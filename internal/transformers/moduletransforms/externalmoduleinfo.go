@@ -47,6 +47,18 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 	hasImportStar := false
 	hasImportDefault := false
 	for _, node := range c.sourceFile.Statements.Nodes {
+		// Look through NotEmittedStatement to find elided export= declarations
+		// (e.g., `declare export = x` is elided by the type eraser but must still be collected)
+		if ast.IsNotEmittedStatement(node) {
+			original := c.emitContext.MostOriginal(node)
+			if original != nil && ast.IsExportAssignment(original) {
+				n := original.AsExportAssignment()
+				if n.IsExportEquals && c.output.exportEquals == nil {
+					c.output.exportEquals = n
+				}
+			}
+			continue
+		}
 		switch node.Kind {
 		case ast.KindImportDeclaration:
 			// import "mod"
@@ -261,7 +273,7 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 					externalHelpersModuleName,
 					emitContext.Factory.NewExternalModuleReference(emitContext.Factory.NewStringLiteral(externalHelpersModuleNameText, ast.TokenFlagsNone)),
 				)
-				emitContext.AddEmitFlags(externalHelpersImportDeclaration, printer.EFNeverApplyImportHelper|printer.EFCustomPrologue)
+				emitContext.AddEmitFlags(externalHelpersImportDeclaration, printer.EFCustomPrologue)
 				return externalHelpersImportDeclaration
 			}
 		} else {
@@ -297,7 +309,7 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 					nil, /*attributes*/
 				)
 
-				emitContext.AddEmitFlags(externalHelpersImportDeclaration, printer.EFNeverApplyImportHelper|printer.EFCustomPrologue)
+				emitContext.AddEmitFlags(externalHelpersImportDeclaration, printer.EFCustomPrologue)
 				return externalHelpersImportDeclaration
 			}
 		}
@@ -322,7 +334,7 @@ func getOrCreateExternalHelpersModuleNameIfNeeded(emitContext *printer.EmitConte
 	}
 
 	create := len(helpers) > 0 ||
-		(hasExportStarsToExportValues || compilerOptions.GetESModuleInterop() && hasImportStarOrImportDefault) &&
+		(hasExportStarsToExportValues || hasImportStarOrImportDefault) &&
 			fileModuleKind < core.ModuleKindSystem
 
 	if create {

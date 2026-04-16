@@ -49,6 +49,7 @@ class X {
 
 
 //// [selfInLambdas.js]
+"use strict";
 var o = {
     counter: 0,
     start: function () {
@@ -59,7 +60,9 @@ var o = {
     }
 };
 class X {
-    value = "value";
+    constructor() {
+        this.value = "value";
+    }
     foo() {
         var outer = () => {
             var x = this.value;

@@ -7,7 +7,7 @@ declare module "GlobalWidgets" {
     }
     export function createWidget3(): Widget3;
 
-    export module SpecializedGlobalWidget {
+    export namespace SpecializedGlobalWidget {
         export class Widget4 {
             name: string;
         }
@@ -23,7 +23,7 @@ export function createWidget1() {
     return new Widget1();
 }
 
-export module SpecializedWidget {
+export namespace SpecializedWidget {
     export class Widget2 {
         name = 'one';
     }
@@ -99,13 +99,16 @@ var privateVarWithPrivateModulePropertyTypes= exporter.createExportedWidget2();
 var privateVarWithPrivateModulePropertyTypes1 = exporter.createExportedWidget4();
 
 //// [privacyCannotNameVarTypeDeclFile_GlobalWidgets.js]
+"use strict";
 //// [privacyCannotNameVarTypeDeclFile_Widgets.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpecializedWidget = exports.Widget1 = void 0;
 exports.createWidget1 = createWidget1;
 class Widget1 {
-    name = 'one';
+    constructor() {
+        this.name = 'one';
+    }
 }
 exports.Widget1 = Widget1;
 function createWidget1() {
@@ -114,7 +117,9 @@ function createWidget1() {
 var SpecializedWidget;
 (function (SpecializedWidget) {
     class Widget2 {
-        name = 'one';
+        constructor() {
+            this.name = 'one';
+        }
     }
     SpecializedWidget.Widget2 = Widget2;
     function createWidget2() {
@@ -150,45 +155,53 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.publicVarWithPrivateModulePropertyTypes1 = exports.publicVarWithPrivateModulePropertyTypes = exports.publicClassWithPrivateModulePropertyTypes = exports.publicVarWithPrivatePropertyTypes1 = exports.publicVarWithPrivatePropertyTypes = exports.publicClassWithWithPrivatePropertyTypes = void 0;
 const exporter = require("./privacyCannotNameVarTypeDeclFile_exporter");
 class publicClassWithWithPrivatePropertyTypes {
-    static myPublicStaticProperty = exporter.createExportedWidget1(); // Error
-    static myPrivateStaticProperty = exporter.createExportedWidget1();
-    myPublicProperty = exporter.createExportedWidget1(); // Error
-    myPrivateProperty = exporter.createExportedWidget1();
-    static myPublicStaticProperty1 = exporter.createExportedWidget3(); // Error
-    static myPrivateStaticProperty1 = exporter.createExportedWidget3();
-    myPublicProperty1 = exporter.createExportedWidget3(); // Error
-    myPrivateProperty1 = exporter.createExportedWidget3();
+    constructor() {
+        this.myPublicProperty = exporter.createExportedWidget1(); // Error
+        this.myPrivateProperty = exporter.createExportedWidget1();
+        this.myPublicProperty1 = exporter.createExportedWidget3(); // Error
+        this.myPrivateProperty1 = exporter.createExportedWidget3();
+    }
 }
 exports.publicClassWithWithPrivatePropertyTypes = publicClassWithWithPrivatePropertyTypes;
+publicClassWithWithPrivatePropertyTypes.myPublicStaticProperty = exporter.createExportedWidget1(); // Error
+publicClassWithWithPrivatePropertyTypes.myPrivateStaticProperty = exporter.createExportedWidget1();
+publicClassWithWithPrivatePropertyTypes.myPublicStaticProperty1 = exporter.createExportedWidget3(); // Error
+publicClassWithWithPrivatePropertyTypes.myPrivateStaticProperty1 = exporter.createExportedWidget3();
 class privateClassWithWithPrivatePropertyTypes {
-    static myPublicStaticProperty = exporter.createExportedWidget1();
-    static myPrivateStaticProperty = exporter.createExportedWidget1();
-    myPublicProperty = exporter.createExportedWidget1();
-    myPrivateProperty = exporter.createExportedWidget1();
-    static myPublicStaticProperty1 = exporter.createExportedWidget3();
-    static myPrivateStaticProperty1 = exporter.createExportedWidget3();
-    myPublicProperty1 = exporter.createExportedWidget3();
-    myPrivateProperty1 = exporter.createExportedWidget3();
+    constructor() {
+        this.myPublicProperty = exporter.createExportedWidget1();
+        this.myPrivateProperty = exporter.createExportedWidget1();
+        this.myPublicProperty1 = exporter.createExportedWidget3();
+        this.myPrivateProperty1 = exporter.createExportedWidget3();
+    }
 }
+privateClassWithWithPrivatePropertyTypes.myPublicStaticProperty = exporter.createExportedWidget1();
+privateClassWithWithPrivatePropertyTypes.myPrivateStaticProperty = exporter.createExportedWidget1();
+privateClassWithWithPrivatePropertyTypes.myPublicStaticProperty1 = exporter.createExportedWidget3();
+privateClassWithWithPrivatePropertyTypes.myPrivateStaticProperty1 = exporter.createExportedWidget3();
 exports.publicVarWithPrivatePropertyTypes = exporter.createExportedWidget1(); // Error
 var privateVarWithPrivatePropertyTypes = exporter.createExportedWidget1();
 exports.publicVarWithPrivatePropertyTypes1 = exporter.createExportedWidget3(); // Error
 var privateVarWithPrivatePropertyTypes1 = exporter.createExportedWidget3();
 class publicClassWithPrivateModulePropertyTypes {
-    static myPublicStaticProperty = exporter.createExportedWidget2(); // Error
-    myPublicProperty = exporter.createExportedWidget2(); // Error
-    static myPublicStaticProperty1 = exporter.createExportedWidget4(); // Error
-    myPublicProperty1 = exporter.createExportedWidget4(); // Error
+    constructor() {
+        this.myPublicProperty = exporter.createExportedWidget2(); // Error
+        this.myPublicProperty1 = exporter.createExportedWidget4(); // Error
+    }
 }
 exports.publicClassWithPrivateModulePropertyTypes = publicClassWithPrivateModulePropertyTypes;
+publicClassWithPrivateModulePropertyTypes.myPublicStaticProperty = exporter.createExportedWidget2(); // Error
+publicClassWithPrivateModulePropertyTypes.myPublicStaticProperty1 = exporter.createExportedWidget4(); // Error
 exports.publicVarWithPrivateModulePropertyTypes = exporter.createExportedWidget2(); // Error
 exports.publicVarWithPrivateModulePropertyTypes1 = exporter.createExportedWidget4(); // Error
 class privateClassWithPrivateModulePropertyTypes {
-    static myPublicStaticProperty = exporter.createExportedWidget2();
-    myPublicProperty = exporter.createExportedWidget2();
-    static myPublicStaticProperty1 = exporter.createExportedWidget4();
-    myPublicProperty1 = exporter.createExportedWidget4();
+    constructor() {
+        this.myPublicProperty = exporter.createExportedWidget2();
+        this.myPublicProperty1 = exporter.createExportedWidget4();
+    }
 }
+privateClassWithPrivateModulePropertyTypes.myPublicStaticProperty = exporter.createExportedWidget2();
+privateClassWithPrivateModulePropertyTypes.myPublicStaticProperty1 = exporter.createExportedWidget4();
 var privateVarWithPrivateModulePropertyTypes = exporter.createExportedWidget2();
 var privateVarWithPrivateModulePropertyTypes1 = exporter.createExportedWidget4();
 

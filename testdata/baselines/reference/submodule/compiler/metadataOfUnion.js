@@ -39,6 +39,7 @@ class D {
 }
 
 //// [metadataOfUnion.js]
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -52,9 +53,6 @@ function PropDeco(target, propKey) { }
 class A {
 }
 class B {
-    x;
-    y;
-    z;
 }
 __decorate([
     PropDeco,
@@ -76,10 +74,6 @@ var E;
     E[E["D"] = 3] = "D";
 })(E || (E = {}));
 class D {
-    a;
-    b;
-    c;
-    d;
 }
 __decorate([
     PropDeco,

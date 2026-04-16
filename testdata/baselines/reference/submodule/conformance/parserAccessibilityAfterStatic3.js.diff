@@ -1,9 +1,0 @@
---- old.parserAccessibilityAfterStatic3.js
-+++ new.parserAccessibilityAfterStatic3.js
-@@= skipped -8, +8 lines =@@
-
- //// [parserAccessibilityAfterStatic3.js]
- class Outer {
-+    static public = 1;
- }
--Outer.public = 1;

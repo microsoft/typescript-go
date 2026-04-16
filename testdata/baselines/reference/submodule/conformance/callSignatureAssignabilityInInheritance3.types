@@ -4,7 +4,7 @@
 // checking subtype relations for function types as it relates to contextual signature instantiation
 // error cases
 
-module Errors {
+namespace Errors {
 >Errors : typeof Errors
 
     class Base { foo: string; }
@@ -26,7 +26,7 @@ module Errors {
 >Base : Base
 >bing : string
 
-    module WithNonGenericSignaturesInBaseType {
+    namespace WithNonGenericSignaturesInBaseType {
         // base type with non-generic call signatures
         interface A {
             a2: (x: number) => string[];
@@ -60,7 +60,7 @@ module Errors {
 >bar : string
 
             a12: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>;
->a12 : (x: Base[], y: Derived2[]) => Derived[]
+>a12 : (x: Array<Base>, y: Array<Derived2>) => Array<Derived>
 >x : Base[]
 >y : Derived2[]
 
@@ -91,7 +91,7 @@ module Errors {
 >a : number
 
                     (a?: number): number;
->a : number
+>a : number | undefined
 
                 }): number[];
                 (x: {
@@ -101,7 +101,7 @@ module Errors {
 >a : boolean
 
                     (a?: boolean): boolean;
->a : boolean
+>a : boolean | undefined
 
                 }): boolean[];
             };
@@ -178,7 +178,7 @@ module Errors {
 
         interface I4E extends A {
             a12: <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T; // valid, no inferences for T, defaults to Array<Derived2>
->a12 : <T extends Derived2[]>(x: Base[], y: Base[]) => T
+>a12 : <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T
 >x : Base[]
 >y : Base[]
         }
@@ -215,7 +215,7 @@ module Errors {
         }
     }
 
-    module WithGenericSignaturesInBaseType {
+    namespace WithGenericSignaturesInBaseType {
         // base type has generic call signature
         interface B {
             a2: <T>(x: T) => T[];

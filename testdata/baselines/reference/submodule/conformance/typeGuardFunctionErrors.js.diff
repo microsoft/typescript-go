@@ -1,33 +1,6 @@
 --- old.typeGuardFunctionErrors.js
 +++ new.typeGuardFunctionErrors.js
-@@= skipped -170, +170 lines =@@
-
- //// [typeGuardFunctionErrors.js]
- class A {
-+    propA;
- }
- class B {
-+    propB;
- }
- class C extends A {
-+    propC;
- }
- function hasANonBooleanReturnStatement(x) {
-     return '';
- }
-+function hasTypeGuardTypeInsideTypeGuardType(x) { }
- is;
- A;
- {
-@@= skipped -66, +70 lines =@@
- var b1, is, A;
- function b2(a, is, A) { }
- ;
-+function b3() { }
- is;
- A;
- {
-@@= skipped -8, +9 lines =@@
+@@= skipped -245, +245 lines =@@
  ;
  // Non-compatiable type predicate positions for signature declarations
  class D {

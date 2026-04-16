@@ -1,13 +1,10 @@
 --- old.nameCollisions.js
 +++ new.nameCollisions.js
-@@= skipped -52, +52 lines =@@
+@@= skipped -53, +53 lines =@@
  var T;
  (function (T) {
      var x = 2;
 -    let x;
      (function (x) {
          class Bar {
-+            test;
          }
-         x.Bar = Bar;
-     })(x || (x = {}));

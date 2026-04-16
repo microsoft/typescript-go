@@ -20,21 +20,16 @@ B.c = C;
 
 
 //// [declarationEmitExpandoFunction.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-exports.A = A;
-exports.B = B;
-function A() {
+export function A() {
     return 'A';
 }
-function B() {
+export function B() {
     return 'B';
 }
-var C;
+export var C;
 (function (C) {
     C[C["C"] = 0] = "C";
-})(C || (exports.C = C = {}));
+})(C || (C = {}));
 A.a = C;
 A.b = C;
 B.c = C;

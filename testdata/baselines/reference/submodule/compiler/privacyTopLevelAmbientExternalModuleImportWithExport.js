@@ -49,14 +49,15 @@ export var publicUse_im_public_mi_public = new im_public_mi_public.c_private();
 
 
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require2.js]
+"use strict";
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require3.js]
+"use strict";
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c_public = void 0;
 // Public elements
 class c_public {
-    foo;
 }
 exports.c_public = c_public;
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require1.js]
@@ -64,7 +65,6 @@ exports.c_public = c_public;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c_public = void 0;
 class c_public {
-    bar;
 }
 exports.c_public = c_public;
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_core.js]

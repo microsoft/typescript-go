@@ -11,10 +11,13 @@ class C {
 }
 
 //// [symbolProperty7.js]
+"use strict";
+var _a;
 class C {
-    [Symbol()] = 0;
-    [Symbol()];
-    [Symbol()]() { }
+    constructor() {
+        this[_a] = 0;
+    }
+    [(_a = Symbol(), Symbol(), Symbol())]() { }
     get [Symbol()]() {
         return 0;
     }

@@ -11,9 +11,8 @@ class Y {
 interface Z extends X, Y { }
 
 //// [baseTypePrivateMemberClash.js]
+"use strict";
 class X {
-    m;
 }
 class Y {
-    m;
 }

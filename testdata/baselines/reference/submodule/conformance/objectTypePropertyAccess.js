@@ -32,9 +32,9 @@ var r11 = a['foo'];
 
 
 //// [objectTypePropertyAccess.js]
+"use strict";
 // Index notation should resolve to the type of a declared property with that same name
 class C {
-    foo;
 }
 var c;
 var r1 = c.toString();

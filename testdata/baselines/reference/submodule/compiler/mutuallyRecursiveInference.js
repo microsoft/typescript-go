@@ -18,16 +18,13 @@ class X extends L<X> {
 
 
 //// [mutuallyRecursiveInference.js]
+"use strict";
 class T {
-    a;
-    b;
 }
 class L extends T {
     m() { this.a; }
 }
 class X extends L {
-    a;
-    b;
     m2() {
         this.a;
     }

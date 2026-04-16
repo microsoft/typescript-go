@@ -20,14 +20,14 @@ class Foo<T> {
 
 
 //// [genericClassWithStaticsUsingTypeArguments.js]
+"use strict";
 // Should be error to use 'T' in all declarations within Foo.
 class Foo {
-    static a = (n) => { };
-    static b;
-    static c = [];
-    static d = false || ((x) => x || undefined)(null);
-    static e = function (x) { return null; };
     static f(xs) {
         return xs.reverse();
     }
 }
+Foo.a = (n) => { };
+Foo.c = [];
+Foo.d = false || ((x) => x || undefined)(null);
+Foo.e = function (x) { return null; };

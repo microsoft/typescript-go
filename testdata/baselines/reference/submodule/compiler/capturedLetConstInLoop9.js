@@ -141,6 +141,7 @@ function foo3 () {
 }
 
 //// [capturedLetConstInLoop9.js]
+"use strict";
 for (let x = 0; x < 1; ++x) {
     let x;
     (function () { return x; });
@@ -237,7 +238,6 @@ function foo2() {
     }
 }
 class C {
-    N;
     constructor(N) {
         this.N = N;
     }

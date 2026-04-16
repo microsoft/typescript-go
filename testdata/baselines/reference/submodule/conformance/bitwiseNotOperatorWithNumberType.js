@@ -11,7 +11,7 @@ class A {
     public a: number;
     static foo() { return 1; }
 }
-module M {
+namespace M {
     export var n: number;
 }
 
@@ -47,12 +47,12 @@ var ResultIsNumber13 = ~~~(NUMBER + NUMBER);
 ~objA.a, M.n;
 
 //// [bitwiseNotOperatorWithNumberType.js]
+"use strict";
 // ~ operator on number type
 var NUMBER;
 var NUMBER1 = [1, 2];
 function foo() { return 1; }
 class A {
-    a;
     static foo() { return 1; }
 }
 var M;

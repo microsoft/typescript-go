@@ -31,6 +31,6 @@ class Derived2 extends Base<{ bar: string; }> {
 >foo : { bar?: string; }
 
         bar?: string; // error
->bar : string
+>bar : string | undefined
     }
 }

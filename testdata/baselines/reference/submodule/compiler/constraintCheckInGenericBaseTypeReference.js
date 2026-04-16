@@ -22,12 +22,12 @@ class Container {
 }
 
 //// [constraintCheckInGenericBaseTypeReference.js]
+"use strict";
 // No errors
 class Constraint {
     method() { }
 }
 class GenericBase {
-    items;
 }
 class Derived extends GenericBase {
 }
@@ -37,5 +37,4 @@ class TypeArg {
     }
 }
 class Container {
-    static People;
 }

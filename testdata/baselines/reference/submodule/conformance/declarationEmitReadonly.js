@@ -6,8 +6,8 @@ class C {
 }
 
 //// [declarationEmitReadonly.js]
+"use strict";
 class C {
-    x;
     constructor(x) {
         this.x = x;
     }

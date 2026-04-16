@@ -25,7 +25,6 @@
 // | 
 // | 
 // | *@throws* — {E}
-// | 
 // | ----------------------------------------------------------------------
 // f2()
 // ^^
@@ -63,7 +62,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f1(): void\n```\n\n\n*@throws* — {E}\n"
+        "value": "```tsx\nfunction f1(): void\n```\n\n\n*@throws* — {E}"
       },
       "range": {
         "start": {

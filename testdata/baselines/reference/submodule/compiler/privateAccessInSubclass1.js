@@ -12,8 +12,8 @@ class D extends Base {
 }
 
 //// [privateAccessInSubclass1.js]
+"use strict";
 class Base {
-    options;
 }
 class D extends Base {
     myMethod() {

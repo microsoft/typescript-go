@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/es6ModuleInternalNamedImports.ts] ////
 
 //// [es6ModuleInternalNamedImports.ts]
-export module M {
+export namespace M {
     // variable
     export var M_V = 0;
     // interface
@@ -9,9 +9,9 @@ export module M {
     //calss
     export class M_C { }
     // instantiated module
-    export module M_M { var x; }
+    export namespace M_M { var x; }
     // uninstantiated module
-    export module M_MU { }
+    export namespace M_MU { }
     // function
     export function M_F() { }
     // enum
@@ -34,8 +34,7 @@ export module M {
 
 
 //// [es6ModuleInternalNamedImports.js]
-export { M };
-var M;
+export var M;
 (function (M) {
     // variable
     M.M_V = 0;
@@ -55,14 +54,6 @@ var M;
     let M_E;
     (function (M_E) {
     })(M_E = M.M_E || (M.M_E = {}));
+    // alias
     M.M_A = M_M;
-    // Reexports
-    export { M_V as v };
-    export { M_I as i };
-    export { M_C as c };
-    export { M_M as m };
-    export { M_MU as mu };
-    export { M_F as f };
-    export { M_E as e };
-    export { M_A as a };
 })(M || (M = {}));

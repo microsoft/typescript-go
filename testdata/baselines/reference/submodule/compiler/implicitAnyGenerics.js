@@ -28,8 +28,8 @@ foo<any>();
     
 
 //// [implicitAnyGenerics.js]
+"use strict";
 class C {
-    x;
 }
 var c = new C();
 var c2 = new C();

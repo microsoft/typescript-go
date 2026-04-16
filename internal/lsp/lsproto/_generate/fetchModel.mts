@@ -1,3 +1,7 @@
+#!/usr/bin/env -S node --experimental-strip-types
+
+// Usage: node --experimental-strip-types fetchModel.mts
+
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
@@ -8,10 +12,16 @@ const __dirname = path.dirname(__filename);
 const metaModelPath = path.join(__dirname, "metaModel.json");
 const metaModelSchemaPath = path.join(__dirname, "metaModelSchema.mts");
 
-const hash = "2abd2d977aa36e8c6b242ff048bdbf5df71e3088";
+// Resolve the vscode-languageclient version from the root package-lock.json.
+const lockfilePath = path.resolve(__dirname, "../../../../package-lock.json");
+const lockfile = JSON.parse(fs.readFileSync(lockfilePath, "utf-8"));
+const clientVersion: string = lockfile.packages["node_modules/vscode-languageclient"].version;
 
-const metaModelURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${hash}/protocol/metaModel.json`;
-const metaModelSchemaURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${hash}/tools/src/metaModel.ts`;
+const ref = `release/client/${clientVersion}`;
+console.log(`Using vscode-languageclient@${clientVersion}`);
+
+const metaModelURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${ref}/protocol/metaModel.json`;
+const metaModelSchemaURL = `https://raw.githubusercontent.com/microsoft/vscode-languageserver-node/${ref}/tools/src/metaModel.ts`;
 
 const metaModelResponse = await fetch(metaModelURL);
 const metaModel = await metaModelResponse.text();

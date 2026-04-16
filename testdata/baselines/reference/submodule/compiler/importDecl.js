@@ -43,7 +43,7 @@ export var x4 = m4.x;
 export var d4 = m4.d;
 export var f4 = m4.foo();
 
-export module m1 {
+export namespace m1 {
     export var x2 = m4.x;
     export var d2 = m4.d;
     export var f2 = m4.foo();
@@ -64,7 +64,7 @@ export var useFncOnly_m4_f4 = fncOnly_m4.foo();
 
 // only used privately no need to emit
 import private_m4 = require("./importDecl_require3");
-export module usePrivate_m4_m1 {
+export namespace usePrivate_m4_m1 {
     var x3 = private_m4.x;
     var d3 = private_m4.d;
     var f3 = private_m4.foo();
@@ -87,7 +87,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.d = void 0;
 exports.foo = foo;
 class d {
-    foo;
 }
 exports.d = d;
 function foo() { return null; }
@@ -97,7 +96,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.d = void 0;
 exports.foo = foo;
 class d {
-    bar;
 }
 exports.d = d;
 var x;
@@ -108,7 +106,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.d = void 0;
 exports.foo = foo;
 class d {
-    baz;
 }
 exports.d = d;
 function foo() { return null; }
@@ -118,7 +115,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.d = void 0;
 exports.foo = foo;
 class d {
-    bing;
 }
 exports.d = d;
 function foo() { return null; }

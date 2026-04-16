@@ -38,7 +38,7 @@
      }
  }
 @@= skipped -10, +10 lines =@@
- >exports : typeof import("mod1")
+ >exports : typeof import("./mod1")
  >K : typeof K
  >NS.K : typeof K
 ->NS : typeof NS

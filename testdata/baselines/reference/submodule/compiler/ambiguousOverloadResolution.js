@@ -11,10 +11,10 @@ var x: B;
 var t: number = f(x, x); // Not an error
 
 //// [ambiguousOverloadResolution.js]
+"use strict";
 class A {
 }
 class B extends A {
-    x;
 }
 var x;
 var t = f(x, x); // Not an error

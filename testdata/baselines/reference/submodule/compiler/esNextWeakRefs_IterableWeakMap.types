@@ -129,10 +129,10 @@ export class IterableWeakMap<K extends object, V> implements WeakMap<K, V> {
 
             this.#finalizationGroup.register(key, {
 >this.#finalizationGroup.register(key, {                set: this.#refSet,                ref,            }, ref) : void
->this.#finalizationGroup.register : (target: WeakKey, heldValue: { readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }, unregisterToken?: WeakKey | undefined) => void
+>this.#finalizationGroup.register : (target: WeakKey, heldValue: { readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }, unregisterToken?: WeakKey) => void
 >this.#finalizationGroup : FinalizationRegistry<{ readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }>
 >this : this
->register : (target: WeakKey, heldValue: { readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }, unregisterToken?: WeakKey | undefined) => void
+>register : (target: WeakKey, heldValue: { readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }, unregisterToken?: WeakKey) => void
 >key : K
 >{                set: this.#refSet,                ref,            } : { set: Set<WeakRef<K>>; ref: WeakRef<K>; }
 
@@ -177,6 +177,79 @@ export class IterableWeakMap<K extends object, V> implements WeakMap<K, V> {
 >get : (key: K) => { readonly ref: WeakRef<K>; value: V; } | undefined
 >key : K
 >value : V | undefined
+    }
+
+    getOrInsert(key: K, defaultValue: V): V {
+>getOrInsert : (key: K, defaultValue: V) => V
+>key : K
+>defaultValue : V
+
+        if (!this.has(key)) {
+>!this.has(key) : boolean
+>this.has(key) : boolean
+>this.has : (key: K) => boolean
+>this : this
+>has : (key: K) => boolean
+>key : K
+
+            this.set(key, defaultValue);
+>this.set(key, defaultValue) : this
+>this.set : (key: K, value: V) => this
+>this : this
+>set : (key: K, value: V) => this
+>key : K
+>defaultValue : V
+
+            return defaultValue;
+>defaultValue : V
+        }
+        return this.get(key)!;
+>this.get(key)! : NonNullable<V>
+>this.get(key) : V | undefined
+>this.get : (key: K) => V | undefined
+>this : this
+>get : (key: K) => V | undefined
+>key : K
+    }
+
+    getOrInsertComputed(key: K, callback: (key: K) => V): V {
+>getOrInsertComputed : (key: K, callback: (key: K) => V) => V
+>key : K
+>callback : (key: K) => V
+>key : K
+
+        if (!this.has(key)) {
+>!this.has(key) : boolean
+>this.has(key) : boolean
+>this.has : (key: K) => boolean
+>this : this
+>has : (key: K) => boolean
+>key : K
+
+            const value = callback(key);
+>value : V
+>callback(key) : V
+>callback : (key: K) => V
+>key : K
+
+            this.set(key, value);
+>this.set(key, value) : this
+>this.set : (key: K, value: V) => this
+>this : this
+>set : (key: K, value: V) => this
+>key : K
+>value : V
+
+            return value;
+>value : V
+        }
+        return this.get(key)!;
+>this.get(key)! : NonNullable<V>
+>this.get(key) : V | undefined
+>this.get : (key: K) => V | undefined
+>this : this
+>get : (key: K) => V | undefined
+>key : K
     }
 
     delete(key: K): boolean {
@@ -240,7 +313,7 @@ export class IterableWeakMap<K extends object, V> implements WeakMap<K, V> {
 >iterator : unique symbol
 
     *entries(): Generator<[key: K, value: V], void> {
->entries : () => Generator<[key: K, value: V], void, any>
+>entries : () => Generator<[key: K, value: V], void>
 
         for (const ref of this.#refSet) {
 >ref : WeakRef<K>

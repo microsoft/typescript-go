@@ -11,10 +11,10 @@ class C<T> {
 }
 
 //// [genericGetter2.js]
+"use strict";
 class A {
 }
 class C {
-    data;
     get x() {
         return this.data;
     }

@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/jsx/checkJsxChildrenProperty10.tsx] ////
 
 //// [file.tsx]
-declare module JSX {
+declare namespace JSX {
 	interface Element { }
 	interface ElementAttributesProperty { props: {} }
 	interface IntrinsicElements { 
@@ -25,8 +25,8 @@ let k3 = <div> {1} {"That is a number"} </div>;
 let k4 = <Button> <h2> Hello </h2> </Button>;
 
 //// [file.jsx]
+"use strict";
 class Button {
-    props;
     render() {
         return (<div>My Button</div>);
     }

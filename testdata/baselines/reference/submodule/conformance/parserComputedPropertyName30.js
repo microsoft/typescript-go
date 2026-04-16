@@ -8,10 +8,10 @@ enum E {
 }
 
 //// [parserComputedPropertyName30.js]
+"use strict";
 var E;
 (function (E) {
     // no ASI, comma expected
-    E[e] = id++;
-    if (typeof E[e] !== "string") E[E[e]] = e;
+    E[E[e] = id++] = e;
     E[E[e2] = 1] = e2;
 })(E || (E = {}));

@@ -29,7 +29,7 @@ class C {
     }
 }
 
-module M {
+namespace M {
     function fn() {
         var p = this;
         var p: any;
@@ -48,6 +48,7 @@ module M {
 }
 
 //// [typeOfThisInFunctionExpression.js]
+"use strict";
 // type of 'this' in FunctionExpression is Any
 function fn() {
     var p = this;
@@ -62,14 +63,16 @@ var t2 = function f() {
     var x;
 };
 class C {
-    x = function () {
-        var q;
-        var q = this;
-    };
-    y = function ff() {
-        var q;
-        var q = this;
-    };
+    constructor() {
+        this.x = function () {
+            var q;
+            var q = this;
+        };
+        this.y = function ff() {
+            var q;
+            var q = this;
+        };
+    }
 }
 var M;
 (function (M) {

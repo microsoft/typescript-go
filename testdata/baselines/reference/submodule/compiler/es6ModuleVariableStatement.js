@@ -5,13 +5,13 @@ export var a = "hello";
 export var x: string = a, y = x;
 var b = y;
 var c: string = b, d = c;
-export module m1 {
+export namespace m1 {
     export var k = a;
     export var l: string = b, m = k;
     var n = m1.k;
     var o: string = n, p = k;
 }
-module m2 {
+namespace m2 {
     export var k = a;
     export var l: string = b, m = k;
     var n = m1.k;
@@ -23,8 +23,7 @@ export var a = "hello";
 export var x = a, y = x;
 var b = y;
 var c = b, d = c;
-export { m1 };
-var m1;
+export var m1;
 (function (m1) {
     m1.k = a;
     m1.l = b, m1.m = m1.k;

@@ -7,6 +7,7 @@ namespace N {
 
 
 //// [constEnumInNamespace.js]
+"use strict";
 var N;
 (function (N) {
     let E;

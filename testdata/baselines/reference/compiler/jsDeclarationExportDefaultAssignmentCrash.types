@@ -4,7 +4,7 @@
 exports.default = () => {
 >exports.default = () => {    return 1234;} : () => number
 >exports.default : () => number
->exports : typeof import("index")
+>exports : typeof import(".")
 >default : () => number
 >() => {    return 1234;} : () => number
 

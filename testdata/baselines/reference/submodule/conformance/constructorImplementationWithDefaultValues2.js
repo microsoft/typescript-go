@@ -23,15 +23,14 @@ class E<T extends Date> {
 }
 
 //// [constructorImplementationWithDefaultValues2.js]
+"use strict";
 class C {
-    x;
     constructor(x = 1) {
         this.x = x;
         var y = x;
     }
 }
 class D {
-    y;
     constructor(x = 1, y = x) {
         this.y = y;
         var z = x;

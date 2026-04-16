@@ -13,7 +13,7 @@ const enum e2 {
 }
 var x = e1.a;
 var y = e2.x;
-export module m1 {
+export namespace m1 {
     export const enum e3 {
         a,
         b,
@@ -29,7 +29,7 @@ export module m1 {
     var x2 = e3.a;
     var y2 = e4.x;
 }
-module m2 {
+namespace m2 {
     export const enum e5 {
         a,
         b,
@@ -50,8 +50,7 @@ module m2 {
 //// [es6ModuleConstEnumDeclaration.js]
 var x = 0 /* e1.a */;
 var y = 0 /* e2.x */;
-export { m1 };
-var m1;
+export var m1;
 (function (m1) {
     var x1 = 0 /* e1.a */;
     var y1 = 0 /* e2.x */;

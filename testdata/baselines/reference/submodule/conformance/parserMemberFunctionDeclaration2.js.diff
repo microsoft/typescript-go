@@ -1,9 +1,0 @@
---- old.parserMemberFunctionDeclaration2.js
-+++ new.parserMemberFunctionDeclaration2.js
-@@= skipped -6, +6 lines =@@
-
- //// [parserMemberFunctionDeclaration2.js]
- class C {
-+    static static;
-     Foo() { }
- }

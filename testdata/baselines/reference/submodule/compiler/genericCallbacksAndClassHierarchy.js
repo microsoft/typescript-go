@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/genericCallbacksAndClassHierarchy.ts] ////
 
 //// [genericCallbacksAndClassHierarchy.ts]
-module M {
+namespace M {
     export interface I<T> {
         subscribe(callback: (newValue: T) => void ): any;
     }
@@ -26,14 +26,13 @@ module M {
 }
 
 //// [genericCallbacksAndClassHierarchy.js]
+"use strict";
 var M;
 (function (M) {
     class C1 {
-        value;
     }
     M.C1 = C1;
     class A {
-        dummy;
     }
     M.A = A;
     class B extends C1 {

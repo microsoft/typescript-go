@@ -12,9 +12,9 @@
 //     ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | var foo: string
+// | (parameter) foo: string
 // | ```
-// | 
+// | A description of foo
 // | ----------------------------------------------------------------------
 // }
 [
@@ -31,7 +31,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar foo: string\n```\n"
+        "value": "```tsx\n(parameter) foo: string\n```\nA description of foo"
       },
       "range": {
         "start": {

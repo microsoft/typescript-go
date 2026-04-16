@@ -1,9 +1,0 @@
---- old.duplicateIdentifierComputedName.js
-+++ new.duplicateIdentifierComputedName.js
-@@= skipped -8, +8 lines =@@
-
- //// [duplicateIdentifierComputedName.js]
- class C {
-+    ["a"];
-+    ["a"];
- }

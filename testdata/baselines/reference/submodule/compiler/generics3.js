@@ -10,8 +10,8 @@ var b: C<Y>;
 a = b; // Ok - should be identical
 
 //// [generics3.js]
+"use strict";
 class C {
-    x;
 }
 var a;
 var b;

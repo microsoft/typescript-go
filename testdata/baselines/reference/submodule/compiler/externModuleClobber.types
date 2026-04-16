@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/externModuleClobber.ts] ////
 
 === externModuleClobber.ts ===
-declare module EM {
+declare namespace EM {
 >EM : typeof EM
 
 	export class Position { }
@@ -11,7 +11,7 @@ declare module EM {
 >EC : EC
 
 		public getPosition() : EM.Position;
->getPosition : () => Position
+>getPosition : () => EM.Position
 >EM : any
 	}
 }

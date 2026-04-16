@@ -17,6 +17,7 @@ class Derived {
 
 
 //// [thisTypeErrors2.js]
+"use strict";
 class Base {
     constructor(a) {
     }
@@ -24,8 +25,6 @@ class Base {
 class Generic {
 }
 class Derived {
-    host;
-    n;
     constructor(host) {
         this.host = host;
         let self = this;

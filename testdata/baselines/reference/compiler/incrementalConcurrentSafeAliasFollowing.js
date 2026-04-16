@@ -145,87 +145,55 @@ export * from "./file14.js"
 export * from "./file15.js"
 
 //// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const a = 1;
+export {};
 //// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file5.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file6.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file7.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file8.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file9.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file10.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file11.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file12.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file13.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file14.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [file15.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [barrel.js]
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./file0.js"), exports);
-__exportStar(require("./file1.js"), exports);
-__exportStar(require("./file2.js"), exports);
-__exportStar(require("./file3.js"), exports);
-__exportStar(require("./file4.js"), exports);
-__exportStar(require("./file5.js"), exports);
-__exportStar(require("./file6.js"), exports);
-__exportStar(require("./file7.js"), exports);
-__exportStar(require("./file8.js"), exports);
-__exportStar(require("./file9.js"), exports);
-__exportStar(require("./file10.js"), exports);
-__exportStar(require("./file11.js"), exports);
-__exportStar(require("./file12.js"), exports);
-__exportStar(require("./file13.js"), exports);
-__exportStar(require("./file14.js"), exports);
-__exportStar(require("./file15.js"), exports);
+export * from "./file0.js";
+export * from "./file1.js";
+export * from "./file2.js";
+export * from "./file3.js";
+export * from "./file4.js";
+export * from "./file5.js";
+export * from "./file6.js";
+export * from "./file7.js";
+export * from "./file8.js";
+export * from "./file9.js";
+export * from "./file10.js";
+export * from "./file11.js";
+export * from "./file12.js";
+export * from "./file13.js";
+export * from "./file14.js";
+export * from "./file15.js";
 
 
 //// [file2.d.ts]

@@ -4,6 +4,9 @@
 class foo { public bar:{id:number;} = {id:5, name:"foo"}; }
 
 //// [contextualTyping4.js]
+"use strict";
 class foo {
-    bar = { id: 5, name: "foo" };
+    constructor() {
+        this.bar = { id: 5, name: "foo" };
+    }
 }

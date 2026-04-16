@@ -7,9 +7,8 @@ class C {
 }
 
 //// [readonlyReadonly.js]
+"use strict";
 class C {
-    y;
-    x;
     constructor(y) {
         this.y = y;
     }

@@ -9,11 +9,12 @@ namespace hello.hi.world
 }
 
 //// [commentInNamespaceDeclarationWithIdentifierPathName.js]
+"use strict";
 var hello;
 (function (hello) {
-    let hi;
+    var hi;
     (function (hi) {
-        let world;
+        var world;
         (function (world) {
             function foo() { }
             // TODO, blah

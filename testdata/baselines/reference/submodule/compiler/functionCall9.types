@@ -3,8 +3,8 @@
 === functionCall9.ts ===
 function foo(a?:string, b?:number){};
 >foo : (a?: string, b?: number) => void
->a : string
->b : number
+>a : string | undefined
+>b : number | undefined
 
 foo('foo', 1); 
 >foo('foo', 1) : void

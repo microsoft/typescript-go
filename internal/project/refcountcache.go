@@ -22,19 +22,16 @@ type RefCountCache[K comparable, V any, AcquireArgs any] struct {
 	Options RefCountCacheOptions
 	entries collections.SyncMap[K, *refCountCacheEntry[V]]
 
-	isExpired func(K, V, AcquireArgs) bool
-	parse     func(K, AcquireArgs) V
+	parse func(K, AcquireArgs) V
 }
 
 func NewRefCountCache[K comparable, V any, AcquireArgs any](
 	options RefCountCacheOptions,
 	parse func(K, AcquireArgs) V,
-	isExpired func(K, V, AcquireArgs) bool,
 ) *RefCountCache[K, V, AcquireArgs] {
 	return &RefCountCache[K, V, AcquireArgs]{
-		Options:   options,
-		isExpired: isExpired,
-		parse:     parse,
+		Options: options,
+		parse:   parse,
 	}
 }
 
@@ -47,11 +44,17 @@ func NewRefCountCache[K comparable, V any, AcquireArgs any](
 func (c *RefCountCache[K, V, AcquireArgs]) Acquire(identity K, acquireArgs AcquireArgs) V {
 	entry, loaded := c.loadOrStoreNewLockedEntry(identity)
 	defer entry.mu.Unlock()
-	if !loaded || c.isExpired != nil && c.isExpired(identity, entry.value, acquireArgs) {
+	if !loaded {
 		// New entry - parse the value
 		entry.value = c.parse(identity, acquireArgs)
+		return entry.value
 	}
 	return entry.value
+}
+
+func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
+	_, ok := c.entries.Load(identity)
+	return ok
 }
 
 // Ref increments the reference count for an existing entry.
@@ -65,11 +68,9 @@ func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
 	defer entry.mu.Unlock()
 	if entry.refCount <= 0 && !c.Options.DisableDeletion {
 		// Entry was deleted while we were acquiring the lock
-		newEntry, loaded := c.loadOrStoreNewLockedEntry(identity)
+		newEntry, _ := c.loadOrStoreNewLockedEntry(identity)
 		defer newEntry.mu.Unlock()
-		if !loaded {
-			newEntry.value = entry.value
-		}
+		newEntry.value = entry.value
 		return
 	}
 	entry.refCount++
@@ -99,6 +100,7 @@ func (c *RefCountCache[K, V, AcquireArgs]) loadOrStoreNewLockedEntry(key K) (*re
 	entry.mu.Lock()
 	existing, loaded := c.entries.LoadOrStore(key, entry)
 	if loaded {
+		entry.mu.Unlock()
 		existing.mu.Lock()
 		if existing.refCount <= 0 && !c.Options.DisableDeletion {
 			// Existing entry was deleted while we were acquiring the lock

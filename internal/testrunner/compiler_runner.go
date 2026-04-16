@@ -84,11 +84,30 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 }
 
 var skippedTests = []string{
+	// Tests that depended on typescript.d.ts in built.
+	"APILibCheck.ts",
+	"APISample_Watch.ts",
+	"APISample_WatchWithDefaults.ts",
+	"APISample_WatchWithOwnWatchHost.ts",
+	"APISample_compile.ts",
+	"APISample_jsdoc.ts",
+	"APISample_linter.ts",
+	"APISample_parseConfig.ts",
+	"APISample_transform.ts",
+	"APISample_watcher.ts",
+
 	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",
 	"verbatimModuleSyntaxCompat.ts",
+	"verbatimModuleSyntaxCompat2.ts",
+	"verbatimModuleSyntaxCompat3.ts",
+	"verbatimModuleSyntaxCompat4.ts",
+	"preserveValueImports.ts",
 	"preserveValueImports_importsNotUsedAsValues.ts",
+	"preserveValueImports_errors.ts",
+	"preserveValueImports_mixedImports.ts",
+	"preserveValueImports_module.ts",
 	"importsNotUsedAsValues_error.ts",
 	"alwaysStrictNoImplicitUseStrict.ts",
 	"nonPrimitiveIndexingWithForInSupressError.ts",
@@ -105,6 +124,14 @@ var skippedTests = []string{
 	"noImplicitUseStrict_amd.ts",
 	"noImplicitAnyIndexingSuppressed.ts",
 	"excessPropertyErrorsSuppressed.ts",
+	"moduleNoneDynamicImport.ts",
+	"moduleNoneErrors.ts",
+	"moduleNoneOutFile.ts",
+	"noErrorUsingImportExportModuleAugmentationInDeclarationFile1.ts",
+	"noErrorUsingImportExportModuleAugmentationInDeclarationFile2.ts",
+	"noErrorUsingImportExportModuleAugmentationInDeclarationFile3.ts",
+	"requireOfJsonFileWithModuleEmitNone.ts",
+	"requireOfJsonFileWithModuleNodeResolutionEmitNone.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
@@ -119,7 +146,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	}
 }
 
-var localBasePath = filepath.Join(repo.TestDataPath, "baselines", "local")
+var localBasePath = filepath.Join(repo.TestDataPath(), "baselines", "local")
 
 func (r *CompilerBaselineRunner) cleanUpLocal(t *testing.T) {
 	localPath := filepath.Join(localBasePath, core.IfElse(r.isSubmodule, "diff", ""), r.testSuitName)
@@ -182,26 +209,7 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
-	switch compilerTest.options.Module {
-	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
-		t.Skipf("Skipping test %s with unsupported module kind %s", testName, compilerTest.options.Module)
-	}
-	switch compilerTest.options.ModuleResolution {
-	case core.ModuleResolutionKindNode10, core.ModuleResolutionKindClassic:
-		t.Skipf("Skipping test %s with unsupported module resolution kind %d", testName, compilerTest.options.ModuleResolution)
-	}
-	if compilerTest.options.ESModuleInterop.IsFalse() {
-		t.Skipf("Skipping test %s with esModuleInterop=false", testName)
-	}
-	if compilerTest.options.AllowSyntheticDefaultImports.IsFalse() {
-		t.Skipf("Skipping test %s with allowSyntheticDefaultImports=false", testName)
-	}
-	if compilerTest.options.BaseUrl != "" {
-		t.Skipf("Skipping test %s with baseUrl set", testName)
-	}
-	if compilerTest.options.OutFile != "" {
-		t.Skipf("Skipping test %s with outFile set", testName)
-	}
+	harnessutil.SkipUnsupportedCompilerOptions(t, compilerTest.options)
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
@@ -402,7 +410,7 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 		}
 
 		defer testutil.RecoverAndFail(t, "Panic on creating js output for test "+c.filename)
-		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
 			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 		}
@@ -425,7 +433,7 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("sourcemap", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map output for test "+c.filename)
-		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
 			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 		}
@@ -445,7 +453,7 @@ func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isS
 func (c *compilerTest) verifySourceMapRecord(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("sourcemap record", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map record for test "+c.filename)
-		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
 			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 		}
@@ -475,7 +483,7 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string, isS
 		},
 	)
 
-	headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+	headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath(), c.filename, tspath.ComparePathsOptions{})
 	if isSubmodule {
 		headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
 	}

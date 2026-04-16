@@ -9,7 +9,7 @@ interface Base {
 
     a2: new (x?: number) => number;
 >a2 : new (x?: number) => number
->x : number
+>x : number | undefined
 
     a3: new (x: number) => number;
 >a3 : new (x: number) => number
@@ -18,12 +18,12 @@ interface Base {
     a4: new (x: number, y?: number) => number;
 >a4 : new (x: number, y?: number) => number
 >x : number
->y : number
+>y : number | undefined
 
     a5: new (x?: number, y?: number) => number;
 >a5 : new (x?: number, y?: number) => number
->x : number
->y : number
+>x : number | undefined
+>y : number | undefined
 }
 
 interface I1 extends Base {
@@ -34,7 +34,7 @@ interface I1 extends Base {
 interface I2 extends Base {
     a: new (x?: number) => number; // ok, same number of required params
 >a : new (x?: number) => number
->x : number
+>x : number | undefined
 }
 
 interface I3 extends Base {
@@ -52,7 +52,7 @@ interface I4 extends Base {
 interface I5 extends Base {
     a2: new (x?: number) => number; // ok, same number of required params
 >a2 : new (x?: number) => number
->x : number
+>x : number | undefined
 }
 
 interface I6 extends Base {
@@ -70,7 +70,7 @@ interface I7 extends Base {
 interface I8 extends Base {
     a3: new (x?: number) => number; // ok, fewer required params
 >a3 : new (x?: number) => number
->x : number
+>x : number | undefined
 }
 
 interface I9 extends Base {
@@ -95,8 +95,8 @@ interface I11 extends Base {
 interface I12 extends Base {
     a4: new (x?: number, y?: number) => number; // ok, fewer required params
 >a4 : new (x?: number, y?: number) => number
->x : number
->y : number
+>x : number | undefined
+>y : number | undefined
 }
 
 interface I13 extends Base {
@@ -121,8 +121,8 @@ interface I15 extends Base {
 interface I16 extends Base {
     a5: new (x?: number, y?: number) => number; // ok, fewer required params
 >a5 : new (x?: number, y?: number) => number
->x : number
->y : number
+>x : number | undefined
+>y : number | undefined
 }
 
 interface I17 extends Base {

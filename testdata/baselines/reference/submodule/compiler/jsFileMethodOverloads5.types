@@ -22,5 +22,5 @@ export const foo = function (a, b) { }
 >foo : (a: string | number, b?: number) => void
 >function (a, b) { } : (a: string | number, b?: number) => void
 >a : string | number
->b : number
+>b : number | undefined
 

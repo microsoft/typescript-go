@@ -1,15 +1,15 @@
 //// [tests/cases/compiler/moduleSharesNameWithImportDeclarationInsideIt3.ts] ////
 
 //// [moduleSharesNameWithImportDeclarationInsideIt3.ts]
-module Z {
-    export module M {
+namespace Z {
+    export namespace M {
         export function bar() {
             return "";
         }
     }
     export interface I { }
 }
-module A.M {
+namespace A.M {
     import M = Z.M;
     import M = Z.I;
 
@@ -19,6 +19,7 @@ module A.M {
 }
 
 //// [moduleSharesNameWithImportDeclarationInsideIt3.js]
+"use strict";
 var Z;
 (function (Z) {
     let M;
@@ -31,10 +32,9 @@ var Z;
 })(Z || (Z = {}));
 var A;
 (function (A) {
-    let M;
+    var M;
     (function (M_1) {
         var M = Z.M;
-        var M = Z.I;
         function bar() {
         }
         M_1.bar = bar;

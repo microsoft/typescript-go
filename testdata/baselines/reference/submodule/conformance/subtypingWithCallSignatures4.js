@@ -114,18 +114,15 @@ var r18arg = (x: <T>(a: T) => T) => <any[]>null;
 var r18 = foo18(r18arg);
 
 //// [subtypingWithCallSignatures4.js]
+"use strict";
 // checking subtype relations for function types as it relates to contextual signature instantiation
 class Base {
-    foo;
 }
 class Derived extends Base {
-    bar;
 }
 class Derived2 extends Derived {
-    baz;
 }
 class OtherDerived extends Base {
-    bing;
 }
 var r1arg = (x) => null;
 var r1arg2 = (x) => null;

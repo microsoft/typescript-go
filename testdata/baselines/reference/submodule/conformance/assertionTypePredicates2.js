@@ -26,12 +26,9 @@ export const main = () => {
 
 
 //// [assertionTypePredicates2.js]
-"use strict";
 /**
  * @typedef {{ x: number }} A
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = void 0;
 /**
  * @typedef { A & { y: number } } B
  */
@@ -40,13 +37,12 @@ exports.main = void 0;
  * @returns { asserts a is B }
  */
 const foo = (a) => {
-    if ( /** @type { B } */a.y !== 0)
+    if ( /** @type { B } */(a).y !== 0)
         throw TypeError();
     return undefined;
 };
-const main = () => {
+export const main = () => {
     /** @type { A } */
     const a = { x: 1 };
     foo(a);
 };
-exports.main = main;

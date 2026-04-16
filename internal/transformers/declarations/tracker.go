@@ -5,7 +5,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -15,11 +14,8 @@ type SymbolTrackerImpl struct {
 	state         *SymbolTrackerSharedState
 	host          DeclarationEmitHost
 	fallbackStack []*ast.Node
-}
 
-// GetModuleSpecifierGenerationHost implements checker.SymbolTracker.
-func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
-	return s.host
+	getIsolatedDeclarationError func(node *ast.Node) *ast.Diagnostic
 }
 
 // PopErrorFallbackNode implements checker.SymbolTracker.
@@ -58,25 +54,28 @@ func (s *SymbolTrackerImpl) ReportInaccessibleUniqueSymbolError() {
 
 // ReportInferenceFallback implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
-	if s.state.isolatedDeclarations || ast.IsSourceFileJS(s.state.currentSourceFile) {
+	if !s.state.isolatedDeclarations || ast.IsSourceFileJS(s.state.currentSourceFile) {
 		return
 	}
 	if ast.GetSourceFileOfNode(node) != s.state.currentSourceFile {
 		return // Nested error on a declaration in another file - ignore, will be reemitted if file is in the output file set
 	}
-	if ast.IsVariableDeclaration(node) && s.state.resolver.IsExpandoFunctionDeclaration(node) {
+	if ast.IsVariableDeclaration(node) && s.state.resolver.IsExpandoFunctionDeclarationUnsafe(node) { // within a node builder call that should already lock the checker, use the unsafe call
 		s.state.reportExpandoFunctionErrors(node)
 	} else {
-		// !!! isolatedDeclaration support
-		// s.state.addDiagnostic(getIsolatedDeclarationError(node))
+		s.state.addDiagnostic(s.getIsolatedDeclarationError(node))
 	}
 }
 
 // ReportLikelyUnsafeImportRequiredError implements checker.SymbolTracker.
-func (s *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string) {
+func (s *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string) {
 	location := s.errorLocation()
 	if location != nil {
-		s.state.addDiagnostic(createDiagnosticForNode(location, diagnostics.The_inferred_type_of_0_cannot_be_named_without_a_reference_to_1_This_is_likely_not_portable_A_type_annotation_is_necessary, s.errorDeclarationNameWithFallback(), specifier))
+		if symbolName != "" {
+			s.state.addDiagnostic(createDiagnosticForNode(location, diagnostics.The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_type_annotation_is_necessary, s.errorDeclarationNameWithFallback(), specifier, symbolName))
+		} else {
+			s.state.addDiagnostic(createDiagnosticForNode(location, diagnostics.The_inferred_type_of_0_cannot_be_named_without_a_reference_to_1_This_is_likely_not_portable_A_type_annotation_is_necessary, s.errorDeclarationNameWithFallback(), specifier))
+		}
 	}
 }
 
@@ -215,6 +214,6 @@ func (s *SymbolTrackerSharedState) addDiagnostic(diag *ast.Diagnostic) {
 }
 
 func NewSymbolTracker(host DeclarationEmitHost, resolver printer.EmitResolver, state *SymbolTrackerSharedState) *SymbolTrackerImpl {
-	tracker := &SymbolTrackerImpl{host: host, resolver: resolver, state: state}
+	tracker := &SymbolTrackerImpl{host: host, resolver: resolver, state: state, getIsolatedDeclarationError: createGetIsolatedDeclarationErrors(resolver)}
 	return tracker
 }

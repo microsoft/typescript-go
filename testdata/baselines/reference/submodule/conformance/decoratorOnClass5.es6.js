@@ -12,6 +12,7 @@ class C {
 let c = new C();
 
 //// [decoratorOnClass5.es6.js]
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21,8 +22,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var C_1;
 let C = C_1 = class C {
     static x() { return C_1.y; }
-    static y = 1;
 };
+C.y = 1;
 C = C_1 = __decorate([
     dec
 ], C);

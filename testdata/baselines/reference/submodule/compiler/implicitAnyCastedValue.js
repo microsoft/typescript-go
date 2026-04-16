@@ -81,6 +81,7 @@ var bar3 = <any>0;
 var array = <any>[null, undefined];
 
 //// [implicitAnyCastedValue.js]
+"use strict";
 var x = function () {
     return 0; // this should not be an error
 };
@@ -88,8 +89,10 @@ function foo() {
     return "hello world"; // this should not be an error
 }
 class C {
-    bar = null; // this should be an error
-    foo = undefined; // this should be an error
+    constructor() {
+        this.bar = null; // this should be an error
+        this.foo = undefined; // this should be an error
+    }
     get tempVar() {
         return 0; // this should not be an error
     }
@@ -101,7 +104,9 @@ class C {
     }
 }
 class C1 {
-    getValue = null; // this should be an error
+    constructor() {
+        this.getValue = null; // this should be an error
+    }
     get castedGet() {
         return this.getValue; // this should not be an error
     }

@@ -21,7 +21,7 @@
 //                             ^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) optionalParam: string
+// | (parameter) optionalParam: string | undefined
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -51,7 +51,7 @@
 //     ^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) optionalParam: string
+// | (parameter) optionalParam: string | undefined
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -140,7 +140,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) optionalParam: string\n```\n"
+        "value": "```tsx\n(parameter) optionalParam: string | undefined\n```\n"
       },
       "range": {
         "start": {
@@ -248,7 +248,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) optionalParam: string\n```\n"
+        "value": "```tsx\n(parameter) optionalParam: string | undefined\n```\n"
       },
       "range": {
         "start": {

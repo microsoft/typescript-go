@@ -1,9 +1,0 @@
---- old.commentInEmptyParameterList1.js
-+++ new.commentInEmptyParameterList1.js
-@@= skipped -4, +4 lines =@@
- }
-
- //// [commentInEmptyParameterList1.js]
--function foo( /** nothing */) {
-+function foo( /** nothing */ /** nothing */) {
- }

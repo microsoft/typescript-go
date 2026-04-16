@@ -46,9 +46,6 @@ p.use(x, y, z);
 
 
 //// [typeTagForMultipleVariableDeclarations.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Processor = void 0;
 // based on code from unifiedjs/unified
 class Node {
 }
@@ -64,7 +61,7 @@ class Node {
  * @template {string | undefined} [CompileResult=undefined]
  *   Output of `stringify` (optional).
  */
-class Processor {
+export class Processor {
     /**
      * @overload
      * @param {string | null | undefined} [preset]
@@ -89,7 +86,6 @@ class Processor {
         return this;
     }
 }
-exports.Processor = Processor;
 var p = new Processor();
 var x = 1, y = 2, z = 3;
 p.use(x, y, z);

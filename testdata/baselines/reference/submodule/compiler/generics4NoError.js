@@ -9,8 +9,8 @@ var b: C<Y>;
 
 
 //// [generics4NoError.js]
+"use strict";
 class C {
-    x;
 }
 var a;
 var b;

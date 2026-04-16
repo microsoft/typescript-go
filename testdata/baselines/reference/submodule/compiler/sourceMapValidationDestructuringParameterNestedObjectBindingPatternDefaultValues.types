@@ -16,10 +16,10 @@ interface Robot {
 >skills : { primary?: string; secondary?: string; }
 
         primary?: string;
->primary : string
+>primary : string | undefined
 
         secondary?: string;
->secondary : string
+>secondary : string | undefined
 
     };
 }
@@ -121,9 +121,9 @@ function foo3({ skills = { primary: "SomeSkill", secondary: "someSkill" }  }: Ro
 >console.log : (msg: string) => void
 >console : { log(msg: string): void; }
 >log : (msg: string) => void
->skills.primary : string
+>skills.primary : string | undefined
 >skills : { primary?: string; secondary?: string; }
->primary : string
+>primary : string | undefined
 }
 
 foo1(robotA);

@@ -2,7 +2,7 @@
 
 //// [testContainerList.ts]
 // Regression test for #325
-module A {
+namespace A {
     class C {
         constructor(public d: {}) { }
     }
@@ -10,11 +10,11 @@ module A {
 
 
 //// [testContainerList.js]
+"use strict";
 // Regression test for #325
 var A;
 (function (A) {
     class C {
-        d;
         constructor(d) {
             this.d = d;
         }

@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/declInput4.ts] ////
 
 //// [declInput4.ts]
-module M {
+namespace M {
     class C { }
     export class E {}
     export interface I1 {}
@@ -18,6 +18,7 @@ module M {
 }
 
 //// [declInput4.js]
+"use strict";
 var M;
 (function (M) {
     class C {
@@ -26,10 +27,6 @@ var M;
     }
     M.E = E;
     class D {
-        m1;
-        m2;
-        m23;
-        m24;
         m232() { return null; }
         m242() { return null; }
         m26(i) { }

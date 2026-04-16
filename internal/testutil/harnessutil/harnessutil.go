@@ -104,7 +104,7 @@ func CompileFiles(
 
 	// Parse harness and compiler options from the test configuration
 	if testConfig != nil {
-		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions, currentDirectory)
+		SetOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions, currentDirectory, false /*allowUnknownOptions*/)
 	}
 
 	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, compilerOptions, currentDirectory, symlinks, tsconfig)
@@ -124,7 +124,8 @@ func CompileFilesEx(
 	for _, file := range inputFiles {
 		fileName := tspath.GetNormalizedAbsolutePath(file.UnitName, currentDirectory)
 
-		if !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+		if !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) &&
+			!tspath.FileExtensionIs(fileName, tspath.ExtensionTsBuildInfo) {
 			programFileNames = append(programFileNames, fileName)
 		}
 	}
@@ -231,7 +232,7 @@ func CompileFilesEx(
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := compilerOptions.Clone()
-		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions, currentDirectory)
+		SetOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions, currentDirectory, false /*allowUnknownOptions*/)
 		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
@@ -239,7 +240,7 @@ func CompileFilesEx(
 
 var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	testfs := make(map[string]any)
-	libfs := os.DirFS(filepath.Join(repo.TypeScriptSubmodulePath, "tests", "lib"))
+	libfs := os.DirFS(filepath.Join(repo.TypeScriptSubmodulePath(), "tests", "lib"))
 	err := fs.WalkDir(libfs, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -262,24 +263,7 @@ var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	return testfs
 })
 
-func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, currentDirectory string) {
-	for name, value := range testConfig {
-		if name == "typescriptversion" {
-			continue
-		}
-
-		commandLineOption := getCommandLineOption(name)
-		if commandLineOption != nil {
-			parsedValue := getOptionValue(t, commandLineOption, value, currentDirectory)
-			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
-			if len(errors) > 0 {
-				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
-			}
-		}
-	}
-}
-
-func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions, currentDirectory string) {
+func SetOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions, currentDirectory string, allowUnknownOptions bool) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {
 			continue
@@ -300,8 +284,9 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 			parseHarnessOption(t, harnessOption.Name, parsedValue, harnessOptions)
 			continue
 		}
-
-		t.Fatalf("Unknown compiler option '%s'.", name)
+		if !allowUnknownOptions {
+			t.Fatalf("Unknown compiler option '%s'.", name)
+		}
 	}
 }
 
@@ -428,8 +413,6 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 		t.Fatalf("Unknown harness option '%s'.", key)
 	}
 }
-
-var deprecatedModuleResolution []string = []string{"node", "classic", "node10"}
 
 func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string, cwd string) tsoptions.CompilerOptionsValue {
 	switch option.Kind {
@@ -971,7 +954,7 @@ func listFiles(path string, spec *regexp.Regexp, recursive bool) ([]string, erro
 }
 
 func listFilesWorker(spec *regexp.Regexp, recursive bool, folder string) ([]string, error) {
-	folder = tspath.GetNormalizedAbsolutePath(folder, repo.TestDataPath)
+	folder = tspath.GetNormalizedAbsolutePath(folder, repo.TestDataPath())
 	entries, err := os.ReadDir(folder)
 	if err != nil {
 		return nil, err
@@ -1103,7 +1086,12 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 
 	// remove all excluded entries
 	for _, exclude := range excludes {
-		value := getValueOfOptionString(t, option, exclude)
+		value, ok := tryGetValueOfOptionString(option, exclude)
+		if !ok {
+			// The excluded value is not recognized (e.g., a removed option like "es3").
+			// Just skip it since there's nothing to remove.
+			continue
+		}
 		delete(variations, value)
 	}
 
@@ -1114,15 +1102,35 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 }
 
 func getValueOfOptionString(t *testing.T, option string, value string) tsoptions.CompilerOptionsValue {
+	result, ok := tryGetValueOfOptionString(option, value)
+	if !ok {
+		t.Fatalf("Unknown value '%s' for option '%s'", value, option)
+	}
+	return result
+}
+
+func tryGetValueOfOptionString(option string, value string) (tsoptions.CompilerOptionsValue, bool) {
 	optionDecl := getCommandLineOption(option)
 	if optionDecl == nil {
-		t.Fatalf("Unknown option '%s'", option)
+		return nil, false
 	}
-	// TODO(gabritto): remove this when we deprecate the tests containing those option values
-	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
-		return value
+	switch optionDecl.Kind {
+	case tsoptions.CommandLineOptionTypeEnum:
+		enumVal, ok := optionDecl.EnumMap().Get(strings.ToLower(value))
+		if !ok {
+			return nil, false
+		}
+		return enumVal, true
+	case tsoptions.CommandLineOptionTypeBoolean:
+		switch strings.ToLower(value) {
+		case "true":
+			return true, true
+		case "false":
+			return false, true
+		}
+		return nil, false
 	}
-	return getOptionValue(t, optionDecl, value, "/")
+	return value, true
 }
 
 func getCommandLineOption(option string) *tsoptions.CommandLineOption {
@@ -1177,4 +1185,35 @@ func GetConfigNameFromFileName(filename string) string {
 		return basenameLower
 	}
 	return ""
+}
+
+func SkipUnsupportedCompilerOptions(t *testing.T, options *core.CompilerOptions) {
+	t.Helper()
+	switch options.Module {
+	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
+		t.Skipf("unsupported module kind %s", options.Module)
+	}
+	switch options.ModuleResolution {
+	case core.ModuleResolutionKindNode10, core.ModuleResolutionKindClassic:
+		t.Skipf("unsupported module resolution kind %d", options.ModuleResolution)
+	}
+	if options.ESModuleInterop.IsFalse() {
+		t.Skipf("esModuleInterop=false is unsupported")
+	}
+	if options.AllowSyntheticDefaultImports.IsFalse() {
+		t.Skipf("allowSyntheticDefaultImports=false is unsupported")
+	}
+	if options.BaseUrl != "" {
+		t.Skipf("unsupported baseUrl %s", options.BaseUrl)
+	}
+	if options.OutFile != "" {
+		t.Skipf("unsupported outFile %s", options.OutFile)
+	}
+	switch options.Target {
+	case core.ScriptTargetES5:
+		t.Skipf("unsupported target %s", options.Target)
+	}
+	if options.AlwaysStrict.IsFalse() {
+		t.Skipf("alwaysStrict=false is unsupported")
+	}
 }

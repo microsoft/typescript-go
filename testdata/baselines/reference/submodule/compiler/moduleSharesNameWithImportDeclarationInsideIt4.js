@@ -1,12 +1,12 @@
 //// [tests/cases/compiler/moduleSharesNameWithImportDeclarationInsideIt4.ts] ////
 
 //// [moduleSharesNameWithImportDeclarationInsideIt4.ts]
-module Z.M {
+namespace Z.M {
     export function bar() {
         return "";
     }
 }
-module A.M {
+namespace A.M {
     interface M { }
     import M = Z.M;
     export function bar() {
@@ -15,9 +15,10 @@ module A.M {
 }
 
 //// [moduleSharesNameWithImportDeclarationInsideIt4.js]
+"use strict";
 var Z;
 (function (Z) {
-    let M;
+    var M;
     (function (M) {
         function bar() {
             return "";
@@ -27,7 +28,7 @@ var Z;
 })(Z || (Z = {}));
 var A;
 (function (A) {
-    let M;
+    var M;
     (function (M_1) {
         var M = Z.M;
         function bar() {

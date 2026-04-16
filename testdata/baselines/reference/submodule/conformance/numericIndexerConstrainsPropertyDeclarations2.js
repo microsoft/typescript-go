@@ -48,6 +48,7 @@ var b: { [x: number]: A } = {
 }
 
 //// [numericIndexerConstrainsPropertyDeclarations2.js]
+"use strict";
 // String indexer providing a constraint of a user defined type
 class A {
     foo() { return ''; }
@@ -56,11 +57,6 @@ class B extends A {
     bar() { return ''; }
 }
 class Foo {
-    1.0; // ok
-    2.0; // ok
-    "2.5"; // ok
-    3.0; // error
-    "4.0"; // error
 }
 var a;
 // error

@@ -48,14 +48,21 @@ func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirector
 	return tspath.GetPathFromPathComponents(commonPathComponents)
 }
 
+func GetComputedCommonSourceDirectory(emittedFiles []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
+	commonSourceDirectory := computeCommonSourceDirectoryOfFilenames(emittedFiles, currentDirectory, useCaseSensitiveFileNames)
+	if len(commonSourceDirectory) > 0 {
+		commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
+	}
+	return commonSourceDirectory
+}
+
 func GetCommonSourceDirectory(options *core.CompilerOptions, files func() []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
 	var commonSourceDirectory string
 	if options.RootDir != "" {
 		// If a rootDir is specified use it as the commonSourceDirectory
 		commonSourceDirectory = options.RootDir
-	} else if options.Composite.IsTrue() && options.ConfigFilePath != "" {
-		// If the rootDir is not specified, but the project is composite, then the common source directory
-		// is the directory of the config file.
+	} else if options.ConfigFilePath != "" {
+		// If the rootDir is not specified, then the common source directory is the directory of the config file.
 		commonSourceDirectory = tspath.GetDirectoryPath(options.ConfigFilePath)
 	} else {
 		commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files(), currentDirectory, useCaseSensitiveFileNames)

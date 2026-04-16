@@ -24,21 +24,19 @@ class Test extends Base {
 
 
 //// [emitStatementsBeforeSuperCall.js]
+"use strict";
 class Base {
 }
 class Sub extends Base {
-    p;
     // @ts-ignore
     constructor(p) {
         console.log('hi'); // should emit before super
         super();
         this.p = p;
+        this.field = 0;
     }
-    field = 0;
 }
 class Test extends Base {
-    p;
-    prop;
     // @ts-ignore
     constructor(p) {
         1; // should emit before super

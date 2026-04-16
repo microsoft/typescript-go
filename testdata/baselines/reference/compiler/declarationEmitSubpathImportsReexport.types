@@ -14,14 +14,14 @@ export const re = { foo };
 
 === /packages/a/src/index.ts ===
 import { re } from "#re_export";
->re : { foo: () => Promise<import("/packages/b/index").B>; }
+>re : { foo: () => Promise<import("package-b").B>; }
 
 const { foo } = re;
->foo : () => Promise<import("/packages/b/index").B>
->re : { foo: () => Promise<import("/packages/b/index").B>; }
+>foo : () => Promise<import("package-b").B>
+>re : { foo: () => Promise<import("package-b").B>; }
 
 export { foo };
->foo : () => Promise<import("/packages/b/index").B>
+>foo : () => Promise<import("package-b").B>
 
 
 

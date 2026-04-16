@@ -21,21 +21,27 @@ class b extends Foo {
 }
 
 //// [collisionSuperAndLocalFunctionInProperty.js]
+"use strict";
 function _super() {
 }
 class Foo {
-    prop1 = {
-        doStuff: () => {
-            function _super() {
+    constructor() {
+        this.prop1 = {
+            doStuff: () => {
+                function _super() {
+                }
             }
-        }
-    };
+        };
+    }
 }
 class b extends Foo {
-    prop2 = {
-        doStuff: () => {
-            function _super() {
+    constructor() {
+        super(...arguments);
+        this.prop2 = {
+            doStuff: () => {
+                function _super() {
+                }
             }
-        }
-    };
+        };
+    }
 }

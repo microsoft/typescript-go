@@ -17,7 +17,7 @@ class D<T>{
 
 function F(x: string): number { return 42; }
 
-module M {
+namespace M {
     export class A {
         name: string;
     }
@@ -52,19 +52,15 @@ var x;
 
 
 //// [everyTypeWithInitializer.js]
+"use strict";
 class C {
-    id;
 }
 class D {
-    source;
-    recurse;
-    wrapped;
 }
 function F(x) { return 42; }
 var M;
 (function (M) {
     class A {
-        name;
     }
     M.A = A;
     function F2(x) { return x.toString(); }

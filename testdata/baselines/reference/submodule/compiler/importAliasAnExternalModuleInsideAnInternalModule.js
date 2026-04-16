@@ -1,13 +1,13 @@
 //// [tests/cases/compiler/importAliasAnExternalModuleInsideAnInternalModule.ts] ////
 
 //// [importAliasAnExternalModuleInsideAnInternalModule_file0.ts]
-export module m {
+export namespace m {
     export function foo() { }
 }
 
 //// [importAliasAnExternalModuleInsideAnInternalModule_file1.ts]
 import r = require('./importAliasAnExternalModuleInsideAnInternalModule_file0');
-module m_private {
+namespace m_private {
     //import r2 = require('m'); // would be error
     export import C = r; // no error
     C.m.foo();
@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const r = require("./importAliasAnExternalModuleInsideAnInternalModule_file0");
 var m_private;
 (function (m_private) {
-    m_private.C = r;
-    m_private. // no error
-    C.m.foo();
+    //import r2 = require('m'); // would be error
+    m_private.C = r; // no error
+    m_private.C.m.foo();
 })(m_private || (m_private = {}));

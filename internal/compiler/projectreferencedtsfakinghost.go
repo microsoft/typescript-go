@@ -75,7 +75,7 @@ func (fs *projectReferenceDtsFakingVfs) ReadFile(path string) (contents string, 
 }
 
 // WriteFile implements vfs.FS.
-func (fs *projectReferenceDtsFakingVfs) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (fs *projectReferenceDtsFakingVfs) WriteFile(path string, data string) error {
 	panic("should not be called by resolver")
 }
 
@@ -192,6 +192,7 @@ func (fs *projectReferenceDtsFakingVfs) fileOrDirectoryExistsUsingSource(fileOrD
 				// Store the real path for the file
 				absolutePath := tspath.GetNormalizedAbsolutePath(fileOrDirectory, fs.projectReferenceFileMapper.opts.Host.GetCurrentDirectory())
 				fs.knownSymlinks.SetFile(
+					absolutePath,
 					fileOrDirectoryPath,
 					knownDirectoryLink.Real+absolutePath[len(directoryPath):],
 				)

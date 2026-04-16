@@ -8,9 +8,9 @@ class Alias {
 >bar : Symbol(Alias.bar, Decl(mod1.js, 0, 13))
 }
 module.exports = Alias;
->module.exports : Symbol(Alias, Decl(mod1.js, 0, 0))
->module : Symbol("mod1", Decl(mod1.js, 0, 0))
->exports : Symbol(Alias, Decl(mod1.js, 0, 0))
+>module.exports : Symbol(exports, Decl(mod1.js, 0, 0))
+>module : Symbol(module, Decl(mod1.js, 0, 0))
+>exports : Symbol(exports, Decl(mod1.js, 0, 0))
 >Alias : Symbol(Alias, Decl(mod1.js, 0, 0))
 
 === main.js ===
@@ -26,6 +26,7 @@ A.prototype.func = function() { this._func = 0; }
 >A.prototype : Symbol(A.prototype)
 >A : Symbol(A, Decl(main.js, 0, 6))
 >prototype : Symbol(A.prototype)
+>this : Symbol(A, Decl(mod1.js, 0, 0))
 
 Object.defineProperty(A.prototype, "def", { value: 0 });
 >Object.defineProperty : Symbol(ObjectConstructor.defineProperty, Decl(lib.es5.d.ts, --, --))

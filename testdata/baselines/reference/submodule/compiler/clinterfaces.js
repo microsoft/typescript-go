@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/clinterfaces.ts] ////
 
 //// [clinterfaces.ts]
-module M {
+namespace M {
     class C { }
     interface C { }
     interface D { }
@@ -37,9 +37,7 @@ var M;
     }
 })(M || (M = {}));
 class Foo {
-    b;
 }
 class Bar {
-    b;
 }
 module.exports = Foo;

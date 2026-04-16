@@ -11,10 +11,7 @@ export function foo() {
 
 
 //// [blockedScopeVariableNotUnused1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
-function foo() {
+export function foo() {
     const _fn = () => {
         ;
         (() => numFilesSelected)();

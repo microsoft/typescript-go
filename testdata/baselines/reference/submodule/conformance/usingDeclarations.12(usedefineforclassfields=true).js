@@ -14,6 +14,7 @@ class C2 extends C1 {
 }
 
 //// [usingDeclarations.12.js]
+"use strict";
 var __addDisposableResource = (this && this.__addDisposableResource) || function (env, value, async) {
     if (value !== null && value !== void 0) {
         if (typeof value !== "object" && typeof value !== "function") throw new TypeError("Object expected.");
@@ -70,11 +71,16 @@ class C1 {
     constructor() { }
 }
 class C2 extends C1 {
-    y = 1;
     constructor() {
         const env_1 = { stack: [], error: void 0, hasError: false };
         try {
             super();
+            Object.defineProperty(this, "y", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 1
+            });
             const d17 = __addDisposableResource(env_1, { [Symbol.dispose]() { } }, false);
         }
         catch (e_1) {

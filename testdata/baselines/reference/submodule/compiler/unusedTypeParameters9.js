@@ -17,10 +17,10 @@ interface C3<T> { d: boolean;  }
 interface C3<T> { e: any; }
 
 //// [unusedTypeParameters9.js]
+"use strict";
 // clas + interface
 class C1 {
 }
 // interface + class
 class C2 {
-    a;
 }

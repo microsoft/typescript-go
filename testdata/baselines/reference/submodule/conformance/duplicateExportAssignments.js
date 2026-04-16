@@ -13,7 +13,7 @@ export = x;
 export = y;
 
 //// [foo3.ts]
-module x {
+namespace x {
 	export var x = 10;
 }
 class y {
@@ -60,7 +60,6 @@ var x;
     x_1.x = 10;
 })(x || (x = {}));
 class y {
-    y;
 }
 module.exports = x;
 //// [foo4.js]

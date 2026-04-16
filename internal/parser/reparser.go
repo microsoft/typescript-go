@@ -15,33 +15,15 @@ func (p *Parser) finishMutatedNode(node *ast.Node) {
 	p.overrideParentInImmediateChildren(node)
 }
 
-func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
-	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
-		return
+// Deep-clone the given node and add the clone to the reparsed clone list. The list is used by ast.GetReparsedNodeForNode
+// to locate reparsed clones of JSDoc nodes. Since the binder attaches symbols to reparsed nodes and not to JSDoc nodes, we
+// need the mapping when obtaining symbols and types from JSDoc nodes.
+func (p *Parser) addDeepCloneReparse(node *ast.Node) *ast.Node {
+	clone := p.factory.DeepCloneReparse(node)
+	if clone != nil {
+		p.reparsedClones = append(p.reparsedClones, clone)
 	}
-	if node.Kind != ast.KindExpressionStatement || node.Expression().Kind != ast.KindBinaryExpression {
-		return
-	}
-	bin := node.Expression().AsBinaryExpression()
-	kind := ast.GetAssignmentDeclarationKind(bin)
-	var export *ast.Node
-	switch kind {
-	case ast.JSDeclarationKindModuleExports:
-		export = p.factory.NewJSExportAssignment(nil, p.factory.DeepCloneReparse(bin.Right))
-	case ast.JSDeclarationKindExportsProperty:
-		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(
-			nil,
-			p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(bin.Left)),
-			nil, /*typeNode*/
-			p.factory.DeepCloneReparse(bin.Right))
-	}
-	if export != nil {
-		p.reparseList = append(p.reparseList, export)
-		p.commonJSModuleIndicator = export
-		p.reparseTags(export, jsdoc)
-		p.finishReparsedNode(export, bin.AsNode())
-	}
+	return clone
 }
 
 // Hosted tags find a host and add their children to the correct location under the host.
@@ -54,9 +36,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 			continue
 		}
 		for _, tag := range tags.Nodes {
-			if parent.Kind != ast.KindCommonJSExport && parent.Kind != ast.KindJSExportAssignment {
-				p.reparseUnhosted(tag, parent, j)
-			}
+			p.reparseUnhosted(tag, parent, j)
 			if isLast {
 				p.reparseHosted(tag, parent, j)
 			}
@@ -71,12 +51,12 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		if typeExpression == nil {
 			break
 		}
-		typeAlias := p.factory.NewJSTypeAliasDeclaration(nil, p.factory.DeepCloneReparse(tag.AsJSDocTypedefTag().Name()), nil, nil)
+		typeAlias := p.factory.NewJSTypeAliasDeclaration(nil, p.addDeepCloneReparse(tag.AsJSDocTypedefTag().Name()), nil, nil)
 		typeAlias.AsTypeAliasDeclaration().TypeParameters = p.gatherTypeParameters(jsDoc, tag)
 		var t *ast.Node
 		switch typeExpression.Kind {
 		case ast.KindJSDocTypeExpression:
-			t = p.factory.DeepCloneReparse(typeExpression.Type())
+			t = p.addDeepCloneReparse(typeExpression.Type())
 		case ast.KindJSDocTypeLiteral:
 			t = p.reparseJSDocTypeLiteral(typeExpression)
 		default:
@@ -84,7 +64,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		}
 		typeAlias.AsTypeAliasDeclaration().Type = t
 		p.finishReparsedNode(typeAlias, tag)
-		p.jsdocCache[typeAlias] = []*ast.Node{jsDoc}
+		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: typeAlias, jsDocs: []*ast.Node{jsDoc}})
 		typeAlias.Flags |= ast.NodeFlagsHasJSDoc
 		p.reparseList = append(p.reparseList, typeAlias)
 	case ast.KindJSDocCallbackTag:
@@ -93,10 +73,10 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 			break
 		}
 		functionType := p.reparseJSDocSignature(callbackTag.TypeExpression, tag, jsDoc, tag, nil)
-		typeAlias := p.factory.NewJSTypeAliasDeclaration(nil, p.factory.DeepCloneReparse(callbackTag.FullName), nil, functionType)
+		typeAlias := p.factory.NewJSTypeAliasDeclaration(nil, p.addDeepCloneReparse(callbackTag.FullName), nil, functionType)
 		typeAlias.AsTypeAliasDeclaration().TypeParameters = p.gatherTypeParameters(jsDoc, tag)
 		p.finishReparsedNode(typeAlias, tag)
-		p.jsdocCache[typeAlias] = []*ast.Node{jsDoc}
+		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: typeAlias, jsDocs: []*ast.Node{jsDoc}})
 		typeAlias.Flags |= ast.NodeFlagsHasJSDoc
 		p.reparseList = append(p.reparseList, typeAlias)
 	case ast.KindJSDocImportTag:
@@ -104,13 +84,13 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		if importTag.ImportClause == nil {
 			break
 		}
-		importClause := p.factory.DeepCloneReparse(importTag.ImportClause)
+		importClause := p.addDeepCloneReparse(importTag.ImportClause)
 		importClause.AsImportClause().PhaseModifier = ast.KindTypeKeyword
 		importDeclaration := p.factory.NewJSImportDeclaration(
 			p.factory.DeepCloneReparseModifiers(importTag.Modifiers()),
 			importClause,
-			p.factory.DeepCloneReparse(importTag.ModuleSpecifier),
-			p.factory.DeepCloneReparse(importTag.Attributes),
+			p.addDeepCloneReparse(importTag.ModuleSpecifier),
+			p.addDeepCloneReparse(importTag.Attributes),
 		)
 		p.finishReparsedNode(importDeclaration, tag)
 		p.reparseList = append(p.reparseList, importDeclaration)
@@ -141,7 +121,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	if tag.Kind != ast.KindJSDocCallbackTag {
 		signature.FunctionLikeData().TypeParameters = p.gatherTypeParameters(jsDoc, tag)
 	}
-	parameters := p.nodeSlicePool.NewSlice(0)
+	parameters := p.nodeSliceArena.NewSlice(0)
 	for _, param := range jsSignature.Parameters() {
 		var parameter *ast.Node
 		if param.Kind == ast.KindJSDocThisTag {
@@ -151,9 +131,9 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 			thisIdent.Flags = p.contextFlags | ast.NodeFlagsReparsed
 			parameter = p.factory.NewParameterDeclaration(nil, nil, thisIdent, nil, nil, nil)
 			if thisTag.TypeExpression != nil {
-				parameter.AsParameterDeclaration().Type = p.factory.DeepCloneReparse(thisTag.TypeExpression.Type())
+				parameter.AsParameterDeclaration().Type = p.addDeepCloneReparse(thisTag.TypeExpression.Type())
 			}
-		} else {
+		} else if param.Kind == ast.KindJSDocParameterTag || param.Kind == ast.KindJSDocPropertyTag {
 			jsparam := param.AsJSDocParameterOrPropertyTag()
 			var dotDotDotToken *ast.Node
 			var paramType *ast.TypeNode
@@ -171,7 +151,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 				}
 			}
 
-			parameter = p.factory.NewParameterDeclaration(nil, dotDotDotToken, p.factory.DeepCloneReparse(jsparam.Name()), p.makeQuestionIfOptional(jsparam), paramType, nil)
+			parameter = p.factory.NewParameterDeclaration(nil, dotDotDotToken, p.addDeepCloneReparse(jsparam.Name()), p.makeQuestionIfOptional(jsparam), paramType, nil)
 		}
 		p.finishReparsedNode(parameter, param)
 		parameters = append(parameters, parameter)
@@ -180,7 +160,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	signature.FunctionLikeData().Parameters = p.newNodeList(jsSignature.AsJSDocSignature().Parameters.Loc, parameters)
 
 	if jsSignature.Type() != nil && jsSignature.Type().TypeExpression() != nil {
-		signature.FunctionLikeData().Type = p.factory.DeepCloneReparse(jsSignature.Type().TypeExpression().Type())
+		signature.FunctionLikeData().Type = p.addDeepCloneReparse(jsSignature.Type().TypeExpression().Type())
 	}
 	loc := jsSignature
 	if tag.Kind == ast.KindJSDocOverloadTag {
@@ -197,14 +177,14 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 	if t.Kind == ast.KindJSDocTypeLiteral {
 		jstypeliteral := t.AsJSDocTypeLiteral()
 		isArrayType := jstypeliteral.IsArrayType
-		properties := p.nodeSlicePool.NewSlice(0)
+		properties := p.nodeSliceArena.NewSlice(0)
 		for _, prop := range jstypeliteral.JSDocPropertyTags {
 			jsprop := prop.AsJSDocParameterOrPropertyTag()
 			name := prop.Name()
 			if name.Kind == ast.KindQualifiedName {
 				name = name.AsQualifiedName().Right
 			}
-			property := p.factory.NewPropertySignatureDeclaration(nil, p.factory.DeepCloneReparse(name), p.makeQuestionIfOptional(jsprop), nil, nil)
+			property := p.factory.NewPropertySignatureDeclaration(nil, p.addDeepCloneReparse(name), p.makeQuestionIfOptional(jsprop), nil, nil)
 			if jsprop.TypeExpression != nil {
 				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type())
 			}
@@ -220,14 +200,17 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 		p.finishReparsedNode(t, jstypeliteral.AsNode())
 		return t
 	}
-	return p.factory.DeepCloneReparse(t)
+	return p.addDeepCloneReparse(t)
 }
 
 func (p *Parser) reparseJSDocComment(node *ast.Node, tag *ast.Node) {
 	if comment := tag.CommentList(); comment != nil {
-		propJSDoc := p.factory.NewJSDoc(comment, nil)
+		newComment := p.factory.NewNodeList(core.Map(comment.Nodes, p.factory.DeepCloneReparse))
+		newComment.Loc = comment.Loc
+		propJSDoc := p.factory.NewJSDoc(newComment, nil)
 		p.finishReparsedNode(propJSDoc, tag)
-		p.jsdocCache[node] = []*ast.Node{propJSDoc}
+		propJSDoc.Parent = node
+		p.jsdocInfos = append(p.jsdocInfos, JSDocInfo{parent: node, jsDocs: []*ast.Node{propJSDoc}})
 		node.Flags |= ast.NodeFlagsHasJSDoc
 	}
 }
@@ -267,16 +250,17 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 			if constraint != nil && firstTypeParameter {
 				reparse = p.factory.NewTypeParameterDeclaration(
 					p.factory.DeepCloneReparseModifiers(tp.Modifiers()),
-					p.factory.DeepCloneReparse(tp.Name()),
-					p.factory.DeepCloneReparse(constraint.Type()),
-					p.factory.DeepCloneReparse(tp.AsTypeParameter().DefaultType),
+					p.addDeepCloneReparse(tp.Name()),
+					p.addDeepCloneReparse(constraint.Type()),
+					nil, // expression
+					p.addDeepCloneReparse(tp.AsTypeParameterDeclaration().DefaultType),
 				)
 				p.finishReparsedNode(reparse, tp)
 			} else {
-				reparse = p.factory.DeepCloneReparse(tp)
+				reparse = p.addDeepCloneReparse(tp)
 			}
 			if typeParameters == nil {
-				typeParameters = p.nodeSlicePool.NewSlice(0)
+				typeParameters = p.nodeSliceArena.NewSlice(0)
 			}
 			typeParameters = append(typeParameters, reparse)
 			firstTypeParameter = false
@@ -297,17 +281,16 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			if parent.AsVariableStatement().DeclarationList != nil {
 				for _, declaration := range parent.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 					if declaration.Type() == nil && tag.TypeExpression() != nil {
-						declaration.AsMutable().SetType(p.factory.DeepCloneReparse(tag.TypeExpression().Type()))
+						declaration.AsMutable().SetType(p.addDeepCloneReparse(tag.TypeExpression().Type()))
 						p.finishMutatedNode(declaration)
 						return
 					}
 				}
 			}
-		case ast.KindVariableDeclaration,
-			ast.KindCommonJSExport, ast.KindExportAssignment, ast.KindJSExportAssignment,
-			ast.KindPropertyDeclaration, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
+		case ast.KindVariableDeclaration, ast.KindExportAssignment, ast.KindPropertyDeclaration, ast.KindPropertyAssignment,
+			ast.KindShorthandPropertyAssignment:
 			if parent.Type() == nil && tag.TypeExpression() != nil {
-				parent.AsMutable().SetType(p.factory.DeepCloneReparse(tag.TypeExpression().Type()))
+				parent.AsMutable().SetType(p.addDeepCloneReparse(tag.TypeExpression().Type()))
 				p.finishMutatedNode(parent)
 				return
 			}
@@ -320,8 +303,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		case ast.KindExpressionStatement:
 			if parent.Expression().Kind == ast.KindBinaryExpression {
 				bin := parent.Expression().AsBinaryExpression()
-				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
-					bin.AsMutable().SetType(p.factory.DeepCloneReparse(tag.TypeExpression().Type()))
+				if kind := ast.GetAssignmentDeclarationKind(bin.AsNode()); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
+					bin.AsMutable().SetType(p.addDeepCloneReparse(tag.TypeExpression().Type()))
 					p.finishMutatedNode(bin.AsNode())
 					return
 				}
@@ -329,7 +312,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		case ast.KindReturnStatement, ast.KindParenthesizedExpression:
 			if parent.Expression() != nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetExpression(p.makeNewCast(
-					p.factory.DeepCloneReparse(tag.TypeExpression().Type()),
+					p.addDeepCloneReparse(tag.TypeExpression().Type()),
 					parent.Expression(),
 					true /*isAssertion*/))
 				p.finishMutatedNode(parent)
@@ -339,7 +322,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		if fun := getFunctionLikeHost(parent); fun != nil {
 			noTypedParams := core.Every(fun.Parameters(), func(param *ast.Node) bool { return param.Type() == nil })
 			if fun.TypeParameterList() == nil && fun.Type() == nil && noTypedParams && tag.TypeExpression() != nil {
-				fun.FunctionLikeData().FullSignature = p.factory.DeepCloneReparse(tag.TypeExpression().Type())
+				fun.FunctionLikeData().FullSignature = p.addDeepCloneReparse(tag.TypeExpression().Type())
 				p.finishMutatedNode(fun)
 			}
 		}
@@ -350,7 +333,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				for _, declaration := range parent.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 					if declaration.Initializer() != nil && tag.TypeExpression() != nil {
 						declaration.AsMutable().SetInitializer(p.makeNewCast(
-							p.factory.DeepCloneReparse(tag.TypeExpression().Type()),
+							p.addDeepCloneReparse(tag.TypeExpression().Type()),
 							declaration.Initializer(),
 							false /*isAssertion*/))
 						p.finishMutatedNode(declaration)
@@ -358,12 +341,10 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					}
 				}
 			}
-		case ast.KindVariableDeclaration,
-			ast.KindCommonJSExport,
-			ast.KindPropertyDeclaration, ast.KindPropertyAssignment:
+		case ast.KindVariableDeclaration, ast.KindPropertyDeclaration, ast.KindPropertyAssignment:
 			if parent.Initializer() != nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetInitializer(p.makeNewCast(
-					p.factory.DeepCloneReparse(tag.TypeExpression().Type()),
+					p.addDeepCloneReparse(tag.TypeExpression().Type()),
 					parent.Initializer(),
 					false /*isAssertion*/))
 				p.finishMutatedNode(parent)
@@ -372,16 +353,15 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			shorthand := parent.AsShorthandPropertyAssignment()
 			if shorthand.ObjectAssignmentInitializer != nil && tag.AsJSDocSatisfiesTag().TypeExpression != nil {
 				shorthand.ObjectAssignmentInitializer = p.makeNewCast(
-					p.factory.DeepCloneReparse(tag.AsJSDocSatisfiesTag().TypeExpression.Type()),
+					p.addDeepCloneReparse(tag.AsJSDocSatisfiesTag().TypeExpression.Type()),
 					shorthand.ObjectAssignmentInitializer,
 					false /*isAssertion*/)
 				p.finishMutatedNode(parent)
 			}
-		case ast.KindReturnStatement, ast.KindParenthesizedExpression,
-			ast.KindExportAssignment, ast.KindJSExportAssignment:
+		case ast.KindReturnStatement, ast.KindParenthesizedExpression, ast.KindExportAssignment:
 			if parent.Expression() != nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetExpression(p.makeNewCast(
-					p.factory.DeepCloneReparse(tag.TypeExpression().Type()),
+					p.addDeepCloneReparse(tag.TypeExpression().Type()),
 					parent.Expression(),
 					false /*isAssertion*/))
 				p.finishMutatedNode(parent)
@@ -389,9 +369,9 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		case ast.KindExpressionStatement:
 			if parent.Expression().Kind == ast.KindBinaryExpression {
 				bin := parent.Expression().AsBinaryExpression()
-				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
+				if kind := ast.GetAssignmentDeclarationKind(bin.AsNode()); kind != ast.JSDeclarationKindNone && tag.TypeExpression() != nil {
 					bin.Right = p.makeNewCast(
-						p.factory.DeepCloneReparse(tag.TypeExpression().Type()),
+						p.addDeepCloneReparse(tag.TypeExpression().Type()),
 						bin.Right,
 						false /*isAssertion*/)
 					p.finishMutatedNode(bin.AsNode())
@@ -445,24 +425,24 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					nil, /* initializer */
 				)
 				if tag.AsJSDocThisTag().TypeExpression != nil {
-					thisParam.AsParameterDeclaration().Type = p.factory.DeepCloneReparse(tag.AsJSDocThisTag().TypeExpression.Type())
+					thisParam.AsParameterDeclaration().Type = p.addDeepCloneReparse(tag.AsJSDocThisTag().TypeExpression.Type())
 				}
 				p.finishReparsedNode(thisParam, tag.TagName())
 
-				newParams := p.nodeSlicePool.NewSlice(len(params) + 1)
+				newParams := p.nodeSliceArena.NewSlice(len(params) + 1)
 				newParams[0] = thisParam
 				for i, param := range params {
 					newParams[i+1] = param
 				}
 
-				fun.FunctionLikeData().Parameters = p.newNodeList(thisParam.Loc, newParams)
+				fun.FunctionLikeData().Parameters = p.newNodeList(fun.ParameterList().Loc, newParams)
 				p.finishMutatedNode(fun)
 			}
 		}
 	case ast.KindJSDocReturnTag:
 		if fun := getFunctionLikeHost(parent); fun != nil && fun.FunctionLikeData().FullSignature == nil {
 			if fun.Type() == nil && tag.TypeExpression() != nil {
-				fun.FunctionLikeData().Type = p.factory.DeepCloneReparse(tag.TypeExpression().Type())
+				fun.FunctionLikeData().Type = p.addDeepCloneReparse(tag.TypeExpression().Type())
 				p.finishMutatedNode(fun)
 			}
 		}
@@ -491,7 +471,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			var nodes []*ast.Node
 			var loc core.TextRange
 			if parent.Modifiers() == nil {
-				nodes = p.nodeSlicePool.NewSlice(1)
+				nodes = p.nodeSliceArena.NewSlice(1)
 				nodes[0] = modifier
 				loc = tag.Loc
 			} else {
@@ -509,18 +489,18 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				if implementsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
 					return node.AsHeritageClause().Token == ast.KindImplementsKeyword
 				}); implementsClause != nil {
-					implementsClause.AsHeritageClause().Types.Nodes = append(implementsClause.AsHeritageClause().Types.Nodes, p.factory.DeepCloneReparse(implementsTag.ClassName))
+					implementsClause.AsHeritageClause().Types.Nodes = append(implementsClause.AsHeritageClause().Types.Nodes, p.addDeepCloneReparse(implementsTag.ClassName))
 					p.finishMutatedNode(implementsClause)
 					return
 				}
 			}
-			typesList := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(p.factory.DeepCloneReparse(implementsTag.ClassName)))
+			typesList := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSliceArena.NewSlice1(p.addDeepCloneReparse(implementsTag.ClassName)))
 
 			heritageClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, typesList)
 			p.finishReparsedNode(heritageClause, implementsTag.ClassName)
 
 			if class.HeritageClauses == nil {
-				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(heritageClause))
+				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSliceArena.NewSlice1(heritageClause))
 				class.HeritageClauses = heritageClauses
 			} else {
 				class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
@@ -536,9 +516,9 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				source := tag.ClassName().AsExpressionWithTypeArguments()
 				if ast.HasSamePropertyAccessName(target.Expression, source.Expression) {
 					if target.TypeArguments == nil && source.TypeArguments != nil {
-						newArguments := p.nodeSlicePool.NewSlice(len(source.TypeArguments.Nodes))
+						newArguments := p.nodeSliceArena.NewSlice(len(source.TypeArguments.Nodes))
 						for i, arg := range source.TypeArguments.Nodes {
-							newArguments[i] = p.factory.DeepCloneReparse(arg)
+							newArguments[i] = p.addDeepCloneReparse(arg)
 						}
 						target.TypeArguments = p.newNodeList(source.TypeArguments.Loc, newArguments)
 						p.finishMutatedNode(target.AsNode())
@@ -549,7 +529,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 	}
 }
 
-func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.Node {
+func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterOrPropertyTag) *ast.Node {
 	var questionToken *ast.Node
 	if parameter.IsBracketed || parameter.TypeExpression != nil && parameter.TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
 		questionToken = p.factory.NewToken(ast.KindQuestionToken)
@@ -559,7 +539,7 @@ func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.N
 	return questionToken
 }
 
-func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
+func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterOrPropertyTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
 	tagIndex := -1
 	paramCount := -1
 	for _, tag := range jsDoc.AsJSDoc().Tags.Nodes {
@@ -573,7 +553,8 @@ func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterTag, j
 	}
 	for parameterIndex, parameter := range fun.Parameters() {
 		if parameter.Name().Kind == ast.KindIdentifier {
-			if parameterTag.Name().Kind == ast.KindIdentifier && parameter.Name().Text() == parameterTag.Name().Text() {
+			if parameterTag.Name().Kind == ast.KindIdentifier &&
+				((parameter.Name().Text() == parameterTag.Name().Text()) || (parameterIndex == tagIndex && len(parameterTag.Name().Text()) == 0)) {
 				return parameter.AsParameterDeclaration(), true
 			}
 		} else if parameterIndex == tagIndex {
@@ -601,9 +582,7 @@ func getFunctionLikeHost(host *ast.Node) *ast.Node {
 	} else if host.Kind == ast.KindReturnStatement {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindExpressionStatement {
-		if ast.IsBinaryExpression(host.Expression()) {
-			fun = host.Expression().AsBinaryExpression().Right
-		}
+		fun = ast.GetRightMostAssignedExpression(host.Expression())
 	}
 	if ast.IsFunctionLike(fun) {
 		return fun

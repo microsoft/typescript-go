@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/newArrays.ts] ////
 
 //// [newArrays.ts]
-module M {
+namespace M {
 	class Foo {}
 	class Gar {
 		public fa: Foo[];
@@ -15,14 +15,16 @@ module M {
 }
 
 //// [newArrays.js]
+"use strict";
 var M;
 (function (M) {
     class Foo {
     }
     class Gar {
-        fa;
-        x = 10;
-        y = 10;
+        constructor() {
+            this.x = 10;
+            this.y = 10;
+        }
         m() {
             this.fa = new Array(this.x * this.y);
         }

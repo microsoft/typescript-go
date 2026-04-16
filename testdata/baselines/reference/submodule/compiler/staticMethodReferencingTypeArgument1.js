@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/staticMethodReferencingTypeArgument1.ts] ////
 
 //// [staticMethodReferencingTypeArgument1.ts]
-module Editor {
+namespace Editor {
     export class List<T> {
         next: List<T>;
         prev: List<T>;
@@ -19,13 +19,10 @@ module Editor {
 }
 
 //// [staticMethodReferencingTypeArgument1.js]
+"use strict";
 var Editor;
 (function (Editor) {
     class List {
-        isHead;
-        data;
-        next;
-        prev;
         constructor(isHead, data) {
             this.isHead = isHead;
             this.data = data;

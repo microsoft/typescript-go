@@ -23,7 +23,7 @@ var i2: I;
 export var r5: typeof i;
 export var r5: typeof i2;
 
-module M {
+namespace M {
     export var foo = '';
     export class C {
         foo: string;
@@ -45,7 +45,7 @@ export var r11: typeof E.A;
 export var r12: typeof r12;
 
 function foo() { }
-module foo {
+namespace foo {
     export var y = 1;
     export class C {
         foo: string;
@@ -60,7 +60,6 @@ exports.r13 = exports.r12 = exports.r11 = exports.r10 = exports.r9 = exports.r8 
 var x = 1;
 var y = { foo: '' };
 class C {
-    foo;
 }
 var c2;
 var i2;
@@ -68,7 +67,6 @@ var M;
 (function (M) {
     M.foo = '';
     class C {
-        foo;
     }
     M.C = C;
 })(M || (M = {}));
@@ -80,7 +78,6 @@ function foo() { }
 (function (foo) {
     foo.y = 1;
     class C {
-        foo;
     }
     foo.C = C;
 })(foo || (foo = {}));

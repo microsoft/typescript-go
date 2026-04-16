@@ -45,13 +45,12 @@ a2 = t;
 
 
 //// [assignmentCompatWithObjectMembersNumericNames.js]
+"use strict";
 // members N and M of types S and T have the same name, same accessibility, same optionality, and N is assignable M
 // numeric named properties work correctly, no errors expected
 class S {
-    1;
 }
 class T {
-    1.;
 }
 var s;
 var t;

@@ -14,13 +14,18 @@ doThing(B); //OK
 
 
 //// [staticInheritance.js]
+"use strict";
 function doThing(x) { }
 class A {
-    static n;
-    p = doThing(A); // OK
+    constructor() {
+        this.p = doThing(A); // OK
+    }
 }
 class B extends A {
-    p1 = doThing(A); // OK
-    p2 = doThing(B); // OK
+    constructor() {
+        super(...arguments);
+        this.p1 = doThing(A); // OK
+        this.p2 = doThing(B); // OK
+    }
 }
 doThing(B); //OK

@@ -23,13 +23,13 @@ class TextBase implements IText {
 }
 
 //// [classSideInheritance2.js]
+"use strict";
 class SubText extends TextBase {
     constructor(text, span) {
         super();
     }
 }
 class TextBase {
-    foo;
     subText(span) {
         return new SubText(this, span);
     }

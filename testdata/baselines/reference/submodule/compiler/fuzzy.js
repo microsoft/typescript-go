@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/fuzzy.ts] ////
 
 //// [fuzzy.ts]
-module M {
+namespace M {
     export interface I {
         works:()=>R;
         alsoWorks:()=>R;
@@ -33,10 +33,10 @@ module M {
 
 
 //// [fuzzy.js]
+"use strict";
 var M;
 (function (M) {
     class C {
-        x;
         constructor(x) {
             this.x = x;
         }

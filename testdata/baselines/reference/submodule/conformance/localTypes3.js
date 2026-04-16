@@ -44,11 +44,10 @@ function f3() {
 
 
 //// [localTypes3.js]
+"use strict";
 function f1() {
     function f() {
         class C {
-            x;
-            y;
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
@@ -64,10 +63,9 @@ function f1() {
 function f2() {
     function f(x) {
         class C {
-            y;
-            x = x;
             constructor(y) {
                 this.y = y;
+                this.x = x;
             }
         }
         return C;
@@ -80,8 +78,10 @@ function f2() {
 function f3() {
     function f(x, y) {
         class C {
-            x = x;
-            y = y;
+            constructor() {
+                this.x = x;
+                this.y = y;
+            }
         }
         return C;
     }

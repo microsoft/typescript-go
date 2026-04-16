@@ -15,13 +15,11 @@ var x2: (a: A) => void = true ? (a: C) => a.foo : (b: number) => { };
 
 
 //// [contextualTypingOfConditionalExpression2.js]
+"use strict";
 class A {
-    foo;
 }
 class B extends A {
-    bar;
 }
 class C extends A {
-    baz;
 }
 var x2 = true ? (a) => a.foo : (b) => { };

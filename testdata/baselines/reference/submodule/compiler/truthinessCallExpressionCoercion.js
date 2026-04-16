@@ -100,6 +100,7 @@ interface Nested {
 }
 
 //// [truthinessCallExpressionCoercion.js]
+"use strict";
 function onlyErrorsWhenTestingNonNullableFunctionType(required, optional) {
     if (required) { // error
     }
@@ -145,7 +146,6 @@ function checksPropertyAccess() {
     }
 }
 class Foo {
-    maybeIsUser;
     isUser() {
         return true;
     }

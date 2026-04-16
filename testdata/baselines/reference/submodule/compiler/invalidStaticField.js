@@ -5,9 +5,10 @@ class A { foo() { return B.NULL; } }
 class B { static NOT_NULL = new B(); }
 
 //// [invalidStaticField.js]
+"use strict";
 class A {
     foo() { return B.NULL; }
 }
 class B {
-    static NOT_NULL = new B();
 }
+B.NOT_NULL = new B();

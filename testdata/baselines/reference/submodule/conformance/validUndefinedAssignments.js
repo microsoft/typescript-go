@@ -26,6 +26,7 @@ function i<T>(a: T) {
 }
 
 //// [validUndefinedAssignments.js]
+"use strict";
 var x;
 var a = x;
 var b = x;
@@ -34,7 +35,6 @@ var d = x;
 var e = x;
 e = x; // should work
 class C {
-    foo;
 }
 var f;
 f = x;

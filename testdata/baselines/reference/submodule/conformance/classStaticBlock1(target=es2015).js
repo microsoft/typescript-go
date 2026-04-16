@@ -13,10 +13,11 @@ class C {
 
 
 //// [classStaticBlock1.js]
+"use strict";
 const a = 2;
 class C {
-    static {
-        const a = 1;
-        a;
-    }
 }
+(() => {
+    const a = 1;
+    a;
+})();

@@ -225,7 +225,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 }
 
 func (c *Checker) getContextualJsxElementAttributesType(node *ast.Node, contextFlags ContextFlags) *Type {
-	if ast.IsJsxOpeningElement(node) && contextFlags != ContextFlagsCompletions {
+	if ast.IsJsxOpeningElement(node) && contextFlags != ContextFlagsIgnoreNodeInferences {
 		index := c.findContextualNode(node.Parent, contextFlags == ContextFlagsNone)
 		if index >= 0 {
 			// Contextually applied type is moved from attributes up to the outer jsx attributes so when walking up from the children they get hit
@@ -276,7 +276,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 		return (initializer == nil || c.isPossiblyDiscriminantValue(initializer)) && c.isDiscriminantProperty(contextualType, symbol.Name)
 	})
 	discriminantMembers := core.Filter(c.getPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
-		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil || len(node.Symbol().Members) == 0 {
+		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil {
 			return false
 		}
 		element := node.Parent.Parent
@@ -492,7 +492,7 @@ func (c *Checker) getSuggestedSymbolForNonexistentJSXAttribute(name string, cont
 	if jsxSpecific != nil {
 		return jsxSpecific
 	}
-	return c.getSpellingSuggestionForName(name, properties, ast.SymbolFlagsValue)
+	return c.getSpellingSuggestionForName(name, slices.Values(properties), ast.SymbolFlagsValue)
 }
 
 func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
@@ -513,7 +513,7 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 		shouldModuleRefErr := c.compilerOptions.Jsx != core.JsxEmitPreserve && c.compilerOptions.Jsx != core.JsxEmitReactNative
 		flags := ast.SymbolFlagsValue
 		if !shouldModuleRefErr {
-			flags &= ^ast.SymbolFlagsEnum
+			flags &^= ast.SymbolFlagsEnum
 		}
 		jsxFactorySymbol = c.resolveName(node, jsxFragmentFactoryName, flags, diagnostics.Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found, true /*isUse*/, false /*excludeGlobals*/)
 	}
@@ -760,7 +760,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				}
 				if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(attributeDecl) {
 					inferenceContext := c.getInferenceContext(attributes)
-					debug.AssertIsDefined(inferenceContext)
+					debug.Assert(inferenceContext != nil)
 					// In CheckMode.Inferential we should always have an inference context
 					inferenceNode := attributeDecl.Initializer().Expression()
 					c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, exprType)
@@ -849,7 +849,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			childrenPropSymbol.ValueDeclaration.AsPropertySignatureDeclaration().Symbol = childrenPropSymbol
 			childPropMap := make(ast.SymbolTable)
 			childPropMap[jsxChildrenPropertyName] = childrenPropSymbol
-			spread = c.getSpreadType(spread, c.newAnonymousType(attributesSymbol, childPropMap, nil, nil, nil), attributesSymbol, objectFlags, false /*readonly*/)
+			spread = c.getSpreadType(spread, c.newAnonymousType(attributesSymbol, childPropMap, nil, nil, nil), attributesSymbol, objectFlags|c.getPropagatingFlagsOfTypes(childTypes, TypeFlagsNone), false /*readonly*/)
 		}
 	}
 	if hasSpreadAnyType {

@@ -10,16 +10,14 @@ export class Preferences {
 
 
 //// [typedefOnSemicolonClassElement.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Preferences = void 0;
-class Preferences {
+export class Preferences {
+    constructor() {
+        /** @type {A} */
+        this.a = 'ok';
+    }
     /** @typedef {string} A */
     ;
-    /** @type {A} */
-    a = 'ok';
 }
-exports.Preferences = Preferences;
 
 
 //// [typedefOnSemicolonClassElement.d.ts]

@@ -16,8 +16,8 @@ function foo<T, U extends T>(t: T, t2: U) {
     return (x: T) => t2;
 }
 
-var c: C;
-var d: D;
+declare var c: C;
+declare var d: D;
 var r = foo(c, d);
 var r2 = foo(d, c); // error because C does not extend D
 var r3 = foo(c, { x: '', foo: c });
@@ -36,19 +36,15 @@ function other<T, U extends T>() {
 
 
 //// [genericCallWithObjectTypeArgsAndConstraints4.js]
+"use strict";
 // Generic call with constraints infering type parameter from object member properties
 class C {
-    x;
 }
 class D {
-    x;
-    y;
 }
 function foo(t, t2) {
     return (x) => t2;
 }
-var c;
-var d;
 var r = foo(c, d);
 var r2 = foo(d, c); // error because C does not extend D
 var r3 = foo(c, { x: '', foo: c });

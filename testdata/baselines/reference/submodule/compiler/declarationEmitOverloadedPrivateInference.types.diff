@@ -14,10 +14,10 @@
 ->proxy : { <T_1, U_1>(fn: (options: T_1) => U_1): (options: T_1) => U_1; <T, U>(fn: (options?: T) => U, noArgs: true): (options?: T) => U; }
 +>proxy : { <T, U>(fn: (options: T) => U): (options: T) => U; <T, U>(fn: (options?: T) => U, noArgs: true): (options?: T) => U; }
  >fn : (options?: T) => U
- >options : T
+ >options : T | undefined
  >noArgs : true
 @@= skipped -14, +14 lines =@@
- >options : T
+ >options : T | undefined
 
      private proxy<T, U>(fn: (options: T) => U) {
 ->proxy : { <T_1, U_1>(fn: (options: T_1) => U_1): (options: T_1) => U_1; <T_1, U_1>(fn: (options?: T_1) => U_1, noArgs: true): (options?: T_1) => U_1; }

@@ -4,15 +4,26 @@
 //     num: 0,
 //     f() {
 //         type Y = typeof this;
-//                           ^
+//                         ^^^^
 // | ----------------------------------------------------------------------
-// | No quickinfo at /*1*/.
+// | ```tsx
+// | this: {
+// |     num: number;
+// |     f(): void;
+// |     g(this: number): void;
+// | }
+// | ```
+// | 
 // | ----------------------------------------------------------------------
 //         type Z = typeof this.num;
 //                         ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | any
+// | this: {
+// |     num: number;
+// |     f(): void;
+// |     g(this: number): void;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -22,7 +33,7 @@
 //                         ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) this: number
+// | this: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -35,7 +46,7 @@
 //                         ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | this
+// | this: this
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -43,7 +54,7 @@
 //                         ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | this
+// | this: this
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -53,7 +64,7 @@
 //                         ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (parameter) this: number
+// | this: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -70,7 +81,22 @@
       "Name": "1",
       "Data": {}
     },
-    "item": null
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nthis: {\n    num: number;\n    f(): void;\n    g(this: number): void;\n}\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 24
+        },
+        "end": {
+          "line": 3,
+          "character": 28
+        }
+      }
+    }
   },
   {
     "marker": {
@@ -85,7 +111,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nany\n```\n"
+        "value": "```tsx\nthis: {\n    num: number;\n    f(): void;\n    g(this: number): void;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -112,7 +138,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) this: number\n```\n"
+        "value": "```tsx\nthis: number\n```\n"
       },
       "range": {
         "start": {
@@ -139,7 +165,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis\n```\n"
+        "value": "```tsx\nthis: this\n```\n"
       },
       "range": {
         "start": {
@@ -166,7 +192,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis\n```\n"
+        "value": "```tsx\nthis: this\n```\n"
       },
       "range": {
         "start": {
@@ -193,7 +219,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) this: number\n```\n"
+        "value": "```tsx\nthis: number\n```\n"
       },
       "range": {
         "start": {

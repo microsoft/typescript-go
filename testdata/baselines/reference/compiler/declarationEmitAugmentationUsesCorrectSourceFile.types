@@ -22,23 +22,23 @@ declare namespace knex {
 declare namespace Knex {
   interface Interface {
     method(): ShouldJustBeAny;
->method : () => any
+>method : () => ShouldJustBeAny
   }
 }
 
 export = knex;
->knex : typeof import("index.ts")
+>knex : typeof import("knex")
 
 === index.ts ===
 import "knex";
 declare module "knex" {
->"knex" : typeof import("node_modules/knex/index")
+>"knex" : typeof import("knex")
 
   namespace Knex {
 >Knex : typeof Knex
 
     function newFunc(): Knex.Interface;
->newFunc : () => Interface
+>newFunc : () => Knex.Interface
 >Knex : any
   }
 }

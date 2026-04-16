@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/genericClassWithStaticFactory.ts] ////
 
 //// [genericClassWithStaticFactory.ts]
-module Editor {
+namespace Editor {
 
     export class List<T> {
         public next: List<T>;
@@ -144,14 +144,10 @@ module Editor {
 }
 
 //// [genericClassWithStaticFactory.js]
+"use strict";
 var Editor;
 (function (Editor) {
     class List {
-        isHead;
-        data;
-        next;
-        prev;
-        listFactory;
         constructor(isHead, data) {
             this.isHead = isHead;
             this.data = data;

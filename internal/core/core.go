@@ -9,10 +9,11 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/debug"
-	"github.com/microsoft/typescript-go/internal/jsonutil"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -31,6 +32,18 @@ func Filter[T any](slice []T, f func(T) bool) []T {
 		}
 	}
 	return slice
+}
+
+func FilterSeq[T any](slice []T, f func(T) bool) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, value := range slice {
+			if f(value) {
+				if !yield(value) {
+					return
+				}
+			}
+		}
+	}
 }
 
 func FilterIndex[T any](slice []T, f func(T, int, []T) bool) []T {
@@ -109,7 +122,7 @@ func MapFiltered[T any, U any](slice []T, f func(T) (U, bool)) []U {
 	return result
 }
 
-func FlatMap[T any, U comparable](slice []T, f func(T) []U) []U {
+func FlatMap[T any, U any](slice []T, f func(T) []U) []U {
 	var result []U
 	for _, value := range slice {
 		mapped := f(value)
@@ -266,6 +279,16 @@ func FirstNonNil[T any, U comparable](slice []T, f func(T) U) U {
 	return *new(U)
 }
 
+func FirstNonZero[T comparable](values ...T) T {
+	var zero T
+	for _, value := range values {
+		if value != zero {
+			return value
+		}
+	}
+	return zero
+}
+
 func Concatenate[T any](s1 []T, s2 []T) []T {
 	if len(s2) == 0 {
 		return s1
@@ -315,6 +338,30 @@ func ReplaceElement[T any](slice []T, i int, t T) []T {
 func InsertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	i, _ := slices.BinarySearchFunc(slice, element, cmp)
 	return slices.Insert(slice, i, element)
+}
+
+// MinAllFunc returns all minimum elements from xs according to the comparison function cmp.
+func MinAllFunc[T any](xs []T, cmp func(a, b T) int) []T {
+	if len(xs) == 0 {
+		return nil
+	}
+
+	m := xs[0]
+	mins := []T{m}
+
+	for _, x := range xs[1:] {
+		c := cmp(x, m)
+		switch {
+		case c < 0:
+			m = x
+			mins = mins[:0]
+			mins = append(mins, x)
+		case c == 0:
+			mins = append(mins, x)
+		}
+	}
+
+	return mins
 }
 
 func AppendIfUnique[T comparable](slice []T, element T) []T {
@@ -406,11 +453,35 @@ func ComputeECMALineStartsSeq(text string) iter.Seq[TextPos] {
 	}
 }
 
-func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
+// PositionToLineAndByteOffset returns the 0-based line and byte offset from the
+// start of that line for the given byte position, using the provided line starts.
+// The byte offset is a raw UTF-8 byte offset from the line start, not a UTF-16 code unit count.
+func PositionToLineAndByteOffset(position int, lineStarts []TextPos) (line int, byteOffset int) {
 	line = max(sort.Search(len(lineStarts), func(i int) bool {
 		return int(lineStarts[i]) > position
 	})-1, 0)
 	return line, position - int(lineStarts[line])
+}
+
+// UTF16Offset represents a character offset measured in UTF-16 code units.
+type UTF16Offset int
+
+// UTF16Len returns the number of UTF-16 code units needed to
+// represent the given UTF-8 encoded string.
+func UTF16Len(s string) UTF16Offset {
+	// Fast path: scan for non-ASCII bytes. For ASCII-only strings,
+	// each byte is one UTF-16 code unit, so we can return len(s) directly.
+	for i := range len(s) {
+		if s[i] >= utf8.RuneSelf {
+			// Found non-ASCII; count the ASCII prefix, then decode the rest.
+			n := UTF16Offset(i)
+			for _, r := range s[i:] {
+				n += UTF16Offset(utf16.RuneLen(r))
+			}
+			return n
+		}
+	}
+	return UTF16Offset(len(s))
 }
 
 func Flatten[T any](array [][]T) []T {
@@ -434,7 +505,7 @@ func FirstResult[T1 any](t1 T1, _ ...any) T1 {
 }
 
 func StringifyJson(input any, prefix string, indent string) (string, error) {
-	output, err := jsonutil.MarshalIndent(input, prefix, indent)
+	output, err := json.MarshalIndent(input, prefix, indent)
 	return string(output), err
 }
 
@@ -470,14 +541,15 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 //	     and 1 insertion/deletion at 3 characters)
 //
 // @internal
-func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) string) T {
+func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
 	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
-	bestDistance := math.Floor(float64(len(name))*0.4) + 1 // If the best result is worse than this, don't bother.
+	bestDistance := math.Floor(float64(len(name))*0.4) + 0.9 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
 	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
 	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
-	for _, candidate := range candidates {
+	hasBest := false
+	for candidate := range candidates {
 		candidateName := getName(candidate)
 		maxLen := max(len(candidateName), len(name))
 		minLen := min(len(candidateName), len(name))
@@ -490,16 +562,26 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
 			}
-			distance := levenshteinWithMax(buffers, runeName, []rune(candidateName), bestDistance-0.1)
+			distance := levenshteinWithMax(buffers, runeName, []rune(candidateName), bestDistance)
 			if distance < 0 {
 				continue
 			}
-			debug.Assert(distance < bestDistance) // Else `levenshteinWithMax` should return undefined
-			bestDistance = distance
-			bestCandidate = candidate
+			debug.Assert(distance <= bestDistance) // Else `levenshteinWithMax` should return undefined
+			if distance < bestDistance {
+				bestDistance = distance
+				bestCandidate = candidate
+				hasBest = true
+			} else if !hasBest || compare(candidate, bestCandidate) < 0 {
+				bestCandidate = candidate
+				hasBest = true
+			}
 		}
 	}
 	return bestCandidate
+}
+
+func GetSpellingSuggestionForStrings(name string, candidates iter.Seq[string]) string {
+	return GetSpellingSuggestion(name, candidates, Identity, strings.Compare)
 }
 
 type levenshteinBuffers struct {
@@ -613,23 +695,49 @@ func ConcatenateSeq[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 	}
 }
 
+// Enumerate returns a sequence of (index, value) pairs from the input sequence.
+func Enumerate[T any](seq iter.Seq[T]) iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		i := 0
+		for v := range seq {
+			if !yield(i, v) {
+				return
+			}
+			i++
+		}
+	}
+}
+
 func comparableValuesEqual[T comparable](a, b T) bool {
 	return a == b
 }
 
+// DiffMaps compares two maps m1 and m2 and calls the provided callbacks for added, removed, and changed entries.
+// onAdded is called for each key-value pair that is in m2 but not in m1.
+// onRemoved is called for each key-value pair that is in m1 but not in m2.
+// onChanged is called for each key where the value in m1 differs from the value in m2.
 func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
 	DiffMapsFunc(m1, m2, comparableValuesEqual, onAdded, onRemoved, onChanged)
 }
 
-func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
-	for k, v2 := range m2 {
-		if _, ok := m1[k]; !ok {
-			onAdded(k, v2)
+// DiffMapsFunc compares two maps m1 and m2 and calls the provided callbacks for added, removed, and changed entries.
+// onAdded is called for each key-value pair that is in m2 but not in m1.
+// onRemoved is called for each key-value pair that is in m1 but not in m2.
+// onChanged is called for each key where the value in m1 differs from the value in m2.
+func DiffMapsFunc[K comparable, V1 any, V2 any](m1 map[K]V1, m2 map[K]V2, equalValues func(V1, V2) bool, onAdded func(K, V2), onRemoved func(K, V1), onChanged func(K, V1, V2)) {
+	if onAdded != nil {
+		for k, v2 := range m2 {
+			if _, ok := m1[k]; !ok {
+				onAdded(k, v2)
+			}
 		}
+	}
+	if onChanged == nil && onRemoved == nil {
+		return
 	}
 	for k, v1 := range m1 {
 		if v2, ok := m2[k]; ok {
-			if !equalValues(v1, v2) {
+			if onChanged != nil && !equalValues(v1, v2) {
 				onChanged(k, v1, v2)
 			}
 		} else {
@@ -646,6 +754,24 @@ func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) 
 	}
 	maps.Copy(dst, src)
 	return dst
+}
+
+// UnorderedEqual returns true if s1 and s2 contain the same elements, regardless of order.
+func UnorderedEqual[T comparable](s1 []T, s2 []T) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	counts := make(map[T]int)
+	for _, v := range s1 {
+		counts[v]++
+	}
+	for _, v := range s2 {
+		counts[v]--
+		if counts[v] < 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func Deduplicate[T comparable](slice []T) []T {

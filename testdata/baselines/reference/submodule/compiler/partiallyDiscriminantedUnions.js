@@ -49,6 +49,7 @@ function fail(s: Shapes) {
 }
 
 //// [partiallyDiscriminantedUnions.js]
+"use strict";
 // Repro from #10586
 const ab = {};
 if (ab.type === 'a') {
@@ -58,10 +59,8 @@ if (ab.type === 'a') {
 }
 // Repro from #11185
 class Square {
-    kind;
 }
 class Circle {
-    kind;
 }
 function isShape(s) {
     return !Array.isArray(s);

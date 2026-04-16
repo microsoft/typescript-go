@@ -18,6 +18,7 @@ class testADelx {
 }
 
 //// [deleteOperatorInvalidOperations.js]
+"use strict";
 // Unary operator delete
 var ANY;
 // operand before delete operator
@@ -27,7 +28,6 @@ delete ; //expect error
 var BOOLEAN2 = delete ;
 // delete global variable s
 class testADelx {
-    s;
     constructor(s) {
         this.s = s;
         delete s; //expect error

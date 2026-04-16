@@ -3,25 +3,25 @@
 === callWithSpread2.ts ===
 declare function all(a?: number, b?: number): void;
 >all : (a?: number, b?: number) => void
->a : number
->b : number
+>a : number | undefined
+>b : number | undefined
 
 declare function weird(a?: number | string, b?: number | string): void;
->weird : (a?: string | number, b?: string | number) => void
->a : string | number
->b : string | number
+>weird : (a?: number | string, b?: number | string) => void
+>a : string | number | undefined
+>b : string | number | undefined
 
 declare function prefix(s: string, a?: number, b?: number): void;
 >prefix : (s: string, a?: number, b?: number) => void
 >s : string
->a : number
->b : number
+>a : number | undefined
+>b : number | undefined
 
 declare function rest(s: string, a?: number, b?: number,  ...rest: number[]): void;
 >rest : (s: string, a?: number, b?: number, ...rest: number[]) => void
 >s : string
->a : number
->b : number
+>a : number | undefined
+>b : number | undefined
 >rest : number[]
 
 declare function normal(s: string): void;
@@ -35,8 +35,8 @@ declare function prefix2(s: string, n: number, a?: number, b?: number): void;
 >prefix2 : (s: string, n: number, a?: number, b?: number) => void
 >s : string
 >n : number
->a : number
->b : number
+>a : number | undefined
+>b : number | undefined
 
 declare var ns: number[];
 >ns : number[]
@@ -56,19 +56,19 @@ all(...ns)
 
 weird(...ns)
 >weird(...ns) : void
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >...ns : number
 >ns : number[]
 
 weird(...mixed)
 >weird(...mixed) : void
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >...mixed : string | number
 >mixed : (string | number)[]
 
 weird(...tuple)
 >weird(...tuple) : void
->weird : (a?: string | number, b?: string | number) => void
+>weird : (a?: number | string, b?: number | string) => void
 >...tuple : string | number
 >tuple : [number, string]
 

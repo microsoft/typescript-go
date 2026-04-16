@@ -19,12 +19,17 @@ function f(value: A | B): number {
 }
 
 //// [exhaustiveSwitchWithWideningLiteralTypes.js]
+"use strict";
 // Repro from #12529
 class A {
-    kind = "A"; // (property) A.kind: "A"
+    constructor() {
+        this.kind = "A"; // (property) A.kind: "A"
+    }
 }
 class B {
-    kind = "B"; // (property) B.kind: "B"
+    constructor() {
+        this.kind = "B"; // (property) B.kind: "B"
+    }
 }
 function f(value) {
     switch (value.kind) {

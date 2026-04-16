@@ -1,8 +1,0 @@
---- old.inheritanceStaticPropertyOverridingMethod.js
-+++ new.inheritanceStaticPropertyOverridingMethod.js
-@@= skipped -17, +17 lines =@@
-     }
- }
- class b extends a {
-+    static x;
- }

@@ -10,7 +10,7 @@ interface NamedColors {
     "blue": _Color;
     "pale blue": _Color;
 }
-module Color {
+namespace Color {
     export var namedColors: NamedColors;
 }
 var a = Color.namedColors["azure"];
@@ -19,11 +19,8 @@ var a = Color.namedColors["pale blue"]; // should not error
 
 
 //// [propertyNamesWithStringLiteral.js]
+"use strict";
 class _Color {
-    a;
-    r;
-    g;
-    b;
 }
 var Color;
 (function (Color) {

@@ -20,6 +20,7 @@
 
 
 //// [jsdocTypeCast.js]
+"use strict";
 /**
  * @param {string} x
  */
@@ -31,6 +32,6 @@ function f(x) {
     let b = (((x))); // Error
     b;
     /** @type {'a' | 'b'} */
-    let c = /** @type {'a' | 'b'} */ x; // Ok
+    let c = /** @type {'a' | 'b'} */ (x); // Ok
     c;
 }

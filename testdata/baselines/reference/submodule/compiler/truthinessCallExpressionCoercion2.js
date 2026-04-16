@@ -198,6 +198,7 @@ class Foo {
 
 
 //// [truthinessCallExpressionCoercion2.js]
+"use strict";
 function test(required1, required2, b, optional) {
     // error
     required1 && console.log('required');
@@ -323,7 +324,6 @@ function checksPropertyAccess() {
     }
 }
 class Foo {
-    optional;
     required() {
         return true;
     }

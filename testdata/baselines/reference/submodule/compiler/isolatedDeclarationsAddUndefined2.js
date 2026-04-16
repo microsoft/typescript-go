@@ -27,44 +27,30 @@ export function test3(x?: Unresolved): void {}
 
 
 //// [isolatedDeclarationsAddUndefined2.js]
-"use strict";
 // https://github.com/microsoft/TypeScript/issues/60123
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Bar4 = exports.Bar3 = exports.Bar2 = exports.Bar = void 0;
-exports.test1 = test1;
-exports.test2 = test2;
-exports.test3 = test3;
-class Bar {
-    x;
+export class Bar {
     constructor(x) {
         this.x = x;
     }
 }
-exports.Bar = Bar;
-class Bar2 {
-    x;
+export class Bar2 {
     constructor(x) {
         this.x = x;
     }
 }
-exports.Bar2 = Bar2;
-class Bar3 {
-    x;
+export class Bar3 {
     constructor(x) {
         this.x = x;
     }
 }
-exports.Bar3 = Bar3;
-class Bar4 {
-    x;
+export class Bar4 {
     constructor(x) {
         this.x = x;
     }
 }
-exports.Bar4 = Bar4;
-function test1(x) { }
-function test2(x) { }
-function test3(x) { }
+export function test1(x) { }
+export function test2(x) { }
+export function test3(x) { }
 
 
 //// [isolatedDeclarationsAddUndefined2.d.ts]

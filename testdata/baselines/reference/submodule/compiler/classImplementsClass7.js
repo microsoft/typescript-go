@@ -9,8 +9,8 @@ class B implements A {}
 
 
 //// [classImplementsClass7.js]
+"use strict";
 class A {
-    x;
 }
 class B {
 }

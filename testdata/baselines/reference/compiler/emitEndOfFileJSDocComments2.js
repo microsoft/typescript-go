@@ -22,6 +22,7 @@ function test(param) {
 
 
 //// [emitEndOfFileJSDocComments2.js]
+"use strict";
 /** @typedef {number} A */
 /**
  * JSDoc comment for function

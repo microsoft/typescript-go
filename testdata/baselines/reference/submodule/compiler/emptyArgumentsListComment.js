@@ -14,5 +14,12 @@ a(
 
 
 //// [emptyArgumentsListComment.js]
-a( /*1*/ /*1*/);
-a();
+"use strict";
+a( /*1*/);
+a(
+/*first*/
+// foo
+/*middle*/
+// bar
+/*last*/
+);

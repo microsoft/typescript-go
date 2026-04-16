@@ -35,7 +35,7 @@
 // | ----------------------------------------------------------------------
 //     }
 // }
-// module m {
+// namespace m {
 //     const c = 10;
 //           ^
 // | ----------------------------------------------------------------------
@@ -98,7 +98,10 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const h: { (a: string): number; (a: number): string; }
+// | const h: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -106,14 +109,20 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const i: { (a: string): number; (a: number): string; }
+// | const i: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | const h: { (a: string): number; (a: number): string; }
+// | const h: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -244,7 +253,7 @@
   },
   {
     "marker": {
-      "Position": 113,
+      "Position": 116,
       "LSPosition": {
         "line": 8,
         "character": 10
@@ -271,7 +280,7 @@
   },
   {
     "marker": {
-      "Position": 138,
+      "Position": 141,
       "LSPosition": {
         "line": 9,
         "character": 17
@@ -298,7 +307,7 @@
   },
   {
     "marker": {
-      "Position": 173,
+      "Position": 176,
       "LSPosition": {
         "line": 11,
         "character": 14
@@ -325,7 +334,7 @@
   },
   {
     "marker": {
-      "Position": 195,
+      "Position": 198,
       "LSPosition": {
         "line": 14,
         "character": 6
@@ -352,7 +361,7 @@
   },
   {
     "marker": {
-      "Position": 229,
+      "Position": 232,
       "LSPosition": {
         "line": 15,
         "character": 6
@@ -379,7 +388,7 @@
   },
   {
     "marker": {
-      "Position": 233,
+      "Position": 236,
       "LSPosition": {
         "line": 15,
         "character": 10
@@ -406,7 +415,7 @@
   },
   {
     "marker": {
-      "Position": 236,
+      "Position": 239,
       "LSPosition": {
         "line": 16,
         "character": 0
@@ -433,7 +442,7 @@
   },
   {
     "marker": {
-      "Position": 247,
+      "Position": 250,
       "LSPosition": {
         "line": 17,
         "character": 6
@@ -444,7 +453,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst h: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```tsx\nconst h: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -460,7 +469,7 @@
   },
   {
     "marker": {
-      "Position": 312,
+      "Position": 315,
       "LSPosition": {
         "line": 18,
         "character": 6
@@ -471,7 +480,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst i: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```tsx\nconst i: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -487,7 +496,7 @@
   },
   {
     "marker": {
-      "Position": 316,
+      "Position": 319,
       "LSPosition": {
         "line": 18,
         "character": 10
@@ -498,7 +507,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst h: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```tsx\nconst h: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -514,7 +523,7 @@
   },
   {
     "marker": {
-      "Position": 319,
+      "Position": 322,
       "LSPosition": {
         "line": 19,
         "character": 0
@@ -541,7 +550,7 @@
   },
   {
     "marker": {
-      "Position": 326,
+      "Position": 329,
       "LSPosition": {
         "line": 20,
         "character": 0

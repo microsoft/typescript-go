@@ -35,6 +35,7 @@ class C5 {
 }
 
 //// [unknownSymbols1.js]
+"use strict";
 var x = asdf;
 var y;
 function foo(x, y) { }
@@ -43,8 +44,6 @@ function foo2() {
 }
 var z = x; // should be an error
 class C {
-    foo;
-    bar;
 }
 class C2 {
 }

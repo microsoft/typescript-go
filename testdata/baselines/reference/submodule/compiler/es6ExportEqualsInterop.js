@@ -30,7 +30,7 @@ declare module "interface-variable" {
 }
 
 declare module "module" {
-    module Foo {
+    namespace Foo {
         export var a: number;
         export var b: number;
     }
@@ -42,7 +42,7 @@ declare module "interface-module" {
         x: number;
         y: number;
     }
-    module Foo {
+    namespace Foo {
         export var a: number;
         export var b: number;
     }
@@ -50,7 +50,7 @@ declare module "interface-module" {
 }
 
 declare module "variable-module" {
-    module Foo {
+    namespace Foo {
         interface Bar {
             x: number;
             y: number;
@@ -70,7 +70,7 @@ declare module "function" {
 
 declare module "function-module" {
     function foo();
-    module foo {
+    namespace foo {
         export var a: number;
         export var b: number;
     }
@@ -90,7 +90,7 @@ declare module "class-module" {
         x: number;
         y: number;
     }
-    module Foo {
+    namespace Foo {
         export var a: number;
         export var b: number;
     }
@@ -307,25 +307,25 @@ function_module_1.a;
 class_1.a;
 class_module_1.a;
 // named export
-const interface_2 = require("interface");
+var interface_2 = require("interface");
 Object.defineProperty(exports, "a1", { enumerable: true, get: function () { return interface_2.a; } });
-const variable_2 = require("variable");
+var variable_2 = require("variable");
 Object.defineProperty(exports, "a2", { enumerable: true, get: function () { return variable_2.a; } });
-const interface_variable_2 = require("interface-variable");
+var interface_variable_2 = require("interface-variable");
 Object.defineProperty(exports, "a3", { enumerable: true, get: function () { return interface_variable_2.a; } });
-const module_2 = require("module");
+var module_2 = require("module");
 Object.defineProperty(exports, "a4", { enumerable: true, get: function () { return module_2.a; } });
-const interface_module_2 = require("interface-module");
+var interface_module_2 = require("interface-module");
 Object.defineProperty(exports, "a5", { enumerable: true, get: function () { return interface_module_2.a; } });
-const variable_module_2 = require("variable-module");
+var variable_module_2 = require("variable-module");
 Object.defineProperty(exports, "a6", { enumerable: true, get: function () { return variable_module_2.a; } });
-const function_2 = require("function");
+var function_2 = require("function");
 Object.defineProperty(exports, "a7", { enumerable: true, get: function () { return function_2.a; } });
-const function_module_2 = require("function-module");
+var function_module_2 = require("function-module");
 Object.defineProperty(exports, "a8", { enumerable: true, get: function () { return function_module_2.a; } });
-const class_2 = require("class");
+var class_2 = require("class");
 Object.defineProperty(exports, "a9", { enumerable: true, get: function () { return class_2.a; } });
-const class_module_2 = require("class-module");
+var class_module_2 = require("class-module");
 Object.defineProperty(exports, "a0", { enumerable: true, get: function () { return class_module_2.a; } });
 // export-star
 __exportStar(require("interface"), exports);

@@ -49,6 +49,7 @@ else {
 }
 
 //// [typeGuardOfFormExpr1OrExpr2.js]
+"use strict";
 var str;
 var bool;
 var num;
@@ -56,7 +57,6 @@ var strOrNum;
 var strOrNumOrBool;
 var numOrBool;
 class C {
-    p;
 }
 var c;
 var cOrBool;

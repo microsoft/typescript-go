@@ -13,10 +13,10 @@ class Derived extends Base {
 
 
 //// [propertyOverridingPrototype.js]
+"use strict";
 class Base {
     foo() {
     }
 }
 class Derived extends Base {
-    foo;
 }

@@ -4,10 +4,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -17,8 +17,8 @@ import (
 )
 
 var packageJsonFixtures = []filefixture.Fixture{
-	filefixture.FromFile("package.json", filepath.Join(repo.RootPath, "package.json")),
-	filefixture.FromFile("date-fns.json", filepath.Join(repo.TestDataPath, "fixtures", "packagejson", "date-fns.json")),
+	filefixture.FromFile("package.json", filepath.Join(repo.RootPath(), "package.json")),
+	filefixture.FromFile("date-fns.json", filepath.Join(repo.TestDataPath(), "fixtures", "packagejson", "date-fns.json")),
 }
 
 func BenchmarkPackageJSON(b *testing.B) {

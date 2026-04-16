@@ -10,7 +10,7 @@
 ->exports : typeof module."./test"
 +>module.exports = {  Abcde} : { Abcde: typeof Abcde; }
 +>module.exports : { Abcde: typeof Abcde; }
-+>module : { "export=": { Abcde: typeof Abcde; }; }
++>module : { exports: { Abcde: typeof Abcde; }; }
 +>exports : { Abcde: typeof Abcde; }
  >{  Abcde} : { Abcde: typeof Abcde; }
 
@@ -19,7 +19,7 @@
  >Abcde : typeof Abcde
 
  declare module "./test" {
-->"./test" : typeof import("/test")
+->"./test" : typeof import("./test")
 +>"./test" : any
 
    interface Abcde { b: string }

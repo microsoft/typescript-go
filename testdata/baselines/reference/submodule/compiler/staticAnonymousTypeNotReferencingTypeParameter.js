@@ -144,12 +144,13 @@ interface Array<T> {
 }
 
 //// [staticAnonymousTypeNotReferencingTypeParameter.js]
+"use strict";
 // This test case is a condensed version of Angular 2's ListWrapper. Prior to #7448
 // this would cause the compiler to run out of memory.
 function outer(x) {
     class Inner {
-        static y = x;
     }
+    Inner.y = x;
     return Inner;
 }
 let y = outer(5).y;

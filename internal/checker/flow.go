@@ -1112,7 +1112,9 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitch
 		if t.flags&TypeFlagsUndefined == 0 {
 			u = c.getRegularTypeOfLiteralType(c.extractUnitType(t))
 		}
-		return !slices.Contains(switchTypes, u)
+		return !slices.ContainsFunc(switchTypes, func(st *Type) bool {
+			return isUnitType(st) && c.areTypesComparable(st, u)
+		})
 	})
 	if caseType.flags&TypeFlagsNever != 0 {
 		return defaultType
@@ -1429,7 +1431,7 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		if ast.IsIdentifier(expr) {
 			symbol := c.getResolvedSymbol(expr)
 			declaration := c.getExportSymbolOfValueSymbolIfExported(symbol).ValueDeclaration
-			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameter(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
+			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameterDeclaration(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
 				return declaration
 			}
 		}
@@ -1442,21 +1444,27 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		symbol := c.getResolvedSymbol(expr)
 		if c.isConstantVariable(symbol) {
 			declaration := symbol.ValueDeclaration
+			initializer := getCandidateVariableDeclarationInitializer(declaration)
 			// Given 'const x = obj.kind', allow 'x' as an alias for 'obj.kind'
-			if ast.IsVariableDeclaration(declaration) && declaration.Type() == nil {
-				if initializer := declaration.Initializer(); initializer != nil && ast.IsAccessExpression(initializer) && c.isMatchingReference(f.reference, initializer.Expression()) {
-					return initializer
-				}
+			if initializer != nil && ast.IsAccessExpression(initializer) && c.isMatchingReference(f.reference, initializer.Expression()) {
+				return initializer
 			}
 			// Given 'const { kind: x } = obj', allow 'x' as an alias for 'obj.kind'
 			if ast.IsBindingElement(declaration) && declaration.Initializer() == nil {
-				parent := declaration.Parent.Parent
-				if ast.IsVariableDeclaration(parent) && parent.Type() == nil {
-					if initializer := parent.Initializer(); initializer != nil && (ast.IsIdentifier(initializer) || ast.IsAccessExpression(initializer)) && c.isMatchingReference(f.reference, initializer) {
-						return declaration
-					}
+				initializer = getCandidateVariableDeclarationInitializer(declaration.Parent.Parent)
+				if initializer != nil && (ast.IsIdentifier(initializer) || ast.IsAccessExpression(initializer)) && c.isMatchingReference(f.reference, initializer) {
+					return declaration
 				}
 			}
+		}
+	}
+	return nil
+}
+
+func getCandidateVariableDeclarationInitializer(node *ast.Node) *ast.Node {
+	if ast.IsVariableDeclaration(node) && node.Type() == nil {
+		if initializer := node.Initializer(); initializer != nil {
+			return ast.SkipParentheses(initializer)
 		}
 	}
 	return nil
@@ -1694,7 +1702,7 @@ func (c *Checker) getAccessedPropertyName(access *ast.Node) (string, bool) {
 	if ast.IsBindingElement(access) {
 		return c.getDestructuringPropertyName(access)
 	}
-	if ast.IsParameter(access) {
+	if ast.IsParameterDeclaration(access) {
 		return strconv.Itoa(slices.Index(access.Parent.Parameters(), access)), true
 	}
 	return "", false
@@ -1795,7 +1803,7 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		rootDeclaration := ast.GetRootDeclaration(node.Parent)
-		if ast.IsParameter(rootDeclaration) || ast.IsVariableDeclaration(rootDeclaration) && ast.IsCatchClause(rootDeclaration.Parent) {
+		if ast.IsParameterDeclaration(rootDeclaration) || ast.IsVariableDeclaration(rootDeclaration) && ast.IsCatchClause(rootDeclaration.Parent) {
 			return !c.isSomeSymbolAssigned(rootDeclaration)
 		}
 		return ast.IsVariableDeclaration(rootDeclaration) && c.isVarConstLike(rootDeclaration)
@@ -2160,7 +2168,7 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 }
 
 func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {
-	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameter(node)) && node.Type() != nil ||
+	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameterDeclaration(node)) && node.Type() != nil ||
 		c.isExpandoPropertyFunctionWithReturnTypeAnnotation(node)
 }
 

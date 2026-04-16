@@ -2,7 +2,7 @@
 
 === reachabilityChecks10.ts ===
 throw new Error("")
->Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
 
 console.log("1")
 >console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))

@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/exportDeclarations/ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.ts] ////
 
 //// [ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.ts]
-module A {
+namespace A {
 
     class Point {
         x: number;
@@ -18,11 +18,10 @@ module A {
 
 
 //// [ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.js]
+"use strict";
 var A;
 (function (A) {
     class Point {
-        x;
-        y;
     }
     class points {
     }

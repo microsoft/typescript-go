@@ -61,6 +61,7 @@ new D<null>();
 new D<undefined>();
 
 //// [transformsElideNullUndefinedType.js]
+"use strict";
 var v0;
 var v1;
 function f0() { return null; }
@@ -92,11 +93,9 @@ class C3 {
     constructor(p11) { }
 }
 class C4 {
-    f1;
     constructor(p12) { }
 }
 class C5 {
-    f2;
     constructor(p13) { }
 }
 var C6 = class {

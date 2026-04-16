@@ -12,7 +12,6 @@ export default hello.hello
 {
     "compilerOptions": {
         "composite": false,
-        "moduleResolution": "node",
         "module": "commonjs",
         "resolveJsonModule": true,
         "esModuleInterop": true,
@@ -25,7 +24,7 @@ export default hello.hello
 }
 
 tsgo --b project --v --explainFiles --listEmittedFiles
-ExitStatus:: Success
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project/tsconfig.json
@@ -34,17 +33,26 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'project/tsconfig.json'...
 
-TSFILE:  /home/src/workspaces/solution/project/dist/hello.json
-TSFILE:  /home/src/workspaces/solution/project/dist/index.js
+[96mproject/tsconfig.json[0m:[93m8[0m:[93m9[0m - [91merror[0m[90m TS5011: [0mThe common source directory of 'tsconfig.json' is './src'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.
+  Visit https://aka.ms/ts6 for migration information.
+
+[7m8[0m         "outDir": "dist",
+[7m [0m [91m        ~~~~~~~~[0m
+
+TSFILE:  /home/src/workspaces/solution/project/dist/src/hello.json
+TSFILE:  /home/src/workspaces/solution/project/dist/src/index.js
 TSFILE:  /home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo
-../../tslibs/TS/Lib/lib.d.ts
-   Default library for target 'ES5'
+../../tslibs/TS/Lib/lib.es2025.full.d.ts
+   Default library for target 'ES2025'
 project/src/hello.json
    Imported via "./hello.json" from file 'project/src/index.ts'
    Matched by include pattern 'src/**/*' in 'project/tsconfig.json'
 project/src/index.ts
    Matched by include pattern 'src/**/*' in 'project/tsconfig.json'
-//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+
+Found 1 error in project/tsconfig.json[90m:8[0m
+
+//// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
@@ -67,12 +75,12 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/solution/project/dist/hello.json] *new* 
+//// [/home/src/workspaces/solution/project/dist/src/hello.json] *new* 
 {
     "hello": "world"
 }
 
-//// [/home/src/workspaces/solution/project/dist/index.js] *new* 
+//// [/home/src/workspaces/solution/project/dist/src/index.js] *new* 
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -82,10 +90,11 @@ const hello_json_1 = __importDefault(require("./hello.json"));
 exports.default = hello_json_1.default.hello;
 
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["../src/index.ts","../src/hello.json"]}
+{"version":"FakeTSVersion","errors":true,"root":["../src/index.ts","../src/hello.json"]}
 //// [/home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
+  "errors": true,
   "root": [
     {
       "files": [
@@ -100,12 +109,12 @@ exports.default = hello_json_1.default.hello;
       "original": "../src/hello.json"
     }
   ],
-  "size": 74
+  "size": 88
 }
 
 project/tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /home/src/workspaces/solution/project/src/hello.json
-*refresh*    /home/src/workspaces/solution/project/src/index.ts
+*not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
+*not cached* /home/src/workspaces/solution/project/src/hello.json
+*not cached* /home/src/workspaces/solution/project/src/index.ts
 Signatures::

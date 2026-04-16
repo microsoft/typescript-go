@@ -11,9 +11,14 @@ class X2 {
 
 
 //// [propertyNamedConstructor.js]
+"use strict";
 class X1 {
-    "constructor" = 3; // Error
+    constructor() {
+        this["constructor"] = 3; // Error
+    }
 }
 class X2 {
-    ["constructor"] = 3;
+    constructor() {
+        this["constructor"] = 3;
+    }
 }

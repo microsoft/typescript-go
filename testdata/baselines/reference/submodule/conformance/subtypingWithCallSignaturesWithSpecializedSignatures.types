@@ -3,7 +3,7 @@
 === subtypingWithCallSignaturesWithSpecializedSignatures.ts ===
 // same as subtypingWithCallSignatures but with additional specialized signatures that should not affect the results
 
-module CallSignature {
+namespace CallSignature {
     interface Base { // T
         // M's
         (x: 'a'): void;
@@ -55,11 +55,11 @@ module CallSignature {
     }
 }
 
-module MemberWithCallSignature {
+namespace MemberWithCallSignature {
     interface Base { // T
         // M's
         a: {
->a : { (x: "a"): void; (x: string): void; }
+>a : { (x: 'a'): void; (x: string): void; }
 
             (x: 'a'): void;
 >x : "a"
@@ -68,7 +68,7 @@ module MemberWithCallSignature {
 >x : string
         }
         a2: {
->a2 : { (x: "a", y: number): void; (x: string, y: number): void; }
+>a2 : { (x: 'a', y: number): void; (x: string, y: number): void; }
 
             (x: 'a', y: number): void;
 >x : "a"
@@ -103,7 +103,7 @@ module MemberWithCallSignature {
     interface Base2 { // T
         // M's
         a: {
->a : { (x: "a"): number; (x: string): number; }
+>a : { (x: 'a'): number; (x: string): number; }
 
             (x: 'a'): number;
 >x : "a"

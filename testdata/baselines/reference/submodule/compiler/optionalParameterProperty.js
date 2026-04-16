@@ -2,7 +2,7 @@
 
 //// [optionalParameterProperty.ts]
 class C {
-    p: number;
+    p: number = 0;
 }
 
 class D extends C { 
@@ -13,11 +13,13 @@ class D extends C {
 
 
 //// [optionalParameterProperty.js]
+"use strict";
 class C {
-    p;
+    constructor() {
+        this.p = 0;
+    }
 }
 class D extends C {
-    p;
     constructor(p) {
         super();
         this.p = p;

@@ -161,56 +161,49 @@ Config File Names::
   "method": "workspace/didChangeConfiguration",
   "params": {
     "settings": {
-      "typescript": {
-        "QuotePreference": "",
-        "LazyConfiguredProjectsFromExternalProject": false,
-        "MaximumHoverLength": 0,
-        "IncludeCompletionsForModuleExports": null,
-        "IncludeCompletionsForImportStatements": null,
-        "IncludeAutomaticOptionalChainCompletions": null,
-        "IncludeCompletionsWithSnippetText": null,
-        "IncludeCompletionsWithClassMemberSnippets": null,
-        "IncludeCompletionsWithObjectLiteralMethodSnippets": null,
-        "JsxAttributeCompletionStyle": "",
-        "ImportModuleSpecifierPreference": "",
-        "ImportModuleSpecifierEnding": "",
-        "IncludePackageJsonAutoImports": "",
-        "AutoImportSpecifierExcludeRegexes": [],
-        "AutoImportFileExcludePatterns": [],
-        "PreferTypeOnlyAutoImports": null,
-        "OrganizeImportsIgnoreCase": null,
-        "OrganizeImportsCollation": false,
-        "OrganizeImportsLocale": "",
-        "OrganizeImportsNumericCollation": false,
-        "OrganizeImportsAccentCollation": false,
-        "OrganizeImportsCaseFirst": 0,
-        "OrganizeImportsTypeOrder": 0,
-        "AllowTextChangesInNewFiles": false,
-        "UseAliasesForRename": null,
-        "AllowRenameOfImportPath": null,
-        "ProvideRefactorNotApplicableReason": false,
-        "InlayHints": {
-          "IncludeInlayParameterNameHints": "",
-          "IncludeInlayParameterNameHintsWhenArgumentMatchesName": false,
-          "IncludeInlayFunctionParameterTypeHints": false,
-          "IncludeInlayVariableTypeHints": false,
-          "IncludeInlayVariableTypeHintsWhenTypeMatchesName": false,
-          "IncludeInlayPropertyDeclarationTypeHints": false,
-          "IncludeInlayFunctionLikeReturnTypeHints": false,
-          "IncludeInlayEnumMemberValueHints": false
+      "js/ts": {
+        "format": {
+          "baseIndentSize": 0,
+          "indentSize": 0,
+          "indentStyle": 0,
+          "newLineCharacter": "",
+          "semicolons": "",
+          "tabSize": 0
         },
-        "CodeLens": {
-          "ReferencesCodeLensEnabled": true,
-          "ImplementationsCodeLensEnabled": true,
-          "ReferencesCodeLensShowOnAllFunctions": true,
-          "ImplementationsCodeLensShowOnInterfaceMethods": true,
-          "ImplementationsCodeLensShowOnAllClassMethods": true
+        "implementationsCodeLens": {
+          "enabled": true,
+          "showOnAllClassMethods": true,
+          "showOnInterfaceMethods": true
         },
-        "ExcludeLibrarySymbolsInNavTo": false,
-        "DisableSuggestions": false,
-        "DisableLineTextInReferences": false,
-        "DisplayPartsForJSDoc": false,
-        "ReportStyleChecksAsWarnings": false
+        "inlayHints": {
+          "parameterNames": {
+            "enabled": ""
+          }
+        },
+        "native-preview": {
+          "customConfigFileName": ""
+        },
+        "preferences": {
+          "importModuleSpecifier": "",
+          "importModuleSpecifierEnding": "",
+          "includePackageJsonAutoImports": "",
+          "jsxAttributeCompletionStyle": "",
+          "organizeImports": {
+            "caseFirst": "default",
+            "locale": "",
+            "typeOrder": "auto",
+            "unicodeCollation": "ordinal"
+          },
+          "quoteStyle": ""
+        },
+        "referencesCodeLens": {
+          "enabled": true,
+          "showOnAllFunctions": true
+        },
+        "unstable": {
+          "maximumHoverLength": 0,
+          "preferGoToSourceDefinition": false
+        }
       }
     }
   }
@@ -609,56 +602,69 @@ Config::
   "method": "workspace/didChangeConfiguration",
   "params": {
     "settings": {
-      "typescript": {
-        "QuotePreference": "",
-        "LazyConfiguredProjectsFromExternalProject": false,
-        "MaximumHoverLength": 0,
-        "IncludeCompletionsForModuleExports": true,
-        "IncludeCompletionsForImportStatements": true,
-        "IncludeAutomaticOptionalChainCompletions": null,
-        "IncludeCompletionsWithSnippetText": true,
-        "IncludeCompletionsWithClassMemberSnippets": null,
-        "IncludeCompletionsWithObjectLiteralMethodSnippets": null,
-        "JsxAttributeCompletionStyle": "",
-        "ImportModuleSpecifierPreference": "",
-        "ImportModuleSpecifierEnding": "",
-        "IncludePackageJsonAutoImports": "",
-        "AutoImportSpecifierExcludeRegexes": [],
-        "AutoImportFileExcludePatterns": [],
-        "PreferTypeOnlyAutoImports": null,
-        "OrganizeImportsIgnoreCase": null,
-        "OrganizeImportsCollation": false,
-        "OrganizeImportsLocale": "",
-        "OrganizeImportsNumericCollation": false,
-        "OrganizeImportsAccentCollation": false,
-        "OrganizeImportsCaseFirst": 0,
-        "OrganizeImportsTypeOrder": 0,
-        "AllowTextChangesInNewFiles": false,
-        "UseAliasesForRename": null,
-        "AllowRenameOfImportPath": true,
-        "ProvideRefactorNotApplicableReason": true,
-        "InlayHints": {
-          "IncludeInlayParameterNameHints": "",
-          "IncludeInlayParameterNameHintsWhenArgumentMatchesName": false,
-          "IncludeInlayFunctionParameterTypeHints": false,
-          "IncludeInlayVariableTypeHints": false,
-          "IncludeInlayVariableTypeHintsWhenTypeMatchesName": false,
-          "IncludeInlayPropertyDeclarationTypeHints": false,
-          "IncludeInlayFunctionLikeReturnTypeHints": false,
-          "IncludeInlayEnumMemberValueHints": false
+      "js/ts": {
+        "format": {
+          "baseIndentSize": 0,
+          "convertTabsToSpaces": true,
+          "indentSize": 4,
+          "indentStyle": 2,
+          "indentSwitchCase": true,
+          "insertSpaceAfterCommaDelimiter": true,
+          "insertSpaceAfterConstructor": false,
+          "insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+          "insertSpaceAfterKeywordsInControlFlowStatements": true,
+          "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+          "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+          "insertSpaceAfterSemicolonInForStatements": true,
+          "insertSpaceBeforeAndAfterBinaryOperators": true,
+          "insertSpaceBeforeFunctionParenthesis": false,
+          "newLineCharacter": "\n",
+          "placeOpenBraceOnNewLineForControlBlocks": false,
+          "placeOpenBraceOnNewLineForFunctions": false,
+          "semicolons": "ignore",
+          "tabSize": 4,
+          "trimTrailingWhitespace": true
         },
-        "CodeLens": {
-          "ReferencesCodeLensEnabled": false,
-          "ImplementationsCodeLensEnabled": false,
-          "ReferencesCodeLensShowOnAllFunctions": false,
-          "ImplementationsCodeLensShowOnInterfaceMethods": false,
-          "ImplementationsCodeLensShowOnAllClassMethods": false
+        "inlayHints": {
+          "parameterNames": {
+            "enabled": ""
+          }
         },
-        "ExcludeLibrarySymbolsInNavTo": true,
-        "DisableSuggestions": false,
-        "DisableLineTextInReferences": true,
-        "DisplayPartsForJSDoc": true,
-        "ReportStyleChecksAsWarnings": true
+        "native-preview": {
+          "customConfigFileName": ""
+        },
+        "preferences": {
+          "importModuleSpecifier": "",
+          "importModuleSpecifierEnding": "",
+          "includePackageJsonAutoImports": "",
+          "jsxAttributeCompletionStyle": "",
+          "organizeImports": {
+            "caseFirst": "default",
+            "locale": "",
+            "typeOrder": "auto",
+            "unicodeCollation": "ordinal"
+          },
+          "quoteStyle": ""
+        },
+        "suggest": {
+          "autoImports": true,
+          "includeCompletionsForImportStatements": true
+        },
+        "unstable": {
+          "allowRenameOfImportPath": true,
+          "disableLineTextInReferences": true,
+          "displayPartsForJSDoc": true,
+          "maximumHoverLength": 0,
+          "preferGoToSourceDefinition": false,
+          "provideRefactorNotApplicableReason": true,
+          "reportStyleChecksAsWarnings": true
+        },
+        "workspaceSymbols": {
+          "excludeLibrarySymbols": true
+        }
       }
     }
   }

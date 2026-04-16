@@ -19,6 +19,7 @@ class C3 {
 }
 
 //// [declarationEmitDestructuringParameterProperties.js]
+"use strict";
 class C1 {
     constructor([x, y, z]) {
     }
@@ -35,10 +36,16 @@ class C3 {
 
 //// [declarationEmitDestructuringParameterProperties.d.ts]
 declare class C1 {
+    x: string;
+    y: string;
+    z: string;
     constructor([x, y, z]: string[]);
 }
 type TupleType1 = [string, number, boolean];
 declare class C2 {
+    x: string;
+    y: number;
+    z: boolean;
     constructor([x, y, z]: TupleType1);
 }
 type ObjType1 = {
@@ -47,5 +54,8 @@ type ObjType1 = {
     z: boolean;
 };
 declare class C3 {
+    x: number;
+    y: string;
+    z: boolean;
     constructor({ x, y, z }: ObjType1);
 }

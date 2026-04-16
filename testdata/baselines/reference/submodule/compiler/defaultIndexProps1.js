@@ -15,8 +15,11 @@ var q2 = o["v"];
 
 
 //// [defaultIndexProps1.js]
+"use strict";
 class Foo {
-    v = "Yo";
+    constructor() {
+        this.v = "Yo";
+    }
 }
 var f = new Foo();
 var q = f["v"];

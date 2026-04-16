@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/innerModExport1.ts] ////
 
 //// [innerModExport1.ts]
-module Outer {
+namespace Outer {
 
     // inner mod 1
     var non_export_var: number;
@@ -22,6 +22,7 @@ module Outer {
 Outer.ExportFunc();
 
 //// [innerModExport1.js]
+"use strict";
 var Outer;
 (function (Outer) {
     // inner mod 1
@@ -29,10 +30,9 @@ var Outer;
     module;
     {
         var non_export_var = 0;
-        Outer.export_var = 1;
+        export var export_var = 1;
         function NonExportFunc() { return 0; }
-        function ExportFunc() { return 0; }
-        Outer.ExportFunc = ExportFunc;
+        export function ExportFunc() { return 0; }
     }
     Outer.outer_var_export = 0;
     function outerFuncExport() { return 0; }

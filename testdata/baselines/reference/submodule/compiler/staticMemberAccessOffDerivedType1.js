@@ -12,11 +12,12 @@ class P extends SomeBase {
 
 
 //// [staticMemberAccessOffDerivedType1.js]
+"use strict";
 class SomeBase {
     static GetNumber() {
         return 2;
     }
 }
 class P extends SomeBase {
-    static SomeNumber = P.GetNumber();
 }
+P.SomeNumber = P.GetNumber();

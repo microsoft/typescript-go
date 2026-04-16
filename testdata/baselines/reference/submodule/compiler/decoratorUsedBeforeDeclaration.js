@@ -76,6 +76,7 @@ class Greeter1 {
 
 
 //// [decoratorUsedBeforeDeclaration.js]
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -86,7 +87,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 let Greeter = class Greeter {
-    greeting;
     constructor(message) {
         this.greeting = message;
     }
@@ -135,7 +135,6 @@ var Enum;
 })(Enum || (Enum = {}));
 const lambda = (...args) => { };
 let Greeter1 = class Greeter1 {
-    greeting;
     constructor(message) {
         this.greeting = message;
     }

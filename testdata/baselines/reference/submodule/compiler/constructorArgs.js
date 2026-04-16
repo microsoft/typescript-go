@@ -18,12 +18,12 @@ class Sub extends Super {
 
 
 //// [constructorArgs.js]
+"use strict";
 class Super {
     constructor(value) {
     }
 }
 class Sub extends Super {
-    options;
     constructor(options) {
         super(options.value);
         this.options = options;

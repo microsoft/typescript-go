@@ -23,12 +23,12 @@ class Derived extends Base {
 }
 
 //// [superCallsInConstructor.js]
+"use strict";
 class C {
     foo() { }
     bar() { }
 }
 class Base {
-    x;
 }
 class Derived extends Base {
     constructor() {

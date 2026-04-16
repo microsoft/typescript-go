@@ -42,13 +42,13 @@ var resultIsObject11 = (STRING.toLowerCase(), new CLASS());
 
 
 //// [commaOperatorWithSecondOperandObjectType.js]
+"use strict";
 var ANY;
 var BOOLEAN;
 var NUMBER;
 var STRING;
 var OBJECT;
 class CLASS {
-    num;
 }
 //The second operand type is Object
 ANY, OBJECT;

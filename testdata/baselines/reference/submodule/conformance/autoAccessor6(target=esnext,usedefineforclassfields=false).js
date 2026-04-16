@@ -15,11 +15,15 @@ class C3 extends C1 {
 
 
 //// [autoAccessor6.js]
+"use strict";
 class C1 {
     accessor a;
 }
 class C2 extends C1 {
-    a = 1;
+    constructor() {
+        super(...arguments);
+        this.a = 1;
+    }
 }
 class C3 extends C1 {
     get a() { return super.a; }

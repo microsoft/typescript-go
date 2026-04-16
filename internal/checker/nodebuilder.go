@@ -2,14 +2,27 @@ package checker
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
 type NodeBuilder struct {
 	ctxStack  []*NodeBuilderContext
-	basicHost Host
+	host      Host
 	impl      *NodeBuilderImpl
+	verbosity *VerbosityContext // nil for non-hover callers
+}
+
+// VerbosityContext controls hover-expansion behavior in the node builder.
+// A nil VerbosityContext means no expansion (non-hover callers).
+// Level 0 = default hover (maxExpansionDepth = 0; detects expandability without expanding).
+// Level 1+ = expansion enabled (maxExpansionDepth = Level).
+type VerbosityContext struct {
+	Level                int  // 0 = default (no expansion), 1+ = expansion depth
+	MaxTruncationLength  int  // 0 = use default
+	CanIncreaseVerbosity bool // output: whether increasing Level would reveal more
+	Truncated            bool // output: whether output was truncated
 }
 
 // EmitContext implements NodeBuilderInterface.
@@ -18,11 +31,20 @@ func (b *NodeBuilder) EmitContext() *printer.EmitContext {
 }
 
 func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) {
+	verbosityLevel := -1
+	maxTruncationLength := 0
+	if b.verbosity != nil {
+		verbosityLevel = b.verbosity.Level
+		maxTruncationLength = b.verbosity.MaxTruncationLength
+	}
 	b.ctxStack = append(b.ctxStack, b.impl.ctx)
 	b.impl.ctx = &NodeBuilderContext{
+		host:                     b.host,
 		tracker:                  tracker,
 		flags:                    flags,
 		internalFlags:            internalFlags,
+		maxExpansionDepth:        verbosityLevel,
+		maxTruncationLength:      maxTruncationLength,
 		enclosingDeclaration:     enclosingDeclaration,
 		enclosingFile:            ast.GetSourceFileOfNode(enclosingDeclaration),
 		inferTypeParameters:      make([]*Type, 0),
@@ -32,15 +54,21 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 		enclosingSymbolTypes:     make(map[ast.SymbolId]*Type),
 		remappedSymbolReferences: make(map[ast.SymbolId]*ast.Symbol),
 	}
-	// TODO: always provide this; see https://github.com/microsoft/typescript-go/pull/1588#pullrequestreview-3125218673
-	var moduleResolverHost Host
-	if tracker != nil {
-		moduleResolverHost = tracker.GetModuleSpecifierGenerationHost()
-	} else if internalFlags&nodebuilder.InternalFlagsDoNotIncludeSymbolChain != 0 {
-		moduleResolverHost = b.basicHost
-	}
-	tracker = NewSymbolTrackerImpl(b.impl.ctx, tracker, moduleResolverHost)
+	tracker = NewSymbolTrackerImpl(b.impl.ctx, tracker)
 	b.impl.ctx.tracker = tracker
+}
+
+// propagateVerbosityOut copies expansion signals from the context to the VerbosityContext output.
+func (b *NodeBuilder) propagateVerbosityOut() {
+	if b.verbosity != nil {
+		// Only set to true, never clear — multiple calls share the same VerbosityContext
+		if b.impl.ctx.canIncreaseExpansionDepth {
+			b.verbosity.CanIncreaseVerbosity = true
+		}
+		if b.impl.ctx.expansionTruncated {
+			b.verbosity.Truncated = true
+		}
+	}
 }
 
 func (b *NodeBuilder) popContext() {
@@ -54,6 +82,7 @@ func (b *NodeBuilder) popContext() {
 }
 
 func (b *NodeBuilder) exitContext(result *ast.Node) *ast.Node {
+	b.propagateVerbosityOut()
 	b.exitContextCheck()
 	defer b.popContext()
 	if b.impl.ctx.encounteredError {
@@ -63,6 +92,7 @@ func (b *NodeBuilder) exitContext(result *ast.Node) *ast.Node {
 }
 
 func (b *NodeBuilder) exitContextSlice(result []*ast.Node) []*ast.Node {
+	b.propagateVerbosityOut()
 	b.exitContextCheck()
 	defer b.popContext()
 	if b.impl.ctx.encounteredError {
@@ -87,12 +117,7 @@ func (b *NodeBuilder) IndexInfoToIndexSignatureDeclaration(info *IndexInfo, encl
 func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	signature := b.impl.ch.getSignatureFromDeclaration(signatureDeclaration)
-	symbol := b.impl.ch.getSymbolOfDeclaration(signatureDeclaration)
-	returnType, ok := b.impl.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
-	if !ok || returnType == nil {
-		returnType = b.impl.ch.instantiateType(b.impl.ch.getReturnTypeOfSignature(signature), b.impl.ctx.mapper)
-	}
-	return b.exitContext(b.impl.serializeInferredReturnTypeForSignature(signature, returnType))
+	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature, true))
 }
 
 func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
@@ -105,7 +130,7 @@ func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *
 // SerializeTypeForDeclaration implements NodeBuilderInterface.
 func (b *NodeBuilder) SerializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
-	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol))
+	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol, true))
 }
 
 // SerializeTypeForExpression implements NodeBuilderInterface.
@@ -120,10 +145,77 @@ func (b *NodeBuilder) SignatureToSignatureDeclaration(signature *Signature, kind
 	return b.exitContext(b.impl.signatureToSignatureDeclarationHelper(signature, kind, nil))
 }
 
-// SymbolTableToDeclarationStatements implements NodeBuilderInterface.
-func (b *NodeBuilder) SymbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
-	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
-	return b.exitContextSlice(b.impl.symbolTableToDeclarationStatements(symbolTable))
+// ExpandSymbolForHover produces declaration nodes for a symbol with verbosity level support.
+func (b *NodeBuilder) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFlags) []*ast.Node {
+	b.enterContext(nil, nodebuilder.FlagsIgnoreErrors|nodebuilder.FlagsMultilineObjectLiterals|nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope, nodebuilder.InternalFlagsNone, nil)
+
+	// Push the declared type onto the type stack to prevent re-expansion.
+	// We push a nil sentinel after the real type so that isTypeOnStack
+	// (which skips the last element) still checks declaredType.
+	declaredType := b.impl.ch.getDeclaredTypeOfSymbol(symbol)
+	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, declaredType)
+	b.impl.ctx.typeStack = append(b.impl.ctx.typeStack, nil)
+
+	nodes := b.impl.expandSymbolForHover(symbol)
+
+	b.impl.ctx.typeStack = b.impl.ctx.typeStack[:len(b.impl.ctx.typeStack)-2]
+
+	b.propagateVerbosityOut()
+
+	// Simplify declarations by applying original modifiers
+	result := make([]*ast.Node, 0, len(nodes))
+	for _, node := range nodes {
+		switch node.Kind {
+		case ast.KindClassDeclaration:
+			result = append(result, simplifyClassDeclaration(b.impl.f, node, symbol))
+		case ast.KindEnumDeclaration:
+			result = append(result, simplifyModifiers(b.impl.f, node, ast.IsEnumDeclaration, symbol))
+		case ast.KindInterfaceDeclaration:
+			if meaning&ast.SymbolFlagsInterface != 0 {
+				result = append(result, simplifyModifiers(b.impl.f, node, ast.IsInterfaceDeclaration, symbol))
+			}
+		case ast.KindModuleDeclaration:
+			result = append(result, simplifyModifiers(b.impl.f, node, ast.IsModuleDeclaration, symbol))
+		}
+	}
+
+	return b.exitContextSlice(result)
+}
+
+func simplifyClassDeclaration(f *ast.NodeFactory, classDecl *ast.Node, symbol *ast.Symbol) *ast.Node {
+	classDeclarations := core.Filter(symbol.Declarations, ast.IsClassLike)
+	var originalClassDecl *ast.Node
+	if len(classDeclarations) > 0 {
+		originalClassDecl = classDeclarations[0]
+	} else {
+		originalClassDecl = classDecl
+	}
+	modifiers := originalClassDecl.ModifierFlags() & ^(ast.ModifierFlagsExport | ast.ModifierFlagsAmbient)
+	isAnonymous := ast.IsClassExpression(originalClassDecl)
+	if isAnonymous {
+		cd := classDecl.AsClassDeclaration()
+		classDecl = f.UpdateClassDeclaration(
+			cd,
+			classDecl.Modifiers(),
+			nil,
+			cd.TypeParameters,
+			cd.HeritageClauses,
+			cd.Members,
+		)
+	}
+	return ast.ReplaceModifiers(f, classDecl, f.NewModifierList(ast.CreateModifiersFromModifierFlags(modifiers, f.NewModifier)))
+}
+
+func simplifyModifiers(f *ast.NodeFactory, newDecl *ast.Node, isDeclKind func(*ast.Node) bool, symbol *ast.Symbol) *ast.Node {
+	decls := core.Filter(symbol.Declarations, isDeclKind)
+	var declWithModifiers *ast.Node
+	if len(decls) > 0 {
+		declWithModifiers = decls[0]
+	} else {
+		declWithModifiers = newDecl
+	}
+	modifiers := declWithModifiers.ModifierFlags() & ^(ast.ModifierFlagsExport | ast.ModifierFlagsAmbient)
+	return ast.ReplaceModifiers(f, newDecl, f.NewModifierList(ast.CreateModifiersFromModifierFlags(modifiers, f.NewModifier)))
 }
 
 // SymbolToEntityName implements NodeBuilderInterface.
@@ -177,10 +269,19 @@ func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, 
 // var _ NodeBuilderInterface = NewNodeBuilderAPI(nil, nil)
 
 func NewNodeBuilder(ch *Checker, e *printer.EmitContext) *NodeBuilder {
-	impl := newNodeBuilderImpl(ch, e)
-	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), basicHost: ch.program}
+	return NewNodeBuilderEx(ch, e, nil /*idToSymbol*/)
+}
+
+func NewNodeBuilderEx(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *NodeBuilder {
+	impl := newNodeBuilderImpl(ch, e, idToSymbol)
+	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
 }
 
 func (c *Checker) getNodeBuilder() *NodeBuilder {
-	return NewNodeBuilder(c, printer.NewEmitContext())
+	return c.getNodeBuilderEx(nil /*idToSymbol*/)
+}
+
+func (c *Checker) getNodeBuilderEx(idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *NodeBuilder {
+	b := NewNodeBuilderEx(c, printer.NewEmitContext(), idToSymbol)
+	return b
 }

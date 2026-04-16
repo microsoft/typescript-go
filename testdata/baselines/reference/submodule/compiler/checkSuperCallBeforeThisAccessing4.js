@@ -22,10 +22,10 @@ class Derived extends Based {
 }
 
 //// [checkSuperCallBeforeThisAccessing4.js]
+"use strict";
 class Based {
 }
 class Derived extends Based {
-    x;
     constructor() {
         (() => {
             this; // No error

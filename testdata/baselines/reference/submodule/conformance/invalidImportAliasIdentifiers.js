@@ -27,11 +27,11 @@ import i = I;
 
 
 //// [invalidImportAliasIdentifiers.js]
+"use strict";
 // none of these should work, since non are actually modules
 var V = 12;
 var v = V;
 class C {
-    name;
 }
 var c = C;
 var E;

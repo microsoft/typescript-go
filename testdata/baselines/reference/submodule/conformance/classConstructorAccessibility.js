@@ -17,7 +17,7 @@ var c = new C(1);
 var d = new D(1); // error
 var e = new E(1); // error
 
-module Generic {
+namespace Generic {
     class C<T> {
         public constructor(public x: T) { }
     }
@@ -37,20 +37,18 @@ module Generic {
 
 
 //// [classConstructorAccessibility.js]
+"use strict";
 class C {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class D {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class E {
-    x;
     constructor(x) {
         this.x = x;
     }
@@ -61,19 +59,16 @@ var e = new E(1); // error
 var Generic;
 (function (Generic) {
     class C {
-        x;
         constructor(x) {
             this.x = x;
         }
     }
     class D {
-        x;
         constructor(x) {
             this.x = x;
         }
     }
     class E {
-        x;
         constructor(x) {
             this.x = x;
         }

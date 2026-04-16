@@ -16,10 +16,14 @@ function foo(name: any): Z {
 
 
 //// [overloadOnConstConstraintChecks4.js]
+"use strict";
 class Z {
 }
 class A extends Z {
-    x = 1;
+    constructor() {
+        super(...arguments);
+        this.x = 1;
+    }
 }
 class B extends A {
 }

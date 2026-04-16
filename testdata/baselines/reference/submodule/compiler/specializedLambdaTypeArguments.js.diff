@@ -1,9 +1,0 @@
---- old.specializedLambdaTypeArguments.js
-+++ new.specializedLambdaTypeArguments.js
-@@= skipped -9, +9 lines =@@
-
- //// [specializedLambdaTypeArguments.js]
- class X {
-+    prop;
- }
- var a;

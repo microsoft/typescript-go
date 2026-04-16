@@ -5,6 +5,9 @@
 
 
 //// [classExpressionWithStaticPropertiesES64.js]
-(class {
-    static x = 0;
-});
+"use strict";
+var _a;
+(_a = class {
+    },
+    _a.x = 0,
+    _a);

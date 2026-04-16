@@ -106,12 +106,12 @@ var b9: { fn(): Derived };
 var a10: { fn(a?: Base): void };
 >a10 : { fn(a?: Base): void; }
 >fn : (a?: Base) => void
->a : Base
+>a : Base | undefined
 
 var b10: { fn(a?: Derived): void };
 >b10 : { fn(a?: Derived): void; }
 >fn : (a?: Derived) => void
->a : Derived
+>a : Derived | undefined
 
 var a11: { fn(...a: Base[]): void };
 >a11 : { fn(...a: Base[]): void; }

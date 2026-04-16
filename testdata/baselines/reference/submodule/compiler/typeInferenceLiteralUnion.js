@@ -39,12 +39,8 @@ extentMixed = extent([new NumCoercible(10), 13, '12', true]);
 
 
 //// [typeInferenceLiteralUnion.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.extent = extent;
 // Not very useful, but meets Numeric
 class NumCoercible {
-    a;
     constructor(a) {
         this.a = a;
     }
@@ -55,7 +51,7 @@ class NumCoercible {
 /**
  * Return the min and max simultaneously.
  */
-function extent(array) {
+export function extent(array) {
     return [undefined, undefined];
 }
 let extentMixed;

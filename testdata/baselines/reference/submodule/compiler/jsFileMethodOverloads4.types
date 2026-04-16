@@ -31,5 +31,5 @@ Foo.prototype.bar = function (a, b) { }
 >bar : any
 >function (a, b) { } : (a: string | number, b?: string) => void
 >a : string | number
->b : string
+>b : string | undefined
 

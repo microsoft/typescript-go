@@ -12,6 +12,7 @@ import (
 	"sync"
 	"testing/fstest"
 	"time"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -250,6 +251,11 @@ type brokenSymlinkError struct {
 
 func (e *brokenSymlinkError) Error() string {
 	return fmt.Sprintf("broken symlink %q -> %q", e.from, e.to)
+}
+
+func isBrokenSymlinkError(err error) bool {
+	_, ok := errors.AsType[*brokenSymlinkError](err)
+	return ok
 }
 
 func (m *MapFS) getFollowingSymlinksWorker(p canonicalPath, symlinkFrom, symlinkTo canonicalPath) (*fstest.MapFile, canonicalPath, error) {
@@ -493,7 +499,18 @@ func (m *MapFS) MkdirAll(path string, perm fs.FileMode) error {
 	return m.mkdirAll(path, perm)
 }
 
-func (m *MapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
+func (m *MapFS) AddSymlink(path string, target string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	canonical := m.getCanonicalPath(path)
+	m.setEntry(path, canonical, fstest.MapFile{
+		Data: []byte(target),
+		Mode: fs.ModeSymlink,
+	})
+}
+
+func (m *MapFS) WriteFile(path string, data string, perm fs.FileMode) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -510,8 +527,7 @@ func (m *MapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	file, cp, err := m.getFollowingSymlinks(m.getCanonicalPath(path))
 	if err != nil {
-		var brokenSymlinkError *brokenSymlinkError
-		if !errors.Is(err, fs.ErrNotExist) && !errors.As(err, &brokenSymlinkError) {
+		if !errors.Is(err, fs.ErrNotExist) && !isBrokenSymlinkError(err) {
 			// No other errors are possible.
 			panic(err)
 		}
@@ -522,7 +538,7 @@ func (m *MapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	}
 
 	m.setEntry(path, cp, fstest.MapFile{
-		Data:    data,
+		Data:    unsafe.Slice(unsafe.StringData(data), len(data)),
 		ModTime: m.clock.Now(),
 		Mode:    perm &^ umask,
 	})

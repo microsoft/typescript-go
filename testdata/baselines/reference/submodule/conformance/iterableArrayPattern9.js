@@ -18,12 +18,11 @@ class FooIterator {
 }
 
 //// [iterableArrayPattern9.js]
+"use strict";
 function fun([a, b] = new FooIterator) { }
 class Bar {
-    x;
 }
 class Foo extends Bar {
-    y;
 }
 class FooIterator {
     next() {

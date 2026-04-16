@@ -10,7 +10,10 @@ async function func(): Promise<void> {
 }
 
 //// [awaitClassExpression_es6.js]
-async function func() {
-    class D extends (await p) {
-    }
+"use strict";
+function func() {
+    return __awaiter(this, void 0, void 0, function* () {
+        class D extends (yield p) {
+        }
+    });
 }

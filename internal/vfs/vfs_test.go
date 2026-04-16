@@ -24,7 +24,7 @@ func BenchmarkReadFile(b *testing.B) {
 	const smallData = "hello, world"
 	tmpdir := tspath.NormalizeSlashes(b.TempDir())
 	osSmallDataPath := tspath.CombinePaths(tmpdir, "foo.ts")
-	err := osFS.WriteFile(osSmallDataPath, smallData, false)
+	err := osFS.WriteFile(osSmallDataPath, smallData)
 	assert.NilError(b, err)
 
 	tests := []bench{
@@ -37,7 +37,7 @@ func BenchmarkReadFile(b *testing.B) {
 	}
 
 	if repo.TypeScriptSubmoduleExists() {
-		checkerPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler", "checker.ts")
+		checkerPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath()), "src", "compiler", "checker.ts")
 
 		checkerContents, ok := osFS.ReadFile(checkerPath)
 		assert.Assert(b, ok)

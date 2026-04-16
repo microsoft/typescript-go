@@ -27,9 +27,9 @@ class A {
 
 
 //// [privateNameStaticFieldDestructuredBinding.js]
+"use strict";
 class A {
     static #field = 1;
-    otherClass = A;
     testObject() {
         return { x: 10, y: 6 };
     }
@@ -37,6 +37,7 @@ class A {
         return [10, 11];
     }
     constructor() {
+        this.otherClass = A;
         let y;
         ({ x: A.#field, y } = this.testObject());
         ([A.#field, y] = this.testArray());

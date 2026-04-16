@@ -31,7 +31,7 @@ var a: A;
 var r = a.a;
 
 // generic interfaces in a module
-module M {
+namespace M {
     class C<T> {
         a: T;
     }
@@ -57,19 +57,14 @@ module M {
 }
 
 //// [mergedInterfacesWithMultipleBases.js]
+"use strict";
 // merged interfaces behave as if all extends clauses from each declaration are merged together
 // no errors expected
 class C {
-    a;
 }
 class C2 {
-    b;
 }
 class D {
-    a;
-    b;
-    y;
-    z;
 }
 var a;
 var r = a.a;
@@ -77,15 +72,9 @@ var r = a.a;
 var M;
 (function (M) {
     class C {
-        a;
     }
     class C2 {
-        b;
     }
     class D {
-        a;
-        b;
-        y;
-        z;
     }
 })(M || (M = {}));

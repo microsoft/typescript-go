@@ -19,6 +19,9 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 	_, sourceFile := l.getProgramAndFile(documentURI)
 	res := l.addNodeOutliningSpans(ctx, sourceFile)
 	res = append(res, l.addRegionOutliningSpans(ctx, sourceFile)...)
+	if lsproto.GetClientCapabilities(ctx).TextDocument.FoldingRange.LineFoldingOnly {
+		res = l.adjustFoldingEnd(res, sourceFile)
+	}
 	slices.SortFunc(res, func(a, b *lsproto.FoldingRange) int {
 		if c := cmp.Compare(a.StartLine, b.StartLine); c != 0 {
 			return c
@@ -26,6 +29,33 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 		return cmp.Compare(*a.StartCharacter, *b.StartCharacter)
 	})
 	return lsproto.FoldingRangesOrNull{FoldingRanges: &res}, nil
+}
+
+// adjustFoldingEnd adjusts the end line of folding ranges when the client signals lineFoldingOnly.
+// This mirrors the behavior of VS Code's built-in TypeScript extension (workaround for vscode#47240).
+// When lineFoldingOnly is true, we hide lines from startLine+1 to endLine. And to keep closing
+// brackets/braces visible, we subtract 1 from endLine when the range ends with a closing pair character.
+func (l *LanguageService) adjustFoldingEnd(ranges []*lsproto.FoldingRange, sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
+	sourceText := sourceFile.Text()
+	result := make([]*lsproto.FoldingRange, 0, len(ranges))
+	for _, r := range ranges {
+		if r.EndCharacter != nil && *r.EndCharacter > 0 {
+			endOffset := int(l.converters.LineAndCharacterToPosition(sourceFile, lsproto.Position{
+				Line:      r.EndLine,
+				Character: *r.EndCharacter,
+			}))
+			if endOffset > 0 && endOffset <= len(sourceText) {
+				foldEndChar := sourceText[endOffset-1]
+				if foldEndChar == '}' || foldEndChar == ']' || foldEndChar == ')' || foldEndChar == '`' || foldEndChar == '>' {
+					if r.EndLine > r.StartLine {
+						r.EndLine--
+					}
+				}
+			}
+		}
+		result = append(result, r)
+	}
+	return result
 }
 
 func (l *LanguageService) addNodeOutliningSpans(ctx context.Context, sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
@@ -475,7 +505,7 @@ func spanForNode(ctx context.Context, node *ast.Node, open ast.Kind, useFullStar
 }
 
 func rangeBetweenTokens(ctx context.Context, openToken *ast.Node, closeToken *ast.Node, sourceFile *ast.SourceFile, useFullStart bool, l *LanguageService) *lsproto.FoldingRange {
-	var textRange *lsproto.Range
+	var textRange lsproto.Range
 	if useFullStart {
 		textRange = l.createLspRangeFromBounds(openToken.Pos(), closeToken.End(), sourceFile)
 	} else {
@@ -488,7 +518,7 @@ func supportsCollapsedText(ctx context.Context) bool {
 	return lsproto.GetClientCapabilities(ctx).TextDocument.FoldingRange.FoldingRange.CollapsedText
 }
 
-func createFoldingRange(ctx context.Context, textRange *lsproto.Range, foldingRangeKind lsproto.FoldingRangeKind, collapsedText string) *lsproto.FoldingRange {
+func createFoldingRange(ctx context.Context, textRange lsproto.Range, foldingRangeKind lsproto.FoldingRangeKind, collapsedText string) *lsproto.FoldingRange {
 	var kind *lsproto.FoldingRangeKind
 	if foldingRangeKind != "" {
 		kind = &foldingRangeKind

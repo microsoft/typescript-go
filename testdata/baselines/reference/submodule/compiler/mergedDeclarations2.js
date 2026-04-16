@@ -8,18 +8,18 @@ enum Foo {
     a = b
 }
 
-module Foo {
+namespace Foo {
     export var x = b
 }
 
 //// [mergedDeclarations2.js]
+"use strict";
 var Foo;
 (function (Foo) {
     Foo[Foo["b"] = 0] = "b";
 })(Foo || (Foo = {}));
 (function (Foo) {
-    Foo["a"] = b;
-    if (typeof Foo.a !== "string") Foo[Foo.a] = "a";
+    Foo[Foo["a"] = 0] = "a";
 })(Foo || (Foo = {}));
 (function (Foo) {
     Foo.x = b;

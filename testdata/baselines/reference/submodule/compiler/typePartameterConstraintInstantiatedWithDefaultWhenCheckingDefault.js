@@ -28,9 +28,9 @@ let test2: Test2<number>;
 
 
 //// [typePartameterConstraintInstantiatedWithDefaultWhenCheckingDefault.js]
+"use strict";
 // implement
 class Identity {
-    item;
     constructor(value) {
         this.item = value;
     }

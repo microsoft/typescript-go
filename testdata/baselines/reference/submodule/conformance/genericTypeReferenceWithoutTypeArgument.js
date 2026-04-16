@@ -25,7 +25,7 @@ class D extends C {
 
 interface I extends C {}
 
-module M {
+namespace M {
     export class E<T> { foo: T }
 }
 
@@ -40,10 +40,10 @@ var j = <C>null;
 var k = <M.E>null;
 
 //// [genericTypeReferenceWithoutTypeArgument.js]
+"use strict";
 // it is an error to use a generic type without type arguments
 // all of these are errors 
 class C {
-    foo;
 }
 var c;
 var a;
@@ -57,7 +57,6 @@ class D extends C {
 var M;
 (function (M) {
     class E {
-        foo;
     }
     M.E = E;
 })(M || (M = {}));

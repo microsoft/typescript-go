@@ -222,8 +222,6 @@ const (
 // Gets the precedence of an operator
 func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrecedenceFlags) OperatorPrecedence {
 	switch nodeKind {
-	case KindCommaListExpression:
-		return OperatorPrecedenceComma
 	case KindSpreadElement:
 		return OperatorPrecedenceSpread
 	case KindYieldExpression:
@@ -321,7 +319,8 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		KindOmittedExpression,
 		KindJsxElement,
 		KindJsxSelfClosingElement,
-		KindJsxFragment:
+		KindJsxFragment,
+		KindMissingDeclaration:
 		return OperatorPrecedencePrimary
 
 	// !!! By necessity, this differs from the old compiler to support emit. consider backporting
@@ -407,10 +406,10 @@ const (
 	// Conditional precedence (lowest)
 	//
 	//   Type[Extends]:
-	//       ConditionalType[?Extends]
+	//       ConditionalTypeNode[?Extends]
 	//
-	//   ConditionalType[Extends]:
-	//       [~Extends] UnionType `extends` Type[+Extends] `?` Type[~Extends] `:` Type[~Extends]
+	//   ConditionalTypeNode[Extends]:
+	//       [~Extends] UnionTypeNode `extends` Type[+Extends] `?` Type[~Extends] `:` Type[~Extends]
 	//
 	TypePrecedenceConditional TypePrecedence = iota
 
@@ -423,53 +422,53 @@ const (
 	// Function precedence
 	//
 	//   Type[Extends]:
-	//       ConditionalType[?Extends]
-	//       FunctionType[?Extends]
-	//       ConstructorType[?Extends]
+	//       ConditionalTypeNode[?Extends]
+	//       FunctionTypeNode[?Extends]
+	//       ConstructorTypeNode[?Extends]
 	//
-	//   ConditionalType[Extends]:
-	//       UnionType
+	//   ConditionalTypeNode[Extends]:
+	//       UnionTypeNode
 	//
-	//   FunctionType[Extends]:
+	//   FunctionTypeNode[Extends]:
 	//       TypeParameters? ArrowParameters `=>` Type[?Extends]
 	//
-	//   ConstructorType[Extends]:
+	//   ConstructorTypeNode[Extends]:
 	//       `abstract`? TypeParameters? ArrowParameters `=>` Type[?Extends]
 	//
 	TypePrecedenceFunction
 
 	// Union precedence
 	//
-	//   UnionType:
+	//   UnionTypeNode:
 	//       `|`? UnionTypeNoBar
 	//
 	//   UnionTypeNoBar:
-	//       IntersectionType
-	//       UnionTypeNoBar `|` IntersectionType
+	//       IntersectionTypeNode
+	//       UnionTypeNoBar `|` IntersectionTypeNode
 	//
 	TypePrecedenceUnion
 
 	// Intersection precedence
 	//
-	//   IntersectionType:
+	//   IntersectionTypeNode:
 	//       `&`? IntersectionTypeNoAmpersand
 	//
 	//   IntersectionTypeNoAmpersand:
-	//       TypeOperator
-	//       IntersectionTypeNoAmpersand `&` TypeOperator
+	//       TypeOperatorNode
+	//       IntersectionTypeNoAmpersand `&` TypeOperatorNode
 	//
 	TypePrecedenceIntersection
 
-	// TypeOperator precedence
+	// TypeOperatorNode precedence
 	//
-	//   TypeOperator:
+	//   TypeOperatorNode:
 	//     PostfixType
-	//     InferType
-	//     `keyof` TypeOperator
-	//     `unique` TypeOperator
+	//     InferTypeNode
+	//     `keyof` TypeOperatorNode
+	//     `unique` TypeOperatorNode
 	//     `readonly` PostfixType
 	//
-	//   InferType:
+	//   InferTypeNode:
 	//     `infer` BindingIdentifier
 	//     `infer` BindingIdentifier `extends` Type[+Extends]
 	//
@@ -479,17 +478,17 @@ const (
 	//
 	//   PostfixType:
 	//       NonArrayType
-	//       OptionalType
-	//       ArrayType
-	//       IndexedAccessType
+	//       OptionalTypeNode
+	//       ArrayTypeNode
+	//       IndexedAccessTypeNode
 	//
-	//   OptionalType:
+	//   OptionalTypeNode:
 	//       PostfixType `?`
 	//
-	//   ArrayType:
+	//   ArrayTypeNode:
 	//       PostfixType `[` `]`
 	//
-	//   IndexedAccessType:
+	//   IndexedAccessTypeNode:
 	//       PostfixType `[` Type[~Extends] `]`
 	//
 	TypePrecedencePostfix
@@ -498,16 +497,16 @@ const (
 	//
 	//   NonArrayType:
 	//       KeywordType
-	//       LiteralType
-	//       ThisType
+	//       LiteralTypeNode
+	//       ThisTypeNode
 	//       ImportType
-	//       TypeQuery
-	//       MappedType
-	//       TypeLiteral
-	//       TupleType
-	//       ParenthesizedType
-	//       TypePredicate
-	//       TypeReference
+	//       TypeQueryNode
+	//       MappedTypeNode
+	//       TypeLiteralNode
+	//       TupleTypeNode
+	//       ParenthesizedTypeNode
+	//       TypePredicateNode
+	//       TypeReferenceNode
 	//       TemplateType
 	//
 	//   KeywordType: one of
@@ -515,7 +514,7 @@ const (
 	//       `symbol`    `boolean` `undefined` `never`  `object`
 	//       `intrinsic` `void`
 	//
-	//   LiteralType:
+	//   LiteralTypeNode:
 	//       StringLiteral
 	//       NoSubstitutionTemplateLiteral
 	//       NumericLiteral
@@ -526,7 +525,7 @@ const (
 	//       `false`
 	//       `null`
 	//
-	//   ThisType:
+	//   ThisTypeNode:
 	//       `this`
 	//
 	//   ImportType:
@@ -539,9 +538,9 @@ const (
 	//   ImportTypeAttributes:
 	//       `{` `with` `:` ImportAttributes `,`? `}`
 	//
-	//   TypeQuery:
+	//   TypeQueryNode:
 	//
-	//   MappedType:
+	//   MappedTypeNode:
 	//       `{` MappedTypePrefix? MappedTypePropertyName MappedTypeSuffix? `:` Type[~Extends] `;` `}`
 	//
 	//   MappedTypePrefix:
@@ -558,7 +557,7 @@ const (
 	//       `+` `?`
 	//       `-` `?`
 	//
-	//   TypeLiteral:
+	//   TypeLiteralNode:
 	//       `{` TypeElementList `}`
 	//
 	//   TypeElementList:
@@ -566,30 +565,30 @@ const (
 	//       TypeElementList TypeElement
 	//
 	//   TypeElement:
-	//       PropertySignature
-	//       MethodSignature
-	//       IndexSignature
-	//       CallSignature
-	//       ConstructSignature
+	//       PropertySignatureDeclaration
+	//       MethodSignatureDeclaration
+	//       IndexSignatureDeclaration
+	//       CallSignatureDeclaration
+	//       ConstructSignatureDeclaration
 	//
-	//   PropertySignature:
+	//   PropertySignatureDeclaration:
 	//       PropertyName `?`? TypeAnnotation? `;`
 	//
-	//   MethodSignature:
+	//   MethodSignatureDeclaration:
 	//       PropertyName `?`? TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;`
-	//       `get` PropertyName TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;` // GetAccessor
-	//       `set` PropertyName TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;` // SetAccessor
+	//       `get` PropertyName TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;` // GetAccessorDeclaration
+	//       `set` PropertyName TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;` // SetAccessorDeclaration
 	//
-	//   IndexSignature:
+	//   IndexSignatureDeclaration:
 	//       `[` IdentifierName`]` TypeAnnotation `;`
 	//
-	//   CallSignature:
+	//   CallSignatureDeclaration:
 	//       TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;`
 	//
-	//   ConstructSignature:
+	//   ConstructSignatureDeclaration:
 	//       `new` TypeParameters? `(` FormalParameterList `)` TypeAnnotation? `;`
 	//
-	//   TupleType:
+	//   TupleTypeNode:
 	//       `[` `]`
 	//       `[` NamedTupleElementTypes `,`? `]`
 	//       `[` TupleElementTypes `,`? `]`
@@ -608,16 +607,16 @@ const (
 	//
 	//   TupleElementType:
 	//       Type[~Extends]
-	//       OptionalType
-	//       RestType
+	//       OptionalTypeNode
+	//       RestTypeNode
 	//
-	//   RestType:
+	//   RestTypeNode:
 	//       `...` Type[~Extends]
 	//
-	//   ParenthesizedType:
+	//   ParenthesizedTypeNode:
 	//       `(` Type[~Extends] `)`
 	//
-	//   TypePredicate:
+	//   TypePredicateNode:
 	//       `asserts`? TypePredicateParameterName
 	//       `asserts`? TypePredicateParameterName `is` Type[~Extends]
 	//
@@ -625,7 +624,7 @@ const (
 	//       `this`
 	//       IdentifierReference
 	//
-	//   TypeReference:
+	//   TypeReferenceNode:
 	//       EntityName TypeArguments?
 	//
 	//   TemplateType:
@@ -668,8 +667,8 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 	case KindTypeOperator:
 		return TypePrecedenceTypeOperator
 	case KindInferType:
-		if n.AsInferTypeNode().TypeParameter.AsTypeParameter().Constraint != nil {
-			// `infer T extends U` must be treated as FunctionType precedence as the `extends` clause eagerly consumes
+		if n.AsInferTypeNode().TypeParameter.AsTypeParameterDeclaration().Constraint != nil {
+			// `infer T extends U` must be treated as FunctionTypeNode precedence as the `extends` clause eagerly consumes
 			// TypeNode
 			return TypePrecedenceFunction
 		}
@@ -677,9 +676,10 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 	case KindIndexedAccessType, KindArrayType, KindOptionalType:
 		return TypePrecedencePostfix
 	case KindTypeQuery:
-		// TypeQuery is actually a NonArrayType, but we treat it as the same
-		// precedence as PostfixType
-		return TypePrecedencePostfix
+		// TypeQueryNode is actually a NonArrayType, but we treat it as TypeOperatorNode
+		// precedence so that it is parenthesized when used in a PostfixType
+		// context (e.g., `(typeof C)[]` instead of `typeof C[]`)
+		return TypePrecedenceTypeOperator
 	case KindAnyKeyword,
 		KindUnknownKeyword,
 		KindStringKeyword,

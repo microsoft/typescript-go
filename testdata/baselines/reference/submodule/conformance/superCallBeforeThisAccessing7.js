@@ -16,11 +16,11 @@ class D extends Base {
 
 
 //// [superCallBeforeThisAccessing7.js]
+"use strict";
 class Base {
     constructor(c) { }
 }
 class D extends Base {
-    _t;
     constructor() {
         let x = {
             j: this._t,

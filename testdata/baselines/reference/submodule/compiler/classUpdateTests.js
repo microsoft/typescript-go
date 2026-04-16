@@ -116,23 +116,23 @@ class R {
 }
 
 //// [classUpdateTests.js]
+"use strict";
 //
 // test codegen for instance properties
 //
 class A {
-    p1 = 0;
-    p2 = 0;
-    p3;
+    constructor() {
+        this.p1 = 0;
+        this.p2 = 0;
+    }
 }
 class B {
-    p1 = 0;
-    p2 = 0;
-    p3;
-    constructor() { }
+    constructor() {
+        this.p1 = 0;
+        this.p2 = 0;
+    }
 }
 class C {
-    p1;
-    p2;
     constructor(p1 = 0, p2 = 0, p3 = 0) {
         this.p1 = p1;
         this.p2 = p2;
@@ -144,14 +144,19 @@ class C {
 class D {
 }
 class E extends D {
-    p1 = 0;
+    constructor() {
+        super(...arguments);
+        this.p1 = 0;
+    }
 }
 class F extends E {
     constructor() { } // ERROR - super call required
 }
 class G extends D {
-    p1 = 0;
-    constructor() { super(); } // NO ERROR
+    constructor() {
+        super();
+        this.p1 = 0;
+    } // NO ERROR
 }
 class H {
     constructor() { super(); } // ERROR - no super call allowed
@@ -160,14 +165,12 @@ class I extends Object {
     constructor() { super(); } // ERROR - no super call allowed
 }
 class J extends G {
-    p1;
     constructor(p1) {
         super(); // NO ERROR
         this.p1 = p1;
     }
 }
 class K extends G {
-    p1;
     constructor(p1) {
         var i = 0;
         super();
@@ -175,14 +178,12 @@ class K extends G {
     }
 }
 class L extends G {
-    p1;
     constructor(p1) {
         super(); // NO ERROR
         this.p1 = p1;
     }
 }
 class M extends G {
-    p1;
     constructor(p1) {
         var i = 0;
         super();
@@ -193,9 +194,9 @@ class M extends G {
 // test this reference in field initializers
 //
 class N {
-    p1 = 0;
-    p2 = this.p1;
     constructor() {
+        this.p1 = 0;
+        this.p2 = this.p1;
         this.p2 = 0;
     }
 }
@@ -204,23 +205,21 @@ class N {
 //
 class O {
     constructor() {
+        this.p1 = 0; // ERROR
     }
-    p1 = 0; // ERROR
 }
 class P {
     constructor() {
+        this.p1 = 0; // ERROR
     }
-    p1 = 0; // ERROR
 }
 class Q {
     constructor() {
+        this.p1 = 0; // ERROR
     }
-    this;
-    p1 = 0; // ERROR
 }
 class R {
     constructor() {
+        this.p1 = 0; // ERROR
     }
-    this;
-    p1 = 0; // ERROR
 }

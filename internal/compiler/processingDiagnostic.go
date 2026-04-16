@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -49,7 +50,7 @@ func (d *processingDiagnostic) toDiagnostic(program *Program) *ast.Diagnostic {
 		case fileIncludeKindLibReferenceDirective:
 			libName := tspath.ToFileNameLowerCase(loc.ref.FileName)
 			unqualifiedLibName := strings.TrimSuffix(strings.TrimPrefix(libName, "lib."), ".d.ts")
-			suggestion := core.GetSpellingSuggestion(unqualifiedLibName, tsoptions.Libs, core.Identity)
+			suggestion := core.GetSpellingSuggestionForStrings(unqualifiedLibName, slices.Values(tsoptions.Libs))
 			return loc.diagnosticAt(core.IfElse(
 				suggestion != "",
 				diagnostics.Cannot_find_lib_definition_for_0_Did_you_mean_1,
@@ -102,7 +103,7 @@ func (d *processingDiagnostic) createDiagnosticExplainingFile(program *Program) 
 		for _, reason := range reasons {
 			processInclude(reason)
 		}
-		redirectInfo = program.includeProcessor.explainRedirectAndImpliedFormat(program, program.GetSourceFileByPath(diag.file), func(fileName string) string { return fileName })
+		redirectInfo = program.includeProcessor.explainRedirectAndImpliedFormat(program, diag.file, func(fileName string) string { return fileName })
 	}
 	if diag.diagnosticReason != nil {
 		processInclude(diag.diagnosticReason)

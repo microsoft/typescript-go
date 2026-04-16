@@ -1,11 +1,6 @@
 --- old.parserRealSource7.errors.txt
 +++ new.parserRealSource7.errors.txt
-@@= skipped -0, +0 lines =@@
--parserRealSource7.ts(4,21): error TS6053: File 'typescript.ts' not found.
- parserRealSource7.ts(12,38): error TS2304: Cannot find name 'ASTList'.
- parserRealSource7.ts(12,62): error TS2304: Cannot find name 'TypeLink'.
- parserRealSource7.ts(16,37): error TS2552: Cannot find name 'TypeLink'. Did you mean 'typeLink'?
-@@= skipped -10, +9 lines =@@
+@@= skipped -10, +10 lines =@@
  parserRealSource7.ts(34,68): error TS2304: Cannot find name 'TypeCollectionContext'.
  parserRealSource7.ts(35,25): error TS2304: Cannot find name 'ValueLocation'.
  parserRealSource7.ts(36,30): error TS2304: Cannot find name 'TypeLink'.
@@ -19,7 +14,7 @@
  parserRealSource7.ts(51,36): error TS2304: Cannot find name 'TypeLink'.
  parserRealSource7.ts(55,30): error TS2304: Cannot find name 'SignatureGroup'.
  parserRealSource7.ts(59,66): error TS2304: Cannot find name 'Type'.
-@@= skipped -35, +35 lines =@@
+@@= skipped -36, +36 lines =@@
  parserRealSource7.ts(155,55): error TS2304: Cannot find name 'VarFlags'.
  parserRealSource7.ts(162,51): error TS2339: Property 'getType' does not exist on type 'Symbol'.
  parserRealSource7.ts(165,28): error TS2304: Cannot find name 'ModuleType'.
@@ -93,22 +88,7 @@
  parserRealSource7.ts(535,53): error TS2304: Cannot find name 'VarFlags'.
  parserRealSource7.ts(535,75): error TS2304: Cannot find name 'VarFlags'.
  parserRealSource7.ts(539,38): error TS2304: Cannot find name 'SymbolFlags'.
-@@= skipped -86, +86 lines =@@
- parserRealSource7.ts(828,13): error TS2304: Cannot find name 'popTypeCollectionScope'.
-
-
--==== parserRealSource7.ts (304 errors) ====
-+==== parserRealSource7.ts (303 errors) ====
-     // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-     // See LICENSE.txt in the project root for complete license information.
-     
-     ///<reference path='typescript.ts' />
--                        ~~~~~~~~~~~~~
--!!! error TS6053: File 'typescript.ts' not found.
-     
-     module TypeScript {
-         export class Continuation {
-@@= skipped -72, +70 lines =@@
+@@= skipped -158, +158 lines =@@
              var fieldSymbol =
                  new FieldSymbol("prototype", ast.minChar,
                      ~~~~~~~~~~~
@@ -128,7 +108,7 @@
              signature.returnType = new TypeLink();
                                         ~~~~~~~~
  !!! error TS2304: Cannot find name 'TypeLink'.
-@@= skipped -181, +182 lines =@@
+@@= skipped -183, +184 lines =@@
      
              typeSymbol = new TypeSymbol(importDecl.id.text, importDecl.minChar,
                               ~~~~~~~~~~

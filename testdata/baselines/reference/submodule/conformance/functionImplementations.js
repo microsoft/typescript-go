@@ -159,6 +159,7 @@ var f12: (x: number) => any = x => { // should be (x: number) => Base | AnotherC
 }
 
 //// [functionImplementations.js]
+"use strict";
 // FunctionExpression with no return type annotation and no return statement returns void
 var v = function () { }();
 // FunctionExpression f with no return type annotation and directly references f in its body returns any
@@ -225,10 +226,8 @@ var n = function () {
 // A compile - time error occurs if no return statement expression has a type that is a supertype of each of the others.
 // FunctionExpression with no return type annotation with multiple return statements with subtype relation between returns
 class Base {
-    m;
 }
 class Derived extends Base {
-    q;
 }
 var b;
 var b = function () {
@@ -272,10 +271,8 @@ function f6() {
     return;
 }
 class Derived2 extends Base {
-    r;
 }
 class AnotherClass {
-    x;
 }
 // if f is a contextually typed function expression, the inferred return type is the union type
 // of the types of the return statement expressions in the function body, 

@@ -33,6 +33,7 @@ const test = (base) => {
 
 
 //// [base.js]
+"use strict";
 class Base {
     constructor() { }
 }
@@ -42,6 +43,7 @@ const BaseFactory = () => {
 BaseFactory.Base = Base;
 module.exports = BaseFactory;
 //// [file.js]
+"use strict";
 /** @typedef {import('./base')} BaseFactory */
 /**
  * @callback BaseFactoryFactory
@@ -83,4 +85,4 @@ declare const couldntThinkOfAny: {};
  * @param {InstanceType<BaseFactory["Base"]>} base
  * @returns {InstanceType<BaseFactory["Base"]>}
  */
-declare const test: (base: any) => any;
+declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;

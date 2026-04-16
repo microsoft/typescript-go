@@ -1,6 +1,6 @@
 --- old.newOperator.js
 +++ new.newOperator.js
-@@= skipped -78, +78 lines =@@
+@@= skipped -79, +79 lines =@@
  // Unresolved symbol
  var f = new q();
  // not legal
@@ -9,11 +9,3 @@
  // Can be an expression
  new String;
  new union;
-@@= skipped -9, +9 lines =@@
- var M;
- (function (M) {
-     class T {
-+        x;
-     }
-     M.T = T;
- })(M || (M = {}));
