@@ -62,7 +62,12 @@ type FourslashTest struct {
 	activeFilename          string
 	selectionEnd            *lsproto.Position
 
+	capabilities   *lsproto.ClientCapabilities
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
+
+	// Semantic token configuration
+	semanticTokenTypes     []string
+	semanticTokenModifiers []string
 }
 
 type scriptInfo struct {
@@ -81,8 +86,8 @@ func newScriptInfo(fileName string, content string) *scriptInfo {
 	}
 }
 
-func (s *scriptInfo) editContent(start int, end int, newText string) {
-	s.content = s.content[:start] + newText + s.content[end:]
+func (s *scriptInfo) editContent(change core.TextChange) {
+	s.content = change.ApplyTo(s.content)
 	s.lineMap = lsconv.ComputeLSPLineStarts(s.content)
 	s.version++
 }
@@ -150,7 +155,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		Target:              core.ScriptTargetLatestStandard,
 		Jsx:                 core.JsxEmitPreserve,
 	}
-	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
+	harnessOptions := harnessutil.HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: rootDir}
+	harnessutil.SetOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, &harnessOptions, rootDir, true /*allowUnknownOptions*/)
 	if commandLines := testData.GlobalOptions["tsc"]; commandLines != "" {
 		for commandLine := range strings.SplitSeq(commandLines, ",") {
 			tsctests.GetFileMapWithBuild(testfs, strings.Split(commandLine, " "))
@@ -159,7 +165,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	harnessutil.SkipUnsupportedCompilerOptions(t, compilerOptions)
 
-	fsFromMap := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
+	fsFromMap := vfstest.FromMap(testfs, harnessOptions.UseCaseSensitiveFileNames)
 	fs := bundled.WrapFS(fsFromMap)
 
 	serverOpts := lsp.ServerOptions{
@@ -190,6 +196,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:              converters,
 		baselines:               make(map[baselineCommand]*strings.Builder),
 		openFiles:               make(map[string]struct{}),
+		semanticTokenTypes:      defaultSemanticTokenTypes(),
+		semanticTokenModifiers:  defaultSemanticTokenModifiers(),
 	}
 	client, closeClient := lsptestutil.NewLSPClient(t, serverOpts, f.handleServerRequest)
 	f.client = client
@@ -309,6 +317,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
+	f.capabilities = params.Capabilities
 	resp, _, ok := lsptestutil.SendRequest(t, f.client, lsproto.InitializeInfo, params)
 	if !ok {
 		t.Fatalf("Initialize request failed")
@@ -321,6 +330,50 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	// Wait for the initial configuration exchange to complete
 	// The server will send workspace/configuration as part of handleInitialized
 	<-f.client.Server.InitComplete()
+}
+
+func defaultSemanticTokenTypes() []string {
+	return []string{
+		string(lsproto.SemanticTokenTypeNamespace),
+		string(lsproto.SemanticTokenTypeClass),
+		string(lsproto.SemanticTokenTypeEnum),
+		string(lsproto.SemanticTokenTypeInterface),
+		string(lsproto.SemanticTokenTypeStruct),
+		string(lsproto.SemanticTokenTypeTypeParameter),
+		string(lsproto.SemanticTokenTypeType),
+		string(lsproto.SemanticTokenTypeParameter),
+		string(lsproto.SemanticTokenTypeVariable),
+		string(lsproto.SemanticTokenTypeProperty),
+		string(lsproto.SemanticTokenTypeEnumMember),
+		string(lsproto.SemanticTokenTypeDecorator),
+		string(lsproto.SemanticTokenTypeEvent),
+		string(lsproto.SemanticTokenTypeFunction),
+		string(lsproto.SemanticTokenTypeMethod),
+		string(lsproto.SemanticTokenTypeMacro),
+		string(lsproto.SemanticTokenTypeLabel),
+		string(lsproto.SemanticTokenTypeComment),
+		string(lsproto.SemanticTokenTypeString),
+		string(lsproto.SemanticTokenTypeKeyword),
+		string(lsproto.SemanticTokenTypeNumber),
+		string(lsproto.SemanticTokenTypeRegexp),
+		string(lsproto.SemanticTokenTypeOperator),
+	}
+}
+
+func defaultSemanticTokenModifiers() []string {
+	return []string{
+		string(lsproto.SemanticTokenModifierDeclaration),
+		string(lsproto.SemanticTokenModifierDefinition),
+		string(lsproto.SemanticTokenModifierReadonly),
+		string(lsproto.SemanticTokenModifierStatic),
+		string(lsproto.SemanticTokenModifierDeprecated),
+		string(lsproto.SemanticTokenModifierAbstract),
+		string(lsproto.SemanticTokenModifierAsync),
+		string(lsproto.SemanticTokenModifierModification),
+		string(lsproto.SemanticTokenModifierDocumentation),
+		string(lsproto.SemanticTokenModifierDefaultLibrary),
+		"local",
+	}
 }
 
 // If modifying the defaults, update GetDefaultCapabilities too.
@@ -349,7 +402,8 @@ var (
 		LinkSupport: ptrTrue,
 	}
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
-		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+		ContentFormat:  &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+		VerbosityLevel: ptrTrue,
 	}
 	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
 		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
@@ -394,6 +448,12 @@ var (
 				lsproto.DiagnosticTagUnnecessary,
 				lsproto.DiagnosticTagDeprecated,
 			},
+		},
+	}
+	defaultWorkspaceEditCapabilities = &lsproto.WorkspaceEditClientCapabilities{
+		DocumentChanges: ptrTrue,
+		ResourceOperations: &[]lsproto.ResourceOperationKind{
+			lsproto.ResourceOperationKindRename,
 		},
 	}
 )
@@ -476,6 +536,15 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 		},
 		Workspace: &lsproto.WorkspaceClientCapabilities{
 			Configuration: ptrTrue,
+			FileOperations: &lsproto.FileOperationClientCapabilities{
+				WillRename: ptrTrue,
+			},
+			WorkspaceEdit: &lsproto.WorkspaceEditClientCapabilities{
+				DocumentChanges: ptrTrue,
+				ResourceOperations: &[]lsproto.ResourceOperationKind{
+					lsproto.ResourceOperationKindRename,
+				},
+			},
 		},
 	}
 }
@@ -500,8 +569,28 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
 		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = defaultPublishDiagnosticCapabilities
 	}
+	if capabilitiesWithDefaults.TextDocument.SemanticTokens == nil {
+		capabilitiesWithDefaults.TextDocument.SemanticTokens = &lsproto.SemanticTokensClientCapabilities{
+			Requests: &lsproto.ClientSemanticTokensRequestOptions{
+				Full: &lsproto.BooleanOrClientSemanticTokensRequestFullDelta{
+					Boolean: ptrTrue,
+				},
+			},
+			TokenTypes:     defaultSemanticTokenTypes(),
+			TokenModifiers: defaultSemanticTokenModifiers(),
+			Formats:        []lsproto.TokenFormat{lsproto.TokenFormatRelative},
+		}
+	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	}
+	if capabilitiesWithDefaults.Workspace.FileOperations == nil {
+		capabilitiesWithDefaults.Workspace.FileOperations = &lsproto.FileOperationClientCapabilities{
+			WillRename: ptrTrue,
+		}
+	}
+	if capabilitiesWithDefaults.Workspace.WorkspaceEdit == nil {
+		capabilitiesWithDefaults.Workspace.WorkspaceEdit = defaultWorkspaceEditCapabilities
 	}
 	if capabilitiesWithDefaults.Workspace.Configuration == nil {
 		capabilitiesWithDefaults.Workspace.Configuration = ptrTrue
@@ -2433,6 +2522,114 @@ func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedS
 	return result
 }
 
+type hoverWithVerbosity struct {
+	Hover          *lsproto.Hover `json:"hover"`
+	VerbosityLevel int            `json:"verbosityLevel"`
+}
+
+// hoverContentString extracts the text content from a hover response for comparison.
+func hoverContentString(hover *lsproto.Hover) string {
+	if hover == nil {
+		return ""
+	}
+	if hover.Contents.MarkupContent != nil {
+		return hover.Contents.MarkupContent.Value
+	}
+	if hover.Contents.String != nil {
+		return *hover.Contents.String
+	}
+	return ""
+}
+
+func (f *FourslashTest) VerifyBaselineHoverWithVerbosity(t *testing.T, verbosityLevels map[string][]int) {
+	var markersAndItems []markerAndItem[*hoverWithVerbosity]
+	for _, marker := range f.Markers() {
+		if marker.Name == nil {
+			continue
+		}
+		levels, ok := verbosityLevels[*marker.Name]
+		if !ok {
+			levels = []int{0}
+		}
+		for i, level := range levels {
+			var verbLevel *int32
+			if level > 0 {
+				verbLevel = new(int32(level))
+			}
+			params := &lsproto.HoverParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(marker.fileName),
+				},
+				Position:       marker.LSPosition,
+				VerbosityLevel: verbLevel,
+			}
+			result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+			item := &hoverWithVerbosity{
+				Hover:          result.Hover,
+				VerbosityLevel: level,
+			}
+			// If the previous level said it can't expand further, verify the hover
+			// content is identical, meaning the flag was accurate.
+			if i > 0 && level > levels[i-1] {
+				prevItem := markersAndItems[len(markersAndItems)-1].Item
+				if prevItem != nil && prevItem.Hover != nil && !prevItem.Hover.CanIncreaseVerbosity {
+					prevContent := hoverContentString(prevItem.Hover)
+					curContent := hoverContentString(item.Hover)
+					if prevContent != curContent {
+						t.Errorf("At marker %q: verbosity level %d response differs from level %d, but level %d had canIncreaseVerbosity=false.\n  level %d: %s\n  level %d: %s",
+							*marker.Name, level, levels[i-1], levels[i-1], levels[i-1], prevContent, level, curContent)
+					}
+				}
+			}
+			markersAndItems = append(markersAndItems, markerAndItem[*hoverWithVerbosity]{Marker: marker, Item: item})
+		}
+	}
+
+	getRange := func(item *hoverWithVerbosity) *lsproto.Range {
+		if item == nil || item.Hover == nil || item.Hover.Range == nil {
+			return nil
+		}
+		return item.Hover.Range
+	}
+
+	getTooltipLines := func(item, _prev *hoverWithVerbosity) []string {
+		if item == nil || item.Hover == nil {
+			return nil
+		}
+		var result []string
+
+		if item.Hover.Contents.MarkupContent != nil {
+			result = strings.Split(item.Hover.Contents.MarkupContent.Value, "\n")
+		}
+		if item.Hover.Contents.String != nil {
+			result = strings.Split(*item.Hover.Contents.String, "\n")
+		}
+		if item.Hover.Contents.MarkedStringWithLanguage != nil {
+			result = appendLinesForMarkedStringWithLanguage(result, item.Hover.Contents.MarkedStringWithLanguage)
+		}
+		if item.Hover.Contents.MarkedStrings != nil {
+			for _, ms := range *item.Hover.Contents.MarkedStrings {
+				if ms.MarkedStringWithLanguage != nil {
+					result = appendLinesForMarkedStringWithLanguage(result, ms.MarkedStringWithLanguage)
+				} else {
+					result = append(result, *ms.String)
+				}
+			}
+		}
+
+		result = append(result, fmt.Sprintf("(verbosity level: %d)", item.VerbosityLevel))
+
+		return result
+	}
+
+	f.addResultToBaseline(t, quickInfoCmd, annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.writeToBaseline(quickInfoCmd, jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.SignatureHelp], bool) {
 		if marker.Name == nil {
@@ -3297,19 +3494,35 @@ func (f *FourslashTest) typeText(t *testing.T, text string) {
 // Edits the script and updates marker and range positions accordingly.
 // This does not update the current caret position.
 func (f *FourslashTest) editScriptAndUpdateMarkers(t *testing.T, fileName string, editStart int, editEnd int, newText string) {
-	script := f.editScript(t, fileName, editStart, editEnd, newText)
-	for _, marker := range f.testData.Markers {
-		if marker.FileName() == fileName {
-			marker.Position = updatePosition(marker.Position, editStart, editEnd, newText)
-			marker.LSPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(marker.Position))
+	f.editScriptAndUpdateMarkersWorker(t, fileName, []core.TextChange{{TextRange: core.NewTextRange(editStart, editEnd), NewText: newText}})
+}
+
+func (f *FourslashTest) editScriptAndUpdateMarkersWorker(t *testing.T, fileName string, changes []core.TextChange) {
+	// Sort changes by position (ascending) so we can apply in reverse
+	sortedChanges := slices.Clone(changes)
+	slices.SortFunc(sortedChanges, func(a, b core.TextChange) int {
+		return a.Pos() - b.Pos()
+	})
+
+	// Apply changes in reverse order to preserve positions of earlier changes
+	for i := len(sortedChanges) - 1; i >= 0; i-- {
+		change := sortedChanges[i]
+		editStart := change.Pos()
+		editEnd := change.End()
+		script := f.editScript(t, fileName, change)
+		for _, marker := range f.testData.Markers {
+			if marker.FileName() == fileName {
+				marker.Position = updatePosition(marker.Position, editStart, editEnd, change.NewText)
+				marker.LSPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(marker.Position))
+			}
 		}
-	}
-	for _, rangeMarker := range f.testData.Ranges {
-		if rangeMarker.FileName() == fileName {
-			start := updatePosition(rangeMarker.Range.Pos(), editStart, editEnd, newText)
-			end := updatePosition(rangeMarker.Range.End(), editStart, editEnd, newText)
-			rangeMarker.Range = core.NewTextRange(start, end)
-			rangeMarker.LSRange = f.converters.ToLSPRange(script, rangeMarker.Range)
+		for _, rangeMarker := range f.testData.Ranges {
+			if rangeMarker.FileName() == fileName {
+				start := updatePosition(rangeMarker.Range.Pos(), editStart, editEnd, change.NewText)
+				end := updatePosition(rangeMarker.Range.End(), editStart, editEnd, change.NewText)
+				rangeMarker.Range = core.NewTextRange(start, end)
+				rangeMarker.LSRange = f.converters.ToLSPRange(script, rangeMarker.Range)
+			}
 		}
 	}
 	f.rangesByText = nil
@@ -3326,27 +3539,28 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 	return pos + len(newText) - (editEnd - editStart)
 }
 
-func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end int, newText string) *scriptInfo {
-	script := f.getScriptInfo(fileName)
-	changeRange := f.converters.ToLSPRange(script, core.NewTextRange(start, end))
+func (f *FourslashTest) editScript(t *testing.T, fileName string, change core.TextChange) *scriptInfo {
+	script := f.getOrLoadScriptInfo(fileName)
 	if script == nil {
 		panic(fmt.Sprintf("Script info for file %s not found", fileName))
 	}
 
-	script.editContent(start, end, newText)
+	changeRange := f.converters.ToLSPRange(script, core.NewTextRange(change.Pos(), change.End()))
+	script.editContent(change)
+	if err := f.vfs.WriteFile(fileName, script.content); err != nil {
+		t.Fatalf("failed to write to VFS for %s: %v", fileName, err)
+	}
 	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
 			Uri:     lsconv.FileNameToDocumentURI(fileName),
 			Version: script.version,
 		},
-		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
-			{
-				Partial: &lsproto.TextDocumentContentChangePartial{
-					Range: changeRange,
-					Text:  newText,
-				},
+		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
+			Partial: &lsproto.TextDocumentContentChangePartial{
+				Range: changeRange,
+				Text:  change.NewText,
 			},
-		},
+		}},
 	})
 	return script
 }
@@ -4059,6 +4273,288 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 	}
 }
 
+func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.RenameResponse {
+	t.Helper()
+	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  newName,
+	})
+
+	if result.WorkspaceEdit == nil {
+		return result
+	}
+
+	if result.WorkspaceEdit.Changes != nil {
+		for uri, edits := range *result.WorkspaceEdit.Changes {
+			fileName := uri.FileName()
+			script := f.getOrLoadScriptInfo(fileName)
+			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
+				return core.TextChange{
+					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					NewText:   edit.NewText,
+				}
+			})
+			f.editScriptAndUpdateMarkersWorker(t, fileName, changes)
+		}
+	}
+
+	var renameFiles []*lsproto.RenameFile
+	if result.WorkspaceEdit.DocumentChanges != nil {
+		for _, docChange := range *result.WorkspaceEdit.DocumentChanges {
+			if docChange.TextDocumentEdit != nil {
+				fileName := docChange.TextDocumentEdit.TextDocument.Uri.FileName()
+				script := f.getOrLoadScriptInfo(fileName)
+				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
+					textEdit := edit.TextEdit
+					return core.TextChange{
+						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						NewText:   textEdit.NewText,
+					}
+				})
+				f.editScriptAndUpdateMarkersWorker(t, fileName, changes)
+			} else if docChange.RenameFile != nil {
+				renameFiles = append(renameFiles, docChange.RenameFile)
+			}
+		}
+	}
+
+	if len(renameFiles) > 0 {
+		var fileRenames []*lsproto.FileRename
+		for _, renameFile := range renameFiles {
+			fileRenames = append(fileRenames, &lsproto.FileRename{
+				OldUri: string(renameFile.OldUri),
+				NewUri: string(renameFile.NewUri),
+			})
+		}
+		if f.capabilities != nil &&
+			f.capabilities.Workspace != nil &&
+			f.capabilities.Workspace.FileOperations != nil &&
+			f.capabilities.Workspace.FileOperations.WillRename != nil &&
+			*f.capabilities.Workspace.FileOperations.WillRename {
+			f.willRenameFilesWorker(t, fileRenames...)
+		} else {
+			for _, renameFile := range renameFiles {
+				f.renameFileOrDirectory(t, renameFile.OldUri.FileName(), renameFile.NewUri.FileName())
+			}
+		}
+	}
+
+	return result
+}
+
+func (f *FourslashTest) WillRenameFiles(t *testing.T, files ...*lsproto.FileRename) lsproto.WillRenameFilesResponse {
+	t.Helper()
+	return sendRequest(t, f, lsproto.WorkspaceWillRenameFilesInfo, &lsproto.RenameFilesParams{
+		Files: files,
+	})
+}
+
+// Emulates a file rename by sending a workspace/willRenameFiles request and applying the resulting edits and file renames.
+func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.FileRename) {
+	t.Helper()
+	result := f.WillRenameFiles(t, files...)
+
+	if result.WorkspaceEdit == nil {
+		for _, file := range files {
+			oldPath := lsproto.DocumentUri(file.OldUri).FileName()
+			newPath := lsproto.DocumentUri(file.NewUri).FileName()
+			f.renameFileOrDirectory(t, oldPath, newPath)
+		}
+		return
+	}
+
+	if result.WorkspaceEdit.Changes != nil {
+		for uri, edits := range *result.WorkspaceEdit.Changes {
+			fileName := uri.FileName()
+			script := f.getOrLoadScriptInfo(fileName)
+			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
+				return core.TextChange{
+					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					NewText:   edit.NewText,
+				}
+			})
+			f.editScriptAndUpdateMarkersWorker(t, fileName, changes)
+		}
+	}
+
+	var renameFiles []*lsproto.RenameFile
+	if result.WorkspaceEdit.DocumentChanges != nil {
+		for _, docChange := range *result.WorkspaceEdit.DocumentChanges {
+			if docChange.TextDocumentEdit != nil {
+				fileName := docChange.TextDocumentEdit.TextDocument.Uri.FileName()
+				script := f.getOrLoadScriptInfo(fileName)
+				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
+					textEdit := edit.TextEdit
+					return core.TextChange{
+						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						NewText:   textEdit.NewText,
+					}
+				})
+				f.editScriptAndUpdateMarkersWorker(t, fileName, changes)
+			} else if docChange.RenameFile != nil {
+				renameFiles = append(renameFiles, docChange.RenameFile)
+			}
+		}
+	}
+
+	var fileRenames []*lsproto.FileRename
+	for _, renameFile := range renameFiles {
+		fileRenames = append(fileRenames, &lsproto.FileRename{
+			OldUri: string(renameFile.OldUri),
+			NewUri: string(renameFile.NewUri),
+		})
+	}
+	f.willRenameFilesWorker(t, fileRenames...)
+
+	for _, file := range files {
+		oldPath := lsproto.DocumentUri(file.OldUri).FileName()
+		newPath := lsproto.DocumentUri(file.NewUri).FileName()
+		f.renameFileOrDirectory(t, oldPath, newPath)
+	}
+}
+
+func (f *FourslashTest) VerifyRename(t *testing.T, markerName string, newName string, expectedFileContents map[string]string) {
+	t.Helper()
+	f.GoToMarker(t, markerName)
+	f.RenameAtCaret(t, newName)
+	for fileName, expectedContent := range expectedFileContents {
+		script := f.getScriptInfo(fileName)
+		if script == nil {
+			t.Fatalf("Expected script info for %s, but got nil", fileName)
+		}
+		assert.Equal(t, script.content, expectedContent, fmt.Sprintf("File content after rename did not match expected content for %s.", fileName))
+	}
+}
+
+func (f *FourslashTest) VerifyWillRenameFilesEdits(t *testing.T, oldPath string, newPath string, expectedFileContents map[string]string, preferences *lsutil.UserPreferences) {
+	t.Helper()
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, *preferences)()
+	}
+
+	f.willRenameFilesWorker(t, &lsproto.FileRename{
+		OldUri: string(lsconv.FileNameToDocumentURI(oldPath)),
+		NewUri: string(lsconv.FileNameToDocumentURI(newPath)),
+	})
+
+	for fileName, expectedContent := range expectedFileContents {
+		script := f.getOrLoadScriptInfo(fileName)
+		if script == nil {
+			t.Fatalf("Expected script info for %s, but got nil", fileName)
+		}
+		assert.Equal(t, script.content, expectedContent, fmt.Sprintf("File content after workspace/willRenameFiles edits did not match expected content for %s.", fileName))
+	}
+}
+
+func (f *FourslashTest) getPathUpdater(oldPath, newPath string) func(path string) (string, bool) {
+	return func(path string) (string, bool) {
+		compareOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: f.vfs.UseCaseSensitiveFileNames()}
+		if tspath.ComparePaths(path, oldPath, compareOptions) == 0 {
+			return newPath, true
+		}
+		if tspath.StartsWithDirectory(path, oldPath, f.vfs.UseCaseSensitiveFileNames()) {
+			return newPath + path[len(oldPath):], true
+		}
+		return "", false
+	}
+}
+
+func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newPath string) {
+	t.Helper()
+
+	pathUpdater := f.getPathUpdater(oldPath, newPath)
+
+	// Collect all file paths that need to be renamed.
+	oldFileNames := map[string]struct{}{}
+	if _, ok := f.vfs.ReadFile(oldPath); ok {
+		oldFileNames[oldPath] = struct{}{}
+	} else {
+		walkErr := f.vfs.WalkDir(oldPath, func(path string, d vfs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if !d.IsDir() {
+				oldFileNames[path] = struct{}{}
+			}
+			return nil
+		})
+		if walkErr != nil {
+			t.Fatalf("failed to collect files for rename %s -> %s: %v", oldPath, newPath, walkErr)
+		}
+	}
+	if len(oldFileNames) == 0 {
+		t.Fatalf("rename source %s did not exist in test environment", oldPath)
+	}
+
+	// !!! TODO: handle overwrites if we need to.
+	// For each file: close if open, update script infos, write to VFS at new path, and collect file-watch events.
+	fileEvents := make([]*lsproto.FileEvent, 0, len(oldFileNames)*2)
+	reopenAtNewPath := map[string]string{} // newFileName -> content, for files that were open
+	for oldFileName := range oldFileNames {
+		newFileName, updated := pathUpdater(oldFileName)
+		if !updated {
+			t.Fatalf("failed to compute renamed path for %s", oldFileName)
+		}
+
+		// Send didClose for open files; get content from the old script info.
+		if _, isOpen := f.openFiles[oldFileName]; isOpen {
+			script := f.scriptInfos[oldFileName]
+			reopenAtNewPath[newFileName] = script.content
+			sendNotification(t, f, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(oldFileName),
+				},
+			})
+			delete(f.openFiles, oldFileName)
+		}
+
+		f.scriptInfos[newFileName] = newScriptInfo(newFileName, f.scriptInfos[oldFileName].content)
+		delete(f.scriptInfos, oldFileName)
+
+		// Write renamed file to VFS.
+		content, updated := f.vfs.ReadFile(oldFileName)
+		if !updated {
+			t.Fatalf("failed to read content for %s during rename to %s", oldFileName, newFileName)
+		}
+		if err := f.vfs.WriteFile(newFileName, content); err != nil {
+			t.Fatalf("failed to write renamed file %s: %v", newFileName, err)
+		}
+
+		fileEvents = append(fileEvents,
+			&lsproto.FileEvent{Uri: lsconv.FileNameToDocumentURI(oldFileName), Type: lsproto.FileChangeTypeDeleted},
+			&lsproto.FileEvent{Uri: lsconv.FileNameToDocumentURI(newFileName), Type: lsproto.FileChangeTypeCreated},
+		)
+	}
+
+	// Remove the old path from VFS and notify the server of all file-system changes.
+	if err := f.vfs.Remove(oldPath); err != nil {
+		t.Fatalf("failed to remove old path %s: %v", oldPath, err)
+	}
+	sendNotification(t, f, lsproto.WorkspaceDidChangeWatchedFilesInfo, &lsproto.DidChangeWatchedFilesParams{
+		Changes: fileEvents,
+	})
+
+	// Reopen files that were previously open at their new paths.
+	for newFileName, content := range reopenAtNewPath {
+		sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+			TextDocument: &lsproto.TextDocumentItem{
+				Uri:        lsconv.FileNameToDocumentURI(newFileName),
+				LanguageId: getLanguageKind(newFileName),
+				Text:       content,
+			},
+		})
+		f.openFiles[newFileName] = struct{}{}
+	}
+
+	// Update active filename if it was under the renamed path.
+	if updatedActive, ok := pathUpdater(f.activeFilename); ok {
+		f.activeFilename = updatedActive
+	}
+}
+
 func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
 		defer f.ConfigureWithReset(t, *preferences)()
@@ -4083,14 +4579,17 @@ func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.Use
 		t.Fatalf("%sExpected rename to fail, but prepareRename returned a result", prefix)
 	}
 
-	// Also verify that textDocument/rename produces no edits, since prepareRename is optional.
-	renameResult := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+	// Also verify that textDocument/rename does not produce usable edits, since prepareRename is optional.
+	renameMsg, renameResult, _ := lsptestutil.SendRequest(t, f.client, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		NewName:  "RENAME_FAILED_TEST",
 	})
+	if renameMsg != nil && renameMsg.AsResponse().Error != nil {
+		return
+	}
 	if renameResult.WorkspaceEdit != nil && renameResult.WorkspaceEdit.Changes != nil && len(*renameResult.WorkspaceEdit.Changes) > 0 {
 		t.Fatalf("%sprepareRename returned null but textDocument/rename returned changes", prefix)
 	}

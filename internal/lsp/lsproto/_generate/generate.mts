@@ -617,6 +617,74 @@ function patchAndPreprocessModel() {
             });
         }
 
+        // Patch HoverParams to add verbosityLevel
+        if (structure.name === "HoverParams") {
+            structure.properties.push({
+                name: "verbosityLevel",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "Controls how many levels of type definitions will be expanded. Default is 0.",
+            });
+        }
+
+        // Patch Hover to add canIncreaseVerbosity
+        if (structure.name === "Hover") {
+            structure.properties.push(
+                {
+                    name: "canIncreaseVerbosity",
+                    type: { kind: "base", name: "boolean" },
+                    omitzeroValue: true,
+                    documentation: "Whether the verbosity level can be increased for this hover.",
+                },
+            );
+        }
+
+        // Patch ClientCapabilities to add VS-specific client capabilities
+        if (structure.name === "ClientCapabilities") {
+            structure.properties.push(
+                {
+                    name: "_vs_supportsVisualStudioExtensions",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports Visual Studio extensions.",
+                },
+                {
+                    name: "_vs_supportedSnippetVersion",
+                    type: { kind: "base", name: "integer" },
+                    optional: true,
+                    documentation: "The snippet version supported by the client.",
+                },
+                {
+                    name: "_vs_supportsNotIncludingTextInTextDocumentDidOpen",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports not including text in textDocument/didOpen notifications.",
+                },
+                {
+                    name: "_vs_supportsIconExtensions",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports icon extensions.",
+                },
+                {
+                    name: "_vs_supportsDiagnosticRequests",
+                    type: { kind: "base", name: "boolean" },
+                    optional: true,
+                    documentation: "Whether the client supports diagnostic requests.",
+                },
+            );
+        }
+
+        // Patch HoverClientCapabilities to add verbosityLevel support flag
+        if (structure.name === "HoverClientCapabilities") {
+            structure.properties.push({
+                name: "verbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
+            });
+        }
+
         for (const prop of structure.properties) {
             // Replace initializationOptions type with custom InitializationOptions
             if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
@@ -938,6 +1006,13 @@ const typeInfo: TypeInfo = {
 
 function titleCase(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function goFieldName(prop: Property): string {
+    if (prop.name.startsWith("_vs_")) {
+        return "VS" + titleCase(prop.name.slice(4));
+    }
+    return titleCase(prop.name);
 }
 
 function resolveType(type: Type): GoType {
@@ -1707,14 +1782,14 @@ function generateCode() {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
                     // Use a named type for the resolved version
-                    lines.push(`${indent}${titleCase(prop.name)} Resolved${type.name} \`json:"${prop.name},omitzero"\``);
+                    lines.push(`${indent}${goFieldName(prop)} Resolved${type.name} \`json:"${prop.name},omitzero"\``);
                     continue;
                 }
             }
 
             // For other types (primitives, enums, arrays, etc.), use the type directly (no pointer)
             const goType = type.name;
-            lines.push(`${indent}${titleCase(prop.name)} ${goType} \`json:"${prop.name},omitzero"\``);
+            lines.push(`${indent}${goFieldName(prop)} ${goType} \`json:"${prop.name},omitzero"\``);
         }
 
         return lines;
@@ -1725,15 +1800,14 @@ function generateCode() {
 
         for (const prop of structure.properties) {
             const type = resolveType(prop.type);
-            const fieldName = titleCase(prop.name);
+            const fieldName = goFieldName(prop);
             const accessPath = `${varName}.${fieldName}`;
 
-            // For reference types that are structures, call the resolve function
+            // For reference types that are structures, call the resolve method
             if (prop.type.kind === "reference") {
                 const refStructure = model.structures.find(s => s.name === type.name);
                 if (refStructure) {
-                    // Use lowercase (unexported) function name for helper functions
-                    lines.push(`${indent}${fieldName}: resolve${type.name}(${accessPath}),`);
+                    lines.push(`${indent}${fieldName}: ${accessPath}.resolve(),`);
                     continue;
                 }
             }
@@ -1774,8 +1848,8 @@ function generateCode() {
     function generateResolvedTypeAndHelper(structure: Structure, isMain: boolean = false): string[] {
         const lines: string[] = [];
         const typeName = `Resolved${structure.name}`;
-        // Main function is exported, helpers are unexported
-        const funcName = isMain ? `Resolve${structure.name}` : `resolve${structure.name}`;
+        // Main method is exported (Resolve), helpers are unexported (resolve)
+        const methodName = isMain ? `Resolve` : `resolve`;
 
         // Generate the resolved type with documentation
         if (!isMain) {
@@ -1806,8 +1880,8 @@ function generateCode() {
         lines.push(`}`);
         lines.push(``);
 
-        // Generate the conversion function
-        lines.push(`func ${funcName}(v *${structure.name}) ${typeName} {`);
+        // Generate the conversion method on the pointer receiver
+        lines.push(`func (v *${structure.name}) ${methodName}() ${typeName} {`);
         lines.push(`\tif v == nil {`);
         lines.push(`\t\treturn ${typeName}{}`);
         lines.push(`\t}`);
@@ -1858,7 +1932,7 @@ function generateCode() {
                 const useOmitzero = prop.optional || prop.omitzeroValue;
                 const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
 
-                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
+                writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -1937,7 +2011,7 @@ function generateCode() {
                 for (let i = 0; i < requiredProps.length; i++) {
                     const prop = requiredProps[i];
                     const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
-                    writeLine(`\t\tmissing${titleCase(prop.name)}${iotaPrefix}`);
+                    writeLine(`\t\tmissing${goFieldName(prop)}${iotaPrefix}`);
                 }
                 writeLine(`\t\t_missingLast`);
                 writeLine(`\t)`);
@@ -1963,7 +2037,7 @@ function generateCode() {
             for (const prop of structure.properties) {
                 writeLine(`\t\tcase \`"${prop.name}"\`:`);
                 if (!prop.optional && !prop.omitzeroValue) {
-                    writeLine(`\t\t\tmissing &^= missing${titleCase(prop.name)}`);
+                    writeLine(`\t\t\tmissing &^= missing${goFieldName(prop)}`);
                 }
                 // Reject null for fields whose types cannot represent null but whose Go types
                 // silently accept it (pointers, slices, maps).
@@ -1974,7 +2048,7 @@ function generateCode() {
                     writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
                     writeLine(`\t\t\t}`);
                 }
-                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
+                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${goFieldName(prop)}); err != nil {`);
                 writeLine(`\t\t\t\treturn err`);
                 writeLine(`\t\t\t}`);
             }
@@ -1996,7 +2070,7 @@ function generateCode() {
                 writeLine(`\tif missing != 0 {`);
                 writeLine(`\t\tvar missingProps []string`);
                 for (const prop of requiredProps) {
-                    writeLine(`\t\tif missing&missing${titleCase(prop.name)} != 0 {`);
+                    writeLine(`\t\tif missing&missing${goFieldName(prop)} != 0 {`);
                     writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
                     writeLine(`\t\t}`);
                 }
@@ -3023,7 +3097,7 @@ function generateCode() {
         // Generate the main ResolvedClientCapabilities type and function
         writeLine("// ResolvedClientCapabilities is a version of ClientCapabilities where all nested");
         writeLine("// fields are values (not pointers), making it easier to access deeply nested capabilities.");
-        writeLine("// Use ResolveClientCapabilities to convert from ClientCapabilities.");
+        writeLine("// Use (*ClientCapabilities).Resolve() to convert from ClientCapabilities.");
         if (clientCapsStructure.documentation) {
             writeLine("//");
             const typeDoc = formatDocumentation(clientCapsStructure.documentation);

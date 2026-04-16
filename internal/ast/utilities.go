@@ -640,8 +640,6 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindImportEqualsDeclaration,
 		KindExportDeclaration,
 		KindExportAssignment,
-		KindJSExportAssignment,
-		KindCommonJSExport,
 		KindNamespaceExportDeclaration:
 		return true
 	}
@@ -1025,7 +1023,7 @@ func CanHaveSymbol(node *Node) bool {
 		KindConstructSignature, KindElementAccessExpression, KindEnumDeclaration, KindEnumMember, KindExportAssignment,
 		KindExportDeclaration, KindExportSpecifier, KindFunctionDeclaration, KindFunctionExpression, KindFunctionType,
 		KindGetAccessor, KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier, KindIndexSignature,
-		KindInterfaceDeclaration, KindJSExportAssignment, KindJSTypeAliasDeclaration, KindCommonJSExport,
+		KindInterfaceDeclaration, KindJSTypeAliasDeclaration,
 		KindJsxAttribute, KindJsxAttributes, KindJsxSpreadAttribute, KindMappedType, KindMethodDeclaration,
 		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
 		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
@@ -1441,7 +1439,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 			return declaration.Arguments()[1]
 		}
 		return nil
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		expr := declaration.Expression()
 		if IsIdentifier(expr) {
 			return expr
@@ -1474,8 +1472,6 @@ func GetAssignedName(node *Node) *Node {
 					}
 				}
 			}
-		case KindCommonJSExport:
-			return parent.AsCommonJSExport().Name()
 		case KindVariableDeclaration:
 			name := parent.AsVariableDeclaration().Name()
 			if IsIdentifier(name) {
@@ -1490,7 +1486,7 @@ type JSDeclarationKind int
 
 const (
 	JSDeclarationKindNone JSDeclarationKind = iota
-	// module.exports = expr
+	// module.exports = expr, except for module.exports = exports
 	JSDeclarationKindModuleExports
 	// exports.name = expr
 	// module.exports.name = expr
@@ -1514,7 +1510,7 @@ func GetAssignmentDeclarationKind(node *Node) JSDeclarationKind {
 		bin := node.AsBinaryExpression()
 		if bin.OperatorToken.Kind == KindEqualsToken && IsAccessExpression(bin.Left) {
 			if IsInJSFile(bin.Left) {
-				if IsModuleExportsAccessExpression(bin.Left) {
+				if IsModuleExportsAccessExpression(bin.Left) && !IsExportsIdentifier(bin.Right) {
 					return JSDeclarationKindModuleExports
 				}
 				if (IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
@@ -1835,9 +1831,8 @@ func IsEnumConst(node *Node) bool {
 	return GetCombinedModifierFlags(node)&ModifierFlagsConst != 0
 }
 
-func ExportAssignmentIsAlias(node *Node) bool {
-	e := node.Expression()
-	return IsEntityNameExpression(e) || IsClassExpression(e)
+func ExpressionIsAlias(node *Node) bool {
+	return IsEntityNameExpression(node) || IsClassExpression(node)
 }
 
 func IsInstanceOfExpression(node *Node) bool {
@@ -2212,7 +2207,6 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindImportDeclaration,
 		KindJSImportDeclaration,
 		KindExportAssignment,
-		KindJSExportAssignment,
 		KindExportDeclaration:
 		return SemanticMeaningAll
 
@@ -2601,10 +2595,12 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 		return true
 	case KindImportClause:
 		return node.AsImportClause().Name() != nil
-	case KindExportAssignment, KindJSExportAssignment:
-		return ExportAssignmentIsAlias(node)
+	case KindExportAssignment:
+		return ExpressionIsAlias(node.Expression())
 	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)
+	case KindBinaryExpression:
+		return GetAssignmentDeclarationKind(node) == JSDeclarationKindModuleExports && ExpressionIsAlias(node.AsBinaryExpression().Right)
 	}
 	return false
 }
@@ -2628,7 +2624,7 @@ func GetNodeAtPosition(file *SourceFile, position int, includeJSDoc bool) *Node 
 		}
 		if child == nil {
 			current.ForEachChild(func(node *Node) bool {
-				if nodeContainsPosition(node, position) && node.Kind != KindJSExportAssignment && node.Kind != KindCommonJSExport {
+				if nodeContainsPosition(node, position) {
 					child = node
 					return true
 				}
@@ -3062,6 +3058,9 @@ func IsJSDocSingleCommentNodeList(nodeList *NodeList) bool {
 		return false
 	}
 	parent := nodeList.Nodes[0].Parent
+	if parent == nil {
+		return false
+	}
 	return IsJSDocSingleCommentNode(parent) && nodeList == parent.CommentList()
 }
 
@@ -3977,6 +3976,39 @@ func IsJSDocNameReferenceContext(node *Node) bool {
 	}) != nil
 }
 
+// GetJSDocRoot returns the containing JSDoc node for a node inside a JSDoc comment.
+func GetJSDocRoot(node *Node) *Node {
+	return FindAncestor(node.Parent, func(n *Node) bool {
+		return n.Kind == KindJSDoc
+	})
+}
+
+// GetJSDocHost returns the declaration that the JSDoc comment containing the given node is attached to.
+func GetJSDocHost(node *Node) *Node {
+	jsDoc := GetJSDocRoot(node)
+	if jsDoc == nil {
+		return nil
+	}
+	return jsDoc.Parent
+}
+
+// GetHostSignatureFromJSDoc returns the function-like declaration that hosts the JSDoc comment
+// containing the given node. This is used to resolve @link references to parameters.
+func GetHostSignatureFromJSDoc(node *Node) *Node {
+	host := GetJSDocHost(node)
+	if host == nil {
+		return nil
+	}
+	// !!! Strada's getEffectiveJSDocHost applies JS assignment pattern transforms (getSourceOfAssignment, getSourceOfDefaultedAssignment, etc.) not yet ported
+	if IsPropertySignatureDeclaration(host) && host.Type() != nil && IsFunctionLike(host.Type()) {
+		return host.Type()
+	}
+	if IsFunctionLike(host) {
+		return host
+	}
+	return nil
+}
+
 func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
@@ -4017,12 +4049,10 @@ func HasInferredType(node *Node) bool {
 		KindCallExpression,
 		KindVariableDeclaration,
 		KindExportAssignment,
-		KindJSExportAssignment,
 		KindPropertyAssignment,
 		KindShorthandPropertyAssignment,
 		KindJSDocParameterTag,
-		KindJSDocPropertyTag,
-		KindCommonJSExport:
+		KindJSDocPropertyTag:
 		return true
 	default:
 		// assertType<never>(node); // !!!
