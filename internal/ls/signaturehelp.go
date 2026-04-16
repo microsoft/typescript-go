@@ -535,7 +535,10 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 	var displayParts strings.Builder
 	if len(signatureHelpTypeParameters) != 0 {
 		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
-		for _, typeParameter := range signatureHelpTypeParameters {
+		for i, typeParameter := range signatureHelpTypeParameters {
+			if i > 0 {
+				displayParts.WriteString(", ")
+			}
 			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
 		}
 		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
@@ -936,7 +939,7 @@ func getAdjustedNode(node *ast.Node) *ast.Node {
 		return node
 	default:
 		return ast.FindAncestor(node.Parent, func(n *ast.Node) bool {
-			if ast.IsParameter(n) {
+			if ast.IsParameterDeclaration(n) {
 				return true
 			} else if ast.IsBindingElement(n) || ast.IsObjectBindingPattern(n) || ast.IsArrayBindingPattern(n) {
 				return false

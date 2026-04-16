@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -13,7 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type resolved struct {
@@ -453,6 +454,36 @@ func (r *resolutionState) mangleScopedPackageName(name string) string {
 	return mangled
 }
 
+// resolveFromTypeRoot tries to resolve a module name from the configured typeRoots.
+// This is used as a fallback after node_modules resolution fails, for declaration file lookups.
+// Returns nil if typeRoots is not configured or if no matching module is found in any typeRoot directory.
+func (r *resolutionState) resolveFromTypeRoot() *resolved {
+	if r.compilerOptions.TypeRoots == nil {
+		return nil
+	}
+	for _, typeRoot := range r.compilerOptions.TypeRoots {
+		candidate := r.getCandidateFromTypeRoot(typeRoot)
+		directoryExists := r.resolver.host.FS().DirectoryExists(typeRoot)
+		if !directoryExists {
+			if r.tracer != nil {
+				r.tracer.write(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it, typeRoot)
+			}
+			continue
+		}
+		if resolvedFromFile := r.loadModuleFromFile(extensionsDeclaration, candidate); !resolvedFromFile.shouldContinueSearching() {
+			packageDirectory := ParseNodeModuleFromPath(resolvedFromFile.path, false)
+			if packageDirectory != "" {
+				resolvedFromFile.packageId = r.getPackageId(resolvedFromFile.path, r.getPackageJsonInfo(packageDirectory))
+			}
+			return resolvedFromFile
+		}
+		if resolved := r.loadNodeModuleFromDirectory(extensionsDeclaration, candidate, true /*considerPackageJson*/); !resolved.shouldContinueSearching() {
+			return resolved
+		}
+	}
+	return nil
+}
+
 func (r *resolutionState) getPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
 	result := tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(
 		r.resolver.typingsLocation,
@@ -529,10 +560,9 @@ func (r *resolutionState) resolveNodeLikeWorker() *ResolvedModule {
 			return r.createResolvedModuleHandlingSymlink(resolved)
 		}
 		if r.extensions&extensionsDeclaration != 0 {
-			// !!!
-			// if resolved := r.resolveFromTypeRoot(); !resolved.shouldContinueSearching() {
-			// 	return r.createResolvedModuleHandlingSymlink(resolved)
-			// }
+			if resolved := r.resolveFromTypeRoot(); !resolved.shouldContinueSearching() {
+				return r.createResolvedModuleHandlingSymlink(resolved)
+			}
 		}
 	} else {
 		candidate := normalizePathForCJSResolution(r.containingDirectory, r.name)
@@ -1787,8 +1817,10 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		return ""
 	}
 	nodeModules := packageDirectory[:nodeModulesIndex+len("/node_modules")] + "/"
+	names := slices.AppendSeq(make([]string, 0, len(peerDependencies.Value)), maps.Keys(peerDependencies.Value))
+	slices.Sort(names)
 	builder := strings.Builder{}
-	for name := range peerDependencies.Value {
+	for _, name := range names {
 		peerPackageJson := r.getPackageJsonInfo(nodeModules + name)
 		if peerPackageJson != nil {
 			version := peerPackageJson.Contents.Version.Value
@@ -2118,14 +2150,14 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		packageJson,
 	)
 
-	otherFiles := vfs.ReadDirectory(
+	otherFiles := vfsmatch.ReadDirectory(
 		r.host.FS(),
 		r.host.GetCurrentDirectory(),
 		packageJson.PackageDirectory,
 		extensions.Array(),
 		[]string{"node_modules"},
 		[]string{"**/*"},
-		nil,
+		vfsmatch.UnlimitedDepth,
 	)
 
 	if mainResolution.isResolved() {
@@ -2193,7 +2225,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				patternPath := tspath.ResolvePath(packageJson.PackageDirectory, exports.AsString())
 				leadingSlice, trailingSlice, _ := strings.Cut(patternPath, "*")
 				caseSensitive := r.resolver.host.FS().UseCaseSensitiveFileNames()
-				files := vfs.ReadDirectory(
+				files := vfsmatch.ReadDirectory(
 					r.resolver.host.FS(),
 					r.resolver.host.GetCurrentDirectory(),
 					packageJson.PackageDirectory,
@@ -2202,7 +2234,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 					[]string{
 						tspath.ChangeFullExtension(strings.Replace(exports.AsString(), "*", "**/*", 1), ".*"),
 					},
-					nil,
+					vfsmatch.UnlimitedDepth,
 				)
 				for _, file := range files {
 					matchedStar, ok := r.getMatchedStarForPatternEntrypoint(file, leadingSlice, trailingSlice, caseSensitive)

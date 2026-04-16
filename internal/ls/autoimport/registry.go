@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -26,6 +25,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type newProgramStructure int
@@ -82,7 +82,7 @@ func (b BucketState) DirtyPackages() *collections.Set[string] {
 	return b.dirtyPackages
 }
 
-func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences *lsutil.UserPreferences) bool {
+func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences lsutil.UserPreferences) bool {
 	return b.newProgramStructure > 0 ||
 		b.hasDirtyFileBesides(file) ||
 		!core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns) ||
@@ -192,7 +192,7 @@ func (d *directory) Clone() *directory {
 
 type Registry struct {
 	toPath          func(fileName string) tspath.Path
-	userPreferences *lsutil.UserPreferences
+	userPreferences lsutil.UserPreferences
 
 	// exports      map[tspath.Path][]*RawExport
 	directories map[tspath.Path]*directory
@@ -208,7 +208,7 @@ type Registry struct {
 	specifierCache map[tspath.Path]*collections.SyncMap[tspath.Path, string]
 }
 
-func NewRegistry(toPath func(fileName string) tspath.Path, preferences *lsutil.UserPreferences) *Registry {
+func NewRegistry(toPath func(fileName string) tspath.Path, preferences lsutil.UserPreferences) *Registry {
 	return &Registry{
 		toPath:          toPath,
 		userPreferences: preferences,
@@ -216,7 +216,7 @@ func NewRegistry(toPath func(fileName string) tspath.Path, preferences *lsutil.U
 	}
 }
 
-func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path, preferences *lsutil.UserPreferences) bool {
+func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path, preferences lsutil.UserPreferences) bool {
 	if r == nil {
 		return false
 	}
@@ -262,7 +262,7 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 	}
 	builder := newRegistryBuilder(r, host)
 	if change.UserPreferences != nil {
-		builder.userPreferences = change.UserPreferences
+		builder.userPreferences = *change.UserPreferences
 		if !core.UnorderedEqual(builder.userPreferences.AutoImportSpecifierExcludeRegexes, r.userPreferences.AutoImportSpecifierExcludeRegexes) {
 			builder.specifierCache.Clear()
 		}
@@ -376,7 +376,7 @@ type registryBuilder struct {
 	host RegistryCloneHost
 	base *Registry
 
-	userPreferences *lsutil.UserPreferences
+	userPreferences lsutil.UserPreferences
 	directories     *dirty.Map[tspath.Path, *directory]
 	nodeModules     *dirty.Map[tspath.Path, *RegistryBucket]
 	projects        *dirty.Map[tspath.Path, *RegistryBucket]
@@ -392,7 +392,7 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		host: host,
 		base: registry,
 
-		userPreferences:    registry.userPreferences.OrDefault(),
+		userPreferences:    registry.userPreferences,
 		directories:        dirty.NewMap(registry.directories),
 		nodeModules:        dirty.NewMap(registry.nodeModules),
 		projects:           dirty.NewMap(registry.projects),
@@ -1069,16 +1069,13 @@ func (b *registryBuilder) buildProjectBucket(
 	var skippedFileCount int
 	var combinedStats extractorStats
 
-outer:
 	for _, file := range program.GetSourceFiles() {
 		if isIgnoredFile(program, file) {
 			continue
 		}
-		for _, excludePattern := range fileExcludePatterns {
-			if matched, _ := excludePattern.MatchString(file.FileName()); matched {
-				skippedFileCount++
-				continue outer
-			}
+		if fileExcludePatterns != nil && fileExcludePatterns.MatchString(file.FileName()) {
+			skippedFileCount++
+			continue
 		}
 		// Skip all node_modules files - they are always handled by node_modules buckets.
 		// This simplifies the logic and ensures exports are indexed consistently.
@@ -1252,7 +1249,7 @@ func (b *registryBuilder) extractPackage(
 	packageJson *packagejson.InfoCacheEntry,
 	packageName string,
 	projectReferenceOutputs map[tspath.Path]string,
-	fileExcludePatterns []*regexp2.Regexp,
+	fileExcludePatterns *vfsmatch.SpecMatcher,
 ) *perPackageExtractionResult {
 	if packageJson == nil || !packageJson.DirectoryExists {
 		return nil
@@ -1265,15 +1262,10 @@ func (b *registryBuilder) extractPackage(
 	}
 
 	var skippedEntrypoints int
-	if len(fileExcludePatterns) > 0 {
+	if fileExcludePatterns != nil {
 		count := len(packageEntrypoints)
 		packageEntrypoints = slices.DeleteFunc(packageEntrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
-			for _, excludePattern := range fileExcludePatterns {
-				if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
-					return true
-				}
-			}
-			return false
+			return fileExcludePatterns.MatchString(entrypoint.ResolvedFileName)
 		})
 		skippedEntrypoints = count - len(packageEntrypoints)
 	}
