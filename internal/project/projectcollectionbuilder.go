@@ -74,7 +74,7 @@ func newProjectCollectionBuilder(
 		parseCache:                         parseCache,
 		extendedConfigCache:                extendedConfigCache,
 		base:                               oldProjectCollection,
-		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, newSnapshotID, sessionOptions, customConfigFileName, nil),
+		configFileRegistryBuilder:          newConfigFileRegistryBuilder(lsproto.GetClientCapabilities(ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport, fs, oldConfigFileRegistry, extendedConfigCache, newSnapshotID, sessionOptions, customConfigFileName, nil),
 		newSnapshotID:                      newSnapshotID,
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
@@ -1003,6 +1003,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 // a boolean indicating whether the update could have caused any structure-affecting changes.
 func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], logger *logging.LogTree) bool {
 	var updateProgram bool
+	var deleteProject bool
 	var filesChanged bool
 	configFileName := entry.Value().configFileName
 	startTime := time.Now()
@@ -1016,13 +1017,13 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				entry.Value(),
 				logger.Fork("Acquiring config for project"),
 			)
+			if commandLine == nil {
+				deleteProject = true
+				filesChanged = true
+				return
+			}
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
-				if commandLine == nil {
-					b.deleteConfiguredProject(entry, logger)
-					filesChanged = true
-					return
-				}
 				entry.Change(func(p *Project) {
 					p.CommandLine = commandLine
 					p.commandLineWithTypingsFiles = nil
@@ -1043,14 +1044,18 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	if notifiedLoading && b.client != nil {
 		b.client.ProgressStart(diagnostics.Project_0, displayName)
 	}
+	if deleteProject {
+		b.deleteConfiguredProject(entry, logger)
+	}
 	if updateProgram {
 		entry.Locked(func(entry dirty.Value[*Project]) {
 			entry.Change(func(project *Project) {
 				oldHost := project.host
+				oldCheckerPool := project.checkerPool
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
 				project.Program = result.Program
-				project.checkerPool = result.CheckerPool
+				project.checkerPool = result.Program.GetCheckerPool().(*checkerPool)
 				project.ProgramUpdateKind = result.UpdateKind
 				project.ProgramLastUpdate = b.newSnapshotID
 				if result.UpdateKind == ProgramUpdateKindCloned {
@@ -1062,6 +1067,9 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""
+				if oldCheckerPool != nil {
+					oldCheckerPool.Discard()
+				}
 			})
 		})
 	}

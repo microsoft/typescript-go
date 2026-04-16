@@ -113,6 +113,7 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
             const isServer = filePath.split(path.sep).includes("server");
             try {
                 const test = parseFileContent(file, content);
+                if (test === NO_TEST) return;
                 const testContent = generateGoTest(test, isServer);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");
@@ -126,7 +127,10 @@ function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
     });
 }
 
-function parseFileContent(filename: string, content: string): GoTest {
+const NO_TEST: unique symbol = Symbol("NO_TEST");
+type NoTest = typeof NO_TEST;
+
+function parseFileContent(filename: string, content: string): GoTest | NoTest {
     console.error(`Parsing file: ${filename}`);
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
@@ -140,7 +144,8 @@ function parseFileContent(filename: string, content: string): GoTest {
         goTest.commands.push(...result);
     }
     if (goTest.commands.length === 0) {
-        throw new Error(`No commands parsed in file: ${filename}`);
+        console.error(`No commands parsed in file (skipping): ${filename}`);
+        return NO_TEST;
     }
     validateCodeFixCommands(goTest.commands);
     return goTest;
@@ -222,10 +227,6 @@ function getBadStatementText(statement: ts.Statement): string {
     return statement.getText();
 }
 
-/**
- * Parses a Strada fourslash statement and returns the corresponding Corsa commands.
- * @returns an array of commands if the statement is a valid fourslash command, or `undefined` if the statement could not be parsed.
- */
 function parseFourslashStatement(statement: ts.Statement): Cmd[] {
     if (ts.isVariableStatement(statement)) {
         // variable declarations (for ranges and markers), e.g. `const range = test.ranges()[0];`
@@ -330,6 +331,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] {
                 case "renameInfoSucceeded":
                 case "renameInfoFailed":
                     return parseRenameInfo(func.text, callExpression.arguments);
+                case "getEditsForFileRename":
+                    return parseGetEditsForFileRename(callExpression.arguments);
                 case "getSemanticDiagnostics":
                 case "getSuggestionDiagnostics":
                 case "getSyntacticDiagnostics":
@@ -368,6 +371,10 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] {
                     return parseCodeFixAvailableArgs(callExpression.arguments);
                 case "codeFixAll":
                     return parseCodeFixAllArgs(callExpression.arguments);
+                case "semanticClassificationsAre":
+                    return parseSemanticClassificationsAre(callExpression.arguments);
+                case "syntacticClassificationsAre":
+                    return [];
             }
         }
         // `goTo....`
@@ -1429,6 +1436,83 @@ function parseRenameInfo(funcName: "renameInfoSucceeded" | "renameInfoFailed", a
     return [{ kind: funcName, preferences }];
 }
 
+function parseGetEditsForFileRename(args: readonly ts.Expression[]): [VerifyGetEditsForFileRenameCmd] {
+    if (args.length !== 1 || !ts.isObjectLiteralExpression(args[0])) {
+        throw new Error(`Expected a single object literal argument in verify.getEditsForFileRename, got ${args.map(arg => arg.getText()).join(", ")}`);
+    }
+
+    let oldPath: string | undefined;
+    let newPath: string | undefined;
+    let newFileContents = "map[string]string{}";
+    let preferences = "nil /*preferences*/";
+
+    for (const prop of args[0].properties) {
+        if (!ts.isPropertyAssignment(prop)) {
+            throw new Error(`Expected property assignment in verify.getEditsForFileRename argument, got ${prop.getText()}`);
+        }
+        const name = prop.name.getText();
+        switch (name) {
+            case "oldPath": {
+                const value = getStringLiteralLike(prop.initializer);
+                if (!value) {
+                    throw new Error(`Expected string literal for oldPath, got ${prop.initializer.getText()}`);
+                }
+                oldPath = getGoStringLiteral(value.text);
+                break;
+            }
+            case "newPath": {
+                const value = getStringLiteralLike(prop.initializer);
+                if (!value) {
+                    throw new Error(`Expected string literal for newPath, got ${prop.initializer.getText()}`);
+                }
+                newPath = getGoStringLiteral(value.text);
+                break;
+            }
+            case "newFileContents": {
+                const obj = getObjectLiteralExpression(prop.initializer);
+                if (!obj) {
+                    throw new Error(`Expected object literal for newFileContents, got ${prop.initializer.getText()}`);
+                }
+                const entries: string[] = [];
+                for (const entry of obj.properties) {
+                    if (!ts.isPropertyAssignment(entry)) {
+                        throw new Error(`Expected property assignment in verify.getEditsForFileRename argument, got ${prop.getText()}`);
+                    }
+                    const key = getStringLiteralLike(entry.name);
+                    const value = getStringLiteralLike(entry.initializer);
+                    if (!key || !value) {
+                        throw new Error(`Expected string literal key/value in newFileContents, got ${entry.getText()}`);
+                    }
+                    entries.push(`${getGoStringLiteral(key.text)}: ${getGoMultiLineStringLiteral(value.text)}`);
+                }
+                newFileContents = entries.length === 0
+                    ? "map[string]string{}"
+                    : `map[string]string{\n${entries.join(",\n")},\n}`;
+                break;
+            }
+            case "preferences": {
+                if (!ts.isObjectLiteralExpression(prop.initializer)) {
+                    throw new Error(`Expected object literal for preferences, got ${prop.initializer.getText()}`);
+                }
+                preferences = parseUserPreferences(prop.initializer);
+                break;
+            }
+        }
+    }
+
+    if (!oldPath || !newPath) {
+        throw new Error(`Expected oldPath and newPath in verify.getEditsForFileRename`);
+    }
+
+    return [{
+        kind: "verifyGetEditsForFileRename",
+        oldPath,
+        newPath,
+        newFileContents,
+        preferences,
+    }];
+}
+
 function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[]): [VerifyBaselineRenameCmd] {
     let newArgs: string[] = [];
     let preferences: string | undefined;
@@ -2164,12 +2248,51 @@ function parseFilterPredicate(arrow: ts.ArrowFunction): string | undefined {
 }
 
 function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaselineQuickInfoCmd[] {
-    if (args.length !== 0) {
-        // !!!
-        throw new Error(`verify.baselineQuickInfo arguments not supported`);
+    if (args.length === 0) {
+        return [{
+            kind: "verifyBaselineQuickInfo",
+        }];
+    }
+    // First arg is verbosityLevels: { markerName: number | number[] }
+    const verbosityArg = args[0];
+    if (!ts.isObjectLiteralExpression(verbosityArg)) {
+        throw new Error(`Expected object literal expression for verify.baselineQuickInfo argument, got ${verbosityArg.getText()}`);
+    }
+    const verbosityLevels: Record<string, number[]> = {};
+    for (const prop of verbosityArg.properties) {
+        if (!ts.isPropertyAssignment(prop)) {
+            throw new Error(`Expected property assignment in baselineQuickInfo verbosity levels, got ${prop.getText()}`);
+        }
+        let name: string;
+        if (ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name)) {
+            name = prop.name.text;
+        }
+        else if (ts.isNumericLiteral(prop.name)) {
+            name = prop.name.text;
+        }
+        else {
+            throw new Error(`Expected identifier, string, or numeric literal for property name in baselineQuickInfo verbosity levels, got ${prop.name.getText()}`);
+        }
+        if (ts.isArrayLiteralExpression(prop.initializer)) {
+            const levels: number[] = [];
+            for (const elem of prop.initializer.elements) {
+                if (!ts.isNumericLiteral(elem)) {
+                    throw new Error(`Expected numeric literal in baselineQuickInfo verbosity levels array, got ${elem.getText()}`);
+                }
+                levels.push(Number(elem.text));
+            }
+            verbosityLevels[name] = levels;
+        }
+        else if (ts.isNumericLiteral(prop.initializer)) {
+            verbosityLevels[name] = [Number(prop.initializer.text)];
+        }
+        else {
+            throw new Error(`Expected numeric literal or array literal for baselineQuickInfo verbosity level, got ${prop.initializer.getText()}`);
+        }
     }
     return [{
         kind: "verifyBaselineQuickInfo",
+        verbosityLevels,
     }];
 }
 
@@ -2819,6 +2942,65 @@ function parseOutliningSpansArgs(args: readonly ts.Expression[]): [VerifyOutlini
     }];
 }
 
+function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [VerifySemanticClassificationsCmd] | [] {
+    if (args.length < 1) {
+        throw new Error("semanticClassificationsAre requires at least a format argument");
+    }
+
+    const formatArg = args[0];
+    if (!ts.isStringLiteralLike(formatArg)) {
+        throw new Error("semanticClassificationsAre first argument must be a string literal");
+    }
+
+    const format = formatArg.text;
+
+    // Only handle "2020" format for semantic tokens
+    if (format !== "2020") {
+        // Skip other formats like "original"
+        return [];
+    }
+
+    const tokens: Array<{ type: string; text: string; }> = [];
+
+    // Parse the classification tokens (c2.semanticToken("type", "text"))
+    for (let i = 1; i < args.length; i++) {
+        const arg = args[i];
+        if (!ts.isCallExpression(arg)) {
+            throw new Error(`Expected call expression for token at index ${i}`);
+        }
+
+        if (!ts.isPropertyAccessExpression(arg.expression) || arg.expression.name.text !== "semanticToken") {
+            throw new Error(`Expected semanticToken call at index ${i}`);
+        }
+
+        if (arg.arguments.length < 2) {
+            throw new Error(`semanticToken requires 2 arguments at index ${i}`);
+        }
+
+        const typeArg = arg.arguments[0];
+        const textArg = arg.arguments[1];
+
+        if (!ts.isStringLiteralLike(typeArg) || !ts.isStringLiteralLike(textArg)) {
+            throw new Error(`semanticToken arguments must be string literals at index ${i}`);
+        }
+
+        // Map TypeScript's internal "member" type to LSP's "method" type
+        let tokenType = typeArg.text;
+        tokenType = tokenType.replace(/\bmember\b/g, "method");
+
+        tokens.push({
+            type: tokenType,
+            text: textArg.text,
+        });
+    }
+
+    return [{
+        kind: "verifySemanticClassifications",
+        format,
+        tokens,
+    }];
+}
+
 function parseKind(expr: ts.Expression): string {
     if (!ts.isStringLiteral(expr)) {
         throw new Error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -3175,6 +3357,7 @@ interface VerifyBaselineGoToDefinitionCmd {
 
 interface VerifyBaselineQuickInfoCmd {
     kind: "verifyBaselineQuickInfo";
+    verbosityLevels?: Record<string, number[]>;
 }
 
 interface VerifyBaselineSignatureHelpCmd {
@@ -3258,6 +3441,14 @@ interface VerifyOrganizeImportsCmd {
 
 interface VerifyRenameInfoCmd {
     kind: "renameInfoSucceeded" | "renameInfoFailed";
+    preferences: string;
+}
+
+interface VerifyGetEditsForFileRenameCmd {
+    kind: "verifyGetEditsForFileRename";
+    oldPath: string;
+    newPath: string;
+    newFileContents: string;
     preferences: string;
 }
 
@@ -3391,6 +3582,12 @@ interface VerifyCodeFixAllCmd {
     newFileContent: string;
 }
 
+interface VerifySemanticClassificationsCmd {
+    kind: "verifySemanticClassifications";
+    format: string;
+    tokens: Array<{ type: string; text: string; }>;
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyApplyCodeActionFromCompletionCmd
@@ -3413,6 +3610,7 @@ type Cmd =
     | VerifyOrganizeImportsCmd
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd
+    | VerifyGetEditsForFileRenameCmd
     | VerifyBaselineLinkedEditingCmd
     | VerifyLinkedEditingCmd
     | VerifyNavToCmd
@@ -3422,6 +3620,7 @@ type Cmd =
     | VerifyImportFixModuleSpecifiersCmd
     | VerifyDiagnosticsCmd
     | VerifyBaselineDiagnosticsCmd
+    | VerifySemanticClassificationsCmd
     | VerifyOutliningSpansCmd
     | VerifyNumberOfErrorsInCurrentFileCmd
     | VerifyNoErrorsCmd
@@ -3698,6 +3897,14 @@ function generateNavigateTo({ args }: VerifyNavToCmd): string {
     return `f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{\n${args.join(", ")}})`;
 }
 
+function generateSemanticClassifications({ format, tokens }: VerifySemanticClassificationsCmd): string {
+    const tokensStr = tokens.map(t => `{Type: ${getGoStringLiteral(t.type)}, Text: ${getGoStringLiteral(t.text)}}`).join(",\n\t\t");
+    const maybeComma = tokens.length > 0 ? "," : "";
+    return `f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		${tokensStr}${maybeComma}
+	})`;
+}
+
 function generateCmd(cmd: Cmd, imports: Set<string>): string {
     switch (cmd.kind) {
         case "verifyCompletions":
@@ -3715,6 +3922,12 @@ function generateCmd(cmd: Cmd, imports: Set<string>): string {
             return generateBaselineGoToDefinition(cmd);
         case "verifyBaselineQuickInfo":
             // Quick Info -> Hover
+            if (cmd.verbosityLevels && Object.keys(cmd.verbosityLevels).length > 0) {
+                const entries = Object.entries(cmd.verbosityLevels).map(
+                    ([marker, levels]) => `${getGoStringLiteral(marker)}: {${levels.join(", ")}}`,
+                ).join(", ");
+                return `f.VerifyBaselineHoverWithVerbosity(t, map[string][]int{${entries}})`;
+            }
             return `f.VerifyBaselineHover(t)`;
         case "verifyBaselineSignatureHelp":
             return `f.VerifyBaselineSignatureHelp(t)`;
@@ -3744,6 +3957,8 @@ function generateCmd(cmd: Cmd, imports: Set<string>): string {
             return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
         case "renameInfoFailed":
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
+        case "verifyGetEditsForFileRename":
+            return `f.VerifyWillRenameFilesEdits(t, ${cmd.oldPath}, ${cmd.newPath}, ${cmd.newFileContents}, ${cmd.preferences})`;
         case "verifyBaselineInlayHints":
             return generateBaselineInlayHints(cmd);
         case "verifyBaselineLinkedEditing":
@@ -3806,6 +4021,8 @@ function generateCmd(cmd: Cmd, imports: Set<string>): string {
 	FixID: ${getGoStringLiteral(cmd.fixId)},
 	NewFileContent: ${getGoMultiLineStringLiteral(cmd.newFileContent)},
 })`;
+        case "verifySemanticClassifications":
+            return generateSemanticClassifications(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
