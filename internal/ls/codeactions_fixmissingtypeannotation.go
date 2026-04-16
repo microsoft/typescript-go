@@ -573,6 +573,12 @@ func (f *isolatedDeclarationsFixer) addTypeToSignatureDeclaration(funcNode *ast.
 	if funcNode.Type() != nil {
 		return ""
 	}
+	// For paren-less arrow functions like `x => x`, add parens before inserting any type annotations.
+	// This must happen before TryInsertTypeAnnotation so that subsequent param/return type annotations
+	// are inserted relative to the now-parenthesized parameter list.
+	if ast.IsArrowFunction(funcNode) {
+		f.changeTracker.ParenthesizeArrowParameters(f.sourceFile, funcNode)
+	}
 	typeNode := f.inferType(funcNode, nil)
 	if typeNode == nil {
 		return ""
