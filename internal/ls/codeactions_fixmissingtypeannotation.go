@@ -573,12 +573,6 @@ func (f *isolatedDeclarationsFixer) addTypeToSignatureDeclaration(funcNode *ast.
 	if funcNode.Type() != nil {
 		return ""
 	}
-	// For paren-less arrow functions like `x => x`, add parens before inserting any type annotations.
-	// This must happen before TryInsertTypeAnnotation so that subsequent param/return type annotations
-	// are inserted relative to the now-parenthesized parameter list.
-	if ast.IsArrowFunction(funcNode) {
-		f.changeTracker.ParenthesizeArrowParameters(f.sourceFile, funcNode)
-	}
 	typeNode := f.inferType(funcNode, nil)
 	if typeNode == nil {
 		return ""
@@ -1268,6 +1262,12 @@ func (f *isolatedDeclarationsFixer) addTypeToVariableLike(decl *ast.Node) string
 		f.changeTracker.ReplaceNode(f.sourceFile, decl.Type(), typeNode, nil)
 	} else {
 		f.changeTracker.TryInsertTypeAnnotation(f.sourceFile, decl, typeNode)
+		// Parenthesize paren-less arrow function parameters (`x => ...`) so the inserted `: T`
+		// produces `(x: T) => ...` instead of the invalid `x: T => ...`. Queued after the type
+		// annotation so that the `)` edit at param.End() sorts after the annotation insertion.
+		if ast.IsParameterDeclaration(decl) && decl.Parent != nil && ast.IsArrowFunction(decl.Parent) {
+			f.changeTracker.ParenthesizeArrowParameters(f.sourceFile, decl.Parent)
+		}
 	}
 	return diagnostics.Add_annotation_of_type_0.Localize(f.locale, typeToStringForDiag(typeNode, f.sourceFile, f.changeTracker))
 }
