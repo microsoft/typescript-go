@@ -317,10 +317,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			continue
 		}
 
-		if events.closeChange != nil {
-			if o == nil {
-				panic("overlay not found for closed file: " + uri)
-			}
+		if events.closeChange != nil && o != nil {
 			result.Closed.Add(uri)
 			delete(newOverlays, path)
 			o = nil
