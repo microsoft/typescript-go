@@ -1,4 +1,7 @@
-import { RAL, Disposable } from '../common/api';
+import {
+    Disposable,
+    RAL,
+} from "../common/api";
 interface RIL extends RAL {
     readonly stream: {
         readonly asReadableStream: (stream: WebSocket) => RAL.ReadableStream;

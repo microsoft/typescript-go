@@ -24,7 +24,7 @@ var Encodings;
             result.push(`${encoding.name};q=${q === 1 || q === 0 ? q.toFixed(0) : q.toFixed(digits)}`);
             q = q - diff;
         }
-        return result.join(', ');
+        return result.join(", ");
     }
     Encodings.getEncodingHeaderValue = getEncodingHeaderValue;
     function parseEncodingHeaderValue(value) {
@@ -32,7 +32,7 @@ var Encodings;
         const encodings = value.split(/\s*,\s*/);
         for (const value of encodings) {
             const [encoding, q] = parseEncoding(value);
-            if (encoding === '*') {
+            if (encoding === "*") {
                 continue;
             }
             let values = map.get(q);
@@ -54,7 +54,7 @@ var Encodings;
     function parseEncoding(value) {
         let q = 1;
         let encoding;
-        const index = value.indexOf(';q=');
+        const index = value.indexOf(";q=");
         if (index !== -1) {
             const parsed = parseFloat(value.substr(index));
             if (!Number.isNaN(parsed)) {

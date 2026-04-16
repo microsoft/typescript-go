@@ -1,5 +1,17 @@
-import { AbstractMessageReader, DataCallback, AbstractMessageWriter, Message, Disposable, ConnectionStrategy, ConnectionOptions, MessageReader, MessageWriter, Logger, MessageConnection } from '../common/api';
-export * from '../common/api';
+import {
+    AbstractMessageReader,
+    AbstractMessageWriter,
+    ConnectionOptions,
+    ConnectionStrategy,
+    DataCallback,
+    Disposable,
+    Logger,
+    Message,
+    MessageConnection,
+    MessageReader,
+    MessageWriter,
+} from "../common/api";
+export * from "../common/api";
 export declare class BrowserMessageReader extends AbstractMessageReader implements MessageReader {
     private _onData;
     private _messageListener;

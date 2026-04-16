@@ -15,16 +15,16 @@ function boolean(value) {
     return value === true || value === false;
 }
 function string(value) {
-    return typeof value === 'string' || value instanceof String;
+    return typeof value === "string" || value instanceof String;
 }
 function number(value) {
-    return typeof value === 'number' || value instanceof Number;
+    return typeof value === "number" || value instanceof Number;
 }
 function error(value) {
     return value instanceof Error;
 }
 function func(value) {
-    return typeof value === 'function';
+    return typeof value === "function";
 }
 function array(value) {
     return Array.isArray(value);

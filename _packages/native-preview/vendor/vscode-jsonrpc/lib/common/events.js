@@ -4,15 +4,17 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { default: mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Emitter = exports.Event = void 0;
 const ral_1 = __importDefault(require("./ral"));
 var Event;
 (function (Event) {
-    const _disposable = { dispose() { } };
-    Event.None = function () { return _disposable; };
+    const _disposable = { dispose() {} };
+    Event.None = function () {
+        return _disposable;
+    };
 })(Event || (exports.Event = Event = {}));
 class CallbackList {
     _callbacks;
@@ -47,7 +49,7 @@ class CallbackList {
             }
         }
         if (foundCallbackWithDifferentContext) {
-            throw new Error('When adding a listener with a context, you should remove it with the same context');
+            throw new Error("When adding a listener with a context, you should remove it with the same context");
         }
     }
     invoke(...args) {
@@ -76,7 +78,7 @@ class CallbackList {
 }
 class Emitter {
     _options;
-    static _noop = function () { };
+    static _noop = function () {};
     _event;
     _callbacks;
     constructor(_options) {
@@ -107,7 +109,7 @@ class Emitter {
                         if (this._options && this._options.onLastListenerRemove && this._callbacks.isEmpty()) {
                             this._options.onLastListenerRemove(this);
                         }
-                    }
+                    },
                 };
                 if (Array.isArray(disposables)) {
                     disposables.push(result);

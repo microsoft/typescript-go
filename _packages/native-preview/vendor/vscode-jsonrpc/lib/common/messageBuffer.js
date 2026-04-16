@@ -7,12 +7,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractMessageBuffer = void 0;
 const CR = 13;
 const LF = 10;
-const CRLF = '\r\n';
+const CRLF = "\r\n";
 class AbstractMessageBuffer {
     _encoding;
     _chunks;
     _totalLength;
-    constructor(encoding = 'utf-8') {
+    constructor(encoding = "utf-8") {
         this._encoding = encoding;
         this._chunks = [];
         this._totalLength = 0;
@@ -21,7 +21,7 @@ class AbstractMessageBuffer {
         return this._encoding;
     }
     append(chunk) {
-        const toAppend = typeof chunk === 'string' ? this.fromString(chunk, this._encoding) : chunk;
+        const toAppend = typeof chunk === "string" ? this.fromString(chunk, this._encoding) : chunk;
         this._chunks.push(toAppend);
         this._totalLength += toAppend.byteLength;
     }
@@ -79,13 +79,13 @@ class AbstractMessageBuffer {
         // have two empty lines after the split at the end as well.
         const buffer = this._read(chunkBytesRead + offset);
         const result = new Map();
-        const headers = this.toString(buffer, 'ascii').split(CRLF);
+        const headers = this.toString(buffer, "ascii").split(CRLF);
         if (headers.length < 2) {
             return result;
         }
         for (let i = 0; i < headers.length - 2; i++) {
             const header = headers[i];
-            const index = header.indexOf(':');
+            const index = header.indexOf(":");
             if (index === -1) {
                 throw new Error(`Message header must separate key and value using ':'\n${header}`);
             }

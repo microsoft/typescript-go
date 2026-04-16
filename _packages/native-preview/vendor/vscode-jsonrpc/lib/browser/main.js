@@ -3,22 +3,27 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function (o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
     if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+        desc = {
+            enumerable: true,
+            get: function () {
+                return m[k];
+            },
+        };
     }
     Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
+}) : (function (o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
+var __exportStar = (this && this.__exportStar) || function (m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { default: mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
@@ -34,10 +39,10 @@ class BrowserMessageReader extends api_1.AbstractMessageReader {
     constructor(port) {
         super();
         this._onData = new api_1.Emitter();
-        this._messageListener = (event) => {
+        this._messageListener = event => {
             this._onData.fire(event.data);
         };
-        port.addEventListener('error', (event) => this.fireError(event));
+        port.addEventListener("error", event => this.fireError(event));
         port.onmessage = this._messageListener;
     }
     listen(callback) {
@@ -52,7 +57,7 @@ class BrowserMessageWriter extends api_1.AbstractMessageWriter {
         super();
         this.port = port;
         this.errorCount = 0;
-        port.addEventListener('error', (event) => this.fireError(event));
+        port.addEventListener("error", event => this.fireError(event));
     }
     write(msg) {
         try {

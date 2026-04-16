@@ -1,4 +1,4 @@
-import { RAL } from '../common/api';
+import { RAL } from "../common/api";
 interface RIL extends RAL {
     readonly stream: {
         readonly asReadableStream: (stream: NodeJS.ReadableStream) => RAL.ReadableStream;

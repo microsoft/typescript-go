@@ -3,24 +3,29 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function (o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
     if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+        desc = {
+            enumerable: true,
+            get: function () {
+                return m[k];
+            },
+        };
     }
     Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
+}) : (function (o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function (o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
+}) : function (o, v) {
     o["default"] = v;
 });
 var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
+    var ownKeys = function (o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
             var ar = [];
             for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
@@ -31,13 +36,40 @@ var __importStar = (this && this.__importStar) || (function () {
     return function (mod) {
         if (mod && mod.__esModule) return mod;
         var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        if (mod != null) { for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]); }
         __setModuleDefault(result, mod);
         return result;
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
+exports.Message =
+    exports.NotificationType9 =
+    exports.NotificationType8 =
+    exports.NotificationType7 =
+    exports.NotificationType6 =
+    exports.NotificationType5 =
+    exports.NotificationType4 =
+    exports.NotificationType3 =
+    exports.NotificationType2 =
+    exports.NotificationType1 =
+    exports.NotificationType0 =
+    exports.NotificationType =
+    exports.RequestType9 =
+    exports.RequestType8 =
+    exports.RequestType7 =
+    exports.RequestType6 =
+    exports.RequestType5 =
+    exports.RequestType4 =
+    exports.RequestType3 =
+    exports.RequestType2 =
+    exports.RequestType1 =
+    exports.RequestType =
+    exports.RequestType0 =
+    exports.AbstractMessageSignature =
+    exports.ParameterStructures =
+    exports.ResponseError =
+    exports.ErrorCodes =
+        void 0;
 const is = __importStar(require("./is"));
 /**
  * Predefined error codes.
@@ -58,7 +90,7 @@ var ErrorCodes;
      * are left in the range.
      *
      * @since 3.16.0
-    */
+     */
     ErrorCodes.jsonrpcReservedErrorRangeStart = -32099;
     /** @deprecated use  jsonrpcReservedErrorRangeStart */
     ErrorCodes.serverErrorStart = -32099;
@@ -90,7 +122,7 @@ var ErrorCodes;
      * It doesn't denote a real error code.
      *
      * @since 3.16.0
-    */
+     */
     ErrorCodes.jsonrpcReservedErrorRangeEnd = -32000;
     /** @deprecated use  jsonrpcReservedErrorRangeEnd */
     ErrorCodes.serverErrorEnd = -32000;
@@ -111,7 +143,7 @@ class ResponseError extends Error {
     toJson() {
         const result = {
             code: this.code,
-            message: this.message
+            message: this.message,
         };
         if (this.data !== undefined) {
             result.data = this.data;
@@ -126,18 +158,18 @@ class ParameterStructures {
      * The parameter structure is automatically inferred on the number of parameters
      * and the parameter type in case of a single param.
      */
-    static auto = new ParameterStructures('auto');
+    static auto = new ParameterStructures("auto");
     /**
      * Forces `byPosition` parameter structure. This is useful if you have a single
      * parameter which has a literal type.
      */
-    static byPosition = new ParameterStructures('byPosition');
+    static byPosition = new ParameterStructures("byPosition");
     /**
      * Forces `byName` parameter structure. This is only useful when having a single
      * parameter. The library will report errors if used with a different number of
      * parameters.
      */
-    static byName = new ParameterStructures('byName');
+    static byName = new ParameterStructures("byName");
     constructor(kind) {
         this.kind = kind;
     }

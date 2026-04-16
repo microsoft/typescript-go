@@ -1,10 +1,43 @@
 /// <reference path="../../typings/thenable.d.ts" preserve="true" />
-import { Message, RequestMessage, RequestType, RequestType0, RequestType1, RequestType2, RequestType3, RequestType4, RequestType5, RequestType6, RequestType7, RequestType8, RequestType9, ResponseMessage, ResponseError, NotificationMessage, NotificationType, NotificationType0, NotificationType1, NotificationType2, NotificationType3, NotificationType4, NotificationType5, NotificationType6, NotificationType7, NotificationType8, NotificationType9, _EM, ParameterStructures } from './messages';
-import type { Disposable } from './disposable';
-import { Event } from './events';
-import { CancellationToken, AbstractCancellationTokenSource } from './cancellation';
-import { MessageReader } from './messageReader';
-import { MessageWriter } from './messageWriter';
+import {
+    AbstractCancellationTokenSource,
+    CancellationToken,
+} from "./cancellation";
+import type { Disposable } from "./disposable";
+import { Event } from "./events";
+import { MessageReader } from "./messageReader";
+import {
+    _EM,
+    Message,
+    NotificationMessage,
+    NotificationType,
+    NotificationType0,
+    NotificationType1,
+    NotificationType2,
+    NotificationType3,
+    NotificationType4,
+    NotificationType5,
+    NotificationType6,
+    NotificationType7,
+    NotificationType8,
+    NotificationType9,
+    ParameterStructures,
+    RequestMessage,
+    RequestType,
+    RequestType0,
+    RequestType1,
+    RequestType2,
+    RequestType3,
+    RequestType4,
+    RequestType5,
+    RequestType6,
+    RequestType7,
+    RequestType8,
+    RequestType9,
+    ResponseError,
+    ResponseMessage,
+} from "./messages";
+import { MessageWriter } from "./messageWriter";
 export type ProgressToken = number | string;
 export declare namespace ProgressToken {
     function is(value: any): value is number | string;
@@ -120,27 +153,27 @@ export declare enum Trace {
     Off = 0,
     Messages = 1,
     Compact = 2,
-    Verbose = 3
+    Verbose = 3,
 }
 export declare namespace TraceValue {
     /**
      * Turn tracing off.
      */
-    const Off: 'off';
+    const Off: "off";
     /**
      * Trace messages only.
      */
-    const Messages: 'messages';
+    const Messages: "messages";
     /**
      * Compact message tracing.
      */
-    const Compact: 'compact';
+    const Compact: "compact";
     /**
      * Verbose message tracing.
      */
-    const Verbose: 'verbose';
+    const Verbose: "verbose";
 }
-export type TraceValue = 'off' | 'messages' | 'compact' | 'verbose';
+export type TraceValue = "off" | "messages" | "compact" | "verbose";
 /**
  * @deprecated Use TraceValue instead
  */
@@ -152,7 +185,7 @@ export declare namespace Trace {
 }
 export declare enum TraceFormat {
     Text = "text",
-    JSON = "json"
+    JSON = "json",
 }
 export declare namespace TraceFormat {
     function fromString(value: string): TraceFormat;
@@ -190,7 +223,7 @@ export declare enum ConnectionErrors {
     /**
      * The connection is already in listening mode.
      */
-    AlreadyListening = 3
+    AlreadyListening = 3,
 }
 export declare class ConnectionError extends Error {
     readonly code: ConnectionErrors;
@@ -204,7 +237,7 @@ export declare namespace ConnectionStrategy {
 }
 export type CancellationId = number | string;
 export interface IdCancellationReceiverStrategy {
-    kind?: 'id';
+    kind?: "id";
     /**
      * Creates a CancellationTokenSource from a cancellation id.
      *
@@ -220,7 +253,7 @@ export declare namespace IdCancellationReceiverStrategy {
     function is(value: any): value is IdCancellationReceiverStrategy;
 }
 export interface RequestCancellationReceiverStrategy {
-    kind: 'request';
+    kind: "request";
     /**
      * Create a cancellation token source from a given request message.
      *

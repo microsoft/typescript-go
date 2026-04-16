@@ -4,7 +4,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { default: mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Semaphore = void 0;
@@ -15,7 +15,7 @@ class Semaphore {
     _waiting;
     constructor(capacity = 1) {
         if (capacity <= 0) {
-            throw new Error('Capacity must be greater than 0');
+            throw new Error("Capacity must be greater than 0");
         }
         this._capacity = capacity;
         this._active = 0;
@@ -48,11 +48,11 @@ class Semaphore {
         try {
             const result = next.thunk();
             if (result instanceof Promise) {
-                result.then((value) => {
+                result.then(value => {
                     this._active--;
                     next.resolve(value);
                     this.runNext();
-                }, (err) => {
+                }, err => {
                     this._active--;
                     next.reject(err);
                     this.runNext();

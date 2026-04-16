@@ -3,24 +3,29 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function (o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
     if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+        desc = {
+            enumerable: true,
+            get: function () {
+                return m[k];
+            },
+        };
     }
     Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
+}) : (function (o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function (o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
+}) : function (o, v) {
     o["default"] = v;
 });
 var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
+    var ownKeys = function (o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
             var ar = [];
             for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
@@ -31,13 +36,13 @@ var __importStar = (this && this.__importStar) || (function () {
     return function (mod) {
         if (mod && mod.__esModule) return mod;
         var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        if (mod != null) { for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]); }
         __setModuleDefault(result, mod);
         return result;
     };
 })();
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { default: mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -91,7 +96,7 @@ class AbstractMessageReader {
             return error;
         }
         else {
-            return new Error(`Reader received error. Reason: ${Is.string(error.message) ? error.message : 'unknown'}`);
+            return new Error(`Reader received error. Reason: ${Is.string(error.message) ? error.message : "unknown"}`);
         }
     }
 }
@@ -105,11 +110,11 @@ var ResolvedMessageReaderOptions;
         const contentDecoders = new Map();
         let contentTypeDecoder;
         const contentTypeDecoders = new Map();
-        if (options === undefined || typeof options === 'string') {
-            charset = options ?? 'utf-8';
+        if (options === undefined || typeof options === "string") {
+            charset = options ?? "utf-8";
         }
         else {
-            charset = options.charset ?? 'utf-8';
+            charset = options.charset ?? "utf-8";
             if (options.contentDecoder !== undefined) {
                 contentDecoder = options.contentDecoder;
                 contentDecoders.set(contentDecoder.name, contentDecoder);
@@ -168,10 +173,10 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
         this.messageToken = 0;
         this.partialMessageTimer = undefined;
         this.callback = callback;
-        const result = this.readable.onData((data) => {
+        const result = this.readable.onData(data => {
             this.onData(data);
         });
-        this.readable.onError((error) => this.fireError(error));
+        this.readable.onError(error => this.fireError(error));
         this.readable.onClose(() => this.fireClose());
         return result;
     }
@@ -184,7 +189,7 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
                     if (!headers) {
                         return;
                     }
-                    const contentLength = headers.get('content-length');
+                    const contentLength = headers.get("content-length");
                     if (!contentLength) {
                         this.fireError(new Error(`Header must provide a Content-Length property.\n${JSON.stringify(Object.fromEntries(headers))}`));
                         return;
@@ -214,7 +219,7 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
                         : body;
                     const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
                     this.callback(message);
-                }).catch((error) => {
+                }).catch(error => {
                     this.fireError(error);
                 });
             }
@@ -234,13 +239,18 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
         if (this._partialMessageTimeout <= 0) {
             return;
         }
-        this.partialMessageTimer = (0, ral_1.default)().timer.setTimeout((token, timeout) => {
-            this.partialMessageTimer = undefined;
-            if (token === this.messageToken) {
-                this.firePartialMessage({ messageToken: token, waitingTime: timeout });
-                this.setPartialMessageTimer();
-            }
-        }, this._partialMessageTimeout, this.messageToken, this._partialMessageTimeout);
+        this.partialMessageTimer = (0, ral_1.default)().timer.setTimeout(
+            (token, timeout) => {
+                this.partialMessageTimer = undefined;
+                if (token === this.messageToken) {
+                    this.firePartialMessage({ messageToken: token, waitingTime: timeout });
+                    this.setPartialMessageTimer();
+                }
+            },
+            this._partialMessageTimeout,
+            this.messageToken,
+            this._partialMessageTimeout,
+        );
     }
 }
 exports.ReadableStreamMessageReader = ReadableStreamMessageReader;

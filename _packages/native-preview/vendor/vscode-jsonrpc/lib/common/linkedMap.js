@@ -14,7 +14,7 @@ var Touch;
     Touch.AsNew = Touch.Last;
 })(Touch || (exports.Touch = Touch = {}));
 class LinkedMap {
-    [Symbol.toStringTag] = 'LinkedMap';
+    [Symbol.toStringTag] = "LinkedMap";
     _map;
     _head;
     _tail;
@@ -114,7 +114,7 @@ class LinkedMap {
             return undefined;
         }
         if (!this._head || !this._tail) {
-            throw new Error('Invalid list');
+            throw new Error("Invalid list");
         }
         const item = this._head;
         this._map.delete(item.key);
@@ -157,7 +157,7 @@ class LinkedMap {
                 else {
                     return { value: undefined, done: true };
                 }
-            }
+            },
         };
         return iterator;
     }
@@ -180,7 +180,7 @@ class LinkedMap {
                 else {
                     return { value: undefined, done: true };
                 }
-            }
+            },
         };
         return iterator;
     }
@@ -203,7 +203,7 @@ class LinkedMap {
                 else {
                     return { value: undefined, done: true };
                 }
-            }
+            },
         };
         return iterator;
     }
@@ -238,7 +238,7 @@ class LinkedMap {
             this._tail = item;
         }
         else if (!this._head) {
-            throw new Error('Invalid list');
+            throw new Error("Invalid list");
         }
         else {
             item.next = this._head;
@@ -253,7 +253,7 @@ class LinkedMap {
             this._head = item;
         }
         else if (!this._tail) {
-            throw new Error('Invalid list');
+            throw new Error("Invalid list");
         }
         else {
             item.previous = this._tail;
@@ -271,7 +271,7 @@ class LinkedMap {
             // This can only happened if size === 1 which is handle
             // by the case above.
             if (!item.next) {
-                throw new Error('Invalid list');
+                throw new Error("Invalid list");
             }
             item.next.previous = undefined;
             this._head = item.next;
@@ -280,7 +280,7 @@ class LinkedMap {
             // This can only happened if size === 1 which is handle
             // by the case above.
             if (!item.previous) {
-                throw new Error('Invalid list');
+                throw new Error("Invalid list");
             }
             item.previous.next = undefined;
             this._tail = item.previous;
@@ -289,7 +289,7 @@ class LinkedMap {
             const next = item.next;
             const previous = item.previous;
             if (!next || !previous) {
-                throw new Error('Invalid list');
+                throw new Error("Invalid list");
             }
             next.previous = previous;
             previous.next = next;
@@ -300,7 +300,7 @@ class LinkedMap {
     }
     touch(item, touch) {
         if (!this._head || !this._tail) {
-            throw new Error('Invalid list');
+            throw new Error("Invalid list");
         }
         if ((touch !== Touch.First && touch !== Touch.Last)) {
             return;
