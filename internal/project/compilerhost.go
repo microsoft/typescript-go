@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 var _ compiler.CompilerHost = (*compilerHost)(nil)
@@ -34,17 +33,12 @@ func newCompilerHost(
 	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *compilerHost {
-	pnpApi := pnp.InitPnpApi(builder.fs.fs, currentDirectory)
-	if pnpApi != nil {
-		builder.fs.fs = pnpvfs.From(builder.fs.fs)
-	}
-
 	return &compilerHost{
 		configFilePath:   project.configFilePath,
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
-		pnpApi:   pnpApi,
+		pnpApi:   builder.pnpApi,
 		sourceFS: newSourceFS(true, builder.fs, builder.toPath),
 
 		project: project,

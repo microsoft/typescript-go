@@ -21,7 +21,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
@@ -65,10 +64,6 @@ func NewSnapshot(
 	toPath func(fileName string) tspath.Path,
 	pnpApi *pnp.PnpApi,
 ) *Snapshot {
-	if pnpApi != nil {
-		fs.fs = pnpvfs.From(fs.fs)
-	}
-
 	s := &Snapshot{
 		id: id,
 
@@ -80,11 +75,10 @@ func NewSnapshot(
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 
-		pnpApi: pnpApi,
-
 		userPreferences:  userPreferences,
 		AutoImports:      autoImports,
 		autoImportsWatch: autoImportsWatch,
+		pnpApi:           pnpApi,
 	}
 	s.refCount.Store(1)
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
@@ -339,12 +333,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		ctx,
 		newSnapshotID,
 		fs,
+		session.pnpApi,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
 		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
-		s.pnpApi,
 		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
@@ -429,6 +423,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollection,
 		session.parseCache,
 		fs,
+		session.pnpApi,
 		s.sessionOptions.CurrentDirectory,
 		s.toPath,
 	)
@@ -469,7 +464,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		autoImports,
 		autoImportsWatch,
 		s.toPath,
-		s.pnpApi,
+		session.pnpApi,
 	)
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection

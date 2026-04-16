@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 type autoImportBuilderFS struct {
@@ -83,14 +82,10 @@ func newAutoImportRegistryCloneHost(
 	projectCollection *ProjectCollection,
 	parseCache *ParseCache,
 	snapshotFSBuilder *snapshotFSBuilder,
+	pnpApi *pnp.PnpApi,
 	currentDirectory string,
 	toPath func(fileName string) tspath.Path,
 ) *autoImportRegistryCloneHost {
-	pnpApi := pnp.InitPnpApi(snapshotFSBuilder.fs, currentDirectory)
-	if pnpApi != nil {
-		snapshotFSBuilder.fs = pnpvfs.From(snapshotFSBuilder.fs)
-	}
-
 	return &autoImportRegistryCloneHost{
 		projectCollection: projectCollection,
 		parseCache:        parseCache,
