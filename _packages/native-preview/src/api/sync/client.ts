@@ -4,6 +4,7 @@ import {
     type ClientSocketOptions,
     type ClientSpawnOptions,
     isSpawnOptions,
+    resolveExePath,
 } from "../options.ts";
 import { SyncRpcChannel } from "../syncChannel.ts";
 
@@ -38,7 +39,7 @@ export class Client {
             args.push(`--callbacks=${enabledCallbacks.join(",")}`);
         }
 
-        const channel = new SyncRpcChannel(options.tsserverPath, args);
+        const channel = new SyncRpcChannel(resolveExePath(options), args);
         this.channel = channel;
 
         if (options.fs) {

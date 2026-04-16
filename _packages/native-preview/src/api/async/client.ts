@@ -18,6 +18,7 @@ import {
     type ClientSocketOptions,
     type ClientSpawnOptions,
     isSpawnOptions,
+    resolveExePath,
 } from "../options.ts";
 
 export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions };
@@ -72,7 +73,7 @@ export class Client {
                 args.push(`--callbacks=${enabledCallbacks.join(",")}`);
             }
 
-            this.process = spawn(options.tsserverPath, args, {
+            this.process = spawn(resolveExePath(options), args, {
                 stdio: ["pipe", "pipe", "inherit"],
             });
 

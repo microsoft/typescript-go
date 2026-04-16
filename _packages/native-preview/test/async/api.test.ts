@@ -1433,7 +1433,6 @@ describe("readFile callback semantics", () => {
 
         const api = new API({
             cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-            tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
             fs,
         });
 
@@ -2382,7 +2381,6 @@ test("Parse-clone-emit roundtrip", async () => {
     const tsSource = fileURLToPath(new URL("../../../../_submodules/TypeScript/src", import.meta.url).toString());
     const api = new API({
         cwd: tsSource,
-        tsserverPath: getTsserverPath(),
     });
     const target = {
         cloneCrashed: 0,
@@ -2570,14 +2568,9 @@ test("Benchmarks", async () => {
     await runBenchmarks({ singleIteration: true });
 });
 
-function getTsserverPath() {
-    return fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString());
-}
-
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
     return new API({
         cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-        tsserverPath: getTsserverPath(),
         fs: createVirtualFileSystem(files),
     });
 }
@@ -2586,7 +2579,6 @@ function spawnAPIWithFS(files: Record<string, string> = { ...defaultFiles }): { 
     const fs = createVirtualFileSystem(files);
     const api = new API({
         cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-        tsserverPath: getTsserverPath(),
         fs,
     });
     return { api, fs };

@@ -102,7 +102,6 @@ describe("astnav", () => {
     before(() => {
         api = new API({
             cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-            tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
             fs: createVirtualFileSystem({
                 "/tsconfig.json": JSON.stringify({ files: ["/src/testFile.ts"] }),
                 "/src/testFile.ts": fileText,

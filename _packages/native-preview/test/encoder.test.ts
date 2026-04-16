@@ -30,17 +30,17 @@ import {
 import {
     encodeNode,
     encodeSourceFile,
-} from "../src/node/encoder.ts";
+} from "../src/api/node/encoder.ts";
 import {
     RemoteNode,
     RemoteNodeList,
     RemoteSourceFile,
-} from "../src/node/node.ts";
+} from "../src/api/node/node.ts";
 import {
     HEADER_OFFSET_NODES,
     NODE_LEN,
     NODE_OFFSET_DATA,
-} from "../src/node/protocol.ts";
+} from "../src/api/node/protocol.ts";
 
 function makeSF(text: string, fileName: string, statements: readonly Statement[]): SourceFile {
     const endOfFileToken = createToken(SyntaxKind.EndOfFile);

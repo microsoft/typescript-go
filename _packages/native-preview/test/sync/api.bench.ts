@@ -26,7 +26,7 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { Bench } from "tinybench";
 import ts from "typescript";
-import { RemoteSourceFile } from "../../src/node/node.ts";
+import { RemoteSourceFile } from "../../src/api/node/node.ts";
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 if (isMain) {
@@ -206,7 +206,6 @@ export function runBenchmarks(options?: { filter?: string; singleIteration?: boo
     function spawnAPI() {
         api = new API({
             cwd: repoRoot,
-            tsserverPath: fileURLToPath(new URL(`../../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         });
     }
 
