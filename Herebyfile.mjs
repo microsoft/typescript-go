@@ -704,7 +704,7 @@ async function runTestTools() {
 }
 
 async function runTestAPI() {
-    await $`npm run -w @typescript/native-preview test`;
+    await $`npm run -w @typescript/native-preview test:only`;
 }
 
 export const testTools = task({
