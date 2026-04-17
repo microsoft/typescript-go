@@ -1,17 +1,16 @@
 import { CharacterCodes } from "#enums/characterCodes";
 import { CommentDirectiveType } from "#enums/commentDirectiveType";
-import { JSDocParsingMode } from "#enums/jsDocParsingMode";
 import { LanguageVariant } from "#enums/languageVariant";
 import { RegularExpressionFlags } from "#enums/regularExpressionFlags";
-import { ScriptKind } from "#enums/scriptKind";
 import { ScriptTarget } from "#enums/scriptTarget";
 import { SyntaxKind } from "#enums/syntaxKind";
 import { TokenFlags } from "#enums/tokenFlags";
 import type {
-    JSDocSyntaxKind,
     JsxTokenSyntaxKind,
     KeywordSyntaxKind,
-} from "./nodes.ts";
+} from "./ast.ts";
+
+export type JSDocTokenKind = SyntaxKind.EndOfFile | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.OpenParenToken | SyntaxKind.CloseParenToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.HashToken | SyntaxKind.Unknown | KeywordSyntaxKind;
 
 export interface CommentDirective {
     range: { pos: number; end: number; };
@@ -51,6 +50,8 @@ export interface Scanner {
     hasPrecedingLineBreak(): boolean;
     hasPrecedingJSDocComment(): boolean;
     hasPrecedingJSDocLeadingAsterisks(): boolean;
+    hasPrecedingJSDocWithDeprecatedTag(): boolean;
+    hasPrecedingJSDocWithSeeOrLink(): boolean;
     isIdentifier(): boolean;
     isReservedWord(): boolean;
     isUnterminated(): boolean;
@@ -71,16 +72,14 @@ export interface Scanner {
     reScanQuestionToken(): SyntaxKind;
     reScanInvalidIdentifier(): SyntaxKind;
     scanJsxToken(): JsxTokenSyntaxKind;
-    scanJsDocToken(): JSDocSyntaxKind;
-    scanJSDocCommentTextToken(inBackticks: boolean): JSDocSyntaxKind | SyntaxKind.JSDocCommentTextToken;
+    scanJsDocToken(): JSDocTokenKind;
+    scanJSDocCommentTextToken(inBackticks: boolean): JSDocTokenKind | SyntaxKind.JSDocCommentTextToken;
     scan(): SyntaxKind;
 
     getText(): string;
     clearCommentDirectives(): void;
     setText(text: string | undefined, start?: number, length?: number): void;
     setLanguageVariant(variant: LanguageVariant): void;
-    setScriptKind(scriptKind: ScriptKind): void;
-    setJSDocParsingMode(kind: JSDocParsingMode): void;
     resetTokenState(pos: number): void;
     setSkipJsDocLeadingAsterisks(skip: boolean): void;
     lookAhead<T>(callback: () => T): T;
@@ -266,7 +265,45 @@ const unicodeESNextIdentifierPart = [48, 57, 65, 90, 95, 95, 97, 122, 170, 170, 
 
 const commentDirectiveRegExSingleLine = /^\/\/\/?\s*@(ts-expect-error|ts-ignore)/;
 const commentDirectiveRegExMultiLine = /^(?:\/|\*)*\s*@(ts-expect-error|ts-ignore)/;
-const jsDocSeeOrLink = /@(?:see|link)/i;
+
+const jsDocTagTerminators = new Set([" ", "\t", "\n", "\r", "}", "*"]);
+
+function hasJSDocTag(text: string, offset: number, ...tags: string[]): boolean {
+    for (const tag of tags) {
+        if (text.startsWith(tag, offset)) {
+            if (offset + tag.length === text.length) {
+                return true;
+            }
+            if (jsDocTagTerminators.has(text[offset + tag.length])) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function scanJSDocCommentForTags(text: string, tokenFlags: TokenFlags): TokenFlags {
+    let offset = 0;
+    while (true) {
+        const i = text.indexOf("@", offset);
+        if (i < 0) {
+            return tokenFlags;
+        }
+        offset = i + 1;
+        if (!(tokenFlags & TokenFlags.PrecedingJSDocWithDeprecated) && hasJSDocTag(text, offset, "deprecated")) {
+            tokenFlags |= TokenFlags.PrecedingJSDocWithDeprecated;
+        }
+        if (!(tokenFlags & TokenFlags.PrecedingJSDocWithSeeOrLink) && hasJSDocTag(text, offset, "see", "link", "linkcode", "linkplain")) {
+            tokenFlags |= TokenFlags.PrecedingJSDocWithSeeOrLink;
+        }
+        if (
+            (tokenFlags & (TokenFlags.PrecedingJSDocWithDeprecated | TokenFlags.PrecedingJSDocWithSeeOrLink)) ===
+                (TokenFlags.PrecedingJSDocWithDeprecated | TokenFlags.PrecedingJSDocWithSeeOrLink)
+        ) {
+            return tokenFlags;
+        }
+    }
+}
 
 function lookupInUnicodeMap(code: number, map: readonly number[]): boolean {
     if (code < map[0]) {
@@ -878,9 +915,6 @@ export function createScanner(
     var commentDirectives: CommentDirective[] | undefined;
     var skipJsDocLeadingAsterisks = 0;
 
-    var scriptKind: ScriptKind = ScriptKind.Unknown;
-    var jsDocParsingMode: JSDocParsingMode = JSDocParsingMode.ParseAll;
-
     setText(text, start, length);
 
     var scanner: Scanner = {
@@ -895,6 +929,8 @@ export function createScanner(
         hasPrecedingLineBreak: () => (tokenFlags & TokenFlags.PrecedingLineBreak) !== 0,
         hasPrecedingJSDocComment: () => (tokenFlags & TokenFlags.PrecedingJSDocComment) !== 0,
         hasPrecedingJSDocLeadingAsterisks: () => (tokenFlags & TokenFlags.PrecedingJSDocLeadingAsterisks) !== 0,
+        hasPrecedingJSDocWithDeprecatedTag: () => (tokenFlags & TokenFlags.PrecedingJSDocWithDeprecated) !== 0,
+        hasPrecedingJSDocWithSeeOrLink: () => (tokenFlags & TokenFlags.PrecedingJSDocWithSeeOrLink) !== 0,
         isIdentifier: () => token === SyntaxKind.Identifier || token > SyntaxKind.LastReservedWord,
         isReservedWord: () => token >= SyntaxKind.FirstReservedWord && token <= SyntaxKind.LastReservedWord,
         isUnterminated: () => (tokenFlags & TokenFlags.Unterminated) !== 0,
@@ -922,8 +958,6 @@ export function createScanner(
         clearCommentDirectives,
         setText,
         setLanguageVariant,
-        setScriptKind,
-        setJSDocParsingMode,
         resetTokenState,
         setSkipJsDocLeadingAsterisks,
         tryScan,
@@ -1705,8 +1739,9 @@ export function createScanner(
                             }
                         }
 
-                        if (isJSDoc && shouldParseJSDoc()) {
+                        if (isJSDoc) {
                             tokenFlags |= TokenFlags.PrecedingJSDocComment;
+                            tokenFlags = scanJSDocCommentForTags(text.slice(tokenStart, pos), tokenFlags);
                         }
 
                         commentDirectives = appendIfCommentDirective(commentDirectives, text.slice(lastLineStart, pos), commentDirectiveRegExMultiLine, lastLineStart);
@@ -1975,25 +2010,6 @@ export function createScanner(
                 }
             }
         }
-    }
-
-    function shouldParseJSDoc() {
-        switch (jsDocParsingMode) {
-            case JSDocParsingMode.ParseAll:
-                return true;
-            case JSDocParsingMode.ParseNone:
-                return false;
-        }
-
-        if (scriptKind !== ScriptKind.TS && scriptKind !== ScriptKind.TSX) {
-            return true;
-        }
-
-        if (jsDocParsingMode === JSDocParsingMode.ParseForTypeInfo) {
-            return false;
-        }
-
-        return jsDocSeeOrLink.test(text.slice(fullStartPos, pos));
     }
 
     function reScanInvalidIdentifier(): SyntaxKind {
@@ -2312,7 +2328,7 @@ export function createScanner(
         return scanJsxAttributeValue();
     }
 
-    function scanJSDocCommentTextToken(inBackticks: boolean): JSDocSyntaxKind | SyntaxKind.JSDocCommentTextToken {
+    function scanJSDocCommentTextToken(inBackticks: boolean): JSDocTokenKind | SyntaxKind.JSDocCommentTextToken {
         fullStartPos = tokenStart = pos;
         tokenFlags = TokenFlags.None;
         if (pos >= end) {
@@ -2339,7 +2355,7 @@ export function createScanner(
         return token = SyntaxKind.JSDocCommentTextToken;
     }
 
-    function scanJsDocToken(): JSDocSyntaxKind {
+    function scanJsDocToken(): JSDocTokenKind {
         fullStartPos = tokenStart = pos;
         tokenFlags = TokenFlags.None;
         if (pos >= end) {
@@ -2499,14 +2515,6 @@ export function createScanner(
 
     function setLanguageVariant(variant: LanguageVariant) {
         languageVariant = variant;
-    }
-
-    function setScriptKind(kind: ScriptKind) {
-        scriptKind = kind;
-    }
-
-    function setJSDocParsingMode(kind: JSDocParsingMode) {
-        jsDocParsingMode = kind;
     }
 
     function resetTokenState(position: number) {

@@ -37,10 +37,11 @@ module.exports = Container;
 
 //// [obj.d.ts]
 declare const _default: {
-    new (): {
-        x: number;
-    };
+    new (): import("./obj");
 };
 export = _default;
 //// [index.d.ts]
+declare class Container {
+    constructor();
+}
 export = Container;

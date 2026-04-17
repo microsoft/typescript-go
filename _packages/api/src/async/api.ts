@@ -1,17 +1,21 @@
 /// <reference path="../node/node.ts" preserve="true" />
+import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
 import { ObjectFlags } from "#enums/objectFlags";
 import { SignatureFlags } from "#enums/signatureFlags";
 import { SignatureKind } from "#enums/signatureKind";
 import { SymbolFlags } from "#enums/symbolFlags";
 import { TypeFlags } from "#enums/typeFlags";
-import type {
-    Expression,
-    Node,
-    Path,
-    SourceFile,
-    SyntaxKind,
-    TypeNode,
+import { TypePredicateKind } from "#enums/typePredicateKind";
+import {
+    type Expression,
+    type Identifier,
+    ModifierFlags,
+    type Node,
+    type Path,
+    type SourceFile,
+    type SyntaxKind,
+    type TypeNode,
 } from "@typescript/ast";
 import {
     encodeNode,
@@ -39,11 +43,13 @@ import type {
     ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
+    IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
     ProjectResponse,
     SignatureResponse,
     SymbolResponse,
+    TypePredicateResponse,
     TypeResponse,
     UpdateSnapshotParams,
     UpdateSnapshotResponse,
@@ -56,8 +62,13 @@ import {
     type ClientSpawnOptions,
 } from "./client.ts";
 import type {
+    AssertsIdentifierTypePredicate,
+    AssertsThisTypePredicate,
     ConditionalType,
+    Diagnostic,
+    IdentifierTypePredicate,
     IndexedAccessType,
+    IndexInfo,
     IndexType,
     InterfaceType,
     IntersectionType,
@@ -66,17 +77,20 @@ import type {
     StringMappingType,
     SubstitutionType,
     TemplateLiteralType,
+    ThisTypePredicate,
     TupleType,
     Type,
     TypeParameter,
+    TypePredicate,
+    TypePredicateBase,
     TypeReference,
     UnionOrIntersectionType,
     UnionType,
 } from "./types.ts";
 
-export { ElementFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags };
+export { DiagnosticCategory, ElementFlags, ModifierFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { ConditionalType, IndexedAccessType, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, TupleType, TypeParameter, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -262,6 +276,7 @@ export class Project {
     readonly program: Program;
     readonly checker: Checker;
     readonly emitter: Emitter;
+    private client: Client;
 
     constructor(
         data: ProjectResponse,
@@ -275,6 +290,7 @@ export class Project {
         this.configFileName = data.configFileName;
         this.compilerOptions = data.compilerOptions;
         this.rootFiles = data.rootFiles;
+        this.client = client;
         this.program = new Program(
             snapshotId,
             this.id,
@@ -341,6 +357,69 @@ export class Program {
         // Create a new RemoteSourceFile and cache it (set returns existing if hash matches)
         const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
         return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.projectId);
+    }
+
+    /**
+     * Get syntactic (parse) diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    async getSyntacticDiagnostics(file?: DocumentIdentifier): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getSyntacticDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get semantic (type-check) diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    async getSemanticDiagnostics(file?: DocumentIdentifier): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getSemanticDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get suggestion diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    async getSuggestionDiagnostics(file?: DocumentIdentifier): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getSuggestionDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get declaration emit diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    async getDeclarationDiagnostics(file?: DocumentIdentifier): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getDeclarationDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get config file parsing diagnostics for the project.
+     */
+    async getConfigFileParsingDiagnostics(): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getConfigFileParsingDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return data ?? [];
     }
 }
 
@@ -501,6 +580,12 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
+    async getResolvedSymbol(node: Identifier): Promise<Symbol | undefined> {
+        const text = node.text;
+        if (!text) return undefined;
+        return this.resolveName(text, SymbolFlags.Value | SymbolFlags.ExportValue, node);
+    }
+
     async getContextualType(node: Expression): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getContextualType", {
             snapshot: this.snapshotId,
@@ -601,6 +686,103 @@ export class Checker {
             flags,
         });
     }
+
+    async isContextSensitive(node: Node): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isContextSensitive", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            location: getNodeId(node),
+        });
+    }
+
+    async getReturnTypeOfSignature(signature: Signature): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getReturnTypeOfSignature", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            signature: signature.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    async getRestTypeOfSignature(signature: Signature): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getRestTypeOfSignature", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            signature: signature.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    async getTypePredicateOfSignature(signature: Signature): Promise<TypePredicate | undefined> {
+        const data = await this.client.apiRequest<TypePredicateResponse | null>("getTypePredicateOfSignature", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            signature: signature.id,
+        });
+        if (!data) return undefined;
+        return {
+            kind: data.kind,
+            parameterIndex: data.parameterIndex,
+            parameterName: data.parameterName,
+            type: data.type ? this.objectRegistry.getOrCreateType(data.type) : undefined,
+        } as TypePredicate;
+    }
+
+    async getBaseTypes(type: Type): Promise<readonly Type[]> {
+        const data = await this.client.apiRequest<TypeResponse[] | null>("getBaseTypes", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
+    }
+
+    async getPropertiesOfType(type: Type): Promise<readonly Symbol[]> {
+        const data = await this.client.apiRequest<SymbolResponse[] | null>("getPropertiesOfType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
+    }
+
+    async getIndexInfosOfType(type: Type): Promise<readonly IndexInfo[]> {
+        const data = await this.client.apiRequest<IndexInfoResponse[] | null>("getIndexInfosOfType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        if (!data) return [];
+        return data.map(d => ({
+            keyType: this.objectRegistry.getOrCreateType(d.keyType),
+            valueType: this.objectRegistry.getOrCreateType(d.valueType),
+            isReadonly: d.isReadonly ?? false,
+        }));
+    }
+
+    async getConstraintOfTypeParameter(type: Type): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getConstraintOfTypeParameter", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    async getTypeArguments(type: Type): Promise<readonly Type[]> {
+        const data = await this.client.apiRequest<TypeResponse[] | null>("getTypeArguments", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
+    }
+}
+
+export interface PrintNodeOptions {
+    preserveSourceNewlines?: boolean;
+    neverAsciiEscape?: boolean;
+    terminateUnterminatedLiterals?: boolean;
 }
 
 export class Emitter {
@@ -610,10 +792,13 @@ export class Emitter {
         this.client = client;
     }
 
-    async printNode(node: Node): Promise<string> {
+    async printNode(node: Node, options: PrintNodeOptions = {}): Promise<string> {
         const encoded = encodeNode(node);
         const base64 = uint8ArrayToBase64(encoded);
-        return this.client.apiRequest<string>("printNode", { data: base64 });
+        return this.client.apiRequest<string>("printNode", {
+            data: base64,
+            ...options,
+        });
     }
 }
 
@@ -683,6 +868,11 @@ export class Symbol {
     async getExports(): Promise<readonly Symbol[]> {
         const data = await this.client.apiRequest<SymbolResponse[] | null>("getExportsOfSymbol", { snapshot: this.snapshotId, symbol: this.id });
         return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
+    }
+
+    async getExportSymbol(): Promise<Symbol> {
+        const data = await this.client.apiRequest<SymbolResponse>("getExportSymbolOfSymbol", { snapshot: this.snapshotId, symbol: this.id });
+        return this.objectRegistry.getOrCreateSymbol(data);
     }
 }
 

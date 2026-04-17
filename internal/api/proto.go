@@ -9,8 +9,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -107,6 +109,7 @@ const (
 	MethodGetParentOfSymbol        Method = "getParentOfSymbol"
 	MethodGetMembersOfSymbol       Method = "getMembersOfSymbol"
 	MethodGetExportsOfSymbol       Method = "getExportsOfSymbol"
+	MethodGetExportSymbolOfSymbol  Method = "getExportSymbolOfSymbol"
 	MethodGetSymbolOfType          Method = "getSymbolOfType"
 	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
 	MethodGetTypeAtLocation        Method = "getTypeAtLocation"
@@ -134,6 +137,22 @@ const (
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
 	MethodTypeToString                      Method = "typeToString"
+	MethodIsContextSensitive                Method = "isContextSensitive"
+	MethodGetReturnTypeOfSignature          Method = "getReturnTypeOfSignature"
+	MethodGetRestTypeOfSignature            Method = "getRestTypeOfSignature"
+	MethodGetTypePredicateOfSignature       Method = "getTypePredicateOfSignature"
+	MethodGetBaseTypes                      Method = "getBaseTypes"
+	MethodGetPropertiesOfType               Method = "getPropertiesOfType"
+	MethodGetIndexInfosOfType               Method = "getIndexInfosOfType"
+	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
+	MethodGetTypeArguments                  Method = "getTypeArguments"
+
+	// Diagnostic methods
+	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
+	MethodGetSemanticDiagnostics          Method = "getSemanticDiagnostics"
+	MethodGetSuggestionDiagnostics        Method = "getSuggestionDiagnostics"
+	MethodGetDeclarationDiagnostics       Method = "getDeclarationDiagnostics"
+	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
@@ -186,11 +205,12 @@ func (d *DocumentIdentifier) UnmarshalJSONFrom(dec *json.Decoder) error {
 			if err != nil {
 				return err
 			}
+			isURI := key.String() == "uri"
 			val, err := dec.ReadToken()
 			if err != nil {
 				return err
 			}
-			if key.String() == "uri" {
+			if isURI {
 				d.URI = lsproto.DocumentUri(val.String())
 			}
 		}
@@ -307,6 +327,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetParentOfSymbol:        unmarshallerFor[GetParentOfSymbolParams],
 	MethodGetMembersOfSymbol:       unmarshallerFor[GetMembersOfSymbolParams],
 	MethodGetExportsOfSymbol:       unmarshallerFor[GetExportsOfSymbolParams],
+	MethodGetExportSymbolOfSymbol:  unmarshallerFor[GetExportSymbolOfSymbolParams],
 	MethodGetSymbolOfType:          unmarshallerFor[GetSymbolOfTypeParams],
 	MethodGetSignaturesOfType:      unmarshallerFor[GetSignaturesOfTypeParams],
 	MethodGetTypeAtLocation:        unmarshallerFor[GetTypeAtLocationParams],
@@ -331,6 +352,15 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
 	MethodTypeToString:                      unmarshallerFor[TypeToTypeNodeParams],
+	MethodIsContextSensitive:                unmarshallerFor[GetContextualTypeParams],
+	MethodGetReturnTypeOfSignature:          unmarshallerFor[CheckerSignatureParams],
+	MethodGetRestTypeOfSignature:            unmarshallerFor[CheckerSignatureParams],
+	MethodGetTypePredicateOfSignature:       unmarshallerFor[CheckerSignatureParams],
+	MethodGetBaseTypes:                      unmarshallerFor[CheckerTypeParams],
+	MethodGetPropertiesOfType:               unmarshallerFor[CheckerTypeParams],
+	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
+	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
+	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -343,6 +373,11 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetUnknownType:                    unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetBigIntType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetESSymbolType:                   unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetSyntacticDiagnostics:           unmarshallerFor[GetDiagnosticsParams],
+	MethodGetSemanticDiagnostics:            unmarshallerFor[GetDiagnosticsParams],
+	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
+	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
+	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
 }
 
 type ParseConfigFileParams struct {
@@ -625,6 +660,11 @@ type GetExportsOfSymbolParams struct {
 	Symbol   Handle[ast.Symbol]       `json:"symbol"`
 }
 
+type GetExportSymbolOfSymbolParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+}
+
 type GetSymbolOfTypeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Type     Handle[checker.Type]     `json:"type"`
@@ -708,13 +748,127 @@ type TypeToTypeNodeParams struct {
 
 // PrintNodeParams are the parameters for the printNode method.
 type PrintNodeParams struct {
-	Data string `json:"data"` // base64-encoded binary AST data
+	Data                          string `json:"data"` // base64-encoded binary AST data
+	PreserveSourceNewlines        bool   `json:"preserveSourceNewlines,omitempty"`
+	NeverAsciiEscape              bool   `json:"neverAsciiEscape,omitempty"`
+	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
+}
+
+// CheckerTypeParams are parameters for checker methods that operate on a type.
+type CheckerTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
+// CheckerSignatureParams are parameters for checker methods that operate on a signature.
+type CheckerSignatureParams struct {
+	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
+	Project   Handle[project.Project]   `json:"project"`
+	Signature Handle[checker.Signature] `json:"signature"`
+}
+
+// TypePredicateResponse is the response for getTypePredicateOfSignature.
+type TypePredicateResponse struct {
+	Kind           int32         `json:"kind"`
+	ParameterIndex int32         `json:"parameterIndex"`
+	ParameterName  string        `json:"parameterName,omitempty"`
+	Type           *TypeResponse `json:"type,omitempty"`
+}
+
+// IndexInfoResponse represents a single index signature.
+type IndexInfoResponse struct {
+	KeyType    TypeResponse `json:"keyType"`
+	ValueType  TypeResponse `json:"valueType"`
+	IsReadonly bool         `json:"isReadonly,omitempty"`
 }
 
 // SourceFileResponse contains the binary-encoded AST data for a source file.
 // The Data field is base64-encoded binary data in the encoder's format.
 type SourceFileResponse struct {
 	Data string `json:"data"`
+}
+
+// GetDiagnosticsParams are parameters for per-file diagnostic methods.
+type GetDiagnosticsParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     *DocumentIdentifier      `json:"file,omitempty"`
+}
+
+// GetProjectDiagnosticsParams are parameters for project-wide diagnostic methods.
+type GetProjectDiagnosticsParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+}
+
+// DiagnosticResponse is the API response for a single diagnostic.
+type DiagnosticResponse struct {
+	// FileName is the path of the file this diagnostic belongs to, if any.
+	FileName string `json:"fileName,omitempty"`
+	// Pos is the start position of the diagnostic in the source file.
+	Pos int `json:"pos"`
+	// End is the end position of the diagnostic in the source file.
+	End int `json:"end"`
+	// Code is the diagnostic error code.
+	Code int32 `json:"code"`
+	// Category is the diagnostic category (error, warning, suggestion, message).
+	Category diagnostics.Category `json:"category"`
+	// Text is the localized diagnostic message text.
+	Text string `json:"text"`
+	// ReportsUnnecessary indicates this diagnostic highlights unnecessary code.
+	ReportsUnnecessary bool `json:"reportsUnnecessary,omitzero"`
+	// ReportsDeprecated indicates this diagnostic highlights deprecated code.
+	ReportsDeprecated bool `json:"reportsDeprecated,omitzero"`
+	// MessageChain contains chained diagnostic messages, if any.
+	MessageChain []*DiagnosticResponse `json:"messageChain,omitempty"`
+	// RelatedInformation contains related diagnostic information, if any.
+	RelatedInformation []*DiagnosticResponse `json:"relatedInformation,omitempty"`
+}
+
+// NewDiagnosticResponse converts an ast.Diagnostic to a DiagnosticResponse.
+func NewDiagnosticResponse(d *ast.Diagnostic) *DiagnosticResponse {
+	resp := &DiagnosticResponse{
+		Pos:                d.Pos(),
+		End:                d.End(),
+		Code:               d.Code(),
+		Category:           d.Category(),
+		Text:               d.Localize(locale.Default),
+		ReportsUnnecessary: d.ReportsUnnecessary(),
+		ReportsDeprecated:  d.ReportsDeprecated(),
+	}
+
+	if d.File() != nil {
+		resp.FileName = d.File().FileName()
+	}
+
+	if chain := d.MessageChain(); len(chain) > 0 {
+		resp.MessageChain = make([]*DiagnosticResponse, len(chain))
+		for i, c := range chain {
+			resp.MessageChain[i] = NewDiagnosticResponse(c)
+		}
+	}
+
+	if related := d.RelatedInformation(); len(related) > 0 {
+		resp.RelatedInformation = make([]*DiagnosticResponse, len(related))
+		for i, r := range related {
+			resp.RelatedInformation[i] = NewDiagnosticResponse(r)
+		}
+	}
+
+	return resp
+}
+
+// NewDiagnosticResponses converts a slice of ast.Diagnostics to DiagnosticResponses.
+func NewDiagnosticResponses(diags []*ast.Diagnostic) []*DiagnosticResponse {
+	if len(diags) == 0 {
+		return nil
+	}
+	result := make([]*DiagnosticResponse, len(diags))
+	for i, d := range diags {
+		result[i] = NewDiagnosticResponse(d)
+	}
+	return result
 }
 
 func unmarshalPayload(method string, payload json.Value) (any, error) {

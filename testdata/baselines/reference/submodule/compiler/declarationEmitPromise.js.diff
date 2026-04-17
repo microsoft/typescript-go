@@ -1,18 +1,10 @@
 --- old.declarationEmitPromise.js
 +++ new.declarationEmitPromise.js
-@@= skipped -38, +38 lines =@@
- exports.runSampleWorks = runSampleWorks;
- exports.runSampleBreaks = runSampleBreaks;
- class bluebird {
-+    static all;
- }
- exports.bluebird = bluebird;
- function runSampleWorks(a, b, c, d, e) {
-@@= skipped -24, +25 lines =@@
+@@= skipped -62, +62 lines =@@
  export declare class bluebird<T> {
      static all: Array<bluebird<any>>;
  }
 -export declare function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<(<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T)>;
 -export declare function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<(<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T)>;
-+export declare function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B | undefined, c?: C | undefined, d?: D | undefined, e?: E | undefined) => T) => T>;
-+export declare function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B | undefined, c?: C | undefined, d?: D | undefined, e?: E | undefined) => T) => T>;
++export declare function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;
++export declare function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;

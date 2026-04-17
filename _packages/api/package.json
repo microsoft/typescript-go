@@ -36,8 +36,9 @@
     },
     "scripts": {
         "node": "node --experimental-strip-types --no-warnings --conditions @typescript/source",
-        "generate": "npm run -w @typescript/ast generate:factory && npm run generate:enums && npm run generate:sync",
-        "generate:sync": "node --experimental-strip-types --no-warnings scripts/generateSync.ts",
+        "generate": "npm run -w @typescript/ast generate:ast && npm run generate:encoder && npm run generate:enums && npm run generate:sync",
+        "generate:encoder": "npm run node -- ../../_scripts/generate-encoder.ts",
+        "generate:sync": "npm run node -- scripts/generateSync.ts",
         "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
         "prebuild": "npm run generate",
         "build": "tsc -b",
@@ -52,7 +53,7 @@
         "tinybench": "^6.0.0"
     },
     "dependencies": {
-        "@types/node": "^25.3.3",
+        "@types/node": "^25.5.0",
         "@typescript/ast": "1.0.0",
         "vscode-jsonrpc": "^9.0.0-next.11"
     }

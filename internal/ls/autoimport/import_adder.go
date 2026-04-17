@@ -24,6 +24,7 @@ import (
 type ImportAdder interface {
 	HasFixes() bool
 	AddImportFromExportedSymbol(symbol *ast.Symbol, isValidTypeOnlyUseSite bool)
+	AddImportFix(fix *Fix)
 	Edits() []*lsproto.TextEdit
 }
 
@@ -54,9 +55,9 @@ type importAdder struct {
 	ctx           context.Context
 	checker       *checker.Checker
 	view          *View
-	formatOptions *lsutil.FormatCodeSettings
+	formatOptions lsutil.FormatCodeSettings
 	converters    *lsconv.Converters
-	preferences   *lsutil.UserPreferences
+	preferences   lsutil.UserPreferences
 
 	// State
 	addToNamespace []*Fix                                                    // Namespace fixes don't conflict, so just build a list
@@ -72,9 +73,9 @@ func NewImportAdder(
 	checker *checker.Checker,
 	file *ast.SourceFile,
 	view *View,
-	formatOptions *lsutil.FormatCodeSettings,
+	formatOptions lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 ) ImportAdder {
 	return &importAdder{
 		ctx:            ctx,
@@ -110,7 +111,7 @@ func (adder *importAdder) AddImportFromExportedSymbol(exportedSymbol *ast.Symbol
 	fix := adder.getImportFixForSymbol(adder.view, adder.view.importingFile, exportInfos, isValidTypeOnlyUseSite)
 	if fix != nil {
 		// !!! referenceImport -> propertyName
-		adder.addImport(fix)
+		adder.AddImportFix(fix)
 	}
 }
 
@@ -130,7 +131,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 			adder.view.importingFile,
 			clauseOrPattern,
 			entry.defaultImport,
-			slices.Collect(maps.Values(entry.namedImports)),
+			sortedNamedImports(entry.namedImports),
 			adder.preferences,
 		)
 	}
@@ -145,7 +146,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 				moduleSpecifier,
 				quotePreference,
 				newImport.defaultImport,
-				slices.Collect(maps.Values(newImport.namedImports)),
+				sortedNamedImports(newImport.namedImports),
 				newImport.namespaceLikeImport,
 				adder.view.program.Options(),
 			)
@@ -155,7 +156,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 				moduleSpecifier,
 				quotePreference,
 				newImport.defaultImport,
-				slices.Collect(maps.Values(newImport.namedImports)),
+				sortedNamedImports(newImport.namedImports),
 				newImport.namespaceLikeImport,
 				adder.view.program.Options(),
 				adder.preferences,
@@ -171,9 +172,18 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 	return tracker.GetChanges()[adder.view.importingFile.FileName()]
 }
 
-// addImport adds an import fix to the appropriate category based on its kind.
-// This batches imports so that multiple imports from the same module can be combined.
-func (adder *importAdder) addImport(fix *Fix) {
+func sortedNamedImports(m map[string]*newImportBinding) []*newImportBinding {
+	keys := slices.Sorted(maps.Keys(m))
+	result := make([]*newImportBinding, 0, len(keys))
+	for _, k := range keys {
+		result = append(result, m[k])
+	}
+	return result
+}
+
+// AddImportFix adds a fix to the import adder, accumulating it with other fixes
+// so that multiple imports from the same module are coalesced into a single import statement.
+func (adder *importAdder) AddImportFix(fix *Fix) {
 	symbolName := fix.Name
 	compilerOptions := adder.view.program.Options()
 
@@ -379,15 +389,17 @@ func TypeToAutoImportableTypeNode(
 	if typeNode == nil {
 		return nil
 	}
-	return typeNodeToAutoImportableTypeNode(typeNode, importAdder, idToSymbol)
+	return TypeNodeToAutoImportableTypeNode(typeNode, importAdder, idToSymbol)
 }
 
-func typeNodeToAutoImportableTypeNode(
+// TypeNodeToAutoImportableTypeNode converts import type references in a type node to
+// simple type references and registers needed imports with the import adder.
+func TypeNodeToAutoImportableTypeNode(
 	typeNode *ast.TypeNode,
 	importAdder ImportAdder,
 	idToSymbol map[*ast.IdentifierNode]*ast.Symbol,
 ) *ast.TypeNode {
-	referenceTypeNode, importableSymbols := tryGetAutoImportableReferenceFromTypeNode(typeNode, idToSymbol)
+	referenceTypeNode, importableSymbols := TryGetAutoImportableReferenceFromTypeNode(typeNode, idToSymbol)
 	if referenceTypeNode != nil {
 		if importAdder != nil {
 			importSymbols(importAdder, importableSymbols)
@@ -408,7 +420,10 @@ func importSymbols(importAdder ImportAdder, symbols []*ast.Symbol) {
 // Given a type node containing 'import("./a").SomeType<import("./b").OtherType<...>>',
 // returns an equivalent type reference node with any nested ImportTypeNodes also replaced
 // with type references, and a list of symbols that must be imported to use the type reference.
-func tryGetAutoImportableReferenceFromTypeNode(importTypeNode *ast.TypeNode, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) (*ast.TypeNode, []*ast.Symbol) {
+// TryGetAutoImportableReferenceFromTypeNode converts import type references in a type node
+// to simple type references and returns the transformed type node and the symbols that need
+// to be imported.
+func TryGetAutoImportableReferenceFromTypeNode(importTypeNode *ast.TypeNode, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) (*ast.TypeNode, []*ast.Symbol) {
 	var symbols []*ast.Symbol
 	var visitor *ast.NodeVisitor
 	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
@@ -456,7 +471,7 @@ func getNameForExportedSymbol(symbol *ast.Symbol, preferCapitalized bool) string
 		if name != "" {
 			return name
 		}
-		debug.AssertIsDefined(symbol.Parent, "Expected exported symbol to have module symbol as parent")
+		debug.Assert(symbol.Parent != nil, "Expected exported symbol to have module symbol as parent")
 		return lsutil.ModuleSymbolToValidIdentifier(symbol.Parent, preferCapitalized)
 	}
 	return symbol.Name

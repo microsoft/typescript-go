@@ -6,7 +6,7 @@ import (
 )
 
 //go:generate go tool github.com/matryer/moq -fmt goimports -out vfsmock/mock_generated.go -pkg vfsmock . FS
-//go:generate go tool mvdan.cc/gofumpt -w vfsmock/mock_generated.go
+//go:generate npx dprint fmt vfsmock/mock_generated.go
 
 // FS is a file system abstraction.
 type FS interface {
@@ -20,7 +20,7 @@ type FS interface {
 	// If the file fails to be read, ok will be false.
 	ReadFile(path string) (contents string, ok bool)
 
-	WriteFile(path string, data string, writeByteOrderMark bool) error
+	WriteFile(path string, data string) error
 
 	// Removes `path` and all its contents. Will return the first error it encounters.
 	Remove(path string) error

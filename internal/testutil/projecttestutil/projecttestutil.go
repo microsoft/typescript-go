@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -23,10 +24,10 @@ import (
 )
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out clientmock_generated.go ../../project Client
-//go:generate go tool mvdan.cc/gofumpt -w clientmock_generated.go
+//go:generate npx dprint fmt clientmock_generated.go
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out npmexecutormock_generated.go ../../project/ata NpmExecutor
-//go:generate go tool mvdan.cc/gofumpt -w npmexecutormock_generated.go
+//go:generate npx dprint fmt npmexecutormock_generated.go
 
 const (
 	TestTypingsLocation = "/home/src/Library/Caches/typescript"
@@ -74,7 +75,7 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 
 		if lenNpmInstallArgs == 3 && npmInstallArgs[2] == "types-registry@latest" {
 			// Write typings file
-			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent(), false)
+			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent())
 			return nil, err
 		}
 
@@ -100,7 +101,7 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 			if !ok {
 				return nil, fmt.Errorf("content not provided for %s", packageBaseName)
 			}
-			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content, false)
+			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content)
 			if err != nil {
 				return nil, err
 			}
@@ -115,6 +116,36 @@ func (h *SessionUtils) ToPath(fileName string) tspath.Path {
 
 func (h *SessionUtils) FS() vfs.FS {
 	return h.fs
+}
+
+// WatchesFile reports whether any registered file watcher would match the given
+// file path. It handles both absolute glob patterns and relative patterns with
+// a base URI. On case-insensitive file systems the paths in glob patterns are
+// lowercased, so callers should pass the lowercased path.
+func (h *SessionUtils) WatchesFile(filePath string) bool {
+	for _, call := range h.client.WatchFilesCalls() {
+		for _, watcher := range call.Watchers {
+			if watcher.GlobPattern.Pattern != nil {
+				if g, err := glob.Parse(*watcher.GlobPattern.Pattern); err == nil && g.Match(filePath) {
+					return true
+				}
+			} else if watcher.GlobPattern.RelativePattern != nil {
+				rp := watcher.GlobPattern.RelativePattern
+				baseUri := string(*rp.BaseUri.URI)
+				// Convert base URI (e.g. "file:///home/projects") to a directory path
+				// with trailing separator for proper prefix matching on path boundaries.
+				baseDir := lsproto.DocumentUri(baseUri).FileName()
+				baseDir = tspath.EnsureTrailingDirectorySeparator(baseDir)
+				if strings.HasPrefix(filePath, baseDir) {
+					relativePath := filePath[len(baseDir):]
+					if g, err := glob.Parse(rp.Pattern); err == nil && g.Match(relativePath) {
+						return true
+					}
+				}
+			}
+		}
+	}
+	return false
 }
 
 func (h *SessionUtils) Logs() string {

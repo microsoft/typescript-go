@@ -18,10 +18,14 @@ module.exports.Another = Q;
 //// [index.js]
 "use strict";
 class A {
-    member = new Q();
+    constructor() {
+        this.member = new Q();
+    }
 }
 class Q {
-    x = 42;
+    constructor() {
+        this.x = 42;
+    }
 }
 module.exports = class Q {
     constructor() {
@@ -32,16 +36,11 @@ module.exports.Another = Q;
 
 
 //// [index.d.ts]
-declare class A {
-    member: Q;
-}
 declare class Q {
     x: number;
 }
 declare const _default: {
-    new (): {
-        x: A;
-    };
+    new (): import(".");
 };
 export = _default;
 export declare var Another: typeof Q;

@@ -1,8 +1,6 @@
 package compiler
 
 import (
-	"encoding/base64"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -39,7 +37,7 @@ type emitter struct {
 	paths              *outputpaths.OutputPaths
 	sourceFile         *ast.SourceFile
 	emitResult         EmitResult
-	writeFile          func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+	writeFile          func(fileName string, text string, data *WriteFileData) error
 }
 
 func (e *emitter) emit() {
@@ -82,11 +80,12 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	// JS files don't use reference calculations as they don't do import elision, no need to calculate it
 	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
+	jsxTransformEnabled := options.GetJSXTransformEnabled() && sourceFile.LanguageVariant == core.LanguageVariantJSX
 
-	var emitResolver printer.EmitResolver
+	emitResolver := host.GetEmitResolver()
+
 	var referenceResolver binder.ReferenceResolver
-	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.GetIsolatedModules() || options.EmitDecoratorMetadata.IsTrue() { // full emit resolver is needed for import ellision and const enum inlining
-		emitResolver = host.GetEmitResolver()
+	if importElisionEnabled || jsxTransformEnabled || !options.GetIsolatedModules() || options.EmitDecoratorMetadata.IsTrue() {
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
 	} else {
@@ -124,8 +123,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 		}
 	}
 
-	// !!! transform legacy decorator syntax
-	if options.GetJSXTransformEnabled() {
+	if jsxTransformEnabled {
 		tx = append(tx, jsxtransforms.NewJSXTransformer(&opts))
 	}
 
@@ -270,13 +268,14 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 				e.writer.RawWrite(core.IfElse(options.NewLine == core.NewLineKindCRLF, "\r\n", "\n"))
 			}
 			sourceMapUrlPos = e.writer.GetTextPos()
-			e.writer.WriteComment("//# sourceMappingURL=" + sourceMappingURL)
+			e.writer.WriteComment("//# sourceMappingURL=")
+			e.writer.WriteComment(sourceMappingURL)
 		}
 
 		// Write the source map
 		if len(sourceMapFilePath) > 0 {
 			sourceMap := sourceMapGenerator.String()
-			err := e.writeText(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/, nil)
+			err := e.writeText(sourceMapFilePath, sourceMap, nil)
 			if err != nil {
 				e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
 			} else {
@@ -289,11 +288,14 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 
 	// Write the output file
 	text := e.writer.String()
+	if options.EmitBOM.IsTrue() {
+		text = stringutil.AddUTF8ByteOrderMark(text)
+	}
 	data := &WriteFileData{
 		SourceMapUrlPos: sourceMapUrlPos,
 		Diagnostics:     e.emitterDiagnostics.GetDiagnostics(),
 	}
-	err := e.writeText(jsFilePath, text, options.EmitBOM.IsTrue(), data)
+	err := e.writeText(jsFilePath, text, data)
 	skippedDtsWrite := data.SkippedDtsWrite
 	if err != nil {
 		e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
@@ -305,11 +307,11 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	e.writer.Clear()
 }
 
-func (e *emitter) writeText(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error {
+func (e *emitter) writeText(fileName string, text string, data *WriteFileData) error {
 	if e.writeFile != nil {
-		return e.writeFile(fileName, text, writeByteOrderMark, data)
+		return e.writeFile(fileName, text, data)
 	}
-	return e.host.WriteFile(fileName, text, writeByteOrderMark)
+	return e.host.WriteFile(fileName, text)
 }
 
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
@@ -361,9 +363,7 @@ func (e *emitter) getSourceMapDirectory(mapOptions *core.CompilerOptions, filePa
 func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMapGenerator *sourcemap.Generator, filePath string, sourceMapFilePath string, sourceFile *ast.SourceFile) string {
 	if mapOptions.InlineSourceMap.IsTrue() {
 		// Encode the sourceMap into the sourceMap url
-		sourceMapText := sourceMapGenerator.String()
-		base64SourceMapText := base64.StdEncoding.EncodeToString([]byte(sourceMapText))
-		return "data:application/json;base64," + base64SourceMapText
+		return sourceMapGenerator.Base64DataURL()
 	}
 
 	sourceMapFile := tspath.GetBaseFileName(tspath.NormalizeSlashes(sourceMapFilePath))

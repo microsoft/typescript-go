@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -12,7 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
-	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 type SignatureCheckMode uint32
@@ -133,7 +133,7 @@ func (c *Checker) compareTypesAssignableSimple(source *Type, target *Type) Terna
 	return TernaryFalse
 }
 
-func (c *Checker) compareTypesAssignable(source *Type, target *Type, reportErrors bool) Ternary {
+func (c *Checker) compareTypesAssignableWorker(source *Type, target *Type, reportErrors bool) Ternary {
 	if c.isTypeRelatedTo(source, target, c.assignableRelation) {
 		return TernaryTrue
 	}
@@ -298,7 +298,7 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 			targetProperty := c.getPropertyOfType(targetEnumType, sourceProperty.Name)
 			if targetProperty == nil || targetProperty.Flags&ast.SymbolFlagsEnumMember == 0 {
 				if errorReporter != nil {
-					errorReporter(diagnostics.Property_0_is_missing_in_type_1, c.symbolToString(sourceProperty), c.TypeToString(c.getDeclaredTypeOfSymbol(targetSymbol)))
+					errorReporter(diagnostics.Property_0_is_missing_in_type_1, c.symbolToString(sourceProperty), c.TypeToStringEx(c.getDeclaredTypeOfSymbol(targetSymbol), nil /*enclosingDeclaration*/, TypeFormatFlagsUseFullyQualifiedType, nil))
 				}
 				c.enumRelation[key] = RelationComparisonResultFailed
 				return false
@@ -1287,7 +1287,7 @@ func (c *Checker) getTypeNamesForErrorDisplay(left *Type, right *Type) (string, 
 }
 
 func (c *Checker) getTypeNameForErrorDisplay(t *Type) string {
-	return c.typeToStringEx(t, nil /*enclosingDeclaration*/, TypeFormatFlagsUseFullyQualifiedType)
+	return c.typeToStringEx(t, nil /*enclosingDeclaration*/, TypeFormatFlagsUseFullyQualifiedType, nil)
 }
 
 func (c *Checker) symbolValueDeclarationIsContextSensitive(symbol *ast.Symbol) bool {
@@ -1827,7 +1827,7 @@ func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int
 }
 
 func (c *Checker) isValidDeclarationForTupleLabel(d *ast.Node) bool {
-	return ast.IsNamedTupleMember(d) || ast.IsParameter(d) && d.Name() != nil && ast.IsIdentifier(d.Name())
+	return ast.IsNamedTupleMember(d) || ast.IsParameterDeclaration(d) && d.Name() != nil && ast.IsIdentifier(d.Name())
 }
 
 func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
@@ -1916,7 +1916,7 @@ func (c *Checker) getTupleElementLabel(elementInfo TupleElementInfo, restSymbol 
 	if elementInfo.labeledDeclaration != nil {
 		return elementInfo.labeledDeclaration.Name().Text()
 	}
-	if restSymbol != nil && restSymbol.ValueDeclaration != nil && ast.IsParameter(restSymbol.ValueDeclaration) {
+	if restSymbol != nil && restSymbol.ValueDeclaration != nil && ast.IsParameterDeclaration(restSymbol.ValueDeclaration) {
 		return c.getTupleElementLabelFromBindingElement(restSymbol.ValueDeclaration, index, elementInfo.flags)
 	}
 	var rootName string
@@ -2301,11 +2301,11 @@ func (c *Checker) templateLiteralTypesDefinitelyUnrelated(source *TemplateLitera
 	return sourceStart[:startLen] != targetStart[:startLen] || sourceEnd[len(sourceEnd)-endLen:] != targetEnd[len(targetEnd)-endLen:]
 }
 
-func (c *Checker) isTypeMatchedByTemplateLiteralType(source *Type, target *TemplateLiteralType) bool {
+func (c *Checker) isTypeMatchedByTemplateLiteralType(source *Type, target *TemplateLiteralType, compareTypes TypeComparer) bool {
 	inferences := c.inferTypesFromTemplateLiteralType(source, target)
 	if inferences != nil {
 		for i, inference := range inferences {
-			if !c.isValidTypeForTemplateLiteralPlaceholder(inference, target.types[i]) {
+			if !c.isValidTypeForTemplateLiteralPlaceholder(inference, target.types[i], compareTypes) {
 				return false
 			}
 		}
@@ -2409,8 +2409,9 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			}
 			addMatch(s, p)
 			pos += len(delim)
-		} else if pos < len(getSourceText(seg)) {
-			addMatch(seg, pos+1)
+		} else if sourceText := getSourceText(seg); pos < len(sourceText) {
+			_, size := utf8.DecodeRuneInString(sourceText[pos:])
+			addMatch(seg, pos+size)
 		} else if seg < lastSourceIndex {
 			addMatch(seg+1, 0)
 		} else {
@@ -2428,13 +2429,13 @@ func (c *Checker) getStringLikeTypeForType(t *Type) *Type {
 	return c.getTemplateLiteralType([]string{"", ""}, []*Type{t})
 }
 
-func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target *Type) bool {
+func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target *Type, compareTypes TypeComparer) bool {
 	switch {
 	case target.flags&TypeFlagsIntersection != 0:
 		return core.Every(target.Types(), func(t *Type) bool {
-			return t == c.emptyTypeLiteralType || c.isValidTypeForTemplateLiteralPlaceholder(source, t)
+			return t == c.emptyTypeLiteralType || c.isValidTypeForTemplateLiteralPlaceholder(source, t, compareTypes)
 		})
-	case target.flags&TypeFlagsString != 0 || c.isTypeAssignableTo(source, target):
+	case target.flags&TypeFlagsString != 0 || compareTypes(source, target, false) != TernaryFalse:
 		return true
 	case source.flags&TypeFlagsStringLiteral != 0:
 		value := getStringLiteralValue(source)
@@ -2442,10 +2443,10 @@ func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target 
 			target.flags&TypeFlagsBigInt != 0 && isValidBigIntString(value, false /*roundTripOnly*/) ||
 			target.flags&(TypeFlagsBooleanLiteral|TypeFlagsNullable) != 0 && value == target.AsIntrinsicType().intrinsicName ||
 			target.flags&TypeFlagsStringMapping != 0 && c.isMemberOfStringMapping(source, target) ||
-			target.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType())
+			target.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType(), compareTypes)
 	case source.flags&TypeFlagsTemplateLiteral != 0:
 		texts := source.AsTemplateLiteralType().texts
-		return len(texts) == 2 && texts[0] == "" && texts[1] == "" && c.isTypeAssignableTo(source.AsTemplateLiteralType().types[0], target)
+		return len(texts) == 2 && texts[0] == "" && texts[1] == "" && compareTypes(source.AsTemplateLiteralType().types[0], target, false) != TernaryFalse
 	}
 	return false
 }
@@ -3526,7 +3527,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			// For example, `foo-${number}` is related to `foo-${string}` even though number isn't related to string.
 			r.c.instantiateType(source, r.c.reportUnreliableMapper)
 		}
-		if r.c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType()) {
+		if r.c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType(), r.isRelatedToWorker) {
 			return TernaryTrue
 		}
 	case target.flags&TypeFlagsStringMapping != 0:
@@ -4284,9 +4285,7 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 		privateIdentifierDescription := unmatchedProperty.ValueDeclaration.Name().Text()
 		symbolTableKey := binder.GetSymbolNameForPrivateIdentifier(source.symbol, privateIdentifierDescription)
 		if r.c.getPropertyOfType(source, symbolTableKey) != nil {
-			sourceName := scanner.DeclarationNameToString(ast.GetNameOfDeclaration(source.symbol.ValueDeclaration))
-			targetName := scanner.DeclarationNameToString(ast.GetNameOfDeclaration(target.symbol.ValueDeclaration))
-			r.reportError(diagnostics.Property_0_in_type_1_refers_to_a_different_member_that_cannot_be_accessed_from_within_type_2, privateIdentifierDescription, sourceName, targetName)
+			r.reportError(diagnostics.Property_0_in_type_1_refers_to_a_different_member_that_cannot_be_accessed_from_within_type_2, privateIdentifierDescription, r.c.SymbolToString(source.symbol), r.c.SymbolToString(target.symbol))
 			return
 		}
 	}
@@ -4668,7 +4667,7 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 			prop = core.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), isConflictingPrivateProperty)
 		}
 		if prop != nil {
-			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction), r.c.symbolToString(prop))
+			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction, nil), r.c.symbolToString(prop))
 		}
 	}
 	r.reportRelationError(headMessage, source, target)
@@ -4867,7 +4866,10 @@ func getPropertyNameArg(arg any) string {
 func isConversionOrInterfaceImplementationMessage(message *diagnostics.Message) bool {
 	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
 		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass ||
-		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first
+		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first ||
+		message == diagnostics.Its_instance_type_0_is_not_a_valid_JSX_element ||
+		message == diagnostics.Its_return_type_0_is_not_a_valid_JSX_element ||
+		message == diagnostics.Its_element_type_0_is_not_a_valid_JSX_element
 }
 
 func chainDepth(chain *ErrorChain) int {

@@ -48,7 +48,7 @@ func (ch *optionalChainTransformer) visitCallExpression(node *ast.CallExpression
 				ch.EmitContext().SetOriginal(res, node.AsNode())
 				return res
 			}
-			return ch.Factory().UpdateCallExpression(node, expression, nil, nil, args)
+			return ch.Factory().UpdateCallExpression(node, expression, nil /*questionDotToken*/, nil /*typeArguments*/, args, node.Flags)
 		}
 	}
 	return ch.Visitor().VisitEachChild(node.AsNode())
@@ -73,7 +73,7 @@ func (ch *optionalChainTransformer) visitPropertyOrElementAccessExpression(node 
 		return ch.visitOptionalExpression(node.AsNode(), captureThisArg, isDelete)
 	}
 	expression := ch.Visitor().VisitNode(node.Expression())
-	debug.AssertNotNode(expression, ast.IsSyntheticReferenceExpression)
+	debug.Assert(expression == nil || !ast.IsSyntheticReferenceExpression(expression))
 
 	var thisArg *ast.Expression
 	if captureThisArg {
@@ -88,10 +88,10 @@ func (ch *optionalChainTransformer) visitPropertyOrElementAccessExpression(node 
 
 	if node.Kind == ast.KindPropertyAccessExpression {
 		p := node.AsPropertyAccessExpression()
-		expression = ch.Factory().UpdatePropertyAccessExpression(p, expression, nil, ch.Visitor().VisitNode(p.Name()))
+		expression = ch.Factory().UpdatePropertyAccessExpression(p, expression, nil /*questionDotToken*/, ch.Visitor().VisitNode(p.Name()), p.Flags)
 	} else {
 		p := node.AsElementAccessExpression()
-		expression = ch.Factory().UpdateElementAccessExpression(p, expression, nil, ch.Visitor().VisitNode(p.AsElementAccessExpression().ArgumentExpression))
+		expression = ch.Factory().UpdateElementAccessExpression(p, expression, nil, ch.Visitor().VisitNode(p.AsElementAccessExpression().ArgumentExpression), p.Flags)
 	}
 
 	if thisArg != nil {
@@ -133,11 +133,11 @@ func isNonNullChain(node *ast.Node) bool {
 }
 
 func flattenChain(chain *ast.Node) flattenResult {
-	debug.AssertNotNode(chain, isNonNullChain)
+	debug.Assert(!isNonNullChain(chain))
 	links := []*ast.Node{chain}
 	for !ast.IsTaggedTemplateExpression(chain) && chain.QuestionDotToken() == nil {
 		chain = ast.SkipPartiallyEmittedExpressions(chain.Expression())
-		debug.AssertNotNode(chain, isNonNullChain)
+		debug.Assert(!isNonNullChain(chain))
 		links = append([]*ast.Node{chain}, links...)
 	}
 	return flattenResult{chain.Expression(), links}

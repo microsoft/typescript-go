@@ -240,7 +240,7 @@ func (s *superAccessState) createSuperAccessVariableStatement() *ast.Node {
 	)
 
 	decl := f.NewVariableDeclaration(s.superBinding, nil, nil, objectCreateCall)
-	declList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{decl}))
+	declList := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{decl}), ast.NodeFlagsConst)
 	return f.NewVariableStatement(nil, declList)
 }
 
@@ -274,4 +274,16 @@ func (s *superAccessState) trackSuperAccess(node *ast.Node) {
 			s.hasSuperPropertyAssignment = true
 		}
 	}
+}
+
+// createAccessorPropertyBackingField creates a private backing field for an `accessor` PropertyDeclaration.
+func createAccessorPropertyBackingField(f *printer.NodeFactory, node *ast.PropertyDeclaration, modifiers *ast.ModifierList, initializer *ast.Expression) *ast.Node {
+	return f.UpdatePropertyDeclaration(
+		node,
+		modifiers,
+		f.NewGeneratedPrivateNameForNodeEx(node.Name(), printer.AutoGenerateOptions{Suffix: "_accessor_storage"}),
+		nil, /*postfixToken*/
+		nil, /*typeNode*/
+		initializer,
+	)
 }

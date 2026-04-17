@@ -2,6 +2,7 @@ package core
 
 import (
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -10,7 +11,7 @@ import (
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind -trimprefix=ModuleKind -output=modulekind_stringer_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
+//go:generate npx dprint fmt modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
 type CompilerOptions struct {
 	_ noCopy
@@ -29,7 +30,6 @@ type CompilerOptions struct {
 	EmitDeclarationOnly                       Tristate                                  `json:"emitDeclarationOnly,omitzero"`
 	EmitBOM                                   Tristate                                  `json:"emitBOM,omitzero"`
 	EmitDecoratorMetadata                     Tristate                                  `json:"emitDecoratorMetadata,omitzero"`
-	DownlevelIteration                        Tristate                                  `json:"downlevelIteration,omitzero"`
 	Declaration                               Tristate                                  `json:"declaration,omitzero"`
 	DeclarationDir                            string                                    `json:"declarationDir,omitzero"`
 	DeclarationMap                            Tristate                                  `json:"declarationMap,omitzero"`
@@ -123,6 +123,8 @@ type CompilerOptions struct {
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	DownlevelIteration Tristate `json:"downlevelIteration,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	ESModuleInterop Tristate `json:"esModuleInterop,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
@@ -318,6 +320,11 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 	return typeRoots, false
 }
 
+// UsesWildcardTypes returns true if this option's types array includes "*"
+func (options *CompilerOptions) UsesWildcardTypes() bool {
+	return slices.Contains(options.Types, "*")
+}
+
 func (options *CompilerOptions) GetIsolatedModules() bool {
 	return options.IsolatedModules == TSTrue || options.VerbatimModuleSyntax == TSTrue
 }
@@ -330,6 +337,13 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 	return options.UseDefineForClassFields != TSFalse && options.GetEmitScriptTarget() >= ScriptTargetES2022
 }
 
+func (options *CompilerOptions) GetUseDefineForClassFields() bool {
+	if options.UseDefineForClassFields == TSUnknown {
+		return options.GetEmitScriptTarget() >= ScriptTargetES2022
+	}
+	return options.UseDefineForClassFields == TSTrue
+}
+
 func (options *CompilerOptions) GetEmitDeclarations() bool {
 	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
@@ -340,7 +354,7 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
+	case ModuleKindSystem, ModuleKindUMD:
 		return false
 	}
 	return true
@@ -368,7 +382,6 @@ const (
 type ModuleKind int32
 
 const (
-	// Deprecated: Do not use outside of options parsing and validation.
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
 	// Deprecated: Do not use outside of options parsing and validation.

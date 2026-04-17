@@ -6,9 +6,11 @@
 // Source: src/async/types.ts
 // Regenerate: npm run generate (from _packages/api)
 //
+import type { DiagnosticCategory } from "#enums/diagnosticCategory";
 import type { ElementFlags } from "#enums/elementFlags";
 import type { ObjectFlags } from "#enums/objectFlags";
 import type { TypeFlags } from "#enums/typeFlags";
+import type { TypePredicateKind } from "#enums/typePredicateKind";
 import type { Symbol } from "./api.ts";
 
 /**
@@ -129,4 +131,81 @@ export interface TemplateLiteralType extends Type {
 export interface StringMappingType extends Type {
     /** Get the mapped type */
     getTarget(): Type;
+}
+
+/** Base for all type predicates */
+export interface TypePredicateBase {
+    readonly kind: TypePredicateKind;
+    readonly type: Type | undefined;
+}
+
+/** `this is T` */
+export interface ThisTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.This;
+    readonly parameterName: undefined;
+    readonly parameterIndex: undefined;
+    readonly type: Type;
+}
+
+/** `x is T` */
+export interface IdentifierTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.Identifier;
+    readonly parameterName: string;
+    readonly parameterIndex: number;
+    readonly type: Type;
+}
+
+/** `asserts this is T` */
+export interface AssertsThisTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.AssertsThis;
+    readonly parameterName: undefined;
+    readonly parameterIndex: undefined;
+    readonly type: Type | undefined;
+}
+
+/** `asserts x is T` */
+export interface AssertsIdentifierTypePredicate extends TypePredicateBase {
+    readonly kind: TypePredicateKind.AssertsIdentifier;
+    readonly parameterName: string;
+    readonly parameterIndex: number;
+    readonly type: Type | undefined;
+}
+
+/** A type predicate — e.g. `x is T` or `asserts x is T` */
+export type TypePredicate = ThisTypePredicate | IdentifierTypePredicate | AssertsThisTypePredicate | AssertsIdentifierTypePredicate;
+
+/** An index signature — e.g. `[key: string]: T` */
+export interface IndexInfo {
+    /** The index key type (e.g. string or number) */
+    readonly keyType: Type;
+    /** The index value type */
+    readonly valueType: Type;
+    /** Whether the index signature is readonly */
+    readonly isReadonly: boolean;
+}
+
+/**
+ * A diagnostic message from the TypeScript compiler.
+ */
+export interface Diagnostic {
+    /** File name of the source file this diagnostic belongs to, if any */
+    readonly fileName?: string;
+    /** Start position of the diagnostic */
+    readonly pos: number;
+    /** End position of the diagnostic */
+    readonly end: number;
+    /** Diagnostic error code */
+    readonly code: number;
+    /** Diagnostic category (error, warning, suggestion, message) */
+    readonly category: DiagnosticCategory;
+    /** Localized diagnostic message text */
+    readonly text: string;
+    /** Whether this diagnostic highlights unnecessary code */
+    readonly reportsUnnecessary?: boolean;
+    /** Whether this diagnostic highlights deprecated code */
+    readonly reportsDeprecated?: boolean;
+    /** Chained diagnostic messages */
+    readonly messageChain?: readonly Diagnostic[];
+    /** Related diagnostic information */
+    readonly relatedInformation?: readonly Diagnostic[];
 }

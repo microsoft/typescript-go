@@ -2,11 +2,11 @@
 
 === typeGuardNarrowsToLiteralTypeUnion.ts ===
 declare function isFoo(value: string) : value is ("foo" | "bar");
->isFoo : (value: string) => value is "bar" | "foo"
+>isFoo : (value: string) => value is ("foo" | "bar")
 >value : string
 
 declare function doThis(value: "foo" | "bar"): void;
->doThis : (value: "bar" | "foo") => void
+>doThis : (value: "foo" | "bar") => void
 >value : "bar" | "foo"
 
 declare function doThat(value: string) : void;
@@ -18,12 +18,12 @@ let value: string;
 
 if (isFoo(value)) {
 >isFoo(value) : boolean
->isFoo : (value: string) => value is "bar" | "foo"
+>isFoo : (value: string) => value is ("foo" | "bar")
 >value : string
 
     doThis(value);
 >doThis(value) : void
->doThis : (value: "bar" | "foo") => void
+>doThis : (value: "foo" | "bar") => void
 >value : "bar" | "foo"
 
 } else {

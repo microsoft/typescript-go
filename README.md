@@ -17,7 +17,7 @@ To use this, set this in your VS Code settings:
 
 ```json
 {
-    "typescript.experimental.useTsgo": true
+    "js/ts.experimental.useTsgo": true
 }
 ```
 
@@ -34,17 +34,17 @@ This is still a work in progress and is not yet at full feature parity with Type
 | Type checking | done | Same errors, locations, and messages as TS 6.0. Types printback in errors may display differently. |
 | JavaScript-specific inference and JSDoc | in progress | Mostly complete, but intentionally lacking some features. Declaration emit not complete. |
 | JSX | done | - |
-| Declaration emit | in progress | Most common features are in place, but some edge cases and feature flags are still unhandled. |
-| Emit (JS output) | in progress | `target: esnext` well-supported, other targets may have gaps. |
+| Declaration emit | in progress | Done for TypeScript files. Not yet complete for JavaScript files. |
+| Emit (JS output) | done | - |
 | Watch mode | prototype | Watches files and rebuilds, but no incremental rechecking. Not optimized. |
 | Build mode / project references | done | - |
 | Incremental build | done | - |
-| Language service (LSP) | in progress | Most functionality. More features coming soon. |
+| Language service (LSP) | in progress | Nearly all features implemented. |
 | API | not ready | - |
 
 Definitions:
 
- * **done** aka "believed done": We're not currently aware of any deficits or major left work to do. OK to log bugs
+ * **done** aka "believed done": We're not currently aware of any deficits or major work left to do. OK to log bugs
  * **in progress**: currently being worked on; some features may work and some might not. OK to log panics, but nothing else please
  * **prototype**: proof-of-concept only; do not log bugs
  * **not ready**: either haven't even started yet, or far enough from ready that you shouldn't bother messing with it yet

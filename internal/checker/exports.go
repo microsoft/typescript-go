@@ -34,6 +34,10 @@ func (c *Checker) GetAnyType() *Type {
 	return c.anyType
 }
 
+func (c *Checker) GetErrorType() *Type {
+	return c.errorType
+}
+
 func (c *Checker) GetNeverType() *Type {
 	return c.neverType
 }
@@ -150,6 +154,10 @@ func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
 	return c.getConstraintOfTypeParameter(typeParameter)
 }
 
+func (c *Checker) GetDefaultFromTypeParameter(typeParameter *Type) *Type {
+	return c.getDefaultFromTypeParameter(typeParameter)
+}
+
 func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
 	return c.getResolutionModeOverride(node, reportErrors)
 }
@@ -237,4 +245,60 @@ func (c *Checker) GetSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
 
 func (c *Checker) GetBaseTypes(t *Type) []*Type {
 	return c.getBaseTypes(t)
+}
+
+func (c *Checker) GetApparentType(t *Type) *Type {
+	return c.getApparentType(t)
+}
+
+func (c *Checker) GetBaseConstructorTypeOfClass(t *Type) *Type {
+	return c.getBaseConstructorTypeOfClass(t)
+}
+
+func (c *Checker) GetRestTypeOfSignature(sig *Signature) *Type {
+	return c.getRestTypeOfSignature(sig)
+}
+
+func (c *Checker) GetTypeArguments(t *Type) []*Type {
+	return c.getTypeArguments(t)
+}
+
+func (c *Checker) GetIndexInfosOfType(t *Type) []*IndexInfo {
+	return c.getIndexInfosOfType(t)
+}
+
+func (c *Checker) IsContextSensitive(node *ast.Node) bool {
+	return c.isContextSensitive(node)
+}
+
+func (c *Checker) FillMissingTypeArguments(typeArguments []*Type, typeParameters []*Type, minTypeArgumentCount int, isJavaScriptImplicitAny bool) []*Type {
+	return c.fillMissingTypeArguments(typeArguments, typeParameters, minTypeArgumentCount, isJavaScriptImplicitAny)
+}
+
+func (c *Checker) GetMinTypeArgumentCount(typeParameters []*Type) int {
+	return c.getMinTypeArgumentCount(typeParameters)
+}
+
+func (c *Checker) GetWidenedLiteralType(t *Type) *Type {
+	return c.getWidenedLiteralType(t)
+}
+
+func (c *Checker) IsTypeAssignableTo(source *Type, target *Type) bool {
+	return c.isTypeAssignableTo(source, target)
+}
+
+func (c *Checker) GetUnionTypeEx(types []*Type, unionReduction UnionReduction) *Type {
+	return c.getUnionTypeEx(types, unionReduction, nil, nil)
+}
+
+func (c *Checker) RequiresAddingImplicitUndefined(node *ast.Node) bool {
+	enclosingDeclaration := ast.FindAncestor(node, ast.IsDeclaration)
+	if enclosingDeclaration == nil {
+		enclosingDeclaration = ast.GetSourceFileOfNode(node).AsNode()
+	}
+	symbol := node.Symbol()
+	if symbol == nil {
+		return false
+	}
+	return c.GetEmitResolver().RequiresAddingImplicitUndefined(node, symbol, enclosingDeclaration)
 }

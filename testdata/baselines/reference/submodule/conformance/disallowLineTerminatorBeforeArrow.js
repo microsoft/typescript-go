@@ -109,13 +109,12 @@ var m;
 (function (m) {
     class City {
         constructor(x, thing = () => 100) {
+            this.m = () => 2 * 2 * 2;
         }
-        m = () => 2 * 2 * 2;
     }
     let Enum;
     (function (Enum) {
-        Enum["claw"] = (() => 10)();
-        if (typeof Enum.claw !== "string") Enum[Enum.claw] = "claw";
+        Enum[Enum["claw"] = (() => 10)()] = "claw";
     })(Enum = m.Enum || (m.Enum = {}));
     m.v = x => new City(Enum.claw);
 })(m || (m = {}));

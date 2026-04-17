@@ -13,7 +13,6 @@ type NameResolver struct {
 	Globals                          ast.SymbolTable
 	ArgumentsSymbol                  *ast.Symbol
 	RequireSymbol                    *ast.Symbol
-	GetModuleSymbol                  func(sourceFile *ast.Node) *ast.Symbol
 	Lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
 	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
@@ -71,7 +70,7 @@ loop:
 							// to make sure that they reference no variables declared after them.
 							useResult = lastLocation.Kind == ast.KindParameter ||
 								lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
-								lastLocation == location.Type() && ast.FindAncestor(result.ValueDeclaration, ast.IsParameter) != nil
+								lastLocation == location.Type() && ast.FindAncestor(result.ValueDeclaration, ast.IsParameterDeclaration) != nil
 						}
 					}
 				} else if location.Kind == ast.KindConditionalType {
@@ -93,7 +92,11 @@ loop:
 			}
 			fallthrough
 		case ast.KindModuleDeclaration:
-			moduleExports := r.getSymbolOfDeclaration(location).Exports
+			moduleSymbol := r.getSymbolOfDeclaration(location)
+			if moduleSymbol == nil {
+				break
+			}
+			moduleExports := moduleSymbol.Exports
 			if ast.IsSourceFile(location) || (ast.IsModuleDeclaration(location) && location.Flags&ast.NodeFlagsAmbient != 0 && !ast.IsGlobalScopeAugmentation(location)) {
 				// It's an external module. First see if the module has an export default and if the local
 				// name of that export default matches.
@@ -128,12 +131,16 @@ loop:
 				}
 			}
 		case ast.KindEnumDeclaration:
-			result = r.lookup(r.getSymbolOfDeclaration(location).Exports, name, meaning&ast.SymbolFlagsEnumMember)
+			enumSymbol := r.getSymbolOfDeclaration(location)
+			if enumSymbol == nil {
+				break
+			}
+			result = r.lookup(enumSymbol.Exports, name, meaning&ast.SymbolFlagsEnumMember)
 			if result != nil {
 				if nameNotFoundMessage != nil && r.CompilerOptions.GetIsolatedModules() && location.Flags&ast.NodeFlagsAmbient == 0 && ast.GetSourceFileOfNode(location) != ast.GetSourceFileOfNode(result.ValueDeclaration) {
 					isolatedModulesLikeFlagName := core.IfElse(r.CompilerOptions.VerbatimModuleSyntax == core.TSTrue, "verbatimModuleSyntax", "isolatedModules")
 					r.error(originalLocation, diagnostics.Cannot_access_0_from_another_file_without_qualification_when_1_is_enabled_Use_2_instead,
-						name, isolatedModulesLikeFlagName, r.getSymbolOfDeclaration(location).Name+"."+name)
+						name, isolatedModulesLikeFlagName, enumSymbol.Name+"."+name)
 				}
 				break loop
 			}
@@ -266,7 +273,7 @@ loop:
 			}
 		case ast.KindInferType:
 			if meaning&ast.SymbolFlagsTypeParameter != 0 {
-				parameterName := location.AsInferTypeNode().TypeParameter.AsTypeParameter().Name()
+				parameterName := location.AsInferTypeNode().TypeParameter.AsTypeParameterDeclaration().Name()
 				if parameterName != nil && name == parameterName.Text() {
 					result = location.AsInferTypeNode().TypeParameter.Symbol()
 					break loop
@@ -282,6 +289,10 @@ loop:
 			lastSelfReferenceLocation = location
 		}
 		lastLocation = location
+		// !!! In Strada, JSDocTemplateTag/JSDocParameterTag/JSDocReturnTag locations skip to
+		// getEffectiveContainerForJSDocTemplateTag/getHostSignatureFromJSDoc instead of location.parent.
+		// This is a no-op currently because JSDoc nodes have no locals and getEffectiveJSDocHost is not
+		// fully ported for JS assignment patterns.
 		location = location.Parent
 	}
 	// We just climbed up parents looking for the name, meaning that we started in a descendant node of `lastLocation`.
@@ -292,27 +303,8 @@ loop:
 			r.SymbolReferenced(result, meaning)
 		}
 	}
-	if result == nil {
-		if lastLocation != nil &&
-			lastLocation.Kind == ast.KindSourceFile &&
-			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
-			name == "exports" &&
-			meaning&lastLocation.Symbol().Flags != 0 {
-			return lastLocation.Symbol()
-		}
-		if lastLocation != nil &&
-			r.GetModuleSymbol != nil &&
-			lastLocation.Kind == ast.KindSourceFile &&
-			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
-			name == "module" &&
-			originalLocation.Parent != nil &&
-			(ast.IsModuleExportsAccessExpression(originalLocation.Parent) || ast.IsModuleExportsQualifiedName(originalLocation.Parent)) &&
-			meaning&lastLocation.Symbol().Flags != 0 {
-			return r.GetModuleSymbol(lastLocation)
-		}
-		if !excludeGlobals {
-			result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
-		}
+	if result == nil && !excludeGlobals {
+		result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
 	}
 	if result == nil {
 		if originalLocation != nil && ast.IsInJSFile(originalLocation) && originalLocation.Parent != nil {
@@ -339,7 +331,7 @@ loop:
 }
 
 func (r *NameResolver) useOuterVariableScopeInParameter(result *ast.Symbol, location *ast.Node, lastLocation *ast.Node) bool {
-	if ast.IsParameter(lastLocation) {
+	if ast.IsParameterDeclaration(lastLocation) {
 		body := location.Body()
 		if body != nil && result.ValueDeclaration != nil && result.ValueDeclaration.Pos() >= body.Pos() && result.ValueDeclaration.End() <= body.End() {
 			// check for several cases where we introduce temporaries that require moving the name/initializer of the parameter to the body
