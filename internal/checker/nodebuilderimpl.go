@@ -746,9 +746,8 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 		return b.f.NewTypeReferenceNode(entityName, typeArguments)
 	}
 	if isTypeOf && ast.IsExpressionWithTypeArguments(entityName) {
-		if typeQuery := b.instantiationExpressionToTypeQueryNode(entityName.AsExpressionWithTypeArguments()); typeQuery != nil {
-			return typeQuery
-		}
+		expr := entityName.AsExpressionWithTypeArguments()
+		return b.f.NewTypeQueryNode(b.f.DeepCloneNode(expr.Expression), expr.TypeArguments)
 	}
 	return entityName
 }
@@ -3442,37 +3441,6 @@ func (b *NodeBuilderImpl) createExpressionWithTypeArguments(expr *ast.Expression
 		return expr
 	}
 	return b.f.NewExpressionWithTypeArguments(expr, typeArguments)
-}
-
-func (b *NodeBuilderImpl) instantiationExpressionToTypeQueryNode(expr *ast.ExpressionWithTypeArguments) *ast.TypeNode {
-	var typeArguments *ast.NodeList
-	if expr.TypeArguments != nil && len(expr.TypeArguments.Nodes) > 0 {
-		typeArguments = expr.TypeArguments
-	}
-
-	var names []*ast.IdentifierNode
-	node := expr.Expression
-
-	for {
-		if ast.IsExpressionWithTypeArguments(node) {
-			exprWithTypeArgs := node.AsExpressionWithTypeArguments()
-			if exprWithTypeArgs.TypeArguments != nil && len(exprWithTypeArgs.TypeArguments.Nodes) > 0 {
-				typeArguments = exprWithTypeArgs.TypeArguments
-			}
-			node = exprWithTypeArgs.Expression
-		} else if ast.IsPropertyAccessExpression(node) && ast.IsIdentifier(node.Name()) {
-			names = append(names, b.f.DeepCloneNode(node.Name()))
-			node = node.Expression()
-		} else if ast.IsIdentifier(node) {
-			entityName := b.f.DeepCloneNode(node)
-			for i := len(names) - 1; i >= 0; i-- {
-				entityName = b.f.NewQualifiedName(entityName, names[i])
-			}
-			return b.f.NewTypeQueryNode(entityName, typeArguments)
-		} else {
-			return nil
-		}
-	}
 }
 
 func (b *NodeBuilderImpl) lookupInstantiatedTypeArgumentNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
