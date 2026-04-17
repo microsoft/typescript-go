@@ -702,11 +702,11 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	if opts.Module != core.ModuleKindNone {
 		compilerOptions["module"] = opts.Module.String()
 	}
-	if name := moduleResolutionKindName(opts.ModuleResolution); name != "" {
-		compilerOptions["moduleResolution"] = name
+	if opts.ModuleResolution != core.ModuleResolutionKindUnknown {
+		compilerOptions["moduleResolution"] = opts.ModuleResolution.String()
 	}
 	if opts.Jsx != core.JsxEmitNone {
-		compilerOptions["jsx"] = jsxEmitName(opts.Jsx)
+		compilerOptions["jsx"] = opts.Jsx.String()
 	}
 	if b, err := json.Marshal(compilerOptions); err == nil {
 		props["compilerOptions"] = string(b)
@@ -768,42 +768,6 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 		}
 	}
 	return &stats
-}
-
-func moduleResolutionKindName(kind core.ModuleResolutionKind) string {
-	switch kind {
-	case core.ModuleResolutionKindUnknown:
-		return ""
-	case core.ModuleResolutionKindClassic:
-		return "Classic"
-	case core.ModuleResolutionKindNode10:
-		return "Node10"
-	case core.ModuleResolutionKindNode16:
-		return "Node16"
-	case core.ModuleResolutionKindNodeNext:
-		return "NodeNext"
-	case core.ModuleResolutionKindBundler:
-		return "Bundler"
-	default:
-		return ""
-	}
-}
-
-func jsxEmitName(jsx core.JsxEmit) string {
-	switch jsx {
-	case core.JsxEmitPreserve:
-		return "preserve"
-	case core.JsxEmitReactNative:
-		return "react-native"
-	case core.JsxEmitReact:
-		return "react"
-	case core.JsxEmitReactJSX:
-		return "react-jsx"
-	case core.JsxEmitReactJSXDev:
-		return "react-jsxdev"
-	default:
-		return ""
-	}
 }
 
 func (s *Session) Snapshot() *Snapshot {
