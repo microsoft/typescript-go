@@ -77,7 +77,7 @@ func (l *LanguageService) provideDefinitionWorker(
 
 	declarations := getDeclarationsFromLocation(c, node)
 	calledDeclaration := tryGetSignatureDeclaration(c, node)
-	if calledDeclaration != nil {
+	if calledDeclaration != nil && !(ast.IsJsxOpeningLikeElement(node.Parent) && isJsxConstructorLike(calledDeclaration)) {
 		symbol := c.GetSymbolAtLocation(getDeclarationNameForKeyword(node))
 		if symbol != nil && core.Some(c.GetRootSymbols(symbol), func(rootSymbol *ast.Symbol) bool {
 			return symbolMatchesSignature(rootSymbol, calledDeclaration)
@@ -357,6 +357,18 @@ func tryGetSignatureDeclaration(typeChecker *checker.Checker, node *ast.Node) *a
 		}
 	}
 	return nil
+}
+
+func isJsxConstructorLike(node *ast.Node) bool {
+	switch {
+	case ast.IsConstructorDeclaration(node),
+		ast.IsConstructorTypeNode(node),
+		ast.IsCallSignatureDeclaration(node),
+		ast.IsConstructSignatureDeclaration(node):
+		return true
+	default:
+		return false
+	}
 }
 
 func symbolMatchesSignature(symbol *ast.Symbol, calledDeclaration *ast.Node) bool {

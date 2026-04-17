@@ -125,11 +125,7 @@
 
 // === goToDefinition ===
 // === /a.tsx ===
-// --- (line: 13) skipped ---
-// o.m();
-// const oFn = { mFn: function () { return 0; } };
-// oFn.mFn();
-// class Component { [|constructor(props: {}) {}|] }
+// --- (line: 17) skipped ---
 // type ComponentClass = new () => Component;
 // interface ComponentClass2 { new(): Component; }
 // 
@@ -164,14 +160,7 @@
 
 // === goToDefinition ===
 // === /a.tsx ===
-// --- (line: 14) skipped ---
-// const oFn = { mFn: function () { return 0; } };
-// oFn.mFn();
-// class Component { constructor(props: {}) {} }
-// type ComponentClass = [|new () => Component|];
-// interface ComponentClass2 { new(): Component; }
-// 
-// class MyComponent extends Component {}
+// --- (line: 21) skipped ---
 // <MyComponent />;
 // new MyComponent({});
 // 
@@ -210,17 +199,7 @@
 
 // === goToDefinition ===
 // === /a.tsx ===
-// --- (line: 15) skipped ---
-// oFn.mFn();
-// class Component { constructor(props: {}) {} }
-// type ComponentClass = new () => Component;
-// interface ComponentClass2 { [|new(): Component;|] }
-// 
-// class MyComponent extends Component {}
-// <MyComponent />;
-// new MyComponent({});
-// 
-// declare const MyComponent2: ComponentClass;
+// --- (line: 25) skipped ---
 // <MyComponent2 />;
 // new MyComponent2();
 // 
