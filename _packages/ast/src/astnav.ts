@@ -140,7 +140,7 @@ function getTokenAtPositionImpl(
         if (
             node.end < position || node.end === position &&
                 node.kind !== SyntaxKind.EndOfFile &&
-                (!isJSDocKind(node.kind) || node.end !== sourceFile.endOfFileToken.end)
+                (!isJSDocNodeKind(node.kind) || node.end !== sourceFile.endOfFileToken.end)
         ) {
             return -1;
         }
