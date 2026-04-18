@@ -1257,17 +1257,27 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 				r.tracer.write(diagnostics.Trying_substitution_0_candidate_module_location_Colon_1, subst, path)
 			}
 			// A path mapping may have an extension
-			if extension := tspath.TryGetExtensionFromPath(subst); extension != "" {
+			extensionFromSubst := tspath.TryGetExtensionFromPath(subst)
+			if extensionFromSubst != "" {
 				if path, ok := r.tryFile(candidate); ok {
 					return &resolved{
 						path:      path,
-						extension: extension,
+						extension: extensionFromSubst,
 					}
 				}
 			}
+			// When the substitution path has an explicit extension, the extension came from the
+			// paths config, not the module specifier. Suppress resolvedUsingTsExtension in that case,
+			// using the same mechanism as candidateIsFromPackageJsonField.
+			saveCandidateIsFromPackageJsonField := r.candidateIsFromPackageJsonField
+			if extensionFromSubst != "" {
+				r.candidateIsFromPackageJsonField = true
+			}
 			if resolved := loader(extensions, candidate); !resolved.shouldContinueSearching() {
+				r.candidateIsFromPackageJsonField = saveCandidateIsFromPackageJsonField
 				return resolved
 			}
+			r.candidateIsFromPackageJsonField = saveCandidateIsFromPackageJsonField
 		}
 	}
 	return continueSearching()
