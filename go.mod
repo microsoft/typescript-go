@@ -19,6 +19,7 @@ require (
 require (
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/matryer/moq v0.7.1 // indirect
+	github.com/tetratelabs/wazero v1.11.0 // indirect
 	golang.org/x/mod v0.35.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect
 )
