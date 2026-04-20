@@ -8,8 +8,18 @@ export default function getExePath() {
     // import.meta.resolve is slow across many separate tsgo invocations.
     const envPath = process.env.TSGO_BINARY;
     if (envPath) {
-        if (!fs.existsSync(envPath)) {
-            throw new Error("TSGO_BINARY points to non-existent file: " + envPath);
+        let envStat;
+        try {
+            envStat = fs.statSync(envPath);
+        }
+        catch {
+            throw new Error("TSGO_BINARY points to non-existent path: " + envPath);
+        }
+        if (!envStat.isFile()) {
+            throw new Error("TSGO_BINARY does not point to a file: " + envPath);
+        }
+        if (process.platform === "win32" && envPath.length >= 248) {
+            return "\\\\?\\" + envPath;
         }
         return envPath;
     }
