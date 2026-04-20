@@ -1,11 +1,31 @@
 import fs from "node:fs";
-import module from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+let cachedExePath;
+
+function findPeerPackageLib(startDir, packageName) {
+    let dir = startDir;
+    while (true) {
+        const candidate = path.join(dir, "node_modules", packageName, "lib");
+        if (fs.existsSync(candidate)) {
+            return candidate;
+        }
+        const parent = path.dirname(dir);
+        if (parent === dir) {
+            return undefined;
+        }
+        dir = parent;
+    }
+}
+
 export default function getExePath() {
+    if (cachedExePath !== undefined) {
+        return cachedExePath;
+    }
+
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const normalizedDirname = __dirname.replace(/\\/g, "/");
+    const normalizedDirname = __dirname.replace(/\/g, "/");
 
     let exeDir;
 
@@ -20,23 +40,14 @@ export default function getExePath() {
         exeDir = path.resolve(__dirname, "..", "..", expectedPackage, "lib");
     }
     else {
-        // We're actually running from an installed package.
+        // We're running from an installed package. Use plain FS lookups instead of
+        // import.meta.resolve/require.resolve, which can be slow in large monorepos
+        // because they trigger full package resolution. Peer dependencies are always
+        // placed in a parent node_modules directory, so a simple directory walk suffices.
         const platformPackageName = "@typescript/" + expectedPackage;
-        try {
-            if (typeof import.meta.resolve === "undefined") {
-                // v16.20.1
-                const require = module.createRequire(import.meta.url);
-                const packageJson = require.resolve(platformPackageName + "/package.json");
-                exeDir = path.join(path.dirname(packageJson), "lib");
-            }
-            else {
-                // v20.6.0, v18.19.0
-                const packageJson = import.meta.resolve(platformPackageName + "/package.json");
-                const packageJsonPath = fileURLToPath(packageJson);
-                exeDir = path.join(path.dirname(packageJsonPath), "lib");
-            }
-        }
-        catch (e) {
+        exeDir = findPeerPackageLib(path.resolve(__dirname, ".."), platformPackageName);
+
+        if (exeDir === undefined) {
             throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
         }
     }
@@ -45,7 +56,7 @@ export default function getExePath() {
     if (process.platform === "win32") {
         exe += ".exe";
         if (exe.length >= 248) {
-            exe = "\\\\?\\" + exe;
+            exe = "\\?\\" + exe;
         }
     }
 
@@ -53,5 +64,6 @@ export default function getExePath() {
         throw new Error("Executable not found: " + exe);
     }
 
+    cachedExePath = exe;
     return exe;
 }
