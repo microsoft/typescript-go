@@ -1276,11 +1276,11 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 			if extensionFromSubst != "" {
 				r.candidateEndingIsFromConfig = true
 			}
-			if resolved := loader(extensions, candidate); !resolved.shouldContinueSearching() {
-				r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
+			resolved := loader(extensions, candidate)
+			r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
+			if !resolved.shouldContinueSearching() {
 				return resolved
 			}
-			r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
 		}
 	}
 	return continueSearching()
