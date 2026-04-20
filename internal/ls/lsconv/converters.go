@@ -166,6 +166,10 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 		lineEnd = textLen
 	}
 
+	// Clamp start and lineEnd to text bounds in case the line map is stale.
+	start = min(start, textLen)
+	lineEnd = min(lineEnd, textLen)
+
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
 		return max(start, min(start+char, lineEnd))
 	}
@@ -201,6 +205,9 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	// The current line ranges from lineMap.LineStarts[line] (or 0) to lineMap.LineStarts[line+1] (or len(text)).
 
 	start := lineMap.LineStarts[line]
+
+	// Clamp start to position in case the line map is stale.
+	start = min(start, position)
 
 	var character core.TextPos
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
