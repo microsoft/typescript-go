@@ -22739,7 +22739,7 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *ast.Node, symbol *a
 		// of the class or interface.
 		localTypeArguments := c.fillMissingTypeArguments(c.getTypeArgumentsFromNode(node), typeParameters, minTypeArgumentCount, isJs)
 		typeArguments := append(d.OuterTypeParameters(), localTypeArguments...)
-		return c.createTypeReference(t, typeArguments)
+		return c.createTypeReferenceEx(t, typeArguments, ObjectFlagsFromTypeNode)
 	}
 	if c.checkNoTypeArguments(node, symbol) {
 		return t
@@ -23660,7 +23660,11 @@ func (c *Checker) getTypeFromArrayOrTupleTypeNode(node *ast.Node) *Type {
 			} else {
 				elementTypes = core.Map(node.Elements(), c.getTypeFromTypeNode)
 			}
-			links.resolvedType = c.createNormalizedTypeReference(target, elementTypes)
+			if target.objectFlags&ObjectFlagsTuple != 0 {
+				links.resolvedType = c.createNormalizedTupleType(target, elementTypes)
+			} else {
+				links.resolvedType = c.createTypeReferenceEx(target, elementTypes, ObjectFlagsFromTypeNode)
+			}
 		}
 	}
 	return links.resolvedType
@@ -24623,13 +24627,16 @@ func (c *Checker) tryCreateTypeReference(target *Type, typeArguments []*Type) *T
 }
 
 func (c *Checker) createTypeReference(target *Type, typeArguments []*Type) *Type {
+	return c.createTypeReferenceEx(target, typeArguments, ObjectFlagsNone)
+}
+
+func (c *Checker) createTypeReferenceEx(target *Type, typeArguments []*Type, objectFlags ObjectFlags) *Type {
 	id := getTypeListKey(typeArguments)
 	intf := target.AsInterfaceType()
 	if t, ok := intf.instantiations[id]; ok {
 		return t
 	}
-	t := c.newObjectType(ObjectFlagsReference, target.symbol)
-	t.objectFlags |= c.getPropagatingFlagsOfTypes(typeArguments, TypeFlagsNone)
+	t := c.newObjectType(ObjectFlagsReference|objectFlags|c.getPropagatingFlagsOfTypes(typeArguments, TypeFlagsNone), target.symbol)
 	d := t.AsTypeReference()
 	d.target = target
 	d.resolvedTypeArguments = typeArguments
