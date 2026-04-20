@@ -110,10 +110,11 @@ func TestGetPackageRealpathFuncs_FollowsNodeModulesSymlinks(t *testing.T) {
 	// resolves to /real/dep/index.d.ts — otherwise the same dep file gets different
 	// cache keys depending on which path it was reached through.
 	fs := vfstest.FromMap(map[string]any{
-		"/symlink-bin/pkg":               vfstest.Symlink("/real/bin/pkg"),
-		"/real/bin/pkg/index.d.ts":       "export declare const a: number;",
-		"/real/bin/pkg/node_modules/dep": vfstest.Symlink("/real/dep"),
-		"/real/dep/index.d.ts":           "export declare const b: number;",
+		"/symlink-bin/pkg":                vfstest.Symlink("/real/bin/pkg"),
+		"/real/bin/pkg/index.d.ts":        "export declare const a: number;",
+		"/real/bin/pkg/node_modules/dep":  vfstest.Symlink("/real/dep"),
+		"/real/dep/index.d.ts":            "export declare const b: number;",
+		"/real/dep/src/utils/helper.d.ts": "export declare const c: number;",
 	}, true)
 
 	toRealpath, _ := getPackageRealpathFuncs(fs, "/symlink-bin/pkg")
@@ -131,6 +132,14 @@ func TestGetPackageRealpathFuncs_FollowsNodeModulesSymlinks(t *testing.T) {
 		toRealpath("/real/bin/pkg/node_modules/dep/index.d.ts"),
 		"/real/dep/index.d.ts",
 		"node_modules symlinks must be followed so the same file gets a consistent cache key",
+	)
+
+	// Files in subdirectories of an already-resolved external package should
+	// use the cached prefix mapping without additional realpath calls.
+	assert.Equal(t,
+		toRealpath("/real/bin/pkg/node_modules/dep/src/utils/helper.d.ts"),
+		"/real/dep/src/utils/helper.d.ts",
+		"subdirectories of a resolved external package should use cached prefix mapping",
 	)
 }
 
@@ -175,4 +184,32 @@ func TestGetPackageRealpathFuncs_DuplicateCacheKeys(t *testing.T) {
 		"app-a's toRealpath should follow the node_modules symlink to the realpath")
 	assert.Equal(t, resolvedB, expectedRealpath,
 		"app-b's toRealpath should follow the node_modules symlink to the realpath")
+}
+
+// TestGetPackageRealpathFuncs_NonSymlinkedPackageWithSymlinkedDeps tests that even when the
+// package directory itself is NOT a symlink, toRealpath still follows symlinks for files
+// outside the package (e.g. re-exports reaching into symlinked node_modules dependencies).
+func TestGetPackageRealpathFuncs_NonSymlinkedPackageWithSymlinkedDeps(t *testing.T) {
+	t.Parallel()
+
+	fs := vfstest.FromMap(map[string]any{
+		"/real/my-pkg/index.d.ts":       "export declare const a: number;",
+		"/real/my-pkg/node_modules/dep": vfstest.Symlink("/real/dep"),
+		"/real/dep/index.d.ts":          "export declare const b: number;",
+	}, true)
+
+	toRealpath, _ := getPackageRealpathFuncs(fs, "/real/my-pkg")
+
+	// Files inside the (non-symlinked) package should be returned unchanged.
+	assert.Equal(t,
+		toRealpath("/real/my-pkg/index.d.ts"),
+		"/real/my-pkg/index.d.ts",
+	)
+
+	// Files outside the package reached via symlinked node_modules should still be resolved.
+	assert.Equal(t,
+		toRealpath("/real/my-pkg/node_modules/dep/index.d.ts"),
+		"/real/dep/index.d.ts",
+		"symlinked deps must be resolved even when the package dir itself is not a symlink",
+	)
 }
