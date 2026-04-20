@@ -115,7 +115,10 @@ func TestPositionToLineAndCharacter_ClampsStaleLineMap(t *testing.T) {
 
 	// Should not panic even with stale line map.
 	result := converters.PositionToLineAndCharacter(script, 10)
-	_ = result
+	// With stale line map [0, 3], position 10 falls on line 1 (start=3).
+	// Character offset should be 7 (10 - 3).
+	assert.Equal(t, result.Line, uint32(1))
+	assert.Equal(t, result.Character, uint32(7))
 }
 
 func TestPositionToLineAndCharacter_ClampsStartToPosition(t *testing.T) {
@@ -144,17 +147,19 @@ func TestPositionToLineAndCharacter_ClampsStartToPosition(t *testing.T) {
 	// position=3: clamped to 3, binary search in [0,2,40] finds between 2 and 40,
 	// line=1, start=2, start(2) < position(3) — fine.
 	result := converters.PositionToLineAndCharacter(script, 3)
-	_ = result
+	assert.Equal(t, result.Line, uint32(1))
+	assert.Equal(t, result.Character, uint32(1))
 
 	// position=5 (textLen): clamped to 5, binary search in [0,2,40] finds between 2 and 40,
-	// line=1, start=2, start(2) < position(5) — fine.
+	// line=1, start=min(2,5)=2, character=3.
 	result = converters.PositionToLineAndCharacter(script, 5)
-	_ = result
+	assert.Equal(t, result.Line, uint32(1))
+	assert.Equal(t, result.Character, uint32(3))
 
-	// position=100: clamped to 5 (textLen), binary search in [0,2,40] finds between 2 and 40,
-	// line=1, start=2, start(2) < position(5) — fine.
+	// position=100: clamped to 5 (textLen), same result as position=5.
 	result = converters.PositionToLineAndCharacter(script, 100)
-	_ = result
+	assert.Equal(t, result.Line, uint32(1))
+	assert.Equal(t, result.Character, uint32(3))
 }
 
 func TestDocumentURIToFileName(t *testing.T) {
