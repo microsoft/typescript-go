@@ -1,237 +1,154 @@
-package lsconv_test
+package lsconv
 
 import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"gotest.tools/v3/assert"
 )
 
-type mockScript struct {
-	fileName string
-	text     string
+type testScript struct {
+	name string
+	text string
 }
 
-func (m *mockScript) FileName() string { return m.fileName }
-func (m *mockScript) Text() string     { return m.text }
+func (s *testScript) FileName() string { return s.name }
+func (s *testScript) Text() string     { return s.text }
 
-func TestLineAndCharacterToPosition_ClampsStaleLineMap(t *testing.T) {
-	t.Parallel()
-
-	// Simulate a stale line map that was computed from a longer text.
-	// Old text was "hello\nworld\nextra text here\n" (28 chars)
-	// New text is "hello\nwor" (9 chars)
-	// Line map from old text: [0, 6, 12, 28]
-	staleLineMap := &lsconv.LSPLineMap{
-		LineStarts: lsconv.LSPLineStarts{0, 6, 12, 28},
-		AsciiOnly:  false,
-	}
-
-	script := &mockScript{
-		fileName: "test.ts",
-		text:     "hello\nwor",
-	}
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return staleLineMap
-	})
-
-	// Request position on line 1 (stale lineEnd=12 > textLen=9) — should not panic.
-	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 1, Character: 2})
-	assert.Assert(t, pos <= core.TextPos(len(script.Text())), "position %d should not exceed text length %d", pos, len(script.Text()))
-}
-
-func TestLineAndCharacterToPosition_ClampsStaleLineMapUTF8(t *testing.T) {
-	t.Parallel()
-
-	staleLineMap := &lsconv.LSPLineMap{
-		LineStarts: lsconv.LSPLineStarts{0, 6, 12, 28},
-		AsciiOnly:  true,
-	}
-
-	script := &mockScript{
-		fileName: "test.ts",
-		text:     "hello\nwor",
-	}
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
-		return staleLineMap
-	})
-
-	// Request position on line 1 (stale lineEnd=12 > textLen=9) — should not panic.
-	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 1, Character: 2})
-	assert.Assert(t, pos <= core.TextPos(len(script.Text())), "position %d should not exceed text length %d", pos, len(script.Text()))
-}
-
-func TestLineAndCharacterToPosition_NonASCIIClamped(t *testing.T) {
+func TestLineAndCharacterToPosition_ValidUTF8(t *testing.T) {
 	t.Parallel()
 
 	// Text with em-dash (U+2014, 3 bytes in UTF-8, 1 UTF-16 code unit)
-	// "ab\u2014\n" = 6 bytes: 'a'(1) + 'b'(1) + '\u2014'(3) + '\n'(1)
-	// But stale line map says newline is at byte 10 (beyond actual text length of 6).
-	staleLineMap := &lsconv.LSPLineMap{
-		LineStarts: lsconv.LSPLineStarts{0, 10},
-		AsciiOnly:  false,
-	}
+	// "ab—cd\nef"
+	//  a(0) b(1) —(2,3,4) c(5) d(6) \n(7) e(8) f(9)
+	text := "ab\u2014cd\nef"
+	script := &testScript{name: "test.ts", text: text}
+	lineMap := ComputeLSPLineStarts(text)
 
-	script := &mockScript{
-		fileName: "test.ts",
-		text:     "ab\u2014\n",
-	}
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return staleLineMap
+	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+		return lineMap
 	})
 
-	// Line 0, char 1 — lineEnd from stale map (10) exceeds text length (6). Should not panic.
-	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 1})
-	assert.Assert(t, pos <= core.TextPos(len(script.Text())), "position %d should not exceed text length %d", pos, len(script.Text()))
+	// Line 0, char 0 → byte 0 (before 'a')
+	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 0})
+	assert.Equal(t, pos, core.TextPos(0))
+
+	// Line 0, char 2 → byte 2 (before em-dash)
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 2})
+	assert.Equal(t, pos, core.TextPos(2))
+
+	// Line 0, char 3 → byte 5 (after em-dash, before 'c')
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 3})
+	assert.Equal(t, pos, core.TextPos(5))
+
+	// Line 0, char 5 → byte 7 (after 'd', at newline)
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 5})
+	assert.Equal(t, pos, core.TextPos(7))
+
+	// Line 1, char 0 → byte 8 (start of 'e')
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 1, Character: 0})
+	assert.Equal(t, pos, core.TextPos(8))
 }
 
-func TestPositionToLineAndCharacter_ClampsStaleLineMap(t *testing.T) {
+func TestLineAndCharacterToPosition_InvalidUTF8(t *testing.T) {
 	t.Parallel()
 
-	// Stale line map from a shorter text.
-	// Old text: "ab\ncd" (5 chars), line starts: [0, 3]
-	// New text: "ab\ncd\nefghij" (12 chars)
-	// Position 10 is on what would be line 2 in the new text, but the stale
-	// line map only knows about 2 lines. The binary search will place it on
-	// line 1 with start=3, which is fine (start <= position).
-	staleLineMap := &lsconv.LSPLineMap{
-		LineStarts: lsconv.LSPLineStarts{0, 3},
-		AsciiOnly:  false,
-	}
+	// Text with invalid UTF-8 byte 0x80 (continuation byte without start byte).
+	// range produces RuneError for it, advancing by 1 byte.
+	// The old code used utf8.RuneLen(RuneError)==3, overshooting the byte offset.
+	text := "a\x80b\ncd"
+	script := &testScript{name: "test.ts", text: text}
+	lineMap := ComputeLSPLineStarts(text)
 
-	script := &mockScript{
-		fileName: "test.ts",
-		text:     "ab\ncd\nefghij",
-	}
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return staleLineMap
+	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+		return lineMap
 	})
 
-	// Should not panic even with stale line map.
-	result := converters.PositionToLineAndCharacter(script, 10)
-	// With stale line map [0, 3], position 10 falls on line 1 (start=3).
-	// Character offset should be 7 (10 - 3).
-	assert.Equal(t, result.Line, uint32(1))
-	assert.Equal(t, result.Character, uint32(7))
+	// Line 0, char 0 → byte 0 ('a')
+	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 0})
+	assert.Equal(t, pos, core.TextPos(0))
+
+	// Line 0, char 1 → byte 1 (the invalid byte 0x80; RuneError = 1 UTF-16 code unit)
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 1})
+	assert.Equal(t, pos, core.TextPos(1))
+
+	// Line 0, char 2 → byte 2 ('b')
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 2})
+	assert.Equal(t, pos, core.TextPos(2))
+
+	// Line 0, char 3 → byte 3 (at newline, end of line content)
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 3})
+	assert.Equal(t, pos, core.TextPos(3))
+
+	// Line 1, char 0 → byte 4 ('c')
+	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 1, Character: 0})
+	assert.Equal(t, pos, core.TextPos(4))
 }
 
-func TestPositionToLineAndCharacter_ClampsStartToPosition(t *testing.T) {
+func TestPositionToLineAndCharacter_ValidUTF8(t *testing.T) {
 	t.Parallel()
 
-	// Stale line map from a longer text where line starts exceed current text.
-	// Stale line map: [0, 20, 40] (from a 40+ char text)
-	// Current text: "short" (5 chars)
-	// position=3, clamped to 3 (within text)
-	// Binary search for 3 in [0, 20, 40] → between 0 and 20, line=0
-	// start=0, which is fine. But let's test line map where start > position.
-	staleLineMap := &lsconv.LSPLineMap{
-		LineStarts: lsconv.LSPLineStarts{0, 2, 40},
-		AsciiOnly:  false,
-	}
+	// Same text as above: "ab—cd\nef"
+	text := "ab\u2014cd\nef"
+	script := &testScript{name: "test.ts", text: text}
+	lineMap := ComputeLSPLineStarts(text)
 
-	script := &mockScript{
-		fileName: "test.ts",
-		text:     "short",
-	}
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return staleLineMap
+	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+		return lineMap
 	})
 
-	// position=3: clamped to 3, binary search in [0,2,40] finds between 2 and 40,
-	// line=1, start=2, start(2) < position(3) — fine.
-	result := converters.PositionToLineAndCharacter(script, 3)
-	assert.Equal(t, result.Line, uint32(1))
-	assert.Equal(t, result.Character, uint32(1))
+	// Byte 0 → (0, 0)
+	lc := converters.PositionToLineAndCharacter(script, 0)
+	assert.Equal(t, lc, lsproto.Position{Line: 0, Character: 0})
 
-	// position=5 (textLen): clamped to 5, binary search in [0,2,40] finds between 2 and 40,
-	// line=1, start=min(2,5)=2, character=3.
-	result = converters.PositionToLineAndCharacter(script, 5)
-	assert.Equal(t, result.Line, uint32(1))
-	assert.Equal(t, result.Character, uint32(3))
+	// Byte 5 → (0, 3) — after em-dash
+	lc = converters.PositionToLineAndCharacter(script, 5)
+	assert.Equal(t, lc, lsproto.Position{Line: 0, Character: 3})
 
-	// position=100: clamped to 5 (textLen), same result as position=5.
-	result = converters.PositionToLineAndCharacter(script, 100)
-	assert.Equal(t, result.Line, uint32(1))
-	assert.Equal(t, result.Character, uint32(3))
+	// Byte 8 → (1, 0) — start of second line
+	lc = converters.PositionToLineAndCharacter(script, 8)
+	assert.Equal(t, lc, lsproto.Position{Line: 1, Character: 0})
 }
 
-func TestDocumentURIToFileName(t *testing.T) {
+func TestRoundTrip_ValidUTF8(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		uri      lsproto.DocumentUri
-		fileName string
-	}{
-		{"file:///path/to/file.ts", "/path/to/file.ts"},
-		{"file://server/share/file.ts", "//server/share/file.ts"},
-		{"file:///d%3A/work/tsgo932/lib/utils.ts", "d:/work/tsgo932/lib/utils.ts"},
-		{"file:///D%3A/work/tsgo932/lib/utils.ts", "d:/work/tsgo932/lib/utils.ts"},
-		{"file:///d%3A/work/tsgo932/app/%28test%29/comp/comp-test.tsx", "d:/work/tsgo932/app/(test)/comp/comp-test.tsx"},
-		{"file:///path/to/file.ts#section", "/path/to/file.ts"},
-		{"file:///c:/test/me", "c:/test/me"},
-		{"file://shares/files/c%23/p.cs", "//shares/files/c#/p.cs"},
-		{"file:///c:/Source/Z%C3%BCrich%20or%20Zurich%20(%CB%88zj%CA%8A%C9%99r%C9%AAk,/Code/resources/app/plugins/c%23/plugin.json", "c:/Source/Zürich or Zurich (ˈzjʊərɪk,/Code/resources/app/plugins/c#/plugin.json"},
-		{"file:///c:/test %25/path", "c:/test %/path"},
-		// {"file:?q", "/"},
-		{"file:///_:/path", "/_:/path"},
-		{"file:///users/me/c%23-projects/", "/users/me/c#-projects/"},
-		{"file://localhost/c%24/GitDevelopment/express", "//localhost/c$/GitDevelopment/express"},
-		{"file:///c%3A/test%20with%20%2525/c%23code", "c:/test with %25/c#code"},
+	text := "ab\u2014cd\nef"
+	script := &testScript{name: "test.ts", text: text}
+	lineMap := ComputeLSPLineStarts(text)
 
-		{"untitled:Untitled-1", "^/untitled/ts-nul-authority/Untitled-1"},
-		{"untitled:Untitled-1#fragment", "^/untitled/ts-nul-authority/Untitled-1#fragment"},
-		{"untitled:c:/Users/jrieken/Code/abc.txt", "^/untitled/ts-nul-authority/c:/Users/jrieken/Code/abc.txt"},
-		{"untitled:C:/Users/jrieken/Code/abc.txt", "^/untitled/ts-nul-authority/C:/Users/jrieken/Code/abc.txt"},
-		{"untitled://wsl%2Bubuntu/home/jabaile/work/TypeScript-go/newfile.ts", "^/untitled/wsl%2Bubuntu/home/jabaile/work/TypeScript-go/newfile.ts"},
-	}
+	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+		return lineMap
+	})
 
-	for _, test := range tests {
-		t.Run(string(test.uri), func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, test.uri.FileName(), test.fileName)
-		})
+	// Round-trip only at valid UTF-8 character boundaries.
+	// Positions in the middle of multi-byte chars (e.g. byte 3,4 inside em-dash)
+	// snap to the next character, so round-tripping them isn't meaningful.
+	validPositions := []core.TextPos{0, 1, 2, 5, 6, 7, 8, 9, core.TextPos(len(text))}
+	for _, bytePos := range validPositions {
+		lc := converters.PositionToLineAndCharacter(script, bytePos)
+		rtPos := converters.LineAndCharacterToPosition(script, lc)
+		assert.Equal(t, rtPos, bytePos, "round-trip failed for byte position %d", bytePos)
 	}
 }
 
-func TestFileNameToDocumentURI(t *testing.T) {
+func TestRoundTrip_InvalidUTF8(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		fileName string
-		uri      lsproto.DocumentUri
-	}{
-		{"/path/to/file.ts", "file:///path/to/file.ts"},
-		{"//server/share/file.ts", "file://server/share/file.ts"},
-		{"d:/work/tsgo932/lib/utils.ts", "file:///d%3A/work/tsgo932/lib/utils.ts"},
-		{"d:/work/tsgo932/lib/utils.ts", "file:///d%3A/work/tsgo932/lib/utils.ts"},
-		{"d:/work/tsgo932/app/(test)/comp/comp-test.tsx", "file:///d%3A/work/tsgo932/app/%28test%29/comp/comp-test.tsx"},
-		{"/path/to/file.ts", "file:///path/to/file.ts"},
-		{"c:/test/me", "file:///c%3A/test/me"},
-		{"//shares/files/c#/p.cs", "file://shares/files/c%23/p.cs"},
-		{"c:/Source/Zürich or Zurich (ˈzjʊərɪk,/Code/resources/app/plugins/c#/plugin.json", "file:///c%3A/Source/Z%C3%BCrich%20or%20Zurich%20%28%CB%88zj%CA%8A%C9%99r%C9%AAk%2C/Code/resources/app/plugins/c%23/plugin.json"},
-		{"c:/test %/path", "file:///c%3A/test%20%25/path"},
-		{"/", "file:///"},
-		{"/_:/path", "file:///_%3A/path"},
-		{"/users/me/c#-projects/", "file:///users/me/c%23-projects/"},
-		{"//localhost/c$/GitDevelopment/express", "file://localhost/c%24/GitDevelopment/express"},
-		{"c:/test with %25/c#code", "file:///c%3A/test%20with%20%2525/c%23code"},
+	// Text with invalid UTF-8 byte
+	text := "a\x80b\ncd"
+	script := &testScript{name: "test.ts", text: text}
+	lineMap := ComputeLSPLineStarts(text)
 
-		{"^/untitled/ts-nul-authority/Untitled-1", "untitled:Untitled-1"},
-		{"^/untitled/ts-nul-authority/c:/Users/jrieken/Code/abc.txt", "untitled:c:/Users/jrieken/Code/abc.txt"},
-		{"^/untitled/ts-nul-authority///wsl%2Bubuntu/home/jabaile/work/TypeScript-go/newfile.ts", "untitled://wsl%2Bubuntu/home/jabaile/work/TypeScript-go/newfile.ts"},
-	}
+	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+		return lineMap
+	})
 
-	for _, test := range tests {
-		t.Run(test.fileName, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, lsconv.FileNameToDocumentURI(test.fileName), test.uri)
-		})
+	// Round-trip: position → line/char → position
+	for bytePos := core.TextPos(0); bytePos <= core.TextPos(len(text)); bytePos++ {
+		lc := converters.PositionToLineAndCharacter(script, bytePos)
+		rtPos := converters.LineAndCharacterToPosition(script, lc)
+		assert.Equal(t, rtPos, bytePos, "round-trip failed for byte position %d", bytePos)
 	}
 }

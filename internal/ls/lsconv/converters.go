@@ -166,27 +166,28 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 		lineEnd = textLen
 	}
 
-	// Clamp start and lineEnd to text bounds in case the line map is stale.
-	start = min(start, textLen)
-	lineEnd = min(lineEnd, textLen)
-
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
 		return max(start, min(start+char, lineEnd))
 	}
 
-	var utf8Char core.TextPos
+	// Scan from line start counting UTF-16 code units to find the byte position.
+	// Uses DecodeRuneInString (not range + RuneLen) so that invalid UTF-8 bytes
+	// advance by their actual size (1) rather than RuneLen(RuneError) == 3.
 	var utf16Char core.TextPos
-
-	for i, r := range script.Text()[start:lineEnd] {
+	pos := int(start)
+	end := int(lineEnd)
+	text := script.Text()
+	for pos < end {
+		r, size := utf8.DecodeRuneInString(text[pos:])
 		u16Len := core.TextPos(utf16.RuneLen(r))
 		if utf16Char+u16Len > char {
 			break
 		}
 		utf16Char += u16Len
-		utf8Char = core.TextPos(i + utf8.RuneLen(r))
+		pos += size
 	}
 
-	return start + utf8Char
+	return core.TextPos(pos)
 }
 
 func (c *Converters) PositionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
@@ -205,9 +206,6 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	// The current line ranges from lineMap.LineStarts[line] (or 0) to lineMap.LineStarts[line+1] (or len(text)).
 
 	start := lineMap.LineStarts[line]
-
-	// Clamp start to position in case the line map is stale.
-	start = min(start, position)
 
 	var character core.TextPos
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
