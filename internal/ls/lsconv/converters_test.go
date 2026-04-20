@@ -1,9 +1,10 @@
-package lsconv
+package lsconv_test
 
 import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"gotest.tools/v3/assert"
 )
@@ -24,9 +25,9 @@ func TestLineAndCharacterToPosition_ValidUTF8(t *testing.T) {
 	//  a(0) b(1) —(2,3,4) c(5) d(6) \n(7) e(8) f(9)
 	text := "ab\u2014cd\nef"
 	script := &testScript{name: "test.ts", text: text}
-	lineMap := ComputeLSPLineStarts(text)
+	lineMap := lsconv.ComputeLSPLineStarts(text)
 
-	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -59,9 +60,9 @@ func TestLineAndCharacterToPosition_InvalidUTF8(t *testing.T) {
 	// The old code used utf8.RuneLen(RuneError)==3, overshooting the byte offset.
 	text := "a\x80b\ncd"
 	script := &testScript{name: "test.ts", text: text}
-	lineMap := ComputeLSPLineStarts(text)
+	lineMap := lsconv.ComputeLSPLineStarts(text)
 
-	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -92,9 +93,9 @@ func TestPositionToLineAndCharacter_ValidUTF8(t *testing.T) {
 	// Same text as above: "ab—cd\nef"
 	text := "ab\u2014cd\nef"
 	script := &testScript{name: "test.ts", text: text}
-	lineMap := ComputeLSPLineStarts(text)
+	lineMap := lsconv.ComputeLSPLineStarts(text)
 
-	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -116,9 +117,9 @@ func TestRoundTrip_ValidUTF8(t *testing.T) {
 
 	text := "ab\u2014cd\nef"
 	script := &testScript{name: "test.ts", text: text}
-	lineMap := ComputeLSPLineStarts(text)
+	lineMap := lsconv.ComputeLSPLineStarts(text)
 
-	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 
@@ -139,9 +140,9 @@ func TestRoundTrip_InvalidUTF8(t *testing.T) {
 	// Text with invalid UTF-8 byte
 	text := "a\x80b\ncd"
 	script := &testScript{name: "test.ts", text: text}
-	lineMap := ComputeLSPLineStarts(text)
+	lineMap := lsconv.ComputeLSPLineStarts(text)
 
-	converters := NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *LSPLineMap {
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
 

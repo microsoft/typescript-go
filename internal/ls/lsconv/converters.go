@@ -173,6 +173,7 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	// Scan from line start counting UTF-16 code units to find the byte position.
 	// Uses DecodeRuneInString (not range + RuneLen) so that invalid UTF-8 bytes
 	// advance by their actual size (1) rather than RuneLen(RuneError) == 3.
+	// This matches the approach in scanner.ComputePositionOfLineAndUTF16Character.
 	var utf16Char core.TextPos
 	pos := int(start)
 	end := int(lineEnd)
