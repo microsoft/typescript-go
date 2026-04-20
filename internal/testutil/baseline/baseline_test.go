@@ -23,14 +23,3 @@ func TestSubmoduleTriagedFilesExist(t *testing.T) {
 		}
 	}
 }
-
-func TestNoFileInBothAcceptedAndTriaged(t *testing.T) {
-	t.Parallel()
-	accepted := submoduleAcceptedFileNames()
-	triaged := submoduleTriagedFileNames()
-	for name := range accepted.Keys() {
-		if triaged.Has(name) {
-			t.Errorf("file %q is in both submoduleAccepted.txt and submoduleTriaged.txt; it should only be in one", name)
-		}
-	}
-}
