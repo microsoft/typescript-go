@@ -198,6 +198,7 @@ func NewSession(init *SessionInit) *Session {
 			NewWatchedFiles(
 				"auto-import",
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+				lsproto.GetClientCapabilities(init.BackgroundCtx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 				func(nodeModulesDirs map[tspath.Path]string) PatternsAndIgnored {
 					patterns := make([]string, 0, len(nodeModulesDirs))
 					for _, dir := range nodeModulesDirs {
@@ -205,7 +206,7 @@ func NewSession(init *SessionInit) *Session {
 					}
 					slices.Sort(patterns)
 					return PatternsAndIgnored{
-						patterns: patterns,
+						patternsInsideWorkspace: patterns,
 					}
 				},
 			),
@@ -381,6 +382,7 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 
 	// Enqueue the debounced diagnostics refresh
 	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
+		defer cancel()
 		// Sleep for the debounce delay
 		select {
 		case <-time.After(s.options.DebounceDelay):
@@ -702,11 +704,11 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	if opts.Module != core.ModuleKindNone {
 		compilerOptions["module"] = opts.Module.String()
 	}
-	if name := moduleResolutionKindName(opts.ModuleResolution); name != "" {
-		compilerOptions["moduleResolution"] = name
+	if opts.ModuleResolution != core.ModuleResolutionKindUnknown {
+		compilerOptions["moduleResolution"] = opts.ModuleResolution.String()
 	}
 	if opts.Jsx != core.JsxEmitNone {
-		compilerOptions["jsx"] = fmt.Sprintf("%d", opts.Jsx)
+		compilerOptions["jsx"] = opts.Jsx.String()
 	}
 	if b, err := json.Marshal(compilerOptions); err == nil {
 		props["compilerOptions"] = string(b)
@@ -746,9 +748,8 @@ func boolTelemetry(v bool) string {
 func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetryMeasurements {
 	var stats lsproto.ProjectInfoTelemetryMeasurements
 	for _, sf := range sourceFiles {
-		fileName := sf.FileName()
 		size := float64(sf.End())
-		switch core.GetScriptKindFromFileName(fileName) {
+		switch sf.ScriptKind {
 		case core.ScriptKindJS:
 			stats.JsFileCount++
 			stats.JsFileSize += size
@@ -756,7 +757,7 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 			stats.JsxFileCount++
 			stats.JsxFileSize += size
 		case core.ScriptKindTS:
-			if tspath.IsDeclarationFileName(fileName) {
+			if tspath.IsDeclarationFileName(sf.FileName()) {
 				stats.DtsFileCount++
 				stats.DtsFileSize += size
 			} else {
@@ -769,25 +770,6 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 		}
 	}
 	return &stats
-}
-
-func moduleResolutionKindName(kind core.ModuleResolutionKind) string {
-	switch kind {
-	case core.ModuleResolutionKindUnknown:
-		return ""
-	case core.ModuleResolutionKindClassic:
-		return "Classic"
-	case core.ModuleResolutionKindNode10:
-		return "Node10"
-	case core.ModuleResolutionKindNode16:
-		return "Node16"
-	case core.ModuleResolutionKindNodeNext:
-		return "NodeNext"
-	case core.ModuleResolutionKindBundler:
-		return "Bundler"
-	default:
-		return ""
-	}
 }
 
 func (s *Session) Snapshot() *Snapshot {
@@ -911,6 +893,26 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
 	allProjects := snapshot.GetProjectsContainingFile(uri)
 	return allProjects, nil
+}
+
+func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []lsproto.DocumentUri) []*ls.LanguageService {
+	snapshot := s.getSnapshot(
+		ctx,
+		ResourceRequest{Documents: uris},
+		false, /*callerRef*/
+	)
+
+	activeFile := ""
+	if len(uris) > 0 {
+		activeFile = uris[0].FileName()
+	}
+
+	projects := snapshot.ProjectCollection.Projects()
+	services := make([]*ls.LanguageService, 0, len(projects))
+	for _, project := range projects {
+		services = append(services, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, activeFile))
+	}
+	return services
 }
 
 func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {
@@ -1116,12 +1118,14 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 	session.watchesMu.Lock()
 	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
-		if id, watchers, ignored := newWatcher.Watchers(); len(watchers) > 0 {
+		w := newWatcher.Watchers()
+		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
+		if len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
 				key := toFileSystemWatcherKey(watcher)
 				value := session.watches[key]
-				globId := WatcherID(fmt.Sprintf("%s.%d", id, i))
+				globId := WatcherID(fmt.Sprintf("%s.%d", w.WatcherID, i))
 				if value == nil {
 					value = &fileSystemWatcherValue{id: globId}
 					session.watches[key] = value
@@ -1140,14 +1144,14 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 					} else {
 						logger.Log(fmt.Sprintf("Updated watch: %s", id))
 					}
-					logger.Log("\t" + *watcher.GlobPattern.Pattern)
+					logger.Log("\t" + fileSystemWatcherGlobString(watcher))
 					logger.Log("")
 				}
 			}
-			if len(ignored) > 0 {
-				logger.Logf("%d paths ineligible for watching", len(ignored))
+			if len(w.IgnoredPaths) > 0 {
+				logger.Logf("%d paths ineligible for watching", len(w.IgnoredPaths))
 				if logger.IsVerbose() {
-					for path := range ignored {
+					for path := range w.IgnoredPaths {
 						logger.Log("\t" + path)
 					}
 				}
@@ -1155,7 +1159,9 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		}
 	}
 	if oldWatcher != nil {
-		if _, watchers, _ := oldWatcher.Watchers(); len(watchers) > 0 {
+		w := oldWatcher.Watchers()
+		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
+		if len(watchers) > 0 {
 			var removedWatchers []WatcherID
 			for _, watcher := range watchers {
 				key := toFileSystemWatcherKey(watcher)
@@ -1360,6 +1366,7 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 	s.logger.Log("\n======== Cache Statistics ========")
 	s.logger.Logf("Open file count:   %6d", len(snapshot.fs.overlays))
 	s.logger.Logf("Cached disk files: %6d", len(snapshot.fs.diskFiles))
+	s.logger.Logf("Realpath aliases:  %6d", len(snapshot.fs.nodeModulesRealpathAliases))
 	s.logger.Logf("Project count:     %6d", len(snapshot.ProjectCollection.Projects()))
 	s.logger.Logf("Config count:      %6d", len(snapshot.ConfigFileRegistry.configs))
 	if s.logger.IsVerbose() {
