@@ -1618,7 +1618,11 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 			s.warmAutoImportCancel()
 		}
 		warmCtx, cancel := context.WithCancel(ctx)
-		s.warmAutoImportCancel = cancel
+		s.warmAutoImportCancel = func() {
+			s.logger.Logf("Cancelling auto-import warming for file %s\n", changedFile.FileName())
+			cancel()
+		}
+
 		s.warmAutoImportMu.Unlock()
 
 		if warmCtx.Err() != nil {
