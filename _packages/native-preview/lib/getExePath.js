@@ -4,6 +4,16 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export default function getExePath() {
+    // Allow users to bypass resolution entirely. Useful in monorepos where
+    // import.meta.resolve is slow across many separate tsgo invocations.
+    const envPath = process.env.TSGO_BINARY;
+    if (envPath) {
+        if (!fs.existsSync(envPath)) {
+            throw new Error("TSGO_BINARY points to non-existent file: " + envPath);
+        }
+        return envPath;
+    }
+
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const normalizedDirname = __dirname.replace(/\\/g, "/");
 
@@ -20,24 +30,34 @@ export default function getExePath() {
         exeDir = path.resolve(__dirname, "..", "..", expectedPackage, "lib");
     }
     else {
-        // We're actually running from an installed package.
+        // We're running from an installed package.
+        // Fast path: check the sibling package at the standard npm layout first.
+        // This avoids calling import.meta.resolve, which can be slow in large
+        // monorepos where many tsgo invocations happen as separate processes.
         const platformPackageName = "@typescript/" + expectedPackage;
-        try {
-            if (typeof import.meta.resolve === "undefined") {
-                // v16.20.1
-                const require = module.createRequire(import.meta.url);
-                const packageJson = require.resolve(platformPackageName + "/package.json");
-                exeDir = path.join(path.dirname(packageJson), "lib");
-            }
-            else {
-                // v20.6.0, v18.19.0
-                const packageJson = import.meta.resolve(platformPackageName + "/package.json");
-                const packageJsonPath = fileURLToPath(packageJson);
-                exeDir = path.join(path.dirname(packageJsonPath), "lib");
-            }
+        const siblingDir = path.resolve(__dirname, "..", "..", expectedPackage, "lib");
+        const siblingExe = path.join(siblingDir, process.platform === "win32" ? "tsgo.exe" : "tsgo");
+        if (fs.existsSync(siblingExe)) {
+            exeDir = siblingDir;
         }
-        catch (e) {
-            throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
+        else {
+            try {
+                if (typeof import.meta.resolve === "undefined") {
+                    // v16.20.1
+                    const require = module.createRequire(import.meta.url);
+                    const packageJson = require.resolve(platformPackageName + "/package.json");
+                    exeDir = path.join(path.dirname(packageJson), "lib");
+                }
+                else {
+                    // v20.6.0, v18.19.0
+                    const packageJson = import.meta.resolve(platformPackageName + "/package.json");
+                    const packageJsonPath = fileURLToPath(packageJson);
+                    exeDir = path.join(path.dirname(packageJsonPath), "lib");
+                }
+            }
+            catch (e) {
+                throw new Error("Unable to resolve " + platformPackageName + ". Either your platform is unsupported, or you are missing the package on disk.");
+            }
         }
     }
 
