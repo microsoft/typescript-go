@@ -81,9 +81,13 @@ type resolutionState struct {
 	resolvePackageDirectoryOnly bool
 
 	// state fields
-	candidateIsFromConfiguredPath bool
-	resolvedPackageDirectory      bool
-	diagnostics                   []*ast.Diagnostic
+	// candidateEndingIsFromConfig is set when the candidate file extension originated from
+	// configuration (package.json fields, tsconfig.json paths entries, or wildcard substitutions)
+	// rather than from the module specifier written in source code. When true, resolvedUsingTsExtension
+	// is suppressed so the checker does not attempt to extract a TS extension from the original specifier.
+	candidateEndingIsFromConfig bool
+	resolvedPackageDirectory    bool
+	diagnostics                 []*ast.Diagnostic
 
 	// Similar to whats on resolver but only done if compilerOptions are for project reference redirect
 	// Cached representation for `core.CompilerOptions.paths`.
@@ -1268,15 +1272,15 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 			}
 			// When the substitution path has an explicit extension, the extension came from the
 			// paths config, not the module specifier. Suppress resolvedUsingTsExtension in that case.
-			saveCandidateIsFromConfiguredPath := r.candidateIsFromConfiguredPath
+			saveCandidateEndingIsFromConfig := r.candidateEndingIsFromConfig
 			if extensionFromSubst != "" {
-				r.candidateIsFromConfiguredPath = true
+				r.candidateEndingIsFromConfig = true
 			}
 			if resolved := loader(extensions, candidate); !resolved.shouldContinueSearching() {
-				r.candidateIsFromConfiguredPath = saveCandidateIsFromConfiguredPath
+				r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
 				return resolved
 			}
-			r.candidateIsFromConfiguredPath = saveCandidateIsFromConfiguredPath
+			r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
 		}
 	}
 	return continueSearching()
@@ -1550,7 +1554,7 @@ func (r *resolutionState) tryExtension(extension string, extensionless string, r
 		return &resolved{
 			path:                     path,
 			extension:                extension,
-			resolvedUsingTsExtension: !r.candidateIsFromConfiguredPath && resolvedUsingTsExtension,
+			resolvedUsingTsExtension: !r.candidateEndingIsFromConfig && resolvedUsingTsExtension,
 		}
 	}
 	return continueSearching()
@@ -1621,14 +1625,14 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 
 		// Disable `esmMode` for the resolution of the package path for CJS-mode packages (so the `main` field can omit extensions)
 		saveESMMode := r.esmMode
-		saveCandidateIsFromConfiguredPath := r.candidateIsFromConfiguredPath
-		r.candidateIsFromConfiguredPath = true
+		saveCandidateEndingIsFromConfig := r.candidateEndingIsFromConfig
+		r.candidateEndingIsFromConfig = true
 		if packageInfo.Exists() && packageInfo.Contents.Type.Value != "module" {
 			r.esmMode = false
 		}
 		result := r.nodeLoadModuleByRelativeName(expandedExtensions, candidate, false /*considerPackageJson*/)
 		r.esmMode = saveESMMode
-		r.candidateIsFromConfiguredPath = saveCandidateIsFromConfiguredPath
+		r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
 		return result
 	}
 
