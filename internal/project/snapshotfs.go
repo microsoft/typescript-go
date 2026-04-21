@@ -600,6 +600,14 @@ func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummar
 		path := s.toPath(change.Opened.FileName())
 		if entry, ok := s.diskFiles.Load(path); !ok || entry.Original() == nil {
 			change.Created.Add(change.Opened)
+		} else if overlay, ok := s.overlays[path]; ok {
+			// When a watch event and a didOpen for the same file arrive in the same
+			// batch, processChanges gives the open priority and discards the watch
+			// event. If the overlay content differs from what the program last saw
+			// (the original disk file), mark it as Changed so the project rebuilds.
+			if diskFile := entry.Original(); diskFile != nil && overlay.Hash() != diskFile.Hash() {
+				change.Changed.Add(change.Opened)
+			}
 		}
 	}
 	for uri := range change.Closed.Keys() {
