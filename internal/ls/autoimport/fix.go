@@ -893,14 +893,13 @@ func detectSyntaxIndicators(file *ast.SourceFile, options *core.CompilerOptions)
 	if options.GetEmitModuleDetectionKind() != core.ModuleDetectionKindForce {
 		// ExternalModuleIndicator is reliable when moduleDetection is not "force"
 		hasESM = file.ExternalModuleIndicator != nil
-		return
+		return hasESM, hasCJS
 	}
 	// Under moduleDetection "force", ExternalModuleIndicator is set to
 	// file.AsNode() when there is no genuine ESM syntax, so only trust it
 	// when it points to a real statement node.
 	if file.ExternalModuleIndicator != nil && file.ExternalModuleIndicator != file.AsNode() {
-		hasESM = true
-		return
+		return true, hasCJS
 	}
 	// Fall back to scanning Imports() for actual import/export declarations
 	// (not require() calls or dynamic imports).
@@ -914,15 +913,13 @@ func detectSyntaxIndicators(file *ast.SourceFile, options *core.CompilerOptions)
 		}
 		switch parent.Kind {
 		case ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindExportDeclaration:
-			hasESM = true
-			return
+			return true, hasCJS
 		case ast.KindExternalModuleReference:
 			// import x = require("...") — this is ESM-ish syntax
-			hasESM = true
-			return
+			return true, hasCJS
 		}
 	}
-	return
+	return hasESM, hasCJS
 }
 
 func (v *View) computeShouldUseRequire() bool {
