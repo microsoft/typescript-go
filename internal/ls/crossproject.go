@@ -166,41 +166,6 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 		}
 	}
 
-	getResultsIterator := func() iter.Seq[Resp] {
-		return func(yield func(Resp) bool) {
-			var seenProjects collections.SyncSet[tspath.Path]
-			if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
-				if !yield(response.result) {
-					return
-				}
-			}
-			seenProjects.Add(defaultProject.Id())
-			for _, project := range allProjects {
-				if seenProjects.AddIfAbsent(project.Id()) {
-					if response, loaded := results.Load(project.Id()); loaded && response.complete {
-						if !yield(response.result) {
-							return
-						}
-					}
-				}
-			}
-			// Prefer the searches from locations for default definition
-			results.Range(func(key tspath.Path, response *response[Resp]) bool {
-				if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-					return yield(response.result)
-				}
-				return true
-			})
-			// Then the searches from original locations
-			results.Range(func(key tspath.Path, response *response[Resp]) bool {
-				if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
-					return yield(response.result)
-				}
-				return true
-			})
-		}
-	}
-
 	// Outer loop - to complete work if more is added after completing existing queue
 	for {
 		// Process existing known projects first
@@ -265,6 +230,41 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 		}
 		if !hasMoreWork {
 			break
+		}
+	}
+
+	getResultsIterator := func() iter.Seq[Resp] {
+		return func(yield func(Resp) bool) {
+			var seenProjects collections.SyncSet[tspath.Path]
+			if response, loaded := results.Load(defaultProject.Id()); loaded && response.complete {
+				if !yield(response.result) {
+					return
+				}
+			}
+			seenProjects.Add(defaultProject.Id())
+			for _, project := range allProjects {
+				if seenProjects.AddIfAbsent(project.Id()) {
+					if response, loaded := results.Load(project.Id()); loaded && response.complete {
+						if !yield(response.result) {
+							return
+						}
+					}
+				}
+			}
+			// Prefer the searches from locations for default definition
+			results.Range(func(key tspath.Path, response *response[Resp]) bool {
+				if !response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
+					return yield(response.result)
+				}
+				return true
+			})
+			// Then the searches from original locations
+			results.Range(func(key tspath.Path, response *response[Resp]) bool {
+				if response.forOriginalLocation && seenProjects.AddIfAbsent(key) && response.complete {
+					return yield(response.result)
+				}
+				return true
+			})
 		}
 	}
 

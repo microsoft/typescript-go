@@ -575,7 +575,7 @@ type CommandLineOptionNameMap map[string]*CommandLineOption
 func (m CommandLineOptionNameMap) Get(name string) *CommandLineOption {
 	opt, ok := m[name]
 	if !ok {
-		opt, _ = m[strings.ToLower(name)]
+		opt = m[strings.ToLower(name)]
 	}
 	return opt
 }
@@ -1094,7 +1094,7 @@ func parseConfig(
 	if ownConfig.extendedConfigPath != nil {
 		// copy the resolution stack so it is never reused between branches in potential diamond-problem scenarios.
 		resolutionStack = append(resolutionStack, resolvedPath)
-		var result *extendsResult = &extendsResult{
+		result := &extendsResult{
 			options: &core.CompilerOptions{},
 		}
 		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String {
@@ -1623,7 +1623,6 @@ func getFileNamesFromConfigSpecs(
 	host vfs.FS,
 	extraFileExtensions []FileExtensionInfo,
 ) ([]string, int) {
-	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
@@ -1661,7 +1660,7 @@ func getFileNamesFromConfigSpecs(
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
 					jsonOnlyIncludeMatchers = vfsmatch.NewSpecMatcher(includes, basePath, vfsmatch.UsageFiles, host.UseCaseSensitiveFileNames())
 				}
-				var includeIndex int = -1
+				includeIndex := -1
 				if jsonOnlyIncludeMatchers != nil {
 					includeIndex = jsonOnlyIncludeMatchers.MatchIndex(file)
 				}
