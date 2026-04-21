@@ -6774,7 +6774,6 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 		if !ast.IsEntityNameExpression(expression) {
 			return DeclarationSpacesExportValue
 		}
-		node = expression
 		// The below options all declare an Alias, which is allowed to merge with other values within the importing module.
 		fallthrough
 	case ast.KindImportEqualsDeclaration, ast.KindNamespaceImport, ast.KindImportClause:
