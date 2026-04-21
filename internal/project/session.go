@@ -137,7 +137,8 @@ type Session struct {
 
 	// warmAutoImportCancel is the cancelation function for a running
 	// auto-import cache warming task. It is cancelled on file opens,
-	// closes, changes, and new auto-import warming requests.
+	// closes, changes, watched-file changes, new auto-import warming
+	// requests, and when the session closes.
 	warmAutoImportCancel context.CancelFunc
 	warmAutoImportMu     sync.Mutex
 
@@ -1612,22 +1613,55 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 			return
 		}
 
-		// Cancel any previous auto-import warming and create a new cancellable context
+		// Cancel any previous auto-import warming and create a new cancellable context.
+		// Only publish the new cancel func if the derived context is still active,
+		// and make the stored cancel func a no-op once that warming task is done.
 		s.warmAutoImportMu.Lock()
 		if s.warmAutoImportCancel != nil {
 			s.warmAutoImportCancel()
 		}
 		warmCtx, cancel := context.WithCancel(ctx)
-		s.warmAutoImportCancel = func() {
-			s.logger.Logf("Cancelling auto-import warming for file %s\n", changedFile.FileName())
-			cancel()
+		if warmCtx.Err() == nil {
+			s.warmAutoImportCancel = func() {
+				if warmCtx.Err() != nil {
+					return
+				}
+				s.logger.Logf("Cancelling auto-import warming for file %s", changedFile.FileName())
+				cancel()
+			}
 		}
-
 		s.warmAutoImportMu.Unlock()
 
 		if warmCtx.Err() != nil {
+			cancel()
 			return
 		}
-		_, _ = s.GetCurrentLanguageServiceWithAutoImports(warmCtx, changedFile)
+		defer cancel()
+
+		// Clone the snapshot with auto-imports using warmCtx so the expensive
+		// extraction work is cancelled if a file change arrives.
+		if !newSnapshot.tryRef() {
+			return
+		}
+		defer newSnapshot.Deref(s)
+
+		warmChange := SnapshotChange{
+			reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
+			ResourceRequest: ResourceRequest{
+				Documents:   []lsproto.DocumentUri{changedFile},
+				AutoImports: changedFile,
+			},
+		}
+		clonedSnapshot := newSnapshot.Clone(warmCtx, warmChange, newSnapshot.fs.overlays, s)
+
+		// If cancelled during clone, discard the incomplete result.
+		if warmCtx.Err() != nil {
+			clonedSnapshot.Deref(s)
+			return
+		}
+
+		// Conditionally adopt: if the session hasn't moved past newSnapshot,
+		// promote the clone so future requests benefit from the warmed cache.
+		s.adoptSnapshotChange(newSnapshot, clonedSnapshot)
 	}
 }
