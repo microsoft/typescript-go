@@ -515,6 +515,31 @@ compiler/jsxChildrenArrayWrongType(target=es2015).errors.txt.diff
 compiler/jsxElementType.errors.txt.diff
 compiler/reactDefaultPropsInferenceSuccess.errors.txt.diff
 compiler/tsxNotUsingApparentTypeOfSFC.errors.txt.diff
+conformance/checkJsxChildrenCanBeTupleType.errors.txt.diff
+conformance/contextuallyTypedStringLiteralsInJsxAttributes02.errors.txt.diff
+conformance/controlFlowIterationErrors.errors.txt.diff
+conformance/controlFlowIterationErrorsAsync.errors.txt.diff
+conformance/for-of39.errors.txt.diff
+conformance/genericCallToOverloadedMethodWithOverloadedArguments.errors.txt.diff
+conformance/genericCallWithOverloadedConstructorTypedArguments.errors.txt.diff
+conformance/iterableArrayPattern28.errors.txt.diff
+conformance/iteratorSpreadInArray6.errors.txt.diff
+conformance/overloadResolution.errors.txt.diff
+conformance/overloadResolutionClassConstructors.errors.txt.diff
+conformance/overloadResolutionConstructors.errors.txt.diff
+conformance/overloadTag1.errors.txt.diff
+conformance/strictBindCallApply1.errors.txt.diff
+conformance/taggedTemplateStringsWithOverloadResolution1.errors.txt.diff
+conformance/taggedTemplateStringsWithOverloadResolution1_ES6.errors.txt.diff
+conformance/taggedTemplateStringsWithOverloadResolution3.errors.txt.diff
+conformance/taggedTemplateStringsWithOverloadResolution3_ES6.errors.txt.diff
+conformance/tsxElementResolution9.errors.txt.diff
+conformance/tsxStatelessFunctionComponentOverload4.errors.txt.diff
+conformance/tsxStatelessFunctionComponentOverload5.errors.txt.diff
+conformance/tsxStatelessFunctionComponentsWithTypeArguments4.errors.txt.diff
+conformance/unionAndIntersectionInference1.errors.txt.diff
+conformance/unionTypeCallSignatures.errors.txt.diff
+conformance/unionTypeConstructSignatures.errors.txt.diff
 
 # More specific error code used when properties are missing (TS2345/TS2344 → TS2741/TS2740/TS2739)
 ## Instead of wrapping a missing-property message inside a generic "Argument of type X is not assignable to parameter of type Y" (TS2345),
@@ -533,10 +558,61 @@ compiler/noParameterReassignmentIIFEAnnotated.errors.txt.diff
 compiler/templateStringsArrayTypeNotDefinedES5Mode(target=es2015).errors.txt.diff
 compiler/templateStringsArrayTypeDefinedInES5Mode(target=es2015).errors.txt.diff
 compiler/templateStringsArrayTypeRedefinedInES6Mode.errors.txt.diff
+conformance/destructuringParameterDeclaration2.errors.txt.diff
+conformance/destructuringParameterDeclaration5.errors.txt.diff
+conformance/es2020IntlAPIs.errors.txt.diff
+conformance/genericCallWithObjectTypeArgsAndConstraints4.errors.txt.diff
+conformance/genericCallWithObjectTypeArgsAndConstraints5.errors.txt.diff
+conformance/genericRestParameters3.errors.txt.diff
+conformance/instanceofOperatorWithInvalidOperands.es2015.errors.txt.diff
+conformance/iterableArrayPattern17.errors.txt.diff
+conformance/iterableArrayPattern18.errors.txt.diff
+conformance/iterableArrayPattern19.errors.txt.diff
+conformance/jsdocTemplateTag3.errors.txt.diff
+conformance/mappedTypeErrors.errors.txt.diff
+conformance/narrowingGenericTypeFromInstanceof01.errors.txt.diff
+conformance/noInfer.errors.txt.diff
+conformance/objectLiteralShorthandPropertiesFunctionArgument2.errors.txt.diff
+conformance/subtypingWithNumericIndexer2.errors.txt.diff
+conformance/subtypingWithNumericIndexer3.errors.txt.diff
+conformance/subtypingWithNumericIndexer4.errors.txt.diff
+conformance/subtypingWithStringIndexer2.errors.txt.diff
+conformance/subtypingWithStringIndexer3.errors.txt.diff
+conformance/subtypingWithStringIndexer4.errors.txt.diff
+conformance/thisTypeInFunctionsNegative.errors.txt.diff
+conformance/typedefMultipleTypeParameters.errors.txt.diff
+conformance/typeSatisfaction.errors.txt.diff
+conformance/typeSatisfaction_errorLocations1.errors.txt.diff
+conformance/typeSatisfactionWithDefaultExport.errors.txt.diff
+conformance/unionTypeCallSignatures6.errors.txt.diff
+conformance/usingDeclarations.14.errors.txt.diff
+conformance/usingDeclarationsWithIteratorObject.errors.txt.diff
+conformance/mappedTypeConstraints2.errors.txt.diff
 
 # Error message for deprecated 6.0 options has changed
 compiler/blockScopedBindingsInDownlevelGenerator(target=es2015).errors.txt.diff
 compiler/sourceMapValidationVarInDownLevelGenerator(target=es2015).errors.txt.diff
+conformance/arrayLiteralSpreadES5iterable(target=es2015).errors.txt.diff
+conformance/asyncArrowFunction11_es5(target=es2015).errors.txt.diff
+conformance/destructuringArrayBindingPatternAndAssignment1ES5iterable.errors.txt.diff
+conformance/destructuringArrayBindingPatternAndAssignment4(target=es2015).errors.txt.diff
+conformance/destructuringParameterDeclaration1ES5iterable.errors.txt.diff
+conformance/destructuringParameterDeclaration3ES5iterable(target=es2015).errors.txt.diff
+conformance/destructuringParameterDeclaration7ES5iterable(target=es2015).errors.txt.diff
+conformance/destructuringVariableDeclaration1ES5iterable(target=es2015).errors.txt.diff
+conformance/emptyAssignmentPatterns01_ES5iterable(target=es2015).errors.txt.diff
+conformance/emptyAssignmentPatterns02_ES5iterable(target=es2015).errors.txt.diff
+conformance/emptyAssignmentPatterns03_ES5iterable(target=es2015).errors.txt.diff
+conformance/emptyAssignmentPatterns04_ES5iterable(target=es2015).errors.txt.diff
+conformance/emptyVariableDeclarationBindingPatterns01_ES5iterable(target=es2015).errors.txt.diff
+conformance/emptyVariableDeclarationBindingPatterns02_ES5iterable(target=es2015).errors.txt.diff
+conformance/ES5For-of33(target=es2015).errors.txt.diff
+conformance/ES5For-of34(target=es2015).errors.txt.diff
+conformance/ES5For-of35(target=es2015).errors.txt.diff
+conformance/ES5For-of36(target=es2015).errors.txt.diff
+conformance/ES5For-of37(target=es2015).errors.txt.diff
+conformance/forAwaitPerIterationBindingDownlevel(target=es2015).errors.txt.diff
+conformance/restParameterInDownlevelGenerator(target=es2015).errors.txt.diff
 
 # Additional circular import alias (TS2303) errors reported
 ## Corsa reports TS2303 "Circular definition of import alias" on both the `import self = require(...)`
@@ -549,6 +625,8 @@ compiler/recursiveExportAssignmentAndFindAliasedType5.errors.txt.diff
 compiler/recursiveExportAssignmentAndFindAliasedType6.errors.txt.diff
 compiler/declarationEmitUnknownImport(target=es2015).errors.txt.diff
 compiler/declarationEmitUnknownImport2(target=es2015).errors.txt.diff
+conformance/circular1.errors.txt.diff
+conformance/circular3.errors.txt.diff
 
 # tslib / import helpers no longer required due to esModuleInterop=false being removed
 ## TS2354 ("This syntax requires an imported helper from 'tslib'") errors are eliminated because
@@ -577,6 +655,12 @@ compiler/nestedCallbackErrorNotFlattened.errors.txt.diff
 compiler/typeParameterArgumentEquivalence5.errors.txt.diff
 compiler/iterableTReturnTNext(strictbuiltiniteratorreturn=true).errors.txt.diff
 compiler/complexRecursiveCollections.errors.txt.diff
+conformance/decoratorOnClassMethod10(target=es2015).errors.txt.diff
+conformance/generatorTypeCheck25.errors.txt.diff
+conformance/generatorTypeCheck62.errors.txt.diff
+conformance/generatorTypeCheck63.errors.txt.diff
+conformance/intraExpressionInferences.errors.txt.diff
+conformance/types.asyncGenerators.es2018.2.errors.txt.diff
 
 # Non-BMP / Unicode character error span measurement improved
 ## Error spans for non-BMP characters (surrogate pairs) are measured by code points instead of UTF-16 code units, causing span widths and positions to shift
@@ -594,6 +678,7 @@ compiler/importNonExportedMember9.errors.txt.diff
 ## Corsa no longer emits the TS-1 internal diagnostic about pre-emit/post-emit diagnostic count mismatches
 compiler/multiLinePropertyAccessAndArrowFunctionIndent1.errors.txt.diff
 compiler/parseErrorIncorrectReturnToken.errors.txt.diff
+conformance/parserStatementIsNotAMemberVariableDeclaration1(alwaysstrict=true).errors.txt.diff
 
 # Error message wording changes (miscellaneous)
 ## Various error messages have minor wording adjustments, no longer suggesting or referencing deprecated options
@@ -617,6 +702,23 @@ compiler/parameterPropertyInConstructor2.errors.txt.diff
 compiler/reassignStaticProp.errors.txt.diff
 compiler/staticModifierAlreadySeen.errors.txt.diff
 compiler/numericClassMembers1.errors.txt.diff
+conformance/autoAccessor11.errors.txt.diff
+conformance/callSignaturesWithParameterInitializers2.errors.txt.diff
+conformance/constructorParameterProperties2.errors.txt.diff
+conformance/constructSignatureWithAccessibilityModifiersOnParameters2.errors.txt.diff
+conformance/duplicatePropertyNames.errors.txt.diff
+conformance/parser0_004152.errors.txt.diff
+conformance/privateNameDuplicateField.errors.txt.diff
+conformance/privateNamesUnique-3.errors.txt.diff
+conformance/stringLiteralTypesInImplementationSignatures2.errors.txt.diff
+conformance/stringNamedPropertyDuplicates.errors.txt.diff
+conformance/symbolDeclarationEmit12.errors.txt.diff
+conformance/symbolProperty37.errors.txt.diff
+conformance/symbolProperty44.errors.txt.diff
+conformance/uniqueSymbolsPropertyNames.errors.txt.diff
+conformance/numericNamedPropertyDuplicates.errors.txt.diff
+conformance/numericStringNamedPropertyEquivalence.errors.txt.diff
+conformance/objectTypeWithDuplicateNumericProperty.errors.txt.diff
 
 # Other elaboration chain differences
 ## These chains are *longer* in Corsa than in Strada for whatever reason
@@ -624,6 +726,15 @@ compiler/inheritance1.errors.txt.diff
 compiler/jsxClassAttributeResolution.errors.txt.diff
 compiler/strictFunctionTypesErrors.errors.txt.diff
 compiler/mutuallyRecursiveCallbacks.errors.txt.diff
+conformance/checkJsxChildrenProperty5.errors.txt.diff
+conformance/conditionalTypes2.errors.txt.diff
+conformance/covariantCallbacks.errors.txt.diff
+conformance/intersectionAsWeakTypeSource.errors.txt.diff
+conformance/nonPrimitiveAssignError.errors.txt.diff
+conformance/objectTypeHidingMembersOfObjectAssignmentCompat2.errors.txt.diff
+conformance/objectTypeWithStringAndNumberIndexSignatureToAny.errors.txt.diff
+conformance/privateNamesUnique-4.errors.txt.diff
+conformance/subtypingWithNumericIndexer5.errors.txt.diff
 
 # Various error spans are slightly different
 ## Error span for individual unused destructured variables narrows from the entire destructuring pattern (`{ e }`) to just the binding name (`e`)
@@ -651,14 +762,55 @@ compiler/reactImportUnusedInNewJSXEmit(jsx=react-jsxdev).errors.txt.diff
 compiler/slashBeforeVariableDeclaration1.errors.txt.diff
 ## In overload resolution, the error span sometimes shifts from the function call expression to the specific argument causing the error
 compiler/noImplicitAnyLoopCrash(target=es2015).errors.txt.diff
+## Backslash characters causing TS1127 "Invalid character" now show a `~` squiggle instead of a blank line
+conformance/parserSkippedTokens1.errors.txt.diff
+conformance/parserSkippedTokens2.errors.txt.diff
+conformance/parserSkippedTokens3.errors.txt.diff
+conformance/parserSkippedTokens4.errors.txt.diff
+conformance/parserSkippedTokens5.errors.txt.diff
+conformance/parserSkippedTokens6.errors.txt.diff
+conformance/parserSkippedTokens7.errors.txt.diff
+conformance/parserSkippedTokens8.errors.txt.diff
+conformance/parserSkippedTokens9.errors.txt.diff
+conformance/parserSkippedTokens10.errors.txt.diff
+conformance/parserSkippedTokens11.errors.txt.diff
+conformance/parserSkippedTokens12.errors.txt.diff
+conformance/parserSkippedTokens13.errors.txt.diff
+conformance/parserSkippedTokens14.errors.txt.diff
+conformance/parserSkippedTokens15.errors.txt.diff
+conformance/parserSkippedTokens17.errors.txt.diff
+conformance/parserSkippedTokens18.errors.txt.diff
+conformance/parserSkippedTokens19.errors.txt.diff
+conformance/parserSkippedTokens20.errors.txt.diff
+conformance/parserX_TypeArgumentList1.errors.txt.diff
+conformance/TypeArgumentList1.errors.txt.diff
+## TS1453 error span moves from `types` attribute to the invalid `resolution-mode` value
+conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=node16).errors.txt.diff
+conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=node18).errors.txt.diff
+conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=node20).errors.txt.diff
+conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=nodenext).errors.txt.diff
+## Error squiggle position/column shifted to a different token or expression (misc)
+conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
+conformance/classAbstractInheritance2.errors.txt.diff
+conformance/jsdocPrivateName2.errors.txt.diff
+conformance/jsdocImplements_missingType.errors.txt.diff
+conformance/symbolProperty24.errors.txt.diff
 
 # Type display simplified for mixin class expressions
 ## Type arguments are dropped from anonymous mixin class types in error messages — e.g. `mixB<typeof A>.(Anonymous class)` becomes `mixB.(Anonymous class)`
 compiler/mixinPrivateAndProtected.errors.txt.diff
+conformance/mixinAccessors3.errors.txt.diff
+conformance/typeArgumentInferenceWithClassExpression2.errors.txt.diff
 
 # Error recovery differences in malformed code
 ## Different parse error recovery in heavily malformed code produces additional errors and different inferred types
 compiler/reachabilityChecksNoCrash1.errors.txt.diff
+## One error instead of 3 emitted for `<T>(arg) => expr` in JSX-syntax files
+conformance/nodeModulesForbidenSyntax(module=node16).errors.txt.diff
+conformance/nodeModulesForbidenSyntax(module=node18).errors.txt.diff
+conformance/nodeModulesForbidenSyntax(module=node20).errors.txt.diff
+conformance/nodeModulesForbidenSyntax(module=nodenext).errors.txt.diff
+
 
 # Type-as-value error code changed (TS2690 → TS2693)
 ## TS2690 (with "Did you mean 'P in K'?" mapped type suggestion) changed to TS2693 (generic "refers to a type, but is being used as a value") — mapped type suggestion lost
@@ -671,6 +823,17 @@ compiler/interfaceMergeWithNonGenericTypeArguments.errors.txt.diff
 # Spelling suggestion limit removed
 ## Corsa no longer enforces a maximum of 10 spelling suggestions — previously plain TS2304 errors now get TS2552 "Did you mean X?" suggestions
 compiler/maximum10SpellingSuggestions.errors.txt.diff
+conformance/parserharness.errors.txt.diff
+conformance/parserindenter.errors.txt.diff
+conformance/parserRealSource6.errors.txt.diff
+conformance/parserRealSource7.errors.txt.diff
+conformance/parserRealSource8.errors.txt.diff
+conformance/parserRealSource9.errors.txt.diff
+conformance/parserRealSource11.errors.txt.diff
+conformance/parserRealSource12.errors.txt.diff
+conformance/parserRealSource13.errors.txt.diff
+conformance/parserS7.6_A4.2_T1.errors.txt.diff
+conformance/scannerS7.6_A4.2_T1.errors.txt.diff
 
 # Union type ordering changed
 ## Union member order in error messages changes due to stable type ordering — e.g. `number | string` becomes `string | number`
@@ -681,11 +844,61 @@ compiler/baseClassImprovedMismatchErrors.errors.txt.diff
 compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
 ## `JSX.IntrinsicAttributes` shortened to `IntrinsicAttributes`, `React.ReactNode` to `ReactNode` in error and related messages
 compiler/tsxNotUsingApparentTypeOfSFC.errors.txt.diff
+conformance/mixinAccessors3.errors.txt.diff
+conformance/tsxGenericAttributesType5.errors.txt.diff
+conformance/tsxGenericAttributesType6.errors.txt.diff
+conformance/tsxGenericAttributesType7.errors.txt.diff
+conformance/tsxGenericAttributesType8.errors.txt.diff
 ## `development//lit-element.d.ts` normalized to `development/lit-element.d.ts` in error output
 compiler/jsDeclarationEmitExportedClassWithExtends.errors.txt.diff
 ## TS2589 "Type instantiation is excessively deep" no longer reported for a recursively expanding union
 compiler/recursivelyExpandingUnionNoStackoverflow.errors.txt.diff
+## `{} == {}` loose equality now also flagged with TS2839 (not just strict equality)
+conformance/plainJSTypeErrors.errors.txt.diff
+## Constraint suggestion shows `{ s?: number | undefined; }` instead of `{ s?: number; }`
+conformance/subtypingWithOptionalProperties.errors.txt.diff
+## Unicode escapes in identifier names now displayed as literal characters
+conformance/parser.numericSeparators.decmialNegative.errors.txt.diff
+## Error messages reference class name 'C' instead of '(anonymous)' for private name errors
+conformance/privateNameMethodClassExpression.errors.txt.diff
+## Missing property name shown as numeric value (e.g., `'0'`) instead of enum member (e.g., `'[E.A]'`)
+conformance/assignmentCompatWithEnumIndexer.errors.txt.diff
+## TS9006 "Declaration emit requires private name" replaced with TS4023 "Exported variable has or is using name"
+conformance/jsDeclarationsTypeReassignmentFromDeclaration2.errors.txt.diff
+## TS8010 → TS8017 "Signature declarations can only be used in TypeScript files" for index signatures
+conformance/jsDeclarationsClassesErr(target=es2015).errors.txt.diff
+## TS8006 "namespace declarations can only be used in TypeScript files" now reported
+conformance/jsDeclarationsTypeReferences4(target=es2015).errors.txt.diff
+## Corsa adds TS1101 "'with' statements are not allowed in strict mode" in .d.ts files
+conformance/parserWithStatement1.d.errors.txt.diff
+## Different TS-only modifier errors (TS8009 removed, TS8017 added) for certain JS syntax
+conformance/plainJSGrammarErrors.errors.txt.diff
+## Error messages reference module path without `.js` extension
+conformance/lateBoundAssignmentDeclarationSupport2.errors.txt.diff
+
+# New Good Related Error Spans
+## Extra `related TS2785` span pointing to a spread that overwrites properties
+conformance/jsxSpreadOverwritesAttributeStrict.errors.txt.diff
+conformance/objectSpreadNegative(target=es2015).errors.txt.diff
+## Extra related diagnostic pointing to additional default export declarations
+conformance/multipleDefaultExports05(target=es2015).errors.txt.diff
+## "was also declared here" moves from separate line to inline on location line
+conformance/typedefCrossModule5.errors.txt.diff
+conformance/importingExportingTypes.errors.txt.diff
 
 # Fixed Bugs
 ## When a class and interface merge across files, Corsa considers type parameters used across the merged declaration, eliminating the false-positive unused error
 compiler/unusedTypeParameters8.errors.txt.diff
+## Instead of the full union type, only the non-iterable constituent(s) are named in the error in for/ofs
+conformance/ES5For-of30(target=es2015).errors.txt.diff
+conformance/ES5For-ofTypeCheck7(target=es2015).errors.txt.diff
+conformance/ES5For-ofTypeCheck9(target=es2015).errors.txt.diff
+## Duplicate identifier names normalized to canonical numeric/string form (e.g., `'1.0'` → `'1'`); first declaration also flagged
+conformance/numericNamedPropertyDuplicates.errors.txt.diff
+conformance/numericStringNamedPropertyEquivalence.errors.txt.diff
+conformance/objectTypeWithDuplicateNumericProperty.errors.txt.diff
+## Removes spurious TS2304/TS2693 errors when TS7061 already covers the issue
+conformance/mappedTypeProperties.errors.txt.diff
+## Correct TS2322 errors assigning class prototype to unrelated function type
+conformance/typesWithPrivateConstructor.errors.txt.diff
+conformance/typesWithProtectedConstructor.errors.txt.diff
