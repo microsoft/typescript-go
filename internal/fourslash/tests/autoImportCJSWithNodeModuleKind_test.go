@@ -10,10 +10,6 @@ import (
 // TestAutoImportCJSWithNodeModuleKind verifies that auto-imports use require()
 // syntax in CJS files when using node16/node20/nodenext module kinds with a
 // package.json that has "type": "commonjs".
-//
-// This is a regression test for https://github.com/nicolo-ribaudo/tc39-proposal-structs/issues/14
-// where module: "node20" with moduleDetection defaulting to "force" caused
-// auto-imports to incorrectly insert `import` statements in CJS files.
 func TestAutoImportCJSWithNodeModuleKind(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
@@ -72,6 +68,38 @@ LIB_VERSION/**/`
 	f.VerifyImportFixAtPosition(t, []string{
 		`const { LIB_VERSION } = require("./lib");
 
+LIB_VERSION`,
+	}, nil /*preferences*/)
+}
+
+// TestAutoImportCJSWithModuleDetectionForce verifies that auto-imports use
+// require() syntax in JS files with CJS syntax when moduleDetection is "force",
+// even with --module preserve where GetImpliedNodeFormatForEmit won't help.
+func TestAutoImportCJSWithModuleDetectionForce(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @Filename: /tsconfig.json
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "preserve",
+    "moduleDetection": "force",
+    "checkJs": true,
+    "noEmit": true
+  }
+}
+// @Filename: /lib.js
+export const LIB_VERSION = 1;
+// @Filename: /main.js
+const path = require("path");
+LIB_VERSION/**/`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+
+	f.GoToMarker(t, "")
+	f.VerifyImportFixAtPosition(t, []string{
+		`const path = require("path");
+const { LIB_VERSION } = require("./lib");
 LIB_VERSION`,
 	}, nil /*preferences*/)
 }
