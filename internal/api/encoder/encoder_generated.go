@@ -377,6 +377,9 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindPartiallyEmittedExpression:
 		n := node.AsPartiallyEmittedExpression()
 		return (boolToByte(n.Expression != nil) << 0)
+	case ast.KindCommaListExpression:
+		n := node.AsCommaListExpression()
+		return (boolToByte(n.Elements != nil) << 0)
 	case ast.KindJsxElement:
 		n := node.AsJsxElement()
 		return (boolToByte(n.OpeningElement != nil) << 0) | (boolToByte(n.Children != nil) << 1) | (boolToByte(n.ClosingElement != nil) << 2)

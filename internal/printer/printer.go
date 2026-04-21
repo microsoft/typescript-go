@@ -3014,6 +3014,14 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 	}
 }
 
+func (p *Printer) emitCommaListElement(node *ast.Expression) {
+	p.emitExpression(node, ast.OperatorPrecedenceSpread)
+}
+
+func (p *Printer) emitCommaList(node *ast.CommaListExpression) {
+	p.emitList((*Printer).emitCommaListElement, node.AsNode(), node.Elements, LFCommaListElements)
+}
+
 func (p *Printer) commentWillEmitNewLine(comment ast.CommentRange) bool {
 	return comment.Kind == ast.KindSingleLineCommentTrivia || comment.HasTrailingNewLine
 }
@@ -3291,6 +3299,8 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		return
 	case ast.KindPartiallyEmittedExpression:
 		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
+	case ast.KindCommaListExpression:
+		p.emitCommaList(node.AsCommaListExpression())
 	case ast.KindSyntheticReferenceExpression:
 		panic("SyntheticReferenceExpression should not be printed")
 

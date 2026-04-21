@@ -856,6 +856,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewSyntheticExpression(typeNode, isSpread, d.singleChild(childIndices)), nil
 	case ast.KindPartiallyEmittedExpression:
 		return d.factory.NewPartiallyEmittedExpression(d.singleChild(childIndices)), nil
+	case ast.KindCommaListExpression:
+		return d.factory.NewCommaListExpression(d.singleNodeListChild(childIndices)), nil
 	case ast.KindJsxElement:
 		it := newChildIter(childIndices)
 		openingElement := d.nodeAt(it.nextIf(mask, 0))
