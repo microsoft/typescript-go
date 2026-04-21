@@ -936,22 +936,18 @@ func (v *View) computeShouldUseRequire() bool {
 		return false
 	}
 
-	// 3. If there's a tsconfig/jsconfig, use its module setting
-	if v.program.Options().ConfigFilePath != "" {
-		moduleKind := v.program.Options().GetEmitModuleKind()
-		if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
-			return v.program.GetImpliedNodeFormatForEmit(v.importingFile) != core.ModuleKindESNext
-		}
-		return moduleKind < core.ModuleKindES2015
-	}
-
-	// 4. Use the implied node format to determine CJS vs ESM
+	// 3. Use the implied node format to determine CJS vs ESM
 	//    TODO: consider removing `impliedNodeFormatForEmit`
 	switch v.program.GetImpliedNodeFormatForEmit(v.importingFile) {
 	case core.ModuleKindCommonJS:
 		return true
 	case core.ModuleKindESNext:
 		return false
+	}
+
+	// 4. If there's a tsconfig/jsconfig, use its module setting
+	if v.program.Options().ConfigFilePath != "" {
+		return v.program.Options().GetEmitModuleKind() < core.ModuleKindES2015
 	}
 
 	// 5. Match the first other JS file in the program that's unambiguously CJS or ESM
