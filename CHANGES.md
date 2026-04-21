@@ -347,6 +347,6 @@ exports.foo = 123  // Exported type is `123`
 exports.bar = "abc"  // Exported type is `"abc"`
 ```
 
-### Mixing module.exports assignments
+#### Mixing module.exports assignments
 
 Corsa does not permit CommonJS modules to mix assignments to the full `module.exports` with assignments to `module.exports.xxx` properties. A CommonJS module must either contain an assignment to `module.exports` or a series of assignments to `module.exports.xxx` properties, but not both.
