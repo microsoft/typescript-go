@@ -26,7 +26,7 @@
 //   ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | (method) ThingWithDeprecations.subscribe(observer?: PartialObserver<void>): Subscription
+// | (method) ThingWithDeprecations<void>.subscribe(observer?: PartialObserver<void>): Subscription
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -46,7 +46,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```typescript\n(method) ThingWithDeprecations.subscribe(observer?: PartialObserver<void>): Subscription\n```\n"
+        "value": "```typescript\n(method) ThingWithDeprecations<void>.subscribe(observer?: PartialObserver<void>): Subscription\n```\n"
       },
       "range": {
         "start": {
