@@ -1,7 +1,20 @@
 --- old.conditionalTypes2.errors.txt
 +++ new.conditionalTypes2.errors.txt
-@@= skipped -25, +25 lines =@@
-             'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
+@@= skipped -0, +0 lines =@@
+ conditionalTypes2.ts(15,5): error TS2322: Type 'Covariant<A>' is not assignable to type 'Covariant<B>'.
+   Type 'A' is not assignable to type 'B'.
+-    'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
+ conditionalTypes2.ts(19,5): error TS2322: Type 'Contravariant<B>' is not assignable to type 'Contravariant<A>'.
+   Type 'A' is not assignable to type 'B'.
+-    'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
+ conditionalTypes2.ts(24,5): error TS2322: Type 'Invariant<B>' is not assignable to type 'Invariant<A>'.
+   Types of property 'foo' are incompatible.
+     Type 'B extends string ? keyof B : B' is not assignable to type 'A extends string ? keyof A : A'.
+@@= skipped -22, +20 lines =@@
+       Type 'A | keyof A' is not assignable to type 'B extends string ? keyof B : B'.
+         Type 'A' is not assignable to type 'B extends string ? keyof B : B'.
+           Type 'A' is not assignable to type 'B'.
+-            'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
  conditionalTypes2.ts(73,12): error TS2345: Argument of type 'Extract<Extract<T, Foo>, Bar>' is not assignable to parameter of type '{ foo: string; bat: string; }'.
    Type 'Extract<T, Bar>' is not assignable to type '{ foo: string; bat: string; }'.
 -    Property 'bat' is missing in type 'Bar & Foo' but required in type '{ foo: string; bat: string; }'.
@@ -19,7 +32,31 @@
 
 
  ==== conditionalTypes2.ts (7 errors) ====
-@@= skipped -119, +122 lines =@@
+@@= skipped -30, +32 lines =@@
+         ~
+ !!! error TS2322: Type 'Covariant<A>' is not assignable to type 'Covariant<B>'.
+ !!! error TS2322:   Type 'A' is not assignable to type 'B'.
+-!!! error TS2322:     'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
+ !!! related TS2208 conditionalTypes2.ts:13:13: This type parameter might need an `extends B` constraint.
+     }
+     
+@@= skipped -9, +8 lines =@@
+         ~
+ !!! error TS2322: Type 'Contravariant<B>' is not assignable to type 'Contravariant<A>'.
+ !!! error TS2322:   Type 'A' is not assignable to type 'B'.
+-!!! error TS2322:     'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
+ !!! related TS2208 conditionalTypes2.ts:18:13: This type parameter might need an `extends B` constraint.
+         b = a;
+     }
+@@= skipped -29, +28 lines =@@
+ !!! error TS2322:       Type 'A | keyof A' is not assignable to type 'B extends string ? keyof B : B'.
+ !!! error TS2322:         Type 'A' is not assignable to type 'B extends string ? keyof B : B'.
+ !!! error TS2322:           Type 'A' is not assignable to type 'B'.
+-!!! error TS2322:             'B' could be instantiated with an arbitrary type which could be unrelated to 'A'.
+ !!! related TS2208 conditionalTypes2.ts:23:13: This type parameter might need an `extends B` constraint.
+ !!! related TS2208 conditionalTypes2.ts:23:13: This type parameter might need an `extends B extends string ? keyof B : B` constraint.
+     }
+@@= skipped -54, +53 lines =@@
                 ~
  !!! error TS2345: Argument of type 'Extract<Extract<T, Foo>, Bar>' is not assignable to parameter of type '{ foo: string; bat: string; }'.
  !!! error TS2345:   Type 'Extract<T, Bar>' is not assignable to type '{ foo: string; bat: string; }'.

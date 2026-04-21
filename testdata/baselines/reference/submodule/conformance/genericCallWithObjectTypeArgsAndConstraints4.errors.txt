@@ -5,7 +5,6 @@ genericCallWithObjectTypeArgsAndConstraints4.ts(19,17): error TS2741: Property '
 genericCallWithObjectTypeArgsAndConstraints4.ts(22,18): error TS2345: Argument of type 'null' is not assignable to parameter of type '{}'.
 genericCallWithObjectTypeArgsAndConstraints4.ts(23,20): error TS2345: Argument of type '{}' is not assignable to parameter of type 'null'.
 genericCallWithObjectTypeArgsAndConstraints4.ts(30,24): error TS2345: Argument of type 'C' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'C'.
 
 
 ==== genericCallWithObjectTypeArgsAndConstraints4.ts (7 errors) ====
@@ -54,7 +53,6 @@ genericCallWithObjectTypeArgsAndConstraints4.ts(30,24): error TS2345: Argument o
         var r5 = foo<T, U>(c, d); // error
                            ~
 !!! error TS2345: Argument of type 'C' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'C'.
     }
     
     

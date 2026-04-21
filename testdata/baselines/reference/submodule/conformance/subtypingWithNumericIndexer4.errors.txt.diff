@@ -10,7 +10,11 @@
  subtypingWithNumericIndexer4.ts(24,11): error TS2415: Class 'B3<T>' incorrectly extends base class 'A<T>'.
    'number' index signatures are incompatible.
      Type 'string' is not assignable to type 'T'.
-@@= skipped -38, +37 lines =@@
+-      'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
+
+
+ ==== subtypingWithNumericIndexer4.ts (4 errors) ====
+@@= skipped -38, +36 lines =@@
  !!! error TS2415:   'number' index signatures are incompatible.
  !!! error TS2415:     Type 'string' is not assignable to type 'Base'.
                            ~~~~
@@ -20,3 +24,11 @@
  !!! related TS2728 subtypingWithNumericIndexer4.ts:4:34: 'bar' is declared here.
              [x: number]: string; // error
          }
+@@= skipped -11, +10 lines =@@
+ !!! error TS2415: Class 'B3<T>' incorrectly extends base class 'A<T>'.
+ !!! error TS2415:   'number' index signatures are incompatible.
+ !!! error TS2415:     Type 'string' is not assignable to type 'T'.
+-!!! error TS2415:       'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
+             [x: number]: string; // error
+         }
+     }

@@ -1,0 +1,16 @@
+--- old.genericCallWithFunctionTypedArguments2.errors.txt
++++ new.genericCallWithFunctionTypedArguments2.errors.txt
+@@= skipped -0, +0 lines =@@
+ genericCallWithFunctionTypedArguments2.ts(5,18): error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ genericCallWithFunctionTypedArguments2.ts(29,15): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+ genericCallWithFunctionTypedArguments2.ts(40,15): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+
+@@= skipped -11, +10 lines =@@
+         return new x(null);
+                      ~~~~
+ !!! error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
+-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     }
+     
+     interface I {

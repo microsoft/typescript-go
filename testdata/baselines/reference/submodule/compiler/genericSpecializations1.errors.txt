@@ -9,7 +9,6 @@ genericSpecializations1.ts(10,5): error TS2416: Property 'foo' in type 'StringFo
       Type 'T' is not assignable to type 'string'.
 genericSpecializations1.ts(10,30): error TS2322: Type 'null' is not assignable to type 'string'.
 genericSpecializations1.ts(14,23): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 
 
 ==== genericSpecializations1.ts (5 errors) ====
@@ -45,5 +44,4 @@ genericSpecializations1.ts(14,23): error TS2322: Type 'null' is not assignable t
         foo<T>(x: T): T { return null; }
                           ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     }

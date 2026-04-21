@@ -1,0 +1,17 @@
+--- old.implicitAnyGenerics.errors.txt
++++ new.implicitAnyGenerics.errors.txt
+@@= skipped -0, +0 lines =@@
+ implicitAnyGenerics.ts(2,5): error TS2564: Property 'x' has no initializer and is not definitely assigned in the constructor.
+ implicitAnyGenerics.ts(20,24): error TS2322: Type 'null' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+
+
+ ==== implicitAnyGenerics.ts (2 errors) ====
+@@= skipped -27, +26 lines =@@
+     function foo<T>(): T { return null; };
+                            ~~~~~~
+ !!! error TS2322: Type 'null' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     foo() 
+     foo<any>();
+     

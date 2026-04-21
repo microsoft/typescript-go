@@ -1,10 +1,8 @@
 genericClassWithStaticFactory.ts(4,16): error TS2564: Property 'next' has no initializer and is not definitely assigned in the constructor.
 genericClassWithStaticFactory.ts(5,16): error TS2564: Property 'prev' has no initializer and is not definitely assigned in the constructor.
 genericClassWithStaticFactory.ts(45,17): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 genericClassWithStaticFactory.ts(69,17): error TS2322: Type 'null' is not assignable to type 'List<T>'.
 genericClassWithStaticFactory.ts(112,52): error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 genericClassWithStaticFactory.ts(127,17): error TS2322: Type 'null' is not assignable to type 'List<T>'.
 genericClassWithStaticFactory.ts(131,17): error TS2322: Type 'null' is not assignable to type 'List<T>'.
 
@@ -61,7 +59,6 @@ genericClassWithStaticFactory.ts(131,17): error TS2322: Type 'null' is not assig
                     return null;
                     ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
                 }
             }
     
@@ -133,7 +130,6 @@ genericClassWithStaticFactory.ts(131,17): error TS2322: Type 'null' is not assig
                 var entry: List<T> = new List<T>(true, null);
                                                        ~~~~
 !!! error TS2345: Argument of type 'null' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
                 entry.prev = entry;
                 entry.next = entry;
                 return entry;

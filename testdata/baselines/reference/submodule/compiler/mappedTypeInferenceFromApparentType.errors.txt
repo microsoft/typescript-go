@@ -3,7 +3,6 @@ mappedTypeInferenceFromApparentType.ts(10,1): error TS2322: Type 'foo' is not as
     Type '{ [K in keyof U]: Obj[K]; }' is not assignable to type '{ [K in keyof U]: U[K]; }'.
       Type 'Obj[K]' is not assignable to type 'U[K]'.
         Type 'Obj' is not assignable to type 'U'.
-          'U' could be instantiated with an arbitrary type which could be unrelated to 'Obj'.
 
 
 ==== mappedTypeInferenceFromApparentType.ts (1 errors) ====
@@ -23,4 +22,3 @@ mappedTypeInferenceFromApparentType.ts(10,1): error TS2322: Type 'foo' is not as
 !!! error TS2322:     Type '{ [K in keyof U]: Obj[K]; }' is not assignable to type '{ [K in keyof U]: U[K]; }'.
 !!! error TS2322:       Type 'Obj[K]' is not assignable to type 'U[K]'.
 !!! error TS2322:         Type 'Obj' is not assignable to type 'U'.
-!!! error TS2322:           'U' could be instantiated with an arbitrary type which could be unrelated to 'Obj'.

@@ -1,0 +1,18 @@
+--- old.typeParameterDiamond4.errors.txt
++++ new.typeParameterDiamond4.errors.txt
+@@= skipped -0, +0 lines =@@
+ typeParameterDiamond4.ts(8,13): error TS2322: Type 'T | Top | U' is not assignable to type 'Top'.
+   'Top' could be instantiated with an arbitrary type which could be unrelated to 'T | Top | U'.
+ typeParameterDiamond4.ts(10,13): error TS2322: Type 'Bottom' is not assignable to type 'Top'.
+-  'Top' could be instantiated with an arbitrary type which could be unrelated to 'Bottom'.
+
+
+ ==== typeParameterDiamond4.ts (2 errors) ====
+@@= skipped -20, +19 lines =@@
+                 top = bottom;
+                 ~~~
+ !!! error TS2322: Type 'Bottom' is not assignable to type 'Top'.
+-!!! error TS2322:   'Top' could be instantiated with an arbitrary type which could be unrelated to 'Bottom'.
+             }
+         }
+     }

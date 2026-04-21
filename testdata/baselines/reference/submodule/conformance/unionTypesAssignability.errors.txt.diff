@@ -1,0 +1,25 @@
+--- old.unionTypesAssignability.errors.txt
++++ new.unionTypesAssignability.errors.txt
+@@= skipped -32, +32 lines =@@
+ unionTypesAssignability.ts(59,1): error TS2322: Type 'undefined' is not assignable to type 'D | E'.
+ unionTypesAssignability.ts(60,1): error TS2322: Type 'undefined' is not assignable to type 'string | number'.
+ unionTypesAssignability.ts(64,5): error TS2322: Type 'U' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ unionTypesAssignability.ts(65,5): error TS2322: Type 'T' is not assignable to type 'U'.
+-  'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ unionTypesAssignability.ts(69,5): error TS2322: Type 'undefined' is not assignable to type 'T | U'.
+ unionTypesAssignability.ts(70,5): error TS2322: Type 'T | U' is not assignable to type 'T'.
+   'T' could be instantiated with an arbitrary type which could be unrelated to 'T | U'.
+@@= skipped -149, +147 lines =@@
+         t = u; // error
+         ~
+ !!! error TS2322: Type 'U' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ !!! related TS2208 unionTypesAssignability.ts:63:17: This type parameter might need an `extends T` constraint.
+         u = t; // error
+         ~
+ !!! error TS2322: Type 'T' is not assignable to type 'U'.
+-!!! error TS2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 unionTypesAssignability.ts:63:14: This type parameter might need an `extends U` constraint.
+         var x : T | U;
+         x = t; // ok

@@ -1,0 +1,21 @@
+--- old.typeInferenceWithTupleType.errors.txt
++++ new.typeInferenceWithTupleType.errors.txt
+@@= skipped -0, +0 lines =@@
+ typeInferenceWithTupleType.ts(11,18): error TS2322: Type 'undefined' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+ typeInferenceWithTupleType.ts(11,29): error TS2322: Type 'undefined' is not assignable to type 'U'.
+-  'U' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+ typeInferenceWithTupleType.ts(16,9): error TS2454: Variable 'zipResult' is used before being assigned.
+ typeInferenceWithTupleType.ts(18,12): error TS2454: Variable 'zipResult' is used before being assigned.
+ typeInferenceWithTupleType.ts(31,15): error TS2352: Conversion of type 'undefined' to type '["a"[], "b"[]]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+@@= skipped -21, +19 lines =@@
+             return [[undefined, undefined]];
+                      ~~~~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+                                 ~~~~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'U'.
+-!!! error TS2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+         }
+         var length = array1.length;
+         var zipResult: [[T, U]];

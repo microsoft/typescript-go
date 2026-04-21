@@ -1,0 +1,17 @@
+--- old.templateLiteralTypes5.errors.txt
++++ new.templateLiteralTypes5.errors.txt
+@@= skipped -10, +10 lines =@@
+     Type '"a" | "b"' is not assignable to type 'T3'.
+       '"a" | "b"' is assignable to the constraint of type 'T3', but 'T3' could be instantiated with a different subtype of constraint '"a" | "b"'.
+         Type '"a"' is not assignable to type 'T3'.
+-          '"a"' is assignable to the constraint of type 'T3', but 'T3' could be instantiated with a different subtype of constraint '"a" | "b"'.
+
+
+ ==== templateLiteralTypes5.ts (3 errors) ====
+@@= skipped -34, +33 lines =@@
+ !!! error TS2322:     Type '"a" | "b"' is not assignable to type 'T3'.
+ !!! error TS2322:       '"a" | "b"' is assignable to the constraint of type 'T3', but 'T3' could be instantiated with a different subtype of constraint '"a" | "b"'.
+ !!! error TS2322:         Type '"a"' is not assignable to type 'T3'.
+-!!! error TS2322:           '"a"' is assignable to the constraint of type 'T3', but 'T3' could be instantiated with a different subtype of constraint '"a" | "b"'.
+     }
+     

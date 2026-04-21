@@ -1,0 +1,16 @@
+--- old.parameterReferenceInInitializer1.errors.txt
++++ new.parameterReferenceInInitializer1.errors.txt
+@@= skipped -0, +0 lines =@@
+ parameterReferenceInInitializer1.ts(2,5): error TS2322: Type 'undefined' is not assignable to type 'a'.
+-  'a' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+
+
+ ==== parameterReferenceInInitializer1.ts (1 errors) ====
+@@= skipped -6, +5 lines =@@
+         return undefined;
+         ~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'a'.
+-!!! error TS2322:   'a' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+     }
+     interface Y { x: number }
+     

@@ -1,5 +1,4 @@
 parenthesizedContexualTyping2.ts(12,5): error TS2322: Type 'undefined' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
 parenthesizedContexualTyping2.ts(15,30): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
 parenthesizedContexualTyping2.ts(16,31): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
 parenthesizedContexualTyping2.ts(17,32): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
@@ -59,7 +58,6 @@ parenthesizedContexualTyping2.ts(36,57): error TS2695: Left side of comma operat
         return undefined;
         ~~~~~~
 !!! error TS2322: Type 'undefined' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
     }
     
     var a = fun(x => { x<number>(undefined); return x; }, 10);

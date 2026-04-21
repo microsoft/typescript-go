@@ -1,7 +1,6 @@
 mappedTypes6.ts(23,5): error TS2322: Type 'T' is not assignable to type 'Required<T>'.
 mappedTypes6.ts(24,5): error TS2322: Type 'Partial<T>' is not assignable to type 'Required<T>'.
 mappedTypes6.ts(27,5): error TS2322: Type 'Partial<T>' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'Partial<T>'.
 mappedTypes6.ts(37,5): error TS2322: Type 'Required<T>' is not assignable to type 'Denullified<T>'.
   Type 'T[P]' is not assignable to type 'NonNullable<T[P]>'.
     Type 'T[keyof T]' is not assignable to type 'NonNullable<T[P]>'.
@@ -26,11 +25,9 @@ mappedTypes6.ts(39,5): error TS2322: Type 'Partial<T>' is not assignable to type
 mappedTypes6.ts(42,5): error TS2322: Type 'T' is not assignable to type 'Required<T>'.
 mappedTypes6.ts(43,5): error TS2322: Type 'Partial<T>' is not assignable to type 'Required<T>'.
 mappedTypes6.ts(47,5): error TS2322: Type 'Partial<T>' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'Partial<T>'.
 mappedTypes6.ts(56,5): error TS2322: Type '{}' is not assignable to type 'Denullified<T>'.
 mappedTypes6.ts(57,5): error TS2322: Type '{}' is not assignable to type 'Required<T>'.
 mappedTypes6.ts(58,5): error TS2322: Type '{}' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to '{}'.
 mappedTypes6.ts(92,1): error TS2741: Property 'b' is missing in type '{ a: number; }' but required in type 'Foo'.
 mappedTypes6.ts(104,1): error TS2739: Type '{ a: number; }' is missing the following properties from type 'Required<Foo>': b, c, d
 mappedTypes6.ts(105,1): error TS2739: Type '{ a: number; b: number; }' is missing the following properties from type 'Required<Foo>': c, d
@@ -75,7 +72,6 @@ mappedTypes6.ts(120,4): error TS2540: Cannot assign to 'b' because it is a read-
         y = z;  // Error
         ~
 !!! error TS2322: Type 'Partial<T>' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'Partial<T>'.
         z = x;
         z = y;
         z = z;
@@ -128,7 +124,6 @@ mappedTypes6.ts(120,4): error TS2540: Cannot assign to 'b' because it is a read-
         y = z;  // Error
         ~
 !!! error TS2322: Type 'Partial<T>' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'Partial<T>'.
         z = w;
         z = x;
         z = y;
@@ -146,7 +141,6 @@ mappedTypes6.ts(120,4): error TS2540: Cannot assign to 'b' because it is a read-
         y = {};  // Error
         ~
 !!! error TS2322: Type '{}' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to '{}'.
         z = {};
     }
     

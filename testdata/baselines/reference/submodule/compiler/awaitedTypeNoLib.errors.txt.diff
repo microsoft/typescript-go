@@ -1,0 +1,18 @@
+--- old.awaitedTypeNoLib.errors.txt
++++ new.awaitedTypeNoLib.errors.txt
+@@= skipped -14, +14 lines =@@
+     Type 'TResult | (TResult extends PromiseLike<unknown> ? never : TResult)' is not assignable to type 'Thenable<TResult>'.
+       Type 'Thenable<unknown> & TResult' is not assignable to type 'Thenable<TResult>'.
+         Type 'unknown' is not assignable to type 'TResult'.
+-          'TResult' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+
+
+ !!! error TS2318: Cannot find global type 'Array'.
+@@= skipped -41, +40 lines =@@
+ !!! error TS2345:     Type 'TResult | (TResult extends PromiseLike<unknown> ? never : TResult)' is not assignable to type 'Thenable<TResult>'.
+ !!! error TS2345:       Type 'Thenable<unknown> & TResult' is not assignable to type 'Thenable<TResult>'.
+ !!! error TS2345:         Type 'unknown' is not assignable to type 'TResult'.
+-!!! error TS2345:           'TResult' could be instantiated with an arbitrary type which could be unrelated to 'unknown'.
+         }
+       }
+     

@@ -1,5 +1,4 @@
 genericTypeAssertions2.ts(4,9): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 genericTypeAssertions2.ts(10,5): error TS2322: Type 'B<string>' is not assignable to type 'A<number>'.
   Types of property 'foo' are incompatible.
     Type '(x: string) => void' is not assignable to type '(x: number) => void'.
@@ -17,7 +16,6 @@ genericTypeAssertions2.ts(13,21): error TS2352: Conversion of type 'never[]' to 
             return null;
             ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
         }
     }
     

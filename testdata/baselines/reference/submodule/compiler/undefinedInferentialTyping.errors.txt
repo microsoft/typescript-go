@@ -1,5 +1,4 @@
 undefinedInferentialTyping.ts(2,5): error TS2322: Type 'null' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
 
 
 ==== undefinedInferentialTyping.ts (1 errors) ====
@@ -7,7 +6,6 @@ undefinedInferentialTyping.ts(2,5): error TS2322: Type 'null' is not assignable 
         return null;
         ~~~~~~
 !!! error TS2322: Type 'null' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
     }
     
     var a = f([], 3); // should be number

@@ -1,0 +1,17 @@
+--- old.functionTypeArgumentAssignmentCompat.errors.txt
++++ new.functionTypeArgumentAssignmentCompat.errors.txt
+@@= skipped -0, +0 lines =@@
+ functionTypeArgumentAssignmentCompat.ts(9,1): error TS2322: Type '<S>() => S[]' is not assignable to type '<T>(x: T) => T'.
+   Type 'unknown[]' is not assignable to type 'T'.
+-    'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown[]'.
+
+
+ ==== functionTypeArgumentAssignmentCompat.ts (1 errors) ====
+@@= skipped -15, +14 lines =@@
+     ~
+ !!! error TS2322: Type '<S>() => S[]' is not assignable to type '<T>(x: T) => T'.
+ !!! error TS2322:   Type 'unknown[]' is not assignable to type 'T'.
+-!!! error TS2322:     'T' could be instantiated with an arbitrary type which could be unrelated to 'unknown[]'.
+     var s = f("str").toUpperCase();
+     
+     console.log(s);

@@ -4,7 +4,6 @@ infiniteExpansionThroughInstantiation.ts(16,1): error TS2322: Type 'OwnerList<st
 infiniteExpansionThroughInstantiation.ts(21,5): error TS2322: Type 'OwnerList<T>' is not assignable to type 'List<T>'.
   Types of property 'data' are incompatible.
     Type 'List<T>' is not assignable to type 'T'.
-      'T' could be instantiated with an arbitrary type which could be unrelated to 'List<T>'.
 
 
 ==== infiniteExpansionThroughInstantiation.ts (2 errors) ====
@@ -37,7 +36,6 @@ infiniteExpansionThroughInstantiation.ts(21,5): error TS2322: Type 'OwnerList<T>
 !!! error TS2322: Type 'OwnerList<T>' is not assignable to type 'List<T>'.
 !!! error TS2322:   Types of property 'data' are incompatible.
 !!! error TS2322:     Type 'List<T>' is not assignable to type 'T'.
-!!! error TS2322:       'T' could be instantiated with an arbitrary type which could be unrelated to 'List<T>'.
     
     }
     

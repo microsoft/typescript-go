@@ -1,0 +1,16 @@
+--- old.conditionalTypeVarianceBigArrayConstraintsPerformance.errors.txt
++++ new.conditionalTypeVarianceBigArrayConstraintsPerformance.errors.txt
+@@= skipped -0, +0 lines =@@
+ conditionalTypeVarianceBigArrayConstraintsPerformance.ts(9,5): error TS2322: Type 'Stuff<U>' is not assignable to type 'Stuff<T>'.
+   Type 'U' is not assignable to type 'T'.
+-    'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+
+
+ ==== conditionalTypeVarianceBigArrayConstraintsPerformance.ts (1 errors) ====
+@@= skipped -15, +14 lines =@@
+         ~~
+ !!! error TS2322: Type 'Stuff<U>' is not assignable to type 'Stuff<T>'.
+ !!! error TS2322:   Type 'U' is not assignable to type 'T'.
+-!!! error TS2322:     'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ !!! related TS2208 conditionalTypeVarianceBigArrayConstraintsPerformance.ts:8:15: This type parameter might need an `extends T` constraint.
+     }

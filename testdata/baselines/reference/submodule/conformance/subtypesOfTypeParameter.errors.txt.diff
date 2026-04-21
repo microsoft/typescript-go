@@ -1,0 +1,18 @@
+--- old.subtypesOfTypeParameter.errors.txt
++++ new.subtypesOfTypeParameter.errors.txt
+@@= skipped -0, +0 lines =@@
+ subtypesOfTypeParameter.ts(4,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameter.ts(8,5): error TS2416: Property 'foo' in type 'D1<T, U>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'U' is not assignable to type 'T'.
+-    'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ subtypesOfTypeParameter.ts(8,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameter.ts(17,12): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameter.ts(18,15): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -26, +25 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D1<T, U>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'U' is not assignable to type 'T'.
+-!!! error TS2416:     'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ !!! related TS2208 subtypesOfTypeParameter.ts:7:13: This type parameter might need an `extends T` constraint.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.

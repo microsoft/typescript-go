@@ -1,0 +1,34 @@
+--- old.genericDefaultsErrors.errors.txt
++++ new.genericDefaultsErrors.errors.txt
+@@= skipped -2, +2 lines =@@
+   Type 'string' is not assignable to type 'number'.
+ genericDefaultsErrors.ts(5,44): error TS2344: Type 'T' does not satisfy the constraint 'number'.
+ genericDefaultsErrors.ts(6,39): error TS2344: Type 'number' does not satisfy the constraint 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+ genericDefaultsErrors.ts(10,5): error TS2558: Expected 2-3 type arguments, but got 1.
+ genericDefaultsErrors.ts(13,5): error TS2558: Expected 2-3 type arguments, but got 4.
+ genericDefaultsErrors.ts(17,13): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+@@= skipped -14, +13 lines =@@
+   Type 'string' is not assignable to type 'number'.
+ genericDefaultsErrors.ts(28,37): error TS2344: Type 'T' does not satisfy the constraint 'number'.
+ genericDefaultsErrors.ts(29,32): error TS2344: Type 'number' does not satisfy the constraint 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+ genericDefaultsErrors.ts(32,15): error TS2707: Generic type 'i09<T, U, V>' requires between 2 and 3 type arguments.
+ genericDefaultsErrors.ts(33,15): error TS2707: Generic type 'i09<T, U, V>' requires between 2 and 3 type arguments.
+ genericDefaultsErrors.ts(36,15): error TS2707: Generic type 'i09<T, U, V>' requires between 2 and 3 type arguments.
+@@= skipped -25, +24 lines =@@
+     declare function f06<T, U extends T = number>(): void; // error
+                                           ~~~~~~
+ !!! error TS2344: Type 'number' does not satisfy the constraint 'T'.
+-!!! error TS2344:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+     
+     declare function f11<T, U, V = number>(): void;
+     f11(); // ok
+@@= skipped -50, +49 lines =@@
+     interface i08<T, U extends T = number> { } // error
+                                    ~~~~~~
+ !!! error TS2344: Type 'number' does not satisfy the constraint 'T'.
+-!!! error TS2344:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+     
+     interface i09<T, U, V = number> { }
+     type i09t00 = i09; // error

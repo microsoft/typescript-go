@@ -1,6 +1,17 @@
 --- old.conditionalTypeDoesntSpinForever.errors.txt
 +++ new.conditionalTypeDoesntSpinForever.errors.txt
-@@= skipped -11, +11 lines =@@
+@@= skipped -0, +0 lines =@@
+ conditionalTypeDoesntSpinForever.ts(23,15): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
+ conditionalTypeDoesntSpinForever.ts(24,20): error TS2322: Type 'undefined' is not assignable to type 'TYPE'.
+-  'TYPE' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+ conditionalTypeDoesntSpinForever.ts(36,19): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
+ conditionalTypeDoesntSpinForever.ts(53,21): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
+ conditionalTypeDoesntSpinForever.ts(53,45): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
+ conditionalTypeDoesntSpinForever.ts(54,26): error TS2322: Type 'undefined' is not assignable to type 'TYPE'.
+-  'TYPE' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+ conditionalTypeDoesntSpinForever.ts(65,17): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
+ conditionalTypeDoesntSpinForever.ts(66,22): error TS2322: Type 'undefined' is not assignable to type 'TYPE'.
+-  'TYPE' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
  conditionalTypeDoesntSpinForever.ts(78,38): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
  conditionalTypeDoesntSpinForever.ts(94,21): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
  conditionalTypeDoesntSpinForever.ts(96,41): error TS2769: No overload matches this call.
@@ -11,7 +22,31 @@
      Argument of type 'SO_FAR' is not assignable to parameter of type 'object'.
  conditionalTypeDoesntSpinForever.ts(97,71): error TS2322: Type 'SO_FAR' is not assignable to type 'object'.
 
-@@= skipped -136, +134 lines =@@
+@@= skipped -48, +43 lines =@@
+           name: <TYPE>(instance: TYPE = undefined) =>
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'TYPE'.
+-!!! error TS2322:   'TYPE' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+             buildPubSubRecordType(Object.assign({}, soFar, {name: instance as TYPE}) as SO_FAR & {name: TYPE}) as BuildPubSubRecordType<SO_FAR & {name: TYPE}>
+         }
+       );
+@@= skipped -42, +41 lines =@@
+           identifier: <TYPE>(instance: TYPE = undefined) =>
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'TYPE'.
+-!!! error TS2322:   'TYPE' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+             buildPubSubRecordType(Object.assign({}, soFar, {identifier: instance as TYPE}) as SO_FAR & {identifier: TYPE}) as BuildPubSubRecordType<SO_FAR & {identifier: TYPE}>
+         }
+       );
+@@= skipped -18, +17 lines =@@
+           record: <TYPE>(instance: TYPE = undefined) =>
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS2322: Type 'undefined' is not assignable to type 'TYPE'.
+-!!! error TS2322:   'TYPE' could be instantiated with an arbitrary type which could be unrelated to 'undefined'.
+             buildPubSubRecordType(Object.assign({}, soFar, {record: instance as TYPE}) as SO_FAR & {record: TYPE}) as BuildPubSubRecordType<SO_FAR & {record: TYPE}>
+         }
+       );
+@@= skipped -39, +38 lines =@@
            fields: () => new Set(Object.keys(soFar) as (keyof SO_FAR)[]),
                                              ~~~~~
  !!! error TS2769: No overload matches this call.

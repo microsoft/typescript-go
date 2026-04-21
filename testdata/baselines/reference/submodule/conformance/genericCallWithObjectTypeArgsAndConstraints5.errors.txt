@@ -5,7 +5,6 @@ genericCallWithObjectTypeArgsAndConstraints5.ts(18,17): error TS2741: Property '
 genericCallWithObjectTypeArgsAndConstraints5.ts(19,23): error TS2345: Argument of type '() => void' is not assignable to parameter of type '() => number'.
   Type 'void' is not assignable to type 'number'.
 genericCallWithObjectTypeArgsAndConstraints5.ts(22,24): error TS2345: Argument of type 'C' is not assignable to parameter of type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'C'.
 
 
 ==== genericCallWithObjectTypeArgsAndConstraints5.ts (6 errors) ====
@@ -45,6 +44,5 @@ genericCallWithObjectTypeArgsAndConstraints5.ts(22,24): error TS2345: Argument o
         var r5 = foo<T, U>(c, d); // error
                            ~
 !!! error TS2345: Argument of type 'C' is not assignable to parameter of type 'T'.
-!!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'C'.
     }
     

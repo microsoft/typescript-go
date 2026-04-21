@@ -1,0 +1,148 @@
+--- old.subtypesOfTypeParameterWithConstraints.errors.txt
++++ new.subtypesOfTypeParameterWithConstraints.errors.txt
+@@= skipped -3, +3 lines =@@
+ subtypesOfTypeParameterWithConstraints.ts(19,5): error TS2411: Property 'foo' of type 'U' is not assignable to 'string' index type 'T'.
+ subtypesOfTypeParameterWithConstraints.ts(19,5): error TS2416: Property 'foo' in type 'D3<T, U>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'U' is not assignable to type 'T'.
+-    'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ subtypesOfTypeParameterWithConstraints.ts(19,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(24,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(33,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -9, +8 lines =@@
+ subtypesOfTypeParameterWithConstraints.ts(50,5): error TS2411: Property 'foo' of type 'U' is not assignable to 'string' index type 'T'.
+ subtypesOfTypeParameterWithConstraints.ts(50,5): error TS2416: Property 'foo' in type 'D8<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'U' is not assignable to type 'T'.
+-    'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ subtypesOfTypeParameterWithConstraints.ts(50,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(55,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(60,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(67,5): error TS2411: Property 'foo' of type 'V' is not assignable to 'string' index type 'T'.
+ subtypesOfTypeParameterWithConstraints.ts(67,5): error TS2416: Property 'foo' in type 'D11<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'V' is not assignable to type 'T'.
+-    'T' could be instantiated with an arbitrary type which could be unrelated to 'V'.
+ subtypesOfTypeParameterWithConstraints.ts(67,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(72,5): error TS2411: Property 'foo' of type 'V' is not assignable to 'string' index type 'U'.
+ subtypesOfTypeParameterWithConstraints.ts(72,5): error TS2416: Property 'foo' in type 'D12<T, U, V>' is not assignable to the same property in base type 'C3<U>'.
+   Type 'V' is not assignable to type 'U'.
+-    'U' could be instantiated with an arbitrary type which could be unrelated to 'V'.
+ subtypesOfTypeParameterWithConstraints.ts(72,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(77,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(85,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -23, +20 lines =@@
+ subtypesOfTypeParameterWithConstraints.ts(112,5): error TS2411: Property 'foo' of type 'U' is not assignable to 'string' index type 'T'.
+ subtypesOfTypeParameterWithConstraints.ts(112,5): error TS2416: Property 'foo' in type 'D19<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'U' is not assignable to type 'T'.
+-    'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+ subtypesOfTypeParameterWithConstraints.ts(112,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(117,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(122,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -8, +7 lines =@@
+ subtypesOfTypeParameterWithConstraints.ts(134,5): error TS2411: Property 'foo' of type 'V' is not assignable to 'string' index type 'T'.
+ subtypesOfTypeParameterWithConstraints.ts(134,5): error TS2416: Property 'foo' in type 'D23<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'V' is not assignable to type 'T'.
+-    'V' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+ subtypesOfTypeParameterWithConstraints.ts(134,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(139,5): error TS2411: Property 'foo' of type 'V' is not assignable to 'string' index type 'U'.
+ subtypesOfTypeParameterWithConstraints.ts(139,5): error TS2416: Property 'foo' in type 'D24<T, U, V>' is not assignable to the same property in base type 'C3<U>'.
+   Type 'V' is not assignable to type 'U'.
+-    'V' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'Date'.
+ subtypesOfTypeParameterWithConstraints.ts(139,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(144,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(151,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(156,5): error TS2411: Property 'foo' of type 'Date' is not assignable to 'string' index type 'T'.
+ subtypesOfTypeParameterWithConstraints.ts(156,5): error TS2416: Property 'foo' in type 'D27<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+   Type 'Date' is not assignable to type 'T'.
+-    'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+ subtypesOfTypeParameterWithConstraints.ts(156,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(161,5): error TS2411: Property 'foo' of type 'Date' is not assignable to 'string' index type 'U'.
+ subtypesOfTypeParameterWithConstraints.ts(161,5): error TS2416: Property 'foo' in type 'D28<T, U, V>' is not assignable to the same property in base type 'C3<U>'.
+   Type 'Date' is not assignable to type 'U'.
+-    'Date' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'Date'.
+ subtypesOfTypeParameterWithConstraints.ts(161,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+ subtypesOfTypeParameterWithConstraints.ts(166,5): error TS2411: Property 'foo' of type 'Date' is not assignable to 'string' index type 'V'.
+ subtypesOfTypeParameterWithConstraints.ts(166,5): error TS2416: Property 'foo' in type 'D29<T, U, V>' is not assignable to the same property in base type 'C3<V>'.
+   Type 'Date' is not assignable to type 'V'.
+-    'Date' is assignable to the constraint of type 'V', but 'V' could be instantiated with a different subtype of constraint 'Date'.
+ subtypesOfTypeParameterWithConstraints.ts(166,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+
+
+@@= skipped -57, +52 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D3<T, U>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'U' is not assignable to type 'T'.
+-!!! error TS2416:     'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+ !!! related TS2208 subtypesOfTypeParameterWithConstraints.ts:17:23: This type parameter might need an `extends T` constraint.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -48, +47 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D8<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'U' is not assignable to type 'T'.
+-!!! error TS2416:     'T' could be instantiated with an arbitrary type which could be unrelated to 'U'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }
+@@= skipped -29, +28 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D11<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'V' is not assignable to type 'T'.
+-!!! error TS2416:     'T' could be instantiated with an arbitrary type which could be unrelated to 'V'.
+ !!! related TS2208 subtypesOfTypeParameterWithConstraints.ts:65:37: This type parameter might need an `extends T` constraint.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -14, +13 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D12<T, U, V>' is not assignable to the same property in base type 'C3<U>'.
+ !!! error TS2416:   Type 'V' is not assignable to type 'U'.
+-!!! error TS2416:     'U' could be instantiated with an arbitrary type which could be unrelated to 'V'.
+ !!! related TS2208 subtypesOfTypeParameterWithConstraints.ts:70:37: This type parameter might need an `extends U` constraint.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+@@= skipped -61, +60 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D19<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'U' is not assignable to type 'T'.
+-!!! error TS2416:     'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }
+@@= skipped -36, +35 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D23<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'V' is not assignable to type 'T'.
+-!!! error TS2416:     'V' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }
+@@= skipped -13, +12 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D24<T, U, V>' is not assignable to the same property in base type 'C3<U>'.
+ !!! error TS2416:   Type 'V' is not assignable to type 'U'.
+-!!! error TS2416:     'V' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'Date'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }
+@@= skipped -29, +28 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D27<T, U, V>' is not assignable to the same property in base type 'C3<T>'.
+ !!! error TS2416:   Type 'Date' is not assignable to type 'T'.
+-!!! error TS2416:     'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }
+@@= skipped -13, +12 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D28<T, U, V>' is not assignable to the same property in base type 'C3<U>'.
+ !!! error TS2416:   Type 'Date' is not assignable to type 'U'.
+-!!! error TS2416:     'Date' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'Date'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }
+@@= skipped -13, +12 lines =@@
+         ~~~
+ !!! error TS2416: Property 'foo' in type 'D29<T, U, V>' is not assignable to the same property in base type 'C3<V>'.
+ !!! error TS2416:   Type 'Date' is not assignable to type 'V'.
+-!!! error TS2416:     'Date' is assignable to the constraint of type 'V', but 'V' could be instantiated with a different subtype of constraint 'Date'.
+         ~~~
+ !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
+     }

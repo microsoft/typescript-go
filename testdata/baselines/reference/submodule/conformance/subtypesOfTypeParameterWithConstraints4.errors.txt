@@ -10,23 +10,19 @@ subtypesOfTypeParameterWithConstraints4.ts(52,5): error TS2564: Property 'foo' h
 subtypesOfTypeParameterWithConstraints4.ts(57,5): error TS2411: Property 'foo' of type 'U' is not assignable to 'string' index type 'T'.
 subtypesOfTypeParameterWithConstraints4.ts(57,5): error TS2416: Property 'foo' in type 'D5<T, U, V>' is not assignable to the same property in base type 'B1<T>'.
   Type 'U' is not assignable to type 'T'.
-    'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Foo'.
 subtypesOfTypeParameterWithConstraints4.ts(57,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
 subtypesOfTypeParameterWithConstraints4.ts(62,5): error TS2411: Property 'foo' of type 'V' is not assignable to 'string' index type 'T'.
 subtypesOfTypeParameterWithConstraints4.ts(62,5): error TS2416: Property 'foo' in type 'D6<T, U, V>' is not assignable to the same property in base type 'B1<T>'.
   Type 'V' is not assignable to type 'T'.
-    'T' could be instantiated with an arbitrary type which could be unrelated to 'V'.
 subtypesOfTypeParameterWithConstraints4.ts(62,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
 subtypesOfTypeParameterWithConstraints4.ts(67,5): error TS2411: Property 'foo' of type 'T' is not assignable to 'string' index type 'U'.
 subtypesOfTypeParameterWithConstraints4.ts(67,5): error TS2416: Property 'foo' in type 'D7<T, U, V>' is not assignable to the same property in base type 'B1<U>'.
   Type 'T' is not assignable to type 'U'.
-    'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'Foo'.
 subtypesOfTypeParameterWithConstraints4.ts(67,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
 subtypesOfTypeParameterWithConstraints4.ts(72,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
 subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2411: Property 'foo' of type 'V' is not assignable to 'string' index type 'U'.
 subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2416: Property 'foo' in type 'D9<T, U, V>' is not assignable to the same property in base type 'B1<U>'.
   Type 'V' is not assignable to type 'U'.
-    'U' could be instantiated with an arbitrary type which could be unrelated to 'V'.
 subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
 
 
@@ -111,7 +107,6 @@ subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2564: Property 'foo' h
         ~~~
 !!! error TS2416: Property 'foo' in type 'D5<T, U, V>' is not assignable to the same property in base type 'B1<T>'.
 !!! error TS2416:   Type 'U' is not assignable to type 'T'.
-!!! error TS2416:     'U' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Foo'.
         ~~~
 !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
     }
@@ -124,7 +119,6 @@ subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2564: Property 'foo' h
         ~~~
 !!! error TS2416: Property 'foo' in type 'D6<T, U, V>' is not assignable to the same property in base type 'B1<T>'.
 !!! error TS2416:   Type 'V' is not assignable to type 'T'.
-!!! error TS2416:     'T' could be instantiated with an arbitrary type which could be unrelated to 'V'.
 !!! related TS2208 subtypesOfTypeParameterWithConstraints4.ts:60:40: This type parameter might need an `extends T` constraint.
         ~~~
 !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
@@ -138,7 +132,6 @@ subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2564: Property 'foo' h
         ~~~
 !!! error TS2416: Property 'foo' in type 'D7<T, U, V>' is not assignable to the same property in base type 'B1<U>'.
 !!! error TS2416:   Type 'T' is not assignable to type 'U'.
-!!! error TS2416:     'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'Foo'.
         ~~~
 !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.
     }
@@ -158,7 +151,6 @@ subtypesOfTypeParameterWithConstraints4.ts(77,5): error TS2564: Property 'foo' h
         ~~~
 !!! error TS2416: Property 'foo' in type 'D9<T, U, V>' is not assignable to the same property in base type 'B1<U>'.
 !!! error TS2416:   Type 'V' is not assignable to type 'U'.
-!!! error TS2416:     'U' could be instantiated with an arbitrary type which could be unrelated to 'V'.
 !!! related TS2208 subtypesOfTypeParameterWithConstraints4.ts:75:40: This type parameter might need an `extends U` constraint.
         ~~~
 !!! error TS2564: Property 'foo' has no initializer and is not definitely assigned in the constructor.

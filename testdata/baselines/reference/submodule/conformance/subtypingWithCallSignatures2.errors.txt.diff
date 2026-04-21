@@ -1,0 +1,51 @@
+--- old.subtypingWithCallSignatures2.errors.txt
++++ new.subtypingWithCallSignatures2.errors.txt
+@@= skipped -2, +2 lines =@@
+ subtypingWithCallSignatures2.ts(5,34): error TS2564: Property 'baz' has no initializer and is not definitely assigned in the constructor.
+ subtypingWithCallSignatures2.ts(6,35): error TS2564: Property 'bing' has no initializer and is not definitely assigned in the constructor.
+ subtypingWithCallSignatures2.ts(110,71): error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ subtypingWithCallSignatures2.ts(111,45): error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+ subtypingWithCallSignatures2.ts(116,81): error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-  'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ subtypingWithCallSignatures2.ts(117,58): error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+ subtypingWithCallSignatures2.ts(122,100): error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-  'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ subtypingWithCallSignatures2.ts(123,86): error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+ subtypingWithCallSignatures2.ts(128,128): error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-  'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+ subtypingWithCallSignatures2.ts(129,86): error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+ subtypingWithCallSignatures2.ts(135,36): error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+ subtypingWithCallSignatures2.ts(141,72): error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+@@= skipped -143, +139 lines =@@
+     var r6arg1 = <T extends Base, U extends Derived>(x: (arg: T) => U) => <T>null;
+                                                                           ~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'T' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-!!! error TS2352:   'T' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     var r6arg2 = (x: (arg: Base) => Derived) => <Base>null;
+                                                 ~~~~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'Base' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+@@= skipped -11, +10 lines =@@
+     var r7arg1 = <T extends Base, U extends Derived>(x: (arg: T) => U) => (r: T) => <U>null;
+                                                                                     ~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-!!! error TS2352:   'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     var r7arg2 = (x: (arg: Base) => Derived) => (r: Base) => <Derived>null;
+                                                              ~~~~~~~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+@@= skipped -11, +10 lines =@@
+     var r8arg1 = <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: T) => U) => (r: T) => <U>null;
+                                                                                                        ~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-!!! error TS2352:   'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     var r8arg2 = (x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => <Derived>null;
+                                                                                          ~~~~~~~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+@@= skipped -11, +10 lines =@@
+     var r9arg1 = <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: string; bing: number }) => U) => (r: T) => <U>null;
+                                                                                                                                    ~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'U' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+-!!! error TS2352:   'U' could be instantiated with an arbitrary type which could be unrelated to 'null'.
+     var r9arg2 = (x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => <Derived>null;
+                                                                                          ~~~~~~~~~~~~~
+ !!! error TS2352: Conversion of type 'null' to type 'Derived' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.

@@ -1,0 +1,32 @@
+--- old.constructorImplementationWithDefaultValues2.errors.txt
++++ new.constructorImplementationWithDefaultValues2.errors.txt
+@@= skipped -0, +0 lines =@@
+ constructorImplementationWithDefaultValues2.ts(3,17): error TS2322: Type 'number' is not assignable to type 'string'.
+ constructorImplementationWithDefaultValues2.ts(10,17): error TS2322: Type 'number' is not assignable to type 'T'.
+-  'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+ constructorImplementationWithDefaultValues2.ts(10,27): error TS2322: Type 'T' is not assignable to type 'U'.
+-  'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ constructorImplementationWithDefaultValues2.ts(17,17): error TS2322: Type 'Date' is not assignable to type 'T'.
+-  'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+
+
+ ==== constructorImplementationWithDefaultValues2.ts (4 errors) ====
+@@= skipped -21, +18 lines =@@
+         constructor(x: T = 1, public y: U = x) { // error
+                     ~~~~~~~~
+ !!! error TS2322: Type 'number' is not assignable to type 'T'.
+-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+                               ~~~~~~~~~~~~~~~
+ !!! error TS2322: Type 'T' is not assignable to type 'U'.
+-!!! error TS2322:   'U' could be instantiated with an arbitrary type which could be unrelated to 'T'.
+ !!! related TS2208 constructorImplementationWithDefaultValues2.ts:8:9: This type parameter might need an `extends U` constraint.
+             var z = x;
+         }
+@@= skipped -14, +12 lines =@@
+         constructor(x: T = new Date()) { // error
+                     ~~~~~~~~~~~~~~~~~
+ !!! error TS2322: Type 'Date' is not assignable to type 'T'.
+-!!! error TS2322:   'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
+             var y = x;
+         }
+     }

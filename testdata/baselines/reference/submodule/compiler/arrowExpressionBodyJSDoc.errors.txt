@@ -1,7 +1,5 @@
 mytest.js(6,44): error TS2322: Type 'string' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
 mytest.js(13,44): error TS2322: Type 'string' is not assignable to type 'T'.
-  'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
 
 
 ==== mytest.js (2 errors) ====
@@ -13,7 +11,6 @@ mytest.js(13,44): error TS2322: Type 'string' is not assignable to type 'T'.
     const foo1 = value => /** @type {string} */({ ...value });
                                                ~~~~~~~~~~~~~~
 !!! error TS2322: Type 'string' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
     
     /**
      * @template T
@@ -23,4 +20,3 @@ mytest.js(13,44): error TS2322: Type 'string' is not assignable to type 'T'.
     const foo2 = value => /** @type {string} */(/** @type {T} */({ ...value }));
                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2322: Type 'string' is not assignable to type 'T'.
-!!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.

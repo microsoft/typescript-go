@@ -1,5 +1,4 @@
 tsxNotUsingApparentTypeOfSFC.tsx(14,14): error TS2322: Type '{}' is not assignable to type 'P'.
-  'P' could be instantiated with an arbitrary type which could be unrelated to '{}'.
 tsxNotUsingApparentTypeOfSFC.tsx(15,14): error TS2769: No overload matches this call.
   The last overload gave the following error.
     Type '{}' is not assignable to type 'Readonly<P>'.
@@ -28,7 +27,6 @@ tsxNotUsingApparentTypeOfSFC.tsx(18,14): error TS2769: No overload matches this 
         let x = <MySFC />;  // should error
                  ~~~~~
 !!! error TS2322: Type '{}' is not assignable to type 'P'.
-!!! error TS2322:   'P' could be instantiated with an arbitrary type which could be unrelated to '{}'.
         let y = <MyComponent />;  // should error
                  ~~~~~~~~~~~
 !!! error TS2769: No overload matches this call.
