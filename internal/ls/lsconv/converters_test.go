@@ -1,9 +1,14 @@
 package lsconv_test
 
 import (
+	"bytes"
+	"encoding/binary"
+	"fmt"
+	"os/exec"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"gotest.tools/v3/assert"
@@ -91,139 +96,234 @@ type testScript struct {
 func (s *testScript) FileName() string { return s.name }
 func (s *testScript) Text() string     { return s.text }
 
-func TestLineAndCharacterToPosition_ValidUTF8(t *testing.T) {
-	t.Parallel()
-
-	// Text with em-dash (U+2014, 3 bytes in UTF-8, 1 UTF-16 code unit)
-	// "ab—cd\nef"
-	//  a(0) b(1) —(2,3,4) c(5) d(6) \n(7) e(8) f(9)
-	text := "ab\u2014cd\nef"
+func newTestConverters(text string) (*lsconv.Converters, *testScript) {
 	script := &testScript{name: "test.ts", text: text}
 	lineMap := lsconv.ComputeLSPLineStarts(text)
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
+	conv := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
 	})
-
-	// Line 0, char 0 → byte 0 (before 'a')
-	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 0})
-	assert.Equal(t, pos, core.TextPos(0))
-
-	// Line 0, char 2 → byte 2 (before em-dash)
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 2})
-	assert.Equal(t, pos, core.TextPos(2))
-
-	// Line 0, char 3 → byte 5 (after em-dash, before 'c')
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 3})
-	assert.Equal(t, pos, core.TextPos(5))
-
-	// Line 0, char 5 → byte 7 (after 'd', at newline)
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 5})
-	assert.Equal(t, pos, core.TextPos(7))
-
-	// Line 1, char 0 → byte 8 (start of 'e')
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 1, Character: 0})
-	assert.Equal(t, pos, core.TextPos(8))
+	return conv, script
 }
 
-func TestLineAndCharacterToPosition_InvalidUTF8(t *testing.T) {
+// TestConvertersInvalidUTF8 verifies behavior on text containing invalid UTF-8
+// sequences (e.g. lone continuation bytes). Node's TextDecoder substitutes such
+// bytes with U+FFFD, so the JS-reference test cannot cover this; we assert the
+// expected Go-side behavior directly. Each invalid byte advances the byte
+// position by 1 and the UTF-16 character by 1 (RuneError = 1 code unit).
+func TestConvertersInvalidUTF8(t *testing.T) {
 	t.Parallel()
 
 	// Text with invalid UTF-8 byte 0x80 (continuation byte without start byte).
-	// range produces RuneError for it, advancing by 1 byte.
-	// The old code used utf8.RuneLen(RuneError)==3, overshooting the byte offset.
+	// Old code used utf8.RuneLen(RuneError)==3, overshooting the byte offset.
 	text := "a\x80b\ncd"
-	script := &testScript{name: "test.ts", text: text}
-	lineMap := lsconv.ComputeLSPLineStarts(text)
+	conv, script := newTestConverters(text)
 
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return lineMap
-	})
+	// (line, char) → byte position. Each row asserts both directions where the
+	// position lies on a character boundary.
+	mappings := []struct {
+		line, char uint32
+		bytePos    core.TextPos
+	}{
+		{0, 0, 0}, // 'a'
+		{0, 1, 1}, // invalid byte 0x80
+		{0, 2, 2}, // 'b'
+		{0, 3, 3}, // newline (line end)
+		{1, 0, 4}, // 'c'
+		{1, 1, 5}, // 'd'
+		{1, 2, 6}, // EOF
+	}
+	for _, m := range mappings {
+		lc := lsproto.Position{Line: m.line, Character: m.char}
+		assert.Equal(t, conv.LineAndCharacterToPosition(script, lc), m.bytePos,
+			fmt.Sprintf("LineAndCharacterToPosition(%d,%d)", m.line, m.char))
+		assert.Equal(t, conv.PositionToLineAndCharacter(script, m.bytePos), lc,
+			fmt.Sprintf("PositionToLineAndCharacter(%d)", m.bytePos))
+	}
 
-	// Line 0, char 0 → byte 0 ('a')
-	pos := converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 0})
-	assert.Equal(t, pos, core.TextPos(0))
-
-	// Line 0, char 1 → byte 1 (the invalid byte 0x80; RuneError = 1 UTF-16 code unit)
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 1})
-	assert.Equal(t, pos, core.TextPos(1))
-
-	// Line 0, char 2 → byte 2 ('b')
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 2})
-	assert.Equal(t, pos, core.TextPos(2))
-
-	// Line 0, char 3 → byte 3 (at newline, end of line content)
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 0, Character: 3})
-	assert.Equal(t, pos, core.TextPos(3))
-
-	// Line 1, char 0 → byte 4 ('c')
-	pos = converters.LineAndCharacterToPosition(script, lsproto.Position{Line: 1, Character: 0})
-	assert.Equal(t, pos, core.TextPos(4))
-}
-
-func TestPositionToLineAndCharacter_ValidUTF8(t *testing.T) {
-	t.Parallel()
-
-	// Same text as above: "ab—cd\nef"
-	text := "ab\u2014cd\nef"
-	script := &testScript{name: "test.ts", text: text}
-	lineMap := lsconv.ComputeLSPLineStarts(text)
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return lineMap
-	})
-
-	// Byte 0 → (0, 0)
-	lc := converters.PositionToLineAndCharacter(script, 0)
-	assert.Equal(t, lc, lsproto.Position{Line: 0, Character: 0})
-
-	// Byte 5 → (0, 3) — after em-dash
-	lc = converters.PositionToLineAndCharacter(script, 5)
-	assert.Equal(t, lc, lsproto.Position{Line: 0, Character: 3})
-
-	// Byte 8 → (1, 0) — start of second line
-	lc = converters.PositionToLineAndCharacter(script, 8)
-	assert.Equal(t, lc, lsproto.Position{Line: 1, Character: 0})
-}
-
-func TestRoundTrip_ValidUTF8(t *testing.T) {
-	t.Parallel()
-
-	text := "ab\u2014cd\nef"
-	script := &testScript{name: "test.ts", text: text}
-	lineMap := lsconv.ComputeLSPLineStarts(text)
-
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return lineMap
-	})
-
-	// Round-trip only at valid UTF-8 character boundaries.
-	// Positions in the middle of multi-byte chars (e.g. byte 3,4 inside em-dash)
-	// snap to the next character, so round-tripping them isn't meaningful.
-	validPositions := []core.TextPos{0, 1, 2, 5, 6, 7, 8, 9, core.TextPos(len(text))}
-	for _, bytePos := range validPositions {
-		lc := converters.PositionToLineAndCharacter(script, bytePos)
-		rtPos := converters.LineAndCharacterToPosition(script, lc)
-		assert.Equal(t, rtPos, bytePos, "round-trip failed for byte position %d", bytePos)
+	// Byte-by-byte round-trip across the entire text.
+	for bytePos := core.TextPos(0); bytePos <= core.TextPos(len(text)); bytePos++ {
+		lc := conv.PositionToLineAndCharacter(script, bytePos)
+		rt := conv.LineAndCharacterToPosition(script, lc)
+		assert.Equal(t, rt, bytePos, fmt.Sprintf("round-trip byte %d", bytePos))
 	}
 }
 
-func TestRoundTrip_InvalidUTF8(t *testing.T) {
+// jsReferenceScript is a Node.js script that, given a list of UTF-8 byte buffers,
+// computes the authoritative mapping between (line, character in UTF-16 code units)
+// and UTF-8 byte offsets.
+//
+// To avoid any string round-tripping at the protocol boundary, the inputs are sent
+// as raw bytes: the test writes a length-prefixed binary stream to stdin
+// ([uint32 little-endian count][uint32 LE len][bytes]...[uint32 LE len][bytes]).
+// Node reads the buffers and decodes each with TextDecoder('utf-8') — which is
+// essentially what tsserver / sys.ts does when reading file contents from disk
+// (read as Buffer, decode as UTF-8 to a JS string with real UTF-16 semantics).
+//
+// For each input buffer, Node walks the underlying UTF-8 bytes (NOT the decoded
+// string) to identify codepoint boundaries: every byte is the start of a codepoint
+// unless it's a UTF-8 continuation byte (0b10xxxxxx). At each boundary it records
+// the UTF-8 byte offset and the corresponding UTF-16 code unit offset (in the
+// decoded JS string) and (line, char) using the LSP line-break rules
+// (\n, \r, \r\n only).
+//
+// Output is JSON on stdout: [ [ { bytePos, line, char }, ... ], ... ]
+const jsReferenceScript = `
+const inChunks = [];
+process.stdin.on('data', c => inChunks.push(c));
+process.stdin.on('end', () => {
+  const buf = Buffer.concat(inChunks);
+  let off = 0;
+  const readU32 = () => { const v = buf.readUInt32LE(off); off += 4; return v; };
+  const n = readU32();
+  const buffers = [];
+  for (let i = 0; i < n; i++) {
+    const len = readU32();
+    buffers.push(buf.subarray(off, off + len));
+    off += len;
+  }
+
+  const decoder = new TextDecoder('utf-8', { fatal: true });
+  const out = buffers.map(bytes => {
+    // Decode the raw UTF-8 bytes to a JS string (this is what sys.ts does with file contents).
+    const text = decoder.decode(bytes);
+
+    // LSP line starts in the *decoded* JS string: \\n, \\r, \\r\\n only.
+    const lineStartsJs = [0];
+    for (let i = 0; i < text.length; i++) {
+      const c = text.charCodeAt(i);
+      if (c === 13) {
+        if (i + 1 < text.length && text.charCodeAt(i + 1) === 10) i++;
+        lineStartsJs.push(i + 1);
+      } else if (c === 10) {
+        lineStartsJs.push(i + 1);
+      }
+    }
+
+    // Walk the original UTF-8 byte buffer to find codepoint boundaries. Inputs are
+    // valid UTF-8, so we advance bytePos by the sequence length of each lead byte
+    // and jsIdx by the corresponding UTF-16 code unit count (1 for BMP, 2 for
+    // surrogate pair) of the codepoint at jsIdx in the decoded string.
+    const boundaries = [{ bytePos: 0, jsIdx: 0 }];
+    let bytePos = 0, jsIdx = 0;
+    while (bytePos < bytes.length) {
+      const seq = utf8SeqLen(bytes[bytePos]);
+      const cp = text.codePointAt(jsIdx);
+      bytePos += seq;
+      jsIdx += cp > 0xFFFF ? 2 : 1;
+      boundaries.push({ bytePos, jsIdx });
+    }
+
+    return boundaries.map(({ bytePos, jsIdx }) => {
+      let lo = 0, hi = lineStartsJs.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi + 1) >> 1;
+        if (lineStartsJs[mid] <= jsIdx) lo = mid;
+        else hi = mid - 1;
+      }
+      return { bytePos, line: lo, char: jsIdx - lineStartsJs[lo] };
+    });
+  });
+
+  process.stdout.write(JSON.stringify(out));
+});
+
+function utf8SeqLen(b) {
+  if (b < 0x80) return 1;
+  if ((b & 0xE0) === 0xC0) return 2;
+  if ((b & 0xF0) === 0xE0) return 3;
+  if ((b & 0xF8) === 0xF0) return 4;
+  throw new Error('invalid UTF-8 lead byte 0x' + b.toString(16));
+}
+`
+
+type jsTuple struct {
+	BytePos int `json:"bytePos"`
+	Line    int `json:"line"`
+	Char    int `json:"char"`
+}
+
+func runJSReference(t *testing.T, texts []string) [][]jsTuple {
+	t.Helper()
+	if _, err := exec.LookPath("node"); err != nil {
+		t.Skipf("node not available: %v", err)
+	}
+
+	// Build a length-prefixed binary stream of the raw UTF-8 bytes:
+	// [uint32 LE count] then for each: [uint32 LE length][bytes].
+	var in bytes.Buffer
+	var u32 [4]byte
+	binary.LittleEndian.PutUint32(u32[:], uint32(len(texts)))
+	in.Write(u32[:])
+	for _, s := range texts {
+		binary.LittleEndian.PutUint32(u32[:], uint32(len(s)))
+		in.Write(u32[:])
+		in.WriteString(s)
+	}
+
+	cmd := exec.Command("node", "-e", jsReferenceScript)
+	cmd.Stdin = &in
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("node failed: %v\nstderr: %s", err, stderr.String())
+	}
+
+	var out [][]jsTuple
+	assert.NilError(t, json.Unmarshal(stdout.Bytes(), &out))
+	return out
+}
+
+// TestConvertersAgainstJSReference cross-checks the Go UTF-16 conversions against
+// authoritative results computed by Node.js using real UTF-16 string semantics.
+func TestConvertersAgainstJSReference(t *testing.T) {
 	t.Parallel()
 
-	// Text with invalid UTF-8 byte
-	text := "a\x80b\ncd"
-	script := &testScript{name: "test.ts", text: text}
-	lineMap := lsconv.ComputeLSPLineStarts(text)
+	cases := []struct {
+		name string
+		text string
+	}{
+		{"empty", ""},
+		{"ascii", "hello\nworld"},
+		{"ascii_crlf", "hello\r\nworld\r\n!"},
+		{"ascii_cr_only", "a\rb\rc"},
+		{"trailing_newline", "abc\n"},
+		{"bmp_em_dash", "ab\u2014cd\nef"},
+		{"bmp_multi", "α\nβ\nγδε\nzz"},
+		{"supplementary_emoji", "x\U0001F600y\nz"}, // 😀 is 4 UTF-8 bytes, 2 UTF-16 units
+		{"supplementary_at_lineend", "ab\U0001F600\ncd\U0001F60A"},
+		{"supplementary_only", "\U0001F600\U0001F601\U0001F602"},
+		{"mixed", "α — \U0001F600\r\nβ\nγ\r"},
+		{"long_mixed_ws", "  \tαβ\n\t\U0001F600  end\n"},
+		{"zwj_emoji", "\U0001F468\u200D\U0001F4BB\nnext"},
+		{"only_newlines", "\n\n\r\n\r"},
+	}
 
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap {
-		return lineMap
-	})
+	texts := make([]string, len(cases))
+	for i, c := range cases {
+		texts[i] = c.text
+	}
+	refs := runJSReference(t, texts)
+	assert.Equal(t, len(refs), len(cases))
 
-	// Round-trip: position → line/char → position
-	for bytePos := core.TextPos(0); bytePos <= core.TextPos(len(text)); bytePos++ {
-		lc := converters.PositionToLineAndCharacter(script, bytePos)
-		rtPos := converters.LineAndCharacterToPosition(script, lc)
-		assert.Equal(t, rtPos, bytePos, "round-trip failed for byte position %d", bytePos)
+	for i, c := range cases {
+		ref := refs[i]
+		t.Run(c.name, func(t *testing.T) {
+			t.Parallel()
+
+			conv, script := newTestConverters(c.text)
+			for _, tup := range ref {
+				bytePos := core.TextPos(tup.BytePos)
+				expectedLC := lsproto.Position{Line: uint32(tup.Line), Character: uint32(tup.Char)}
+
+				gotLC := conv.PositionToLineAndCharacter(script, bytePos)
+				assert.Equal(t, gotLC, expectedLC,
+					fmt.Sprintf("PositionToLineAndCharacter(%d) mismatch in %q", bytePos, c.text))
+
+				gotPos := conv.LineAndCharacterToPosition(script, expectedLC)
+				assert.Equal(t, gotPos, bytePos,
+					fmt.Sprintf("LineAndCharacterToPosition(%d,%d) mismatch in %q", tup.Line, tup.Char, c.text))
+			}
+		})
 	}
 }
