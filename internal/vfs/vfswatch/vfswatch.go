@@ -25,6 +25,7 @@ func (e WatchEvent) HasChanges() bool {
 type watchEntry struct {
 	modTime      time.Time
 	childrenHash uint64 // 0 if not tracked
+	isDir        bool
 }
 
 type FileWatcher struct {
@@ -139,7 +140,7 @@ func snapshotDir(fs vfs.FS, state map[string]watchEntry, dir string, recursive b
 		for _, subdir := range entries.Directories {
 			path := joinWatchPath(dir, subdir)
 			if s := fs.Stat(path); s != nil {
-				state[path] = watchEntry{modTime: s.ModTime()}
+				state[path] = watchEntry{modTime: s.ModTime(), isDir: true}
 			}
 		}
 		return
@@ -201,7 +202,7 @@ func diffSnapshots(baseline, current map[string]watchEntry) WatchEvent {
 			continue
 		}
 		if !cur.modTime.Equal(old.modTime) {
-			if old.childrenHash == 0 {
+			if old.childrenHash == 0 && !old.isDir {
 				event.Changed = append(event.Changed, path)
 			}
 			continue
