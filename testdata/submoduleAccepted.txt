@@ -726,11 +726,6 @@ compiler/unicodeEscapesInNames02(target=es2015).errors.txt.diff
 ## The TS2497 suggestion to turn on the `esModuleInterop` flag is no longer emitted since esModuleInterop is always enabled in Corsa
 compiler/importNonExportedMember9.errors.txt.diff
 
-## Corsa no longer emits the TS-1 internal diagnostic about pre-emit/post-emit diagnostic count mismatches
-compiler/multiLinePropertyAccessAndArrowFunctionIndent1.errors.txt.diff
-compiler/parseErrorIncorrectReturnToken.errors.txt.diff
-conformance/parserStatementIsNotAMemberVariableDeclaration1(alwaysstrict=true).errors.txt.diff
-
 ## Various error messages have minor wording adjustments, no longer suggesting or referencing deprecated options
 compiler/pathMappingBasedModuleResolution1_node.errors.txt.diff
 compiler/pathsValidation5.errors.txt.diff
@@ -862,9 +857,6 @@ conformance/nodeModulesForbidenSyntax(module=node18).errors.txt.diff
 conformance/nodeModulesForbidenSyntax(module=node20).errors.txt.diff
 conformance/nodeModulesForbidenSyntax(module=nodenext).errors.txt.diff
 
-## TS2690 (with "Did you mean 'P in K'?" mapped type suggestion) changed to TS2693 (generic "refers to a type, but is being used as a value") — mapped type suggestion lost
-compiler/typeUsedAsTypeLiteralIndex.errors.txt.diff
-
 ## `super()` call no longer flagged as error when the class heritage clause already has an error. Immaterial.
 compiler/interfaceMergeWithNonGenericTypeArguments.errors.txt.diff
 
@@ -896,14 +888,8 @@ compiler/jsDeclarationEmitExportedClassWithExtends.errors.txt.diff
 ## TS2589 "Type instantiation is excessively deep" no longer reported for a recursively expanding union
 compiler/recursivelyExpandingUnionNoStackoverflow.errors.txt.diff
 
-## `{} == {}` loose equality now also flagged with TS2839 (not just strict equality)
-conformance/plainJSTypeErrors.errors.txt.diff
-
 ## Constraint suggestion shows `{ s?: number | undefined; }` instead of `{ s?: number; }`
 conformance/subtypingWithOptionalProperties.errors.txt.diff
-
-## Unicode escapes in identifier names now displayed as literal characters
-conformance/parser.numericSeparators.decmialNegative.errors.txt.diff
 
 ## Error messages reference class name 'C' instead of '(anonymous)' for private name errors
 conformance/privateNameMethodClassExpression.errors.txt.diff
@@ -942,11 +928,6 @@ conformance/importingExportingTypes.errors.txt.diff
 
 ## When a class and interface merge across files, Corsa considers type parameters used across the merged declaration, eliminating the false-positive unused error
 compiler/unusedTypeParameters8.errors.txt.diff
-
-## Instead of the full union type, only the non-iterable constituent(s) are named in the error in for/ofs
-conformance/ES5For-of30(target=es2015).errors.txt.diff
-conformance/ES5For-ofTypeCheck7(target=es2015).errors.txt.diff
-conformance/ES5For-ofTypeCheck9(target=es2015).errors.txt.diff
 
 ## Duplicate identifier names normalized to canonical numeric/string form (e.g., `'1.0'` → `'1'`); first declaration also flagged
 conformance/numericNamedPropertyDuplicates.errors.txt.diff
