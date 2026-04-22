@@ -28434,15 +28434,15 @@ func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
 func applyStringMapping(symbol *ast.Symbol, str string) string {
 	switch intrinsicTypeKinds[symbol.Name] {
 	case IntrinsicTypeKindUppercase:
-		return strings.ToUpper(str)
+		return stringutil.ToUpperJS(str)
 	case IntrinsicTypeKindLowercase:
-		return strings.ToLower(str)
+		return stringutil.ToLowerJS(str)
 	case IntrinsicTypeKindCapitalize:
 		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToUpper(str[:size]) + str[size:]
+		return stringutil.ToUpperJS(str[:size]) + str[size:]
 	case IntrinsicTypeKindUncapitalize:
 		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToLower(str[:size]) + str[size:]
+		return stringutil.ToLowerJS(str[:size]) + str[size:]
 	}
 	return str
 }
