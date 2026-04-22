@@ -65,11 +65,11 @@ declare const console: { log(msg: any): void; };
 [
   {
     "configFilePath": "/home/src/workspaces/project/tsconfig.json",
-    "tracePath": "/home/src/workspaces/project/trace/trace_0.json",
+    "tracePath": "/home/src/workspaces/project/trace/trace.json",
     "typesPath": "/home/src/workspaces/project/trace/types_0.json"
   }
 ]
-//// [/home/src/workspaces/project/trace/trace_0.json] *new* 
+//// [/home/src/workspaces/project/trace/trace.json] *new* 
 [
 {"pid":1,"tid":1,"ph":"M","cat":"__metadata","ts":1,"name":"process_name","args":{"name":"tsgo"}},
 {"pid":1,"tid":1,"ph":"M","cat":"__metadata","ts":1,"name":"thread_name","args":{"name":"Main"}},

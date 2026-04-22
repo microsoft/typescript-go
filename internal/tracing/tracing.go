@@ -90,7 +90,7 @@ type traceEvent struct {
 // duration crosses a 10ms sampling boundary.
 const sampleInterval = 10 * time.Millisecond
 
-const traceFileName = "trace_0.json"
+const traceFileName = "trace.json"
 
 // flushThreshold is the size at which buffered trace content is flushed to disk
 // via AppendFile. Keeps peak memory bounded for long-running compilations while
