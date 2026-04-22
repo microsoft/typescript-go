@@ -1826,7 +1826,8 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
 
     const sourceFile = args[0].getSourceFile();
     let description = "";
-    let newFileContent = "";
+    let newFileContent: string | undefined;
+    let newRangeContent: string | undefined;
     let index = 0;
     let applyChanges = false;
     let preferences = "nil /*preferences*/";
@@ -1851,6 +1852,11 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
             case "newFileContent": {
                 const str = getStringLiteralLike(prop.initializer);
                 if (str) newFileContent = str.text;
+                break;
+            }
+            case "newRangeContent": {
+                const str = getStringLiteralLike(prop.initializer);
+                if (str) newRangeContent = str.text;
                 break;
             }
             case "index": {
@@ -1879,6 +1885,7 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
         kind: "verifyCodeFix",
         description,
         newFileContent,
+        newRangeContent,
         index,
         applyChanges,
         preferences,
@@ -3657,7 +3664,8 @@ interface VerifyErrorExistsBeforeMarkerCmd {
 interface VerifyCodeFixCmd {
     kind: "verifyCodeFix";
     description: string;
-    newFileContent: string;
+    newFileContent?: string;
+    newRangeContent?: string;
     index: number;
     applyChanges: boolean;
     preferences: string;
@@ -4102,7 +4110,11 @@ function generateCmd(cmd: Cmd, imports: Set<string>): string {
         case "verifyCodeFix":
             return `f.VerifyCodeFix(t, fourslash.VerifyCodeFixOptions{
 	Description: ${getGoStringLiteral(cmd.description)},
-	NewFileContent: ${getGoMultiLineStringLiteral(cmd.newFileContent)},
+${
+                cmd.newRangeContent !== undefined
+                    ? `\tNewRangeContent: ${getGoMultiLineStringLiteral(cmd.newRangeContent)},`
+                    : `\tNewFileContent: ${getGoMultiLineStringLiteral(cmd.newFileContent ?? "")},`
+            }
 	Index: ${cmd.index},${
                 cmd.applyChanges ? `
 	ApplyChanges: true,` : ``

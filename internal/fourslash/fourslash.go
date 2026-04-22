@@ -1471,6 +1471,7 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 type VerifyCodeFixOptions struct {
 	Description     string
 	NewFileContent  string
+	NewRangeContent string
 	Index           int
 	ApplyChanges    bool
 	UserPreferences *lsutil.UserPreferences
@@ -1519,6 +1520,20 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 		}
 	}
 
+	originalContent := f.getScriptInfo(f.activeFilename).content
+	expectedContent := options.NewFileContent
+	if options.NewRangeContent != "" {
+		selection := f.getSelection()
+		if selection.Pos() == selection.End() {
+			ranges := f.getRangesInFile(f.activeFilename)
+			if len(ranges) == 0 {
+				t.Fatal("Expected a selected range or fourslash range for NewRangeContent verification.")
+			}
+			selection = ranges[0].Range
+		}
+		expectedContent = originalContent[:selection.Pos()] + options.NewRangeContent + originalContent[selection.End():]
+	}
+
 	if options.ApplyChanges {
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
 			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
@@ -1530,7 +1545,7 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 			}
 		}
 		actual := f.getScriptInfo(f.activeFilename).content
-		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+		assert.Equal(t, expectedContent, actual, "File content after applying code fix did not match expected content.")
 	} else {
 		actual := f.getScriptInfo(f.activeFilename).content
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
@@ -1542,7 +1557,7 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 				actual = f.applyEditsToContent(actual, edits)
 			}
 		}
-		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+		assert.Equal(t, expectedContent, actual, "File content after applying code fix did not match expected content.")
 	}
 }
 

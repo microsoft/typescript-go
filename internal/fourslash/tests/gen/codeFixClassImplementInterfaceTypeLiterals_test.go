@@ -32,8 +32,12 @@ interface Foo {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCodeFix(t, fourslash.VerifyCodeFixOptions{
-		Description:    "Implement interface 'Foo'",
-		NewFileContent: ``,
-		Index:          0,
+		Description: "Implement interface 'Foo'",
+		NewRangeContent: `export class C implements Foo {
+    request(): DeepPartial<{ nested1: Nested; test2: Nested; }> {
+        throw new Error("Method not implemented.");
+    }
+}`,
+		Index: 0,
 	})
 }

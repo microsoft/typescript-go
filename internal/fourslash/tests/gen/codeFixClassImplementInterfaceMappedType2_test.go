@@ -26,8 +26,11 @@ type ClickEventSupport = ListenActionable<{ Click: 'some-click-event-payload' }>
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCodeFix(t, fourslash.VerifyCodeFixOptions{
-		Description:    "Implement interface 'ClickEventSupport'",
-		NewFileContent: ``,
-		Index:          0,
+		Description: "Implement interface 'ClickEventSupport'",
+		NewRangeContent: `class C implements ClickEventSupport {
+    addClickListener: (listener: (payload: "some-click-event-payload") => void) => void;
+    removeClickListener: (listener: (payload: "some-click-event-payload") => void) => void;
+}`,
+		Index: 0,
 	})
 }
