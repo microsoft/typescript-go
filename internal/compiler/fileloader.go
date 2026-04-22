@@ -259,7 +259,9 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 					},
 				})
 			}
-			traceDone()
+			if traceDone != nil {
+				traceDone()
+			}
 		}
 	}
 	return toParse, typeResolutionsInFile, typeResolutionsTrace, pDiagnostics
