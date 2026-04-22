@@ -28,6 +28,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
 type UpdateReason int
@@ -58,6 +59,8 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	PollingEnabled         bool
+	PollingInterval        time.Duration
 }
 
 type SessionInit struct {
@@ -159,6 +162,8 @@ type Session struct {
 	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
 	watchesMu sync.Mutex
 
+	fileWatcher *vfswatch.FileWatcher
+
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
 	// requests into a single background task.
@@ -230,6 +235,23 @@ func NewSession(init *SessionInit) *Session {
 			TypingsLocation: init.Options.TypingsLocation,
 			ThrottleLimit:   5,
 		}, session)
+	}
+
+	if init.Options.PollingEnabled && !init.Options.WatchEnabled {
+		pollInterval := init.Options.PollingInterval
+		if pollInterval == 0 {
+			pollInterval = time.Second
+		}
+		session.fileWatcher = vfswatch.NewFileWatcher(
+			init.FS,
+			pollInterval,
+			false,
+			session.onPolledFileChanges,
+		)
+		session.fileWatcher.UpdateWatchedDirectories(map[string]bool{
+			init.Options.CurrentDirectory: false,
+		})
+		go session.fileWatcher.Run(time.Now)
 	}
 
 	return session
@@ -365,6 +387,97 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	s.ScheduleDiagnosticsRefresh()
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
+}
+
+func (s *Session) onPolledFileChanges(event vfswatch.WatchEvent) {
+	if !event.HasChanges() {
+		return
+	}
+
+	fileChanges := make([]FileChange, 0, len(event.Created)+len(event.Deleted)+len(event.Changed))
+	for _, path := range event.Created {
+		fileChanges = append(fileChanges, FileChange{
+			Kind: FileChangeKindWatchCreate,
+			URI:  lsconv.FileNameToDocumentURI(path),
+		})
+	}
+	for _, path := range event.Changed {
+		fileChanges = append(fileChanges, FileChange{
+			Kind: FileChangeKindWatchChange,
+			URI:  lsconv.FileNameToDocumentURI(path),
+		})
+	}
+	for _, path := range event.Deleted {
+		fileChanges = append(fileChanges, FileChange{
+			Kind: FileChangeKindWatchDelete,
+			URI:  lsconv.FileNameToDocumentURI(path),
+		})
+	}
+
+	s.pendingFileChangesMu.Lock()
+	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
+	s.pendingFileChangesMu.Unlock()
+
+	s.ScheduleDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
+}
+
+func (s *Session) updatePollingDirectories(snapshot *Snapshot) {
+	dirs := make(map[string]bool)
+	sourceFileDirs := make(map[string]struct{})
+
+	for _, entry := range snapshot.ConfigFileRegistry.configs {
+		configDir := tspath.GetDirectoryPath(entry.fileName)
+		if configDir != "" {
+			if _, already := dirs[configDir]; !already {
+				dirs[configDir] = false
+			}
+		}
+		if entry.commandLine == nil {
+			continue
+		}
+		for dir, recursive := range entry.commandLine.WildcardDirectories() {
+			if dir != "" {
+				dirs[dir] = recursive
+			}
+		}
+		for _, fileName := range entry.commandLine.FileNames() {
+			dir := tspath.GetDirectoryPath(fileName)
+			if dir != "" {
+				sourceFileDirs[dir] = struct{}{}
+			}
+		}
+	}
+
+	compareOpts := tspath.ComparePathsOptions{
+		CurrentDirectory:          s.options.CurrentDirectory,
+		UseCaseSensitiveFileNames: s.fs.fs.UseCaseSensitiveFileNames(),
+	}
+
+	for dir := range sourceFileDirs {
+		if _, already := dirs[dir]; !already {
+			covered := false
+			for wdir, recursive := range dirs {
+				if recursive && tspath.ContainsPath(wdir, dir, compareOpts) {
+					covered = true
+					break
+				}
+				if tspath.ComparePaths(wdir, dir, compareOpts) == 0 {
+					covered = true
+					break
+				}
+			}
+			if !covered {
+				dirs[dir] = false
+			}
+		}
+	}
+
+	if len(dirs) == 0 {
+		dirs[s.options.CurrentDirectory] = true
+	}
+
+	s.fileWatcher.UpdateWatchedDirectories(dirs)
 }
 
 func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
@@ -1118,6 +1231,9 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 				s.logger.Log(err)
 			}
 		}
+		if s.fileWatcher != nil {
+			s.updatePollingDirectories(newSnapshot)
+		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
 		s.sendProjectInfoTelemetryForNewProjects(oldSnapshot, newSnapshot)
 		s.warmAutoImportCache(ctx, change, oldSnapshot, newSnapshot)
@@ -1271,6 +1387,10 @@ func (s *Session) Close() {
 	s.cancelIdleCacheClean()
 	// Cancel periodic performance telemetry
 	s.stopPerformanceTelemetry()
+	// Stop the polling file watcher goroutine if running
+	if s.fileWatcher != nil {
+		s.fileWatcher.Stop()
+	}
 	s.backgroundQueue.Close()
 }
 
