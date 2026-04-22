@@ -846,7 +846,7 @@ func getRecursionIdentity(t *Type) RecursionId {
 			// of generative recursion without first being instantiated).
 			return asRecursionId(t.symbol)
 		}
-		if isTupleType(t) {
+		if isTupleType(t) && t.objectFlags&ObjectFlagsFromTypeNode == 0 {
 			return asRecursionId(t.Target())
 		}
 	}
