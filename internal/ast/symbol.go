@@ -76,7 +76,7 @@ func SymbolName(symbol *Symbol) string {
 	return symbol.Name
 }
 
-// EscapeInternalSymbolName replaces internal symbol name markers ("\xFE") with "__".
-func EscapeInternalSymbolName(name string) string {
+// EscapeAllInternalSymbolNames replaces internal symbol name markers ("\xFE") with "__".
+func EscapeAllInternalSymbolNames(name string) string {
 	return strings.ReplaceAll(name, InternalSymbolNamePrefix, "__")
 }
