@@ -1,0 +1,88 @@
+//// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType9.ts] ////
+
+=== noExcessPropertyCheckAutoTypeVsReturnType9.ts ===
+interface Inner { x: number }
+>x : number
+
+interface U { a: Inner[] }
+>a : Inner[]
+
+declare const cond: boolean;
+>cond : boolean
+
+function f1(): U {
+>f1 : () => U
+
+  let v;
+>v : any
+
+  if (cond) {
+>cond : boolean
+
+    v = { a: [{ x: 1, extra: true }] }
+>v = { a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>v : any
+>{ a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>a : { x: number; extra: boolean; }[]
+>[{ x: 1, extra: true }] : { x: number; extra: boolean; }[]
+>{ x: 1, extra: true } : { x: number; extra: boolean; }
+>x : number
+>1 : 1
+>extra : boolean
+>true : true
+
+  } else {
+    v = { a: [{ x: 1, extra: true }] }
+>v = { a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>v : any
+>{ a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>a : { x: number; extra: boolean; }[]
+>[{ x: 1, extra: true }] : { x: number; extra: boolean; }[]
+>{ x: 1, extra: true } : { x: number; extra: boolean; }
+>x : number
+>1 : 1
+>extra : boolean
+>true : true
+  }
+  return v;
+>v : { a: { x: number; extra: boolean; }[]; }
+}
+
+function f2(): U {
+>f2 : () => U
+
+  let v;
+>v : any
+
+  if (cond) {
+>cond : boolean
+
+    v = { a: [{ x: 1, extra: true }] }
+>v = { a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>v : any
+>{ a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>a : { x: number; extra: boolean; }[]
+>[{ x: 1, extra: true }] : { x: number; extra: boolean; }[]
+>{ x: 1, extra: true } : { x: number; extra: boolean; }
+>x : number
+>1 : 1
+>extra : boolean
+>true : true
+
+  } else {
+    v = { a: [{ x: 1, extra2: true }] }
+>v = { a: [{ x: 1, extra2: true }] } : { a: { x: number; extra2: boolean; }[]; }
+>v : any
+>{ a: [{ x: 1, extra2: true }] } : { a: { x: number; extra2: boolean; }[]; }
+>a : { x: number; extra2: boolean; }[]
+>[{ x: 1, extra2: true }] : { x: number; extra2: boolean; }[]
+>{ x: 1, extra2: true } : { x: number; extra2: boolean; }
+>x : number
+>1 : 1
+>extra2 : boolean
+>true : true
+  }
+  return v;
+>v : { a: { x: number; extra: boolean; }[]; } | { a: { x: number; extra2: boolean; }[]; }
+}
+

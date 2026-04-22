@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType8.ts] ////
+
+=== noExcessPropertyCheckAutoTypeVsReturnType8.ts ===
+interface Inner {
+>Inner : Symbol(Inner, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 0, 0))
+
+  x: number;
+>x : Symbol(Inner.x, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 0, 17))
+}
+
+interface U {
+>U : Symbol(U, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 2, 1))
+
+  a: Inner[];
+>a : Symbol(U.a, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 4, 13))
+>Inner : Symbol(Inner, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 0, 0))
+}
+
+declare const cond: boolean;
+>cond : Symbol(cond, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 8, 13))
+
+function f(): U[] {
+>f : Symbol(f, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 8, 28))
+>U : Symbol(U, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 2, 1))
+
+  let v;
+>v : Symbol(v, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 11, 5))
+
+  if (cond) {
+>cond : Symbol(cond, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 8, 13))
+
+    const tmp = [];
+>tmp : Symbol(tmp, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 13, 9))
+
+    tmp.push({ a: [{ x: 1, extra: true }] });
+>tmp.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>tmp : Symbol(tmp, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 13, 9))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>a : Symbol(a, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 14, 14))
+>x : Symbol(x, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 14, 20))
+>extra : Symbol(extra, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 14, 26))
+
+    v = tmp;
+>v : Symbol(v, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 11, 5))
+>tmp : Symbol(tmp, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 13, 9))
+
+  } else {
+    v = [{ a: [{ x: 1, extra: true }] }];
+>v : Symbol(v, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 11, 5))
+>a : Symbol(a, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 17, 10))
+>x : Symbol(x, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 17, 16))
+>extra : Symbol(extra, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 17, 22))
+  }
+  return v;
+>v : Symbol(v, Decl(noExcessPropertyCheckAutoTypeVsReturnType8.ts, 11, 5))
+}
+
