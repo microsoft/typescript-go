@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -41,6 +42,7 @@ import { Parts } from './parts';
 export class EditorParts implements Parts {
     options: Event;
 }`,
-		Index: 0,
+		Index:           0,
+		UserPreferences: &lsutil.UserPreferences{AutoImportFileExcludePatterns: []string{"src/vs/workbench/workbench.ts"}},
 	})
 }

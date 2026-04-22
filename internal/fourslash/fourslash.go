@@ -1469,10 +1469,11 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 
 // VerifyCodeFixOptions are the options for VerifyCodeFix.
 type VerifyCodeFixOptions struct {
-	Description    string
-	NewFileContent string
-	Index          int
-	ApplyChanges   bool
+	Description     string
+	NewFileContent  string
+	Index           int
+	ApplyChanges    bool
+	UserPreferences *lsutil.UserPreferences
 }
 
 // VerifyCodeFixAllOptions are the options for VerifyCodeFixAll.
@@ -1484,6 +1485,11 @@ type VerifyCodeFixAllOptions struct {
 // VerifyCodeFix verifies that applying a code fix produces the expected file content.
 func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions) {
 	t.Helper()
+
+	if options.UserPreferences != nil {
+		reset := f.ConfigureWithReset(t, *options.UserPreferences)
+		defer reset()
+	}
 
 	actions := f.getCodeFixActions(t)
 

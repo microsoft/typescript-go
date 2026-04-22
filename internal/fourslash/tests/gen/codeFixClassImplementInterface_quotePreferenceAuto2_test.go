@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -41,6 +42,7 @@ class Foo implements I {
     c: 'c';
     d: { e: 'e'; };
 }`,
-		Index: 0,
+		Index:           0,
+		UserPreferences: &lsutil.UserPreferences{QuotePreference: lsutil.QuotePreference("auto")},
 	})
 }

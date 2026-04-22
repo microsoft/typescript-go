@@ -1829,6 +1829,7 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
     let newFileContent = "";
     let index = 0;
     let applyChanges = false;
+    let preferences = "nil /*preferences*/";
 
     for (const prop of obj.properties) {
         const name = getPropertyName(prop);
@@ -1863,6 +1864,14 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
                 }
                 break;
             }
+            case "preferences": {
+                const prefs = getObjectLiteralExpression(prop.initializer);
+                if (!prefs) {
+                    throw new Error(`Expected object literal for preferences in verify.codeFix, got ${prop.initializer.getText()}`);
+                }
+                preferences = parseUserPreferences(prefs);
+                break;
+            }
         }
     }
 
@@ -1872,6 +1881,7 @@ function parseCodeFixArgs(args: readonly ts.Expression[]): [VerifyCodeFixCmd] {
         newFileContent,
         index,
         applyChanges,
+        preferences,
     }];
 }
 
@@ -3650,6 +3660,7 @@ interface VerifyCodeFixCmd {
     newFileContent: string;
     index: number;
     applyChanges: boolean;
+    preferences: string;
 }
 
 interface VerifyCodeFixAvailableCmd {
@@ -4095,6 +4106,9 @@ function generateCmd(cmd: Cmd, imports: Set<string>): string {
 	Index: ${cmd.index},${
                 cmd.applyChanges ? `
 	ApplyChanges: true,` : ``
+            }${
+                cmd.preferences !== "nil /*preferences*/" ? `
+	UserPreferences: ${cmd.preferences},` : ``
             }
 })`;
         case "verifyCodeFixAvailable":
