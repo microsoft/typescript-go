@@ -491,17 +491,6 @@ type LineAndChar struct {
 	Character int `json:"character"`
 }
 
-// escapeSymbolName converts internal symbol names to a JSON-safe format.
-// The Go codebase uses \xFE as a prefix for internal symbol names (which is invalid UTF-8),
-// while TypeScript uses "___" (three underscores). This function converts the Go format
-// to "__" (two underscores) for JSON output, matching TypeScript's unescapeLeadingUnderscores behavior.
-func escapeSymbolName(name string) string {
-	if strings.HasPrefix(name, ast.InternalSymbolNamePrefix) {
-		return "__" + name[len(ast.InternalSymbolNamePrefix):]
-	}
-	return name
-}
-
 func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap map[any]int) TypeDescriptor {
 	symbol := typ.Symbol()
 	aliasSymbol := typ.AliasSymbol()
@@ -529,9 +518,9 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 
 	// Symbol name - escape the internal symbol name prefix for valid JSON
 	if sym := aliasSymbol; sym != nil {
-		desc.SymbolName = escapeSymbolName(sym.Name)
+		desc.SymbolName = ast.EscapeInternalSymbolName(sym.Name)
 	} else if symbol != nil {
-		desc.SymbolName = escapeSymbolName(symbol.Name)
+		desc.SymbolName = ast.EscapeInternalSymbolName(symbol.Name)
 	}
 
 	// Tuple flag

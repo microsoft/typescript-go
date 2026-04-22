@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"strings"
 	"sync/atomic"
 )
 
@@ -73,4 +74,10 @@ func SymbolName(symbol *Symbol) string {
 		return symbol.ValueDeclaration.Name().Text()
 	}
 	return symbol.Name
+}
+
+// EscapeInternalSymbolName rewrites internal symbol name markers (\xFE) to
+// a printable form used by TypeScript's baseline outputs.
+func EscapeInternalSymbolName(name string) string {
+	return strings.ReplaceAll(name, InternalSymbolNamePrefix, "__")
 }
