@@ -59,27 +59,9 @@ func hasCasedLetterAfter(runes []rune, index int) bool {
 }
 
 func isUnicodeCased(r rune) bool {
-	return isInRuneRanges(r, unicodeCasedRanges)
+	return IsInRuneRanges(r, unicodeCasedRanges)
 }
 
 func isUnicodeCaseIgnorable(r rune) bool {
-	return isInRuneRanges(r, unicodeCaseIgnorableRanges)
-}
-
-func isInRuneRanges(r rune, ranges []rune) bool {
-	lo := 0
-	hi := len(ranges) / 2
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		start := ranges[mid*2]
-		end := ranges[mid*2+1]
-		if r < start {
-			hi = mid
-		} else if r > end {
-			lo = mid + 1
-		} else {
-			return true
-		}
-	}
-	return false
+	return IsInRuneRanges(r, unicodeCaseIgnorableRanges)
 }
