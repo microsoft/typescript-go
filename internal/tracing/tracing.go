@@ -111,10 +111,16 @@ const sampleInterval = 10 * time.Millisecond
 
 const traceFileName = "trace_0.json"
 
+// flushThreshold is the size at which buffered trace content is flushed to disk
+// via AppendFile. Keeps peak memory bounded for long-running compilations while
+// avoiding a syscall per event.
+const flushThreshold = 256 * 1024
+
 // Tracing manages the overall tracing session including all checkers
 type Tracing struct {
 	fs               vfs.FS
 	traceDir         string
+	tracePath        string
 	configFilePath   string
 	legend           []TraceRecord
 	tracers          []*typeTracer
@@ -146,6 +152,7 @@ func StartTracing(fs vfs.FS, traceDir string, configFilePath string, determinist
 	tr := &Tracing{
 		fs:             fs,
 		traceDir:       traceDir,
+		tracePath:      tspath.CombinePaths(traceDir, traceFileName),
 		configFilePath: configFilePath,
 		legend:         []TraceRecord{},
 		tracers:        []*typeTracer{},
@@ -164,6 +171,13 @@ func StartTracing(fs vfs.FS, traceDir string, configFilePath string, determinist
 	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "__metadata", TS: metaTs, Name: "thread_name", Args: map[string]any{"name": "Main"}})
 	tr.traceContent.WriteString(",\n")
 	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "disabled-by-default-devtools.timeline", TS: metaTs, Name: "TracingStartedInBrowser"})
+
+	// Truncate any existing trace file with the header so subsequent AppendFile
+	// calls extend a clean file.
+	if err := tr.fs.WriteFile(tr.tracePath, tr.traceContent.String()); err != nil {
+		return nil, fmt.Errorf("failed to write trace file header: %w", err)
+	}
+	tr.traceContent.Reset()
 
 	return tr, nil
 }
@@ -190,6 +204,18 @@ func (tr *Tracing) writeEvent(event traceEvent) {
 	writeEventTo(&tr.traceContent, event)
 }
 
+// maybeFlushLocked appends the buffered trace content to disk if it has grown
+// past the flush threshold. Caller must hold tr.mu.
+func (tr *Tracing) maybeFlushLocked() {
+	if tr.traceContent.Len() < flushThreshold {
+		return
+	}
+	if err := tr.fs.AppendFile(tr.tracePath, tr.traceContent.String()); err != nil {
+		panic(fmt.Sprintf("failed to flush trace file: %v", err))
+	}
+	tr.traceContent.Reset()
+}
+
 // Instant records an instant event in the trace.
 // Safe to call on nil receiver.
 func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
@@ -203,6 +229,7 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 	ts := tr.timestamp()
 	tr.traceContent.WriteString(",\n")
 	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, Args: args})
+	tr.maybeFlushLocked()
 }
 
 // Push starts a trace event block on the shared trace buffer.
@@ -229,6 +256,7 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 		ts := tr.timestamp()
 		tr.traceContent.WriteString(",\n")
 		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
+		tr.maybeFlushLocked()
 		tr.mu.Unlock()
 
 		return func() {
@@ -237,6 +265,7 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 			endTs := tr.timestamp()
 			tr.traceContent.WriteString(",\n")
 			tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "E", Cat: string(phase), TS: endTs, Name: name, Args: args})
+			tr.maybeFlushLocked()
 		}
 	}
 
@@ -259,6 +288,7 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 		defer tr.mu.Unlock()
 		tr.traceContent.WriteString(",\n")
 		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
+		tr.maybeFlushLocked()
 	}
 }
 
@@ -268,7 +298,6 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	tracePath := tspath.CombinePaths(tr.traceDir, traceFileName)
 	typesPath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("types_%d.json", checkerIndex))
 	tracer := &typeTracer{
 		fs:           tr.fs,
@@ -279,7 +308,7 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.tracers = append(tr.tracers, tracer)
 	tr.legend = append(tr.legend, TraceRecord{
 		ConfigFilePath: tr.configFilePath,
-		TracePath:      tracePath,
+		TracePath:      tr.tracePath,
 		TypesPath:      typesPath,
 	})
 	return tracer
@@ -301,13 +330,11 @@ func (tr *Tracing) StopTracing() error {
 
 	// Close the trace file(s)
 	if tr.traceStarted.Load() {
-		sharedContent := tr.traceContent.String()
-
-		// Write shared content to trace_0.json
-		tracePath := tspath.CombinePaths(tr.traceDir, traceFileName)
-		if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n"); err != nil {
+		// Flush any remaining buffered content and close the JSON array.
+		if err := tr.fs.AppendFile(tr.tracePath, tr.traceContent.String()+"\n]\n"); err != nil {
 			return fmt.Errorf("failed to write trace file: %w", err)
 		}
+		tr.traceContent.Reset()
 		tr.traceStarted.Store(false)
 	}
 
