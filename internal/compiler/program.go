@@ -367,6 +367,7 @@ func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.dupli
 func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
 func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
 func (p *Program) Host() CompilerHost                           { return p.opts.Host }
+func (p *Program) Tracing() *tracing.Tracing                    { return p.opts.Tracing }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -1575,7 +1576,7 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
-	if tr := tracing.FromContext(ctx); tr != nil {
+	if tr := p.opts.Tracing; tr != nil {
 		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
 	}
 

@@ -74,11 +74,6 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
 	ctx := context.Background()
 
-	// Inject tracing into context if available
-	if input.Tracing != nil {
-		ctx = tracing.WithTracing(ctx, input.Tracing)
-	}
-
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
 		ctx,
 		input.ProgramLike,
@@ -88,7 +83,7 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			// Options diagnostics include global diagnostics (even though we collect them separately),
 			// and global diagnostics create checkers, which then bind all of the files. Do this binding
 			// early so we can track the time.
-			if tr := tracing.FromContext(ctx); tr != nil {
+			if tr := input.Tracing; tr != nil {
 				defer tr.Push(tracing.PhaseBind, "bindSourceFiles", nil, true)()
 			}
 			bindStart := input.Sys.Now()
@@ -97,7 +92,7 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			return diags
 		},
 		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-			if tr := tracing.FromContext(ctx); tr != nil {
+			if tr := input.Tracing; tr != nil {
 				defer tr.Push(tracing.PhaseCheck, "checkSourceFiles", nil, true)()
 			}
 			checkStart := input.Sys.Now()

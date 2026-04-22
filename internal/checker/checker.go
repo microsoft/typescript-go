@@ -886,19 +886,20 @@ type Checker struct {
 
 	mu      sync.Mutex
 	tracer  TypeTracer       // Optional tracer for recording types (for --generateTrace)
-	tracing *tracing.Tracing // Cached tracing session, set once per checkSourceFile call
+	tracing *tracing.Tracing // Optional tracing session, set at construction
 }
 
 func NewChecker(program Program) (*Checker, *sync.Mutex) {
-	return NewCheckerWithTracer(program, nil)
+	return NewCheckerWithTracer(program, nil, nil)
 }
 
-func NewCheckerWithTracer(program Program, tracer TypeTracer) (*Checker, *sync.Mutex) {
+func NewCheckerWithTracer(program Program, tracer TypeTracer, tr *tracing.Tracing) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}
 	c.id = nextCheckerID.Add(1)
 	c.tracer = tracer
+	c.tracing = tr
 	c.program = program
 	c.compilerOptions = program.Options()
 	c.files = program.SourceFiles()
@@ -2143,7 +2144,6 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 
 func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool) {
 	c.ctx = ctx
-	c.tracing = tracing.FromContext(ctx)
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
 		c.saveDeferredDiagnostics = true

@@ -1,7 +1,6 @@
 package tracing
 
 import (
-	"context"
 	"fmt"
 	"maps"
 	"math"
@@ -17,25 +16,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
-
-// Context key for tracing
-type contextKey int
-
-const tracingContextKey contextKey = 0
-
-// WithTracing returns a new context with the given Tracing instance.
-func WithTracing(ctx context.Context, tr *Tracing) context.Context {
-	return context.WithValue(ctx, tracingContextKey, tr)
-}
-
-// FromContext returns the Tracing instance from the context, or nil if none.
-func FromContext(ctx context.Context) *Tracing {
-	if ctx == nil {
-		return nil
-	}
-	tr, _ := ctx.Value(tracingContextKey).(*Tracing)
-	return tr
-}
 
 // Tracer is an interface for recording types during type checking.
 // Each checker should have its own Tracer instance to avoid sharing types between checkers.

@@ -274,7 +274,7 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 }
 
 func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
-	if tr := tracing.FromContext(ctx); tr != nil {
+	if tr := p.program.Tracing(); tr != nil {
 		defer tr.Push(tracing.PhaseEmit, "emitBuildInfo", nil, true)()
 	}
 	buildInfoFileName := outputpaths.GetBuildInfoFileName(p.snapshot.options, tspath.ComparePathsOptions{
