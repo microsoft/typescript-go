@@ -565,11 +565,13 @@ func (b *NodeBuilderImpl) serializeTypeAliasForNamespace(symbol *ast.Symbol, nam
 func (b *NodeBuilderImpl) hoverExpressionWithTypeArguments(t *Type, flags ast.SymbolFlags) *ast.Node {
 	var typeArgs []*ast.Node
 	var reference *ast.Node
-	if t.Target() != nil && b.ch.IsSymbolAccessibleByFlags(t.Target().symbol, b.ctx.enclosingDeclaration, flags) {
+	if t.objectFlags&ObjectFlagsReference != 0 && t.Target() != nil && b.ch.IsSymbolAccessibleByFlags(t.Target().symbol, b.ctx.enclosingDeclaration, flags) {
 		typeArgs = core.Map(b.ch.getTypeArguments(t), func(arg *Type) *ast.Node { return b.typeToTypeNode(arg) })
 		reference = b.symbolToExpression(t.Target().symbol, ast.SymbolFlagsType)
 	} else if t.symbol != nil && b.ch.IsSymbolAccessibleByFlags(t.symbol, b.ctx.enclosingDeclaration, flags) {
 		reference = b.symbolToExpression(t.symbol, ast.SymbolFlagsType)
+	} else if t.symbol != nil && t.symbol.Name == ast.InternalSymbolNameClass {
+		reference = b.f.NewIdentifier(b.getNameOfSymbolAsWritten(t.symbol))
 	}
 	if reference != nil {
 		return b.f.NewExpressionWithTypeArguments(reference, b.f.NewNodeList(typeArgs))

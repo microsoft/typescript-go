@@ -171,7 +171,7 @@
 //     ^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | var iVal: <"hello">(a: "hello", b: string) => "hello"
+// | var iVal: new <"hello">(a: "hello", b: string) => "hello"
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -194,7 +194,7 @@
 //      ^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (method) I.method<"hello">(a: "hello", b: string): "hello"
+// | (method) I<string>.method<"hello">(a: "hello", b: string): "hello"
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -404,7 +404,7 @@
 //     ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | var iVal1: <I<string>>(a: I<string>, b: I<string>) => I<string>
+// | var iVal1: new <I<string>>(a: I<string>, b: I<string>) => I<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -455,7 +455,7 @@
 //       ^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
-// | (method) I1.method<I<string>>(a: I<string>, b: I<string>): I<string>
+// | (method) I1<I<string>>.method<I<string>>(a: I<string>, b: I<string>): I<string>
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -1111,7 +1111,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: <\"hello\">(a: \"hello\", b: string) => \"hello\"\n```\n"
+        "value": "```tsx\nvar iVal: new <\"hello\">(a: \"hello\", b: string) => \"hello\"\n```\n"
       },
       "range": {
         "start": {
@@ -1193,7 +1193,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) I.method<\"hello\">(a: \"hello\", b: string): \"hello\"\n```\n"
+        "value": "```tsx\n(method) I<string>.method<\"hello\">(a: \"hello\", b: string): \"hello\"\n```\n"
       },
       "range": {
         "start": {
@@ -2004,7 +2004,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal1: <I<string>>(a: I<string>, b: I<string>) => I<string>\n```\n"
+        "value": "```tsx\nvar iVal1: new <I<string>>(a: I<string>, b: I<string>) => I<string>\n```\n"
       },
       "range": {
         "start": {
@@ -2200,7 +2200,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) I1.method<I<string>>(a: I<string>, b: I<string>): I<string>\n```\n"
+        "value": "```tsx\n(method) I1<I<string>>.method<I<string>>(a: I<string>, b: I<string>): I<string>\n```\n"
       },
       "range": {
         "start": {

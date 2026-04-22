@@ -1047,8 +1047,14 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 		}
 	}
 	tx.tracker.PushErrorFallbackNode(assignment)
-	type_ := tx.ensureType(assignment, false)
-	varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+	var type_, initializer *ast.Node
+	if ast.IsPrimitiveLiteralValue(unwrapParenthesizedExpression(expression), true) {
+		initializer = tx.resolver.CreateLiteralConstValue(tx.EmitContext(), tx.EmitContext().ParseNode(assignment), tx.tracker)
+	}
+	if initializer == nil {
+		type_ = tx.ensureType(assignment, false)
+	}
+	varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, initializer)
 	tx.tracker.PopErrorFallbackNode()
 	var modList *ast.ModifierList
 	if tx.needsDeclare {
@@ -1066,7 +1072,16 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name *ast.Node) *ast.Node {
 	tx.resultHasExternalModuleIndicator = true
 	tx.resultHasScopeMarker = true
-	if ast.IsIdentifier(name) {
+	if isCommonJSAliasExport(input) {
+		// export { name }
+		// export { source as name }
+		propertyName := input.AsBinaryExpression().Right
+		if ast.IsIdentifier(name) && propertyName.Text() == name.Text() {
+			propertyName = nil
+		}
+		exportSpecifier := tx.Factory().NewExportSpecifier(false, propertyName, name)
+		return tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{exportSpecifier})), nil, nil)
+	} else if ast.IsIdentifier(name) {
 		if name.Text() == "default" {
 			// const _default: Type; export default _default;
 			newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
@@ -1136,6 +1151,15 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 	}
 }
 
+func isCommonJSAliasExport(node *ast.Node) bool {
+	if ast.IsBinaryExpression(node) && ast.IsIdentifier(node.AsBinaryExpression().Right) {
+		if symbol := node.Symbol(); symbol != nil && len(symbol.Declarations) == 1 {
+			return true
+		}
+	}
+	return false
+}
+
 func (tx *DeclarationTransformer) rewriteModuleSpecifier(parent *ast.Node, input *ast.Node) *ast.Node {
 	if input == nil {
 		return nil
@@ -1181,7 +1205,17 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 	// Should be removed createTypeOfDeclaration will actually now reuse the existing annotation so there is no real need to duplicate type walking
 	// Left in for now to minimize diff during syntactic type node builder refactor
 	if !ast.IsExportAssignment(node) && !ast.IsBindingElement(node) && node.Type() != nil && (!ast.IsParameterDeclaration(node) || !tx.resolver.RequiresAddingImplicitUndefined(node, nil, tx.enclosingDeclaration)) {
-		return tx.Visitor().Visit(node.Type())
+		if tx.state.currentSourceFile.IsJS() {
+			// JS types have a heap of constructs we can't directly emit into .d.ts files; the node builder contains logic to remap those where possible, so we invoke it here
+			// In strada we always built js declarations symbolically, so all js type nodes went through this postprocessing
+			res := tx.resolver.TryJSTypeNodeToTypeNode(tx.EmitContext(), node.Type(), tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+			if res != nil {
+				return res
+			}
+			// otherwise, fall back to full serialization
+		} else {
+			return tx.Visitor().Visit(node.Type())
+		}
 	}
 
 	oldErrorNameNode := tx.state.errorNameNode
