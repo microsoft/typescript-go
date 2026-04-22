@@ -76,8 +76,7 @@ func SymbolName(symbol *Symbol) string {
 	return symbol.Name
 }
 
-// EscapeInternalSymbolName rewrites internal symbol name markers (\xFE) to
-// a printable form used by TypeScript's baseline outputs.
+// EscapeInternalSymbolName replaces internal symbol name markers ("\xFE") with "__".
 func EscapeInternalSymbolName(name string) string {
 	return strings.ReplaceAll(name, InternalSymbolNamePrefix, "__")
 }
