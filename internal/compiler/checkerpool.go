@@ -22,9 +22,8 @@ type CheckerPool interface {
 }
 
 type checkerPool struct {
-	checkerCount int
-	program      *Program
-	tracing      *tracing.Tracing
+	program *Program
+	tracing *tracing.Tracing
 
 	createCheckersOnce sync.Once
 	checkers           []*checker.Checker
@@ -49,11 +48,10 @@ func newCheckerPoolWithTracing(program *Program, tr *tracing.Tracing) *checkerPo
 	checkerCount = max(min(checkerCount, len(program.files), 256), 1)
 
 	pool := &checkerPool{
-		program:      program,
-		checkerCount: checkerCount,
-		checkers:     make([]*checker.Checker, checkerCount),
-		locks:        make([]*sync.Mutex, checkerCount),
-		tracing:      tr,
+		program:  program,
+		checkers: make([]*checker.Checker, checkerCount),
+		locks:    make([]*sync.Mutex, checkerCount),
+		tracing:  tr,
 	}
 
 	return pool

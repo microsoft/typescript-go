@@ -92,16 +92,6 @@ type TraceRecord struct {
 	TypesPath      string `json:"typesPath,omitzero"`
 }
 
-// traceStackEntry records the state of a Push call so Pop can
-// either emit a matching "E" event (separateBeginAndEnd) or a sampled "X" event.
-type traceStackEntry struct {
-	phase               Phase
-	name                string
-	args                map[string]any
-	startTime           time.Time // wall-clock time for sampling decisions
-	separateBeginAndEnd bool
-}
-
 type traceEvent struct {
 	PID  int            `json:"pid"`
 	TID  int            `json:"tid"`
@@ -132,7 +122,6 @@ type Tracing struct {
 	deterministic    bool   // when true, use monotonic counter instead of real time
 	timestampCounter uint64 // only used in deterministic mode
 	startTime        time.Time
-	eventStack       []traceStackEntry
 	mu               sync.Mutex
 }
 
@@ -215,112 +204,61 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, Args: args})
 }
 
-// pushTo implements the Push logic, writing to the given buffer and event stack.
-func pushTo(buf *strings.Builder, stack *[]traceStackEntry, ts float64, phase Phase, name string, separateBeginAndEnd bool, args map[string]any) {
-	*stack = append(*stack, traceStackEntry{
-		phase:               phase,
-		name:                name,
-		args:                maps.Clone(args),
-		startTime:           time.Now(),
-		separateBeginAndEnd: separateBeginAndEnd,
-	})
-
-	if separateBeginAndEnd {
-		buf.WriteString(",\n")
-		writeEventTo(buf, traceEvent{PID: 1, TID: 1, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
-	}
-}
-
-// popFrom implements the Pop logic, writing to the given buffer and event stack.
-// When deterministic is true, sampled events are skipped to ensure stable output.
-func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTime time.Time, deterministic bool) {
-	if len(*stack) == 0 {
-		return
-	}
-	n := len(*stack)
-	entry := (*stack)[n-1]
-	*stack = (*stack)[:n-1]
-
-	if entry.separateBeginAndEnd {
-		buf.WriteString(",\n")
-		writeEventTo(buf, traceEvent{PID: 1, TID: 1, PH: "E", Cat: string(entry.phase), TS: ts, Name: entry.name, Args: entry.args})
-	} else if !deterministic {
-		// Sampled events use wall-clock time for duration and sampling boundary
-		// checks. In deterministic mode, skip them entirely to avoid flaky baselines.
-		now := time.Now()
-		startMicros := float64(entry.startTime.Sub(startTime).Nanoseconds()) / 1000.0
-		endMicros := float64(now.Sub(startTime).Nanoseconds()) / 1000.0
-		intervalMicros := float64(sampleInterval.Nanoseconds()) / 1000.0
-		dur := endMicros - startMicros
-
-		if intervalMicros-math.Mod(startMicros, intervalMicros) <= dur {
-			buf.WriteString(",\n")
-			writeEventTo(buf, traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(entry.phase), TS: startMicros, Name: entry.name, Dur: &dur, Args: entry.args})
-		}
-	}
-}
-
 // Push starts a trace event block on the shared trace buffer.
-// Safe to call on nil receiver.
+// Safe to call on nil receiver. Safe to call from multiple goroutines.
 //
 // When separateBeginAndEnd is true, a "B" (begin) event is written immediately and
-// Pop will write a matching "E" (end) event. This is used for events that must always
-// appear in the trace (e.g. checkSourceFile, createProgram, emit).
+// the returned function writes a matching "E" (end) event. This is used for events
+// that must always appear in the trace (e.g. checkSourceFile, createProgram, emit).
 //
 // When separateBeginAndEnd is false (the default in TypeScript), the event is only
 // recorded if its duration crosses a 10ms sampling boundary, matching TypeScript's
 // behavior of sampling short-lived events to avoid trace bloat.
 //
 // Returns a function that should be called (typically deferred) to end the event.
+// Each returned function is self-contained and does not depend on a shared stack,
+// making it safe for concurrent use across goroutines.
 func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
 	if tr == nil || !tr.traceStarted {
 		return func() {}
 	}
 
-	tr.mu.Lock()
-	defer tr.mu.Unlock()
-
-	var ts float64
 	if separateBeginAndEnd {
-		ts = tr.timestamp()
-	}
-	pushTo(&tr.traceContent, &tr.eventStack, ts, phase, name, separateBeginAndEnd, args)
-	return func() { tr.Pop() }
-}
+		tr.mu.Lock()
+		ts := tr.timestamp()
+		tr.traceContent.WriteString(",\n")
+		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
+		tr.mu.Unlock()
 
-// Pop ends the most recent trace event block on the shared trace buffer.
-// Safe to call on nil receiver.
-func (tr *Tracing) Pop() {
-	if tr == nil || !tr.traceStarted {
-		return
-	}
-
-	tr.mu.Lock()
-	defer tr.mu.Unlock()
-
-	if len(tr.eventStack) == 0 {
-		return
-	}
-	var ts float64
-	if tr.eventStack[len(tr.eventStack)-1].separateBeginAndEnd {
-		ts = tr.timestamp()
-	}
-	popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime, tr.deterministic)
-}
-
-// PopAll closes all open trace events on the shared trace buffer.
-// Safe to call on nil receiver.
-func (tr *Tracing) PopAll() {
-	if tr == nil || !tr.traceStarted {
-		return
+		return func() {
+			tr.mu.Lock()
+			defer tr.mu.Unlock()
+			endTs := tr.timestamp()
+			tr.traceContent.WriteString(",\n")
+			tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "E", Cat: string(phase), TS: endTs, Name: name, Args: args})
+		}
 	}
 
-	tr.mu.Lock()
-	defer tr.mu.Unlock()
+	// Sampled event: only record if duration crosses a sampling boundary.
+	// In deterministic mode, sampled events are skipped entirely to avoid flaky baselines.
+	startTime := time.Now()
+	args = maps.Clone(args)
+	return func() {
+		if tr.deterministic {
+			return
+		}
+		now := time.Now()
+		tr.mu.Lock()
+		defer tr.mu.Unlock()
+		startMicros := float64(startTime.Sub(tr.startTime).Nanoseconds()) / 1000.0
+		endMicros := float64(now.Sub(tr.startTime).Nanoseconds()) / 1000.0
+		intervalMicros := float64(sampleInterval.Nanoseconds()) / 1000.0
+		dur := endMicros - startMicros
 
-	ts := tr.timestamp()
-	for i := len(tr.eventStack) - 1; i >= 0; i-- {
-		popFrom(&tr.traceContent, &tr.eventStack, ts, tr.startTime, tr.deterministic)
+		if intervalMicros-math.Mod(startMicros, intervalMicros) <= dur {
+			tr.traceContent.WriteString(",\n")
+			tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
+		}
 	}
 }
 

@@ -149,13 +149,10 @@ func processAllProgramFiles(
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	if opts.Tracing != nil {
-		opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", map[string]any{"count": len(rootFiles)}, false)
+		defer opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", map[string]any{"count": len(rootFiles)}, false)()
 	}
 	for index, rootFile := range rootFiles {
 		loader.addRootTask(rootFile, nil, &FileIncludeReason{kind: fileIncludeKindRootFile, data: index})
-	}
-	if opts.Tracing != nil {
-		opts.Tracing.Pop()
 	}
 	if len(rootFiles) > 0 && compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
@@ -232,9 +229,10 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 			// Under bundler module resolution, this also triggers the "import" condition to be used.
 			resolutionMode := core.ResolutionModeNone
 			resolved, trace := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
-			if p.opts.Tracing != nil {
-				p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": name, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindAutomaticTypeDirectiveFile)}, false)
-			}
+		var traceDone func()
+		if p.opts.Tracing != nil {
+			traceDone = p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": name, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindAutomaticTypeDirectiveFile)}, false)
+		}
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: name, Mode: resolutionMode}] = resolved
 			typeResolutionsTrace = append(typeResolutionsTrace, trace...)
 			if resolved.IsResolved() {
@@ -261,9 +259,7 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 					},
 				})
 			}
-			if p.opts.Tracing != nil {
-				p.opts.Tracing.Pop()
-			}
+			traceDone()
 		}
 	}
 	return toParse, typeResolutionsInFile, typeResolutionsTrace, pDiagnostics
@@ -449,8 +445,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 		return
 	}
 	if p.opts.Tracing != nil {
-		p.opts.Tracing.Push(tracing.PhaseProgram, "resolveTypeReferenceDirectiveNamesWorker", map[string]any{"containingFileName": file.FileName()}, false)
-		defer p.opts.Tracing.Pop()
+		defer p.opts.Tracing.Push(tracing.PhaseProgram, "resolveTypeReferenceDirectiveNamesWorker", map[string]any{"containingFileName": file.FileName()}, false)()
 	}
 	meta := t.metadata
 
@@ -460,9 +455,9 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(file)
 		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
 		resolved, trace := p.resolver.ResolveTypeReferenceDirective(ref.FileName, fileName, resolutionMode, redirect)
-
+		var traceDone func()
 		if p.opts.Tracing != nil {
-			p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": ref.FileName, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindTypeReferenceDirective), "refPath": string(t.path)}, false)
+			traceDone = p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": ref.FileName, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindTypeReferenceDirective), "refPath": string(t.path)}, false)
 		}
 		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
 		includeReason := &FileIncludeReason{
@@ -488,8 +483,8 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 				data: includeReason,
 			})
 		}
-		if p.opts.Tracing != nil {
-			p.opts.Tracing.Pop()
+		if traceDone != nil {
+			traceDone()
 		}
 	}
 
@@ -501,8 +496,7 @@ const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
 func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 	if p.opts.Tracing != nil {
-		p.opts.Tracing.Push(tracing.PhaseProgram, "resolveModuleNamesWorker", map[string]any{"containingFileName": t.file.FileName()}, false)
-		defer p.opts.Tracing.Pop()
+		defer p.opts.Tracing.Push(tracing.PhaseProgram, "resolveModuleNamesWorker", map[string]any{"containingFileName": t.file.FileName()}, false)()
 	}
 	file := t.file
 	meta := t.metadata
