@@ -545,60 +545,48 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 
 	// Index type (keyof)
 	if indexType := typ.IndexType(); indexType != nil {
-		id := indexType.Id()
-		desc.KeyofType = &id
+		desc.KeyofType = uint32Ptr(indexType.Id())
 	}
 
 	// Indexed access type
 	if objType := typ.IndexedAccessObjectType(); objType != nil {
-		id := objType.Id()
-		desc.IndexedAccessObjectType = &id
+		desc.IndexedAccessObjectType = uint32Ptr(objType.Id())
 	}
 	if idxType := typ.IndexedAccessIndexType(); idxType != nil {
-		id := idxType.Id()
-		desc.IndexedAccessIndexType = &id
+		desc.IndexedAccessIndexType = uint32Ptr(idxType.Id())
 	}
 
 	// Conditional type
 	if typ.IsConditional() {
 		if checkType := typ.ConditionalCheckType(); checkType != nil {
-			id := checkType.Id()
-			desc.ConditionalCheckType = &id
+			desc.ConditionalCheckType = uint32Ptr(checkType.Id())
 		}
 		if extendsType := typ.ConditionalExtendsType(); extendsType != nil {
-			id := extendsType.Id()
-			desc.ConditionalExtendsType = &id
+			desc.ConditionalExtendsType = uint32Ptr(extendsType.Id())
 		}
 		if trueType := typ.ConditionalTrueType(); trueType != nil {
-			id := int32(trueType.Id())
-			desc.ConditionalTrueType = &id
+			desc.ConditionalTrueType = int32Ptr(int32(trueType.Id()))
 		} else {
-			id := int32(-1)
-			desc.ConditionalTrueType = &id
+			desc.ConditionalTrueType = int32Ptr(-1)
 		}
 		if falseType := typ.ConditionalFalseType(); falseType != nil {
-			id := int32(falseType.Id())
-			desc.ConditionalFalseType = &id
+			desc.ConditionalFalseType = int32Ptr(int32(falseType.Id()))
 		} else {
-			id := int32(-1)
-			desc.ConditionalFalseType = &id
+			desc.ConditionalFalseType = int32Ptr(-1)
 		}
 	}
 
 	// Substitution type
 	if baseType := typ.SubstitutionBaseType(); baseType != nil {
-		id := baseType.Id()
-		desc.SubstitutionBaseType = &id
+		desc.SubstitutionBaseType = uint32Ptr(baseType.Id())
 	}
 	if constraint := typ.SubstitutionConstraintType(); constraint != nil {
-		id := constraint.Id()
-		desc.ConstraintType = &id
+		desc.ConstraintType = uint32Ptr(constraint.Id())
 	}
 
 	// Reference type
 	if target := typ.ReferenceTarget(); target != nil {
-		id := target.Id()
-		desc.InstantiatedType = &id
+		desc.InstantiatedType = uint32Ptr(target.Id())
 	}
 	if args := typ.ReferenceTypeArguments(); len(args) > 0 {
 		desc.TypeArguments = mapTypeIds(args)
@@ -609,26 +597,21 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 
 	// Reverse mapped type
 	if sourceType := typ.ReverseMappedSourceType(); sourceType != nil {
-		id := sourceType.Id()
-		desc.ReverseMappedSourceType = &id
+		desc.ReverseMappedSourceType = uint32Ptr(sourceType.Id())
 	}
 	if mappedType := typ.ReverseMappedMappedType(); mappedType != nil {
-		id := mappedType.Id()
-		desc.ReverseMappedMappedType = &id
+		desc.ReverseMappedMappedType = uint32Ptr(mappedType.Id())
 	}
 	if constraintType := typ.ReverseMappedConstraintType(); constraintType != nil {
-		id := constraintType.Id()
-		desc.ReverseMappedConstraintType = &id
+		desc.ReverseMappedConstraintType = uint32Ptr(constraintType.Id())
 	}
 
 	// Evolving array type
 	if elemType := typ.EvolvingArrayElementType(); elemType != nil {
-		id := elemType.Id()
-		desc.EvolvingArrayElementType = &id
+		desc.EvolvingArrayElementType = uint32Ptr(elemType.Id())
 	}
 	if finalType := typ.EvolvingArrayFinalType(); finalType != nil {
-		id := finalType.Id()
-		desc.EvolvingArrayFinalType = &id
+		desc.EvolvingArrayFinalType = uint32Ptr(finalType.Id())
 	}
 
 	// Pattern (destructuring)
@@ -666,6 +649,14 @@ func mapTypeIds(types []TracedType) []uint32 {
 	return ids
 }
 
+func uint32Ptr(v uint32) *uint32 {
+	return &v
+}
+
+func int32Ptr(v int32) *int32 {
+	return &v
+}
+
 func getLocation(node *ast.Node) *Location {
 	if node == nil {
 		return nil
@@ -675,7 +666,8 @@ func getLocation(node *ast.Node) *Location {
 		return nil
 	}
 
-	startLine, startChar := scanner.GetECMALineAndUTF16CharacterOfPosition(file, node.Pos())
+	startPos := scanner.GetTokenPosOfNode(node, file, false)
+	startLine, startChar := scanner.GetECMALineAndUTF16CharacterOfPosition(file, startPos)
 	endLine, endChar := scanner.GetECMALineAndUTF16CharacterOfPosition(file, node.End())
 
 	return &Location{
