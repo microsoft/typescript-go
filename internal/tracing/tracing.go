@@ -206,6 +206,13 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
+	// Re-check under the lock: StopTracing may have run between the load above
+	// and acquiring the lock. Once stopped, further writes would land in a buffer
+	// that has already been flushed and the closing "]" written.
+	if !tr.traceStarted.Load() {
+		return
+	}
+
 	ts := tr.timestamp()
 	tr.traceContent.WriteString(",\n")
 	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, Args: args})
@@ -233,6 +240,10 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 
 	if separateBeginAndEnd {
 		tr.mu.Lock()
+		if !tr.traceStarted.Load() {
+			tr.mu.Unlock()
+			return func() {}
+		}
 		ts := tr.timestamp()
 		tr.traceContent.WriteString(",\n")
 		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
@@ -242,6 +253,9 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 		return func() {
 			tr.mu.Lock()
 			defer tr.mu.Unlock()
+			if !tr.traceStarted.Load() {
+				return
+			}
 			endTs := tr.timestamp()
 			tr.traceContent.WriteString(",\n")
 			tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "E", Cat: string(phase), TS: endTs, Name: name, Args: args})
@@ -266,6 +280,9 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 		}
 		tr.mu.Lock()
 		defer tr.mu.Unlock()
+		if !tr.traceStarted.Load() {
+			return
+		}
 		tr.traceContent.WriteString(",\n")
 		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
 		tr.maybeFlushLocked()
