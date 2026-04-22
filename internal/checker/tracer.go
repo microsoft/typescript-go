@@ -56,6 +56,9 @@ func (a *tracedTypeAdapter) Symbol() *ast.Symbol {
 }
 
 func (a *tracedTypeAdapter) AliasSymbol() *ast.Symbol {
+	if a.t.alias == nil {
+		return nil
+	}
 	return a.t.alias.Symbol()
 }
 

@@ -111,6 +111,11 @@ type Tracing struct {
 	timestampCounter uint64 // only used in deterministic mode
 	startTime        time.Time
 	mu               sync.Mutex
+	// flushErr holds the first error encountered while appending the trace buffer
+	// to disk. Once set, subsequent flushes become no-ops and the error is
+	// surfaced from StopTracing so that transient I/O failures (disk full,
+	// permission denied, etc.) don't crash the compiler.
+	flushErr error
 }
 
 // Phase represents a tracing phase
@@ -186,13 +191,19 @@ func (tr *Tracing) writeEvent(event traceEvent) {
 }
 
 // maybeFlushLocked appends the buffered trace content to disk if it has grown
-// past the flush threshold. Caller must hold tr.mu.
+// past the flush threshold. Caller must hold tr.mu. If a previous flush failed,
+// or this flush fails, the error is recorded in tr.flushErr and subsequent
+// writes become no-ops; the error is surfaced from StopTracing.
 func (tr *Tracing) maybeFlushLocked() {
+	if tr.flushErr != nil {
+		tr.traceContent.Reset()
+		return
+	}
 	if tr.traceContent.Len() < flushThreshold {
 		return
 	}
 	if err := tr.fs.AppendFile(tr.tracePath, tr.traceContent.String()); err != nil {
-		panic(fmt.Sprintf("failed to flush trace file: %v", err))
+		tr.flushErr = fmt.Errorf("failed to flush trace file: %w", err)
 	}
 	tr.traceContent.Reset()
 }
@@ -328,6 +339,12 @@ func (tr *Tracing) StopTracing() error {
 
 	// Close the trace file(s)
 	if tr.traceStarted.Load() {
+		// Surface any buffered flush failure before attempting the final write.
+		if tr.flushErr != nil {
+			tr.traceContent.Reset()
+			tr.traceStarted.Store(false)
+			return tr.flushErr
+		}
 		// Flush any remaining buffered content and close the JSON array.
 		if err := tr.fs.AppendFile(tr.tracePath, tr.traceContent.String()+"\n]\n"); err != nil {
 			return fmt.Errorf("failed to write trace file: %w", err)
