@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -96,7 +97,7 @@ type traceEvent struct {
 	PID  int            `json:"pid"`
 	TID  int            `json:"tid"`
 	PH   string         `json:"ph"`
-	Cat  string         `json:"cat,omitzero"`
+	Cat  string         `json:"cat"`
 	TS   float64        `json:"ts"`
 	Name string         `json:"name,omitzero"`
 	Dur  *float64       `json:"dur,omitzero"`
@@ -118,7 +119,7 @@ type Tracing struct {
 	legend           []TraceRecord
 	tracers          []*typeTracer
 	traceContent     strings.Builder
-	traceStarted     bool
+	traceStarted     atomic.Bool
 	deterministic    bool   // when true, use monotonic counter instead of real time
 	timestampCounter uint64 // only used in deterministic mode
 	startTime        time.Time
@@ -148,10 +149,10 @@ func StartTracing(fs vfs.FS, traceDir string, configFilePath string, determinist
 		configFilePath: configFilePath,
 		legend:         []TraceRecord{},
 		tracers:        []*typeTracer{},
-		traceStarted:   true,
 		deterministic:  deterministic,
 		startTime:      time.Now(),
 	}
+	tr.traceStarted.Store(true)
 
 	// Write the trace file header with metadata events
 	tr.traceContent.WriteString("[\n")
@@ -192,7 +193,7 @@ func (tr *Tracing) writeEvent(event traceEvent) {
 // Instant records an instant event in the trace.
 // Safe to call on nil receiver.
 func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
-	if tr == nil || !tr.traceStarted {
+	if tr == nil || !tr.traceStarted.Load() {
 		return
 	}
 
@@ -219,7 +220,7 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 // Each returned function is self-contained and does not depend on a shared stack,
 // making it safe for concurrent use across goroutines.
 func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
-	if tr == nil || !tr.traceStarted {
+	if tr == nil || !tr.traceStarted.Load() {
 		return func() {}
 	}
 
@@ -240,25 +241,24 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 	}
 
 	// Sampled event: only record if duration crosses a sampling boundary.
-	// In deterministic mode, sampled events are skipped entirely to avoid flaky baselines.
+	// In deterministic mode, sampled events are skipped entirely to avoid flaky baselines,
+	// so avoid the cost of cloning args / capturing the start time.
+	if tr.deterministic {
+		return func() {}
+	}
 	startTime := time.Now()
 	args = maps.Clone(args)
 	return func() {
-		if tr.deterministic {
+		dur := float64(time.Since(startTime).Nanoseconds()) / 1000.0
+		startMicros := float64(startTime.Sub(tr.startTime).Nanoseconds()) / 1000.0
+		intervalMicros := float64(sampleInterval.Nanoseconds()) / 1000.0
+		if intervalMicros-math.Mod(startMicros, intervalMicros) > dur {
 			return
 		}
-		now := time.Now()
 		tr.mu.Lock()
 		defer tr.mu.Unlock()
-		startMicros := float64(startTime.Sub(tr.startTime).Nanoseconds()) / 1000.0
-		endMicros := float64(now.Sub(tr.startTime).Nanoseconds()) / 1000.0
-		intervalMicros := float64(sampleInterval.Nanoseconds()) / 1000.0
-		dur := endMicros - startMicros
-
-		if intervalMicros-math.Mod(startMicros, intervalMicros) <= dur {
-			tr.traceContent.WriteString(",\n")
-			tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
-		}
+		tr.traceContent.WriteString(",\n")
+		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
 	}
 }
 
@@ -300,7 +300,7 @@ func (tr *Tracing) StopTracing() error {
 	defer tr.mu.Unlock()
 
 	// Close the trace file(s)
-	if tr.traceStarted {
+	if tr.traceStarted.Load() {
 		sharedContent := tr.traceContent.String()
 
 		// Write shared content to trace_0.json
@@ -308,7 +308,7 @@ func (tr *Tracing) StopTracing() error {
 		if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n"); err != nil {
 			return fmt.Errorf("failed to write trace file: %w", err)
 		}
-		tr.traceStarted = false
+		tr.traceStarted.Store(false)
 	}
 
 	// Sort legend entries by typesPath for deterministic output
@@ -364,12 +364,9 @@ func (t *typeTracer) DumpTypes() error {
 	for i, typ := range types {
 		descriptor := t.buildTypeDescriptor(typ, recursionIdentityMap)
 
-		data, err := json.Marshal(descriptor)
-		if err != nil {
+		if err := json.MarshalWrite(&sb, descriptor); err != nil {
 			return fmt.Errorf("failed to marshal type %d: %w", typ.Id(), err)
 		}
-
-		sb.Write(data)
 
 		if i < len(types)-1 {
 			sb.WriteString(",\n")
