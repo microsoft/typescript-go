@@ -33,6 +33,7 @@ const IMPORT_UTIL = `. "github.com/microsoft/typescript-go/internal/fourslash/te
 const allowedCodeFixIds = new Set([
     "fixMissingImport",
     "fixMissingTypeAnnotationOnExports",
+    "fixClassIncorrectlyImplementsInterface",
 ]);
 
 // File name prefixes for code fix tests that are allowed even without a fixId.
@@ -42,6 +43,7 @@ const allowedCodeFixDescriptionPrefixes = [
     "Import ",
     "Add import from ",
     "Update import from ",
+    "Implement interface '",
     "Change 'import' to 'import type'",
     "Add annotation of type",
     "Add return type",
@@ -4233,6 +4235,24 @@ function resolveDescriptionExpression(expr: ts.Expression, sourceFile: ts.Source
     // String literal
     const str = getStringLiteralLike(expr);
     if (str) return str.text;
+
+    // [ts.Diagnostics.Foo.message, "arg0", "arg1", ...]
+    if (ts.isArrayLiteralExpression(expr) && expr.elements.length > 0) {
+        const [diagnostic] = expr.elements;
+        const template = resolveDescriptionExpression(diagnostic, sourceFile);
+        if (template) {
+            let message = template;
+            for (let i = 1; i < expr.elements.length; i++) {
+                const arg = resolveDescriptionExpression(expr.elements[i], sourceFile);
+                if (arg === undefined) {
+                    return undefined;
+                }
+                message = message.replaceAll(`{${i - 1}}`, arg);
+            }
+            return message;
+        }
+        return undefined;
+    }
 
     // ts.Diagnostics.Foo_bar.message
     if (ts.isPropertyAccessExpression(expr) && expr.name.text === "message") {
