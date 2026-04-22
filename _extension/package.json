@@ -79,10 +79,10 @@
                             "experimental"
                         ]
                     },
-                    "typescript.native-preview.showPID": {
+                    "typescript.native-preview.showDebugInfo": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Show the language server process ID in the status bar.",
+                        "description": "Show debug information (PID, executable path) in the server menu.",
                         "tags": [
                             "experimental"
                         ]

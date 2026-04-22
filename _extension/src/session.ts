@@ -121,7 +121,7 @@ class Session implements vscode.Disposable {
     async start(context: vscode.ExtensionContext): Promise<void> {
         const exe = await getExe(context);
         await this.client.start(exe);
-        this.disposables.push(setupStatusBar(exe.version, this.client.serverPid));
+        this.disposables.push(setupStatusBar(exe.version));
 
         // Set up active editor tracker and UI features
         const activeEditorTracker = new ActiveJsTsEditorTracker();
@@ -156,11 +156,13 @@ class Session implements vscode.Disposable {
             this.traceOutputChannel.show();
         }));
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.selectVersion", async () => {
+        this.disposables.push(vscode.commands.registerCommand("typescript.selectTypeScriptVersion", async () => {
             await promptSelectVersion(this.context, this.outputChannel);
         }));
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", () => {
+            showCommands(this.client);
+        }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
             this.telemetryReporter.sendTelemetryEvent("command.reportIssue");
@@ -255,8 +257,15 @@ class Session implements vscode.Disposable {
     }
 }
 
-async function showCommands(): Promise<void> {
-    const commands: readonly { label: string; description: string; command: string; }[] = [
+async function showCommands(client: Client): Promise<void> {
+    interface CommandItem {
+        label: string;
+        description?: string;
+        kind?: vscode.QuickPickItemKind;
+        command?: string;
+        action?: () => Promise<void>;
+    }
+    const commands: CommandItem[] = [
         {
             label: "$(refresh) Restart Server",
             description: "Restart the TypeScript Native Preview language server",
@@ -280,7 +289,7 @@ async function showCommands(): Promise<void> {
         {
             label: "$(versions) Select Version",
             description: "Choose between bundled and workspace versions",
-            command: "typescript.native-preview.selectVersion",
+            command: "typescript.selectTypeScriptVersion",
         },
         {
             label: "$(stop-circle) Disable TypeScript Native Preview",
@@ -289,12 +298,44 @@ async function showCommands(): Promise<void> {
         },
     ];
 
+    const showDebugInfo = vscode.workspace.getConfiguration("typescript.native-preview").get<boolean>("showDebugInfo", false);
+    if (showDebugInfo) {
+        const exe = client.getCurrentExe();
+        const pid = client.serverPid;
+        commands.push({ label: "", kind: vscode.QuickPickItemKind.Separator });
+        if (exe) {
+            commands.push({
+                label: `Executable`,
+                description: exe.path,
+                action: async () => {
+                    await vscode.env.clipboard.writeText(exe.path);
+                    vscode.window.showInformationMessage("Executable path copied to clipboard.");
+                },
+            });
+        }
+        if (pid) {
+            commands.push({
+                label: `PID`,
+                description: `${pid}`,
+                action: async () => {
+                    await vscode.env.clipboard.writeText(`${pid}`);
+                    vscode.window.showInformationMessage("Server PID copied to clipboard.");
+                },
+            });
+        }
+    }
+
     const selected = await vscode.window.showQuickPick(commands, {
         placeHolder: "TypeScript Native Preview Commands",
     });
 
     if (selected) {
-        await vscode.commands.executeCommand(selected.command);
+        if (selected.action) {
+            await selected.action();
+        }
+        else if (selected.command) {
+            await vscode.commands.executeCommand(selected.command);
+        }
     }
 }
 
