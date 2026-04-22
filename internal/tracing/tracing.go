@@ -545,48 +545,48 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 
 	// Index type (keyof)
 	if indexType := typ.IndexType(); indexType != nil {
-		desc.KeyofType = uint32Ptr(indexType.Id())
+		desc.KeyofType = new(indexType.Id())
 	}
 
 	// Indexed access type
 	if objType := typ.IndexedAccessObjectType(); objType != nil {
-		desc.IndexedAccessObjectType = uint32Ptr(objType.Id())
+		desc.IndexedAccessObjectType = new(objType.Id())
 	}
 	if idxType := typ.IndexedAccessIndexType(); idxType != nil {
-		desc.IndexedAccessIndexType = uint32Ptr(idxType.Id())
+		desc.IndexedAccessIndexType = new(idxType.Id())
 	}
 
 	// Conditional type
 	if typ.IsConditional() {
 		if checkType := typ.ConditionalCheckType(); checkType != nil {
-			desc.ConditionalCheckType = uint32Ptr(checkType.Id())
+			desc.ConditionalCheckType = new(checkType.Id())
 		}
 		if extendsType := typ.ConditionalExtendsType(); extendsType != nil {
-			desc.ConditionalExtendsType = uint32Ptr(extendsType.Id())
+			desc.ConditionalExtendsType = new(extendsType.Id())
 		}
 		if trueType := typ.ConditionalTrueType(); trueType != nil {
-			desc.ConditionalTrueType = int32Ptr(int32(trueType.Id()))
+			desc.ConditionalTrueType = new(int32(trueType.Id()))
 		} else {
-			desc.ConditionalTrueType = int32Ptr(-1)
+			desc.ConditionalTrueType = new(int32(-1))
 		}
 		if falseType := typ.ConditionalFalseType(); falseType != nil {
-			desc.ConditionalFalseType = int32Ptr(int32(falseType.Id()))
+			desc.ConditionalFalseType = new(int32(falseType.Id()))
 		} else {
-			desc.ConditionalFalseType = int32Ptr(-1)
+			desc.ConditionalFalseType = new(int32(-1))
 		}
 	}
 
 	// Substitution type
 	if baseType := typ.SubstitutionBaseType(); baseType != nil {
-		desc.SubstitutionBaseType = uint32Ptr(baseType.Id())
+		desc.SubstitutionBaseType = new(baseType.Id())
 	}
 	if constraint := typ.SubstitutionConstraintType(); constraint != nil {
-		desc.ConstraintType = uint32Ptr(constraint.Id())
+		desc.ConstraintType = new(constraint.Id())
 	}
 
 	// Reference type
 	if target := typ.ReferenceTarget(); target != nil {
-		desc.InstantiatedType = uint32Ptr(target.Id())
+		desc.InstantiatedType = new(target.Id())
 	}
 	if args := typ.ReferenceTypeArguments(); len(args) > 0 {
 		desc.TypeArguments = mapTypeIds(args)
@@ -597,21 +597,21 @@ func (t *typeTracer) buildTypeDescriptor(typ TracedType, recursionIdentityMap ma
 
 	// Reverse mapped type
 	if sourceType := typ.ReverseMappedSourceType(); sourceType != nil {
-		desc.ReverseMappedSourceType = uint32Ptr(sourceType.Id())
+		desc.ReverseMappedSourceType = new(sourceType.Id())
 	}
 	if mappedType := typ.ReverseMappedMappedType(); mappedType != nil {
-		desc.ReverseMappedMappedType = uint32Ptr(mappedType.Id())
+		desc.ReverseMappedMappedType = new(mappedType.Id())
 	}
 	if constraintType := typ.ReverseMappedConstraintType(); constraintType != nil {
-		desc.ReverseMappedConstraintType = uint32Ptr(constraintType.Id())
+		desc.ReverseMappedConstraintType = new(constraintType.Id())
 	}
 
 	// Evolving array type
 	if elemType := typ.EvolvingArrayElementType(); elemType != nil {
-		desc.EvolvingArrayElementType = uint32Ptr(elemType.Id())
+		desc.EvolvingArrayElementType = new(elemType.Id())
 	}
 	if finalType := typ.EvolvingArrayFinalType(); finalType != nil {
-		desc.EvolvingArrayFinalType = uint32Ptr(finalType.Id())
+		desc.EvolvingArrayFinalType = new(finalType.Id())
 	}
 
 	// Pattern (destructuring)
@@ -647,14 +647,6 @@ func mapTypeIds(types []TracedType) []uint32 {
 		}
 	}
 	return ids
-}
-
-func uint32Ptr(v uint32) *uint32 {
-	return &v
-}
-
-func int32Ptr(v int32) *int32 {
-	return &v
 }
 
 func getLocation(node *ast.Node) *Location {
