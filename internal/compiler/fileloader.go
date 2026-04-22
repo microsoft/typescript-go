@@ -229,10 +229,10 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 			// Under bundler module resolution, this also triggers the "import" condition to be used.
 			resolutionMode := core.ResolutionModeNone
 			resolved, trace := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
-		var traceDone func()
-		if p.opts.Tracing != nil {
-			traceDone = p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": name, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindAutomaticTypeDirectiveFile)}, false)
-		}
+			var traceDone func()
+			if p.opts.Tracing != nil {
+				traceDone = p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": name, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindAutomaticTypeDirectiveFile)}, false)
+			}
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: name, Mode: resolutionMode}] = resolved
 			typeResolutionsTrace = append(typeResolutionsTrace, trace...)
 			if resolved.IsResolved() {
