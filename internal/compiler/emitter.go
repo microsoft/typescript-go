@@ -56,6 +56,28 @@ func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, d
 	return []*declarations.DeclarationTransformer{transform}
 }
 
+func (e *emitter) runScriptTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile) *ast.SourceFile {
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "transformNodes", map[string]any{"path": string(sourceFile.Path())}, false)()
+	}
+	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
+		sourceFile = transformer.TransformSourceFile(sourceFile)
+	}
+	return sourceFile
+}
+
+func (e *emitter) runDeclarationTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, declarationFilePath, declarationMapPath string) (*ast.SourceFile, []*ast.Diagnostic) {
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "transformNodes", map[string]any{"path": string(sourceFile.Path())}, false)()
+	}
+	var diags []*ast.Diagnostic
+	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
+		sourceFile = transformer.TransformSourceFile(sourceFile)
+		diags = append(diags, transformer.GetDiagnostics()...)
+	}
+	return sourceFile, diags
+}
+
 func getModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	switch opts.CompilerOptions.GetEmitModuleKind() {
 	case core.ModuleKindPreserve:
@@ -167,9 +189,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
 
-	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
-		sourceFile = transformer.TransformSourceFile(sourceFile)
-	}
+	sourceFile = e.runScriptTransformers(emitContext, sourceFile)
 
 	printerOptions := printer.PrinterOptions{
 		RemoveComments:  options.RemoveComments.IsTrue(),
@@ -206,13 +226,9 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		defer e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", map[string]any{"declarationFilePath": declarationFilePath}, true)()
 	}
 
-	var diags []*ast.Diagnostic
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
-	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
-		sourceFile = transformer.TransformSourceFile(sourceFile)
-		diags = append(diags, transformer.GetDiagnostics()...)
-	}
+	sourceFile, diags := e.runDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath)
 
 	// !!! strada skipped emit if there were diagnostics
 

@@ -620,7 +620,7 @@ func (p *fileLoader) pathForLibFile(name string) *LibFile {
 	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() && name != "lib.d.ts" {
 		libraryName := getLibraryNameFromLibFileName(name)
 		resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
-		resolution, trace := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
+		resolution, trace := p.resolveLibrary(libraryName, resolveFrom)
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
 			replaced = true
@@ -634,6 +634,13 @@ func (p *fileLoader) pathForLibFile(name string) *LibFile {
 
 	libPath, _ := p.pathForLibFileCache.LoadOrStore(name, &LibFile{name, path, replaced})
 	return libPath
+}
+
+func (p *fileLoader) resolveLibrary(libraryName, resolveFrom string) (*module.ResolvedModule, []module.DiagAndArgs) {
+	if tr := p.opts.Tracing; tr != nil {
+		defer tr.Push(tracing.PhaseProgram, "resolveLibrary", map[string]any{"resolveFrom": resolveFrom}, false)()
+	}
+	return p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
 }
 
 func getLibraryNameFromLibFileName(libFileName string) string {
