@@ -54,32 +54,19 @@ function workspaceResolve(relativePath: string): vscode.Uri {
 
 export const useWorkspaceTsdkStorageKey = "typescript.native-preview.useWorkspaceTsdk";
 
-/**
- * Returns true if the `tsdk` setting is only set at the workspace level
- * (i.e., not explicitly set at the user/global level).
- */
-function isTsdkWorkspaceLevelOnly(): boolean {
-    const config = vscode.workspace.getConfiguration("typescript.native-preview");
-    const inspection = config.inspect<string>("tsdk");
-    if (!inspection) return false;
-    // If the user explicitly set it at the global level, it's trusted.
-    if (inspection.globalValue !== undefined) return false;
-    // Otherwise it's workspace-level only (could be committed by anyone).
-    return inspection.workspaceValue !== undefined || inspection.workspaceFolderValue !== undefined;
-}
-
 export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo> {
     const config = vscode.workspace.getConfiguration("typescript.native-preview");
     const exeName = `tsgo${process.platform === "win32" ? ".exe" : ""}`;
 
     let exe = config.get<string>("tsdk");
+    const exeInspection = config.inspect<string>("tsdk");
 
-    // If tsdk is only set at the workspace level, require the user to have
+    // If tsdk is set at the workspace level, require the user to have
     // explicitly opted in via the version picker (stored in workspace state).
-    if (exe && isTsdkWorkspaceLevelOnly()) {
+    if (exe && (exeInspection?.workspaceValue !== undefined || exeInspection?.workspaceFolderValue !== undefined)) {
         const useWorkspaceTsdk = context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false);
         if (!useWorkspaceTsdk) {
-            exe = undefined;
+            exe = exeInspection.globalValue;
         }
     }
 
