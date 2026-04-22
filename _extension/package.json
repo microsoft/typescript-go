@@ -68,6 +68,25 @@
                             "experimental"
                         ]
                     },
+                    "typescript.native-preview.additionalTsdkLocations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [],
+                        "description": "Additional paths to tsgo binary directories or @typescript/native-preview packages that should appear in the version selector.",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "typescript.native-preview.showPID": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Show the language server process ID in the status bar.",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
                     "typescript.native-preview.goMemLimit": {
                         "type": "string",
                         "description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
@@ -114,6 +133,12 @@
             {
                 "command": "typescript.native-preview.reportIssue",
                 "title": "Report Issue",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "TypeScript Native Preview"
+            },
+            {
+                "command": "typescript.native-preview.selectVersion",
+                "title": "Select Version",
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "TypeScript Native Preview"
             },

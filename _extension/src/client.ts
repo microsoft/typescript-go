@@ -248,6 +248,10 @@ export class Client implements vscode.Disposable {
         return this.exe;
     }
 
+    get serverPid(): number | undefined {
+        return (this.client as any)?._serverProcess?.pid;
+    }
+
     /**
      * Initialize an API session and return the socket path for connecting.
      * This allows other extensions to get a direct connection to the API server.

@@ -1,3 +1,4 @@
+import * as path from "path";
 import * as vscode from "vscode";
 import { ActiveJsTsEditorTracker } from "./activeJsTsEditorTracker";
 import { Client } from "./client";
@@ -6,7 +7,10 @@ import { ManagedFileContextManager } from "./managedFileContext";
 import { ProjectStatus } from "./projectStatus";
 import { setupStatusBar } from "./statusBar";
 import { TelemetryReporter } from "./telemetryReporting";
-import { getExe } from "./util";
+import {
+    getExe,
+    useWorkspaceTsdkStorageKey,
+} from "./util";
 
 /**
  * SessionManager's lifetime is equal to that of the extension. It is responsible
@@ -55,7 +59,7 @@ export class SessionManager implements vscode.Disposable {
             this.outputChannel.appendLine("Restarting TypeScript Native Preview...");
             await this.currentSession.dispose();
         }
-        this.currentSession = new Session(this.outputChannel, this.traceOutputChannel, this.initializedEventEmitter, this.telemetryReporter);
+        this.currentSession = new Session(context, this.outputChannel, this.traceOutputChannel, this.initializedEventEmitter, this.telemetryReporter);
         return this.currentSession.start(context);
     }
 
@@ -91,12 +95,14 @@ export class SessionManager implements vscode.Disposable {
 class Session implements vscode.Disposable {
     client: Client;
     private disposables: vscode.Disposable[] = [];
+    private context: vscode.ExtensionContext;
     private outputChannel: vscode.LogOutputChannel;
     private traceOutputChannel: vscode.LogOutputChannel;
     private telemetryReporter: TelemetryReporter;
     private initializedEventEmitter: vscode.EventEmitter<void>;
 
     constructor(
+        context: vscode.ExtensionContext,
         outputChannel: vscode.LogOutputChannel,
         traceOutputChannel: vscode.LogOutputChannel,
         initializedEventEmitter: vscode.EventEmitter<void>,
@@ -104,6 +110,7 @@ class Session implements vscode.Disposable {
     ) {
         this.client = new Client(outputChannel, traceOutputChannel, initializedEventEmitter, telemetryReporter);
         this.disposables.push(this.client);
+        this.context = context;
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
         this.telemetryReporter = telemetryReporter;
@@ -114,7 +121,7 @@ class Session implements vscode.Disposable {
     async start(context: vscode.ExtensionContext): Promise<void> {
         const exe = await getExe(context);
         await this.client.start(exe);
-        this.disposables.push(setupStatusBar(exe.version));
+        this.disposables.push(setupStatusBar(exe.version, this.client.serverPid));
 
         // Set up active editor tracker and UI features
         const activeEditorTracker = new ActiveJsTsEditorTracker();
@@ -150,6 +157,7 @@ class Session implements vscode.Disposable {
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.selectVersion", async () => {
+            await promptSelectVersion(this.context, this.outputChannel);
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
@@ -270,6 +278,11 @@ async function showCommands(): Promise<void> {
             command: "typescript.native-preview.reportIssue",
         },
         {
+            label: "$(versions) Select Version",
+            description: "Choose between bundled and workspace versions",
+            command: "typescript.native-preview.selectVersion",
+        },
+        {
             label: "$(stop-circle) Disable TypeScript Native Preview",
             description: "Switch back to the built-in TypeScript extension",
             command: "typescript.native-preview.disable",
@@ -282,6 +295,162 @@ async function showCommands(): Promise<void> {
 
     if (selected) {
         await vscode.commands.executeCommand(selected.command);
+    }
+}
+
+interface VersionQuickPickItem extends vscode.QuickPickItem {
+    run(): Promise<void>;
+}
+
+interface DetectedVersion {
+    label: string;
+    version: string;
+    tsdkPath: string;
+}
+
+async function findWorkspaceNativePreviewPackages(): Promise<DetectedVersion[]> {
+    const results: DetectedVersion[] = [];
+    for (const folder of vscode.workspace.workspaceFolders ?? []) {
+        const packagePath = vscode.Uri.joinPath(folder.uri, "node_modules", "@typescript", "native-preview");
+        try {
+            const packageJsonPath = vscode.Uri.joinPath(packagePath, "package.json");
+            const raw = await vscode.workspace.fs.readFile(packageJsonPath);
+            const packageJson = JSON.parse(new TextDecoder().decode(raw));
+            results.push({
+                label: folder.name,
+                version: packageJson.version ?? "unknown",
+                tsdkPath: path.posix.join("node_modules", "@typescript", "native-preview"),
+            });
+        }
+        catch {
+            // No @typescript/native-preview in this folder
+        }
+    }
+    return results;
+}
+
+async function promptSelectVersion(context: vscode.ExtensionContext, outputChannel: vscode.LogOutputChannel): Promise<void> {
+    const config = vscode.workspace.getConfiguration("typescript.native-preview");
+    const currentTsdk = config.get<string>("tsdk") ?? "";
+    const useWorkspaceTsdk = context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false);
+    const workspaceVersions = await findWorkspaceNativePreviewPackages();
+    const isUsingBundled = !currentTsdk || !useWorkspaceTsdk;
+    const bundledVersion = context.extension.packageJSON.version as string;
+    const items: VersionQuickPickItem[] = [];
+
+    // Bundled version
+    items.push({
+        label: (isUsingBundled ? "• " : "") + "Use Bundled Version",
+        description: bundledVersion,
+        detail: context.asAbsolutePath("lib"),
+        run: async () => {
+            await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
+            await config.update("tsdk", undefined, vscode.ConfigurationTarget.Workspace);
+            outputChannel.appendLine("Switched to bundled tsgo version.");
+        },
+    });
+
+    // Workspace versions
+    if (vscode.workspace.isTrusted) {
+        for (const wsVersion of workspaceVersions) {
+            const isActive = !isUsingBundled && currentTsdk.endsWith("@typescript/native-preview");
+            items.push({
+                label: (isActive ? "• " : "") + "Use Workspace Version",
+                description: wsVersion.version,
+                detail: wsVersion.tsdkPath,
+                run: async () => {
+                    await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
+                    await config.update("tsdk", wsVersion.tsdkPath, vscode.ConfigurationTarget.Workspace);
+                    outputChannel.appendLine(`Switched to workspace tsgo version (${wsVersion.version}).`);
+                },
+            });
+        }
+    }
+    else if (workspaceVersions.length > 0) {
+        items.push({
+            label: "",
+            kind: vscode.QuickPickItemKind.Separator,
+            run: async () => {},
+        });
+        items.push({
+            label: "$(lock) Manage Workspace Trust to select a workspace version",
+            run: async () => {
+                await vscode.commands.executeCommand("workbench.trust.manage");
+            },
+        });
+    }
+
+    // Additional tsdk locations from settings
+    const additionalLocations = config.get<string[]>("additionalTsdkLocations", []);
+    if (additionalLocations.length > 0) {
+        items.push({
+            label: "",
+            kind: vscode.QuickPickItemKind.Separator,
+            run: async () => {},
+        });
+        for (const loc of additionalLocations) {
+            const isActive = !isUsingBundled && currentTsdk === loc;
+            items.push({
+                label: (isActive ? "• " : "") + "Use Custom Version",
+                detail: loc,
+                run: async () => {
+                    await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
+                    await config.update("tsdk", loc, vscode.ConfigurationTarget.Workspace);
+                    outputChannel.appendLine(`Switched to custom tsgo version at ${loc}.`);
+                },
+            });
+        }
+    }
+
+    const selected = await vscode.window.showQuickPick<VersionQuickPickItem>(items, {
+        placeHolder: "Select the TypeScript Native Preview version to use",
+    });
+
+    if (selected) {
+        await selected.run();
+        // Restart server to pick up the new version
+        await vscode.commands.executeCommand("typescript.native-preview.restart");
+    }
+}
+
+/**
+ * If the workspace has `@typescript/native-preview` installed and the user
+ * hasn't already opted in or dismissed the prompt, ask whether they'd like
+ * to use the workspace version.
+ */
+export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext): Promise<void> {
+    if (!vscode.workspace.isTrusted) return;
+
+    const useWorkspaceTsdk = context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false);
+    if (useWorkspaceTsdk) return; // already opted in
+
+    const suppressKey = "typescript.native-preview.suppressPromptWorkspaceTsdk";
+    if (context.workspaceState.get<boolean>(suppressKey, false)) return;
+
+    const workspaceVersions = await findWorkspaceNativePreviewPackages();
+    if (workspaceVersions.length === 0) return;
+
+    const wsVersion = workspaceVersions[0];
+    const allow = "Allow";
+    const dismiss = "Dismiss";
+    const suppress = "Never in this Workspace";
+
+    const result = await vscode.window.showInformationMessage(
+        `This workspace contains a TypeScript Native Preview version (${wsVersion.version}). Would you like to use the workspace version?`,
+        allow,
+        dismiss,
+        suppress,
+    );
+
+    if (result === allow) {
+        if (!vscode.workspace.isTrusted) return;
+        await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
+        const config = vscode.workspace.getConfiguration("typescript.native-preview");
+        await config.update("tsdk", wsVersion.tsdkPath, vscode.ConfigurationTarget.Workspace);
+        await vscode.commands.executeCommand("typescript.native-preview.restart");
+    }
+    else if (result === suppress) {
+        await context.workspaceState.update(suppressKey, true);
     }
 }
 
