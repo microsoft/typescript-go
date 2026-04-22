@@ -1,11 +1,6 @@
-import { AbstractCancellationTokenSource } from "./cancellation";
-import {
-    CancellationId,
-    CancellationSenderStrategy,
-    MessageConnection,
-    RequestCancellationReceiverStrategy,
-} from "./connection";
-import { RequestMessage } from "./messages";
+import { RequestMessage } from './messages';
+import { AbstractCancellationTokenSource } from './cancellation';
+import { CancellationId, RequestCancellationReceiverStrategy, CancellationSenderStrategy, MessageConnection } from './connection';
 export declare class SharedArraySenderStrategy implements CancellationSenderStrategy {
     private readonly buffers;
     constructor();

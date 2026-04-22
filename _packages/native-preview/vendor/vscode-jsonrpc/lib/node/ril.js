@@ -8,7 +8,7 @@ const util_1 = require("util");
 const api_1 = require("../common/api");
 class MessageBuffer extends api_1.AbstractMessageBuffer {
     static emptyBuffer = Buffer.allocUnsafe(0);
-    constructor(encoding = "utf-8") {
+    constructor(encoding = 'utf-8') {
         super(encoding);
     }
     emptyBuffer() {
@@ -43,20 +43,20 @@ class ReadableStreamWrapper {
         this.stream = stream;
     }
     onClose(listener) {
-        this.stream.on("close", listener);
-        return api_1.Disposable.create(() => this.stream.off("close", listener));
+        this.stream.on('close', listener);
+        return api_1.Disposable.create(() => this.stream.off('close', listener));
     }
     onError(listener) {
-        this.stream.on("error", listener);
-        return api_1.Disposable.create(() => this.stream.off("error", listener));
+        this.stream.on('error', listener);
+        return api_1.Disposable.create(() => this.stream.off('error', listener));
     }
     onEnd(listener) {
-        this.stream.on("end", listener);
-        return api_1.Disposable.create(() => this.stream.off("end", listener));
+        this.stream.on('end', listener);
+        return api_1.Disposable.create(() => this.stream.off('end', listener));
     }
     onData(listener) {
-        this.stream.on("data", listener);
-        return api_1.Disposable.create(() => this.stream.off("data", listener));
+        this.stream.on('data', listener);
+        return api_1.Disposable.create(() => this.stream.off('data', listener));
     }
 }
 class WritableStreamWrapper {
@@ -65,20 +65,20 @@ class WritableStreamWrapper {
         this.stream = stream;
     }
     onClose(listener) {
-        this.stream.on("close", listener);
-        return api_1.Disposable.create(() => this.stream.off("close", listener));
+        this.stream.on('close', listener);
+        return api_1.Disposable.create(() => this.stream.off('close', listener));
     }
     onError(listener) {
-        this.stream.on("error", listener);
-        return api_1.Disposable.create(() => this.stream.off("error", listener));
+        this.stream.on('error', listener);
+        return api_1.Disposable.create(() => this.stream.off('error', listener));
     }
     onEnd(listener) {
-        this.stream.on("end", listener);
-        return api_1.Disposable.create(() => this.stream.off("end", listener));
+        this.stream.on('end', listener);
+        return api_1.Disposable.create(() => this.stream.off('end', listener));
     }
     write(data, encoding) {
         return new Promise((resolve, reject) => {
-            const callback = error => {
+            const callback = (error) => {
                 if (error === undefined || error === null) {
                     resolve();
                 }
@@ -86,7 +86,7 @@ class WritableStreamWrapper {
                     reject(error);
                 }
             };
-            if (typeof data === "string") {
+            if (typeof data === 'string') {
                 this.stream.write(data, encoding, callback);
             }
             else {
@@ -100,11 +100,11 @@ class WritableStreamWrapper {
 }
 const _ril = Object.freeze({
     messageBuffer: Object.freeze({
-        create: encoding => new MessageBuffer(encoding),
+        create: (encoding) => new MessageBuffer(encoding)
     }),
     applicationJson: Object.freeze({
         encoder: Object.freeze({
-            name: "application/json",
+            name: 'application/json',
             encode: (msg, options) => {
                 try {
                     return Promise.resolve(Buffer.from(JSON.stringify(msg, undefined, 0), options.charset));
@@ -112,10 +112,10 @@ const _ril = Object.freeze({
                 catch (err) {
                     return Promise.reject(err);
                 }
-            },
+            }
         }),
         decoder: Object.freeze({
-            name: "application/json",
+            name: 'application/json',
             decode: (buffer, options) => {
                 try {
                     if (buffer instanceof Buffer) {
@@ -128,12 +128,12 @@ const _ril = Object.freeze({
                 catch (err) {
                     return Promise.reject(err);
                 }
-            },
-        }),
+            }
+        })
     }),
     stream: Object.freeze({
-        asReadableStream: stream => new ReadableStreamWrapper(stream),
-        asWritableStream: stream => new WritableStreamWrapper(stream),
+        asReadableStream: (stream) => new ReadableStreamWrapper(stream),
+        asWritableStream: (stream) => new WritableStreamWrapper(stream)
     }),
     console: console,
     timer: Object.freeze({
@@ -148,8 +148,8 @@ const _ril = Object.freeze({
         setInterval(callback, ms, ...args) {
             const handle = setInterval(callback, ms, ...args);
             return { dispose: () => clearInterval(handle) };
-        },
-    }),
+        }
+    })
 });
 function RIL() {
     return _ril;

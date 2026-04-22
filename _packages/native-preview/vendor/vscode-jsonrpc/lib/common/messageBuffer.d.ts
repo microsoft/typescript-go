@@ -1,4 +1,4 @@
-import RAL from "./ral";
+import RAL from './ral';
 export declare abstract class AbstractMessageBuffer implements RAL.MessageBuffer {
     private _encoding;
     private _chunks;

@@ -1,10 +1,7 @@
-import {
-    ContentEncoder,
-    ContentTypeEncoder,
-} from "./encoding";
-import { Event } from "./events";
-import { Message } from "./messages";
-import RAL from "./ral";
+import RAL from './ral';
+import { Message } from './messages';
+import { Event } from './events';
+import { ContentEncoder, ContentTypeEncoder } from './encoding';
 /**
  * Writes JSON-RPC messages to an underlying transport.
  */

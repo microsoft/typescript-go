@@ -3,29 +3,24 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function (o, m, k, k2) {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
     if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-        desc = {
-            enumerable: true,
-            get: function () {
-                return m[k];
-            },
-        };
+      desc = { enumerable: true, get: function() { return m[k]; } };
     }
     Object.defineProperty(o, k2, desc);
-}) : (function (o, m, k, k2) {
+}) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function (o, v) {
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function (o, v) {
+}) : function(o, v) {
     o["default"] = v;
 });
 var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function (o) {
+    var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
             var ar = [];
             for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
@@ -36,13 +31,13 @@ var __importStar = (this && this.__importStar) || (function () {
     return function (mod) {
         if (mod && mod.__esModule) return mod;
         var result = {};
-        if (mod != null) { for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]); }
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
         __setModuleDefault(result, mod);
         return result;
     };
 })();
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -50,8 +45,8 @@ const ral_1 = __importDefault(require("./ral"));
 const Is = __importStar(require("./is"));
 const semaphore_1 = require("./semaphore");
 const events_1 = require("./events");
-const ContentLength = "Content-Length: ";
-const CRLF = "\r\n";
+const ContentLength = 'Content-Length: ';
+const CRLF = '\r\n';
 var MessageWriter;
 (function (MessageWriter) {
     function is(value) {
@@ -89,7 +84,7 @@ class AbstractMessageWriter {
             return error;
         }
         else {
-            return new Error(`Writer received error. Reason: ${Is.string(error.message) ? error.message : "unknown"}`);
+            return new Error(`Writer received error. Reason: ${Is.string(error.message) ? error.message : 'unknown'}`);
         }
     }
 }
@@ -97,11 +92,11 @@ exports.AbstractMessageWriter = AbstractMessageWriter;
 var ResolvedMessageWriterOptions;
 (function (ResolvedMessageWriterOptions) {
     function fromOptions(options) {
-        if (options === undefined || typeof options === "string") {
-            return { charset: options ?? "utf-8", contentTypeEncoder: (0, ral_1.default)().applicationJson.encoder };
+        if (options === undefined || typeof options === 'string') {
+            return { charset: options ?? 'utf-8', contentTypeEncoder: (0, ral_1.default)().applicationJson.encoder };
         }
         else {
-            return { charset: options.charset ?? "utf-8", contentEncoder: options.contentEncoder, contentTypeEncoder: options.contentTypeEncoder ?? (0, ral_1.default)().applicationJson.encoder };
+            return { charset: options.charset ?? 'utf-8', contentEncoder: options.contentEncoder, contentTypeEncoder: options.contentTypeEncoder ?? (0, ral_1.default)().applicationJson.encoder };
         }
     }
     ResolvedMessageWriterOptions.fromOptions = fromOptions;
@@ -117,12 +112,12 @@ class WriteableStreamMessageWriter extends AbstractMessageWriter {
         this.options = ResolvedMessageWriterOptions.fromOptions(options);
         this.errorCount = 0;
         this.writeSemaphore = new semaphore_1.Semaphore(1);
-        this.writable.onError(error => this.fireError(error));
+        this.writable.onError((error) => this.fireError(error));
         this.writable.onClose(() => this.fireClose());
     }
     async write(msg) {
         return this.writeSemaphore.lock(async () => {
-            const payload = this.options.contentTypeEncoder.encode(msg, this.options).then(buffer => {
+            const payload = this.options.contentTypeEncoder.encode(msg, this.options).then((buffer) => {
                 if (this.options.contentEncoder !== undefined) {
                     return this.options.contentEncoder.encode(buffer);
                 }
@@ -130,12 +125,12 @@ class WriteableStreamMessageWriter extends AbstractMessageWriter {
                     return buffer;
                 }
             });
-            return payload.then(buffer => {
+            return payload.then((buffer) => {
                 const headers = [];
                 headers.push(ContentLength, buffer.byteLength.toString(), CRLF);
                 headers.push(CRLF);
                 return this.doWrite(msg, headers, buffer);
-            }, error => {
+            }, (error) => {
                 this.fireError(error);
                 throw error;
             });
@@ -143,7 +138,7 @@ class WriteableStreamMessageWriter extends AbstractMessageWriter {
     }
     async doWrite(msg, headers, data) {
         try {
-            await this.writable.write(headers.join(""), "ascii");
+            await this.writable.write(headers.join(''), 'ascii');
             return this.writable.write(data);
         }
         catch (error) {

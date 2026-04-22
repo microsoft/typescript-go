@@ -1,8 +1,5 @@
-import type { Disposable } from "./disposable";
-import type {
-    ContentTypeDecoder,
-    ContentTypeEncoder,
-} from "./encoding";
+import type { Disposable } from './disposable';
+import type { ContentTypeEncoder, ContentTypeDecoder } from './encoding';
 interface _MessageBuffer {
     readonly encoding: RAL.MessageBufferEncoding;
     /**
@@ -28,7 +25,7 @@ interface _MessageBuffer {
      */
     tryReadBody(length: number): Uint8Array | undefined;
 }
-type _MessageBufferEncoding = "ascii" | "utf-8";
+type _MessageBufferEncoding = 'ascii' | 'utf-8';
 interface _ReadableStream {
     onData(listener: (data: Uint8Array) => void): Disposable;
     onClose(listener: () => void): Disposable;

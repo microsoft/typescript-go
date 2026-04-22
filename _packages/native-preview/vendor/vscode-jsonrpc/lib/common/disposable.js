@@ -9,7 +9,7 @@ var Disposable;
 (function (Disposable) {
     function create(func) {
         return {
-            dispose: func,
+            dispose: func
         };
     }
     Disposable.create = create;

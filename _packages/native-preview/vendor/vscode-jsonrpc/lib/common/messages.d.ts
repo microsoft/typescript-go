@@ -38,7 +38,7 @@ export declare namespace ErrorCodes {
      * are left in the range.
      *
      * @since 3.16.0
-     */
+    */
     const jsonrpcReservedErrorRangeStart: -32099;
     /** @deprecated use  jsonrpcReservedErrorRangeStart */
     const serverErrorStart: -32099;
@@ -70,7 +70,7 @@ export declare namespace ErrorCodes {
      * It doesn't denote a real error code.
      *
      * @since 3.16.0
-     */
+    */
     const jsonrpcReservedErrorRangeEnd: -32000;
     /** @deprecated use  jsonrpcReservedErrorRangeEnd */
     const serverErrorEnd: -32000;
@@ -123,7 +123,7 @@ export interface ResponseMessage extends Message {
 /**
  * A LSP Log Entry.
  */
-export type LSPMessageType = "send-request" | "receive-request" | "send-response" | "receive-response" | "send-notification" | "receive-notification";
+export type LSPMessageType = 'send-request' | 'receive-request' | 'send-response' | 'receive-response' | 'send-notification' | 'receive-notification';
 export interface LSPLogMessage {
     type: LSPMessageType;
     message: RequestMessage | ResponseMessage | NotificationMessage;

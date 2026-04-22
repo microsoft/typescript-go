@@ -4,29 +4,24 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 /// <reference path="../../typings/thenable.d.ts" preserve="true"/>
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function (o, m, k, k2) {
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
     if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-        desc = {
-            enumerable: true,
-            get: function () {
-                return m[k];
-            },
-        };
+      desc = { enumerable: true, get: function() { return m[k]; } };
     }
     Object.defineProperty(o, k2, desc);
-}) : (function (o, m, k, k2) {
+}) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function (o, v) {
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function (o, v) {
+}) : function(o, v) {
     o["default"] = v;
 });
 var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function (o) {
+    var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
             var ar = [];
             for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
@@ -37,35 +32,16 @@ var __importStar = (this && this.__importStar) || (function () {
     return function (mod) {
         if (mod && mod.__esModule) return mod;
         var result = {};
-        if (mod != null) { for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]); }
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
         __setModuleDefault(result, mod);
         return result;
     };
 })();
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConnectionOptions =
-    exports.MessageStrategy =
-    exports.CancellationStrategy =
-    exports.CancellationSenderStrategy =
-    exports.CancellationReceiverStrategy =
-    exports.RequestCancellationReceiverStrategy =
-    exports.IdCancellationReceiverStrategy =
-    exports.ConnectionStrategy =
-    exports.ConnectionError =
-    exports.ConnectionErrors =
-    exports.LogTraceNotification =
-    exports.SetTraceNotification =
-    exports.TraceFormat =
-    exports.TraceValues =
-    exports.TraceValue =
-    exports.Trace =
-    exports.NullLogger =
-    exports.ProgressType =
-    exports.ProgressToken =
-        void 0;
+exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.TraceValue = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
 exports.createMessageConnection = createMessageConnection;
 const ral_1 = __importDefault(require("./ral"));
 const Is = __importStar(require("./is"));
@@ -75,18 +51,18 @@ const events_1 = require("./events");
 const cancellation_1 = require("./cancellation");
 var CancelNotification;
 (function (CancelNotification) {
-    CancelNotification.type = new messages_1.NotificationType("$/cancelRequest");
+    CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
 })(CancelNotification || (CancelNotification = {}));
 var ProgressToken;
 (function (ProgressToken) {
     function is(value) {
-        return typeof value === "string" || typeof value === "number";
+        return typeof value === 'string' || typeof value === 'number';
     }
     ProgressToken.is = is;
 })(ProgressToken || (exports.ProgressToken = ProgressToken = {}));
 var ProgressNotification;
 (function (ProgressNotification) {
-    ProgressNotification.type = new messages_1.NotificationType("$/progress");
+    ProgressNotification.type = new messages_1.NotificationType('$/progress');
 })(ProgressNotification || (ProgressNotification = {}));
 class ProgressType {
     /**
@@ -107,10 +83,10 @@ var StarRequestHandler;
     StarRequestHandler.is = is;
 })(StarRequestHandler || (StarRequestHandler = {}));
 exports.NullLogger = Object.freeze({
-    error: () => {},
-    warn: () => {},
-    info: () => {},
-    log: () => {},
+    error: () => { },
+    warn: () => { },
+    info: () => { },
+    log: () => { }
 });
 var Trace;
 (function (Trace) {
@@ -124,19 +100,19 @@ var TraceValue;
     /**
      * Turn tracing off.
      */
-    TraceValue.Off = "off";
+    TraceValue.Off = 'off';
     /**
      * Trace messages only.
      */
-    TraceValue.Messages = "messages";
+    TraceValue.Messages = 'messages';
     /**
      * Compact message tracing.
      */
-    TraceValue.Compact = "compact";
+    TraceValue.Compact = 'compact';
     /**
      * Verbose message tracing.
      */
-    TraceValue.Verbose = "verbose";
+    TraceValue.Verbose = 'verbose';
 })(TraceValue || (exports.TraceValue = TraceValue = {}));
 /**
  * @deprecated Use TraceValue instead
@@ -149,13 +125,13 @@ exports.TraceValues = TraceValue;
         }
         value = value.toLowerCase();
         switch (value) {
-            case "off":
+            case 'off':
                 return Trace.Off;
-            case "messages":
+            case 'messages':
                 return Trace.Messages;
-            case "compact":
+            case 'compact':
                 return Trace.Compact;
-            case "verbose":
+            case 'verbose':
                 return Trace.Verbose;
             default:
                 return Trace.Off;
@@ -165,15 +141,15 @@ exports.TraceValues = TraceValue;
     function toString(value) {
         switch (value) {
             case Trace.Off:
-                return "off";
+                return 'off';
             case Trace.Messages:
-                return "messages";
+                return 'messages';
             case Trace.Compact:
-                return "compact";
+                return 'compact';
             case Trace.Verbose:
-                return "verbose";
+                return 'verbose';
             default:
-                return "off";
+                return 'off';
         }
     }
     Trace.toString = toString;
@@ -189,7 +165,7 @@ var TraceFormat;
             return TraceFormat.Text;
         }
         value = value.toLowerCase();
-        if (value === "json") {
+        if (value === 'json') {
             return TraceFormat.JSON;
         }
         else {
@@ -200,11 +176,11 @@ var TraceFormat;
 })(TraceFormat || (exports.TraceFormat = TraceFormat = {}));
 var SetTraceNotification;
 (function (SetTraceNotification) {
-    SetTraceNotification.type = new messages_1.NotificationType("$/setTrace");
+    SetTraceNotification.type = new messages_1.NotificationType('$/setTrace');
 })(SetTraceNotification || (exports.SetTraceNotification = SetTraceNotification = {}));
 var LogTraceNotification;
 (function (LogTraceNotification) {
-    LogTraceNotification.type = new messages_1.NotificationType("$/logTrace");
+    LogTraceNotification.type = new messages_1.NotificationType('$/logTrace');
 })(LogTraceNotification || (exports.LogTraceNotification = LogTraceNotification = {}));
 var ConnectionErrors;
 (function (ConnectionErrors) {
@@ -242,7 +218,7 @@ var IdCancellationReceiverStrategy;
 (function (IdCancellationReceiverStrategy) {
     function is(value) {
         const candidate = value;
-        return candidate && (candidate.kind === undefined || candidate.kind === "id") && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+        return candidate && (candidate.kind === undefined || candidate.kind === 'id') && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
     }
     IdCancellationReceiverStrategy.is = is;
 })(IdCancellationReceiverStrategy || (exports.IdCancellationReceiverStrategy = IdCancellationReceiverStrategy = {}));
@@ -250,7 +226,7 @@ var RequestCancellationReceiverStrategy;
 (function (RequestCancellationReceiverStrategy) {
     function is(value) {
         const candidate = value;
-        return candidate && candidate.kind === "request" && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+        return candidate && candidate.kind === 'request' && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
     }
     RequestCancellationReceiverStrategy.is = is;
 })(RequestCancellationReceiverStrategy || (exports.RequestCancellationReceiverStrategy = RequestCancellationReceiverStrategy = {}));
@@ -259,7 +235,7 @@ var CancellationReceiverStrategy;
     CancellationReceiverStrategy.Message = Object.freeze({
         createCancellationTokenSource(_) {
             return new cancellation_1.CancellationTokenSource();
-        },
+        }
     });
     function is(value) {
         return IdCancellationReceiverStrategy.is(value) || RequestCancellationReceiverStrategy.is(value);
@@ -272,7 +248,7 @@ var CancellationSenderStrategy;
         sendCancellation(conn, id) {
             return conn.sendNotification(CancelNotification.type, { id });
         },
-        cleanup(_) {},
+        cleanup(_) { }
     });
     function is(value) {
         const candidate = value;
@@ -284,7 +260,7 @@ var CancellationStrategy;
 (function (CancellationStrategy) {
     CancellationStrategy.Message = Object.freeze({
         receiver: CancellationReceiverStrategy.Message,
-        sender: CancellationSenderStrategy.Message,
+        sender: CancellationSenderStrategy.Message
     });
     function is(value) {
         const candidate = value;
@@ -321,7 +297,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
     let sequenceNumber = 0;
     let notificationSequenceNumber = 0;
     let unknownResponseSequenceNumber = 0;
-    const version = "2.0";
+    const version = '2.0';
     const maxParallelism = options?.maxParallelism ?? -1;
     let inFlight = 0;
     let starRequestHandler = undefined;
@@ -377,18 +353,18 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
         if (id === null) {
             throw new Error(`Can't send requests with id null since the response can't be correlated.`);
         }
-        return "req-" + id.toString();
+        return 'req-' + id.toString();
     }
     function createResponseQueueKey(id) {
         if (id === null) {
-            return "res-unknown-" + (++unknownResponseSequenceNumber).toString();
+            return 'res-unknown-' + (++unknownResponseSequenceNumber).toString();
         }
         else {
-            return "res-" + id.toString();
+            return 'res-' + id.toString();
         }
     }
     function createNotificationQueueKey() {
-        return "not-" + (++notificationSequenceNumber).toString();
+        return 'not-' + (++notificationSequenceNumber).toString();
     }
     function addMessageToQueue(queue, message) {
         if (messages_1.Message.isRequest(message)) {
@@ -445,7 +421,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     result.then(() => {
                         inFlight--;
                         triggerMessageQueue();
-                    }).catch(error => {
+                    }).catch((error) => {
                         logger.error(`Processing message queue failed: ${error.toString()}`);
                     });
                 }
@@ -470,7 +446,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             return handleInvalidMessage(message);
         }
     }
-    const callback = message => {
+    const callback = (message) => {
         try {
             // We have received a cancellation message. Check if the message is still in the queue
             // and cancel it if allowed to do so.
@@ -518,7 +494,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
         function reply(resultOrError, method, startTime) {
             const message = {
                 jsonrpc: version,
-                id: requestMessage.id,
+                id: requestMessage.id
             };
             if (resultOrError instanceof messages_1.ResponseError) {
                 message.error = resultOrError.toJson();
@@ -533,7 +509,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             const message = {
                 jsonrpc: version,
                 id: requestMessage.id,
-                error: error.toJson(),
+                error: error.toJson()
             };
             traceSendingResponse(message, method, startTime);
             return messageWriter.write(message);
@@ -633,7 +609,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                         responsePromise.resolve(responseMessage.result);
                     }
                     else {
-                        throw new Error("Should never happen.");
+                        throw new Error('Should never happen.');
                     }
                 }
                 catch (error) {
@@ -724,7 +700,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
     }
     function handleInvalidMessage(message) {
         if (!message) {
-            logger.error("Received empty message.");
+            logger.error('Received empty message.');
             return;
         }
         logger.error(`Received message which is neither a response nor a notification message:\n${JSON.stringify(message, null, 4)}`);
@@ -734,7 +710,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             const key = responseMessage.id;
             const responseHandler = responsePromises.get(key);
             if (responseHandler) {
-                responseHandler.reject(new Error("The received response has neither a result nor an error property."));
+                responseHandler.reject(new Error('The received response has neither a result nor an error property.'));
             }
         }
     }
@@ -763,7 +739,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             tracer.log(`Sending request '${message.method} - (${message.id})'.`, data);
         }
         else {
-            logLSPMessage("send-request", message);
+            logLSPMessage('send-request', message);
         }
     }
     function traceSendingNotification(message) {
@@ -777,13 +753,13 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     data = `Params: ${stringifyTrace(message.params)}`;
                 }
                 else {
-                    data = "No parameters provided.";
+                    data = 'No parameters provided.';
                 }
             }
             tracer.log(`Sending notification '${message.method}'.`, data);
         }
         else {
-            logLSPMessage("send-notification", message);
+            logLSPMessage('send-notification', message);
         }
     }
     function traceSendingResponse(message, method, startTime) {
@@ -801,14 +777,14 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                         data = `Result: ${stringifyTrace(message.result)}`;
                     }
                     else if (message.error === undefined) {
-                        data = "No result returned.";
+                        data = 'No result returned.';
                     }
                 }
             }
             tracer.log(`Sending response '${method} - (${message.id})'. Processing request took ${Date.now() - startTime}ms`, data);
         }
         else {
-            logLSPMessage("send-response", message);
+            logLSPMessage('send-response', message);
         }
     }
     function traceReceivedRequest(message) {
@@ -823,7 +799,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             tracer.log(`Received request '${message.method} - (${message.id})'.`, data);
         }
         else {
-            logLSPMessage("receive-request", message);
+            logLSPMessage('receive-request', message);
         }
     }
     function traceReceivedNotification(message) {
@@ -837,13 +813,13 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     data = `Params: ${stringifyTrace(message.params)}`;
                 }
                 else {
-                    data = "No parameters provided.";
+                    data = 'No parameters provided.';
                 }
             }
             tracer.log(`Received notification '${message.method}'.`, data);
         }
         else {
-            logLSPMessage("receive-notification", message);
+            logLSPMessage('receive-notification', message);
         }
     }
     function traceReceivedResponse(message, responsePromise) {
@@ -861,12 +837,12 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                         data = `Result: ${stringifyTrace(message.result)}`;
                     }
                     else if (message.error === undefined) {
-                        data = "No result returned.";
+                        data = 'No result returned.';
                     }
                 }
             }
             if (responsePromise) {
-                const error = message.error ? ` Request failed: ${message.error.message} (${message.error.code}).` : "";
+                const error = message.error ? ` Request failed: ${message.error.message} (${message.error.code}).` : '';
                 tracer.log(`Received response '${responsePromise.method} - (${message.id})' in ${Date.now() - responsePromise.timerStart}ms.${error}`, data);
             }
             else {
@@ -874,7 +850,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             }
         }
         else {
-            logLSPMessage("receive-response", message);
+            logLSPMessage('receive-response', message);
         }
     }
     function logLSPMessage(type, message) {
@@ -885,26 +861,26 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             isLSPMessage: true,
             type,
             message,
-            timestamp: Date.now(),
+            timestamp: Date.now()
         };
         tracer.log(lspMessage);
     }
     function throwIfClosedOrDisposed() {
         if (isClosed()) {
-            throw new ConnectionError(ConnectionErrors.Closed, "Connection is closed.");
+            throw new ConnectionError(ConnectionErrors.Closed, 'Connection is closed.');
         }
         if (isDisposed()) {
-            throw new ConnectionError(ConnectionErrors.Disposed, "Connection is disposed.");
+            throw new ConnectionError(ConnectionErrors.Disposed, 'Connection is disposed.');
         }
     }
     function throwIfListening() {
         if (isListening()) {
-            throw new ConnectionError(ConnectionErrors.AlreadyListening, "Connection is already listening");
+            throw new ConnectionError(ConnectionErrors.AlreadyListening, 'Connection is already listening');
         }
     }
     function throwIfNotListening() {
         if (!isListening()) {
-            throw new Error("Call listen() first.");
+            throw new Error('Call listen() first.');
         }
     }
     function undefinedToNull(param) {
@@ -924,7 +900,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
         }
     }
     function isNamedParam(param) {
-        return param !== undefined && param !== null && !Array.isArray(param) && typeof param === "object";
+        return param !== undefined && param !== null && !Array.isArray(param) && typeof param === 'object';
     }
     function computeSingleParam(parameterStructures, param) {
         switch (parameterStructures) {
@@ -1009,10 +985,10 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             const notificationMessage = {
                 jsonrpc: version,
                 method: method,
-                params: messageParams,
+                params: messageParams
             };
             traceSendingNotification(notificationMessage);
-            return messageWriter.write(notificationMessage).catch(error => {
+            return messageWriter.write(notificationMessage).catch((error) => {
                 logger.error(`Sending notification failed.`);
                 throw error;
             });
@@ -1043,7 +1019,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     else if (starNotificationHandler === type) {
                         starNotificationHandler = undefined;
                     }
-                },
+                }
             };
         },
         onProgress: (_type, token, handler) => {
@@ -1056,7 +1032,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     if (progressHandlers.get(token) === handler) {
                         progressHandlers.delete(token);
                     }
-                },
+                }
             };
         },
         sendProgress: (_type, token, value) => {
@@ -1137,20 +1113,20 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                 jsonrpc: version,
                 id: id,
                 method: method,
-                params: messageParams,
+                params: messageParams
             };
             traceSendingRequest(requestMessage);
-            if (typeof cancellationStrategy.sender.enableCancellation === "function") {
+            if (typeof cancellationStrategy.sender.enableCancellation === 'function') {
                 cancellationStrategy.sender.enableCancellation(requestMessage);
             }
             // eslint-disable-next-line no-async-promise-executor
             return new Promise(async (resolve, reject) => {
-                const resolveWithCleanup = r => {
+                const resolveWithCleanup = (r) => {
                     resolve(r);
                     cancellationStrategy.sender.cleanup(id);
                     disposable?.dispose();
                 };
-                const rejectWithCleanup = r => {
+                const rejectWithCleanup = (r) => {
                     reject(r);
                     cancellationStrategy.sender.cleanup(id);
                     disposable?.dispose();
@@ -1167,7 +1143,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     // Writing the message failed. So we need to delete it from the response promises and
                     // reject it.
                     responsePromises.delete(id);
-                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, error.message ? error.message : "Unknown reason"));
+                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, error.message ? error.message : 'Unknown reason'));
                     logger.error(`Sending request failed.`);
                     throw error;
                 }
@@ -1206,7 +1182,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     else if (starRequestHandler === type) {
                         starRequestHandler = undefined;
                     }
-                },
+                }
             };
         },
         hasPendingResponse: () => {
@@ -1249,7 +1225,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             }
             state = ConnectionState.Disposed;
             disposeEmitter.fire(undefined);
-            const error = new messages_1.ResponseError(messages_1.ErrorCodes.PendingResponseRejected, "Pending response rejected since connection got disposed");
+            const error = new messages_1.ResponseError(messages_1.ErrorCodes.PendingResponseRejected, 'Pending response rejected since connection got disposed');
             for (const promise of responsePromises.values()) {
                 promise.reject(error);
             }
@@ -1273,17 +1249,17 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
         },
         inspect: () => {
             // eslint-disable-next-line no-console
-            (0, ral_1.default)().console.log("inspect");
-        },
+            (0, ral_1.default)().console.log('inspect');
+        }
     };
-    connection.onNotification(LogTraceNotification.type, params => {
+    connection.onNotification(LogTraceNotification.type, (params) => {
         if (trace === Trace.Off || !tracer) {
             return;
         }
         const verbose = trace === Trace.Verbose || trace === Trace.Compact;
         tracer.log(params.message, verbose ? params.verbose : undefined);
     });
-    connection.onNotification(ProgressNotification.type, async params => {
+    connection.onNotification(ProgressNotification.type, async (params) => {
         const handler = progressHandlers.get(params.token);
         if (handler) {
             await handler(params.value);

@@ -1,11 +1,8 @@
-import { Disposable } from "./api";
-import {
-    ContentDecoder,
-    ContentTypeDecoder,
-} from "./encoding";
-import { Event } from "./events";
-import { Message } from "./messages";
-import RAL from "./ral";
+import RAL from './ral';
+import { Event } from './events';
+import { Message } from './messages';
+import { ContentDecoder, ContentTypeDecoder } from './encoding';
+import { Disposable } from './api';
 /**
  * A callback that receives each incoming JSON-RPC message.
  */

@@ -1,5 +1,5 @@
-import { Disposable } from "./disposable";
-import { Event } from "./events";
+import { Event } from './events';
+import { Disposable } from './disposable';
 /**
  * Defines a CancellationToken. This interface is not
  * intended to be implemented. A CancellationToken must

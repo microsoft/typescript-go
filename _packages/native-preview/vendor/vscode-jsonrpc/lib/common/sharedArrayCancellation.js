@@ -65,7 +65,7 @@ class SharedArrayBufferCancellationTokenSource {
     }
 }
 class SharedArrayReceiverStrategy {
-    kind = "request";
+    kind = 'request';
     createCancellationTokenSource(request) {
         const buffer = request.$cancellationData;
         if (buffer === undefined) {

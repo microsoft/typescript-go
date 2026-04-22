@@ -1,5 +1,5 @@
-import { Message } from "./messages";
-import type RAL from "./ral";
+import type RAL from './ral';
+import { Message } from './messages';
 export interface FunctionContentEncoder {
     name: string;
     encode(input: Uint8Array): Promise<Uint8Array>;
