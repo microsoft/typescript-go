@@ -43,6 +43,12 @@ func NewMissingMemberFixer(changeTracker *change.Tracker, program *compiler.Prog
 	}
 }
 
+func (f *MissingMemberFixer) createNodeBuilder() (*checker.NodeBuilder, map[*ast.IdentifierNode]*ast.Symbol) {
+	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+	nodeBuilder := checker.NewNodeBuilderEx(f.Checker, f.ChangeTracker.EmitContext, idToSymbol)
+	return nodeBuilder, idToSymbol
+}
+
 func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, body *ast.FunctionBody, preserveOptional PreserveOptionalFlags) []*ast.Node {
 	declarations := symbol.Declarations
 	declaration := core.FirstOrNil(declarations)
@@ -63,13 +69,12 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 	}
 
 	t := f.Checker.GetTypeOfSymbolAtLocation(symbol, enclosingDeclaration)
+	nodeBuilder, idToSymbol := f.createNodeBuilder()
 	var nodes []*ast.Node
 
 	switch kind {
 	case ast.KindPropertySignature, ast.KindPropertyDeclaration:
-		idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
-		builder := checker.NewNodeBuilderEx(f.Checker, f.ChangeTracker.EmitContext, idToSymbol)
-		typeNode := f.importTypeNode(builder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil), idToSymbol)
+		typeNode := f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)
 		var questionToken *ast.TokenNode
 		if optional && preserveOptional&PreserveOptionalFlagsProperty != 0 {
 			questionToken = f.ChangeTracker.NodeFactory.NewToken(ast.KindQuestionToken)
@@ -77,9 +82,6 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 		return append(nodes, f.ChangeTracker.NodeFactory.NewPropertyDeclaration(modifiers, createPropertyName(f.ChangeTracker.NodeFactory, declarationName, quotePreference), questionToken, typeNode, nil /*initializer*/))
 
 	case ast.KindGetAccessor, ast.KindSetAccessor:
-		idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
-		builder := checker.NewNodeBuilderEx(f.Checker, f.ChangeTracker.EmitContext, idToSymbol)
-		typeNode := f.importTypeNode(builder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil), idToSymbol)
 		accessors := ast.GetAllAccessorDeclarations(symbol.Declarations, declaration)
 		var orderedAccessors []*ast.Node
 		if accessors.SecondAccessor == nil {
@@ -93,7 +95,7 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 				nodes = append(nodes,
 					f.ChangeTracker.NodeFactory.NewGetAccessorDeclaration(
 						modifiers, createPropertyName(f.ChangeTracker.NodeFactory, declarationName, quotePreference),
-						nil /*typeParameters*/, nil /*parameters*/, f.ChangeTracker.NodeFactory.DeepCloneNode(typeNode), nil /*fullSignature*/, f.createBody(body, ambient, quotePreference)),
+						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, ambient, quotePreference)),
 				)
 			}
 
@@ -105,7 +107,7 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 
 				nodes = append(nodes, f.ChangeTracker.NodeFactory.NewSetAccessorDeclaration(
 					modifiers, createPropertyName(f.ChangeTracker.NodeFactory, declarationName, quotePreference),
-					nil /*typeParameters*/, createDummyParameters(f.ChangeTracker.NodeFactory, 1, []string{parameter.Name().Text()}, []*ast.TypeNode{typeNode}, 1, ast.IsInJSFile(enclosingDeclaration)),
+					nil /*typeParameters*/, createDummyParameters(f.ChangeTracker.NodeFactory, 1, []string{parameter.Name().Text()}, []*ast.TypeNode{f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)}, 1, ast.IsInJSFile(enclosingDeclaration)),
 					nil /*type*/, nil /*fullSignature*/, f.createBody(body, ambient, quotePreference)),
 				)
 			}
@@ -159,6 +161,10 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 	return nil
 }
 
+func (f *MissingMemberFixer) createTypeNode(t *checker.Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+	return f.importTypeNode(nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil /*tracker*/), idToSymbol)
+}
+
 func (f *MissingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *ast.Node) *ast.ModifierList {
 	modifierFlags := ast.ModifierFlagsNone
 	if declaration != nil {
@@ -192,9 +198,8 @@ func (f *MissingMemberFixer) createSignatureDeclarationFromSignature(signature *
 		flags |= nodebuilder.FlagsUseSingleQuotesForStringLiteralType
 	}
 
-	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
-	builder := checker.NewNodeBuilderEx(f.Checker, f.ChangeTracker.EmitContext, idToSymbol)
-	signatureDeclaration := builder.SignatureToSignatureDeclaration(signature, kind, enclosingDeclaration, flags, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*tracker*/)
+	nodeBuilder, idToSymbol := f.createNodeBuilder()
+	signatureDeclaration := nodeBuilder.SignatureToSignatureDeclaration(signature, kind, enclosingDeclaration, flags, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*tracker*/)
 	if signatureDeclaration == nil {
 		return nil
 	}
@@ -288,6 +293,7 @@ func (f *MissingMemberFixer) createSignatureDeclarationFromSignatures(signatures
 		return nil
 	}
 
+	nodeBuilder, idToSymbol := f.createNodeBuilder()
 	maxArgsSignature := signatures[0]
 	minArgumentCount := signatures[0].MinArgumentCount()
 
@@ -331,12 +337,12 @@ func (f *MissingMemberFixer) createSignatureDeclarationFromSignatures(signatures
 
 	return f.ChangeTracker.NodeFactory.NewMethodDeclaration(
 		modifiers, nil /*asteriskToken*/, methodName, core.IfElse(optional, f.ChangeTracker.NodeFactory.NewToken(ast.KindQuestionToken), nil),
-		nil /*typeParameters*/, parameters, f.getReturnTypeFromSignatures(signatures, enclosingDeclaration),
+		nil /*typeParameters*/, parameters, f.getReturnTypeFromSignatures(signatures, enclosingDeclaration, nodeBuilder, idToSymbol),
 		nil /*fullSignature*/, f.createBody(body, false /*ambient*/, quotePreference),
 	)
 }
 
-func (f *MissingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.Signature, enclosingDeclaration *ast.Node) *ast.TypeNode {
+func (f *MissingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.Signature, enclosingDeclaration *ast.Node, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
 	if len(signatures) == 0 {
 		return nil
 	}
@@ -347,9 +353,7 @@ func (f *MissingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.S
 	}
 
 	unionType := f.Checker.GetUnionType(returnTypes)
-	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
-	builder := checker.NewNodeBuilderEx(f.Checker, f.ChangeTracker.EmitContext, idToSymbol)
-	return f.importTypeNode(builder.TypeToTypeNode(unionType, enclosingDeclaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*typeArguments*/), idToSymbol)
+	return f.importTypeNode(nodeBuilder.TypeToTypeNode(unionType, enclosingDeclaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*typeArguments*/), idToSymbol)
 }
 
 func (f *MissingMemberFixer) importTypeNode(typeNode *ast.TypeNode, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
