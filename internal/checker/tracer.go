@@ -5,10 +5,30 @@ import (
 	"github.com/microsoft/typescript-go/internal/tracing"
 )
 
-// TypeTracer is an interface for recording types during type checking.
-// This allows for optional tracing without creating a circular dependency.
-type TypeTracer interface {
-	RecordType(t *Type)
+// Tracer records types and trace events during type checking. A nil *Tracer
+// is a valid no-op, so call sites can use `if tr := c.tracer; tr != nil` to
+// gate work that only matters under --generateTrace.
+type Tracer struct {
+	tracing  *tracing.Tracing
+	recorder tracing.Tracer
+}
+
+// NewTracer creates a Tracer for the given checker index that records both
+// type-creation events and trace events through the provided tracing session.
+func NewTracer(tr *tracing.Tracing, checkerIndex int) *Tracer {
+	return &Tracer{tracing: tr, recorder: tr.NewTypeTracer(checkerIndex)}
+}
+
+func (t *Tracer) RecordType(typ *Type) {
+	t.recorder.RecordType(wrapType(typ))
+}
+
+func (t *Tracer) Push(phase tracing.Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
+	return t.tracing.Push(phase, name, args, separateBeginAndEnd)
+}
+
+func (t *Tracer) Instant(phase tracing.Phase, name string, args map[string]any) {
+	t.tracing.Instant(phase, name, args)
 }
 
 // tracedTypeAdapter adapts a Type to the tracing.TracedType interface
@@ -301,18 +321,4 @@ func wrapTypes(types []*Type) []tracing.TracedType {
 		result[i] = wrapType(t)
 	}
 	return result
-}
-
-// tracingTypeTracer wraps a tracing.Tracer to implement TypeTracer
-type tracingTypeTracer struct {
-	tracer tracing.Tracer
-}
-
-func (t *tracingTypeTracer) RecordType(typ *Type) {
-	t.tracer.RecordType(wrapType(typ))
-}
-
-// NewTracingTypeTracer creates a TypeTracer from a tracing.Tracer
-func NewTracingTypeTracer(tracer tracing.Tracer) TypeTracer {
-	return &tracingTypeTracer{tracer: tracer}
 }

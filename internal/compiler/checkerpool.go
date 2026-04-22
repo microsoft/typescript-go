@@ -101,11 +101,11 @@ func (p *checkerPool) createCheckers() {
 		wg := core.NewWorkGroup(p.program.SingleThreaded())
 		for i := range checkerCount {
 			wg.Queue(func() {
-				var tracer checker.TypeTracer
+				var tracer *checker.Tracer
 				if p.tracing != nil {
-					tracer = checker.NewTracingTypeTracer(p.tracing.NewTypeTracer(i))
+					tracer = checker.NewTracer(p.tracing, i)
 				}
-				p.checkers[i], p.locks[i] = checker.NewCheckerWithTracer(p.program, tracer, p.tracing)
+				p.checkers[i], p.locks[i] = checker.NewCheckerWithTracer(p.program, tracer)
 			})
 		}
 
