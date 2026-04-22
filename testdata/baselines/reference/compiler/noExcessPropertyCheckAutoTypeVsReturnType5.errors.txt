@@ -1,0 +1,54 @@
+noExcessPropertyCheckAutoTypeVsReturnType5.ts(39,13): error TS2353: Object literal may only specify known properties, and 'attributes' does not exist in type 'UsageData'.
+
+
+==== noExcessPropertyCheckAutoTypeVsReturnType5.ts (1 errors) ====
+    interface TypeData {
+      ref?: string;
+    }
+    
+    interface UsageData {
+      Type_Data?: Array<TypeData>;
+    }
+    
+    interface EmailAddressData {
+      Email_Address: string;
+      Usage_Data?: Array<UsageData>;
+    }
+    
+    declare const cond: boolean;
+    declare const emails: { value: string }[];
+    declare function makeRef(s: string): string;
+    declare function take(xs: EmailAddressData[]): EmailAddressData[];
+    
+    function f(): EmailAddressData[] {
+      let v;
+      if (cond) {
+        v = [
+          {
+            Email_Address: emails[0].value,
+            Usage_Data: [
+              {
+                attributes: { p: false },
+                Type_Data: [{ ref: makeRef("x") }],
+              },
+            ],
+          },
+        ];
+      } else {
+        v = take([
+          {
+            Email_Address: emails[0].value,
+            Usage_Data: [
+              {
+                attributes: { p: false },
+                ~~~~~~~~~~
+!!! error TS2353: Object literal may only specify known properties, and 'attributes' does not exist in type 'UsageData'.
+                Type_Data: [{ ref: makeRef("x") }],
+              },
+            ],
+          },
+        ]);
+      }
+      return v;
+    }
+    

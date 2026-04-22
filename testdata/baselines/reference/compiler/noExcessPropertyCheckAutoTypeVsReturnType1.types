@@ -1,0 +1,179 @@
+//// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType1.ts] ////
+
+=== noExcessPropertyCheckAutoTypeVsReturnType1.ts ===
+interface TypeData {
+  ref?: string;
+>ref : string | undefined
+}
+
+interface UsageData {
+  Type_Data?: Array<TypeData>;
+>Type_Data : TypeData[] | undefined
+
+  Comments?: string;
+>Comments : string | undefined
+}
+
+interface EmailAddressData {
+  Email_Address: string;
+>Email_Address : string
+
+  Usage_Data?: Array<UsageData>;
+>Usage_Data : UsageData[] | undefined
+}
+
+declare function condition(): boolean;
+>condition : () => boolean
+
+declare function makeRef(s: string): string;
+>makeRef : (s: string) => string
+>s : string
+
+declare const emails: { value: string; isWork: boolean }[];
+>emails : { value: string; isWork: boolean; }[]
+>value : string
+>isWork : boolean
+
+async function build(): Promise<EmailAddressData[]> {
+>build : () => Promise<EmailAddressData[]>
+
+  let emailAddressData;
+>emailAddressData : any
+
+  if (condition()) {
+>condition() : boolean
+>condition : () => boolean
+
+    const primary = emails[0];
+>primary : { value: string; isWork: boolean; }
+>emails[0] : { value: string; isWork: boolean; }
+>emails : { value: string; isWork: boolean; }[]
+>0 : 0
+
+    emailAddressData = primary
+>emailAddressData = primary      ? [          {            Email_Address: primary.value,            Usage_Data: [              {                attributes: { "wd:Public": false },                Type_Data: [                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ],              },            ],          },        ]      : [] : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }[]
+>emailAddressData : any
+>primary      ? [          {            Email_Address: primary.value,            Usage_Data: [              {                attributes: { "wd:Public": false },                Type_Data: [                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ],              },            ],          },        ]      : [] : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }[]
+>primary : { value: string; isWork: boolean; }
+
+      ? [
+>[          {            Email_Address: primary.value,            Usage_Data: [              {                attributes: { "wd:Public": false },                Type_Data: [                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ],              },            ],          },        ] : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }[]
+          {
+>{            Email_Address: primary.value,            Usage_Data: [              {                attributes: { "wd:Public": false },                Type_Data: [                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ],              },            ],          } : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }
+
+            Email_Address: primary.value,
+>Email_Address : string
+>primary.value : string
+>primary : { value: string; isWork: boolean; }
+>value : string
+
+            Usage_Data: [
+>Usage_Data : { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]
+>[              {                attributes: { "wd:Public": false },                Type_Data: [                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ],              },            ] : { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]
+              {
+>{                attributes: { "wd:Public": false },                Type_Data: [                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ],              } : { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }
+
+                attributes: { "wd:Public": false },
+>attributes : { "wd:Public": boolean; }
+>{ "wd:Public": false } : { "wd:Public": boolean; }
+>"wd:Public" : boolean
+>false : false
+
+                Type_Data: [
+>Type_Data : { attributes: { "wd:Primary": boolean; }; ref: string; }[]
+>[                  {                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  },                ] : { attributes: { "wd:Primary": boolean; }; ref: string; }[]
+                  {
+>{                    attributes: { "wd:Primary": true },                    ref: makeRef("HOME"),                  } : { attributes: { "wd:Primary": boolean; }; ref: string; }
+
+                    attributes: { "wd:Primary": true },
+>attributes : { "wd:Primary": boolean; }
+>{ "wd:Primary": true } : { "wd:Primary": boolean; }
+>"wd:Primary" : boolean
+>true : true
+
+                    ref: makeRef("HOME"),
+>ref : string
+>makeRef("HOME") : string
+>makeRef : (s: string) => string
+>"HOME" : "HOME"
+
+                  },
+                ],
+              },
+            ],
+          },
+        ]
+      : [];
+>[] : never[]
+
+  } else {
+    emailAddressData = emails.map((email) => ({
+>emailAddressData = emails.map((email) => ({      Email_Address: email.value,      Usage_Data: [        {          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        },      ],    })) : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }[]
+>emailAddressData : any
+>emails.map((email) => ({      Email_Address: email.value,      Usage_Data: [        {          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        },      ],    })) : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }[]
+>emails.map : <U>(callbackfn: (value: { value: string; isWork: boolean; }, index: number, array: { value: string; isWork: boolean; }[]) => U, thisArg?: any) => U[]
+>emails : { value: string; isWork: boolean; }[]
+>map : <U>(callbackfn: (value: { value: string; isWork: boolean; }, index: number, array: { value: string; isWork: boolean; }[]) => U, thisArg?: any) => U[]
+>(email) => ({      Email_Address: email.value,      Usage_Data: [        {          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        },      ],    }) : (email: { value: string; isWork: boolean; }) => { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }
+>email : { value: string; isWork: boolean; }
+>({      Email_Address: email.value,      Usage_Data: [        {          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        },      ],    }) : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": true; }; ref: string; }[]; }[]; }
+>{      Email_Address: email.value,      Usage_Data: [        {          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        },      ],    } : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": true; }; ref: string; }[]; }[]; }
+
+      Email_Address: email.value,
+>Email_Address : string
+>email.value : string
+>email : { value: string; isWork: boolean; }
+>value : string
+
+      Usage_Data: [
+>Usage_Data : { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": true; }; ref: string; }[]; }[]
+>[        {          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        },      ] : { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": true; }; ref: string; }[]; }[]
+        {
+>{          attributes: { "wd:Public": email.isWork },          Type_Data: [            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ],        } : { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": true; }; ref: string; }[]; }
+
+          attributes: { "wd:Public": email.isWork },
+>attributes : { "wd:Public": boolean; }
+>{ "wd:Public": email.isWork } : { "wd:Public": boolean; }
+>"wd:Public" : boolean
+>email.isWork : boolean
+>email : { value: string; isWork: boolean; }
+>isWork : boolean
+
+          Type_Data: [
+>Type_Data : { attributes: { "wd:Primary": true; }; ref: string; }[]
+>[            {              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            },          ] : { attributes: { "wd:Primary": true; }; ref: string; }[]
+            {
+>{              attributes: { "wd:Primary": true },              ref: makeRef("HOME"),            } : { attributes: { "wd:Primary": true; }; ref: string; }
+
+              attributes: { "wd:Primary": true },
+>attributes : { "wd:Primary": true; }
+>{ "wd:Primary": true } : { "wd:Primary": true; }
+>"wd:Primary" : true
+>true : true
+
+              ref: makeRef("HOME"),
+>ref : string
+>makeRef("HOME") : string
+>makeRef : (s: string) => string
+>"HOME" : "HOME"
+
+            },
+          ],
+        },
+      ],
+    }));
+  }
+  return emailAddressData;
+>emailAddressData : { Email_Address: string; Usage_Data: { attributes: { "wd:Public": boolean; }; Type_Data: { attributes: { "wd:Primary": boolean; }; ref: string; }[]; }[]; }[]
+}
+
+build().then(console.log);
+>build().then(console.log) : Promise<void>
+>build().then : <TResult1 = EmailAddressData[], TResult2 = never>(onfulfilled?: ((value: EmailAddressData[]) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>
+>build() : Promise<EmailAddressData[]>
+>build : () => Promise<EmailAddressData[]>
+>then : <TResult1 = EmailAddressData[], TResult2 = never>(onfulfilled?: ((value: EmailAddressData[]) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+

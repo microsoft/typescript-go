@@ -1,0 +1,151 @@
+//// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType2.ts] ////
+
+=== noExcessPropertyCheckAutoTypeVsReturnType2.ts ===
+interface TypeData {
+>TypeData : Symbol(TypeData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 0, 0))
+
+  ref?: string;
+>ref : Symbol(TypeData.ref, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 0, 20))
+}
+
+interface UsageData {
+>UsageData : Symbol(UsageData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 2, 1))
+
+  Type_Data?: Array<TypeData>;
+>Type_Data : Symbol(UsageData.Type_Data, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 4, 21))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 3 more)
+>TypeData : Symbol(TypeData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 0, 0))
+
+  Comments?: string;
+>Comments : Symbol(UsageData.Comments, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 5, 30))
+}
+
+interface EmailAddressData {
+>EmailAddressData : Symbol(EmailAddressData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 7, 1))
+
+  Email_Address: string;
+>Email_Address : Symbol(EmailAddressData.Email_Address, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 9, 28))
+
+  Usage_Data?: Array<UsageData>;
+>Usage_Data : Symbol(EmailAddressData.Usage_Data, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 10, 24))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 3 more)
+>UsageData : Symbol(UsageData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 2, 1))
+}
+
+declare function condition(): boolean;
+>condition : Symbol(condition, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 12, 1))
+
+declare function makeRef(s: string): string;
+>makeRef : Symbol(makeRef, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 14, 38))
+>s : Symbol(s, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 15, 25))
+
+declare const emails: { value: string; isWork: boolean }[];
+>emails : Symbol(emails, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 13))
+>value : Symbol(value, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 23))
+>isWork : Symbol(isWork, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 38))
+
+async function build(): Promise<EmailAddressData[]> {
+>build : Symbol(build, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 59))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
+>EmailAddressData : Symbol(EmailAddressData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 7, 1))
+
+  let emailAddressData;
+>emailAddressData : Symbol(emailAddressData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 19, 5))
+
+  if (condition()) {
+>condition : Symbol(condition, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 12, 1))
+
+    emailAddressData = emails.map((email) => ({
+>emailAddressData : Symbol(emailAddressData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 19, 5))
+>emails.map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>emails : Symbol(emails, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 13))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>email : Symbol(email, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 21, 35))
+
+      Email_Address: email.value,
+>Email_Address : Symbol(Email_Address, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 21, 47))
+>email.value : Symbol(value, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 23))
+>email : Symbol(email, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 21, 35))
+>value : Symbol(value, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 23))
+
+      Usage_Data: [
+>Usage_Data : Symbol(Usage_Data, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 22, 33))
+        {
+          attributes: { "wd:Public": email.isWork },
+>attributes : Symbol(attributes, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 24, 9))
+>"wd:Public" : Symbol("wd:Public", Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 25, 23))
+>email.isWork : Symbol(isWork, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 38))
+>email : Symbol(email, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 21, 35))
+>isWork : Symbol(isWork, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 38))
+
+          Type_Data: [
+>Type_Data : Symbol(Type_Data, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 25, 52))
+            {
+              attributes: { "wd:Primary": true },
+>attributes : Symbol(attributes, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 27, 13))
+>"wd:Primary" : Symbol("wd:Primary", Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 28, 27))
+
+              ref: makeRef("HOME"),
+>ref : Symbol(ref, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 28, 49))
+>makeRef : Symbol(makeRef, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 14, 38))
+
+            },
+          ],
+        },
+      ],
+    }));
+  } else {
+    const primary = emails[0];
+>primary : Symbol(primary, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 36, 9))
+>emails : Symbol(emails, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 13))
+
+    emailAddressData = primary
+>emailAddressData : Symbol(emailAddressData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 19, 5))
+>primary : Symbol(primary, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 36, 9))
+
+      ? [
+          {
+            Email_Address: primary.value,
+>Email_Address : Symbol(Email_Address, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 39, 11))
+>primary.value : Symbol(value, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 23))
+>primary : Symbol(primary, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 36, 9))
+>value : Symbol(value, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 23))
+
+            Usage_Data: [
+>Usage_Data : Symbol(Usage_Data, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 40, 41))
+              {
+                attributes: { "wd:Public": false },
+>attributes : Symbol(attributes, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 42, 15))
+>"wd:Public" : Symbol("wd:Public", Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 43, 29))
+
+                Type_Data: [
+>Type_Data : Symbol(Type_Data, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 43, 51))
+                  {
+                    attributes: { "wd:Primary": true },
+>attributes : Symbol(attributes, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 45, 19))
+>"wd:Primary" : Symbol("wd:Primary", Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 46, 33))
+
+                    ref: makeRef("HOME"),
+>ref : Symbol(ref, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 46, 55))
+>makeRef : Symbol(makeRef, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 14, 38))
+
+                  },
+                ],
+              },
+            ],
+          },
+        ]
+      : [];
+  }
+  return emailAddressData;
+>emailAddressData : Symbol(emailAddressData, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 19, 5))
+}
+
+build().then(console.log);
+>build().then : Symbol(Promise.then, Decl(lib.es5.d.ts, --, --))
+>build : Symbol(build, Decl(noExcessPropertyCheckAutoTypeVsReturnType2.ts, 16, 59))
+>then : Symbol(Promise.then, Decl(lib.es5.d.ts, --, --))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+

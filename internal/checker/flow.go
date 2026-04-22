@@ -229,7 +229,7 @@ func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) Flow
 			if c.isEmptyArrayAssignment(node) {
 				return FlowType{t: c.getEvolvingArrayType(c.neverType)}
 			}
-			assignedType := c.getWidenedLiteralType(c.getInitialOrAssignedType(f, flow))
+			assignedType := c.getWidenedType(c.getWidenedLiteralType(c.getInitialOrAssignedType(f, flow)))
 			if c.isTypeAssignableTo(assignedType, f.declaredType) {
 				return FlowType{t: assignedType}
 			}

@@ -1,0 +1,133 @@
+//// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType6.ts] ////
+
+=== noExcessPropertyCheckAutoTypeVsReturnType6.ts ===
+interface TypeData {
+  ref?: string;
+>ref : string | undefined
+}
+
+interface UsageData {
+  Type_Data?: Array<TypeData>;
+>Type_Data : TypeData[] | undefined
+}
+
+interface EmailAddressData {
+  Email_Address: string;
+>Email_Address : string
+
+  Usage_Data?: Array<UsageData>;
+>Usage_Data : UsageData[] | undefined
+}
+
+declare const cond: boolean;
+>cond : boolean
+
+declare const emails: { value: string }[];
+>emails : { value: string; }[]
+>value : string
+
+declare function makeRef(s: string): string;
+>makeRef : (s: string) => string
+>s : string
+
+declare function take(xs: EmailAddressData[]): EmailAddressData[];
+>take : (xs: EmailAddressData[]) => EmailAddressData[]
+>xs : EmailAddressData[]
+
+function f(): EmailAddressData[] {
+>f : () => EmailAddressData[]
+
+  let v;
+>v : any
+
+  if (cond) {
+>cond : boolean
+
+    v = take([
+>v = take([      {        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      },    ]) : EmailAddressData[]
+>v : any
+>take([      {        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      },    ]) : EmailAddressData[]
+>take : (xs: EmailAddressData[]) => EmailAddressData[]
+>[      {        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      },    ] : { Email_Address: string; Usage_Data: { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]; }[]
+      {
+>{        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      } : { Email_Address: string; Usage_Data: { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]; }
+
+        Email_Address: emails[0].value,
+>Email_Address : string
+>emails[0].value : string
+>emails[0] : { value: string; }
+>emails : { value: string; }[]
+>0 : 0
+>value : string
+
+        Usage_Data: [
+>Usage_Data : { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]
+>[          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ] : { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]
+          {
+>{            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          } : { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }
+
+            attributes: { p: false },
+>attributes : { p: boolean; }
+>{ p: false } : { p: boolean; }
+>p : boolean
+>false : false
+
+            Type_Data: [{ ref: makeRef("x") }],
+>Type_Data : { ref: string; }[]
+>[{ ref: makeRef("x") }] : { ref: string; }[]
+>{ ref: makeRef("x") } : { ref: string; }
+>ref : string
+>makeRef("x") : string
+>makeRef : (s: string) => string
+>"x" : "x"
+
+          },
+        ],
+      },
+    ]);
+  } else {
+    v = [
+>v = [      {        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      },    ] : { Email_Address: string; Usage_Data: { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]; }[]
+>v : any
+>[      {        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      },    ] : { Email_Address: string; Usage_Data: { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]; }[]
+      {
+>{        Email_Address: emails[0].value,        Usage_Data: [          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ],      } : { Email_Address: string; Usage_Data: { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]; }
+
+        Email_Address: emails[0].value,
+>Email_Address : string
+>emails[0].value : string
+>emails[0] : { value: string; }
+>emails : { value: string; }[]
+>0 : 0
+>value : string
+
+        Usage_Data: [
+>Usage_Data : { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]
+>[          {            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          },        ] : { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }[]
+          {
+>{            attributes: { p: false },            Type_Data: [{ ref: makeRef("x") }],          } : { attributes: { p: boolean; }; Type_Data: { ref: string; }[]; }
+
+            attributes: { p: false },
+>attributes : { p: boolean; }
+>{ p: false } : { p: boolean; }
+>p : boolean
+>false : false
+
+            Type_Data: [{ ref: makeRef("x") }],
+>Type_Data : { ref: string; }[]
+>[{ ref: makeRef("x") }] : { ref: string; }[]
+>{ ref: makeRef("x") } : { ref: string; }
+>ref : string
+>makeRef("x") : string
+>makeRef : (s: string) => string
+>"x" : "x"
+
+          },
+        ],
+      },
+    ];
+  }
+  return v;
+>v : EmailAddressData[]
+}
+

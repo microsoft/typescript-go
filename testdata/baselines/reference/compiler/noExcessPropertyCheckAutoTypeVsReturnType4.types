@@ -1,0 +1,66 @@
+//// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType4.ts] ////
+
+=== noExcessPropertyCheckAutoTypeVsReturnType4.ts ===
+interface Inner {
+  x: number;
+>x : number
+}
+
+interface U {
+  a: Inner[];
+>a : Inner[]
+}
+
+declare const cond: boolean;
+>cond : boolean
+
+declare function id<T>(x: T): T;
+>id : <T>(x: T) => T
+>x : T
+
+function f(): U[] {
+>f : () => U[]
+
+  let v;
+>v : any
+
+  if (cond) {
+>cond : boolean
+
+    const tmp = id([{ a: [{ x: 1, extra: true }] }]);
+>tmp : { a: { x: number; extra: boolean; }[]; }[]
+>id([{ a: [{ x: 1, extra: true }] }]) : { a: { x: number; extra: boolean; }[]; }[]
+>id : <T>(x: T) => T
+>[{ a: [{ x: 1, extra: true }] }] : { a: { x: number; extra: true; }[]; }[]
+>{ a: [{ x: 1, extra: true }] } : { a: { x: number; extra: true; }[]; }
+>a : { x: number; extra: true; }[]
+>[{ x: 1, extra: true }] : { x: number; extra: true; }[]
+>{ x: 1, extra: true } : { x: number; extra: true; }
+>x : number
+>1 : 1
+>extra : true
+>true : true
+
+    v = tmp;
+>v = tmp : { a: { x: number; extra: boolean; }[]; }[]
+>v : any
+>tmp : { a: { x: number; extra: boolean; }[]; }[]
+
+  } else {
+    v = [{ a: [{ x: 1, extra: true }] }];
+>v = [{ a: [{ x: 1, extra: true }] }] : { a: { x: number; extra: boolean; }[]; }[]
+>v : any
+>[{ a: [{ x: 1, extra: true }] }] : { a: { x: number; extra: boolean; }[]; }[]
+>{ a: [{ x: 1, extra: true }] } : { a: { x: number; extra: boolean; }[]; }
+>a : { x: number; extra: boolean; }[]
+>[{ x: 1, extra: true }] : { x: number; extra: boolean; }[]
+>{ x: 1, extra: true } : { x: number; extra: boolean; }
+>x : number
+>1 : 1
+>extra : boolean
+>true : true
+  }
+  return v;
+>v : { a: { x: number; extra: boolean; }[]; }[]
+}
+
