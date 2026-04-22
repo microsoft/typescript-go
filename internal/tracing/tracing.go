@@ -80,6 +80,7 @@ type traceEvent struct {
 	Cat  string         `json:"cat"`
 	TS   float64        `json:"ts"`
 	Name string         `json:"name,omitzero"`
+	S    string         `json:"s,omitzero"` // scope, only set for instant events ("g" = global)
 	Dur  *float64       `json:"dur,omitzero"`
 	Args map[string]any `json:"args,omitzero"`
 }
@@ -215,7 +216,7 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 
 	ts := tr.timestamp()
 	tr.traceContent.WriteString(",\n")
-	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, Args: args})
+	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, S: "g", Args: args})
 	tr.maybeFlushLocked()
 }
 
