@@ -3,6 +3,7 @@ package tracing
 import (
 	"context"
 	"fmt"
+	"maps"
 	"math"
 	"slices"
 	"strings"
@@ -96,15 +97,28 @@ type TraceRecord struct {
 type traceStackEntry struct {
 	phase               Phase
 	name                string
-	argsJSON            string
+	args                map[string]any
 	startTime           time.Time // wall-clock time for sampling decisions
 	separateBeginAndEnd bool
+}
+
+type traceEvent struct {
+	PID  int            `json:"pid"`
+	TID  int            `json:"tid"`
+	PH   string         `json:"ph"`
+	Cat  string         `json:"cat,omitzero"`
+	TS   float64        `json:"ts"`
+	Name string         `json:"name,omitzero"`
+	Dur  *float64       `json:"dur,omitzero"`
+	Args map[string]any `json:"args,omitzero"`
 }
 
 // sampleInterval matches TypeScript's 10ms sampling interval.
 // Events with separateBeginAndEnd=false are only recorded if their
 // duration crosses a 10ms sampling boundary.
 const sampleInterval = 10 * time.Millisecond
+
+const traceFileName = "trace_0.json"
 
 // Tracing manages the overall tracing session including all checkers
 type Tracing struct {
@@ -155,11 +169,11 @@ func StartTracing(fs vfs.FS, traceDir string, configFilePath string, determinist
 
 	// Write metadata events (matching TypeScript's format)
 	metaTs := tr.timestamp()
-	tr.writeEventRaw("M", "__metadata", metaTs, "process_name", "{\"name\":\"tsgo\"}")
+	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "__metadata", TS: metaTs, Name: "process_name", Args: map[string]any{"name": "tsgo"}})
 	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("M", "__metadata", metaTs, "thread_name", "{\"name\":\"Main\"}")
+	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "__metadata", TS: metaTs, Name: "thread_name", Args: map[string]any{"name": "Main"}})
 	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("M", "disabled-by-default-devtools.timeline", metaTs, "TracingStartedInBrowser", "")
+	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "disabled-by-default-devtools.timeline", TS: metaTs, Name: "TracingStartedInBrowser"})
 
 	return tr, nil
 }
@@ -176,108 +190,14 @@ func (tr *Tracing) timestamp() float64 {
 	return float64(time.Since(tr.startTime).Nanoseconds()) / 1000.0
 }
 
-// writeEventTo writes a trace event to the given builder with deterministic field ordering.
-// argsJSON should be pre-formatted JSON for the args object contents, or empty string for no args.
-// extras should be pre-formatted JSON key-value pair(s) like `"dur":123`, or empty string.
-func writeEventTo(buf *strings.Builder, ph string, cat string, ts float64, name string, argsJSON string, extras ...string) {
-	buf.WriteString("{\"pid\":1,\"tid\":1,\"ph\":\"")
-	buf.WriteString(ph)
-	buf.WriteString("\"")
-	if cat != "" {
-		buf.WriteString(",\"cat\":\"")
-		buf.WriteString(cat)
-		buf.WriteString("\"")
-	}
-	buf.WriteString(",\"ts\":")
-	writeNumberTo(buf, ts)
-	if name != "" {
-		buf.WriteString(",\"name\":\"")
-		buf.WriteString(name)
-		buf.WriteString("\"")
-	}
-	for _, extra := range extras {
-		if extra != "" {
-			buf.WriteString(",")
-			buf.WriteString(extra)
-		}
-	}
-	if argsJSON != "" {
-		buf.WriteString(",\"args\":")
-		buf.WriteString(argsJSON)
-	}
-	buf.WriteString("}")
-}
-
-// writeNumberTo writes a number to the builder, using integer format when
-// the value has no fractional part to produce cleaner output.
-func writeNumberTo(buf *strings.Builder, v float64) {
-	if v == float64(int64(v)) {
-		fmt.Fprintf(buf, "%d", int64(v))
-	} else {
-		fmt.Fprintf(buf, "%.4f", v)
+func writeEventTo(buf *strings.Builder, event traceEvent) {
+	if err := json.MarshalWrite(buf, event, json.Deterministic(true)); err != nil {
+		panic(fmt.Sprintf("failed to marshal trace event: %v", err))
 	}
 }
 
-// writeEventRaw writes a trace event to the shared trace content.
-func (tr *Tracing) writeEventRaw(ph string, cat string, ts float64, name string, argsJSON string, extras ...string) {
-	writeEventTo(&tr.traceContent, ph, cat, ts, name, argsJSON, extras...)
-}
-
-// writeArgsJSON constructs a deterministic JSON object from a map of key-value pairs.
-// String values are properly escaped using json.Marshal to handle backslashes,
-// quotes, control characters, and other special characters safely.
-func writeArgsJSON(args map[string]any) string {
-	if len(args) == 0 {
-		return ""
-	}
-	// Sort keys for deterministic output
-	keys := make([]string, 0, len(args))
-	for k := range args {
-		keys = append(keys, k)
-	}
-	slices.Sort(keys)
-	var b strings.Builder
-	b.WriteString("{")
-	first := true
-	for _, k := range keys {
-		if !first {
-			b.WriteString(",")
-		}
-		first = false
-		// Use json.Marshal for proper key escaping
-		keyJSON, _ := json.Marshal(k)
-		b.Write(keyJSON)
-		b.WriteString(":")
-		v := args[k]
-		switch val := v.(type) {
-		case string:
-			valJSON, _ := json.Marshal(val)
-			b.Write(valJSON)
-		case bool:
-			if val {
-				b.WriteString("true")
-			} else {
-				b.WriteString("false")
-			}
-		case int:
-			fmt.Fprintf(&b, "%d", val)
-		case int32:
-			fmt.Fprintf(&b, "%d", val)
-		case uint32:
-			fmt.Fprintf(&b, "%d", val)
-		case int64:
-			fmt.Fprintf(&b, "%d", val)
-		case uint64:
-			fmt.Fprintf(&b, "%d", val)
-		case ast.Kind:
-			fmt.Fprintf(&b, "%d", int(val))
-		default:
-			valJSON, _ := json.Marshal(fmt.Sprintf("%v", val))
-			b.Write(valJSON)
-		}
-	}
-	b.WriteString("}")
-	return b.String()
+func (tr *Tracing) writeEvent(event traceEvent) {
+	writeEventTo(&tr.traceContent, event)
 }
 
 // Instant records an instant event in the trace.
@@ -292,23 +212,22 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 
 	ts := tr.timestamp()
 	tr.traceContent.WriteString(",\n")
-	tr.writeEventRaw("I", string(phase), ts, name, writeArgsJSON(args))
+	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, Args: args})
 }
 
 // pushTo implements the Push logic, writing to the given buffer and event stack.
 func pushTo(buf *strings.Builder, stack *[]traceStackEntry, ts float64, phase Phase, name string, separateBeginAndEnd bool, args map[string]any) {
-	argsJSON := writeArgsJSON(args)
 	*stack = append(*stack, traceStackEntry{
 		phase:               phase,
 		name:                name,
-		argsJSON:            argsJSON,
+		args:                maps.Clone(args),
 		startTime:           time.Now(),
 		separateBeginAndEnd: separateBeginAndEnd,
 	})
 
 	if separateBeginAndEnd {
 		buf.WriteString(",\n")
-		writeEventTo(buf, "B", string(phase), ts, name, argsJSON)
+		writeEventTo(buf, traceEvent{PID: 1, TID: 1, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
 	}
 }
 
@@ -324,7 +243,7 @@ func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTi
 
 	if entry.separateBeginAndEnd {
 		buf.WriteString(",\n")
-		writeEventTo(buf, "E", string(entry.phase), ts, entry.name, entry.argsJSON)
+		writeEventTo(buf, traceEvent{PID: 1, TID: 1, PH: "E", Cat: string(entry.phase), TS: ts, Name: entry.name, Args: entry.args})
 	} else if !deterministic {
 		// Sampled events use wall-clock time for duration and sampling boundary
 		// checks. In deterministic mode, skip them entirely to avoid flaky baselines.
@@ -336,7 +255,7 @@ func popFrom(buf *strings.Builder, stack *[]traceStackEntry, ts float64, startTi
 
 		if intervalMicros-math.Mod(startMicros, intervalMicros) <= dur {
 			buf.WriteString(",\n")
-			writeEventTo(buf, "X", string(entry.phase), startMicros, entry.name, entry.argsJSON, fmt.Sprintf("\"dur\":%.4f", dur))
+			writeEventTo(buf, traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(entry.phase), TS: startMicros, Name: entry.name, Dur: &dur, Args: entry.args})
 		}
 	}
 }
@@ -411,7 +330,7 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 	tr.mu.Lock()
 	defer tr.mu.Unlock()
 
-	tracePath := tspath.CombinePaths(tr.traceDir, "trace_0.json")
+	tracePath := tspath.CombinePaths(tr.traceDir, traceFileName)
 	typesPath := tspath.CombinePaths(tr.traceDir, fmt.Sprintf("types_%d.json", checkerIndex))
 	tracer := &typeTracer{
 		fs:           tr.fs,
@@ -447,7 +366,7 @@ func (tr *Tracing) StopTracing() error {
 		sharedContent := tr.traceContent.String()
 
 		// Write shared content to trace_0.json
-		tracePath := tspath.CombinePaths(tr.traceDir, "trace_0.json")
+		tracePath := tspath.CombinePaths(tr.traceDir, traceFileName)
 		if err := tr.fs.WriteFile(tracePath, sharedContent+"\n]\n"); err != nil {
 			return fmt.Errorf("failed to write trace file: %w", err)
 		}
@@ -491,8 +410,7 @@ func (t *typeTracer) DumpTypes() error {
 	// Copy the types slice under lock, then release so Display() calls during
 	// buildTypeDescriptor don't deadlock when they create new types
 	t.mu.Lock()
-	types := make([]TracedType, len(t.types))
-	copy(types, t.types)
+	types := slices.Clone(t.types)
 	t.mu.Unlock()
 
 	if len(types) == 0 {
