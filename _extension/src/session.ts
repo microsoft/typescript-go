@@ -10,6 +10,7 @@ import { TelemetryReporter } from "./telemetryReporting";
 import {
     getBuiltinExePath,
     getExe,
+    resolveTsdkPathToExe,
     useWorkspaceTsdkStorageKey,
 } from "./util";
 
@@ -348,25 +349,21 @@ interface DetectedVersion {
     label: string;
     version: string;
     tsdkPath: string;
+    exePath: string;
 }
 
 async function findWorkspaceNativePreviewPackages(): Promise<DetectedVersion[]> {
     const results: DetectedVersion[] = [];
     for (const folder of vscode.workspace.workspaceFolders ?? []) {
         const packagePath = vscode.Uri.joinPath(folder.uri, "node_modules", "@typescript", "native-preview");
-        try {
-            const packageJsonPath = vscode.Uri.joinPath(packagePath, "package.json");
-            const raw = await vscode.workspace.fs.readFile(packageJsonPath);
-            const packageJson = JSON.parse(new TextDecoder().decode(raw));
-            results.push({
-                label: folder.name,
-                version: packageJson.version ?? "unknown",
-                tsdkPath: path.normalize(packagePath.fsPath),
-            });
-        }
-        catch {
-            // No @typescript/native-preview in this folder
-        }
+        const resolved = await resolveTsdkPathToExe(path.normalize(packagePath.fsPath));
+        if (!resolved) continue;
+        results.push({
+            label: folder.name,
+            version: resolved?.version ?? "unknown",
+            tsdkPath: path.normalize(packagePath.fsPath),
+            exePath: resolved?.path ?? "",
+        });
     }
     return results;
 }
@@ -374,15 +371,16 @@ async function findWorkspaceNativePreviewPackages(): Promise<DetectedVersion[]> 
 async function promptSelectVersion(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.LogOutputChannel): Promise<void> {
     const config = vscode.workspace.getConfiguration("typescript.native-preview");
     const currentExePath = client.getCurrentExe()?.path;
+    const builtinExe = await getBuiltinExePath(context);
     const workspaceVersions = await findWorkspaceNativePreviewPackages();
     const bundledVersion = context.extension.packageJSON.version as string;
     const items: VersionQuickPickItem[] = [];
 
     // Bundled version
     items.push({
-        label: (currentExePath === getBuiltinExePath(context) ? "• " : "") + "Use Bundled Version",
+        label: (currentExePath === builtinExe.path ? "• " : "") + "Use Bundled Version",
         description: bundledVersion,
-        detail: context.asAbsolutePath("lib"),
+        detail: builtinExe.path,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
             await config.update("tsdk", undefined, vscode.ConfigurationTarget.Workspace);
@@ -429,10 +427,15 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
             run: async () => {},
         });
         for (const loc of additionalLocations) {
-            const isActive = currentExePath === loc;
+            const resolved = await resolveTsdkPathToExe(loc);
+            if (!resolved) continue;
+            if (resolved.path === builtinExe.path) continue;
+            if (workspaceVersions.some(ws => ws.exePath === resolved.path)) continue;
+            const isActive = currentExePath === resolved.path;
             items.push({
                 label: (isActive ? "• " : "") + "Use Custom Version",
-                detail: loc,
+                description: resolved.version,
+                detail: resolved.path,
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await config.update("tsdk", loc, vscode.ConfigurationTarget.Workspace);
