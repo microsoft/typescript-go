@@ -105,7 +105,7 @@ func (p *checkerPool) createCheckers() {
 				if p.tracing != nil {
 					tracer = checker.NewTracer(p.tracing, i)
 				}
-				p.checkers[i], p.locks[i] = checker.NewCheckerWithTracer(p.program, tracer)
+				p.checkers[i], p.locks[i] = checker.NewChecker(p.program, tracer)
 			})
 		}
 

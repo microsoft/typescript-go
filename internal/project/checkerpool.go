@@ -218,7 +218,7 @@ func (p *CheckerPool) isFullLocked() bool {
 func (p *CheckerPool) createCheckerLocked() (*checker.Checker, int) {
 	for i, existing := range p.checkers {
 		if existing == nil {
-			checker, _ := checker.NewChecker(p.program)
+			checker, _ := checker.NewChecker(p.program, nil)
 			p.checkers[i] = checker
 			return checker, i
 		}

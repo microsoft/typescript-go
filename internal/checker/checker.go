@@ -888,11 +888,7 @@ type Checker struct {
 	tracer *Tracer // Optional tracer for trace events and type recording (for --generateTrace)
 }
 
-func NewChecker(program Program) (*Checker, *sync.Mutex) {
-	return NewCheckerWithTracer(program, nil)
-}
-
-func NewCheckerWithTracer(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
+func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	program.BindSourceFiles()
 
 	c := &Checker{}
