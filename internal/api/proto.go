@@ -155,7 +155,8 @@ const (
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
-	MethodPrintNode Method = "printNode"
+	MethodPrintNode              Method = "printNode"
+	MethodFormatNodeForInsertion Method = "formatNodeForInsertion"
 
 	// Intrinsic type getters
 	MethodGetAnyType       Method = "getAnyType"
@@ -362,6 +363,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
+	MethodFormatNodeForInsertion:            unmarshallerFor[FormatNodeForInsertionParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetNumberType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -752,6 +754,15 @@ type PrintNodeParams struct {
 	PreserveSourceNewlines        bool   `json:"preserveSourceNewlines,omitempty"`
 	NeverAsciiEscape              bool   `json:"neverAsciiEscape,omitempty"`
 	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
+}
+
+// FormatNodeForInsertionParams are the parameters for the formatNodeForInsertion method.
+type FormatNodeForInsertionParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     DocumentIdentifier       `json:"file"`     // target file where the node will be inserted
+	Position uint32                   `json:"position"` // insertion position in the target file
+	Data     string                   `json:"data"`     // base64-encoded binary AST data for the synthesized node
 }
 
 // CheckerTypeParams are parameters for checker methods that operate on a type.
