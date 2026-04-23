@@ -190,35 +190,35 @@ let C0 = () => null;
 >() => null : () => null
 
 export const C1 = React.forwardRef((props, ref) => <C0 domRef={ref} {...props} />);
->C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<unknown>>
->React.forwardRef((props, ref) => <C0 domRef={ref} {...props} />) : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<unknown>>
+>C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<any>>
+>React.forwardRef((props, ref) => <C0 domRef={ref} {...props} />) : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<any>>
 >React.forwardRef : <T, P = {}>(render: React.ForwardRefRenderFunction<T, P>) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<T>>
 >React : typeof React
 >forwardRef : <T, P = {}>(render: React.ForwardRefRenderFunction<T, P>) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<T>>
->(props, ref) => <C0 domRef={ref} {...props} /> : (props: {}, ref: React.Ref<unknown>) => any
+>(props, ref) => <C0 domRef={ref} {...props} /> : (props: {}, ref: React.Ref<any>) => any
 >props : {}
->ref : React.Ref<unknown>
-><C0 domRef={ref} {...props} /> : any
+>ref : React.Ref<any>
+><C0 domRef={ref} {...props} /> : error
 >C0 : React.FC<{ domRef: unknown; }>
->domRef : React.Ref<unknown>
->ref : React.Ref<unknown>
+>domRef : React.Ref<any>
+>ref : React.Ref<any>
 >props : {}
 
 export const C2 = compose(connect(), hoc())(C1);
->C2 : unknown
->compose(connect(), hoc())(C1) : unknown
->compose(connect(), hoc()) : (...args: any[]) => unknown
+>C2 : any
+>compose(connect(), hoc())(C1) : any
+>compose(connect(), hoc()) : (...args: any[]) => any
 >compose : { (): <R>(a: R) => R; <F extends Function>(f: F): F; <A, B, C>(f1: (b: B) => C, f2: (a: A) => B): (a: A) => C; <A, B, C, D>(f1: (c: C) => D, f2: (b: B) => C, f3: (a: A) => B): (a: A) => D; <R>(f1: (a: any) => R, ...funcs: Function[]): (...args: any[]) => R; <R>(...funcs: Function[]): (...args: any[]) => R; }
 >connect() : import("react-redux").InferableComponentEnhancer
 >connect : () => import("react-redux").InferableComponentEnhancer
 >hoc() : (Component: any) => typeof (Anonymous class)
 >hoc : () => (Component: any) => typeof (Anonymous class)
->C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<unknown>>
+>C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<any>>
 
 // @ts-ignore
 export const C3 = React.createContext();
->C3 : React.Context<unknown>
->React.createContext() : React.Context<unknown>
+>C3 : React.Context<any>
+>React.createContext() : React.Context<any>
 >React.createContext : <T>(defaultValue: T) => React.Context<T>
 >React : typeof React
 >createContext : <T>(defaultValue: T) => React.Context<T>
@@ -242,7 +242,7 @@ function hoc() {
 >render : () => any
 
                 return <Component {...this.props} />;
-><Component {...this.props} /> : any
+><Component {...this.props} /> : error
 >Component : any
 >this.props : Readonly<any>
 >this : this
@@ -257,9 +257,9 @@ import React from 'react';
 >React : typeof React
 
 import { C1, C2, C3 } from './lib.js';
->C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<unknown>>
->C2 : unknown
->C3 : React.Context<unknown>
+>C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<any>>
+>C2 : any
+>C3 : React.Context<any>
 
 const track = React.useRef(null);
 >track : React.RefObject<null>
@@ -269,26 +269,26 @@ const track = React.useRef(null);
 >useRef : <T>(initialValue: T | null) => React.RefObject<T>
 
 <C1 ref={(e) => { track.current = e; }} />;
-><C1 ref={(e) => { track.current = e; }} /> : any
->C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<unknown>>
->ref : (e: unknown) => void
->(e) => { track.current = e; } : (e: unknown) => void
->e : unknown
->track.current = e : unknown
+><C1 ref={(e) => { track.current = e; }} /> : error
+>C1 : React.ForwardRefExoticComponent<React.PropsWithoutRef<{}> & React.RefAttributes<any>>
+>ref : (e: any) => void
+>(e) => { track.current = e; } : (e: any) => void
+>e : any
+>track.current = e : any
 >track.current : null
 >track : React.RefObject<null>
 >current : null
->e : unknown
+>e : any
 
 <C2 />;
-><C2 /> : any
->C2 : unknown
+><C2 /> : error
+>C2 : any
 
 const { value } = React.useContext(C3);
 >value : any
->React.useContext(C3) : unknown
+>React.useContext(C3) : any
 >React.useContext : <T>(context: React.Context<T>) => T
 >React : typeof React
 >useContext : <T>(context: React.Context<T>) => T
->C3 : React.Context<unknown>
+>C3 : React.Context<any>
 
