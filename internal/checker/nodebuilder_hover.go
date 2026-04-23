@@ -111,7 +111,8 @@ func (b *NodeBuilderImpl) expandClassDecl(symbol *ast.Symbol) *ast.Node {
 	name := ast.SymbolName(symbol)
 	b.ctx.approximateLength += 9 + len(name)
 
-	originalDecl := core.Find(symbol.Declarations, ast.IsClassLike)
+	classLikeDeclarations := core.Filter(symbol.Declarations, ast.IsClassLike)
+	originalDecl := core.FirstOrNil(classLikeDeclarations)
 	oldEnclosing := b.ctx.enclosingDeclaration
 	if originalDecl != nil {
 		b.ctx.enclosingDeclaration = originalDecl
@@ -134,22 +135,7 @@ func (b *NodeBuilderImpl) expandClassDecl(symbol *ast.Symbol) *ast.Node {
 	}
 
 	// Heritage clauses
-	var heritageClauses []*ast.Node
-	if len(baseTypes) > 0 {
-		extendsTypes := core.Map(baseTypes, func(bt *Type) *ast.Node { return b.hoverExpressionWithTypeArguments(bt, ast.SymbolFlagsValue) })
-		heritageClauses = append(heritageClauses, b.f.NewHeritageClause(ast.KindExtendsKeyword, b.f.NewNodeList(extendsTypes)))
-	}
-	if impls := b.getImplementsTypes(classType); len(impls) > 0 {
-		var implExprs []*ast.Node
-		for _, t := range impls {
-			if expr := b.hoverExpressionWithTypeArguments(t, ast.SymbolFlagsType); expr != nil {
-				implExprs = append(implExprs, expr)
-			}
-		}
-		if len(implExprs) > 0 {
-			heritageClauses = append(heritageClauses, b.f.NewHeritageClause(ast.KindImplementsKeyword, b.f.NewNodeList(implExprs)))
-		}
-	}
+	heritageClauses := b.hoverHeritageClauses(classLikeDeclarations)
 
 	// Instance members via addPropertyToElementList (reusing existing serialization),
 	// then convert TypeElements to ClassElements and add class-specific modifiers
@@ -249,6 +235,7 @@ func (b *NodeBuilderImpl) expandInterfaceDecl(symbol *ast.Symbol) *ast.Node {
 	b.ctx.approximateLength += 14 + len(name)
 
 	interfaceType := b.ch.getDeclaredTypeOfClassOrInterface(symbol)
+	interfaceDeclarations := core.Filter(symbol.Declarations, ast.IsInterfaceDeclaration)
 	localParams := b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 	typeParamDecls := core.Map(localParams, func(p *Type) *ast.Node { return b.typeParameterToDeclaration(p) })
 	baseTypes := b.ch.getBaseTypes(interfaceType)
@@ -279,20 +266,31 @@ func (b *NodeBuilderImpl) expandInterfaceDecl(symbol *ast.Symbol) *ast.Node {
 	members = b.serializePropertiesWithTruncation(filteredProps, members)
 
 	// Heritage clauses
-	var heritageClauses []*ast.Node
-	if len(baseTypes) > 0 {
-		var hcTypes []*ast.Node
-		for _, bt := range baseTypes {
-			if ref := b.hoverExpressionWithTypeArguments(bt, ast.SymbolFlagsValue); ref != nil {
-				hcTypes = append(hcTypes, ref)
-			}
+	heritageClauses := b.hoverHeritageClauses(interfaceDeclarations)
+
+	return b.f.NewInterfaceDeclaration(nil, b.f.NewIdentifier(name), b.f.NewNodeList(typeParamDecls), b.f.NewNodeList(heritageClauses), b.f.NewNodeList(members))
+}
+
+func (b *NodeBuilderImpl) hoverHeritageClauses(declarations []*ast.Node) []*ast.Node {
+	var extendsTypes []*ast.Node
+	var implementsTypes []*ast.Node
+	for _, declaration := range declarations {
+		for _, heritageElement := range ast.GetExtendsHeritageClauseElements(declaration) {
+			extendsTypes = append(extendsTypes, b.f.DeepCloneNode(heritageElement.AsNode()))
 		}
-		if len(hcTypes) > 0 {
-			heritageClauses = []*ast.Node{b.f.NewHeritageClause(ast.KindExtendsKeyword, b.f.NewNodeList(hcTypes))}
+		for _, heritageElement := range ast.GetImplementsHeritageClauseElements(declaration) {
+			implementsTypes = append(implementsTypes, b.f.DeepCloneNode(heritageElement.AsNode()))
 		}
 	}
 
-	return b.f.NewInterfaceDeclaration(nil, b.f.NewIdentifier(name), b.f.NewNodeList(typeParamDecls), b.f.NewNodeList(heritageClauses), b.f.NewNodeList(members))
+	var heritageClauses []*ast.Node
+	if len(extendsTypes) > 0 {
+		heritageClauses = append(heritageClauses, b.f.NewHeritageClause(ast.KindExtendsKeyword, b.f.NewNodeList(extendsTypes)))
+	}
+	if len(implementsTypes) > 0 {
+		heritageClauses = append(heritageClauses, b.f.NewHeritageClause(ast.KindImplementsKeyword, b.f.NewNodeList(implementsTypes)))
+	}
+	return heritageClauses
 }
 
 // serializePropertiesWithTruncation iterates properties using addPropertyToElementList,
