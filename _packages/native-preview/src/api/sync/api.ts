@@ -828,7 +828,7 @@ export class InternalAPI {
      *
      * @param node The synthesized AST node to format.
      * @param file The target file where the node will be inserted.
-     * @param position The character offset in the target file for insertion.
+     * @param position The UTF-16 code-unit offset in the target file for insertion.
      * @returns The formatted text of the node, indented for the insertion position.
      */
     formatNodeForInsertion(node: Node, file: DocumentIdentifier, position: number): string {

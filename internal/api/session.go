@@ -1427,7 +1427,7 @@ func (s *Session) handleFormatNodeForInsertion(ctx context.Context, params *Form
 		return "", fmt.Errorf("%w: failed to decode AST: %w", ErrClientError, err)
 	}
 
-	pos := int(params.Position)
+	pos := targetSourceFile.GetPositionMap().UTF16ToUTF8(int(params.Position))
 	formatOptions := sd.snapshot.UserPreferences().FormatCodeSettings
 	newLine := formatOptions.NewLineCharacter
 
