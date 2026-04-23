@@ -747,6 +747,9 @@ func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.T
 }
 
 func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
+	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil && ast.IsVariableDeclarationInitializedToRequire(input.AsNode()) {
+		return tx.transformCjsRequireVariableDeclaration(input)
+	}
 	if ast.IsBindingPattern(input.Name()) {
 		return tx.recreateBindingPattern(input.Name().AsBindingPattern())
 	}
@@ -759,6 +762,42 @@ func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.Variab
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
+}
+
+func (tx *DeclarationTransformer) transformCjsRequireVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
+	specifier := tx.rewriteModuleSpecifier(input.AsNode(), input.Initializer.AsCallExpression().Arguments.Nodes[0])
+	if ast.IsIdentifier(input.Name()) {
+		// `const x = require("something")` -> `import x = require("something")`
+		return tx.Factory().NewImportEqualsDeclaration(nil, false, input.Name(), tx.Factory().NewExternalModuleReference(specifier))
+	} else if ast.IsArrayBindingPattern(input.Name()) {
+		// TODO: Is this actually reachable? should we error on this?
+		return nil
+	} else { // object binding pattern
+
+		// `const {x, y: z} = require("something")` -> `import {x, y as z} from "something"`
+		b := input.Name().AsObjectLiteralExpression()
+		var importSpecifiers []*ast.Node
+		for _, elem := range b.Properties.Nodes {
+			if ast.IsShorthandPropertyAssignment(elem) {
+				importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, nil, elem.Name()))
+			} else if ast.IsPropertyAssignment(elem) && ast.IsIdentifier(elem.Name()) && ast.IsIdentifier(elem.AsPropertyAssignment().Initializer) {
+				importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, elem.AsPropertyAssignment().Name(), elem.AsPropertyAssignment().Initializer))
+			} else {
+				//elide invalid import specifier; should we errorm though?
+				continue
+			}
+		}
+		return tx.Factory().NewImportDeclaration(
+			nil,
+			tx.Factory().NewImportClause(
+				ast.KindUnknown,
+				nil,
+				tx.Factory().NewNamedImports(tx.Factory().NewNodeList(importSpecifiers)),
+			),
+			specifier,
+			nil,
+		)
+	}
 }
 
 func (tx *DeclarationTransformer) recreateBindingPattern(input *ast.BindingPattern) *ast.Node {
@@ -1725,23 +1764,47 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		return nil
 	}
 
-	nodes := tx.Visitor().VisitNodes(input.DeclarationList.AsVariableDeclarationList().Declarations)
-	if nodes != nil && len(nodes.Nodes) == 0 {
+	inputNodes := input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+	var extraImports []*ast.Node
+	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
+		var normalDeclarations []*ast.Node
+		var imports []*ast.Node
+		for _, n := range inputNodes {
+			if ast.IsVariableDeclarationInitializedToRequire(n) {
+				imports = append(imports, n)
+			} else {
+				normalDeclarations = append(normalDeclarations, n)
+			}
+		}
+		inputNodes = normalDeclarations
+		extraImports, _ = tx.Visitor().VisitSlice(imports)
+	}
+
+	nodes, _ := tx.Visitor().VisitSlice(inputNodes)
+	if len(nodes) == 0 {
+		if len(extraImports) > 0 {
+			return tx.Factory().NewSyntaxList(extraImports)
+		}
 		return nil
 	}
+	nodeList := tx.Factory().NewNodeList(nodes)
 
 	modifiers := tx.ensureModifiers(input.AsNode())
 
 	var declList *ast.Node
 	if ast.IsVarUsing(input.DeclarationList) || ast.IsVarAwaitUsing(input.DeclarationList) {
-		declList = tx.Factory().NewVariableDeclarationList(nodes, ast.NodeFlagsConst)
+		declList = tx.Factory().NewVariableDeclarationList(nodeList, ast.NodeFlagsConst)
 		tx.EmitContext().SetOriginal(declList, input.DeclarationList)
 		tx.EmitContext().SetCommentRange(declList, input.DeclarationList.Loc)
 		declList.Loc = input.DeclarationList.Loc
 	} else {
-		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodes, input.DeclarationList.Flags)
+		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodeList, input.DeclarationList.Flags)
 	}
-	return tx.Factory().UpdateVariableStatement(input, modifiers, declList)
+	res := tx.Factory().UpdateVariableStatement(input, modifiers, declList)
+	if len(extraImports) > 0 {
+		return tx.Factory().NewSyntaxList(append(extraImports, res))
+	}
+	return res
 }
 
 func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclaration) *ast.Node {
