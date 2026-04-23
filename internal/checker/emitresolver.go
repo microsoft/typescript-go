@@ -269,7 +269,7 @@ func (r *EmitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 func (r *EmitResolver) markLinkedAliases(node *ast.Node) {
 	var exportSymbol *ast.Symbol
 	if node.Kind != ast.KindStringLiteral && node.Parent != nil && (ast.IsExportAssignment(node.Parent) || isCommonJSModuleExports(node.Parent)) {
-		exportSymbol = r.checker.resolveName(node, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
+		exportSymbol = r.checker.resolveName(node, nil, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
 	} else if node.Parent.Kind == ast.KindExportSpecifier {
 		exportSymbol = r.checker.getTargetOfExportSpecifier(node.Parent, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, false)
 	}
@@ -290,7 +290,7 @@ func (r *EmitResolver) markLinkedAliases(node *ast.Node) {
 				// Add the referenced top container visible
 				internalModuleReference := declaration.AsImportEqualsDeclaration().ModuleReference
 				firstIdentifier := ast.GetFirstIdentifier(internalModuleReference)
-				importSymbol := r.checker.resolveName(declaration, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
+				importSymbol := r.checker.resolveName(declaration, nil, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
 				nextSymbol = importSymbol
 			}
 		}
@@ -336,7 +336,7 @@ func (r *EmitResolver) isEntityNameVisible(entityName *ast.Node, enclosingDeclar
 	meaning := getMeaningOfEntityNameReference(entityName)
 	firstIdentifier := ast.GetFirstIdentifier(entityName)
 
-	symbol := r.checker.resolveName(enclosingDeclaration, firstIdentifier.Text(), meaning, nil, false, false)
+	symbol := r.checker.resolveName(enclosingDeclaration, nil, firstIdentifier.Text(), meaning, nil, false, false)
 
 	if symbol != nil && symbol.Flags&ast.SymbolFlagsTypeParameter != 0 && meaning&ast.SymbolFlagsType != 0 {
 		return printer.SymbolAccessibilityResult{Accessibility: printer.SymbolAccessibilityAccessible}
@@ -1053,7 +1053,7 @@ func (r *EmitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 						}
 
 						firstIdentifier := ast.GetFirstIdentifier(c.Name().Expression())
-						name := r.checker.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
+						name := r.checker.resolveName(firstIdentifier, nil, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
 						if name != nil {
 							tracker.TrackSymbol(name, enclosingDeclaration, ast.SymbolFlagsValue)
 						}

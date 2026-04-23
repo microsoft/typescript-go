@@ -236,7 +236,7 @@ func (c *Checker) GetJsxFragmentFactory(location *ast.Node) string {
 }
 
 func (c *Checker) ResolveName(name string, location *ast.Node, meaning ast.SymbolFlags, excludeGlobals bool) *ast.Symbol {
-	return c.resolveName(location, name, meaning, nil, true, excludeGlobals)
+	return c.resolveName(location, nil, name, meaning, nil, true, excludeGlobals)
 }
 
 func (c *Checker) GetSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {

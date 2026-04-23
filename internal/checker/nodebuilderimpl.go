@@ -1411,7 +1411,7 @@ func (b *NodeBuilderImpl) setTextRange(range_ *ast.Node, location *ast.Node) *as
 }
 
 func (b *NodeBuilderImpl) typeParameterShadowsOtherTypeParameterInScope(name string, typeParameter *Type) bool {
-	result := b.ch.resolveName(b.ctx.enclosingDeclaration, name, ast.SymbolFlagsType, nil, false, false)
+	result := b.ch.resolveName(b.ctx.enclosingDeclaration, nil, name, ast.SymbolFlagsType, nil, false, false)
 	if result != nil && result.Flags&ast.SymbolFlagsTypeParameter != 0 {
 		return result != typeParameter.symbol
 	}
@@ -2293,12 +2293,12 @@ func (b *NodeBuilderImpl) shouldUsePlaceholderForProperty(propertySymbol *ast.Sy
 func (b *NodeBuilderImpl) trackComputedName(accessExpression *ast.Node, enclosingDeclaration *ast.Node) {
 	// get symbol of the first identifier of the entityName
 	firstIdentifier := ast.GetFirstIdentifier(accessExpression)
-	name := b.ch.resolveName(enclosingDeclaration, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+	name := b.ch.resolveName(enclosingDeclaration, nil, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
 	if name != nil {
 		b.ctx.tracker.TrackSymbol(name, enclosingDeclaration, ast.SymbolFlagsValue)
 	} else {
 		// Name does not resolve at target location, track symbol at dest location (should be inaccessible)
-		fallback := b.ch.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+		fallback := b.ch.resolveName(firstIdentifier, nil, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
 		if fallback != nil {
 			b.ctx.tracker.TrackSymbol(fallback, enclosingDeclaration, ast.SymbolFlagsValue)
 		}

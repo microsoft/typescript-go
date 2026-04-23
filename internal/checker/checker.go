@@ -642,9 +642,8 @@ type Checker struct {
 	errorTypes                                  map[CacheHashKey]*Type
 	moduleSymbols                               map[*ast.Node]*ast.Symbol
 	globalThisSymbol                            *ast.Symbol
-	resolveName                                 func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
-	resolveNameWithNode                         func(location *ast.Node, name string, nameNode *ast.Node, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
-	resolveNameForSymbolSuggestion              func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
+	resolveName                                 func(location *ast.Node, nameNode *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
+	resolveNameForSymbolSuggestion              func(location *ast.Node, nameNode *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	tupleTypes                                  map[CacheHashKey]*Type
 	unionTypes                                  map[CacheHashKey]*Type
 	unionOfUnionTypes                           map[UnionOfUnionKey]*Type
@@ -951,7 +950,6 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.globals[c.globalThisSymbol.Name] = c.globalThisSymbol
 	nameResolver := c.createNameResolver()
 	c.resolveName = nameResolver.Resolve
-	c.resolveNameWithNode = nameResolver.ResolveWithNode
 	c.resolveNameForSymbolSuggestion = c.createNameResolverForSuggestion().Resolve
 	c.tupleTypes = make(map[CacheHashKey]*Type)
 	c.unionTypes = make(map[CacheHashKey]*Type)
@@ -1229,7 +1227,7 @@ func getGlobalTypeDeclaration(symbol *ast.Symbol) *ast.Declaration {
 
 func (c *Checker) getGlobalSymbol(name string, meaning ast.SymbolFlags, diagnostic *diagnostics.Message) *ast.Symbol {
 	// Don't track references for global symbols anyway, so value if `isReference` is arbitrary
-	return c.resolveName(nil, name, meaning, diagnostic, false /*isUse*/, false /*excludeGlobals*/)
+	return c.resolveName(nil, nil, name, meaning, diagnostic, false /*isUse*/, false /*excludeGlobals*/)
 }
 
 func (c *Checker) initializeClosures() {
@@ -1533,7 +1531,7 @@ func diagnosticName(name string, nameNode *ast.Node) string {
 	return name
 }
 
-func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, nameNode *ast.Node, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message) {
+func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, nameNode *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message) {
 	if errorLocation != nil && (errorLocation.Parent.Kind == ast.KindJSDocLink ||
 		c.checkAndReportErrorForMissingPrefix(errorLocation, name) ||
 		c.checkAndReportErrorForExtendingInterface(errorLocation) ||
@@ -1570,7 +1568,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 
 func (c *Checker) checkAndReportErrorForUsingTypeAsNamespace(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
 	if meaning == ast.SymbolFlagsNamespace {
-		symbol := c.resolveSymbol(c.resolveName(errorLocation, name, ast.SymbolFlagsType&^ast.SymbolFlagsNamespace, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
+		symbol := c.resolveSymbol(c.resolveName(errorLocation, nil, name, ast.SymbolFlagsType&^ast.SymbolFlagsNamespace, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
 		if symbol != nil {
 			parent := errorLocation.Parent
 			if ast.IsQualifiedName(parent) {
@@ -1603,13 +1601,13 @@ func isPrimitiveTypeName(s string) bool {
 
 func (c *Checker) checkAndReportErrorForUsingNamespaceAsTypeOrValue(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
 	if meaning&(ast.SymbolFlagsValue&^ast.SymbolFlagsType) != 0 {
-		symbol := c.resolveSymbol(c.resolveName(errorLocation, name, ast.SymbolFlagsNamespaceModule, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
+		symbol := c.resolveSymbol(c.resolveName(errorLocation, nil, name, ast.SymbolFlagsNamespaceModule, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
 		if symbol != nil {
 			c.error(errorLocation, diagnostics.Cannot_use_namespace_0_as_a_value, name)
 			return true
 		}
 	} else if meaning&(ast.SymbolFlagsType&^ast.SymbolFlagsValue) != 0 {
-		symbol := c.resolveSymbol(c.resolveName(errorLocation, name, ast.SymbolFlagsModule, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
+		symbol := c.resolveSymbol(c.resolveName(errorLocation, nil, name, ast.SymbolFlagsModule, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
 		if symbol != nil {
 			c.error(errorLocation, diagnostics.Cannot_use_namespace_0_as_a_type, name)
 			return true
@@ -1637,7 +1635,7 @@ func (c *Checker) checkAndReportErrorForUsingTypeAsValue(errorLocation *ast.Node
 			}
 			return true
 		}
-		symbol := c.resolveSymbol(c.resolveName(errorLocation, name, ast.SymbolFlagsType & ^ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
+		symbol := c.resolveSymbol(c.resolveName(errorLocation, nil, name, ast.SymbolFlagsType & ^ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
 		if symbol != nil {
 			allFlags := c.getSymbolFlags(symbol)
 			if allFlags&ast.SymbolFlagsValue == 0 {
@@ -1672,7 +1670,7 @@ func (c *Checker) maybeMappedType(node *ast.Node, symbol *ast.Symbol) bool {
 
 func (c *Checker) checkAndReportErrorForUsingValueAsType(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
 	if meaning&(ast.SymbolFlagsType & ^ast.SymbolFlagsNamespace) != 0 {
-		symbol := c.resolveSymbol(c.resolveName(errorLocation, name, ^ast.SymbolFlagsType&ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
+		symbol := c.resolveSymbol(c.resolveName(errorLocation, nil, name, ^ast.SymbolFlagsType&ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/))
 		if symbol != nil && symbol.Flags&ast.SymbolFlagsNamespace == 0 {
 			c.error(errorLocation, diagnostics.X_0_refers_to_a_value_but_is_being_used_as_a_type_here_Did_you_mean_typeof_0, name)
 			return true
@@ -1690,7 +1688,7 @@ func (c *Checker) getSuggestedLibForNonExistentName(name string) string {
 }
 
 func (c *Checker) getSuggestedSymbolForNonexistentSymbol(location *ast.Node, outerName string, meaning ast.SymbolFlags) *ast.Symbol {
-	return c.resolveNameForSymbolSuggestion(location, outerName, meaning, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+	return c.resolveNameForSymbolSuggestion(location, nil, outerName, meaning, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 }
 
 var primitiveTypeAliasSuggestions = sync.OnceValue(func() map[string]*ast.Symbol {
@@ -5416,7 +5414,7 @@ func (c *Checker) checkExportSpecifier(node *ast.Node) {
 			return // Skip for invalid syntax like this: export { "x" }
 		}
 		// find immediate value referenced by exported name (SymbolFlags.Alias is set so we don't chase down aliases)
-		symbol := c.resolveName(exportedName, exportedName.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+		symbol := c.resolveName(exportedName, nil, exportedName.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
 		if symbol != nil && (symbol == c.undefinedSymbol || symbol == c.globalThisSymbol || symbol.Declarations != nil && ast.IsGlobalSourceFile(ast.GetDeclarationContainer(symbol.Declarations[0]))) {
 			c.error(exportedName, diagnostics.Cannot_export_0_Only_local_declarations_can_be_exported_from_a_module, exportedName.Text())
 		} else {
@@ -5835,7 +5833,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 		if !ast.IsIdentifier(name) {
 			panic("Identifier expected")
 		}
-		localDeclarationSymbol := c.resolveName(node, name.Text(), ast.SymbolFlagsVariable, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
+		localDeclarationSymbol := c.resolveName(node, nil, name.Text(), ast.SymbolFlagsVariable, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
 		if localDeclarationSymbol != nil && localDeclarationSymbol != symbol && localDeclarationSymbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
 			if c.getDeclarationNodeFlagsFromSymbol(localDeclarationSymbol)&ast.NodeFlagsBlockScoped != 0 {
 				varDeclList := ast.FindAncestorKind(localDeclarationSymbol.ValueDeclaration, ast.KindVariableDeclarationList)
@@ -7386,7 +7384,7 @@ func (c *Checker) checkConstEnumAccess(node *ast.Node, t *Type) {
 	// --verbatimModuleSyntax only gets checked here when the enum usage does not
 	// resolve to an import, because imports of ambient const enums get checked
 	// separately in `checkAliasSymbol`.
-	if c.compilerOptions.IsolatedModules.IsTrue() || c.compilerOptions.VerbatimModuleSyntax.IsTrue() && ok && c.resolveName(node, ast.GetFirstIdentifier(node).Text(), ast.SymbolFlagsAlias, nil, false, true) == nil {
+	if c.compilerOptions.IsolatedModules.IsTrue() || c.compilerOptions.VerbatimModuleSyntax.IsTrue() && ok && c.resolveName(node, nil, ast.GetFirstIdentifier(node).Text(), ast.SymbolFlagsAlias, nil, false, true) == nil {
 		debug.Assert(t.symbol.Flags&ast.SymbolFlagsConstEnum != 0)
 		constEnumDeclaration := t.symbol.ValueDeclaration
 		redirect := c.program.GetProjectReferenceFromOutputDts(ast.GetSourceFileOfNode(constEnumDeclaration).Path())
@@ -8193,7 +8191,7 @@ func (c *Checker) isSymbolOrSymbolForCall(node *ast.Node) bool {
 	if globalESSymbol == nil {
 		return false
 	}
-	return globalESSymbol == c.resolveName(left, "Symbol", ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
+	return globalESSymbol == c.resolveName(left, nil, "Symbol", ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
 }
 
 /**
@@ -9613,7 +9611,7 @@ func (c *Checker) isPromiseResolveArityError(node *ast.Node) bool {
 	if !ast.IsCallExpression(node) || !ast.IsIdentifier(node.Expression()) {
 		return false
 	}
-	symbol := c.resolveName(node.Expression(), node.Expression().Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
+	symbol := c.resolveName(node.Expression(), nil, node.Expression().Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
 	if symbol == nil {
 		return false
 	}
@@ -13528,7 +13526,7 @@ func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
 			if ast.IsIdentifier(node) {
 				nameNode = node
 			}
-			symbol = c.resolveNameWithNode(node, node.Text(), nameNode, ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
+			symbol = c.resolveName(node, nameNode, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
 				c.getCannotFindNameDiagnosticForName(node), !ast.IsWriteOnlyAccess(node), false /*excludeGlobals*/)
 		}
 		links.resolvedSymbol = core.OrElse(symbol, c.unknownSymbol)
@@ -13545,7 +13543,7 @@ func (c *Checker) getReferencedValueOrAliasSymbol(reference *ast.Node) *ast.Symb
 	if resolvedSymbol != nil && resolvedSymbol != c.unknownSymbol {
 		return resolvedSymbol
 	}
-	return c.resolveName(reference, reference.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/)
+	return c.resolveName(reference, nil, reference.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/)
 }
 
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
@@ -15287,7 +15285,7 @@ func (c *Checker) isCommonJSRequire(node *ast.Node) bool {
 		panic("Expected identifier for require call")
 	}
 	// Make sure require is not a local function
-	resolvedRequire := c.resolveName(node.Expression(), node.Expression().Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
+	resolvedRequire := c.resolveName(node.Expression(), nil, node.Expression().Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
 	if resolvedRequire == c.requireSymbol {
 		return true
 	}
@@ -15393,19 +15391,19 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 			resolveLocation = name
 		}
 		if meaning == ast.SymbolFlagsNamespace {
-			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, nil, true /*isUse*/, false /*excludeGlobals*/))
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, nil, name.Text(), meaning, nil, true /*isUse*/, false /*excludeGlobals*/))
 			if symbol == nil {
-				alias := c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/))
+				alias := c.getMergedSymbol(c.resolveName(resolveLocation, nil, name.Text(), ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/))
 				if alias != nil && alias.Name == ast.InternalSymbolNameExportEquals {
 					// resolve typedefs exported from commonjs, stored on the module symbol
 					symbol = alias.Parent
 				}
 			}
 			if symbol == nil && message != nil {
-				c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/)
+				c.resolveName(resolveLocation, nil, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/)
 			}
 		} else {
-			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/))
+			symbol = c.getMergedSymbol(c.resolveName(resolveLocation, nil, name.Text(), meaning, message, true /*isUse*/, false /*excludeGlobals*/))
 		}
 	case ast.KindQualifiedName:
 		qualified := name.AsQualifiedName()
@@ -15493,7 +15491,7 @@ func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *as
 
 func (c *Checker) tryGetQualifiedNameAsValue(node *ast.Node) *ast.Symbol {
 	id := ast.GetFirstIdentifier(node)
-	symbol := c.resolveName(id, id.Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
+	symbol := c.resolveName(id, nil, id.Text(), ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
 	if symbol == nil {
 		return nil
 	}
@@ -17833,7 +17831,7 @@ func (c *Checker) reportImplicitAny(declaration *ast.Node, t *Type, wideningKind
 			originalKeywordKind := scanner.IdentifierToKeywordKind(name)
 			if (ast.IsCallSignatureDeclaration(declaration.Parent) || ast.IsMethodSignatureDeclaration(declaration.Parent) || ast.IsFunctionTypeNode(declaration.Parent)) &&
 				slices.Contains(declaration.Parent.Parameters(), declaration) &&
-				(ast.IsTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, name.Text, ast.SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
+				(ast.IsTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, nil, name.Text, ast.SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
 				newName := fmt.Sprintf("arg%v", slices.Index(declaration.Parent.Parameters(), declaration))
 				typeName := scanner.DeclarationNameToString(param.Name()) + core.IfElse(param.DotDotDotToken != nil, "[]", "")
 				c.errorOrSuggestion(c.noImplicitAny, declaration, diagnostics.Parameter_has_a_name_but_no_type_Did_you_mean_0_Colon_1, newName, typeName)
@@ -19395,7 +19393,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 		typeNode := param.Type()
 		// Include parameter symbol instead of property symbol in the signature
 		if paramSymbol != nil && paramSymbol.Flags&ast.SymbolFlagsProperty != 0 && !ast.IsBindingPattern(param.Name()) {
-			resolvedSymbol := c.resolveName(param, paramSymbol.Name, ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+			resolvedSymbol := c.resolveName(param, nil, paramSymbol.Name, ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 			paramSymbol = resolvedSymbol
 		}
 		if i == 0 && paramSymbol.Name == ast.InternalSymbolNameThis {
@@ -27848,7 +27846,7 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 		if !shouldFactoryRefErr {
 			flags &^= ast.SymbolFlagsEnum
 		}
-		jsxFactorySym = c.resolveName(jsxFactoryLocation, jsxFactoryNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
+		jsxFactorySym = c.resolveName(jsxFactoryLocation, nil, jsxFactoryNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
 	}
 	if jsxFactorySym != nil {
 		// Mark local symbol as referenced here because it might not have been marked
@@ -27869,7 +27867,7 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 			if !shouldFactoryRefErr {
 				flags &^= ast.SymbolFlagsEnum
 			}
-			c.resolveName(jsxFactoryLocation, localJsxNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
+			c.resolveName(jsxFactoryLocation, nil, localJsxNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
 		}
 	}
 }
@@ -27886,7 +27884,7 @@ func (c *Checker) markExportSpecifierAliasReferenced(location *ast.ExportSpecifi
 		if exportedName.Kind == ast.KindStringLiteral {
 			return // Skip for invalid syntax like this: export { "x" }
 		}
-		symbol := c.resolveName(exportedName, exportedName.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
+		symbol := c.resolveName(exportedName, nil, exportedName.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
 		if symbol != nil && (symbol == c.undefinedSymbol || symbol == c.globalThisSymbol || symbol.Declarations != nil && ast.IsGlobalSourceFile(ast.GetDeclarationContainer(symbol.Declarations[0]))) {
 			// Do nothing, non-local symbol
 		} else {
@@ -28080,7 +28078,7 @@ func (c *Checker) markEntityNameOrEntityExpressionAsReference(typeName *ast.Node
 
 	rootName := ast.GetFirstIdentifier(typeName)
 	meaning := core.IfElse(typeName.Kind == ast.KindIdentifier, ast.SymbolFlagsType, ast.SymbolFlagsNamespace) | ast.SymbolFlagsAlias
-	rootSymbol := c.resolveName(rootName, rootName.Text(), meaning, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
+	rootSymbol := c.resolveName(rootName, nil, rootName.Text(), meaning, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
 
 	if rootSymbol != nil && rootSymbol.Flags&ast.SymbolFlagsAlias != 0 {
 		if c.canCollectSymbolAliasAccessibilityData &&

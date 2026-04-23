@@ -383,7 +383,7 @@ func (e *symbolExtractor) tryResolveSymbol(symbol *ast.Symbol, syntax ExportSynt
 	}
 
 	if loc != nil {
-		local := e.localNameResolver.Resolve(loc, name, ast.SymbolFlagsAll, nil, false, false)
+		local := e.localNameResolver.Resolve(loc, nil, name, ast.SymbolFlagsAll, nil, false, false)
 		if local != nil && !ast.IsNonLocalAlias(local, ast.SymbolFlagsNone) {
 			return local
 		}

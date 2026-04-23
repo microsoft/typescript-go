@@ -515,7 +515,7 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 		if !shouldModuleRefErr {
 			flags &^= ast.SymbolFlagsEnum
 		}
-		jsxFactorySymbol = c.resolveName(node, jsxFragmentFactoryName, flags, diagnostics.Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found, true /*isUse*/, false /*excludeGlobals*/)
+		jsxFactorySymbol = c.resolveName(node, nil, jsxFragmentFactoryName, flags, diagnostics.Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found, true /*isUse*/, false /*excludeGlobals*/)
 	}
 	if jsxFactorySymbol == nil {
 		links.jsxFragmentType = c.errorType
@@ -1314,7 +1314,7 @@ func (c *Checker) getJsxNamespaceAt(location *ast.Node) *ast.Symbol {
 		resolvedNamespace := c.getJsxNamespaceContainerForImplicitImport(location)
 		if resolvedNamespace == nil || resolvedNamespace == c.unknownSymbol {
 			namespaceName := c.getJsxNamespace(location)
-			resolvedNamespace = c.resolveName(location, namespaceName, ast.SymbolFlagsNamespace, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+			resolvedNamespace = c.resolveName(location, nil, namespaceName, ast.SymbolFlagsNamespace, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 		}
 		if resolvedNamespace != nil {
 			candidate := c.resolveSymbol(c.getSymbol(c.getExportsOfSymbol(c.resolveSymbol(resolvedNamespace)), JsxNames.JSX, ast.SymbolFlagsNamespace))

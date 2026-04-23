@@ -15,7 +15,7 @@ type ReferenceResolver interface {
 }
 
 type ReferenceResolverHooks struct {
-	ResolveName                            func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
+	ResolveName                            func(location *ast.Node, nameNode *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	GetResolvedSymbol                      func(*ast.Node) *ast.Symbol
 	GetMergedSymbol                        func(*ast.Symbol) *ast.Symbol
 	GetParentOfSymbol                      func(*ast.Symbol) *ast.Symbol
@@ -91,7 +91,7 @@ func (r *referenceResolver) getReferencedValueSymbol(reference *ast.IdentifierNo
 	}
 
 	if r.hooks.ResolveName != nil {
-		return r.hooks.ResolveName(location, reference.Text(), ast.SymbolFlagsExportValue|ast.SymbolFlagsValue|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+		return r.hooks.ResolveName(location, nil, reference.Text(), ast.SymbolFlagsExportValue|ast.SymbolFlagsValue|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 	}
 
 	if r.resolver == nil {
@@ -100,7 +100,7 @@ func (r *referenceResolver) getReferencedValueSymbol(reference *ast.IdentifierNo
 		}
 	}
 
-	return r.resolver.Resolve(location, reference.Text(), ast.SymbolFlagsExportValue|ast.SymbolFlagsValue|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+	return r.resolver.Resolve(location, nil, reference.Text(), ast.SymbolFlagsExportValue|ast.SymbolFlagsValue|ast.SymbolFlagsAlias, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
 }
 
 func (r *referenceResolver) isTypeOnlyAliasDeclaration(symbol *ast.Symbol) bool {
