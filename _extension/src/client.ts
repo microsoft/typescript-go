@@ -24,8 +24,8 @@ import {
 } from "./configurationMiddleware";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
 import { registerHoverFeature } from "./languageFeatures/hover";
+import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
 import { registerSourceDefinitionFeature } from "./languageFeatures/sourceDefinition";
-import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
 import * as tr from "./telemetryReporting";
 import {
     ExeInfo,
@@ -80,7 +80,6 @@ export class Client implements vscode.Disposable {
                 sendNotification: sendNotificationMiddleware,
                 provideHover: () => undefined,
             },
-            diagnosticCollectionName: "typescript",
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -232,8 +231,7 @@ export class Client implements vscode.Disposable {
             registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
             registerSourceDefinitionFeature(this.client),
             registerHoverFeature(this.documentSelector, this.client),
-            registerTagClosingFeature("typescript", this.documentSelector, this.client),
-            registerTagClosingFeature("javascript", this.documentSelector, this.client),
+            registerOnAutoInsertFeature(this.documentSelector, this.client),
         );
     }
 
@@ -247,10 +245,6 @@ export class Client implements vscode.Disposable {
 
     getCurrentExe(): { path: string; version: string; } | undefined {
         return this.exe;
-    }
-
-    get serverPid(): number | undefined {
-        return (this.client as any)?._serverProcess?.pid;
     }
 
     /**
