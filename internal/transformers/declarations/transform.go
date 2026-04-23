@@ -783,7 +783,7 @@ func (tx *DeclarationTransformer) transformCjsRequireVariableDeclaration(input *
 			} else if ast.IsPropertyAssignment(elem) && ast.IsIdentifier(elem.Name()) && ast.IsIdentifier(elem.AsPropertyAssignment().Initializer) {
 				importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, elem.AsPropertyAssignment().Name(), elem.AsPropertyAssignment().Initializer))
 			} else {
-				//elide invalid import specifier; should we errorm though?
+				// elide invalid import specifier; should we errorm though?
 				continue
 			}
 		}
