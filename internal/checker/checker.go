@@ -643,6 +643,7 @@ type Checker struct {
 	moduleSymbols                               map[*ast.Node]*ast.Symbol
 	globalThisSymbol                            *ast.Symbol
 	resolveName                                 func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
+	resolveNameWithNode                         func(location *ast.Node, name string, nameNode *ast.Node, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	resolveNameForSymbolSuggestion              func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	tupleTypes                                  map[CacheHashKey]*Type
 	unionTypes                                  map[CacheHashKey]*Type
@@ -948,7 +949,9 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.globalThisSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "globalThis", ast.CheckFlagsReadonly)
 	c.globalThisSymbol.Exports = c.globals
 	c.globals[c.globalThisSymbol.Name] = c.globalThisSymbol
-	c.resolveName = c.createNameResolver().Resolve
+	nameResolver := c.createNameResolver()
+	c.resolveName = nameResolver.Resolve
+	c.resolveNameWithNode = nameResolver.ResolveWithNode
 	c.resolveNameForSymbolSuggestion = c.createNameResolverForSuggestion().Resolve
 	c.tupleTypes = make(map[CacheHashKey]*Type)
 	c.unionTypes = make(map[CacheHashKey]*Type)
@@ -1523,7 +1526,14 @@ func (c *Checker) checkAndReportErrorForMissingPrefix(errorLocation *ast.Node, n
 	return false
 }
 
-func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message) {
+func diagnosticName(name string, nameNode *ast.Node) string {
+	if nameNode != nil {
+		return scanner.DeclarationNameToString(nameNode)
+	}
+	return name
+}
+
+func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, nameNode *ast.Node, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message) {
 	if errorLocation != nil && (errorLocation.Parent.Kind == ast.KindJSDocLink ||
 		c.checkAndReportErrorForMissingPrefix(errorLocation, name) ||
 		c.checkAndReportErrorForExtendingInterface(errorLocation) ||
@@ -1537,7 +1547,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 	// Report missing lib first
 	suggestedLib := c.getSuggestedLibForNonExistentName(name)
 	if suggestedLib != "" {
-		c.error(errorLocation, nameNotFoundMessage, name, suggestedLib)
+		c.error(errorLocation, nameNotFoundMessage, diagnosticName(name, nameNode), suggestedLib)
 		return
 	}
 	// Then spelling suggestions
@@ -1547,7 +1557,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		isUncheckedJS := c.isUncheckedJSSuggestion(errorLocation, suggestion, false /*excludeClasses*/)
 		message := core.IfElse(meaning == ast.SymbolFlagsNamespace, diagnostics.Cannot_find_namespace_0_Did_you_mean_1,
 			core.IfElse(isUncheckedJS, diagnostics.Could_not_find_name_0_Did_you_mean_1, diagnostics.Cannot_find_name_0_Did_you_mean_1))
-		diagnostic := NewDiagnosticForNode(errorLocation, message, name, suggestionName)
+		diagnostic := NewDiagnosticForNode(errorLocation, message, diagnosticName(name, nameNode), suggestionName)
 		if suggestion.ValueDeclaration != nil {
 			diagnostic.AddRelatedInfo(NewDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
 		}
@@ -1555,7 +1565,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		return
 	}
 	// And then fall back to unspecified "not found"
-	c.error(errorLocation, nameNotFoundMessage, name)
+	c.error(errorLocation, nameNotFoundMessage, diagnosticName(name, nameNode))
 }
 
 func (c *Checker) checkAndReportErrorForUsingTypeAsNamespace(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
@@ -13514,7 +13524,11 @@ func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
 	if links.resolvedSymbol == nil {
 		var symbol *ast.Symbol
 		if !ast.NodeIsMissing(node) {
-			symbol = c.resolveName(node, node.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
+			var nameNode *ast.Node
+			if ast.IsIdentifier(node) {
+				nameNode = node
+			}
+			symbol = c.resolveNameWithNode(node, node.Text(), nameNode, ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
 				c.getCannotFindNameDiagnosticForName(node), !ast.IsWriteOnlyAccess(node), false /*excludeGlobals*/)
 		}
 		links.resolvedSymbol = core.OrElse(symbol, c.unknownSymbol)

@@ -18,11 +18,15 @@ type NameResolver struct {
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
 	GetRequiresScopeChangeCache      func(node *ast.Node) core.Tristate
 	OnPropertyWithInvalidInitializer func(location *ast.Node, name string, declaration *ast.Node, result *ast.Symbol) bool
-	OnFailedToResolveSymbol          func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message)
+	OnFailedToResolveSymbol          func(location *ast.Node, name string, nameNode *ast.Node, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message)
 	OnSuccessfullyResolvedSymbol     func(location *ast.Node, result *ast.Symbol, meaning ast.SymbolFlags, lastLocation *ast.Node, associatedDeclarationForContainingInitializerOrBindingName *ast.Node, withinDeferredContext bool)
 }
 
 func (r *NameResolver) Resolve(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
+	return r.ResolveWithNode(location, name, nil, meaning, nameNotFoundMessage, isUse, excludeGlobals)
+}
+
+func (r *NameResolver) ResolveWithNode(location *ast.Node, name string, nameNode *ast.Node, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 	var result *ast.Symbol
 	var lastLocation *ast.Node
 	var lastSelfReferenceLocation *ast.Node
@@ -322,7 +326,7 @@ loop:
 		}
 		if result == nil {
 			if r.OnFailedToResolveSymbol != nil {
-				r.OnFailedToResolveSymbol(originalLocation, name, meaning, nameNotFoundMessage)
+				r.OnFailedToResolveSymbol(originalLocation, name, nameNode, meaning, nameNotFoundMessage)
 			}
 		} else {
 			if r.OnSuccessfullyResolvedSymbol != nil {
