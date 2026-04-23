@@ -37,7 +37,7 @@ While it's still expected that supported tags (see below) are emitted with corre
 This also has effects on how `.d.ts` is emitted in the presence of errors, which tends to be more common in `.js` and JSDoc scenarios.
 Declaration file generation isn't well-defined in the presence of errors (including those suppressed with `ts-ignore`/`ts-expect-error`), and you can expect Corsa and Strada to be quite different depending on the situation.
 
-Please do log an issue if you see _incorrect_ `.d.ts` output from a `.js` file.
+However, if you see **_incorrect_** `.d.ts` output from a `.js` file, **please file an issue**.
 
 ## JSDoc Tags and Types
 
