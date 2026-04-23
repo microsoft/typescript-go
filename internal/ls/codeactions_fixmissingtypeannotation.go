@@ -90,13 +90,17 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	defer done()
 
 	var fixes []CodeAction
-	seenDescriptions := make(map[string]bool)
 
 	addFix := func(action *CodeAction) {
-		if action != nil && !seenDescriptions[action.Description] {
-			seenDescriptions[action.Description] = true
-			fixes = append(fixes, *action)
+		if action == nil {
+			return
 		}
+		for _, existing := range fixes {
+			if codeActionsEqual(&existing, action) {
+				return
+			}
+		}
+		fixes = append(fixes, *action)
 	}
 
 	// Match TS ordering: Full annotation, Relative annotation, Widened annotation,
@@ -124,6 +128,25 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	}))
 
 	return fixes, nil
+}
+
+// codeActionsEqual returns true if two CodeActions have the same description and edits.
+func codeActionsEqual(a, b *CodeAction) bool {
+	if a.Description != b.Description {
+		return false
+	}
+	if len(a.Changes) != len(b.Changes) {
+		return false
+	}
+	for i, edit := range a.Changes {
+		other := b.Changes[i]
+		if edit.NewText != other.NewText ||
+			edit.Range.Start != other.Range.Start ||
+			edit.Range.End != other.Range.End {
+			return false
+		}
+	}
+	return true
 }
 
 func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {
