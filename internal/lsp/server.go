@@ -1178,6 +1178,11 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 	s.session.InitializeWithUserConfig(userPreferences)
 
+	// Enable polling watcher if the user explicitly opted in via settings
+	if userPreferences.UsePollingWatcher == core.TSTrue {
+		s.session.EnablePollingWatcher()
+	}
+
 	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{

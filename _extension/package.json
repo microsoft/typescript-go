@@ -95,6 +95,14 @@
                         "tags": [
                             "experimental"
                         ]
+                    },
+                    "typescript.native-preview.usePollingWatcher": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Use an in-process polling file watcher instead of the client's file watching. Useful when the client's watcher is unreliable or unsupported.",
+                        "tags": [
+                            "experimental"
+                        ]
                     }
                 }
             }

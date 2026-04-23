@@ -1,6 +1,7 @@
 package vfswatch
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -11,6 +12,11 @@ import (
 )
 
 const debounceWait = 250 * time.Millisecond
+
+type WatchLogger interface {
+	Log(msg ...any)
+	Logf(format string, args ...any)
+}
 
 type WatchEvent struct {
 	Created []string
@@ -39,6 +45,7 @@ type FileWatcher struct {
 	mu            sync.Mutex
 	done          chan struct{}
 	stopOnce      sync.Once
+	logger        WatchLogger
 }
 
 func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func(WatchEvent)) *FileWatcher {
@@ -49,6 +56,12 @@ func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callbac
 		callback:     callback,
 		done:         make(chan struct{}),
 	}
+}
+
+func (fw *FileWatcher) SetLogger(logger WatchLogger) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
+	fw.logger = logger
 }
 
 func (fw *FileWatcher) Stop() {
@@ -64,12 +77,16 @@ func (fw *FileWatcher) SetPollInterval(d time.Duration) {
 }
 
 func (fw *FileWatcher) UpdateWatchedDirectories(dirs map[string]bool) {
+	start := time.Now()
 	state := snapshotDirectories(fw.fs, dirs)
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
 	fw.directories = dirs
 	fw.watchState = state
 	fw.watchStateGen++
+	if fw.logger != nil {
+		fw.logger.Logf("Polling watcher: watching %d directories (%d entries) in %v", len(dirs), len(state), time.Since(start))
+	}
 }
 
 func (fw *FileWatcher) sleepOrDone(d time.Duration) bool {
@@ -236,6 +253,7 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 		interval := fw.pollInterval
 		ws := fw.watchState
 		dirs := fw.directories
+		logger := fw.logger
 		fw.mu.Unlock()
 
 		if fw.sleepOrDone(interval) {
@@ -245,9 +263,13 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 		if ws == nil {
 			continue
 		}
+		scanStart := time.Now()
 		current := snapshotDirectories(fw.fs, dirs)
 		event := diffSnapshots(ws, current)
 		if event.HasChanges() {
+			if logger != nil {
+				logger.Logf("Polling watcher: changes detected (scanned %d entries in %v): %s", len(current), time.Since(scanStart), formatEvent(event))
+			}
 			fw.WaitForSettled(now)
 			fw.mu.Lock()
 			gen := fw.watchStateGen
@@ -266,4 +288,8 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 			fw.mu.Unlock()
 		}
 	}
+}
+
+func formatEvent(e WatchEvent) string {
+	return fmt.Sprintf("created=%d deleted=%d changed=%d", len(e.Created), len(e.Deleted), len(e.Changed))
 }

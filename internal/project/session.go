@@ -248,6 +248,9 @@ func NewSession(init *SessionInit) *Session {
 			false,
 			session.onPolledFileChanges,
 		)
+		if init.Options.LoggingEnabled {
+			session.fileWatcher.SetLogger(session.logger)
+		}
 		session.fileWatcher.UpdateWatchedDirectories(map[string]bool{
 			init.Options.CurrentDirectory: false,
 		})
@@ -255,6 +258,31 @@ func NewSession(init *SessionInit) *Session {
 	}
 
 	return session
+}
+
+// EnablePollingWatcher starts the in-process polling file watcher. This can be called
+// after session creation to enable polling based on user settings.
+func (s *Session) EnablePollingWatcher() {
+	if s.fileWatcher != nil {
+		return
+	}
+	pollInterval := s.options.PollingInterval
+	if pollInterval == 0 {
+		pollInterval = time.Second
+	}
+	s.fileWatcher = vfswatch.NewFileWatcher(
+		s.fs.fs,
+		pollInterval,
+		false,
+		s.onPolledFileChanges,
+	)
+	if s.options.LoggingEnabled {
+		s.fileWatcher.SetLogger(s.logger)
+	}
+	s.fileWatcher.UpdateWatchedDirectories(map[string]bool{
+		s.options.CurrentDirectory: false,
+	})
+	go s.fileWatcher.Run(time.Now)
 }
 
 // FS implements module.ResolutionHost
