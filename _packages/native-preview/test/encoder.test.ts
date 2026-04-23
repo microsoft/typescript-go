@@ -62,7 +62,7 @@ describe("Encoder", () => {
         // Verify header
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
         const metadata = view.getUint32(0, true);
-        assert.strictEqual(metadata >>> 24, 5, "protocol version should be 5");
+        assert.strictEqual(metadata >>> 24, 6, "protocol version should be 6");
 
         // Verify we can decode it
         const decoded = decode(encoded);
@@ -169,11 +169,11 @@ describe("Encoder", () => {
         assert.strictEqual(rootKind, SyntaxKind.IfStatement);
     });
 
-    test("protocol version is 5", () => {
+    test("protocol version is 6", () => {
         const sf = makeSF("", "/test.ts", []);
         const encoded = encodeSourceFile(sf);
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
-        assert.strictEqual(view.getUint32(0, true) >>> 24, 5);
+        assert.strictEqual(view.getUint32(0, true) >>> 24, 6);
     });
 
     test("boolean properties are encoded", () => {

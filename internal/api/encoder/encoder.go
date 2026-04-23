@@ -59,7 +59,7 @@ const (
 )
 
 const (
-	ProtocolVersion uint8 = 5
+	ProtocolVersion uint8 = 6
 )
 
 // Source File Binary Format
@@ -108,10 +108,11 @@ const (
 // String data (variable)
 // ----------------------
 //
-// The string data section contains UTF-8 encoded string data. In typical cases, the entirety of the string data is the
-// source file text, and individual nodes with string properties reference their positional slice of the file text. In
-// cases where a node's string property is not equal to the slice of file text at its position, the unique string is
-// appended to the string data section after the file text.
+// The string data section contains UTF-8 encoded string data, with WTF-8 used for JS strings containing lone UTF-16
+// surrogates. In typical cases, the entirety of the string data is the source file text, and individual nodes with
+// string properties reference their positional slice of the file text. In cases where a node's string property is not
+// equal to the slice of file text at its position, the unique string is appended to the string data section after the
+// file text.
 //
 // Extended node data (variable)
 // -----------------------------
@@ -704,7 +705,7 @@ func getNodeCommonData_SyntheticExpression(_ *ast.Node) uint32 {
 
 func recordExtendedData_StringLiteral(node *ast.Node, strs *stringTable, _ *ast.PositionMap, extendedData *[]byte, _ *[]byte) {
 	n := node.AsStringLiteral()
-	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(encodeLiteralTextForJS(n.Text, node, strs), node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, uint32(n.TokenFlags))
 }
 
@@ -728,6 +729,6 @@ func recordExtendedData_RegularExpressionLiteral(node *ast.Node, strs *stringTab
 
 func recordExtendedData_NoSubstitutionTemplateLiteral(node *ast.Node, strs *stringTable, _ *ast.PositionMap, extendedData *[]byte, _ *[]byte) {
 	n := node.AsNoSubstitutionTemplateLiteral()
-	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(encodeLiteralTextForJS(n.Text, node, strs), node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, uint32(n.TemplateFlags))
 }

@@ -23,6 +23,7 @@ import {
     HEADER_OFFSET_STRUCTURED_DATA,
     NODE_LEN,
 } from "./protocol.ts";
+import { Wtf8Decoder } from "./wtf8.ts";
 
 // Re-export everything consumers need from the other two files.
 export { RemoteNode, RemoteNodeList } from "./node.generated.ts";
@@ -242,7 +243,7 @@ export function parseNodeHandle(handle: string): ParsedNodeHandle {
  * (e.g. from typeToTypeNode) that don't have a source file.
  */
 export function decodeNode(data: Uint8Array): Node {
-    const sf = new RemoteSourceFile(data, new TextDecoder());
+    const sf = new RemoteSourceFile(data, new Wtf8Decoder());
     return sf as unknown as Node;
 }
 
