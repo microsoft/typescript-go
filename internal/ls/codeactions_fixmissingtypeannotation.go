@@ -86,11 +86,11 @@ const (
 	typePrintModeWidened                // widened literal type
 )
 
-func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]CodeAction, error) {
+func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]*CodeAction, error) {
 	ch, done := fixContext.Program.GetTypeCheckerForFile(ctx, fixContext.SourceFile)
 	defer done()
 
-	var fixes []CodeAction
+	var fixes []*CodeAction
 	var seen []*CodeAction // sorted for binary search dedup
 
 	addFix := func(action *CodeAction) {
@@ -102,7 +102,7 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 			return
 		}
 		seen = slices.Insert(seen, i, action)
-		fixes = append(fixes, *action)
+		fixes = append(fixes, action)
 	}
 
 	// Match TS ordering: Full annotation, Relative annotation, Widened annotation,

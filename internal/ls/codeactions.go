@@ -19,7 +19,7 @@ import (
 // CodeFixProvider represents a provider for a specific type of code fix
 type CodeFixProvider struct {
 	ErrorCodes        []int32
-	GetCodeActions    func(ctx context.Context, fixContext *CodeFixContext) ([]CodeAction, error)
+	GetCodeActions    func(ctx context.Context, fixContext *CodeFixContext) ([]*CodeAction, error)
 	FixIds            []string
 	GetAllCodeActions func(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error)
 }
@@ -131,7 +131,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					return lsproto.CodeActionResponse{}, err
 				}
 				for _, action := range providerActions {
-					actions = append(actions, convertToLSPCodeAction(&action, diag, params.TextDocument.Uri))
+					actions = append(actions, convertToLSPCodeAction(action, diag, params.TextDocument.Uri))
 					if action.FixID != "" {
 						fixIdSeen[action.FixID] = provider
 					}
