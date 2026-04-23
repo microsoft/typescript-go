@@ -90,36 +90,38 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	defer done()
 
 	var fixes []CodeAction
+	seenDescriptions := make(map[string]bool)
+
+	addFix := func(action *CodeAction) {
+		if action != nil && !seenDescriptions[action.Description] {
+			seenDescriptions[action.Description] = true
+			fixes = append(fixes, *action)
+		}
+	}
 
 	// Match TS ordering: Full annotation, Relative annotation, Widened annotation,
 	// Full inline, Relative inline, Widened inline, Full extract
 	modes := []typePrintMode{typePrintModeFull, typePrintModeRelative, typePrintModeWidened}
 
 	for _, mode := range modes {
-		if action := tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+		addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 			f.typePrintMode = mode
 			return f.addTypeAnnotation(fixContext.Span)
-		}); action != nil {
-			fixes = append(fixes, *action)
-		}
+		}))
 	}
 
 	for _, mode := range modes {
-		if action := tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+		addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 			f.typePrintMode = mode
 			return f.addInlineAssertion(fixContext.Span)
-		}); action != nil {
-			fixes = append(fixes, *action)
-		}
+		}))
 	}
 
 	// extractAsVariable only in Full mode
-	if action := tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+	addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 		f.typePrintMode = typePrintModeFull
 		return f.extractAsVariable(fixContext.Span)
-	}); action != nil {
-		fixes = append(fixes, *action)
-	}
+	}))
 
 	return fixes, nil
 }
