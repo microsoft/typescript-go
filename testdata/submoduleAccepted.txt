@@ -940,3 +940,131 @@ conformance/mappedTypeProperties.errors.txt.diff
 ## Correct TS2322 errors assigning class prototype to unrelated function type
 conformance/typesWithPrivateConstructor.errors.txt.diff
 conformance/typesWithProtectedConstructor.errors.txt.diff
+
+## JS declaration emit now uses `export declare` instead of bare `export` (`declare` is optional and moot in declarations in .d.ts files)
+## e.g. `export class Foo` → `export declare class Foo`, `export function f` → `export declare function f`
+compiler/jsDeclarationEmitExportedClassWithExtends.js.diff
+compiler/jsEmitIntersectionProperty.js.diff
+compiler/lateBoundAssignmentCandidateJS3.js.diff
+conformance/jsDeclarationsClassesErr(target=es2015).js.diff
+conformance/jsDeclarationsClassLeadingOptional(target=es2015).js.diff
+conformance/jsDeclarationsExportSpecifierNonlocal(target=es2015).js.diff
+conformance/jsDeclarationsSubclassWithExplicitNoArgumentConstructor.js.diff
+conformance/jsDeclarationsThisTypes.js.diff
+conformance/exportNamespace_js.js.diff
+conformance/thisTag2.js.diff
+conformance/nodeModulesAllowJsDynamicImport(module=node16).js.diff
+conformance/nodeModulesAllowJsDynamicImport(module=node18).js.diff
+conformance/nodeModulesAllowJsDynamicImport(module=node20).js.diff
+conformance/nodeModulesAllowJsDynamicImport(module=nodenext).js.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=node16).js.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=node18).js.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=node20).js.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=nodenext).js.diff
+conformance/nodeAllowJsPackageSelfName2.js.diff
+
+## JS declaration emit splits `export const/function` into `declare` + separate `export {}` statement (`declare const` + `export { x }` is semantically equivalent to `export const`)
+## e.g. `export const x: 1` → `declare const x = 1; export { x };`
+conformance/nodeModulesAllowJs1(module=node16).js.diff
+conformance/nodeModulesAllowJs1(module=node18).js.diff
+conformance/nodeModulesAllowJs1(module=node20).js.diff
+conformance/nodeModulesAllowJs1(module=nodenext).js.diff
+conformance/nodeModulesAllowJsGeneratedNameCollisions(module=node16).js.diff
+conformance/nodeModulesAllowJsGeneratedNameCollisions(module=node18).js.diff
+conformance/nodeModulesAllowJsGeneratedNameCollisions(module=node20).js.diff
+conformance/nodeModulesAllowJsGeneratedNameCollisions(module=nodenext).js.diff
+conformance/nodeModulesAllowJsImportMeta(module=node16).js.diff
+conformance/nodeModulesAllowJsImportMeta(module=node18).js.diff
+conformance/nodeModulesAllowJsImportMeta(module=node20).js.diff
+conformance/nodeModulesAllowJsImportMeta(module=nodenext).js.diff
+conformance/nodeModulesAllowJsTopLevelAwait(module=node16).js.diff
+conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
+conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
+conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
+
+## `@class`/`@constructor` no longer makes functions into class declarations (inferred classes from `.prototype` are no longer supported)
+compiler/jsDeclarationsGlobalFileConstFunction.js.diff
+compiler/jsDeclarationsGlobalFileConstFunctionNamed.js.diff
+compiler/jsdocFunctionClassPropertiesDeclaration.js.diff
+compiler/jsFileMethodOverloads4.js.diff
+conformance/jsDeclarationsClassLikeHeuristic(target=es2015).js.diff
+conformance/jsDeclarationsClassMethod.js.diff
+conformance/jsDeclarationsExportAssignedConstructorFunction(target=es2015).js.diff
+conformance/jsDeclarationsFunctionClassesCjsExportAssignment(target=es2015).js.diff
+conformance/jsDeclarationsFunctionLikeClasses(target=es2015).js.diff
+conformance/jsDeclarationsFunctionLikeClasses2(target=es2015).js.diff
+conformance/jsDeclarationsFunctionPrototypeStatic(target=es2015).js.diff
+conformance/jsdocImplements_class.js.diff
+conformance/thisPropertyAssignment.js.diff
+conformance/typeFromPrototypeAssignment4.js.diff
+
+## `this`-property expressions without initializers no longer create class properties in declaration emit (Documented in CHANGES.md in sections "Expando declarations" and "Expandos")
+## `this.x;` in constructor (without `= value`) no longer produces a property declaration
+compiler/jsDeclarationEmitDoesNotRenameImport.js.diff
+conformance/jsdocImplements_properties.js.diff
+conformance/jsdocImplements_missingType.js.diff
+conformance/lateBoundClassMemberAssignmentJS.js.diff
+conformance/lateBoundClassMemberAssignmentJS2.js.diff
+conformance/lateBoundClassMemberAssignmentJS3.js.diff
+conformance/thisPropertyAssignmentCircular.js.diff
+
+## Declaration emit ordering changed (ordering of declarations is cosmetic; the new order is arguably more logical)
+## Imports are now emitted before function declarations, type aliases before their usages, `export =` after declaration
+compiler/declarationEmitCastReusesTypeNode4(strictnullchecks=false).js.diff
+compiler/declarationEmitCastReusesTypeNode4(strictnullchecks=true).js.diff
+compiler/jsDeclarationsInheritedTypes.js.diff
+compiler/nodeNextPackageSelfNameWithOutDirDeclDirCompositeNestedDirs.js.diff
+compiler/nodeNextPackageSelfNameWithOutDirDeclDirNestedDirs.js.diff
+conformance/exportDefaultNamespace.js.diff
+conformance/jsDeclarationsClassStatic2.js.diff
+conformance/jsDeclarationsComputedNames(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassInstance1(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassInstance2(target=es2015).js.diff
+conformance/jsDeclarationsJson(target=es2015).js.diff
+conformance/jsDeclarationsPrivateFields01.js.diff
+conformance/jsDeclarationsReexportAliases(target=es2015).js.diff
+conformance/jsDeclarationsTypeReassignmentFromDeclaration.js.diff
+conformance/typedefOnStatements.js.diff
+conformance/typeTagNoErasure.js.diff
+conformance/recursiveTypeReferences2.js.diff
+conformance/templateInsideCallback.js.diff
+conformance/linkTagEmit1.js.diff
+
+## `@import` JSDoc tag declarations reordered before function declarations (imports before usage is the standard convention)
+## Import declarations from `@import` JSDoc tags are now emitted before the function using them
+conformance/importTag15(module=es2015).js.diff
+conformance/importTag15(module=esnext).js.diff
+conformance/importTag16.js.diff
+conformance/importTag18.js.diff
+conformance/importTag19.js.diff
+conformance/importTag20.js.diff
+conformance/importTag5.js.diff
+
+## Trailing comma now emitted in object literals in error recovery (error-recovery on invalid input; emitted code is invalid either way)
+## Typical manifestation is e.g. var tt = { aa; }
+compiler/fatarrowfunctionsErrors.js.diff
+compiler/incompleteObjectLiteral1.js.diff
+compiler/objectLiteralWithSemicolons3.js.diff
+compiler/objectLiteralWithSemicolons5.js.diff
+compiler/reachabilityChecksNoCrash1.js.diff
+conformance/classExtendsEveryObjectType.js.diff
+conformance/classExtendsEveryObjectType2.js.diff
+conformance/destructuringObjectBindingPatternAndAssignment3.js.diff
+conformance/parser512097.js.diff
+conformance/parserErrorRecovery_ObjectLiteral2.js.diff
+conformance/parserErrorRecovery_ObjectLiteral3.js.diff
+conformance/parserErrorRecovery_ObjectLiteral4.js.diff
+conformance/parserErrorRecovery_ObjectLiteral5.js.diff
+conformance/privateIndexer2.js.diff
+conformance/tsxStatelessFunctionComponents1.js.diff
+
+## String literal types in declarations now preserve original quote style (preserving the author's original quote style is a valid editorial choice)
+## `"foo"` in declarations now prints as `'foo'` or `` `foo` `` when the original source used single quotes or template literals
+compiler/declarationEmitClassMemberWithComputedPropertyName.js.diff
+compiler/isolatedDeclarationsLiterals.js.diff
+conformance/constAssertions.js.diff
+
+## Type parameter disambiguation suffixes (`_1`, `_2`) removed in nested/overlapping scopes (shadowing matches runtime semantics; `_1` suffixes were unnecessary)
+## Inner generic type parameters shadow outer ones with the same name instead of being renamed
+compiler/declarationEmitNestedGenerics.js.diff
+conformance/typeParametersAvailableInNestedScope3.js.diff
