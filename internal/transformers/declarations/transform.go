@@ -507,6 +507,10 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		return nil
 	}
 
+	if ast.IsHeritageClause(input) && (len(input.AsHeritageClause().Types.Nodes) == 0 || (len(input.AsHeritageClause().Types.Nodes) == 1 && ast.NodeIsMissing(input.AsHeritageClause().Types.Nodes[0]))) {
+		return nil
+	}
+
 	previousEnclosingDeclaration := tx.enclosingDeclaration
 	if isEnclosingDeclaration(input) {
 		tx.enclosingDeclaration = input
@@ -1507,6 +1511,12 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		)
 	}
 
+	// Collect this.x property assignments from constructors and static blocks in JS files
+	var thisPropertyAssignments []*ast.Node
+	if ast.IsInJSFile(input.AsNode()) {
+		thisPropertyAssignments = tx.collectThisPropertyAssignments(input)
+	}
+
 	lateIndexes := tx.resolver.CreateLateBoundIndexSignatures(
 		tx.EmitContext(),
 		input.AsNode(),
@@ -1522,6 +1532,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	}
 	memberNodes = append(memberNodes, lateIndexes...)
 	memberNodes = append(memberNodes, parameterProperties...)
+	memberNodes = append(memberNodes, thisPropertyAssignments...)
 	visitResult := tx.Visitor().VisitNodes(input.Members)
 	if visitResult != nil && len(visitResult.Nodes) > 0 {
 		memberNodes = append(memberNodes, visitResult.Nodes...)
@@ -1599,6 +1610,86 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		tx.Visitor().VisitNodes(input.HeritageClauses),
 		members,
 	)
+}
+
+// collectThisPropertyAssignments finds `this.x = expr` assignments in constructors, methods, and static blocks
+// of JS classes and synthesizes PropertyDeclaration nodes for each unique property name.
+func (tx *DeclarationTransformer) collectThisPropertyAssignments(input *ast.ClassDeclaration) []*ast.Node {
+	var result []*ast.Node
+	seen := collections.Set[*ast.Node]{}
+	// Pre-populate seen with existing direct member nodes to avoid duplicates
+	for _, member := range input.Members.Nodes {
+		if member.Name() != nil {
+			seen.Add(member)
+		}
+	}
+	for _, member := range input.Members.Nodes {
+		isStatic := false
+		var body *ast.Node
+		switch member.Kind {
+		case ast.KindConstructor:
+			body = member.AsConstructorDeclaration().Body
+		case ast.KindMethodDeclaration:
+			body = member.AsMethodDeclaration().Body
+			if ast.HasStaticModifier(member) {
+				isStatic = true
+			}
+		case ast.KindClassStaticBlockDeclaration:
+			body = member.AsClassStaticBlockDeclaration().Body
+			isStatic = true
+		default:
+			continue
+		}
+		if body == nil {
+			continue
+		}
+		for _, stmt := range body.AsBlock().Statements.Nodes {
+			if stmt.Kind != ast.KindExpressionStatement {
+				continue
+			}
+			expr := stmt.Expression()
+			if expr == nil || expr.Kind != ast.KindBinaryExpression {
+				continue
+			}
+			if ast.GetAssignmentDeclarationKind(expr) != ast.JSDeclarationKindThisProperty {
+				continue
+			}
+			name := ast.GetNameOfDeclaration(expr)
+			base := tx.resolver.GetReferencedMemberValueDeclaration(expr)
+			if base == nil || seen.Has(base) {
+				continue
+			}
+			seen.Add(base)
+
+			var mods *ast.ModifierList
+			if isStatic {
+				mods = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindStaticKeyword)})
+			}
+			if ast.HasDynamicName(expr) {
+				if !transformers.IsSimpleInlineableExpression(name) {
+					continue // Member either becomes an index signature or is a reassignment
+				}
+				tx.checkName(expr)
+				name = tx.Factory().NewComputedPropertyName(name) // Convert `this[foo] = expr` to `[foo]: Type`
+			}
+			if ast.GetTextOfPropertyName(name) == "constructor" {
+				continue // `constructor` is a builtin class member, not allowed to redeclare it
+			}
+			if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+				name = tx.Factory().NewStringLiteralFromNode(name)
+			}
+			prop := tx.Factory().NewPropertyDeclaration(
+				mods,
+				name,
+				nil,
+				tx.ensureType(expr, false),
+				nil,
+			)
+			tx.preserveJsDoc(prop, stmt)
+			result = append(result, prop)
+		}
+	}
+	return result
 }
 
 func (tx *DeclarationTransformer) walkBindingPattern(pattern *ast.BindingPattern, param *ast.Node) []*ast.Node {
