@@ -242,9 +242,20 @@ func (fw *FileWatcher) ScanForChanges() WatchEvent {
 	fw.mu.Lock()
 	ws := fw.watchState
 	dirs := fw.directories
+	logger := fw.logger
 	fw.mu.Unlock()
+	scanStart := time.Now()
 	current := snapshotDirectories(fw.fs, dirs)
-	return diffSnapshots(ws, current)
+	event := diffSnapshots(ws, current)
+	if logger != nil {
+		scanDuration := time.Since(scanStart)
+		if event.HasChanges() {
+			logger.Logf("Polling watcher scan: %d entries in %v, %s", len(current), scanDuration, formatEvent(event))
+		} else if scanDuration > 100*time.Millisecond {
+			logger.Logf("Polling watcher scan: %d entries in %v, no changes", len(current), scanDuration)
+		}
+	}
+	return event
 }
 
 func (fw *FileWatcher) Run(now func() time.Time) {
@@ -265,10 +276,20 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 		}
 		scanStart := time.Now()
 		current := snapshotDirectories(fw.fs, dirs)
+		scanDuration := time.Since(scanStart)
 		event := diffSnapshots(ws, current)
 		if event.HasChanges() {
 			if logger != nil {
-				logger.Logf("Polling watcher: changes detected (scanned %d entries in %v): %s", len(current), time.Since(scanStart), formatEvent(event))
+				logger.Logf("Polling watcher: changes detected (scanned %d entries in %v)", len(current), scanDuration)
+				for _, p := range event.Created {
+					logger.Logf("  created: %s", p)
+				}
+				for _, p := range event.Changed {
+					logger.Logf("  changed: %s", p)
+				}
+				for _, p := range event.Deleted {
+					logger.Logf("  deleted: %s", p)
+				}
 			}
 			fw.WaitForSettled(now)
 			fw.mu.Lock()
@@ -279,6 +300,9 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 			current = snapshotDirectories(fw.fs, dirs)
 			event = diffSnapshots(ws, current)
 			if event.HasChanges() {
+				if logger != nil {
+					logger.Logf("Polling watcher: settled with %s", formatEvent(event))
+				}
 				fw.callback(event)
 			}
 			fw.mu.Lock()
@@ -286,6 +310,8 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 				fw.watchState = current
 			}
 			fw.mu.Unlock()
+		} else if logger != nil && scanDuration > 100*time.Millisecond {
+			logger.Logf("Polling watcher: scan took %v (%d entries), no changes", scanDuration, len(current))
 		}
 	}
 }
