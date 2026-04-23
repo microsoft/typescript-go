@@ -1,6 +1,7 @@
 package vfswatch
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strings"
@@ -43,8 +44,6 @@ type FileWatcher struct {
 	watchState    map[string]watchEntry
 	watchStateGen uint64
 	mu            sync.Mutex
-	done          chan struct{}
-	stopOnce      sync.Once
 	logger        WatchLogger
 }
 
@@ -54,7 +53,6 @@ func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callbac
 		pollInterval: pollInterval,
 		testing:      testing,
 		callback:     callback,
-		done:         make(chan struct{}),
 	}
 }
 
@@ -62,12 +60,6 @@ func (fw *FileWatcher) SetLogger(logger WatchLogger) {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
 	fw.logger = logger
-}
-
-func (fw *FileWatcher) Stop() {
-	fw.stopOnce.Do(func() {
-		close(fw.done)
-	})
 }
 
 func (fw *FileWatcher) SetPollInterval(d time.Duration) {
@@ -89,18 +81,20 @@ func (fw *FileWatcher) UpdateWatchedDirectories(dirs map[string]bool) {
 	}
 }
 
-func (fw *FileWatcher) sleepOrDone(d time.Duration) bool {
+// sleepOrDone sleeps for the given duration, returning true if the context
+// was cancelled during the sleep.
+func sleepOrDone(ctx context.Context, d time.Duration) bool {
 	t := time.NewTimer(d)
 	defer t.Stop()
 	select {
-	case <-fw.done:
+	case <-ctx.Done():
 		return true
 	case <-t.C:
 		return false
 	}
 }
 
-func (fw *FileWatcher) WaitForSettled(now func() time.Time) {
+func (fw *FileWatcher) WaitForSettled(ctx context.Context) {
 	if fw.testing {
 		return
 	}
@@ -109,16 +103,16 @@ func (fw *FileWatcher) WaitForSettled(now func() time.Time) {
 	pollInterval := fw.pollInterval
 	fw.mu.Unlock()
 	current := snapshotDirectories(fw.fs, dirs)
-	settledAt := now()
+	settledAt := time.Now()
 	tick := min(pollInterval, debounceWait)
-	for now().Sub(settledAt) < debounceWait {
-		if fw.sleepOrDone(tick) {
+	for time.Since(settledAt) < debounceWait {
+		if sleepOrDone(ctx, tick) {
 			return
 		}
 		next := snapshotDirectories(fw.fs, dirs)
 		if diffSnapshots(current, next).HasChanges() {
 			current = next
-			settledAt = now()
+			settledAt = time.Now()
 		}
 	}
 }
@@ -258,7 +252,7 @@ func (fw *FileWatcher) ScanForChanges() WatchEvent {
 	return event
 }
 
-func (fw *FileWatcher) Run(now func() time.Time) {
+func (fw *FileWatcher) Run(ctx context.Context) {
 	for {
 		fw.mu.Lock()
 		interval := fw.pollInterval
@@ -267,7 +261,7 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 		logger := fw.logger
 		fw.mu.Unlock()
 
-		if fw.sleepOrDone(interval) {
+		if sleepOrDone(ctx, interval) {
 			return
 		}
 
@@ -291,7 +285,7 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 					logger.Logf("  deleted: %s", p)
 				}
 			}
-			fw.WaitForSettled(now)
+			fw.WaitForSettled(ctx)
 			fw.mu.Lock()
 			gen := fw.watchStateGen
 			ws = fw.watchState

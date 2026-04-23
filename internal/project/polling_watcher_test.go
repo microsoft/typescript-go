@@ -41,8 +41,11 @@ func TestPollingWatcherIntegration(t *testing.T) {
 
 		client := &pollingTestClient{}
 
+		bgCtx, bgCancel := context.WithCancel(context.Background())
+		defer bgCancel()
+
 		session := project.NewSession(&project.SessionInit{
-			BackgroundCtx: context.Background(),
+			BackgroundCtx: bgCtx,
 			Options: &project.SessionOptions{
 				CurrentDirectory:       "/project",
 				DefaultLibraryPath:     bundled.LibPath(),

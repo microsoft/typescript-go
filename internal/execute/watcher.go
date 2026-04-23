@@ -1,6 +1,7 @@
 package execute
 
 import (
+	"context"
 	"maps"
 	"reflect"
 	"slices"
@@ -134,7 +135,7 @@ func (w *Watcher) start() {
 	w.mu.Unlock()
 
 	if w.testing == nil {
-		w.fileWatcher.Run(w.sys.Now)
+		w.fileWatcher.Run(context.Background())
 	}
 }
 

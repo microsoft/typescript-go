@@ -254,7 +254,7 @@ func NewSession(init *SessionInit) *Session {
 		session.fileWatcher.UpdateWatchedDirectories(map[string]bool{
 			init.Options.CurrentDirectory: false,
 		})
-		go session.fileWatcher.Run(time.Now)
+		go session.fileWatcher.Run(init.BackgroundCtx)
 	}
 
 	return session
@@ -282,7 +282,7 @@ func (s *Session) EnablePollingWatcher() {
 	s.fileWatcher.UpdateWatchedDirectories(map[string]bool{
 		s.options.CurrentDirectory: false,
 	})
-	go s.fileWatcher.Run(time.Now)
+	go s.fileWatcher.Run(s.backgroundCtx)
 }
 
 // FS implements module.ResolutionHost
@@ -452,53 +452,44 @@ func (s *Session) onPolledFileChanges(event vfswatch.WatchEvent) {
 
 func (s *Session) updatePollingDirectories(snapshot *Snapshot) {
 	dirs := make(map[string]bool)
-	sourceFileDirs := make(map[string]struct{})
+
+	// Extract watched directories from the same WatchedFiles pipeline that
+	// updateWatches uses. The glob patterns are always "<dir>/**/*", so
+	// stripping the "/**/*" suffix gives us the directory path.
+	collectDirs := func(watchers []*lsproto.FileSystemWatcher) {
+		for _, w := range watchers {
+			glob := fileSystemWatcherGlobString(w)
+			if dir, ok := strings.CutSuffix(glob, "/**/*"); ok && dir != "" {
+				dirs[dir] = true
+			}
+		}
+	}
 
 	for _, entry := range snapshot.ConfigFileRegistry.configs {
-		configDir := tspath.GetDirectoryPath(entry.fileName)
-		if configDir != "" {
-			if _, already := dirs[configDir]; !already {
-				dirs[configDir] = false
-			}
-		}
-		if entry.commandLine == nil {
-			continue
-		}
-		for dir, recursive := range entry.commandLine.WildcardDirectories() {
-			if dir != "" {
-				dirs[dir] = recursive
-			}
-		}
-		for _, fileName := range entry.commandLine.FileNames() {
-			dir := tspath.GetDirectoryPath(fileName)
-			if dir != "" {
-				sourceFileDirs[dir] = struct{}{}
-			}
+		if entry.rootFilesWatch != nil {
+			w := entry.rootFilesWatch.Watchers()
+			collectDirs(w.WorkspaceWatchers)
+			collectDirs(w.OutsideWorkspaceWatchers)
 		}
 	}
 
-	compareOpts := tspath.ComparePathsOptions{
-		CurrentDirectory:          s.options.CurrentDirectory,
-		UseCaseSensitiveFileNames: s.fs.fs.UseCaseSensitiveFileNames(),
+	for _, project := range snapshot.ProjectCollection.ProjectsByPath().Entries() {
+		if project.programFilesWatch != nil {
+			pw := project.programFilesWatch.Watchers()
+			collectDirs(pw.WorkspaceWatchers)
+			collectDirs(pw.OutsideWorkspaceWatchers)
+		}
+		if project.typingsWatch != nil {
+			tw := project.typingsWatch.Watchers()
+			collectDirs(tw.WorkspaceWatchers)
+			collectDirs(tw.OutsideWorkspaceWatchers)
+		}
 	}
 
-	for dir := range sourceFileDirs {
-		if _, already := dirs[dir]; !already {
-			covered := false
-			for wdir, recursive := range dirs {
-				if recursive && tspath.ContainsPath(wdir, dir, compareOpts) {
-					covered = true
-					break
-				}
-				if tspath.ComparePaths(wdir, dir, compareOpts) == 0 {
-					covered = true
-					break
-				}
-			}
-			if !covered {
-				dirs[dir] = false
-			}
-		}
+	if snapshot.autoImportsWatch != nil {
+		aw := snapshot.autoImportsWatch.Watchers()
+		collectDirs(aw.WorkspaceWatchers)
+		collectDirs(aw.OutsideWorkspaceWatchers)
 	}
 
 	if len(dirs) == 0 {
@@ -1415,10 +1406,6 @@ func (s *Session) Close() {
 	s.cancelIdleCacheClean()
 	// Cancel periodic performance telemetry
 	s.stopPerformanceTelemetry()
-	// Stop the polling file watcher goroutine if running
-	if s.fileWatcher != nil {
-		s.fileWatcher.Stop()
-	}
 	s.backgroundQueue.Close()
 }
 
