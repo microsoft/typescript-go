@@ -775,17 +775,13 @@ func (tx *DeclarationTransformer) transformCjsRequireVariableDeclaration(input *
 	} else { // object binding pattern
 
 		// `const {x, y: z} = require("something")` -> `import {x, y as z} from "something"`
-		b := input.Name().AsObjectLiteralExpression()
+		b := input.Name().AsBindingPattern()
 		var importSpecifiers []*ast.Node
-		for _, elem := range b.Properties.Nodes {
-			if ast.IsShorthandPropertyAssignment(elem) {
-				importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, nil, elem.Name()))
-			} else if ast.IsPropertyAssignment(elem) && ast.IsIdentifier(elem.Name()) && ast.IsIdentifier(elem.AsPropertyAssignment().Initializer) {
-				importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, elem.AsPropertyAssignment().Name(), elem.AsPropertyAssignment().Initializer))
-			} else {
-				// elide invalid import specifier; should we errorm though?
-				continue
+		for _, elem := range b.Elements.Nodes {
+			if !ast.IsIdentifier(elem.Name()) {
+				continue // nested destructuring, bail
 			}
+			importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, elem.PropertyName(), elem.Name()))
 		}
 		return tx.Factory().NewImportDeclaration(
 			nil,
