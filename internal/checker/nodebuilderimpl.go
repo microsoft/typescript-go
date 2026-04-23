@@ -1059,11 +1059,7 @@ func (b *NodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 		if typeArgumentNodes := b.lookupInstantiatedTypeArgumentNodes(chain, index); typeArgumentNodes != nil {
 			return typeArgumentNodes
 		} else {
-			typeParameterNodes := b.typeParametersToTypeParameterDeclarations(symbol)
-			if len(typeParameterNodes) > 0 {
-				return b.f.NewNodeList(typeParameterNodes)
-			}
-			return nil
+			return b.typeParametersToTypeParameterNodes(symbol)
 		}
 	}
 
@@ -1666,6 +1662,16 @@ func (b *NodeBuilderImpl) typeParametersToTypeParameterDeclarations(symbol *ast.
 			results = append(results, b.typeParameterToDeclaration(param))
 		}
 		return results
+	}
+	return nil
+}
+
+func (b *NodeBuilderImpl) typeParametersToTypeParameterNodes(symbol *ast.Symbol) *ast.TypeParameterList {
+	targetSymbol := b.ch.getTargetSymbol(symbol)
+	if targetSymbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface|ast.SymbolFlagsAlias) != 0 {
+		return b.mapToTypeNodes(b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol), false /*isBareList*/)
+	} else if targetSymbol.Flags&ast.SymbolFlagsFunction != 0 {
+		return b.mapToTypeNodes(b.ch.getTypeParametersFromDeclaration(symbol.ValueDeclaration), false /*isBareList*/)
 	}
 	return nil
 }
