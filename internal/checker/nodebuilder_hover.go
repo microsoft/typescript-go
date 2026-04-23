@@ -559,45 +559,6 @@ func (b *NodeBuilderImpl) serializeTypeAliasForNamespace(symbol *ast.Symbol, nam
 	return b.f.NewTypeAliasDeclaration(nil, b.f.NewIdentifier(name), b.f.NewNodeList(typeParamDecls), typeNode)
 }
 
-// hoverExpressionWithTypeArguments builds an ExpressionWithTypeArguments node for heritage clauses.
-func (b *NodeBuilderImpl) hoverExpressionWithTypeArguments(t *Type, flags ast.SymbolFlags) *ast.Node {
-	var typeArgs []*ast.Node
-	var reference *ast.Node
-	if t.objectFlags&ObjectFlagsReference != 0 && t.Target() != nil && b.ch.IsSymbolAccessibleByFlags(t.Target().symbol, b.ctx.enclosingDeclaration, flags) {
-		typeArgs = core.Map(b.ch.getTypeArguments(t), func(arg *Type) *ast.Node { return b.typeToTypeNode(arg) })
-		reference = b.symbolToExpression(t.Target().symbol, ast.SymbolFlagsType)
-	} else if t.symbol != nil && b.ch.IsSymbolAccessibleByFlags(t.symbol, b.ctx.enclosingDeclaration, flags) {
-		reference = b.symbolToExpression(t.symbol, ast.SymbolFlagsType)
-	} else if t.symbol != nil && t.symbol.Name == ast.InternalSymbolNameClass {
-		reference = b.f.NewIdentifier(b.getNameOfSymbolAsWritten(t.symbol))
-	}
-	if reference != nil {
-		return b.f.NewExpressionWithTypeArguments(reference, b.f.NewNodeList(typeArgs))
-	}
-	return nil
-}
-
-// getImplementsTypes extracts implements types from class declarations.
-func (b *NodeBuilderImpl) getImplementsTypes(classType *Type) []*Type {
-	var result []*Type
-	if classType.symbol == nil {
-		return result
-	}
-	for _, declaration := range classType.symbol.Declarations {
-		implementsTypeNodes := ast.GetImplementsTypeNodes(declaration)
-		if implementsTypeNodes == nil {
-			continue
-		}
-		for _, node := range implementsTypeNodes {
-			t := b.ch.getTypeFromTypeNode(node)
-			if !b.ch.isErrorType(t) {
-				result = append(result, t)
-			}
-		}
-	}
-	return result
-}
-
 // filterInheritedProperties removes properties already present in base types.
 func (b *NodeBuilderImpl) filterInheritedProperties(t *Type, baseTypes []*Type, properties []*ast.Symbol) []*ast.Symbol {
 	if len(baseTypes) == 0 {
