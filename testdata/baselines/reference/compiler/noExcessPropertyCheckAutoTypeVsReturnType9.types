@@ -1,6 +1,37 @@
 //// [tests/cases/compiler/noExcessPropertyCheckAutoTypeVsReturnType9.ts] ////
 
 === noExcessPropertyCheckAutoTypeVsReturnType9.ts ===
+type Target = {
+>Target : Target
+
+  prop: string;
+>prop : string
+
+};
+function f1(): Target {
+>f1 : () => Target
+
+  let v;
+>v : any
+
+  v = {
+>v = {    prop: "foo",    extra: 1,  } : { prop: string; extra: number; }
+>v : any
+>{    prop: "foo",    extra: 1,  } : { prop: string; extra: number; }
+
+    prop: "foo",
+>prop : string
+>"foo" : "foo"
+
+    extra: 1,
+>extra : number
+>1 : 1
+
+  };
+  return v;
+>v : { prop: string; extra: number; }
+}
+
 interface Inner { x: number }
 >x : number
 
@@ -10,8 +41,8 @@ interface U { a: Inner[] }
 declare const cond: boolean;
 >cond : boolean
 
-function f1(): U {
->f1 : () => U
+function f2(): U {
+>f2 : () => U
 
   let v;
 >v : any
@@ -48,8 +79,8 @@ function f1(): U {
 >v : { a: { x: number; extra: boolean; }[]; }
 }
 
-function f2(): U {
->f2 : () => U
+function f3(): U {
+>f3 : () => U
 
   let v;
 >v : any

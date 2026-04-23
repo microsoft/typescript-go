@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/autoTypeJsLiteral1.ts] ////
+
+=== EnvironmentPlugin.js ===
+/** @typedef {string | number | boolean} CodeValue */
+
+class EnvironmentPlugin {
+>EnvironmentPlugin : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+
+	constructor() {
+        this.keys = /** @type {string[]} */ ([]);
+>this.keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 3, 16))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 3, 16))
+
+		this.defaultValues = {};
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 4, 49))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 4, 49))
+	}
+
+	apply() {
+>apply : Symbol(EnvironmentPlugin.apply, Decl(EnvironmentPlugin.js, 6, 2))
+
+		/** @type {Record<string, CodeValue>} */
+		const definitions = {};
+>definitions : Symbol(definitions, Decl(EnvironmentPlugin.js, 10, 7))
+
+		for (const key of this.keys) {
+>key : Symbol(key, Decl(EnvironmentPlugin.js, 11, 12))
+>this.keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 3, 16))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 3, 16))
+
+			const value = this.defaultValues[key];
+>value : Symbol(value, Decl(EnvironmentPlugin.js, 12, 8))
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 4, 49))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 4, 49))
+>key : Symbol(key, Decl(EnvironmentPlugin.js, 11, 12))
+
+			definitions[key] = value;
+>definitions : Symbol(definitions, Decl(EnvironmentPlugin.js, 10, 7))
+>key : Symbol(key, Decl(EnvironmentPlugin.js, 11, 12))
+>value : Symbol(value, Decl(EnvironmentPlugin.js, 12, 8))
+		}
+	}
+}
+

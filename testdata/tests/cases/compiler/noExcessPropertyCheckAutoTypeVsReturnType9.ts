@@ -1,12 +1,24 @@
 // @strict: true
 // @noEmit: true
 
+type Target = {
+  prop: string;
+};
+function f1(): Target {
+  let v;
+  v = {
+    prop: "foo",
+    extra: 1,
+  };
+  return v;
+}
+
 interface Inner { x: number }
 interface U { a: Inner[] }
 
 declare const cond: boolean;
 
-function f1(): U {
+function f2(): U {
   let v;
   if (cond) {
     v = { a: [{ x: 1, extra: true }] }
@@ -16,7 +28,7 @@ function f1(): U {
   return v;
 }
 
-function f2(): U {
+function f3(): U {
   let v;
   if (cond) {
     v = { a: [{ x: 1, extra: true }] }

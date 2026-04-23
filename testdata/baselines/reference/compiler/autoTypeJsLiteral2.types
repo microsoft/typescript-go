@@ -1,0 +1,145 @@
+//// [tests/cases/compiler/autoTypeJsLiteral2.ts] ////
+
+=== EnvironmentPlugin.js ===
+/** @typedef {string | number | boolean} CodeValue */
+
+class EnvironmentPlugin {
+>EnvironmentPlugin : EnvironmentPlugin
+
+	/**
+	 * @param {(string | string[] | Record<string, CodeValue>)[]} keys
+	 */
+	constructor(...keys) {
+>keys : (string | string[] | Record<string, CodeValue>)[]
+
+		if (keys.length === 1 && Array.isArray(keys[0])) {
+>keys.length === 1 && Array.isArray(keys[0]) : boolean
+>keys.length === 1 : boolean
+>keys.length : number
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>length : number
+>1 : 1
+>Array.isArray(keys[0]) : boolean
+>Array.isArray : (arg: any) => arg is any[]
+>Array : ArrayConstructor
+>isArray : (arg: any) => arg is any[]
+>keys[0] : string | string[] | Record<string, CodeValue>
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>0 : 0
+
+			/** @type {string[]} */
+			this.keys = keys[0];
+>this.keys = keys[0] : string[]
+>this.keys : string[]
+>this : this
+>keys : string[]
+>keys[0] : string[]
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>0 : 0
+
+			this.defaultValues = {};
+>this.defaultValues = {} : {}
+>this.defaultValues : any
+>this : this
+>defaultValues : any
+>{} : {}
+
+		} else if (keys.length === 1 && keys[0] && typeof keys[0] === "object") {
+>keys.length === 1 && keys[0] && typeof keys[0] === "object" : "" | boolean
+>keys.length === 1 && keys[0] : string | false | string[] | Record<string, CodeValue>
+>keys.length === 1 : boolean
+>keys.length : number
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>length : number
+>1 : 1
+>keys[0] : string | string[] | Record<string, CodeValue>
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>0 : 0
+>typeof keys[0] === "object" : boolean
+>typeof keys[0] : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+>keys[0] : string | string[] | Record<string, CodeValue>
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>0 : 0
+>"object" : "object"
+
+			this.keys = Object.keys(keys[0]);
+>this.keys = Object.keys(keys[0]) : string[]
+>this.keys : string[]
+>this : this
+>keys : string[]
+>Object.keys(keys[0]) : string[]
+>Object.keys : { (o: object): string[]; (o: {}): string[]; }
+>Object : ObjectConstructor
+>keys : { (o: object): string[]; (o: {}): string[]; }
+>keys[0] : string[] | Record<string, CodeValue>
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>0 : 0
+
+			this.defaultValues =
+>this.defaultValues =				/** @type {Record<string, CodeValue>} */				(keys[0]) : Record<string, CodeValue>
+>this.defaultValues : any
+>this : this
+>defaultValues : any
+
+				/** @type {Record<string, CodeValue>} */
+				(keys[0]);
+>(keys[0]) : Record<string, CodeValue>
+>keys[0] : string[] | Record<string, CodeValue>
+>keys : (string | string[] | Record<string, CodeValue>)[]
+>0 : 0
+
+		} else {
+			this.keys = /** @type {string[]} */ (keys);
+>this.keys = /** @type {string[]} */ (keys) : string[]
+>this.keys : string[]
+>this : this
+>keys : string[]
+>(keys) : string[]
+>keys : (string | string[] | Record<string, CodeValue>)[]
+
+			this.defaultValues = {};
+>this.defaultValues = {} : {}
+>this.defaultValues : any
+>this : this
+>defaultValues : any
+>{} : {}
+		}
+	}
+
+	apply() {
+>apply : () => void
+
+		/** @type {Record<string, CodeValue>} */
+		const definitions = {};
+>definitions : Record<string, CodeValue>
+>{} : {}
+
+		for (const key of this.keys) {
+>key : string
+>this.keys : string[]
+>this : this
+>keys : string[]
+
+			this.defaultValues // current: Record<string, CodeValue>, broken: {}
+>this.defaultValues : {}
+>this : this
+>defaultValues : {}
+
+			const value = this.defaultValues[key];
+>value : any
+>this.defaultValues[key] : any
+>this.defaultValues : {}
+>this : this
+>defaultValues : {}
+>key : string
+
+			definitions[key] = value;
+>definitions[key] = value : any
+>definitions[key] : CodeValue
+>definitions : Record<string, CodeValue>
+>key : string
+>value : any
+		}
+	}
+}
+

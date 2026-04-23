@@ -1,0 +1,41 @@
+EnvironmentPlugin.js(28,18): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+
+
+==== EnvironmentPlugin.js (1 errors) ====
+    /** @typedef {string | number | boolean} CodeValue */
+    
+    class EnvironmentPlugin {
+    	/**
+    	 * @param {(string | string[] | Record<string, CodeValue>)[]} keys
+    	 */
+    	constructor(...keys) {
+    		if (keys.length === 1 && Array.isArray(keys[0])) {
+    			/** @type {string[]} */
+    			this.keys = keys[0];
+    			this.defaultValues = {};
+    		} else if (keys.length === 1 && keys[0] && typeof keys[0] === "object") {
+    			this.keys = Object.keys(keys[0]);
+    			this.defaultValues =
+    				/** @type {Record<string, CodeValue>} */
+    				(keys[0]);
+    		} else {
+    			this.keys = /** @type {string[]} */ (keys);
+    			this.defaultValues = {};
+    		}
+    	}
+    
+    	apply() {
+    		/** @type {Record<string, CodeValue>} */
+    		const definitions = {};
+    		for (const key of this.keys) {
+    			this.defaultValues // current: Record<string, CodeValue>, broken: {}
+    			const value = this.defaultValues[key];
+    			              ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+!!! error TS7053:   No index signature with a parameter of type 'string' was found on type '{}'.
+    			definitions[key] = value;
+    		}
+    	}
+    }
+    

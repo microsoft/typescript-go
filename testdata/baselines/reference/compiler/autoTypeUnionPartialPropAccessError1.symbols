@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/autoTypeUnionPartialPropAccessError1.ts] ////
+
+=== autoTypeUnionPartialPropAccessError1.ts ===
+declare const filePath: string | undefined
+>filePath : Symbol(filePath, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 13))
+
+declare function access(path: string): Promise<void>
+>access : Symbol(access, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 42))
+>path : Symbol(path, Decl(autoTypeUnionPartialPropAccessError1.ts, 1, 24))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
+
+type Result =
+>Result : Symbol(Result, Decl(autoTypeUnionPartialPropAccessError1.ts, 1, 52))
+
+	| { success: true; warnings?: string[] }
+>success : Symbol(success, Decl(autoTypeUnionPartialPropAccessError1.ts, 4, 4))
+>warnings : Symbol(warnings, Decl(autoTypeUnionPartialPropAccessError1.ts, 4, 19))
+
+	| { success: false; error: string }
+>success : Symbol(success, Decl(autoTypeUnionPartialPropAccessError1.ts, 5, 4))
+>error : Symbol(error, Decl(autoTypeUnionPartialPropAccessError1.ts, 5, 20))
+
+declare function importSettings(): Promise<Result>
+>importSettings : Symbol(importSettings, Decl(autoTypeUnionPartialPropAccessError1.ts, 5, 36))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
+>Result : Symbol(Result, Decl(autoTypeUnionPartialPropAccessError1.ts, 1, 52))
+
+declare function importSettingsFromPath(filePath: string): Promise<Result>
+>importSettingsFromPath : Symbol(importSettingsFromPath, Decl(autoTypeUnionPartialPropAccessError1.ts, 7, 50))
+>filePath : Symbol(filePath, Decl(autoTypeUnionPartialPropAccessError1.ts, 8, 40))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
+>Result : Symbol(Result, Decl(autoTypeUnionPartialPropAccessError1.ts, 1, 52))
+
+async function f() {
+>f : Symbol(f, Decl(autoTypeUnionPartialPropAccessError1.ts, 8, 74))
+
+	let result
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+
+	if (filePath) {
+>filePath : Symbol(filePath, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 13))
+
+		try {
+			await access(filePath)
+>access : Symbol(access, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 42))
+>filePath : Symbol(filePath, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 13))
+
+			result = await importSettingsFromPath(filePath)
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+>importSettingsFromPath : Symbol(importSettingsFromPath, Decl(autoTypeUnionPartialPropAccessError1.ts, 7, 50))
+>filePath : Symbol(filePath, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 13))
+
+		} catch (error) {
+>error : Symbol(error, Decl(autoTypeUnionPartialPropAccessError1.ts, 17, 11))
+
+			result = {
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+
+				success: false,
+>success : Symbol(success, Decl(autoTypeUnionPartialPropAccessError1.ts, 18, 13))
+
+				error: `Cannot access file at path "${filePath}": ${error instanceof Error ? error.message : "Unknown error"}`,
+>error : Symbol(error, Decl(autoTypeUnionPartialPropAccessError1.ts, 19, 19))
+>filePath : Symbol(filePath, Decl(autoTypeUnionPartialPropAccessError1.ts, 0, 13))
+>error : Symbol(error, Decl(autoTypeUnionPartialPropAccessError1.ts, 17, 11))
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+>error.message : Symbol(Error.message, Decl(lib.es5.d.ts, --, --))
+>error : Symbol(error, Decl(autoTypeUnionPartialPropAccessError1.ts, 17, 11))
+>message : Symbol(Error.message, Decl(lib.es5.d.ts, --, --))
+			}
+		}
+	} else {
+		result = await importSettings()
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+>importSettings : Symbol(importSettings, Decl(autoTypeUnionPartialPropAccessError1.ts, 5, 36))
+	}
+
+	if (result.success) {
+>result.success : Symbol(success, Decl(autoTypeUnionPartialPropAccessError1.ts, 4, 4), Decl(autoTypeUnionPartialPropAccessError1.ts, 18, 13))
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+>success : Symbol(success, Decl(autoTypeUnionPartialPropAccessError1.ts, 4, 4), Decl(autoTypeUnionPartialPropAccessError1.ts, 18, 13))
+
+		if (result.warnings && result.warnings.length > 0) {
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+
+			return result.warnings[0]
+>result : Symbol(result, Decl(autoTypeUnionPartialPropAccessError1.ts, 11, 4))
+		}
+	}
+}
+

@@ -1,0 +1,117 @@
+//// [tests/cases/compiler/autoTypeUnionPartialPropAccessError1.ts] ////
+
+=== autoTypeUnionPartialPropAccessError1.ts ===
+declare const filePath: string | undefined
+>filePath : string | undefined
+
+declare function access(path: string): Promise<void>
+>access : (path: string) => Promise<void>
+>path : string
+
+type Result =
+>Result : Result
+
+	| { success: true; warnings?: string[] }
+>success : true
+>true : true
+>warnings : string[] | undefined
+
+	| { success: false; error: string }
+>success : false
+>false : false
+>error : string
+
+declare function importSettings(): Promise<Result>
+>importSettings : () => Promise<Result>
+
+declare function importSettingsFromPath(filePath: string): Promise<Result>
+>importSettingsFromPath : (filePath: string) => Promise<Result>
+>filePath : string
+
+async function f() {
+>f : () => Promise<any>
+
+	let result
+>result : any
+
+	if (filePath) {
+>filePath : string | undefined
+
+		try {
+			await access(filePath)
+>await access(filePath) : void
+>access(filePath) : Promise<void>
+>access : (path: string) => Promise<void>
+>filePath : string
+
+			result = await importSettingsFromPath(filePath)
+>result = await importSettingsFromPath(filePath) : Result
+>result : any
+>await importSettingsFromPath(filePath) : Result
+>importSettingsFromPath(filePath) : Promise<Result>
+>importSettingsFromPath : (filePath: string) => Promise<Result>
+>filePath : string
+
+		} catch (error) {
+>error : unknown
+
+			result = {
+>result = {				success: false,				error: `Cannot access file at path "${filePath}": ${error instanceof Error ? error.message : "Unknown error"}`,			} : { success: boolean; error: string; }
+>result : any
+>{				success: false,				error: `Cannot access file at path "${filePath}": ${error instanceof Error ? error.message : "Unknown error"}`,			} : { success: boolean; error: string; }
+
+				success: false,
+>success : boolean
+>false : false
+
+				error: `Cannot access file at path "${filePath}": ${error instanceof Error ? error.message : "Unknown error"}`,
+>error : string
+>`Cannot access file at path "${filePath}": ${error instanceof Error ? error.message : "Unknown error"}` : string
+>filePath : string
+>error instanceof Error ? error.message : "Unknown error" : string
+>error instanceof Error : boolean
+>error : unknown
+>Error : ErrorConstructor
+>error.message : string
+>error : Error
+>message : string
+>"Unknown error" : "Unknown error"
+			}
+		}
+	} else {
+		result = await importSettings()
+>result = await importSettings() : Result
+>result : any
+>await importSettings() : Result
+>importSettings() : Promise<Result>
+>importSettings : () => Promise<Result>
+	}
+
+	if (result.success) {
+>result.success : boolean
+>result : { success: true; warnings?: string[]; } | { success: boolean; error: string; }
+>success : boolean
+
+		if (result.warnings && result.warnings.length > 0) {
+>result.warnings && result.warnings.length > 0 : any
+>result.warnings : any
+>result : { success: true; warnings?: string[]; } | { success: boolean; error: string; }
+>warnings : any
+>result.warnings.length > 0 : boolean
+>result.warnings.length : any
+>result.warnings : any
+>result : { success: true; warnings?: string[]; } | { success: boolean; error: string; }
+>warnings : any
+>length : any
+>0 : 0
+
+			return result.warnings[0]
+>result.warnings[0] : any
+>result.warnings : any
+>result : { success: true; warnings?: string[]; } | { success: boolean; error: string; }
+>warnings : any
+>0 : 0
+		}
+	}
+}
+

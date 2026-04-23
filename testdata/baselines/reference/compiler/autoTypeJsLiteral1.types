@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/autoTypeJsLiteral1.ts] ////
+
+=== EnvironmentPlugin.js ===
+/** @typedef {string | number | boolean} CodeValue */
+
+class EnvironmentPlugin {
+>EnvironmentPlugin : EnvironmentPlugin
+
+	constructor() {
+        this.keys = /** @type {string[]} */ ([]);
+>this.keys = /** @type {string[]} */ ([]) : string[]
+>this.keys : any
+>this : this
+>keys : any
+>([]) : string[]
+>[] : never[]
+
+		this.defaultValues = {};
+>this.defaultValues = {} : {}
+>this.defaultValues : any
+>this : this
+>defaultValues : any
+>{} : {}
+	}
+
+	apply() {
+>apply : () => void
+
+		/** @type {Record<string, CodeValue>} */
+		const definitions = {};
+>definitions : Record<string, CodeValue>
+>{} : {}
+
+		for (const key of this.keys) {
+>key : string
+>this.keys : string[]
+>this : this
+>keys : string[]
+
+			const value = this.defaultValues[key];
+>value : any
+>this.defaultValues[key] : any
+>this.defaultValues : {}
+>this : this
+>defaultValues : {}
+>key : string
+
+			definitions[key] = value;
+>definitions[key] = value : any
+>definitions[key] : CodeValue
+>definitions : Record<string, CodeValue>
+>key : string
+>value : any
+		}
+	}
+}
+

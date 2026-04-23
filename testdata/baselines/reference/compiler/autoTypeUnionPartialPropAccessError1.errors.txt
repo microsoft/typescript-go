@@ -1,0 +1,52 @@
+autoTypeUnionPartialPropAccessError1.ts(29,14): error TS2339: Property 'warnings' does not exist on type '{ success: true; warnings?: string[] | undefined; } | { success: boolean; error: string; }'.
+  Property 'warnings' does not exist on type '{ success: boolean; error: string; }'.
+autoTypeUnionPartialPropAccessError1.ts(29,33): error TS2339: Property 'warnings' does not exist on type '{ success: true; warnings?: string[] | undefined; } | { success: boolean; error: string; }'.
+  Property 'warnings' does not exist on type '{ success: boolean; error: string; }'.
+autoTypeUnionPartialPropAccessError1.ts(30,18): error TS2339: Property 'warnings' does not exist on type '{ success: true; warnings?: string[] | undefined; } | { success: boolean; error: string; }'.
+  Property 'warnings' does not exist on type '{ success: boolean; error: string; }'.
+
+
+==== autoTypeUnionPartialPropAccessError1.ts (3 errors) ====
+    declare const filePath: string | undefined
+    declare function access(path: string): Promise<void>
+    
+    type Result =
+    	| { success: true; warnings?: string[] }
+    	| { success: false; error: string }
+    
+    declare function importSettings(): Promise<Result>
+    declare function importSettingsFromPath(filePath: string): Promise<Result>
+    
+    async function f() {
+    	let result
+    
+    	if (filePath) {
+    		try {
+    			await access(filePath)
+    			result = await importSettingsFromPath(filePath)
+    		} catch (error) {
+    			result = {
+    				success: false,
+    				error: `Cannot access file at path "${filePath}": ${error instanceof Error ? error.message : "Unknown error"}`,
+    			}
+    		}
+    	} else {
+    		result = await importSettings()
+    	}
+    
+    	if (result.success) {
+    		if (result.warnings && result.warnings.length > 0) {
+    		           ~~~~~~~~
+!!! error TS2339: Property 'warnings' does not exist on type '{ success: true; warnings?: string[] | undefined; } | { success: boolean; error: string; }'.
+!!! error TS2339:   Property 'warnings' does not exist on type '{ success: boolean; error: string; }'.
+    		                              ~~~~~~~~
+!!! error TS2339: Property 'warnings' does not exist on type '{ success: true; warnings?: string[] | undefined; } | { success: boolean; error: string; }'.
+!!! error TS2339:   Property 'warnings' does not exist on type '{ success: boolean; error: string; }'.
+    			return result.warnings[0]
+    			              ~~~~~~~~
+!!! error TS2339: Property 'warnings' does not exist on type '{ success: true; warnings?: string[] | undefined; } | { success: boolean; error: string; }'.
+!!! error TS2339:   Property 'warnings' does not exist on type '{ success: boolean; error: string; }'.
+    		}
+    	}
+    }
+    

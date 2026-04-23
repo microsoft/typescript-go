@@ -1,0 +1,107 @@
+//// [tests/cases/compiler/autoTypeJsLiteral2.ts] ////
+
+=== EnvironmentPlugin.js ===
+/** @typedef {string | number | boolean} CodeValue */
+
+class EnvironmentPlugin {
+>EnvironmentPlugin : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+
+	/**
+	 * @param {(string | string[] | Record<string, CodeValue>)[]} keys
+	 */
+	constructor(...keys) {
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+		if (keys.length === 1 && Array.isArray(keys[0])) {
+>keys.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
+>isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+			/** @type {string[]} */
+			this.keys = keys[0];
+>this.keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+			this.defaultValues = {};
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+
+		} else if (keys.length === 1 && keys[0] && typeof keys[0] === "object") {
+>keys.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+>length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+			this.keys = Object.keys(keys[0]);
+>this.keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>Object.keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+			this.defaultValues =
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+
+				/** @type {Record<string, CodeValue>} */
+				(keys[0]);
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+		} else {
+			this.keys = /** @type {string[]} */ (keys);
+>this.keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>keys : Symbol(keys, Decl(EnvironmentPlugin.js, 6, 13))
+
+			this.defaultValues = {};
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+		}
+	}
+
+	apply() {
+>apply : Symbol(EnvironmentPlugin.apply, Decl(EnvironmentPlugin.js, 20, 2))
+
+		/** @type {Record<string, CodeValue>} */
+		const definitions = {};
+>definitions : Symbol(definitions, Decl(EnvironmentPlugin.js, 24, 7))
+
+		for (const key of this.keys) {
+>key : Symbol(key, Decl(EnvironmentPlugin.js, 25, 12))
+>this.keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>keys : Symbol(EnvironmentPlugin.keys, Decl(EnvironmentPlugin.js, 7, 52), Decl(EnvironmentPlugin.js, 11, 75), Decl(EnvironmentPlugin.js, 16, 10))
+
+			this.defaultValues // current: Record<string, CodeValue>, broken: {}
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+
+			const value = this.defaultValues[key];
+>value : Symbol(value, Decl(EnvironmentPlugin.js, 27, 8))
+>this.defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+>this : Symbol(EnvironmentPlugin, Decl(EnvironmentPlugin.js, 0, 0))
+>defaultValues : Symbol(EnvironmentPlugin.defaultValues, Decl(EnvironmentPlugin.js, 9, 23), Decl(EnvironmentPlugin.js, 12, 36), Decl(EnvironmentPlugin.js, 17, 46))
+>key : Symbol(key, Decl(EnvironmentPlugin.js, 25, 12))
+
+			definitions[key] = value;
+>definitions : Symbol(definitions, Decl(EnvironmentPlugin.js, 24, 7))
+>key : Symbol(key, Decl(EnvironmentPlugin.js, 25, 12))
+>value : Symbol(value, Decl(EnvironmentPlugin.js, 27, 8))
+		}
+	}
+}
+
