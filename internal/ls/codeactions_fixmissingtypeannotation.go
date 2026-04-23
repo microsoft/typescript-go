@@ -1,11 +1,9 @@
 package ls
 
 import (
-	"cmp"
 	"context"
 	"slices"
 	"strconv"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -93,17 +91,17 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	defer done()
 
 	var fixes []CodeAction
-	var seen []CodeAction // sorted for binary search dedup
+	var seen []*CodeAction // sorted for binary search dedup
 
 	addFix := func(action *CodeAction) {
 		if action == nil {
 			return
 		}
-		i, found := slices.BinarySearchFunc(seen, *action, compareCodeActions)
+		i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
 		if found {
 			return
 		}
-		seen = slices.Insert(seen, i, *action)
+		seen = slices.Insert(seen, i, action)
 		fixes = append(fixes, *action)
 	}
 
@@ -132,36 +130,6 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	}))
 
 	return fixes, nil
-}
-
-// compareCodeActions defines a total ordering for CodeAction values, comparing
-// description then text edits lexicographically. Used with slices.BinarySearchFunc.
-func compareCodeActions(a, b CodeAction) int {
-	if c := strings.Compare(a.Description, b.Description); c != 0 {
-		return c
-	}
-	if c := cmp.Compare(len(a.Changes), len(b.Changes)); c != 0 {
-		return c
-	}
-	for i, edit := range a.Changes {
-		other := b.Changes[i]
-		if c := cmp.Compare(edit.Range.Start.Line, other.Range.Start.Line); c != 0 {
-			return c
-		}
-		if c := cmp.Compare(edit.Range.Start.Character, other.Range.Start.Character); c != 0 {
-			return c
-		}
-		if c := cmp.Compare(edit.Range.End.Line, other.Range.End.Line); c != 0 {
-			return c
-		}
-		if c := cmp.Compare(edit.Range.End.Character, other.Range.End.Character); c != 0 {
-			return c
-		}
-		if c := strings.Compare(edit.NewText, other.NewText); c != 0 {
-			return c
-		}
-	}
-	return 0
 }
 
 func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error) {

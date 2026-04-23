@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"strings"
@@ -40,6 +41,23 @@ type CodeAction struct {
 	Changes           []*lsproto.TextEdit
 	FixID             string
 	FixAllDescription string
+}
+
+// Compare defines a total ordering for CodeAction values, comparing description
+// then text edits lexicographically. Used with slices.BinarySearchFunc.
+func (a *CodeAction) Compare(b *CodeAction) int {
+	if c := strings.Compare(a.Description, b.Description); c != 0 {
+		return c
+	}
+	if c := cmp.Compare(len(a.Changes), len(b.Changes)); c != 0 {
+		return c
+	}
+	for i, edit := range a.Changes {
+		if c := edit.Compare(b.Changes[i]); c != 0 {
+			return c
+		}
+	}
+	return 0
 }
 
 // CombinedCodeActions represents combined code actions for fix-all scenarios
