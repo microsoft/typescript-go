@@ -168,6 +168,35 @@ func (w *WatchedFiles[T]) ID() WatcherID {
 	return w.Watchers().WatcherID
 }
 
+// WatchedDirectories returns the set of directories being watched.
+// It extracts directory paths from the computed glob patterns.
+func (w *WatchedFiles[T]) WatchedDirectories() []string {
+	if w == nil {
+		return nil
+	}
+	watchers := w.Watchers()
+	var dirs []string
+	for _, fw := range watchers.WorkspaceWatchers {
+		if dir := extractWatchedDirectory(fw); dir != "" {
+			dirs = append(dirs, dir)
+		}
+	}
+	for _, fw := range watchers.OutsideWorkspaceWatchers {
+		if dir := extractWatchedDirectory(fw); dir != "" {
+			dirs = append(dirs, dir)
+		}
+	}
+	return dirs
+}
+
+func extractWatchedDirectory(w *lsproto.FileSystemWatcher) string {
+	glob := fileSystemWatcherGlobString(w)
+	if dir, ok := strings.CutSuffix(glob, "/**/*"); ok {
+		return dir
+	}
+	return ""
+}
+
 func (w *WatchedFiles[T]) Name() string {
 	return w.name
 }

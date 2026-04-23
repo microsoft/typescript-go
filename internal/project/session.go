@@ -453,44 +453,22 @@ func (s *Session) onPolledFileChanges(event vfswatch.WatchEvent) {
 func (s *Session) updatePollingDirectories(snapshot *Snapshot) {
 	dirs := make(map[string]bool)
 
-	// Extract watched directories from the same WatchedFiles pipeline that
-	// updateWatches uses. The glob patterns are always "<dir>/**/*", so
-	// stripping the "/**/*" suffix gives us the directory path.
-	collectDirs := func(watchers []*lsproto.FileSystemWatcher) {
-		for _, w := range watchers {
-			glob := fileSystemWatcherGlobString(w)
-			if dir, ok := strings.CutSuffix(glob, "/**/*"); ok && dir != "" {
-				dirs[dir] = true
-			}
+	addDirs := func(directories []string) {
+		for _, dir := range directories {
+			dirs[dir] = true
 		}
 	}
 
 	for _, entry := range snapshot.ConfigFileRegistry.configs {
-		if entry.rootFilesWatch != nil {
-			w := entry.rootFilesWatch.Watchers()
-			collectDirs(w.WorkspaceWatchers)
-			collectDirs(w.OutsideWorkspaceWatchers)
-		}
+		addDirs(entry.rootFilesWatch.WatchedDirectories())
 	}
 
 	for _, project := range snapshot.ProjectCollection.ProjectsByPath().Entries() {
-		if project.programFilesWatch != nil {
-			pw := project.programFilesWatch.Watchers()
-			collectDirs(pw.WorkspaceWatchers)
-			collectDirs(pw.OutsideWorkspaceWatchers)
-		}
-		if project.typingsWatch != nil {
-			tw := project.typingsWatch.Watchers()
-			collectDirs(tw.WorkspaceWatchers)
-			collectDirs(tw.OutsideWorkspaceWatchers)
-		}
+		addDirs(project.programFilesWatch.WatchedDirectories())
+		addDirs(project.typingsWatch.WatchedDirectories())
 	}
 
-	if snapshot.autoImportsWatch != nil {
-		aw := snapshot.autoImportsWatch.Watchers()
-		collectDirs(aw.WorkspaceWatchers)
-		collectDirs(aw.OutsideWorkspaceWatchers)
-	}
+	addDirs(snapshot.autoImportsWatch.WatchedDirectories())
 
 	if len(dirs) == 0 {
 		dirs[s.options.CurrentDirectory] = true
