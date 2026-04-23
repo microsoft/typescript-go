@@ -14,10 +14,8 @@ github.com/microsoft/typescript-go/internal/ls.validateToken(0x3)
 	github.com/microsoft/typescript-go/internal/ls/token.go:9 +0x10
 github.com/microsoft/typescript-go/internal/ls.signRequest(0x4)
 	github.com/microsoft/typescript-go/internal/ls/sig.go:11 +0x10
-github.com/microsoft/typescript-go/internal/ls.loadSecretConfig(0x5)
-	github.com/microsoft/typescript-go/internal/ls/secret.go:13 +0x10
-github.com/microsoft/typescript-go/internal/ls.setPwd(0x6)
-	github.com/microsoft/typescript-go/internal/ls/pwd.go:15 +0x10
+github.com/microsoft/typescript-go/internal/ls.setPwd(0x5)
+	github.com/microsoft/typescript-go/internal/ls/pwd.go:13 +0x10
 ````
 
 # Sanitized output:
@@ -33,8 +31,6 @@ typescript-go|>internal|>ls.validateTokenX_X()
 	typescript-go|>internal|>ls|>tokenX_X.go:9
 typescript-go|>internal|>ls.signRequest()
 	typescript-go|>internal|>ls|>sigX_X.go:11
-typescript-go|>internal|>ls.loadSecretConfig()
-	typescript-go|>internal|>ls|>secretX_X.go:13
 typescript-go|>internal|>ls.setPwdX_X()
-	typescript-go|>internal|>ls|>pwdX_X.go:15
+	typescript-go|>internal|>ls|>pwdX_X.go:13
 ````

@@ -106,8 +106,7 @@ func TestSanitizedStackTraceDefeatsVSCodeGenericSecretRegex(t *testing.T) {
 
 	// Frame names contain identifiers that contain trigger keywords:
 	// `getSignatureHelp` (signature), `LookupKey` (key), `validateToken` (token),
-	// `signRequest` (sig), `loadSecretConfig` (secret), `setPwd` (pwd),
-	// and a file `signature.go`.
+	// `signRequest` (sig), `setPwd` (pwd), and a file `signature.go`.
 	input := `goroutine 7 [running]:
 runtime/debug.Stack()
 	runtime/debug/stack.go:26 +0x5e
@@ -119,10 +118,8 @@ github.com/microsoft/typescript-go/internal/ls.validateToken(0x3)
 	github.com/microsoft/typescript-go/internal/ls/token.go:9 +0x10
 github.com/microsoft/typescript-go/internal/ls.signRequest(0x4)
 	github.com/microsoft/typescript-go/internal/ls/sig.go:11 +0x10
-github.com/microsoft/typescript-go/internal/ls.loadSecretConfig(0x5)
-	github.com/microsoft/typescript-go/internal/ls/secret.go:13 +0x10
-github.com/microsoft/typescript-go/internal/ls.setPwd(0x6)
-	github.com/microsoft/typescript-go/internal/ls/pwd.go:15 +0x10`
+github.com/microsoft/typescript-go/internal/ls.setPwd(0x5)
+	github.com/microsoft/typescript-go/internal/ls/pwd.go:13 +0x10`
 
 	output := sanitizeStackTrace(input)
 	if loc := vscodeGenericSecretRegex.FindStringIndex(output); loc != nil {

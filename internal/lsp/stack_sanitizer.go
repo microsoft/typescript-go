@@ -10,10 +10,11 @@ import (
 // VS Code's telemetry pipeline redacts any string matching
 // /(key|token|sig|secret|signature|password|passwd|pwd|android:value)[^a-zA-Z0-9]/i
 // as `<REDACTED: Generic Secret>`, which trips on innocuous Go frames like
-// `getSignatureHelp(`. Insert `X_X` after each trigger keyword to defeat the
-// regex; reverse by removing the marker (replace `X_X` with the empty string)
-// on the dashboard.
-var genericSecretKeywordRegex = regexp.MustCompile(`(?i)(key|token|signature|sig|secret|password|passwd|pwd|android:value)([^a-zA-Z0-9])`)
+// `getSignatureHelp(`. Insert `X_X` after each trigger keyword that we know
+// can appear in our sanitized output, when followed by punctuation we
+// actually emit (`(`, `[`, `.`, `|`); reverse by removing the marker (replace
+// `X_X` with the empty string) on the dashboard.
+var genericSecretKeywordRegex = regexp.MustCompile(`(?i)(key|token|signature|sig|pwd)([(\[.|])`)
 
 func defeatGenericSecretRegex(s string) string {
 	return genericSecretKeywordRegex.ReplaceAllString(s, "${1}X_X${2}")
