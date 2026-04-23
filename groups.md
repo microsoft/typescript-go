@@ -107,8 +107,7 @@ conformance/nodeModulesAllowJsImportAssignment(module=node20).js.diff
 conformance/nodeModulesAllowJsImportAssignment(module=nodenext).js.diff
 
 # `@class`/`@constructor` no longer makes functions into class declarations
-## TODO: Log a bug (class properties and constructor signatures are lost; consumers see plain functions instead of classes)
-## Constructor functions annotated with @class/@constructor remain plain functions; prototype assignments do not produce classes
+## TODO: Accept this (inferred classes from `.prototype` are no longer supported)
 compiler/jsDeclarationsGlobalFileConstFunction.js.diff
 compiler/jsDeclarationsGlobalFileConstFunctionNamed.js.diff
 compiler/jsdocFunctionClassPropertiesDeclaration.js.diff
@@ -136,8 +135,7 @@ conformance/lateBoundClassMemberAssignmentJS3.js.diff
 conformance/thisPropertyAssignmentCircular.js.diff
 
 # CJS `module.exports = {}` now emits `export = _default` with inlined object type instead of named exports
-## TODO: Accept this (Documented in CHANGES.md in sections "CommonJS syntax" and "CommonJS")
-## CommonJS files using module.exports pattern changed from individual named exports to a single `export = _default` const
+## TODO: Log a bug (Investigate these and ensure they're a semantic match)
 compiler/jsDeclarationEmitExportAssignedArray.js.diff
 compiler/jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.js.diff
 conformance/jsDeclarationsCommonjsRelativePath.js.diff
@@ -530,13 +528,14 @@ conformance/commonJSImportClassTypeReference.js.diff
 conformance/commonJSImportNestedClassTypeReference.js.diff
 conformance/jsDeclarationsExportDoubleAssignmentInClosure.js.diff
 
-# JS emit changes (non-declaration): module exports, __esModule, and variable scoping
-## `export const title` in labeled statement context no longer emits as bare semicolon
-## Changes in the emitted JavaScript runtime code rather than declaration files
+## TODO: Log a bug (Jake has a fix)
+conformance/exportNonInitializedVariablesInIfThenStatementNoCrash1(module=commonjs).js.diff
+
+# Weird testcases that don't correspond to anything real or are no-ops
+## TODO: Accept this
 compiler/augmentExportEquals2.js.diff
 compiler/importDeclWithExportModifierAndExportAssignment.js.diff
 conformance/defaultExportsCannotMerge04(target=es2015).js.diff
-conformance/exportNonInitializedVariablesInIfThenStatementNoCrash1(module=commonjs).js.diff
 
 # Numeric string property key uses computed property syntax `["404"]` instead of plain `"404"`
 ## TODO: Accept this (`"404"` and `["404"]` declare the same property; consumers access it identically)
@@ -544,7 +543,7 @@ conformance/exportNonInitializedVariablesInIfThenStatementNoCrash1(module=common
 compiler/declarationEmitPropertyNumericStringKey.js.diff
 
 # Non-literal computed property `[fieldName]` changed to index signature `[x: string]` in declaration emit
-## TODO: Log a bug (index signature allows any string key; named computed property was a specific key only)
+## TODO: Accept this (fieldName is not a legal const to use in a computed position, so this is an error case)
 ## Dynamic computed property keys resolved to index signatures
 compiler/declarationEmitSimpleComputedNames1.js.diff
 
@@ -565,8 +564,7 @@ compiler/es5ExportEqualsDts(target=es2015).js.diff
 compiler/declarationEmitNameConflicts.js.diff
 
 # Properties with `__proto__`-like names now quoted in declaration emit
-## TODO: Log a bug
-## `__proto__` and similar compiler-reserved names are now string-quoted as `"__proto__"`
+## TODO: Accept this (it's quoted in the originating sourcefile)
 compiler/escapedReservedCompilerNamedIdentifier.js.diff
 
 # Nested `/*elided*/` type annotation comments removed at deeper nesting levels
@@ -693,6 +691,6 @@ conformance/privateNameStaticMethod.js.diff
 compiler/declarationEmitShadowing.js.diff
 
 # JSDoc-in-TypeScript parsing changes cause broken emit
-## TODO: Log a bug
+## TODO: Accept this (caused by documented deprecation of @function tag)
 ## JSDoc type annotations in `.ts` files now cause parsing issues resulting in broken JS output
 conformance/jsdocDisallowedInTypescript.js.diff
