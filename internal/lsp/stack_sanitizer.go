@@ -11,7 +11,8 @@ import (
 // /(key|token|sig|secret|signature|password|passwd|pwd|android:value)[^a-zA-Z0-9]/i
 // as `<REDACTED: Generic Secret>`, which trips on innocuous Go frames like
 // `getSignatureHelp(`. Insert `X_X` after each trigger keyword to defeat the
-// regex; reverse with a `X_X` -> “ find-and-replace on the dashboard.
+// regex; reverse by removing the marker (replace `X_X` with the empty string)
+// on the dashboard.
 var genericSecretKeywordRegex = regexp.MustCompile(`(?i)(key|token|signature|sig|secret|password|passwd|pwd|android:value)([^a-zA-Z0-9])`)
 
 func defeatGenericSecretRegex(s string) string {

@@ -41,7 +41,7 @@ github.com/microsoft/typescript-go/internal/lsp.(*Server).dispatchLoop.func1()
 created by github.com/microsoft/typescript-go/internal/lsp.(*Server).dispatchLoop in goroutine 19
         /workspaces/typescript-go/internal/lsp/server.go:438 +0x60`
 
-	baseline.Run(t, "completionsDebugStackTrace.md", sanitizedStackTraceBaselineContents(t, input), baseline.Options{
+	baseline.Run(t, "completionsDebugStackTrace.md", sanitizedStackTraceBaselineContents(t, input, sanitizeStackTrace(input)), baseline.Options{
 		Subfolder: "lsp/stackSanitizer/",
 	})
 }
@@ -78,19 +78,18 @@ github.com/microsoft/typescript-go/internal/lsp.(*Server).dispatchLoop.func1()
 created by github.com/microsoft/typescript-go/internal/lsp.(*Server).dispatchLoop in goroutine 35
 	github.com/microsoft/typescript-go/internal/lsp/server.go:438 +0x9f1`
 
-	baseline.Run(t, "completionsReleaseStackTrace.md", sanitizedStackTraceBaselineContents(t, input), baseline.Options{
+	baseline.Run(t, "completionsReleaseStackTrace.md", sanitizedStackTraceBaselineContents(t, input, sanitizeStackTrace(input)), baseline.Options{
 		Subfolder: "lsp/stackSanitizer/",
 	})
 }
 
-func sanitizedStackTraceBaselineContents(t *testing.T, input string) string {
+func sanitizedStackTraceBaselineContents(t *testing.T, input string, output string) string {
 	builder := strings.Builder{}
 	builder.WriteString("Test name: `")
 	builder.WriteString(t.Name())
 	builder.WriteString("`\n\n# Unsanitized input:\n\n````\n")
 	builder.WriteString(input)
 	builder.WriteString("\n````\n\n# Sanitized output:\n\n````\n")
-	output := sanitizeStackTrace(input)
 	builder.WriteString(output)
 	builder.WriteString("\n````\n")
 	return builder.String()
@@ -130,7 +129,7 @@ github.com/microsoft/typescript-go/internal/ls.setPwd(0x6)
 		t.Fatalf("sanitized stack trace would be redacted by VS Code's Generic Secret regex at %v: %q\nfull output:\n%s", loc, output[loc[0]:loc[1]], output)
 	}
 
-	baseline.Run(t, "genericSecretWorkaround.md", sanitizedStackTraceBaselineContents(t, input), baseline.Options{
+	baseline.Run(t, "genericSecretWorkaround.md", sanitizedStackTraceBaselineContents(t, input, output), baseline.Options{
 		Subfolder: "lsp/stackSanitizer/",
 	})
 }
