@@ -64,7 +64,7 @@ func decodeQuotedLiteralText(raw string) (text string, hasSurrogate bool, ok boo
 		if codePointIsHighSurrogate(ch) {
 			hasSurrogate = true
 			if nextCh, nextNext, ok := decodeUnicodeEscape(raw, next, len(raw)-1); ok && codePointIsLowSurrogate(nextCh) {
-				out.WriteString(string(surrogatePairToCodepoint(ch, nextCh)))
+				out.WriteRune(surrogatePairToCodepoint(ch, nextCh))
 				i = nextNext
 				continue
 			}
@@ -145,7 +145,7 @@ func decodeOctalEscape(raw string, start int, end int, maxDigits int) (rune, int
 
 func parseOctalEscape(text string) rune {
 	value := rune(0)
-	for i := 0; i < len(text); i++ {
+	for i := range len(text) {
 		value = value*8 + rune(text[i]-'0')
 	}
 	return value

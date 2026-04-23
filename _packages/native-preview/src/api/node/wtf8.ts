@@ -1,10 +1,9 @@
-import type { TextDecodeOptions } from "node:util";
-
 const surrogateLeadByte = 0xED;
 const surrogateSecondByteMin = 0xA0;
 const surrogateSecondByteMax = 0xBF;
 const continuationByteMin = 0x80;
 const continuationByteMax = 0xBF;
+type DecodeOptions = Parameters<TextDecoder["decode"]>[1];
 
 function isWtf8Surrogate(bytes: Uint8Array, index: number): boolean {
     return index + 2 < bytes.length
@@ -30,7 +29,7 @@ function toUint8Array(input: NodeJS.AllowSharedBufferSource): Uint8Array {
 }
 
 export class Wtf8Decoder extends TextDecoder {
-    override decode(input?: NodeJS.AllowSharedBufferSource, options?: TextDecodeOptions): string {
+    override decode(input?: NodeJS.AllowSharedBufferSource, options?: DecodeOptions): string {
         if (input === undefined) {
             return super.decode(input, options);
         }
