@@ -240,7 +240,6 @@ compiler/expressionWithJSDocTypeArguments.errors.txt.diff
 compiler/expressionWithJSDocTypeArguments.js.diff
 compiler/expressionWithJSDocTypeArguments.symbols.diff
 compiler/expressionWithJSDocTypeArguments.types.diff
-compiler/genericDefaultsJs.types.diff
 compiler/importAssertionsDeprecatedIgnored.errors.txt.diff
 compiler/importTypeAssertionDeprecationIgnored.errors.txt.diff
 compiler/inexistentPropertyInsideToStringType.errors.txt.diff
@@ -802,9 +801,6 @@ compiler/reactImportUnusedInNewJSXEmit(jsx=react-jsxdev).errors.txt.diff
 
 ## Minor one-column error span shifts for specific characters
 compiler/slashBeforeVariableDeclaration1.errors.txt.diff
-
-## In overload resolution, the error span sometimes shifts from the function call expression to the specific argument causing the error
-compiler/noImplicitAnyLoopCrash(target=es2015).errors.txt.diff
 
 ## Backslash characters causing TS1127 "Invalid character" now show a `~` squiggle instead of a blank line
 conformance/parserSkippedTokens1.errors.txt.diff

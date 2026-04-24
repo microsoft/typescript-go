@@ -1,43 +1,33 @@
 // === QuickInfo ===
-=== /quickinfoVerbosityNamespaceAnonymousClassHeritage1.ts ===
+=== /b.ts ===
+// import * as ns from "./a";
 // 
-// namespace NS {
-//           ^^
+// ns;
+// ^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | namespace NS {
-// |     class Derived extends class {
-// |         baseField: string;
-// |     } {
-// |         derivedField: number;
-// |     }
+// | (alias) module "/a" {
+// |     export { default };
 // | }
 // | ```
 // | 
 // | (verbosity level: 1)
 // | ----------------------------------------------------------------------
-//           ^^
+// ^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | namespace NS
+// | (alias) module "./a"
 // | ```
 // | 
 // | (verbosity level: 0)
 // | ----------------------------------------------------------------------
-//     export class Derived extends class {
-//         baseField: string;
-//     } {
-//         derivedField: number;
-//     }
-// }
-// 
 [
   {
     "marker": {
-      "Position": 13,
+      "Position": 30,
       "LSPosition": {
-        "line": 1,
-        "character": 12
+        "line": 2,
+        "character": 2
       },
       "Name": "1",
       "Data": {}
@@ -46,16 +36,16 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nnamespace NS\n```\n"
+          "value": "```typescript\n(alias) module \"./a\"\n```\n"
         },
         "range": {
           "start": {
-            "line": 1,
-            "character": 10
+            "line": 2,
+            "character": 0
           },
           "end": {
-            "line": 1,
-            "character": 12
+            "line": 2,
+            "character": 2
           }
         },
         "canIncreaseVerbosity": true
@@ -65,10 +55,10 @@
   },
   {
     "marker": {
-      "Position": 13,
+      "Position": 30,
       "LSPosition": {
-        "line": 1,
-        "character": 12
+        "line": 2,
+        "character": 2
       },
       "Name": "1",
       "Data": {}
@@ -77,16 +67,16 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nnamespace NS {\n    class Derived extends class {\n        baseField: string;\n    } {\n        derivedField: number;\n    }\n}\n```\n"
+          "value": "```typescript\n(alias) module \"/a\" {\n    export { default };\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 1,
-            "character": 10
+            "line": 2,
+            "character": 0
           },
           "end": {
-            "line": 1,
-            "character": 12
+            "line": 2,
+            "character": 2
           }
         }
       },
