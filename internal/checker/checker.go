@@ -18974,9 +18974,9 @@ func (c *Checker) getBaseSignature(signature *Signature) *Signature {
 	baseConstraints := core.Map(typeParameters, func(tp *Type) *Type {
 		return c.instantiateType(tp, baseConstraintMapper)
 	})
-	// Run N type params thru the immediate constraint mapper up to N times
-	// This way any noncircular interdependent type parameters are definitely resolved to their external dependencies
-	for range typeParameters {
+	// Run the immediate constraint mapper N-1 times so non-circular interdependent type parameters
+	// resolve to their external dependencies without adding an extra expansion step for self-recursive constraints.
+	for i := 0; i < len(typeParameters)-1; i++ {
 		baseConstraints = c.instantiateTypes(baseConstraints, baseConstraintMapper)
 	}
 	// and then apply a type eraser to remove any remaining circularly dependent type parameters
