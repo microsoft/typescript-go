@@ -112,6 +112,12 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 
 ## Checker
 
+### `strictArrayVariance`
+
+When `--strictArrayVariance` / `"strictArrayVariance": true` is set, relating two `Array<T>` instantiations treats `T` as **invariant** instead of covariant. Mutable tuple element positions are likewise treated as invariant at their fixed positions. That rejects unsound assignments such as passing `string[]` where `(string | number)[]` is expected, or `[string, string]` where `[string | number, string]` is expected, when the callee could mutate the argument. `ReadonlyArray<T>` and `readonly` tuples are unchanged (still covariant). The option defaults to **off** so behavior matches TypeScript 6.0 unless you opt in.
+
+When the check rejects a call or assignment, the diagnostic chain includes a dedicated hint suggesting `ReadonlyArray<T>` at the parameter type (if reads suffice), or declaring the source with the wider element type when a mutating callee is genuinely intended.
+
 ### Miscellaneous
 
 #### With `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
