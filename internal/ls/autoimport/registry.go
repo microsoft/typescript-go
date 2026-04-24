@@ -57,7 +57,7 @@ type BucketState struct {
 	// the bucket was built. If changed, the bucket should be rebuilt.
 	fileExcludePatterns []string
 	// dirtyPackages is the set of package names that need to be re-indexed.
-	// This is used for granular updates: when a file in a symlinked package
+	// This is used for granular updates: when a file in a local workspace package
 	// changes, only that package needs to be re-extracted rather than rebuilding
 	// the entire node_modules bucket.
 	// If nil, no granular updates are pending.
@@ -99,9 +99,10 @@ type RegistryBucket struct {
 
 	// Paths maps file paths to package names. For project buckets, the package name
 	// is always empty string. For node_modules buckets, this enables reverse lookup
-	// from path to package for granular updates. Only paths for symlinked packages
-	// have entries here, since their realpaths are outside node_modules and need
-	// reverse lookup for dirty detection.
+	// from path to package for granular updates. Only paths for local workspace
+	// packages (symlinked and within the workspace root) have entries here, since
+	// their realpaths are outside node_modules and need reverse lookup for dirty
+	// detection.
 	Paths map[tspath.Path]string
 	// PackageFiles maps package names to their file paths and file names.
 	// All package directory names in node_modules are keys; indexed packages have
@@ -617,8 +618,8 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 						}
 					}
 				} else {
-					// Check if this path (possibly a realpath of a symlinked package) is in any bucket's Paths.
-					// This handles symlinked packages where the realpath doesn't contain /node_modules/.
+					// Check if this path (possibly a realpath of a workspace package) is in any bucket's Paths.
+					// This handles local workspace packages where the realpath doesn't contain /node_modules/.
 					for bucketDirPath := range cleanNodeModulesBuckets {
 						entry := core.FirstResult(b.nodeModules.Get(bucketDirPath))
 						if packageName, ok := entry.Value().Paths[path]; ok {
@@ -1186,6 +1187,7 @@ type discoveredPackage struct {
 	typesPackageJson *packagejson.InfoCacheEntry
 	typesRealpath    string
 	dirPath          tspath.Path // bucket directory path (used as extraction context)
+	isLocal          bool        // true if realpath is within the workspace root
 }
 
 // perPackageExtractionResult holds the extraction output for one physical package.
@@ -1210,7 +1212,7 @@ type packageExtractionResult struct {
 	packageFiles                             map[string]map[tspath.Path]string
 	ambientModuleNames                       map[string][]string
 	entrypoints                              [][]*module.ResolvedEntrypoint
-	symlinkedPackages                        *collections.Set[string]
+	workspacePackages                        *collections.Set[string]
 	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
 	stats                                    extractorStats
@@ -1243,6 +1245,13 @@ func (b *registryBuilder) discoverBucketPackages(
 		if typesPackageJson != nil {
 			typesRealpath = b.host.FS().Realpath(typesPackageJson.PackageDirectory)
 		}
+		isLocal := realpath != "" &&
+			!strings.Contains(realpath, "/node_modules/") &&
+			tspath.ContainsPath(
+				b.host.GetCurrentDirectory(),
+				realpath,
+				tspath.ComparePathsOptions{UseCaseSensitiveFileNames: b.host.FS().UseCaseSensitiveFileNames()},
+			)
 		result = append(result, &discoveredPackage{
 			packageName:      packageName,
 			packageJson:      packageJson,
@@ -1250,6 +1259,7 @@ func (b *registryBuilder) discoverBucketPackages(
 			typesPackageJson: typesPackageJson,
 			typesRealpath:    typesRealpath,
 			dirPath:          dirPath,
+			isLocal:          isLocal,
 		})
 	}
 	return result
@@ -1379,7 +1389,7 @@ func installExtractions(
 		exports:                                  make(map[tspath.Path][]*Export),
 		packageFiles:                             make(map[string]map[tspath.Path]string),
 		ambientModuleNames:                       make(map[string][]string),
-		symlinkedPackages:                        &collections.Set[string]{},
+		workspacePackages:                        &collections.Set[string]{},
 		possibleFailedAmbientModuleLookupSources: &collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]{},
 		possibleFailedAmbientModuleLookupTargets: &collections.SyncSet[string]{},
 	}
@@ -1409,8 +1419,8 @@ func installExtractions(
 		for target := range extraction.failedAmbientModuleLookupTargets.Keys() {
 			result.possibleFailedAmbientModuleLookupTargets.Add(target)
 		}
-		if extraction.isSymlinked {
-			result.symlinkedPackages.Add(pkg.packageName)
+		if extraction.isSymlinked && pkg.isLocal {
+			result.workspacePackages.Add(pkg.packageName)
 		}
 		result.stats.exports.Add(int32(extraction.statsExports))
 		result.stats.usedChecker.Add(int32(extraction.statsUsedChecker))
@@ -1446,9 +1456,9 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	}
 
 	// Build Paths as reverse mapping from path to package name.
-	// Only include paths for symlinked packages (eligible for granular updates).
+	// Only include paths for local workspace packages (eligible for granular updates).
 	paths := make(map[tspath.Path]string)
-	for pkgName := range extraction.symlinkedPackages.Keys() {
+	for pkgName := range extraction.workspacePackages.Keys() {
 		if files, ok := extraction.packageFiles[pkgName]; ok {
 			for path := range files {
 				paths[path] = pkgName
@@ -1547,8 +1557,8 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		}
 		newPaths[path] = pkgName
 	}
-	// Add paths for newly extracted symlinked packages
-	for pkgName := range extraction.symlinkedPackages.Keys() {
+	// Add paths for newly extracted workspace packages
+	for pkgName := range extraction.workspacePackages.Keys() {
 		if files, ok := extraction.packageFiles[pkgName]; ok {
 			for path := range files {
 				newPaths[path] = pkgName
