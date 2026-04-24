@@ -381,6 +381,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.StableTypeOrdering = ParseTristate(value)
 	case "strict":
 		allOptions.Strict = ParseTristate(value)
+	case "strictArrayVariance":
+		allOptions.StrictArrayVariance = ParseTristate(value)
 	case "strictBindCallApply":
 		allOptions.StrictBindCallApply = ParseTristate(value)
 	case "strictBuiltinIteratorReturn":

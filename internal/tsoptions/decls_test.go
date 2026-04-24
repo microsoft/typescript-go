@@ -74,6 +74,31 @@ func checkCompilerOptionJsonTagName(t *testing.T, field reflect.StructField, nam
 	want := name + ",omitzero"
 	got := field.Tag.Get("json")
 	if got != want {
-		t.Errorf("Field %s has json tag %s, but the option declaration has name %s", field.Name, got, want)
+		t.Errorf("Field %s has json tag %s, but the option declaration has name %s", field.Name, got, name)
 	}
+}
+
+func TestStrictArrayVarianceOptionDeclarationShape(t *testing.T) {
+	t.Parallel()
+
+	var opt *tsoptions.CommandLineOption
+	for _, o := range tsoptions.OptionsDeclarations {
+		if o.Name == "strictArrayVariance" {
+			opt = o
+			break
+		}
+	}
+	if opt == nil {
+		t.Fatal("strictArrayVariance missing from OptionsDeclarations")
+	}
+	if opt.Kind != tsoptions.CommandLineOptionTypeBoolean {
+		t.Errorf("strictArrayVariance kind = %v, want boolean", opt.Kind)
+	}
+	if opt.IsCommandLineOnly || opt.IsTSConfigOnly {
+		t.Errorf("strictArrayVariance should be a normal compiler option (CLI + tsconfig), got IsCommandLineOnly=%v IsTSConfigOnly=%v", opt.IsCommandLineOnly, opt.IsTSConfigOnly)
+	}
+	if !opt.AffectsSemanticDiagnostics || !opt.AffectsBuildInfo {
+		t.Errorf("strictArrayVariance should affect semantic diagnostics and build info, got semantic=%v buildInfo=%v", opt.AffectsSemanticDiagnostics, opt.AffectsBuildInfo)
+	}
+	// strictFlag must stay false in declscompiler.go so `--strict` does not enable this option.
 }

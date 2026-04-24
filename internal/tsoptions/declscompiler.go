@@ -572,6 +572,17 @@ var optionsForCompiler = []*CommandLineOption{
 		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
+		Name:                       "strictArrayVariance",
+		Kind:                       CommandLineOptionTypeBoolean,
+		AffectsSemanticDiagnostics: true,
+		AffectsBuildInfo:           true,
+		// strictFlag intentionally omitted: this option is explicit opt-in and is NOT implied by --strict.
+		// Guarded by strictarrayvariance_test.go: TestStrictArrayVarianceCommandLine/"strict does not enable strictArrayVariance".
+		Category:                diagnostics.Type_Checking,
+		Description:             diagnostics.Treat_Array_element_types_as_invariant_when_comparing_instantiations,
+		DefaultValueDescription: false,
+	},
+	{
 		Name:                       "strictBindCallApply",
 		Kind:                       CommandLineOptionTypeBoolean,
 		AffectsSemanticDiagnostics: true,

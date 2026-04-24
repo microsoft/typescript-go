@@ -97,6 +97,7 @@ type CompilerOptions struct {
 	SkipLibCheck                              Tristate                                  `json:"skipLibCheck,omitzero"`
 	StableTypeOrdering                        Tristate                                  `json:"stableTypeOrdering,omitzero"`
 	Strict                                    Tristate                                  `json:"strict,omitzero"`
+	StrictArrayVariance                       Tristate                                  `json:"strictArrayVariance,omitzero"`
 	StrictBindCallApply                       Tristate                                  `json:"strictBindCallApply,omitzero"`
 	StrictBuiltinIteratorReturn               Tristate                                  `json:"strictBuiltinIteratorReturn,omitzero"`
 	StrictFunctionTypes                       Tristate                                  `json:"strictFunctionTypes,omitzero"`

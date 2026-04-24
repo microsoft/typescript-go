@@ -705,6 +705,7 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	setTristate(compilerOptions, "noImplicitThis", opts.NoImplicitThis)
 	setTristate(compilerOptions, "strictNullChecks", opts.StrictNullChecks)
 	setTristate(compilerOptions, "strictFunctionTypes", opts.StrictFunctionTypes)
+	setTristate(compilerOptions, "strictArrayVariance", opts.StrictArrayVariance)
 	setTristate(compilerOptions, "strictBindCallApply", opts.StrictBindCallApply)
 	setTristate(compilerOptions, "strictPropertyInitialization", opts.StrictPropertyInitialization)
 	setTristate(compilerOptions, "strictBuiltinIteratorReturn", opts.StrictBuiltinIteratorReturn)

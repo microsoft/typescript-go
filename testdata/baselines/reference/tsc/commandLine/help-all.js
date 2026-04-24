@@ -286,6 +286,11 @@ Enable all strict type-checking options.
 type: boolean
 default: true
 
+[94m--strictArrayVariance[39m
+Treat Array element types as invariant when comparing instantiations.
+type: boolean
+default: false
+
 [94m--strictBindCallApply[39m
 Check that the arguments for 'bind', 'call', and 'apply' methods match the original function.
 type: boolean
