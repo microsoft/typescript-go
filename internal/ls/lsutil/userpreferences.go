@@ -172,10 +172,10 @@ type UserPreferences struct {
 
 	// DisableAutomaticTypeAcquisition is the deprecated setting from typescript.disableAutomaticTypeAcquisition.
 	DisableAutomaticTypeAcquisition core.Tristate `raw:"disableAutomaticTypeAcquisition" config:"disableAutomaticTypeAcquisition"`
-	// AutomaticTypeAcquisitionEnabled is the unified setting from js/ts.tsserver.automaticTypeAcquisition.enabled.
+	// AutomaticTypeAcquisitionEnabled is the unified setting from tsserver.automaticTypeAcquisition.enabled under the js/ts section.
 	// When set, it takes precedence over DisableAutomaticTypeAcquisition.
 	AutomaticTypeAcquisitionEnabled core.Tristate `raw:"automaticTypeAcquisitionEnabled" config:"tsserver.automaticTypeAcquisition.enabled"`
-	// TODO: add js/ts.tsserver.web.typeAcquisition.enabled for the web variant when web support is implemented.
+	// TODO: add tsserver.web.typeAcquisition.enabled under the js/ts section for the web variant when web support is implemented.
 
 	// ------- Project Configuration -------
 

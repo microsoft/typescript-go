@@ -1455,9 +1455,9 @@ func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, ne
 }
 
 func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
-	if oldPrefs.IsATADisabled() != newPrefs.IsATADisabled() {
-		// ATA setting changed; schedule a diagnostics refresh so the next snapshot update
-		// triggers (or skips) ATA for existing projects with the new setting.
+	if oldPrefs.IsATADisabled() && !newPrefs.IsATADisabled() {
+		// ATA was re-enabled; schedule a diagnostics refresh so the next snapshot update
+		// re-triggers ATA for existing projects with the new setting.
 		s.ScheduleDiagnosticsRefresh()
 	}
 }
