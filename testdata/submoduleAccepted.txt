@@ -192,7 +192,7 @@ conformance/typesWithSpecializedCallSignatures.types.diff
 conformance/typesWithSpecializedConstructSignatures.types.diff
 conformance/unionTypeReduction2.types.diff
 
-## JSX factory calls are direct in automatic runtime ##
+## Generated JSX factory calls for script files in react-jsx and moduleDetection=legacy are arbitrary ##
 compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=legacy).js.diff
 
 ## _jsxFileName path ##
