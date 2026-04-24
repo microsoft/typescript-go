@@ -65,6 +65,12 @@ type BucketState struct {
 	dirtyPackages *collections.Set[string]
 }
 
+func (b BucketState) Clone() BucketState {
+	b.fileExcludePatterns = slices.Clone(b.fileExcludePatterns)
+	b.dirtyPackages = b.dirtyPackages.Clone()
+	return b
+}
+
 func (b BucketState) Dirty() bool {
 	return b.multipleFilesDirty || b.dirtyFile != "" || b.newProgramStructure > 0 || b.dirtyPackages.Len() > 0
 }
@@ -139,7 +145,7 @@ func newRegistryBucket() *RegistryBucket {
 
 func (b *RegistryBucket) Clone() *RegistryBucket {
 	return &RegistryBucket{
-		state:                b.state,
+		state:                b.state.Clone(),
 		Paths:                b.Paths,
 		PackageFiles:         b.PackageFiles,
 		ResolvedPackageNames: b.ResolvedPackageNames,
