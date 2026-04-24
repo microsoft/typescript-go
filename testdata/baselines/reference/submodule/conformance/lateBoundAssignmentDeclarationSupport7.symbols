@@ -11,7 +11,7 @@ const y = x.F["my-fake-sym"];
 >x.F : Symbol(x.F, Decl(lateBoundAssignmentDeclarationSupport7.js, 6, 15))
 >x : Symbol(x, Decl(usage.js, 0, 5))
 >F : Symbol(x.F, Decl(lateBoundAssignmentDeclarationSupport7.js, 6, 15))
->"my-fake-sym" : Symbol(F[F[_str]], Decl(lateBoundAssignmentDeclarationSupport7.js, 5, 15))
+>"my-fake-sym" : Symbol(x.F[F[_str]], Decl(lateBoundAssignmentDeclarationSupport7.js, 5, 15))
 
 const z = x.F[x.S];
 >z : Symbol(z, Decl(usage.js, 2, 5))
@@ -43,17 +43,17 @@ F[_str] = "ok";
 
 module.exports.F = F;
 >module.exports.F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport7.js, 6, 15))
->module.exports : Symbol("./lateBoundAssignmentDeclarationSupport7", Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
->module : Symbol("./lateBoundAssignmentDeclarationSupport7", Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
->exports : Symbol("./lateBoundAssignmentDeclarationSupport7", Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
+>module.exports : Symbol(exports, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
+>module : Symbol(module, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
+>exports : Symbol(exports, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
 >F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport7.js, 6, 15))
 >F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport7.js, 1, 27))
 
 module.exports.S = _sym;
 >module.exports.S : Symbol(S, Decl(lateBoundAssignmentDeclarationSupport7.js, 7, 21))
->module.exports : Symbol("./lateBoundAssignmentDeclarationSupport7", Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
->module : Symbol("./lateBoundAssignmentDeclarationSupport7", Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
->exports : Symbol("./lateBoundAssignmentDeclarationSupport7", Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
+>module.exports : Symbol(exports, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
+>module : Symbol(module, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
+>exports : Symbol(exports, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 0))
 >S : Symbol(S, Decl(lateBoundAssignmentDeclarationSupport7.js, 7, 21))
 >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 5))
 

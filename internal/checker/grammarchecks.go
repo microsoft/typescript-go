@@ -54,43 +54,35 @@ func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *dia
 	return false
 }
 
-func (c *Checker) checkGrammarRegularExpressionLiteral(_ *ast.RegularExpressionLiteral) bool {
-	// !!!
-	// Unclear if this is needed until regular expression parsing is more thoroughly implemented.
+func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressionLiteral) bool {
+	sourceFile := ast.GetSourceFileOfNode(node.AsNode())
+	if !c.hasParseDiagnostics(sourceFile) {
+		var lastError *ast.Diagnostic
+		if c.regExpScanner == nil {
+			c.regExpScanner = scanner.NewScanner()
+		}
+		c.regExpScanner.SetScriptTarget(c.languageVersion)
+		c.regExpScanner.SetLanguageVariant(sourceFile.LanguageVariant)
+		c.regExpScanner.SetOnError(func(message *diagnostics.Message, start int, length int, args ...any) {
+			if message.Category() == diagnostics.CategoryMessage && lastError != nil && start == lastError.Pos() && length == lastError.Len() {
+				// For providing spelling suggestions.
+				err := ast.NewDiagnostic(nil, core.NewTextRange(start, start+length), message, args...)
+				lastError.AddRelatedInfo(err)
+			} else if lastError == nil || start != lastError.Pos() {
+				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...)
+				c.diagnostics.Add(lastError)
+			}
+		})
+		c.regExpScanner.SetText(sourceFile.Text())
+		c.regExpScanner.ResetTokenState(node.AsNode().Pos())
+		c.regExpScanner.Scan()
+		tokenIsRegularExpressionLiteral := c.regExpScanner.ReScanSlashToken(true) == ast.KindRegularExpressionLiteral
+		c.regExpScanner.SetText("")
+		c.regExpScanner.SetOnError(nil)
+		debug.Assert(tokenIsRegularExpressionLiteral)
+		return lastError != nil
+	}
 	return false
-	// sourceFile := ast.GetSourceFileOfNode(node.AsNode())
-	// if !c.hasParseDiagnostics(sourceFile) && !node.IsUnterminated {
-	// 	var lastError *ast.Diagnostic
-	// 	scanner := NewScanner()
-	// 	scanner.skipTrivia = true
-	// 	scanner.SetScriptTarget(sourceFile.LanguageVersion)
-	// 	scanner.SetLanguageVariant(sourceFile.LanguageVariant)
-	// 	scanner.SetOnError(func(message *diagnostics.Message, start int, length int, args ...any) {
-	// 		// !!!
-	// 		// Original uses `tokenEnd()` - unclear if this is the same as the `start` passed in here.
-	// 		// const start = scanner.TokenEnd()
-
-	// 		// The scanner is operating on a slice of the original source text, so we need to adjust the start
-	// 		// for error reporting.
-	// 		start = start + node.Pos()
-
-	// 		// For providing spelling suggestions
-	// 		if message.Category() == diagnostics.CategoryMessage && lastError != nil && start == lastError.Pos() && length == lastError.Len() {
-	// 			err := ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args)
-	// 			lastError.AddRelatedInfo(err)
-	// 		} else if !(lastError != nil) || start != lastError.Pos() {
-	// 			lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args)
-	// 			c.diagnostics.Add(lastError)
-	// 		}
-	// 	})
-	// 	scanner.SetText(sourceFile.Text[node.Pos():node.Loc.Len()])
-	// 	scanner.Scan()
-	// 	if scanner.ReScanSlashToken() != ast.KindRegularExpressionLiteral {
-	// 		panic("Expected to rescan RegularExpressionLiteral")
-	// 	}
-	// 	return lastError != nil
-	// }
-	// return false
 }
 
 func (c *Checker) checkGrammarPrivateIdentifierExpression(privId *ast.PrivateIdentifier) bool {
@@ -607,7 +599,6 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindImportEqualsDeclaration,
 		ast.KindExportDeclaration,
 		ast.KindExportAssignment,
-		ast.KindJSExportAssignment,
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
 		ast.KindParameter,
@@ -787,9 +778,8 @@ func (c *Checker) checkGrammarArrowFunction(node *ast.Node, file *ast.SourceFile
 	typeParameters := arrowFunc.TypeParameters
 	if typeParameters != nil {
 		typeParamNodes := typeParameters.Nodes
-		if len(typeParamNodes) == 0 ||
-			len(typeParamNodes) == 1 && typeParamNodes[0].AsTypeParameter().Constraint == nil ||
-			typeParameters.HasTrailingComma() {
+		hasConstraint := len(typeParamNodes) > 0 && typeParamNodes[0].AsTypeParameterDeclaration().Constraint != nil
+		if !(len(typeParamNodes) > 1 || typeParameters.HasTrailingComma() || hasConstraint) {
 			if tspath.FileExtensionIsOneOf(file.FileName(), []string{tspath.ExtensionMts, tspath.ExtensionCts}) {
 				// TODO(danielr): should we return early here?
 				c.grammarErrorOnNode(typeParameters.Nodes[0], diagnostics.This_syntax_is_reserved_in_files_with_the_mts_or_cts_extension_Add_a_trailing_comma_or_explicit_constraint)
@@ -892,15 +882,11 @@ func (c *Checker) checkGrammarHeritageClause(node *ast.HeritageClause) bool {
 	return false
 }
 
-func (c *Checker) checkGrammarExpressionWithTypeArguments(node *ast.Node /*Union[ExpressionWithTypeArguments, TypeQueryNode]*/) bool {
-	if !ast.IsExpressionWithTypeArguments(node) {
-		return false
-	}
-	exprWithTypeArgs := node.AsExpressionWithTypeArguments()
-	if node.Expression().Kind == ast.KindImportKeyword && exprWithTypeArgs.TypeArguments != nil {
+func (c *Checker) checkGrammarExpressionWithTypeArguments(node *ast.Node /*Union[ExpressionWithTypeArguments, TypeQuery]*/) bool {
+	if ast.IsExpressionWithTypeArguments(node) && node.Expression().Kind == ast.KindImportKeyword && node.TypeArgumentList() != nil {
 		return c.grammarErrorOnNode(node, diagnostics.This_use_of_import_is_invalid_import_calls_can_be_written_but_they_must_have_parentheses_and_cannot_have_type_arguments)
 	}
-	return c.checkGrammarTypeArguments(node, exprWithTypeArgs.TypeArguments)
+	return c.checkGrammarTypeArguments(node, node.TypeArgumentList())
 }
 
 func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLikeDeclaration, file *ast.SourceFile) bool {
@@ -2037,7 +2023,7 @@ func (c *Checker) checkGrammarTopLevelElementForRequiredDeclareModifier(node *as
 	//     export_opt   AmbientDeclaration
 	//
 	// TODO: The spec needs to be amended to reflect this grammar.
-	if node.Kind == ast.KindInterfaceDeclaration || node.Kind == ast.KindTypeAliasDeclaration || node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindJSImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindExportDeclaration || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindJSExportAssignment || node.Kind == ast.KindNamespaceExportDeclaration || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsExport|ast.ModifierFlagsDefault) {
+	if node.Kind == ast.KindInterfaceDeclaration || node.Kind == ast.KindTypeAliasDeclaration || node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindJSImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindExportDeclaration || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindNamespaceExportDeclaration || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsExport|ast.ModifierFlagsDefault) {
 		return false
 	}
 

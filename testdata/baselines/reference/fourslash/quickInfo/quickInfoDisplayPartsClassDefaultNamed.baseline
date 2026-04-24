@@ -7,21 +7,21 @@
 // | ----------------------------------------------------------------------
 //        ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class C
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class C
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class C
 // | ```
 // | 
@@ -57,7 +57,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass C\n```\n"
+        "value": "```typescript\nclass C\n```\n"
       },
       "range": {
         "start": {
@@ -68,7 +68,8 @@
           "line": 0,
           "character": 14
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -84,7 +85,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass C\n```\n"
+        "value": "```typescript\nclass C\n```\n"
       },
       "range": {
         "start": {
@@ -95,7 +96,8 @@
           "line": 0,
           "character": 20
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -111,7 +113,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass C\n```\n"
+        "value": "```typescript\nclass C\n```\n"
       },
       "range": {
         "start": {
@@ -122,7 +124,8 @@
           "line": 0,
           "character": 22
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {

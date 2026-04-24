@@ -76,7 +76,7 @@ type trackerEdit struct {
 
 type Tracker struct {
 	// initialized with
-	formatSettings *lsutil.FormatCodeSettings
+	formatSettings lsutil.FormatCodeSettings
 	newLine        string
 	converters     *lsconv.Converters
 	ctx            context.Context
@@ -96,7 +96,7 @@ type deletedNode struct {
 	node       *ast.Node
 }
 
-func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions *lsutil.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
+func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions lsutil.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
 	emitContext := printer.NewEmitContext()
 	newLine := compilerOptions.NewLine.GetNewLineCharacter()
 	ctx = format.WithFormatCodeSettings(ctx, formatOptions, newLine) // !!! formatSettings in context?
@@ -129,7 +129,7 @@ func (t *Tracker) ReplaceNode(sourceFile *ast.SourceFile, oldNode *ast.Node, new
 			TrailingTriviaOption: TrailingTriviaOptionExclude,
 		}
 	}
-	t.ReplaceRange(sourceFile, t.getAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNode, *options)
+	t.ReplaceRange(sourceFile, t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNode, *options)
 }
 
 func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.Node, newNodes []*ast.Node, options *NodeOptions) {
@@ -139,7 +139,7 @@ func (t *Tracker) ReplaceNodeWithNodes(sourceFile *ast.SourceFile, oldNode *ast.
 			TrailingTriviaOption: TrailingTriviaOptionExclude,
 		}
 	}
-	t.ReplaceRangeWithNodes(sourceFile, t.getAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNodes, *options)
+	t.ReplaceRangeWithNodes(sourceFile, t.GetAdjustedRange(sourceFile, oldNode, oldNode, options.LeadingTriviaOption, options.TrailingTriviaOption), newNodes, *options)
 }
 
 func (t *Tracker) ReplaceRange(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, newNode *ast.Node, options NodeOptions) {
@@ -182,8 +182,65 @@ func (t *Tracker) InsertNodesAfter(sourceFile *ast.SourceFile, after *ast.Node, 
 	t.InsertNodesAt(sourceFile, endPosition, newNodes, t.getInsertNodeAfterOptions(sourceFile, after))
 }
 
-func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool) {
-	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, LeadingTriviaOptionNone, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
+func (t *Tracker) InsertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool, leadingTriviaOption LeadingTriviaOption) {
+	t.InsertNodeAt(sourceFile, core.TextPos(t.getAdjustedStartPosition(sourceFile, before, leadingTriviaOption, false)), newNode, t.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
+}
+
+// TryInsertTypeAnnotation inserts a type annotation after the appropriate position on a node
+// (after the close paren for function-like, after the name/exclamation/question for variable-like).
+// Returns true if successful.
+func (t *Tracker) TryInsertTypeAnnotation(sourceFile *ast.SourceFile, node *ast.Node, typeNode *ast.Node) bool {
+	var endNode *ast.Node
+	if ast.IsFunctionLike(node) {
+		endNode = astnav.FindChildOfKind(node, ast.KindCloseParenToken, sourceFile)
+		if endNode == nil {
+			if !ast.IsArrowFunction(node) {
+				return false
+			}
+			// If no `)`, is an arrow function `x => x`, so use the end of the first parameter
+			params := node.Parameters()
+			if len(params) == 0 {
+				return false
+			}
+			endNode = params[0]
+		}
+	} else {
+		switch node.Kind {
+		case ast.KindVariableDeclaration:
+			endNode = node.AsVariableDeclaration().ExclamationToken
+		case ast.KindPropertySignature:
+			endNode = node.AsPropertySignatureDeclaration().PostfixToken
+		case ast.KindPropertyDeclaration:
+			endNode = node.AsPropertyDeclaration().PostfixToken
+		case ast.KindParameter:
+			endNode = node.AsParameterDeclaration().QuestionToken
+		}
+		if endNode == nil {
+			endNode = node.Name()
+		}
+	}
+	if endNode == nil {
+		return false
+	}
+	t.InsertNodeAt(sourceFile, core.TextPos(endNode.End()), typeNode, NodeOptions{Prefix: ": "})
+	return true
+}
+
+// ParenthesizeArrowParameters wraps the parameters of a paren-less arrow function in `(` and `)`.
+// This is a no-op if the arrow function already has parens.
+func (t *Tracker) ParenthesizeArrowParameters(sourceFile *ast.SourceFile, arrowFunc *ast.Node) {
+	if astnav.FindChildOfKind(arrowFunc, ast.KindCloseParenToken, sourceFile) != nil {
+		return
+	}
+	params := arrowFunc.Parameters()
+	if len(params) == 0 {
+		return
+	}
+	firstParam := params[0]
+	lastParam := params[len(params)-1]
+	startPos := astnav.GetStartOfNode(firstParam, sourceFile, false)
+	t.InsertText(sourceFile, t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(startPos)), "(")
+	t.InsertText(sourceFile, t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(lastParam.End())), ")")
 }
 
 // InsertModifierBefore inserts a modifier token (like 'type') before a node with a trailing space.
@@ -210,7 +267,7 @@ func (t *Tracker) DeleteRange(sourceFile *ast.SourceFile, textRange core.TextRan
 // DeleteNode deletes a node immediately with specified trivia options.
 // Stop! Consider using Delete instead, which has logic for deleting nodes from delimited lists.
 func (t *Tracker) DeleteNode(sourceFile *ast.SourceFile, node *ast.Node, leadingTrivia LeadingTriviaOption, trailingTrivia TrailingTriviaOption) {
-	rng := t.getAdjustedRange(sourceFile, node, node, leadingTrivia, trailingTrivia)
+	rng := t.GetAdjustedRange(sourceFile, node, node, leadingTrivia, trailingTrivia)
 	t.ReplaceRangeWithText(sourceFile, rng, "")
 }
 
@@ -290,15 +347,20 @@ func (t *Tracker) endPosForInsertNodeAfter(sourceFile *ast.SourceFile, after *as
 * i.e. arguments in arguments lists, parameters in parameter lists etc.
 * Note that separators are part of the node in statements and class elements.
  */
-func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.Node, newNode *ast.Node, containingList []*ast.Node) {
-	if len(containingList) == 0 {
-		containingList = format.GetContainingList(after, sourceFile).Nodes
+func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.Node, newNode *ast.Node, containingList *ast.NodeList) {
+	if containingList == nil {
+		containingList = format.GetContainingList(after, sourceFile)
 	}
-	index := slices.Index(containingList, after)
+	if containingList == nil {
+		// Debug.fail("node is not a list element")
+		return
+	}
+	index := slices.Index(containingList.Nodes, after)
 	if index < 0 {
 		return
 	}
-	if index != len(containingList)-1 {
+	end := after.End()
+	if index != len(containingList.Nodes)-1 {
 		// any element except the last one
 		// use next sibling as an anchor
 		if nextToken := astnav.GetTokenAtPosition(sourceFile, after.End()); nextToken != nil && isSeparator(after, nextToken) {
@@ -318,12 +380,12 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 			//   insertedtext<separator>#
 			// ###b,
 			//   c,
-			nextNode := containingList[index+1]
+			nextNode := containingList.Nodes[index+1]
 			startPos := scanner.SkipTriviaEx(sourceFile.Text(), nextNode.Pos(), &scanner.SkipTriviaOptions{StopAfterLineBreak: false, StopAtComments: true})
 
 			// write separator and leading trivia of the next element as suffix
 			suffix := scanner.TokenToString(nextToken.Kind) + sourceFile.Text()[nextToken.End():startPos]
-			t.InsertNodeAt(sourceFile, core.TextPos(startPos), newNode, NodeOptions{Suffix: suffix})
+			t.InsertNodesAt(sourceFile, core.TextPos(startPos), []*ast.Node{newNode}, NodeOptions{Suffix: suffix})
 		}
 		return
 	}
@@ -341,50 +403,49 @@ func (t *Tracker) InsertNodeInListAfter(sourceFile *ast.SourceFile, after *ast.N
 	// i.e. var x = 1 // this is x
 	//     | new element will be inserted at this position
 	separator := ast.KindCommaToken // SyntaxKind.CommaToken | SyntaxKind.SemicolonToken
-	if len(containingList) != 1 {
+	if len(containingList.Nodes) != 1 {
 		// otherwise, if list has more than one element, pick separator from the list
 		tokenBeforeInsertPosition := astnav.FindPrecedingToken(sourceFile, after.Pos())
 		separator = core.IfElse(isSeparator(after, tokenBeforeInsertPosition), tokenBeforeInsertPosition.Kind, ast.KindCommaToken)
 		// determine if list is multiline by checking lines of after element and element that precedes it.
-		afterMinusOneStartLinePosition := format.GetLineStartPositionForPosition(astnav.GetStartOfNode(containingList[index-1], sourceFile, false), sourceFile)
+		afterMinusOneStartLinePosition := format.GetLineStartPositionForPosition(astnav.GetStartOfNode(containingList.Nodes[index-1], sourceFile, false), sourceFile)
 		multilineList = afterMinusOneStartLinePosition != afterStartLinePosition
 	}
-	if hasCommentsBeforeLineBreak(sourceFile.Text(), after.End()) || printer.GetLinesBetweenPositions(sourceFile, containingList[0].Pos(), containingList[len(containingList)-1].End()) != 0 {
+	if hasCommentsBeforeLineBreak(sourceFile.Text(), after.End()) || !positionsAreOnSameLine(containingList.Pos(), containingList.End(), sourceFile) {
 		// in this case we'll always treat containing list as multiline
 		multilineList = true
 	}
-
-	separatorString := scanner.TokenToString(separator)
-	end := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(after.End()))
-	if !multilineList {
-		t.ReplaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, NodeOptions{Prefix: separatorString})
-		return
+	if multilineList {
+		// insert separator immediately following the 'after' node to preserve comments in trailing trivia
+		separatorToken := t.NewToken(separator)
+		separatorString := scanner.TokenToString(separator)
+		separatorToken.Loc = core.NewTextRange(end, end+len(separatorString))
+		separatorToken.Parent = after.Parent
+		endPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(end))
+		t.ReplaceRange(sourceFile, lsproto.Range{Start: endPos, End: endPos}, separatorToken, NodeOptions{})
+		// use the same indentation as 'after' item
+		indentation := format.FindFirstNonWhitespaceColumn(afterStartLinePosition, afterStart, sourceFile, t.formatSettings)
+		// insert element before the line break on the line that contains 'after' element
+		insertPos := scanner.SkipTriviaEx(sourceFile.Text(), end, &scanner.SkipTriviaOptions{StopAfterLineBreak: true, StopAtComments: false})
+		// find position before "\n" or "\r\n"
+		for insertPos != end && stringutil.IsLineBreak(rune(sourceFile.Text()[insertPos-1])) {
+			insertPos--
+		}
+		insertLSPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(insertPos))
+		t.ReplaceRange(
+			sourceFile,
+			lsproto.Range{Start: insertLSPos, End: insertLSPos},
+			newNode,
+			NodeOptions{
+				indentation: &indentation,
+				Prefix:      t.newLine,
+			},
+		)
+	} else {
+		separatorString := scanner.TokenToString(separator)
+		endPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(end))
+		t.ReplaceRange(sourceFile, lsproto.Range{Start: endPos, End: endPos}, newNode, NodeOptions{Prefix: separatorString + " "})
 	}
-
-	// insert separator immediately following the 'after' node to preserve comments in trailing trivia
-	// !!! formatcontext
-	separatorToken := t.NewToken(separator)
-	separatorToken.Loc = core.NewTextRange(after.End(), after.End()+len(separatorString))
-	separatorToken.Parent = after.Parent
-	t.ReplaceRange(sourceFile, lsproto.Range{Start: end, End: end}, separatorToken, NodeOptions{})
-	// use the same indentation as 'after' item
-	indentation := format.FindFirstNonWhitespaceColumn(afterStartLinePosition, afterStart, sourceFile, t.formatSettings)
-	// insert element before the line break on the line that contains 'after' element
-	insertPos := scanner.SkipTriviaEx(sourceFile.Text(), after.End(), &scanner.SkipTriviaOptions{StopAfterLineBreak: true, StopAtComments: false})
-	// find position before "\n" or "\r\n"
-	for insertPos != after.End() && stringutil.IsLineBreak(rune(sourceFile.Text()[insertPos-1])) {
-		insertPos--
-	}
-	insertLSPos := t.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(insertPos))
-	t.ReplaceRange(
-		sourceFile,
-		lsproto.Range{Start: insertLSPos, End: insertLSPos},
-		newNode,
-		NodeOptions{
-			indentation: new(indentation),
-			Prefix:      t.newLine,
-		},
-	)
 }
 
 // InsertImportSpecifierAtIndex inserts a new import specifier at the specified index in a NamedImports list
@@ -392,17 +453,20 @@ func (t *Tracker) InsertImportSpecifierAtIndex(sourceFile *ast.SourceFile, newSp
 	namedImportsNode := namedImports.AsNamedImports()
 	elements := namedImportsNode.Elements.Nodes
 
-	if index >= len(elements) {
-		// Insert at the end (after the last element)
-		t.InsertNodeInListAfter(sourceFile, elements[len(elements)-1], newSpecifier, elements)
-	} else if index > 0 {
-		// Insert after the element at index-1
-		t.InsertNodeInListAfter(sourceFile, elements[index-1], newSpecifier, elements)
+	var prevSpecifier *ast.Node
+	if index > 0 && index-1 < len(elements) {
+		prevSpecifier = elements[index-1]
+	}
+	if prevSpecifier != nil {
+		t.InsertNodeInListAfter(sourceFile, prevSpecifier, newSpecifier, nil)
 	} else {
-		// Insert before the first element
-		firstElement := elements[0]
-		multiline := printer.GetLinesBetweenPositions(sourceFile, firstElement.Pos(), namedImports.Parent.Parent.Pos()) != 0
-		t.InsertNodeBefore(sourceFile, firstElement, newSpecifier, multiline)
+		t.InsertNodeBefore(
+			sourceFile,
+			elements[0],
+			newSpecifier,
+			!positionsAreOnSameLine(astnav.GetStartOfNode(elements[0], sourceFile, false), astnav.GetStartOfNode(namedImports.Parent.Parent, sourceFile, false), sourceFile),
+			LeadingTriviaOptionNone,
+		)
 	}
 }
 

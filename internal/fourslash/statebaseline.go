@@ -58,7 +58,9 @@ func (f *FourslashTest) baselineRequestOrNotification(t *testing.T, method lspro
 	}
 
 	res, _ := json.Marshal(requestOrMessage{method, params}, json.WithIndent("  "))
-	f.stateBaseline.baseline.WriteString("\n" + string(res) + "\n")
+	f.stateBaseline.baseline.WriteString("\n")
+	f.stateBaseline.baseline.Write(res)
+	f.stateBaseline.baseline.WriteString("\n")
 	f.stateBaseline.isInitialized = true
 }
 
@@ -243,8 +245,7 @@ func (f *FourslashTest) printStateDiff(t *testing.T, w io.Writer) {
 		return
 	}
 	session := f.client.Server.Session()
-	snapshot, release := session.Snapshot()
-	defer release()
+	snapshot := session.Snapshot()
 
 	f.printProjectsDiff(t, snapshot, w)
 	f.printOpenFilesDiff(t, snapshot, w)

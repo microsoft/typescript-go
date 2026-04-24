@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
+//go:generate npx dprint fmt stringer_generated.go
 
 // ParseFlags
 
@@ -63,6 +63,7 @@ const (
 	TypeFormatFlagsUseAliasDefinedOutsideCurrentScope  TypeFormatFlags = 1 << 14 // For a `type T = ... ` defined in a different file, write `T` instead of its value, even though `T` can't be accessed in the current scope.
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType TypeFormatFlags = 1 << 28 // Use single quotes for string literal type
 	TypeFormatFlagsNoTypeReduction                     TypeFormatFlags = 1 << 29 // Don't call getReducedType
+	TypeFormatFlagsUseInstantiationExpressions         TypeFormatFlags = 1 << 30 // Use instantiation expressions for qualified instantiated names like Foo<string>.Bar
 	TypeFormatFlagsOmitThisParameter                   TypeFormatFlags = 1 << 25
 	TypeFormatFlagsWriteCallStyleSignature             TypeFormatFlags = 1 << 27 // Write construct signatures as call style signatures
 	// Error Handling
@@ -80,6 +81,7 @@ const (
 const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFormatFlagsWriteArrayAsGenericType | TypeFormatFlagsGenerateNamesForShadowedTypeParams | TypeFormatFlagsUseStructuralFallback | TypeFormatFlagsWriteTypeArgumentsOfSignature |
 	TypeFormatFlagsUseFullyQualifiedType | TypeFormatFlagsSuppressAnyReturnType | TypeFormatFlagsMultilineObjectLiterals | TypeFormatFlagsWriteClassExpressionAsTypeLiteral |
 	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
+	TypeFormatFlagsUseInstantiationExpressions |
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
 
 type SymbolFormatFlags uint32
@@ -262,10 +264,6 @@ const (
 	VarianceFlagsAllowsStructuralFallback               = VarianceFlagsUnmeasurable | VarianceFlagsUnreliable
 )
 
-type IndexSymbolLinks struct {
-	filteredIndexSymbolCache map[CacheHashKey]*ast.Symbol // Symbol with applicable declarations
-}
-
 type MarkedAssignmentSymbolLinks struct {
 	lastAssignmentPos     int32
 	hasDefiniteAssignment bool // Symbol is definitely assigned somewhere
@@ -302,14 +300,16 @@ const (
 type NodeCheckFlags uint32
 
 const (
-	NodeCheckFlagsNone                           NodeCheckFlags = 0
-	NodeCheckFlagsTypeChecked                    NodeCheckFlags = 1 << 0  // Node has been type checked
-	NodeCheckFlagsContextChecked                 NodeCheckFlags = 1 << 6  // Contextual types have been assigned
-	NodeCheckFlagsEnumValuesComputed             NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
-	NodeCheckFlagsAssignmentsMarked              NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
-	NodeCheckFlagsInCheckIdentifier              NodeCheckFlags = 1 << 22
-	NodeCheckFlagsInitializerIsUndefined         NodeCheckFlags = 1 << 24
-	NodeCheckFlagsInitializerIsUndefinedComputed NodeCheckFlags = 1 << 25
+	NodeCheckFlagsNone                                     NodeCheckFlags = 0
+	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // Node has been type checked
+	NodeCheckFlagsContextChecked                           NodeCheckFlags = 1 << 6  // Contextual types have been assigned
+	NodeCheckFlagsEnumValuesComputed                       NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
+	NodeCheckFlagsAssignmentsMarked                        NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
+	NodeCheckFlagsContainsClassWithPrivateIdentifiers      NodeCheckFlags = 1 << 20 // Marked on all block-scoped containers containing a class with private identifiers.
+	NodeCheckFlagsContainsSuperPropertyInStaticInitializer NodeCheckFlags = 1 << 21 // Marked on all block-scoped containers containing a static initializer with 'super.x' or 'super[x]'.
+	NodeCheckFlagsInCheckIdentifier                        NodeCheckFlags = 1 << 22
+	NodeCheckFlagsInitializerIsUndefined                   NodeCheckFlags = 1 << 24
+	NodeCheckFlagsInitializerIsUndefinedComputed           NodeCheckFlags = 1 << 25
 )
 
 // Common links
@@ -321,8 +321,7 @@ type NodeLinks struct {
 }
 
 type SymbolNodeLinks struct {
-	resolvedSymbol              *ast.Symbol // Resolved symbol associated with node
-	resolvedSymbolNoDiagnostics *ast.Symbol // Resolved symbol associated with node, generated without producing diagnostics for an API call
+	resolvedSymbol *ast.Symbol // Resolved symbol associated with node
 }
 
 type TypeNodeLinks struct {
@@ -346,6 +345,7 @@ type AssertionLinks struct {
 
 type SourceFileLinks struct {
 	typeChecked               bool
+	unusedChecked             bool
 	deferredNodes             collections.OrderedSet[*ast.Node]
 	identifierCheckNodes      []*ast.Node
 	localJsxNamespace         string
@@ -497,6 +497,7 @@ const (
 	// Flags that require TypeFlags.Object and ObjectFlags.Reference
 	ObjectFlagsIdenticalBaseTypeCalculated = 1 << 27 // has had `getSingleBaseForNonAugmentingSubtype` invoked on it already
 	ObjectFlagsIdenticalBaseTypeExists     = 1 << 28 // has a defined cachedEquivalentBaseType member
+	ObjectFlagsUnresolvedMembers           = 1 << 29 // Member resolution in process
 	// Flags that require TypeFlags.UnionOrIntersection or TypeFlags.Substitution
 	ObjectFlagsIsGenericTypeComputed = 1 << 22 // IsGenericObjectType flag has been computed
 	ObjectFlagsIsGenericObjectType   = 1 << 23 // Union or intersection contains generic object type
@@ -1221,6 +1222,7 @@ type IndexInfo struct {
 	valueType   *Type
 	isReadonly  bool
 	declaration *ast.Node   // IndexSignatureDeclaration
+	indexSymbol *ast.Symbol // Synthetic property symbol for this index signature
 	components  []*ast.Node // ElementWithComputedPropertyName
 }
 

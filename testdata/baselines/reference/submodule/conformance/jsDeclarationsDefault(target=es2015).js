@@ -59,7 +59,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bar = exports.X = void 0;
 class Foo {
     constructor() {
-        this.a = null;
+        this.a = (null);
     }
 }
 exports.default = Foo;
@@ -76,7 +76,7 @@ const index3_1 = __importDefault(require("./index3"));
 class Bar extends index3_1.default {
     constructor() {
         super(...arguments);
-        this.x = null;
+        this.x = (null);
     }
 }
 exports.default = Bar;
@@ -101,7 +101,7 @@ function func() { }
 
 
 //// [index1.d.ts]
-declare const _default: number;
+declare const _default = 12;
 export default _default;
 //// [index2.d.ts]
 export default function foo(): typeof foo;
@@ -120,7 +120,7 @@ declare class Bar extends Fab {
 }
 export default Bar;
 //// [index5.d.ts]
-declare const _default: number;
+declare const _default = 12;
 export default _default;
 export type default = string | number;
 /**

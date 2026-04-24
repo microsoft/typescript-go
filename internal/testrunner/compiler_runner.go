@@ -84,8 +84,17 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 }
 
 var skippedTests = []string{
-	// Flaky
-	"for-of29.ts",
+	// Tests that depended on typescript.d.ts in built.
+	"APILibCheck.ts",
+	"APISample_Watch.ts",
+	"APISample_WatchWithDefaults.ts",
+	"APISample_WatchWithOwnWatchHost.ts",
+	"APISample_compile.ts",
+	"APISample_jsdoc.ts",
+	"APISample_linter.ts",
+	"APISample_parseConfig.ts",
+	"APISample_transform.ts",
+	"APISample_watcher.ts",
 
 	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",

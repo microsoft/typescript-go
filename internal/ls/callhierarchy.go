@@ -205,7 +205,7 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 			kwPos := scanner.SkipTrivia(sourceFile.Text(), moveRangePastModifiers(node).Pos())
 			return "(anonymous)", kwPos, kwPos + 5 // "class".length
 		}
-		debug.AssertIsDefined(declName, "Expected call hierarchy item to have a name")
+		debug.Assert(declName != nil, "Expected call hierarchy item to have a name")
 	}
 
 	if ast.IsIdentifier(declName) {
@@ -258,7 +258,7 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 				}
 			}
 		}
-		if ast.IsModuleBlock(parent.Parent.Parent.Parent) {
+		if parent.Parent.Parent != nil && parent.Parent.Parent.Parent != nil && ast.IsModuleBlock(parent.Parent.Parent.Parent) {
 			modParent := parent.Parent.Parent.Parent.Parent
 			if ast.IsModuleDeclaration(modParent) {
 				if name := modParent.Name(); name != nil && ast.IsIdentifier(name) {
@@ -568,9 +568,7 @@ func (l *LanguageService) convertCallSiteGroupToIncomingCall(program *compiler.P
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
-	slices.SortFunc(fromRanges, func(a, b lsproto.Range) int {
-		return lsproto.CompareRanges(&a, &b)
-	})
+	slices.SortFunc(fromRanges, lsproto.CompareRanges)
 
 	return &lsproto.CallHierarchyIncomingCall{
 		From:       l.createCallHierarchyItem(program, entries[0].declaration),
@@ -652,7 +650,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 			if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
 				return 0
 			}
-			return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
+			return lsproto.CompareRanges(a.FromRanges[0], b.FromRanges[0])
 		})
 	}
 	return result, err
@@ -927,9 +925,7 @@ func (l *LanguageService) convertCallSiteGroupToOutgoingCall(program *compiler.P
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
-	slices.SortFunc(fromRanges, func(a, b lsproto.Range) int {
-		return lsproto.CompareRanges(&a, &b)
-	})
+	slices.SortFunc(fromRanges, lsproto.CompareRanges)
 
 	return &lsproto.CallHierarchyOutgoingCall{
 		To:         l.createCallHierarchyItem(program, entries[0].declaration),
@@ -970,7 +966,7 @@ func (l *LanguageService) getOutgoingCalls(program *compiler.Program, declaratio
 		if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
 			return 0
 		}
-		return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
+		return lsproto.CompareRanges(a.FromRanges[0], b.FromRanges[0])
 	})
 
 	return result

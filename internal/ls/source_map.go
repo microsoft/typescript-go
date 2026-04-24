@@ -15,13 +15,14 @@ func (l *LanguageService) getMappedLocation(fileName string, fileRange core.Text
 		lspRange := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
 		return lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(fileName),
-			Range: *lspRange,
+			Range: lspRange,
 		}
 	}
 	endPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.End()))
-	if endPos == nil || endPos.FileName != startPos.FileName {
-		// When end doesn't map (or maps to a different source file, e.g. in a .d.ts with a
-		// multi-source source map from --outFile compilation), approximate the end position.
+	if endPos == nil || endPos.FileName != startPos.FileName || endPos.Pos < startPos.Pos {
+		// When end doesn't map, maps to a different source file (e.g. in a .d.ts with a
+		// multi-source source map from --outFile compilation), or maps to a position before
+		// start (non-monotonic source map mappings), approximate the end position.
 		endPos = &sourcemap.DocumentPosition{
 			FileName: startPos.FileName,
 			Pos:      startPos.Pos + fileRange.Len(),
@@ -31,7 +32,7 @@ func (l *LanguageService) getMappedLocation(fileName string, fileRange core.Text
 	lspRange := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
 	return lsproto.Location{
 		Uri:   lsconv.FileNameToDocumentURI(startPos.FileName),
-		Range: *lspRange,
+		Range: lspRange,
 	}
 }
 

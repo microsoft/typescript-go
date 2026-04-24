@@ -6,16 +6,24 @@
 //         type Y = typeof this;
 //                         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | this: { num: number; f(): void; g(this: number): void; }
+// | ```typescript
+// | this: {
+// |     num: number;
+// |     f(): void;
+// |     g(this: number): void;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         type Z = typeof this.num;
 //                         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | this: { num: number; f(): void; g(this: number): void; }
+// | ```typescript
+// | this: {
+// |     num: number;
+// |     f(): void;
+// |     g(this: number): void;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -24,7 +32,7 @@
 //         type X = typeof this;
 //                         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | this: number
 // | ```
 // | 
@@ -37,7 +45,7 @@
 //         type Y = typeof this;
 //                         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | this: this
 // | ```
 // | 
@@ -45,7 +53,7 @@
 //         type Z = typeof this.num;
 //                         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | this: this
 // | ```
 // | 
@@ -55,7 +63,7 @@
 //         type X = typeof this;
 //                         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | this: number
 // | ```
 // | 
@@ -76,7 +84,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: { num: number; f(): void; g(this: number): void; }\n```\n"
+        "value": "```typescript\nthis: {\n    num: number;\n    f(): void;\n    g(this: number): void;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -103,7 +111,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: { num: number; f(): void; g(this: number): void; }\n```\n"
+        "value": "```typescript\nthis: {\n    num: number;\n    f(): void;\n    g(this: number): void;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -130,7 +138,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: number\n```\n"
+        "value": "```typescript\nthis: number\n```\n"
       },
       "range": {
         "start": {
@@ -157,7 +165,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: this\n```\n"
+        "value": "```typescript\nthis: this\n```\n"
       },
       "range": {
         "start": {
@@ -184,7 +192,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: this\n```\n"
+        "value": "```typescript\nthis: this\n```\n"
       },
       "range": {
         "start": {
@@ -211,7 +219,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: number\n```\n"
+        "value": "```typescript\nthis: number\n```\n"
       },
       "range": {
         "start": {

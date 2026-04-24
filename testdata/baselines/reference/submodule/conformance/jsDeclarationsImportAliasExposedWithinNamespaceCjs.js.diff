@@ -1,16 +1,12 @@
 --- old.jsDeclarationsImportAliasExposedWithinNamespaceCjs.js
 +++ new.jsDeclarationsImportAliasExposedWithinNamespaceCjs.js
-@@= skipped -53, +53 lines =@@
-
-
- //// [file.d.ts]
--/**
-- * @namespace myTypes
-- * @global
-- * @type {Object<string,*>}
-- */
+@@= skipped -58, +58 lines =@@
+  * @global
+  * @type {Object<string,*>}
+  */
 -export const myTypes: {
 -    [x: string]: any;
++declare const myTypes: Record<string, any>;
 +export type myTypes = string | RegExp | Array<string | RegExp>;
 +export type myTypes = {
 +    prop1: myTypes.typeA;
@@ -31,13 +27,13 @@
 -    type typeC = myTypes.typeB | Function;
 -}
 +export type myTypes = myTypes.typeB | Function;
-+export declare var myTypes: any;
++export declare var myTypes: Record<string, any>;
  //// [file2.d.ts]
 +export type testFnTypes = boolean | myTypes.typeC;
  /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
  /**
   * @function testFn
-@@= skipped -30, +16 lines =@@
+@@= skipped -25, +17 lines =@@
   * @param {testFnTypes.input} input - Input.
   * @returns {number|null} Result.
   */
@@ -52,7 +48,7 @@
 +declare function testFn(input: testFnTypes.input): number | null;
 +declare const _default: {
 +    testFn: typeof testFn;
-+    testFnTypes: any;
++    testFnTypes: Record<string, any>;
  };
 -export namespace testFnTypes {
 -    type input = boolean | myTypes.typeC;

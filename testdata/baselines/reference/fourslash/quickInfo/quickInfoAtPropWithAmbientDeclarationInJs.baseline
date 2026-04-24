@@ -7,9 +7,12 @@
 //     declare prop: string;
 //     method() {
 //         this.prop.foo
-//                      ^
+//                   ^^^
 // | ----------------------------------------------------------------------
-// | No quickinfo at /**/.
+// | ```typescript
+// | any
+// | ```
+// | 
 // | ----------------------------------------------------------------------
 //     }
 // }
@@ -24,6 +27,21 @@
       "Name": "",
       "Data": {}
     },
-    "item": null
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\nany\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 18
+        },
+        "end": {
+          "line": 6,
+          "character": 21
+        }
+      }
+    }
   }
 ]

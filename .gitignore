@@ -194,9 +194,11 @@ custom-gcl.hash
 .idea
 
 !testdata/submoduleAccepted.txt
+!testdata/submoduleTriaged.txt
 
 !NOTICE.txt
 
 !internal/fourslash/_scripts/failingTests.txt
 !internal/fourslash/_scripts/manualTests.txt
 !internal/fourslash/_scripts/crashingTests.txt
+!internal/fourslash/_scripts/unparsedTests.txt
