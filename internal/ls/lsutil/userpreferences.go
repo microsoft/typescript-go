@@ -168,10 +168,28 @@ type UserPreferences struct {
 	DisplayPartsForJSDoc        core.Tristate `raw:"displayPartsForJSDoc"`        // !!!
 	ReportStyleChecksAsWarnings core.Tristate `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
 
+	// ------- ATA -------
+
+	// DisableAutomaticTypeAcquisition is the deprecated setting from typescript.disableAutomaticTypeAcquisition.
+	DisableAutomaticTypeAcquisition core.Tristate `raw:"disableAutomaticTypeAcquisition" config:"disableAutomaticTypeAcquisition"`
+	// AutomaticTypeAcquisitionEnabled is the unified setting from js/ts.tsserver.automaticTypeAcquisition.enabled.
+	// When set, it takes precedence over DisableAutomaticTypeAcquisition.
+	AutomaticTypeAcquisitionEnabled core.Tristate `raw:"automaticTypeAcquisitionEnabled" config:"tsserver.automaticTypeAcquisition.enabled"`
+
 	// ------- Project Configuration -------
 
 	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
 	CustomConfigFileName string `raw:"customConfigFileName" config:"native-preview.customConfigFileName"`
+}
+
+// IsATADisabled returns whether Automatic Type Acquisition is disabled based on user preferences.
+// It checks the unified setting (tsserver.automaticTypeAcquisition.enabled) first,
+// then falls back to the deprecated setting (disableAutomaticTypeAcquisition).
+func (p UserPreferences) IsATADisabled() bool {
+	if !p.AutomaticTypeAcquisitionEnabled.IsUnknown() {
+		return !p.AutomaticTypeAcquisitionEnabled.IsTrue()
+	}
+	return p.DisableAutomaticTypeAcquisition.IsTrue()
 }
 
 type InlayHintsPreferences struct {
