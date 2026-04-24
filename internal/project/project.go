@@ -341,10 +341,8 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	// CreateProgram must use its own closure so that concurrent goroutines cloning
 	// the same project never share a captured variable through a stale closure
 	// stored in the old program's options.
-	// Capture only the log function, not the entire *Project receiver.
-	log := p.log
 	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
-		checkerPool = newCheckerPool(4, program, log)
+		checkerPool = newCheckerPool(4, program, nil)
 		return checkerPool
 	}
 
