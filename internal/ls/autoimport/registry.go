@@ -109,17 +109,26 @@ type RegistryBucket struct {
 	// packages (symlinked and within the workspace root) have entries here, since
 	// their realpaths are outside node_modules and need reverse lookup for dirty
 	// detection.
+	//
+	// Paths is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	Paths map[tspath.Path]string
 	// PackageFiles maps package names to their file paths and file names.
 	// All package directory names in node_modules are keys; indexed packages have
 	// non-nil maps with path→fileName entries, unindexed packages have nil maps.
 	// This enables efficient removal of a package's files during granular updates
 	// without iterating through all entries. Only defined for node_modules buckets.
+	//
+	// PackageFiles is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	PackageFiles map[string]map[tspath.Path]string
 	// ResolvedPackageNames is only defined for project buckets. It is the set of
 	// package names that were resolved from imports in the project's program files.
 	// This is passed to node_modules buckets so they include packages that are
 	// directly imported even if not listed in package.json dependencies.
+	//
+	// ResolvedPackageNames is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	ResolvedPackageNames *collections.Set[string]
 	// DependencyNames is only defined for node_modules buckets. It is the set of
 	// package names that will be included in the bucket if present in the directory,
@@ -127,11 +136,19 @@ type RegistryBucket struct {
 	// active programs. If nil, all packages are included because at least one open
 	// file has access to this node_modules directory without being filtered by a
 	// package.json.
+	//
+	// DependencyNames is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	DependencyNames *collections.Set[string]
 	// AmbientModuleNames is only defined for node_modules buckets. It is the set of
 	// ambient module names found while extracting exports in the bucket.
+	//
+	// AmbientModuleNames is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	AmbientModuleNames map[string][]string
-	Index              *Index[*Export]
+	// Index is considered immutable after the bucket is finalized.
+	// It should be cloned and replaced rather than mutated while changing a bucket.
+	Index *Index[*Export]
 }
 
 func newRegistryBucket() *RegistryBucket {
