@@ -1,0 +1,270 @@
+//// [tests/cases/compiler/strictArrayVariance.ts] ////
+
+=== strictArrayVariance.ts ===
+// Mutable Array: covariant element typing is unsound when the callee mutates.
+function widen(xs: (string | number)[]) {
+>widen : Symbol(widen, Decl(strictArrayVariance.ts, 0, 0))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 1, 15))
+
+    xs.push(3);
+>xs.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 1, 15))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+}
+
+const ys: string[] = ["a"];
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+
+widen(ys);
+>widen : Symbol(widen, Decl(strictArrayVariance.ts, 0, 0))
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+
+// ReadonlyArray stays covariant in T; passing readonly string[] should remain ok.
+function read(xs: ReadonlyArray<string | number>) {
+>read : Symbol(read, Decl(strictArrayVariance.ts, 6, 10))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 9, 14))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --) ... and 3 more)
+
+    return xs[0];
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 9, 14))
+}
+
+const rs: readonly string[] = ["b"];
+>rs : Symbol(rs, Decl(strictArrayVariance.ts, 13, 5))
+
+read(rs);
+>read : Symbol(read, Decl(strictArrayVariance.ts, 6, 10))
+>rs : Symbol(rs, Decl(strictArrayVariance.ts, 13, 5))
+
+// `Array<T>` syntax uses the same `globalArrayType` variance as `(T)[]`.
+function idArray(xs: Array<string | number>) {
+>idArray : Symbol(idArray, Decl(strictArrayVariance.ts, 14, 9))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 17, 17))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
+
+    xs.push(3);
+>xs.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 17, 17))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+}
+
+const zs: Array<string> = ["c"];
+>zs : Symbol(zs, Decl(strictArrayVariance.ts, 21, 5))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
+
+idArray(zs);
+>idArray : Symbol(idArray, Decl(strictArrayVariance.ts, 14, 9))
+>zs : Symbol(zs, Decl(strictArrayVariance.ts, 21, 5))
+
+// Type alias to `Array<T>` should use the same variance as `Array<T>` / `(T)[]`.
+type ArrayAlias<T> = Array<T>;
+>ArrayAlias : Symbol(ArrayAlias, Decl(strictArrayVariance.ts, 22, 12))
+>T : Symbol(T, Decl(strictArrayVariance.ts, 25, 16))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
+>T : Symbol(T, Decl(strictArrayVariance.ts, 25, 16))
+
+function idAlias(xs: ArrayAlias<string | number>) {
+>idAlias : Symbol(idAlias, Decl(strictArrayVariance.ts, 25, 30))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 26, 17))
+>ArrayAlias : Symbol(ArrayAlias, Decl(strictArrayVariance.ts, 22, 12))
+
+    xs.push(3);
+>xs.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 26, 17))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+}
+
+const ws: ArrayAlias<string> = ["d"];
+>ws : Symbol(ws, Decl(strictArrayVariance.ts, 30, 5))
+>ArrayAlias : Symbol(ArrayAlias, Decl(strictArrayVariance.ts, 22, 12))
+
+idAlias(ws);
+>idAlias : Symbol(idAlias, Decl(strictArrayVariance.ts, 25, 30))
+>ws : Symbol(ws, Decl(strictArrayVariance.ts, 30, 5))
+
+// Mutable tuples: element positions are invariant under strictArrayVariance.
+function widenTuple(xs: [string | number, string]) {
+>widenTuple : Symbol(widenTuple, Decl(strictArrayVariance.ts, 31, 12))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 34, 20))
+
+    xs[0] = 1;
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 34, 20))
+>0 : Symbol(0)
+}
+
+const tup: [string, string] = ["x", "y"];
+>tup : Symbol(tup, Decl(strictArrayVariance.ts, 38, 5))
+
+widenTuple(tup);
+>widenTuple : Symbol(widenTuple, Decl(strictArrayVariance.ts, 31, 12))
+>tup : Symbol(tup, Decl(strictArrayVariance.ts, 38, 5))
+
+// Nested `Array<Array<U>>`: element type `U[]` is still `globalArrayType`.
+function nest(xs: (string | number)[][]) {
+>nest : Symbol(nest, Decl(strictArrayVariance.ts, 39, 16))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 42, 14))
+
+    xs[0].push(3);
+>xs[0].push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 42, 14))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+}
+
+const row: string[] = ["p"];
+>row : Symbol(row, Decl(strictArrayVariance.ts, 46, 5))
+
+const grid: string[][] = [row];
+>grid : Symbol(grid, Decl(strictArrayVariance.ts, 47, 5))
+>row : Symbol(row, Decl(strictArrayVariance.ts, 46, 5))
+
+nest(grid);
+>nest : Symbol(nest, Decl(strictArrayVariance.ts, 39, 16))
+>grid : Symbol(grid, Decl(strictArrayVariance.ts, 47, 5))
+
+// Readonly tuples use tuple variance (covariant), like ReadonlyArray.
+function rtup(xs: readonly [string | number, string]) {
+>rtup : Symbol(rtup, Decl(strictArrayVariance.ts, 48, 11))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 51, 14))
+
+    return xs[0];
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 51, 14))
+>0 : Symbol(0)
+}
+
+const rt: readonly [string, string] = ["u", "v"] as const;
+>rt : Symbol(rt, Decl(strictArrayVariance.ts, 55, 5))
+>const : Symbol(const)
+
+rtup(rt);
+>rtup : Symbol(rtup, Decl(strictArrayVariance.ts, 48, 11))
+>rt : Symbol(rt, Decl(strictArrayVariance.ts, 55, 5))
+
+// Structural assignability: object with `string[]` field to type expecting `(string | number)[]`.
+interface Hold {
+>Hold : Symbol(Hold, Decl(strictArrayVariance.ts, 56, 9))
+
+    xs: (string | number)[];
+>xs : Symbol(Hold.xs, Decl(strictArrayVariance.ts, 59, 16))
+}
+
+function mutateCell(h: Hold) {
+>mutateCell : Symbol(mutateCell, Decl(strictArrayVariance.ts, 61, 1))
+>h : Symbol(h, Decl(strictArrayVariance.ts, 63, 20))
+>Hold : Symbol(Hold, Decl(strictArrayVariance.ts, 56, 9))
+
+    h.xs.push(1);
+>h.xs.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>h.xs : Symbol(Hold.xs, Decl(strictArrayVariance.ts, 59, 16))
+>h : Symbol(h, Decl(strictArrayVariance.ts, 63, 20))
+>xs : Symbol(Hold.xs, Decl(strictArrayVariance.ts, 59, 16))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+}
+
+const cell: { xs: string[] } = { xs: ["q"] };
+>cell : Symbol(cell, Decl(strictArrayVariance.ts, 67, 5))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 67, 13))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 67, 32))
+
+mutateCell(cell);
+>mutateCell : Symbol(mutateCell, Decl(strictArrayVariance.ts, 61, 1))
+>cell : Symbol(cell, Decl(strictArrayVariance.ts, 67, 5))
+
+// Inference: generic element extraction via `infer U` still works; the instance of
+// Array<string> has its type argument inferred as `string` regardless of the flag.
+type ElemOf<T> = T extends Array<infer U> ? U : never;
+>ElemOf : Symbol(ElemOf, Decl(strictArrayVariance.ts, 68, 17))
+>T : Symbol(T, Decl(strictArrayVariance.ts, 72, 12))
+>T : Symbol(T, Decl(strictArrayVariance.ts, 72, 12))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
+>U : Symbol(U, Decl(strictArrayVariance.ts, 72, 38))
+>U : Symbol(U, Decl(strictArrayVariance.ts, 72, 38))
+
+type E1 = ElemOf<string[]>; // string
+>E1 : Symbol(E1, Decl(strictArrayVariance.ts, 72, 54))
+>ElemOf : Symbol(ElemOf, Decl(strictArrayVariance.ts, 68, 17))
+
+const e1: E1 = "ok";
+>e1 : Symbol(e1, Decl(strictArrayVariance.ts, 74, 5))
+>E1 : Symbol(E1, Decl(strictArrayVariance.ts, 72, 54))
+
+// Inference: a generic identity function should infer T from the argument type.
+// Under strictArrayVariance this still works because T is inferred, not constrained
+// by a widening target.
+function idGeneric<T>(xs: T[]): T[] {
+>idGeneric : Symbol(idGeneric, Decl(strictArrayVariance.ts, 74, 20))
+>T : Symbol(T, Decl(strictArrayVariance.ts, 79, 19))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 79, 22))
+>T : Symbol(T, Decl(strictArrayVariance.ts, 79, 19))
+>T : Symbol(T, Decl(strictArrayVariance.ts, 79, 19))
+
+    return xs;
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 79, 22))
+}
+
+const inferred = idGeneric(ys); // inferred: string[]
+>inferred : Symbol(inferred, Decl(strictArrayVariance.ts, 83, 5))
+>idGeneric : Symbol(idGeneric, Decl(strictArrayVariance.ts, 74, 20))
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+
+const checkInferred: string[] = inferred;
+>checkInferred : Symbol(checkInferred, Decl(strictArrayVariance.ts, 84, 5))
+>inferred : Symbol(inferred, Decl(strictArrayVariance.ts, 83, 5))
+
+// Inference: when the target is wider than the source and both are mutable Array,
+// the strict flag rejects the call (same as the widen cases above) rather than
+// silently widening the inferred type argument.
+function takeWider(xs: Array<string | number>) {}
+>takeWider : Symbol(takeWider, Decl(strictArrayVariance.ts, 84, 41))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 89, 19))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
+
+takeWider(ys);
+>takeWider : Symbol(takeWider, Decl(strictArrayVariance.ts, 84, 41))
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+
+// Spread alone does NOT widen under this flag: `[...ys]` has type `string[]`,
+// so this still errors. The diagnostic message must not suggest otherwise.
+widen([...ys]);
+>widen : Symbol(widen, Decl(strictArrayVariance.ts, 0, 0))
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+
+// The primary migration target: `readonly` at the parameter boundary stays
+// covariant under the flag, so passing `string[]` to a consumer typed for
+// `readonly (string | number)[]` is still accepted.
+function readWider(xs: readonly (string | number)[]) {
+>readWider : Symbol(readWider, Decl(strictArrayVariance.ts, 94, 15))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 99, 19))
+
+    return xs.length;
+>xs.length : Symbol(ReadonlyArray.length, Decl(lib.es5.d.ts, --, --))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 99, 19))
+>length : Symbol(ReadonlyArray.length, Decl(lib.es5.d.ts, --, --))
+}
+readWider(ys);
+>readWider : Symbol(readWider, Decl(strictArrayVariance.ts, 94, 15))
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+
+// Callback contravariance is orthogonal to array variance and must keep
+// working: a callback accepting the wider element type is assignable to a
+// parameter typed for the narrower one.
+function forEachString(xs: readonly string[], cb: (x: string) => void) {
+>forEachString : Symbol(forEachString, Decl(strictArrayVariance.ts, 102, 14))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 107, 23))
+>cb : Symbol(cb, Decl(strictArrayVariance.ts, 107, 45))
+>x : Symbol(x, Decl(strictArrayVariance.ts, 107, 51))
+
+    for (const x of xs) cb(x);
+>x : Symbol(x, Decl(strictArrayVariance.ts, 108, 14))
+>xs : Symbol(xs, Decl(strictArrayVariance.ts, 107, 23))
+>cb : Symbol(cb, Decl(strictArrayVariance.ts, 107, 45))
+>x : Symbol(x, Decl(strictArrayVariance.ts, 108, 14))
+}
+const wideCb: (x: string | number) => void = () => {};
+>wideCb : Symbol(wideCb, Decl(strictArrayVariance.ts, 110, 5))
+>x : Symbol(x, Decl(strictArrayVariance.ts, 110, 15))
+
+forEachString(ys, wideCb);
+>forEachString : Symbol(forEachString, Decl(strictArrayVariance.ts, 102, 14))
+>ys : Symbol(ys, Decl(strictArrayVariance.ts, 5, 5))
+>wideCb : Symbol(wideCb, Decl(strictArrayVariance.ts, 110, 5))
+
