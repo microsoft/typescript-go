@@ -4,9 +4,9 @@
 // declare namespace NS {
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace NS {
-// |     interface Config extends þtype {
+// |     interface Config extends Record<string, any> {
 // |     }
 // | }
 // | ```
@@ -15,7 +15,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace NS
 // | ```
 // | 
@@ -39,7 +39,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace NS\n```\n"
+          "value": "```typescript\nnamespace NS\n```\n"
         },
         "range": {
           "start": {
@@ -70,7 +70,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace NS {\n    interface Config extends ï¿½type {\n    }\n}\n```\n"
+          "value": "```typescript\nnamespace NS {\n    interface Config extends Record<string, any> {\n    }\n}\n```\n"
         },
         "range": {
           "start": {

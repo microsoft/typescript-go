@@ -1582,6 +1582,40 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 	}
 }
 
+// VerifyCodeFixAvailableExact verifies that the exact set of code fix descriptions matches.
+// Unlike VerifyCodeFixAvailable, this checks both that all expected descriptions are present
+// and that no additional unexpected code fixes exist (exact count match).
+func (f *FourslashTest) VerifyCodeFixAvailableExact(t *testing.T, expectedDescriptions []string) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if len(actions) != len(expectedDescriptions) {
+		var titles []string
+		for _, a := range actions {
+			titles = append(titles, a.Title)
+		}
+		t.Fatalf("Expected exactly %d code fixes, but got %d. Available fixes: %v", len(expectedDescriptions), len(actions), titles)
+	}
+
+	for _, expected := range expectedDescriptions {
+		found := false
+		for _, action := range actions {
+			if action.Title == expected {
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected code fix with description %q not found. Available fixes: %v", expected, titles)
+		}
+	}
+}
+
 // VerifyCodeFixAll verifies that applying all code fixes with the given fixId produces the expected file content.
 // It gets all quickfix code actions for the file (which includes per-fixId "Fix all" entries when
 // multiple diagnostics match the same provider), finds the fix-all entry, and applies its edits.
@@ -3675,7 +3709,7 @@ func (f *FourslashTest) verifyHoverMarkdown(
 	expectedDocumentation string,
 	prefix string,
 ) {
-	expected := fmt.Sprintf("```tsx\n%s\n```\n%s", expectedText, expectedDocumentation)
+	expected := fmt.Sprintf("```typescript\n%s\n```\n%s", expectedText, expectedDocumentation)
 	assertDeepEqual(t, actual, expected, prefix+"Hover markdown content mismatch")
 }
 
@@ -3708,18 +3742,27 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
 	for marker, expectedText := range markersToNewText {
 		f.GoToMarker(t, marker)
-		params := &lsproto.TextDocumentPositionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
+		params := &lsproto.VsOnAutoInsertParams{
+			VSTextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
-			Position: f.currentCaretPosition,
+			VSPosition: f.currentCaretPosition,
+			VSCh:       ">",
 		}
 
-		requestResult := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+		requestResult := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
 
 		var actualText *string
-		if closingTag := requestResult.CustomClosingTagCompletion; closingTag != nil {
-			actualText = &closingTag.NewText
+		if item := requestResult.VsOnAutoInsertResponseItem; item != nil && item.VSTextEdit != nil {
+			newText := item.VSTextEdit.NewText
+			if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
+				var ok bool
+				newText, ok = strings.CutPrefix(newText, "$0")
+				if !ok {
+					t.Fatalf("%sexpected JSX closing tag snippet to begin with $0, got %q", f.getCurrentPositionPrefix(), item.VSTextEdit.NewText)
+				}
+			}
+			actualText = &newText
 		}
 		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
 	}
@@ -3729,31 +3772,39 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
 	t.Helper()
 
-	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.CustomClosingTagCompletion], bool) {
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.VsOnAutoInsertResponseItem], bool) {
 		if marker.Name == nil {
-			return markerAndItem[*lsproto.CustomClosingTagCompletion]{}, false
+			return markerAndItem[*lsproto.VsOnAutoInsertResponseItem]{}, false
 		}
 
-		params := &lsproto.TextDocumentPositionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
+		params := &lsproto.VsOnAutoInsertParams{
+			VSTextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
 			},
-			Position: marker.LSPosition,
+			VSPosition: marker.LSPosition,
+			VSCh:       ">",
 		}
 
-		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
-		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result.CustomClosingTagCompletion}, true
+		result := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
+		return markerAndItem[*lsproto.VsOnAutoInsertResponseItem]{Marker: marker, Item: result.VsOnAutoInsertResponseItem}, true
 	})
 
-	getRange := func(item *lsproto.CustomClosingTagCompletion) *lsproto.Range {
+	getRange := func(item *lsproto.VsOnAutoInsertResponseItem) *lsproto.Range {
+		// Returning nil lets annotateContentWithTooltips render the caret marker at
+		// the marker position. The text edit's range is zero-width at the cursor,
+		// which would render as an empty underline.
 		return nil
 	}
 
-	getTooltipLines := func(item, _prev *lsproto.CustomClosingTagCompletion) []string {
-		if item == nil {
+	getTooltipLines := func(item, _prev *lsproto.VsOnAutoInsertResponseItem) []string {
+		if item == nil || item.VSTextEdit == nil {
 			return []string{"No closing tag"}
 		}
-		return []string{fmt.Sprintf("newText: %q", item.NewText)}
+		format := "plaintext"
+		if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
+			format = "snippet"
+		}
+		return []string{fmt.Sprintf("%s: %q", format, item.VSTextEdit.NewText)}
 	}
 
 	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)
