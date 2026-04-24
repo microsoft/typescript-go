@@ -565,15 +565,21 @@ func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterOrProp
 }
 
 func getFunctionLikeHost(host *ast.Node) *ast.Node {
-	fun := host
 	if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
 		for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-			if ast.IsFunctionLike(declaration.Initializer()) {
-				fun = declaration.Initializer()
-				break
+			expr := declaration.Initializer()
+			if expr != nil {
+				expr = ast.SkipOuterExpressions(expr, ast.OEKAll)
+				if ast.IsFunctionLike(expr) {
+					return expr
+				}
 			}
 		}
-	} else if host.Kind == ast.KindPropertyAssignment {
+		return nil
+	}
+
+	fun := host
+	if host.Kind == ast.KindPropertyAssignment {
 		fun = host.Initializer()
 	} else if host.Kind == ast.KindPropertyDeclaration {
 		fun = host.Initializer()
@@ -583,6 +589,9 @@ func getFunctionLikeHost(host *ast.Node) *ast.Node {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindExpressionStatement {
 		fun = ast.GetRightMostAssignedExpression(host.Expression())
+	}
+	if fun != nil {
+		fun = ast.SkipOuterExpressions(fun, ast.OEKAll)
 	}
 	if ast.IsFunctionLike(fun) {
 		return fun
