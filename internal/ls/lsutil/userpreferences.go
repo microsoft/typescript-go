@@ -175,6 +175,7 @@ type UserPreferences struct {
 	// AutomaticTypeAcquisitionEnabled is the unified setting from js/ts.tsserver.automaticTypeAcquisition.enabled.
 	// When set, it takes precedence over DisableAutomaticTypeAcquisition.
 	AutomaticTypeAcquisitionEnabled core.Tristate `raw:"automaticTypeAcquisitionEnabled" config:"tsserver.automaticTypeAcquisition.enabled"`
+	// TODO: add js/ts.tsserver.web.typeAcquisition.enabled for the web variant when web support is implemented.
 
 	// ------- Project Configuration -------
 
