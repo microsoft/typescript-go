@@ -1841,6 +1841,7 @@ func (tx *DeclarationTransformer) filterBindingPatternInitializers(node *ast.Nod
 			))
 		}
 		elemList := tx.Factory().NewNodeList(elements)
+		elemList.Loc = node.AsBindingPattern().Elements.Loc
 		return tx.Factory().UpdateBindingPattern(node.AsBindingPattern(), elemList)
 	}
 }
