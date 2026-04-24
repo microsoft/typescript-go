@@ -601,6 +601,7 @@ type Checker struct {
 	strictBindCallApply                         bool
 	strictPropertyInitialization                bool
 	strictBuiltinIteratorReturn                 bool
+	strictArrayVariance                         bool
 	noImplicitAny                               bool
 	noImplicitThis                              bool
 	useUnknownInCatchVariables                  bool
@@ -609,6 +610,7 @@ type Checker struct {
 	wasCanceled                                 bool
 	saveDeferredDiagnostics                     bool
 	arrayVariances                              []VarianceFlags
+	strictInvariantTupleVariances               map[int][]VarianceFlags
 	globals                                     ast.SymbolTable
 	evaluate                                    evaluator.Evaluator
 	stringLiteralTypes                          map[string]*Type
@@ -908,12 +910,17 @@ func NewChecker(program Program) (*Checker, *sync.Mutex) {
 	c.strictBindCallApply = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictBindCallApply)
 	c.strictPropertyInitialization = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictPropertyInitialization)
 	c.strictBuiltinIteratorReturn = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.StrictBuiltinIteratorReturn)
+	// Off unless explicitly enabled: do not tie to `--strict` (too breaking vs TS 6.0 behavior).
+	c.strictArrayVariance = c.compilerOptions.StrictArrayVariance == core.TSTrue
 	c.noImplicitAny = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.NoImplicitAny)
 	c.noImplicitThis = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.NoImplicitThis)
 	c.useUnknownInCatchVariables = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
 	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == core.TSTrue
 	c.canCollectSymbolAliasAccessibilityData = c.compilerOptions.VerbatimModuleSyntax.IsFalseOrUnknown()
 	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
+	if c.strictArrayVariance {
+		c.strictInvariantTupleVariances = make(map[int][]VarianceFlags)
+	}
 	c.globals = make(ast.SymbolTable, countGlobalSymbols(c.files))
 	c.evaluate = evaluator.NewEvaluator(c.evaluateEntity, ast.OEKParentheses)
 	c.stringLiteralTypes = make(map[string]*Type)

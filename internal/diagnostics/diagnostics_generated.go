@@ -4308,6 +4308,10 @@ var Remove_Unused_Imports = &Message{code: 100017, category: CategoryMessage, ke
 
 var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_Imports_100018", text: "Sort Imports"}
 
+var Treat_Array_element_types_as_invariant_when_comparing_instantiations = &Message{code: 100019, category: CategoryMessage, key: "Treat_Array_element_types_as_invariant_when_comparing_instantiations_100019", text: "Treat Array element types as invariant when comparing instantiations."}
+
+var Under_strictArrayVariance_the_element_type_of_mutable_Array_and_mutable_tuples_is_invariant_Use_ReadonlyArray_at_the_parameter_type_if_reads_suffice_or_declare_the_source_as_the_wider_element_type = &Message{code: 100020, category: CategoryError, key: "Under_strictArrayVariance_the_element_type_of_mutable_Array_and_mutable_tuples_is_invariant_Use_Read_100020", text: "Under '--strictArrayVariance', the element type of mutable 'Array' and mutable tuples is invariant. Use 'ReadonlyArray' at the parameter type if reads suffice, or declare the source as the wider element type."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8616,6 +8620,10 @@ func keyToMessage(key Key) *Message {
 		return Remove_Unused_Imports
 	case "Sort_Imports_100018":
 		return Sort_Imports
+	case "Treat_Array_element_types_as_invariant_when_comparing_instantiations_100019":
+		return Treat_Array_element_types_as_invariant_when_comparing_instantiations
+	case "Under_strictArrayVariance_the_element_type_of_mutable_Array_and_mutable_tuples_is_invariant_Use_Read_100020":
+		return Under_strictArrayVariance_the_element_type_of_mutable_Array_and_mutable_tuples_is_invariant_Use_ReadonlyArray_at_the_parameter_type_if_reads_suffice_or_declare_the_source_as_the_wider_element_type
 	default:
 		return nil
 	}

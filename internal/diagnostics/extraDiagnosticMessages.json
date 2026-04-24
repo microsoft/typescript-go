@@ -126,5 +126,13 @@
     "File rename is not supported by the editor": {
         "category": "Error",
         "code": 8040
+    },
+    "Treat Array element types as invariant when comparing instantiations.": {
+        "category": "Message",
+        "code": 100019
+    },
+    "Under '--strictArrayVariance', the element type of mutable 'Array' and mutable tuples is invariant. Use 'ReadonlyArray' at the parameter type if reads suffice, or declare the source as the wider element type.": {
+        "category": "Error",
+        "code": 100020
     }
 }

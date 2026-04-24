@@ -115,6 +115,10 @@ func (r *Relation) size() int {
 	return len(r.results)
 }
 
+// Single-element variances for global Array<T> when strictArrayVariance is enabled.
+// Treated as immutable — do not mutate.
+var invariantArrayElementVariances = []VarianceFlags{VarianceFlagsInvariant}
+
 func (c *Checker) isTypeIdenticalTo(source *Type, target *Type) bool {
 	return c.isTypeRelatedTo(source, target, c.identityRelation)
 }
@@ -1315,10 +1319,44 @@ func (c *Checker) typeCouldHaveTopLevelSingletonTypes(t *Type) bool {
 
 func (c *Checker) getVariances(t *Type) []VarianceFlags {
 	// Arrays and tuples are known to be covariant, no need to spend time computing this.
-	if t == c.globalArrayType || t == c.globalReadonlyArrayType || t.objectFlags&ObjectFlagsTuple != 0 {
+	// Mutable `Array<T>` and mutable tuples are unsound if treated covariantly when the
+	// reference may be mutated (e.g. passing `string[]` where `(string|number)[]` is
+	// expected, or `[string, string]` where `[string|number, string]` is expected, and
+	// the callee then writes). Optional strict mode treats their element parameters as
+	// invariant; `ReadonlyArray` and readonly tuples stay covariant.
+	if t == c.globalArrayType {
+		if c.strictArrayVariance {
+			return invariantArrayElementVariances
+		}
+		return c.arrayVariances
+	}
+	if t.objectFlags&ObjectFlagsTuple != 0 {
+		if c.strictArrayVariance && !t.AsTupleType().readonly {
+			return c.getStrictInvariantTupleVariances(len(t.AsInterfaceType().TypeParameters()))
+		}
+		return c.arrayVariances
+	}
+	if t == c.globalReadonlyArrayType {
 		return c.arrayVariances
 	}
 	return c.getVariancesWorker(t.symbol, t.AsInterfaceType().TypeParameters())
+}
+
+// getStrictInvariantTupleVariances returns a slice of `n` invariant variance flags.
+// The returned slice is cached per-arity on the Checker and must not be mutated.
+func (c *Checker) getStrictInvariantTupleVariances(n int) []VarianceFlags {
+	if n <= 1 {
+		return invariantArrayElementVariances[:max(n, 0):max(n, 0)]
+	}
+	if v, ok := c.strictInvariantTupleVariances[n]; ok {
+		return v
+	}
+	v := make([]VarianceFlags, n)
+	for i := range v {
+		v[i] = VarianceFlagsInvariant
+	}
+	c.strictInvariantTupleVariances[n] = v
+	return v
 }
 
 func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
@@ -4144,6 +4182,18 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 					targetCheckType = r.c.removeMissingType(targetType, targetFlags&ElementFlagsOptional != 0)
 				}
 				related := r.isRelatedToEx(sourceType, targetCheckType, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				// Under --strictArrayVariance, mutable tuple fixed-element positions are invariant:
+				// the callee can do `xs[i] = U`, so the caller's element type must equal the target's.
+				// Only apply this check when the target tuple is mutable and both positions are fixed
+				// (required/optional); rest/variadic positions are handled via their own array/variadic
+				// paths which already go through globalArrayType variance.
+				if related != TernaryFalse &&
+					r.c.strictArrayVariance &&
+					!target.TargetTupleType().readonly &&
+					sourceFlags&ElementFlagsFixed != 0 &&
+					targetFlags&ElementFlagsFixed != 0 {
+					related &= r.isRelatedToEx(targetCheckType, sourceType, RecursionFlagsBoth, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
+				}
 				if related == TernaryFalse {
 					if reportErrors && (targetArity > 1 || sourceArity > 1) {
 						if targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount != sourceArity-targetEndCount-1 {
@@ -4336,6 +4386,29 @@ func (r *Relater) tryElaborateArrayLikeErrors(source *Type, target *Type, report
 		return r.c.isArrayType(source)
 	}
 	return true
+}
+
+// tryElaborateStrictArrayVarianceHint appends a user-facing hint when two
+// same-target mutable-array-like instantiations fail to relate and the
+// failure is specifically caused by `--strictArrayVariance` making the
+// element type invariant. It is a no-op when the flag is off.
+func (r *Relater) tryElaborateStrictArrayVarianceHint(source *Type, target *Type) {
+	if !r.c.strictArrayVariance {
+		return
+	}
+	if source.objectFlags&ObjectFlagsReference == 0 || target.objectFlags&ObjectFlagsReference == 0 {
+		return
+	}
+	if source.Target() != target.Target() {
+		return
+	}
+	t := source.Target()
+	isArray := t == r.c.globalArrayType
+	isMutableTuple := t.objectFlags&ObjectFlagsTuple != 0 && !t.AsTupleType().readonly
+	if !isArray && !isMutableTuple {
+		return
+	}
+	r.reportError(diagnostics.Under_strictArrayVariance_the_element_type_of_mutable_Array_and_mutable_tuples_is_invariant_Use_ReadonlyArray_at_the_parameter_type_if_reads_suffice_or_declare_the_source_as_the_wider_element_type)
 }
 
 func (r *Relater) tryElaborateErrorsForPrimitivesAndObjects(source *Type, target *Type) {
@@ -4646,6 +4719,7 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 	}
 	if source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsObject != 0 {
 		r.tryElaborateArrayLikeErrors(source, target, true /*reportErrors*/)
+		r.tryElaborateStrictArrayVarianceHint(source, target)
 	}
 	switch {
 	case source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsPrimitive != 0:
