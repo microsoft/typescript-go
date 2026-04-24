@@ -1100,7 +1100,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	s.snapshotMu.Unlock()
 
 	// Enqueue ATA updates if needed
-	if s.typingsInstaller != nil {
+	if s.typingsInstaller != nil && !s.Config().IsATADisabled() {
 		s.triggerATAForUpdatedProjects(newSnapshot)
 	}
 
@@ -1536,9 +1536,6 @@ func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
 }
 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
-	if s.Config().IsATADisabled() {
-		return
-	}
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.ShouldTriggerATA(newSnapshot.ID()) {
 			s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
