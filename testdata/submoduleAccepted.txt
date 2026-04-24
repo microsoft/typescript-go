@@ -1336,3 +1336,5 @@ conformance/privateNameStaticMethod.js.diff
 ## JSDoc-in-TypeScript parsing changes cause broken emit (caused by documented deprecation of @function tag)
 ## JSDoc type annotations in `.ts` files now cause parsing issues resulting in broken JS output
 conformance/jsdocDisallowedInTypescript.js.diff
+## Corsa correctly emits `any` type for auto-typed variable with `null` initializer
+compiler/letDeclarations.js.diff
