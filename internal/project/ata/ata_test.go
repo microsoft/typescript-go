@@ -735,4 +735,50 @@ func TestATA(t *testing.T) {
 		calls := utils.NpmExecutor().NpmInstallCalls()
 		assert.Equal(t, 0, len(calls), "Expected no npm install calls when ATA is disabled via deprecated setting")
 	})
+
+	t.Run("ATA re-enabled after being disabled triggers diagnostics refresh", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js": ``,
+			"/user/username/projects/project/package.json": `{
+				"name": "test",
+				"dependencies": {
+					"jquery": "^3.1.0"
+				}
+			}`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"jquery": `declare const $: { x: number }`,
+			},
+		})
+
+		// Disable ATA
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{
+			"js/ts": map[string]any{
+				"tsserver": map[string]any{
+					"automaticTypeAcquisition": map[string]any{
+						"enabled": false,
+					},
+				},
+			},
+		}))
+
+		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"), 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 0, len(calls), "Expected no npm install calls when ATA is disabled")
+
+		baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+		// Re-enable ATA
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{}))
+		session.WaitForBackgroundTasks()
+
+		refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+		assert.Assert(t, refreshCount > baselineRefreshCount, "Expected RefreshDiagnostics call after ATA setting change")
+	})
 }

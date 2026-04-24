@@ -268,6 +268,7 @@ func (s *Session) Configure(config lsutil.UserPreferences) {
 	s.refreshInlayHintsIfNeeded(oldConfig, config)
 	s.refreshCodeLensIfNeeded(oldConfig, config)
 	s.refreshDiagnosticsIfNeeded(oldConfig, config)
+	s.refreshATAIfNeeded(oldConfig, config)
 }
 
 func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
@@ -1449,6 +1450,14 @@ func (s *Session) refreshCodeLensIfNeeded(oldPrefs lsutil.UserPreferences, newPr
 
 func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
 	if oldPrefs.CustomConfigFileName != newPrefs.CustomConfigFileName {
+		s.ScheduleDiagnosticsRefresh()
+	}
+}
+
+func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
+	if oldPrefs.IsATADisabled() != newPrefs.IsATADisabled() {
+		// ATA setting changed; schedule a diagnostics refresh so the next snapshot update
+		// triggers (or skips) ATA for existing projects with the new setting.
 		s.ScheduleDiagnosticsRefresh()
 	}
 }
