@@ -718,28 +718,28 @@ type GetBaseTypeOfLiteralTypeParams struct {
 	Type     Handle[checker.Type]     `json:"type"`
 }
 
-// GetNonNullableTypeParams returns the type with null and undefined removed.
+// GetNonNullableTypeParams are the parameters for the getNonNullableType method.
 type GetNonNullableTypeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
 	Type     Handle[checker.Type]     `json:"type"`
 }
 
-// GetTypeFromTypeNodeParams returns the type for a type node.
+// GetTypeFromTypeNodeParams are the parameters for the getTypeFromTypeNode method.
 type GetTypeFromTypeNodeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
 	Location Handle[ast.Node]         `json:"location"`
 }
 
-// GetWidenedTypeParams returns the widened type of a type.
+// GetWidenedTypeParams are the parameters for the getWidenedType method.
 type GetWidenedTypeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
 	Type     Handle[checker.Type]     `json:"type"`
 }
 
-// GetParameterTypeParams returns the type of a parameter at a given index in a signature.
+// GetParameterTypeParams are the parameters for the getParameterType method.
 type GetParameterTypeParams struct {
 	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
 	Project   Handle[project.Project]   `json:"project"`

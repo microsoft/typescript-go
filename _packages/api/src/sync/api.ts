@@ -740,7 +740,7 @@ export class Checker {
         return decodeNode(binaryData) as TypeNode;
     }
 
-    signatureToSignatureDeclaration(signature: Signature, kind: number, enclosingDeclaration?: Node, flags?: number): Node | undefined {
+    signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Node | undefined {
         const binaryData = this.client.apiRequestBinary("signatureToSignatureDeclaration", {
             snapshot: this.snapshotId,
             project: this.projectId,

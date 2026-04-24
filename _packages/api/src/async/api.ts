@@ -732,7 +732,7 @@ export class Checker {
         return decodeNode(binaryData) as TypeNode;
     }
 
-    async signatureToSignatureDeclaration(signature: Signature, kind: number, enclosingDeclaration?: Node, flags?: number): Promise<Node | undefined> {
+    async signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): Promise<Node | undefined> {
         const binaryData = await this.client.apiRequestBinary("signatureToSignatureDeclaration", {
             snapshot: this.snapshotId,
             project: this.projectId,

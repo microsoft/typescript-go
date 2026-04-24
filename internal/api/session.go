@@ -1367,7 +1367,11 @@ func (s *Session) handleGetParameterType(ctx context.Context, params *GetParamet
 		return nil, err
 	}
 
-	t := setup.checker.GetTypeParameterAtPosition(sig, int(params.Index))
+	if params.Index < 0 {
+		return nil, fmt.Errorf("invalid parameter index")
+	}
+
+	t := setup.checker.GetTypeAtPosition(sig, int(params.Index))
 	if t == nil {
 		return nil, nil
 	}
