@@ -1337,8 +1337,18 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
 	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
+		var traceArgs map[string]any
 		if tr := c.tracer; tr != nil {
-			defer tr.Push(tracing.PhaseCheckTypes, "getVariancesWorker", map[string]any{"arity": len(typeParameters), "id": c.getDeclaredTypeOfSymbol(symbol).id}, false)()
+			traceArgs = map[string]any{"arity": len(typeParameters), "id": c.getDeclaredTypeOfSymbol(symbol).id}
+			popFn := tr.Push(tracing.PhaseCheckTypes, "getVariancesWorker", traceArgs, true)
+			defer func() {
+				formatted := make([]string, len(links.variances))
+				for i, v := range links.variances {
+					formatted[i] = v.String()
+				}
+				traceArgs["variances"] = formatted
+				popFn()
+			}()
 		}
 		oldVarianceComputation := c.inVarianceComputation
 		saveResolutionStart := c.resolutionStart

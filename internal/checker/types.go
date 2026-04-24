@@ -508,6 +508,31 @@ func (f TypeFlags) String() string {
 	return strings.Join(FormatTypeFlags(f), "|")
 }
 
+func (v VarianceFlags) String() string {
+	variance := v & VarianceFlagsVarianceMask
+	var result string
+	switch variance {
+	case VarianceFlagsInvariant:
+		result = "in out"
+	case VarianceFlagsBivariant:
+		result = "[bivariant]"
+	case VarianceFlagsContravariant:
+		result = "in"
+	case VarianceFlagsCovariant:
+		result = "out"
+	case VarianceFlagsIndependent:
+		result = "[independent]"
+	default:
+		result = ""
+	}
+	if v&VarianceFlagsUnmeasurable != 0 {
+		result += " (unmeasurable)"
+	} else if v&VarianceFlagsUnreliable != 0 {
+		result += " (unreliable)"
+	}
+	return result
+}
+
 type ObjectFlags uint32
 
 // Types included in TypeFlags.ObjectFlagsType have an objectFlags property. Some ObjectFlags
