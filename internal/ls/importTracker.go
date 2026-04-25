@@ -672,7 +672,7 @@ func skipExportSpecifierSymbol(symbol *ast.Symbol, checker *checker.Checker) *as
 			// Export of form 'module.exports.propName = expr';
 			return checker.GetSymbolAtLocation(declaration)
 		case ast.IsShorthandPropertyAssignment(declaration) && ast.IsBinaryExpression(declaration.Parent.Parent) && ast.GetAssignmentDeclarationKind(declaration.Parent.Parent) == ast.JSDeclarationKindModuleExports:
-			return checker.GetExportSpecifierLocalTargetSymbol(declaration.Name())
+			return core.OrElse(checker.GetExportSpecifierLocalTargetSymbol(declaration.Name()), symbol)
 		}
 	}
 	return symbol
