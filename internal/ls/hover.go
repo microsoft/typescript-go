@@ -737,6 +737,18 @@ func getSymbolAtLocationForQuickInfo(c *checker.Checker, node *ast.Node) *ast.Sy
 
 func getSignaturesAtLocation(c *checker.Checker, symbol *ast.Symbol, kind checker.SignatureKind, node *ast.Node) []*checker.Signature {
 	signatures := c.GetSignaturesOfType(c.GetTypeOfSymbol(symbol), kind)
+	// Optional methods/functions (e.g. `bar?(): void`) get a `T | undefined` type, and
+	// `GetSignaturesOfType` on a union returns nothing. Recover the signatures from the
+	// function-like declarations so hover matches the required-method path.
+	if len(signatures) == 0 && kind == checker.SignatureKindCall && symbol.Flags&ast.SymbolFlagsOptional != 0 {
+		for _, decl := range symbol.Declarations {
+			if ast.IsFunctionLike(decl) {
+				if sig := c.GetSignatureFromDeclaration(decl); sig != nil {
+					signatures = append(signatures, sig)
+				}
+			}
+		}
+	}
 	if len(signatures) > 1 || len(signatures) == 1 && len(signatures[0].TypeParameters()) != 0 {
 		if callNode := getCallOrNewExpression(node); callNode != nil {
 			signature := c.GetResolvedSignature(callNode)
