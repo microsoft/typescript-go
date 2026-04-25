@@ -578,6 +578,9 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		}
 		// Search on the local symbol in the exporting module, not the exported symbol.
 		importedSymbol = skipExportSpecifierSymbol(importedSymbol, checker)
+		if importedSymbol == nil {
+			return nil
+		}
 		// Similarly, skip past the symbol for 'export ='
 		if importedSymbol.Name == "export=" {
 			importedSymbol = getExportEqualsLocalSymbol(importedSymbol, checker)
@@ -672,7 +675,7 @@ func skipExportSpecifierSymbol(symbol *ast.Symbol, checker *checker.Checker) *as
 			// Export of form 'module.exports.propName = expr';
 			return checker.GetSymbolAtLocation(declaration)
 		case ast.IsShorthandPropertyAssignment(declaration) && ast.IsBinaryExpression(declaration.Parent.Parent) && ast.GetAssignmentDeclarationKind(declaration.Parent.Parent) == ast.JSDeclarationKindModuleExports:
-			return core.OrElse(checker.GetExportSpecifierLocalTargetSymbol(declaration.Name()), symbol)
+			return checker.GetExportSpecifierLocalTargetSymbol(declaration.Name())
 		}
 	}
 	return symbol
