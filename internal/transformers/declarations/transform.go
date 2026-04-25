@@ -64,6 +64,7 @@ type DeclarationTransformer struct {
 	rawReferencedFiles               []ReferencedFilePair
 	rawTypeReferenceDirectives       []*ast.FileReference
 	rawLibReferenceDirectives        []*ast.FileReference
+	bindingNameVisitor      *ast.NodeVisitor
 }
 
 // TODO: Convert to transformers.TransformerFactory signature to allow more automatic composition with other transforms
@@ -94,6 +95,7 @@ func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitCo
 		}
 	}
 	tx.NewTransformer(tx.visit, context)
+	tx.bindingNameVisitor = tx.EmitContext().NewNodeVisitor(tx.visitBindingName)
 	return tx
 }
 
@@ -1793,7 +1795,7 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 		p,
 		nil,
 		p.DotDotDotToken,
-		tx.filterBindingPatternInitializers(p.Name()),
+		tx.bindingNameVisitor.VisitNode(p.Name()),
 		questionToken,
 		tx.ensureType(p.AsNode(), true),
 		tx.ensureNoInitializer(p.AsNode()),
@@ -1813,28 +1815,20 @@ func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node 
 	return nil
 }
 
-func (tx *DeclarationTransformer) filterBindingPatternInitializers(node *ast.Node) *ast.Node {
-	if node.Kind == ast.KindIdentifier {
+func (tx *DeclarationTransformer) visitBindingName(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindIdentifier, ast.KindOmittedExpression:
+		return node
+	case ast.KindArrayBindingPattern, ast.KindObjectBindingPattern:
+		return node.VisitEachChild(tx.bindingNameVisitor)
+	case ast.KindBindingElement:
+		if node.PropertyName() != nil && ast.IsComputedPropertyName(node.PropertyName()) && ast.IsEntityNameExpression(node.PropertyName().Expression()) {
+			tx.checkEntityNameVisibility(node.PropertyName().Expression(), tx.enclosingDeclaration)
+		}
+		return tx.Factory().UpdateBindingElement(node.AsBindingElement(), node.AsBindingElement().DotDotDotToken, node.PropertyName(), tx.bindingNameVisitor.VisitNode(node.Name()), nil, /*initializer*/)
+	default:
 		return node
 	}
-
-	var visitor *ast.NodeVisitor
-	visitor = tx.EmitContext().NewNodeVisitor(func(node *ast.Node) *ast.Node {
-		switch node.Kind {
-		case ast.KindIdentifier, ast.KindOmittedExpression:
-			return node
-		case ast.KindArrayBindingPattern, ast.KindObjectBindingPattern:
-			return node.VisitEachChild(visitor)
-		case ast.KindBindingElement:
-			if node.PropertyName() != nil && ast.IsComputedPropertyName(node.PropertyName()) && ast.IsEntityNameExpression(node.PropertyName().Expression()) {
-				tx.checkEntityNameVisibility(node.PropertyName().Expression(), tx.enclosingDeclaration)
-			}
-			return visitor.Factory.UpdateBindingElement(node.AsBindingElement(), node.AsBindingElement().DotDotDotToken, node.PropertyName(), visitor.VisitNode(node.Name()), nil /*initializer*/)
-		default:
-			return node
-		}
-	})
-	return visitor.VisitNode(node)
 }
 
 func (tx *DeclarationTransformer) transformImportEqualsDeclaration(decl *ast.ImportEqualsDeclaration) *ast.Node {
