@@ -1064,6 +1064,22 @@ export class Checker {
         });
     }
 
+    isArrayType(type: Type): boolean {
+        return this.client.apiRequest<boolean>("isArrayType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+    }
+
+    isTupleType(type: Type): boolean {
+        return this.client.apiRequest<boolean>("isTupleType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+    }
+
     getReturnTypeOfSignature(signature: Signature): Type | undefined {
         const data = this.client.apiRequest<TypeResponse | null>("getReturnTypeOfSignature", {
             snapshot: this.snapshotId,

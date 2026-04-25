@@ -1954,6 +1954,140 @@ describe("readFile callback semantics", () => {
     });
 });
 
+describe("Checker - isArrayType / isTupleType", () => {
+    test("number[] is array, not tuple", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const xs: number[] = [];`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export const xs: number[] = [];`;
+            const pos = src.indexOf("xs");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(project.checker.isArrayType(type), true);
+            assert.equal(project.checker.isTupleType(type), false);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("readonly number[] is array", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const xs: readonly number[] = [];`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export const xs: readonly number[] = [];`;
+            const pos = src.indexOf("xs");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(project.checker.isArrayType(type), true);
+            assert.equal(project.checker.isTupleType(type), false);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("Array<number> is array, not tuple", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const xs: Array<number> = [];`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export const xs: Array<number> = [];`;
+            const pos = src.indexOf("xs");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(project.checker.isArrayType(type), true);
+            assert.equal(project.checker.isTupleType(type), false);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("[number, string] is tuple, not array", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const tup: [number, string] = [1, "a"];`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export const tup: [number, string] = [1, "a"];`;
+            const pos = src.indexOf("tup");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(project.checker.isArrayType(type), false);
+            assert.equal(project.checker.isTupleType(type), true);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("readonly [number, string] is tuple, not array", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const tup: readonly [number, string] = [1, "a"];`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export const tup: readonly [number, string] = [1, "a"];`;
+            const pos = src.indexOf("tup");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(project.checker.isArrayType(type), false);
+            assert.equal(project.checker.isTupleType(type), true);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("string is neither array nor tuple", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const str: string = "";`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export const str: string = "";`;
+            const pos = src.indexOf("str");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(project.checker.isArrayType(type), false);
+            assert.equal(project.checker.isTupleType(type), false);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("Checker - getReturnTypeOfSignature", () => {
     test("returns the return type of a function signature", () => {
         const api = spawnAPI({

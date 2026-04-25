@@ -628,6 +628,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetJSDocTags(ctx, parsed.(*CheckerSymbolParams))
 	case string(MethodGetDocumentationComment):
 		return s.handleGetDocumentationComment(ctx, parsed.(*CheckerSymbolParams))
+	case string(MethodIsArrayType):
+		return s.handleIsArrayType(ctx, parsed.(*CheckerTypeParams))
+	case string(MethodIsTupleType):
+		return s.handleIsTupleType(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetAnyType):
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetAnyType)
 	case string(MethodGetStringType):
@@ -2018,6 +2022,38 @@ func (s *Session) handleGetTypePredicateOfSignature(ctx context.Context, params 
 	}
 
 	return resp, nil
+}
+
+// handleIsArrayType returns whether a type is Array<T> or ReadonlyArray<T>.
+func (s *Session) handleIsArrayType(ctx context.Context, params *CheckerTypeParams) (bool, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return false, err
+	}
+	defer setup.done()
+
+	t, err := setup.resolveTypeHandle(params.Type)
+	if err != nil {
+		return false, err
+	}
+
+	return setup.checker.IsArrayType(t), nil
+}
+
+// handleIsTupleType returns whether a type is a tuple type.
+func (s *Session) handleIsTupleType(ctx context.Context, params *CheckerTypeParams) (bool, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return false, err
+	}
+	defer setup.done()
+
+	t, err := setup.resolveTypeHandle(params.Type)
+	if err != nil {
+		return false, err
+	}
+
+	return checker.IsTupleType(t), nil
 }
 
 // handleGetBaseTypes returns the base types of an interface/class type.

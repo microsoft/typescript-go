@@ -1056,6 +1056,22 @@ export class Checker {
         });
     }
 
+    async isArrayType(type: Type): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isArrayType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+    }
+
+    async isTupleType(type: Type): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isTupleType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+    }
+
     async getReturnTypeOfSignature(signature: Signature): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getReturnTypeOfSignature", {
             snapshot: this.snapshotId,
