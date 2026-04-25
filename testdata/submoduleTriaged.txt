@@ -254,7 +254,6 @@ conformance/genericFunctionParameters.js.diff
 
 # Declaration emit trailing comma changes in destructuring parameters
 ## https://github.com/microsoft/typescript-go/issues/3565
-compiler/declarationEmitDestructuring5.js.diff
 
 # Late-bound computed property [prop] preserved instead of resolved to plain prop
 ## https://github.com/microsoft/typescript-go/issues/3566
