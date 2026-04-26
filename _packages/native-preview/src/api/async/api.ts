@@ -1,6 +1,7 @@
 /// <reference path="../node/node.ts" preserve="true" />
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
+import { EmitFlags } from "#enums/emitFlags";
 import { ObjectFlags } from "#enums/objectFlags";
 import { SignatureFlags } from "#enums/signatureFlags";
 import { SignatureKind } from "#enums/signatureKind";
@@ -420,6 +421,24 @@ export class Program {
             project: this.projectId,
         });
         return data ?? [];
+    }
+
+    /**
+     * Emit the compiled JavaScript and declaration files for the whole project,
+     * or a specific file if provided.
+     * @param file - Optional source file whose compiled output is to be emitted.
+     *               If omitted, all files in the project will be considered.
+     * @param emitOnly - Optional flag to specify what kinds of files to emit
+     *                   (e.g. only JavaScript, only declarations, etc.). Defaults
+     *                   to emitting all files.
+     */
+    async emit(file?: DocumentIdentifier, emitOnly: EmitFlags = EmitFlags.All): Promise<void> {
+        const data = await this.client.apiRequest("emit", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+            emitOnly: emitOnly,
+        });
     }
 }
 
