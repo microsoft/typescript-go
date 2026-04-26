@@ -34,6 +34,7 @@ import {
     API,
     type ConditionalType,
     DiagnosticCategory,
+    EmitFlags,
     type IndexedAccessType,
     type IndexType,
     ModifierFlags,
@@ -57,7 +58,6 @@ import {
     test,
 } from "node:test";
 import { fileURLToPath } from "node:url";
-import { EmitFlags } from "../../src/enums/emitFlags.ts";
 import { runBenchmarks } from "./api.bench.ts";
 
 const defaultFiles = {
