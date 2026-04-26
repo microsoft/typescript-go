@@ -75,6 +75,7 @@ import type {
     AssertsThisTypePredicate,
     ConditionalType,
     Diagnostic,
+    EmitResult,
     IdentifierTypePredicate,
     IndexedAccessType,
     IndexInfo,
@@ -440,14 +441,14 @@ export class Program {
      *                   (e.g. only JavaScript, only declarations, etc.). Defaults
      *                   to emitting all files.
      */
-    emit(file?: DocumentIdentifier, emitOnly: EmitFlags = EmitFlags.All): void {
+    emit(file?: DocumentIdentifier, emitOnly: EmitFlags = EmitFlags.All): EmitResult {
         const data = this.client.apiRequest("emit", {
             snapshot: this.snapshotId,
             project: this.projectId,
             ...(file !== undefined ? { targetSourceFile: file } : {}),
             emitOnly: emitOnly,
         });
-        return data as any;
+        return data as EmitResult;
     }
 }
 
