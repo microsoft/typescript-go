@@ -436,9 +436,10 @@ export class Program {
         const data = await this.client.apiRequest("emit", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            ...(file !== undefined ? { file } : {}),
+            ...(file !== undefined ? { targetSourceFile: file } : {}),
             emitOnly: emitOnly,
         });
+        return data as any;
     }
 }
 
