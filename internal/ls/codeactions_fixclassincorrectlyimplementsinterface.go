@@ -29,7 +29,7 @@ var FixClassIncorrectlyImplementsInterfaceProvider = &CodeFixProvider{
 	GetAllCodeActions: getAllCodeActionsToFixClassIncorrectlyImplementsInterface,
 }
 
-func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Context, fixContext *CodeFixContext) ([]CodeAction, error) {
+func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Context, fixContext *CodeFixContext) ([]*CodeAction, error) {
 	classDeclaration := getClass(fixContext.SourceFile, fixContext.Span)
 	if classDeclaration == nil {
 		return nil, nil
@@ -41,7 +41,7 @@ func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Cont
 	typeChecker, done := fixContext.Program.GetTypeCheckerForFile(context, fixContext.SourceFile)
 	defer done()
 
-	var actions []CodeAction
+	var actions []*CodeAction
 	for _, implementedTypeNode := range implementsTypes {
 		changeTracker := change.NewTracker(context, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 		importAdder, err := createImportAdder(context, fixContext, typeChecker)
@@ -55,7 +55,7 @@ func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Cont
 			continue
 		}
 
-		actions = append(actions, CodeAction{
+		actions = append(actions, &CodeAction{
 			Description:       diagnostics.Implement_interface_0.Localize(locale, scanner.GetTextOfNode(implementedTypeNode)),
 			Changes:           changes,
 			FixID:             fixClassIncorrectlyImplementsInterfaceFixID,
