@@ -831,10 +831,10 @@ type DiagnosticResponse struct {
 
 // EmitParams are the parameters for the emit method.
 type EmitParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     *DocumentIdentifier      `json:"targetSourceFile,omitempty"`
-	EmitOnly byte                     `json:"emitOnly"`
+	Snapshot         Handle[project.Snapshot] `json:"snapshot"`
+	Project          Handle[project.Project]  `json:"project"`
+	TargetSourceFile *DocumentIdentifier      `json:"targetSourceFile,omitempty"`
+	EmitOnly         byte                     `json:"emitOnly"`
 }
 
 // EmitResponse is the response for the emit method.
