@@ -8,6 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -156,6 +157,7 @@ const (
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
+	MethodEmit      Method = "emit"
 
 	// Intrinsic type getters
 	MethodGetAnyType       Method = "getAnyType"
@@ -378,6 +380,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
 	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
 	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
+	MethodEmit:                              unmarshallerFor[EmitParams],
 }
 
 type ParseConfigFileParams struct {
@@ -826,6 +829,21 @@ type DiagnosticResponse struct {
 	RelatedInformation []*DiagnosticResponse `json:"relatedInformation,omitempty"`
 }
 
+// EmitParams are the parameters for the emit method.
+type EmitParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     *DocumentIdentifier      `json:"targetSourceFile,omitempty"`
+	EmitOnly byte                     `json:"emitOnly"`
+}
+
+// EmitResponse is the response for the emit method.
+type EmitResponse struct {
+	EmitSkipped  bool                  `json:"emitSkipped"`
+	Diagnostics  []*DiagnosticResponse `json:"diagnostics"`
+	EmittedFiles []string              `json:"emittedFiles"`
+}
+
 // NewDiagnosticResponse converts an ast.Diagnostic to a DiagnosticResponse.
 func NewDiagnosticResponse(d *ast.Diagnostic) *DiagnosticResponse {
 	resp := &DiagnosticResponse{
@@ -869,6 +887,15 @@ func NewDiagnosticResponses(diags []*ast.Diagnostic) []*DiagnosticResponse {
 		result[i] = NewDiagnosticResponse(d)
 	}
 	return result
+}
+
+// NewEmitResponse converts a compiler.EmitResult to an EmitResponse.
+func NewEmitResponse(emitResult *compiler.EmitResult) *EmitResponse {
+	return &EmitResponse{
+		EmitSkipped:  emitResult.EmitSkipped,
+		Diagnostics:  NewDiagnosticResponses(emitResult.Diagnostics),
+		EmittedFiles: emitResult.EmittedFiles,
+	}
 }
 
 func unmarshalPayload(method string, payload json.Value) (any, error) {
