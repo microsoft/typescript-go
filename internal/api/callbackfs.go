@@ -207,7 +207,7 @@ func (fs *callbackFS) WriteFile(path string, data string) error {
 
 		_, err := fs.call(callbackWriteFile, data)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		return nil
 	}
