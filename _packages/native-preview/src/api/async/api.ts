@@ -90,9 +90,9 @@ import type {
     UnionType,
 } from "./types.ts";
 
-export { DiagnosticCategory, ElementFlags, ModifierFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export { DiagnosticCategory, ElementFlags, EmitFlags, ModifierFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, EmitResult, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
