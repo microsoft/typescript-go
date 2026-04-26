@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"fmt"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -29,6 +31,17 @@ const (
 	EmitOnlyDts
 	EmitOnlyForcedDts
 )
+
+func EmitOnlyFromByte(v byte) (EmitOnly, error) {
+	s := EmitOnly(v)
+
+	switch s {
+	case EmitAll, EmitOnlyJs, EmitOnlyDts, EmitOnlyForcedDts:
+		return s, nil
+	default:
+		return EmitAll, fmt.Errorf("Invalid value for EmitOnly flag: %d", v)
+	}
+}
 
 type emitter struct {
 	host               EmitHost
