@@ -39,7 +39,7 @@ func EmitOnlyFromByte(v byte) (EmitOnly, error) {
 	case EmitAll, EmitOnlyJs, EmitOnlyDts, EmitOnlyForcedDts:
 		return s, nil
 	default:
-		return EmitAll, fmt.Errorf("Invalid value for EmitOnly flag: %d", v)
+		return EmitAll, fmt.Errorf("invalid value for EmitOnly flag: %d", v)
 	}
 }
 
