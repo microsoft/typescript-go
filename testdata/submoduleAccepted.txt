@@ -1182,7 +1182,7 @@ conformance/nodeModulesAllowJsPackageImports(module=node20).js.diff
 conformance/nodeModulesAllowJsPackageImports(module=nodenext).js.diff
 
 ## this.x member ordering changed
-## Strada grouped js declaration members by catecory, corsa keeps them in source order
+## Strada grouped js declaration members by category, corsa keeps them in source order
 compiler/argumentsReferenceInConstructor1_Js.js.diff
 compiler/argumentsReferenceInConstructor2_Js.js.diff
 compiler/argumentsReferenceInConstructor3_Js.js.diff
