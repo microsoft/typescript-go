@@ -1895,7 +1895,7 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 		return nil, err
 	}
 
-	targetSourceFile, err := s.resolveOptionalSourceFile(program, params.File)
+	targetSourceFile, err := s.resolveOptionalSourceFile(program, params.TargetSourceFile)
 	if err != nil {
 		return nil, err
 	}
