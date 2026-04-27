@@ -1962,42 +1962,6 @@ func (p *Program) GetSymlinkCache() *symlinks.KnownSymlinks {
 			knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
 		}
 
-		// Check other dependencies for symlinks
-		var seenPackageJsons collections.Set[tspath.Path]
-		for filePath, meta := range p.sourceFileMetaDatas {
-			if meta.PackageJsonDirectory == "" ||
-				!p.SourceFileMayBeEmitted(p.GetSourceFileByPath(filePath), false) ||
-				!seenPackageJsons.AddIfAbsent(p.toPath(meta.PackageJsonDirectory)) {
-				continue
-			}
-			packageJsonName := tspath.CombinePaths(meta.PackageJsonDirectory, "package.json")
-			info := p.GetPackageJsonInfo(packageJsonName)
-			if info.GetContents() == nil {
-				continue
-			}
-
-			for dep := range info.GetContents().GetRuntimeDependencyNames().Keys() {
-				// Skip work in common case: we already saved a symlink for this package directory
-				// in the node_modules adjacent to this package.json
-				possibleDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", dep))
-				if knownSymlinks.HasDirectory(possibleDirectoryPath) {
-					continue
-				}
-				if !strings.HasPrefix(dep, "@types") {
-					possibleTypesDirectoryPath := p.toPath(tspath.CombinePaths(meta.PackageJsonDirectory, "node_modules", module.GetTypesPackageName(dep)))
-					if knownSymlinks.HasDirectory(possibleTypesDirectoryPath) {
-						continue
-					}
-				}
-
-				if packageResolution := p.resolver.ResolvePackageDirectory(dep, packageJsonName, core.ResolutionModeCommonJS, nil); packageResolution.IsResolved() {
-					knownSymlinks.ProcessResolution(
-						tspath.CombinePaths(packageResolution.OriginalPath, "package.json"),
-						tspath.CombinePaths(packageResolution.ResolvedFileName, "package.json"),
-					)
-				}
-			}
-		}
 		return knownSymlinks
 	})
 }

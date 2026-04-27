@@ -202,6 +202,25 @@ func getAllModulePathsWorker(
 	compilerOptions *core.CompilerOptions,
 	options ModuleSpecifierOptions,
 ) []ModulePath {
+	symlinkCache := host.GetSymlinkCache()
+	if symlinkCache != nil && !ContainsNodeModules(info.ImportingSourceFileName) {
+		// Populate symlinks for runtime dependencies using normal module resolution so paths mappings
+		// and package.json context match the module specifier being generated.
+		packageDirectory := host.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(info.ImportingSourceFileName))
+		if packageDirectory != "" {
+			packageJsonName := tspath.CombinePaths(packageDirectory, "package.json")
+			packageJsonInfo := host.GetPackageJsonInfo(packageJsonName)
+			if packageJsonInfo != nil && packageJsonInfo.GetContents() != nil {
+				for dep := range packageJsonInfo.GetContents().GetRuntimeDependencyNames().Keys() {
+					resolved := host.ResolveModuleName(dep, packageJsonName, options.OverrideImportMode)
+					if resolved != nil && resolved.IsResolved() {
+						symlinkCache.ProcessResolution(resolved.OriginalPath, resolved.ResolvedFileName)
+					}
+				}
+			}
+		}
+	}
+
 	allFileNames := make(map[string]ModulePath)
 	paths := GetEachFileNameOfModule(info.ImportingSourceFileName, importedFileName, host, true)
 	for _, p := range paths {
