@@ -16,5 +16,5 @@ func TestSignatureHelpOnImportDefer(t *testing.T) {
 	defer done()
 
 	f.GoToMarker(t, "")
-	f.VerifyBaselineSignatureHelp(t);
+	f.VerifyBaselineSignatureHelp(t)
 }
