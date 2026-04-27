@@ -1145,7 +1145,7 @@ export interface JsxText extends ExpressionBase, LiteralLikeNodeBase {
 }
 export interface SyntaxList extends NodeBase {
     readonly kind: SyntaxKind.SyntaxList;
-    readonly children: readonly Node[];
+    readonly children: NodeArray<Node>;
 }
 export interface JSDoc extends NodeBase {
     readonly kind: SyntaxKind.JSDoc;
@@ -1327,7 +1327,7 @@ export interface SyntheticReferenceExpression extends ExpressionBase {
 }
 export interface JSDocTypeLiteral extends JSDocTypeBase, DeclarationBase {
     readonly kind: SyntaxKind.JSDocTypeLiteral;
-    readonly jsdocPropertyTags?: readonly JSDocTag[];
+    readonly jsdocPropertyTags?: NodeArray<JSDocTag>;
     readonly isArrayType: boolean;
 }
 

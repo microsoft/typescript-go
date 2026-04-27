@@ -36,9 +36,12 @@ export interface ReadonlyTextRange {
     readonly end: number;
 }
 
-export interface NodeArray<T extends Node> extends ReadonlyArray<T>, ReadonlyTextRange {
+export interface NodeArray<T extends Node> extends ReadonlyTextRange {
     hasTrailingComma?: boolean;
     transformFlags: number;
+    length: number;
+    at(index: number): T;
+    [Symbol.iterator](): IterableIterator<T>;
 }
 
 export interface Node extends ReadonlyTextRange {

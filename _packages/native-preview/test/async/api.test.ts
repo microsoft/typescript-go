@@ -117,9 +117,9 @@ describe("Snapshot", () => {
             const sourceFile = await project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
             const node = cast(
-                cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings,
+                cast(sourceFile.statements.at(0), isImportDeclaration).importClause?.namedBindings,
                 isNamedImports,
-            ).elements[0].name;
+            ).elements.at(0).name;
             assert.ok(node);
             const symbol = await project.checker.getSymbolAtLocation(node);
             assert.ok(symbol);
@@ -694,7 +694,7 @@ export class MyClass {
             const project = snapshot.getProject("/tsconfig.json")!;
             const sourceFile = await project.program.getSourceFile("/src/main.ts");
             assert.ok(sourceFile);
-            const firstVarDecl = sourceFile.statements[2]; // "export const x"
+            const firstVarDecl = sourceFile.statements.at(2); // "export const x"
             assert.ok(firstVarDecl);
             const type = await project.checker.getTypeAtLocation(firstVarDecl);
             assert.ok(type);
@@ -1293,13 +1293,13 @@ foo(42);
 
             // Find the argument "42" in foo(42)
             // statement[1] = foo(42); which is an ExpressionStatement -> CallExpression
-            const callStmt = sourceFile.statements[1];
+            const callStmt = sourceFile.statements.at(1);
             assert.ok(callStmt);
             let numLiteral: import("@typescript/native-preview/ast").Expression | undefined;
             callStmt.forEachChild(function visit(node) {
                 if (isCallExpression(node)) {
                     // First argument
-                    numLiteral = node.arguments[0];
+                    numLiteral = node.arguments.at(0);
                 }
                 node.forEachChild(visit);
             });
@@ -1348,7 +1348,7 @@ export function check(x: string | number) {
             assert.ok(sourceFile);
 
             // statement[0] is the function declaration
-            const funcDecl = sourceFile.statements[0];
+            const funcDecl = sourceFile.statements.at(0);
             assert.ok(funcDecl);
             // Walk to find the first "return x" — inside the if, x should be narrowed to string
             let firstReturnX: import("@typescript/native-preview/ast").Node | undefined;
@@ -2263,7 +2263,7 @@ test("TypeOperator operator kind", async () => {
         const project = snapshot.getProject("/tsconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.ts");
         assert(sourceFile);
-        const param = (sourceFile.statements[0] as import("@typescript/native-preview/ast").FunctionDeclaration).parameters[0];
+        const param = (sourceFile.statements.at(0) as import("@typescript/native-preview/ast").FunctionDeclaration).parameters.at(0);
         assert(param);
         const type = param.type as import("@typescript/native-preview/ast").TypeOperatorNode;
         assert(type);
@@ -2287,9 +2287,9 @@ test("SpreadAssignment roundtrip", async () => {
         const project = snapshot.getProject("/tsconfig.json")!;
         const sourceFile = await project.program.getSourceFile("/src/index.ts");
         assert(sourceFile);
-        const stmt = sourceFile.statements[0] as import("@typescript/native-preview/ast").VariableStatement;
-        const object = stmt.declarationList.declarations[0].initializer as import("@typescript/native-preview/ast").ObjectLiteralExpression;
-        const assignment = object.properties[0] as import("@typescript/native-preview/ast").SpreadAssignment;
+        const stmt = sourceFile.statements.at(0) as import("@typescript/native-preview/ast").VariableStatement;
+        const object = stmt.declarationList.declarations.at(0).initializer as import("@typescript/native-preview/ast").ObjectLiteralExpression;
+        const assignment = object.properties.at(0) as import("@typescript/native-preview/ast").SpreadAssignment;
         assert(assignment);
         assert.equal(assignment.kind, SyntaxKind.SpreadAssignment);
         const expr = assignment.expression;
@@ -2314,13 +2314,13 @@ test("VariableDeclarationList const flag clone", async () => {
         const sourceFile = await project.program.getSourceFile("/src/index.ts");
         assert(sourceFile);
         {
-            const stmt = sourceFile.statements[0] as import("@typescript/native-preview/ast").VariableStatement;
+            const stmt = sourceFile.statements.at(0) as import("@typescript/native-preview/ast").VariableStatement;
             const list = stmt.declarationList;
             assert(list.flags & NodeFlags.Const);
         }
         const cloned = getSynthesizedDeepClone(sourceFile);
         {
-            const stmt = cloned.statements[0] as import("@typescript/native-preview/ast").VariableStatement;
+            const stmt = cloned.statements.at(0) as import("@typescript/native-preview/ast").VariableStatement;
             const list = stmt.declarationList;
             assert(list.flags & NodeFlags.Const);
         }

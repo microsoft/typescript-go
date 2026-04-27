@@ -1509,8 +1509,9 @@ function emitNodeGeneratedImports(w: CodeWriter) {
 }
 
 function emitRemoteNodeList(w: CodeWriter) {
-    w.write(`export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {`);
+    w.write(`export class RemoteNodeList implements NodeArray<RemoteNode> {`);
     w.write(`    parent: RemoteNode;`);
+    w.write(`    length: number;`);
     w.write(`    hasTrailingComma?: boolean;`);
     w.write(`    transformFlags: number = 0;`);
     w.write(`    protected view: DataView;`);
@@ -1536,7 +1537,6 @@ function emitRemoteNodeList(w: CodeWriter) {
     w.write(`    private sourceFile: SourceFileInfo;`);
     w.write(``);
     w.write(`    constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: SourceFileInfo, offsetNodes: number) {`);
-    w.write(`        super();`);
     w.write(`        this.view = view;`);
     w.write(`        this.index = index;`);
     w.write(`        this.parent = parent;`);
@@ -1544,22 +1544,7 @@ function emitRemoteNodeList(w: CodeWriter) {
     w.write(`        this._byteIndex = offsetNodes + index * NODE_LEN;`);
     w.write(`        this.length = this.data;`);
     w.write(``);
-    w.write(`        const length = this.length;`);
-    w.write(`        for (let i = 16; i < length; i++) {`);
-    w.write(`            Object.defineProperty(this, i, {`);
-    w.write(`                get() {`);
-    w.write(`                    return this.at(i);`);
-    w.write(`                },`);
-    w.write(`            });`);
-    w.write(`        }`);
     w.write(`    }`);
-
-    // Emit indexed getters 0..15
-    for (let i = 0; i < 16; i++) {
-        w.write(`    get ${i}(): RemoteNode {`);
-        w.write(`        return this.at(${i});`);
-        w.write(`    }`);
-    }
 
     w.write(``);
     w.write(`    *[Symbol.iterator](): ArrayIterator<RemoteNode> {`);

@@ -216,7 +216,7 @@ function getTokenAtPositionImpl(
                     if (nodes.end === position && includePrecedingTokenAtEndPosition !== undefined) {
                         state.left = nodes.end;
                         nodeAfterLeft = undefined;
-                        state.prevSubtree = nodes[nodes.length - 1];
+                        state.prevSubtree = nodes.at(nodes.length - 1);
                     }
                     else if (nodes.end <= position) {
                         state.left = nodes.end;
@@ -227,8 +227,8 @@ function getTokenAtPositionImpl(
                             state.left = node.end;
                             nodeAfterLeft = undefined;
                             for (let i = middle + 1; i < arr.length; i++) {
-                                if (!(arr[i].flags & NodeFlags.Reparsed)) {
-                                    nodeAfterLeft = arr[i];
+                                if (!(arr.at(i).flags & NodeFlags.Reparsed)) {
+                                    nodeAfterLeft = arr.at(i);
                                     break;
                                 }
                             }
@@ -374,14 +374,14 @@ function findPrecedingTokenImpl(sourceFile: SourceFile, position: number, startN
                 }
                 if (nodes.length > 0 && !skipSingleCommentChildrenImpl) {
                     const index = binarySearchForPrecedingToken(nodes, position);
-                    if (index >= 0 && !(nodes[index].flags & NodeFlags.Reparsed)) {
-                        foundChild = nodes[index];
+                    if (index >= 0 && !(nodes.at(index).flags & NodeFlags.Reparsed)) {
+                        foundChild = nodes.at(index);
                     }
                     const lookupIndex = index >= 0 ? index - 1 : nodes.length - 1;
                     for (let i = lookupIndex; i >= 0; i--) {
-                        if (!(nodes[i].flags & NodeFlags.Reparsed)) {
+                        if (!(nodes.at(i).flags & NodeFlags.Reparsed)) {
                             if (prevChild === undefined) {
-                                prevChild = nodes[i];
+                                prevChild = nodes.at(i);
                             }
                             break;
                         }
@@ -479,7 +479,7 @@ function findRightmostValidToken(sourceFile: SourceFile, endPos: number, contain
                 if (nodes.length > 0 && !skipSingleCommentChildren) {
                     hasChildren = true;
                     for (let i = nodes.length - 1; i >= 0; i--) {
-                        const node = nodes[i];
+                        const node = nodes.at(i);
                         if (node.flags & NodeFlags.Reparsed) continue;
                         if (node.end > endPos || getTokenPosOfNode(node, sourceFile) >= position) continue;
                         if (isValidPrecedingNode(node, sourceFile)) {
@@ -574,7 +574,7 @@ function isJSDocCommentChildKind(kind: SyntaxKind): boolean {
 }
 
 function isJSDocSingleCommentNodeList(nodes: NodeArray<Node>): boolean {
-    return nodes.length === 1 && isJSDocCommentChildKind(nodes[0].kind);
+    return nodes.length === 1 && isJSDocCommentChildKind(nodes.at(0).kind);
 }
 
 function getScannerForSourceFile(sourceFile: SourceFile, pos: number) {
@@ -616,22 +616,22 @@ function binarySearchNodeList(
     let hi = nodes.length - 1;
     while (lo <= hi) {
         const mid = (lo + hi) >>> 1;
-        const node = nodes[mid];
+        const node = nodes.at(mid);
         if (node.flags & NodeFlags.Reparsed) {
             // Skip reparsed nodes: try to find a non-reparsed node nearby
             let found = false;
             for (let i = mid + 1; i <= hi; i++) {
-                if (!(nodes[i].flags & NodeFlags.Reparsed)) {
-                    const cmp = testNode(nodes[i]);
+                if (!(nodes.at(i).flags & NodeFlags.Reparsed)) {
+                    const cmp = testNode(nodes.at(i));
                     if (cmp < 0) {
-                        onLeft(nodes[i], i, nodes);
+                        onLeft(nodes.at(i), i, nodes);
                         lo = i + 1;
                     }
                     else if (cmp > 0) {
                         hi = i - 1;
                     }
                     else {
-                        onMatch(nodes[i]);
+                        onMatch(nodes.at(i));
                         return;
                     }
                     found = true;
@@ -664,13 +664,13 @@ function binarySearchForPrecedingToken(nodes: NodeArray<Node>, position: number)
     let result = -1;
     while (lo <= hi) {
         const mid = (lo + hi) >>> 1;
-        const node = nodes[mid];
+        const node = nodes.at(mid);
         if (node.flags & NodeFlags.Reparsed) {
             lo = mid + 1;
             continue;
         }
         if (position < node.end) {
-            if (mid === 0 || position >= nodes[mid - 1].end) {
+            if (mid === 0 || position >= nodes.at(mid - 1).end) {
                 result = mid;
                 break;
             }
