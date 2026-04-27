@@ -155,6 +155,12 @@ func getResolvedPackageNames(ctx context.Context, program *compiler.Program) *co
 		resolvedPackageNames.Add(module.GetPackageNameFromTypesPackageName(name))
 	}
 
+	for _, name := range program.Options().Types {
+		if name != "*" {
+			resolvedPackageNames.Add(module.GetPackageNameFromTypesPackageName(name))
+		}
+	}
+
 	if unresolvedPackageNames.Len() > 0 {
 		checker, done := program.GetTypeChecker(ctx)
 		defer done()
@@ -212,7 +218,7 @@ func createCheckerPool(program checker.Program) (getChecker func() (*checker.Che
 					return ch, func() { pool <- ch }
 				}
 				if created.CompareAndSwap(current, current+1) {
-					ch := core.FirstResult(checker.NewChecker(program))
+					ch := core.FirstResult(checker.NewChecker(program, nil))
 					return ch, func() { pool <- ch }
 				}
 			}
