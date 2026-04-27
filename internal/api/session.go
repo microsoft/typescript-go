@@ -1902,7 +1902,7 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 
 	emitOnly, err := compiler.EmitOnlyFromByte(params.EmitOnly)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 	}
 
 	// The WriteFile callback writes emitted files to the session's file system,
