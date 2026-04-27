@@ -1918,6 +1918,13 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 	}
 
 	result := program.Emit(ctx, options)
+	if result == nil {
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("%w: %w", ErrClientError, err)
+		}
+		return nil, fmt.Errorf("compiler emit returned nil result")
+	}
+
 	return NewEmitResponse(result), nil
 }
 
