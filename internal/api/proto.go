@@ -891,10 +891,20 @@ func NewDiagnosticResponses(diags []*ast.Diagnostic) []*DiagnosticResponse {
 
 // NewEmitResponse converts a compiler.EmitResult to an EmitResponse.
 func NewEmitResponse(emitResult *compiler.EmitResult) *EmitResponse {
+	diagnostics := NewDiagnosticResponses(emitResult.Diagnostics)
+	if diagnostics == nil {
+		diagnostics = []*DiagnosticResponse{}
+	}
+
+	emittedFiles := emitResult.EmittedFiles
+	if emittedFiles == nil {
+		emittedFiles = []string{}
+	}
+
 	return &EmitResponse{
 		EmitSkipped:  emitResult.EmitSkipped,
-		Diagnostics:  NewDiagnosticResponses(emitResult.Diagnostics),
-		EmittedFiles: emitResult.EmittedFiles,
+		Diagnostics:  diagnostics,
+		EmittedFiles: emittedFiles,
 	}
 }
 
