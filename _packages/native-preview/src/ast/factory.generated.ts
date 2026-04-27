@@ -3751,7 +3751,7 @@ export function updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifi
     return node.tagName !== tagName || node.name !== name || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocPropertyTag(tagName, name, node.isBracketed, typeExpression, node.isNameFirst, comment) : node;
 }
 
-export function createSourceFile(statements: NodeArray<Statement>, endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {
+export function createSourceFile(statements: readonly Statement[] | NodeArray<Statement>, endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {
     return new NodeObject(SyntaxKind.SourceFile, {
         statements: createNodeArray(statements),
         endOfFileToken,
@@ -3761,7 +3761,7 @@ export function createSourceFile(statements: NodeArray<Statement>, endOfFileToke
     }) as unknown as SourceFile;
 }
 
-export function updateSourceFile(node: SourceFile, statements: NodeArray<Statement>, endOfFileToken: EndOfFile): SourceFile {
+export function updateSourceFile(node: SourceFile, statements: readonly Statement[] | NodeArray<Statement>, endOfFileToken: EndOfFile): SourceFile {
     return node.statements !== statements || node.endOfFileToken !== endOfFileToken
         ? createSourceFile(statements, endOfFileToken, node.text, node.fileName, node.path)
         : node;

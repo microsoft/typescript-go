@@ -980,7 +980,7 @@ function generateFactory(): string {
     }
 
     // ── createSourceFile (hand-written — SourceFile is handWritten in schema) ──
-    out.push(`export function createSourceFile(statements: NodeArray<Statement>, endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {`);
+    out.push(`export function createSourceFile(statements: readonly Statement[] | NodeArray<Statement>, endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {`);
     out.push(`    return new NodeObject(SyntaxKind.SourceFile, {`);
     out.push(`        statements: createNodeArray(statements),`);
     out.push(`        endOfFileToken,`);
@@ -992,7 +992,7 @@ function generateFactory(): string {
     out.push(``);
 
     // ── updateSourceFile (hand-written in schema) ──
-    out.push(`export function updateSourceFile(node: SourceFile, statements: NodeArray<Statement>, endOfFileToken: EndOfFile): SourceFile {`);
+    out.push(`export function updateSourceFile(node: SourceFile, statements: readonly Statement[] | NodeArray<Statement>, endOfFileToken: EndOfFile): SourceFile {`);
     out.push(`    return node.statements !== statements || node.endOfFileToken !== endOfFileToken`);
     out.push(`        ? createSourceFile(statements, endOfFileToken, node.text, node.fileName, node.path)`);
     out.push(`        : node;`);

@@ -105,12 +105,13 @@ export function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T>, in
 export function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T> | undefined, includeTrivia?: boolean): NodeArray<T> | undefined;
 export function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T> | undefined, includeTrivia = true): NodeArray<T> | undefined {
     if (nodes) {
-        const cloned = createNodeArray(
-            Array.from(nodes).map(n => getSynthesizedDeepClone(n, includeTrivia)),
-            nodes.pos,
-            nodes.end,
-        );
-        return cloned;
+        const cloned = new Array(nodes.length) as T[] & { pos: number; end: number; };
+        cloned.pos = nodes.pos;
+        cloned.end = nodes.end;
+        for (let i = 0; i < nodes.length; i++) {
+            cloned[i] = getSynthesizedDeepClone(nodes.at(i), includeTrivia);
+        }
+        return cloned as unknown as NodeArray<T>;
     }
     return nodes;
 }
