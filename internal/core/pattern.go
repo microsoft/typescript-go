@@ -1,6 +1,9 @@
 package core
 
-import "strings"
+import (
+	"math"
+	"strings"
+)
 
 type Pattern struct {
 	Text      string
@@ -45,7 +48,12 @@ func FindBestPatternMatch[T any](values []T, getPattern func(v T) Pattern, candi
 		pattern := getPattern(value)
 		if (pattern.StarIndex == -1 || pattern.StarIndex > longestMatchPrefixLength) && pattern.Matches(candidate) {
 			bestPattern = value
-			longestMatchPrefixLength = pattern.StarIndex
+			if pattern.StarIndex == -1 {
+				// Exact match: use math.MaxInt so no wildcard pattern can override it.
+				longestMatchPrefixLength = math.MaxInt
+			} else {
+				longestMatchPrefixLength = pattern.StarIndex
+			}
 		}
 	}
 	return bestPattern
