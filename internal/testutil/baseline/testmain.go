@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/core"
 )
 
 var (
@@ -34,7 +33,6 @@ var (
 //	    m.Run()
 //	}
 func Track() func() {
-	core.ApplyDebugStackLimit()
 	trackingInitialized = true
 
 	if trackingDir == "" {

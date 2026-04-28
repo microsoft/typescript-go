@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	core.ApplyDebugStackLimit()
 	os.Exit(runMain())
 }
 
 func runMain() int {
+	core.ApplyDebugStackLimit()
 	args := os.Args[1:]
 	if len(args) > 0 {
 		switch args[0] {

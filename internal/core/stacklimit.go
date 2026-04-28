@@ -6,23 +6,11 @@ import (
 	"strconv"
 )
 
-// DebugStackLimitEnvVar is the name of the environment variable that, when set
-// to a positive integer, configures the Go runtime's per-goroutine maximum
-// stack size via debug.SetMaxStack. This is intended for debugging runaway
-// recursion: with a sufficiently low limit, well-behaved code still completes
-// successfully but pathological recursion produces a fatal stack overflow
-// instead of consuming gigabytes of memory before being killed.
-const DebugStackLimitEnvVar = "TSC_DEBUG_STACK_LIMIT"
-
-// ApplyDebugStackLimit checks the TSC_DEBUG_STACK_LIMIT environment variable
-// and, if it is set to an integer greater than zero, applies it as the
-// per-goroutine maximum stack size via runtime/debug.SetMaxStack. If the
-// variable is unset, empty, not a valid integer, or not positive, no change is
-// made and the Go runtime default applies.
-//
-// This should be called from program entry points (including TestMain).
+// ApplyDebugStackLimit reads TSC_DEBUG_STACK_LIMIT and, if it parses as a
+// positive integer, applies it via runtime/debug.SetMaxStack. Useful for
+// catching runaway recursion. Should be called from program entry points.
 func ApplyDebugStackLimit() {
-	v := os.Getenv(DebugStackLimitEnvVar) //nolint:forbidigo
+	v := os.Getenv("TSC_DEBUG_STACK_LIMIT") //nolint:forbidigo
 	if v == "" {
 		return
 	}
