@@ -82,6 +82,7 @@ export async function main() {
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 )
 
