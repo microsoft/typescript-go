@@ -1155,7 +1155,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 			}
 			for id, watcher := range newWatchers.Entries() {
 				if err := session.client.WatchFiles(watchCtx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
-					session.watches.RollbackAcquire(watcher)
+					session.watches.Release(watcher)
 					errors = append(errors, err)
 				} else if logger != nil {
 					if oldWatcher == nil {

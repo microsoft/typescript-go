@@ -55,18 +55,6 @@ func (r *watchRegistry) Acquire(watcher *lsproto.FileSystemWatcher, id WatcherID
 	return value.count == 1
 }
 
-// RollbackAcquire undoes an Acquire after a failed client registration,
-// decrementing the ref count and removing the entry when it reaches zero.
-func (r *watchRegistry) RollbackAcquire(watcher *lsproto.FileSystemWatcher) {
-	key := toFileSystemWatcherKey(watcher)
-	if value := r.entries[key]; value != nil {
-		value.count--
-		if value.count == 0 {
-			delete(r.entries, key)
-		}
-	}
-}
-
 // Release decrements the ref count for a watcher. If no references remain,
 // the entry is removed and the function returns the WatcherID and true so
 // the caller knows to unregister the watcher from the client.
