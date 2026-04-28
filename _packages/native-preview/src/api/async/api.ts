@@ -659,6 +659,50 @@ export class Checker {
         });
     }
 
+    async isSymbolReferencedInFile(definition: Node, symbol: Symbol): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isSymbolReferencedInFile", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            definition: getNodeId(definition),
+            symbol: symbol.id,
+        });
+    }
+
+    async eachSymbolReferenceInFile(definition: Node, symbol: Symbol): Promise<number[]> {
+        return this.client.apiRequest<number[]>("eachSymbolReferenceInFile", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            definition: getNodeId(definition),
+            symbol: symbol.id,
+        });
+    }
+
+    async getReferencedSymbolsForNode(node: Node, position: number): Promise<NodeReferenceInfo[]> {
+        return this.client.apiRequest<NodeReferenceInfo[]>("getReferencedSymbolsForNode", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            node: getNodeId(node),
+            position,
+        });
+    }
+
+    async someSignatureUsage(signatureDecl: Node, parameterIndex: number): Promise<boolean> {
+        return this.client.apiRequest<boolean>("someSignatureUsage", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            signatureDecl: getNodeId(signatureDecl),
+            parameterIndex,
+        });
+    }
+
+    async probablyUsesSemicolons(file: string): Promise<boolean> {
+        return this.client.apiRequest<boolean>("probablyUsesSemicolons", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+        });
+    }
+
     async getShorthandAssignmentValueSymbol(node: Node): Promise<Symbol | undefined> {
         const data = await this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
             snapshot: this.snapshotId,
@@ -845,6 +889,15 @@ export class Checker {
         });
         return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
     }
+}
+
+export interface NodeReferenceInfo {
+    nodeKind: number;
+    parentKind: number;
+    grandparentKind: number;
+    argumentsLength: number;
+    parametersLength: number;
+    parentNodeHandle?: string;
 }
 
 export interface PrintNodeOptions {

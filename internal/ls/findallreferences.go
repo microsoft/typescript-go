@@ -110,6 +110,21 @@ type ReferenceEntry struct {
 	lspRange  *lsproto.Location
 }
 
+// Node returns the AST node for this reference entry.
+func (e *ReferenceEntry) Node() *ast.Node {
+	return e.node
+}
+
+// IsNodeEntry returns true if this is a node-backed reference entry.
+func (e *ReferenceEntry) IsNodeEntry() bool {
+	return e.kind == entryKindNode
+}
+
+// References returns the reference entries for this symbol.
+func (s *SymbolAndEntries) References() []*ReferenceEntry {
+	return s.references
+}
+
 func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 	if entry.definition == nil {
 		return false
@@ -844,7 +859,12 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 	return result
 }
 
-// === functions for find all ref implementation ===
+// It returns all referenced symbols and their reference entries for the given node across the provided source files.
+func (l *LanguageService) GetReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
+	return l.getReferencedSymbolsForNode(ctx, position, node, l.program, sourceFiles, refOptions{
+		use: referenceUseReferences,
+	})
+}
 
 func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile, options refOptions) []*SymbolAndEntries {
 	// !!! cancellationToken
@@ -2338,4 +2358,49 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 	// Update cache with the actual result
 	state.inheritsFromCache[key] = inherits
 	return inherits
+}
+
+// SomeSignatureUsage checks if any usage of the given signature means the parameter at paramIndex may still matter.
+// Returns true if any reference is either a non-call usage or a call with more arguments than paramIndex.
+func (l *LanguageService) SomeSignatureUsage(
+	ctx context.Context,
+	signatureDecl *ast.Node,
+	paramIndex int,
+) bool {
+	name := signatureDecl.Name()
+	if name == nil || !ast.IsIdentifier(name) {
+		return false
+	}
+
+	sourceFiles := l.program.GetSourceFiles()
+	entries := l.GetReferencedSymbolsForNode(ctx, name.Pos(), name, sourceFiles)
+
+	for _, entry := range entries {
+		for _, ref := range entry.References() {
+			if !ref.IsNodeEntry() {
+				continue
+			}
+			node := ref.Node()
+			if node == nil || node == name {
+				continue
+			}
+
+			// Climb past property access (e.g., obj.method → method)
+			called := ast.ClimbPastPropertyAccess(node)
+
+			// Check if this is a call expression
+			var callExpr *ast.Node
+			if called.Parent != nil && ast.IsCallExpression(called.Parent) && called.Parent.Expression() == called {
+				callExpr = called.Parent
+			}
+
+			// Non-call ref (e.g., `const g = f`) counts as usage that blocks deletion.
+			// Call with more arguments than our parameter index also blocks.
+			// Ports Strada: (_, call) => !call || call.arguments.length > index
+			if callExpr == nil || len(callExpr.Arguments()) > paramIndex {
+				return true
+			}
+		}
+	}
+	return false
 }
