@@ -3,10 +3,12 @@ package main
 import (
 	"os"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
 )
 
 func main() {
+	core.ApplyDebugStackLimit()
 	os.Exit(runMain())
 }
 
