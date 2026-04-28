@@ -42,9 +42,9 @@ for (var propname in HTMLDOMPropertyConfig.Properties) {
 >DOMAttributeNames : any
 >propname : string
 >propname.toLowerCase() : string
->propname.toLowerCase : () => string
+>propname.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
 >propname : string
->toLowerCase : () => string
+>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
 }
 
 /**

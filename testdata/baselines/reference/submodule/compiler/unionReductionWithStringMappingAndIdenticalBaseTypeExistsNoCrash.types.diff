@@ -1,0 +1,14 @@
+--- old.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.types
++++ new.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.types
+@@= skipped -146, +146 lines =@@
+ >upperFirst(value.toLowerCase()) : Capitalize<string>
+ >upperFirst : <T extends string>(str: T) => Capitalize<T>
+ >value.toLowerCase() : string
+->value.toLowerCase : () => string
++>value.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >value : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+ function Comp() {
+ >Comp : () => React.JSX.Element

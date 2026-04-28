@@ -16,11 +16,11 @@ function f1(obj: Record<string, unknown>, key: string) {
 
         obj[key].toUpperCase();
 >obj[key].toUpperCase() : string
->obj[key].toUpperCase : () => string
+>obj[key].toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >obj[key] : string
 >obj : Record<string, unknown>
 >key : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
     }
 }
 
@@ -38,11 +38,11 @@ function f2(obj: Record<string, string | undefined>, key: string) {
 
         obj[key].toUpperCase();
 >obj[key].toUpperCase() : string
->obj[key].toUpperCase : () => string
+>obj[key].toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >obj[key] : string
 >obj : Record<string, string | undefined>
 >key : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
     }
     let key2 = key + key;
 >key2 : string
@@ -59,11 +59,11 @@ function f2(obj: Record<string, string | undefined>, key: string) {
 
         obj[key2].toUpperCase();
 >obj[key2].toUpperCase() : string
->obj[key2].toUpperCase : () => string
+>obj[key2].toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >obj[key2] : string
 >obj : Record<string, string | undefined>
 >key2 : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
     }
     const key3 = key + key;
 >key3 : string
@@ -80,11 +80,11 @@ function f2(obj: Record<string, string | undefined>, key: string) {
 
         obj[key3].toUpperCase();
 >obj[key3].toUpperCase() : string
->obj[key3].toUpperCase : () => string
+>obj[key3].toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >obj[key3] : string
 >obj : Record<string, string | undefined>
 >key3 : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
     }
 }
 
@@ -116,11 +116,11 @@ function f3(obj: Thing, key: keyof Thing) {
 
             obj[key].toUpperCase();
 >obj[key].toUpperCase() : string
->obj[key].toUpperCase : () => string
+>obj[key].toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >obj[key] : string
 >obj : Thing
 >key : keyof Thing
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
         }
         if (typeof obj[key] === "number") {
 >typeof obj[key] === "number" : boolean
@@ -153,11 +153,11 @@ function f4<K extends string>(obj: Record<K, string | undefined>, key: K) {
 
         obj[key].toUpperCase();
 >obj[key].toUpperCase() : string
->obj[key].toUpperCase : () => string
+>obj[key].toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >obj[key] : string
 >obj : Record<K, string | undefined>
 >key : K
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
     }
 }
 

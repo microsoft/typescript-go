@@ -1,0 +1,29 @@
+--- old.typeAliases.types
++++ new.typeAliases.types
+@@= skipped -175, +175 lines =@@
+
+ f15(E.x).toLowerCase();
+ >f15(E.x).toLowerCase() : string
+->f15(E.x).toLowerCase : () => string
++>f15(E.x).toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >f15(E.x) : string
+ >f15 : { (a: string): boolean; (a: Meters): string; }
+ >E.x : E
+ >E : typeof E
+ >x : E
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+ type StringAndBoolean = [string, boolean]
+ >StringAndBoolean : StringAndBoolean
+@@= skipped -31, +31 lines =@@
+
+ y[0].toLowerCase();
+ >y[0].toLowerCase() : string
+->y[0].toLowerCase : () => string
++>y[0].toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >y[0] : string
+ >y : StringAndBoolean
+ >0 : 0
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>

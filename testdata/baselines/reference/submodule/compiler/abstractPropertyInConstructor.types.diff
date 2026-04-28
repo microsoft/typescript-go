@@ -1,0 +1,30 @@
+--- old.abstractPropertyInConstructor.types
++++ new.abstractPropertyInConstructor.types
+@@= skipped -19, +19 lines =@@
+         let val = this.prop.toLowerCase();
+ >val : string
+ >this.prop.toLowerCase() : string
+->this.prop.toLowerCase : () => string
++>this.prop.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >this.prop : string
+ >this : this
+ >prop : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+         if (!str) {
+ >!str : boolean
+@@= skipped -113, +113 lines =@@
+ >this : this
+ >cb : (s: string) => void
+ >this.prop.toLowerCase() : string
+->this.prop.toLowerCase : () => string
++>this.prop.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >this.prop : string
+ >this : this
+ >prop : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+         this.method(1);
+ >this.method(1) : void

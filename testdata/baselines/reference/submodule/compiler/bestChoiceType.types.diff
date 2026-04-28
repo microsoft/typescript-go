@@ -1,0 +1,36 @@
+--- old.bestChoiceType.types
++++ new.bestChoiceType.types
+@@= skipped -17, +17 lines =@@
+ >s => s.toLowerCase() : (s: string) => string
+ >s : string
+ >s.toLowerCase() : string
+->s.toLowerCase : () => string
++>s.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >s : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+ // Similar cases
+
+@@= skipped -32, +32 lines =@@
+ >s => s.toLowerCase() : (s: string) => string
+ >s : string
+ >s.toLowerCase() : string
+->s.toLowerCase : () => string
++>s.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >s : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ }
+
+ function f2() {
+@@= skipped -32, +32 lines =@@
+ >s => s.toLowerCase() : (s: string) => string
+ >s : string
+ >s.toLowerCase() : string
+->s.toLowerCase : () => string
++>s.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >s : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ }

@@ -1,0 +1,11 @@
+--- old.propertyAccess7.types
++++ new.propertyAccess7.types
+@@= skipped -5, +5 lines =@@
+
+ foo.toUpperCase();
+ >foo.toUpperCase() : string
+->foo.toUpperCase : () => string
++>foo.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >foo : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>

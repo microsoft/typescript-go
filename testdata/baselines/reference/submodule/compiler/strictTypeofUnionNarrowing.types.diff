@@ -1,0 +1,49 @@
+--- old.strictTypeofUnionNarrowing.types
++++ new.strictTypeofUnionNarrowing.types
+@@= skipped -12, +12 lines =@@
+ >anything : { toString(): string; } | undefined
+ >"string" : "string"
+ >anything.toUpperCase() : string
+->anything.toUpperCase : () => string
++>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >anything : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"" : ""
+ }
+
+@@= skipped -17, +17 lines =@@
+ >anything : {} | undefined
+ >"string" : "string"
+ >anything.toUpperCase() : string
+->anything.toUpperCase : () => string
++>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >anything : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"" : ""
+ }
+
+@@= skipped -17, +17 lines =@@
+ >anything : unknown
+ >"string" : "string"
+ >anything.toUpperCase() : string
+->anything.toUpperCase : () => string
++>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >anything : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"" : ""
+ }
+
+@@= skipped -18, +18 lines =@@
+ >anything : { toString?(): string; } | undefined
+ >"string" : "string"
+ >anything.toUpperCase() : string
+->anything.toUpperCase : () => string
++>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >anything : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"" : ""
+ }

@@ -1,6 +1,135 @@
 --- old.dependentDestructuredVariables.types
 +++ new.dependentDestructuredVariables.types
-@@= skipped -574, +574 lines =@@
+@@= skipped -34, +34 lines =@@
+
+         payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+ }
+
+@@= skipped -33, +33 lines =@@
+
+         payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+ }
+
+@@= skipped -29, +29 lines =@@
+
+             payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+
+             break;
+         default:
+@@= skipped -35, +35 lines =@@
+
+         payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T_1 extends string>(this: T_1) => string extends T_1 ? string : Uppercase<T_1>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T_1 extends string>(this: T_1) => string extends T_1 ? string : Uppercase<T_1>
+     }
+ }
+
+@@= skipped -33, +33 lines =@@
+
+         payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T_1 extends string>(this: T_1) => string extends T_1 ? string : Uppercase<T_1>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T_1 extends string>(this: T_1) => string extends T_1 ? string : Uppercase<T_1>
+     }
+ }
+
+@@= skipped -43, +43 lines =@@
+
+             payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+         }
+     }
+ }
+@@= skipped -37, +37 lines =@@
+
+             payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+         }
+     }
+ }
+@@= skipped -39, +39 lines =@@
+
+             payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+         }
+     }
+ }
+@@= skipped -33, +33 lines =@@
+
+                 payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+
+                 break;
+             default:
+@@= skipped -97, +97 lines =@@
+
+         data.toUpperCase();
+ >data.toUpperCase() : string
+->data.toUpperCase : () => string
++>data.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >data : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+ }
+
+@@= skipped -154, +154 lines =@@
+
+         data.toUpperCase();
+ >data.toUpperCase() : string
+->data.toUpperCase : () => string
++>data.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >data : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
  });
 
  const f51: (...args: ['A', number] | ['B', string]) => void = (kind, payload) => {
@@ -10,6 +139,15 @@
  >(kind, payload) => {    if (kind === 'A') {        payload.toFixed();    }    if (kind === 'B') {        payload.toUpperCase();    }} : (kind: "A" | "B", payload: string | number) => void
  >kind : "A" | "B"
 @@= skipped -31, +31 lines =@@
+
+         payload.toUpperCase();
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
  };
 
  const f52: (...args: ['A', number] | ['B']) => void = (kind, payload?) => {
@@ -18,3 +156,14 @@
  >args : ["B"] | ["A", number]
  >(kind, payload?) => {    if (kind === 'A') {        payload.toFixed();    }    else {        payload;  // undefined    }} : (kind: "A" | "B", payload?: number | undefined) => void
  >kind : "A" | "B"
+@@= skipped -349, +349 lines =@@
+
+         payload.toUpperCase();  // error
+ >payload.toUpperCase() : string
+->payload.toUpperCase : () => string
++>payload.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >payload : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+ };

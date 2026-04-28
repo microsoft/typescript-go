@@ -1,0 +1,37 @@
+--- old.conditionalOperatorConditoinIsStringType.types
++++ new.conditionalOperatorConditoinIsStringType.types
+@@= skipped -129, +129 lines =@@
+
+ condString.toUpperCase ? exprBoolean1 : exprBoolean2;
+ >condString.toUpperCase ? exprBoolean1 : exprBoolean2 : boolean
+->condString.toUpperCase : () => string
++>condString.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >condString : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >exprBoolean1 : boolean
+ >exprBoolean2 : boolean
+
+@@= skipped -132, +132 lines =@@
+ var resultIsBoolean3 = condString.toUpperCase ? exprBoolean1 : exprBoolean2;
+ >resultIsBoolean3 : boolean
+ >condString.toUpperCase ? exprBoolean1 : exprBoolean2 : boolean
+->condString.toUpperCase : () => string
++>condString.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >condString : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >exprBoolean1 : boolean
+ >exprBoolean2 : boolean
+
+@@= skipped -43, +43 lines =@@
+ var resultIsStringOrBoolean4 = condString.toUpperCase ? exprString1 : exprBoolean1; // union
+ >resultIsStringOrBoolean4 : string | boolean
+ >condString.toUpperCase ? exprString1 : exprBoolean1 : string | boolean
+->condString.toUpperCase : () => string
++>condString.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >condString : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >exprString1 : string
+ >exprBoolean1 : boolean

@@ -1,0 +1,90 @@
+--- old.narrowingInCaseClauseAfterCaseClauseWithReturn.types
++++ new.narrowingInCaseClauseAfterCaseClauseWithReturn.types
+@@= skipped -18, +18 lines =@@
+     case arg.toUpperCase() === "A":
+ >arg.toUpperCase() === "A" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"A" : "A"
+
+       return "A";
+@@= skipped -11, +11 lines =@@
+     case arg.toUpperCase() === "B":
+ >arg.toUpperCase() === "B" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"B" : "B"
+
+     case arg.toUpperCase() === "C":
+ >arg.toUpperCase() === "C" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"C" : "C"
+
+     case arg.toUpperCase() === "D":
+ >arg.toUpperCase() === "D" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"D" : "D"
+
+       return "B, C or D";
+@@= skipped -45, +45 lines =@@
+     case arg.toUpperCase() === "A":
+ >arg.toUpperCase() === "A" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"A" : "A"
+
+     case arg.toUpperCase() === "B":
+ >arg.toUpperCase() === "B" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"B" : "B"
+
+     case arg.toUpperCase() === "C":
+ >arg.toUpperCase() === "C" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"C" : "C"
+
+       return "A, B or C";
+@@= skipped -27, +27 lines =@@
+     case arg.toUpperCase() === "D":
+ >arg.toUpperCase() === "D" : boolean
+ >arg.toUpperCase() : string
+->arg.toUpperCase : () => string
++>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >arg : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >"D" : "D"
+
+       return "D";

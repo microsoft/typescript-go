@@ -1,0 +1,16 @@
+--- old.jsxFactoryIdentifier.types
++++ new.jsxFactoryIdentifier.types
+@@= skipped -69, +69 lines =@@
+     return text[0].toLowerCase() + text.substring(1);
+ >text[0].toLowerCase() + text.substring(1) : string
+ >text[0].toLowerCase() : string
+->text[0].toLowerCase : () => string
++>text[0].toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >text[0] : string
+ >text : string
+ >0 : 0
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >text.substring(1) : string
+ >text.substring : (start: number, end?: number) => string
+ >text : string

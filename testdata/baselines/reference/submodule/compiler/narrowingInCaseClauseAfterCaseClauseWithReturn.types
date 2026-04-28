@@ -19,9 +19,9 @@ function test1(arg: string | undefined) {
     case arg.toUpperCase() === "A":
 >arg.toUpperCase() === "A" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"A" : "A"
 
       return "A";
@@ -30,25 +30,25 @@ function test1(arg: string | undefined) {
     case arg.toUpperCase() === "B":
 >arg.toUpperCase() === "B" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"B" : "B"
 
     case arg.toUpperCase() === "C":
 >arg.toUpperCase() === "C" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"C" : "C"
 
     case arg.toUpperCase() === "D":
 >arg.toUpperCase() === "D" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"D" : "D"
 
       return "B, C or D";
@@ -75,25 +75,25 @@ function test2(arg: string | undefined) {
     case arg.toUpperCase() === "A":
 >arg.toUpperCase() === "A" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"A" : "A"
 
     case arg.toUpperCase() === "B":
 >arg.toUpperCase() === "B" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"B" : "B"
 
     case arg.toUpperCase() === "C":
 >arg.toUpperCase() === "C" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"C" : "C"
 
       return "A, B or C";
@@ -102,9 +102,9 @@ function test2(arg: string | undefined) {
     case arg.toUpperCase() === "D":
 >arg.toUpperCase() === "D" : boolean
 >arg.toUpperCase() : string
->arg.toUpperCase : () => string
+>arg.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >arg : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"D" : "D"
 
       return "D";

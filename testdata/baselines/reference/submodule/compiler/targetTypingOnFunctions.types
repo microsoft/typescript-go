@@ -7,9 +7,9 @@ var fu: (s: string) => string = function (s) { return s.toLowerCase() };
 >function (s) { return s.toLowerCase() } : (s: string) => string
 >s : string
 >s.toLowerCase() : string
->s.toLowerCase : () => string
+>s.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
 >s : string
->toLowerCase : () => string
+>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
 
 var zu = fu = function (s) { return s.toLowerCase() };
 >zu : (s: string) => string
@@ -18,7 +18,7 @@ var zu = fu = function (s) { return s.toLowerCase() };
 >function (s) { return s.toLowerCase() } : (s: string) => string
 >s : string
 >s.toLowerCase() : string
->s.toLowerCase : () => string
+>s.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
 >s : string
->toLowerCase : () => string
+>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
 

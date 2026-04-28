@@ -1,0 +1,14 @@
+--- old.inferFromGenericFunctionReturnTypes1.types
++++ new.inferFromGenericFunctionReturnTypes1.types
+@@= skipped -247, +247 lines =@@
+ >x => x.toUpperCase() : (x: string) => string
+ >x : string
+ >x.toUpperCase() : string
+->x.toUpperCase : () => string
++>x.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >x : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+
+   )
+ )

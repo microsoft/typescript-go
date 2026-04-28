@@ -1,0 +1,31 @@
+--- old.gettersAndSetters.types
++++ new.gettersAndSetters.types
+@@= skipped -162, +162 lines =@@
+ >prop : any
+ >_ : any
+ >x.toUpperCase() : string
+->x.toUpperCase : () => string
++>x.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >x : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+
+     get prop() { return x.toUpperCase() },
+ >prop : any
+ >x.toUpperCase() : string
+->x.toUpperCase : () => string
++>x.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >x : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+
+     method() { return x.toUpperCase() }
+ >method : () => string
+ >x.toUpperCase() : string
+->x.toUpperCase : () => string
++>x.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >x : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+   }
+ }

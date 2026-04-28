@@ -1,0 +1,23 @@
+--- old.nullishCoalescingOperator9.types
++++ new.nullishCoalescingOperator9.types
+@@= skipped -13, +13 lines =@@
+ >abc : string
+ >void abc.toLowerCase() : undefined
+ >abc.toLowerCase() : string
+->abc.toLowerCase : () => string
++>abc.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >abc : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+ let gg = f ?? (abc => { void abc.toLowerCase() })
+ >gg : (x: string) => void
+@@= skipped -13, +13 lines =@@
+ >abc : string
+ >void abc.toLowerCase() : undefined
+ >abc.toLowerCase() : string
+->abc.toLowerCase : () => string
++>abc.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >abc : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>

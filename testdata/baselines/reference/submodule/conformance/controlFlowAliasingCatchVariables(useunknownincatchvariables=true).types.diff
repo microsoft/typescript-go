@@ -1,0 +1,37 @@
+--- old.controlFlowAliasingCatchVariables(useunknownincatchvariables=true).types
++++ new.controlFlowAliasingCatchVariables(useunknownincatchvariables=true).types
+@@= skipped -16, +16 lines =@@
+
+         e.toUpperCase(); // e string
+ >e.toUpperCase() : string
+->e.toUpperCase : () => string
++>e.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >e : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+
+     if (typeof e === 'string') {
+@@= skipped -13, +13 lines =@@
+
+         e.toUpperCase(); // e string
+ >e.toUpperCase() : string
+->e.toUpperCase : () => string
++>e.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >e : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+ }
+
+@@= skipped -40, +40 lines =@@
+
+         e.toUpperCase(); // e string
+ >e.toUpperCase() : string
+->e.toUpperCase : () => string
++>e.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >e : string
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+     }
+ }

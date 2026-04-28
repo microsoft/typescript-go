@@ -1,0 +1,16 @@
+--- old.moduleAugmentationExtendAmbientModule2.types
++++ new.moduleAugmentationExtendAmbientModule2.types
+@@= skipped -33, +33 lines =@@
+ let z2 = Observable.someAnotherValue.toLowerCase();
+ >z2 : string
+ >Observable.someAnotherValue.toLowerCase() : string
+->Observable.someAnotherValue.toLowerCase : () => string
++>Observable.someAnotherValue.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >Observable.someAnotherValue : string
+ >Observable : typeof Observable
+ >someAnotherValue : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+ === map.ts ===
+ import { Observable } from "observable"

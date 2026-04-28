@@ -1,0 +1,13 @@
+--- old.mergedWithLocalValue.types
++++ new.mergedWithLocalValue.types
+@@= skipped -12, +12 lines =@@
+ >"a" : "a"
+
+ A.toUpperCase();
+->A.toUpperCase() : string
+->A.toUpperCase : () => string
++>A.toUpperCase() : "A"
++>A.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
+ >A : "a"
+->toUpperCase : () => string
++>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>

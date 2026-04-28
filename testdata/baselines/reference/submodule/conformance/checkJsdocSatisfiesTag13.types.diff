@@ -1,0 +1,14 @@
+--- old.checkJsdocSatisfiesTag13.types
++++ new.checkJsdocSatisfiesTag13.types
+@@= skipped -8, +8 lines =@@
+ >s => s.toLowerCase() : (s: string) => string
+ >s : string
+ >s.toLowerCase() : string
+->s.toLowerCase : () => string
++>s.toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+ >s : string
+->toLowerCase : () => string
++>toLowerCase : <T extends string>(this: T) => string extends T ? string : Lowercase<T>
+
+ /** @satisfies {{ f: (x: string) => string }} */
+ const t2 = { g: "oops" }; // should error

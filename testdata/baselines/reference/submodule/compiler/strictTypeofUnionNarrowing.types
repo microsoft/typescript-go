@@ -13,9 +13,9 @@ function stringify1(anything: { toString(): string } | undefined): string {
 >anything : { toString(): string; } | undefined
 >"string" : "string"
 >anything.toUpperCase() : string
->anything.toUpperCase : () => string
+>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >anything : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"" : ""
 }
 
@@ -30,9 +30,9 @@ function stringify2(anything: {} | undefined): string {
 >anything : {} | undefined
 >"string" : "string"
 >anything.toUpperCase() : string
->anything.toUpperCase : () => string
+>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >anything : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"" : ""
 }
 
@@ -47,9 +47,9 @@ function stringify3(anything: unknown | undefined): string { // should simplify 
 >anything : unknown
 >"string" : "string"
 >anything.toUpperCase() : string
->anything.toUpperCase : () => string
+>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >anything : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"" : ""
 }
 
@@ -65,9 +65,9 @@ function stringify4(anything: { toString?(): string } | undefined): string {
 >anything : { toString?(): string; } | undefined
 >"string" : "string"
 >anything.toUpperCase() : string
->anything.toUpperCase : () => string
+>anything.toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >anything : string
->toUpperCase : () => string
+>toUpperCase : <T extends string>(this: T) => string extends T ? string : Uppercase<T>
 >"" : ""
 }
 
