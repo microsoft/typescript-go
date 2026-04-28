@@ -1,8 +1,11 @@
 package build
 
 import (
+	"context"
 	"io"
+	"maps"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -15,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
 type Options struct {
@@ -64,6 +68,8 @@ type Orchestrator struct {
 
 	errorSummaryReporter tsc.DiagnosticsReporter
 	watchStatusReporter  tsc.DiagnosticReporter
+
+	fileWatcher *vfswatch.FileWatcher
 }
 
 var _ tsc.Watcher = (*Orchestrator)(nil)
@@ -221,6 +227,12 @@ func (o *Orchestrator) Start() tsc.CommandLineResult {
 }
 
 func (o *Orchestrator) Watch() {
+	o.fileWatcher = vfswatch.NewFileWatcher(
+		o.opts.Sys.FS(),
+		o.opts.Command.WatchOptions.WatchInterval(),
+		o.opts.Testing != nil,
+		nil, // build mode uses ScanForChanges, not callback
+	)
 	o.updateWatch()
 	o.resetCaches()
 
@@ -228,7 +240,6 @@ func (o *Orchestrator) Watch() {
 	if o.opts.Testing == nil {
 		watchInterval := o.opts.Command.WatchOptions.WatchInterval()
 		for {
-			// Testing mode: run a single cycle and exit
 			time.Sleep(watchInterval)
 			o.DoCycle()
 		}
@@ -236,11 +247,107 @@ func (o *Orchestrator) Watch() {
 }
 
 func (o *Orchestrator) updateWatch() {
+	o.host.host.FS().(*cachedvfs.FS).ClearCache()
 	oldCache := o.host.mTimes
 	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
+
 	o.rangeTask(func(path tspath.Path, task *BuildTask) {
-		task.updateWatch(o, oldCache)
+		task.updateWatchState(o, oldCache)
 	})
+
+	mergedDirs := o.computeWatchDirectories()
+	o.fileWatcher.UpdateWatchedDirectories(mergedDirs)
+}
+
+const minWatchLocationDepth = 2
+
+func (o *Orchestrator) computeWatchDirectories() map[string]bool {
+	dirs := make(map[string]bool)
+	var mu sync.Mutex
+
+	o.rangeTask(func(_ tspath.Path, task *BuildTask) {
+		localDirs := make(map[string]bool)
+		if task.resolved != nil {
+			maps.Copy(localDirs, task.resolved.WildcardDirectories())
+		}
+
+		projectRoot := o.comparePathsOptions.CurrentDirectory
+		if task.resolved != nil && task.resolved.ConfigFile != nil {
+			projectRoot = tspath.GetDirectoryPath(task.resolved.ConfigFile.SourceFile.FileName())
+		}
+
+		internalDirs := make(map[string]struct{})
+		externalDirs := make(map[string]struct{})
+		if task.seenFiles != nil {
+			task.seenFiles.Range(func(path string) bool {
+				if !tspath.HasExtension(path) {
+					return true
+				}
+				dir := tspath.GetDirectoryPath(path)
+				if dir == "" {
+					return true
+				}
+				if tspath.ContainsPath(projectRoot, path, o.comparePathsOptions) {
+					internalDirs[dir] = struct{}{}
+				} else {
+					externalDirs[dir] = struct{}{}
+				}
+				return true
+			})
+		}
+
+		// Coarsen internal directories to common parents
+		if len(internalDirs) > 0 {
+			fileDirs := make([]string, 0, len(internalDirs))
+			for dir := range internalDirs {
+				fileDirs = append(fileDirs, dir)
+			}
+			commonParents, _ := tspath.GetCommonParents(
+				fileDirs,
+				minWatchLocationDepth,
+				tspath.GetPathComponentsForWatching,
+				o.comparePathsOptions,
+			)
+			for _, parent := range commonParents {
+				if !isCoveredByWildcardDir(parent, localDirs, o.comparePathsOptions) {
+					localDirs[parent] = true
+				}
+			}
+		}
+
+		// Add external directories non-recursively
+		for dir := range externalDirs {
+			if !isCoveredByWildcardDir(dir, localDirs, o.comparePathsOptions) {
+				if _, already := localDirs[dir]; !already {
+					localDirs[dir] = false
+				}
+			}
+		}
+
+		mu.Lock()
+		for dir, recursive := range localDirs {
+			if recursive {
+				dirs[dir] = true
+			} else if _, already := dirs[dir]; !already {
+				dirs[dir] = false
+			}
+		}
+		mu.Unlock()
+	})
+
+	return dirs
+}
+
+func isCoveredByWildcardDir(dir string, wildcardDirs map[string]bool, opts tspath.ComparePathsOptions) bool {
+	for wdir, recursive := range wildcardDirs {
+		if tspath.ComparePaths(wdir, dir, opts) == 0 {
+			return true
+		}
+		if recursive && tspath.ContainsPath(wdir, dir, opts) {
+			return true
+		}
+	}
+	return false
 }
 
 func (o *Orchestrator) resetCaches() {
@@ -253,11 +360,19 @@ func (o *Orchestrator) resetCaches() {
 }
 
 func (o *Orchestrator) DoCycle() {
+	event := o.fileWatcher.ScanForChanges()
+	if !event.HasChanges() {
+		return
+	}
+
+	o.fileWatcher.WaitForSettled(context.Background())
+	event = o.fileWatcher.ScanForChanges()
+
 	var needsConfigUpdate atomic.Bool
 	var needsUpdate atomic.Bool
 	mTimes := o.host.mTimes.Clone()
 	o.rangeTask(func(path tspath.Path, task *BuildTask) {
-		if updateKind := task.hasUpdate(o, path); updateKind != updateKindNone {
+		if updateKind := task.hasUpdate(o, path, event); updateKind != updateKindNone {
 			needsUpdate.Store(true)
 			if updateKind == updateKindConfig {
 				needsConfigUpdate.Store(true)
@@ -268,12 +383,16 @@ func (o *Orchestrator) DoCycle() {
 	if !needsUpdate.Load() {
 		o.host.mTimes = mTimes
 		o.resetCaches()
+		o.fileWatcher.UpdateWatchedDirectories(o.computeWatchDirectories())
 		return
 	}
 
 	o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
+
+	o.host.host.FS().(*cachedvfs.FS).ClearCache()
+	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
+
 	if needsConfigUpdate.Load() {
-		// Generate new tasks
 		o.GenerateGraphReusingOldTasks()
 	}
 

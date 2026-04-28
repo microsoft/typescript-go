@@ -254,6 +254,20 @@ Edit [0]:: reports import errors after change to package file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is up to date with .d.ts files from its dependencies
+
+[[90mHH:MM:SS AM[0m] Updating output timestamps of project 'packages/pkg1/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
+//// [/user/username/projects/myproject/packages/pkg1/build/index.js] *mTime changed*
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *mTime changed*
 
 
 
@@ -287,6 +301,20 @@ Edit [1]:: removes those errors when a package file is changed back
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is up to date with .d.ts files from its dependencies
+
+[[90mHH:MM:SS AM[0m] Updating output timestamps of project 'packages/pkg1/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
+//// [/user/username/projects/myproject/packages/pkg1/build/index.js] *mTime changed*
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *mTime changed*
 
 
 
@@ -301,6 +329,20 @@ Edit [2]:: reports import errors after change to package file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is up to date with .d.ts files from its dependencies
+
+[[90mHH:MM:SS AM[0m] Updating output timestamps of project 'packages/pkg1/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
+//// [/user/username/projects/myproject/packages/pkg1/build/index.js] *mTime changed*
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *mTime changed*
 
 
 
@@ -354,7 +396,7 @@ Loading module as file / folder, candidate module location '/user/username/proje
 File name '/user/username/projects/myproject/packages/pkg2/const.cjs' has a '.cjs' extension - stripping it.
 File '/user/username/projects/myproject/packages/pkg2/const.cts' exists - use it as a name resolution result.
 ======== Module name './const.cjs' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/const.cts'. ========
-[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is out of date because output 'packages/pkg1/build/index.js' is older than input 'packages/pkg2/tsconfig.json'
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is out of date because output 'packages/pkg1/build/tsconfig.tsbuildinfo' is older than input 'packages/pkg2'
 
 [[90mHH:MM:SS AM[0m] Building project 'packages/pkg1/tsconfig.json'...
 

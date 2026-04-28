@@ -231,7 +231,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'src/pure/tsconfig.json'...
 
-[[90mHH:MM:SS AM[0m] Project 'src/main/tsconfig.json' is out of date because output 'out/main/index.js' is older than input 'src/pure/tsconfig.json'
+[[90mHH:MM:SS AM[0m] Project 'src/main/tsconfig.json' is out of date because output 'out/main/tsconfig.tsbuildinfo' is older than input 'src/pure'
 
 [[90mHH:MM:SS AM[0m] Building project 'src/main/tsconfig.json'...
 
@@ -385,7 +385,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'src/pure/tsconfig.json'...
 
-[[90mHH:MM:SS AM[0m] Project 'src/main/tsconfig.json' is out of date because it has errors.
+[[90mHH:MM:SS AM[0m] Project 'src/main/tsconfig.json' is out of date because buildinfo file 'out/main/tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'src/main/tsconfig.json'...
 

@@ -12,7 +12,7 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
-const debounceWait = 250 * time.Millisecond
+const DebounceWait = 250 * time.Millisecond
 
 type WatchLogger interface {
 	Log(msg ...any)
@@ -104,8 +104,8 @@ func (fw *FileWatcher) WaitForSettled(ctx context.Context) {
 	fw.mu.Unlock()
 	current := snapshotDirectories(fw.fs, dirs)
 	settledAt := time.Now()
-	tick := min(pollInterval, debounceWait)
-	for time.Since(settledAt) < debounceWait {
+	tick := min(pollInterval, DebounceWait)
+	for time.Since(settledAt) < DebounceWait {
 		if sleepOrDone(ctx, tick) {
 			return
 		}
