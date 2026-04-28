@@ -709,7 +709,8 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 		KindImportType,
 		// These occur in pseudo-types like `f<T>.C`, where `f` is a generic function and `C` is a local type
 		KindPropertyAccessExpression,
-		KindExpressionWithTypeArguments:
+		KindExpressionWithTypeArguments,
+		KindTypeParameter:
 		return TypePrecedenceNonArray
 	default:
 		panic(fmt.Sprintf("unhandled TypeNode: %v", n.Kind))

@@ -2322,13 +2322,6 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
 
-	case ast.KindPropertyAccessExpression:
-		// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type
-		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
-	case ast.KindExpressionWithTypeArguments:
-		// !!! Should this actually be considered a type?
-		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
-
 	case ast.KindJSDocAllType:
 		p.emitJSDocAllType(node)
 	case ast.KindJSDocNonNullableType:
@@ -2339,6 +2332,14 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		p.emitJSDocOptionalType(node.AsJSDocOptionalType())
 	case ast.KindJSDocVariadicType:
 		p.emitJSDocVariadicType(node.AsJSDocVariadicType())
+
+	// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type
+	case ast.KindPropertyAccessExpression:
+		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
+	case ast.KindExpressionWithTypeArguments:
+		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
+	case ast.KindTypeParameter:
+		p.emitTypeParameter(node.AsTypeParameterDeclaration())
 
 	default:
 		panic(fmt.Sprintf("unhandled TypeNode: %v", node.Kind))

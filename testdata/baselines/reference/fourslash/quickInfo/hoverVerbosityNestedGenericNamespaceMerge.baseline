@@ -1,0 +1,155 @@
+// === QuickInfo ===
+=== /hoverVerbosityNestedGenericNamespaceMerge.ts ===
+// 
+// declare namespace NS {
+//     export class Box<TElement = HTMLElement> {}
+//     export namespace Box {
+//         export interface ResultBase<TR, TJ, TN> {
+//             next<ARD, AJD, AND>(
+//                 doneFilter: (
+//                     value: TR
+//                 ) => ResultBase<ARD, AJD, AND> | ARD,
+//             ): ResultBase<ARD, AJD, AND>;
+//         }
+//         export interface Result<TR, TJ = any, TN = any> extends ResultBase<TR, TJ, TN> {}
+//     }
+// }
+// 
+// interface Operation<T> extends NS.Box.Result<T> {}
+// 
+// declare namespace Work {
+//     interface Item {
+//         run(force?: boolean): Operation<any>;
+//     }
+// }
+// 
+// declare const item: Work.Item;
+// item.run();
+//      ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) Work.Item.run(force?: boolean | undefined): {
+// |     next<ARD, AJD, AND>(doneFilter: (value: any) => ARD | {
+// |         next<ARD, AJD, AND>(doneFilter: (value: ARD) => ARD | NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>): NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>;
+// |     }): {
+// |         next<ARD, AJD, AND>(doneFilter: (value: ARD) => ARD | NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>): NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>;
+// |     };
+// | }
+// | ```
+// | 
+// | (verbosity level: 2)
+// | ----------------------------------------------------------------------
+//      ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) Work.Item.run(force?: boolean | undefined): {
+// |     next<ARD, AJD, AND>(doneFilter: (value: any) => ARD | NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>): NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>;
+// | }
+// | ```
+// | 
+// | (verbosity level: 1)
+// | ----------------------------------------------------------------------
+//      ^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (method) Work.Item.run(force?: boolean): Operation<any>
+// | ```
+// | 
+// | (verbosity level: 0)
+// | ----------------------------------------------------------------------
+// 
+[
+  {
+    "marker": {
+      "Position": 636,
+      "LSPosition": {
+        "line": 24,
+        "character": 5
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\n(method) Work.Item.run(force?: boolean): Operation<any>\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 24,
+            "character": 5
+          },
+          "end": {
+            "line": 24,
+            "character": 8
+          }
+        },
+        "canIncreaseVerbosity": true
+      },
+      "verbosityLevel": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 636,
+      "LSPosition": {
+        "line": 24,
+        "character": 5
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\n(method) Work.Item.run(force?: boolean | undefined): {\n    next<ARD, AJD, AND>(doneFilter: (value: any) => ARD | NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>): NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>;\n}\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 24,
+            "character": 5
+          },
+          "end": {
+            "line": 24,
+            "character": 8
+          }
+        },
+        "canIncreaseVerbosity": true
+      },
+      "verbosityLevel": 1
+    }
+  },
+  {
+    "marker": {
+      "Position": 636,
+      "LSPosition": {
+        "line": 24,
+        "character": 5
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\n(method) Work.Item.run(force?: boolean | undefined): {\n    next<ARD, AJD, AND>(doneFilter: (value: any) => ARD | {\n        next<ARD, AJD, AND>(doneFilter: (value: ARD) => ARD | NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>): NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>;\n    }): {\n        next<ARD, AJD, AND>(doneFilter: (value: ARD) => ARD | NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>): NS.Box<TElement = HTMLElement>.ResultBase<ARD, AJD, AND>;\n    };\n}\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 24,
+            "character": 5
+          },
+          "end": {
+            "line": 24,
+            "character": 8
+          }
+        },
+        "canIncreaseVerbosity": true
+      },
+      "verbosityLevel": 2
+    }
+  }
+]
