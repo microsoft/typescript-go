@@ -279,6 +279,8 @@ export class Client implements vscode.Disposable {
         this.isInitialized = false;
         this.outputChannel.appendLine(`Restarting language server...`);
         await this.client.restart();
+        this.isInitialized = true;
+        this.initializedEventEmitter.fire();
         return true;
     }
 
