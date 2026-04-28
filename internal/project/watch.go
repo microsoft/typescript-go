@@ -29,6 +29,61 @@ type fileSystemWatcherValue struct {
 	id    WatcherID
 }
 
+// watchRegistry tracks the current watch globs and how many individual
+// WatchedFiles reference each glob. It guards concurrent access with a mutex
+// and provides ref-count helpers so callers don't manipulate the map directly.
+type watchRegistry struct {
+	mu      sync.Mutex
+	entries map[fileSystemWatcherKey]*fileSystemWatcherValue
+}
+
+func newWatchRegistry() *watchRegistry {
+	return &watchRegistry{entries: make(map[fileSystemWatcherKey]*fileSystemWatcherValue)}
+}
+
+// Acquire increments the ref count for a watcher. If this is the first
+// reference (count goes from 0 to 1), it returns true so the caller knows
+// to register the watcher with the client.
+func (r *watchRegistry) Acquire(watcher *lsproto.FileSystemWatcher, id WatcherID) (isNew bool) {
+	key := toFileSystemWatcherKey(watcher)
+	value := r.entries[key]
+	if value == nil {
+		value = &fileSystemWatcherValue{id: id}
+		r.entries[key] = value
+	}
+	value.count++
+	return value.count == 1
+}
+
+// RollbackAcquire undoes an Acquire after a failed client registration,
+// decrementing the ref count and removing the entry when it reaches zero.
+func (r *watchRegistry) RollbackAcquire(watcher *lsproto.FileSystemWatcher) {
+	key := toFileSystemWatcherKey(watcher)
+	if value := r.entries[key]; value != nil {
+		value.count--
+		if value.count == 0 {
+			delete(r.entries, key)
+		}
+	}
+}
+
+// Release decrements the ref count for a watcher. If no references remain,
+// the entry is removed and the function returns the WatcherID and true so
+// the caller knows to unregister the watcher from the client.
+func (r *watchRegistry) Release(watcher *lsproto.FileSystemWatcher) (id WatcherID, removed bool) {
+	key := toFileSystemWatcherKey(watcher)
+	value := r.entries[key]
+	if value == nil {
+		return "", false
+	}
+	if value.count <= 1 {
+		delete(r.entries, key)
+		return value.id, true
+	}
+	value.count--
+	return "", false
+}
+
 type PatternsAndIgnored struct {
 	directoriesOutsideWorkspace []string
 	patternsInsideWorkspace     []string

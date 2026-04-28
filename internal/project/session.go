@@ -160,8 +160,7 @@ type Session struct {
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
-	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
-	watchesMu sync.Mutex
+	watches *watchRegistry
 
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
@@ -226,7 +225,7 @@ func NewSession(init *SessionInit) *Session {
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
 		pendingATAChanges:        make(map[tspath.Path]*ATAStateChange),
-		watches:                  make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
+		watches:                  newWatchRegistry(),
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
@@ -1137,9 +1136,9 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
-	session.watchesMu.Lock()
-	defer session.watchesMu.Unlock()
-	// Use a timeout for client requests to prevent holding watchesMu indefinitely
+	session.watches.mu.Lock()
+	defer session.watches.mu.Unlock()
+	// Use a timeout for client requests to prevent holding the mutex indefinitely
 	// if the client is slow or unresponsive.
 	watchCtx, watchCancel := context.WithTimeout(ctx, watchRequestTimeout)
 	defer watchCancel()
@@ -1149,29 +1148,14 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		if len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				value := session.watches[key]
 				globId := WatcherID(fmt.Sprintf("%s.%d", w.WatcherID, i))
-				if value == nil {
-					value = &fileSystemWatcherValue{id: globId}
-					session.watches[key] = value
-				}
-				value.count++
-				if value.count == 1 {
+				if session.watches.Acquire(watcher, globId) {
 					newWatchers.Set(globId, watcher)
 				}
 			}
 			for id, watcher := range newWatchers.Entries() {
 				if err := session.client.WatchFiles(watchCtx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
-					// Roll back the count increment so a subsequent updateWatch call
-					// will see this watcher as new and re-attempt registration.
-					key := toFileSystemWatcherKey(watcher)
-					if value := session.watches[key]; value != nil {
-						value.count--
-						if value.count == 0 {
-							delete(session.watches, key)
-						}
-					}
+					session.watches.RollbackAcquire(watcher)
 					errors = append(errors, err)
 				} else if logger != nil {
 					if oldWatcher == nil {
@@ -1197,21 +1181,13 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		w := oldWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
-			var removedWatchers []WatcherID
+			var removedIDs []WatcherID
 			for _, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				value := session.watches[key]
-				if value == nil {
-					continue
-				}
-				if value.count <= 1 {
-					delete(session.watches, key)
-					removedWatchers = append(removedWatchers, value.id)
-				} else {
-					value.count--
+				if id, removed := session.watches.Release(watcher); removed {
+					removedIDs = append(removedIDs, id)
 				}
 			}
-			for _, id := range removedWatchers {
+			for _, id := range removedIDs {
 				if err := session.client.UnwatchFiles(watchCtx, id); err != nil {
 					errors = append(errors, err)
 				} else if logger != nil && newWatcher == nil {
