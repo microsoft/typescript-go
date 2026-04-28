@@ -86,6 +86,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	core.ApplyDebugStackLimit()
 	defer baseline.Track()()
 	m.Run()
 }
