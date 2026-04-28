@@ -188,13 +188,29 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 		defer done()
 		compilerOptions := fixContext.Program.Options()
 		symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
-		if len(symbolNames) != 1 {
-			panic("Expected exactly one symbol name for type-only import promotion")
+		for _, symbolName := range symbolNames {
+			fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, symbolName, fixContext.Program)
+			if fix != nil {
+				info = append(info, &fixInfo{fix: fix, symbolName: symbolName, errorIdentifierText: symbolToken.Text()})
+			}
 		}
-		symbolName := symbolNames[0]
-		fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, symbolName, fixContext.Program)
-		if fix != nil {
-			return []*fixInfo{{fix: fix, symbolName: symbolName, errorIdentifierText: symbolToken.Text()}}, nil
+		// For any symbol names that couldn't be promoted, fall back to regular auto-import
+		if len(info) < len(symbolNames) {
+			var err error
+			view, err = fixContext.LS.getPreparedAutoImportView(fixContext.SourceFile)
+			if err != nil {
+				return nil, err
+			}
+			if view != nil {
+				info = append(info, getFixesInfoForNonUMDImport(ctx, fixContext, symbolToken, view)...)
+			}
+		}
+		if len(info) > 0 {
+			// Sort fixes by preference
+			if view == nil {
+				view = fixContext.LS.getCurrentAutoImportView(fixContext.SourceFile)
+			}
+			return sortFixInfo(info, fixContext, view), nil
 		}
 		return nil, nil
 	} else {
