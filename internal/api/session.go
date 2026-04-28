@@ -1391,7 +1391,7 @@ func (s *Session) handleGetParameterType(ctx context.Context, params *GetParamet
 	}
 
 	if params.Index < 0 {
-		return nil, fmt.Errorf("invalid parameter index")
+		return nil, fmt.Errorf("%w: invalid parameter index", ErrClientError)
 	}
 
 	t := setup.checker.GetTypeAtPosition(sig, int(params.Index))
