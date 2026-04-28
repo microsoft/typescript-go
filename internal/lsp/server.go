@@ -263,6 +263,10 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 		return nil
 	}
 
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
 	// Fire-and-forget: the client always returns null, and waiting for the response
 	// can cause the server to hang if the client is slow or unresponsive.
 	// Any response from the client will be silently ignored by the read loop.

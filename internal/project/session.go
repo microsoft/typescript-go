@@ -49,6 +49,9 @@ const (
 // a WatchFiles or UnwatchFiles request while holding the watches mutex.
 const watchRequestTimeout = time.Second
 
+// watchRetryDelay is the delay before retrying failed watch operations.
+const watchRetryDelay = time.Second
+
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
@@ -1116,8 +1119,24 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
-			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
-				s.logger.Log(err)
+			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil {
+				if s.options.LoggingEnabled {
+					s.logger.Log(err)
+				}
+				// Schedule a single retry for failed watch registrations.
+				// WatchFiles bookkeeping is rolled back on failure, so the retry
+				// will naturally re-attempt the registrations.
+				s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
+					select {
+					case <-time.After(watchRetryDelay):
+						// Delay completed, proceed with retry
+					case <-ctx.Done():
+						return
+					}
+					if retryErr := s.updateWatches(oldSnapshot, newSnapshot); retryErr != nil && s.options.LoggingEnabled {
+						s.logger.Logf("Watch update retry failed: %v", retryErr)
+					}
+				})
 			}
 		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
@@ -1137,12 +1156,12 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
+	session.watchesMu.Lock()
+	defer session.watchesMu.Unlock()
 	// Use a timeout for client requests to prevent holding watchesMu indefinitely
 	// if the client is slow or unresponsive.
 	watchCtx, watchCancel := context.WithTimeout(ctx, watchRequestTimeout)
 	defer watchCancel()
-	session.watchesMu.Lock()
-	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
 		w := newWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
@@ -1163,6 +1182,15 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 			}
 			for id, watcher := range newWatchers.Entries() {
 				if err := session.client.WatchFiles(watchCtx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
+					// Roll back the count increment so a subsequent updateWatch call
+					// will see this watcher as new and re-attempt registration.
+					key := toFileSystemWatcherKey(watcher)
+					if value := session.watches[key]; value != nil {
+						value.count--
+						if value.count == 0 {
+							delete(session.watches, key)
+						}
+					}
 					errors = append(errors, err)
 				} else if logger != nil {
 					if oldWatcher == nil {
