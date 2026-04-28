@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/autoTypeUnionPartialPropAccessError2.ts] ////
+
+=== index.js ===
+// https://github.com/microsoft/typescript-go/issues/3639
+
+export class C {
+>C : C
+
+    constructor() {
+        const error = { message: 'props.message' };
+>error : { message: string; }
+>{ message: 'props.message' } : { message: string; }
+>message : string
+>'props.message' : "props.message"
+
+        const shouldEmitError = Math.random() < 0.5;
+>shouldEmitError : boolean
+>Math.random() < 0.5 : boolean
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+>0.5 : 0.5
+
+        this.state = {
+>this.state = {            ctx: shouldEmitError ? { ...error, name: 'A' } : { name: 'B' },        } : { ctx: { message: string; name: string; } | { name: string; }; }
+>this.state : any
+>this : this
+>state : any
+>{            ctx: shouldEmitError ? { ...error, name: 'A' } : { name: 'B' },        } : { ctx: { message: string; name: string; } | { name: string; }; }
+
+            ctx: shouldEmitError ? { ...error, name: 'A' } : { name: 'B' },
+>ctx : { message: string; name: string; } | { name: string; }
+>shouldEmitError ? { ...error, name: 'A' } : { name: 'B' } : { message: string; name: string; } | { name: string; }
+>shouldEmitError : boolean
+>{ ...error, name: 'A' } : { message: string; name: string; }
+>error : { message: string; }
+>name : string
+>'A' : "A"
+>{ name: 'B' } : { name: string; }
+>name : string
+>'B' : "B"
+        }
+    }
+
+    method() {
+>method : () => void
+
+        const { ctx: { message, name } } = this.state;
+>ctx : any
+>message : any
+>name : string
+>this.state : { ctx: { message: string; name: string; } | { name: string; }; }
+>this : this
+>state : { ctx: { message: string; name: string; } | { name: string; }; }
+    }
+}
+

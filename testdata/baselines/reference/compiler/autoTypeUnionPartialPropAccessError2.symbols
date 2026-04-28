@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/autoTypeUnionPartialPropAccessError2.ts] ////
+
+=== index.js ===
+// https://github.com/microsoft/typescript-go/issues/3639
+
+export class C {
+>C : Symbol(C, Decl(index.js, 0, 0))
+
+    constructor() {
+        const error = { message: 'props.message' };
+>error : Symbol(error, Decl(index.js, 4, 13))
+>message : Symbol(message, Decl(index.js, 4, 23))
+
+        const shouldEmitError = Math.random() < 0.5;
+>shouldEmitError : Symbol(shouldEmitError, Decl(index.js, 5, 13))
+>Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2025.float16.d.ts, --, --))
+>random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+        this.state = {
+>this.state : Symbol(C.state, Decl(index.js, 5, 52))
+>this : Symbol(C, Decl(index.js, 0, 0))
+>state : Symbol(C.state, Decl(index.js, 5, 52))
+
+            ctx: shouldEmitError ? { ...error, name: 'A' } : { name: 'B' },
+>ctx : Symbol(ctx, Decl(index.js, 7, 22))
+>shouldEmitError : Symbol(shouldEmitError, Decl(index.js, 5, 13))
+>error : Symbol(error, Decl(index.js, 4, 13))
+>name : Symbol(name, Decl(index.js, 8, 46))
+>name : Symbol(name, Decl(index.js, 8, 62))
+        }
+    }
+
+    method() {
+>method : Symbol(C.method, Decl(index.js, 10, 5))
+
+        const { ctx: { message, name } } = this.state;
+>ctx : Symbol(ctx, Decl(index.js, 7, 22))
+>message : Symbol(message, Decl(index.js, 13, 22))
+>name : Symbol(name, Decl(index.js, 13, 31))
+>this.state : Symbol(C.state, Decl(index.js, 5, 52))
+>this : Symbol(C, Decl(index.js, 0, 0))
+>state : Symbol(C.state, Decl(index.js, 5, 52))
+    }
+}
+
