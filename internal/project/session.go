@@ -49,9 +49,6 @@ const (
 // a WatchFiles or UnwatchFiles request while holding the watches mutex.
 const watchRequestTimeout = time.Second
 
-// watchRetryDelay is the delay before retrying failed watch operations.
-const watchRetryDelay = time.Second
-
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
@@ -1119,24 +1116,8 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
-			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil {
-				if s.options.LoggingEnabled {
-					s.logger.Log(err)
-				}
-				// Schedule a single retry for failed watch registrations.
-				// WatchFiles bookkeeping is rolled back on failure, so the retry
-				// will naturally re-attempt the registrations.
-				s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
-					select {
-					case <-time.After(watchRetryDelay):
-						// Delay completed, proceed with retry
-					case <-ctx.Done():
-						return
-					}
-					if retryErr := s.updateWatches(oldSnapshot, newSnapshot); retryErr != nil && s.options.LoggingEnabled {
-						s.logger.Logf("Watch update retry failed: %v", retryErr)
-					}
-				})
+			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
+				s.logger.Log(err)
 			}
 		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
