@@ -19,6 +19,7 @@ export enum NodeBuilderFlags {
     UseAliasDefinedOutsideCurrentScope = 1 << 14,
     UseSingleQuotesForStringLiteralType = 1 << 28,
     NoTypeReduction = 1 << 29,
+    UseInstantiationExpressions = 1 << 30,
     OmitThisParameter = 1 << 25,
     WriteCallStyleSignature = 1 << 27,
     AllowThisInObjectLiteral = 1 << 15,
