@@ -28,22 +28,27 @@ func TestUpdateWatchTimeoutAndRollback(t *testing.T) {
 		"/home/projects/TS/p1/src/index.ts": `export const x = 1;`,
 	}
 
-	t.Run("slow client triggers timeout and rollback, watch succeeds after tsconfig change", func(t *testing.T) {
+	t.Run("watch retries on next snapshot update after timeout with same watcher identity", func(t *testing.T) {
 		t.Parallel()
 		synctest.Test(t, func(t *testing.T) {
 			init, utils := projecttestutil.GetSessionInitOptions(files, nil, &projecttestutil.TypingsInstallerOptions{})
 
-			// Track WatchFiles calls and which watcher IDs were successfully registered.
-			var watchCalls atomic.Int32
-			var firstBatchDone atomic.Bool
+			// Track WatchFiles calls: record which watcher IDs were attempted
+			// and which succeeded.
 			var mu sync.Mutex
+			var attemptedIDs []project.WatcherID
 			var successfulIDs []project.WatcherID
-			utils.Client().WatchFilesFunc = func(ctx context.Context, id project.WatcherID, _ []*lsproto.FileSystemWatcher) error {
-				watchCalls.Add(1)
+			var firstBatchDone atomic.Bool
+			utils.Client().WatchFilesFunc = func(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
+				mu.Lock()
+				attemptedIDs = append(attemptedIDs, id)
+				mu.Unlock()
 				if !firstBatchDone.Load() {
+					// Block until the context times out to simulate a slow client.
 					<-ctx.Done()
 					return ctx.Err()
 				}
+				// After the first batch, succeed immediately.
 				mu.Lock()
 				successfulIDs = append(successfulIDs, id)
 				mu.Unlock()
@@ -55,9 +60,10 @@ func TestUpdateWatchTimeoutAndRollback(t *testing.T) {
 
 			uri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.ts")
 
-			// Open the file: triggers updateWatches which calls WatchFiles for
-			// the project's watches. All calls block and time out because the
-			// client is slow.
+			// Step 1: Open the file. This creates the project and triggers
+			// updateWatches. All WatchFiles calls block and time out because
+			// the client is slow, so the registry is rolled back and the
+			// watchers are marked as pending.
 			session.DidOpenFile(context.Background(), uri, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Let the background goroutine block on WatchFiles, then advance
@@ -66,49 +72,54 @@ func TestUpdateWatchTimeoutAndRollback(t *testing.T) {
 			time.Sleep(2 * time.Second)
 			synctest.Wait()
 
-			firstCallCount := watchCalls.Load()
-			assert.Assert(t, firstCallCount >= 1, "expected at least one WatchFiles call during initial open, got %d", firstCallCount)
+			mu.Lock()
+			firstAttemptIDs := append([]project.WatcherID(nil), attemptedIDs...)
+			mu.Unlock()
+			assert.Assert(t, len(firstAttemptIDs) >= 1, "expected at least one WatchFiles call during initial open, got %d", len(firstAttemptIDs))
 
-			// No watcher IDs should have been successfully registered.
+			// No watcher IDs should have succeeded.
 			mu.Lock()
 			assert.Equal(t, len(successfulIDs), 0, "expected no successful watches after timeout")
 			mu.Unlock()
 
-			// Allow subsequent WatchFiles calls to succeed.
+			// Step 2: Allow subsequent WatchFiles calls to succeed.
 			firstBatchDone.Store(true)
 
-			// Simulate an external tsconfig.json modification. This queues a
-			// pending file-change event. When flushed, the config entry is
-			// re-parsed and its rootFilesWatch gets a new identity, causing
-			// updateWatches to call WatchFiles for that watcher. Without the
-			// rollback, the registry would still have a stale entry from the
-			// first failed attempt, and Acquire would return false for the
-			// overlapping glob — silently skipping the client registration.
-			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			// Step 3: Make a single character change to the open file. This
+			// doesn't change any watcher identities — the program files remain
+			// the same, so the programFilesWatch ID is unchanged. The pending
+			// tracking ensures updateWatches retries the failed registrations.
+			session.DidChangeFile(context.Background(), uri, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
-					Uri:  "file:///home/projects/TS/p1/tsconfig.json",
-					Type: lsproto.FileChangeTypeChanged,
+					Partial: &lsproto.TextDocumentContentChangePartial{
+						Range: lsproto.Range{
+							Start: lsproto.Position{Line: 0, Character: 18},
+							End:   lsproto.Position{Line: 0, Character: 19},
+						},
+						Text: "2",
+					},
 				},
 			})
 
-			// DidChangeWatchedFiles only queues the change. Reopen the file to
-			// flush pending changes and trigger UpdateSnapshot → updateWatches.
-			session.DidOpenFile(context.Background(), uri, 2, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			// Step 4: Flush the pending change by requesting the language service.
+			// This triggers getSnapshot → updateSnapshot → updateWatches.
+			_, err := session.GetLanguageService(context.Background(), uri)
+			assert.NilError(t, err)
 
+			// Let the background task run updateWatches.
 			synctest.Wait()
 			time.Sleep(2 * time.Second)
 			synctest.Wait()
 
-			// WatchFiles should have been called again for the re-registered watcher.
-			retryCallCount := watchCalls.Load()
-			assert.Assert(t, retryCallCount > firstCallCount,
-				"expected WatchFiles to be called again after tsconfig change, got %d total calls (was %d after first attempt)",
-				retryCallCount, firstCallCount)
-
-			// Verify that at least one watcher was successfully registered.
+			// Verify: WatchFiles was called again with the same watcher IDs,
+			// and this time the calls succeeded.
 			mu.Lock()
-			assert.Assert(t, len(successfulIDs) > 0,
-				"expected at least one watcher to be registered after successful retry")
+			retryIDs := attemptedIDs[len(firstAttemptIDs):]
+			assert.Assert(t, len(retryIDs) >= 1,
+				"expected WatchFiles to be retried after character change, got %d new calls (total %d, first batch %d)",
+				len(retryIDs), len(attemptedIDs), len(firstAttemptIDs))
+			assert.Assert(t, len(successfulIDs) >= 1,
+				"expected at least one watcher to be registered after retry, got %d", len(successfulIDs))
 			mu.Unlock()
 		})
 	})

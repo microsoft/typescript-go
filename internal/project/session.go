@@ -1167,6 +1167,11 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 					logger.Log("")
 				}
 			}
+			if len(errors) > 0 {
+				session.watches.MarkPending(w.WatcherID)
+			} else {
+				session.watches.ClearPending(w.WatcherID)
+			}
 			if len(w.IgnoredPaths) > 0 {
 				logger.Logf("%d paths ineligible for watching", len(w.IgnoredPaths))
 				if logger.IsVerbose() {
@@ -1219,6 +1224,14 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			errors = append(errors, updateWatch(ctx, s, s.logger, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
 		},
 	)
+	// Retry config watchers whose IDs didn't change but whose previous registration failed.
+	for path, newEntry := range newSnapshot.ConfigFileRegistry.configs {
+		if oldEntry, ok := oldSnapshot.ConfigFileRegistry.configs[path]; ok {
+			if oldEntry.rootFilesWatch.ID() == newEntry.rootFilesWatch.ID() && s.watches.IsPending(newEntry.rootFilesWatch.ID()) {
+				errors = append(errors, updateWatch(ctx, s, s.logger, nil, newEntry.rootFilesWatch)...)
+			}
+		}
+	}
 
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
@@ -1234,15 +1247,21 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
+			} else if s.watches.IsPending(newProject.programFilesWatch.ID()) {
+				errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.programFilesWatch)...)
 			}
 			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
+			} else if s.watches.IsPending(newProject.typingsWatch.ID()) {
+				errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
 			}
 		},
 	)
 
 	if oldSnapshot.autoImportsWatch.ID() != newSnapshot.autoImportsWatch.ID() {
 		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
+	} else if s.watches.IsPending(newSnapshot.autoImportsWatch.ID()) {
+		errors = append(errors, updateWatch(ctx, s, s.logger, nil, newSnapshot.autoImportsWatch)...)
 	}
 
 	if len(errors) > 0 {

@@ -32,13 +32,19 @@ type fileSystemWatcherValue struct {
 // watchRegistry tracks the current watch globs and how many individual
 // WatchedFiles reference each glob. It guards concurrent access with a mutex
 // and provides ref-count helpers so callers don't manipulate the map directly.
+// It also tracks which parent watcher IDs have pending (failed) registrations
+// so that updateWatches can retry them even when the watcher identity hasn't changed.
 type watchRegistry struct {
 	mu      sync.Mutex
 	entries map[fileSystemWatcherKey]*fileSystemWatcherValue
+	pending map[WatcherID]struct{}
 }
 
 func newWatchRegistry() *watchRegistry {
-	return &watchRegistry{entries: make(map[fileSystemWatcherKey]*fileSystemWatcherValue)}
+	return &watchRegistry{
+		entries: make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
+		pending: make(map[WatcherID]struct{}),
+	}
 }
 
 // Acquire increments the ref count for a watcher. If this is the first
@@ -70,6 +76,27 @@ func (r *watchRegistry) Release(watcher *lsproto.FileSystemWatcher) (id WatcherI
 	}
 	value.count--
 	return "", false
+}
+
+// MarkPending records that a watcher's registration failed and needs retry.
+// Must be called with mu held.
+func (r *watchRegistry) MarkPending(id WatcherID) {
+	r.pending[id] = struct{}{}
+}
+
+// ClearPending removes a watcher from the pending set after successful registration.
+// Must be called with mu held.
+func (r *watchRegistry) ClearPending(id WatcherID) {
+	delete(r.pending, id)
+}
+
+// IsPending returns true if the watcher needs retry due to a previous failure.
+// Acquires mu internally — must NOT be called with mu already held.
+func (r *watchRegistry) IsPending(id WatcherID) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	_, ok := r.pending[id]
+	return ok
 }
 
 type PatternsAndIgnored struct {
