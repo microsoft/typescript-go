@@ -1144,7 +1144,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		if len(watchers) > 0 {
 			// Dedupe watchers by key to prevent refcount inflation from
 			// duplicate patterns.
-			seen := make(map[fileSystemWatcherKey]bool)
+			seen := make(map[fileSystemWatcherKey]bool, len(watchers))
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
 				key := toFileSystemWatcherKey(watcher)
