@@ -22,7 +22,7 @@ import (
 )
 
 func ApplyDebugStackLimit() {
-	v := os.Getenv("TSGO_DEBUG_STACK_LIMIT") //nolint:forbidigo
+	v := os.Getenv("TS_GO_DEBUG_STACK_LIMIT") //nolint:forbidigo
 	if v == "" {
 		return
 	}
