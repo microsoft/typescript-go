@@ -15,8 +15,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
-	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -277,17 +275,6 @@ type checkerSetup struct {
 	done    func()
 }
 
-// setupLanguageService creates a LanguageService from the same snapshot/project used by setupChecker.
-// This ensures the LS operates on the same program and state as the checker.
-func (s *Session) setupLanguageService(setup checkerSetup, projectHandle Handle[project.Project], activeFile string) (*ls.LanguageService, error) {
-	projectName := parseProjectHandle(projectHandle)
-	proj := setup.sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
-	if proj == nil {
-		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
-	}
-	return ls.NewLanguageService(proj.ConfigFilePath(), setup.program, setup.sd.snapshot, activeFile), nil
-}
-
 // setupChecker resolves snapshot, program, and type checker for a project.
 // Callers must defer setup.done() to release the checker.
 func (s *Session) setupChecker(ctx context.Context, snapshot Handle[project.Snapshot], projectHandle Handle[project.Project]) (checkerSetup, error) {
@@ -416,16 +403,6 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetParameterType(ctx, parsed.(*GetParameterTypeParams))
 	case string(MethodIsArrayLikeType):
 		return s.handleIsArrayLikeType(ctx, parsed.(*IsArrayLikeTypeParams))
-	case string(MethodIsSymbolReferencedInFile):
-		return s.handleIsSymbolReferencedInFile(ctx, parsed.(*IsSymbolReferencedInFileParams))
-	case string(MethodEachSymbolReferenceInFile):
-		return s.handleEachSymbolReferenceInFile(ctx, parsed.(*IsSymbolReferencedInFileParams))
-	case string(MethodGetReferencedSymbolsForNode):
-		return s.handleGetReferencedSymbolsForNode(ctx, parsed.(*GetReferencedSymbolsForNodeParams))
-	case string(MethodSomeSignatureUsage):
-		return s.handleSomeSignatureUsage(ctx, parsed.(*SomeSignatureUsageParams))
-	case string(MethodProbablyUsesSemicolons):
-		return s.handleProbablyUsesSemicolons(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetShorthandAssignmentValueSymbol):
 		return s.handleGetShorthandAssignmentValueSymbol(ctx, parsed.(*GetTypeAtLocationParams))
 	case string(MethodGetTypeOfSymbolAtLocation):
@@ -1418,174 +1395,6 @@ func (s *Session) handleIsArrayLikeType(ctx context.Context, params *IsArrayLike
 	return setup.checker.IsArrayLikeType(t), nil
 }
 
-// handleIsSymbolReferencedInFile returns whether a symbol is referenced in the file containing the given identifier.
-func (s *Session) handleIsSymbolReferencedInFile(ctx context.Context, params *IsSymbolReferencedInFileParams) (bool, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return false, err
-	}
-	defer setup.done()
-
-	node, err := s.resolveNodeHandle(setup.program, params.Definition)
-	if err != nil {
-		return false, err
-	}
-	if node == nil || !ast.IsIdentifier(node) {
-		return false, fmt.Errorf("%w: definition must be an identifier node", ErrClientError)
-	}
-
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
-	if err != nil {
-		return false, err
-	}
-	if symbol == nil {
-		return false, nil
-	}
-
-	// Get the source file from the node handle
-	_, _, _, path, err := parseNodeHandle(params.Definition)
-	if err != nil {
-		return false, fmt.Errorf("%w: %w", ErrClientError, err)
-	}
-	sourceFile := setup.program.GetSourceFileByPath(path)
-	if sourceFile == nil {
-		return false, fmt.Errorf("%w: source file not found: %s", ErrClientError, path)
-	}
-
-	return setup.checker.IsSymbolReferencedInFile(sourceFile, node.AsIdentifier(), symbol), nil
-}
-
-// handleEachSymbolReferenceInFile returns positions of all references to a symbol in a file.
-func (s *Session) handleEachSymbolReferenceInFile(ctx context.Context, params *IsSymbolReferencedInFileParams) ([]int, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return nil, err
-	}
-	defer setup.done()
-
-	node, err := s.resolveNodeHandle(setup.program, params.Definition)
-	if err != nil {
-		return nil, err
-	}
-	if node == nil || !ast.IsIdentifier(node) {
-		return nil, fmt.Errorf("%w: definition must be an identifier node", ErrClientError)
-	}
-
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
-	if err != nil {
-		return nil, err
-	}
-	if symbol == nil {
-		return []int{}, nil
-	}
-
-	_, _, _, path, err := parseNodeHandle(params.Definition)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
-	}
-	sourceFile := setup.program.GetSourceFileByPath(path)
-	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: source file not found: %s", ErrClientError, path)
-	}
-
-	positions := setup.checker.EachSymbolReferenceInFile(sourceFile, node.AsIdentifier(), symbol)
-	if positions == nil {
-		return []int{}, nil
-	}
-	return positions, nil
-}
-
-// handleGetReferencedSymbolsForNode finds all references to a node and returns compact NodeReferenceInfo entries.
-func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params *GetReferencedSymbolsForNodeParams) ([]NodeReferenceInfo, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return nil, err
-	}
-	defer setup.done()
-
-	node, err := s.resolveNodeHandle(setup.program, params.Node)
-	if err != nil {
-		return nil, err
-	}
-
-	langSvc, err := s.setupLanguageService(setup, params.Project, "")
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFiles := setup.program.GetSourceFiles()
-	entries := langSvc.GetReferencedSymbolsForNode(ctx, params.Position, node, sourceFiles)
-
-	var result []NodeReferenceInfo
-	for _, entry := range entries {
-		for _, ref := range entry.References() {
-			if !ref.IsNodeEntry() {
-				continue
-			}
-			refNode := ref.Node()
-			if refNode == nil {
-				continue
-			}
-
-			info := NodeReferenceInfo{
-				NodeKind: refNode.Kind,
-			}
-			if refNode.Parent != nil {
-				info.ParentKind = refNode.Parent.Kind
-
-				// Only call Arguments() on nodes that support it (CallExpression, NewExpression)
-				if refNode.Parent.Kind == ast.KindCallExpression || refNode.Parent.Kind == ast.KindNewExpression {
-					info.ParentArgumentsLength = len(refNode.Parent.Arguments())
-				}
-
-				// Only call Parameters() on function-like nodes
-				if ast.IsFunctionLikeDeclaration(refNode.Parent) {
-					info.ParentParametersLength = len(refNode.Parent.Parameters())
-				}
-
-				// For checking parent identity, serialize the parent's node handle
-				parentFile := ast.GetSourceFileOfNode(refNode.Parent)
-				if parentFile != nil {
-					info.ParentNodeHandle = fmt.Sprintf("%s:%d", parentFile.Path(), refNode.Parent.Pos())
-				}
-
-				if refNode.Parent.Parent != nil {
-					info.GrandparentKind = refNode.Parent.Parent.Kind
-					// Only call Arguments() on nodes that support it
-					if refNode.Parent.Parent.Kind == ast.KindCallExpression || refNode.Parent.Parent.Kind == ast.KindNewExpression {
-						info.GrandparentArgumentsLength = len(refNode.Parent.Parent.Arguments())
-					}
-				}
-			}
-
-			result = append(result, info)
-		}
-	}
-	return result, nil
-}
-
-// handleSomeSignatureUsage checks if any usage of a signature has more arguments than the given parameter index,
-// or if any reference is a non-call usage. Ports Strada's FindAllReferences.Core.someSignatureUsage.
-func (s *Session) handleSomeSignatureUsage(ctx context.Context, params *SomeSignatureUsageParams) (bool, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return false, err
-	}
-	defer setup.done()
-
-	node, err := s.resolveNodeHandle(setup.program, params.SignatureDecl)
-	if err != nil {
-		return false, err
-	}
-
-	langSvc, err := s.setupLanguageService(setup, params.Project, "")
-	if err != nil {
-		return false, err
-	}
-
-	return langSvc.SomeSignatureUsage(ctx, node, params.ParameterIndex), nil
-}
-
 // handleGetShorthandAssignmentValueSymbol returns the value symbol of a shorthand property assignment.
 func (s *Session) handleGetShorthandAssignmentValueSymbol(ctx context.Context, params *GetTypeAtLocationParams) (*SymbolResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -2262,24 +2071,4 @@ func (s *Session) resolveOptionalSourceFile(program *compiler.Program, file *Doc
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, file)
 	}
 	return sourceFile, nil
-}
-
-// handleProbablyUsesSemicolons checks whether a source file probably uses semicolons.
-func (s *Session) handleProbablyUsesSemicolons(ctx context.Context, params *GetSourceFileParams) (bool, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return false, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return false, err
-	}
-
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
-	if sourceFile == nil {
-		return false, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
-	}
-
-	return lsutil.ProbablyUsesSemicolons(sourceFile), nil
 }

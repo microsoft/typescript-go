@@ -542,16 +542,6 @@ func (c *Checker) IsSymbolReferencedInFile(
 	definition *ast.Identifier,
 	symbol *ast.Symbol,
 ) bool {
-	return len(c.EachSymbolReferenceInFile(sourceFile, definition, symbol)) > 0
-}
-
-// EachSymbolReferenceInFile returns the positions of all references to the given symbol within a single source file.
-func (c *Checker) EachSymbolReferenceInFile(
-	sourceFile *ast.SourceFile,
-	definition *ast.Identifier,
-	symbol *ast.Symbol,
-) []int {
-	var positions []int
 	identifierText := definition.Text
 	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
 		if !ast.IsIdentifier(token) {
@@ -562,20 +552,23 @@ func (c *Checker) EachSymbolReferenceInFile(
 			continue
 		}
 		refSymbol := c.GetSymbolAtLocation(token)
-		matched := refSymbol == symbol
-		if !matched && token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
+		if refSymbol == symbol {
+			return true
+		}
+		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
 			shorthandSymbol := c.GetShorthandAssignmentValueSymbol(token.Parent)
-			matched = shorthandSymbol == symbol
+			if shorthandSymbol == symbol {
+				return true
+			}
 		}
-		if !matched && token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
+		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
 			localSymbol := c.getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier())
-			matched = localSymbol == symbol
-		}
-		if matched {
-			positions = append(positions, token.Pos())
+			if localSymbol == symbol {
+				return true
+			}
 		}
 	}
-	return positions
+	return false
 }
 
 func (c *Checker) getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier) *ast.Symbol {

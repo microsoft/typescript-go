@@ -139,11 +139,6 @@ const (
 	MethodGetWidenedType                    Method = "getWidenedType"
 	MethodGetParameterType                  Method = "getParameterType"
 	MethodIsArrayLikeType                   Method = "isArrayLikeType"
-	MethodIsSymbolReferencedInFile          Method = "isSymbolReferencedInFile"
-	MethodEachSymbolReferenceInFile         Method = "eachSymbolReferenceInFile"
-	MethodGetReferencedSymbolsForNode       Method = "getReferencedSymbolsForNode"
-	MethodSomeSignatureUsage                Method = "someSignatureUsage"
-	MethodProbablyUsesSemicolons            Method = "probablyUsesSemicolons"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
@@ -366,11 +361,6 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
 	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
 	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
-	MethodIsSymbolReferencedInFile:          unmarshallerFor[IsSymbolReferencedInFileParams],
-	MethodEachSymbolReferenceInFile:         unmarshallerFor[IsSymbolReferencedInFileParams],
-	MethodGetReferencedSymbolsForNode:       unmarshallerFor[GetReferencedSymbolsForNodeParams],
-	MethodSomeSignatureUsage:                unmarshallerFor[SomeSignatureUsageParams],
-	MethodProbablyUsesSemicolons:            unmarshallerFor[GetSourceFileParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
@@ -762,43 +752,6 @@ type IsArrayLikeTypeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
 	Type     Handle[checker.Type]     `json:"type"`
-}
-
-// IsSymbolReferencedInFileParams checks whether a symbol is referenced in the file containing the given identifier.
-type IsSymbolReferencedInFileParams struct {
-	Snapshot   Handle[project.Snapshot] `json:"snapshot"`
-	Project    Handle[project.Project]  `json:"project"`
-	Definition Handle[ast.Node]         `json:"definition"`
-	Symbol     Handle[ast.Symbol]       `json:"symbol"`
-}
-
-// GetReferencedSymbolsForNodeParams finds all references to a node across all source files.
-// Returns compact NodeReferenceInfo entries for each node-backed reference.
-type GetReferencedSymbolsForNodeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Node     Handle[ast.Node]         `json:"node"`
-	Position int                      `json:"position"`
-}
-
-// NodeReferenceInfo is a compact representation of a node-backed reference entry suitable for sending over the wire.
-type NodeReferenceInfo struct {
-	NodeKind                   ast.Kind `json:"nodeKind"`
-	ParentKind                 ast.Kind `json:"parentKind"`
-	GrandparentKind            ast.Kind `json:"grandparentKind"`
-	ParentArgumentsLength      int      `json:"parentArgumentsLength"`
-	GrandparentArgumentsLength int      `json:"grandparentArgumentsLength"`
-	ParentParametersLength     int      `json:"parentParametersLength"`
-	// ParentNodeHandle allows the client to check identity (e.g., parent !== parameter.parent)
-	ParentNodeHandle string `json:"parentNodeHandle,omitempty"`
-}
-
-// SomeSignatureUsageParams checks if any usage of a signature has more arguments than the given parameter index.
-type SomeSignatureUsageParams struct {
-	Snapshot       Handle[project.Snapshot] `json:"snapshot"`
-	Project        Handle[project.Project]  `json:"project"`
-	SignatureDecl  Handle[ast.Node]         `json:"signatureDecl"`
-	ParameterIndex int                      `json:"parameterIndex"`
 }
 
 type GetSignaturesOfTypeParams struct {

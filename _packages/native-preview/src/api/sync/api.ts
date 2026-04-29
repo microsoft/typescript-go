@@ -667,50 +667,6 @@ export class Checker {
         });
     }
 
-    isSymbolReferencedInFile(definition: Node, symbol: Symbol): boolean {
-        return this.client.apiRequest<boolean>("isSymbolReferencedInFile", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            definition: getNodeId(definition),
-            symbol: symbol.id,
-        });
-    }
-
-    eachSymbolReferenceInFile(definition: Node, symbol: Symbol): number[] {
-        return this.client.apiRequest<number[]>("eachSymbolReferenceInFile", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            definition: getNodeId(definition),
-            symbol: symbol.id,
-        });
-    }
-
-    getReferencedSymbolsForNode(node: Node, position: number): NodeReferenceInfo[] {
-        return this.client.apiRequest<NodeReferenceInfo[]>("getReferencedSymbolsForNode", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            node: getNodeId(node),
-            position,
-        });
-    }
-
-    someSignatureUsage(signatureDecl: Node, parameterIndex: number): boolean {
-        return this.client.apiRequest<boolean>("someSignatureUsage", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            signatureDecl: getNodeId(signatureDecl),
-            parameterIndex,
-        });
-    }
-
-    probablyUsesSemicolons(file: string): boolean {
-        return this.client.apiRequest<boolean>("probablyUsesSemicolons", {
-            snapshot: this.snapshotId,
-            project: this.projectId,
-            file,
-        });
-    }
-
     getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined {
         const data = this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
             snapshot: this.snapshotId,
@@ -897,15 +853,6 @@ export class Checker {
         });
         return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
     }
-}
-
-export interface NodeReferenceInfo {
-    nodeKind: number;
-    parentKind: number;
-    grandparentKind: number;
-    argumentsLength: number;
-    parametersLength: number;
-    parentNodeHandle?: string;
 }
 
 export interface PrintNodeOptions {
