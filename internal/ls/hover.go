@@ -99,6 +99,11 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 		return quickInfo, documentation
 	}
 
+	documentation = l.documentationFromRootSymbols(c, symbol, node, contentFormat)
+	if documentation != "" {
+		return quickInfo, documentation
+	}
+
 	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat)
 }
 
@@ -142,6 +147,30 @@ func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast
 		}
 
 		if documentation := l.getDocumentationFromDeclaration(c, candidate, aliasedDeclaration, node, contentFormat, false /*commentOnly*/); documentation != "" {
+			return documentation
+		}
+	}
+
+	return ""
+}
+
+func (l *LanguageService) documentationFromRootSymbols(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) string {
+	if symbol == nil {
+		return ""
+	}
+
+	for _, rootSymbol := range c.GetRootSymbols(symbol) {
+		if rootSymbol == nil {
+			continue
+		}
+		declaration := rootSymbol.ValueDeclaration
+		if declaration == nil {
+			declaration = core.FirstOrNil(rootSymbol.Declarations)
+		}
+		if declaration == nil {
+			continue
+		}
+		if documentation := l.getDocumentationFromDeclaration(c, rootSymbol, declaration, node, contentFormat, false /*commentOnly*/); documentation != "" {
 			return documentation
 		}
 	}
