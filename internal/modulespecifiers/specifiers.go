@@ -86,7 +86,7 @@ func GetModuleSpecifiersForFileWithInfo(
 	forAutoImports bool,
 ) ([]string, ResultKind) {
 	modulePaths := getAllModulePathsWorker(
-		getInfo(host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
+		getInfo(importingSourceFile, host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
 		moduleFileName,
 		host,
 		compilerOptions,
@@ -156,16 +156,19 @@ func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker Checker
 
 type Info struct {
 	UseCaseSensitiveFileNames bool
+	ImportingSourceFile       ast.HasFileName
 	ImportingSourceFileName   string
 	SourceDirectory           string
 }
 
 func getInfo(
+	importingSourceFile ast.HasFileName,
 	importingSourceFileName string,
 	host ModuleSpecifierGenerationHost,
 ) Info {
 	sourceDirectory := tspath.GetDirectoryPath(importingSourceFileName)
 	return Info{
+		ImportingSourceFile:       importingSourceFile,
 		ImportingSourceFileName:   importingSourceFileName,
 		SourceDirectory:           sourceDirectory,
 		UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
@@ -202,6 +205,30 @@ func getAllModulePathsWorker(
 	compilerOptions *core.CompilerOptions,
 	options ModuleSpecifierOptions,
 ) []ModulePath {
+	symlinkCache := host.GetSymlinkCache()
+	if symlinkCache != nil && !ContainsNodeModules(info.ImportingSourceFileName) {
+		effectiveResolutionMode := options.OverrideImportMode
+		if effectiveResolutionMode == core.ResolutionModeNone {
+			effectiveResolutionMode = host.GetDefaultResolutionModeForFile(info.ImportingSourceFile)
+		}
+
+		// Populate symlinks for runtime dependencies using normal module resolution so paths mappings,
+		// package.json context, and import/require conditions match the module specifier being generated.
+		packageDirectory := host.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(info.ImportingSourceFileName))
+		if packageDirectory != "" {
+			packageJsonName := tspath.CombinePaths(packageDirectory, "package.json")
+			packageJsonInfo := host.GetPackageJsonInfo(packageJsonName)
+			if packageJsonInfo != nil && packageJsonInfo.GetContents() != nil && symlinkCache.MarkPackageJsonRuntimeDepsSeeded(packageJsonName, effectiveResolutionMode) {
+				for dep := range packageJsonInfo.GetContents().GetRuntimeDependencyNames().Keys() {
+					resolved := host.ResolveModuleName(dep, packageJsonName, effectiveResolutionMode)
+					if resolved != nil && resolved.IsResolved() {
+						symlinkCache.ProcessResolution(resolved.OriginalPath, resolved.ResolvedFileName)
+					}
+				}
+			}
+		}
+	}
+
 	allFileNames := make(map[string]ModulePath)
 	paths := GetEachFileNameOfModule(info.ImportingSourceFileName, importedFileName, host, true)
 	for _, p := range paths {
@@ -364,7 +391,7 @@ func computeModuleSpecifiers(
 	options ModuleSpecifierOptions,
 	forAutoImport bool,
 ) ([]string, ResultKind) {
-	info := getInfo(importingSourceFile.FileName(), host)
+	info := getInfo(importingSourceFile, importingSourceFile.FileName(), host)
 	preferences := getModuleSpecifierPreferences(userPreferences, host, compilerOptions, importingSourceFile, "")
 
 	var existingSpecifier string
@@ -1378,7 +1405,7 @@ func getModuleSpecifierWithPreferences(
 	userPreferences UserPreferences,
 	options ModuleSpecifierOptions,
 ) string {
-	info := getInfo(importingSourceFileName, host)
+	info := getInfo(importingSourceFile, importingSourceFileName, host)
 	modulePaths := getAllModulePaths(info, toFileName, host, compilerOptions, userPreferences, options)
 	preferences := getModuleSpecifierPreferences(userPreferences, host, compilerOptions, importingSourceFile, oldImportSpecifier)
 

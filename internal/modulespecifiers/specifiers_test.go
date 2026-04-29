@@ -17,6 +17,17 @@ type mockModuleSpecifierGenerationHost struct {
 	currentDir                string
 	useCaseSensitiveFileNames bool
 	symlinkCache              *symlinks.KnownSymlinks
+	packageJsonDirectory      string
+	packageJsonInfo           *packagejson.InfoCacheEntry
+	defaultResolutionMode     core.ResolutionMode
+	resolveModuleName         func(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule
+	resolveModuleNameCalls    []resolveModuleNameCall
+}
+
+type resolveModuleNameCall struct {
+	moduleName     string
+	containingFile string
+	resolutionMode core.ResolutionMode
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetCurrentDirectory() string {
@@ -32,6 +43,14 @@ func (h *mockModuleSpecifierGenerationHost) GetSymlinkCache() *symlinks.KnownSym
 }
 
 func (h *mockModuleSpecifierGenerationHost) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
+	h.resolveModuleNameCalls = append(h.resolveModuleNameCalls, resolveModuleNameCall{
+		moduleName:     moduleName,
+		containingFile: containingFile,
+		resolutionMode: resolutionMode,
+	})
+	if h.resolveModuleName != nil {
+		return h.resolveModuleName(moduleName, containingFile, resolutionMode)
+	}
 	return nil
 }
 
@@ -60,15 +79,15 @@ func (h *mockModuleSpecifierGenerationHost) FileExists(path string) bool {
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
-	return ""
+	return h.packageJsonDirectory
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
-	return nil
+	return h.packageJsonInfo
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode {
-	return core.ResolutionModeNone
+	return h.defaultResolutionMode
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
@@ -184,6 +203,60 @@ func TestGetEachFileNameOfModuleWithSymlinks(t *testing.T) {
 
 	if !found {
 		t.Error("Expected to find symlink path /project/symlink/file.ts")
+	}
+}
+
+func TestGetAllModulePathsSeedsRuntimeDepsOncePerResolutionMode(t *testing.T) {
+	t.Parallel()
+
+	fields, err := packagejson.Parse([]byte(`{"dependencies":{"dep":"1.0.0"}}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	host := &mockModuleSpecifierGenerationHost{
+		currentDir:                "/project",
+		useCaseSensitiveFileNames: true,
+		symlinkCache:              symlinks.NewKnownSymlink("/project", true),
+		packageJsonDirectory:      "/project",
+		packageJsonInfo: &packagejson.InfoCacheEntry{
+			PackageDirectory: "/project",
+			Contents: &packagejson.PackageJson{
+				Fields:    fields,
+				Parseable: true,
+			},
+		},
+		defaultResolutionMode: core.ResolutionModeESM,
+		resolveModuleName: func(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
+			return &module.ResolvedModule{
+				OriginalPath:     "/project/node_modules/dep/index.d.ts",
+				ResolvedFileName: "/workspace/dep/index.d.ts",
+			}
+		},
+	}
+	source := ast.NewHasFileName("/project/src/main.mts", tspath.ToPath("/project/src/main.mts", "/project", true))
+	info := getInfo(source, source.FileName(), host)
+
+	getAllModulePathsWorker(info, "/workspace/dep/index.ts", host, &core.CompilerOptions{}, ModuleSpecifierOptions{})
+	getAllModulePathsWorker(info, "/workspace/dep/index.ts", host, &core.CompilerOptions{}, ModuleSpecifierOptions{})
+
+	if len(host.resolveModuleNameCalls) != 1 {
+		t.Fatalf("expected one dependency resolution for repeated ESM calls, got %d", len(host.resolveModuleNameCalls))
+	}
+	if got := host.resolveModuleNameCalls[0].resolutionMode; got != core.ResolutionModeESM {
+		t.Fatalf("expected default ESM resolution mode, got %v", got)
+	}
+	if got := host.resolveModuleNameCalls[0].containingFile; got != "/project/package.json" {
+		t.Fatalf("expected package.json containing file, got %q", got)
+	}
+
+	getAllModulePathsWorker(info, "/workspace/dep/index.ts", host, &core.CompilerOptions{}, ModuleSpecifierOptions{OverrideImportMode: core.ResolutionModeCommonJS})
+
+	if len(host.resolveModuleNameCalls) != 2 {
+		t.Fatalf("expected a second dependency resolution for a different mode, got %d", len(host.resolveModuleNameCalls))
+	}
+	if got := host.resolveModuleNameCalls[1].resolutionMode; got != core.ResolutionModeCommonJS {
+		t.Fatalf("expected override CommonJS resolution mode, got %v", got)
 	}
 }
 

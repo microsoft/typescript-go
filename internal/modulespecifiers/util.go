@@ -345,7 +345,7 @@ func GetNodeModulesPackageName(
 	preferences UserPreferences,
 	options ModuleSpecifierOptions,
 ) string {
-	info := getInfo(importingSourceFile.FileName(), host)
+	info := getInfo(importingSourceFile, importingSourceFile.FileName(), host)
 	modulePaths := getAllModulePaths(info, nodeModulesFileName, host, compilerOptions, preferences, options)
 	for _, modulePath := range modulePaths {
 		if result := tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, preferences, true /*packageNameOnly*/, options.OverrideImportMode); len(result) > 0 {

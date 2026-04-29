@@ -24,8 +24,14 @@ type KnownSymlinks struct {
 	directoriesByRealpath     collections.SyncMap[tspath.Path, *collections.SyncSet[string]]
 	files                     collections.SyncMap[tspath.Path, string]
 	filesByRealpath           collections.SyncMap[tspath.Path, *collections.SyncSet[string]]
+	packageJsonRuntimeDeps    collections.SyncSet[packageJsonRuntimeDepsKey]
 	cwd                       string
 	useCaseSensitiveFileNames bool
+}
+
+type packageJsonRuntimeDepsKey struct {
+	packageJsonPath tspath.Path
+	resolutionMode  core.ResolutionMode
 }
 
 func (cache *KnownSymlinks) HasDirectory(symlinkPath tspath.Path) bool {
@@ -69,6 +75,13 @@ func (cache *KnownSymlinks) SetFile(symlink string, symlinkPath tspath.Path, rea
 		set.Add(symlink)
 	}
 	cache.files.Store(symlinkPath, realpath)
+}
+
+func (cache *KnownSymlinks) MarkPackageJsonRuntimeDepsSeeded(packageJsonName string, resolutionMode core.ResolutionMode) bool {
+	return cache.packageJsonRuntimeDeps.AddIfAbsent(packageJsonRuntimeDepsKey{
+		packageJsonPath: tspath.ToPath(packageJsonName, cache.cwd, cache.useCaseSensitiveFileNames),
+		resolutionMode:  resolutionMode,
+	})
 }
 
 func NewKnownSymlink(currentDirectory string, useCaseSensitiveFileNames bool) *KnownSymlinks {
