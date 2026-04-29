@@ -30,10 +30,12 @@ type fileSystemWatcherValue struct {
 }
 
 // watchRegistry tracks the current watch globs and how many individual
-// WatchedFiles reference each glob. It guards concurrent access with a mutex
-// and provides ref-count helpers so callers don't manipulate the map directly.
-// It also tracks which parent watcher IDs have pending (failed) registrations
-// so that updateWatches can retry them even when the watcher identity hasn't changed.
+// WatchedFiles reference each glob. It provides ref-count helpers so callers
+// don't manipulate the map directly.
+//
+// All methods require the caller to hold mu. Call mu.Lock/Unlock around
+// groups of operations that must be atomic (e.g. Acquire + WatchFiles +
+// rollback on failure).
 type watchRegistry struct {
 	mu      sync.Mutex
 	entries map[fileSystemWatcherKey]*fileSystemWatcherValue
@@ -50,6 +52,7 @@ func newWatchRegistry() *watchRegistry {
 // Acquire increments the ref count for a watcher. If this is the first
 // reference (count goes from 0 to 1), it returns true so the caller knows
 // to register the watcher with the client.
+// Must be called with mu held.
 func (r *watchRegistry) Acquire(watcher *lsproto.FileSystemWatcher, id WatcherID) (isNew bool) {
 	key := toFileSystemWatcherKey(watcher)
 	value := r.entries[key]
@@ -64,6 +67,7 @@ func (r *watchRegistry) Acquire(watcher *lsproto.FileSystemWatcher, id WatcherID
 // Release decrements the ref count for a watcher. If no references remain,
 // the entry is removed and the function returns the WatcherID and true so
 // the caller knows to unregister the watcher from the client.
+// Must be called with mu held.
 func (r *watchRegistry) Release(watcher *lsproto.FileSystemWatcher) (id WatcherID, removed bool) {
 	key := toFileSystemWatcherKey(watcher)
 	value := r.entries[key]
@@ -91,10 +95,8 @@ func (r *watchRegistry) ClearPending(id WatcherID) {
 }
 
 // IsPending returns true if the watcher needs retry due to a previous failure.
-// Acquires mu internally — must NOT be called with mu already held.
+// Must be called with mu held.
 func (r *watchRegistry) IsPending(id WatcherID) bool {
-	r.mu.Lock()
-	defer r.mu.Unlock()
 	_, ok := r.pending[id]
 	return ok
 }

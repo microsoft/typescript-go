@@ -118,8 +118,33 @@ func TestUpdateWatchTimeoutAndRollback(t *testing.T) {
 			assert.Assert(t, len(retryIDs) >= 1,
 				"expected WatchFiles to be retried after character change, got %d new calls (total %d, first batch %d)",
 				len(retryIDs), len(attemptedIDs), len(firstAttemptIDs))
-			assert.Assert(t, len(successfulIDs) >= 1,
-				"expected at least one watcher to be registered after retry, got %d", len(successfulIDs))
+
+			// Verify that the retry used the same watcher IDs as the first attempt.
+			firstAttemptSet := make(map[project.WatcherID]struct{}, len(firstAttemptIDs))
+			for _, id := range firstAttemptIDs {
+				firstAttemptSet[id] = struct{}{}
+			}
+			retrySet := make(map[project.WatcherID]struct{}, len(retryIDs))
+			for _, id := range retryIDs {
+				retrySet[id] = struct{}{}
+			}
+			for id := range retrySet {
+				_, ok := firstAttemptSet[id]
+				assert.Assert(t, ok,
+					"retry watcher ID %v was not in the first attempt; first attempt IDs=%v retry IDs=%v",
+					id, firstAttemptIDs, retryIDs)
+			}
+
+			// Verify at least one retried watcher succeeded.
+			successfulRetriedCount := 0
+			for _, id := range successfulIDs {
+				if _, ok := retrySet[id]; ok {
+					successfulRetriedCount++
+				}
+			}
+			assert.Assert(t, successfulRetriedCount >= 1,
+				"expected at least one retried watcher to succeed, got %d (successful IDs=%v, retry IDs=%v)",
+				successfulRetriedCount, successfulIDs, retryIDs)
 			mu.Unlock()
 		})
 	})
