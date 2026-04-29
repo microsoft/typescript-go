@@ -302,3 +302,11 @@ func (c *Checker) RequiresAddingImplicitUndefined(node *ast.Node) bool {
 	}
 	return c.GetEmitResolver().RequiresAddingImplicitUndefined(node, symbol, enclosingDeclaration)
 }
+
+func (c *Checker) RemoveMissingOrUndefinedType(t *Type) *Type {
+	return c.removeMissingOrUndefinedType(t)
+}
+
+func (c *Checker) GetWidenedType(t *Type) *Type {
+	return c.getWidenedType(t)
+}
