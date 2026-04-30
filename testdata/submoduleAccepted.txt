@@ -324,8 +324,6 @@ compiler/genericFunctionSpecializations1.types.diff
 compiler/genericMemberFunction.types.diff
 compiler/genericOverloadSignatures.types.diff
 compiler/genericSpecializationToTypeLiteral1.types.diff
-compiler/gettersAndSettersErrors.symbols.diff
-compiler/gettersAndSettersErrors.types.diff
 compiler/indexTypeNoSubstitutionTemplateLiteral.symbols.diff
 compiler/indexTypeNoSubstitutionTemplateLiteral.types.diff
 compiler/inferenceDoesNotAddUndefinedOrNull.types.diff
