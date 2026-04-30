@@ -1,21 +1,15 @@
 --- old.objectLiteralErrors(target=es2015).types
 +++ new.objectLiteralErrors(target=es2015).types
-@@= skipped -165, +165 lines =@@
- >'' : ""
-
+@@= skipped -167, +167 lines =@@
  var f3 = { a: 0, get a() { return ''; } };
-->f3 : { readonly a: string; }
-->{ a: 0, get a() { return ''; } } : { readonly a: string; }
-+>f3 : { readonly a: number; }
-+>{ a: 0, get a() { return ''; } } : { readonly a: number; }
- >a : number
+ >f3 : { readonly a: string; }
+ >{ a: 0, get a() { return ''; } } : { readonly a: string; }
+->a : number
++>a : string
  >0 : 0
-->a : string
-+>a : number
+ >a : string
  >'' : ""
-
- var f4 = { a: true, get a() { return false; } };
-@@= skipped -64, +64 lines =@@
+@@= skipped -62, +62 lines =@@
  >0 : 0
 
  var f11 = { 1.0: 0, get '1'() { return 0; } };

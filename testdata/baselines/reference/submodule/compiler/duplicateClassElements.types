@@ -17,16 +17,16 @@ class a {
 >b : () => void
     }
     public x;
->x : any
+>x : number
 
     get x() {
->x : any
+>x : number
 
         return 10;
 >10 : 10
     }
     set x(_x: number) {
->x : any
+>x : number
 >_x : number
     }
 

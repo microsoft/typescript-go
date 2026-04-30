@@ -1,17 +1,11 @@
 --- old.duplicateClassElements.types
 +++ new.duplicateClassElements.types
-@@= skipped -19, +19 lines =@@
- >x : any
+@@= skipped -16, +16 lines =@@
+ >b : () => void
+     }
+     public x;
+->x : any
++>x : number
 
      get x() {
-->x : number
-+>x : any
-
-         return 10;
- >10 : 10
-     }
-     set x(_x: number) {
-->x : number
-+>x : any
- >_x : number
-     }
+ >x : number

@@ -166,11 +166,11 @@ var f2 = { a: '', get a() { return ''; } };
 >'' : ""
 
 var f3 = { a: 0, get a() { return ''; } };
->f3 : { readonly a: number; }
->{ a: 0, get a() { return ''; } } : { readonly a: number; }
->a : number
+>f3 : { readonly a: string; }
+>{ a: 0, get a() { return ''; } } : { readonly a: string; }
+>a : string
 >0 : 0
->a : number
+>a : string
 >'' : ""
 
 var f4 = { a: true, get a() { return false; } };
