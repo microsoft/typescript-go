@@ -2,12 +2,13 @@
 
 === symbolToNodeBoundaryNoStackOverflow.ts ===
 // Regression test for https://github.com/microsoft/TypeScript/issues/63441
-// The pass-through methods on the recovery-boundary wrapping tracker
-// (ReportInferenceFallback, ReportTruncationError, ReportNonlocalAugmentation,
-// Push/PopErrorFallbackNode) used to delegate through every nested
-// SymbolTrackerImpl/wrappingTracker pair, adding two stack frames per
-// nested tryReuseExistingNodeHelper boundary. For deeply recursive types
-// (like the one below) this overflowed the goroutine stack.
+// In createAnonymousTypeNodeEx for an InstantiationExpressionType, when the
+// existing typeof node failed to be reused (e.g. its entity name isn't
+// accessible from the current scope), the recovery boundary's fallback path
+// re-entered typeToTypeNode with the same instantiation type, which would
+// try to reuse the same node again, recursing without bound.
+// The fix marks the type as visited around the reuse attempt so the inner
+// recursion bottoms out via the existing visitedTypes guard.
 
 export interface CustomNode<P> {
     getNextNode: () => CustomNode<P>;
