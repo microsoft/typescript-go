@@ -50,20 +50,40 @@ func decodeQuotedLiteralText(raw string) (text string, hasSurrogate bool, ok boo
 	if len(raw) < 2 {
 		return "", false, false
 	}
+	return decodeEscapedLiteralText(raw[1:len(raw)-1], false)
+}
+
+func encodeTemplateTextForJS(text string, rawText string) string {
+	decoded, hasSurrogate, ok := decodeEscapedLiteralText(rawText, true)
+	if !ok || !hasSurrogate {
+		return text
+	}
+	return decoded
+}
+
+func decodeEscapedLiteralText(raw string, normalizeTemplateLineEndings bool) (text string, hasSurrogate bool, ok bool) {
 	var out strings.Builder
-	for i := 1; i < len(raw)-1; {
+	for i := 0; i < len(raw); {
 		if raw[i] != '\\' {
+			if normalizeTemplateLineEndings && raw[i] == '\r' {
+				out.WriteByte('\n')
+				i++
+				if i < len(raw) && raw[i] == '\n' {
+					i++
+				}
+				continue
+			}
 			out.WriteByte(raw[i])
 			i++
 			continue
 		}
-		ch, next, ok := decodeEscape(raw, i, len(raw)-1)
+		ch, next, ok := decodeEscape(raw, i, len(raw))
 		if !ok {
 			return "", false, false
 		}
 		if codePointIsHighSurrogate(ch) {
 			hasSurrogate = true
-			if nextCh, nextNext, ok := decodeUnicodeEscape(raw, next, len(raw)-1); ok && codePointIsLowSurrogate(nextCh) {
+			if nextCh, nextNext, ok := decodeUnicodeEscape(raw, next, len(raw)); ok && codePointIsLowSurrogate(nextCh) {
 				out.WriteRune(surrogatePairToCodepoint(ch, nextCh))
 				i = nextNext
 				continue

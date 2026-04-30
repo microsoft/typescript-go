@@ -75,6 +75,25 @@ func TestEncodeSourceFilePreservesSurrogateEscapes(t *testing.T) {
 	})
 }
 
+func TestEncodeSourceFilePreservesTemplateSurrogateEscapes(t *testing.T) {
+	t.Parallel()
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.ts",
+		Path:     "/test.ts",
+	}, "let s = `\\uD800${1}\\uDC00`;", core.ScriptKindTS)
+
+	buf, err := encoder.EncodeSourceFile(sourceFile)
+	assert.NilError(t, err)
+
+	headText, ok := findExtendedNodeText(buf, ast.KindTemplateHead)
+	assert.Assert(t, ok)
+	assert.DeepEqual(t, headText, []byte{0xed, 0xa0, 0x80})
+
+	tailText, ok := findExtendedNodeText(buf, ast.KindTemplateTail)
+	assert.Assert(t, ok)
+	assert.DeepEqual(t, tailText, []byte{0xed, 0xb0, 0x80})
+}
+
 func TestEncodeSourceFileFallsBackForUnterminatedSurrogateEscape(t *testing.T) {
 	t.Parallel()
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{

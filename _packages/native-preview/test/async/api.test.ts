@@ -234,6 +234,38 @@ test("unicode escapes", async () => {
     }
 });
 
+test("template unicode escapes", async () => {
+    const api = spawnAPI({
+        "/tsconfig.json": "{}",
+        "/src/index.ts": "`\\ud800${0}\\udc00`",
+    });
+    try {
+        const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+        const project = snapshot.getProject("/tsconfig.json")!;
+        const sourceFile = await project.program.getSourceFile("/src/index.ts");
+        assert.ok(sourceFile);
+
+        let sawHead = false;
+        let sawTail = false;
+        sourceFile.forEachChild(function visit(node) {
+            if (isTemplateHead(node)) {
+                assert.equal(node.text, "\ud800");
+                sawHead = true;
+            }
+            else if (isTemplateTail(node)) {
+                assert.equal(node.text, "\udc00");
+                sawTail = true;
+            }
+            node.forEachChild(visit);
+        });
+        assert.ok(sawHead);
+        assert.ok(sawTail);
+    }
+    finally {
+        await api.close();
+    }
+});
+
 test("Object equality", async () => {
     const api = spawnAPI();
     try {

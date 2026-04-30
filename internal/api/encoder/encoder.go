@@ -547,21 +547,21 @@ func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMa
 
 func recordExtendedData_TemplateHead(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	n := node.AsTemplateHead()
-	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(encodeTemplateTextForJS(n.Text, n.RawText), node.Kind, node.Pos(), node.End())
 	rawTextIndex := strs.add(n.RawText, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, uint32(n.TemplateFlags))
 }
 
 func recordExtendedData_TemplateMiddle(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	n := node.AsTemplateMiddle()
-	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(encodeTemplateTextForJS(n.Text, n.RawText), node.Kind, node.Pos(), node.End())
 	rawTextIndex := strs.add(n.RawText, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, uint32(n.TemplateFlags))
 }
 
 func recordExtendedData_TemplateTail(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	n := node.AsTemplateTail()
-	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(encodeTemplateTextForJS(n.Text, n.RawText), node.Kind, node.Pos(), node.End())
 	rawTextIndex := strs.add(n.RawText, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, uint32(n.TemplateFlags))
 }
