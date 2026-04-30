@@ -158,6 +158,7 @@ func (l *LanguageService) documentationFromRootSymbols(c *checker.Checker, symbo
 		return ""
 	}
 
+	var docs []string
 	for _, rootSymbol := range c.GetRootSymbols(symbol) {
 		if rootSymbol == nil {
 			continue
@@ -170,11 +171,24 @@ func (l *LanguageService) documentationFromRootSymbols(c *checker.Checker, symbo
 			continue
 		}
 		if documentation := l.getDocumentationFromDeclaration(c, rootSymbol, declaration, node, contentFormat, false /*commentOnly*/); documentation != "" {
-			return documentation
+			docs = core.AppendIfUnique(docs, documentation)
 		}
 	}
 
-	return ""
+	if len(docs) == 0 {
+		return ""
+	}
+	if len(docs) == 1 {
+		return docs[0]
+	}
+
+	var b strings.Builder
+	b.WriteString(docs[0])
+	for _, doc := range docs[1:] {
+		b.WriteString("\n")
+		b.WriteString(doc)
+	}
+	return b.String()
 }
 
 func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
