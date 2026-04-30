@@ -37,7 +37,7 @@ func rawQuotedLiteralText(node *ast.Node, strs *stringTable) (string, bool) {
 	}
 	switch strs.fileText[start] {
 	case '\'', '"', '`':
-		if node.End()-start < 2 {
+		if node.End()-start < 2 || strs.fileText[node.End()-1] != strs.fileText[start] {
 			return "", false
 		}
 		return strs.fileText[start:node.End()], true

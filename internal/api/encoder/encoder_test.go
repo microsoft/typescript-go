@@ -75,6 +75,21 @@ func TestEncodeSourceFilePreservesSurrogateEscapes(t *testing.T) {
 	})
 }
 
+func TestEncodeSourceFileFallsBackForUnterminatedSurrogateEscape(t *testing.T) {
+	t.Parallel()
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.ts",
+		Path:     "/test.ts",
+	}, `let s = "\uD800a`, core.ScriptKindTS)
+
+	buf, err := encoder.EncodeSourceFile(sourceFile)
+	assert.NilError(t, err)
+
+	text, ok := findExtendedNodeText(buf, ast.KindStringLiteral)
+	assert.Assert(t, ok)
+	assert.DeepEqual(t, text, []byte("\ufffda"))
+}
+
 func BenchmarkEncodeSourceFile(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
