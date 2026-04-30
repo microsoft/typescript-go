@@ -44,7 +44,7 @@ export class Wtf8Decoder extends TextDecoder {
             }
 
             if (segmentStart < i) {
-                result += super.decode(bytes.subarray(segmentStart, i));
+                result += super.decode(bytes.subarray(segmentStart, i), options);
             }
             result += String.fromCharCode(getSurrogateCodeUnit(bytes, i));
             i += 2;
