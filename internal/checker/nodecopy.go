@@ -1,8 +1,6 @@
 package checker
 
 import (
-	"fmt"
-	"os"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -113,15 +111,47 @@ func (b *recoveryBoundary) endRecoveryScope(state originalRecoveryScopeState) {
 
 type wrappingTracker struct {
 	wrapped nodebuilder.SymbolTracker
-	bound   *recoveryBoundary
+	// passthrough is the underlying user-supplied tracker (no wrappingTracker /
+	// SymbolTrackerImpl layers on top). It is used for methods that don't need
+	// to be deferred through markError, so they call the original tracker
+	// directly instead of recursing through every nested boundary's
+	// SymbolTrackerImpl chain. This mirrors the upstream TS behavior of
+	// inheriting these methods via `...oldTracker.inner`.
+	passthrough nodebuilder.SymbolTracker
+	bound       *recoveryBoundary
+}
+
+// findPassthroughTracker walks the tracker chain to find the deepest
+// user-supplied tracker, skipping over SymbolTrackerImpl wrappers and prior
+// wrappingTrackers (reusing their already-resolved passthrough).
+func findPassthroughTracker(t nodebuilder.SymbolTracker) nodebuilder.SymbolTracker {
+	for {
+		switch v := t.(type) {
+		case nil:
+			return nil
+		case *SymbolTrackerImpl:
+			if v == nil || v.inner == nil {
+				return nil
+			}
+			t = v.inner
+		case *wrappingTracker:
+			return v.passthrough
+		default:
+			return t
+		}
+	}
 }
 
 func (w *wrappingTracker) PopErrorFallbackNode() {
-	w.wrapped.PopErrorFallbackNode()
+	if w.passthrough != nil {
+		w.passthrough.PopErrorFallbackNode()
+	}
 }
 
 func (w *wrappingTracker) PushErrorFallbackNode(node *ast.Node) {
-	w.wrapped.PushErrorFallbackNode(node)
+	if w.passthrough != nil {
+		w.passthrough.PushErrorFallbackNode(node)
+	}
 }
 
 func (w *wrappingTracker) ReportCyclicStructureError() {
@@ -136,37 +166,10 @@ func (w *wrappingTracker) ReportInaccessibleUniqueSymbolError() {
 	w.bound.markError(w.wrapped.ReportInaccessibleUniqueSymbolError)
 }
 
-var _wtRIFDepth int
-
 func (w *wrappingTracker) ReportInferenceFallback(node *ast.Node) {
-	_wtRIFDepth++
-	if _wtRIFDepth == 1 {
-		// log chain length on each entry
-		var chain int
-		var cur nodebuilder.SymbolTracker = w
-		seen := map[any]bool{}
-		for cur != nil {
-			if seen[cur] {
-				fmt.Fprintf(os.Stderr, "CYCLE at depth %d ptr=%p type=%T\n", chain, cur, cur)
-				panic("cycle")
-			}
-			seen[cur] = true
-			chain++
-			switch v := cur.(type) {
-			case *wrappingTracker:
-				cur = v.wrapped
-			case *SymbolTrackerImpl:
-				cur = v.inner
-			default:
-				cur = nil
-			}
-		}
-		if chain > 100 {
-			fmt.Fprintf(os.Stderr, "long chain len=%d\n", chain)
-		}
+	if w.passthrough != nil {
+		w.passthrough.ReportInferenceFallback(node)
 	}
-	w.wrapped.ReportInferenceFallback(node) // Should this also be deferred?
-	_wtRIFDepth--
 }
 
 func (w *wrappingTracker) ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string) {
@@ -178,7 +181,9 @@ func (w *wrappingTracker) ReportNonSerializableProperty(propertyName string) {
 }
 
 func (w *wrappingTracker) ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol) {
-	w.wrapped.ReportNonlocalAugmentation(containingFile, parentSymbol, augmentingSymbol) // Should this also be deferred?
+	if w.passthrough != nil {
+		w.passthrough.ReportNonlocalAugmentation(containingFile, parentSymbol, augmentingSymbol)
+	}
 }
 
 func (w *wrappingTracker) ReportPrivateInBaseOfClassExpression(propertyName string) {
@@ -186,7 +191,9 @@ func (w *wrappingTracker) ReportPrivateInBaseOfClassExpression(propertyName stri
 }
 
 func (w *wrappingTracker) ReportTruncationError() {
-	w.wrapped.ReportTruncationError() // Should this also be deferred?
+	if w.passthrough != nil {
+		w.passthrough.ReportTruncationError()
+	}
 }
 
 func (w *wrappingTracker) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool {
@@ -196,8 +203,9 @@ func (w *wrappingTracker) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *
 
 func newWrappingTracker(inner nodebuilder.SymbolTracker, bound *recoveryBoundary) *wrappingTracker {
 	return &wrappingTracker{
-		wrapped: inner,
-		bound:   bound,
+		wrapped:     inner,
+		passthrough: findPassthroughTracker(inner),
+		bound:       bound,
 	}
 }
 
@@ -207,12 +215,10 @@ func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound))
 	b.ctx.tracker = newTracker
 	b.ctx.trackedSymbols = nil
-	fmt.Fprintf(os.Stderr, "createBoundary: ctx=%p oldTracker=%p newTracker=%p\n", b.ctx, bound.oldTracker, newTracker)
 	return bound
 }
 
 func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
-	fmt.Fprintf(os.Stderr, "finalize: b.ctx=%p bound.ctx=%p ctx.tracker=%p oldTracker=%p\n", b.ctx, bound.ctx, b.ctx.tracker, bound.oldTracker)
 	b.ctx.tracker = bound.oldTracker
 	b.ctx.trackedSymbols = bound.oldTrackedSymbols
 	b.ctx.encounteredError = bound.oldEncounteredError

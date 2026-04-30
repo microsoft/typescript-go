@@ -1,0 +1,61 @@
+//// [tests/cases/compiler/symbolToNodeBoundaryNoStackOverflow.ts] ////
+
+=== symbolToNodeBoundaryNoStackOverflow.ts ===
+// Regression test for https://github.com/microsoft/TypeScript/issues/63441
+// The pass-through methods on the recovery-boundary wrapping tracker
+// (ReportInferenceFallback, ReportTruncationError, ReportNonlocalAugmentation,
+// Push/PopErrorFallbackNode) used to delegate through every nested
+// SymbolTrackerImpl/wrappingTracker pair, adding two stack frames per
+// nested tryReuseExistingNodeHelper boundary. For deeply recursive types
+// (like the one below) this overflowed the goroutine stack.
+
+export interface CustomNode<P> {
+>CustomNode : Symbol(CustomNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 0, 0))
+>P : Symbol(P, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 8, 28))
+
+    getNextNode: () => CustomNode<P>;
+>getNextNode : Symbol(CustomNode.getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 8, 32))
+>CustomNode : Symbol(CustomNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 0, 0))
+>P : Symbol(P, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 8, 28))
+}
+
+export declare const createNode: () => {
+>createNode : Symbol(createNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 20))
+
+    getNextNode: <T>() => CustomNode<T>;
+>getNextNode : Symbol(getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 40))
+>T : Symbol(T, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 13, 18))
+>CustomNode : Symbol(CustomNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 0, 0))
+>T : Symbol(T, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 13, 18))
+
+};
+
+function wrapNode<T>(getNode: () => CustomNode<T>) {
+>wrapNode : Symbol(wrapNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 14, 2))
+>T : Symbol(T, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 16, 18))
+>getNode : Symbol(getNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 16, 21))
+>CustomNode : Symbol(CustomNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 0, 0))
+>T : Symbol(T, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 16, 18))
+
+    return getNode;
+>getNode : Symbol(getNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 16, 21))
+}
+
+wrapNode(() => {
+>wrapNode : Symbol(wrapNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 14, 2))
+
+    const node = createNode();
+>node : Symbol(node, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 21, 9))
+>createNode : Symbol(createNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 20))
+
+    return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);
+>wrapNode : Symbol(wrapNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 14, 2))
+>node.getNextNode : Symbol(getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 40))
+>node : Symbol(node, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 21, 9))
+>getNextNode : Symbol(getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 40))
+>node.getNextNode : Symbol(getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 40))
+>node : Symbol(node, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 21, 9))
+>getNextNode : Symbol(getNextNode, Decl(symbolToNodeBoundaryNoStackOverflow.ts, 12, 40))
+
+});
+

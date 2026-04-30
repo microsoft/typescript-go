@@ -1,0 +1,35 @@
+symbolToNodeBoundaryNoStackOverflow.ts(21,10): error TS2345: Argument of type '() => () => CustomNode<any>' is not assignable to parameter of type '() => CustomNode<unknown>'.
+  Type '() => CustomNode<typeof node.getNextNode<any>>' is not assignable to type 'CustomNode<unknown>'.
+
+
+==== symbolToNodeBoundaryNoStackOverflow.ts (1 errors) ====
+    // Regression test for https://github.com/microsoft/TypeScript/issues/63441
+    // The pass-through methods on the recovery-boundary wrapping tracker
+    // (ReportInferenceFallback, ReportTruncationError, ReportNonlocalAugmentation,
+    // Push/PopErrorFallbackNode) used to delegate through every nested
+    // SymbolTrackerImpl/wrappingTracker pair, adding two stack frames per
+    // nested tryReuseExistingNodeHelper boundary. For deeply recursive types
+    // (like the one below) this overflowed the goroutine stack.
+    
+    export interface CustomNode<P> {
+        getNextNode: () => CustomNode<P>;
+    }
+    
+    export declare const createNode: () => {
+        getNextNode: <T>() => CustomNode<T>;
+    };
+    
+    function wrapNode<T>(getNode: () => CustomNode<T>) {
+        return getNode;
+    }
+    
+    wrapNode(() => {
+             ~~~~~~~
+!!! error TS2345: Argument of type '() => () => CustomNode<any>' is not assignable to parameter of type '() => CustomNode<unknown>'.
+!!! error TS2345:   Type '() => CustomNode<typeof node.getNextNode<any>>' is not assignable to type 'CustomNode<unknown>'.
+!!! related TS6212 symbolToNodeBoundaryNoStackOverflow.ts:21:10: Did you mean to call this expression?
+        const node = createNode();
+    
+        return wrapNode<typeof node.getNextNode<any>>(node.getNextNode);
+    });
+    
