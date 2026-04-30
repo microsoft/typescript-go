@@ -1,6 +1,8 @@
 package checker
 
 import (
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -134,8 +136,37 @@ func (w *wrappingTracker) ReportInaccessibleUniqueSymbolError() {
 	w.bound.markError(w.wrapped.ReportInaccessibleUniqueSymbolError)
 }
 
+var _wtRIFDepth int
+
 func (w *wrappingTracker) ReportInferenceFallback(node *ast.Node) {
+	_wtRIFDepth++
+	if _wtRIFDepth == 1 {
+		// log chain length on each entry
+		var chain int
+		var cur nodebuilder.SymbolTracker = w
+		seen := map[any]bool{}
+		for cur != nil {
+			if seen[cur] {
+				fmt.Fprintf(os.Stderr, "CYCLE at depth %d ptr=%p type=%T\n", chain, cur, cur)
+				panic("cycle")
+			}
+			seen[cur] = true
+			chain++
+			switch v := cur.(type) {
+			case *wrappingTracker:
+				cur = v.wrapped
+			case *SymbolTrackerImpl:
+				cur = v.inner
+			default:
+				cur = nil
+			}
+		}
+		if chain > 100 {
+			fmt.Fprintf(os.Stderr, "long chain len=%d\n", chain)
+		}
+	}
 	w.wrapped.ReportInferenceFallback(node) // Should this also be deferred?
+	_wtRIFDepth--
 }
 
 func (w *wrappingTracker) ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string) {
@@ -176,10 +207,12 @@ func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound))
 	b.ctx.tracker = newTracker
 	b.ctx.trackedSymbols = nil
+	fmt.Fprintf(os.Stderr, "createBoundary: ctx=%p oldTracker=%p newTracker=%p\n", b.ctx, bound.oldTracker, newTracker)
 	return bound
 }
 
 func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
+	fmt.Fprintf(os.Stderr, "finalize: b.ctx=%p bound.ctx=%p ctx.tracker=%p oldTracker=%p\n", b.ctx, bound.ctx, b.ctx.tracker, bound.oldTracker)
 	b.ctx.tracker = bound.oldTracker
 	b.ctx.trackedSymbols = bound.oldTrackedSymbols
 	b.ctx.encounteredError = bound.oldEncounteredError
