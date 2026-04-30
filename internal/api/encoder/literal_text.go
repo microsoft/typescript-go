@@ -234,7 +234,7 @@ func codePointIsLowSurrogate(r rune) bool {
 }
 
 func surrogatePairToCodepoint(r1, r2 rune) rune {
-	return (r1-surr1)<<10 | (r2 - surr2) + surrSelf
+	return ((r1 - surr1) << 10) + (r2 - surr2) + surrSelf
 }
 
 func encodeCodePointForJS(r rune) string {

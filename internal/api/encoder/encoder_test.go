@@ -58,7 +58,7 @@ func TestEncodeSourceFilePreservesSurrogateEscapes(t *testing.T) {
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
 		FileName: "/test.ts",
 		Path:     "/test.ts",
-	}, `let s = "\uD83E\uDD80\uD800a\uDC00\uD7FF\uD801";`, core.ScriptKindTS)
+	}, `let s = "\uD83E\uDD80\uD800a\uDC00\uD7FF\uD801\uDBFF\uDFFF";`, core.ScriptKindTS)
 
 	buf, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(t, err)
@@ -72,6 +72,7 @@ func TestEncodeSourceFilePreservesSurrogateEscapes(t *testing.T) {
 		0xed, 0xb0, 0x80, // \uDC00
 		0xed, 0x9f, 0xbf, // \uD7FF
 		0xed, 0xa0, 0x81, // \uD801
+		0xf4, 0x8f, 0xbf, 0xbf, // \uDBFF\uDFFF
 	})
 }
 
