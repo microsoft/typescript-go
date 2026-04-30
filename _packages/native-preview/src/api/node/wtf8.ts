@@ -35,7 +35,7 @@ export class Wtf8Decoder extends TextDecoder {
         }
 
         const bytes = toUint8Array(input);
-        let result = "";
+        const parts: string[] = [];
         let segmentStart = 0;
 
         for (let i = 0; i < bytes.length; i++) {
@@ -44,9 +44,9 @@ export class Wtf8Decoder extends TextDecoder {
             }
 
             if (segmentStart < i) {
-                result += super.decode(bytes.subarray(segmentStart, i), options);
+                parts.push(super.decode(bytes.subarray(segmentStart, i), options));
             }
-            result += String.fromCharCode(getSurrogateCodeUnit(bytes, i));
+            parts.push(String.fromCharCode(getSurrogateCodeUnit(bytes, i)));
             i += 2;
             segmentStart = i + 1;
         }
@@ -55,8 +55,8 @@ export class Wtf8Decoder extends TextDecoder {
             return super.decode(bytes, options);
         }
         if (segmentStart < bytes.length) {
-            result += super.decode(bytes.subarray(segmentStart), options);
+            parts.push(super.decode(bytes.subarray(segmentStart), options));
         }
-        return result;
+        return parts.join("");
     }
 }
