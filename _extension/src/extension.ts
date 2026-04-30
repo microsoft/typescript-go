@@ -6,6 +6,7 @@ import {
 } from "./commands";
 import {
     aiConnectionString,
+    getPackageInfo,
     getUseTsgo,
     getUseTsgoFalseSetting,
     needsExtHostRestartOnChange,
@@ -16,6 +17,8 @@ import {
     promptUseWorkspaceVersion,
     SessionManager,
 } from "./session";
+
+import { ExperimentationService } from "./experimentationService";
 import { createTelemetryReporter } from "./telemetryReporting";
 
 export interface ExtensionAPI {
@@ -28,6 +31,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
+
+    const packageInfo = getPackageInfo(context);
+    if (packageInfo) {
+        const { name: id, version } = packageInfo;
+        // Constructing the experimentation service actually sets shared properties
+        // so that events include context on treatments/flights.
+        const _expService = new ExperimentationService(telemetryReporter, id, version, context.globalState);
+    }
 
     registerEnablementCommands(context, telemetryReporter);
 

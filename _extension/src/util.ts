@@ -222,3 +222,19 @@ export function readUnifiedConfig<T>(
     if (explicit !== undefined) return explicit;
     return vscode.workspace.getConfiguration(fallbackSection, scope).get<T>(fallbackKey, defaultValue);
 }
+
+export interface PackageInfo {
+    name: string;
+    version: string;
+}
+
+export function getPackageInfo(context: vscode.ExtensionContext): PackageInfo | undefined {
+    const packageJSON: Record<string, unknown> | null = context.extension.packageJSON;
+    if (packageJSON && typeof packageJSON === "object" && typeof packageJSON.name === "string" && typeof packageJSON.version === "string") {
+        return {
+            name: packageJSON.name,
+            version: packageJSON.version,
+        };
+    }
+    return undefined;
+}
