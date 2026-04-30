@@ -16,7 +16,8 @@ func TestWatchEventPipeline(t *testing.T) {
 		"/src/b.ts":      "const b = 2;",
 		"/tsconfig.json": "{}",
 	}
-	fs := vfstest.FromMap(files, true)
+	clock := vfstest.NewSteppingClock(100 * time.Millisecond)
+	fs := vfstest.FromMapWithClock(files, true, clock)
 
 	fw := vfswatch.NewFileWatcher(fs, 50*time.Millisecond, true, func(e vfswatch.WatchEvent) {})
 	fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
@@ -26,10 +27,6 @@ func TestWatchEventPipeline(t *testing.T) {
 	if event.HasChanges() {
 		t.Fatalf("unexpected changes: created=%v deleted=%v changed=%v", event.Created, event.Deleted, event.Changed)
 	}
-
-	// Sleep to ensure WriteFile gets a different modTime than the snapshot,
-	// since Windows time resolution can be ~15ms.
-	time.Sleep(20 * time.Millisecond)
 
 	// Modify a file → detect change
 	_ = fs.WriteFile("/src/a.ts", "const a = 999;")
@@ -44,7 +41,6 @@ func TestWatchEventPipeline(t *testing.T) {
 		t.Fatalf("expected /src/a.ts in Changed, got: %v", event.Changed)
 	}
 	fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
-	time.Sleep(20 * time.Millisecond)
 
 	// Add new file → detect create
 	_ = fs.WriteFile("/src/new.ts", "const n = 42;")
@@ -56,7 +52,6 @@ func TestWatchEventPipeline(t *testing.T) {
 		t.Fatalf("expected Created entries, got: created=%v deleted=%v changed=%v", event.Created, event.Deleted, event.Changed)
 	}
 	fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
-	time.Sleep(20 * time.Millisecond)
 
 	// Delete a file → detect delete
 	_ = fs.Remove("/src/b.ts")
@@ -74,7 +69,6 @@ func TestWatchEventPipeline(t *testing.T) {
 	if event.HasChanges() {
 		t.Fatalf("unexpected changes after refresh: created=%v deleted=%v changed=%v", event.Created, event.Deleted, event.Changed)
 	}
-	time.Sleep(20 * time.Millisecond)
 
 	// Add subdirectory with file → detect create
 	_ = fs.WriteFile("/src/sub/deep.ts", "const deep = true;")
@@ -93,14 +87,11 @@ func TestWatchEventNonRecursive(t *testing.T) {
 		"/root/a.ts":     "const a = 1;",
 		"/root/sub/b.ts": "const b = 2;",
 	}
-	fs := vfstest.FromMap(files, true)
+	clock := vfstest.NewSteppingClock(100 * time.Millisecond)
+	fs := vfstest.FromMapWithClock(files, true, clock)
 
 	fw := vfswatch.NewFileWatcher(fs, 50*time.Millisecond, true, func(e vfswatch.WatchEvent) {})
 	fw.UpdateWatchedDirectories(map[string]bool{"/root": false}) // non-recursive
-
-	// Sleep to ensure WriteFile gets a different modTime than the snapshot,
-	// since Windows time resolution can be ~15ms.
-	time.Sleep(20 * time.Millisecond)
 
 	// Modify a file in root → detect change
 	_ = fs.WriteFile("/root/a.ts", "const a = 999;")
@@ -109,7 +100,6 @@ func TestWatchEventNonRecursive(t *testing.T) {
 		t.Fatal("no changes detected after modifying file in non-recursive dir")
 	}
 	fw.UpdateWatchedDirectories(map[string]bool{"/root": false})
-	time.Sleep(20 * time.Millisecond)
 
 	// Add file in root → detect create
 	_ = fs.WriteFile("/root/c.ts", "const c = 3;")

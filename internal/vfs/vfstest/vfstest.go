@@ -51,6 +51,33 @@ func (c *clockImpl) SinceStart() time.Duration {
 	return time.Since(c.start)
 }
 
+// SteppingClock is a deterministic clock that advances by a fixed step on each
+// call to Now(). This avoids time.Sleep in tests that rely on distinct modtimes.
+// It is not safe for concurrent use from multiple goroutines.
+type SteppingClock struct {
+	current time.Time
+	step    time.Duration
+}
+
+// NewSteppingClock returns a SteppingClock starting at an arbitrary epoch,
+// advancing by step on each call to Now().
+func NewSteppingClock(step time.Duration) *SteppingClock {
+	return &SteppingClock{
+		current: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
+		step:    step,
+	}
+}
+
+func (c *SteppingClock) Now() time.Time {
+	t := c.current
+	c.current = c.current.Add(c.step)
+	return t
+}
+
+func (c *SteppingClock) SinceStart() time.Duration {
+	return c.current.Sub(time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC))
+}
+
 var (
 	_ iovfs.RealpathFS = (*MapFS)(nil)
 	_ iovfs.WritableFS = (*MapFS)(nil)

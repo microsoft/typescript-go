@@ -190,9 +190,21 @@ func (w *WatchedFiles[T]) WatchedDirectories() []string {
 }
 
 func extractWatchedDirectory(w *lsproto.FileSystemWatcher) string {
-	glob := fileSystemWatcherGlobString(w)
-	if dir, ok := strings.CutSuffix(glob, "/**/*"); ok {
-		return dir
+	// For plain glob patterns (dir/**/*), extract the directory prefix.
+	if w.GlobPattern.Pattern != nil {
+		if dir, ok := strings.CutSuffix(*w.GlobPattern.Pattern, "/**/*"); ok {
+			return dir
+		}
+		return ""
+	}
+	// For RelativePattern, the base URI is the directory and pattern is **/*.
+	if w.GlobPattern.RelativePattern != nil {
+		if w.GlobPattern.RelativePattern.Pattern != "**/*" {
+			return ""
+		}
+		if w.GlobPattern.RelativePattern.BaseUri.URI != nil {
+			return lsproto.DocumentUri(*w.GlobPattern.RelativePattern.BaseUri.URI).FileName()
+		}
 	}
 	return ""
 }

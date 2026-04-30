@@ -12,6 +12,8 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
+// DebounceWait is the duration the polling watcher waits to coalesce rapid
+// filesystem changes before reporting them as a single watch event.
 const DebounceWait = 250 * time.Millisecond
 
 type WatchLogger interface {

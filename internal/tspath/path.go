@@ -1200,6 +1200,10 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 	return [][]string{componentGroups[0][:maxDepth]}
 }
 
+// GetPathComponentsForWatching returns path components suitable for watch
+// directory coarsening. Unlike [GetPathComponents], it groups the root and
+// initial path segments (e.g. UNC host, Windows Users, or Unix /home) into
+// a single component so that the minimum watch depth stays above the OS root.
 func GetPathComponentsForWatching(path string, currentDirectory string) []string {
 	components := GetPathComponents(path, currentDirectory)
 	rootLength := perceivedOsRootLengthForWatching(components)
