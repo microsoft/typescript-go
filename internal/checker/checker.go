@@ -16125,6 +16125,9 @@ func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	if symbol.CheckFlags&ast.CheckFlagsReverseMapped != 0 {
 		return c.getTypeOfReverseMappedSymbol(symbol)
 	}
+	if symbol.Flags&ast.SymbolFlagsAccessor != 0 {
+		return c.getTypeOfAccessors(symbol)
+	}
 	if symbol.Flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty) != 0 {
 		return c.getTypeOfVariableOrParameterOrProperty(symbol)
 	}
@@ -16133,9 +16136,6 @@ func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	}
 	if symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
 		return c.getTypeOfEnumMember(symbol)
-	}
-	if symbol.Flags&ast.SymbolFlagsAccessor != 0 {
-		return c.getTypeOfAccessors(symbol)
 	}
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
 		return c.getTypeOfAlias(symbol)
