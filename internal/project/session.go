@@ -248,6 +248,7 @@ func NewSession(init *SessionInit) *Session {
 			false,
 			session.onPolledFileChanges,
 		)
+		session.fileWatcher.SetExcludePackageDirs(true)
 		if init.Options.LoggingEnabled {
 			session.fileWatcher.SetLogger(session.logger)
 		}
@@ -262,10 +263,12 @@ func NewSession(init *SessionInit) *Session {
 
 // EnablePollingWatcher starts the in-process polling file watcher. This can be called
 // after session creation to enable polling based on user settings.
+// It also disables client-side watching so that both watchers don't run simultaneously.
 func (s *Session) EnablePollingWatcher() {
 	if s.fileWatcher != nil {
 		return
 	}
+	s.options.WatchEnabled = false
 	pollInterval := s.options.PollingInterval
 	if pollInterval == 0 {
 		pollInterval = time.Second
@@ -276,6 +279,7 @@ func (s *Session) EnablePollingWatcher() {
 		false,
 		s.onPolledFileChanges,
 	)
+	s.fileWatcher.SetExcludePackageDirs(true)
 	if s.options.LoggingEnabled {
 		s.fileWatcher.SetLogger(s.logger)
 	}

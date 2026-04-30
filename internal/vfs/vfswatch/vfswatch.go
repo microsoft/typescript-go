@@ -36,15 +36,16 @@ type watchEntry struct {
 }
 
 type FileWatcher struct {
-	fs            vfs.FS
-	pollInterval  time.Duration
-	testing       bool
-	callback      func(WatchEvent)
-	directories   map[string]bool
-	watchState    map[string]watchEntry
-	watchStateGen uint64
-	mu            sync.Mutex
-	logger        WatchLogger
+	fs                 vfs.FS
+	pollInterval       time.Duration
+	testing            bool
+	excludePackageDirs bool
+	callback           func(WatchEvent)
+	directories        map[string]bool
+	watchState         map[string]watchEntry
+	watchStateGen      uint64
+	mu                 sync.Mutex
+	logger             WatchLogger
 }
 
 func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func(WatchEvent)) *FileWatcher {
@@ -54,6 +55,12 @@ func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callbac
 		testing:      testing,
 		callback:     callback,
 	}
+}
+
+func (fw *FileWatcher) SetExcludePackageDirs(exclude bool) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
+	fw.excludePackageDirs = exclude
 }
 
 func (fw *FileWatcher) SetLogger(logger WatchLogger) {
@@ -70,7 +77,7 @@ func (fw *FileWatcher) SetPollInterval(d time.Duration) {
 
 func (fw *FileWatcher) UpdateWatchedDirectories(dirs map[string]bool) {
 	start := time.Now()
-	state := snapshotDirectories(fw.fs, dirs)
+	state := snapshotDirectories(fw.fs, dirs, fw.excludePackageDirs)
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
 	fw.directories = dirs
@@ -101,15 +108,16 @@ func (fw *FileWatcher) WaitForSettled(ctx context.Context) {
 	fw.mu.Lock()
 	dirs := fw.directories
 	pollInterval := fw.pollInterval
+	excludePackageDirs := fw.excludePackageDirs
 	fw.mu.Unlock()
-	current := snapshotDirectories(fw.fs, dirs)
+	current := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
 	settledAt := time.Now()
 	tick := min(pollInterval, debounceWait)
 	for time.Since(settledAt) < debounceWait {
 		if sleepOrDone(ctx, tick) {
 			return
 		}
-		next := snapshotDirectories(fw.fs, dirs)
+		next := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
 		if diffSnapshots(current, next).HasChanges() {
 			current = next
 			settledAt = time.Now()
@@ -117,13 +125,13 @@ func (fw *FileWatcher) WaitForSettled(ctx context.Context) {
 	}
 }
 
-func snapshotDirectories(fs vfs.FS, dirs map[string]bool) map[string]watchEntry {
+func snapshotDirectories(fs vfs.FS, dirs map[string]bool, excludePackageDirs bool) map[string]watchEntry {
 	state := make(map[string]watchEntry)
 	for dir, recursive := range dirs {
 		if dir == "" {
 			continue
 		}
-		snapshotDir(fs, state, dir, recursive)
+		snapshotDir(fs, state, dir, recursive, excludePackageDirs)
 	}
 	return state
 }
@@ -135,7 +143,7 @@ func joinWatchPath(dir, name string) string {
 	return dir + "/" + name
 }
 
-func snapshotDir(fs vfs.FS, state map[string]watchEntry, dir string, recursive bool) {
+func snapshotDir(fs vfs.FS, state map[string]watchEntry, dir string, recursive bool, excludePackageDirs bool) {
 	if !recursive {
 		entries := fs.GetAccessibleEntries(dir)
 		h := hashEntries(entries)
@@ -161,6 +169,10 @@ func snapshotDir(fs vfs.FS, state map[string]watchEntry, dir string, recursive b
 			return nil
 		}
 		if d.IsDir() {
+			name := d.Name()
+			if excludePackageDirs && path != dir && isExcludedDir(name) {
+				return vfs.SkipDir
+			}
 			snapshotDirEntry(fs, state, path)
 		} else {
 			if s := fs.Stat(path); s != nil {
@@ -237,9 +249,10 @@ func (fw *FileWatcher) ScanForChanges() WatchEvent {
 	ws := fw.watchState
 	dirs := fw.directories
 	logger := fw.logger
+	excludePackageDirs := fw.excludePackageDirs
 	fw.mu.Unlock()
 	scanStart := time.Now()
-	current := snapshotDirectories(fw.fs, dirs)
+	current := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
 	event := diffSnapshots(ws, current)
 	if logger != nil {
 		scanDuration := time.Since(scanStart)
@@ -259,6 +272,7 @@ func (fw *FileWatcher) Run(ctx context.Context) {
 		ws := fw.watchState
 		dirs := fw.directories
 		logger := fw.logger
+		excludePackageDirs := fw.excludePackageDirs
 		fw.mu.Unlock()
 
 		if sleepOrDone(ctx, interval) {
@@ -269,7 +283,7 @@ func (fw *FileWatcher) Run(ctx context.Context) {
 			continue
 		}
 		scanStart := time.Now()
-		current := snapshotDirectories(fw.fs, dirs)
+		current := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
 		scanDuration := time.Since(scanStart)
 		event := diffSnapshots(ws, current)
 		if event.HasChanges() {
@@ -291,7 +305,7 @@ func (fw *FileWatcher) Run(ctx context.Context) {
 			ws = fw.watchState
 			dirs = fw.directories
 			fw.mu.Unlock()
-			current = snapshotDirectories(fw.fs, dirs)
+			current = snapshotDirectories(fw.fs, dirs, excludePackageDirs)
 			event = diffSnapshots(ws, current)
 			if event.HasChanges() {
 				if logger != nil {
@@ -312,4 +326,18 @@ func (fw *FileWatcher) Run(ctx context.Context) {
 
 func formatEvent(e WatchEvent) string {
 	return fmt.Sprintf("created=%d deleted=%d changed=%d", len(e.Created), len(e.Deleted), len(e.Changed))
+}
+
+// isExcludedDir returns true for directories that the polling watcher should
+// skip during recursive walks: hidden directories (e.g. .git) and common
+// package folders (node_modules, bower_components, jspm_packages).
+func isExcludedDir(name string) bool {
+	if len(name) > 0 && name[0] == '.' {
+		return true
+	}
+	switch strings.ToLower(name) {
+	case "node_modules", "bower_components", "jspm_packages":
+		return true
+	}
+	return false
 }
