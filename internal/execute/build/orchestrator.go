@@ -17,7 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
@@ -247,7 +246,9 @@ func (o *Orchestrator) Watch() {
 }
 
 func (o *Orchestrator) updateWatch() {
-	o.host.host.FS().(*cachedvfs.FS).ClearCache()
+	if c, ok := o.host.host.FS().(interface{ ClearCache() }); ok {
+		c.ClearCache()
+	}
 	oldCache := o.host.mTimes
 	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
 
@@ -258,8 +259,6 @@ func (o *Orchestrator) updateWatch() {
 	mergedDirs := o.computeWatchDirectories()
 	o.fileWatcher.UpdateWatchedDirectories(mergedDirs)
 }
-
-const minWatchLocationDepth = 2
 
 func (o *Orchestrator) computeWatchDirectories() map[string]bool {
 	dirs := make(map[string]bool)
@@ -304,7 +303,7 @@ func (o *Orchestrator) computeWatchDirectories() map[string]bool {
 			}
 			commonParents, _ := tspath.GetCommonParents(
 				fileDirs,
-				minWatchLocationDepth,
+				tspath.MinWatchLocationDepth,
 				tspath.GetPathComponentsForWatching,
 				o.comparePathsOptions,
 			)
@@ -352,8 +351,9 @@ func isCoveredByWildcardDir(dir string, wildcardDirs map[string]bool, opts tspat
 
 func (o *Orchestrator) resetCaches() {
 	// Clean out all the caches
-	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
-	cachesVfs.ClearCache()
+	if c, ok := o.host.host.FS().(interface{ ClearCache() }); ok {
+		c.ClearCache()
+	}
 	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
 	o.host.sourceFiles.reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
@@ -389,7 +389,9 @@ func (o *Orchestrator) DoCycle() {
 
 	o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
 
-	o.host.host.FS().(*cachedvfs.FS).ClearCache()
+	if c, ok := o.host.host.FS().(interface{ ClearCache() }); ok {
+		c.ClearCache()
+	}
 	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
 
 	if needsConfigUpdate.Load() {

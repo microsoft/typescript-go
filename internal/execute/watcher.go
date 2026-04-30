@@ -24,8 +24,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
-const minWatchLocationDepth = 2
-
 type cachedSourceFile struct {
 	file    *ast.SourceFile
 	modTime time.Time
@@ -315,7 +313,7 @@ func (w *Watcher) computeWatchDirectories(seenFiles *collections.SyncSet[string]
 		}
 		commonParents, _ := tspath.GetCommonParents(
 			fileDirs,
-			minWatchLocationDepth,
+			tspath.MinWatchLocationDepth,
 			tspath.GetPathComponentsForWatching,
 			compareOpts,
 		)

@@ -3,6 +3,7 @@ package vfswatch
 import (
 	"context"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -72,14 +73,15 @@ func (fw *FileWatcher) SetPollInterval(d time.Duration) {
 
 func (fw *FileWatcher) UpdateWatchedDirectories(dirs map[string]bool) {
 	start := time.Now()
-	state := snapshotDirectories(fw.fs, dirs)
+	dirsCopy := maps.Clone(dirs)
+	state := snapshotDirectories(fw.fs, dirsCopy)
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
-	fw.directories = dirs
+	fw.directories = dirsCopy
 	fw.watchState = state
 	fw.watchStateGen++
 	if fw.logger != nil {
-		fw.logger.Logf("Polling watcher: watching %d directories (%d entries) in %v", len(dirs), len(state), time.Since(start))
+		fw.logger.Logf("Polling watcher: watching %d directories (%d entries) in %v", len(dirsCopy), len(state), time.Since(start))
 	}
 }
 
@@ -299,7 +301,9 @@ func (fw *FileWatcher) Run(ctx context.Context) {
 				if logger != nil {
 					logger.Logf("Polling watcher: settled with %s", formatEvent(event))
 				}
-				fw.callback(event)
+				if fw.callback != nil {
+					fw.callback(event)
+				}
 			}
 			fw.mu.Lock()
 			if fw.watchStateGen == gen {

@@ -1097,6 +1097,11 @@ func SplitVolumePath(path string) (volume string, rest string, ok bool) {
 	return "", path, false
 }
 
+// MinWatchLocationDepth is the minimum number of path components required to
+// qualify as a viable watch root, preventing watches from being placed too
+// close to the filesystem root (e.g. "/" or "C:/").
+const MinWatchLocationDepth = 2
+
 // GetCommonParents returns the smallest set of directories that are parents of all paths with
 // at least `minComponents` directory components. Any path that has fewer than `minComponents` directory components
 // will be returned in the second return value. Examples:
