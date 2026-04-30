@@ -1351,3 +1351,14 @@ conformance/privateNameStaticMethod.js.diff
 conformance/jsdocDisallowedInTypescript.js.diff
 ## Corsa correctly emits `any` type for auto-typed variable with `null` initializer
 compiler/letDeclarations.js.diff
+
+## Fix checks for disallowed property/accessor duplicate declarations
+## https://github.com/microsoft/typescript-go/pull/3672
+compiler/allowJscheckJsTypeParameterNoCrash.types.diff
+compiler/fieldAndGetterWithSameName.symbols.diff
+conformance/autoAccessor11.symbols.diff
+conformance/objectLiteralErrors(target=es2015).errors.txt.diff
+conformance/objectLiteralErrors(target=es2015).symbols.diff
+conformance/objectLiteralErrors(target=es2015).types.diff
+conformance/propertyAndAccessorWithSameName.symbols.diff
+conformance/propertyAndAccessorWithSameName.types.diff
