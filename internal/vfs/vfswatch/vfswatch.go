@@ -3,6 +3,8 @@
 package vfswatch
 
 import (
+	"fmt"
+	"io"
 	"slices"
 	"sync"
 	"time"
@@ -27,6 +29,7 @@ type FileWatcher struct {
 	watchState          map[string]WatchEntry
 	wildcardDirectories map[string]bool
 	mu                  sync.Mutex
+	debugLog            io.Writer // nil = silent; non-nil = write timing lines here
 }
 
 func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func()) *FileWatcher {
@@ -36,6 +39,14 @@ func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callbac
 		testing:      testing,
 		callback:     callback,
 	}
+}
+
+// SetDebugLog enables per-scan timing output written to w.
+// Pass nil to disable. Safe to call at any time.
+func (fw *FileWatcher) SetDebugLog(w io.Writer) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
+	fw.debugLog = w
 }
 
 func (fw *FileWatcher) SetPollInterval(d time.Duration) {
@@ -176,21 +187,16 @@ func hashEntries(entries vfs.Entries) uint64 {
 	return h.Sum64()
 }
 
-func dirChanged(fs vfs.FS, baseline map[string]WatchEntry, dir string) bool {
-	entry, ok := baseline[dir]
-	if !ok {
-		return true
-	}
-	if entry.ChildrenHash != 0 {
-		entries := fs.GetAccessibleEntries(dir)
-		if hashEntries(entries) != entry.ChildrenHash {
-			return true
-		}
-	}
-	return false
-}
-
-func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs map[string]bool) bool {
+// hasChanges compares the current filesystem state against baseline.
+//
+// snapshotPaths stores every directory reachable through a recursive wildcard
+// dir in the watchState map (via snapshotDirEntry), with a ChildrenHash that
+// covers both files and subdirectories. Iterating baseline and re-hashing
+// every entry with ChildrenHash != 0 therefore already covers the full
+// wildcard tree — there is no need for a separate recursive WalkDir pass.
+// Any new file or subdirectory causes its parent directory's hash to change,
+// which is detected in the loop below.
+func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, _ map[string]bool) bool {
 	for path, old := range baseline {
 		s := fw.fs.Stat(path)
 		if !old.Exists {
@@ -207,28 +213,6 @@ func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs m
 					return true
 				}
 			}
-		}
-	}
-	for dir, recursive := range wildcardDirs {
-		if !recursive {
-			if dirChanged(fw.fs, baseline, dir) {
-				return true
-			}
-			continue
-		}
-		found := false
-		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
-			if err != nil || !d.IsDir() {
-				return nil
-			}
-			if dirChanged(fw.fs, baseline, path) {
-				found = true
-				return vfs.SkipAll
-			}
-			return nil
-		})
-		if found {
-			return true
 		}
 	}
 	return false
@@ -252,9 +236,17 @@ func (fw *FileWatcher) Run(now func() time.Time) {
 		interval := fw.pollInterval
 		ws := fw.watchState
 		wildcardDirs := fw.wildcardDirectories
+		log := fw.debugLog
 		fw.mu.Unlock()
 		time.Sleep(interval)
-		if ws == nil || fw.hasChanges(ws, wildcardDirs) {
+		start := now()
+		changed := ws == nil || fw.hasChanges(ws, wildcardDirs)
+		if log != nil {
+			elapsed := now().Sub(start)
+			fmt.Fprintf(log, "[vfswatch] scan: %d paths, %.1fms, changed=%v\n",
+				len(ws), float64(elapsed.Microseconds())/1000.0, changed)
+		}
+		if changed {
 			fw.WaitForSettled(now)
 			fw.callback()
 		}
