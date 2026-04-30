@@ -20,13 +20,13 @@ class a {
 >x : any
 
     get x() {
->x : number
+>x : any
 
         return 10;
 >10 : 10
     }
     set x(_x: number) {
->x : number
+>x : any
 >_x : number
     }
 
@@ -66,7 +66,7 @@ class a {
 >_x : number
     }
     public x2;
->x2 : any
+>x2 : number
 
     get z2() {
 >z2 : string
