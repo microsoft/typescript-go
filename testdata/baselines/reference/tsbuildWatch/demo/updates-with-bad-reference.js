@@ -730,7 +730,7 @@ Output::
 [7m3[0m     "compilerOptions": {
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~[0m
 
-[[90mHH:MM:SS AM[0m] Project 'animals/tsconfig.json' is out of date because it has errors.
+[[90mHH:MM:SS AM[0m] Project 'animals/tsconfig.json' is out of date because buildinfo file 'lib/animals/tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'animals/tsconfig.json'...
 
@@ -738,8 +738,6 @@ Output::
 
 [7m3[0m     "compilerOptions": {
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~[0m
-
-[[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'animals/tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Project 'zoo/tsconfig.json' is out of date because it has errors.
 
@@ -754,7 +752,6 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Found 3 errors. Watching for file changes.
 
-//// [/user/username/projects/demo/lib/animals/tsconfig.tsbuildinfo] *mTime changed*
 //// [/user/username/projects/demo/lib/core/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","errors":true,"root":[5],"fileNames":["lib.d.ts","../../animals/animal.ts","../../animals/dog.ts","../../animals/index.ts","../../core/utilities.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"47f086fff365b1e8b96a6df2c4313c1a-export type Size = \"small\" | \"medium\" | \"large\";\nexport default interface Animal {\n    size: Size;\n}","signature":"1d76529d4652ddf9ebdfa65e748240fb-export type Size = \"small\" | \"medium\" | \"large\";\nexport default interface Animal {\n    size: Size;\n}\n","impliedNodeFormat":1},{"version":"39dbb9b755eef022e56879989968e5cf-import Animal from '.';\nimport { makeRandomName } from '../core/utilities';\n\nexport interface Dog extends Animal {\n    woof(): void;\n    name: string;\n}\n\nexport function createDog(): Dog {\n    return ({\n        size: \"medium\",\n        woof: function(this: Dog) {\n            console.log(`${ this.name } says \"Woof\"!`);\n        },\n        name: makeRandomName()\n    });\n}","signature":"4dc4bc559452869bfd0d92b5ed5d604f-import Animal from '.';\nexport interface Dog extends Animal {\n    woof(): void;\n    name: string;\n}\nexport declare function createDog(): Dog;\n","impliedNodeFormat":1},{"version":"d6a6b65b86b0330b1a1bd96b1738d5a4-import Animal from './animal';\n\nexport default Animal;\nimport { createDog, Dog } from './dog';\nexport { createDog, Dog };","signature":"a3e41a5ccafc3d07a201f0603e28edcf-import Animal from './animal';\nexport default Animal;\nimport { createDog, Dog } from './dog';\nexport { createDog, Dog };\n","impliedNodeFormat":1},{"version":"c3e46c15bb789df9e21a5ca1964be7a1-\nimport * as A from '../animals'\nexport function makeRandomName() {\n    return \"Bob!?! \";\n}\n\nexport function lastElementOf<T>(arr: T[]): T | undefined {\n    if (arr.length === 0) return undefined;\n    return arr[arr.length - 1];\n}","signature":"096c311e7aecdb577f7b613fbf1716e5-export declare function makeRandomName(): string;\nexport declare function lastElementOf<T>(arr: T[]): T | undefined;\n","impliedNodeFormat":1}],"fileIdsList":[[4,5],[2,3],[4]],"options":{"composite":true,"declaration":true,"module":1,"noFallthroughCasesInSwitch":true,"noImplicitReturns":true,"noUnusedLocals":true,"noUnusedParameters":true,"outDir":"./","rootDir":"../../core","strict":true,"target":1},"referencedMap":[[3,1],[4,2],[5,3]],"semanticDiagnosticsPerFile":[1,2,3,4,5],"latestChangedDtsFile":"./utilities.d.ts"}
 //// [/user/username/projects/demo/lib/core/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 

@@ -11,12 +11,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
-var defaultPaths = []string{
-	"/src/a.ts",
-	"/src/b.ts",
-	"/src/c.ts",
-	"/src/sub/d.ts",
-	"/tsconfig.json",
+var defaultDirs = map[string]bool{
+	"/src": true, // recursive
 }
 
 func newTestFS() vfs.FS {
@@ -30,15 +26,15 @@ func newTestFS() vfs.FS {
 }
 
 func newWatcherWithState(fs vfs.FS) *vfswatch.FileWatcher {
-	fw := vfswatch.NewFileWatcher(fs, 10*time.Millisecond, true, func() {})
-	fw.UpdateWatchState(defaultPaths, nil)
+	fw := vfswatch.NewFileWatcher(fs, 10*time.Millisecond, true, func(vfswatch.WatchEvent) {})
+	fw.UpdateWatchedDirectories(defaultDirs)
 	return fw
 }
 
-// TestRaceHasChangesVsUpdateWatchState tests for data races between
-// concurrent HasChanges reads and UpdateWatchState writes on the
-// WatchState map.
-func TestRaceHasChangesVsUpdateWatchState(t *testing.T) {
+// TestRaceScanVsUpdateWatchedDirectories tests for data races between
+// concurrent ScanForChanges reads and UpdateWatchedDirectories writes
+// using recursive directory watching.
+func TestRaceScanVsUpdateWatchedDirectories(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
 	fw := newWatcherWithState(fs)
@@ -48,7 +44,7 @@ func TestRaceHasChangesVsUpdateWatchState(t *testing.T) {
 	for range 10 {
 		wg.Go(func() {
 			for range 200 {
-				fw.HasChangesFromWatchState()
+				fw.ScanForChanges()
 			}
 		})
 	}
@@ -56,7 +52,7 @@ func TestRaceHasChangesVsUpdateWatchState(t *testing.T) {
 	for range 5 {
 		wg.Go(func() {
 			for range 100 {
-				fw.UpdateWatchState([]string{"/src/a.ts", "/src/b.ts"}, nil)
+				fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
 			}
 		})
 	}
@@ -64,21 +60,21 @@ func TestRaceHasChangesVsUpdateWatchState(t *testing.T) {
 	wg.Wait()
 }
 
-// TestRaceWildcardDirectoriesAccess tests for data races when
-// WildcardDirectories is read internally by HasChanges while being
-// replaced concurrently via UpdateWatchState.
-func TestRaceWildcardDirectoriesAccess(t *testing.T) {
+// TestRaceNonRecursiveDirectoryAccess tests for data races when
+// directories are watched non-recursively, exercising the shallow
+// scan path in ScanForChanges while being replaced concurrently.
+func TestRaceNonRecursiveDirectoryAccess(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
-	fw := newWatcherWithState(fs)
-	fw.UpdateWatchState(defaultPaths, map[string]bool{"/src": true})
+	fw := vfswatch.NewFileWatcher(fs, 10*time.Millisecond, true, func(vfswatch.WatchEvent) {})
+	fw.UpdateWatchedDirectories(map[string]bool{"/src": false})
 
 	var wg sync.WaitGroup
 
 	for range 10 {
 		wg.Go(func() {
 			for range 200 {
-				fw.HasChangesFromWatchState()
+				fw.ScanForChanges()
 			}
 		})
 	}
@@ -86,7 +82,7 @@ func TestRaceWildcardDirectoriesAccess(t *testing.T) {
 	for range 5 {
 		wg.Go(func() {
 			for range 100 {
-				fw.UpdateWatchState(defaultPaths, map[string]bool{"/src": true})
+				fw.UpdateWatchedDirectories(map[string]bool{"/src": false})
 			}
 		})
 	}
@@ -106,7 +102,7 @@ func TestRacePollIntervalAccess(t *testing.T) {
 	for range 10 {
 		wg.Go(func() {
 			for range 500 {
-				fw.HasChangesFromWatchState()
+				fw.ScanForChanges()
 			}
 		})
 	}
@@ -125,33 +121,31 @@ func TestRacePollIntervalAccess(t *testing.T) {
 }
 
 // TestRaceMixedOperations hammers all FileWatcher operations
-// concurrently: HasChanges, UpdateWatchState, FS mutations,
+// concurrently: ScanForChanges, UpdateWatchedDirectories, FS mutations,
 // and PollInterval writes.
 func TestRaceMixedOperations(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
 	fw := newWatcherWithState(fs)
-	fw.UpdateWatchState(defaultPaths, map[string]bool{"/src": true})
 
 	var wg sync.WaitGroup
 
-	// HasChanges readers
+	// ScanForChanges readers
 	for range 8 {
 		wg.Go(func() {
 			for range 100 {
-				fw.HasChangesFromWatchState()
+				fw.ScanForChanges()
 			}
 		})
 	}
 
-	// UpdateWatchState writers
+	// UpdateWatchedDirectories writers
 	for i := range 4 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			for j := range 50 {
-				paths := []string{"/src/a.ts", fmt.Sprintf("/src/new_%d_%d.ts", i, j)}
-				fw.UpdateWatchState(paths, map[string]bool{"/src": true})
+			for range 50 {
+				fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
 			}
 		}(i)
 	}
@@ -186,13 +180,12 @@ func TestRaceMixedOperations(t *testing.T) {
 }
 
 // TestRaceUpdateWithConcurrentFileModifications creates and deletes
-// files on the FS while UpdateWatchState is scanning the same FS,
+// files on the FS while UpdateWatchedDirectories is scanning the same FS,
 // testing for races between the FS walker and concurrent mutations.
 func TestRaceUpdateWithConcurrentFileModifications(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
 	fw := newWatcherWithState(fs)
-	fw.UpdateWatchState(defaultPaths, map[string]bool{"/src": true})
 
 	var wg sync.WaitGroup
 
@@ -209,11 +202,11 @@ func TestRaceUpdateWithConcurrentFileModifications(t *testing.T) {
 		}(i)
 	}
 
-	// Concurrent UpdateWatchState (walks the FS tree via WildcardDirectories)
+	// Concurrent UpdateWatchedDirectories (walks the FS tree)
 	for range 4 {
 		wg.Go(func() {
 			for range 50 {
-				fw.UpdateWatchState([]string{"/src/a.ts", "/tsconfig.json"}, map[string]bool{"/src": true})
+				fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
 			}
 		})
 	}
@@ -251,13 +244,13 @@ func FuzzFileWatcherOperations(f *testing.F) {
 				_ = fs.WriteFile(path, fmt.Sprintf("const x = %d;", i))
 			case 1: // Remove a file
 				_ = fs.Remove(path)
-			case 2: // Check for changes against current state
-				fw.HasChangesFromWatchState()
+			case 2: // Scan for changes
+				fw.ScanForChanges()
 			case 3: // Rebuild watch state
-				fw.UpdateWatchState(files, nil)
-			case 4: // Set wildcard directories and check for changes
-				fw.UpdateWatchState(files, map[string]bool{"/src": true})
-				fw.HasChangesFromWatchState()
+				fw.UpdateWatchedDirectories(defaultDirs)
+			case 4: // Update directories and scan
+				fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
+				fw.ScanForChanges()
 			case 5: // Modify PollInterval
 				fw.SetPollInterval(time.Duration(i*10) * time.Millisecond)
 			}
@@ -279,7 +272,6 @@ func FuzzFileWatcherConcurrent(f *testing.F) {
 
 		fs := newTestFS()
 		fw := newWatcherWithState(fs)
-		fw.UpdateWatchState(defaultPaths, map[string]bool{"/src": true})
 
 		files := []string{"/src/a.ts", "/src/b.ts", "/src/c.ts", "/src/new.ts"}
 
@@ -306,9 +298,9 @@ func FuzzFileWatcherConcurrent(f *testing.F) {
 					case 1:
 						_ = fs.Remove(path)
 					case 2:
-						fw.HasChangesFromWatchState()
+						fw.ScanForChanges()
 					case 3:
-						fw.UpdateWatchState([]string{path}, map[string]bool{"/src": true})
+						fw.UpdateWatchedDirectories(map[string]bool{"/src": true})
 					}
 				}
 			}(chunk, start/chunkSize)

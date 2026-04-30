@@ -273,6 +273,18 @@ Edit [0]:: reports import errors after change to package file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg2/tsconfig.json' is up to date because newest input 'packages/pkg2/other.ts' is older than output 'packages/pkg2/build/tsconfig.tsbuildinfo'
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is up to date because newest input 'packages/pkg1/index.ts' is older than output 'packages/pkg1/build/tsconfig.tsbuildinfo'
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 
 
 
@@ -296,4 +308,16 @@ Edit [1]:: removes those errors when a package file is changed back
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg2/tsconfig.json' is up to date because newest input 'packages/pkg2/other.ts' is older than output 'packages/pkg2/build/tsconfig.tsbuildinfo'
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is up to date because newest input 'packages/pkg1/index.ts' is older than output 'packages/pkg1/build/tsconfig.tsbuildinfo'
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 

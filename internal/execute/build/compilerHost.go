@@ -7,16 +7,21 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/trackingvfs"
 )
 
 type compilerHost struct {
 	host  *host
 	trace func(msg *diagnostics.Message, args ...any)
+	tfs   *trackingvfs.FS
 }
 
 var _ compiler.CompilerHost = (*compilerHost)(nil)
 
 func (h *compilerHost) FS() vfs.FS {
+	if h.tfs != nil {
+		return h.tfs
+	}
 	return h.host.FS()
 }
 
@@ -33,6 +38,9 @@ func (h *compilerHost) Trace(msg *diagnostics.Message, args ...any) {
 }
 
 func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	if h.tfs != nil {
+		h.tfs.SeenFiles.Add(opts.FileName)
+	}
 	return h.host.GetSourceFile(opts)
 }
 

@@ -568,12 +568,7 @@ Output::
 [7m4[0m let x: string = 10;
 [7m [0m [91m    ~[0m
 
-[96mlogic/index.ts[0m:[93m7[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
-
-[7m7[0m let y: string = 10;
-[7m [0m [91m    ~[0m
-
-[[90mHH:MM:SS AM[0m] Found 2 errors. Watching for file changes.
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/sample1/core/index.d.ts.map] *rewrite with same content*
 //// [/user/username/projects/sample1/core/index.js] *modified* 
@@ -688,20 +683,6 @@ SemanticDiagnostics::
 Signatures::
 (computed .d.ts) /user/username/projects/sample1/core/index.ts
 
-
-Diff:: Clean build will stop on error in core and will not report error in logic
-Watch build will retain previous errors from logic and report it
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -3,3 +3,8 @@
- [7m4[0m let x: string = 10;
- [7m [0m [91m    ~[0m
-
-+[96mlogic/index.ts[0m:[93m7[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
-+
-+[7m7[0m let y: string = 10;
-+[7m [0m [91m    ~[0m
-+
 
 Edit [2]:: fix error in logic
 //// [/user/username/projects/sample1/logic/index.ts] *modified* 

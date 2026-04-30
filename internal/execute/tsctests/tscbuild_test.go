@@ -3246,13 +3246,6 @@ class someClass2 { }`,
 		}`)
 	}
 	getIncrementalErrorTest := func(subScenario string, options []string) *tscInput {
-		var expectedDiffWithLogicError string
-		if slices.Contains(options, "--stopBuildOnErrors") {
-			expectedDiffWithLogicError = stringtestutil.Dedent(`
-				Clean build will stop on error in core and will not report error in logic
-				Watch build will retain previous errors from logic and report it
-			`)
-		}
 		return &tscInput{
 			subScenario:     "reportErrors " + subScenario,
 			files:           getBuildSampleFileMap(nil),
@@ -3270,7 +3263,7 @@ class someClass2 { }`,
 					edit: func(sys *TestSys) {
 						sys.appendFile("/user/username/projects/sample1/core/index.ts", "\nlet x: string = 10;")
 					},
-					expectedDiff: expectedDiffWithLogicError,
+					expectedDiff: "",
 				},
 				{
 					caption: "fix error in logic",

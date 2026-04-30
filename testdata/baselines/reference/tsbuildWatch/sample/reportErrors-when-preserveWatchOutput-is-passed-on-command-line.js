@@ -682,7 +682,6 @@ let x = 10;
   "latestChangedDtsFile": "./index.d.ts",
   "size": 2024
 }
-//// [/user/username/projects/sample1/logic/tsconfig.tsbuildinfo] *mTime changed*
 //// [/user/username/projects/sample1/tests/tsconfig.tsbuildinfo] *mTime changed*
 
 core/tsconfig.json::

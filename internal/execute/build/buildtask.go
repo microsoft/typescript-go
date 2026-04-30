@@ -17,6 +17,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/trackingvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
 type updateKind uint
@@ -71,9 +73,9 @@ type BuildTask struct {
 	reportDone   chan struct{}
 
 	// Watching things
-	configTime          time.Time
-	extendedConfigTimes []time.Time
-	inputFiles          []time.Time
+	configFilePaths []string                     // config + extended source files
+	seenFiles       *collections.SyncSet[string] // paths accessed during last compile
+	lastTrackingFS  *trackingvfs.FS              // from most recent compileAndEmit
 
 	buildInfoEntry   *buildInfoEntry
 	buildInfoEntryMu sync.Mutex
@@ -205,6 +207,17 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		t.result.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
 	}
 
+	tfs := &trackingvfs.FS{Inner: orchestrator.host.FS()}
+
+	if t.resolved != nil {
+		for dir := range t.resolved.WildcardDirectories() {
+			tfs.SeenFiles.Add(dir)
+		}
+	}
+	for _, cfgPath := range t.configFilePaths {
+		tfs.SeenFiles.Add(cfgPath)
+	}
+
 	// Real build
 	var compileTimes tsc.CompileTimes
 	configTime, _ := orchestrator.host.configTimes.Load(path)
@@ -221,6 +234,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		Host: &compilerHost{
 			host:  orchestrator.host,
 			trace: tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
+			tfs:   tfs,
 		},
 	})
 	compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
@@ -262,6 +276,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		}
 		t.status = &upToDateStatus{kind: upToDateStatusTypeUpToDate, data: oldestOutputFileName}
 	}
+	t.lastTrackingFS = tfs
 }
 
 func (t *BuildTask) handleStatusThatDoesntRequireBuild(orchestrator *Orchestrator) bool {
@@ -428,6 +443,81 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		if !seenRoots.Has(root) {
 			// File was root file when project was built but its not any more
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateRoots, data: &inputOutputName{string(root), buildInfoPath}}
+		}
+	}
+
+	// Check non-root program files (e.g. node_modules .d.ts dependencies) for changes.
+	if buildInfo.IsIncremental() {
+		buildInfoDir := tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory))
+		defaultLibPath := tspath.RemoveTrailingDirectorySeparator(orchestrator.host.DefaultLibraryPath())
+		seenPackageDirs := collections.Set[string]{}
+		for i, fileInfo := range buildInfo.FileInfos {
+			if i >= len(buildInfo.FileNames) {
+				break
+			}
+			fileName := buildInfo.FileNames[i]
+			resolvedPath := tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
+			filePath := orchestrator.toPath(resolvedPath)
+			if seenRoots.Has(filePath) {
+				continue // already checked in the root input loop
+			}
+			if defaultLibPath != "" {
+				if tspath.ContainsPath(defaultLibPath, resolvedPath, orchestrator.comparePathsOptions) {
+					continue
+				}
+				if strings.HasPrefix(fileName, "lib.") && strings.HasSuffix(fileName, ".d.ts") && !strings.ContainsRune(fileName, '/') {
+					continue
+				}
+			}
+
+			// Check if the dependency file still exists and get its modtime.
+			depStat := orchestrator.opts.Sys.FS().Stat(resolvedPath)
+			if depStat == nil {
+				return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{resolvedPath, buildInfoPath}}
+			}
+
+			// Check if content has changed
+			if storedInfo := fileInfo.GetFileInfo(); storedInfo != nil && storedInfo.Version() != "" {
+				if depStat.ModTime().After(oldestOutputFileAndTime.time) {
+					if text, ok := orchestrator.opts.Sys.FS().ReadFile(resolvedPath); ok {
+						currentVersion := incremental.ComputeHash(text, orchestrator.opts.Testing != nil)
+						if storedInfo.Version() != currentVersion {
+							return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{resolvedPath, buildInfoPath}}
+						}
+					} else {
+						// File exists but can't be read — conservatively rebuild.
+						return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{resolvedPath, buildInfoPath}}
+					}
+				}
+			}
+
+			// Track package.json directories for node_modules dependencies.
+			if idx := strings.LastIndex(resolvedPath, "/node_modules/"); idx >= 0 {
+				rest := resolvedPath[idx+len("/node_modules/"):]
+				var pkgDir string
+				if strings.HasPrefix(rest, "@") {
+					// Scoped package: @scope/name
+					parts := strings.SplitN(rest, "/", 3)
+					if len(parts) >= 2 {
+						pkgDir = resolvedPath[:idx+len("/node_modules/")] + parts[0] + "/" + parts[1]
+					}
+				} else {
+					parts := strings.SplitN(rest, "/", 2)
+					pkgDir = resolvedPath[:idx+len("/node_modules/")] + parts[0]
+				}
+				if pkgDir != "" {
+					seenPackageDirs.Add(pkgDir)
+				}
+			}
+		}
+
+		// Check package.json files for changes in any node_modules package we depend on.
+		for pkgDir := range seenPackageDirs.Keys() {
+			pkgJsonPath := pkgDir + "/package.json"
+			pkgStat := orchestrator.opts.Sys.FS().Stat(pkgJsonPath)
+			if pkgStat != nil && pkgStat.ModTime().After(oldestOutputFileAndTime.time) {
+				return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{pkgJsonPath, buildInfoPath}}
+			}
 		}
 	}
 
@@ -709,19 +799,37 @@ func (t *BuildTask) cleanProjectOutput(orchestrator *Orchestrator, outputFile st
 	}
 }
 
-func (t *BuildTask) updateWatch(orchestrator *Orchestrator, oldCache *collections.SyncMap[tspath.Path, time.Time]) {
-	t.configTime = orchestrator.host.loadOrStoreMTime(t.config, oldCache, false)
+func (t *BuildTask) updateWatchState(orchestrator *Orchestrator, oldCache *collections.SyncMap[tspath.Path, time.Time]) {
 	if t.resolved != nil {
-		t.extendedConfigTimes = core.Map(t.resolved.ExtendedSourceFiles(), func(p string) time.Time {
-			return orchestrator.host.loadOrStoreMTime(p, oldCache, false)
-		})
-		t.inputFiles = core.Map(t.resolved.FileNames(), func(p string) time.Time {
-			return orchestrator.host.loadOrStoreMTime(p, oldCache, false)
-		})
-		if t.canUpdateJsDtsOutputTimestamps() {
-			for outputFile := range t.resolved.GetOutputFileNames() {
-				orchestrator.host.storeMTimeFromOldCache(outputFile, oldCache)
+		t.configFilePaths = append([]string{t.config}, t.resolved.ExtendedSourceFiles()...)
+	} else {
+		t.configFilePaths = []string{t.config}
+	}
+
+	// Transfer seen files from the last compile for watch directory computation
+	if t.lastTrackingFS != nil {
+		t.seenFiles = &t.lastTrackingFS.SeenFiles
+		t.lastTrackingFS = nil
+	} else if t.seenFiles == nil {
+		// Initial cycle: seed seenFiles with known project files so that
+		// the FileWatcher has directories to watch before the first compile.
+		t.seenFiles = &collections.SyncSet[string]{}
+		if t.resolved != nil {
+			for _, file := range t.resolved.FileNames() {
+				t.seenFiles.Add(file)
 			}
+		}
+	}
+
+	// Ensure config paths are in seenFiles for watch directory coverage
+	for _, path := range t.configFilePaths {
+		t.seenFiles.Add(path)
+	}
+
+	// Preserve output mtimes across watch cycles
+	if t.resolved != nil && t.canUpdateJsDtsOutputTimestamps() {
+		for outputFile := range t.resolved.GetOutputFileNames() {
+			orchestrator.host.storeMTimeFromOldCache(outputFile, oldCache)
 		}
 	}
 }
@@ -737,43 +845,53 @@ func (t *BuildTask) resetConfig(orchestrator *Orchestrator, path tspath.Path) {
 	orchestrator.host.resolvedReferences.delete(path)
 }
 
-func (t *BuildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) updateKind {
-	var needsConfigUpdate bool
-	var needsUpdate bool
-	if configTime := orchestrator.host.GetMTime(t.config); configTime != t.configTime {
-		t.resetConfig(orchestrator, path)
-		needsConfigUpdate = true
+func (t *BuildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path, event vfswatch.WatchEvent) updateKind {
+	t.reportDone = make(chan struct{})
+	t.done = make(chan struct{})
+
+	if t.seenFiles == nil {
+		return updateKindUpdate
 	}
-	if t.resolved != nil {
-		for index, file := range t.resolved.ExtendedSourceFiles() {
-			if orchestrator.host.GetMTime(file) != t.extendedConfigTimes[index] {
-				t.resetConfig(orchestrator, path)
-				needsConfigUpdate = true
-			}
-		}
-		for index, file := range t.resolved.FileNames() {
-			if orchestrator.host.GetMTime(file) != t.inputFiles[index] {
-				t.resetStatus()
-				needsUpdate = true
-			}
-		}
-		if !needsConfigUpdate {
+
+	allChanged := make([]string, 0, len(event.Created)+len(event.Changed)+len(event.Deleted))
+	allChanged = append(allChanged, event.Created...)
+	allChanged = append(allChanged, event.Changed...)
+	allChanged = append(allChanged, event.Deleted...)
+
+	if len(allChanged) == 0 {
+		return updateKindNone
+	}
+
+	// Check if any changed paths are config files for this task
+	if slices.ContainsFunc(allChanged, func(p string) bool {
+		return slices.Contains(t.configFilePaths, p)
+	}) {
+		t.resetConfig(orchestrator, path)
+		return updateKindConfig
+	}
+
+	// Check if any changed paths were seen by this task's last compile,
+	// or if new files match the config's include patterns
+	needsUpdate := slices.ContainsFunc(allChanged, func(p string) bool {
+		return t.seenFiles.Has(p) || (t.resolved != nil && t.resolved.PossiblyMatchesFileName(p))
+	})
+
+	if needsUpdate {
+		if t.resolved != nil {
 			configStart := orchestrator.opts.Sys.Now()
 			newConfig := t.resolved.ReloadFileNamesOfParsedCommandLine(orchestrator.host.FS())
 			configTime := orchestrator.opts.Sys.Now().Sub(configStart)
-			// Make new channels if needed later
-			t.reportDone = make(chan struct{})
-			t.done = make(chan struct{})
 			if !slices.Equal(t.resolved.FileNames(), newConfig.FileNames()) {
 				orchestrator.host.resolvedReferences.store(path, newConfig)
 				orchestrator.host.configTimes.Store(path, configTime)
 				t.resolved = newConfig
-				t.resetStatus()
-				needsUpdate = true
 			}
 		}
+		t.resetStatus()
+		return updateKindUpdate
 	}
-	return core.IfElse(needsConfigUpdate, updateKindConfig, core.IfElse(needsUpdate, updateKindUpdate, updateKindNone))
+
+	return updateKindNone
 }
 
 func (t *BuildTask) loadOrStoreBuildInfo(orchestrator *Orchestrator, configPath tspath.Path, buildInfoFileName string) (*incremental.BuildInfo, time.Time) {
@@ -823,6 +941,9 @@ func (t *BuildTask) hasConflictingBuildInfo(orchestrator *Orchestrator, upstream
 func (t *BuildTask) getLatestChangedDtsMTime(orchestrator *Orchestrator) time.Time {
 	t.buildInfoEntryMu.Lock()
 	defer t.buildInfoEntryMu.Unlock()
+	if t.buildInfoEntry == nil {
+		return time.Time{}
+	}
 	if t.buildInfoEntry.dtsTime != nil {
 		return *t.buildInfoEntry.dtsTime
 	}
