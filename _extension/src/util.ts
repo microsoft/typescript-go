@@ -1,5 +1,3 @@
-import { exec } from "child_process";
-import { get } from "http";
 import * as path from "path";
 import * as vscode from "vscode";
 
