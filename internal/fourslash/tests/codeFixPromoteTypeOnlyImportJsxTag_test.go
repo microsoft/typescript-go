@@ -28,17 +28,57 @@ import type React from "./react";
 	defer done()
 	f.GoToMarker(t, "")
 	// The fix should promote the type-only import of React to a regular import.
-	// Only the promotion fix is returned; the missing "Foo" component is a
-	// separate error handled by a different diagnostic.
+	// The "Cannot find name 'Foo'" error does not produce an auto-import for
+	// React since it's already imported (as type-only, handled by promotion).
 	f.VerifyImportFixAtPosition(t, []string{
-		// Promotion fix from the "cannot use as value because type-imported" error
 		`import React from "./react";
 
 <Foo />;`,
-		// Auto-import fix from the "Cannot find name 'Foo'" error, which also
-		// needs React for JSX
+	}, nil /*preferences*/)
+}
+
+// Test edge case where both the component name (Foo) and the JSX namespace (React)
+// are type-only imported. Both should get promotion fixes. Since there are two
+// diagnostics at the same position (one for each symbol) and we can't distinguish
+// which diagnostic is about which symbol, each diagnostic produces both promotion
+// fixes, resulting in duplicates.
+func TestCodeFixPromoteTypeOnlyImportJsxTagBothTypeOnly(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @module: preserve
+// @verbatimModuleSyntax: true
+// @jsx: react
+// @Filename: /react.ts
+const React: any = {};
+export default React;
+// @Filename: /foo.ts
+export function Foo() { return null; }
+// @Filename: /bar.tsx
+import type React from "./react";
+import type { Foo } from "./foo";
+
+<Foo/**/ />;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.GoToMarker(t, "")
+	// Both Foo and React are type-only imported. Each of the two diagnostics
+	// produces promotion fixes for both symbols (since we can't match diagnostic
+	// to symbol without parsing the error message), so we get duplicates.
+	f.VerifyImportFixAtPosition(t, []string{
 		`import type React from "./react";
-import React from "./react";
+import { Foo } from "./foo";
+
+<Foo />;`,
+		`import React from "./react";
+import type { Foo } from "./foo";
+
+<Foo />;`,
+		`import type React from "./react";
+import { Foo } from "./foo";
+
+<Foo />;`,
+		`import React from "./react";
+import type { Foo } from "./foo";
 
 <Foo />;`,
 	}, nil /*preferences*/)

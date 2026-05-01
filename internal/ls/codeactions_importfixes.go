@@ -183,20 +183,28 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 	} else if !ast.IsIdentifier(symbolToken) {
 		return nil, nil
 	} else if errorCode == diagnostics.X_0_cannot_be_used_as_a_value_because_it_was_imported_using_import_type.Code() {
-		// Handle type-only import promotion. getSymbolNamesToImport may return multiple
-		// names for JSX tags (component name + JSX namespace), but only the type-imported
-		// symbol needs promotion here. Other missing symbols get their own error diagnostics.
+		// Handle type-only import promotion. For JSX tags, the error could be about
+		// either the component name or the JSX namespace, so check both as candidates.
 		ch, done := fixContext.Program.GetTypeChecker(ctx)
 		defer done()
 		compilerOptions := fixContext.Program.Options()
-		symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
-		for _, symbolName := range symbolNames {
-			fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, symbolName, fixContext.Program)
-			if fix != nil {
-				return []*fixInfo{{fix: fix, symbolName: symbolName, errorIdentifierText: symbolToken.Text()}}, nil
+		candidates := []string{symbolToken.Text()}
+		parent := symbolToken.Parent
+		if (ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent)) &&
+			parent.TagName() == symbolToken &&
+			jsxModeNeedsExplicitImport(compilerOptions.Jsx) {
+			jsxNamespace := ch.GetJsxNamespace(fixContext.SourceFile.AsNode())
+			if jsxNamespace != symbolToken.Text() {
+				candidates = append(candidates, jsxNamespace)
 			}
 		}
-		return nil, nil
+		for _, symbolName := range candidates {
+			fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, symbolName, fixContext.Program)
+			if fix != nil {
+				info = append(info, &fixInfo{fix: fix, symbolName: symbolName, errorIdentifierText: symbolToken.Text()})
+			}
+		}
+		return info, nil
 	} else {
 		var err error
 		view, err = fixContext.LS.getPreparedAutoImportView(fixContext.SourceFile)
@@ -310,8 +318,9 @@ func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext
 			fixes := view.GetFixes(ctx, export, isJSXTagName, isValidTypeOnlyUseSite, &usagePosition)
 			for _, fix := range fixes {
 				allInfo = append(allInfo, &fixInfo{
-					fix:        fix,
-					symbolName: symbolName,
+					fix:               fix,
+					symbolName:        symbolName,
+					isJsxNamespaceFix: symbolName != symbolToken.Text(),
 				})
 			}
 		}
@@ -370,10 +379,7 @@ func needsJsxNamespaceFix(jsxNamespace string, symbolToken *ast.Node, ch *checke
 	if namespaceSymbol == nil {
 		return true
 	}
-	// Check if all declarations are type-only
-	if slices.ContainsFunc(namespaceSymbol.Declarations, ast.IsTypeOnlyImportOrExportDeclaration) {
-		return (namespaceSymbol.Flags & ast.SymbolFlagsValue) == 0
-	}
+	// Type-only imports are handled by the promotion code path, not the auto-import path.
 	return false
 }
 
