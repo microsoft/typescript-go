@@ -43,7 +43,7 @@ export function createTelemetryReporter(vscReporter: VSCodeTelemetryReporter): E
         sendTelemetryErrorEvent,
         sendTelemetryEventUntyped: sendTelemetryEvent,
         sendTelemetryErrorEventUntyped: sendTelemetryErrorEvent,
-        
+
         // Required for the experimentation telemetry service interface.
         setSharedProperty,
         postEvent,
