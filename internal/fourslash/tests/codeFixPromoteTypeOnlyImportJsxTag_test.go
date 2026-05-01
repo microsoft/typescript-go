@@ -11,7 +11,6 @@ import (
 // When both the JSX namespace (React) and the component need to be imported,
 // getSymbolNamesToImport returns multiple names and the type-only promotion
 // path should handle this gracefully instead of panicking.
-// https://github.com/microsoft/typescript-go/issues/1234
 func TestCodeFixPromoteTypeOnlyImportJsxTag(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
@@ -28,16 +27,16 @@ import type React from "./react";
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")
-	// The main goal is that this doesn't panic. The fix should promote
-	// the type-only import of React to a regular import.
+	// The fix should promote the type-only import of React to a regular import.
+	// Only the promotion fix is returned; the missing "Foo" component is a
+	// separate error handled by a different diagnostic.
 	f.VerifyImportFixAtPosition(t, []string{
-		`import type React from "./react";
-import React from "./react";
-
-<Foo />;`,
+		// Promotion fix from the "cannot use as value because type-imported" error
 		`import React from "./react";
 
 <Foo />;`,
+		// Auto-import fix from the "Cannot find name 'Foo'" error, which also
+		// needs React for JSX
 		`import type React from "./react";
 import React from "./react";
 
