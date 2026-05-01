@@ -3,6 +3,7 @@ package ls
 import (
 	"context"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -187,8 +188,21 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 		defer done()
 		compilerOptions := fixContext.Program.Options()
 		symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
+
+		// Best-effort: use the diagnostic message to disambiguate which symbol
+		// the error is about. The message format is "'X' cannot be used as a
+		// value because it was imported using 'import type'." so we check for
+		// the symbol name in single quotes.
+		diagnosticMessage := ""
+		if fixContext.Diagnostic != nil {
+			diagnosticMessage = fixContext.Diagnostic.Message
+		}
+
 		for _, sn := range symbolNames {
 			if !sn.isTypeOnly {
+				continue
+			}
+			if diagnosticMessage != "" && !strings.Contains(diagnosticMessage, "'"+sn.name+"'") {
 				continue
 			}
 			fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, sn.name, fixContext.Program)
