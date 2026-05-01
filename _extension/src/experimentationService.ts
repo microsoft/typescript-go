@@ -58,6 +58,5 @@ export async function createTasExperimentationService(
     }
 
     const experimentationService = tas.getExperimentationService(id, version, targetPopulation, reporter, globalState);
-    await experimentationService.initialFetch;
     return experimentationService;
 }
