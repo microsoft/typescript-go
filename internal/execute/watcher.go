@@ -115,7 +115,7 @@ func (w *Watcher) start() {
 		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
 	}
 
-	if w.sys.GetEnvironmentVariable("TSGO_WATCH_DEBUG") != "" {
+	if w.sys.GetEnvironmentVariable("TS_WATCH_DEBUG") != "" {
 		w.fileWatcher.SetDebugLog(w.sys.Writer())
 	}
 
