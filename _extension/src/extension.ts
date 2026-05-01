@@ -37,7 +37,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         const { name: id, version } = packageInfo;
         // Constructing the experimentation service actually sets shared properties
         // so that events include context on treatments/flights.
-        const _expService = new ExperimentationService(telemetryReporter, id, version, context.globalState);
+        // If we actually need to read treatment variables we would hold onto this instance,
+        // but for now we just construct it to ensure shared properties are set for telemetry.
+        void new ExperimentationService(telemetryReporter, id, version, context.globalState);
     }
 
     registerEnablementCommands(context, telemetryReporter);
