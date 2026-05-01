@@ -1,8 +1,13 @@
 package execute
 
 import (
+	"context"
+	"maps"
 	"reflect"
+	"slices"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -18,6 +23,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/trackingvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
+
+const minWatchLocationDepth = 2
 
 type cachedSourceFile struct {
 	file    *ast.SourceFile
@@ -69,8 +76,13 @@ type Watcher struct {
 	configHasErrors     bool
 	configFilePaths     []string
 
-	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
-	fileWatcher     *vfswatch.FileWatcher
+	seenFiles          *collections.SyncSet[string]
+	canonicalSeenFiles map[string]struct{}
+	configModTimes     map[string]time.Time
+	hasBuilt           bool
+	sourceFileCache    *collections.SyncMap[tspath.Path, *cachedSourceFile]
+	fileWatcher        *vfswatch.FileWatcher
+	pendingEvent       atomic.Pointer[vfswatch.WatchEvent]
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -100,7 +112,10 @@ func createWatcher(
 		sys.FS(),
 		w.config.ParsedConfig.WatchOptions.WatchInterval(),
 		testing != nil,
-		w.DoCycle,
+		func(event vfswatch.WatchEvent) {
+			w.pendingEvent.Store(&event)
+			w.DoCycle()
+		},
 	)
 	return w
 }
@@ -120,17 +135,25 @@ func (w *Watcher) start() {
 	w.mu.Unlock()
 
 	if w.testing == nil {
-		w.fileWatcher.Run(w.sys.Now)
+		w.fileWatcher.Run(context.Background())
 	}
 }
 
 func (w *Watcher) DoCycle() {
 	w.mu.Lock()
 	defer w.mu.Unlock()
+
+	var event vfswatch.WatchEvent
+	if pe := w.pendingEvent.Swap(nil); pe != nil {
+		event = *pe
+	} else {
+		event = w.fileWatcher.ScanForChanges()
+	}
+
 	if w.recheckTsConfig() {
 		return
 	}
-	if !w.fileWatcher.WatchStateUninitialized() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
+	if w.hasBuilt && !w.configModified && !w.hasRelevantChanges(event) {
 		if w.testing != nil {
 			w.testing.OnProgram(w.program)
 		}
@@ -139,6 +162,40 @@ func (w *Watcher) DoCycle() {
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
 	w.doBuild()
+}
+
+func (w *Watcher) hasRelevantChanges(event vfswatch.WatchEvent) bool {
+	if !event.HasChanges() {
+		return false
+	}
+	if w.seenFiles == nil {
+		return true
+	}
+	isRelevant := func(path string) bool {
+		if !tspath.HasExtension(path) {
+			return false
+		}
+		if w.canonicalSeenFiles != nil {
+			_, ok := w.canonicalSeenFiles[strings.ToLower(path)]
+			return ok
+		}
+		return w.seenFiles.Has(path)
+	}
+	if slices.ContainsFunc(event.Created, isRelevant) ||
+		slices.ContainsFunc(event.Deleted, isRelevant) ||
+		slices.ContainsFunc(event.Changed, isRelevant) {
+		return true
+	}
+	if w.config.ConfigFile != nil {
+		if slices.ContainsFunc(event.Created, func(path string) bool {
+			return w.config.PossiblyMatchesFileName(path)
+		}) {
+			return true
+		}
+	} else if len(event.Created) > 0 {
+		return true
+	}
+	return false
 }
 
 func (w *Watcher) doBuild() {
@@ -172,9 +229,32 @@ func (w *Watcher) doBuild() {
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
-	w.fileWatcher.UpdateWatchState(tfs.SeenFiles.ToSlice(), wildcardDirs)
+
+	watchDirs := w.computeWatchDirectories(&tfs.SeenFiles, wildcardDirs)
+	w.fileWatcher.UpdateWatchedDirectories(watchDirs)
 	w.fileWatcher.SetPollInterval(w.config.ParsedConfig.WatchOptions.WatchInterval())
+	w.seenFiles = &tfs.SeenFiles
+
+	if !w.sys.FS().UseCaseSensitiveFileNames() {
+		canonical := make(map[string]struct{})
+		tfs.SeenFiles.Range(func(path string) bool {
+			canonical[strings.ToLower(path)] = struct{}{}
+			return true
+		})
+		w.canonicalSeenFiles = canonical
+	} else {
+		w.canonicalSeenFiles = nil
+	}
 	w.configModified = false
+	w.hasBuilt = true
+
+	modTimes := make(map[string]time.Time)
+	for _, path := range w.configFilePaths {
+		if s := w.sys.FS().Stat(path); s != nil {
+			modTimes[path] = s.ModTime()
+		}
+	}
+	w.configModTimes = modTimes
 
 	programFiles := w.program.GetProgram().FilesByPath()
 	w.sourceFileCache.Range(func(path tspath.Path, _ *cachedSourceFile) bool {
@@ -196,6 +276,79 @@ func (w *Watcher) doBuild() {
 	}
 }
 
+func (w *Watcher) computeWatchDirectories(seenFiles *collections.SyncSet[string], wildcardDirs map[string]bool) map[string]bool {
+	dirs := make(map[string]bool)
+
+	maps.Copy(dirs, wildcardDirs)
+
+	projectRoot := w.sys.GetCurrentDirectory()
+	if w.configFileName != "" {
+		projectRoot = tspath.GetDirectoryPath(w.configFileName)
+	}
+	compareOpts := tspath.ComparePathsOptions{
+		CurrentDirectory:          w.sys.GetCurrentDirectory(),
+		UseCaseSensitiveFileNames: w.sys.FS().UseCaseSensitiveFileNames(),
+	}
+
+	internalDirs := make(map[string]struct{})
+	externalDirs := make(map[string]struct{})
+	seenFiles.Range(func(path string) bool {
+		if !tspath.HasExtension(path) {
+			return true
+		}
+		dir := tspath.GetDirectoryPath(path)
+		if dir == "" {
+			return true
+		}
+		if tspath.ContainsPath(projectRoot, path, compareOpts) {
+			internalDirs[dir] = struct{}{}
+		} else {
+			externalDirs[dir] = struct{}{}
+		}
+		return true
+	})
+
+	if len(internalDirs) > 0 {
+		fileDirs := make([]string, 0, len(internalDirs))
+		for dir := range internalDirs {
+			fileDirs = append(fileDirs, dir)
+		}
+		commonParents, _ := tspath.GetCommonParents(
+			fileDirs,
+			minWatchLocationDepth,
+			tspath.GetPathComponentsForWatching,
+			compareOpts,
+		)
+		for _, parent := range commonParents {
+			if !isCoveredByWildcardDir(parent, wildcardDirs, compareOpts) {
+				dirs[parent] = true
+			}
+		}
+	}
+
+	for dir := range externalDirs {
+		if !isCoveredByWildcardDir(dir, wildcardDirs, compareOpts) {
+			if _, already := dirs[dir]; !already {
+				dirs[dir] = false
+			}
+		}
+	}
+
+	return dirs
+}
+
+func isCoveredByWildcardDir(dir string, wildcardDirs map[string]bool, opts tspath.ComparePathsOptions) bool {
+	for wdir, recursive := range wildcardDirs {
+		if tspath.ComparePaths(wdir, dir, opts) == 0 {
+			return true
+		}
+		if recursive && tspath.ContainsPath(wdir, dir, opts) {
+			return true
+		}
+	}
+	return false
+}
+
 func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
 		Sys:                w.sys,
@@ -215,25 +368,18 @@ func (w *Watcher) recheckTsConfig() bool {
 		return false
 	}
 
-	if !w.configHasErrors && len(w.configFilePaths) > 0 {
+	if !w.configHasErrors && len(w.configFilePaths) > 0 && w.configModTimes != nil {
 		changed := false
 		for _, path := range w.configFilePaths {
-			old, ok := w.fileWatcher.WatchStateEntry(path)
+			entryModTime, ok := w.configModTimes[path]
 			if !ok {
 				changed = true
 				break
 			}
 			s := w.sys.FS().Stat(path)
-			if !old.Exists {
-				if s != nil {
-					changed = true
-					break
-				}
-			} else {
-				if s == nil || !s.ModTime().Equal(old.ModTime) {
-					changed = true
-					break
-				}
+			if s == nil || !s.ModTime().Equal(entryModTime) {
+				changed = true
+				break
 			}
 		}
 		if !changed {

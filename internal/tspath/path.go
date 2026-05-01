@@ -1200,6 +1200,36 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 	return [][]string{componentGroups[0][:maxDepth]}
 }
 
+func GetPathComponentsForWatching(path string, currentDirectory string) []string {
+	components := GetPathComponents(path, currentDirectory)
+	rootLength := perceivedOsRootLengthForWatching(components)
+	if rootLength <= 1 {
+		return components
+	}
+	newRoot := CombinePaths(components[0], components[1:rootLength]...)
+	return append([]string{newRoot}, components[rootLength:]...)
+}
+
+func perceivedOsRootLengthForWatching(pathComponents []string) int {
+	length := len(pathComponents)
+	if length <= 1 {
+		return length
+	}
+	if strings.HasPrefix(pathComponents[0], "//") {
+		return 2
+	}
+	if len(pathComponents[0]) == 3 && IsVolumeCharacter(pathComponents[0][0]) && pathComponents[0][1] == ':' && pathComponents[0][2] == '/' {
+		if strings.EqualFold(pathComponents[1], "users") {
+			return min(3, length)
+		}
+		return 1
+	}
+	if pathComponents[1] == "home" {
+		return min(3, length)
+	}
+	return 1
+}
+
 func StartsWithDirectory(fileName string, directoryName string, useCaseSensitiveFileNames bool) bool {
 	if directoryName == "" {
 		return false

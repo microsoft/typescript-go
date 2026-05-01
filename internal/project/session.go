@@ -28,6 +28,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfswatch"
 )
 
 type UpdateReason int
@@ -58,6 +59,8 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	PollingEnabled         bool
+	PollingInterval        time.Duration
 }
 
 type SessionInit struct {
@@ -159,6 +162,8 @@ type Session struct {
 	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
 	watchesMu sync.Mutex
 
+	fileWatcher *vfswatch.FileWatcher
+
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
 	// requests into a single background task.
@@ -232,7 +237,56 @@ func NewSession(init *SessionInit) *Session {
 		}, session)
 	}
 
+	if init.Options.PollingEnabled && !init.Options.WatchEnabled {
+		pollInterval := init.Options.PollingInterval
+		if pollInterval == 0 {
+			pollInterval = time.Second
+		}
+		session.fileWatcher = vfswatch.NewFileWatcher(
+			init.FS,
+			pollInterval,
+			false,
+			session.onPolledFileChanges,
+		)
+		session.fileWatcher.SetExcludePackageDirs(true)
+		if init.Options.LoggingEnabled {
+			session.fileWatcher.SetLogger(session.logger)
+		}
+		session.fileWatcher.UpdateWatchedDirectories(map[string]bool{
+			init.Options.CurrentDirectory: false,
+		})
+		go session.fileWatcher.Run(init.BackgroundCtx)
+	}
+
 	return session
+}
+
+// EnablePollingWatcher starts the in-process polling file watcher. This can be called
+// after session creation to enable polling based on user settings.
+// It also disables client-side watching so that both watchers don't run simultaneously.
+func (s *Session) EnablePollingWatcher() {
+	if s.fileWatcher != nil {
+		return
+	}
+	s.options.WatchEnabled = false
+	pollInterval := s.options.PollingInterval
+	if pollInterval == 0 {
+		pollInterval = time.Second
+	}
+	s.fileWatcher = vfswatch.NewFileWatcher(
+		s.fs.fs,
+		pollInterval,
+		false,
+		s.onPolledFileChanges,
+	)
+	s.fileWatcher.SetExcludePackageDirs(true)
+	if s.options.LoggingEnabled {
+		s.fileWatcher.SetLogger(s.logger)
+	}
+	s.fileWatcher.UpdateWatchedDirectories(map[string]bool{
+		s.options.CurrentDirectory: false,
+	})
+	go s.fileWatcher.Run(s.backgroundCtx)
 }
 
 // FS implements module.ResolutionHost
@@ -363,6 +417,66 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	s.ScheduleDiagnosticsRefresh()
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
+}
+
+func (s *Session) onPolledFileChanges(event vfswatch.WatchEvent) {
+	if !event.HasChanges() {
+		return
+	}
+
+	fileChanges := make([]FileChange, 0, len(event.Created)+len(event.Deleted)+len(event.Changed))
+	for _, path := range event.Created {
+		fileChanges = append(fileChanges, FileChange{
+			Kind: FileChangeKindWatchCreate,
+			URI:  lsconv.FileNameToDocumentURI(path),
+		})
+	}
+	for _, path := range event.Changed {
+		fileChanges = append(fileChanges, FileChange{
+			Kind: FileChangeKindWatchChange,
+			URI:  lsconv.FileNameToDocumentURI(path),
+		})
+	}
+	for _, path := range event.Deleted {
+		fileChanges = append(fileChanges, FileChange{
+			Kind: FileChangeKindWatchDelete,
+			URI:  lsconv.FileNameToDocumentURI(path),
+		})
+	}
+
+	s.pendingFileChangesMu.Lock()
+	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
+	s.pendingFileChangesMu.Unlock()
+
+	s.ScheduleDiagnosticsRefresh()
+	s.scheduleIdleCacheClean()
+}
+
+func (s *Session) updatePollingDirectories(snapshot *Snapshot) {
+	dirs := make(map[string]bool)
+
+	addDirs := func(directories []string) {
+		for _, dir := range directories {
+			dirs[dir] = true
+		}
+	}
+
+	for _, entry := range snapshot.ConfigFileRegistry.configs {
+		addDirs(entry.rootFilesWatch.WatchedDirectories())
+	}
+
+	for _, project := range snapshot.ProjectCollection.ProjectsByPath().Entries() {
+		addDirs(project.programFilesWatch.WatchedDirectories())
+		addDirs(project.typingsWatch.WatchedDirectories())
+	}
+
+	addDirs(snapshot.autoImportsWatch.WatchedDirectories())
+
+	if len(dirs) == 0 {
+		dirs[s.options.CurrentDirectory] = true
+	}
+
+	s.fileWatcher.UpdateWatchedDirectories(dirs)
 }
 
 func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
@@ -1115,6 +1229,9 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
 				s.logger.Log(err)
 			}
+		}
+		if s.fileWatcher != nil {
+			s.updatePollingDirectories(newSnapshot)
 		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
 		s.sendProjectInfoTelemetryForNewProjects(oldSnapshot, newSnapshot)

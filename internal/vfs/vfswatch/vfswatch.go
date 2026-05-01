@@ -1,9 +1,10 @@
-// This package implements a polling-based file watcher designed
-// for use by both the CLI watcher and the language server.
 package vfswatch
 
 import (
+	"context"
+	"fmt"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -13,23 +14,41 @@ import (
 
 const debounceWait = 250 * time.Millisecond
 
-type WatchEntry struct {
-	ModTime      time.Time
-	Exists       bool
-	ChildrenHash uint64 // 0 if not tracked
+type WatchLogger interface {
+	Log(msg ...any)
+	Logf(format string, args ...any)
+}
+
+type WatchEvent struct {
+	Created []string
+	Deleted []string
+	Changed []string
+}
+
+func (e WatchEvent) HasChanges() bool {
+	return len(e.Created) > 0 || len(e.Deleted) > 0 || len(e.Changed) > 0
+}
+
+type watchEntry struct {
+	modTime      time.Time
+	childrenHash uint64 // 0 if not tracked
+	isDir        bool
 }
 
 type FileWatcher struct {
-	fs                  vfs.FS
-	pollInterval        time.Duration
-	testing             bool
-	callback            func()
-	watchState          map[string]WatchEntry
-	wildcardDirectories map[string]bool
-	mu                  sync.Mutex
+	fs                 vfs.FS
+	pollInterval       time.Duration
+	testing            bool
+	excludePackageDirs bool
+	callback           func(WatchEvent)
+	directories        map[string]bool
+	watchState         map[string]watchEntry
+	watchStateGen      uint64
+	mu                 sync.Mutex
+	logger             WatchLogger
 }
 
-func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func()) *FileWatcher {
+func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callback func(WatchEvent)) *FileWatcher {
 	return &FileWatcher{
 		fs:           fs,
 		pollInterval: pollInterval,
@@ -38,121 +57,141 @@ func NewFileWatcher(fs vfs.FS, pollInterval time.Duration, testing bool, callbac
 	}
 }
 
+func (fw *FileWatcher) SetExcludePackageDirs(exclude bool) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
+	fw.excludePackageDirs = exclude
+}
+
+func (fw *FileWatcher) SetLogger(logger WatchLogger) {
+	fw.mu.Lock()
+	defer fw.mu.Unlock()
+	fw.logger = logger
+}
+
 func (fw *FileWatcher) SetPollInterval(d time.Duration) {
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
 	fw.pollInterval = d
 }
 
-func (fw *FileWatcher) WatchStateEntry(path string) (WatchEntry, bool) {
+func (fw *FileWatcher) UpdateWatchedDirectories(dirs map[string]bool) {
+	start := time.Now()
+	state := snapshotDirectories(fw.fs, dirs, fw.excludePackageDirs)
 	fw.mu.Lock()
 	defer fw.mu.Unlock()
-	e, ok := fw.watchState[path]
-	return e, ok
-}
-
-func (fw *FileWatcher) WatchStateUninitialized() bool {
-	fw.mu.Lock()
-	defer fw.mu.Unlock()
-	return fw.watchState == nil
-}
-
-func (fw *FileWatcher) UpdateWatchState(paths []string, wildcardDirs map[string]bool) {
-	state := snapshotPaths(fw.fs, paths, wildcardDirs)
-	fw.mu.Lock()
-	defer fw.mu.Unlock()
+	fw.directories = dirs
 	fw.watchState = state
-	fw.wildcardDirectories = wildcardDirs
+	fw.watchStateGen++
+	if fw.logger != nil {
+		fw.logger.Logf("Polling watcher: watching %d directories (%d entries) in %v", len(dirs), len(state), time.Since(start))
+	}
 }
 
-func (fw *FileWatcher) WaitForSettled(now func() time.Time) {
+// sleepOrDone sleeps for the given duration, returning true if the context
+// was cancelled during the sleep.
+func sleepOrDone(ctx context.Context, d time.Duration) bool {
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-ctx.Done():
+		return true
+	case <-t.C:
+		return false
+	}
+}
+
+func (fw *FileWatcher) WaitForSettled(ctx context.Context) {
 	if fw.testing {
 		return
 	}
 	fw.mu.Lock()
-	wildcardDirs := fw.wildcardDirectories
+	dirs := fw.directories
 	pollInterval := fw.pollInterval
+	excludePackageDirs := fw.excludePackageDirs
 	fw.mu.Unlock()
-	current := fw.currentState()
-	settledAt := now()
+	current := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
+	settledAt := time.Now()
 	tick := min(pollInterval, debounceWait)
-	for now().Sub(settledAt) < debounceWait {
-		time.Sleep(tick)
-		if fw.hasChanges(current, wildcardDirs) {
-			current = fw.currentState()
-			settledAt = now()
+	for time.Since(settledAt) < debounceWait {
+		if sleepOrDone(ctx, tick) {
+			return
+		}
+		next := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
+		if diffSnapshots(current, next).HasChanges() {
+			current = next
+			settledAt = time.Now()
 		}
 	}
 }
 
-func (fw *FileWatcher) currentState() map[string]WatchEntry {
-	fw.mu.Lock()
-	watchState := fw.watchState
-	wildcardDirs := fw.wildcardDirectories
-	fw.mu.Unlock()
-	state := make(map[string]WatchEntry, len(watchState))
-	for fn := range watchState {
-		if s := fw.fs.Stat(fn); s != nil {
-			state[fn] = WatchEntry{ModTime: s.ModTime(), Exists: true}
-		} else {
-			state[fn] = WatchEntry{Exists: false}
-		}
-	}
-	for dir, recursive := range wildcardDirs {
-		if !recursive {
-			snapshotDirEntry(fw.fs, state, dir)
+func snapshotDirectories(fs vfs.FS, dirs map[string]bool, excludePackageDirs bool) map[string]watchEntry {
+	state := make(map[string]watchEntry)
+	for dir, recursive := range dirs {
+		if dir == "" {
 			continue
 		}
-		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
-			if err != nil || !d.IsDir() {
-				return nil
-			}
-			snapshotDirEntry(fw.fs, state, path)
-			return nil
-		})
+		snapshotDir(fs, state, dir, recursive, excludePackageDirs)
 	}
 	return state
 }
 
-func snapshotPaths(fs vfs.FS, paths []string, wildcardDirs map[string]bool) map[string]WatchEntry {
-	state := make(map[string]WatchEntry, len(paths))
-	for _, fn := range paths {
-		if s := fs.Stat(fn); s != nil {
-			entry := WatchEntry{ModTime: s.ModTime(), Exists: true}
-			if s.IsDir() {
-				entries := fs.GetAccessibleEntries(fn)
-				entry.ChildrenHash = hashEntries(entries)
-			}
-			state[fn] = entry
-		} else {
-			state[fn] = WatchEntry{Exists: false}
-		}
+func joinWatchPath(dir, name string) string {
+	if strings.HasSuffix(dir, "/") {
+		return dir + name
 	}
-	for dir, recursive := range wildcardDirs {
-		if !recursive {
-			snapshotDirEntry(fs, state, dir)
-			continue
+	return dir + "/" + name
+}
+
+func snapshotDir(fs vfs.FS, state map[string]watchEntry, dir string, recursive bool, excludePackageDirs bool) {
+	if !recursive {
+		entries := fs.GetAccessibleEntries(dir)
+		h := hashEntries(entries)
+		if s := fs.Stat(dir); s != nil {
+			state[dir] = watchEntry{modTime: s.ModTime(), childrenHash: h}
 		}
-		_ = fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
-			if err != nil || !d.IsDir() {
-				return nil
+		for _, file := range entries.Files {
+			path := joinWatchPath(dir, file)
+			if s := fs.Stat(path); s != nil {
+				state[path] = watchEntry{modTime: s.ModTime()}
+			}
+		}
+		for _, subdir := range entries.Directories {
+			path := joinWatchPath(dir, subdir)
+			if s := fs.Stat(path); s != nil {
+				state[path] = watchEntry{modTime: s.ModTime(), isDir: true}
+			}
+		}
+		return
+	}
+	_ = fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		if d.IsDir() {
+			name := d.Name()
+			if excludePackageDirs && path != dir && isExcludedDir(name) {
+				return vfs.SkipDir
 			}
 			snapshotDirEntry(fs, state, path)
-			return nil
-		})
-	}
-	return state
+		} else {
+			if s := fs.Stat(path); s != nil {
+				state[path] = watchEntry{modTime: s.ModTime()}
+			}
+		}
+		return nil
+	})
 }
 
-func snapshotDirEntry(fs vfs.FS, state map[string]WatchEntry, dir string) {
+func snapshotDirEntry(fs vfs.FS, state map[string]watchEntry, dir string) {
 	entries := fs.GetAccessibleEntries(dir)
 	h := hashEntries(entries)
 	if existing, ok := state[dir]; ok {
-		existing.ChildrenHash = h
+		existing.childrenHash = h
 		state[dir] = existing
 	} else {
 		if s := fs.Stat(dir); s != nil {
-			state[dir] = WatchEntry{ModTime: s.ModTime(), Exists: true, ChildrenHash: h}
+			state[dir] = watchEntry{modTime: s.ModTime(), childrenHash: h}
 		}
 	}
 }
@@ -176,87 +215,129 @@ func hashEntries(entries vfs.Entries) uint64 {
 	return h.Sum64()
 }
 
-func dirChanged(fs vfs.FS, baseline map[string]WatchEntry, dir string) bool {
-	entry, ok := baseline[dir]
-	if !ok {
-		return true
-	}
-	if entry.ChildrenHash != 0 {
-		entries := fs.GetAccessibleEntries(dir)
-		if hashEntries(entries) != entry.ChildrenHash {
-			return true
-		}
-	}
-	return false
-}
+func diffSnapshots(baseline, current map[string]watchEntry) WatchEvent {
+	var event WatchEvent
 
-func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry, wildcardDirs map[string]bool) bool {
 	for path, old := range baseline {
-		s := fw.fs.Stat(path)
-		if !old.Exists {
-			if s != nil {
-				return true
-			}
-		} else {
-			if s == nil || !s.ModTime().Equal(old.ModTime) {
-				return true
-			}
-			if old.ChildrenHash != 0 {
-				entries := fw.fs.GetAccessibleEntries(path)
-				if hashEntries(entries) != old.ChildrenHash {
-					return true
-				}
-			}
+		cur, exists := current[path]
+		if !exists {
+			event.Deleted = append(event.Deleted, path)
+			continue
 		}
-	}
-	for dir, recursive := range wildcardDirs {
-		if !recursive {
-			if dirChanged(fw.fs, baseline, dir) {
-				return true
+		if !cur.modTime.Equal(old.modTime) {
+			if old.childrenHash == 0 && !old.isDir {
+				event.Changed = append(event.Changed, path)
 			}
 			continue
 		}
-		found := false
-		_ = fw.fs.WalkDir(dir, func(path string, d vfs.DirEntry, err error) error {
-			if err != nil || !d.IsDir() {
-				return nil
-			}
-			if dirChanged(fw.fs, baseline, path) {
-				found = true
-				return vfs.SkipAll
-			}
-			return nil
-		})
-		if found {
-			return true
+		if old.childrenHash != 0 && cur.childrenHash != old.childrenHash {
+			continue
 		}
 	}
-	return false
+
+	for path := range current {
+		if _, inBaseline := baseline[path]; !inBaseline {
+			event.Created = append(event.Created, path)
+		}
+	}
+
+	return event
 }
 
-// HasChangesFromWatchState compares the current filesystem against the
-// stored watch state. Safe for concurrent use: watchState and
-// wildcardDirectories are snapshotted under lock; the maps themselves
-// are never mutated after creation (UpdateWatchState replaces them).
-func (fw *FileWatcher) HasChangesFromWatchState() bool {
+func (fw *FileWatcher) ScanForChanges() WatchEvent {
 	fw.mu.Lock()
 	ws := fw.watchState
-	wildcardDirs := fw.wildcardDirectories
+	dirs := fw.directories
+	logger := fw.logger
+	excludePackageDirs := fw.excludePackageDirs
 	fw.mu.Unlock()
-	return fw.hasChanges(ws, wildcardDirs)
+	scanStart := time.Now()
+	current := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
+	event := diffSnapshots(ws, current)
+	if logger != nil {
+		scanDuration := time.Since(scanStart)
+		if event.HasChanges() {
+			logger.Logf("Polling watcher scan: %d entries in %v, %s", len(current), scanDuration, formatEvent(event))
+		} else if scanDuration > 100*time.Millisecond {
+			logger.Logf("Polling watcher scan: %d entries in %v, no changes", len(current), scanDuration)
+		}
+	}
+	return event
 }
 
-func (fw *FileWatcher) Run(now func() time.Time) {
+func (fw *FileWatcher) Run(ctx context.Context) {
 	for {
 		fw.mu.Lock()
 		interval := fw.pollInterval
 		ws := fw.watchState
-		wildcardDirs := fw.wildcardDirectories
+		dirs := fw.directories
+		logger := fw.logger
+		excludePackageDirs := fw.excludePackageDirs
 		fw.mu.Unlock()
-		time.Sleep(interval)
-		if ws == nil || fw.hasChanges(ws, wildcardDirs) {
-			fw.WaitForSettled(now)
-			fw.callback()
+
+		if sleepOrDone(ctx, interval) {
+			return
+		}
+
+		if ws == nil {
+			continue
+		}
+		scanStart := time.Now()
+		current := snapshotDirectories(fw.fs, dirs, excludePackageDirs)
+		scanDuration := time.Since(scanStart)
+		event := diffSnapshots(ws, current)
+		if event.HasChanges() {
+			if logger != nil {
+				logger.Logf("Polling watcher: changes detected (scanned %d entries in %v)", len(current), scanDuration)
+				for _, p := range event.Created {
+					logger.Logf("  created: %s", p)
+				}
+				for _, p := range event.Changed {
+					logger.Logf("  changed: %s", p)
+				}
+				for _, p := range event.Deleted {
+					logger.Logf("  deleted: %s", p)
+				}
+			}
+			fw.WaitForSettled(ctx)
+			fw.mu.Lock()
+			gen := fw.watchStateGen
+			ws = fw.watchState
+			dirs = fw.directories
+			fw.mu.Unlock()
+			current = snapshotDirectories(fw.fs, dirs, excludePackageDirs)
+			event = diffSnapshots(ws, current)
+			if event.HasChanges() {
+				if logger != nil {
+					logger.Logf("Polling watcher: settled with %s", formatEvent(event))
+				}
+				fw.callback(event)
+			}
+			fw.mu.Lock()
+			if fw.watchStateGen == gen {
+				fw.watchState = current
+			}
+			fw.mu.Unlock()
+		} else if logger != nil && scanDuration > 100*time.Millisecond {
+			logger.Logf("Polling watcher: scan took %v (%d entries), no changes", scanDuration, len(current))
 		}
 	}
+}
+
+func formatEvent(e WatchEvent) string {
+	return fmt.Sprintf("created=%d deleted=%d changed=%d", len(e.Created), len(e.Deleted), len(e.Changed))
+}
+
+// isExcludedDir returns true for directories that the polling watcher should
+// skip during recursive walks: hidden directories (e.g. .git) and common
+// package folders (node_modules, bower_components, jspm_packages).
+func isExcludedDir(name string) bool {
+	if len(name) > 0 && name[0] == '.' {
+		return true
+	}
+	switch strings.ToLower(name) {
+	case "node_modules", "bower_components", "jspm_packages":
+		return true
+	}
+	return false
 }

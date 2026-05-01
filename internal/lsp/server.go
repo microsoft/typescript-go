@@ -1166,6 +1166,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			DebounceDelay:          500 * time.Millisecond,
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
 			Locale:                 s.locale,
+			PollingEnabled:         !s.watchEnabled,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
@@ -1179,6 +1180,11 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		return err
 	}
 	s.session.InitializeWithUserConfig(userPreferences)
+
+	// Enable polling watcher if the user explicitly opted in via settings
+	if userPreferences.UsePollingWatcher == core.TSTrue {
+		s.session.EnablePollingWatcher()
+	}
 
 	_, err = sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{

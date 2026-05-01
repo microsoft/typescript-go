@@ -168,6 +168,35 @@ func (w *WatchedFiles[T]) ID() WatcherID {
 	return w.Watchers().WatcherID
 }
 
+// WatchedDirectories returns the set of directories being watched.
+// It extracts directory paths from the computed glob patterns.
+func (w *WatchedFiles[T]) WatchedDirectories() []string {
+	if w == nil {
+		return nil
+	}
+	watchers := w.Watchers()
+	var dirs []string
+	for _, fw := range watchers.WorkspaceWatchers {
+		if dir := extractWatchedDirectory(fw); dir != "" {
+			dirs = append(dirs, dir)
+		}
+	}
+	for _, fw := range watchers.OutsideWorkspaceWatchers {
+		if dir := extractWatchedDirectory(fw); dir != "" {
+			dirs = append(dirs, dir)
+		}
+	}
+	return dirs
+}
+
+func extractWatchedDirectory(w *lsproto.FileSystemWatcher) string {
+	glob := fileSystemWatcherGlobString(w)
+	if dir, ok := strings.CutSuffix(glob, "/**/*"); ok {
+		return dir
+	}
+	return ""
+}
+
 func (w *WatchedFiles[T]) Name() string {
 	return w.name
 }
@@ -259,7 +288,7 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 			externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(
 				externalDirStrings,
 				minWatchLocationDepth,
-				getPathComponentsForWatching,
+				tspath.GetPathComponentsForWatching,
 				tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true}, // Already using tspath.Path
 			)
 			slices.Sort(externalDirectoryParents)
@@ -302,7 +331,7 @@ func getTypingsLocationsGlobs(
 	externalDirectoryParents, ignored := tspath.GetCommonParents(
 		slices.Collect(maps.Values(externalDirectories)),
 		minWatchLocationDepth,
-		getPathComponentsForWatching,
+		tspath.GetPathComponentsForWatching,
 		comparePathsOptions,
 	)
 	slices.Sort(externalDirectoryParents)
@@ -317,40 +346,6 @@ func getTypingsLocationsGlobs(
 		patternsInsideWorkspace:     slices.Collect(maps.Values(globs)),
 		ignored:                     ignored,
 	}
-}
-
-func getPathComponentsForWatching(path string, currentDirectory string) []string {
-	components := tspath.GetPathComponents(path, currentDirectory)
-	rootLength := perceivedOsRootLengthForWatching(components)
-	if rootLength <= 1 {
-		return components
-	}
-	newRoot := tspath.CombinePaths(components[0], components[1:rootLength]...)
-	return append([]string{newRoot}, components[rootLength:]...)
-}
-
-func perceivedOsRootLengthForWatching(pathComponents []string) int {
-	length := len(pathComponents)
-	if length <= 1 {
-		return length
-	}
-	if strings.HasPrefix(pathComponents[0], "//") {
-		// Group UNC roots (//server/share) into a single component
-		return 2
-	}
-	if len(pathComponents[0]) == 3 && tspath.IsVolumeCharacter(pathComponents[0][0]) && pathComponents[0][1] == ':' && pathComponents[0][2] == '/' {
-		// Windows-style volume
-		if strings.EqualFold(pathComponents[1], "users") {
-			// Group C:/Users/username into a single component
-			return min(3, length)
-		}
-		return 1
-	}
-	if pathComponents[1] == "home" {
-		// Group /home/username into a single component
-		return min(3, length)
-	}
-	return 1
 }
 
 func getRecursiveGlobPattern(directory string) string {

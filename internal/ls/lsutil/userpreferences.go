@@ -181,6 +181,11 @@ type UserPreferences struct {
 
 	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
 	CustomConfigFileName string `raw:"customConfigFileName" config:"native-preview.customConfigFileName"`
+
+	// UsePollingWatcher enables an in-process polling file watcher instead of relying on the
+	// client's workspace/didChangeWatchedFiles support. Useful for clients that don't support
+	// file watching or when the client's watcher is unreliable.
+	UsePollingWatcher core.Tristate `raw:"usePollingWatcher" config:"native-preview.usePollingWatcher"`
 }
 
 // IsATADisabled returns whether Automatic Type Acquisition is disabled based on user preferences.
