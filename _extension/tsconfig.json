@@ -8,9 +8,9 @@
         "module": "preserve",
         "moduleResolution": "bundler",
         "types": ["node"],
-        
+
         "strict": true,
-        "noImplicitOverride": true,
+        "noImplicitOverride": true
     },
     "include": ["./src/**/*"]
 }
