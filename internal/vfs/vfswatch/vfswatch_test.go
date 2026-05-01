@@ -21,27 +21,33 @@ func (c *countingFS) GetAccessibleEntries(path string) vfs.Entries {
 	return c.FS.GetAccessibleEntries(path)
 }
 
-// TestHasChangesNoRedundantGetAccessibleEntries verifies that HasChangesFromWatchState
-// calls GetAccessibleEntries exactly once per directory tracked via a recursive wildcard,
-// not twice. Previously a redundant WalkDir pass in hasChanges doubled the calls.
+// TestHasChangesNoRedundantGetAccessibleEntries verifies that
+// HasChangesFromWatchState calls GetAccessibleEntries only for directories
+// that are part of a recursive wildcard tree, and exactly once each — never
+// for directories that merely happened to be in the explicit paths list.
 //
-// With /src as a recursive wildcard dir, snapshotPaths adds /src and /src/sub to
-// watchState with ChildrenHash. A single HasChangesFromWatchState call should therefore
-// call GetAccessibleEntries exactly 2 times — once for /src and once for /src/sub.
+// Setup: /src is a recursive wildcard root containing /src and /src/sub.
+// The explicit paths list also contains /node_modules (a directory accessed
+// during compilation but with no wildcard scope) and the tsconfig file.
+// A single HasChangesFromWatchState call should call GetAccessibleEntries
+// exactly twice: once for /src and once for /src/sub. /node_modules is a
+// directory but is *not* a wildcard tree member, so it gets only a Stat —
+// the watcher does not depend on its listing.
 func TestHasChangesNoRedundantGetAccessibleEntries(t *testing.T) {
 	t.Parallel()
 
 	inner := vfstest.FromMap(map[string]string{
-		"/src/a.ts":      "const a = 1;",
-		"/src/b.ts":      "const b = 2;",
-		"/src/sub/c.ts":  "const c = 3;",
-		"/tsconfig.json": "{}",
+		"/src/a.ts":          "const a = 1;",
+		"/src/b.ts":          "const b = 2;",
+		"/src/sub/c.ts":      "const c = 3;",
+		"/node_modules/x.js": "",
+		"/tsconfig.json":     "{}",
 	}, true)
 	cfs := &countingFS{FS: inner}
 
 	fw := vfswatch.NewFileWatcher(cfs, 10*time.Millisecond, true, func() {})
 	fw.UpdateWatchState(
-		[]string{"/src/a.ts", "/src/b.ts", "/src/sub/c.ts", "/tsconfig.json"},
+		[]string{"/src/a.ts", "/src/b.ts", "/src/sub/c.ts", "/node_modules", "/tsconfig.json"},
 		map[string]bool{"/src": true},
 	)
 
@@ -49,9 +55,10 @@ func TestHasChangesNoRedundantGetAccessibleEntries(t *testing.T) {
 
 	fw.HasChangesFromWatchState()
 
-	// /src and /src/sub are the two dirs tracked with ChildrenHash.
-	// Each should be hashed exactly once; the old code hashed each twice.
+	// Only /src and /src/sub (the wildcard tree) are tracked with ChildrenHash.
+	// /node_modules is a directory in the explicit paths list but should NOT be
+	// hashed: its listing is not something the watcher depends on.
 	if got := cfs.n.Load(); got != 2 {
-		t.Errorf("GetAccessibleEntries called %d times, want 2 (once per tracked dir)", got)
+		t.Errorf("GetAccessibleEntries called %d times, want 2 (once per wildcard-tree dir)", got)
 	}
 }
