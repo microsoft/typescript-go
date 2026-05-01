@@ -12,16 +12,16 @@ interface ExperimentTypes {
 }
 
 export class ExperimentationService {
-    private readonly _experimentationServicePromise: Promise<tas.IExperimentationService>;
+    private readonly _experimentationService: tas.IExperimentationService;
     private readonly _telemetryReporter: tas.IExperimentationTelemetry;
 
     constructor(telemetryReporter: tas.IExperimentationTelemetry, id: string, version: string, globalState: vscode.Memento) {
         this._telemetryReporter = telemetryReporter;
-        this._experimentationServicePromise = createTasExperimentationService(this._telemetryReporter, id, version, globalState);
+        this._experimentationService = createTasExperimentationService(this._telemetryReporter, id, version, globalState);
     }
 
     public async getTreatmentVariable<K extends keyof ExperimentTypes>(name: K, defaultValue: ExperimentTypes[K]): Promise<ExperimentTypes[K]> {
-        const experimentationService = await this._experimentationServicePromise;
+        const experimentationService = this._experimentationService;
         try {
             const treatmentVariable = await experimentationService.getTreatmentVariableAsync("vscode", name, /*checkCache*/ true) as ExperimentTypes[K];
             return treatmentVariable ?? defaultValue;
@@ -32,12 +32,12 @@ export class ExperimentationService {
     }
 }
 
-export async function createTasExperimentationService(
+function createTasExperimentationService(
     reporter: tas.IExperimentationTelemetry,
     id: string,
     version: string,
     globalState: vscode.Memento,
-): Promise<tas.IExperimentationService> {
+): tas.IExperimentationService {
     let targetPopulation: tas.TargetPopulation;
     switch (vscode.env.uriScheme) {
         case "vscode":
