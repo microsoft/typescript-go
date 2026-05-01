@@ -6,7 +6,6 @@ import {
 } from "./commands";
 import {
     aiConnectionString,
-    getPackageInfo,
     getUseTsgo,
     getUseTsgoFalseSetting,
     needsExtHostRestartOnChange,
@@ -21,6 +20,8 @@ import {
 import { ExperimentationService } from "./experimentationService";
 import { createTelemetryReporter } from "./telemetryReporting";
 
+import assert from "node:assert";
+
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
     initializeAPIConnection(pipe?: string): Promise<string>;
@@ -32,15 +33,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
 
-    const packageInfo = getPackageInfo(context);
-    if (packageInfo) {
-        const { name: id, version } = packageInfo;
-        // Constructing the experimentation service actually sets shared properties
-        // so that events include context on treatments/flights.
-        // If we actually need to read treatment variables we would hold onto this instance,
-        // but for now we just construct it to ensure shared properties are set for telemetry.
-        void new ExperimentationService(telemetryReporter, id, version, context.globalState);
-    }
+    const version = context.extension.packageJSON.version;
+    assert(typeof version === "string");
+    // Constructing the experimentation service actually sets shared properties
+    // so that events include context on treatments/flights.
+    // If we actually need to read treatment variables we would hold onto this instance,
+    // but for now we just construct it to ensure shared properties are set for telemetry.
+    void new ExperimentationService(telemetryReporter, context.extension.id, version, context.globalState);
 
     registerEnablementCommands(context, telemetryReporter);
 
