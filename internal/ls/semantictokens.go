@@ -532,14 +532,13 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast
 		startPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenStart))
 		endPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenEnd))
 
-		// Length is the character difference when on the same line
-		var tokenLength uint32
-		if startPos.Line == endPos.Line {
-			tokenLength = endPos.Character - startPos.Character
-		} else {
-			panic(fmt.Sprintf("semantic tokens: token spans multiple lines: start=(%d,%d) end=(%d,%d) for token at offset %d",
-				startPos.Line, startPos.Character, endPos.Line, endPos.Character, tokenStart))
+		// Length is the character difference when on the same line.
+		// LSP semantic tokens cannot span multiple lines, so skip any token
+		// that does (e.g. when CRLF/multi-line trivia leaks into the range).
+		if startPos.Line != endPos.Line {
+			continue
 		}
+		tokenLength := endPos.Character - startPos.Character
 
 		line := startPos.Line
 		char := startPos.Character
