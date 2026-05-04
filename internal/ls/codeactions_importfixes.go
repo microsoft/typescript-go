@@ -198,17 +198,30 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 			diagnosticMessage = fixContext.Diagnostic.Message
 		}
 
+		// Collect all type-only candidates with valid fixes.
+		var allTypeOnlyFixes []*fixInfo
 		for _, sn := range symbolNames {
 			if !sn.isTypeOnly {
 				continue
 			}
-			if diagnosticMessage != "" && !strings.Contains(diagnosticMessage, "'"+sn.name+"'") {
-				continue
-			}
 			fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, sn.name, fixContext.Program)
 			if fix != nil {
-				info = append(info, &fixInfo{fix: fix, symbolName: sn.name, errorIdentifierText: symbolToken.Text()})
+				allTypeOnlyFixes = append(allTypeOnlyFixes, &fixInfo{fix: fix, symbolName: sn.name, errorIdentifierText: symbolToken.Text()})
 			}
+		}
+
+		// If there are multiple type-only candidates, try to disambiguate
+		// using the diagnostic message (which quotes the symbol name).
+		// Fall back to all candidates if filtering yields nothing.
+		if len(allTypeOnlyFixes) > 1 && diagnosticMessage != "" {
+			for _, fi := range allTypeOnlyFixes {
+				if strings.Contains(diagnosticMessage, "'"+fi.symbolName+"'") {
+					info = append(info, fi)
+				}
+			}
+		}
+		if len(info) == 0 {
+			info = allTypeOnlyFixes
 		}
 		return info, nil
 	} else {
