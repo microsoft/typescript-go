@@ -89,7 +89,7 @@ func (ct *ChangeTrackerWriter) setLastNonTriviaPosition(s string, force bool) {
 	if force || scanner.SkipTrivia(s, 0) != len(s) {
 		ct.lastNonTriviaPosition = ct.textWriter.GetTextPos()
 		i := 0
-		for stringutil.IsWhiteSpaceLike(rune(s[len(s)-i-1])) {
+		for i < len(s) && stringutil.IsWhiteSpaceLike(rune(s[len(s)-i-1])) {
 			i++
 		}
 		// trim trailing whitespaces
