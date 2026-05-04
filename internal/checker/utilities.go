@@ -2,6 +2,7 @@ package checker
 
 import (
 	"cmp"
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -362,8 +363,16 @@ func (c *Checker) compareSymbolsWorker(s1, s2 *ast.Symbol) int {
 	if r := strings.Compare(s1.Name, s2.Name); r != 0 {
 		return r
 	}
-	// Fall back to symbol IDs. This is a last resort that should happen only when symbols have
-	// no declaration and duplicate names.
+	// Anonymous transient symbols (e.g. the placeholder symbols of synthetic default import
+	// wrapper types) carry no declarations of their own; recurse on parents to distinguish
+	// wrappers belonging to different containing symbols (e.g. different module symbols).
+	if s1.Parent != s2.Parent {
+		if r := c.compareSymbolsWorker(s1.Parent, s2.Parent); r != 0 {
+			return r
+		}
+	}
+	// Last resort: fall back to symbol IDs to give a stable, deterministic total ordering rather
+	// than relying on insertion order.
 	return int(ast.GetSymbolId(s1)) - int(ast.GetSymbolId(s2))
 }
 
@@ -413,7 +422,9 @@ func CompareTypes(t1, t2 *Type) int {
 	// We have unnamed types or types with identical names. Now sort by data specific to the type.
 	switch {
 	case t1.flags&(TypeFlagsAny|TypeFlagsUnknown|TypeFlagsString|TypeFlagsNumber|TypeFlagsBoolean|TypeFlagsBigInt|TypeFlagsESSymbol|TypeFlagsVoid|TypeFlagsUndefined|TypeFlagsNull|TypeFlagsNever|TypeFlagsNonPrimitive) != 0:
-		// Only distinguished by type IDs, handled below.
+		// Predeclared intrinsic types are singletons per checker allocated in a deterministic order,
+		// so type ID ordering is stable.
+		return int(t1.id) - int(t2.id)
 	case t1.flags&TypeFlagsObject != 0:
 		// Order unnamed or identically named object types by symbol.
 		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
@@ -460,6 +471,13 @@ func CompareTypes(t1, t2 *Type) int {
 			if c := compareTypeMappers(t1.AsObjectType().mapper, t2.AsObjectType().mapper); c != 0 {
 				return c
 			}
+			// Instantiation expression types share an anonymous symbol but originate from distinct
+			// expression nodes; order by source location of that node.
+			if t1.objectFlags&ObjectFlagsInstantiationExpressionType != 0 {
+				if c := t1.checker.compareNodes(t1.AsInstantiationExpressionType().node, t2.AsInstantiationExpressionType().node); c != 0 {
+					return c
+				}
+			}
 		}
 	case t1.flags&TypeFlagsUnion != 0:
 		// Unions are ordered by origin and then constituent type lists.
@@ -488,14 +506,38 @@ func CompareTypes(t1, t2 *Type) int {
 		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
 		}
+		// Same enum member symbol: enum types (including computed-value enums with TypeFlagsEnum
+		// alone) are LiteralType instances; distinguish fresh vs regular variants. UniqueESSymbol
+		// types are not LiteralType, so guard accordingly.
+		if t1.flags&TypeFlagsUniqueESSymbol == 0 {
+			if c := compareLiteralFreshness(t1, t2); c != 0 {
+				return c
+			}
+		}
 	case t1.flags&TypeFlagsStringLiteral != 0:
 		// String literal types are ordered by their values.
 		if c := strings.Compare(t1.AsLiteralType().value.(string), t2.AsLiteralType().value.(string)); c != 0 {
 			return c
 		}
+		if c := compareLiteralFreshness(t1, t2); c != 0 {
+			return c
+		}
 	case t1.flags&TypeFlagsNumberLiteral != 0:
 		// Numeric literal types are ordered by their values.
 		if c := cmp.Compare(t1.AsLiteralType().value.(jsnum.Number), t2.AsLiteralType().value.(jsnum.Number)); c != 0 {
+			return c
+		}
+		if c := compareLiteralFreshness(t1, t2); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsBigIntLiteral != 0:
+		// BigInt literal types are ordered by their values.
+		v1 := t1.AsLiteralType().value.(jsnum.PseudoBigInt)
+		v2 := t2.AsLiteralType().value.(jsnum.PseudoBigInt)
+		if c := v1.Compare(v2); c != 0 {
+			return c
+		}
+		if c := compareLiteralFreshness(t1, t2); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsBooleanLiteral != 0:
@@ -507,8 +549,25 @@ func CompareTypes(t1, t2 *Type) int {
 			}
 			return -1
 		}
+		if c := compareLiteralFreshness(t1, t2); c != 0 {
+			return c
+		}
 	case t1.flags&TypeFlagsTypeParameter != 0:
 		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
+			return c
+		}
+		// Cloned type parameters carry a `target` pointing back to the original generic parameter and
+		// a `mapper` describing the instantiation context. Distinguish original from clones, then
+		// order clones by their mappers.
+		tp1 := t1.AsTypeParameter()
+		tp2 := t2.AsTypeParameter()
+		if (tp1.target == nil) != (tp2.target == nil) {
+			if tp1.target == nil {
+				return -1
+			}
+			return 1
+		}
+		if c := compareTypeMappers(tp1.mapper, tp2.mapper); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndex != 0:
@@ -550,9 +609,29 @@ func CompareTypes(t1, t2 *Type) int {
 		if c := CompareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
 			return c
 		}
+	default:
+		panic(fmt.Sprintf("Types are not comparable: ids=%v,%v flags=%v,%v objectFlags=%v,%v", t1.id, t2.id, t1.flags, t2.flags, t1.objectFlags, t2.objectFlags))
 	}
-	// Fall back to type IDs. This results in type creation order for built-in types.
+	// Fall back to type IDs. Type IDs are deterministic within a checker, so this gives a stable
+	// total ordering for distinct type instances that compare structurally equal (e.g. two anonymous
+	// object literal types with identical members but different source locations).
 	return int(t1.id) - int(t2.id)
+}
+
+// compareLiteralFreshness orders the regular variant of a literal type before its fresh variant.
+// Two distinct LiteralType instances with the same value form a fresh/regular pair: the regular
+// variant has freshType pointing to its sibling, while the fresh variant has freshType pointing
+// to itself.
+func compareLiteralFreshness(t1, t2 *Type) int {
+	f1 := t1.AsLiteralType().freshType == t1
+	f2 := t2.AsLiteralType().freshType == t2
+	if f1 == f2 {
+		return 0
+	}
+	if f1 {
+		return 1
+	}
+	return -1
 }
 
 func getSortOrderFlags(t *Type) int {

@@ -1,6 +1,7 @@
 package jsnum
 
 import (
+	"cmp"
 	"fmt"
 	"math/big"
 	"strings"
@@ -35,6 +36,23 @@ func (value PseudoBigInt) Sign() int {
 		return -1
 	}
 	return 1
+}
+
+// Compare returns -1, 0, or 1 depending on whether value is less than, equal to, or greater than other.
+func (value PseudoBigInt) Compare(other PseudoBigInt) int {
+	if c := cmp.Compare(value.Sign(), other.Sign()); c != 0 {
+		return c
+	}
+	// Same sign. Compare absolute magnitudes: longer Base10Value means larger magnitude;
+	// equal length sorts lexicographically (ASCII digits compare numerically).
+	mag := cmp.Compare(len(value.Base10Value), len(other.Base10Value))
+	if mag == 0 {
+		mag = strings.Compare(value.Base10Value, other.Base10Value)
+	}
+	if value.Negative {
+		return -mag
+	}
+	return mag
 }
 
 func ParseValidBigInt(text string) PseudoBigInt {

@@ -75,3 +75,41 @@ func TestParsePseudoBigInt(t *testing.T) {
 		assert.Equal(t, ParsePseudoBigInt("0x18ee90ff6c373e0ee4e3f0ad2n"), "123456789012345678901234567890")
 	})
 }
+
+func TestPseudoBigIntCompare(t *testing.T) {
+	t.Parallel()
+
+	values := []PseudoBigInt{
+		NewPseudoBigInt("123456789012345678901234567890", true),
+		NewPseudoBigInt("100", true),
+		NewPseudoBigInt("99", true),
+		NewPseudoBigInt("10", true),
+		NewPseudoBigInt("2", true),
+		NewPseudoBigInt("1", true),
+		{},
+		NewPseudoBigInt("0", true),  // also zero
+		NewPseudoBigInt("0", false), // also zero
+		NewPseudoBigInt("1", false),
+		NewPseudoBigInt("2", false),
+		NewPseudoBigInt("10", false),
+		NewPseudoBigInt("99", false),
+		NewPseudoBigInt("100", false),
+		NewPseudoBigInt("123456789012345678901234567890", false),
+	}
+
+	for i, a := range values {
+		for j, b := range values {
+			got := a.Compare(b)
+			var want int
+			switch {
+			case (i >= 6 && i <= 8) && (j >= 6 && j <= 8):
+				want = 0
+			case i < j:
+				want = -1
+			case i > j:
+				want = 1
+			}
+			assert.Equal(t, got, want, "Compare(%s, %s)", a, b)
+		}
+	}
+}
