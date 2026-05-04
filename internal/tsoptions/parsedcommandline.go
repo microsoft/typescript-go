@@ -128,7 +128,8 @@ func (p *ParsedCommandLine) CommonSourceDirectory() string {
 					func(file string) bool {
 						return !(p.ParsedConfig.CompilerOptions.NoEmitForJsFiles.IsTrue() && tspath.HasJSFileExtension(file)) &&
 							!tspath.IsDeclarationFileName(file)
-					})
+					},
+				)
 			},
 			p.GetCurrentDirectory(),
 			p.UseCaseSensitiveFileNames(),

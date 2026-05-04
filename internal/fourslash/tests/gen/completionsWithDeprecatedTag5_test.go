@@ -43,7 +43,8 @@ Foo./**/`
 						Kind:     new(lsproto.CompletionItemKindMethod),
 						SortText: new(string(ls.DeprecateSortText(ls.SortTextLocalDeclarationPriority))),
 					},
-				}),
+				},
+			),
 		},
 	})
 }

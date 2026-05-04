@@ -314,7 +314,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				parent.AsMutable().SetExpression(p.makeNewCast(
 					p.addDeepCloneReparse(tag.TypeExpression().Type()),
 					parent.Expression(),
-					true /*isAssertion*/))
+					true, /*isAssertion*/
+				))
 				p.finishMutatedNode(parent)
 				return
 			}
@@ -335,7 +336,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 						declaration.AsMutable().SetInitializer(p.makeNewCast(
 							p.addDeepCloneReparse(tag.TypeExpression().Type()),
 							declaration.Initializer(),
-							false /*isAssertion*/))
+							false, /*isAssertion*/
+						))
 						p.finishMutatedNode(declaration)
 						break
 					}
@@ -346,7 +348,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				parent.AsMutable().SetInitializer(p.makeNewCast(
 					p.addDeepCloneReparse(tag.TypeExpression().Type()),
 					parent.Initializer(),
-					false /*isAssertion*/))
+					false, /*isAssertion*/
+				))
 				p.finishMutatedNode(parent)
 			}
 		case ast.KindShorthandPropertyAssignment:
@@ -355,7 +358,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				shorthand.ObjectAssignmentInitializer = p.makeNewCast(
 					p.addDeepCloneReparse(tag.AsJSDocSatisfiesTag().TypeExpression.Type()),
 					shorthand.ObjectAssignmentInitializer,
-					false /*isAssertion*/)
+					false, /*isAssertion*/
+				)
 				p.finishMutatedNode(parent)
 			}
 		case ast.KindReturnStatement, ast.KindParenthesizedExpression, ast.KindExportAssignment:
@@ -363,7 +367,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				parent.AsMutable().SetExpression(p.makeNewCast(
 					p.addDeepCloneReparse(tag.TypeExpression().Type()),
 					parent.Expression(),
-					false /*isAssertion*/))
+					false, /*isAssertion*/
+				))
 				p.finishMutatedNode(parent)
 			}
 		case ast.KindExpressionStatement:
@@ -373,7 +378,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					bin.Right = p.makeNewCast(
 						p.addDeepCloneReparse(tag.TypeExpression().Type()),
 						bin.Right,
-						false /*isAssertion*/)
+						false, /*isAssertion*/
+					)
 					p.finishMutatedNode(bin.AsNode())
 				}
 			}

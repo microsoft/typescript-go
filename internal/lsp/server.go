@@ -1534,7 +1534,8 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 			programs,
 			snapshot.Converters(),
 			snapshot.UserPreferences(),
-			params.Query)
+			params.Query,
+		)
 	})
 	return resp, lsErr
 }
