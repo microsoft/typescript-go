@@ -22664,7 +22664,7 @@ func (c *Checker) isJSDocTypeReference(node *ast.Node) bool {
 
 func (c *Checker) hasQualifiedTypeName(node *ast.Node) bool {
 	name := getTypeReferenceName(node)
-	return name != nil && (name.Kind == ast.KindQualifiedName || name.Kind == ast.KindPropertyAccessExpression)
+	return name != nil && name.Kind == ast.KindQualifiedName
 }
 
 func (c *Checker) getIntendedTypeFromJSDocTypeReference(node *ast.Node) *Type {
