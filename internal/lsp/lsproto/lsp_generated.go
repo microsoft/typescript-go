@@ -3,6 +3,7 @@
 package lsproto
 
 import (
+	"cmp"
 	"fmt"
 	"strings"
 
@@ -7530,6 +7531,13 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+func (s *TextEdit) Compare(other *TextEdit) int {
+	if c := s.Range.Compare(&other.Range); c != 0 {
+		return c
+	}
+	return cmp.Compare(s.NewText, other.NewText)
+}
+
 // The watched files change notification's parameters.
 type DidChangeWatchedFilesParams struct {
 	// The actual file events.
@@ -13162,6 +13170,13 @@ func (s *Range) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+func (s *Range) Compare(other *Range) int {
+	if c := s.Start.Compare(&other.Start); c != 0 {
+		return c
+	}
+	return s.End.Compare(&other.End)
+}
+
 type ImplementationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
@@ -13777,6 +13792,13 @@ func (s *Position) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 
 	return nil
+}
+
+func (s *Position) Compare(other *Position) int {
+	if c := cmp.Compare(s.Line, other.Line); c != 0 {
+		return c
+	}
+	return cmp.Compare(s.Character, other.Character)
 }
 
 type SelectionRangeOptions struct {
@@ -17160,6 +17182,12 @@ type ServerCapabilities struct {
 
 	// The server provides source definition support via custom/textDocument/sourceDefinition.
 	CustomSourceDefinitionProvider *bool `json:"customSourceDefinitionProvider,omitzero"`
+
+	// Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.
+	VSOnAutoInsertProvider *VsOnAutoInsertOptions `json:"_vs_onAutoInsertProvider,omitzero"`
+
+	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
+	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*ServerCapabilities)(nil)
@@ -17421,6 +17449,20 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("customSourceDefinitionProvider")
 			}
 			if err := json.UnmarshalDecode(dec, &s.CustomSourceDefinitionProvider); err != nil {
+				return err
+			}
+		case `"_vs_onAutoInsertProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_onAutoInsertProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSOnAutoInsertProvider); err != nil {
+				return err
+			}
+		case `"customMultiDocumentHighlightProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("customMultiDocumentHighlightProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
 				return err
 			}
 		default:
@@ -28366,17 +28408,17 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
-// CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.
-type CustomClosingTagCompletion struct {
-	// The text to insert at the closing tag position.
-	NewText string `json:"newText"`
+// Options for the textDocument/_vs_onAutoInsert provider capability.
+type VsOnAutoInsertOptions struct {
+	// List of trigger characters that trigger auto-insert.
+	VSTriggerCharacters []string `json:"_vs_triggerCharacters"`
 }
 
-var _ json.UnmarshalerFrom = (*CustomClosingTagCompletion)(nil)
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertOptions)(nil)
 
-func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error {
+func (s *VsOnAutoInsertOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	const (
-		missingNewText uint = 1 << iota
+		missingVSTriggerCharacters uint = 1 << iota
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -28394,9 +28436,12 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error 
 			return err
 		}
 		switch string(name) {
-		case `"newText"`:
-			missing &^= missingNewText
-			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+		case `"_vs_triggerCharacters"`:
+			missing &^= missingVSTriggerCharacters
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_triggerCharacters")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSTriggerCharacters); err != nil {
 				return err
 			}
 		default:
@@ -28412,8 +28457,165 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error 
 
 	if missing != 0 {
 		var missingProps []string
-		if missing&missingNewText != 0 {
-			missingProps = append(missingProps, "newText")
+		if missing&missingVSTriggerCharacters != 0 {
+			missingProps = append(missingProps, "_vs_triggerCharacters")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Parameters for the textDocument/_vs_onAutoInsert request.
+type VsOnAutoInsertParams struct {
+	// The text document.
+	VSTextDocument TextDocumentIdentifier `json:"_vs_textDocument"`
+
+	// The position inside the text document.
+	VSPosition Position `json:"_vs_position"`
+
+	// The character that triggered the auto-insert.
+	VSCh string `json:"_vs_ch"`
+}
+
+func (s *VsOnAutoInsertParams) TextDocumentURI() DocumentUri {
+	return s.VSTextDocument.Uri
+}
+
+func (s *VsOnAutoInsertParams) TextDocumentPosition() Position {
+	return s.VSPosition
+}
+
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertParams)(nil)
+
+func (s *VsOnAutoInsertParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVSTextDocument uint = 1 << iota
+		missingVSPosition
+		missingVSCh
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"_vs_textDocument"`:
+			missing &^= missingVSTextDocument
+			if err := json.UnmarshalDecode(dec, &s.VSTextDocument); err != nil {
+				return err
+			}
+		case `"_vs_position"`:
+			missing &^= missingVSPosition
+			if err := json.UnmarshalDecode(dec, &s.VSPosition); err != nil {
+				return err
+			}
+		case `"_vs_ch"`:
+			missing &^= missingVSCh
+			if err := json.UnmarshalDecode(dec, &s.VSCh); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVSTextDocument != 0 {
+			missingProps = append(missingProps, "_vs_textDocument")
+		}
+		if missing&missingVSPosition != 0 {
+			missingProps = append(missingProps, "_vs_position")
+		}
+		if missing&missingVSCh != 0 {
+			missingProps = append(missingProps, "_vs_ch")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Response item for the textDocument/_vs_onAutoInsert request.
+type VsOnAutoInsertResponseItem struct {
+	// The format of the text edit (plaintext or snippet).
+	VSTextEditFormat InsertTextFormat `json:"_vs_textEditFormat"`
+
+	// The text edit to apply for the auto-insertion.
+	VSTextEdit *TextEdit `json:"_vs_textEdit"`
+}
+
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertResponseItem)(nil)
+
+func (s *VsOnAutoInsertResponseItem) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVSTextEditFormat uint = 1 << iota
+		missingVSTextEdit
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"_vs_textEditFormat"`:
+			missing &^= missingVSTextEditFormat
+			if err := json.UnmarshalDecode(dec, &s.VSTextEditFormat); err != nil {
+				return err
+			}
+		case `"_vs_textEdit"`:
+			missing &^= missingVSTextEdit
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_textEdit")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSTextEdit); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVSTextEditFormat != 0 {
+			missingProps = append(missingProps, "_vs_textEditFormat")
+		}
+		if missing&missingVSTextEdit != 0 {
+			missingProps = append(missingProps, "_vs_textEdit")
 		}
 		return errMissing(missingProps)
 	}
@@ -29209,6 +29411,166 @@ type ProjectInfoTelemetryMeasurements struct {
 	DtsFileCount float64 `json:"dtsFileCount,omitzero"`
 
 	DtsFileSize float64 `json:"dtsFileSize,omitzero"`
+}
+
+// Represents a collection of document highlights from a single document, used in multi-document highlight responses.
+type MultiDocumentHighlight struct {
+	// The URI of the document containing the highlights.
+	Uri DocumentUri `json:"uri"`
+
+	// The highlights for the document.
+	Highlights []*DocumentHighlight `json:"highlights"`
+}
+
+var _ json.UnmarshalerFrom = (*MultiDocumentHighlight)(nil)
+
+func (s *MultiDocumentHighlight) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingUri uint = 1 << iota
+		missingHighlights
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"uri"`:
+			missing &^= missingUri
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case `"highlights"`:
+			missing &^= missingHighlights
+			if dec.PeekKind() == 'n' {
+				return errNull("highlights")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Highlights); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingUri != 0 {
+			missingProps = append(missingProps, "uri")
+		}
+		if missing&missingHighlights != 0 {
+			missingProps = append(missingProps, "highlights")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Parameters for the custom/textDocument/multiDocumentHighlight request.
+type MultiDocumentHighlightParams struct {
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// The list of file URIs to search for highlights across.
+	FilesToSearch []DocumentUri `json:"filesToSearch"`
+}
+
+func (s *MultiDocumentHighlightParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
+func (s *MultiDocumentHighlightParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
+var _ json.UnmarshalerFrom = (*MultiDocumentHighlightParams)(nil)
+
+func (s *MultiDocumentHighlightParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		missingFilesToSearch
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"textDocument"`:
+			missing &^= missingTextDocument
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case `"position"`:
+			missing &^= missingPosition
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case `"filesToSearch"`:
+			missing &^= missingFilesToSearch
+			if dec.PeekKind() == 'n' {
+				return errNull("filesToSearch")
+			}
+			if err := json.UnmarshalDecode(dec, &s.FilesToSearch); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingTextDocument != 0 {
+			missingProps = append(missingProps, "textDocument")
+		}
+		if missing&missingPosition != 0 {
+			missingProps = append(missingProps, "position")
+		}
+		if missing&missingFilesToSearch != 0 {
+			missingProps = append(missingProps, "filesToSearch")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
 }
 
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
@@ -30579,8 +30941,6 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
-	case MethodCustomTextDocumentClosingTagCompletion:
-		return unmarshalPtrTo[TextDocumentPositionParams](data)
 	case MethodCustomRunGC:
 		return unmarshalEmpty(data)
 	case MethodCustomSaveHeapProfile:
@@ -30597,6 +30957,10 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ProjectInfoParams](data)
 	case MethodCustomTextDocumentSourceDefinition:
 		return unmarshalPtrTo[TextDocumentPositionParams](data)
+	case MethodCustomTextDocumentMultiDocumentHighlight:
+		return unmarshalPtrTo[MultiDocumentHighlightParams](data)
+	case MethodTextDocumentVSOnAutoInsert:
+		return unmarshalPtrTo[VsOnAutoInsertParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
 	case MethodWindowWorkDoneProgressCancel:
@@ -30786,8 +31150,6 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
-	case MethodCustomTextDocumentClosingTagCompletion:
-		return unmarshalValue[CustomClosingTagCompletionResponse](data)
 	case MethodCustomRunGC:
 		return unmarshalValue[RunGCResponse](data)
 	case MethodCustomSaveHeapProfile:
@@ -30804,6 +31166,10 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[CustomProjectInfoResponse](data)
 	case MethodCustomTextDocumentSourceDefinition:
 		return unmarshalValue[CustomTextDocumentSourceDefinitionResponse](data)
+	case MethodCustomTextDocumentMultiDocumentHighlight:
+		return unmarshalValue[CustomMultiDocumentHighlightResponse](data)
+	case MethodTextDocumentVSOnAutoInsert:
+		return unmarshalValue[VsOnAutoInsertResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -31108,8 +31474,6 @@ const (
 	MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
-	// Request to get the closing tag completion at a given position.
-	MethodCustomTextDocumentClosingTagCompletion Method = "custom/textDocument/closingTagCompletion"
 	// Triggers garbage collection in the language server.
 	MethodCustomRunGC Method = "custom/runGC"
 	// Saves a heap profile to the specified directory.
@@ -31126,6 +31490,10 @@ const (
 	MethodCustomProjectInfo Method = "custom/projectInfo"
 	// Request to get source definitions for a position.
 	MethodCustomTextDocumentSourceDefinition Method = "custom/textDocument/sourceDefinition"
+	// Request to get document highlights across multiple files.
+	MethodCustomTextDocumentMultiDocumentHighlight Method = "custom/textDocument/multiDocumentHighlight"
+	// Request for auto-insert when a trigger character is typed (VS-specific).
+	MethodTextDocumentVSOnAutoInsert Method = "textDocument/_vs_onAutoInsert"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -31623,12 +31991,6 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
-// Response type for `custom/textDocument/closingTagCompletion`
-type CustomClosingTagCompletionResponse = CustomClosingTagCompletionOrNull
-
-// Type mapping info for `custom/textDocument/closingTagCompletion`
-var CustomTextDocumentClosingTagCompletionInfo = RequestInfo[*TextDocumentPositionParams, CustomClosingTagCompletionResponse]{Method: MethodCustomTextDocumentClosingTagCompletion}
-
 // Response type for `custom/runGC`
 type RunGCResponse = Null
 
@@ -31676,6 +32038,18 @@ type CustomTextDocumentSourceDefinitionResponse = *LocationOrLocationsOrDefiniti
 
 // Type mapping info for `custom/textDocument/sourceDefinition`
 var CustomTextDocumentSourceDefinitionInfo = RequestInfo[*TextDocumentPositionParams, CustomTextDocumentSourceDefinitionResponse]{Method: MethodCustomTextDocumentSourceDefinition}
+
+// Response type for `custom/textDocument/multiDocumentHighlight`
+type CustomMultiDocumentHighlightResponse = MultiDocumentHighlightsOrNull
+
+// Type mapping info for `custom/textDocument/multiDocumentHighlight`
+var CustomTextDocumentMultiDocumentHighlightInfo = RequestInfo[*MultiDocumentHighlightParams, CustomMultiDocumentHighlightResponse]{Method: MethodCustomTextDocumentMultiDocumentHighlight}
+
+// Response type for `textDocument/_vs_onAutoInsert`
+type VsOnAutoInsertResponse = VsOnAutoInsertResponseItemOrNull
+
+// Type mapping info for `textDocument/_vs_onAutoInsert`
+var TextDocumentVSOnAutoInsertInfo = RequestInfo[*VsOnAutoInsertParams, VsOnAutoInsertResponse]{Method: MethodTextDocumentVSOnAutoInsert}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
@@ -35158,33 +35532,63 @@ func (o *LSPAnyOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return errInvalidValue("LSPAnyOrNull", data)
 }
 
-type CustomClosingTagCompletionOrNull struct {
-	CustomClosingTagCompletion *CustomClosingTagCompletion
+type MultiDocumentHighlightsOrNull struct {
+	MultiDocumentHighlights *[]*MultiDocumentHighlight
 }
 
-var _ json.MarshalerTo = (*CustomClosingTagCompletionOrNull)(nil)
+var _ json.MarshalerTo = (*MultiDocumentHighlightsOrNull)(nil)
 
-func (o *CustomClosingTagCompletionOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CustomClosingTagCompletion != nil {
-		return json.MarshalEncode(enc, o.CustomClosingTagCompletion)
+func (o *MultiDocumentHighlightsOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	if o.MultiDocumentHighlights != nil {
+		return json.MarshalEncode(enc, o.MultiDocumentHighlights)
 	}
 	return enc.WriteToken(json.Null)
 }
 
-var _ json.UnmarshalerFrom = (*CustomClosingTagCompletionOrNull)(nil)
+var _ json.UnmarshalerFrom = (*MultiDocumentHighlightsOrNull)(nil)
 
-func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = CustomClosingTagCompletionOrNull{}
+func (o *MultiDocumentHighlightsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = MultiDocumentHighlightsOrNull{}
+
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
+		return err
+	case '[':
+		o.MultiDocumentHighlights = new([]*MultiDocumentHighlight)
+		return json.UnmarshalDecode(dec, o.MultiDocumentHighlights)
+	default:
+		return errInvalidKind("MultiDocumentHighlightsOrNull", dec.PeekKind())
+	}
+}
+
+type VsOnAutoInsertResponseItemOrNull struct {
+	VsOnAutoInsertResponseItem *VsOnAutoInsertResponseItem
+}
+
+var _ json.MarshalerTo = (*VsOnAutoInsertResponseItemOrNull)(nil)
+
+func (o *VsOnAutoInsertResponseItemOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	if o.VsOnAutoInsertResponseItem != nil {
+		return json.MarshalEncode(enc, o.VsOnAutoInsertResponseItem)
+	}
+	return enc.WriteToken(json.Null)
+}
+
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertResponseItemOrNull)(nil)
+
+func (o *VsOnAutoInsertResponseItemOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = VsOnAutoInsertResponseItemOrNull{}
 
 	switch dec.PeekKind() {
 	case 'n':
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		o.CustomClosingTagCompletion = new(CustomClosingTagCompletion)
-		return json.UnmarshalDecode(dec, o.CustomClosingTagCompletion)
+		o.VsOnAutoInsertResponseItem = new(VsOnAutoInsertResponseItem)
+		return json.UnmarshalDecode(dec, o.VsOnAutoInsertResponseItem)
 	default:
-		return errInvalidKind("CustomClosingTagCompletionOrNull", dec.PeekKind())
+		return errInvalidKind("VsOnAutoInsertResponseItemOrNull", dec.PeekKind())
 	}
 }
 

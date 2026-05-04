@@ -81,9 +81,13 @@ type resolutionState struct {
 	resolvePackageDirectoryOnly bool
 
 	// state fields
-	candidateIsFromPackageJsonField bool
-	resolvedPackageDirectory        bool
-	diagnostics                     []*ast.Diagnostic
+	// candidateEndingIsFromConfig is set when the candidate file extension originated from
+	// configuration (package.json fields, tsconfig.json paths entries, or wildcard substitutions)
+	// rather than from the module specifier written in source code. When true, resolvedUsingTsExtension
+	// is suppressed so the checker does not attempt to extract a TS extension from the original specifier.
+	candidateEndingIsFromConfig bool
+	resolvedPackageDirectory    bool
+	diagnostics                 []*ast.Diagnostic
 
 	// Similar to whats on resolver but only done if compilerOptions are for project reference redirect
 	// Cached representation for `core.CompilerOptions.paths`.
@@ -1041,7 +1045,15 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 }
 
 func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensions, moduleName string, nodeModulesDirectory string) *resolved {
-	candidate := tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, moduleName))
+	// Strip any trailing directory separator so that imports like `pkg/` and `pkg`
+	// produce identical `candidate` and `packageDirectory` strings. Otherwise the
+	// `package.json` info cache (which is keyed by normalized path but stores the
+	// caller's `PackageDirectory` verbatim) can hand back, under concurrent
+	// inserts, an entry whose `PackageDirectory` doesn't match `candidate`,
+	// causing `loadNodeModuleFromDirectoryWorker`'s `ComparePaths(candidate, ...)`
+	// check to fail and skip loading the package's `main`/`types` entry.
+	// https://github.com/microsoft/typescript-go/issues/3526
+	candidate := tspath.RemoveTrailingDirectorySeparator(tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, moduleName)))
 	packageName, rest := ParsePackageName(moduleName)
 	packageDirectory := tspath.CombinePaths(nodeModulesDirectory, packageName)
 	if packageName == "" {
@@ -1257,15 +1269,24 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 				r.tracer.write(diagnostics.Trying_substitution_0_candidate_module_location_Colon_1, subst, path)
 			}
 			// A path mapping may have an extension
-			if extension := tspath.TryGetExtensionFromPath(subst); extension != "" {
+			extensionFromSubst := tspath.TryGetExtensionFromPath(subst)
+			if extensionFromSubst != "" {
 				if path, ok := r.tryFile(candidate); ok {
 					return &resolved{
 						path:      path,
-						extension: extension,
+						extension: extensionFromSubst,
 					}
 				}
 			}
-			if resolved := loader(extensions, candidate); !resolved.shouldContinueSearching() {
+			// When the substitution path has an explicit extension, the extension came from the
+			// paths config, not the module specifier. Suppress resolvedUsingTsExtension in that case.
+			saveCandidateEndingIsFromConfig := r.candidateEndingIsFromConfig
+			if extensionFromSubst != "" {
+				r.candidateEndingIsFromConfig = true
+			}
+			resolved := loader(extensions, candidate)
+			r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
+			if !resolved.shouldContinueSearching() {
 				return resolved
 			}
 		}
@@ -1541,7 +1562,7 @@ func (r *resolutionState) tryExtension(extension string, extensionless string, r
 		return &resolved{
 			path:                     path,
 			extension:                extension,
-			resolvedUsingTsExtension: !r.candidateIsFromPackageJsonField && resolvedUsingTsExtension,
+			resolvedUsingTsExtension: !r.candidateEndingIsFromConfig && resolvedUsingTsExtension,
 		}
 	}
 	return continueSearching()
@@ -1612,14 +1633,14 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 
 		// Disable `esmMode` for the resolution of the package path for CJS-mode packages (so the `main` field can omit extensions)
 		saveESMMode := r.esmMode
-		saveCandidateIsFromPackageJsonField := r.candidateIsFromPackageJsonField
-		r.candidateIsFromPackageJsonField = true
+		saveCandidateEndingIsFromConfig := r.candidateEndingIsFromConfig
+		r.candidateEndingIsFromConfig = true
 		if packageInfo.Exists() && packageInfo.Contents.Type.Value != "module" {
 			r.esmMode = false
 		}
 		result := r.nodeLoadModuleByRelativeName(expandedExtensions, candidate, false /*considerPackageJson*/)
 		r.esmMode = saveESMMode
-		r.candidateIsFromPackageJsonField = saveCandidateIsFromPackageJsonField
+		r.candidateEndingIsFromConfig = saveCandidateEndingIsFromConfig
 		return result
 	}
 

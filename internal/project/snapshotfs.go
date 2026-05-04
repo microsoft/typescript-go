@@ -600,6 +600,14 @@ func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummar
 		path := s.toPath(change.Opened.FileName())
 		if entry, ok := s.diskFiles.Load(path); !ok || entry.Original() == nil {
 			change.Created.Add(change.Opened)
+		} else if overlay, ok := s.overlays[path]; ok {
+			// The file already exists in the program, but the overlay content from
+			// didOpen may differ from what was originally read from disk (e.g. the
+			// editor normalizes line endings, or the file changed on disk since the
+			// project was loaded). Mark it as Changed so the project rebuilds.
+			if diskFile := entry.Original(); diskFile != nil && overlay.Hash() != diskFile.Hash() {
+				change.Changed.Add(change.Opened)
+			}
 		}
 	}
 	for uri := range change.Closed.Keys() {
@@ -742,6 +750,11 @@ func (fs *sourceFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 
 // WriteFile implements vfs.FS.
 func (fs *sourceFS) WriteFile(path string, data string) error {
+	panic("unimplemented")
+}
+
+// AppendFile implements vfs.FS.
+func (fs *sourceFS) AppendFile(path string, data string) error {
 	panic("unimplemented")
 }
 
