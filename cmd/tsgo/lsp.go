@@ -61,8 +61,8 @@ func runLSP(args []string) int {
 			return cmd.Output()
 		},
 		ProgressDelay: 250 * time.Millisecond,
-		SetParentProcessId: func(parentPID int) {
-			startParentProcessWatchdog(ctx, parentPID)
+		SetParentProcessID: func(parentPID int) {
+			startParentProcessWatchdog(ctx, stop, parentPID)
 		},
 	})
 
@@ -74,22 +74,24 @@ func runLSP(args []string) int {
 }
 
 // startParentProcessWatchdog starts a goroutine that monitors the parent process
-// and exits the current process if the parent dies. This prevents orphaned language
+// and cancels the context if the parent dies. This prevents orphaned language
 // server processes when the editor crashes or is killed.
-func startParentProcessWatchdog(ctx context.Context, parentPID int) {
+func startParentProcessWatchdog(ctx context.Context, stop context.CancelFunc, parentPID int) {
 	if parentPID <= 0 {
 		return
 	}
 	go func() {
-		tick := time.Tick(5 * time.Second)
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
 		for {
 			select {
 			case <-ctx.Done():
 				return
-			case <-tick:
+			case <-ticker.C:
 				if !isProcessAlive(parentPID) {
 					fmt.Fprintf(os.Stderr, "Parent process %d has exited, shutting down.\n", parentPID)
-					os.Exit(1)
+					stop()
+					return
 				}
 			}
 		}

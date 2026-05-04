@@ -45,7 +45,7 @@ type ServerOptions struct {
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
 	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
-	SetParentProcessId func(parentPID int)
+	SetParentProcessID func(parentPID int)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -67,7 +67,7 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
-		startWatchdog:         opts.SetParentProcessId,
+		startWatchdog:         opts.SetParentProcessID,
 		initComplete:          make(chan struct{}),
 		progressDelay:         opts.ProgressDelay,
 	}

@@ -14,7 +14,7 @@ func isProcessAlive(pid int) bool {
 	if err != nil {
 		return false
 	}
-	defer syscall.CloseHandle(handle)
+	defer func() { _ = syscall.CloseHandle(handle) }()
 	ret, err := syscall.WaitForSingleObject(handle, 0)
 	if err != nil {
 		return false
