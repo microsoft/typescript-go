@@ -45,12 +45,54 @@ func TestConcurrentDurationEventsUseSeparateThreadIDs(t *testing.T) {
 	assert.Equal(t, aBegin.TID, aEnd.TID)
 	assert.Equal(t, bBegin.TID, bEnd.TID)
 	assert.Assert(t, aBegin.TID != bBegin.TID)
+	assertThreadName(t, events, aBegin.TID, "file:/a.ts")
+	assertThreadName(t, events, bBegin.TID, "file:/b.ts")
 
 	checkBegin := findEvent(t, events, "B", "checkSourceFile", "path", "/a.ts")
 	varianceBegin := findEvent(t, events, "B", "getVariancesWorker", "id", float64(1))
 	assert.Equal(t, checkBegin.TID, varianceBegin.TID)
+	assertThreadName(t, events, checkBegin.TID, "checker:0")
 
 	assertDurationEventsAreWellNestedByThread(t, events)
+}
+
+func TestThreadIDsAreStableAcrossFirstSeenOrder(t *testing.T) {
+	t.Parallel()
+
+	first := traceThreadIDsForPaths(t, []string{"/a.ts", "/b.ts"})
+	second := traceThreadIDsForPaths(t, []string{"/b.ts", "/a.ts"})
+
+	assert.DeepEqual(t, first, second)
+}
+
+func traceThreadIDsForPaths(t *testing.T, paths []string) map[string]int {
+	t.Helper()
+
+	fsys := vfstest.FromMap(fstest.MapFS{
+		"/trace": &fstest.MapFile{Mode: fs.ModeDir},
+	}, true)
+
+	tr, err := StartTracing(fsys, "/trace", "", true /*deterministic*/)
+	assert.NilError(t, err)
+
+	for _, path := range paths {
+		end := tr.Push(PhaseParse, "createSourceFile", map[string]any{"path": path}, true)
+		end()
+	}
+
+	assert.NilError(t, tr.StopTracing())
+
+	traceText, ok := fsys.ReadFile("/trace/trace.json")
+	assert.Assert(t, ok)
+
+	var events []traceEvent
+	assert.NilError(t, json.Unmarshal([]byte(traceText), &events))
+
+	threadIDs := make(map[string]int)
+	for _, path := range paths {
+		threadIDs[path] = findEvent(t, events, "B", "createSourceFile", "path", path).TID
+	}
+	return threadIDs
 }
 
 func findEvent(t *testing.T, events []traceEvent, phase string, name string, argName string, argValue any) traceEvent {
@@ -62,6 +104,16 @@ func findEvent(t *testing.T, events []traceEvent, phase string, name string, arg
 	}
 	t.Fatalf("failed to find %s event %q with %s=%v", phase, name, argName, argValue)
 	return traceEvent{}
+}
+
+func assertThreadName(t *testing.T, events []traceEvent, tid int, name string) {
+	t.Helper()
+	for _, event := range events {
+		if event.PH == "M" && event.Name == "thread_name" && event.TID == tid && event.Args["name"] == name {
+			return
+		}
+	}
+	t.Fatalf("failed to find thread_name metadata for thread %d named %q", tid, name)
 }
 
 func assertDurationEventsAreWellNestedByThread(t *testing.T, events []traceEvent) {
