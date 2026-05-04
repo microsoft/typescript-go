@@ -93,8 +93,10 @@ const sampleInterval = 10 * time.Millisecond
 
 const traceFileName = "trace.json"
 
-const mainThreadID = 1
-const firstSyntheticThreadID = 2
+const (
+	mainThreadID           = 1
+	firstSyntheticThreadID = 2
+)
 
 // flushThreshold is the size at which buffered trace content is flushed to disk
 // via AppendFile. Keeps peak memory bounded for long-running compilations while
