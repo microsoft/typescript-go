@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"syscall"
 )
@@ -18,5 +19,5 @@ func isProcessAlive(pid int) bool {
 		return false
 	}
 	err = proc.Signal(syscall.Signal(0))
-	return err == nil || err == syscall.EPERM
+	return err == nil || errors.Is(err, syscall.EPERM)
 }
