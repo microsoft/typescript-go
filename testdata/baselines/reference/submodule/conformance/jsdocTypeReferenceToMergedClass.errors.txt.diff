@@ -2,14 +2,14 @@
 +++ new.jsdocTypeReferenceToMergedClass.errors.txt
 @@= skipped -0, +0 lines =@@
 -jsdocTypeReferenceToMergedClass.js(4,1): error TS2454: Variable 'p' is used before being assigned.
-+jsdocTypeReferenceToMergedClass.js(2,12): error TS2503: Cannot find namespace 'Workspace'.
++jsdocTypeReferenceToMergedClass.js(2,12): error TS2749: 'Workspace.Project' refers to a value, but is being used as a type here. Did you mean 'typeof Workspace.Project'?
 
 
  ==== jsdocTypeReferenceToMergedClass.js (1 errors) ====
      var Workspace = {}
      /** @type {Workspace.Project} */
-+               ~~~~~~~~~
-+!!! error TS2503: Cannot find namespace 'Workspace'.
++               ~~~~~~~~~~~~~~~~~
++!!! error TS2749: 'Workspace.Project' refers to a value, but is being used as a type here. Did you mean 'typeof Workspace.Project'?
      var p;
      p.isServiceProject()
 -    ~

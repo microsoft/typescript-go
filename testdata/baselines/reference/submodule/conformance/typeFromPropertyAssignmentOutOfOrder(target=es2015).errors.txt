@@ -1,4 +1,4 @@
-index.js(6,12): error TS2503: Cannot find namespace 'Workspace'.
+index.js(6,22): error TS2694: Namespace 'Workspace' has no exported member 'Object'.
 
 
 ==== index.js (1 errors) ====
@@ -8,8 +8,8 @@ index.js(6,12): error TS2503: Cannot find namespace 'Workspace'.
     Workspace.Object = class extends Common.Object {}
     
     /** @type {Workspace.Object} */
-               ~~~~~~~~~
-!!! error TS2503: Cannot find namespace 'Workspace'.
+                         ~~~~~~
+!!! error TS2694: Namespace 'Workspace' has no exported member 'Object'.
     var am;
     
 ==== roots.js (0 errors) ====

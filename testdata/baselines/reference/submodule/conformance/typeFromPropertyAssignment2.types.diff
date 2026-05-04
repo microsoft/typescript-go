@@ -36,12 +36,12 @@
  /** @type {Outer.Inner} */
  var oc
 ->oc : I
-+>oc : Outer.Inner
++>oc : any
 
  oc.x
 ->oc.x : number
 ->oc : I
 ->x : number
 +>oc.x : any
-+>oc : Outer.Inner
++>oc : any
 +>x : any

@@ -15412,6 +15412,10 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 	if ast.NodeIsMissing(name) {
 		return nil
 	}
+	namespaceMeaning := ast.SymbolFlagsNamespace
+	if ast.IsInJSFile(name) {
+		namespaceMeaning |= meaning & ast.SymbolFlagsValue
+	}
 	var symbol *ast.Symbol
 	switch name.Kind {
 	case ast.KindIdentifier:
@@ -15444,10 +15448,10 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 		}
 	case ast.KindQualifiedName:
 		qualified := name.AsQualifiedName()
-		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, location)
+		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, namespaceMeaning, meaning, ignoreErrors, location)
 	case ast.KindPropertyAccessExpression:
 		access := name.AsPropertyAccessExpression()
-		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), meaning, ignoreErrors, location)
+		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), namespaceMeaning, meaning, ignoreErrors, location)
 	default:
 		panic("Unknown entity name kind")
 	}
@@ -15463,9 +15467,20 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 	return symbol
 }
 
-func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, meaning ast.SymbolFlags, ignoreErrors bool, location *ast.Node) *ast.Symbol {
-	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, ignoreErrors, false /*dontResolveAlias*/, location)
-	if namespace == nil || ast.NodeIsMissing(right) {
+func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *ast.Node, namespaceMeaning ast.SymbolFlags, meaning ast.SymbolFlags, ignoreErrors bool, location *ast.Node) *ast.Symbol {
+	namespace := c.resolveEntityName(left, ast.SymbolFlagsNamespace, true /*ignoreErrors*/, false /*dontResolveAlias*/, location)
+	if namespace == nil && namespaceMeaning != ast.SymbolFlagsNamespace {
+		// In JS files, also try resolving the left side including value meaning
+		namespace = c.resolveEntityName(left, namespaceMeaning, true /*ignoreErrors*/, false /*dontResolveAlias*/, location)
+	}
+	if namespace == nil {
+		if !ignoreErrors {
+			// Re-resolve with just Namespace meaning to produce the original error
+			c.resolveEntityName(left, ast.SymbolFlagsNamespace, false /*ignoreErrors*/, false /*dontResolveAlias*/, location)
+		}
+		return nil
+	}
+	if ast.NodeIsMissing(right) {
 		return nil
 	}
 	if namespace == c.unknownSymbol {
@@ -22627,11 +22642,29 @@ func (c *Checker) getTypeFromTypeReference(node *ast.Node) *Type {
 			links.resolvedType = c.checkExpressionCached(node.Parent.Expression())
 		} else if t := c.getIntendedTypeFromJSDocTypeReference(node); t != nil {
 			links.resolvedType = t
+		} else if c.isJSDocTypeReference(node) && c.hasQualifiedTypeName(node) {
+			symbol := c.resolveTypeReferenceName(node, ast.SymbolFlagsType, true /*ignoreErrors*/)
+			if symbol == c.unknownSymbol {
+				symbol = c.resolveTypeReferenceName(node, ast.SymbolFlagsType|ast.SymbolFlagsValue, false /*ignoreErrors*/)
+			} else {
+				c.resolveTypeReferenceName(node, ast.SymbolFlagsType, false /*ignoreErrors*/) // Resolve again to mark errors, if any
+			}
+			c.symbolNodeLinks.Get(node).resolvedSymbol = symbol
+			links.resolvedType = c.getTypeReferenceType(node, symbol)
 		} else {
 			links.resolvedType = c.getTypeReferenceType(node, c.getSymbolFromTypeReference(node))
 		}
 	}
 	return links.resolvedType
+}
+
+func (c *Checker) isJSDocTypeReference(node *ast.Node) bool {
+	return node.Flags&ast.NodeFlagsJSDoc != 0 && (ast.IsTypeReferenceNode(node) || node.Kind == ast.KindImportType)
+}
+
+func (c *Checker) hasQualifiedTypeName(node *ast.Node) bool {
+	name := getTypeReferenceName(node)
+	return name != nil && (name.Kind == ast.KindQualifiedName || name.Kind == ast.KindPropertyAccessExpression)
 }
 
 func (c *Checker) getIntendedTypeFromJSDocTypeReference(node *ast.Node) *Type {

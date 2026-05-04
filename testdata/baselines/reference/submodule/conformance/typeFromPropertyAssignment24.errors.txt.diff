@@ -3,7 +3,7 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +usage.js(2,13): error TS2339: Property 'Message' does not exist on type 'typeof Inner'.
-+usage.js(7,12): error TS2503: Cannot find namespace 'Outer'.
++usage.js(7,12): error TS2749: 'Outer.Inner' refers to a value, but is being used as a type here. Did you mean 'typeof Outer.Inner'?
 +
 +
 +==== usage.js (2 errors) ====
@@ -16,8 +16,8 @@
 +    var y = new Outer.Inner()
 +    y.name
 +    /** @type {Outer.Inner} should be instance type, not static type */
-+               ~~~~~
-+!!! error TS2503: Cannot find namespace 'Outer'.
++               ~~~~~~~~~~~
++!!! error TS2749: 'Outer.Inner' refers to a value, but is being used as a type here. Did you mean 'typeof Outer.Inner'?
 +    var x;
 +    x.name
 +    

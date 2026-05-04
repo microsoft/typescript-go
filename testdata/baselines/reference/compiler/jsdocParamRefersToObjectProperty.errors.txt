@@ -1,0 +1,16 @@
+main.js(7,12): error TS2749: 'map.foo' refers to a value, but is being used as a type here. Did you mean 'typeof map.foo'?
+
+
+==== main.js (1 errors) ====
+    export const map = /** @type {const} */ ({
+        foo: 'foo',
+        bar: 'bar',
+    });
+    
+    /**
+     * @param {map.foo} foo
+               ~~~~~~~
+!!! error TS2749: 'map.foo' refers to a value, but is being used as a type here. Did you mean 'typeof map.foo'?
+     */
+    export function buzz(foo) {}
+    

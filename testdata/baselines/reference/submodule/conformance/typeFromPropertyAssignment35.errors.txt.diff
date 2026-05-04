@@ -2,13 +2,13 @@
 +++ new.typeFromPropertyAssignment35.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+bug26877.js(1,13): error TS2503: Cannot find namespace 'Emu'.
++bug26877.js(1,17): error TS2694: Namespace 'Emu' has no exported member 'D'.
 +
 +
 +==== bug26877.js (1 errors) ====
 +    /** @param {Emu.D} x */
-+                ~~~
-+!!! error TS2503: Cannot find namespace 'Emu'.
++                    ~
++!!! error TS2694: Namespace 'Emu' has no exported member 'D'.
 +    function ollKorrect(x) {
 +        x._model
 +        const y = new Emu.D()
