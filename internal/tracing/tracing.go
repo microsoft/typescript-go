@@ -71,6 +71,7 @@ type TraceRecord struct {
 	ConfigFilePath string `json:"configFilePath,omitzero"`
 	TracePath      string `json:"tracePath,omitzero"`
 	TypesPath      string `json:"typesPath,omitzero"`
+	CheckerID      int    `json:"checkerId"`
 }
 
 type traceEvent struct {
@@ -92,6 +93,9 @@ const sampleInterval = 10 * time.Millisecond
 
 const traceFileName = "trace.json"
 
+const mainThreadID = 1
+const firstSyntheticThreadID = 2
+
 // flushThreshold is the size at which buffered trace content is flushed to disk
 // via AppendFile. Keeps peak memory bounded for long-running compilations while
 // avoiding a syscall per event.
@@ -107,6 +111,8 @@ type Tracing struct {
 	tracers          []*typeTracer
 	traceContent     strings.Builder
 	traceStarted     atomic.Bool
+	threadIDs        map[string]int
+	nextThreadID     int
 	deterministic    bool   // when true, use monotonic counter instead of real time
 	timestampCounter uint64 // only used in deterministic mode
 	startTime        time.Time
@@ -142,6 +148,8 @@ func StartTracing(fs vfs.FS, traceDir string, configFilePath string, determinist
 		configFilePath: configFilePath,
 		legend:         []TraceRecord{},
 		tracers:        []*typeTracer{},
+		threadIDs:      make(map[string]int),
+		nextThreadID:   firstSyntheticThreadID,
 		deterministic:  deterministic,
 		startTime:      time.Now(),
 	}
@@ -152,11 +160,11 @@ func StartTracing(fs vfs.FS, traceDir string, configFilePath string, determinist
 
 	// Write metadata events (matching TypeScript's format)
 	metaTs := tr.timestamp()
-	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "__metadata", TS: metaTs, Name: "process_name", Args: map[string]any{"name": "tsgo"}})
+	tr.writeEvent(traceEvent{PID: 1, TID: mainThreadID, PH: "M", Cat: "__metadata", TS: metaTs, Name: "process_name", Args: map[string]any{"name": "tsgo"}})
 	tr.traceContent.WriteString(",\n")
-	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "__metadata", TS: metaTs, Name: "thread_name", Args: map[string]any{"name": "Main"}})
+	tr.writeEvent(traceEvent{PID: 1, TID: mainThreadID, PH: "M", Cat: "__metadata", TS: metaTs, Name: "thread_name", Args: map[string]any{"name": "Main"}})
 	tr.traceContent.WriteString(",\n")
-	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "M", Cat: "disabled-by-default-devtools.timeline", TS: metaTs, Name: "TracingStartedInBrowser"})
+	tr.writeEvent(traceEvent{PID: 1, TID: mainThreadID, PH: "M", Cat: "disabled-by-default-devtools.timeline", TS: metaTs, Name: "TracingStartedInBrowser"})
 
 	// Truncate any existing trace file with the header so subsequent AppendFile
 	// calls extend a clean file.
@@ -226,8 +234,9 @@ func (tr *Tracing) Instant(phase Phase, name string, args map[string]any) {
 	}
 
 	ts := tr.timestamp()
+	tid := tr.threadIDLocked(args)
 	tr.traceContent.WriteString(",\n")
-	tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "I", Cat: string(phase), TS: ts, Name: name, S: "g", Args: args})
+	tr.writeEvent(traceEvent{PID: 1, TID: tid, PH: "I", Cat: string(phase), TS: ts, Name: name, S: "g", Args: args})
 	tr.maybeFlushLocked()
 }
 
@@ -257,8 +266,9 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 			return func() {}
 		}
 		ts := tr.timestamp()
+		tid := tr.threadIDLocked(args)
 		tr.traceContent.WriteString(",\n")
-		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
+		tr.writeEvent(traceEvent{PID: 1, TID: tid, PH: "B", Cat: string(phase), TS: ts, Name: name, Args: args})
 		tr.maybeFlushLocked()
 		tr.mu.Unlock()
 
@@ -270,7 +280,7 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 			}
 			endTs := tr.timestamp()
 			tr.traceContent.WriteString(",\n")
-			tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "E", Cat: string(phase), TS: endTs, Name: name, Args: args})
+			tr.writeEvent(traceEvent{PID: 1, TID: tid, PH: "E", Cat: string(phase), TS: endTs, Name: name, Args: args})
 			tr.maybeFlushLocked()
 		}
 	}
@@ -295,10 +305,47 @@ func (tr *Tracing) Push(phase Phase, name string, args map[string]any, separateB
 		if !tr.traceStarted.Load() {
 			return
 		}
+		tid := tr.threadIDLocked(args)
 		tr.traceContent.WriteString(",\n")
-		tr.writeEvent(traceEvent{PID: 1, TID: 1, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
+		tr.writeEvent(traceEvent{PID: 1, TID: tid, PH: "X", Cat: string(phase), TS: startMicros, Name: name, Dur: &dur, Args: args})
 		tr.maybeFlushLocked()
 	}
+}
+
+func (tr *Tracing) threadIDLocked(args map[string]any) int {
+	key, ok := traceThreadKey(args)
+	if !ok {
+		return mainThreadID
+	}
+
+	if tid, ok := tr.threadIDs[key]; ok {
+		return tid
+	}
+
+	tid := tr.nextThreadID
+	tr.nextThreadID++
+	tr.threadIDs[key] = tid
+	return tid
+}
+
+func traceThreadKey(args map[string]any) (string, bool) {
+	if len(args) == 0 {
+		return "", false
+	}
+
+	if checkerID, ok := args["checkerId"]; ok {
+		return "checker:" + fmt.Sprint(checkerID), true
+	}
+
+	for _, key := range []string{"path", "fileName", "containingFileName", "jsFilePath", "declarationFilePath"} {
+		if value, ok := args[key]; ok {
+			if path, ok := value.(string); ok && path != "" {
+				return "file:" + path, true
+			}
+		}
+	}
+
+	return "", false
 }
 
 // NewTypeTracer creates a new tracer for a specific checker.
@@ -319,6 +366,7 @@ func (tr *Tracing) NewTypeTracer(checkerIndex int) Tracer {
 		ConfigFilePath: tr.configFilePath,
 		TracePath:      tr.tracePath,
 		TypesPath:      typesPath,
+		CheckerID:      checkerIndex,
 	})
 	return tracer
 }

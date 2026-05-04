@@ -9,14 +9,15 @@ import (
 // is a valid no-op, so call sites can use `if tr := c.tracer; tr != nil` to
 // gate work that only matters under --generateTrace.
 type Tracer struct {
-	tracing  *tracing.Tracing
-	recorder tracing.Tracer
+	tracing      *tracing.Tracing
+	recorder     tracing.Tracer
+	checkerIndex int
 }
 
 // NewTracer creates a Tracer for the given checker index that records both
 // type-creation events and trace events through the provided tracing session.
 func NewTracer(tr *tracing.Tracing, checkerIndex int) *Tracer {
-	return &Tracer{tracing: tr, recorder: tr.NewTypeTracer(checkerIndex)}
+	return &Tracer{tracing: tr, recorder: tr.NewTypeTracer(checkerIndex), checkerIndex: checkerIndex}
 }
 
 func (t *Tracer) RecordType(typ *Type) {
@@ -24,11 +25,19 @@ func (t *Tracer) RecordType(typ *Type) {
 }
 
 func (t *Tracer) Push(phase tracing.Phase, name string, args map[string]any, separateBeginAndEnd bool) func() {
-	return t.tracing.Push(phase, name, args, separateBeginAndEnd)
+	return t.tracing.Push(phase, name, t.withCheckerIndex(args), separateBeginAndEnd)
 }
 
 func (t *Tracer) Instant(phase tracing.Phase, name string, args map[string]any) {
-	t.tracing.Instant(phase, name, args)
+	t.tracing.Instant(phase, name, t.withCheckerIndex(args))
+}
+
+func (t *Tracer) withCheckerIndex(args map[string]any) map[string]any {
+	if args == nil {
+		args = map[string]any{}
+	}
+	args["checkerId"] = t.checkerIndex
+	return args
 }
 
 // tracedTypeAdapter adapts a Type to the tracing.TracedType interface
