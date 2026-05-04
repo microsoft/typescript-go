@@ -16,11 +16,11 @@
         "dprint": "^0.54.0",
         "execa": "^9.6.1",
         "glob": "^13.0.6",
-        "hereby": "^1.14.0",
+        "hereby": "^1.15.1",
         "p-limit": "^7.3.0",
         "picocolors": "^1.1.1",
         "tmp": "^0.2.5",
-        "typescript": "^6.0.2",
+        "typescript": "^6.0.3",
         "which": "^6.0.1"
     },
     "scripts": {
@@ -44,7 +44,7 @@
         "@microsoft/1ds-core-js": "4.3.11",
         "@microsoft/1ds-post-js": "4.3.11"
     },
-    "packageManager": "npm@11.12.1+sha512.cdca14b85d647b3192028d02aadbe82d75f79a446aceea9874be98e6d768f20ebd3555770a48d0e9906106007877bbc690f715e9372f2e2dc644a3c3157fb14c",
+    "packageManager": "npm@11.13.0+sha512.7119a16a0843580d65160977520e3f5710c974f04afd4fad36d9eb97d917ba716a856c35c78c4be6dc64367eeaccfb957ef5ce997ca31e9330b2e936ba2b1b92",
     "volta": {
         "node": "22.22.0",
         "npm": "11.12.1"
