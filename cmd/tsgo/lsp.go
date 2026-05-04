@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"runtime"
 	"syscall"
 	"time"
 
@@ -95,19 +94,4 @@ func startParentProcessWatchdog(ctx context.Context, parentPID int) {
 			}
 		}
 	}()
-}
-
-// isProcessAlive checks if a process with the given PID is still running.
-func isProcessAlive(pid int) bool {
-	proc, err := os.FindProcess(pid)
-	if err != nil {
-		return false
-	}
-	// On Unix, FindProcess always succeeds. We need to send signal 0 to check if
-	// the process exists. On Windows, FindProcess already validates the process exists.
-	if runtime.GOOS == "windows" {
-		return true
-	}
-	err = proc.Signal(syscall.Signal(0))
-	return err == nil
 }
