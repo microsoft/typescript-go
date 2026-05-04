@@ -184,6 +184,7 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 	"moduleDetection":  moduleDetectionOptionMap,
 	"jsx":              jsxOptionMap,
 	"newLine":          newLineOptionMap,
+	"outputFormat":     outputFormatOptionMap,
 	"watchFile":        watchFileEnumMap,
 	"watchDirectory":   watchDirectoryEnumMap,
 	"fallbackPolling":  fallbackEnumMap,

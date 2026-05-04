@@ -145,6 +145,7 @@ type CompilerOptions struct {
 	NoEmitForJsFiles    Tristate `json:"noEmitForJsFiles,omitzero"`
 	PreserveWatchOutput Tristate `json:"preserveWatchOutput,omitzero"`
 	Pretty              Tristate `json:"pretty,omitzero"`
+	OutputFormat        string   `json:"outputFormat,omitzero"`
 	Version             Tristate `json:"version,omitzero"`
 	Watch               Tristate `json:"watch,omitzero"`
 	ShowConfig          Tristate `json:"showConfig,omitzero"`
@@ -168,6 +169,11 @@ type noCopy struct{}
 // Lock is a no-op used by -copylocks checker from `go vet`.
 func (*noCopy) Lock()   {}
 func (*noCopy) Unlock() {}
+
+const (
+	OutputFormatDefault = "default"
+	OutputFormatMinimal = "minimal"
+)
 
 var EmptyCompilerOptions = &CompilerOptions{}
 

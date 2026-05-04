@@ -28,10 +28,15 @@ type DiagnosticReporter = func(*ast.Diagnostic)
 func QuietDiagnosticReporter(diagnostic *ast.Diagnostic) {}
 
 func CreateDiagnosticReporter(sys System, w io.Writer, locale locale.Locale, options *core.CompilerOptions) DiagnosticReporter {
-	if options.Quiet.IsTrue() {
+	if options != nil && options.Quiet.IsTrue() {
 		return QuietDiagnosticReporter
 	}
 	formatOpts := getFormatOptsOfSys(sys, locale)
+	if shouldUseMinimalOutput(options) {
+		return func(diagnostic *ast.Diagnostic) {
+			diagnosticwriter.WriteMinimalDiagnostic(w, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOpts)
+		}
+	}
 	if shouldBePretty(sys, options) {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.FormatDiagnosticWithColorAndContext(w, diagnosticwriter.WrapASTDiagnostic(diagnostic), formatOpts)
@@ -53,7 +58,14 @@ func defaultIsPretty(sys System) bool {
 	return sys.WriteOutputIsTTY()
 }
 
+func shouldUseMinimalOutput(options *core.CompilerOptions) bool {
+	return options != nil && options.OutputFormat == core.OutputFormatMinimal
+}
+
 func shouldBePretty(sys System, options *core.CompilerOptions) bool {
+	if shouldUseMinimalOutput(options) {
+		return false
+	}
 	if options == nil || options.Pretty.IsUnknown() {
 		return defaultIsPretty(sys)
 	}

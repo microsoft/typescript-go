@@ -476,6 +476,38 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *
 	fmt.Fprint(output, formatOpts.NewLine)
 }
 
+func WriteMinimalDiagnostic(output io.Writer, diagnostic Diagnostic, formatOpts *FormattingOptions) {
+	if diagnostic.File() != nil {
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		fileName := diagnostic.File().FileName()
+		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
+		fmt.Fprintf(output, "%s:%d:%d: ", relativeFileName, line+1, int(character)+1)
+	}
+
+	fmt.Fprintf(output, "TS%d: ", diagnostic.Code())
+	writeFlattenedDiagnosticMessageSingleLine(output, diagnostic, formatOpts.Locale)
+	fmt.Fprint(output, formatOpts.NewLine)
+}
+
+func writeFlattenedDiagnosticMessageSingleLine(writer io.Writer, diagnostic Diagnostic, locale locale.Locale) {
+	first := true
+	var writeMessage func(Diagnostic)
+	writeMessage = func(diagnostic Diagnostic) {
+		message := strings.Join(strings.Fields(diagnostic.Localize(locale)), " ")
+		if message != "" {
+			if !first {
+				fmt.Fprint(writer, " | ")
+			}
+			fmt.Fprint(writer, message)
+			first = false
+		}
+		for _, chain := range diagnostic.MessageChain() {
+			writeMessage(chain)
+		}
+	}
+	writeMessage(diagnostic)
+}
+
 func FormatDiagnosticsStatusWithColorAndTime(output io.Writer, time string, diag Diagnostic, formatOpts *FormattingOptions) {
 	fmt.Fprint(output, "[")
 	writeWithStyleAndReset(output, time, foregroundColorEscapeGrey)

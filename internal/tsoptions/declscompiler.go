@@ -78,6 +78,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		DefaultValueDescription:  true,
 	},
 	{
+		Name:                    "outputFormat",
+		Kind:                    CommandLineOptionTypeEnum,
+		IsCommandLineOnly:       true,
+		Category:                diagnostics.Output_Formatting,
+		Description:             diagnostics.Specify_how_TypeScript_reports_diagnostics,
+		DefaultValueDescription: core.OutputFormatDefault,
+	},
+	{
 		Name:                    "traceResolution",
 		Kind:                    CommandLineOptionTypeBoolean,
 		Category:                diagnostics.Compiler_Diagnostics,
