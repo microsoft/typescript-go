@@ -8,10 +8,14 @@
 -exports.bar2 = [2][0];
 -exports.bar3 = { a: 1 }.a;
 -exports.bar4 = { a: 1 }.a;
-+[exports.bar1] = [1];
-+[exports.bar2] = [2];
-+({ a: exports.bar3 } = { a: 1 });
-+({ a: exports.bar4 } = { a: 1 });
++let [bar1] = [1];
++exports.bar1 = bar1;
++const [bar2] = [2];
++exports.bar2 = bar2;
++let { a: bar3 } = { a: 1 };
++exports.bar3 = bar3;
++const { a: bar4 } = { a: 1 };
++exports.bar4 = bar4;
  var M;
  (function (M) {
      M.baz = 100;

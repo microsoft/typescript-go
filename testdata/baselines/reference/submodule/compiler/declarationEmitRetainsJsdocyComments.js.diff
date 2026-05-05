@@ -4,15 +4,13 @@
      }
  }
  exports.Foo = Foo;
--/**
--* comment5
--*/
++let { 
+ /**
+ * comment5
+ */
 -exports.someMethod = null.someMethod;
-+({ 
-+    /**
-+    * comment5
-+    */
-+    someMethod: exports.someMethod } = null);
++someMethod } = null;
++exports.someMethod = someMethod;
 
 
  //// [declarationEmitRetainsJsdocyComments.d.ts]

@@ -78,11 +78,12 @@ class Foo {
     }
 }
 exports.Foo = Foo;
-({ 
-    /**
-    * comment5
-    */
-    someMethod: exports.someMethod } = null);
+let { 
+/**
+* comment5
+*/
+someMethod } = null;
+exports.someMethod = someMethod;
 
 
 //// [declarationEmitRetainsJsdocyComments.d.ts]
