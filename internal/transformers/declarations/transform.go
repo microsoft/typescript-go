@@ -60,7 +60,7 @@ type DeclarationTransformer struct {
 	resultHasExternalModuleIndicator bool
 	suppressNewDiagnosticContexts    bool
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
-	expandoHosts                     collections.Set[ast.NodeId]
+	expandoHosts                     map[ast.NodeId]*ast.Node // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
 	rawReferencedFiles               []ReferencedFilePair
 	rawTypeReferenceDirectives       []*ast.FileReference
 	rawLibReferenceDirectives        []*ast.FileReference
@@ -250,7 +250,7 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.suppressNewDiagnosticContexts = false
 	tx.state.lateMarkedStatements = make([]*ast.Node, 0)
 	tx.lateStatementReplacementMap = make(map[ast.NodeId]*ast.Node)
-	tx.expandoHosts = collections.Set[ast.NodeId]{}
+	tx.expandoHosts = make(map[ast.NodeId]*ast.Node)
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
@@ -1327,6 +1327,12 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 	if ast.IsFunctionLike(input) && tx.resolver.IsImplementationOfOverload(input) {
 		return nil
 	}
+	original := tx.EmitContext().MostOriginal(input)
+	id := ast.GetNodeId(original)
+	if n, ok := tx.expandoHosts[id]; ok {
+		return n
+	}
+
 	previousEnclosingDeclaration := tx.enclosingDeclaration
 	if isEnclosingDeclaration(input) {
 		tx.enclosingDeclaration = input
@@ -2235,6 +2241,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return nil
 	}
 
+	if ast.IsDeclaration(declaration) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, declaration) {
+		return nil
+	}
+
 	tx.transformExpandoHost(name, declaration)
 
 	if ast.IsFunctionDeclaration(declaration) && !shouldEmitFunctionProperties(declaration.AsFunctionDeclaration()) {
@@ -2297,7 +2307,7 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 	root := core.IfElse(ast.IsVariableDeclaration(declaration), declaration.Parent.Parent, declaration)
 	id := ast.GetNodeId(tx.EmitContext().MostOriginal(root))
 
-	if tx.expandoHosts.Has(id) {
+	if _, ok := tx.expandoHosts[id]; ok {
 		return
 	}
 
@@ -2333,8 +2343,12 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 		replacement = append(replacement, tx.Factory().NewExportAssignment(nil /*modifiers*/, false /*isExportEquals*/, nil /*typeNode*/, name))
 	}
 
-	tx.expandoHosts.Add(id)
-	tx.lateStatementReplacementMap[id] = tx.Factory().NewSyntaxList(replacement)
+	// store host result to be added to the output when it's actually visited
+	tx.expandoHosts[id] = tx.Factory().NewSyntaxList(replacement)
+	if _, ok := tx.lateStatementReplacementMap[id]; ok {
+		// host already included in output, revise it
+		tx.lateStatementReplacementMap[id] = tx.expandoHosts[id]
+	}
 }
 
 func extractExpandoHostParams(node *ast.Node) (typeParameters *ast.TypeParameterList, parameters *ast.ParameterList, asteriskToken *ast.TokenNode) {
