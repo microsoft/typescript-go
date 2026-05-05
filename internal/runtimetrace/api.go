@@ -63,7 +63,7 @@ func NewTask(ctx context.Context, name string) (context.Context, func()) {
 //
 //   - LogUnsafe / LogUnsafef: for payloads that may contain user data such
 //     as file paths, module specifiers, or identifier names. Only emitted
-//     when the user has opted in via TSGO_RUNTIME_TRACE_DETAIL.
+//     when the user has opted in via TS_GO_RUNTIME_TRACE_DETAIL.
 //
 // All four helpers fast-path with a single IsEnabled / unsafeLogging check
 // before doing anything else, so calls on the disabled path are cheap.
@@ -71,7 +71,7 @@ func NewTask(ctx context.Context, name string) (context.Context, func()) {
 // arguments before the call. Hot-path callers should additionally gate on
 // IsEnabled to skip the call entirely.
 
-// unsafeLogging is set by Start when TSGO_RUNTIME_TRACE_DETAIL is truthy.
+// unsafeLogging is set by Start when TS_GO_RUNTIME_TRACE_DETAIL is truthy.
 var unsafeLogging atomic.Bool
 
 // LogSafe emits a one-off event to the execution trace, attached to the task
@@ -91,7 +91,7 @@ func LogSafef(ctx context.Context, category, format string, args ...any) {
 }
 
 // LogUnsafe emits a one-off event to the execution trace only when the user
-// has opted in via TSGO_RUNTIME_TRACE_DETAIL. Use it for payloads that may
+// has opted in via TS_GO_RUNTIME_TRACE_DETAIL. Use it for payloads that may
 // include file paths, identifier names, or other user data.
 func LogUnsafe(ctx context.Context, category, message string) {
 	if unsafeLogging.Load() && trace.IsEnabled() {

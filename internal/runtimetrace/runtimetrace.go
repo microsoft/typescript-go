@@ -5,25 +5,25 @@
 //
 // Environment variables:
 //
-//	TSGO_RUNTIME_TRACE
+//	TS_GO_RUNTIME_TRACE
 //	    If set to a non-empty path, write a Go execution trace covering the
 //	    whole process lifetime to that path. Inspect with `go tool trace`.
 //
-//	TSGO_RUNTIME_TRACE_FLIGHT
+//	TS_GO_RUNTIME_TRACE_FLIGHT
 //	    If set to a non-empty path (file or directory), start a flight
 //	    recorder and write a snapshot of the most recent execution-trace
 //	    window on shutdown (and on SIGUSR1 on unix). When the value is an
 //	    existing directory the snapshot is written into it with a generated
 //	    filename.
 //
-//	TSGO_RUNTIME_TRACE_FLIGHT_MIN_AGE
+//	TS_GO_RUNTIME_TRACE_FLIGHT_MIN_AGE
 //	    Optional time.ParseDuration value used as MinAge for the flight
 //	    recorder.
 //
-//	TSGO_RUNTIME_TRACE_FLIGHT_MAX_BYTES
+//	TS_GO_RUNTIME_TRACE_FLIGHT_MAX_BYTES
 //	    Optional unsigned integer used as MaxBytes for the flight recorder.
 //
-//	TSGO_RUNTIME_TRACE_DETAIL
+//	TS_GO_RUNTIME_TRACE_DETAIL
 //	    If set to a truthy value (1, true, yes, on), instrumentation may emit
 //	    additional log events that include potentially sensitive information
 //	    such as file paths or identifier names. Defaults to off so that
@@ -44,11 +44,11 @@ import (
 )
 
 const (
-	envRuntimeTrace              = "TSGO_RUNTIME_TRACE"
-	envRuntimeTraceFlight        = "TSGO_RUNTIME_TRACE_FLIGHT"
-	envRuntimeTraceFlightMinAge  = "TSGO_RUNTIME_TRACE_FLIGHT_MIN_AGE"
-	envRuntimeTraceFlightMaxByte = "TSGO_RUNTIME_TRACE_FLIGHT_MAX_BYTES"
-	envRuntimeTraceDetail        = "TSGO_RUNTIME_TRACE_DETAIL"
+	envRuntimeTrace              = "TS_GO_RUNTIME_TRACE"
+	envRuntimeTraceFlight        = "TS_GO_RUNTIME_TRACE_FLIGHT"
+	envRuntimeTraceFlightMinAge  = "TS_GO_RUNTIME_TRACE_FLIGHT_MIN_AGE"
+	envRuntimeTraceFlightMaxByte = "TS_GO_RUNTIME_TRACE_FLIGHT_MAX_BYTES"
+	envRuntimeTraceDetail        = "TS_GO_RUNTIME_TRACE_DETAIL"
 )
 
 // Session represents an active runtime tracing setup (regular trace and/or
