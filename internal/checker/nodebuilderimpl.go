@@ -83,9 +83,9 @@ type NodeBuilderContext struct {
 
 	// per signature scope state
 	typeParameterNames                    collections.CopyOnWriteMap[TypeId, *ast.Identifier]
-	typeParameterNamesByText              collections.CopyOnWriteMap[string, struct{}]
+	typeParameterNamesByText              collections.CopyOnWriteSet[string]
 	typeParameterNamesByTextNextNameCount collections.CopyOnWriteMap[string, int]
-	typeParameterSymbolList               collections.CopyOnWriteMap[ast.SymbolId, struct{}]
+	typeParameterSymbolList               collections.CopyOnWriteSet[ast.SymbolId]
 }
 
 type NodeBuilderImpl struct {
@@ -1047,7 +1047,7 @@ func (b *NodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 	if b.ctx.typeParameterSymbolList.Has(symbolId) {
 		return nil
 	}
-	b.ctx.typeParameterSymbolList.Set(symbolId, struct{}{})
+	b.ctx.typeParameterSymbolList.Add(symbolId)
 
 	if b.ctx.flags&nodebuilder.FlagsWriteTypeParametersInQualifiedName != 0 && index < (len(chain)-1) {
 		if typeArgumentNodes := b.lookupInstantiatedTypeArgumentNodes(chain, index); typeArgumentNodes != nil {
@@ -1452,7 +1452,7 @@ func (b *NodeBuilderImpl) typeParameterToName(typeParameter *Type) *ast.Identifi
 		// `i` we've used thus far, to save work later
 		b.ctx.typeParameterNamesByTextNextNameCount.Set(rawText, i)
 		b.ctx.typeParameterNames.Set(typeParameter.id, result.AsIdentifier())
-		b.ctx.typeParameterNamesByText.Set(text, struct{}{})
+		b.ctx.typeParameterNamesByText.Add(text)
 	}
 
 	return result.AsIdentifier()
@@ -3454,7 +3454,7 @@ func (b *NodeBuilderImpl) lookupExpressionChainTypeArgumentNodes(chain []*ast.Sy
 			return nil
 		}
 
-		b.ctx.typeParameterSymbolList.Set(symbolId, struct{}{})
+		b.ctx.typeParameterSymbolList.Add(symbolId)
 		if typeArgumentNodes := b.lookupInstantiatedTypeArgumentNodes(chain, index); typeArgumentNodes != nil {
 			return typeArgumentNodes
 		}

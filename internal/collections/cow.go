@@ -51,3 +51,26 @@ func (c *CopyOnWriteMap[K, V]) EnterScope() func() {
 	c.owned = false
 	return func() { *c = saved }
 }
+
+type CopyOnWriteSet[K comparable] struct {
+	m CopyOnWriteMap[K, struct{}]
+}
+
+// Has reports whether k is in the set.
+func (c *CopyOnWriteSet[K]) Has(k K) bool {
+	_, ok := c.m.Get(k)
+	return ok
+}
+
+// Set adds k to the set, cloning the inherited backing map first if necessary.
+func (c *CopyOnWriteSet[K]) Add(k K) {
+	c.m.Set(k, struct{}{})
+}
+
+// EnterScope returns a function that restores this set to its current state.
+// While the scope is active, the set shares its current backing storage with
+// the parent scope: reads see the inherited entries, and the first mutation
+// transparently clones the storage so the parent's view is not modified.
+func (c *CopyOnWriteSet[K]) EnterScope() func() {
+	return c.m.EnterScope()
+}
