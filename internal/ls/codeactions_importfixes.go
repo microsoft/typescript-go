@@ -189,16 +189,6 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 		compilerOptions := fixContext.Program.Options()
 		symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
 
-		// Best-effort: use the diagnostic message to disambiguate which symbol
-		// the error is about. The message format is "'X' cannot be used as a
-		// value because it was imported using 'import type'." so we check for
-		// the symbol name in single quotes.
-		diagnosticMessage := ""
-		if fixContext.Diagnostic != nil {
-			diagnosticMessage = fixContext.Diagnostic.Message
-		}
-
-		// Collect all type-only candidates with valid fixes.
 		var allTypeOnlyFixes []*fixInfo
 		for _, sn := range symbolNames {
 			if !sn.isTypeOnly {
@@ -210,9 +200,15 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 			}
 		}
 
-		// If there are multiple type-only candidates, try to disambiguate
-		// using the diagnostic message (which quotes the symbol name).
-		// Fall back to all candidates if filtering yields nothing.
+		// For JSX opening tags, there can be separate type-only errors for both the tag name
+		// identifier and the JSX namespace identifier. When both produce valid fixes, we
+		// disambiguate using the diagnostic message, which quotes the symbol name in single
+		// quotes (e.g., "'React' cannot be used as a value..."). If filtering yields nothing
+		// (e.g., due to localization), fall back to returning all candidates.
+		diagnosticMessage := ""
+		if fixContext.Diagnostic != nil {
+			diagnosticMessage = fixContext.Diagnostic.Message
+		}
 		if len(allTypeOnlyFixes) > 1 && diagnosticMessage != "" {
 			for _, fi := range allTypeOnlyFixes {
 				if strings.Contains(diagnosticMessage, "'"+fi.symbolName+"'") {
