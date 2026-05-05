@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/runtimetrace"
 )
@@ -12,6 +13,7 @@ func main() {
 }
 
 func runMain() int {
+	core.ApplyDebugStackLimit()
 	tracing := runtimetrace.Start(os.Stderr)
 	defer tracing.Stop()
 
