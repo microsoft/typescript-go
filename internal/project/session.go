@@ -1142,16 +1142,8 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		w := newWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
-			// Dedupe watchers by key to prevent refcount inflation from
-			// duplicate patterns.
-			seen := make(map[fileSystemWatcherKey]bool, len(watchers))
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				if seen[key] {
-					continue
-				}
-				seen[key] = true
 				globId := WatcherID(fmt.Sprintf("%s.%d", w.WatcherID, i))
 				if session.watches.Acquire(watcher, globId) {
 					newWatchers.Set(globId, watcher)

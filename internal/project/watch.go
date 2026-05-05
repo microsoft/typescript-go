@@ -190,7 +190,7 @@ func (w *WatchedFiles[T]) Watchers() Watchers {
 		w.mu.Lock()
 		defer w.mu.Unlock()
 		result := w.computeGlobPatterns(w.input)
-		globs := result.patternsInsideWorkspace
+		globs := slices.Compact(slices.Sorted(slices.Values(result.patternsInsideWorkspace)))
 
 		ignored := result.ignored
 		// ignored is only used for logging and doesn't affect watcher identity
@@ -209,7 +209,7 @@ func (w *WatchedFiles[T]) Watchers() Watchers {
 			})
 			changed = true
 		}
-		dirsOutside := result.directoriesOutsideWorkspace
+		dirsOutside := slices.Compact(slices.Sorted(slices.Values(result.directoriesOutsideWorkspace)))
 		if !slices.EqualFunc(w.outsideWorkspaceWatchers, dirsOutside, func(a *lsproto.FileSystemWatcher, b string) bool {
 			return fileSystemWatcherGlobString(a) == recursiveDirectoryGlobPattern(b, w.hasRelativePatternCapability)
 		}) {
