@@ -20,22 +20,15 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 	// we write it out like that, rather than as
 	// export const x: <T>(x: T) => T
 	// export const y: <T_1>(x: T_1) => T_1
-	oldHasCreatedTypeParameterSymbolList := context.hasCreatedTypeParameterSymbolList
-	oldHasCreatedTypeParametersNamesLookups := context.hasCreatedTypeParametersNamesLookups
-	oldTypeParameterNames := context.typeParameterNames
-	oldTypeParameterNamesByText := context.typeParameterNamesByText
-	oldTypeParameterNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount
-	oldTypeParameterSymbolList := context.typeParameterSymbolList
-	// Keep sharing the inherited tables until this scope needs to mutate them.
-	context.hasCreatedTypeParameterSymbolList = false
-	context.hasCreatedTypeParametersNamesLookups = false
+	restoreNames := context.typeParameterNames.EnterScope()
+	restoreNamesByText := context.typeParameterNamesByText.EnterScope()
+	restoreNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount.EnterScope()
+	restoreSymbolList := context.typeParameterSymbolList.EnterScope()
 	return func() {
-		context.typeParameterNames = oldTypeParameterNames
-		context.typeParameterNamesByText = oldTypeParameterNamesByText
-		context.typeParameterNamesByTextNextNameCount = oldTypeParameterNamesByTextNextNameCount
-		context.typeParameterSymbolList = oldTypeParameterSymbolList
-		context.hasCreatedTypeParameterSymbolList = oldHasCreatedTypeParameterSymbolList
-		context.hasCreatedTypeParametersNamesLookups = oldHasCreatedTypeParametersNamesLookups
+		restoreNames()
+		restoreNamesByText()
+		restoreNamesByTextNextNameCount()
+		restoreSymbolList()
 	}
 }
 

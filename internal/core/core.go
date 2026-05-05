@@ -771,14 +771,6 @@ func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) 
 	return dst
 }
 
-// CloneOrMakeMap returns a clone of m, or a new empty map if m is nil.
-func CloneOrMakeMap[K comparable, V any](m map[K]V) map[K]V {
-	if m == nil {
-		return make(map[K]V)
-	}
-	return maps.Clone(m)
-}
-
 // UnorderedEqual returns true if s1 and s2 contain the same elements, regardless of order.
 func UnorderedEqual[T comparable](s1 []T, s2 []T) bool {
 	if len(s1) != len(s2) {
