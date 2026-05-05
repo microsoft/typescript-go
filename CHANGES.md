@@ -134,18 +134,6 @@ function f(x) {
 f(); // Still allowed
 ```
 
-#### Strada's JS-specific rules for inferring type arguments no longer apply in Corsa.
-
-Inferred type arguments may change. For example:
-
-```js
-/** @type {any} */
-var x = { a: 1, b: 2 };
-var entries = Object.entries(x);
-```
-
-In Strada, `entries: Array<[string, any]>`. In Corsa it has type `Array<[string, unknown]>`, the same as in TypeScript.
-
 #### Values are no longer resolved as types in JSDoc type positions.
 
 ```js
@@ -258,18 +246,6 @@ If you have `"strict": true`, you will see a noImplicitAny error on the now-unty
 var f = (x) => x,
   g = (x) => x;
 ```
-
-#### Optional marking on parameter names now makes the parameter both optional and undefined:
-
-```js
-/** @param {number} [x] */
-function f(x) {
-  return x;
-}
-```
-
-This behaves the same as TypeScript's `x?: number` syntax.
-Strada makes the parameter optional but does not add `undefined` to the type.
 
 #### Type assertions with `@type` tags now prevent narrowing of the type.
 

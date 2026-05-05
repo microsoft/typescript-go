@@ -80,6 +80,7 @@ export class Client implements vscode.Disposable {
                 sendNotification: sendNotificationMiddleware,
                 provideHover: () => undefined,
             },
+            diagnosticCollectionName: "typescript",
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -247,6 +248,10 @@ export class Client implements vscode.Disposable {
         return this.exe;
     }
 
+    get serverPid(): number | undefined {
+        return (this.client as any)?._serverProcess?.pid;
+    }
+
     /**
      * Initialize an API session and return the socket path for connecting.
      * This allows other extensions to get a direct connection to the API server.
@@ -273,7 +278,13 @@ export class Client implements vscode.Disposable {
 
         this.isInitialized = false;
         this.outputChannel.appendLine(`Restarting language server...`);
-        await this.client.restart();
+        try {
+            await this.client.restart();
+        }
+        catch (err) {
+            this.outputChannel.appendLine(`Graceful shutdown failed, forcing restart: ${err}`);
+            await this.client.start();
+        }
         return true;
     }
 

@@ -1,7 +1,9 @@
 package checker
 
 import (
+	"math/bits"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -452,6 +454,85 @@ const (
 	TypeFlagsNotPrimitiveUnion               = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsVoid | TypeFlagsNever | TypeFlagsObject | TypeFlagsIntersection | TypeFlagsIncludesInstantiable
 )
 
+var typeFlagNames = [...]struct {
+	flag TypeFlags
+	name string
+}{
+	{TypeFlagsAny, "Any"},
+	{TypeFlagsUnknown, "Unknown"},
+	{TypeFlagsUndefined, "Undefined"},
+	{TypeFlagsNull, "Null"},
+	{TypeFlagsVoid, "Void"},
+	{TypeFlagsString, "String"},
+	{TypeFlagsNumber, "Number"},
+	{TypeFlagsBigInt, "BigInt"},
+	{TypeFlagsBoolean, "Boolean"},
+	{TypeFlagsESSymbol, "ESSymbol"},
+	{TypeFlagsStringLiteral, "StringLiteral"},
+	{TypeFlagsNumberLiteral, "NumberLiteral"},
+	{TypeFlagsBigIntLiteral, "BigIntLiteral"},
+	{TypeFlagsBooleanLiteral, "BooleanLiteral"},
+	{TypeFlagsUniqueESSymbol, "UniqueESSymbol"},
+	{TypeFlagsEnumLiteral, "EnumLiteral"},
+	{TypeFlagsEnum, "Enum"},
+	{TypeFlagsNonPrimitive, "NonPrimitive"},
+	{TypeFlagsNever, "Never"},
+	{TypeFlagsTypeParameter, "TypeParameter"},
+	{TypeFlagsObject, "Object"},
+	{TypeFlagsIndex, "Index"},
+	{TypeFlagsTemplateLiteral, "TemplateLiteral"},
+	{TypeFlagsStringMapping, "StringMapping"},
+	{TypeFlagsSubstitution, "Substitution"},
+	{TypeFlagsIndexedAccess, "IndexedAccess"},
+	{TypeFlagsConditional, "Conditional"},
+	{TypeFlagsUnion, "Union"},
+	{TypeFlagsIntersection, "Intersection"},
+}
+
+// FormatTypeFlags returns the individual flag names as a slice of strings.
+func FormatTypeFlags(flags TypeFlags) []string {
+	result := make([]string, 0, bits.OnesCount32(uint32(flags)))
+	for _, fn := range typeFlagNames {
+		if flags&fn.flag != 0 {
+			result = append(result, fn.name)
+		}
+	}
+	if len(result) == 0 {
+		result = append(result, "None")
+	}
+	return result
+}
+
+// String returns a pipe-separated string of flag names.
+func (f TypeFlags) String() string {
+	return strings.Join(FormatTypeFlags(f), "|")
+}
+
+func (v VarianceFlags) String() string {
+	variance := v & VarianceFlagsVarianceMask
+	var result string
+	switch variance {
+	case VarianceFlagsInvariant:
+		result = "in out"
+	case VarianceFlagsBivariant:
+		result = "[bivariant]"
+	case VarianceFlagsContravariant:
+		result = "in"
+	case VarianceFlagsCovariant:
+		result = "out"
+	case VarianceFlagsIndependent:
+		result = "[independent]"
+	default:
+		result = ""
+	}
+	if v&VarianceFlagsUnmeasurable != 0 {
+		result += " (unmeasurable)"
+	} else if v&VarianceFlagsUnreliable != 0 {
+		result += " (unreliable)"
+	}
+	return result
+}
+
 type ObjectFlags uint32
 
 // Types included in TypeFlags.ObjectFlagsType have an objectFlags property. Some ObjectFlags
@@ -498,6 +579,7 @@ const (
 	ObjectFlagsIdenticalBaseTypeCalculated = 1 << 27 // has had `getSingleBaseForNonAugmentingSubtype` invoked on it already
 	ObjectFlagsIdenticalBaseTypeExists     = 1 << 28 // has a defined cachedEquivalentBaseType member
 	ObjectFlagsUnresolvedMembers           = 1 << 29 // Member resolution in process
+	ObjectFlagsFromTypeNode                = 1 << 30 // Originates in resolution of AST type node
 	// Flags that require TypeFlags.UnionOrIntersection or TypeFlags.Substitution
 	ObjectFlagsIsGenericTypeComputed = 1 << 22 // IsGenericObjectType flag has been computed
 	ObjectFlagsIsGenericObjectType   = 1 << 23 // Union or intersection contains generic object type
