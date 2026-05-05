@@ -1136,8 +1136,6 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
-	session.watches.mu.Lock()
-	defer session.watches.mu.Unlock()
 	if newWatcher != nil {
 		w := newWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
@@ -1240,10 +1238,7 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 	for path, newEntry := range newSnapshot.ConfigFileRegistry.configs {
 		if oldEntry, ok := oldSnapshot.ConfigFileRegistry.configs[path]; ok {
 			if oldEntry.rootFilesWatch.ID() == newEntry.rootFilesWatch.ID() {
-				s.watches.mu.Lock()
-				isPending := s.watches.IsPending(newEntry.rootFilesWatch.ID())
-				s.watches.mu.Unlock()
-				if isPending {
+				if s.watches.IsPending(newEntry.rootFilesWatch.ID()) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newEntry.rootFilesWatch)...)
 				}
 			}
@@ -1265,20 +1260,14 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
 			} else {
-				s.watches.mu.Lock()
-				isPending := s.watches.IsPending(newProject.programFilesWatch.ID())
-				s.watches.mu.Unlock()
-				if isPending {
+				if s.watches.IsPending(newProject.programFilesWatch.ID()) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.programFilesWatch)...)
 				}
 			}
 			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
 			} else {
-				s.watches.mu.Lock()
-				isPending := s.watches.IsPending(newProject.typingsWatch.ID())
-				s.watches.mu.Unlock()
-				if isPending {
+				if s.watches.IsPending(newProject.typingsWatch.ID()) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
 				}
 			}
@@ -1288,10 +1277,7 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 	if oldSnapshot.autoImportsWatch.ID() != newSnapshot.autoImportsWatch.ID() {
 		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
 	} else {
-		s.watches.mu.Lock()
-		isPending := s.watches.IsPending(newSnapshot.autoImportsWatch.ID())
-		s.watches.mu.Unlock()
-		if isPending {
+		if s.watches.IsPending(newSnapshot.autoImportsWatch.ID()) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, newSnapshot.autoImportsWatch)...)
 		}
 	}
