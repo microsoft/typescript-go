@@ -12,4 +12,4 @@ var x = 0;
 
 
 //// [declarationEmitInvalidReferenceAllowJs.d.ts]
-declare var x: number;
+var x: number;

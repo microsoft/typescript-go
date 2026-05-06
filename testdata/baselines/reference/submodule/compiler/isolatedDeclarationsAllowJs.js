@@ -12,6 +12,6 @@ exports.x = void 0;
 
 
 //// [file1.d.ts]
-export declare var x: any;
+export var x: any;
 //// [file2.d.ts]
-export declare var y: any;
+export var y: any;

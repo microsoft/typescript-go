@@ -57,7 +57,7 @@ var X;
 
 
 //// [declarationEmitNameConflicts2.d.ts]
-declare namespace X.Y.base {
+namespace X.Y.base {
     function f(): void;
     class C {
     }
@@ -67,9 +67,37 @@ declare namespace X.Y.base {
     enum E {
     }
 }
-declare namespace X.Y.base.Z {
+namespace X.Y.base.Z {
     var f: typeof base.f;
     var C: typeof base.C;
     var M: typeof base.M;
     var E: typeof base.E;
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitNameConflicts2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitNameConflicts2.d.ts (1 errors) ====
+    namespace X.Y.base {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        function f(): void;
+        class C {
+        }
+        namespace M {
+            var v: any;
+        }
+        enum E {
+        }
+    }
+    namespace X.Y.base.Z {
+        var f: typeof base.f;
+        var C: typeof base.C;
+        var M: typeof base.M;
+        var E: typeof base.E;
+    }
+    

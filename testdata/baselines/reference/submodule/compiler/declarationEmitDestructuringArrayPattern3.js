@@ -15,6 +15,21 @@ var M;
 
 
 //// [declarationEmitDestructuringArrayPattern3.d.ts]
-declare namespace M {
+namespace M {
     var a: number, b: number;
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDestructuringArrayPattern3.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDestructuringArrayPattern3.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        var a: number, b: number;
+    }
+    

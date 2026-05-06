@@ -9,7 +9,7 @@ let x = {};
 
 
 //// [duplicatePropertiesInTypeAssertions02.d.ts]
-declare let x: {
+let x: {
     a: number;
     a: number;
 };

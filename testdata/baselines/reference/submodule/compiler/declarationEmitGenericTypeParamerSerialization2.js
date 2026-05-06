@@ -50,7 +50,7 @@ exports.v = makeV();
 
 
 //// [declarationEmitGenericTypeParamerSerialization2.d.ts]
-export declare const x: {
+export const x: {
     readonly readonlyProperty: string;
     field: string;
     method: (p: string) => string;
@@ -59,7 +59,7 @@ export declare const x: {
     property: string;
     divergentProperty: string;
 };
-export declare const v: {
+export const v: {
     readonly readonlyProperty: number;
     field: number;
     method(p: number): number;

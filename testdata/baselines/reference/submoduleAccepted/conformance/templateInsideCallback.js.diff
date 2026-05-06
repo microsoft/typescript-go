@@ -24,11 +24,19 @@
  /**
   * @typedef Oops
   * @template T
-@@= skipped -39, +24 lines =@@
+@@= skipped -32, +17 lines =@@
+  * @template T
+  * @type {Call<T>}
+  */
+-declare const identity: Call<T>;
++const identity: Call<T>;
+ type Nested = {
+     oh: {
+         no: number;
          noooooo: string;
      };
  };
 -type Oops = any;
 -type Call = () => any;
-+declare function flatMap(): any;
-+declare function flatMap(): any;
++function flatMap(): any;
++function flatMap(): any;

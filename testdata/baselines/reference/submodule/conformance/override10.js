@@ -21,11 +21,31 @@ class Sub extends Base {
 
 
 //// [override10.d.ts]
-declare abstract class Base {
+abstract class Base {
     abstract foo(): unknown;
     abstract bar(): void;
 }
-declare abstract class Sub extends Base {
+abstract class Sub extends Base {
     abstract foo(): number;
     bar(): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+override10.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== override10.d.ts (1 errors) ====
+    abstract class Base {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        abstract foo(): unknown;
+        abstract bar(): void;
+    }
+    abstract class Sub extends Base {
+        abstract foo(): number;
+        bar(): void;
+    }
+    

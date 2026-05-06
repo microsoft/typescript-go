@@ -7,38 +7,38 @@
 +
 +
 +//// [computedPropertiesNarrowed.d.ts]
-+export declare let o: {
++export let o: {
 +    1: number;
 +};
-+export declare let o2: {
++export let o2: {
 +    0: number;
 +};
-+export declare let o3: {
++export let o3: {
 +    [1]: number;
 +};
-+export declare let o31: {
++export let o31: {
 +    [-1]: number;
 +};
-+export declare let o32: {
++export let o32: {
 +    [x: number]: number;
 +};
-+export declare let o4: {
++export let o4: {
 +    [x: symbol]: number;
 +};
-+export declare let o5: {
++export let o5: {
 +    [x: symbol]: number;
 +};
-+declare const uu: unique symbol;
-+export declare let o6: {
++const uu: unique symbol;
++export let o6: {
 +    [uu]: number;
 +};
-+export declare let o7: {
++export let o7: {
 +    1: number;
 +};
-+export declare const o8: {
++export const o8: {
 +    1: number;
 +};
-+export declare const o9: {
++export const o9: {
 +    0: number;
 +};
 +export {};

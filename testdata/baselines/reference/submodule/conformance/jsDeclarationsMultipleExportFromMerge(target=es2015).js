@@ -62,9 +62,9 @@ Object.defineProperty(exports, "cc", { enumerable: true, get: function () { retu
 
 
 //// [items.d.ts]
-export declare const a = 1;
-export declare const b = 2;
-export declare const c = 3;
+export const a = 1;
+export const b = 2;
+export const c = 3;
 //// [justone.d.ts]
 export { a, b, c } from "./items";
 //// [two.d.ts]

@@ -278,36 +278,36 @@ type T13 = Pick<Shape, keyof Named>;
 type T14 = Pick<Shape, keyof Point>;
 type T15 = Pick<Shape, never>;
 type T16 = Pick<Shape, undefined>;
-declare function f1<T>(x: T): void;
-declare function f2<T extends string | number>(x: T): void;
-declare function f3<T extends keyof Shape>(x: T): void;
-declare function f4<T extends keyof Named>(x: T): void;
-declare function f10<T>(): void;
-declare function f11<T>(): void;
-declare function f12<T>(): void;
-declare function objAndReadonly<T>(primary: T, secondary: Readonly<T>): T;
-declare function objAndPartial<T>(primary: T, secondary: Partial<T>): T;
-declare function f20(): void;
-declare function f21(): void;
+function f1<T>(x: T): void;
+function f2<T extends string | number>(x: T): void;
+function f3<T extends keyof Shape>(x: T): void;
+function f4<T extends keyof Named>(x: T): void;
+function f10<T>(): void;
+function f11<T>(): void;
+function f12<T>(): void;
+function objAndReadonly<T>(primary: T, secondary: Readonly<T>): T;
+function objAndPartial<T>(primary: T, secondary: Partial<T>): T;
+function f20(): void;
+function f21(): void;
 interface Foo {
     a: string;
     b?: number;
 }
-declare function setState<T, K extends keyof T>(obj: T, props: Pick<T, K>): void;
-declare let foo: Foo;
-declare class C<T> {
+function setState<T, K extends keyof T>(obj: T, props: Pick<T, K>): void;
+let foo: Foo;
+class C<T> {
     state: T;
     constructor(initialState: T);
     setState<K extends keyof T>(props: Pick<T, K>): void;
 }
-declare let c: C<Foo>;
+let c: C<Foo>;
 type T2 = {
     a?: number;
     [key: string]: any;
 };
-declare let x1: T2;
-declare let x2: Partial<T2>;
-declare let x3: {
+let x1: T2;
+let x2: Partial<T2>;
+let x3: {
     [P in keyof T2]: T2[P];
 };
 type Foo2<T, F extends keyof T> = {
@@ -322,7 +322,7 @@ type O = {
     x: number;
     y: boolean;
 };
-declare let o: O;
-declare let f: Foo2<O, 'x'>;
-declare function test1<T, K extends keyof T>(obj: Pick<T, K>): void;
-declare function test2<T, K extends keyof T>(obj: Record<K, number>): void;
+let o: O;
+let f: Foo2<O, 'x'>;
+function test1<T, K extends keyof T>(obj: Pick<T, K>): void;
+function test2<T, K extends keyof T>(obj: Record<K, number>): void;

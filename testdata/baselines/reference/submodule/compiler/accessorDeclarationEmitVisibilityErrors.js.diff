@@ -1,0 +1,10 @@
+--- old.accessorDeclarationEmitVisibilityErrors.js
++++ new.accessorDeclarationEmitVisibilityErrors.js
+@@= skipped -11, +11 lines =@@
+
+
+ //// [accessorDeclarationEmitVisibilityErrors.d.ts]
+-export declare class Q {
++export class Q {
+     set bet(arg: DoesNotExist);
+ }

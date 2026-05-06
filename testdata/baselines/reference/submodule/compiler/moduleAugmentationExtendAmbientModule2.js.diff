@@ -1,0 +1,11 @@
+--- old.moduleAugmentationExtendAmbientModule2.js
++++ new.moduleAugmentationExtendAmbientModule2.js
+@@= skipped -51, +51 lines =@@
+
+
+ //// [map.d.ts]
+-declare module "observable" {
++module "observable" {
+     interface Observable<T> {
+         map<U>(proj: (e: T) => U): Observable<U>;
+     }

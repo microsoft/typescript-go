@@ -1,0 +1,24 @@
+--- old.declarationEmitNestedGenerics.js
++++ new.declarationEmitNestedGenerics.js
+@@= skipped -23, +23 lines =@@
+
+
+ //// [declarationEmitNestedGenerics.d.ts]
+-declare function f<T>(p: T): <T_1>(x: T_1) => typeof p;
+-declare function g<T>(x: T): T extends (infer T_1)[] ? T_1 : T;
++function f<T>(p: T): <T_1>(x: T_1) => typeof p;
++function g<T>(x: T): T extends (infer T_1)[] ? T_1 : T;
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitNestedGenerics.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitNestedGenerics.d.ts (1 errors) ====
++    function f<T>(p: T): <T_1>(x: T_1) => typeof p;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    function g<T>(x: T): T extends (infer T_1)[] ? T_1 : T;
++    

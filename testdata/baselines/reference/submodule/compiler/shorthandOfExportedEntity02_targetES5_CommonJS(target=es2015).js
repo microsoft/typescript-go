@@ -20,5 +20,5 @@ function foo() {
 
 
 //// [shorthandOfExportedEntity02_targetES5_CommonJS.d.ts]
-export declare const test = "test";
-export declare function foo(): void;
+export const test = "test";
+export function foo(): void;

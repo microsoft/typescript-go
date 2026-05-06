@@ -23,10 +23,29 @@ var /*2*/ x = point. /*3*/x;
 
 
 //// [declFileObjectLiteralWithOnlyGetter.d.ts]
-declare function makePoint(x: number): {
+function makePoint(x: number): {
     readonly x: number;
 };
-declare var /*4*/ point: {
+var /*4*/ point: {
     readonly x: number;
 };
-declare var /*2*/ x: number;
+var /*2*/ x: number;
+
+
+//// [DtsFileErrors]
+
+
+declFileObjectLiteralWithOnlyGetter.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileObjectLiteralWithOnlyGetter.d.ts (1 errors) ====
+    function makePoint(x: number): {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        readonly x: number;
+    };
+    var /*4*/ point: {
+        readonly x: number;
+    };
+    var /*2*/ x: number;
+    

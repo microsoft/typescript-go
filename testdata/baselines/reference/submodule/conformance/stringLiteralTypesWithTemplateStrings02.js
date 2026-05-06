@@ -13,5 +13,5 @@ let de_NEWLINE_f = `DE${"\n"}F`;
 
 
 //// [stringLiteralTypesWithTemplateStrings02.d.ts]
-declare let abc: "AB\r\nC";
-declare let de_NEWLINE_f: "DE\nF";
+let abc: "AB\r\nC";
+let de_NEWLINE_f: "DE\nF";

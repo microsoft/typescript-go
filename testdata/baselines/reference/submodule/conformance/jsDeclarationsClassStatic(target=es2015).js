@@ -49,14 +49,14 @@ module.exports.Strings = Strings;
 
 
 //// [source.d.ts]
-declare class Handler {
+class Handler {
     static get OPTIONS(): number;
     process(): void;
 }
 declare namespace Handler {
     var statische: () => void;
 }
-declare const Strings: {
+const Strings: {
     a: string;
     b: string;
 };

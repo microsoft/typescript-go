@@ -34,7 +34,7 @@ var notOK = 0;
 
 
 //// [typedefScope1.d.ts]
-declare function B1(): void;
-declare function B2(): void;
+function B1(): void;
+function B2(): void;
 /** @type {B} */
-declare var notOK: B;
+var notOK: B;

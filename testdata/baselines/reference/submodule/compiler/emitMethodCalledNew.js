@@ -28,12 +28,12 @@ export const c = {
 
 
 //// [emitMethodCalledNew.d.ts]
-export declare const a: {
+export const a: {
     "new"(x: number): number;
 };
-export declare const b: {
+export const b: {
     "new"(x: number): number;
 };
-export declare const c: {
+export const c: {
     ["new"](x: number): number;
 };

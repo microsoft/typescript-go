@@ -1,0 +1,23 @@
+--- old.genericDefaultsErrors.js
++++ new.genericDefaultsErrors.js
+@@= skipped -55, +55 lines =@@
+
+
+ //// [genericDefaultsErrors.d.ts]
+-declare const x: any;
+-declare function f03<T extends string = number>(): void;
+-declare function f04<T extends string, U extends number = T>(): void;
+-declare function f05<T, U extends number = T>(): void;
+-declare function f06<T, U extends T = number>(): void;
+-declare function f11<T, U, V = number>(): void;
+-declare function f12<T, U = T>(a?: U): void;
++const x: any;
++function f03<T extends string = number>(): void;
++function f04<T extends string, U extends number = T>(): void;
++function f05<T, U extends number = T>(): void;
++function f06<T, U extends T = number>(): void;
++function f11<T, U, V = number>(): void;
++function f12<T, U = T>(a?: U): void;
+ interface i00<T> {
+ }
+ interface i00<U = number> {

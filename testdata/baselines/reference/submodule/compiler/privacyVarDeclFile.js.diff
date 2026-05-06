@@ -1,0 +1,92 @@
+--- old.privacyVarDeclFile.js
++++ new.privacyVarDeclFile.js
+@@= skipped -564, +564 lines =@@
+
+
+ //// [privacyVarDeclFile_externalModule.d.ts]
+-declare class privateClass {
++class privateClass {
+ }
+-export declare class publicClass {
++export class publicClass {
+ }
+ export interface publicInterfaceWithPrivatePropertyTypes {
+     myProperty: privateClass;
+@@= skipped -10, +10 lines =@@
+ export interface publicInterfaceWithPublicPropertyTypes {
+     myProperty: publicClass;
+ }
+-export declare class publicClassWithWithPrivatePropertyTypes {
++export class publicClassWithWithPrivatePropertyTypes {
+     static myPublicStaticProperty: privateClass;
+     private static myPrivateStaticProperty;
+     myPublicProperty: privateClass;
+     private myPrivateProperty;
+ }
+-export declare class publicClassWithWithPublicPropertyTypes {
++export class publicClassWithWithPublicPropertyTypes {
+     static myPublicStaticProperty: publicClass;
+     private static myPrivateStaticProperty;
+     myPublicProperty: publicClass;
+     private myPrivateProperty;
+ }
+-export declare var publicVarWithPrivatePropertyTypes: privateClass;
+-export declare var publicVarWithPublicPropertyTypes: publicClass;
+-export declare var publicAmbientVarWithPrivatePropertyTypes: privateClass;
+-export declare var publicAmbientVarWithPublicPropertyTypes: publicClass;
++export var publicVarWithPrivatePropertyTypes: privateClass;
++export var publicVarWithPublicPropertyTypes: publicClass;
++export var publicAmbientVarWithPrivatePropertyTypes: privateClass;
++export var publicAmbientVarWithPublicPropertyTypes: publicClass;
+ export interface publicInterfaceWithPrivateModulePropertyTypes {
+     myProperty: privateModule.publicClass;
+ }
+-export declare class publicClassWithPrivateModulePropertyTypes {
++export class publicClassWithPrivateModulePropertyTypes {
+     static myPublicStaticProperty: privateModule.publicClass;
+     myPublicProperty: privateModule.publicClass;
+ }
+-export declare var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
+-export declare var publicAmbientVarWithPrivateModulePropertyTypes: privateModule.publicClass;
+-export declare namespace publicModule {
++export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
++export var publicAmbientVarWithPrivateModulePropertyTypes: privateModule.publicClass;
++export namespace publicModule {
+     class privateClass {
+     }
+     export class publicClass {
+@@= skipped -63, +63 lines =@@
+     export var publicAmbientVarWithPrivateModulePropertyTypes: privateModule.publicClass;
+     export {};
+ }
+-declare namespace privateModule {
++namespace privateModule {
+     class privateClass {
+     }
+     export class publicClass {
+@@= skipped -40, +40 lines =@@
+ }
+ export {};
+ //// [privacyVarDeclFile_GlobalFile.d.ts]
+-declare class publicClassInGlobal {
++class publicClassInGlobal {
+ }
+ interface publicInterfaceWithPublicPropertyTypesInGlobal {
+     myProperty: publicClassInGlobal;
+ }
+-declare class publicClassWithWithPublicPropertyTypesInGlobal {
++class publicClassWithWithPublicPropertyTypesInGlobal {
+     static myPublicStaticProperty: publicClassInGlobal;
+     private static myPrivateStaticProperty;
+     myPublicProperty: publicClassInGlobal;
+     private myPrivateProperty;
+ }
+-declare var publicVarWithPublicPropertyTypesInGlobal: publicClassInGlobal;
+-declare var publicAmbientVarWithPublicPropertyTypesInGlobal: publicClassInGlobal;
+-declare namespace publicModuleInGlobal {
++var publicVarWithPublicPropertyTypesInGlobal: publicClassInGlobal;
++var publicAmbientVarWithPublicPropertyTypesInGlobal: publicClassInGlobal;
++namespace publicModuleInGlobal {
+     class privateClass {
+     }
+     export class publicClass {

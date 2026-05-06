@@ -45,14 +45,14 @@ export const ClassExpressionStatic = (_b = class {
 
 
 //// [privateFieldsInClassExpressionDeclaration.d.ts]
-export declare const ClassExpression: {
+export const ClassExpression: {
     new (): {
         #context: number;
         #method(): number;
         value: number;
     };
 };
-export declare const ClassExpressionStatic: {
+export const ClassExpressionStatic: {
     new (): {
         #instancePrivate: boolean;
         exposed: string;

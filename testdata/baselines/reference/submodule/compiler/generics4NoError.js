@@ -17,7 +17,7 @@ var b;
 
 
 //// [generics4NoError.d.ts]
-declare class C<T> {
+class C<T> {
     private x;
 }
 interface X {
@@ -26,5 +26,5 @@ interface X {
 interface Y {
     f(): boolean;
 }
-declare var a: C<X>;
-declare var b: C<Y>;
+var a: C<X>;
+var b: C<Y>;

@@ -1,0 +1,36 @@
+--- old.declFileWithInternalModuleNameConflictsInExtendsClause1.js
++++ new.declFileWithInternalModuleNameConflictsInExtendsClause1.js
+@@= skipped -31, +31 lines =@@
+
+
+ //// [declFileWithInternalModuleNameConflictsInExtendsClause1.d.ts]
+-declare namespace X.A.C {
++namespace X.A.C {
+     interface Z {
+     }
+ }
+-declare namespace X.A.B.C {
++namespace X.A.B.C {
+     class W implements X.A.C.Z {
+     }
+ }
++
++
++//// [DtsFileErrors]
++
++
++declFileWithInternalModuleNameConflictsInExtendsClause1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declFileWithInternalModuleNameConflictsInExtendsClause1.d.ts (1 errors) ====
++    namespace X.A.C {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        interface Z {
++        }
++    }
++    namespace X.A.B.C {
++        class W implements X.A.C.Z {
++        }
++    }
++    

@@ -673,38 +673,38 @@ export { x };
 
 
 //// [index.d.ts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.cts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.mts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.ts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.cts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.mts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.ts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.mts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.cts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.cts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.ts]
-declare const x = 1;
+const x = 1;
 export { x };
 //// [index.d.mts]
-declare const x = 1;
+const x = 1;
 export { x };

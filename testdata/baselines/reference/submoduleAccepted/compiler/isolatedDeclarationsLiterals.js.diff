@@ -1,6 +1,15 @@
 --- old.isolatedDeclarationsLiterals.js
 +++ new.isolatedDeclarationsLiterals.js
-@@= skipped -142, +142 lines =@@
+@@= skipped -123, +123 lines =@@
+
+
+ //// [file1.d.ts]
+-export declare const constObject: {
++export const constObject: {
+     /** Value Of 1 */
+     readonly one: 1;
+     /** Value Of 0o1 */
+@@= skipped -19, +19 lines =@@
      /** Value Of "1" */
      readonly oneStrDoubleQuote: "1";
      /** Value Of '1' */
@@ -12,3 +21,28 @@
      /** A method */
      readonly method: () => void;
  };
+-export declare const one = 1;
+-export declare const oneOctal = 1;
+-export declare const oneHex = 1;
+-export declare const pOne = 1;
+-export declare const mOne = -1;
+-export declare const onen = 1n;
+-export declare const mOnen = -1n;
+-export declare const oneStrDoubleQuote = "1";
+-export declare const oneStrSingleQuote = "1";
+-export declare const oneStrTemplate = "1";
+-export declare const mutableObject: {
++export const one = 1;
++export const oneOctal = 1;
++export const oneHex = 1;
++export const pOne = 1;
++export const mOne = -1;
++export const onen = 1n;
++export const mOnen = -1n;
++export const oneStrDoubleQuote = "1";
++export const oneStrSingleQuote = "1";
++export const oneStrTemplate = "1";
++export const mutableObject: {
+     /** Value Of 1 */
+     one: number;
+     /** Value Of 0o1 */

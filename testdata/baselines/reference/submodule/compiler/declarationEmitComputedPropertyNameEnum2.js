@@ -16,7 +16,7 @@ export type Type = {
     x?: {};
 };
 //// [index.d.ts]
-export declare const foo: {
+export const foo: {
     x?: {
         [Enum.A]: 0;
     };

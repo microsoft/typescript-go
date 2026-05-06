@@ -28,10 +28,10 @@ exports.value = provider.Enum.Value1;
 
 
 //// [provider.d.ts]
-export declare enum Enum {
+export enum Enum {
     Value1 = 0,
     Value2 = 1
 }
 //// [consumer.d.ts]
 import provider = require('./provider');
-export declare const value = provider.Enum.Value1;
+export const value = provider.Enum.Value1;

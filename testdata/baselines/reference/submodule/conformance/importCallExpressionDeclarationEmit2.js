@@ -15,6 +15,22 @@ var p1 = import("./0");
 
 
 //// [0.d.ts]
-export declare function foo(): string;
+export function foo(): string;
 //// [1.d.ts]
-declare var p1: Promise<typeof import("./0")>;
+var p1: Promise<typeof import("./0")>;
+
+
+//// [DtsFileErrors]
+
+
+1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== 0.d.ts (0 errors) ====
+    export function foo(): string;
+    
+==== 1.d.ts (1 errors) ====
+    var p1: Promise<typeof import("./0")>;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

@@ -489,15 +489,15 @@ const obj3 = { [sym]: 'hello ' }; // Error
 
 
 //// [indexSignatures1.d.ts]
-declare const sym: unique symbol;
-declare function gg3(x: {
+const sym: unique symbol;
+function gg3(x: {
     [key: string]: string;
 }, y: {
     [key: symbol]: string;
 }, z: {
     [sym]: number;
 }): void;
-declare function gg1(x: {
+function gg1(x: {
     [key: `a${string}`]: string;
     [key: `${string}a`]: string;
 }, y: {
@@ -510,35 +510,35 @@ interface IX {
 interface IY {
     [key: `a${string}a`]: string;
 }
-declare function gg2(x: IX, y: IY): void;
-declare let combo: {
+function gg2(x: IX, y: IY): void;
+let combo: {
     [x: `foo-${string}`]: 'a' | 'b';
 } & {
     [x: `${string}-bar`]: 'b' | 'c';
 };
-declare const x1: "a" | "b";
-declare const x2: "b" | "c";
-declare const x3: "b";
-declare var str: string;
-declare const x4: "a" | "b";
-declare const x5: "b" | "c";
-declare const x6: "b";
-declare let combo2: {
+const x1: "a" | "b";
+const x2: "b" | "c";
+const x3: "b";
+var str: string;
+const x4: "a" | "b";
+const x5: "b" | "c";
+const x6: "b";
+let combo2: {
     [x: `${string}xxx${string}` & `${string}yyy${string}`]: string;
 };
-declare const x7: string;
-declare const x8: string;
-declare const x9: any;
-declare let dom: {
+const x7: string;
+const x8: string;
+const x9: any;
+let dom: {
     [x: `data${string}`]: string;
 };
-declare const y1: string;
-declare const y2: string;
+const y1: string;
+const y2: string;
 type Funcs = {
     [key: `s${string}`]: (x: string) => void;
     [key: `n${string}`]: (x: number) => void;
 };
-declare const funcs: Funcs;
+const funcs: Funcs;
 type Duplicates = {
     [key: string | number]: any;
     [key: number | symbol]: any;
@@ -564,11 +564,11 @@ type Tag2 = {
 };
 type TaggedString1 = string & Tag1;
 type TaggedString2 = string & Tag2;
-declare let s0: string;
-declare let s1: TaggedString1;
-declare let s2: TaggedString2;
-declare let s3: TaggedString1 | TaggedString2;
-declare let s4: TaggedString1 & TaggedString2;
+let s0: string;
+let s1: TaggedString1;
+let s2: TaggedString2;
+let s3: TaggedString1 | TaggedString2;
+let s4: TaggedString1 & TaggedString2;
 interface I1 {
     [key: TaggedString1]: string;
 }
@@ -581,35 +581,35 @@ interface I3 {
 interface I4 {
     [key: TaggedString1 & TaggedString2]: string;
 }
-declare let i1: I1;
-declare let i2: I2;
-declare let i3: I3;
-declare let i4: I4;
-declare let o1: {
+let i1: I1;
+let i2: I2;
+let i3: I3;
+let i4: I4;
+let o1: {
     [key: TaggedString1]: string;
 };
-declare let o2: {
+let o2: {
     [key: TaggedString2]: string;
 };
-declare let o3: {
+let o3: {
     [key: TaggedString1 | TaggedString2]: string;
 };
-declare let o4: {
+let o4: {
     [key: TaggedString1 & TaggedString2]: string;
 };
-declare const obj10: {
+const obj10: {
     [x: string]: 0 | 1;
     x: 0;
 };
-declare const obj11: {
+const obj11: {
     [x: number]: 2 | 3;
     1: 2;
 };
-declare const obj12: {
+const obj12: {
     [x: symbol]: 4 | 5;
     [sym]: 4;
 };
-declare const obj13: {
+const obj13: {
     [x: string]: 0 | 1 | 2 | 3;
     [x: number]: 2 | 3;
     [x: symbol]: 4 | 5;
@@ -617,58 +617,58 @@ declare const obj13: {
     1: 2;
     [sym]: 4;
 };
-declare const system: unique symbol;
-declare const SomeSytePlugin: unique symbol;
+const system: unique symbol;
+const SomeSytePlugin: unique symbol;
 interface Plugs {
     [key: symbol]: (...args: any) => unknown;
 }
-declare const plugins: {
+const plugins: {
     user: Plugs;
     [system]: Plugs;
 };
-declare var theAnswer: symbol;
-declare var obj: Record<symbol, number>;
-declare const directive: unique symbol;
-declare function foo<TArg, TRet, TDir>(options: {
+var theAnswer: symbol;
+var obj: Record<symbol, number>;
+const directive: unique symbol;
+function foo<TArg, TRet, TDir>(options: {
     [x in string]: (arg: TArg) => TRet;
 } & {
     [directive]?: TDir;
 }): void;
-declare let case1: void;
-declare let case2: void;
-declare let case3: void;
+let case1: void;
+let case2: void;
+let case3: void;
 type Pseudo = `&:${string}`;
-declare const AmIPseudo1: Pseudo;
-declare const AmIPseudo: Pseudo;
+const AmIPseudo1: Pseudo;
+const AmIPseudo: Pseudo;
 type PseudoDeclaration = {
     [key in Pseudo]: string;
 };
-declare const test: PseudoDeclaration;
+const test: PseudoDeclaration;
 type FieldPattern = `/${string}`;
-declare const path1: FieldPattern;
-declare const path2: FieldPattern;
+const path1: FieldPattern;
+const path2: FieldPattern;
 type PathsObject = {
     [P in FieldPattern]: object;
 };
-declare const pathObject: PathsObject;
+const pathObject: PathsObject;
 type IdType = `${number}-${number}-${number}-${number}`;
-declare const id: IdType;
+const id: IdType;
 type A = Record<IdType, string>;
-declare const a: A;
-declare let aid: string;
+const a: A;
+let aid: string;
 interface AA {
     a?: string;
     b?: number;
     [key: symbol]: string;
 }
-declare const aa: AA;
-declare const obj1: {
+const aa: AA;
+const obj1: {
     [key: symbol]: string;
 };
-declare const obj2: {
+const obj2: {
     [key: string]: string;
 };
-declare const obj3: {
+const obj3: {
     [key: number]: string;
 };
 type Id = string & {

@@ -22,7 +22,7 @@ exports.Color = {
 
 
 //// [declarationEmitMergedAliasWithConst.d.ts]
-export declare const Color: {
+export const Color: {
     readonly Red: "Red";
     readonly Green: "Green";
     readonly Blue: "Blue";

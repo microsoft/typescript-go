@@ -14,4 +14,4 @@
 -    x: number | undefined;
 -    y: number | undefined;
 -}
-+export declare function Foo(x: number | undefined, y: number | undefined): any;
++export function Foo(x: number | undefined, y: number | undefined): any;

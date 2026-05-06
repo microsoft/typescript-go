@@ -67,10 +67,10 @@ exports.timestamp = (0, a_1.now)();
 
 //// [b.d.ts]
 import * as x from "./a";
-export declare const timestamp: {
+export const timestamp: {
     [x.timestampSymbol]: true;
 };
 //// [c.d.ts]
-export declare const timestamp: {
+export const timestamp: {
     [timestampSymbol]: true;
 };

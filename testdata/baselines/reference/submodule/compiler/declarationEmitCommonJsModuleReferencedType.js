@@ -35,5 +35,5 @@ exports.y = (0, root_1.bar)();
 
 
 //// [entry.d.ts]
-export declare const x: any;
-export declare const y: import("root").RootProps;
+export const x: any;
+export const y: import("root").RootProps;

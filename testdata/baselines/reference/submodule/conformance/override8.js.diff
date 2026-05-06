@@ -1,0 +1,37 @@
+--- old.override8.js
++++ new.override8.js
+@@= skipped -62, +62 lines =@@
+
+
+ //// [override8.d.ts]
+-declare class B {
++class B {
+     a: string;
+ }
+-declare class D extends B {
++class D extends B {
+     a: string;
+     b: string;
+     constructor(a: string, b: string);
+ }
+-declare class BB {
+-    a: string;
+-    constructor(a: string);
+-}
+-declare class DD extends BB {
+-    a: string;
+-    constructor(a: string);
+-}
+-declare class DDD extends BB {
++class BB {
++    a: string;
++    constructor(a: string);
++}
++class DD extends BB {
++    a: string;
++    constructor(a: string);
++}
++class DDD extends BB {
+     a: string;
+     constructor(a: string);
+ }

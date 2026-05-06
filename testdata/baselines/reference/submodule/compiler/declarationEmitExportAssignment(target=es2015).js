@@ -23,8 +23,8 @@ module.exports = utils_1.foo;
 
 
 //// [utils.d.ts]
-export declare function foo(): void;
-export declare function bar(): void;
+export function foo(): void;
+export function bar(): void;
 export interface Buzz {
 }
 //// [index.d.ts]

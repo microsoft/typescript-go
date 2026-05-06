@@ -17,7 +17,23 @@ exports.b = foo;
 
 
 //// [privacyCheckTypeOfFunction.d.ts]
-declare function foo(): void;
-export declare var x: typeof foo;
-export declare var b: typeof foo;
+function foo(): void;
+export var x: typeof foo;
+export var b: typeof foo;
 export {};
+
+
+//// [DtsFileErrors]
+
+
+privacyCheckTypeOfFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyCheckTypeOfFunction.d.ts (1 errors) ====
+    function foo(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export var x: typeof foo;
+    export var b: typeof foo;
+    export {};
+    

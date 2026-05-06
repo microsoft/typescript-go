@@ -35,10 +35,38 @@ export class Client extends createService() {
 
 //// [client.d.ts]
 import { MySymbol } from "lib";
-declare const Client_base: new () => {
+const Client_base: new () => {
     [MySymbol](): string | undefined;
 };
-export declare class Client extends Client_base {
+export class Client extends Client_base {
     doSomething(): string;
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+client.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== node_modules/lib/index.d.ts (0 errors) ====
+    export declare const MySymbol: unique symbol;
+    export declare function createService<T>(): {
+        new (): {
+            [MySymbol](): T | undefined;
+        };
+    };
+    
+==== client.d.ts (1 errors) ====
+    import { MySymbol } from "lib";
+    const Client_base: new () => {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        [MySymbol](): string | undefined;
+    };
+    export class Client extends Client_base {
+        doSomething(): string;
+    }
+    export {};
+    

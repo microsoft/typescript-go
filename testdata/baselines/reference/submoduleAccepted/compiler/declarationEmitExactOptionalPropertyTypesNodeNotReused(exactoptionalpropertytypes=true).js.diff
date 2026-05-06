@@ -1,10 +1,12 @@
 --- old.declarationEmitExactOptionalPropertyTypesNodeNotReused(exactoptionalpropertytypes=true).js
 +++ new.declarationEmitExactOptionalPropertyTypesNodeNotReused(exactoptionalpropertytypes=true).js
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
+
 
  //// [declarationEmitExactOptionalPropertyTypesNodeNotReused.d.ts]
- export declare const baddts: (x: {
+-export declare const baddts: (x: {
 -    foo?: string | undefined;
++export const baddts: (x: {
 +    foo?: string;
      baz?: undefined;
  } & {

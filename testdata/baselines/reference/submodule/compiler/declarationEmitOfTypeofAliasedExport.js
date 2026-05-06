@@ -57,10 +57,33 @@ exports.default = a.D;
 
 
 //// [a.d.ts]
-declare class C {
+class C {
 }
 export { C as D };
 //// [b.d.ts]
 import * as a from "./a";
-declare const _default: typeof a.D;
+const _default: typeof a.D;
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+/b.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /a.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export { C as D };
+    
+==== /b.d.ts (1 errors) ====
+    import * as a from "./a";
+    const _default: typeof a.D;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    

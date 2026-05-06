@@ -31,4 +31,4 @@ import type { Foo } from './a';
 /**
  * @param {Foo} a
  */
-export declare function foo(a: Foo): void;
+export function foo(a: Foo): void;

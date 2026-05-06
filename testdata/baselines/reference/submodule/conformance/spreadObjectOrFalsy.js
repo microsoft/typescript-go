@@ -91,19 +91,19 @@ class Foo {
 
 
 //// [spreadObjectOrFalsy.d.ts]
-declare function f1<T>(a: T & undefined): any;
-declare function f2<T>(a: T | (T & undefined)): T | (T & undefined);
-declare function f3<T extends undefined>(a: T): any;
-declare function f4<T extends undefined>(a: object | T): {};
-declare function f5<S, T extends undefined>(a: S | T): S | T;
-declare function f6<T extends object | undefined>(a: T): T;
-declare function g1<T extends {}, A extends {
+function f1<T>(a: T & undefined): any;
+function f2<T>(a: T | (T & undefined)): T | (T & undefined);
+function f3<T extends undefined>(a: T): any;
+function f4<T extends undefined>(a: object | T): {};
+function f5<S, T extends undefined>(a: S | T): S | T;
+function f6<T extends object | undefined>(a: T): T;
+function g1<T extends {}, A extends {
     z: (T | undefined) & T;
 }>(a: A): T;
 interface DatafulFoo<T> {
     data: T;
 }
-declare class Foo<T extends string> {
+class Foo<T extends string> {
     data: T | undefined;
     bar(): void;
     hasData(): this is DatafulFoo<T>;

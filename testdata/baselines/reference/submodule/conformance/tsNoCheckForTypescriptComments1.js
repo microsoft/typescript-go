@@ -25,11 +25,11 @@ export class Bet {
 
 
 //// [file.d.ts]
-export declare const a: any;
+export const a: any;
 export interface Aleph {
     q: number;
 }
-export declare class Bet implements Aleph {
+export class Bet implements Aleph {
     q: string;
 }
 
@@ -42,11 +42,11 @@ file.d.ts(6,5): error TS2416: Property 'q' in type 'Bet' is not assignable to th
 
 
 ==== file.d.ts (1 errors) ====
-    export declare const a: any;
+    export const a: any;
     export interface Aleph {
         q: number;
     }
-    export declare class Bet implements Aleph {
+    export class Bet implements Aleph {
         q: string;
         ~
 !!! error TS2416: Property 'q' in type 'Bet' is not assignable to the same property in base type 'Aleph'.

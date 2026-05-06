@@ -35,7 +35,7 @@ export type Foo = {
 /**
  * @typedef {{x: string}} Foo
  */
-declare const _default: {
+const _default: {
     a: number;
     b: string;
 };

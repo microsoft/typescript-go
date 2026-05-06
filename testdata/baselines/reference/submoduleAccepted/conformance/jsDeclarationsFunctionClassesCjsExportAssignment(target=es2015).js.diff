@@ -8,7 +8,7 @@
  /**
   * @param {number} timeout
   */
- declare function Timer(timeout: number): void;
+-declare function Timer(timeout: number): void;
 -declare class Timer {
 -    /**
 -     * @param {number} timeout
@@ -16,6 +16,7 @@
 -    constructor(timeout: number);
 -    timeout: number;
 -}
++function Timer(timeout: number): void;
 +export = Timer;
  //// [context.d.ts]
 -export = Context;
@@ -82,7 +83,7 @@
 -     */
 -    construct(input: Input, handle?: HookHandler | undefined): State;
 -}
-+declare function Context(input: Input): any;
++function Context(input: Input): any;
  declare namespace Context {
 -    export { Timer, Hook, HookHandler, Input, State };
 +    var prototype: {
@@ -127,10 +128,10 @@
  /**
   * @typedef {(arg: import("./context")) => void} HookHandler
   */
-@@= skipped -76, +21 lines =@@
+ /**
   * @param {HookHandler} handle
   */
- declare function Hook(handle: HookHandler): void;
+-declare function Hook(handle: HookHandler): void;
 -declare class Hook {
 -    /**
 -     * @typedef {(arg: import("./context")) => void} HookHandler
@@ -145,4 +146,5 @@
 -    export { HookHandler };
 -}
 -type HookHandler = (arg: import("./context")) => void;
++function Hook(handle: HookHandler): void;
 +export = Hook;

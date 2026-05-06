@@ -1,0 +1,8 @@
+--- old.fakeInfinity1.js
++++ new.fakeInfinity1.js
+@@= skipped -42, +42 lines =@@
+ export type TypeOfInfinity = typeof Infinity;
+ export type TypeOfNaN = typeof NaN;
+ export type Oops = 123456789123456789123456789123456789123456789123456789;
+-export declare const oops = 1.2345678912345678e+53;
++export const oops = 1.2345678912345678e+53;

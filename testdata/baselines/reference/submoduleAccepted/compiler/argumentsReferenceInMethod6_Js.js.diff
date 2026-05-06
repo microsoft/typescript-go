@@ -1,10 +1,12 @@
 --- old.argumentsReferenceInMethod6_Js.js
 +++ new.argumentsReferenceInMethod6_Js.js
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+
 
  //// [a.d.ts]
- declare class A {
+-declare class A {
 -    m(...args: any[]): void;
++class A {
      /**
       * @type object
       */
@@ -12,3 +14,22 @@
 +    foo: object;
 +    m(): void;
  }
++
++
++//// [DtsFileErrors]
++
++
++/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== /a.d.ts (1 errors) ====
++    class A {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        /**
++         * @type object
++         */
++        foo: object;
++        m(): void;
++    }
++    

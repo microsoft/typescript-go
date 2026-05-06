@@ -246,7 +246,7 @@ new m7.m8.m9.c();
 
 //// [commentsModules.d.ts]
 /** Module comment*/
-declare namespace m1 {
+namespace m1 {
     /** b's comment*/
     var b: number;
     /** m2 comments*/
@@ -265,21 +265,21 @@ declare namespace m1 {
      */
     function foo3Export(): void;
 }
-declare var myvar: m1.m2.c;
+var myvar: m1.m2.c;
 /** module comment of m2.m3*/
-declare namespace m2.m3 {
+namespace m2.m3 {
     /** Exported class comment*/
     class c {
     }
 }
 /** module comment of m3.m4.m5*/
-declare namespace m3.m4.m5 {
+namespace m3.m4.m5 {
     /** Exported class comment*/
     class c {
     }
 }
 /** module comment of m4.m5.m6*/
-declare namespace m4.m5.m6 {
+namespace m4.m5.m6 {
     namespace m7 {
         /** Exported class comment*/
         class c {
@@ -287,7 +287,7 @@ declare namespace m4.m5.m6 {
     }
 }
 /** module comment of m5.m6.m7*/
-declare namespace m5.m6.m7 {
+namespace m5.m6.m7 {
     /** module m8 comment*/
     namespace m8 {
         /** Exported class comment*/
@@ -295,14 +295,14 @@ declare namespace m5.m6.m7 {
         }
     }
 }
-declare namespace m6.m7 {
+namespace m6.m7 {
     namespace m8 {
         /** Exported class comment*/
         class c {
         }
     }
 }
-declare namespace m7.m8 {
+namespace m7.m8 {
     /** module m9 comment*/
     namespace m9 {
         /** Exported class comment*/
@@ -312,3 +312,82 @@ declare namespace m7.m8 {
         }
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+commentsModules.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsModules.d.ts (1 errors) ====
+    /** Module comment*/
+    namespace m1 {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /** b's comment*/
+        var b: number;
+        /** m2 comments*/
+        namespace m2 {
+            /** class comment;*/
+            class c {
+            }
+            /** i*/
+            var i: c;
+        }
+        /** exported function*/
+        function fooExport(): number;
+        function foo2Export(/**hm*/ a: string): void;
+        /** foo3Export
+         * comment
+         */
+        function foo3Export(): void;
+    }
+    var myvar: m1.m2.c;
+    /** module comment of m2.m3*/
+    namespace m2.m3 {
+        /** Exported class comment*/
+        class c {
+        }
+    }
+    /** module comment of m3.m4.m5*/
+    namespace m3.m4.m5 {
+        /** Exported class comment*/
+        class c {
+        }
+    }
+    /** module comment of m4.m5.m6*/
+    namespace m4.m5.m6 {
+        namespace m7 {
+            /** Exported class comment*/
+            class c {
+            }
+        }
+    }
+    /** module comment of m5.m6.m7*/
+    namespace m5.m6.m7 {
+        /** module m8 comment*/
+        namespace m8 {
+            /** Exported class comment*/
+            class c {
+            }
+        }
+    }
+    namespace m6.m7 {
+        namespace m8 {
+            /** Exported class comment*/
+            class c {
+            }
+        }
+    }
+    namespace m7.m8 {
+        /** module m9 comment*/
+        namespace m9 {
+            /** Exported class comment*/
+            class c {
+            }
+            class e {
+            }
+        }
+    }
+    

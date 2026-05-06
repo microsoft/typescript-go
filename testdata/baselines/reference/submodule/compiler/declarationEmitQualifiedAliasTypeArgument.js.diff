@@ -1,0 +1,10 @@
+--- old.declarationEmitQualifiedAliasTypeArgument.js
++++ new.declarationEmitQualifiedAliasTypeArgument.js
+@@= skipped -37, +37 lines =@@
+
+ //// [index.d.ts]
+ import { T, Q } from "./lib";
+-export declare const fun: () => import("./bbb").INode<T>;
+-export declare const fun2: () => import("./bbb").INode<Q>;
++export const fun: () => import("./bbb").INode<T>;
++export const fun2: () => import("./bbb").INode<Q>;

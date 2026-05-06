@@ -79,20 +79,20 @@ interface JustHello extends Base {
 interface JustWorld extends Base {
     p3: boolean;
 }
-declare let hello: "hello";
-declare let world: "world";
-declare let helloOrWorld: "hello" | "world";
-declare function f(p: "hello"): JustHello;
-declare function f(p: "hello" | "world"): HelloOrWorld;
-declare function f(p: "world"): JustWorld;
-declare function f(p: string): Base;
-declare let fResult1: JustHello;
-declare let fResult2: JustWorld;
-declare let fResult3: HelloOrWorld;
-declare function g(p: string): Base;
-declare function g(p: "hello"): JustHello;
-declare function g(p: "hello" | "world"): HelloOrWorld;
-declare function g(p: "world"): JustWorld;
-declare let gResult1: JustHello;
-declare let gResult2: JustWorld;
-declare let gResult3: Base;
+let hello: "hello";
+let world: "world";
+let helloOrWorld: "hello" | "world";
+function f(p: "hello"): JustHello;
+function f(p: "hello" | "world"): HelloOrWorld;
+function f(p: "world"): JustWorld;
+function f(p: string): Base;
+let fResult1: JustHello;
+let fResult2: JustWorld;
+let fResult3: HelloOrWorld;
+function g(p: string): Base;
+function g(p: "hello"): JustHello;
+function g(p: "hello" | "world"): HelloOrWorld;
+function g(p: "world"): JustWorld;
+let gResult1: JustHello;
+let gResult2: JustWorld;
+let gResult3: Base;

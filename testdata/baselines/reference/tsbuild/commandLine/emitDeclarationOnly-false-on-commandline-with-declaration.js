@@ -72,16 +72,16 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/solution/project1/src/a.d.ts] *new* 
-export declare const a = 10;
+export const a = 10;
 
 //// [/home/src/workspaces/solution/project1/src/b.d.ts] *new* 
-export declare const b = 10;
+export const b = 10;
 
 //// [/home/src/workspaces/solution/project1/src/c.d.ts] *new* 
-export declare const c = 10;
+export const c = 10;
 
 //// [/home/src/workspaces/solution/project1/src/d.d.ts] *new* 
-export declare const d = 10;
+export const d = 10;
 
 //// [/home/src/workspaces/solution/project1/src/tsconfig.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","root":["./a.ts","./b.ts","./c.ts","./d.ts"]}
@@ -117,13 +117,13 @@ export declare const d = 10;
   "size": 72
 }
 //// [/home/src/workspaces/solution/project2/src/e.d.ts] *new* 
-export declare const e = 10;
+export const e = 10;
 
 //// [/home/src/workspaces/solution/project2/src/f.d.ts] *new* 
-export declare const f = 10;
+export const f = 10;
 
 //// [/home/src/workspaces/solution/project2/src/g.d.ts] *new* 
-export declare const g = 10;
+export const g = 10;
 
 //// [/home/src/workspaces/solution/project2/src/tsconfig.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","errors":true,"root":["./e.ts","./f.ts","./g.ts"]}

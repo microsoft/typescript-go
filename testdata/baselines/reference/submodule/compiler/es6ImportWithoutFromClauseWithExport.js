@@ -18,6 +18,6 @@ require("server");
 
 
 //// [server.d.ts]
-export declare var a: number;
+export var a: number;
 //// [client.d.ts]
 export import "server";

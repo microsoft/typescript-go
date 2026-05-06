@@ -22,7 +22,7 @@ exports.x.foo();
 
 
 //// [internalAliasUninitializedModuleInsideTopLevelModuleWithoutExport.d.ts]
-export declare namespace a {
+export namespace a {
     namespace b {
         interface I {
             foo(): any;
@@ -30,4 +30,4 @@ export declare namespace a {
     }
 }
 import b = a.b;
-export declare var x: b.I;
+export var x: b.I;

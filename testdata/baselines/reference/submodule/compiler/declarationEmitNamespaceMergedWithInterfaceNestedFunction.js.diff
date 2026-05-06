@@ -1,0 +1,33 @@
+--- old.declarationEmitNamespaceMergedWithInterfaceNestedFunction.js
++++ new.declarationEmitNamespaceMergedWithInterfaceNestedFunction.js
+@@= skipped -33, +33 lines =@@
+ interface Bar {
+     baz(): void;
+ }
+-declare namespace Bar {
++namespace Bar {
+     function biz(): number;
+ }
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitNamespaceMergedWithInterfaceNestedFunction.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitNamespaceMergedWithInterfaceNestedFunction.d.ts (1 errors) ====
++    export interface Foo {
++        item: Bar;
++    }
++    interface Bar {
++        baz(): void;
++    }
++    namespace Bar {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        function biz(): number;
++    }
++    export {};
++    

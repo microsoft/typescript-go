@@ -138,32 +138,32 @@ function f4() {
 
 
 //// [definiteAssignmentAssertions.d.ts]
-declare class C1 {
+class C1 {
     a: number;
     b: string;
 }
-declare class C2 {
+class C2 {
     a: number;
     constructor();
 }
-declare class C3 {
+class C3 {
     a: number;
     b: number;
     static c: number;
     d: any;
 }
-declare class C4 {
+class C4 {
     a: number;
 }
-declare abstract class C5 {
+abstract class C5 {
     abstract a: number;
 }
-declare function f1(): void;
-declare function f2(): void;
-declare function f3(): void;
-declare function f4(): void;
-declare let v1: number;
-declare var v2: number;
-declare namespace foo {
+function f1(): void;
+function f2(): void;
+function f3(): void;
+function f4(): void;
+let v1: number;
+var v2: number;
+namespace foo {
     var v: number;
 }

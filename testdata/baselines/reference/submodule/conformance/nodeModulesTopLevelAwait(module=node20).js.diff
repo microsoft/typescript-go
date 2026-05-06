@@ -1,0 +1,13 @@
+--- old.nodeModulesTopLevelAwait(module=node20).js
++++ new.nodeModulesTopLevelAwait(module=node20).js
+@@= skipped -36, +36 lines =@@
+
+
+ //// [index.d.ts]
+-declare const x = 1;
++const x = 1;
+ export { x };
+ //// [index.d.ts]
+-declare const x = 1;
++const x = 1;
+ export { x };

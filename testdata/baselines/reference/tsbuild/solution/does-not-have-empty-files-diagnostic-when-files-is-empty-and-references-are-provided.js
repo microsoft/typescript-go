@@ -53,15 +53,15 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/solution/core/index.d.ts] *new* 
-export declare function multiply(a: number, b: number): number;
+export function multiply(a: number, b: number): number;
 //# sourceMappingURL=index.d.ts.map
 //// [/home/src/workspaces/solution/core/index.d.ts.map] *new* 
-{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["index.ts"],"names":[],"mappings":"AAAA,wBAAgB,QAAQ,CAAC,CAAC,EAAE,MAAM,EAAE,CAAC,EAAE,MAAM,UAAmB"}
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["index.ts"],"names":[],"mappings":"AAAA,MAAM,UAAU,QAAQ,CAAC,CAAC,EAAE,MAAM,EAAE,CAAC,EAAE,MAAM,UAAmB"}
 //// [/home/src/workspaces/solution/core/index.js] *new* 
 export function multiply(a, b) { return a * b; }
 
 //// [/home/src/workspaces/solution/core/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"3e196dbeb0efd6f81808db37973c4e6d-export function multiply(a: number, b: number) { return a * b; }","signature":"0d04cb6a9ce77a203776db1857b08505-export declare function multiply(a: number, b: number): number;\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"declarationMap":true,"skipDefaultLibCheck":true},"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"3e196dbeb0efd6f81808db37973c4e6d-export function multiply(a: number, b: number) { return a * b; }","signature":"bbb94214d0a454482a66ba7146a36bdb-export function multiply(a: number, b: number): number;\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"declarationMap":true,"skipDefaultLibCheck":true},"latestChangedDtsFile":"./index.d.ts"}
 //// [/home/src/workspaces/solution/core/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -93,11 +93,11 @@ export function multiply(a, b) { return a * b; }
     {
       "fileName": "./index.ts",
       "version": "3e196dbeb0efd6f81808db37973c4e6d-export function multiply(a: number, b: number) { return a * b; }",
-      "signature": "0d04cb6a9ce77a203776db1857b08505-export declare function multiply(a: number, b: number): number;\n",
+      "signature": "bbb94214d0a454482a66ba7146a36bdb-export function multiply(a: number, b: number): number;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "3e196dbeb0efd6f81808db37973c4e6d-export function multiply(a: number, b: number) { return a * b; }",
-        "signature": "0d04cb6a9ce77a203776db1857b08505-export declare function multiply(a: number, b: number): number;\n",
+        "signature": "bbb94214d0a454482a66ba7146a36bdb-export function multiply(a: number, b: number): number;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -109,7 +109,7 @@ export function multiply(a, b) { return a * b; }
     "skipDefaultLibCheck": true
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1254
+  "size": 1246
 }
 
 core/tsconfig.json::

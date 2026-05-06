@@ -1,0 +1,11 @@
+--- old.declarationEmitOverloadedPrivateInference.js
++++ new.declarationEmitOverloadedPrivateInference.js
+@@= skipped -47, +47 lines =@@
+
+
+ //// [declarationEmitOverloadedPrivateInference.d.ts]
+-export declare class Wrapper {
++export class Wrapper {
+     private proxy;
+     Proxies: {
+         Failure: (options?: unknown) => string;

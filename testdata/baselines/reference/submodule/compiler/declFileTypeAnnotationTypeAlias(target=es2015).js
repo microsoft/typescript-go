@@ -57,7 +57,7 @@ var M;
 
 
 //// [declFileTypeAnnotationTypeAlias.d.ts]
-declare namespace M {
+namespace M {
     type Value = string | number | boolean;
     var x: Value;
     class c {
@@ -73,7 +73,7 @@ declare namespace M {
 interface Window {
     someMethod(): any;
 }
-declare namespace M {
+namespace M {
     type W = Window | string;
     namespace N {
         class Window {
@@ -81,3 +81,39 @@ declare namespace M {
         var p: W;
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationTypeAlias.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationTypeAlias.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        type Value = string | number | boolean;
+        var x: Value;
+        class c {
+        }
+        type C = c;
+        namespace m {
+            class c {
+            }
+        }
+        type MC = m.c;
+        type fc = () => c;
+    }
+    interface Window {
+        someMethod(): any;
+    }
+    namespace M {
+        type W = Window | string;
+        namespace N {
+            class Window {
+            }
+            var p: W;
+        }
+    }
+    

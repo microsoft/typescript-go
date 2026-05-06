@@ -4,10 +4,11 @@
 
 
  //// [a.d.ts]
-+declare const foo: {
-+    f1: (params: any) => void;
-+};
- declare function f2(x: any): void;
+-declare function f2(x: any): void;
 -declare namespace foo {
 -    function f1(params: any): void;
 -}
++const foo: {
++    f1: (params: any) => void;
++};
++function f2(x: any): void;

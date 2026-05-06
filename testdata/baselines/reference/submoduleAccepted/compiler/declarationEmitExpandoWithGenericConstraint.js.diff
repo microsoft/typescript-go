@@ -8,8 +8,9 @@
 -    (x: number, y: number): Point;
 -    zero(): Point;
 -};
-+export declare function Point(x: number, y: number): Point;
- export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
+-export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
++export function Point(x: number, y: number): Point;
++export const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
 +export declare namespace Point {
 +    var zero: () => Point;
 +}

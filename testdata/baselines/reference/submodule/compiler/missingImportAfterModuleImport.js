@@ -33,7 +33,7 @@ module.exports = MainModule;
 
 
 //// [missingImportAfterModuleImport_0.d.ts]
-declare module "SubModule" {
+module "SubModule" {
     class SubModule {
         static StaticVar: number;
         InstanceVar: number;
@@ -44,7 +44,7 @@ declare module "SubModule" {
 //// [missingImportAfterModuleImport_1.d.ts]
 /// <reference path="missingImportAfterModuleImport_0.d.ts" preserve="true" />
 import SubModule = require('SubModule');
-declare class MainModule {
+class MainModule {
     SubModule: SubModule;
     constructor();
 }

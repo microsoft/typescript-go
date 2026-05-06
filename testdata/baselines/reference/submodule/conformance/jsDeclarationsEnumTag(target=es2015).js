@@ -106,7 +106,7 @@ function ff(s) {
 
 //// [index.d.ts]
 /** @enum {string} */
-export declare const Target: {
+export const Target: {
     START: string;
     MIDDLE: string;
     END: string;
@@ -114,13 +114,13 @@ export declare const Target: {
     OK_I_GUESS: number;
 };
 /** @enum number */
-export declare const Second: {
+export const Second: {
     OK: number;
     /** @type {number} */
     FINE: number;
 };
 /** @enum {function(number): number} */
-export declare const Fs: {
+export const Fs: {
     ADD1: (n: any) => any;
     ID: (n: any) => any;
     SUB1: (n: any) => number;
@@ -130,6 +130,6 @@ export declare const Fs: {
  * @param {Second} s
  * @param {Fs} f
  */
-export declare function consume(t: Target, s: Second, f: Fs): void;
+export function consume(t: Target, s: Second, f: Fs): void;
 /** @param {string} s */
-export declare function ff(s: string): any;
+export function ff(s: string): any;

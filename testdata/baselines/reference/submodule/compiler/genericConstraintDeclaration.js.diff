@@ -1,0 +1,10 @@
+--- old.genericConstraintDeclaration.js
++++ new.genericConstraintDeclaration.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [genericConstraintDeclaration.d.ts]
+-declare class List<T extends {}> {
++class List<T extends {}> {
+     static empty<T extends {}>(): List<T>;
+ }

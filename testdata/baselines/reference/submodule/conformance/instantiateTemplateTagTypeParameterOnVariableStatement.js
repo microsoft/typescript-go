@@ -23,8 +23,30 @@ var text3 = seq(text1)(text2);
  * @param {T} a
  * @returns {(b: T) => T}
  */
-declare const seq: <T>(a: T) => (b: T) => T;
-declare const text1 = "hello";
-declare const text2 = "world";
+const seq: <T>(a: T) => (b: T) => T;
+const text1 = "hello";
+const text2 = "world";
 /** @type {string} */
-declare var text3: string;
+var text3: string;
+
+
+//// [DtsFileErrors]
+
+
+instantiateTemplateTagTypeParameterOnVariableStatement.d.ts(6,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== instantiateTemplateTagTypeParameterOnVariableStatement.d.ts (1 errors) ====
+    /**
+     * @template T
+     * @param {T} a
+     * @returns {(b: T) => T}
+     */
+    const seq: <T>(a: T) => (b: T) => T;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const text1 = "hello";
+    const text2 = "world";
+    /** @type {string} */
+    var text3: string;
+    

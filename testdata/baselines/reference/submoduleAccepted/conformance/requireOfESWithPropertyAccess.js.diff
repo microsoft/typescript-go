@@ -7,7 +7,7 @@
 -export namespace x {
 -    let grey: {};
 -}
-+declare const x: {
++const x: {
 +    grey: {};
 +};
 +export { x };

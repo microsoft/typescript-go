@@ -1,13 +1,13 @@
 UseCaseSensitiveFileNames: true
 //// [/myproject/decls/FnS.d.ts] *new* 
-export declare function fn1(): void;
-export declare function fn2(): void;
-export declare function fn3(): void;
-export declare function fn4(): void;
-export declare function fn5(): void;
+export function fn1(): void;
+export function fn2(): void;
+export function fn3(): void;
+export function fn4(): void;
+export function fn5(): void;
 //# sourceMappingURL=FnS.d.ts.map
 //// [/myproject/decls/FnS.d.ts.map] *new* 
-{"version":3,"file":"FnS.d.ts","sourceRoot":"","sources":["../dependency/FnS.ts"],"names":[],"mappings":"AAAA,wBAAgB,GAAG,SAAM;AACzB,wBAAgB,GAAG,SAAM;AACzB,wBAAgB,GAAG,SAAM;AACzB,wBAAgB,GAAG,SAAM;AACzB,wBAAgB,GAAG,SAAM"}
+{"version":3,"file":"FnS.d.ts","sourceRoot":"","sources":["../dependency/FnS.ts"],"names":[],"mappings":"AAAA,MAAM,UAAU,GAAG,SAAM;AACzB,MAAM,UAAU,GAAG,SAAM;AACzB,MAAM,UAAU,GAAG,SAAM;AACzB,MAAM,UAAU,GAAG,SAAM;AACzB,MAAM,UAAU,GAAG,SAAM"}
 //// [/myproject/dependency/FnS.js] *new* 
 export function fn1() { }
 export function fn2() { }
@@ -31,7 +31,7 @@ export function fn5() { }
 	}
 }
 //// [/myproject/dependency/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./FnS.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"dabc23167a661a3e71744cf63ff5adcc-export function fn1() { }\nexport function fn2() { }\nexport function fn3() { }\nexport function fn4() { }\nexport function fn5() { }\n","signature":"bf56b5172c2fd500384b437b7700d594-export declare function fn1(): void;\nexport declare function fn2(): void;\nexport declare function fn3(): void;\nexport declare function fn4(): void;\nexport declare function fn5(): void;\n","impliedNodeFormat":1}],"options":{"composite":true,"declarationDir":"../decls","declarationMap":true},"latestChangedDtsFile":"../decls/FnS.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./FnS.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"dabc23167a661a3e71744cf63ff5adcc-export function fn1() { }\nexport function fn2() { }\nexport function fn3() { }\nexport function fn4() { }\nexport function fn5() { }\n","signature":"d60771ab5e4b4ec5e8325e4be669aab5-export function fn1(): void;\nexport function fn2(): void;\nexport function fn3(): void;\nexport function fn4(): void;\nexport function fn5(): void;\n","impliedNodeFormat":1}],"options":{"composite":true,"declarationDir":"../decls","declarationMap":true},"latestChangedDtsFile":"../decls/FnS.d.ts"}
 //// [/myproject/dependency/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -63,11 +63,11 @@ export function fn5() { }
     {
       "fileName": "./FnS.ts",
       "version": "dabc23167a661a3e71744cf63ff5adcc-export function fn1() { }\nexport function fn2() { }\nexport function fn3() { }\nexport function fn4() { }\nexport function fn5() { }\n",
-      "signature": "bf56b5172c2fd500384b437b7700d594-export declare function fn1(): void;\nexport declare function fn2(): void;\nexport declare function fn3(): void;\nexport declare function fn4(): void;\nexport declare function fn5(): void;\n",
+      "signature": "d60771ab5e4b4ec5e8325e4be669aab5-export function fn1(): void;\nexport function fn2(): void;\nexport function fn3(): void;\nexport function fn4(): void;\nexport function fn5(): void;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "dabc23167a661a3e71744cf63ff5adcc-export function fn1() { }\nexport function fn2() { }\nexport function fn3() { }\nexport function fn4() { }\nexport function fn5() { }\n",
-        "signature": "bf56b5172c2fd500384b437b7700d594-export declare function fn1(): void;\nexport declare function fn2(): void;\nexport declare function fn3(): void;\nexport declare function fn4(): void;\nexport declare function fn5(): void;\n",
+        "signature": "d60771ab5e4b4ec5e8325e4be669aab5-export function fn1(): void;\nexport function fn2(): void;\nexport function fn3(): void;\nexport function fn4(): void;\nexport function fn5(): void;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -78,7 +78,7 @@ export function fn5() { }
     "declarationMap": true
   },
   "latestChangedDtsFile": "../decls/FnS.d.ts",
-  "size": 1435
+  "size": 1395
 }
 //// [/myproject/main/main.d.ts] *new* 
 export {};
@@ -117,7 +117,7 @@ fn5();
 	"references": [{ "path": "../dependency" }]
 }
 //// [/myproject/main/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../decls/FnS.d.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"ccbe7f3de9ff1ded77b994bef4cf9dce-export declare function fn1(): void;\nexport declare function fn2(): void;\nexport declare function fn3(): void;\nexport declare function fn4(): void;\nexport declare function fn5(): void;\n//# sourceMappingURL=FnS.d.ts.map",{"version":"72620bcff3a257f2c990b3f030e1b8e3-import {\n\tfn1,\n\tfn2,\n\tfn3,\n\tfn4,\n\tfn5\n} from \"../decls/FnS\";\n\nfn1();\nfn2();\nfn3();\nfn4();\nfn5();","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"declarationMap":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./main.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../decls/FnS.d.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"999a4d7bccbfedcf2cc8b3396a70cf2d-export function fn1(): void;\nexport function fn2(): void;\nexport function fn3(): void;\nexport function fn4(): void;\nexport function fn5(): void;\n//# sourceMappingURL=FnS.d.ts.map",{"version":"72620bcff3a257f2c990b3f030e1b8e3-import {\n\tfn1,\n\tfn2,\n\tfn3,\n\tfn4,\n\tfn5\n} from \"../decls/FnS\";\n\nfn1();\nfn2();\nfn3();\nfn4();\nfn5();","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"declarationMap":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./main.d.ts"}
 //// [/myproject/main/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -149,8 +149,8 @@ fn5();
     },
     {
       "fileName": "../decls/FnS.d.ts",
-      "version": "ccbe7f3de9ff1ded77b994bef4cf9dce-export declare function fn1(): void;\nexport declare function fn2(): void;\nexport declare function fn3(): void;\nexport declare function fn4(): void;\nexport declare function fn5(): void;\n//# sourceMappingURL=FnS.d.ts.map",
-      "signature": "ccbe7f3de9ff1ded77b994bef4cf9dce-export declare function fn1(): void;\nexport declare function fn2(): void;\nexport declare function fn3(): void;\nexport declare function fn4(): void;\nexport declare function fn5(): void;\n//# sourceMappingURL=FnS.d.ts.map",
+      "version": "999a4d7bccbfedcf2cc8b3396a70cf2d-export function fn1(): void;\nexport function fn2(): void;\nexport function fn3(): void;\nexport function fn4(): void;\nexport function fn5(): void;\n//# sourceMappingURL=FnS.d.ts.map",
+      "signature": "999a4d7bccbfedcf2cc8b3396a70cf2d-export function fn1(): void;\nexport function fn2(): void;\nexport function fn3(): void;\nexport function fn4(): void;\nexport function fn5(): void;\n//# sourceMappingURL=FnS.d.ts.map",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -180,7 +180,7 @@ fn5();
     ]
   },
   "latestChangedDtsFile": "./main.d.ts",
-  "size": 1527
+  "size": 1487
 }
 //// [/myproject/tsconfig.json] *new* 
 {

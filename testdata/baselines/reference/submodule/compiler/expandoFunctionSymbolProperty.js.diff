@@ -1,0 +1,34 @@
+--- old.expandoFunctionSymbolProperty.js
++++ new.expandoFunctionSymbolProperty.js
+@@= skipped -27, +27 lines =@@
+
+
+ //// [expandoFunctionSymbolProperty.d.ts]
+-declare const symb: unique symbol;
++const symb: unique symbol;
+ interface TestSymb {
+     (): void;
+     readonly [symb]: boolean;
+ }
+-export declare function test(): TestSymb;
++export function test(): TestSymb;
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++expandoFunctionSymbolProperty.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== expandoFunctionSymbolProperty.d.ts (1 errors) ====
++    const symb: unique symbol;
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    interface TestSymb {
++        (): void;
++        readonly [symb]: boolean;
++    }
++    export function test(): TestSymb;
++    export {};
++    

@@ -94,18 +94,18 @@ var StrExt;
 
 
 //// [isolatedDeclarationErrorsEnums.d.ts]
-declare function computed(x: number): number;
-declare enum E {
+function computed(x: number): number;
+enum E {
     A,
     B,
     C,
     D
 }
-declare enum F {
+enum F {
     A,
     B
 }
-declare enum Flag {
+enum Flag {
     A = 0,
     B = 0,
     C = 0,
@@ -113,19 +113,19 @@ declare enum Flag {
     ABC = 0,
     AC = 0
 }
-declare const EV = 1;
-declare enum ExtFlags {
+const EV = 1;
+enum ExtFlags {
     D = 2,
     E = 1,
     ABCD = 2,
     AC = 2
 }
-declare enum Str {
+enum Str {
     A = "A",
     B = "B",
     AB = "AB"
 }
-declare enum StrExt {
+enum StrExt {
     D = "D",
     ABD = "ABD",
     AD = "AD"

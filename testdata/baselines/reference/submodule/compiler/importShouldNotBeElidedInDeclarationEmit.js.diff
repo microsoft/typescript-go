@@ -1,0 +1,8 @@
+--- old.importShouldNotBeElidedInDeclarationEmit.js
++++ new.importShouldNotBeElidedInDeclarationEmit.js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const thing: import("umd").Thing;
++export const thing: import("umd").Thing;

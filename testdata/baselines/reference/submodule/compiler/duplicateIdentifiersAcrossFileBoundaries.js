@@ -66,31 +66,31 @@ var Foo;
 //// [file1.d.ts]
 interface I {
 }
-declare class C1 {
+class C1 {
 }
-declare class C2 {
+class C2 {
 }
-declare function f(): void;
-declare var v: number;
-declare class Foo {
+function f(): void;
+var v: number;
+class Foo {
     static x: number;
 }
-declare namespace N {
+namespace N {
     namespace F {
     }
 }
 //// [file2.d.ts]
-declare class I {
+class I {
 }
 interface C1 {
 }
-declare function C2(): void;
-declare class f {
+function C2(): void;
+class f {
 }
-declare var v: number;
-declare namespace Foo {
+var v: number;
+namespace Foo {
     var x: number;
 }
-declare namespace N {
+namespace N {
     function F(): any;
 }

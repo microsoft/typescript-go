@@ -15,4 +15,4 @@ function f(x) {
 
 
 //// [declarationEmitIdentifierPredicates01.d.ts]
-export declare function f(x: any): x is number;
+export function f(x: any): x is number;

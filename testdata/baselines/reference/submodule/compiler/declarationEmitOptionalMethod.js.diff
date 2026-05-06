@@ -1,0 +1,11 @@
+--- old.declarationEmitOptionalMethod.js
++++ new.declarationEmitOptionalMethod.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [declarationEmitOptionalMethod.d.ts]
+-export declare const Foo: (opts: {
++export const Foo: (opts: {
+     a?(): void;
+     b?: () => void;
+ }) => {

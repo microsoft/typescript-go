@@ -358,17 +358,17 @@ exports.ExtendsStatics = ExtendsStatics;
 
 
 //// [index.d.ts]
-export declare class A {
+export class A {
 }
-export declare class B {
+export class B {
     static cat: string;
 }
-export declare class C {
+export class C {
     static Cls: {
         new (): {};
     };
 }
-export declare class D {
+export class D {
     /**
      * @param {number} a
      * @param {number} b
@@ -378,7 +378,7 @@ export declare class D {
 /**
  * @template T,U
  */
-export declare class E<T, U> {
+export class E<T, U> {
     /**
      * @type {T & U}
      */
@@ -440,7 +440,7 @@ export declare class E<T, U> {
 /**
  * @template T,U
  */
-export declare class F<T, U> {
+export class F<T, U> {
     /**
      * @type {T & U}
      */
@@ -457,34 +457,34 @@ export declare class F<T, U> {
      */
     static create<A, B>(a: A, b: B): F<A, B>;
 }
-declare class G {
+class G {
 }
 export { G };
-declare class HH {
+class HH {
 }
 export { HH as H };
-export declare class I {
+export class I {
 }
 export { I as II };
 export { J as JJ };
-export declare class J {
+export class J {
 }
-export declare class K {
+export class K {
     p1: number;
     p2: string;
     constructor();
     method(): number;
 }
-export declare class L extends K {
+export class L extends K {
 }
-export declare class M extends null {
+export class M extends null {
     prop: number;
     constructor();
 }
 /**
  * @template T
  */
-export declare class N<T> extends L {
+export class N<T> extends L {
     another: T;
     /**
      * @param {T} param
@@ -495,19 +495,19 @@ export declare class N<T> extends L {
  * @template U
  * @extends {N<U>}
  */
-export declare class O<U> extends N<U> {
+export class O<U> extends N<U> {
     another2: U;
     /**
      * @param {U} param
      */
     constructor(param: U);
 }
-declare var x: any;
-export declare class VariableBase extends x {
+var x: any;
+export class VariableBase extends x {
 }
-export declare class HasStatics {
+export class HasStatics {
     static staticMethod(): void;
 }
-export declare class ExtendsStatics extends HasStatics {
+export class ExtendsStatics extends HasStatics {
     static also(): void;
 }

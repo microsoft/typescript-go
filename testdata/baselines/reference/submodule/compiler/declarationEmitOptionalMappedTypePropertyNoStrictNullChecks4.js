@@ -12,6 +12,6 @@ export const test = {
 
 
 //// [declarationEmitOptionalMappedTypePropertyNoStrictNullChecks4.d.ts]
-export declare const test: {
+export const test: {
     enable_member_receipts?: undefined;
 };

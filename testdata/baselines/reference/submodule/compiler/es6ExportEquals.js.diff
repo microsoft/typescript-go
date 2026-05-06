@@ -1,0 +1,9 @@
+--- old.es6ExportEquals.js
++++ new.es6ExportEquals.js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [es6ExportEquals.d.ts]
+-export declare function f(): void;
++export function f(): void;
+ export = f;

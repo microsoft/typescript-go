@@ -1,0 +1,34 @@
+--- old.commentsTypeParameters.js
++++ new.commentsTypeParameters.js
+@@= skipped -34, +34 lines =@@
+
+
+ //// [commentsTypeParameters.d.ts]
+-declare class C</**docComment for type parameter*/ T> {
++class C</**docComment for type parameter*/ T> {
+     method</**docComment of method type parameter */ U extends T>(a: U): void;
+     static staticmethod</**docComment of method type parameter */ U>(a: U): void;
+     private privatemethod;
+     private static privatestaticmethod;
+ }
+-declare function compare</**type*/ T>(a: T, b: T): boolean;
++function compare</**type*/ T>(a: T, b: T): boolean;
++
++
++//// [DtsFileErrors]
++
++
++commentsTypeParameters.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== commentsTypeParameters.d.ts (1 errors) ====
++    class C</**docComment for type parameter*/ T> {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        method</**docComment of method type parameter */ U extends T>(a: U): void;
++        static staticmethod</**docComment of method type parameter */ U>(a: U): void;
++        private privatemethod;
++        private static privatestaticmethod;
++    }
++    function compare</**type*/ T>(a: T, b: T): boolean;
++    

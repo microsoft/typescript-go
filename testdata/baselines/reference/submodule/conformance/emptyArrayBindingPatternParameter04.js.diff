@@ -1,0 +1,21 @@
+--- old.emptyArrayBindingPatternParameter04.js
++++ new.emptyArrayBindingPatternParameter04.js
+@@= skipped -12, +12 lines =@@
+
+
+ //// [emptyArrayBindingPatternParameter04.d.ts]
+-declare function f([]?: number[]): void;
++function f([]?: number[]): void;
++
++
++//// [DtsFileErrors]
++
++
++emptyArrayBindingPatternParameter04.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== emptyArrayBindingPatternParameter04.d.ts (1 errors) ====
++    function f([]?: number[]): void;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

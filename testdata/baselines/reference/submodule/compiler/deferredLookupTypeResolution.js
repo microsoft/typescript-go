@@ -53,12 +53,46 @@ type T1 = ObjectHasKey<{
 type T2 = ObjectHasKey<{
     a: string;
 }, 'b'>;
-declare function f1<A extends string, B extends string>(a: A, b: B): {
+function f1<A extends string, B extends string>(a: A, b: B): {
     [P in A | B]: any;
 };
-declare function f2<A extends string>(a: A): { [P in "x" | A]: any; };
-declare function f3(x: 'a' | 'b'): {
+function f2<A extends string>(a: A): { [P in "x" | A]: any; };
+function f3(x: 'a' | 'b'): {
     a: any;
     b: any;
     x: any;
 };
+
+
+//// [DtsFileErrors]
+
+
+deferredLookupTypeResolution.d.ts(14,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== deferredLookupTypeResolution.d.ts (1 errors) ====
+    type StringContains<S extends string, L extends string> = ({
+        [K in S]: 'true';
+    } & {
+        [key: string]: 'false';
+    })[L];
+    type ObjectHasKey<O, L extends string> = StringContains<Extract<keyof O, string>, L>;
+    type First<T> = ObjectHasKey<T, '0'>;
+    type T1 = ObjectHasKey<{
+        a: string;
+    }, 'a'>;
+    type T2 = ObjectHasKey<{
+        a: string;
+    }, 'b'>;
+    function f1<A extends string, B extends string>(a: A, b: B): {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        [P in A | B]: any;
+    };
+    function f2<A extends string>(a: A): { [P in "x" | A]: any; };
+    function f3(x: 'a' | 'b'): {
+        a: any;
+        b: any;
+        x: any;
+    };
+    

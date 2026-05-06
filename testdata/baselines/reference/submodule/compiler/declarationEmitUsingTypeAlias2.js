@@ -52,7 +52,7 @@ exports.bar = some_dep_1.goodDeclaration;
 
 //// [index.d.ts]
 import { shouldReuseLocalName } from "some-dep";
-export declare const bar: () => () => {
+export const bar: () => () => {
     shouldPrintResult: "N";
     shouldPrintResult2: "N";
     shouldLookupName: typeof import("some-dep").shouldLookupName;

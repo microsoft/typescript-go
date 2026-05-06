@@ -104,46 +104,46 @@ var dc = new DerivedC(1);
 
 
 //// [classConstructorAccessibility2.d.ts]
-declare class BaseA {
+class BaseA {
     x: number;
     constructor(x: number);
     createInstance(): void;
 }
-declare class BaseB {
+class BaseB {
     x: number;
     protected constructor(x: number);
     createInstance(): void;
 }
-declare class BaseC {
+class BaseC {
     x: number;
     private constructor();
     createInstance(): void;
     static staticInstance(): void;
 }
-declare class DerivedA extends BaseA {
+class DerivedA extends BaseA {
     x: number;
     constructor(x: number);
     createInstance(): void;
     createBaseInstance(): void;
     static staticBaseInstance(): void;
 }
-declare class DerivedB extends BaseB {
+class DerivedB extends BaseB {
     x: number;
     constructor(x: number);
     createInstance(): void;
     createBaseInstance(): void;
     static staticBaseInstance(): void;
 }
-declare class DerivedC extends BaseC {
+class DerivedC extends BaseC {
     x: number;
     constructor(x: number);
     createInstance(): void;
     createBaseInstance(): void;
     static staticBaseInstance(): void;
 }
-declare var ba: BaseA;
-declare var bb: BaseB;
-declare var bc: BaseC;
-declare var da: DerivedA;
-declare var db: DerivedB;
-declare var dc: DerivedC;
+var ba: BaseA;
+var bb: BaseB;
+var bc: BaseC;
+var da: DerivedA;
+var db: DerivedB;
+var dc: DerivedC;

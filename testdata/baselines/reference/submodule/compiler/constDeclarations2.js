@@ -21,8 +21,25 @@ var M;
 
 
 //// [constDeclarations2.d.ts]
-declare namespace M {
+namespace M {
     const c1 = false;
     const c2: number;
     const c3 = 0, c4: string, c5: any;
 }
+
+
+//// [DtsFileErrors]
+
+
+constDeclarations2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== constDeclarations2.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        const c1 = false;
+        const c2: number;
+        const c3 = 0, c4: string, c5: any;
+    }
+    

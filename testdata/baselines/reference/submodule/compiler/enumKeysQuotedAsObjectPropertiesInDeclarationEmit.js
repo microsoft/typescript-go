@@ -43,7 +43,7 @@ exports.DOMMouseButton = {
 
 
 //// [enumKeysQuotedAsObjectPropertiesInDeclarationEmit.d.ts]
-export declare enum MouseButton {
+export enum MouseButton {
     LEFT_BUTTON = 1,
     RIGHT_BUTTON = 2,
     MIDDLE_BUTTON = 4,
@@ -51,7 +51,7 @@ export declare enum MouseButton {
     XBUTTON2_BUTTON = 6,
     NO_BUTTON = 0
 }
-export declare const DOMMouseButton: {
+export const DOMMouseButton: {
     '-1': MouseButton;
     "0": MouseButton;
     "1": MouseButton;

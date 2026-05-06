@@ -197,7 +197,7 @@ export * from "./file15.js";
 
 
 //// [file2.d.ts]
-declare const a = 1;
+const a = 1;
 export type { a as b };
 //// [file1.d.ts]
 import { b } from "./file2.js";
@@ -261,3 +261,95 @@ export * from "./file12.js";
 export * from "./file13.js";
 export * from "./file14.js";
 export * from "./file15.js";
+
+
+//// [DtsFileErrors]
+
+
+res/file2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== res/file1.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as c };
+    
+==== res/file2.d.ts (1 errors) ====
+    const a = 1;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export type { a as b };
+    
+==== res/file0.d.ts (0 errors) ====
+    import { c } from "./file1.js";
+    export type { c as d };
+    
+==== res/file3.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as e };
+    
+==== res/file4.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as f };
+    
+==== res/file5.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as g };
+    
+==== res/file6.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as h };
+    
+==== res/file7.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as i };
+    
+==== res/file8.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as j };
+    
+==== res/file9.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as k };
+    
+==== res/file10.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as l };
+    
+==== res/file11.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as m };
+    
+==== res/file12.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as n };
+    
+==== res/file13.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as o };
+    
+==== res/file14.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as p };
+    
+==== res/file15.d.ts (0 errors) ====
+    import { b } from "./file2.js";
+    export type { b as q };
+    
+==== res/barrel.d.ts (0 errors) ====
+    export * from "./file0.js";
+    export * from "./file1.js";
+    export * from "./file2.js";
+    export * from "./file3.js";
+    export * from "./file4.js";
+    export * from "./file5.js";
+    export * from "./file6.js";
+    export * from "./file7.js";
+    export * from "./file8.js";
+    export * from "./file9.js";
+    export * from "./file10.js";
+    export * from "./file11.js";
+    export * from "./file12.js";
+    export * from "./file13.js";
+    export * from "./file14.js";
+    export * from "./file15.js";
+    

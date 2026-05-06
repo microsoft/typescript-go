@@ -36,10 +36,10 @@ module.exports.Another = Q;
 
 
 //// [index.d.ts]
-declare class Q {
+class Q {
     x: number;
 }
-declare const _default: {
+const _default: {
     new (): import(".");
 };
 export = _default;

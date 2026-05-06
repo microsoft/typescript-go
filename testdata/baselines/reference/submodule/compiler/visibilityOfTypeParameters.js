@@ -20,6 +20,6 @@ exports.MyClass = MyClass;
 
 
 //// [visibilityOfTypeParameters.d.ts]
-export declare class MyClass {
+export class MyClass {
     protected myMethod<T>(val: T): T;
 }

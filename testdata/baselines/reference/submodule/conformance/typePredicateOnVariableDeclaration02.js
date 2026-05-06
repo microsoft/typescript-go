@@ -9,4 +9,4 @@ var y, is, number;
 
 
 //// [typePredicateOnVariableDeclaration02.d.ts]
-declare var y: z, is: any, number: any;
+var y: z, is: any, number: any;

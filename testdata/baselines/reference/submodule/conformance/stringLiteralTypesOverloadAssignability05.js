@@ -33,8 +33,8 @@ b = a;
 
 
 //// [stringLiteralTypesOverloadAssignability05.d.ts]
-declare function f(x: "foo"): number;
-declare function f(x: string): number;
-declare function g(x: "foo"): number;
-declare let a: typeof f;
-declare let b: typeof g;
+function f(x: "foo"): number;
+function f(x: string): number;
+function g(x: "foo"): number;
+let a: typeof f;
+let b: typeof g;

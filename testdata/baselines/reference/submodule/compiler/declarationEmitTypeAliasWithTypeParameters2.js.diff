@@ -1,0 +1,8 @@
+--- old.declarationEmitTypeAliasWithTypeParameters2.js
++++ new.declarationEmitTypeAliasWithTypeParameters2.js
+@@= skipped -17, +17 lines =@@
+ export type Bar<X, Y, Z> = () => [X, Y, Z];
+ export type Baz<M, N> = Bar<M, string, N>;
+ export type Baa<Y> = Baz<boolean, Y>;
+-export declare const y: (x: Baa<number>) => number;
++export const y: (x: Baa<number>) => number;

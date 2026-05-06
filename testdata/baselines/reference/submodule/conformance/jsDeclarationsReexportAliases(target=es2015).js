@@ -35,5 +35,5 @@ export default class Foo {
 }
 //// [usage.d.ts]
 import { default as Fooa } from "./cls";
-export declare const x: Fooa;
+export const x: Fooa;
 export { default as Foob } from "./cls";

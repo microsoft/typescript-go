@@ -17,7 +17,7 @@ export const foo = { ...({} as Type) };
 
 
 //// [type.d.ts]
-export declare enum Enum {
+export enum Enum {
     A = "a",
     B = "b"
 }
@@ -27,7 +27,7 @@ export type Type = {
     };
 };
 //// [index.d.ts]
-export declare const foo: {
+export const foo: {
     x?: {
         a: 0;
     };

@@ -20,7 +20,7 @@ declare module "foo" {
 
 
 //// [es5ExportDefaultClassDeclaration4.d.ts]
-declare module "foo" {
+module "foo" {
     var before: C;
     export default class C {
         method(): C;
@@ -28,3 +28,23 @@ declare module "foo" {
     var after: C;
     var t: typeof C;
 }
+
+
+//// [DtsFileErrors]
+
+
+es5ExportDefaultClassDeclaration4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== es5ExportDefaultClassDeclaration4.d.ts (1 errors) ====
+    module "foo" {
+    ~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        var before: C;
+        export default class C {
+            method(): C;
+        }
+        var after: C;
+        var t: typeof C;
+    }
+    

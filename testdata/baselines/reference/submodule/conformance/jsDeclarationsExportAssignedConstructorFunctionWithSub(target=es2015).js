@@ -31,6 +31,6 @@ module.exports.Sub.prototype = {};
 /**
  * @param {number} p
  */
-declare const _default: (p: number) => void;
+const _default: (p: number) => void;
 export = _default;
-export declare var Sub: () => void;
+export var Sub: () => void;

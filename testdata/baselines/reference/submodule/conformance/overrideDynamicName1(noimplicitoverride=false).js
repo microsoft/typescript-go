@@ -29,21 +29,21 @@ class Derived3 extends Base3 {
 
 
 //// [overrideDynamicName1.d.ts]
-declare let prop: string;
-declare class Base1 {
+let prop: string;
+class Base1 {
     [prop]: () => void;
 }
-declare class Derived1 extends Base1 {
+class Derived1 extends Base1 {
     [prop]: () => void;
 }
-declare class Base2 {
+class Base2 {
     [prop]: () => void;
 }
-declare class Derived2 extends Base2 {
+class Derived2 extends Base2 {
     [prop]: () => void;
 }
-declare class Base3 {
+class Base3 {
 }
-declare class Derived3 extends Base3 {
+class Derived3 extends Base3 {
     [prop]: () => void;
 }

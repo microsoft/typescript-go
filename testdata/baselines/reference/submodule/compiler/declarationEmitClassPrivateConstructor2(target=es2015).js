@@ -32,11 +32,11 @@ exports.ExportedClass2 = ExportedClass2;
 //// [declarationEmitClassPrivateConstructor2.d.ts]
 interface PrivateInterface {
 }
-export declare class ExportedClass1 {
+export class ExportedClass1 {
     data: PrivateInterface;
     private constructor();
 }
-export declare class ExportedClass2 {
+export class ExportedClass2 {
     protected constructor(data: PrivateInterface);
 }
 export {};

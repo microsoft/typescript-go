@@ -67,12 +67,12 @@ export {};
 
 //// [/home/src/workspaces/project/factory.d.ts] *new* 
 import type { Settings } from "./a";
-export declare const makeObj: () => {
+export const makeObj: () => {
     fn: (s?: Settings) => Settings | undefined;
 };
 
 //// [/home/src/workspaces/project/state.d.ts] *new* 
-export declare const obj: {
+export const obj: {
     fn: (s?: import("./a").Settings) => import("./a").Settings | undefined;
 };
 

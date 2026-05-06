@@ -81,7 +81,7 @@ var M2;
 interface Window {
     someMethod(): any;
 }
-declare namespace M {
+namespace M {
     type W = Window | string;
     export namespace N {
         class Window {
@@ -90,7 +90,7 @@ declare namespace M {
     }
     export {};
 }
-declare namespace M1 {
+namespace M1 {
     type W = Window | string;
     namespace N {
         class Window {
@@ -98,7 +98,7 @@ declare namespace M1 {
         var p: W;
     }
 }
-declare namespace M2 {
+namespace M2 {
     class private1 {
     }
     class public1 {
@@ -112,3 +112,49 @@ declare namespace M2 {
     export type t112 = m3.public1;
     export {};
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationVisibilityErrorTypeAlias.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationVisibilityErrorTypeAlias.d.ts (1 errors) ====
+    interface Window {
+        someMethod(): any;
+    }
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        type W = Window | string;
+        export namespace N {
+            class Window {
+            }
+            var p: W;
+        }
+        export {};
+    }
+    namespace M1 {
+        type W = Window | string;
+        namespace N {
+            class Window {
+            }
+            var p: W;
+        }
+    }
+    namespace M2 {
+        class private1 {
+        }
+        class public1 {
+        }
+        namespace m3 {
+            class public1 {
+            }
+        }
+        export type t2 = private1;
+        export type t12 = public1;
+        export type t112 = m3.public1;
+        export {};
+    }
+    

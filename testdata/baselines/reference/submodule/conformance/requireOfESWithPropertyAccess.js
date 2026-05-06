@@ -29,7 +29,7 @@ x.x.grey;
 
 
 //// [ch.d.ts]
-declare const x: {
+const x: {
     grey: {};
 };
 export { x };

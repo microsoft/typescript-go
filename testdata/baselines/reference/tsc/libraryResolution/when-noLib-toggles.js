@@ -41,14 +41,14 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/b.d.ts] *new* 
-declare const b = 10;
+const b = 10;
 
 //// [/home/src/workspaces/project/b.js] *new* 
 "use strict";
 const b = 10;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2015.d.ts","./a.d.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"65e51aad504cdd4dce12c03a2dcc9410-declare const a = \"hello\";","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0b6737c5344041bf3b8940a4bf34d44f-const b = 10;","signature":"459f957b863aabe09fb52325f783682c-declare const b = 10;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true}}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2015.d.ts","./a.d.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"65e51aad504cdd4dce12c03a2dcc9410-declare const a = \"hello\";","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0b6737c5344041bf3b8940a4bf34d44f-const b = 10;","signature":"9ab2f9eed51e567950b0875ae6770f1f-const b = 10;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true}}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -97,12 +97,12 @@ const b = 10;
     {
       "fileName": "./b.ts",
       "version": "0b6737c5344041bf3b8940a4bf34d44f-const b = 10;",
-      "signature": "459f957b863aabe09fb52325f783682c-declare const b = 10;\n",
+      "signature": "9ab2f9eed51e567950b0875ae6770f1f-const b = 10;\n",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "0b6737c5344041bf3b8940a4bf34d44f-const b = 10;",
-        "signature": "459f957b863aabe09fb52325f783682c-declare const b = 10;\n",
+        "signature": "9ab2f9eed51e567950b0875ae6770f1f-const b = 10;\n",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -111,7 +111,7 @@ const b = 10;
   "options": {
     "declaration": true
   },
-  "size": 1213
+  "size": 1205
 }
 
 tsconfig.json::
@@ -139,7 +139,7 @@ Found 1 error in tsconfig.json[90m:5[0m
 //// [/home/src/workspaces/project/b.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/b.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":[[1,2]],"fileNames":["./a.d.ts","./b.ts"],"fileInfos":[{"version":"65e51aad504cdd4dce12c03a2dcc9410-declare const a = \"hello\";","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0b6737c5344041bf3b8940a4bf34d44f-const b = 10;","signature":"459f957b863aabe09fb52325f783682c-declare const b = 10;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true},"semanticDiagnosticsPerFile":[1,2]}
+{"version":"FakeTSVersion","errors":true,"root":[[1,2]],"fileNames":["./a.d.ts","./b.ts"],"fileInfos":[{"version":"65e51aad504cdd4dce12c03a2dcc9410-declare const a = \"hello\";","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0b6737c5344041bf3b8940a4bf34d44f-const b = 10;","signature":"9ab2f9eed51e567950b0875ae6770f1f-const b = 10;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true},"semanticDiagnosticsPerFile":[1,2]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -176,12 +176,12 @@ Found 1 error in tsconfig.json[90m:5[0m
     {
       "fileName": "./b.ts",
       "version": "0b6737c5344041bf3b8940a4bf34d44f-const b = 10;",
-      "signature": "459f957b863aabe09fb52325f783682c-declare const b = 10;\n",
+      "signature": "9ab2f9eed51e567950b0875ae6770f1f-const b = 10;\n",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "0b6737c5344041bf3b8940a4bf34d44f-const b = 10;",
-        "signature": "459f957b863aabe09fb52325f783682c-declare const b = 10;\n",
+        "signature": "9ab2f9eed51e567950b0875ae6770f1f-const b = 10;\n",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -194,7 +194,7 @@ Found 1 error in tsconfig.json[90m:5[0m
     "./a.d.ts",
     "./b.ts"
   ],
-  "size": 474
+  "size": 466
 }
 
 tsconfig.json::

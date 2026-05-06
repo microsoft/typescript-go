@@ -1,0 +1,21 @@
+--- old.functionExpressionReturningItself.js
++++ new.functionExpressionReturningItself.js
+@@= skipped -8, +8 lines =@@
+
+
+ //// [functionExpressionReturningItself.d.ts]
+-declare var x: () => () => /*elided*/ any;
++var x: () => () => /*elided*/ any;
++
++
++//// [DtsFileErrors]
++
++
++functionExpressionReturningItself.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== functionExpressionReturningItself.d.ts (1 errors) ====
++    var x: () => () => /*elided*/ any;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

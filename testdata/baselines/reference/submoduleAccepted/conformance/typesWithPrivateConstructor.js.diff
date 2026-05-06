@@ -1,15 +1,26 @@
 --- old.typesWithPrivateConstructor.js
 +++ new.typesWithPrivateConstructor.js
-@@= skipped -33, +33 lines =@@
- declare class C {
-     private constructor();
- }
+@@= skipped -30, +30 lines =@@
+
+
+ //// [typesWithPrivateConstructor.d.ts]
+-declare class C {
+-    private constructor();
+-}
 -declare var c: any;
-+declare var c: C;
- declare var r: () => void;
- declare class C2 {
-     private constructor();
- }
+-declare var r: () => void;
+-declare class C2 {
+-    private constructor();
+-}
 -declare var c2: any;
-+declare var c2: C2;
- declare var r2: (x: number) => void;
+-declare var r2: (x: number) => void;
++class C {
++    private constructor();
++}
++var c: C;
++var r: () => void;
++class C2 {
++    private constructor();
++}
++var c2: C2;
++var r2: (x: number) => void;

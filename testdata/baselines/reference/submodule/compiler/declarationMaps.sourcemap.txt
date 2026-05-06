@@ -8,23 +8,23 @@ sources: declarationMaps.ts
 emittedFile:declarationMaps.d.ts
 sourceFile:declarationMaps.ts
 -------------------------------------------------------------------
->>>declare namespace m2 {
+>>>namespace m2 {
 1 >
-2 >^^^^^^^^^^^^^^^^^^
-3 >                  ^^
-4 >                    ^
-5 >                     ^
-6 >                      ^^^^^^^^->
+2 >^^^^^^^^^^
+3 >          ^^
+4 >            ^
+5 >             ^
+6 >              ^^^^^^^^^^^^^^^^->
 1 >
 2 >namespace 
-3 >                  m2
-4 >                     
-5 >                     {
+3 >          m2
+4 >             
+5 >             {
 1 >Emitted(1, 1) Source(1, 1) + SourceIndex(0)
-2 >Emitted(1, 19) Source(1, 11) + SourceIndex(0)
-3 >Emitted(1, 21) Source(1, 13) + SourceIndex(0)
-4 >Emitted(1, 22) Source(1, 14) + SourceIndex(0)
-5 >Emitted(1, 23) Source(1, 15) + SourceIndex(0)
+2 >Emitted(1, 11) Source(1, 11) + SourceIndex(0)
+3 >Emitted(1, 13) Source(1, 13) + SourceIndex(0)
+4 >Emitted(1, 14) Source(1, 14) + SourceIndex(0)
+5 >Emitted(1, 15) Source(1, 15) + SourceIndex(0)
 ---
 >>>    interface connectModule {
 1->^^^^
@@ -175,31 +175,28 @@ sourceFile:declarationMaps.ts
 ---
 >>>}
 1 >^
-2 > ^^^^^^^^^^^^^^^^^->
+2 > ^^^^^^^^^->
 1 >
   >
   >}
 1 >Emitted(9, 2) Source(10, 2) + SourceIndex(0)
 ---
->>>declare var m2: {
+>>>var m2: {
 1->
-2 >^^^^^^^^
-3 >        ^^^^
-4 >            ^^
-5 >              ^^
-6 >                ^^^^^^^^^^->
+2 >^^^^
+3 >    ^^
+4 >      ^^
+5 >        ^^^^^^^^^^^^^^^^^^->
 1->
   >
   >
-2 >
-3 >        var 
-4 >            m2
-5 >              : 
+2 >var 
+3 >    m2
+4 >      : 
 1->Emitted(10, 1) Source(12, 1) + SourceIndex(0)
-2 >Emitted(10, 9) Source(12, 1) + SourceIndex(0)
-3 >Emitted(10, 13) Source(12, 5) + SourceIndex(0)
-4 >Emitted(10, 15) Source(12, 7) + SourceIndex(0)
-5 >Emitted(10, 17) Source(12, 9) + SourceIndex(0)
+2 >Emitted(10, 5) Source(12, 5) + SourceIndex(0)
+3 >Emitted(10, 7) Source(12, 7) + SourceIndex(0)
+4 >Emitted(10, 9) Source(12, 9) + SourceIndex(0)
 ---
 >>>    (): m2.connectExport;
 1->^^^^

@@ -29,10 +29,30 @@ x = Colors.FancyPink;
 
 //// [commentsEnums.d.ts]
 /** Enum of colors*/
-declare enum Colors {
+enum Colors {
     /** Fancy name for 'blue'*/
     Cornflower = 0,
     /** Fancy name for 'pink'*/
     FancyPink = 1
 }
-declare var x: Colors;
+var x: Colors;
+
+
+//// [DtsFileErrors]
+
+
+commentsEnums.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsEnums.d.ts (1 errors) ====
+    /** Enum of colors*/
+    enum Colors {
+    ~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /** Fancy name for 'blue'*/
+        Cornflower = 0,
+        /** Fancy name for 'pink'*/
+        FancyPink = 1
+    }
+    var x: Colors;
+    

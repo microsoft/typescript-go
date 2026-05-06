@@ -1,0 +1,14 @@
+--- old.genericClasses0.js
++++ new.genericClasses0.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [genericClasses0.d.ts]
+-declare class C<T> {
++class C<T> {
+     x: T;
+ }
+-declare var v1: C<string>;
+-declare var y: string;
++var v1: C<string>;
++var y: string;

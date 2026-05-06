@@ -1,10 +1,9 @@
 --- old.overloadTag2.js
 +++ new.overloadTag2.js
-@@= skipped -71, +71 lines =@@
-
+@@= skipped -72, +72 lines =@@
 
  //// [overloadTag2.d.ts]
--export class Foo {
+ export class Foo {
 -    /**
 -     * Should not have an implicit any error, because constructor's return type is always implicit
 -     * @constructor
@@ -12,7 +11,6 @@
 -     * @param {string} a
 -     * @param {number} b
 -     */
-+export declare class Foo {
 +    #private;
      constructor(a: string, b: number);
 -    /**

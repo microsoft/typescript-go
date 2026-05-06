@@ -51,10 +51,10 @@ new MixedBase();
 interface Mixin {
     mixinMethod(): void;
 }
-declare function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin);
-declare abstract class AbstractBase {
+function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin);
+abstract class AbstractBase {
     abstract abstractBaseMethod(): void;
 }
-declare const MixedBase: typeof AbstractBase & (abstract new (...args: any) => Mixin);
-declare class DerivedFromAbstract extends MixedBase {
+const MixedBase: typeof AbstractBase & (abstract new (...args: any) => Mixin);
+class DerivedFromAbstract extends MixedBase {
 }

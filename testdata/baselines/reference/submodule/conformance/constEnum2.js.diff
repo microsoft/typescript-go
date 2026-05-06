@@ -1,0 +1,13 @@
+--- old.constEnum2.js
++++ new.constEnum2.js
+@@= skipped -24, +24 lines =@@
+
+
+ //// [constEnum2.d.ts]
+-declare const CONST: number;
+-declare const enum D {
++const CONST: number;
++const enum D {
+     d = 10,
+     e,
+     f,

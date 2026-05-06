@@ -27,14 +27,37 @@ const obj2 = { [hundredNum]: "bar" };
 
 
 //// [declarationEmitPropertyNumericStringKey.d.ts]
-declare const STATUS: {
+const STATUS: {
     readonly ["404"]: "not found";
 };
-declare const hundredStr = "100";
-declare const obj: {
+const hundredStr = "100";
+const obj: {
     "100": string;
 };
-declare const hundredNum = 100;
-declare const obj2: {
+const hundredNum = 100;
+const obj2: {
     100: string;
 };
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitPropertyNumericStringKey.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitPropertyNumericStringKey.d.ts (1 errors) ====
+    const STATUS: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        readonly ["404"]: "not found";
+    };
+    const hundredStr = "100";
+    const obj: {
+        "100": string;
+    };
+    const hundredNum = 100;
+    const obj2: {
+        100: string;
+    };
+    

@@ -13,6 +13,21 @@ var obj = {
 
 
 //// [symbolDeclarationEmit8.d.ts]
-declare var obj: {
+var obj: {
     [Symbol.isConcatSpreadable]: number;
 };
+
+
+//// [DtsFileErrors]
+
+
+symbolDeclarationEmit8.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== symbolDeclarationEmit8.d.ts (1 errors) ====
+    var obj: {
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        [Symbol.isConcatSpreadable]: number;
+    };
+    

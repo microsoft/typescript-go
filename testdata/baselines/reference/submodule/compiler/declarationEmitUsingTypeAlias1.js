@@ -43,5 +43,5 @@ exports.bar = bar;
 
 //// [index.d.ts]
 import { SomeType } from "some-dep";
-export declare const foo: any;
-export declare const bar: any;
+export const foo: any;
+export const bar: any;

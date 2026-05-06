@@ -40,7 +40,7 @@ interface G<T, U extends B> {
     x: T;
     y: U;
 }
-declare var v1: {
+var v1: {
     x: {
         a: string;
     };
@@ -50,7 +50,46 @@ declare var v1: {
         c: string;
     };
 };
-declare var v2: G<{
+var v2: G<{
     a: string;
 }, C>;
-declare var v4: G<G<A, B>, C>;
+var v4: G<G<A, B>, C>;
+
+
+//// [DtsFileErrors]
+
+
+generics2NoError.d.ts(14,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== generics2NoError.d.ts (1 errors) ====
+    interface A {
+        a: string;
+    }
+    interface B extends A {
+        b: string;
+    }
+    interface C extends B {
+        c: string;
+    }
+    interface G<T, U extends B> {
+        x: T;
+        y: U;
+    }
+    var v1: {
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        x: {
+            a: string;
+        };
+        y: {
+            a: string;
+            b: string;
+            c: string;
+        };
+    };
+    var v2: G<{
+        a: string;
+    }, C>;
+    var v4: G<G<A, B>, C>;
+    

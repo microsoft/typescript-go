@@ -21,7 +21,7 @@ declare class C {
 
 
 //// [ambientAccessors.d.ts]
-declare class C {
+class C {
     static get a(): string;
     static set a(value: string);
     private static get b();
@@ -31,3 +31,25 @@ declare class C {
     private get y();
     private set y(value);
 }
+
+
+//// [DtsFileErrors]
+
+
+ambientAccessors.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== ambientAccessors.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        static get a(): string;
+        static set a(value: string);
+        private static get b();
+        private static set b(value);
+        get x(): string;
+        set x(value: string);
+        private get y();
+        private set y(value);
+    }
+    

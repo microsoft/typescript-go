@@ -20,5 +20,5 @@ export function isExplicitString(value) {
 
 
 //// [isolatedDeclarationsTypePredicate.d.ts]
-export declare function isString(value: unknown): value is string;
-export declare function isExplicitString(value: unknown): value is string;
+export function isString(value: unknown): value is string;
+export function isExplicitString(value: unknown): value is string;

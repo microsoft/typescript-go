@@ -30,7 +30,7 @@ foo("IN " + thingy.me + "!");
 
 
 //// [unusedImportDeclaration_testerB.d.ts]
-declare class TesterB {
+class TesterB {
     me: string;
 }
 export = TesterB;

@@ -18,8 +18,8 @@ let d = (myRandBool ? "foo" : ("bar"));
 
 
 //// [stringLiteralTypesAndParenthesizedExpressions01.d.ts]
-declare function myRandBool(): boolean;
-declare let a: "foo";
-declare let b: "foo" | "bar";
-declare let c: "foo";
-declare let d: "foo" | "bar";
+function myRandBool(): boolean;
+let a: "foo";
+let b: "foo" | "bar";
+let c: "foo";
+let d: "foo" | "bar";

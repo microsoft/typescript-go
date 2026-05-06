@@ -24,7 +24,7 @@ foo.length = 10;
 
 
 //// [isolatedDeclarationErrorsExpandoFunctions.d.ts]
-export declare function foo(): void;
+export function foo(): void;
 export declare namespace foo {
     var apply: () => void;
 }

@@ -26,8 +26,8 @@ exports.D = D;
 
 
 //// [declarationEmitThisPredicates01.d.ts]
-export declare class C {
+export class C {
     m(): this is D;
 }
-export declare class D extends C {
+export class D extends C {
 }

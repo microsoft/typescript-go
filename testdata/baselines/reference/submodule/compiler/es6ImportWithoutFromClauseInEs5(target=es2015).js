@@ -18,6 +18,6 @@ require("es6ImportWithoutFromClauseInEs5_0");
 
 
 //// [es6ImportWithoutFromClauseInEs5_0.d.ts]
-export declare var a: number;
+export var a: number;
 //// [es6ImportWithoutFromClauseInEs5_1.d.ts]
 import "es6ImportWithoutFromClauseInEs5_0";

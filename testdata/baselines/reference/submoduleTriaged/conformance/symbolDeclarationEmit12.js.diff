@@ -1,6 +1,12 @@
 --- old.symbolDeclarationEmit12.js
 +++ new.symbolDeclarationEmit12.js
-@@= skipped -35, +35 lines =@@
+@@= skipped -30, +30 lines =@@
+
+
+ //// [symbolDeclarationEmit12.d.ts]
+-declare namespace M {
++namespace M {
+     interface I {
      }
      export class C {
          [Symbol.iterator]: I;

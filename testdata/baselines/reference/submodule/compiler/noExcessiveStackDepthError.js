@@ -33,4 +33,4 @@ interface FindOperator<T> {
 type FindConditions<T> = {
     [P in keyof T]?: FindConditions<T[P]> | FindOperator<FindConditions<T[P]>>;
 };
-declare function foo<Entity>(): void;
+function foo<Entity>(): void;

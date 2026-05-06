@@ -32,13 +32,13 @@ let x;
 
 
 //// [namespacesDeclaration2.d.ts]
-declare namespace N {
+namespace N {
 }
-declare namespace M {
+namespace M {
 }
-declare namespace ns {
+namespace ns {
     let f: number;
 }
-declare var foge: N.S;
-declare var foo: M.F;
-declare let x: ns.A;
+var foge: N.S;
+var foo: M.F;
+let x: ns.A;

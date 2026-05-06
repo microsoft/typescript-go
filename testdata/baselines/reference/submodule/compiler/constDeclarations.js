@@ -27,6 +27,21 @@ for (const c5 = 0, c6 = 0; c5 < c6;) {
 
 
 //// [constDeclarations.d.ts]
-declare const c1 = false;
-declare const c2: number;
-declare const c3 = 0, c4: string, c5: any;
+const c1 = false;
+const c2: number;
+const c3 = 0, c4: string, c5: any;
+
+
+//// [DtsFileErrors]
+
+
+constDeclarations.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== constDeclarations.d.ts (1 errors) ====
+    const c1 = false;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const c2: number;
+    const c3 = 0, c4: string, c5: any;
+    

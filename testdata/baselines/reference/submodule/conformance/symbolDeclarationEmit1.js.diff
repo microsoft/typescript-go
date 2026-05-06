@@ -1,0 +1,10 @@
+--- old.symbolDeclarationEmit1.js
++++ new.symbolDeclarationEmit1.js
+@@= skipped -12, +12 lines =@@
+
+
+ //// [symbolDeclarationEmit1.d.ts]
+-declare class C {
++class C {
+     [Symbol.toPrimitive]: number;
+ }

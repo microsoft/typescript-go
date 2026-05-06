@@ -79,7 +79,7 @@ export interface Things<P, T> {
     p: P;
     t: T;
 }
-export declare function make<P, CTor>(x: {
+export function make<P, CTor>(x: {
     new (): CTor & {
         props: P;
     };
@@ -89,6 +89,6 @@ export interface Props {
 export default class MyComponent {
     props: Props;
 }
-export declare namespace Something {
+export namespace Something {
     const create: Things<Props, me.default>;
 }

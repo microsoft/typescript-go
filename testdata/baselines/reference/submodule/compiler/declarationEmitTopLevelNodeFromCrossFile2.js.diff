@@ -1,0 +1,11 @@
+--- old.declarationEmitTopLevelNodeFromCrossFile2.js
++++ new.declarationEmitTopLevelNodeFromCrossFile2.js
+@@= skipped -34, +34 lines =@@
+
+
+ //// [a.d.ts]
+-export declare const _: import("./box").Box<{
++export const _: import("./box").Box<{
+     boxed: import("./box").Box<number>;
+ }>;
+ /**

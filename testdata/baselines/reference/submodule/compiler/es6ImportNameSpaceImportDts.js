@@ -58,8 +58,8 @@ exports.x = new nameSpaceBinding.c();
 
 
 //// [server.d.ts]
-export declare class c {
+export class c {
 }
 //// [client.d.ts]
 import * as nameSpaceBinding from "./server";
-export declare var x: nameSpaceBinding.c;
+export var x: nameSpaceBinding.c;

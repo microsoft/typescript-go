@@ -25,15 +25,15 @@ export const t3 = {
 
 
 //// [a.d.ts]
-export declare const t1: {
+export const t1: {
     p: string;
     readonly getter: string;
 };
-export declare const t2: {
+export const t2: {
     v: string;
     setter: any;
 };
-export declare const t3: {
+export const t3: {
     p: string;
     value: string;
 };

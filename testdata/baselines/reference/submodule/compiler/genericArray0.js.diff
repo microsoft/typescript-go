@@ -1,0 +1,12 @@
+--- old.genericArray0.js
++++ new.genericArray0.js
+@@= skipped -20, +20 lines =@@
+
+
+ //// [genericArray0.d.ts]
+-declare var x: number[];
+-declare var y: number[];
+-declare function map<U>(): void;
++var x: number[];
++var y: number[];
++function map<U>(): void;

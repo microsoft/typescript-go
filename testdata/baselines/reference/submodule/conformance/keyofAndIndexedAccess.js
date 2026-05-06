@@ -1023,20 +1023,20 @@ const cf2 = (t, k) => {
 
 
 //// [keyofAndIndexedAccess.d.ts]
-declare class Shape {
+class Shape {
     name: string;
     width: number;
     height: number;
     visible: boolean;
 }
-declare class TaggedShape extends Shape {
+class TaggedShape extends Shape {
     tag: string;
 }
-declare class Item {
+class Item {
     name: string;
     price: number;
 }
-declare class Options {
+class Options {
     visible: "yes" | "no";
 }
 type Dictionary<T> = {
@@ -1045,7 +1045,7 @@ type Dictionary<T> = {
 type NumericallyIndexed<T> = {
     [x: number]: T;
 };
-declare const enum E {
+const enum E {
     A = 0,
     B = 1,
     C = 2
@@ -1091,65 +1091,65 @@ type Q41 = (Shape & Options)["visible"];
 type Q50 = Dictionary<Shape>["howdy"];
 type Q51 = Dictionary<Shape>[123];
 type Q52 = Dictionary<Shape>[E.B];
-declare let cond: boolean;
-declare function getProperty<T, K extends keyof T>(obj: T, key: K): T[K];
-declare function setProperty<T, K extends keyof T>(obj: T, key: K, value: T[K]): void;
-declare function f10(shape: Shape): void;
-declare function f11(a: Shape[]): void;
-declare function f12(t: [Shape, boolean]): void;
-declare function f13(foo: any, bar: any): void;
-declare class Component<PropType> {
+let cond: boolean;
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K];
+function setProperty<T, K extends keyof T>(obj: T, key: K, value: T[K]): void;
+function f10(shape: Shape): void;
+function f11(a: Shape[]): void;
+function f12(t: [Shape, boolean]): void;
+function f13(foo: any, bar: any): void;
+class Component<PropType> {
     props: PropType;
     getProperty<K extends keyof PropType>(key: K): PropType[K];
     setProperty<K extends keyof PropType>(key: K, value: PropType[K]): void;
 }
-declare function f20(component: Component<Shape>): void;
-declare function pluck<T, K extends keyof T>(array: T[], key: K): T[K][];
-declare function f30(shapes: Shape[]): void;
-declare function f31<K extends keyof Shape>(key: K): Shape[K];
-declare function f32<K extends "width" | "height">(key: K): Shape[K];
-declare function f33<S extends Shape, K extends keyof S>(shape: S, key: K): S[K];
-declare function f34(ts: TaggedShape): void;
-declare class C {
+function f20(component: Component<Shape>): void;
+function pluck<T, K extends keyof T>(array: T[], key: K): T[K][];
+function f30(shapes: Shape[]): void;
+function f31<K extends keyof Shape>(key: K): Shape[K];
+function f32<K extends "width" | "height">(key: K): Shape[K];
+function f33<S extends Shape, K extends keyof S>(shape: S, key: K): S[K];
+function f34(ts: TaggedShape): void;
+class C {
     x: string;
     protected y: string;
     private z;
 }
-declare function f40(c: C): void;
-declare function f50<T>(k: keyof T, s: string): void;
-declare function f51<T, K extends keyof T>(k: K, s: string): void;
-declare function f52<T>(obj: {
+function f40(c: C): void;
+function f50<T>(k: keyof T, s: string): void;
+function f51<T, K extends keyof T>(k: K, s: string): void;
+function f52<T>(obj: {
     [x: string]: boolean;
 }, k: Exclude<keyof T, symbol>, s: string, n: number): void;
-declare function f53<T, K extends Exclude<keyof T, symbol>>(obj: {
+function f53<T, K extends Exclude<keyof T, symbol>>(obj: {
     [x: string]: boolean;
 }, k: K, s: string, n: number): void;
-declare function f54<T>(obj: T, key: keyof T): void;
-declare function f55<T, K extends keyof T>(obj: T, key: K): void;
-declare function f60<T>(source: T, target: T): void;
-declare function f70(func: <T, U>(k1: keyof (T | U), k2: keyof (T & U)) => void): void;
-declare function f71(func: <T, U>(x: T, y: U) => Partial<T & U>): void;
-declare function f72(func: <T, U, K extends keyof T | keyof U>(x: T, y: U, k: K) => (T & U)[K]): void;
-declare function f73(func: <T, U, K extends keyof (T & U)>(x: T, y: U, k: K) => (T & U)[K]): void;
-declare function f74(func: <T, U, K extends keyof (T | U)>(x: T, y: U, k: K) => (T | U)[K]): void;
-declare function f80<T extends {
+function f54<T>(obj: T, key: keyof T): void;
+function f55<T, K extends keyof T>(obj: T, key: K): void;
+function f60<T>(source: T, target: T): void;
+function f70(func: <T, U>(k1: keyof (T | U), k2: keyof (T & U)) => void): void;
+function f71(func: <T, U>(x: T, y: U) => Partial<T & U>): void;
+function f72(func: <T, U, K extends keyof T | keyof U>(x: T, y: U, k: K) => (T & U)[K]): void;
+function f73(func: <T, U, K extends keyof (T & U)>(x: T, y: U, k: K) => (T & U)[K]): void;
+function f74(func: <T, U, K extends keyof (T | U)>(x: T, y: U, k: K) => (T | U)[K]): void;
+function f80<T extends {
     a: {
         x: any;
     };
 }>(obj: T): void;
-declare function f81<T extends {
+function f81<T extends {
     a: {
         x: any;
     };
 }>(obj: T): T['a']['x'];
-declare function f82(): void;
-declare function f83<T extends {
+function f82(): void;
+function f83<T extends {
     [x: string]: {
         x: any;
     };
 }, K extends keyof T>(obj: T, key: K): T[K]['x'];
-declare function f84(): void;
-declare class C1 {
+function f84(): void;
+class C1 {
     x: number;
     get<K extends keyof this>(key: K): this[K];
     set<K extends keyof this>(key: K, value: this[K]): void;
@@ -1159,27 +1159,27 @@ type S2 = {
     a: string;
     b: string;
 };
-declare function f90<T extends S2, K extends keyof S2>(x1: S2[keyof S2], x2: T[keyof S2], x3: S2[K]): void;
-declare function f91<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
-declare function f92<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
-declare class Base {
+function f90<T extends S2, K extends keyof S2>(x1: S2[keyof S2], x2: T[keyof S2], x3: S2[K]): void;
+function f91<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
+function f92<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
+class Base {
     get<K extends keyof this>(prop: K): this[K];
     set<K extends keyof this>(prop: K, value: this[K]): void;
 }
-declare class Person extends Base {
+class Person extends Base {
     parts: number;
     constructor(parts: number);
     getParts(): this["parts"];
 }
-declare class OtherPerson {
+class OtherPerson {
     parts: number;
     constructor(parts: number);
     getParts(): this["parts"];
 }
-declare function path<T, K1 extends keyof T>(obj: T, key1: K1): T[K1];
-declare function path<T, K1 extends keyof T, K2 extends keyof T[K1]>(obj: T, key1: K1, key2: K2): T[K1][K2];
-declare function path<T, K1 extends keyof T, K2 extends keyof T[K1], K3 extends keyof T[K1][K2]>(obj: T, key1: K1, key2: K2, key3: K3): T[K1][K2][K3];
-declare function path(obj: any, ...keys: (string | number)[]): any;
+function path<T, K1 extends keyof T>(obj: T, key1: K1): T[K1];
+function path<T, K1 extends keyof T, K2 extends keyof T[K1]>(obj: T, key1: K1, key2: K2): T[K1][K2];
+function path<T, K1 extends keyof T, K2 extends keyof T[K1], K3 extends keyof T[K1][K2]>(obj: T, key1: K1, key2: K2, key3: K3): T[K1][K2][K3];
+function path(obj: any, ...keys: (string | number)[]): any;
 type Thing = {
     a: {
         x: number;
@@ -1187,100 +1187,100 @@ type Thing = {
     };
     b: boolean;
 };
-declare function f1(thing: Thing): void;
-declare const assignTo2: <T, K1 extends keyof T, K2 extends keyof T[K1]>(object: T, key1: K1, key2: K2) => (value: T[K1][K2]) => T[K1][K2];
-declare function one<T>(handler: (t: T) => void): T;
-declare var empty: unknown;
+function f1(thing: Thing): void;
+const assignTo2: <T, K1 extends keyof T, K2 extends keyof T[K1]>(object: T, key1: K1, key2: K2) => (value: T[K1][K2]) => T[K1][K2];
+function one<T>(handler: (t: T) => void): T;
+var empty: unknown;
 type Handlers<T> = {
     [K in keyof T]: (t: T[K]) => void;
 };
-declare function on<T>(handlerHash: Handlers<T>): T;
-declare var hashOfEmpty1: {
+function on<T>(handlerHash: Handlers<T>): T;
+var hashOfEmpty1: {
     test: unknown;
 };
-declare var hashOfEmpty2: {
+var hashOfEmpty2: {
     test: boolean;
 };
 interface Options1<Data, Computed> {
     data?: Data;
     computed?: Computed;
 }
-declare class Component1<Data, Computed> {
+class Component1<Data, Computed> {
     constructor(options: Options1<Data, Computed>);
     get<K extends keyof (Data & Computed)>(key: K): (Data & Computed)[K];
 }
-declare let c1: Component1<{
+let c1: Component1<{
     hello: string;
 }, unknown>;
 interface Options2<Data, Computed> {
     data?: Data;
     computed?: Computed;
 }
-declare class Component2<Data, Computed> {
+class Component2<Data, Computed> {
     constructor(options: Options2<Data, Computed>);
     get<K extends keyof Data | keyof Computed>(key: K): (Data & Computed)[K];
 }
 interface R {
     p: number;
 }
-declare function f<K extends keyof R>(p: K): void;
+function f<K extends keyof R>(p: K): void;
 type MethodDescriptor = {
     name: string;
     args: any[];
     returnValue: any;
 };
-declare function dispatchMethod<M extends MethodDescriptor>(name: M['name'], args: M['args']): M['returnValue'];
+function dispatchMethod<M extends MethodDescriptor>(name: M['name'], args: M['args']): M['returnValue'];
 type SomeMethodDescriptor = {
     name: "someMethod";
     args: [string, number];
     returnValue: string[];
 };
-declare let result: string[];
+let result: string[];
 type KeyTypes = "a" | "b";
-declare let MyThingy: {
+let MyThingy: {
     [key in KeyTypes]: string[];
 };
-declare function addToMyThingy<S extends KeyTypes>(key: S): void;
+function addToMyThingy<S extends KeyTypes>(key: S): void;
 type Handler<T> = {
     onChange: (name: keyof T) => void;
 };
-declare function onChangeGenericFunction<T>(handler: Handler<T & {
+function onChangeGenericFunction<T>(handler: Handler<T & {
     preset: number;
 }>): void;
-declare function updateIds<T extends Record<K, string>, K extends string>(obj: T, idFields: K[], idMapping: Partial<Record<T[K], T[K]>>): Record<K, string>;
-declare function updateIds2<T extends {
+function updateIds<T extends Record<K, string>, K extends string>(obj: T, idFields: K[], idMapping: Partial<Record<T[K], T[K]>>): Record<K, string>;
+function updateIds2<T extends {
     [x: string]: string;
 }, K extends keyof T>(obj: T, key: K, stringMap: {
     [oldId: string]: string;
 }): void;
-declare function head<T extends Array<any>>(list: T): T[0];
-declare class A<T> {
+function head<T extends Array<any>>(list: T): T[0];
+class A<T> {
     props: T & {
         foo: string;
     };
 }
-declare class B extends A<{
+class B extends A<{
     x: number;
 }> {
     f(p: this["props"]): void;
 }
-declare class Form<T> {
+class Form<T> {
     private childFormFactories;
     set<K extends keyof T>(prop: K, value: T[K]): void;
 }
-declare class SampleClass<P> {
+class SampleClass<P> {
     props: Readonly<P>;
     constructor(props: P);
 }
 interface Foo {
     foo: string;
 }
-declare function merge<T, U>(obj1: T, obj2: U): T & U;
-declare class AnotherSampleClass<T> extends SampleClass<T & Foo> {
+function merge<T, U>(obj1: T, obj2: U): T & U;
+class AnotherSampleClass<T> extends SampleClass<T & Foo> {
     constructor(props: T);
     brokenMethod(): void;
 }
-declare function f3<T, K extends Extract<keyof T, string>>(t: T, k: K, tk: T[K]): void;
+function f3<T, K extends Extract<keyof T, string>>(t: T, k: K, tk: T[K]): void;
 type Predicates<TaggedRecord> = {
     [T in keyof TaggedRecord]: (variant: TaggedRecord[keyof TaggedRecord]) => variant is TaggedRecord[T];
 };
@@ -1318,42 +1318,42 @@ type Result2 = Example2<{
 type DBBoolTable<K extends string> = {
     [k in K]: 0 | 1;
 };
-declare enum Flag {
+enum Flag {
     FLAG_1 = "flag_1",
     FLAG_2 = "flag_2"
 }
 type SimpleDBRecord<Flag extends string> = {
     staticField: number;
 } & DBBoolTable<Flag>;
-declare function getFlagsFromSimpleRecord<Flag extends string>(record: SimpleDBRecord<Flag>, flags: Flag[]): SimpleDBRecord<Flag>[Flag];
+function getFlagsFromSimpleRecord<Flag extends string>(record: SimpleDBRecord<Flag>, flags: Flag[]): SimpleDBRecord<Flag>[Flag];
 type DynamicDBRecord<Flag extends string> = ({
     dynamicField: number;
 } | {
     dynamicField: string;
 }) & DBBoolTable<Flag>;
-declare function getFlagsFromDynamicRecord<Flag extends string>(record: DynamicDBRecord<Flag>, flags: Flag[]): DynamicDBRecord<Flag>[Flag];
+function getFlagsFromDynamicRecord<Flag extends string>(record: DynamicDBRecord<Flag>, flags: Flag[]): DynamicDBRecord<Flag>[Flag];
 interface I {
     foo: string;
 }
-declare function take<T>(p: T): void;
-declare function fn<T extends I, K extends keyof T>(o: T, k: K): void;
-declare class Unbounded<T> {
+function take<T>(p: T): void;
+function fn<T extends I, K extends keyof T>(o: T, k: K): void;
+class Unbounded<T> {
     foo(x: T[keyof T]): void;
 }
 interface I7 {
     x: any;
 }
 type Foo7<T extends number> = T;
-declare function f7<K extends keyof I7>(type: K): Foo7<I7[K]>;
+function f7<K extends keyof I7>(type: K): Foo7<I7[K]>;
 type Dict<T extends string> = {
     [key in T]: number;
 };
 type DictDict<V extends string, T extends string> = {
     [key in V]: Dict<T>;
 };
-declare function ff1<V extends string, T extends string>(dd: DictDict<V, T>, k1: V, k2: T): number;
-declare function ff2<V extends string, T extends string>(dd: DictDict<V, T>, k1: V, k2: T): number;
-declare const cf1: <T extends { [P in K]: string; } & {
+function ff1<V extends string, T extends string>(dd: DictDict<V, T>, k1: V, k2: T): number;
+function ff2<V extends string, T extends string>(dd: DictDict<V, T>, k1: V, k2: T): number;
+const cf1: <T extends { [P in K]: string; } & {
     cool: string;
 }, K extends keyof T>(t: T, k: K) => void;
-declare const cf2: <T extends { [P in K | "cool"]: string; }, K extends keyof T>(t: T, k: K) => void;
+const cf2: <T extends { [P in K | "cool"]: string; }, K extends keyof T>(t: T, k: K) => void;

@@ -47,7 +47,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/solution/project/src/main.d.ts] *new* 
-export declare const x = 10;
+export const x = 10;
 
 //// [/home/src/workspaces/solution/project/src/main.js] *new* 
 export const x = 10;

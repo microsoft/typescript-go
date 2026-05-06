@@ -1,0 +1,16 @@
+--- old.importTypeAmbientMissing.js
++++ new.importTypeAmbientMissing.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [importTypeAmbientMissing.d.ts]
+-declare module "foo" {
++module "foo" {
+     interface Point {
+         x: number;
+         y: number;
+     }
+     export = Point;
+ }
+-declare const x: import("fo");
++const x: import("fo");

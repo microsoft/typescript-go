@@ -1,0 +1,11 @@
+--- old.declarationEmitComputedNamesInaccessible.js
++++ new.declarationEmitComputedNamesInaccessible.js
+@@= skipped -46, +46 lines =@@
+
+
+ //// [declarationEmitComputedNamesInaccessible.d.ts]
+-export declare function f1(): {
++export function f1(): {
+     new (): {
+         [x: string]: (() => string) | (() => number);
+     };

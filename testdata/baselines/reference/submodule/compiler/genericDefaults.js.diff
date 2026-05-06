@@ -1,0 +1,233 @@
+--- old.genericDefaults.js
++++ new.genericDefaults.js
+@@= skipped -886, +886 lines =@@
+     b: number;
+     c: number;
+ }
+-declare const a: A;
+-declare const b: B;
+-declare const c: C;
+-declare const d: D;
+-declare const ab: AB;
+-declare const bc: BC;
+-declare const x: any;
+-declare function f00(a?: A): A;
+-declare function f01<T>(a?: T): T;
+-declare function f02<T = A>(a?: T): T;
+-declare function f03<T = T>(a?: T): T;
+-declare function f04<T, U = B>(a?: T, b?: U): [T, U];
+-declare function f05<T, U = T>(a?: T, b?: U): [T, U];
+-declare function f06<T = A, U = T>(a?: T, b?: U): [T, U];
+-declare function f07<T, U = B, V = U>(a?: T, b?: U, c?: V): [T, U, V];
+-declare function f08<T extends A, U = T>(a?: T, b?: U): [T, U];
+-declare function f09<T, U extends T = T>(a?: T, b?: U): [T, U];
+-declare function f10<T extends A, U extends T = T>(a?: T, b?: U): [T, U];
+-declare function f11<T, U = T | B>(a?: T, b?: U): [T, U];
+-declare function f12<T, U = T & B>(a?: T, b?: U): [T, U];
+-declare function f13<T = U, U = B>(a?: T, b?: U): [T, U];
+-declare function f14<T, U = V, V = C>(a?: T, b?: U, c?: V): [T, U, V];
+-declare function f15<T = U, U = T>(a?: T, b?: U): [T, U];
+-declare function f16<T, U = V, V = U>(a?: T, b?: U, c?: V): [T, U, V];
+-declare function f17<T = U, U = T | B>(a?: T, b?: U): [T, U];
+-declare function f18<T, U = V, V = U | C>(a?: T, b?: U, c?: V): [T, U, V];
+-declare function f19<T = U, U = T & B>(a?: T, b?: U): [T, U];
+-declare function f20<T, U = V, V = U & C>(a?: T, b?: U, c?: V): [T, U, V];
++const a: A;
++const b: B;
++const c: C;
++const d: D;
++const ab: AB;
++const bc: BC;
++const x: any;
++function f00(a?: A): A;
++function f01<T>(a?: T): T;
++function f02<T = A>(a?: T): T;
++function f03<T = T>(a?: T): T;
++function f04<T, U = B>(a?: T, b?: U): [T, U];
++function f05<T, U = T>(a?: T, b?: U): [T, U];
++function f06<T = A, U = T>(a?: T, b?: U): [T, U];
++function f07<T, U = B, V = U>(a?: T, b?: U, c?: V): [T, U, V];
++function f08<T extends A, U = T>(a?: T, b?: U): [T, U];
++function f09<T, U extends T = T>(a?: T, b?: U): [T, U];
++function f10<T extends A, U extends T = T>(a?: T, b?: U): [T, U];
++function f11<T, U = T | B>(a?: T, b?: U): [T, U];
++function f12<T, U = T & B>(a?: T, b?: U): [T, U];
++function f13<T = U, U = B>(a?: T, b?: U): [T, U];
++function f14<T, U = V, V = C>(a?: T, b?: U, c?: V): [T, U, V];
++function f15<T = U, U = T>(a?: T, b?: U): [T, U];
++function f16<T, U = V, V = U>(a?: T, b?: U, c?: V): [T, U, V];
++function f17<T = U, U = T | B>(a?: T, b?: U): [T, U];
++function f18<T, U = V, V = U | C>(a?: T, b?: U, c?: V): [T, U, V];
++function f19<T = U, U = T & B>(a?: T, b?: U): [T, U];
++function f20<T, U = V, V = U & C>(a?: T, b?: U, c?: V): [T, U, V];
+ interface i00<T = number> {
+     a: T;
+ }
+-declare const i00c00: number;
+-declare const i00c01: number;
++const i00c00: number;
++const i00c01: number;
+ interface i01<T, U = T> {
+     a: [T, U];
+ }
+-declare const i01c00: [number, number];
+-declare const i01c01: [number, string];
++const i01c00: [number, number];
++const i01c01: [number, string];
+ interface i02<T extends number, U = T> {
+     a: [T, U];
+ }
+-declare const i02c00: [number, number];
+-declare const i02c01: [1, 1];
+-declare const i02c02: [number, number];
+-declare const i02c03: [1, number];
+-declare const i02c04: [number, 1];
++const i02c00: [number, number];
++const i02c01: [1, 1];
++const i02c02: [number, number];
++const i02c03: [1, number];
++const i02c04: [number, 1];
+ interface i03<T extends number, U extends T = T> {
+     a: [T, U];
+ }
+-declare const i03c00: [number, number];
+-declare const i03c01: [1, 1];
+-declare const i03c02: [number, number];
+-declare const i03c03: [1, 1];
+-declare const i03c04: [number, 1];
++const i03c00: [number, number];
++const i03c01: [1, 1];
++const i03c02: [number, number];
++const i03c03: [1, 1];
++const i03c04: [number, 1];
+ interface i04 {
+ }
+ interface i04<T> {
+@@= skipped -65, +65 lines =@@
+ interface i05<T = T> {
+     a: T;
+ }
+-declare const i05c00: any;
+-declare const i05c01: number;
++const i05c00: any;
++const i05c01: number;
+ interface i06<T = U, U = T> {
+     a: [T, U];
+ }
+-declare const i06c00: [any, any];
+-declare const i06c01: [number, number];
+-declare const i06c02: [number, string];
++const i06c00: [any, any];
++const i06c01: [number, number];
++const i06c02: [number, string];
+ interface i07 {
+     a: A;
+ }
+ interface i07<A = number> {
+     b: A;
+ }
+-declare const i07c00: A;
+-declare const i07c01: number;
+-declare const i07c02: A;
+-declare const i07c03: B;
++const i07c00: A;
++const i07c01: number;
++const i07c02: A;
++const i07c03: B;
+ interface Base01<T> {
+     a: T;
+ }
+ interface Base01Constructor {
+     new <T = number>(a?: T): Base01<T>;
+ }
+-declare const Base01: Base01Constructor;
+-declare const Base01c00: Base01<number>;
+-declare const Base01c01: Base01<number>;
+-declare const Base01c02: Base01<number>;
+-declare const Base01c03: Base01<number>;
+-declare class Derived01<T> extends Base01<T> {
+-}
+-declare const Derived01c00: Derived01<unknown>;
+-declare const Derived01c01: Derived01<number>;
+-declare const Derived01c02: Derived01<number>;
+-declare const Derived01c03: Derived01<number>;
+-declare class Derived02<T = string> extends Base01<T> {
+-}
+-declare const Derived02c00: Derived02<string>;
+-declare const Derived02c01: Derived02<number>;
+-declare const Derived02c02: Derived02<number>;
+-declare const Derived02c03: Derived02<number>;
++const Base01: Base01Constructor;
++const Base01c00: Base01<number>;
++const Base01c01: Base01<number>;
++const Base01c02: Base01<number>;
++const Base01c03: Base01<number>;
++class Derived01<T> extends Base01<T> {
++}
++const Derived01c00: Derived01<unknown>;
++const Derived01c01: Derived01<number>;
++const Derived01c02: Derived01<number>;
++const Derived01c03: Derived01<number>;
++class Derived02<T = string> extends Base01<T> {
++}
++const Derived02c00: Derived02<string>;
++const Derived02c01: Derived02<number>;
++const Derived02c02: Derived02<number>;
++const Derived02c03: Derived02<number>;
+ interface Base02 {
+ }
+ interface Base02Constructor {
+     new <T = A>(a: T): Base02 & T;
+ }
+-declare const Base02: Base02Constructor;
+-declare class Derived03 extends Base02 {
++const Base02: Base02Constructor;
++class Derived03 extends Base02 {
+ }
+-declare const Derived03c00: Derived03;
+-declare const Derived03c01: number;
++const Derived03c00: Derived03;
++const Derived03c01: number;
+ type DerivedProps = keyof Derived03;
+ type t00<T = number> = {
+     a: T;
+ };
+-declare const t00c00: number;
+-declare const t00c01: number;
++const t00c00: number;
++const t00c01: number;
+ type t01<T, U = T> = {
+     a: [T, U];
+ };
+-declare const t01c00: [number, number];
+-declare const t01c01: [number, string];
++const t01c00: [number, number];
++const t01c01: [number, string];
+ type t02<T extends number, U = T> = {
+     a: [T, U];
+ };
+-declare const t02c00: [number, number];
+-declare const t02c01: [1, 1];
+-declare const t02c02: [number, number];
+-declare const t02c03: [1, number];
+-declare const t02c04: [number, 1];
++const t02c00: [number, number];
++const t02c01: [1, 1];
++const t02c02: [number, number];
++const t02c03: [1, number];
++const t02c04: [number, 1];
+ type t03<T extends number, U extends T = T> = {
+     a: [T, U];
+ };
+-declare const t03c00: [number, number];
+-declare const t03c01: [1, 1];
+-declare const t03c02: [number, number];
+-declare const t03c03: [1, 1];
+-declare const t03c04: [number, 1];
++const t03c00: [number, number];
++const t03c01: [1, 1];
++const t03c02: [number, number];
++const t03c03: [1, 1];
++const t03c04: [number, 1];
+ interface SelfReference<T = SelfReference<string>> {
+ }

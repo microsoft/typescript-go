@@ -36,9 +36,9 @@ B.c = C;
 
 
 //// [declarationEmitExpandoFunction.d.ts]
-export declare function A(): string;
-export declare function B(): string;
-export declare enum C {
+export function A(): string;
+export function B(): string;
+export enum C {
     C = 0
 }
 export declare namespace A {

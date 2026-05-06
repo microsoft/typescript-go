@@ -74,7 +74,7 @@ test.tags();
 
 
 //// [emitClassExpressionInDeclarationFile2.d.ts]
-export declare var noPrivates: {
+export var noPrivates: {
     new (): {
         tags(): void;
         p: number;
@@ -82,13 +82,13 @@ export declare var noPrivates: {
     getTags(): void;
     ps: number;
 };
-export declare class FooItem {
+export class FooItem {
     foo(): void;
     name?: string;
     private property;
 }
 export type Constructor<T> = new (...args: any[]) => T;
-export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
+export function WithTags<T extends Constructor<FooItem>>(Base: T): {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
@@ -97,7 +97,7 @@ export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
     };
     getTags(): void;
 } & T;
-declare const Test_base: {
+const Test_base: {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
@@ -106,6 +106,6 @@ declare const Test_base: {
     };
     getTags(): void;
 } & typeof FooItem;
-export declare class Test extends Test_base {
+export class Test extends Test_base {
 }
 export {};

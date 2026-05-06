@@ -59,23 +59,23 @@ export type NativeTypeValidator<T> = (n: any) => T | undefined;
 export type ObjectValidator<O> = {
     [K in keyof O]: Validator<O[K]>;
 };
-export declare const SimpleStringValidator: NativeTypeValidator<string>;
-export declare const ObjValidator: <V>(validatorObj: ObjectValidator<V>) => (o: any) => V;
-export declare const test: {
+export const SimpleStringValidator: NativeTypeValidator<string>;
+export const ObjValidator: <V>(validatorObj: ObjectValidator<V>) => (o: any) => V;
+export const test: {
     Test: {
         Test1: {
             Test2: NativeTypeValidator<string>;
         };
     };
 };
-export declare const validatorFunc: (o: any) => {
+export const validatorFunc: (o: any) => {
     Test: {
         Test1: {
             Test2: string;
         };
     };
 };
-export declare const outputExample: {
+export const outputExample: {
     Test: {
         Test1: {
             Test2: string;

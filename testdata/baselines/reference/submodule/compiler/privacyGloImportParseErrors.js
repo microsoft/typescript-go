@@ -238,7 +238,7 @@ var m2;
 
 
 //// [privacyGloImportParseErrors.d.ts]
-declare namespace m1 {
+namespace m1 {
     export namespace m1_M1_public {
         class c1 {
         }
@@ -286,14 +286,14 @@ declare namespace m1 {
     export import m1_im4_public = require("m1_M4_private");
     export {};
 }
-declare namespace glo_M1_public {
+namespace glo_M1_public {
     class c1 {
     }
     function f1(): c1;
     var v1: typeof c1;
     var v2: c1;
 }
-declare module "glo_M2_public" {
+module "glo_M2_public" {
     function f1(): any;
     class c1 {
     }
@@ -302,7 +302,7 @@ declare module "glo_M2_public" {
     };
     var v2: c1;
 }
-declare module "use_glo_M1_public" {
+module "use_glo_M1_public" {
     import use_glo_M1_public = glo_M1_public;
     var use_glo_M1_public_v1_public: {
         new (): use_glo_M1_public.c1;
@@ -330,7 +330,7 @@ declare module "use_glo_M1_public" {
         }
     }
 }
-declare module "anotherParseError" {
+module "anotherParseError" {
     namespace m2 {
         module "abc" {
         }
@@ -342,5 +342,5 @@ declare module "anotherParseError" {
     module "abc3" {
     }
 }
-declare namespace m2 {
+namespace m2 {
 }

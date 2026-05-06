@@ -19,7 +19,7 @@ export class Clazz {
 
 
 //// [bug38550.d.ts]
-export declare class Clazz {
+export class Clazz {
     /**
      * @param {function(this:Object, ...*):*} functionDeclaration
      */

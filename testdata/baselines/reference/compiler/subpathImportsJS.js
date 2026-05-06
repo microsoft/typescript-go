@@ -25,6 +25,6 @@ foo;
 
 
 //// [subpath.d.ts]
-export declare const foo = "foo";
+export const foo = "foo";
 //// [index.d.ts]
 export {};

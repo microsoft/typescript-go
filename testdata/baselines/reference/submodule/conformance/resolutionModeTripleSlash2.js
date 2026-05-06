@@ -35,4 +35,4 @@ function foo() {
 
 
 //// [app.d.ts]
-declare function foo(): any;
+function foo(): any;

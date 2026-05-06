@@ -1,0 +1,11 @@
+--- old.declarationEmitCrossFileCopiedGeneratedImportType.js
++++ new.declarationEmitCrossFileCopiedGeneratedImportType.js
+@@= skipped -24, +24 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const d: {
++export const d: {
+     e: {
+         f: (foo: import("../projA").Foo) => boolean;
+     };

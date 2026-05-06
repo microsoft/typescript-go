@@ -1,0 +1,23 @@
+--- old.es5ExportDefaultExpression(target=es2015).js
++++ new.es5ExportDefaultExpression(target=es2015).js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [es5ExportDefaultExpression.d.ts]
+-declare const _default: number;
++const _default: number;
+ export default _default;
++
++
++//// [DtsFileErrors]
++
++
++es5ExportDefaultExpression.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== es5ExportDefaultExpression.d.ts (1 errors) ====
++    const _default: number;
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    export default _default;
++    

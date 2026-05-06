@@ -238,46 +238,46 @@ export function foo([, , b] = [0, 1, 2]) {
 
 
 //// [isolatedDeclarationErrorsExpressions.d.ts]
-export declare const numberConst = 1;
-export declare const numberConstBad1: number;
-export declare const numberConstBad2: number;
-export declare const numberConstBad3 = 1;
-export declare const bigIntConst = 1n;
-export declare const bigIntConstBad1: bigint;
-export declare const bigIntConstBad2: bigint;
-export declare const bigIntConstBad3 = 1n;
-export declare const stringConst = "s";
-export declare const stringConstBad: string;
-export declare const templateConstOk1 = "s";
-export declare const templateConstNotOk2: string;
-export declare const templateConstNotOk3 = "s1 - S";
-export declare const templateConstNotOk4: string;
-export declare const templateConstNotOk5: string;
-export declare let numberLet: number;
-export declare let numberLetBad1: number;
-export declare let numberLetBad2: number;
-export declare let numberLetBad3: number;
-export declare let bigIntLet: bigint;
-export declare let bigIntLetBad1: bigint;
-export declare let bigIntLetBad2: bigint;
-export declare let bigIntLetBad3: bigint;
-export declare let stringLet: string;
-export declare let stringLetBad: string;
-export declare let templateLetOk1: string;
-export declare let templateLetOk2: string;
-export declare let templateLetOk3: string;
-export declare let templateLetOk4: string;
-export declare let numberLetAsConst: 1;
-export declare let bigIntLetAsConst: 1n;
-export declare let stringLetAsConst: "s";
-export declare let templateLetOk1AsConst: `s`;
-export declare let templateLetOk2AsConst: "s1 - S";
-export declare let templateLetOk3AsConst: "s1 - S - false";
-export declare let templateLetOk4AsConst: `s${number} - S - true`;
-export declare let arr: number[];
-export declare let arrConst: readonly [1, 2, 3];
-export declare let arrWithSpread: readonly [1, 2, 3, ...number[]];
-export declare class Exported {
+export const numberConst = 1;
+export const numberConstBad1: number;
+export const numberConstBad2: number;
+export const numberConstBad3 = 1;
+export const bigIntConst = 1n;
+export const bigIntConstBad1: bigint;
+export const bigIntConstBad2: bigint;
+export const bigIntConstBad3 = 1n;
+export const stringConst = "s";
+export const stringConstBad: string;
+export const templateConstOk1 = "s";
+export const templateConstNotOk2: string;
+export const templateConstNotOk3 = "s1 - S";
+export const templateConstNotOk4: string;
+export const templateConstNotOk5: string;
+export let numberLet: number;
+export let numberLetBad1: number;
+export let numberLetBad2: number;
+export let numberLetBad3: number;
+export let bigIntLet: bigint;
+export let bigIntLetBad1: bigint;
+export let bigIntLetBad2: bigint;
+export let bigIntLetBad3: bigint;
+export let stringLet: string;
+export let stringLetBad: string;
+export let templateLetOk1: string;
+export let templateLetOk2: string;
+export let templateLetOk3: string;
+export let templateLetOk4: string;
+export let numberLetAsConst: 1;
+export let bigIntLetAsConst: 1n;
+export let stringLetAsConst: "s";
+export let templateLetOk1AsConst: `s`;
+export let templateLetOk2AsConst: "s1 - S";
+export let templateLetOk3AsConst: "s1 - S - false";
+export let templateLetOk4AsConst: `s${number} - S - true`;
+export let arr: number[];
+export let arrConst: readonly [1, 2, 3];
+export let arrWithSpread: readonly [1, 2, 3, ...number[]];
+export class Exported {
     numberLet: number;
     numberLetBad1: number;
     numberLetBad2: number;
@@ -314,23 +314,23 @@ export declare class Exported {
     templateLetOk3AsConst: "s1 - S - false";
     templateLetOk4AsConst: `s${number} - S - true`;
 }
-export declare function numberParam(p?: number): void;
-export declare function numberParamBad1(p?: number): void;
-export declare function numberParamBad2(p?: number): void;
-export declare function numberParamBad3(p?: typeof numberParam): void;
-export declare function bigIntParam(p?: bigint): void;
-export declare function bigIntParamBad1(p?: bigint): void;
-export declare function bigIntParamBad2(p?: bigint): void;
-export declare function bigIntParamBad3(p?: typeof bigIntParam): void;
-export declare function stringParam(p?: string): void;
-export declare function stringParamBad(p?: string): void;
-export declare function templateParamOk1(p?: string): void;
-export declare function templateParamOk2(p?: string): void;
-export declare function templateParamOk3(p?: string): void;
-export declare function templateParamOk4(p?: string): void;
-export declare const a: number;
-export declare const b: number;
-export declare function foo([, , b]?: [
+export function numberParam(p?: number): void;
+export function numberParamBad1(p?: number): void;
+export function numberParamBad2(p?: number): void;
+export function numberParamBad3(p?: typeof numberParam): void;
+export function bigIntParam(p?: bigint): void;
+export function bigIntParamBad1(p?: bigint): void;
+export function bigIntParamBad2(p?: bigint): void;
+export function bigIntParamBad3(p?: typeof bigIntParam): void;
+export function stringParam(p?: string): void;
+export function stringParamBad(p?: string): void;
+export function templateParamOk1(p?: string): void;
+export function templateParamOk2(p?: string): void;
+export function templateParamOk3(p?: string): void;
+export function templateParamOk4(p?: string): void;
+export const a: number;
+export const b: number;
+export function foo([, , b]?: [
     number,
     number,
     number

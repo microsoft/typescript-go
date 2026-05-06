@@ -1,0 +1,144 @@
+--- old.isolatedDeclarationsStrictBuiltinIteratorReturn(isolateddeclarations=true,strictbuiltiniteratorreturn=true).js
++++ new.isolatedDeclarationsStrictBuiltinIteratorReturn(isolateddeclarations=true,strictbuiltiniteratorreturn=true).js
+@@= skipped -67, +67 lines =@@
+
+
+ //// [isolatedDeclarationsStrictBuiltinIteratorReturn.d.ts]
+-declare let x1: Iterable<number>;
+-declare let x2: Iterable<number, any>;
+-declare let x3: Iterable<number, any, any>;
+-declare let x4: Iterable<number, undefined>;
+-declare let x5: Iterable<number, undefined, any>;
+-declare let x6: Iterable<number, BuiltinIteratorReturn>;
+-declare let x7: Iterable<number, BuiltinIteratorReturn, any>;
+-declare let x8: IterableIterator<number>;
+-declare let x9: IterableIterator<number, any>;
+-declare let x10: IterableIterator<number, any, any>;
+-declare let x11: IterableIterator<number, undefined>;
+-declare let x12: IterableIterator<number, undefined, any>;
+-declare let x13: IterableIterator<number, BuiltinIteratorReturn>;
+-declare let x14: IterableIterator<number, BuiltinIteratorReturn, any>;
+-declare function f1(): Iterable<number>;
+-declare function f2(): Iterable<number, any>;
+-declare function f3(): Iterable<number, any, any>;
+-declare function f4(): Iterable<number, undefined>;
+-declare function f5(): Iterable<number, undefined, any>;
+-declare function f6(): Iterable<number, BuiltinIteratorReturn>;
+-declare function f7(): Iterable<number, BuiltinIteratorReturn, any>;
+-declare function f8(): IterableIterator<number>;
+-declare function f9(): IterableIterator<number, any>;
+-declare function f10(): IterableIterator<number, any, any>;
+-declare function f11(): IterableIterator<number, undefined>;
+-declare function f12(): IterableIterator<number, undefined, any>;
+-declare function f13(): IterableIterator<number, BuiltinIteratorReturn>;
+-declare function f14(): IterableIterator<number, BuiltinIteratorReturn, any>;
+-declare const a1: () => Iterable<number>;
+-declare const a2: () => Iterable<number, any>;
+-declare const a3: () => Iterable<number, any, any>;
+-declare const a4: () => Iterable<number, undefined>;
+-declare const a5: () => Iterable<number, undefined, any>;
+-declare const a6: () => Iterable<number, BuiltinIteratorReturn>;
+-declare const a7: () => Iterable<number, BuiltinIteratorReturn, any>;
+-declare const a8: () => IterableIterator<number>;
+-declare const a9: () => IterableIterator<number, any>;
+-declare const a10: () => IterableIterator<number, any, any>;
+-declare const a11: () => IterableIterator<number, undefined>;
+-declare const a12: () => IterableIterator<number, undefined, any>;
+-declare const a13: () => IterableIterator<number, BuiltinIteratorReturn>;
+-declare const a14: () => IterableIterator<number, BuiltinIteratorReturn, any>;
++let x1: Iterable<number>;
++let x2: Iterable<number, any>;
++let x3: Iterable<number, any, any>;
++let x4: Iterable<number, undefined>;
++let x5: Iterable<number, undefined, any>;
++let x6: Iterable<number, BuiltinIteratorReturn>;
++let x7: Iterable<number, BuiltinIteratorReturn, any>;
++let x8: IterableIterator<number>;
++let x9: IterableIterator<number, any>;
++let x10: IterableIterator<number, any, any>;
++let x11: IterableIterator<number, undefined>;
++let x12: IterableIterator<number, undefined, any>;
++let x13: IterableIterator<number, BuiltinIteratorReturn>;
++let x14: IterableIterator<number, BuiltinIteratorReturn, any>;
++function f1(): Iterable<number>;
++function f2(): Iterable<number, any>;
++function f3(): Iterable<number, any, any>;
++function f4(): Iterable<number, undefined>;
++function f5(): Iterable<number, undefined, any>;
++function f6(): Iterable<number, BuiltinIteratorReturn>;
++function f7(): Iterable<number, BuiltinIteratorReturn, any>;
++function f8(): IterableIterator<number>;
++function f9(): IterableIterator<number, any>;
++function f10(): IterableIterator<number, any, any>;
++function f11(): IterableIterator<number, undefined>;
++function f12(): IterableIterator<number, undefined, any>;
++function f13(): IterableIterator<number, BuiltinIteratorReturn>;
++function f14(): IterableIterator<number, BuiltinIteratorReturn, any>;
++const a1: () => Iterable<number>;
++const a2: () => Iterable<number, any>;
++const a3: () => Iterable<number, any, any>;
++const a4: () => Iterable<number, undefined>;
++const a5: () => Iterable<number, undefined, any>;
++const a6: () => Iterable<number, BuiltinIteratorReturn>;
++const a7: () => Iterable<number, BuiltinIteratorReturn, any>;
++const a8: () => IterableIterator<number>;
++const a9: () => IterableIterator<number, any>;
++const a10: () => IterableIterator<number, any, any>;
++const a11: () => IterableIterator<number, undefined>;
++const a12: () => IterableIterator<number, undefined, any>;
++const a13: () => IterableIterator<number, BuiltinIteratorReturn>;
++const a14: () => IterableIterator<number, BuiltinIteratorReturn, any>;
++
++
++//// [DtsFileErrors]
++
++
++isolatedDeclarationsStrictBuiltinIteratorReturn.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== isolatedDeclarationsStrictBuiltinIteratorReturn.d.ts (1 errors) ====
++    let x1: Iterable<number>;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    let x2: Iterable<number, any>;
++    let x3: Iterable<number, any, any>;
++    let x4: Iterable<number, undefined>;
++    let x5: Iterable<number, undefined, any>;
++    let x6: Iterable<number, BuiltinIteratorReturn>;
++    let x7: Iterable<number, BuiltinIteratorReturn, any>;
++    let x8: IterableIterator<number>;
++    let x9: IterableIterator<number, any>;
++    let x10: IterableIterator<number, any, any>;
++    let x11: IterableIterator<number, undefined>;
++    let x12: IterableIterator<number, undefined, any>;
++    let x13: IterableIterator<number, BuiltinIteratorReturn>;
++    let x14: IterableIterator<number, BuiltinIteratorReturn, any>;
++    function f1(): Iterable<number>;
++    function f2(): Iterable<number, any>;
++    function f3(): Iterable<number, any, any>;
++    function f4(): Iterable<number, undefined>;
++    function f5(): Iterable<number, undefined, any>;
++    function f6(): Iterable<number, BuiltinIteratorReturn>;
++    function f7(): Iterable<number, BuiltinIteratorReturn, any>;
++    function f8(): IterableIterator<number>;
++    function f9(): IterableIterator<number, any>;
++    function f10(): IterableIterator<number, any, any>;
++    function f11(): IterableIterator<number, undefined>;
++    function f12(): IterableIterator<number, undefined, any>;
++    function f13(): IterableIterator<number, BuiltinIteratorReturn>;
++    function f14(): IterableIterator<number, BuiltinIteratorReturn, any>;
++    const a1: () => Iterable<number>;
++    const a2: () => Iterable<number, any>;
++    const a3: () => Iterable<number, any, any>;
++    const a4: () => Iterable<number, undefined>;
++    const a5: () => Iterable<number, undefined, any>;
++    const a6: () => Iterable<number, BuiltinIteratorReturn>;
++    const a7: () => Iterable<number, BuiltinIteratorReturn, any>;
++    const a8: () => IterableIterator<number>;
++    const a9: () => IterableIterator<number, any>;
++    const a10: () => IterableIterator<number, any, any>;
++    const a11: () => IterableIterator<number, undefined>;
++    const a12: () => IterableIterator<number, undefined, any>;
++    const a13: () => IterableIterator<number, BuiltinIteratorReturn>;
++    const a14: () => IterableIterator<number, BuiltinIteratorReturn, any>;
++    

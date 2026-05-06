@@ -38,7 +38,23 @@ class Foo {
 
 
 //// [a.d.ts]
-declare class Foo {
+class Foo {
     a(): Promise<void>;
     b: () => Promise<void>;
 }
+
+
+//// [DtsFileErrors]
+
+
+out/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/a.d.ts (1 errors) ====
+    class Foo {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        a(): Promise<void>;
+        b: () => Promise<void>;
+    }
+    

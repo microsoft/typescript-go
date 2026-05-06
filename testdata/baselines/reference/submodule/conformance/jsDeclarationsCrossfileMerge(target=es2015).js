@@ -25,10 +25,10 @@ module.exports.memberName = "thing";
 
 
 //// [exporter.d.ts]
-declare function validate(): void;
+function validate(): void;
 export default validate;
 //// [index.d.ts]
 import m = require("./exporter");
-declare const _default: typeof m.default;
+const _default: typeof m.default;
 export = _default;
-export declare var memberName: "thing";
+export var memberName: "thing";

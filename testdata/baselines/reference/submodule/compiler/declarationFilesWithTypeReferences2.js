@@ -18,4 +18,4 @@ function foo() {
 
 
 //// [app.d.ts]
-declare function foo(): Error2;
+function foo(): Error2;

@@ -115,8 +115,8 @@ interface Foo {
     f(): number;
     g?(): number;
 }
-declare function test1(x: Foo): void;
-declare class Bar {
+function test1(x: Foo): void;
+class Bar {
     d?: number | undefined;
     e: number;
     a: number;
@@ -127,12 +127,51 @@ declare class Bar {
     g?(): number;
     h?(): number;
 }
-declare function test2(x: Bar): void;
-declare class Base {
+function test2(x: Bar): void;
+class Base {
     a?: number;
     f?(): number;
 }
-declare class Derived extends Base {
+class Derived extends Base {
     a: number;
     f(): number;
 }
+
+
+//// [DtsFileErrors]
+
+
+optionalMethods.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== optionalMethods.d.ts (1 errors) ====
+    interface Foo {
+        a: number;
+        b?: number;
+        f(): number;
+        g?(): number;
+    }
+    function test1(x: Foo): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    class Bar {
+        d?: number | undefined;
+        e: number;
+        a: number;
+        b?: number;
+        c?: number | undefined;
+        constructor(d?: number | undefined, e?: number);
+        f(): number;
+        g?(): number;
+        h?(): number;
+    }
+    function test2(x: Bar): void;
+    class Base {
+        a?: number;
+        f?(): number;
+    }
+    class Derived extends Base {
+        a: number;
+        f(): number;
+    }
+    

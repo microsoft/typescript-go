@@ -13,7 +13,23 @@ var m = M;
 
 
 //// [structuralTypeInDeclareFileForModule.d.ts]
-declare namespace M {
+namespace M {
     var x: any;
 }
-declare var m: typeof M;
+var m: typeof M;
+
+
+//// [DtsFileErrors]
+
+
+structuralTypeInDeclareFileForModule.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== structuralTypeInDeclareFileForModule.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        var x: any;
+    }
+    var m: typeof M;
+    

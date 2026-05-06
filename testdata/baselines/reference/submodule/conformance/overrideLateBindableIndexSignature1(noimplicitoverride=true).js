@@ -29,21 +29,21 @@ class Derived3 extends Base3 {
 
 
 //// [overrideLateBindableIndexSignature1.d.ts]
-declare const sym: symbol;
-declare class Base1 {
+const sym: symbol;
+class Base1 {
     [sym]: () => void;
 }
-declare class Derived1 extends Base1 {
+class Derived1 extends Base1 {
     [sym]: () => void;
 }
-declare class Base2 {
+class Base2 {
     [sym]: () => void;
 }
-declare class Derived2 extends Base2 {
+class Derived2 extends Base2 {
     [sym]: () => void;
 }
-declare class Base3 {
+class Base3 {
 }
-declare class Derived3 extends Base3 {
+class Derived3 extends Base3 {
     [sym]: () => void;
 }

@@ -34,5 +34,5 @@ export class MyComponent extends Component {
 
 
 //// [index.d.ts]
-export declare class MyComponent extends Component {
+export class MyComponent extends Component {
 }

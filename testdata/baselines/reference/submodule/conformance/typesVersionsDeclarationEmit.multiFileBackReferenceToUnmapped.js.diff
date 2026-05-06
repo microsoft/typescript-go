@@ -1,0 +1,10 @@
+--- old.typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.js
++++ new.typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.js
+@@= skipped -41, +41 lines =@@
+
+
+ //// [main.d.ts]
+-export declare const va: import("ext").A2;
+-export declare const va2: import("ext").A2;
++export const va: import("ext").A2;
++export const va2: import("ext").A2;

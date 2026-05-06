@@ -1,0 +1,8 @@
+--- old.exportAssignedNamespaceIsVisibleInDeclarationEmit.js
++++ new.exportAssignedNamespaceIsVisibleInDeclarationEmit.js
+@@= skipped -18, +18 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const thing: import("./thing").Bar;
++export const thing: import("./thing").Bar;

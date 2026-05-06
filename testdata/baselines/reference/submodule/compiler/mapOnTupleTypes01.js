@@ -70,12 +70,12 @@ export let h = numNumNumNumNum.map(n => n * n);
 
 
 //// [mapOnTupleTypes01.d.ts]
-export declare let mapOnLooseArrayLiteral: number[];
-export declare let a: number[];
-export declare let b: number[];
-export declare let c: number[];
-export declare let d: (string | number)[];
-export declare let e: number[];
-export declare let f: number[];
-export declare let g: number[];
-export declare let h: number[];
+export let mapOnLooseArrayLiteral: number[];
+export let a: number[];
+export let b: number[];
+export let c: number[];
+export let d: (string | number)[];
+export let e: number[];
+export let f: number[];
+export let g: number[];
+export let h: number[];

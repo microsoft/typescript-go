@@ -22,8 +22,8 @@ function bar(a) { }
 
 
 //// [declFileAliasUseBeforeDeclaration_foo.d.ts]
-export declare class Foo {
+export class Foo {
 }
 //// [declFileAliasUseBeforeDeclaration_test.d.ts]
-export declare function bar(a: foo.Foo): void;
+export function bar(a: foo.Foo): void;
 import foo = require("./declFileAliasUseBeforeDeclaration_foo");

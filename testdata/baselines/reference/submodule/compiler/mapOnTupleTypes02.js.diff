@@ -1,0 +1,8 @@
+--- old.mapOnTupleTypes02.js
++++ new.mapOnTupleTypes02.js
+@@= skipped -14, +14 lines =@@
+
+ //// [mapOnTupleTypes02.d.ts]
+ export type Point = [number, number];
+-export declare function increment(point: Point): number[];
++export function increment(point: Point): number[];

@@ -157,7 +157,7 @@ class e {
 
 
 //// [classdecl.d.ts]
-declare class a {
+class a {
     constructor(n: number);
     constructor(s: string);
     pgF(): void;
@@ -173,15 +173,15 @@ declare class a {
     private pv3;
     private foo;
 }
-declare class b extends a {
+class b extends a {
 }
-declare namespace m1 {
+namespace m1 {
     class b {
     }
     interface ib {
     }
 }
-declare namespace m2 {
+namespace m2 {
     namespace m3 {
         class c extends b {
         }
@@ -189,11 +189,11 @@ declare namespace m2 {
         }
     }
 }
-declare class c extends m1.b {
+class c extends m1.b {
 }
-declare class ib2 implements m1.ib {
+class ib2 implements m1.ib {
 }
-declare class aAmbient {
+class aAmbient {
     constructor(n: number);
     constructor(s: string);
     pgF(): void;
@@ -208,9 +208,78 @@ declare class aAmbient {
     private pv3;
     private foo;
 }
-declare class d {
+class d {
     private foo;
 }
-declare class e {
+class e {
     private foo;
 }
+
+
+//// [DtsFileErrors]
+
+
+classdecl.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== classdecl.d.ts (1 errors) ====
+    class a {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        constructor(n: number);
+        constructor(s: string);
+        pgF(): void;
+        pv: any;
+        get d(): number;
+        set d(a: number);
+        static get p2(): {
+            x: number;
+            y: number;
+        };
+        private static d2;
+        private static get p3();
+        private pv3;
+        private foo;
+    }
+    class b extends a {
+    }
+    namespace m1 {
+        class b {
+        }
+        interface ib {
+        }
+    }
+    namespace m2 {
+        namespace m3 {
+            class c extends b {
+            }
+            class ib2 implements m1.ib {
+            }
+        }
+    }
+    class c extends m1.b {
+    }
+    class ib2 implements m1.ib {
+    }
+    class aAmbient {
+        constructor(n: number);
+        constructor(s: string);
+        pgF(): void;
+        pv: any;
+        d: number;
+        static p2: {
+            x: number;
+            y: number;
+        };
+        static d2(): any;
+        static p3: any;
+        private pv3;
+        private foo;
+    }
+    class d {
+        private foo;
+    }
+    class e {
+        private foo;
+    }
+    

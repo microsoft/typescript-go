@@ -24,6 +24,6 @@ exports.bar = (0, mod1_1.foo)();
 
 
 //// [mod1.d.ts]
-export declare function foo(): Lib;
+export function foo(): Lib;
 //// [mod2.d.ts]
-export declare const bar: Lib;
+export const bar: Lib;

@@ -1,0 +1,35 @@
+--- old.es5ExportDefaultClassDeclaration4(target=es2015).js
++++ new.es5ExportDefaultClassDeclaration4(target=es2015).js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [es5ExportDefaultClassDeclaration4.d.ts]
+-declare module "foo" {
++module "foo" {
+     var before: C;
+     export default class C {
+         method(): C;
+@@= skipped -8, +8 lines =@@
+     var after: C;
+     var t: typeof C;
+ }
++
++
++//// [DtsFileErrors]
++
++
++es5ExportDefaultClassDeclaration4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== es5ExportDefaultClassDeclaration4.d.ts (1 errors) ====
++    module "foo" {
++    ~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        var before: C;
++        export default class C {
++            method(): C;
++        }
++        var after: C;
++        var t: typeof C;
++    }
++    

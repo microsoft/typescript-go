@@ -201,7 +201,7 @@ class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
 
 
 //// [privacyClassExtendsClauseDeclFile_externalModule.d.ts]
-export declare namespace publicModule {
+export namespace publicModule {
     export class publicClassInPublicModule {
         private f1;
     }
@@ -215,7 +215,7 @@ export declare namespace publicModule {
     }
     export {};
 }
-declare namespace privateModule {
+namespace privateModule {
     export class publicClassInPrivateModule {
         private f1;
     }
@@ -229,20 +229,20 @@ declare namespace privateModule {
     }
     export {};
 }
-export declare class publicClass {
+export class publicClass {
     private f1;
 }
-declare class privateClass {
+class privateClass {
 }
-export declare class publicClassExtendingPublicClass extends publicClass {
+export class publicClassExtendingPublicClass extends publicClass {
 }
-export declare class publicClassExtendingPrivateClass extends privateClass {
+export class publicClassExtendingPrivateClass extends privateClass {
 }
-export declare class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
+export class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
 }
 export {};
 //// [privacyClassExtendsClauseDeclFile_GlobalFile.d.ts]
-declare namespace publicModuleInGlobal {
+namespace publicModuleInGlobal {
     export class publicClassInPublicModule {
         private f1;
     }
@@ -254,7 +254,7 @@ declare namespace publicModuleInGlobal {
     }
     export {};
 }
-declare class publicClassInGlobal {
+class publicClassInGlobal {
 }
-declare class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
+class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
 }

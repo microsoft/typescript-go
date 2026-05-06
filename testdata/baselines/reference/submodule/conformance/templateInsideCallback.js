@@ -130,12 +130,12 @@ type Call = () => any;
  * @template T
  * @type {Call<T>}
  */
-declare const identity: Call<T>;
+const identity: Call<T>;
 type Nested = {
     oh: {
         no: number;
         noooooo: string;
     };
 };
-declare function flatMap(): any;
-declare function flatMap(): any;
+function flatMap(): any;
+function flatMap(): any;

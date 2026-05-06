@@ -38,9 +38,30 @@ module.exports = { x, b };
 /**
  * function doc comment
  */
-declare function b(): number;
-declare const _default: {
+function b(): number;
+const _default: {
     x: (a: any) => string;
     b: typeof b;
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+out/index1.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/index1.d.ts (1 errors) ====
+    /**
+     * function doc comment
+     */
+    function b(): number;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const _default: {
+        x: (a: any) => string;
+        b: typeof b;
+    };
+    export = _default;
+    

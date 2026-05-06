@@ -15,5 +15,5 @@ exports.default = f;
 
 
 //// [es5ExportDefaultIdentifier.d.ts]
-export declare function f(): void;
+export function f(): void;
 export default f;

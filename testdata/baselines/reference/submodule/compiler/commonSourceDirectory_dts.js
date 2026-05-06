@@ -15,4 +15,4 @@ export const x = y;
 
 //// [/app/bin/src/index.d.ts]
 /// <reference path="../../lib/bar.d.ts" preserve="true" />
-export declare const x: number;
+export const x: number;

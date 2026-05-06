@@ -123,13 +123,13 @@ export { platform } from "./src/util";
 export { platform } from "./src/util";
 
 //// [/home/src/workspaces/project/pkg/dist/src/util.d.ts] *new* 
-export declare const platform: "web";
+export const platform: "web";
 
 //// [/home/src/workspaces/project/pkg/dist/src/util.native.d.ts] *new* 
-export declare const platform: "native";
+export const platform: "native";
 
 //// [/home/src/workspaces/project/pkg/dist/tsconfig.native.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/util.native.ts","../index.native.ts","../src/util.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"c1f8db351239c175fbb3960262e28684-export const platform = \"native\" as const;","signature":"1f876b2eee633f65aa2e7817bfee737a-export declare const platform: \"native\";\n","impliedNodeFormat":1},{"version":"0a747b719fd37e7b799139c5f607d76b-export { platform } from \"./src/util\";","signature":"b065ccf77d7f1159c74552524b8d4d2b-export { platform } from \"./src/util\";\n","impliedNodeFormat":1},{"version":"7941de8fb997b556c0afef2b586d7205-export const platform = \"web\" as const;","signature":"5082e4a38cc5cc308625a8754198c0e3-export declare const platform: \"web\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"module":99,"outDir":"./","strict":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/util.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/util.native.ts","../index.native.ts","../src/util.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"c1f8db351239c175fbb3960262e28684-export const platform = \"native\" as const;","signature":"aff0b4da2ab68e724529cd8a5fc43561-export const platform: \"native\";\n","impliedNodeFormat":1},{"version":"0a747b719fd37e7b799139c5f607d76b-export { platform } from \"./src/util\";","signature":"b065ccf77d7f1159c74552524b8d4d2b-export { platform } from \"./src/util\";\n","impliedNodeFormat":1},{"version":"7941de8fb997b556c0afef2b586d7205-export const platform = \"web\" as const;","signature":"7ee579b5e5cf73edde56123bb0d4a349-export const platform: \"web\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"module":99,"outDir":"./","strict":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/util.d.ts"}
 //// [/home/src/workspaces/project/pkg/dist/tsconfig.native.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -168,11 +168,11 @@ export declare const platform: "native";
     {
       "fileName": "../src/util.native.ts",
       "version": "c1f8db351239c175fbb3960262e28684-export const platform = \"native\" as const;",
-      "signature": "1f876b2eee633f65aa2e7817bfee737a-export declare const platform: \"native\";\n",
+      "signature": "aff0b4da2ab68e724529cd8a5fc43561-export const platform: \"native\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "c1f8db351239c175fbb3960262e28684-export const platform = \"native\" as const;",
-        "signature": "1f876b2eee633f65aa2e7817bfee737a-export declare const platform: \"native\";\n",
+        "signature": "aff0b4da2ab68e724529cd8a5fc43561-export const platform: \"native\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -190,11 +190,11 @@ export declare const platform: "native";
     {
       "fileName": "../src/util.ts",
       "version": "7941de8fb997b556c0afef2b586d7205-export const platform = \"web\" as const;",
-      "signature": "5082e4a38cc5cc308625a8754198c0e3-export declare const platform: \"web\";\n",
+      "signature": "7ee579b5e5cf73edde56123bb0d4a349-export const platform: \"web\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "7941de8fb997b556c0afef2b586d7205-export const platform = \"web\" as const;",
-        "signature": "5082e4a38cc5cc308625a8754198c0e3-export declare const platform: \"web\";\n",
+        "signature": "7ee579b5e5cf73edde56123bb0d4a349-export const platform: \"web\";\n",
         "impliedNodeFormat": 1
       }
     }
@@ -218,10 +218,10 @@ export declare const platform: "native";
     ]
   },
   "latestChangedDtsFile": "./src/util.d.ts",
-  "size": 1731
+  "size": 1715
 }
 //// [/home/src/workspaces/project/pkg/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./src/util.native.d.ts","./index.native.d.ts","./src/util.d.ts","../index.ts","../src/util.native.ts","../index.native.ts","../src/util.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"1f876b2eee633f65aa2e7817bfee737a-export declare const platform: \"native\";\n","b065ccf77d7f1159c74552524b8d4d2b-export { platform } from \"./src/util\";\n","5082e4a38cc5cc308625a8754198c0e3-export declare const platform: \"web\";\n",{"version":"0a747b719fd37e7b799139c5f607d76b-export { platform } from \"./src/util\";","signature":"b065ccf77d7f1159c74552524b8d4d2b-export { platform } from \"./src/util\";\n","impliedNodeFormat":1}],"fileIdsList":[[2],[4]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"module":99,"outDir":"./","strict":true},"referencedMap":[[3,1],[5,2]],"latestChangedDtsFile":"./index.d.ts","resolvedRoot":[[2,6],[3,7],[4,8]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./src/util.native.d.ts","./index.native.d.ts","./src/util.d.ts","../index.ts","../src/util.native.ts","../index.native.ts","../src/util.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"aff0b4da2ab68e724529cd8a5fc43561-export const platform: \"native\";\n","b065ccf77d7f1159c74552524b8d4d2b-export { platform } from \"./src/util\";\n","7ee579b5e5cf73edde56123bb0d4a349-export const platform: \"web\";\n",{"version":"0a747b719fd37e7b799139c5f607d76b-export { platform } from \"./src/util\";","signature":"b065ccf77d7f1159c74552524b8d4d2b-export { platform } from \"./src/util\";\n","impliedNodeFormat":1}],"fileIdsList":[[2],[4]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"module":99,"outDir":"./","strict":true},"referencedMap":[[3,1],[5,2]],"latestChangedDtsFile":"./index.d.ts","resolvedRoot":[[2,6],[3,7],[4,8]]}
 //// [/home/src/workspaces/project/pkg/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -264,8 +264,8 @@ export declare const platform: "native";
     },
     {
       "fileName": "./src/util.native.d.ts",
-      "version": "1f876b2eee633f65aa2e7817bfee737a-export declare const platform: \"native\";\n",
-      "signature": "1f876b2eee633f65aa2e7817bfee737a-export declare const platform: \"native\";\n",
+      "version": "aff0b4da2ab68e724529cd8a5fc43561-export const platform: \"native\";\n",
+      "signature": "aff0b4da2ab68e724529cd8a5fc43561-export const platform: \"native\";\n",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -276,8 +276,8 @@ export declare const platform: "native";
     },
     {
       "fileName": "./src/util.d.ts",
-      "version": "5082e4a38cc5cc308625a8754198c0e3-export declare const platform: \"web\";\n",
-      "signature": "5082e4a38cc5cc308625a8754198c0e3-export declare const platform: \"web\";\n",
+      "version": "7ee579b5e5cf73edde56123bb0d4a349-export const platform: \"web\";\n",
+      "signature": "7ee579b5e5cf73edde56123bb0d4a349-export const platform: \"web\";\n",
       "impliedNodeFormat": "CommonJS"
     },
     {
@@ -331,7 +331,7 @@ export declare const platform: "native";
       "../src/util.ts"
     ]
   ],
-  "size": 1681
+  "size": 1665
 }
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","root":["./app.ts"]}

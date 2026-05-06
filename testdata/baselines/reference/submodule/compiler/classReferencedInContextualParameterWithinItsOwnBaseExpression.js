@@ -52,17 +52,52 @@ interface Schema<A> {
 interface Class<A> {
     new (): A;
 }
-declare const Class: <Self>(identifier: string) => <Fields>(fields: Fields, annotations?: Schema<Self>) => Class<OutputFrom<Fields>>;
+const Class: <Self>(identifier: string) => <Fields>(fields: Fields, annotations?: Schema<Self>) => Class<OutputFrom<Fields>>;
 type Type<TOutput> = {
     _TOutput: TOutput;
 };
 type OutputFrom<TFields> = {
     [K in keyof TFields]: "_TOutput" extends keyof TFields[K] ? TFields[K]["_TOutput"] : never;
 };
-declare function string(): Type<string>;
-declare const A_base: Class<OutputFrom<{
+function string(): Type<string>;
+const A_base: Class<OutputFrom<{
     a: typeof string;
 }>>;
-export declare class A extends A_base {
+export class A extends A_base {
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+classReferencedInContextualParameterWithinItsOwnBaseExpression.d.ts(10,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== classReferencedInContextualParameterWithinItsOwnBaseExpression.d.ts (1 errors) ====
+    interface Pretty<To> {
+        (a: To): string;
+    }
+    interface Schema<A> {
+        readonly pretty?: Pretty<A>;
+    }
+    interface Class<A> {
+        new (): A;
+    }
+    const Class: <Self>(identifier: string) => <Fields>(fields: Fields, annotations?: Schema<Self>) => Class<OutputFrom<Fields>>;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    type Type<TOutput> = {
+        _TOutput: TOutput;
+    };
+    type OutputFrom<TFields> = {
+        [K in keyof TFields]: "_TOutput" extends keyof TFields[K] ? TFields[K]["_TOutput"] : never;
+    };
+    function string(): Type<string>;
+    const A_base: Class<OutputFrom<{
+        a: typeof string;
+    }>>;
+    export class A extends A_base {
+    }
+    export {};
+    

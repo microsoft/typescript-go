@@ -1,0 +1,43 @@
+--- old.declarationEmitBindingPatternsFunctionExpr.js
++++ new.declarationEmitBindingPatternsFunctionExpr.js
+@@= skipped -33, +33 lines =@@
+ type Named = {
+     name: string;
+ };
+-declare let notReferenced: ({ name: alias }: Named) => void;
+-declare const duplicateIndetifiers: ({ name: alias, name: alias2 }: Named) => void;
+-declare const duplicateIndetifiers2: (name: string, { name: alias }: Named) => void;
+-declare const duplicateIndetifiers3: ({ name: alias }: Named, { name: alias2 }: Named) => void;
+-declare let value: string;
+-declare const shadowedVariable: ({ value: alias }: {
++let notReferenced: ({ name: alias }: Named) => void;
++const duplicateIndetifiers: ({ name: alias, name: alias2 }: Named) => void;
++const duplicateIndetifiers2: (name: string, { name: alias }: Named) => void;
++const duplicateIndetifiers3: ({ name: alias }: Named, { name: alias2 }: Named) => void;
++let value: string;
++const shadowedVariable: ({ value: alias }: {
+     value: string;
+ }) => typeof value;
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitBindingPatternsFunctionExpr.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitBindingPatternsFunctionExpr.d.ts (1 errors) ====
++    type Named = {
++        name: string;
++    };
++    let notReferenced: ({ name: alias }: Named) => void;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    const duplicateIndetifiers: ({ name: alias, name: alias2 }: Named) => void;
++    const duplicateIndetifiers2: (name: string, { name: alias }: Named) => void;
++    const duplicateIndetifiers3: ({ name: alias }: Named, { name: alias2 }: Named) => void;
++    let value: string;
++    const shadowedVariable: ({ value: alias }: {
++        value: string;
++    }) => typeof value;
++    

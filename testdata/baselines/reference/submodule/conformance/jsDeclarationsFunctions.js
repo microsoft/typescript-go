@@ -121,12 +121,12 @@ function j() { }
 
 
 //// [index.d.ts]
-export declare function a(): void;
-export declare function b(): void;
+export function a(): void;
+export function b(): void;
 export declare namespace b {
     var cat: string;
 }
-export declare function c(): void;
+export function c(): void;
 export declare namespace c {
     var Cls: {
         new (): {};
@@ -137,19 +137,19 @@ export declare namespace c {
  * @param {number} b
  * @return {string}
  */
-export declare function d(a: number, b: number): string;
+export function d(a: number, b: number): string;
 /**
  * @template T,U
  * @param {T} a
  * @param {U} b
  * @return {T & U}
  */
-export declare function e<T, U>(a: T, b: U): T & U;
+export function e<T, U>(a: T, b: U): T & U;
 /**
  * @template T
  * @param {T} a
  */
-export declare function f<T>(a: T): T;
+export function f<T>(a: T): T;
 export declare namespace f {
     var self: typeof f;
 }
@@ -157,7 +157,7 @@ export declare namespace f {
  * @param {{x: string}} a
  * @param {{y: typeof b}} b
  */
-declare function g(a: {
+function g(a: {
     x: string;
 }, b: {
     y: typeof b;
@@ -167,13 +167,13 @@ export { g };
  * @param {{x: string}} a
  * @param {{y: typeof b}} b
  */
-declare function hh(a: {
+function hh(a: {
     x: string;
 }, b: {
     y: typeof b;
 }): any;
 export { hh as h };
-export declare function i(): void;
+export function i(): void;
 export { i as ii };
 export { j as jj };
-export declare function j(): void;
+export function j(): void;

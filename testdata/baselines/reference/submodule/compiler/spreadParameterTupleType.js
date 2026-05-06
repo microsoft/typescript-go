@@ -29,5 +29,19 @@ function f2() {
 
 
 //// [spreadParameterTupleType.d.ts]
-declare function f1(): (s: string, s_1: string) => void;
-declare function f2(): (a: string, a_1: string, b: string, a_2: string, b_1: string, b_2: string, a_3: string, c: string) => void;
+function f1(): (s: string, s_1: string) => void;
+function f2(): (a: string, a_1: string, b: string, a_2: string, b_1: string, b_2: string, a_3: string, c: string) => void;
+
+
+//// [DtsFileErrors]
+
+
+spreadParameterTupleType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== spreadParameterTupleType.d.ts (1 errors) ====
+    function f1(): (s: string, s_1: string) => void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function f2(): (a: string, a_1: string, b: string, a_2: string, b_1: string, b_2: string, a_3: string, c: string) => void;
+    

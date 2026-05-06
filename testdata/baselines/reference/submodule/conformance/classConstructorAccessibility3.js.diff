@@ -1,0 +1,38 @@
+--- old.classConstructorAccessibility3.js
++++ new.classConstructorAccessibility3.js
+@@= skipped -74, +74 lines =@@
+
+
+ //// [classConstructorAccessibility3.d.ts]
+-declare class Foo {
+-    x: number;
+-    constructor(x: number);
+-}
+-declare class Bar {
+-    x: number;
+-    constructor(x: number);
+-}
+-declare class Baz {
++class Foo {
++    x: number;
++    constructor(x: number);
++}
++class Bar {
++    x: number;
++    constructor(x: number);
++}
++class Baz {
+     x: number;
+     protected constructor(x: number);
+ }
+-declare class Qux {
++class Qux {
+     x: number;
+     private constructor();
+ }
+-declare let a: typeof Foo;
+-declare let b: typeof Baz;
+-declare let c: typeof Qux;
++let a: typeof Foo;
++let b: typeof Baz;
++let c: typeof Qux;

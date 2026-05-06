@@ -140,4 +140,4 @@ const fz2 = (debug = true) => false;
 
 
 //// [contextuallyTypedParametersWithInitializers1.d.ts]
-export declare function executeSomething(): Promise<string>;
+export function executeSomething(): Promise<string>;

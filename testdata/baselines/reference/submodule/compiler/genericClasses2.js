@@ -31,12 +31,12 @@ var z = v1.z.a; // should be 'number'
 interface Foo<T> {
     a: T;
 }
-declare class C<T> {
+class C<T> {
     x: T;
     y: Foo<T>;
     z: Foo<number>;
 }
-declare var v1: C<string>;
-declare var y: string;
-declare var w: string;
-declare var z: number;
+var v1: C<string>;
+var y: string;
+var w: string;
+var z: number;

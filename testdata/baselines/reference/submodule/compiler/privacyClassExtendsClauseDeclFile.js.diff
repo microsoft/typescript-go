@@ -1,0 +1,60 @@
+--- old.privacyClassExtendsClauseDeclFile.js
++++ new.privacyClassExtendsClauseDeclFile.js
+@@= skipped -200, +200 lines =@@
+
+
+ //// [privacyClassExtendsClauseDeclFile_externalModule.d.ts]
+-export declare namespace publicModule {
++export namespace publicModule {
+     export class publicClassInPublicModule {
+         private f1;
+     }
+@@= skipped -14, +14 lines =@@
+     }
+     export {};
+ }
+-declare namespace privateModule {
++namespace privateModule {
+     export class publicClassInPrivateModule {
+         private f1;
+     }
+@@= skipped -14, +14 lines =@@
+     }
+     export {};
+ }
+-export declare class publicClass {
++export class publicClass {
+     private f1;
+ }
+-declare class privateClass {
+-}
+-export declare class publicClassExtendingPublicClass extends publicClass {
+-}
+-export declare class publicClassExtendingPrivateClass extends privateClass {
+-}
+-export declare class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++class privateClass {
++}
++export class publicClassExtendingPublicClass extends publicClass {
++}
++export class publicClassExtendingPrivateClass extends privateClass {
++}
++export class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
+ }
+ export {};
+ //// [privacyClassExtendsClauseDeclFile_GlobalFile.d.ts]
+-declare namespace publicModuleInGlobal {
++namespace publicModuleInGlobal {
+     export class publicClassInPublicModule {
+         private f1;
+     }
+@@= skipped -25, +25 lines =@@
+     }
+     export {};
+ }
+-declare class publicClassInGlobal {
++class publicClassInGlobal {
+ }
+-declare class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
++class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
+ }

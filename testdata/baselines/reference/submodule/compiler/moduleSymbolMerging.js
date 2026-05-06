@@ -29,13 +29,13 @@ var B;
 
 
 //// [A.d.ts]
-declare namespace A {
+namespace A {
     interface I {
     }
 }
 //// [B.d.ts]
 /// <reference path="A.d.ts" preserve="true" />
-declare namespace A { }
-declare namespace B {
+namespace A { }
+namespace B {
     function f(): A.I;
 }

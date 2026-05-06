@@ -54,13 +54,13 @@ function f3(x, y) {
 
 
 //// [indexSignatureAndMappedType.d.ts]
-declare function f1<T, K extends string>(x: {
+function f1<T, K extends string>(x: {
     [key: string]: T;
 }, y: Record<K, T>): void;
-declare function f2<T>(x: {
+function f2<T>(x: {
     [key: string]: T;
 }, y: Record<string, T>): void;
-declare function f3<T, U, K extends string>(x: {
+function f3<T, U, K extends string>(x: {
     [key: string]: T;
 }, y: Record<K, U>): void;
 type Dictionary = {

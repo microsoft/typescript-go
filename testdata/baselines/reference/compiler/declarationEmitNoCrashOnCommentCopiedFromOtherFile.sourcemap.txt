@@ -21,7 +21,7 @@ sourceFile:export.ts
 >>> * blah blah blah blah
 >>> */
 1->^^^
-2 >   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
+2 >   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^->
 1->/**
   > * blah blah blah blah
   > * blah blah blah blah
@@ -31,43 +31,46 @@ sourceFile:export.ts
   > */
 1->Emitted(7, 4) Source(7, 4) + SourceIndex(0)
 ---
->>>export declare function foo(): (_item: unknown) => _item is boolean;
+>>>export function foo(): (_item: unknown) => _item is boolean;
 1->
-2 >^^^^^^^^^^^^^^^^^^^^^^^^
-3 >                        ^^^
-4 >                           ^^^^^^^^^^^^
-5 >                                       ^^^^^^^
-6 >                                              ^^^^^
-7 >                                                   ^^^^^
-8 >                                                        ^^^^
-9 >                                                            ^^^^^^^
-10>                                                                   ^
+2 >^^^^^^
+3 >      ^^^^^^^^^^
+4 >                ^^^
+5 >                   ^^^^^^^^^^^^
+6 >                               ^^^^^^^
+7 >                                      ^^^^^
+8 >                                           ^^^^^
+9 >                                                ^^^^
+10>                                                    ^^^^^^^
+11>                                                           ^
 1->
   >
   >
-2 >export function 
-3 >                        foo
-4 >                           () {
-  >                             return (_item: 
-5 >                                       unknown
-6 >                                              ): 
-7 >                                                   _item
-8 >                                                         is 
-9 >                                                            boolean
-10>                                                                    => {
-  >                                                                       return true;
-  >                                                                     };
-  >                                                                   }
+2 >export
+3 >       function 
+4 >                foo
+5 >                   () {
+  >                     return (_item: 
+6 >                               unknown
+7 >                                      ): 
+8 >                                           _item
+9 >                                                 is 
+10>                                                    boolean
+11>                                                            => {
+  >                                                               return true;
+  >                                                             };
+  >                                                           }
 1->Emitted(8, 1) Source(9, 1) + SourceIndex(0)
-2 >Emitted(8, 25) Source(9, 17) + SourceIndex(0)
-3 >Emitted(8, 28) Source(9, 20) + SourceIndex(0)
-4 >Emitted(8, 40) Source(10, 18) + SourceIndex(0)
-5 >Emitted(8, 47) Source(10, 25) + SourceIndex(0)
-6 >Emitted(8, 52) Source(10, 28) + SourceIndex(0)
-7 >Emitted(8, 57) Source(10, 33) + SourceIndex(0)
-8 >Emitted(8, 61) Source(10, 37) + SourceIndex(0)
-9 >Emitted(8, 68) Source(10, 44) + SourceIndex(0)
-10>Emitted(8, 69) Source(13, 2) + SourceIndex(0)
+2 >Emitted(8, 7) Source(9, 7) + SourceIndex(0)
+3 >Emitted(8, 17) Source(9, 17) + SourceIndex(0)
+4 >Emitted(8, 20) Source(9, 20) + SourceIndex(0)
+5 >Emitted(8, 32) Source(10, 18) + SourceIndex(0)
+6 >Emitted(8, 39) Source(10, 25) + SourceIndex(0)
+7 >Emitted(8, 44) Source(10, 28) + SourceIndex(0)
+8 >Emitted(8, 49) Source(10, 33) + SourceIndex(0)
+9 >Emitted(8, 53) Source(10, 37) + SourceIndex(0)
+10>Emitted(8, 60) Source(10, 44) + SourceIndex(0)
+11>Emitted(8, 61) Source(13, 2) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=export.d.ts.map===================================================================
 JsFile: import.d.ts
@@ -79,25 +82,28 @@ sources: import.ts
 emittedFile:import.d.ts
 sourceFile:import.ts
 -------------------------------------------------------------------
->>>export declare const x: (_item: unknown) => _item is boolean;
+>>>export const x: (_item: unknown) => _item is boolean;
 1 >
-2 >^^^^^^^^^^^^^^^
-3 >               ^^^^^^
-4 >                     ^
-5 >                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-6 >                                                            ^
+2 >^^^^^^
+3 >      ^
+4 >       ^^^^^^
+5 >             ^
+6 >              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7 >                                                    ^
 1 >import { foo } from './export';
   >
-2 >export 
-3 >               const 
-4 >                     x
-5 >                       = foo()
-6 >                                                            ;
+2 >export
+3 >       
+4 >       const 
+5 >             x
+6 >               = foo()
+7 >                                                    ;
 1 >Emitted(1, 1) Source(2, 1) + SourceIndex(0)
-2 >Emitted(1, 16) Source(2, 8) + SourceIndex(0)
-3 >Emitted(1, 22) Source(2, 14) + SourceIndex(0)
-4 >Emitted(1, 23) Source(2, 15) + SourceIndex(0)
-5 >Emitted(1, 61) Source(2, 23) + SourceIndex(0)
-6 >Emitted(1, 62) Source(2, 24) + SourceIndex(0)
+2 >Emitted(1, 7) Source(2, 7) + SourceIndex(0)
+3 >Emitted(1, 8) Source(2, 8) + SourceIndex(0)
+4 >Emitted(1, 14) Source(2, 14) + SourceIndex(0)
+5 >Emitted(1, 15) Source(2, 15) + SourceIndex(0)
+6 >Emitted(1, 53) Source(2, 23) + SourceIndex(0)
+7 >Emitted(1, 54) Source(2, 24) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=import.d.ts.map

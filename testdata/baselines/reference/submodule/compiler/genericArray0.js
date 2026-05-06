@@ -21,6 +21,6 @@ function map() {
 
 
 //// [genericArray0.d.ts]
-declare var x: number[];
-declare var y: number[];
-declare function map<U>(): void;
+var x: number[];
+var y: number[];
+function map<U>(): void;

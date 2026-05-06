@@ -19,5 +19,5 @@ var z = v2.x; // 'y' should be of type 'string'
 interface G<T> {
     x: T;
 }
-declare var v2: G<string>;
-declare var z: string;
+var v2: G<string>;
+var z: string;

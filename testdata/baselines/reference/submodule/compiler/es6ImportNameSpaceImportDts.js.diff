@@ -1,0 +1,13 @@
+--- old.es6ImportNameSpaceImportDts.js
++++ new.es6ImportNameSpaceImportDts.js
+@@= skipped -57, +57 lines =@@
+
+
+ //// [server.d.ts]
+-export declare class c {
++export class c {
+ }
+ //// [client.d.ts]
+ import * as nameSpaceBinding from "./server";
+-export declare var x: nameSpaceBinding.c;
++export var x: nameSpaceBinding.c;

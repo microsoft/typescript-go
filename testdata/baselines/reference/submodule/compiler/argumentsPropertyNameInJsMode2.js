@@ -17,4 +17,4 @@ f(1, 2, 3);
 
 
 //// [a.d.ts]
-declare function f(x: any): void;
+function f(x: any): void;

@@ -11,5 +11,5 @@ export function f() { }
 
 
 //// [es6ExportEquals.d.ts]
-export declare function f(): void;
+export function f(): void;
 export = f;

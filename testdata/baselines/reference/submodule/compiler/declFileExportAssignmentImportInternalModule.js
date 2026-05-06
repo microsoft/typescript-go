@@ -33,7 +33,7 @@ module.exports = m;
 
 
 //// [declFileExportAssignmentImportInternalModule.d.ts]
-declare namespace m3 {
+namespace m3 {
     namespace m2 {
         interface connectModule {
             (res: any, req: any, next: any): void;
@@ -51,3 +51,33 @@ declare namespace m3 {
 }
 import m = m3;
 export = m;
+
+
+//// [DtsFileErrors]
+
+
+declFileExportAssignmentImportInternalModule.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileExportAssignmentImportInternalModule.d.ts (1 errors) ====
+    namespace m3 {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        namespace m2 {
+            interface connectModule {
+                (res: any, req: any, next: any): void;
+            }
+            interface connectExport {
+                use: (mod: connectModule) => connectExport;
+                listen: (port: number) => void;
+            }
+        }
+        var server: {
+            (): m2.connectExport;
+            test1: m2.connectModule;
+            test2(): m2.connectModule;
+        };
+    }
+    import m = m3;
+    export = m;
+    

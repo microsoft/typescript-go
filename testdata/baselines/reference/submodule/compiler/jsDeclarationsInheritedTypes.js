@@ -50,19 +50,19 @@ type B = {
  * @typedef B
  * @property {number} b
  */
-declare class C1 {
+class C1 {
     /**
      * @type {A}
      */
     value: A;
 }
-declare class C2 extends C1 {
+class C2 extends C1 {
     /**
      * @type {A}
      */
     value: A;
 }
-declare class C3 extends C1 {
+class C3 extends C1 {
     /**
      * @type {A & B}
      */

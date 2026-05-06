@@ -32,11 +32,11 @@ const result = apply.toFixed();
 
 
 //// [moduleExportAliasDuplicateAlias.d.ts]
-export declare var apply: "ok" | 1 | typeof a | undefined;
-export declare var apply: "ok" | 1 | typeof a | undefined;
-declare function a(): void;
-export declare var apply: "ok" | 1 | typeof a | undefined;
-export declare var apply: "ok" | 1 | typeof a | undefined;
-export declare var apply: "ok" | 1 | typeof a | undefined;
+export var apply: "ok" | 1 | typeof a | undefined;
+export var apply: "ok" | 1 | typeof a | undefined;
+function a(): void;
+export var apply: "ok" | 1 | typeof a | undefined;
+export var apply: "ok" | 1 | typeof a | undefined;
+export var apply: "ok" | 1 | typeof a | undefined;
 //// [test.d.ts]
 export {};

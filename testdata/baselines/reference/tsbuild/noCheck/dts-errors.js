@@ -59,7 +59,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/a.d.ts] *new* 
-export declare const a: {
+export const a: {
     new (): {
         p: number;
     };
@@ -71,7 +71,7 @@ export const a = class {
 };
 
 //// [/home/src/workspaces/project/b.d.ts] *new* 
-export declare const b = 10;
+export const b = 10;
 
 //// [/home/src/workspaces/project/b.js] *new* 
 export const b = 10;
@@ -162,7 +162,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-export declare const a = "hello";
+export const a = "hello";
 
 //// [/home/src/workspaces/project/a.js] *modified* 
 export const a = "hello";
@@ -312,7 +312,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-export declare const a: {
+export const a: {
     new (): {
         p: number;
     };
@@ -470,7 +470,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-export declare const a = "hello";
+export const a = "hello";
 
 //// [/home/src/workspaces/project/a.js] *modified* 
 export const a = "hello";
@@ -581,7 +581,7 @@ Found 1 error in c.ts[90m:1[0m
 //// [/home/src/workspaces/project/b.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/b.js] *rewrite with same content*
 //// [/home/src/workspaces/project/c.d.ts] *new* 
-export declare const c: number;
+export const c: number;
 
 //// [/home/src/workspaces/project/c.js] *new* 
 export const c = "hello";
@@ -651,7 +651,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-export declare const a: {
+export const a: {
     new (): {
         p: number;
     };
@@ -720,7 +720,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-export declare const a = "hello";
+export const a = "hello";
 
 //// [/home/src/workspaces/project/a.js] *modified* 
 export const a = "hello";

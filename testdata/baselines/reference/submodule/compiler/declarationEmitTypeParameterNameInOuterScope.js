@@ -29,13 +29,35 @@ function b2(x) { return x; }
 
 
 //// [declarationEmitTypeParameterNameInOuterScope.d.ts]
-declare class A {
+class A {
 }
-declare var a: <A>(x: A) => A;
-declare function a2<A>(x: A): A;
-declare var a3: <A>(x: A) => globalThis.A;
-declare function a4<A>(x: A): globalThis.A;
+var a: <A>(x: A) => A;
+function a2<A>(x: A): A;
+var a3: <A>(x: A) => globalThis.A;
+function a4<A>(x: A): globalThis.A;
 interface B {
 }
-declare var b: <B>(x: B) => B;
-declare function b2<B>(x: B): B;
+var b: <B>(x: B) => B;
+function b2<B>(x: B): B;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitTypeParameterNameInOuterScope.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitTypeParameterNameInOuterScope.d.ts (1 errors) ====
+    class A {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    var a: <A>(x: A) => A;
+    function a2<A>(x: A): A;
+    var a3: <A>(x: A) => globalThis.A;
+    function a4<A>(x: A): globalThis.A;
+    interface B {
+    }
+    var b: <B>(x: B) => B;
+    function b2<B>(x: B): B;
+    

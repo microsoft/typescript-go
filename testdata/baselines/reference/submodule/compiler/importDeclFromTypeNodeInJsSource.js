@@ -72,11 +72,11 @@ exports.Foo4 = Foo4;
 import { EventEmitter } from 'events';
 import { n3, d } from 'nestNamespaceModule';
 import { c } from 'renameModule';
-export declare class Foo extends EventEmitter {
+export class Foo extends EventEmitter {
 }
-export declare class Foo2 extends n3.c {
+export class Foo2 extends n3.c {
 }
-export declare class Foo3 extends d {
+export class Foo3 extends d {
 }
-export declare class Foo4 extends c {
+export class Foo4 extends c {
 }

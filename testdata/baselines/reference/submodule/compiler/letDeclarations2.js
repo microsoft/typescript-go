@@ -16,6 +16,21 @@ var M;
 
 
 //// [letDeclarations2.d.ts]
-declare namespace M {
+namespace M {
     let l2: number;
 }
+
+
+//// [DtsFileErrors]
+
+
+letDeclarations2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== letDeclarations2.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        let l2: number;
+    }
+    

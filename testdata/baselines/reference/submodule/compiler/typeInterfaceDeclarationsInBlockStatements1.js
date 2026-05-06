@@ -59,7 +59,7 @@ function f4() {
 
 
 //// [typeInterfaceDeclarationsInBlockStatements1.d.ts]
-declare function f1(): void;
-declare function f2(): void;
-declare function f3(): void;
-declare function f4(): void;
+function f1(): void;
+function f2(): void;
+function f3(): void;
+function f4(): void;

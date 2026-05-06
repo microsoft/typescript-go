@@ -48,12 +48,12 @@ export function fnWithPartialAnnotationOnDefaultparam(x = /** @type {P} */(somet
 export type P = {} & {
     name?: string;
 };
-export declare let vLet: P;
-export declare const vConst: P;
-export declare function fn(p?: P): void;
+export let vLet: P;
+export const vConst: P;
+export function fn(p?: P): void;
 /** @param {number} req */
-export declare function fnWithRequiredDefaultParam(p: P, req: number): void;
-export declare class C {
+export function fnWithRequiredDefaultParam(p: P, req: number): void;
+export class C {
     field: P;
     /** @optional */ optField: P;
     /** @readonly */ readonly roFiled: P;
@@ -64,11 +64,53 @@ export declare class C {
     get x(): P;
     set x(v: P);
 }
-declare const _default: P;
+const _default: P;
 export default _default;
 /**
  *
  * @param {P} x
  * @param {number} b
  */
-export declare function fnWithPartialAnnotationOnDefaultparam(x: P, b: number): void;
+export function fnWithPartialAnnotationOnDefaultparam(x: P, b: number): void;
+
+
+//// [DtsFileErrors]
+
+
+input.d.ts(23,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== input.d.ts (1 errors) ====
+    /**
+     * @typedef {{ } & { name?: string }} P
+     */
+    export type P = {} & {
+        name?: string;
+    };
+    export let vLet: P;
+    export const vConst: P;
+    export function fn(p?: P): void;
+    /** @param {number} req */
+    export function fnWithRequiredDefaultParam(p: P, req: number): void;
+    export class C {
+        field: P;
+        /** @optional */ optField: P;
+        /** @readonly */ readonly roFiled: P;
+        method(p?: P): void;
+        /** @param {number} req */
+        methodWithRequiredDefault(p: P, req: number): void;
+        constructor(ctorField?: P);
+        get x(): P;
+        set x(v: P);
+    }
+    const _default: P;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    /**
+     *
+     * @param {P} x
+     * @param {number} b
+     */
+    export function fnWithPartialAnnotationOnDefaultparam(x: P, b: number): void;
+    

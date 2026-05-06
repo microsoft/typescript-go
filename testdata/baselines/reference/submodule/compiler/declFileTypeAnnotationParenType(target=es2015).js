@@ -22,10 +22,10 @@ var l = (() => new c()) || "";
 
 
 //// [declFileTypeAnnotationParenType.d.ts]
-declare class c {
+class c {
     private p;
 }
-declare var x: (() => c)[];
-declare var y: (() => c)[];
-declare var k: (() => c) | string;
-declare var l: () => c;
+var x: (() => c)[];
+var y: (() => c)[];
+var k: (() => c) | string;
+var l: () => c;

@@ -9,7 +9,7 @@ export const obj1 = { $and: [{ $expr: true }] };
 
 
 //// [isolatedDeclarationsAsConstNestedObjects.d.ts]
-export declare const obj1: {
+export const obj1: {
     readonly $and: readonly [{
         readonly $expr: true;
     }];

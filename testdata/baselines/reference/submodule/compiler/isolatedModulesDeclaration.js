@@ -8,4 +8,4 @@ export var x;
 
 
 //// [file1.d.ts]
-export declare var x: any;
+export var x: any;

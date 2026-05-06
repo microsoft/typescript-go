@@ -38,6 +38,6 @@ function fn3() {
 
 
 //// [implicitAnyDeclareFunctionWithoutFormalType2.d.ts]
-declare function fn1(): number;
-declare function fn2(): any;
-declare function fn3(): any;
+function fn1(): number;
+function fn2(): any;
+function fn3(): any;

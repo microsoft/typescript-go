@@ -80,7 +80,7 @@ type Types = {
         a3: true;
     };
 };
-declare class Test {
+class Test {
     entries: {
         [T in keyof Types]?: Types[T][];
     };
@@ -101,5 +101,51 @@ type P<T extends keyof TypesMap> = {
 type TypeHandlers = {
     [T in keyof TypesMap]?: (p: P<T>) => void;
 };
-declare const typeHandlers: TypeHandlers;
-declare const onSomeEvent: <T extends keyof TypesMap>(p: P<T>) => void | undefined;
+const typeHandlers: TypeHandlers;
+const onSomeEvent: <T extends keyof TypesMap>(p: P<T>) => void | undefined;
+
+
+//// [DtsFileErrors]
+
+
+mappedTypeGenericIndexedAccess.d.ts(12,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== mappedTypeGenericIndexedAccess.d.ts (1 errors) ====
+    type Types = {
+        first: {
+            a1: true;
+        };
+        second: {
+            a2: true;
+        };
+        third: {
+            a3: true;
+        };
+    };
+    class Test {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        entries: {
+            [T in keyof Types]?: Types[T][];
+        };
+        constructor();
+        addEntry<T extends keyof Types>(name: T, entry: Types[T]): void;
+    }
+    type TypesMap = {
+        [0]: {
+            foo: 'bar';
+        };
+        [1]: {
+            a: 'b';
+        };
+    };
+    type P<T extends keyof TypesMap> = {
+        t: T;
+    } & TypesMap[T];
+    type TypeHandlers = {
+        [T in keyof TypesMap]?: (p: P<T>) => void;
+    };
+    const typeHandlers: TypeHandlers;
+    const onSomeEvent: <T extends keyof TypesMap>(p: P<T>) => void | undefined;
+    

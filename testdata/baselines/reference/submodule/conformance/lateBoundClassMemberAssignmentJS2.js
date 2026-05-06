@@ -16,7 +16,7 @@ export class MyClass {
 
 
 //// [lateBoundClassMemberAssignmentJS2.d.ts]
-export declare class MyClass {
+export class MyClass {
     constructor();
     method(): void;
 }

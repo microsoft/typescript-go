@@ -43,7 +43,7 @@ declare namespace NS {
         };
     };
 }
-export declare var K: {
+export var K: {
     new (): {
         values(): /*elided*/ any;
     };

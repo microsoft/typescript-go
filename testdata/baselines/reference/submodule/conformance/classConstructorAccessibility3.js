@@ -75,22 +75,22 @@ c = Baz;
 
 
 //// [classConstructorAccessibility3.d.ts]
-declare class Foo {
+class Foo {
     x: number;
     constructor(x: number);
 }
-declare class Bar {
+class Bar {
     x: number;
     constructor(x: number);
 }
-declare class Baz {
+class Baz {
     x: number;
     protected constructor(x: number);
 }
-declare class Qux {
+class Qux {
     x: number;
     private constructor();
 }
-declare let a: typeof Foo;
-declare let b: typeof Baz;
-declare let c: typeof Qux;
+let a: typeof Foo;
+let b: typeof Baz;
+let c: typeof Qux;

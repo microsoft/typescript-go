@@ -75,38 +75,93 @@ type P = {
     await: boolean;
     one: boolean;
 };
-declare function f1({ enum: _enum, ...rest }: P): {
+function f1({ enum: _enum, ...rest }: P): {
     function: boolean;
     abstract: boolean;
     async: boolean;
     await: boolean;
     one: boolean;
 };
-declare function f2({ function: _function, ...rest }: P): {
+function f2({ function: _function, ...rest }: P): {
     enum: boolean;
     abstract: boolean;
     async: boolean;
     await: boolean;
     one: boolean;
 };
-declare function f3({ abstract: _abstract, ...rest }: P): {
+function f3({ abstract: _abstract, ...rest }: P): {
     enum: boolean;
     function: boolean;
     async: boolean;
     await: boolean;
     one: boolean;
 };
-declare function f4({ async: _async, ...rest }: P): {
+function f4({ async: _async, ...rest }: P): {
     enum: boolean;
     function: boolean;
     abstract: boolean;
     await: boolean;
     one: boolean;
 };
-declare function f5({ await: _await, ...rest }: P): {
+function f5({ await: _await, ...rest }: P): {
     enum: boolean;
     function: boolean;
     abstract: boolean;
     async: boolean;
     one: boolean;
 };
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitKeywordDestructuring.d.ts(9,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitKeywordDestructuring.d.ts (1 errors) ====
+    type P = {
+        enum: boolean;
+        function: boolean;
+        abstract: boolean;
+        async: boolean;
+        await: boolean;
+        one: boolean;
+    };
+    function f1({ enum: _enum, ...rest }: P): {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        function: boolean;
+        abstract: boolean;
+        async: boolean;
+        await: boolean;
+        one: boolean;
+    };
+    function f2({ function: _function, ...rest }: P): {
+        enum: boolean;
+        abstract: boolean;
+        async: boolean;
+        await: boolean;
+        one: boolean;
+    };
+    function f3({ abstract: _abstract, ...rest }: P): {
+        enum: boolean;
+        function: boolean;
+        async: boolean;
+        await: boolean;
+        one: boolean;
+    };
+    function f4({ async: _async, ...rest }: P): {
+        enum: boolean;
+        function: boolean;
+        abstract: boolean;
+        await: boolean;
+        one: boolean;
+    };
+    function f5({ await: _await, ...rest }: P): {
+        enum: boolean;
+        function: boolean;
+        abstract: boolean;
+        async: boolean;
+        one: boolean;
+    };
+    

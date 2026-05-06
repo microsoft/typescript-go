@@ -1,15 +1,6 @@
 --- old.lateBoundAssignmentCandidateJS1.js
 +++ new.lateBoundAssignmentCandidateJS1.js
-@@= skipped -45, +45 lines =@@
-
-
- //// [index.d.ts]
--export const kBar: unique symbol;
--export class foo0 {
-+export declare const kBar: unique symbol;
-+export declare class foo0 {
-     /**
-      * @protected
+@@= skipped -52, +52 lines =@@
       * @type {null | string}
       */
      protected [kBar]: null | string;

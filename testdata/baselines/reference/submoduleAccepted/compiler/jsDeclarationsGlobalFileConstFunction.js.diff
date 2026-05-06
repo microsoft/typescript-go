@@ -8,13 +8,15 @@
 -declare class SomeConstructor {
 -    x: number;
 -}
-+declare const SomeConstructor: () => void;
- declare function SomeConstructor2(): void;
+-declare function SomeConstructor2(): void;
++const SomeConstructor: () => void;
++function SomeConstructor2(): void;
  declare namespace SomeConstructor2 {
 -    let staticMember: string;
 +    var staticMember: string;
  }
- declare function SomeConstructor3(): void;
+-declare function SomeConstructor3(): void;
++function SomeConstructor3(): void;
  declare namespace SomeConstructor3 {
 -    let staticMember_1: string;
 -    export { staticMember_1 as staticMember };

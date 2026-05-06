@@ -1,0 +1,83 @@
+--- old.anonClassDeclarationEmitIsAnon.js
++++ new.anonClassDeclarationEmitIsAnon.js
+@@= skipped -76, +76 lines =@@
+
+
+ //// [wrapClass.d.ts]
+-export declare function wrapClass(param: any): {
++export function wrapClass(param: any): {
+     new (): {
+         foo(): any;
+     };
+ };
+ export type Constructor<T = {}> = new (...args: any[]) => T;
+-export declare function Timestamped<TBase extends Constructor>(Base: TBase): {
++export function Timestamped<TBase extends Constructor>(Base: TBase): {
+     new (...args: any[]): {
+         timestamp: number;
+     };
+ } & TBase;
+ //// [index.d.ts]
+-declare const _default: {
++const _default: {
+     new (): {
+         foo(): any;
+     };
+ };
+ export default _default;
+-export declare class User {
++export class User {
+     name: string;
+ }
+-declare const TimestampedUser_base: {
++const TimestampedUser_base: {
+     new (...args: any[]): {
+         timestamp: number;
+     };
+ } & typeof User;
+-export declare class TimestampedUser extends TimestampedUser_base {
++export class TimestampedUser extends TimestampedUser_base {
+     constructor();
+ }
++
++
++//// [DtsFileErrors]
++
++
++index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== wrapClass.d.ts (0 errors) ====
++    export function wrapClass(param: any): {
++        new (): {
++            foo(): any;
++        };
++    };
++    export type Constructor<T = {}> = new (...args: any[]) => T;
++    export function Timestamped<TBase extends Constructor>(Base: TBase): {
++        new (...args: any[]): {
++            timestamp: number;
++        };
++    } & TBase;
++    
++==== index.d.ts (1 errors) ====
++    const _default: {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        new (): {
++            foo(): any;
++        };
++    };
++    export default _default;
++    export class User {
++        name: string;
++    }
++    const TimestampedUser_base: {
++        new (...args: any[]): {
++            timestamp: number;
++        };
++    } & typeof User;
++    export class TimestampedUser extends TimestampedUser_base {
++        constructor();
++    }
++    

@@ -37,4 +37,4 @@ export type ControllerClass = Constructor<any>;
 //// [usage.d.ts]
 import { ControllerClass } from './application';
 import { BindingKey } from '@loopback/context';
-export declare const CONTROLLER_CLASS: BindingKey<ControllerClass>;
+export const CONTROLLER_CLASS: BindingKey<ControllerClass>;

@@ -48,7 +48,7 @@ exports.Wrapper = Wrapper;
 
 
 //// [declarationEmitOverloadedPrivateInference.d.ts]
-export declare class Wrapper {
+export class Wrapper {
     private proxy;
     Proxies: {
         Failure: (options?: unknown) => string;

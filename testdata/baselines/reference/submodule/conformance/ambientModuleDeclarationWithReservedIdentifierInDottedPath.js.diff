@@ -1,0 +1,8 @@
+--- old.ambientModuleDeclarationWithReservedIdentifierInDottedPath.js
++++ new.ambientModuleDeclarationWithReservedIdentifierInDottedPath.js
+@@= skipped -26, +26 lines =@@
+
+
+ //// [ambientModuleDeclarationWithReservedIdentifierInDottedPath.d.ts]
+-export declare const tabId: number;
++export const tabId: number;

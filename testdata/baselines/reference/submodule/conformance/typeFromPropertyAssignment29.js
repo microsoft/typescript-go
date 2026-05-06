@@ -174,15 +174,15 @@ var n = ExpandoExpr3.prop + ExpandoExpr3.m(13) + new ExpandoExpr3().n;
 
 
 //// [typeFromPropertyAssignment29.d.ts]
-declare function ExpandoDecl(n: number): string;
+function ExpandoDecl(n: number): string;
 declare namespace ExpandoDecl {
     var prop: number;
 }
 declare namespace ExpandoDecl {
     var m: (n: number) => number;
 }
-declare var n: number;
-declare function ExpandoExpr(n: number): string;
+var n: number;
+function ExpandoExpr(n: number): string;
 declare namespace ExpandoExpr {
     var prop: {
         x: number;
@@ -204,33 +204,33 @@ declare namespace ExpandoExpr {
 declare namespace ExpandoExpr {
     var m: (n: number) => number;
 }
-declare var n: number;
-declare function ExpandoArrow(n: number): string;
+var n: number;
+function ExpandoArrow(n: number): string;
 declare namespace ExpandoArrow {
     var prop: number;
 }
 declare namespace ExpandoArrow {
     var m: (n: number) => number;
 }
-declare function ExpandoNested(n: number): {
+function ExpandoNested(n: number): {
     (m: number): number;
     total: number;
 };
 declare namespace ExpandoNested {
     var also: number;
 }
-declare function ExpandoMerge(n: number): number;
+function ExpandoMerge(n: number): number;
 declare namespace ExpandoMerge {
     var p1: number;
 }
-declare namespace ExpandoMerge {
+namespace ExpandoMerge {
     var p2: number;
 }
-declare namespace ExpandoMerge {
+namespace ExpandoMerge {
     var p3: number;
 }
-declare var n: number;
-declare namespace Ns {
+var n: number;
+namespace Ns {
     function ExpandoNamespace(): void;
     declare namespace ExpandoNamespace {
         var p6: number;
@@ -238,15 +238,15 @@ declare namespace Ns {
     export function foo(): typeof ExpandoNamespace;
     export {};
 }
-declare var ExpandoExpr2: (n: number) => string;
-declare var n: number;
-declare class ExpandoClass {
+var ExpandoExpr2: (n: number) => string;
+var n: number;
+class ExpandoClass {
     n: number;
 }
-declare var n: number;
-declare var ExpandoExpr3: {
+var n: number;
+var ExpandoExpr3: {
     new (): {
         n: number;
     };
 };
-declare var n: number;
+var n: number;

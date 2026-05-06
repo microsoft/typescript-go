@@ -90,21 +90,51 @@ function foo8() {
 
 
 //// [declFileTypeAnnotationTypeQuery.d.ts]
-declare class c {
+class c {
 }
-declare namespace m {
+namespace m {
     class c {
     }
     class g<T> {
     }
 }
-declare class g<T> {
+class g<T> {
 }
-declare function foo(): typeof c;
-declare function foo2(): typeof c;
-declare function foo3(): typeof m.c;
-declare function foo4(): typeof m.c;
-declare function foo5(): typeof g;
-declare function foo6(): typeof g;
-declare function foo7(): typeof m.g;
-declare function foo8(): typeof m.g;
+function foo(): typeof c;
+function foo2(): typeof c;
+function foo3(): typeof m.c;
+function foo4(): typeof m.c;
+function foo5(): typeof g;
+function foo6(): typeof g;
+function foo7(): typeof m.g;
+function foo8(): typeof m.g;
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationTypeQuery.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationTypeQuery.d.ts (1 errors) ====
+    class c {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    namespace m {
+        class c {
+        }
+        class g<T> {
+        }
+    }
+    class g<T> {
+    }
+    function foo(): typeof c;
+    function foo2(): typeof c;
+    function foo3(): typeof m.c;
+    function foo4(): typeof m.c;
+    function foo5(): typeof g;
+    function foo6(): typeof g;
+    function foo7(): typeof m.g;
+    function foo8(): typeof m.g;
+    

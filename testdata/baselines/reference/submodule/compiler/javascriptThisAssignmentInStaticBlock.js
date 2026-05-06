@@ -43,9 +43,27 @@ ElementsArray.isArray(new ElementsArray());
 
 
 //// [a.d.ts]
-declare class Thing {
+class Thing {
     static doSomething: () => void;
 }
-declare class ElementsArray extends Array {
+class ElementsArray extends Array {
     static isArray: (arg: any) => arg is any[];
 }
+
+
+//// [DtsFileErrors]
+
+
+/out/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /out/a.d.ts (1 errors) ====
+    class Thing {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        static doSomething: () => void;
+    }
+    class ElementsArray extends Array {
+        static isArray: (arg: any) => arg is any[];
+    }
+    

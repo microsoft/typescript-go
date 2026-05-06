@@ -18,7 +18,7 @@ exports.Foo = Foo;
 
 
 //// [declarationEmitOptionalMethod.d.ts]
-export declare const Foo: (opts: {
+export const Foo: (opts: {
     a?(): void;
     b?: () => void;
 }) => {

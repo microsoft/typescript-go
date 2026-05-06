@@ -125,32 +125,74 @@ class Thing3 extends Thing2 {
 
 //// [mixinClassesAnnotated.d.ts]
 type Constructor<T> = new (...args: any[]) => T;
-declare class Base {
+class Base {
     x: number;
     y: number;
     constructor(x: number, y: number);
 }
-declare class Derived extends Base {
+class Derived extends Base {
     z: number;
     constructor(x: number, y: number, z: number);
 }
 interface Printable {
     print(): void;
 }
-declare const Printable: <T extends Constructor<Base>>(superClass: T) => Constructor<Printable> & {
+const Printable: <T extends Constructor<Base>>(superClass: T) => Constructor<Printable> & {
     message: string;
 } & T;
 interface Tagged {
     _tag: string;
 }
-declare function Tagged<T extends Constructor<{}>>(superClass: T): Constructor<Tagged> & T;
-declare const Thing1: Constructor<Tagged> & typeof Derived;
-declare const Thing2: Constructor<Tagged> & Constructor<Printable> & {
+function Tagged<T extends Constructor<{}>>(superClass: T): Constructor<Tagged> & T;
+const Thing1: Constructor<Tagged> & typeof Derived;
+const Thing2: Constructor<Tagged> & Constructor<Printable> & {
     message: string;
 } & typeof Derived;
-declare function f1(): void;
-declare function f2(): void;
-declare class Thing3 extends Thing2 {
+function f1(): void;
+function f2(): void;
+class Thing3 extends Thing2 {
     constructor(tag: string);
     test(): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+mixinClassesAnnotated.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== mixinClassesAnnotated.d.ts (1 errors) ====
+    type Constructor<T> = new (...args: any[]) => T;
+    class Base {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        x: number;
+        y: number;
+        constructor(x: number, y: number);
+    }
+    class Derived extends Base {
+        z: number;
+        constructor(x: number, y: number, z: number);
+    }
+    interface Printable {
+        print(): void;
+    }
+    const Printable: <T extends Constructor<Base>>(superClass: T) => Constructor<Printable> & {
+        message: string;
+    } & T;
+    interface Tagged {
+        _tag: string;
+    }
+    function Tagged<T extends Constructor<{}>>(superClass: T): Constructor<Tagged> & T;
+    const Thing1: Constructor<Tagged> & typeof Derived;
+    const Thing2: Constructor<Tagged> & Constructor<Printable> & {
+        message: string;
+    } & typeof Derived;
+    function f1(): void;
+    function f2(): void;
+    class Thing3 extends Thing2 {
+        constructor(tag: string);
+        test(): void;
+    }
+    

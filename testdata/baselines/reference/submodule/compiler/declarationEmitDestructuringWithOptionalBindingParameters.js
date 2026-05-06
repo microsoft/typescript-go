@@ -15,8 +15,8 @@ function foo1({ x, y, z }) {
 
 
 //// [declarationEmitDestructuringWithOptionalBindingParameters.d.ts]
-declare function foo([x, y, z]?: [string, number, boolean]): void;
-declare function foo1({ x, y, z }?: {
+function foo([x, y, z]?: [string, number, boolean]): void;
+function foo1({ x, y, z }?: {
     x: string;
     y: number;
     z: boolean;

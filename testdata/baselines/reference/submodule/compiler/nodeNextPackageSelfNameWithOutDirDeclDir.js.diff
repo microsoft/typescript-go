@@ -1,0 +1,8 @@
+--- old.nodeNextPackageSelfNameWithOutDirDeclDir.js
++++ new.nodeNextPackageSelfNameWithOutDirDeclDir.js
+@@= skipped -25, +25 lines =@@
+
+
+ //// [index.d.ts]
+-export declare function thing(): void;
++export function thing(): void;

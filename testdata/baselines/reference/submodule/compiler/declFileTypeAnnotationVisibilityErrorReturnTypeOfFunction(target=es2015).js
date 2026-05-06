@@ -120,7 +120,7 @@ var m;
 
 
 //// [declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.d.ts]
-declare namespace m {
+namespace m {
     class private1 {
     }
     export class public1 {

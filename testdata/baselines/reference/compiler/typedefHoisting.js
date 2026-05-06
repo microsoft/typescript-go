@@ -25,7 +25,7 @@ export {};
 //// [x.d.ts]
 import type { Bar } from "./y";
 type Bars = Bar[];
-declare class C {
+class C {
     /** @import {Bar} from "./y" */
     /** @typedef {Bar[]} Bars */
     /** @type {Bars} */

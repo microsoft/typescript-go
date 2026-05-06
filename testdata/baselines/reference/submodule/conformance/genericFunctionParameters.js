@@ -24,13 +24,35 @@ const x = s(a => a.init()); // x is any, should have been {}
 
 
 //// [genericFunctionParameters.d.ts]
-declare function f1<T>(cb: <S>(x: S) => T): T;
-declare function f2<T>(cb: <S extends number>(x: S) => T): T;
-declare function f3<T>(cb: <S extends Array<S>>(x: S) => T): T;
-declare let x1: unknown;
-declare let x2: number;
-declare let x3: any[][];
-declare const s: <R>(go: <S>(ops: {
+function f1<T>(cb: <S>(x: S) => T): T;
+function f2<T>(cb: <S extends number>(x: S) => T): T;
+function f3<T>(cb: <S extends Array<S>>(x: S) => T): T;
+let x1: unknown;
+let x2: number;
+let x3: any[][];
+const s: <R>(go: <S>(ops: {
     init(): S;
 }) => R) => R;
-declare const x: unknown;
+const x: unknown;
+
+
+//// [DtsFileErrors]
+
+
+genericFunctionParameters.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== genericFunctionParameters.d.ts (1 errors) ====
+    function f1<T>(cb: <S>(x: S) => T): T;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function f2<T>(cb: <S extends number>(x: S) => T): T;
+    function f3<T>(cb: <S extends Array<S>>(x: S) => T): T;
+    let x1: unknown;
+    let x2: number;
+    let x3: any[][];
+    const s: <R>(go: <S>(ops: {
+        init(): S;
+    }) => R) => R;
+    const x: unknown;
+    

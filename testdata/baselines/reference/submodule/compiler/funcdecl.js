@@ -128,32 +128,73 @@ var f2 = () => {
 
 
 //// [funcdecl.d.ts]
-declare function simpleFunc(): string;
-declare var simpleFuncVar: typeof simpleFunc;
-declare function anotherFuncNoReturn(): void;
-declare var anotherFuncNoReturnVar: typeof anotherFuncNoReturn;
-declare function withReturn(): string;
-declare var withReturnVar: typeof withReturn;
-declare function withParams(a: string): string;
-declare var withparamsVar: typeof withParams;
-declare function withMultiParams(a: number, b: any, c: Object): number;
-declare var withMultiParamsVar: typeof withMultiParams;
-declare function withOptionalParams(a?: string): void;
-declare var withOptionalParamsVar: typeof withOptionalParams;
-declare function withInitializedParams(a: string, b0: any, b?: number, c?: string): void;
-declare var withInitializedParamsVar: typeof withInitializedParams;
-declare function withOptionalInitializedParams(a: string, c?: string): void;
-declare var withOptionalInitializedParamsVar: typeof withOptionalInitializedParams;
-declare function withRestParams(a: string, ...myRestParameter: number[]): number[];
-declare var withRestParamsVar: typeof withRestParams;
-declare function overload1(n: number): string;
-declare function overload1(s: string): string;
-declare var withOverloadSignature: typeof overload1;
-declare function f(n: () => void): void;
-declare namespace m2 {
+function simpleFunc(): string;
+var simpleFuncVar: typeof simpleFunc;
+function anotherFuncNoReturn(): void;
+var anotherFuncNoReturnVar: typeof anotherFuncNoReturn;
+function withReturn(): string;
+var withReturnVar: typeof withReturn;
+function withParams(a: string): string;
+var withparamsVar: typeof withParams;
+function withMultiParams(a: number, b: any, c: Object): number;
+var withMultiParamsVar: typeof withMultiParams;
+function withOptionalParams(a?: string): void;
+var withOptionalParamsVar: typeof withOptionalParams;
+function withInitializedParams(a: string, b0: any, b?: number, c?: string): void;
+var withInitializedParamsVar: typeof withInitializedParams;
+function withOptionalInitializedParams(a: string, c?: string): void;
+var withOptionalInitializedParamsVar: typeof withOptionalInitializedParams;
+function withRestParams(a: string, ...myRestParameter: number[]): number[];
+var withRestParamsVar: typeof withRestParams;
+function overload1(n: number): string;
+function overload1(s: string): string;
+var withOverloadSignature: typeof overload1;
+function f(n: () => void): void;
+namespace m2 {
     function foo(n: () => void): void;
 }
-declare function fooAmbient(n: number): string;
-declare function overloadAmbient(n: number): string;
-declare function overloadAmbient(s: string): string;
-declare var f2: () => string;
+function fooAmbient(n: number): string;
+function overloadAmbient(n: number): string;
+function overloadAmbient(s: string): string;
+var f2: () => string;
+
+
+//// [DtsFileErrors]
+
+
+funcdecl.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== funcdecl.d.ts (1 errors) ====
+    function simpleFunc(): string;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    var simpleFuncVar: typeof simpleFunc;
+    function anotherFuncNoReturn(): void;
+    var anotherFuncNoReturnVar: typeof anotherFuncNoReturn;
+    function withReturn(): string;
+    var withReturnVar: typeof withReturn;
+    function withParams(a: string): string;
+    var withparamsVar: typeof withParams;
+    function withMultiParams(a: number, b: any, c: Object): number;
+    var withMultiParamsVar: typeof withMultiParams;
+    function withOptionalParams(a?: string): void;
+    var withOptionalParamsVar: typeof withOptionalParams;
+    function withInitializedParams(a: string, b0: any, b?: number, c?: string): void;
+    var withInitializedParamsVar: typeof withInitializedParams;
+    function withOptionalInitializedParams(a: string, c?: string): void;
+    var withOptionalInitializedParamsVar: typeof withOptionalInitializedParams;
+    function withRestParams(a: string, ...myRestParameter: number[]): number[];
+    var withRestParamsVar: typeof withRestParams;
+    function overload1(n: number): string;
+    function overload1(s: string): string;
+    var withOverloadSignature: typeof overload1;
+    function f(n: () => void): void;
+    namespace m2 {
+        function foo(n: () => void): void;
+    }
+    function fooAmbient(n: number): string;
+    function overloadAmbient(n: number): string;
+    function overloadAmbient(s: string): string;
+    var f2: () => string;
+    

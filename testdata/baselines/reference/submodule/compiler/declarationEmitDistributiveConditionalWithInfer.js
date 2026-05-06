@@ -17,4 +17,4 @@ exports.fun = fun;
 
 
 //// [declarationEmitDistributiveConditionalWithInfer.d.ts]
-export declare const fun: (subFun: <Collection, Field extends keyof Collection>() => FlatArray<Collection[Field], 0>[]) => void;
+export const fun: (subFun: <Collection, Field extends keyof Collection>() => FlatArray<Collection[Field], 0>[]) => void;

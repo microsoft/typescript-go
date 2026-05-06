@@ -189,7 +189,7 @@ class С4 {
 
 
 //// [index.d.ts]
-declare class С1 {
+class С1 {
     /** @type {string=} */
     p1: string | undefined;
     /** @type {string | undefined} */
@@ -199,7 +199,7 @@ declare class С1 {
     /** @type {string | null} */
     p4: string | null;
 }
-declare class С2 {
+class С2 {
     /** @type {string=} */
     get p1(): string | undefined;
     /** @type {string | undefined} */
@@ -209,7 +209,7 @@ declare class С2 {
     /** @type {string | null} */
     get p4(): string | null;
 }
-declare class С3 {
+class С3 {
     /** @type {string=} */
     get p1(): string | undefined;
     /** @param {string=} value */
@@ -227,7 +227,7 @@ declare class С3 {
     /** @param {string | null} value */
     set p4(value: string | null);
 }
-declare class С4 {
+class С4 {
     /** @param {string=} value */
     set p1(value?: string | undefined);
     /** @param {string | undefined} value */

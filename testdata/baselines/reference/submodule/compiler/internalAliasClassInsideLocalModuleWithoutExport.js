@@ -42,12 +42,12 @@ var m2;
 
 
 //// [internalAliasClassInsideLocalModuleWithoutExport.d.ts]
-export declare namespace x {
+export namespace x {
     class c {
         foo(a: number): number;
     }
 }
-export declare namespace m2 {
+export namespace m2 {
     namespace m3 {
         import c = x.c;
         var cProp: c;

@@ -35,7 +35,7 @@ type M<T> = {
 interface M2 extends M<M3> {
 }
 type M3 = M2[keyof M2];
-declare function f(m: M3): any;
+function f(m: M3): any;
 type X<T> = {
     [K in keyof T]: string;
 } & {

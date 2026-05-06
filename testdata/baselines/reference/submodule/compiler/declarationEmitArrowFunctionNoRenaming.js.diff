@@ -1,0 +1,11 @@
+--- old.declarationEmitArrowFunctionNoRenaming.js
++++ new.declarationEmitArrowFunctionNoRenaming.js
+@@= skipped -40, +40 lines =@@
+     __witness__: Base;
+ };
+ export type BoundedInteger<LowerBound extends number, UpperBound extends number> = Brand<number, "BoundedInteger">;
+-export declare const toBoundedInteger: <LowerBound extends number, UpperBound extends number>(bounds: {
++export const toBoundedInteger: <LowerBound extends number, UpperBound extends number>(bounds: {
+     lowerBound: LowerBound;
+     upperBound: UpperBound;
+ }) => (n: number) => BoundedInteger<LowerBound, UpperBound>;

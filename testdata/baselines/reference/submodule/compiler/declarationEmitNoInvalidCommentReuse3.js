@@ -22,7 +22,7 @@ export declare namespace id {
 
 //// [a.d.ts]
 import { id } from "./id";
-export declare const _: {
+export const _: {
     foo: id.A<1>;
 };
 /**

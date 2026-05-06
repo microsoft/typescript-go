@@ -1,6 +1,54 @@
 --- old.declarationMapsMultifile.sourcemap.txt
 +++ new.declarationMapsMultifile.sourcemap.txt
-@@= skipped -61, +61 lines =@@
+@@= skipped -7, +7 lines =@@
+ emittedFile:a.d.ts
+ sourceFile:a.ts
+ -------------------------------------------------------------------
+->>>export declare class Foo {
+-1 >
+-2 >^^^^^^^^^^^^^^^^^^^^^
+-3 >                     ^^^
+-1 >
+-2 >export class 
+-3 >                     Foo
++>>>export class Foo {
++1 >
++2 >^^^^^^
++3 >      ^^^^^^^
++4 >             ^^^
++5 >                ^->
++1 >
++2 >export
++3 >       class 
++4 >             Foo
+ 1 >Emitted(1, 1) Source(1, 1) + SourceIndex(0)
+-2 >Emitted(1, 22) Source(1, 14) + SourceIndex(0)
+-3 >Emitted(1, 25) Source(1, 17) + SourceIndex(0)
++2 >Emitted(1, 7) Source(1, 7) + SourceIndex(0)
++3 >Emitted(1, 14) Source(1, 14) + SourceIndex(0)
++4 >Emitted(1, 17) Source(1, 17) + SourceIndex(0)
+ ---
+ >>>    doThing(x: {
+-1 >^^^^
++1->^^^^
+ 2 >    ^^^^^^^
+ 3 >           ^
+ 4 >            ^
+ 5 >             ^^
+ 6 >               ^^^^->
+-1 > {
++1-> {
+   >    
+ 2 >    doThing
+ 3 >           (
+ 4 >            x
+ 5 >             : 
+-1 >Emitted(2, 5) Source(2, 5) + SourceIndex(0)
++1->Emitted(2, 5) Source(2, 5) + SourceIndex(0)
+ 2 >Emitted(2, 12) Source(2, 12) + SourceIndex(0)
+ 3 >Emitted(2, 13) Source(2, 13) + SourceIndex(0)
+ 4 >Emitted(2, 14) Source(2, 14) + SourceIndex(0)
+@@= skipped -54, +58 lines =@@
  1 >Emitted(4, 6) Source(2, 27) + SourceIndex(0)
  ---
  >>>        b: number;
@@ -52,3 +100,93 @@
    >}
  1 >Emitted(8, 2) Source(8, 2) + SourceIndex(0)
  ---
+@@= skipped -63, +78 lines =@@
+ 7 >Emitted(1, 26) Source(1, 24) + SourceIndex(0)
+ 8 >Emitted(1, 27) Source(1, 25) + SourceIndex(0)
+ ---
+->>>declare const c: Foo;
+-1 >
+-2 >^^^^^^^^
+-3 >        ^^^^^^
+-4 >              ^
+-5 >               ^^^^^
+-6 >                    ^
+-7 >                     ^^^->
+-1 >
+-  >
+-  >
+-2 >
+-3 >        const 
+-4 >              c
+-5 >                = new Foo()
+-6 >                    ;
++>>>const c: Foo;
++1 >
++2 >^^^^^^
++3 >      ^
++4 >       ^^^^^
++5 >            ^
++6 >             ^^^->
++1 >
++  >
++  >
++2 >const 
++3 >      c
++4 >        = new Foo()
++5 >            ;
+ 1 >Emitted(2, 1) Source(3, 1) + SourceIndex(0)
+-2 >Emitted(2, 9) Source(3, 1) + SourceIndex(0)
+-3 >Emitted(2, 15) Source(3, 7) + SourceIndex(0)
+-4 >Emitted(2, 16) Source(3, 8) + SourceIndex(0)
+-5 >Emitted(2, 21) Source(3, 20) + SourceIndex(0)
+-6 >Emitted(2, 22) Source(3, 21) + SourceIndex(0)
++2 >Emitted(2, 7) Source(3, 7) + SourceIndex(0)
++3 >Emitted(2, 8) Source(3, 8) + SourceIndex(0)
++4 >Emitted(2, 13) Source(3, 20) + SourceIndex(0)
++5 >Emitted(2, 14) Source(3, 21) + SourceIndex(0)
+ ---
+->>>export declare let x: {
++>>>export let x: {
+ 1->
+-2 >^^^^^^^^^^^^^^^
+-3 >               ^^^^
+-4 >                   ^
++2 >^^^^^^
++3 >      ^
++4 >       ^^^^
++5 >           ^
++6 >            ^^^->
+ 1->
+   >c.doThing({a: 42});
+   >
+   >
+-2 >export 
+-3 >               let 
+-4 >                   x
++2 >export
++3 >       
++4 >       let 
++5 >           x
+ 1->Emitted(3, 1) Source(6, 1) + SourceIndex(0)
+-2 >Emitted(3, 16) Source(6, 8) + SourceIndex(0)
+-3 >Emitted(3, 20) Source(6, 12) + SourceIndex(0)
+-4 >Emitted(3, 21) Source(6, 13) + SourceIndex(0)
++2 >Emitted(3, 7) Source(6, 7) + SourceIndex(0)
++3 >Emitted(3, 8) Source(6, 8) + SourceIndex(0)
++4 >Emitted(3, 12) Source(6, 12) + SourceIndex(0)
++5 >Emitted(3, 13) Source(6, 13) + SourceIndex(0)
+ ---
+ >>>    b: number;
+ >>>};
+-1 >^
++1->^
+ 2 > ^
+ 3 >  ^^^^^^^^^^^^^^^^^->
+-1 > = c.doThing({a: 12})
++1-> = c.doThing({a: 12})
+ 2 > ;
+-1 >Emitted(5, 2) Source(6, 34) + SourceIndex(0)
++1->Emitted(5, 2) Source(6, 34) + SourceIndex(0)
+ 2 >Emitted(5, 3) Source(6, 35) + SourceIndex(0)
+ ---
+ >>>export { c, Foo };

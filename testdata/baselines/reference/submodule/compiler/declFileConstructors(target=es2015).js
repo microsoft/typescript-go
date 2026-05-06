@@ -197,70 +197,150 @@ class GlobalConstructorWithParameterInitializer {
 
 
 //// [declFileConstructors_0.d.ts]
-export declare class SimpleConstructor {
+export class SimpleConstructor {
     /** This comment should appear for foo*/
     constructor();
 }
-export declare class ConstructorWithParameters {
+export class ConstructorWithParameters {
     /** This is comment for function signature*/
     constructor(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number);
 }
-export declare class ConstructorWithRestParamters {
+export class ConstructorWithRestParamters {
     constructor(a: string, ...rests: string[]);
 }
-export declare class ConstructorWithOverloads {
+export class ConstructorWithOverloads {
     constructor(a: string);
     constructor(a: number);
 }
-export declare class ConstructorWithPublicParameterProperty {
+export class ConstructorWithPublicParameterProperty {
     x: string;
     constructor(x: string);
 }
-export declare class ConstructorWithPrivateParameterProperty {
+export class ConstructorWithPrivateParameterProperty {
     private x;
     constructor(x: string);
 }
-export declare class ConstructorWithOptionalParameterProperty {
+export class ConstructorWithOptionalParameterProperty {
     x?: string | undefined;
     constructor(x?: string | undefined);
 }
-export declare class ConstructorWithParameterInitializer {
+export class ConstructorWithParameterInitializer {
     x: string;
     constructor(x?: string);
 }
 //// [declFileConstructors_1.d.ts]
-declare class GlobalSimpleConstructor {
+class GlobalSimpleConstructor {
     /** This comment should appear for foo*/
     constructor();
 }
-declare class GlobalConstructorWithParameters {
+class GlobalConstructorWithParameters {
     /** This is comment for function signature*/
     constructor(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number);
 }
-declare class GlobalConstructorWithRestParamters {
+class GlobalConstructorWithRestParamters {
     constructor(a: string, ...rests: string[]);
 }
-declare class GlobalConstructorWithOverloads {
+class GlobalConstructorWithOverloads {
     constructor(a: string);
     constructor(a: number);
 }
-declare class GlobalConstructorWithPublicParameterProperty {
+class GlobalConstructorWithPublicParameterProperty {
     x: string;
     constructor(x: string);
 }
-declare class GlobalConstructorWithPrivateParameterProperty {
+class GlobalConstructorWithPrivateParameterProperty {
     private x;
     constructor(x: string);
 }
-declare class GlobalConstructorWithOptionalParameterProperty {
+class GlobalConstructorWithOptionalParameterProperty {
     x?: string | undefined;
     constructor(x?: string | undefined);
 }
-declare class GlobalConstructorWithParameterInitializer {
+class GlobalConstructorWithParameterInitializer {
     x: string;
     constructor(x?: string);
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileConstructors_1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileConstructors_0.d.ts (0 errors) ====
+    export class SimpleConstructor {
+        /** This comment should appear for foo*/
+        constructor();
+    }
+    export class ConstructorWithParameters {
+        /** This is comment for function signature*/
+        constructor(/** this is comment about a*/ a: string, 
+        /** this is comment for b*/
+        b: number);
+    }
+    export class ConstructorWithRestParamters {
+        constructor(a: string, ...rests: string[]);
+    }
+    export class ConstructorWithOverloads {
+        constructor(a: string);
+        constructor(a: number);
+    }
+    export class ConstructorWithPublicParameterProperty {
+        x: string;
+        constructor(x: string);
+    }
+    export class ConstructorWithPrivateParameterProperty {
+        private x;
+        constructor(x: string);
+    }
+    export class ConstructorWithOptionalParameterProperty {
+        x?: string | undefined;
+        constructor(x?: string | undefined);
+    }
+    export class ConstructorWithParameterInitializer {
+        x: string;
+        constructor(x?: string);
+    }
+    
+==== declFileConstructors_1.d.ts (1 errors) ====
+    class GlobalSimpleConstructor {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /** This comment should appear for foo*/
+        constructor();
+    }
+    class GlobalConstructorWithParameters {
+        /** This is comment for function signature*/
+        constructor(/** this is comment about a*/ a: string, 
+        /** this is comment for b*/
+        b: number);
+    }
+    class GlobalConstructorWithRestParamters {
+        constructor(a: string, ...rests: string[]);
+    }
+    class GlobalConstructorWithOverloads {
+        constructor(a: string);
+        constructor(a: number);
+    }
+    class GlobalConstructorWithPublicParameterProperty {
+        x: string;
+        constructor(x: string);
+    }
+    class GlobalConstructorWithPrivateParameterProperty {
+        private x;
+        constructor(x: string);
+    }
+    class GlobalConstructorWithOptionalParameterProperty {
+        x?: string | undefined;
+        constructor(x?: string | undefined);
+    }
+    class GlobalConstructorWithParameterInitializer {
+        x: string;
+        constructor(x?: string);
+    }
+    

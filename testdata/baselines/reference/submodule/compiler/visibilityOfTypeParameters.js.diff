@@ -1,0 +1,10 @@
+--- old.visibilityOfTypeParameters.js
++++ new.visibilityOfTypeParameters.js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [visibilityOfTypeParameters.d.ts]
+-export declare class MyClass {
++export class MyClass {
+     protected myMethod<T>(val: T): T;
+ }

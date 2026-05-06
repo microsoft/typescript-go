@@ -1,10 +1,17 @@
 --- old.declarationEmitReadonlyComputedProperty.js
 +++ new.declarationEmitReadonlyComputedProperty.js
-@@= skipped -44, +44 lines =@@
+@@= skipped -39, +39 lines =@@
+
+
+ //// [bug.d.ts]
+-export declare const SYMBOL: unique symbol;
++export const SYMBOL: unique symbol;
+ export interface Interface {
      readonly [SYMBOL]: string;
  }
- export declare function createInstance(): Interface;
+-export declare function createInstance(): Interface;
++export function createInstance(): Interface;
 +//// [index.d.ts]
-+export declare const spread: {
++export const spread: {
 +    [SYMBOL]: string;
 +};

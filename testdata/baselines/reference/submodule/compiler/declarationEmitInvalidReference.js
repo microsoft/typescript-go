@@ -11,4 +11,17 @@ var x = 0;
 
 
 //// [declarationEmitInvalidReference.d.ts]
-declare var x: number;
+var x: number;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitInvalidReference.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitInvalidReference.d.ts (1 errors) ====
+    var x: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

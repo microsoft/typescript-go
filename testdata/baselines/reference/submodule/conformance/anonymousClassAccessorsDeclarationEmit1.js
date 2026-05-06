@@ -47,20 +47,49 @@ export function Mixin(Super) {
 
 
 //// [anonymousClassAccessorsDeclarationEmit1.d.ts]
-export declare abstract class Base {
+export abstract class Base {
     accessor a: number;
 }
-export declare function middle(Super?: typeof Base): abstract new () => {
+export function middle(Super?: typeof Base): abstract new () => {
     get a(): number;
     set a(arg: number);
 };
-declare class A {
+class A {
     constructor(...args: any[]);
 }
-export declare function Mixin<T extends typeof A>(Super: T): {
+export function Mixin<T extends typeof A>(Super: T): {
     new (...args: any[]): {
         get myName(): string;
         set myName(arg: string);
     };
 } & T;
 export {};
+
+
+//// [DtsFileErrors]
+
+
+anonymousClassAccessorsDeclarationEmit1.d.ts(8,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== anonymousClassAccessorsDeclarationEmit1.d.ts (1 errors) ====
+    export abstract class Base {
+        accessor a: number;
+    }
+    export function middle(Super?: typeof Base): abstract new () => {
+        get a(): number;
+        set a(arg: number);
+    };
+    class A {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        constructor(...args: any[]);
+    }
+    export function Mixin<T extends typeof A>(Super: T): {
+        new (...args: any[]): {
+            get myName(): string;
+            set myName(arg: string);
+        };
+    } & T;
+    export {};
+    

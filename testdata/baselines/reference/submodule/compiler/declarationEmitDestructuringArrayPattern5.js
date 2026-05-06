@@ -13,6 +13,21 @@ var [, , [, b,]] = [3, 5, [0, 1]];
 
 
 //// [declarationEmitDestructuringArrayPattern5.d.ts]
-declare var z: number;
-declare var a: number;
-declare var b: number;
+var z: number;
+var a: number;
+var b: number;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDestructuringArrayPattern5.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDestructuringArrayPattern5.d.ts (1 errors) ====
+    var z: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    var a: number;
+    var b: number;
+    

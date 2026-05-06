@@ -572,62 +572,62 @@ class A53267 {
 
 
 //// [controlFlowAliasing.d.ts]
-declare function f10(x: string | number): void;
-declare function f11(x: unknown): void;
-declare function f12(x: string | number | boolean): void;
-declare function f13(x: string | number | boolean): void;
-declare function f14(x: number | null | undefined): number | null;
-declare function f15(obj: {
+function f10(x: string | number): void;
+function f11(x: unknown): void;
+function f12(x: string | number | boolean): void;
+function f13(x: string | number | boolean): void;
+function f14(x: number | null | undefined): number | null;
+function f15(obj: {
     readonly x: string | number;
 }): void;
-declare function f16(obj: {
+function f16(obj: {
     readonly x: string | number;
 }): void;
-declare function f17(obj: readonly [string | number]): void;
-declare function f18(obj: readonly [string | number]): void;
-declare function f20(obj: {
+function f17(obj: readonly [string | number]): void;
+function f18(obj: readonly [string | number]): void;
+function f20(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f21(obj: {
+function f21(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f22(obj: {
+function f22(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f23(obj: {
+function f23(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f24(arg: {
+function f24(arg: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f25(arg: {
+function f25(arg: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f26(outer: {
+function f26(outer: {
     readonly obj: {
         kind: 'foo';
         foo: string;
@@ -636,7 +636,7 @@ declare function f26(outer: {
         bar: number;
     };
 }): void;
-declare function f27(outer: {
+function f27(outer: {
     obj: {
         kind: 'foo';
         foo: string;
@@ -645,50 +645,50 @@ declare function f27(outer: {
         bar: number;
     };
 }): void;
-declare function f28(obj?: {
+function f28(obj?: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f30(obj: {
+function f30(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f31(obj: {
+function f31(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f32(obj: {
+function f32(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare function f33(obj: {
+function f33(obj: {
     kind: 'foo';
     foo: string;
 } | {
     kind: 'bar';
     bar: number;
 }): void;
-declare class C10 {
+class C10 {
     readonly x: string | number;
     constructor(x: string | number);
 }
-declare class C11 {
+class C11 {
     readonly x: string | number;
     constructor(x: string | number);
 }
-declare function f40(obj: {
+function f40(obj: {
     kind: 'foo';
     foo?: string;
 } | {
@@ -702,16 +702,16 @@ type Data = {
     kind: 'num';
     payload: number;
 };
-declare function gg2(obj: Data): void;
-declare function foo({ kind, payload }: Data): void;
-declare const obj: {
+function gg2(obj: Data): void;
+function foo({ kind, payload }: Data): void;
+const obj: {
     fn: () => boolean;
 };
-declare const a: boolean;
-declare class Utils {
+const a: boolean;
+class Utils {
     static isDefined<T>(value: T): value is NonNullable<T>;
 }
-declare class A53267 {
+class A53267 {
     readonly testNumber: number | undefined;
     foo(): void;
 }

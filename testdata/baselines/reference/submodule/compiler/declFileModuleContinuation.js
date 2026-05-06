@@ -28,11 +28,31 @@ var A;
 
 
 //// [declFileModuleContinuation.d.ts]
-declare namespace A.C {
+namespace A.C {
     interface Z {
     }
 }
-declare namespace A.B.C {
+namespace A.B.C {
     class W implements A.C.Z {
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileModuleContinuation.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileModuleContinuation.d.ts (1 errors) ====
+    namespace A.C {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Z {
+        }
+    }
+    namespace A.B.C {
+        class W implements A.C.Z {
+        }
+    }
+    

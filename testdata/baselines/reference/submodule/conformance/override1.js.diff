@@ -1,0 +1,48 @@
+--- old.override1.js
++++ new.override1.js
+@@= skipped -83, +83 lines =@@
+
+
+ //// [override1.d.ts]
+-declare class B {
++class B {
+     foo(v: string): void;
+     fooo(v: string): void;
+ }
+-declare class D extends B {
++class D extends B {
+     foo(v: string): void;
+     fooo(v: string): void;
+     bar(v: string): void;
+ }
+-declare class C {
++class C {
+     foo(v: string): void;
+ }
+-declare function f(): {
++function f(): {
+     new (): {
+         foo(v: string): void;
+         fooo(v: string): void;
+         bar(v: string): void;
+     };
+ };
+-declare const E_base: {
++const E_base: {
+     new (): {
+         foo(): void;
+         bar(): void;
+     };
+ };
+-declare class E extends E_base {
++class E extends E_base {
+     foo(): void;
+     bar(): void;
+     baz(): void;
+     bazz(): void;
+ }
+-declare function ff(): {
++function ff(): {
+     new (): {
+         foo(): void;
+     };

@@ -38,19 +38,19 @@ export const B = { ...A };
 
 
 //// [e.d.ts]
-export declare enum E {
+export enum E {
     A = "a",
     B = "b"
 }
 //// [a.d.ts]
 import { E } from './e.js';
-export declare const A: {
+export const A: {
     readonly item: {
         readonly a: E.A;
     };
 };
 //// [b.d.ts]
-export declare const B: {
+export const B: {
     readonly item: {
         readonly a: import("./e.js").E.A;
     };

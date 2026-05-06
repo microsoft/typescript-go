@@ -120,59 +120,59 @@ arrow10[emoji] = 0;
 
 
 //// [declarationEmitLateBoundAssignments2.d.ts]
-export declare function decl(): void;
+export function decl(): void;
 export declare namespace decl {
     var B: string;
 }
-export declare function decl2(): void;
+export function decl2(): void;
 export declare namespace decl2 {
     var C: number;
 }
-export declare function decl3(): void;
-export declare function decl4(): void;
-export declare function decl5(): void;
-export declare function decl6(): void;
-export declare function decl7(): void;
-export declare function decl8(): void;
-export declare function decl9(): void;
-export declare function decl10(): void;
-export declare function arrow(): void;
+export function decl3(): void;
+export function decl4(): void;
+export function decl5(): void;
+export function decl6(): void;
+export function decl7(): void;
+export function decl8(): void;
+export function decl9(): void;
+export function decl10(): void;
+export function arrow(): void;
 export declare namespace arrow {
     var B: string;
 }
-export declare function arrow2(): void;
+export function arrow2(): void;
 export declare namespace arrow2 {
     var C: number;
 }
-export declare const arrow3: {
+export const arrow3: {
     (): void;
     77: number;
 };
-export declare const arrow4: {
+export const arrow4: {
     (): void;
     1: number;
 };
-export declare const arrow5: {
+export const arrow5: {
     (): void;
     "101": number;
 };
-export declare const arrow6: {
+export const arrow6: {
     (): void;
     "10": number;
 };
-export declare const arrow7: {
+export const arrow7: {
     (): void;
     "qwe rty": number;
 };
-export declare const arrow8: {
+export const arrow8: {
     (): void;
     "foo bar": number;
 };
-export declare const arrow9: {
+export const arrow9: {
     (): void;
     "\uD83E\uDD2A": number;
 };
-export declare const arrow10: {
+export const arrow10: {
     (): void;
     "\uD83E\uDD37\u200D\u2642\uFE0F": number;
 };

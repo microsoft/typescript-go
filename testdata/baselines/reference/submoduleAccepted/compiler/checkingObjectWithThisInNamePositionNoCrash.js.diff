@@ -1,11 +1,13 @@
 --- old.checkingObjectWithThisInNamePositionNoCrash.js
 +++ new.checkingObjectWithThisInNamePositionNoCrash.js
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
+
 
  //// [checkingObjectWithThisInNamePositionNoCrash.d.ts]
- export declare const thing: {
+-export declare const thing: {
 -    doit(): {
 -        [x: number]: string;
 -    };
++export const thing: {
 +    doit(): any;
  };

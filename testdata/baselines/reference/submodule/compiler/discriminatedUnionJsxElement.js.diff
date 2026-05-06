@@ -1,0 +1,46 @@
+--- old.discriminatedUnionJsxElement.js
++++ new.discriminatedUnionJsxElement.js
+@@= skipped -45, +45 lines =@@
+ interface IData<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine> {
+     menuItemsVariant?: MenuItemVariant;
+ }
+-declare function Menu<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine>(data: IData<MenuItemVariant>): any;
++function Menu<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine>(data: IData<MenuItemVariant>): any;
+ type IListItemData = {
+     variant: ListItemVariant.Avatar;
+ } | {
+     variant: ListItemVariant.OneLine;
+ };
+-declare enum ListItemVariant {
++enum ListItemVariant {
+     OneLine = 0,
+     Avatar = 1
+ }
+-declare function ListItem(_data: IListItemData): null;
++function ListItem(_data: IListItemData): null;
++
++
++//// [DtsFileErrors]
++
++
++discriminatedUnionJsxElement.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== discriminatedUnionJsxElement.d.ts (1 errors) ====
++    interface IData<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine> {
++        menuItemsVariant?: MenuItemVariant;
++    }
++    function Menu<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine>(data: IData<MenuItemVariant>): any;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    type IListItemData = {
++        variant: ListItemVariant.Avatar;
++    } | {
++        variant: ListItemVariant.OneLine;
++    };
++    enum ListItemVariant {
++        OneLine = 0,
++        Avatar = 1
++    }
++    function ListItem(_data: IListItemData): null;
++    

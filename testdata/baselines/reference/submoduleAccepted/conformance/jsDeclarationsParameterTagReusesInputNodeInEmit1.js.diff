@@ -5,10 +5,11 @@
 
  //// [base.d.ts]
 -export = BaseFactory;
-+declare class Base {
+-declare function BaseFactory(): Base;
++class Base {
 +    constructor();
 +}
- declare function BaseFactory(): Base;
++function BaseFactory(): Base;
  declare namespace BaseFactory {
 -    export { Base };
 -}
@@ -29,7 +30,13 @@
  /** @typedef {import('./base')} BaseFactory */
  /**
   * @callback BaseFactoryFactory
-@@= skipped -26, +23 lines =@@
+  * @param {import('./base')} factory
+  */
+ /** @enum {import('./base')} */
+-declare const couldntThinkOfAny: {};
++const couldntThinkOfAny: {};
+ /**
+  *
   * @param {InstanceType<BaseFactory["Base"]>} base
   * @returns {InstanceType<BaseFactory["Base"]>}
   */
@@ -46,4 +53,4 @@
 -        new (): {};
 -    };
 -}) => any;
-+declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
++const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;

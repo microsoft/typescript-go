@@ -24,7 +24,24 @@ var x = es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0_1.default;
 
 
 //// [es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0.d.ts]
-declare var a: number;
+var a: number;
 export default a;
 //// [es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_1.d.ts]
 export {};
+
+
+//// [DtsFileErrors]
+
+
+es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0.d.ts (1 errors) ====
+    var a: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default a;
+    
+==== es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_1.d.ts (0 errors) ====
+    export {};
+    

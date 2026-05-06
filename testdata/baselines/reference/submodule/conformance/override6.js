@@ -36,13 +36,13 @@ class D extends B {
 
 
 //// [override6.d.ts]
-declare class B {
+class B {
     foo: string;
     bar: number;
     baz: number;
     constructor(foo: string, bar: number);
 }
-declare class D extends B {
+class D extends B {
     foo: string;
     baz: number;
     bar: number;

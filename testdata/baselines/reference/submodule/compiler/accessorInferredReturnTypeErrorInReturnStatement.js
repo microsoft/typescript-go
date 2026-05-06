@@ -22,6 +22,6 @@ exports.basePrototype = {
 
 
 //// [accessorInferredReturnTypeErrorInReturnStatement.d.ts]
-export declare var basePrototype: {
+export var basePrototype: {
     readonly primaryPath: any;
 };

@@ -203,7 +203,7 @@ class c2 {
 
 //// [declFileAccessors_0.d.ts]
 /** This is comment for c1*/
-export declare class c1 {
+export class c1 {
     /** getter property*/
     get p3(): number;
     /** setter property*/
@@ -227,7 +227,7 @@ export declare class c1 {
 }
 //// [declFileAccessors_1.d.ts]
 /** This is comment for c2 - the global class*/
-declare class c2 {
+class c2 {
     /** getter property*/
     get p3(): number;
     /** setter property*/
@@ -249,3 +249,63 @@ declare class c2 {
     get onlyGetter(): number;
     set onlySetter(value: number);
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileAccessors_1.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileAccessors_0.d.ts (0 errors) ====
+    /** This is comment for c1*/
+    export class c1 {
+        /** getter property*/
+        get p3(): number;
+        /** setter property*/
+        set p3(/** this is value*/ value: number);
+        /** private getter property*/
+        private get pp3();
+        /** private setter property*/
+        private set pp3(value);
+        /** static getter property*/
+        static get s3(): number;
+        /** setter property*/
+        static set s3(/** this is value*/ value: number);
+        get nc_p3(): number;
+        set nc_p3(value: number);
+        private get nc_pp3();
+        private set nc_pp3(value);
+        static get nc_s3(): string;
+        static set nc_s3(value: string);
+        get onlyGetter(): number;
+        set onlySetter(value: number);
+    }
+    
+==== declFileAccessors_1.d.ts (1 errors) ====
+    /** This is comment for c2 - the global class*/
+    class c2 {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /** getter property*/
+        get p3(): number;
+        /** setter property*/
+        set p3(/** this is value*/ value: number);
+        /** private getter property*/
+        private get pp3();
+        /** private setter property*/
+        private set pp3(value);
+        /** static getter property*/
+        static get s3(): number;
+        /** setter property*/
+        static set s3(/** this is value*/ value: number);
+        get nc_p3(): number;
+        set nc_p3(value: number);
+        private get nc_pp3();
+        private set nc_pp3(value);
+        static get nc_s3(): string;
+        static set nc_s3(value: string);
+        get onlyGetter(): number;
+        set onlySetter(value: number);
+    }
+    

@@ -72,7 +72,7 @@ var d = new Foo('str', 2);
 
 
 //// [overloadTag2.d.ts]
-export declare class Foo {
+export class Foo {
     #private;
     constructor(a: string, b: number);
     constructor(a: number);

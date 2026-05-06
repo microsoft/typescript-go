@@ -23,6 +23,6 @@ exports.y = y;
 
 
 //// [app.d.ts]
-export declare let $: number;
-export declare let x: typeof $;
-export declare let y: () => number;
+export let $: number;
+export let x: typeof $;
+export let y: () => number;

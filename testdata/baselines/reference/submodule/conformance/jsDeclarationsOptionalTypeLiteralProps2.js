@@ -44,8 +44,35 @@ function foo({ a, b, c }) {
  * @param {number} [opts.c]
  * @returns {number}
  */
-declare function foo({ a, b, c }: {
+function foo({ a, b, c }: {
     a: number;
     b?: number;
     c?: number;
 }): number;
+
+
+//// [DtsFileErrors]
+
+
+out/foo.d.ts(11,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/foo.d.ts (1 errors) ====
+    /**
+     * foo
+     *
+     * @public
+     * @param {object} opts
+     * @param {number} opts.a
+     * @param {number} [opts.b]
+     * @param {number} [opts.c]
+     * @returns {number}
+     */
+    function foo({ a, b, c }: {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        a: number;
+        b?: number;
+        c?: number;
+    }): number;
+    

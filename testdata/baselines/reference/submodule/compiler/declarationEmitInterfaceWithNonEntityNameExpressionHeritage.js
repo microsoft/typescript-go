@@ -11,7 +11,7 @@ class A {
 
 
 //// [declarationEmitInterfaceWithNonEntityNameExpressionHeritage.d.ts]
-declare class A {
+class A {
 }
 interface Class {
 }

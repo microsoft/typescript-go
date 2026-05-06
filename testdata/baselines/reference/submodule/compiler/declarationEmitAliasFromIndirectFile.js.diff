@@ -1,0 +1,54 @@
+--- old.declarationEmitAliasFromIndirectFile.js
++++ new.declarationEmitAliasFromIndirectFile.js
+@@= skipped -34, +34 lines =@@
+
+
+ //// [app.d.ts]
+-declare const _default: {
++const _default: {
+     ar?: import("./locale").CustomLocale | undefined;
+     bg?: import("./locale").CustomLocale | undefined;
+ } & {
+     default: import("./locale").Locale;
+ };
+ export default _default;
++
++
++//// [DtsFileErrors]
++
++
++app.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== locale.d.ts (0 errors) ====
++    export type Locale = {
++        weekdays: {
++            shorthand: [string, string, string, string, string, string, string];
++            longhand: [string, string, string, string, string, string, string];
++        };
++    };
++    export type CustomLocale = {
++        weekdays: {
++            shorthand: [string, string, string, string, string, string, string];
++            longhand: [string, string, string, string, string, string, string];
++        };
++    };
++    export type key = "ar" | "bg";
++    
++==== instance.d.ts (0 errors) ====
++    import { Locale, CustomLocale, key as LocaleKey } from "./locale";
++    export interface FlatpickrFn {
++        l10ns: {[k in LocaleKey]?: CustomLocale } & { default: Locale };
++    }
++    
++==== app.d.ts (1 errors) ====
++    const _default: {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        ar?: import("./locale").CustomLocale | undefined;
++        bg?: import("./locale").CustomLocale | undefined;
++    } & {
++        default: import("./locale").Locale;
++    };
++    export default _default;
++    

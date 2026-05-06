@@ -62,15 +62,39 @@ function foo5(x) {
 
 
 //// [declFileTypeofFunction.d.ts]
-declare function f(n: typeof f): string;
-declare function f(n: typeof g): string;
-declare function g(n: typeof g): number;
-declare function g(n: typeof f): number;
-declare var b: () => typeof b;
-declare function b1(): typeof b1;
-declare function foo(): typeof foo;
-declare var foo1: typeof foo;
-declare var foo2: typeof foo;
-declare var foo3: () => () => /*elided*/ any;
-declare var x: () => () => /*elided*/ any;
-declare function foo5(x: number): (x: number) => number;
+function f(n: typeof f): string;
+function f(n: typeof g): string;
+function g(n: typeof g): number;
+function g(n: typeof f): number;
+var b: () => typeof b;
+function b1(): typeof b1;
+function foo(): typeof foo;
+var foo1: typeof foo;
+var foo2: typeof foo;
+var foo3: () => () => /*elided*/ any;
+var x: () => () => /*elided*/ any;
+function foo5(x: number): (x: number) => number;
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeofFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeofFunction.d.ts (1 errors) ====
+    function f(n: typeof f): string;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function f(n: typeof g): string;
+    function g(n: typeof g): number;
+    function g(n: typeof f): number;
+    var b: () => typeof b;
+    function b1(): typeof b1;
+    function foo(): typeof foo;
+    var foo1: typeof foo;
+    var foo2: typeof foo;
+    var foo3: () => () => /*elided*/ any;
+    var x: () => () => /*elided*/ any;
+    function foo5(x: number): (x: number) => number;
+    

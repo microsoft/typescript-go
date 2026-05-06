@@ -35,13 +35,35 @@ var X;
 
 
 //// [declFileWithInternalModuleNameConflictsInExtendsClause2.d.ts]
-declare namespace X.A.C {
+namespace X.A.C {
     interface Z {
     }
 }
-declare namespace X.A.B.C {
+namespace X.A.B.C {
     class W implements A.C.Z {
     }
 }
-declare namespace X.A.B.C {
+namespace X.A.B.C {
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileWithInternalModuleNameConflictsInExtendsClause2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileWithInternalModuleNameConflictsInExtendsClause2.d.ts (1 errors) ====
+    namespace X.A.C {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Z {
+        }
+    }
+    namespace X.A.B.C {
+        class W implements A.C.Z {
+        }
+    }
+    namespace X.A.B.C {
+    }
+    

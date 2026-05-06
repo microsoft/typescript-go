@@ -90,21 +90,51 @@ function foo8() {
 
 
 //// [declFileTypeAnnotationTypeReference.d.ts]
-declare class c {
+class c {
 }
-declare namespace m {
+namespace m {
     class c {
     }
     class g<T> {
     }
 }
-declare class g<T> {
+class g<T> {
 }
-declare function foo(): c;
-declare function foo2(): c;
-declare function foo3(): m.c;
-declare function foo4(): m.c;
-declare function foo5(): g<string>;
-declare function foo6(): g<string>;
-declare function foo7(): m.g<number>;
-declare function foo8(): m.g<number>;
+function foo(): c;
+function foo2(): c;
+function foo3(): m.c;
+function foo4(): m.c;
+function foo5(): g<string>;
+function foo6(): g<string>;
+function foo7(): m.g<number>;
+function foo8(): m.g<number>;
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationTypeReference.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationTypeReference.d.ts (1 errors) ====
+    class c {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    namespace m {
+        class c {
+        }
+        class g<T> {
+        }
+    }
+    class g<T> {
+    }
+    function foo(): c;
+    function foo2(): c;
+    function foo3(): m.c;
+    function foo4(): m.c;
+    function foo5(): g<string>;
+    function foo6(): g<string>;
+    function foo7(): m.g<number>;
+    function foo8(): m.g<number>;
+    

@@ -123,14 +123,14 @@ new Intl.NumberFormat("fr").format(bigintVal);
 
 
 //// [bigintWithLib.d.ts]
-declare let bigintVal: bigint;
-declare let stringVal: string;
-declare let bigIntArray: BigInt64Array;
-declare let len: number;
-declare let arrayBufferLike: ArrayBufferView;
-declare let bigUintArray: BigUint64Array;
-declare const dataView: DataView<ArrayBuffer>;
-declare const w = 12n;
-declare const x = -12n;
-declare const y: 12n;
-declare let z: bigint;
+let bigintVal: bigint;
+let stringVal: string;
+let bigIntArray: BigInt64Array;
+let len: number;
+let arrayBufferLike: ArrayBufferView;
+let bigUintArray: BigUint64Array;
+const dataView: DataView<ArrayBuffer>;
+const w = 12n;
+const x = -12n;
+const y: 12n;
+let z: bigint;

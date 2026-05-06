@@ -32,11 +32,11 @@ exports.withContext = withContext;
 
 
 //// [context.d.ts]
-export declare const Key: unique symbol;
+export const Key: unique symbol;
 export interface Context {
     [Key]: string;
 }
 //// [index.d.ts]
 import { Key, Context } from "./context";
-export declare const context: Context;
-export declare const withContext: ({ [Key]: value }: Context) => string;
+export const context: Context;
+export const withContext: ({ [Key]: value }: Context) => string;

@@ -110,24 +110,24 @@ Example5.value++;
 
 
 //// [controlFlowAutoAccessor1.d.ts]
-declare class Example {
+class Example {
     accessor test: number;
     constructor(test: number);
     getTest(): number;
 }
-declare class Example2 {
+class Example2 {
     accessor test: number | undefined;
     constructor(test: number | undefined);
     getTest(): number;
 }
-declare class Example3 {
+class Example3 {
     accessor value: number | null;
     constructor(n: number);
 }
-declare var n: number;
-declare class Example4 {
+var n: number;
+class Example4 {
     static accessor value: number | null;
 }
-declare class Example5 {
+class Example5 {
     static accessor value: any;
 }

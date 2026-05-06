@@ -40,7 +40,7 @@ var Test;
 
 
 //// [declarationEmitExpressionInExtends5.d.ts]
-declare namespace Test {
+namespace Test {
     export interface IFace {
     }
     export class SomeClass implements IFace {
@@ -51,3 +51,26 @@ declare namespace Test {
     export function getClass<T>(): new () => T;
     export {};
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitExpressionInExtends5.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitExpressionInExtends5.d.ts (1 errors) ====
+    namespace Test {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        export interface IFace {
+        }
+        export class SomeClass implements IFace {
+        }
+        const Derived_base: new () => IFace;
+        export class Derived extends Derived_base {
+        }
+        export function getClass<T>(): new () => T;
+        export {};
+    }
+    

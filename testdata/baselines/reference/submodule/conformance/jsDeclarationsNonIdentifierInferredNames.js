@@ -16,8 +16,8 @@ export const ExampleFunctionalComponent = ({ "data-testid": dataTestId, [dynProp
 
 
 //// [jsDeclarationsNonIdentifierInferredNames.d.ts]
-declare const dynPropName = "data-dyn";
-export declare const ExampleFunctionalComponent: ({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
+const dynPropName = "data-dyn";
+export const ExampleFunctionalComponent: ({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
     "data-dyn": any;
     "data-testid": any;
 }) => JSX.Element;
@@ -27,12 +27,15 @@ export {};
 //// [DtsFileErrors]
 
 
+out/jsDeclarationsNonIdentifierInferredNames.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
 out/jsDeclarationsNonIdentifierInferredNames.d.ts(5,7): error TS2503: Cannot find namespace 'JSX'.
 
 
-==== out/jsDeclarationsNonIdentifierInferredNames.d.ts (1 errors) ====
-    declare const dynPropName = "data-dyn";
-    export declare const ExampleFunctionalComponent: ({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
+==== out/jsDeclarationsNonIdentifierInferredNames.d.ts (2 errors) ====
+    const dynPropName = "data-dyn";
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export const ExampleFunctionalComponent: ({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
         "data-dyn": any;
         "data-testid": any;
     }) => JSX.Element;

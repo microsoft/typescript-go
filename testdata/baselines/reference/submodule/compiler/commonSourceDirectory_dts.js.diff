@@ -1,0 +1,8 @@
+--- old.commonSourceDirectory_dts.js
++++ new.commonSourceDirectory_dts.js
+@@= skipped -14, +14 lines =@@
+
+ //// [/app/bin/src/index.d.ts]
+ /// <reference path="../../lib/bar.d.ts" preserve="true" />
+-export declare const x: number;
++export const x: number;

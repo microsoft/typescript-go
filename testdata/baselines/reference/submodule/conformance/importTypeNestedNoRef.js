@@ -13,4 +13,4 @@ export const x = "yes"; // expect outter import to fail, since b.d.ts isn't in t
 
 
 //// [chainer.d.ts]
-export declare const x: import(import("./a").LookAt).Value;
+export const x: import(import("./a").LookAt).Value;

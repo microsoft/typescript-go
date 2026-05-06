@@ -1,0 +1,10 @@
+--- old.objectLiteralComputedNameNoDeclarationError.js
++++ new.objectLiteralComputedNameNoDeclarationError.js
+@@= skipped -18, +18 lines =@@
+
+
+ //// [objectLiteralComputedNameNoDeclarationError.d.ts]
+-export declare const Baa: {
++export const Baa: {
+     banana: number;
+ };

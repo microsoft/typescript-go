@@ -28,13 +28,13 @@ export class C {
 
 
 //// [declarationEmitCastReusesTypeNode5.d.ts]
-export declare const vNumberLiteral: 1 | 1;
-export declare const vStringLiteral: "1" | "1";
-export declare const vLiteral: "1" | "1";
+export const vNumberLiteral: 1 | 1;
+export const vStringLiteral: "1" | "1";
+export const vLiteral: "1" | "1";
 type R = {
     foo: string;
 };
-export declare class C {
+export class C {
     tsResolve?: R | R;
     tsResolve2?: R | R | string;
     reuseType?: ((p: R) => void) | string | string;

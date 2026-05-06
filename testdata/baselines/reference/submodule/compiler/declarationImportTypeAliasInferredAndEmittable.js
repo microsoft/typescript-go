@@ -42,14 +42,38 @@ exports.Wrap = Wrap;
 
 
 //// [foo.d.ts]
-declare class Conn {
+class Conn {
     constructor();
     item: number;
     method(): void;
 }
 export = Conn;
 //// [usage.d.ts]
-export declare class Wrap {
+export class Wrap {
     connItem: number;
     constructor(c?: import("./foo"));
 }
+
+
+//// [DtsFileErrors]
+
+
+foo.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== foo.d.ts (1 errors) ====
+    class Conn {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        constructor();
+        item: number;
+        method(): void;
+    }
+    export = Conn;
+    
+==== usage.d.ts (0 errors) ====
+    export class Wrap {
+        connItem: number;
+        constructor(c?: import("./foo"));
+    }
+    

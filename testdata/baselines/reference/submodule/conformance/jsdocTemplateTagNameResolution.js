@@ -31,8 +31,8 @@ const y = "a";
  * @typedef {T[K]} Foo
  */
 type Foo<T, K extends keyof T> = T[K];
-declare const x: {
+const x: {
     a: number;
 };
 /** @type {Foo<typeof x, "a">} */
-declare const y: Foo<typeof x, "a">;
+const y: Foo<typeof x, "a">;

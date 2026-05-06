@@ -43,9 +43,35 @@ const send = handlers => new Promise((resolve, reject) => {
 type ResolveRejectMap = {
     [id: string]: [Function, Function];
 };
-declare let id: number;
+let id: number;
 /**
  * @param {ResolveRejectMap} handlers
  * @returns {Promise<any>}
  */
-declare const send: (handlers: ResolveRejectMap) => Promise<any>;
+const send: (handlers: ResolveRejectMap) => Promise<any>;
+
+
+//// [DtsFileErrors]
+
+
+out/foo.d.ts(9,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/foo.d.ts (1 errors) ====
+    /**
+     * @typedef {{
+     *   [id: string]: [Function, Function];
+     * }} ResolveRejectMap
+     */
+    type ResolveRejectMap = {
+        [id: string]: [Function, Function];
+    };
+    let id: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    /**
+     * @param {ResolveRejectMap} handlers
+     * @returns {Promise<any>}
+     */
+    const send: (handlers: ResolveRejectMap) => Promise<any>;
+    

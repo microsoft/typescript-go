@@ -14,6 +14,21 @@ function foo(args) {
 
 
 //// [functionDeclarationWithArgumentOfTypeFunctionTypeArray.d.ts]
-declare function foo(args: {
+function foo(args: {
     (x: any): number;
 }[]): number;
+
+
+//// [DtsFileErrors]
+
+
+functionDeclarationWithArgumentOfTypeFunctionTypeArray.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== functionDeclarationWithArgumentOfTypeFunctionTypeArray.d.ts (1 errors) ====
+    function foo(args: {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        (x: any): number;
+    }[]): number;
+    

@@ -1,0 +1,41 @@
+--- old.typeReferenceDirectives4.js
++++ new.typeReferenceDirectives4.js
+@@= skipped -23, +23 lines =@@
+
+ //// [app.d.ts]
+ /// <reference types="lib" preserve="true" />
+-declare let x: $;
+-declare let y: () => $;
++let x: $;
++let y: () => $;
+
+
+ //// [DtsFileErrors]
+
+
+-/app.d.ts(2,16): error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
+-/app.d.ts(3,22): error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
+-
+-
+-==== /app.d.ts (2 errors) ====
++/app.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++/app.d.ts(2,8): error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
++/app.d.ts(3,14): error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
++
++
++==== /app.d.ts (3 errors) ====
+     /// <reference types="lib" preserve="true" />
+-    declare let x: $;
+-                   ~
++    let x: $;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++           ~
+ !!! error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
+-    declare let y: () => $;
+-                         ~
++    let y: () => $;
++                 ~
+ !!! error TS2749: '$' refers to a value, but is being used as a type here. Did you mean 'typeof $'?
+     
+ ==== /ref.d.ts (0 errors) ====

@@ -1,0 +1,11 @@
+--- old.omitTypeTests01.js
++++ new.omitTypeTests01.js
+@@= skipped -40, +40 lines =@@
+ }
+ export type Bar = Omit<Foo, "c">;
+ export type Baz = Omit<Foo, "b" | "c">;
+-export declare function getBarA(bar: Bar): string;
+-export declare function getBazA(baz: Baz): string;
++export function getBarA(bar: Bar): string;
++export function getBazA(baz: Baz): string;
+ export {};

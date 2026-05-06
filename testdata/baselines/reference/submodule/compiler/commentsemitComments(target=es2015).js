@@ -143,13 +143,13 @@ var m1;
 
 //// [commentsemitComments.d.ts]
 /** Variable comments*/
-declare var myVariable: number;
+var myVariable: number;
 /** function comments*/
-declare function foo(/** parameter comment*/ p: number): void;
+function foo(/** parameter comment*/ p: number): void;
 /** variable with function type comment*/
-declare var fooVar: () => void;
+var fooVar: () => void;
 /**class comment*/
-declare class c {
+class c {
     /** constructor comment*/
     constructor();
     /** property comment */
@@ -166,7 +166,7 @@ declare class c {
     foo1(b: string): string;
 }
 /**instance comment*/
-declare var i: c;
+var i: c;
 /** interface comments*/
 interface i1 {
     /** caller comments*/
@@ -181,9 +181,9 @@ interface i1 {
     prop: string;
 }
 /**interface instance comments*/
-declare var i1_i: i1;
+var i1_i: i1;
 /** this is module comment*/
-declare namespace m1 {
+namespace m1 {
     /** class b */
     class b {
         x: number;
@@ -192,4 +192,67 @@ declare namespace m1 {
     namespace m2 {
     }
 }
-declare var x: any;
+var x: any;
+
+
+//// [DtsFileErrors]
+
+
+commentsemitComments.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsemitComments.d.ts (1 errors) ====
+    /** Variable comments*/
+    var myVariable: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    /** function comments*/
+    function foo(/** parameter comment*/ p: number): void;
+    /** variable with function type comment*/
+    var fooVar: () => void;
+    /**class comment*/
+    class c {
+        /** constructor comment*/
+        constructor();
+        /** property comment */
+        b: number;
+        /** function comment */
+        myFoo(): number;
+        /** getter comment*/
+        get prop1(): number;
+        /** setter comment*/
+        set prop1(val: number);
+        /** overload signature1*/
+        foo1(a: number): string;
+        /** Overload signature 2*/
+        foo1(b: string): string;
+    }
+    /**instance comment*/
+    var i: c;
+    /** interface comments*/
+    interface i1 {
+        /** caller comments*/
+        (a: number): number;
+        /** new comments*/
+        new (b: string): any;
+        /**indexer property*/
+        [a: number]: string;
+        /** function property;*/
+        myFoo(/*param prop*/ a: number): string;
+        /** prop*/
+        prop: string;
+    }
+    /**interface instance comments*/
+    var i1_i: i1;
+    /** this is module comment*/
+    namespace m1 {
+        /** class b */
+        class b {
+            x: number;
+            constructor(x: number);
+        }
+        namespace m2 {
+        }
+    }
+    var x: any;
+    

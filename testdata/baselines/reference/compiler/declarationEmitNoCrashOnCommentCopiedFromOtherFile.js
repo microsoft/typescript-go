@@ -44,7 +44,7 @@ export const x = foo();
  * blah blah blah blah
  * blah blah blah blah
  */
-export declare function foo(): (_item: unknown) => _item is boolean;
+export function foo(): (_item: unknown) => _item is boolean;
 //# sourceMappingURL=export.d.ts.map//// [import.d.ts]
-export declare const x: (_item: unknown) => _item is boolean;
+export const x: (_item: unknown) => _item is boolean;
 //# sourceMappingURL=import.d.ts.map

@@ -1,0 +1,9 @@
+--- old.declarationEmitInferredTypeAlias3.js
++++ new.declarationEmitInferredTypeAlias3.js
+@@= skipped -23, +23 lines =@@
+ //// [0.d.ts]
+ export {};
+ //// [1.d.ts]
+-declare var x: string;
++var x: string;
+ export default x;

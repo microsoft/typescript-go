@@ -36,14 +36,14 @@ var c;
 
 
 //// [internalAliasEnumInsideLocalModuleWithExport.d.ts]
-export declare namespace a {
+export namespace a {
     enum weekend {
         Friday = 0,
         Saturday = 1,
         Sunday = 2
     }
 }
-export declare namespace c {
+export namespace c {
     export import b = a.weekend;
     var bVal: b;
 }

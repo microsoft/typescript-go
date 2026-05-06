@@ -43,4 +43,4 @@ exports.a = (0, typescript_fsa_1.getA)();
 
 
 //// [index.d.ts]
-export declare const a: import("typescript-fsa").A;
+export const a: import("typescript-fsa").A;

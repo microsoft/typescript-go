@@ -18,6 +18,21 @@ let fResult = f("foo");
 
 
 //// [stringLiteralTypesAsTypeParameterConstraint02.d.ts]
-declare function foo<T extends "foo">(f: (x: T) => T): (x: T) => T;
-declare let f: (x: "foo") => "foo";
-declare let fResult: "foo";
+function foo<T extends "foo">(f: (x: T) => T): (x: T) => T;
+let f: (x: "foo") => "foo";
+let fResult: "foo";
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesAsTypeParameterConstraint02.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesAsTypeParameterConstraint02.d.ts (1 errors) ====
+    function foo<T extends "foo">(f: (x: T) => T): (x: T) => T;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    let f: (x: "foo") => "foo";
+    let fResult: "foo";
+    

@@ -24,4 +24,4 @@ function foo() {
 
 
 //// [app.d.ts]
-export declare function foo(): Object;
+export function foo(): Object;

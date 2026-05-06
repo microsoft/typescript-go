@@ -22,9 +22,9 @@ export class Bar {
 
 
 //// [noImplicitAnyDestructuringInPrivateMethod.d.ts]
-export declare class Bar {
+export class Bar {
     private bar;
 }
-export declare class Bar2 {
+export class Bar2 {
     private bar;
 }

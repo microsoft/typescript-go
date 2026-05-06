@@ -82,4 +82,4 @@ exports.a = a;
 
 
 //// [index.d.ts]
-export declare const a: any;
+export const a: any;

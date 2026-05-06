@@ -24,16 +24,16 @@ SelfReference.staticMember = "str";
 
 
 //// [file.d.ts]
-declare const SomeConstructor: () => void;
-declare function SomeConstructor2(): void;
+const SomeConstructor: () => void;
+function SomeConstructor2(): void;
 declare namespace SomeConstructor2 {
     var staticMember: string;
 }
-declare function SomeConstructor3(): void;
+function SomeConstructor3(): void;
 declare namespace SomeConstructor3 {
     var staticMember: string;
 }
-declare function SelfReference(): any;
+function SelfReference(): any;
 declare namespace SelfReference {
     var staticMember: string;
 }

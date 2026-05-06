@@ -1,0 +1,24 @@
+--- old.namespacesDeclaration2.js
++++ new.namespacesDeclaration2.js
+@@= skipped -31, +31 lines =@@
+
+
+ //// [namespacesDeclaration2.d.ts]
+-declare namespace N {
+-}
+-declare namespace M {
+-}
+-declare namespace ns {
++namespace N {
++}
++namespace M {
++}
++namespace ns {
+     let f: number;
+ }
+-declare var foge: N.S;
+-declare var foo: M.F;
+-declare let x: ns.A;
++var foge: N.S;
++var foo: M.F;
++let x: ns.A;

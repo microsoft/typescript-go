@@ -1,0 +1,31 @@
+--- old.declarationEmitExpressionInExtends4.js
++++ new.declarationEmitExpressionInExtends4.js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [declarationEmitExpressionInExtends4.d.ts]
+-declare function getSomething(): {
+-    new (): {};
+-};
+-declare const C_base: {
+-    new (): {};
+-};
+-declare class C extends C_base<number, string> {
+-}
+-declare const C2_base: any;
+-declare class C2 extends C2_base<number, string> {
+-}
+-declare class C3 extends SomeUndefinedFunction {
++function getSomething(): {
++    new (): {};
++};
++const C_base: {
++    new (): {};
++};
++class C extends C_base<number, string> {
++}
++const C2_base: any;
++class C2 extends C2_base<number, string> {
++}
++class C3 extends SomeUndefinedFunction {
+ }

@@ -24,9 +24,9 @@ config.y;
 
 
 //// [vue.d.ts]
-export declare class Vue {
+export class Vue {
 }
-export declare const config: {
+export const config: {
     x: number;
 };
 //// [test.d.ts]

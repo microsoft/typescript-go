@@ -1,0 +1,10 @@
+--- old.declarationAssertionNodeNotReusedWhenTypeNotEquivalent1.js
++++ new.declarationAssertionNodeNotReusedWhenTypeNotEquivalent1.js
+@@= skipped -28, +28 lines =@@
+
+
+ //// [declarationAssertionNodeNotReusedWhenTypeNotEquivalent1.d.ts]
+-export declare const unwrapped: {
++export const unwrapped: {
+     prop1: "hello";
+ };

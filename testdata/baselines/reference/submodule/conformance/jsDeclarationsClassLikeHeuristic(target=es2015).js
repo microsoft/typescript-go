@@ -15,4 +15,4 @@ A.prototype.b = {};
 
 
 //// [index.d.ts]
-declare let A: any;
+let A: any;

@@ -7,15 +7,15 @@
 +
 +
 +//// [isolatedDeclarationErrors.d.ts]
-+declare function errorOnAssignmentBelowDecl(): void;
++function errorOnAssignmentBelowDecl(): void;
 +declare namespace errorOnAssignmentBelowDecl {
 +    var a: string;
 +}
-+declare function errorOnAssignmentBelow(): void;
++function errorOnAssignmentBelow(): void;
 +declare namespace errorOnAssignmentBelow {
 +    var a: string;
 +}
-+declare function errorOnMissingReturn(): void;
++function errorOnMissingReturn(): void;
 +declare namespace errorOnMissingReturn {
 +    var a: string;
 +}

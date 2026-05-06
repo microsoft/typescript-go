@@ -10,6 +10,6 @@
 -export namespace Dotted {
 -    type Name = number;
 -}
-+export declare var dummy: number;
++export var dummy: number;
  //// [file.d.ts]
  export {};

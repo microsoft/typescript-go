@@ -89,7 +89,7 @@ exports.someMethod = null.someMethod;
  * comment1
  * @param p
  */
-export declare const foo: (p: string) => {
+export const foo: (p: string) => {
     /**
      * comment2
      * @param s
@@ -101,19 +101,19 @@ export declare const foo: (p: string) => {
      */
     bar2(s: number): void;
 };
-export declare class Foo {
+export class Foo {
     /**
      * comment4
      * @param s
      */
     bar(s: number): void;
 }
-export declare let 
+export let 
 /**
 * comment5
 */
 someMethod: any;
-declare global {
+global {
     interface ExtFunc {
         /**
         * comment6
@@ -121,3 +121,51 @@ declare global {
         someMethod(collection: any[]): boolean;
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitRetainsJsdocyComments.d.ts(29,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitRetainsJsdocyComments.d.ts (1 errors) ====
+    /**
+     * comment1
+     * @param p
+     */
+    export const foo: (p: string) => {
+        /**
+         * comment2
+         * @param s
+         */
+        bar: (s: number) => void;
+        /**
+         * comment3
+         * @param s
+         */
+        bar2(s: number): void;
+    };
+    export class Foo {
+        /**
+         * comment4
+         * @param s
+         */
+        bar(s: number): void;
+    }
+    export let 
+    /**
+    * comment5
+    */
+    someMethod: any;
+    global {
+    ~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface ExtFunc {
+            /**
+            * comment6
+            */
+            someMethod(collection: any[]): boolean;
+        }
+    }
+    

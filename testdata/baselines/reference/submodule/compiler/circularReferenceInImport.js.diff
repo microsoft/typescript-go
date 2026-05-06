@@ -1,0 +1,8 @@
+--- old.circularReferenceInImport.js
++++ new.circularReferenceInImport.js
+@@= skipped -23, +23 lines =@@
+
+
+ //// [app.d.ts]
+-export declare function foo(): Object;
++export function foo(): Object;

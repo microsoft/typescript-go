@@ -1,0 +1,11 @@
+--- old.declarationEmitMergedAliasWithConst.js
++++ new.declarationEmitMergedAliasWithConst.js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [declarationEmitMergedAliasWithConst.d.ts]
+-export declare const Color: {
++export const Color: {
+     readonly Red: "Red";
+     readonly Green: "Green";
+     readonly Blue: "Blue";

@@ -66,5 +66,5 @@ type F4 = ([{ a: [b, c] }]: [{
 type C1 = new ([{ a: [b, c] }]: [{
     a: [any, any];
 }]) => void;
-declare var v1: ([a, b, c]: [any, any, any]) => string;
-declare var v2: ([a, b, c]: [any, any, any]) => string;
+var v1: ([a, b, c]: [any, any, any]) => string;
+var v2: ([a, b, c]: [any, any, any]) => string;

@@ -20,8 +20,25 @@ exports.User = User;
 
 
 //// [declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.d.ts]
-declare const _data: unique symbol;
-export declare class User {
+const _data: unique symbol;
+export class User {
     private [_data];
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.d.ts (1 errors) ====
+    const _data: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export class User {
+        private [_data];
+    }
+    export {};
+    

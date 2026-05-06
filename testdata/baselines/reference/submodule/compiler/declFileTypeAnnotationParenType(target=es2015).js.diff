@@ -1,0 +1,18 @@
+--- old.declFileTypeAnnotationParenType(target=es2015).js
++++ new.declFileTypeAnnotationParenType(target=es2015).js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [declFileTypeAnnotationParenType.d.ts]
+-declare class c {
++class c {
+     private p;
+ }
+-declare var x: (() => c)[];
+-declare var y: (() => c)[];
+-declare var k: (() => c) | string;
+-declare var l: () => c;
++var x: (() => c)[];
++var y: (() => c)[];
++var k: (() => c) | string;
++var l: () => c;

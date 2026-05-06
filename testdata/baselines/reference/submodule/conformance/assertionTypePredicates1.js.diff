@@ -1,0 +1,107 @@
+--- old.assertionTypePredicates1.js
++++ new.assertionTypePredicates1.js
+@@= skipped -462, +462 lines =@@
+
+
+ //// [assertionTypePredicates1.d.ts]
+-declare function isString(value: unknown): value is string;
+-declare function isArrayOfStrings(value: unknown): value is string[];
+-declare const assert: (value: unknown) => asserts value;
+-declare function assertIsString(value: unknown): asserts value is string;
+-declare function assertIsArrayOfStrings(value: unknown): asserts value is string[];
+-declare function assertDefined<T>(value: T): asserts value is NonNullable<T>;
+-declare function f01(x: unknown): void;
+-declare function f02(x: string | undefined): void;
+-declare function f03(x: string | undefined, assert: (value: unknown) => asserts value): void;
+-declare namespace Debug {
++function isString(value: unknown): value is string;
++function isArrayOfStrings(value: unknown): value is string[];
++const assert: (value: unknown) => asserts value;
++function assertIsString(value: unknown): asserts value is string;
++function assertIsArrayOfStrings(value: unknown): asserts value is string[];
++function assertDefined<T>(value: T): asserts value is NonNullable<T>;
++function f01(x: unknown): void;
++function f02(x: string | undefined): void;
++function f03(x: string | undefined, assert: (value: unknown) => asserts value): void;
++namespace Debug {
+     function assert(value: unknown, message?: string): asserts value;
+     function assertDefined<T>(value: T): asserts value is NonNullable<T>;
+ }
+-declare function f10(x: string | undefined): void;
+-declare class Test {
++function f10(x: string | undefined): void;
++class Test {
+     assert(value: unknown): asserts value;
+     isTest2(): this is Test2;
+     assertIsTest2(): asserts this is Test2;
+@@= skipped -23, +23 lines =@@
+     foo(x: unknown): void;
+     baz(x: number): void;
+ }
+-declare class Test2 extends Test {
++class Test2 extends Test {
+     z: number;
+ }
+-declare class Derived extends Test {
++class Derived extends Test {
+     foo(x: unknown): void;
+     baz(x: number): void;
+ }
+-declare function f11(items: Test[]): void;
+-declare let Q1: new (x: unknown) => x is string;
+-declare let Q2: new (x: boolean) => asserts x;
+-declare let Q3: new (x: unknown) => asserts x is string;
+-declare class Wat {
++function f11(items: Test[]): void;
++let Q1: new (x: unknown) => x is string;
++let Q2: new (x: boolean) => asserts x;
++let Q3: new (x: unknown) => asserts x is string;
++class Wat {
+     get p1(): this is string;
+     set p1(x: this is string);
+     get p2(): asserts this is string;
+     set p2(x: asserts this is string);
+ }
+-declare function f20(x: unknown): void;
++function f20(x: unknown): void;
+ interface Thing {
+     good: boolean;
+     isGood(): asserts this is GoodThing;
+@@= skipped -25, +25 lines =@@
+ interface GoodThing {
+     good: true;
+ }
+-declare function example1(things: Thing[]): void;
+-declare class TestPropertyDeclaration1 {
++function example1(things: Thing[]): void;
++class TestPropertyDeclaration1 {
+     assert: (value: unknown) => asserts value;
+     other(x: unknown): void;
+ }
+-declare class TestPropertyDeclaration2 {
++class TestPropertyDeclaration2 {
+     assert: (v: unknown) => asserts v;
+     other(x: unknown): void;
+ }
+-declare class ParentInheritedPropertyDeclaration {
++class ParentInheritedPropertyDeclaration {
+     assert: (value: unknown) => asserts value;
+ }
+-declare class ChildInheritedPropertyDeclaration extends ParentInheritedPropertyDeclaration {
++class ChildInheritedPropertyDeclaration extends ParentInheritedPropertyDeclaration {
+     other(x: unknown): void;
+ }
+ interface TestPropertySignature {
+     assert: (value: unknown) => asserts value;
+ }
+-declare function testPropertySignature(x: TestPropertySignature, y: unknown): void;
+-declare function testFunctionThisParameter1(this: TestPropertySignature, x: unknown): void;
++function testPropertySignature(x: TestPropertySignature, y: unknown): void;
++function testFunctionThisParameter1(this: TestPropertySignature, x: unknown): void;
+ interface TestMethodSignature {
+     assert(value: unknown): asserts value;
+ }
+-declare function testMethodSignature(x: TestMethodSignature, y: unknown): void;
+-declare function testFunctionThisParameter2(this: TestMethodSignature, x: unknown): void;
++function testMethodSignature(x: TestMethodSignature, y: unknown): void;
++function testFunctionThisParameter2(this: TestMethodSignature, x: unknown): void;

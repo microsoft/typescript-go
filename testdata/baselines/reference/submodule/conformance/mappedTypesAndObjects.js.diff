@@ -1,0 +1,23 @@
+--- old.mappedTypesAndObjects.js
++++ new.mappedTypesAndObjects.js
+@@= skipped -69, +69 lines =@@
+
+
+ //// [mappedTypesAndObjects.d.ts]
+-declare function f1<T>(x: Partial<T>, y: Readonly<T>): void;
+-declare function f2<T>(x: Partial<T>, y: Readonly<T>): void;
+-declare function f3<T>(x: Partial<T>): void;
++function f1<T>(x: Partial<T>, y: Readonly<T>): void;
++function f2<T>(x: Partial<T>, y: Readonly<T>): void;
++function f3<T>(x: Partial<T>): void;
+ interface Base {
+     foo: {
+         [key: string]: any;
+@@= skipped -23, +23 lines =@@
+ interface E3<T> extends Base {
+     foo: Partial<T>;
+ }
+-declare class Form<T> {
++class Form<T> {
+     private values;
+ }

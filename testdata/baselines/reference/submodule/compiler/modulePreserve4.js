@@ -195,26 +195,26 @@ export {}; // Silly test harness
 
 
 //// [a.d.ts]
-export declare const x = 0;
+export const x = 0;
 //// [b.d.ts]
-declare const _default = 0;
+const _default = 0;
 export default _default;
 //// [c.d.ts]
-declare const _default: {
+const _default: {
     default: () => void;
 };
 export = _default;
 //// [d.d.ts]
-declare const _default: () => void;
+const _default: () => void;
 export = _default;
 //// [e.d.mts]
-declare const _default = 0;
+const _default = 0;
 export = _default;
 //// [f.d.cts]
-declare const _default = 0;
+const _default = 0;
 export default _default;
 //// [g.d.ts]
-declare const _default: 0;
+const _default: 0;
 export default _default;
 //// [main1.d.ts]
 export {};
@@ -223,6 +223,6 @@ export {};
 //// [main3.d.cts]
 export {};
 //// [main4.d.cts]
-export declare var x: typeof import("./g");
+export var x: typeof import("./g");
 //// [dummy.d.ts]
 export {};

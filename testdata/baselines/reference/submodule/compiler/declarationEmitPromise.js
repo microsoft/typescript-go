@@ -60,8 +60,8 @@ function runSampleBreaks(a, b, c, d, e) {
 
 
 //// [declarationEmitPromise.d.ts]
-export declare class bluebird<T> {
+export class bluebird<T> {
     static all: Array<bluebird<any>>;
 }
-export declare function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;
-export declare function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;
+export function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;
+export function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;

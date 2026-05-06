@@ -1,0 +1,11 @@
+--- old.declarationEmitGenericTypeParamerSerialization.js
++++ new.declarationEmitGenericTypeParamerSerialization.js
+@@= skipped -24, +24 lines =@@
+
+
+ //// [declarationEmitGenericTypeParamerSerialization.d.ts]
+-export declare const w: {
++export const w: {
+     m(): number;
+     readonly g: number;
+ };

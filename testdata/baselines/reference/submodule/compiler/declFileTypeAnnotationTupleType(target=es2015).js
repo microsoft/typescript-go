@@ -42,17 +42,43 @@ var y = x;
 
 
 //// [declFileTypeAnnotationTupleType.d.ts]
-declare class c {
+class c {
 }
-declare namespace m {
+namespace m {
     class c {
     }
     class g<T> {
     }
 }
-declare class g<T> {
+class g<T> {
 }
-declare var k: [c, m.c];
-declare var l: [c, m.c];
-declare var x: [g<string>, m.g<number>, () => c];
-declare var y: [g<string>, m.g<number>, () => c];
+var k: [c, m.c];
+var l: [c, m.c];
+var x: [g<string>, m.g<number>, () => c];
+var y: [g<string>, m.g<number>, () => c];
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationTupleType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationTupleType.d.ts (1 errors) ====
+    class c {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    namespace m {
+        class c {
+        }
+        class g<T> {
+        }
+    }
+    class g<T> {
+    }
+    var k: [c, m.c];
+    var l: [c, m.c];
+    var x: [g<string>, m.g<number>, () => c];
+    var y: [g<string>, m.g<number>, () => c];
+    

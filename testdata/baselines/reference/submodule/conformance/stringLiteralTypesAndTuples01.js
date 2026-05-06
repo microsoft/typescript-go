@@ -38,7 +38,23 @@ function rawr(dino) {
 
 
 //// [stringLiteralTypesAndTuples01.d.ts]
-declare let hello: string, brave: string, newish: string, world: string;
+let hello: string, brave: string, newish: string, world: string;
 type RexOrRaptor = "t-rex" | "raptor";
-declare let im: "I'm", a: "a", dinosaur: RexOrRaptor;
-declare function rawr(dino: RexOrRaptor): "ROAAAAR!" | "yip yip!";
+let im: "I'm", a: "a", dinosaur: RexOrRaptor;
+function rawr(dino: RexOrRaptor): "ROAAAAR!" | "yip yip!";
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesAndTuples01.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesAndTuples01.d.ts (1 errors) ====
+    let hello: string, brave: string, newish: string, world: string;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    type RexOrRaptor = "t-rex" | "raptor";
+    let im: "I'm", a: "a", dinosaur: RexOrRaptor;
+    function rawr(dino: RexOrRaptor): "ROAAAAR!" | "yip yip!";
+    

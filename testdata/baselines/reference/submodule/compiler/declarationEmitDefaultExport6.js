@@ -12,7 +12,23 @@ export default new A();
 
 
 //// [declarationEmitDefaultExport6.d.ts]
-export declare class A {
+export class A {
 }
-declare const _default: A;
+const _default: A;
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDefaultExport6.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDefaultExport6.d.ts (1 errors) ====
+    export class A {
+    }
+    const _default: A;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    

@@ -35,12 +35,12 @@ export default X;
 
 //// [Test.d.ts]
 /** @module test/Test */
-declare class Test {
+class Test {
 }
 export default Test;
 //// [Test.d.ts]
 /** @module Test */
-declare class Test {
+class Test {
 }
 export default Test;
 //// [index.d.ts]
@@ -52,10 +52,55 @@ export type Options = {
  * @typedef {Object} Options
  * @property {typeof import("./Test.js").default} [test]
  */
-declare class X extends Test {
+class X extends Test {
     /**
      * @param {Options} options
      */
     constructor(options: Options);
 }
 export default X;
+
+
+//// [DtsFileErrors]
+
+
+Test.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+index.d.ts(9,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+test/Test.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== test/Test.d.ts (1 errors) ====
+    /** @module test/Test */
+    class Test {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export default Test;
+    
+==== Test.d.ts (1 errors) ====
+    /** @module Test */
+    class Test {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export default Test;
+    
+==== index.d.ts (1 errors) ====
+    import Test from './test/Test.js';
+    export type Options = {
+        test?: typeof import("./Test.js").default;
+    };
+    /**
+     * @typedef {Object} Options
+     * @property {typeof import("./Test.js").default} [test]
+     */
+    class X extends Test {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /**
+         * @param {Options} options
+         */
+        constructor(options: Options);
+    }
+    export default X;
+    

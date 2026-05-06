@@ -1,0 +1,27 @@
+--- old.exportDeclarationInInternalModule(target=es2015).js
++++ new.exportDeclarationInInternalModule(target=es2015).js
+@@= skipped -38, +38 lines =@@
+
+
+ //// [exportDeclarationInInternalModule.d.ts]
+-declare class Bbb {
+-}
+-declare class Aaa extends Bbb {
+-}
+-declare namespace Aaa {
++class Bbb {
++}
++class Aaa extends Bbb {
++}
++namespace Aaa {
+     class SomeType {
+     }
+ }
+-declare namespace Bbb {
++namespace Bbb {
+     export class SomeType {
+     }
+     export * from Aaa;
+ }
+-declare var a: Bbb.SomeType;
++var a: Bbb.SomeType;

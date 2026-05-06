@@ -1,0 +1,10 @@
+--- old.importTypeNonString.js
++++ new.importTypeNonString.js
+@@= skipped -8, +8 lines =@@
+
+
+ //// [importTypeNonString.d.ts]
+-export declare const x: import({
++export const x: import({
+     x: 12;
+ });

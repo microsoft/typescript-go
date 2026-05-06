@@ -1,0 +1,12 @@
+--- old.es6ImportDefaultBindingWithExport(target=es2015).js
++++ new.es6ImportDefaultBindingWithExport(target=es2015).js
+@@= skipped -25, +25 lines =@@
+
+
+ //// [server.d.ts]
+-declare var a: number;
++var a: number;
+ export default a;
+ //// [client.d.ts]
+-export declare var x: number;
++export var x: number;

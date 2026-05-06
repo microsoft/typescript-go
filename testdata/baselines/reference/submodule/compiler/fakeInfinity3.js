@@ -41,30 +41,30 @@ exports.Infinity = "oops";
 
 
 //// [fakeInfinity3.d.ts]
-export declare enum Foo {
+export enum Foo {
     A = Infinity,
     B = -Infinity
 }
-export declare const m: Infinity;
-export declare const Infinity = "oops";
+export const m: Infinity;
+export const Infinity = "oops";
 
 
 //// [DtsFileErrors]
 
 
 fakeInfinity3.d.ts(3,9): error TS1066: In ambient enum declarations member initializer must be constant expression.
-fakeInfinity3.d.ts(5,25): error TS2749: 'Infinity' refers to a value, but is being used as a type here. Did you mean 'typeof Infinity'?
+fakeInfinity3.d.ts(5,17): error TS2749: 'Infinity' refers to a value, but is being used as a type here. Did you mean 'typeof Infinity'?
 
 
 ==== fakeInfinity3.d.ts (2 errors) ====
-    export declare enum Foo {
+    export enum Foo {
         A = Infinity,
         B = -Infinity
             ~~~~~~~~~
 !!! error TS1066: In ambient enum declarations member initializer must be constant expression.
     }
-    export declare const m: Infinity;
-                            ~~~~~~~~
+    export const m: Infinity;
+                    ~~~~~~~~
 !!! error TS2749: 'Infinity' refers to a value, but is being used as a type here. Did you mean 'typeof Infinity'?
-    export declare const Infinity = "oops";
+    export const Infinity = "oops";
     

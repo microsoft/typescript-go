@@ -315,7 +315,7 @@ baz(makeFoo(Enum.A), makeFoo(Enum.A));
 
 
 //// [inferFromGenericFunctionReturnTypes3.d.ts]
-export declare namespace DiagnosticSeverity {
+export namespace DiagnosticSeverity {
     const Error = 1;
     const Warning = 2;
     const Information = 3;
@@ -332,5 +332,5 @@ interface OK<T> {
     kind: "OK";
     value: T;
 }
-export declare function ok<T>(value: T): OK<T>;
+export function ok<T>(value: T): OK<T>;
 export {};

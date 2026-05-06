@@ -20,9 +20,27 @@ let e = d;
 
 
 //// [stringLiteralTypesAndLogicalOrExpressions01.d.ts]
-declare function myRandBool(): boolean;
-declare let a: "foo";
-declare let b: "foo";
-declare let c: "foo";
-declare let d: "foo";
-declare let e: "foo" | "bar";
+function myRandBool(): boolean;
+let a: "foo";
+let b: "foo";
+let c: "foo";
+let d: "foo";
+let e: "foo" | "bar";
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesAndLogicalOrExpressions01.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesAndLogicalOrExpressions01.d.ts (1 errors) ====
+    function myRandBool(): boolean;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    let a: "foo";
+    let b: "foo";
+    let c: "foo";
+    let d: "foo";
+    let e: "foo" | "bar";
+    

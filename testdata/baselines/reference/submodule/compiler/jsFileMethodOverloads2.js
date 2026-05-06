@@ -95,7 +95,7 @@ class Example {
 /**
  * @template T
  */
-declare class Example<T> {
+class Example<T> {
     value: T;
     /**
      * @param {T} value
@@ -152,3 +152,75 @@ declare class Example<T> {
      */
     transform(): T;
 }
+
+
+//// [DtsFileErrors]
+
+
+dist/jsFileMethodOverloads2.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== dist/jsFileMethodOverloads2.d.ts (1 errors) ====
+    /**
+     * @template T
+     */
+    class Example<T> {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        value: T;
+        /**
+         * @param {T} value
+         */
+        constructor(value: T);
+        /**
+         * @overload
+         * @param {Example<number>} this
+         * @returns {'number'}
+         *
+         * @overload
+         * @param {Example<string>} this
+         * @returns {'string'}
+         *
+         * @returns {string}
+         */
+        getTypeName(this: Example<number>): 'number';
+        /**
+         * @overload
+         * @param {Example<number>} this
+         * @returns {'number'}
+         *
+         * @overload
+         * @param {Example<string>} this
+         * @returns {'string'}
+         *
+         * @returns {string}
+         */
+        getTypeName(this: Example<string>): 'string';
+        /**
+         * @template U
+         * @overload
+         * @param {(y: T) => U} fn
+         * @returns {U}
+         *
+         * @overload
+         * @returns {T}
+         *
+         * @param {(y: T) => unknown} [fn]
+         * @returns {unknown}
+         */
+        transform<U>(fn: (y: T) => U): U;
+        /**
+         * @template U
+         * @overload
+         * @param {(y: T) => U} fn
+         * @returns {U}
+         *
+         * @overload
+         * @returns {T}
+         *
+         * @param {(y: T) => unknown} [fn]
+         * @returns {unknown}
+         */
+        transform(): T;
+    }
+    

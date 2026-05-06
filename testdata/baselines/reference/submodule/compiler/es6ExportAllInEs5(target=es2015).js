@@ -48,15 +48,15 @@ __exportStar(require("./server"), exports);
 
 
 //// [server.d.ts]
-export declare class c {
+export class c {
 }
 export interface i {
 }
-export declare namespace m {
+export namespace m {
     var x: number;
 }
-export declare var x: number;
-export declare namespace uninstantiated {
+export var x: number;
+export namespace uninstantiated {
 }
 //// [client.d.ts]
 export * from "./server";

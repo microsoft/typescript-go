@@ -1,0 +1,21 @@
+--- old.circularInstantiationExpression.js
++++ new.circularInstantiationExpression.js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [circularInstantiationExpression.d.ts]
+-declare function foo<T>(t: T): typeof foo<T>;
++function foo<T>(t: T): typeof foo<T>;
++
++
++//// [DtsFileErrors]
++
++
++circularInstantiationExpression.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== circularInstantiationExpression.d.ts (1 errors) ====
++    function foo<T>(t: T): typeof foo<T>;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

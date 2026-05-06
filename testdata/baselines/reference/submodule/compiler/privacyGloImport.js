@@ -258,7 +258,7 @@ var m2;
 
 
 //// [privacyGloImport.d.ts]
-declare namespace m1 {
+namespace m1 {
     export namespace m1_M1_public {
         class c1 {
         }
@@ -287,14 +287,14 @@ declare namespace m1 {
     export import m1_im2_public = m1_M2_private;
     export {};
 }
-declare namespace glo_M1_public {
+namespace glo_M1_public {
     class c1 {
     }
     function f1(): c1;
     var v1: typeof c1;
     var v2: c1;
 }
-declare module "glo_M2_public" {
+module "glo_M2_public" {
     function f1(): any;
     class c1 {
     }
@@ -303,7 +303,7 @@ declare module "glo_M2_public" {
     };
     var v2: c1;
 }
-declare module "use_glo_M1_public" {
+module "use_glo_M1_public" {
     import use_glo_M1_public = glo_M1_public;
     var use_glo_M1_public_v1_public: {
         new (): use_glo_M1_public.c1;
@@ -331,11 +331,104 @@ declare module "use_glo_M1_public" {
         }
     }
 }
-declare module "anotherParseError" {
+module "anotherParseError" {
     namespace m2 {
     }
     namespace m2 {
     }
 }
-declare namespace m2 {
+namespace m2 {
 }
+
+
+//// [DtsFileErrors]
+
+
+privacyGloImport.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyGloImport.d.ts (1 errors) ====
+    namespace m1 {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        export namespace m1_M1_public {
+            class c1 {
+            }
+            function f1(): c1;
+            var v1: typeof c1;
+            var v2: c1;
+        }
+        namespace m1_M2_private {
+            class c1 {
+            }
+            function f1(): c1;
+            var v1: typeof c1;
+            var v2: c1;
+        }
+        import m1_im1_private = m1_M1_public;
+        export var m1_im1_private_v1_public: typeof m1_im1_private.c1;
+        export var m1_im1_private_v2_public: m1_im1_private.c1;
+        export var m1_im1_private_v3_public: typeof m1_im1_private.f1;
+        export var m1_im1_private_v4_public: m1_im1_private.c1;
+        import m1_im2_private = m1_M2_private;
+        export var m1_im2_private_v1_public: typeof m1_im2_private.c1;
+        export var m1_im2_private_v2_public: m1_im2_private.c1;
+        export var m1_im2_private_v3_public: typeof m1_im2_private.f1;
+        export var m1_im2_private_v4_public: m1_im2_private.c1;
+        export import m1_im1_public = m1_M1_public;
+        export import m1_im2_public = m1_M2_private;
+        export {};
+    }
+    namespace glo_M1_public {
+        class c1 {
+        }
+        function f1(): c1;
+        var v1: typeof c1;
+        var v2: c1;
+    }
+    module "glo_M2_public" {
+        function f1(): any;
+        class c1 {
+        }
+        var v1: {
+            new (): c1;
+        };
+        var v2: c1;
+    }
+    module "use_glo_M1_public" {
+        import use_glo_M1_public = glo_M1_public;
+        var use_glo_M1_public_v1_public: {
+            new (): use_glo_M1_public.c1;
+        };
+        var use_glo_M1_public_v2_public: typeof use_glo_M1_public;
+        var use_glo_M1_public_v3_public: () => use_glo_M1_public.c1;
+        var use_glo_M1_public_v1_private: {
+            new (): use_glo_M1_public.c1;
+        };
+        var use_glo_M1_public_v2_private: typeof use_glo_M1_public;
+        var use_glo_M1_public_v3_private: () => use_glo_M1_public.c1;
+        import use_glo_M2_public = require("glo_M2_public");
+        var use_glo_M2_public_v1_public: {
+            new (): use_glo_M2_public.c1;
+        };
+        var use_glo_M2_public_v2_public: typeof use_glo_M2_public;
+        var use_glo_M2_public_v3_public: () => use_glo_M2_public.c1;
+        var use_glo_M2_public_v1_private: {
+            new (): use_glo_M2_public.c1;
+        };
+        var use_glo_M2_public_v2_private: typeof use_glo_M2_public;
+        var use_glo_M2_public_v3_private: () => use_glo_M2_public.c1;
+        namespace m2 {
+            namespace m5 {
+            }
+        }
+    }
+    module "anotherParseError" {
+        namespace m2 {
+        }
+        namespace m2 {
+        }
+    }
+    namespace m2 {
+    }
+    

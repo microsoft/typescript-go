@@ -1,35 +1,57 @@
 --- old.jsDeclarationsReusesExistingTypeAnnotations.js
 +++ new.jsDeclarationsReusesExistingTypeAnnotations.js
-@@= skipped -209, +209 lines =@@
-     get p4(): string | null;
+@@= skipped -188, +188 lines =@@
+
+
+ //// [index.d.ts]
+-declare class С1 {
++class С1 {
+     /** @type {string=} */
+     p1: string | undefined;
+     /** @type {string | undefined} */
+@@= skipped -10, +10 lines =@@
+     /** @type {string | null} */
+     p4: string | null;
  }
- declare class С3 {
--    /** @param {string=} value */
--    set p1(value: string | undefined);
+-declare class С2 {
++class С2 {
      /** @type {string=} */
      get p1(): string | undefined;
--    /** @param {string | undefined} value */
--    set p2(value: string | undefined);
-+    /** @param {string=} value */
-+    set p1(value?: string | undefined);
      /** @type {string | undefined} */
-     get p2(): string | undefined;
--    /** @param {?string} value */
--    set p3(value: string | null);
-+    /** @param {string | undefined} value */
-+    set p2(value: string | undefined);
-     /** @type {?string} */
-     get p3(): string | null;
--    /** @param {string | null} value */
--    set p4(value: string | null);
-+    /** @param {?string} value */
-+    set p3(value: string | null);
+@@= skipped -10, +10 lines =@@
      /** @type {string | null} */
      get p4(): string | null;
-+    /** @param {string | null} value */
-+    set p4(value: string | null);
  }
- declare class С4 {
+-declare class С3 {
++class С3 {
++    /** @type {string=} */
++    get p1(): string | undefined;
+     /** @param {string=} value */
+-    set p1(value: string | undefined);
+-    /** @type {string=} */
+-    get p1(): string | undefined;
++    set p1(value?: string | undefined);
++    /** @type {string | undefined} */
++    get p2(): string | undefined;
+     /** @param {string | undefined} value */
+     set p2(value: string | undefined);
+-    /** @type {string | undefined} */
+-    get p2(): string | undefined;
++    /** @type {?string} */
++    get p3(): string | null;
+     /** @param {?string} value */
+     set p3(value: string | null);
+-    /** @type {?string} */
+-    get p3(): string | null;
++    /** @type {string | null} */
++    get p4(): string | null;
+     /** @param {string | null} value */
+     set p4(value: string | null);
+-    /** @type {string | null} */
+-    get p4(): string | null;
+ }
+-declare class С4 {
++class С4 {
      /** @param {string=} value */
 -    set p1(value: string | undefined);
 +    set p1(value?: string | undefined);

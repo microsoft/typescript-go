@@ -50,10 +50,10 @@ const test = (base) => {
 
 
 //// [base.d.ts]
-declare class Base {
+class Base {
     constructor();
 }
-declare function BaseFactory(): Base;
+function BaseFactory(): Base;
 declare namespace BaseFactory {
     var Base: typeof Base;
 }
@@ -66,20 +66,24 @@ type BaseFactory = typeof import('./base');
  * @param {InstanceType<BaseFactory["Base"]>} base
  * @returns {InstanceType<BaseFactory["Base"]>}
  */
-declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
+const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
 
 
 //// [DtsFileErrors]
 
 
+out/base.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
 out/base.d.ts(6,9): error TS2502: 'Base' is referenced directly or indirectly in its own type annotation.
+out/file.d.ts(8,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
 
 
-==== out/base.d.ts (1 errors) ====
-    declare class Base {
+==== out/base.d.ts (2 errors) ====
+    class Base {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
         constructor();
     }
-    declare function BaseFactory(): Base;
+    function BaseFactory(): Base;
     declare namespace BaseFactory {
         var Base: typeof Base;
             ~~~~
@@ -87,7 +91,7 @@ out/base.d.ts(6,9): error TS2502: 'Base' is referenced directly or indirectly in
     }
     export = BaseFactory;
     
-==== out/file.d.ts (0 errors) ====
+==== out/file.d.ts (1 errors) ====
     /** @typedef {typeof import('./base')} BaseFactory */
     type BaseFactory = typeof import('./base');
     /**
@@ -95,5 +99,7 @@ out/base.d.ts(6,9): error TS2502: 'Base' is referenced directly or indirectly in
      * @param {InstanceType<BaseFactory["Base"]>} base
      * @returns {InstanceType<BaseFactory["Base"]>}
      */
-    declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
+    const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
     

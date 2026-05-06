@@ -36,7 +36,7 @@ var M;
 
 
 //// [declInput4.d.ts]
-declare namespace M {
+namespace M {
     class E {
     }
     interface I1 {
@@ -51,3 +51,30 @@ declare namespace M {
         m26(i: I1): void;
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+declInput4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declInput4.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class E {
+        }
+        interface I1 {
+        }
+        class D {
+            m1: number;
+            m2: string;
+            m23: E;
+            m24: I1;
+            m232(): E;
+            m242(): I1;
+            m26(i: I1): void;
+        }
+    }
+    

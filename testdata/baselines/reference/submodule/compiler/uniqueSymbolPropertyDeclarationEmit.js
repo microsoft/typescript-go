@@ -46,7 +46,7 @@ function foo() {
 
 
 //// [op.d.ts]
-declare const Op: {
+const Op: {
     readonly or: unique symbol;
 };
 export default Op;
@@ -57,3 +57,32 @@ export default function foo(): {
     [Op.or]: any[];
     [Po.ro]: {};
 };
+
+
+//// [DtsFileErrors]
+
+
+op.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== test.d.ts (0 errors) ====
+    import Op from './op';
+    import { Po } from './po';
+    export default function foo(): {
+        [Op.or]: any[];
+        [Po.ro]: {};
+    };
+    
+==== op.d.ts (1 errors) ====
+    const Op: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        readonly or: unique symbol;
+    };
+    export default Op;
+    
+==== po.d.ts (0 errors) ====
+    export declare const Po: {
+      readonly ro: unique symbol;
+    };
+    

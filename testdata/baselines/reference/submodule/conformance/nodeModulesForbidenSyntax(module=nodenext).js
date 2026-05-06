@@ -135,38 +135,38 @@ export { x };
 
 
 //// [index.d.ts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.cts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.mts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.ts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.cts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.mts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.ts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.mts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.cts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.mts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.cts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };
 //// [index.d.ts]
-declare const x: <T>() => T;
+const x: <T>() => T;
 export { x };

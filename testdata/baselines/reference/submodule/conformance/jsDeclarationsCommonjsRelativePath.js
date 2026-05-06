@@ -14,16 +14,42 @@ module.exports = { Thing }
 
 
 //// [thing.d.ts]
-declare class Thing {
+class Thing {
 }
-declare const _default: {
+const _default: {
     Thing: typeof Thing;
 };
 export = _default;
 //// [reexport.d.ts]
-declare const _default: {
+const _default: {
     Thing: {
         new (): {};
     };
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+reexport.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== reexport.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        Thing: {
+            new (): {};
+        };
+    };
+    export = _default;
+    
+==== thing.d.ts (0 errors) ====
+    class Thing {
+    }
+    const _default: {
+        Thing: typeof Thing;
+    };
+    export = _default;
+    

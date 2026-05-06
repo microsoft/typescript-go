@@ -1,0 +1,8 @@
+--- old.declFileWithErrorsInInputDeclarationFile.js
++++ new.declFileWithErrorsInInputDeclarationFile.js
+@@= skipped -22, +22 lines =@@
+
+ //// [client.d.ts]
+ /// <reference path="declFile.d.ts" preserve="true" />
+-declare var x: M.C;
++var x: M.C;

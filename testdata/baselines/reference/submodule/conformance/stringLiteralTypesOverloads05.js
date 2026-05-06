@@ -34,6 +34,6 @@ interface Cat extends Animal {
 interface Moose extends Animal {
     moose: {};
 }
-declare function doThing(x: "dog"): Dog;
-declare function doThing(x: "cat"): Cat;
-declare function doThing(x: string): Animal;
+function doThing(x: "dog"): Dog;
+function doThing(x: "cat"): Cat;
+function doThing(x: string): Animal;

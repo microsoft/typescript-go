@@ -61,11 +61,31 @@ function returnDynamicLoad(path) {
 
 
 //// [importCallExpressionDeclarationEmit1.d.ts]
-declare function getSpecifier(): string;
-declare var whatToLoad: boolean;
-declare const directory: string;
-declare const moduleFile: number;
-declare var p0: Promise<any>;
-declare var p1: Promise<any>;
-declare const p2: Promise<any>;
-declare function returnDynamicLoad(path: string): Promise<any>;
+function getSpecifier(): string;
+var whatToLoad: boolean;
+const directory: string;
+const moduleFile: number;
+var p0: Promise<any>;
+var p1: Promise<any>;
+const p2: Promise<any>;
+function returnDynamicLoad(path: string): Promise<any>;
+
+
+//// [DtsFileErrors]
+
+
+importCallExpressionDeclarationEmit1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== importCallExpressionDeclarationEmit1.d.ts (1 errors) ====
+    function getSpecifier(): string;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    var whatToLoad: boolean;
+    const directory: string;
+    const moduleFile: number;
+    var p0: Promise<any>;
+    var p1: Promise<any>;
+    const p2: Promise<any>;
+    function returnDynamicLoad(path: string): Promise<any>;
+    

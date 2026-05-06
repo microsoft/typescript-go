@@ -38,7 +38,7 @@ export const qux = (one = "DEFAULT", two = "DEFAULT") => {
 
 
 //// [isolatedDeclarationsArrowFunctionDefaultParameter.d.ts]
-export declare const foo: (one: string | undefined, two: string) => string;
-export declare const bar: (one: string | undefined, two: string) => string;
-export declare const baz: (one: string, two?: string | undefined) => string;
-export declare const qux: (one?: string, two?: string) => string;
+export const foo: (one: string | undefined, two: string) => string;
+export const bar: (one: string | undefined, two: string) => string;
+export const baz: (one: string, two?: string | undefined) => string;
+export const qux: (one?: string, two?: string) => string;

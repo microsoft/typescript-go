@@ -1,12 +1,63 @@
 --- old.coAndContraVariantInferences.js
 +++ new.coAndContraVariantInferences.js
-@@= skipped -69, +69 lines =@@
+@@= skipped -57, +57 lines =@@
+ type B = {
+     kind: 'b';
+ };
+-declare const a: A;
+-declare const b: B;
+-declare function fab(arg: A | B): void;
+-declare function foo<T>(x: {
++const a: A;
++const b: B;
++function fab(arg: A | B): void;
++function foo<T>(x: {
+     kind: T;
+ }, f: (arg: {
+     kind: T;
+@@= skipped -12, +12 lines =@@
      name: TName;
      payload: TPayload;
  }
 -declare const actionA: Action<"ACTION_A", string>;
 -declare const actionB: Action<"ACTION_B", boolean>;
-+declare const actionA: Action<'ACTION_A', string>;
-+declare const actionB: Action<'ACTION_B', boolean>;
- declare function call<TName extends string, TPayload>(action: Action<TName, TPayload>, fn: (action: Action<TName, TPayload>) => any): void;
- declare const printFn: (action: typeof actionA | typeof actionB) => void;
+-declare function call<TName extends string, TPayload>(action: Action<TName, TPayload>, fn: (action: Action<TName, TPayload>) => any): void;
+-declare const printFn: (action: typeof actionA | typeof actionB) => void;
++const actionA: Action<'ACTION_A', string>;
++const actionB: Action<'ACTION_B', boolean>;
++function call<TName extends string, TPayload>(action: Action<TName, TPayload>, fn: (action: Action<TName, TPayload>) => any): void;
++const printFn: (action: typeof actionA | typeof actionB) => void;
++
++
++//// [DtsFileErrors]
++
++
++coAndContraVariantInferences.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== coAndContraVariantInferences.d.ts (1 errors) ====
++    type A = {
++        kind: 'a';
++    };
++    type B = {
++        kind: 'b';
++    };
++    const a: A;
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    const b: B;
++    function fab(arg: A | B): void;
++    function foo<T>(x: {
++        kind: T;
++    }, f: (arg: {
++        kind: T;
++    }) => void): void;
++    interface Action<TName extends string, TPayload> {
++        name: TName;
++        payload: TPayload;
++    }
++    const actionA: Action<'ACTION_A', string>;
++    const actionB: Action<'ACTION_B', boolean>;
++    function call<TName extends string, TPayload>(action: Action<TName, TPayload>, fn: (action: Action<TName, TPayload>) => any): void;
++    const printFn: (action: typeof actionA | typeof actionB) => void;
++    

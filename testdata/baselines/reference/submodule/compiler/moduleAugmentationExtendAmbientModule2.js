@@ -52,7 +52,7 @@ let z2 = observable_1.Observable.someAnotherValue.toLowerCase();
 
 
 //// [map.d.ts]
-declare module "observable" {
+module "observable" {
     interface Observable<T> {
         map<U>(proj: (e: T) => U): Observable<U>;
     }

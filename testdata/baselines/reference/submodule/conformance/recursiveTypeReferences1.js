@@ -207,35 +207,35 @@ function level(h) {
 
 //// [recursiveTypeReferences1.d.ts]
 type ValueOrArray<T> = T | Array<ValueOrArray<T>>;
-declare const a0: ValueOrArray<number>;
-declare const a1: ValueOrArray<number>;
+const a0: ValueOrArray<number>;
+const a1: ValueOrArray<number>;
 type HypertextNode = string | [string, {
     [key: string]: unknown;
 }, ...HypertextNode[]];
-declare const hypertextNode: HypertextNode;
+const hypertextNode: HypertextNode;
 type Json = string | number | boolean | null | Json[] | {
     [key: string]: Json;
 };
-declare let data: Json;
+let data: Json;
 interface Box<T> {
     value: T;
 }
 type T1 = Box<T1>;
 type T2 = Box<Box<T2>>;
 type T3 = Box<Box<Box<T3>>>;
-declare function f1(t1: T1, t2: T2, t3: T3): void;
+function f1(t1: T1, t2: T2, t3: T3): void;
 type Box1 = Box<Box1> | number;
-declare const b10: Box1;
-declare const b11: Box1;
-declare const b12: Box1;
+const b10: Box1;
+const b11: Box1;
+const b12: Box1;
 type Box2 = Box<Box2 | number>;
-declare const b20: Box2;
-declare const b21: Box2;
-declare const b22: Box2;
+const b20: Box2;
+const b21: Box2;
+const b22: Box2;
 type RecArray<T> = Array<T | RecArray<T>>;
-declare function flat<T>(a: RecArray<T>): Array<T>;
-declare function flat1<T>(a: Array<T | Array<T>>): Array<T>;
-declare function flat2<T>(a: Array<T | Array<T | Array<T>>>): Array<T>;
+function flat<T>(a: RecArray<T>): Array<T>;
+function flat1<T>(a: Array<T | Array<T>>): Array<T>;
+function flat2<T>(a: Array<T | Array<T | Array<T>>>): Array<T>;
 type T10 = T10[];
 type T11 = readonly T11[];
 type T12 = (T12)[];
@@ -246,15 +246,15 @@ type T14 = T14[] & {
 type T15<X> = X extends string ? T15<X>[] : never;
 type ValueOrArray1<T> = T | ValueOrArray1<T>[];
 type ValueOrArray2<T> = T | ValueOrArray2<T>[];
-declare function foo1<T>(a: ValueOrArray1<T>): T;
-declare let ra1: ValueOrArray2<string>;
-declare let x1: string;
+function foo1<T>(a: ValueOrArray1<T>): T;
+let ra1: ValueOrArray2<string>;
+let x1: string;
 type NumberOrArray1<T> = T | ValueOrArray1<T>[];
 type NumberOrArray2<T> = T | ValueOrArray2<T>[];
-declare function foo2<T>(a: ValueOrArray1<T>): T;
-declare let ra2: ValueOrArray2<string>;
-declare let x2: string;
+function foo2<T>(a: ValueOrArray1<T>): T;
+let ra2: ValueOrArray2<string>;
+let x2: string;
 type Tree = [HTMLHeadingElement, Tree][];
-declare function parse(node: Tree, index?: number[]): HTMLUListElement;
-declare function cons(hs: HTMLHeadingElement[]): Tree;
-declare function level(h: HTMLHeadingElement): number;
+function parse(node: Tree, index?: number[]): HTMLUListElement;
+function cons(hs: HTMLHeadingElement[]): Tree;
+function level(h: HTMLHeadingElement): number;

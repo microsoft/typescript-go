@@ -1,0 +1,51 @@
+--- old.moduleDeclarationExportStarShadowingGlobalIsNameable.js
++++ new.moduleDeclarationExportStarShadowingGlobalIsNameable.js
+@@= skipped -64, +64 lines =@@
+ //// [index.d.ts]
+ export * from "./account";
+ //// [index.d.ts]
+-declare global {
++global {
+     interface Account {
+         someProp: number;
+     }
+@@= skipped -9, +9 lines =@@
+     }
+ }
+ import * as model from "./model";
+-export declare const func: (account: model.Account, acc2: model.Acc) => void;
++export const func: (account: model.Account, acc2: model.Acc) => void;
++
++
++//// [DtsFileErrors]
++
++
++index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== model/index.d.ts (0 errors) ====
++    export * from "./account";
++    
++==== model/account.d.ts (0 errors) ====
++    export interface Account {
++        myAccNum: number;
++    }
++    interface Account2 {
++        myAccNum: number;
++    }
++    export { Account2 as Acc };
++    
++==== index.d.ts (1 errors) ====
++    global {
++    ~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        interface Account {
++            someProp: number;
++        }
++        interface Acc {
++            someProp: number;
++        }
++    }
++    import * as model from "./model";
++    export const func: (account: model.Account, acc2: model.Acc) => void;
++    

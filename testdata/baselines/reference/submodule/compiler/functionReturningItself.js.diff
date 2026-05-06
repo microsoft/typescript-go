@@ -1,0 +1,21 @@
+--- old.functionReturningItself.js
++++ new.functionReturningItself.js
+@@= skipped -12, +12 lines =@@
+
+
+ //// [functionReturningItself.d.ts]
+-declare function somefn(): typeof somefn;
++function somefn(): typeof somefn;
++
++
++//// [DtsFileErrors]
++
++
++functionReturningItself.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== functionReturningItself.d.ts (1 errors) ====
++    function somefn(): typeof somefn;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

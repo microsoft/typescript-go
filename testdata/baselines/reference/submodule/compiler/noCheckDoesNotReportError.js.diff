@@ -1,0 +1,8 @@
+--- old.noCheckDoesNotReportError.js
++++ new.noCheckDoesNotReportError.js
+@@= skipped -6, +6 lines =@@
+
+
+ //// [noCheckDoesNotReportError.d.ts]
+-export declare const a: number;
++export const a: number;

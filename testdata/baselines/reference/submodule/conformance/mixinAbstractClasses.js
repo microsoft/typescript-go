@@ -67,19 +67,50 @@ wasAbstract.mixinMethod();
 interface Mixin {
     mixinMethod(): void;
 }
-declare function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin);
-declare class ConcreteBase {
+function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin);
+class ConcreteBase {
     baseMethod(): void;
 }
-declare abstract class AbstractBase {
+abstract class AbstractBase {
     abstract abstractBaseMethod(): void;
 }
-declare const DerivedFromConcrete_base: typeof ConcreteBase & (abstract new (...args: any) => Mixin);
-declare class DerivedFromConcrete extends DerivedFromConcrete_base {
+const DerivedFromConcrete_base: typeof ConcreteBase & (abstract new (...args: any) => Mixin);
+class DerivedFromConcrete extends DerivedFromConcrete_base {
 }
-declare const wasConcrete: DerivedFromConcrete;
-declare const DerivedFromAbstract_base: typeof AbstractBase & (abstract new (...args: any) => Mixin);
-declare class DerivedFromAbstract extends DerivedFromAbstract_base {
+const wasConcrete: DerivedFromConcrete;
+const DerivedFromAbstract_base: typeof AbstractBase & (abstract new (...args: any) => Mixin);
+class DerivedFromAbstract extends DerivedFromAbstract_base {
     abstractBaseMethod(): void;
 }
-declare const wasAbstract: DerivedFromAbstract;
+const wasAbstract: DerivedFromAbstract;
+
+
+//// [DtsFileErrors]
+
+
+mixinAbstractClasses.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== mixinAbstractClasses.d.ts (1 errors) ====
+    interface Mixin {
+        mixinMethod(): void;
+    }
+    function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin);
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    class ConcreteBase {
+        baseMethod(): void;
+    }
+    abstract class AbstractBase {
+        abstract abstractBaseMethod(): void;
+    }
+    const DerivedFromConcrete_base: typeof ConcreteBase & (abstract new (...args: any) => Mixin);
+    class DerivedFromConcrete extends DerivedFromConcrete_base {
+    }
+    const wasConcrete: DerivedFromConcrete;
+    const DerivedFromAbstract_base: typeof AbstractBase & (abstract new (...args: any) => Mixin);
+    class DerivedFromAbstract extends DerivedFromAbstract_base {
+        abstractBaseMethod(): void;
+    }
+    const wasAbstract: DerivedFromAbstract;
+    

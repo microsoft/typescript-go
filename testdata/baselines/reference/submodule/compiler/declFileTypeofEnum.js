@@ -33,7 +33,7 @@ var daysOfYear;
 
 
 //// [declFileTypeofEnum.d.ts]
-declare enum days {
+enum days {
     monday = 0,
     tuesday = 1,
     wednesday = 2,
@@ -42,6 +42,30 @@ declare enum days {
     saturday = 5,
     sunday = 6
 }
-declare var weekendDay: days;
-declare var daysOfMonth: typeof days;
-declare var daysOfYear: typeof days;
+var weekendDay: days;
+var daysOfMonth: typeof days;
+var daysOfYear: typeof days;
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeofEnum.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeofEnum.d.ts (1 errors) ====
+    enum days {
+    ~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        monday = 0,
+        tuesday = 1,
+        wednesday = 2,
+        thursday = 3,
+        friday = 4,
+        saturday = 5,
+        sunday = 6
+    }
+    var weekendDay: days;
+    var daysOfMonth: typeof days;
+    var daysOfYear: typeof days;
+    

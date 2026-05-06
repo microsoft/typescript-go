@@ -79,24 +79,24 @@ exports.z2 = server_9.z2; // z2 shouldn't give redeclare error
 
 
 //// [server.d.ts]
-export declare var a: number;
-export declare var x: number;
-export declare var m: number;
-export declare var a1: number;
-export declare var x1: number;
-export declare var z1: number;
-export declare var z2: number;
-export declare var aaaa: number;
+export var a: number;
+export var x: number;
+export var m: number;
+export var a1: number;
+export var x1: number;
+export var z1: number;
+export var z2: number;
+export var aaaa: number;
 //// [client.d.ts]
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var xxxx: number;
-export declare var z111: number;
-export declare var z2: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var xxxx: number;
+export var z111: number;
+export var z2: number;

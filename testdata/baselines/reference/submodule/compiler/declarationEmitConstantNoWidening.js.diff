@@ -1,0 +1,12 @@
+--- old.declarationEmitConstantNoWidening.js
++++ new.declarationEmitConstantNoWidening.js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [declarationEmitConstantNoWidening.d.ts]
+-export declare const FOO = "FOO";
+-export declare class Bar {
++export const FOO = "FOO";
++export class Bar {
+     readonly type = "FOO";
+ }

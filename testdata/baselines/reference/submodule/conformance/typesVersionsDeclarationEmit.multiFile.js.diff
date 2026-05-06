@@ -1,0 +1,10 @@
+--- old.typesVersionsDeclarationEmit.multiFile.js
++++ new.typesVersionsDeclarationEmit.multiFile.js
+@@= skipped -44, +44 lines =@@
+
+
+ //// [main.d.ts]
+-export declare const va: import("ext").A;
+-export declare const vb: import("ext/other").B;
++export const va: import("ext").A;
++export const vb: import("ext/other").B;

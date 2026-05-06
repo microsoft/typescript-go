@@ -134,10 +134,10 @@ var shade = 1;
 
 
 //// [commentsdoNotEmitComments.d.ts]
-declare var myVariable: number;
-declare function foo(p: number): void;
-declare var fooVar: () => void;
-declare class c {
+var myVariable: number;
+function foo(p: number): void;
+var fooVar: () => void;
+class c {
     constructor();
     b: number;
     myFoo(): number;
@@ -146,7 +146,7 @@ declare class c {
     foo1(a: number): string;
     foo1(b: string): string;
 }
-declare var i: c;
+var i: c;
 interface i1 {
     (a: number): number;
     new (b: string): any;
@@ -154,8 +154,8 @@ interface i1 {
     myFoo(a: number): string;
     prop: string;
 }
-declare var i1_i: i1;
-declare namespace m1 {
+var i1_i: i1;
+namespace m1 {
     class b {
         x: number;
         constructor(x: number);
@@ -163,10 +163,58 @@ declare namespace m1 {
     namespace m2 {
     }
 }
-declare var x: any;
-declare const enum color {
+var x: any;
+const enum color {
     red = 0,
     green = 1,
     blue = 2
 }
-declare var shade: color;
+var shade: color;
+
+
+//// [DtsFileErrors]
+
+
+commentsdoNotEmitComments.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsdoNotEmitComments.d.ts (1 errors) ====
+    var myVariable: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function foo(p: number): void;
+    var fooVar: () => void;
+    class c {
+        constructor();
+        b: number;
+        myFoo(): number;
+        get prop1(): number;
+        set prop1(val: number);
+        foo1(a: number): string;
+        foo1(b: string): string;
+    }
+    var i: c;
+    interface i1 {
+        (a: number): number;
+        new (b: string): any;
+        [a: number]: string;
+        myFoo(a: number): string;
+        prop: string;
+    }
+    var i1_i: i1;
+    namespace m1 {
+        class b {
+            x: number;
+            constructor(x: number);
+        }
+        namespace m2 {
+        }
+    }
+    var x: any;
+    const enum color {
+        red = 0,
+        green = 1,
+        blue = 2
+    }
+    var shade: color;
+    

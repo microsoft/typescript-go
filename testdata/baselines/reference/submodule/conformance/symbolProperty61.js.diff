@@ -1,0 +1,47 @@
+--- old.symbolProperty61.js
++++ new.symbolProperty61.js
+@@= skipped -51, +51 lines =@@
+
+
+ //// [symbolProperty61.d.ts]
+-declare global {
++global {
+     interface SymbolConstructor {
+         readonly obs: symbol;
+     }
+ }
+-declare const observable: typeof Symbol.obs;
+-export declare class MyObservable<T> {
++const observable: typeof Symbol.obs;
++export class MyObservable<T> {
+     private _val;
+     constructor(_val: T);
+     subscribe(next: (val: T) => void): void;
+     [observable](): this;
+ }
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++symbolProperty61.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== symbolProperty61.d.ts (1 errors) ====
++    global {
++    ~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        interface SymbolConstructor {
++            readonly obs: symbol;
++        }
++    }
++    const observable: typeof Symbol.obs;
++    export class MyObservable<T> {
++        private _val;
++        constructor(_val: T);
++        subscribe(next: (val: T) => void): void;
++        [observable](): this;
++    }
++    export {};
++    

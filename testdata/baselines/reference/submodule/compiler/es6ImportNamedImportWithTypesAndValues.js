@@ -50,13 +50,13 @@ export interface I {
 export interface I2 {
     prop2: string;
 }
-export declare class C implements I {
+export class C implements I {
     prop: string;
 }
-export declare class C2 implements I2 {
+export class C2 implements I2 {
     prop2: string;
 }
 //// [client.d.ts]
 import { C, I } from "./server";
 export type cValInterface = I;
-export declare var cVal: C;
+export var cVal: C;

@@ -30,8 +30,8 @@ function ignoreExtraVariables(ctor) {
 
 
 //// [file.d.ts]
-declare const IGNORE_EXTRA_VARIABLES: unique symbol;
-export declare function ignoreExtraVariables<CtorT extends {
+const IGNORE_EXTRA_VARIABLES: unique symbol;
+export function ignoreExtraVariables<CtorT extends {
     new (...args: any[]): {};
 }>(ctor: CtorT): {
     new (...args: any[]): {
@@ -39,3 +39,24 @@ export declare function ignoreExtraVariables<CtorT extends {
     };
 } & CtorT;
 export {};
+
+
+//// [DtsFileErrors]
+
+
+file.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== file.d.ts (1 errors) ====
+    const IGNORE_EXTRA_VARIABLES: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export function ignoreExtraVariables<CtorT extends {
+        new (...args: any[]): {};
+    }>(ctor: CtorT): {
+        new (...args: any[]): {
+            [IGNORE_EXTRA_VARIABLES]: boolean;
+        };
+    } & CtorT;
+    export {};
+    

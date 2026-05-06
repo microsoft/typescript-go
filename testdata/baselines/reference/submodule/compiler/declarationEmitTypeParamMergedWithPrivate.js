@@ -23,7 +23,7 @@ export class Test {
 
 
 //// [declarationEmitTypeParamMergedWithPrivate.d.ts]
-export declare class Test<T> {
+export class Test<T> {
     private get T();
     test(): T;
 }

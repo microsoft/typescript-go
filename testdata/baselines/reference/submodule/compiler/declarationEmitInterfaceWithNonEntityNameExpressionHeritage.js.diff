@@ -1,0 +1,11 @@
+--- old.declarationEmitInterfaceWithNonEntityNameExpressionHeritage.js
++++ new.declarationEmitInterfaceWithNonEntityNameExpressionHeritage.js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [declarationEmitInterfaceWithNonEntityNameExpressionHeritage.d.ts]
+-declare class A {
++class A {
+ }
+ interface Class {
+ }

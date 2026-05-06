@@ -4,8 +4,7 @@
  export default class Foo {
  }
  //// [usage.d.ts]
--export const x: Fooa;
--export { default as Foob } from "./cls";
- import { default as Fooa } from "./cls";
-+export declare const x: Fooa;
-+export { default as Foob } from "./cls";
++import { default as Fooa } from "./cls";
+ export const x: Fooa;
+ export { default as Foob } from "./cls";
+-import { default as Fooa } from "./cls";

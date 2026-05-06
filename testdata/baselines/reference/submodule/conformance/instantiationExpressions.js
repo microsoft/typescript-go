@@ -273,85 +273,85 @@ function makeBox(value) {
 
 
 //// [instantiationExpressions.d.ts]
-declare function fx<T>(x: T): T;
-declare function fx<T>(x: T, n: number): T;
-declare function fx<T, U>(t: [T, U]): [T, U];
-declare function f1(): void;
+function fx<T>(x: T): T;
+function fx<T>(x: T, n: number): T;
+function fx<T, U>(t: [T, U]): [T, U];
+function f1(): void;
 type T10 = typeof fx;
 type T11 = typeof fx<string>;
 type T12 = typeof fx<string, number>;
 type T13 = typeof fx<string, number, boolean>;
-declare function f2(): void;
+function f2(): void;
 type T20 = typeof Array;
 type T21 = typeof Array<string>;
 type T22 = typeof Array<string, number>;
-declare class C<T> {
+class C<T> {
     constructor(x: T);
     static f<U>(x: U): U[];
 }
-declare function f3(): void;
-declare function f10(f: {
+function f3(): void;
+function f10(f: {
     <T>(a: T): T;
     <U>(a: U, b: number): U[];
 }): void;
-declare function f11(f: {
+function f11(f: {
     <T>(a: T): T;
     (a: string, b: number): string[];
 }): void;
-declare function f12(f: {
+function f12(f: {
     <T>(a: T): T;
     x: string;
 }): void;
-declare function f13(f: {
+function f13(f: {
     x: string;
     y: string;
 }): void;
-declare function f14(f: {
+function f14(f: {
     new <T>(a: T): T;
     new <U>(a: U, b: number): U[];
 }): void;
-declare function f15(f: {
+function f15(f: {
     new <T>(a: T): T;
     <U>(a: U, b: number): U[];
 }): void;
-declare function f16(f: {
+function f16(f: {
     new <T>(a: T): T;
     (a: string, b: number): string[];
 }): void;
-declare function f17(f: {
+function f17(f: {
     <T>(a: T): T;
     new (a: string, b: number): string[];
 }): void;
-declare function f20(f: (<T>(a: T) => T) & (<U>(a: U, b: number) => U[])): void;
-declare function f21(f: (<T>(a: T) => T) & ((a: string, b: number) => string[])): void;
-declare function f22(f: (<T>(a: T) => T) & {
+function f20(f: (<T>(a: T) => T) & (<U>(a: U, b: number) => U[])): void;
+function f21(f: (<T>(a: T) => T) & ((a: string, b: number) => string[])): void;
+function f22(f: (<T>(a: T) => T) & {
     x: string;
 }): void;
-declare function f23(f: {
+function f23(f: {
     x: string;
 } & {
     y: string;
 }): void;
-declare function f24(f: (new <T>(a: T) => T) & (new <U>(a: U, b: number) => U[])): void;
-declare function f25(f: (new <T>(a: T) => T) & (<U>(a: U, b: number) => U[])): void;
-declare function f26(f: (new <T>(a: T) => T) & ((a: string, b: number) => string[])): void;
-declare function f27(f: (<T>(a: T) => T) & (new (a: string, b: number) => string[])): void;
-declare function f30(f: (<T>(a: T) => T) | (<U>(a: U, b: number) => U[])): void;
-declare function f31(f: (<T>(a: T) => T) | ((a: string, b: number) => string[])): void;
-declare function f32(f: (<T>(a: T) => T) | {
+function f24(f: (new <T>(a: T) => T) & (new <U>(a: U, b: number) => U[])): void;
+function f25(f: (new <T>(a: T) => T) & (<U>(a: U, b: number) => U[])): void;
+function f26(f: (new <T>(a: T) => T) & ((a: string, b: number) => string[])): void;
+function f27(f: (<T>(a: T) => T) & (new (a: string, b: number) => string[])): void;
+function f30(f: (<T>(a: T) => T) | (<U>(a: U, b: number) => U[])): void;
+function f31(f: (<T>(a: T) => T) | ((a: string, b: number) => string[])): void;
+function f32(f: (<T>(a: T) => T) | {
     x: string;
 }): void;
-declare function f33(f: {
+function f33(f: {
     x: string;
 } | {
     y: string;
 }): void;
-declare function f34(f: (new <T>(a: T) => T) | (new <U>(a: U, b: number) => U[])): void;
-declare function f35(f: (new <T>(a: T) => T) | (<U>(a: U, b: number) => U[])): void;
-declare function f36(f: (new <T>(a: T) => T) | ((a: string, b: number) => string[])): void;
-declare function f37(f: (<T>(a: T) => T) | (new (a: string, b: number) => string[])): void;
-declare function f38<T extends (<A>(x: A) => A) | (<B>(x: B) => B[]), U>(f: T | U | (<C>(x: C) => C[][])): void;
-declare function makeBox<T>(value: T): {
+function f34(f: (new <T>(a: T) => T) | (new <U>(a: U, b: number) => U[])): void;
+function f35(f: (new <T>(a: T) => T) | (<U>(a: U, b: number) => U[])): void;
+function f36(f: (new <T>(a: T) => T) | ((a: string, b: number) => string[])): void;
+function f37(f: (<T>(a: T) => T) | (new (a: string, b: number) => string[])): void;
+function f38<T extends (<A>(x: A) => A) | (<B>(x: B) => B[]), U>(f: T | U | (<C>(x: C) => C[][])): void;
+function makeBox<T>(value: T): {
     value: T;
 };
 type BoxFunc<T> = typeof makeBox<T>;
@@ -359,7 +359,7 @@ type StringBoxFunc = BoxFunc<string>;
 type Box<T> = ReturnType<typeof makeBox<T>>;
 type StringBox = Box<string>;
 type A<U> = InstanceType<typeof Array<U>>;
-declare const g1: {
+const g1: {
     <T>(a: T): {
         a: T;
     };
@@ -370,13 +370,13 @@ declare const g1: {
 type T30<V> = typeof g1<V>;
 type T31<A> = ReturnType<T30<A>>;
 type T32<B> = InstanceType<T30<B>>;
-declare const g2: {
+const g2: {
     <T extends string>(a: T): T;
     new <T extends number>(b: T): T;
 };
 type T40<U extends string> = typeof g2<U>;
 type T41<U extends number> = typeof g2<U>;
-declare const g3: {
+const g3: {
     <T extends string>(a: T): T;
     new <T extends number, Q>(b: T): T;
 };

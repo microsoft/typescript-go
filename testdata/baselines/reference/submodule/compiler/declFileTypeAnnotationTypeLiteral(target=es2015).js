@@ -61,15 +61,15 @@ var z;
 
 
 //// [declFileTypeAnnotationTypeLiteral.d.ts]
-declare class c {
+class c {
 }
-declare class g<T> {
+class g<T> {
 }
-declare namespace m {
+namespace m {
     class c {
     }
 }
-declare var x: {
+var x: {
     (a: number): c;
     (a: string): g<string>;
     new (a: number): c;
@@ -81,5 +81,39 @@ declare var x: {
     m1(): g<number>;
     m2(a: string, b?: number, ...c: c[]): string;
 };
-declare var y: (a: string) => string;
-declare var z: new (a: string) => m.c;
+var y: (a: string) => string;
+var z: new (a: string) => m.c;
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationTypeLiteral.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationTypeLiteral.d.ts (1 errors) ====
+    class c {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    class g<T> {
+    }
+    namespace m {
+        class c {
+        }
+    }
+    var x: {
+        (a: number): c;
+        (a: string): g<string>;
+        new (a: number): c;
+        new (a: string): m.c;
+        [n: number]: c;
+        [n: string]: c;
+        a: c;
+        b: g<string>;
+        m1(): g<number>;
+        m2(a: string, b?: number, ...c: c[]): string;
+    };
+    var y: (a: string) => string;
+    var z: new (a: string) => m.c;
+    

@@ -26,4 +26,4 @@ export function thing() { }
 
 
 //// [index.d.ts]
-export declare function thing(): void;
+export function thing(): void;

@@ -50,18 +50,18 @@ exports.h = null;
 
 //// [index.d.ts]
 /** @type {?} */
-export declare const a: any | null;
+export const a: any | null;
 /** @type {*} */
-export declare const b: any;
+export const b: any;
 /** @type {string?} */
-export declare const c: string | null;
+export const c: string | null;
 /** @type {string=} */
-export declare const d: string | undefined;
+export const d: string | undefined;
 /** @type {string!} */
-export declare const e: string;
+export const e: string;
 /** @type {function(string, number): object} */
-export declare const f: Function;
+export const f: Function;
 /** @type {function(new: object, string, number)} */
-export declare const g: Function;
+export const g: Function;
 /** @type {Object.<string, number>} */
-export declare const h: Record<string, number>;
+export const h: Record<string, number>;

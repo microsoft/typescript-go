@@ -19,5 +19,5 @@ const bar = foo;
 
 
 //// [arbitraryModuleNamespaceIdentifiers_exportEmpty.d.ts]
-declare const empty = "empty";
+const empty = "empty";
 export { empty as "" };

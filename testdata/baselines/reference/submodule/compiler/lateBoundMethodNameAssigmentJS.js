@@ -13,9 +13,27 @@ export class MyClass {
 
 
 //// [lateBoundMethodNameAssigmentJS.d.ts]
-declare const _symbol: unique symbol;
-export declare class MyClass {
+const _symbol: unique symbol;
+export class MyClass {
     constructor();
     [_symbol](): Promise<void>;
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+lateBoundMethodNameAssigmentJS.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== lateBoundMethodNameAssigmentJS.d.ts (1 errors) ====
+    const _symbol: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export class MyClass {
+        constructor();
+        [_symbol](): Promise<void>;
+    }
+    export {};
+    

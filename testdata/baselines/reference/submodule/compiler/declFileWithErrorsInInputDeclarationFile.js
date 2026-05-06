@@ -23,4 +23,4 @@ var x = new M.C(); // Declaration file wont get emitted because there are errors
 
 //// [client.d.ts]
 /// <reference path="declFile.d.ts" preserve="true" />
-declare var x: M.C;
+var x: M.C;

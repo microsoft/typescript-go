@@ -27,6 +27,6 @@ f.foo();
 
 
 //// [file1.d.ts]
-export declare function foo(): any;
+export function foo(): any;
 //// [file2.d.ts]
 export {};

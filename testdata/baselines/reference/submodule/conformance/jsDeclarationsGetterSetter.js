@@ -238,36 +238,36 @@ Object.defineProperty(M.prototype, "x", {
 
 
 //// [index.d.ts]
-export declare class A {
+export class A {
     get x(): number;
 }
-export declare class B {
+export class B {
     /**
      * @param {number} _arg
      */
     set x(_arg: number);
 }
-export declare class C {
+export class C {
     get x(): number;
     set x(_arg: number);
 }
-export declare class D {
+export class D {
 }
-export declare class E {
+export class E {
 }
-export declare class F {
+export class F {
 }
-export declare class G {
+export class G {
 }
-export declare class H {
+export class H {
 }
-export declare class I {
+export class I {
 }
-export declare class J {
+export class J {
 }
-export declare class K {
+export class K {
 }
-export declare class L {
+export class L {
 }
-export declare class M {
+export class M {
 }

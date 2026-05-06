@@ -1,0 +1,91 @@
+--- old.enumConstantMemberWithTemplateLiteralsEmitDeclaration.js
++++ new.enumConstantMemberWithTemplateLiteralsEmitDeclaration.js
+@@= skipped -80, +80 lines =@@
+
+
+ //// [enumConstantMemberWithTemplateLiteralsEmitDeclaration.d.ts]
+-declare enum T1 {
++enum T1 {
+     a = "1"
+ }
+-declare enum T2 {
++enum T2 {
+     a = "1",
+     b = "2",
+     c = 3
+ }
+-declare enum T3 {
++enum T3 {
+     a = "11"
+ }
+-declare enum T4 {
++enum T4 {
+     a = "1",
+     b = "11",
+     c = "12",
+     d = "21",
+     e = "211"
+ }
+-declare enum T5 {
++enum T5 {
+     a = "1",
+     b = "12",
+     c = "123",
+     d = 1
+ }
+-declare enum T6 {
++enum T6 {
+     a = 1,
+     b
+ }
+-declare enum T7 {
++enum T7 {
+     a = "1",
+     b = "11",
+     c = "21"
+ }
++
++
++//// [DtsFileErrors]
++
++
++enumConstantMemberWithTemplateLiteralsEmitDeclaration.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== enumConstantMemberWithTemplateLiteralsEmitDeclaration.d.ts (1 errors) ====
++    enum T1 {
++    ~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        a = "1"
++    }
++    enum T2 {
++        a = "1",
++        b = "2",
++        c = 3
++    }
++    enum T3 {
++        a = "11"
++    }
++    enum T4 {
++        a = "1",
++        b = "11",
++        c = "12",
++        d = "21",
++        e = "211"
++    }
++    enum T5 {
++        a = "1",
++        b = "12",
++        c = "123",
++        d = 1
++    }
++    enum T6 {
++        a = 1,
++        b
++    }
++    enum T7 {
++        a = "1",
++        b = "11",
++        c = "21"
++    }
++    

@@ -5,32 +5,35 @@
   * @param {Array} x
   */
 -declare function x(x: any[]): void;
-+declare function x(x: Array): void;
++function x(x: Array): void;
  /**
   * @param {Promise} x
   */
 -declare function y(x: Promise<any>): void;
-+declare function y(x: Promise): void;
++function y(x: Promise): void;
 +
 +
 +//// [DtsFileErrors]
 +
 +
-+out/file.d.ts(4,23): error TS2314: Generic type 'Array<T>' requires 1 type argument(s).
-+out/file.d.ts(8,23): error TS2314: Generic type 'Promise<T>' requires 1 type argument(s).
++out/file.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++out/file.d.ts(4,15): error TS2314: Generic type 'Array<T>' requires 1 type argument(s).
++out/file.d.ts(8,15): error TS2314: Generic type 'Promise<T>' requires 1 type argument(s).
 +
 +
-+==== out/file.d.ts (2 errors) ====
++==== out/file.d.ts (3 errors) ====
 +    /**
 +     * @param {Array} x
 +     */
-+    declare function x(x: Array): void;
-+                          ~~~~~
++    function x(x: Array): void;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++                  ~~~~~
 +!!! error TS2314: Generic type 'Array<T>' requires 1 type argument(s).
 +    /**
 +     * @param {Promise} x
 +     */
-+    declare function y(x: Promise): void;
-+                          ~~~~~~~
++    function y(x: Promise): void;
++                  ~~~~~~~
 +!!! error TS2314: Generic type 'Promise<T>' requires 1 type argument(s).
 +    

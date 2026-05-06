@@ -55,15 +55,15 @@ _a = a_1.x;
 
 
 //// [a.d.ts]
-export declare const x: unique symbol;
+export const x: unique symbol;
 //// [b.d.ts]
 import { x } from "./a";
-export declare class C {
+export class C {
     private [x];
 }
 //// [c.d.ts]
 import { x } from "./a";
 import { C } from "./b";
-export declare class D extends C {
+export class D extends C {
     private [x];
 }

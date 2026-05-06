@@ -61,4 +61,4 @@ exports.MyComp = Ctor.extends({ foo: "bar" });
 
 
 //// [index.d.ts]
-export declare const MyComp: import("mod/ctor").ExtendedCtor<import("mod").default>;
+export const MyComp: import("mod/ctor").ExtendedCtor<import("mod").default>;

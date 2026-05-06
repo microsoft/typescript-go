@@ -20,9 +20,27 @@ C[_a] = 0;
 
 
 //// [symbolDeclarationEmit11.d.ts]
-declare class C {
+class C {
     static [Symbol.iterator]: number;
     static [Symbol.isConcatSpreadable](): void;
     static get [Symbol.toPrimitive](): string;
     static set [Symbol.toPrimitive](x: string);
 }
+
+
+//// [DtsFileErrors]
+
+
+symbolDeclarationEmit11.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== symbolDeclarationEmit11.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        static [Symbol.iterator]: number;
+        static [Symbol.isConcatSpreadable](): void;
+        static get [Symbol.toPrimitive](): string;
+        static set [Symbol.toPrimitive](x: string);
+    }
+    

@@ -1,0 +1,79 @@
+--- old.declFileEnums.js
++++ new.declFileEnums.js
+@@= skipped -74, +74 lines =@@
+
+
+ //// [declFileEnums.d.ts]
+-declare enum e1 {
++enum e1 {
+     a = 0,
+     b = 1,
+     c = 2
+ }
+-declare enum e2 {
++enum e2 {
+     a = 10,
+     b = 12,
+     c = 10
+ }
+-declare enum e3 {
++enum e3 {
+     a = 10,
+     b,
+     c = 13
+ }
+-declare enum e4 {
++enum e4 {
+     a = 0,
+     b = 1,
+     c = 2,
+     d = 10,
+     e = 11
+ }
+-declare enum e5 {
++enum e5 {
+     "Friday" = 0,
+     "Saturday" = 1,
+     "Sunday" = 2,
+     "Weekend days" = 3
+ }
++
++
++//// [DtsFileErrors]
++
++
++declFileEnums.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declFileEnums.d.ts (1 errors) ====
++    enum e1 {
++    ~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        a = 0,
++        b = 1,
++        c = 2
++    }
++    enum e2 {
++        a = 10,
++        b = 12,
++        c = 10
++    }
++    enum e3 {
++        a = 10,
++        b,
++        c = 13
++    }
++    enum e4 {
++        a = 0,
++        b = 1,
++        c = 2,
++        d = 10,
++        e = 11
++    }
++    enum e5 {
++        "Friday" = 0,
++        "Saturday" = 1,
++        "Sunday" = 2,
++        "Weekend days" = 3
++    }
++    

@@ -1,0 +1,10 @@
+--- old.classStaticBlockUseBeforeDef5.js
++++ new.classStaticBlockUseBeforeDef5.js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [classStaticBlockUseBeforeDef5.d.ts]
+-declare class C {
++class C {
+     static accessor x: number;
+ }

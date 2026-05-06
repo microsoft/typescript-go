@@ -71,12 +71,12 @@ const x = e;
 
 
 //// [numericEnumMappedType.d.ts]
-declare enum E1 {
+enum E1 {
     ONE = 0,
     TWO = 1,
     THREE = 2
 }
-declare enum E2 {
+enum E2 {
     ONE,
     TWO,
     THREE
@@ -87,26 +87,77 @@ type Bins1 = {
 type Bins2 = {
     [k in E2]?: string;
 };
-declare const b1: Bins1;
-declare const b2: Bins2;
-declare const e1: E1;
-declare const e2: E2;
-declare function val(): number;
-declare enum N1 {
+const b1: Bins1;
+const b2: Bins2;
+const e1: E1;
+const e2: E2;
+function val(): number;
+enum N1 {
     A,
     B
 }
-declare enum N2 {
+enum N2 {
     C,
     D
 }
 type T1 = {
     [K in N1 | N2]: K;
 };
-declare enum E {
+enum E {
     ONE,
     TWO,
     THREE = "x"
 }
-declare const e: E;
-declare const x: E.ONE;
+const e: E;
+const x: E.ONE;
+
+
+//// [DtsFileErrors]
+
+
+numericEnumMappedType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== numericEnumMappedType.d.ts (1 errors) ====
+    enum E1 {
+    ~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        ONE = 0,
+        TWO = 1,
+        THREE = 2
+    }
+    enum E2 {
+        ONE,
+        TWO,
+        THREE
+    }
+    type Bins1 = {
+        [k in E1]?: string;
+    };
+    type Bins2 = {
+        [k in E2]?: string;
+    };
+    const b1: Bins1;
+    const b2: Bins2;
+    const e1: E1;
+    const e2: E2;
+    function val(): number;
+    enum N1 {
+        A,
+        B
+    }
+    enum N2 {
+        C,
+        D
+    }
+    type T1 = {
+        [K in N1 | N2]: K;
+    };
+    enum E {
+        ONE,
+        TWO,
+        THREE = "x"
+    }
+    const e: E;
+    const x: E.ONE;
+    

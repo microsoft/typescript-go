@@ -16,7 +16,7 @@ export class Foo {
 
 
 //// [foo.d.ts]
-export declare class Foo {
+export class Foo {
     /**
      * Bar.
      *

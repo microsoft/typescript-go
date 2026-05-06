@@ -9,7 +9,7 @@ export const thing = null;
 
 
 //// [mappedTypeWithAsClauseAndLateBoundProperty2.d.ts]
-export declare const thing: {
+export const thing: {
     [x: number]: number;
     toString: () => string;
     toLocaleString: {

@@ -75,27 +75,27 @@ interface Point {
 }
 export = Point;
 //// [foo2.d.ts]
-declare namespace Bar {
+namespace Bar {
     interface I {
         a: string;
         b: number;
     }
 }
-export declare namespace Baz {
+export namespace Baz {
     interface J {
         a: number;
         b: string;
     }
 }
-declare class Bar {
+class Bar {
     item: Bar.I;
     constructor(input: Baz.J);
 }
 export { Bar };
 //// [usage.d.ts]
-export declare const x: import("./foo");
-export declare let y: import("./foo2").Bar.I;
-export declare class Bar2 {
+export const x: import("./foo");
+export let y: import("./foo2").Bar.I;
+export class Bar2 {
     item: {
         a: string;
         b: number;
@@ -103,4 +103,4 @@ export declare class Bar2 {
     };
     constructor(input?: any);
 }
-export declare let shim: typeof import("./foo2");
+export let shim: typeof import("./foo2");

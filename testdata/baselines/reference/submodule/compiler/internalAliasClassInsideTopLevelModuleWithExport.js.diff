@@ -1,0 +1,15 @@
+--- old.internalAliasClassInsideTopLevelModuleWithExport.js
++++ new.internalAliasClassInsideTopLevelModuleWithExport.js
+@@= skipped -31, +31 lines =@@
+
+
+ //// [internalAliasClassInsideTopLevelModuleWithExport.d.ts]
+-export declare namespace x {
++export namespace x {
+     class c {
+         foo(a: number): number;
+     }
+ }
+ export import xc = x.c;
+-export declare var cProp: xc;
++export var cProp: xc;

@@ -1,0 +1,8 @@
+--- old.emptyAssignmentPatterns03_ES5iterable(target=es2015).js
++++ new.emptyAssignmentPatterns03_ES5iterable(target=es2015).js
+@@= skipped -13, +13 lines =@@
+
+
+ //// [emptyAssignmentPatterns03_ES5iterable.d.ts]
+-declare var a: any;
++var a: any;

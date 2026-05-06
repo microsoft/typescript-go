@@ -30,7 +30,7 @@ C.y = 1;
 
 
 //// [declFilePrivateStatic.d.ts]
-declare class C {
+class C {
     private static x;
     static y: number;
     private static a;
@@ -40,3 +40,25 @@ declare class C {
     private static set e(value);
     static set f(v: any);
 }
+
+
+//// [DtsFileErrors]
+
+
+declFilePrivateStatic.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFilePrivateStatic.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        private static x;
+        static y: number;
+        private static a;
+        static b(): void;
+        private static get c();
+        static get d(): number;
+        private static set e(value);
+        static set f(v: any);
+    }
+    

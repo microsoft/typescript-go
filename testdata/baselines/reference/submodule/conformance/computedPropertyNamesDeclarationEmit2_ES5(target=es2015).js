@@ -17,5 +17,19 @@ class C {
 
 
 //// [computedPropertyNamesDeclarationEmit2_ES5.d.ts]
-declare class C {
+class C {
 }
+
+
+//// [DtsFileErrors]
+
+
+computedPropertyNamesDeclarationEmit2_ES5.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== computedPropertyNamesDeclarationEmit2_ES5.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    

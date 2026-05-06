@@ -73,14 +73,37 @@ class A {
 
 
 //// [nonNullableTypes1.d.ts]
-declare function f1<T>(x: T): void;
-declare function error(): never;
-declare function f2<T>(x: T): NonNullable<T>;
-declare function f3(x: unknown): void;
-declare function f4<T extends {
+function f1<T>(x: T): void;
+function error(): never;
+function f2<T>(x: T): NonNullable<T>;
+function f3(x: unknown): void;
+function f4<T extends {
     x: string;
 } | undefined>(obj: T): void;
-declare class A {
+class A {
     x: string;
     foo(): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+nonNullableTypes1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== nonNullableTypes1.d.ts (1 errors) ====
+    function f1<T>(x: T): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function error(): never;
+    function f2<T>(x: T): NonNullable<T>;
+    function f3(x: unknown): void;
+    function f4<T extends {
+        x: string;
+    } | undefined>(obj: T): void;
+    class A {
+        x: string;
+        foo(): void;
+    }
+    

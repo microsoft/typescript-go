@@ -1,11 +1,7 @@
 --- old.jsDeclarationsExportFormsErr(target=es2015).js
 +++ new.jsDeclarationsExportFormsErr(target=es2015).js
-@@= skipped -96, +96 lines =@@
-
-
- //// [cls.d.ts]
--export class Foo {
-+export declare class Foo {
+@@= skipped -99, +99 lines =@@
+ export class Foo {
  }
  //// [bar.d.ts]
 -export = ns;

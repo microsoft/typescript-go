@@ -1,0 +1,32 @@
+--- old.declarationEmitHasTypesRefOnNamespaceUse.js
++++ new.declarationEmitHasTypesRefOnNamespaceUse.js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [index.d.ts]
+-declare class Src implements NS.Dep {
++class Src implements NS.Dep {
+ }
++
++
++//// [DtsFileErrors]
++
++
++/src/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== /src/index.d.ts (1 errors) ====
++    class Src implements NS.Dep {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    
++==== /deps/dep/dep.d.ts (0 errors) ====
++    declare namespace NS {
++        interface Dep {
++        }
++    }
++==== /deps/dep/package.json (0 errors) ====
++    {
++        "typings": "dep.d.ts"
++    }

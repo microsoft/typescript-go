@@ -1,0 +1,8 @@
+--- old.symlinkedWorkspaceDependenciesNoDirectLinkOptionalGeneratesNonrelativeName.js
++++ new.symlinkedWorkspaceDependenciesNoDirectLinkOptionalGeneratesNonrelativeName.js
+@@= skipped -70, +70 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const a: import("package-a").Foo;
++export const a: import("package-a").Foo;

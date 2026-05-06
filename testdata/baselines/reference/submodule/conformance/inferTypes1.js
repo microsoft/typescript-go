@@ -224,15 +224,15 @@ type T03 = Unpacked<Promise<string>>;
 type T04 = Unpacked<Unpacked<Promise<string>[]>>;
 type T05 = Unpacked<any>;
 type T06 = Unpacked<never>;
-declare function f1(s: string): {
+function f1(s: string): {
     a: number;
     b: string;
 };
-declare class C {
+class C {
     x: number;
     y: number;
 }
-declare abstract class Abstract {
+abstract class Abstract {
     x: number;
     y: number;
 }
@@ -374,13 +374,13 @@ type Example = {
         };
     };
 };
-declare class MyClass {
+class MyClass {
     toJSON(): "correct";
 }
 type JsonifiedExample = Jsonified<Example>;
-declare let ex: JsonifiedExample;
-declare const z1: "correct";
-declare const z2: string;
+let ex: JsonifiedExample;
+const z1: "correct";
+const z2: string;
 type A1<T, U extends A1<any, any>> = [T, U];
 type B1<S> = S extends A1<infer T, infer U> ? [T, U] : never;
 type A2<T, U extends void> = [T, U];
@@ -404,6 +404,6 @@ type MustBeString<T extends string> = T;
 type EnsureIsString<T> = T extends MustBeString<infer U> ? U : never;
 type Test1 = EnsureIsString<"hello">;
 type Test2 = EnsureIsString<42>;
-declare function invoker<K extends string | number | symbol, A extends any[]>(key: K, ...args: A): <T extends Record<K, (...args: A) => any>>(obj: T) => ReturnType<T[K]>;
-declare const result: number;
+function invoker<K extends string | number | symbol, A extends any[]>(key: K, ...args: A): <T extends Record<K, (...args: A) => any>>(obj: T) => ReturnType<T[K]>;
+const result: number;
 type Foo2<A extends any[]> = ReturnType<(...args: A) => string>;

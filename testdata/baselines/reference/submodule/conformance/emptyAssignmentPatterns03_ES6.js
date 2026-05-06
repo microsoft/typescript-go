@@ -14,4 +14,17 @@ var a;
 
 
 //// [emptyAssignmentPatterns03_ES6.d.ts]
-declare var a: any;
+var a: any;
+
+
+//// [DtsFileErrors]
+
+
+emptyAssignmentPatterns03_ES6.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== emptyAssignmentPatterns03_ES6.d.ts (1 errors) ====
+    var a: any;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

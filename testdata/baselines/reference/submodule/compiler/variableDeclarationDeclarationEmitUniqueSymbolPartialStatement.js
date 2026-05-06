@@ -23,8 +23,25 @@ _a = key;
 
 
 //// [variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.d.ts]
-declare const key: unique symbol;
-export declare class Foo {
+const key: unique symbol;
+export class Foo {
     [key]: number;
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.d.ts (1 errors) ====
+    const key: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export class Foo {
+        [key]: number;
+    }
+    export {};
+    

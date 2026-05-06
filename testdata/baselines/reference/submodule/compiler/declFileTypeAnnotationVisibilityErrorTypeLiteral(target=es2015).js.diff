@@ -1,0 +1,11 @@
+--- old.declFileTypeAnnotationVisibilityErrorTypeLiteral(target=es2015).js
++++ new.declFileTypeAnnotationVisibilityErrorTypeLiteral(target=es2015).js
+@@= skipped -60, +60 lines =@@
+
+
+ //// [declFileTypeAnnotationVisibilityErrorTypeLiteral.d.ts]
+-declare namespace m {
++namespace m {
+     class private1 {
+     }
+     namespace m2 {

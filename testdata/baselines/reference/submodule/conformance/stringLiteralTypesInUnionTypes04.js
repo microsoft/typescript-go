@@ -70,5 +70,20 @@ if (!!!x) {
 
 //// [stringLiteralTypesInUnionTypes04.d.ts]
 type T = "" | "foo";
-declare let x: T;
-declare let y: T;
+let x: T;
+let y: T;
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesInUnionTypes04.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesInUnionTypes04.d.ts (1 errors) ====
+    type T = "" | "foo";
+    let x: T;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    let y: T;
+    

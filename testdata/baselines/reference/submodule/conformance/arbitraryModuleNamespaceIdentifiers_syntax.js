@@ -98,7 +98,7 @@ export {};
 
 
 //// [values-valid.d.ts]
-export declare const foo = 123;
+export const foo = 123;
 export { foo as "valid 1" };
 export { "valid 1" as "valid 2" } from "./values-valid";
 export { foo as "valid 3" } from "./values-valid";

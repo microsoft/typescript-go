@@ -164,7 +164,7 @@ export interface A {
 export {};
 
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.d.ts] *new* 
-export declare const a: {
+export const a: {
     new (): {
         p: number;
     };

@@ -18,12 +18,12 @@ var M;
 
 
 //// [declarationEmitNameConflictsWithAlias.d.ts]
-export declare namespace C {
+export namespace C {
     interface I {
     }
 }
 export import v = C;
-export declare namespace M {
+export namespace M {
     namespace C {
         interface I {
         }

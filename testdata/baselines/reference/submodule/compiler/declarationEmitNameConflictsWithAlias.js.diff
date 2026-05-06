@@ -1,0 +1,17 @@
+--- old.declarationEmitNameConflictsWithAlias.js
++++ new.declarationEmitNameConflictsWithAlias.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [declarationEmitNameConflictsWithAlias.d.ts]
+-export declare namespace C {
++export namespace C {
+     interface I {
+     }
+ }
+ export import v = C;
+-export declare namespace M {
++export namespace M {
+     namespace C {
+         interface I {
+         }

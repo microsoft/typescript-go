@@ -56,15 +56,15 @@ let shim = {
 
 
 //// [importTypeAmbient.d.ts]
-declare module "foo" {
+module "foo" {
     interface Point {
         x: number;
         y: number;
     }
     export = Point;
 }
-declare const x: import("foo");
-declare module "foo2" {
+const x: import("foo");
+module "foo2" {
     namespace Bar {
         interface I {
             a: string;
@@ -82,8 +82,8 @@ declare module "foo2" {
         constructor(input: Baz.J);
     }
 }
-declare let y: import("foo2").Bar.I;
-declare class Bar2 {
+let y: import("foo2").Bar.I;
+class Bar2 {
     item: {
         a: string;
         b: number;
@@ -91,4 +91,4 @@ declare class Bar2 {
     };
     constructor(input?: any);
 }
-declare let shim: typeof import("foo2");
+let shim: typeof import("foo2");

@@ -1,0 +1,8 @@
+--- old.contextuallyTypedParametersWithInitializers1.js
++++ new.contextuallyTypedParametersWithInitializers1.js
+@@= skipped -139, +139 lines =@@
+
+
+ //// [contextuallyTypedParametersWithInitializers1.d.ts]
+-export declare function executeSomething(): Promise<string>;
++export function executeSomething(): Promise<string>;

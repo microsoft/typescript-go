@@ -70,7 +70,7 @@ var M;
 
 
 //// [declarationEmitNameConflicts3.d.ts]
-declare namespace M {
+namespace M {
     interface D {
     }
     namespace D {
@@ -83,7 +83,7 @@ declare namespace M {
         function f(): void;
     }
 }
-declare namespace M.P {
+namespace M.P {
     class C {
         static f(): void;
     }
@@ -97,3 +97,42 @@ declare namespace M.P {
     var x: typeof M.C.f;
     var x: typeof M.C.f;
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitNameConflicts3.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitNameConflicts3.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface D {
+        }
+        namespace D {
+            function f(): void;
+        }
+        namespace C {
+            function f(): void;
+        }
+        namespace E {
+            function f(): void;
+        }
+    }
+    namespace M.P {
+        class C {
+            static f(): void;
+        }
+        class E extends C {
+        }
+        enum D {
+            f = 0
+        }
+        var v: M.D;
+        var w: typeof M.D.f;
+        var x: typeof M.C.f;
+        var x: typeof M.C.f;
+    }
+    

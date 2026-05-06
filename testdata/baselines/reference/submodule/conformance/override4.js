@@ -50,7 +50,7 @@ class DD extends B {
 
 
 //// [override4.d.ts]
-declare class B {
+class B {
     p1: number;
     p2: number;
     p3: () => void;
@@ -58,7 +58,7 @@ declare class B {
     foo(v: string): void;
     fooo(v: string): void;
 }
-declare class D extends B {
+class D extends B {
     p1: number;
     p2: number;
     p3: () => void;
@@ -66,7 +66,7 @@ declare class D extends B {
     foo(v: string): void;
     fooo(v: string): void;
 }
-declare class DD extends B {
+class DD extends B {
     foo: () => void;
     fooo: () => void;
 }

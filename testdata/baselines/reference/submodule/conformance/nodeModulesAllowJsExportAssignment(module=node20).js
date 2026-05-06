@@ -50,13 +50,13 @@ module.exports = a;
 
 
 //// [index.d.ts]
-declare const a: {};
+const a: {};
 export = a;
 //// [file.d.ts]
-declare const a: {};
+const a: {};
 export = a;
 //// [index.d.ts]
-declare const a: {};
+const a: {};
 export = a;
 //// [file.d.ts]
 import "fs";

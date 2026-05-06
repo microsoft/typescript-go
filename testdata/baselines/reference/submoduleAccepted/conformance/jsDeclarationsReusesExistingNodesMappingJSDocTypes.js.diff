@@ -5,27 +5,21 @@
  //// [index.d.ts]
  /** @type {?} */
 -export const a: unknown;
-+export declare const a: any | null;
++export const a: any | null;
  /** @type {*} */
--export const b: any;
-+export declare const b: any;
+ export const b: any;
  /** @type {string?} */
--export const c: string | null;
-+export declare const c: string | null;
- /** @type {string=} */
--export const d: string | undefined;
-+export declare const d: string | undefined;
+@@= skipped -10, +10 lines =@@
  /** @type {string!} */
--export const e: string;
-+export declare const e: string;
+ export const e: string;
  /** @type {function(string, number): object} */
 -export const f: (arg0: string, arg1: number) => object;
-+export declare const f: Function;
++export const f: Function;
  /** @type {function(new: object, string, number)} */
 -export const g: new (arg1: string, arg2: number) => object;
-+export declare const g: Function;
++export const g: Function;
  /** @type {Object.<string, number>} */
 -export const h: {
 -    [x: string]: number;
 -};
-+export declare const h: Record<string, number>;
++export const h: Record<string, number>;

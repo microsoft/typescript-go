@@ -60,11 +60,31 @@ class D {
 
 
 //// [classConstructorAccessibility4.d.ts]
-declare class A {
+class A {
     private constructor();
     method(): void;
 }
-declare class D {
+class D {
     protected constructor();
     method(): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+classConstructorAccessibility4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== classConstructorAccessibility4.d.ts (1 errors) ====
+    class A {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        private constructor();
+        method(): void;
+    }
+    class D {
+        protected constructor();
+        method(): void;
+    }
+    

@@ -32,16 +32,16 @@ module.exports.Strings = Strings;
 
 
 //// [bar.d.ts]
-declare class Bar {
+class Bar {
 }
 export = Bar;
 //// [cls.d.ts]
 import Bar = require("./bar");
-declare const Strings: {
+const Strings: {
     a: string;
     b: string;
 };
-declare class Foo extends Bar {
+class Foo extends Bar {
 }
 export = Foo;
 export { Strings };

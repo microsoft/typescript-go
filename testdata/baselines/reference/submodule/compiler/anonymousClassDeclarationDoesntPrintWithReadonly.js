@@ -27,11 +27,11 @@ function y() {
 
 
 //// [anonymousClassDeclarationDoesntPrintWithReadonly.d.ts]
-export declare class X {
+export class X {
     readonly a: number;
     constructor(a: number);
 }
-export declare function y(): {
+export function y(): {
     new (a: number): {
         readonly a: number;
     };

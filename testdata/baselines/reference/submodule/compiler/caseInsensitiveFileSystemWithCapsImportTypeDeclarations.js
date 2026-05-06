@@ -58,6 +58,6 @@ export type TypeB = Merge<TypeA, {
 }>;
 //// [index.d.ts]
 import { TypeB } from './type-b';
-export declare class Broken {
+export class Broken {
     method(): TypeB;
 }

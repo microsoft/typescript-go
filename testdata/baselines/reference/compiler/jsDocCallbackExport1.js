@@ -18,4 +18,23 @@ type Foo = (x: string) => number;
  * @param {string} x
  * @returns {number}
  */
-declare function f1(): void;
+function f1(): void;
+
+
+//// [DtsFileErrors]
+
+
+x.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== x.d.ts (1 errors) ====
+    type Foo = (x: string) => number;
+    /**
+     * @callback Foo
+     * @param {string} x
+     * @returns {number}
+     */
+    function f1(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

@@ -388,9 +388,6 @@ compiler/asyncArrowInClassES5(target=es2015).js.diff
 compiler/augmentedTypesVar.js.diff
 compiler/constructorWithIncompleteTypeAnnotation.js.diff
 compiler/declarationEmitClassAccessorsJs1.js.diff
-compiler/declarationEmitClassSetAccessorParamNameInJs.js.diff
-compiler/declarationEmitClassSetAccessorParamNameInJs2.js.diff
-compiler/declarationEmitClassSetAccessorParamNameInJs3.js.diff
 compiler/declarationEmitDefaultExportWithStaticAssignment.js.diff
 compiler/declarationEmitDefaultExportWithStaticAssignment.symbols.diff
 compiler/declarationEmitDefaultExportWithStaticAssignment.types.diff
@@ -407,7 +404,6 @@ compiler/importTypeGenericArrowTypeParenthesized.types.diff
 compiler/instanceofOnInstantiationExpression.js.diff
 compiler/accessorDeclarationEmitJs.js.diff
 compiler/argumentsPropertyNameInJsMode1.js.diff
-compiler/checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.errors.txt.diff
 compiler/declarationEmitExpandoPropertyPrivateName.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.symbols.diff
@@ -936,23 +932,8 @@ conformance/typesWithProtectedConstructor.errors.txt.diff
 ## JS declaration emit now uses `export declare` instead of bare `export` (`declare` is optional and moot in declarations in .d.ts files)
 ## e.g. `export class Foo` → `export declare class Foo`, `export function f` → `export declare function f`
 compiler/jsDeclarationEmitExportedClassWithExtends.js.diff
-compiler/jsEmitIntersectionProperty.js.diff
 compiler/lateBoundAssignmentCandidateJS3.js.diff
-conformance/jsDeclarationsClassesErr(target=es2015).js.diff
-conformance/jsDeclarationsClassLeadingOptional(target=es2015).js.diff
-conformance/jsDeclarationsExportSpecifierNonlocal(target=es2015).js.diff
-conformance/jsDeclarationsSubclassWithExplicitNoArgumentConstructor.js.diff
-conformance/jsDeclarationsThisTypes.js.diff
 conformance/exportNamespace_js.js.diff
-conformance/thisTag2.js.diff
-conformance/nodeModulesAllowJsDynamicImport(module=node16).js.diff
-conformance/nodeModulesAllowJsDynamicImport(module=node18).js.diff
-conformance/nodeModulesAllowJsDynamicImport(module=node20).js.diff
-conformance/nodeModulesAllowJsDynamicImport(module=nodenext).js.diff
-conformance/nodeModulesAllowJsSynchronousCallErrors(module=node16).js.diff
-conformance/nodeModulesAllowJsSynchronousCallErrors(module=node18).js.diff
-conformance/nodeModulesAllowJsSynchronousCallErrors(module=node20).js.diff
-conformance/nodeModulesAllowJsSynchronousCallErrors(module=nodenext).js.diff
 conformance/nodeAllowJsPackageSelfName2.js.diff
 
 ## JS declaration emit splits `export const/function` into `declare` + separate `export {}` statement (`declare const` + `export { x }` is semantically equivalent to `export const`)

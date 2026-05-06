@@ -33,13 +33,13 @@ exports.Derived2 = Derived2;
 
 
 //// [declarationEmitTypeParameterNameReusedInOverloads.d.ts]
-export declare class Base {
+export class Base {
     foo: string;
 }
-export declare class Derived extends Base {
+export class Derived extends Base {
     bar: string;
 }
-export declare class Derived2 extends Derived {
+export class Derived2 extends Derived {
     baz: string;
 }
 export type Foo = {

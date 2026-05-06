@@ -21,6 +21,6 @@ exports.globalThis = variable_1.variable;
 
 
 //// [variable.d.ts]
-export declare const variable: typeof globalThis;
+export const variable: typeof globalThis;
 //// [index.d.ts]
-export declare const globalThis: typeof globalThis;
+export const globalThis: typeof globalThis;

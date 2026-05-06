@@ -21,4 +21,4 @@ exports.reeexported = somepackage_1.item;
 
 
 //// [index.d.ts]
-export declare const reeexported: typeof import("@namespace/component").Foo;
+export const reeexported: typeof import("@namespace/component").Foo;

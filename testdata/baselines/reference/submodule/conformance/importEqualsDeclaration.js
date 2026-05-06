@@ -38,14 +38,14 @@ void type; // Ok
 
 
 //// [a.d.ts]
-declare class A {
+class A {
     a: string;
 }
 export = A;
 //// [b.d.ts]
-declare class SomeClass {
+class SomeClass {
 }
 export = SomeClass;
 //// [c.d.ts]
 import type A = require('./a');
-export declare const AConstructor: typeof A;
+export const AConstructor: typeof A;

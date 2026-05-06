@@ -167,15 +167,15 @@ export const oWithSpread2 = {
 
 
 //// [isolatedDeclarationErrorsObjects.d.ts]
-export declare let o: {
+export let o: {
     a: number;
     b: string;
 };
-export declare let oBad: {
+export let oBad: {
     a: number;
 };
-export declare const V = 1;
-export declare let oBad2: {
+export const V = 1;
+export let oBad2: {
     a: {
         b: number;
     };
@@ -184,14 +184,14 @@ export declare let oBad2: {
         e: number;
     };
 };
-export declare let oWithMethods: {
+export let oWithMethods: {
     method(): void;
     okMethod(): void;
     a: number;
     bad(): void;
     e: number;
 };
-export declare let oWithMethodsNested: {
+export let oWithMethodsNested: {
     foo: {
         method(): void;
         a: number;
@@ -199,7 +199,7 @@ export declare let oWithMethodsNested: {
         bad(): void;
     };
 };
-export declare let oWithAccessor: {
+export let oWithAccessor: {
     readonly singleGetterBad: number;
     singleSetterBad: any;
     getSetBad: number;
@@ -207,8 +207,8 @@ export declare let oWithAccessor: {
     getSetOk2: number;
     getSetOk3: number;
 };
-declare const s: unique symbol;
-export declare const oWithComputedProperties: {
+const s: unique symbol;
+export const oWithComputedProperties: {
     [x: string]: number;
     [x: number]: number;
     1: number;
@@ -216,7 +216,7 @@ export declare const oWithComputedProperties: {
     [s]: number;
     10: number;
 };
-export declare const oWithSpread: {
+export const oWithSpread: {
     a: number;
     b: number;
     c: number;
@@ -224,7 +224,7 @@ export declare const oWithSpread: {
         a: number;
     };
 };
-export declare const oWithSpread2: {
+export const oWithSpread2: {
     b: number;
     nested: {
         a: number;

@@ -9,6 +9,6 @@ export const x = undefined;
 
 
 //// [importTypeNonString.d.ts]
-export declare const x: import({
+export const x: import({
     x: 12;
 });

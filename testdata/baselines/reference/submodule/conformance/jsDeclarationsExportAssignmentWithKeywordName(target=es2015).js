@@ -23,7 +23,7 @@ module.exports = {
 
 
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     extends: string;
     more: {
         others: string[];
@@ -31,3 +31,23 @@ declare const _default: {
     x: number;
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/index.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        extends: string;
+        more: {
+            others: string[];
+        };
+        x: number;
+    };
+    export = _default;
+    

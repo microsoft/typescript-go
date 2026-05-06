@@ -26,10 +26,29 @@ function baz4({} = { x: 10 }) { }
 
 
 //// [declarationEmitDestructuring4.d.ts]
-declare function baz([]: Iterable<any, void, undefined>): void;
-declare function baz1([]?: number[]): void;
-declare function baz2([[]]?: [number[]]): void;
-declare function baz3({}: {}): void;
-declare function baz4({}?: {
+function baz([]: Iterable<any, void, undefined>): void;
+function baz1([]?: number[]): void;
+function baz2([[]]?: [number[]]): void;
+function baz3({}: {}): void;
+function baz4({}?: {
     x: number;
 }): void;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDestructuring4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDestructuring4.d.ts (1 errors) ====
+    function baz([]: Iterable<any, void, undefined>): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function baz1([]?: number[]): void;
+    function baz2([[]]?: [number[]]): void;
+    function baz3({}: {}): void;
+    function baz4({}?: {
+        x: number;
+    }): void;
+    

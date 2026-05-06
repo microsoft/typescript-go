@@ -1,0 +1,53 @@
+--- old.defaultParameterAddsUndefinedWithStrictNullChecks.js
++++ new.defaultParameterAddsUndefinedWithStrictNullChecks.js
+@@= skipped -110, +110 lines =@@
+
+
+ //// [defaultParameterAddsUndefinedWithStrictNullChecks.d.ts]
+-declare function f(addUndefined1?: string, addUndefined2?: number): number;
+-declare function g(addUndefined: string | undefined, addDefined: number): number;
+-declare let total: number;
+-declare function foo1(x: string | undefined, b: number): void;
+-declare function foo2(x: string | undefined, b: number): void;
+-declare function foo3(x: string | undefined, b: number): void;
+-declare function foo4(x: string | undefined, b: number): void;
++function f(addUndefined1?: string, addUndefined2?: number): number;
++function g(addUndefined: string | undefined, addDefined: number): number;
++let total: number;
++function foo1(x: string | undefined, b: number): void;
++function foo2(x: string | undefined, b: number): void;
++function foo3(x: string | undefined, b: number): void;
++function foo4(x: string | undefined, b: number): void;
+ type OptionalNullableString = string | null | undefined;
+-declare function allowsNull(val?: OptionalNullableString): void;
+-declare function removeUndefinedButNotFalse(x?: boolean): false | undefined;
+-declare const cond: boolean;
+-declare function removeNothing(y?: boolean | undefined): boolean;
++function allowsNull(val?: OptionalNullableString): void;
++function removeUndefinedButNotFalse(x?: boolean): false | undefined;
++const cond: boolean;
++function removeNothing(y?: boolean | undefined): boolean;
++
++
++//// [DtsFileErrors]
++
++
++defaultParameterAddsUndefinedWithStrictNullChecks.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== defaultParameterAddsUndefinedWithStrictNullChecks.d.ts (1 errors) ====
++    function f(addUndefined1?: string, addUndefined2?: number): number;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    function g(addUndefined: string | undefined, addDefined: number): number;
++    let total: number;
++    function foo1(x: string | undefined, b: number): void;
++    function foo2(x: string | undefined, b: number): void;
++    function foo3(x: string | undefined, b: number): void;
++    function foo4(x: string | undefined, b: number): void;
++    type OptionalNullableString = string | null | undefined;
++    function allowsNull(val?: OptionalNullableString): void;
++    function removeUndefinedButNotFalse(x?: boolean): false | undefined;
++    const cond: boolean;
++    function removeNothing(y?: boolean | undefined): boolean;
++    

@@ -1,0 +1,11 @@
+--- old.nodeModulesDynamicImport(module=node20).js
++++ new.nodeModulesDynamicImport(module=node20).js
+@@= skipped -38, +38 lines =@@
+
+
+ //// [index.d.ts]
+-export declare function main(): Promise<void>;
++export function main(): Promise<void>;
+ //// [index.d.ts]
+-export declare function main(): Promise<void>;
++export function main(): Promise<void>;

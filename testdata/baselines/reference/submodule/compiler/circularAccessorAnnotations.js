@@ -33,13 +33,13 @@ type T3 = {
 
 
 //// [circularAccessorAnnotations.d.ts]
-declare const c1: {
+const c1: {
     get foo(): typeof c1.foo;
 };
-declare const c2: {
+const c2: {
     set foo(value: typeof c2.foo);
 };
-declare const c3: {
+const c3: {
     get foo(): string;
     set foo(value: typeof c3.foo);
 };

@@ -1,0 +1,140 @@
+--- old.typeGuardFunctionOfFormThis.js
++++ new.typeGuardFunctionOfFormThis.js
+@@= skipped -248, +248 lines =@@
+
+
+ //// [typeGuardFunctionOfFormThis.d.ts]
+-declare class RoyalGuard {
++class RoyalGuard {
+     isLeader(): this is LeadGuard;
+     isFollower(): this is FollowerGuard;
+ }
+-declare class LeadGuard extends RoyalGuard {
++class LeadGuard extends RoyalGuard {
+     lead(): void;
+ }
+-declare class FollowerGuard extends RoyalGuard {
++class FollowerGuard extends RoyalGuard {
+     follow(): void;
+ }
+-declare let a: RoyalGuard;
++let a: RoyalGuard;
+ interface GuardInterface extends RoyalGuard {
+ }
+-declare let b: GuardInterface;
+-declare var holder2: {
++let b: GuardInterface;
++var holder2: {
+     a: RoyalGuard;
+ };
+-declare class ArrowGuard {
++class ArrowGuard {
+     isElite: () => this is ArrowElite;
+     isMedic: () => this is ArrowMedic;
+ }
+-declare class ArrowElite extends ArrowGuard {
++class ArrowElite extends ArrowGuard {
+     defend(): void;
+ }
+-declare class ArrowMedic extends ArrowGuard {
++class ArrowMedic extends ArrowGuard {
+     heal(): void;
+ }
+-declare let guard: ArrowGuard;
++let guard: ArrowGuard;
+ interface Supplies {
+     spoiled: boolean;
+ }
+@@= skipped -40, +40 lines =@@
+     isSupplies(): this is Crate<Supplies>;
+     isSundries(): this is Crate<Sundries>;
+ }
+-declare let crate: Crate<{}>;
+-declare class MimicGuard {
++let crate: Crate<{}>;
++class MimicGuard {
+     isLeader(): this is MimicLeader;
+     isFollower(): this is MimicFollower;
+ }
+-declare class MimicLeader extends MimicGuard {
++class MimicLeader extends MimicGuard {
+     lead(): void;
+ }
+-declare class MimicFollower extends MimicGuard {
++class MimicFollower extends MimicGuard {
+     follow(): void;
+ }
+-declare let mimic: MimicGuard;
++let mimic: MimicGuard;
+ interface MimicGuardInterface {
+     isLeader(): this is LeadGuard;
+     isFollower(): this is FollowerGuard;
+ }
++
++
++//// [DtsFileErrors]
++
++
++typeGuardFunctionOfFormThis.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== typeGuardFunctionOfFormThis.d.ts (1 errors) ====
++    class RoyalGuard {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        isLeader(): this is LeadGuard;
++        isFollower(): this is FollowerGuard;
++    }
++    class LeadGuard extends RoyalGuard {
++        lead(): void;
++    }
++    class FollowerGuard extends RoyalGuard {
++        follow(): void;
++    }
++    let a: RoyalGuard;
++    interface GuardInterface extends RoyalGuard {
++    }
++    let b: GuardInterface;
++    var holder2: {
++        a: RoyalGuard;
++    };
++    class ArrowGuard {
++        isElite: () => this is ArrowElite;
++        isMedic: () => this is ArrowMedic;
++    }
++    class ArrowElite extends ArrowGuard {
++        defend(): void;
++    }
++    class ArrowMedic extends ArrowGuard {
++        heal(): void;
++    }
++    let guard: ArrowGuard;
++    interface Supplies {
++        spoiled: boolean;
++    }
++    interface Sundries {
++        broken: boolean;
++    }
++    interface Crate<T> {
++        contents: T;
++        volume: number;
++        isSupplies(): this is Crate<Supplies>;
++        isSundries(): this is Crate<Sundries>;
++    }
++    let crate: Crate<{}>;
++    class MimicGuard {
++        isLeader(): this is MimicLeader;
++        isFollower(): this is MimicFollower;
++    }
++    class MimicLeader extends MimicGuard {
++        lead(): void;
++    }
++    class MimicFollower extends MimicGuard {
++        follow(): void;
++    }
++    let mimic: MimicGuard;
++    interface MimicGuardInterface {
++        isLeader(): this is LeadGuard;
++        isFollower(): this is FollowerGuard;
++    }
++    

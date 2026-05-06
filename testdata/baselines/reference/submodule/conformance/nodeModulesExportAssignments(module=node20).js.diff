@@ -1,0 +1,13 @@
+--- old.nodeModulesExportAssignments(module=node20).js
++++ new.nodeModulesExportAssignments(module=node20).js
+@@= skipped -30, +30 lines =@@
+
+
+ //// [index.d.ts]
+-declare const a: {};
++const a: {};
+ export = a;
+ //// [index.d.ts]
+-declare const a: {};
++const a: {};
+ export = a;

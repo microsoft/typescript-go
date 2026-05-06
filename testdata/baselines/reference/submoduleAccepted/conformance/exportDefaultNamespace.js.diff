@@ -1,11 +1,30 @@
 --- old.exportDefaultNamespace.js
 +++ new.exportDefaultNamespace.js
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
+
 
  //// [exportDefaultNamespace.d.ts]
- declare function someFunc(): string;
+-declare function someFunc(): string;
++function someFunc(): string;
 +export default someFunc;
  declare namespace someFunc {
      var someProp: string;
  }
 -export default someFunc;
++
++
++//// [DtsFileErrors]
++
++
++exportDefaultNamespace.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== exportDefaultNamespace.d.ts (1 errors) ====
++    function someFunc(): string;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    export default someFunc;
++    declare namespace someFunc {
++        var someProp: string;
++    }
++    

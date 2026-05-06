@@ -1,0 +1,11 @@
+--- old.es6ImportDefaultBindingFollowedWithNamedImport1InEs5(target=es2015).js
++++ new.es6ImportDefaultBindingFollowedWithNamedImport1InEs5(target=es2015).js
+@@= skipped -44, +44 lines =@@
+
+
+ //// [es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0.d.ts]
+-declare var a: number;
++var a: number;
+ export default a;
+ //// [es6ImportDefaultBindingFollowedWithNamedImport1InEs5_1.d.ts]
+ export {};

@@ -25,4 +25,17 @@ function g() {
 
 
 //// [modifierOnClassExpressionMemberInFunction.d.ts]
-declare function g(): void;
+function g(): void;
+
+
+//// [DtsFileErrors]
+
+
+modifierOnClassExpressionMemberInFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== modifierOnClassExpressionMemberInFunction.d.ts (1 errors) ====
+    function g(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

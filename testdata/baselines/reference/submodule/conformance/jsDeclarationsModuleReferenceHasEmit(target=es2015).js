@@ -33,11 +33,11 @@ export default A;
 /**
  * @module A
  */
-declare class A {
+class A {
 }
 /**
  * Target element
  * @type {module:A}
  */
-export declare let el: module;
+export let el: module;
 export default A;

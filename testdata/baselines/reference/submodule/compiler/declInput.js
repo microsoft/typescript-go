@@ -24,7 +24,7 @@ class bar {
 //// [declInput.d.ts]
 interface bar {
 }
-declare class bar {
+class bar {
     f(): string;
     g(): {
         a: bar;
@@ -33,3 +33,26 @@ declare class bar {
     };
     h(x?: number, y?: any, z?: string): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+declInput.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declInput.d.ts (1 errors) ====
+    interface bar {
+    }
+    class bar {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        f(): string;
+        g(): {
+            a: bar;
+            b: any;
+            c: any;
+        };
+        h(x?: number, y?: any, z?: string): void;
+    }
+    

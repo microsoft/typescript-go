@@ -13,18 +13,31 @@
  /**
   * @typedef B
   * @property {number} b
-@@= skipped -11, +17 lines =@@
-     value: A;
- }
- declare class C2 extends C1 {
+  */
+-declare class C1 {
+-    /**
+-     * @type {A}
+-     */
+-    value: A;
+-}
+-declare class C2 extends C1 {
+-}
+-declare class C3 extends C1 {
++class C1 {
 +    /**
 +     * @type {A}
 +     */
 +    value: A;
- }
- declare class C3 extends C1 {
++}
++class C2 extends C1 {
++    /**
++     * @type {A}
++     */
++    value: A;
++}
++class C3 extends C1 {
      /**
-@@= skipped -7, +11 lines =@@
+      * @type {A & B}
       */
      value: A & B;
  }

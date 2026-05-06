@@ -1,0 +1,10 @@
+--- old.accessorInferredReturnTypeErrorInReturnStatement.js
++++ new.accessorInferredReturnTypeErrorInReturnStatement.js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [accessorInferredReturnTypeErrorInReturnStatement.d.ts]
+-export declare var basePrototype: {
++export var basePrototype: {
+     readonly primaryPath: any;
+ };

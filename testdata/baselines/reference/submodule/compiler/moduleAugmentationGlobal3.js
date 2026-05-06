@@ -39,10 +39,10 @@ let y = x.getCountAsString().toLowerCase();
 
 
 //// [f1.d.ts]
-export declare class A {
+export class A {
 }
 //// [f2.d.ts]
-declare global {
+global {
     interface Array<T> {
         getCountAsString(): string;
     }
@@ -50,3 +50,28 @@ declare global {
 export {};
 //// [f3.d.ts]
 import "./f2";
+
+
+//// [DtsFileErrors]
+
+
+f2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== f1.d.ts (0 errors) ====
+    export class A {
+    }
+    
+==== f2.d.ts (1 errors) ====
+    global {
+    ~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Array<T> {
+            getCountAsString(): string;
+        }
+    }
+    export {};
+    
+==== f3.d.ts (0 errors) ====
+    import "./f2";
+    

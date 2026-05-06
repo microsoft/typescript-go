@@ -47,7 +47,7 @@ function f1() {
 
 
 //// [declarationEmitComputedNamesInaccessible.d.ts]
-export declare function f1(): {
+export function f1(): {
     new (): {
         [x: string]: (() => string) | (() => number);
     };

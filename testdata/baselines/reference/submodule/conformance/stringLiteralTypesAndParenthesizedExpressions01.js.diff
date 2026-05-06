@@ -1,0 +1,16 @@
+--- old.stringLiteralTypesAndParenthesizedExpressions01.js
++++ new.stringLiteralTypesAndParenthesizedExpressions01.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [stringLiteralTypesAndParenthesizedExpressions01.d.ts]
+-declare function myRandBool(): boolean;
+-declare let a: "foo";
+-declare let b: "foo" | "bar";
+-declare let c: "foo";
+-declare let d: "foo" | "bar";
++function myRandBool(): boolean;
++let a: "foo";
++let b: "foo" | "bar";
++let c: "foo";
++let d: "foo" | "bar";

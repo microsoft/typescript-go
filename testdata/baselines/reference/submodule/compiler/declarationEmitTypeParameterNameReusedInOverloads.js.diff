@@ -1,0 +1,19 @@
+--- old.declarationEmitTypeParameterNameReusedInOverloads.js
++++ new.declarationEmitTypeParameterNameReusedInOverloads.js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [declarationEmitTypeParameterNameReusedInOverloads.d.ts]
+-export declare class Base {
++export class Base {
+     foo: string;
+ }
+-export declare class Derived extends Base {
++export class Derived extends Base {
+     bar: string;
+ }
+-export declare class Derived2 extends Derived {
++export class Derived2 extends Derived {
+     baz: string;
+ }
+ export type Foo = {

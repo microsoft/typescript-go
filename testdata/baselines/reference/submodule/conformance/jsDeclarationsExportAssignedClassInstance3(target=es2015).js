@@ -23,10 +23,10 @@ module.exports.additional = 20;
 
 
 //// [index.d.ts]
-declare class Foo {
+class Foo {
     static stat: number;
     member: number;
 }
-declare const _default: Foo;
+const _default: Foo;
 export = _default;
-export declare var additional: 20;
+export var additional: 20;

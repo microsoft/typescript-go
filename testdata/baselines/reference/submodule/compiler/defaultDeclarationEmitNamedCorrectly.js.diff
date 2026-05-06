@@ -1,0 +1,11 @@
+--- old.defaultDeclarationEmitNamedCorrectly.js
++++ new.defaultDeclarationEmitNamedCorrectly.js
+@@= skipped -34, +34 lines =@@
+     p: P;
+     t: T;
+ }
+-export declare function make<P, CTor>(x: {
++export function make<P, CTor>(x: {
+     new (): CTor & {
+         props: P;
+     };

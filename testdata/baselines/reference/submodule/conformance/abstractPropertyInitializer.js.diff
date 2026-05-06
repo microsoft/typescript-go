@@ -1,0 +1,10 @@
+--- old.abstractPropertyInitializer.js
++++ new.abstractPropertyInitializer.js
+@@= skipped -12, +12 lines =@@
+
+
+ //// [abstractPropertyInitializer.d.ts]
+-declare abstract class C {
++abstract class C {
+     abstract prop: number;
+ }

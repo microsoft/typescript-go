@@ -1,9 +1,17 @@
 --- old.definiteAssignmentAssertionsWithObjectShortHand.js
 +++ new.definiteAssignmentAssertionsWithObjectShortHand.js
-@@= skipped -22, +22 lines =@@
+@@= skipped -17, +17 lines =@@
+
+
+ //// [definiteAssignmentAssertionsWithObjectShortHand.d.ts]
+-declare const a: string | undefined;
+-declare const foo: {
++const a: string | undefined;
++const foo: {
      a: string;
  };
- declare const bar: {
+-declare const bar: {
 -    a?(): void;
++const bar: {
 +    a(): void;
  };

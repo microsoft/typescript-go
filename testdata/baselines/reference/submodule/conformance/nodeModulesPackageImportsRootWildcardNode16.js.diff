@@ -1,0 +1,10 @@
+--- old.nodeModulesPackageImportsRootWildcardNode16.js
++++ new.nodeModulesPackageImportsRootWildcardNode16.js
+@@= skipped -25, +25 lines =@@
+
+
+ //// [foo.d.ts]
+-export declare const foo = "foo";
++export const foo = "foo";
+ //// [index.d.ts]
+ export {};

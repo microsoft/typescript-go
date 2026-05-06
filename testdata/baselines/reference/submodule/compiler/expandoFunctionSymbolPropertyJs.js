@@ -41,7 +41,7 @@ function test() {
 
 
 //// [types.d.ts]
-export declare const symb: unique symbol;
+export const symb: unique symbol;
 export interface TestSymb {
     (): void;
     readonly [symb]: boolean;
@@ -50,4 +50,4 @@ export interface TestSymb {
 /**
  * @returns {import("./types").TestSymb}
  */
-export declare function test(): import("./types").TestSymb;
+export function test(): import("./types").TestSymb;

@@ -1,0 +1,35 @@
+--- old.moduleOuterQualification.js
++++ new.moduleOuterQualification.js
+@@= skipped -14, +14 lines =@@
+
+
+ //// [moduleOuterQualification.d.ts]
+-declare namespace outer {
++namespace outer {
+     interface Beta {
+     }
+     namespace inner {
+@@= skipped -8, +8 lines =@@
+         }
+     }
+ }
++
++
++//// [DtsFileErrors]
++
++
++moduleOuterQualification.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== moduleOuterQualification.d.ts (1 errors) ====
++    namespace outer {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        interface Beta {
++        }
++        namespace inner {
++            interface Beta extends outer.Beta {
++            }
++        }
++    }
++    

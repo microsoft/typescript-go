@@ -114,23 +114,23 @@ else {
 
 
 //// [typeGuardFunctionOfFormThisErrors.d.ts]
-declare class RoyalGuard {
+class RoyalGuard {
     isLeader(): this is LeadGuard;
     isFollower(): this is FollowerGuard;
 }
-declare class LeadGuard extends RoyalGuard {
+class LeadGuard extends RoyalGuard {
     lead(): void;
 }
-declare class FollowerGuard extends RoyalGuard {
+class FollowerGuard extends RoyalGuard {
     follow(): void;
 }
 interface GuardInterface extends RoyalGuard {
 }
-declare let a: RoyalGuard;
-declare let b: GuardInterface;
-declare function invalidGuard(c: any): this is number;
-declare var c: number | number[];
-declare let holder: {
+let a: RoyalGuard;
+let b: GuardInterface;
+function invalidGuard(c: any): this is number;
+var c: number | number[];
+let holder: {
     invalidGuard: typeof invalidGuard;
 };
-declare let detached: () => this is FollowerGuard;
+let detached: () => this is FollowerGuard;

@@ -1,0 +1,21 @@
+--- old.modifierOnClassDeclarationMemberInFunction.js
++++ new.modifierOnClassDeclarationMemberInFunction.js
+@@= skipped -22, +22 lines =@@
+
+
+ //// [modifierOnClassDeclarationMemberInFunction.d.ts]
+-declare function f(): void;
++function f(): void;
++
++
++//// [DtsFileErrors]
++
++
++modifierOnClassDeclarationMemberInFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== modifierOnClassDeclarationMemberInFunction.d.ts (1 errors) ====
++    function f(): void;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

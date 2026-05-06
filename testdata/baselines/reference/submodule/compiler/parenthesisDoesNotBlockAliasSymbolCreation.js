@@ -35,15 +35,15 @@ export type InvalidKeys2<K extends string | number | symbol> = ({
 });
 export type A<T> = (T & InvalidKeys<"a">);
 export type A2<T> = (T & InvalidKeys2<"a">);
-export declare const a: A<{
+export const a: A<{
     x: number;
 }>;
-export declare const a2: A2<{
+export const a2: A2<{
     x: number;
 }>;
-export declare const a3: {
+export const a3: {
     x: number;
 } & InvalidKeys<"a">;
-export declare const a4: {
+export const a4: {
     x: number;
 } & InvalidKeys2<"a">;

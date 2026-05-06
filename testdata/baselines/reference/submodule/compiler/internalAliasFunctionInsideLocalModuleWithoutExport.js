@@ -34,10 +34,10 @@ var c;
 
 
 //// [internalAliasFunctionInsideLocalModuleWithoutExport.d.ts]
-export declare namespace a {
+export namespace a {
     function foo(x: number): number;
 }
-export declare namespace c {
+export namespace c {
     import b = a.foo;
     var bVal2: typeof b;
 }

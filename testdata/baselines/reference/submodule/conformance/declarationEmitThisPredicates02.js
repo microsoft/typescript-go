@@ -32,6 +32,6 @@ export interface Foo {
     b: number;
     c: boolean;
 }
-export declare const obj: {
+export const obj: {
     m(): this is Foo;
 };

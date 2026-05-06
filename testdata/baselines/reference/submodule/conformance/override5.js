@@ -88,7 +88,7 @@ class ADD extends AD {
 
 
 //// [override5.d.ts]
-declare class B {
+class B {
     p1: number;
     p2: number;
     p3: number;
@@ -97,7 +97,7 @@ declare class B {
     pp: number;
     op: number;
 }
-declare class D extends B {
+class D extends B {
     p1: number;
     p2: number;
     readonly p3: number;
@@ -108,19 +108,19 @@ declare class D extends B {
     op: number;
     constructor();
 }
-declare abstract class AB {
+abstract class AB {
     abstract f(): void;
     abstract b(): void;
 }
-declare abstract class AD extends AB {
+abstract class AD extends AB {
     abstract f(): void;
     abstract b(): void;
 }
-declare abstract class AND {
+abstract class AND {
     abstract f(): void;
     abstract b(): void;
 }
-declare class ADD extends AD {
+class ADD extends AD {
     f(): void;
     b(): void;
 }

@@ -32,14 +32,14 @@ var z = v2.b;
 
 
 //// [genericClasses3.d.ts]
-declare class B<T> {
+class B<T> {
     a: T;
     b: T;
 }
-declare class C<T> extends B<T> {
+class C<T> extends B<T> {
     x: T;
 }
-declare var v2: C<string>;
-declare var y: string;
-declare var u: string;
-declare var z: string;
+var v2: C<string>;
+var y: string;
+var u: string;
+var z: string;

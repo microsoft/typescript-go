@@ -46,21 +46,54 @@ class DerivedFromAbstract2 extends Mixin2(AbstractBase) {
 interface Mixin1 {
     mixinMethod(): void;
 }
-declare abstract class AbstractBase {
+abstract class AbstractBase {
     abstract abstractBaseMethod(): void;
 }
-declare function Mixin2<TBase extends abstract new (...args: any[]) => any>(baseClass: TBase): ((abstract new (...args: any[]) => {
+function Mixin2<TBase extends abstract new (...args: any[]) => any>(baseClass: TBase): ((abstract new (...args: any[]) => {
     [x: string]: any;
     mixinMethod(): void;
 }) & {
     staticMixinMethod(): void;
 }) & TBase;
-declare const DerivedFromAbstract2_base: ((abstract new (...args: any[]) => {
+const DerivedFromAbstract2_base: ((abstract new (...args: any[]) => {
     [x: string]: any;
     mixinMethod(): void;
 }) & {
     staticMixinMethod(): void;
 }) & typeof AbstractBase;
-declare class DerivedFromAbstract2 extends DerivedFromAbstract2_base {
+class DerivedFromAbstract2 extends DerivedFromAbstract2_base {
     abstractBaseMethod(): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+mixinAbstractClassesReturnTypeInference.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== mixinAbstractClassesReturnTypeInference.d.ts (1 errors) ====
+    interface Mixin1 {
+        mixinMethod(): void;
+    }
+    abstract class AbstractBase {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        abstract abstractBaseMethod(): void;
+    }
+    function Mixin2<TBase extends abstract new (...args: any[]) => any>(baseClass: TBase): ((abstract new (...args: any[]) => {
+        [x: string]: any;
+        mixinMethod(): void;
+    }) & {
+        staticMixinMethod(): void;
+    }) & TBase;
+    const DerivedFromAbstract2_base: ((abstract new (...args: any[]) => {
+        [x: string]: any;
+        mixinMethod(): void;
+    }) & {
+        staticMixinMethod(): void;
+    }) & typeof AbstractBase;
+    class DerivedFromAbstract2 extends DerivedFromAbstract2_base {
+        abstractBaseMethod(): void;
+    }
+    

@@ -39,6 +39,6 @@ export type Foo = {
 /**
  * @typedef {{x: string}} Foo
  */
-export declare const x = 1;
+export const x = 1;
 //// [b.d.ts]
 export {};

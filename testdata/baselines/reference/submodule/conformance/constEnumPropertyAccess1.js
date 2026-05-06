@@ -53,19 +53,19 @@ class C {
 
 
 //// [constEnumPropertyAccess1.d.ts]
-declare const enum G {
+const enum G {
     A = 1,
     B = 2,
     C = 3,
     D = 2
 }
-declare var o: {
+var o: {
     [idx: number]: boolean;
 };
-declare var a: G;
-declare var a1: G;
-declare var g: boolean;
-declare class C {
+var a: G;
+var a1: G;
+var g: boolean;
+class C {
     [G.A](): void;
     get [G.B](): number;
     set [G.B](x: number);

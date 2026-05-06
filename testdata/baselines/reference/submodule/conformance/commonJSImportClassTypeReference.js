@@ -34,9 +34,28 @@ function f(k) {
 
 
 //// [mod1.d.ts]
-declare class K {
+class K {
     values(): K;
 }
 export { K };
 //// [main.d.ts]
 export {};
+
+
+//// [DtsFileErrors]
+
+
+out/mod1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/main.d.ts (0 errors) ====
+    export {};
+    
+==== out/mod1.d.ts (1 errors) ====
+    class K {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        values(): K;
+    }
+    export { K };
+    

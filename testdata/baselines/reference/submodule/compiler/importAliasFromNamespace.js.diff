@@ -1,0 +1,20 @@
+--- old.importAliasFromNamespace.js
++++ new.importAliasFromNamespace.js
+@@= skipped -50, +50 lines =@@
+
+
+ //// [internal.d.ts]
+-declare namespace My.Internal {
++namespace My.Internal {
+     function getThing(): void;
+     const enum WhichThing {
+         A = 0,
+@@= skipped -10, +10 lines =@@
+ }
+ //// [usage.d.ts]
+ /// <reference path="internal.d.ts" preserve="true" />
+-declare namespace SomeOther.Thing {
++namespace SomeOther.Thing {
+     class Foo {
+         private _which;
+         constructor();

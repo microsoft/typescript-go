@@ -24,11 +24,31 @@ var [x19, y19, z19, ...a13] = [1, "hello", true];
 
 
 //// [declarationEmitDestructuringArrayPattern4.d.ts]
-declare var a5: number[];
-declare var x14: number, a6: [number, number];
-declare var x15: number, y15: number, a7: [number];
-declare var x16: number, y16: number, z16: number, a8: [];
-declare var a9: (string | number | boolean)[];
-declare var x17: number, a10: [string, boolean];
-declare var x18: number, y18: string, a12: [boolean];
-declare var x19: number, y19: string, z19: boolean, a13: [];
+var a5: number[];
+var x14: number, a6: [number, number];
+var x15: number, y15: number, a7: [number];
+var x16: number, y16: number, z16: number, a8: [];
+var a9: (string | number | boolean)[];
+var x17: number, a10: [string, boolean];
+var x18: number, y18: string, a12: [boolean];
+var x19: number, y19: string, z19: boolean, a13: [];
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDestructuringArrayPattern4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDestructuringArrayPattern4.d.ts (1 errors) ====
+    var a5: number[];
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    var x14: number, a6: [number, number];
+    var x15: number, y15: number, a7: [number];
+    var x16: number, y16: number, z16: number, a8: [];
+    var a9: (string | number | boolean)[];
+    var x17: number, a10: [string, boolean];
+    var x18: number, y18: string, a12: [boolean];
+    var x19: number, y19: string, z19: boolean, a13: [];
+    

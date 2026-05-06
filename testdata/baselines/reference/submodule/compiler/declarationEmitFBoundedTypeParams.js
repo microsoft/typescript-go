@@ -19,4 +19,17 @@ function append(result, value) {
 
 
 //// [declarationEmitFBoundedTypeParams.d.ts]
-declare function append<a, b extends a>(result: a[], value: b): a[];
+function append<a, b extends a>(result: a[], value: b): a[];
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitFBoundedTypeParams.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitFBoundedTypeParams.d.ts (1 errors) ====
+    function append<a, b extends a>(result: a[], value: b): a[];
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

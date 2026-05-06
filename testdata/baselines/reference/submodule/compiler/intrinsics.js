@@ -32,10 +32,10 @@ var foo;
 
 
 //// [intrinsics.d.ts]
-declare var hasOwnProperty: hasOwnProperty;
-declare namespace m1 {
+var hasOwnProperty: hasOwnProperty;
+namespace m1 {
     var __proto__: any;
 }
-declare class Foo<__proto__> {
+class Foo<__proto__> {
 }
-declare var foo: (__proto__: number) => void;
+var foo: (__proto__: number) => void;

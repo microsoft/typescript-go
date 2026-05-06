@@ -39,15 +39,15 @@ module.exports = {
 
 
 //// [errors.d.ts]
-declare class FancyError extends Error {
+class FancyError extends Error {
     constructor(status: any);
 }
-declare const _default: {
+const _default: {
     FancyError: typeof FancyError;
 };
 export = _default;
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     errors: {
         FancyError: {
             new (status: any): {
@@ -59,3 +59,36 @@ declare const _default: {
     };
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/index.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        errors: {
+            FancyError: {
+                new (status: any): {
+                    name: string;
+                    message: string;
+                    stack?: string;
+                };
+            };
+        };
+    };
+    export = _default;
+    
+==== out/errors.d.ts (0 errors) ====
+    class FancyError extends Error {
+        constructor(status: any);
+    }
+    const _default: {
+        FancyError: typeof FancyError;
+    };
+    export = _default;
+    

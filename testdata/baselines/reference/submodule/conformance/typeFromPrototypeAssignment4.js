@@ -29,7 +29,7 @@ map4.__underscores__();
 
 
 //// [a.d.ts]
-declare function Multimap4(): void;
+function Multimap4(): void;
 declare namespace Multimap4 {
     var prototype: {
         /**
@@ -39,4 +39,27 @@ declare namespace Multimap4 {
         get(key: string): number;
     };
 }
-declare const map4: any;
+const map4: any;
+
+
+//// [DtsFileErrors]
+
+
+out/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/a.d.ts (1 errors) ====
+    function Multimap4(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    declare namespace Multimap4 {
+        var prototype: {
+            /**
+             * @param {string} key
+             * @returns {number} the value ok
+             */
+            get(key: string): number;
+        };
+    }
+    const map4: any;
+    

@@ -1,0 +1,8 @@
+--- old.importDeferJsdoc.js
++++ new.importDeferJsdoc.js
+@@= skipped -24, +24 lines =@@
+ /**
+  * @type { ns.X }
+  */
+-declare let a: ns.X;
++let a: ns.X;

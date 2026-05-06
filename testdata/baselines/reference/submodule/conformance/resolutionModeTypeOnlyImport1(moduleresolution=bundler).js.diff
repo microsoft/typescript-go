@@ -1,0 +1,11 @@
+--- old.resolutionModeTypeOnlyImport1(moduleresolution=bundler).js
++++ new.resolutionModeTypeOnlyImport1(moduleresolution=bundler).js
+@@= skipped -46, +46 lines =@@
+
+
+ //// [other.d.ts]
+-export declare const x = "other";
++export const x = "other";
+ //// [app.d.ts]
+ import type { x as Default } from "foo";
+ import type { x as Import } from "foo" with { "resolution-mode": "import" };

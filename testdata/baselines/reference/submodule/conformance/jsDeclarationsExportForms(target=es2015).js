@@ -261,10 +261,10 @@ require("./bar2");
 
 
 //// [cls.d.ts]
-export declare class Foo {
+export class Foo {
 }
 //// [func.d.ts]
-export declare function func(): void;
+export function func(): void;
 //// [bar.d.ts]
 export * from "./cls";
 //// [bar2.d.ts]
@@ -284,7 +284,7 @@ import * as ns from "./cls";
 export { ns as classContainer };
 //// [cjs.d.ts]
 import ns = require("./cls");
-declare const _default: {
+const _default: {
     ns: typeof ns;
 };
 export = _default;
@@ -308,3 +308,74 @@ import "./bat";
 import "./baz";
 import "./bar";
 import "./bar2";
+
+
+//// [DtsFileErrors]
+
+
+out/cjs.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/cls.d.ts (0 errors) ====
+    export class Foo {
+    }
+    
+==== out/func.d.ts (0 errors) ====
+    export function func(): void;
+    
+==== out/bar.d.ts (0 errors) ====
+    export * from "./cls";
+    
+==== out/bar2.d.ts (0 errors) ====
+    export * from "./func";
+    export * from "./cls";
+    
+==== out/baz.d.ts (0 errors) ====
+    import { Foo } from "./cls";
+    export { Foo };
+    
+==== out/bat.d.ts (0 errors) ====
+    import * as ns from "./cls";
+    export default ns;
+    
+==== out/ban.d.ts (0 errors) ====
+    import * as ns from "./cls";
+    export { ns };
+    
+==== out/bol.d.ts (0 errors) ====
+    import * as ns from "./cls";
+    export { ns as classContainer };
+    
+==== out/cjs.d.ts (1 errors) ====
+    import ns = require("./cls");
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        ns: typeof ns;
+    };
+    export = _default;
+    
+==== out/cjs2.d.ts (0 errors) ====
+    import ns = require("./cls");
+    export = ns;
+    
+==== out/cjs3.d.ts (0 errors) ====
+    import ns = require("./cls");
+    export { ns };
+    
+==== out/cjs4.d.ts (0 errors) ====
+    import ns = require("./cls");
+    export { ns as names };
+    
+==== out/includeAll.d.ts (0 errors) ====
+    import "./cjs4";
+    import "./cjs3";
+    import "./cjs2";
+    import "./cjs";
+    import "./bol";
+    import "./ban";
+    import "./bat";
+    import "./baz";
+    import "./bar";
+    import "./bar2";
+    

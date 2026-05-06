@@ -35,14 +35,40 @@ const c = "";
 interface Foo {
     foo: string;
 }
-declare namespace NS {
+namespace NS {
     interface Bar {
         baz: Foo;
     }
 }
 /** @see {Foo} foooo*/
-declare const a = "";
+const a = "";
 /** @see {NS.Bar} ns.bar*/
-declare const b = "";
+const b = "";
 /** @see {b} b */
-declare const c = "";
+const c = "";
+
+
+//// [DtsFileErrors]
+
+
+seeTag1.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== seeTag1.d.ts (1 errors) ====
+    interface Foo {
+        foo: string;
+    }
+    namespace NS {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Bar {
+            baz: Foo;
+        }
+    }
+    /** @see {Foo} foooo*/
+    const a = "";
+    /** @see {NS.Bar} ns.bar*/
+    const b = "";
+    /** @see {b} b */
+    const c = "";
+    

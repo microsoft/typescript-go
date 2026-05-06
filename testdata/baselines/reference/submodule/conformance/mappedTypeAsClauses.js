@@ -262,9 +262,9 @@ type PickByValueType<T, U> = {
     [K in keyof T as T[K] extends U ? K : never]: T[K];
 };
 type T1 = PickByValueType<Example, string>;
-declare const e1: T1;
+const e1: T1;
 type T2 = keyof T1;
-declare const e2: T2;
+const e2: T2;
 interface Car {
     name: string;
     seats: number;
@@ -283,10 +283,10 @@ type Primitive = string | number | boolean;
 type OnlyPrimitives<T> = {
     [K in keyof T as T[K] extends Primitive ? K : never]: T[K];
 };
-declare let primitiveCar: OnlyPrimitives<Car>;
-declare let keys: keyof OnlyPrimitives<Car>;
+let primitiveCar: OnlyPrimitives<Car>;
+let keys: keyof OnlyPrimitives<Car>;
 type KeysOfPrimitives<T> = keyof OnlyPrimitives<T>;
-declare let carKeys: KeysOfPrimitives<Car>;
+let carKeys: KeysOfPrimitives<Car>;
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
 type If<Cond extends boolean, Then, Else> = Cond extends true ? Then : Else;
 type GetKey<S, V> = keyof {
@@ -318,7 +318,7 @@ interface M {
     a: boolean;
     b: number;
 }
-declare function f(x: KeysExtendedBy<M, number>): "b";
+function f(x: KeysExtendedBy<M, number>): "b";
 type NameMap = {
     'a': 'x';
     'b': 'y';

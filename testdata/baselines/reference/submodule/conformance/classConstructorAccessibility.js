@@ -80,20 +80,20 @@ var Generic;
 
 
 //// [classConstructorAccessibility.d.ts]
-declare class C {
+class C {
     x: number;
     constructor(x: number);
 }
-declare class D {
+class D {
     x: number;
     private constructor();
 }
-declare class E {
+class E {
     x: number;
     protected constructor(x: number);
 }
-declare var c: C;
-declare var d: D;
-declare var e: E;
-declare namespace Generic {
+var c: C;
+var d: D;
+var e: E;
+namespace Generic {
 }

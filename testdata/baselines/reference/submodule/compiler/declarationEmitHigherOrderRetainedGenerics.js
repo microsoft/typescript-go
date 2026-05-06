@@ -127,12 +127,12 @@ export interface TypeLambda {
     readonly Out1: unknown;
     readonly Target: unknown;
 }
-export declare namespace Types {
+export namespace Types {
     type Invariant<A> = (_: A) => A;
     type Covariant<A> = (_: never) => A;
     type Contravariant<A> = (_: A) => void;
 }
-export declare const URI: unique symbol;
+export const URI: unique symbol;
 export interface TypeClass<F extends TypeLambda> {
     readonly [URI]?: F;
 }
@@ -168,16 +168,16 @@ export interface SemiProduct<F extends TypeLambda> extends Invariant<F> {
 }
 export interface SemiApplicative<F extends TypeLambda> extends SemiProduct<F>, Covariant<F> {
 }
-export declare const SK: <A, B>(_: A, b: B) => B;
-export declare const dual: {
+export const SK: <A, B>(_: A, b: B) => B;
+export const dual: {
     <DataLast extends (...args: Array<any>) => any, DataFirst extends (...args: Array<any>) => any>(arity: Parameters<DataFirst>["length"], body: DataFirst): DataLast & DataFirst;
     <DataLast extends (...args: Array<any>) => any, DataFirst extends (...args: Array<any>) => any>(isDataFirst: (args: IArguments) => boolean, body: DataFirst): DataLast & DataFirst;
 };
-export declare const zipWith: <F extends TypeLambda>(F: SemiApplicative<F>) => {
+export const zipWith: <F extends TypeLambda>(F: SemiApplicative<F>) => {
     <R2, O2, E2, B, A, C>(that: Kind<F, R2, O2, E2, B>, f: (a: A, b: B) => C): <R1, O1, E1>(self: Kind<F, R1, O1, E1, A>) => Kind<F, R1 & R2, O2 | O1, E2 | E1, C>;
     <R1, O1, E1, A, R2, O2, E2, B, C>(self: Kind<F, R1, O1, E1, A>, that: Kind<F, R2, O2, E2, B>, f: (a: A, b: B) => C): Kind<F, R1 & R2, O1 | O2, E1 | E2, C>;
 };
-export declare const zipRight: <F extends TypeLambda>(F: SemiApplicative<F>) => {
+export const zipRight: <F extends TypeLambda>(F: SemiApplicative<F>) => {
     <R2, O2, E2, B>(that: Kind<F, R2, O2, E2, B>): <R1, O1, E1, _>(self: Kind<F, R1, O1, E1, _>) => Kind<F, R1 & R2, O2 | O1, E2 | E1, B>;
     <R1, O1, E1, _, R2, O2, E2, B>(self: Kind<F, R1, O1, E1, _>, that: Kind<F, R2, O2, E2, B>): Kind<F, R1 & R2, O1 | O2, E1 | E2, B>;
 };

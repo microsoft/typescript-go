@@ -23,6 +23,6 @@ exports.thing = {
 
 
 //// [checkingObjectWithThisInNamePositionNoCrash.d.ts]
-export declare const thing: {
+export const thing: {
     doit(): any;
 };

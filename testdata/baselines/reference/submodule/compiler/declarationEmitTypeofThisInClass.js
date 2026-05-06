@@ -13,7 +13,23 @@ class Foo {
 
 
 //// [declarationEmitTypeofThisInClass.d.ts]
-declare class Foo {
+class Foo {
     foo: string;
     bar: typeof this.foo;
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitTypeofThisInClass.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitTypeofThisInClass.d.ts (1 errors) ====
+    class Foo {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        foo: string;
+        bar: typeof this.foo;
+    }
+    

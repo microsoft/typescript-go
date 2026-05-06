@@ -46,10 +46,10 @@ export let oo = {
 
 
 //// [isolatedDeclarationLazySymbols.d.ts]
-export declare function foo(): void;
-export declare class Foo {
+export function foo(): void;
+export class Foo {
 }
-export declare let oo: {
+export let oo: {
     a: string;
     b: string;
 };

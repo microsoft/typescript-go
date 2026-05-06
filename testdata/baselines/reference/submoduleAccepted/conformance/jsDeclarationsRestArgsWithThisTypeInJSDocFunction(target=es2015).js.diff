@@ -1,11 +1,6 @@
 --- old.jsDeclarationsRestArgsWithThisTypeInJSDocFunction(target=es2015).js
 +++ new.jsDeclarationsRestArgsWithThisTypeInJSDocFunction(target=es2015).js
-@@= skipped -18, +18 lines =@@
-
-
- //// [bug38550.d.ts]
--export class Clazz {
-+export declare class Clazz {
+@@= skipped -22, +22 lines =@@
      /**
       * @param {function(this:Object, ...*):*} functionDeclaration
       */

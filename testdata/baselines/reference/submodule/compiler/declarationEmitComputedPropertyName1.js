@@ -29,7 +29,7 @@ export interface IData {
 
 
 //// [declarationEmitComputedPropertyName1.d.ts]
-export declare const c: {
+export const c: {
     data: {
         ["a_b_c"]: string;
         ["sss"]: string;

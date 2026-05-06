@@ -24,7 +24,7 @@ ns.default.a;
 
 
 //// [a.d.cts]
-export declare const a: number;
+export const a: number;
 //// [foo.d.mts]
 import d, { a } from './a.cjs';
 import * as ns from './a.cjs';

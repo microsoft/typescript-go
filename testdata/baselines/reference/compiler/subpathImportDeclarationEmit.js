@@ -43,13 +43,13 @@ console.log(await bar());
 
 
 //// [subpath.d.ts]
-declare function bar(): Promise<string>;
-export declare const barrel: {
+function bar(): Promise<string>;
+export const barrel: {
     bar: typeof bar;
 };
 export {};
 //// [indirect.d.ts]
-declare const bar: () => Promise<string>;
+const bar: () => Promise<string>;
 export { bar };
 //// [main.d.ts]
 export {};

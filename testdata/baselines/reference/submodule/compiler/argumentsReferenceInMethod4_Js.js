@@ -43,7 +43,7 @@ class A {
 
 
 //// [a.d.ts]
-declare class A {
+class A {
     /**
      * @type object
      */

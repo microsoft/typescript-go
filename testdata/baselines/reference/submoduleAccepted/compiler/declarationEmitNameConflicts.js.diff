@@ -1,6 +1,32 @@
 --- old.declarationEmitNameConflicts.js
 +++ new.declarationEmitNameConflicts.js
-@@= skipped -155, +155 lines =@@
+@@= skipped -121, +121 lines =@@
+
+
+ //// [declarationEmit_nameConflicts_1.d.ts]
+-declare namespace f {
++namespace f {
+     class c {
+     }
+ }
+ export = f;
+ //// [declarationEmit_nameConflicts_0.d.ts]
+ import im = require('./declarationEmit_nameConflicts_1');
+-export declare namespace M {
++export namespace M {
+     function f(): void;
+     class C {
+     }
+@@= skipped -21, +21 lines =@@
+     export import c = N;
+     export import d = im;
+ }
+-export declare namespace M.P {
++export namespace M.P {
+     function f(): void;
+     class C {
+     }
+@@= skipped -13, +13 lines =@@
      var a: typeof M.f;
      var b: typeof M.C;
      var c: typeof M.N;
@@ -9,5 +35,80 @@
 +    var g: typeof M.c.g;
 +    var d: typeof import("./declarationEmit_nameConflicts_1");
  }
- export declare namespace M.Q {
+-export declare namespace M.Q {
++export namespace M.Q {
      function f(): void;
+     class C {
+     }
+@@= skipped -21, +21 lines =@@
+         }
+     }
+ }
++
++
++//// [DtsFileErrors]
++
++
++declarationEmit_nameConflicts_1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmit_nameConflicts_0.d.ts (0 errors) ====
++    import im = require('./declarationEmit_nameConflicts_1');
++    export namespace M {
++        function f(): void;
++        class C {
++        }
++        namespace N {
++            function g(): void;
++            interface I {
++            }
++        }
++        export import a = M.f;
++        export import b = M.C;
++        export import c = N;
++        export import d = im;
++    }
++    export namespace M.P {
++        function f(): void;
++        class C {
++        }
++        namespace N {
++            function g(): void;
++            interface I {
++            }
++        }
++        export import im = M.P.f;
++        var a: typeof M.f;
++        var b: typeof M.C;
++        var c: typeof M.N;
++        var g: typeof M.c.g;
++        var d: typeof import("./declarationEmit_nameConflicts_1");
++    }
++    export namespace M.Q {
++        function f(): void;
++        class C {
++        }
++        namespace N {
++            function g(): void;
++            interface I {
++            }
++        }
++        interface b extends M.b {
++        }
++        interface I extends M.c.I {
++        }
++        namespace c {
++            interface I extends M.c.I {
++            }
++        }
++    }
++    
++==== declarationEmit_nameConflicts_1.d.ts (1 errors) ====
++    namespace f {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        class c {
++        }
++    }
++    export = f;
++    

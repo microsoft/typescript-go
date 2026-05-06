@@ -1,0 +1,11 @@
+--- old.privateNameDeclaration.js
++++ new.privateNameDeclaration.js
+@@= skipped -27, +27 lines =@@
+
+
+ //// [privateNameDeclaration.d.ts]
+-declare class A {
++class A {
+     #private;
+     baz: string;
+     qux: number;

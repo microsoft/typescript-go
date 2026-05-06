@@ -1,0 +1,49 @@
+--- old.typeofImportTypeOnlyExport.js
++++ new.typeofImportTypeOnlyExport.js
+@@= skipped -37, +37 lines =@@
+
+
+ //// [lit.d.ts]
+-declare class ClassMapDirective {
++class ClassMapDirective {
+ }
+ export type { ClassMapDirective };
+-export declare const directive: <C>(class_: C) => () => {
++export const directive: <C>(class_: C) => () => {
+     directive: C;
+ };
+-export declare const classMap: () => {
++export const classMap: () => {
+     directive: typeof ClassMapDirective;
+ };
+ //// [button.d.ts]
+-export declare const c: {
++export const c: {
+     directive: typeof import("./lit.js").ClassMapDirective;
+ };
++
++
++//// [DtsFileErrors]
++
++
++lit.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== button.d.ts (0 errors) ====
++    export const c: {
++        directive: typeof import("./lit.js").ClassMapDirective;
++    };
++    
++==== lit.d.ts (1 errors) ====
++    class ClassMapDirective {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    export type { ClassMapDirective };
++    export const directive: <C>(class_: C) => () => {
++        directive: C;
++    };
++    export const classMap: () => {
++        directive: typeof ClassMapDirective;
++    };
++    

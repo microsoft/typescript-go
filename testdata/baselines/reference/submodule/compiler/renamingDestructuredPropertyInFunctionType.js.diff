@@ -1,0 +1,42 @@
+--- old.renamingDestructuredPropertyInFunctionType.js
++++ new.renamingDestructuredPropertyInFunctionType.js
+@@= skipped -168, +168 lines =@@
+         a: any;
+     }): any;
+ }
+-declare function f1({ a: string }: O): void;
+-declare const f2: ({ a: string }: O) => void;
+-declare const f3: ({ a: string, b, c }: O) => void;
+-declare const f4: ({ a: string }: O) => typeof string;
+-declare const f5: ({ a: string, b, c }: O) => typeof string;
+-declare const obj1: {
++function f1({ a: string }: O): void;
++const f2: ({ a: string }: O) => void;
++const f3: ({ a: string, b, c }: O) => void;
++const f4: ({ a: string }: O) => typeof string;
++const f5: ({ a: string, b, c }: O) => typeof string;
++const obj1: {
+     method({ a: string }: O): void;
+ };
+-declare const obj2: {
++const obj2: {
+     method({ a: string }: O): typeof string;
+ };
+-declare function f6({ a: string }: O): void;
+-declare const f7: ({ a: string, b, c }: O) => void;
+-declare const f8: ({ "a": string }: O) => void;
+-declare function f9({ 2: string }: {
++function f6({ a: string }: O): void;
++const f7: ({ a: string, b, c }: O) => void;
++const f8: ({ "a": string }: O) => void;
++function f9({ 2: string }: {
+     2: any;
+ }): void;
+-declare function f10({ ["a"]: string }: O): void;
+-declare const f11: ({ [2]: string }: {
++function f10({ ["a"]: string }: O): void;
++const f11: ({ [2]: string }: {
+     2: any;
+ }) => void;
+-declare function f12({ a: string }: O): typeof string;
++function f12({ a: string }: O): typeof string;

@@ -13,4 +13,4 @@ export const x = "yes";
 
 
 //// [chainer.d.ts]
-export declare const x: import(import("./a").LookAt).Value;
+export const x: import(import("./a").LookAt).Value;

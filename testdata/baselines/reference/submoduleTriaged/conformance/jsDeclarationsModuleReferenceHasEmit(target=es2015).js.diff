@@ -4,19 +4,19 @@
 
  //// [index.d.ts]
  /**
-- * Target element
-- * @type {module:A}
-- */
--export let el: any;
--export default A;
--/**
-  * @module A
-  */
- declare class A {
- }
-+/**
-+ * Target element
-+ * @type {module:A}
++ * @module A
 + */
-+export declare let el: module;
-+export default A;
++class A {
++}
++/**
+  * Target element
+  * @type {module:A}
+  */
+-export let el: any;
++export let el: module;
+ export default A;
+-/**
+- * @module A
+- */
+-declare class A {
+-}

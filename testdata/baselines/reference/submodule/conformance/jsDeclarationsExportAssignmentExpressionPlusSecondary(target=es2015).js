@@ -32,11 +32,11 @@ module.exports.Strings = Strings;
 
 
 //// [index.d.ts]
-declare const Strings: {
+const Strings: {
     a: string;
     b: string;
 };
-declare const _default: {
+const _default: {
     thing: string;
     also: string;
     desc: {

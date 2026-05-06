@@ -1,0 +1,11 @@
+--- old.typeGuardOfFormThisMemberErrors(target=es2015).js
++++ new.typeGuardOfFormThisMemberErrors(target=es2015).js
+@@= skipped -71, +71 lines =@@
+
+
+ //// [typeGuardOfFormThisMemberErrors.d.ts]
+-declare namespace Test {
++namespace Test {
+     class FileSystemObject {
+         path: string;
+         isFSO: this is FileSystemObject;

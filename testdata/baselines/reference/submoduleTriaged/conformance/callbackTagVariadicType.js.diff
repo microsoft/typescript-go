@@ -6,6 +6,5 @@
   */
 +export type Foo = (...args: string) => number;
  /** @type {Foo} */
--export const x: Foo;
+ export const x: Foo;
 -export type Foo = (...args: string[]) => number;
-+export declare const x: Foo;

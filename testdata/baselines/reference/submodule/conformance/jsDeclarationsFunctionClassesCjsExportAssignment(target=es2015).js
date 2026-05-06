@@ -144,7 +144,7 @@ module.exports = Hook;
 /**
  * @param {number} timeout
  */
-declare function Timer(timeout: number): void;
+function Timer(timeout: number): void;
 export = Timer;
 //// [context.d.ts]
 /**
@@ -185,7 +185,7 @@ export type State = {
  * @class
  * @param {Input} input
  */
-declare function Context(input: Input): any;
+function Context(input: Input): any;
 declare namespace Context {
     var prototype: {
         /**
@@ -205,5 +205,5 @@ export type HookHandler = (arg: import("./context")) => void;
 /**
  * @param {HookHandler} handle
  */
-declare function Hook(handle: HookHandler): void;
+function Hook(handle: HookHandler): void;
 export = Hook;

@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 //// [privacyCheckExternalModuleExportAssignmentOfGenericClass_0.d.ts]
 export = Foo;
-declare class Foo<A> {
+class Foo<A> {
     a: A;
     constructor(a: A);
 }
@@ -38,3 +38,27 @@ export = Bar;
 interface Bar {
     foo: Foo<number>;
 }
+
+
+//// [DtsFileErrors]
+
+
+privacyCheckExternalModuleExportAssignmentOfGenericClass_0.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyCheckExternalModuleExportAssignmentOfGenericClass_1.d.ts (0 errors) ====
+    import Foo = require("./privacyCheckExternalModuleExportAssignmentOfGenericClass_0");
+    export = Bar;
+    interface Bar {
+        foo: Foo<number>;
+    }
+    
+==== privacyCheckExternalModuleExportAssignmentOfGenericClass_0.d.ts (1 errors) ====
+    export = Foo;
+    class Foo<A> {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        a: A;
+        constructor(a: A);
+    }
+    

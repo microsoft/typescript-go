@@ -31,4 +31,4 @@ export const a = (await import("inner")).x();
 
 
 //// [index.d.ts]
-export declare const a: any;
+export const a: any;

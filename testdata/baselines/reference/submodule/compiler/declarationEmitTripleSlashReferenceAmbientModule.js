@@ -23,6 +23,6 @@ export const thing = parse();
 //// [usage1.d.ts]
 export { parse } from "url";
 //// [usage2.d.ts]
-export declare const thing: import("url").Url;
+export const thing: import("url").Url;
 //// [usage3.d.ts]
-export declare const thing: import("url").Url;
+export const thing: import("url").Url;

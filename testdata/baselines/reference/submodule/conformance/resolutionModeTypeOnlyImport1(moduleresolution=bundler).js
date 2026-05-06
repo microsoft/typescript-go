@@ -47,7 +47,7 @@ export const x = "other";
 
 
 //// [other.d.ts]
-export declare const x = "other";
+export const x = "other";
 //// [app.d.ts]
 import type { x as Default } from "foo";
 import type { x as Import } from "foo" with { "resolution-mode": "import" };

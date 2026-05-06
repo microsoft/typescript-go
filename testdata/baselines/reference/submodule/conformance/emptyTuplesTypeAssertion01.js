@@ -11,5 +11,5 @@ let y = x[0];
 
 
 //// [emptyTuplesTypeAssertion01.d.ts]
-declare let x: [];
-declare let y: undefined;
+let x: [];
+let y: undefined;

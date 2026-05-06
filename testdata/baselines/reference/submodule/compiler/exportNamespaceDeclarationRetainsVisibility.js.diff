@@ -1,0 +1,38 @@
+--- old.exportNamespaceDeclarationRetainsVisibility.js
++++ new.exportNamespaceDeclarationRetainsVisibility.js
+@@= skipped -20, +20 lines =@@
+
+
+ //// [exportNamespaceDeclarationRetainsVisibility.d.ts]
+-declare namespace X {
++namespace X {
+     interface A {
+         kind: 'a';
+     }
+@@= skipped -11, +11 lines =@@
+     export {};
+ }
+ export = X;
++
++
++//// [DtsFileErrors]
++
++
++exportNamespaceDeclarationRetainsVisibility.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== exportNamespaceDeclarationRetainsVisibility.d.ts (1 errors) ====
++    namespace X {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        interface A {
++            kind: 'a';
++        }
++        interface B {
++            kind: 'b';
++        }
++        export type C = A | B;
++        export {};
++    }
++    export = X;
++    

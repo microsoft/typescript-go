@@ -69,10 +69,10 @@ main.ts
 [[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/home/src/projects/myproject/decls/main.d.ts] *new* 
-export declare const y = 10;
+export const y = 10;
 
 //// [/home/src/projects/myproject/decls/types/sometype.d.ts] *new* 
-export declare const x = 10;
+export const x = 10;
 
 //// [/home/src/projects/myproject/outDir/main.js] *new* 
 // some comment

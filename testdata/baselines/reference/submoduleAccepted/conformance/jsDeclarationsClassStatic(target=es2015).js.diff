@@ -5,7 +5,8 @@
 
  //// [source.d.ts]
 -export = Handler;
- declare class Handler {
+-declare class Handler {
++class Handler {
      static get OPTIONS(): number;
      process(): void;
  }
@@ -23,7 +24,7 @@
 -     */
 +    var statische: () => void;
 +}
-+declare const Strings: {
++const Strings: {
 +    a: string;
 +    b: string;
 +};

@@ -32,7 +32,7 @@ export const { useTestQuery } = slice;
 type Id<T> = {
     [K in keyof T]: T[K];
 } & {};
-export declare function createApi<Definitions>(_: {
+export function createApi<Definitions>(_: {
     endpoints: Definitions;
 }): {
     [K in keyof Definitions as `use${Capitalize<K & string>}Query`]: () => Id<{
@@ -42,7 +42,7 @@ export declare function createApi<Definitions>(_: {
 };
 export {};
 //// [index.d.ts]
-export declare const useTestQuery: () => {
+export const useTestQuery: () => {
     status: "uninitialized";
     originalArgs?: undefined;
 };

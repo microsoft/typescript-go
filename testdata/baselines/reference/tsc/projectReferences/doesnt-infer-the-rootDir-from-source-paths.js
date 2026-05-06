@@ -39,13 +39,13 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/alpha/bin/src/a.d.ts] *new* 
-export declare const m: number;
+export const m: number;
 
 //// [/home/src/workspaces/project/alpha/bin/src/a.js] *new* 
 export const m = 3;
 
 //// [/home/src/workspaces/project/alpha/bin/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../src/a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"2b6cc65e84778a8f25c0bc94021b2656-export const m: number = 3;","signature":"b9eb93bd7f963b3a9524dc6c507eb73b-export declare const m: number;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/a.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../src/a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"2b6cc65e84778a8f25c0bc94021b2656-export const m: number = 3;","signature":"69866d09a4a28d0babfb4ffd6d941843-export const m: number;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/a.d.ts"}
 //// [/home/src/workspaces/project/alpha/bin/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -77,11 +77,11 @@ export const m = 3;
     {
       "fileName": "../src/a.ts",
       "version": "2b6cc65e84778a8f25c0bc94021b2656-export const m: number = 3;",
-      "signature": "b9eb93bd7f963b3a9524dc6c507eb73b-export declare const m: number;\n",
+      "signature": "69866d09a4a28d0babfb4ffd6d941843-export const m: number;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "2b6cc65e84778a8f25c0bc94021b2656-export const m: number = 3;",
-        "signature": "b9eb93bd7f963b3a9524dc6c507eb73b-export declare const m: number;\n",
+        "signature": "69866d09a4a28d0babfb4ffd6d941843-export const m: number;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -91,7 +91,7 @@ export const m = 3;
     "outDir": "./"
   },
   "latestChangedDtsFile": "./src/a.d.ts",
-  "size": 1132
+  "size": 1124
 }
 
 alpha/tsconfig.json::

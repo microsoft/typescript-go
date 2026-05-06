@@ -468,10 +468,10 @@ type T02 = Exclude<string | number | (() => void), Function>;
 type T03 = Extract<string | number | (() => void), Function>;
 type T04 = NonNullable<string | number | undefined>;
 type T05 = NonNullable<(() => string) | string[] | null | undefined>;
-declare function f1<T>(x: T, y: NonNullable<T>): void;
-declare function f2<T extends string | undefined>(x: T, y: NonNullable<T>): void;
-declare function f3<T>(x: Partial<T>[keyof T], y: NonNullable<Partial<T>[keyof T]>): void;
-declare function f4<T extends {
+function f1<T>(x: T, y: NonNullable<T>): void;
+function f2<T extends string | undefined>(x: T, y: NonNullable<T>): void;
+function f3<T>(x: Partial<T>[keyof T], y: NonNullable<Partial<T>[keyof T]>): void;
+function f4<T extends {
     x: string | undefined;
 }>(x: T["x"], y: NonNullable<T["x"]>): void;
 type Options = {
@@ -506,10 +506,10 @@ type T14 = Exclude<Options, {
 type T15 = Extract<Options, {
     q: "a";
 }>;
-declare function f5<T extends Options, K extends string>(p: K): Extract<T, {
+function f5<T extends Options, K extends string>(p: K): Extract<T, {
     k: K;
 }>;
-declare let x0: {
+let x0: {
     k: "a";
     a: number;
 };
@@ -558,19 +558,19 @@ type NonFunctionPropertyNames<T> = {
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 type T30 = FunctionProperties<Part>;
 type T31 = NonFunctionProperties<Part>;
-declare function f7<T>(x: T, y: FunctionProperties<T>, z: NonFunctionProperties<T>): void;
-declare function f8<T>(x: keyof T, y: FunctionPropertyNames<T>, z: NonFunctionPropertyNames<T>): void;
+function f7<T>(x: T, y: FunctionProperties<T>, z: NonFunctionProperties<T>): void;
+function f8<T>(x: keyof T, y: FunctionPropertyNames<T>, z: NonFunctionPropertyNames<T>): void;
 type DeepReadonly<T> = T extends any[] ? DeepReadonlyArray<T[number]> : T extends object ? DeepReadonlyObject<T> : T;
 interface DeepReadonlyArray<T> extends ReadonlyArray<DeepReadonly<T>> {
 }
 type DeepReadonlyObject<T> = {
     readonly [P in NonFunctionPropertyNames<T>]: DeepReadonly<T[P]>;
 };
-declare function f10(part: DeepReadonly<Part>): void;
+function f10(part: DeepReadonly<Part>): void;
 type ZeroOf<T extends number | string | boolean> = T extends number ? 0 : T extends string ? "" : false;
-declare function zeroOf<T extends number | string | boolean>(value: T): ZeroOf<T>;
-declare function f20<T extends string>(n: number, b: boolean, x: number | boolean, y: T): void;
-declare function f21<T extends number | string>(x: T, y: ZeroOf<T>): void;
+function zeroOf<T extends number | string | boolean>(value: T): ZeroOf<T>;
+function f20<T extends string>(n: number, b: boolean, x: number | boolean, y: T): void;
+function f21<T extends number | string>(x: T, y: ZeroOf<T>): void;
 type T35<T extends {
     a: string;
     b: number;
@@ -628,8 +628,8 @@ type IsNever<T> = [T] extends [never] ? true : false;
 type T50 = IsNever<never>;
 type T51 = IsNever<number>;
 type T52 = IsNever<any>;
-declare function f22<T>(x: T extends (infer U)[] ? U[] : never): void;
-declare function f23<T extends string[]>(x: T extends (infer U)[] ? U[] : never): void;
+function f22<T>(x: T extends (infer U)[] ? U[] : never): void;
+function f23<T extends string[]>(x: T extends (infer U)[] ? U[] : never): void;
 type Eq<T, U> = T extends U ? U extends T ? true : false : false;
 type T60 = Eq<true, true>;
 type T61 = Eq<true, false>;
@@ -647,25 +647,25 @@ type T82 = Eq2<false, true>;
 type T83 = Eq2<false, false>;
 type Foo<T> = T extends string ? boolean : number;
 type Bar<T> = T extends string ? boolean : number;
-declare const convert: <U>(value: Foo<U>) => Bar<U>;
+const convert: <U>(value: Foo<U>) => Bar<U>;
 type Baz<T> = Foo<T>;
-declare const convert2: <T>(value: Foo<T>) => Baz<T>;
-declare function f31<T>(): void;
-declare function f32<T, U>(): void;
-declare function f33<T, U>(): void;
+const convert2: <T>(value: Foo<T>) => Baz<T>;
+function f31<T>(): void;
+function f32<T, U>(): void;
+function f33<T, U>(): void;
 type T90<T> = T extends 0 ? 0 : () => 0;
 type T91<T> = T extends 0 ? 0 : () => 0;
-declare const f40: <U>(a: T90<U>) => T91<U>;
-declare const f41: <U>(a: T91<U>) => T90<U>;
+const f40: <U>(a: T90<U>) => T91<U>;
+const f41: <U>(a: T91<U>) => T90<U>;
 type T92<T> = T extends () => 0 ? () => 1 : () => 2;
 type T93<T> = T extends () => 0 ? () => 1 : () => 2;
-declare const f42: <U>(a: T92<U>) => T93<U>;
-declare const f43: <U>(a: T93<U>) => T92<U>;
+const f42: <U>(a: T92<U>) => T93<U>;
+const f43: <U>(a: T93<U>) => T92<U>;
 type T94<T> = T extends string ? true : 42;
 type T95<T> = T extends string ? boolean : number;
-declare const f44: <U>(value: T94<U>) => T95<U>;
-declare const f45: <U>(value: T95<U>) => T94<U>;
-declare function f50(): void;
+const f44: <U>(value: T94<U>) => T95<U>;
+const f45: <U>(value: T95<U>) => T94<U>;
+function f50(): void;
 type OldDiff<T extends keyof any, U extends keyof any> = ({
     [P in T]: P;
 } & {
@@ -706,7 +706,7 @@ interface Bar2 {
     bar: string;
 }
 type FooBar = Foo2 | Bar2;
-declare interface ExtractFooBar<FB extends FooBar> {
+interface ExtractFooBar<FB extends FooBar> {
 }
 type Extracted<Struct> = {
     [K in keyof Struct]: Struct[K] extends FooBar ? ExtractFooBar<Struct[K]> : Struct[K];
@@ -716,8 +716,8 @@ type RecursivePartial<T> = {
         [index: number]: RecursivePartial<T[P][0]>;
     } : T[P] extends object ? RecursivePartial<T[P]> : T[P];
 };
-declare function assign<T>(o: T, a: RecursivePartial<T>): void;
-declare var a: {
+function assign<T>(o: T, a: RecursivePartial<T>): void;
+var a: {
     o: number;
     b: number;
     c: {

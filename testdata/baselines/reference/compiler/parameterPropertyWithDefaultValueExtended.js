@@ -60,23 +60,23 @@ export class PublicWithDefault {
 
 
 //// [parameterPropertyWithDefaultValueExtended.d.ts]
-export declare class WithDefault {
+export class WithDefault {
     readonly timestamp: Date;
     constructor(timestamp?: Date);
 }
-export declare class WithoutDefault {
+export class WithoutDefault {
     readonly timestamp?: Date | undefined;
     constructor(timestamp?: Date | undefined);
 }
-export declare class ExplicitUndefined {
+export class ExplicitUndefined {
     readonly timestamp: Date | undefined;
     constructor(timestamp?: Date | undefined);
 }
-export declare class PrivateWithDefault {
+export class PrivateWithDefault {
     private timestamp;
     constructor(timestamp?: Date);
 }
-export declare class PublicWithDefault {
+export class PublicWithDefault {
     timestamp: Date;
     constructor(timestamp?: Date);
 }

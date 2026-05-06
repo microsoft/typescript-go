@@ -66,7 +66,7 @@ class Y {
 
 
 //// [file.d.ts]
-declare class X {
+class X {
     /**
       * Cancels the request, sending a cancellation to the other party
       * @param {Object} error __auto_generated__
@@ -79,7 +79,7 @@ declare class X {
         code: string | null;
     }): Promise<any>;
 }
-declare class Y {
+class Y {
     /**
       * Cancels the request, sending a cancellation to the other party
       * @param {Object} error __auto_generated__
@@ -97,3 +97,46 @@ declare class Y {
         };
     }): Promise<any>;
 }
+
+
+//// [DtsFileErrors]
+
+
+out/file.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/file.d.ts (1 errors) ====
+    class X {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /**
+          * Cancels the request, sending a cancellation to the other party
+          * @param {Object} error __auto_generated__
+          * @param {string?} error.reason the error reason to send the cancellation with
+          * @param {string?} error.code the error code to send the cancellation with
+          * @returns {Promise.<*>} resolves when the event has been sent.
+          */
+        cancel({ reason, code }: {
+            reason: string | null;
+            code: string | null;
+        }): Promise<any>;
+    }
+    class Y {
+        /**
+          * Cancels the request, sending a cancellation to the other party
+          * @param {Object} error __auto_generated__
+          * @param {string?} error.reason the error reason to send the cancellation with
+          * @param {Object} error.suberr
+          * @param {string?} error.suberr.reason the error reason to send the cancellation with
+          * @param {string?} error.suberr.code the error code to send the cancellation with
+          * @returns {Promise.<*>} resolves when the event has been sent.
+          */
+        cancel({ reason, suberr }: {
+            reason: string | null;
+            suberr: {
+                reason: string | null;
+                code: string | null;
+            };
+        }): Promise<any>;
+    }
+    

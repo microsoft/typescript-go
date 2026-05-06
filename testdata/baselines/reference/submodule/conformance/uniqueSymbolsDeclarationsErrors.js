@@ -105,21 +105,21 @@ exports.ClassWithPrivateNamedAccessors = ClassWithPrivateNamedAccessors;
 
 
 //// [uniqueSymbolsDeclarationsErrors.d.ts]
-declare const s: unique symbol;
+const s: unique symbol;
 interface I {
     readonly readonlyType: unique symbol;
 }
-export declare const obj: {
+export const obj: {
     method1(p: typeof s): typeof s;
     method2(p: I["readonlyType"]): I["readonlyType"];
 };
-export declare const classExpression: {
+export const classExpression: {
     new (): {
         method1(p: typeof s): typeof s;
         method2(p: I["readonlyType"]): I["readonlyType"];
     };
 };
-export declare function funcInferredReturnType(obj: {
+export function funcInferredReturnType(obj: {
     method(p: typeof s): void;
 }): {
     method(p: typeof s): void;
@@ -136,18 +136,76 @@ export type TypeLiteralWithPrivateNamedProperties = {
 export type TypeLiteralWithPrivateNamedMethods = {
     [s](): any;
 };
-export declare class ClassWithPrivateNamedProperties {
+export class ClassWithPrivateNamedProperties {
     [s]: any;
     static [s]: any;
 }
-export declare class ClassWithPrivateNamedMethods {
+export class ClassWithPrivateNamedMethods {
     [s](): void;
     static [s](): void;
 }
-export declare class ClassWithPrivateNamedAccessors {
+export class ClassWithPrivateNamedAccessors {
     get [s](): any;
     set [s](v: any);
     static get [s](): any;
     static set [s](v: any);
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+uniqueSymbolsDeclarationsErrors.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== uniqueSymbolsDeclarationsErrors.d.ts (1 errors) ====
+    const s: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    interface I {
+        readonly readonlyType: unique symbol;
+    }
+    export const obj: {
+        method1(p: typeof s): typeof s;
+        method2(p: I["readonlyType"]): I["readonlyType"];
+    };
+    export const classExpression: {
+        new (): {
+            method1(p: typeof s): typeof s;
+            method2(p: I["readonlyType"]): I["readonlyType"];
+        };
+    };
+    export function funcInferredReturnType(obj: {
+        method(p: typeof s): void;
+    }): {
+        method(p: typeof s): void;
+    };
+    export interface InterfaceWithPrivateNamedProperties {
+        [s]: any;
+    }
+    export interface InterfaceWithPrivateNamedMethods {
+        [s](): any;
+    }
+    export type TypeLiteralWithPrivateNamedProperties = {
+        [s]: any;
+    };
+    export type TypeLiteralWithPrivateNamedMethods = {
+        [s](): any;
+    };
+    export class ClassWithPrivateNamedProperties {
+        [s]: any;
+        static [s]: any;
+    }
+    export class ClassWithPrivateNamedMethods {
+        [s](): void;
+        static [s](): void;
+    }
+    export class ClassWithPrivateNamedAccessors {
+        get [s](): any;
+        set [s](v: any);
+        static get [s](): any;
+        static set [s](v: any);
+    }
+    export {};
+    

@@ -34,13 +34,13 @@ var c;
 
 
 //// [internalAliasInitializedModuleInsideLocalModuleWithoutExport.d.ts]
-export declare namespace a {
+export namespace a {
     namespace b {
         class c {
         }
     }
 }
-export declare namespace c {
+export namespace c {
     import b = a.b;
     var x: b.c;
 }

@@ -16,7 +16,7 @@ export class C {
 
 
 //// [parameterPropertyInConstructor4.d.ts]
-export declare class C {
+export class C {
     a: number[];
     constructor(a: number[] | undefined, b: number);
 }

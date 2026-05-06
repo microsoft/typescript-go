@@ -28,7 +28,7 @@ module.exports = b;
 
 
 //// [declFileImportChainInExportAssignment.d.ts]
-declare namespace m {
+namespace m {
     namespace c {
         class c {
         }
@@ -37,3 +37,24 @@ declare namespace m {
 import a = m.c;
 import b = a;
 export = b;
+
+
+//// [DtsFileErrors]
+
+
+declFileImportChainInExportAssignment.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileImportChainInExportAssignment.d.ts (1 errors) ====
+    namespace m {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        namespace c {
+            class c {
+            }
+        }
+    }
+    import a = m.c;
+    import b = a;
+    export = b;
+    

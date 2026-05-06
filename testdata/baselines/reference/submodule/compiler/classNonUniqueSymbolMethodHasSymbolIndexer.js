@@ -27,11 +27,11 @@ export const Mixer = Mix(class {
 
 
 //// [classNonUniqueSymbolMethodHasSymbolIndexer.d.ts]
-declare const a: symbol;
-export declare class A {
+const a: symbol;
+export class A {
     [a]: () => number;
 }
-export declare const Mixer: {
+export const Mixer: {
     new (): {
         [x: symbol]: () => number;
     };
@@ -39,3 +39,27 @@ export declare const Mixer: {
     mixed: true;
 });
 export {};
+
+
+//// [DtsFileErrors]
+
+
+classNonUniqueSymbolMethodHasSymbolIndexer.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== classNonUniqueSymbolMethodHasSymbolIndexer.d.ts (1 errors) ====
+    const a: symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export class A {
+        [a]: () => number;
+    }
+    export const Mixer: {
+        new (): {
+            [x: symbol]: () => number;
+        };
+    } & (new (...args: any[]) => {
+        mixed: true;
+    });
+    export {};
+    

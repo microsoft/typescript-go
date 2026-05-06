@@ -24,7 +24,7 @@ const enum E {
 
 
 //// [constEnum1.d.ts]
-declare const enum E {
+const enum E {
     a = 10,
     b = 10,
     c = 11,
@@ -34,3 +34,25 @@ declare const enum E {
     g = 20,
     h = 10
 }
+
+
+//// [DtsFileErrors]
+
+
+constEnum1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== constEnum1.d.ts (1 errors) ====
+    const enum E {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        a = 10,
+        b = 10,
+        c = 11,
+        e = 12,
+        d = -13,
+        f = 20,
+        g = 20,
+        h = 10
+    }
+    

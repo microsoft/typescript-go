@@ -28,12 +28,33 @@ point. /*3*/x = 30;
 
 
 //// [declFileObjectLiteralWithAccessors.d.ts]
-declare function makePoint(x: number): {
+function makePoint(x: number): {
     b: number;
     x: number;
 };
-declare var /*4*/ point: {
+var /*4*/ point: {
     b: number;
     x: number;
 };
-declare var /*2*/ x: number;
+var /*2*/ x: number;
+
+
+//// [DtsFileErrors]
+
+
+declFileObjectLiteralWithAccessors.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileObjectLiteralWithAccessors.d.ts (1 errors) ====
+    function makePoint(x: number): {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        b: number;
+        x: number;
+    };
+    var /*4*/ point: {
+        b: number;
+        x: number;
+    };
+    var /*2*/ x: number;
+    

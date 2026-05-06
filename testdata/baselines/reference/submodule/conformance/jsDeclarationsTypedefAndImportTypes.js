@@ -71,7 +71,7 @@ module.exports = {
  * @typedef {string | number} Whatever
  */
 export type Whatever = string | number;
-declare class Conn {
+class Conn {
     constructor();
     item: number;
     method(): void;
@@ -82,7 +82,7 @@ export = Conn;
  * @typedef {import("./conn")} Conn
  */
 export type Conn = import("./conn");
-declare class Wrap {
+class Wrap {
     connItem: number;
     /** @type {import("./conn").Whatever} */
     another: import("./conn").Whatever;
@@ -91,7 +91,51 @@ declare class Wrap {
      */
     constructor(c: Conn);
 }
-declare const _default: {
+const _default: {
     Wrap: typeof Wrap;
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+out/conn.d.ts(5,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+out/usage.d.ts(5,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/conn.d.ts (1 errors) ====
+    /**
+     * @typedef {string | number} Whatever
+     */
+    export type Whatever = string | number;
+    class Conn {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        constructor();
+        item: number;
+        method(): void;
+    }
+    export = Conn;
+    
+==== out/usage.d.ts (1 errors) ====
+    /**
+     * @typedef {import("./conn")} Conn
+     */
+    export type Conn = import("./conn");
+    class Wrap {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        connItem: number;
+        /** @type {import("./conn").Whatever} */
+        another: import("./conn").Whatever;
+        /**
+         * @param {Conn} c
+         */
+        constructor(c: Conn);
+    }
+    const _default: {
+        Wrap: typeof Wrap;
+    };
+    export = _default;
+    

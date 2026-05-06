@@ -39,6 +39,6 @@ export async function main() {
 
 
 //// [index.d.ts]
-export declare function main(): Promise<void>;
+export function main(): Promise<void>;
 //// [index.d.ts]
-export declare function main(): Promise<void>;
+export function main(): Promise<void>;

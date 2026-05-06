@@ -25,7 +25,7 @@ exports.w = wrapper(0);
 
 
 //// [declarationEmitGenericTypeParamerSerialization.d.ts]
-export declare const w: {
+export const w: {
     m(): number;
     readonly g: number;
 };

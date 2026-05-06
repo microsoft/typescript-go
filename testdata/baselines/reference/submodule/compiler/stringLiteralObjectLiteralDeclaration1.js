@@ -15,8 +15,25 @@ var m1;
 
 
 //// [stringLiteralObjectLiteralDeclaration1.d.ts]
-declare namespace m1 {
+namespace m1 {
     var n: {
         'foo bar': number;
     };
 }
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralObjectLiteralDeclaration1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralObjectLiteralDeclaration1.d.ts (1 errors) ====
+    namespace m1 {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        var n: {
+            'foo bar': number;
+        };
+    }
+    

@@ -28,9 +28,28 @@ exports.x = new server_1.default();
 
 
 //// [server.d.ts]
-declare class c {
+class c {
 }
 export default c;
 //// [client.d.ts]
 import defaultBinding from "./server";
-export declare var x: defaultBinding;
+export var x: defaultBinding;
+
+
+//// [DtsFileErrors]
+
+
+server.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== server.d.ts (1 errors) ====
+    class c {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export default c;
+    
+==== client.d.ts (0 errors) ====
+    import defaultBinding from "./server";
+    export var x: defaultBinding;
+    

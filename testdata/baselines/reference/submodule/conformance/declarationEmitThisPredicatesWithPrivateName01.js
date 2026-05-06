@@ -25,9 +25,27 @@ class D extends C {
 
 
 //// [declarationEmitThisPredicatesWithPrivateName01.d.ts]
-export declare class C {
+export class C {
     m(): this is D;
 }
-declare class D extends C {
+class D extends C {
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitThisPredicatesWithPrivateName01.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitThisPredicatesWithPrivateName01.d.ts (1 errors) ====
+    export class C {
+        m(): this is D;
+    }
+    class D extends C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export {};
+    

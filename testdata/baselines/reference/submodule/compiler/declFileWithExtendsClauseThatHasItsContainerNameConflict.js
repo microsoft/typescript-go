@@ -44,16 +44,16 @@ var A;
 
 
 //// [declFileWithExtendsClauseThatHasItsContainerNameConflict.d.ts]
-declare namespace A.B.C {
+namespace A.B.C {
     class B {
     }
 }
-declare namespace A.B {
+namespace A.B {
     class EventManager {
         id: number;
     }
 }
-declare namespace A.B.C {
+namespace A.B.C {
     class ContextMenu extends EventManager {
         name: string;
     }

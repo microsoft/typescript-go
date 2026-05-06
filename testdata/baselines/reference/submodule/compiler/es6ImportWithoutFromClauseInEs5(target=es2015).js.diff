@@ -1,0 +1,10 @@
+--- old.es6ImportWithoutFromClauseInEs5(target=es2015).js
++++ new.es6ImportWithoutFromClauseInEs5(target=es2015).js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [es6ImportWithoutFromClauseInEs5_0.d.ts]
+-export declare var a: number;
++export var a: number;
+ //// [es6ImportWithoutFromClauseInEs5_1.d.ts]
+ import "es6ImportWithoutFromClauseInEs5_0";

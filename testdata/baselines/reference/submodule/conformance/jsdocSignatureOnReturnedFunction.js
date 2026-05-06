@@ -75,7 +75,23 @@ function f4() {
 
 
 //// [jsdocSignatureOnReturnedFunction.d.ts]
-declare function f1(): (a: number, b: number) => number;
-declare function f2(): (a: number, b: number) => number;
-declare function f3(): (a: number, b: number) => number;
-declare function f4(): (a: number, b: number) => number;
+function f1(): (a: number, b: number) => number;
+function f2(): (a: number, b: number) => number;
+function f3(): (a: number, b: number) => number;
+function f4(): (a: number, b: number) => number;
+
+
+//// [DtsFileErrors]
+
+
+out/jsdocSignatureOnReturnedFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/jsdocSignatureOnReturnedFunction.d.ts (1 errors) ====
+    function f1(): (a: number, b: number) => number;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function f2(): (a: number, b: number) => number;
+    function f3(): (a: number, b: number) => number;
+    function f4(): (a: number, b: number) => number;
+    

@@ -63,27 +63,27 @@ exports.x6 = new server_5.m();
 
 
 //// [server.d.ts]
-export declare class a {
+export class a {
 }
-export declare class x {
+export class x {
 }
-export declare class m {
+export class m {
 }
-export declare class a11 {
+export class a11 {
 }
-export declare class a12 {
+export class a12 {
 }
-export declare class x11 {
+export class x11 {
 }
 //// [client.d.ts]
 import { a } from "./server";
-export declare var x1: a;
+export var x1: a;
 import { a11 as b } from "./server";
-export declare var x2: b;
+export var x2: b;
 import { x, a12 as y } from "./server";
-export declare var x4: x;
-export declare var x5: y;
+export var x4: x;
+export var x5: y;
 import { x11 as z } from "./server";
-export declare var x3: z;
+export var x3: z;
 import { m } from "./server";
-export declare var x6: m;
+export var x6: m;

@@ -35,6 +35,6 @@ function bar() {
 //// [0.d.ts]
 export {};
 //// [1.d.ts]
-declare let v: string;
-declare function bar(): string;
+let v: string;
+function bar(): string;
 export { v, bar };

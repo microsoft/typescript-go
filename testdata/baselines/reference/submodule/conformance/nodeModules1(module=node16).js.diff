@@ -1,0 +1,75 @@
+--- old.nodeModules1(module=node16).js
++++ new.nodeModules1(module=node16).js
+@@= skipped -672, +672 lines =@@
+
+
+ //// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
++const x = 1;
++export { x };
++//// [index.d.cts]
++const x = 1;
++export { x };
++//// [index.d.mts]
++const x = 1;
++export { x };
++//// [index.d.ts]
++const x = 1;
++export { x };
++//// [index.d.cts]
++const x = 1;
++export { x };
++//// [index.d.mts]
++const x = 1;
++export { x };
++//// [index.d.ts]
++const x = 1;
++export { x };
++//// [index.d.mts]
++const x = 1;
++export { x };
++//// [index.d.cts]
++const x = 1;
++export { x };
++//// [index.d.cts]
++const x = 1;
++export { x };
++//// [index.d.ts]
++const x = 1;
++export { x };
++//// [index.d.mts]
++const x = 1;
+ export { x };

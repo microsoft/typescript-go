@@ -78,9 +78,9 @@ export {};
 
 
 //// [mod.d.ts]
-export declare const as = 0;
-export declare const type = 0;
-export declare const something = 0;
+export const as = 0;
+export const type = 0;
+export const something = 0;
 //// [a.d.ts]
 export {};
 //// [b.d.ts]

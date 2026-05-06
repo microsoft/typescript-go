@@ -1,0 +1,14 @@
+--- old.uniqueSymbolJs2.js
++++ new.uniqueSymbolJs2.js
+@@= skipped -23, +23 lines =@@
+
+ //// [index.d.ts]
+ /** @type {unique symbol} */
+-declare const x: unique symbol;
++const x: unique symbol;
+ /** @type {unique symbol} */
+-declare const y: unique symbol;
++const y: unique symbol;
+ /** @type {typeof x} */
+-declare let z: typeof x;
++let z: typeof x;

@@ -1,0 +1,13 @@
+--- old.exportAsNamespace4(module=es2015).js
++++ new.exportAsNamespace4(module=es2015).js
+@@= skipped -39, +39 lines =@@
+
+
+ //// [0.d.ts]
+-export declare const a = 1;
+-export declare const b = 2;
++export const a = 1;
++export const b = 2;
+ //// [1.d.ts]
+ export * as default from './0';
+ //// [11.d.ts]

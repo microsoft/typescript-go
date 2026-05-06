@@ -59,7 +59,7 @@ export interface Encoder<T> {
  * @template T
  * @implements {IEncoder<T>}
  */
-export declare class Encoder<T> implements IEncoder<T> {
+export class Encoder<T> implements IEncoder<T> {
     /**
      * @param {T} value
      */

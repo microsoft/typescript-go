@@ -35,15 +35,39 @@ var m2;
 
 
 //// [declFileInternalAliases.d.ts]
-declare namespace m {
+namespace m {
     class c {
     }
 }
-declare namespace m1 {
+namespace m1 {
     import x = m.c;
     var d: x;
 }
-declare namespace m2 {
+namespace m2 {
     export import x = m.c;
     var d: x;
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileInternalAliases.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileInternalAliases.d.ts (1 errors) ====
+    namespace m {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class c {
+        }
+    }
+    namespace m1 {
+        import x = m.c;
+        var d: x;
+    }
+    namespace m2 {
+        export import x = m.c;
+        var d: x;
+    }
+    

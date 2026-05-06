@@ -25,4 +25,4 @@ export type X = 1;
 /**
  * @type { ns.X }
  */
-declare let a: ns.X;
+let a: ns.X;

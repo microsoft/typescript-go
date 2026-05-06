@@ -59,14 +59,14 @@ module.exports = {testFn, testFnTypes};
  * @global
  * @type {Object<string,*>}
  */
-declare const myTypes: Record<string, any>;
+const myTypes: Record<string, any>;
 export type myTypes = string | RegExp | Array<string | RegExp>;
 export type myTypes = {
     prop1: myTypes.typeA;
     prop2: string;
 };
 export type myTypes = myTypes.typeB | Function;
-export declare var myTypes: Record<string, any>;
+export var myTypes: Record<string, any>;
 //// [file2.d.ts]
 export type testFnTypes = boolean | myTypes.typeC;
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
@@ -76,8 +76,8 @@ export type testFnTypes = boolean | myTypes.typeC;
  * @param {testFnTypes.input} input - Input.
  * @returns {number|null} Result.
  */
-declare function testFn(input: testFnTypes.input): number | null;
-declare const _default: {
+function testFn(input: testFnTypes.input): number | null;
+const _default: {
     testFn: typeof testFn;
     testFnTypes: Record<string, any>;
 };

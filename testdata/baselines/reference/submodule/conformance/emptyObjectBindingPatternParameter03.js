@@ -13,4 +13,17 @@ function f({}, a) {
 
 
 //// [emptyObjectBindingPatternParameter03.d.ts]
-declare function f({}: {}, a: any): void;
+function f({}: {}, a: any): void;
+
+
+//// [DtsFileErrors]
+
+
+emptyObjectBindingPatternParameter03.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== emptyObjectBindingPatternParameter03.d.ts (1 errors) ====
+    function f({}: {}, a: any): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

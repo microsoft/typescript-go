@@ -1,0 +1,10 @@
+--- old.declarationEmitThisPredicates02.js
++++ new.declarationEmitThisPredicates02.js
+@@= skipped -31, +31 lines =@@
+     b: number;
+     c: boolean;
+ }
+-export declare const obj: {
++export const obj: {
+     m(): this is Foo;
+ };

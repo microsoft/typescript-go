@@ -65,7 +65,7 @@ export class Argument extends Base {
 
 
 //// [base.d.ts]
-export declare class Base {
+export class Base {
     constructor();
     toJSON(): {
         type: any;
@@ -75,7 +75,7 @@ export declare class Base {
 }
 //// [argument.d.ts]
 import { Base } from "./base.js";
-export declare class Argument extends Base {
+export class Argument extends Base {
     /**
      * @param {*} tokeniser
      */

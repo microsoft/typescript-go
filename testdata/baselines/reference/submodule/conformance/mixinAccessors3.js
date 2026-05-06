@@ -42,21 +42,21 @@ class MyClass extends mixin(BaseClass) {
 
 
 //// [mixinAccessors3.d.ts]
-declare function mixin<T extends {
+function mixin<T extends {
     new (...args: any[]): {};
 }>(superclass: T): {
     new (...args: any[]): {
         get name(): string;
     };
 } & T;
-declare class BaseClass {
+class BaseClass {
     set name(v: string);
 }
-declare const MyClass_base: {
+const MyClass_base: {
     new (...args: any[]): {
         get name(): string;
     };
 } & typeof BaseClass;
-declare class MyClass extends MyClass_base {
+class MyClass extends MyClass_base {
     get name(): string;
 }

@@ -28,7 +28,7 @@ _A_foo = new WeakMap(), _A_bar = new WeakMap();
 
 
 //// [privateNameDeclaration.d.ts]
-declare class A {
+class A {
     #private;
     baz: string;
     qux: number;

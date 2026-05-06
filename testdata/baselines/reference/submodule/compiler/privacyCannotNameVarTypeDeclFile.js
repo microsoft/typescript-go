@@ -207,7 +207,7 @@ var privateVarWithPrivateModulePropertyTypes1 = exporter.createExportedWidget4()
 
 
 //// [privacyCannotNameVarTypeDeclFile_GlobalWidgets.d.ts]
-declare module "GlobalWidgets" {
+module "GlobalWidgets" {
     class Widget3 {
         name: string;
     }
@@ -220,11 +220,11 @@ declare module "GlobalWidgets" {
     }
 }
 //// [privacyCannotNameVarTypeDeclFile_Widgets.d.ts]
-export declare class Widget1 {
+export class Widget1 {
     name: string;
 }
-export declare function createWidget1(): Widget1;
-export declare namespace SpecializedWidget {
+export function createWidget1(): Widget1;
+export namespace SpecializedWidget {
     class Widget2 {
         name: string;
     }
@@ -233,12 +233,12 @@ export declare namespace SpecializedWidget {
 //// [privacyCannotNameVarTypeDeclFile_exporter.d.ts]
 import Widgets = require("./privacyCannotNameVarTypeDeclFile_Widgets");
 import Widgets1 = require("GlobalWidgets");
-export declare function createExportedWidget1(): Widgets.Widget1;
-export declare function createExportedWidget2(): Widgets.SpecializedWidget.Widget2;
-export declare function createExportedWidget3(): Widgets1.Widget3;
-export declare function createExportedWidget4(): Widgets1.SpecializedGlobalWidget.Widget4;
+export function createExportedWidget1(): Widgets.Widget1;
+export function createExportedWidget2(): Widgets.SpecializedWidget.Widget2;
+export function createExportedWidget3(): Widgets1.Widget3;
+export function createExportedWidget4(): Widgets1.SpecializedGlobalWidget.Widget4;
 //// [privacyCannotNameVarTypeDeclFile_consumer.d.ts]
-export declare class publicClassWithWithPrivatePropertyTypes {
+export class publicClassWithWithPrivatePropertyTypes {
     static myPublicStaticProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
     private static myPrivateStaticProperty;
     myPublicProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
@@ -248,16 +248,16 @@ export declare class publicClassWithWithPrivatePropertyTypes {
     myPublicProperty1: import("GlobalWidgets").Widget3;
     private myPrivateProperty1;
 }
-export declare var publicVarWithPrivatePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
-export declare var publicVarWithPrivatePropertyTypes1: import("GlobalWidgets").Widget3;
-export declare class publicClassWithPrivateModulePropertyTypes {
+export var publicVarWithPrivatePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
+export var publicVarWithPrivatePropertyTypes1: import("GlobalWidgets").Widget3;
+export class publicClassWithPrivateModulePropertyTypes {
     static myPublicStaticProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
     myPublicProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
     static myPublicStaticProperty1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
     myPublicProperty1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
 }
-export declare var publicVarWithPrivateModulePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
-export declare var publicVarWithPrivateModulePropertyTypes1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
+export var publicVarWithPrivateModulePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
+export var publicVarWithPrivateModulePropertyTypes1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
 
 
 //// [DtsFileErrors]
@@ -265,14 +265,14 @@ export declare var publicVarWithPrivateModulePropertyTypes1: import("GlobalWidge
 
 privacyCannotNameVarTypeDeclFile_consumer.d.ts(6,44): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
 privacyCannotNameVarTypeDeclFile_consumer.d.ts(8,31): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
-privacyCannotNameVarTypeDeclFile_consumer.d.ts(12,63): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
+privacyCannotNameVarTypeDeclFile_consumer.d.ts(12,55): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
 privacyCannotNameVarTypeDeclFile_consumer.d.ts(16,44): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
 privacyCannotNameVarTypeDeclFile_consumer.d.ts(17,31): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
-privacyCannotNameVarTypeDeclFile_consumer.d.ts(20,69): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
+privacyCannotNameVarTypeDeclFile_consumer.d.ts(20,61): error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
 
 
 ==== privacyCannotNameVarTypeDeclFile_consumer.d.ts (6 errors) ====
-    export declare class publicClassWithWithPrivatePropertyTypes {
+    export class publicClassWithWithPrivatePropertyTypes {
         static myPublicStaticProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
         private static myPrivateStaticProperty;
         myPublicProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
@@ -286,11 +286,11 @@ privacyCannotNameVarTypeDeclFile_consumer.d.ts(20,69): error TS2307: Cannot find
 !!! error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
         private myPrivateProperty1;
     }
-    export declare var publicVarWithPrivatePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
-    export declare var publicVarWithPrivatePropertyTypes1: import("GlobalWidgets").Widget3;
-                                                                  ~~~~~~~~~~~~~~~
+    export var publicVarWithPrivatePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").Widget1;
+    export var publicVarWithPrivatePropertyTypes1: import("GlobalWidgets").Widget3;
+                                                          ~~~~~~~~~~~~~~~
 !!! error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
-    export declare class publicClassWithPrivateModulePropertyTypes {
+    export class publicClassWithPrivateModulePropertyTypes {
         static myPublicStaticProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
         myPublicProperty: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
         static myPublicStaticProperty1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
@@ -300,13 +300,13 @@ privacyCannotNameVarTypeDeclFile_consumer.d.ts(20,69): error TS2307: Cannot find
                                   ~~~~~~~~~~~~~~~
 !!! error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
     }
-    export declare var publicVarWithPrivateModulePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
-    export declare var publicVarWithPrivateModulePropertyTypes1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
-                                                                        ~~~~~~~~~~~~~~~
+    export var publicVarWithPrivateModulePropertyTypes: import("./privacyCannotNameVarTypeDeclFile_Widgets").SpecializedWidget.Widget2;
+    export var publicVarWithPrivateModulePropertyTypes1: import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
+                                                                ~~~~~~~~~~~~~~~
 !!! error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
     
 ==== privacyCannotNameVarTypeDeclFile_GlobalWidgets.d.ts (0 errors) ====
-    declare module "GlobalWidgets" {
+    module "GlobalWidgets" {
         class Widget3 {
             name: string;
         }
@@ -320,11 +320,11 @@ privacyCannotNameVarTypeDeclFile_consumer.d.ts(20,69): error TS2307: Cannot find
     }
     
 ==== privacyCannotNameVarTypeDeclFile_Widgets.d.ts (0 errors) ====
-    export declare class Widget1 {
+    export class Widget1 {
         name: string;
     }
-    export declare function createWidget1(): Widget1;
-    export declare namespace SpecializedWidget {
+    export function createWidget1(): Widget1;
+    export namespace SpecializedWidget {
         class Widget2 {
             name: string;
         }
@@ -334,8 +334,8 @@ privacyCannotNameVarTypeDeclFile_consumer.d.ts(20,69): error TS2307: Cannot find
 ==== privacyCannotNameVarTypeDeclFile_exporter.d.ts (0 errors) ====
     import Widgets = require("./privacyCannotNameVarTypeDeclFile_Widgets");
     import Widgets1 = require("GlobalWidgets");
-    export declare function createExportedWidget1(): Widgets.Widget1;
-    export declare function createExportedWidget2(): Widgets.SpecializedWidget.Widget2;
-    export declare function createExportedWidget3(): Widgets1.Widget3;
-    export declare function createExportedWidget4(): Widgets1.SpecializedGlobalWidget.Widget4;
+    export function createExportedWidget1(): Widgets.Widget1;
+    export function createExportedWidget2(): Widgets.SpecializedWidget.Widget2;
+    export function createExportedWidget3(): Widgets1.Widget3;
+    export function createExportedWidget4(): Widgets1.SpecializedGlobalWidget.Widget4;
     

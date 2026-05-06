@@ -31,12 +31,12 @@ export const v2 = (...a) => {
 
 
 //// [v1.d.ts]
-export declare const v1: (...a: [n: "n", a: "a"]) => {
+export const v1: (...a: [n: "n", a: "a"]) => {
     /** r rest param */
     a: [n: "n", a: "a"];
 };
 //// [v2.d.ts]
-export declare const v2: (...a: [n: "n", a: "a"]) => {
+export const v2: (...a: [n: "n", a: "a"]) => {
     /** r rest param */
     a: [n: "n", a: "a"];
     /** module var */

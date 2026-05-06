@@ -14,4 +14,4 @@ var a;
 
 
 //// [emptyAssignmentPatterns01_ES5iterable.d.ts]
-declare var a: any;
+var a: any;

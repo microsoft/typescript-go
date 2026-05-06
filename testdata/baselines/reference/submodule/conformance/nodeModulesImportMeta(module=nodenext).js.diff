@@ -1,0 +1,13 @@
+--- old.nodeModulesImportMeta(module=nodenext).js
++++ new.nodeModulesImportMeta(module=nodenext).js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [index.d.ts]
+-declare const x: string;
++const x: string;
+ export { x };
+ //// [index.d.ts]
+-declare const x: string;
++const x: string;
+ export { x };

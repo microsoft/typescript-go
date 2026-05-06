@@ -25,4 +25,4 @@ module.exports.A.B = {
 
 
 //// [index.d.ts]
-export declare var A: {};
+export var A: {};

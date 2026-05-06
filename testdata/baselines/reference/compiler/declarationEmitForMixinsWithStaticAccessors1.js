@@ -64,7 +64,7 @@ export const MixedClass = make();
 
 
 //// [declarationEmitForMixinsWithStaticAccessors1.d.ts]
-export declare const MixedClass: {
+export const MixedClass: {
     new (): {
         z: boolean;
         x: string;

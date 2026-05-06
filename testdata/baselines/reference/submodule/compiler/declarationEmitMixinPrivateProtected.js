@@ -70,24 +70,24 @@ exports.default = default_1;
 
 
 //// [first.d.ts]
-declare const _default: {
+const _default: {
     new (): {
         _onDispose(): void;
         _assertIsStripped(): void;
     };
 };
 export default _default;
-declare const Monitor_base: {
+const Monitor_base: {
     new (): {
         _onDispose(): void;
         _assertIsStripped(): void;
     };
 };
-export declare class Monitor extends Monitor_base {
+export class Monitor extends Monitor_base {
     protected _onDispose(): void;
 }
 //// [another.d.ts]
-declare const default_base: {
+const default_base: {
     new (): {
         _onDispose(): void;
         _assertIsStripped(): void;

@@ -19,9 +19,27 @@ class C extends X {
 
 
 //// [declFileForFunctionTypeAsTypeParameter.d.ts]
-declare class X<T> {
+class X<T> {
 }
-declare class C extends X<() => number> {
+class C extends X<() => number> {
 }
 interface I extends X<() => number> {
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileForFunctionTypeAsTypeParameter.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileForFunctionTypeAsTypeParameter.d.ts (1 errors) ====
+    class X<T> {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    class C extends X<() => number> {
+    }
+    interface I extends X<() => number> {
+    }
+    

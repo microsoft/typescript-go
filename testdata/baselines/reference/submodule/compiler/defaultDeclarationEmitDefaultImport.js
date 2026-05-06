@@ -25,9 +25,9 @@ exports.instance = (0, root_1.getSomething)();
 
 
 //// [root.d.ts]
-export declare function getSomething(): Something;
+export function getSomething(): Something;
 export default class Something {
 }
 //// [main.d.ts]
 import Thing from "./root";
-export declare const instance: Thing;
+export const instance: Thing;

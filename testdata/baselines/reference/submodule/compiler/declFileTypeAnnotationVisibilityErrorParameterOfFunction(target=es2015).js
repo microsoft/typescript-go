@@ -96,7 +96,7 @@ var m;
 
 
 //// [declFileTypeAnnotationVisibilityErrorParameterOfFunction.d.ts]
-declare namespace m {
+namespace m {
     class private1 {
     }
     export class public1 {
@@ -113,3 +113,32 @@ declare namespace m {
     export function foo114(param?: m2.public2): void;
     export {};
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationVisibilityErrorParameterOfFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationVisibilityErrorParameterOfFunction.d.ts (1 errors) ====
+    namespace m {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class private1 {
+        }
+        export class public1 {
+        }
+        export function foo3(param: private1): void;
+        export function foo4(param?: private1): void;
+        export function foo13(param: public1): void;
+        export function foo14(param?: public1): void;
+        namespace m2 {
+            class public2 {
+            }
+        }
+        export function foo113(param: m2.public2): void;
+        export function foo114(param?: m2.public2): void;
+        export {};
+    }
+    

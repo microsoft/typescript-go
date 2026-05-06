@@ -196,7 +196,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/user/username/projects/myproject/plugin-one/action.d.ts] *new* 
-export declare const actions: {
+export const actions: {
     featureOne: import("typescript-fsa").ActionCreator<{
         route: string;
     }>;

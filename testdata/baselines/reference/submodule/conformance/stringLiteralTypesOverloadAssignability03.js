@@ -32,7 +32,23 @@ b = a;
 
 
 //// [stringLiteralTypesOverloadAssignability03.d.ts]
-declare function f(x: "foo"): number;
-declare function g(x: "foo"): number;
-declare let a: typeof f;
-declare let b: typeof g;
+function f(x: "foo"): number;
+function g(x: "foo"): number;
+let a: typeof f;
+let b: typeof g;
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesOverloadAssignability03.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesOverloadAssignability03.d.ts (1 errors) ====
+    function f(x: "foo"): number;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function g(x: "foo"): number;
+    let a: typeof f;
+    let b: typeof g;
+    

@@ -44,23 +44,23 @@ class EB extends D {
 
 
 //// [override3.d.ts]
-declare class B {
+class B {
     foo(): void;
     bar(): void;
 }
-declare class D extends B {
+class D extends B {
     foo(): void;
     bar(): void;
 }
-declare class DB extends B {
+class DB extends B {
     foo(): void;
     bar(): void;
 }
-declare class DD extends D {
+class DD extends D {
     foo(): void;
     bar(): void;
 }
-declare class EB extends D {
+class EB extends D {
     foo(): void;
     bar(): void;
 }

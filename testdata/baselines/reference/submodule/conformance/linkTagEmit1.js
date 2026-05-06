@@ -64,8 +64,45 @@ type Z = number;
 /**
  * @param {number} integer {@link Z}
  */
-declare function computeCommonSourceDirectoryOfFilenames(integer: number): number;
+function computeCommonSourceDirectoryOfFilenames(integer: number): number;
 /** {@link https://hvad} */
-declare var see3: boolean;
+var see3: boolean;
 type Attempt = number;
 /** @typedef {number} Attempt {@link https://wat} {@linkcode I think lingcod is better} {@linkplain or lutefisk}*/
+
+
+//// [DtsFileErrors]
+
+
+foo/linkTagEmit1.d.ts(17,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarations.d.ts (0 errors) ====
+    declare namespace NS {
+        type R = number
+    }
+==== foo/linkTagEmit1.d.ts (1 errors) ====
+    /** @typedef {number} N */
+    /**
+     * @typedef {Object} D1
+     * @property {1} e Just link to {@link NS.R} this time
+     * @property {1} m Wyatt Earp loved {@link N integers} I bet.
+     */
+    type N = number;
+    type D1 = {
+        e: 1;
+        m: 1;
+    };
+    type Z = number;
+    /** @typedef {number} Z @see N {@link N} */
+    /**
+     * @param {number} integer {@link Z}
+     */
+    function computeCommonSourceDirectoryOfFilenames(integer: number): number;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    /** {@link https://hvad} */
+    var see3: boolean;
+    type Attempt = number;
+    /** @typedef {number} Attempt {@link https://wat} {@linkcode I think lingcod is better} {@linkplain or lutefisk}*/
+    

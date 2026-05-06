@@ -54,22 +54,22 @@ export function test3(x) { }
 
 
 //// [isolatedDeclarationsAddUndefined2.d.ts]
-export declare class Bar {
+export class Bar {
     private x?;
     constructor(x?: Array | undefined);
 }
-export declare class Bar2 {
+export class Bar2 {
     private x?;
     constructor(x?: Array);
 }
-export declare class Bar3 {
+export class Bar3 {
     private x;
     constructor(x: Array | undefined);
 }
-export declare class Bar4 {
+export class Bar4 {
     private x;
     constructor(x: Array);
 }
-export declare function test1(x?: Array | undefined): void;
-export declare function test2(x?: Unresolved | undefined): void;
-export declare function test3(x?: Unresolved): void;
+export function test1(x?: Array | undefined): void;
+export function test2(x?: Unresolved | undefined): void;
+export function test3(x?: Unresolved): void;

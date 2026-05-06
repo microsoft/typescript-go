@@ -154,26 +154,63 @@ function globalfooWithOverloads(a) {
 
 //// [declFileFunctions_0.d.ts]
 /** This comment should appear for foo*/
-export declare function foo(): void;
+export function foo(): void;
 /** This is comment for function signature*/
-export declare function fooWithParameters(/** this is comment about a*/ a: string, 
+export function fooWithParameters(/** this is comment about a*/ a: string, 
 /** this is comment for b*/
 b: number): void;
-export declare function fooWithRestParameters(a: string, ...rests: string[]): string;
-export declare function fooWithOverloads(a: string): string;
-export declare function fooWithOverloads(a: number): number;
-export declare function fooWithSingleOverload(a: string): string;
-export declare function fooWithTypePredicate(a: any): a is number;
-export declare function fooWithTypePredicateAndMulitpleParams(a: any, b: any, c: any): a is number;
-export declare function fooWithTypeTypePredicateAndGeneric<T>(a: any): a is T;
-export declare function fooWithTypeTypePredicateAndRestParam(a: any, ...rest: any[]): a is number;
+export function fooWithRestParameters(a: string, ...rests: string[]): string;
+export function fooWithOverloads(a: string): string;
+export function fooWithOverloads(a: number): number;
+export function fooWithSingleOverload(a: string): string;
+export function fooWithTypePredicate(a: any): a is number;
+export function fooWithTypePredicateAndMulitpleParams(a: any, b: any, c: any): a is number;
+export function fooWithTypeTypePredicateAndGeneric<T>(a: any): a is T;
+export function fooWithTypeTypePredicateAndRestParam(a: any, ...rest: any[]): a is number;
 //// [declFileFunctions_1.d.ts]
 /** This comment should appear for foo*/
-declare function globalfoo(): void;
+function globalfoo(): void;
 /** This is comment for function signature*/
-declare function globalfooWithParameters(/** this is comment about a*/ a: string, 
+function globalfooWithParameters(/** this is comment about a*/ a: string, 
 /** this is comment for b*/
 b: number): void;
-declare function globalfooWithRestParameters(a: string, ...rests: string[]): string;
-declare function globalfooWithOverloads(a: string): string;
-declare function globalfooWithOverloads(a: number): number;
+function globalfooWithRestParameters(a: string, ...rests: string[]): string;
+function globalfooWithOverloads(a: string): string;
+function globalfooWithOverloads(a: number): number;
+
+
+//// [DtsFileErrors]
+
+
+declFileFunctions_1.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileFunctions_0.d.ts (0 errors) ====
+    /** This comment should appear for foo*/
+    export function foo(): void;
+    /** This is comment for function signature*/
+    export function fooWithParameters(/** this is comment about a*/ a: string, 
+    /** this is comment for b*/
+    b: number): void;
+    export function fooWithRestParameters(a: string, ...rests: string[]): string;
+    export function fooWithOverloads(a: string): string;
+    export function fooWithOverloads(a: number): number;
+    export function fooWithSingleOverload(a: string): string;
+    export function fooWithTypePredicate(a: any): a is number;
+    export function fooWithTypePredicateAndMulitpleParams(a: any, b: any, c: any): a is number;
+    export function fooWithTypeTypePredicateAndGeneric<T>(a: any): a is T;
+    export function fooWithTypeTypePredicateAndRestParam(a: any, ...rest: any[]): a is number;
+    
+==== declFileFunctions_1.d.ts (1 errors) ====
+    /** This comment should appear for foo*/
+    function globalfoo(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    /** This is comment for function signature*/
+    function globalfooWithParameters(/** this is comment about a*/ a: string, 
+    /** this is comment for b*/
+    b: number): void;
+    function globalfooWithRestParameters(a: string, ...rests: string[]): string;
+    function globalfooWithOverloads(a: string): string;
+    function globalfooWithOverloads(a: number): number;
+    

@@ -1,0 +1,11 @@
+--- old.declFileForExportedImport.js
++++ new.declFileForExportedImport.js
+@@= skipped -26, +26 lines =@@
+
+
+ //// [declFileForExportedImport_0.d.ts]
+-export declare var x: number;
++export var x: number;
+ //// [declFileForExportedImport_1.d.ts]
+ export import a = require('./declFileForExportedImport_0');
+ export import b = a;

@@ -120,7 +120,7 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/packages/src-dogs/dog.d.ts] *new* 
 import { DogConfig } from 'src-types';
-export declare abstract class Dog {
+export abstract class Dog {
     static getCapabilities(): DogConfig;
 }
 
@@ -134,7 +134,7 @@ export class Dog {
 
 //// [/home/src/workspaces/packages/src-dogs/dogconfig.d.ts] *new* 
 import { DogConfig } from 'src-types';
-export declare const DOG_CONFIG: DogConfig;
+export const DOG_CONFIG: DogConfig;
 
 //// [/home/src/workspaces/packages/src-dogs/dogconfig.js] *new* 
 export const DOG_CONFIG = {
@@ -151,14 +151,14 @@ export * from './lassie/lassiedog.js';
 
 //// [/home/src/workspaces/packages/src-dogs/lassie/lassieconfig.d.ts] *new* 
 import { DogConfig } from 'src-types';
-export declare const LASSIE_CONFIG: DogConfig;
+export const LASSIE_CONFIG: DogConfig;
 
 //// [/home/src/workspaces/packages/src-dogs/lassie/lassieconfig.js] *new* 
 export const LASSIE_CONFIG = { name: 'Lassie' };
 
 //// [/home/src/workspaces/packages/src-dogs/lassie/lassiedog.d.ts] *new* 
 import { Dog } from '../dog.js';
-export declare class LassieDog extends Dog {
+export class LassieDog extends Dog {
     protected static getDogConfig: () => import("src-types").DogConfig;
 }
 
@@ -170,7 +170,7 @@ export class LassieDog extends Dog {
 }
 
 //// [/home/src/workspaces/packages/src-dogs/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[4,8]],"fileNames":["lib.es2025.full.d.ts","../src-types/dogconfig.d.ts","../src-types/index.d.ts","./dogconfig.ts","./dog.ts","./lassie/lassieconfig.ts","./lassie/lassiedog.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"a71e22ebb89c8c5bea7cef8d090ace25-export interface DogConfig {\n    name: string;\n}\n","impliedNodeFormat":99},{"version":"3c21c50da3a1aea8b6fafa5aa595f160-export * from './dogconfig.js';\n","impliedNodeFormat":99},{"version":"a8c9e5169f1e05ea3fd4da563dc779b7-import { DogConfig } from 'src-types';\n\nexport const DOG_CONFIG: DogConfig = {\n    name: 'Default dog',\n};","signature":"55c35bfb192d26f7ab56e9447864b637-import { DogConfig } from 'src-types';\nexport declare const DOG_CONFIG: DogConfig;\n","impliedNodeFormat":99},{"version":"4ef4eb6072aff36903b09b7e1fa75eea-import { DogConfig } from 'src-types';\nimport { DOG_CONFIG } from './dogconfig.js';\n\nexport abstract class Dog {\n\n    public static getCapabilities(): DogConfig {\n        return DOG_CONFIG;\n    }\n}","signature":"1130c09f22ac69e13b25f0c42f3a9379-import { DogConfig } from 'src-types';\nexport declare abstract class Dog {\n    static getCapabilities(): DogConfig;\n}\n","impliedNodeFormat":99},{"version":"37fa5afea0e398a9cc485818c902b71c-import { DogConfig } from 'src-types';\n\nexport const LASSIE_CONFIG: DogConfig = { name: 'Lassie' };","signature":"2ef44fffbc07bb77765462af9f6df2a2-import { DogConfig } from 'src-types';\nexport declare const LASSIE_CONFIG: DogConfig;\n","impliedNodeFormat":99},{"version":"16f2a31a47590452f19f34bb56d0345f-import { Dog } from '../dog.js';\nimport { LASSIE_CONFIG } from './lassieconfig.js';\n\nexport class LassieDog extends Dog {\n    protected static getDogConfig = () => LASSIE_CONFIG;\n}","signature":"e1943411d89cafd8c6f5a028539f5775-import { Dog } from '../dog.js';\nexport declare class LassieDog extends Dog {\n    protected static getDogConfig: () => import(\"src-types\").DogConfig;\n}\n","impliedNodeFormat":99},{"version":"099983d5c3c8b20233df02ca964ad12f-export * from 'src-types';\nexport * from './lassie/lassiedog.js';","signature":"0fb03f7b5b8061b0e2cd78a4131e3df7-export * from 'src-types';\nexport * from './lassie/lassiedog.js';\n","impliedNodeFormat":99}],"fileIdsList":[[3,4],[3],[3,7],[5,6],[2]],"options":{"composite":true,"declaration":true,"module":100},"referencedMap":[[5,1],[4,2],[8,3],[6,2],[7,4],[3,5]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[4,8]],"fileNames":["lib.es2025.full.d.ts","../src-types/dogconfig.d.ts","../src-types/index.d.ts","./dogconfig.ts","./dog.ts","./lassie/lassieconfig.ts","./lassie/lassiedog.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"a71e22ebb89c8c5bea7cef8d090ace25-export interface DogConfig {\n    name: string;\n}\n","impliedNodeFormat":99},{"version":"3c21c50da3a1aea8b6fafa5aa595f160-export * from './dogconfig.js';\n","impliedNodeFormat":99},{"version":"a8c9e5169f1e05ea3fd4da563dc779b7-import { DogConfig } from 'src-types';\n\nexport const DOG_CONFIG: DogConfig = {\n    name: 'Default dog',\n};","signature":"d86984911a450bc1d13fc53590505060-import { DogConfig } from 'src-types';\nexport const DOG_CONFIG: DogConfig;\n","impliedNodeFormat":99},{"version":"4ef4eb6072aff36903b09b7e1fa75eea-import { DogConfig } from 'src-types';\nimport { DOG_CONFIG } from './dogconfig.js';\n\nexport abstract class Dog {\n\n    public static getCapabilities(): DogConfig {\n        return DOG_CONFIG;\n    }\n}","signature":"a851cbd338ec541ff6266302711c68cc-import { DogConfig } from 'src-types';\nexport abstract class Dog {\n    static getCapabilities(): DogConfig;\n}\n","impliedNodeFormat":99},{"version":"37fa5afea0e398a9cc485818c902b71c-import { DogConfig } from 'src-types';\n\nexport const LASSIE_CONFIG: DogConfig = { name: 'Lassie' };","signature":"efad3510bbf6cfb5bf1140851b2500cf-import { DogConfig } from 'src-types';\nexport const LASSIE_CONFIG: DogConfig;\n","impliedNodeFormat":99},{"version":"16f2a31a47590452f19f34bb56d0345f-import { Dog } from '../dog.js';\nimport { LASSIE_CONFIG } from './lassieconfig.js';\n\nexport class LassieDog extends Dog {\n    protected static getDogConfig = () => LASSIE_CONFIG;\n}","signature":"303d75b1aae9162d7cfdfab830d511b5-import { Dog } from '../dog.js';\nexport class LassieDog extends Dog {\n    protected static getDogConfig: () => import(\"src-types\").DogConfig;\n}\n","impliedNodeFormat":99},{"version":"099983d5c3c8b20233df02ca964ad12f-export * from 'src-types';\nexport * from './lassie/lassiedog.js';","signature":"0fb03f7b5b8061b0e2cd78a4131e3df7-export * from 'src-types';\nexport * from './lassie/lassiedog.js';\n","impliedNodeFormat":99}],"fileIdsList":[[3,4],[3],[3,7],[5,6],[2]],"options":{"composite":true,"declaration":true,"module":100},"referencedMap":[[5,1],[4,2],[8,3],[6,2],[7,4],[3,5]],"latestChangedDtsFile":"./index.d.ts"}
 //// [/home/src/workspaces/packages/src-dogs/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -235,44 +235,44 @@ export class LassieDog extends Dog {
     {
       "fileName": "./dogconfig.ts",
       "version": "a8c9e5169f1e05ea3fd4da563dc779b7-import { DogConfig } from 'src-types';\n\nexport const DOG_CONFIG: DogConfig = {\n    name: 'Default dog',\n};",
-      "signature": "55c35bfb192d26f7ab56e9447864b637-import { DogConfig } from 'src-types';\nexport declare const DOG_CONFIG: DogConfig;\n",
+      "signature": "d86984911a450bc1d13fc53590505060-import { DogConfig } from 'src-types';\nexport const DOG_CONFIG: DogConfig;\n",
       "impliedNodeFormat": "ESNext",
       "original": {
         "version": "a8c9e5169f1e05ea3fd4da563dc779b7-import { DogConfig } from 'src-types';\n\nexport const DOG_CONFIG: DogConfig = {\n    name: 'Default dog',\n};",
-        "signature": "55c35bfb192d26f7ab56e9447864b637-import { DogConfig } from 'src-types';\nexport declare const DOG_CONFIG: DogConfig;\n",
+        "signature": "d86984911a450bc1d13fc53590505060-import { DogConfig } from 'src-types';\nexport const DOG_CONFIG: DogConfig;\n",
         "impliedNodeFormat": 99
       }
     },
     {
       "fileName": "./dog.ts",
       "version": "4ef4eb6072aff36903b09b7e1fa75eea-import { DogConfig } from 'src-types';\nimport { DOG_CONFIG } from './dogconfig.js';\n\nexport abstract class Dog {\n\n    public static getCapabilities(): DogConfig {\n        return DOG_CONFIG;\n    }\n}",
-      "signature": "1130c09f22ac69e13b25f0c42f3a9379-import { DogConfig } from 'src-types';\nexport declare abstract class Dog {\n    static getCapabilities(): DogConfig;\n}\n",
+      "signature": "a851cbd338ec541ff6266302711c68cc-import { DogConfig } from 'src-types';\nexport abstract class Dog {\n    static getCapabilities(): DogConfig;\n}\n",
       "impliedNodeFormat": "ESNext",
       "original": {
         "version": "4ef4eb6072aff36903b09b7e1fa75eea-import { DogConfig } from 'src-types';\nimport { DOG_CONFIG } from './dogconfig.js';\n\nexport abstract class Dog {\n\n    public static getCapabilities(): DogConfig {\n        return DOG_CONFIG;\n    }\n}",
-        "signature": "1130c09f22ac69e13b25f0c42f3a9379-import { DogConfig } from 'src-types';\nexport declare abstract class Dog {\n    static getCapabilities(): DogConfig;\n}\n",
+        "signature": "a851cbd338ec541ff6266302711c68cc-import { DogConfig } from 'src-types';\nexport abstract class Dog {\n    static getCapabilities(): DogConfig;\n}\n",
         "impliedNodeFormat": 99
       }
     },
     {
       "fileName": "./lassie/lassieconfig.ts",
       "version": "37fa5afea0e398a9cc485818c902b71c-import { DogConfig } from 'src-types';\n\nexport const LASSIE_CONFIG: DogConfig = { name: 'Lassie' };",
-      "signature": "2ef44fffbc07bb77765462af9f6df2a2-import { DogConfig } from 'src-types';\nexport declare const LASSIE_CONFIG: DogConfig;\n",
+      "signature": "efad3510bbf6cfb5bf1140851b2500cf-import { DogConfig } from 'src-types';\nexport const LASSIE_CONFIG: DogConfig;\n",
       "impliedNodeFormat": "ESNext",
       "original": {
         "version": "37fa5afea0e398a9cc485818c902b71c-import { DogConfig } from 'src-types';\n\nexport const LASSIE_CONFIG: DogConfig = { name: 'Lassie' };",
-        "signature": "2ef44fffbc07bb77765462af9f6df2a2-import { DogConfig } from 'src-types';\nexport declare const LASSIE_CONFIG: DogConfig;\n",
+        "signature": "efad3510bbf6cfb5bf1140851b2500cf-import { DogConfig } from 'src-types';\nexport const LASSIE_CONFIG: DogConfig;\n",
         "impliedNodeFormat": 99
       }
     },
     {
       "fileName": "./lassie/lassiedog.ts",
       "version": "16f2a31a47590452f19f34bb56d0345f-import { Dog } from '../dog.js';\nimport { LASSIE_CONFIG } from './lassieconfig.js';\n\nexport class LassieDog extends Dog {\n    protected static getDogConfig = () => LASSIE_CONFIG;\n}",
-      "signature": "e1943411d89cafd8c6f5a028539f5775-import { Dog } from '../dog.js';\nexport declare class LassieDog extends Dog {\n    protected static getDogConfig: () => import(\"src-types\").DogConfig;\n}\n",
+      "signature": "303d75b1aae9162d7cfdfab830d511b5-import { Dog } from '../dog.js';\nexport class LassieDog extends Dog {\n    protected static getDogConfig: () => import(\"src-types\").DogConfig;\n}\n",
       "impliedNodeFormat": "ESNext",
       "original": {
         "version": "16f2a31a47590452f19f34bb56d0345f-import { Dog } from '../dog.js';\nimport { LASSIE_CONFIG } from './lassieconfig.js';\n\nexport class LassieDog extends Dog {\n    protected static getDogConfig = () => LASSIE_CONFIG;\n}",
-        "signature": "e1943411d89cafd8c6f5a028539f5775-import { Dog } from '../dog.js';\nexport declare class LassieDog extends Dog {\n    protected static getDogConfig: () => import(\"src-types\").DogConfig;\n}\n",
+        "signature": "303d75b1aae9162d7cfdfab830d511b5-import { Dog } from '../dog.js';\nexport class LassieDog extends Dog {\n    protected static getDogConfig: () => import(\"src-types\").DogConfig;\n}\n",
         "impliedNodeFormat": 99
       }
     },
@@ -337,7 +337,7 @@ export class LassieDog extends Dog {
     ]
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 3216
+  "size": 3184
 }
 //// [/home/src/workspaces/packages/src-types/dogconfig.d.ts] *new* 
 export interface DogConfig {

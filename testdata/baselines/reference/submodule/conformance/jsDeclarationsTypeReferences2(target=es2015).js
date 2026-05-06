@@ -34,12 +34,34 @@ module.exports = {
 
 
 //// [something.d.ts]
-export declare const o: {
+export const o: {
     a: number;
     m: number;
 };
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     thing: number;
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+tests/cases/conformance/jsdoc/declarations/out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== tests/cases/conformance/jsdoc/declarations/out/index.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        thing: number;
+    };
+    export = _default;
+    
+==== tests/cases/conformance/jsdoc/declarations/out/something.d.ts (0 errors) ====
+    export const o: {
+        a: number;
+        m: number;
+    };
+    

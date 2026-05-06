@@ -56,17 +56,44 @@ new multiM.c();
 
 //// [commentsMultiModuleSingleFile.d.ts]
 /** this is multi declare module*/
-declare namespace multiM {
+namespace multiM {
     /** class b*/
     class b {
     }
     class d {
     }
 }
-declare namespace multiM {
+namespace multiM {
     /** class c comment*/
     class c {
     }
     class e {
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+commentsMultiModuleSingleFile.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsMultiModuleSingleFile.d.ts (1 errors) ====
+    /** this is multi declare module*/
+    namespace multiM {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /** class b*/
+        class b {
+        }
+        class d {
+        }
+    }
+    namespace multiM {
+        /** class c comment*/
+        class c {
+        }
+        class e {
+        }
+    }
+    

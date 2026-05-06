@@ -87,13 +87,13 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/solution/target-tsc-build/shared/index.d.ts] *new* 
-export declare const a: Unrestricted;
+export const a: Unrestricted;
 
 //// [/home/src/workspaces/solution/target-tsc-build/shared/index.js] *new* 
 export const a = 1;
 
 //// [/home/src/workspaces/solution/target-tsc-build/shared/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../shared/index.ts","../../shared/typings-base/globals.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"038419a8862a47ff75929bd3632cfaa0-export const a: Unrestricted = 1;","signature":"3d46c415eae6cd0e760bea3fa85ba3aa-export declare const a: Unrestricted;\n","impliedNodeFormat":1},{"version":"0818246edc003d659f6bac1bc37ad307-type Unrestricted = any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"outDir":"..","rootDir":"../.."},"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../shared/index.ts","../../shared/typings-base/globals.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"038419a8862a47ff75929bd3632cfaa0-export const a: Unrestricted = 1;","signature":"3c4f9192e62292d693c30cd54107d59b-export const a: Unrestricted;\n","impliedNodeFormat":1},{"version":"0818246edc003d659f6bac1bc37ad307-type Unrestricted = any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"outDir":"..","rootDir":"../.."},"latestChangedDtsFile":"./index.d.ts"}
 //// [/home/src/workspaces/solution/target-tsc-build/shared/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -130,11 +130,11 @@ export const a = 1;
     {
       "fileName": "../../shared/index.ts",
       "version": "038419a8862a47ff75929bd3632cfaa0-export const a: Unrestricted = 1;",
-      "signature": "3d46c415eae6cd0e760bea3fa85ba3aa-export declare const a: Unrestricted;\n",
+      "signature": "3c4f9192e62292d693c30cd54107d59b-export const a: Unrestricted;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "038419a8862a47ff75929bd3632cfaa0-export const a: Unrestricted = 1;",
-        "signature": "3d46c415eae6cd0e760bea3fa85ba3aa-export declare const a: Unrestricted;\n",
+        "signature": "3c4f9192e62292d693c30cd54107d59b-export const a: Unrestricted;\n",
         "impliedNodeFormat": 1
       }
     },
@@ -157,16 +157,16 @@ export const a = 1;
     "rootDir": "../.."
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1337
+  "size": 1329
 }
 //// [/home/src/workspaces/solution/target-tsc-build/webpack/index.d.ts] *new* 
-export declare const b: Unrestricted;
+export const b: Unrestricted;
 
 //// [/home/src/workspaces/solution/target-tsc-build/webpack/index.js] *new* 
 export const b = 1;
 
 //// [/home/src/workspaces/solution/target-tsc-build/webpack/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../webpack/index.ts","../../shared/typings-base/globals.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"55323568c1e8cde378750e233962127b-export const b: Unrestricted = 1;","signature":"ab6809558636ca24521fe1a6d7861d37-export declare const b: Unrestricted;\n","impliedNodeFormat":1},{"version":"0818246edc003d659f6bac1bc37ad307-type Unrestricted = any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"outDir":"..","rootDir":"../.."},"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../webpack/index.ts","../../shared/typings-base/globals.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"55323568c1e8cde378750e233962127b-export const b: Unrestricted = 1;","signature":"aa437e87d10e3966c7a4028fdf83ebb9-export const b: Unrestricted;\n","impliedNodeFormat":1},{"version":"0818246edc003d659f6bac1bc37ad307-type Unrestricted = any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"outDir":"..","rootDir":"../.."},"latestChangedDtsFile":"./index.d.ts"}
 //// [/home/src/workspaces/solution/target-tsc-build/webpack/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -203,11 +203,11 @@ export const b = 1;
     {
       "fileName": "../../webpack/index.ts",
       "version": "55323568c1e8cde378750e233962127b-export const b: Unrestricted = 1;",
-      "signature": "ab6809558636ca24521fe1a6d7861d37-export declare const b: Unrestricted;\n",
+      "signature": "aa437e87d10e3966c7a4028fdf83ebb9-export const b: Unrestricted;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "55323568c1e8cde378750e233962127b-export const b: Unrestricted = 1;",
-        "signature": "ab6809558636ca24521fe1a6d7861d37-export declare const b: Unrestricted;\n",
+        "signature": "aa437e87d10e3966c7a4028fdf83ebb9-export const b: Unrestricted;\n",
         "impliedNodeFormat": 1
       }
     },
@@ -230,7 +230,7 @@ export const b = 1;
     "rootDir": "../.."
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1338
+  "size": 1330
 }
 
 shared/tsconfig.json::

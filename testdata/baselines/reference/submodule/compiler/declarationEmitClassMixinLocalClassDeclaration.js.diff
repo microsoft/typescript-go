@@ -1,0 +1,47 @@
+--- old.declarationEmitClassMixinLocalClassDeclaration.js
++++ new.declarationEmitClassMixinLocalClassDeclaration.js
+@@= skipped -50, +50 lines =@@
+ export type AnyFunction<Result = any> = (...input: any[]) => Result;
+ export type AnyConstructor<Instance extends object = object, Static extends object = object> = (new (...input: any[]) => Instance) & Static;
+ type MixinHelperFunc = <A extends AnyConstructor, T>(required: [A], arg: T) => T extends AnyFunction<infer M> ? M : never;
+-export declare const Mixin: MixinHelperFunc;
+-export declare class Base {
++export const Mixin: MixinHelperFunc;
++export class Base {
+ }
+-declare const XmlElement2_base: {
++const XmlElement2_base: {
+     new (): {
+         num: number;
+     };
+ };
+-export declare class XmlElement2 extends XmlElement2_base {
++export class XmlElement2 extends XmlElement2_base {
+ }
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitClassMixinLocalClassDeclaration.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitClassMixinLocalClassDeclaration.d.ts (1 errors) ====
++    export type AnyFunction<Result = any> = (...input: any[]) => Result;
++    export type AnyConstructor<Instance extends object = object, Static extends object = object> = (new (...input: any[]) => Instance) & Static;
++    type MixinHelperFunc = <A extends AnyConstructor, T>(required: [A], arg: T) => T extends AnyFunction<infer M> ? M : never;
++    export const Mixin: MixinHelperFunc;
++    export class Base {
++    }
++    const XmlElement2_base: {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        new (): {
++            num: number;
++        };
++    };
++    export class XmlElement2 extends XmlElement2_base {
++    }
++    export {};
++    

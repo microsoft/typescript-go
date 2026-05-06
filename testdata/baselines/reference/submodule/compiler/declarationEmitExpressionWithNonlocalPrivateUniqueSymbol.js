@@ -24,9 +24,9 @@ exports.A1 = a_1.A;
 type AX = {
     readonly A: unique symbol;
 };
-export declare const A: AX;
+export const A: AX;
 export {};
 //// [b.d.ts]
-export declare const A1: {
+export const A1: {
     readonly A: unique symbol;
 };

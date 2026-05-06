@@ -30,5 +30,5 @@ f.b;
 
 //// [a.d.ts]
 /** @constructor */
-declare function F(): void;
-declare const f: any;
+function F(): void;
+const f: any;

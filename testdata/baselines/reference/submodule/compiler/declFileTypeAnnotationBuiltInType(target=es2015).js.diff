@@ -1,0 +1,48 @@
+--- old.declFileTypeAnnotationBuiltInType(target=es2015).js
++++ new.declFileTypeAnnotationBuiltInType(target=es2015).js
+@@= skipped -80, +80 lines =@@
+
+
+ //// [declFileTypeAnnotationBuiltInType.d.ts]
+-declare function foo(): string;
+-declare function foo2(): string;
+-declare function foo3(): number;
+-declare function foo4(): number;
+-declare function foo5(): boolean;
+-declare function foo6(): boolean;
+-declare function foo7(): void;
+-declare function foo8(): void;
+-declare function foo9(): any;
+-declare function foo10(): any;
++function foo(): string;
++function foo2(): string;
++function foo3(): number;
++function foo4(): number;
++function foo5(): boolean;
++function foo6(): boolean;
++function foo7(): void;
++function foo8(): void;
++function foo9(): any;
++function foo10(): any;
++
++
++//// [DtsFileErrors]
++
++
++declFileTypeAnnotationBuiltInType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declFileTypeAnnotationBuiltInType.d.ts (1 errors) ====
++    function foo(): string;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    function foo2(): string;
++    function foo3(): number;
++    function foo4(): number;
++    function foo5(): boolean;
++    function foo6(): boolean;
++    function foo7(): void;
++    function foo8(): void;
++    function foo9(): any;
++    function foo10(): any;
++    

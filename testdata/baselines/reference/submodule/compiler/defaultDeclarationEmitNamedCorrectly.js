@@ -35,7 +35,7 @@ export interface Things<P, T> {
     p: P;
     t: T;
 }
-export declare function make<P, CTor>(x: {
+export function make<P, CTor>(x: {
     new (): CTor & {
         props: P;
     };

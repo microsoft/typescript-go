@@ -1,0 +1,11 @@
+--- old.declarationEmitParameterProperty.js
++++ new.declarationEmitParameterProperty.js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [declarationEmitParameterProperty.d.ts]
+-export declare class Foo {
++export class Foo {
+     bar?: string | undefined;
+     constructor(bar?: string | undefined);
+ }

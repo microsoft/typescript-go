@@ -120,14 +120,37 @@ function flatMap(array, iterable = identity) {
 
 
 //// [jsFileFunctionOverloads.d.ts]
-declare function getTypeName(x: number): 'number';
-declare function getTypeName(x: string): 'string';
-declare function getTypeName(x: boolean): 'boolean';
+function getTypeName(x: number): 'number';
+function getTypeName(x: string): 'string';
+function getTypeName(x: boolean): 'boolean';
 /**
  * @template T
  * @param {T} x
  * @returns {T}
  */
-declare const identity: <T>(x: T) => T;
-declare function flatMap<T, U>(array: T[], iterable: (x: T) => U[]): U[];
-declare function flatMap<T>(array: T[][]): T[];
+const identity: <T>(x: T) => T;
+function flatMap<T, U>(array: T[], iterable: (x: T) => U[]): U[];
+function flatMap<T>(array: T[][]): T[];
+
+
+//// [DtsFileErrors]
+
+
+dist/jsFileFunctionOverloads.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== dist/jsFileFunctionOverloads.d.ts (1 errors) ====
+    function getTypeName(x: number): 'number';
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function getTypeName(x: string): 'string';
+    function getTypeName(x: boolean): 'boolean';
+    /**
+     * @template T
+     * @param {T} x
+     * @returns {T}
+     */
+    const identity: <T>(x: T) => T;
+    function flatMap<T, U>(array: T[], iterable: (x: T) => U[]): U[];
+    function flatMap<T>(array: T[][]): T[];
+    

@@ -1,0 +1,11 @@
+--- old.parameterPropertyInConstructor4.js
++++ new.parameterPropertyInConstructor4.js
+@@= skipped -15, +15 lines =@@
+
+
+ //// [parameterPropertyInConstructor4.d.ts]
+-export declare class C {
++export class C {
+     a: number[];
+     constructor(a: number[] | undefined, b: number);
+ }

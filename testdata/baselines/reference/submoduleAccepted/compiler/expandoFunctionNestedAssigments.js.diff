@@ -1,9 +1,10 @@
 --- old.expandoFunctionNestedAssigments.js
 +++ new.expandoFunctionNestedAssigments.js
-@@= skipped -97, +97 lines =@@
+@@= skipped -96, +96 lines =@@
+
 
  //// [expandoFunctionNestedAssigments.d.ts]
- declare function Foo(): void;
+-declare function Foo(): void;
 -declare namespace Foo {
 -    var inVariableInit: number;
 -    var bla: {
@@ -31,5 +32,8 @@
 -    var fromForInBody: number;
 -    var fromForInBodyNested: number;
 -}
- declare let d: number;
- declare function bar(p?: number): void;
+-declare let d: number;
+-declare function bar(p?: number): void;
++function Foo(): void;
++let d: number;
++function bar(p?: number): void;

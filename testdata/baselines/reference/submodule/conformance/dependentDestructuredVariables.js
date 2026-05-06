@@ -833,11 +833,11 @@ type Action = {
     kind: 'B';
     payload: string;
 };
-declare function f10({ kind, payload }: Action): void;
-declare function f11(action: Action): void;
-declare function f12({ kind, payload }: Action): void;
-declare function f13<T extends Action>({ kind, payload }: T): void;
-declare function f14<T extends Action>(t: T): void;
+function f10({ kind, payload }: Action): void;
+function f11(action: Action): void;
+function f12({ kind, payload }: Action): void;
+function f13<T extends Action>({ kind, payload }: T): void;
+function f14<T extends Action>(t: T): void;
 type Action2 = {
     kind: 'A';
     payload: number | undefined;
@@ -845,10 +845,10 @@ type Action2 = {
     kind: 'B';
     payload: string | undefined;
 };
-declare function f20({ kind, payload }: Action2): void;
-declare function f21(action: Action2): void;
-declare function f22(action: Action2): void;
-declare function f23({ kind, payload }: Action2): void;
+function f20({ kind, payload }: Action2): void;
+function f21(action: Action2): void;
+function f22(action: Action2): void;
+function f23({ kind, payload }: Action2): void;
 type Foo = {
     kind: 'A';
     isA: true;
@@ -859,9 +859,9 @@ type Foo = {
     kind: 'C';
     isA: false;
 };
-declare function f30({ kind, isA }: Foo): void;
+function f30({ kind, isA }: Foo): void;
 type Args = ['A', number] | ['B', string];
-declare function f40(...[kind, data]: Args): void;
+function f40(...[kind, data]: Args): void;
 interface A<T> {
     variant: 'a';
     value: T;
@@ -871,9 +871,9 @@ interface B<T> {
     value: Array<T>;
 }
 type AB<T> = A<T> | B<T>;
-declare function printValue<T>(t: T): void;
-declare function printValueList<T>(t: Array<T>): void;
-declare function unrefined1<T>(ab: AB<T>): void;
+function printValue<T>(t: T): void;
+function printValueList<T>(t: Array<T>): void;
+function unrefined1<T>(ab: AB<T>): void;
 type Action3 = {
     type: 'add';
     payload: {
@@ -885,13 +885,13 @@ type Action3 = {
         toRemove: number;
     };
 };
-declare const reducerBroken: (state: number, { type, payload }: Action3) => number;
-declare var it: Iterator<number>;
-declare const value: any, done: boolean | undefined;
-declare function f50(cb: (...args: Args) => void): void;
-declare const f51: (...args: ['A', number] | ['B', string]) => void;
-declare const f52: (...args: ['A', number] | ['B']) => void;
-declare function readFile(path: string, callback: (...args: [err: null, data: unknown[]] | [err: Error, data: undefined]) => void): void;
+const reducerBroken: (state: number, { type, payload }: Action3) => number;
+var it: Iterator<number>;
+const value: any, done: boolean | undefined;
+function f50(cb: (...args: Args) => void): void;
+const f51: (...args: ['A', number] | ['B', string]) => void;
+const f52: (...args: ['A', number] | ['B']) => void;
+function readFile(path: string, callback: (...args: [err: null, data: unknown[]] | [err: Error, data: undefined]) => void): void;
 type ReducerArgs = ["add", {
     a: number;
     b: number;
@@ -899,7 +899,7 @@ type ReducerArgs = ["add", {
     firstArr: any[];
     secondArr: any[];
 }];
-declare const reducer: (...args: ReducerArgs) => void;
+const reducer: (...args: ReducerArgs) => void;
 type FooMethod = {
     method(...args: [
         type: "str",
@@ -909,7 +909,7 @@ type FooMethod = {
         cb: (e: number) => void
     ]): void;
 };
-declare let fooM: FooMethod;
+let fooM: FooMethod;
 type FooAsyncMethod = {
     method(...args: [
         type: "str",
@@ -919,7 +919,7 @@ type FooAsyncMethod = {
         cb: (e: number) => void
     ]): Promise<any>;
 };
-declare let fooAsyncM: FooAsyncMethod;
+let fooAsyncM: FooAsyncMethod;
 type FooGenMethod = {
     method(...args: [
         type: "str",
@@ -929,7 +929,7 @@ type FooGenMethod = {
         cb: (e: number) => void
     ]): Generator<any, any, any>;
 };
-declare let fooGenM: FooGenMethod;
+let fooGenM: FooGenMethod;
 type FooAsyncGenMethod = {
     method(...args: [
         type: "str",
@@ -939,10 +939,10 @@ type FooAsyncGenMethod = {
         cb: (e: number) => void
     ]): AsyncGenerator<any, any, any>;
 };
-declare let fooAsyncGenM: FooAsyncGenMethod;
+let fooAsyncGenM: FooAsyncGenMethod;
 type Func = <T extends ["a", number] | ["b", string]>(...args: T) => void;
-declare const f60: Func;
-declare function foo({ value1, test1, test2, test3, test4, test5, test6, test7, test8, test9 }: {
+const f60: Func;
+function foo({ value1, test1, test2, test3, test4, test5, test6, test7, test8, test9 }: {
     test1?: any;
     test2?: any;
     test3?: any;
@@ -954,25 +954,25 @@ declare function foo({ value1, test1, test2, test3, test4, test5, test6, test7, 
     test9?: any;
     value1: any;
 }): void;
-declare function fa1(x: [true, number] | [false, string]): void;
-declare function fa2(x: {
+function fa1(x: [true, number] | [false, string]): void;
+function fa2(x: {
     guard: true;
     value: number;
 } | {
     guard: false;
     value: string;
 }): void;
-declare const fa3: (...args: [true, number] | [false, string]) => void;
+const fa3: (...args: [true, number] | [false, string]) => void;
 interface ClientEvents {
     warn: [message: string];
     shardDisconnect: [closeEvent: CloseEvent, shardId: number];
 }
-declare class Client {
+class Client {
     on<K extends keyof ClientEvents>(event: K, listener: (...args: ClientEvents[K]) => void): void;
 }
-declare const bot: Client;
-declare function fz1([x, y]: [1, 2] | [3, 4] | [5]): void;
-declare function tooNarrow([x, y]: [1, 1] | [1, 2] | [1]): void;
-declare function parameterReassigned1([x, y]: [1, 2] | [3, 4]): void;
-declare function parameterReassigned2([x, y]: [1, 2] | [3, 4]): void;
-declare const parameterReassignedContextualRest1: (...args: [1, 2] | [3, 4]) => void;
+const bot: Client;
+function fz1([x, y]: [1, 2] | [3, 4] | [5]): void;
+function tooNarrow([x, y]: [1, 1] | [1, 2] | [1]): void;
+function parameterReassigned1([x, y]: [1, 2] | [3, 4]): void;
+function parameterReassigned2([x, y]: [1, 2] | [3, 4]): void;
+const parameterReassignedContextualRest1: (...args: [1, 2] | [3, 4]) => void;

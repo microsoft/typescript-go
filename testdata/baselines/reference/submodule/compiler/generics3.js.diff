@@ -1,0 +1,19 @@
+--- old.generics3.js
++++ new.generics3.js
+@@= skipped -18, +18 lines =@@
+
+
+ //// [generics3.d.ts]
+-declare class C<T> {
++class C<T> {
+     private x;
+ }
+ interface X {
+@@= skipped -9, +9 lines =@@
+ interface Y {
+     f(): string;
+ }
+-declare var a: C<X>;
+-declare var b: C<Y>;
++var a: C<X>;
++var b: C<Y>;

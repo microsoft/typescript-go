@@ -1,0 +1,8 @@
+--- old.declarationEmitAliasExportStar.js
++++ new.declarationEmitAliasExportStar.js
+@@= skipped -44, +44 lines =@@
+ export * from "./thingB";
+ //// [index.d.ts]
+ import * as things from "./things";
+-export declare const thing2: (param: things.ThingB) => any;
++export const thing2: (param: things.ThingB) => any;

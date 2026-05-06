@@ -57,9 +57,9 @@ function magnitude(p) {
  * @param {number} x
  * @param {number} y
  */
-export declare function Point(x: number, y: number): any;
+export function Point(x: number, y: number): any;
 //// [referencer.d.ts]
 /**
  * @param {Point} p
  */
-export declare function magnitude(p: Point): number;
+export function magnitude(p: Point): number;

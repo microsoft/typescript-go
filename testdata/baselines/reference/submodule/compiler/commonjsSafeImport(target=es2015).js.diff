@@ -1,0 +1,10 @@
+--- old.commonjsSafeImport(target=es2015).js
++++ new.commonjsSafeImport(target=es2015).js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [10_lib.d.ts]
+-export declare function Foo(): void;
++export function Foo(): void;
+ //// [main.d.ts]
+ export {};

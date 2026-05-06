@@ -1,9 +1,10 @@
 --- old.thisPropertyAssignment.js
 +++ new.thisPropertyAssignment.js
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
+
  //// [a.d.ts]
  /** @constructor */
- declare function F(): void;
+-declare function F(): void;
 -declare class F {
 -    a: {};
 -    b: {};
@@ -11,4 +12,5 @@
 -declare var x: {} | undefined;
 -declare var y: {} | undefined;
 -declare const f: F;
-+declare const f: any;
++function F(): void;
++const f: any;

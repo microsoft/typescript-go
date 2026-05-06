@@ -43,7 +43,29 @@ interface Greeter {
 interface GreeterConstructor {
     new (): Greeter;
 }
-declare const default_base: GreeterConstructor;
+const default_base: GreeterConstructor;
 export default class extends default_base {
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitForDefaultExportClassExtendingExpression01.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitForDefaultExportClassExtendingExpression01.d.ts (1 errors) ====
+    interface Greeter {
+        getGreeting(): string;
+    }
+    interface GreeterConstructor {
+        new (): Greeter;
+    }
+    const default_base: GreeterConstructor;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default class extends default_base {
+    }
+    export {};
+    

@@ -19,7 +19,7 @@ module.exports = es6ImportNamedImportInExportAssignment_0_1.a;
 
 
 //// [es6ImportNamedImportInExportAssignment_0.d.ts]
-export declare var a: number;
+export var a: number;
 //// [es6ImportNamedImportInExportAssignment_1.d.ts]
 import { a } from "./es6ImportNamedImportInExportAssignment_0";
 export = a;

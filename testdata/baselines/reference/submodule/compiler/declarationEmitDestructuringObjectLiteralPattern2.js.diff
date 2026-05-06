@@ -1,0 +1,42 @@
+--- old.declarationEmitDestructuringObjectLiteralPattern2.js
++++ new.declarationEmitDestructuringObjectLiteralPattern2.js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [declarationEmitDestructuringObjectLiteralPattern2.d.ts]
+-declare var x11: number, y11: string, z11: boolean;
+-declare function f15(): {
++var x11: number, y11: string, z11: boolean;
++function f15(): {
+     a4: string;
+     b4: number;
+     c4: boolean;
+ };
+-declare var a4: string, b4: number, c4: boolean;
+-declare namespace m {
++var a4: string, b4: number, c4: boolean;
++namespace m {
+     var a4: string, b4: number, c4: boolean;
+ }
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitDestructuringObjectLiteralPattern2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitDestructuringObjectLiteralPattern2.d.ts (1 errors) ====
++    var x11: number, y11: string, z11: boolean;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    function f15(): {
++        a4: string;
++        b4: number;
++        c4: boolean;
++    };
++    var a4: string, b4: number, c4: boolean;
++    namespace m {
++        var a4: string, b4: number, c4: boolean;
++    }
++    

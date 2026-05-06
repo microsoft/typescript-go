@@ -37,8 +37,8 @@ o2[s];
 
 
 //// [unionElementErrorTruncation.d.ts]
-declare let s: string;
-declare let o1: {
+let s: string;
+let o1: {
     id: "00";
 } | {
     id: "01";
@@ -77,6 +77,6 @@ declare let o1: {
 } | {
     id: "18";
 };
-declare let o2: typeof o1 | {
+let o2: typeof o1 | {
     id: "19";
 };

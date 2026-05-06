@@ -32,6 +32,6 @@ exports.c = (0, reexporter_1.func)();
 
 //// [reexporter.d.ts]
 import { CustomHtmlRepresentationThing } from "./foo.html";
-export declare function func(): CustomHtmlRepresentationThing;
+export function func(): CustomHtmlRepresentationThing;
 //// [index.d.ts]
-export declare const c: import("./foo.html").CustomHtmlRepresentationThing;
+export const c: import("./foo.html").CustomHtmlRepresentationThing;

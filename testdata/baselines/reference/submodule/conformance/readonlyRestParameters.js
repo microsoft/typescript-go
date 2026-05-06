@@ -57,7 +57,7 @@ function f4(...args) {
 
 
 //// [readonlyRestParameters.d.ts]
-declare function f0(a: string, b: string): void;
-declare function f1(...args: readonly string[]): void;
-declare function f2(...args: readonly [string, string]): void;
-declare function f4(...args: readonly string[]): void;
+function f0(a: string, b: string): void;
+function f1(...args: readonly string[]): void;
+function f2(...args: readonly [string, string]): void;
+function f4(...args: readonly string[]): void;

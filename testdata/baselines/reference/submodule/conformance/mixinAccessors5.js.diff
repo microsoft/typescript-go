@@ -1,0 +1,57 @@
+--- old.mixinAccessors5.js
++++ new.mixinAccessors5.js
+@@= skipped -30, +30 lines =@@
+
+
+ //// [mixinAccessors5.d.ts]
+-declare function basicMixin<T extends object, U extends object>(t: T, u: U): T & U;
+-declare class GetterA {
+-    constructor(...args: any[]);
+-    get inCompendium(): boolean;
+-}
+-declare class GetterB {
+-    constructor(...args: any[]);
+-    get inCompendium(): boolean;
+-}
+-declare const TestB_base: typeof GetterA & typeof GetterB;
+-declare class TestB extends TestB_base {
+-    get inCompendium(): boolean;
+-}
++function basicMixin<T extends object, U extends object>(t: T, u: U): T & U;
++class GetterA {
++    constructor(...args: any[]);
++    get inCompendium(): boolean;
++}
++class GetterB {
++    constructor(...args: any[]);
++    get inCompendium(): boolean;
++}
++const TestB_base: typeof GetterA & typeof GetterB;
++class TestB extends TestB_base {
++    get inCompendium(): boolean;
++}
++
++
++//// [DtsFileErrors]
++
++
++mixinAccessors5.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== mixinAccessors5.d.ts (1 errors) ====
++    function basicMixin<T extends object, U extends object>(t: T, u: U): T & U;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    class GetterA {
++        constructor(...args: any[]);
++        get inCompendium(): boolean;
++    }
++    class GetterB {
++        constructor(...args: any[]);
++        get inCompendium(): boolean;
++    }
++    const TestB_base: typeof GetterA & typeof GetterB;
++    class TestB extends TestB_base {
++        get inCompendium(): boolean;
++    }
++    

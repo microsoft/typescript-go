@@ -1,0 +1,8 @@
+--- old.declarationEmitInvalidReference2.js
++++ new.declarationEmitInvalidReference2.js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [declarationEmitInvalidReference2.d.ts]
+-declare var x: number;
++var x: number;

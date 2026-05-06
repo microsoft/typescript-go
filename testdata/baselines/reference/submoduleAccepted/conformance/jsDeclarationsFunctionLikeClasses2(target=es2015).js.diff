@@ -1,10 +1,9 @@
 --- old.jsDeclarationsFunctionLikeClasses2(target=es2015).js
 +++ new.jsDeclarationsFunctionLikeClasses2(target=es2015).js
-@@= skipped -157, +157 lines =@@
- /**
+@@= skipped -158, +158 lines =@@
   * @param {number} len
   */
--export function Vec(len: number): void;
+ export function Vec(len: number): void;
 -export class Vec {
 -    /**
 -     * @param {number} len
@@ -19,7 +18,6 @@
 -     */
 -    dot(other: Vec): number;
 -    magnitude(): number;
-+export declare function Vec(len: number): void;
 +export declare namespace Vec {
 +    var prototype: {
 +        /**
@@ -51,7 +49,7 @@
 -    set y(y: number);
 -    get y(): number;
 -    __proto__: typeof Vec;
-+export declare function Point2D(x: number, y: number): any;
++export function Point2D(x: number, y: number): any;
 +export declare namespace Point2D {
 +    var prototype: {
 +        __proto__: typeof Vec;
@@ -62,4 +60,4 @@
  //// [referencer.d.ts]
 -export const origin: Point2D;
 -import { Point2D } from "./source";
-+export declare const origin: any;
++export const origin: any;

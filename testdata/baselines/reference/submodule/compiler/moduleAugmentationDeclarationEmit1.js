@@ -53,13 +53,13 @@ let y = x.map(x => x + 1);
 
 
 //// [observable.d.ts]
-export declare class Observable<T> {
+export class Observable<T> {
     filter(pred: (e: T) => boolean): Observable<T>;
 }
-export declare namespace Observable {
+export namespace Observable {
 }
 //// [map.d.ts]
-declare module "./observable" {
+module "./observable" {
     interface Observable<T> {
         map<U>(proj: (e: T) => U): Observable<U>;
     }

@@ -21,12 +21,12 @@ export function noParamAnnotationBadDefault2(p = { a: 1 + 1 }) { }
 
 
 //// [isolatedDeclarationErrorsFunctionDeclarations.d.ts]
-export declare function noReturn(): void;
-export declare function noParamAnnotation(p: any): void;
-export declare function noParamAnnotationDefault(p?: number): void;
-export declare function noParamAnnotationBadDefault(p?: number, p2?: {
+export function noReturn(): void;
+export function noParamAnnotation(p: any): void;
+export function noParamAnnotationDefault(p?: number): void;
+export function noParamAnnotationBadDefault(p?: number, p2?: {
     a: number;
 }, p3?: readonly [number]): void;
-export declare function noParamAnnotationBadDefault2(p?: {
+export function noParamAnnotationBadDefault2(p?: {
     a: number;
 }): void;

@@ -97,6 +97,6 @@ for (let f in (Foo.forIn = [])) {
 
 
 //// [expandoFunctionNestedAssigments.d.ts]
-declare function Foo(): void;
-declare let d: number;
-declare function bar(p?: number): void;
+function Foo(): void;
+let d: number;
+function bar(p?: number): void;

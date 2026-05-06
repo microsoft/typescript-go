@@ -28,10 +28,38 @@ export type C = {
     m: 1;
 };
 /** @typedef {{ a: 1, m: 1 }} C */
-declare const f: () => void;
+const f: () => void;
 export = f;
 //// [use.d.ts]
 type C = import('./typedefModuleExportsIndirect2').C;
 /** @typedef {import('./typedefModuleExportsIndirect2').C} C */
 /** @type {C} */
-declare var c: C;
+var c: C;
+
+
+//// [DtsFileErrors]
+
+
+dist/typedefModuleExportsIndirect2.d.ts(6,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+dist/use.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== dist/typedefModuleExportsIndirect2.d.ts (1 errors) ====
+    export type C = {
+        a: 1;
+        m: 1;
+    };
+    /** @typedef {{ a: 1, m: 1 }} C */
+    const f: () => void;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export = f;
+    
+==== dist/use.d.ts (1 errors) ====
+    type C = import('./typedefModuleExportsIndirect2').C;
+    /** @typedef {import('./typedefModuleExportsIndirect2').C} C */
+    /** @type {C} */
+    var c: C;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

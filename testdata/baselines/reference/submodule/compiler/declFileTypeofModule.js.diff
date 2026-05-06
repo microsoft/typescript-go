@@ -1,0 +1,44 @@
+--- old.declFileTypeofModule.js
++++ new.declFileTypeofModule.js
+@@= skipped -28, +28 lines =@@
+
+
+ //// [declFileTypeofModule.d.ts]
+-declare namespace m1 {
++namespace m1 {
+     var c: string;
+ }
+-declare var m1_1: typeof m1;
+-declare var m1_2: typeof m1;
+-declare namespace m2 {
++var m1_1: typeof m1;
++var m1_2: typeof m1;
++namespace m2 {
+     var d: typeof m2;
+ }
+-declare var m2_1: typeof m2;
+-declare var m2_2: typeof m2;
++var m2_1: typeof m2;
++var m2_2: typeof m2;
++
++
++//// [DtsFileErrors]
++
++
++declFileTypeofModule.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declFileTypeofModule.d.ts (1 errors) ====
++    namespace m1 {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        var c: string;
++    }
++    var m1_1: typeof m1;
++    var m1_2: typeof m1;
++    namespace m2 {
++        var d: typeof m2;
++    }
++    var m2_1: typeof m2;
++    var m2_2: typeof m2;
++    

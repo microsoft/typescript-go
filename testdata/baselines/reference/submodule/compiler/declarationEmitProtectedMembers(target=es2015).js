@@ -95,7 +95,7 @@ class C4 {
 
 
 //// [declarationEmitProtectedMembers.d.ts]
-declare class C1 {
+class C1 {
     protected x: number;
     protected f(): number;
     protected set accessor(a: number);
@@ -105,19 +105,57 @@ declare class C1 {
     protected static set staticSetter(a: number);
     protected static get staticGetter(): number;
 }
-declare class C2 extends C1 {
+class C2 extends C1 {
     protected f(): number;
     protected static sf(): number;
 }
-declare class C3 extends C2 {
+class C3 extends C2 {
     x: number;
     static sx: number;
     f(): number;
     static sf(): number;
     static get staticGetter(): number;
 }
-declare class C4 {
+class C4 {
     protected a: number;
     protected b: any;
     constructor(a: number, b: any);
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitProtectedMembers.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitProtectedMembers.d.ts (1 errors) ====
+    class C1 {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        protected x: number;
+        protected f(): number;
+        protected set accessor(a: number);
+        protected get accessor(): number;
+        protected static sx: number;
+        protected static sf(): number;
+        protected static set staticSetter(a: number);
+        protected static get staticGetter(): number;
+    }
+    class C2 extends C1 {
+        protected f(): number;
+        protected static sf(): number;
+    }
+    class C3 extends C2 {
+        x: number;
+        static sx: number;
+        f(): number;
+        static sf(): number;
+        static get staticGetter(): number;
+    }
+    class C4 {
+        protected a: number;
+        protected b: any;
+        constructor(a: number, b: any);
+    }
+    

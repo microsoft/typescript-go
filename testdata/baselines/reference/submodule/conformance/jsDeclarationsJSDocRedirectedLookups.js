@@ -63,20 +63,20 @@
 
 
 //// [index.d.ts]
-/** @type {String} */ declare const a: string;
-/** @type {Number} */ declare const b: number;
-/** @type {Boolean} */ declare const c: boolean;
-/** @type {Void} */ declare const d: void;
-/** @type {Undefined} */ declare const e: undefined;
-/** @type {Null} */ declare const f: null;
-/** @type {Function} */ declare const g: Function;
-/** @type {function} */ declare const h: Function;
-/** @type {array} */ declare const i: any[];
-/** @type {promise} */ declare const j: Promise<any>;
-/** @type {Object<string, string>} */ declare const k: Record<string, string>;
-/** @type {class} */ declare const l: class;
-/** @type {bool} */ declare const m: bool;
-/** @type {int} */ declare const n: int;
-/** @type {float} */ declare const o: float;
-/** @type {integer} */ declare const p: integer;
-/** @type {event} */ declare const q: event;
+/** @type {String} */ const a: string;
+/** @type {Number} */ const b: number;
+/** @type {Boolean} */ const c: boolean;
+/** @type {Void} */ const d: void;
+/** @type {Undefined} */ const e: undefined;
+/** @type {Null} */ const f: null;
+/** @type {Function} */ const g: Function;
+/** @type {function} */ const h: Function;
+/** @type {array} */ const i: any[];
+/** @type {promise} */ const j: Promise<any>;
+/** @type {Object<string, string>} */ const k: Record<string, string>;
+/** @type {class} */ const l: class;
+/** @type {bool} */ const m: bool;
+/** @type {int} */ const n: int;
+/** @type {float} */ const o: float;
+/** @type {integer} */ const p: integer;
+/** @type {event} */ const q: event;

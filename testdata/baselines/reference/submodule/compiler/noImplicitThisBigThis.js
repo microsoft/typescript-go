@@ -100,7 +100,7 @@ function createObjNoCrash() {
 
 
 //// [noImplicitThisBigThis.d.ts]
-declare function createObj(): {
+function createObj(): {
     func1(): {
         func1(): /*elided*/ any;
         func2(): /*elided*/ any;
@@ -117,7 +117,7 @@ declare function createObj(): {
         func3(): any;
     };
 };
-declare function createObjNoCrash(): {
+function createObjNoCrash(): {
     func1(): {
         func1(): /*elided*/ any;
         func2(): /*elided*/ any;
@@ -218,3 +218,133 @@ declare function createObjNoCrash(): {
         func9(): any;
     };
 };
+
+
+//// [DtsFileErrors]
+
+
+noImplicitThisBigThis.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== noImplicitThisBigThis.d.ts (1 errors) ====
+    function createObj(): {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        func1(): {
+            func1(): /*elided*/ any;
+            func2(): /*elided*/ any;
+            func3(): /*elided*/ any;
+        };
+        func2(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+        };
+        func3(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+        };
+    };
+    function createObjNoCrash(): {
+        func1(): {
+            func1(): /*elided*/ any;
+            func2(): /*elided*/ any;
+            func3(): /*elided*/ any;
+            func4(): /*elided*/ any;
+            func5(): /*elided*/ any;
+            func6(): /*elided*/ any;
+            func7(): /*elided*/ any;
+            func8(): /*elided*/ any;
+            func9(): /*elided*/ any;
+        };
+        func2(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func3(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func4(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func5(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func6(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func7(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func8(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+        func9(): {
+            func1(): any;
+            func2(): any;
+            func3(): any;
+            func4(): any;
+            func5(): any;
+            func6(): any;
+            func7(): any;
+            func8(): any;
+            func9(): any;
+        };
+    };
+    

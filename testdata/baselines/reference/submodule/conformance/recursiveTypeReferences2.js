@@ -94,6 +94,6 @@ type XMLObject<T> = {
   )
 }} XMLObject<T> */
 /** @type {XMLObject<{foo:string}>} */
-declare const p: XMLObject<{
+const p: XMLObject<{
     foo: string;
 }>;

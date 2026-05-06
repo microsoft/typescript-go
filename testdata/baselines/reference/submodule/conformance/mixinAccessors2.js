@@ -32,7 +32,7 @@ class MyClass extends mixin(BaseClass) {
 
 
 //// [mixinAccessors2.d.ts]
-declare function mixin<T extends {
+function mixin<T extends {
     new (...args: any[]): {};
 }>(superclass: T): {
     new (...args: any[]): {
@@ -40,15 +40,47 @@ declare function mixin<T extends {
         set name(arg: string);
     };
 } & T;
-declare class BaseClass {
+class BaseClass {
     accessor name: string;
 }
-declare const MyClass_base: {
+const MyClass_base: {
     new (...args: any[]): {
         get name(): string;
         set name(arg: string);
     };
 } & typeof BaseClass;
-declare class MyClass extends MyClass_base {
+class MyClass extends MyClass_base {
     accessor name: string;
 }
+
+
+//// [DtsFileErrors]
+
+
+mixinAccessors2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== mixinAccessors2.d.ts (1 errors) ====
+    function mixin<T extends {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        new (...args: any[]): {};
+    }>(superclass: T): {
+        new (...args: any[]): {
+            get name(): string;
+            set name(arg: string);
+        };
+    } & T;
+    class BaseClass {
+        accessor name: string;
+    }
+    const MyClass_base: {
+        new (...args: any[]): {
+            get name(): string;
+            set name(arg: string);
+        };
+    } & typeof BaseClass;
+    class MyClass extends MyClass_base {
+        accessor name: string;
+    }
+    

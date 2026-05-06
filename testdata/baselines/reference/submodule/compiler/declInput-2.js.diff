@@ -1,0 +1,53 @@
+--- old.declInput-2.js
++++ new.declInput-2.js
+@@= skipped -44, +44 lines =@@
+
+
+ //// [declInput-2.d.ts]
+-declare namespace M {
++namespace M {
+     class C {
+     }
+     export class E {
+@@= skipped -26, +26 lines =@@
+     }
+     export {};
+ }
++
++
++//// [DtsFileErrors]
++
++
++declInput-2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declInput-2.d.ts (1 errors) ====
++    namespace M {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        class C {
++        }
++        export class E {
++        }
++        export interface I1 {
++        }
++        interface I2 {
++        }
++        export class D {
++            private c;
++            m1: number;
++            m2: string;
++            m22: C;
++            m23: E;
++            m24: I1;
++            m25: I2;
++            m232(): E;
++            m242(): I1;
++            m252(): I2;
++            m26(i: I1): void;
++            m262(i: I2): void;
++            m3(): C;
++        }
++        export {};
++    }
++    

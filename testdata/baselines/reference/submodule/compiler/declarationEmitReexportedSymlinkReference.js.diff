@@ -1,0 +1,10 @@
+--- old.declarationEmitReexportedSymlinkReference.js
++++ new.declarationEmitReexportedSymlinkReference.js
+@@= skipped -70, +70 lines =@@
+
+ //// [keys.d.ts]
+ import { MetadataAccessor } from "@raymondfeng/pkg2";
+-export declare const ADMIN: MetadataAccessor<boolean, import("@raymondfeng/pkg2").IdType>;
++export const ADMIN: MetadataAccessor<boolean, import("@raymondfeng/pkg2").IdType>;
+ //// [index.d.ts]
+ export * from './keys';

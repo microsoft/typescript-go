@@ -38,4 +38,4 @@ var Query;
 
 
 //// [privacyCheckAnonymousFunctionParameter.d.ts]
-export declare var x: number;
+export var x: number;

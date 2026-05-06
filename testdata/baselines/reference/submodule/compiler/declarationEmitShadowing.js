@@ -34,7 +34,7 @@ function needsRenameForShadowing() {
 
 
 //// [declarationEmitShadowing.d.ts]
-export declare class A<T = any> {
+export class A<T = any> {
     readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
 }
-export declare function needsRenameForShadowing<T>(): <T_1>(t: T, t2: T_1) => void;
+export function needsRenameForShadowing<T>(): <T_1>(t: T, t2: T_1) => void;

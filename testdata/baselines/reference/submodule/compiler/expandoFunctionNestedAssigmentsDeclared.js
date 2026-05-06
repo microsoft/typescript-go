@@ -114,8 +114,8 @@ for (let f in (Foo.forIn = [])) {
 
 
 //// [expandoFunctionNestedAssigmentsDeclared.d.ts]
-declare function Foo(): void;
-declare namespace Foo {
+function Foo(): void;
+namespace Foo {
     var bla: {
         foo: number;
     };
@@ -141,3 +141,42 @@ declare namespace Foo {
     var fromForInBody: number;
     var fromForInBodyNested: number;
 }
+
+
+//// [DtsFileErrors]
+
+
+expandoFunctionNestedAssigmentsDeclared.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== expandoFunctionNestedAssigmentsDeclared.d.ts (1 errors) ====
+    function Foo(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    namespace Foo {
+        var bla: {
+            foo: number;
+        };
+        var baz: number;
+        var bar: number;
+        var fromIf: number;
+        var inIf: number;
+        var fromWhileCondition: number;
+        var fromWhileBody: number;
+        var fromWhileBodyNested: number;
+        var fromDoBody: number;
+        var fromDoBodyNested: number;
+        var fromDoCondition: number;
+        var forInit: number;
+        var forCond: number;
+        var fromForBody: number;
+        var fromForBodyNested: number;
+        var forIncr: number;
+        var forOf: any[];
+        var fromForOfBody: number;
+        var fromForOfBodyNested: number;
+        var forIn: any[];
+        var fromForInBody: number;
+        var fromForInBodyNested: number;
+    }
+    

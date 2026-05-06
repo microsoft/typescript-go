@@ -134,10 +134,10 @@ function f3(a, b) { }
  * @typedef {[T]} A
  */
 type A<T extends string | number = string> = [T];
-/** @type {A} */ declare const aDefault1: A;
-/** @type {A} */ declare const aDefault2: A;
-/** @type {A<string>} */ declare const aString: A<string>;
-/** @type {A<number>} */ declare const aNumber: A<number>;
+/** @type {A} */ const aDefault1: A;
+/** @type {A} */ const aDefault2: A;
+/** @type {A<string>} */ const aString: A<string>;
+/** @type {A<number>} */ const aNumber: A<number>;
 type B<T, U = T> = [T, U];
 type C<T extends string | number = > = [T];
 type D<T extends string | number = > = [T];
@@ -172,18 +172,18 @@ type G<T = U, U = T> = [T, U];
  * @param {T} a
  * @param {U} b
  */
-declare function f1<T, U = T>(a: T, b: U): void;
+function f1<T, U = T>(a: T, b: U): void;
 /**
 * @template {string | number} [T=string]
 * @template U - error: Required type parameters cannot follow optional type parameters
 * @param {T} a
 * @param {U} b
 */
-declare function f2<T extends string | number = string, U>(a: T, b: U): void;
+function f2<T extends string | number = string, U>(a: T, b: U): void;
 /**
  * @template [T=U] - error: Type parameter defaults can only reference previously declared type parameters.
  * @template [U=T]
  * @param {T} a
  * @param {U} b
  */
-declare function f3<T = U, U = T>(a: T, b: U): void;
+function f3<T = U, U = T>(a: T, b: U): void;

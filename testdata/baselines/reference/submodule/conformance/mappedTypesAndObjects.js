@@ -70,9 +70,9 @@ class Form {
 
 
 //// [mappedTypesAndObjects.d.ts]
-declare function f1<T>(x: Partial<T>, y: Readonly<T>): void;
-declare function f2<T>(x: Partial<T>, y: Readonly<T>): void;
-declare function f3<T>(x: Partial<T>): void;
+function f1<T>(x: Partial<T>, y: Readonly<T>): void;
+function f2<T>(x: Partial<T>, y: Readonly<T>): void;
+function f3<T>(x: Partial<T>): void;
 interface Base {
     foo: {
         [key: string]: any;
@@ -93,6 +93,6 @@ interface E2 extends Base {
 interface E3<T> extends Base {
     foo: Partial<T>;
 }
-declare class Form<T> {
+class Form<T> {
     private values;
 }

@@ -25,7 +25,7 @@ export const wwmfMap = {};
 
 
 //// [enum.d.ts]
-export declare enum WWMF {
+export enum WWMF {
     AAR = "AAR"
 }
 //// [base.d.ts]
@@ -33,5 +33,5 @@ import type { WWMF } from "./enum";
 interface WWMFMap {
     [WWMF.AAR]?: any;
 }
-export declare const wwmfMap: WWMFMap;
+export const wwmfMap: WWMFMap;
 export {};

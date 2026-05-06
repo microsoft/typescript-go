@@ -189,7 +189,6 @@ compiler/jsFileFunctionOverloads2.js.diff
 compiler/jsFileMethodOverloads.js.diff
 compiler/jsFileMethodOverloads2.js.diff
 compiler/jsFileMethodOverloads5.js.diff
-conformance/overloadTag1.js.diff
 conformance/overloadTag2.js.diff
 
 # @callback/@overload tags reordered and restructured in declaration emit

@@ -15,9 +15,27 @@ var n = { w: null, x: '', y: () => { }, z: 32 };
 
 
 //// [declFileRegressionTests.d.ts]
-declare var n: {
+var n: {
     w: any;
     x: string;
     y: () => void;
     z: number;
 };
+
+
+//// [DtsFileErrors]
+
+
+declFileRegressionTests.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileRegressionTests.d.ts (1 errors) ====
+    var n: {
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        w: any;
+        x: string;
+        y: () => void;
+        z: number;
+    };
+    

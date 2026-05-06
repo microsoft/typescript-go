@@ -46,8 +46,8 @@ export class foo0 {
 
 
 //// [index.d.ts]
-export declare const kBar: unique symbol;
-export declare class foo0 {
+export const kBar: unique symbol;
+export class foo0 {
     /**
      * @protected
      * @type {null | string}

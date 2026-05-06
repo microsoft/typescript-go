@@ -27,11 +27,31 @@ var c;
 
 
 //// [internalAliasClass.d.ts]
-declare namespace a {
+namespace a {
     class c {
     }
 }
-declare namespace c {
+namespace c {
     import b = a.c;
     var x: b;
 }
+
+
+//// [DtsFileErrors]
+
+
+internalAliasClass.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== internalAliasClass.d.ts (1 errors) ====
+    namespace a {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class c {
+        }
+    }
+    namespace c {
+        import b = a.c;
+        var x: b;
+    }
+    

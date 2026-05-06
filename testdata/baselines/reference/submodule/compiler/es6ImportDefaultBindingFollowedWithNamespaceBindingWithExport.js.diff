@@ -1,0 +1,11 @@
+--- old.es6ImportDefaultBindingFollowedWithNamespaceBindingWithExport.js
++++ new.es6ImportDefaultBindingFollowedWithNamespaceBindingWithExport.js
+@@= skipped -53, +53 lines =@@
+
+
+ //// [server.d.ts]
+-export declare var a: number;
++export var a: number;
+ //// [client.d.ts]
+-export declare var x: number;
++export var x: number;

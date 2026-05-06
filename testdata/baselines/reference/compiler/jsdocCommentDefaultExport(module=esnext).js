@@ -52,7 +52,7 @@ export default null;
 
 //// [exportDefaultObject.d.ts]
 /** Object comment */
-declare const _default: {
+const _default: {
     fn(): void;
 };
 export default _default;
@@ -66,9 +66,52 @@ export default class {
 }
 //// [exportDefaultLiteral.d.ts]
 /** Literal comment */
-declare const _default = 42;
+const _default = 42;
 export default _default;
 //// [exportDefaultNull.d.ts]
 /** Null comment */
-declare const _default: null;
+const _default: null;
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+exportDefaultLiteral.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+exportDefaultNull.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+exportDefaultObject.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== exportDefaultObject.d.ts (1 errors) ====
+    /** Object comment */
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        fn(): void;
+    };
+    export default _default;
+    
+==== exportDefaultFunction.d.ts (0 errors) ====
+    /** Function comment */
+    export default function (): number;
+    
+==== exportDefaultClass.d.ts (0 errors) ====
+    /** Class comment */
+    export default class {
+        method(): void;
+    }
+    
+==== exportDefaultLiteral.d.ts (1 errors) ====
+    /** Literal comment */
+    const _default = 42;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    
+==== exportDefaultNull.d.ts (1 errors) ====
+    /** Null comment */
+    const _default: null;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    

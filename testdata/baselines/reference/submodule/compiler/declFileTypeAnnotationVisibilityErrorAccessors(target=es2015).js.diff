@@ -1,0 +1,11 @@
+--- old.declFileTypeAnnotationVisibilityErrorAccessors(target=es2015).js
++++ new.declFileTypeAnnotationVisibilityErrorAccessors(target=es2015).js
+@@= skipped -191, +191 lines =@@
+
+
+ //// [declFileTypeAnnotationVisibilityErrorAccessors.d.ts]
+-declare namespace m {
++namespace m {
+     class private1 {
+     }
+     export class public1 {

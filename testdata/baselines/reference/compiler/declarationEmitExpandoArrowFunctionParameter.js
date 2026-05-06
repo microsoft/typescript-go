@@ -69,7 +69,7 @@ interface Props<T extends string = string> {
     onValueChange: (value: T) => void;
     disabled?: boolean;
 }
-export declare const ColorPicker: <T extends string>(props: Props<T> & {
+export const ColorPicker: <T extends string>(props: Props<T> & {
     ref?: {
         current: HTMLButtonElement | null;
     } | undefined;
@@ -80,5 +80,5 @@ import { ColorPicker } from "./component";
 type StoryFn<T> = ((args: T extends (props: infer P) => any ? P : never) => string) & {
     args?: Partial<T extends (props: infer P) => any ? P : never>;
 };
-export declare const Default: StoryFn<typeof ColorPicker>;
+export const Default: StoryFn<typeof ColorPicker>;
 export {};

@@ -137,7 +137,7 @@ __exportStar(require("./keys"), exports);
 
 //// [/user/username/projects/myproject/pkg3/dist/keys.d.ts] *new* 
 import { MetadataAccessor } from "@raymondfeng/pkg2";
-export declare const ADMIN: any;
+export const ADMIN: any;
 
 //// [/user/username/projects/myproject/pkg3/dist/keys.js] *new* 
 "use strict";

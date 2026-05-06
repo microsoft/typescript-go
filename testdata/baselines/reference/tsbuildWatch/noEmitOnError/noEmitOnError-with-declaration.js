@@ -566,7 +566,7 @@ Output::
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *rewrite with same content*
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *rewrite with same content*
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.d.ts] *modified* 
-export declare const a: {
+export const a: {
     new (): {
         p: number;
     };

@@ -24,7 +24,7 @@ export class TextElement extends HTMLElement {
 
 
 //// [thisPropertyAssignmentInherited.d.ts]
-export declare class Element {
+export class Element {
     /**
      * @returns {String}
      */
@@ -32,9 +32,9 @@ export declare class Element {
     set textContent(x: string);
     cloneNode(): this;
 }
-export declare class HTMLElement extends Element {
+export class HTMLElement extends Element {
 }
-export declare class TextElement extends HTMLElement {
+export class TextElement extends HTMLElement {
     get innerHTML(): string;
     set innerHTML(html: string);
     toString(): void;

@@ -20,7 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 //// [file1.d.ts]
 /// <reference lib="dom" preserve="true" />
-export declare const elem: HTMLElement;
+export const elem: HTMLElement;
 //// [file2.d.ts]
 /// <reference lib="dom" preserve="true" />
 export {};

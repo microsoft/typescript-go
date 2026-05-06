@@ -158,7 +158,7 @@ exports.origin = new source_1.Point2D(0, 0);
 /**
  * @param {number} len
  */
-export declare function Vec(len: number): void;
+export function Vec(len: number): void;
 export declare namespace Vec {
     var prototype: {
         /**
@@ -172,7 +172,7 @@ export declare namespace Vec {
  * @param {number} x
  * @param {number} y
  */
-export declare function Point2D(x: number, y: number): any;
+export function Point2D(x: number, y: number): any;
 export declare namespace Point2D {
     var prototype: {
         __proto__: typeof Vec;
@@ -181,4 +181,4 @@ export declare namespace Point2D {
     };
 }
 //// [referencer.d.ts]
-export declare const origin: any;
+export const origin: any;

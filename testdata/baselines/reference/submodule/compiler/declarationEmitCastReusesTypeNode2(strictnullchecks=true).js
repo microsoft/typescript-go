@@ -29,19 +29,19 @@ export function fnWithPartialAnnotationOnDefaultparam(x: {} & { name: string } =
 
 
 //// [declarationEmitCastReusesTypeNode2.d.ts]
-export declare let vLet: {} & {
+export let vLet: {} & {
     name: string;
 };
-export declare const vConst: {} & {
+export const vConst: {} & {
     name: string;
 };
-export declare function fn(p?: {} & {
+export function fn(p?: {} & {
     name: string;
 }): void;
-export declare function fnWithRequiredDefaultParam(p: ({} & {
+export function fnWithRequiredDefaultParam(p: ({} & {
     name: string;
 }) | undefined, req: number): void;
-export declare class C {
+export class C {
     ctorField: {} & {
         name: string;
     };
@@ -70,10 +70,70 @@ export declare class C {
         name: string;
     });
 }
-declare const _default: {} & {
+const _default: {} & {
     name: string;
 };
 export default _default;
-export declare function fnWithPartialAnnotationOnDefaultparam(x: ({} & {
+export function fnWithPartialAnnotationOnDefaultparam(x: ({} & {
     name: string;
 }) | undefined, b: number): void;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitCastReusesTypeNode2.d.ts(42,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitCastReusesTypeNode2.d.ts (1 errors) ====
+    export let vLet: {} & {
+        name: string;
+    };
+    export const vConst: {} & {
+        name: string;
+    };
+    export function fn(p?: {} & {
+        name: string;
+    }): void;
+    export function fnWithRequiredDefaultParam(p: ({} & {
+        name: string;
+    }) | undefined, req: number): void;
+    export class C {
+        ctorField: {} & {
+            name: string;
+        };
+        field: {} & {
+            name: string;
+        };
+        optField?: {} & {
+            name: string;
+        };
+        readonly roFiled: {} & {
+            name: string;
+        };
+        method(p?: {} & {
+            name: string;
+        }): void;
+        methodWithRequiredDefault(p: ({} & {
+            name: string;
+        }) | undefined, req: number): void;
+        constructor(ctorField?: {} & {
+            name: string;
+        });
+        get x(): {} & {
+            name: string;
+        };
+        set x(v: {} & {
+            name: string;
+        });
+    }
+    const _default: {} & {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        name: string;
+    };
+    export default _default;
+    export function fnWithPartialAnnotationOnDefaultparam(x: ({} & {
+        name: string;
+    }) | undefined, b: number): void;
+    

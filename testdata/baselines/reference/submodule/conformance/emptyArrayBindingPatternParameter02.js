@@ -13,4 +13,17 @@ function f(a, []) {
 
 
 //// [emptyArrayBindingPatternParameter02.d.ts]
-declare function f(a: any, []: Iterable<any, void, undefined>): void;
+function f(a: any, []: Iterable<any, void, undefined>): void;
+
+
+//// [DtsFileErrors]
+
+
+emptyArrayBindingPatternParameter02.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== emptyArrayBindingPatternParameter02.d.ts (1 errors) ====
+    function f(a: any, []: Iterable<any, void, undefined>): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

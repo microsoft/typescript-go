@@ -1,0 +1,28 @@
+--- old.commentsExternalModules3(target=es2015).js
++++ new.commentsExternalModules3(target=es2015).js
+@@= skipped -131, +131 lines =@@
+
+ //// [commentsExternalModules2_0.d.ts]
+ /** Module comment*/
+-export declare namespace m1 {
++export namespace m1 {
+     /** b's comment*/
+     var b: number;
+     /** m2 comments*/
+@@= skipped -15, +15 lines =@@
+     function fooExport(): number;
+ }
+ /** Module comment */
+-export declare namespace m4 {
++export namespace m4 {
+     /** b's comment */
+     var b: number;
+     /** m2 comments
+@@= skipped -18, +18 lines =@@
+ //// [commentsExternalModules_1.d.ts]
+ /**This is on import declaration*/
+ import extMod = require("./commentsExternalModules2_0");
+-export declare var newVar: extMod.m1.m2.c;
+-export declare var newVar2: extMod.m4.m2.c;
++export var newVar: extMod.m1.m2.c;
++export var newVar2: extMod.m4.m2.c;

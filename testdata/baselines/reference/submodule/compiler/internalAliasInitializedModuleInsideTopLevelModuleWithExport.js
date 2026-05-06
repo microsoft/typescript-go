@@ -29,11 +29,11 @@ exports.x = new exports.b.c();
 
 
 //// [internalAliasInitializedModuleInsideTopLevelModuleWithExport.d.ts]
-export declare namespace a {
+export namespace a {
     namespace b {
         class c {
         }
     }
 }
 export import b = a.b;
-export declare var x: b.c;
+export var x: b.c;

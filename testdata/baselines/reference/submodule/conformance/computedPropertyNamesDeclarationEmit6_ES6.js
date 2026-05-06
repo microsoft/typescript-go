@@ -20,7 +20,7 @@ var v = {
 
 
 //// [computedPropertyNamesDeclarationEmit6_ES6.d.ts]
-declare var v: {
+var v: {
     [x: number]: {};
     [-1]: {};
     1: {};

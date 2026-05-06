@@ -104,20 +104,50 @@ function foo2() {
 
 //// [commentsFunction.d.ts]
 /** This comment should appear for foo*/
-declare function foo(): void;
+function foo(): void;
 /** This is comment for function signature*/
-declare function fooWithParameters(/** this is comment about a*/ a: string, 
+function fooWithParameters(/** this is comment about a*/ a: string, 
 /** this is comment for b*/
 b: number): void;
 /** fooFunc
  * comment
  */
-declare var fooFunc: (b: string) => string;
-declare var lambdaFoo: (a: number, b: number) => number;
-declare var lambddaNoVarComment: (a: number, b: number) => number;
-declare function blah(a: string): void;
-declare function blah2(a: string): void;
-declare function blah3(a: string): void;
-declare function blah4(/*1*/ a: string, /*3*/ b: string): void;
-declare function foo1(): void;
-declare function foo2(): void;
+var fooFunc: (b: string) => string;
+var lambdaFoo: (a: number, b: number) => number;
+var lambddaNoVarComment: (a: number, b: number) => number;
+function blah(a: string): void;
+function blah2(a: string): void;
+function blah3(a: string): void;
+function blah4(/*1*/ a: string, /*3*/ b: string): void;
+function foo1(): void;
+function foo2(): void;
+
+
+//// [DtsFileErrors]
+
+
+commentsFunction.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsFunction.d.ts (1 errors) ====
+    /** This comment should appear for foo*/
+    function foo(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    /** This is comment for function signature*/
+    function fooWithParameters(/** this is comment about a*/ a: string, 
+    /** this is comment for b*/
+    b: number): void;
+    /** fooFunc
+     * comment
+     */
+    var fooFunc: (b: string) => string;
+    var lambdaFoo: (a: number, b: number) => number;
+    var lambddaNoVarComment: (a: number, b: number) => number;
+    function blah(a: string): void;
+    function blah2(a: string): void;
+    function blah3(a: string): void;
+    function blah4(/*1*/ a: string, /*3*/ b: string): void;
+    function foo1(): void;
+    function foo2(): void;
+    

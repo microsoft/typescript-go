@@ -63,14 +63,14 @@ let b = a.foo().n;
 
 
 //// [f1.d.ts]
-export declare class A {
+export class A {
 }
 //// [f2.d.ts]
-export declare class B {
+export class B {
     n: number;
 }
 //// [f3.d.ts]
-declare namespace N {
+namespace N {
     interface Ifc {
         a: any;
     }
@@ -78,7 +78,7 @@ declare namespace N {
         a: any;
     }
 }
-declare module "./f1" {
+module "./f1" {
     import { B } from "./f2";
     import I = N.Ifc;
     import C = N.Cls;

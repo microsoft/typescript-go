@@ -1,0 +1,28 @@
+--- old.declarationEmitDestructuringParameterProperties.js
++++ new.declarationEmitDestructuringParameterProperties.js
+@@= skipped -34, +34 lines =@@
+
+
+ //// [declarationEmitDestructuringParameterProperties.d.ts]
+-declare class C1 {
++class C1 {
+     x: string;
+     y: string;
+     z: string;
+     constructor([x, y, z]: string[]);
+ }
+ type TupleType1 = [string, number, boolean];
+-declare class C2 {
++class C2 {
+     x: string;
+     y: number;
+     z: boolean;
+@@= skipped -18, +18 lines =@@
+     y: string;
+     z: boolean;
+ };
+-declare class C3 {
++class C3 {
+     x: number;
+     y: string;
+     z: boolean;

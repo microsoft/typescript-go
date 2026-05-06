@@ -45,5 +45,5 @@ exports.vb = (0, other_1.fb)();
 
 
 //// [main.d.ts]
-export declare const va: import("ext").A;
-export declare const vb: import("ext/other").B;
+export const va: import("ext").A;
+export const vb: import("ext/other").B;

@@ -15,7 +15,7 @@ exports.c = [null][0];
 
 
 //// [hugeDeclarationOutputGetsTruncatedWithError.d.ts]
-export declare const c: {
+export const c: {
     aa: {
         aa: "aa.aa";
         ab: "aa.ab";

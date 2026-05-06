@@ -65,10 +65,10 @@ export const y = 10;
 export const x = 10;
 
 //// [/home/src/projects/myproject/decls/main.d.ts] *new* 
-export declare const y = 10;
+export const y = 10;
 
 //// [/home/src/projects/myproject/decls/types/sometype.d.ts] *new* 
-export declare const x = 10;
+export const x = 10;
 
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>

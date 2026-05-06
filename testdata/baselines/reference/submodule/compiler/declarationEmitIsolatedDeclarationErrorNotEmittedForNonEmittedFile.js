@@ -68,7 +68,7 @@ exports.publicProcedure = trpc.procedure;
 
 
 //// [index.d.ts]
-export declare const middleware: <TNewParams extends Record<string, any>>(fn: import("@trpc/server/middleware").MiddlewareFunction<{
+export const middleware: <TNewParams extends Record<string, any>>(fn: import("@trpc/server/middleware").MiddlewareFunction<{
     _config: import("@trpc/server/internals/config").RootConfig<{
         errorShape: import("@trpc/server/internals/utils").ErrorFormatterShape<import("@trpc/server/internals/utils").ErrorFormatter<object, import("@trpc/server/internals/utils").DefaultErrorShape<{}>>>;
     }>;
@@ -77,5 +77,5 @@ export declare const middleware: <TNewParams extends Record<string, any>>(fn: im
         errorShape: import("@trpc/server/internals/utils").ErrorFormatterShape<import("@trpc/server/internals/utils").ErrorFormatter<object, import("@trpc/server/internals/utils").DefaultErrorShape<{}>>>;
     }>;
 }, TNewParams>;
-export declare const router: {};
-export declare const publicProcedure: {};
+export const router: {};
+export const publicProcedure: {};

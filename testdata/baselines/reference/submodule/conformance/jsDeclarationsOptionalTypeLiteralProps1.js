@@ -44,7 +44,7 @@ function foo({ a, b, c }) {
  * @param {number} [opts.c]
  * @returns {number}
  */
-declare function foo({ a, b, c }: {
+function foo({ a, b, c }: {
     a: number;
     b?: number;
     c?: number;

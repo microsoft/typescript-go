@@ -52,12 +52,12 @@ interface Controller<out T> {
 interface Animal {
     run(): void;
 }
-declare class Dog implements Animal {
+class Dog implements Animal {
     run(): void;
     bark(): void;
 }
 interface AnimalContainer<T> {
     controller: Controller<T>;
 }
-declare let ca: AnimalContainer<Animal>;
-declare let cd: AnimalContainer<Dog>;
+let ca: AnimalContainer<Animal>;
+let cd: AnimalContainer<Dog>;

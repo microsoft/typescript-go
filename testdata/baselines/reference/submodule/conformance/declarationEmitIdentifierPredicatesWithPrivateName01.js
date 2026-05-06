@@ -22,5 +22,5 @@ function f(x) {
 interface I {
     a: number;
 }
-export declare function f(x: any): x is I;
+export function f(x: any): x is I;
 export {};

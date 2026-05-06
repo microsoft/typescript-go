@@ -1,0 +1,10 @@
+--- old.noConstraintInReturnType1.js
++++ new.noConstraintInReturnType1.js
+@@= skipped -13, +13 lines =@@
+
+
+ //// [noConstraintInReturnType1.d.ts]
+-declare class List<T extends {}> {
++class List<T extends {}> {
+     static empty<T extends {}>(): List<T>;
+ }

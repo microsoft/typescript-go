@@ -12,9 +12,9 @@ exports.example = exports.mapped;
 
 
 //// [declarationQuotedMembers.d.ts]
-export declare const mapped: {
+export const mapped: {
     [K in 'a-b-c']: number;
 };
-export declare const example: {
+export const example: {
     "a-b-c": number;
 };

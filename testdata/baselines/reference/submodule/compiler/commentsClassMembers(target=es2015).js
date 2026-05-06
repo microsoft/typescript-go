@@ -414,7 +414,7 @@ cProperties_i.nc_p2 = cProperties_i.nc_p1;
 
 //// [commentsClassMembers.d.ts]
 /** This is comment for c1*/
-declare class c1 {
+class c1 {
     /** p1 is property of c1*/
     p1: number;
     /** sum with property*/
@@ -492,25 +492,25 @@ declare class c1 {
     */
     static set b_s3(value: number);
 }
-declare var i1: c1;
-declare var i1_p: number;
-declare var i1_f: (b: number) => number;
-declare var i1_r: number;
-declare var i1_prop: number;
-declare var i1_nc_p: number;
-declare var i1_ncf: (b: number) => number;
-declare var i1_ncr: number;
-declare var i1_ncprop: number;
-declare var i1_s_p: number;
-declare var i1_s_f: typeof c1.s2;
-declare var i1_s_r: number;
-declare var i1_s_prop: number;
-declare var i1_s_nc_p: number;
-declare var i1_s_ncf: typeof c1.nc_s2;
-declare var i1_s_ncr: number;
-declare var i1_s_ncprop: number;
-declare var i1_c: typeof c1;
-declare class cProperties {
+var i1: c1;
+var i1_p: number;
+var i1_f: (b: number) => number;
+var i1_r: number;
+var i1_prop: number;
+var i1_nc_p: number;
+var i1_ncf: (b: number) => number;
+var i1_ncr: number;
+var i1_ncprop: number;
+var i1_s_p: number;
+var i1_s_f: typeof c1.s2;
+var i1_s_r: number;
+var i1_s_prop: number;
+var i1_s_nc_p: number;
+var i1_s_ncf: typeof c1.nc_s2;
+var i1_s_ncr: number;
+var i1_s_ncprop: number;
+var i1_c: typeof c1;
+class cProperties {
     private val;
     /** getter only property*/
     get p1(): number;
@@ -521,4 +521,4 @@ declare class cProperties {
     x: number;
     private y;
 }
-declare var cProperties_i: cProperties;
+var cProperties_i: cProperties;

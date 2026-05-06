@@ -68,13 +68,13 @@ export interface HttpResponse<D extends unknown, E extends unknown = unknown> ex
     data: D;
     error: E;
 }
-export declare class HttpClient<SecurityDataType = unknown> {
+export class HttpClient<SecurityDataType = unknown> {
     request: <T = any, E = any>() => TPromise<HttpResponse<T, E>>;
 }
 export {};
 //// [Api.d.ts]
 import { HttpClient } from "./http-client";
-export declare class Api<SecurityDataType = unknown> {
+export class Api<SecurityDataType = unknown> {
     private http;
     constructor(http: HttpClient<SecurityDataType>);
     abc1: () => Omit<Promise<import("./http-client").HttpResponse<any, any>>, "catch" | "then"> & {

@@ -1,0 +1,8 @@
+--- old.declarationsIndirectGeneratedAliasReference.js
++++ new.declarationsIndirectGeneratedAliasReference.js
+@@= skipped -60, +60 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const MyComp: import("mod/ctor").ExtendedCtor<import("mod").default>;
++export const MyComp: import("mod/ctor").ExtendedCtor<import("mod").default>;

@@ -1,0 +1,10 @@
+--- old.declarationEmitPrivateAsync.js
++++ new.declarationEmitPrivateAsync.js
+@@= skipped -30, +30 lines =@@
+
+
+ //// [declarationEmitPrivateAsync.d.ts]
+-export declare class Foo {
++export class Foo {
+     private baz;
+ }

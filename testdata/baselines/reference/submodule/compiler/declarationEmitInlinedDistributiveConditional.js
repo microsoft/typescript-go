@@ -41,17 +41,17 @@ const b = (0, api_1.dropPrivateProps2)({ foo: 42, _bar: 'secret' }); // type is 
 
 
 //// [internal.d.ts]
-export declare function excludePrivateKeys1<Obj>(obj: Obj): {
+export function excludePrivateKeys1<Obj>(obj: Obj): {
     [K in PublicKeys1<keyof Obj>]: Obj[K];
 };
-export declare function excludePrivateKeys2<Obj>(obj: Obj): {
+export function excludePrivateKeys2<Obj>(obj: Obj): {
     [K in PublicKeys2<keyof Obj>]: Obj[K];
 };
 export type PublicKeys1<T> = T extends `_${string}` ? never : T;
 type PublicKeys2<T> = T extends `_${string}` ? never : T;
 export {};
 //// [api.d.ts]
-export declare const dropPrivateProps1: <Obj>(obj: Obj) => { [K in import("./internal").PublicKeys1<keyof Obj>]: Obj[K]; };
-export declare const dropPrivateProps2: <Obj>(obj: Obj) => { [K in keyof Obj extends infer T ? T extends keyof Obj ? T extends `_${string}` ? never : T : never : never]: Obj[K]; };
+export const dropPrivateProps1: <Obj>(obj: Obj) => { [K in import("./internal").PublicKeys1<keyof Obj>]: Obj[K]; };
+export const dropPrivateProps2: <Obj>(obj: Obj) => { [K in keyof Obj extends infer T ? T extends keyof Obj ? T extends `_${string}` ? never : T : never : never]: Obj[K]; };
 //// [test.d.ts]
 export {};

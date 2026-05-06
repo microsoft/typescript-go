@@ -1,15 +1,22 @@
 --- old.isolatedDeclarationsAddUndefined.js
 +++ new.isolatedDeclarationsAddUndefined.js
-@@= skipped -58, +58 lines =@@
-     f: number;
- }
- export {};
-+//// [file2.d.ts]
-+export declare function foo(p?: (ip: number | undefined, v: number) => void): void;
-+type T = number;
-+export declare function foo2(p?: (ip: T | undefined, v: number) => void): void;
-+export declare class Bar2 {
+@@= skipped -51, +51 lines =@@
+
+ //// [file1.d.ts]
+ type N = 1;
+-export declare class Bar {
++export class Bar {
+     c?: readonly [1] | undefined;
+     c3?: N;
 +    readonly r = 1;
 +    f: number;
 +}
 +export {};
++//// [file2.d.ts]
++export function foo(p?: (ip: number | undefined, v: number) => void): void;
++type T = number;
++export function foo2(p?: (ip: T | undefined, v: number) => void): void;
++export class Bar2 {
+     readonly r = 1;
+     f: number;
+ }

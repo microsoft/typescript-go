@@ -1,0 +1,90 @@
+--- old.exhaustiveSwitchStatements1.js
++++ new.exhaustiveSwitchStatements1.js
+@@= skipped -476, +476 lines =@@
+
+
+ //// [exhaustiveSwitchStatements1.d.ts]
+-declare function f1(x: 1 | 2): string;
+-declare function f2(x: 1 | 2): void;
+-declare function f3(x: 1 | 2): 10 | 20;
+-declare enum E {
++function f1(x: 1 | 2): string;
++function f2(x: 1 | 2): void;
++function f3(x: 1 | 2): 10 | 20;
++enum E {
+     A = 0,
+     B = 1
+ }
+-declare function f(e: E): number;
+-declare function g(e: E): number;
++function f(e: E): number;
++function g(e: E): number;
+ interface Square {
+     kind: "square";
+     size: number;
+@@= skipped -27, +27 lines =@@
+     side: number;
+ }
+ type Shape = Square | Rectangle | Circle | Triangle;
+-declare function area(s: Shape): number;
+-declare function areaWrapped(s: Shape): number;
+-declare enum MyEnum {
++function area(s: Shape): number;
++function areaWrapped(s: Shape): number;
++enum MyEnum {
+     A = 0,
+     B = 1
+ }
+-declare function thisGivesError(e: MyEnum): string;
+-declare function good1(e: MyEnum): string;
+-declare function good2(e: MyEnum): string;
+-declare enum Level {
++function thisGivesError(e: MyEnum): string;
++function good1(e: MyEnum): string;
++function good2(e: MyEnum): string;
++enum Level {
+     One = 0,
+     Two = 1
+ }
+-declare const doSomethingWithLevel: (level: Level) => Level;
++const doSomethingWithLevel: (level: Level) => Level;
+ interface Square2 {
+     kind: "square";
+     size: number;
+@@= skipped -23, +23 lines =@@
+     radius: number;
+ }
+ type Shape2 = Square2 | Circle2;
+-declare function withDefault(s1: Shape2, s2: Shape2): string;
+-declare function withoutDefault(s1: Shape2, s2: Shape2): string;
+-declare function test4(value: 1 | 2): string;
+-declare enum Animal {
++function withDefault(s1: Shape2, s2: Shape2): string;
++function withoutDefault(s1: Shape2, s2: Shape2): string;
++function test4(value: 1 | 2): string;
++enum Animal {
+     DOG = 0,
+     CAT = 1
+ }
+-declare const zoo: {
++const zoo: {
+     animal: Animal;
+ } | undefined;
+-declare function expression(): Animal;
+-declare function foo(): void;
++function expression(): Animal;
++function foo(): void;
+ type O = {
+     a: number;
+     b: number;
+ };
+ type K = keyof O | 'c';
+-declare function ff(o: O, k: K): number;
++function ff(o: O, k: K): number;
+ type A = {
+     kind: "abc";
+ } | {
+     kind: "def";
+ };
+-declare function f35431(a: A): void;
++function f35431(a: A): void;

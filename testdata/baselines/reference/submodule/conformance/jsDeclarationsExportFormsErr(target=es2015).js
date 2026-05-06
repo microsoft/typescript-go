@@ -97,7 +97,7 @@ require("./globalNs");
 
 
 //// [cls.d.ts]
-export declare class Foo {
+export class Foo {
 }
 //// [bar.d.ts]
 import ns = require("./cls");

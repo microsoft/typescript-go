@@ -1,10 +1,13 @@
 --- old.declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js
 +++ new.declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -23, +23 lines =@@
+ type AX = {
+     readonly A: unique symbol;
  };
- export declare const A: AX;
+-export declare const A: AX;
++export const A: AX;
  export {};
 +//// [b.d.ts]
-+export declare const A1: {
++export const A1: {
 +    readonly A: unique symbol;
 +};

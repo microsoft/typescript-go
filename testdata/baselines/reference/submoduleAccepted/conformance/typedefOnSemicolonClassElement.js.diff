@@ -4,9 +4,8 @@
 
 
  //// [typedefOnSemicolonClassElement.d.ts]
--export class Preferences {
 +export type A = string;
-+export declare class Preferences {
+ export class Preferences {
      /** @type {A} */
 -    a: string;
 +    a: A;

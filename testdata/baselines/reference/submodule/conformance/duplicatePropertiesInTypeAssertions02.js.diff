@@ -1,0 +1,11 @@
+--- old.duplicatePropertiesInTypeAssertions02.js
++++ new.duplicatePropertiesInTypeAssertions02.js
+@@= skipped -8, +8 lines =@@
+
+
+ //// [duplicatePropertiesInTypeAssertions02.d.ts]
+-declare let x: {
++let x: {
+     a: number;
+     a: number;
+ };

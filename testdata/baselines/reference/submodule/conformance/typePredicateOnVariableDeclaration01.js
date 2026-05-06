@@ -9,4 +9,4 @@ var x;
 
 
 //// [typePredicateOnVariableDeclaration01.d.ts]
-declare var x: this is string;
+var x: this is string;

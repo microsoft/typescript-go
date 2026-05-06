@@ -27,7 +27,27 @@ module.exports = {
 
 
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     thing: import("fs").Something;
 };
 export = _default;
+
+
+//// [DtsFileErrors]
+
+
+tests/cases/conformance/jsdoc/declarations/out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== tests/cases/conformance/jsdoc/declarations/out/index.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        thing: import("fs").Something;
+    };
+    export = _default;
+    
+==== node_modules/@types/node/index.d.ts (0 errors) ====
+    declare module "fs" {
+        export class Something {}
+    }

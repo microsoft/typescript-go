@@ -28,6 +28,6 @@ exports.C = C;
 
 //// [main.d.ts]
 import Test from "abcdefgh";
-export declare class C {
+export class C {
     [Test.someKey]: () => void;
 }

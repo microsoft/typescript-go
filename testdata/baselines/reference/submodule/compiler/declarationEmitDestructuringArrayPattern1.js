@@ -22,9 +22,27 @@ var [x3, y3, z3] = a; // emit x3, y3, z3
 
 
 //// [declarationEmitDestructuringArrayPattern1.d.ts]
-declare var x: number;
-declare var x1: number, y1: string;
-declare var z1: number;
-declare var a: (string | number)[];
-declare var x2: string | number;
-declare var x3: string | number, y3: string | number, z3: string | number;
+var x: number;
+var x1: number, y1: string;
+var z1: number;
+var a: (string | number)[];
+var x2: string | number;
+var x3: string | number, y3: string | number, z3: string | number;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDestructuringArrayPattern1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDestructuringArrayPattern1.d.ts (1 errors) ====
+    var x: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    var x1: number, y1: string;
+    var z1: number;
+    var a: (string | number)[];
+    var x2: string | number;
+    var x3: string | number, y3: string | number, z3: string | number;
+    

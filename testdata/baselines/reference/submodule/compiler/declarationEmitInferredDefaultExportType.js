@@ -20,9 +20,27 @@ exports.default = {
 
 
 //// [declarationEmitInferredDefaultExportType.d.ts]
-declare const _default: {
+const _default: {
     foo: never[];
     bar: undefined;
     baz: null;
 };
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitInferredDefaultExportType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitInferredDefaultExportType.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        foo: never[];
+        bar: undefined;
+        baz: null;
+    };
+    export default _default;
+    

@@ -1,0 +1,31 @@
+--- old.declarationEmitPrivateReadonlyLiterals.js
++++ new.declarationEmitPrivateReadonlyLiterals.js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [declarationEmitPrivateReadonlyLiterals.d.ts]
+-declare class Foo {
++class Foo {
+     private static readonly A;
+     private readonly B;
+     private static readonly C;
+     private readonly D;
+ }
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitPrivateReadonlyLiterals.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitPrivateReadonlyLiterals.d.ts (1 errors) ====
++    class Foo {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        private static readonly A;
++        private readonly B;
++        private static readonly C;
++        private readonly D;
++    }
++    

@@ -38,9 +38,9 @@ function bar() {
 
 
 //// [file1.d.ts]
-export declare class Foo {
+export class Foo {
 }
 //// [file2.d.ts]
-export declare function foo(): import("./file1").Foo;
+export function foo(): import("./file1").Foo;
 //// [file3.d.ts]
-export declare function bar(): import("./file1").Foo;
+export function bar(): import("./file1").Foo;

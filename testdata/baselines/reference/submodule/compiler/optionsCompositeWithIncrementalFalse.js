@@ -10,4 +10,4 @@ const x = "Hello World";
 
 
 //// [optionsCompositeWithIncrementalFalse.d.ts]
-declare const x = "Hello World";
+const x = "Hello World";

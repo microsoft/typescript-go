@@ -1,6 +1,25 @@
 --- old.declarationEmitMappedTypeDistributivityPreservesConstraints.js
 +++ new.declarationEmitMappedTypeDistributivityPreservesConstraints.js
-@@= skipped -57, +57 lines =@@
+@@= skipped -41, +41 lines =@@
+ type AllArg<T extends Fns> = {
+     [K in keyof T]: Parameters<T[K]>;
+ };
+-declare function fn<T extends {
++function fn<T extends {
+     x: Map<T['x']>;
+ }>(sliceIndex: T): AllArg<T['x']>;
+-declare const _default: {
++const _default: {
+     fn: typeof fn;
+ };
+ export default _default;
+ //// [reexport.d.ts]
+-declare const _default: {
++const _default: {
+     test: {
+         fn: <T extends {
+             x: T["x"] extends infer T_1 extends {
+@@= skipped -16, +16 lines =@@
              } ? { [K in keyof T_1]: T_1[K]; } : never;
          }>(sliceIndex: T) => T["x"] extends infer T_2 extends {
              [x: string]: (...params: unknown[]) => unknown;
@@ -9,3 +28,46 @@
      };
  };
  export default _default;
++
++
++//// [DtsFileErrors]
++
++
++reexport.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++types.d.ts(8,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== types.d.ts (1 errors) ====
++    type Fns = Record<string, (...params: unknown[]) => unknown>;
++    type Map<T extends Fns> = {
++        [K in keyof T]: T[K];
++    };
++    type AllArg<T extends Fns> = {
++        [K in keyof T]: Parameters<T[K]>;
++    };
++    function fn<T extends {
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        x: Map<T['x']>;
++    }>(sliceIndex: T): AllArg<T['x']>;
++    const _default: {
++        fn: typeof fn;
++    };
++    export default _default;
++    
++==== reexport.d.ts (1 errors) ====
++    const _default: {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        test: {
++            fn: <T extends {
++                x: T["x"] extends infer T_1 extends {
++                    [x: string]: (...params: unknown[]) => unknown;
++                } ? { [K in keyof T_1]: T_1[K]; } : never;
++            }>(sliceIndex: T) => T["x"] extends infer T_2 extends {
++                [x: string]: (...params: unknown[]) => unknown;
++            } ? { [K in keyof T_2]: Parameters<T_2[K]>; } : never;
++        };
++    };
++    export default _default;
++    

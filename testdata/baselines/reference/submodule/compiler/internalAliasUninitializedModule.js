@@ -24,14 +24,37 @@ var c;
 
 
 //// [internalAliasUninitializedModule.d.ts]
-declare namespace a {
+namespace a {
     namespace b {
         interface I {
             foo(): any;
         }
     }
 }
-declare namespace c {
+namespace c {
     import b = a.b;
     var x: b.I;
 }
+
+
+//// [DtsFileErrors]
+
+
+internalAliasUninitializedModule.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== internalAliasUninitializedModule.d.ts (1 errors) ====
+    namespace a {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        namespace b {
+            interface I {
+                foo(): any;
+            }
+        }
+    }
+    namespace c {
+        import b = a.b;
+        var x: b.I;
+    }
+    

@@ -1,0 +1,11 @@
+--- old.declFileForTypeParameters.js
++++ new.declFileForTypeParameters.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [declFileForTypeParameters.d.ts]
+-declare class C<T> {
++class C<T> {
+     x: T;
+     foo(a: T): T;
+ }

@@ -1,8 +1,36 @@
 --- old.letDeclarations.js
 +++ new.letDeclarations.js
-@@= skipped -31, +31 lines =@@
- declare let l3: any, l4: any, l5: string, l6: any;
- declare let l7: boolean;
- declare let l8: number;
+@@= skipped -26, +26 lines =@@
+
+
+ //// [letDeclarations.d.ts]
+-declare let l1: any;
+-declare let l2: number;
+-declare let l3: any, l4: any, l5: string, l6: any;
+-declare let l7: boolean;
+-declare let l8: number;
 -declare let l9: number, l10: string, l11: null;
-+declare let l9: number, l10: string, l11: any;
++let l1: any;
++let l2: number;
++let l3: any, l4: any, l5: string, l6: any;
++let l7: boolean;
++let l8: number;
++let l9: number, l10: string, l11: any;
++
++
++//// [DtsFileErrors]
++
++
++letDeclarations.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== letDeclarations.d.ts (1 errors) ====
++    let l1: any;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    let l2: number;
++    let l3: any, l4: any, l5: string, l6: any;
++    let l7: boolean;
++    let l8: number;
++    let l9: number, l10: string, l11: any;
++    

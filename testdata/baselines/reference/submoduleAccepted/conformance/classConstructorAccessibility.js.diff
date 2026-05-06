@@ -1,12 +1,30 @@
 --- old.classConstructorAccessibility.js
 +++ new.classConstructorAccessibility.js
-@@= skipped -92, +92 lines =@@
+@@= skipped -79, +79 lines =@@
+
+
+ //// [classConstructorAccessibility.d.ts]
+-declare class C {
++class C {
+     x: number;
+     constructor(x: number);
+ }
+-declare class D {
++class D {
+     x: number;
+     private constructor();
+ }
+-declare class E {
++class E {
+     x: number;
      protected constructor(x: number);
  }
- declare var c: C;
+-declare var c: C;
 -declare var d: any;
 -declare var e: any;
-+declare var d: D;
-+declare var e: E;
- declare namespace Generic {
+-declare namespace Generic {
++var c: C;
++var d: D;
++var e: E;
++namespace Generic {
  }

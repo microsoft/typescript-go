@@ -10,10 +10,10 @@ class B  {
 
 
 //// [a.d.ts]
-declare class A {
+class A {
     x: number;
     constructor();
 }
 /** @implements */
-declare class B {
+class B {
 }

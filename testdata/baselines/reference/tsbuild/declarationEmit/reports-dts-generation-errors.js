@@ -86,7 +86,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/index.d.ts] *new* 
-export declare const api: {
+export const api: {
     extend(options: Record<string, unknown>): KyInstance;
 };
 

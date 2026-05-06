@@ -30,7 +30,7 @@ function f(k) {
 
 
 //// [mod1.d.ts]
-export declare var K: {
+export var K: {
     new (): K;
 };
 //// [main.d.ts]
@@ -47,7 +47,7 @@ out/mod1.d.ts(2,13): error TS2749: 'K' refers to a value, but is being used as a
     export {};
     
 ==== out/mod1.d.ts (1 errors) ====
-    export declare var K: {
+    export var K: {
         new (): K;
                 ~
 !!! error TS2749: 'K' refers to a value, but is being used as a type here. Did you mean 'typeof K'?

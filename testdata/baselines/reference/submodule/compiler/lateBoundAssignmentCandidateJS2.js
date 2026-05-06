@@ -31,8 +31,8 @@ export class foo1 {
 
 
 //// [index.d.ts]
-declare const prop = "prop";
-export declare class foo1 {
+const prop = "prop";
+export class foo1 {
     constructor();
     /**
      * @protected
@@ -41,3 +41,25 @@ export declare class foo1 {
     protected [prop]: string;
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+dist/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== dist/index.d.ts (1 errors) ====
+    const prop = "prop";
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export class foo1 {
+        constructor();
+        /**
+         * @protected
+         * @type {string}
+         */
+        protected [prop]: string;
+    }
+    export {};
+    

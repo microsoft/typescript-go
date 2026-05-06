@@ -33,4 +33,17 @@ var lengths = ["a", "b", "c"].map(x => x.length);
 
 
 //// [genericArray1.d.ts]
-declare var lengths: number[];
+var lengths: number[];
+
+
+//// [DtsFileErrors]
+
+
+genericArray1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== genericArray1.d.ts (1 errors) ====
+    var lengths: number[];
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

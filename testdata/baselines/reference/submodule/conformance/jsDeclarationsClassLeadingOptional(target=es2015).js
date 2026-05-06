@@ -20,6 +20,6 @@ exports.Z = Z;
 
 
 //// [bar.d.ts]
-export declare class Z {
+export class Z {
     f(x: number, y: any): any[];
 }

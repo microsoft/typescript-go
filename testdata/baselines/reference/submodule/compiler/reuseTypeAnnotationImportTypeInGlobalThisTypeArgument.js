@@ -40,7 +40,7 @@ export type ParamStateRecord = Record<Keyword, ParamValueTyped>;
  *   keyword pairs with descriptions of parameters under governance.
  */
 //// [index.d.ts]
-export declare const blah: {
+export const blah: {
     publicMixin: {
         getGovernedParams: () => globalThis.ERef<import("./types.js").ParamStateRecord>;
     };

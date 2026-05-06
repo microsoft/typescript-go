@@ -1,0 +1,30 @@
+--- old.spreadExpressionContextualType.js
++++ new.spreadExpressionContextualType.js
+@@= skipped -39, +39 lines =@@
+ interface Apple {
+     name: string;
+ }
+-declare function test<T extends Apple | Orange>(item: T): T;
+-declare function test2<T extends Apple | Orange>(item: T): T;
++function test<T extends Apple | Orange>(item: T): T;
++function test2<T extends Apple | Orange>(item: T): T;
++
++
++//// [DtsFileErrors]
++
++
++spreadExpressionContextualType.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== spreadExpressionContextualType.d.ts (1 errors) ====
++    interface Orange {
++        name: string;
++    }
++    interface Apple {
++        name: string;
++    }
++    function test<T extends Apple | Orange>(item: T): T;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    function test2<T extends Apple | Orange>(item: T): T;
++    

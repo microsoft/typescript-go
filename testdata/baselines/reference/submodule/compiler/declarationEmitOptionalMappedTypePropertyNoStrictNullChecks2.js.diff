@@ -1,0 +1,20 @@
+--- old.declarationEmitOptionalMappedTypePropertyNoStrictNullChecks2.js
++++ new.declarationEmitOptionalMappedTypePropertyNoStrictNullChecks2.js
+@@= skipped -31, +31 lines =@@
+ type Id<T> = {
+     [K in keyof T]: T[K];
+ } & {};
+-export declare function createApi<Definitions>(_: {
++export function createApi<Definitions>(_: {
+     endpoints: Definitions;
+ }): {
+     [K in keyof Definitions as `use${Capitalize<K & string>}Query`]: () => Id<{
+@@= skipped -10, +10 lines =@@
+ };
+ export {};
+ //// [index.d.ts]
+-export declare const useTestQuery: () => {
++export const useTestQuery: () => {
+     status: "uninitialized";
+     originalArgs?: any[];
+ };

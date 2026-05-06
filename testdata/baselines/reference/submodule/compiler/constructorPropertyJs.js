@@ -14,9 +14,27 @@ class C {
 
 
 //// [a.d.ts]
-declare class C {
+class C {
     /**
      * @param {any} a
      */
     foo(a: any): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /a.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /**
+         * @param {any} a
+         */
+        foo(a: any): void;
+    }
+    

@@ -45,9 +45,9 @@ export interface Widget {
 }
 //# sourceMappingURL=types.d.ts.map//// [helper.d.ts]
 import { Widget } from "./types";
-export declare function getWidget(): (w: Widget) => keyof Widget;
+export function getWidget(): (w: Widget) => keyof Widget;
 //# sourceMappingURL=helper.d.ts.map//// [index.d.ts]
 import { Widget } from "./types";
 export type MyWidget = Widget;
-export declare const fn: (w: Widget) => keyof Widget;
+export const fn: (w: Widget) => keyof Widget;
 //# sourceMappingURL=index.d.ts.map

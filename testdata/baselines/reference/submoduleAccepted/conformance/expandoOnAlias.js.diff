@@ -1,17 +1,13 @@
 --- old.expandoOnAlias.js
 +++ new.expandoOnAlias.js
-@@= skipped -23, +23 lines =@@
-
-
+@@= skipped -25, +25 lines =@@
  //// [vue.d.ts]
--export class Vue {
--}
+ export class Vue {
+ }
 -export namespace config {
 -    let x: number;
 -}
-+export declare class Vue {
-+}
-+export declare const config: {
++export const config: {
 +    x: number;
 +};
  //// [test.d.ts]

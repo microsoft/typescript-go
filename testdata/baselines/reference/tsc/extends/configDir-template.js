@@ -58,10 +58,10 @@ types/sometype.ts
 main.ts
    Part of 'files' list in tsconfig.json
 //// [/home/src/projects/myproject/decls/main.d.ts] *new* 
-export declare const y = 10;
+export const y = 10;
 
 //// [/home/src/projects/myproject/decls/types/sometype.d.ts] *new* 
-export declare const x = 10;
+export const x = 10;
 
 //// [/home/src/projects/myproject/outDir/main.js] *new* 
 // some comment

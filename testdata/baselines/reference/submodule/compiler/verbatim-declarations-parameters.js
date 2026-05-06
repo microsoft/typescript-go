@@ -49,11 +49,11 @@ type Map = {} & {
     [P in string]: any;
 };
 type MapOrUndefined = Map | undefined | "dummy";
-export declare class Foo {
+export class Foo {
     reuseTypeNode?: Map | undefined;
     reuseTypeNode2?: Exclude<MapOrUndefined, "dummy">;
     resolveType?: Map | undefined;
     constructor(reuseTypeNode?: Map | undefined, reuseTypeNode2?: Exclude<MapOrUndefined, "dummy">, resolveType?: Map | undefined);
 }
-export declare function foo1(reuseTypeNode: Map | undefined, reuseTypeNode2: Exclude<MapOrUndefined, "dummy">, resolveType: Map | undefined, requiredParam: number): void;
+export function foo1(reuseTypeNode: Map | undefined, reuseTypeNode2: Exclude<MapOrUndefined, "dummy">, resolveType: Map | undefined, requiredParam: number): void;
 export {};

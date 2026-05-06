@@ -52,7 +52,7 @@ exports.foo2 = foo2;
 
 
 //// [foo.d.ts]
-declare const foo: {
+const foo: {
     bar: string;
     bat: string;
     bam: {
@@ -62,7 +62,7 @@ declare const foo: {
         };
     };
 };
-declare const arr: [0, 1, 2, ['a', 'b', 'c', [{
+const arr: [0, 1, 2, ['a', 'b', 'c', [{
     def: 'def';
 }, {
     sec: 'sec';
@@ -71,9 +71,50 @@ export { foo, arr };
 //// [index.d.ts]
 import { foo, arr } from './foo';
 export { foo, arr };
-declare const baz: string, ibaz: string;
+const baz: string, ibaz: string;
 export { baz, ibaz };
-declare const one: 1, bee: "b", sec: "sec";
+const one: 1, bee: "b", sec: "sec";
 export { one, bee, sec };
-declare const foo2: string;
+const foo2: string;
 export { foo2 };
+
+
+//// [DtsFileErrors]
+
+
+foo.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+index.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== foo.d.ts (1 errors) ====
+    const foo: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        bar: string;
+        bat: string;
+        bam: {
+            bork: {
+                bar: string;
+                baz: string;
+            };
+        };
+    };
+    const arr: [0, 1, 2, ['a', 'b', 'c', [{
+        def: 'def';
+    }, {
+        sec: 'sec';
+    }]]];
+    export { foo, arr };
+    
+==== index.d.ts (1 errors) ====
+    import { foo, arr } from './foo';
+    export { foo, arr };
+    const baz: string, ibaz: string;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export { baz, ibaz };
+    const one: 1, bee: "b", sec: "sec";
+    export { one, bee, sec };
+    const foo2: string;
+    export { foo2 };
+    

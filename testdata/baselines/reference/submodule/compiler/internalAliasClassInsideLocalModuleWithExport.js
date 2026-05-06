@@ -45,15 +45,15 @@ exports.d = new m2.m3.c();
 
 
 //// [internalAliasClassInsideLocalModuleWithExport.d.ts]
-export declare namespace x {
+export namespace x {
     class c {
         foo(a: number): number;
     }
 }
-export declare namespace m2 {
+export namespace m2 {
     namespace m3 {
         export import c = x.c;
         var cProp: c;
     }
 }
-export declare var d: x.c;
+export var d: x.c;

@@ -1,0 +1,32 @@
+--- old.declarationsForIndirectTypeAliasReference.js
++++ new.declarationsForIndirectTypeAliasReference.js
+@@= skipped -60, +60 lines =@@
+ //// [a.d.ts]
+ import { StringHash, StringHash2 } from "./b";
+ export { doSome };
+-declare function doSome(arg1: string, arg2?: StringHash, arg3?: StringHash2): void;
++function doSome(arg1: string, arg2?: StringHash, arg3?: StringHash2): void;
++
++
++//// [DtsFileErrors]
++
++
++a.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== b.d.ts (0 errors) ====
++    export { Hash, StringHash, StringHash2 };
++    interface Hash<T> {
++        [key: string]: T;
++    }
++    type StringHash = Hash<string>;
++    interface StringHash2 extends Hash<string> {
++    }
++    
++==== a.d.ts (1 errors) ====
++    import { StringHash, StringHash2 } from "./b";
++    export { doSome };
++    function doSome(arg1: string, arg2?: StringHash, arg3?: StringHash2): void;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

@@ -230,7 +230,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/projects/project/a.d.ts] *new* 
-declare const a: {
+const a: {
     new (): {
         p: number;
     };

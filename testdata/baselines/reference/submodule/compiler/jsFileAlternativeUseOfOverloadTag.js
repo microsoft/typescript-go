@@ -107,7 +107,7 @@ const example3 = {
 
 
 //// [jsFileAlternativeUseOfOverloadTag.d.ts]
-declare const example1: {
+const example1: {
     /**
      * @overload Example1(value)
      *   Creates Example1
@@ -115,7 +115,7 @@ declare const example1: {
      */
     constructor: (value: any, options: any) => void;
 };
-declare const example2: {
+const example2: {
     /**
      * Example 2
      *
@@ -137,7 +137,7 @@ declare const example2: {
     constructor: () => void;
 };
 type callback = (error: any, result: any) => any;
-declare const example3: {
+const example3: {
     /**
      * @overload evaluate(options = {}, [callback])
      *   Evaluate something
@@ -153,3 +153,61 @@ declare const example3: {
      */
     evaluate: (options: any, callback: any) => void;
 };
+
+
+//// [DtsFileErrors]
+
+
+dist/jsFileAlternativeUseOfOverloadTag.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== dist/jsFileAlternativeUseOfOverloadTag.d.ts (1 errors) ====
+    const example1: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        /**
+         * @overload Example1(value)
+         *   Creates Example1
+         *   @param value [String]
+         */
+        constructor: (value: any, options: any) => void;
+    };
+    const example2: {
+        /**
+         * Example 2
+         *
+         * @overload Example2(value)
+         *   Creates Example2
+         *   @param value [String]
+         *   @param secretAccessKey [String]
+         *   @param sessionToken [String]
+         *   @example Creates with string value
+         *     const example = new Example('');
+         * @overload Example2(options)
+         *   Creates Example2
+         *   @option options value [String]
+         *   @example Creates with options object
+         *     const example = new Example2({
+         *       value: '',
+         *     });
+         */
+        constructor: () => void;
+    };
+    type callback = (error: any, result: any) => any;
+    const example3: {
+        /**
+         * @overload evaluate(options = {}, [callback])
+         *   Evaluate something
+         *   @note Something interesting
+         *   @param options [map]
+         *   @return [string] returns evaluation result
+         *   @return [null] returns nothing if callback provided
+         *   @callback callback function (error, result)
+         *     If callback is provided it will be called with evaluation result
+         *     @param error [Error]
+         *     @param result [String]
+         *   @see callback
+         */
+        evaluate: (options: any, callback: any) => void;
+    };
+    

@@ -1,0 +1,12 @@
+--- old.genericFunctions2.js
++++ new.genericFunctions2.js
+@@= skipped -14, +14 lines =@@
+
+
+ //// [genericFunctions2.d.ts]
+-declare function map<T, U>(items: T[], f: (x: T) => U): U[];
+-declare var myItems: string[];
+-declare var lengths: number[];
++function map<T, U>(items: T[], f: (x: T) => U): U[];
++var myItems: string[];
++var lengths: number[];

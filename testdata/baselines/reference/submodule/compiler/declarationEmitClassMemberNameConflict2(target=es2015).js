@@ -46,15 +46,39 @@ class Foo {
 
 
 //// [declarationEmitClassMemberNameConflict2.d.ts]
-declare const Bar = "bar";
-declare enum Hello {
+const Bar = "bar";
+enum Hello {
     World = 0
 }
-declare enum Hello1 {
+enum Hello1 {
     World1 = 0
 }
-declare class Foo {
+class Foo {
     Bar: string;
     Hello: typeof Hello;
     Hello2: typeof Hello1;
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitClassMemberNameConflict2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitClassMemberNameConflict2.d.ts (1 errors) ====
+    const Bar = "bar";
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    enum Hello {
+        World = 0
+    }
+    enum Hello1 {
+        World1 = 0
+    }
+    class Foo {
+        Bar: string;
+        Hello: typeof Hello;
+        Hello2: typeof Hello1;
+    }
+    

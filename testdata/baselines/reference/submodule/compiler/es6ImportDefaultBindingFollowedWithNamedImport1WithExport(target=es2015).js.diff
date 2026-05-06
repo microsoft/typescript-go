@@ -1,0 +1,22 @@
+--- old.es6ImportDefaultBindingFollowedWithNamedImport1WithExport(target=es2015).js
++++ new.es6ImportDefaultBindingFollowedWithNamedImport1WithExport(target=es2015).js
+@@= skipped -45, +45 lines =@@
+
+
+ //// [server.d.ts]
+-declare var a: number;
++var a: number;
+ export default a;
+ //// [client.d.ts]
+-export declare var x1: number;
+-export declare var x1: number;
+-export declare var x1: number;
+-export declare var x1: number;
+-export declare var x1: number;
+-export declare var x1: number;
++export var x1: number;
++export var x1: number;
++export var x1: number;
++export var x1: number;
++export var x1: number;
++export var x1: number;

@@ -114,17 +114,17 @@ module.exports.j = function j() { };
 
 
 //// [index.d.ts]
-export declare var a: () => void;
-export declare var b: () => void;
-export declare var c: () => void;
-export declare var d: (a: number, b: number) => string;
-export declare var e: <T, U>(a: T, b: U) => T & U;
-export declare var f: <T>(a: T) => T;
+export var a: () => void;
+export var b: () => void;
+export var c: () => void;
+export var d: (a: number, b: number) => string;
+export var e: <T, U>(a: T, b: U) => T & U;
+export var f: <T>(a: T) => T;
 /**
  * @param {{x: string}} a
  * @param {{y: typeof module.exports.b}} b
  */
-declare function g(a: {
+function g(a: {
     x: string;
 }, b: {
     y: () => void;
@@ -134,13 +134,13 @@ export { g };
  * @param {{x: string}} a
  * @param {{y: typeof module.exports.b}} b
  */
-declare function hh(a: {
+function hh(a: {
     x: string;
 }, b: {
     y: () => void;
 }): void | "";
 export { hh as h };
-export declare var i: () => void;
-export declare var ii: () => void;
-export declare var jj: () => void;
-export declare var j: () => void;
+export var i: () => void;
+export var ii: () => void;
+export var jj: () => void;
+export var j: () => void;

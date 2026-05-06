@@ -1,0 +1,144 @@
+--- old.enumClassification.js
++++ new.enumClassification.js
+@@= skipped -161, +161 lines =@@
+
+
+ //// [enumClassification.d.ts]
+-declare enum E01 {
++enum E01 {
+     A = 0
+ }
+-declare enum E02 {
++enum E02 {
+     A = 123
+ }
+-declare enum E03 {
++enum E03 {
+     A = "hello"
+ }
+-declare enum E04 {
++enum E04 {
+     A = 0,
+     B = 1,
+     C = 2
+ }
+-declare enum E05 {
++enum E05 {
+     A = 0,
+     B = 10,
+     C = 11
+ }
+-declare enum E06 {
++enum E06 {
+     A = "one",
+     B = "two",
+     C = "three"
+ }
+-declare enum E07 {
++enum E07 {
+     A = 0,
+     B = 1,
+     C = "hi",
+@@= skipped -32, +32 lines =@@
+     E = 11,
+     F = "bye"
+ }
+-declare enum E08 {
++enum E08 {
+     A = 10,
+     B = "hello",
+     C = 10,
+     D = "hello",
+     E = 10
+ }
+-declare enum E10 {
++enum E10 {
+ }
+-declare enum E11 {
++enum E11 {
+     A = 0,
+     B = 1,
+     C = 2
+ }
+-declare enum E12 {
++enum E12 {
+     A = 1,
+     B = 2,
+     C = 4
+ }
+-declare enum E20 {
++enum E20 {
+     A,
+     B,
+     C,
+     D
+ }
++
++
++//// [DtsFileErrors]
++
++
++enumClassification.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== enumClassification.d.ts (1 errors) ====
++    enum E01 {
++    ~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        A = 0
++    }
++    enum E02 {
++        A = 123
++    }
++    enum E03 {
++        A = "hello"
++    }
++    enum E04 {
++        A = 0,
++        B = 1,
++        C = 2
++    }
++    enum E05 {
++        A = 0,
++        B = 10,
++        C = 11
++    }
++    enum E06 {
++        A = "one",
++        B = "two",
++        C = "three"
++    }
++    enum E07 {
++        A = 0,
++        B = 1,
++        C = "hi",
++        D = 10,
++        E = 11,
++        F = "bye"
++    }
++    enum E08 {
++        A = 10,
++        B = "hello",
++        C = 10,
++        D = "hello",
++        E = 10
++    }
++    enum E10 {
++    }
++    enum E11 {
++        A = 0,
++        B = 1,
++        C = 2
++    }
++    enum E12 {
++        A = 1,
++        B = 2,
++        C = 4
++    }
++    enum E20 {
++        A,
++        B,
++        C,
++        D
++    }
++    

@@ -79,8 +79,8 @@ Object.defineProperty(exports, "d", { enumerable: true, get: function () { retur
 
 
 //// [0.d.ts]
-export declare const a = 1;
-export declare const b = 2;
+export const a = 1;
+export const b = 2;
 //// [1.d.ts]
 export {} from './0';
 export { a, b } from './0';

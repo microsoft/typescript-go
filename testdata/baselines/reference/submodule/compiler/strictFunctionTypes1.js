@@ -70,40 +70,89 @@ const t6 = coAndContraArray([], acceptA);
 
 
 //// [strictFunctionTypes1.d.ts]
-declare function f1<T>(f1: (x: T) => void, f2: (x: T) => void): (x: T) => void;
-declare function f2<T>(obj: T, f1: (x: T) => void, f2: (x: T) => void): T;
-declare function f3<T>(obj: T, f1: (x: T) => void, f2: (f: (x: T) => void) => void): T;
+function f1<T>(f1: (x: T) => void, f2: (x: T) => void): (x: T) => void;
+function f2<T>(obj: T, f1: (x: T) => void, f2: (x: T) => void): T;
+function f3<T>(obj: T, f1: (x: T) => void, f2: (f: (x: T) => void) => void): T;
 interface Func<T> {
     (x: T): void;
 }
-declare function f4<T>(f1: Func<T>, f2: Func<T>): Func<T>;
-declare function fo(x: Object): void;
-declare function fs(x: string): void;
-declare function fx(f: (x: "def") => void): void;
-declare const x1: (x: string) => void;
-declare const x2 = "abc";
-declare const x3: string;
-declare const x4: Func<string>;
-declare const never: never;
-declare const x10: string;
-declare const x11: "def";
-declare function foo<T>(a: ReadonlyArray<T>): T;
-declare let x: never;
+function f4<T>(f1: Func<T>, f2: Func<T>): Func<T>;
+function fo(x: Object): void;
+function fs(x: string): void;
+function fx(f: (x: "def") => void): void;
+const x1: (x: string) => void;
+const x2 = "abc";
+const x3: string;
+const x4: Func<string>;
+const never: never;
+const x10: string;
+const x11: "def";
+function foo<T>(a: ReadonlyArray<T>): T;
+let x: never;
 interface A {
     a: string;
 }
 interface B extends A {
     b: string;
 }
-declare function acceptUnion(x: A | number): void;
-declare function acceptA(x: A): void;
-declare let a: A;
-declare let b: B;
-declare function coAndContra<T>(value: T, func: (t: T) => void): T;
-declare const t1: A;
-declare const t2: B;
-declare const t3: A;
-declare function coAndContraArray<T>(value: T[], func: (t: T) => void): T[];
-declare const t4: A[];
-declare const t5: B[];
-declare const t6: A[];
+function acceptUnion(x: A | number): void;
+function acceptA(x: A): void;
+let a: A;
+let b: B;
+function coAndContra<T>(value: T, func: (t: T) => void): T;
+const t1: A;
+const t2: B;
+const t3: A;
+function coAndContraArray<T>(value: T[], func: (t: T) => void): T[];
+const t4: A[];
+const t5: B[];
+const t6: A[];
+
+
+//// [DtsFileErrors]
+
+
+strictFunctionTypes1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== strictFunctionTypes1.d.ts (1 errors) ====
+    function f1<T>(f1: (x: T) => void, f2: (x: T) => void): (x: T) => void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function f2<T>(obj: T, f1: (x: T) => void, f2: (x: T) => void): T;
+    function f3<T>(obj: T, f1: (x: T) => void, f2: (f: (x: T) => void) => void): T;
+    interface Func<T> {
+        (x: T): void;
+    }
+    function f4<T>(f1: Func<T>, f2: Func<T>): Func<T>;
+    function fo(x: Object): void;
+    function fs(x: string): void;
+    function fx(f: (x: "def") => void): void;
+    const x1: (x: string) => void;
+    const x2 = "abc";
+    const x3: string;
+    const x4: Func<string>;
+    const never: never;
+    const x10: string;
+    const x11: "def";
+    function foo<T>(a: ReadonlyArray<T>): T;
+    let x: never;
+    interface A {
+        a: string;
+    }
+    interface B extends A {
+        b: string;
+    }
+    function acceptUnion(x: A | number): void;
+    function acceptA(x: A): void;
+    let a: A;
+    let b: B;
+    function coAndContra<T>(value: T, func: (t: T) => void): T;
+    const t1: A;
+    const t2: B;
+    const t3: A;
+    function coAndContraArray<T>(value: T[], func: (t: T) => void): T[];
+    const t4: A[];
+    const t5: B[];
+    const t6: A[];
+    

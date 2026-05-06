@@ -28,7 +28,7 @@ const FooComponent = (props) => <span>{props.foo}</span>;
 
 
 //// [contextuallyTypedStringLiteralsInJsxAttributes01.d.ts]
-declare namespace JSX {
+namespace JSX {
     interface IntrinsicElements {
         span: {};
     }
@@ -36,6 +36,6 @@ declare namespace JSX {
         something?: any;
     }
 }
-declare const FooComponent: (props: {
+const FooComponent: (props: {
     foo: "A" | "B" | "C";
 }) => JSX.Element;

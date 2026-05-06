@@ -1,0 +1,8 @@
+--- old.declarationEmitIdentifierPredicates01.js
++++ new.declarationEmitIdentifierPredicates01.js
+@@= skipped -14, +14 lines =@@
+
+
+ //// [declarationEmitIdentifierPredicates01.d.ts]
+-export declare function f(x: any): x is number;
++export function f(x: any): x is number;

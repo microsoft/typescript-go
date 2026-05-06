@@ -65,29 +65,32 @@ export default [obj1, obj2.default];
 
 //// [uses.d.ts]
 /// <reference types="pkg" preserve="true" />
-declare const _default: ImportInterface;
+const _default: ImportInterface;
 export default _default;
 //// [uses.d.ts]
 /// <reference types="pkg" preserve="true" />
-declare const _default: RequireInterface;
+const _default: RequireInterface;
 export default _default;
 //// [index.d.ts]
-declare const _default: readonly [ImportInterface, RequireInterface];
+const _default: readonly [ImportInterface, RequireInterface];
 export default _default;
 
 
 //// [DtsFileErrors]
 
 
-out/index.d.ts(1,35): error TS2304: Cannot find name 'ImportInterface'.
-out/index.d.ts(1,52): error TS2304: Cannot find name 'RequireInterface'.
+out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+out/index.d.ts(1,27): error TS2304: Cannot find name 'ImportInterface'.
+out/index.d.ts(1,44): error TS2304: Cannot find name 'RequireInterface'.
 
 
-==== out/index.d.ts (2 errors) ====
-    declare const _default: readonly [ImportInterface, RequireInterface];
-                                      ~~~~~~~~~~~~~~~
+==== out/index.d.ts (3 errors) ====
+    const _default: readonly [ImportInterface, RequireInterface];
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+                              ~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'ImportInterface'.
-                                                       ~~~~~~~~~~~~~~~~
+                                               ~~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'RequireInterface'.
     export default _default;
     
@@ -114,7 +117,7 @@ out/index.d.ts(1,52): error TS2304: Cannot find name 'RequireInterface'.
     }
 ==== out/sub1/uses.d.ts (0 errors) ====
     /// <reference types="pkg" preserve="true" />
-    declare const _default: ImportInterface;
+    const _default: ImportInterface;
     export default _default;
     
 ==== /sub1/package.json (0 errors) ====
@@ -124,7 +127,7 @@ out/index.d.ts(1,52): error TS2304: Cannot find name 'RequireInterface'.
     }
 ==== out/sub2/uses.d.ts (0 errors) ====
     /// <reference types="pkg" preserve="true" />
-    declare const _default: RequireInterface;
+    const _default: RequireInterface;
     export default _default;
     
 ==== /sub2/package.json (0 errors) ====

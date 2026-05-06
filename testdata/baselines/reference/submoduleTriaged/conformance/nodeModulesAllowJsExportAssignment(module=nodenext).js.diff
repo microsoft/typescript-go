@@ -4,17 +4,17 @@
 
 
  //// [index.d.ts]
--export = a;
- declare const a: {};
-+export = a;
++const a: {};
+ export = a;
+-declare const a: {};
  //// [file.d.ts]
--export = a;
- declare const a: {};
-+export = a;
++const a: {};
+ export = a;
+-declare const a: {};
  //// [index.d.ts]
--export = a;
- declare const a: {};
-+export = a;
++const a: {};
+ export = a;
+-declare const a: {};
  //// [file.d.ts]
 -export {};
 +import "fs";

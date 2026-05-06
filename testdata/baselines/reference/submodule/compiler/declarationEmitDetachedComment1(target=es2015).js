@@ -62,17 +62,55 @@ class Hola {
 /**
  * Hello class
  */
-declare class Hello {
+class Hello {
 }
 //// [test2.d.ts]
 /**
  * Hi class
  */
-declare class Hi {
+class Hi {
 }
 //// [test3.d.ts]
 /**
  * Hola class
  */
-declare class Hola {
+class Hola {
 }
+
+
+//// [DtsFileErrors]
+
+
+test1.d.ts(5,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+test2.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+test3.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== test1.d.ts (1 errors) ====
+    /*! Copyright 2015 MyCompany Inc. */
+    /**
+     * Hello class
+     */
+    class Hello {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    
+==== test2.d.ts (1 errors) ====
+    /**
+     * Hi class
+     */
+    class Hi {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    
+==== test3.d.ts (1 errors) ====
+    /**
+     * Hola class
+     */
+    class Hola {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    

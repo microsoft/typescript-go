@@ -4,13 +4,10 @@
 
 
  //// [index.d.ts]
--export class ElementB extends LitElement {
--}
--export class ElementC extends LitElement {
--}
--import { LitElement } from "lit";
 +import { LitElement, LitElement as LitElement2 } from "lit";
-+export declare class ElementB extends LitElement {
-+}
-+export declare class ElementC extends LitElement2 {
-+}
+ export class ElementB extends LitElement {
+ }
+-export class ElementC extends LitElement {
++export class ElementC extends LitElement2 {
+ }
+-import { LitElement } from "lit";

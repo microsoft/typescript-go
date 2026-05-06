@@ -31,7 +31,7 @@ exports.baddts = foo();
 
 
 //// [declarationEmitExactOptionalPropertyTypesNodeNotReused.d.ts]
-export declare const baddts: (x: {
+export const baddts: (x: {
     foo?: string;
     baz?: undefined;
 } & {

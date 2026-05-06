@@ -55,6 +55,6 @@ var x = nameSpaceBinding.a;
 
 
 //// [es6ImportNameSpaceImportInEs5_0.d.ts]
-export declare var a: number;
+export var a: number;
 //// [es6ImportNameSpaceImportInEs5_1.d.ts]
 export {};

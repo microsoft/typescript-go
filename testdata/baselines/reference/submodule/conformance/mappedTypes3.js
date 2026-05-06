@@ -62,14 +62,14 @@ function f3(bb) {
 
 
 //// [mappedTypes3.d.ts]
-declare class Box<P> {
+class Box<P> {
     value: P;
 }
 type Boxified<T> = {
     [K in keyof T]: Box<T[K]>;
 };
-declare function boxify<T>(obj: T): Boxified<T>;
-declare function unboxify<T>(obj: Boxified<T>): T;
+function boxify<T>(obj: T): Boxified<T>;
+function unboxify<T>(obj: Boxified<T>): T;
 interface Bacon {
     isPerfect: boolean;
     weight: number;
@@ -78,6 +78,6 @@ interface BoxifiedBacon {
     isPerfect: Box<boolean>;
     weight: Box<number>;
 }
-declare function f1(b: Bacon): void;
-declare function f2(bb: Boxified<Bacon>): void;
-declare function f3(bb: BoxifiedBacon): void;
+function f1(b: Bacon): void;
+function f2(bb: Boxified<Bacon>): void;
+function f3(bb: BoxifiedBacon): void;

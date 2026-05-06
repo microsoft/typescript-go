@@ -40,12 +40,12 @@ let v2 = { y: 42 };
 export type Foo = {
     x: string;
 };
-export declare namespace Bar {
+export namespace Bar {
     interface Baz {
         y: number;
     }
 }
-declare namespace mod {
+namespace mod {
     const a = 1;
     const b = "hello";
 }

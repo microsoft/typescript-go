@@ -93,7 +93,7 @@ let e4 = f({ a: 2 }, data);
 
 
 //// [objectLiteralNormalization.d.ts]
-declare let a1: {
+let a1: {
     a: number;
     b?: undefined;
     c?: undefined;
@@ -106,7 +106,7 @@ declare let a1: {
     b: string;
     c: boolean;
 };
-declare let a2: {
+let a2: {
     a: number;
     b: number;
 } | {
@@ -116,23 +116,14 @@ declare let a2: {
     b?: undefined;
     a?: undefined;
 };
-declare let b1: {
+let b1: {
     a: string;
     b: string;
 } | {
     b: string;
     c: string;
 };
-declare let b2: {
-    a: string;
-    b: string;
-    z: number;
-} | {
-    b: string;
-    c: string;
-    z: number;
-};
-declare let b3: {
+let b2: {
     a: string;
     b: string;
     z: number;
@@ -141,36 +132,45 @@ declare let b3: {
     c: string;
     z: number;
 };
-declare let opts: {
+let b3: {
+    a: string;
+    b: string;
+    z: number;
+} | {
+    b: string;
+    c: string;
+    z: number;
+};
+let opts: {
     foo?: string;
     bar?: string;
     baz?: boolean;
 };
-declare let c1: {
+let c1: {
     foo?: string;
     bar?: string;
     baz?: boolean;
 };
-declare let c2: {
+let c2: {
     foo?: string;
     bar?: string;
     baz?: boolean;
 };
-declare let c3: {
+let c3: {
     a: number;
     b: number;
 } | {
     b?: undefined;
     a?: undefined;
 };
-declare let c4: {
+let c4: {
     b?: undefined;
     a?: undefined;
 } | {
     a: number;
     b: number;
 };
-declare let d1: {
+let d1: {
     kind: string;
     pos: {
         b?: undefined;
@@ -192,13 +192,13 @@ declare let d1: {
         b: number;
     };
 };
-declare function f<T>(...items: T[]): T;
-declare let data: {
+function f<T>(...items: T[]): T;
+let data: {
     a: 1;
     b: "abc";
     c: true;
 };
-declare let e1: {
+let e1: {
     a: number;
     b: number;
 } | {
@@ -208,7 +208,7 @@ declare let e1: {
     b?: undefined;
     a?: undefined;
 };
-declare let e2: {
+let e2: {
     b?: undefined;
     a?: undefined;
 } | {
@@ -218,12 +218,12 @@ declare let e2: {
     a: number;
     b: number;
 };
-declare let e3: {
+let e3: {
     a: 1;
     b: "abc";
     c: true;
 };
-declare let e4: {
+let e4: {
     a: 1;
     b: "abc";
     c: true;

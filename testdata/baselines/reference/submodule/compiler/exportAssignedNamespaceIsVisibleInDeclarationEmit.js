@@ -19,4 +19,4 @@ exports.thing = (0, thing_1.f)();
 
 
 //// [index.d.ts]
-export declare const thing: import("./thing").Bar;
+export const thing: import("./thing").Bar;

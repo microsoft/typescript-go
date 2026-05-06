@@ -36,4 +36,4 @@ function Foo(x, y) {
  * @param {number | undefined} x
  * @param {number | undefined} y
  */
-export declare function Foo(x: number | undefined, y: number | undefined): any;
+export function Foo(x: number | undefined, y: number | undefined): any;

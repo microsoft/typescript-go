@@ -1,0 +1,219 @@
+--- old.objectLiteralNormalization.js
++++ new.objectLiteralNormalization.js
+@@= skipped -92, +92 lines =@@
+
+
+ //// [objectLiteralNormalization.d.ts]
+-declare let a1: {
++let a1: {
+     a: number;
+     b?: undefined;
+     c?: undefined;
+@@= skipped -13, +13 lines =@@
+     b: string;
+     c: boolean;
+ };
+-declare let a2: {
+-    a: number;
+-    b: number;
+-} | {
+-    b?: undefined;
+-    a: string;
+-} | {
+-    b?: undefined;
+-    a?: undefined;
+-};
+-declare let b1: {
+-    a: string;
+-    b: string;
+-} | {
+-    b: string;
+-    c: string;
+-};
+-declare let b2: {
+-    a: string;
+-    b: string;
+-    z: number;
+-} | {
+-    b: string;
+-    c: string;
+-    z: number;
+-};
+-declare let b3: {
+-    a: string;
+-    b: string;
+-    z: number;
+-} | {
+-    b: string;
+-    c: string;
+-    z: number;
+-};
+-declare let opts: {
+-    foo?: string;
+-    bar?: string;
+-    baz?: boolean;
+-};
+-declare let c1: {
+-    foo?: string;
+-    bar?: string;
+-    baz?: boolean;
+-};
+-declare let c2: {
+-    foo?: string;
+-    bar?: string;
+-    baz?: boolean;
+-};
+-declare let c3: {
+-    a: number;
+-    b: number;
+-} | {
+-    b?: undefined;
+-    a?: undefined;
+-};
+-declare let c4: {
+-    b?: undefined;
+-    a?: undefined;
+-} | {
+-    a: number;
+-    b: number;
+-};
+-declare let d1: {
++let a2: {
++    a: number;
++    b: number;
++} | {
++    b?: undefined;
++    a: string;
++} | {
++    b?: undefined;
++    a?: undefined;
++};
++let b1: {
++    a: string;
++    b: string;
++} | {
++    b: string;
++    c: string;
++};
++let b2: {
++    a: string;
++    b: string;
++    z: number;
++} | {
++    b: string;
++    c: string;
++    z: number;
++};
++let b3: {
++    a: string;
++    b: string;
++    z: number;
++} | {
++    b: string;
++    c: string;
++    z: number;
++};
++let opts: {
++    foo?: string;
++    bar?: string;
++    baz?: boolean;
++};
++let c1: {
++    foo?: string;
++    bar?: string;
++    baz?: boolean;
++};
++let c2: {
++    foo?: string;
++    bar?: string;
++    baz?: boolean;
++};
++let c3: {
++    a: number;
++    b: number;
++} | {
++    b?: undefined;
++    a?: undefined;
++};
++let c4: {
++    b?: undefined;
++    a?: undefined;
++} | {
++    a: number;
++    b: number;
++};
++let d1: {
+     kind: string;
+     pos: {
+         b?: undefined;
+@@= skipped -86, +86 lines =@@
+         b: number;
+     };
+ };
+-declare function f<T>(...items: T[]): T;
+-declare let data: {
+-    a: 1;
+-    b: "abc";
+-    c: true;
+-};
+-declare let e1: {
+-    a: number;
+-    b: number;
+-} | {
+-    b?: undefined;
+-    a: string;
+-} | {
+-    b?: undefined;
+-    a?: undefined;
+-};
+-declare let e2: {
+-    b?: undefined;
+-    a?: undefined;
+-} | {
+-    b?: undefined;
+-    a: string;
+-} | {
+-    a: number;
+-    b: number;
+-};
+-declare let e3: {
+-    a: 1;
+-    b: "abc";
+-    c: true;
+-};
+-declare let e4: {
++function f<T>(...items: T[]): T;
++let data: {
++    a: 1;
++    b: "abc";
++    c: true;
++};
++let e1: {
++    a: number;
++    b: number;
++} | {
++    b?: undefined;
++    a: string;
++} | {
++    b?: undefined;
++    a?: undefined;
++};
++let e2: {
++    b?: undefined;
++    a?: undefined;
++} | {
++    b?: undefined;
++    a: string;
++} | {
++    a: number;
++    b: number;
++};
++let e3: {
++    a: 1;
++    b: "abc";
++    c: true;
++};
++let e4: {
+     a: 1;
+     b: "abc";
+     c: true;

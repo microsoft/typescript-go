@@ -21,4 +21,4 @@ exports.special = (0, foo_1.getSpecial)();
 
 
 //// [entry.d.ts]
-export declare const special: any;
+export const special: any;

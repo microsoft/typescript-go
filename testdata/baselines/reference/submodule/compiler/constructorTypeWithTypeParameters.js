@@ -15,10 +15,29 @@ var anotherVar;
 
 
 //// [constructorTypeWithTypeParameters.d.ts]
-declare var X: {
+var X: {
     new <T>(): number;
 };
-declare var Y: {
+var Y: {
     new (): number;
 };
-declare var anotherVar: new <T>() => number;
+var anotherVar: new <T>() => number;
+
+
+//// [DtsFileErrors]
+
+
+constructorTypeWithTypeParameters.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== constructorTypeWithTypeParameters.d.ts (1 errors) ====
+    var X: {
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        new <T>(): number;
+    };
+    var Y: {
+        new (): number;
+    };
+    var anotherVar: new <T>() => number;
+    

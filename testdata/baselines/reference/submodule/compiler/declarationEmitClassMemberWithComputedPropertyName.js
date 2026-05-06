@@ -57,11 +57,11 @@ export const t12 = new Foo().p1;
 
 
 //// [declarationEmitClassMemberWithComputedPropertyName.d.ts]
-declare const k1: unique symbol;
-declare const k2: 'foo';
-declare const k3: unique symbol;
-declare const k4: 'prop';
-declare class Foo {
+const k1: unique symbol;
+const k2: 'foo';
+const k3: unique symbol;
+const k4: 'prop';
+class Foo {
     static [k1](): number;
     [k1](): string;
     static [k2](): number;
@@ -75,16 +75,59 @@ declare class Foo {
     static p1: number;
     p1: number;
 }
-export declare const t1: () => number;
-export declare const t2: () => string;
-export declare const t3: () => number;
-export declare const t4: () => string;
-export declare const t5: typeof Foo.m1;
-export declare const t6: () => void;
-export declare const t7: number;
-export declare const t8: number;
-export declare const t9: number;
-export declare const t10: number;
-export declare const t11: number;
-export declare const t12: number;
+export const t1: () => number;
+export const t2: () => string;
+export const t3: () => number;
+export const t4: () => string;
+export const t5: typeof Foo.m1;
+export const t6: () => void;
+export const t7: number;
+export const t8: number;
+export const t9: number;
+export const t10: number;
+export const t11: number;
+export const t12: number;
 export {};
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitClassMemberWithComputedPropertyName.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitClassMemberWithComputedPropertyName.d.ts (1 errors) ====
+    const k1: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const k2: 'foo';
+    const k3: unique symbol;
+    const k4: 'prop';
+    class Foo {
+        static [k1](): number;
+        [k1](): string;
+        static [k2](): number;
+        [k2](): string;
+        static m1(): void;
+        m1(): void;
+        static [k3]: number;
+        [k3]: number;
+        static [k4]: number;
+        [k4]: number;
+        static p1: number;
+        p1: number;
+    }
+    export const t1: () => number;
+    export const t2: () => string;
+    export const t3: () => number;
+    export const t4: () => string;
+    export const t5: typeof Foo.m1;
+    export const t6: () => void;
+    export const t7: number;
+    export const t8: number;
+    export const t9: number;
+    export const t10: number;
+    export const t11: number;
+    export const t12: number;
+    export {};
+    

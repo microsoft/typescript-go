@@ -24,4 +24,4 @@ function f() {
 
 //// [b.d.ts]
 export { X };
-export declare function f(): X;
+export function f(): X;

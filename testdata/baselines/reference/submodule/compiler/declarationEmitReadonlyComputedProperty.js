@@ -40,12 +40,12 @@ exports.spread = Object.assign({}, (0, bug_1.createInstance)());
 
 
 //// [bug.d.ts]
-export declare const SYMBOL: unique symbol;
+export const SYMBOL: unique symbol;
 export interface Interface {
     readonly [SYMBOL]: string;
 }
-export declare function createInstance(): Interface;
+export function createInstance(): Interface;
 //// [index.d.ts]
-export declare const spread: {
+export const spread: {
     [SYMBOL]: string;
 };

@@ -52,19 +52,56 @@ exports.mod = await (async () => {
 
 
 //// [case0.d.ts]
-declare const _default = 0;
+const _default = 0;
 export default _default;
 //// [case1.d.ts]
-declare const _default = 1;
+const _default = 1;
 export default _default;
 //// [caseFallback.d.ts]
-declare const _default = "fallback";
+const _default = "fallback";
 export default _default;
 //// [index.d.ts]
-export declare const mod: {
+export const mod: {
     default: typeof import("./case0.js");
 } | {
     default: typeof import("./case1.js");
 } | {
     default: typeof import("./caseFallback.js");
 };
+
+
+//// [DtsFileErrors]
+
+
+/case0.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+/case1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+/caseFallback.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /case0.d.ts (1 errors) ====
+    const _default = 0;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    
+==== /case1.d.ts (1 errors) ====
+    const _default = 1;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    
+==== /caseFallback.d.ts (1 errors) ====
+    const _default = "fallback";
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    
+==== /index.d.ts (0 errors) ====
+    export const mod: {
+        default: typeof import("./case0.js");
+    } | {
+        default: typeof import("./case1.js");
+    } | {
+        default: typeof import("./caseFallback.js");
+    };
+    

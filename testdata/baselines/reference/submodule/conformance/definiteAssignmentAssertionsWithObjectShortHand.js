@@ -18,10 +18,10 @@ const bar = {
 
 
 //// [definiteAssignmentAssertionsWithObjectShortHand.d.ts]
-declare const a: string | undefined;
-declare const foo: {
+const a: string | undefined;
+const foo: {
     a: string;
 };
-declare const bar: {
+const bar: {
     a(): void;
 };

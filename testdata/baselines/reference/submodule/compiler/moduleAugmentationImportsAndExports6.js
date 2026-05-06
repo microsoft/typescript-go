@@ -68,15 +68,15 @@ let d = a.baz().b;
 
 
 //// [f1.d.ts]
-export declare class A {
+export class A {
 }
 //// [f2.d.ts]
-export declare class B {
+export class B {
     n: number;
 }
 //// [f3.d.ts]
 import { B } from "./f2";
-export declare namespace N {
+export namespace N {
     interface Ifc {
         a: number;
     }
@@ -86,7 +86,7 @@ export declare namespace N {
 }
 import I = N.Ifc;
 import C = N.Cls;
-declare module "./f1" {
+module "./f1" {
     interface A {
         foo(): B;
         bar(): I;

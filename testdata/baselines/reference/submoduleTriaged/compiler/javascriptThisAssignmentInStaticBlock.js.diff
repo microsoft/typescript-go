@@ -1,15 +1,37 @@
 --- old.javascriptThisAssignmentInStaticBlock.js
 +++ new.javascriptThisAssignmentInStaticBlock.js
-@@= skipped -43, +43 lines =@@
+@@= skipped -42, +42 lines =@@
+
 
  //// [a.d.ts]
- declare class Thing {
-+    static doSomething: () => void;
- }
+-declare class Thing {
+-}
 -declare class ElementsArray extends Array<any> {
 -    constructor(arrayLength?: number);
 -    constructor(arrayLength: number);
 -    constructor(...items: any[]);
-+declare class ElementsArray extends Array {
+-}
++class Thing {
++    static doSomething: () => void;
++}
++class ElementsArray extends Array {
 +    static isArray: (arg: any) => arg is any[];
- }
++}
++
++
++//// [DtsFileErrors]
++
++
++/out/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== /out/a.d.ts (1 errors) ====
++    class Thing {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        static doSomething: () => void;
++    }
++    class ElementsArray extends Array {
++        static isArray: (arg: any) => arg is any[];
++    }
++    

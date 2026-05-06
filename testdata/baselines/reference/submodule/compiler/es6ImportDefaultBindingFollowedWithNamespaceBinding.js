@@ -15,6 +15,6 @@ var x = nameSpaceBinding.a;
 
 
 //// [es6ImportDefaultBindingFollowedWithNamespaceBinding_0.d.ts]
-export declare var a: number;
+export var a: number;
 //// [es6ImportDefaultBindingFollowedWithNamespaceBinding_1.d.ts]
 export {};

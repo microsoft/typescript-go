@@ -112,43 +112,43 @@ export class CC extends Y {
 
 
 //// [index.d.ts]
-export declare class M<T> {
+export class M<T> {
     field: T;
 }
-export declare class N<U> extends M<U> {
+export class N<U> extends M<U> {
     other: U;
 }
-export declare class O {
+export class O {
     [idx: string]: string;
 }
-export declare class P extends O {
+export class P extends O {
 }
-export declare class Q extends O {
+export class Q extends O {
     [idx: string]: "ok";
 }
-export declare class R extends O {
+export class R extends O {
     [idx: number]: "ok";
 }
-export declare class S extends O {
+export class S extends O {
     [idx: string]: "ok";
     [idx: number]: never;
 }
-export declare class T {
+export class T {
     [idx: number]: string;
 }
-export declare class U extends T {
+export class U extends T {
 }
-export declare class V extends T {
+export class V extends T {
     [idx: string]: string;
 }
-export declare class W extends T {
+export class W extends T {
     [idx: number]: "ok";
 }
-export declare class X extends T {
+export class X extends T {
     [idx: string]: string;
     [idx: number]: "ok";
 }
-export declare class Y {
+export class Y {
     [idx: string]: {
         x: number;
     };
@@ -157,21 +157,21 @@ export declare class Y {
         y: number;
     };
 }
-export declare class Z extends Y {
+export class Z extends Y {
 }
-export declare class AA extends Y {
+export class AA extends Y {
     [idx: string]: {
         x: number;
         y: number;
     };
 }
-export declare class BB extends Y {
+export class BB extends Y {
     [idx: number]: {
         x: 0;
         y: 0;
     };
 }
-export declare class CC extends Y {
+export class CC extends Y {
     [idx: string]: {
         x: number;
         y: number;

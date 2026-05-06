@@ -1,6 +1,19 @@
 --- old.declarationEmitResolveTypesIfNotReusable.js
 +++ new.declarationEmitResolveTypesIfNotReusable.js
-@@= skipped -41, +41 lines =@@
+@@= skipped -30, +30 lines =@@
+
+
+ //// [decl.d.ts]
+-declare const u = "X";
++const u = "X";
+ type A = {
+     a: {
+         b: "value of b";
+         notNecessary: typeof u;
+     };
+ };
+-declare const a: {
++const a: {
      readonly a: "value of a";
      readonly notNecessary: "X";
  };
@@ -8,13 +21,14 @@
 -export declare const o2: (o: (typeof a)["a"]) => void;
 -export declare const o3: (o: (typeof a)["a"]) => void;
 -export declare const o4: (o: keyof A["a"]) => void;
-+export declare const o1: (o: A['a']['b']) => void;
-+export declare const o2: (o: (typeof a)['a']) => void;
-+export declare const o3: (o: (typeof a)['a']) => void;
-+export declare const o4: (o: keyof (A['a'])) => void;
++export const o1: (o: A['a']['b']) => void;
++export const o2: (o: (typeof a)['a']) => void;
++export const o3: (o: (typeof a)['a']) => void;
++export const o4: (o: keyof (A['a'])) => void;
  export {};
  //// [main.d.ts]
- export declare const f: {
+-export declare const f: {
++export const f: {
      o1: (o: "value of b") => void;
 -    o2: (o: "value of a") => void;
 +    o2: (o: ({
@@ -28,3 +42,45 @@
 +        notNecessary: "X";
 +    })) => void;
  };
++
++
++//// [DtsFileErrors]
++
++
++decl.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== decl.d.ts (1 errors) ====
++    const u = "X";
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    type A = {
++        a: {
++            b: "value of b";
++            notNecessary: typeof u;
++        };
++    };
++    const a: {
++        readonly a: "value of a";
++        readonly notNecessary: "X";
++    };
++    export const o1: (o: A['a']['b']) => void;
++    export const o2: (o: (typeof a)['a']) => void;
++    export const o3: (o: (typeof a)['a']) => void;
++    export const o4: (o: keyof (A['a'])) => void;
++    export {};
++    
++==== main.d.ts (0 errors) ====
++    export const f: {
++        o1: (o: "value of b") => void;
++        o2: (o: ({
++            readonly a: "value of a";
++            readonly notNecessary: "X";
++        })['a']) => void;
++        o3: (o: "value of a") => void;
++        o4: (o: keyof ({
++            b: "value of b";
++            notNecessary: "X";
++        })) => void;
++    };
++    

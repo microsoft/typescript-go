@@ -12,4 +12,18 @@ var v = 1;
 
 //// [commentsVariableStatement1.d.ts]
 /** Comment */
-declare var v: number;
+var v: number;
+
+
+//// [DtsFileErrors]
+
+
+commentsVariableStatement1.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== commentsVariableStatement1.d.ts (1 errors) ====
+    /** Comment */
+    var v: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

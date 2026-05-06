@@ -1,0 +1,10 @@
+--- old.nodeModulesCjsFormatFileAlwaysHasDefault(module=nodenext).js
++++ new.nodeModulesCjsFormatFileAlwaysHasDefault(module=nodenext).js
+@@= skipped -30, +30 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const a = 1;
++export const a = 1;
+ //// [index.d.ts]
+ export {};

@@ -82,11 +82,11 @@ exports.c = 12;
  * @param {number} a
  * @param {string} b
  */
-export declare function foo(a: number, b: string): void;
+export function foo(a: number, b: string): void;
 /**
  * Legacy - DO NOT USE
  */
-export declare class Aleph {
+export class Aleph {
     /**
      * Field is always null
      */
@@ -106,4 +106,4 @@ export declare class Aleph {
 /**
  * Not the speed of light
  */
-export declare const c = 12;
+export const c = 12;

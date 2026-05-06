@@ -26,10 +26,29 @@ var M;
 
 
 //// [aliasInaccessibleModule2.d.ts]
-declare namespace M {
+namespace M {
     namespace N {
     }
     import R = N;
     export import X = R;
     export {};
 }
+
+
+//// [DtsFileErrors]
+
+
+aliasInaccessibleModule2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== aliasInaccessibleModule2.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        namespace N {
+        }
+        import R = N;
+        export import X = R;
+        export {};
+    }
+    

@@ -23,10 +23,10 @@ exports.bar = null;
 
 
 //// [declarationEmitNoNonRequiredParens.d.ts]
-export declare enum Test {
+export enum Test {
     A = 0,
     B = 1,
     C = 2
 }
 export type TestType = typeof Test;
-export declare const bar: Test[];
+export const bar: Test[];

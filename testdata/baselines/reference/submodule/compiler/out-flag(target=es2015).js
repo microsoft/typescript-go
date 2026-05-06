@@ -35,7 +35,23 @@ class MyClass {
 //# sourceMappingURL=out-flag.js.map
 
 //// [out-flag.d.ts]
-declare class MyClass {
+class MyClass {
     Count(): number;
     SetCount(value: number): void;
 }
+
+
+//// [DtsFileErrors]
+
+
+out-flag.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out-flag.d.ts (1 errors) ====
+    class MyClass {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        Count(): number;
+        SetCount(value: number): void;
+    }
+    

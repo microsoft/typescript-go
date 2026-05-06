@@ -1,0 +1,8 @@
+--- old.templateLiteralsInTypes.js
++++ new.templateLiteralsInTypes.js
+@@= skipped -12, +12 lines =@@
+
+
+ //// [templateLiteralsInTypes.d.ts]
+-declare const f: (hdr: string, val: number) => `${string}:\t${number}\r\n`;
++const f: (hdr: string, val: number) => `${string}:\t${number}\r\n`;

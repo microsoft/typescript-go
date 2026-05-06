@@ -1,22 +1,19 @@
 --- old.jsDeclarationsClassAccessor.js
 +++ new.jsDeclarationsClassAccessor.js
-@@= skipped -64, +64 lines =@@
-
+@@= skipped -65, +65 lines =@@
 
  //// [base.d.ts]
--export class Base {
-+export declare class Base {
+ export class Base {
 +    constructor();
      toJSON(): {
          type: any;
          name: any;
-@@= skipped -8, +9 lines =@@
+@@= skipped -7, +8 lines =@@
      };
  }
  //// [argument.d.ts]
--export class Argument extends Base {
 +import { Base } from "./base.js";
-+export declare class Argument extends Base {
+ export class Argument extends Base {
      /**
       * @param {*} tokeniser
       */

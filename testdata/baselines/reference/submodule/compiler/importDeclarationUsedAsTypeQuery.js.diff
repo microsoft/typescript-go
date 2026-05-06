@@ -1,0 +1,14 @@
+--- old.importDeclarationUsedAsTypeQuery.js
++++ new.importDeclarationUsedAsTypeQuery.js
+@@= skipped -24, +24 lines =@@
+
+
+ //// [importDeclarationUsedAsTypeQuery_require.d.ts]
+-export declare class B {
++export class B {
+     id: number;
+ }
+ //// [importDeclarationUsedAsTypeQuery_1.d.ts]
+ import a = require('./importDeclarationUsedAsTypeQuery_require');
+-export declare var x: typeof a;
++export var x: typeof a;

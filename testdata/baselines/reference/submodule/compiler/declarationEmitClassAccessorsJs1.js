@@ -22,7 +22,7 @@ export class VFile {
 
 
 //// [index.d.ts]
-export declare class VFile {
+export class VFile {
     /**
      * @returns {string}
      */

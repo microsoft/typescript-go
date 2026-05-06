@@ -1,0 +1,86 @@
+--- old.genericRestParameters2.js
++++ new.genericRestParameters2.js
+@@= skipped -125, +125 lines =@@
+
+
+ //// [genericRestParameters2.d.ts]
+-declare const t1: [number, string, ...boolean[]];
+-declare const t2: [string, ...boolean[]];
+-declare const t3: [...boolean[]];
+-declare const t4: [];
+-declare let f00: (...x: [number, string, boolean]) => void;
+-declare let f01: (a: number, ...x: [string, boolean]) => void;
+-declare let f02: (a: number, b: string, ...x: [boolean]) => void;
+-declare let f03: (a: number, b: string, c: boolean) => void;
+-declare let f04: (a: number, b: string, c: boolean, ...x: []) => void;
+-declare let f10: (...x: [number, string, ...boolean[]]) => void;
+-declare let f11: (a: number, ...x: [string, ...boolean[]]) => void;
+-declare let f12: (a: number, b: string, ...x: [...boolean[]]) => void;
+-declare let f13: (a: number, b: string, ...c: boolean[]) => void;
+-declare const ns: [number, string];
+-declare const sn: [string, number];
+-declare const f20: <T extends unknown[]>(...args: T) => T;
++const t1: [number, string, ...boolean[]];
++const t2: [string, ...boolean[]];
++const t3: [...boolean[]];
++const t4: [];
++let f00: (...x: [number, string, boolean]) => void;
++let f01: (a: number, ...x: [string, boolean]) => void;
++let f02: (a: number, b: string, ...x: [boolean]) => void;
++let f03: (a: number, b: string, c: boolean) => void;
++let f04: (a: number, b: string, c: boolean, ...x: []) => void;
++let f10: (...x: [number, string, ...boolean[]]) => void;
++let f11: (a: number, ...x: [string, ...boolean[]]) => void;
++let f12: (a: number, b: string, ...x: [...boolean[]]) => void;
++let f13: (a: number, b: string, ...c: boolean[]) => void;
++const ns: [number, string];
++const sn: [string, number];
++const f20: <T extends unknown[]>(...args: T) => T;
+ type T01 = Parameters<(x: number, y: string, ...z: boolean[]) => void>;
+ type T02 = Parameters<(...args: [number, string, ...boolean[]]) => void>;
+ type T03 = ConstructorParameters<new (x: number, y: string, ...z: boolean[]) => void>;
+@@= skipped -29, +29 lines =@@
+ type T10 = P1<(x: number, y: string, ...z: boolean[]) => void>;
+ type T11 = P1<(...z: number[]) => void>;
+ type T12 = P1<(x: number, y: number) => void>;
++
++
++//// [DtsFileErrors]
++
++
++genericRestParameters2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== genericRestParameters2.d.ts (1 errors) ====
++    const t1: [number, string, ...boolean[]];
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    const t2: [string, ...boolean[]];
++    const t3: [...boolean[]];
++    const t4: [];
++    let f00: (...x: [number, string, boolean]) => void;
++    let f01: (a: number, ...x: [string, boolean]) => void;
++    let f02: (a: number, b: string, ...x: [boolean]) => void;
++    let f03: (a: number, b: string, c: boolean) => void;
++    let f04: (a: number, b: string, c: boolean, ...x: []) => void;
++    let f10: (...x: [number, string, ...boolean[]]) => void;
++    let f11: (a: number, ...x: [string, ...boolean[]]) => void;
++    let f12: (a: number, b: string, ...x: [...boolean[]]) => void;
++    let f13: (a: number, b: string, ...c: boolean[]) => void;
++    const ns: [number, string];
++    const sn: [string, number];
++    const f20: <T extends unknown[]>(...args: T) => T;
++    type T01 = Parameters<(x: number, y: string, ...z: boolean[]) => void>;
++    type T02 = Parameters<(...args: [number, string, ...boolean[]]) => void>;
++    type T03 = ConstructorParameters<new (x: number, y: string, ...z: boolean[]) => void>;
++    type T04 = ConstructorParameters<new (...args: [number, string, ...boolean[]]) => void>;
++    type T05<T extends any[]> = Parameters<(x: string, ...args: T) => void>;
++    type T06 = T05<[number, ...boolean[]]>;
++    type P1<T extends Function> = T extends (head: infer A, ...tail: infer B) => any ? {
++        head: A;
++        tail: B;
++    } : any[];
++    type T10 = P1<(x: number, y: string, ...z: boolean[]) => void>;
++    type T11 = P1<(...z: number[]) => void>;
++    type T12 = P1<(x: number, y: number) => void>;
++    

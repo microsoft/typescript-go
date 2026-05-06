@@ -51,7 +51,7 @@ export class ElementC extends LitElement2 {
 
 //// [index.d.ts]
 import { LitElement, LitElement as LitElement2 } from "lit";
-export declare class ElementB extends LitElement {
+export class ElementB extends LitElement {
 }
-export declare class ElementC extends LitElement2 {
+export class ElementC extends LitElement2 {
 }

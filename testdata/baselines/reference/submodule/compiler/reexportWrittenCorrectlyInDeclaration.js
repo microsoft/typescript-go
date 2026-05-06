@@ -52,16 +52,16 @@ exports.Test = Test;
 
 
 //// [ThingA.d.ts]
-export declare class ThingA {
+export class ThingA {
 }
 //// [ThingB.d.ts]
-export declare class ThingB {
+export class ThingB {
 }
 //// [Things.d.ts]
 export { ThingA } from "./ThingA";
 export { ThingB } from "./ThingB";
 //// [Test.d.ts]
 import * as things from "./Things";
-export declare class Test {
+export class Test {
     method: (input: things.ThingA) => void;
 }

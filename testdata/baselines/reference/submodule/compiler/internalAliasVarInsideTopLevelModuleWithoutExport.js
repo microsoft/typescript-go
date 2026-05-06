@@ -23,7 +23,7 @@ exports.bVal = b;
 
 
 //// [internalAliasVarInsideTopLevelModuleWithoutExport.d.ts]
-export declare namespace a {
+export namespace a {
     var x: number;
 }
-export declare var bVal: number;
+export var bVal: number;

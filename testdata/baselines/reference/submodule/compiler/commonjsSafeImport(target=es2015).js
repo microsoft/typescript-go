@@ -22,6 +22,6 @@ const _10_lib_1 = require("./10_lib");
 
 
 //// [10_lib.d.ts]
-export declare function Foo(): void;
+export function Foo(): void;
 //// [main.d.ts]
 export {};

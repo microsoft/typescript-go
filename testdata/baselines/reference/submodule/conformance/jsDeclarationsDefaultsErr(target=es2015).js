@@ -65,7 +65,7 @@ exports.default = x;
 
 
 //// [index1.d.ts]
-declare class Cls {
+class Cls {
     x: number;
     static y: string;
 }
@@ -82,7 +82,7 @@ export type default = string | number;
  * @typedef {string | number} default
  */
 //// [index3.d.ts]
-declare const x = 12;
+const x = 12;
 export { x as default };
 export type default = string | number;
 /**

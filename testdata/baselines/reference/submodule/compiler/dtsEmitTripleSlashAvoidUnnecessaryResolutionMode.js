@@ -25,4 +25,4 @@ export async function drainStream(stream: NodeJS.ReadableStream): Promise<void> 
 
 //// [app.d.mts]
 /// <reference types="node" preserve="true" />
-export declare function drainStream(stream: NodeJS.ReadableStream): Promise<void>;
+export function drainStream(stream: NodeJS.ReadableStream): Promise<void>;

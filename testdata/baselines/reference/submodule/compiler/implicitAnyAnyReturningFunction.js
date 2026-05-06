@@ -43,9 +43,27 @@ class C {
 
 
 //// [implicitAnyAnyReturningFunction.d.ts]
-declare function A(): any;
-declare function B(): any;
-declare class C {
+function A(): any;
+function B(): any;
+class C {
     A(): any;
     B(): any;
 }
+
+
+//// [DtsFileErrors]
+
+
+implicitAnyAnyReturningFunction.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== implicitAnyAnyReturningFunction.d.ts (1 errors) ====
+    function A(): any;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function B(): any;
+    class C {
+        A(): any;
+        B(): any;
+    }
+    

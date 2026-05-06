@@ -13,4 +13,17 @@ function foo(arr, depth) {
 
 
 //// [arrayFlatNoCrashInferenceDeclarations.d.ts]
-declare function foo<T>(arr: T[], depth: number): FlatArray<T, -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20>[];
+function foo<T>(arr: T[], depth: number): FlatArray<T, -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20>[];
+
+
+//// [DtsFileErrors]
+
+
+arrayFlatNoCrashInferenceDeclarations.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== arrayFlatNoCrashInferenceDeclarations.d.ts (1 errors) ====
+    function foo<T>(arr: T[], depth: number): FlatArray<T, -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20>[];
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    

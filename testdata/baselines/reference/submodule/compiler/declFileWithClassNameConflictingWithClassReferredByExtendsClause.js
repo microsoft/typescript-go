@@ -52,17 +52,17 @@ var X;
 
 
 //// [declFileWithClassNameConflictingWithClassReferredByExtendsClause.d.ts]
-declare namespace A.B.Base {
+namespace A.B.Base {
     class W {
         id: number;
     }
 }
-declare namespace X.Y.base {
+namespace X.Y.base {
     class W extends A.B.Base.W {
         name: string;
     }
 }
-declare namespace X.Y.base.Z {
+namespace X.Y.base.Z {
     class W<TValue> extends X.Y.base.W {
         value: boolean;
     }

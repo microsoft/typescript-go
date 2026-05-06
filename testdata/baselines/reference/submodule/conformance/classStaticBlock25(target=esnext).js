@@ -40,8 +40,23 @@ class C {
 //# sourceMappingURL=classStaticBlock25.js.map
 
 //// [classStaticBlock25.d.ts]
-declare const a = 1;
-declare const b = 2;
-declare class C {
+const a = 1;
+const b = 2;
+class C {
 }
 //# sourceMappingURL=classStaticBlock25.d.ts.map
+
+//// [DtsFileErrors]
+
+
+classStaticBlock25.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== classStaticBlock25.d.ts (1 errors) ====
+    const a = 1;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const b = 2;
+    class C {
+    }
+    //# sourceMappingURL=classStaticBlock25.d.ts.map

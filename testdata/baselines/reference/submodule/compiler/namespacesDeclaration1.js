@@ -14,7 +14,7 @@ namespace M {
 
 
 //// [namespacesDeclaration1.d.ts]
-declare namespace M {
+namespace M {
     namespace N {
         namespace M2 {
             interface I {
@@ -22,3 +22,23 @@ declare namespace M {
         }
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+namespacesDeclaration1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== namespacesDeclaration1.d.ts (1 errors) ====
+    namespace M {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        namespace N {
+            namespace M2 {
+                interface I {
+                }
+            }
+        }
+    }
+    

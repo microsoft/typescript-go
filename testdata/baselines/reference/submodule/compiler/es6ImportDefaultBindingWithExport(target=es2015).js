@@ -26,7 +26,7 @@ exports.x = server_1.default;
 
 
 //// [server.d.ts]
-declare var a: number;
+var a: number;
 export default a;
 //// [client.d.ts]
-export declare var x: number;
+export var x: number;

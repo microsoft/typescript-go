@@ -9,10 +9,10 @@ export const fn2 = ({ prop: a }: { prop: number }, { prop: b }: { prop: number }
 
 
 //// [declarationEmitDuplicateParameterDestructuring.d.ts]
-export declare const fn1: ({ prop: a, prop: b }: {
+export const fn1: ({ prop: a, prop: b }: {
     prop: number;
 }) => number;
-export declare const fn2: ({ prop: a }: {
+export const fn2: ({ prop: a }: {
     prop: number;
 }, { prop: b }: {
     prop: number;

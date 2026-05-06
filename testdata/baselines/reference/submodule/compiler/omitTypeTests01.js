@@ -41,6 +41,6 @@ interface Foo {
 }
 export type Bar = Omit<Foo, "c">;
 export type Baz = Omit<Foo, "b" | "c">;
-export declare function getBarA(bar: Bar): string;
-export declare function getBazA(baz: Baz): string;
+export function getBarA(bar: Bar): string;
+export function getBazA(baz: Baz): string;
 export {};

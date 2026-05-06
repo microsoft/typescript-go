@@ -1,0 +1,10 @@
+--- old.es6ImportNameSpaceImportInEs5(target=es2015).js
++++ new.es6ImportNameSpaceImportInEs5(target=es2015).js
+@@= skipped -54, +54 lines =@@
+
+
+ //// [es6ImportNameSpaceImportInEs5_0.d.ts]
+-export declare var a: number;
++export var a: number;
+ //// [es6ImportNameSpaceImportInEs5_1.d.ts]
+ export {};

@@ -1,0 +1,20 @@
+--- old.missingImportAfterModuleImport.js
++++ new.missingImportAfterModuleImport.js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [missingImportAfterModuleImport_0.d.ts]
+-declare module "SubModule" {
++module "SubModule" {
+     class SubModule {
+         static StaticVar: number;
+         InstanceVar: number;
+@@= skipped -11, +11 lines =@@
+ //// [missingImportAfterModuleImport_1.d.ts]
+ /// <reference path="missingImportAfterModuleImport_0.d.ts" preserve="true" />
+ import SubModule = require('SubModule');
+-declare class MainModule {
++class MainModule {
+     SubModule: SubModule;
+     constructor();
+ }

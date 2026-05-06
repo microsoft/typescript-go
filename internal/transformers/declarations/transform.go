@@ -1097,13 +1097,7 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 	}
 	varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, initializer)
 	tx.tracker.PopErrorFallbackNode()
-	var modList *ast.ModifierList
-	if tx.needsDeclare {
-		modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-	} else {
-		modList = tx.Factory().NewModifierList([]*ast.Node{})
-	}
-	statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
+	statement := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
 	exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, newId)
 	// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 	tx.preserveJsDoc(statement, input)
@@ -1136,13 +1130,7 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 			type_ := tx.ensureType(input, false)
 			varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
 			tx.tracker.PopErrorFallbackNode()
-			var modList *ast.ModifierList
-			if tx.needsDeclare {
-				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-			} else {
-				modList = tx.Factory().NewModifierList([]*ast.Node{})
-			}
-			statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
+			statement := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
 
 			assignment := tx.Factory().NewExportAssignment(input.Modifiers(), false, nil, newId)
 			// Remove comments from the export declaration and copy them onto the synthetic _default declaration
@@ -1155,12 +1143,7 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 			type_ := tx.ensureType(input, false)
 			varDecl := tx.Factory().NewVariableDeclaration(name, nil, type_, nil)
 			tx.tracker.PopErrorFallbackNode()
-			var modList *ast.ModifierList
-			if tx.needsDeclare {
-				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword), tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-			} else {
-				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)})
-			}
+			modList := tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)})
 			return tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsNone))
 		}
 	} else {
@@ -1176,13 +1159,7 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 		type_ := tx.ensureType(input, false)
 		varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
 		tx.tracker.PopErrorFallbackNode()
-		var modList *ast.ModifierList
-		if tx.needsDeclare {
-			modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-		} else {
-			modList = tx.Factory().NewModifierList([]*ast.Node{})
-		}
-		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
+		statement := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
 
 		assignment := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, newId, name)})), nil, nil)
 		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
@@ -1598,12 +1575,8 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 			tx.resolver.CreateTypeOfExpression(tx.EmitContext(), extendsClause.Expression(), input.AsNode(), declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker),
 			nil,
 		)
-		var mods *ast.ModifierList
-		if tx.needsDeclare {
-			mods = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-		}
 		statement := tx.Factory().NewVariableStatement(
-			mods,
+			nil,
 			tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst),
 		)
 		newHeritageClause := tx.Factory().UpdateHeritageClause(
@@ -1867,16 +1840,8 @@ func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierL
 }
 
 func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.ModifierFlags {
-	mask := ast.ModifierFlagsAll ^ (ast.ModifierFlagsPublic | ast.ModifierFlagsAsync | ast.ModifierFlagsOverride) // No async and override modifiers in declaration files
+	mask := ast.ModifierFlagsAll ^ (ast.ModifierFlagsPublic | ast.ModifierFlagsAsync | ast.ModifierFlagsOverride | ast.ModifierFlagsAmbient) // No async, override, or declare modifiers in declaration files
 	additions := ast.ModifierFlagsNone
-	if tx.needsDeclare && !isAlwaysType(node) {
-		additions = ast.ModifierFlagsAmbient
-	}
-	parentIsFile := node.Parent.Kind == ast.KindSourceFile
-	if !parentIsFile {
-		mask ^= ast.ModifierFlagsAmbient
-		additions = ast.ModifierFlagsNone
-	}
 	if ast.IsImplicitlyExportedJSTypeAlias(node) {
 		additions |= ast.ModifierFlagsExport
 	}
@@ -2296,7 +2261,6 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 	tx.needsDeclare = saveNeedsDeclare
 
 	if defaultExport {
-		modifierFlags |= ast.ModifierFlagsAmbient
 		modifierFlags ^= ast.ModifierFlagsDefault
 		modifierFlags ^= ast.ModifierFlagsExport
 	}

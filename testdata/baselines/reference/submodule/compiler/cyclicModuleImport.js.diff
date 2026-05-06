@@ -1,0 +1,54 @@
+--- old.cyclicModuleImport.js
++++ new.cyclicModuleImport.js
+@@= skipped -25, +25 lines =@@
+
+
+ //// [cyclicModuleImport.d.ts]
+-declare module "SubModule" {
++module "SubModule" {
+     import MainModule = require('MainModule');
+     class SubModule {
+         static StaticVar: number;
+@@= skipped -10, +10 lines =@@
+     }
+     export = SubModule;
+ }
+-declare module "MainModule" {
++module "MainModule" {
+     import SubModule = require('SubModule');
+     class MainModule {
+         SubModule: SubModule;
+@@= skipped -8, +8 lines =@@
+     }
+     export = MainModule;
+ }
++
++
++//// [DtsFileErrors]
++
++
++cyclicModuleImport.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== cyclicModuleImport.d.ts (1 errors) ====
++    module "SubModule" {
++    ~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        import MainModule = require('MainModule');
++        class SubModule {
++            static StaticVar: number;
++            InstanceVar: number;
++            main: MainModule;
++            constructor();
++        }
++        export = SubModule;
++    }
++    module "MainModule" {
++        import SubModule = require('SubModule');
++        class MainModule {
++            SubModule: SubModule;
++            constructor();
++        }
++        export = MainModule;
++    }
++    

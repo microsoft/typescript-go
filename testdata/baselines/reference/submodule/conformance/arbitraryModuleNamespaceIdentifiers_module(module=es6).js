@@ -57,7 +57,7 @@ const importStarTestA = "expect error about otherType";
 
 
 //// [arbitraryModuleNamespaceIdentifiers_module.d.ts]
-declare const someValue = "someValue";
+const someValue = "someValue";
 type someType = "someType";
 export { someValue as "<X>" };
 export { "<X>" as "<Y>" } from "./arbitraryModuleNamespaceIdentifiers_module";

@@ -1,0 +1,52 @@
+--- old.es6ExportClause.js
++++ new.es6ExportClause.js
+@@= skipped -31, +31 lines =@@
+
+
+ //// [server.d.ts]
+-declare class c {
++class c {
+ }
+ interface i {
+ }
+-declare namespace m {
++namespace m {
+     var x: number;
+ }
+-declare var x: number;
+-declare namespace uninstantiated {
++var x: number;
++namespace uninstantiated {
+ }
+ export { c };
+ export { c as c2 };
+ export { i, m as instantiatedModule };
+ export { uninstantiated };
+ export { x };
++
++
++//// [DtsFileErrors]
++
++
++server.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== server.d.ts (1 errors) ====
++    class c {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    interface i {
++    }
++    namespace m {
++        var x: number;
++    }
++    var x: number;
++    namespace uninstantiated {
++    }
++    export { c };
++    export { c as c2 };
++    export { i, m as instantiatedModule };
++    export { uninstantiated };
++    export { x };
++    

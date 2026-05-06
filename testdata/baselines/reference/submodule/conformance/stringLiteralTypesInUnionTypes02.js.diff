@@ -1,0 +1,25 @@
+--- old.stringLiteralTypesInUnionTypes02.js
++++ new.stringLiteralTypesInUnionTypes02.js
+@@= skipped -41, +41 lines =@@
+
+ //// [stringLiteralTypesInUnionTypes02.d.ts]
+ type T = string | "foo" | "bar" | "baz";
+-declare var x: "foo" | "bar" | "baz" | string;
+-declare var y: T;
++var x: "foo" | "bar" | "baz" | string;
++var y: T;
++
++
++//// [DtsFileErrors]
++
++
++stringLiteralTypesInUnionTypes02.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== stringLiteralTypesInUnionTypes02.d.ts (1 errors) ====
++    type T = string | "foo" | "bar" | "baz";
++    var x: "foo" | "bar" | "baz" | string;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    var y: T;
++    

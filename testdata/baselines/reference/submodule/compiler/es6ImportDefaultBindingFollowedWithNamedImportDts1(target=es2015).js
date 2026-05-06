@@ -46,14 +46,14 @@ exports.x6 = new server_6.default();
 
 
 //// [server.d.ts]
-declare class a {
+class a {
 }
 export default a;
 //// [client.d.ts]
 import defaultBinding1 from "./server";
-export declare var x1: defaultBinding1;
-export declare var x2: defaultBinding1;
-export declare var x3: defaultBinding1;
-export declare var x4: defaultBinding1;
-export declare var x5: defaultBinding1;
-export declare var x6: defaultBinding1;
+export var x1: defaultBinding1;
+export var x2: defaultBinding1;
+export var x3: defaultBinding1;
+export var x4: defaultBinding1;
+export var x5: defaultBinding1;
+export var x6: defaultBinding1;

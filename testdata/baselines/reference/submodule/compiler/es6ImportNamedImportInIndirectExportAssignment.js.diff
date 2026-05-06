@@ -1,0 +1,11 @@
+--- old.es6ImportNamedImportInIndirectExportAssignment.js
++++ new.es6ImportNamedImportInIndirectExportAssignment.js
+@@= skipped -28, +28 lines =@@
+
+
+ //// [es6ImportNamedImportInIndirectExportAssignment_0.d.ts]
+-export declare namespace a {
++export namespace a {
+     class c {
+     }
+ }

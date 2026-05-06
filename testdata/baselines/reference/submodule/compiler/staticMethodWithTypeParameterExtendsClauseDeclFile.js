@@ -50,9 +50,9 @@ exports.publicClassWithWithPrivateTypeParameters = publicClassWithWithPrivateTyp
 
 
 //// [staticMethodWithTypeParameterExtendsClauseDeclFile.d.ts]
-export declare class publicClass {
+export class publicClass {
 }
-export declare class publicClassWithWithPrivateTypeParameters {
+export class publicClassWithWithPrivateTypeParameters {
     private static myPrivateStaticMethod1;
     private myPrivateMethod1;
     private static myPrivateStaticMethod2;

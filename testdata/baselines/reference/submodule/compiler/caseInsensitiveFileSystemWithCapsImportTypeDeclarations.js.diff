@@ -1,0 +1,10 @@
+--- old.caseInsensitiveFileSystemWithCapsImportTypeDeclarations.js
++++ new.caseInsensitiveFileSystemWithCapsImportTypeDeclarations.js
+@@= skipped -57, +57 lines =@@
+ }>;
+ //// [index.d.ts]
+ import { TypeB } from './type-b';
+-export declare class Broken {
++export class Broken {
+     method(): TypeB;
+ }

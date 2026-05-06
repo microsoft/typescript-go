@@ -189,8 +189,8 @@ let C = (() => {
 //# sourceMappingURL=esDecorators-classDeclaration-sourceMap.js.map
 
 //// [esDecorators-classDeclaration-sourceMap.d.ts]
-declare var dec: any;
-declare class C {
+var dec: any;
+class C {
     #private;
     method(): void;
     get x(): number;
@@ -199,3 +199,23 @@ declare class C {
     accessor z: number;
 }
 //# sourceMappingURL=esDecorators-classDeclaration-sourceMap.d.ts.map
+
+//// [DtsFileErrors]
+
+
+esDecorators-classDeclaration-sourceMap.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== esDecorators-classDeclaration-sourceMap.d.ts (1 errors) ====
+    var dec: any;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    class C {
+        #private;
+        method(): void;
+        get x(): number;
+        set x(value: number);
+        y: number;
+        accessor z: number;
+    }
+    //# sourceMappingURL=esDecorators-classDeclaration-sourceMap.d.ts.map

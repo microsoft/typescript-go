@@ -101,7 +101,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 //// [privacyInterfaceExtendsClauseDeclFile_externalModule.d.ts]
-export declare namespace publicModule {
+export namespace publicModule {
     export interface publicInterfaceInPublicModule {
     }
     interface privateInterfaceInPublicModule {
@@ -116,7 +116,7 @@ export declare namespace publicModule {
     }
     export {};
 }
-declare namespace privateModule {
+namespace privateModule {
     export interface publicInterfaceInPrivateModule {
     }
     interface privateInterfaceInPrivateModule {
@@ -141,7 +141,7 @@ export interface publicInterfaceImplementingFromPrivateModuleInterface extends p
 }
 export {};
 //// [privacyInterfaceExtendsClauseDeclFile_GlobalFile.d.ts]
-declare namespace publicModuleInGlobal {
+namespace publicModuleInGlobal {
     export interface publicInterfaceInPublicModule {
     }
     interface privateInterfaceInPublicModule {
@@ -156,3 +156,74 @@ interface publicInterfaceInGlobal {
 }
 interface publicInterfaceImplementingPublicInterfaceInGlobal extends publicInterfaceInGlobal {
 }
+
+
+//// [DtsFileErrors]
+
+
+privacyInterfaceExtendsClauseDeclFile_GlobalFile.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+privacyInterfaceExtendsClauseDeclFile_externalModule.d.ts(16,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyInterfaceExtendsClauseDeclFile_externalModule.d.ts (1 errors) ====
+    export namespace publicModule {
+        export interface publicInterfaceInPublicModule {
+        }
+        interface privateInterfaceInPublicModule {
+        }
+        export interface publicInterfaceImplementingPublicInterfaceInModule extends publicInterfaceInPublicModule {
+        }
+        export interface publicInterfaceImplementingPrivateInterfaceInModule extends privateInterfaceInPublicModule {
+        }
+        export interface publicInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
+        }
+        export interface publicInterfaceImplementingPrivateAndPublicInterface extends privateInterfaceInPublicModule, publicInterfaceInPublicModule {
+        }
+        export {};
+    }
+    namespace privateModule {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        export interface publicInterfaceInPrivateModule {
+        }
+        interface privateInterfaceInPrivateModule {
+        }
+        export interface publicInterfaceImplementingPublicInterfaceInModule extends publicInterfaceInPrivateModule {
+        }
+        export interface publicInterfaceImplementingPrivateInterfaceInModule extends privateInterfaceInPrivateModule {
+        }
+        export interface publicInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
+        }
+        export {};
+    }
+    export interface publicInterface {
+    }
+    interface privateInterface {
+    }
+    export interface publicInterfaceImplementingPublicInterface extends publicInterface {
+    }
+    export interface publicInterfaceImplementingPrivateInterface extends privateInterface {
+    }
+    export interface publicInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
+    }
+    export {};
+    
+==== privacyInterfaceExtendsClauseDeclFile_GlobalFile.d.ts (1 errors) ====
+    namespace publicModuleInGlobal {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        export interface publicInterfaceInPublicModule {
+        }
+        interface privateInterfaceInPublicModule {
+        }
+        export interface publicInterfaceImplementingPublicInterfaceInModule extends publicInterfaceInPublicModule {
+        }
+        export interface publicInterfaceImplementingPrivateInterfaceInModule extends privateInterfaceInPublicModule {
+        }
+        export {};
+    }
+    interface publicInterfaceInGlobal {
+    }
+    interface publicInterfaceImplementingPublicInterfaceInGlobal extends publicInterfaceInGlobal {
+    }
+    

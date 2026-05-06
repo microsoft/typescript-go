@@ -14,7 +14,7 @@ export class SomeClass {
 
 
 //// [parameterPropertyWithDefaultValue.d.ts]
-export declare class SomeClass {
+export class SomeClass {
     readonly timestamp: Date;
     constructor(timestamp?: Date);
 }

@@ -1,0 +1,35 @@
+--- old.declarationEmitMultipleComputedNamesSameDomain.js
++++ new.declarationEmitMultipleComputedNamesSameDomain.js
+@@= skipped -20, +20 lines =@@
+
+
+ //// [declarationEmitMultipleComputedNamesSameDomain.d.ts]
+-declare const x: string;
+-declare const y: "y";
+-export declare class Test {
++const x: string;
++const y: "y";
++export class Test {
+     [x]: number;
+     [y]: number;
+ }
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitMultipleComputedNamesSameDomain.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitMultipleComputedNamesSameDomain.d.ts (1 errors) ====
++    const x: string;
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    const y: "y";
++    export class Test {
++        [x]: number;
++        [y]: number;
++    }
++    export {};
++    

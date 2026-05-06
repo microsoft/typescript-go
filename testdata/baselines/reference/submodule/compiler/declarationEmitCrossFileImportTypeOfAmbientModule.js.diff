@@ -1,0 +1,8 @@
+--- old.declarationEmitCrossFileImportTypeOfAmbientModule.js
++++ new.declarationEmitCrossFileImportTypeOfAmbientModule.js
+@@= skipped -20, +20 lines =@@
+
+
+ //// [index.d.ts]
+-export declare const reeexported: typeof import("@namespace/component").Foo;
++export const reeexported: typeof import("@namespace/component").Foo;

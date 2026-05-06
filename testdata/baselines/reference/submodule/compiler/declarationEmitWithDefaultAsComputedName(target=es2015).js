@@ -40,9 +40,31 @@ exports.obj = {
 type Experiment<Name> = {
     name: Name;
 };
-declare const _default: Experiment<"foo">;
+const _default: Experiment<"foo">;
 export default _default;
 //// [main.d.ts]
-export declare const obj: {
+export const obj: {
     foo: number;
 };
+
+
+//// [DtsFileErrors]
+
+
+other.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== other.d.ts (1 errors) ====
+    type Experiment<Name> = {
+        name: Name;
+    };
+    const _default: Experiment<"foo">;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    
+==== main.d.ts (0 errors) ====
+    export const obj: {
+        foo: number;
+    };
+    

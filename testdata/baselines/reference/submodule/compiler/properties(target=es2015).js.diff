@@ -1,0 +1,27 @@
+--- old.properties(target=es2015).js
++++ new.properties(target=es2015).js
+@@= skipped -26, +26 lines =@@
+ //# sourceMappingURL=properties.js.map
+
+ //// [properties.d.ts]
+-declare class MyClass {
++class MyClass {
+     get Count(): number;
+     set Count(value: number);
+ }
++
++
++//// [DtsFileErrors]
++
++
++properties.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== properties.d.ts (1 errors) ====
++    class MyClass {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        get Count(): number;
++        set Count(value: number);
++    }
++    

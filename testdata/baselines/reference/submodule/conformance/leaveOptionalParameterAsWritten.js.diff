@@ -1,0 +1,47 @@
+--- old.leaveOptionalParameterAsWritten.js
++++ new.leaveOptionalParameterAsWritten.js
+@@= skipped -23, +23 lines =@@
+ }
+ //// [b.d.ts]
+ import * as a from "./a";
+-declare global {
++global {
+     namespace teams {
+         namespace calling {
+             export import Foo = a.Foo;
+@@= skipped -9, +9 lines =@@
+ }
+ //// [c.d.ts]
+ type Foo = teams.calling.Foo;
+-export declare const bar: (p?: Foo) => void;
++export const bar: (p?: Foo) => void;
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++dist/b.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== dist/a.d.ts (0 errors) ====
++    export interface Foo {
++    }
++    
++==== dist/b.d.ts (1 errors) ====
++    import * as a from "./a";
++    global {
++    ~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        namespace teams {
++            namespace calling {
++                export import Foo = a.Foo;
++            }
++        }
++    }
++    
++==== dist/c.d.ts (0 errors) ====
++    type Foo = teams.calling.Foo;
++    export const bar: (p?: Foo) => void;
++    export {};
++    

@@ -18,7 +18,7 @@ class C {
 
 
 //// [declFileForTypeParameters.d.ts]
-declare class C<T> {
+class C<T> {
     x: T;
     foo(a: T): T;
 }

@@ -55,7 +55,7 @@ export const obj4 = {
 
 
 //// [index.d.ts]
-export declare const obj1: {
+export const obj1: {
     /**
      * my awesome getter (first in source order)
      * @returns {string}
@@ -67,7 +67,7 @@ export declare const obj1: {
      */
     set x(a: string);
 };
-export declare const obj2: {
+export const obj2: {
     /**
      * my awesome getter
      * @returns {string}
@@ -79,14 +79,14 @@ export declare const obj2: {
      */
     set x(a: number);
 };
-export declare const obj3: {
+export const obj3: {
     /**
      * my awesome getter
      * @returns {string}
      */
     readonly x: string;
 };
-export declare const obj4: {
+export const obj4: {
     /**
      * my awesome setter
      * @param {number} a

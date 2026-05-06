@@ -60,7 +60,7 @@ type O = {
 type I = {
     prop: string;
 };
-export declare const fn: (v: O['prop'], p: Omit<O, 'prop'>, key: keyof O, p2: Omit<O, keyof I>) => void;
+export const fn: (v: O['prop'], p: Omit<O, 'prop'>, key: keyof O, p2: Omit<O, keyof I>) => void;
 export {};
 //// [aExp.d.ts]
 export type O = {
@@ -70,9 +70,9 @@ export type O = {
 export type I = {
     prop: string;
 };
-export declare const fnExp: (v: O['prop'], p: Omit<O, 'prop'>, key: keyof O, p2: Omit<O, keyof I>) => void;
+export const fnExp: (v: O['prop'], p: Omit<O, 'prop'>, key: keyof O, p2: Omit<O, keyof I>) => void;
 //// [b.d.ts]
-export declare const f: (v: string, p: Omit<{
+export const f: (v: string, p: Omit<{
     prop: string;
     prop2: string;
 }, 'prop'>, key: keyof {
@@ -82,4 +82,4 @@ export declare const f: (v: string, p: Omit<{
     prop: string;
     prop2: string;
 }, "prop">) => void;
-export declare const fExp: (v: import("./aExp").O['prop'], p: Omit<import("./aExp").O, 'prop'>, key: keyof import("./aExp").O, p2: Omit<import("./aExp").O, keyof import("./aExp").I>) => void;
+export const fExp: (v: import("./aExp").O['prop'], p: Omit<import("./aExp").O, 'prop'>, key: keyof import("./aExp").O, p2: Omit<import("./aExp").O, keyof import("./aExp").I>) => void;

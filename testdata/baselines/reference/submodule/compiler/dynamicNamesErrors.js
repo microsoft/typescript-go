@@ -91,15 +91,15 @@ exports.ObjectLiteralVisibility = {
 
 
 //// [dynamicNamesErrors.d.ts]
-declare const x: unique symbol;
-declare const y: unique symbol;
-declare const z: unique symbol;
-declare const w: unique symbol;
+const x: unique symbol;
+const y: unique symbol;
+const z: unique symbol;
+const w: unique symbol;
 export interface InterfaceMemberVisibility {
     [x]: number;
     [y](): number;
 }
-export declare class ClassMemberVisibility {
+export class ClassMemberVisibility {
     static [x]: number;
     static [y](): number;
     static get [z](): number;
@@ -113,7 +113,7 @@ export type ObjectTypeVisibility = {
     [x]: number;
     [y](): number;
 };
-export declare const ObjectLiteralVisibility: {
+export const ObjectLiteralVisibility: {
     [x]: number;
     [y](): number;
     readonly [z]: number;

@@ -1,0 +1,21 @@
+--- old.privateIdentifierExpando.js
++++ new.privateIdentifierExpando.js
+@@= skipped -7, +7 lines =@@
+
+
+ //// [privateIdentifierExpando.d.ts]
+-declare const x: {};
++const x: {};
++
++
++//// [DtsFileErrors]
++
++
++privateIdentifierExpando.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== privateIdentifierExpando.d.ts (1 errors) ====
++    const x: {};
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

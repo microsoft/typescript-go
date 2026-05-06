@@ -21,7 +21,7 @@ Object.defineProperty(exports, "globalThis", { enumerable: true, get: function (
 
 
 //// [variable.d.ts]
-export declare const variable: typeof globalThis;
+export const variable: typeof globalThis;
 //// [index.d.ts]
 import { variable } from "./variable";
 export { variable as globalThis };

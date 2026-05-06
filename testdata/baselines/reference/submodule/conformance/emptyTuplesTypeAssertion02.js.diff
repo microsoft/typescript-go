@@ -1,0 +1,10 @@
+--- old.emptyTuplesTypeAssertion02.js
++++ new.emptyTuplesTypeAssertion02.js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [emptyTuplesTypeAssertion02.d.ts]
+-declare let x: [];
+-declare let y: undefined;
++let x: [];
++let y: undefined;

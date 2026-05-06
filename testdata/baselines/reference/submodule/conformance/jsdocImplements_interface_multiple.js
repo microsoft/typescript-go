@@ -37,7 +37,7 @@ class BadSquare {
  * @implements {Drawable}
  * @implements Sizable
  **/
-declare class Square implements Drawable, Sizable {
+class Square implements Drawable, Sizable {
     draw(): number;
     size(): number;
 }
@@ -45,6 +45,6 @@ declare class Square implements Drawable, Sizable {
  * @implements Drawable
  * @implements {Sizable}
  **/
-declare class BadSquare implements Drawable, Sizable {
+class BadSquare implements Drawable, Sizable {
     size(): number;
 }

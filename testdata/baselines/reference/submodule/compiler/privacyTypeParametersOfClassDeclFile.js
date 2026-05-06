@@ -305,23 +305,23 @@ var privateModule;
 
 
 //// [privacyTypeParametersOfClassDeclFile.d.ts]
-declare class privateClass {
+class privateClass {
 }
-export declare class publicClass {
+export class publicClass {
 }
-export declare class publicClassWithPrivateTypeParameters<T extends privateClass> {
+export class publicClassWithPrivateTypeParameters<T extends privateClass> {
     myMethod(val: T): T;
 }
-export declare class publicClassWithPublicTypeParameters<T extends publicClass> {
+export class publicClassWithPublicTypeParameters<T extends publicClass> {
     myMethod(val: T): T;
 }
-export declare class publicClassWithPublicTypeParametersWithoutExtends<T> {
+export class publicClassWithPublicTypeParametersWithoutExtends<T> {
     myMethod(val: T): T;
 }
-export declare class publicClassWithTypeParametersFromPrivateModule<T extends privateModule.publicClassInPrivateModule> {
+export class publicClassWithTypeParametersFromPrivateModule<T extends privateModule.publicClassInPrivateModule> {
     myMethod(val: T): T;
 }
-export declare namespace publicModule {
+export namespace publicModule {
     class privateClassInPublicModule {
     }
     export class publicClassInPublicModule {
@@ -340,7 +340,7 @@ export declare namespace publicModule {
     }
     export {};
 }
-declare namespace privateModule {
+namespace privateModule {
     class privateClassInPrivateModule {
     }
     export class publicClassInPrivateModule {
@@ -357,3 +357,67 @@ declare namespace privateModule {
     export {};
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+privacyTypeParametersOfClassDeclFile.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyTypeParametersOfClassDeclFile.d.ts (1 errors) ====
+    class privateClass {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export class publicClass {
+    }
+    export class publicClassWithPrivateTypeParameters<T extends privateClass> {
+        myMethod(val: T): T;
+    }
+    export class publicClassWithPublicTypeParameters<T extends publicClass> {
+        myMethod(val: T): T;
+    }
+    export class publicClassWithPublicTypeParametersWithoutExtends<T> {
+        myMethod(val: T): T;
+    }
+    export class publicClassWithTypeParametersFromPrivateModule<T extends privateModule.publicClassInPrivateModule> {
+        myMethod(val: T): T;
+    }
+    export namespace publicModule {
+        class privateClassInPublicModule {
+        }
+        export class publicClassInPublicModule {
+        }
+        export class publicClassWithPrivateTypeParameters<T extends privateClassInPublicModule> {
+            myMethod(val: T): T;
+        }
+        export class publicClassWithPublicTypeParameters<T extends publicClassInPublicModule> {
+            myMethod(val: T): T;
+        }
+        export class publicClassWithPublicTypeParametersWithoutExtends<T> {
+            myMethod(val: T): T;
+        }
+        export class publicClassWithTypeParametersFromPrivateModule<T extends privateModule.publicClassInPrivateModule> {
+            myMethod(val: T): T;
+        }
+        export {};
+    }
+    namespace privateModule {
+        class privateClassInPrivateModule {
+        }
+        export class publicClassInPrivateModule {
+        }
+        export class publicClassWithPrivateTypeParameters<T extends privateClassInPrivateModule> {
+            myMethod(val: T): T;
+        }
+        export class publicClassWithPublicTypeParameters<T extends publicClassInPrivateModule> {
+            myMethod(val: T): T;
+        }
+        export class publicClassWithPublicTypeParametersWithoutExtends<T> {
+            myMethod(val: T): T;
+        }
+        export {};
+    }
+    export {};
+    

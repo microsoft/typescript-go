@@ -1,0 +1,199 @@
+--- old.vardecl.js
++++ new.vardecl.js
+@@= skipped -169, +169 lines =@@
+
+
+ //// [vardecl.d.ts]
+-declare var simpleVar: any;
+-declare var anotherVar: any;
+-declare var varWithSimpleType: number;
+-declare var varWithArrayType: number[];
+-declare var varWithInitialValue: number;
+-declare var withComplicatedValue: {
++var simpleVar: any;
++var anotherVar: any;
++var varWithSimpleType: number;
++var varWithArrayType: number[];
++var varWithInitialValue: number;
++var withComplicatedValue: {
+     x: number;
+     y: number;
+     desc: string;
+ };
+-declare var declaredVar: any;
+-declare var declareVar2: any;
+-declare var declaredVar3: any;
+-declare var deckareVarWithType: number;
+-declare var arrayVar: string[];
+-declare var complicatedArrayVar: {
++var declaredVar: any;
++var declareVar2: any;
++var declaredVar3: any;
++var deckareVarWithType: number;
++var arrayVar: string[];
++var complicatedArrayVar: {
+     x: number;
+     y: string;
+ }[];
+-declare var n1: {
++var n1: {
+     [s: string]: number;
+ };
+-declare var c: {
++var c: {
+     new?(): any;
+ };
+-declare var d: {
++var d: {
+     foo?(): {
+         x: number;
+     };
+ };
+-declare var d3: {
++var d3: {
+     foo(): {
+         x: number;
+         y: number;
+     };
+ };
+-declare var d2: {
++var d2: {
+     foo(): {
+         x: number;
+     };
+ };
+-declare var n2: {
++var n2: {
+     (): void;
+ };
+-declare var n4: {
++var n4: {
+     (): void;
+ }[];
+-declare var d4: {
++var d4: {
+     foo(n: string, x: {
+         x: number;
+         y: number;
+@@= skipped -56, +56 lines =@@
+         y: number;
+     };
+ };
+-declare namespace m2 {
++namespace m2 {
+     var a: any, b2: number, b: any;
+     class C2 {
+         b: any;
+@@= skipped -11, +11 lines =@@
+     var b2E: any;
+     var v1E: any;
+ }
+-declare var a22: any, b22: number, c22: number;
+-declare var nn: any;
+-declare var da1: any, da2: any;
+-declare var normalVar: any;
+-declare var dv1: any;
+-declare var xl: any;
+-declare var x: any;
+-declare var z: any;
+-declare function foo(a2: any): void;
+-declare var b: number;
++var a22: any, b22: number, c22: number;
++var nn: any;
++var da1: any, da2: any;
++var normalVar: any;
++var dv1: any;
++var xl: any;
++var x: any;
++var z: any;
++function foo(a2: any): void;
++var b: number;
++
++
++//// [DtsFileErrors]
++
++
++vardecl.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== vardecl.d.ts (1 errors) ====
++    var simpleVar: any;
++    ~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    var anotherVar: any;
++    var varWithSimpleType: number;
++    var varWithArrayType: number[];
++    var varWithInitialValue: number;
++    var withComplicatedValue: {
++        x: number;
++        y: number;
++        desc: string;
++    };
++    var declaredVar: any;
++    var declareVar2: any;
++    var declaredVar3: any;
++    var deckareVarWithType: number;
++    var arrayVar: string[];
++    var complicatedArrayVar: {
++        x: number;
++        y: string;
++    }[];
++    var n1: {
++        [s: string]: number;
++    };
++    var c: {
++        new?(): any;
++    };
++    var d: {
++        foo?(): {
++            x: number;
++        };
++    };
++    var d3: {
++        foo(): {
++            x: number;
++            y: number;
++        };
++    };
++    var d2: {
++        foo(): {
++            x: number;
++        };
++    };
++    var n2: {
++        (): void;
++    };
++    var n4: {
++        (): void;
++    }[];
++    var d4: {
++        foo(n: string, x: {
++            x: number;
++            y: number;
++        }): {
++            x: number;
++            y: number;
++        };
++    };
++    namespace m2 {
++        var a: any, b2: number, b: any;
++        class C2 {
++            b: any;
++            constructor(b: any);
++        }
++        var mE: any;
++        var d1E: any, d2E: any;
++        var b2E: any;
++        var v1E: any;
++    }
++    var a22: any, b22: number, c22: number;
++    var nn: any;
++    var da1: any, da2: any;
++    var normalVar: any;
++    var dv1: any;
++    var xl: any;
++    var x: any;
++    var z: any;
++    function foo(a2: any): void;
++    var b: number;
++    

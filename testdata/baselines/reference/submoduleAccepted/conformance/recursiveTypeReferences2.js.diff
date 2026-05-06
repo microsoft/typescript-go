@@ -23,8 +23,12 @@
  /**
   * @template T
   * @typedef {{
-@@= skipped -22, +38 lines =@@
- declare const p: XMLObject<{
+@@= skipped -19, +35 lines =@@
+   )
+ }} XMLObject<T> */
+ /** @type {XMLObject<{foo:string}>} */
+-declare const p: XMLObject<{
++const p: XMLObject<{
      foo: string;
  }>;
 -type JsonArray = ReadonlyArray<Json>;

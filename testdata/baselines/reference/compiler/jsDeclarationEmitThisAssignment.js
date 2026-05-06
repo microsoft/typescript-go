@@ -22,12 +22,12 @@ export class Bar {
 
 
 //// [main.d.ts]
-export declare class Foo {
+export class Foo {
     static bar: number | undefined;
     baz: string;
     constructor();
 }
-export declare class Bar {
+export class Bar {
     x: number;
     y: boolean;
     constructor();

@@ -186,7 +186,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/projects/project/a.d.ts] *new* 
-declare const a = "hello";
+const a = "hello";
 
 //// [/home/src/projects/project/a.js] *new* 
 "use strict";
@@ -290,7 +290,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/projects/project/a.d.ts] *modified* 
-declare const a: {
+const a: {
     new (): {
         p: number;
     };

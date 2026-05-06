@@ -48,22 +48,22 @@ class D4 extends AB {
 
 
 //// [override2.d.ts]
-declare abstract class AB {
+abstract class AB {
     abstract foo(v: string): void;
     abstract bar(v: string): void;
     abstract baz(v: string): void;
 }
-declare abstract class AD1 extends AB {
+abstract class AD1 extends AB {
 }
-declare abstract class AD2 extends AB {
+abstract class AD2 extends AB {
     abstract foo(v: ''): void;
 }
-declare abstract class AD3 extends AB {
+abstract class AD3 extends AB {
     foo(v: ''): void;
     abstract bar(): void;
     baz(): void;
 }
-declare class D4 extends AB {
+class D4 extends AB {
     foo(v: ''): void;
     bar(v: ''): void;
     baz(): void;

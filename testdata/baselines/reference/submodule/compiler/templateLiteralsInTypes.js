@@ -13,4 +13,4 @@ f("x").foo;
 
 
 //// [templateLiteralsInTypes.d.ts]
-declare const f: (hdr: string, val: number) => `${string}:\t${number}\r\n`;
+const f: (hdr: string, val: number) => `${string}:\t${number}\r\n`;

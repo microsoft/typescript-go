@@ -549,97 +549,97 @@ function negative(t) {
 
 
 //// [inferTypePredicates.d.ts]
-declare const numsOrNull: (number | null)[];
-declare const filteredNumsTruthy: number[];
-declare const filteredNumsNonNullish: number[];
-declare const evenSquaresInline: number[];
-declare const isTruthy: (x: number | null) => boolean;
-declare const evenSquares: number[];
-declare const evenSquaresNonNull: number[];
-declare function isNonNull(x: number | null): x is number;
-declare function isNonNullVar(x: number | null): x is number;
-declare function isNonNullGeneric<T>(x: T): x is T & ({} | undefined);
-declare const myGuard: (o: string | undefined) => o is string;
-declare const mySecondGuard: (o: string | undefined) => o is string;
+const numsOrNull: (number | null)[];
+const filteredNumsTruthy: number[];
+const filteredNumsNonNullish: number[];
+const evenSquaresInline: number[];
+const isTruthy: (x: number | null) => boolean;
+const evenSquares: number[];
+const evenSquaresNonNull: number[];
+function isNonNull(x: number | null): x is number;
+function isNonNullVar(x: number | null): x is number;
+function isNonNullGeneric<T>(x: T): x is T & ({} | undefined);
+const myGuard: (o: string | undefined) => o is string;
+const mySecondGuard: (o: string | undefined) => o is string;
 type MyObj = {
     data?: string;
 };
 type MyArray = {
     list?: MyObj[];
 }[];
-declare const myArray: MyArray;
-declare const result: any[][];
-declare const result2: any[][];
+const myArray: MyArray;
+const result: any[][];
+const result2: any[][];
 type Foo = {
     foo: string;
 };
 type Bar = Foo & {
     bar: string;
 };
-declare const list: (Foo | Bar)[];
-declare const resultBars: Bar[];
-declare function isBarNonNull(x: Foo | Bar | null): x is Bar;
-declare const fooOrBar: Foo | Bar;
-declare const a: string[];
-declare function backwardsGuard(x: number | string): x is number;
-declare function isString(x: string | number): x is string;
-declare let strOrNum: string | number;
-declare function flakyIsString(x: string | number): boolean;
-declare function isDate(x: object): x is Date;
-declare function flakyIsDate(x: object): boolean;
-declare let maybeDate: object;
-declare function irrelevantIsNumber(x: string | number): boolean;
-declare function irrelevantIsNumberDestructuring(x: string | number): boolean;
-declare function areBothNums(x: string | number, y: string | number): boolean;
-declare function doubleReturn(x: string | number): boolean;
-declare function guardsOneButNotOthers(a: string | number, b: string | number, c: string | number): b is string;
-declare function dunderguard(__x: number | string): __x is string;
-declare const booleanIdentity: (x: boolean) => boolean;
-declare const numOrBoolean: (x: number | boolean) => x is number | true;
+const list: (Foo | Bar)[];
+const resultBars: Bar[];
+function isBarNonNull(x: Foo | Bar | null): x is Bar;
+const fooOrBar: Foo | Bar;
+const a: string[];
+function backwardsGuard(x: number | string): x is number;
+function isString(x: string | number): x is string;
+let strOrNum: string | number;
+function flakyIsString(x: string | number): boolean;
+function isDate(x: object): x is Date;
+function flakyIsDate(x: object): boolean;
+let maybeDate: object;
+function irrelevantIsNumber(x: string | number): boolean;
+function irrelevantIsNumberDestructuring(x: string | number): boolean;
+function areBothNums(x: string | number, y: string | number): boolean;
+function doubleReturn(x: string | number): boolean;
+function guardsOneButNotOthers(a: string | number, b: string | number, c: string | number): b is string;
+function dunderguard(__x: number | string): __x is string;
+const booleanIdentity: (x: boolean) => boolean;
+const numOrBoolean: (x: number | boolean) => x is number | true;
 interface NumberInferrer {
     isNumber(x: number | string): x is number;
 }
-declare class Inferrer implements NumberInferrer {
+class Inferrer implements NumberInferrer {
     isNumber(x: number | string): x is number;
 }
-declare let numOrStr: number | string;
-declare const inf: Inferrer;
-declare class C1 {
+let numOrStr: number | string;
+const inf: Inferrer;
+class C1 {
     isC2(): boolean;
 }
-declare class C2 extends C1 {
+class C2 extends C1 {
     z: number;
 }
-declare let c: C1;
-declare function doNotRefineDestructuredParam({ x, y }: {
+let c: C1;
+function doNotRefineDestructuredParam({ x, y }: {
     x: number | null;
     y: number;
 }): boolean;
-declare function isShortString(x: unknown): boolean;
-declare let str: string;
-declare function isStringFromUnknown(x: unknown): x is string;
-declare function isNumOrStr(x: unknown): x is string | number;
-declare let unk: unknown;
-declare function assertAndPredicate(x: string | number | Date): x is string;
-declare let snd: string | number | Date;
-declare function isNumberWithThis(this: Date, x: number | string): x is number;
-declare function narrowFromAny(x: any): x is number;
-declare const noInferenceFromRest: (...f: ["a" | "b"]) => boolean;
-declare const noInferenceFromImpossibleRest: (...f: []) => boolean;
-declare function inferWithRest(x: string | null, ...f: ["a", "b"]): x is string;
-declare const foobar: {
+function isShortString(x: unknown): boolean;
+let str: string;
+function isStringFromUnknown(x: unknown): x is string;
+function isNumOrStr(x: unknown): x is string | number;
+let unk: unknown;
+function assertAndPredicate(x: string | number | Date): x is string;
+let snd: string | number | Date;
+function isNumberWithThis(this: Date, x: number | string): x is number;
+function narrowFromAny(x: any): x is number;
+const noInferenceFromRest: (...f: ["a" | "b"]) => boolean;
+const noInferenceFromImpossibleRest: (...f: []) => boolean;
+function inferWithRest(x: string | null, ...f: ["a", "b"]): x is string;
+const foobar: {
     type: "foo";
     foo: number;
 } | {
     type: "bar";
     bar: string;
 };
-declare const foobarPred: (fb: typeof foobar) => fb is {
+const foobarPred: (fb: typeof foobar) => fb is {
     type: "foo";
     foo: number;
 };
-declare const arrTest: Array<number>;
-declare function isEmptyString(x: unknown): x is "";
+const arrTest: Array<number>;
+function isEmptyString(x: unknown): x is "";
 type Animal = {
     breath: true;
 };
@@ -647,6 +647,6 @@ type Rock = {
     breath: false;
 };
 type Something = Animal | Rock;
-declare function isAnimal(something: Something): something is Animal;
-declare function positive(t: Something): t is Animal;
-declare function negative(t: Something): t is Rock;
+function isAnimal(something: Something): something is Animal;
+function positive(t: Something): t is Animal;
+function negative(t: Something): t is Rock;

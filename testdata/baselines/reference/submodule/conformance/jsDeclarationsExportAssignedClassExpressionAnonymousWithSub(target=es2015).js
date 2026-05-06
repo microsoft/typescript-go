@@ -34,11 +34,11 @@ module.exports.Sub = class {
 
 
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     new (p: number): import(".");
 };
 export = _default;
-export declare var Sub: {
+export var Sub: {
     new (): {
         instance: import(".");
     };

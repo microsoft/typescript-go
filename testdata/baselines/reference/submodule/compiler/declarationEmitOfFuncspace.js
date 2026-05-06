@@ -19,8 +19,25 @@ function ExpandoMerge(n) {
 
 
 //// [expando.d.ts]
-declare function ExpandoMerge(n: number): number;
-declare namespace ExpandoMerge {
+function ExpandoMerge(n: number): number;
+namespace ExpandoMerge {
     interface I {
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+expando.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== expando.d.ts (1 errors) ====
+    function ExpandoMerge(n: number): number;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    namespace ExpandoMerge {
+        interface I {
+        }
+    }
+    

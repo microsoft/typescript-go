@@ -5,7 +5,7 @@
 
  //// [index.d.ts]
 -export = Q;
- declare class Q {
+-declare class Q {
 -    x: A;
 -}
 -declare namespace Q {
@@ -15,9 +15,10 @@
 -    member: Q;
 -}
 -declare class Q_1 {
++class Q {
      x: number;
  }
-+declare const _default: {
++const _default: {
 +    new (): import(".");
 +};
 +export = _default;

@@ -1,0 +1,53 @@
+--- old.override5.js
++++ new.override5.js
+@@= skipped -87, +87 lines =@@
+
+
+ //// [override5.d.ts]
+-declare class B {
++class B {
+     p1: number;
+     p2: number;
+     p3: number;
+@@= skipped -9, +9 lines =@@
+     pp: number;
+     op: number;
+ }
+-declare class D extends B {
++class D extends B {
+     p1: number;
+     p2: number;
+     readonly p3: number;
+@@= skipped -11, +11 lines =@@
+     op: number;
+     constructor();
+ }
+-declare abstract class AB {
+-    abstract f(): void;
+-    abstract b(): void;
+-}
+-declare abstract class AD extends AB {
+-    abstract f(): void;
+-    abstract b(): void;
+-}
+-declare abstract class AND {
+-    abstract f(): void;
+-    abstract b(): void;
+-}
+-declare class ADD extends AD {
++abstract class AB {
++    abstract f(): void;
++    abstract b(): void;
++}
++abstract class AD extends AB {
++    abstract f(): void;
++    abstract b(): void;
++}
++abstract class AND {
++    abstract f(): void;
++    abstract b(): void;
++}
++class ADD extends AD {
+     f(): void;
+     b(): void;
+ }

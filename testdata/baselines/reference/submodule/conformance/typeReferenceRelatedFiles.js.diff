@@ -1,0 +1,8 @@
+--- old.typeReferenceRelatedFiles.js
++++ new.typeReferenceRelatedFiles.js
+@@= skipped -29, +29 lines =@@
+
+ //// [main.d.ts]
+ import { FSWatcher } from "fs";
+-export declare function f(): FSWatcher;
++export function f(): FSWatcher;

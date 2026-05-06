@@ -19,7 +19,7 @@ export function b(value) {
 
 
 //// [a.d.ts]
-export declare const kSymbol: unique symbol;
+export const kSymbol: unique symbol;
 export type WithSymbol = {
     [kSymbol]: true;
 };
@@ -31,4 +31,4 @@ export type WithSymbol = {
  * @returns {import('./a').WithSymbol}
  * @param {import('./a').WithSymbol} value
  */
-export declare function b(value: import('./a').WithSymbol): import('./a').WithSymbol;
+export function b(value: import('./a').WithSymbol): import('./a').WithSymbol;

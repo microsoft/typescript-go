@@ -1,0 +1,54 @@
+--- old.declarationEmitLocalClassDeclarationMixin.js
++++ new.declarationEmitLocalClassDeclarationMixin.js
+@@= skipped -70, +70 lines =@@
+
+
+ //// [declarationEmitLocalClassDeclarationMixin.d.ts]
+-export declare class Unmixed {
++export class Unmixed {
+     foo: number;
+ }
+-export declare const Mixed: {
++export const Mixed: {
+     new (...args: any[]): {
+         bar: number;
+     };
+ } & typeof Unmixed;
+-declare const FilteredThing_base: (abstract new (...args: any[]) => {
++const FilteredThing_base: (abstract new (...args: any[]) => {
+     match(path: string): boolean;
+     thing: number;
+ }) & typeof Unmixed;
+-export declare class FilteredThing extends FilteredThing_base {
++export class FilteredThing extends FilteredThing_base {
+     match(path: string): boolean;
+ }
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitLocalClassDeclarationMixin.d.ts(9,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitLocalClassDeclarationMixin.d.ts (1 errors) ====
++    export class Unmixed {
++        foo: number;
++    }
++    export const Mixed: {
++        new (...args: any[]): {
++            bar: number;
++        };
++    } & typeof Unmixed;
++    const FilteredThing_base: (abstract new (...args: any[]) => {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        match(path: string): boolean;
++        thing: number;
++    }) & typeof Unmixed;
++    export class FilteredThing extends FilteredThing_base {
++        match(path: string): boolean;
++    }
++    export {};
++    

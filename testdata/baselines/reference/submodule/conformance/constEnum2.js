@@ -25,8 +25,8 @@ const CONST = 9000 % 2;
 
 
 //// [constEnum2.d.ts]
-declare const CONST: number;
-declare const enum D {
+const CONST: number;
+const enum D {
     d = 10,
     e,
     f,

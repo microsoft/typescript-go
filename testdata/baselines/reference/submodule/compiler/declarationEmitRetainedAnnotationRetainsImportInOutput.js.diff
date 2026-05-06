@@ -1,0 +1,8 @@
+--- old.declarationEmitRetainedAnnotationRetainsImportInOutput.js
++++ new.declarationEmitRetainedAnnotationRetainsImportInOutput.js
+@@= skipped -52, +52 lines =@@
+
+ //// [index.d.ts]
+ import * as E from 'whatever';
+-export declare const run: <E>(i: () => E.Whatever<E>) => E.Whatever<E>;
++export const run: <E>(i: () => E.Whatever<E>) => E.Whatever<E>;

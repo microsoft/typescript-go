@@ -1,8 +1,10 @@
 --- old.globalThisDeclarationEmit.js
 +++ new.globalThisDeclarationEmit.js
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
+
 
  //// [variable.d.ts]
- export declare const variable: typeof globalThis;
+-export declare const variable: typeof globalThis;
++export const variable: typeof globalThis;
 +//// [index.d.ts]
-+export declare const globalThis: typeof globalThis;
++export const globalThis: typeof globalThis;

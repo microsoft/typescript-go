@@ -1,0 +1,24 @@
+--- old.es6ImportNamedImport.js
++++ new.es6ImportNamedImport.js
+@@= skipped -78, +78 lines =@@
+
+
+ //// [es6ImportNamedImport_0.d.ts]
+-export declare var a: number;
+-export declare var x: number;
+-export declare var m: number;
+-export declare var a1: number;
+-export declare var x1: number;
+-export declare var z1: number;
+-export declare var z2: number;
+-export declare var aaaa: number;
++export var a: number;
++export var x: number;
++export var m: number;
++export var a1: number;
++export var x1: number;
++export var z1: number;
++export var z2: number;
++export var aaaa: number;
+ //// [es6ImportNamedImport_1.d.ts]
+ export {};

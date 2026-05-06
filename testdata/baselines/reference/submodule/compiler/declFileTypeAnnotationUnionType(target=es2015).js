@@ -46,10 +46,10 @@ var y = new g() || new m.g() || (() => new c());
 
 
 //// [declFileTypeAnnotationUnionType.d.ts]
-declare class c {
+class c {
     private p;
 }
-declare namespace m {
+namespace m {
     class c {
         private q;
     }
@@ -57,10 +57,10 @@ declare namespace m {
         private r;
     }
 }
-declare class g<T> {
+class g<T> {
     private s;
 }
-declare var k: c | m.c;
-declare var l: c;
-declare var x: g<string> | m.g<number> | (() => c);
-declare var y: g<string>;
+var k: c | m.c;
+var l: c;
+var x: g<string> | m.g<number> | (() => c);
+var y: g<string>;

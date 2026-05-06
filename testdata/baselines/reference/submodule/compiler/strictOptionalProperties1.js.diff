@@ -1,0 +1,148 @@
+--- old.strictOptionalProperties1.js
++++ new.strictOptionalProperties1.js
+@@= skipped -366, +366 lines =@@
+
+
+ //// [strictOptionalProperties1.d.ts]
+-declare function f1(obj: {
+-    a?: string;
+-    b?: string | undefined;
+-}): void;
+-declare function f2(obj: {
+-    a?: string;
+-    b?: string | undefined;
+-}): void;
+-declare function f3(obj: Partial<{
++function f1(obj: {
++    a?: string;
++    b?: string | undefined;
++}): void;
++function f2(obj: {
++    a?: string;
++    b?: string | undefined;
++}): void;
++function f3(obj: Partial<{
+     a: string;
+     b: string | undefined;
+ }>): void;
+-declare function f4(t: [string?]): void;
+-declare function f4a(t1: [number, string?], t2: [number, string?, string?]): void;
+-declare function f5(t: [number, string?, boolean?]): void;
+-declare function f6(): void;
++function f4(t: [string?]): void;
++function f4a(t1: [number, string?], t2: [number, string?, string?]): void;
++function f5(t: [number, string?, boolean?]): void;
++function f6(): void;
+ type Props = {
+     foo: string;
+     bar: string;
+@@= skipped -24, +24 lines =@@
+     foo?: string;
+     bar: string;
+ };
+-declare const defaultProps: Pick<Props, 'foo'>;
+-declare const inputProps: InputProps;
+-declare const completeProps: Props;
+-declare const t1: [number, string?, boolean?];
+-declare const t2: [number, string?, boolean?];
+-declare const t3: [number, string?, boolean?];
+-declare const t4: [number, string?, boolean?];
+-declare const x: {
++const defaultProps: Pick<Props, 'foo'>;
++const inputProps: InputProps;
++const completeProps: Props;
++const t1: [number, string?, boolean?];
++const t2: [number, string?, boolean?];
++const t3: [number, string?, boolean?];
++const t4: [number, string?, boolean?];
++const x: {
+     foo?: number;
+ };
+-declare const y: {
++const y: {
+     foo: number;
+ };
+ interface Test {
+@@= skipped -18, +18 lines =@@
+     foo?: string;
+     bar?: string | undefined;
+ }
+-declare let ox1: {
++let ox1: {
+     p: string;
+ };
+-declare let ox2: {
++let ox2: {
+     p: string | undefined;
+ };
+-declare let ox3: {
++let ox3: {
+     p?: string;
+ };
+-declare let ox4: {
++let ox4: {
+     p?: string | undefined;
+ };
+-declare let tx1: [string];
+-declare let tx2: [string | undefined];
+-declare let tx3: [string?];
+-declare let tx4: [(string | undefined)?];
+-declare function f11<T>(x: {
++let tx1: [string];
++let tx2: [string | undefined];
++let tx3: [string?];
++let tx4: [(string | undefined)?];
++function f11<T>(x: {
+     p?: T;
+ }): T;
+-declare function f12<T>(x: [T?]): T;
+-declare function f13<T>(x: Partial<T>): T;
++function f12<T>(x: [T?]): T;
++function f13<T>(x: Partial<T>): T;
+ type Undefinable<T> = T | undefined;
+-declare function expectNotUndefined<T>(value: Undefinable<T>): T;
++function expectNotUndefined<T>(value: Undefinable<T>): T;
+ interface Bar {
+     bar?: number;
+ }
+-declare function aa(input: Bar): void;
+-declare function bb(input: number): void;
++function aa(input: Bar): void;
++function bb(input: number): void;
+ interface U1 {
+     name: string;
+     email?: string | number | undefined;
+@@= skipped -36, +36 lines =@@
+     name: string;
+     email?: string | number;
+ }
+-declare const e: string | boolean | undefined;
+-declare const u1: U1;
+-declare let u2: U2;
+-declare var a: {
++const e: string | boolean | undefined;
++const u1: U1;
++let u2: U2;
++var a: {
+     [x: string]: number | string;
+ };
+-declare var b: {
++var b: {
+     a: number;
+     b: string;
+ };
+-declare var c: {
++var c: {
+     a: number;
+     b?: string;
+ };
+-declare var d: {
++var d: {
+     a: number;
+     b: string | undefined;
+ };
+-declare var e: {
++var e: {
+     a: number;
+     b?: string | undefined;
+ };

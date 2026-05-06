@@ -738,9 +738,9 @@ var privateModule;
 
 
 //// [privacyTypeParameterOfFunctionDeclFile.d.ts]
-declare class privateClass {
+class privateClass {
 }
-export declare class publicClass {
+export class publicClass {
 }
 export interface publicInterfaceWithPrivateTypeParameters {
     new <T extends privateClass>(): privateClass;
@@ -752,43 +752,43 @@ export interface publicInterfaceWithPublicTypeParameters {
     <T extends publicClass>(): publicClass;
     myMethod<T extends publicClass>(): publicClass;
 }
-export declare class publicClassWithWithPrivateTypeParameters {
+export class publicClassWithWithPrivateTypeParameters {
     static myPublicStaticMethod<T extends privateClass>(): void;
     private static myPrivateStaticMethod;
     myPublicMethod<T extends privateClass>(): void;
     private myPrivateMethod;
 }
-export declare class publicClassWithWithPublicTypeParameters {
+export class publicClassWithWithPublicTypeParameters {
     static myPublicStaticMethod<T extends publicClass>(): void;
     private static myPrivateStaticMethod;
     myPublicMethod<T extends publicClass>(): void;
     private myPrivateMethod;
 }
-export declare function publicFunctionWithPrivateTypeParameters<T extends privateClass>(): void;
-export declare function publicFunctionWithPublicTypeParameters<T extends publicClass>(): void;
+export function publicFunctionWithPrivateTypeParameters<T extends privateClass>(): void;
+export function publicFunctionWithPublicTypeParameters<T extends publicClass>(): void;
 export interface publicInterfaceWithPublicTypeParametersWithoutExtends {
     new <T>(): publicClass;
     <T>(): publicClass;
     myMethod<T>(): publicClass;
 }
-export declare class publicClassWithWithPublicTypeParametersWithoutExtends {
+export class publicClassWithWithPublicTypeParametersWithoutExtends {
     static myPublicStaticMethod<T>(): void;
     private static myPrivateStaticMethod;
     myPublicMethod<T>(): void;
     private myPrivateMethod;
 }
-export declare function publicFunctionWithPublicTypeParametersWithoutExtends<T>(): void;
+export function publicFunctionWithPublicTypeParametersWithoutExtends<T>(): void;
 export interface publicInterfaceWithPrivatModuleTypeParameters {
     new <T extends privateModule.publicClass>(): privateModule.publicClass;
     <T extends privateModule.publicClass>(): privateModule.publicClass;
     myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;
 }
-export declare class publicClassWithWithPrivateModuleTypeParameters {
+export class publicClassWithWithPrivateModuleTypeParameters {
     static myPublicStaticMethod<T extends privateModule.publicClass>(): void;
     myPublicMethod<T extends privateModule.publicClass>(): void;
 }
-export declare function publicFunctionWithPrivateMopduleTypeParameters<T extends privateModule.publicClass>(): void;
-export declare namespace publicModule {
+export function publicFunctionWithPrivateMopduleTypeParameters<T extends privateModule.publicClass>(): void;
+export namespace publicModule {
     class privateClass {
     }
     export class publicClass {
@@ -841,7 +841,7 @@ export declare namespace publicModule {
     export function publicFunctionWithPrivateMopduleTypeParameters<T extends privateModule.publicClass>(): void;
     export {};
 }
-declare namespace privateModule {
+namespace privateModule {
     class privateClass {
     }
     export class publicClass {
@@ -885,3 +885,162 @@ declare namespace privateModule {
     export {};
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+privacyTypeParameterOfFunctionDeclFile.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyTypeParameterOfFunctionDeclFile.d.ts (1 errors) ====
+    class privateClass {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    export class publicClass {
+    }
+    export interface publicInterfaceWithPrivateTypeParameters {
+        new <T extends privateClass>(): privateClass;
+        <T extends privateClass>(): privateClass;
+        myMethod<T extends privateClass>(): privateClass;
+    }
+    export interface publicInterfaceWithPublicTypeParameters {
+        new <T extends publicClass>(): publicClass;
+        <T extends publicClass>(): publicClass;
+        myMethod<T extends publicClass>(): publicClass;
+    }
+    export class publicClassWithWithPrivateTypeParameters {
+        static myPublicStaticMethod<T extends privateClass>(): void;
+        private static myPrivateStaticMethod;
+        myPublicMethod<T extends privateClass>(): void;
+        private myPrivateMethod;
+    }
+    export class publicClassWithWithPublicTypeParameters {
+        static myPublicStaticMethod<T extends publicClass>(): void;
+        private static myPrivateStaticMethod;
+        myPublicMethod<T extends publicClass>(): void;
+        private myPrivateMethod;
+    }
+    export function publicFunctionWithPrivateTypeParameters<T extends privateClass>(): void;
+    export function publicFunctionWithPublicTypeParameters<T extends publicClass>(): void;
+    export interface publicInterfaceWithPublicTypeParametersWithoutExtends {
+        new <T>(): publicClass;
+        <T>(): publicClass;
+        myMethod<T>(): publicClass;
+    }
+    export class publicClassWithWithPublicTypeParametersWithoutExtends {
+        static myPublicStaticMethod<T>(): void;
+        private static myPrivateStaticMethod;
+        myPublicMethod<T>(): void;
+        private myPrivateMethod;
+    }
+    export function publicFunctionWithPublicTypeParametersWithoutExtends<T>(): void;
+    export interface publicInterfaceWithPrivatModuleTypeParameters {
+        new <T extends privateModule.publicClass>(): privateModule.publicClass;
+        <T extends privateModule.publicClass>(): privateModule.publicClass;
+        myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;
+    }
+    export class publicClassWithWithPrivateModuleTypeParameters {
+        static myPublicStaticMethod<T extends privateModule.publicClass>(): void;
+        myPublicMethod<T extends privateModule.publicClass>(): void;
+    }
+    export function publicFunctionWithPrivateMopduleTypeParameters<T extends privateModule.publicClass>(): void;
+    export namespace publicModule {
+        class privateClass {
+        }
+        export class publicClass {
+        }
+        export interface publicInterfaceWithPrivateTypeParameters {
+            new <T extends privateClass>(): privateClass;
+            <T extends privateClass>(): privateClass;
+            myMethod<T extends privateClass>(): privateClass;
+        }
+        export interface publicInterfaceWithPublicTypeParameters {
+            new <T extends publicClass>(): publicClass;
+            <T extends publicClass>(): publicClass;
+            myMethod<T extends publicClass>(): publicClass;
+        }
+        export class publicClassWithWithPrivateTypeParameters {
+            static myPublicStaticMethod<T extends privateClass>(): void;
+            private static myPrivateStaticMethod;
+            myPublicMethod<T extends privateClass>(): void;
+            private myPrivateMethod;
+        }
+        export class publicClassWithWithPublicTypeParameters {
+            static myPublicStaticMethod<T extends publicClass>(): void;
+            private static myPrivateStaticMethod;
+            myPublicMethod<T extends publicClass>(): void;
+            private myPrivateMethod;
+        }
+        export function publicFunctionWithPrivateTypeParameters<T extends privateClass>(): void;
+        export function publicFunctionWithPublicTypeParameters<T extends publicClass>(): void;
+        export interface publicInterfaceWithPublicTypeParametersWithoutExtends {
+            new <T>(): publicClass;
+            <T>(): publicClass;
+            myMethod<T>(): publicClass;
+        }
+        export class publicClassWithWithPublicTypeParametersWithoutExtends {
+            static myPublicStaticMethod<T>(): void;
+            private static myPrivateStaticMethod;
+            myPublicMethod<T>(): void;
+            private myPrivateMethod;
+        }
+        export function publicFunctionWithPublicTypeParametersWithoutExtends<T>(): void;
+        export interface publicInterfaceWithPrivatModuleTypeParameters {
+            new <T extends privateModule.publicClass>(): privateModule.publicClass;
+            <T extends privateModule.publicClass>(): privateModule.publicClass;
+            myMethod<T extends privateModule.publicClass>(): privateModule.publicClass;
+        }
+        export class publicClassWithWithPrivateModuleTypeParameters {
+            static myPublicStaticMethod<T extends privateModule.publicClass>(): void;
+            myPublicMethod<T extends privateModule.publicClass>(): void;
+        }
+        export function publicFunctionWithPrivateMopduleTypeParameters<T extends privateModule.publicClass>(): void;
+        export {};
+    }
+    namespace privateModule {
+        class privateClass {
+        }
+        export class publicClass {
+        }
+        export interface publicInterfaceWithPrivateTypeParameters {
+            new <T extends privateClass>(): privateClass;
+            <T extends privateClass>(): privateClass;
+            myMethod<T extends privateClass>(): privateClass;
+        }
+        export interface publicInterfaceWithPublicTypeParameters {
+            new <T extends publicClass>(): publicClass;
+            <T extends publicClass>(): publicClass;
+            myMethod<T extends publicClass>(): publicClass;
+        }
+        export class publicClassWithWithPrivateTypeParameters {
+            static myPublicStaticMethod<T extends privateClass>(): void;
+            private static myPrivateStaticMethod;
+            myPublicMethod<T extends privateClass>(): void;
+            private myPrivateMethod;
+        }
+        export class publicClassWithWithPublicTypeParameters {
+            static myPublicStaticMethod<T extends publicClass>(): void;
+            private static myPrivateStaticMethod;
+            myPublicMethod<T extends publicClass>(): void;
+            private myPrivateMethod;
+        }
+        export function publicFunctionWithPrivateTypeParameters<T extends privateClass>(): void;
+        export function publicFunctionWithPublicTypeParameters<T extends publicClass>(): void;
+        export interface publicInterfaceWithPublicTypeParametersWithoutExtends {
+            new <T>(): publicClass;
+            <T>(): publicClass;
+            myMethod<T>(): publicClass;
+        }
+        export class publicClassWithWithPublicTypeParametersWithoutExtends {
+            static myPublicStaticMethod<T>(): void;
+            private static myPrivateStaticMethod;
+            myPublicMethod<T>(): void;
+            private myPrivateMethod;
+        }
+        export function publicFunctionWithPublicTypeParametersWithoutExtends<T>(): void;
+        export {};
+    }
+    export {};
+    

@@ -71,7 +71,7 @@ exports.CONTROLLER_CLASS = context_1.BindingKey.create(null); // line in questio
 export type Constructor<T> = (...args: any[]) => T;
 //// [bindingkey.d.ts]
 import { Constructor } from "@loopback/context";
-export declare class BindingKey<T> {
+export class BindingKey<T> {
     readonly __type: T;
     static create<T extends Constructor<any>>(ctor: T): BindingKey<T>;
 }
@@ -84,4 +84,4 @@ export type ControllerClass = Constructor<any>;
 //// [usage.d.ts]
 import { ControllerClass } from './application';
 import { BindingKey } from '@loopback/context';
-export declare const CONTROLLER_CLASS: BindingKey<ControllerClass>;
+export const CONTROLLER_CLASS: BindingKey<ControllerClass>;

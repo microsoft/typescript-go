@@ -1,8 +1,11 @@
 --- old.jsDeclarationsOptionalTypeLiteralProps1.js
 +++ new.jsDeclarationsOptionalTypeLiteralProps1.js
-@@= skipped -45, +45 lines =@@
+@@= skipped -43, +43 lines =@@
+  * @param {number} [opts.c]
+  * @returns {number}
   */
- declare function foo({ a, b, c }: {
+-declare function foo({ a, b, c }: {
++function foo({ a, b, c }: {
      a: number;
 -    b?: number | undefined;
 -    c?: number | undefined;

@@ -84,37 +84,37 @@ export function fn7(uuid) { }
 
 //// [a.d.ts]
 /** @satisfies {(uuid: string) => void} */
-export declare const fn1: (uuid: string) => void;
+export const fn1: (uuid: string) => void;
 export type Foo = Parameters<typeof fn1>;
 /** @typedef {Parameters<typeof fn1>} Foo */
 /** @type Foo */
-export declare const v1: Foo;
+export const v1: Foo;
 /** @type Foo */
-export declare const v2: Foo;
+export const v2: Foo;
 /** @satisfies {(a: string, ...args: never) => void} */
-export declare const fn2: (a: string, b: never) => void;
+export const fn2: (a: string, b: never) => void;
 /**
  * @satisfies {(a: string, ...args: never) => void}
  * @param {string} a
  */
-export declare const fn3: (a: string, b: never) => void;
+export const fn3: (a: string, b: never) => void;
 /**
  * @satisfies {(a: string, ...args: never) => void}
  * @param {string} a
  * @param {number} b
  */
-export declare const fn4: (a: string, b: never) => void;
+export const fn4: (a: string, b: never) => void;
 /**
  * @satisfies {(a: string, ...args: number[]) => void}
  * @param {string} a
  * @param {string} b
  */
-export declare const fn5: (a: string, b: number) => void;
+export const fn5: (a: string, b: number) => void;
 /**
  * @satisfies {(a: string, ...args: number[]) => void}
  * @param {string} a
  * @param {string | number} b
  */
-export declare const fn6: (a: string, b: number) => void;
+export const fn6: (a: string, b: number) => void;
 /** @satisfies {(uuid: string) => void} */
-export declare function fn7(uuid: any): void;
+export function fn7(uuid: any): void;

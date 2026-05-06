@@ -124,7 +124,7 @@ export const mutableObject = {
 
 
 //// [file1.d.ts]
-export declare const constObject: {
+export const constObject: {
     /** Value Of 1 */
     readonly one: 1;
     /** Value Of 0o1 */
@@ -149,17 +149,17 @@ export declare const constObject: {
     /** A method */
     readonly method: () => void;
 };
-export declare const one = 1;
-export declare const oneOctal = 1;
-export declare const oneHex = 1;
-export declare const pOne = 1;
-export declare const mOne = -1;
-export declare const onen = 1n;
-export declare const mOnen = -1n;
-export declare const oneStrDoubleQuote = "1";
-export declare const oneStrSingleQuote = "1";
-export declare const oneStrTemplate = "1";
-export declare const mutableObject: {
+export const one = 1;
+export const oneOctal = 1;
+export const oneHex = 1;
+export const pOne = 1;
+export const mOne = -1;
+export const onen = 1n;
+export const mOnen = -1n;
+export const oneStrDoubleQuote = "1";
+export const oneStrSingleQuote = "1";
+export const oneStrTemplate = "1";
+export const mutableObject: {
     /** Value Of 1 */
     one: number;
     /** Value Of 0o1 */

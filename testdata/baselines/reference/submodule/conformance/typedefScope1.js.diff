@@ -1,0 +1,13 @@
+--- old.typedefScope1.js
++++ new.typedefScope1.js
+@@= skipped -33, +33 lines =@@
+
+
+ //// [typedefScope1.d.ts]
+-declare function B1(): void;
+-declare function B2(): void;
++function B1(): void;
++function B2(): void;
+ /** @type {B} */
+-declare var notOK: B;
++var notOK: B;

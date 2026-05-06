@@ -71,25 +71,25 @@ class Bar {
 
 
 //// [initializerWithThisPropertyAccess.d.ts]
-declare class A {
+class A {
     a: number;
     b: number;
     c: () => number;
     d: number;
     constructor();
 }
-declare class B extends A {
+class B extends A {
     x: number;
 }
-declare class C {
+class C {
     a: number;
     b: number;
 }
-declare class Foo {
+class Foo {
     private bar;
     readonly barProp = false;
     constructor();
 }
-declare class Bar {
+class Bar {
     readonly prop = false;
 }

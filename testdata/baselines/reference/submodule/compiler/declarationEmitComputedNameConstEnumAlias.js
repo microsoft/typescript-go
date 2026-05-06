@@ -35,12 +35,37 @@ exports.default = {
 
 
 //// [EnumExample.d.ts]
-declare enum EnumExample {
+enum EnumExample {
     TEST = "TEST"
 }
 export default EnumExample;
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     TEST: {};
 };
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+EnumExample.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== EnumExample.d.ts (1 errors) ====
+    enum EnumExample {
+    ~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        TEST = "TEST"
+    }
+    export default EnumExample;
+    
+==== index.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        TEST: {};
+    };
+    export default _default;
+    

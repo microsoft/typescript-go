@@ -7,19 +7,19 @@
 +
 +
 +//// [isolatedDeclarationErrorsReturnTypes.d.ts]
-+export declare const fnExpressionConstVariable: () => number;
-+export declare const fnArrowConstVariable: () => string;
-+export declare let fnExpressionLetVariable: () => number;
-+export declare let fnArrowLetVariable: () => string;
-+export declare var fnExpressionVarVariable: () => number;
-+export declare var fnArrowVarVariable: () => string;
-+export declare const fnExpressionConstVariableOk: () => number;
-+export declare const fnArrowConstVariableOk: (cb?: () => void) => string;
-+export declare let fnExpressionLetVariableOk: () => number;
-+export declare let fnArrowLetVariableOk: (cb?: () => void) => string;
-+export declare var fnExpressionVarVariableOk: () => number;
-+export declare var fnArrowVarVariableOk: (cb?: () => void) => string;
-+export declare class ExportedClass {
++export const fnExpressionConstVariable: () => number;
++export const fnArrowConstVariable: () => string;
++export let fnExpressionLetVariable: () => number;
++export let fnArrowLetVariable: () => string;
++export var fnExpressionVarVariable: () => number;
++export var fnArrowVarVariable: () => string;
++export const fnExpressionConstVariableOk: () => number;
++export const fnArrowConstVariableOk: (cb?: () => void) => string;
++export let fnExpressionLetVariableOk: () => number;
++export let fnArrowLetVariableOk: (cb?: () => void) => string;
++export var fnExpressionVarVariableOk: () => number;
++export var fnArrowVarVariableOk: (cb?: () => void) => string;
++export class ExportedClass {
 +    #private;
 +    fnExpression: () => number;
 +    fnArrow: () => string;
@@ -42,7 +42,7 @@
 +    private static fnStaticExpressionPrivate;
 +    private static fnStaticArrowPrivate;
 +}
-+declare class IndirectlyExportedClass {
++class IndirectlyExportedClass {
 +    #private;
 +    fnExpression: () => number;
 +    fnArrow: () => string;
@@ -55,32 +55,32 @@
 +    private static fnStaticExpressionPrivate;
 +    private static fnStaticArrowPrivate;
 +}
-+export declare const instance: IndirectlyExportedClass;
-+export declare const fnParamExpressionConstVariable: (cb?: () => void) => number;
-+export declare const fnParamArrowConstVariable: (cb?: () => number) => string;
-+export declare let fnParamExpressionLetVariable: (cb?: () => void) => number;
-+export declare let fnParamArrowLetVariable: (cb?: () => number) => string;
-+export declare var fnParamExpressionVarVariable: (cb?: () => void) => number;
-+export declare var fnParamArrowVarVariable: (cb?: () => number) => string;
-+export declare const fnParamExpressionConstVariableOwnerHasReturnType: (cb?: () => void) => number;
-+export declare const fnParamArrowConstVariableOwnerHasReturnType: (cb?: () => void) => string;
-+export declare let fnParamExpressionLetVariableOwnerHasReturnType: (cb?: () => void) => number;
-+export declare let fnParamArrowLetVariableOwnerHasReturnType: (cb?: () => void) => string;
-+export declare var fnParamExpressionVarVariableOwnerHasReturnType: (cb?: () => void) => number;
-+export declare var fnParamArrowVarVariableOwnerHasReturnType: (cb?: () => void) => string;
-+export declare const fnParamExpressionConstVariableOk: (cb?: () => void) => number;
-+export declare const fnParamArrowConstVariableOk: (cb?: () => void) => string;
-+export declare let fnParamExpressionLetVariableOk: (cb?: () => void) => number;
-+export declare let fnParamArrowLetVariableOk: (cb?: () => void) => string;
-+export declare var fnParamExpressionVarVariableOk: (cb?: () => void) => number;
-+export declare var fnParamArrowVarVariableOk: (cb?: () => void) => string;
-+export declare const fnParamExpressionConstVariableInternal: (cb?: () => void) => number;
-+export declare const fnParamArrowConstVariableInternal: (cb?: () => number) => string;
-+export declare let fnParamExpressionLetVariableInternal: (cb?: () => void) => number;
-+export declare let fnParamArrowLetVariableInternal: (cb?: () => number) => string;
-+export declare var fnParamExpressionVarVariableInternal: (cb?: () => void) => number;
-+export declare var fnParamArrowVarVariableInternal: (cb?: () => number) => string;
-+export declare class FnParamsExportedClass {
++export const instance: IndirectlyExportedClass;
++export const fnParamExpressionConstVariable: (cb?: () => void) => number;
++export const fnParamArrowConstVariable: (cb?: () => number) => string;
++export let fnParamExpressionLetVariable: (cb?: () => void) => number;
++export let fnParamArrowLetVariable: (cb?: () => number) => string;
++export var fnParamExpressionVarVariable: (cb?: () => void) => number;
++export var fnParamArrowVarVariable: (cb?: () => number) => string;
++export const fnParamExpressionConstVariableOwnerHasReturnType: (cb?: () => void) => number;
++export const fnParamArrowConstVariableOwnerHasReturnType: (cb?: () => void) => string;
++export let fnParamExpressionLetVariableOwnerHasReturnType: (cb?: () => void) => number;
++export let fnParamArrowLetVariableOwnerHasReturnType: (cb?: () => void) => string;
++export var fnParamExpressionVarVariableOwnerHasReturnType: (cb?: () => void) => number;
++export var fnParamArrowVarVariableOwnerHasReturnType: (cb?: () => void) => string;
++export const fnParamExpressionConstVariableOk: (cb?: () => void) => number;
++export const fnParamArrowConstVariableOk: (cb?: () => void) => string;
++export let fnParamExpressionLetVariableOk: (cb?: () => void) => number;
++export let fnParamArrowLetVariableOk: (cb?: () => void) => string;
++export var fnParamExpressionVarVariableOk: (cb?: () => void) => number;
++export var fnParamArrowVarVariableOk: (cb?: () => void) => string;
++export const fnParamExpressionConstVariableInternal: (cb?: () => void) => number;
++export const fnParamArrowConstVariableInternal: (cb?: () => number) => string;
++export let fnParamExpressionLetVariableInternal: (cb?: () => void) => number;
++export let fnParamArrowLetVariableInternal: (cb?: () => number) => string;
++export var fnParamExpressionVarVariableInternal: (cb?: () => void) => number;
++export var fnParamArrowVarVariableInternal: (cb?: () => number) => string;
++export class FnParamsExportedClass {
 +    #private;
 +    fnExpression: (cb?: () => void) => number;
 +    fnArrow: (cb?: () => void) => string;

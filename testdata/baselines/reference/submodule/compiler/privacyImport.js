@@ -690,7 +690,7 @@ var m3;
 
 
 //// [privacyImport.d.ts]
-export declare namespace m1 {
+export namespace m1 {
     export namespace m1_M1_public {
         class c1 {
         }
@@ -719,14 +719,14 @@ export declare namespace m1 {
     export import m1_im2_public = m1_M2_private;
     export {};
 }
-export declare namespace glo_M1_public {
+export namespace glo_M1_public {
     class c1 {
     }
     function f1(): c1;
     var v1: typeof c1;
     var v2: c1;
 }
-export declare namespace glo_M3_private {
+export namespace glo_M3_private {
     class c1 {
     }
     function f1(): c1;
@@ -734,16 +734,16 @@ export declare namespace glo_M3_private {
     var v2: c1;
 }
 import glo_im1_private = glo_M1_public;
-export declare var glo_im1_private_v1_public: typeof glo_im1_private.c1;
-export declare var glo_im1_private_v2_public: glo_im1_private.c1;
-export declare var glo_im1_private_v3_public: typeof glo_im1_private.f1;
-export declare var glo_im1_private_v4_public: glo_im1_private.c1;
+export var glo_im1_private_v1_public: typeof glo_im1_private.c1;
+export var glo_im1_private_v2_public: glo_im1_private.c1;
+export var glo_im1_private_v3_public: typeof glo_im1_private.f1;
+export var glo_im1_private_v4_public: glo_im1_private.c1;
 import glo_im3_private = glo_M3_private;
-export declare var glo_im3_private_v1_public: typeof glo_im3_private.c1;
-export declare var glo_im3_private_v2_public: glo_im3_private.c1;
-export declare var glo_im3_private_v3_public: typeof glo_im3_private.f1;
-export declare var glo_im3_private_v4_public: glo_im3_private.c1;
+export var glo_im3_private_v1_public: typeof glo_im3_private.c1;
+export var glo_im3_private_v2_public: glo_im3_private.c1;
+export var glo_im3_private_v3_public: typeof glo_im3_private.f1;
+export var glo_im3_private_v4_public: glo_im3_private.c1;
 export import glo_im1_public = glo_M1_public;
 export import glo_im2_public = glo_M3_private;
-export declare namespace m3 {
+export namespace m3 {
 }

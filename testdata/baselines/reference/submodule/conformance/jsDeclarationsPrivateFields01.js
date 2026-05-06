@@ -26,7 +26,7 @@ export class C {
 
 
 //// [file.d.ts]
-export declare class C {
+export class C {
     #private;
     getWorld(): number;
 }

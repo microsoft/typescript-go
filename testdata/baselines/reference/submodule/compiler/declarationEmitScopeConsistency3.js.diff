@@ -1,0 +1,8 @@
+--- old.declarationEmitScopeConsistency3.js
++++ new.declarationEmitScopeConsistency3.js
+@@= skipped -19, +19 lines =@@
+
+
+ //// [a.d.ts]
+-export declare const g: (v: "outer") => () => "inner";
++export const g: (v: "outer") => () => "inner";

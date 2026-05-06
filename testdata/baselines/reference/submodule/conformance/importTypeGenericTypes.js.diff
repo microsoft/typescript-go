@@ -1,0 +1,52 @@
+--- old.importTypeGenericTypes.js
++++ new.importTypeGenericTypes.js
+@@= skipped -78, +78 lines =@@
+ }
+ export = Point;
+ //// [foo2.d.ts]
+-declare namespace Bar {
++namespace Bar {
+     interface I<T> {
+         a: string;
+         b: number;
+         data: T;
+     }
+ }
+-export declare namespace Baz {
++export namespace Baz {
+     interface J<T> {
+         a: number;
+         b: string;
+         data: T;
+     }
+ }
+-declare class Bar<T> {
++class Bar<T> {
+     item: Bar.I<T>;
+     constructor(input: Baz.J<T>);
+ }
+ export { Bar };
+ //// [usage.d.ts]
+-export declare const x: import("./foo")<{
+-    x: number;
+-}>;
+-export declare let y: import("./foo2").Bar.I<{
+-    x: number;
+-}>;
+-export declare class Bar2<T> {
++export const x: import("./foo")<{
++    x: number;
++}>;
++export let y: import("./foo2").Bar.I<{
++    x: number;
++}>;
++export class Bar2<T> {
+     item: {
+         a: string;
+         b: number;
+@@= skipped -35, +35 lines =@@
+     };
+     constructor(input?: any);
+ }
+-export declare let shim: typeof import("./foo2");
++export let shim: typeof import("./foo2");

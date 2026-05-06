@@ -38,17 +38,17 @@ export const classes = [class {
 
 
 //// [isolatedDeclarationErrorsClassesExpressions.d.ts]
-export declare const cls: {
+export const cls: {
     new (): {
         foo: string;
     };
 };
-export declare class Base {
+export class Base {
 }
-declare const Mix_base: typeof Base;
-export declare class Mix extends Mix_base {
+const Mix_base: typeof Base;
+export class Mix extends Mix_base {
 }
-export declare const classes: readonly [{
+export const classes: readonly [{
     new (): {};
 }, {
     new (): {};

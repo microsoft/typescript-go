@@ -56,11 +56,11 @@ exports.bar = main_1.Cls.bar();
 
 
 //// [main.d.ts]
-export declare class Cls {
+export class Cls {
     x: any;
 }
 //// [mod1.d.ts]
-declare module "./main" {
+module "./main" {
     interface Cls {
         foo(): Lib;
     }
@@ -72,6 +72,42 @@ export {};
 //// [mod2.d.ts]
 import { Cls } from "./main";
 import "./mod1";
-export declare const cls: typeof Cls;
-export declare const foo: Lib;
-export declare const bar: Lib;
+export const cls: typeof Cls;
+export const foo: Lib;
+export const bar: Lib;
+
+
+//// [DtsFileErrors]
+
+
+/mod1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /mod2.d.ts (0 errors) ====
+    import { Cls } from "./main";
+    import "./mod1";
+    export const cls: typeof Cls;
+    export const foo: Lib;
+    export const bar: Lib;
+    
+==== /types/lib/index.d.ts (0 errors) ====
+    interface Lib { x }
+    
+==== /main.d.ts (0 errors) ====
+    export class Cls {
+        x: any;
+    }
+    
+==== /mod1.d.ts (1 errors) ====
+    module "./main" {
+    ~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Cls {
+            foo(): Lib;
+        }
+        namespace Cls {
+            function bar(): Lib;
+        }
+    }
+    export {};
+    

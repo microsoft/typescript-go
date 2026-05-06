@@ -16,7 +16,23 @@ exports.Foo = Foo;
 
 
 //// [declarationEmitClassInherritsAny.d.ts]
-declare const anyThing: any;
-export declare class Foo extends anyThing {
+const anyThing: any;
+export class Foo extends anyThing {
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitClassInherritsAny.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitClassInherritsAny.d.ts (1 errors) ====
+    const anyThing: any;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export class Foo extends anyThing {
+    }
+    export {};
+    

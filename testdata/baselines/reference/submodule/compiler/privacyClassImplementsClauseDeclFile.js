@@ -171,7 +171,7 @@ class publicClassImplementingPublicInterfaceInGlobal {
 
 
 //// [privacyClassImplementsClauseDeclFile_externalModule.d.ts]
-export declare namespace publicModule {
+export namespace publicModule {
     export interface publicInterfaceInPublicModule {
     }
     interface privateInterfaceInPublicModule {
@@ -186,7 +186,7 @@ export declare namespace publicModule {
     }
     export {};
 }
-declare namespace privateModule {
+namespace privateModule {
     export interface publicInterfaceInPrivateModule {
     }
     interface privateInterfaceInPrivateModule {
@@ -203,15 +203,15 @@ export interface publicInterface {
 }
 interface privateInterface {
 }
-export declare class publicClassImplementingPublicInterface implements publicInterface {
+export class publicClassImplementingPublicInterface implements publicInterface {
 }
-export declare class publicClassImplementingPrivateInterface implements privateInterface {
+export class publicClassImplementingPrivateInterface implements privateInterface {
 }
-export declare class publicClassImplementingFromPrivateModuleInterface implements privateModule.publicInterfaceInPrivateModule {
+export class publicClassImplementingFromPrivateModuleInterface implements privateModule.publicInterfaceInPrivateModule {
 }
 export {};
 //// [privacyClassImplementsClauseDeclFile_GlobalFile.d.ts]
-declare namespace publicModuleInGlobal {
+namespace publicModuleInGlobal {
     export interface publicInterfaceInPublicModule {
     }
     interface privateInterfaceInPublicModule {
@@ -224,5 +224,76 @@ declare namespace publicModuleInGlobal {
 }
 interface publicInterfaceInGlobal {
 }
-declare class publicClassImplementingPublicInterfaceInGlobal implements publicInterfaceInGlobal {
+class publicClassImplementingPublicInterfaceInGlobal implements publicInterfaceInGlobal {
 }
+
+
+//// [DtsFileErrors]
+
+
+privacyClassImplementsClauseDeclFile_GlobalFile.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+privacyClassImplementsClauseDeclFile_externalModule.d.ts(16,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== privacyClassImplementsClauseDeclFile_externalModule.d.ts (1 errors) ====
+    export namespace publicModule {
+        export interface publicInterfaceInPublicModule {
+        }
+        interface privateInterfaceInPublicModule {
+        }
+        export class publicClassImplementingPublicInterfaceInModule implements publicInterfaceInPublicModule {
+        }
+        export class publicClassImplementingPrivateInterfaceInModule implements privateInterfaceInPublicModule {
+        }
+        export class publicClassImplementingFromPrivateModuleInterface implements privateModule.publicInterfaceInPrivateModule {
+        }
+        export class publicClassImplementingPrivateAndPublicInterface implements privateInterfaceInPublicModule, publicInterfaceInPublicModule {
+        }
+        export {};
+    }
+    namespace privateModule {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        export interface publicInterfaceInPrivateModule {
+        }
+        interface privateInterfaceInPrivateModule {
+        }
+        export class publicClassImplementingPublicInterfaceInModule implements publicInterfaceInPrivateModule {
+        }
+        export class publicClassImplementingPrivateInterfaceInModule implements privateInterfaceInPrivateModule {
+        }
+        export class publicClassImplementingFromPrivateModuleInterface implements privateModule.publicInterfaceInPrivateModule {
+        }
+        export {};
+    }
+    export interface publicInterface {
+    }
+    interface privateInterface {
+    }
+    export class publicClassImplementingPublicInterface implements publicInterface {
+    }
+    export class publicClassImplementingPrivateInterface implements privateInterface {
+    }
+    export class publicClassImplementingFromPrivateModuleInterface implements privateModule.publicInterfaceInPrivateModule {
+    }
+    export {};
+    
+==== privacyClassImplementsClauseDeclFile_GlobalFile.d.ts (1 errors) ====
+    namespace publicModuleInGlobal {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        export interface publicInterfaceInPublicModule {
+        }
+        interface privateInterfaceInPublicModule {
+        }
+        export class publicClassImplementingPublicInterfaceInModule implements publicInterfaceInPublicModule {
+        }
+        export class publicClassImplementingPrivateInterfaceInModule implements privateInterfaceInPublicModule {
+        }
+        export {};
+    }
+    interface publicInterfaceInGlobal {
+    }
+    class publicClassImplementingPublicInterfaceInGlobal implements publicInterfaceInGlobal {
+    }
+    

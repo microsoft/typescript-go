@@ -93,8 +93,8 @@ export const name2 = ns.default.name;
 
 
 //// [index.d.ts]
-export declare const name: string;
-export declare const thing: {
+export const name: string;
+export const thing: {
     default: {
         name: string;
         version: string;
@@ -102,10 +102,10 @@ export declare const thing: {
         default: string;
     };
 };
-export declare const name2: string;
+export const name2: string;
 //// [index.d.cts]
-export declare const name: string;
-export declare const thing: {
+export const name: string;
+export const thing: {
     name: string;
     version: string;
     type: string;
@@ -116,10 +116,10 @@ export declare const thing: {
         default: string;
     };
 };
-export declare const name2: string;
+export const name2: string;
 //// [index.d.mts]
-export declare const name: string;
-export declare const thing: {
+export const name: string;
+export const thing: {
     default: {
         name: string;
         version: string;
@@ -127,4 +127,4 @@ export declare const thing: {
         default: string;
     };
 };
-export declare const name2: string;
+export const name2: string;

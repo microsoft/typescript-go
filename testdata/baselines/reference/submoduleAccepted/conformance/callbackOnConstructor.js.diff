@@ -4,9 +4,8 @@
 
 
  //// [callbackOnConstructor.d.ts]
--export class Preferences {
 +export type ValueGetter_2 = (name: string) => boolean | number | string | undefined;
-+export declare class Preferences {
+ export class Preferences {
      assignability: string;
 +    /**
 +     * @callback ValueGetter_2

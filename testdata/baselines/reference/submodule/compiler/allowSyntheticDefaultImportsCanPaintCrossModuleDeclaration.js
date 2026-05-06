@@ -33,6 +33,6 @@ interface Color {
 export default Color;
 //// [file1.d.ts]
 import Color from "./color";
-export declare function styled(): Color;
+export function styled(): Color;
 //// [file2.d.ts]
-export declare const A: import("./color").default;
+export const A: import("./color").default;

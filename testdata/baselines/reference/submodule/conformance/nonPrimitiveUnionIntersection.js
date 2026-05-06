@@ -23,10 +23,10 @@ const bar = { bar: 'bar' }; // error
 
 
 //// [nonPrimitiveUnionIntersection.d.ts]
-declare var a: object & string;
-declare var b: object | string;
-declare var c: object & {};
-declare const foo: object & {};
-declare const bar: object & {
+var a: object & string;
+var b: object | string;
+var c: object & {};
+const foo: object & {};
+const bar: object & {
     err: string;
 };

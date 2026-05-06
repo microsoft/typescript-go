@@ -1,0 +1,8 @@
+--- old.noExcessiveStackDepthError.js
++++ new.noExcessiveStackDepthError.js
+@@= skipped -32, +32 lines =@@
+ type FindConditions<T> = {
+     [P in keyof T]?: FindConditions<T[P]> | FindOperator<FindConditions<T[P]>>;
+ };
+-declare function foo<Entity>(): void;
++function foo<Entity>(): void;

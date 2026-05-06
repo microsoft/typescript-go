@@ -5,4 +5,4 @@
 
  //// [a.d.ts]
 -declare function f(x: any, ...args: any[]): void;
-+declare function f(x: any): void;
++function f(x: any): void;

@@ -5,9 +5,9 @@
 
  //// [index.d.ts]
 -export const x: string;
-+declare const x: string;
++const x: string;
 +export { x };
  //// [index.d.ts]
 -export const x: string;
-+declare const x: string;
++const x: string;
 +export { x };

@@ -29,6 +29,6 @@ export const unwrapped = unwrap(value);
 
 
 //// [declarationAssertionNodeNotReusedWhenTypeNotEquivalent1.d.ts]
-export declare const unwrapped: {
+export const unwrapped: {
     prop1: "hello";
 };

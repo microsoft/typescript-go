@@ -13,7 +13,23 @@ export default 1 + 2;
 
 
 //// [declarationEmitDefaultExport8.d.ts]
-declare var _default: number;
+var _default: number;
 export { _default as d };
-declare const _default_1: number;
+const _default_1: number;
 export default _default_1;
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDefaultExport8.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDefaultExport8.d.ts (1 errors) ====
+    var _default: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export { _default as d };
+    const _default_1: number;
+    export default _default_1;
+    

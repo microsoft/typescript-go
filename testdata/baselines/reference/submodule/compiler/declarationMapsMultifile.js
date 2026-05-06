@@ -45,7 +45,7 @@ exports.x = c.doThing({ a: 12 });
 
 
 //// [a.d.ts]
-export declare class Foo {
+export class Foo {
     doThing(x: {
         a: number;
     }): {
@@ -55,9 +55,36 @@ export declare class Foo {
 }
 //# sourceMappingURL=a.d.ts.map//// [index.d.ts]
 import { Foo } from "./a";
-declare const c: Foo;
-export declare let x: {
+const c: Foo;
+export let x: {
     b: number;
 };
 export { c, Foo };
 //# sourceMappingURL=index.d.ts.map
+
+//// [DtsFileErrors]
+
+
+index.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== a.d.ts (0 errors) ====
+    export class Foo {
+        doThing(x: {
+            a: number;
+        }): {
+            b: number;
+        };
+        static make(): Foo;
+    }
+    //# sourceMappingURL=a.d.ts.map
+==== index.d.ts (1 errors) ====
+    import { Foo } from "./a";
+    const c: Foo;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export let x: {
+        b: number;
+    };
+    export { c, Foo };
+    //# sourceMappingURL=index.d.ts.map

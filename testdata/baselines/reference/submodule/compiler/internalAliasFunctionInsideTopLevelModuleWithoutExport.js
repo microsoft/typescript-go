@@ -29,9 +29,9 @@ exports.bVal2 = b;
 
 
 //// [internalAliasFunctionInsideTopLevelModuleWithoutExport.d.ts]
-export declare namespace a {
+export namespace a {
     function foo(x: number): number;
 }
 import b = a.foo;
-export declare var bVal: number;
-export declare var bVal2: typeof b;
+export var bVal: number;
+export var bVal2: typeof b;

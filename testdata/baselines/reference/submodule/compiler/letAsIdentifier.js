@@ -16,6 +16,6 @@ let a;
 
 
 //// [letAsIdentifier.d.ts]
-declare var let: number;
-declare var a: number;
-declare let a: any;
+var let: number;
+var a: number;
+let a: any;

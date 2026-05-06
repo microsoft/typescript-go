@@ -22,7 +22,7 @@ exports.SpotifyAgeGroupEnum = Object.assign({}, AgeGroups);
 
 
 //// [declarationEmitSpreadStringlyKeyedEnum.d.ts]
-declare enum AgeGroups {
+enum AgeGroups {
     "0-17" = 0,
     "18-22" = 1,
     "23-27" = 2,
@@ -31,7 +31,7 @@ declare enum AgeGroups {
     "45-59" = 5,
     "60-150" = 6
 }
-export declare const SpotifyAgeGroupEnum: {
+export const SpotifyAgeGroupEnum: {
     [x: number]: string;
     "0-17": (typeof AgeGroups)["0-17"];
     "18-22": (typeof AgeGroups)["18-22"];
@@ -42,3 +42,35 @@ export declare const SpotifyAgeGroupEnum: {
     "60-150": (typeof AgeGroups)["60-150"];
 };
 export {};
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitSpreadStringlyKeyedEnum.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitSpreadStringlyKeyedEnum.d.ts (1 errors) ====
+    enum AgeGroups {
+    ~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        "0-17" = 0,
+        "18-22" = 1,
+        "23-27" = 2,
+        "28-34" = 3,
+        "35-44" = 4,
+        "45-59" = 5,
+        "60-150" = 6
+    }
+    export const SpotifyAgeGroupEnum: {
+        [x: number]: string;
+        "0-17": (typeof AgeGroups)["0-17"];
+        "18-22": (typeof AgeGroups)["18-22"];
+        "23-27": (typeof AgeGroups)["23-27"];
+        "28-34": (typeof AgeGroups)["28-34"];
+        "35-44": (typeof AgeGroups)["35-44"];
+        "45-59": (typeof AgeGroups)["45-59"];
+        "60-150": (typeof AgeGroups)["60-150"];
+    };
+    export {};
+    

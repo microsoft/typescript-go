@@ -1,0 +1,53 @@
+--- old.declarationEmitNestedBindingPattern.js
++++ new.declarationEmitNestedBindingPattern.js
+@@= skipped -98, +98 lines =@@
+
+
+ //// [declarationEmitNestedBindingPattern.d.ts]
+-export declare class C1 {
++export class C1 {
+     x: any;
+     constructor([[x]]: any[]);
+ }
+-export declare class C2 {
++export class C2 {
+     y: any;
+     constructor([{ y }]: any[]);
+ }
+-export declare class C3 {
++export class C3 {
+     z: any;
+     constructor([[[z]]]: any[]);
+ }
+-export declare class C4 {
++export class C4 {
+     b: any;
+     constructor([{ a: [b] }]: any[]);
+ }
+-export declare class C5 {
++export class C5 {
+     c: any;
+     constructor({ prop: [c] }: any);
+ }
+-export declare class C6 {
++export class C6 {
+     d: any;
+     constructor({ prop: { nested: [d] } }: any);
+ }
+-export declare class C7 {
++export class C7 {
+     e: any;
+     f: any;
+     constructor([[e]]: any[], [{ f }]: any[]);
+ }
+-export declare class C8 {
++export class C8 {
+     g: any;
+     rest: any;
+     constructor([[g, ...rest]]: any[]);
+ }
+-export declare class C9 {
++export class C9 {
+     h: any;
+     i: any;
+     j: any;

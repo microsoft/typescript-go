@@ -95,7 +95,7 @@ export class C {
 
 
 //// [isolatedDeclarationErrorsClasses.d.ts]
-export declare class Cls {
+export class Cls {
     field: number;
     method(): void;
     methodOk(): void;
@@ -112,10 +112,10 @@ export declare class Cls {
     get getSetOk3(): number;
     set getSetOk3(value: number);
 }
-declare let noAnnotationStringName: string;
-declare let noParamAnnotationStringName: string;
-declare const noAnnotationLiteralName = "noAnnotationLiteralName";
-export declare class C {
+let noAnnotationStringName: string;
+let noParamAnnotationStringName: string;
+const noAnnotationLiteralName = "noAnnotationLiteralName";
+export class C {
     [noAnnotationStringName]: () => void;
     [noParamAnnotationStringName]: (v: any) => void;
     [noAnnotationStringName]: number;

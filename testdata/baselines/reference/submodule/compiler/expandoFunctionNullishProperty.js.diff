@@ -1,0 +1,21 @@
+--- old.expandoFunctionNullishProperty.js
++++ new.expandoFunctionNullishProperty.js
+@@= skipped -60, +60 lines =@@
+     (): void;
+     readonly prop: null;
+ }
+-export declare function testNull(): TestNull;
++export function testNull(): TestNull;
+ interface TestNull2 {
+     (): void;
+     prop: string | null;
+ }
+-export declare function testNull2(): TestNull2;
++export function testNull2(): TestNull2;
+ interface TestUndefined {
+     (): void;
+     readonly prop: undefined;
+ }
+-export declare function testUndefined(): TestUndefined;
++export function testUndefined(): TestUndefined;
+ export {};

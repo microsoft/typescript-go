@@ -23,7 +23,7 @@ function C() {
 
 
 //// [thisPropertyAssignmentCircular.d.ts]
-export declare class Foo {
+export class Foo {
     foo: string;
     constructor();
     slicey(): void;

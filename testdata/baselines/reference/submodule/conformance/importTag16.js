@@ -28,7 +28,7 @@ import type Foo, { I } from "./a";
  * @param {Foo} a
  * @param {I} b
  */
-export declare function foo(a: Foo, b: I): void;
+export function foo(a: Foo, b: I): void;
 
 
 //// [DtsFileErrors]
@@ -52,5 +52,5 @@ b.d.ts(2,8): error TS1363: A type-only import can specify a default import or na
      * @param {Foo} a
      * @param {I} b
      */
-    export declare function foo(a: Foo, b: I): void;
+    export function foo(a: Foo, b: I): void;
     

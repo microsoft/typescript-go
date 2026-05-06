@@ -11,4 +11,4 @@ var x = 0;
 
 
 //// [declarationEmitInvalidReference2.d.ts]
-declare var x: number;
+var x: number;

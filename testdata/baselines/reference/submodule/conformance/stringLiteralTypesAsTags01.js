@@ -79,7 +79,35 @@ interface B extends Entity {
     kind: "B";
     b: string;
 }
-declare function hasKind(entity: Entity, kind: "A"): entity is A;
-declare function hasKind(entity: Entity, kind: "B"): entity is B;
-declare function hasKind(entity: Entity, kind: Kind): entity is Entity;
-declare let x: A;
+function hasKind(entity: Entity, kind: "A"): entity is A;
+function hasKind(entity: Entity, kind: "B"): entity is B;
+function hasKind(entity: Entity, kind: Kind): entity is Entity;
+let x: A;
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesAsTags01.d.ts(13,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesAsTags01.d.ts (1 errors) ====
+    type Kind = "A" | "B";
+    interface Entity {
+        kind: Kind;
+    }
+    interface A extends Entity {
+        kind: "A";
+        a: number;
+    }
+    interface B extends Entity {
+        kind: "B";
+        b: string;
+    }
+    function hasKind(entity: Entity, kind: "A"): entity is A;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function hasKind(entity: Entity, kind: "B"): entity is B;
+    function hasKind(entity: Entity, kind: Kind): entity is Entity;
+    let x: A;
+    

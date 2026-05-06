@@ -52,7 +52,7 @@ var d = {
 
 
 //// [declFileTypeofInAnonymousType.d.ts]
-declare namespace m1 {
+namespace m1 {
     class c {
     }
     enum e {
@@ -61,17 +61,17 @@ declare namespace m1 {
         holiday = 2
     }
 }
-declare var a: {
+var a: {
     c: m1.c;
 };
-declare var b: {
+var b: {
     c: typeof m1.c;
     m1: typeof m1;
 };
-declare var c: {
+var c: {
     m1: typeof m1;
 };
-declare var d: {
+var d: {
     m: {
         mod: typeof m1;
     };
@@ -83,3 +83,46 @@ declare var d: {
     };
     mh: m1.e;
 };
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeofInAnonymousType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeofInAnonymousType.d.ts (1 errors) ====
+    namespace m1 {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class c {
+        }
+        enum e {
+            weekday = 0,
+            weekend = 1,
+            holiday = 2
+        }
+    }
+    var a: {
+        c: m1.c;
+    };
+    var b: {
+        c: typeof m1.c;
+        m1: typeof m1;
+    };
+    var c: {
+        m1: typeof m1;
+    };
+    var d: {
+        m: {
+            mod: typeof m1;
+        };
+        mc: {
+            cl: typeof m1.c;
+        };
+        me: {
+            en: typeof m1.e;
+        };
+        mh: m1.e;
+    };
+    

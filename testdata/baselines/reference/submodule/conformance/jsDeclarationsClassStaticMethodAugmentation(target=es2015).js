@@ -19,6 +19,6 @@ Clazz.method.prop = 5;
 
 
 //// [source.d.ts]
-export declare class Clazz {
+export class Clazz {
     static method(): void;
 }

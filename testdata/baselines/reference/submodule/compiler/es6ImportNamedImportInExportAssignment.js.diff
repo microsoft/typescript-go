@@ -1,0 +1,11 @@
+--- old.es6ImportNamedImportInExportAssignment.js
++++ new.es6ImportNamedImportInExportAssignment.js
+@@= skipped -18, +18 lines =@@
+
+
+ //// [es6ImportNamedImportInExportAssignment_0.d.ts]
+-export declare var a: number;
++export var a: number;
+ //// [es6ImportNamedImportInExportAssignment_1.d.ts]
+ import { a } from "./es6ImportNamedImportInExportAssignment_0";
+ export = a;

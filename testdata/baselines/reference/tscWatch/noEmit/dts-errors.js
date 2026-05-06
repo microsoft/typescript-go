@@ -95,7 +95,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/home/src/workspaces/project/a.d.ts] *new* 
-declare const a = "hello";
+const a = "hello";
 
 //// [/home/src/workspaces/project/a.js] *new* 
 "use strict";
@@ -186,7 +186,7 @@ Found 1 error in a.ts[90m:1[0m
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-declare const a: {
+const a: {
     new (): {
         p: number;
     };

@@ -19,9 +19,9 @@ export const brandColors = {
 
 
 //// [index.d.ts]
-export declare const colors: {
+export const colors: {
     royalBlue: string;
 };
-export declare const brandColors: {
+export const brandColors: {
     purple: string;
 };

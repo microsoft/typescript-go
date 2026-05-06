@@ -1,0 +1,75 @@
+--- old.nodeModulesForbidenSyntax(module=node16).js
++++ new.nodeModulesForbidenSyntax(module=node16).js
+@@= skipped -134, +134 lines =@@
+
+
+ //// [index.d.ts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.cts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.mts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.ts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.cts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.mts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.ts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.mts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.cts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.mts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.cts]
+-declare const x: <T>() => T;
+-export { x };
+-//// [index.d.ts]
+-declare const x: <T>() => T;
++const x: <T>() => T;
++export { x };
++//// [index.d.cts]
++const x: <T>() => T;
++export { x };
++//// [index.d.mts]
++const x: <T>() => T;
++export { x };
++//// [index.d.ts]
++const x: <T>() => T;
++export { x };
++//// [index.d.cts]
++const x: <T>() => T;
++export { x };
++//// [index.d.mts]
++const x: <T>() => T;
++export { x };
++//// [index.d.ts]
++const x: <T>() => T;
++export { x };
++//// [index.d.mts]
++const x: <T>() => T;
++export { x };
++//// [index.d.cts]
++const x: <T>() => T;
++export { x };
++//// [index.d.mts]
++const x: <T>() => T;
++export { x };
++//// [index.d.cts]
++const x: <T>() => T;
++export { x };
++//// [index.d.ts]
++const x: <T>() => T;
+ export { x };

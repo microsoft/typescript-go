@@ -24,7 +24,7 @@ f2(1, 2, 3);
 
 
 //// [a.d.ts]
-declare const foo: {
+const foo: {
     f1: (params: any) => void;
 };
-declare function f2(x: any): void;
+function f2(x: any): void;

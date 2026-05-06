@@ -67,13 +67,13 @@ test.tags();
 
 
 //// [emitClassExpressionInDeclarationFile.d.ts]
-export declare var simpleExample: {
+export var simpleExample: {
     new (): {
         tags(): void;
     };
     getTags(): void;
 };
-export declare var circularReference: {
+export var circularReference: {
     new (): {
         tags(c: /*elided*/ any): /*elided*/ any;
     };
@@ -83,12 +83,12 @@ export declare var circularReference: {
         tags(c: any): any;
     };
 };
-export declare class FooItem {
+export class FooItem {
     foo(): void;
     name?: string;
 }
 export type Constructor<T> = new (...args: any[]) => T;
-export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
+export function WithTags<T extends Constructor<FooItem>>(Base: T): {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
@@ -96,7 +96,7 @@ export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
     };
     getTags(): void;
 } & T;
-declare const Test_base: {
+const Test_base: {
     new (...args: any[]): {
         tags(): void;
         foo(): void;
@@ -104,6 +104,58 @@ declare const Test_base: {
     };
     getTags(): void;
 } & typeof FooItem;
-export declare class Test extends Test_base {
+export class Test extends Test_base {
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+emitClassExpressionInDeclarationFile.d.ts(30,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== emitClassExpressionInDeclarationFile.d.ts (1 errors) ====
+    export var simpleExample: {
+        new (): {
+            tags(): void;
+        };
+        getTags(): void;
+    };
+    export var circularReference: {
+        new (): {
+            tags(c: /*elided*/ any): /*elided*/ any;
+        };
+        getTags(c: {
+            tags(c: /*elided*/ any): /*elided*/ any;
+        }): {
+            tags(c: any): any;
+        };
+    };
+    export class FooItem {
+        foo(): void;
+        name?: string;
+    }
+    export type Constructor<T> = new (...args: any[]) => T;
+    export function WithTags<T extends Constructor<FooItem>>(Base: T): {
+        new (...args: any[]): {
+            tags(): void;
+            foo(): void;
+            name?: string;
+        };
+        getTags(): void;
+    } & T;
+    const Test_base: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        new (...args: any[]): {
+            tags(): void;
+            foo(): void;
+            name?: string;
+        };
+        getTags(): void;
+    } & typeof FooItem;
+    export class Test extends Test_base {
+    }
+    export {};
+    

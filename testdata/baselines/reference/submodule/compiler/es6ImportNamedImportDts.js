@@ -119,53 +119,53 @@ exports.z2 = new server_9.z2(); // z2 shouldn't give redeclare error
 
 
 //// [server.d.ts]
-export declare class a {
+export class a {
 }
-export declare class a11 {
+export class a11 {
 }
-export declare class a12 {
+export class a12 {
 }
-export declare class x {
+export class x {
 }
-export declare class x11 {
+export class x11 {
 }
-export declare class m {
+export class m {
 }
-export declare class a1 {
+export class a1 {
 }
-export declare class x1 {
+export class x1 {
 }
-export declare class a111 {
+export class a111 {
 }
-export declare class x111 {
+export class x111 {
 }
-export declare class z1 {
+export class z1 {
 }
-export declare class z2 {
+export class z2 {
 }
-export declare class aaaa {
+export class aaaa {
 }
-export declare class aaaa1 {
+export class aaaa1 {
 }
 //// [client.d.ts]
 import { a } from "./server";
-export declare var xxxx: a;
+export var xxxx: a;
 import { a11 as b } from "./server";
-export declare var xxxx1: b;
+export var xxxx1: b;
 import { x, a12 as y } from "./server";
-export declare var xxxx2: x;
-export declare var xxxx3: y;
+export var xxxx2: x;
+export var xxxx3: y;
 import { x11 as z } from "./server";
-export declare var xxxx4: z;
+export var xxxx4: z;
 import { m } from "./server";
-export declare var xxxx5: m;
+export var xxxx5: m;
 import { a1, x1 } from "./server";
-export declare var xxxx6: a1;
-export declare var xxxx7: x1;
+export var xxxx6: a1;
+export var xxxx7: x1;
 import { a111 as a11, x111 as x11 } from "./server";
-export declare var xxxx8: a11;
-export declare var xxxx9: x11;
+export var xxxx8: a11;
+export var xxxx9: x11;
 import { z1 } from "./server";
-export declare var z111: z1;
+export var z111: z1;
 import { z2 as z3 } from "./server";
-export declare var z2: z3;
+export var z2: z3;

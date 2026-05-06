@@ -36,13 +36,13 @@ module.exports = Container;
 
 
 //// [obj.d.ts]
-declare const _default: {
+const _default: {
     new (): import("./obj");
 };
 export = _default;
 //// [index.d.ts]
 import Obj = require("./obj");
-declare class Container {
+class Container {
     usage: Obj;
     constructor();
 }
@@ -52,13 +52,17 @@ export = Container;
 //// [DtsFileErrors]
 
 
+out/index.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
 out/index.d.ts(3,12): error TS2749: 'Obj' refers to a value, but is being used as a type here. Did you mean 'typeof Obj'?
+out/obj.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
 out/obj.d.ts(2,13): error TS1340: Module './obj' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./obj')'?
 
 
-==== out/index.d.ts (1 errors) ====
+==== out/index.d.ts (2 errors) ====
     import Obj = require("./obj");
-    declare class Container {
+    class Container {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
         usage: Obj;
                ~~~
 !!! error TS2749: 'Obj' refers to a value, but is being used as a type here. Did you mean 'typeof Obj'?
@@ -66,8 +70,10 @@ out/obj.d.ts(2,13): error TS1340: Module './obj' does not refer to a type, but i
     }
     export = Container;
     
-==== out/obj.d.ts (1 errors) ====
-    declare const _default: {
+==== out/obj.d.ts (2 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
         new (): import("./obj");
                 ~~~~~~~~~~~~~~~
 !!! error TS1340: Module './obj' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./obj')'?

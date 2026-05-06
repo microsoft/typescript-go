@@ -1,0 +1,63 @@
+--- old.recursiveClassBaseType.js
++++ new.recursiveClassBaseType.js
+@@= skipped -39, +39 lines =@@
+
+
+ //// [recursiveClassBaseType.d.ts]
+-declare const p: <T>(fn: () => T) => T;
+-declare const Base: <T>(val: T) => {
++const p: <T>(fn: () => T) => T;
++const Base: <T>(val: T) => {
+     new (): T;
+ };
+-declare const C_base: new () => {
++const C_base: new () => {
+     x: C[];
+ };
+-declare class C extends C_base {
++class C extends C_base {
+ }
+-declare abstract class Base1 {
++abstract class Base1 {
+     abstract root(): Derived1;
+ }
+-declare const Derived1_base: {
++const Derived1_base: {
+     new (): {
+         root(): any;
+     };
+ };
+-declare class Derived1 extends Derived1_base {
++class Derived1 extends Derived1_base {
+ }
++
++
++//// [DtsFileErrors]
++
++
++recursiveClassBaseType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== recursiveClassBaseType.d.ts (1 errors) ====
++    const p: <T>(fn: () => T) => T;
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    const Base: <T>(val: T) => {
++        new (): T;
++    };
++    const C_base: new () => {
++        x: C[];
++    };
++    class C extends C_base {
++    }
++    abstract class Base1 {
++        abstract root(): Derived1;
++    }
++    const Derived1_base: {
++        new (): {
++            root(): any;
++        };
++    };
++    class Derived1 extends Derived1_base {
++    }
++    

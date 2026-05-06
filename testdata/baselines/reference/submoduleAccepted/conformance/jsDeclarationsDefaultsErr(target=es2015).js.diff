@@ -6,8 +6,9 @@
  //// [index1.d.ts]
 -export type Cls = string | number;
 -export default Cls;
- declare class Cls {
+-declare class Cls {
 -    static y: string;
++class Cls {
      x: number;
 +    static y: string;
  }
@@ -25,7 +26,7 @@
 + */
  //// [index3.d.ts]
 -export type _default = string | number;
-+declare const x = 12;
++const x = 12;
  export { x as default };
 -declare const x: 12;
 +export type default = string | number;

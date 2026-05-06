@@ -35,40 +35,40 @@ let d2 = Object.assign({ a: 123 }, (t ? d : {})); // string | number
 
 
 //// [spreadDuplicate.d.ts]
-declare let a: {
+let a: {
     a: string;
 };
-declare let b: {
+let b: {
     a?: string;
 };
-declare let c: {
+let c: {
     a: string | undefined;
 };
-declare let d: {
+let d: {
     a?: string | undefined;
 };
-declare let t: boolean;
-declare let a1: {
+let t: boolean;
+let a1: {
     a: string;
 };
-declare let b1: {
+let b1: {
     a: string | number;
 };
-declare let c1: {
+let c1: {
     a: string | undefined;
 };
-declare let d1: {
+let d1: {
     a: string | number;
 };
-declare let a2: {
+let a2: {
     a: string | number;
 };
-declare let b2: {
+let b2: {
     a: string | number;
 };
-declare let c2: {
+let c2: {
     a: string | number;
 };
-declare let d2: {
+let d2: {
     a: string | number;
 };

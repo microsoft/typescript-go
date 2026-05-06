@@ -55,22 +55,22 @@ _RegularClass_shouldError_accessor_storage = new WeakMap();
 
 
 //// [accessorInAmbientContextES5.d.ts]
-declare class AmbientClass {
+class AmbientClass {
     accessor prop1: string;
     static accessor prop2: number;
     private accessor prop3;
     private static accessor prop4;
 }
-declare namespace AmbientNamespace {
+namespace AmbientNamespace {
     class C {
         accessor prop: string;
     }
 }
-declare module "some-module" {
+module "some-module" {
     class ExportedClass {
         accessor value: any;
     }
 }
-declare class RegularClass {
+class RegularClass {
     accessor shouldError: string;
 }

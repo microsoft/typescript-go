@@ -82,19 +82,19 @@ class C4 {
 
 
 //// [declarationFiles.d.ts]
-declare class C1 {
+class C1 {
     x: this;
     f(x: this): this;
     constructor(x: this);
 }
-declare class C2 {
+class C2 {
     [x: string]: this;
 }
 interface Foo<T> {
     x: T;
     y: this;
 }
-declare class C3 {
+class C3 {
     a: this[];
     b: [this, this];
     c: this | Date;
@@ -106,7 +106,7 @@ declare class C3 {
     i: Foo<this | (() => this)>;
     j: (x: any) => x is this;
 }
-declare class C4 {
+class C4 {
     x1: {
         a: this;
     };

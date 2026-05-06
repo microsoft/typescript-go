@@ -24,8 +24,8 @@ z == y; // error
 
 //// [index.d.ts]
 /** @type {unique symbol} */
-declare const x: unique symbol;
+const x: unique symbol;
 /** @type {unique symbol} */
-declare const y: unique symbol;
+const y: unique symbol;
 /** @type {typeof x} */
-declare let z: typeof x;
+let z: typeof x;

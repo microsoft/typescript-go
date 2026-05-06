@@ -23,7 +23,7 @@ export const obj1 = {
 
 
 //// [declarationEmitConstObjectLiteralGenericMethod1.d.ts]
-export declare const obj1: {
+export const obj1: {
     id<T>(value: T): T;
     pair<T_1>(left: T_1, right: T_1): T_1[];
 };

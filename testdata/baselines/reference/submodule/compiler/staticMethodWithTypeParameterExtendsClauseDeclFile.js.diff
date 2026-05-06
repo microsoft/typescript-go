@@ -1,0 +1,14 @@
+--- old.staticMethodWithTypeParameterExtendsClauseDeclFile.js
++++ new.staticMethodWithTypeParameterExtendsClauseDeclFile.js
+@@= skipped -49, +49 lines =@@
+
+
+ //// [staticMethodWithTypeParameterExtendsClauseDeclFile.d.ts]
+-export declare class publicClass {
++export class publicClass {
+ }
+-export declare class publicClassWithWithPrivateTypeParameters {
++export class publicClassWithWithPrivateTypeParameters {
+     private static myPrivateStaticMethod1;
+     private myPrivateMethod1;
+     private static myPrivateStaticMethod2;

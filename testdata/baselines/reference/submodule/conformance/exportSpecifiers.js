@@ -35,9 +35,9 @@ bar; // Error (used in emitting position)
 
 
 //// [exports.d.ts]
-declare const type = 0;
-declare const as = 0;
-declare const something = 0;
+const type = 0;
+const as = 0;
+const something = 0;
 export { type };
 export { type as };
 export { type something };

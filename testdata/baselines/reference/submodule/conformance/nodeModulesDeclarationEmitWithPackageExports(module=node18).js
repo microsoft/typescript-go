@@ -172,32 +172,32 @@ exports.f = typei;
 
 
 //// [index.d.ts]
-export declare const a: any;
-export declare const b: any;
-export declare const c: any;
+export const a: any;
+export const b: any;
+export const c: any;
 import * as cjsi from "inner/cjs";
 import * as mjsi from "inner/mjs";
 import * as typei from "inner";
-export declare const d: typeof cjsi;
-export declare const e: typeof mjsi;
-export declare const f: typeof typei;
+export const d: typeof cjsi;
+export const e: typeof mjsi;
+export const f: typeof typei;
 //// [index.d.mts]
-export declare const a: any;
-export declare const b: any;
-export declare const c: any;
+export const a: any;
+export const b: any;
+export const c: any;
 import * as cjsi from "inner/cjs";
 import * as mjsi from "inner/mjs";
 import * as typei from "inner";
-export declare const d: typeof cjsi;
-export declare const e: typeof mjsi;
-export declare const f: typeof typei;
+export const d: typeof cjsi;
+export const e: typeof mjsi;
+export const f: typeof typei;
 //// [index.d.cts]
-export declare const a: any;
-export declare const b: any;
-export declare const c: any;
+export const a: any;
+export const b: any;
+export const c: any;
 import * as cjsi from "inner/cjs";
 import * as mjsi from "inner/mjs";
 import * as typei from "inner";
-export declare const d: typeof cjsi;
-export declare const e: typeof mjsi;
-export declare const f: typeof typei;
+export const d: typeof cjsi;
+export const e: typeof mjsi;
+export const f: typeof typei;

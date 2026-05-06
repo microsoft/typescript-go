@@ -34,14 +34,37 @@ var c;
 
 
 //// [internalAliasEnum.d.ts]
-declare namespace a {
+namespace a {
     enum weekend {
         Friday = 0,
         Saturday = 1,
         Sunday = 2
     }
 }
-declare namespace c {
+namespace c {
     import b = a.weekend;
     var bVal: b;
 }
+
+
+//// [DtsFileErrors]
+
+
+internalAliasEnum.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== internalAliasEnum.d.ts (1 errors) ====
+    namespace a {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        enum weekend {
+            Friday = 0,
+            Saturday = 1,
+            Sunday = 2
+        }
+    }
+    namespace c {
+        import b = a.weekend;
+        var bVal: b;
+    }
+    

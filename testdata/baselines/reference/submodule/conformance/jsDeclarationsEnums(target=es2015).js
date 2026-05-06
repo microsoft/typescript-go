@@ -117,50 +117,50 @@ var K;
 
 
 //// [index.d.ts]
-export declare enum A {
+export enum A {
 }
-export declare enum B {
+export enum B {
     Member = 0
 }
-declare enum C {
+enum C {
 }
 export { C };
-declare enum DD {
+enum DD {
 }
 export { DD as D };
-export declare enum E {
+export enum E {
 }
 export { E as EE };
 export { F as FF };
-export declare enum F {
+export enum F {
 }
-export declare enum G {
+export enum G {
     A = 1,
     B = 2,
     C = 3
 }
-export declare enum H {
+export enum H {
     A = "a",
     B = "b"
 }
-export declare enum I {
+export enum I {
     A = "a",
     B = 0,
     C = 1
 }
-export declare const enum J {
+export const enum J {
     A = 1,
     B = 2,
     C = 3
 }
-export declare enum K {
+export enum K {
     None = 0,
     A = 1,
     B = 2,
     C = 4,
     Mask = 7
 }
-export declare const enum L {
+export const enum L {
     None = 0,
     A = 1,
     B = 2,

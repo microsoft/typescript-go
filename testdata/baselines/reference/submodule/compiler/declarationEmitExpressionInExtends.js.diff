@@ -1,0 +1,19 @@
+--- old.declarationEmitExpressionInExtends.js
++++ new.declarationEmitExpressionInExtends.js
+@@= skipped -26, +26 lines =@@
+
+
+ //// [declarationEmitExpressionInExtends.d.ts]
+-declare var x: {
++var x: {
+     new <T>(s: any): Q;
+ };
+-declare class Q {
++class Q {
+     s: string;
+ }
+-declare class B extends x<string> {
++class B extends x<string> {
+ }
+-declare var q: B;
++var q: B;

@@ -17,7 +17,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 //// [es6ImportDefaultBindingInEs5_0.d.ts]
-declare var a: number;
+var a: number;
 export = a;
 //// [es6ImportDefaultBindingInEs5_1.d.ts]
 export {};
+
+
+//// [DtsFileErrors]
+
+
+es6ImportDefaultBindingInEs5_0.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== es6ImportDefaultBindingInEs5_0.d.ts (1 errors) ====
+    var a: number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export = a;
+    
+==== es6ImportDefaultBindingInEs5_1.d.ts (0 errors) ====
+    export {};
+    

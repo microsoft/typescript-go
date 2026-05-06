@@ -57,23 +57,23 @@ Ns.C5 = C5 || class {
 
 
 //// [a.d.ts]
-declare class A {
+class A {
     /** @return {number} */
     method(): number;
 }
 /** @implements {A} */
-declare class B implements A {
+class B implements A {
     method(): number;
 }
 /** @implements A */
-declare class B2 implements A {
+class B2 implements A {
     /** @return {string} */
     method(): string;
 }
 /** @implements {A} */
-declare class B3 implements A {
+class B3 implements A {
 }
-declare var Ns: {
+var Ns: {
     /** @implements {A} */
     C1: {
         new (): {
@@ -95,12 +95,12 @@ declare namespace Ns {
     };
 }
 /** @implements {A} */
-declare var C2: {
+var C2: {
     new (): {
         method(): number;
     };
 };
-declare var o: {
+var o: {
     /** @implements {A} */
     C3: {
         new (): {
@@ -108,7 +108,7 @@ declare var o: {
         };
     };
 };
-declare class CC {
+class CC {
     /** @implements {A} */
     C4: {
         new (): {
@@ -116,7 +116,7 @@ declare class CC {
         };
     };
 }
-declare var C5: any;
+var C5: any;
 declare namespace Ns {
     var C5: {
         new (): {

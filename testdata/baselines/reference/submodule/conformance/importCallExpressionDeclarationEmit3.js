@@ -23,9 +23,9 @@ export var p2 = import("./0");
 
 
 //// [0.d.ts]
-export declare function foo(): string;
+export function foo(): string;
 //// [1.d.ts]
 import * as Zero from "./0";
-export declare var p0: Promise<typeof Zero>;
-export declare var p1: Promise<typeof Zero>;
-export declare var p2: Promise<any>;
+export var p0: Promise<typeof Zero>;
+export var p1: Promise<typeof Zero>;
+export var p2: Promise<any>;

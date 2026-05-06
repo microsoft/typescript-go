@@ -13,6 +13,6 @@ class C {
 
 
 //// [abstractPropertyInitializer.d.ts]
-declare abstract class C {
+abstract class C {
     abstract prop: number;
 }

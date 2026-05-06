@@ -47,6 +47,22 @@ else {
 
 //// [stringLiteralTypesTypePredicates01.d.ts]
 type Kind = "A" | "B";
-declare function kindIs(kind: Kind, is: "A"): kind is "A";
-declare function kindIs(kind: Kind, is: "B"): kind is "B";
-declare var x: Kind;
+function kindIs(kind: Kind, is: "A"): kind is "A";
+function kindIs(kind: Kind, is: "B"): kind is "B";
+var x: Kind;
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesTypePredicates01.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesTypePredicates01.d.ts (1 errors) ====
+    type Kind = "A" | "B";
+    function kindIs(kind: Kind, is: "A"): kind is "A";
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function kindIs(kind: Kind, is: "B"): kind is "B";
+    var x: Kind;
+    

@@ -18,4 +18,4 @@ export type Foo = (x: string) => number;
  * @param {string} x
  * @returns {number}
  */
-export declare function f1(): void;
+export function f1(): void;

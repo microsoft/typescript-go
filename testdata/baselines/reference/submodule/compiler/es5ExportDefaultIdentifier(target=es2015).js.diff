@@ -1,0 +1,9 @@
+--- old.es5ExportDefaultIdentifier(target=es2015).js
++++ new.es5ExportDefaultIdentifier(target=es2015).js
+@@= skipped -14, +14 lines =@@
+
+
+ //// [es5ExportDefaultIdentifier.d.ts]
+-export declare function f(): void;
++export function f(): void;
+ export default f;

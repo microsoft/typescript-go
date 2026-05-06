@@ -84,7 +84,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/user/username/projects/transitiveReferences/a.d.ts] *new* 
-export declare class A {
+export class A {
 }
 
 //// [/user/username/projects/transitiveReferences/a.js] *new* 
@@ -92,7 +92,7 @@ export class A {
 }
 
 //// [/user/username/projects/transitiveReferences/b.d.ts] *new* 
-export declare const b: any;
+export const b: any;
 
 //// [/user/username/projects/transitiveReferences/b.js] *new* 
 "use strict";
@@ -108,7 +108,7 @@ b;
 X;
 
 //// [/user/username/projects/transitiveReferences/tsconfig.a.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0a3004c9585165dfcdd47d90e20f798d-export class A {}","signature":"0ccee316fe0e81d05228833d759a8fea-export declare class A {\n}\n","impliedNodeFormat":1}],"options":{"composite":true},"latestChangedDtsFile":"./a.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0a3004c9585165dfcdd47d90e20f798d-export class A {}","signature":"f1ac80e91c19b4916d6d9235febc9b72-export class A {\n}\n","impliedNodeFormat":1}],"options":{"composite":true},"latestChangedDtsFile":"./a.d.ts"}
 //// [/user/username/projects/transitiveReferences/tsconfig.a.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -140,11 +140,11 @@ X;
     {
       "fileName": "./a.ts",
       "version": "0a3004c9585165dfcdd47d90e20f798d-export class A {}",
-      "signature": "0ccee316fe0e81d05228833d759a8fea-export declare class A {\n}\n",
+      "signature": "f1ac80e91c19b4916d6d9235febc9b72-export class A {\n}\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "0a3004c9585165dfcdd47d90e20f798d-export class A {}",
-        "signature": "0ccee316fe0e81d05228833d759a8fea-export declare class A {\n}\n",
+        "signature": "f1ac80e91c19b4916d6d9235febc9b72-export class A {\n}\n",
         "impliedNodeFormat": 1
       }
     }
@@ -153,10 +153,10 @@ X;
     "composite": true
   },
   "latestChangedDtsFile": "./a.d.ts",
-  "size": 1095
+  "size": 1087
 }
 //// [/user/username/projects/transitiveReferences/tsconfig.b.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"d0c1e70086e2297c6733a209dc8aebd5-import {A} from 'a';\nexport const b = new A();","signature":"5c4caa93805477a2ce78ec8e61b569d7-export declare const b: any;\n","impliedNodeFormat":1}],"options":{"composite":true,"module":199},"semanticDiagnosticsPerFile":[[2,[{"pos":16,"end":19,"code":2307,"category":1,"messageKey":"Cannot_find_module_0_or_its_corresponding_type_declarations_2307","messageArgs":["a"]}]]],"latestChangedDtsFile":"./b.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"d0c1e70086e2297c6733a209dc8aebd5-import {A} from 'a';\nexport const b = new A();","signature":"75b4a726076969b684e0acdb4ba9e002-export const b: any;\n","impliedNodeFormat":1}],"options":{"composite":true,"module":199},"semanticDiagnosticsPerFile":[[2,[{"pos":16,"end":19,"code":2307,"category":1,"messageKey":"Cannot_find_module_0_or_its_corresponding_type_declarations_2307","messageArgs":["a"]}]]],"latestChangedDtsFile":"./b.d.ts"}
 //// [/user/username/projects/transitiveReferences/tsconfig.b.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -188,11 +188,11 @@ X;
     {
       "fileName": "./b.ts",
       "version": "d0c1e70086e2297c6733a209dc8aebd5-import {A} from 'a';\nexport const b = new A();",
-      "signature": "5c4caa93805477a2ce78ec8e61b569d7-export declare const b: any;\n",
+      "signature": "75b4a726076969b684e0acdb4ba9e002-export const b: any;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "d0c1e70086e2297c6733a209dc8aebd5-import {A} from 'a';\nexport const b = new A();",
-        "signature": "5c4caa93805477a2ce78ec8e61b569d7-export declare const b: any;\n",
+        "signature": "75b4a726076969b684e0acdb4ba9e002-export const b: any;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -219,7 +219,7 @@ X;
     ]
   ],
   "latestChangedDtsFile": "./b.d.ts",
-  "size": 1321
+  "size": 1313
 }
 //// [/user/username/projects/transitiveReferences/tsconfig.c.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","root":["./c.ts"]}

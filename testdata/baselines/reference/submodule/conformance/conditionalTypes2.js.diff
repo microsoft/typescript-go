@@ -1,0 +1,106 @@
+--- old.conditionalTypes2.js
++++ new.conditionalTypes2.js
+@@= skipped -330, +330 lines =@@
+ interface Invariant<T> {
+     foo: T extends string ? keyof T : T;
+ }
+-declare function f1<A, B extends A>(a: Covariant<A>, b: Covariant<B>): void;
+-declare function f2<A, B extends A>(a: Contravariant<A>, b: Contravariant<B>): void;
+-declare function f3<A, B extends A>(a: Invariant<A>, b: Invariant<B>): void;
+-declare function isFunction<T>(value: T): value is Extract<T, Function>;
+-declare function getFunction<T>(item: T): Extract<T, Function>;
+-declare function f10<T>(x: T): void;
+-declare function f11(x: string | (() => string) | undefined): void;
+-declare function f12(x: string | (() => string) | undefined): void;
++function f1<A, B extends A>(a: Covariant<A>, b: Covariant<B>): void;
++function f2<A, B extends A>(a: Contravariant<A>, b: Contravariant<B>): void;
++function f3<A, B extends A>(a: Invariant<A>, b: Invariant<B>): void;
++function isFunction<T>(value: T): value is Extract<T, Function>;
++function getFunction<T>(item: T): Extract<T, Function>;
++function f10<T>(x: T): void;
++function f11(x: string | (() => string) | undefined): void;
++function f12(x: string | (() => string) | undefined): void;
+ type Foo = {
+     foo: string;
+ };
+ type Bar = {
+     bar: string;
+ };
+-declare function fooBar(x: {
++function fooBar(x: {
+     foo: string;
+     bar: string;
+ }): void;
+-declare function fooBat(x: {
++function fooBat(x: {
+     foo: string;
+     bat: string;
+ }): void;
+ type Extract2<T, U, V> = T extends U ? T extends V ? T : never : never;
+-declare function f20<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: Extract2<T, Foo, Bar>): void;
+-declare function f21<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: Extract2<T, Foo, Bar>): void;
+-declare class Opt<T> {
++function f20<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: Extract2<T, Foo, Bar>): void;
++function f21<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: Extract2<T, Foo, Bar>): void;
++class Opt<T> {
+     toVector(): Vector<T>;
+ }
+ interface Seq<T> {
+     tail(): Opt<Seq<T>>;
+ }
+-declare class Vector<T> implements Seq<T> {
++class Vector<T> implements Seq<T> {
+     tail(): Opt<Vector<T>>;
+     partition2<U extends T>(predicate: (v: T) => v is U): [Vector<U>, Vector<Exclude<T, U>>];
+     partition2(predicate: (x: T) => boolean): [Vector<T>, Vector<T>];
+@@= skipped -43, +43 lines =@@
+     bat: B1<B1<T>>;
+     boom: T extends any ? true : true;
+ }
+-declare function toString1(value: object | Function): string;
+-declare function toString2(value: Function): string;
+-declare function foo<T>(value: T): void;
++function toString1(value: object | Function): string;
++function toString2(value: Function): string;
++function foo<T>(value: T): void;
+ type A<T, V, E> = T extends object ? {
+     [Q in {
+         [P in keyof T]: T[P] extends V ? P : P;
+@@= skipped -78, +78 lines =@@
+ type What = Hmm<{}, {
+     a: string;
+ }>;
+-declare const w: What;
+-declare function save(_response: IRootResponse<string>): void;
+-declare function exportCommand<TResponse>(functionToCall: IExportCallback<TResponse>): void;
++const w: What;
++function save(_response: IRootResponse<string>): void;
++function exportCommand<TResponse>(functionToCall: IExportCallback<TResponse>): void;
+ interface IExportCallback<TResponse> {
+     (response: IRootResponse<TResponse>): void;
+ }
+@@= skipped -10, +10 lines =@@
+ interface IRecord {
+     readonly Id: string;
+ }
+-declare type IRecordResponse<T extends IRecord> = IResponse<T> & {
++type IRecordResponse<T extends IRecord> = IResponse<T> & {
+     sendRecord(): void;
+ };
+-declare type IResponse<T> = {
++type IResponse<T> = {
+     sendValue(name: keyof GetAllPropertiesOfType<T, string>): void;
+ };
+-declare type GetPropertyNamesOfType<T, RestrictToType> = {
++type GetPropertyNamesOfType<T, RestrictToType> = {
+     [PropertyName in Extract<keyof T, string>]: T[PropertyName] extends RestrictToType ? PropertyName : never;
+ }[Extract<keyof T, string>];
+-declare type GetAllPropertiesOfType<T, RestrictToType> = Pick<T, GetPropertyNamesOfType<Required<T>, RestrictToType>>;
+-declare function ff(x: Foo3<string>): void;
+-declare function gg<T>(f: (x: Foo3<T>) => void): void;
++type GetAllPropertiesOfType<T, RestrictToType> = Pick<T, GetPropertyNamesOfType<Required<T>, RestrictToType>>;
++function ff(x: Foo3<string>): void;
++function gg<T>(f: (x: Foo3<T>) => void): void;
+ type Foo3<T> = T extends number ? {
+     n: T;
+ } : {

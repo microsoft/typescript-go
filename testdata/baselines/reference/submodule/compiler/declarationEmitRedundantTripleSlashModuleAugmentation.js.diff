@@ -1,0 +1,47 @@
+--- old.declarationEmitRedundantTripleSlashModuleAugmentation.js
++++ new.declarationEmitRedundantTripleSlashModuleAugmentation.js
+@@= skipped -25, +25 lines =@@
+ //// [augmentation.d.ts]
+ export interface FooOptions {
+ }
+-declare module "foo" {
++module "foo" {
+     interface Augmentation {
+     }
+ }
+@@= skipped -12, +12 lines =@@
+     augmentation: Augmentation;
+     options: FooOptions;
+ }
++
++
++//// [DtsFileErrors]
++
++
++/augmentation.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== /node_modules/foo/index.d.ts (0 errors) ====
++    declare module "foo" {
++        export interface Original {}
++    }
++    
++==== /augmentation.d.ts (1 errors) ====
++    export interface FooOptions {
++    }
++    module "foo" {
++    ~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        interface Augmentation {
++        }
++    }
++    
++==== /index.d.ts (0 errors) ====
++    import { Original, Augmentation } from "foo";
++    import type { FooOptions } from "./augmentation";
++    export interface _ {
++        original: Original;
++        augmentation: Augmentation;
++        options: FooOptions;
++    }
++    

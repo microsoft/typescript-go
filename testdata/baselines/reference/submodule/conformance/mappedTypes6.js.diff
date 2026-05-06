@@ -1,0 +1,40 @@
+--- old.mappedTypes6.js
++++ new.mappedTypes6.js
+@@= skipped -247, +247 lines =@@
+ type T15<T> = {
+     -readonly [P in keyof T]-?: T[P];
+ };
+-declare function f1<T>(x: Required<T>, y: T, z: Partial<T>): void;
++function f1<T>(x: Required<T>, y: T, z: Partial<T>): void;
+ type Denullified<T> = {
+     [P in keyof T]-?: NonNullable<T[P]>;
+ };
+-declare function f2<T>(w: Denullified<T>, x: Required<T>, y: T, z: Partial<T>): void;
+-declare function f3<T>(w: Denullified<T>, x: Required<T>, y: T, z: Partial<T>): void;
++function f2<T>(w: Denullified<T>, x: Required<T>, y: T, z: Partial<T>): void;
++function f3<T>(w: Denullified<T>, x: Required<T>, y: T, z: Partial<T>): void;
+ type Readwrite<T> = {
+     -readonly [P in keyof T]: T[P];
+ };
+-declare function f10<T>(x: Readonly<T>, y: T, z: Readwrite<T>): void;
++function f10<T>(x: Readonly<T>, y: T, z: Readwrite<T>): void;
+ type Foo = {
+     a: number;
+     b: number | undefined;
+     c?: number;
+     d?: number | undefined;
+ };
+-declare let x1: Foo;
+-declare let x2: Required<Foo>;
++let x1: Foo;
++let x2: Required<Foo>;
+ type Bar = {
+     a: number;
+     readonly b: number;
+ };
+-declare let x3: Bar;
+-declare let x4: Readonly<Bar>;
+-declare let x5: Readwrite<Bar>;
++let x3: Bar;
++let x4: Readonly<Bar>;
++let x5: Readwrite<Bar>;

@@ -40,4 +40,4 @@ inJsArrow(2); // no error gets linted as expected
  */
 export type IFn = <T>(m: T) => T;
 /**@type {IFn}*/
-export declare function inJs<T>(l: T): T;
+export function inJs<T>(l: T): T;

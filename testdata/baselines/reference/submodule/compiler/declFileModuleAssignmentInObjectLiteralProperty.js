@@ -25,11 +25,11 @@ var d = {
 
 
 //// [declFileModuleAssignmentInObjectLiteralProperty.d.ts]
-declare namespace m1 {
+namespace m1 {
     class c {
     }
 }
-declare var d: {
+var d: {
     m1: {
         m: typeof m1;
     };
@@ -37,3 +37,27 @@ declare var d: {
         c: typeof m1.c;
     };
 };
+
+
+//// [DtsFileErrors]
+
+
+declFileModuleAssignmentInObjectLiteralProperty.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileModuleAssignmentInObjectLiteralProperty.d.ts (1 errors) ====
+    namespace m1 {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class c {
+        }
+    }
+    var d: {
+        m1: {
+            m: typeof m1;
+        };
+        m2: {
+            c: typeof m1.c;
+        };
+    };
+    

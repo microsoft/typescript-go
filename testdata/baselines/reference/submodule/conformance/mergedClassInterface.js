@@ -69,26 +69,26 @@ c5.x4;
 
 
 //// [file1.d.ts]
-declare class C1 {
+class C1 {
 }
 interface C1 {
 }
 interface C2 {
 }
-declare class C2 {
+class C2 {
 }
-declare class C3 {
+class C3 {
 }
 interface C3 {
 }
 interface C4 {
 }
-declare class C4 {
+class C4 {
 }
 interface C5 {
     x1: number;
 }
-declare class C5 {
+class C5 {
     x2: number;
 }
 interface C5 {
@@ -97,14 +97,14 @@ interface C5 {
 interface C5 {
     x4: number;
 }
-declare var c5: C5;
+var c5: C5;
 //// [file2.d.ts]
-declare class C6 {
+class C6 {
 }
 interface C7 {
 }
 //// [file3.d.ts]
 interface C6 {
 }
-declare class C7 {
+class C7 {
 }

@@ -1,0 +1,40 @@
+--- old.overrideDynamicName1(noimplicitoverride=false).js
++++ new.overrideDynamicName1(noimplicitoverride=false).js
+@@= skipped -28, +28 lines =@@
+
+
+ //// [overrideDynamicName1.d.ts]
+-declare let prop: string;
+-declare class Base1 {
+-    [prop]: () => void;
+-}
+-declare class Derived1 extends Base1 {
+-    [prop]: () => void;
+-}
+-declare class Base2 {
+-    [prop]: () => void;
+-}
+-declare class Derived2 extends Base2 {
+-    [prop]: () => void;
+-}
+-declare class Base3 {
+-}
+-declare class Derived3 extends Base3 {
++let prop: string;
++class Base1 {
++    [prop]: () => void;
++}
++class Derived1 extends Base1 {
++    [prop]: () => void;
++}
++class Base2 {
++    [prop]: () => void;
++}
++class Derived2 extends Base2 {
++    [prop]: () => void;
++}
++class Base3 {
++}
++class Derived3 extends Base3 {
+     [prop]: () => void;
+ }

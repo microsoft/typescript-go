@@ -51,13 +51,13 @@ var addr = new Drawing.Math.Adder();
 
 
 //// [Adder.d.ts]
-declare class Adder {
+class Adder {
     add(a: number, b: number): void;
 }
 export = Adder;
 //// [Math.d.ts]
 import Adder = require('./Adder');
-declare var Math: {
+var Math: {
     Adder: typeof Adder;
 };
 export = Math;
@@ -65,3 +65,35 @@ export = Math;
 export import Math = require('./Math/Math');
 //// [consumer.d.ts]
 export {};
+
+
+//// [DtsFileErrors]
+
+
+Math/Adder.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+Math/Math.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== consumer.d.ts (0 errors) ====
+    export {};
+    
+==== Drawing.d.ts (0 errors) ====
+    export import Math = require('./Math/Math');
+    
+==== Math/Math.d.ts (1 errors) ====
+    import Adder = require('./Adder');
+    var Math: {
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        Adder: typeof Adder;
+    };
+    export = Math;
+    
+==== Math/Adder.d.ts (1 errors) ====
+    class Adder {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        add(a: number, b: number): void;
+    }
+    export = Adder;
+    

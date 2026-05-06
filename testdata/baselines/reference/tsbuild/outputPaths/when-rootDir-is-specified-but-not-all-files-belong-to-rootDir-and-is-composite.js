@@ -48,13 +48,13 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/dist/index.d.ts] *new* 
-export declare const x = 10;
+export const x = 10;
 
 //// [/home/src/workspaces/project/dist/index.js] *new* 
 export const x = 10;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./src/index.ts","./types/type.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"28e8748a7acd58f4f59388926e914f86-export const x = 10;","signature":"f9b4154a9a5944099ecf197d4519d083-export declare const x = 10;\n","impliedNodeFormat":1},{"version":"37c1beee3ff062c5ae875b0377f00093-export type t = string;","signature":"09b8756df8837e9d9dd668b82d3aad6c-export type t = string;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./dist","rootDir":"./src"},"latestChangedDtsFile":"./types/type.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./src/index.ts","./types/type.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"28e8748a7acd58f4f59388926e914f86-export const x = 10;","signature":"cd0d242831dfb3b5b35577077f3bf07a-export const x = 10;\n","impliedNodeFormat":1},{"version":"37c1beee3ff062c5ae875b0377f00093-export type t = string;","signature":"09b8756df8837e9d9dd668b82d3aad6c-export type t = string;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./dist","rootDir":"./src"},"latestChangedDtsFile":"./types/type.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -91,11 +91,11 @@ export const x = 10;
     {
       "fileName": "./src/index.ts",
       "version": "28e8748a7acd58f4f59388926e914f86-export const x = 10;",
-      "signature": "f9b4154a9a5944099ecf197d4519d083-export declare const x = 10;\n",
+      "signature": "cd0d242831dfb3b5b35577077f3bf07a-export const x = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "28e8748a7acd58f4f59388926e914f86-export const x = 10;",
-        "signature": "f9b4154a9a5944099ecf197d4519d083-export declare const x = 10;\n",
+        "signature": "cd0d242831dfb3b5b35577077f3bf07a-export const x = 10;\n",
         "impliedNodeFormat": 1
       }
     },
@@ -117,7 +117,7 @@ export const x = 10;
     "rootDir": "./src"
   },
   "latestChangedDtsFile": "./types/type.d.ts",
-  "size": 1340
+  "size": 1332
 }
 //// [/home/src/workspaces/project/types/type.d.ts] *new* 
 export type t = string;

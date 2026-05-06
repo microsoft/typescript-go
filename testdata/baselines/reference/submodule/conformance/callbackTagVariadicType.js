@@ -31,4 +31,4 @@ var res = x('a', 'b');
  */
 export type Foo = (...args: string) => number;
 /** @type {Foo} */
-export declare const x: Foo;
+export const x: Foo;

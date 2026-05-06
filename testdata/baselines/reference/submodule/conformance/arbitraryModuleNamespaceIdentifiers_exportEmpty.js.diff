@@ -1,0 +1,9 @@
+--- old.arbitraryModuleNamespaceIdentifiers_exportEmpty.js
++++ new.arbitraryModuleNamespaceIdentifiers_exportEmpty.js
+@@= skipped -18, +18 lines =@@
+
+
+ //// [arbitraryModuleNamespaceIdentifiers_exportEmpty.d.ts]
+-declare const empty = "empty";
++const empty = "empty";
+ export { empty as "" };

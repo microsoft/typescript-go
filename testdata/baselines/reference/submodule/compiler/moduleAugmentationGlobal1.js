@@ -32,12 +32,12 @@ let y = x.getA().x;
 
 
 //// [f1.d.ts]
-export declare class A {
+export class A {
     x: number;
 }
 //// [f2.d.ts]
 import { A } from "./f1";
-declare global {
+global {
     interface Array<T> {
         getA(): A;
     }

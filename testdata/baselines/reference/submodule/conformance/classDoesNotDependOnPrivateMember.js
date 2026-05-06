@@ -19,7 +19,7 @@ var M;
 
 
 //// [classDoesNotDependOnPrivateMember.d.ts]
-declare namespace M {
+namespace M {
     class C {
         private x;
     }

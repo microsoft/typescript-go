@@ -40,8 +40,8 @@ function returnError() {
 
 
 //// [nonPrimitiveInFunction.d.ts]
-declare function takeObject(o: object): void;
-declare function returnObject(): object;
-declare var nonPrimitive: object;
-declare var primitive: boolean;
-declare function returnError(): object;
+function takeObject(o: object): void;
+function returnObject(): object;
+var nonPrimitive: object;
+var primitive: boolean;
+function returnError(): object;

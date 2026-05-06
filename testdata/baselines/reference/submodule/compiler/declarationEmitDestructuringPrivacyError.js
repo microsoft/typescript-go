@@ -19,9 +19,27 @@ var m;
 
 
 //// [declarationEmitDestructuringPrivacyError.d.ts]
-declare namespace m {
+namespace m {
     class c {
     }
     export var x: number, y: c, z: number;
     export {};
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitDestructuringPrivacyError.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitDestructuringPrivacyError.d.ts (1 errors) ====
+    namespace m {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class c {
+        }
+        export var x: number, y: c, z: number;
+        export {};
+    }
+    

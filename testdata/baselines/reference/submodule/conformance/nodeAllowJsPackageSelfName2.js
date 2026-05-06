@@ -28,6 +28,6 @@ import { foo } from "js-self-name-import/foo.js";
 
 
 //// [foo.d.ts]
-export declare const foo = 1;
+export const foo = 1;
 //// [foo.d.ts]
 export {};

@@ -21,6 +21,6 @@ function f() {
 
 
 //// [indirectUniqueSymbolDeclarationEmit.d.ts]
-export declare const x: unique symbol;
-export declare const y: unique symbol;
-export declare function f(): typeof x | typeof y;
+export const x: unique symbol;
+export const y: unique symbol;
+export function f(): typeof x | typeof y;

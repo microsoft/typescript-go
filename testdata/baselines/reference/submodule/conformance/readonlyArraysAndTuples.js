@@ -75,5 +75,5 @@ type T30 = readonly string;
 type T31<T> = readonly T;
 type T32 = readonly (readonly string[]);
 type T33 = readonly Array<string>;
-declare function f1(ma: string[], ra: readonly string[], mt: [string, string], rt: readonly [string, string]): void;
-declare var v: readonly [number, number, ...number[]];
+function f1(ma: string[], ra: readonly string[], mt: [string, string], rt: readonly [string, string]): void;
+var v: readonly [number, number, ...number[]];

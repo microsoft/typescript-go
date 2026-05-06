@@ -1,0 +1,71 @@
+--- old.noInfer.js
++++ new.noInfer.js
+@@= skipped -146, +146 lines =@@
+         b: string;
+     }>]: K;
+ };
+-declare function foo1<T extends string>(a: T, b: NoInfer<T>): void;
+-declare function foo2<T extends string>(a: T, b: NoInfer<T>[]): void;
+-declare function foo3<T extends string>(a: T, b: NoInfer<T[]>): void;
+-declare function foo4<T extends string>(a: T, b: {
++function foo1<T extends string>(a: T, b: NoInfer<T>): void;
++function foo2<T extends string>(a: T, b: NoInfer<T>[]): void;
++function foo3<T extends string>(a: T, b: NoInfer<T[]>): void;
++function foo4<T extends string>(a: T, b: {
+     x: NoInfer<T>;
+ }): void;
+-declare function foo5<T extends string>(a: T, b: NoInfer<{
++function foo5<T extends string>(a: T, b: NoInfer<{
+     x: T;
+ }>): void;
+-declare class Animal {
++class Animal {
+     move(): void;
+ }
+-declare class Dog extends Animal {
++class Dog extends Animal {
+     woof(): void;
+ }
+-declare function doSomething<T>(value: T, getDefault: () => NoInfer<T>): void;
+-declare function assertEqual<T>(actual: T, expected: NoInfer<T>): boolean;
+-declare const g: {
++function doSomething<T>(value: T, getDefault: () => NoInfer<T>): void;
++function assertEqual<T>(actual: T, expected: NoInfer<T>): boolean;
++const g: {
+     x: number;
+     y: number;
+ };
+-declare function invoke<T, R>(func: (value: T) => R, value: NoInfer<T>): R;
+-declare function test(value: {
++function invoke<T, R>(func: (value: T) => R, value: NoInfer<T>): R;
++function test(value: {
+     x: number;
+ }): number;
+ type Component<Props> = {
+     props: Props;
+ };
+-declare function doWork<Props>(Component: Component<Props>, props: NoInfer<Props>): void;
+-declare const comp: Component<{
++function doWork<Props>(Component: Component<Props>, props: NoInfer<Props>): void;
++const comp: Component<{
+     foo: number;
+ }>;
+-declare function mutate<T>(callback: (a: NoInfer<T>, b: number) => T): T;
+-declare const mutate1: unknown;
+-declare class ExampleClass<T> {
++function mutate<T>(callback: (a: NoInfer<T>, b: number) => T): T;
++const mutate1: unknown;
++class ExampleClass<T> {
+ }
+-declare class OkClass<T> {
++class OkClass<T> {
+     private clazz;
+     private _value;
+     constructor(clazz: ExampleClass<T>, _value: NoInfer<T>);
+     get value(): T;
+ }
+-declare class OkClass2<T> {
++class OkClass2<T> {
+     private clazz;
+     _value: NoInfer<T>;
+     constructor(clazz: ExampleClass<T>, _value: NoInfer<T>);

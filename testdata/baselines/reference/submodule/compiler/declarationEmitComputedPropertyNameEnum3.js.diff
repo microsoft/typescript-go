@@ -1,0 +1,19 @@
+--- old.declarationEmitComputedPropertyNameEnum3.js
++++ new.declarationEmitComputedPropertyNameEnum3.js
+@@= skipped -17, +17 lines =@@
+
+
+ //// [type.d.ts]
+-export declare namespace Foo {
++export namespace Foo {
+     enum Enum {
+         A = "a",
+         B = "b"
+@@= skipped -10, +10 lines =@@
+     x?: {};
+ };
+ //// [index.d.ts]
+-export declare const foo: {
++export const foo: {
+     x?: {};
+ };

@@ -20,9 +20,27 @@ var x = e;
 
 
 //// [declFileEnumUsedAsValue.d.ts]
-declare enum e {
+enum e {
     a = 0,
     b = 1,
     c = 2
 }
-declare var x: typeof e;
+var x: typeof e;
+
+
+//// [DtsFileErrors]
+
+
+declFileEnumUsedAsValue.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileEnumUsedAsValue.d.ts (1 errors) ====
+    enum e {
+    ~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        a = 0,
+        b = 1,
+        c = 2
+    }
+    var x: typeof e;
+    

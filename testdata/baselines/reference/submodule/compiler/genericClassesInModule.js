@@ -25,10 +25,29 @@ var a = new Foo.B();
 
 
 //// [genericClassesInModule.d.ts]
-declare namespace Foo {
+namespace Foo {
     class B<T> {
     }
     class A {
     }
 }
-declare var a: Foo.B<Foo.A>;
+var a: Foo.B<Foo.A>;
+
+
+//// [DtsFileErrors]
+
+
+genericClassesInModule.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== genericClassesInModule.d.ts (1 errors) ====
+    namespace Foo {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class B<T> {
+        }
+        class A {
+        }
+    }
+    var a: Foo.B<Foo.A>;
+    

@@ -79,28 +79,28 @@ function f7(a) {}
  * @param {4} b
  * @return {string}
  */
-declare function f1(/** @type {5}*/ a: 5, b: 4): string;
+function f1(/** @type {5}*/ a: 5, b: 4): string;
 /**
  * @type {(a: 1, b: 2) => number}
  * @param {3} a
  * @param {4} b
  * @return {string}
  */
-declare function f2(a: 1, b: 2): number;
+function f2(a: 1, b: 2): number;
 /**
  * @param {3} a
  * @type {(a: 1, b: 2) => number}
  * @param {4} b
  * @return {string}
  */
-declare function f3(a: 3, b: 4): string;
+function f3(a: 3, b: 4): string;
 /**
  * @return {string}
  * @type {(a: 1, b: 2) => number}
  * @param {3} a
  * @param {4} b
  */
-declare function f4(a: 3, b: 4): string;
+function f4(a: 3, b: 4): string;
 /**
  * @type {(a: 1, b: 2) => number}
  * @template T
@@ -109,7 +109,7 @@ declare function f4(a: 3, b: 4): string;
  * @param {U} b
  * @return {string}
  */
-declare function f5(a: 1, b: 2): number;
+function f5(a: 1, b: 2): number;
 /**
  * @template T
  * @type {(a: 1, b: 2) => number}
@@ -118,9 +118,72 @@ declare function f5(a: 1, b: 2): number;
  * @param {U} b
  * @return {string}
  */
-declare function f6<T, U>(a: T, b: U): string;
+function f6<T, U>(a: T, b: U): string;
 /**
  * @param {1} a
  * @param {2} a
  */
-declare function f7(a: 1): void;
+function f7(a: 1): void;
+
+
+//// [DtsFileErrors]
+
+
+/a.d.ts(7,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /a.d.ts (1 errors) ====
+    /**
+     * @type {(a: 1, b: 2) => number}
+     * @param {3} a
+     * @param {4} b
+     * @return {string}
+     */
+    function f1(/** @type {5}*/ a: 5, b: 4): string;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    /**
+     * @type {(a: 1, b: 2) => number}
+     * @param {3} a
+     * @param {4} b
+     * @return {string}
+     */
+    function f2(a: 1, b: 2): number;
+    /**
+     * @param {3} a
+     * @type {(a: 1, b: 2) => number}
+     * @param {4} b
+     * @return {string}
+     */
+    function f3(a: 3, b: 4): string;
+    /**
+     * @return {string}
+     * @type {(a: 1, b: 2) => number}
+     * @param {3} a
+     * @param {4} b
+     */
+    function f4(a: 3, b: 4): string;
+    /**
+     * @type {(a: 1, b: 2) => number}
+     * @template T
+     * @template U
+     * @param {T} a
+     * @param {U} b
+     * @return {string}
+     */
+    function f5(a: 1, b: 2): number;
+    /**
+     * @template T
+     * @type {(a: 1, b: 2) => number}
+     * @template U
+     * @param {T} a
+     * @param {U} b
+     * @return {string}
+     */
+    function f6<T, U>(a: T, b: U): string;
+    /**
+     * @param {1} a
+     * @param {2} a
+     */
+    function f7(a: 1): void;
+    

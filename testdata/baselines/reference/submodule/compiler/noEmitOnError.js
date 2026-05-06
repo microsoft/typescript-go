@@ -8,7 +8,7 @@ var x: number = "";
 
 !!!! File noEmitOnError.d.ts missing from original emit, but present in noCheck emit
 //// [noEmitOnError.d.ts]
-declare var x: number;
+var x: number;
 
 
 !!!! File noEmitOnError.js missing from original emit, but present in noCheck emit

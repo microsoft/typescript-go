@@ -27,9 +27,9 @@ const b = new a_1.Bar();
 
 
 //// [a.d.ts]
-declare class Foo {
+class Foo {
 }
-declare class Bar {
+class Bar {
 }
 export = Foo;
 export { Bar };

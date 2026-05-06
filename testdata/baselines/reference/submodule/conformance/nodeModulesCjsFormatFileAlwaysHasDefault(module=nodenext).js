@@ -31,6 +31,6 @@ mod;
 
 
 //// [index.d.ts]
-export declare const a = 1;
+export const a = 1;
 //// [index.d.ts]
 export {};

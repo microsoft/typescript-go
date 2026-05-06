@@ -1,12 +1,10 @@
 --- old.lateBoundClassMemberAssignmentJS.js
 +++ new.lateBoundClassMemberAssignmentJS.js
-@@= skipped -15, +15 lines =@@
-
+@@= skipped -16, +16 lines =@@
 
  //// [lateBoundClassMemberAssignmentJS.d.ts]
--export class MyClass {
+ export class MyClass {
 -    [_sym]: string;
-+export declare class MyClass {
 +    constructor();
      method(): void;
  }

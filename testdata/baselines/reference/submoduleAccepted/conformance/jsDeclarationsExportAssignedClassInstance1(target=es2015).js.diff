@@ -6,7 +6,24 @@
  //// [index.d.ts]
 -declare const _exports: Foo;
 -export = _exports;
- declare class Foo {
+-declare class Foo {
++class Foo {
  }
-+declare const _default: Foo;
++const _default: Foo;
 +export = _default;
++
++
++//// [DtsFileErrors]
++
++
++out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== out/index.d.ts (1 errors) ====
++    class Foo {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    const _default: Foo;
++    export = _default;
++    

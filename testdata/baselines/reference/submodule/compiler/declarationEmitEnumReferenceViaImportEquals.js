@@ -66,7 +66,7 @@ new test_1.Test().print();
 export interface Translation {
     translationKey: Translation.TranslationKeyEnum;
 }
-export declare namespace Translation {
+export namespace Translation {
     type TranslationKeyEnum = 'translation1' | 'translation2';
     const TranslationKeyEnum: {
         Translation1: TranslationKeyEnum;
@@ -76,7 +76,7 @@ export declare namespace Translation {
 //// [test.d.ts]
 import { Translation } from "./translation";
 import TranslationKeyEnum = Translation.TranslationKeyEnum;
-export declare class Test {
+export class Test {
     TranslationKeyEnum: {
         Translation1: TranslationKeyEnum;
         Translation2: TranslationKeyEnum;

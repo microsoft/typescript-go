@@ -51,7 +51,7 @@ var SomeOther;
 
 
 //// [internal.d.ts]
-declare namespace My.Internal {
+namespace My.Internal {
     function getThing(): void;
     const enum WhichThing {
         A = 0,
@@ -61,7 +61,7 @@ declare namespace My.Internal {
 }
 //// [usage.d.ts]
 /// <reference path="internal.d.ts" preserve="true" />
-declare namespace SomeOther.Thing {
+namespace SomeOther.Thing {
     class Foo {
         private _which;
         constructor();

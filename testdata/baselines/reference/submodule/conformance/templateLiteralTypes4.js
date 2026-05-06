@@ -346,7 +346,7 @@ type TNull0 = "null" extends `${infer T extends null}` ? T : never;
 type TNull1 = "abcd" extends `${infer T extends null}` ? T : never;
 type TUndefined0 = "undefined" extends `${infer T extends undefined}` ? T : never;
 type TUndefined1 = "abcd" extends `${infer T extends undefined}` ? T : never;
-declare const enum StringLiteralEnum {
+const enum StringLiteralEnum {
     Zero = "0",
     True = "true",
     False = "false",
@@ -354,12 +354,12 @@ declare const enum StringLiteralEnum {
     Null = "null"
 }
 type TStringLiteralEnum0 = "0" extends `${infer T extends StringLiteralEnum}` ? T : never;
-declare const enum NumberLiteralEnum {
+const enum NumberLiteralEnum {
     Zero = 0,
     One = 1
 }
 type TNumberLiteralEnum0 = "0" extends `${infer T extends NumberLiteralEnum}` ? T : never;
-declare const enum NonLiteralEnum {
+const enum NonLiteralEnum {
     Zero = 0,
     One = 1
 }
@@ -472,8 +472,8 @@ type Point = TypedObject<[
         type: "f64";
     }
 ]>;
-declare const p: Point;
-declare function f1<T extends string | number>(s: `**${T}**`): T;
-declare function f2<T extends number>(s: `**${T}**`): T;
-declare function f3<T extends bigint>(s: `**${T}**`): T;
-declare function f4<T extends boolean>(s: `**${T}**`): T;
+const p: Point;
+function f1<T extends string | number>(s: `**${T}**`): T;
+function f2<T extends number>(s: `**${T}**`): T;
+function f3<T extends bigint>(s: `**${T}**`): T;
+function f4<T extends boolean>(s: `**${T}**`): T;

@@ -118,8 +118,8 @@ _11_1.default.b;
 
 
 //// [0.d.ts]
-export declare const a = 1;
-export declare const b = 2;
+export const a = 1;
+export const b = 2;
 //// [1.d.ts]
 export * as default from './0';
 //// [11.d.ts]

@@ -11,5 +11,19 @@ class ExtendsNull extends null {
 
 
 //// [declFileClassExtendsNull.d.ts]
-declare class ExtendsNull extends null {
+class ExtendsNull extends null {
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileClassExtendsNull.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileClassExtendsNull.d.ts (1 errors) ====
+    class ExtendsNull extends null {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    }
+    

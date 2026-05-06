@@ -42,5 +42,20 @@ y = x;
 
 //// [stringLiteralTypesInUnionTypes03.d.ts]
 type T = number | "foo" | "bar";
-declare var x: "foo" | "bar" | number;
-declare var y: T;
+var x: "foo" | "bar" | number;
+var y: T;
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesInUnionTypes03.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesInUnionTypes03.d.ts (1 errors) ====
+    type T = number | "foo" | "bar";
+    var x: "foo" | "bar" | number;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    var y: T;
+    

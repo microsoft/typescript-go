@@ -6,6 +6,7 @@
  /** @import * as foo from './0' with { type: "json" } */
 +import type { I } from './0';
  /** @param {I} a */
- declare function f(a: I): void;
+-declare function f(a: I): void;
 -import type { I } from './0' with { type: "json" };
 -import type * as foo from './0';
++function f(a: I): void;

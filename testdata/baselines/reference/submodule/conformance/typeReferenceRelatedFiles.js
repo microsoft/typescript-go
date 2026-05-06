@@ -30,4 +30,4 @@ function f() {
 
 //// [main.d.ts]
 import { FSWatcher } from "fs";
-export declare function f(): FSWatcher;
+export function f(): FSWatcher;

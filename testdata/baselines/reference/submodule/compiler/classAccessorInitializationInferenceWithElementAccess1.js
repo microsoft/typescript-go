@@ -34,7 +34,7 @@ export class Cls {
 
 
 //// [classAccessorInitializationInferenceWithElementAccess1.d.ts]
-export declare class Cls {
+export class Cls {
     accessor x: number[];
     accessor y: {
         seed: number;

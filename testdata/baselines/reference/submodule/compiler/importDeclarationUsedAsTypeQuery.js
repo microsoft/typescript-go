@@ -25,9 +25,9 @@ exports.x = void 0;
 
 
 //// [importDeclarationUsedAsTypeQuery_require.d.ts]
-export declare class B {
+export class B {
     id: number;
 }
 //// [importDeclarationUsedAsTypeQuery_1.d.ts]
 import a = require('./importDeclarationUsedAsTypeQuery_require');
-export declare var x: typeof a;
+export var x: typeof a;

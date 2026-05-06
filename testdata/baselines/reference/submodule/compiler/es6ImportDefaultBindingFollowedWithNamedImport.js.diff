@@ -1,0 +1,37 @@
+--- old.es6ImportDefaultBindingFollowedWithNamedImport.js
++++ new.es6ImportDefaultBindingFollowedWithNamedImport.js
+@@= skipped -45, +45 lines =@@
+
+
+ //// [es6ImportDefaultBindingFollowedWithNamedImport_0.d.ts]
+-export declare var a: number;
+-export declare var x: number;
+-export declare var m: number;
+-declare const _default: {};
++export var a: number;
++export var x: number;
++export var m: number;
++const _default: {};
+ export default _default;
+ //// [es6ImportDefaultBindingFollowedWithNamedImport_1.d.ts]
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++es6ImportDefaultBindingFollowedWithNamedImport_0.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== es6ImportDefaultBindingFollowedWithNamedImport_0.d.ts (1 errors) ====
++    export var a: number;
++    export var x: number;
++    export var m: number;
++    const _default: {};
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    export default _default;
++    
++==== es6ImportDefaultBindingFollowedWithNamedImport_1.d.ts (0 errors) ====
++    export {};
++    

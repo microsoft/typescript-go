@@ -39,17 +39,17 @@ var a;
 
 
 //// [exportDeclarationInInternalModule.d.ts]
-declare class Bbb {
+class Bbb {
 }
-declare class Aaa extends Bbb {
+class Aaa extends Bbb {
 }
-declare namespace Aaa {
+namespace Aaa {
     class SomeType {
     }
 }
-declare namespace Bbb {
+namespace Bbb {
     export class SomeType {
     }
     export * from Aaa;
 }
-declare var a: Bbb.SomeType;
+var a: Bbb.SomeType;

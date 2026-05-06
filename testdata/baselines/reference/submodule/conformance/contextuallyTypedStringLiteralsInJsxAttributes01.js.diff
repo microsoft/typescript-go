@@ -1,0 +1,19 @@
+--- old.contextuallyTypedStringLiteralsInJsxAttributes01.js
++++ new.contextuallyTypedStringLiteralsInJsxAttributes01.js
+@@= skipped -27, +27 lines =@@
+
+
+ //// [contextuallyTypedStringLiteralsInJsxAttributes01.d.ts]
+-declare namespace JSX {
++namespace JSX {
+     interface IntrinsicElements {
+         span: {};
+     }
+@@= skipped -8, +8 lines =@@
+         something?: any;
+     }
+ }
+-declare const FooComponent: (props: {
++const FooComponent: (props: {
+     foo: "A" | "B" | "C";
+ }) => JSX.Element;

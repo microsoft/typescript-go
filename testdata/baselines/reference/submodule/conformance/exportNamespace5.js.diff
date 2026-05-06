@@ -1,0 +1,19 @@
+--- old.exportNamespace5.js
++++ new.exportNamespace5.js
+@@= skipped -78, +78 lines =@@
+
+
+ //// [a.d.ts]
+-export declare class A {
+-}
+-export declare class B {
+-}
+-export declare class X {
++export class A {
++}
++export class B {
++}
++export class X {
+ }
+ //// [b.d.ts]
+ export type * from "./a";

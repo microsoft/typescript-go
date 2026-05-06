@@ -142,39 +142,39 @@ var schema;
 
 
 //// [isDeclarationVisibleNodeKinds.d.ts]
-declare namespace schema {
+namespace schema {
     function createValidator1(schema: any): <T>(data: T) => T;
 }
-declare namespace schema {
+namespace schema {
     function createValidator2(schema: any): new <T>(data: T) => T;
 }
-declare namespace schema {
+namespace schema {
     function createValidator3(schema: any): number | {
         new <T>(data: T): T;
     };
 }
-declare namespace schema {
+namespace schema {
     function createValidator4(schema: any): {
         new <T>(data: T): T;
     }[];
 }
-declare namespace schema {
+namespace schema {
     function createValidator5(schema: any): {
         new <T>(data: T): T;
     };
 }
-declare namespace schema {
+namespace schema {
     function createValidator6(schema: any): [new <T>(data: T) => T, number];
 }
-declare namespace schema {
+namespace schema {
     function createValidator7(schema: any): (new <T>(data: T) => T)[];
 }
-declare namespace schema {
+namespace schema {
     function createValidator8(schema: any): Array<{
         <T>(data: T): T;
     }>;
 }
-declare namespace schema {
+namespace schema {
     class T {
         get createValidator9(): <T>(data: T) => T;
         set createValidator10(v: <T>(data: T) => T);

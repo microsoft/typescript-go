@@ -8,6 +8,5 @@
  /**
   * @param {Foo} a
   */
--export function foo(a: Foo): void;
+ export function foo(a: Foo): void;
 -import type { Foo } from "./a";
-+export declare function foo(a: Foo): void;

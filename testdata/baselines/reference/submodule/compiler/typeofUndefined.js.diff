@@ -1,0 +1,10 @@
+--- old.typeofUndefined.js
++++ new.typeofUndefined.js
+@@= skipped -10, +10 lines =@@
+
+
+ //// [typeofUndefined.d.ts]
+-declare var x: typeof undefined;
+-declare var x: any;
++var x: typeof undefined;
++var x: any;

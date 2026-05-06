@@ -61,7 +61,7 @@ var m;
 
 
 //// [declFileTypeAnnotationVisibilityErrorTypeLiteral.d.ts]
-declare namespace m {
+namespace m {
     class private1 {
     }
     namespace m2 {

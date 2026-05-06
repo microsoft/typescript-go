@@ -45,7 +45,7 @@ interface RegExp {
 interface IArguments {
 }
 //// [file1.d.ts]
-export declare interface HTMLElement {
+export interface HTMLElement {
     field: string;
 }
-export declare const elem: HTMLElement;
+export const elem: HTMLElement;

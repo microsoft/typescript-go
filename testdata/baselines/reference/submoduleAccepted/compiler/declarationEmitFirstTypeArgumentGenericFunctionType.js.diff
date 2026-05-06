@@ -1,23 +1,60 @@
 --- old.declarationEmitFirstTypeArgumentGenericFunctionType.js
 +++ new.declarationEmitFirstTypeArgumentGenericFunctionType.js
-@@= skipped -53, +53 lines =@@
+@@= skipped -51, +51 lines =@@
+
+
  //// [declarationEmitFirstTypeArgumentGenericFunctionType.d.ts]
- declare class X<A> {
- }
+-declare class X<A> {
+-}
 -declare var prop11: X<(<Tany>() => Tany)>;
-+declare var prop11: X<<Tany>() => Tany>;
- declare var prop12: X<(<Tany>() => Tany)>;
+-declare var prop12: X<(<Tany>() => Tany)>;
 -declare function f1(): X<(<Tany>() => Tany)>;
 -declare function f2(): X<(<Tany>() => Tany)>;
 -declare function f3(): X<(<Tany>() => Tany)>;
-+declare function f1(): X<<Tany>() => Tany>;
-+declare function f2(): X<<Tany>() => Tany>;
-+declare function f3(): X<<Tany>() => Tany>;
- declare function f4(): X<(<Tany>() => Tany)>;
- declare class Y<A, B> {
- }
- declare var prop2: Y<string[], <Tany>() => Tany>;
- declare var prop2: Y<string[], <Tany>() => Tany>;
+-declare function f4(): X<(<Tany>() => Tany)>;
+-declare class Y<A, B> {
+-}
+-declare var prop2: Y<string[], <Tany>() => Tany>;
+-declare var prop2: Y<string[], <Tany>() => Tany>;
 -declare var prop3: Y<(<Tany>() => Tany), <Tany>() => Tany>;
-+declare var prop3: Y<<Tany>() => Tany, <Tany>() => Tany>;
- declare var prop4: Y<(<Tany>() => Tany), <Tany>() => Tany>;
+-declare var prop4: Y<(<Tany>() => Tany), <Tany>() => Tany>;
++class X<A> {
++}
++var prop11: X<<Tany>() => Tany>;
++var prop12: X<(<Tany>() => Tany)>;
++function f1(): X<<Tany>() => Tany>;
++function f2(): X<<Tany>() => Tany>;
++function f3(): X<<Tany>() => Tany>;
++function f4(): X<(<Tany>() => Tany)>;
++class Y<A, B> {
++}
++var prop2: Y<string[], <Tany>() => Tany>;
++var prop2: Y<string[], <Tany>() => Tany>;
++var prop3: Y<<Tany>() => Tany, <Tany>() => Tany>;
++var prop4: Y<(<Tany>() => Tany), <Tany>() => Tany>;
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitFirstTypeArgumentGenericFunctionType.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitFirstTypeArgumentGenericFunctionType.d.ts (1 errors) ====
++    class X<A> {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    var prop11: X<<Tany>() => Tany>;
++    var prop12: X<(<Tany>() => Tany)>;
++    function f1(): X<<Tany>() => Tany>;
++    function f2(): X<<Tany>() => Tany>;
++    function f3(): X<<Tany>() => Tany>;
++    function f4(): X<(<Tany>() => Tany)>;
++    class Y<A, B> {
++    }
++    var prop2: Y<string[], <Tany>() => Tany>;
++    var prop2: Y<string[], <Tany>() => Tany>;
++    var prop3: Y<<Tany>() => Tany, <Tany>() => Tany>;
++    var prop4: Y<(<Tany>() => Tany), <Tany>() => Tany>;
++    

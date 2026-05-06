@@ -17,11 +17,11 @@ module.exports = Foo;
 
 
 //// [privacyCheckExportAssignmentOnExportedGenericInterface1.d.ts]
-declare namespace Foo {
+namespace Foo {
     interface A<T> {
     }
 }
 interface Foo<T> {
 }
-declare var Foo: new () => Foo.A<Foo<string>>;
+var Foo: new () => Foo.A<Foo<string>>;
 export = Foo;

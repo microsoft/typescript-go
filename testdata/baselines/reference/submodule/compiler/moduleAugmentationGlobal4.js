@@ -30,14 +30,14 @@ require("./f2");
 
 
 //// [f1.d.ts]
-declare global {
+global {
     interface Something {
         x: any;
     }
 }
 export {};
 //// [f2.d.ts]
-declare global {
+global {
     interface Something {
         y: any;
     }
@@ -46,3 +46,36 @@ export {};
 //// [f3.d.ts]
 import "./f1";
 import "./f2";
+
+
+//// [DtsFileErrors]
+
+
+f1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+f2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== f1.d.ts (1 errors) ====
+    global {
+    ~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Something {
+            x: any;
+        }
+    }
+    export {};
+    
+==== f2.d.ts (1 errors) ====
+    global {
+    ~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Something {
+            y: any;
+        }
+    }
+    export {};
+    
+==== f3.d.ts (0 errors) ====
+    import "./f1";
+    import "./f2";
+    

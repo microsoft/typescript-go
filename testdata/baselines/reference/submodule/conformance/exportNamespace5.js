@@ -79,11 +79,11 @@ let ___ = new d_1.X(); // Ok
 
 
 //// [a.d.ts]
-export declare class A {
+export class A {
 }
-export declare class B {
+export class B {
 }
-export declare class X {
+export class X {
 }
 //// [b.d.ts]
 export type * from "./a";

@@ -29,7 +29,7 @@ A;
 
 
 //// [a.d.ts]
-export declare class A {
+export class A {
 }
 //// [b.d.ts]
 export type * from './a';

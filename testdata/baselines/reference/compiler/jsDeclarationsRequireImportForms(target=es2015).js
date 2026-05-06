@@ -42,17 +42,47 @@ module.exports = Container;
 
 
 //// [obj.d.ts]
-declare class Obj {
+class Obj {
     x: number;
     constructor();
 }
 export { Obj };
 //// [index.d.ts]
 import { Obj, Obj as Other } from "./obj";
-declare class Container {
+class Container {
     usage: Obj;
     /** @type {Other} */
     usage2: Other;
     constructor();
 }
 export = Container;
+
+
+//// [DtsFileErrors]
+
+
+out/index.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+out/obj.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/index.d.ts (1 errors) ====
+    import { Obj, Obj as Other } from "./obj";
+    class Container {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        usage: Obj;
+        /** @type {Other} */
+        usage2: Other;
+        constructor();
+    }
+    export = Container;
+    
+==== out/obj.d.ts (1 errors) ====
+    class Obj {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        x: number;
+        constructor();
+    }
+    export { Obj };
+    

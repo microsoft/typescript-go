@@ -1,0 +1,41 @@
+--- old.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithOutDir.js
++++ new.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithOutDir.js
+@@= skipped -28, +28 lines =@@
+
+
+ //// [a.d.ts]
+-declare class c {
++class c {
+ }
+ //// [c.d.ts]
+-declare function bar(): void;
++function bar(): void;
+ //// [b.d.ts]
+-declare function foo(): void;
++function foo(): void;
++
++
++//// [DtsFileErrors]
++
++
++outDir/a.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++outDir/b.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++outDir/c.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== outDir/a.d.ts (1 errors) ====
++    class c {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    
++==== outDir/b.d.ts (1 errors) ====
++    function foo(): void;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    
++==== outDir/c.d.ts (1 errors) ====
++    function bar(): void;
++    ~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    

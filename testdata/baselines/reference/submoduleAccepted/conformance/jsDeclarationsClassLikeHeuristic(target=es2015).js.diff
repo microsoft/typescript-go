@@ -8,4 +8,4 @@
 -    private constructor();
 -    b: {};
 -}
-+declare let A: any;
++let A: any;

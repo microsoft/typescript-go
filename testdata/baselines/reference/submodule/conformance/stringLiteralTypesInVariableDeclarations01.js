@@ -38,11 +38,11 @@ g = "bar";
 
 
 //// [stringLiteralTypesInVariableDeclarations01.d.ts]
-declare let a: "";
-declare var b: "foo";
-declare let c: "bar";
-declare const d: "baz";
-declare let e: "";
-declare var f: "foo";
-declare let g: "bar";
-declare const h: "baz";
+let a: "";
+var b: "foo";
+let c: "bar";
+const d: "baz";
+let e: "";
+var f: "foo";
+let g: "bar";
+const h: "baz";

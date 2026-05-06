@@ -28,9 +28,9 @@ exports.g = a_1.f;
 export interface A {
     a: number;
 }
-export declare const f: (x: A) => A;
+export const f: (x: A) => A;
 //// [b.d.ts]
 export interface A {
     other: number;
 }
-export declare const g: (x: import("./a").A) => import("./a").A;
+export const g: (x: import("./a").A) => import("./a").A;

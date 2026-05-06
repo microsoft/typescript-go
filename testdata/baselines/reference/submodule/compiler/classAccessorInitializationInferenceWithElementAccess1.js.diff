@@ -1,0 +1,11 @@
+--- old.classAccessorInitializationInferenceWithElementAccess1.js
++++ new.classAccessorInitializationInferenceWithElementAccess1.js
+@@= skipped -33, +33 lines =@@
+
+
+ //// [classAccessorInitializationInferenceWithElementAccess1.d.ts]
+-export declare class Cls {
++export class Cls {
+     accessor x: number[];
+     accessor y: {
+         seed: number;

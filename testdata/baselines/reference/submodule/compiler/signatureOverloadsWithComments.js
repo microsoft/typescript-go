@@ -29,7 +29,7 @@ function Foo() {
 /**
  * Docs
  */
-declare function Foo(): {
+function Foo(): {
     new (): {
         /**
          * comment 1
@@ -43,3 +43,32 @@ declare function Foo(): {
         foo(): string;
     };
 };
+
+
+//// [DtsFileErrors]
+
+
+signatureOverloadsWithComments.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== signatureOverloadsWithComments.d.ts (1 errors) ====
+    /**
+     * Docs
+     */
+    function Foo(): {
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        new (): {
+            /**
+             * comment 1
+             */
+            foo(bar: string): void;
+            /**
+             * @deprecated This signature is deprecated
+             *
+             * comment 2
+             */
+            foo(): string;
+        };
+    };
+    

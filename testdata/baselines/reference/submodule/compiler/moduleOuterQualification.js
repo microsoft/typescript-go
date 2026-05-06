@@ -15,7 +15,7 @@ declare namespace outer {
 
 
 //// [moduleOuterQualification.d.ts]
-declare namespace outer {
+namespace outer {
     interface Beta {
     }
     namespace inner {
@@ -23,3 +23,23 @@ declare namespace outer {
         }
     }
 }
+
+
+//// [DtsFileErrors]
+
+
+moduleOuterQualification.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== moduleOuterQualification.d.ts (1 errors) ====
+    namespace outer {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        interface Beta {
+        }
+        namespace inner {
+            interface Beta extends outer.Beta {
+            }
+        }
+    }
+    

@@ -1,0 +1,8 @@
+--- old.isolatedModulesDeclaration.js
++++ new.isolatedModulesDeclaration.js
+@@= skipped -7, +7 lines =@@
+
+
+ //// [file1.d.ts]
+-export declare var x: any;
++export var x: any;

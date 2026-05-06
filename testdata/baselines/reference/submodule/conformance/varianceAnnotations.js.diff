@@ -1,0 +1,94 @@
+--- old.varianceAnnotations.js
++++ new.varianceAnnotations.js
+@@= skipped -217, +217 lines =@@
+ type Covariant<out T> = {
+     x: T;
+ };
+-declare let super_covariant: Covariant<unknown>;
+-declare let sub_covariant: Covariant<string>;
++let super_covariant: Covariant<unknown>;
++let sub_covariant: Covariant<string>;
+ type Contravariant<in T> = {
+     f: (x: T) => void;
+ };
+-declare let super_contravariant: Contravariant<unknown>;
+-declare let sub_contravariant: Contravariant<string>;
++let super_contravariant: Contravariant<unknown>;
++let sub_contravariant: Contravariant<string>;
+ type Invariant<in out T> = {
+     f: (x: T) => T;
+ };
+-declare let super_invariant: Invariant<unknown>;
+-declare let sub_invariant: Invariant<string>;
++let super_invariant: Invariant<unknown>;
++let sub_invariant: Invariant<string>;
+ type T10<out T> = T;
+ type T11<in T> = keyof T;
+ type T12<out T, out K extends keyof T> = T[K];
+@@= skipped -57, +57 lines =@@
+ type T21<in out in T> = T;
+ type T22<in out out T> = T;
+ type T23<out in T> = T;
+-declare function f1<in T>(x: T): void;
+-declare function f2<out T>(): T;
+-declare class C {
++function f1<in T>(x: T): void;
++function f2<out T>(): T;
++class C {
+     in a: number;
+     out b: number;
+ }
+@@= skipped -10, +10 lines =@@
+ }
+ interface Baz<in T> {
+ }
+-declare let baz1: Baz<unknown>;
+-declare let baz2: Baz<string>;
++let baz1: Baz<unknown>;
++let baz2: Baz<string>;
+ interface Parent<out A> {
+     child: Child<A> | null;
+     parent: Parent<A> | null;
+@@= skipped -10, +10 lines =@@
+     readonly a: A;
+     readonly b: B;
+ }
+-declare function fn<A>(inp: Child<A>): void;
+-declare const pu: Parent<unknown>;
+-declare const notString: Parent<string>;
+-declare class StateNode<TContext, in out TEvent extends {
++function fn<A>(inp: Child<A>): void;
++const pu: Parent<unknown>;
++const notString: Parent<string>;
++class StateNode<TContext, in out TEvent extends {
+     type: string;
+ }> {
+     _storedEvent: TEvent;
+@@= skipped -15, +15 lines =@@
+ }> {
+     exec: (meta: StateNode<any, TEvent>) => void;
+ }
+-declare function createMachine<TEvent extends {
++function createMachine<TEvent extends {
+     type: string;
+ }>(action: ActionObject<TEvent>): StateNode<any, any>;
+-declare function interpret<TContext>(machine: StateNode<TContext, any>): void;
+-declare const machine: StateNode<any, any>;
+-declare const qq: ActionObject<{
++function interpret<TContext>(machine: StateNode<TContext, any>): void;
++const machine: StateNode<any, any>;
++const qq: ActionObject<{
+     type: "PLAY";
+     value: number;
+ }>;
+-declare let Anon: {
++let Anon: {
+     new <out T>(): {
+         foo(): InstanceType<(typeof Anon<T>)>;
+     };
+ };
+-declare let OuterC: {
++let OuterC: {
+     new <out T>(): {
+         foo(): /*elided*/ any;
+     };

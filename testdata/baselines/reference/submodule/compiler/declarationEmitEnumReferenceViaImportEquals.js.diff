@@ -1,0 +1,20 @@
+--- old.declarationEmitEnumReferenceViaImportEquals.js
++++ new.declarationEmitEnumReferenceViaImportEquals.js
+@@= skipped -65, +65 lines =@@
+ export interface Translation {
+     translationKey: Translation.TranslationKeyEnum;
+ }
+-export declare namespace Translation {
++export namespace Translation {
+     type TranslationKeyEnum = 'translation1' | 'translation2';
+     const TranslationKeyEnum: {
+         Translation1: TranslationKeyEnum;
+@@= skipped -10, +10 lines =@@
+ //// [test.d.ts]
+ import { Translation } from "./translation";
+ import TranslationKeyEnum = Translation.TranslationKeyEnum;
+-export declare class Test {
++export class Test {
+     TranslationKeyEnum: {
+         Translation1: TranslationKeyEnum;
+         Translation2: TranslationKeyEnum;

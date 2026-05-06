@@ -31,8 +31,8 @@ export {};
 
 
 //// [index.d.ts]
-declare const a: {};
+const a: {};
 export = a;
 //// [index.d.ts]
-declare const a: {};
+const a: {};
 export = a;

@@ -1,0 +1,41 @@
+--- old.declFileImportedTypeUseInTypeArgPosition.js
++++ new.declFileImportedTypeUseInTypeArgPosition.js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [declFileImportedTypeUseInTypeArgPosition.d.ts]
+-declare class List<T> {
++class List<T> {
+ }
+-declare module 'mod1' {
++module 'mod1' {
+     class Foo {
+     }
+ }
+-declare module 'moo' {
++module 'moo' {
+     import x = require('mod1');
+     var p: List<x.Foo>;
+ }
++
++
++//// [DtsFileErrors]
++
++
++declFileImportedTypeUseInTypeArgPosition.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declFileImportedTypeUseInTypeArgPosition.d.ts (1 errors) ====
++    class List<T> {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    module 'mod1' {
++        class Foo {
++        }
++    }
++    module 'moo' {
++        import x = require('mod1');
++        var p: List<x.Foo>;
++    }
++    

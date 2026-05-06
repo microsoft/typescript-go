@@ -12,11 +12,11 @@
 -
 -!!!! File out/exporter.d.ts missing from original emit, but present in noCheck emit
  //// [exporter.d.ts]
--export default validate;
- declare function validate(): void;
-+export default validate;
++function validate(): void;
+ export default validate;
+-declare function validate(): void;
 +//// [index.d.ts]
 +import m = require("./exporter");
-+declare const _default: typeof m.default;
++const _default: typeof m.default;
 +export = _default;
-+export declare var memberName: "thing";
++export var memberName: "thing";

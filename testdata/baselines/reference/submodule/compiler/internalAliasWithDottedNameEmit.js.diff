@@ -1,0 +1,30 @@
+--- old.internalAliasWithDottedNameEmit.js
++++ new.internalAliasWithDottedNameEmit.js
+@@= skipped -22, +22 lines =@@
+
+
+ //// [internalAliasWithDottedNameEmit.d.ts]
+-declare namespace a.b.c {
++namespace a.b.c {
+     var d: any;
+ }
+-declare namespace a.e.f {
++namespace a.e.f {
+ }
++
++
++//// [DtsFileErrors]
++
++
++internalAliasWithDottedNameEmit.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== internalAliasWithDottedNameEmit.d.ts (1 errors) ====
++    namespace a.b.c {
++    ~~~~~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        var d: any;
++    }
++    namespace a.e.f {
++    }
++    

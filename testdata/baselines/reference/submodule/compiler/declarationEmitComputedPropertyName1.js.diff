@@ -1,0 +1,11 @@
+--- old.declarationEmitComputedPropertyName1.js
++++ new.declarationEmitComputedPropertyName1.js
+@@= skipped -28, +28 lines =@@
+
+
+ //// [declarationEmitComputedPropertyName1.d.ts]
+-export declare const c: {
++export const c: {
+     data: {
+         ["a_b_c"]: string;
+         ["sss"]: string;

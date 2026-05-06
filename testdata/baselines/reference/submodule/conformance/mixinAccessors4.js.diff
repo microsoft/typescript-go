@@ -1,0 +1,56 @@
+--- old.mixinAccessors4.js
++++ new.mixinAccessors4.js
+@@= skipped -48, +48 lines =@@
+
+
+ //// [mixinAccessors4.d.ts]
+-declare class A {
++class A {
+     constructor(...args: any[]);
+     get myName(): string;
+ }
+-declare function Mixin<T extends typeof A>(Super: T): {
++function Mixin<T extends typeof A>(Super: T): {
+     new (...args: any[]): {
+         get myName(): string;
+     };
+ } & T;
+-declare const C_base: {
++const C_base: {
+     new (...args: any[]): {
+         get myName(): string;
+     };
+ } & typeof A;
+-declare class C extends C_base {
++class C extends C_base {
+     get myName(): string;
+ }
++
++
++//// [DtsFileErrors]
++
++
++mixinAccessors4.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== mixinAccessors4.d.ts (1 errors) ====
++    class A {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        constructor(...args: any[]);
++        get myName(): string;
++    }
++    function Mixin<T extends typeof A>(Super: T): {
++        new (...args: any[]): {
++            get myName(): string;
++        };
++    } & T;
++    const C_base: {
++        new (...args: any[]): {
++            get myName(): string;
++        };
++    } & typeof A;
++    class C extends C_base {
++        get myName(): string;
++    }
++    

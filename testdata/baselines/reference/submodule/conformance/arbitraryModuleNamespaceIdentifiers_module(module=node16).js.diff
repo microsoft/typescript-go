@@ -1,0 +1,11 @@
+--- old.arbitraryModuleNamespaceIdentifiers_module(module=node16).js
++++ new.arbitraryModuleNamespaceIdentifiers_module(module=node16).js
+@@= skipped -92, +92 lines =@@
+
+
+ //// [arbitraryModuleNamespaceIdentifiers_module.d.ts]
+-declare const someValue = "someValue";
++const someValue = "someValue";
+ type someType = "someType";
+ export { someValue as "<X>" };
+ export { "<X>" as "<Y>" } from "./arbitraryModuleNamespaceIdentifiers_module";

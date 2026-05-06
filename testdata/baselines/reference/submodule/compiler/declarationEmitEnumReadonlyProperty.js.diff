@@ -1,0 +1,37 @@
+--- old.declarationEmitEnumReadonlyProperty.js
++++ new.declarationEmitEnumReadonlyProperty.js
+@@= skipped -27, +27 lines =@@
+
+
+ //// [declarationEmitEnumReadonlyProperty.d.ts]
+-declare enum E {
++enum E {
+     A = "a",
+     B = "b"
+ }
+-declare class C {
++class C {
+     readonly type = E.A;
+ }
+-declare let x: E.A;
++let x: E.A;
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitEnumReadonlyProperty.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitEnumReadonlyProperty.d.ts (1 errors) ====
++    enum E {
++    ~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        A = "a",
++        B = "b"
++    }
++    class C {
++        readonly type = E.A;
++    }
++    let x: E.A;
++    

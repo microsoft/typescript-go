@@ -15,7 +15,23 @@ class C {
 
 
 //// [declarationEmitReadonly.d.ts]
-declare class C {
+class C {
     readonly x: number;
     constructor(x: number);
 }
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitReadonly.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitReadonly.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        readonly x: number;
+        constructor(x: number);
+    }
+    

@@ -934,10 +934,10 @@ var eM;
 
 
 //// [giant.d.ts]
-declare const p = "propName";
-export declare var eV: any;
-export declare function eF(): void;
-export declare class eC {
+const p = "propName";
+export var eV: any;
+export function eF(): void;
+export class eC {
     constructor();
     pV: any;
     private rV;
@@ -987,7 +987,7 @@ export interface eI {
     p7(pa1: any, pa2: any): void;
     p7?(pa1: any, pa2: any): void;
 }
-export declare namespace eM {
+export namespace eM {
     var eV: any;
     function eF(): void;
     class eC {
@@ -1094,9 +1094,9 @@ export declare namespace eM {
         namespace eM { }
     }
 }
-export declare var eaV: any;
-export declare function eaF(): void;
-export declare class eaC {
+export var eaV: any;
+export function eaF(): void;
+export class eaC {
     constructor();
     pV: any;
     private rV;
@@ -1117,7 +1117,7 @@ export declare class eaC {
     static tgF(): void;
     static get tgF(): any;
 }
-export declare namespace eaM {
+export namespace eaM {
     var V: any;
     function F(): void;
     class C {

@@ -31,13 +31,13 @@ var r2 = c2.constructor;
 
 
 //// [typesWithProtectedConstructor.d.ts]
-declare class C {
+class C {
     protected constructor();
 }
-declare var c: C;
-declare var r: () => void;
-declare class C2 {
+var c: C;
+var r: () => void;
+class C2 {
     protected constructor(x: number);
 }
-declare var c2: C2;
-declare var r2: (x: number) => void;
+var c2: C2;
+var r2: (x: number) => void;

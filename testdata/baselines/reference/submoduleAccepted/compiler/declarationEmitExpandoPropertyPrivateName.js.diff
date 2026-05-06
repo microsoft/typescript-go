@@ -1,11 +1,14 @@
 --- old.declarationEmitExpandoPropertyPrivateName.js
 +++ new.declarationEmitExpandoPropertyPrivateName.js
-@@= skipped -28, +28 lines =@@
+@@= skipped -26, +26 lines =@@
+ //// [a.d.ts]
+ interface I {
  }
- export declare function f(): I;
+-export declare function f(): I;
++export function f(): I;
  export {};
 +//// [b.d.ts]
-+export declare function q(): void;
++export function q(): void;
 +export declare namespace q {
 +    var val: I;
 +}

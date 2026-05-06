@@ -38,8 +38,8 @@ var A;
 
 
 //// [index.d.ts]
-export declare const Something = 2;
-export declare namespace A {
+export const Something = 2;
+export namespace A {
     namespace B {
         const thing: import("fs").Something;
         export { thing };

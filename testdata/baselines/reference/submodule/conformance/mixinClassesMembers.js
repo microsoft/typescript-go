@@ -169,38 +169,85 @@ class C3 extends Mixed3 {
 
 
 //// [mixinClassesMembers.d.ts]
-declare class C1 {
+class C1 {
     a: number;
     protected b: number;
     private c;
     constructor(s: string);
     constructor(n: number);
 }
-declare class M1 {
+class M1 {
     constructor(...args: any[]);
     p: number;
     static p: number;
 }
-declare class M2 {
+class M2 {
     constructor(...args: any[]);
     f(): number;
     static f(): number;
 }
-declare const Mixed1: typeof M1 & typeof C1;
-declare const Mixed2: typeof C1 & typeof M1;
-declare const Mixed3: typeof M2 & typeof M1 & typeof C1;
-declare const Mixed4: typeof C1 & typeof M1 & typeof M2;
-declare const Mixed5: typeof M1 & typeof M2;
-declare function f1(): void;
-declare function f2(): void;
-declare function f3(): void;
-declare function f4(): void;
-declare function f5(): void;
-declare function f6(): void;
-declare class C2 extends Mixed1 {
+const Mixed1: typeof M1 & typeof C1;
+const Mixed2: typeof C1 & typeof M1;
+const Mixed3: typeof M2 & typeof M1 & typeof C1;
+const Mixed4: typeof C1 & typeof M1 & typeof M2;
+const Mixed5: typeof M1 & typeof M2;
+function f1(): void;
+function f2(): void;
+function f3(): void;
+function f4(): void;
+function f5(): void;
+function f6(): void;
+class C2 extends Mixed1 {
     constructor();
 }
-declare class C3 extends Mixed3 {
+class C3 extends Mixed3 {
     constructor();
     f(): number;
 }
+
+
+//// [DtsFileErrors]
+
+
+mixinClassesMembers.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== mixinClassesMembers.d.ts (1 errors) ====
+    class C1 {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        a: number;
+        protected b: number;
+        private c;
+        constructor(s: string);
+        constructor(n: number);
+    }
+    class M1 {
+        constructor(...args: any[]);
+        p: number;
+        static p: number;
+    }
+    class M2 {
+        constructor(...args: any[]);
+        f(): number;
+        static f(): number;
+    }
+    const Mixed1: typeof M1 & typeof C1;
+    const Mixed2: typeof C1 & typeof M1;
+    const Mixed3: typeof M2 & typeof M1 & typeof C1;
+    const Mixed4: typeof C1 & typeof M1 & typeof M2;
+    const Mixed5: typeof M1 & typeof M2;
+    function f1(): void;
+    function f2(): void;
+    function f3(): void;
+    function f4(): void;
+    function f5(): void;
+    function f6(): void;
+    class C2 extends Mixed1 {
+        constructor();
+    }
+    class C3 extends Mixed3 {
+        constructor();
+        f(): number;
+    }
+    

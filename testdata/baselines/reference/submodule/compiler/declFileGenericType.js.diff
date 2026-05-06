@@ -1,0 +1,38 @@
+--- old.declFileGenericType.js
++++ new.declFileGenericType.js
+@@= skipped -86, +86 lines =@@
+
+
+ //// [declFileGenericType.d.ts]
+-export declare namespace C {
++export namespace C {
+     class A<T> {
+     }
+     class B {
+@@= skipped -16, +16 lines =@@
+         constructor(val: T);
+     }
+ }
+-export declare var a: C.A<C.B>;
+-export declare var b: typeof C.F;
+-export declare var c: typeof C.F2;
+-export declare var d: typeof C.F3;
+-export declare var e: typeof C.F4;
+-export declare var x: C.A<C.B>;
+-export declare function f<T extends C.A<C.B>>(): void;
+-export declare var g: C.A<C.B>;
+-export declare class h extends C.A<C.B> {
++export var a: C.A<C.B>;
++export var b: typeof C.F;
++export var c: typeof C.F2;
++export var d: typeof C.F3;
++export var e: typeof C.F4;
++export var x: C.A<C.B>;
++export function f<T extends C.A<C.B>>(): void;
++export var g: C.A<C.B>;
++export class h extends C.A<C.B> {
+ }
+ export interface i extends C.A<C.B> {
+ }
+-export declare var j: typeof C.F6;
++export var j: typeof C.F6;

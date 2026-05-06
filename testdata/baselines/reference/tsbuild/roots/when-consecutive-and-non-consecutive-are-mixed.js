@@ -64,49 +64,49 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/anotherNonConsecutive.d.ts] *new* 
-export declare const nonConsecutive = "hello";
+export const nonConsecutive = "hello";
 
 //// [/home/src/workspaces/project/anotherNonConsecutive.js] *new* 
 export const nonConsecutive = "hello";
 
 //// [/home/src/workspaces/project/asArray1.d.ts] *new* 
-export declare const x = "hello";
+export const x = "hello";
 
 //// [/home/src/workspaces/project/asArray1.js] *new* 
 export const x = "hello";
 
 //// [/home/src/workspaces/project/asArray2.d.ts] *new* 
-export declare const x = "hello";
+export const x = "hello";
 
 //// [/home/src/workspaces/project/asArray2.js] *new* 
 export const x = "hello";
 
 //// [/home/src/workspaces/project/asArray3.d.ts] *new* 
-export declare const x = "hello";
+export const x = "hello";
 
 //// [/home/src/workspaces/project/asArray3.js] *new* 
 export const x = "hello";
 
 //// [/home/src/workspaces/project/file1.d.ts] *new* 
-export declare const x = "hello";
+export const x = "hello";
 
 //// [/home/src/workspaces/project/file1.js] *new* 
 export const x = "hello";
 
 //// [/home/src/workspaces/project/file2.d.ts] *new* 
-export declare const y = "world";
+export const y = "world";
 
 //// [/home/src/workspaces/project/file2.js] *new* 
 export const y = "world";
 
 //// [/home/src/workspaces/project/nonconsecutive.d.ts] *new* 
-export declare const nonConsecutive = "hello";
+export const nonConsecutive = "hello";
 
 //// [/home/src/workspaces/project/nonconsecutive.js] *new* 
 export const nonConsecutive = "hello";
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3],5,[7,9],11],"fileNames":["lib.es2025.full.d.ts","./file1.ts","./file2.ts","./random.d.ts","./nonconsecutive.ts","./random1.d.ts","./asArray1.ts","./asArray2.ts","./asArray3.ts","./random2.d.ts","./anotherNonConsecutive.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},{"version":"42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";","signature":"64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";","signature":"ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";","signature":"ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n","impliedNodeFormat":1}],"fileIdsList":[[10],[6],[4]],"options":{"composite":true},"referencedMap":[[11,1],[7,2],[5,3]],"latestChangedDtsFile":"./anotherNonConsecutive.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3],5,[7,9],11],"fileNames":["lib.es2025.full.d.ts","./file1.ts","./file2.ts","./random.d.ts","./nonconsecutive.ts","./random1.d.ts","./asArray1.ts","./asArray2.ts","./asArray3.ts","./random2.d.ts","./anotherNonConsecutive.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},{"version":"42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";","signature":"c400cc4dc1ed18a60f172daf98f52b4d-export const y = \"world\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";","signature":"bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";","signature":"bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n","impliedNodeFormat":1}],"fileIdsList":[[10],[6],[4]],"options":{"composite":true},"referencedMap":[[11,1],[7,2],[5,3]],"latestChangedDtsFile":"./anotherNonConsecutive.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -174,22 +174,22 @@ export const nonConsecutive = "hello";
     {
       "fileName": "./file1.ts",
       "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./file2.ts",
       "version": "42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";",
-      "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
+      "signature": "c400cc4dc1ed18a60f172daf98f52b4d-export const y = \"world\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";",
-        "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
+        "signature": "c400cc4dc1ed18a60f172daf98f52b4d-export const y = \"world\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -202,11 +202,11 @@ export const nonConsecutive = "hello";
     {
       "fileName": "./nonconsecutive.ts",
       "version": "805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";",
-      "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+      "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";",
-        "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+        "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -219,33 +219,33 @@ export const nonConsecutive = "hello";
     {
       "fileName": "./asArray1.ts",
       "version": "f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./asArray2.ts",
       "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./asArray3.ts",
       "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -258,11 +258,11 @@ export const nonConsecutive = "hello";
     {
       "fileName": "./anotherNonConsecutive.ts",
       "version": "f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";",
-      "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+      "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";",
-        "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+        "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     }
@@ -293,7 +293,7 @@ export const nonConsecutive = "hello";
     ]
   },
   "latestChangedDtsFile": "./anotherNonConsecutive.d.ts",
-  "size": 2848
+  "size": 2792
 }
 
 tsconfig.json::
@@ -335,7 +335,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[2,4,[6,8],10],"fileNames":["lib.es2025.full.d.ts","./file2.ts","./random.d.ts","./nonconsecutive.ts","./random1.d.ts","./asArray1.ts","./asArray2.ts","./asArray3.ts","./random2.d.ts","./anotherNonConsecutive.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";","signature":"64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";","signature":"ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";","signature":"ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n","impliedNodeFormat":1}],"fileIdsList":[[9],[5],[3]],"options":{"composite":true},"referencedMap":[[10,1],[6,2],[4,3]],"latestChangedDtsFile":"./anotherNonConsecutive.d.ts"}
+{"version":"FakeTSVersion","root":[2,4,[6,8],10],"fileNames":["lib.es2025.full.d.ts","./file2.ts","./random.d.ts","./nonconsecutive.ts","./random1.d.ts","./asArray1.ts","./asArray2.ts","./asArray3.ts","./random2.d.ts","./anotherNonConsecutive.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";","signature":"c400cc4dc1ed18a60f172daf98f52b4d-export const y = \"world\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";","signature":"bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n","impliedNodeFormat":1},"cc6fd496b46fb211a7b922d3e31cdc4e-export const random = \"hello\";",{"version":"f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";","signature":"bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n","impliedNodeFormat":1}],"fileIdsList":[[9],[5],[3]],"options":{"composite":true},"referencedMap":[[10,1],[6,2],[4,3]],"latestChangedDtsFile":"./anotherNonConsecutive.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -398,11 +398,11 @@ Output::
     {
       "fileName": "./file2.ts",
       "version": "42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";",
-      "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
+      "signature": "c400cc4dc1ed18a60f172daf98f52b4d-export const y = \"world\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "42f7437ec4aafe7a26fc38ec3ba035fe-export const y = \"world\";",
-        "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
+        "signature": "c400cc4dc1ed18a60f172daf98f52b4d-export const y = \"world\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -415,11 +415,11 @@ Output::
     {
       "fileName": "./nonconsecutive.ts",
       "version": "805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";",
-      "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+      "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "805bd15692edf65c8f946bb322e0a876-import { random } from \"./random\";\n    export const nonConsecutive = \"hello\";",
-        "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+        "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -432,33 +432,33 @@ Output::
     {
       "fileName": "./asArray1.ts",
       "version": "f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "f1ff3ce44c97592c5ef5a510c8ed269d-import { random } from \"./random1\";\nexport const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./asArray2.ts",
       "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./asArray3.ts",
       "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+        "signature": "5c62b9f0d37873290c280f48efb04a64-export const x = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     },
@@ -471,11 +471,11 @@ Output::
     {
       "fileName": "./anotherNonConsecutive.ts",
       "version": "f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";",
-      "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+      "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "f5ecedece6d42fea3feb8b5832aacd89-import { random } from \"./random2\";\nexport const nonConsecutive = \"hello\";",
-        "signature": "ed1a51017d86c01f126fd5c93a77072d-export declare const nonConsecutive = \"hello\";\n",
+        "signature": "bc12c9e9d4560848f67a5eb83be68541-export const nonConsecutive = \"hello\";\n",
         "impliedNodeFormat": 1
       }
     }
@@ -506,7 +506,7 @@ Output::
     ]
   },
   "latestChangedDtsFile": "./anotherNonConsecutive.d.ts",
-  "size": 2648
+  "size": 2600
 }
 
 tsconfig.json::

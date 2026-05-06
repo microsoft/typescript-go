@@ -33,8 +33,8 @@ export { x };
 
 
 //// [index.d.ts]
-declare const x: string;
+const x: string;
 export { x };
 //// [index.d.ts]
-declare const x: string;
+const x: string;
 export { x };

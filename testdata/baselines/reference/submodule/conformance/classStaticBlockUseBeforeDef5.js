@@ -20,6 +20,6 @@ class C {
 
 
 //// [classStaticBlockUseBeforeDef5.d.ts]
-declare class C {
+class C {
     static accessor x: number;
 }

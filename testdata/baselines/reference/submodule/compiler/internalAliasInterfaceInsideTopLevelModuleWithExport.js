@@ -17,9 +17,9 @@ exports.x = void 0;
 
 
 //// [internalAliasInterfaceInsideTopLevelModuleWithExport.d.ts]
-export declare namespace a {
+export namespace a {
     interface I {
     }
 }
 export import b = a.I;
-export declare var x: b;
+export var x: b;

@@ -52,7 +52,7 @@ exports.Bar2 = Bar2;
 
 //// [file1.d.ts]
 type N = 1;
-export declare class Bar {
+export class Bar {
     c?: readonly [1] | undefined;
     c3?: N;
     readonly r = 1;
@@ -60,10 +60,10 @@ export declare class Bar {
 }
 export {};
 //// [file2.d.ts]
-export declare function foo(p?: (ip: number | undefined, v: number) => void): void;
+export function foo(p?: (ip: number | undefined, v: number) => void): void;
 type T = number;
-export declare function foo2(p?: (ip: T | undefined, v: number) => void): void;
-export declare class Bar2 {
+export function foo2(p?: (ip: T | undefined, v: number) => void): void;
+export class Bar2 {
     readonly r = 1;
     f: number;
 }

@@ -31,7 +31,7 @@ exports.default = Base;
 
 
 //// [index.d.ts]
-export declare class A {
+export class A {
     /** @returns {this} */
     method(): this;
 }

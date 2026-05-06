@@ -29,5 +29,32 @@ exports.default = new EnhancedPrisma();
 
 //// [index.d.ts]
 import { PrismaClient } from "@prisma/client";
-declare const _default: PrismaClient<import(".prisma/client").PrismaClientOptions>;
+const _default: PrismaClient<import(".prisma/client").PrismaClientOptions>;
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+/index.d.ts(2,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /node_modules/.prisma/client/index.d.ts (0 errors) ====
+    export interface PrismaClientOptions {
+      rejectOnNotFound?: any;
+    }
+    
+    export class PrismaClient<T extends PrismaClientOptions = PrismaClientOptions> {
+      private fetcher;
+    }
+    
+==== /node_modules/@prisma/client/index.d.ts (0 errors) ====
+    export * from ".prisma/client";
+    
+==== /index.d.ts (1 errors) ====
+    import { PrismaClient } from "@prisma/client";
+    const _default: PrismaClient<import(".prisma/client").PrismaClientOptions>;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default _default;
+    

@@ -33,14 +33,14 @@ export const call = foo({
 
 
 //// [declarationEmitAsConstSatisfiesNonReadonlyResult.d.ts]
-export declare const obj: {
+export const obj: {
     readonly array: [{
         readonly n: 1;
     }, {
         readonly n: 2;
     }];
 };
-export declare const call: {
+export const call: {
     readonly array: [{
         readonly n: 1;
     }, {

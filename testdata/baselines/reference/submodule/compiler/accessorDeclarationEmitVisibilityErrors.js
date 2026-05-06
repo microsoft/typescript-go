@@ -12,6 +12,6 @@ export class Q {
 
 
 //// [accessorDeclarationEmitVisibilityErrors.d.ts]
-export declare class Q {
+export class Q {
     set bet(arg: DoesNotExist);
 }

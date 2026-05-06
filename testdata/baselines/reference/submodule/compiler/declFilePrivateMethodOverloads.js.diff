@@ -1,0 +1,39 @@
+--- old.declFilePrivateMethodOverloads.js
++++ new.declFilePrivateMethodOverloads.js
+@@= skipped -39, +39 lines =@@
+ interface IContext {
+     someMethod(): any;
+ }
+-declare class c1 {
++class c1 {
+     private _forEachBindingContext;
+     private overloadWithArityDifference;
+ }
+-declare class c2 {
++class c2 {
+     private overload1;
+     private overload2;
+ }
++
++
++//// [DtsFileErrors]
++
++
++declFilePrivateMethodOverloads.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declFilePrivateMethodOverloads.d.ts (1 errors) ====
++    interface IContext {
++        someMethod(): any;
++    }
++    class c1 {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++        private _forEachBindingContext;
++        private overloadWithArityDifference;
++    }
++    class c2 {
++        private overload1;
++        private overload2;
++    }
++    

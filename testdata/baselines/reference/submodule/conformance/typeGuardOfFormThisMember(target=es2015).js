@@ -145,7 +145,7 @@ var Test;
 
 
 //// [typeGuardOfFormThisMember.d.ts]
-declare namespace Test {
+namespace Test {
     class FileSystemObject {
         path: string;
         isFSO: this is FileSystemObject;

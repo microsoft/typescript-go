@@ -1,0 +1,49 @@
+--- old.declarationEmitLocalClassHasRequiredDeclare.js
++++ new.declarationEmitLocalClassHasRequiredDeclare.js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [declarationEmitLocalClassHasRequiredDeclare.d.ts]
+-export declare namespace A {
++export namespace A {
+     namespace X { }
+ }
+-declare class X {
++class X {
+ }
+-export declare class A {
++export class A {
+     static X: typeof X;
+ }
+-export declare namespace Y {
++export namespace Y {
+ }
+-export declare class Y {
++export class Y {
+ }
+ export {};
++
++
++//// [DtsFileErrors]
++
++
++declarationEmitLocalClassHasRequiredDeclare.d.ts(4,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++
++
++==== declarationEmitLocalClassHasRequiredDeclare.d.ts (1 errors) ====
++    export namespace A {
++        namespace X { }
++    }
++    class X {
++    ~~~~~
++!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
++    }
++    export class A {
++        static X: typeof X;
++    }
++    export namespace Y {
++    }
++    export class Y {
++    }
++    export {};
++    

@@ -23,9 +23,38 @@ export default {
 
 
 //// [index.d.ts]
-declare const _default: {
+const _default: {
     computed: {
         panels: import("./helper").Computed;
     };
 };
 export default _default;
+
+
+//// [DtsFileErrors]
+
+
+/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /helper.d.ts (0 errors) ====
+    type Computed = () => any;
+    interface Mapper<R> {
+        <Key extends string>(map: Key[]): { [K in Key]: R };
+        <Map extends Record<string, string>>(map: Map): { [K in keyof Map]: R };
+    }
+    interface NamespacedMappers {
+        mapState: Mapper<Computed>;
+    }
+    export declare function createNamespacedHelpers(): NamespacedMappers;
+    
+==== /index.d.ts (1 errors) ====
+    const _default: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        computed: {
+            panels: import("./helper").Computed;
+        };
+    };
+    export default _default;
+    

@@ -7,8 +7,7 @@
 -export namespace obj1 {
 -    let x: string;
 -}
--export const obj2: {
-+export declare const obj1: {
++export const obj1: {
 +    /**
 +     * my awesome getter (first in source order)
 +     * @returns {string}
@@ -20,10 +19,9 @@
 +     */
 +    set x(a: string);
 +};
-+export declare const obj2: {
+ export const obj2: {
      /**
       * my awesome getter
-      * @returns {string}
 @@= skipped -15, +24 lines =@@
       */
      set x(a: number);
@@ -36,14 +34,14 @@
 -    let x_2: number;
 -    export { x_2 as x };
 -}
-+export declare const obj3: {
++export const obj3: {
 +    /**
 +     * my awesome getter
 +     * @returns {string}
 +     */
 +    readonly x: string;
 +};
-+export declare const obj4: {
++export const obj4: {
 +    /**
 +     * my awesome setter
 +     * @param {number} a

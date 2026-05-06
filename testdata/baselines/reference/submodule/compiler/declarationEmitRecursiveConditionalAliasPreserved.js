@@ -113,4 +113,4 @@ exports.power = power;
 
 //// [a.d.ts]
 import { Power } from "./input";
-export declare const power: <Num extends number, PowerOf extends number>(num: Num, powerOf: PowerOf) => Power<Num, PowerOf>;
+export const power: <Num extends number, PowerOf extends number>(num: Num, powerOf: PowerOf) => Power<Num, PowerOf>;

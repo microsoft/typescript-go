@@ -30,6 +30,6 @@ exports.Value = (0, b_1.createNamed)();
 //// [b.d.ts]
 export interface Named {
 }
-export declare function createNamed(): Named;
+export function createNamed(): Named;
 //// [a.d.ts]
-export declare const Value: import("./b").Named;
+export const Value: import("./b").Named;

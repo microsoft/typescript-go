@@ -192,7 +192,7 @@ var m;
 
 
 //// [declFileTypeAnnotationVisibilityErrorAccessors.d.ts]
-declare namespace m {
+namespace m {
     class private1 {
     }
     export class public1 {

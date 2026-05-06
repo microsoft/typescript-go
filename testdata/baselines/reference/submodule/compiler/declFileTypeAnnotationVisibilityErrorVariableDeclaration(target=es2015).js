@@ -63,7 +63,7 @@ var m;
 
 
 //// [declFileTypeAnnotationVisibilityErrorVariableDeclaration.d.ts]
-declare namespace m {
+namespace m {
     class private1 {
     }
     export class public1 {
@@ -80,3 +80,32 @@ declare namespace m {
     export var l3: m2.public2;
     export {};
 }
+
+
+//// [DtsFileErrors]
+
+
+declFileTypeAnnotationVisibilityErrorVariableDeclaration.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declFileTypeAnnotationVisibilityErrorVariableDeclaration.d.ts (1 errors) ====
+    namespace m {
+    ~~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        class private1 {
+        }
+        export class public1 {
+        }
+        export var k: private1;
+        export var l: private1;
+        export var k2: public1;
+        export var l2: public1;
+        namespace m2 {
+            class public2 {
+            }
+        }
+        export var k3: m2.public2;
+        export var l3: m2.public2;
+        export {};
+    }
+    

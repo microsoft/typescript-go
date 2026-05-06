@@ -15,7 +15,23 @@ class C {
 
 
 //// [symbolDeclarationEmit3.d.ts]
-declare class C {
+class C {
     [Symbol.toPrimitive](x: number): any;
     [Symbol.toPrimitive](x: string): any;
 }
+
+
+//// [DtsFileErrors]
+
+
+symbolDeclarationEmit3.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== symbolDeclarationEmit3.d.ts (1 errors) ====
+    class C {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        [Symbol.toPrimitive](x: number): any;
+        [Symbol.toPrimitive](x: string): any;
+    }
+    

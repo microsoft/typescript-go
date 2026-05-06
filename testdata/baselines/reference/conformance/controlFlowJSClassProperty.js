@@ -34,7 +34,7 @@ c.position;
 
 
 //// [controlFlowJSClassProperty.d.ts]
-export declare class C {
+export class C {
     name: string;
     /**
      * @param {[number, number] | undefined} position

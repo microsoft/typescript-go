@@ -55,20 +55,20 @@ class D {
 
 
 //// [classConstructorOverloadsAccessibility.d.ts]
-declare class A {
+class A {
     constructor(a: boolean);
     protected constructor(a: number);
     private constructor();
 }
-declare class B {
+class B {
     protected constructor(a: number);
     constructor(a: string);
 }
-declare class C {
+class C {
     protected constructor(a: number);
     protected constructor(a: string);
 }
-declare class D {
+class D {
     constructor(a: number);
     constructor(a: string);
 }

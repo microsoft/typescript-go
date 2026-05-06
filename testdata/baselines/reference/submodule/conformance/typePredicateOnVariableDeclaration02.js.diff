@@ -1,0 +1,8 @@
+--- old.typePredicateOnVariableDeclaration02.js
++++ new.typePredicateOnVariableDeclaration02.js
+@@= skipped -8, +8 lines =@@
+
+
+ //// [typePredicateOnVariableDeclaration02.d.ts]
+-declare var y: z, is: any, number: any;
++var y: z, is: any, number: any;

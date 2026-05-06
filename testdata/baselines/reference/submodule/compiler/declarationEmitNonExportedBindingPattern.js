@@ -37,14 +37,37 @@ const { a: { b: { c } } } = getNested();
 
 
 //// [test.d.ts]
-declare const foo: {
+const foo: {
     test: number;
 };
 export type AliasType = typeof foo;
-declare const renamed: {
+const renamed: {
     test: number;
 };
 export type AliasType2 = typeof renamed;
-declare const c: string;
+const c: string;
 export type AliasType3 = typeof c;
 export {};
+
+
+//// [DtsFileErrors]
+
+
+test.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== test.d.ts (1 errors) ====
+    const foo: {
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+        test: number;
+    };
+    export type AliasType = typeof foo;
+    const renamed: {
+        test: number;
+    };
+    export type AliasType2 = typeof renamed;
+    const c: string;
+    export type AliasType3 = typeof c;
+    export {};
+    

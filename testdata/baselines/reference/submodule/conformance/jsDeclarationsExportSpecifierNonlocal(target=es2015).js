@@ -27,9 +27,9 @@ Object.defineProperty(exports, "default", { enumerable: true, get: function () {
 
 
 //// [source.d.ts]
-export declare class Thing {
+export class Thing {
 }
-export declare class OtherThing {
+export class OtherThing {
 }
 //// [index.d.ts]
 export { Thing, OtherThing as default } from "./source";

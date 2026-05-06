@@ -1,0 +1,11 @@
+--- old.declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction(target=es2015).js
++++ new.declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction(target=es2015).js
+@@= skipped -119, +119 lines =@@
+
+
+ //// [declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.d.ts]
+-declare namespace m {
++namespace m {
+     class private1 {
+     }
+     export class public1 {

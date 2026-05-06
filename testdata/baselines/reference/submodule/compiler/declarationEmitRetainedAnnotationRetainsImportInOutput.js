@@ -53,4 +53,4 @@ exports.run = run;
 
 //// [index.d.ts]
 import * as E from 'whatever';
-export declare const run: <E>(i: () => E.Whatever<E>) => E.Whatever<E>;
+export const run: <E>(i: () => E.Whatever<E>) => E.Whatever<E>;

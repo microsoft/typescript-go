@@ -62,9 +62,9 @@ MyClass[_a] = 12;
 
 
 //// [index.d.ts]
-declare const TopLevelSym: unique symbol;
-declare const InnerSym: unique symbol;
-declare const _default: {
+const TopLevelSym: unique symbol;
+const InnerSym: unique symbol;
+const _default: {
     [TopLevelSym](x?: number): number;
     items: {
         [InnerSym]: (arg?: {
@@ -74,9 +74,9 @@ declare const _default: {
 };
 export = _default;
 //// [index2.d.ts]
-declare const TopLevelSym: unique symbol;
-declare const InnerSym: unique symbol;
-export declare class MyClass {
+const TopLevelSym: unique symbol;
+const InnerSym: unique symbol;
+export class MyClass {
     static [TopLevelSym]: number;
     [InnerSym]: string;
     /**
@@ -85,3 +85,42 @@ export declare class MyClass {
     constructor(_p?: typeof TopLevelSym | typeof InnerSym);
 }
 export {};
+
+
+//// [DtsFileErrors]
+
+
+out/index.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+out/index2.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== out/index.d.ts (1 errors) ====
+    const TopLevelSym: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const InnerSym: unique symbol;
+    const _default: {
+        [TopLevelSym](x?: number): number;
+        items: {
+            [InnerSym]: (arg?: {
+                x: number;
+            }) => number;
+        };
+    };
+    export = _default;
+    
+==== out/index2.d.ts (1 errors) ====
+    const TopLevelSym: unique symbol;
+    ~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const InnerSym: unique symbol;
+    export class MyClass {
+        static [TopLevelSym]: number;
+        [InnerSym]: string;
+        /**
+         * @param {typeof TopLevelSym | typeof InnerSym} _p
+         */
+        constructor(_p?: typeof TopLevelSym | typeof InnerSym);
+    }
+    export {};
+    

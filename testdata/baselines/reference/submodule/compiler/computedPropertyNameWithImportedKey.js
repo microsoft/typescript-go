@@ -26,7 +26,7 @@ function fn({ [a_1.a]: value }) {
 
 
 //// [a.d.ts]
-export declare const a: unique symbol;
+export const a: unique symbol;
 //// [b.d.ts]
 import { a } from "./a";
-export declare function fn({ [a]: value }: any): string;
+export function fn({ [a]: value }: any): string;

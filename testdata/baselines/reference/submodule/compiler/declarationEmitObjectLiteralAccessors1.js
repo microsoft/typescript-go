@@ -37,23 +37,23 @@ export const obj4 = {
 
 
 //// [declarationEmitObjectLiteralAccessors1.d.ts]
-export declare const obj1: {
+export const obj1: {
     /** my awesome getter (first in source order) */
     get x(): string;
     /** my awesome setter (second in source order) */
     set x(a: string);
 };
-export declare const obj2: {
+export const obj2: {
     /** my awesome getter */
     get x(): string;
     /** my awesome setter */
     set x(a: number);
 };
-export declare const obj3: {
+export const obj3: {
     /** my awesome getter */
     readonly x: string;
 };
-export declare const obj4: {
+export const obj4: {
     /** my awesome setter */
     x: number;
 };

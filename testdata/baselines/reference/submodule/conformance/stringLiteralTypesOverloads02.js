@@ -93,21 +93,51 @@ var Consts2;
 
 
 //// [stringLiteralTypesOverloads02.d.ts]
-declare function getFalsyPrimitive(x: "string"): string;
-declare function getFalsyPrimitive(x: "number"): number;
-declare function getFalsyPrimitive(x: "boolean"): boolean;
-declare function getFalsyPrimitive(x: "boolean" | "string"): boolean | string;
-declare function getFalsyPrimitive(x: "boolean" | "number"): boolean | number;
-declare function getFalsyPrimitive(x: "number" | "string"): number | string;
-declare function getFalsyPrimitive(x: "number" | "string" | "boolean"): number | string | boolean;
-declare namespace Consts1 {
+function getFalsyPrimitive(x: "string"): string;
+function getFalsyPrimitive(x: "number"): number;
+function getFalsyPrimitive(x: "boolean"): boolean;
+function getFalsyPrimitive(x: "boolean" | "string"): boolean | string;
+function getFalsyPrimitive(x: "boolean" | "number"): boolean | number;
+function getFalsyPrimitive(x: "number" | "string"): number | string;
+function getFalsyPrimitive(x: "number" | "string" | "boolean"): number | string | boolean;
+namespace Consts1 {
 }
-declare const string = "string";
-declare const number = "number";
-declare const boolean = "boolean";
-declare const stringOrNumber: string;
-declare const stringOrBoolean: string;
-declare const booleanOrNumber: string;
-declare const stringOrBooleanOrNumber: string;
-declare namespace Consts2 {
+const string = "string";
+const number = "number";
+const boolean = "boolean";
+const stringOrNumber: string;
+const stringOrBoolean: string;
+const booleanOrNumber: string;
+const stringOrBooleanOrNumber: string;
+namespace Consts2 {
 }
+
+
+//// [DtsFileErrors]
+
+
+stringLiteralTypesOverloads02.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== stringLiteralTypesOverloads02.d.ts (1 errors) ====
+    function getFalsyPrimitive(x: "string"): string;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    function getFalsyPrimitive(x: "number"): number;
+    function getFalsyPrimitive(x: "boolean"): boolean;
+    function getFalsyPrimitive(x: "boolean" | "string"): boolean | string;
+    function getFalsyPrimitive(x: "boolean" | "number"): boolean | number;
+    function getFalsyPrimitive(x: "number" | "string"): number | string;
+    function getFalsyPrimitive(x: "number" | "string" | "boolean"): number | string | boolean;
+    namespace Consts1 {
+    }
+    const string = "string";
+    const number = "number";
+    const boolean = "boolean";
+    const stringOrNumber: string;
+    const stringOrBoolean: string;
+    const booleanOrNumber: string;
+    const stringOrBooleanOrNumber: string;
+    namespace Consts2 {
+    }
+    

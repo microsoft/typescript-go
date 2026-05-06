@@ -79,10 +79,10 @@ C.B = B;
 
 
 //// [foo.d.ts]
-export declare class Foo {
+export class Foo {
 }
 //// [index1.d.ts]
-declare function Example(): void;
+function Example(): void;
 export default Example;
 declare namespace Example {
     var Foo: typeof import("./foo").Foo;
@@ -90,24 +90,78 @@ declare namespace Example {
 //// [index2.d.ts]
 import { Foo } from './foo';
 export { Foo };
-declare function Example(): void;
+function Example(): void;
 export default Example;
 declare namespace Example {
     var Foo: typeof import("./foo").Foo;
 }
 //// [index3.d.ts]
-export declare class Bar {
+export class Bar {
 }
-declare function Example(): void;
+function Example(): void;
 export default Example;
 declare namespace Example {
     var Bar: typeof import("./index3").Bar;
 }
 //// [index4.d.ts]
-export declare function C(): any;
+export function C(): any;
 export declare namespace C {
     var A: () => void;
 }
 export declare namespace C {
     var B: () => void;
 }
+
+
+//// [DtsFileErrors]
+
+
+index1.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+index2.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+index3.d.ts(3,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== foo.d.ts (0 errors) ====
+    export class Foo {
+    }
+    
+==== index1.d.ts (1 errors) ====
+    function Example(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default Example;
+    declare namespace Example {
+        var Foo: typeof import("./foo").Foo;
+    }
+    
+==== index2.d.ts (1 errors) ====
+    import { Foo } from './foo';
+    export { Foo };
+    function Example(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default Example;
+    declare namespace Example {
+        var Foo: typeof import("./foo").Foo;
+    }
+    
+==== index3.d.ts (1 errors) ====
+    export class Bar {
+    }
+    function Example(): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    export default Example;
+    declare namespace Example {
+        var Bar: typeof import("./index3").Bar;
+    }
+    
+==== index4.d.ts (0 errors) ====
+    export function C(): any;
+    export declare namespace C {
+        var A: () => void;
+    }
+    export declare namespace C {
+        var B: () => void;
+    }
+    

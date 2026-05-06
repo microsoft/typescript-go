@@ -26,5 +26,5 @@ exports.v = v;
 //// [0.d.ts]
 export type Data = string | boolean;
 //// [1.d.ts]
-declare let v: string;
+let v: string;
 export { v };

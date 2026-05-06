@@ -74,10 +74,10 @@ exports.MyClass4 = MyClass4;
 
 
 //// [declarationEmitExpressionInExtends3.d.ts]
-export declare class ExportedClass<T> {
+export class ExportedClass<T> {
     x: T;
 }
-declare class LocalClass<T, U> {
+class LocalClass<T, U> {
     x: T;
     y: U;
 }
@@ -87,16 +87,16 @@ export interface ExportedInterface {
 interface LocalInterface {
     x: number;
 }
-declare const MyClass_base: typeof LocalClass;
-export declare class MyClass extends MyClass_base<string, number> {
+const MyClass_base: typeof LocalClass;
+export class MyClass extends MyClass_base<string, number> {
 }
-declare const MyClass2_base: typeof ExportedClass;
-export declare class MyClass2 extends MyClass2_base<string> {
+const MyClass2_base: typeof ExportedClass;
+export class MyClass2 extends MyClass2_base<string> {
 }
-declare const MyClass3_base: typeof ExportedClass;
-export declare class MyClass3 extends MyClass3_base<LocalInterface> {
+const MyClass3_base: typeof ExportedClass;
+export class MyClass3 extends MyClass3_base<LocalInterface> {
 }
-declare const MyClass4_base: typeof ExportedClass;
-export declare class MyClass4 extends MyClass4_base<ExportedInterface> {
+const MyClass4_base: typeof ExportedClass;
+export class MyClass4 extends MyClass4_base<ExportedInterface> {
 }
 export {};

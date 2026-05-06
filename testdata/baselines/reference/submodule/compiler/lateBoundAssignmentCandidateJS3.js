@@ -31,7 +31,7 @@ export class foo2 {
 
 
 //// [index.d.ts]
-export declare class foo2 {
+export class foo2 {
     constructor();
     /**
      * @protected

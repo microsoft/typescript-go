@@ -31,6 +31,6 @@ exports.Foo = Foo;
 
 
 //// [declarationEmitPrivateAsync.d.ts]
-export declare class Foo {
+export class Foo {
     private baz;
 }

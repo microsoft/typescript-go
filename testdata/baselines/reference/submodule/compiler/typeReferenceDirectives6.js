@@ -25,5 +25,26 @@ let y = () => x;
 
 
 //// [app.d.ts]
-declare let x: $;
-declare let y: () => $;
+let x: $;
+let y: () => $;
+
+
+//// [DtsFileErrors]
+
+
+/app.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== /app.d.ts (1 errors) ====
+    let x: $;
+    ~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    let y: () => $;
+    
+==== /ref.d.ts (0 errors) ====
+    declare let $: { x: number }
+        
+==== /types/lib/index.d.ts (0 errors) ====
+    interface $ { x }
+    
+    

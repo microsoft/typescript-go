@@ -1,0 +1,11 @@
+--- old.typeReferenceDirectives8.js
++++ new.typeReferenceDirectives8.js
+@@= skipped -23, +23 lines =@@
+
+
+ //// [mod1.d.ts]
+-export declare function foo(): Lib;
++export function foo(): Lib;
+ //// [mod2.d.ts]
+-export declare const bar: Lib;
++export const bar: Lib;

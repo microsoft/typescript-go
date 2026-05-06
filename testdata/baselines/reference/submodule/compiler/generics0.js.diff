@@ -1,0 +1,10 @@
+--- old.generics0.js
++++ new.generics0.js
+@@= skipped -18, +18 lines =@@
+ interface G<T> {
+     x: T;
+ }
+-declare var v2: G<string>;
+-declare var z: string;
++var v2: G<string>;
++var z: string;

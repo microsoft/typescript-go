@@ -19,19 +19,19 @@ class B3 {
 
 
 //// [a.d.ts]
-declare class A {
+class A {
     x: number;
     constructor();
 }
 /** @implements A*/
-declare class B implements A {
+class B implements A {
 }
 /** @implements A*/
-declare class B2 implements A {
+class B2 implements A {
     x: number;
 }
 /** @implements {A}*/
-declare class B3 implements A {
+class B3 implements A {
     x: number;
     constructor();
 }

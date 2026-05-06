@@ -66,8 +66,8 @@ src/main.ts
 Found 1 error in tsconfig.json[90m:5[0m
 
 //// [D:/Work/pkg1/dist/src/main.d.ts] *new* 
-declare const Sub_base: import("./utils/type-helpers").MyReturnType;
-export declare class Sub extends Sub_base {
+const Sub_base: import("./utils/type-helpers").MyReturnType;
+export class Sub extends Sub_base {
     id: string;
 }
 export {};
@@ -81,7 +81,7 @@ export class Sub extends PartialType(Common) {
 
 //// [D:/Work/pkg1/dist/src/utils/index.d.ts] *new* 
 import { MyType, MyReturnType } from './type-helpers';
-export declare function PartialType<T>(classRef: MyType<T>): MyReturnType;
+export function PartialType<T>(classRef: MyType<T>): MyReturnType;
 
 //// [D:/Work/pkg1/dist/src/utils/index.js] *new* 
 export function PartialType(classRef) {

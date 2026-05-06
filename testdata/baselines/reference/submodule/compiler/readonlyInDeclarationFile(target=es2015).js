@@ -96,7 +96,7 @@ interface Foo {
     readonly x: number;
     readonly [x: string]: Object;
 }
-declare class C {
+class C {
     readonly [x: string]: Object;
     private readonly a1;
     protected readonly a2: number;
@@ -123,15 +123,15 @@ declare class C {
     static get u3(): number;
     static set u3(value: number);
 }
-declare var z: {
+var z: {
     readonly a: string;
     readonly [x: string]: Object;
 };
-declare function f(): {
+function f(): {
     readonly x: number;
     y: number;
 };
-declare function g(): {
+function g(): {
     readonly [x: string]: Object;
     readonly a: string;
 };

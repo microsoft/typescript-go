@@ -410,40 +410,40 @@ const o4 = {
 
 
 //// [uniqueSymbolsDeclarations.d.ts]
-declare const constCall: unique symbol;
-declare let letCall: symbol;
-declare var varCall: symbol;
-declare const constType: unique symbol;
-declare const constTypeAndCall: unique symbol;
-declare const constInitToConstCall: symbol;
-declare const constInitToLetCall: symbol;
-declare const constInitToVarCall: symbol;
-declare const constInitToConstDeclAmbient: symbol;
-declare let letInitToConstCall: symbol;
-declare let letInitToLetCall: symbol;
-declare let letInitToVarCall: symbol;
-declare let letInitToConstDeclAmbient: symbol;
-declare var varInitToConstCall: symbol;
-declare var varInitToLetCall: symbol;
-declare var varInitToVarCall: symbol;
-declare var varInitToConstDeclAmbient: symbol;
-declare const constInitToConstCallWithTypeQuery: typeof constCall;
-declare const constInitToConstDeclAmbientWithTypeQuery: typeof constType;
-declare function funcReturnConstCall(): symbol;
-declare function funcReturnLetCall(): symbol;
-declare function funcReturnVarCall(): symbol;
-declare function funcReturnConstCallWithTypeQuery(): typeof constCall;
-declare function genFuncYieldConstCall(): Generator<symbol, void, unknown>;
-declare function genFuncYieldLetCall(): Generator<symbol, void, unknown>;
-declare function genFuncYieldVarCall(): Generator<symbol, void, unknown>;
-declare function genFuncYieldConstCallWithTypeQuery(): IterableIterator<typeof constCall>;
-declare function asyncFuncReturnConstCall(): Promise<symbol>;
-declare function asyncFuncReturnLetCall(): Promise<symbol>;
-declare function asyncFuncReturnVarCall(): Promise<symbol>;
-declare function asyncGenFuncYieldConstCall(): AsyncGenerator<symbol, void, unknown>;
-declare function asyncGenFuncYieldLetCall(): AsyncGenerator<symbol, void, unknown>;
-declare function asyncGenFuncYieldVarCall(): AsyncGenerator<symbol, void, unknown>;
-declare class C {
+const constCall: unique symbol;
+let letCall: symbol;
+var varCall: symbol;
+const constType: unique symbol;
+const constTypeAndCall: unique symbol;
+const constInitToConstCall: symbol;
+const constInitToLetCall: symbol;
+const constInitToVarCall: symbol;
+const constInitToConstDeclAmbient: symbol;
+let letInitToConstCall: symbol;
+let letInitToLetCall: symbol;
+let letInitToVarCall: symbol;
+let letInitToConstDeclAmbient: symbol;
+var varInitToConstCall: symbol;
+var varInitToLetCall: symbol;
+var varInitToVarCall: symbol;
+var varInitToConstDeclAmbient: symbol;
+const constInitToConstCallWithTypeQuery: typeof constCall;
+const constInitToConstDeclAmbientWithTypeQuery: typeof constType;
+function funcReturnConstCall(): symbol;
+function funcReturnLetCall(): symbol;
+function funcReturnVarCall(): symbol;
+function funcReturnConstCallWithTypeQuery(): typeof constCall;
+function genFuncYieldConstCall(): Generator<symbol, void, unknown>;
+function genFuncYieldLetCall(): Generator<symbol, void, unknown>;
+function genFuncYieldVarCall(): Generator<symbol, void, unknown>;
+function genFuncYieldConstCallWithTypeQuery(): IterableIterator<typeof constCall>;
+function asyncFuncReturnConstCall(): Promise<symbol>;
+function asyncFuncReturnLetCall(): Promise<symbol>;
+function asyncFuncReturnVarCall(): Promise<symbol>;
+function asyncGenFuncYieldConstCall(): AsyncGenerator<symbol, void, unknown>;
+function asyncGenFuncYieldLetCall(): AsyncGenerator<symbol, void, unknown>;
+function asyncGenFuncYieldVarCall(): AsyncGenerator<symbol, void, unknown>;
+class C {
     static readonly readonlyStaticCall: unique symbol;
     static readonly readonlyStaticType: unique symbol;
     static readonly readonlyStaticTypeAndCall: unique symbol;
@@ -451,55 +451,55 @@ declare class C {
     readonly readonlyCall: symbol;
     readwriteCall: symbol;
 }
-declare const c: C;
-declare const constInitToCReadonlyStaticCall: symbol;
-declare const constInitToCReadonlyStaticType: symbol;
-declare const constInitToCReadonlyStaticTypeAndCall: symbol;
-declare const constInitToCReadwriteStaticCall: symbol;
-declare const constInitToCReadonlyStaticCallWithTypeQuery: typeof C.readonlyStaticCall;
-declare const constInitToCReadonlyStaticTypeWithTypeQuery: typeof C.readonlyStaticType;
-declare const constInitToCReadonlyStaticTypeAndCallWithTypeQuery: typeof C.readonlyStaticTypeAndCall;
-declare const constInitToCReadwriteStaticCallWithTypeQuery: typeof C.readwriteStaticCall;
-declare const constInitToCReadonlyCall: symbol;
-declare const constInitToCReadwriteCall: symbol;
-declare const constInitToCReadonlyCallWithTypeQuery: typeof c.readonlyCall;
-declare const constInitToCReadwriteCallWithTypeQuery: typeof c.readwriteCall;
-declare const constInitToCReadonlyCallWithIndexedAccess: C["readonlyCall"];
-declare const constInitToCReadwriteCallWithIndexedAccess: C["readwriteCall"];
+const c: C;
+const constInitToCReadonlyStaticCall: symbol;
+const constInitToCReadonlyStaticType: symbol;
+const constInitToCReadonlyStaticTypeAndCall: symbol;
+const constInitToCReadwriteStaticCall: symbol;
+const constInitToCReadonlyStaticCallWithTypeQuery: typeof C.readonlyStaticCall;
+const constInitToCReadonlyStaticTypeWithTypeQuery: typeof C.readonlyStaticType;
+const constInitToCReadonlyStaticTypeAndCallWithTypeQuery: typeof C.readonlyStaticTypeAndCall;
+const constInitToCReadwriteStaticCallWithTypeQuery: typeof C.readwriteStaticCall;
+const constInitToCReadonlyCall: symbol;
+const constInitToCReadwriteCall: symbol;
+const constInitToCReadonlyCallWithTypeQuery: typeof c.readonlyCall;
+const constInitToCReadwriteCallWithTypeQuery: typeof c.readwriteCall;
+const constInitToCReadonlyCallWithIndexedAccess: C["readonlyCall"];
+const constInitToCReadwriteCallWithIndexedAccess: C["readwriteCall"];
 interface I {
     readonly readonlyType: unique symbol;
 }
-declare const i: I;
-declare const constInitToIReadonlyType: symbol;
-declare const constInitToIReadonlyTypeWithTypeQuery: typeof i.readonlyType;
-declare const constInitToIReadonlyTypeWithIndexedAccess: I["readonlyType"];
+const i: I;
+const constInitToIReadonlyType: symbol;
+const constInitToIReadonlyTypeWithTypeQuery: typeof i.readonlyType;
+const constInitToIReadonlyTypeWithIndexedAccess: I["readonlyType"];
 type L = {
     readonly readonlyType: unique symbol;
     nested: {
         readonly readonlyNestedType: unique symbol;
     };
 };
-declare const l: L;
-declare const constInitToLReadonlyType: symbol;
-declare const constInitToLReadonlyNestedType: symbol;
-declare const constInitToLReadonlyTypeWithTypeQuery: typeof l.readonlyType;
-declare const constInitToLReadonlyNestedTypeWithTypeQuery: typeof l.nested.readonlyNestedType;
-declare const constInitToLReadonlyTypeWithIndexedAccess: L["readonlyType"];
-declare const constInitToLReadonlyNestedTypeWithIndexedAccess: L["nested"]["readonlyNestedType"];
-declare const promiseForConstCall: Promise<typeof constCall>;
-declare const arrayOfConstCall: symbol[];
-declare const s: unique symbol;
-declare namespace N {
+const l: L;
+const constInitToLReadonlyType: symbol;
+const constInitToLReadonlyNestedType: symbol;
+const constInitToLReadonlyTypeWithTypeQuery: typeof l.readonlyType;
+const constInitToLReadonlyNestedTypeWithTypeQuery: typeof l.nested.readonlyNestedType;
+const constInitToLReadonlyTypeWithIndexedAccess: L["readonlyType"];
+const constInitToLReadonlyNestedTypeWithIndexedAccess: L["nested"]["readonlyNestedType"];
+const promiseForConstCall: Promise<typeof constCall>;
+const arrayOfConstCall: symbol[];
+const s: unique symbol;
+namespace N {
     const s: unique symbol;
 }
-declare const o: {
+const o: {
     [s]: "a";
     [N.s]: "b";
 };
-declare function f<T>(x: T): T;
-declare function g(x: typeof s): void;
-declare function g(x: typeof N.s): void;
-declare const o2: {
+function f<T>(x: T): T;
+function g(x: typeof s): void;
+function g(x: typeof N.s): void;
+const o2: {
     a: symbol;
     b: symbol;
     c: symbol;
@@ -509,7 +509,7 @@ declare const o2: {
     method4(): Generator<symbol, void, unknown>;
     method5(p?: symbol): symbol;
 };
-declare class C0 {
+class C0 {
     static readonly a: symbol;
     static readonly b: symbol;
     static readonly c: symbol;
@@ -528,7 +528,7 @@ declare class C0 {
     method4(): Generator<symbol, void, unknown>;
     method5(p?: symbol): symbol;
 }
-declare class C1 {
+class C1 {
     static [s]: "a";
     static [N.s]: "b";
     [s]: "a";
@@ -541,4 +541,4 @@ interface Context {
     method4(): IterableIterator<typeof s>;
     method5(p?: typeof s): typeof s;
 }
-declare const o4: Context;
+const o4: Context;

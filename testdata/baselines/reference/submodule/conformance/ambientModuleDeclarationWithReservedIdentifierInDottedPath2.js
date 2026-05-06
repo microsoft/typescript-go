@@ -24,4 +24,4 @@ debugger;
 
 
 //// [ambientModuleDeclarationWithReservedIdentifierInDottedPath2.d.ts]
-export declare const tabId: number;
+export const tabId: number;

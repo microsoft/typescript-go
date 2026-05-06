@@ -17,7 +17,23 @@ const utilityFunctions = {
 
 
 //// [declarationEmitIndexTypeArray.d.ts]
-declare function doSomethingWithKeys<T>(...keys: (keyof T)[]): void;
-declare const utilityFunctions: {
+function doSomethingWithKeys<T>(...keys: (keyof T)[]): void;
+const utilityFunctions: {
     doSomethingWithKeys: typeof doSomethingWithKeys;
 };
+
+
+//// [DtsFileErrors]
+
+
+declarationEmitIndexTypeArray.d.ts(1,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+
+
+==== declarationEmitIndexTypeArray.d.ts (1 errors) ====
+    function doSomethingWithKeys<T>(...keys: (keyof T)[]): void;
+    ~~~~~~~~
+!!! error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+    const utilityFunctions: {
+        doSomethingWithKeys: typeof doSomethingWithKeys;
+    };
+    

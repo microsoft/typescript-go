@@ -26,10 +26,10 @@ module.exports = A;
 
 
 //// [es5ExportEqualsDts.d.ts]
-declare class A {
+class A {
     foo(): import("./es5ExportEqualsDts").B;
 }
-declare namespace A {
+namespace A {
     interface B {
     }
 }
