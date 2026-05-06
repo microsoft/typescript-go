@@ -113,6 +113,50 @@ func TestSession(t *testing.T) {
 		})
 	})
 
+	t.Run("watchChange and didOpen in same batch rebuilds program", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"strict": true
+				}
+			}`,
+			"/home/projects/TS/p1/src/a.ts": "export const a = 1;\n",
+			"/home/projects/TS/p1/src/b.ts": "export const b = 1;\n",
+		}
+		session, utils := projecttestutil.Setup(files)
+		oldContent := files["/home/projects/TS/p1/src/a.ts"].(string)
+
+		// Open b.ts to create the project; a.ts is included via tsconfig.
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/b.ts", 1, files["/home/projects/TS/p1/src/b.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Verify a.ts is in the program with the original content.
+		ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/b.ts")
+		assert.NilError(t, err)
+		assert.Equal(t, ls.GetProgram().GetSourceFile("/home/projects/TS/p1/src/a.ts").Text(), oldContent)
+
+		// Modify a.ts on disk (simulate a build tool or git checkout).
+		newContent := "export const a = 2;\nexport const extra = true;\n"
+		err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", newContent)
+		assert.NilError(t, err)
+
+		// Queue a watch event for the disk change (not flushed yet).
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{Type: lsproto.FileChangeTypeChanged, Uri: "file:///home/projects/TS/p1/src/a.ts"},
+		})
+
+		// Open a.ts in the editor—flushes both watch event and didOpen together.
+		// Before the fix, processChanges would discard the watch event,
+		// leaving the project with a stale SourceFile and a mismatched line map.
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/a.ts", 1, newContent, lsproto.LanguageKindTypeScript)
+
+		// The program's SourceFile must reflect the overlay (new) content.
+		ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/a.ts")
+		assert.NilError(t, err)
+		assert.Equal(t, ls.GetProgram().GetSourceFile("/home/projects/TS/p1/src/a.ts").Text(), newContent)
+	})
+
 	t.Run("DidChangeFile", func(t *testing.T) {
 		t.Parallel()
 		t.Run("update file and program", func(t *testing.T) {
@@ -864,6 +908,94 @@ func TestSession(t *testing.T) {
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/sub/x.ts") == nil)
 			// The import should now be an error since the module is missing.
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+		})
+
+		t.Run("delete sibling folder schedules diagnostics refresh", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["index.ts"]
+				}`,
+				"/home/projects/TS/p1/index.ts": `import { content } from "./f/content";
+
+export const value = content;`,
+				"/home/projects/TS/p1/f/content.ts": `export const content = 1;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			contentURI := lsproto.DocumentUri("file:///home/projects/TS/p1/f/content.ts")
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), contentURI, 1, files["/home/projects/TS/p1/f/content.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+			err = utils.FS().Remove("/home/projects/TS/p1/f")
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/f",
+				},
+			})
+			session.DidCloseFile(context.Background(), contentURI)
+			session.WaitForBackgroundTasks()
+
+			refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+			assert.Assert(t, refreshCount > baselineRefreshCount,
+				"expected RefreshDiagnostics to be called after deleting /home/projects/TS/p1/f, got %d calls (baseline %d)",
+				refreshCount, baselineRefreshCount)
+		})
+
+		t.Run("delete sibling folder schedules diagnostics refresh after opening third file", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["index.ts", "third.ts"]
+				}`,
+				"/home/projects/TS/p1/index.ts": `import { content } from "./f/content";
+
+export const value = content;`,
+				"/home/projects/TS/p1/f/content.ts": `export const content = 1;`,
+				"/home/projects/TS/p1/third.ts":     `export const third = 3;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			contentURI := lsproto.DocumentUri("file:///home/projects/TS/p1/f/content.ts")
+			thirdURI := lsproto.DocumentUri("file:///home/projects/TS/p1/third.ts")
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), contentURI, 1, files["/home/projects/TS/p1/f/content.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+			err = utils.FS().Remove("/home/projects/TS/p1/f")
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/f",
+				},
+			})
+			session.DidOpenFile(context.Background(), thirdURI, 1, files["/home/projects/TS/p1/third.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.WaitForBackgroundTasks()
+
+			refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+			assert.Assert(t, refreshCount > baselineRefreshCount,
+				"expected RefreshDiagnostics to be called after deleting /home/projects/TS/p1/f and opening /home/projects/TS/p1/third.ts, got %d calls (baseline %d)",
+				refreshCount, baselineRefreshCount)
 		})
 
 		t.Run("create explicitly included file", func(t *testing.T) {

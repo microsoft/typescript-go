@@ -28,6 +28,17 @@ function f() {}
 f.called = false;
 ```
 
+## Declaration Emit
+
+We've fundamentally rewritten core parts of the declaration emit *and* JavaScript parsing components.
+As a result, declaration (`.d.ts`) emit based on `.js` input files has substantially changed behavior.
+While it's still expected that supported tags (see below) are emitted with correct semantics in Corsa, it's a non-goal to exactly match Strada's output.
+
+This also has effects on how `.d.ts` is emitted in the presence of errors, which tends to be more common in `.js` and JSDoc scenarios.
+Declaration file generation isn't well-defined in the presence of errors (including those suppressed with `ts-ignore`/`ts-expect-error`), and you can expect Corsa and Strada to be quite different depending on the situation.
+
+However, if you see **_incorrect_** `.d.ts` output from a `.js` file, **please file an issue**.
+
 ## JSDoc Tags and Types
 
 | Name                       | Example | Substitute  | Note |
@@ -122,18 +133,6 @@ function f(x) {
 }
 f(); // Still allowed
 ```
-
-#### Strada's JS-specific rules for inferring type arguments no longer apply in Corsa.
-
-Inferred type arguments may change. For example:
-
-```js
-/** @type {any} */
-var x = { a: 1, b: 2 };
-var entries = Object.entries(x);
-```
-
-In Strada, `entries: Array<[string, any]>`. In Corsa it has type `Array<[string, unknown]>`, the same as in TypeScript.
 
 #### Values are no longer resolved as types in JSDoc type positions.
 
@@ -248,18 +247,6 @@ var f = (x) => x,
   g = (x) => x;
 ```
 
-#### Optional marking on parameter names now makes the parameter both optional and undefined:
-
-```js
-/** @param {number} [x] */
-function f(x) {
-  return x;
-}
-```
-
-This behaves the same as TypeScript's `x?: number` syntax.
-Strada makes the parameter optional but does not add `undefined` to the type.
-
 #### Type assertions with `@type` tags now prevent narrowing of the type.
 
 ```js
@@ -346,3 +333,7 @@ exports.foo = exports.bar = void 0;
 exports.foo = 123  // Exported type is `123`
 exports.bar = "abc"  // Exported type is `"abc"`
 ```
+
+#### Mixing module.exports assignments
+
+Corsa does not permit CommonJS modules to mix assignments to the full `module.exports` with assignments to `module.exports.xxx` properties. A CommonJS module must either contain an assignment to `module.exports` or a series of assignments to `module.exports.xxx` properties, but not both.

@@ -335,11 +335,19 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var programCloned bool
 	var newProgram *compiler.Program
 
+	// Define a fresh CreateCheckerPool closure for this call. Each invocation of
+	// CreateProgram must use its own closure so that concurrent goroutines cloning
+	// the same project never share a captured variable through a stale closure
+	// stored in the old program's options.
+	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
+		return newCheckerPool(p.host.sessionOptions.CheckerPoolOptions, program, p.log)
+	}
+
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
 
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
-		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
+		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
 			for _, file := range newProgram.SourceFiles() {
@@ -368,9 +376,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					return newCheckerPool(p.host.sessionOptions.CheckerPoolOptions, program, p.log)
-				},
+				CreateCheckerPool:           createCheckerPool,
 			},
 		)
 	}

@@ -105,6 +105,10 @@ func newCheckerPool(opts CheckerPoolOptions, program *compiler.Program, log func
 		log:                    log,
 		globalDiagCheckerCount: make([]int, opts.MaxCheckers),
 	}
+
+	if pool.log == nil {
+		pool.log = func(msg string) {}
+	}
 	return pool
 }
 
@@ -218,7 +222,7 @@ func (p *checkerPool) getDiagnosticsChecker(ctx context.Context, requestID strin
 
 	if p.checkers[diagIndex] == nil {
 		p.log("checkerpool: Creating diagnostics checker")
-		c, _ := checker.NewChecker(p.program)
+		c, _ := checker.NewChecker(p.program, nil)
 		p.checkers[diagIndex] = c
 	}
 
@@ -292,7 +296,7 @@ func (p *checkerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	for i := 1; i < len(p.checkers); i++ {
 		if p.checkers[i] == nil {
 			p.log(fmt.Sprintf("checkerpool: Creating query checker %d", i))
-			c, _ := checker.NewChecker(p.program)
+			c, _ := checker.NewChecker(p.program, nil)
 			p.checkers[i] = c
 			return c, i
 		}
@@ -306,7 +310,7 @@ func (p *checkerPool) getPersistentChecker() (*checker.Checker, func()) {
 
 	if p.persistentChecker == nil {
 		p.log("checkerpool: Creating persistent checker")
-		c, _ := checker.NewChecker(p.program)
+		c, _ := checker.NewChecker(p.program, nil)
 		p.persistentChecker = c
 	}
 

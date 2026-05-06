@@ -2588,6 +2588,8 @@ func IsNonLocalAlias(symbol *Symbol, excludes SymbolFlags) bool {
 //	export = <EntityNameExpression>
 //	export default <EntityNameExpression>
 //	module.exports = <EntityNameExpression> (JS only)
+//	module.exports.<symbol> = <EntityNameExpression> (JS only)
+//	exports.<symbol> = <EntityNameExpression> (JS only)
 func IsAliasSymbolDeclaration(node *Node) bool {
 	switch node.Kind {
 	case KindImportEqualsDeclaration, KindNamespaceExportDeclaration, KindNamespaceImport, KindNamespaceExport,
@@ -2600,7 +2602,10 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)
 	case KindBinaryExpression:
-		return GetAssignmentDeclarationKind(node) == JSDeclarationKindModuleExports && ExpressionIsAlias(node.AsBinaryExpression().Right)
+		switch GetAssignmentDeclarationKind(node) {
+		case JSDeclarationKindModuleExports, JSDeclarationKindExportsProperty:
+			return ExpressionIsAlias(node.AsBinaryExpression().Right)
+		}
 	}
 	return false
 }
@@ -4072,7 +4077,7 @@ func HasModifier(node *Node, flags ModifierFlags) bool {
 	return node.ModifierFlags()&flags != 0
 }
 
-func IsExpandoInitializer(initializer *Node) bool {
+func IsExpandoInitializer(declaration *Node, initializer *Node) bool {
 	if initializer == nil {
 		return false
 	}
@@ -4080,7 +4085,7 @@ func IsExpandoInitializer(initializer *Node) bool {
 		return true
 	}
 	if IsInJSFile(initializer) {
-		return IsClassExpression(initializer) || (IsObjectLiteralExpression(initializer) && len(initializer.Properties()) == 0)
+		return IsClassExpression(initializer) || (IsObjectLiteralExpression(initializer) && len(initializer.Properties()) == 0 && declaration.Type() == nil)
 	}
 	return false
 }

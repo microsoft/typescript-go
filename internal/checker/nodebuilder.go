@@ -117,7 +117,10 @@ func (b *NodeBuilder) IndexInfoToIndexSignatureDeclaration(info *IndexInfo, encl
 func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	signature := b.impl.ch.getSignatureFromDeclaration(signatureDeclaration)
-	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature, true))
+	_, cleanup := b.impl.enterSignatureScope(signature)
+	result := b.impl.serializeReturnTypeForSignature(signature, true)
+	cleanup()
+	return b.exitContext(result)
 }
 
 func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
@@ -264,6 +267,11 @@ func (b *NodeBuilder) TypePredicateToTypePredicateNode(predicate *TypePredicate,
 func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.typeToTypeNode(typ))
+}
+
+func (b *NodeBuilder) TryJSTypeNodeToTypeNode(node *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
+	return b.exitContext(b.impl.tryJSTypeNodeToTypeNode(node))
 }
 
 // var _ NodeBuilderInterface = NewNodeBuilderAPI(nil, nil)
