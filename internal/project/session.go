@@ -166,6 +166,11 @@ type Session struct {
 	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
 	watchesMu sync.Mutex
 
+	// workspaceWatcherID is set when we've registered a special workspace
+	// watcher to ensure the current directory is always covered. It is
+	// removed when regular project watchers cover the workspace.
+	workspaceWatcherID *WatcherID
+
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
 	// requests into a single background task.
@@ -1322,12 +1327,68 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
 	}
 
+	errors = append(errors, s.ensureWorkspaceWatcher(ctx)...)
+
 	if len(errors) > 0 {
 		return fmt.Errorf("errors updating watches: %v", errors)
 	} else if s.options.LoggingEnabled {
 		s.logger.Log(fmt.Sprintf("Updated watches in %v", time.Since(start)))
 	}
 	return nil
+}
+
+// ensureWorkspaceWatcher checks whether any active watcher covers the current
+// directory. If none do, a special workspace watcher is registered. If regular
+// project watchers already cover the workspace and the special watcher exists,
+// it is removed. The workspace watcher is tracked separately from
+// session.watches so it doesn't interfere with ref-counted project watchers.
+func (s *Session) ensureWorkspaceWatcher(ctx context.Context) []error {
+	currentDir := s.options.CurrentDirectory
+	if currentDir == "" {
+		return nil
+	}
+
+	s.watchesMu.Lock()
+	defer s.watchesMu.Unlock()
+
+	// Check whether any active project watcher uses the exact workspace glob.
+	watchKind := lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete
+	workspaceKey := fileSystemWatcherKey{
+		pattern: getRecursiveGlobPattern(currentDir),
+		kind:    watchKind,
+	}
+	covered := s.watches[workspaceKey] != nil
+
+	var errors []error
+	if !covered && s.workspaceWatcherID == nil {
+		// No project watcher covers the workspace; register a special one.
+		glob := workspaceKey.pattern
+		watcher := &lsproto.FileSystemWatcher{
+			GlobPattern: lsproto.PatternOrRelativePattern{
+				Pattern: &glob,
+			},
+			Kind: &watchKind,
+		}
+		id := WatcherID("workspace watcher")
+		s.workspaceWatcherID = &id
+		if err := s.client.WatchFiles(ctx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
+			errors = append(errors, err)
+		} else if s.options.LoggingEnabled {
+			s.logger.Log(fmt.Sprintf("Added workspace watcher: %s", id))
+			s.logger.Log("\t" + glob)
+			s.logger.Log("")
+		}
+	} else if covered && s.workspaceWatcherID != nil {
+		// Regular watchers cover the workspace; remove the special one.
+		if err := s.client.UnwatchFiles(ctx, *s.workspaceWatcherID); err != nil {
+			errors = append(errors, err)
+		} else if s.options.LoggingEnabled {
+			s.logger.Log(fmt.Sprintf("Removed workspace watcher: %s", *s.workspaceWatcherID))
+		}
+		s.workspaceWatcherID = nil
+	}
+
+	return errors
 }
 
 func (s *Session) Close() {

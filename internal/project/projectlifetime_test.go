@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
@@ -327,6 +328,104 @@ func TestProjectLifetime(t *testing.T) {
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+	})
+
+	t.Run("workspace is always watched", func(t *testing.T) {
+		t.Parallel()
+		// Demonstrate what happens to LSP file watchers when we:
+		//   1. Open a file in project A (watchers created)
+		//   2. Close project A's file
+		//   3. Open a file in project B (project A removed, project B added)
+		//
+		// When the workspace directory is "/" all project globs collapse to "/**/*",
+		// so the ref-counted watcher is never removed. To exercise real watcher churn,
+		// we set CurrentDirectory to a narrow directory so that projects outside it
+		// produce distinct outside-workspace watcher globs.
+		files := map[string]any{
+			// Project A - inside the workspace
+			"/home/projects/workspace/projA/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true
+				}
+			}`,
+			"/home/projects/workspace/projA/a.ts": `export const a = 1;`,
+			// Project B - outside the workspace
+			"/external/projB/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true
+				}
+			}`,
+			"/external/projB/b.ts": `export const b = 2;`,
+		}
+		session, utils := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+			CurrentDirectory:       "/home/projects/workspace",
+			DefaultLibraryPath:     bundled.LibPath(),
+			PositionEncoding:       lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:           true,
+			LoggingEnabled:         true,
+			PushDiagnosticsEnabled: true,
+		})
+
+		// --- Step 1: Open project A ---
+		uriA := lsproto.DocumentUri("file:///home/projects/workspace/projA/a.ts")
+		session.DidOpenFile(context.Background(), uriA, 1, files["/home/projects/workspace/projA/a.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), uriA)
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		watchCallsAfterOpenA := len(utils.Client().WatchFilesCalls())
+		unwatchCallsAfterOpenA := len(utils.Client().UnwatchFilesCalls())
+		assert.Assert(t, watchCallsAfterOpenA > 0, "expected at least one WatchFiles call after opening project A")
+		assert.Equal(t, unwatchCallsAfterOpenA, 0, "expected no UnwatchFiles calls after opening project A")
+
+		snapshot := session.Snapshot()
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/workspace/proja/tsconfig.json")) != nil,
+			"project A should exist")
+
+		// Record the watcher IDs registered for project A
+		var watcherIDsA []project.WatcherID
+		for _, call := range utils.Client().WatchFilesCalls() {
+			watcherIDsA = append(watcherIDsA, call.ID)
+		}
+
+		// --- Step 2: Close project A, open project B ---
+		session.DidCloseFile(context.Background(), uriA)
+		uriB := lsproto.DocumentUri("file:///external/projB/b.ts")
+		session.DidOpenFile(context.Background(), uriB, 1, files["/external/projB/b.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageService(context.Background(), uriB)
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		snapshot = session.Snapshot()
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/workspace/proja/tsconfig.json")) == nil,
+			"project A should be removed after closing its only open file and opening another project")
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/external/projb/tsconfig.json")) != nil,
+			"project B should exist")
+
+		watchCallsAfterSwitch := len(utils.Client().WatchFilesCalls())
+		unwatchCallsAfterSwitch := len(utils.Client().UnwatchFilesCalls())
+
+		// Record all watcher IDs that were unwatched
+		var unwatchedIDs []project.WatcherID
+		for _, call := range utils.Client().UnwatchFilesCalls() {
+			unwatchedIDs = append(unwatchedIDs, call.ID)
+		}
+
+		// New watchers should have been created for project B
+		assert.Assert(t, watchCallsAfterSwitch > watchCallsAfterOpenA,
+			"expected new WatchFiles calls for project B, got %d total (was %d)", watchCallsAfterSwitch, watchCallsAfterOpenA)
+
+		// Project A's watchers should have been cleaned up (globs no longer needed)
+		assert.Assert(t, unwatchCallsAfterSwitch > 0,
+			"expected UnwatchFiles calls when project A is removed, got %d", unwatchCallsAfterSwitch)
+
+		// --- Step 3: Verify project B's files are watched ---
+		assert.Assert(t, utils.WatchesFile("/external/projb/b.ts"),
+			"project B's files should be watched")
+		// Workspace should still be watched via the workspace watcher,
+		// even though project A was removed.
+		assert.Assert(t, utils.WatchesFile("/home/projects/workspace/proja/a.ts"),
+			"workspace should still be watched via workspace watcher")
 	})
 
 	t.Run("deleted open file remains in project until closed", func(t *testing.T) {

@@ -139,6 +139,7 @@ type snapshotFSBuilder struct {
 	diskFiles                  *dirty.SyncMap[tspath.Path, *diskFile]
 	diskDirectories            *dirty.Map[tspath.Path, dirty.CloneableMap[tspath.Path, string]]
 	nodeModulesRealpathAliases *dirty.SyncMap[tspath.Path, *realpathAliasSet]
+	currentDirectoryPath       tspath.Path
 	toPath                     func(string) tspath.Path
 }
 
@@ -150,6 +151,7 @@ func newSnapshotFSBuilder(
 	diskDirectories map[tspath.Path]dirty.CloneableMap[tspath.Path, string],
 	nodeModulesRealpathAliases map[tspath.Path]*realpathAliasSet,
 	positionEncoding lsproto.PositionEncodingKind,
+	currentDirectoryPath tspath.Path,
 	toPath func(fileName string) tspath.Path,
 ) *snapshotFSBuilder {
 	cachedFS := cachedvfs.From(fs)
@@ -186,6 +188,7 @@ func newSnapshotFSBuilder(
 		diskFiles:                  dirty.NewSyncMap(diskFiles),
 		diskDirectories:            dirty.NewMap(diskDirectories),
 		nodeModulesRealpathAliases: dirty.NewSyncMap(nodeModulesRealpathAliases),
+		currentDirectoryPath:       currentDirectoryPath,
 		toPath:                     toPath,
 	}
 }
@@ -654,7 +657,9 @@ func (s *snapshotFSBuilder) isWatchedConfigFile(uri lsproto.DocumentUri, customC
 	fileName := uri.FileName()
 	path := s.toPath(fileName)
 	baseName := tspath.GetBaseFileName(string(path))
-	return isConfigBaseName(baseName, customConfigFileName) && !strings.Contains(string(path), "/node_modules/")
+	return isConfigBaseName(baseName, customConfigFileName) &&
+		!strings.Contains(string(path), "/node_modules/") &&
+		s.currentDirectoryPath.ContainsPath(path)
 }
 
 // sourceFS is a vfs.FS that sources files from a FileSource and tracks seen files.
