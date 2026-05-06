@@ -478,6 +478,37 @@ func computeModuleSpecifiers(
 	if len(nodeModulesSpecifiers) > 0 {
 		return nodeModulesSpecifiers, ResultKindNodeModules
 	}
+
+	// If no specifiers were found but we have redirect paths (e.g., project reference
+	// output .d.ts files), try generating relative specifiers for them without the
+	// pathsOnly restriction. This handles the case where a type is from a non-exported
+	// file in a referenced project (e.g., a types file that is not the main entry point).
+	// The redirect path (output .d.ts) is a stable, portable path that doesn't go
+	// through node_modules.
+	if len(relativeSpecifiers) == 0 || (len(relativeSpecifiers) > 0 && ContainsNodeModules(relativeSpecifiers[0])) {
+		importMode := options.OverrideImportMode
+		if importMode == core.ResolutionModeNone {
+			importMode = host.GetDefaultResolutionModeForFile(importingSourceFile)
+		}
+		for _, modulePath := range modulePaths {
+			if !modulePath.IsRedirect || modulePath.IsInNodeModules {
+				continue
+			}
+			local := getLocalModuleSpecifier(
+				modulePath.FileName,
+				info,
+				compilerOptions,
+				host,
+				importMode,
+				preferences,
+				false, /*pathsOnly*/
+			)
+			if len(local) > 0 && !ContainsNodeModules(local) {
+				return []string{local}, ResultKindRedirect
+			}
+		}
+	}
+
 	return relativeSpecifiers, ResultKindRelative
 }
 

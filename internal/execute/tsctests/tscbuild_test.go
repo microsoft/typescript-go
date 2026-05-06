@@ -1229,6 +1229,114 @@ func TestBuildInferredTypeFromMonorepoReference(t *testing.T) {
 	}
 }
 
+func TestBuildInferredTypeFromNonIndexInMonorepo(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "inferred type from non-index file in referenced monorepo package",
+			files: FileMap{
+				// Root package.json and tsconfig.json
+				"/home/src/workspaces/solution/package.json": stringtestutil.Dedent(`
+					{
+						"name": "monorepo-root",
+						"private": true,
+						"workspaces": ["packages/*"]
+					}`),
+				"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"files": [],
+						"include": [],
+						"references": [
+							{ "path": "packages/feature-gating" },
+							{ "path": "packages/app" }
+						]
+					}`),
+				// feature-gating: exports createFeatureGateSelector which uses State from a separate types file
+				"/home/src/workspaces/solution/packages/feature-gating/package.json": stringtestutil.Dedent(`
+					{
+						"name": "@lab/feature-gating",
+						"version": "1.0.0",
+						"private": true,
+						"type": "module",
+						"main": "./src/index.ts",
+						"types": "./src/index.ts",
+						"exports": {
+							".": "./src/index.ts"
+						}
+					}`),
+				"/home/src/workspaces/solution/packages/feature-gating/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"module": "ESNext",
+							"moduleResolution": "Bundler",
+							"target": "ES2022",
+							"outDir": "./out",
+							"rootDir": "./src"
+						},
+						"include": ["src/**/*"]
+					}`),
+				"/home/src/workspaces/solution/packages/feature-gating/src/types.ts": stringtestutil.Dedent(`
+					export interface State {
+						featureGates: string[];
+					}`),
+				"/home/src/workspaces/solution/packages/feature-gating/src/index.ts": stringtestutil.Dedent(`
+					import type { State } from "./types.js";
+
+					export const createFeatureGateSelector =
+						(featureGate: string) =>
+						(state: State): boolean =>
+							state.featureGates.includes(featureGate);`),
+				// app: project reference to feature-gating, uses createFeatureGateSelector with inferred type
+				"/home/src/workspaces/solution/packages/app/package.json": stringtestutil.Dedent(`
+					{
+						"name": "@lab/app",
+						"version": "1.0.0",
+						"private": true,
+						"type": "module",
+						"main": "./src/index.ts",
+						"types": "./src/index.ts",
+						"exports": {
+							".": "./src/index.ts"
+						},
+						"dependencies": {
+							"@lab/feature-gating": "workspace:*"
+						}
+					}`),
+				"/home/src/workspaces/solution/packages/app/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"module": "ESNext",
+							"moduleResolution": "Bundler",
+							"target": "ES2022",
+							"outDir": "./out",
+							"rootDir": "./src"
+						},
+						"include": ["src/**/*"],
+						"references": [{ "path": "../feature-gating" }]
+					}`),
+				"/home/src/workspaces/solution/packages/app/src/index.ts": stringtestutil.Dedent(`
+					import { createFeatureGateSelector } from "@lab/feature-gating";
+
+					export const isFooEnabled = createFeatureGateSelector("foo");`),
+				// Symlinks for node_modules to simulate pnpm workspace
+				"/home/src/workspaces/solution/packages/app/node_modules/@lab/feature-gating": vfstest.Symlink("/home/src/workspaces/solution/packages/feature-gating"),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "--verbose"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "inferredTypeFromNonIndexInMonorepo")
+	}
+}
+
 func TestBuildJavascriptProjectEmit(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
