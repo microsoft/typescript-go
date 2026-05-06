@@ -14,6 +14,23 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+type publishDiagnosticsCall = struct {
+	Ctx    context.Context
+	Params *lsproto.PublishDiagnosticsParams
+}
+
+// filterDiagnosticsByURI returns all PublishDiagnostics calls matching the given URI,
+// starting from the given index.
+func filterDiagnosticsByURI(calls []publishDiagnosticsCall, uri lsproto.DocumentUri, from int) []publishDiagnosticsCall {
+	var result []publishDiagnosticsCall
+	for i := from; i < len(calls); i++ {
+		if calls[i].Params.Uri == uri {
+			result = append(result, calls[i])
+		}
+	}
+	return result
+}
+
 // These tests explicitly verify ProgramUpdateKind using subtests with shared helpers.
 func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Parallel()
@@ -210,7 +227,80 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Assert(t, len(tsconfigCall.Params.Diagnostics) > 0, "expected at least one diagnostic")
 	})
 
-	t.Run("clears diagnostics when project is removed", func(t *testing.T) {
+	t.Run("clears checker diagnostics when project is removed", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "es2020",
+					"baseUrl": "."
+				}
+			}`,
+			"/src/index.ts": `export function f() {
+				using x = { [Symbol.dispose]() {} };
+			}`,
+			"/src2/tsconfig.json": `{"compilerOptions": {}}`,
+			"/src2/index.ts":      "export const y = 2;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		// Request semantic diagnostics to trigger checking, which produces global diagnostics.
+		ls, err := session.GetLanguageService(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		_, err = ls.ProvideDiagnostics(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.EnqueuePublishGlobalDiagnostics()
+		session.WaitForBackgroundTasks()
+
+		// Verify we got both a config diagnostic (baseUrl) and a global checker diagnostic on tsconfig.json
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json")
+		lastBeforeClose := tsconfigCalls[len(tsconfigCalls)-1]
+		hasGlobalDiag := false
+		hasBaseUrlDiag := false
+		for _, diag := range lastBeforeClose.Params.Diagnostics {
+			if diag.Code != nil && diag.Code.Integer != nil {
+				switch *diag.Code.Integer {
+				case 2318: // Cannot_find_global_type_0
+					hasGlobalDiag = true
+				case 5102: // Option_0_has_been_removed_Please_remove_it_from_your_configuration
+					hasBaseUrlDiag = true
+				}
+			}
+		}
+		assert.Assert(t, hasGlobalDiag, "expected a 'Cannot find global' diagnostic on tsconfig.json, got: %v", lastBeforeClose.Params.Diagnostics)
+		assert.Assert(t, hasBaseUrlDiag, "expected a 'baseUrl' diagnostic on tsconfig.json, got: %v", lastBeforeClose.Params.Diagnostics)
+		callsBeforeClose := len(calls)
+
+		// Close the file and open a file in a different project to trigger cleanup of the first
+		session.DidCloseFile(context.Background(), "file:///src/index.ts")
+		session.DidOpenFile(context.Background(), "file:///src2/index.ts", 1, files["/src2/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src2/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// After project removal, checker diagnostics should be cleared but config diagnostics should remain
+		calls = utils.Client().PublishDiagnosticsCalls()
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeClose)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after project removal")
+		lastCall := clearCalls[len(clearCalls)-1]
+		// The baseUrl config diagnostic should still be present, global checker diagnostics should not
+		hasBaseUrlDiag = false
+		for _, diag := range lastCall.Params.Diagnostics {
+			if diag.Code != nil && diag.Code.Integer != nil {
+				switch *diag.Code.Integer {
+				case 2318: // Cannot_find_global_type_0
+					t.Errorf("expected no diagnostic code 2318 (Cannot find global type) after project cleanup, got: %v", lastCall.Params.Diagnostics)
+				case 5102: // Option_0_has_been_removed_Please_remove_it_from_your_configuration
+					hasBaseUrlDiag = true
+				}
+			}
+		}
+		assert.Assert(t, hasBaseUrlDiag, "expected 'baseUrl' option removed to remain after project cleanup, got: %v", lastCall.Params.Diagnostics)
+	})
+
+	t.Run("updates tsconfig diagnostics after project has been closed", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
 			"/src/tsconfig.json":  `{"compilerOptions": {"baseUrl": "."}}`,
@@ -224,29 +314,35 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.NilError(t, err)
 		session.WaitForBackgroundTasks()
 
-		// Open a file in a different project to trigger cleanup of the first
+		// After opening, there should be a tsconfig diagnostics call with one diagnostic.
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after opening file")
+		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after opening file")
+
+		// Close the only open file in the project.
 		session.DidCloseFile(context.Background(), "file:///src/index.ts")
+		// Open file in a different project to trigger cleanup of the first project.
 		session.DidOpenFile(context.Background(), "file:///src2/index.ts", 1, files["/src2/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src2/index.ts"))
 		assert.NilError(t, err)
 		session.WaitForBackgroundTasks()
 
-		calls := utils.Client().PublishDiagnosticsCalls()
-		// Should have at least one call for the first project with diagnostics,
-		// and one clearing it after switching projects
-		var firstProjectCalls []struct {
-			Ctx    context.Context
-			Params *lsproto.PublishDiagnosticsParams
-		}
-		for i := range calls {
-			if calls[i].Params.Uri == "file:///src/tsconfig.json" {
-				firstProjectCalls = append(firstProjectCalls, calls[i])
-			}
-		}
-		assert.Assert(t, len(firstProjectCalls) >= 2, "expected at least 2 PublishDiagnostics calls for first project")
-		// Last call should clear diagnostics
-		lastCall := firstProjectCalls[len(firstProjectCalls)-1]
-		assert.Equal(t, len(lastCall.Params.Diagnostics), 0, "expected empty diagnostics after project cleanup")
+		callsBeforeChange := len(calls)
+		// Remove baseUrl from tsconfig so the diagnostic goes away.
+		err = utils.FS().WriteFile("/src/tsconfig.json", `{"compilerOptions": {}}`)
+		assert.NilError(t, err)
+		// The tsconfig should still be watched after closing the TS file.
+		assert.Assert(t, utils.WatchesFile("/src/tsconfig.json"), "expected tsconfig.json to still be watched after closing the TS file")
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src/tsconfig.json"), Type: lsproto.FileChangeTypeChanged}})
+		session.WaitForBackgroundTasks()
+
+		// After updating config, there should be a tsconfig diagnostics call with empty diagnostics.
+		calls = utils.Client().PublishDiagnosticsCalls()
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeChange)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after config change")
+		lastClearCall := clearCalls[len(clearCalls)-1]
+		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after removing baseUrl")
 	})
 
 	t.Run("updates diagnostics when program changes", func(t *testing.T) {

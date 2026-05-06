@@ -423,13 +423,16 @@ func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath
 	return entry.Value()
 }
 
-func (s *snapshotFSBuilder) watchChangesOverlapCache(change FileChangeSummary) bool {
+func (s *snapshotFSBuilder) watchChangesOverlapCache(change FileChangeSummary, customConfigFileName string) bool {
 	for uri := range change.Changed.Keys() {
 		path := s.toPath(uri.FileName())
 		if _, ok := s.diskFiles.Load(path); ok {
 			return true
 		}
 		if _, ok := s.nodeModulesRealpathAliases.Load(path); ok {
+			return true
+		}
+		if s.isWatchedConfigFile(uri, customConfigFileName) {
 			return true
 		}
 	}
@@ -626,6 +629,32 @@ func (s *snapshotFSBuilder) convertOpenAndCloseToChanges(change FileChangeSummar
 		change.Deleted.Add(uri)
 	}
 	return change
+}
+
+// convertConfigWatchEventsToResourceRequest converts file change events into a resource request that
+// includes the URIs of any changed config files. This allows updated diagnostics for config files.
+func (s *snapshotFSBuilder) convertConfigWatchEventsToResourceRequest(
+	customConfigFileName string,
+	fileChangeSummary FileChangeSummary,
+	resourceRequest ResourceRequest,
+) ResourceRequest {
+	var configUris []lsproto.DocumentUri
+	for uri := range fileChangeSummary.Changed.Keys() {
+		if s.isWatchedConfigFile(uri, customConfigFileName) {
+			configUris = append(configUris, uri)
+		}
+	}
+	resourceRequest.ConfiguredProjectDocuments = append(resourceRequest.ConfiguredProjectDocuments, configUris...)
+	return resourceRequest
+}
+
+// isWatchedConfigFile returns true if the given URI refers to a config file that is being watched for changes for
+// diagnostics updates.
+func (s *snapshotFSBuilder) isWatchedConfigFile(uri lsproto.DocumentUri, customConfigFileName string) bool {
+	fileName := uri.FileName()
+	path := s.toPath(fileName)
+	baseName := tspath.GetBaseFileName(string(path))
+	return isConfigBaseName(baseName, customConfigFileName) && !strings.Contains(string(path), "/node_modules/")
 }
 
 // sourceFS is a vfs.FS that sources files from a FileSource and tracks seen files.

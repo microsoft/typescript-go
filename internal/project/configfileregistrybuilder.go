@@ -386,8 +386,7 @@ func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) cha
 }
 
 func (c *configFileRegistryBuilder) isConfigBaseName(baseName string) bool {
-	return baseName == "tsconfig.json" || baseName == "jsconfig.json" ||
-		(c.customConfigFileName != "" && baseName == c.customConfigFileName)
+	return isConfigBaseName(baseName, c.customConfigFileName)
 }
 
 func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
@@ -722,4 +721,9 @@ func (c *configFileRegistryBuilder) Cleanup() {
 		})
 		return true
 	})
+}
+
+func isConfigBaseName(baseName string, customConfigFileName string) bool {
+	return baseName == "tsconfig.json" || baseName == "jsconfig.json" ||
+		(customConfigFileName != "" && baseName == customConfigFileName)
 }

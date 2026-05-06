@@ -278,17 +278,26 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
 		case UpdateReasonIdleCleanDiskCache:
 			logger.Logf("Reason: IdleCleanDiskCache")
+		case UpdateReasonDidChangeWatchedFiles:
+			logger.Logf("Reason: DidChangeWatchedFiles - %v", getDetails())
 		}
 	}
 
 	start := time.Now()
+
+	// Compute effective customConfigFileName from user preferences
+	customConfigFileName := s.ConfigFileRegistry.customConfigFileName
+	if change.newConfig != nil {
+		customConfigFileName = change.newConfig.CustomConfigFileName
+	}
+
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if change.fileChanges.InvalidateAll {
 			fs.invalidateCache()
 			logger.Logf("InvalidateAll: invalidated file cache in %v", time.Since(invalidateStart))
-		} else if !fs.watchChangesOverlapCache(change.fileChanges) {
+		} else if !fs.watchChangesOverlapCache(change.fileChanges, customConfigFileName) {
 			// All watch changes/deletes are files we haven't seen; should be irrelevant to us (probably an external tool's build or something)
 			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
 			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
@@ -312,11 +321,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
-	// Compute effective customConfigFileName from user preferences
-	customConfigFileName := s.ConfigFileRegistry.customConfigFileName
-	if change.newConfig != nil {
-		customConfigFileName = change.newConfig.CustomConfigFileName
-	}
+	change.ResourceRequest = fs.convertConfigWatchEventsToResourceRequest(customConfigFileName, change.fileChanges, change.ResourceRequest)
 
 	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(

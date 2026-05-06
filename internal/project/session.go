@@ -43,6 +43,7 @@ const (
 	UpdateReasonRequestedLoadProjectTree
 	UpdateReasonRequestedLanguageServiceWithAutoImports
 	UpdateReasonIdleCleanDiskCache
+	UpdateReasonDidChangeWatchedFiles
 )
 
 // SessionOptions are the immutable initialization options for a session.
@@ -128,6 +129,12 @@ type Session struct {
 	// installations and applied to the next snapshot update.
 	pendingATAChanges   map[tspath.Path]*ATAStateChange
 	pendingATAChangesMu sync.Mutex
+
+	// snapshotUpdateCancel is the cancelation function for a scheduled
+	// snapshot update. Snapshot updates are scheduled and debounced
+	// after file watch changes.
+	snapshotUpdateCancel   context.CancelFunc
+	snapshotUpdateCancelMu sync.Mutex
 
 	// diagnosticsRefreshCancel is the cancelation function for a scheduled
 	// diagnostics refresh. Diagnostics refreshes are scheduled and debounced
@@ -359,7 +366,8 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
 	s.pendingFileChangesMu.Unlock()
 
-	// Schedule a debounced diagnostics refresh
+	// Schedule a debounced snapshot update and diagnostics refresh
+	s.scheduleSnapshotUpdate()
 	s.ScheduleDiagnosticsRefresh()
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
@@ -371,6 +379,68 @@ func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Contex
 		reason:                             UpdateReasonDidChangeCompilerOptionsForInferredProjects,
 		compilerOptionsForInferredProjects: options,
 	})
+}
+
+func (s *Session) scheduleSnapshotUpdate() {
+	s.snapshotUpdateCancelMu.Lock()
+	defer s.snapshotUpdateCancelMu.Unlock()
+
+	// Cancel any existing scheduled snapshot update
+	if s.snapshotUpdateCancel != nil {
+		s.snapshotUpdateCancel()
+		s.logger.Log("Delaying scheduled snapshot update...")
+	} else {
+		s.logger.Log("Scheduling new snapshot update...")
+	}
+
+	// Create a new cancellable context for the debounce task
+	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
+	s.snapshotUpdateCancel = cancel
+
+	// Enqueue the debounced snapshot update
+	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
+		defer cancel()
+		// Sleep for the debounce delay
+		select {
+		case <-time.After(s.options.DebounceDelay):
+			// Delay completed, proceed with update
+		case <-ctx.Done():
+			// Context was cancelled, newer events arrived
+			return
+		}
+
+		// Clear the cancel function since we're about to execute the update
+		s.snapshotUpdateCancelMu.Lock()
+		s.snapshotUpdateCancel = nil
+		s.snapshotUpdateCancelMu.Unlock()
+
+		if s.options.LoggingEnabled {
+			s.logger.Log("Running scheduled snapshot update")
+		}
+
+		s.snapshotUpdateMu.Lock()
+		defer s.snapshotUpdateMu.Unlock()
+
+		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+		if !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil {
+			s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+				reason:      UpdateReasonDidChangeWatchedFiles,
+				fileChanges: fileChanges,
+				ataChanges:  ataChanges,
+				newConfig:   newConfig,
+			})
+		}
+	})
+}
+
+func (s *Session) cancelSnapshotUpdate() {
+	s.snapshotUpdateCancelMu.Lock()
+	defer s.snapshotUpdateCancelMu.Unlock()
+	if s.snapshotUpdateCancel != nil {
+		s.snapshotUpdateCancel()
+		s.logger.Log("Canceled scheduled snapshot update")
+		s.snapshotUpdateCancel = nil
+	}
 }
 
 func (s *Session) ScheduleDiagnosticsRefresh() {
@@ -1261,6 +1331,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 }
 
 func (s *Session) Close() {
+	// Cancel any pending snapshot update
+	s.cancelSnapshotUpdate()
 	// Cancel any pending diagnostics refresh
 	s.cancelDiagnosticsRefresh()
 	// Cancel any pending auto-import cache warming
@@ -1478,7 +1550,12 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if removedProject.Kind != KindConfigured {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
+			var oldProgramDiagnostics []*ast.Diagnostic
+			if removedProject.Program != nil {
+				oldProgramDiagnostics = removedProject.Program.GetProgramDiagnostics()
+			}
+			// Remove global checker project diagnostics if the project is removed, since we will no longer keep those updated.
+			s.publishProjectDiagnostics(ctx, string(configFilePath), oldProgramDiagnostics, oldSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, oldProject, newProject *Project) {
 			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) {
