@@ -485,7 +485,7 @@ func computeModuleSpecifiers(
 	// file in a referenced project (e.g., a types file that is not the main entry point).
 	// The redirect path (output .d.ts) is a stable, portable path that doesn't go
 	// through node_modules.
-	if len(relativeSpecifiers) == 0 || (len(relativeSpecifiers) > 0 && ContainsNodeModules(relativeSpecifiers[0])) {
+	if len(relativeSpecifiers) == 0 || ContainsNodeModules(relativeSpecifiers[0]) {
 		importMode := options.OverrideImportMode
 		if importMode == core.ResolutionModeNone {
 			importMode = host.GetDefaultResolutionModeForFile(importingSourceFile)
