@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -75,18 +76,19 @@ func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.C
 		return nil, err
 	}
 
-	seenClassDeclarations := make(map[*ast.Node]bool)
+	seenClassDeclarations := collections.Set[*ast.Node]{}
 
 	for _, diag := range getAllDiagnostics(context, fixContext.Program, fixContext.SourceFile) {
 		if containsErrorCode(fixClassIncorrectlyImplementsInterfaceErrorCodes, diag.Code()) {
 			classDeclaration := getClass(fixContext.SourceFile, core.NewTextRange(diag.Pos(), diag.End()))
-			if classDeclaration == nil || seenClassDeclarations[classDeclaration] {
+			if classDeclaration == nil {
 				continue
 			}
-			seenClassDeclarations[classDeclaration] = true
-			implementsTypes := ast.GetImplementsTypeNodes(classDeclaration)
-			for _, implementedTypeNode := range implementsTypes {
-				addChanges(context, fixContext, changeTracker, importAdder, typeChecker, classDeclaration, implementedTypeNode)
+			if seenClassDeclarations.AddIfAbsent(classDeclaration) {
+				implementsTypes := ast.GetImplementsTypeNodes(classDeclaration)
+				for _, implementedTypeNode := range implementsTypes {
+					addChanges(context, fixContext, changeTracker, importAdder, typeChecker, classDeclaration, implementedTypeNode)
+				}
 			}
 		}
 	}
