@@ -72,7 +72,7 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 	wg := core.NewWorkGroup(false)
 	var errMu sync.Mutex
 	var enqueueItem func(item projectAndTextDocumentPosition)
-	var panicsOccured []*core.PanicWithStack
+	var panicsOccurred []*core.PanicWithStack
 	var panicMu sync.Mutex
 	enqueueItem = func(item projectAndTextDocumentPosition) {
 		var response response[Resp]
@@ -87,7 +87,7 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 				if r := recover(); r != nil {
 					stack := debug.Stack()
 					panicMu.Lock()
-					panicsOccured = append(panicsOccured, &core.PanicWithStack{Value: r, Stack: stack})
+					panicsOccurred = append(panicsOccurred, &core.PanicWithStack{Value: r, Stack: stack})
 					panicMu.Unlock()
 				}
 			}()
@@ -204,8 +204,8 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 		// Process existing known projects first
 		wg.RunAndWait()
 		// No need to use mu here since we are not in parallel at this point
-		if panicsOccured != nil {
-			panic(panicsOccured[0])
+		if panicsOccurred != nil {
+			panic(panicsOccurred[0])
 		}
 		if ctx.Err() != nil {
 			return resp, ctx.Err()
