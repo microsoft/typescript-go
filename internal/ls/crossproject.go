@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"fmt"
 	"iter"
 	"runtime/debug"
 	"sync"
@@ -73,7 +72,7 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 	wg := core.NewWorkGroup(false)
 	var errMu sync.Mutex
 	var enqueueItem func(item projectAndTextDocumentPosition)
-	var panicsOccured []string
+	var panicsOccured []*core.PanicWithStack
 	var panicMu sync.Mutex
 	enqueueItem = func(item projectAndTextDocumentPosition) {
 		var response response[Resp]
@@ -87,9 +86,8 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 			defer func() {
 				if r := recover(); r != nil {
 					stack := debug.Stack()
-					panicOccured := fmt.Sprintf("panic handling request: %v\n%s", r, string(stack))
 					panicMu.Lock()
-					panicsOccured = append(panicsOccured, panicOccured)
+					panicsOccured = append(panicsOccured, &core.PanicWithStack{Value: r, Stack: stack})
 					panicMu.Unlock()
 				}
 			}()
@@ -207,7 +205,7 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 		wg.RunAndWait()
 		// No need to use mu here since we are not in parallel at this point
 		if panicsOccured != nil {
-			panic(fmt.Sprintf("Panics occurred during cross-project handling: %v", panicsOccured))
+			panic(panicsOccured[0])
 		}
 		if ctx.Err() != nil {
 			return resp, ctx.Err()

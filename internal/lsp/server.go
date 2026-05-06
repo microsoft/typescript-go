@@ -955,9 +955,16 @@ func (s *Server) getLanguageServiceAndCrossProjectOrchestrator(ctx context.Conte
 func (s *Server) recover(req *lsproto.RequestMessage) {
 	if r := recover(); r != nil {
 		stack := debug.Stack()
-		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
+		// If the panic was wrapped with PanicWithStack (e.g., from cross-project handling),
+		// use the original stack trace to preserve the actual crash context.
+		panicValue := r
+		if pws, ok := r.(*core.PanicWithStack); ok {
+			stack = pws.Stack
+			panicValue = pws.Value
+		}
+		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, panicValue, string(stack))
 		if req.ID != nil {
-			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
+			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, panicValue))
 			if err != nil {
 				return
 			}
@@ -974,7 +981,7 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 				})
 			}
 		} else {
-			s.logger.Error("unhandled panic in notification", req.Method, r)
+			s.logger.Error("unhandled panic in notification", req.Method, panicValue)
 		}
 	}
 }
