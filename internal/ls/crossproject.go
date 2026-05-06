@@ -3,7 +3,6 @@ package ls
 import (
 	"context"
 	"iter"
-	"runtime/debug"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -85,9 +84,8 @@ func handleCrossProject[Req lsproto.HasTextDocumentPosition, Resp any](
 			}
 			defer func() {
 				if r := recover(); r != nil {
-					stack := debug.Stack()
 					panicMu.Lock()
-					panicsOccurred = append(panicsOccurred, &core.PanicWithStack{Value: r, Stack: stack})
+					panicsOccurred = append(panicsOccurred, core.NewPanicWithStack(r))
 					panicMu.Unlock()
 				}
 			}()

@@ -85,21 +85,14 @@ created by github.com/microsoft/typescript-go/internal/lsp.(*Server).dispatchLoo
 
 // This test represents a stack trace captured via PanicWithStack from a cross-project
 // worker goroutine. The stack originates from the goroutine where the panic occurred
-// (captured by debug.Stack() in the deferred recover), preserving the actual crash site
-// rather than showing the re-panic location in handleCrossProject.
+// with recovery infrastructure frames (debug.Stack, deferred func, panic) already
+// stripped by NewPanicWithStack, leaving only the actual crash site frames.
 func TestSanitizedCrossProjectPanicStackTrace(t *testing.T) {
 	t.Parallel()
 
-	// This is the stack as captured by debug.Stack() in the cross-project worker goroutine's
-	// deferred recover. It shows the actual crash context that would otherwise be lost.
-	input := `goroutine 42 [running]:
-runtime/debug.Stack()
-	runtime/debug/stack.go:26 +0x5e
-github.com/microsoft/typescript-go/internal/ls.handleCrossProject[...].func1.1()
-	github.com/microsoft/typescript-go/internal/ls/crossproject.go:88 +0x70
-panic({0xc323a0?, 0x1780b90?})
-	runtime/panic.go:783 +0x132
-github.com/microsoft/typescript-go/internal/checker.(*Checker).checkExpression(0xc0045a8000, {0x10f6688, 0xc00c2871d0}, 0xc0001fe008, 0x0)
+	// This is the stack after NewPanicWithStack trims recovery overhead.
+	// It starts directly at the crash site without debug.Stack/panic frames.
+	input := `github.com/microsoft/typescript-go/internal/checker.(*Checker).checkExpression(0xc0045a8000, {0x10f6688, 0xc00c2871d0}, 0xc0001fe008, 0x0)
 	github.com/microsoft/typescript-go/internal/checker/checker.go:5000 +0x1a0
 github.com/microsoft/typescript-go/internal/ls.(*LanguageService).provideSymbolsAndEntries(0xc008329200, {0x10f6688, 0xc00c2871d0}, {0xc00b472030, 0x28}, {0x2, 0x4}, 0x0, 0x0)
 	github.com/microsoft/typescript-go/internal/ls/findallreferences.go:100 +0x200
