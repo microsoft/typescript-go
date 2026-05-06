@@ -105,7 +105,7 @@ func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.C
 }
 
 func addChanges(context context.Context, fixContext *CodeFixContext, changeTracker *change.Tracker, importAdder autoimport.ImportAdder, typeChecker *checker.Checker, classDeclaration *ast.Node, implementedTypeNode *ast.Node) {
-	missingMemberFixer := NewMissingMemberFixer(changeTracker, fixContext.Program, typeChecker, fixContext.LS.UserPreferences(), importAdder, locale.FromContext(context))
+	missingMemberFixer := newMissingMemberFixer(changeTracker, fixContext.Program, typeChecker, fixContext.LS.UserPreferences(), importAdder, locale.FromContext(context))
 	constructor := getConstructor(classDeclaration)
 	implementedType := typeChecker.GetTypeAtLocation(implementedTypeNode)
 	classType := typeChecker.GetTypeAtLocation(classDeclaration)
@@ -126,7 +126,7 @@ func addChanges(context context.Context, fixContext *CodeFixContext, changeTrack
 
 	missingMembers := getMissingMembers(typeChecker, classDeclaration, []*checker.Type{implementedType})
 	for _, member := range missingMembers {
-		missingMembers := missingMemberFixer.createMemberFromSymbol(member, classDeclaration, fixContext.SourceFile, nil /*body*/, PreserveOptionalFlagsAll)
+		missingMembers := missingMemberFixer.createMemberFromSymbol(member, classDeclaration, fixContext.SourceFile, nil /*body*/, preserveOptionalFlagsAll)
 		for _, missingMember := range missingMembers {
 			insertInterfaceMemberNode(changeTracker, fixContext.SourceFile, classDeclaration, constructor, missingMember)
 		}

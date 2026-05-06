@@ -15,15 +15,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
 
-type PreserveOptionalFlags int
+type preserveOptionalFlags int
 
 const (
-	PreserveOptionalFlagsMethod PreserveOptionalFlags = 1 << iota
-	PreserveOptionalFlagsProperty
-	PreserveOptionalFlagsAll = PreserveOptionalFlagsMethod | PreserveOptionalFlagsProperty
+	preserveOptionalFlagsMethod preserveOptionalFlags = 1 << iota
+	preserveOptionalFlagsProperty
+	preserveOptionalFlagsAll = preserveOptionalFlagsMethod | preserveOptionalFlagsProperty
 )
 
-type MissingMemberFixer struct {
+type missingMemberFixer struct {
 	ChangeTracker *change.Tracker
 	Checker       *checker.Checker
 	Program       *compiler.Program
@@ -32,8 +32,8 @@ type MissingMemberFixer struct {
 	Locale        locale.Locale
 }
 
-func NewMissingMemberFixer(changeTracker *change.Tracker, program *compiler.Program, typeChecker *checker.Checker, preferences lsutil.UserPreferences, importAdder autoimport.ImportAdder, locale locale.Locale) *MissingMemberFixer {
-	return &MissingMemberFixer{
+func newMissingMemberFixer(changeTracker *change.Tracker, program *compiler.Program, typeChecker *checker.Checker, preferences lsutil.UserPreferences, importAdder autoimport.ImportAdder, locale locale.Locale) *missingMemberFixer {
+	return &missingMemberFixer{
 		ChangeTracker: changeTracker,
 		Checker:       typeChecker,
 		Program:       program,
@@ -43,13 +43,13 @@ func NewMissingMemberFixer(changeTracker *change.Tracker, program *compiler.Prog
 	}
 }
 
-func (f *MissingMemberFixer) createNodeBuilder() (*checker.NodeBuilder, map[*ast.IdentifierNode]*ast.Symbol) {
+func (f *missingMemberFixer) createNodeBuilder() (*checker.NodeBuilder, map[*ast.IdentifierNode]*ast.Symbol) {
 	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
 	nodeBuilder := checker.NewNodeBuilderEx(f.Checker, f.ChangeTracker.EmitContext, idToSymbol)
 	return nodeBuilder, idToSymbol
 }
 
-func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, body *ast.FunctionBody, preserveOptional PreserveOptionalFlags) []*ast.Node {
+func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, body *ast.FunctionBody, preserveOptional preserveOptionalFlags) []*ast.Node {
 	declarations := symbol.Declarations
 	declaration := core.FirstOrNil(declarations)
 
@@ -76,7 +76,7 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 	case ast.KindPropertySignature, ast.KindPropertyDeclaration:
 		typeNode := f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)
 		var questionToken *ast.TokenNode
-		if optional && preserveOptional&PreserveOptionalFlagsProperty != 0 {
+		if optional && preserveOptional&preserveOptionalFlagsProperty != 0 {
 			questionToken = f.ChangeTracker.NodeFactory.NewToken(ast.KindQuestionToken)
 		}
 		return append(nodes, f.ChangeTracker.NodeFactory.NewPropertyDeclaration(modifiers, createPropertyName(f.ChangeTracker.NodeFactory, declarationName, quotePreference), questionToken, typeNode, nil /*initializer*/))
@@ -161,11 +161,11 @@ func (f *MissingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 	return nil
 }
 
-func (f *MissingMemberFixer) createTypeNode(t *checker.Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+func (f *missingMemberFixer) createTypeNode(t *checker.Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
 	return f.importTypeNode(nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil /*tracker*/), idToSymbol)
 }
 
-func (f *MissingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *ast.Node) *ast.ModifierList {
+func (f *missingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *ast.Node) *ast.ModifierList {
 	modifierFlags := ast.ModifierFlagsNone
 	if declaration != nil {
 		effective := checker.GetDeclarationModifierFlagsFromSymbol(symbol)
@@ -188,11 +188,11 @@ func (f *MissingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *as
 	return f.ChangeTracker.NodeFactory.NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, f.ChangeTracker.NodeFactory.NewModifier))
 }
 
-func (f *MissingMemberFixer) shouldAddOverrideKeyword(declaration *ast.Node) bool {
+func (f *missingMemberFixer) shouldAddOverrideKeyword(declaration *ast.Node) bool {
 	return f.Program.Options().NoImplicitOverride.IsTrue() && ast.HasAbstractModifier(declaration)
 }
 
-func (f *MissingMemberFixer) createSignatureDeclarationFromSignature(signature *checker.Signature, kind ast.Kind, sourceFile *ast.SourceFile, enclosingDeclaration *ast.Node, body *ast.FunctionBody, modifiers *ast.ModifierList, name *ast.PropertyName, optional bool) *ast.Node {
+func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *checker.Signature, kind ast.Kind, sourceFile *ast.SourceFile, enclosingDeclaration *ast.Node, body *ast.FunctionBody, modifiers *ast.ModifierList, name *ast.PropertyName, optional bool) *ast.Node {
 	flags := nodebuilder.FlagsNoTruncation | nodebuilder.FlagsSuppressAnyReturnType | nodebuilder.FlagsAllowEmptyTuple
 	if lsutil.GetQuotePreference(sourceFile, f.Preferences) == lsutil.QuotePreferenceSingle {
 		flags |= nodebuilder.FlagsUseSingleQuotesForStringLiteralType
@@ -288,7 +288,7 @@ func (f *MissingMemberFixer) createSignatureDeclarationFromSignature(signature *
 	return nil
 }
 
-func (f *MissingMemberFixer) createSignatureDeclarationFromSignatures(signatures []*checker.Signature, name *ast.PropertyName, optional bool, modifiers *ast.ModifierList, quotePreference lsutil.QuotePreference, body *ast.FunctionBody, enclosingDeclaration *ast.Node) *ast.Node {
+func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(signatures []*checker.Signature, name *ast.PropertyName, optional bool, modifiers *ast.ModifierList, quotePreference lsutil.QuotePreference, body *ast.FunctionBody, enclosingDeclaration *ast.Node) *ast.Node {
 	if len(signatures) == 0 {
 		return nil
 	}
@@ -342,7 +342,7 @@ func (f *MissingMemberFixer) createSignatureDeclarationFromSignatures(signatures
 	)
 }
 
-func (f *MissingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.Signature, enclosingDeclaration *ast.Node, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+func (f *missingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.Signature, enclosingDeclaration *ast.Node, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
 	if len(signatures) == 0 {
 		return nil
 	}
@@ -356,7 +356,7 @@ func (f *MissingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.S
 	return f.importTypeNode(nodeBuilder.TypeToTypeNode(unionType, enclosingDeclaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*typeArguments*/), idToSymbol)
 }
 
-func (f *MissingMemberFixer) importTypeNode(typeNode *ast.TypeNode, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+func (f *missingMemberFixer) importTypeNode(typeNode *ast.TypeNode, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
 	if typeNode == nil || f.ImportAdder == nil {
 		return typeNode
 	}
@@ -380,7 +380,7 @@ func (f *MissingMemberFixer) importTypeNode(typeNode *ast.TypeNode, idToSymbol m
 	return typeNode
 }
 
-func (f *MissingMemberFixer) createIndexSignatureDeclarationFromType(classDeclaration *ast.Node, implementedType *checker.Type, keyType *checker.Type) *ast.Node {
+func (f *missingMemberFixer) createIndexSignatureDeclarationFromType(classDeclaration *ast.Node, implementedType *checker.Type, keyType *checker.Type) *ast.Node {
 	indexInfo := f.Checker.GetIndexInfoOfType(implementedType, keyType)
 	if indexInfo == nil {
 		return nil
@@ -390,7 +390,7 @@ func (f *MissingMemberFixer) createIndexSignatureDeclarationFromType(classDeclar
 	return builder.IndexInfoToIndexSignatureDeclaration(indexInfo, classDeclaration, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, nil)
 }
 
-func (f *MissingMemberFixer) createBody(body *ast.FunctionBody, ambient bool, quotePreference lsutil.QuotePreference) *ast.FunctionBody {
+func (f *missingMemberFixer) createBody(body *ast.FunctionBody, ambient bool, quotePreference lsutil.QuotePreference) *ast.FunctionBody {
 	if ambient {
 		return nil
 	}
@@ -401,7 +401,7 @@ func (f *MissingMemberFixer) createBody(body *ast.FunctionBody, ambient bool, qu
 	return body
 }
 
-func (f *MissingMemberFixer) createStubbedMethodBody(quotePreference lsutil.QuotePreference) *ast.FunctionBody {
+func (f *missingMemberFixer) createStubbedMethodBody(quotePreference lsutil.QuotePreference) *ast.FunctionBody {
 	tokenFlags := ast.TokenFlagsNone
 	if quotePreference == lsutil.QuotePreferenceSingle {
 		tokenFlags = ast.TokenFlagsSingleQuote
