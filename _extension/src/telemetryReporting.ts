@@ -15,6 +15,9 @@ export interface TelemetryReporter {
     sendTelemetryEvent(eventName: "command.disableNativePreview"): void;
     sendTelemetryEvent(eventName: "command.restartLanguageServer"): void;
     sendTelemetryEvent(eventName: "command.reportIssue"): void;
+    sendTelemetryEvent(eventName: "restartExceeded.warningShown"): void;
+    sendTelemetryEvent(eventName: "restartExceeded.experiencingIssue", data: RestartExceededExperiencingIssue): void;
+    sendTelemetryEvent(eventName: "restartExceeded.action", data: RestartExceededAction): void;
     sendTelemetryEvent(eventName: "languageServer.start", data: LSServerStart): void;
 
     sendTelemetryErrorEvent(eventName: "languageServer.connectionError", data: LSConnectionError): void;
@@ -99,4 +102,12 @@ export type ReportIssue = {};
 
 export type UnexpectedTelemetryPurpose = {
     telemetryPurpose: string;
+};
+
+export type RestartExceededExperiencingIssue = {
+    choice: "Yes" | "No" | "Dismiss";
+};
+
+export type RestartExceededAction = {
+    choice: "Report Issue" | "Show Output Logs" | "Dismiss";
 };
