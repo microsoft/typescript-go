@@ -97,13 +97,15 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 	if symbol.Parent == nil || !checker.IsExternalModuleSymbol(symbol.Parent) {
 		return nil
 	}
-	moduleID, moduleFileName := getModuleIDAndFileNameOfModuleSymbol(symbol.Parent)
-	extractor := newSymbolExtractor("", ch, nil, nil)
+	if moduleID, moduleFileName, ok := tryGetModuleIDAndFileNameOfModuleSymbol(symbol.Parent); ok {
+		extractor := newSymbolExtractor("", ch, nil, nil)
 
-	var exports []*Export
-	extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)
-	if len(exports) > 0 {
-		return exports[0]
+		var exports []*Export
+		extractor.extractFromSymbol(symbol.Name, symbol, moduleID, moduleFileName, ast.GetSourceFileOfModule(symbol.Parent), &exports)
+
+		if len(exports) > 0 {
+			return exports[0]
+		}
 	}
 	return nil
 }
