@@ -165,12 +165,6 @@ func (p *Program) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileNa
 	if source, ok := p.outputFileToProjectReferenceSource[file.Path()]; ok {
 		return source
 	}
-	// Also check if the file is a project reference output .d.ts file that wasn't
-	// explicitly redirected (e.g., a dependency of a redirected entry point loaded
-	// from within the output directory).
-	if ref := p.projectReferenceFileMapper.getProjectReferenceFromOutputDts(file.Path()); ref != nil {
-		return ref.Source
-	}
 	return file.FileName()
 }
 
