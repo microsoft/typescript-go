@@ -843,12 +843,14 @@ func getRecursionIdentity(t *Type) RecursionId {
 			// unique AST node.
 			return asRecursionId(t.AsTypeReference().node)
 		}
-		if t.symbol != nil && !(t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol.Flags&ast.SymbolFlagsClass != 0) {
+		if t.symbol != nil && !(t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol.Flags&ast.SymbolFlagsClass != 0) && t.objectFlags&ObjectFlagsFromTypeNode == 0 {
 			// We track object types that have a symbol by that symbol (representing the origin of the type), but
-			// exclude the static side of a class since it shares its symbol with the instance side.
+			// exclude the static sides of classes (since they share their symbols with the instance sides) and type
+			// references that originate in resolution of AST type nodes (since such type nodes cannot be the source
+			// of generative recursion without first being instantiated).
 			return asRecursionId(t.symbol)
 		}
-		if isTupleType(t) {
+		if isTupleType(t) && t.objectFlags&ObjectFlagsFromTypeNode == 0 {
 			return asRecursionId(t.Target())
 		}
 	}
@@ -4581,16 +4583,16 @@ func (r *Relater) typeRelatedToIndexInfo(source *Type, targetInfo *IndexInfo, re
 	return TernaryFalse
 }
 
-/**
- * Return true if type was inferred from an object literal, written as an object type literal, or is the shape of a module
- * with no call or construct signatures.
- */
+// Return true if type was inferred from a non-expando object literal, written as an object type literal, or is the shape of a module
+// with no call or construct signatures.
 func (c *Checker) isObjectTypeWithInferableIndex(t *Type) bool {
 	if t.flags&TypeFlagsIntersection != 0 {
 		return core.Every(t.Types(), c.isObjectTypeWithInferableIndex)
 	}
-	return t.symbol != nil && t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 &&
-		t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||
+	return t.symbol != nil &&
+		(t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral) != 0 && len(t.symbol.Exports) == 0 ||
+			t.symbol.Flags&(ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 && t.symbol.Flags&ast.SymbolFlagsClass == 0) &&
+		!c.typeHasCallOrConstructSignatures(t) ||
 		t.objectFlags&ObjectFlagsObjectRestType != 0 ||
 		t.objectFlags&ObjectFlagsReverseMapped != 0 && c.isObjectTypeWithInferableIndex(t.AsReverseMappedType().source)
 }
