@@ -121,19 +121,25 @@ func (h *SessionUtils) FS() vfs.FS {
 // WatchesFile reports whether any currently active file watcher would match
 // the given file path. It handles both absolute glob patterns and relative
 // patterns with a base URI. Watchers that have been subsequently unwatched
-// are excluded. On case-insensitive file systems the paths in glob patterns
-// are lowercased, so callers should pass the lowercased path.
+// are excluded. If the same watcher ID is re-registered after being unwatched,
+// the latest state is used. On case-insensitive file systems the paths in
+// glob patterns are lowercased, so callers should pass the lowercased path.
 func (h *SessionUtils) WatchesFile(filePath string) bool {
-	// Build set of unwatched watcher IDs.
-	unwatched := make(map[project.WatcherID]struct{})
+	// Track net watch count per ID: +1 for each watch, -1 for each unwatch.
+	// A watcher is active if its net count is positive.
+	activeCount := make(map[project.WatcherID]int)
+	for _, call := range h.client.WatchFilesCalls() {
+		activeCount[call.ID]++
+	}
 	for _, call := range h.client.UnwatchFilesCalls() {
-		unwatched[call.ID] = struct{}{}
+		activeCount[call.ID]--
 	}
 
 	for _, call := range h.client.WatchFilesCalls() {
-		if _, ok := unwatched[call.ID]; ok {
+		if activeCount[call.ID] <= 0 {
 			continue
 		}
+
 		for _, watcher := range call.Watchers {
 			if watcher.GlobPattern.Pattern != nil {
 				if g, err := glob.Parse(*watcher.GlobPattern.Pattern); err == nil && g.Match(filePath) {

@@ -449,6 +449,9 @@ func (s *snapshotFSBuilder) watchChangesAreConfigOrOverlapCache(
 		if _, ok := s.nodeModulesRealpathAliases.Load(path); ok {
 			return true
 		}
+		if isWatchedConfigFile(uri, s.toPath, currentDirectoryPath, oldCustomConfigFileName, newCustomConfigFileName) {
+			return true
+		}
 	}
 	return false
 }
@@ -645,18 +648,20 @@ func (s *snapshotFSBuilder) convertConfigWatchEventsToResourceRequest(
 	oldCustomConfigFileName string,
 	newCustomConfigFileName string,
 ) ResourceRequest {
-	var configUris []lsproto.DocumentUri
+	var configUris collections.Set[lsproto.DocumentUri]
 	for uri := range fileChangeSummary.Changed.Keys() {
 		if isWatchedConfigFile(uri, s.toPath, currentDirectoryPath, oldCustomConfigFileName, newCustomConfigFileName) {
-			configUris = append(configUris, uri)
+			configUris.Add(uri)
 		}
 	}
 	for uri := range fileChangeSummary.Created.Keys() {
 		if isWatchedConfigFile(uri, s.toPath, currentDirectoryPath, oldCustomConfigFileName, newCustomConfigFileName) {
-			configUris = append(configUris, uri)
+			configUris.Add(uri)
 		}
 	}
-	resourceRequest.ConfiguredProjectDocuments = append(resourceRequest.ConfiguredProjectDocuments, configUris...)
+	for uri := range configUris.Keys() {
+		resourceRequest.ConfiguredProjectDocuments = append(resourceRequest.ConfiguredProjectDocuments, uri)
+	}
 	return resourceRequest
 }
 
