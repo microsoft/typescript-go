@@ -94,7 +94,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNested(node *ast.Node) *ast.No
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedNoStack(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindVariableStatement:
-		node = tx.visitTopLevelNestedVariableStatement(node.AsVariableStatement())
+		node = tx.visitTopLevelVariableStatement(node.AsVariableStatement())
 	case ast.KindForStatement:
 		node = tx.visitTopLevelNestedForStatement(node.AsForStatement())
 	case ast.KindForInStatement, ast.KindForOfStatement:
@@ -1246,7 +1246,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedLabeledStatement(node *a
 	return tx.Factory().UpdateLabeledStatement(
 		node,
 		node.Label,
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement),
+		core.Coalesce(tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement), tx.Factory().NewEmptyStatement()),
 	)
 }
 
@@ -1266,7 +1266,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedIfStatement(node *ast.If
 	return tx.Factory().UpdateIfStatement(
 		node,
 		tx.Visitor().VisitNode(node.Expression),
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement),
+		core.Coalesce(tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement), tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false /*multiLine*/)),
 		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement),
 	)
 }
