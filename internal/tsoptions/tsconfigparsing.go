@@ -216,25 +216,13 @@ func parseOwnConfigOfJsonSourceFile(
 				if parentOption.ElementOptions != nil {
 					possibleOption := parentOption.ElementOptions.Get(keyText)
 					if possibleOption != nil && possibleOption.Name != keyText {
-						didYouMeanDiag := extraKeyDidYouMeanDiagnostics(parentOption.Name)
-						if didYouMeanDiag != nil {
-							propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(
-								sourceFile,
-								propertyAssignment.Name(),
-								didYouMeanDiag,
-								keyText,
-								possibleOption.Name,
-							))
-						} else {
-							propertySetErrors = append(propertySetErrors, createUnknownOptionError(
-								keyText,
-								unknownNameDiag,
-								"", /*unknownOptionErrorText*/
-								propertyAssignment.Name(),
-								sourceFile,
-								nil, /*alternateMode*/
-							))
-						}
+						propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(
+							sourceFile,
+							propertyAssignment.Name(),
+							extraKeyDidYouMeanDiagnostics(parentOption.Name),
+							keyText,
+							possibleOption.Name,
+						))
 					} else {
 						propertySetErrors = append(propertySetErrors, createUnknownOptionError(
 							keyText,
@@ -635,12 +623,7 @@ func convertOptionsFromJson[O optionParser](optionsNameMap CommandLineOptionName
 		opt := optionsNameMap.Get(key)
 		if opt != nil && opt.Name != key {
 			// Case-insensitive match found but exact case doesn't match - provide "did you mean" suggestion
-			didYouMeanDiag := result.UnknownDidYouMeanDiagnostic()
-			if didYouMeanDiag != nil {
-				errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(nil, nil, didYouMeanDiag, key, opt.Name))
-			} else {
-				errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil))
-			}
+			errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(nil, nil, result.UnknownDidYouMeanDiagnostic(), key, opt.Name))
 			continue
 		}
 		if opt == nil {
