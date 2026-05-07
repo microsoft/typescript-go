@@ -1877,7 +1877,7 @@ func (p *Printer) emitTypeArguments(parentNode *ast.Node, nodes *ast.TypeArgumen
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitTypeParameterDeclarationNode, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
@@ -2322,6 +2322,9 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
 
+	case ast.KindPropertyAccessExpression:
+		// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type
+		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindExpressionWithTypeArguments:
 		// !!! Should this actually be considered a type?
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())

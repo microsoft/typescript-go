@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/symlinks"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -39,6 +40,7 @@ type ProgramOptions struct {
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
+	Tracing                     *tracing.Tracing
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -265,6 +267,9 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
+	if p.opts.Tracing != nil {
+		defer p.opts.Tracing.Push(tracing.PhaseProgram, "createProgram", map[string]any{"configFilePath": opts.Config.CompilerOptions().ConfigFilePath}, true)()
+	}
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.initCheckerPool()
 	p.verifyCompilerOptions()
@@ -273,9 +278,14 @@ func NewProgram(opts ProgramOptions) *Program {
 
 // Return an updated program for which it is known that only the file with the given path has changed.
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
-func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost) (*Program, bool) {
+// createCheckerPool, if non-nil, overrides the CreateCheckerPool stored in the old program's options,
+// ensuring each caller uses a fresh closure and avoiding data races on captured variables.
+func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost, createCheckerPool func(*Program) CheckerPool) (*Program, bool) {
 	newOpts := p.opts
 	newOpts.Host = newHost
+	if createCheckerPool != nil {
+		newOpts.CreateCheckerPool = createCheckerPool
+	}
 
 	oldFile := p.filesByPath[changedFilePath]
 	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
@@ -322,7 +332,7 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		pool := newCheckerPool(p)
+		pool := newCheckerPoolWithTracing(p, p.opts.Tracing)
 		p.checkerPool = pool
 		p.compilerCheckerPool = pool
 	}
@@ -362,6 +372,7 @@ func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.dupli
 func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
 func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
 func (p *Program) Host() CompilerHost                           { return p.opts.Host }
+func (p *Program) Tracing() *tracing.Tracing                    { return p.opts.Tracing }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -409,6 +420,9 @@ func (p *Program) BindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
+				if p.opts.Tracing != nil {
+					defer p.opts.Tracing.Push(tracing.PhaseBind, "bindSourceFile", map[string]any{"path": string(file.Path())}, true)()
+				}
 				binder.BindSourceFile(file)
 			})
 		}
@@ -1567,6 +1581,10 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
+	if tr := p.opts.Tracing; tr != nil {
+		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
+	}
+
 	if options.EmitOnly != EmitOnlyForcedDts {
 		result := HandleNoEmitOnError(
 			ctx,
@@ -1594,6 +1612,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			sourceFile: sourceFile,
 			emitOnly:   options.EmitOnly,
 			writeFile:  options.WriteFile,
+			tr:         p.opts.Tracing,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {

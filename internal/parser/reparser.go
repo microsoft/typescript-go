@@ -288,7 +288,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 			}
 		case ast.KindVariableDeclaration, ast.KindExportAssignment, ast.KindPropertyDeclaration, ast.KindPropertyAssignment,
-			ast.KindShorthandPropertyAssignment:
+			ast.KindShorthandPropertyAssignment, ast.KindGetAccessor:
 			if parent.Type() == nil && tag.TypeExpression() != nil {
 				parent.AsMutable().SetType(p.addDeepCloneReparse(tag.TypeExpression().Type()))
 				p.finishMutatedNode(parent)
@@ -404,7 +404,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				if param.Type == nil && parameterTag.TypeExpression != nil {
 					param.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(parameterTag.TypeExpression.Type())
 				}
-				if param.QuestionToken == nil && param.Initializer == nil {
+				if param.QuestionToken == nil {
 					if question := p.makeQuestionIfOptional(parameterTag); question != nil {
 						param.QuestionToken = question
 					}
@@ -564,19 +564,27 @@ func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterOrProp
 	return nil, false
 }
 
+func skipSatisfiesExpressions(node *ast.Node) *ast.Node {
+	for node != nil && node.Kind == ast.KindSatisfiesExpression {
+		node = node.Expression()
+	}
+	return node
+}
+
 func getFunctionLikeHost(host *ast.Node) *ast.Node {
 	fun := host
 	if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
 		for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-			if ast.IsFunctionLike(declaration.Initializer()) {
-				fun = declaration.Initializer()
+			initializer := skipSatisfiesExpressions(declaration.Initializer())
+			if ast.IsFunctionLike(initializer) {
+				fun = initializer
 				break
 			}
 		}
 	} else if host.Kind == ast.KindPropertyAssignment {
-		fun = host.Initializer()
+		fun = skipSatisfiesExpressions(host.Initializer())
 	} else if host.Kind == ast.KindPropertyDeclaration {
-		fun = host.Initializer()
+		fun = skipSatisfiesExpressions(host.Initializer())
 	} else if host.Kind == ast.KindExportAssignment {
 		fun = host.Expression()
 	} else if host.Kind == ast.KindReturnStatement {
