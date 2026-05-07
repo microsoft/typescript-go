@@ -361,7 +361,7 @@ func TestPushDiagnostics(t *testing.T) {
 		session.DidCloseFile(context.Background(), "file:///src/index.ts")
 		session.DidOpenFile(context.Background(), "file:///src2/index.ts", 1, files["/src2/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.DidChangeFile(context.Background(), "file:///src2/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
-			Partial: &lsproto.TextDocumentContentChangePartial{Text: "\n", Range: lsproto.Range{Start: lsproto.Position{Line: 0, Character: 20}, End: lsproto.Position{Line: 0, Character: 20}}},
+			Partial: &lsproto.TextDocumentContentChangePartial{Text: "\n", Range: lsproto.Range{Start: lsproto.Position{Line: 0, Character: 0}, End: lsproto.Position{Line: 0, Character: 0}}},
 		}})
 		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src2/index.ts"))
 		assert.NilError(t, err)
