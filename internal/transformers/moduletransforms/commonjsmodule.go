@@ -1243,11 +1243,11 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedWhileStatement(node *ast
 // Visits a top-level nested labeled statement as it may contain `var` declarations that are hoisted and may still be
 // exported with `export {}`.
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedLabeledStatement(node *ast.LabeledStatement) *ast.Node {
-	return tx.Factory().UpdateLabeledStatement(
-		node,
-		node.Label,
-		core.Coalesce(tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement), tx.Factory().NewEmptyStatement()),
-	)
+	statement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement)
+	if statement == nil {
+		statement = tx.Factory().NewEmptyStatement()
+	}
+	return tx.Factory().UpdateLabeledStatement(node, node.Label, statement)
 }
 
 // Visits a top-level nested `with` statement as it may contain `var` declarations that are hoisted and may still be
@@ -1263,12 +1263,13 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedWithStatement(node *ast.
 // Visits a top-level nested `if` statement as it may contain `var` declarations that are hoisted and may still be
 // exported with `export {}`.
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedIfStatement(node *ast.IfStatement) *ast.Node {
-	return tx.Factory().UpdateIfStatement(
-		node,
-		tx.Visitor().VisitNode(node.Expression),
-		core.Coalesce(tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement), tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false /*multiLine*/)),
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement),
-	)
+	expression := tx.Visitor().VisitNode(node.Expression)
+	thenStatement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement)
+	if thenStatement == nil {
+		thenStatement = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false /*multiLine*/)
+	}
+	elseStatement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement)
+	return tx.Factory().UpdateIfStatement(node, expression, thenStatement, elseStatement)
 }
 
 // Visits a top-level nested `switch` statement as it may contain `var` declarations that are hoisted and may still be
