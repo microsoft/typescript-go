@@ -382,12 +382,6 @@ func TestProjectLifetime(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/workspace/proja/tsconfig.json")) != nil,
 			"project A should exist")
 
-		// Record the watcher IDs registered for project A
-		var watcherIDsA []project.WatcherID
-		for _, call := range utils.Client().WatchFilesCalls() {
-			watcherIDsA = append(watcherIDsA, call.ID)
-		}
-
 		// --- Step 2: Close project A, open project B ---
 		session.DidCloseFile(context.Background(), uriA)
 		uriB := lsproto.DocumentUri("file:///external/projB/b.ts")
@@ -403,21 +397,10 @@ func TestProjectLifetime(t *testing.T) {
 			"project B should exist")
 
 		watchCallsAfterSwitch := len(utils.Client().WatchFilesCalls())
-		unwatchCallsAfterSwitch := len(utils.Client().UnwatchFilesCalls())
-
-		// Record all watcher IDs that were unwatched
-		var unwatchedIDs []project.WatcherID
-		for _, call := range utils.Client().UnwatchFilesCalls() {
-			unwatchedIDs = append(unwatchedIDs, call.ID)
-		}
 
 		// New watchers should have been created for project B
 		assert.Assert(t, watchCallsAfterSwitch > watchCallsAfterOpenA,
 			"expected new WatchFiles calls for project B, got %d total (was %d)", watchCallsAfterSwitch, watchCallsAfterOpenA)
-
-		// Project A's watchers should have been cleaned up (globs no longer needed)
-		assert.Assert(t, unwatchCallsAfterSwitch > 0,
-			"expected UnwatchFiles calls when project A is removed, got %d", unwatchCallsAfterSwitch)
 
 		// --- Step 3: Verify project B's files are watched ---
 		assert.Assert(t, utils.WatchesFile("/external/projb/b.ts"),

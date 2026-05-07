@@ -173,6 +173,17 @@ type Session struct {
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
 	// requests into a single background task.
 	globalDiagPublishPending atomic.Bool
+
+	// publishedDiagConfigPaths tracks all config file paths for which we have
+	// published diagnostics. Used to detect when a deleted file or directory
+	// affects a config file that needs its diagnostics cleared.
+	publishedDiagConfigPaths collections.SyncSet[tspath.Path]
+
+	// configFileWatch is a permanent watcher for the current directory that
+	// detects config file create/change/delete events. It is registered once
+	// during the first updateWatches call and never removed.
+	configFileWatch           *WatchedFiles[struct{}]
+	configFileWatchRegistered atomic.Bool
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -233,6 +244,16 @@ func NewSession(init *SessionInit) *Session {
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
 		pendingATAChanges:        make(map[tspath.Path]*ATAStateChange),
 		watches:                  newWatchRegistry(),
+		configFileWatch: NewWatchedFiles(
+			"config files",
+			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+			lsproto.GetClientCapabilities(init.BackgroundCtx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
+			func(_ struct{}) PatternsAndIgnored {
+				return PatternsAndIgnored{
+					patternsInsideWorkspace: []string{getRecursiveGlobPattern(currentDirectory)},
+				}
+			},
+		),
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
@@ -1352,6 +1373,15 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		}
 	}
 
+	// Register the permanent config file watcher if not yet registered or pending retry.
+	if !s.configFileWatchRegistered.Load() || s.watches.IsPending(s.configFileWatch.ID()) {
+		watchErrors := updateWatch(ctx, s, s.logger, nil, s.configFileWatch)
+		if len(watchErrors) == 0 {
+			s.configFileWatchRegistered.Store(true)
+		}
+		errors = append(errors, watchErrors...)
+	}
+
 	if len(errors) > 0 {
 		return fmt.Errorf("errors updating watches: %v", errors)
 	} else if s.options.LoggingEnabled {
@@ -1596,11 +1626,15 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		},
 	)
 
-	// We need to handle deleted config files separately,
-	// since its project may not be in any of the snapshot's project collections anymore.
+	// Handle deleted files and directories: clear diagnostics for any config
+	// file we previously published diagnostics for that has been deleted,
+	// including config files inside deleted directories.
 	for uri := range change.fileChanges.Deleted.Keys() {
-		if isWatchedConfigFile(uri, s.toPath, tspath.Path(s.options.CurrentDirectory), oldSnapshot.ConfigFileRegistry.customConfigFileName, newSnapshot.ConfigFileRegistry.customConfigFileName) {
-			s.publishProjectDiagnostics(ctx, uri.FileName(), nil, nil /*converters*/)
+		deletedPath := s.toPath(uri.FileName())
+		for configPath := range s.publishedDiagConfigPaths.Keys() {
+			if configPath == deletedPath || deletedPath.ContainsPath(configPath) {
+				s.publishProjectDiagnostics(ctx, string(configPath), nil, nil /*converters*/)
+			}
 		}
 	}
 }
@@ -1616,6 +1650,13 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
 	for _, diag := range diagnostics {
 		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))
+	}
+
+	configPath := s.toPath(configFilePath)
+	if len(lspDiagnostics) > 0 {
+		s.publishedDiagConfigPaths.Add(configPath)
+	} else {
+		s.publishedDiagConfigPaths.Delete(configPath)
 	}
 
 	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{

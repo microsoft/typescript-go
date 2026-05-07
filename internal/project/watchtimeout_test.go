@@ -67,9 +67,11 @@ func TestUpdateWatchTimeoutAndRollback(t *testing.T) {
 			session.DidOpenFile(context.Background(), uri, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			// Let the background goroutine block on WatchFiles, then advance
-			// fake time past the 1s watchRequestTimeout.
+			// fake time past the 1s watchRequestTimeout for all sequential calls.
+			// Each WatchFiles call creates a fresh 1s timeout, and they run sequentially,
+			// so we need enough time for all of them to expire.
 			synctest.Wait()
-			time.Sleep(2 * time.Second)
+			time.Sleep(10 * time.Second)
 			synctest.Wait()
 
 			mu.Lock()

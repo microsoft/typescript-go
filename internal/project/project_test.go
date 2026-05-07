@@ -427,6 +427,51 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after deleting tsconfig.json")
 	})
 
+	t.Run("clears tsconfig diagnostics after project has been closed and config directory is deleted", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json":  `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.ts":       "export const x = 1;",
+			"/src2/tsconfig.json": `{"compilerOptions": {}}`,
+			"/src2/index.ts":      "export const y = 2;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// After opening, there should be a tsconfig diagnostics call with one diagnostic.
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after opening file")
+		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after opening file")
+
+		// Close the only open file in the project.
+		session.DidCloseFile(context.Background(), "file:///src/index.ts")
+		// Open file in a different project to trigger cleanup of the first project.
+		session.DidOpenFile(context.Background(), "file:///src2/index.ts", 1, files["/src2/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src2/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		callsBeforeChange := len(calls)
+		// Delete the entire directory containing the tsconfig.
+		err = utils.FS().Remove("/src")
+		assert.NilError(t, err)
+		assert.Assert(t, utils.WatchesFile("/src"))
+		// When a directory is deleted, the client sends a single deletion event for the directory.
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{Uri: lsproto.DocumentUri("file:///src"), Type: lsproto.FileChangeTypeDeleted}})
+		session.WaitForBackgroundTasks()
+
+		// After deleting the directory, there should be a tsconfig diagnostics call with empty diagnostics.
+		calls = utils.Client().PublishDiagnosticsCalls()
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeChange)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after directory deletion")
+		lastClearCall := clearCalls[len(clearCalls)-1]
+		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after deleting tsconfig directory")
+	})
+
 	t.Run("updates diagnostics when program changes", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
