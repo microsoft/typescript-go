@@ -2852,7 +2852,7 @@ func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	// skip the ?
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType()), pos)
+	return p.finishNode(p.factory.NewJSDocNullableType(p.parseNonArrayType()), pos)
 }
 
 func (p *Parser) parseJSDocType() *ast.TypeNode {
