@@ -18,18 +18,18 @@ export function f2(x) {}
 
 /** @param {? | never} x */
 export function f3(x) {}
->f3 : (x: (never) | null) => void
->x : null
+>f3 : (x: (any | null) | never) => void
+>x : any
 
 /** @param {? | string} x */
 export function f4(x) {}
->f4 : (x: (string) | null) => void
->x : string | null
+>f4 : (x: (any | null) | string) => void
+>x : any
 
 /** @param {number | ? | string} x */
 export function f5(x) {}
->f5 : (x: number | ((string) | null)) => void
->x : string | number | null
+>f5 : (x: number | (any | null) | string) => void
+>x : any
 
 /** @param {number | string | ?} x */
 export function f6(x) {}
@@ -38,7 +38,7 @@ export function f6(x) {}
 
 /** @param {? number | string} x */
 export function f7(x) {}
->f7 : (x: (number | string) | null) => void
+>f7 : (x: (number | null) | string) => void
 >x : string | number | null
 
 /** @param {number? | string} x */
@@ -53,8 +53,8 @@ export function f9(x) {}
 
 /** @param {? { a: number } & { b: number }} x */
 export function f10(x) {}
->f10 : (x: ({ a: number; } & { b: number; }) | null) => void
->x : ({ a: number; } & { b: number; }) | null
+>f10 : (x: ({ a: number; } | null) & { b: number; }) => void
+>x : { a: number; } & { b: number; }
 
 /** @param {{ a: number } & ? { b: number }} x */
 export function f11(x) {}
@@ -63,13 +63,13 @@ export function f11(x) {}
 
 /** @param {? { a: number } & { b: number } | string} x */
 export function f12(x) {}
->f12 : (x: (({ a: number; } & { b: number; }) | string) | null) => void
->x : string | ({ a: number; } & { b: number; }) | null
+>f12 : (x: (({ a: number; } | null) & { b: number; }) | string) => void
+>x : string | ({ a: number; } & { b: number; })
 
 /** @param {{ a: number } & ? { b: number } | string} x */
 export function f13(x) {}
->f13 : (x: { a: number; } & (({ b: number; } | string) | null)) => void
->x : ({ a: number; } & string) | ({ a: number; } & { b: number; })
+>f13 : (x: ({ a: number; } & ({ b: number; } | null)) | string) => void
+>x : string | ({ a: number; } & { b: number; })
 
 === exclamation.js ===
 /** @param {!} x */

@@ -96,15 +96,15 @@ export declare function f1(x: never | null): void;
 /** @param {never?} x */
 export declare function f2(x: never | null): void;
 /** @param {? | never} x */
-export declare function f3(x: (never) | null): void;
+export declare function f3(x: (any | null) | never): void;
 /** @param {? | string} x */
-export declare function f4(x: (string) | null): void;
+export declare function f4(x: (any | null) | string): void;
 /** @param {number | ? | string} x */
-export declare function f5(x: number | ((string) | null)): void;
+export declare function f5(x: number | (any | null) | string): void;
 /** @param {number | string | ?} x */
 export declare function f6(x: number | string | (any | null)): void;
 /** @param {? number | string} x */
-export declare function f7(x: (number | string) | null): void;
+export declare function f7(x: (number | null) | string): void;
 /** @param {number? | string} x */
 export declare function f8(x: number): void;
 /** @param {number | ? string} x */
@@ -112,9 +112,9 @@ export declare function f9(x: number | (string | null)): void;
 /** @param {? { a: number } & { b: number }} x */
 export declare function f10(x: ({
     a: number;
-} & {
+} | null) & {
     b: number;
-}) | null): void;
+}): void;
 /** @param {{ a: number } & ? { b: number }} x */
 export declare function f11(x: {
     a: number;
@@ -124,15 +124,15 @@ export declare function f11(x: {
 /** @param {? { a: number } & { b: number } | string} x */
 export declare function f12(x: (({
     a: number;
-} & {
+} | null) & {
     b: number;
-}) | string) | null): void;
+}) | string): void;
 /** @param {{ a: number } & ? { b: number } | string} x */
-export declare function f13(x: {
+export declare function f13(x: ({
     a: number;
-} & (({
+} & ({
     b: number;
-} | string) | null)): void;
+} | null)) | string): void;
 //// [exclamation.d.ts]
 /** @param {!} x */
 export declare function g0(x: any): void;
