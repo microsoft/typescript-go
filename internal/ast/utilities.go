@@ -4014,6 +4014,31 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 	return nil
 }
 
+func GetNextJSDocCommentLocation(node *Node) *Node {
+	parent := node.Parent
+	if parent == nil {
+		return nil
+	}
+	switch parent.Kind {
+	case KindPropertyAssignment, KindExportAssignment, KindPropertyDeclaration:
+		return parent
+	case KindExpressionStatement:
+		if node.Kind == KindPropertyAccessExpression {
+			return parent
+		}
+	case KindReturnStatement:
+		return parent
+	case KindVariableStatement:
+		if HasSyntacticModifier(parent, ModifierFlagsExport) {
+			return parent
+		}
+	}
+	if IsVariableLike(parent) && parent.Initializer() == node {
+		return parent
+	}
+	return nil
+}
+
 func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
