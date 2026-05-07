@@ -207,6 +207,9 @@ func getAllModulePathsWorker(
 ) []ModulePath {
 	symlinkCache := host.GetSymlinkCache()
 	if symlinkCache != nil && !ContainsNodeModules(info.ImportingSourceFileName) {
+		// Use the file's default resolution mode when no override is provided. The seed runs per
+		// (package.json, mode), and per-usage modes for `require()` in ESM (or vice versa) arrive via
+		// OverrideImportMode on subsequent calls and seed separately under their own mode key.
 		effectiveResolutionMode := options.OverrideImportMode
 		if effectiveResolutionMode == core.ResolutionModeNone {
 			effectiveResolutionMode = host.GetDefaultResolutionModeForFile(info.ImportingSourceFile)

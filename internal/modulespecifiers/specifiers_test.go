@@ -258,6 +258,14 @@ func TestGetAllModulePathsSeedsRuntimeDepsOncePerResolutionMode(t *testing.T) {
 	if got := host.resolveModuleNameCalls[1].resolutionMode; got != core.ResolutionModeCommonJS {
 		t.Fatalf("expected override CommonJS resolution mode, got %v", got)
 	}
+
+	// An override matching the file's default mode collapses onto the same cache key as the
+	// no-override call above and must not re-seed.
+	getAllModulePathsWorker(info, "/workspace/dep/index.ts", host, &core.CompilerOptions{}, ModuleSpecifierOptions{OverrideImportMode: core.ResolutionModeESM})
+
+	if len(host.resolveModuleNameCalls) != 2 {
+		t.Fatalf("expected no re-seed when override matches the file default mode, got %d total resolutions", len(host.resolveModuleNameCalls))
+	}
 }
 
 func TestContainsNodeModules(t *testing.T) {
