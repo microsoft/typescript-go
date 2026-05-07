@@ -1,6 +1,8 @@
 // @checkJs: true
 // @declaration: true
 // @isolatedDeclarations: true
+// @rootDir: src
+// @outDir: dist
 
 // @ts-check
 
@@ -14,7 +16,7 @@
 // which is not what we want. This test is meant to validate how `?` is
 // handled when written in different contexts - as a prefix/postfix operator, as a standalone type, and in union types.
 
-// @filename: question.js
+// @filename: src/question.js
 /** @param {?} x */
 export function f0(x) {}
 
@@ -69,7 +71,7 @@ export function f16(x) {}
 /** @param {?readonly ?number[] | string} x */
 export function f17(x) {}
 
-// @filename: exclamation.js
+// @filename: src/exclamation.js
 /** @param {!} x */
 export function g0(x) {}
 
