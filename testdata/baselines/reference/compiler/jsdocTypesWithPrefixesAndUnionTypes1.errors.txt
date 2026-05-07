@@ -1,4 +1,3 @@
-error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
 src/exclamation.js(1,14): error TS1110: Type expected.
 src/exclamation.js(10,15): error TS1110: Type expected.
 src/exclamation.js(13,15): error TS1110: Type expected.
@@ -14,7 +13,6 @@ src/question.js(25,19): error TS1005: '}' expected.
 src/question.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
 
 
-!!! error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
 ==== src/question.js (7 errors) ====
     /** @param {?} x */
                  ~
