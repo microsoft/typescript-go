@@ -54,6 +54,17 @@ func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *dia
 	return false
 }
 
+func getIdentifierFromEntityNameExpression(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindIdentifier:
+		return node
+	case ast.KindPropertyAccessExpression:
+		return node.AsPropertyAccessExpression().Name()
+	default:
+		return nil
+	}
+}
+
 func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressionLiteral) bool {
 	sourceFile := ast.GetSourceFileOfNode(node.AsNode())
 	if !c.hasParseDiagnostics(sourceFile) {
@@ -705,10 +716,9 @@ func (c *Checker) checkGrammarParameterList(parameters *ast.NodeList) bool {
 				return c.grammarErrorOnNode(parameter.Name(), diagnostics.A_rest_parameter_cannot_have_an_initializer)
 			}
 		} else if isOptionalDeclaration(parameter.AsNode()) {
-			// !!!
-			// used to be hasEffectiveQuestionToken for JSDoc
 			seenOptionalParameter = true
-			if parameter.QuestionToken != nil && parameter.Initializer != nil {
+			// A reparsed '?' token indicates a bracketed name in @param tag
+			if parameter.QuestionToken != nil && parameter.QuestionToken.Flags&ast.NodeFlagsReparsed == 0 && parameter.Initializer != nil {
 				return c.grammarErrorOnNode(parameter.Name(), diagnostics.Parameter_cannot_have_question_mark_and_initializer)
 			}
 		} else if seenOptionalParameter && parameter.Initializer == nil {
@@ -920,10 +930,10 @@ func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLik
 						if tag.Kind == ast.KindJSDocAugmentsTag {
 							target := typeNodes[0].AsExpressionWithTypeArguments()
 							source := tag.ClassName().AsExpressionWithTypeArguments()
-							if !ast.HasSamePropertyAccessName(target.Expression, source.Expression) &&
-								target.Expression.Kind == ast.KindIdentifier &&
-								source.Expression.Kind == ast.KindIdentifier {
-								return c.grammarErrorOnNode(tag.ClassName(), diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.TagName().Text(), source.Expression.Text(), target.Expression.Text())
+							targetName := getIdentifierFromEntityNameExpression(target.Expression)
+							sourceName := getIdentifierFromEntityNameExpression(source.Expression)
+							if targetName != nil && sourceName != nil && targetName.Text() != sourceName.Text() {
+								return c.grammarErrorOnNode(sourceName, diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.TagName().Text(), sourceName.Text(), targetName.Text())
 							}
 						}
 					}
