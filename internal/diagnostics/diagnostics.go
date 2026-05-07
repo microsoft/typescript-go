@@ -52,6 +52,12 @@ type Message struct {
 	reportsDeprecated            bool
 }
 
+// NewMessage creates a Message with the given code, category, and text.
+// This is useful for internal/test diagnostics that are not part of the generated diagnostic set.
+func NewMessage(code int32, category Category, text string) *Message {
+	return &Message{code: code, category: category, key: Key(text), text: text}
+}
+
 func (m *Message) Code() int32                        { return m.code }
 func (m *Message) Category() Category                 { return m.category }
 func (m *Message) Key() Key                           { return m.key }

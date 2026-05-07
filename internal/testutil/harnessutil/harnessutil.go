@@ -618,62 +618,84 @@ func compileFilesWithHost(
 	// 	delete compilerOptions.project;
 	// }
 
-	// !!! Need `getPreEmitDiagnostics` program for this
-	// pre-emit/post-emit error comparison requires declaration emit twice, which can be slow. If it's unlikely to flag any error consistency issues
-	// and if the test is running `skipLibCheck` - an indicator that we want the tets to run quickly - skip the before/after error comparison, too
-	// skipErrorComparison := len(rootFiles) >= 100 || options.SkipLibCheck == core.TSTrue && options.Declaration == core.TSTrue
-	// var preProgram *compiler.Program
-	// if !skipErrorComparison {
-	// preProgram = ts.createProgram({ rootNames: rootFiles || [], options: { ...compilerOptions, configFile: compilerOptions.configFile, traceResolution: false }, host, typeScriptVersion })
-	// }
-	// let preErrors = preProgram && ts.getPreEmitDiagnostics(preProgram);
-	// if (preProgram && harnessOptions.captureSuggestions) {
-	//     preErrors = ts.concatenate(preErrors, ts.flatMap(preProgram.getSourceFiles(), f => preProgram.getSuggestionDiagnostics(f)));
-	// }
-
-	// const program = ts.createProgram({ rootNames: rootFiles || [], options: compilerOptions, host, harnessOptions.typeScriptVersion });
-	// const emitResult = program.emit();
-	// let postErrors = ts.getPreEmitDiagnostics(program);
-	// !!! Need `getSuggestionDiagnostics` for this
-	// if (harnessOptions.captureSuggestions) {
-	//     postErrors = ts.concatenate(postErrors, ts.flatMap(program.getSourceFiles(), f => program.getSuggestionDiagnostics(f)));
-	// }
-	// const longerErrors = ts.length(preErrors) > postErrors.length ? preErrors : postErrors;
-	// const shorterErrors = longerErrors === preErrors ? postErrors : preErrors;
-	// const errors = preErrors && (preErrors.length !== postErrors.length) ? [
-	//     ...shorterErrors!,
-	//     ts.addRelatedInfo(
-	//         ts.createCompilerDiagnostic({
-	//             category: ts.DiagnosticCategory.Error,
-	//             code: -1,
-	//             key: "-1",
-	//             message: `Pre-emit (${preErrors.length}) and post-emit (${postErrors.length}) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!`,
-	//         }),
-	//         ts.createCompilerDiagnostic({
-	//             category: ts.DiagnosticCategory.Error,
-	//             code: -1,
-	//             key: "-1",
-	//             message: `The excess diagnostics are:`,
-	//         }),
-	//         ...ts.filter(longerErrors!, p => !ts.some(shorterErrors, p2 => ts.compareDiagnostics(p, p2) === ts.Comparison.EqualTo)),
-	//     ),
-	// ] : postErrors;
 	ctx := context.Background()
+	options := config.CompilerOptions()
+
+	// pre-emit/post-emit error comparison requires declaration emit twice, which can be slow. If it's unlikely to flag any error consistency issues
+	// and if the test is running `skipLibCheck` - an indicator that we want the test to run quickly - skip the before/after error comparison, too
+	skipErrorComparison := len(config.FileNames()) >= 100 || (options.SkipLibCheck == core.TSTrue && options.Declaration == core.TSTrue)
+
+	// Collect pre-emit diagnostics from a separate program (before any emit).
+	// Uses a separate program so that the emit resolver's side effects on the checker
+	// are isolated from the pre-emit diagnostic collection.
+	var preErrors []*ast.Diagnostic
+	if !skipErrorComparison {
+		preProgram := createProgram(host, config)
+		preErrors = getPreEmitDiagnostics(ctx, preProgram, config, harnessOptions)
+		// Reset the tracer so that pre-program's module resolution traces don't
+		// pollute the main program's trace output (mirrors TS's traceResolution: false).
+		if cachedHost, ok := host.(*cachedCompilerHost); ok {
+			cachedHost.tracer.builder.Reset()
+			cachedHost.tracer.packageJsonCache = make(map[tspath.Path]bool)
+		}
+	}
+
 	program := createProgram(host, config)
-	var diagnostics []*ast.Diagnostic
-	diagnostics = append(diagnostics, program.GetProgramDiagnostics()...)
-	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
-	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
-	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
-	if config.CompilerOptions().GetEmitDeclarations() {
-		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
-	}
-	if harnessOptions.CaptureSuggestions {
-		diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, nil)...)
-	}
 	emitResult := program.Emit(ctx, compiler.EmitOptions{})
 
-	return newCompilationResult(host, config.CompilerOptions(), program, emitResult, diagnostics, harnessOptions)
+	// Collect post-emit diagnostics (after emit, the checker may have discovered new errors via the emit resolver).
+	postErrors := getPreEmitDiagnostics(ctx, program, config, harnessOptions)
+
+	var resultDiagnostics []*ast.Diagnostic
+	if !skipErrorComparison && len(preErrors) != len(postErrors) {
+		// Use the shorter list as the base, and report the mismatch with excess diagnostics as related info.
+		longerErrors := postErrors
+		shorterErrors := preErrors
+		if len(preErrors) > len(postErrors) {
+			longerErrors = preErrors
+			shorterErrors = postErrors
+		}
+		resultDiagnostics = append(resultDiagnostics, shorterErrors...)
+
+		// Find the excess diagnostics (in longer but not in shorter).
+		excessDiags := core.Filter(longerErrors, func(p *ast.Diagnostic) bool {
+			return !core.Some(shorterErrors, func(p2 *ast.Diagnostic) bool {
+				return ast.CompareDiagnostics(p, p2) == 0
+			})
+		})
+
+		mismatchMessage := diagnostics.NewMessage(-1, diagnostics.CategoryError,
+			fmt.Sprintf("Pre-emit (%d) and post-emit (%d) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!", len(preErrors), len(postErrors)))
+		excessMessage := diagnostics.NewMessage(-1, diagnostics.CategoryError, "The excess diagnostics are:")
+
+		mismatchDiag := ast.NewCompilerDiagnostic(mismatchMessage)
+		mismatchDiag.AddRelatedInfo(ast.NewCompilerDiagnostic(excessMessage))
+		for _, d := range excessDiags {
+			mismatchDiag.AddRelatedInfo(d)
+		}
+		resultDiagnostics = append(resultDiagnostics, mismatchDiag)
+	} else {
+		resultDiagnostics = postErrors
+	}
+
+	return newCompilationResult(host, options, program, emitResult, resultDiagnostics, harnessOptions)
+}
+
+// getPreEmitDiagnostics collects all diagnostics from a program without emitting.
+// This mirrors TypeScript's getPreEmitDiagnostics function.
+func getPreEmitDiagnostics(ctx context.Context, program compiler.ProgramLike, config *tsoptions.ParsedCommandLine, harnessOptions *HarnessOptions) []*ast.Diagnostic {
+	var diags []*ast.Diagnostic
+	diags = append(diags, program.GetProgramDiagnostics()...)
+	diags = append(diags, program.GetSyntacticDiagnostics(ctx, nil)...)
+	diags = append(diags, program.GetSemanticDiagnostics(ctx, nil)...)
+	diags = append(diags, program.GetGlobalDiagnostics(ctx)...)
+	if config.CompilerOptions().GetEmitDeclarations() {
+		diags = append(diags, program.GetDeclarationDiagnostics(ctx, nil)...)
+	}
+	if harnessOptions.CaptureSuggestions {
+		diags = append(diags, program.GetSuggestionDiagnostics(ctx, nil)...)
+	}
+	return diags
 }
 
 type CompilationResult struct {
