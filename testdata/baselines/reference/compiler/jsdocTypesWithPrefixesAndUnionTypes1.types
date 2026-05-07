@@ -1,6 +1,6 @@
 //// [tests/cases/compiler/jsdocTypesWithPrefixesAndUnionTypes1.ts] ////
 
-=== question.js ===
+=== src/question.js ===
 /** @param {?} x */
 export function f0(x) {}
 >f0 : (x: any | null) => void
@@ -91,7 +91,7 @@ export function f17(x) {}
 >f17 : (x: (readonly (number[] | null) | null) | string) => void
 >x : string | number[] | null
 
-=== exclamation.js ===
+=== src/exclamation.js ===
 /** @param {!} x */
 export function g0(x) {}
 >g0 : (x: any) => void

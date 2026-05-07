@@ -1,6 +1,6 @@
 //// [tests/cases/compiler/jsdocTypesWithPrefixesAndUnionTypes1.ts] ////
 
-=== question.js ===
+=== src/question.js ===
 /** @param {?} x */
 export function f0(x) {}
 >f0 : Symbol(f0, Decl(question.js, 0, 0))
@@ -91,7 +91,7 @@ export function f17(x) {}
 >f17 : Symbol(f17, Decl(question.js, 49, 25))
 >x : Symbol(x, Decl(question.js, 52, 20))
 
-=== exclamation.js ===
+=== src/exclamation.js ===
 /** @param {!} x */
 export function g0(x) {}
 >g0 : Symbol(g0, Decl(exclamation.js, 0, 0))

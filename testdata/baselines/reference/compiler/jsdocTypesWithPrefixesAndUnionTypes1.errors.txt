@@ -1,29 +1,21 @@
 error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
-error TS5055: Cannot write file 'exclamation.js' because it would overwrite input file.
-  Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-error TS5055: Cannot write file 'question.js' because it would overwrite input file.
-  Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-exclamation.js(1,14): error TS1110: Type expected.
-exclamation.js(10,15): error TS1110: Type expected.
-exclamation.js(13,15): error TS1110: Type expected.
-exclamation.js(16,24): error TS1110: Type expected.
-exclamation.js(19,32): error TS1110: Type expected.
-exclamation.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
-question.js(1,14): error TS1110: Type expected.
-question.js(10,15): error TS1110: Type expected.
-question.js(13,15): error TS1110: Type expected.
-question.js(16,24): error TS1110: Type expected.
-question.js(19,32): error TS1110: Type expected.
-question.js(25,19): error TS1005: '}' expected.
-question.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
+src/exclamation.js(1,14): error TS1110: Type expected.
+src/exclamation.js(10,15): error TS1110: Type expected.
+src/exclamation.js(13,15): error TS1110: Type expected.
+src/exclamation.js(16,24): error TS1110: Type expected.
+src/exclamation.js(19,32): error TS1110: Type expected.
+src/exclamation.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
+src/question.js(1,14): error TS1110: Type expected.
+src/question.js(10,15): error TS1110: Type expected.
+src/question.js(13,15): error TS1110: Type expected.
+src/question.js(16,24): error TS1110: Type expected.
+src/question.js(19,32): error TS1110: Type expected.
+src/question.js(25,19): error TS1005: '}' expected.
+src/question.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
 
 
 !!! error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
-!!! error TS5055: Cannot write file 'exclamation.js' because it would overwrite input file.
-!!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-!!! error TS5055: Cannot write file 'question.js' because it would overwrite input file.
-!!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-==== question.js (7 errors) ====
+==== src/question.js (7 errors) ====
     /** @param {?} x */
                  ~
 !!! error TS1110: Type expected.
@@ -92,7 +84,7 @@ question.js(52,14): error TS1354: 'readonly' type modifier is only permitted on 
 !!! error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
     export function f17(x) {}
     
-==== exclamation.js (6 errors) ====
+==== src/exclamation.js (6 errors) ====
     /** @param {!} x */
                  ~
 !!! error TS1110: Type expected.
