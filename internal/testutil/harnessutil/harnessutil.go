@@ -638,7 +638,6 @@ func compileFilesWithHost(
 	if harnessOptions.CaptureSuggestions {
 		preSuggestionDiags = program.GetSuggestionDiagnostics(ctx, nil)
 	}
-	preCount := len(progDiags) + len(syntaxDiags) + len(preSemanticDiags) + len(preGlobalDiags) + len(preSuggestionDiags)
 
 	emitResult := program.Emit(ctx, compiler.EmitOptions{})
 
@@ -649,45 +648,42 @@ func compileFilesWithHost(
 	if harnessOptions.CaptureSuggestions {
 		postSuggestionDiags = program.GetSuggestionDiagnostics(ctx, nil)
 	}
-	postCount := len(progDiags) + len(syntaxDiags) + len(postSemanticDiags) + len(postGlobalDiags) + len(postSuggestionDiags)
+
+	// Build combined pre/post diagnostic lists for comparison.
+	preDiags := core.Concatenate(core.Concatenate(preSemanticDiags, preGlobalDiags), preSuggestionDiags)
+	postDiags := core.Concatenate(core.Concatenate(postSemanticDiags, postGlobalDiags), postSuggestionDiags)
+	preCount := len(progDiags) + len(syntaxDiags) + len(preDiags)
+	postCount := len(progDiags) + len(syntaxDiags) + len(postDiags)
 
 	// Build result diagnostics.
 	var resultDiagnostics []*ast.Diagnostic
 	if !skipErrorComparison && preCount != postCount {
-		// When counts differ, use the SHORTER diagnostic list as the base (matching TS behavior),
+		// When counts differ, use the SHORTER diagnostic list as the base,
 		// and add a TS-1 mismatch diagnostic describing the excess.
-		shorterSemanticDiags := preSemanticDiags
-		longerSemanticDiags := postSemanticDiags
-		shorterGlobalDiags := preGlobalDiags
-		shorterSuggestionDiags := preSuggestionDiags
+		shorterDiags := preDiags
+		longerDiags := postDiags
 		if preCount > postCount {
-			shorterSemanticDiags = postSemanticDiags
-			longerSemanticDiags = preSemanticDiags
-			shorterGlobalDiags = postGlobalDiags
-			shorterSuggestionDiags = postSuggestionDiags
+			shorterDiags = postDiags
+			longerDiags = preDiags
 		}
 
 		resultDiagnostics = append(resultDiagnostics, progDiags...)
 		resultDiagnostics = append(resultDiagnostics, syntaxDiags...)
-		resultDiagnostics = append(resultDiagnostics, shorterSemanticDiags...)
-		resultDiagnostics = append(resultDiagnostics, shorterGlobalDiags...)
+		resultDiagnostics = append(resultDiagnostics, shorterDiags...)
 		if options.GetEmitDeclarations() {
 			resultDiagnostics = append(resultDiagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
 		}
-		if harnessOptions.CaptureSuggestions {
-			resultDiagnostics = append(resultDiagnostics, shorterSuggestionDiags...)
-		}
 
-		// Find the excess diagnostics (in longer but not in shorter).
-		excessDiags := core.Filter(longerSemanticDiags, func(p *ast.Diagnostic) bool {
-			return !core.Some(shorterSemanticDiags, func(p2 *ast.Diagnostic) bool {
+		// Find the excess diagnostics.
+		excessDiags := core.Filter(longerDiags, func(p *ast.Diagnostic) bool {
+			return !core.Some(shorterDiags, func(p2 *ast.Diagnostic) bool {
 				return ast.CompareDiagnostics(p, p2) == 0
 			})
 		})
 
 		mismatchMessage := diagnostics.NewMessage(-1, diagnostics.CategoryError,
-			fmt.Sprintf("Pre-emit (%d) and post-emit (%d) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!", preCount, postCount))
-		excessMessage := diagnostics.NewMessage(-1, diagnostics.CategoryError, "The excess diagnostics are:")
+			fmt.Sprintf("Pre-emit (%d) and post-emit (%d) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!", preCount, postCount), false, false, false)
+		excessMessage := diagnostics.NewMessage(-1, diagnostics.CategoryError, "The excess diagnostics are:", false, false, false)
 
 		mismatchDiag := ast.NewCompilerDiagnostic(mismatchMessage)
 		mismatchDiag.AddRelatedInfo(ast.NewCompilerDiagnostic(excessMessage))
@@ -699,13 +695,9 @@ func compileFilesWithHost(
 		// No mismatch - use post-emit diagnostics (which match pre-emit when counts are equal).
 		resultDiagnostics = append(resultDiagnostics, progDiags...)
 		resultDiagnostics = append(resultDiagnostics, syntaxDiags...)
-		resultDiagnostics = append(resultDiagnostics, postSemanticDiags...)
-		resultDiagnostics = append(resultDiagnostics, postGlobalDiags...)
+		resultDiagnostics = append(resultDiagnostics, postDiags...)
 		if options.GetEmitDeclarations() {
 			resultDiagnostics = append(resultDiagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
-		}
-		if harnessOptions.CaptureSuggestions {
-			resultDiagnostics = append(resultDiagnostics, postSuggestionDiags...)
 		}
 	}
 
