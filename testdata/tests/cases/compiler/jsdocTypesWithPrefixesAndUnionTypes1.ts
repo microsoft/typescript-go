@@ -57,6 +57,18 @@ export function f12(x) {}
 /** @param {{ a: number } & ? { b: number } | string} x */
 export function f13(x) {}
 
+/** @param {?readonly number[]} x */
+export function f14(x) {}
+
+/** @param {string | ?readonly number[]} x */
+export function f15(x) {}
+
+/** @param {?readonly number[] | string} x */
+export function f16(x) {}
+
+/** @param {?readonly ?number[] | string} x */
+export function f17(x) {}
+
 // @filename: exclamation.js
 /** @param {!} x */
 export function g0(x) {}
@@ -99,3 +111,15 @@ export function g12(x) {}
 
 /** @param {{ a: number } & ! { b: number } | string} x */
 export function g13(x) {}
+
+/** @param {!readonly number[]} x */
+export function g14(x) {}
+
+/** @param {string | !readonly number[]} x */
+export function g15(x) {}
+
+/** @param {!readonly number[] | string} x */
+export function g16(x) {}
+
+/** @param {!readonly !number[] | string} x */
+export function g17(x) {}
