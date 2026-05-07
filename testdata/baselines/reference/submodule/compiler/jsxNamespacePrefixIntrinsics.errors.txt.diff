@@ -1,0 +1,17 @@
+--- old.jsxNamespacePrefixIntrinsics.errors.txt
++++ new.jsxNamespacePrefixIntrinsics.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxNamespacePrefixIntrinsics.tsx(15,18): error TS2339: Property 'element' does not exist on type 'JSX.IntrinsicElements'.
+ jsxNamespacePrefixIntrinsics.tsx(16,30): error TS2322: Type '{ attribute: string; }' is not assignable to type '{ "ns:attribute": string; }'.
+   Property 'attribute' does not exist on type '{ "ns:attribute": string; }'. Did you mean '"ns:attribute"'?
+@@= skipped -4, +5 lines =@@
+   Property 'ns:invalid' does not exist on type '{ "ns:attribute": string; }'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2552 jsxNamespacePrefixIntrinsics.tsx:15:19: Cannot find name 'element'. Did you mean 'Element'?
+ ==== jsxNamespacePrefixIntrinsics.tsx (3 errors) ====
+     declare namespace JSX {
+       interface IntrinsicElements {

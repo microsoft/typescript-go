@@ -1,0 +1,26 @@
+error TS-1: Pre-emit (0) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+
+
+!!! error TS-1: Pre-emit (0) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+!!! related TS-1: The excess diagnostics are:
+!!! related TS2552 jsxSpreadFirstUnionNoErrors.tsx:10:6: Cannot find name 'noscript'. Did you mean 'WScript'?
+!!! related TS2304 jsxSpreadFirstUnionNoErrors.tsx:11:6: Cannot find name 'div'.
+!!! related TS2304 jsxSpreadFirstUnionNoErrors.tsx:11:27: Cannot find name 'div'.
+==== jsxSpreadFirstUnionNoErrors.tsx (0 errors) ====
+    /// <reference path="/.lib/react.d.ts" />
+    import React from "react";
+    
+    type InfoProps =
+    | { status: "hidden" }
+    | { status: "visible"; content: string };
+    
+    const Info = (props: InfoProps) =>
+    props.status === "hidden"
+      ? <noscript />
+      : <div>{props.content}</div>;
+    
+    const a = <Info status="hidden" />;
+    const b = <Info status="visible" content="hello world" />;
+    declare const infoProps: InfoProps;
+    
+    const c = <Info {...infoProps} />;

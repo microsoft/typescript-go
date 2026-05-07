@@ -1,0 +1,30 @@
+--- old.checkJsxChildrenProperty2.errors.txt
++++ new.checkJsxChildrenProperty2.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (6) and post-emit (20) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(16,10): error TS2741: Property 'children' is missing in type '{ a: number; b: string; }' but required in type 'Prop'.
+ file.tsx(19,11): error TS2710: 'children' are specified twice. The attribute named 'children' will be overwritten.
+ file.tsx(33,6): error TS2746: This JSX tag's 'children' prop expects a single child of type 'string | Element', but multiple children were provided.
+@@= skipped -5, +6 lines =@@
+ file.tsx(51,6): error TS2746: This JSX tag's 'children' prop expects a single child of type 'string | Element', but multiple children were provided.
+
+
++!!! error TS-1: Pre-emit (6) and post-emit (20) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:12:13: Cannot find name 'div'.
++!!! related TS2304 file.tsx:12:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:34:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:34:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:35:29: Cannot find name 'div'.
++!!! related TS2304 file.tsx:35:51: Cannot find name 'div'.
++!!! related TS2304 file.tsx:40:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:40:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:46:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:46:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:52:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:52:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:53:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:53:24: Cannot find name 'div'.
+ ==== file.tsx (6 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

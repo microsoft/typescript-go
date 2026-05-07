@@ -1,0 +1,16 @@
+--- old.tsxSpreadChildren.errors.txt
++++ new.tsxSpreadChildren.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ tsxSpreadChildren.tsx(25,19): error TS2454: Variable 'x' is used before being assigned.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 tsxSpreadChildren.tsx:17:13: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildren.tsx:17:52: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildren.tsx:20:13: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildren.tsx:22:7: Cannot find name 'div'.
+ ==== tsxSpreadChildren.tsx (1 errors) ====
+     declare namespace JSX {
+     	interface Element { }

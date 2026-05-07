@@ -1,0 +1,11 @@
+--- old.jsxNamespaceImplicitImportJSXNamespace.types
++++ new.jsxNamespaceImplicitImportJSXNamespace.types
+@@= skipped -199, +199 lines =@@
+
+ export import JSX = JSXInternal;
+ >JSX : any
+->JSXInternal : error
++>JSXInternal : any
+
+ === /index.tsx ===
+ export const Comp = () => <div></div>;

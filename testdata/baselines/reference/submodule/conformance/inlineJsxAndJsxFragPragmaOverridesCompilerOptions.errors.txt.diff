@@ -1,0 +1,61 @@
+--- old.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.errors.txt
++++ new.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (8) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (8) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 mix-n-match.tsx:5:4: Cannot find name 'span'.
++!!! related TS2304 mix-n-match.tsx:5:11: Cannot find name 'span'.
++!!! related TS2304 preacty.tsx:6:4: Cannot find name 'div'.
++!!! related TS2304 preacty.tsx:6:10: Cannot find name 'div'.
++!!! related TS2304 reacty.tsx:2:4: Cannot find name 'span'.
++!!! related TS2304 reacty.tsx:2:11: Cannot find name 'span'.
++!!! related TS2304 snabbdomy.tsx:6:4: Cannot find name 'div'.
++!!! related TS2304 snabbdomy.tsx:6:10: Cannot find name 'div'.
++==== react.d.ts (0 errors) ====
++    declare global {
++        namespace JSX {
++            interface IntrinsicElements {
++                [e: string]: any;
++            }
++        }
++    }
++    export function createElement(): void;
++    export function Fragment(): void;
++    
++==== preact.d.ts (0 errors) ====
++    export function h(): void;
++    export function Frag(): void;
++    
++==== snabbdom.d.ts (0 errors) ====
++    export function h(): void;
++    
++==== reacty.tsx (0 errors) ====
++    import {createElement, Fragment} from "./react";
++    <><span></span></>
++    
++==== preacty.tsx (0 errors) ====
++    /**
++     * @jsx h
++     * @jsxFrag Frag
++     */
++    import {h, Frag} from "./preact";
++    <><div></div></>
++    
++==== snabbdomy.tsx (0 errors) ====
++    /**
++     * @jsx h
++     * @jsxfrag null
++     */
++    import {h} from "./snabbdom";
++    <><div></div></>
++    
++==== mix-n-match.tsx (0 errors) ====
++    /* @jsx h */
++    /* @jsxFrag Fragment */
++    import {h} from "./preact";
++    import {Fragment} from "./react";
++    <><span></span></>

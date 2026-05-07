@@ -1,0 +1,24 @@
+--- old.tsxErrorRecovery2.errors.txt
++++ new.tsxErrorRecovery2.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (10) and post-emit (18) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file1.tsx(3,1): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ file1.tsx(3,1): error TS2657: JSX expressions must have one parent element.
+ file1.tsx(3,6): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -9, +10 lines =@@
+ file2.tsx(1,25): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (10) and post-emit (18) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file1.tsx:3:2: Cannot find name 'div'.
++!!! related TS2304 file1.tsx:3:8: Cannot find name 'div'.
++!!! related TS2304 file1.tsx:4:2: Cannot find name 'div'.
++!!! related TS2304 file1.tsx:4:8: Cannot find name 'div'.
++!!! related TS2304 file2.tsx:1:10: Cannot find name 'div'.
++!!! related TS2304 file2.tsx:1:16: Cannot find name 'div'.
++!!! related TS2304 file2.tsx:1:21: Cannot find name 'div'.
++!!! related TS2304 file2.tsx:1:27: Cannot find name 'div'.
+ ==== file1.tsx (5 errors) ====
+     declare namespace JSX { interface Element { } }
+     

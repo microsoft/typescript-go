@@ -1,0 +1,28 @@
+--- old.jsxElementsAsIdentifierNames.errors.txt
++++ new.jsxElementsAsIdentifierNames.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 a.tsx:9:13: Cannot find name 'package'.
++!!! related TS2304 a.tsx:13:13: Cannot find name 'package'.
++!!! related TS2304 a.tsx:13:23: Cannot find name 'package'.
++==== a.tsx (0 errors) ====
++    declare const React: any;
++    declare namespace JSX {
++        interface IntrinsicElements {
++            ["package"]: any;
++        }
++    }
++    
++    function A() {
++        return <package />
++    }
++    
++    function B() {
++        return <package></package>
++    }
++    

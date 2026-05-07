@@ -1,0 +1,22 @@
+--- old.jsxFactoryAndJsxFragmentFactory.errors.txt
++++ new.jsxFactoryAndJsxFragmentFactory.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (6) and post-emit (12) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxFactoryAndJsxFragmentFactory.tsx(5,3): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxFactoryAndJsxFragmentFactory.tsx(5,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxFactoryAndJsxFragmentFactory.tsx(5,19): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -5, +6 lines =@@
+ jsxFactoryAndJsxFragmentFactory.tsx(5,44): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (6) and post-emit (12) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxFactoryAndJsxFragmentFactory.tsx:5:4: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactory.tsx:5:12: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactory.tsx:5:20: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactory.tsx:5:30: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactory.tsx:5:36: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactory.tsx:5:46: Cannot find name 'span'.
+ ==== jsxFactoryAndJsxFragmentFactory.tsx (6 errors) ====
+     declare var h: any;
+     declare var Frag: any;

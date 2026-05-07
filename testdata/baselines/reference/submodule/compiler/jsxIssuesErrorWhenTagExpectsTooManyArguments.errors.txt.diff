@@ -1,0 +1,19 @@
+--- old.jsxIssuesErrorWhenTagExpectsTooManyArguments.errors.txt
++++ new.jsxIssuesErrorWhenTagExpectsTooManyArguments.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (2) and post-emit (8) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx(19,12): error TS6229: Tag 'MyComp4' expects at least '4' arguments, but the JSX factory 'React.createElement' provides at most '2'.
+ jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx(20,12): error TS6229: Tag 'MyComp3' expects at least '3' arguments, but the JSX factory 'React.createElement' provides at most '2'.
+
+
++!!! error TS-1: Pre-emit (2) and post-emit (8) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx:10:13: Cannot find name 'div'.
++!!! related TS2304 jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx:10:19: Cannot find name 'div'.
++!!! related TS2304 jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx:13:13: Cannot find name 'div'.
++!!! related TS2304 jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx:13:19: Cannot find name 'div'.
++!!! related TS2304 jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx:16:13: Cannot find name 'div'.
++!!! related TS2304 jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx:16:19: Cannot find name 'div'.
+ ==== jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx (2 errors) ====
+     /// <reference path="/.lib/react16.d.ts" />
+     

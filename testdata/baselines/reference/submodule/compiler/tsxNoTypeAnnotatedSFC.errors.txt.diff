@@ -1,0 +1,15 @@
+--- old.tsxNoTypeAnnotatedSFC.errors.txt
++++ new.tsxNoTypeAnnotatedSFC.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ tsxNoTypeAnnotatedSFC.tsx(2,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+ tsxNoTypeAnnotatedSFC.tsx(4,23): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ tsxNoTypeAnnotatedSFC.tsx(6,24): error TS7006: Parameter 'props' implicitly has an 'any' type.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 tsxNoTypeAnnotatedSFC.tsx:4:24: Cannot find name 'div'.
+ ==== tsxNoTypeAnnotatedSFC.tsx (3 errors) ====
+     // not _actually_ making react available in this test to regression test #22948
+     import * as React from 'react';

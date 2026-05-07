@@ -1,0 +1,14 @@
+--- old.nodeModulesImportMeta(module=node20).errors.txt
++++ new.nodeModulesImportMeta(module=node20).errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ subfolder/index.ts(2,11): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 index.ts:2:18: Cannot find name 'meta'.
++!!! related TS2304 subfolder/index.ts:2:18: Cannot find name 'meta'.
+ ==== subfolder/index.ts (1 errors) ====
+     // cjs format file
+     const x = import.meta.url;

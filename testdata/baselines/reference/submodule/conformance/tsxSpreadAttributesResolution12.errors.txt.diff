@@ -1,0 +1,18 @@
+--- old.tsxSpreadAttributesResolution12.errors.txt
++++ new.tsxSpreadAttributesResolution12.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(29,33): error TS2322: Type 'true' is not assignable to type 'false'.
+ file.tsx(30,50): error TS2322: Type '3' is not assignable to type '2'.
+ file.tsx(32,11): error TS2322: Type '{ x: 2; overwrite: string; y: true; }' is not assignable to type 'Prop'.
+@@= skipped -4, +5 lines =@@
+     Type 'true' is not assignable to type 'false'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:22:17: Cannot find name 'div'.
++!!! related TS2304 file.tsx:22:28: Cannot find name 'div'.
+ ==== file.tsx (3 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

@@ -1,0 +1,23 @@
+--- old.tsxAttributeResolution3.errors.txt
++++ new.tsxAttributeResolution3.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (5) and post-emit (12) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(19,2): error TS2322: Type '{ x: number; }' is not assignable to type 'Attribs1'.
+   Types of property 'x' are incompatible.
+     Type 'number' is not assignable to type 'string'.
+@@= skipped -6, +7 lines =@@
+ file.tsx(39,8): error TS2783: 'x' is specified more than once, so this usage will be overwritten.
+
+
++!!! error TS-1: Pre-emit (5) and post-emit (12) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:15:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:19:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:23:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:27:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:31:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:35:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:39:2: Cannot find name 'test1'.
+ ==== file.tsx (5 errors) ====
+     declare namespace JSX {
+     	interface Element { }

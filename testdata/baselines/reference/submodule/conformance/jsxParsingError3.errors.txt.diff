@@ -1,0 +1,28 @@
+--- old.jsxParsingError3.errors.txt
++++ new.jsxParsingError3.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (6) and post-emit (18) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ Error1.tsx(1,15): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+ Error2.tsx(1,15): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+ Error3.tsx(1,22): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+@@= skipped -5, +6 lines =@@
+ Error6.tsx(1,15): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+
+
++!!! error TS-1: Pre-emit (6) and post-emit (18) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 Error1.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error1.tsx:1:18: Cannot find name 'div'.
++!!! related TS2304 Error2.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error2.tsx:1:18: Cannot find name 'div'.
++!!! related TS2304 Error3.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error3.tsx:1:25: Cannot find name 'div'.
++!!! related TS2304 Error4.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error4.tsx:1:25: Cannot find name 'div'.
++!!! related TS2304 Error5.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error5.tsx:1:25: Cannot find name 'div'.
++!!! related TS2304 Error6.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error6.tsx:1:25: Cannot find name 'div'.
+ ==== file.tsx (0 errors) ====
+     declare namespace JSX {
+       interface Element {}

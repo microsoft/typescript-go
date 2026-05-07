@@ -1,0 +1,34 @@
+--- old.jsxIntrinsicElementsTypeArgumentErrors.errors.txt
++++ new.jsxIntrinsicElementsTypeArgumentErrors.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (22) and post-emit (40) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxIntrinsicElementsTypeArgumentErrors.tsx(5,15): error TS1099: Type argument list cannot be empty.
+ jsxIntrinsicElementsTypeArgumentErrors.tsx(7,16): error TS2558: Expected 0 type arguments, but got 1.
+ jsxIntrinsicElementsTypeArgumentErrors.tsx(7,22): error TS1009: Trailing comma not allowed.
+@@= skipped -21, +22 lines =@@
+ jsxIntrinsicElementsTypeArgumentErrors.tsx(28,16): error TS2558: Expected 0 type arguments, but got 1.
+
+
++!!! error TS-1: Pre-emit (22) and post-emit (40) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:5:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:5:20: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:7:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:7:27: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:9:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:9:27: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:11:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:11:40: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:13:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:13:42: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:15:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:15:26: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:18:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:20:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:22:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:24:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:26:12: Cannot find name 'div'.
++!!! related TS2304 jsxIntrinsicElementsTypeArgumentErrors.tsx:28:12: Cannot find name 'div'.
+ ==== jsxIntrinsicElementsTypeArgumentErrors.tsx (22 errors) ====
+     /// <reference path="/.lib/react16.d.ts" />
+     import * as React from "react";

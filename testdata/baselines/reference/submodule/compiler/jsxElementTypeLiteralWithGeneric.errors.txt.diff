@@ -1,0 +1,16 @@
+--- old.jsxElementTypeLiteralWithGeneric.errors.txt
++++ new.jsxElementTypeLiteralWithGeneric.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (2) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxElementTypeLiteralWithGeneric.tsx(21,9): error TS2339: Property 'ruhroh' does not exist on type 'JSX.IntrinsicElements'.
+ jsxElementTypeLiteralWithGeneric.tsx(21,10): error TS2786: 'ruhroh' cannot be used as a JSX component.
+   Its type '"ruhroh"' is not a valid JSX element type.
+
+
++!!! error TS-1: Pre-emit (2) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxElementTypeLiteralWithGeneric.tsx:17:10: Cannot find name 'div'.
++!!! related TS2304 jsxElementTypeLiteralWithGeneric.tsx:21:10: Cannot find name 'ruhroh'.
+ ==== jsxElementTypeLiteralWithGeneric.tsx (2 errors) ====
+     /// <reference path="/.lib/react16.d.ts" />
+     import * as React from "react";

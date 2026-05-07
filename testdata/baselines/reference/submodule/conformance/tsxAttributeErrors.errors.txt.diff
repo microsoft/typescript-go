@@ -1,0 +1,20 @@
+--- old.tsxAttributeErrors.errors.txt
++++ new.tsxAttributeErrors.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ tsxAttributeErrors.tsx(14,6): error TS2322: Type 'number' is not assignable to type 'string'.
+ tsxAttributeErrors.tsx(17,6): error TS2322: Type 'string' is not assignable to type 'number'.
+ tsxAttributeErrors.tsx(21,2): error TS2322: Type '{ text: number; }' is not assignable to type '{ text?: string | undefined; width?: number | undefined; }'.
+@@= skipped -4, +5 lines =@@
+     Type 'number' is not assignable to type 'string'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 tsxAttributeErrors.tsx:14:2: Cannot find name 'div'.
++!!! related TS2304 tsxAttributeErrors.tsx:17:2: Cannot find name 'div'.
++!!! related TS2304 tsxAttributeErrors.tsx:21:2: Cannot find name 'div'.
++!!! related TS2304 tsxAttributeErrors.tsx:24:2: Cannot find name 'span'.
+ ==== tsxAttributeErrors.tsx (3 errors) ====
+     declare namespace JSX {
+     	interface Element { }

@@ -1,0 +1,16 @@
+--- old.tsxSpreadAttributesResolution4.errors.txt
++++ new.tsxSpreadAttributesResolution4.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(34,45): error TS2532: Object is possibly 'undefined'.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:12:17: Cannot find name 'div'.
++!!! related TS2304 file.tsx:12:28: Cannot find name 'div'.
++!!! related TS2304 file.tsx:26:17: Cannot find name 'div'.
++!!! related TS2304 file.tsx:26:33: Cannot find name 'div'.
+ ==== file.tsx (1 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

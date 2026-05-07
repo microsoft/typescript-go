@@ -1,0 +1,14 @@
+--- old.jsxImportForSideEffectsNonExtantNoError.errors.txt
++++ new.jsxImportForSideEffectsNonExtantNoError.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxImportForSideEffectsNonExtantNoError.tsx(4,8): error TS2882: Cannot find module or type declarations for side-effect import of './App.css'.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxImportForSideEffectsNonExtantNoError.tsx:6:14: Cannot find name 'div'.
++!!! related TS2304 jsxImportForSideEffectsNonExtantNoError.tsx:6:20: Cannot find name 'div'.
+ ==== jsxImportForSideEffectsNonExtantNoError.tsx (1 errors) ====
+     /// <reference path="/.lib/react16.d.ts" />
+     import * as React from "react";

@@ -1,0 +1,20 @@
+--- old.checkJsxChildrenProperty14.errors.txt
++++ new.checkJsxChildrenProperty14.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(44,11): error TS2746: This JSX tag's 'children' prop expects a single child of type 'Element', but multiple children were provided.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:13:18: Cannot find name 'div'.
++!!! related TS2304 file.tsx:13:33: Cannot find name 'div'.
++!!! related TS2304 file.tsx:18:13: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:18:37: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:22:13: Cannot find name 'div'.
++!!! related TS2304 file.tsx:22:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:37:13: Cannot find name 'div'.
++!!! related TS2304 file.tsx:37:24: Cannot find name 'div'.
+ ==== file.tsx (1 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

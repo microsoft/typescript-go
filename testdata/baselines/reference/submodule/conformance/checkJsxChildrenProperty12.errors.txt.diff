@@ -1,0 +1,16 @@
+--- old.checkJsxChildrenProperty12.errors.txt
++++ new.checkJsxChildrenProperty12.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(14,7): error TS2454: Variable 'condition' is used before being assigned.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:19:6: Cannot find name 'div'.
++!!! related TS2304 file.tsx:19:23: Cannot find name 'div'.
++!!! related TS2552 file.tsx:31:12: Cannot find name 'button'. Did you mean 'Button'?
++!!! related TS2552 file.tsx:31:26: Cannot find name 'button'. Did you mean 'Button'?
+ ==== file.tsx (1 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

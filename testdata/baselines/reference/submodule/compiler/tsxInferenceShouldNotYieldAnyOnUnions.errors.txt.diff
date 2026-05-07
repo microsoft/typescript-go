@@ -1,0 +1,13 @@
+--- old.tsxInferenceShouldNotYieldAnyOnUnions.errors.txt
++++ new.tsxInferenceShouldNotYieldAnyOnUnions.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ index.tsx(16,12): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 index.tsx:16:13: Cannot find name 'div'.
+ ==== index.tsx (1 errors) ====
+     namespace JSX {
+         export interface Element {}

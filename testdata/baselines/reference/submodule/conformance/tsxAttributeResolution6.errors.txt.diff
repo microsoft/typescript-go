@@ -1,0 +1,20 @@
+--- old.tsxAttributeResolution6.errors.txt
++++ new.tsxAttributeResolution6.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(10,8): error TS2322: Type 'boolean' is not assignable to type 'string'.
+ file.tsx(11,8): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.
+ file.tsx(12,2): error TS2741: Property 'n' is missing in type '{}' but required in type '{ n: boolean; }'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:10:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:11:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:12:2: Cannot find name 'test2'.
++!!! related TS2304 file.tsx:15:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:16:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:17:2: Cannot find name 'test2'.
+ ==== file.tsx (3 errors) ====
+     declare namespace JSX {
+     	interface Element { }

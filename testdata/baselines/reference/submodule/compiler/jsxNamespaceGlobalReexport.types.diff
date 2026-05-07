@@ -1,0 +1,11 @@
+--- old.jsxNamespaceGlobalReexport.types
++++ new.jsxNamespaceGlobalReexport.types
+@@= skipped -205, +205 lines =@@
+     // @ts-ignore
+     export import JSX = JSXInternal;
+ >JSX : any
+->JSXInternal : error
++>JSXInternal : any
+ }
+ === /index.tsx ===
+ export const Comp = () => <div></div>;

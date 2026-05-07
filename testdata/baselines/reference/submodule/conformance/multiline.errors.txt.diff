@@ -1,0 +1,15 @@
+--- old.multiline.errors.txt
++++ new.multiline.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ b.tsx(33,1): error TS2578: Unused '@ts-expect-error' directive.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 b.tsx:5:11: Cannot find name 'div'.
++!!! related TS2304 b.tsx:9:4: Cannot find name 'div'.
++!!! related TS2304 b.tsx:35:5: Cannot find name 'div'.
+ ==== b.tsx (1 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     import * as React from "react";

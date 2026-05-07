@@ -1,0 +1,25 @@
+error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+
+
+!!! error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+!!! related TS-1: The excess diagnostics are:
+!!! related TS2304 tsxAttributeQuickinfoTypesSameAsObjectLiteral.tsx:10:51: Cannot find name 'span'.
+!!! related TS2304 tsxAttributeQuickinfoTypesSameAsObjectLiteral.tsx:10:69: Cannot find name 'span'.
+==== tsxAttributeQuickinfoTypesSameAsObjectLiteral.tsx (0 errors) ====
+    namespace JSX {
+        export interface IntrinsicElements {
+            span: {};
+        }
+        export interface Element {
+    		something?: any;
+        }
+    }
+    
+    const Foo = (props: { foo: "A" | "B" | "C" }) => <span>{props.foo}</span>;
+    
+    Foo({
+        foo: "B"
+    });
+    
+    <Foo foo="B" />
+    

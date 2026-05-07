@@ -1,0 +1,55 @@
+--- old.checkJsxChildrenProperty3.errors.txt
++++ new.checkJsxChildrenProperty3.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:26:18: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:26:36: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:37:18: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:37:36: Cannot find name 'h1'.
++==== file.tsx (0 errors) ====
++    /// <reference path="/.lib/react.d.ts" />
++    
++    import React = require('react');
++    
++    interface IUser {
++        Name: string;
++    }
++    
++    interface IFetchUserProps {
++        children: (user: IUser) => JSX.Element;
++    }
++    
++    class FetchUser extends React.Component<IFetchUserProps, any> {
++        render() {
++            return this.state
++                ? this.props.children(this.state.result)
++                : null;
++        }
++    }
++    
++    // Ok
++    function UserName0() {
++        return (
++            <FetchUser>
++                { user => (
++                    <h1>{ user.Name }</h1>
++                ) }
++            </FetchUser>
++        );
++    }
++    
++    function UserName1() {
++        return (
++            <FetchUser>
++    
++                { user => (
++                    <h1>{ user.Name }</h1>
++                ) }
++            </FetchUser>
++        );
++    }

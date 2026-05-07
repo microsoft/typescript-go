@@ -1,0 +1,16 @@
+--- old.jsxAttributeMissingInitializer.errors.txt
++++ new.jsxAttributeMissingInitializer.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxAttributeMissingInitializer.tsx(1,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxAttributeMissingInitializer.tsx(1,21): error TS1145: '{' or JSX element expected.
+ jsxAttributeMissingInitializer.tsx(1,22): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxAttributeMissingInitializer.tsx:1:12: Cannot find name 'div'.
++!!! related TS2304 jsxAttributeMissingInitializer.tsx:1:24: Cannot find name 'div'.
+ ==== jsxAttributeMissingInitializer.tsx (3 errors) ====
+     const x = <div foo= ></div>;
+               ~~~~~~~~~~~

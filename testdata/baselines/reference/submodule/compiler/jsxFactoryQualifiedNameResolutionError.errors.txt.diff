@@ -1,0 +1,13 @@
+--- old.jsxFactoryQualifiedNameResolutionError.errors.txt
++++ new.jsxFactoryQualifiedNameResolutionError.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ test.tsx(9,17): error TS2552: Cannot find name 'MyElement'. Did you mean 'Element'?
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 test.tsx:9:17: Cannot find name 'div'.
+ ==== test.tsx (1 errors) ====
+     declare namespace JSX {
+         interface IntrinsicElements {

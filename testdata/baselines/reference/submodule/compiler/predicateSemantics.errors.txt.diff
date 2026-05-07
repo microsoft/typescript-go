@@ -1,0 +1,17 @@
+--- old.predicateSemantics.errors.txt
++++ new.predicateSemantics.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (38) and post-emit (39) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ predicateSemantics.ts(7,16): error TS2871: This expression is always nullish.
+ predicateSemantics.ts(10,16): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
+ predicateSemantics.ts(26,13): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
+@@= skipped -37, +38 lines =@@
+ predicateSemantics.ts(90,1): error TS2869: Right operand of ?? is unreachable because the left operand is never nullish.
+
+
++!!! error TS-1: Pre-emit (38) and post-emit (39) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 predicateSemantics.ts:77:19: Cannot find name 'target'.
+ ==== predicateSemantics.ts (38 errors) ====
+     declare let opt: number | undefined;
+     

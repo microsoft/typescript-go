@@ -1,0 +1,62 @@
+--- old.jsxRuntimePragma(jsx=react-jsx).errors.txt
++++ new.jsxRuntimePragma(jsx=react-jsx).errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (20) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (20) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 four.tsx:5:34: Cannot find name 'h1'.
++!!! related TS2304 four.tsx:5:50: Cannot find name 'h1'.
++!!! related TS2304 four.tsx:6:24: Cannot find name 'div'.
++!!! related TS2304 four.tsx:6:30: Cannot find name 'div'.
++!!! related TS2304 four.tsx:7:29: Cannot find name 'img'.
++!!! related TS2304 one.tsx:4:34: Cannot find name 'h1'.
++!!! related TS2304 one.tsx:4:50: Cannot find name 'h1'.
++!!! related TS2304 one.tsx:5:24: Cannot find name 'div'.
++!!! related TS2304 one.tsx:5:30: Cannot find name 'div'.
++!!! related TS2304 one.tsx:6:29: Cannot find name 'img'.
++!!! related TS2304 three.tsx:4:34: Cannot find name 'h1'.
++!!! related TS2304 three.tsx:4:50: Cannot find name 'h1'.
++!!! related TS2304 three.tsx:5:24: Cannot find name 'div'.
++!!! related TS2304 three.tsx:5:30: Cannot find name 'div'.
++!!! related TS2304 three.tsx:6:29: Cannot find name 'img'.
++!!! related TS2304 two.tsx:3:34: Cannot find name 'h1'.
++!!! related TS2304 two.tsx:3:50: Cannot find name 'h1'.
++!!! related TS2304 two.tsx:4:24: Cannot find name 'div'.
++!!! related TS2304 two.tsx:4:30: Cannot find name 'div'.
++!!! related TS2304 two.tsx:5:29: Cannot find name 'img'.
++==== one.tsx (0 errors) ====
++    /// <reference path="/.lib/react16.d.ts" />
++    /* @jsxRuntime classic */
++    import * as React from "react";
++    export const HelloWorld = () => <h1>Hello world</h1>;
++    export const frag = <><div></div></>;
++    export const selfClosing = <img src="./image.png" />;
++==== two.tsx (0 errors) ====
++    /// <reference path="/.lib/react16.d.ts" />
++    /* @jsxRuntime automatic */
++    export const HelloWorld = () => <h1>Hello world</h1>;
++    export const frag = <><div></div></>;
++    export const selfClosing = <img src="./image.png" />;
++==== three.tsx (0 errors) ====
++    /// <reference path="/.lib/react16.d.ts" />
++    /* @jsxRuntime classic */
++    /* @jsxRuntime automatic */
++    export const HelloWorld = () => <h1>Hello world</h1>;
++    export const frag = <><div></div></>;
++    export const selfClosing = <img src="./image.png" />;
++==== four.tsx (0 errors) ====
++    /// <reference path="/.lib/react16.d.ts" />
++    /* @jsxRuntime automatic */
++    /* @jsxRuntime classic */
++    import * as React from "react";
++    export const HelloWorld = () => <h1>Hello world</h1>;
++    export const frag = <><div></div></>;
++    export const selfClosing = <img src="./image.png" />;
++==== index.ts (0 errors) ====
++    export * as one from "./one.js";
++    export * as two from "./two.js";
++    export * as three from "./three.js";
++    export * as four from "./four.js";

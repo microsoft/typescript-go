@@ -1,0 +1,50 @@
+--- old.jsxHash.errors.txt
++++ new.jsxHash.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (34) and post-emit (68) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxHash.tsx(1,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxHash.tsx(1,18): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxHash.tsx(2,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -33, +34 lines =@@
+ jsxHash.tsx(11,15): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (34) and post-emit (68) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxHash.tsx:1:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:1:20: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:2:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:2:20: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:3:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:3:21: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:4:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:4:16: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:4:20: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:4:24: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:5:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:5:16: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:5:20: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:5:24: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:6:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:6:16: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:6:21: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:6:25: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:7:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:7:15: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:7:19: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:7:24: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:8:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:8:16: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:8:20: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:8:25: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:9:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:9:15: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:9:21: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:10:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:10:16: Cannot find name 'i'.
++!!! related TS2304 jsxHash.tsx:10:21: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:11:12: Cannot find name 'a'.
++!!! related TS2304 jsxHash.tsx:11:17: Cannot find name 'a'.
+ ==== jsxHash.tsx (34 errors) ====
+     var t02 = <a>{0}#</a>;
+               ~~~

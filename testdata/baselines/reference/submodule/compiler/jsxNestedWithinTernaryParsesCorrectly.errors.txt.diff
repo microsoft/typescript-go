@@ -1,0 +1,19 @@
+--- old.jsxNestedWithinTernaryParsesCorrectly.errors.txt
++++ new.jsxNestedWithinTernaryParsesCorrectly.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (4) and post-emit (8) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxNestedWithinTernaryParsesCorrectly.tsx(3,5): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxNestedWithinTernaryParsesCorrectly.tsx(8,9): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxNestedWithinTernaryParsesCorrectly.tsx(10,9): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxNestedWithinTernaryParsesCorrectly.tsx(12,5): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (4) and post-emit (8) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxNestedWithinTernaryParsesCorrectly.tsx:3:6: Cannot find name 'div'.
++!!! related TS2304 jsxNestedWithinTernaryParsesCorrectly.tsx:8:10: Cannot find name 'span'.
++!!! related TS2304 jsxNestedWithinTernaryParsesCorrectly.tsx:10:11: Cannot find name 'span'.
++!!! related TS2304 jsxNestedWithinTernaryParsesCorrectly.tsx:12:7: Cannot find name 'div'.
+ ==== jsxNestedWithinTernaryParsesCorrectly.tsx (4 errors) ====
+     const emptyMessage = null as any;
+     const a = (

@@ -1,0 +1,26 @@
+--- old.tsxStatelessComponentDefaultProps.errors.txt
++++ new.tsxStatelessComponentDefaultProps.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (1) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (1) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 tsxStatelessComponentDefaultProps.tsx:9:13: Cannot find name 'div'.
++==== tsxStatelessComponentDefaultProps.tsx (0 errors) ====
++    /// <reference path="/.lib/react16.d.ts" />
++    
++    import React from 'react';
++    interface Props {
++        text: string;
++    }
++    
++    function BackButton(_props: Props) {
++        return <div />
++    }
++    BackButton.defaultProps = {
++        text: 'Go Back',
++    };
++    let a = <BackButton />
++    

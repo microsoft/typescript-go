@@ -1,0 +1,24 @@
+--- old.useBeforeDeclaration_jsx.errors.txt
++++ new.useBeforeDeclaration_jsx.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (13) and post-emit (21) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ useBeforeDeclaration_jsx.tsx(6,19): error TS2729: Property 'z' is used before its initialization.
+ useBeforeDeclaration_jsx.tsx(7,19): error TS2729: Property 'z' is used before its initialization.
+ useBeforeDeclaration_jsx.tsx(8,16): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -12, +13 lines =@@
+ useBeforeDeclaration_jsx.tsx(13,25): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (13) and post-emit (21) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 useBeforeDeclaration_jsx.tsx:8:17: Cannot find name 'span'.
++!!! related TS2304 useBeforeDeclaration_jsx.tsx:8:33: Cannot find name 'span'.
++!!! related TS2304 useBeforeDeclaration_jsx.tsx:9:17: Cannot find name 'span'.
++!!! related TS2304 useBeforeDeclaration_jsx.tsx:9:33: Cannot find name 'span'.
++!!! related TS2304 useBeforeDeclaration_jsx.tsx:10:17: Cannot find name 'span'.
++!!! related TS2304 useBeforeDeclaration_jsx.tsx:10:29: Cannot find name 'span'.
++!!! related TS2662 useBeforeDeclaration_jsx.tsx:13:23: Cannot find name 'b'. Did you mean the static member 'C.b'?
++!!! related TS2662 useBeforeDeclaration_jsx.tsx:13:27: Cannot find name 'b'. Did you mean the static member 'C.b'?
+ ==== useBeforeDeclaration_jsx.tsx (13 errors) ====
+     namespace JSX {
+         export interface Element {}

@@ -1,0 +1,18 @@
+--- old.tsxSpreadChildrenInvalidType(jsx=react,target=es2015).errors.txt
++++ new.tsxSpreadChildrenInvalidType(jsx=react,target=es2015).errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ tsxSpreadChildrenInvalidType.tsx(21,9): error TS2609: JSX spread child must be an array type.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 tsxSpreadChildrenInvalidType.tsx:17:13: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildrenInvalidType.tsx:17:52: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildrenInvalidType.tsx:20:13: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildrenInvalidType.tsx:22:7: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildrenInvalidType.tsx:26:13: Cannot find name 'div'.
++!!! related TS2304 tsxSpreadChildrenInvalidType.tsx:28:7: Cannot find name 'div'.
+ ==== tsxSpreadChildrenInvalidType.tsx (1 errors) ====
+     declare namespace JSX {
+     	interface Element { }

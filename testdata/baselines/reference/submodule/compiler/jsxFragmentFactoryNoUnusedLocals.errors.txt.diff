@@ -1,0 +1,16 @@
+--- old.jsxFragmentFactoryNoUnusedLocals.errors.txt
++++ new.jsxFragmentFactoryNoUnusedLocals.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxFragmentFactoryNoUnusedLocals.tsx(12,40): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxFragmentFactoryNoUnusedLocals.tsx:11:10: Cannot find name 'p'.
++!!! related TS2304 jsxFragmentFactoryNoUnusedLocals.tsx:11:19: Cannot find name 'p'.
++!!! related TS2304 jsxFragmentFactoryNoUnusedLocals.tsx:12:10: Cannot find name 'button'.
++!!! related TS2304 jsxFragmentFactoryNoUnusedLocals.tsx:12:82: Cannot find name 'button'.
+ ==== jsxFragmentFactoryNoUnusedLocals.tsx (1 errors) ====
+     /// <reference path="/.lib/react16.d.ts" />
+     import { Fragment, createElement } from "react"

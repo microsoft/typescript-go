@@ -1,0 +1,17 @@
+--- old.tsxAttributeResolution15.errors.txt
++++ new.tsxAttributeResolution15.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(9,5): error TS2564: Property 'greeting' has no initializer and is not definitely assigned in the constructor.
+ file.tsx(13,21): error TS2322: Type '{ prop1: string; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<BigGreeter> & { children?: ReactNode | undefined; }'.
+   Property 'prop1' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<BigGreeter> & { children?: ReactNode | undefined; }'.
+ file.tsx(16,39): error TS2532: Object is possibly 'undefined'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:7:17: Cannot find name 'div'.
++!!! related TS2304 file.tsx:7:33: Cannot find name 'div'.
+ ==== file.tsx (3 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

@@ -1,0 +1,30 @@
+--- old.unusedImports14.errors.txt
++++ new.unusedImports14.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 foo.tsx:3:30: Cannot find name 'div'.
++!!! related TS2304 foo.tsx:3:36: Cannot find name 'div'.
++==== foo.tsx (0 errors) ====
++    import React = require("react");
++    
++    export const FooComponent = <div></div>
++    
++==== node_modules/@types/react/index.d.ts (0 errors) ====
++    export = React;
++    export as namespace React;
++    
++    declare namespace React {
++        function createClass<P, S>(spec);
++    }
++    declare global {
++        namespace JSX {
++        }
++    }
++    
++    
++    

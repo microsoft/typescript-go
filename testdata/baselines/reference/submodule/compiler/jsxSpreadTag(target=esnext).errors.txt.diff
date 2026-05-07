@@ -1,0 +1,35 @@
+--- old.jsxSpreadTag(target=esnext).errors.txt
++++ new.jsxSpreadTag(target=esnext).errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (4) and post-emit (24) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ /a.tsx(5,13): error TS2304: Cannot find name 'Comp'.
+ /a.tsx(9,13): error TS2304: Cannot find name 'Comp'.
+ /a.tsx(13,13): error TS2304: Cannot find name 'Comp'.
+ /a.tsx(17,13): error TS2304: Cannot find name 'Comp'.
+
+
++!!! error TS-1: Pre-emit (4) and post-emit (24) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 /a.tsx:3:13: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:3:22: Cannot find name 'span'.
++!!! related TS2304 /a.tsx:4:13: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:4:22: Cannot find name 'span'.
++!!! related TS2304 /a.tsx:6:13: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:6:20: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:7:19: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:7:26: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:10:13: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:10:20: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:11:29: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:11:36: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:14:13: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:14:20: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:15:33: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:15:40: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:18:13: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:18:20: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:19:35: Cannot find name 'div'.
++!!! related TS2304 /a.tsx:19:42: Cannot find name 'div'.
+ ==== /a.tsx (4 errors) ====
+     declare const React: any;
+     

@@ -1,0 +1,21 @@
+--- old.tsxParseTests1.errors.txt
++++ new.tsxParseTests1.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (2) and post-emit (10) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(3,32): error TS7008: Member 'div' implicitly has an 'any' type.
+ file.tsx(3,37): error TS7008: Member 'span' implicitly has an 'any' type.
+
+
++!!! error TS-1: Pre-emit (2) and post-emit (10) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:6:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:6:15: Cannot find name 'div'.
++!!! related TS2304 file.tsx:6:20: Cannot find name 'span'.
++!!! related TS2304 file.tsx:6:26: Cannot find name 'div'.
++!!! related TS2304 file.tsx:6:32: Cannot find name 'div'.
++!!! related TS2304 file.tsx:6:38: Cannot find name 'span'.
++!!! related TS2304 file.tsx:6:45: Cannot find name 'div'.
++!!! related TS2304 file.tsx:6:51: Cannot find name 'div'.
+ ==== file.tsx (2 errors) ====
+     declare namespace JSX {
+     	interface Element { }

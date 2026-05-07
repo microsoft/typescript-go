@@ -1,0 +1,42 @@
+--- old.jsxJsxsCjsTransformNestedSelfClosingChild(jsx=react-jsx).errors.txt
++++ new.jsxJsxsCjsTransformNestedSelfClosingChild(jsx=react-jsx).errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (11) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (11) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:5:4: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:6:6: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:7:5: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:11:4: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:12:6: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:13:6: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:14:5: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:18:4: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:19:23: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:19:40: Cannot find name 'div'.
++!!! related TS2304 jsxJsxsCjsTransformNestedSelfClosingChild.tsx:20:5: Cannot find name 'div'.
++==== jsxJsxsCjsTransformNestedSelfClosingChild.tsx (0 errors) ====
++    /// <reference path="/.lib/react16.d.ts" />
++    import type * as React from 'react';
++    
++    console.log(
++      <div>
++        <div />
++      </div>
++    )
++    
++    console.log(
++      <div>
++        <div />
++        <div />
++      </div>
++    )
++    
++    console.log(
++      <div>
++        {[1, 2].map(i => <div key={i}>{i}</div>)}
++      </div>
++    )

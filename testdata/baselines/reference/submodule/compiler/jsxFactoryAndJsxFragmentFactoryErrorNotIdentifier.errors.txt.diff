@@ -1,0 +1,22 @@
+--- old.jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.errors.txt
++++ new.jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (7) and post-emit (13) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ error TS18035: Invalid value for 'jsxFragmentFactory'. '234' is not a valid identifier or qualified-name.
+ jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx(4,3): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx(4,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -6, +7 lines =@@
+ jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx(4,44): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (7) and post-emit (13) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx:4:4: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx:4:12: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx:4:20: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx:4:30: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx:4:36: Cannot find name 'span'.
++!!! related TS2304 jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx:4:46: Cannot find name 'span'.
+ !!! error TS18035: Invalid value for 'jsxFragmentFactory'. '234' is not a valid identifier or qualified-name.
+ ==== jsxFactoryAndJsxFragmentFactoryErrorNotIdentifier.tsx (6 errors) ====
+     declare var h: any;

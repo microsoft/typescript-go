@@ -1,0 +1,27 @@
+--- old.jsxParsingError2.errors.txt
++++ new.jsxParsingError2.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (10) and post-emit (21) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ Error1.tsx(2,16): error TS17008: JSX element 'span' has no corresponding closing tag.
+ Error2.tsx(1,17): error TS17002: Expected corresponding JSX closing tag for 'div'.
+ Error3.tsx(1,11): error TS17008: JSX element 'div' has no corresponding closing tag.
+@@= skipped -9, +10 lines =@@
+ Error5.tsx(3,1): error TS1005: '</' expected.
+
+
++!!! error TS-1: Pre-emit (10) and post-emit (21) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 Error1.tsx:2:11: Cannot find name 'div'.
++!!! related TS2304 Error1.tsx:2:16: Cannot find name 'span'.
++!!! related TS2304 Error1.tsx:2:23: Cannot find name 'div'.
++!!! related TS2304 Error2.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error2.tsx:1:17: Cannot find name 'span'.
++!!! related TS2304 Error3.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error4.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error4.tsx:1:16: Cannot find name 'div'.
++!!! related TS2304 Error4.tsx:1:22: Cannot find name 'span'.
++!!! related TS2304 Error5.tsx:1:11: Cannot find name 'div'.
++!!! related TS2304 Error5.tsx:1:16: Cannot find name 'span'.
+ ==== file.tsx (0 errors) ====
+     declare namespace JSX {
+     	interface Element { }

@@ -1,0 +1,34 @@
+error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+
+
+!!! error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+!!! related TS-1: The excess diagnostics are:
+!!! related TS2304 file.tsx:12:17: Cannot find name 'div'.
+!!! related TS2304 file.tsx:12:28: Cannot find name 'div'.
+==== file.tsx (0 errors) ====
+    /// <reference path="/.lib/react.d.ts" />
+    
+    import React = require('react');
+    
+    interface OptionProp {
+        x?: 2
+        y?: boolean
+    }
+    
+    class Opt extends React.Component<OptionProp, {}> {
+        render() {
+            return <div>Hello</div>;
+        }
+    }
+    
+    const obj: OptionProp = {};
+    const obj1: OptionProp = {
+        x: 2
+    }
+    
+    // OK
+    let p = <Opt />;
+    let y = <Opt {...obj} />;
+    let y1 = <Opt {...obj1} />;
+    let y2 = <Opt {...obj1} y/>;
+    let y3 = <Opt x={2} />;

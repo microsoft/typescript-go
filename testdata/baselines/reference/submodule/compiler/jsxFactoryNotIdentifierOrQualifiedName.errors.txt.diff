@@ -1,0 +1,18 @@
+--- old.jsxFactoryNotIdentifierOrQualifiedName.errors.txt
++++ new.jsxFactoryNotIdentifierOrQualifiedName.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ error TS5067: Invalid value for 'jsxFactory'. 'Element.createElement=' is not a valid identifier or qualified-name.
+ test.tsx(12,5): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+ test.tsx(13,5): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 test.tsx:12:5: Cannot find name 'meta'.
++!!! related TS2304 test.tsx:12:33: Cannot find name 'meta'.
++!!! related TS2304 test.tsx:13:5: Cannot find name 'meta'.
++!!! related TS2304 test.tsx:13:29: Cannot find name 'meta'.
+ !!! error TS5067: Invalid value for 'jsxFactory'. 'Element.createElement=' is not a valid identifier or qualified-name.
+ ==== Element.ts (0 errors) ====
+     declare namespace JSX {

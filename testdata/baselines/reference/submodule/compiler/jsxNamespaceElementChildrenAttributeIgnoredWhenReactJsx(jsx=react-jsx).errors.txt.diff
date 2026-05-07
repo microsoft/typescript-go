@@ -1,0 +1,16 @@
+--- old.jsxNamespaceElementChildrenAttributeIgnoredWhenReactJsx(jsx=react-jsx).errors.txt
++++ new.jsxNamespaceElementChildrenAttributeIgnoredWhenReactJsx(jsx=react-jsx).errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ /test.tsx(7,2): error TS2741: Property 'offspring' is missing in type '{ children: string; }' but required in type '{ offspring: string; }'.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (5) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 /test.tsx:1:49: Cannot find name 'h1'.
++!!! related TS2304 /test.tsx:1:70: Cannot find name 'h1'.
++!!! related TS2304 /test.tsx:5:50: Cannot find name 'h1'.
++!!! related TS2304 /test.tsx:5:72: Cannot find name 'h1'.
+ ==== /jsx.d.ts (0 errors) ====
+     declare namespace JSX {
+       interface IntrinsicElements {

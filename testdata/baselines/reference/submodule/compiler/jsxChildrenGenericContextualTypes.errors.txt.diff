@@ -1,0 +1,18 @@
+--- old.jsxChildrenGenericContextualTypes.errors.txt
++++ new.jsxChildrenGenericContextualTypes.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxChildrenGenericContextualTypes.tsx(20,46): error TS2322: Type '"y"' is not assignable to type '"x"'.
+ jsxChildrenGenericContextualTypes.tsx(21,42): error TS2322: Type '"y"' is not assignable to type '"x"'.
+ jsxChildrenGenericContextualTypes.tsx(22,45): error TS2322: Type 'number' is not assignable to type '"x"'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (7) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 jsxChildrenGenericContextualTypes.tsx:8:69: Cannot find name 'div'.
++!!! related TS2304 jsxChildrenGenericContextualTypes.tsx:8:75: Cannot find name 'div'.
++!!! related TS2304 jsxChildrenGenericContextualTypes.tsx:14:56: Cannot find name 'div'.
++!!! related TS2304 jsxChildrenGenericContextualTypes.tsx:14:62: Cannot find name 'div'.
+ ==== jsxChildrenGenericContextualTypes.tsx (3 errors) ====
+     namespace JSX {
+         export interface Element {}

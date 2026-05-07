@@ -1,0 +1,34 @@
+--- old.tsxReactEmit7.errors.txt
++++ new.tsxReactEmit7.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (9) and post-emit (27) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(8,10): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+ file.tsx(9,10): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+ file.tsx(10,10): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+@@= skipped -8, +9 lines =@@
+ file.tsx(18,10): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+
+
++!!! error TS-1: Pre-emit (9) and post-emit (27) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:8:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:8:26: Cannot find name 'div'.
++!!! related TS2304 file.tsx:9:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:9:27: Cannot find name 'div'.
++!!! related TS2304 file.tsx:10:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:10:27: Cannot find name 'div'.
++!!! related TS2304 file.tsx:11:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:11:28: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:24: Cannot find name 'div'.
++!!! related TS2304 file.tsx:15:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:15:25: Cannot find name 'div'.
++!!! related TS2304 file.tsx:16:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:16:26: Cannot find name 'div'.
++!!! related TS2304 file.tsx:17:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:17:27: Cannot find name 'div'.
++!!! related TS2304 file.tsx:18:10: Cannot find name 'div'.
++!!! related TS2304 file.tsx:18:28: Cannot find name 'div'.
+ ==== file.tsx (9 errors) ====
+     declare namespace JSX {
+     	interface Element { }

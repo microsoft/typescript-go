@@ -1,0 +1,30 @@
+--- old.checkJsxChildrenProperty11.errors.txt
++++ new.checkJsxChildrenProperty11.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (19) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(12,2): error TS2564: Property 'props' has no initializer and is not definitely assigned in the constructor.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (19) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:14:18: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:33: Cannot find name 'div'.
++!!! related TS2304 file.tsx:19:11: Cannot find name 'div'.
++!!! related TS2304 file.tsx:19:17: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:19:29: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:19:34: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:19:46: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:19:51: Cannot find name 'div'.
++!!! related TS2304 file.tsx:20:11: Cannot find name 'div'.
++!!! related TS2304 file.tsx:20:17: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:20:29: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:20:50: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:20:66: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:20:72: Cannot find name 'div'.
++!!! related TS2304 file.tsx:21:11: Cannot find name 'div'.
++!!! related TS2304 file.tsx:21:43: Cannot find name 'div'.
++!!! related TS2304 file.tsx:22:20: Cannot find name 'h2'.
++!!! related TS2304 file.tsx:22:32: Cannot find name 'h2'.
+ ==== file.tsx (1 errors) ====
+     declare namespace JSX {
+     	interface Element { }

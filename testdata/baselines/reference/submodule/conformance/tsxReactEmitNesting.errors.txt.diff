@@ -1,0 +1,41 @@
+--- old.tsxReactEmitNesting.errors.txt
++++ new.tsxReactEmitNesting.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (28) and post-emit (53) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(6,15): error TS7006: Parameter 'ctrl' implicitly has an 'any' type.
+ file.tsx(6,21): error TS7006: Parameter 'model' implicitly has an 'any' type.
+ file.tsx(7,5): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -27, +28 lines =@@
+ file.tsx(32,5): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (28) and post-emit (53) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2552 file.tsx:7:6: Cannot find name 'section'. Did you mean 'Selection'?
++!!! related TS2552 file.tsx:8:10: Cannot find name 'header'. Did you mean 'Headers'?
++!!! related TS2304 file.tsx:9:14: Cannot find name 'h1'.
++!!! related TS2304 file.tsx:9:34: Cannot find name 'h1'.
++!!! related TS2552 file.tsx:10:14: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 file.tsx:11:11: Cannot find name 'header'. Did you mean 'Headers'?
++!!! related TS2552 file.tsx:12:10: Cannot find name 'section'. Did you mean 'Selection'?
++!!! related TS2552 file.tsx:13:14: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2304 file.tsx:14:14: Cannot find name 'ul'.
++!!! related TS2304 file.tsx:16:22: Cannot find name 'li'.
++!!! related TS2304 file.tsx:17:26: Cannot find name 'div'.
++!!! related TS2552 file.tsx:19:34: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 file.tsx:19:73: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2304 file.tsx:22:30: Cannot find name 'label'.
++!!! related TS2304 file.tsx:22:92: Cannot find name 'label'.
++!!! related TS2304 file.tsx:23:30: Cannot find name 'button'.
++!!! related TS2304 file.tsx:23:97: Cannot find name 'button'.
++!!! related TS2304 file.tsx:24:30: Cannot find name 'div'.
++!!! related TS2304 file.tsx:25:34: Cannot find name 'div'.
++!!! related TS2304 file.tsx:26:31: Cannot find name 'div'.
++!!! related TS2304 file.tsx:27:27: Cannot find name 'div'.
++!!! related TS2304 file.tsx:28:23: Cannot find name 'li'.
++!!! related TS2304 file.tsx:30:15: Cannot find name 'ul'.
++!!! related TS2552 file.tsx:31:11: Cannot find name 'section'. Did you mean 'Selection'?
++!!! related TS2552 file.tsx:32:7: Cannot find name 'section'. Did you mean 'Selection'?
+ ==== file.tsx (28 errors) ====
+     declare var vdom: any;
+     declare var ctrl: any;

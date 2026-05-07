@@ -1,0 +1,80 @@
+--- old.tsxEmitSpreadAttribute(target=esnext).errors.txt
++++ new.tsxEmitSpreadAttribute(target=esnext).errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (22) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (22) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 test.tsx:4:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:4:47: Cannot find name 'div'.
++!!! related TS2304 test.tsx:8:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:8:56: Cannot find name 'div'.
++!!! related TS2304 test.tsx:12:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:12:56: Cannot find name 'div'.
++!!! related TS2304 test.tsx:16:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:16:60: Cannot find name 'div'.
++!!! related TS2304 test.tsx:20:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:20:73: Cannot find name 'div'.
++!!! related TS2304 test.tsx:24:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:24:79: Cannot find name 'div'.
++!!! related TS2304 test.tsx:28:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:28:77: Cannot find name 'div'.
++!!! related TS2304 test.tsx:32:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:32:67: Cannot find name 'div'.
++!!! related TS2304 test.tsx:38:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:38:67: Cannot find name 'div'.
++!!! related TS2304 test.tsx:42:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:42:71: Cannot find name 'div'.
++!!! related TS2304 test.tsx:46:13: Cannot find name 'div'.
++!!! related TS2304 test.tsx:46:61: Cannot find name 'div'.
++==== test.tsx (0 errors) ====
++    declare const React: any;
++    
++    export function T1(a: any) {
++        return <div className={"T1"} { ...a }>T1</div>;
++    }
++    
++    export function T2(a: any, b: any) {
++        return <div className={"T2"} { ...a } { ...b }>T2</div>;
++    }
++    
++    export function T3(a: any, b: any) {
++        return <div { ...a } className={"T3"} { ...b }>T3</div>;
++    }
++    
++    export function T4(a: any, b: any) {
++        return <div className={"T4"} { ...{ ...a, ...b } }>T4</div>;
++    }
++    
++    export function T5(a: any, b: any, c: any, d: any) {
++        return <div className={"T5"} { ...{ ...a, ...b, ...{ c, d } } }>T5</div>;
++    }
++    
++    export function T6(a: any, b: any, c: any, d: any) {
++        return <div className={"T6"} { ...{ ...a, ...b, ...{ ...c, ...d } } }>T6</div>;
++    }
++    
++    export function T7(a: any, b: any, c: any, d: any) {
++        return <div className={"T7"} { ...{ __proto__: null, dir: 'rtl' } }>T7</div>;
++    }
++    
++    export function T8(a: any, b: any, c: any, d: any) {
++        return <div className={"T8"} { ...{ "__proto__": null } }>T8</div>;
++    }
++    
++    declare const __proto__: string;
++    
++    export function T9(a: any, b: any, c: any, d: any) {
++        return <div className={"T9"} { ...{ [__proto__]: null } }>T9</div>;
++    }
++    
++    export function T10(a: any, b: any, c: any, d: any) {
++        return <div className={"T10"} { ...{ ["__proto__"]: null } }>T10</div>;
++    }
++    
++    export function T11(a: any, b: any, c: any, d: any) {
++        return <div className={"T11"} { ...{ __proto__ } }>T11</div>;
++    }
++    

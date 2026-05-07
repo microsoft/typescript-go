@@ -1,0 +1,25 @@
+error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+
+
+!!! error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+!!! related TS-1: The excess diagnostics are:
+!!! related TS2304 index.tsx:16:14: Cannot find name 'p'.
+!!! related TS2304 index.tsx:16:23: Cannot find name 'p'.
+==== index.tsx (0 errors) ====
+    export class X {
+        static jsx() {
+            return document.createElement('p');
+        }
+    }
+    
+    export namespace X {
+        export namespace JSX {
+            export type IntrinsicElements = {
+                [other: string]: any;
+            };
+        }
+    }
+    
+    function A() {
+        return (<p>Hello</p>);
+    }

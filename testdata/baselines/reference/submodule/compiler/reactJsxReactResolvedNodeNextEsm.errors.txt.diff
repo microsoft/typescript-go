@@ -1,0 +1,37 @@
+--- old.reactJsxReactResolvedNodeNextEsm.errors.txt
++++ new.reactJsxReactResolvedNodeNextEsm.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++
++
++!!! error TS-1: Pre-emit (0) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:1:19: Cannot find name 'div'.
++!!! related TS2304 file.tsx:1:25: Cannot find name 'div'.
++==== package.json (0 errors) ====
++    {
++        "type": "module"
++    }
++==== file.tsx (0 errors) ====
++    export const a = <div></div>;
++==== node_modules/@types/react/package.json (0 errors) ====
++    {
++        "name": "@types/react",
++        "version": "0.0.1",
++        "main": "",
++        "types": "index.d.ts",
++        "exports": {
++            "./*.js": "./*.js",
++            "./*": "./*.js"
++        }
++    }
++==== node_modules/@types/react/index.d.ts (0 errors) ====
++    declare namespace JSX {
++        interface IntrinsicElements { [x: string]: any; }
++    }
++==== node_modules/@types/react/jsx-runtime.d.ts (0 errors) ====
++    import './';
++==== node_modules/@types/react/jsx-dev-runtime.d.ts (0 errors) ====
++    import './';
++    

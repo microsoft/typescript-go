@@ -1,0 +1,15 @@
+--- old.tsxExternalModuleEmit1.errors.txt
++++ new.tsxExternalModuleEmit1.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (2) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ button.tsx(6,16): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ button.tsx(6,35): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (2) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2552 button.tsx:6:17: Cannot find name 'button'. Did you mean 'Button'?
++!!! related TS2552 button.tsx:6:37: Cannot find name 'button'. Did you mean 'Button'?
+ ==== react.d.ts (0 errors) ====
+     declare module 'react' {
+     	class Component<T, U> { }

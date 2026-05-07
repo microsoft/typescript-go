@@ -1,0 +1,27 @@
+error TS-1: Pre-emit (0) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+
+
+!!! error TS-1: Pre-emit (0) and post-emit (4) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+!!! related TS-1: The excess diagnostics are:
+!!! related TS2304 jsxEmptyExpressionNotCountedAsChild.tsx:9:13: Cannot find name 'div'.
+!!! related TS2304 jsxEmptyExpressionNotCountedAsChild.tsx:9:35: Cannot find name 'div'.
+!!! related TS2304 jsxEmptyExpressionNotCountedAsChild.tsx:15:7: Cannot find name 'div'.
+!!! related TS2304 jsxEmptyExpressionNotCountedAsChild.tsx:15:18: Cannot find name 'div'.
+==== jsxEmptyExpressionNotCountedAsChild.tsx (0 errors) ====
+    /// <reference path="/.lib/react16.d.ts" />
+    import * as React from 'react'
+    
+    interface Props {
+        children: React.ReactElement<any>
+    }
+    
+    function Wrapper(props: Props) {
+        return <div>{props.children}</div>
+    }
+    
+    const element = (
+        <Wrapper>
+        {/* comment */}
+         <div>Hello</div>
+        </Wrapper>
+    )

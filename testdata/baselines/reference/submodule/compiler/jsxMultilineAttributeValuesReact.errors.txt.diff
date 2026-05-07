@@ -1,0 +1,22 @@
+--- old.jsxMultilineAttributeValuesReact.errors.txt
++++ new.jsxMultilineAttributeValuesReact.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (6) and post-emit (12) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ jsxMultilineAttributeValuesReact.tsx(2,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxMultilineAttributeValuesReact.tsx(4,3): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ jsxMultilineAttributeValuesReact.tsx(5,11): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -5, +6 lines =@@
+ jsxMultilineAttributeValuesReact.tsx(10,3): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
++!!! error TS-1: Pre-emit (6) and post-emit (12) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2552 jsxMultilineAttributeValuesReact.tsx:2:12: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 jsxMultilineAttributeValuesReact.tsx:4:5: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 jsxMultilineAttributeValuesReact.tsx:5:12: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 jsxMultilineAttributeValuesReact.tsx:7:5: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 jsxMultilineAttributeValuesReact.tsx:8:12: Cannot find name 'input'. Did you mean 'oninput'?
++!!! related TS2552 jsxMultilineAttributeValuesReact.tsx:10:5: Cannot find name 'input'. Did you mean 'oninput'?
+ ==== jsxMultilineAttributeValuesReact.tsx (6 errors) ====
+     declare var React: any;
+     const a = <input value="

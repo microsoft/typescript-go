@@ -1,0 +1,20 @@
+--- old.tsxTypeErrors.errors.txt
++++ new.tsxTypeErrors.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (5) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ tsxTypeErrors.tsx(2,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ tsxTypeErrors.tsx(5,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+ tsxTypeErrors.tsx(9,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+@@= skipped -4, +5 lines =@@
+ tsxTypeErrors.tsx(16,3): error TS2564: Property 'props' has no initializer and is not definitely assigned in the constructor.
+
+
++!!! error TS-1: Pre-emit (5) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 tsxTypeErrors.tsx:2:11: Cannot find name 'div'.
++!!! related TS2304 tsxTypeErrors.tsx:5:11: Cannot find name 'img'.
++!!! related TS2304 tsxTypeErrors.tsx:9:11: Cannot find name 'div'.
++!!! related TS2552 tsxTypeErrors.tsx:12:11: Cannot find name 'imag'. Did you mean 'Image'?
+ ==== tsxTypeErrors.tsx (5 errors) ====
+     // A built-in element (OK)
+     var a1 = <div id="foo" />;

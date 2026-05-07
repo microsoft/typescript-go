@@ -1,0 +1,14 @@
+--- old.jsxParsingError1.errors.txt
++++ new.jsxParsingError1.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (2) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(11,30): error TS2695: Left side of comma operator is unused and has no side effects.
+ file.tsx(11,30): error TS18007: JSX expressions may not use the comma operator. Did you mean to write an array?
+
+
++!!! error TS-1: Pre-emit (2) and post-emit (3) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:11:15: Cannot find name 'div'.
+ ==== file.tsx (2 errors) ====
+     declare namespace JSX {
+     	interface Element { }

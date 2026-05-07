@@ -1,0 +1,26 @@
+--- old.checkJsxChildrenProperty15.errors.txt
++++ new.checkJsxChildrenProperty15.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (3) and post-emit (13) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(12,17): error TS2322: Type '{ children: Element; }' is not assignable to type 'IntrinsicAttributes'.
+   Property 'children' does not exist on type 'IntrinsicAttributes'.
+ file.tsx(13,13): error TS2322: Type '{ key: string; children: Element; }' is not assignable to type 'IntrinsicAttributes'.
+@@= skipped -5, +6 lines =@@
+   Property 'children' does not exist on type 'IntrinsicAttributes'.
+
+
++!!! error TS-1: Pre-emit (3) and post-emit (13) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:5:25: Cannot find name 'div'.
++!!! related TS2304 file.tsx:5:31: Cannot find name 'div'.
++!!! related TS2304 file.tsx:12:28: Cannot find name 'div'.
++!!! related TS2304 file.tsx:12:34: Cannot find name 'div'.
++!!! related TS2304 file.tsx:13:26: Cannot find name 'div'.
++!!! related TS2304 file.tsx:13:32: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:26: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:32: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:37: Cannot find name 'div'.
++!!! related TS2304 file.tsx:14:43: Cannot find name 'div'.
+ ==== file.tsx (3 errors) ====
+     /// <reference path="/.lib/react.d.ts" />
+     

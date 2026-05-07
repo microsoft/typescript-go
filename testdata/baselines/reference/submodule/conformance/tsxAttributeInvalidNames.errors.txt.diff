@@ -1,0 +1,18 @@
+--- old.tsxAttributeInvalidNames.errors.txt
++++ new.tsxAttributeInvalidNames.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (13) and post-emit (15) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ file.tsx(10,8): error TS1003: Identifier expected.
+ file.tsx(10,10): error TS1005: ';' expected.
+ file.tsx(10,10): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+@@= skipped -12, +13 lines =@@
+ file.tsx(11,19): error TS1161: Unterminated regular expression literal.
+
+
++!!! error TS-1: Pre-emit (13) and post-emit (15) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 file.tsx:10:2: Cannot find name 'test1'.
++!!! related TS2304 file.tsx:11:2: Cannot find name 'test2'.
+ ==== file.tsx (13 errors) ====
+     declare namespace JSX {
+     	interface Element { }

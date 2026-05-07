@@ -1,0 +1,13 @@
+--- old.tsxReactEmit5.errors.txt
++++ new.tsxReactEmit5.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS-1: Pre-emit (1) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+ test.d.ts(1,12): error TS7005: Variable 'React' implicitly has an 'any' type.
+
+
++!!! error TS-1: Pre-emit (1) and post-emit (2) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
++!!! related TS-1: The excess diagnostics are:
++!!! related TS2304 react-consumer.tsx:5:16: Cannot find name 'div'.
+ ==== file.tsx (0 errors) ====
+     declare namespace JSX {
+     	interface Element { }
