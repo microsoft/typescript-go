@@ -1,6 +1,5 @@
 // @checkJs: true
 // @declaration: true
-// @isolatedDeclarations: true
 // @rootDir: src
 // @outDir: dist
 
