@@ -71,6 +71,26 @@ export function f13(x) {}
 >f13 : (x: ({ a: number; } & ({ b: number; } | null)) | string) => void
 >x : string | ({ a: number; } & { b: number; })
 
+/** @param {?readonly number[]} x */
+export function f14(x) {}
+>f14 : (x: readonly number[] | null) => void
+>x : readonly number[] | null
+
+/** @param {string | ?readonly number[]} x */
+export function f15(x) {}
+>f15 : (x: string | (readonly number[] | null)) => void
+>x : string | readonly number[] | null
+
+/** @param {?readonly number[] | string} x */
+export function f16(x) {}
+>f16 : (x: (readonly number[] | null) | string) => void
+>x : string | readonly number[] | null
+
+/** @param {?readonly ?number[] | string} x */
+export function f17(x) {}
+>f17 : (x: (readonly (number[] | null) | null) | string) => void
+>x : string | number[] | null
+
 === exclamation.js ===
 /** @param {!} x */
 export function g0(x) {}
@@ -141,4 +161,24 @@ export function g12(x) {}
 export function g13(x) {}
 >g13 : (x: ({ a: number; } & { b: number; }) | string) => void
 >x : string | ({ a: number; } & { b: number; })
+
+/** @param {!readonly number[]} x */
+export function g14(x) {}
+>g14 : (x: readonly number[]) => void
+>x : readonly number[]
+
+/** @param {string | !readonly number[]} x */
+export function g15(x) {}
+>g15 : (x: string | readonly number[]) => void
+>x : string | readonly number[]
+
+/** @param {!readonly number[] | string} x */
+export function g16(x) {}
+>g16 : (x: readonly number[] | string) => void
+>x : string | readonly number[]
+
+/** @param {!readonly !number[] | string} x */
+export function g17(x) {}
+>g17 : (x: readonly number[] | string) => void
+>x : string | number[]
 

@@ -43,6 +43,18 @@ export function f12(x) {}
 /** @param {{ a: number } & ? { b: number } | string} x */
 export function f13(x) {}
 
+/** @param {?readonly number[]} x */
+export function f14(x) {}
+
+/** @param {string | ?readonly number[]} x */
+export function f15(x) {}
+
+/** @param {?readonly number[] | string} x */
+export function f16(x) {}
+
+/** @param {?readonly ?number[] | string} x */
+export function f17(x) {}
+
 //// [exclamation.js]
 /** @param {!} x */
 export function g0(x) {}
@@ -85,6 +97,18 @@ export function g12(x) {}
 
 /** @param {{ a: number } & ! { b: number } | string} x */
 export function g13(x) {}
+
+/** @param {!readonly number[]} x */
+export function g14(x) {}
+
+/** @param {string | !readonly number[]} x */
+export function g15(x) {}
+
+/** @param {!readonly number[] | string} x */
+export function g16(x) {}
+
+/** @param {!readonly !number[] | string} x */
+export function g17(x) {}
 
 
 
@@ -133,6 +157,14 @@ export declare function f13(x: ({
 } & ({
     b: number;
 } | null)) | string): void;
+/** @param {?readonly number[]} x */
+export declare function f14(x: readonly number[] | null): void;
+/** @param {string | ?readonly number[]} x */
+export declare function f15(x: string | (readonly number[] | null)): void;
+/** @param {?readonly number[] | string} x */
+export declare function f16(x: (readonly number[] | null) | string): void;
+/** @param {?readonly ?number[] | string} x */
+export declare function f17(x: (readonly (number[] | null) | null) | string): void;
 //// [exclamation.d.ts]
 /** @param {!} x */
 export declare function g0(x: any): void;
@@ -178,3 +210,11 @@ export declare function g13(x: ({
 } & {
     b: number;
 }) | string): void;
+/** @param {!readonly number[]} x */
+export declare function g14(x: readonly number[]): void;
+/** @param {string | !readonly number[]} x */
+export declare function g15(x: string | readonly number[]): void;
+/** @param {!readonly number[] | string} x */
+export declare function g16(x: readonly number[] | string): void;
+/** @param {!readonly !number[] | string} x */
+export declare function g17(x: readonly number[] | string): void;

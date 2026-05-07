@@ -71,6 +71,26 @@ export function f13(x) {}
 >f13 : Symbol(f13, Decl(question.js, 37, 25))
 >x : Symbol(x, Decl(question.js, 40, 20))
 
+/** @param {?readonly number[]} x */
+export function f14(x) {}
+>f14 : Symbol(f14, Decl(question.js, 40, 25))
+>x : Symbol(x, Decl(question.js, 43, 20))
+
+/** @param {string | ?readonly number[]} x */
+export function f15(x) {}
+>f15 : Symbol(f15, Decl(question.js, 43, 25))
+>x : Symbol(x, Decl(question.js, 46, 20))
+
+/** @param {?readonly number[] | string} x */
+export function f16(x) {}
+>f16 : Symbol(f16, Decl(question.js, 46, 25))
+>x : Symbol(x, Decl(question.js, 49, 20))
+
+/** @param {?readonly ?number[] | string} x */
+export function f17(x) {}
+>f17 : Symbol(f17, Decl(question.js, 49, 25))
+>x : Symbol(x, Decl(question.js, 52, 20))
+
 === exclamation.js ===
 /** @param {!} x */
 export function g0(x) {}
@@ -141,4 +161,24 @@ export function g12(x) {}
 export function g13(x) {}
 >g13 : Symbol(g13, Decl(exclamation.js, 37, 25))
 >x : Symbol(x, Decl(exclamation.js, 40, 20))
+
+/** @param {!readonly number[]} x */
+export function g14(x) {}
+>g14 : Symbol(g14, Decl(exclamation.js, 40, 25))
+>x : Symbol(x, Decl(exclamation.js, 43, 20))
+
+/** @param {string | !readonly number[]} x */
+export function g15(x) {}
+>g15 : Symbol(g15, Decl(exclamation.js, 43, 25))
+>x : Symbol(x, Decl(exclamation.js, 46, 20))
+
+/** @param {!readonly number[] | string} x */
+export function g16(x) {}
+>g16 : Symbol(g16, Decl(exclamation.js, 46, 25))
+>x : Symbol(x, Decl(exclamation.js, 49, 20))
+
+/** @param {!readonly !number[] | string} x */
+export function g17(x) {}
+>g17 : Symbol(g17, Decl(exclamation.js, 49, 25))
+>x : Symbol(x, Decl(exclamation.js, 52, 20))
 

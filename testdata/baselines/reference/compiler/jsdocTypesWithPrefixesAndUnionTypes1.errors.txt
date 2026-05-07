@@ -8,12 +8,14 @@ exclamation.js(10,15): error TS1110: Type expected.
 exclamation.js(13,15): error TS1110: Type expected.
 exclamation.js(16,24): error TS1110: Type expected.
 exclamation.js(19,32): error TS1110: Type expected.
+exclamation.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
 question.js(1,14): error TS1110: Type expected.
 question.js(10,15): error TS1110: Type expected.
 question.js(13,15): error TS1110: Type expected.
 question.js(16,24): error TS1110: Type expected.
 question.js(19,32): error TS1110: Type expected.
 question.js(25,19): error TS1005: '}' expected.
+question.js(52,14): error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
 
 
 !!! error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
@@ -21,7 +23,7 @@ question.js(25,19): error TS1005: '}' expected.
 !!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
 !!! error TS5055: Cannot write file 'question.js' because it would overwrite input file.
 !!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-==== question.js (6 errors) ====
+==== question.js (7 errors) ====
     /** @param {?} x */
                  ~
 !!! error TS1110: Type expected.
@@ -76,7 +78,21 @@ question.js(25,19): error TS1005: '}' expected.
     /** @param {{ a: number } & ? { b: number } | string} x */
     export function f13(x) {}
     
-==== exclamation.js (5 errors) ====
+    /** @param {?readonly number[]} x */
+    export function f14(x) {}
+    
+    /** @param {string | ?readonly number[]} x */
+    export function f15(x) {}
+    
+    /** @param {?readonly number[] | string} x */
+    export function f16(x) {}
+    
+    /** @param {?readonly ?number[] | string} x */
+                 ~~~~~~~~
+!!! error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
+    export function f17(x) {}
+    
+==== exclamation.js (6 errors) ====
     /** @param {!} x */
                  ~
 !!! error TS1110: Type expected.
@@ -128,3 +144,17 @@ question.js(25,19): error TS1005: '}' expected.
     
     /** @param {{ a: number } & ! { b: number } | string} x */
     export function g13(x) {}
+    
+    /** @param {!readonly number[]} x */
+    export function g14(x) {}
+    
+    /** @param {string | !readonly number[]} x */
+    export function g15(x) {}
+    
+    /** @param {!readonly number[] | string} x */
+    export function g16(x) {}
+    
+    /** @param {!readonly !number[] | string} x */
+                 ~~~~~~~~
+!!! error TS1354: 'readonly' type modifier is only permitted on array and tuple literal types.
+    export function g17(x) {}
