@@ -44,7 +44,7 @@
         "@microsoft/1ds-core-js": "4.3.11",
         "@microsoft/1ds-post-js": "4.3.11"
     },
-    "packageManager": "npm@11.13.0+sha512.7119a16a0843580d65160977520e3f5710c974f04afd4fad36d9eb97d917ba716a856c35c78c4be6dc64367eeaccfb957ef5ce997ca31e9330b2e936ba2b1b92",
+    "packageManager": "npm@11.14.0+sha512.ea37d9cea2bc11f5869d379941ef9b80cc78220884667ee4d5e338184f1213cd41de261c879d9d55230ed610b63a735b14b230cefc14914c6c38e7143c6d9723",
     "volta": {
         "node": "22.22.0",
         "npm": "11.12.1"
