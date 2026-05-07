@@ -55,6 +55,18 @@ question.js(25,19): error TS1005: '}' expected.
     /** @param {number | ? string} x */
     export function f9(x) {}
     
+    /** @param {? { a: number } & { b: number }} x */
+    export function f10(x) {}
+    
+    /** @param {{ a: number } & ? { b: number }} x */
+    export function f11(x) {}
+    
+    /** @param {? { a: number } & { b: number } | string} x */
+    export function f12(x) {}
+    
+    /** @param {{ a: number } & ? { b: number } | string} x */
+    export function f13(x) {}
+    
 ==== exclamation.js (5 errors) ====
     /** @param {!} x */
                  ~
@@ -95,3 +107,15 @@ question.js(25,19): error TS1005: '}' expected.
     
     /** @param {number | ! string} x */
     export function g9(x) {}
+    
+    /** @param {! { a: number } & { b: number }} x */
+    export function g10(x) {}
+    
+    /** @param {{ a: number } & ! { b: number }} x */
+    export function g11(x) {}
+    
+    /** @param {! { a: number } & { b: number } | string} x */
+    export function g12(x) {}
+    
+    /** @param {{ a: number } & ! { b: number } | string} x */
+    export function g13(x) {}

@@ -31,6 +31,18 @@ export function f8(x) {}
 /** @param {number | ? string} x */
 export function f9(x) {}
 
+/** @param {? { a: number } & { b: number }} x */
+export function f10(x) {}
+
+/** @param {{ a: number } & ? { b: number }} x */
+export function f11(x) {}
+
+/** @param {? { a: number } & { b: number } | string} x */
+export function f12(x) {}
+
+/** @param {{ a: number } & ? { b: number } | string} x */
+export function f13(x) {}
+
 //// [exclamation.js]
 /** @param {!} x */
 export function g0(x) {}
@@ -62,6 +74,18 @@ export function g8(x) {}
 /** @param {number | ! string} x */
 export function g9(x) {}
 
+/** @param {! { a: number } & { b: number }} x */
+export function g10(x) {}
+
+/** @param {{ a: number } & ! { b: number }} x */
+export function g11(x) {}
+
+/** @param {! { a: number } & { b: number } | string} x */
+export function g12(x) {}
+
+/** @param {{ a: number } & ! { b: number } | string} x */
+export function g13(x) {}
+
 
 
 //// [question.d.ts]
@@ -85,6 +109,30 @@ export declare function f7(x: (number | string) | null): void;
 export declare function f8(x: number): void;
 /** @param {number | ? string} x */
 export declare function f9(x: number | (string | null)): void;
+/** @param {? { a: number } & { b: number }} x */
+export declare function f10(x: ({
+    a: number;
+} & {
+    b: number;
+}) | null): void;
+/** @param {{ a: number } & ? { b: number }} x */
+export declare function f11(x: {
+    a: number;
+} & ({
+    b: number;
+} | null)): void;
+/** @param {? { a: number } & { b: number } | string} x */
+export declare function f12(x: (({
+    a: number;
+} & {
+    b: number;
+}) | string) | null): void;
+/** @param {{ a: number } & ? { b: number } | string} x */
+export declare function f13(x: {
+    a: number;
+} & (({
+    b: number;
+} | string) | null)): void;
 //// [exclamation.d.ts]
 /** @param {!} x */
 export declare function g0(x: any): void;
@@ -106,3 +154,27 @@ export declare function g7(x: number | string): void;
 export declare function g8(x: number | string): void;
 /** @param {number | ! string} x */
 export declare function g9(x: number | string): void;
+/** @param {! { a: number } & { b: number }} x */
+export declare function g10(x: {
+    a: number;
+} & {
+    b: number;
+}): void;
+/** @param {{ a: number } & ! { b: number }} x */
+export declare function g11(x: {
+    a: number;
+} & {
+    b: number;
+}): void;
+/** @param {! { a: number } & { b: number } | string} x */
+export declare function g12(x: ({
+    a: number;
+} & {
+    b: number;
+}) | string): void;
+/** @param {{ a: number } & ! { b: number } | string} x */
+export declare function g13(x: ({
+    a: number;
+} & {
+    b: number;
+}) | string): void;

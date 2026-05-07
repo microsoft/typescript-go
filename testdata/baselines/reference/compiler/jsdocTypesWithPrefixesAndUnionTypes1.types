@@ -51,6 +51,26 @@ export function f9(x) {}
 >f9 : (x: number | (string | null)) => void
 >x : string | number | null
 
+/** @param {? { a: number } & { b: number }} x */
+export function f10(x) {}
+>f10 : (x: ({ a: number; } & { b: number; }) | null) => void
+>x : ({ a: number; } & { b: number; }) | null
+
+/** @param {{ a: number } & ? { b: number }} x */
+export function f11(x) {}
+>f11 : (x: { a: number; } & ({ b: number; } | null)) => void
+>x : { a: number; } & { b: number; }
+
+/** @param {? { a: number } & { b: number } | string} x */
+export function f12(x) {}
+>f12 : (x: (({ a: number; } & { b: number; }) | string) | null) => void
+>x : string | ({ a: number; } & { b: number; }) | null
+
+/** @param {{ a: number } & ? { b: number } | string} x */
+export function f13(x) {}
+>f13 : (x: { a: number; } & (({ b: number; } | string) | null)) => void
+>x : ({ a: number; } & string) | ({ a: number; } & { b: number; })
+
 === exclamation.js ===
 /** @param {!} x */
 export function g0(x) {}
@@ -101,4 +121,24 @@ export function g8(x) {}
 export function g9(x) {}
 >g9 : (x: number | string) => void
 >x : string | number
+
+/** @param {! { a: number } & { b: number }} x */
+export function g10(x) {}
+>g10 : (x: { a: number; } & { b: number; }) => void
+>x : { a: number; } & { b: number; }
+
+/** @param {{ a: number } & ! { b: number }} x */
+export function g11(x) {}
+>g11 : (x: { a: number; } & { b: number; }) => void
+>x : { a: number; } & { b: number; }
+
+/** @param {! { a: number } & { b: number } | string} x */
+export function g12(x) {}
+>g12 : (x: ({ a: number; } & { b: number; }) | string) => void
+>x : string | ({ a: number; } & { b: number; })
+
+/** @param {{ a: number } & ! { b: number } | string} x */
+export function g13(x) {}
+>g13 : (x: ({ a: number; } & { b: number; }) | string) => void
+>x : string | ({ a: number; } & { b: number; })
 
