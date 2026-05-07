@@ -453,8 +453,6 @@ func (s *Session) scheduleIdleCacheClean() {
 		s.idleCacheCleanMu.Unlock()
 
 		s.snapshotUpdateMu.Lock()
-		defer s.snapshotUpdateMu.Unlock()
-
 		ctx := s.backgroundCtx
 		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
@@ -464,6 +462,7 @@ func (s *Session) scheduleIdleCacheClean() {
 			newConfig:      newConfig,
 			cleanDiskCache: true,
 		})
+		s.snapshotUpdateMu.Unlock()
 
 		runtime.GC()
 	})
