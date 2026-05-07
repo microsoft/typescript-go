@@ -45,11 +45,17 @@ export function f8(x) {}
 /** @param {number | ? string} x */
 export function f9(x) {}
 
-/** @param {? { a: number } & { b: number } | string} x */
+/** @param {? { a: number } & { b: number }} x */
 export function f10(x) {}
 
-/** @param {{ a: number } & ? { b: number } | string} x */
+/** @param {{ a: number } & ? { b: number }} x */
 export function f11(x) {}
+
+/** @param {? { a: number } & { b: number } | string} x */
+export function f12(x) {}
+
+/** @param {{ a: number } & ? { b: number } | string} x */
+export function f13(x) {}
 
 // @filename: exclamation.js
 /** @param {!} x */
@@ -82,8 +88,14 @@ export function g8(x) {}
 /** @param {number | ! string} x */
 export function g9(x) {}
 
-/** @param {! { a: number } & { b: number } | string} x */
+/** @param {! { a: number } & { b: number }} x */
 export function g10(x) {}
 
-/** @param {{ a: number } & ! { b: number } | string} x */
+/** @param {{ a: number } & ! { b: number }} x */
 export function g11(x) {}
+
+/** @param {! { a: number } & { b: number } | string} x */
+export function g12(x) {}
+
+/** @param {{ a: number } & ! { b: number } | string} x */
+export function g13(x) {}
