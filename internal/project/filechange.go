@@ -5,7 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-const excessiveChangeThreshold = 1000
+const ExcessiveChangeThreshold = 1000
 
 type FileChangeKind int
 
@@ -56,11 +56,11 @@ func (f FileChangeSummary) IsEmpty() bool {
 }
 
 func (f FileChangeSummary) HasExcessiveWatchEvents() bool {
-	return f.InvalidateAll || f.Created.Len()+f.Deleted.Len()+f.Changed.Len() > excessiveChangeThreshold
+	return f.InvalidateAll || f.Created.Len()+f.Deleted.Len()+f.Changed.Len() > ExcessiveChangeThreshold
 }
 
 func (f FileChangeSummary) HasExcessiveNonCreateWatchEvents() bool {
-	return f.InvalidateAll || f.Deleted.Len()+f.Changed.Len() > excessiveChangeThreshold
+	return f.InvalidateAll || f.Deleted.Len()+f.Changed.Len() > ExcessiveChangeThreshold
 }
 
 // mergeFileChangeSummary merges src into dst, combining their change sets.

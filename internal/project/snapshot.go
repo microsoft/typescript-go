@@ -297,12 +297,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		if change.fileChanges.InvalidateAll {
 			fs.invalidateCache()
 			logger.Logf("InvalidateAll: invalidated file cache in %v", time.Since(invalidateStart))
-		} else if !fs.watchChangesAreConfigOrOverlapCache(
-			change.fileChanges,
-			s.toPath(s.sessionOptions.CurrentDirectory),
-			s.ConfigFileRegistry.customConfigFileName,
-			customConfigFileName,
-		) {
+		} else if !fs.watchChangesOverlapCache(change.fileChanges) {
 			// All watch changes/deletes are files we haven't seen; should be irrelevant to us (probably an external tool's build or something)
 			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
 			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
@@ -318,6 +313,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
+		change.ResourceRequest = fs.convertConfigWatchEventsToResourceRequest(
+			change.fileChanges,
+			change.ResourceRequest,
+			s.toPath(s.sessionOptions.CurrentDirectory),
+			s.ConfigFileRegistry.customConfigFileName,
+			customConfigFileName,
+		)
 	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
@@ -325,14 +327,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		// !!! mark inferred projects as dirty?
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
-
-	change.ResourceRequest = fs.convertConfigWatchEventsToResourceRequest(
-		change.fileChanges,
-		change.ResourceRequest,
-		s.toPath(s.sessionOptions.CurrentDirectory),
-		s.ConfigFileRegistry.customConfigFileName,
-		customConfigFileName,
-	)
 
 	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(

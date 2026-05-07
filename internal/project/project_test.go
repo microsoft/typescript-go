@@ -472,6 +472,46 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after deleting tsconfig directory")
 	})
 
+	t.Run("clears tsconfig diagnostics on excessive watch events that include the tsconfig deletion", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// After opening, there should be a tsconfig diagnostics call with the baseUrl diagnostic.
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after opening file")
+		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after opening file")
+
+		callsBeforeChange := len(calls)
+
+		// Delete the tsconfig from the FS and produce an excessive batch of watch events
+		// that includes the tsconfig deletion.
+		err = utils.FS().Remove("/src/tsconfig.json")
+		assert.NilError(t, err)
+		fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///some/path/file%d.ts", lsproto.FileChangeTypeChanged)
+		fileEvents = append(fileEvents, &lsproto.FileEvent{
+			Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
+			Type: lsproto.FileChangeTypeDeleted,
+		})
+		session.DidChangeWatchedFiles(context.Background(), fileEvents)
+		session.WaitForBackgroundTasks()
+
+		// Diagnostics for the deleted tsconfig should have been cleared.
+		calls = utils.Client().PublishDiagnosticsCalls()
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeChange)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after excessive changes with deletion")
+		lastClearCall := clearCalls[len(clearCalls)-1]
+		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after tsconfig deletion via excessive changes")
+	})
+
 	t.Run("updates diagnostics when program changes", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{

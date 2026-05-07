@@ -423,21 +423,13 @@ func (s *snapshotFSBuilder) reloadEntryIfNeeded(entry *dirty.SyncMapEntry[tspath
 	return entry.Value()
 }
 
-func (s *snapshotFSBuilder) watchChangesAreConfigOrOverlapCache(
-	change FileChangeSummary,
-	currentDirectoryPath tspath.Path,
-	oldCustomConfigFileName,
-	newCustomConfigFileName string,
-) bool {
+func (s *snapshotFSBuilder) watchChangesOverlapCache(change FileChangeSummary) bool {
 	for uri := range change.Changed.Keys() {
 		path := s.toPath(uri.FileName())
 		if _, ok := s.diskFiles.Load(path); ok {
 			return true
 		}
 		if _, ok := s.nodeModulesRealpathAliases.Load(path); ok {
-			return true
-		}
-		if isWatchedConfigFile(uri, s.toPath, currentDirectoryPath, oldCustomConfigFileName, newCustomConfigFileName) {
 			return true
 		}
 	}
@@ -447,9 +439,6 @@ func (s *snapshotFSBuilder) watchChangesAreConfigOrOverlapCache(
 			return true
 		}
 		if _, ok := s.nodeModulesRealpathAliases.Load(path); ok {
-			return true
-		}
-		if isWatchedConfigFile(uri, s.toPath, currentDirectoryPath, oldCustomConfigFileName, newCustomConfigFileName) {
 			return true
 		}
 	}

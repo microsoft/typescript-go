@@ -175,8 +175,7 @@ type Session struct {
 	globalDiagPublishPending atomic.Bool
 
 	// publishedDiagConfigPaths tracks all config file paths for which we have
-	// published diagnostics. Used to detect when a deleted file or directory
-	// affects a config file that needs its diagnostics cleared.
+	// ever published diagnostics.
 	publishedDiagConfigPaths collections.SyncSet[tspath.Path]
 
 	// configFileWatch is a permanent watcher for the current directory that
@@ -1626,14 +1625,45 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		},
 	)
 
-	// Handle deleted files and directories: clear diagnostics for any config
-	// file we previously published diagnostics for that has been deleted,
-	// including config files inside deleted directories.
-	for uri := range change.fileChanges.Deleted.Keys() {
-		deletedPath := s.toPath(uri.FileName())
+	if change.fileChanges.HasExcessiveWatchEvents() {
+		// Clear diagnostics for all stored config paths, then schedule
+		// a snapshot update to reload projects and re-publish diagnostics.
+		var configURIs []lsproto.DocumentUri
 		for configPath := range s.publishedDiagConfigPaths.Keys() {
-			if configPath == deletedPath || deletedPath.ContainsPath(configPath) {
-				s.publishProjectDiagnostics(ctx, string(configPath), nil, nil /*converters*/)
+			s.publishProjectDiagnostics(ctx, string(configPath), nil, nil)
+			configURIs = append(configURIs, lsconv.FileNameToDocumentURI(string(configPath)))
+			s.publishedDiagConfigPaths.Delete(configPath)
+		}
+		if len(configURIs) > 0 {
+			s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
+				s.snapshotUpdateMu.Lock()
+				defer s.snapshotUpdateMu.Unlock()
+				fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+				s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+					reason:      UpdateReasonDidChangeWatchedFiles,
+					fileChanges: fileChanges,
+					ataChanges:  ataChanges,
+					newConfig:   newConfig,
+					ResourceRequest: ResourceRequest{
+						ConfiguredProjectDocuments: configURIs,
+					},
+				})
+			})
+		}
+	} else {
+		// Handle deleted files and directories: clear diagnostics for any config
+		// file we previously published diagnostics for that has been deleted,
+		// including config files inside deleted directories.
+		for uri := range change.fileChanges.Deleted.Keys() {
+			deletedPath := s.toPath(uri.FileName())
+			if strings.Contains(string(deletedPath), "/node_modules/") {
+				continue
+			}
+			for configPath := range s.publishedDiagConfigPaths.Keys() {
+				if configPath == deletedPath || deletedPath.ContainsPath(configPath) {
+					s.publishProjectDiagnostics(ctx, string(configPath), nil, nil /*converters*/)
+					s.publishedDiagConfigPaths.Delete(configPath)
+				}
 			}
 		}
 	}
@@ -1653,11 +1683,7 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 	}
 
 	configPath := s.toPath(configFilePath)
-	if len(lspDiagnostics) > 0 {
-		s.publishedDiagConfigPaths.Add(configPath)
-	} else {
-		s.publishedDiagConfigPaths.Delete(configPath)
-	}
+	s.publishedDiagConfigPaths.Add(configPath)
 
 	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{
 		Uri:         lsconv.FileNameToDocumentURI(configFilePath),

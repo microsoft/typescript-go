@@ -95,7 +95,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 		t.Run("with file existing in cache", func(t *testing.T) {
 			t.Parallel()
-			fileEvents := generateFileEvents(1001, "file:///project/node_modules/generated/file%d.js", lsproto.FileChangeTypeCreated)
+			fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/node_modules/generated/file%d.js", lsproto.FileChangeTypeCreated)
 			// Include two files in the program to trigger a full program creation.
 			// Exclude fs.d.ts to show that its content still gets invalidated.
 			fileEvents = append(fileEvents, &lsproto.FileEvent{
@@ -111,7 +111,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 		t.Run("without file existing in cache", func(t *testing.T) {
 			t.Parallel()
-			fileEvents := generateFileEvents(1001, "file:///project/node_modules/generated/file%d.js", lsproto.FileChangeTypeCreated)
+			fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/node_modules/generated/file%d.js", lsproto.FileChangeTypeCreated)
 			test(t, fileEvents, false)
 		})
 	})
@@ -158,7 +158,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 		t.Run("with event matching include glob", func(t *testing.T) {
 			t.Parallel()
-			fileEvents := generateFileEvents(1001, "file:///project/generated/file%d.ts", lsproto.FileChangeTypeCreated)
+			fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/generated/file%d.ts", lsproto.FileChangeTypeCreated)
 			fileEvents = append(fileEvents, &lsproto.FileEvent{
 				Uri:  "file:///project/src/rootFile.ts",
 				Type: lsproto.FileChangeTypeCreated,
@@ -168,7 +168,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 		t.Run("without event matching include glob", func(t *testing.T) {
 			t.Parallel()
-			fileEvents := generateFileEvents(1001, "file:///project/generated/file%d.ts", lsproto.FileChangeTypeCreated)
+			fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/generated/file%d.ts", lsproto.FileChangeTypeCreated)
 			test(t, fileEvents, false)
 		})
 	})
@@ -200,7 +200,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		assert.NilError(t, err)
 
 		// Create excessive changes to trigger bulk invalidation
-		fileEvents := generateFileEvents(1001, "file:///project/src/generated/file%d.ts", lsproto.FileChangeTypeCreated)
+		fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/src/generated/file%d.ts", lsproto.FileChangeTypeCreated)
 
 		// Process the excessive changes - this should trigger project reevaluation
 		session.DidChangeWatchedFiles(context.Background(), fileEvents)
@@ -265,13 +265,13 @@ func TestBulkCacheInvalidation(t *testing.T) {
 
 		t.Run("excessive changes only in node_modules does not affect config file names cache", func(t *testing.T) {
 			t.Parallel()
-			fileEvents := generateFileEvents(1001, "file:///project/node_modules/generated/file%d.js", lsproto.FileChangeTypeCreated)
+			fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/node_modules/generated/file%d.js", lsproto.FileChangeTypeCreated)
 			test(t, fileEvents, false, "node_modules changes should not clear config cache")
 		})
 
 		t.Run("excessive changes outside node_modules clears config file names cache", func(t *testing.T) {
 			t.Parallel()
-			fileEvents := generateFileEvents(1001, "file:///project/src/generated/file%d.ts", lsproto.FileChangeTypeCreated)
+			fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/src/generated/file%d.ts", lsproto.FileChangeTypeCreated)
 			// Presence of any tsconfig.json file event triggers rediscovery for config for all open files
 			fileEvents = append(fileEvents, &lsproto.FileEvent{
 				Uri:  lsproto.DocumentUri("file:///project/src/generated/tsconfig.json"),
@@ -306,7 +306,7 @@ func TestBulkCacheInvalidation(t *testing.T) {
 		assert.NilError(t, err)
 
 		// Create excessive changes in dist folder only
-		fileEvents := generateFileEvents(1001, "file:///project/dist/generated/file%d.js", lsproto.FileChangeTypeCreated)
+		fileEvents := generateFileEvents(project.ExcessiveChangeThreshold+1, "file:///project/dist/generated/file%d.js", lsproto.FileChangeTypeCreated)
 		session.DidChangeWatchedFiles(context.Background(), fileEvents)
 
 		// File should still use inferred project (config file names cache NOT cleared for dist changes)
