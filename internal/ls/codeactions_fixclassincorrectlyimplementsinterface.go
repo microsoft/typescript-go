@@ -126,9 +126,9 @@ func addChanges(context context.Context, fixContext *CodeFixContext, changeTrack
 
 	missingMembers := getMissingMembers(typeChecker, classDeclaration, []*checker.Type{implementedType})
 	for _, member := range missingMembers {
-		missingMembers := missingMemberFixer.createMemberFromSymbol(member, classDeclaration, fixContext.SourceFile, nil /*body*/, preserveOptionalFlagsAll)
-		for _, missingMember := range missingMembers {
-			insertInterfaceMemberNode(changeTracker, fixContext.SourceFile, classDeclaration, constructor, missingMember)
+		memberNodes := missingMemberFixer.createMemberFromSymbol(member, classDeclaration, fixContext.SourceFile, nil /*body*/, preserveOptionalFlagsAll)
+		for _, memberNode := range memberNodes {
+			insertInterfaceMemberNode(changeTracker, fixContext.SourceFile, classDeclaration, constructor, memberNode)
 		}
 	}
 }
