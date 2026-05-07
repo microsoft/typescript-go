@@ -25,12 +25,11 @@ C.b = 1;
 C.foo();
 
 //// [classPropertyIsPublicByDefault.js]
+"use strict";
 class C {
-    x;
     get y() { return null; }
     set y(x) { }
     foo() { }
-    static a;
     static get b() { return null; }
     static set b(x) { }
     static foo() { }

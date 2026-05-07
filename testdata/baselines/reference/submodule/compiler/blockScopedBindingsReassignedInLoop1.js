@@ -10,8 +10,8 @@ declare function use(n: number): void;
 })();
 
 //// [blockScopedBindingsReassignedInLoop1.js]
+"use strict";
 (function () {
-    'use strict';
     'use strict';
     for (let i = 0; i < 9; ++i) {
         (() => use(++i))();

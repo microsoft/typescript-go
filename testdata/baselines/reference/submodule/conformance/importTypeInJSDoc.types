@@ -17,7 +17,7 @@ declare class MyClass {
     static Bar: (x: string, y?: number) => void;
 >Bar : (x: string, y?: number) => void
 >x : string
->y : number
+>y : number | undefined
 
     constructor(x: MyClass.Bar);
 >x : import("./externs").Bar

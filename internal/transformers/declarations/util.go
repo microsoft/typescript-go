@@ -14,7 +14,7 @@ func canHaveLiteralInitializer(host DeclarationEmitHost, node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindPropertyDeclaration,
 		ast.KindPropertySignature:
-		return host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) != 0
+		return host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) == 0
 	case ast.KindParameter,
 		ast.KindVariableDeclaration:
 		return true
@@ -34,7 +34,7 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsMethodDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsFunctionDeclaration(node) ||
-		ast.IsParameter(node) ||
+		ast.IsParameterDeclaration(node) ||
 		ast.IsTypeParameterDeclaration(node) ||
 		ast.IsExpressionWithTypeArguments(node) ||
 		ast.IsImportEqualsDeclaration(node) ||
@@ -46,30 +46,6 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsElementAccessExpression(node) ||
 		ast.IsBinaryExpression(node) // || // !!! TODO: JSDoc support
 	/* ast.IsJSDocTypeAlias(node); */
-}
-
-func hasInferredType(node *ast.Node) bool {
-	// Debug.type<HasInferredType>(node); // !!!
-	switch node.Kind {
-	case ast.KindParameter,
-		ast.KindPropertySignature,
-		ast.KindPropertyDeclaration,
-		ast.KindBindingElement,
-		ast.KindPropertyAccessExpression,
-		ast.KindElementAccessExpression,
-		ast.KindBinaryExpression,
-		ast.KindVariableDeclaration,
-		ast.KindExportAssignment,
-		ast.KindJSExportAssignment,
-		ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
-		ast.KindJSDocParameterTag,
-		ast.KindJSDocPropertyTag:
-		return true
-	default:
-		// assertType<never>(node); // !!!
-		return false
-	}
 }
 
 func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver printer.EmitResolver, node *ast.Node) bool {
@@ -90,7 +66,6 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		ast.KindImportDeclaration,
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
-		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
 		return false
 	case ast.KindClassStaticBlockDeclaration:
@@ -110,7 +85,7 @@ func getBindingNameVisible(resolver printer.EmitResolver, elem *ast.Node) bool {
 	}
 	if ast.IsBindingPattern(elem.Name()) {
 		// If any child binding pattern element has been marked visible (usually by collect linked aliases), then this is visible
-		for _, elem := range elem.Name().AsBindingPattern().Elements.Nodes {
+		for _, elem := range elem.Name().Elements() {
 			if getBindingNameVisible(resolver, elem) {
 				return true
 			}
@@ -160,55 +135,19 @@ func unwrapParenthesizedExpression(o *ast.Node) *ast.Node {
 	return o
 }
 
-func isPrimitiveLiteralValue(node *ast.Node, includeBigInt bool) bool {
-	// !!! Debug.type<PrimitiveLiteral>(node);
-	switch node.Kind {
-	case ast.KindTrueKeyword,
-		ast.KindFalseKeyword,
-		ast.KindNumericLiteral,
-		ast.KindStringLiteral,
-		ast.KindNoSubstitutionTemplateLiteral:
-		return true
-	case ast.KindBigIntLiteral:
-		return includeBigInt
-	case ast.KindPrefixUnaryExpression:
-		if node.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
-			return ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand) || (includeBigInt && ast.IsBigIntLiteral(node.AsPrefixUnaryExpression().Operand))
-		}
-		if node.AsPrefixUnaryExpression().Operator == ast.KindPlusToken {
-			return ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand)
-		}
-		return false
-	default:
-		// !!! assertType<never>(node);
-		return false
-	}
-}
-
 func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParameterDeclaration) bool {
 	return node.AsNode().Parent.Kind == ast.KindMethodDeclaration && host.GetEffectiveDeclarationFlags(node.AsNode().Parent, ast.ModifierFlagsPrivate) != 0
 }
 
-// If the ExpandoFunctionDeclaration have multiple overloads, then we only need to emit properties for the last one.
+// Returns true if expando properties should be emitted for this function.
+// Properties are emitted if any overload in the symbol has a body (implementation).
 func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
-	if input.Body != nil { // if it has an implementation, it must be the last one
+	if input.Body != nil {
 		return true
 	}
-
-	overloadSignatures := core.Filter(input.Symbol.Declarations, func(decl *ast.Node) bool {
-		return ast.IsFunctionDeclaration(decl)
+	return !core.Every(input.Symbol.Declarations, func(decl *ast.Node) bool {
+		return !ast.IsFunctionDeclaration(decl) || decl.AsFunctionDeclaration().Body == nil
 	})
-
-	return len(overloadSignatures) == 0 || overloadSignatures[len(overloadSignatures)-1] == input.AsNode()
-}
-
-func getFirstConstructorWithBody(node *ast.Node) *ast.Node {
-	for _, member := range node.Members() {
-		if ast.IsConstructorDeclaration(member) && ast.NodeIsPresent(member.Body()) {
-			return member
-		}
-	}
-	return nil
 }
 
 func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {

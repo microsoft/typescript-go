@@ -1,364 +1,469 @@
 package project
 
 import (
-	"context"
 	"fmt"
 	"maps"
 	"slices"
 	"strings"
-	"time"
+	"sync"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 const (
-	fileGlobPattern          = "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
-	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
+	minWatchLocationDepth = 2
 )
 
-type watchFileHost interface {
-	Name() string
-	Client() Client
-	Log(message string)
+type fileSystemWatcherKey struct {
+	pattern string
+	kind    lsproto.WatchKind
 }
 
-type watchedFiles[T any] struct {
-	p         watchFileHost
-	getGlobs  func(data T) []string
-	watchKind lsproto.WatchKind
-
-	data      T
-	globs     []string
-	watcherID WatcherHandle
-	watchType string
+type fileSystemWatcherValue struct {
+	count int
+	id    WatcherID
 }
 
-func newWatchedFiles[T any](
-	p watchFileHost,
-	watchKind lsproto.WatchKind,
-	getGlobs func(data T) []string,
-	watchType string,
-) *watchedFiles[T] {
-	return &watchedFiles[T]{
-		p:         p,
-		watchKind: watchKind,
-		getGlobs:  getGlobs,
-		watchType: watchType,
+// watchRegistry tracks the current watch globs and how many individual
+// WatchedFiles reference each glob. It provides ref-count helpers so callers
+// don't manipulate the map directly.
+//
+// All methods are safe for concurrent use; locking is handled internally.
+type watchRegistry struct {
+	mu      sync.Mutex
+	entries map[fileSystemWatcherKey]*fileSystemWatcherValue
+	pending map[WatcherID]struct{}
+}
+
+func newWatchRegistry() *watchRegistry {
+	return &watchRegistry{
+		entries: make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
+		pending: make(map[WatcherID]struct{}),
 	}
 }
 
-func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
-	newGlobs := w.getGlobs(newData)
-	newGlobs = slices.Clone(newGlobs)
-	slices.Sort(newGlobs)
-
-	w.data = newData
-	if slices.Equal(w.globs, newGlobs) {
-		return
+// Acquire increments the ref count for a watcher. If this is the first
+// reference (count goes from 0 to 1), it returns true so the caller knows
+// to register the watcher with the client.
+func (r *watchRegistry) Acquire(watcher *lsproto.FileSystemWatcher, id WatcherID) (isNew bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	key := toFileSystemWatcherKey(watcher)
+	value := r.entries[key]
+	if value == nil {
+		value = &fileSystemWatcherValue{id: id}
+		r.entries[key] = value
 	}
+	value.count++
+	return value.count == 1
+}
 
-	w.globs = newGlobs
-	if w.watcherID != "" {
-		if err := w.p.Client().UnwatchFiles(ctx, w.watcherID); err != nil {
-			w.p.Log(fmt.Sprintf("%s:: Failed to unwatch %s watch: %s, err: %v newGlobs that are not updated: \n%s", w.p.Name(), w.watchType, w.watcherID, err, formatFileList(w.globs, "\t", hr)))
-			return
+// Release decrements the ref count for a watcher. If no references remain,
+// the entry is removed and the function returns the WatcherID and true so
+// the caller knows to unregister the watcher from the client.
+func (r *watchRegistry) Release(watcher *lsproto.FileSystemWatcher) (id WatcherID, removed bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	key := toFileSystemWatcherKey(watcher)
+	value := r.entries[key]
+	if value == nil {
+		return "", false
+	}
+	if value.count <= 1 {
+		delete(r.entries, key)
+		return value.id, true
+	}
+	value.count--
+	return "", false
+}
+
+// MarkPending records that a watcher's registration failed and needs retry.
+func (r *watchRegistry) MarkPending(id WatcherID) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.pending[id] = struct{}{}
+}
+
+// ClearPending removes a watcher from the pending set after successful registration.
+func (r *watchRegistry) ClearPending(id WatcherID) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	delete(r.pending, id)
+}
+
+// IsPending returns true if the watcher needs retry due to a previous failure.
+func (r *watchRegistry) IsPending(id WatcherID) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	_, ok := r.pending[id]
+	return ok
+}
+
+type PatternsAndIgnored struct {
+	directoriesOutsideWorkspace []string
+	patternsInsideWorkspace     []string
+	ignored                     map[string]struct{}
+}
+
+// toFileSystemWatcherKey produces a deduplication key for a file system watcher.
+// Note: this key is a simple string concatenation of the base and pattern, so
+// structurally different watchers (Pattern vs RelativePattern, URI vs WorkspaceFolder)
+// could theoretically collide. In practice, workspace watchers use plain Pattern
+// with filesystem paths while outside-workspace watchers use RelativePattern with
+// file:// URIs, so collisions don't occur.
+func toFileSystemWatcherKey(w *lsproto.FileSystemWatcher) fileSystemWatcherKey {
+	kind := w.Kind
+	if kind == nil {
+		kind = new(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete)
+	}
+	var pattern string
+	if w.GlobPattern.Pattern != nil {
+		pattern = *w.GlobPattern.Pattern
+	} else if w.GlobPattern.RelativePattern != nil {
+		var base string
+		if w.GlobPattern.RelativePattern.BaseUri.URI != nil {
+			base = string(*w.GlobPattern.RelativePattern.BaseUri.URI)
+		} else if w.GlobPattern.RelativePattern.BaseUri.WorkspaceFolder != nil {
+			panic("workspace folder-based relative patterns not implemented")
 		}
-		w.p.Log(fmt.Sprintf("%s:: %s watches unwatch %s", w.p.Name(), w.watchType, w.watcherID))
+		pattern = base + "/" + w.GlobPattern.RelativePattern.Pattern
 	}
-
-	w.watcherID = ""
-	if len(newGlobs) == 0 {
-		return
-	}
-
-	watchers := make([]*lsproto.FileSystemWatcher, 0, len(newGlobs))
-	for _, glob := range newGlobs {
-		watchers = append(watchers, &lsproto.FileSystemWatcher{
-			GlobPattern: lsproto.PatternOrRelativePattern{
-				Pattern: &glob,
-			},
-			Kind: &w.watchKind,
-		})
-	}
-	watcherID, err := w.p.Client().WatchFiles(ctx, watchers)
-	if err != nil {
-		w.p.Log(fmt.Sprintf("%s:: Failed to update %s watch: %v\n%s", w.p.Name(), w.watchType, err, formatFileList(w.globs, "\t", hr)))
-		return
-	}
-	w.watcherID = watcherID
-	w.p.Log(fmt.Sprintf("%s:: %s watches updated %s:\n%s", w.p.Name(), w.watchType, w.watcherID, formatFileList(w.globs, "\t", hr)))
-	return
+	return fileSystemWatcherKey{pattern: pattern, kind: *kind}
 }
 
-func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {
-	return slices.AppendSeq(make([]string, 0, len(data)), maps.Values(data))
+func fileSystemWatcherGlobString(w *lsproto.FileSystemWatcher) string {
+	if w.GlobPattern.Pattern != nil {
+		return *w.GlobPattern.Pattern
+	}
+	if w.GlobPattern.RelativePattern != nil {
+		var base string
+		if w.GlobPattern.RelativePattern.BaseUri.URI != nil {
+			base = string(*w.GlobPattern.RelativePattern.BaseUri.URI)
+		} else if w.GlobPattern.RelativePattern.BaseUri.WorkspaceFolder != nil {
+			panic("workspace folder-based relative patterns not implemented")
+		}
+		return base + "/" + w.GlobPattern.RelativePattern.Pattern
+	}
+	return ""
 }
 
-func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Path]string) []string {
-	rootDir := host.GetCurrentDirectory()
-	rootPath := tspath.ToPath(rootDir, "", host.FS().UseCaseSensitiveFileNames())
-	rootPathComponents := tspath.GetPathComponents(string(rootPath), "")
-	isRootWatchable := canWatchDirectoryOrFile(rootPathComponents)
+type WatcherID string
 
-	return func(data map[tspath.Path]string) []string {
-		start := time.Now()
+var watcherID atomic.Uint64
 
-		// dir -> recursive
-		globSet := make(map[string]bool)
-		var seenDirs collections.Set[string]
+type WatchedFiles[T any] struct {
+	name                         string
+	watchKind                    lsproto.WatchKind
+	hasRelativePatternCapability bool
+	computeGlobPatterns          func(input T) PatternsAndIgnored
 
-		for path, fileName := range data {
-			// Assuming all of the input paths are filenames, we can avoid
-			// duplicate work by only taking one file per dir, since their outputs
-			// will always be the same.
-			if !seenDirs.AddIfAbsent(tspath.GetDirectoryPath(string(path))) {
-				continue
+	mu                       sync.RWMutex
+	input                    T
+	computeWatchersOnce      sync.Once
+	workspaceWatchers        []*lsproto.FileSystemWatcher
+	outsideWorkspaceWatchers []*lsproto.FileSystemWatcher
+	ignored                  map[string]struct{}
+	id                       uint64
+}
+
+func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, hasRelativePatternCapability bool, computeGlobPatterns func(input T) PatternsAndIgnored) *WatchedFiles[T] {
+	return &WatchedFiles[T]{
+		id:                           watcherID.Add(1),
+		name:                         name,
+		watchKind:                    watchKind,
+		hasRelativePatternCapability: hasRelativePatternCapability,
+		computeGlobPatterns:          computeGlobPatterns,
+	}
+}
+
+type Watchers struct {
+	WatcherID                WatcherID
+	WorkspaceWatchers        []*lsproto.FileSystemWatcher
+	OutsideWorkspaceWatchers []*lsproto.FileSystemWatcher
+	IgnoredPaths             map[string]struct{}
+}
+
+func (w *WatchedFiles[T]) Watchers() Watchers {
+	w.computeWatchersOnce.Do(func() {
+		w.mu.Lock()
+		defer w.mu.Unlock()
+		result := w.computeGlobPatterns(w.input)
+		globs := slices.Compact(slices.Sorted(slices.Values(result.patternsInsideWorkspace)))
+
+		ignored := result.ignored
+		// ignored is only used for logging and doesn't affect watcher identity
+		w.ignored = ignored
+		changed := false
+		if !slices.EqualFunc(w.workspaceWatchers, globs, func(a *lsproto.FileSystemWatcher, b string) bool {
+			return *a.GlobPattern.Pattern == b
+		}) {
+			w.workspaceWatchers = core.Map(globs, func(glob string) *lsproto.FileSystemWatcher {
+				return &lsproto.FileSystemWatcher{
+					GlobPattern: lsproto.PatternOrRelativePattern{
+						Pattern: &glob,
+					},
+					Kind: &w.watchKind,
+				}
+			})
+			changed = true
+		}
+		dirsOutside := slices.Compact(slices.Sorted(slices.Values(result.directoriesOutsideWorkspace)))
+		if !slices.EqualFunc(w.outsideWorkspaceWatchers, dirsOutside, func(a *lsproto.FileSystemWatcher, b string) bool {
+			return fileSystemWatcherGlobString(a) == recursiveDirectoryGlobPattern(b, w.hasRelativePatternCapability)
+		}) {
+			w.outsideWorkspaceWatchers = core.Map(dirsOutside, func(dir string) *lsproto.FileSystemWatcher {
+				return newRecursiveDirectoryWatcher(dir, w.watchKind, w.hasRelativePatternCapability)
+			})
+			changed = true
+		}
+		if changed {
+			w.id = watcherID.Add(1)
+		}
+	})
+
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+	return Watchers{
+		WatcherID:                WatcherID(fmt.Sprintf("%s watcher %d", w.name, w.id)),
+		WorkspaceWatchers:        w.workspaceWatchers,
+		OutsideWorkspaceWatchers: w.outsideWorkspaceWatchers,
+		IgnoredPaths:             w.ignored,
+	}
+}
+
+func (w *WatchedFiles[T]) ID() WatcherID {
+	if w == nil {
+		return ""
+	}
+	return w.Watchers().WatcherID
+}
+
+func (w *WatchedFiles[T]) Name() string {
+	return w.name
+}
+
+func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
+	return w.watchKind
+}
+
+func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
+	if w == nil {
+		return nil
+	}
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+	return &WatchedFiles[T]{
+		name:                         w.name,
+		watchKind:                    w.watchKind,
+		hasRelativePatternCapability: w.hasRelativePatternCapability,
+		computeGlobPatterns:          w.computeGlobPatterns,
+		workspaceWatchers:            w.workspaceWatchers,
+		outsideWorkspaceWatchers:     w.outsideWorkspaceWatchers,
+		input:                        input,
+	}
+}
+
+func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory string, currentDirectory string, useCaseSensitiveFileNames bool) func(data *collections.SyncSet[tspath.Path]) PatternsAndIgnored {
+	workspaceDirectoryPath := tspath.ToPath(workspaceDirectory, currentDirectory, useCaseSensitiveFileNames)
+	currentDirectoryPath := tspath.ToPath(currentDirectory, currentDirectory, useCaseSensitiveFileNames)
+	libDirectoryPath := tspath.ToPath(libDirectory, currentDirectory, useCaseSensitiveFileNames)
+
+	return func(data *collections.SyncSet[tspath.Path]) PatternsAndIgnored {
+		var ignored map[string]struct{}
+		var seenDirs collections.Set[tspath.Path]
+		var includeWorkspace, includeRoot, includeLib bool
+		var nodeModulesDirectories collections.Set[tspath.Path]
+		var externalDirectories collections.Set[tspath.Path]
+
+		if data != nil {
+			data.Range(func(path tspath.Path) bool {
+				if tspath.IsDynamicFileName(string(path)) {
+					return true
+				}
+				// Assuming all of the input paths are file paths, we can avoid
+				// duplicate work by only taking one file per dir, since their outputs
+				// will always be the same.
+				if !seenDirs.AddIfAbsent(path.GetDirectoryPath()) {
+					return true
+				}
+
+				if workspaceDirectoryPath.ContainsPath(path) {
+					includeWorkspace = true
+				} else if currentDirectoryPath.ContainsPath(path) {
+					includeRoot = true
+				} else if libDirectoryPath.ContainsPath(path) {
+					includeLib = true
+				} else if idx := strings.Index(string(path), "/node_modules/"); idx != -1 {
+					nodeModulesDirectories.Add(path[:idx+len("/node_modules")])
+				} else {
+					externalDirectories.Add(path.GetDirectoryPath())
+				}
+				return true
+			})
+		}
+
+		var globs []string
+		if includeWorkspace {
+			globs = append(globs, getRecursiveGlobPattern(string(workspaceDirectoryPath)))
+		}
+		if includeRoot {
+			globs = append(globs, getRecursiveGlobPattern(string(currentDirectoryPath)))
+		}
+		if includeLib {
+			globs = append(globs, getRecursiveGlobPattern(string(libDirectoryPath)))
+		}
+		if nodeModulesDirectories.Len() > 0 {
+			nodeModulesGlobs := make([]string, 0, nodeModulesDirectories.Len())
+			for dir := range nodeModulesDirectories.Keys() {
+				nodeModulesGlobs = append(nodeModulesGlobs, getRecursiveGlobPattern(string(dir)))
 			}
-
-			w := getDirectoryToWatchFailedLookupLocation(
-				fileName,
-				path,
-				rootDir,
-				rootPath,
-				rootPathComponents,
-				isRootWatchable,
-				rootDir,
-				true,
+			slices.Sort(nodeModulesGlobs)
+			globs = append(globs, nodeModulesGlobs...)
+		}
+		var outsideDirs []string
+		if externalDirectories.Len() > 0 {
+			externalDirStrings := make([]string, 0, externalDirectories.Len())
+			for dir := range externalDirectories.Keys() {
+				externalDirStrings = append(externalDirStrings, string(dir))
+			}
+			externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(
+				externalDirStrings,
+				minWatchLocationDepth,
+				getPathComponentsForWatching,
+				tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true}, // Already using tspath.Path
 			)
-			if w == nil {
-				continue
-			}
-			globSet[w.dir] = globSet[w.dir] || !w.nonRecursive
+			slices.Sort(externalDirectoryParents)
+			ignored = ignoredExternalDirs
+			outsideDirs = externalDirectoryParents
 		}
 
-		globs := make([]string, 0, len(globSet))
-		for dir, recursive := range globSet {
-			if recursive {
-				globs = append(globs, dir+"/"+recursiveFileGlobPattern)
-			} else {
-				globs = append(globs, dir+"/"+fileGlobPattern)
-			}
+		return PatternsAndIgnored{
+			directoriesOutsideWorkspace: outsideDirs,
+			patternsInsideWorkspace:     globs,
+			ignored:                     ignored,
 		}
-
-		timeTaken := time.Since(start)
-		host.Log(fmt.Sprintf("createGlobMapper took %s to create %d globs for %d failed lookups", timeTaken, len(globs), len(data)))
-		return globs
 	}
 }
 
-type directoryOfFailedLookupWatch struct {
-	dir            string
-	dirPath        tspath.Path
-	nonRecursive   bool
-	packageDir     *string
-	packageDirPath *tspath.Path
-}
-
-func getDirectoryToWatchFailedLookupLocation(
-	failedLookupLocation string,
-	failedLookupLocationPath tspath.Path,
-	rootDir string,
-	rootPath tspath.Path,
-	rootPathComponents []string,
-	isRootWatchable bool,
+func getTypingsLocationsGlobs(
+	typingsFiles []string,
+	typingsLocation string,
+	workspaceDirectory string,
 	currentDirectory string,
-	preferNonRecursiveWatch bool,
-) *directoryOfFailedLookupWatch {
-	failedLookupPathComponents := tspath.GetPathComponents(string(failedLookupLocationPath), "")
-	// Ensure failed look up is normalized path
-	// !!! needed?
-	if tspath.IsRootedDiskPath(failedLookupLocation) {
-		failedLookupLocation = tspath.NormalizePath(failedLookupLocation)
-	} else {
-		failedLookupLocation = tspath.GetNormalizedAbsolutePath(failedLookupLocation, currentDirectory)
+	useCaseSensitiveFileNames bool,
+) PatternsAndIgnored {
+	var includeTypingsLocation, includeWorkspace bool
+	externalDirectories := make(map[tspath.Path]string)
+	globs := make(map[tspath.Path]string)
+	comparePathsOptions := tspath.ComparePathsOptions{
+		CurrentDirectory:          currentDirectory,
+		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
 	}
-	failedLookupComponents := tspath.GetPathComponents(failedLookupLocation, "")
-	perceivedOsRootLength := perceivedOsRootLengthForWatching(failedLookupPathComponents, len(failedLookupPathComponents))
-	if len(failedLookupPathComponents) <= perceivedOsRootLength+1 {
-		return nil
-	}
-	// If directory path contains node module, get the most parent node_modules directory for watching
-	nodeModulesIndex := slices.Index(failedLookupPathComponents, "node_modules")
-	if nodeModulesIndex != -1 && nodeModulesIndex+1 <= perceivedOsRootLength+1 {
-		return nil
-	}
-	lastNodeModulesIndex := lastIndex(failedLookupPathComponents, "node_modules")
-	if isRootWatchable && isInDirectoryPath(rootPathComponents, failedLookupPathComponents) {
-		if len(failedLookupPathComponents) > len(rootPathComponents)+1 {
-			// Instead of watching root, watch directory in root to avoid watching excluded directories not needed for module resolution
-			return getDirectoryOfFailedLookupWatch(
-				failedLookupComponents,
-				failedLookupPathComponents,
-				max(len(rootPathComponents)+1, perceivedOsRootLength+1),
-				lastNodeModulesIndex,
-				false,
-			)
+	for _, file := range typingsFiles {
+		if tspath.ContainsPath(typingsLocation, file, comparePathsOptions) {
+			includeTypingsLocation = true
+		} else if !tspath.ContainsPath(workspaceDirectory, file, comparePathsOptions) {
+			directory := tspath.GetDirectoryPath(file)
+			externalDirectories[tspath.ToPath(directory, currentDirectory, useCaseSensitiveFileNames)] = directory
 		} else {
-			// Always watch root directory non recursively
-			return &directoryOfFailedLookupWatch{
-				dir:          rootDir,
-				dirPath:      rootPath,
-				nonRecursive: true,
-			}
+			includeWorkspace = true
 		}
 	}
-
-	return getDirectoryToWatchFromFailedLookupLocationDirectory(
-		failedLookupComponents,
-		failedLookupPathComponents,
-		len(failedLookupPathComponents)-1,
-		perceivedOsRootLength,
-		nodeModulesIndex,
-		rootPathComponents,
-		lastNodeModulesIndex,
-		preferNonRecursiveWatch,
+	externalDirectoryParents, ignored := tspath.GetCommonParents(
+		slices.Collect(maps.Values(externalDirectories)),
+		minWatchLocationDepth,
+		getPathComponentsForWatching,
+		comparePathsOptions,
 	)
-}
-
-func getDirectoryToWatchFromFailedLookupLocationDirectory(
-	dirComponents []string,
-	dirPathComponents []string,
-	dirPathComponentsLength int,
-	perceivedOsRootLength int,
-	nodeModulesIndex int,
-	rootPathComponents []string,
-	lastNodeModulesIndex int,
-	preferNonRecursiveWatch bool,
-) *directoryOfFailedLookupWatch {
-	// If directory path contains node module, get the most parent node_modules directory for watching
-	if nodeModulesIndex != -1 {
-		// If the directory is node_modules use it to watch, always watch it recursively
-		return getDirectoryOfFailedLookupWatch(
-			dirComponents,
-			dirPathComponents,
-			nodeModulesIndex+1,
-			lastNodeModulesIndex,
-			false,
-		)
+	slices.Sort(externalDirectoryParents)
+	if includeWorkspace {
+		globs[tspath.ToPath(workspaceDirectory, currentDirectory, useCaseSensitiveFileNames)] = getRecursiveGlobPattern(workspaceDirectory)
 	}
-
-	// Use some ancestor of the root directory
-	nonRecursive := true
-	length := dirPathComponentsLength
-	if !preferNonRecursiveWatch {
-		for i := range dirPathComponentsLength {
-			if dirPathComponents[i] != rootPathComponents[i] {
-				nonRecursive = false
-				length = max(i+1, perceivedOsRootLength+1)
-				break
-			}
-		}
+	if includeTypingsLocation {
+		globs[tspath.ToPath(typingsLocation, currentDirectory, useCaseSensitiveFileNames)] = getRecursiveGlobPattern(typingsLocation)
 	}
-	return getDirectoryOfFailedLookupWatch(
-		dirComponents,
-		dirPathComponents,
-		length,
-		lastNodeModulesIndex,
-		nonRecursive,
-	)
-}
-
-func getDirectoryOfFailedLookupWatch(
-	dirComponents []string,
-	dirPathComponents []string,
-	length int,
-	lastNodeModulesIndex int,
-	nonRecursive bool,
-) *directoryOfFailedLookupWatch {
-	packageDirLength := -1
-	if lastNodeModulesIndex != -1 && lastNodeModulesIndex+1 >= length && lastNodeModulesIndex+2 < len(dirPathComponents) {
-		if !strings.HasPrefix(dirPathComponents[lastNodeModulesIndex+1], "@") {
-			packageDirLength = lastNodeModulesIndex + 2
-		} else if lastNodeModulesIndex+3 < len(dirPathComponents) {
-			packageDirLength = lastNodeModulesIndex + 3
-		}
-	}
-	var packageDir *string
-	var packageDirPath *tspath.Path
-	if packageDirLength != -1 {
-		packageDir = ptrTo(tspath.GetPathFromPathComponents(dirPathComponents[:packageDirLength]))
-		packageDirPath = ptrTo(tspath.Path(tspath.GetPathFromPathComponents(dirComponents[:packageDirLength])))
-	}
-
-	return &directoryOfFailedLookupWatch{
-		dir:            tspath.GetPathFromPathComponents(dirComponents[:length]),
-		dirPath:        tspath.Path(tspath.GetPathFromPathComponents(dirPathComponents[:length])),
-		nonRecursive:   nonRecursive,
-		packageDir:     packageDir,
-		packageDirPath: packageDirPath,
+	return PatternsAndIgnored{
+		directoriesOutsideWorkspace: externalDirectoryParents,
+		patternsInsideWorkspace:     slices.Collect(maps.Values(globs)),
+		ignored:                     ignored,
 	}
 }
 
-func perceivedOsRootLengthForWatching(pathComponents []string, length int) int {
-	// Ignore "/", "c:/"
+func getPathComponentsForWatching(path string, currentDirectory string) []string {
+	components := tspath.GetPathComponents(path, currentDirectory)
+	rootLength := perceivedOsRootLengthForWatching(components)
+	if rootLength <= 1 {
+		return components
+	}
+	newRoot := tspath.CombinePaths(components[0], components[1:rootLength]...)
+	return append([]string{newRoot}, components[rootLength:]...)
+}
+
+func perceivedOsRootLengthForWatching(pathComponents []string) int {
+	length := len(pathComponents)
 	if length <= 1 {
+		return length
+	}
+	if strings.HasPrefix(pathComponents[0], "//") {
+		// Group UNC roots (//server/share) into a single component
+		return 2
+	}
+	if len(pathComponents[0]) == 3 && tspath.IsVolumeCharacter(pathComponents[0][0]) && pathComponents[0][1] == ':' && pathComponents[0][2] == '/' {
+		// Windows-style volume
+		if strings.EqualFold(pathComponents[1], "users") {
+			// Group C:/Users/username into a single component
+			return min(3, length)
+		}
 		return 1
 	}
-	indexAfterOsRoot := 1
-	firstComponent := pathComponents[0]
-	isDosStyle := len(firstComponent) >= 2 && tspath.IsVolumeCharacter(firstComponent[0]) && firstComponent[1] == ':'
-	if firstComponent != "/" && !isDosStyle && isDosStyleNextPart(pathComponents[1]) {
-		// ignore "//vda1cs4850/c$/folderAtRoot"
-		if length == 2 {
-			return 2
-		}
-		indexAfterOsRoot = 2
-		isDosStyle = true
+	if pathComponents[1] == "home" {
+		// Group /home/username into a single component
+		return min(3, length)
 	}
-
-	afterOsRoot := pathComponents[indexAfterOsRoot]
-	if isDosStyle && !strings.EqualFold(afterOsRoot, "users") {
-		// Paths like c:/notUsers
-		return indexAfterOsRoot
-	}
-
-	if strings.EqualFold(afterOsRoot, "workspaces") {
-		// Paths like: /workspaces as codespaces hoist the repos in /workspaces so we have to exempt these from "2" level from root rule
-		return indexAfterOsRoot + 1
-	}
-
-	// Paths like: c:/users/username or /home/username
-	return indexAfterOsRoot + 2
+	return 1
 }
 
-func canWatchDirectoryOrFile(pathComponents []string) bool {
-	length := len(pathComponents)
-	// Ignore "/", "c:/"
-	// ignore "/user", "c:/users" or "c:/folderAtRoot"
-	if length < 2 {
-		return false
+func getRecursiveGlobPattern(directory string) string {
+	return fmt.Sprintf("%s/%s", tspath.RemoveTrailingDirectorySeparator(directory), "**/*")
+}
+
+// recursiveDirectoryGlobPattern returns the string form of a recursive watcher
+// for the given directory that would be produced by newRecursiveDirectoryWatcher.
+func recursiveDirectoryGlobPattern(directory string, useRelativePattern bool) string {
+	if useRelativePattern {
+		return string(lsconv.FileNameToDocumentURI(directory)) + "/**/*"
 	}
-	perceivedOsRootLength := perceivedOsRootLengthForWatching(pathComponents, length)
-	return length > perceivedOsRootLength+1
+	return getRecursiveGlobPattern(directory)
 }
 
-func isDosStyleNextPart(part string) bool {
-	return len(part) == 2 && tspath.IsVolumeCharacter(part[0]) && part[1] == '$'
-}
-
-func lastIndex[T comparable](s []T, v T) int {
-	for i := len(s) - 1; i >= 0; i-- {
-		if s[i] == v {
-			return i
+// newRecursiveDirectoryWatcher creates a FileSystemWatcher for recursively
+// watching a directory. When useRelativePattern is true, a RelativePattern with
+// a file:// base URI is used; otherwise a plain glob Pattern is used.
+func newRecursiveDirectoryWatcher(directory string, kind lsproto.WatchKind, useRelativePattern bool) *lsproto.FileSystemWatcher {
+	if useRelativePattern {
+		baseUri := lsproto.URI(lsconv.FileNameToDocumentURI(directory))
+		return &lsproto.FileSystemWatcher{
+			GlobPattern: lsproto.PatternOrRelativePattern{
+				RelativePattern: &lsproto.RelativePattern{
+					BaseUri: lsproto.WorkspaceFolderOrURI{
+						URI: &baseUri,
+					},
+					Pattern: "**/*",
+				},
+			},
+			Kind: &kind,
 		}
 	}
-	return -1
-}
-
-func isInDirectoryPath(dirComponents []string, fileOrDirComponents []string) bool {
-	if len(fileOrDirComponents) < len(dirComponents) {
-		return false
+	glob := getRecursiveGlobPattern(directory)
+	return &lsproto.FileSystemWatcher{
+		GlobPattern: lsproto.PatternOrRelativePattern{
+			Pattern: &glob,
+		},
+		Kind: &kind,
 	}
-	for i := range dirComponents {
-		if dirComponents[i] != fileOrDirComponents[i] {
-			return false
-		}
-	}
-	return true
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }

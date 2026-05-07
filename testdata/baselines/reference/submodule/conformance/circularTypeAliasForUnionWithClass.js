@@ -21,9 +21,9 @@ class I4 {
 
 
 //// [circularTypeAliasForUnionWithClass.js]
+"use strict";
 var v0;
 class I0 {
-    x;
 }
 var v3;
 class I3 {

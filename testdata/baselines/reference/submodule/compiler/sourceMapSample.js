@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/sourceMapSample.ts] ////
 
 //// [sourceMapSample.ts]
-module Foo.Bar {
+namespace Foo.Bar {
     "use strict";
 
     class Greeter {
@@ -38,14 +38,13 @@ module Foo.Bar {
 }
 
 //// [sourceMapSample.js]
+"use strict";
 var Foo;
 (function (Foo) {
-    let Bar;
+    var Bar;
     (function (Bar) {
         "use strict";
-        "use strict";
         class Greeter {
-            greeting;
             constructor(greeting) {
                 this.greeting = greeting;
             }

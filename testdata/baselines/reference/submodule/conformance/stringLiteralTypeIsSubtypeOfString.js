@@ -104,6 +104,8 @@ function f16<T extends String, U extends T>(x: any) { }
 
 
 //// [stringLiteralTypeIsSubtypeOfString.js]
+"use strict";
+// string literal types are subtypes of string, any
 function f1(x) { }
 function f2(x) { }
 function f3(x) { }
@@ -132,7 +134,6 @@ class C {
     toUpperCase() { return null; }
     toLocaleUpperCase() { return null; }
     trim() { return null; }
-    length;
     substr(from, length) { return null; }
     valueOf() { return null; }
 }

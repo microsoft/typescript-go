@@ -1,0 +1,18 @@
+--- old.commonJSImportNestedClassTypeReference.js
++++ new.commonJSImportNestedClassTypeReference.js
+@@= skipped -35, +35 lines =@@
+
+
+ //// [mod1.d.ts]
+-export var K: {
++declare namespace NS {
++    var K: {
++        new (): {
++            values(): /*elided*/ any;
++        };
++    };
++}
++export declare var K: {
+     new (): {
+         values(): /*elided*/ any;
+     };

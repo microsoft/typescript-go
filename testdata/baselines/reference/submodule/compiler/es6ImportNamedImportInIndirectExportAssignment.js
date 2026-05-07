@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/es6ImportNamedImportInIndirectExportAssignment.ts] ////
 
 //// [es6ImportNamedImportInIndirectExportAssignment_0.ts]
-export module a {
+export namespace a {
     export class c {
     }
 }
@@ -24,6 +24,7 @@ var a;
 //// [es6ImportNamedImportInIndirectExportAssignment_1.js]
 "use strict";
 const es6ImportNamedImportInIndirectExportAssignment_0_1 = require("./es6ImportNamedImportInIndirectExportAssignment_0");
+var x = es6ImportNamedImportInIndirectExportAssignment_0_1.a;
 module.exports = x;
 
 

@@ -36,6 +36,8 @@ var b: { Foo2: Derived; }
 var r = true ? a : b; // ok
 
 //// [subtypingWithObjectMembersOptionality3.js]
+"use strict";
+// Base property is optional and derived type has no property of that name
 // object literal case
 var a;
 var b;

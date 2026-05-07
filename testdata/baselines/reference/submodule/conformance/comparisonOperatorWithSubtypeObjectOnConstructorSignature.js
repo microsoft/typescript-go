@@ -224,11 +224,10 @@ var r8b9 = b9 !== a9;
 //var r8b10 = b10 !== a10;
 
 //// [comparisonOperatorWithSubtypeObjectOnConstructorSignature.js]
+"use strict";
 class Base {
-    a;
 }
 class Derived extends Base {
-    b;
 }
 var a1;
 var b1;

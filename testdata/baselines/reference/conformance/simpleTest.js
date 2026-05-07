@@ -4,4 +4,5 @@
 1 + 2;
 
 //// [simpleTest.js]
+"use strict";
 1 + 2;

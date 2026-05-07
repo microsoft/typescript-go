@@ -17,6 +17,8 @@ function a<T>(l: Recur<T>[]): void {
 
 
 //// [recursiveReverseMappedType.js]
+"use strict";
+// Repro from #38198
 function join(l) {
     return ['marker', ...l];
 }

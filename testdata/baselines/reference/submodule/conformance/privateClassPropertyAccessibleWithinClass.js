@@ -34,13 +34,12 @@ class C2 {
 
 
 //// [privateClassPropertyAccessibleWithinClass.js]
+"use strict";
 // no errors
 class C {
-    x;
     get y() { return this.x; }
     set y(x) { this.y = this.x; }
     foo() { return this.foo; }
-    static x;
     static get y() { return this.x; }
     static set y(x) { this.y = this.x; }
     static foo() { return this.foo; }
@@ -48,11 +47,9 @@ class C {
 }
 // added level of function nesting
 class C2 {
-    x;
     get y() { () => this.x; return null; }
     set y(x) { () => { this.y = this.x; }; }
     foo() { () => this.foo; }
-    static x;
     static get y() { () => this.x; return null; }
     static set y(x) {
         () => { this.y = this.x; };

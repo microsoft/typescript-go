@@ -12,9 +12,11 @@ declare function callme(x: Bar<any>): Bar<any>;
 declare function callme(x: object): string;
 
 //// [classVarianceResolveCircularity1.js]
+"use strict";
 // Issue #52813
 class Bar {
-    num;
-    Value = callme(this).num;
-    Field = callme(this).num;
+    constructor() {
+        this.Value = callme(this).num;
+        this.Field = callme(this).num;
+    }
 }

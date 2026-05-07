@@ -48,22 +48,20 @@ var dc = new DerivedC(1);
 
 
 //// [classConstructorAccessibility2.js]
+"use strict";
 class BaseA {
-    x;
     constructor(x) {
         this.x = x;
     }
     createInstance() { new BaseA(1); }
 }
 class BaseB {
-    x;
     constructor(x) {
         this.x = x;
     }
     createInstance() { new BaseB(2); }
 }
 class BaseC {
-    x;
     constructor(x) {
         this.x = x;
     }
@@ -71,7 +69,6 @@ class BaseC {
     static staticInstance() { new BaseC(4); }
 }
 class DerivedA extends BaseA {
-    x;
     constructor(x) {
         super(x);
         this.x = x;
@@ -81,7 +78,6 @@ class DerivedA extends BaseA {
     static staticBaseInstance() { new BaseA(7); }
 }
 class DerivedB extends BaseB {
-    x;
     constructor(x) {
         super(x);
         this.x = x;
@@ -91,7 +87,6 @@ class DerivedB extends BaseB {
     static staticBaseInstance() { new BaseB(9); } // ok
 }
 class DerivedC extends BaseC {
-    x;
     constructor(x) {
         super(x);
         this.x = x;
@@ -136,19 +131,19 @@ declare class DerivedB extends BaseB {
     x: number;
     constructor(x: number);
     createInstance(): void;
-    createBaseInstance(): void; // ok
-    static staticBaseInstance(): void; // ok
+    createBaseInstance(): void;
+    static staticBaseInstance(): void;
 }
 declare class DerivedC extends BaseC {
     x: number;
     constructor(x: number);
     createInstance(): void;
-    createBaseInstance(): void; // error
-    static staticBaseInstance(): void; // error
+    createBaseInstance(): void;
+    static staticBaseInstance(): void;
 }
 declare var ba: BaseA;
-declare var bb: any; // error
-declare var bc: any; // error
+declare var bb: BaseB;
+declare var bc: BaseC;
 declare var da: DerivedA;
 declare var db: DerivedB;
 declare var dc: DerivedC;

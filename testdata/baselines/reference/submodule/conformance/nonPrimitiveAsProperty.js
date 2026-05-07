@@ -11,6 +11,7 @@ var b: WithNonPrimitive = {foo: "bar"}; // expect error
 
 
 //// [nonPrimitiveAsProperty.js]
+"use strict";
 var a = { foo: { bar: "bar" } };
 var b = { foo: "bar" }; // expect error
 
@@ -20,4 +21,4 @@ interface WithNonPrimitive {
     foo: object;
 }
 declare var a: WithNonPrimitive;
-declare var b: WithNonPrimitive; // expect error
+declare var b: WithNonPrimitive;

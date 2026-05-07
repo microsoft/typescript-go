@@ -47,10 +47,6 @@ uncheckedInternally("zero", "one")
 
 
 //// [overloadTag1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.overloaded = overloaded;
-exports.uncheckedInternally = uncheckedInternally;
 /**
  * @overload
  * @param {number} a
@@ -66,7 +62,7 @@ exports.uncheckedInternally = uncheckedInternally;
  * @param {string | number} b
  * @returns {string | number}
  */
-function overloaded(a, b) {
+export function overloaded(a, b) {
     if (typeof a === "string" && typeof b === "string") {
         return a + b;
     }
@@ -89,7 +85,7 @@ var o3 = overloaded("a", false);
  * @param {boolean} b
  * @returns {string}
  */
-function uncheckedInternally(a, b) {
+export function uncheckedInternally(a, b) {
     return a + b;
 }
 uncheckedInternally(1, 2);
@@ -97,31 +93,7 @@ uncheckedInternally("zero", "one");
 
 
 //// [overloadTag1.d.ts]
-/**
- * @overload
- * @param {number} a
- * @param {number} b
- * @returns {number}
- *
- * @overload
- * @param {string} a
- * @param {boolean} b
- * @returns {string}
- *
- * @param {string | number} a
- * @param {string | number} b
- * @returns {string | number}
- */
-export declare function overloaded(a: string | number, b: string | number): string | number;
-/**
- * @overload
- * @param {number} a
- * @param {number} b
- * @returns {number}
- *
- * @overload
- * @param {string} a
- * @param {boolean} b
- * @returns {string}
- */
-export declare function uncheckedInternally(a: any, b: any): any;
+export declare function overloaded(a: number, b: number): number;
+export declare function overloaded(a: string, b: boolean): string;
+export declare function uncheckedInternally(a: number, b: number): number;
+export declare function uncheckedInternally(a: string, b: boolean): string;

@@ -19,7 +19,7 @@
 ///<reference path='formatting.ts' />
 
 
-module Formatting {
+namespace Formatting {
     export class Indenter implements ILineIndenationResolver  {
 
         private indentationBag: IndentationBag;
@@ -744,6 +744,7 @@ module Formatting {
 
 
 //// [parserindenter.js]
+"use strict";
 //﻿
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -762,16 +763,6 @@ module Formatting {
 var Formatting;
 (function (Formatting) {
     class Indenter {
-        logger;
-        tree;
-        snapshot;
-        languageHostIndentation;
-        editorOptions;
-        firstToken;
-        smartIndent;
-        indentationBag;
-        scriptBlockBeginLineNumber;
-        offsetIndentationDeltas;
         constructor(logger, tree, snapshot, languageHostIndentation, editorOptions, firstToken, smartIndent) {
             this.logger = logger;
             this.tree = tree;

@@ -50,6 +50,7 @@
 
 
 //// [jsFileMethodOverloads.js]
+"use strict";
 /**
  * @template T
  */
@@ -101,6 +102,7 @@ class Example {
  * @template T
  */
 declare class Example<T> {
+    value: T;
     /**
      * @param {T} value
      */

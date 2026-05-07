@@ -6,14 +6,14 @@ type T10 = string[];
 
 type T11 = Array<string>;
 >T11 : Symbol(T11, Decl(readonlyArraysAndTuples2.ts, 0, 20))
->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 type T12 = readonly string[];
 >T12 : Symbol(T12, Decl(readonlyArraysAndTuples2.ts, 1, 25))
 
 type T13 = ReadonlyArray<string>;
 >T13 : Symbol(T13, Decl(readonlyArraysAndTuples2.ts, 2, 29))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 type T20 = [number, number];
 >T20 : Symbol(T20, Decl(readonlyArraysAndTuples2.ts, 3, 33))
@@ -38,12 +38,12 @@ class A {
 >someDec : Symbol(someDec, Decl(readonlyArraysAndTuples2.ts, 10, 13))
 
   j: readonly string[] = [];
->j : Symbol(j, Decl(readonlyArraysAndTuples2.ts, 12, 9))
+>j : Symbol(A.j, Decl(readonlyArraysAndTuples2.ts, 12, 9))
 
   @someDec
 >someDec : Symbol(someDec, Decl(readonlyArraysAndTuples2.ts, 10, 13))
 
   k: readonly [string, number] = ['foo', 42];
->k : Symbol(k, Decl(readonlyArraysAndTuples2.ts, 14, 28))
+>k : Symbol(A.k, Decl(readonlyArraysAndTuples2.ts, 14, 28))
 }
 

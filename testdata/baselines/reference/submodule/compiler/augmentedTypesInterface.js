@@ -36,6 +36,8 @@ interface i4 {
 //import i4 = require('');  // error
 
 //// [augmentedTypesInterface.js]
+"use strict";
+// interface then interface
 class i2 {
     bar() {
         return 1;

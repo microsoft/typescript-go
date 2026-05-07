@@ -9,9 +9,10 @@ class C {
 }
 
 //// [staticsInConstructorBodies.js]
+"use strict";
 class C {
     constructor() {
     }
-    static p1 = 0; // ERROR
     static m1() { } // ERROR
 }
+C.p1 = 0; // ERROR

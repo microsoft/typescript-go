@@ -9,10 +9,6 @@ class d {
 }
 
 //// [a.js]
+"use strict";
 class d {
-}
-
-
-//// [a.d.ts]
-declare class d {
 }

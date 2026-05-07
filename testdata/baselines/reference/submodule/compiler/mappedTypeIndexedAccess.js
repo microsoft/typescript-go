@@ -31,6 +31,8 @@ let pair2: Pairs<FooBar>[keyof FooBar] = {
 
 
 //// [mappedTypeIndexedAccess.js]
+"use strict";
+// Repro from #15756
 // Error expected here
 let pair1 = {
     key: "foo",

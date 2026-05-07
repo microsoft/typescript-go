@@ -1,19 +1,21 @@
 //// [tests/cases/compiler/moduleSymbolMerging.ts] ////
 
 //// [A.ts]
-module A { export interface I {} }
+namespace A { export interface I {} }
 
 //// [B.ts]
 ///<reference path="A.ts" preserve="true" />
-module A { ; }
-module B {
+namespace A { ; }
+namespace B {
 	export function f(): A.I { return null; }
 }
 
 
 
 //// [A.js]
+"use strict";
 //// [B.js]
+"use strict";
 ///<reference path="A.ts" preserve="true" />
 var A;
 (function (A) {
@@ -32,29 +34,8 @@ declare namespace A {
     }
 }
 //// [B.d.ts]
+/// <reference path="A.d.ts" preserve="true" />
 declare namespace A { }
 declare namespace B {
     function f(): A.I;
 }
-
-
-//// [DtsFileErrors]
-
-
-B.d.ts(3,21): error TS2694: Namespace 'A' has no exported member 'I'.
-
-
-==== B.d.ts (1 errors) ====
-    declare namespace A { }
-    declare namespace B {
-        function f(): A.I;
-                        ~
-!!! error TS2694: Namespace 'A' has no exported member 'I'.
-    }
-    
-==== A.d.ts (0 errors) ====
-    declare namespace A {
-        interface I {
-        }
-    }
-    

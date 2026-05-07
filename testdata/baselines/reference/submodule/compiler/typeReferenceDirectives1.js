@@ -10,10 +10,12 @@ interface A {
 }
 
 //// [app.js]
+"use strict";
 /// <reference types="lib" preserve="true" />
 
 
 //// [app.d.ts]
+/// <reference types="lib" preserve="true" />
 interface A {
     x: $;
 }

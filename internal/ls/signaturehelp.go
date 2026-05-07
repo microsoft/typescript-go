@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -9,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -40,18 +42,15 @@ func (l *LanguageService) ProvideSignatureHelp(
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 	context *lsproto.SignatureHelpContext,
-	clientOptions *lsproto.SignatureHelpClientCapabilities,
-	preferences *UserPreferences,
-) *lsproto.SignatureHelp {
+) (lsproto.SignatureHelpResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	return l.GetSignatureHelpItems(
+	items := l.GetSignatureHelpItems(
 		ctx,
 		int(l.converters.LineAndCharacterToPosition(sourceFile, position)),
 		program,
 		sourceFile,
-		context,
-		clientOptions,
-		preferences)
+		context)
+	return lsproto.SignatureHelpOrNull{SignatureHelp: items}, nil
 }
 
 func (l *LanguageService) GetSignatureHelpItems(
@@ -60,8 +59,6 @@ func (l *LanguageService) GetSignatureHelpItems(
 	program *compiler.Program,
 	sourceFile *ast.SourceFile,
 	context *lsproto.SignatureHelpContext,
-	clientOptions *lsproto.SignatureHelpClientCapabilities,
-	preferences *UserPreferences,
 ) *lsproto.SignatureHelp {
 	typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
 	defer done()
@@ -73,74 +70,123 @@ func (l *LanguageService) GetSignatureHelpItems(
 		return nil
 	}
 
+	type signatureHelpTriggerReasonKind int32
+
+	const (
+		signatureHelpTriggerReasonKindNone           signatureHelpTriggerReasonKind = 0    // was undefined
+		signatureHelpTriggerReasonKindInvoked        signatureHelpTriggerReasonKind = iota // was "invoked"
+		signatureHelpTriggerReasonKindCharacterTyped                                       // was "characterTyped"
+		signatureHelpTriggerReasonKindRetriggered                                          // was "retrigger"
+	)
+
+	// Emulate VS Code's toTsTriggerReason.
+	triggerReasonKind := signatureHelpTriggerReasonKindNone
+	if context != nil {
+		switch context.TriggerKind {
+		case lsproto.SignatureHelpTriggerKindTriggerCharacter:
+			if context.TriggerCharacter != nil {
+				if context.IsRetrigger {
+					triggerReasonKind = signatureHelpTriggerReasonKindRetriggered
+				} else {
+					triggerReasonKind = signatureHelpTriggerReasonKindCharacterTyped
+				}
+			} else {
+				triggerReasonKind = signatureHelpTriggerReasonKindInvoked
+			}
+		case lsproto.SignatureHelpTriggerKindContentChange:
+			if context.IsRetrigger {
+				triggerReasonKind = signatureHelpTriggerReasonKindRetriggered
+			} else {
+				triggerReasonKind = signatureHelpTriggerReasonKindCharacterTyped
+			}
+		case lsproto.SignatureHelpTriggerKindInvoked:
+			triggerReasonKind = signatureHelpTriggerReasonKindInvoked
+		default:
+			triggerReasonKind = signatureHelpTriggerReasonKindInvoked
+		}
+	}
+
 	// Only need to be careful if the user typed a character and signature help wasn't showing.
-	onlyUseSyntacticOwners := context.TriggerKind == lsproto.SignatureHelpTriggerKindTriggerCharacter
+	onlyUseSyntacticOwners := triggerReasonKind == signatureHelpTriggerReasonKindCharacterTyped
 
 	// Bail out quickly in the middle of a string or comment, don't provide signature help unless the user explicitly requested it.
-	if onlyUseSyntacticOwners && IsInString(sourceFile, position, startingToken) { // isInComment(sourceFile, position) needs formatting implemented
+	if onlyUseSyntacticOwners && (IsInString(sourceFile, position, startingToken) || isInComment(sourceFile, position, startingToken) != nil) {
 		return nil
 	}
 
-	isManuallyInvoked := context.TriggerKind == 1
+	isManuallyInvoked := triggerReasonKind == signatureHelpTriggerReasonKindInvoked
 	argumentInfo := getContainingArgumentInfo(startingToken, sourceFile, typeChecker, isManuallyInvoked, position)
 	if argumentInfo == nil {
 		return nil
 	}
 
-	// cancellationToken.throwIfCancellationRequested();
+	if ctx.Err() != nil {
+		return nil
+	}
 
 	// Extra syntactic and semantic filtering of signature help
 	candidateInfo := getCandidateOrTypeInfo(argumentInfo, typeChecker, sourceFile, startingToken, onlyUseSyntacticOwners)
-	// cancellationToken.throwIfCancellationRequested();
 
-	// if (!candidateInfo) { !!!
-	// 	// We didn't have any sig help items produced by the TS compiler.  If this is a JS
-	// 	// file, then see if we can figure out anything better.
-	// 	return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
-	// }
+	if ctx.Err() != nil {
+		return nil
+	}
+
+	if candidateInfo == nil {
+		// For JS files, try a fallback that searches all source files for declarations
+		// with matching names that have call signatures. This is a heuristic for untyped JS code.
+		if ast.IsSourceFileJS(sourceFile) {
+			return l.createJSSignatureHelpItems(ctx, argumentInfo, program, typeChecker)
+		}
+		return nil
+	}
 
 	// return typeChecker.runWithCancellationToken(cancellationToken, typeChecker =>
 	if candidateInfo.candidateInfo != nil {
-		return createSignatureHelpItems(candidateInfo.candidateInfo.candidates, candidateInfo.candidateInfo.resolvedSignature, argumentInfo, sourceFile, typeChecker, onlyUseSyntacticOwners, clientOptions)
+		return l.createSignatureHelpItems(ctx, candidateInfo.candidateInfo.candidates, candidateInfo.candidateInfo.resolvedSignature, argumentInfo, sourceFile, typeChecker, onlyUseSyntacticOwners)
 	}
-	return createTypeHelpItems(candidateInfo.typeInfo, argumentInfo, sourceFile, clientOptions, typeChecker)
+	return createTypeHelpItems(ctx, candidateInfo.typeInfo, argumentInfo, sourceFile, typeChecker)
 }
 
-func createTypeHelpItems(symbol *ast.Symbol, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, clientOptions *lsproto.SignatureHelpClientCapabilities, c *checker.Checker) *lsproto.SignatureHelp {
+func createTypeHelpItems(ctx context.Context, symbol *ast.Symbol, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker) *lsproto.SignatureHelp {
 	typeParameters := c.GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 	if typeParameters == nil {
 		return nil
 	}
 	item := getTypeHelpItem(symbol, typeParameters, getEnclosingDeclarationFromInvocation(argumentInfo.invocation), sourceFile, c)
 
+	// Check client capabilities for activeParameter handling
+	caps := lsproto.GetClientCapabilities(ctx)
+	sigInfoCaps := caps.TextDocument.SignatureHelp.SignatureInformation
+	supportsPerSignatureActiveParam := sigInfoCaps.ActiveParameterSupport
+
 	// Converting signatureHelpParameter to *lsproto.ParameterInformation
 	parameters := make([]*lsproto.ParameterInformation, len(item.Parameters))
 	for i, param := range item.Parameters {
 		parameters[i] = param.parameterInfo
 	}
-	signatureInformation := []*lsproto.SignatureInformation{
-		{
-			Label:         item.Label,
-			Documentation: nil,
-			Parameters:    &parameters,
-		},
+
+	sigInfo := &lsproto.SignatureInformation{
+		Label:         item.Label,
+		Documentation: nil,
+		Parameters:    &parameters,
 	}
 
-	var activeParameter *lsproto.Nullable[uint32]
-	if argumentInfo.argumentIndex == nil {
-		if clientOptions.SignatureInformation.NoActiveParameterSupport != nil && *clientOptions.SignatureInformation.NoActiveParameterSupport {
-			activeParameter = nil
-		} else {
-			activeParameter = ptrTo(lsproto.ToNullable(uint32(0)))
-		}
-	} else {
-		activeParameter = ptrTo(lsproto.ToNullable(uint32(*argumentInfo.argumentIndex)))
+	// If client supports per-signature activeParameter, set it on SignatureInformation
+	if supportsPerSignatureActiveParam && len(item.Parameters) > 0 {
+		sigInfo.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: new(uint32(argumentInfo.argumentIndex))}
 	}
-	return &lsproto.SignatureHelp{
-		Signatures:      signatureInformation,
-		ActiveSignature: ptrTo(uint32(0)),
-		ActiveParameter: activeParameter,
+
+	help := &lsproto.SignatureHelp{
+		Signatures:      []*lsproto.SignatureInformation{sigInfo},
+		ActiveSignature: new(uint32(0)),
 	}
+
+	// If client doesn't support per-signature activeParameter, set it on the top-level SignatureHelp
+	if !supportsPerSignatureActiveParam && len(item.Parameters) > 0 {
+		help.ActiveParameter = &lsproto.UintegerOrNull{Uinteger: new(uint32(argumentInfo.argumentIndex))}
+	}
+
+	return help
 }
 
 func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) signatureInformation {
@@ -173,7 +219,64 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosin
 	}
 }
 
-func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool, clientOptions *lsproto.SignatureHelpClientCapabilities) *lsproto.SignatureHelp {
+// createJSSignatureHelpItems is a fallback for JavaScript files when normal signature help
+// doesn't produce results. It searches all source files for declarations with matching names
+// that have call signatures.
+func (l *LanguageService) createJSSignatureHelpItems(ctx context.Context, argumentInfo *argumentListInfo, program *compiler.Program, c *checker.Checker) *lsproto.SignatureHelp {
+	if argumentInfo.invocation.contextualInvocation != nil {
+		return nil
+	}
+	// See if we can find some symbol with the call expression name that has call signatures.
+	expression := getExpressionFromInvocation(argumentInfo)
+	if !ast.IsPropertyAccessExpression(expression) {
+		return nil
+	}
+	name := expression.AsPropertyAccessExpression().Name().Text()
+	if name == "" {
+		return nil
+	}
+
+	for _, sf := range program.GetSourceFiles() {
+		result := l.findSignatureHelpFromNamedDeclarations(ctx, sf, name, argumentInfo, c)
+		if result != nil {
+			return result
+		}
+	}
+	return nil
+}
+
+func (l *LanguageService) findSignatureHelpFromNamedDeclarations(ctx context.Context, sourceFile *ast.SourceFile, name string, argumentInfo *argumentListInfo, c *checker.Checker) *lsproto.SignatureHelp {
+	var result *lsproto.SignatureHelp
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if result != nil {
+			return true
+		}
+		if ast.GetDeclarationName(node) == name {
+			if symbol := node.Symbol(); symbol != nil {
+				if t := c.GetTypeOfSymbolAtLocation(symbol, node); t != nil {
+					if callSignatures := c.GetCallSignatures(t); len(callSignatures) > 0 {
+						result = l.createSignatureHelpItems(ctx, callSignatures, callSignatures[0], argumentInfo, sourceFile, c, true /*useFullPrefix*/)
+						if result != nil {
+							return true
+						}
+					}
+				}
+			}
+		}
+		node.ForEachChild(func(child *ast.Node) bool {
+			return visit(child)
+		})
+		return result != nil
+	}
+	visit(sourceFile.AsNode())
+	return result
+}
+
+func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool) *lsproto.SignatureHelp {
+	caps := lsproto.GetClientCapabilities(ctx)
+	docFormat := lsproto.PreferredMarkupKind(caps.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat)
+
 	enclosingDeclaration := getEnclosingDeclarationFromInvocation(argumentInfo.invocation)
 	if enclosingDeclaration == nil {
 		return nil
@@ -190,11 +293,15 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 
 	var callTargetDisplayParts strings.Builder
 	if callTargetSymbol != nil {
-		callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
+		if useFullPrefix {
+			callTargetDisplayParts.WriteString(c.SymbolToStringEx(callTargetSymbol, sourceFile.AsNode(), ast.SymbolFlagsNone, checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope))
+		} else {
+			callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
+		}
 	}
 	items := make([][]signatureInformation, len(candidates))
 	for i, candidateSignature := range candidates {
-		items[i] = getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), enclosingDeclaration, sourceFile, c)
+		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), enclosingDeclaration, sourceFile, c, docFormat)
 	}
 
 	selectedItemIndex := 0
@@ -217,7 +324,7 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 		itemSeen = itemSeen + len(item)
 	}
 
-	// Debug.assert(selectedItemIndex !== -1)
+	debug.Assert(selectedItemIndex != -1)
 	flattenedSignatures := []signatureInformation{}
 	for _, item := range items {
 		flattenedSignatures = append(flattenedSignatures, item...)
@@ -226,6 +333,11 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 		return nil
 	}
 
+	// Check client capabilities for activeParameter handling
+	sigInfoCaps := caps.TextDocument.SignatureHelp.SignatureInformation
+	supportsPerSignatureActiveParam := sigInfoCaps.ActiveParameterSupport
+	supportsNullActiveParam := sigInfoCaps.NoActiveParameterSupport
+
 	// Converting []signatureInformation to []*lsproto.SignatureInformation
 	signatureInformation := make([]*lsproto.SignatureInformation, len(flattenedSignatures))
 	for i, item := range flattenedSignatures {
@@ -233,52 +345,93 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 		for j, param := range item.Parameters {
 			parameters[j] = param.parameterInfo
 		}
-		signatureInformation[i] = &lsproto.SignatureInformation{
+		var documentation *lsproto.StringOrMarkupContent
+		if item.Documentation != nil {
+			documentation = &lsproto.StringOrMarkupContent{
+				MarkupContent: &lsproto.MarkupContent{
+					Kind:  docFormat,
+					Value: *item.Documentation,
+				},
+			}
+		}
+		sigInfo := &lsproto.SignatureInformation{
 			Label:         item.Label,
-			Documentation: nil,
+			Documentation: documentation,
 			Parameters:    &parameters,
 		}
+
+		// If client supports per-signature activeParameter, set it on each SignatureInformation
+		if supportsPerSignatureActiveParam {
+			sigInfo.ActiveParameter = l.computeActiveParameter(item, argumentInfo.argumentIndex, supportsNullActiveParam)
+		}
+
+		signatureInformation[i] = sigInfo
 	}
 
-	var activeParameter *lsproto.Nullable[uint32]
-	if argumentInfo.argumentIndex == nil {
-		if clientOptions.SignatureInformation.NoActiveParameterSupport != nil && *clientOptions.SignatureInformation.NoActiveParameterSupport {
-			activeParameter = nil
-		}
-	} else {
-		activeParameter = ptrTo(lsproto.ToNullable(uint32(*argumentInfo.argumentIndex)))
-	}
 	help := &lsproto.SignatureHelp{
 		Signatures:      signatureInformation,
-		ActiveSignature: ptrTo(uint32(selectedItemIndex)),
-		ActiveParameter: activeParameter,
+		ActiveSignature: new(uint32(selectedItemIndex)),
 	}
 
-	activeSignature := flattenedSignatures[selectedItemIndex]
-	if activeSignature.IsVariadic {
-		firstRest := core.FindIndex(activeSignature.Parameters, func(p signatureHelpParameter) bool {
-			return p.isRest
-		})
-		if -1 < firstRest && firstRest < len(activeSignature.Parameters)-1 {
-			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
-			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters))))
-		}
-		if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(activeSignature.Parameters)-1) {
-			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters) - 1)))
-		}
+	// If client doesn't support per-signature activeParameter, set it on the top-level SignatureHelp
+	if !supportsPerSignatureActiveParam {
+		activeSignature := flattenedSignatures[selectedItemIndex]
+		help.ActiveParameter = l.computeActiveParameter(activeSignature, argumentInfo.argumentIndex, supportsNullActiveParam)
 	}
+
 	return help
 }
 
-func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) []signatureInformation {
+// computeActiveParameter calculates the active parameter index for a signature,
+// handling variadic signatures and null support appropriately.
+func (l *LanguageService) computeActiveParameter(sig signatureInformation, argumentIndex int, supportsNull bool) *lsproto.UintegerOrNull {
+	paramCount := len(sig.Parameters)
+	if paramCount == 0 {
+		// No parameters, return nil (omit the field)
+		return nil
+	}
+
+	activeParam := uint32(argumentIndex)
+
+	if sig.IsVariadic {
+		firstRest := core.FindIndex(sig.Parameters, func(p signatureHelpParameter) bool {
+			return p.isRest
+		})
+		if -1 < firstRest && firstRest < paramCount-1 {
+			// Middle rest parameter - we can't accurately highlight, so indicate "no active parameter"
+			if supportsNull {
+				return &lsproto.UintegerOrNull{} // null means "no parameter is active"
+			}
+			// Client doesn't support null, use out-of-range index (defaults to 0 per LSP spec)
+			return &lsproto.UintegerOrNull{Uinteger: new(uint32(paramCount))}
+		}
+		// Clamp to last parameter for trailing rest parameters
+		if activeParam > uint32(paramCount-1) {
+			activeParam = uint32(paramCount - 1)
+		}
+	}
+
+	return &lsproto.UintegerOrNull{Uinteger: new(activeParam)}
+}
+
+func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind) []signatureInformation {
 	var infos []*signatureHelpItemInfo
 	if isTypeParameterList {
-		infos = itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile)
+		infos = l.itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat)
 	} else {
-		infos = itemInfoForParameters(candidate, c, enclosingDeclaration, sourceFile)
+		infos = l.itemInfoForParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat)
 	}
 
 	suffixDisplayParts := returnTypeToDisplayParts(candidate, c)
+
+	// Generate documentation from the signature's declaration
+	var documentation *string
+	if declaration := candidate.Declaration(); declaration != nil {
+		doc := l.getDocumentationFromDeclaration(c, nil, declaration, nil, docFormat, true /*commentOnly*/)
+		if doc != "" {
+			documentation = &doc
+		}
+	}
 
 	result := make([]signatureInformation, len(infos))
 	for i, info := range infos {
@@ -288,7 +441,7 @@ func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool
 		display.WriteString(suffixDisplayParts)
 		result[i] = signatureInformation{
 			Label:         display.String(),
-			Documentation: nil,
+			Documentation: documentation,
 			Parameters:    info.parameters,
 			IsVariadic:    info.isVariadic,
 		}
@@ -308,7 +461,7 @@ func returnTypeToDisplayParts(candidateSignature *checker.Signature, c *checker.
 	return returnType.String()
 }
 
-func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile) []*signatureHelpItemInfo {
+func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind) []*signatureHelpItemInfo {
 	printer := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
 
 	var typeParameters []*checker.Type
@@ -324,7 +477,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 
 	thisParameter := []signatureHelpParameter{}
 	if candidateSignature.ThisParameter() != nil {
-		thisParameter = []signatureHelpParameter{createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), enclosingDeclaration, printer, sourceFile, c)}
+		thisParameter = []signatureHelpParameter{l.createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), enclosingDeclaration, printer, sourceFile, c, docFormat)}
 	}
 
 	// Creating type parameter display label
@@ -350,7 +503,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 		displayParameters.WriteString(displayParts.String())
 		parameters := thisParameter
 		for j, param := range parameterList {
-			parameter := createSignatureHelpParameterForParameter(param, enclosingDeclaration, printer, sourceFile, c)
+			parameter := l.createSignatureHelpParameterForParameter(param, enclosingDeclaration, printer, sourceFile, c, docFormat)
 			parameters = append(parameters, parameter)
 			if j > 0 {
 				displayParameters.WriteString(", ")
@@ -368,7 +521,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	return result
 }
 
-func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile) []*signatureHelpItemInfo {
+func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind) []*signatureHelpItemInfo {
 	printer := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
 
 	signatureHelpTypeParameters := make([]signatureHelpParameter, len(candidateSignature.TypeParameters()))
@@ -382,7 +535,10 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 	var displayParts strings.Builder
 	if len(signatureHelpTypeParameters) != 0 {
 		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
-		for _, typeParameter := range signatureHelpTypeParameters {
+		for i, typeParameter := range signatureHelpTypeParameters {
+			if i > 0 {
+				displayParts.WriteString(", ")
+			}
 			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
 		}
 		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
@@ -410,7 +566,7 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 		var displayParameters strings.Builder
 		displayParameters.WriteString(displayParts.String())
 		for j, param := range parameterList {
-			parameter := createSignatureHelpParameterForParameter(param, enclosingDeclaratipn, printer, sourceFile, c)
+			parameter := l.createSignatureHelpParameterForParameter(param, enclosingDeclaratipn, printer, sourceFile, c, docFormat)
 			parameters[j] = parameter
 			if j > 0 {
 				displayParameters.WriteString(", ")
@@ -431,14 +587,26 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 
 const signatureHelpNodeBuilderFlags = nodebuilder.FlagsOmitParameterModifiers | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 
-func createSignatureHelpParameterForParameter(parameter *ast.Symbol, enclosingDeclaratipn *ast.Node, p *printer.Printer, sourceFile *ast.SourceFile, c *checker.Checker) signatureHelpParameter {
+func (l *LanguageService) createSignatureHelpParameterForParameter(parameter *ast.Symbol, enclosingDeclaratipn *ast.Node, p *printer.Printer, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind) signatureHelpParameter {
 	display := p.Emit(checker.NewNodeBuilder(c, printer.NewEmitContext()).SymbolToParameterDeclaration(parameter, enclosingDeclaratipn, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil), sourceFile)
 	isOptional := parameter.CheckFlags&ast.CheckFlagsOptionalParameter != 0
 	isRest := parameter.CheckFlags&ast.CheckFlagsRestParameter != 0
+	var documentation *lsproto.StringOrMarkupContent
+	if parameter.ValueDeclaration != nil {
+		doc := l.getDocumentationFromDeclaration(c, nil, parameter.ValueDeclaration, nil, docFormat, true /*commentOnly*/)
+		if doc != "" {
+			documentation = &lsproto.StringOrMarkupContent{
+				MarkupContent: &lsproto.MarkupContent{
+					Kind:  docFormat,
+					Value: doc,
+				},
+			}
+		}
+	}
 	return signatureHelpParameter{
 		parameterInfo: &lsproto.ParameterInformation{
 			Label:         lsproto.StringOrTuple{String: &display},
-			Documentation: nil,
+			Documentation: documentation,
 		},
 		isRest:     isRest,
 		isOptional: isOptional,
@@ -516,7 +684,12 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 		if onlyUseSyntacticOwners && !isSyntacticOwner(startingToken, info.invocation.callInvocation.node, sourceFile) {
 			return nil
 		}
+
 		resolvedSignature, candidates := checker.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, info.argumentCount, c)
+		if len(candidates) == 0 {
+			return nil
+		}
+
 		return &CandidateOrTypeInfo{
 			candidateInfo: &candidateInfo{
 				candidates:        candidates,
@@ -530,9 +703,11 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 		if ast.IsIdentifier(called) {
 			container = called.Parent
 		}
+
 		if onlyUseSyntacticOwners && !containsPrecedingToken(startingToken, sourceFile, container) {
 			return nil
 		}
+
 		candidates := getPossibleGenericSignatures(called, info.argumentCount, c)
 		if len(candidates) != 0 {
 			return &CandidateOrTypeInfo{
@@ -542,11 +717,17 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 				},
 			}
 		}
-		symbol := c.GetSymbolAtLocation(called)
-		return &CandidateOrTypeInfo{
-			typeInfo: symbol,
+
+		if symbol := c.GetSymbolAtLocation(called); symbol != nil {
+			return &CandidateOrTypeInfo{
+				typeInfo: symbol,
+			}
 		}
+
+		// This can happen in the case of an unresolved symbol.
+		return nil
 	}
+
 	if info.invocation.contextualInvocation != nil {
 		return &CandidateOrTypeInfo{
 			candidateInfo: &candidateInfo{
@@ -555,24 +736,20 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 			},
 		}
 	}
-	return nil // return Debug.assertNever(invocation);
+	debug.AssertNever(info.invocation)
+	return nil
 }
 
-func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.SourceFile) bool { // !!! not tested
+func isSyntacticOwner(startingToken *ast.Node, node *ast.CallLikeExpression, sourceFile *ast.SourceFile) bool {
 	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}
-	invocationChildren := getTokensFromNode(node, sourceFile)
+	invocationChildren := getChildrenFromNonJSDocNode(node, sourceFile)
 	switch startingToken.Kind {
-	case ast.KindOpenParenToken:
-		return containsNode(invocationChildren, startingToken)
-	case ast.KindCommaToken:
-		return containsNode(invocationChildren, startingToken)
-		// !!!
-		// const containingList = findContainingList(startingToken);
-		// return !!containingList && contains(invocationChildren, containingList);
+	case ast.KindOpenParenToken, ast.KindCommaToken:
+		return slices.Contains(invocationChildren, startingToken)
 	case ast.KindLessThanToken:
-		return containsPrecedingToken(startingToken, sourceFile, node.AsCallExpression().Expression)
+		return containsPrecedingToken(startingToken, sourceFile, node.Expression())
 	default:
 		return false
 	}
@@ -587,13 +764,12 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 	// multiple nested levels.
 	currentParent := startingToken.Parent
 	for currentParent != nil {
-		precedingToken := astnav.FindPrecedingToken(sourceFile, pos)
+		precedingToken := astnav.FindPrecedingTokenEx(sourceFile, pos, currentParent, true /*excludeJSDoc*/)
 		if precedingToken != nil {
 			return RangeContainsRange(container.Loc, precedingToken.Loc)
 		}
 		currentParent = currentParent.Parent
 	}
-	// return Debug.fail("Could not find preceding token");
 	return false
 }
 
@@ -601,7 +777,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
-		// Debug.assert(rangeContainsRange(n.parent, n), "Not a subspan", () => `Child: ${Debug.formatSyntaxKind(n.kind)}, parent: ${Debug.formatSyntaxKind(n.parent.kind)}`);
+		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), "Not a subspan. Child: ", n.KindString(), ", parent: ", n.Parent.KindString())
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo
@@ -621,8 +797,8 @@ func getImmediatelyContainingArgumentOrContextualParameterInfo(node *ast.Node, p
 type argumentListInfo struct {
 	isTypeParameterList bool
 	invocation          *invocation
-	argumentsRange      core.TextRange
-	argumentIndex       *int
+	argumentsSpan       core.TextRange
+	argumentIndex       int
 	/** argumentCount is the *apparent* number of arguments. */
 	argumentCount int
 }
@@ -646,8 +822,14 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		//    Case 3:
 		//          foo<T#, U#>(a#, #b#) -> The token is buried inside a list, and should give signature help
 		// Find out if 'node' is an argument, a type argument, or neither
-		// const info = getArgumentOrParameterListInfo(node, position, sourceFile, checker);
-		list, argumentIndex, argumentCount, argumentSpan := getArgumentOrParameterListInfo(node, sourceFile, c)
+		info := getArgumentOrParameterListInfo(node, sourceFile, c)
+		if info == nil {
+			return nil
+		}
+		list := info.list
+		argumentIndex := info.argumentIndex
+		argumentCount := info.argumentCount
+		argumentsSpan := info.argumentsSpan
 		isTypeParameterList := false
 		parentTypeArgumentList := parent.TypeArgumentList()
 		if parentTypeArgumentList != nil {
@@ -658,7 +840,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		return &argumentListInfo{
 			isTypeParameterList: isTypeParameterList,
 			invocation:          &invocation{callInvocation: &callInvocation{node: parent}},
-			argumentsRange:      argumentSpan,
+			argumentsSpan:       argumentsSpan,
 			argumentIndex:       argumentIndex,
 			argumentCount:       argumentCount,
 		}
@@ -666,16 +848,16 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		// Check if we're actually inside the template;
 		// otherwise we'll fall out and return undefined.
 		if isInsideTemplateLiteral(node, position, sourceFile) {
-			return getArgumentListInfoForTemplate(parent.AsTaggedTemplateExpression(), ptrTo(0), sourceFile)
+			return getArgumentListInfoForTemplate(parent.AsTaggedTemplateExpression(), 0, sourceFile)
 		}
 		return nil
 	} else if isTemplateHead(node) && parent.Parent.Kind == ast.KindTaggedTemplateExpression {
 		templateExpression := parent.AsTemplateExpression()
 		tagExpression := templateExpression.Parent.AsTaggedTemplateExpression()
 
-		argumentIndex := ptrTo(1)
+		argumentIndex := 1
 		if isInsideTemplateLiteral(node, position, sourceFile) {
-			argumentIndex = ptrTo(0)
+			argumentIndex = 0
 		}
 		return getArgumentListInfoForTemplate(tagExpression, argumentIndex, sourceFile)
 	} else if ast.IsTemplateSpan(parent) && isTaggedTemplateExpression(parent.Parent.Parent) {
@@ -688,7 +870,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		}
 
 		spanIndex := ast.IndexOfNode(templateSpan.Parent.AsTemplateExpression().TemplateSpans.Nodes, templateSpan)
-		argumentIndex := getArgumentIndexForTemplatePiece(spanIndex, templateSpan, position, sourceFile)
+		argumentIndex := getArgumentIndexForTemplatePiece(spanIndex, node, position, sourceFile)
 
 		return getArgumentListInfoForTemplate(tagExpression.AsTaggedTemplateExpression(), argumentIndex, sourceFile)
 	} else if ast.IsJsxOpeningLikeElement(parent) {
@@ -702,8 +884,8 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		return &argumentListInfo{
 			isTypeParameterList: false,
 			invocation:          &invocation{callInvocation: &callInvocation{node: parent}},
-			argumentsRange:      core.NewTextRange(attributeSpanStart, attributeSpanEnd-attributeSpanStart),
-			argumentIndex:       ptrTo(0),
+			argumentsSpan:       core.NewTextRange(attributeSpanStart, attributeSpanEnd-attributeSpanStart),
+			argumentIndex:       0,
 			argumentCount:       1,
 		}
 	} else {
@@ -718,9 +900,9 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 				invocation: &invocation{
 					typeArgsInvocation: invoc,
 				},
-				argumentsRange: argumentRange,
-				argumentIndex:  ptrTo(nTypeArguments),
-				argumentCount:  nTypeArguments + 1,
+				argumentsSpan: argumentRange,
+				argumentIndex: nTypeArguments,
+				argumentCount: nTypeArguments + 1,
 			}
 		}
 	}
@@ -729,7 +911,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 
 // spanIndex is either the index for a given template span.
 // This does not give appropriate results for a NoSubstitutionTemplateLiteral
-func getArgumentIndexForTemplatePiece(spanIndex int, node *ast.Node, position int, sourceFile *ast.SourceFile) *int {
+func getArgumentIndexForTemplatePiece(spanIndex int, node *ast.Node, position int, sourceFile *ast.SourceFile) int {
 	// Because the TemplateStringsArray is the first argument, we have to offset each substitution expression by 1.
 	// There are three cases we can encounter:
 	//      1. We are precisely in the template literal (argIndex = 0).
@@ -741,14 +923,14 @@ func getArgumentIndexForTemplatePiece(spanIndex int, node *ast.Node, position in
 	// Example: f  `# abcd $#{#  1 + 1#  }# efghi ${ #"#hello"#  }  #  `
 	//              ^       ^ ^       ^   ^          ^ ^      ^     ^
 	// Case:        1       1 3       2   1          3 2      2     1
-	//Debug.assert(position >= node.getStart(), "Assumed 'position' could not occur before node.");
+	debug.Assert(position >= node.Loc.Pos(), "Assumed 'position' could not occur before node.")
 	if ast.IsTemplateLiteralToken(node) {
 		if isInsideTemplateLiteral(node, position, sourceFile) {
-			return ptrTo(0)
+			return 0
 		}
-		return ptrTo(spanIndex + 2)
+		return spanIndex + 2
 	}
-	return ptrTo(spanIndex + 1)
+	return spanIndex + 1
 }
 
 func getAdjustedNode(node *ast.Node) *ast.Node {
@@ -757,7 +939,7 @@ func getAdjustedNode(node *ast.Node) *ast.Node {
 		return node
 	default:
 		return ast.FindAncestor(node.Parent, func(n *ast.Node) bool {
-			if ast.IsParameter(n) {
+			if ast.IsParameterDeclaration(n) {
 				return true
 			} else if ast.IsBindingElement(n) || ast.IsObjectBindingPattern(n) || ast.IsArrayBindingPattern(n) {
 				return false
@@ -769,7 +951,7 @@ func getAdjustedNode(node *ast.Node) *ast.Node {
 
 type contextualSignatureLocationInfo struct {
 	contextualType *checker.Type
-	argumentIndex  *int
+	argumentIndex  int
 	argumentCount  int
 	argumentsSpan  core.TextRange
 }
@@ -798,45 +980,31 @@ func getSpreadElementCount(node *ast.SpreadElement, c *checker.Checker) int {
 	return 0
 }
 
-func getArgumentIndex(node *ast.Node, arguments *ast.NodeList, sourceFile *ast.SourceFile, c *checker.Checker) *int {
+func getArgumentIndex(node *ast.Node, arguments *ast.NodeList, sourceFile *ast.SourceFile, c *checker.Checker) int {
 	return getArgumentIndexOrCount(getTokenFromNodeList(arguments, node.Parent, sourceFile), node, c)
 }
 
 func getArgumentCount(node *ast.Node, arguments *ast.NodeList, sourceFile *ast.SourceFile, c *checker.Checker) int {
-	argumentCount := getArgumentIndexOrCount(getTokenFromNodeList(arguments, node.Parent, sourceFile), nil, c)
-	if argumentCount == nil {
-		return 0
-	}
-	return *argumentCount
+	return getArgumentIndexOrCount(getTokenFromNodeList(arguments, node.Parent, sourceFile), nil, c)
 }
 
-func getArgumentIndexOrCount(arguments []*ast.Node, node *ast.Node, c *checker.Checker) *int {
-	var argumentIndex *int = nil
+func getArgumentIndexOrCount(arguments []*ast.Node, node *ast.Node, c *checker.Checker) int {
+	argumentIndex := 0
 	skipComma := false
 	for _, arg := range arguments {
 		if node != nil && arg == node {
-			if argumentIndex == nil {
-				argumentIndex = ptrTo(0)
-			}
 			if !skipComma && arg.Kind == ast.KindCommaToken {
-				*argumentIndex++
+				argumentIndex++
 			}
 			return argumentIndex
 		}
 		if ast.IsSpreadElement(arg) {
-			if argumentIndex == nil {
-				argumentIndex = ptrTo(getSpreadElementCount(arg.AsSpreadElement(), c))
-			} else {
-				argumentIndex = ptrTo(*argumentIndex + getSpreadElementCount(arg.AsSpreadElement(), c))
-			}
+			argumentIndex += getSpreadElementCount(arg.AsSpreadElement(), c)
 			skipComma = true
 			continue
 		}
 		if arg.Kind != ast.KindCommaToken {
-			if argumentIndex == nil {
-				argumentIndex = ptrTo(0)
-			}
-			*argumentIndex++
+			argumentIndex++
 			skipComma = true
 			continue
 		}
@@ -844,10 +1012,7 @@ func getArgumentIndexOrCount(arguments []*ast.Node, node *ast.Node, c *checker.C
 			skipComma = false
 			continue
 		}
-		if argumentIndex == nil {
-			argumentIndex = ptrTo(0)
-		}
-		*argumentIndex++
+		argumentIndex++
 	}
 	if node != nil {
 		return argumentIndex
@@ -860,19 +1025,33 @@ func getArgumentIndexOrCount(arguments []*ast.Node, node *ast.Node, c *checker.C
 	// arg count by one to compensate.
 	argumentCount := argumentIndex
 	if len(arguments) > 0 && arguments[len(arguments)-1].Kind == ast.KindCommaToken {
-		if argumentIndex == nil {
-			argumentIndex = ptrTo(0)
-		}
-		argumentCount = ptrTo(*argumentIndex + 1)
+		argumentCount = argumentIndex + 1
 	}
 	return argumentCount
 }
 
-func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) (*ast.NodeList, *int, int, core.TextRange) {
-	arguments, argumentIndex := getArgumentOrParameterListAndIndex(node, sourceFile, c)
-	argumentCount := getArgumentCount(node, arguments, sourceFile, c)
-	argumentSpan := getApplicableSpanForArguments(arguments, node, sourceFile)
-	return arguments, argumentIndex, argumentCount, argumentSpan
+type argumentOrParameterListInfo struct {
+	list          *ast.NodeList
+	argumentIndex int
+	argumentCount int
+	argumentsSpan core.TextRange
+}
+
+func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) *argumentOrParameterListInfo {
+	info := getArgumentOrParameterListAndIndex(node, sourceFile, c)
+	if info == nil {
+		return nil
+	}
+	list := info.list
+	argumentIndex := info.argumentIndex
+	argumentCount := getArgumentCount(node, list, sourceFile, c)
+	argumentsSpan := getApplicableSpanForArguments(list, node, sourceFile)
+	return &argumentOrParameterListInfo{
+		list:          list,
+		argumentIndex: argumentIndex,
+		argumentCount: argumentCount,
+		argumentsSpan: argumentsSpan,
+	}
 }
 
 func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange {
@@ -895,12 +1074,20 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, s
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
 }
 
-func getArgumentOrParameterListAndIndex(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) (*ast.NodeList, *int) {
+type argumentOrParameterListAndIndex struct {
+	list          *ast.NodeList
+	argumentIndex int
+}
+
+func getArgumentOrParameterListAndIndex(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) *argumentOrParameterListAndIndex {
 	if node.Kind == ast.KindLessThanToken || node.Kind == ast.KindOpenParenToken {
 		// Find the list that starts right *after* the < or ( token.
 		// If the user has just opened a list, consider this item 0.
 		list := getChildListThatStartsWithOpenerToken(node.Parent, node)
-		return list, ptrTo(0)
+		return &argumentOrParameterListAndIndex{
+			list:          list,
+			argumentIndex: 0,
+		}
 	} else {
 		// findListItemInfo can return undefined if we are not in parent's argument list
 		// or type argument list. This includes cases where the cursor is:
@@ -908,28 +1095,19 @@ func getArgumentOrParameterListAndIndex(node *ast.Node, sourceFile *ast.SourceFi
 		//   - Between the type arguments and the arguments (greater than token)
 		//   - On the target of the call (parent.func)
 		//   - On the 'new' keyword in a 'new' expression
-		var arguments *ast.NodeList
-		switch node.Parent.Kind {
-		case ast.KindCallExpression:
-			arguments = node.Parent.AsCallExpression().Arguments
-		case ast.KindNewExpression:
-			arguments = node.Parent.AsNewExpression().Arguments
-		case ast.KindParenthesizedExpression:
-			arguments = node.Parent.AsParenthesizedExpression().ExpressionBase.NodeBase.Node.ArgumentList() // !!!
-		case ast.KindMethodDeclaration:
-			arguments = node.Parent.AsMethodDeclaration().FunctionLikeWithBodyBase.Parameters
-		case ast.KindFunctionExpression:
-			arguments = node.Parent.AsFunctionExpression().FunctionLikeWithBodyBase.Parameters
-		case ast.KindArrowFunction:
-			arguments = node.Parent.AsArrowFunction().FunctionLikeWithBodyBase.Parameters
+		list := findContainingList(node, sourceFile)
+		if list == nil {
+			return nil
 		}
-		// Find the index of the argument that contains the node.
-		argumentIndex := getArgumentIndex(node, arguments, sourceFile, c)
-		return arguments, argumentIndex
+		return &argumentOrParameterListAndIndex{
+			list: list,
+			// Find the index of the argument that contains the node.
+			argumentIndex: getArgumentIndex(node, list, sourceFile, c),
+		}
 	}
 }
 
-func getChildListThatStartsWithOpenerToken(parent *ast.Node, openerToken *ast.Node) *ast.NodeList { //!!!
+func getChildListThatStartsWithOpenerToken(parent *ast.Node, openerToken *ast.Node) *ast.NodeList {
 	if ast.IsCallExpression(parent) {
 		parentCallExpression := parent.AsCallExpression()
 		if openerToken.Kind == ast.KindLessThanToken {
@@ -968,7 +1146,7 @@ func tryGetParameterInfo(startingToken *ast.Node, sourceFile *ast.SourceFile, c 
 	}
 
 	signatures := c.GetSignaturesOfType(nonNullableContextualType, checker.SignatureKindCall)
-	if signatures == nil || signatures[len(signatures)-1] == nil {
+	if len(signatures) == 0 {
 		return nil
 	}
 	signature := signatures[len(signatures)-1]
@@ -981,7 +1159,7 @@ func tryGetParameterInfo(startingToken *ast.Node, sourceFile *ast.SourceFile, c 
 	return &argumentListInfo{
 		isTypeParameterList: false,
 		invocation:          &invocation{contextualInvocation: contextualInvocation},
-		argumentsRange:      info.argumentsSpan,
+		argumentsSpan:       info.argumentsSpan,
 		argumentIndex:       info.argumentIndex,
 		argumentCount:       info.argumentCount,
 	}
@@ -1002,7 +1180,13 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 	parent := node.Parent
 	switch parent.Kind {
 	case ast.KindParenthesizedExpression, ast.KindMethodDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
-		_, argumentIndex, argumentCount, argumentSpan := getArgumentOrParameterListInfo(node, sourceFile, c)
+		info := getArgumentOrParameterListInfo(node, sourceFile, c)
+		if info == nil {
+			return nil
+		}
+		argumentIndex := info.argumentIndex
+		argumentCount := info.argumentCount
+		argumentsSpan := info.argumentsSpan
 
 		var contextualType *checker.Type
 		if ast.IsMethodDeclaration(parent) {
@@ -1015,16 +1199,16 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 				contextualType: contextualType,
 				argumentIndex:  argumentIndex,
 				argumentCount:  argumentCount,
-				argumentsSpan:  argumentSpan,
+				argumentsSpan:  argumentsSpan,
 			}
 		}
 		return nil
 	case ast.KindBinaryExpression:
 		highestBinary := getHighestBinary(parent.AsBinaryExpression())
 		contextualType := c.GetContextualType(highestBinary.AsNode(), checker.ContextFlagsNone)
-		argumentIndex := ptrTo(0)
+		argumentIndex := 0
 		if node.Kind != ast.KindOpenParenToken {
-			argumentIndex = ptrTo(countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1)
+			argumentIndex = countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1
 			argumentCount := countBinaryExpressionParameters(highestBinary)
 			if contextualType != nil {
 				return &contextualSignatureLocationInfo{
@@ -1054,25 +1238,6 @@ func countBinaryExpressionParameters(b *ast.BinaryExpression) int {
 	return 2
 }
 
-func getTokensFromNode(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	if node == nil {
-		return nil
-	}
-	var children []*ast.Node
-	current := node
-	left := node.Pos()
-	scanner := scanner.GetScannerForSourceFile(sourceFile, left)
-	for left < current.End() {
-		token := scanner.Token()
-		tokenFullStart := scanner.TokenFullStart()
-		tokenEnd := scanner.TokenEnd()
-		children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current))
-		left = tokenEnd
-		scanner.Scan()
-	}
-	return children
-}
-
 func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	if nodeList == nil || nodeListParent == nil {
 		return nil
@@ -1090,37 +1255,28 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 			token := scanner.Token()
 			tokenFullStart := scanner.TokenFullStart()
 			tokenEnd := scanner.TokenEnd()
-			tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, nodeListParent))
+			tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, nodeListParent, scanner.TokenFlags()))
 			left = tokenEnd
 		}
 	}
 	return tokens
 }
 
-func containsNode(nodes []*ast.Node, node *ast.Node) bool {
-	for i := range nodes {
-		if nodes[i] == node {
-			return true
-		}
-	}
-	return false
-}
-
-func getArgumentListInfoForTemplate(tagExpression *ast.TaggedTemplateExpression, argumentIndex *int, sourceFile *ast.SourceFile) *argumentListInfo {
+func getArgumentListInfoForTemplate(tagExpression *ast.TaggedTemplateExpression, argumentIndex int, sourceFile *ast.SourceFile) *argumentListInfo {
 	// argumentCount is either 1 or (numSpans + 1) to account for the template strings array argument.
 	argumentCount := 1
 	if !isNoSubstitutionTemplateLiteral(tagExpression.Template) {
 		argumentCount = len(tagExpression.Template.AsTemplateExpression().TemplateSpans.Nodes) + 1
 	}
-	// if (argumentIndex !== 0) {
-	//     Debug.assertLessThan(argumentIndex, argumentCount);
-	// }
+	if argumentIndex != 0 {
+		debug.Assert(argumentIndex < argumentCount)
+	}
 	return &argumentListInfo{
 		isTypeParameterList: false,
 		invocation:          &invocation{callInvocation: &callInvocation{node: tagExpression.AsNode()}},
 		argumentIndex:       argumentIndex,
 		argumentCount:       argumentCount,
-		argumentsRange:      getApplicableRangeForTaggedTemplate(tagExpression, sourceFile),
+		argumentsSpan:       getApplicableRangeForTaggedTemplate(tagExpression, sourceFile),
 	}
 }
 

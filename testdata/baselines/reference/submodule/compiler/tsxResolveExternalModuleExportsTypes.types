@@ -1,5 +1,17 @@
 //// [tests/cases/compiler/tsxResolveExternalModuleExportsTypes.ts] ////
 
+=== foo.tsx ===
+/// <reference path="react.d.ts" />
+import { Test } from 'a';
+>Test : any
+
+const Foo = (<h1></h1>);
+>Foo : JSX.Element
+>(<h1></h1>) : JSX.Element
+><h1></h1> : JSX.Element
+>h1 : any
+>h1 : any
+
 === /node_modules/@types/a/index.d.ts ===
 declare var a: a.Foo;
 >a : import("a").Foo
@@ -10,30 +22,4 @@ declare namespace a {
 }
 export = a;
 >a : import("a").Foo
-
-=== /node_modules/@types/b/index.d.ts ===
-import * as a from 'a';
->a : a.Foo
-
-declare module 'a' {
->'a' : Foo
-
-    namespace Test {}
-
-    interface Foo {
-        Test: null;
->Test : null
-    }
-}
-
-=== foo.tsx ===
-import { Test } from 'a';
->Test : null
-
-const Foo = (<h1></h1>);
->Foo : JSX.Element
->(<h1></h1>) : JSX.Element
-><h1></h1> : JSX.Element
->h1 : any
->h1 : any
 

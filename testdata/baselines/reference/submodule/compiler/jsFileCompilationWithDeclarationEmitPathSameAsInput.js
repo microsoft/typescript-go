@@ -8,10 +8,6 @@ class c {
 declare function isC(): boolean;
 
 //// [a.js]
+"use strict";
 class c {
-}
-
-
-//// [a.d.ts]
-declare class c {
 }

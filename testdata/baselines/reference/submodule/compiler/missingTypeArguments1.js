@@ -57,45 +57,36 @@ var a10: X10<number>;
 
 
 //// [missingTypeArguments1.js]
+"use strict";
 class Y {
 }
 class X {
-    p1;
 }
 var a;
 class X2 {
-    p2;
 }
 var a2;
 class X3 {
-    p3;
 }
 var a3;
 class X4 {
-    p4;
 }
 var a4;
 class X5 {
-    p5;
 }
 var a5;
 class X6 {
-    p6;
 }
 var a6;
 class X7 {
-    p7;
 }
 var a7;
 class X8 {
-    p8;
 }
 var a8;
 class X9 {
-    p9;
 }
 var a9;
 class X10 {
-    pa;
 }
 var a10;

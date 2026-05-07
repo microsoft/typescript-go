@@ -7,7 +7,11 @@ class C {
 }
 
 //// [parserComputedPropertyName28.js]
+"use strict";
+var _a;
 class C {
-    [e] = 0;
-    [e2];
+    constructor() {
+        this[_a] = 0;
+    }
 }
+_a = e;

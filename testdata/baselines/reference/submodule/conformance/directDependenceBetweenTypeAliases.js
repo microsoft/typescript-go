@@ -45,6 +45,8 @@ var zz: { x: T11 }
 
 
 //// [directDependenceBetweenTypeAliases.js]
+"use strict";
+// It is an error for the type specified in a type alias to depend on that type alias
 class C {
 }
 // A type query directly depends on the type of the referenced entity.

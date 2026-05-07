@@ -73,12 +73,26 @@ export declare const fieldName: string;
 export declare const conatainer: {
     [x: string]: () => string;
 };
+declare const classFieldName: string;
+declare const otherField: string;
+declare const staticField: string;
 export declare class Holder {
-    static [x: string]: Holder | (typeof Holder)[typeof staticField] | (typeof Holder)[typeof staticField];
-    [x: string]: (() => string) | (() => number);
+    static [staticField]: () => {
+        static: boolean;
+    };
+    static [staticField]: () => {
+        static: string;
+    };
+    [classFieldName]: () => string;
+    [otherField]: () => number;
 }
 /**
  * Could be `"prototype"`, so all static string indexers include the instance type
  */
-export declare const staticLookup: Holder | (typeof Holder)[typeof staticField] | (typeof Holder)[typeof staticField];
+export declare const staticLookup: Holder | (() => {
+    static: boolean;
+}) | (() => {
+    static: string;
+});
 export declare const instanceLookup: (() => string) | (() => number);
+export {};

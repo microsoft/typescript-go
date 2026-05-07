@@ -1,12 +1,10 @@
 package packagejson
 
 import (
-	"encoding/json"
 	"fmt"
 
-	json2 "github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/json"
 )
 
 type JSONValueType int8
@@ -45,6 +43,10 @@ type JSONValue struct {
 	Value any
 }
 
+func (v *JSONValue) IsPresent() bool {
+	return v.Type != JSONValueTypeNotPresent
+}
+
 func (v *JSONValue) IsFalsy() bool {
 	switch v.Type {
 	case JSONValueTypeNotPresent, JSONValueTypeNull:
@@ -74,16 +76,16 @@ func (v JSONValue) AsArray() []JSONValue {
 	return v.Value.([]JSONValue)
 }
 
-var (
-	_ json.Unmarshaler      = (*JSONValue)(nil)
-	_ json2.UnmarshalerFrom = (*JSONValue)(nil)
-)
-
-func (v *JSONValue) UnmarshalJSON(data []byte) error {
-	return unmarshalJSONValue[JSONValue](v, data)
+func (v JSONValue) AsString() string {
+	if v.Type != JSONValueTypeString {
+		panic(fmt.Sprintf("expected string, got %v", v.Type))
+	}
+	return v.Value.(string)
 }
 
-func (v *JSONValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+var _ json.UnmarshalerFrom = (*JSONValue)(nil)
+
+func (v *JSONValue) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return unmarshalJSONValueV2[JSONValue](v, dec)
 }
 
@@ -120,9 +122,9 @@ func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 	return nil
 }
 
-func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder) error {
+func unmarshalJSONValueV2[T any](v *JSONValue, dec *json.Decoder) error {
 	switch dec.PeekKind() {
-	case 'n': // jsontext.Null.Kind()
+	case 'n': // json.Null.Kind()
 		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
@@ -131,7 +133,7 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder) error {
 		return nil
 	case '"':
 		v.Type = JSONValueTypeString
-		if err := json2.UnmarshalDecode(dec, &v.Value); err != nil {
+		if err := json.UnmarshalDecode(dec, &v.Value); err != nil {
 			return err
 		}
 	case '[':
@@ -139,9 +141,9 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder) error {
 			return err
 		}
 		var elements []T
-		for dec.PeekKind() != jsontext.EndArray.Kind() {
+		for dec.PeekKind() != json.EndArray.Kind() {
 			var element T
-			if err := json2.UnmarshalDecode(dec, &element); err != nil {
+			if err := json.UnmarshalDecode(dec, &element); err != nil {
 				return err
 			}
 			elements = append(elements, element)
@@ -153,19 +155,19 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder) error {
 		v.Value = elements
 	case '{':
 		var object collections.OrderedMap[string, T]
-		if err := json2.UnmarshalDecode(dec, &object); err != nil {
+		if err := json.UnmarshalDecode(dec, &object); err != nil {
 			return err
 		}
 		v.Type = JSONValueTypeObject
 		v.Value = &object
-	case 't', 'f': // jsontext.True.Kind(), jsontext.False.Kind()
+	case 't', 'f': // json.True.Kind(), json.False.Kind()
 		v.Type = JSONValueTypeBoolean
-		if err := json2.UnmarshalDecode(dec, &v.Value); err != nil {
+		if err := json.UnmarshalDecode(dec, &v.Value); err != nil {
 			return err
 		}
 	default:
 		v.Type = JSONValueTypeNumber
-		if err := json2.UnmarshalDecode(dec, &v.Value); err != nil {
+		if err := json.UnmarshalDecode(dec, &v.Value); err != nil {
 			return err
 		}
 	}

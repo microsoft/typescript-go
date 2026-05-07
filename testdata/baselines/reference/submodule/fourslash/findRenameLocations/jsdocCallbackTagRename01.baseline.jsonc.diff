@@ -1,0 +1,8 @@
+--- old.jsdocCallbackTagRename01.baseline.jsonc
++++ new.jsdocCallbackTagRename01.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+-
+ // === /jsDocCallback.js ===
+ // 
+ // /**

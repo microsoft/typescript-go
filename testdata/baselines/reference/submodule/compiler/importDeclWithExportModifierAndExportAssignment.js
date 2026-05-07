@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/importDeclWithExportModifierAndExportAssignment.ts] ////
 
 //// [importDeclWithExportModifierAndExportAssignment.ts]
-module x {
+namespace x {
     interface c {
     }
 }
@@ -11,3 +11,5 @@ export = x;
 //// [importDeclWithExportModifierAndExportAssignment.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.a = void 0;
+exports.a = x.c;

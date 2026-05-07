@@ -30,9 +30,9 @@ const MyComponent2 = () => null;
  * @type {MyComponentProps}
  */
 MyComponent2.defaultProps = {
->MyComponent2.defaultProps : Symbol(defaultProps, Decl(input.js, 15, 32))
+>MyComponent2.defaultProps : Symbol(MyComponent2.defaultProps, Decl(input.js, 15, 32))
 >MyComponent2 : Symbol(MyComponent2, Decl(input.js, 15, 5))
->defaultProps : Symbol(defaultProps, Decl(input.js, 15, 32))
+>defaultProps : Symbol(MyComponent2.defaultProps, Decl(input.js, 15, 32))
 
     color: "red"
 >color : Symbol(color, Decl(input.js, 20, 29))
@@ -70,9 +70,9 @@ function foo() {
  * @type {MyComponentProps}
  */
 module.exports = {
->module.exports : Symbol(export=, Decl(input.js, 42, 1))
->module : Symbol(module.exports)
->exports : Symbol(export=, Decl(input.js, 42, 1))
+>module.exports : Symbol(exports, Decl(input.js, 0, 0))
+>module : Symbol(module, Decl(input.js, 0, 0))
+>exports : Symbol(exports, Decl(input.js, 0, 0))
 
     color: "red"
 >color : Symbol(color, Decl(input.js, 47, 18))
@@ -81,7 +81,7 @@ module.exports = {
 expectLiteral({ props: module.exports });
 >expectLiteral : Symbol(expectLiteral, Decl(input.js, 27, 27))
 >props : Symbol(props, Decl(input.js, 51, 15))
->module.exports : Symbol(export=, Decl(input.js, 42, 1))
->module : Symbol(module.exports)
->exports : Symbol(export=, Decl(input.js, 42, 1))
+>module.exports : Symbol(exports, Decl(input.js, 0, 0))
+>module : Symbol(module, Decl(input.js, 0, 0))
+>exports : Symbol(exports, Decl(input.js, 0, 0))
 

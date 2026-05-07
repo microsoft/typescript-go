@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/moduleAliasInterface.ts] ////
 
 //// [moduleAliasInterface.ts]
-module _modes {
+namespace _modes {
  export interface IMode {
   
  }
@@ -13,7 +13,7 @@ module _modes {
 
 // _modes. // produces an internal error - please implement in derived class
 
-module editor {
+namespace editor {
  import modes = _modes;
  
  var i : modes.IMode;
@@ -28,7 +28,7 @@ module editor {
 }
 
 import modesOuter = _modes;
-module editor2 {
+namespace editor2 {
  
  var i : modesOuter.IMode;
  
@@ -37,19 +37,19 @@ module editor2 {
   
  }
  
-  module Foo { export class Bar{} }
+  namespace Foo { export class Bar{} }
  
   class Bug2 {
       constructor(p1: Foo.Bar, p2: modesOuter.Mode) { }
   }
 }
 
-module A1 {
+namespace A1 {
     export interface A1I1 {}
     export class A1C1 {}
 }
 
-module B1 {
+namespace B1 {
     import A1Alias1 = A1;
     
     var i : A1Alias1.A1I1;   
@@ -58,6 +58,7 @@ module B1 {
 
 
 //// [moduleAliasInterface.js]
+"use strict";
 var _modes;
 (function (_modes) {
     class Mode {
@@ -67,7 +68,6 @@ var _modes;
 // _modes. // produces an internal error - please implement in derived class
 var editor;
 (function (editor) {
-    var modes = _modes;
     var i;
     // If you just use p1:modes, the compiler accepts it - should be an error
     class Bug {
@@ -76,6 +76,7 @@ var editor;
         }
     }
 })(editor || (editor = {}));
+var modesOuter = _modes;
 var editor2;
 (function (editor2) {
     var i;
@@ -100,7 +101,6 @@ var A1;
 })(A1 || (A1 = {}));
 var B1;
 (function (B1) {
-    var A1Alias1 = A1;
     var i;
     var c;
 })(B1 || (B1 = {}));

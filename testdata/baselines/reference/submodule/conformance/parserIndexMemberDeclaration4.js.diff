@@ -1,8 +1,0 @@
---- old.parserIndexMemberDeclaration4.js
-+++ new.parserIndexMemberDeclaration4.js
-@@= skipped -6, +6 lines =@@
-
- //// [parserIndexMemberDeclaration4.js]
- class C {
-+    v;
- }

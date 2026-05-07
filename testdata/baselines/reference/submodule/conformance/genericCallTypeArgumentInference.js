@@ -94,6 +94,7 @@ var r10 = i.foo7(''); // {}
 var r11 = i.foo8(); // {}
 
 //// [genericCallTypeArgumentInference.js]
+"use strict";
 // Basic type inference with generic calls, no errors expected
 function foo(t) {
     return t;
@@ -109,8 +110,6 @@ function foo2b(u) {
 var r2 = foo2('', 1); // number
 var r3 = foo2b(1); // {}
 class C {
-    t;
-    u;
     constructor(t, u) {
         this.t = t;
         this.u = u;

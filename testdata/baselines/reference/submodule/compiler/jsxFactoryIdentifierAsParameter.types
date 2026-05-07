@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/jsxFactoryIdentifierAsParameter.ts] ////
 
 === test.tsx ===
-declare module JSX {
+declare namespace JSX {
     interface IntrinsicElements {
         [s: string]: any;
 >s : string
@@ -16,7 +16,7 @@ export class AppComponent {
 >createElement : any
 
         return <div />;
-><div /> : any
+><div /> : error
 >div : any
     }
 }

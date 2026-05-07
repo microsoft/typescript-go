@@ -111,13 +111,6 @@ export type AsFunctionType = (isNaN: typeof globalThis.isNaN) => typeof globalTh
 
 
 //// [declarationEmitGlobalThisPreserved.d.ts]
-// Adding this makes tooltips fail too.
-// declare global {
-//     namespace isNaN {
-//         const prop: number;
-//     }
-// }
-// Broken inference cases.
 export declare const a1: (isNaN: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare const a2: (isNaN: typeof globalThis.isNaN, bar?: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare const a3: (isNaN: number, bar: typeof globalThis.isNaN) => typeof globalThis.isNaN;
@@ -129,7 +122,7 @@ export declare const aObj: {
     a4: (isNaN: number) => typeof globalThis.isNaN;
 };
 export type a4Return = ReturnType<ReturnType<typeof a4>>;
-export type a4oReturn = ReturnType<ReturnType<typeof aObj['a4']>>;
+export type a4oReturn = ReturnType<ReturnType<(typeof aObj)['a4']>>;
 export declare const b1: (isNaN: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare const b2: (isNaN: typeof globalThis.isNaN, bar?: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare const b3: (isNaN: number, bar: typeof globalThis.isNaN) => typeof globalThis.isNaN;
@@ -141,7 +134,7 @@ export declare const bObj: {
     b4: (isNaN: number) => typeof globalThis.isNaN;
 };
 export type b4Return = ReturnType<ReturnType<typeof b4>>;
-export type b4oReturn = ReturnType<ReturnType<typeof bObj['b4']>>;
+export type b4oReturn = ReturnType<ReturnType<(typeof bObj)['b4']>>;
 export declare function c1(isNaN: typeof globalThis.isNaN): typeof globalThis.isNaN;
 export declare function c2(isNaN: typeof globalThis.isNaN, bar?: typeof globalThis.isNaN): typeof globalThis.isNaN;
 export declare function c3(isNaN: number, bar: typeof globalThis.isNaN): typeof globalThis.isNaN;
@@ -153,7 +146,7 @@ export declare const cObj: {
     c4(isNaN: number): typeof globalThis.isNaN;
 };
 export type c4Return = ReturnType<ReturnType<typeof c4>>;
-export type c4oReturn = ReturnType<ReturnType<typeof cObj['c4']>>;
+export type c4oReturn = ReturnType<ReturnType<(typeof cObj)['c4']>>;
 export declare function d1(): () => (isNaN: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare function d2(): () => (isNaN: typeof globalThis.isNaN, bar?: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare function d3(): () => (isNaN: number, bar: typeof globalThis.isNaN) => typeof globalThis.isNaN;
@@ -168,7 +161,6 @@ export declare class A {
 export declare function fromParameter(isNaN: number, bar: typeof globalThis.isNaN): () => {
     bar: typeof globalThis.isNaN;
 };
-// Non-inference cases.
 export declare const explicitlyTypedVariable: (isNaN: typeof globalThis.isNaN) => typeof globalThis.isNaN;
 export declare function explicitlyTypedFunction(isNaN: typeof globalThis.isNaN): typeof globalThis.isNaN;
 export type AsObjectProperty = {

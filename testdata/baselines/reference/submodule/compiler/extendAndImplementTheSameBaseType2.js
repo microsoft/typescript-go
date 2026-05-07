@@ -19,8 +19,8 @@ var r3: string = d.bar();
 var r4: number = d.bar();
 
 //// [extendAndImplementTheSameBaseType2.js]
+"use strict";
 class C {
-    foo;
     bar() {
         return null;
     }

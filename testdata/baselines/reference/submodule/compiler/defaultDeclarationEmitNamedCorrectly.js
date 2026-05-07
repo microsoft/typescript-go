@@ -25,9 +25,8 @@ function make(x) {
     return null;
 }
 class MyComponent {
-    props;
-    static create = make(MyComponent);
 }
+MyComponent.create = make(MyComponent);
 exports.default = MyComponent;
 
 
@@ -37,7 +36,9 @@ export interface Things<P, T> {
     t: T;
 }
 export declare function make<P, CTor>(x: {
-    new ();
+    new (): CTor & {
+        props: P;
+    };
 }): Things<P, CTor>;
 export interface Props {
 }

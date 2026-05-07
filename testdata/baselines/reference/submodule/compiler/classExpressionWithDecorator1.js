@@ -4,8 +4,9 @@
 var v = @decorate class C { static p = 1 };
 
 //// [classExpressionWithDecorator1.js]
-var v = 
-@decorate
-class C {
-    static p = 1;
-};
+"use strict";
+var _a;
+var v = (_a = class C {
+    },
+    _a.p = 1,
+    _a);

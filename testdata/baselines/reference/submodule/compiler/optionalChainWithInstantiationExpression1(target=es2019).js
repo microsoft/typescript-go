@@ -18,5 +18,6 @@ a?.b.d
 
 
 //// [optionalChainWithInstantiationExpression1.js]
-(a?.b).d;
-a?.b.d;
+"use strict";
+(a === null || a === void 0 ? void 0 : a.b).d;
+a === null || a === void 0 ? void 0 : a.b.d;

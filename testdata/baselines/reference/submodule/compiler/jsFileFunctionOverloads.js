@@ -61,6 +61,7 @@ function flatMap(array, iterable = identity) {
 
 
 //// [jsFileFunctionOverloads.js]
+"use strict";
 /**
  * @overload
  * @param {number} x
@@ -112,7 +113,7 @@ function flatMap(array, iterable = identity) {
     /** @type {unknown[]} */
     const result = [];
     for (let i = 0; i < array.length; i += 1) {
-        result.push(... /** @type {unknown[]} */iterable(array[i]));
+        result.push(... /** @type {unknown[]} */(iterable(array[i])));
     }
     return result;
 }

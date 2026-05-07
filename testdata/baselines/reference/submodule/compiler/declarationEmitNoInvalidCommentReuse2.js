@@ -22,9 +22,8 @@ export type Id<T> = T;
 
 //// [a.d.ts]
 export declare const _: {
-    foo: {};
+    foo: import("./id").Id<{}>;
 };
-///////////
 /**
  * huh
  */ 

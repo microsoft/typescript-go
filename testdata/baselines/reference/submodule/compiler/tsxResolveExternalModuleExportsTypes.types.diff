@@ -1,10 +1,10 @@
 --- old.tsxResolveExternalModuleExportsTypes.types
 +++ new.tsxResolveExternalModuleExportsTypes.types
-@@= skipped -1, +1 lines =@@
+@@= skipped -13, +13 lines =@@
 
  === /node_modules/@types/a/index.d.ts ===
  declare var a: a.Foo;
-->a : import("/node_modules/@types/a/index.d.ts").Foo
+->a : a.Foo
 +>a : import("a").Foo
  >a : any
 
@@ -12,8 +12,5 @@
      interface Foo {}
  }
  export = a;
-->a : import("/node_modules/@types/a/index.d.ts").Foo
+->a : a.Foo
 +>a : import("a").Foo
-
- === /node_modules/@types/b/index.d.ts ===
- import * as a from 'a';

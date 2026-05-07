@@ -5,8 +5,5 @@ const enum E { A }
 var x = E["B"]
 
 //// [constEnumBadPropertyNames.js]
-var E;
-(function (E) {
-    E[E["A"] = 0] = "A";
-})(E || (E = {}));
+"use strict";
 var x = E["B"];

@@ -23,10 +23,7 @@ const ColumnSelectView1: new <S extends Schema>() => Table<UnrollOnHover<S>> = C
 const ColumnSelectView2: new <S extends Schema>() => Table<UnrollOnHover<S>> = Table;
 
 //// [localTypeParameterInferencePriority.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class Table {
-    __schema;
     // Removing this line, removes the error 
     getRows() {
         return null;
@@ -36,3 +33,4 @@ class ColumnSelectViewImp extends Table {
 }
 const ColumnSelectView1 = ColumnSelectViewImp;
 const ColumnSelectView2 = Table;
+export {};

@@ -43,11 +43,14 @@ const Component = () => {
 
 
 //// [index.js]
+"use strict";
 configureStore({
     middleware: [...defaultMiddleware], // Should not error
 });
 const Component = () => {
     const categories = ['Fruit', 'Vegetables'];
-    return (React.createElement("ul", null, React.createElement("li", null, "All"), categories.map((category) => (React.createElement("li", { key: category }, category) // Error about 'key' only
-    ))));
+    return (React.createElement("ul", null,
+        React.createElement("li", null, "All"),
+        categories.map((category) => (React.createElement("li", { key: category }, category) // Error about 'key' only
+        ))));
 };

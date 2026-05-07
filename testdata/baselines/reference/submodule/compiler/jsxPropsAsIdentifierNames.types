@@ -8,7 +8,7 @@ declare namespace JSX {
 >div : { static?: boolean; }
 
             static?: boolean;
->static : boolean
+>static : boolean | undefined
 
         };
     }

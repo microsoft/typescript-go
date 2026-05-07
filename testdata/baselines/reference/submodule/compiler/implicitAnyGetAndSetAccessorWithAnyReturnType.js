@@ -26,9 +26,12 @@ class GetterOnly {
 }
 
 //// [implicitAnyGetAndSetAccessorWithAnyReturnType.js]
+"use strict";
 // these should be errors
 class GetAndSet {
-    getAndSet = null; // error at "getAndSet"
+    constructor() {
+        this.getAndSet = null; // error at "getAndSet"
+    }
     get haveGetAndSet() {
         return this.getAndSet;
     }

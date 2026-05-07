@@ -1,9 +1,0 @@
---- old.errorsWithInvokablesInUnions01.js
-+++ new.errorsWithInvokablesInUnions01.js
-@@= skipped -27, +27 lines =@@
- let blah = (x) => { };
- exports.blah = blah;
- let ctor = class {
-+    someUnaccountedProp;
- };
- exports.ctor = ctor;

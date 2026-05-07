@@ -8,12 +8,12 @@ interface Item {
 
 declare function foo<T extends Item>(x?: T, y?: T): T;
 >foo : <T extends Item>(x?: T, y?: T) => T
->x : T
->y : T
+>x : T | undefined
+>y : T | undefined
 
 var z1 = foo(null);                   // any
->z1 : any
->foo(null) : any
+>z1 : Item
+>foo(null) : Item
 >foo : <T extends Item>(x?: T, y?: T) => T
 
 var z2 = foo();                       // Item
@@ -22,8 +22,8 @@ var z2 = foo();                       // Item
 >foo : <T extends Item>(x?: T, y?: T) => T
 
 var z3 = foo({ name: null });         // { name: any }
->z3 : { name: any; }
->foo({ name: null }) : { name: any; }
+>z3 : Item
+>foo({ name: null }) : Item
 >foo : <T extends Item>(x?: T, y?: T) => T
 >{ name: null } : { name: null; }
 >name : null

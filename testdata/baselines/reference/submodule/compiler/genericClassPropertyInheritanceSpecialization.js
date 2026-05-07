@@ -36,11 +36,11 @@ interface KnockoutObservableArrayStatic {
     <T>(value?: T[]): KnockoutObservableArray<T>;
 }
 
-declare module ko {
+declare namespace ko {
     export var observableArray: KnockoutObservableArrayStatic;
 }
 
-module Portal.Controls.Validators {
+namespace Portal.Controls.Validators {
 
     export class Validator<TValue> {
         private _subscription;
@@ -53,7 +53,7 @@ module Portal.Controls.Validators {
     }
 }
 
-module PortalFx.ViewModels.Controls.Validators {
+namespace PortalFx.ViewModels.Controls.Validators {
 
     export class Validator<TValue> extends Portal.Controls.Validators.Validator<TValue> {
 
@@ -78,17 +78,14 @@ class ViewModel<TValue> implements Contract<TValue> {
 
 
 //// [genericClassPropertyInheritanceSpecialization.js]
+"use strict";
 var Portal;
 (function (Portal) {
-    let Controls;
+    var Controls;
     (function (Controls) {
-        let Validators;
+        var Validators;
         (function (Validators) {
             class Validator {
-                _subscription;
-                message;
-                validationState;
-                validate;
                 constructor(message) { }
                 destroy() { }
                 _validate(value) { return 0; }
@@ -99,11 +96,11 @@ var Portal;
 })(Portal || (Portal = {}));
 var PortalFx;
 (function (PortalFx) {
-    let ViewModels;
+    var ViewModels;
     (function (ViewModels) {
-        let Controls;
+        var Controls;
         (function (Controls) {
-            let Validators;
+            var Validators;
             (function (Validators) {
                 class Validator extends Portal.Controls.Validators.Validator {
                     constructor(message) {
@@ -116,5 +113,7 @@ var PortalFx;
     })(ViewModels = PortalFx.ViewModels || (PortalFx.ViewModels = {}));
 })(PortalFx || (PortalFx = {}));
 class ViewModel {
-    validators = ko.observableArray();
+    constructor() {
+        this.validators = ko.observableArray();
+    }
 }

@@ -7,7 +7,7 @@ declare module "GlobalWidgets" {
     }
     export function createWidget3(): Widget3;
 
-    export module SpecializedGlobalWidget {
+    export namespace SpecializedGlobalWidget {
         export class Widget4 {
             name: string;
         }
@@ -23,7 +23,7 @@ export function createWidget1() {
     return new Widget1();
 }
 
-export module SpecializedWidget {
+export namespace SpecializedWidget {
     export class Widget2 {
         name = 'one';
     }
@@ -162,13 +162,16 @@ function privateFunctionWithPrivateModuleReturnTypes1() {
 
 
 //// [privacyFunctionReturnTypeDeclFile_GlobalWidgets.js]
+"use strict";
 //// [privacyFunctionReturnTypeDeclFile_Widgets.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpecializedWidget = exports.Widget1 = void 0;
 exports.createWidget1 = createWidget1;
 class Widget1 {
-    name = 'one';
+    constructor() {
+        this.name = 'one';
+    }
 }
 exports.Widget1 = Widget1;
 function createWidget1() {
@@ -177,7 +180,9 @@ function createWidget1() {
 var SpecializedWidget;
 (function (SpecializedWidget) {
     class Widget2 {
-        name = 'one';
+        constructor() {
+            this.name = 'one';
+        }
     }
     SpecializedWidget.Widget2 = Widget2;
     function createWidget2() {

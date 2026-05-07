@@ -2,7 +2,6 @@ package checker
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
 
@@ -10,30 +9,20 @@ type SymbolTrackerImpl struct {
 	context            *NodeBuilderContext
 	inner              nodebuilder.SymbolTracker
 	DisableTrackSymbol bool
-	tchost             Host
 }
 
-func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.SymbolTracker, tchost Host) *SymbolTrackerImpl {
-	var inner nodebuilder.SymbolTracker
+func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.SymbolTracker) *SymbolTrackerImpl {
 	if tracker != nil {
-		inner = tracker.GetInnerSymbolTracker()
-		if inner == nil {
-			inner = tracker
+		for {
+			t, ok := tracker.(*SymbolTrackerImpl)
+			if !ok {
+				break
+			}
+			tracker = t.inner
 		}
 	}
 
-	return &SymbolTrackerImpl{context, inner, false, tchost}
-}
-
-func (this *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
-	if this.inner == nil {
-		return this.tchost
-	}
-	return this.inner.GetModuleSpecifierGenerationHost()
-}
-
-func (this *SymbolTrackerImpl) GetInnerSymbolTracker() nodebuilder.SymbolTracker {
-	return this.inner
+	return &SymbolTrackerImpl{context, tracker, false}
 }
 
 func (this *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool {
@@ -82,12 +71,12 @@ func (this *SymbolTrackerImpl) ReportCyclicStructureError() {
 	this.inner.ReportCyclicStructureError()
 }
 
-func (this *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string) {
+func (this *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string, symbolName string) {
 	this.onDiagnosticReported()
 	if this.inner == nil {
 		return
 	}
-	this.inner.ReportLikelyUnsafeImportRequiredError(specifier)
+	this.inner.ReportLikelyUnsafeImportRequiredError(specifier, symbolName)
 }
 
 func (this *SymbolTrackerImpl) ReportTruncationError() {

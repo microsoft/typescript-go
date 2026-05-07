@@ -52,9 +52,9 @@ exports.B = class {
     constructor() {
         this.x = 1;
 >this.x = 1 : 1
->this.x : number
+>this.x : any
 >this : this
->x : number
+>x : any
 >1 : 1
     }
 };
@@ -70,9 +70,9 @@ const { B } = require("./b-ext");
 function b(p) { p.x; }
 >b : (p: B) => void
 >p : B
->p.x : any
+>p.x : number
 >p : B
->x : any
+>x : number
 
 === c-ext.js ===
 export function C() {
@@ -137,9 +137,9 @@ export class E {
     constructor() {
         this.x = 1;
 >this.x = 1 : 1
->this.x : number
+>this.x : any
 >this : this
->x : number
+>x : any
 >1 : 1
     }
 }
@@ -208,9 +208,9 @@ class H {
     constructor() {
         this.x = 1;
 >this.x = 1 : 1
->this.x : number
+>this.x : any
 >this : this
->x : number
+>x : any
 >1 : 1
     }
 }

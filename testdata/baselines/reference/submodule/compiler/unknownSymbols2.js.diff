@@ -1,9 +1,0 @@
---- old.unknownSymbols2.js
-+++ new.unknownSymbols2.js
-@@= skipped -57, +57 lines =@@
-     (function (N) {
-         var x = 1;
-     })(N || (N = {}));
-+    var c = N;
-+    var d = asdf;
- })(M || (M = {}));

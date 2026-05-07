@@ -2,8 +2,8 @@
 
 //// [declFileAmbientExternalModuleWithSingleExportedModule_0.ts]
 declare module "SubModule" {
-    export module m {
-        export module m3 {
+    export namespace m {
+        export namespace m3 {
             interface c {
             }
         }
@@ -18,6 +18,7 @@ export var x: SubModule.m.m3.c;
 
 
 //// [declFileAmbientExternalModuleWithSingleExportedModule_0.js]
+"use strict";
 //// [declFileAmbientExternalModuleWithSingleExportedModule_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,29 +35,6 @@ declare module "SubModule" {
     }
 }
 //// [declFileAmbientExternalModuleWithSingleExportedModule_1.d.ts]
+/// <reference path="declFileAmbientExternalModuleWithSingleExportedModule_0.d.ts" preserve="true" />
 import SubModule = require('SubModule');
 export declare var x: SubModule.m.m3.c;
-
-
-//// [DtsFileErrors]
-
-
-declFileAmbientExternalModuleWithSingleExportedModule_1.d.ts(1,28): error TS2307: Cannot find module 'SubModule' or its corresponding type declarations.
-
-
-==== declFileAmbientExternalModuleWithSingleExportedModule_1.d.ts (1 errors) ====
-    import SubModule = require('SubModule');
-                               ~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'SubModule' or its corresponding type declarations.
-    export declare var x: SubModule.m.m3.c;
-    
-==== declFileAmbientExternalModuleWithSingleExportedModule_0.d.ts (0 errors) ====
-    declare module "SubModule" {
-        namespace m {
-            namespace m3 {
-                interface c {
-                }
-            }
-        }
-    }
-    

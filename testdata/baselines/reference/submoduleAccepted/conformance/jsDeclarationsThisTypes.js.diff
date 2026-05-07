@@ -1,0 +1,11 @@
+--- old.jsDeclarationsThisTypes.js
++++ new.jsDeclarationsThisTypes.js
+@@= skipped -30, +30 lines =@@
+
+
+ //// [index.d.ts]
+-export class A {
++export declare class A {
+     /** @returns {this} */
+     method(): this;
+ }

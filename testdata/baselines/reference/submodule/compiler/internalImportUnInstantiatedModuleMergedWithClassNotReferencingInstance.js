@@ -4,22 +4,21 @@
 class A {
     aProp: string;
 }
-module A {
+namespace A {
     export interface X { s: string }
 }
 
-module B {
+namespace B {
     var A = 1;
     import Y = A;
 }
 
 
 //// [internalImportUnInstantiatedModuleMergedWithClassNotReferencingInstance.js]
+"use strict";
 class A {
-    aProp;
 }
 var B;
 (function (B) {
     var A = 1;
-    var Y = A;
 })(B || (B = {}));

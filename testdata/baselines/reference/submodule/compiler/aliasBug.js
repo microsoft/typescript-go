@@ -1,11 +1,11 @@
 //// [tests/cases/compiler/aliasBug.ts] ////
 
 //// [aliasBug.ts]
-module foo {    
+namespace foo {    
     export class Provide {
     }
 
-    export module bar { export module baz {export class boo {}}}
+    export namespace bar { export namespace baz {export class boo {}}}
 }
 
 import provide = foo;
@@ -22,6 +22,7 @@ function use() {
 
 
 //// [aliasBug.js]
+"use strict";
 var foo;
 (function (foo) {
     class Provide {
@@ -37,6 +38,8 @@ var foo;
         })(baz = bar.baz || (bar.baz = {}));
     })(bar = foo.bar || (foo.bar = {}));
 })(foo || (foo = {}));
+var provide = foo;
+var booz = foo.bar.baz;
 var p = new provide.Provide();
 function use() {
     var p1; // error here, but should be okay

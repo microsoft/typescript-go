@@ -15,7 +15,6 @@ let foo;
 
 //// [seeTag4.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {any} A
  */

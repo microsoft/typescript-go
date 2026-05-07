@@ -32,7 +32,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BindingKey = void 0;
 class BindingKey {
-    __type;
     static create(ctor) {
         return new BindingKey();
     }
@@ -85,4 +84,4 @@ export type ControllerClass = Constructor<any>;
 //// [usage.d.ts]
 import { ControllerClass } from './application';
 import { BindingKey } from '@loopback/context';
-export declare const CONTROLLER_CLASS: BindingKey<ControllerClass>; // line in question
+export declare const CONTROLLER_CLASS: BindingKey<ControllerClass>;

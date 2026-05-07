@@ -2,7 +2,7 @@
 
 //// [a.tsx]
 declare const React: any;
-declare module JSX {
+declare namespace JSX {
     interface IntrinsicElements {
         ["package"]: any;
     }
@@ -18,6 +18,7 @@ function B() {
 
 
 //// [a.js]
+"use strict";
 function A() {
     return React.createElement("package", null);
 }

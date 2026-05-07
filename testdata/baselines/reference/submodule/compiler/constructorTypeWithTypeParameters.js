@@ -10,14 +10,15 @@ declare var Y: {
 var anotherVar: new <T>() => number;
 
 //// [constructorTypeWithTypeParameters.js]
+"use strict";
 var anotherVar;
 
 
 //// [constructorTypeWithTypeParameters.d.ts]
 declare var X: {
-    new <T>();
+    new <T>(): number;
 };
 declare var Y: {
-    new ();
+    new (): number;
 };
 declare var anotherVar: new <T>() => number;

@@ -14,16 +14,18 @@ export default class C {
 
 //// [usingDeclarationsWithLegacyClassDecorators.3.js]
 "use strict";
-var before, C, _default;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
+var before, C, _default;
 const env_1 = { stack: [], error: void 0, hasError: false };
 try {
     before = __addDisposableResource(env_1, null, false);
-    exports.default = _default = C = 
-    @dec
-    class C {
+    C = class C {
     };
+    C = __decorate([
+        dec
+    ], C);
+    exports.default = _default = C;
 }
 catch (e_1) {
     env_1.error = e_1;

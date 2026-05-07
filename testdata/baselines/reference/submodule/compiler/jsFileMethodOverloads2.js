@@ -47,6 +47,7 @@
 
 
 //// [jsFileMethodOverloads2.js]
+"use strict";
 // Also works if all @overload tags are combined in one comment.
 /**
  * @template T
@@ -91,11 +92,11 @@ class Example {
 
 
 //// [jsFileMethodOverloads2.d.ts]
-// Also works if all @overload tags are combined in one comment.
 /**
  * @template T
  */
 declare class Example<T> {
+    value: T;
     /**
      * @param {T} value
      */

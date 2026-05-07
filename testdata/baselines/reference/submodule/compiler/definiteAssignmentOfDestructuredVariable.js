@@ -18,8 +18,8 @@ class C<T extends Options> {
 }
 
 //// [definiteAssignmentOfDestructuredVariable.js]
+"use strict";
 class C {
-    foo;
     method() {
         let { a, b } = this.foo;
         !(a && b);

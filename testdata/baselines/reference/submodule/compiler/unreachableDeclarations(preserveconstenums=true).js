@@ -89,14 +89,15 @@ function func5() {
 
 
 //// [unreachableDeclarations.js]
+"use strict";
 function func1() {
     aFunc();
     console.log(EnumA.Value);
-    console.log(EnumB.Value);
+    console.log(0 /* EnumB.Value */);
     return;
     function aFunc() {
         console.log(EnumA.Value);
-        console.log(EnumB.Value);
+        console.log(0 /* EnumB.Value */);
     }
     let EnumA;
     (function (EnumA) {
@@ -121,10 +122,10 @@ function func2() {
 }
 function func3() {
     aFunc();
-    console.log(EnumB.Value);
+    console.log(0 /* EnumB.Value */);
     return;
     function aFunc() {
-        console.log(EnumB.Value);
+        console.log(0 /* EnumB.Value */);
     }
     let EnumB;
     (function (EnumB) {
@@ -139,8 +140,8 @@ function func4() {
         console.log(ClassA.Value);
     }
     class ClassA {
-        static Value = 1234;
     }
+    ClassA.Value = 1234;
 }
 function func5() {
     aFunc();
@@ -161,7 +162,9 @@ function func5() {
         Bar[Bar["A"] = 0] = "A";
     })(Bar || (Bar = {}));
     class Foo {
-        x = 1234;
+        constructor() {
+            this.x = 1234;
+        }
     }
     let Baz;
     (function (Baz) {

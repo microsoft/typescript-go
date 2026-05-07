@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
 )
 
@@ -11,6 +12,7 @@ func main() {
 }
 
 func runMain() int {
+	core.ApplyDebugStackLimit()
 	args := os.Args[1:]
 	if len(args) > 0 {
 		switch args[0] {
@@ -20,5 +22,6 @@ func runMain() int {
 			return runAPI(args[1:])
 		}
 	}
-	return int(execute.CommandLine(newSystem(), nil, args))
+	result := execute.CommandLine(newSystem(), args, nil)
+	return int(result.Status)
 }

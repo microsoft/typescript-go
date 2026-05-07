@@ -12,10 +12,11 @@ e ??= x ?? "x"
 e.length
 
 //// [logicalAssignment11.js]
+"use strict";
 let x;
 let d;
-d ?? (d = x ?? "x");
+d !== null && d !== void 0 ? d : (d = x !== null && x !== void 0 ? x : "x");
 d.length;
 let e;
-e ??= x ?? "x";
+e !== null && e !== void 0 ? e : (e = x !== null && x !== void 0 ? x : "x");
 e.length;

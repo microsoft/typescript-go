@@ -28,21 +28,22 @@ function f6<T>(arg: T) {
 
 
 //// [spreadTypeVariable.js]
+"use strict";
 function f1(arg) {
-    return { ...arg };
+    return Object.assign({}, arg);
 }
 function f2(arg) {
-    return { ...arg };
+    return Object.assign({}, arg);
 }
 function f3(arg) {
-    return { ...arg };
+    return Object.assign({}, arg);
 }
 function f4(arg) {
-    return { ...arg };
+    return Object.assign({}, arg);
 }
 function f5(arg) {
-    return { ...arg };
+    return Object.assign({}, arg);
 }
 function f6(arg) {
-    return { ...arg };
+    return Object.assign({}, arg);
 }

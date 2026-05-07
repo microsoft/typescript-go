@@ -34,12 +34,11 @@ class Derived extends Base {
 }
 
 //// [derivedClassSuperCallsInNonConstructorMembers.js]
+"use strict";
 // error to use super calls outside a constructor
 class Base {
-    x;
 }
 class Derived extends Base {
-    a;
     ;
     b() {
         super();
@@ -51,7 +50,6 @@ class Derived extends Base {
     set C(v) {
         super();
     }
-    static a;
     ;
     static b() {
         super();

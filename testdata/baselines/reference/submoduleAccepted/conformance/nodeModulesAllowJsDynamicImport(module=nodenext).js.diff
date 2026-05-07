@@ -1,0 +1,11 @@
+--- old.nodeModulesAllowJsDynamicImport(module=nodenext).js
++++ new.nodeModulesAllowJsDynamicImport(module=nodenext).js
+@@= skipped -38, +38 lines =@@
+
+
+ //// [index.d.ts]
+-export function main(): Promise<void>;
++export declare function main(): Promise<void>;
+ //// [index.d.ts]
+-export function main(): Promise<void>;
++export declare function main(): Promise<void>;

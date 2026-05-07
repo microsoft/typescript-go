@@ -11,7 +11,7 @@ var x=1,y=2,z=3;
 >y : Symbol(y, Decl(multivar.ts, 1, 8))
 >z : Symbol(z, Decl(multivar.ts, 1, 12))
 
-module m2 {
+namespace m2 {
 >m2 : Symbol(m2, Decl(multivar.ts, 1, 16))
 
     export var a, b2: number = 10, b;
@@ -34,7 +34,7 @@ module m2 {
 >C : Symbol(C, Decl(multivar.ts, 8, 11))
 
         constructor (public b) {
->b : Symbol(b, Decl(multivar.ts, 11, 21))
+>b : Symbol(C.b, Decl(multivar.ts, 11, 21))
         }
     }
 
@@ -42,7 +42,7 @@ module m2 {
 >C2 : Symbol(C2, Decl(multivar.ts, 13, 5))
 
         constructor (public b) {
->b : Symbol(b, Decl(multivar.ts, 16, 21))
+>b : Symbol(C2.b, Decl(multivar.ts, 16, 21))
         }
     }
     var m;

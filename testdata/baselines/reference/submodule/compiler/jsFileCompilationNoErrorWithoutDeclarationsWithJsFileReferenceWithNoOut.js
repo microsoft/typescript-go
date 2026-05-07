@@ -15,12 +15,11 @@ function bar() {
 }
 
 //// [a.js]
+"use strict";
 class c {
 }
-//// [c.js]
-function bar() {
-}
 //// [b.js]
+"use strict";
 /// <reference path="c.js"/>
 // no error on above reference path since not emitting declarations
 function foo() {

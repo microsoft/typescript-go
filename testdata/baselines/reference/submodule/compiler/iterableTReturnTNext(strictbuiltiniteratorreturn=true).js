@@ -35,6 +35,8 @@ class MyMap implements Map<string, number> {
     delete(key: string): boolean { return false; }
     forEach(callbackfn: (value: number, key: string, map: Map<string, number>) => void, thisArg?: any): void { }
     get(key: string): number | undefined { return undefined; }
+    getOrInsert(key: string, defaultValue: number): number { return Number.NaN; }
+    getOrInsertComputed(key: string, callback: (key: string) => number): number { return Number.NaN; }
     has(key: string): boolean { return false; }
     set(key: string, value: number): this { return this; }
     entries(): MapIterator<[string, number]> { throw new Error("Method not implemented."); }
@@ -49,6 +51,7 @@ class MyMap implements Map<string, number> {
 
 
 //// [iterableTReturnTNext.js]
+"use strict";
 // based on:
 // - https://github.com/apollographql/apollo-client/blob/8740f198805a99e01136617c4055d611b92cc231/src/react/hooks/__tests__/useMutation.test.tsx#L2328
 // - https://github.com/continuedev/continue/blob/046bca088a833f8b3620412ff64e4b6f41fbb959/extensions/vscode/src/autocomplete/lsp.ts#L60
@@ -66,6 +69,8 @@ class MyMap {
     delete(key) { return false; }
     forEach(callbackfn, thisArg) { }
     get(key) { return undefined; }
+    getOrInsert(key, defaultValue) { return Number.NaN; }
+    getOrInsertComputed(key, callback) { return Number.NaN; }
     has(key) { return false; }
     set(key, value) { return this; }
     entries() { throw new Error("Method not implemented."); }

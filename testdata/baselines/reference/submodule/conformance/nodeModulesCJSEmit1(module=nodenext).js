@@ -22,19 +22,14 @@ three.foo;
 
 //// [1.cjs]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-export = {};
 module.exports = {};
 //// [2.cjs]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-export var foo = 0;
 exports.foo = 0;
 //// [3.cjs]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("foo");
-export var foo = {};
 exports.foo = {};
 //// [4.cjs]
 "use strict";

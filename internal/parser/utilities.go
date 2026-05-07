@@ -25,7 +25,7 @@ func tokenIsIdentifierOrKeywordOrGreaterThan(token ast.Kind) bool {
 	return token == ast.KindGreaterThanToken || tokenIsIdentifierOrKeyword(token)
 }
 
-func getJSDocCommentRanges(f *ast.NodeFactory, commentRanges []ast.CommentRange, node *ast.Node, text string) []ast.CommentRange {
+func GetJSDocCommentRanges(f *ast.NodeFactory, commentRanges []ast.CommentRange, node *ast.Node, text string) []ast.CommentRange {
 	switch node.Kind {
 	case ast.KindParameter, ast.KindTypeParameter, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindParenthesizedExpression, ast.KindVariableDeclaration, ast.KindExportSpecifier:
 		for commentRange := range scanner.GetTrailingCommentRanges(f, text, node.Pos()) {
@@ -41,7 +41,9 @@ func getJSDocCommentRanges(f *ast.NodeFactory, commentRanges []ast.CommentRange,
 	}
 	// Keep if the comment starts with '/**' but not if it is '/**/'
 	return slices.DeleteFunc(commentRanges, func(comment ast.CommentRange) bool {
-		return comment.End() > node.End() || text[comment.Pos()+1] != '*' || text[comment.Pos()+2] != '*' || text[comment.Pos()+3] == '/'
+		commentStart := comment.Pos()
+		commentLen := comment.End() - commentStart
+		return comment.End() > node.End() || commentLen < 4 || text[commentStart+1] != '*' || text[commentStart+2] != '*' || text[commentStart+3] == '/'
 	})
 }
 

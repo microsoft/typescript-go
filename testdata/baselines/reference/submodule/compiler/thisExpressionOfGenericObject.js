@@ -10,8 +10,8 @@ class MyClass1<T> {
 
 
 //// [thisExpressionOfGenericObject.js]
+"use strict";
 class MyClass1 {
-    obj;
     constructor() {
         () => this;
     }

@@ -2,9 +2,9 @@
 
 //// [unusedPrivateVariableInClass5.ts]
 class greeter {
-    private x: string;
-    private y: string;
-    public  z: string;
+    private x!: string;
+    private y!: string;
+    public  z!: string;
 
     constructor() {
         this.x;
@@ -12,10 +12,8 @@ class greeter {
 }
 
 //// [unusedPrivateVariableInClass5.js]
+"use strict";
 class greeter {
-    x;
-    y;
-    z;
     constructor() {
         this.x;
     }

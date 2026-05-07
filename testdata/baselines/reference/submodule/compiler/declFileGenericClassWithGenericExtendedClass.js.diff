@@ -1,9 +1,0 @@
---- old.declFileGenericClassWithGenericExtendedClass.js
-+++ new.declFileGenericClassWithGenericExtendedClass.js
-@@= skipped -19, +19 lines =@@
- class Derived extends Base {
- }
- class Baz {
-+    derived;
- }
-

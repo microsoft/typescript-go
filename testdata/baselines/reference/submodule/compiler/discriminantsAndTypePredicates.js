@@ -34,6 +34,8 @@ function foo2(x: A | B): any {
 }
 
 //// [discriminantsAndTypePredicates.js]
+"use strict";
+// Repro from #10145
 function isA(x) { return x.type === 'A'; }
 function isB(x) { return x.type === 'B'; }
 function foo1(x) {

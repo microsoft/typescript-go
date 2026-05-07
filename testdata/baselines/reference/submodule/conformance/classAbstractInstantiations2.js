@@ -54,6 +54,7 @@ class H { // error -- not declared abstract
 }
 
 //// [classAbstractInstantiations2.js]
+"use strict";
 class A {
 }
 class B {
@@ -81,7 +82,6 @@ class F extends B {
     bar() { return 2; }
 }
 class G {
-    y;
 }
 class H {
 }

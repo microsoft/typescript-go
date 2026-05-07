@@ -16,10 +16,6 @@ abstract class A {
 }
 
 //// [classAbstractProperties.js]
+"use strict";
 class A {
-    x;
-    y;
-    z;
-    w;
-    m;
 }

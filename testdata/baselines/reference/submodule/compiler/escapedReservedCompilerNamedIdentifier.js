@@ -33,6 +33,7 @@ var o5 = {
 var b5 = o5["_proto__"];
 
 //// [escapedReservedCompilerNamedIdentifier.js]
+"use strict";
 // double underscores
 var __proto__ = 10;
 var o = {
@@ -66,30 +67,27 @@ var b5 = o5["_proto__"];
 
 
 //// [escapedReservedCompilerNamedIdentifier.d.ts]
-// double underscores
 declare var __proto__: number;
 declare var o: {
-    __proto__: number;
+    "__proto__": number;
 };
 declare var b: number;
 declare var o1: {
     __proto__: number;
 };
 declare var b1: number;
-// Triple underscores
 declare var ___proto__: number;
 declare var o2: {
-    ___proto__: number;
+    "___proto__": number;
 };
 declare var b2: number;
 declare var o3: {
     ___proto__: number;
 };
 declare var b3: number;
-// One underscore
 declare var _proto__: number;
 declare var o4: {
-    _proto__: number;
+    "_proto__": number;
 };
 declare var b4: number;
 declare var o5: {

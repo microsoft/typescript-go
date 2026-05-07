@@ -2,7 +2,7 @@
 
 //// [foo1.ts]
 import foo2 = require('./foo2');
-export module M1 {
+export namespace M1 {
 	export class C1 {
 		m1: foo2.M1.C1;
 		x: number;
@@ -16,7 +16,7 @@ export module M1 {
 
 //// [foo2.ts]
 import foo1 = require('./foo1');
-export module M1 {
+export namespace M1 {
 	export class C1 {
 		m1: foo1.M1.C1;
 		y: number
@@ -41,8 +41,6 @@ const foo2 = require("./foo2");
 var M1;
 (function (M1) {
     class C1 {
-        m1;
-        x;
         constructor() {
             this.m1 = new foo2.M1.C1();
             this.m1.y = 10; // OK
@@ -59,8 +57,6 @@ const foo1 = require("./foo1");
 var M1;
 (function (M1) {
     class C1 {
-        m1;
-        y;
         constructor() {
             this.m1 = new foo1.M1.C1();
             this.m1.y = 10; // Error

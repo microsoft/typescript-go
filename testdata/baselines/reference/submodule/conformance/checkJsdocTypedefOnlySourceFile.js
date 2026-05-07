@@ -16,7 +16,6 @@ const myString = 'str';
 
 //// [0.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-check
 var exports = {};
 /**

@@ -10,9 +10,5 @@ export class Logger {
 
 //// [parser509546_2.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = void 0;
-class Logger {
-    public;
+export class Logger {
 }
-exports.Logger = Logger;

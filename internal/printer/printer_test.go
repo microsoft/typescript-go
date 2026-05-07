@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
 
@@ -22,7 +23,7 @@ func TestEmit(t *testing.T) {
 		{title: "StringLiteral#1", input: `;"test"`, output: ";\n\"test\";"},
 		{title: "StringLiteral#2", input: `;'test'`, output: ";\n'test';"},
 		{title: "NumericLiteral#1", input: `0`, output: `0;`},
-		{title: "NumericLiteral#2", input: `10_000`, output: `10_000;`},
+		{title: "NumericLiteral#2", input: `10_000`, output: `10000;`},
 		{title: "BigIntLiteral#1", input: `0n`, output: `0n;`},
 		{title: "BigIntLiteral#2", input: `10_000n`, output: `10000n;`}, // TODO: Preserve numeric literal separators after Strada migration
 		{title: "BooleanLiteral#1", input: `true`, output: `true;`},
@@ -93,7 +94,7 @@ func TestEmit(t *testing.T) {
 		{title: "ArrowFunction#2", input: `()=>{}`, output: `() => { };`},
 		{title: "ArrowFunction#3", input: `(a)=>{}`, output: `(a) => { };`},
 		{title: "ArrowFunction#4", input: `<T>(a)=>{}`, output: `<T>(a) => { };`},
-		{title: "ArrowFunction#5", input: `async a=>{}`, output: `async a => { };`},
+		{title: "ArrowFunction#5", input: `async a=>{}`, output: `async (a) => { };`},
 		{title: "ArrowFunction#6", input: `async()=>{}`, output: `async () => { };`},
 		{title: "ArrowFunction#7", input: `async<T>()=>{}`, output: `async <T>() => { };`},
 		{title: "ArrowFunction#8", input: `():T=>{}`, output: `(): T => { };`},
@@ -161,6 +162,7 @@ func TestEmit(t *testing.T) {
 		{title: "ArrayLiteralExpression#3", input: `[a,]`, output: `[a,];`},
 		{title: "ArrayLiteralExpression#4", input: `[,a]`, output: `[, a];`},
 		{title: "ArrayLiteralExpression#5", input: `[...a]`, output: `[...a];`},
+		{title: "ArrayLiteralExpression#6", input: `const array = [/* comment */];`, output: `const array = [ /* comment */];`},
 		{title: "ObjectLiteralExpression#1", input: `({})`, output: `({});`},
 		{title: "ObjectLiteralExpression#2", input: `({a,})`, output: `({ a, });`},
 		{title: "ShorthandPropertyAssignment", input: `({a})`, output: `({ a });`},
@@ -553,6 +555,7 @@ func TestEmit(t *testing.T) {
 		{title: "JsxElement9", input: "<a><b></b></a>", output: "<a><b></b></a>;", jsx: true},
 		{title: "JsxElement10", input: "<a><b /></a>", output: "<a><b /></a>;", jsx: true},
 		{title: "JsxElement11", input: "<a><></></a>", output: "<a><></></a>;", jsx: true},
+		{title: "JsxElement12", input: "<a>\n    {/* missing */}\n    {\n        // foo\n    }\n</a>", output: "<a>\n    {/* missing */}\n    {\n    // foo\n    }\n</a>;", jsx: true},
 		{title: "JsxSelfClosingElement1", input: "<a />", output: "<a />;", jsx: true},
 		{title: "JsxSelfClosingElement2", input: "<this />", output: "<this />;", jsx: true},
 		{title: "JsxSelfClosingElement3", input: "<a:b />", output: "<a:b />;", jsx: true},
@@ -612,7 +615,7 @@ func TestParenthesizeDecorator(t *testing.T) {
 				factory.NewNodeList([]*ast.Node{}),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "@(a + b)\nclass C {\n}")
@@ -649,7 +652,7 @@ func TestParenthesizeComputedPropertyName(t *testing.T) {
 				}),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "class C {\n    [(a, b)];\n}")
@@ -679,7 +682,7 @@ func TestParenthesizeArrayLiteral(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "[(a, b)];")
@@ -707,7 +710,7 @@ func TestParenthesizePropertyAccess1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b).c;")
@@ -734,7 +737,7 @@ func TestParenthesizePropertyAccess2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a?.b).c;")
@@ -760,7 +763,7 @@ func TestParenthesizePropertyAccess3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(new a).b;")
@@ -788,7 +791,7 @@ func TestParenthesizeElementAccess1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)[c];")
@@ -815,7 +818,7 @@ func TestParenthesizeElementAccess2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a?.b)[c];")
@@ -841,7 +844,7 @@ func TestParenthesizeElementAccess3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(new a)[b];")
@@ -870,7 +873,7 @@ func TestParenthesizeCall1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)();")
@@ -898,7 +901,7 @@ func TestParenthesizeCall2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a?.b)();")
@@ -925,7 +928,7 @@ func TestParenthesizeCall3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(new C)();")
@@ -955,7 +958,7 @@ func TestParenthesizeCall4(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a((b, c));")
@@ -982,7 +985,7 @@ func TestParenthesizeNew1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "new (a, b)();")
@@ -1009,7 +1012,7 @@ func TestParenthesizeNew2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "new (C());")
@@ -1037,7 +1040,7 @@ func TestParenthesizeNew3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "new C((a, b));")
@@ -1061,12 +1064,12 @@ func TestParenthesizeTaggedTemplate1(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral(""),
+					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
 					ast.NodeFlagsNone,
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b) ``;")
@@ -1089,12 +1092,12 @@ func TestParenthesizeTaggedTemplate2(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNoSubstitutionTemplateLiteral(""),
+					factory.NewNoSubstitutionTemplateLiteral("", ast.TokenFlagsNone),
 					ast.NodeFlagsNone,
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a?.b) ``;")
@@ -1123,7 +1126,7 @@ func TestParenthesizeTypeAssertion1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "<T>(a + b);")
@@ -1141,6 +1144,7 @@ func TestParenthesizeArrowFunction1(t *testing.T) {
 					nil, /*typeParameters*/
 					factory.NewNodeList([]*ast.Node{}),
 					nil, /*returnType*/
+					nil, /*fullSignature*/
 					factory.NewToken(ast.KindEqualsGreaterThanToken),
 					// will be parenthesized on emit:
 					factory.NewObjectLiteralExpression(
@@ -1150,7 +1154,7 @@ func TestParenthesizeArrowFunction1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "() => ({});")
@@ -1168,6 +1172,7 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 					nil, /*typeParameters*/
 					factory.NewNodeList([]*ast.Node{}),
 					nil, /*returnType*/
+					nil, /*fullSignature*/
 					factory.NewToken(ast.KindEqualsGreaterThanToken),
 					// will be parenthesized on emit:
 					factory.NewPropertyAccessExpression(
@@ -1182,7 +1187,7 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "() => ({}.a);")
@@ -1207,7 +1212,7 @@ func TestParenthesizeDelete(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "delete (a + b);")
@@ -1232,7 +1237,7 @@ func TestParenthesizeVoid(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "void (a + b);")
@@ -1257,7 +1262,7 @@ func TestParenthesizeTypeOf(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "typeof (a + b);")
@@ -1282,7 +1287,7 @@ func TestParenthesizeAwait(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "await (a + b);")
@@ -1347,6 +1352,7 @@ func makeSide(label string, kind ast.Kind, factory *ast.NodeFactory) *ast.Node {
 			nil, /*typeParameters*/
 			factory.NewNodeList([]*ast.Node{}),
 			nil, /*returnType*/
+			nil, /*fullSignature*/
 			factory.NewToken(ast.KindEqualsGreaterThanToken),
 			factory.NewBlock(factory.NewNodeList([]*ast.Node{}), false /*multiLine*/),
 		)
@@ -1405,7 +1411,7 @@ func TestParenthesizeBinary(t *testing.T) {
 						),
 					),
 				},
-			))
+			), factory.NewToken(ast.KindEndOfFile))
 
 			parsetestutil.MarkSyntheticRecursive(file)
 			emittestutil.CheckEmit(t, nil, file.AsSourceFile(), rec.output+";")
@@ -1436,7 +1442,7 @@ func TestParenthesizeConditional1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b) ? c : d;")
@@ -1465,7 +1471,7 @@ func TestParenthesizeConditional2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a = b) ? c : d;")
@@ -1485,6 +1491,7 @@ func TestParenthesizeConditional3(t *testing.T) {
 						nil, /*typeParameters*/
 						factory.NewNodeList([]*ast.Node{}),
 						nil, /*returnType*/
+						nil, /*fullSignature*/
 						factory.NewToken(ast.KindEqualsGreaterThanToken),
 						factory.NewBlock(
 							factory.NewNodeList([]*ast.Node{}),
@@ -1498,7 +1505,7 @@ func TestParenthesizeConditional3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(() => { }) ? a : b;")
@@ -1521,7 +1528,7 @@ func TestParenthesizeConditional4(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(yield) ? a : b;")
@@ -1550,7 +1557,7 @@ func TestParenthesizeConditional5(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a ? (b, c) : d;")
@@ -1579,7 +1586,7 @@ func TestParenthesizeConditional6(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a ? b : (c, d);")
@@ -1605,7 +1612,7 @@ func TestParenthesizeYield1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "yield (a, b);")
@@ -1641,7 +1648,7 @@ func TestParenthesizeSpreadElement1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "[...(a, b)];")
@@ -1676,7 +1683,7 @@ func TestParenthesizeSpreadElement2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a(...(b, c));")
@@ -1709,7 +1716,7 @@ func TestParenthesizeSpreadElement3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "new a(...(b, c));")
@@ -1742,7 +1749,7 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)<c>;")
@@ -1771,7 +1778,7 @@ func TestParenthesizeAsExpression(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b) as c;")
@@ -1800,7 +1807,7 @@ func TestParenthesizeSatisfiesExpression(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b) satisfies c;")
@@ -1826,7 +1833,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(a, b)!;")
@@ -1847,7 +1854,7 @@ func TestParenthesizeExpressionStatement1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "({});")
@@ -1869,6 +1876,7 @@ func TestParenthesizeExpressionStatement2(t *testing.T) {
 						[]*ast.Node{},
 					),
 					nil, /*returnType*/
+					nil, /*fullSignature*/
 					factory.NewBlock(
 						factory.NewNodeList([]*ast.Node{}),
 						false, /*multiLine*/
@@ -1876,7 +1884,7 @@ func TestParenthesizeExpressionStatement2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(function () { });")
@@ -1900,10 +1908,10 @@ func TestParenthesizeExpressionStatement3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "(class {\n});")
+	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "class {\n};")
 }
 
 func TestParenthesizeExpressionDefault1(t *testing.T) {
@@ -1928,7 +1936,7 @@ func TestParenthesizeExpressionDefault1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "export default (class {\n});")
@@ -1954,6 +1962,7 @@ func TestParenthesizeExpressionDefault2(t *testing.T) {
 						[]*ast.Node{},
 					),
 					nil, /*returnType*/
+					nil, /*fullSignature*/
 					factory.NewBlock(
 						factory.NewNodeList(
 							[]*ast.Node{},
@@ -1963,7 +1972,7 @@ func TestParenthesizeExpressionDefault2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "export default (function () { });")
@@ -1989,7 +1998,7 @@ func TestParenthesizeExpressionDefault3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "export default (a, b);")
@@ -2018,7 +2027,7 @@ func TestParenthesizeArrayType(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = (a | b)[];")
@@ -2053,7 +2062,7 @@ func TestParenthesizeOptionalType(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = [\n    (a | b)?\n];")
@@ -2086,7 +2095,7 @@ func TestParenthesizeUnionType1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = a | (() => b);")
@@ -2111,6 +2120,7 @@ func TestParenthesizeUnionType2(t *testing.T) {
 									nil,
 									factory.NewIdentifier("a"),
 									factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
+									nil, /*expression*/
 									nil, /*defaultType*/
 								),
 							),
@@ -2120,7 +2130,7 @@ func TestParenthesizeUnionType2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = (infer a extends b) | c;")
@@ -2154,7 +2164,7 @@ func TestParenthesizeIntersectionType(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = a & (b | c);")
@@ -2184,7 +2194,7 @@ func TestParenthesizeReadonlyTypeOperator1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = readonly (a | b);")
@@ -2210,7 +2220,7 @@ func TestParenthesizeReadonlyTypeOperator2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = readonly (keyof a);")
@@ -2240,7 +2250,7 @@ func TestParenthesizeKeyofTypeOperator(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = keyof (a | b);")
@@ -2270,7 +2280,7 @@ func TestParenthesizeIndexedAccessType(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = (a | b)[c];")
@@ -2301,7 +2311,7 @@ func TestParenthesizeConditionalType1(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = (() => a) extends b ? c : d;")
@@ -2331,7 +2341,7 @@ func TestParenthesizeConditionalType2(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = a extends (b extends c ? d : e) ? f : g;")
@@ -2360,6 +2370,7 @@ func TestParenthesizeConditionalType3(t *testing.T) {
 								nil,
 								factory.NewIdentifier("b"),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
+								nil, /*expression*/
 								nil, /*defaultType*/
 							),
 						),
@@ -2369,7 +2380,7 @@ func TestParenthesizeConditionalType3(t *testing.T) {
 				),
 			),
 		},
-	))
+	), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = a extends () => (infer b extends c) ? d : e;")
@@ -2400,6 +2411,7 @@ func TestParenthesizeConditionalType4(t *testing.T) {
 										nil,
 										factory.NewIdentifier("b"),
 										factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
+										nil, /*expression*/
 										nil, /*defaultType*/
 									),
 								),
@@ -2412,7 +2424,7 @@ func TestParenthesizeConditionalType4(t *testing.T) {
 				factory.NewTypeReferenceNode(factory.NewIdentifier("f"), nil /*typeArguments*/),
 			),
 		),
-	}))
+	}), factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "type _ = a extends () => (infer b extends c) | d ? e : f;")
@@ -2423,10 +2435,10 @@ func TestNameGeneration(t *testing.T) {
 	ec := printer.NewEmitContext()
 	file := ec.Factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.ts", Path: "/file.ts"}, "", ec.Factory.NewNodeList([]*ast.Node{
 		ec.Factory.NewVariableStatement(nil, ec.Factory.NewVariableDeclarationList(
-			ast.NodeFlagsNone,
 			ec.Factory.NewNodeList([]*ast.Node{
 				ec.Factory.NewVariableDeclaration(ec.Factory.NewTempVariable(), nil, nil, nil),
 			}),
+			ast.NodeFlagsNone,
 		)),
 		ec.Factory.NewFunctionDeclaration(
 			nil,
@@ -2435,16 +2447,17 @@ func TestNameGeneration(t *testing.T) {
 			nil,
 			ec.Factory.NewNodeList([]*ast.Node{}),
 			nil,
+			nil,
 			ec.Factory.NewBlock(ec.Factory.NewNodeList([]*ast.Node{
 				ec.Factory.NewVariableStatement(nil, ec.Factory.NewVariableDeclarationList(
-					ast.NodeFlagsNone,
 					ec.Factory.NewNodeList([]*ast.Node{
 						ec.Factory.NewVariableDeclaration(ec.Factory.NewTempVariable(), nil, nil, nil),
 					}),
+					ast.NodeFlagsNone,
 				)),
 			}), true),
 		),
-	}))
+	}), ec.Factory.NewToken(ast.KindEndOfFile))
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, ec, file.AsSourceFile(), "var _a;\nfunction f() {\n    var _a;\n}")
@@ -2460,7 +2473,7 @@ func TestNoTrailingCommaAfterTransform(t *testing.T) {
 	visitor = emitContext.NewNodeVisitor(func(node *ast.Node) *ast.Node {
 		switch node.Kind {
 		case ast.KindNonNullExpression:
-			node = node.AsNonNullExpression().Expression
+			node = node.Expression()
 		default:
 			node = node.VisitEachChild(visitor)
 		}
@@ -2481,7 +2494,7 @@ func TestTrailingCommaAfterTransform(t *testing.T) {
 	visitor = emitContext.NewNodeVisitor(func(node *ast.Node) *ast.Node {
 		switch node.Kind {
 		case ast.KindNonNullExpression:
-			node = node.AsNonNullExpression().Expression
+			node = node.Expression()
 		default:
 			node = node.VisitEachChild(visitor)
 		}
@@ -2503,9 +2516,77 @@ func TestPartiallyEmittedExpression(t *testing.T) {
     .expression;`, false /*jsx*/)
 
 	emitContext := printer.NewEmitContext()
-	file = tstransforms.NewTypeEraserTransformer(emitContext, compilerOptions).TransformSourceFile(file)
+	file = tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: emitContext}).TransformSourceFile(file)
 	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), `return container.parent
     .left
     .expression
     .expression;`)
+}
+
+func TestParenthesizeBinaryExpressionMixingNullishCoalescing(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		title   string
+		innerOp ast.Kind
+		outerOp ast.Kind
+		side    string
+		output  string
+	}{
+		// inner ?? on left side of || or &&
+		{title: "BarBarWithLeftQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindBarBarToken, side: "left", output: "(a ?? b) || c;"},
+		{title: "AmpersandAmpersandWithLeftQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindAmpersandAmpersandToken, side: "left", output: "(a ?? b) && c;"},
+		// inner ?? on right side of || or &&
+		{title: "BarBarWithRightQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindBarBarToken, side: "right", output: "a || (b ?? c);"},
+		{title: "AmpersandAmpersandWithRightQuestionQuestion", innerOp: ast.KindQuestionQuestionToken, outerOp: ast.KindAmpersandAmpersandToken, side: "right", output: "a && (b ?? c);"},
+		// inner || or && on left side of ??
+		{title: "QuestionQuestionWithLeftBarBar", innerOp: ast.KindBarBarToken, outerOp: ast.KindQuestionQuestionToken, side: "left", output: "(a || b) ?? c;"},
+		{title: "QuestionQuestionWithLeftAmpersandAmpersand", innerOp: ast.KindAmpersandAmpersandToken, outerOp: ast.KindQuestionQuestionToken, side: "left", output: "(a && b) ?? c;"},
+		// inner || or && on right side of ??
+		{title: "QuestionQuestionWithRightBarBar", innerOp: ast.KindBarBarToken, outerOp: ast.KindQuestionQuestionToken, side: "right", output: "a ?? (b || c);"},
+		{title: "QuestionQuestionWithRightAmpersandAmpersand", innerOp: ast.KindAmpersandAmpersandToken, outerOp: ast.KindQuestionQuestionToken, side: "right", output: "a ?? (b && c);"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			t.Parallel()
+			var factory ast.NodeFactory
+			innerExpr := factory.NewBinaryExpression(
+				nil, /*modifiers*/
+				factory.NewIdentifier("a"),
+				nil, /*typeNode*/
+				factory.NewToken(tt.innerOp),
+				factory.NewIdentifier("b"),
+			)
+			var outerExpr *ast.Node
+			if tt.side == "left" {
+				outerExpr = factory.NewBinaryExpression(
+					nil,       /*modifiers*/
+					innerExpr, /*left: (a innerOp b)*/
+					nil,       /*typeNode*/
+					factory.NewToken(tt.outerOp),
+					factory.NewIdentifier("c"),
+				)
+			} else {
+				outerExpr = factory.NewBinaryExpression(
+					nil, /*modifiers*/
+					factory.NewIdentifier("a"),
+					nil, /*typeNode*/
+					factory.NewToken(tt.outerOp),
+					innerExpr, /*right: (b innerOp c)*/
+				)
+				// adjust identifiers for right side
+				innerExpr.AsBinaryExpression().Left = factory.NewIdentifier("b")
+				innerExpr.AsBinaryExpression().Right = factory.NewIdentifier("c")
+			}
+			file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.ts", Path: "/file.ts"}, "", factory.NewNodeList(
+				[]*ast.Node{
+					factory.NewExpressionStatement(outerExpr),
+				},
+			), factory.NewToken(ast.KindEndOfFile))
+
+			parsetestutil.MarkSyntheticRecursive(file)
+			emittestutil.CheckEmit(t, nil, file.AsSourceFile(), tt.output)
+		})
+	}
 }

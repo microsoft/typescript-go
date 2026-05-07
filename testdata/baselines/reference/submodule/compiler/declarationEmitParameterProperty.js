@@ -12,7 +12,6 @@ export class Foo {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Foo = void 0;
 class Foo {
-    bar;
     constructor(bar) {
         this.bar = bar;
     }
@@ -22,6 +21,6 @@ exports.Foo = Foo;
 
 //// [declarationEmitParameterProperty.d.ts]
 export declare class Foo {
-    bar?: string;
-    constructor(bar?: string);
+    bar?: string | undefined;
+    constructor(bar?: string | undefined);
 }

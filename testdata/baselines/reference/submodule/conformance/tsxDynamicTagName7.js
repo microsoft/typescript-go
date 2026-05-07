@@ -19,15 +19,14 @@ export class Text extends React.Component<{}, {}> {
 }
 
 //// [app.jsx]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Text = void 0;
-const React = require("react");
-class Text extends React.Component {
-    _tagName = 'div';
+import * as React from 'react';
+export class Text extends React.Component {
+    constructor() {
+        super(...arguments);
+        this._tagName = 'div';
+    }
     render() {
         return (<this /> // this should be an error
         );
     }
 }
-exports.Text = Text;

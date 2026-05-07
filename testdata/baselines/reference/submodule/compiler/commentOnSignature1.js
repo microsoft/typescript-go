@@ -38,6 +38,11 @@ function foo2(a: any): void {
 }
 
 //// [a.js]
+"use strict";
+/*!=================
+    Keep this pinned
+   =================
+*/
 function foo(a) {
 }
 class c {
@@ -47,6 +52,7 @@ class c {
     }
 }
 //// [b.js]
+"use strict";
 ///<reference path='a.ts'/>
 function foo2(a) {
 }

@@ -91,10 +91,19 @@ function destructure<T extends A>(x: T) {
 
 
 //// [destructuringUnspreadableIntoRest.js]
+"use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 class A {
-    publicProp;
-    privateProp;
-    protectedProp;
     constructor(publicProp, privateProp, protectedProp) {
         this.publicProp = publicProp;
         this.privateProp = privateProp;
@@ -105,10 +114,10 @@ class A {
     }
     set setter(_v) { }
     method() {
-        const { ...rest1 } = this;
-        const { ...rest2 } = this;
-        const { publicProp: _1, ...rest3 } = this;
-        const { publicProp: _2, ...rest4 } = this;
+        const rest1 = __rest(this, []);
+        const rest2 = __rest(this, []);
+        const _a = this, { publicProp: _1 } = _a, rest3 = __rest(_a, ["publicProp"]);
+        const _b = this, { publicProp: _2 } = _b, rest4 = __rest(_b, ["publicProp"]);
         rest1.publicProp;
         rest2.publicProp;
         rest3.publicProp;
@@ -136,10 +145,10 @@ class A {
     }
 }
 function destructure(x) {
-    const { ...rest1 } = x;
-    const { ...rest2 } = x;
-    const { publicProp: _1, ...rest3 } = x;
-    const { publicProp: _2, ...rest4 } = x;
+    const rest1 = __rest(x, []);
+    const rest2 = __rest(x, []);
+    const { publicProp: _1 } = x, rest3 = __rest(x, ["publicProp"]);
+    const _a = x, { publicProp: _2 } = _a, rest4 = __rest(_a, ["publicProp"]);
     rest1.publicProp;
     rest2.publicProp;
     rest3.publicProp;

@@ -3,31 +3,31 @@
 === a.js ===
 /** @type {function(string): void} */
 const f = (value) => {
->f : function
+>f : Function
 >(value) => {} : (value: any) => void
 >value : any
 
 };
 /** @type {(s: string) => void} */
 function g(s) {
->g : (s: any) => void
->s : any
+>g : (s: string) => void
+>s : string
 }
 /** @type {{(s: string): void}} */
 function h(s) {
->h : (s: any) => void
->s : any
+>h : (s: string) => void
+>s : string
 }
 
 f() // should error
 >f() : any
->f : function
+>f : Function
 
 g() // should error
 >g() : void
->g : (s: any) => void
+>g : (s: string) => void
 
 h()
 >h() : void
->h : (s: any) => void
+>h : (s: string) => void
 

@@ -21,7 +21,9 @@ declare module "someMod" {
 export {};
 
 
+//// [file1.js]
+"use strict";
 //// [file2.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="./file1" />
+Object.defineProperty(exports, "__esModule", { value: true });

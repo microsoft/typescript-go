@@ -8,9 +8,8 @@ function test(p: any) {
 }
 
 //// [destructuringTempOccursAfterPrologue.js]
+"use strict";
 function test(p) {
-    'use strict';
-    'use strong';
     'use strict';
     'use strong';
     p = { prop: p } = p;

@@ -18,5 +18,5 @@ export type UseQueryOptions<T> = Expand__<T, 4, 2>
 
 
 //// [recursiveConditionalCrash2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+// Simplified #43529
+export {};

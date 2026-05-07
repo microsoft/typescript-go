@@ -124,6 +124,7 @@ interface ReferencedInSignartureInterface {
 }
 
 //// [declarationEmitBindingPatternsUnused.js]
+"use strict";
 // Resons we can't remove aliases that are not used in the function signature: 
 // 1.Causes duplicate identifier if we remove alias
 function duplicateIndetifiers({ name: alias, name: alias2 }) { }
@@ -209,13 +210,10 @@ let referencedInSignartureParamTypeCtorType;
 type Named = {
     name: string;
 };
-// Resons we can't remove aliases that are not used in the function signature: 
-// 1.Causes duplicate identifier if we remove alias
 declare function duplicateIndetifiers({ name: alias, name: alias2 }: Named): void;
 declare function duplicateIndetifiers2(name: string, { name: alias }: Named): void;
 declare function duplicateIndetifiers3({ name: alias }: Named, { name: alias2 }: Named): void;
 declare let value: string;
-// 2.Can change in meaning for typeof value if we remove alias
 declare function shadowedVariable({ value: alias }: {
     value: string;
 }): typeof value;
@@ -230,9 +228,9 @@ declare function referencedInSignartureKeyword({ function: alias }: {
     function: string;
 }): typeof alias;
 declare function referencedInInferredType({ name: alias }: Named): {
-    name: string;
+    name: typeof alias;
 };
-declare function referencedInNestedFunction({ name: alias }: Named): (p: string) => void;
+declare function referencedInNestedFunction({ name: alias }: Named): (p: typeof alias) => void;
 declare function referencedNestedAlias({ p: { name: alias } }: {
     p: Named;
 }): typeof alias;
@@ -264,15 +262,15 @@ declare let referencedInSignartureReturnTypeCtorType: new ({ name: alias }: Name
 declare let referencedInSignartureParamTypeCtorType: new ({ name: alias }: Named, p: typeof alias) => void;
 interface NotReferencedInterface {
     ({ name: alias }: Named): void;
-    new ({ name: alias }: Named);
+    new ({ name: alias }: Named): void;
     set x({ name: alias }: Named);
     m({ name: alias }: Named): any;
 }
 interface ReferencedInSignartureInterface {
     ({ name: alias }: Named, p: typeof alias): void;
     ({ name: alias }: Named): typeof alias;
-    new ({ name: alias }: Named, p: typeof alias);
-    new ({ name: alias }: Named);
+    new ({ name: alias }: Named, p: typeof alias): void;
+    new ({ name: alias }: Named): typeof alias;
     set x({ name: alias }: Named & {
         o: typeof alias;
     });

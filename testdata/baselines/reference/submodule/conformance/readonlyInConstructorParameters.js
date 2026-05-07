@@ -16,21 +16,19 @@ class F {
 new F(1).x;
 
 //// [readonlyInConstructorParameters.js]
+"use strict";
 class C {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 new C(1).x = 2;
 class E {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class F {
-    x;
     constructor(x) {
         this.x = x;
     }

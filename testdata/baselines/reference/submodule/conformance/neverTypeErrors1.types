@@ -73,7 +73,7 @@ function f5() {
 
     let x: never[] = [];  // Ok
 >x : never[]
->[] : undefined[]
+>[] : never[]
 }
 
 // Repro from #46032
@@ -92,15 +92,15 @@ type Union = A & B;
 >Union : never
 
 function func(): { value: Union[] } {
->func : () => { value: never[]; }
+>func : () => { value: Union[]; }
 >value : never[]
 
     return {
->{        value: [],    } : { value: undefined[]; }
+>{        value: [],    } : { value: never[]; }
 
         value: [],
->value : undefined[]
->[] : undefined[]
+>value : never[]
+>[] : never[]
 
     };
 }

@@ -15,12 +15,10 @@ class C {
 }
 
 //// [numericIndexerConstraint3.js]
+"use strict";
 class A {
-    foo;
 }
 class B extends A {
-    bar;
 }
 class C {
-    0;
 }

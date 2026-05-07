@@ -16,9 +16,9 @@ var q: B;
 q.s;
 
 //// [declarationEmitExpressionInExtends.js]
+"use strict";
 var x;
 class Q {
-    s;
 }
 class B extends x {
 }
@@ -28,7 +28,7 @@ q.s;
 
 //// [declarationEmitExpressionInExtends.d.ts]
 declare var x: {
-    new <T>(s: any);
+    new <T>(s: any): Q;
 };
 declare class Q {
     s: string;

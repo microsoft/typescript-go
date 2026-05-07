@@ -54,9 +54,9 @@ module.exports.bothBefore = 'string'
 >module.exports.bothBefore = 'string' : "string"
 >module.exports.bothBefore : number
 >module.exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->module : { A: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
+>module : { exports: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
 >exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->bothBefore : "string"
+>bothBefore : number
 >'string' : "string"
 
 A.justExport = 4
@@ -83,7 +83,7 @@ A.bothAfter = 3
 module.exports = A
 >module.exports = A : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
 >module.exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->module : { A: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
+>module : { exports: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
 >exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
 >A : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
 
@@ -101,17 +101,17 @@ module.exports.bothAfter = 'string'
 >module.exports.bothAfter = 'string' : "string"
 >module.exports.bothAfter : number
 >module.exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->module : { A: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
+>module : { exports: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
 >exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->bothAfter : "string"
+>bothAfter : number
 >'string' : "string"
 
 module.exports.justProperty = 'string'
 >module.exports.justProperty = 'string' : "string"
 >module.exports.justProperty : any
 >module.exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->module : { A: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
+>module : { exports: { (): void; justExport: number; bothBefore: number; bothAfter: number; }; }
 >exports : { (): void; justExport: number; bothBefore: number; bothAfter: number; }
->justProperty : "string"
+>justProperty : any
 >'string' : "string"
 

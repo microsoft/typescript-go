@@ -42,6 +42,8 @@ f({
 
 
 //// [discriminantPropertyInference.js]
+"use strict";
+// Repro from #41759
 // simple inference
 f({
     disc: true,

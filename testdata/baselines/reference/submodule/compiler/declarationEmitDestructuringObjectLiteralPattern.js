@@ -19,11 +19,12 @@ function f15() {
 }
 var { a4, b4, c4 } = f15();
 
-module m {
+namespace m {
     export var { a4, b4, c4 } = f15();
 }
 
 //// [declarationEmitDestructuringObjectLiteralPattern.js]
+"use strict";
 var {} = { x: 5, y: "hello" };
 var { x4 } = { x4: 5, y4: "hello" };
 var { y5 } = { x5: 5, y5: "hello" };
@@ -41,15 +42,25 @@ function f15() {
 var { a4, b4, c4 } = f15();
 var m;
 (function (m) {
-    ({ a4: m.a4, b4: m.b4, c4: m.c4 } = f15());
+    var _a;
+    _a = f15(), m.a4 = _a.a4, m.b4 = _a.b4, m.c4 = _a.c4;
 })(m || (m = {}));
 
 
 //// [declarationEmitDestructuringObjectLiteralPattern.d.ts]
+declare var x4: number;
+declare var y5: string;
+declare var x6: number, y6: string;
+declare var a1: number;
+declare var b1: string;
+declare var a2: number, b2: string;
+declare var x11: number, y11: string, z11: boolean;
 declare function f15(): {
     a4: string;
     b4: number;
     c4: boolean;
 };
+declare var a4: string, b4: number, c4: boolean;
 declare namespace m {
+    var a4: string, b4: number, c4: boolean;
 }

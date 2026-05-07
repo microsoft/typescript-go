@@ -46,6 +46,7 @@ class Form<T> {
 
 
 //// [mappedTypesAndObjects.js]
+"use strict";
 function f1(x, y) {
     let obj;
     obj = x;
@@ -62,7 +63,9 @@ function f3(x) {
 ;
 // Repro from #13747
 class Form {
-    values = {};
+    constructor() {
+        this.values = {};
+    }
 }
 
 
@@ -70,7 +73,6 @@ class Form {
 declare function f1<T>(x: Partial<T>, y: Readonly<T>): void;
 declare function f2<T>(x: Partial<T>, y: Readonly<T>): void;
 declare function f3<T>(x: Partial<T>): void;
-// Repro from #12900
 interface Base {
     foo: {
         [key: string]: any;
@@ -86,12 +88,11 @@ interface Something {
     value: string;
 }
 interface E2 extends Base {
-    foo: Partial<Something>; // or other mapped type
+    foo: Partial<Something>;
 }
 interface E3<T> extends Base {
-    foo: Partial<T>; // or other mapped type
+    foo: Partial<T>;
 }
-// Repro from #13747
 declare class Form<T> {
     private values;
 }

@@ -1,0 +1,10 @@
+--- old.goToDefinitionJsDocImportTag1.baseline.jsonc
++++ new.goToDefinitionJsDocImportTag1.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === goToDefinition ===
+ // === /b.ts ===
+-// [||]export interface A { }
++// [|export interface A { }|]
+
+ // === /a.js ===
+ // /**

@@ -11,8 +11,8 @@ class TestProgressBar {
 
 
 //// [functionWithSameNameAsField.js]
+"use strict";
 class TestProgressBar {
-    total;
     total(total) {
         this.total = total;
         return this;

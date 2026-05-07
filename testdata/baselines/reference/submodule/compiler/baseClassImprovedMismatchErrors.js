@@ -21,20 +21,18 @@ class DerivedInterface implements Base {
 }
 
 //// [baseClassImprovedMismatchErrors.js]
+"use strict";
 class Base {
-    n;
     fn() {
         return 10;
     }
 }
 class Derived extends Base {
-    n;
     fn() {
         return 10;
     }
 }
 class DerivedInterface {
-    n;
     fn() {
         return 10;
     }

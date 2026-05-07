@@ -1,42 +1,41 @@
 //// [tests/cases/compiler/declFileWithExtendsClauseThatHasItsContainerNameConflict.ts] ////
 
 //// [declFileWithExtendsClauseThatHasItsContainerNameConflict.ts]
-declare module A.B.C {
+declare namespace A.B.C {
     class B {
     }
 }
 
-module A.B {
+namespace A.B {
     export class EventManager {
         id: number;
 
     }
 }
 
-module A.B.C {
+namespace A.B.C {
     export class ContextMenu extends EventManager {
         name: string;
     }
 }
 
 //// [declFileWithExtendsClauseThatHasItsContainerNameConflict.js]
+"use strict";
 var A;
 (function (A) {
-    let B;
+    var B;
     (function (B) {
         class EventManager {
-            id;
         }
         B.EventManager = EventManager;
     })(B = A.B || (A.B = {}));
 })(A || (A = {}));
 (function (A) {
-    let B;
+    var B;
     (function (B) {
-        let C;
+        var C;
         (function (C) {
-            class ContextMenu extends EventManager {
-                name;
+            class ContextMenu extends B.EventManager {
             }
             C.ContextMenu = ContextMenu;
         })(C = B.C || (B.C = {}));

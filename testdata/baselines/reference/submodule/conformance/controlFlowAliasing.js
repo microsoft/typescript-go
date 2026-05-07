@@ -304,6 +304,7 @@ class A53267 {
 }
 
 //// [controlFlowAliasing.js]
+"use strict";
 // Narrowing by aliased conditional expressions
 function f10(x) {
     const isString = typeof x === "string";
@@ -496,7 +497,6 @@ function f33(obj) {
     }
 }
 class C10 {
-    x;
     constructor(x) {
         this.x = x;
         const thisX_isString = typeof this.x === 'string';
@@ -509,7 +509,6 @@ class C10 {
     }
 }
 class C11 {
-    x;
     constructor(x) {
         this.x = x;
         const thisX_isString = typeof this.x === 'string';
@@ -563,7 +562,6 @@ class Utils {
     }
 }
 class A53267 {
-    testNumber;
     foo() {
         const isNumber = Utils.isDefined(this.testNumber);
         if (isNumber) {
@@ -574,7 +572,6 @@ class A53267 {
 
 
 //// [controlFlowAliasing.d.ts]
-// Narrowing by aliased conditional expressions
 declare function f10(x: string | number): void;
 declare function f11(x: unknown): void;
 declare function f12(x: string | number | boolean): void;
@@ -655,7 +652,6 @@ declare function f28(obj?: {
     kind: 'bar';
     bar: number;
 }): void;
-// Narrowing by aliased discriminant property access
 declare function f30(obj: {
     kind: 'foo';
     foo: string;
@@ -692,7 +688,6 @@ declare class C11 {
     readonly x: string | number;
     constructor(x: string | number);
 }
-// Mixing of aliased discriminants and conditionals
 declare function f40(obj: {
     kind: 'foo';
     foo?: string;
@@ -700,7 +695,6 @@ declare function f40(obj: {
     kind: 'bar';
     bar?: number;
 }): void;
-// Unsupported narrowing of destructured payload by destructured discriminant
 type Data = {
     kind: 'str';
     payload: string;
@@ -710,12 +704,10 @@ type Data = {
 };
 declare function gg2(obj: Data): void;
 declare function foo({ kind, payload }: Data): void;
-// Repro from #45830
 declare const obj: {
     fn: () => boolean;
 };
 declare const a: boolean;
-// repro from https://github.com/microsoft/TypeScript/issues/53267
 declare class Utils {
     static isDefined<T>(value: T): value is NonNullable<T>;
 }

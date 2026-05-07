@@ -51,6 +51,7 @@ interface C6 { }
 declare class C7 { }
 
 //// [file1.js]
+"use strict";
 class C3 {
 }
 class C4 {
@@ -62,7 +63,9 @@ c5.x2;
 c5.x3;
 c5.x4;
 //// [file2.js]
+"use strict";
 //// [file3.js]
+"use strict";
 
 
 //// [file1.d.ts]
@@ -94,7 +97,6 @@ interface C5 {
 interface C5 {
     x4: number;
 }
-// checks if properties actually were merged
 declare var c5: C5;
 //// [file2.d.ts]
 declare class C6 {

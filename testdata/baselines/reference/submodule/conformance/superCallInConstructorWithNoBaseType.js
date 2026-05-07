@@ -14,15 +14,15 @@ class D<T> {
 }
 
 //// [superCallInConstructorWithNoBaseType.js]
+"use strict";
 class C {
     constructor() {
         super(); // error
     }
 }
 class D {
-    x;
     constructor(x) {
-        this.x = x;
         super(); // error
+        this.x = x;
     }
 }

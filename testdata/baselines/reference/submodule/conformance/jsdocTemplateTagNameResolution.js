@@ -14,7 +14,6 @@ const y = "a";
 
 //// [file.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @template T
  * @template {keyof T} K
@@ -26,4 +25,14 @@ const y = "a";
 
 
 //// [file.d.ts]
-export type Foo<T, K extends keyof T> = T[K];
+/**
+ * @template T
+ * @template {keyof T} K
+ * @typedef {T[K]} Foo
+ */
+type Foo<T, K extends keyof T> = T[K];
+declare const x: {
+    a: number;
+};
+/** @type {Foo<typeof x, "a">} */
+declare const y: Foo<typeof x, "a">;

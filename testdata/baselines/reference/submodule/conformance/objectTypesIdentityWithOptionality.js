@@ -59,15 +59,13 @@ function foo14(x: typeof b); // ok
 function foo14(x: any) { }
 
 //// [objectTypesIdentityWithOptionality.js]
+"use strict";
 // object types are identical structurally
 class A {
-    foo;
 }
 class B {
-    foo;
 }
 class C {
-    foo;
 }
 var a;
 var b = { foo: '' };

@@ -10,21 +10,41 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
 
-type fileLoader struct {
-	opts                ProgramOptions
-	resolver            *module.Resolver
-	defaultLibraryPath  string
-	comparePathsOptions tspath.ComparePathsOptions
-	supportedExtensions []string
+type libResolution struct {
+	libraryName string
+	resolution  *module.ResolvedModule
+	trace       []module.DiagAndArgs
+}
 
-	parseTasks                 *fileLoaderWorker[*parseTask]
-	projectReferenceParseTasks *fileLoaderWorker[*projectReferenceParseTask]
-	rootTasks                  []*parseTask
+type LibFile struct {
+	Name     string
+	path     string
+	Replaced bool
+}
+
+type sourceFileFromReferenceDiagnostic struct {
+	message *diagnostics.Message
+	args    []any
+}
+
+type fileLoader struct {
+	opts                                           ProgramOptions
+	resolver                                       *module.Resolver
+	defaultLibraryPath                             string
+	comparePathsOptions                            tspath.ComparePathsOptions
+	supportedExtensions                            [][]string
+	supportedExtensionsWithJsonIfResolveJsonModule [][]string
+
+	filesParser *filesParser
+	rootTasks   []*parseTask
 
 	totalFileCount atomic.Int32
 	libFileCount   atomic.Int32
@@ -35,13 +55,43 @@ type fileLoader struct {
 	projectReferenceFileMapper *projectReferenceFileMapper
 	dtsDirectories             collections.Set[tspath.Path]
 
-	pathForLibFileCache       collections.SyncMap[string, string]
-	pathForLibFileResolutions collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
+	pathForLibFileCache       collections.SyncMap[string, *LibFile]
+	pathForLibFileResolutions collections.SyncMap[tspath.Path, *libResolution]
+}
+
+type redirectsFile struct {
+	// Index of file at which this redirect file needs to be iterated
+	index    int
+	fileName string
+	path     tspath.Path
+	target   tspath.Path
+}
+
+type DuplicateSourceFile struct {
+	ParseOptions ast.SourceFileParseOptions
+	Hash         xxh3.Uint128
+	ScriptKind   core.ScriptKind
+}
+
+var _ ast.HasFileName = (*redirectsFile)(nil)
+
+func (r *redirectsFile) FileName() string {
+	return r.fileName
+}
+
+func (r *redirectsFile) Path() tspath.Path {
+	return r.path
 }
 
 type processedFiles struct {
-	resolver                      *module.Resolver
-	files                         []*ast.SourceFile
+	resolver *module.Resolver
+	files    []*ast.SourceFile
+	// duplicateSourceFiles tracks parsed files loaded during program construction
+	// that were later dropped from the final program, such as losing filename
+	// casing variants for the same path or files hidden behind package redirect
+	// deduplication. Their parse-cache acquires still need to be balanced when
+	// the program is disposed.
+	duplicateSourceFiles          []*DuplicateSourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
 	projectReferenceFileMapper    *projectReferenceFileMapper
 	missingFiles                  []string
@@ -49,16 +99,24 @@ type processedFiles struct {
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
-	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
-	libFiles                      collections.Set[tspath.Path]
+	importHelpersImportSpecifiers map[tspath.Path]*ast.StringLiteralNode
+	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
-	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
+	includeProcessor                     *includeProcessor
+	// if file was included using source file and its output is actually part of program
+	// this contains mapping from output to source file
+	outputFileToProjectReferenceSource map[tspath.Path]string
+	// Key is a file path. Value is the list of files that redirect to it (same package, different install location)
+	redirectTargetsMap map[tspath.Path][]string
+	// filesByPath for redirect files
+	redirectFilesByPath map[tspath.Path]*redirectsFile
+	finishedProcessing  bool
 }
 
 type jsxRuntimeImportSpecifier struct {
 	moduleReference string
-	specifier       *ast.Node
+	specifier       *ast.StringLiteralNode
 }
 
 func processAllProgramFiles(
@@ -68,6 +126,7 @@ func processAllProgramFiles(
 	compilerOptions := opts.Config.CompilerOptions()
 	rootFiles := opts.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
+	supportedExtensionsWithJsonIfResolveJsonModule := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)
 	var maxNodeModuleJsDepth int
 	if p := opts.Config.CompilerOptions().MaxNodeModuleJsDepth; p != nil {
 		maxNodeModuleJsDepth = *p
@@ -79,141 +138,64 @@ func processAllProgramFiles(
 			UseCaseSensitiveFileNames: opts.Host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
-		parseTasks: &fileLoaderWorker[*parseTask]{
+		filesParser: &filesParser{
 			wg:       core.NewWorkGroup(singleThreaded),
 			maxDepth: maxNodeModuleJsDepth,
 		},
-		projectReferenceParseTasks: &fileLoaderWorker[*projectReferenceParseTask]{
-			wg: core.NewWorkGroup(singleThreaded),
-		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
-		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
+		supportedExtensions: supportedExtensions,
+		supportedExtensionsWithJsonIfResolveJsonModule: supportedExtensionsWithJsonIfResolveJsonModule,
 	}
-	loader.addProjectReferenceTasks()
+	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
-
-	var libs []string
-	if compilerOptions.NoLib.IsFalseOrUnknown() {
+	if opts.Tracing != nil {
+		defer opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", map[string]any{"count": len(rootFiles)}, false)()
+	}
+	for index, rootFile := range rootFiles {
+		loader.addRootTask(rootFile, nil, &FileIncludeReason{kind: fileIncludeKindRootFile, data: index})
+	}
+	if len(rootFiles) > 0 && compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
-			libs = append(libs, loader.pathForLibFile(name))
+			libFile := loader.pathForLibFile(name)
+			loader.addRootTask(libFile.path, libFile, &FileIncludeReason{kind: fileIncludeKindLibFile})
+
 		} else {
-			for _, lib := range compilerOptions.Lib {
+			for index, lib := range compilerOptions.Lib {
 				if name, ok := tsoptions.GetLibFileName(lib); ok {
-					libs = append(libs, loader.pathForLibFile(name))
+					libFile := loader.pathForLibFile(name)
+					loader.addRootTask(libFile.path, libFile, &FileIncludeReason{kind: fileIncludeKindLibFile, data: index})
 				}
 				// !!! error on unknown name
 			}
 		}
 	}
 
-	loader.addRootTasks(rootFiles, false)
-	loader.addRootTasks(libs, true)
-	loader.addAutomaticTypeDirectiveTasks()
+	if len(rootFiles) > 0 {
+		loader.addAutomaticTypeDirectiveTasks()
+	}
 
-	loader.parseTasks.runAndWait(&loader, loader.rootTasks)
+	loader.filesParser.parse(&loader, loader.rootTasks)
+
 	// Clear out loader and host to ensure its not used post program creation
 	loader.projectReferenceFileMapper.loader = nil
 	loader.projectReferenceFileMapper.host = nil
 
-	totalFileCount := int(loader.totalFileCount.Load())
-	libFileCount := int(loader.libFileCount.Load())
-
-	var missingFiles []string
-	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
-	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
-
-	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
-	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount+1)
-	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
-	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
-	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
-	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
-	var unsupportedExtensions []string
-	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
-	var libFileSet collections.Set[tspath.Path]
-
-	loader.parseTasks.collect(&loader, loader.rootTasks, func(task *parseTask, _ []tspath.Path) {
-		if task.isRedirected {
-			return
-		}
-
-		if task.isForAutomaticTypeDirective {
-			typeResolutionsInFile[task.path] = task.typeResolutionsInFile
-			return
-		}
-		file := task.file
-		path := task.path
-		if file == nil {
-			missingFiles = append(missingFiles, task.normalizedFilePath)
-			return
-		}
-		if task.isLib {
-			libFiles = append(libFiles, file)
-			libFileSet.Add(path)
-		} else {
-			files = append(files, file)
-		}
-
-		filesByPath[path] = file
-		resolvedModules[path] = task.resolutionsInFile
-		typeResolutionsInFile[path] = task.typeResolutionsInFile
-		sourceFileMetaDatas[path] = task.metadata
-		if task.jsxRuntimeImportSpecifier != nil {
-			if jsxRuntimeImportSpecifiers == nil {
-				jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
-			}
-			jsxRuntimeImportSpecifiers[path] = task.jsxRuntimeImportSpecifier
-		}
-		if task.importHelpersImportSpecifier != nil {
-			if importHelpersImportSpecifiers == nil {
-				importHelpersImportSpecifiers = make(map[tspath.Path]*ast.Node, totalFileCount)
-			}
-			importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
-		}
-		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
-		}
-		if task.fromExternalLibrary {
-			sourceFilesFoundSearchingNodeModules.Add(path)
-		}
-	})
-	loader.sortLibs(libFiles)
-
-	allFiles := append(libFiles, files...)
-
-	loader.pathForLibFileResolutions.Range(func(key tspath.Path, value module.ModeAwareCache[*module.ResolvedModule]) bool {
-		resolvedModules[key] = value
-		return true
-	})
-
-	return processedFiles{
-		resolver:                             loader.resolver,
-		files:                                allFiles,
-		filesByPath:                          filesByPath,
-		projectReferenceFileMapper:           loader.projectReferenceFileMapper,
-		resolvedModules:                      resolvedModules,
-		typeResolutionsInFile:                typeResolutionsInFile,
-		sourceFileMetaDatas:                  sourceFileMetaDatas,
-		jsxRuntimeImportSpecifiers:           jsxRuntimeImportSpecifiers,
-		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
-		unsupportedExtensions:                unsupportedExtensions,
-		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
-		libFiles:                             libFileSet,
-	}
+	return loader.filesParser.getProcessedFiles(&loader)
 }
 
 func (p *fileLoader) toPath(file string) tspath.Path {
 	return tspath.ToPath(file, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 }
 
-func (p *fileLoader) addRootTasks(files []string, isLib bool) {
-	for _, fileName := range files {
-		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
-		if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
-			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib, root: true})
-		}
+func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
+	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
+	if p.opts.Config.CompilerOptions().AllowNonTsExtensions.IsTrue() || tspath.HasExtension(absPath) {
+		p.rootTasks = append(p.rootTasks, &parseTask{
+			normalizedFilePath: absPath,
+			libFile:            libFile,
+			includeReason:      includeReason,
+		})
 	}
 }
 
@@ -226,34 +208,66 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 		containingDirectory = p.opts.Host.GetCurrentDirectory()
 	}
 	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
-	p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: containingFileName, isLib: false, isForAutomaticTypeDirective: true})
+	p.rootTasks = append(p.rootTasks, &parseTask{
+		normalizedFilePath:          containingFileName,
+		isForAutomaticTypeDirective: true,
+	})
 }
 
 func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 	toParse []resolvedRef,
 	typeResolutionsInFile module.ModeAwareCache[*module.ResolvedTypeReferenceDirective],
+	typeResolutionsTrace []module.DiagAndArgs,
+	pDiagnostics []*processingDiagnostic,
 ) {
 	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(p.opts.Config.CompilerOptions(), p.opts.Host)
 	if len(automaticTypeDirectiveNames) != 0 {
 		toParse = make([]resolvedRef, 0, len(automaticTypeDirectiveNames))
 		typeResolutionsInFile = make(module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], len(automaticTypeDirectiveNames))
 		for _, name := range automaticTypeDirectiveNames {
-			resolutionMode := core.ModuleKindNodeNext
-			resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
+			// Under node16/nodenext module resolution, load `types`/ata include names as cjs resolution results by passing an `undefined` mode.
+			// Under bundler module resolution, this also triggers the "import" condition to be used.
+			resolutionMode := core.ResolutionModeNone
+			resolved, trace := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, resolutionMode, nil)
+			var traceDone func()
+			if p.opts.Tracing != nil {
+				traceDone = p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": name, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindAutomaticTypeDirectiveFile)}, false)
+			}
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: name, Mode: resolutionMode}] = resolved
+			typeResolutionsTrace = append(typeResolutionsTrace, trace...)
 			if resolved.IsResolved() {
 				toParse = append(toParse, resolvedRef{
 					fileName:      resolved.ResolvedFileName,
 					increaseDepth: resolved.IsExternalLibraryImport,
 					elideOnDepth:  false,
+					includeReason: &FileIncludeReason{
+						kind: fileIncludeKindAutomaticTypeDirectiveFile,
+						data: &automaticTypeDirectiveFileData{name, resolved.PackageId},
+					},
+					packageId: resolved.PackageId,
 				})
+			} else {
+				pDiagnostics = append(pDiagnostics, &processingDiagnostic{
+					kind: processingDiagnosticKindExplainingFileInclude,
+					data: &includeExplainingDiagnostic{
+						diagnosticReason: &FileIncludeReason{
+							kind: fileIncludeKindAutomaticTypeDirectiveFile,
+							data: &automaticTypeDirectiveFileData{typeReference: name},
+						},
+						message: diagnostics.Cannot_find_type_definition_file_for_0,
+						args:    []any{name},
+					},
+				})
+			}
+			if traceDone != nil {
+				traceDone()
 			}
 		}
 	}
-	return toParse, typeResolutionsInFile
+	return toParse, typeResolutionsInFile, typeResolutionsTrace, pDiagnostics
 }
 
-func (p *fileLoader) addProjectReferenceTasks() {
+func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 	p.projectReferenceFileMapper = &projectReferenceFileMapper{
 		opts: p.opts,
 		host: p.opts.Host,
@@ -263,32 +277,12 @@ func (p *fileLoader) addProjectReferenceTasks() {
 		return
 	}
 
-	rootTasks := createProjectReferenceParseTasks(projectReferences)
-	p.projectReferenceParseTasks.runAndWait(p, rootTasks)
-	p.projectReferenceFileMapper.init(p, rootTasks)
-
-	// Add files from project references as root if the module kind is 'none'.
-	// This ensures that files from project references are included in the root tasks
-	// when no module system is specified, allowing including all files for global symbol merging
-	// !!! sheetal Do we really need it?
-	if len(p.opts.Config.FileNames()) != 0 {
-		for _, resolved := range p.projectReferenceFileMapper.getResolvedProjectReferences() {
-			if resolved == nil || resolved.CompilerOptions().GetEmitModuleKind() != core.ModuleKindNone {
-				continue
-			}
-			if p.opts.canUseProjectReferenceSource() {
-				for _, fileName := range resolved.FileNames() {
-					p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: fileName, isLib: false})
-				}
-			} else {
-				for outputDts := range resolved.GetOutputDeclarationFileNames() {
-					if outputDts != "" {
-						p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: outputDts, isLib: false})
-					}
-				}
-			}
-		}
+	parser := &projectReferenceParser{
+		loader: p,
+		wg:     core.NewWorkGroup(singleThreaded),
 	}
+	rootTasks := createProjectReferenceParseTasks(projectReferences)
+	parser.parse(rootTasks)
 }
 
 func (p *fileLoader) sortLibs(libFiles []*ast.SourceFile) {
@@ -318,14 +312,20 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaData {
-	packageJsonScope := p.resolver.GetPackageJsonScopeIfApplicable(fileName)
+	packageJsonScope := p.resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName))
+	moduleResolutionKind := p.opts.Config.CompilerOptions().GetModuleResolutionKind()
+
 	var packageJsonType, packageJsonDirectory string
 	if packageJsonScope.Exists() {
 		packageJsonDirectory = packageJsonScope.PackageDirectory
 		if value, ok := packageJsonScope.Contents.Type.GetValue(); ok {
-			packageJsonType = value
+			if !tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) &&
+				core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(fileName, "/node_modules/") {
+				packageJsonType = value
+			}
 		}
 	}
+
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(fileName, packageJsonType)
 	return ast.SourceFileMetaData{
 		PackageJsonType:      packageJsonType,
@@ -335,28 +335,110 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaD
 }
 
 func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
+	if p.opts.Tracing != nil {
+		defer p.opts.Tracing.Push(tracing.PhaseParse, "createSourceFile", map[string]any{"path": t.normalizedFilePath}, true)()
+	}
 	path := p.toPath(t.normalizedFilePath)
 	options := p.projectReferenceFileMapper.getCompilerOptionsForFile(t)
 	sourceFile := p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
 		FileName:                       t.normalizedFilePath,
 		Path:                           path,
-		CompilerOptions:                ast.GetSourceFileAffectingCompilerOptions(t.normalizedFilePath, options),
 		ExternalModuleIndicatorOptions: ast.GetExternalModuleIndicatorOptions(t.normalizedFilePath, options, t.metadata),
-		JSDocParsingMode:               p.opts.JSDocParsingMode,
 	})
 	return sourceFile
 }
 
-func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string) resolvedRef {
+func (p *fileLoader) isSupportedExtension(canonicalFileName string) bool {
+	for _, group := range p.supportedExtensionsWithJsonIfResolveJsonModule {
+		if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *fileLoader) getSourceFileFromReference(
+	fileName string,
+	referenceText string,
+	containingFile string,
+) (string, *sourceFileFromReferenceDiagnostic) {
+	options := p.opts.Config.CompilerOptions()
+	allowNonTsExtensions := options.AllowNonTsExtensions.IsTrue()
+	diagnosticFileName := tspath.NormalizeSlashes(referenceText)
+
+	if tspath.HasExtension(fileName) {
+		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.opts.Host.FS().UseCaseSensitiveFileNames())
+		if !allowNonTsExtensions && !p.isSupportedExtension(canonicalFileName) {
+			if tspath.HasJSFileExtension(canonicalFileName) {
+				return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, args: []any{diagnosticFileName}}
+			}
+			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, args: []any{diagnosticFileName, "'" + strings.Join(core.Flatten(p.supportedExtensions), "', '") + "'"}}
+		}
+
+		if !p.opts.Host.FS().FileExists(fileName) {
+			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_not_found, args: []any{diagnosticFileName}}
+		}
+
+		if tspath.GetCanonicalFileName(containingFile, p.opts.Host.FS().UseCaseSensitiveFileNames()) == canonicalFileName {
+			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.A_file_cannot_have_a_reference_to_itself}
+		}
+		return fileName, nil
+	}
+
+	if allowNonTsExtensions && p.opts.Host.FS().FileExists(fileName) {
+		return fileName, nil
+	}
+
+	if allowNonTsExtensions {
+		return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_not_found, args: []any{diagnosticFileName}}
+	}
+
+	for _, ext := range p.supportedExtensions[0] {
+		candidate := fileName + ext
+		if p.opts.Host.FS().FileExists(candidate) {
+			return candidate, nil
+		}
+	}
+
+	return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, args: []any{diagnosticFileName, "'" + strings.Join(core.Flatten(p.supportedExtensions), "', '") + "'"}}
+}
+
+func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string, index int) (*resolvedRef, *processingDiagnostic) {
 	basePath := tspath.GetDirectoryPath(containingFile)
 	referencedFileName := moduleName
 
 	if !tspath.IsRootedDiskPath(moduleName) {
 		referencedFileName = tspath.CombinePaths(basePath, moduleName)
 	}
-	return resolvedRef{
-		fileName: tspath.NormalizePath(referencedFileName),
+	normalizedFileName := tspath.NormalizePath(referencedFileName)
+	includeReason := &FileIncludeReason{
+		kind: fileIncludeKindReferenceFile,
+		data: &referencedFileData{
+			file:  p.toPath(containingFile),
+			index: index,
+		},
 	}
+
+	resolvedFileName, diagnostic := p.getSourceFileFromReference(
+		normalizedFileName,
+		moduleName,
+		containingFile,
+	)
+	if diagnostic != nil {
+		return nil, &processingDiagnostic{
+			kind: processingDiagnosticKindExplainingFileInclude,
+			data: &includeExplainingDiagnostic{
+				diagnosticReason: includeReason,
+				message:          diagnostic.message,
+				args:             diagnostic.args,
+			},
+		}
+	}
+
+	return &resolvedRef{
+		fileName:      resolvedFileName,
+		includeReason: includeReason,
+	}, nil
 }
 
 func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
@@ -364,30 +446,60 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 	if len(file.TypeReferenceDirectives) == 0 {
 		return
 	}
+	if p.opts.Tracing != nil {
+		defer p.opts.Tracing.Push(tracing.PhaseProgram, "resolveTypeReferenceDirectiveNamesWorker", map[string]any{"containingFileName": file.FileName()}, false)()
+	}
 	meta := t.metadata
 
 	typeResolutionsInFile := make(module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], len(file.TypeReferenceDirectives))
-	for _, ref := range file.TypeReferenceDirectives {
-		redirect := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	var typeResolutionsTrace []module.DiagAndArgs
+	for index, ref := range file.TypeReferenceDirectives {
+		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(file)
 		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
-		resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, redirect)
+		resolved, trace := p.resolver.ResolveTypeReferenceDirective(ref.FileName, fileName, resolutionMode, redirect)
+		var traceDone func()
+		if p.opts.Tracing != nil {
+			traceDone = p.opts.Tracing.Push(tracing.PhaseProgram, "processTypeReferenceDirective", map[string]any{"directive": ref.FileName, "hasResolved": resolved.IsResolved(), "refKind": int(fileIncludeKindTypeReferenceDirective), "refPath": string(t.path)}, false)
+		}
 		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
+		includeReason := &FileIncludeReason{
+			kind: fileIncludeKindTypeReferenceDirective,
+			data: &referencedFileData{
+				file:  t.path,
+				index: index,
+			},
+		}
+		typeResolutionsTrace = append(typeResolutionsTrace, trace...)
+
 		if resolved.IsResolved() {
 			t.addSubTask(resolvedRef{
-				fileName:              resolved.ResolvedFileName,
-				increaseDepth:         resolved.IsExternalLibraryImport,
-				elideOnDepth:          false,
-				isFromExternalLibrary: resolved.IsExternalLibraryImport,
-			}, false)
+				fileName:      resolved.ResolvedFileName,
+				increaseDepth: resolved.IsExternalLibraryImport,
+				elideOnDepth:  false,
+				includeReason: includeReason,
+				packageId:     resolved.PackageId,
+			}, nil)
+		} else {
+			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
+				kind: processingDiagnosticKindUnknownReference,
+				data: includeReason,
+			})
+		}
+		if traceDone != nil {
+			traceDone()
 		}
 	}
 
 	t.typeResolutionsInFile = typeResolutionsInFile
+	t.typeResolutionsTrace = typeResolutionsTrace
 }
 
 const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
 func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
+	if p.opts.Tracing != nil {
+		defer p.opts.Tracing.Push(tracing.PhaseProgram, "resolveModuleNamesWorker", map[string]any{"containingFileName": t.file.FileName()}, false)()
+	}
 	file := t.file
 	meta := t.metadata
 
@@ -396,7 +508,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 	isJavaScriptFile := ast.IsSourceFileJS(file)
 	isExternalModuleFile := ast.IsExternalModule(file)
 
-	redirect := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(file)
 	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
 	if isJavaScriptFile || (!file.IsDeclarationFile && (optionsForFile.GetIsolatedModules() || isExternalModuleFile)) {
 		if optionsForFile.ImportHelpers.IsTrue() {
@@ -428,6 +540,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 
 	if len(moduleNames) != 0 {
 		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(moduleNames))
+		var resolutionsTrace []module.DiagAndArgs
 
 		for index, entry := range moduleNames {
 			moduleName := entry.Text()
@@ -436,8 +549,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			}
 
 			mode := getModeForUsageLocation(file.FileName(), meta, entry, optionsForFile)
-			resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), mode, redirect)
+			resolvedModule, trace := p.resolver.ResolveModuleName(moduleName, fileName, mode, redirect)
 			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleName, Mode: mode}] = resolvedModule
+			resolutionsTrace = append(resolutionsTrace, trace...)
 
 			if !resolvedModule.IsResolved() {
 				continue
@@ -446,7 +560,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			resolvedFileName := resolvedModule.ResolvedFileName
 			isFromNodeModulesSearch := resolvedModule.IsExternalLibraryImport
 			// Don't treat redirected files as JS files.
-			isJsFile := !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) && p.projectReferenceFileMapper.getRedirectForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName))) == nil
+			isJsFile := !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) && p.projectReferenceFileMapper.getRedirectParsedCommandLineForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName))) == nil
 			isJsFileFromNodeModules := isFromNodeModulesSearch && isJsFile && strings.Contains(resolvedFileName, "/node_modules/")
 
 			// add file to program only if:
@@ -465,51 +579,68 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 
 			if shouldAddFile {
 				t.addSubTask(resolvedRef{
-					fileName:              resolvedFileName,
-					increaseDepth:         resolvedModule.IsExternalLibraryImport,
-					elideOnDepth:          isJsFileFromNodeModules,
-					isFromExternalLibrary: resolvedModule.IsExternalLibraryImport,
-				}, false)
+					fileName:      resolvedFileName,
+					increaseDepth: resolvedModule.IsExternalLibraryImport,
+					elideOnDepth:  isJsFileFromNodeModules,
+					includeReason: &FileIncludeReason{
+						kind: fileIncludeKindImport,
+						data: &referencedFileData{
+							file:      t.path,
+							index:     importIndex,
+							synthetic: core.IfElse(importIndex < 0, entry, nil),
+						},
+					},
+					packageId: resolvedModule.PackageId,
+				}, nil)
 			}
 		}
 
 		t.resolutionsInFile = resolutionsInFile
+		t.resolutionsTrace = resolutionsTrace
 	}
 }
 
-func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *ast.Node {
+func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *ast.StringLiteralNode {
 	p.factoryMu.Lock()
 	defer p.factoryMu.Unlock()
-	externalHelpersModuleReference := p.factory.NewStringLiteral(text)
+	externalHelpersModuleReference := p.factory.NewStringLiteral(text, ast.TokenFlagsNone)
 	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference, nil)
-	// !!! addInternalEmitFlags(importDecl, InternalEmitFlags.NeverApplyImportHelper);
 	externalHelpersModuleReference.Parent = importDecl
 	importDecl.Parent = file.AsNode()
-	// !!! externalHelpersModuleReference.Flags &^= ast.NodeFlagsSynthesized
-	// !!! importDecl.Flags &^= ast.NodeFlagsSynthesized
 	return externalHelpersModuleReference
 }
 
-func (p *fileLoader) pathForLibFile(name string) string {
+func (p *fileLoader) pathForLibFile(name string) *LibFile {
 	if cached, ok := p.pathForLibFileCache.Load(name); ok {
 		return cached
 	}
 
 	path := tspath.CombinePaths(p.defaultLibraryPath, name)
-	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() {
+	replaced := false
+	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() && name != "lib.d.ts" {
 		libraryName := getLibraryNameFromLibFileName(name)
 		resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
-		resolution := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
+		resolution, trace := p.resolveLibrary(libraryName, resolveFrom)
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
-			p.pathForLibFileResolutions.LoadOrStore(p.toPath(resolveFrom), module.ModeAwareCache[*module.ResolvedModule]{
-				module.ModeAwareCacheKey{Name: libraryName, Mode: core.ModuleKindCommonJS}: resolution,
-			})
+			replaced = true
 		}
+		p.pathForLibFileResolutions.LoadOrStore(p.toPath(resolveFrom), &libResolution{
+			libraryName: libraryName,
+			resolution:  resolution,
+			trace:       trace,
+		})
 	}
 
-	path, _ = p.pathForLibFileCache.LoadOrStore(name, path)
-	return path
+	libPath, _ := p.pathForLibFileCache.LoadOrStore(name, &LibFile{name, path, replaced})
+	return libPath
+}
+
+func (p *fileLoader) resolveLibrary(libraryName, resolveFrom string) (*module.ResolvedModule, []module.DiagAndArgs) {
+	if tr := p.opts.Tracing; tr != nil {
+		defer tr.Push(tracing.PhaseProgram, "resolveLibrary", map[string]any{"resolveFrom": resolveFrom}, false)()
+	}
+	return p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
 }
 
 func getLibraryNameFromLibFileName(libFileName string) string {
@@ -517,16 +648,22 @@ func getLibraryNameFromLibFileName(libFileName string) string {
 	//                      lib.dom.iterable.d.ts -> @typescript/lib-dom/iterable
 	//                      lib.es2015.symbol.wellknown.d.ts -> @typescript/lib-es2015/symbol-wellknown
 	components := strings.Split(libFileName, ".")
-	var path string
+	var path strings.Builder
+	path.WriteString("@typescript/lib-")
 	if len(components) > 1 {
-		path = components[1]
+		path.WriteString(components[1])
 	}
 	i := 2
 	for i < len(components) && components[i] != "" && components[i] != "d" {
-		path += core.IfElse(i == 2, "/", "-") + components[i]
+		if i == 2 {
+			path.WriteByte('/')
+		} else {
+			path.WriteByte('-')
+		}
+		path.WriteString(components[i])
 		i++
 	}
-	return "@typescript/lib-" + path
+	return path.String()
 }
 
 func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDirectory string, libFileName string) string {
@@ -537,11 +674,6 @@ func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDir
 		containingDirectory = currentDirectory
 	}
 	return tspath.CombinePaths(containingDirectory, "__lib_node_modules_lookup_"+libFileName+"__.ts")
-}
-
-type resolution struct {
-	node           *ast.Node
-	resolvedModule *module.ResolvedModule
 }
 
 func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.SourceFile, meta ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {

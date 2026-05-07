@@ -1,0 +1,17 @@
+--- old.smartSelection_templateStrings.baseline
++++ new.smartSelection_templateStrings.baseline
+@@= skipped -17, +17 lines =@@
+   '/**/c'
+ } d`
+
+-
+-   c 
+-
+-
+-  'c'
+-
++   c ↲
++  'c'↲
+
+      ${
+   'c'

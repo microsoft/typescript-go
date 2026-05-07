@@ -43,31 +43,33 @@ const looserAsyncFactory: SequenceFactory = async function* (){
 
 
 //// [typeOfYieldWithUnionInContextualReturnType.js]
+"use strict";
+// https://github.com/microsoft/TypeScript/issues/42439
 const syncFactory = function* () {
     let name = "";
     while (!name) {
-        name = (yield "What is your name?");
+        name = yield "What is your name?";
     }
     return `That's the end of the game, ${name}`;
 };
 const asyncFactory = async function* () {
     let name = "";
     while (!name) {
-        name = (yield "What is your name?");
+        name = yield "What is your name?";
     }
     return `That's the end of the game, ${name}`;
 };
 const looserSyncFactory = function* () {
     let name = "";
     while (!name) {
-        name = (yield "What is your name?");
+        name = yield "What is your name?";
     }
     return `That's the end of the game, ${name}`;
 };
 const looserAsyncFactory = async function* () {
     let name = "";
     while (!name) {
-        name = (yield "What is your name?");
+        name = yield "What is your name?";
     }
     return `That's the end of the game, ${name}`;
 };

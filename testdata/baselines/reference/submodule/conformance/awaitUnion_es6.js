@@ -15,10 +15,13 @@ async function f() {
 }
 
 //// [awaitUnion_es6.js]
-async function f() {
-    let await_a = await a;
-    let await_b = await b;
-    let await_c = await c;
-    let await_d = await d;
-    let await_e = await e;
+"use strict";
+function f() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let await_a = yield a;
+        let await_b = yield b;
+        let await_c = yield c;
+        let await_d = yield d;
+        let await_e = yield e;
+    });
 }

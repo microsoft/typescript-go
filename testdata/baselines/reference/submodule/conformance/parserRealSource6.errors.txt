@@ -1,3 +1,4 @@
+parserRealSource6.ts(4,21): error TS6053: File 'typescript.ts' not found.
 parserRealSource6.ts(8,24): error TS2304: Cannot find name 'Script'.
 parserRealSource6.ts(10,41): error TS2304: Cannot find name 'ScopeChain'.
 parserRealSource6.ts(10,69): error TS2304: Cannot find name 'TypeChecker'.
@@ -7,11 +8,13 @@ parserRealSource6.ts(17,23): error TS2304: Cannot find name 'SymbolScope'.
 parserRealSource6.ts(18,30): error TS2304: Cannot find name 'AstWalkOptions'.
 parserRealSource6.ts(20,35): error TS2304: Cannot find name 'TypeFlow'.
 parserRealSource6.ts(20,83): error TS2304: Cannot find name 'ASTFlags'.
+parserRealSource6.ts(26,16): error TS2322: Type 'null' is not assignable to type '() => SymbolScope'.
 parserRealSource6.ts(26,35): error TS2304: Cannot find name 'SymbolScope'.
+parserRealSource6.ts(27,16): error TS2322: Type 'null' is not assignable to type '() => SymbolScope'.
 parserRealSource6.ts(27,48): error TS2304: Cannot find name 'SymbolScope'.
 parserRealSource6.ts(28,31): error TS2304: Cannot find name 'AST'.
 parserRealSource6.ts(30,35): error TS2304: Cannot find name 'ModuleDeclaration'.
-parserRealSource6.ts(31,36): error TS2304: Cannot find name 'TypeDeclaration'.
+parserRealSource6.ts(31,36): error TS2552: Cannot find name 'TypeDeclaration'. Did you mean 'CSSStyleDeclaration'?
 parserRealSource6.ts(32,36): error TS2304: Cannot find name 'UnaryExpression'.
 parserRealSource6.ts(35,33): error TS2304: Cannot find name 'Script'.
 parserRealSource6.ts(37,37): error TS2304: Cannot find name 'ILogger'.
@@ -43,7 +46,7 @@ parserRealSource6.ts(120,29): error TS2304: Cannot find name 'NodeType'.
 parserRealSource6.ts(126,22): error TS2304: Cannot find name 'NodeType'.
 parserRealSource6.ts(127,35): error TS2304: Cannot find name 'Script'.
 parserRealSource6.ts(134,22): error TS2304: Cannot find name 'NodeType'.
-parserRealSource6.ts(139,51): error TS2304: Cannot find name 'TypeDeclaration'.
+parserRealSource6.ts(139,51): error TS2552: Cannot find name 'TypeDeclaration'. Did you mean 'CSSStyleDeclaration'?
 parserRealSource6.ts(142,22): error TS2304: Cannot find name 'NodeType'.
 parserRealSource6.ts(143,38): error TS2304: Cannot find name 'UnaryExpression'.
 parserRealSource6.ts(156,22): error TS2304: Cannot find name 'NodeType'.
@@ -57,15 +60,18 @@ parserRealSource6.ts(212,50): error TS2304: Cannot find name 'ILogger'.
 parserRealSource6.ts(212,67): error TS2304: Cannot find name 'Script'.
 parserRealSource6.ts(212,81): error TS2304: Cannot find name 'ISourceText'.
 parserRealSource6.ts(215,20): error TS2339: Property 'getAstWalkerFactory' does not exist on type 'typeof TypeScript'.
+parserRealSource6.ts(218,13): error TS2322: Type 'null' is not assignable to type 'EnclosingScopeContext'.
 
 
-==== parserRealSource6.ts (59 errors) ====
+==== parserRealSource6.ts (63 errors) ====
     // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
     // See LICENSE.txt in the project root for complete license information.
     
     ///<reference path='typescript.ts' />
+                        ~~~~~~~~~~~~~
+!!! error TS6053: File 'typescript.ts' not found.
     
-    module TypeScript {
+    namespace TypeScript {
         export class TypeCollectionContext {
             public script: Script = null;
                            ~~~~~~
@@ -104,9 +110,13 @@ parserRealSource6.ts(215,20): error TS2339: Property 'getAstWalkerFactory' does 
         export class EnclosingScopeContext {
     
             public scopeGetter: () => SymbolScope = null;
+                   ~~~~~~~~~~~
+!!! error TS2322: Type 'null' is not assignable to type '() => SymbolScope'.
                                       ~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'SymbolScope'.
             public objectLiteralScopeGetter: () => SymbolScope = null;
+                   ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type 'null' is not assignable to type '() => SymbolScope'.
                                                    ~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'SymbolScope'.
             public scopeStartAST: AST = null;
@@ -118,7 +128,8 @@ parserRealSource6.ts(215,20): error TS2339: Property 'getAstWalkerFactory' does 
 !!! error TS2304: Cannot find name 'ModuleDeclaration'.
             public enclosingClassDecl: TypeDeclaration = null;
                                        ~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'TypeDeclaration'.
+!!! error TS2552: Cannot find name 'TypeDeclaration'. Did you mean 'CSSStyleDeclaration'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'CSSStyleDeclaration' is declared here.
             public enclosingObjectLit: UnaryExpression = null;
                                        ~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'UnaryExpression'.
@@ -290,7 +301,8 @@ parserRealSource6.ts(215,20): error TS2339: Property 'getAstWalkerFactory' does 
                         context.scopeStartAST = ast;
                         context.enclosingClassDecl = <TypeDeclaration>ast;
                                                       ~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'TypeDeclaration'.
+!!! error TS2552: Cannot find name 'TypeDeclaration'. Did you mean 'CSSStyleDeclaration'?
+!!! related TS2728 lib.dom.d.ts:--:--: 'CSSStyleDeclaration' is declared here.
                         break;
     
                     case NodeType.ObjectLit:
@@ -396,6 +408,8 @@ parserRealSource6.ts(215,20): error TS2339: Property 'getAstWalkerFactory' does 
     
             if (context.scopeStartAST === null)
                 return null;
+                ~~~~~~
+!!! error TS2322: Type 'null' is not assignable to type 'EnclosingScopeContext'.
             return context;
         }
     }

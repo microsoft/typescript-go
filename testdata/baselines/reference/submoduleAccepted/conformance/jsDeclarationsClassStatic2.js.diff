@@ -1,0 +1,22 @@
+--- old.jsDeclarationsClassStatic2.js
++++ new.jsDeclarationsClassStatic2.js
+@@= skipped -16, +16 lines =@@
+
+
+ //// [Foo.d.ts]
+-export class Foo extends Base {
+-}
+-export namespace Foo {
+-    let foo: string;
+-}
+ declare class Base {
+     static foo: string;
+ }
+-export {};
++export declare class Foo extends Base {
++}
++export declare namespace Foo {
++    var foo: string;
++}
+ //// [Bar.d.ts]
+ export {};

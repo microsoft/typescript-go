@@ -9,11 +9,11 @@ enum x {
 }
 
 //// [enumWithExport.js]
+"use strict";
 var x;
 (function (x) {
     x.y = 123;
 })(x || (x = {}));
 (function (x) {
-    x["z"] = y;
-    if (typeof x.z !== "string") x[x.z] = "z";
+    x[x["z"] = y] = "z";
 })(x || (x = {}));

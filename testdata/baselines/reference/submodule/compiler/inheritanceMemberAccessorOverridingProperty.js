@@ -15,8 +15,8 @@ class b extends a {
 }
 
 //// [inheritanceMemberAccessorOverridingProperty.js]
+"use strict";
 class a {
-    x;
 }
 class b extends a {
     get x() {

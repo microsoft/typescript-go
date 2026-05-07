@@ -1,19 +1,19 @@
 //// [tests/cases/compiler/es6ModuleInternalImport.ts] ////
 
 //// [es6ModuleInternalImport.ts]
-export module m {
+export namespace m {
     export var a = 10;
 }
 export import a1 = m.a;
 import a2 = m.a;
 var x = a1 + a2;
-export module m1 {
+export namespace m1 {
     export import a3 = m.a;
     import a4 = m.a;
     var x = a1 + a2;
     var x2 = a3 + a4;
 }
-module m2 {
+namespace m2 {
     export import a3 = m.a;
     import a4 = m.a;
     var x = a1 + a2;
@@ -22,14 +22,14 @@ module m2 {
 }
 
 //// [es6ModuleInternalImport.js]
-export { m };
-var m;
+export var m;
 (function (m) {
     m.a = 10;
 })(m || (m = {}));
+export var a1 = m.a;
+var a2 = m.a;
 var x = a1 + a2;
-export { m1 };
-var m1;
+export var m1;
 (function (m1) {
     m1.a3 = m.a;
     var a4 = m.a;

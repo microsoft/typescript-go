@@ -25,8 +25,7 @@ createInstance(MenuWorkbenchToolBar, {
 
 
 //// [cachedContextualTypes.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+// Repro from #52198
 class MenuWorkbenchToolBar {
     constructor(options) { }
 }
@@ -35,3 +34,4 @@ createInstance(MenuWorkbenchToolBar, {
         foo(bar) { return bar; }
     }
 });
+export {};

@@ -8,6 +8,7 @@ class C {
 }
 
 //// [stripInternal1.js]
+"use strict";
 class C {
     foo() { }
     // @internal
@@ -18,6 +19,4 @@ class C {
 //// [stripInternal1.d.ts]
 declare class C {
     foo(): void;
-    // @internal
-    bar(): void;
 }

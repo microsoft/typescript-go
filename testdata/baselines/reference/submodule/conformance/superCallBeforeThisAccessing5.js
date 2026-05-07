@@ -10,8 +10,8 @@ class D extends null {
 
 
 //// [superCallBeforeThisAccessing5.js]
+"use strict";
 class D extends null {
-    _t;
     constructor() {
         this._t; // No error
     }

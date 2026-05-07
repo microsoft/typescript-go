@@ -34,8 +34,8 @@ s.genericVar = 12;
 
 
 //// [genericClassExpressionInFunction.js]
+"use strict";
 class A {
-    genericVar;
 }
 function B1() {
     // class expression can use T
@@ -43,8 +43,10 @@ function B1() {
     };
 }
 class B2 {
-    anon = class extends A {
-    };
+    constructor() {
+        this.anon = class extends A {
+        };
+    }
 }
 function B3() {
     return class Inner extends A {
@@ -52,14 +54,11 @@ function B3() {
 }
 // extends can call B
 class K extends B1() {
-    namae;
 }
 class C extends (new B2().anon) {
-    name;
 }
 let b3Number = B3();
 class S extends b3Number {
-    nom;
 }
 var c = new C();
 var k = new K();

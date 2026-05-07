@@ -23,8 +23,8 @@ interface IncorrectlyExtends extends IncorrectGetters {}
 
 
 //// [mergedInheritedMembersSatisfyAbstractBase.js]
+"use strict";
 class BaseClass {
-    bar;
 }
 class Broken extends BaseClass {
 }

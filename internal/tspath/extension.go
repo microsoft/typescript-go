@@ -23,8 +23,8 @@ const (
 )
 
 var (
-	supportedDeclarationExtensions                 = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
-	supportedTSImplementationExtensions            = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
+	SupportedDeclarationExtensions                 = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
+	SupportedTSImplementationExtensions            = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
 	supportedTSExtensionsForExtractExtension       = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
 	AllSupportedExtensions                         = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionJs, ExtensionJsx}, {ExtensionCts, ExtensionDcts, ExtensionCjs}, {ExtensionMts, ExtensionDmts, ExtensionMjs}}
 	SupportedTSExtensions                          = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts}, {ExtensionCts, ExtensionDcts}, {ExtensionMts, ExtensionDmts}}
@@ -51,7 +51,7 @@ func RemoveFileExtension(path string) string {
 		}
 	}
 	// Otherwise just remove single dot extension, if any
-	return path[:len(path)-len(filepath.Ext(path))]
+	return path[:len(path)-len(filepath.Ext(path))] //nolint:forbidigo
 }
 
 func TryGetExtensionFromPath(p string) string {
@@ -90,7 +90,7 @@ func HasTSFileExtension(path string) bool {
 }
 
 func HasImplementationTSFileExtension(path string) bool {
-	return FileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !IsDeclarationFileName(path)
+	return FileExtensionIsOneOf(path, SupportedTSImplementationExtensions) && !IsDeclarationFileName(path)
 }
 
 func HasJSFileExtension(path string) bool {
@@ -111,7 +111,7 @@ func ExtensionIsOneOf(ext string, extensions []string) bool {
 
 func GetDeclarationFileExtension(fileName string) string {
 	base := GetBaseFileName(fileName)
-	for _, ext := range supportedDeclarationExtensions {
+	for _, ext := range SupportedDeclarationExtensions {
 		if strings.HasSuffix(base, ext) {
 			return ext
 		}
@@ -131,33 +131,39 @@ func GetDeclarationEmitExtensionForPath(path string) string {
 		return ExtensionDmts
 	case FileExtensionIsOneOf(path, []string{ExtensionCjs, ExtensionCts}):
 		return ExtensionDcts
-	case FileExtensionIsOneOf(path, []string{ExtensionJson}):
-		return `.d.json.ts` // Drive-by redefinition of json declaration file output name so if it's ever enabled, it behaves well
+	case FileExtensionIsOneOf(path, []string{ExtensionTs, ExtensionTsx, ExtensionJs, ExtensionJsx}):
+		return ExtensionDts
 	default:
+		ext := GetAnyExtensionFromPath(path, nil, false)
+		if ext != "" {
+			return ".d" + ext + ".ts"
+		}
 		return ExtensionDts
 	}
 }
 
-// changeAnyExtension changes the extension of a path to the provided extension if it has one of the provided extensions.
+// ChangeAnyExtension changes the extension of a path to the provided extension if it has one of the provided extensions.
 //
-// changeAnyExtension("/path/to/file.ext", ".js", ".ext") === "/path/to/file.js"
-// changeAnyExtension("/path/to/file.ext", ".js", ".ts") === "/path/to/file.ext"
-// changeAnyExtension("/path/to/file.ext", ".js", [".ext", ".ts"]) === "/path/to/file.js"
-func changeAnyExtension(path string, ext string, extensions []string, ignoreCase bool) string {
+// ChangeAnyExtension("/path/to/file.ext", ".js", ".ext") === "/path/to/file.js"
+// ChangeAnyExtension("/path/to/file.ext", ".js", ".ts") === "/path/to/file.ext"
+// ChangeAnyExtension("/path/to/file.ext", ".js", [".ext", ".ts"]) === "/path/to/file.js"
+func ChangeAnyExtension(path string, ext string, extensions []string, ignoreCase bool) string {
 	pathext := GetAnyExtensionFromPath(path, extensions, ignoreCase)
 	if pathext != "" {
 		result := path[:len(path)-len(pathext)]
+		if ext == "" {
+			return result
+		}
 		if strings.HasPrefix(ext, ".") {
 			return result + ext
-		} else {
-			return result + "." + ext
 		}
+		return result + "." + ext
 	}
 	return path
 }
 
 func ChangeExtension(path string, newExtension string) string {
-	return changeAnyExtension(path, newExtension, extensionsToRemove /*ignoreCase*/, false)
+	return ChangeAnyExtension(path, newExtension, extensionsToRemove, false /*ignoreCase*/)
 }
 
 // Like `changeAnyExtension`, but declaration file extensions are recognized
@@ -175,4 +181,19 @@ func ChangeFullExtension(path string, newExtension string) string {
 		return path[:len(path)-len(declarationExtension)] + ext
 	}
 	return ChangeExtension(path, newExtension)
+}
+
+func GetPossibleOriginalInputExtensionForExtension(path string) []string {
+	if FileExtensionIsOneOf(path, []string{ExtensionDmts, ExtensionMjs, ExtensionMts}) {
+		return []string{ExtensionMts, ExtensionMjs}
+	}
+	if FileExtensionIsOneOf(path, []string{ExtensionDcts, ExtensionCjs, ExtensionCts}) {
+		return []string{ExtensionCts, ExtensionCjs}
+	}
+	// Handle any custom .d.x.ts extension (e.g., .d.json.ts -> .json, .d.css.ts -> .css)
+	if ext := GetDeclarationFileExtension(path); ext != "" && ext != ExtensionDts {
+		inner := ext[len(".d.") : len(ext)-len(".ts")]
+		return []string{"." + inner}
+	}
+	return []string{ExtensionTsx, ExtensionTs, ExtensionJsx, ExtensionJs}
 }

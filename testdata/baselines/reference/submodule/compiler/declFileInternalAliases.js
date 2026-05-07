@@ -1,20 +1,21 @@
 //// [tests/cases/compiler/declFileInternalAliases.ts] ////
 
 //// [declFileInternalAliases.ts]
-module m {
+namespace m {
     export class c {
     }
 }
-module m1 {
+namespace m1 {
     import x = m.c;
     export var d = new x(); // emit the type as m.c
 }
-module m2 {
+namespace m2 {
     export import x = m.c;
     export var d = new x(); // emit the type as x
 }
 
 //// [declFileInternalAliases.js]
+"use strict";
 var m;
 (function (m) {
     class c {
@@ -40,9 +41,9 @@ declare namespace m {
 }
 declare namespace m1 {
     import x = m.c;
-    var d: x; // emit the type as m.c
+    var d: x;
 }
 declare namespace m2 {
     export import x = m.c;
-    var d: x; // emit the type as x
+    var d: x;
 }

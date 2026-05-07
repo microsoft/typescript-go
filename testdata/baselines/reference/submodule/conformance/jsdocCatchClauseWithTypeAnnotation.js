@@ -54,6 +54,7 @@ function fn() {
 
 
 //// [foo.js]
+"use strict";
 /**
  * @typedef {any} Any
  */
@@ -144,4 +145,3 @@ function fn() {
     try { }
     catch ( /** @type {object} */{ x }) { } // error in the type
 }
-export {};

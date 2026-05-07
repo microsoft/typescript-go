@@ -9,6 +9,7 @@ const bar = {
 }
 
 //// [definiteAssignmentAssertionsWithObjectShortHand.js]
+"use strict";
 const a = 'ff';
 const foo = { a };
 const bar = {
@@ -22,5 +23,5 @@ declare const foo: {
     a: string;
 };
 declare const bar: {
-    a?(): void;
+    a(): void;
 };

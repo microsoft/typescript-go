@@ -3,7 +3,7 @@
 === a.js ===
 /** @type {function(string): void} */
 const f = (value) => {
->f : function
+>f : Function
 >(value) => {    value = 1 // should error} : (value: any) => void
 >value : any
 
@@ -15,12 +15,12 @@ const f = (value) => {
 };
 /** @type {(s: string) => void} */
 function g(s) {
->g : (s: any) => void
->s : any
+>g : (s: string) => void
+>s : string
 
     s = 1 // Should error
 >s = 1 : 1
->s : any
+>s : string
 >1 : 1
 }
 

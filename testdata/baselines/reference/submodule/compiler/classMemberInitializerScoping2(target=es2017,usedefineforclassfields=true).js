@@ -9,8 +9,15 @@ class C {
 
 
 //// [classMemberInitializerScoping2.js]
+"use strict";
 const x = 1;
 class C {
-    p = x;
-    constructor(x) { }
+    constructor(x) {
+        Object.defineProperty(this, "p", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: x
+        });
+    }
 }

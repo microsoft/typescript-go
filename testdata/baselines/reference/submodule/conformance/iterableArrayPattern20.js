@@ -20,11 +20,10 @@ function fun(...[[a = new Foo], b = [new Foo]]: Bar[][]) { }
 fun(...new FooArrayIterator);
 
 //// [iterableArrayPattern20.js]
+"use strict";
 class Bar {
-    x;
 }
 class Foo extends Bar {
-    y;
 }
 class FooArrayIterator {
     next() {

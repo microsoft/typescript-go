@@ -74,10 +74,10 @@ testSet.transform(
 
 
 //// [inferFromGenericFunctionReturnTypes1.js]
+"use strict";
 // Repro from #15680
 // This is a contrived class. We could do the same thing with Observables, etc.
 class SetOf {
-    _store;
     add(a) {
         this._store.push(a);
     }

@@ -240,9 +240,6 @@ const doTestingStuff = (mapOfTests: MapOfAllTests, ids: string[]) => {
 
 
 //// [discriminantPropertyCheck.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
 function goo1(x) {
     if (x.kind === "A" && x.foo !== undefined) {
         x.foo.length;
@@ -308,7 +305,7 @@ const f = (_a, _b) => { };
 const u = {};
 u.a && u.b && f(u.a, u.b);
 u.b && u.a && f(u.a, u.b);
-function foo(obj) {
+export function foo(obj) {
     switch (obj.key) {
         case '+': {
             onlyPlus(obj.key);
@@ -319,17 +316,12 @@ function foo(obj) {
 function onlyPlus(arg) {
     return arg;
 }
-var BarEnum;
-(function (BarEnum) {
-    BarEnum[BarEnum["bar1"] = 1] = "bar1";
-    BarEnum[BarEnum["bar2"] = 2] = "bar2";
-})(BarEnum || (BarEnum = {}));
 function func3(value) {
     if (value.type !== undefined) {
         switch (value.type) {
-            case BarEnum.bar1:
+            case 1 /* BarEnum.bar1 */:
                 break;
-            case BarEnum.bar2:
+            case 2 /* BarEnum.bar2 */:
                 break;
             default:
                 never(value.type);

@@ -38,6 +38,7 @@ function f3<T extends E>(v: T | { x: string }) {
 
 
 //// [narrowingConstrainedTypeVariable.js]
+"use strict";
 // Repro from #20138
 class C {
 }
@@ -60,7 +61,6 @@ function f2(v) {
     }
 }
 class E {
-    x;
 }
 function f3(v) {
     if (v instanceof E) {

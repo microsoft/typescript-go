@@ -16,9 +16,10 @@ var resolve = {
 };
 
 //// [commentsOnPropertyOfObjectLiteral1.js]
+"use strict";
 var resolve = {
-    id: (details) => details.id,
-    id1: "hello",
+    id: /*! @ngInject */ (details) => details.id,
+    id1: /* c1 */ "hello",
     id2: 
     /*! @ngInject */ (details) => details.id,
     id3: 

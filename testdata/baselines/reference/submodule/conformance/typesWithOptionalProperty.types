@@ -8,10 +8,10 @@ interface I {
 >foo : string
 
     bar?: number;
->bar : number
+>bar : number | undefined
 
     baz? (): string;
->baz : () => string
+>baz : (() => string) | undefined
 }
 
 var a: {
@@ -21,10 +21,10 @@ var a: {
 >foo : string
 
     bar?: number;
->bar : number
+>bar : number | undefined
 
     baz? (): string;
->baz : () => string
+>baz : (() => string) | undefined
 
 };
 

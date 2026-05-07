@@ -1,14 +1,14 @@
 //// [tests/cases/compiler/genericRecursiveImplicitConstructorErrors3.ts] ////
 
 === genericRecursiveImplicitConstructorErrors3.ts ===
-module TypeScript {
+namespace TypeScript {
 >TypeScript : typeof TypeScript
 
     export class MemberName <A,B,C>{
 >MemberName : MemberName<A, B, C>
 
         static create<A,B,C>(arg1: any, arg2?: any, arg3?: any): MemberName {
->create : <A, B, C>(arg1: any, arg2?: any, arg3?: any) => any
+>create : <A, B, C>(arg1: any, arg2?: any, arg3?: any) => MemberName
 >arg1 : any
 >arg2 : any
 >arg3 : any
@@ -16,7 +16,7 @@ module TypeScript {
     }
 }
  
-module TypeScript {
+namespace TypeScript {
 >TypeScript : typeof TypeScript
 
     export class PullSymbol <A,B,C>{
@@ -33,31 +33,31 @@ module TypeScript {
 >_elementType : any
 
         public toString<A,B,C>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
->toString : <A_1, B_1, C_1>(scopeSymbol?: any, useConstraintInName?: boolean) => any
+>toString : <A_1, B_1, C_1>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) => any
 >scopeSymbol : any
->useConstraintInName : boolean
+>useConstraintInName : boolean | undefined
 
             var s = this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
 >s : any
 >this.getScopedNameEx(scopeSymbol, useConstraintInName).toString() : any
 >this.getScopedNameEx(scopeSymbol, useConstraintInName).toString : any
 >this.getScopedNameEx(scopeSymbol, useConstraintInName) : any
->this.getScopedNameEx : <A_1, B_1, C_1>(scopeSymbol?: any, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) => any
+>this.getScopedNameEx : <A_1, B_1, C_1>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) => any
 >this : this
->getScopedNameEx : <A_1, B_1, C_1>(scopeSymbol?: any, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) => any
+>getScopedNameEx : <A_1, B_1, C_1>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) => any
 >scopeSymbol : any
->useConstraintInName : boolean
+>useConstraintInName : boolean | undefined
 >toString : any
 
             return s;
 >s : any
         }
         public getScopedNameEx<A,B,C>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) {
->getScopedNameEx : <A_1, B_1, C_1>(scopeSymbol?: any, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) => any
+>getScopedNameEx : <A_1, B_1, C_1>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) => any
 >scopeSymbol : any
->useConstraintInName : boolean
->getPrettyTypeName : boolean
->getTypeParamMarkerInfo : boolean
+>useConstraintInName : boolean | undefined
+>getPrettyTypeName : boolean | undefined
+>getTypeParamMarkerInfo : boolean | undefined
 
             if (this.isArray()) {
 >this.isArray() : any
@@ -98,8 +98,8 @@ module TypeScript {
 >getScopedNameEx : any
 >scopeSymbol : any
 >false : false
->getPrettyTypeName : boolean
->getTypeParamMarkerInfo : boolean
+>getPrettyTypeName : boolean | undefined
+>getTypeParamMarkerInfo : boolean | undefined
 
                 this._elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) : 1
 >this._elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : any
@@ -110,14 +110,14 @@ module TypeScript {
 >getMemberTypeNameEx : any
 >false : false
 >scopeSymbol : any
->getPrettyTypeName : boolean
+>getPrettyTypeName : boolean | undefined
 >1 : 1
 
                 return MemberName.create(elementMemberName, "", "[]");
 >MemberName.create(elementMemberName, "", "[]") : any
->MemberName.create : <A_1, B_1, C_1>(arg1: any, arg2?: any, arg3?: any) => any
+>MemberName.create : <A_1, B_1, C_1>(arg1: any, arg2?: any, arg3?: any) => MemberName
 >MemberName : typeof MemberName
->create : <A_1, B_1, C_1>(arg1: any, arg2?: any, arg3?: any) => any
+>create : <A_1, B_1, C_1>(arg1: any, arg2?: any, arg3?: any) => MemberName
 >elementMemberName : any
 >"" : ""
 >"[]" : "[]"

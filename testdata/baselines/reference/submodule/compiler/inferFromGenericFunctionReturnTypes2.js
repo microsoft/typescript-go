@@ -98,6 +98,7 @@ const t2 = testSet.transform(
 
 
 //// [inferFromGenericFunctionReturnTypes2.js]
+"use strict";
 let f1 = s => s.length;
 let f2 = wrap(s => s.length);
 let f3 = arrayize(wrap(s => s.length));
@@ -111,7 +112,6 @@ let a5 = ["a", "b"].map(combine(identity, wrap(s => s.length)));
 let a6 = ["a", "b"].map(combine(wrap(s => s.length), identity));
 // This is a contrived class. We could do the same thing with Observables, etc.
 class SetOf {
-    _store;
     add(a) {
         this._store.push(a);
     }

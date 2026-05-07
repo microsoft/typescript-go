@@ -1,16 +1,16 @@
 //// [tests/cases/compiler/declarationEmitNameConflicts2.ts] ////
 
 //// [declarationEmitNameConflicts2.ts]
-module X.Y.base {
+namespace X.Y.base {
     export function f() { }
     export class C { }
-    export module M {
+    export namespace M {
         export var v;
     }
     export enum E { }
 }
 
-module X.Y.base.Z {
+namespace X.Y.base.Z {
     export var f = X.Y.base.f; // Should be base.f
     export var C = X.Y.base.C; // Should be base.C
     export var M = X.Y.base.M; // Should be base.M
@@ -18,11 +18,12 @@ module X.Y.base.Z {
 }
 
 //// [declarationEmitNameConflicts2.js]
+"use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let base;
+        var base;
         (function (base) {
             function f() { }
             base.f = f;
@@ -39,11 +40,11 @@ var X;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
-        let base;
+        var base;
         (function (base) {
-            let Z;
+            var Z;
             (function (Z) {
                 Z.f = X.Y.base.f; // Should be base.f
                 Z.C = X.Y.base.C; // Should be base.C
@@ -67,8 +68,8 @@ declare namespace X.Y.base {
     }
 }
 declare namespace X.Y.base.Z {
-    var f: typeof base.f; // Should be base.f
-    var C: typeof base.C; // Should be base.C
-    var M: typeof base.M; // Should be base.M
-    var E: typeof base.E; // Should be base.E
+    var f: typeof base.f;
+    var C: typeof base.C;
+    var M: typeof base.M;
+    var E: typeof base.E;
 }

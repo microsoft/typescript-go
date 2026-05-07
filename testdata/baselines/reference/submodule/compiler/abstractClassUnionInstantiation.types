@@ -46,7 +46,7 @@ new cls2(); // should error
 >cls2 : Abstracts
 
 new cls3(); // should work
->new cls3() : ConcreteA
+>new cls3() : ConcreteA | ConcreteB
 >cls3 : Concretes
 
 [ConcreteA, AbstractA, AbstractB].map(cls => new cls()); // should error
@@ -77,11 +77,11 @@ new cls3(); // should work
 
 [ConcreteA, ConcreteB].map(cls => new cls()); // should work
 >[ConcreteA, ConcreteB].map(cls => new cls()) : ConcreteA[]
->[ConcreteA, ConcreteB].map : <U>(callbackfn: (value: typeof ConcreteA, index: number, array: typeof ConcreteA[]) => U, thisArg?: any) => U[]
->[ConcreteA, ConcreteB] : typeof ConcreteA[]
+>[ConcreteA, ConcreteB].map : <U>(callbackfn: (value: typeof ConcreteA, index: number, array: (typeof ConcreteA)[]) => U, thisArg?: any) => U[]
+>[ConcreteA, ConcreteB] : (typeof ConcreteA)[]
 >ConcreteA : typeof ConcreteA
 >ConcreteB : typeof ConcreteB
->map : <U>(callbackfn: (value: typeof ConcreteA, index: number, array: typeof ConcreteA[]) => U, thisArg?: any) => U[]
+>map : <U>(callbackfn: (value: typeof ConcreteA, index: number, array: (typeof ConcreteA)[]) => U, thisArg?: any) => U[]
 >cls => new cls() : (cls: typeof ConcreteA) => ConcreteA
 >cls : typeof ConcreteA
 >new cls() : ConcreteA

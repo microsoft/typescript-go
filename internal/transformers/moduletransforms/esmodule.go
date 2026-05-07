@@ -25,12 +25,10 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
-func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
-	if resolver == nil {
-		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
-	}
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
-	return tx.NewTransformer(tx.visit, emitContext)
+func NewESModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: opts.Resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 // Visits source elements that are not top-level or top-level nested statements.
@@ -69,9 +67,14 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
 	if externalHelpersImportDeclaration != nil || tx.importRequireStatements != nil {
 		prologue, rest := tx.Factory().SplitStandardPrologue(result.Statements.Nodes)
+		custom, rest := tx.Factory().SplitCustomPrologue(rest)
 		statements := slices.Clone(prologue)
+		statements = append(statements, custom...)
 		if externalHelpersImportDeclaration != nil {
-			statements = append(statements, externalHelpersImportDeclaration)
+			// The helpers import must be visited so that `import x = require("tslib")`
+			// (TypeScript-only syntax) is transformed to `const x = require("tslib")`
+			// for CJS output files via visitImportEqualsDeclaration.
+			statements = append(statements, tx.Visitor().VisitNode(externalHelpersImportDeclaration))
 		}
 		if tx.importRequireStatements != nil {
 			statements = append(statements, tx.importRequireStatements.statements...)
@@ -79,7 +82,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		statements = append(statements, rest...)
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.Factory().UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.Factory().UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	if ast.IsExternalModule(result) &&
@@ -89,7 +92,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		statements = append(statements, createEmptyImports(tx.Factory()))
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.Factory().UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.Factory().UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	tx.importRequireStatements = nil
@@ -126,7 +129,6 @@ func (tx *ESModuleTransformer) visitImportEqualsDeclaration(node *ast.ImportEqua
 	varStatement := tx.Factory().NewVariableStatement(
 		nil, /*modifiers*/
 		tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().NewVariableDeclaration(
 					node.Name().Clone(tx.Factory()),
@@ -135,6 +137,7 @@ func (tx *ESModuleTransformer) visitImportEqualsDeclaration(node *ast.ImportEqua
 					tx.createRequireCall(node.AsNode()),
 				),
 			}),
+			ast.NodeFlagsConst,
 		),
 	)
 	tx.EmitContext().SetOriginal(varStatement, node.AsNode())
@@ -213,8 +216,8 @@ func (tx *ESModuleTransformer) visitExportDeclaration(node *ast.ExportDeclaratio
 	importDecl := tx.Factory().NewImportDeclaration(
 		nil, /*modifiers*/
 		tx.Factory().NewImportClause(
-			false, /*isTypeOnly*/
-			nil,   /*name*/
+			ast.KindUnknown, /*phaseModifier*/
+			nil,             /*name*/
 			tx.Factory().NewNamespaceImport(synthName),
 		),
 		updatedModuleSpecifier,
@@ -280,6 +283,7 @@ func (tx *ESModuleTransformer) visitImportOrRequireCall(node *ast.CallExpression
 		node.QuestionDotToken,
 		nil, /*typeArguments*/
 		argumentList,
+		node.Flags,
 	)
 }
 
@@ -306,8 +310,8 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 		importStatement := tx.Factory().NewImportDeclaration(
 			nil, /*modifiers*/
 			tx.Factory().NewImportClause(
-				false, /*isTypeOnly*/
-				nil,   /*name*/
+				ast.KindUnknown, /*phaseModifier*/
+				nil,             /*name*/
 				tx.Factory().NewNamedImports(
 					tx.Factory().NewNodeList([]*ast.Node{
 						tx.Factory().NewImportSpecifier(
@@ -318,7 +322,7 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 					}),
 				),
 			),
-			tx.Factory().NewStringLiteral("module"),
+			tx.Factory().NewStringLiteral("module", ast.TokenFlagsNone),
 			nil, /*attributes*/
 		)
 		tx.EmitContext().AddEmitFlags(importStatement, printer.EFCustomPrologue)
@@ -327,7 +331,6 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 		requireStatement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsConst,
 				tx.Factory().NewNodeList([]*ast.Node{
 					tx.Factory().NewVariableDeclaration(
 						requireHelperName,
@@ -349,6 +352,7 @@ func (tx *ESModuleTransformer) createRequireCall(node *ast.Node /*ImportDeclarat
 						),
 					),
 				}),
+				ast.NodeFlagsConst,
 			),
 		)
 		tx.EmitContext().AddEmitFlags(requireStatement, printer.EFCustomPrologue)

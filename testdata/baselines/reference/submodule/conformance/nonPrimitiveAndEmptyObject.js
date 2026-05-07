@@ -18,14 +18,13 @@ fooProps.barProp;
 
 
 //// [nonPrimitiveAndEmptyObject.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+// Repro from #49480
 const { fooProps = {} } = foo;
 fooProps.barProp;
+export {};
 
 
 //// [nonPrimitiveAndEmptyObject.d.ts]
-// Repro from #49480
 export interface BarProps {
     barProp?: string;
 }

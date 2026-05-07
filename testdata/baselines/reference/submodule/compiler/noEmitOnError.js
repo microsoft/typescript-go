@@ -4,9 +4,15 @@
 var x: number = "";
 
 
-//// [noEmitOnError.js]
-var x = "";
-//# sourceMappingURL=noEmitOnError.js.map
 
+
+!!!! File noEmitOnError.d.ts missing from original emit, but present in noCheck emit
 //// [noEmitOnError.d.ts]
 declare var x: number;
+
+
+!!!! File noEmitOnError.js missing from original emit, but present in noCheck emit
+//// [noEmitOnError.js]
+"use strict";
+var x = "";
+//# sourceMappingURL=noEmitOnError.js.map

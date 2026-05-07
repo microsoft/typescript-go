@@ -123,6 +123,7 @@ const fooConst54374: Foo54374 = {
 
 
 //// [constAssertions.js]
+"use strict";
 let v1 = 'abc';
 let v2 = `abc`;
 let v3 = 10;
@@ -213,8 +214,8 @@ const fooConst54374 = {
 
 
 //// [constAssertions.d.ts]
-declare let v1: "abc";
-declare let v2: "abc";
+declare let v1: 'abc';
+declare let v2: `abc`;
 declare let v3: 10;
 declare let v4: -10;
 declare let v5: 10;
@@ -222,8 +223,8 @@ declare let v6: 10n;
 declare let v7: -10n;
 declare let v8: true;
 declare let v9: false;
-declare let c1: "abc";
-declare let c2: "abc";
+declare let c1: 'abc';
+declare let c2: `abc`;
 declare let c3: 10;
 declare let c4: -10;
 declare let c5: 10;
@@ -235,7 +236,7 @@ declare let vv1: "abc";
 declare let vc1: "abc";
 declare let a1: readonly [];
 declare let a2: readonly [1, 2, 3];
-declare let a3: readonly [10, "hello", true];
+declare let a3: readonly [10, 'hello', true];
 declare let a4: readonly [1, 2, 3];
 declare let a5: number[];
 declare let a6: readonly number[];
@@ -285,7 +286,7 @@ declare let o8: {
 declare let o9: {
     readonly x: 10;
     readonly foo: () => void;
-}; // Error
+};
 declare let p1: 10;
 declare let p2: -10;
 declare let p3: readonly [10];
@@ -300,7 +301,7 @@ declare let x1: {
     };
 };
 declare let q1: 10;
-declare let q2: "abc";
+declare let q2: 'abc';
 declare let q3: true;
 declare let q4: readonly [1, 2, 3];
 declare let q5: {
@@ -308,11 +309,11 @@ declare let q5: {
     readonly y: 20;
 };
 declare function id<T>(x: T): T;
-declare let e1: "abc"; // Error
-declare let e2: 0 | 1; // Error
-declare let e3: 1; // Error
-declare let t1: "foo";
-declare let t2: "bar";
+declare let e1: "abc";
+declare let e2: 0 | 1;
+declare let e3: 1;
+declare let t1: 'foo';
+declare let t2: 'bar';
 declare let t3: "foo-bar";
 declare let t4: "(foo)-(bar)";
 declare function ff1(x: 'foo' | 'bar', y: 1 | 2): "bar-1" | "bar-2" | "foo-1" | "foo-2";
@@ -328,7 +329,6 @@ declare function ff4(verify: boolean, contentMatches: boolean): "verify_match" |
 declare function ff5(verify: boolean, contentMatches: boolean): "verify_match" | "verify_nonMatch" | "write_match" | "write_nonMatch";
 declare function accessorNames<S extends string>(propName: S): readonly [`get-${S}`, `set-${S}`];
 declare const ns1: readonly ["get-foo", "set-foo"];
-// repro from https://github.com/microsoft/TypeScript/issues/54374
 interface Foo54374 {
     a: 1;
     b: 2;

@@ -17,6 +17,7 @@ class C {
 }
 
 //// [functionArgShadowing.js]
+"use strict";
 class A {
     foo() { }
 }
@@ -28,7 +29,6 @@ function foo(x) {
     x.bar(); // the property bar does not exist on a value of type A
 }
 class C {
-    p;
     constructor(p) {
         this.p = p;
         var p;

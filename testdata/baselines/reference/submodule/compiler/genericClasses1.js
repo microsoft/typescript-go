@@ -10,8 +10,8 @@ var v1 = new C<string>();
 var y = v1.x; // should be 'string'
 
 //// [genericClasses1.js]
+"use strict";
 class C {
-    x;
 }
 var v1 = new C();
 var y = v1.x; // should be 'string'
@@ -22,4 +22,4 @@ declare class C<T> {
     x: T;
 }
 declare var v1: C<string>;
-declare var y: string; // should be 'string'
+declare var y: string;

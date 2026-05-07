@@ -7,10 +7,12 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -50,6 +52,7 @@ var textToKeyword = map[string]ast.Kind{
 	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"default":     ast.KindDefaultKeyword,
+	"defer":       ast.KindDeferKeyword,
 	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
@@ -207,13 +210,18 @@ type ScannerState struct {
 }
 
 type Scanner struct {
-	text             string
-	languageVariant  core.LanguageVariant
-	onError          ErrorCallback
-	skipTrivia       bool
-	JSDocParsingMode ast.JSDocParsingMode
-	scriptKind       core.ScriptKind
+	text            string
+	end             int
+	languageVariant core.LanguageVariant
+	scriptTarget    core.ScriptTarget
+	onError         ErrorCallback
+	skipTrivia      bool
 	ScannerState
+
+	containsNonASCII bool
+	numberCache      map[string]string
+	hexNumberCache   map[string]string
+	hexDigitCache    map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -229,7 +237,18 @@ func NewScanner() *Scanner {
 }
 
 func (s *Scanner) Reset() {
+	numberCache := cleared(s.numberCache)
+	hexNumberCache := cleared(s.hexNumberCache)
+	hexDigitCache := cleared(s.hexDigitCache)
 	*s = defaultScanner()
+	s.numberCache = numberCache
+	s.hexNumberCache = hexNumberCache
+	s.hexDigitCache = hexDigitCache
+}
+
+func cleared[M ~map[K]V, K comparable, V any](m M) M {
+	clear(m)
+	return m
 }
 
 func (s *Scanner) Text() string {
@@ -312,6 +331,13 @@ func (s *Scanner) HasUnicodeEscape() bool {
 	return s.tokenFlags&ast.TokenFlagsUnicodeEscape != 0
 }
 
+// ContainsNonASCII returns true if the scanner encountered any non-ASCII bytes
+// during scanning. This is useful for determining whether UTF-8 byte offsets
+// may differ from UTF-16 code unit offsets.
+func (s *Scanner) ContainsNonASCII() bool {
+	return s.containsNonASCII
+}
+
 func (s *Scanner) HasExtendedUnicodeEscape() bool {
 	return s.tokenFlags&ast.TokenFlagsExtendedUnicodeEscape != 0
 }
@@ -328,8 +354,57 @@ func (s *Scanner) HasPrecedingJSDocLeadingAsterisks() bool {
 	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocLeadingAsterisks != 0
 }
 
+func (s *Scanner) HasPrecedingJSDocWithDeprecatedTag() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated != 0
+}
+
+func (s *Scanner) HasPrecedingJSDocWithSeeOrLink() bool {
+	return s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink != 0
+}
+
+// scanJSDocCommentForTags scans a JSDoc comment for @deprecated, @see, and @link tags,
+// setting the appropriate token flags. Called during scanning when a JSDoc comment is detected.
+func (s *Scanner) scanJSDocCommentForTags(commentText string) {
+	for {
+		i := strings.IndexByte(commentText, '@')
+		if i < 0 {
+			return
+		}
+		commentText = commentText[i+1:]
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithDeprecated == 0 && hasJSDocTag(commentText, "deprecated") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithDeprecated
+		}
+		if s.tokenFlags&ast.TokenFlagsPrecedingJSDocWithSeeOrLink == 0 && hasJSDocTag(commentText, "see", "link", "linkcode", "linkplain") {
+			s.tokenFlags |= ast.TokenFlagsPrecedingJSDocWithSeeOrLink
+		}
+		if s.tokenFlags&(ast.TokenFlagsPrecedingJSDocWithDeprecated|ast.TokenFlagsPrecedingJSDocWithSeeOrLink) ==
+			(ast.TokenFlagsPrecedingJSDocWithDeprecated | ast.TokenFlagsPrecedingJSDocWithSeeOrLink) {
+			return
+		}
+	}
+}
+
+// hasJSDocTag reports whether text starts with one of the given tag names followed
+// by a valid JSDoc tag terminator (whitespace, '}', '*', or end-of-string).
+func hasJSDocTag(text string, tags ...string) bool {
+	for _, tag := range tags {
+		if !strings.HasPrefix(text, tag) {
+			continue
+		}
+		if len(text) == len(tag) {
+			return true
+		}
+		ch := text[len(tag)]
+		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '}' || ch == '*' {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Scanner) SetText(text string) {
 	s.text = text
+	s.end = len(text)
 	s.ScannerState = ScannerState{}
 }
 
@@ -337,16 +412,19 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 	s.onError = errorCallback
 }
 
-func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
-	s.scriptKind = scriptKind
-}
-
-func (s *Scanner) SetJSDocParsingMode(kind ast.JSDocParsingMode) {
-	s.JSDocParsingMode = kind
-}
-
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
 	s.languageVariant = languageVariant
+}
+
+func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
+	s.scriptTarget = scriptTarget
+}
+
+func (s *Scanner) languageVersion() core.ScriptTarget {
+	if s.scriptTarget == core.ScriptTargetNone {
+		return core.ScriptTargetLatest
+	}
+	return s.scriptTarget
 }
 
 func (s *Scanner) error(diagnostic *diagnostics.Message) {
@@ -363,7 +441,7 @@ func (s *Scanner) errorAt(diagnostic *diagnostics.Message, pos int, length int, 
 // It must be checked against utf8.RuneSelf to verify that a call to charAndSize
 // is not needed.
 func (s *Scanner) char() rune {
-	if s.pos < len(s.text) {
+	if s.pos < s.end {
 		return rune(s.text[s.pos])
 	}
 	return -1
@@ -371,44 +449,18 @@ func (s *Scanner) char() rune {
 
 // NOTE: this returns a rune, but only decodes the byte at the offset.
 func (s *Scanner) charAt(offset int) rune {
-	if s.pos+offset < len(s.text) {
+	if s.pos+offset < s.end {
 		return rune(s.text[s.pos+offset])
 	}
 	return -1
 }
 
 func (s *Scanner) charAndSize() (rune, int) {
-	return utf8.DecodeRuneInString(s.text[s.pos:])
-}
-
-func (s *Scanner) shouldParseJSDoc() bool {
-	switch s.JSDocParsingMode {
-	case ast.JSDocParsingModeParseAll:
-		return true
-	case ast.JSDocParsingModeParseNone:
-		return false
+	r, size := utf8.DecodeRuneInString(s.text[s.pos:])
+	if size > 1 {
+		s.containsNonASCII = true
 	}
-	if s.scriptKind != core.ScriptKindTS && s.scriptKind != core.ScriptKindTSX {
-		// If outside of TS, we need JSDoc to get any type info.
-		return true
-	}
-	if s.JSDocParsingMode == ast.JSDocParsingModeParseForTypeInfo {
-		// If we're in TS, but we don't need to produce reliable errors,
-		// we don't need to parse to find @see or @link.
-		return false
-	}
-	text := s.text[s.fullStartPos:s.pos]
-	for {
-		i := strings.IndexByte(text, '@')
-		if i < 0 {
-			break
-		}
-		text = text[i+1:]
-		if strings.HasPrefix(text, "see") || strings.HasPrefix(text, "link") {
-			return true
-		}
-	}
-	return false
+	return r, size
 }
 
 func (s *Scanner) Scan() ast.Kind {
@@ -597,8 +649,9 @@ func (s *Scanner) Scan() ast.Kind {
 					}
 				}
 
-				if isJSDoc && s.shouldParseJSDoc() {
+				if isJSDoc {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
+					s.scanJSDocCommentForTags(s.text[s.tokenStart:s.pos])
 				}
 
 				s.processCommentDirective(lastLineStart, s.pos, true)
@@ -626,13 +679,27 @@ func (s *Scanner) Scan() ast.Kind {
 			}
 		case '0':
 			if s.charAt(1) == 'X' || s.charAt(1) == 'x' {
+				start := s.pos
 				s.pos += 2
 				digits := s.scanHexDigits(1, true, true)
 				if digits == "" {
 					s.error(diagnostics.Hexadecimal_digit_expected)
 					digits = "0"
 				}
-				s.tokenValue = "0x" + digits
+				if s.hexNumberCache == nil {
+					s.hexNumberCache = make(map[string]string)
+				}
+				if cachedValue, ok := s.hexNumberCache[digits]; ok {
+					s.tokenValue = cachedValue
+				} else {
+					rawText := s.text[start:s.pos]
+					if strings.HasPrefix(rawText, "0x") && rawText[2:] == digits {
+						s.tokenValue = rawText
+					} else {
+						s.tokenValue = "0x" + digits
+					}
+					s.hexNumberCache[digits] = s.tokenValue
+				}
 				s.tokenFlags |= ast.TokenFlagsHexSpecifier
 				s.token = s.scanBigIntSuffix()
 				break
@@ -834,12 +901,11 @@ func (s *Scanner) Scan() ast.Kind {
 				}
 				s.pos--
 			}
-			if s.scanIdentifier(1) {
-				s.token = ast.KindPrivateIdentifier
-			} else {
+			if !s.scanIdentifier(1) {
 				s.errorAt(diagnostics.Invalid_character, s.pos-1, 1)
-				s.token = ast.KindUnknown
+				s.tokenValue = "#"
 			}
+			s.token = ast.KindPrivateIdentifier
 		default:
 			if ch < 0 {
 				s.token = ast.KindEndOfFile
@@ -850,7 +916,7 @@ func (s *Scanner) Scan() ast.Kind {
 				break
 			}
 			ch, size := s.charAndSize()
-			if ch == utf8.RuneError && size == 1 {
+			if ch == utf8.RuneError {
 				s.errorAt(diagnostics.File_appears_to_be_binary, 0, 0)
 				s.pos = len(s.text)
 				s.token = ast.KindNonTextFileMarkerTrivia
@@ -977,20 +1043,35 @@ func (s *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
 	return s.token
 }
 
-// !!! https://github.com/microsoft/TypeScript/pull/55600
-func (s *Scanner) ReScanSlashToken() ast.Kind {
+func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
+	shouldReportErrors := len(reportErrors) > 0 && reportErrors[0]
 	if s.token == ast.KindSlashToken || s.token == ast.KindSlashEqualsToken {
-		s.pos = s.tokenStart + 1
-		startOfRegExpBody := s.pos
+		// Quickly get to the end of regex such that we know the flags
+		startOfRegExpBody := s.tokenStart + 1
+		p := startOfRegExpBody
 		inEscape := false
+		namedCaptureGroups := false
+		// Although nested character classes are allowed in Unicode Sets mode,
+		// an unescaped slash is nevertheless invalid even in a character class in any Unicode mode.
+		// This is indicated by Section 12.9.5 Regular Expression Literals of the specification,
+		// where nested character classes are not considered at all. (A `[` RegularExpressionClassChar
+		// does nothing in a RegularExpressionClass, and a `]` always closes the class.)
+		// Additionally, parsing nested character classes will misinterpret regexes like `/[[]/`
+		// as unterminated, consuming characters beyond the slash. (This even applies to `/[[]/v`,
+		// which should be parsed as a well-terminated regex with an incomplete character class.)
+		// Thus we must not handle nested character classes in the first pass.
 		inCharacterClass := false
 	loop:
 		for {
-			ch, size := s.charAndSize()
 			// If we reach the end of a file, or hit a newline, then this is an unterminated
-			// regex.  Report error and return what we have so far.
+			// regex. Report error and return what we have so far.
+			if p >= s.end {
+				s.tokenFlags |= ast.TokenFlagsUnterminated
+				break loop
+			}
+			ch := rune(s.text[p])
 			switch {
-			case size == 0 || stringutil.IsLineBreak(ch):
+			case stringutil.IsLineBreak(ch):
 				s.tokenFlags |= ast.TokenFlagsUnterminated
 				break loop
 			case inEscape:
@@ -1007,20 +1088,26 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 				inEscape = true
 			case ch == ']':
 				inCharacterClass = false
+			case !inCharacterClass && ch == '(' &&
+				p+1 < s.end && s.text[p+1] == '?' &&
+				p+2 < s.end && s.text[p+2] == '<' &&
+				(p+3 >= s.end || (s.text[p+3] != '=' && s.text[p+3] != '!')):
+				namedCaptureGroups = true
 			}
-			s.pos += size
+			p++
 		}
+
+		endOfRegExpBody := p
 		if s.tokenFlags&ast.TokenFlagsUnterminated != 0 {
 			// Search for the nearest unbalanced bracket for better recovery. Since the expression is
 			// invalid anyways, we take nested square brackets into consideration for the best guess.
-			endOfRegExpBody := s.pos
-			s.pos = startOfRegExpBody
+			p = startOfRegExpBody
 			inEscape = false
 			characterClassDepth := 0
 			inDecimalQuantifier := false
 			groupDepth := 0
-			for s.pos < endOfRegExpBody {
-				ch, size := s.charAndSize()
+			for p < endOfRegExpBody {
+				ch := rune(s.text[p])
 				if inEscape {
 					inEscape = false
 				} else if ch == '\\' {
@@ -1045,29 +1132,69 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 						}
 					}
 				}
-				s.pos += size
+				p++
 			}
 			// Whitespaces and semicolons at the end are not likely to be part of the regex
-			for {
-				ch, size := utf8.DecodeLastRuneInString(s.text[:s.pos])
+			for p > startOfRegExpBody {
+				ch, size := utf8.DecodeLastRuneInString(s.text[:p])
 				if stringutil.IsWhiteSpaceLike(ch) || ch == ';' {
-					s.pos -= size
+					p -= size
 				} else {
 					break
 				}
 			}
-			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, s.pos-s.tokenStart)
+			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, p-s.tokenStart)
 		} else {
 			// Consume the slash character
-			s.pos++
-			for {
-				ch, size := s.charAndSize()
-				if size == 0 || !IsIdentifierPart(ch) {
+			p++
+			var regExpFlags regularExpressionFlags
+			for p < s.end {
+				ch, size := utf8.DecodeRuneInString(s.text[p:])
+				if ch == utf8.RuneError || !IsIdentifierPart(ch) {
 					break
 				}
-				s.pos += size
+				if shouldReportErrors {
+					flag, ok := charCodeToRegExpFlag[ch]
+					if !ok {
+						s.errorAt(diagnostics.Unknown_regular_expression_flag, p, size)
+					} else if regExpFlags&flag != 0 {
+						s.errorAt(diagnostics.Duplicate_regular_expression_flag, p, size)
+					} else if (regExpFlags|flag)&regularExpressionFlagsAnyUnicodeMode == regularExpressionFlagsAnyUnicodeMode {
+						s.errorAt(diagnostics.The_Unicode_u_flag_and_the_Unicode_Sets_v_flag_cannot_be_set_simultaneously, p, size)
+					} else {
+						regExpFlags |= flag
+						s.checkRegularExpressionFlagAvailability(flag, p, size)
+					}
+				}
+				p += size
+			}
+			if shouldReportErrors {
+				s.pos = startOfRegExpBody
+				saveEnd := s.end
+				saveTokenPos := s.tokenStart
+				saveTokenFlags := s.tokenFlags
+				s.end = endOfRegExpBody
+				parser := &regExpParser{
+					scanner:            s,
+					end:                endOfRegExpBody,
+					regExpFlags:        regExpFlags,
+					anyUnicodeMode:     regExpFlags&regularExpressionFlagsAnyUnicodeMode != 0,
+					unicodeSetsMode:    regExpFlags&regularExpressionFlagsUnicodeSets != 0,
+					annexB:             true,
+					namedCaptureGroups: namedCaptureGroups,
+					groupSpecifiers:    make(map[string]bool),
+				}
+				parser.run()
+				s.end = saveEnd
+				s.pos = p
+				s.tokenStart = saveTokenPos
+				s.tokenFlags = saveTokenFlags
+			} else {
+				s.pos = p
 			}
 		}
+
+		s.pos = p
 		s.tokenValue = s.text[s.tokenStart:s.pos]
 		s.token = ast.KindRegularExpressionLiteral
 	}
@@ -1199,6 +1326,12 @@ func (s *Scanner) ScanJsxIdentifier() ast.Kind {
 
 func (s *Scanner) ScanJsxAttributeValue() ast.Kind {
 	s.fullStartPos = s.pos
+	// Skip whitespace between '=' and the value so tokenStart lands on the
+	// opening quote, not on trivia.
+	for ch, size := s.charAndSize(); size > 0 && stringutil.IsWhiteSpaceLike(ch); ch, size = s.charAndSize() {
+		s.pos += size
+	}
+	s.tokenStart = s.pos
 	switch s.char() {
 	case '"', '\'':
 		s.tokenValue = s.scanString(true /*jsxAttributeString*/)
@@ -1230,15 +1363,11 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 			if ch == '{' {
 				break
 			} else if ch == '@' && s.pos >= 0 {
-				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before non-whitespace
+				// @ doesn't start a new tag inside ``, and elsewhere, only after whitespace and before identifier
 				previous, _ := utf8.DecodeLastRuneInString(s.text[:s.pos])
 				if stringutil.IsWhiteSpaceSingleLine(previous) {
-					if s.pos+size >= len(s.text) {
-						// EOF counts as non-whitespace
-						break
-					}
 					next, _ := utf8.DecodeRuneInString(s.text[s.pos+size:])
-					if !stringutil.IsWhiteSpaceLike(next) {
+					if IsIdentifierStart(next) {
 						break
 					}
 				}
@@ -1252,6 +1381,17 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 	s.tokenValue = s.text[s.tokenStart:s.pos]
 	s.token = ast.KindJSDocCommentTextToken
 	return s.token
+}
+
+// Peek at the character at the current scanner position (expected to be right after '@')
+// and return true if a JSDoc tag can follow. Identifier starts indicate a tag name.
+// Whitespace, newlines, and EOF are also accepted to support incomplete tags for code completion.
+func (s *Scanner) CanFollowJSDocAt() bool {
+	if s.pos >= len(s.text) {
+		return true
+	}
+	ch, _ := utf8.DecodeRuneInString(s.text[s.pos:])
+	return IsIdentifierStart(ch) || stringutil.IsWhiteSpaceSingleLine(ch) || stringutil.IsLineBreak(ch)
 }
 
 func (s *Scanner) ScanJSDocToken() ast.Kind {
@@ -1333,7 +1473,8 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 			s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 			s.token = GetIdentifierToken(s.tokenValue)
 		} else {
-			s.scanInvalidCharacter()
+			s.pos++
+			s.token = ast.KindUnknown
 		}
 		return s.token
 	}
@@ -1425,7 +1566,23 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
+	// Fast path for simple strings without escape sequences.
+	strLen := strings.IndexRune(s.text[s.pos:], quote)
+	if strLen == 0 {
+		s.pos++
+		return ""
+	}
+	if strLen > 0 {
+		str := s.text[s.pos : s.pos+strLen]
+		if !jsxAttributeString && !strings.ContainsAny(str, "\r\n\\") {
+			s.pos += strLen + 1
+			return str
+		}
+	}
 	var sb strings.Builder
 	start := s.pos
 	for {
@@ -1462,12 +1619,12 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 	startedWithBacktick := s.char() == '`'
 	s.pos++
 	start := s.pos
-	b := strings.Builder{}
+	parts := make([]string, 0, 4)
 	var token ast.Kind
 	for {
 		ch := s.char()
 		if ch < 0 || ch == '`' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			if ch == '`' {
 				s.pos++
 			} else {
@@ -1478,32 +1635,32 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 			break
 		}
 		if ch == '$' && s.charAt(1) == '{' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			s.pos += 2
 			token = core.IfElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
 			break
 		}
 		if ch == '\\' {
-			b.WriteString(s.text[start:s.pos])
-			b.WriteString(s.scanEscapeSequence(EscapeSequenceScanningFlagsString | core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
+			parts = append(parts, s.text[start:s.pos])
+			parts = append(parts, s.scanEscapeSequence(EscapeSequenceScanningFlagsString|core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
 			start = s.pos
 			continue
 		}
 		// Speculated ECMAScript 6 Spec 11.8.6.1:
 		// <CR><LF> and <CR> LineTerminatorSequences are normalized to <LF> for Template Values
 		if ch == '\r' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			s.pos++
 			if s.char() == '\n' {
 				s.pos++
 			}
-			b.WriteString("\n")
+			parts = append(parts, "\n")
 			start = s.pos
 			continue
 		}
 		s.pos++
 	}
-	s.tokenValue = b.String()
+	s.tokenValue = strings.Join(parts, "")
 	return token
 }
 
@@ -1542,9 +1699,9 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			code, _ := strconv.ParseInt(s.text[start+1:s.pos], 8, 32)
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
-				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, fmt.Sprintf("%02x", code))
+				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, fmt.Sprintf("\\x%02x", code))
 			} else {
-				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
+				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, fmt.Sprintf("\\x%02x", code))
 			}
 			return string(rune(code))
 		}
@@ -1578,11 +1735,43 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 	case '"':
 		return "\""
 	case 'u':
-		// '\uDDDD' and '\U{DDDDDD}'
+		// '\uDDDD' and '\u{DDDDDD}'
+		extended := s.char() == '{'
 		s.pos -= 2
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+		if extended {
+			if flags&EscapeSequenceScanningFlagsAllowExtendedUnicodeEscape == 0 {
+				s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
+				if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
+					s.errorAt(diagnostics.Unicode_escape_sequences_are_only_available_when_the_Unicode_u_flag_or_the_Unicode_Sets_v_flag_is_set, start, s.pos-start)
+				}
+			}
+			if codePoint < 0 {
+				return s.text[start:s.pos]
+			}
+			return string(codePoint)
+		}
 		if codePoint < 0 {
 			return s.text[start:s.pos]
+		} else if codePointIsHighSurrogate(codePoint) &&
+			(flags&EscapeSequenceScanningFlagsRegularExpression == 0 || flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0) &&
+			s.char() == '\\' && s.charAt(1) == 'u' && s.charAt(2) != '{' {
+			// Combine \uHigh\uLow into a single code point in string literals (always) and
+			// in regex AnyUnicodeMode. In non-unicode regex mode they are separate atoms.
+			savedPos := s.pos
+			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
+			if codePointIsLowSurrogate(nextCodePoint) {
+				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			}
+			s.pos = savedPos
+			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
+				return encodeSurrogate(codePoint)
+			}
+		} else if (codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint)) &&
+			flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
+			// Lone surrogate inside a non-unicode regex: encode as CESU-8 so scanClassRanges
+			// can compare surrogates numerically. Must NOT apply to string literals.
+			return encodeSurrogate(codePoint)
 		}
 		return string(codePoint)
 	case 'x':
@@ -1626,7 +1815,6 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	var hexDigits string
 	if extended {
 		s.pos++
-		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 		hexDigits = s.scanHexDigits(1, true, false)
 	} else {
 		s.tokenFlags |= ast.TokenFlagsUnicodeEscape
@@ -1641,21 +1829,31 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	}
 	hexValue, _ := strconv.ParseInt(hexDigits, 16, 32)
 	if extended {
+		isInvalidExtendedEscape := false
 		if hexValue > 0x10FFFF {
-			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.errorAt(diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive, start+1, s.pos-start-1)
 			}
-			return -1
+			isInvalidExtendedEscape = true
 		}
-		if s.char() != '}' {
-			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
+		if s.pos >= s.end {
+			if shouldEmitInvalidEscapeError {
+				s.error(diagnostics.Unexpected_end_of_text)
+			}
+			isInvalidExtendedEscape = true
+		} else if s.char() == '}' {
+			s.pos++
+		} else {
 			if shouldEmitInvalidEscapeError {
 				s.error(diagnostics.Unterminated_Unicode_escape_sequence)
 			}
+			isInvalidExtendedEscape = true
+		}
+		if isInvalidExtendedEscape {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			return -1
 		}
-		s.pos++
+		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 	}
 	return rune(hexValue)
 }
@@ -1692,10 +1890,11 @@ func (s *Scanner) scanNumber() ast.Kind {
 				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 				fixedPart = digits
 			} else {
-				s.tokenValue = jsnum.FromString(digits).String()
+				val, _ := strconv.ParseInt(digits, 8, 64)
+				s.tokenValue = strconv.FormatInt(val, 10)
 				s.tokenFlags |= ast.TokenFlagsOctal
 				withMinus := s.token == ast.KindMinusToken
-				literal := core.IfElse(withMinus, "-", "") + "0o" + s.tokenValue
+				literal := core.IfElse(withMinus, "-", "") + "0o" + strconv.FormatInt(val, 8)
 				if withMinus {
 					start--
 				}
@@ -1777,7 +1976,7 @@ func (s *Scanner) scanNumberFragment() string {
 	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	result := ""
+	var result strings.Builder
 	for {
 		ch := s.char()
 		if ch == '_' {
@@ -1785,7 +1984,7 @@ func (s *Scanner) scanNumberFragment() string {
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
-				result += s.text[start:s.pos]
+				result.WriteString(s.text[start:s.pos])
 			} else {
 				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
@@ -1810,7 +2009,8 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	return result + s.text[start:s.pos]
+	result.WriteString(s.text[start:s.pos])
+	return result.String()
 }
 
 func (s *Scanner) scanDigits() (string, bool) {
@@ -1826,18 +2026,16 @@ func (s *Scanner) scanDigits() (string, bool) {
 }
 
 func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHaveSeparators bool) string {
-	var sb strings.Builder
+	digitCount := 0
+	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	for sb.Len() < minCount || scanAsManyAsPossible {
+	for digitCount < minCount || scanAsManyAsPossible {
 		ch := s.char()
 		if stringutil.IsHexDigit(ch) {
-			if ch >= 'A' && ch <= 'F' {
-				ch += 'a' - 'A' // standardize hex literals to lowercase
-			}
-			sb.WriteByte(byte(ch))
 			allowSeparator = canHaveSeparators
 			isPreviousTokenSeparator = false
+			digitCount++
 		} else if canHaveSeparators && ch == '_' {
 			s.tokenFlags |= ast.TokenFlagsContainsSeparator
 			if allowSeparator {
@@ -1856,10 +2054,24 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 	if isPreviousTokenSeparator {
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	if sb.Len() < minCount {
+	if digitCount < minCount {
 		return ""
 	}
-	return sb.String()
+	digits := s.text[start:s.pos]
+	if s.hexDigitCache == nil {
+		s.hexDigitCache = make(map[string]string)
+	}
+	if cached, ok := s.hexDigitCache[digits]; ok {
+		return cached
+	} else {
+		original := digits
+		if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
+			digits = strings.ReplaceAll(digits, "_", "")
+		}
+		digits = strings.ToLower(digits) // standardize hex literals to lowercase
+		s.hexDigitCache[original] = digits
+		return digits
+	}
 }
 
 func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
@@ -1902,7 +2114,19 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 		s.pos++
 		return ast.KindBigIntLiteral
 	}
-	s.tokenValue = jsnum.FromString(s.tokenValue).String()
+	if s.numberCache == nil {
+		s.numberCache = make(map[string]string)
+	}
+	if cached, ok := s.numberCache[s.tokenValue]; ok {
+		s.tokenValue = cached
+	} else {
+		tokenValue := jsnum.FromString(s.tokenValue).String()
+		if tokenValue == s.tokenValue {
+			tokenValue = s.tokenValue
+		}
+		s.numberCache[s.tokenValue] = tokenValue
+		s.tokenValue = tokenValue
+	}
 	return ast.KindNumericLiteral
 }
 
@@ -1986,14 +2210,13 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[ast.Kind]string
-
-func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToToken))
-	for text, key := range textToToken {
-		tokenToText[key] = text
+var tokenToText = func() [ast.KindCount]string {
+	var result [ast.KindCount]string
+	for text, kind := range textToToken {
+		result[kind] = text
 	}
-}
+	return result
+}()
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
@@ -2231,6 +2454,7 @@ func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
 	s.text = sourceFile.Text()
 	s.pos = pos
+	s.end = len(s.text)
 	s.languageVariant = sourceFile.LanguageVariant
 	s.Scan()
 	return s
@@ -2252,21 +2476,93 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 	if ast.NodeIsMissing(node) {
 		return node.Pos()
 	}
-
 	if ast.IsJSDocNode(node) || node.Kind == ast.KindJsxText {
 		// JsxText cannot actually contain comments, even though the scanner will think it sees comments
 		return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{StopAtComments: true})
 	}
-
 	if includeJSDoc && len(node.JSDoc(sourceFile)) > 0 {
 		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJSDoc*/)
 	}
+	return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0})
+}
 
-	return SkipTriviaEx(
-		sourceFile.Text(),
-		node.Pos(),
-		&SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0},
-	)
+func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
+	pos := SkipTrivia(sourceFile.Text(), node.Pos())
+	body := node.Body()
+	if body != nil && body.Kind == ast.KindBlock {
+		startLine := GetECMALineOfPosition(sourceFile, body.Pos())
+		endLine := GetECMALineOfPosition(sourceFile, body.End())
+		if startLine < endLine {
+			// The arrow function spans multiple lines, make the error span be the first line, inclusive.
+			return core.NewTextRange(pos, GetECMAEndLinePosition(sourceFile, startLine)+1)
+		}
+	}
+	return core.NewTextRange(pos, node.End())
+}
+
+func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
+	errorNode := node
+	switch node.Kind {
+	case ast.KindSourceFile:
+		pos := SkipTrivia(sourceFile.Text(), 0)
+		if pos == len(sourceFile.Text()) {
+			return core.NewTextRange(0, 0)
+		}
+		return GetRangeOfTokenAtPosition(sourceFile, pos)
+	// This list is a work in progress. Add missing node kinds to improve their error spans
+	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		fallthrough
+	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
+		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
+		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
+		ast.KindPropertySignature, ast.KindNamespaceImport:
+		errorNode = ast.GetNameOfDeclaration(node)
+	case ast.KindArrowFunction:
+		return getErrorRangeForArrowFunction(sourceFile, node)
+	case ast.KindCaseClause, ast.KindDefaultClause:
+		start := SkipTrivia(sourceFile.Text(), node.Pos())
+		end := node.End()
+		statements := node.Statements()
+		if len(statements) != 0 {
+			end = statements[0].Pos()
+		}
+		return core.NewTextRange(start, end)
+	case ast.KindReturnStatement, ast.KindYieldExpression:
+		pos := SkipTrivia(sourceFile.Text(), node.Pos())
+		return GetRangeOfTokenAtPosition(sourceFile, pos)
+	case ast.KindSatisfiesExpression:
+		pos := SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
+		return GetRangeOfTokenAtPosition(sourceFile, pos)
+	case ast.KindConstructor:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		scanner := GetScannerForSourceFile(sourceFile, node.Pos())
+		start := scanner.TokenStart()
+		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {
+			scanner.Scan()
+		}
+		return core.NewTextRange(start, scanner.TokenEnd())
+		// !!!
+		// case KindJSDocSatisfiesTag:
+		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
+		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
+	}
+	if errorNode == nil {
+		// If we don't have a better node, then just set the error on the first token of
+		// construct.
+		return GetRangeOfTokenAtPosition(sourceFile, node.Pos())
+	}
+	pos := errorNode.Pos()
+	if !ast.NodeIsMissing(errorNode) && !ast.IsJsxText(errorNode) {
+		pos = SkipTrivia(sourceFile.Text(), pos)
+	}
+	return core.NewTextRange(pos, errorNode.End())
 }
 
 func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
@@ -2286,58 +2582,130 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
-	return sourceFile.LineMap()
+func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
+	return sourceFile.ECMALineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
-	lineMap := GetLineStarts(sourceFile)
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
+}
+
+// GetECMALineAndUTF16CharacterOfPosition returns the 0-based line number and the
+// UTF-16 code unit offset from the start of that line for the given byte position.
+// Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
+func GetECMALineAndUTF16CharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character core.UTF16Offset) {
+	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
-	return
+	character = core.UTF16Len(sourceFile.Text()[lineMap[line]:pos])
+	return line, character
 }
 
-func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
-	pos := int(GetLineStarts(sourceFile)[line])
+// GetECMALineAndByteOffsetOfPosition returns the 0-based line number and the
+// raw UTF-8 byte offset from the start of that line for the given byte position.
+// Uses ECMAScript line separators (LF, CR, CRLF, LS, PS).
+// Unlike GetECMALineAndUTF16CharacterOfPosition, the offset is in bytes, not UTF-16 code units.
+func GetECMALineAndByteOffsetOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, byteOffset int) {
+	lineMap := GetECMALineStarts(sourceFile)
+	line = ComputeLineOfPosition(lineMap, pos)
+	byteOffset = pos - int(lineMap[line])
+	return line, byteOffset
+}
+
+func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
+	pos := int(GetECMALineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
-			return pos
+			return pos - 1
 		}
 		pos += size
 	}
 }
 
-func GetPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
-	return ComputePositionOfLineAndCharacter(GetLineStarts(sourceFile), line, character)
+// GetECMAPositionOfLineAndUTF16Character converts a 0-based line number and UTF-16
+// code unit character offset back to an absolute byte position in the source text.
+// Uses ECMAScript line separators.
+func GetECMAPositionOfLineAndUTF16Character(sourceFile ast.SourceFileLike, line int, character core.UTF16Offset) int {
+	lineStarts := GetECMALineStarts(sourceFile)
+	return ComputePositionOfLineAndUTF16Character(lineStarts, line, character, sourceFile.Text(), false)
 }
 
-func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, character int) int {
-	/// !!! debugText, allowEdits
+// GetECMAPositionOfLineAndByteOffset converts a 0-based line number and byte offset
+// from line start back to an absolute byte position in the source text.
+// Uses ECMAScript line separators.
+func GetECMAPositionOfLineAndByteOffset(sourceFile ast.SourceFileLike, line int, byteOffset int) int {
+	return ComputePositionOfLineAndByteOffset(GetECMALineStarts(sourceFile), line, byteOffset)
+}
+
+// ComputePositionOfLineAndByteOffset computes a byte position from a line and
+// raw byte offset from the line start. This is a simple addition with validation.
+func ComputePositionOfLineAndByteOffset(lineStarts []core.TextPos, line int, byteOffset int) int {
 	if line < 0 || line >= len(lineStarts) {
-		// if (allowEdits) {
-		//     // Clamp line to nearest allowable value
-		//     line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
-		// }
 		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
 	}
+	return int(lineStarts[line]) + byteOffset
+}
 
-	res := int(lineStarts[line]) + character
-
-	// !!!
-	// if (allowEdits) {
-	//     // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
-	//     // TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
-	//     // apply them to the computed position to improve accuracy
-	//     return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
-	// }
-	if line < len(lineStarts)-1 && res >= int(lineStarts[line+1]) {
-		panic("Computed position is beyond that of the following line.")
+// ComputePositionOfLineAndUTF16Character converts a line and UTF-16 character offset
+// back to a byte position. The character parameter is measured in UTF-16 code units.
+// It scans from the line start to correctly handle multi-byte characters.
+// When allowEdits is true, out-of-range values are clamped instead of panicking.
+func ComputePositionOfLineAndUTF16Character(lineStarts []core.TextPos, line int, character core.UTF16Offset, text string, allowEdits bool) int {
+	if line < 0 || line >= len(lineStarts) {
+		if allowEdits {
+			// Clamp line to nearest allowable value
+			if line < 0 {
+				line = 0
+			} else if line >= len(lineStarts) {
+				line = len(lineStarts) - 1
+			}
+		} else {
+			panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+		}
 	}
-	// !!!
-	// else if (debugText !== undefined) {
-	//     Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
-	// }
+
+	lineStart := int(lineStarts[line])
+
+	if character > 0 {
+		// UTF-16 character offset: scan from line start counting UTF-16 code units.
+		lineEnd := len(text)
+		if line+1 < len(lineStarts) {
+			lineEnd = int(lineStarts[line+1])
+		}
+		utf16Count := core.UTF16Offset(0)
+		pos := lineStart
+		for pos < lineEnd {
+			if utf16Count >= character {
+				break
+			}
+			r, size := utf8.DecodeRuneInString(text[pos:])
+			utf16Count += core.UTF16Offset(utf16.RuneLen(r))
+			pos += size
+		}
+		if !allowEdits {
+			if pos == lineEnd && utf16Count < character {
+				panic(fmt.Sprintf("Bad UTF-16 character offset. Line: %d, character: %d.", line, character))
+			}
+			debug.Assert(pos <= len(text))
+			return pos
+		}
+		if pos > len(text) {
+			return len(text)
+		}
+		return pos
+	}
+
+	// Character is 0: line start position.
+	res := lineStart
+
+	if allowEdits {
+		if res > len(text) {
+			return len(text)
+		}
+		return res
+	}
+	debug.Assert(res <= len(text)) // Allow single character overflow for trailing newline
 	return res
 }
 

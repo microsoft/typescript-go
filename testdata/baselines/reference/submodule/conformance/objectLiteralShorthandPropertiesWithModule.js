@@ -3,11 +3,11 @@
 //// [objectLiteralShorthandPropertiesWithModule.ts]
 // module export
 
-module m {
+namespace m {
     export var x;
 }
 
-module m {
+namespace m {
     var z = x;
     var y = {
         a: x,
@@ -17,14 +17,15 @@ module m {
 
 
 //// [objectLiteralShorthandPropertiesWithModule.js]
+"use strict";
 // module export
 var m;
 (function (m) {
 })(m || (m = {}));
 (function (m) {
-    var z = x;
+    var z = m.x;
     var y = {
-        a: x,
-        x
+        a: m.x,
+        x: m.x
     };
 })(m || (m = {}));

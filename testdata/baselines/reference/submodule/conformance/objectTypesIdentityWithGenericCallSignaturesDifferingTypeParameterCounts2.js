@@ -43,6 +43,8 @@ function foo15(x: I2); // ok
 function foo15(x: any) { }
 
 //// [objectTypesIdentityWithGenericCallSignaturesDifferingTypeParameterCounts2.js]
+"use strict";
+// object types are identical structurally
 var a;
 function foo1(x) { }
 function foo2(x) { }

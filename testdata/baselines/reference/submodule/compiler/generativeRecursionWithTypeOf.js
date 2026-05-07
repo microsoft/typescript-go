@@ -6,16 +6,16 @@ class C<T> {
     type: T;
 }
 
-module M {
+namespace M {
     export function f(x: typeof C) {   
         return new x<typeof x>();     
     }
 }
 
 //// [generativeRecursionWithTypeOf.js]
+"use strict";
 class C {
     static foo(x) { }
-    type;
 }
 var M;
 (function (M) {

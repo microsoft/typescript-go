@@ -53,6 +53,7 @@ class Other extends Doing {
 
 
 //// [superCallInNonStaticMethod.js]
+"use strict";
 class Doing {
     instanceMethod() {
     }
@@ -88,8 +89,8 @@ class Other extends Doing {
     }
     constructor() {
         super();
+        this.propertyInitializer = super.instanceMethod();
+        this.functionProperty = () => { super.instanceMethod(); };
         super.instanceMethod();
     }
-    propertyInitializer = super.instanceMethod();
-    functionProperty = () => { super.instanceMethod(); };
 }

@@ -12,10 +12,11 @@ a.b.c
 }
 
 //// [asiPreventsParsingAsNamespace05.js]
+"use strict";
 let namespace = 10;
 var a;
 (function (a) {
-    let b;
+    var b;
     (function (b) {
         b.c = 20;
     })(b = a.b || (a.b = {}));

@@ -11,7 +11,7 @@ export interface I1 {
 	age: number;
 }
 
-export module M1 {
+export namespace M1 {
 	export interface I2 {
 		foo: string;
 	}
@@ -36,10 +36,12 @@ var e: number = <foo.E1>0;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.E1 = exports.C1 = void 0;
 class C1 {
-    m1 = 42;
-    static s1 = true;
+    constructor() {
+        this.m1 = 42;
+    }
 }
 exports.C1 = C1;
+C1.s1 = true;
 var E1;
 (function (E1) {
     E1[E1["A"] = 0] = "A";

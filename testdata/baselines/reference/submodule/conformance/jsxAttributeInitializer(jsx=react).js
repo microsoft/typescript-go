@@ -12,4 +12,10 @@ declare var React: any;
 
 
 //// [a.js]
-React.createElement("div", null, React.createElement("div", { attr: React.createElement("div", null) }), React.createElement("div", { attr: React.createElement("div", null, "foo") }), React.createElement("div", { attr: React.createElement(React.Fragment, null, React.createElement("div", null, "foo")) }), React.createElement("div", { attr: true }));
+"use strict";
+React.createElement("div", null,
+    React.createElement("div", { attr: React.createElement("div", null) }),
+    React.createElement("div", { attr: React.createElement("div", null, "foo") }),
+    React.createElement("div", { attr: React.createElement(React.Fragment, null,
+            React.createElement("div", null, "foo")) }),
+    React.createElement("div", { attr: true }));

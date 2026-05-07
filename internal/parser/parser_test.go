@@ -1,4 +1,4 @@
-package parser
+package parser_test
 
 import (
 	"io/fs"
@@ -10,7 +10,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/testrunner"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -18,14 +20,6 @@ import (
 )
 
 func BenchmarkParse(b *testing.B) {
-	jsdocModes := []struct {
-		name string
-		mode ast.JSDocParsingMode
-	}{
-		{"tsc", ast.JSDocParsingModeParseForTypeErrors},
-		{"server", ast.JSDocParsingModeParseAll},
-	}
-
 	for _, f := range fixtures.BenchFixtures {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
@@ -35,20 +29,13 @@ func BenchmarkParse(b *testing.B) {
 			sourceText := f.ReadFile(b)
 			scriptKind := core.GetScriptKindFromFileName(fileName)
 
-			for _, jsdoc := range jsdocModes {
-				b.Run(jsdoc.name, func(b *testing.B) {
-					jsdocMode := jsdoc.mode
+			opts := ast.SourceFileParseOptions{
+				FileName: fileName,
+				Path:     path,
+			}
 
-					opts := ast.SourceFileParseOptions{
-						FileName:         fileName,
-						Path:             path,
-						JSDocParsingMode: jsdocMode,
-					}
-
-					for b.Loop() {
-						ParseSourceFile(opts, sourceText, scriptKind)
-					}
-				})
+			for b.Loop() {
+				parser.ParseSourceFile(opts, sourceText, scriptKind)
 			}
 		})
 	}
@@ -94,7 +81,6 @@ func FuzzParser(f *testing.F) {
 		"src",
 		"scripts",
 		"Herebyfile.mjs",
-		// "tests/cases",
 	}
 
 	var extensions collections.Set[string]
@@ -105,29 +91,57 @@ func FuzzParser(f *testing.F) {
 	}
 
 	for _, test := range tests {
-		root := filepath.Join(repo.TypeScriptSubmodulePath, test)
+		root := filepath.Join(repo.TypeScriptSubmodulePath(), test)
 
 		for file := range allParsableFiles(f, root) {
 			sourceText, err := os.ReadFile(file.path)
 			assert.NilError(f, err)
 			extension := tspath.TryGetExtensionFromPath(file.path)
-			f.Add(extension, string(sourceText), int(core.ScriptTargetESNext), int(ast.JSDocParsingModeParseAll))
+			f.Add(extension, string(sourceText), false, false)
 		}
 	}
 
-	f.Fuzz(func(t *testing.T, extension string, sourceText string, scriptTarget_ int, jsdocParsingMode_ int) {
-		scriptTarget := core.ScriptTarget(scriptTarget_)
-		jsdocParsingMode := ast.JSDocParsingMode(jsdocParsingMode_)
+	testDirs := []string{
+		filepath.Join(repo.TypeScriptSubmodulePath(), "tests/cases/compiler"),
+		filepath.Join(repo.TypeScriptSubmodulePath(), "tests/cases/conformance"),
+		filepath.Join(repo.TestDataPath(), "tests/cases/compiler"),
+	}
 
+	for _, testDir := range testDirs {
+		if _, err := os.Stat(testDir); os.IsNotExist(err) {
+			continue
+		}
+
+		for file := range allParsableFiles(f, testDir) {
+			sourceText, err := os.ReadFile(file.path)
+			assert.NilError(f, err)
+
+			type testFile struct {
+				content string
+				name    string
+			}
+
+			testUnits, _, _, _, err := testrunner.ParseTestFilesAndSymlinks(
+				string(sourceText),
+				file.path,
+				func(filename string, content string, fileOptions map[string]string) (testFile, error) {
+					return testFile{content: content, name: filename}, nil
+				},
+			)
+			assert.NilError(f, err)
+
+			for _, unit := range testUnits {
+				extension := tspath.TryGetExtensionFromPath(unit.name)
+				if extension == "" {
+					continue
+				}
+				f.Add(extension, unit.content, false, false)
+			}
+		}
+	}
+
+	f.Fuzz(func(t *testing.T, extension string, sourceText string, externalModuleIndicatorOptionsJSX bool, externalModuleIndicatorOptionsForce bool) {
 		if !extensions.Has(extension) {
-			t.Skip()
-		}
-
-		if scriptTarget < core.ScriptTargetNone || scriptTarget > core.ScriptTargetLatest {
-			t.Skip()
-		}
-
-		if jsdocParsingMode < ast.JSDocParsingModeParseAll || jsdocParsingMode > ast.JSDocParsingModeParseNone {
 			t.Skip()
 		}
 
@@ -135,11 +149,60 @@ func FuzzParser(f *testing.F) {
 		path := tspath.Path(fileName)
 
 		opts := ast.SourceFileParseOptions{
-			FileName:         fileName,
-			Path:             path,
-			JSDocParsingMode: jsdocParsingMode,
+			FileName: fileName,
+			Path:     path,
+			ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{
+				JSX:   externalModuleIndicatorOptionsJSX,
+				Force: externalModuleIndicatorOptionsForce,
+			},
 		}
 
-		ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
+		parser.ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
 	})
+}
+
+func TestJSDocImportTypeParentChain(t *testing.T) {
+	t.Parallel()
+	sourceText := `test("", async function () {
+  ;(/** @type {typeof import("a")} */ ({}))
+})
+
+test("", async function () {
+  ;(/** @type {typeof import("a")} */ a)
+})
+
+test("", async function () {
+  (/** @type {typeof import("a")} */ ({}))
+  ;(/** @type {typeof import("a")} */ ({}))
+})
+
+test("", async function () {
+  (/** @type {typeof import("a")} */ a)
+  ;(/** @type {typeof import("a")} */ a)
+})
+
+test("", async function () {
+  (/** @type {typeof import("a")} */ ({}))
+  ;(/** @type {typeof import("a")} */ ({}))
+})
+`
+	opts := ast.SourceFileParseOptions{
+		FileName: "/index.js",
+		Path:     "/index.js",
+	}
+
+	file := parser.ParseSourceFile(opts, sourceText, core.ScriptKindJS)
+
+	for i := 1; i < len(file.ReparsedClones); i++ {
+		a, b := file.ReparsedClones[i-1], file.ReparsedClones[i]
+		if a.Pos() == b.Pos() && a.End() == b.End() && a.Kind == b.Kind {
+			t.Errorf("duplicate ReparsedClones at [%d] and [%d]: %s pos=%d end=%d", i-1, i, a.Kind.String(), a.Pos(), a.End())
+		}
+	}
+	for _, imp := range file.Imports() {
+		reparsed := ast.GetReparsedNodeForNode(imp)
+		if ast.GetSourceFileOfNode(reparsed) == nil {
+			t.Errorf("reparsed import at pos=%d has broken parent chain", imp.Pos())
+		}
+	}
 }

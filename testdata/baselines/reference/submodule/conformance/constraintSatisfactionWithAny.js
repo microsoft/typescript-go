@@ -55,6 +55,7 @@ var c8 = new C4<any>(b);
 
 
 //// [constraintSatisfactionWithAny.js]
+"use strict";
 // any is not a valid type argument unless there is no constraint, or the constraint is any
 function foo(x) { return null; }
 function foo2(x) { return null; }
@@ -74,7 +75,6 @@ foo4(b);
 //foo5(a, a);
 //foo5<any, any>(b, b);
 class C {
-    x;
     constructor(x) {
         this.x = x;
     }
@@ -82,7 +82,6 @@ class C {
 var c1 = new C(a);
 var c2 = new C(b);
 class C2 {
-    x;
     constructor(x) {
         this.x = x;
     }
@@ -95,7 +94,6 @@ var c4 = new C2(b);
 //var c5 = new C3(a);
 //var c6 = new C3<any>(b);
 class C4 {
-    x;
     constructor(x) {
         this.x = x;
     }

@@ -3,7 +3,7 @@
 === index.js ===
 /** @type () => string */
 function fn1() {
->fn1 : () => number
+>fn1 : () => string
 
   return 42;
 >42 : 42
@@ -19,16 +19,16 @@ function fn2() {
 
 /** @type (arg: string) => string */
 function fn3(arg) {
->fn3 : (arg: any) => any
->arg : any
+>fn3 : (arg: string) => string
+>arg : string
 
   return arg;
->arg : any
+>arg : string
 }
 
 /** @type ({ type: 'foo' } | { type: 'bar' }) & { prop: number } */
 const obj1 = { type: "foo", prop: 10 };
->obj1 : ({ type: "foo"; } | { type: "bar"; }) & { prop: number; }
+>obj1 : ({ type: 'foo'; } | { type: 'bar'; }) & { prop: number; }
 >{ type: "foo", prop: 10 } : { type: "foo"; prop: number; }
 >type : "foo"
 >"foo" : "foo"
@@ -37,7 +37,7 @@ const obj1 = { type: "foo", prop: 10 };
 
 /** @type ({ type: 'foo' } | { type: 'bar' }) & { prop: number } */
 const obj2 = { type: "other", prop: 10 };
->obj2 : ({ type: "foo"; } | { type: "bar"; }) & { prop: number; }
+>obj2 : ({ type: 'foo'; } | { type: 'bar'; }) & { prop: number; }
 >{ type: "other", prop: 10 } : { type: "other"; prop: number; }
 >type : "other"
 >"other" : "other"

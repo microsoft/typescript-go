@@ -3,19 +3,19 @@
 === arrayOfSubtypeIsAssignableToReadonlyArray.ts ===
 class A { a }
 >A : Symbol(A, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 0))
->a : Symbol(a, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 9))
+>a : Symbol(A.a, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 9))
 
 class B extends A { b }
 >B : Symbol(B, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 13))
 >A : Symbol(A, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 0))
->b : Symbol(b, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 1, 19))
+>b : Symbol(B.b, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 1, 19))
 
 class C<T> extends Array<T> { c }
 >C : Symbol(C, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 1, 23))
 >T : Symbol(T, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 2, 8))
->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >T : Symbol(T, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 2, 8))
->c : Symbol(c, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 2, 29))
+>c : Symbol(C.c, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 2, 29))
 
 declare var ara: A[];
 >ara : Symbol(ara, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 3, 11))
@@ -37,12 +37,12 @@ declare var crb: C<B>;
 
 declare var rra: ReadonlyArray<A>;
 >rra : Symbol(rra, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 7, 11))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >A : Symbol(A, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 0))
 
 declare var rrb: ReadonlyArray<B>;
 >rrb : Symbol(rrb, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 8, 11))
->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >B : Symbol(B, Decl(arrayOfSubtypeIsAssignableToReadonlyArray.ts, 0, 13))
 
 rra = ara;

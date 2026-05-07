@@ -13,7 +13,7 @@ const enum e2 {
 }
 var x = e1.a;
 var y = e2.x;
-export module m1 {
+export namespace m1 {
     export const enum e3 {
         a,
         b,
@@ -29,7 +29,7 @@ export module m1 {
     var x2 = e3.a;
     var y2 = e4.x;
 }
-module m2 {
+namespace m2 {
     export const enum e5 {
         a,
         b,
@@ -48,8 +48,7 @@ module m2 {
 }
 
 //// [es6ModuleConstEnumDeclaration2.js]
-export { e1 };
-var e1;
+export var e1;
 (function (e1) {
     e1[e1["a"] = 0] = "a";
     e1[e1["b"] = 1] = "b";
@@ -61,10 +60,9 @@ var e2;
     e2[e2["y"] = 1] = "y";
     e2[e2["z"] = 2] = "z";
 })(e2 || (e2 = {}));
-var x = e1.a;
-var y = e2.x;
-export { m1 };
-var m1;
+var x = 0 /* e1.a */;
+var y = 0 /* e2.x */;
+export var m1;
 (function (m1) {
     let e3;
     (function (e3) {
@@ -78,10 +76,10 @@ var m1;
         e4[e4["y"] = 1] = "y";
         e4[e4["z"] = 2] = "z";
     })(e4 || (e4 = {}));
-    var x1 = e1.a;
-    var y1 = e2.x;
-    var x2 = e3.a;
-    var y2 = e4.x;
+    var x1 = 0 /* e1.a */;
+    var y1 = 0 /* e2.x */;
+    var x2 = 0 /* e3.a */;
+    var y2 = 0 /* e4.x */;
 })(m1 || (m1 = {}));
 var m2;
 (function (m2) {
@@ -97,9 +95,9 @@ var m2;
         e6[e6["y"] = 1] = "y";
         e6[e6["z"] = 2] = "z";
     })(e6 || (e6 = {}));
-    var x1 = e1.a;
-    var y1 = e2.x;
-    var x2 = e5.a;
-    var y2 = e6.x;
-    var x3 = m1.e3.a;
+    var x1 = 0 /* e1.a */;
+    var y1 = 0 /* e2.x */;
+    var x2 = 0 /* e5.a */;
+    var y2 = 0 /* e6.x */;
+    var x3 = 0 /* m1.e3.a */;
 })(m2 || (m2 = {}));

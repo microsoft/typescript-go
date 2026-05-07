@@ -3,7 +3,7 @@
 //// [interfaceDeclaration4.ts]
 // Import this module when test harness supports external modules. Also remove the internal module below.
 // import Foo = require("interfaceDeclaration5")
-module Foo {
+namespace Foo {
     export interface I1 { item: string; }
     export class C1 { }
 }
@@ -43,6 +43,7 @@ interface Foo.I1 { }
 
 
 //// [interfaceDeclaration4.js]
+"use strict";
 // Import this module when test harness supports external modules. Also remove the internal module below.
 // import Foo = require("interfaceDeclaration5")
 var Foo;
@@ -52,11 +53,9 @@ var Foo;
     Foo.C1 = C1;
 })(Foo || (Foo = {}));
 class C1 {
-    item;
 }
 // Err - not implemented item
 class C2 {
-    token;
 }
 class C3 {
 }

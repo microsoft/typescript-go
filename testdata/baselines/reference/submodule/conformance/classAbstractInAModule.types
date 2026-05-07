@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/classes/classDeclarations/classAbstractKeyword/classAbstractInAModule.ts] ////
 
 === classAbstractInAModule.ts ===
-module M {
+namespace M {
 >M : typeof M
 
     export abstract class A {}
@@ -13,7 +13,7 @@ module M {
 }
 
 new M.A;
->new M.A : any
+>new M.A : M.A
 >M.A : typeof M.A
 >M : typeof M
 >A : typeof M.A

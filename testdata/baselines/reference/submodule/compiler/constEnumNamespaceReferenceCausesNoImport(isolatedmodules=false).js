@@ -20,14 +20,7 @@ function check(x: Foo.ConstFooEnum): void {
 //// [foo.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConstFooEnum = void 0;
 exports.fooFunc = fooFunc;
-var ConstFooEnum;
-(function (ConstFooEnum) {
-    ConstFooEnum[ConstFooEnum["Some"] = 0] = "Some";
-    ConstFooEnum[ConstFooEnum["Values"] = 1] = "Values";
-    ConstFooEnum[ConstFooEnum["Here"] = 2] = "Here";
-})(ConstFooEnum || (exports.ConstFooEnum = ConstFooEnum = {}));
 ;
 function fooFunc() { }
 //// [index.js]
@@ -35,7 +28,7 @@ function fooFunc() { }
 Object.defineProperty(exports, "__esModule", { value: true });
 function check(x) {
     switch (x) {
-        case Foo.ConstFooEnum.Some:
+        case 0 /* Foo.ConstFooEnum.Some */:
             break;
     }
 }

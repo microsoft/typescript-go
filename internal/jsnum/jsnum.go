@@ -3,6 +3,7 @@ package jsnum
 
 import (
 	"math"
+	"math/big"
 )
 
 const (
@@ -41,31 +42,33 @@ func isNonFinite(x float64) bool {
 }
 
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-touint32
-func (n Number) toUint32() uint32 {
+func (x Number) toUint32() uint32 {
+	// The only difference between ToUint32 and ToInt32 is the interpretation of the bits.
+	return uint32(x.toInt32())
+}
+
+// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
+func (n Number) toInt32() int32 {
 	x := float64(n)
-	// Fast path: if the number is the range (-2^31, 2^32), i.e. an SMI,
+
+	// Fast path: if the number is in the range (-2^31, 2^32), i.e. an SMI,
 	// then we don't need to do any special mapping.
 	if smi := int32(x); float64(smi) == x {
-		return uint32(smi)
+		return smi
 	}
 
-	// If the number is non-finite (NaN, +Inf, -Inf; exp=0x7FF), it maps to zero.
+	// 2. If number is not finite or number is either +0𝔽 or -0𝔽, return +0𝔽.
+	// Zero was covered by the test above.
 	if isNonFinite(x) {
 		return 0
 	}
 
-	// Otherwise, take x modulo 2^32, mapping positive numbers
-	// to [0, 2^32) and negative numbers to (-2^32, -0.0].
+	// Let int be truncate(ℝ(number)).
+	x = math.Trunc(x)
+	// Let int32bit be int modulo 2**32.
 	x = math.Mod(x, 1<<32)
-
-	// Convert to uint32, which will wrap negative numbers.
-	return uint32(x)
-}
-
-// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
-func (x Number) toInt32() int32 {
-	// The only difference between ToUint32 and ToInt32 is the interpretation of the bits.
-	return int32(x.toUint32())
+	// If int32bit ≥ 2**31, return 𝔽(int32bit - 2**32); otherwise return 𝔽(int32bit).
+	return int32(int64(x))
 }
 
 func (x Number) toShiftCount() uint32 {
@@ -137,11 +140,7 @@ func (n Number) Remainder(d Number) Number {
 	case n == 0:
 		return n
 	}
-	r := n - d*(n/d).trunc()
-	if r == 0 && n < 0 {
-		return negativeZero
-	}
-	return r
+	return Number(math.Mod(float64(n), float64(d)))
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-exponentiate
@@ -153,5 +152,26 @@ func (base Number) Exponentiate(exponent Number) Number {
 		return NaN()
 	}
 
-	return Number(math.Pow(float64(base), float64(exponent)))
+	b := float64(base)
+	e := float64(exponent)
+
+	// For integer base ** integer exponent where the result exceeds 53 bits,
+	// math.Pow can be off by multiple ULPs vs JS engines. Use exact big.Int
+	// arithmetic and IEEE 754 round-to-nearest-even conversion instead.
+	// The ES spec (§6.1.6.1.3) says exponentiate returns an
+	// "implementation-approximated" value, so engines are allowed to differ.
+	// This won't exactly match every engine (V8's fdlibm-compiled pow can
+	// round halfway ties differently), but will always be within 1 ULP
+	// (unit in the last place, i.e. the least significant bit of the result).
+	if b >= math.MinInt64 && b <= math.MaxInt64 && b == math.Trunc(b) &&
+		e >= 0 && e <= math.MaxInt64 && e == math.Trunc(e) && !math.IsInf(e, 0) {
+		magnitude := e * math.Log2(math.Abs(b))
+		if magnitude > 53 && magnitude <= math.Log2(math.MaxFloat64) {
+			ri := new(big.Int).Exp(big.NewInt(int64(b)), big.NewInt(int64(e)), nil)
+			result, _ := new(big.Float).SetPrec(256).SetInt(ri).Float64()
+			return Number(result)
+		}
+	}
+
+	return Number(math.Pow(b, e))
 }

@@ -1,11 +1,11 @@
 //// [tests/cases/compiler/recursiveMods.ts] ////
 
 //// [recursiveMods.ts]
-export module Foo {
+export namespace Foo {
 	export class C {}
 }
 
-export module Foo {
+export namespace Foo {
 
 	function Bar() : C {
 		if (true) { return Bar();}
@@ -40,7 +40,7 @@ var Foo;
         if (true) {
             return Bar();
         }
-        return new C();
+        return new Foo.C();
     }
     function Baz() {
         var c = Baz();

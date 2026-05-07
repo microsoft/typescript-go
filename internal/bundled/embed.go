@@ -22,6 +22,11 @@ func libPath() string {
 	return scheme + "libs"
 }
 
+func IsBundled(path string) bool {
+	_, ok := splitPath(path)
+	return ok
+}
+
 // wrappedFS is implemented directly rather than going through [io/fs.FS].
 // Our vfs.FS works with file contents in terms of strings, and that's
 // what go:embed does under the hood, but going through fs.FS will cause
@@ -131,7 +136,7 @@ func (vfs *wrappedFS) walkDir(rest string, walkFn vfs.WalkDirFunc) error {
 			return err
 		}
 		if entry.IsDir() {
-			if err := vfs.walkDir(name, walkFn); err != nil {
+			if err := vfs.walkDir(strings.TrimPrefix(name, "/"), walkFn); err != nil {
 				return err
 			}
 		}
@@ -147,11 +152,18 @@ func (vfs *wrappedFS) Realpath(path string) string {
 	return vfs.fs.Realpath(path)
 }
 
-func (vfs *wrappedFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (vfs *wrappedFS) WriteFile(path string, data string) error {
 	if _, ok := splitPath(path); ok {
 		panic("cannot write to embedded file system")
 	}
-	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
+	return vfs.fs.WriteFile(path, data)
+}
+
+func (vfs *wrappedFS) AppendFile(path string, data string) error {
+	if _, ok := splitPath(path); ok {
+		panic("cannot write to embedded file system")
+	}
+	return vfs.fs.AppendFile(path, data)
 }
 
 func (vfs *wrappedFS) Remove(path string) error {
@@ -159,6 +171,13 @@ func (vfs *wrappedFS) Remove(path string) error {
 		panic("cannot remove from embedded file system")
 	}
 	return vfs.fs.Remove(path)
+}
+
+func (vfs *wrappedFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	if _, ok := splitPath(path); ok {
+		panic("cannot change times on embedded file system")
+	}
+	return vfs.fs.Chtimes(path, aTime, mTime)
 }
 
 type fileInfo struct {

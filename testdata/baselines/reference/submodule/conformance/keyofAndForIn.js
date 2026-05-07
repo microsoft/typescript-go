@@ -37,6 +37,7 @@ function f3<T, K extends keyof T>(obj: { [P in K]: T[P] }, k: K) {
 }
 
 //// [keyofAndForIn.js]
+"use strict";
 // Repro from #12513
 function f1(obj, k) {
     const b = k in obj;
@@ -71,7 +72,6 @@ function f3(obj, k) {
 
 
 //// [keyofAndForIn.d.ts]
-// Repro from #12513
 declare function f1<K extends string, T>(obj: {
     [P in K]: T;
 }, k: K): void;

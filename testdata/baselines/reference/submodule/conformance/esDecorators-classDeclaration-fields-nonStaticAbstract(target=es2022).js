@@ -13,12 +13,7 @@ abstract class C {
 
 
 //// [esDecorators-classDeclaration-fields-nonStaticAbstract.js]
+"use strict";
 const field3 = "field3";
 class C {
-    @dec(1)
-    field1;
-    @dec(2)
-    ["field2"];
-    @dec(3)
-    [field3];
 }

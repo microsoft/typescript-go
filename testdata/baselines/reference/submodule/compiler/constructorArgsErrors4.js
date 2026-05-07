@@ -8,8 +8,8 @@ class foo {
 
 
 //// [constructorArgsErrors4.js]
+"use strict";
 class foo {
-    a;
     constructor(a) {
         this.a = a;
     }

@@ -5,10 +5,11 @@ var x: typeof undefined;
 var x: any; // shouldn't be an error since type is the same as the first declaration
 
 //// [typeofUndefined.js]
+"use strict";
 var x;
 var x; // shouldn't be an error since type is the same as the first declaration
 
 
 //// [typeofUndefined.d.ts]
 declare var x: typeof undefined;
-declare var x: any; // shouldn't be an error since type is the same as the first declaration
+declare var x: any;

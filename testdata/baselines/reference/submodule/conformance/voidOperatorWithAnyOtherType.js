@@ -3,25 +3,25 @@
 //// [voidOperatorWithAnyOtherType.ts]
 // void  operator on any type
 
-var ANY: any;
-var ANY1;
+declare var ANY: any;
+declare var ANY1;
 var ANY2: any[] = ["", ""];
-var obj: () => {}
+declare var obj: () => {};
 var obj1 = {x:"",y:1};
 
 function foo(): any {
-    var a;
+    var a!: any;
     return a;
 }
 class A {
     public a: any;
     static foo() {
-        var a;
+        var a!: any;
         return a;
     }
 }
-module M {
-    export var n: any;
+namespace M {
+    export var n!: any;
 }
 var objA = new A();
 
@@ -63,18 +63,15 @@ void objA.a;
 void M.n;
 
 //// [voidOperatorWithAnyOtherType.js]
+"use strict";
 // void  operator on any type
-var ANY;
-var ANY1;
 var ANY2 = ["", ""];
-var obj;
 var obj1 = { x: "", y: 1 };
 function foo() {
     var a;
     return a;
 }
 class A {
-    a;
     static foo() {
         var a;
         return a;

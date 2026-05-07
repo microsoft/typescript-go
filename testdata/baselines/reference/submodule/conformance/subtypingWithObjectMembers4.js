@@ -36,28 +36,21 @@ class B3 extends A3 {
 }
 
 //// [subtypingWithObjectMembers4.js]
+"use strict";
 // subtyping when property names do not match
 class Base {
-    foo;
 }
 class Derived extends Base {
-    bar;
 }
 class A {
-    foo;
 }
 class B extends A {
-    fooo; // ok, inherits foo
 }
 class A2 {
-    1;
 }
 class B2 extends A2 {
-    1.1; // ok, inherits 1
 }
 class A3 {
-    '1';
 }
 class B3 extends A3 {
-    '1.1'; // ok, inherits '1'
 }

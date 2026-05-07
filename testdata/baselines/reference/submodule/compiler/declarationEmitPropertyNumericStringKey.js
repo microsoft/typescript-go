@@ -15,6 +15,7 @@ const obj2 = { [hundredNum]: "bar" };
 
 
 //// [declarationEmitPropertyNumericStringKey.js]
+"use strict";
 // https://github.com/microsoft/TypeScript/issues/55292
 const STATUS = {
     ["404"]: "not found",
@@ -26,9 +27,8 @@ const obj2 = { [hundredNum]: "bar" };
 
 
 //// [declarationEmitPropertyNumericStringKey.d.ts]
-// https://github.com/microsoft/TypeScript/issues/55292
 declare const STATUS: {
-    readonly "404": "not found";
+    readonly ["404"]: "not found";
 };
 declare const hundredStr = "100";
 declare const obj: {

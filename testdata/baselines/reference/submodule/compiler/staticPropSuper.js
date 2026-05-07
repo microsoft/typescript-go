@@ -38,30 +38,31 @@ class E extends A {
 }
 
 //// [staticPropSuper.js]
+"use strict";
 class A {
 }
 class B extends A {
-    static s = 9;
     constructor() {
         var x = 1; // should not error
         super();
     }
 }
+B.s = 9;
 class C extends A {
-    p = 10;
     constructor() {
+        this.p = 10;
         var x = 1; // should error
     }
 }
 class D extends A {
-    p = 11;
     constructor() {
+        this.p = 11;
         var x = 1; // should error
     }
 }
 class E extends A {
-    p = 12;
     constructor() {
+        this.p = 12;
         var x = 1; // should error
     }
 }

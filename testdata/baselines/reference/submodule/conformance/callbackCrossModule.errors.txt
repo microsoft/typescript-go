@@ -1,5 +1,4 @@
-mod1.js(5,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-use.js(1,30): error TS2694: Namespace 'C' has no exported member 'Con'.
+mod1.js(7,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 
 
 ==== mod1.js (1 errors) ====
@@ -8,16 +7,14 @@ use.js(1,30): error TS2694: Namespace 'C' has no exported member 'Con'.
      * @return {any} I don't even know what this should return
      */
     module.exports = C
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     function C() {
         this.p = 1
+        ~~~~
+!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     }
     
-==== use.js (1 errors) ====
+==== use.js (0 errors) ====
     /** @param {import('./mod1').Con} k */
-                                 ~~~
-!!! error TS2694: Namespace 'C' has no exported member 'Con'.
     function f(k) {
         if (1 === 2 - 1) {
             // I guess basic math works!

@@ -24,12 +24,9 @@ foo[k] = ['foo'];
 
 
 //// [a.js]
+"use strict";
 const k = Symbol();
-var Props;
-(function (Props) {
-    Props["k"] = "k";
-})(Props || (Props = {}));
 foo.k = ['foo'];
 foo['k'] = ['foo'];
-foo[Props.k] = ['foo'];
+foo["k" /* Props.k */] = ['foo'];
 foo[k] = ['foo'];

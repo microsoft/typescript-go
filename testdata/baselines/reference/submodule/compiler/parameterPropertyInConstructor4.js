@@ -8,20 +8,15 @@ export class C {
 
 
 //// [parameterPropertyInConstructor4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
-    a;
+export class C {
     constructor(a = [], b) {
         this.a = a;
     }
 }
-exports.C = C;
 
 
 //// [parameterPropertyInConstructor4.d.ts]
 export declare class C {
     a: number[];
-    constructor(a: number[], b: number);
+    constructor(a: number[] | undefined, b: number);
 }

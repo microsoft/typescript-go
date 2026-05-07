@@ -1,11 +1,11 @@
 //// [tests/cases/compiler/typeofInternalModules.ts] ////
 
 //// [typeofInternalModules.ts]
-module Outer {
-    export module instantiated {
+namespace Outer {
+    export namespace instantiated {
         export class C { }
     }
-    export module uninstantiated {
+    export namespace uninstantiated {
         export interface P { }
     }
 }
@@ -27,6 +27,7 @@ x7 = importInst;
 
 
 //// [typeofInternalModules.js]
+"use strict";
 var Outer;
 (function (Outer) {
     let instantiated;
@@ -36,6 +37,7 @@ var Outer;
         instantiated.C = C;
     })(instantiated = Outer.instantiated || (Outer.instantiated = {}));
 })(Outer || (Outer = {}));
+var importInst = Outer.instantiated;
 var x1 = importInst.C;
 var x2 = new x1();
 var x3; // Error again

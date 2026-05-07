@@ -17,14 +17,12 @@ class Derived2 extends Derived1 {
 }
 
 //// [derivedClassOverridesProtectedMembers4.js]
+"use strict";
 var x;
 var y;
 class Base {
-    a;
 }
 class Derived1 extends Base {
-    a;
 }
 class Derived2 extends Derived1 {
-    a; // Error, parent was public
 }

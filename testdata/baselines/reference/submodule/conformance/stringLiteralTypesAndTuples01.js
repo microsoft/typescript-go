@@ -21,6 +21,7 @@ function rawr(dino: RexOrRaptor) {
 }
 
 //// [stringLiteralTypesAndTuples01.js]
+"use strict";
 // Should all be strings.
 let [hello, brave, newish, world] = ["Hello", "Brave", "New", "World"];
 let [im, a, dinosaur] = ['I\'m', 'a', 't-rex'];
@@ -37,5 +38,7 @@ function rawr(dino) {
 
 
 //// [stringLiteralTypesAndTuples01.d.ts]
+declare let hello: string, brave: string, newish: string, world: string;
 type RexOrRaptor = "t-rex" | "raptor";
+declare let im: "I'm", a: "a", dinosaur: RexOrRaptor;
 declare function rawr(dino: RexOrRaptor): "ROAAAAR!" | "yip yip!";

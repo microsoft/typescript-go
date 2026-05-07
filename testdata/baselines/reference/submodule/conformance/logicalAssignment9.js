@@ -8,5 +8,7 @@ x.a &&= false;
 
 
 //// [logicalAssignment9.js]
-x.a ??= true;
-x.a &&= false;
+"use strict";
+var _a;
+(_a = x.a) !== null && _a !== void 0 ? _a : (x.a = true);
+x.a && (x.a = false);

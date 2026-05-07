@@ -13,3 +13,8 @@ declare var v: number;
 declare var y: number;
 
 //// [commentOnAmbientVariable1.js]
+"use strict";
+/*!=========
+    Keep this pinned comment
+   =========
+*/

@@ -30,6 +30,7 @@ class C<T1> extends CBase<T1> {
 
 
 //// [baseTypeWrappingInstantiationChain.js]
+"use strict";
 class CBaseBase {
     constructor(x) { }
 }
@@ -39,7 +40,6 @@ class Parameter {
     method(t) { }
 }
 class Wrapper {
-    property;
 }
 class C extends CBase {
     works() {

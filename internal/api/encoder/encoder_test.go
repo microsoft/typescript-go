@@ -25,7 +25,7 @@ func TestEncodeSourceFile(t *testing.T) {
 	}, "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
-		buf, err := encoder.EncodeSourceFile(sourceFile, "")
+		buf, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(t, err)
 
 		str := formatEncodedSourceFile(buf)
@@ -35,9 +35,27 @@ func TestEncodeSourceFile(t *testing.T) {
 	})
 }
 
+func TestEncodeSourceFileWithUnicodeEscapes(t *testing.T) {
+	t.Parallel()
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.ts",
+		Path:     "/test.ts",
+	}, `let a = "😃"; let b = "\ud83d\ude03"; let c = "\udc00\ud83d\ude03"; let d = "\ud83d\ud83d\ude03"`, core.ScriptKindTS)
+	t.Run("baseline", func(t *testing.T) {
+		t.Parallel()
+		buf, err := encoder.EncodeSourceFile(sourceFile)
+		assert.NilError(t, err)
+
+		str := formatEncodedSourceFile(buf)
+		baseline.Run(t, "encodeSourceFileWithUnicodeEscapes.txt", str, baseline.Options{
+			Subfolder: "api",
+		})
+	})
+}
+
 func BenchmarkEncodeSourceFile(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
-	filePath := filepath.Join(repo.TypeScriptSubmodulePath, "src/compiler/checker.ts")
+	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
 	fileContent, err := os.ReadFile(filePath)
 	assert.NilError(b, err)
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
@@ -46,7 +64,7 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	}, string(fileContent), core.ScriptKindTS)
 
 	for b.Loop() {
-		_, err := encoder.EncodeSourceFile(sourceFile, "")
+		_, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(b, err)
 	}
 }
@@ -79,8 +97,10 @@ func formatEncodedSourceFile(encoded []byte) string {
 		} else {
 			result.WriteString(ast.Kind(kind).String())
 		}
-		if ast.Kind(kind) == ast.KindIdentifier || ast.Kind(kind) == ast.KindStringLiteral {
-			stringIndex := readUint32(encoded, i+encoder.NodeOffsetData) & encoder.NodeDataStringIndexMask
+		data := readUint32(encoded, i+encoder.NodeOffsetData)
+		dataType := data & encoder.NodeDataTypeMask
+		if ast.Kind(kind) == ast.KindIdentifier || (dataType == encoder.NodeDataTypeString) {
+			stringIndex := data & encoder.NodeDataStringIndexMask
 			strStart := readUint32(encoded, int(offsetStringOffsets+stringIndex*4))
 			strEnd := readUint32(encoded, int(offsetStringOffsets+stringIndex*4)+4)
 			str := string(encoded[offsetStrings+strStart : offsetStrings+strEnd])

@@ -30,7 +30,7 @@ type tup = [number, number, number, number];
 >tup : tup
 
 function foo(arg: Circular<tup>): tup {
->foo : (arg: any) => tup
+>foo : (arg: Circular<tup>) => tup
 >arg : any
 
   return arg;
@@ -118,7 +118,7 @@ export interface ListWidget {
 >"maximum_count" : number
 
     "collapsable"?: boolean, //default to false, means all expanded
->"collapsable" : boolean
+>"collapsable" : boolean | undefined
 
     "each": Child<ListWidget>;
 >"each" : any

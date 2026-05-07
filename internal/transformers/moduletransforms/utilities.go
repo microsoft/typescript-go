@@ -5,14 +5,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func isDeclarationNameOfEnumOrNamespace(emitContext *printer.EmitContext, node *ast.IdentifierNode) bool {
-	if original := emitContext.MostOriginal(node); original != nil && original.Parent != nil {
-		switch original.Parent.Kind {
+	if original := emitContext.MostOriginal(node); original != nil && original.Parent != nil { //nolint:customlint // MostOriginal yields parse-tree nodes and this helper intentionally inspects parse-tree parents.
+		switch original.Parent.Kind { //nolint:customlint // MostOriginal yields parse-tree nodes and this helper intentionally inspects parse-tree parents.
 		case ast.KindEnumDeclaration, ast.KindModuleDeclaration:
-			return original == original.Parent.Name()
+			return original == original.Parent.Name() //nolint:customlint // MostOriginal yields parse-tree nodes and this helper intentionally inspects parse-tree parents.
 		}
 	}
 	return false
@@ -24,8 +25,7 @@ func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expressi
 	}
 	updatedText := tspath.ChangeExtension(node.Text(), outputpaths.GetOutputExtension(node.Text(), compilerOptions.Jsx))
 	if updatedText != node.Text() {
-		updated := emitContext.Factory.NewStringLiteral(updatedText)
-		// !!! set quote style
+		updated := emitContext.Factory.NewStringLiteral(updatedText, node.AsStringLiteral().TokenFlags)
 		emitContext.SetOriginal(updated, node)
 		emitContext.AssignCommentAndSourceMapRanges(updated, node)
 		return updated
@@ -57,8 +57,8 @@ func getExternalModuleNameLiteral(factory *printer.NodeFactory, importNode *ast.
 		if name == nil {
 			name = tryRenameExternalModule(factory, moduleName, sourceFile)
 		}
-		if name == nil {
-			name = factory.NewStringLiteral(moduleName.Text())
+		if name == nil { // !!! propagate token flags (will produce new diffs)
+			name = factory.NewStringLiteral(moduleName.Text(), ast.TokenFlagsNone)
 		}
 		return name
 	}
@@ -79,9 +79,6 @@ func tryGetModuleNameFromFile(factory *printer.NodeFactory, file *ast.SourceFile
 	// if file.moduleName {
 	// 	return factory.createStringLiteral(file.moduleName)
 	// }
-	if !file.IsDeclarationFile && len(options.OutFile) > 0 {
-		return factory.NewStringLiteral(getExternalModuleNameFromPath(host, file.FileName(), "" /*referencePath*/))
-	}
 	return nil
 }
 
@@ -113,20 +110,9 @@ func isFileLevelReservedGeneratedIdentifier(emitContext *printer.EmitContext, na
 		info.Flags.IsReservedInNestedScopes()
 }
 
-// Used in the module transformer to check if an expression is reasonably without sideeffect,
-//
-//	and thus better to copy into multiple places rather than to cache in a temporary variable
-//	- this is mostly subjective beyond the requirement that the expression not be sideeffecting
-func isSimpleCopiableExpression(expression *ast.Expression) bool {
-	return ast.IsStringLiteralLike(expression) ||
-		ast.IsNumericLiteral(expression) ||
-		ast.IsKeywordKind(expression.Kind) ||
-		ast.IsIdentifier(expression)
-}
-
 // A simple inlinable expression is an expression which can be copied into multiple locations
 // without risk of repeating any sideeffects and whose value could not possibly change between
 // any such locations
 func isSimpleInlineableExpression(expression *ast.Expression) bool {
-	return !ast.IsIdentifier(expression) && isSimpleCopiableExpression(expression)
+	return !ast.IsIdentifier(expression) && transformers.IsSimpleCopiableExpression(expression)
 }

@@ -74,6 +74,7 @@ interface testInterface2 {
 
 
 //// [errorsInGenericTypeReference.js]
+"use strict";
 class Foo {
 }
 // in call type arguments
@@ -91,7 +92,6 @@ class testClass3 {
     testMethod1() { return null; } // error: could not find symbol V
     static testMethod2() { return null; } // error: could not find symbol V
     set a(value) { } // error: could not find symbol V
-    property; // error: could not find symbol V
 }
 // in function return type annotation
 function testFunction1() { return null; } // error: could not find symbol V

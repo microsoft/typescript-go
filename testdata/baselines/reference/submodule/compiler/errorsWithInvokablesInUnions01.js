@@ -22,12 +22,6 @@ export let ctor: IDirectiveLinkFn<number> | ConstructableA | IDirectivePrePost<n
 
 
 //// [errorsWithInvokablesInUnions01.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ctor = exports.blah = void 0;
-let blah = (x) => { };
-exports.blah = blah;
-let ctor = class {
-    someUnaccountedProp;
+export let blah = (x) => { };
+export let ctor = class {
 };
-exports.ctor = ctor;

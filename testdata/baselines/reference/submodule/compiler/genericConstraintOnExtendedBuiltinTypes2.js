@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/genericConstraintOnExtendedBuiltinTypes2.ts] ////
 
 //// [genericConstraintOnExtendedBuiltinTypes2.ts]
-module EndGate {
+namespace EndGate {
     export interface ICloneable {
         Clone(): any;
     }
@@ -9,7 +9,7 @@ module EndGate {
 
 interface Number extends EndGate.ICloneable { }
 
-module EndGate.Tweening {
+namespace EndGate.Tweening {
     export class Tween<T extends ICloneable>{
         private _from: T;
 
@@ -19,7 +19,7 @@ module EndGate.Tweening {
     }
 }
 
-module EndGate.Tweening {
+namespace EndGate.Tweening {
     export class NumberTween extends Tween<Number>{
         constructor(from: number) {
             super(from);
@@ -28,12 +28,12 @@ module EndGate.Tweening {
 }
 
 //// [genericConstraintOnExtendedBuiltinTypes2.js]
+"use strict";
 var EndGate;
 (function (EndGate) {
-    let Tweening;
+    var Tweening;
     (function (Tweening) {
         class Tween {
-            _from;
             constructor(from) {
                 this._from = from.Clone();
             }
@@ -42,9 +42,9 @@ var EndGate;
     })(Tweening = EndGate.Tweening || (EndGate.Tweening = {}));
 })(EndGate || (EndGate = {}));
 (function (EndGate) {
-    let Tweening;
+    var Tweening;
     (function (Tweening) {
-        class NumberTween extends Tween {
+        class NumberTween extends Tweening.Tween {
             constructor(from) {
                 super(from);
             }

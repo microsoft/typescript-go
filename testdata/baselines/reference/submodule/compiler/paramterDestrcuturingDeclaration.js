@@ -8,6 +8,7 @@ interface C {
 
 
 //// [paramterDestrcuturingDeclaration.js]
+"use strict";
 
 
 //// [paramterDestrcuturingDeclaration.d.ts]
@@ -17,5 +18,5 @@ interface C {
     }): any;
     new ({ p: boolean }: {
         p: any;
-    });
+    }): any;
 }

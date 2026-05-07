@@ -20,20 +20,19 @@ class T {
     }
 }
 
-module M {
+namespace M {
     var x = this;
 }
 
 
 //// [lambdaPropSelf.js]
+"use strict";
 class Person {
-    name;
-    children;
     constructor(name, children) {
         this.name = name;
+        this.addChild = () => this.children.push("New child");
         this.children = ko.observableArray(children);
     }
-    addChild = () => this.children.push("New child");
 }
 class T {
     fo() {

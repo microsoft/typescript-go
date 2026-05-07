@@ -38,11 +38,8 @@ function foo<C, T extends { content: C }>(x: C, y: T['content']) {
 
 
 //// [indexedAccessTypeConstraints.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Bar = exports.Foo = void 0;
+// Repro from #14557
 class Parent {
-    data;
     constructor(data) {
         this.data = data;
     }
@@ -50,18 +47,16 @@ class Parent {
         return this.data;
     }
 }
-class Foo extends Parent {
+export class Foo extends Parent {
     getContent() {
         return this.getData().get('content');
     }
 }
-exports.Foo = Foo;
-class Bar extends Parent {
+export class Bar extends Parent {
     getContent() {
         return this.getData().get('content');
     }
 }
-exports.Bar = Bar;
 // Repro from #14557
 function foo(x, y) {
     x = y;

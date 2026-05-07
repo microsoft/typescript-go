@@ -3,23 +3,27 @@
     "name": "typescript-go",
     "version": "0.0.0",
     "license": "Apache-2.0",
+    "engines": {
+        "node": ">=20.19"
+    },
     "devDependencies": {
-        "@types/adm-zip": "^0.5.7",
+        "@types/adm-zip": "^0.5.8",
         "@types/node": "latest",
+        "@types/tmp": "^0.2.6",
         "@types/which": "^3.0.4",
-        "adm-zip": "^0.5.16",
-        "chokidar": "^4.0.3",
-        "dprint": "^0.50.0",
-        "execa": "^9.6.0",
-        "glob": "^10.4.5",
-        "hereby": "^1.11.0",
-        "p-limit": "^6.2.0",
+        "adm-zip": "^0.5.17",
+        "chokidar": "^5.0.0",
+        "dprint": "^0.54.0",
+        "execa": "^9.6.1",
+        "glob": "^13.0.6",
+        "hereby": "^1.14.0",
+        "p-limit": "^7.3.0",
         "picocolors": "^1.1.1",
-        "typescript": "^5.8.3",
-        "which": "^5.0.0"
+        "tmp": "^0.2.5",
+        "typescript": "^6.0.2",
+        "which": "^6.0.1"
     },
     "scripts": {
-        "postinstall": "hereby postinstall",
         "build": "hereby build",
         "build:watch": "hereby build:watch",
         "build:watch:debug": "hereby build:watch --debug",
@@ -27,16 +31,22 @@
         "api:build": "npm run -w @typescript/api build",
         "extension:build": "npm run -w _extension build",
         "extension:watch": "npm run -w _extension watch",
-        "node": "node --no-warnings --conditions @typescript/source",
-        "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts"
+        "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts",
+        "updatefailing": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/updateFailing.mts",
+        "makemanual": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/makeManual.mts"
     },
     "workspaces": [
         "./_extension",
         "./_packages/*"
     ],
-    "packageManager": "npm@8.19.4",
+    "overrides": {
+        "@microsoft/applicationinsights-web-basic": "3.3.11",
+        "@microsoft/1ds-core-js": "4.3.11",
+        "@microsoft/1ds-post-js": "4.3.11"
+    },
+    "packageManager": "npm@11.12.1+sha512.cdca14b85d647b3192028d02aadbe82d75f79a446aceea9874be98e6d768f20ebd3555770a48d0e9906106007877bbc690f715e9372f2e2dc644a3c3157fb14c",
     "volta": {
-        "node": "22.16.0",
-        "npm": "8.19.4"
+        "node": "22.22.0",
+        "npm": "11.12.1"
     }
 }

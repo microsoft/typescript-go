@@ -4,10 +4,10 @@
 // Function typed arguments with multiple signatures must be passed an implementation that matches all of them
 // Inferences are made quadratic-pairwise to and from these overload sets
 
-module NonGenericParameter {
+namespace NonGenericParameter {
 >NonGenericParameter : typeof NonGenericParameter
 
-    var a: {
+    declare var a: {
 >a : { new (x: boolean): boolean; new (x: string): string; }
 
         new(x: boolean): boolean;
@@ -18,7 +18,7 @@ module NonGenericParameter {
     }
 
     function foo4(cb: typeof a) {
->foo4 : (cb: { new (x: boolean): boolean; new (x: string): string; }) => { new (x: boolean): boolean; new (x: string): string; }
+>foo4 : (cb: typeof a) => { new (x: boolean): boolean; new (x: string): string; }
 >cb : { new (x: boolean): boolean; new (x: string): string; }
 >a : { new (x: boolean): boolean; new (x: string): string; }
 
@@ -26,18 +26,18 @@ module NonGenericParameter {
 >cb : { new (x: boolean): boolean; new (x: string): string; }
     }
 
-    var b: { new <T, U>(x: T): U }
+    declare var b: { new <T, U>(x: T): U }
 >b : new <T, U>(x: T) => U
 >x : T
 
     var r3 = foo4(b); // ok
 >r3 : { new (x: boolean): boolean; new (x: string): string; }
 >foo4(b) : { new (x: boolean): boolean; new (x: string): string; }
->foo4 : (cb: { new (x: boolean): boolean; new (x: string): string; }) => { new (x: boolean): boolean; new (x: string): string; }
+>foo4 : (cb: typeof a) => { new (x: boolean): boolean; new (x: string): string; }
 >b : new <T, U>(x: T) => U
 }
 
-module GenericParameter {
+namespace GenericParameter {
 >GenericParameter : typeof GenericParameter
 
     function foo5<T>(cb: { new(x: T): string; new(x: number): T }) {
@@ -50,7 +50,7 @@ module GenericParameter {
 >cb : { new (x: T): string; new (x: number): T; }
     }
 
-    var a: { new <T>(x: T): T };
+    declare var a: { new <T>(x: T): T };
 >a : new <T>(x: T) => T
 >x : T
 
@@ -65,13 +65,13 @@ module GenericParameter {
 >cb : { new (x: T): string; new (x: T, y?: T): string; }
 >x : T
 >x : T
->y : T
+>y : T | undefined
 
         return cb;
 >cb : { new (x: T): string; new (x: T, y?: T): string; }
     }
 
-    var b: { new <T>(x: T, y: T): string };
+    declare var b: { new <T>(x: T, y: T): string };
 >b : new <T>(x: T, y: T) => string
 >x : T
 >y : T
@@ -88,27 +88,27 @@ module GenericParameter {
 >cb : { new (x: T): string; new (x: T, y?: T): string; }
 >x : T
 >x : T
->y : T
+>y : T | undefined
 
         return cb;
 >cb : { new (x: T): string; new (x: T, y?: T): string; }
     }
 
     var r13 = foo7(1, a); // ok
->r13 : { new (x: unknown): string; new (x: unknown, y?: unknown): string; }
->foo7(1, a) : { new (x: unknown): string; new (x: unknown, y?: unknown): string; }
+>r13 : { new (x: 1): string; new (x: 1, y?: 1 | undefined): string; }
+>foo7(1, a) : { new (x: 1): string; new (x: 1, y?: 1 | undefined): string; }
 >foo7 : <T>(x: T, cb: { new (x: T): string; new (x: T, y?: T): string; }) => { new (x: T): string; new (x: T, y?: T): string; }
 >1 : 1
 >a : new <T>(x: T) => T
 
-    var c: { new<T>(x: T): number; new<T>(x: number): T; }
+    declare var c: { new<T>(x: T): number; new<T>(x: number): T; }
 >c : { new <T>(x: T): number; new <T>(x: number): T; }
 >x : T
 >x : number
 
     var r14 = foo7(1, c); // ok
->r14 : { new (x: unknown): string; new (x: unknown, y?: unknown): string; }
->foo7(1, c) : { new (x: unknown): string; new (x: unknown, y?: unknown): string; }
+>r14 : { new (x: 1): string; new (x: 1, y?: 1 | undefined): string; }
+>foo7(1, c) : { new (x: 1): string; new (x: 1, y?: 1 | undefined): string; }
 >foo7 : <T>(x: T, cb: { new (x: T): string; new (x: T, y?: T): string; }) => { new (x: T): string; new (x: T, y?: T): string; }
 >1 : 1
 >c : { new <T>(x: T): number; new <T>(x: number): T; }

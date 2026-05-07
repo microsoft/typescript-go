@@ -14,12 +14,9 @@ apply()
 
 //// [moduleExportAliasDuplicateAlias.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-export var apply = undefined;
 exports.apply = undefined;
 function a() { }
 exports.apply();
-export var apply = a;
 exports.apply = a;
 exports.apply();
 //// [test.js]
@@ -29,8 +26,8 @@ apply();
 
 
 //// [moduleExportAliasDuplicateAlias.d.ts]
-export var apply = undefined;
-export var apply = a;
-export {};
+export declare var apply: typeof a;
+declare function a(): void;
+export declare var apply: typeof a;
 //// [test.d.ts]
 export {};

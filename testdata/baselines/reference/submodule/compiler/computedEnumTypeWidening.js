@@ -80,16 +80,13 @@ val2 = MyDeclaredEnum.B;
 
 
 //// [computedEnumTypeWidening.js]
+"use strict";
 var E;
 (function (E) {
-    E["A"] = computed(0);
-    if (typeof E.A !== "string") E[E.A] = "A";
-    E["B"] = computed(1);
-    if (typeof E.B !== "string") E[E.B] = "B";
-    E["C"] = computed(2);
-    if (typeof E.C !== "string") E[E.C] = "C";
-    E["D"] = computed(3);
-    if (typeof E.D !== "string") E[E.D] = "D";
+    E[E["A"] = computed(0)] = "A";
+    E[E["B"] = computed(1)] = "B";
+    E[E["C"] = computed(2)] = "C";
+    E[E["D"] = computed(3)] = "D";
 })(E || (E = {}));
 function f1() {
     const c1 = E.B; // Fresh E.B
@@ -134,10 +131,12 @@ const c2 = E.B;
 let v1 = E.B;
 let v2 = E.B;
 class C {
-    p1 = E.B;
-    p2 = E.B;
-    p3 = E.B;
-    p4 = E.B;
+    constructor() {
+        this.p1 = E.B;
+        this.p2 = E.B;
+        this.p3 = E.B;
+        this.p4 = E.B;
+    }
 }
 // Repro from #52531
 var MyEnum;
@@ -177,10 +176,9 @@ declare let v2: E.B;
 declare class C {
     p1: E;
     p2: E.B;
-    readonly p3: E;
+    readonly p3 = E.B;
     readonly p4: E.B;
 }
-// Repro from #52531
 declare enum MyEnum {
     A = 0,
     B = 1,

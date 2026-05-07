@@ -56,6 +56,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 			return &testUnit{content: content, name: filename}, nil
 		},
 	)
+
 	if currentDirectory == "" {
 		currentDirectory = srcFolder
 	}
@@ -87,6 +88,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 				parseConfigHost,
 				configDir,
 				nil, /*existingOptions*/
+				nil, /*existingOptionsRaw*/
 				configFileName,
 				nil, /*resolutionStack*/
 				nil, /*extraFileExtensions*/
@@ -107,6 +109,13 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	}
 }
 
+type ParseTestFilesOptions struct {
+	// If true, allows test content to appear before the first @Filename directive.
+	// In this case, an implicit first file is created using the fileName parameter.
+	// This matches the behavior of the TypeScript fourslash test harness.
+	AllowImplicitFirstFile bool
+}
+
 // Given a test file containing // @FileName and // @symlink directives,
 // return an array of named units of code to be added to an existing compiler instance,
 // along with a map of symlinks and the current directory.
@@ -114,6 +123,15 @@ func ParseTestFilesAndSymlinks[T any](
 	code string,
 	fileName string,
 	parseFile func(filename string, content string, fileOptions map[string]string) (T, error),
+) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string, e error) {
+	return ParseTestFilesAndSymlinksWithOptions(code, fileName, parseFile, ParseTestFilesOptions{})
+}
+
+func ParseTestFilesAndSymlinksWithOptions[T any](
+	code string,
+	fileName string,
+	parseFile func(filename string, content string, fileOptions map[string]string) (T, error),
+	options ParseTestFilesOptions,
 ) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string, e error) {
 	// List of all the subfiles we've parsed out
 	var testUnits []T
@@ -123,6 +141,13 @@ func ParseTestFilesAndSymlinks[T any](
 	// Stuff related to the subfile we're parsing
 	var currentFileContent strings.Builder
 	var currentFileName string
+	seenContentLine := false
+	hasSeenFile := false
+	if options.AllowImplicitFirstFile {
+		// For fourslash tests, initialize currentFileName to the fileName parameter
+		// so content before the first @Filename directive goes into an implicit first file
+		currentFileName = fileName
+	}
 	var currentDirectory string
 	var parseError error
 	currentFileOptions := make(map[string]string)
@@ -142,7 +167,14 @@ func ParseTestFilesAndSymlinks[T any](
 				currentDirectory = metaDataValue
 			}
 			if metaDataName != "filename" {
-				if slices.Contains(fourslashDirectives, metaDataName) {
+				if metaDataName == "symlink" && currentFileName != "" {
+					for link := range strings.SplitSeq(metaDataValue, ",") {
+						link = strings.TrimSpace(link)
+						if link != "" {
+							symlinks[link] = currentFileName
+						}
+					}
+				} else if slices.Contains(fourslashDirectives, metaDataName) {
 					// File-specific option
 					currentFileOptions[metaDataName] = metaDataValue
 				} else {
@@ -158,32 +190,64 @@ func ParseTestFilesAndSymlinks[T any](
 
 			// New metadata statement after having collected some code to go with the previous metadata
 			if currentFileName != "" {
-				// Store result file
-				newTestFile, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
-				if e != nil {
-					parseError = e
-					break
+				// Store result file - always save for regular tests, but skip empty implicit first file for fourslash
+				shouldSaveFile := !options.AllowImplicitFirstFile || currentFileContent.Len() != 0 || hasSeenFile
+				if shouldSaveFile {
+					hasSeenFile = true
+					newTestFile, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
+					if e != nil {
+						parseError = e
+						break
+					}
+					testUnits = append(testUnits, newTestFile)
 				}
-				testUnits = append(testUnits, newTestFile)
 
 				// Reset local data
 				currentFileContent.Reset()
+				seenContentLine = false
 				currentFileName = metaDataValue
 				currentFileOptions = make(map[string]string)
 			} else {
 				// First metadata marker in the file
-				currentFileName = strings.TrimSpace(testMetaData[2])
-				if currentFileContent.Len() != 0 && scanner.SkipTrivia(currentFileContent.String(), 0) != currentFileContent.Len() {
+				hasContentBeforeFirstFilename := currentFileContent.Len() != 0 && scanner.SkipTrivia(currentFileContent.String(), 0) != currentFileContent.Len()
+				if hasContentBeforeFirstFilename && !options.AllowImplicitFirstFile {
 					panic("Non-comment test content appears before the first '// @Filename' directive")
 				}
+
+				// If we have content before the first @Filename and AllowImplicitFirstFile is true,
+				// we need to save it as an implicit first file before starting the new file
+				if hasContentBeforeFirstFilename && options.AllowImplicitFirstFile && currentFileName != "" {
+					// Store the implicit first file
+					hasSeenFile = true
+					newTestFile, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
+					if e != nil {
+						parseError = e
+						break
+					}
+					testUnits = append(testUnits, newTestFile)
+				}
+
+				// Reset for the new file
 				currentFileContent.Reset()
+				seenContentLine = false
+				currentFileName = strings.TrimSpace(testMetaData[2])
+				currentFileOptions = make(map[string]string)
 			}
 		} else {
 			// Subfile content line
 			// Append to the current subfile content, inserting a newline if needed
-			if currentFileContent.Len() != 0 {
-				// End-of-line
-				currentFileContent.WriteRune('\n')
+			// For fourslash tests, use seenContentLine to preserve leading blank lines
+			// (matching TS fourslash's //// content markers). For compiler tests, use
+			// Len() != 0 which drops leading blanks (matching TS's harness behavior).
+			if options.AllowImplicitFirstFile {
+				if seenContentLine {
+					currentFileContent.WriteRune('\n')
+				}
+				seenContentLine = true
+			} else {
+				if currentFileContent.Len() != 0 {
+					currentFileContent.WriteRune('\n')
+				}
 			}
 			currentFileContent.WriteString(line)
 		}

@@ -1,29 +1,29 @@
 //// [tests/cases/compiler/declFileGenericType2.ts] ////
 
 //// [declFileGenericType2.ts]
-declare module templa.mvc {
+declare namespace templa.mvc {
     interface IModel {
     }
 }
-declare module templa.mvc {
+declare namespace templa.mvc {
     interface IController<ModelType extends templa.mvc.IModel> {
     }
 }
-declare module templa.mvc {
+declare namespace templa.mvc {
     class AbstractController<ModelType extends templa.mvc.IModel> implements mvc.IController<ModelType> {
     }
 }
-declare module templa.mvc.composite {
+declare namespace templa.mvc.composite {
     interface ICompositeControllerModel extends mvc.IModel {
         getControllers(): mvc.IController<mvc.IModel>[];
     }
 }
-module templa.dom.mvc {
+namespace templa.dom.mvc {
     export interface IElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.IController<ModelType> {
     }
 }
 // Module
-module templa.dom.mvc {
+namespace templa.dom.mvc {
 
     export class AbstractElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.AbstractController<ModelType> implements IElementController<ModelType> {
         constructor() {
@@ -32,7 +32,7 @@ module templa.dom.mvc {
     }
 }
 // Module
-module templa.dom.mvc.composite {
+namespace templa.dom.mvc.composite {
     export class AbstractCompositeElementController<ModelType extends templa.mvc.composite.ICompositeControllerModel> extends templa.dom.mvc.AbstractElementController<ModelType> {
         public _controllers: templa.mvc.IController<templa.mvc.IModel>[];
         constructor() {
@@ -44,12 +44,13 @@ module templa.dom.mvc.composite {
 
 
 //// [declFileGenericType2.js]
+"use strict";
 // Module
 var templa;
 (function (templa) {
-    let dom;
+    var dom;
     (function (dom) {
-        let mvc;
+        var mvc;
         (function (mvc) {
             class AbstractElementController extends templa.mvc.AbstractController {
                 constructor() {
@@ -62,14 +63,13 @@ var templa;
 })(templa || (templa = {}));
 // Module
 (function (templa) {
-    let dom;
+    var dom;
     (function (dom) {
-        let mvc;
+        var mvc;
         (function (mvc) {
-            let composite;
+            var composite;
             (function (composite) {
                 class AbstractCompositeElementController extends templa.dom.mvc.AbstractElementController {
-                    _controllers;
                     constructor() {
                         super();
                         this._controllers = [];
@@ -104,13 +104,11 @@ declare namespace templa.dom.mvc {
     interface IElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.IController<ModelType> {
     }
 }
-// Module
 declare namespace templa.dom.mvc {
     class AbstractElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.AbstractController<ModelType> implements IElementController<ModelType> {
         constructor();
     }
 }
-// Module
 declare namespace templa.dom.mvc.composite {
     class AbstractCompositeElementController<ModelType extends templa.mvc.composite.ICompositeControllerModel> extends templa.dom.mvc.AbstractElementController<ModelType> {
         _controllers: templa.mvc.IController<templa.mvc.IModel>[];

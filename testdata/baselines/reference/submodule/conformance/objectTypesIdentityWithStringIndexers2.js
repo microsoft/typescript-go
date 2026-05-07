@@ -128,12 +128,11 @@ function foo16(x: any) { }
 
 
 //// [objectTypesIdentityWithStringIndexers2.js]
+"use strict";
 // object types are identical structurally
 class Base {
-    foo;
 }
 class Derived extends Base {
-    bar;
 }
 class A {
 }

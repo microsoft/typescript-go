@@ -25,10 +25,13 @@ class Foo {
 
 
 //// [asiInES6Classes.js]
+"use strict";
 class Foo {
-    defaults = {
-        done: false
-    };
+    constructor() {
+        this.defaults = {
+            done: false
+        };
+    }
     bar() {
         return 3;
     }

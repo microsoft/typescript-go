@@ -248,7 +248,6 @@ export declare const bigIntConstBad2: bigint;
 export declare const bigIntConstBad3 = 1n;
 export declare const stringConst = "s";
 export declare const stringConstBad: string;
-// These are just strings
 export declare const templateConstOk1 = "s";
 export declare const templateConstNotOk2: string;
 export declare const templateConstNotOk3 = "s1 - S";
@@ -268,11 +267,10 @@ export declare let templateLetOk1: string;
 export declare let templateLetOk2: string;
 export declare let templateLetOk3: string;
 export declare let templateLetOk4: string;
-// As const
 export declare let numberLetAsConst: 1;
 export declare let bigIntLetAsConst: 1n;
 export declare let stringLetAsConst: "s";
-export declare let templateLetOk1AsConst: "s";
+export declare let templateLetOk1AsConst: `s`;
 export declare let templateLetOk2AsConst: "s1 - S";
 export declare let templateLetOk3AsConst: "s1 - S - false";
 export declare let templateLetOk4AsConst: `s${number} - S - true`;
@@ -294,24 +292,24 @@ export declare class Exported {
     templateLetOk2: string;
     templateLetOk3: string;
     templateLetOk4: string;
-    readonly numberConst: number;
+    readonly numberConst = 1;
     readonly numberConstBad1: number;
     readonly numberConstBad2: number;
-    readonly numberConstBad3: number;
-    readonly bigIntConst: bigint;
+    readonly numberConstBad3 = 1;
+    readonly bigIntConst = 1n;
     readonly bigIntConstBad1: bigint;
     readonly bigIntConstBad2: bigint;
-    readonly bigIntConstBad3: bigint;
-    readonly stringConst: string;
+    readonly bigIntConstBad3 = 1n;
+    readonly stringConst = "s";
     readonly stringConstBad: string;
-    readonly templateConstOk1: string;
-    readonly templateConstNotOk2: string;
+    readonly templateConstOk1 = "s";
+    readonly templateConstNotOk2 = "s1 - S";
     readonly templateConstNotOk3: string;
     readonly templateConstNotOk4: string;
     numberLetAsConst: 1;
     bigIntLetAsConst: 1n;
     stringLetAsConst: "s";
-    templateLetOk1AsConst: "s";
+    templateLetOk1AsConst: `s`;
     templateLetOk2AsConst: "s1 - S";
     templateLetOk3AsConst: "s1 - S - false";
     templateLetOk4AsConst: `s${number} - S - true`;
@@ -330,6 +328,8 @@ export declare function templateParamOk1(p?: string): void;
 export declare function templateParamOk2(p?: string): void;
 export declare function templateParamOk3(p?: string): void;
 export declare function templateParamOk4(p?: string): void;
+export declare const a: number;
+export declare const b: number;
 export declare function foo([, , b]?: [
     number,
     number,

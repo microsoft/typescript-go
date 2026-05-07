@@ -17,7 +17,7 @@ declare function foo(arg: { x: Bar, y: Date }, item: number, items?: [number, nu
 >x : Bar
 >y : Date
 >item : number
->items : [number, number, number]
+>items : [number, number, number] | undefined
 
 foo({
 >foo({    x: Bar,    y: Date}, getNum()) : void

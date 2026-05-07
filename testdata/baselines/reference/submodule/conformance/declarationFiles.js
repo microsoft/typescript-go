@@ -50,30 +50,22 @@ class C4 {
 
 
 //// [declarationFiles.js]
+"use strict";
 class C1 {
-    x;
     f(x) { return undefined; }
     constructor(x) { }
 }
 class C2 {
 }
 class C3 {
-    a;
-    b;
-    c;
-    d;
-    e;
-    f;
-    g;
-    h;
-    i;
-    j;
 }
 class C4 {
-    x1 = { a: this };
-    x2 = [this];
-    x3 = [{ a: this }];
-    x4 = () => this;
+    constructor() {
+        this.x1 = { a: this };
+        this.x2 = [this];
+        this.x3 = [{ a: this }];
+        this.x4 = () => this;
+    }
     f1() {
         return { a: this };
     }
@@ -115,11 +107,15 @@ declare class C3 {
     j: (x: any) => x is this;
 }
 declare class C4 {
-    x1: any;
+    x1: {
+        a: this;
+    };
     x2: this[];
     x3: any;
     x4: () => this;
-    f1(): any;
+    f1(): {
+        a: this;
+    };
     f2(): this[];
     f3(): any;
     f4(): () => this;

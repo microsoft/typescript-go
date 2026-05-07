@@ -5,14 +5,15 @@ class Clod {
     static x = 10;
 }
 
-module Clod {
+namespace Clod {
     var p = x; // x isn't in scope here
 }
 
 //// [staticsNotInScopeInClodule.js]
+"use strict";
 class Clod {
-    static x = 10;
 }
+Clod.x = 10;
 (function (Clod) {
     var p = x; // x isn't in scope here
 })(Clod || (Clod = {}));

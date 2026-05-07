@@ -88,7 +88,7 @@ function f3<T extends keyof Shape>(x: T) {
 }
 
 function f4<T extends keyof Named>(x: T) {
->f4 : <T extends "name">(x: T) => void
+>f4 : <T extends keyof Named>(x: T) => void
 >x : T
 
     let y: Pick<Shape, T>;
@@ -347,6 +347,16 @@ class C<T> {
     state: T;
 >state : T
 
+    constructor(initialState: T) {
+>initialState : T
+
+        this.state = initialState;
+>this.state = initialState : T
+>this.state : T
+>this : this
+>state : T
+>initialState : T
+    }
     setState<K extends keyof T>(props: Pick<T, K>) {
 >setState : <K extends keyof T>(props: Pick<T, K>) => void
 >props : Pick<T, K>
@@ -369,10 +379,15 @@ class C<T> {
     }
 }
 
-let c = new C<Foo>();
+let c = new C<Foo>({ a: "hello", b: 42 });
 >c : C<Foo>
->new C<Foo>() : C<Foo>
+>new C<Foo>({ a: "hello", b: 42 }) : C<Foo>
 >C : typeof C
+>{ a: "hello", b: 42 } : { a: string; b: number; }
+>a : string
+>"hello" : "hello"
+>b : number
+>42 : 42
 
 c.setState({ a: "test", b: 43 });
 >c.setState({ a: "test", b: 43 }) : void
@@ -453,7 +468,7 @@ let x2: Partial<T2> = { a: 'no' }; // Error
 >'no' : "no"
 
 let x3: { [P in keyof T2]: T2[P]} = { a: 'no' };  // Error
->x3 : { [x: string]: any; a?: number | undefined; }
+>x3 : { [x: string]: any; a?: number; }
 >{ a: 'no' } : { a: string; }
 >a : string
 >'no' : "no"

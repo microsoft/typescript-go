@@ -25,14 +25,11 @@ const b: string = a;
 
 
 //// [inferTypes2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.bar = bar;
-exports.bar2 = bar2;
-function bar(obj) {
+// Repros from #22755
+export function bar(obj) {
     return foo(obj);
 }
-function bar2(obj) {
+export function bar2(obj) {
     return foo2(obj);
 }
 const a = null;
@@ -40,7 +37,6 @@ const b = a;
 
 
 //// [inferTypes2.d.ts]
-// Repros from #22755
 export declare function foo<T>(obj: T): T extends () => infer P ? P : never;
 export declare function bar<T>(obj: T): T extends () => infer P ? P : never;
 export type BadNested<T> = {

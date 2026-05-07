@@ -18,14 +18,22 @@ class C extends A {
 
 
 //// [abstractProperty.js]
+"use strict";
 class A {
-    x;
     foo() {
         console.log(this.x);
     }
 }
 class B extends A {
-    x = 'B.x';
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "x", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 'B.x'
+        });
+    }
 }
 class C extends A {
     get x() { return 'C.x'; }

@@ -92,23 +92,18 @@ function fn8(x: Alpha|Beta|Gamma) {
 
 
 //// [instanceOfAssignability.js]
+"use strict";
 // Derived1 is assignable to, but not a subtype of, Base
 class Derived1 {
-    foo;
 }
 // Derived2 is a subtype of Base that is not assignable to Derived1
 class Derived2 {
-    foo;
-    optional;
 }
 class Animal {
-    move;
 }
 class Mammal extends Animal {
-    milk;
 }
 class Giraffe extends Mammal {
-    neck;
 }
 function fn1(x) {
     if (x instanceof Array) {
@@ -160,9 +155,6 @@ function fn7(x) {
     }
 }
 class ABC {
-    a;
-    b;
-    c;
 }
 function fn8(x) {
     if (x instanceof ABC) {

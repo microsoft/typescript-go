@@ -32,18 +32,18 @@ declare function require(name: string): any;
 module.exports = function () { }
 >module.exports = function () { } : () => void
 >module.exports : () => void
->module : { "export=": () => void; }
+>module : { exports: () => void; }
 >exports : () => void
 >function () { } : () => void
 
 /** @param {number} a */
 module.exports.f = function (a) { }
->module.exports.f = function (a) { } : (a: any) => void
+>module.exports.f = function (a) { } : (a: number) => void
 >module.exports.f : any
 >module.exports : () => void
->module : { "export=": () => void; }
+>module : { exports: () => void; }
 >exports : () => void
->f : (a: any) => void
->function (a) { } : (a: any) => void
->a : any
+>f : any
+>function (a) { } : (a: number) => void
+>a : number
 

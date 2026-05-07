@@ -44,11 +44,11 @@ var r12 = foo(i2);
 var r15 = foo(c2);
 
 //// [functionConstraintSatisfaction3.js]
+"use strict";
 // satisfaction of a constraint to Function, no errors expected
 function foo(x) { return x; }
 var i;
 class C {
-    foo;
 }
 var a;
 var b;
@@ -61,7 +61,6 @@ var r5 = foo(i);
 var r8 = foo(c);
 var i2;
 class C2 {
-    foo;
 }
 var a2;
 var b2;

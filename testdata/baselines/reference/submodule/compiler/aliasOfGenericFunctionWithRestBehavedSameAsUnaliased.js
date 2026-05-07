@@ -36,6 +36,8 @@ let check3: test3 = "y";
 
 
 //// [aliasOfGenericFunctionWithRestBehavedSameAsUnaliased.js]
+"use strict";
+// the type printback for every `test` below should be "y"
 let check = "y";
 let check1 = "y";
 let check2 = "y";

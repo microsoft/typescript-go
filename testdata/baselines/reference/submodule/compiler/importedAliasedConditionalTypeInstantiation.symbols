@@ -19,7 +19,7 @@ export type Handler<TEvent = any, TResult = any> = (
 >TResult : Symbol(TResult, Decl(index.d.ts, 0, 33))
 
 ) => void | Promise<TResult>;
->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >TResult : Symbol(TResult, Decl(index.d.ts, 0, 33))
 
 export type Callback<TResult = any> = (error?: Error | string | null, result?: TResult) => void;
@@ -80,7 +80,7 @@ declare namespace lambdaTester {
 >result : Symbol(result, Decl(index.d.ts, 9, 9))
 >S : Symbol(S, Decl(index.d.ts, 8, 25))
 >additional : Symbol(additional, Decl(index.d.ts, 9, 19))
->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
         (result: S, additional?: any, done?: () => {}): void;
 >result : Symbol(result, Decl(index.d.ts, 10, 9))
@@ -120,7 +120,7 @@ declare namespace lambdaTester {
 >Handler : Symbol(Handler, Decl(index.d.ts, 0, 8))
 
         event(event: HandlerEvent<T>): this;
->event : Symbol(event, Decl(index.d.ts, 20, 43))
+>event : Symbol(LambdaTester.event, Decl(index.d.ts, 20, 43))
 >event : Symbol(event, Decl(index.d.ts, 21, 14))
 >HandlerEvent : Symbol(HandlerEvent, Decl(index.d.ts, 1, 32))
 >T : Symbol(T, Decl(index.d.ts, 20, 23))
@@ -134,7 +134,7 @@ declare function lambdaTester<T extends Handler>(handler: T): lambdaTester.Lambd
 >handler : Symbol(handler, Decl(index.d.ts, 25, 49))
 >T : Symbol(T, Decl(index.d.ts, 25, 30))
 >lambdaTester : Symbol(lambdaTester, Decl(index.d.ts, 23, 1), Decl(index.d.ts, 0, 47))
->LambdaTester : Symbol(LambdaTester, Decl(index.d.ts, 18, 24))
+>LambdaTester : Symbol(lambdaTester.LambdaTester, Decl(index.d.ts, 18, 24))
 >T : Symbol(T, Decl(index.d.ts, 25, 30))
 
 export = lambdaTester;
@@ -150,16 +150,16 @@ import { Handler } from 'aws-lambda';
 type Actual = lambdaTester.Verifier<lambdaTester.HandlerResult<Handler>>;
 >Actual : Symbol(Actual, Decl(index.ts, 1, 37))
 >lambdaTester : Symbol(lambdaTester, Decl(index.ts, 0, 6))
->Verifier : Symbol(Verifier, Decl(index.d.ts, 11, 5))
+>Verifier : Symbol(lambdaTester.Verifier, Decl(index.d.ts, 11, 5))
 >lambdaTester : Symbol(lambdaTester, Decl(index.ts, 0, 6))
->HandlerResult : Symbol(HandlerResult, Decl(index.d.ts, 2, 92))
+>HandlerResult : Symbol(lambdaTester.HandlerResult, Decl(index.d.ts, 2, 92))
 >Handler : Symbol(Handler, Decl(index.ts, 1, 8))
 
 type Expected = lambdaTester.Verifier<lambdaTester.HandlerResult<Handler<any, any>>>;
 >Expected : Symbol(Expected, Decl(index.ts, 3, 73))
 >lambdaTester : Symbol(lambdaTester, Decl(index.ts, 0, 6))
->Verifier : Symbol(Verifier, Decl(index.d.ts, 11, 5))
+>Verifier : Symbol(lambdaTester.Verifier, Decl(index.d.ts, 11, 5))
 >lambdaTester : Symbol(lambdaTester, Decl(index.ts, 0, 6))
->HandlerResult : Symbol(HandlerResult, Decl(index.d.ts, 2, 92))
+>HandlerResult : Symbol(lambdaTester.HandlerResult, Decl(index.d.ts, 2, 92))
 >Handler : Symbol(Handler, Decl(index.ts, 1, 8))
 

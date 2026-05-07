@@ -18,14 +18,13 @@ class C3 {
 
 
 //// [asiAbstract.js]
+"use strict";
 abstract;
 class NonAbstractClass {
 }
 class C2 {
-    abstract;
     nonAbstractFunction() {
     }
 }
 class C3 {
-    abstract;
 }

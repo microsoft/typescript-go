@@ -11,8 +11,9 @@ class C
 
 
 //// [staticClassProps.js]
+"use strict";
 class C {
     foo() {
     }
-    static z = 1;
 }
+C.z = 1;

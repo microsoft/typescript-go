@@ -19,9 +19,9 @@ type usingDeclarationTransformer struct {
 	exportEqualsBinding  *ast.IdentifierNode
 }
 
-func newUsingDeclarationTransformer(emitContext *printer.EmitContext) *transformers.Transformer {
+func newUsingDeclarationTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &usingDeclarationTransformer{}
-	return tx.NewTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 type usingKind uint
@@ -46,8 +46,6 @@ func (tx *usingDeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitForStatement(node.AsForStatement())
 	case ast.KindForOfStatement:
 		node = tx.visitForOfStatement(node.AsForInOrOfStatement())
-	case ast.KindSwitchStatement:
-		node = tx.visitSwitchStatement(node.AsSwitchStatement())
 	default:
 		node = tx.Visitor().VisitEachChild(node)
 	}
@@ -150,15 +148,15 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 			)
 		}
 
-		topLevelStatements = tx.EmitContext().EndAndMergeVariableEnvironment(topLevelStatements)
+		topLevelStatements = append(topLevelStatements, tx.EmitContext().EndVariableEnvironment()...)
 		if len(tx.exportVars) > 0 {
 			topLevelStatements = append(topLevelStatements, tx.Factory().NewVariableStatement(
 				tx.Factory().NewModifierList([]*ast.Node{
 					tx.Factory().NewModifier(ast.KindExportKeyword),
 				}),
 				tx.Factory().NewVariableDeclarationList(
-					ast.NodeFlagsLet,
 					tx.Factory().NewNodeList(tx.exportVars),
+					ast.NodeFlagsLet,
 				),
 			))
 		}
@@ -173,7 +171,7 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 			))
 		}
 
-		visited = tx.Factory().UpdateSourceFile(node, tx.Factory().NewNodeList(topLevelStatements))
+		visited = tx.Factory().UpdateSourceFile(node, tx.Factory().NewNodeList(topLevelStatements), node.EndOfFileToken)
 	} else {
 		visited = tx.Visitor().VisitEachChild(node.AsNode())
 	}
@@ -199,7 +197,7 @@ func (tx *usingDeclarationTransformer) visitBlock(node *ast.Block) *ast.Node {
 		)...)
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = node.Statements.Loc
-		return tx.Factory().UpdateBlock(node, statementList)
+		return tx.Factory().UpdateBlock(node, statementList, node.MultiLine)
 	}
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
@@ -258,18 +256,19 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 		temp := tx.Factory().NewGeneratedNameForNode(forDecl.Name())
 		usingVar := tx.Factory().UpdateVariableDeclaration(forDecl.AsVariableDeclaration(), forDecl.Name(), nil /*exclamationToken*/, nil /*type*/, temp)
 		usingVarList := tx.Factory().NewVariableDeclarationList(
-			core.IfElse(isAwaitUsing, ast.NodeFlagsAwaitUsing, ast.NodeFlagsUsing),
 			tx.Factory().NewNodeList([]*ast.Node{usingVar}),
+			core.IfElse(isAwaitUsing, ast.NodeFlagsAwaitUsing, ast.NodeFlagsUsing),
 		)
 		usingVarStatement := tx.Factory().NewVariableStatement(nil /*modifiers*/, usingVarList)
 		var statement *ast.Statement
 		if ast.IsBlock(node.Statement) {
-			statements := make([]*ast.Statement, 0, len(node.Statement.AsBlock().Statements.Nodes)+1)
+			statements := make([]*ast.Statement, 0, len(node.Statement.Statements())+1)
 			statements = append(statements, usingVarStatement)
-			statements = append(statements, node.Statement.AsBlock().Statements.Nodes...)
+			statements = append(statements, node.Statement.Statements()...)
 			statement = tx.Factory().UpdateBlock(
 				node.Statement.AsBlock(),
 				tx.Factory().NewNodeList(statements),
+				node.Statement.AsBlock().MultiLine,
 			)
 		} else {
 			statement = tx.Factory().NewBlock(
@@ -285,78 +284,16 @@ func (tx *usingDeclarationTransformer) visitForOfStatement(node *ast.ForInOrOfSt
 				node,
 				node.AwaitModifier,
 				tx.Factory().NewVariableDeclarationList(
-					ast.NodeFlagsConst,
 					tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 						tx.Factory().NewVariableDeclaration(temp, nil /*exclamationToken*/, nil /*type*/, nil),
 					}),
+					ast.NodeFlagsConst,
 				),
 				node.Expression,
 				statement,
 			),
 		)
 	}
-	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *usingDeclarationTransformer) visitCaseOrDefaultClause(node *ast.CaseOrDefaultClause, envBinding *ast.IdentifierNode) *ast.Node {
-	if getUsingKindOfStatements(node.Statements.Nodes) != usingKindNone {
-		return tx.Factory().UpdateCaseOrDefaultClause(
-			node,
-			tx.Visitor().VisitNode(node.Expression),
-			tx.Factory().NewNodeList(tx.transformUsingDeclarations(node.Statements.Nodes, envBinding, nil /*topLevelStatements*/)),
-		)
-	}
-	return tx.Visitor().VisitEachChild(node.AsNode())
-}
-
-func (tx *usingDeclarationTransformer) visitSwitchStatement(node *ast.SwitchStatement) *ast.Node {
-	// given:
-	//
-	//  switch (expr) {
-	//    case expr:
-	//      using res = expr;
-	//  }
-	//
-	// produces:
-	//
-	//  const env_1 = { stack: [], error: void 0, hasError: false };
-	//  try {
-	//    switch(expr) {
-	//      case expr:
-	//        const res = __addDisposableResource(env_1, expr, false);
-	//    }
-	//  }
-	//  catch (e_1) {
-	//    env_1.error = e_1;
-	//    env_1.hasError = true;
-	//  }
-	//  finally {
-	//     __disposeResources(env_1);
-	//  }
-	//
-	usingKind := getUsingKindOfCaseOrDefaultClauses(node.CaseBlock.AsCaseBlock().Clauses.Nodes)
-	if usingKind != usingKindNone {
-		envBinding := tx.createEnvBinding()
-		return transformers.SingleOrMany(tx.createDownlevelUsingStatements(
-			[]*ast.Statement{
-				tx.Factory().UpdateSwitchStatement(
-					node,
-					tx.Visitor().VisitNode(node.Expression),
-					tx.Factory().UpdateCaseBlock(
-						node.CaseBlock.AsCaseBlock(),
-						tx.Factory().NewNodeList(
-							core.Map(node.CaseBlock.AsCaseBlock().Clauses.Nodes, func(clause *ast.CaseOrDefaultClauseNode) *ast.CaseOrDefaultClauseNode {
-								return tx.visitCaseOrDefaultClause(clause.AsCaseOrDefaultClause(), envBinding)
-							}),
-						),
-					),
-				),
-			},
-			envBinding,
-			usingKind == usingKindAsync,
-		), tx.Factory())
-	}
-
 	return tx.Visitor().VisitEachChild(node.AsNode())
 }
 
@@ -430,7 +367,7 @@ func (tx *usingDeclarationTransformer) transformUsingDeclarations(statementsIn [
 
 			// Only replace the statement if it was valid.
 			if len(declarations) > 0 {
-				varList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList(declarations))
+				varList := tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList(declarations), ast.NodeFlagsConst)
 				tx.EmitContext().SetOriginal(varList, declarationList)
 				varList.Loc = declarationList.Loc
 				hoistOrAppendNode(tx.Factory().UpdateVariableStatement(varStatement, nil /*modifiers*/, varList))
@@ -644,7 +581,7 @@ func (tx *usingDeclarationTransformer) hoistInitializedVariable(node *ast.Variab
 	var target *ast.Expression
 	if ast.IsIdentifier(node.Name()) {
 		target = node.Name().Clone(tx.Factory())
-		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName|printer.EFInternalName))
+		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName))
 	} else {
 		target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), node.Name().AsBindingPattern())
 	}
@@ -659,7 +596,7 @@ func (tx *usingDeclarationTransformer) hoistInitializedVariable(node *ast.Variab
 func (tx *usingDeclarationTransformer) hoistBindingElement(node *ast.Node /*VariableDeclaration|BindingElement*/, isExportedDeclaration bool, original *ast.Node) {
 	// NOTE: `node` has already been visited
 	if ast.IsBindingPattern(node.Name()) {
-		for _, element := range node.Name().AsBindingPattern().Elements.Nodes {
+		for _, element := range node.Name().Elements() {
 			if element.Name() != nil {
 				tx.hoistBindingElement(element, isExportedDeclaration, original)
 			}
@@ -722,7 +659,7 @@ func (tx *usingDeclarationTransformer) createDownlevelUsingStatements(bodyStatem
 		tx.Factory().NewPropertyAssignment(nil /*modifiers*/, tx.Factory().NewIdentifier("hasError"), nil /*postfixToken*/, nil /*typeNode*/, tx.Factory().NewFalseExpression()),
 	}), false /*multiLine*/)
 	envVar := tx.Factory().NewVariableDeclaration(envBinding, nil /*exclamationToken*/, nil /*typeNode*/, envObject)
-	envVarList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{envVar}))
+	envVarList := tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{envVar}), ast.NodeFlagsConst)
 	envVarStatement := tx.Factory().NewVariableStatement(nil /*modifiers*/, envVarList)
 	statements = append(statements, envVarStatement)
 
@@ -788,14 +725,14 @@ func (tx *usingDeclarationTransformer) createDownlevelUsingStatements(bodyStatem
 		finallyBlock = tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Statement{
 			tx.Factory().NewVariableStatement(
 				nil, /*modifiers*/
-				tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
+				tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						result,
 						nil, /*exclamationToken*/
 						nil, /*type*/
 						tx.Factory().NewDisposeResourcesHelper(envBinding),
 					),
-				})),
+				}), ast.NodeFlagsConst),
 			),
 			tx.Factory().NewIfStatement(result, tx.Factory().NewExpressionStatement(tx.Factory().NewAwaitExpression(result)), nil /*elseStatement*/),
 		}), true /*multiLine*/)
@@ -842,20 +779,6 @@ func getUsingKindOfStatements(statements []*ast.Node) usingKind {
 	result := usingKindNone
 	for _, statement := range statements {
 		usingKind := getUsingKind(statement)
-		if usingKind == usingKindAsync {
-			return usingKindAsync
-		}
-		if usingKind > result {
-			result = usingKind
-		}
-	}
-	return result
-}
-
-func getUsingKindOfCaseOrDefaultClauses(clauses []*ast.CaseOrDefaultClauseNode) usingKind {
-	result := usingKindNone
-	for _, clause := range clauses {
-		usingKind := getUsingKindOfStatements(clause.AsCaseOrDefaultClause().Statements.Nodes)
 		if usingKind == usingKindAsync {
 			return usingKindAsync
 		}

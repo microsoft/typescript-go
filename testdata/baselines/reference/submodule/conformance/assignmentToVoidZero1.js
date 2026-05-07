@@ -9,20 +9,13 @@ exports.y = 2;
 
 //// [assignmentToVoidZero1.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// #38552
-export var y = exports.x = void 0;
 // #38552
 exports.y = exports.x = void 0;
-export var x = 1;
 exports.x = 1;
-export var y = 2;
 exports.y = 2;
 
 
 //// [assignmentToVoidZero1.d.ts]
-// #38552
-export var y = exports.x = void 0;
-export var x = 1;
-export var y = 2;
-export {};
+export declare var y: 2;
+export declare var x: 1;
+export declare var y: 2;

@@ -1,11 +1,13 @@
 package sourcemap
 
 import (
-	"encoding/json"
+	"encoding/base64"
 	"errors"
 	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -15,9 +17,10 @@ type (
 )
 
 const (
-	sourceIndexNotSet SourceIndex = -1
-	nameIndexNotSet   NameIndex   = -1
-	notSet            int         = -1
+	sourceIndexNotSet SourceIndex      = -1
+	nameIndexNotSet   NameIndex        = -1
+	notSet            int              = -1
+	notSetUTF16       core.UTF16Offset = -1
 )
 
 type Generator struct {
@@ -33,17 +36,17 @@ type Generator struct {
 	nameToNameIndexMap        map[string]NameIndex
 	mappings                  strings.Builder
 	lastGeneratedLine         int
-	lastGeneratedCharacter    int
+	lastGeneratedCharacter    core.UTF16Offset
 	lastSourceIndex           SourceIndex
 	lastSourceLine            int
-	lastSourceCharacter       int
+	lastSourceCharacter       core.UTF16Offset
 	lastNameIndex             NameIndex
 	hasLast                   bool
 	pendingGeneratedLine      int
-	pendingGeneratedCharacter int
+	pendingGeneratedCharacter core.UTF16Offset
 	pendingSourceIndex        SourceIndex
 	pendingSourceLine         int
-	pendingSourceCharacter    int
+	pendingSourceCharacter    core.UTF16Offset
 	pendingNameIndex          NameIndex
 	hasPending                bool
 	hasPendingSource          bool
@@ -57,7 +60,7 @@ type RawSourceMap struct {
 	Sources        []string  `json:"sources"`
 	Names          []string  `json:"names"`
 	Mappings       string    `json:"mappings"`
-	SourcesContent []*string `json:"sourcesContent,omitempty"`
+	SourcesContent []*string `json:"sourcesContent,omitzero"`
 }
 
 func NewGenerator(file string, sourceRoot string, sourcesDirectoryPath string, options tspath.ComparePathsOptions) *Generator {
@@ -120,16 +123,16 @@ func (gen *Generator) AddName(name string) NameIndex {
 	return nameIndex
 }
 
-func (gen *Generator) isNewGeneratedPosition(generatedLine int, generatedCharacter int) bool {
+func (gen *Generator) isNewGeneratedPosition(generatedLine int, generatedCharacter core.UTF16Offset) bool {
 	return !gen.hasPending ||
 		gen.pendingGeneratedLine != generatedLine ||
 		gen.pendingGeneratedCharacter != generatedCharacter
 }
 
-func (gen *Generator) isBacktrackingSourcePosition(sourceIndex SourceIndex, sourceLine int, sourceCharacter int) bool {
+func (gen *Generator) isBacktrackingSourcePosition(sourceIndex SourceIndex, sourceLine int, sourceCharacter core.UTF16Offset) bool {
 	return sourceIndex != sourceIndexNotSet &&
 		sourceLine != notSet &&
-		sourceCharacter != notSet &&
+		sourceCharacter != notSetUTF16 &&
 		gen.pendingSourceIndex == sourceIndex &&
 		(gen.pendingSourceLine > sourceLine ||
 			gen.pendingSourceLine == sourceLine && gen.pendingSourceCharacter > sourceCharacter)
@@ -205,7 +208,7 @@ func (gen *Generator) commitPendingMapping() {
 	}
 
 	// 1. Relative generated character
-	gen.appendBase64VLQ(gen.pendingGeneratedCharacter - gen.lastGeneratedCharacter)
+	gen.appendBase64VLQ(int(gen.pendingGeneratedCharacter - gen.lastGeneratedCharacter))
 	gen.lastGeneratedCharacter = gen.pendingGeneratedCharacter
 
 	if gen.hasPendingSource {
@@ -218,7 +221,7 @@ func (gen *Generator) commitPendingMapping() {
 		gen.lastSourceLine = gen.pendingSourceLine
 
 		// 4. Relative source character
-		gen.appendBase64VLQ(gen.pendingSourceCharacter - gen.lastSourceCharacter)
+		gen.appendBase64VLQ(int(gen.pendingSourceCharacter - gen.lastSourceCharacter))
 		gen.lastSourceCharacter = gen.pendingSourceCharacter
 
 		if gen.hasPendingName {
@@ -231,7 +234,7 @@ func (gen *Generator) commitPendingMapping() {
 	gen.hasLast = true
 }
 
-func (gen *Generator) addMapping(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int, nameIndex NameIndex) {
+func (gen *Generator) addMapping(generatedLine int, generatedCharacter core.UTF16Offset, sourceIndex SourceIndex, sourceLine int, sourceCharacter core.UTF16Offset, nameIndex NameIndex) {
 	if gen.isNewGeneratedPosition(generatedLine, generatedCharacter) ||
 		gen.isBacktrackingSourcePosition(sourceIndex, sourceLine, sourceCharacter) {
 		gen.commitPendingMapping()
@@ -242,7 +245,7 @@ func (gen *Generator) addMapping(generatedLine int, generatedCharacter int, sour
 		gen.hasPending = true
 	}
 
-	if sourceIndex != sourceIndexNotSet && sourceLine != notSet && sourceCharacter != notSet {
+	if sourceIndex != sourceIndexNotSet && sourceLine != notSet && sourceCharacter != notSetUTF16 {
 		gen.pendingSourceIndex = sourceIndex
 		gen.pendingSourceLine = sourceLine
 		gen.pendingSourceCharacter = sourceCharacter
@@ -255,19 +258,19 @@ func (gen *Generator) addMapping(generatedLine int, generatedCharacter int, sour
 }
 
 // Adds a mapping without source information
-func (gen *Generator) AddGeneratedMapping(generatedLine int, generatedCharacter int) error {
+func (gen *Generator) AddGeneratedMapping(generatedLine int, generatedCharacter core.UTF16Offset) error {
 	if generatedLine < gen.pendingGeneratedLine {
 		return errors.New("generatedLine cannot backtrack")
 	}
 	if generatedCharacter < 0 {
 		return errors.New("generatedCharacter cannot be negative")
 	}
-	gen.addMapping(generatedLine, generatedCharacter, sourceIndexNotSet, notSet /*sourceLine*/, notSet /*sourceCharacter*/, nameIndexNotSet)
+	gen.addMapping(generatedLine, generatedCharacter, sourceIndexNotSet, notSet /*sourceLine*/, notSetUTF16 /*sourceCharacter*/, nameIndexNotSet)
 	return nil
 }
 
 // Adds a mapping with source information
-func (gen *Generator) AddSourceMapping(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int) error {
+func (gen *Generator) AddSourceMapping(generatedLine int, generatedCharacter core.UTF16Offset, sourceIndex SourceIndex, sourceLine int, sourceCharacter core.UTF16Offset) error {
 	if generatedLine < gen.pendingGeneratedLine {
 		return errors.New("generatedLine cannot backtrack")
 	}
@@ -288,7 +291,7 @@ func (gen *Generator) AddSourceMapping(generatedLine int, generatedCharacter int
 }
 
 // Adds a mapping with source and name information
-func (gen *Generator) AddNamedSourceMapping(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int, nameIndex NameIndex) error {
+func (gen *Generator) AddNamedSourceMapping(generatedLine int, generatedCharacter core.UTF16Offset, sourceIndex SourceIndex, sourceLine int, sourceCharacter core.UTF16Offset, nameIndex NameIndex) error {
 	if generatedLine < gen.pendingGeneratedLine {
 		return errors.New("generatedLine cannot backtrack")
 	}
@@ -333,13 +336,29 @@ func (gen *Generator) RawSourceMap() *RawSourceMap {
 	}
 }
 
-// Gets the string representation of the source map
-func (gen *Generator) String() string {
+func (gen *Generator) bytes() []byte {
 	buf, err := json.Marshal(gen.RawSourceMap())
 	if err != nil {
 		panic(err.Error())
 	}
-	return string(buf)
+	return buf
+}
+
+// Gets the string representation of the source map
+func (gen *Generator) String() string {
+	return string(gen.bytes())
+}
+
+func (gen *Generator) Base64DataURL() string {
+	const prefix = "data:application/json;base64,"
+	data := gen.bytes()
+	var sb strings.Builder
+	sb.Grow(len(prefix) + base64.StdEncoding.EncodedLen(len(data)))
+	sb.WriteString(prefix)
+	encoder := base64.NewEncoder(base64.StdEncoding, &sb)
+	_, _ = encoder.Write(data)
+	encoder.Close()
+	return sb.String()
 }
 
 func base64FormatEncode(value int) rune {

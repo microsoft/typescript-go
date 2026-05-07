@@ -1,6 +1,7 @@
 //// [tests/cases/compiler/jsxHasLiteralType.tsx] ////
 
 //// [jsxHasLiteralType.tsx]
+/// <reference path="/.lib/react.d.ts" />
 import * as React from "react";
 
 interface Props {
@@ -11,9 +12,8 @@ const m = <MyComponent x="a"/>
 
 
 //// [jsxHasLiteralType.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
+/// <reference path="/.lib/react.d.ts" />
+import * as React from "react";
 class MyComponent extends React.Component {
 }
 const m = React.createElement(MyComponent, { x: "a" });

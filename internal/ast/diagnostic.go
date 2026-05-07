@@ -1,44 +1,73 @@
 package ast
 
 import (
-	"maps"
 	"slices"
 	"strings"
+	"sync"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 )
+
+// RepopulateDiagnosticKind indicates the kind of repopulation for a diagnostic chain entry.
+type RepopulateDiagnosticKind int
+
+const (
+	RepopulateModeMismatch   RepopulateDiagnosticKind = 1
+	RepopulateModuleNotFound RepopulateDiagnosticKind = 2
+)
+
+// RepopulateDiagnosticInfo stores information needed to recompute a diagnostic chain entry
+// during incremental builds when the program state may have changed.
+type RepopulateDiagnosticInfo struct {
+	Kind            RepopulateDiagnosticKind
+	ModuleReference string
+	Mode            core.ResolutionMode
+	PackageName     string
+}
 
 // Diagnostic
 
 type Diagnostic struct {
-	file               *SourceFile
-	loc                core.TextRange
-	code               int32
-	category           diagnostics.Category
-	message            string
+	file     *SourceFile
+	loc      core.TextRange
+	code     int32
+	category diagnostics.Category
+	// Original message; may be nil.
+	message            *diagnostics.Message
+	messageKey         diagnostics.Key
+	messageArgs        []string
 	messageChain       []*Diagnostic
 	relatedInformation []*Diagnostic
 	reportsUnnecessary bool
 	reportsDeprecated  bool
+	skippedOnNoEmit    bool
+	repopulateInfo     *RepopulateDiagnosticInfo
 }
 
-func (d *Diagnostic) File() *SourceFile                 { return d.file }
-func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
-func (d *Diagnostic) End() int                          { return d.loc.End() }
-func (d *Diagnostic) Len() int                          { return d.loc.Len() }
-func (d *Diagnostic) Loc() core.TextRange               { return d.loc }
-func (d *Diagnostic) Code() int32                       { return d.code }
-func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
-func (d *Diagnostic) Message() string                   { return d.message }
-func (d *Diagnostic) MessageChain() []*Diagnostic       { return d.messageChain }
-func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInformation }
-func (d *Diagnostic) ReportsUnnecessary() bool          { return d.reportsUnnecessary }
-func (d *Diagnostic) ReportsDeprecated() bool           { return d.reportsDeprecated }
+func (d *Diagnostic) File() *SourceFile                         { return d.file }
+func (d *Diagnostic) Pos() int                                  { return d.loc.Pos() }
+func (d *Diagnostic) End() int                                  { return d.loc.End() }
+func (d *Diagnostic) Len() int                                  { return d.loc.Len() }
+func (d *Diagnostic) Loc() core.TextRange                       { return d.loc }
+func (d *Diagnostic) Code() int32                               { return d.code }
+func (d *Diagnostic) Category() diagnostics.Category            { return d.category }
+func (d *Diagnostic) MessageKey() diagnostics.Key               { return d.messageKey }
+func (d *Diagnostic) MessageArgs() []string                     { return d.messageArgs }
+func (d *Diagnostic) MessageChain() []*Diagnostic               { return d.messageChain }
+func (d *Diagnostic) RelatedInformation() []*Diagnostic         { return d.relatedInformation }
+func (d *Diagnostic) ReportsUnnecessary() bool                  { return d.reportsUnnecessary }
+func (d *Diagnostic) ReportsDeprecated() bool                   { return d.reportsDeprecated }
+func (d *Diagnostic) SkippedOnNoEmit() bool                     { return d.skippedOnNoEmit }
+func (d *Diagnostic) RepopulateInfo() *RepopulateDiagnosticInfo { return d.repopulateInfo }
 
-func (d *Diagnostic) SetFile(file *SourceFile)                  { d.file = file }
-func (d *Diagnostic) SetLocation(loc core.TextRange)            { d.loc = loc }
-func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
+func (d *Diagnostic) SetFile(file *SourceFile)                         { d.file = file }
+func (d *Diagnostic) SetLocation(loc core.TextRange)                   { d.loc = loc }
+func (d *Diagnostic) SetCategory(category diagnostics.Category)        { d.category = category }
+func (d *Diagnostic) SetSkippedOnNoEmit()                              { d.skippedOnNoEmit = true }
+func (d *Diagnostic) SetRepopulateInfo(info *RepopulateDiagnosticInfo) { d.repopulateInfo = info }
 
 func (d *Diagnostic) SetMessageChain(messageChain []*Diagnostic) *Diagnostic {
 	d.messageChain = messageChain
@@ -69,13 +98,52 @@ func (d *Diagnostic) Clone() *Diagnostic {
 	return &result
 }
 
+func (d *Diagnostic) Localize(locale locale.Locale) string {
+	return diagnostics.Localize(locale, d.message, d.messageKey, d.messageArgs...)
+}
+
+// For debugging only.
+func (d *Diagnostic) String() string {
+	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.messageArgs...)
+}
+
+func NewDiagnosticFromSerialized(
+	file *SourceFile,
+	loc core.TextRange,
+	code int32,
+	category diagnostics.Category,
+	messageKey diagnostics.Key,
+	messageArgs []string,
+	messageChain []*Diagnostic,
+	relatedInformation []*Diagnostic,
+	reportsUnnecessary bool,
+	reportsDeprecated bool,
+	skippedOnNoEmit bool,
+) *Diagnostic {
+	return &Diagnostic{
+		file:               file,
+		loc:                loc,
+		code:               code,
+		category:           category,
+		messageKey:         messageKey,
+		messageArgs:        messageArgs,
+		messageChain:       messageChain,
+		relatedInformation: relatedInformation,
+		reportsUnnecessary: reportsUnnecessary,
+		reportsDeprecated:  reportsDeprecated,
+		skippedOnNoEmit:    skippedOnNoEmit,
+	}
+}
+
 func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	return &Diagnostic{
 		file:               file,
 		loc:                loc,
 		code:               message.Code(),
 		category:           message.Category(),
-		message:            message.Format(args...),
+		message:            message,
+		messageKey:         message.Key(),
+		messageArgs:        diagnostics.StringifyArgs(args),
 		reportsUnnecessary: message.ReportsUnnecessary(),
 		reportsDeprecated:  message.ReportsDeprecated(),
 	}
@@ -93,28 +161,42 @@ func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnosti
 }
 
 type DiagnosticsCollection struct {
-	fileDiagnostics    map[string][]*Diagnostic
-	nonFileDiagnostics []*Diagnostic
+	mu                       sync.Mutex
+	count                    int
+	fileDiagnostics          map[string][]*Diagnostic
+	fileDiagnosticsSorted    collections.Set[string]
+	nonFileDiagnostics       []*Diagnostic
+	nonFileDiagnosticsSorted bool
 }
 
 func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.count++
+
 	if diagnostic.File() != nil {
 		fileName := diagnostic.File().FileName()
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = core.InsertSorted(c.fileDiagnostics[fileName], diagnostic, CompareDiagnostics)
+		c.fileDiagnostics[fileName] = append(c.fileDiagnostics[fileName], diagnostic)
+		c.fileDiagnosticsSorted.Delete(fileName)
 	} else {
-		c.nonFileDiagnostics = core.InsertSorted(c.nonFileDiagnostics, diagnostic, CompareDiagnostics)
+		c.nonFileDiagnostics = append(c.nonFileDiagnostics, diagnostic)
+		c.nonFileDiagnosticsSorted = false
 	}
 }
 
 func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	var diagnostics []*Diagnostic
 	if diagnostic.File() != nil {
-		diagnostics = c.fileDiagnostics[diagnostic.File().FileName()]
+		diagnostics = c.getDiagnosticsForFileLocked(diagnostic.File().FileName())
 	} else {
-		diagnostics = c.nonFileDiagnostics
+		diagnostics = c.getGlobalDiagnosticsLocked()
 	}
 	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, CompareDiagnostics); ok {
 		return diagnostics[i]
@@ -123,20 +205,45 @@ func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
 }
 
 func (c *DiagnosticsCollection) GetGlobalDiagnostics() []*Diagnostic {
-	return c.nonFileDiagnostics
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return c.getGlobalDiagnosticsLocked()
+}
+
+func (c *DiagnosticsCollection) getGlobalDiagnosticsLocked() []*Diagnostic {
+	if !c.nonFileDiagnosticsSorted {
+		slices.SortStableFunc(c.nonFileDiagnostics, CompareDiagnostics)
+		c.nonFileDiagnosticsSorted = true
+	}
+	return slices.Clone(c.nonFileDiagnostics)
 }
 
 func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*Diagnostic {
-	return c.fileDiagnostics[fileName]
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return c.getDiagnosticsForFileLocked(fileName)
+}
+
+func (c *DiagnosticsCollection) getDiagnosticsForFileLocked(fileName string) []*Diagnostic {
+	if !c.fileDiagnosticsSorted.Has(fileName) {
+		slices.SortStableFunc(c.fileDiagnostics[fileName], CompareDiagnostics)
+		c.fileDiagnosticsSorted.Add(fileName)
+	}
+	return slices.Clone(c.fileDiagnostics[fileName])
 }
 
 func (c *DiagnosticsCollection) GetDiagnostics() []*Diagnostic {
-	fileNames := slices.Collect(maps.Keys(c.fileDiagnostics))
-	slices.Sort(fileNames)
-	diagnostics := slices.Clip(c.nonFileDiagnostics)
-	for _, fileName := range fileNames {
-		diagnostics = append(diagnostics, c.fileDiagnostics[fileName]...)
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	diagnostics := make([]*Diagnostic, 0, c.count)
+	diagnostics = append(diagnostics, c.nonFileDiagnostics...)
+	for _, diags := range c.fileDiagnostics {
+		diagnostics = append(diagnostics, diags...)
 	}
+	slices.SortFunc(diagnostics, CompareDiagnostics)
 	return diagnostics
 }
 
@@ -148,21 +255,30 @@ func getDiagnosticPath(d *Diagnostic) string {
 }
 
 func EqualDiagnostics(d1, d2 *Diagnostic) bool {
+	if d1 == d2 {
+		return true
+	}
 	return EqualDiagnosticsNoRelatedInfo(d1, d2) &&
 		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), EqualDiagnostics)
 }
 
 func EqualDiagnosticsNoRelatedInfo(d1, d2 *Diagnostic) bool {
+	if d1 == d2 {
+		return true
+	}
 	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
 		d1.Loc() == d2.Loc() &&
 		d1.Code() == d2.Code() &&
-		d1.Message() == d2.Message() &&
+		slices.Equal(d1.MessageArgs(), d2.MessageArgs()) &&
 		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain)
 }
 
 func equalMessageChain(c1, c2 *Diagnostic) bool {
+	if c1 == c2 {
+		return true
+	}
 	return c1.Code() == c2.Code() &&
-		c1.Message() == c2.Message() &&
+		slices.Equal(c1.MessageArgs(), c2.MessageArgs()) &&
 		slices.EqualFunc(c1.MessageChain(), c2.MessageChain(), equalMessageChain)
 }
 
@@ -182,7 +298,7 @@ func compareMessageChainSize(c1, c2 []*Diagnostic) int {
 
 func compareMessageChainContent(c1, c2 []*Diagnostic) int {
 	for i := range c1 {
-		c := strings.Compare(c1[i].Message(), c2[i].Message())
+		c := slices.Compare(c1[i].MessageArgs(), c2[i].MessageArgs())
 		if c != 0 {
 			return c
 		}
@@ -211,6 +327,9 @@ func compareRelatedInfo(r1, r2 []*Diagnostic) int {
 }
 
 func CompareDiagnostics(d1, d2 *Diagnostic) int {
+	if d1 == d2 {
+		return 0
+	}
 	c := strings.Compare(getDiagnosticPath(d1), getDiagnosticPath(d2))
 	if c != 0 {
 		return c
@@ -227,7 +346,7 @@ func CompareDiagnostics(d1, d2 *Diagnostic) int {
 	if c != 0 {
 		return c
 	}
-	c = strings.Compare(d1.Message(), d2.Message())
+	c = slices.Compare(d1.MessageArgs(), d2.MessageArgs())
 	if c != 0 {
 		return c
 	}

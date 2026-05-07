@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/classes/members/classTypes/instancePropertyInClassType.ts] ////
 
 //// [instancePropertyInClassType.ts]
-module NonGeneric {
+namespace NonGeneric {
     class C {
         x: string;
         get y() {
@@ -21,7 +21,7 @@ module NonGeneric {
 
 }
 
-module Generic {
+namespace Generic {
     class C<T,U> {
         x: T;
         get y() {
@@ -41,12 +41,10 @@ module Generic {
 }
 
 //// [instancePropertyInClassType.js]
+"use strict";
 var NonGeneric;
 (function (NonGeneric) {
     class C {
-        a;
-        b;
-        x;
         get y() {
             return 1;
         }
@@ -67,9 +65,6 @@ var NonGeneric;
 var Generic;
 (function (Generic) {
     class C {
-        a;
-        b;
-        x;
         get y() {
             return null;
         }

@@ -20,12 +20,10 @@ var z = v2.b;
 
 
 //// [genericClasses3.js]
+"use strict";
 class B {
-    a;
-    b;
 }
 class C extends B {
-    x;
 }
 var v2;
 var y = v2.x; // should be 'string'
@@ -42,6 +40,6 @@ declare class C<T> extends B<T> {
     x: T;
 }
 declare var v2: C<string>;
-declare var y: string; // should be 'string'
-declare var u: string; // should be 'string'
+declare var y: string;
+declare var u: string;
 declare var z: string;

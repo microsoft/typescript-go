@@ -12,6 +12,7 @@ errorOnMissingReturn.a = "";
 
 
 //// [isolatedDeclarationErrors.js]
+"use strict";
 function errorOnAssignmentBelowDecl() { }
 errorOnAssignmentBelowDecl.a = "";
 const errorOnAssignmentBelow = () => { };
@@ -22,11 +23,14 @@ errorOnMissingReturn.a = "";
 
 //// [isolatedDeclarationErrors.d.ts]
 declare function errorOnAssignmentBelowDecl(): void;
-declare const errorOnAssignmentBelow: {
-    (): void;
-    a: string;
-};
-declare const errorOnMissingReturn: {
-    (): void;
-    a: string;
-};
+declare namespace errorOnAssignmentBelowDecl {
+    var a: string;
+}
+declare function errorOnAssignmentBelow(): void;
+declare namespace errorOnAssignmentBelow {
+    var a: string;
+}
+declare function errorOnMissingReturn(): void;
+declare namespace errorOnMissingReturn {
+    var a: string;
+}

@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/nestedSelf.ts] ////
 
 //// [nestedSelf.ts]
-module M {
+namespace M {
  export class C {
    public n = 42;
    public foo() { [1,2,3].map((x) => { return this.n * x; })}
@@ -11,10 +11,13 @@ module M {
 
 
 //// [nestedSelf.js]
+"use strict";
 var M;
 (function (M) {
     class C {
-        n = 42;
+        constructor() {
+            this.n = 42;
+        }
         foo() { [1, 2, 3].map((x) => { return this.n * x; }); }
     }
     M.C = C;

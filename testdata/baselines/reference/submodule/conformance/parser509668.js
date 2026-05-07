@@ -7,8 +7,8 @@ class Foo3 {
 }
 
 //// [parser509668.js]
+"use strict";
 class Foo3 {
-    args;
     // Doesn't work, but should
     constructor(...args) {
         this.args = args;

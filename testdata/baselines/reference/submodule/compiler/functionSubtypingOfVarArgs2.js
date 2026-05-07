@@ -17,8 +17,11 @@ class StringEvent extends EventBase {
 
 
 //// [functionSubtypingOfVarArgs2.js]
+"use strict";
 class EventBase {
-    _listeners = [];
+    constructor() {
+        this._listeners = [];
+    }
     add(listener) {
         this._listeners.push(listener);
     }

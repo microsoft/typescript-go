@@ -31,6 +31,8 @@ cd = ca;  // Error
 
 
 //// [varianceAnnotationValidation.js]
+"use strict";
+// Repro from #49607
 ;
 class Dog {
     run() { }
@@ -43,8 +45,6 @@ cd = ca; // Error
 
 
 //// [varianceAnnotationValidation.d.ts]
-// Repro from #49607
-// Variance annotation error expected
 interface Controller<out T> {
     createAnimal: () => T;
     run: (animal: T) => void;

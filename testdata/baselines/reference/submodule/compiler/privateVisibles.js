@@ -12,9 +12,10 @@ class Foo {
 
 
 //// [privateVisibles.js]
+"use strict";
 class Foo {
-    pvar = 0;
     constructor() {
+        this.pvar = 0;
         var n = this.pvar;
     }
     meth() { var q = this.pvar; }

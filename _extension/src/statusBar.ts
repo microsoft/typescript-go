@@ -1,11 +1,14 @@
 import * as vscode from "vscode";
+import { jsTsLanguageModes } from "./util";
 
-export function setupStatusBar(context: vscode.ExtensionContext): void {
-    const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.text = "$(beaker) tsgo";
-    statusBarItem.tooltip = "TypeScript Native Preview Language Server";
-    statusBarItem.command = "typescript.native-preview.showMenu";
-    statusBarItem.backgroundColor = new vscode.ThemeColor("statusBarItem.warningBackground");
-    statusBarItem.show();
-    context.subscriptions.push(statusBarItem);
+export function setupStatusBar(version: string): vscode.Disposable {
+    const statusItem = vscode.languages.createLanguageStatusItem("typescript.native-preview.status", jsTsLanguageModes);
+    statusItem.name = "TypeScript Native Preview";
+    statusItem.text = `$(beaker) tsgo ${version}`;
+    statusItem.detail = "TypeScript Native Preview Language Server";
+    statusItem.command = {
+        title: "Show Menu",
+        command: "typescript.native-preview.showMenu",
+    };
+    return statusItem;
 }

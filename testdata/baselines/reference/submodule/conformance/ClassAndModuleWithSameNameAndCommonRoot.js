@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/DeclarationMerging/ClassAndModuleWithSameNameAndCommonRoot.ts] ////
 
 //// [class.ts]
-module X.Y {
+namespace X.Y {
     export class Point {
         constructor(x: number, y: number) {
             this.x = x;
@@ -13,8 +13,8 @@ module X.Y {
 }
 
 //// [module.ts]
-module X.Y {
-    export module Point {
+namespace X.Y {
+    export namespace Point {
         export var Origin = new Point(0, 0);
     }
 }
@@ -30,7 +30,7 @@ class A {
     id: string;
 }
 
-module A {
+namespace A {
     export var Instance = new A();
 }
 
@@ -41,25 +41,25 @@ var a: { id: string };
 
 
 //// [class.js]
+"use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
         class Point {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
             }
-            x;
-            y;
         }
         Y.Point = Point;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
 //// [module.js]
+"use strict";
 var X;
 (function (X) {
-    let Y;
+    var Y;
     (function (Y) {
         let Point;
         (function (Point) {
@@ -68,12 +68,13 @@ var X;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
 //// [test.js]
+"use strict";
 //var cl: { x: number; y: number; }
 var cl = new X.Y.Point(1, 1);
 var cl = X.Y.Point.Origin; // error not expected here same as bug 83996 ?
 //// [simple.js]
+"use strict";
 class A {
-    id;
 }
 (function (A) {
     A.Instance = new A();

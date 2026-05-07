@@ -36,26 +36,23 @@ c = Bar;
 c = Baz;
 
 //// [classConstructorAccessibility3.js]
+"use strict";
 class Foo {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class Bar {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class Baz {
-    x;
     constructor(x) {
         this.x = x;
     }
 }
 class Qux {
-    x;
     constructor(x) {
         this.x = x;
     }
@@ -94,9 +91,6 @@ declare class Qux {
     x: number;
     private constructor();
 }
-// b is public
 declare let a: typeof Foo;
-// b is protected
 declare let b: typeof Baz;
-// c is private
 declare let c: typeof Qux;

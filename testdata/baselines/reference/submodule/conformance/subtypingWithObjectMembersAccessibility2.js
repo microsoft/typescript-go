@@ -11,7 +11,7 @@ class Derived extends Base {
     bar: string;
 }
 
-module ExplicitPublic {
+namespace ExplicitPublic {
     class A {
         private foo: Base;
     }
@@ -37,7 +37,7 @@ module ExplicitPublic {
     }
 }
 
-module ImplicitPublic {
+namespace ImplicitPublic {
     class A {
         private foo: Base;
     }
@@ -64,52 +64,39 @@ module ImplicitPublic {
 }
 
 //// [subtypingWithObjectMembersAccessibility2.js]
+"use strict";
 // Derived member is private, base member is not causes errors
 class Base {
-    foo;
 }
 class Derived extends Base {
-    bar;
 }
 var ExplicitPublic;
 (function (ExplicitPublic) {
     class A {
-        foo;
     }
     class B extends A {
-        foo; // error
     }
     class A2 {
-        1;
     }
     class B2 extends A2 {
-        1; // error
     }
     class A3 {
-        '1';
     }
     class B3 extends A3 {
-        '1'; // error
     }
 })(ExplicitPublic || (ExplicitPublic = {}));
 var ImplicitPublic;
 (function (ImplicitPublic) {
     class A {
-        foo;
     }
     class B extends A {
-        foo; // error
     }
     class A2 {
-        1;
     }
     class B2 extends A2 {
-        1; // error
     }
     class A3 {
-        '1';
     }
     class B3 extends A3 {
-        '1'; // error
     }
 })(ImplicitPublic || (ImplicitPublic = {}));

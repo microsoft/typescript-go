@@ -46,6 +46,7 @@ function booleanFixed(wrapped: WrappedStringOr<boolean> | null) {
 
 
 //// [narrowingTypeofDiscriminant.js]
+"use strict";
 function f1(obj) {
     if (typeof obj.kind === "string") {
         obj; // { kind: 'a', data: string }
@@ -55,7 +56,7 @@ function f1(obj) {
     }
 }
 function f2(obj) {
-    if (typeof obj?.kind === "string") {
+    if (typeof (obj === null || obj === void 0 ? void 0 : obj.kind) === "string") {
         obj; // { kind: 'a', data: string }
     }
     else {
@@ -63,19 +64,19 @@ function f2(obj) {
     }
 }
 function numberOk(wrapped) {
-    if (typeof wrapped?.value !== 'string') {
+    if (typeof (wrapped === null || wrapped === void 0 ? void 0 : wrapped.value) !== 'string') {
         return null;
     }
     return wrapped.value;
 }
 function booleanBad(wrapped) {
-    if (typeof wrapped?.value !== 'string') {
+    if (typeof (wrapped === null || wrapped === void 0 ? void 0 : wrapped.value) !== 'string') {
         return null;
     }
     return wrapped.value;
 }
 function booleanFixed(wrapped) {
-    if (typeof (wrapped?.value) !== 'string') {
+    if (typeof (wrapped === null || wrapped === void 0 ? void 0 : wrapped.value) !== 'string') {
         return null;
     }
     return wrapped.value;

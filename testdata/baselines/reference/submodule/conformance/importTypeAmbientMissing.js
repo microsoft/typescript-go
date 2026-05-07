@@ -13,6 +13,7 @@ const x: import("fo") = { x: 0, y: 0 }; // typo, error
 
 
 //// [importTypeAmbientMissing.js]
+"use strict";
 const x = { x: 0, y: 0 }; // typo, error
 
 
@@ -24,4 +25,4 @@ declare module "foo" {
     }
     export = Point;
 }
-declare const x: import("fo"); // typo, error
+declare const x: import("fo");

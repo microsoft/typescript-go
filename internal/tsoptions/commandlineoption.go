@@ -23,7 +23,7 @@ type CommandLineOption struct {
 	Kind            CommandLineOptionKind
 
 	// used in parsing
-	isFilePath        bool
+	IsFilePath        bool
 	IsTSConfigOnly    bool
 	IsCommandLineOnly bool
 
@@ -35,8 +35,11 @@ type CommandLineOption struct {
 	// used in output in serializing and generate tsconfig
 	Category *diagnostics.Message
 
-	// a flag indicating whether `validateJsonOptionValue` should perform extra checks
-	extraValidation bool
+	// What kind of extra validation `validateJsonOptionValue` should do
+	extraValidation extraValidation
+
+	// checks that option with number type has value >= minValue
+	minValue int
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
@@ -62,8 +65,16 @@ type CommandLineOption struct {
 	// used for CommandLineOptionTypeList
 	listPreserveFalsyValues bool
 	// used for compilerOptionsDeclaration
-	ElementOptions map[string]*CommandLineOption
+	ElementOptions CommandLineOptionNameMap
 }
+
+type extraValidation string
+
+const (
+	extraValidationNone   extraValidation = ""
+	extraValidationSpec   extraValidation = "spec"
+	extraValidationLocale extraValidation = "locale"
+)
 
 func (o *CommandLineOption) DeprecatedKeys() *collections.Set[string] {
 	if o.Kind != CommandLineOptionTypeEnum {
@@ -100,12 +111,12 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"rootDirs": {
 		Name:       "rootDirs",
 		Kind:       CommandLineOptionTypeString,
-		isFilePath: true,
+		IsFilePath: true,
 	},
 	"typeRoots": {
 		Name:       "typeRoots",
 		Kind:       CommandLineOptionTypeString,
-		isFilePath: true,
+		IsFilePath: true,
 	},
 	"types": {
 		Name: "types",
@@ -148,14 +159,14 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"excludeDirectories": {
 		Name:            "excludeDirectory",
 		Kind:            CommandLineOptionTypeString,
-		isFilePath:      true,
-		extraValidation: true,
+		IsFilePath:      true,
+		extraValidation: extraValidationSpec,
 	},
 	"excludeFiles": {
 		Name:            "excludeFile",
 		Kind:            CommandLineOptionTypeString,
-		isFilePath:      true,
-		extraValidation: true,
+		IsFilePath:      true,
+		extraValidation: extraValidationSpec,
 	},
 	// Test infra options
 	"libFiles": {
@@ -166,7 +177,7 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 
 // CommandLineOption.EnumMap()
 var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
-	"lib":              libMap,
+	"lib":              LibMap,
 	"moduleResolution": moduleResolutionOptionMap,
 	"module":           moduleOptionMap,
 	"target":           targetOptionMap,
@@ -180,8 +191,9 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 
 // CommandLineOption.DeprecatedKeys()
 var commandLineOptionDeprecated = map[string]*collections.Set[string]{
+	"module":           collections.NewSetFromItems("none", "amd", "system", "umd"),
 	"moduleResolution": collections.NewSetFromItems("node", "classic", "node10"),
-	"target":           collections.NewSetFromItems("es3"),
+	"target":           collections.NewSetFromItems("es5"),
 }
 
 // todo: revisit to see if this can be improved

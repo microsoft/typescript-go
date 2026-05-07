@@ -6,7 +6,7 @@
 
 ///<reference path='typescript.ts' />
 
-module TypeScript {
+namespace TypeScript {
     export interface IAstWalker {
         walk(ast: AST, parent: AST): AST;
         options: AstWalkOptions;
@@ -220,7 +220,7 @@ module TypeScript {
         return globalAstWalkerFactory;
     }
 
-    module ChildrenWalkers {
+    namespace ChildrenWalkers {
         export function walkNone(preAst: ASTList, parent: AST, walker: IAstWalker): void {
             // Nothing to do
         }
@@ -533,15 +533,18 @@ module TypeScript {
 }
 
 //// [parserRealSource12.js]
+"use strict";
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 // See LICENSE.txt in the project root for complete license information.
 ///<reference path='typescript.ts' />
 var TypeScript;
 (function (TypeScript) {
     class AstWalkOptions {
-        goChildren = true;
-        goNextSibling = true;
-        reverseSiblings = false; // visit siblings in reverse execution order
+        constructor() {
+            this.goChildren = true;
+            this.goNextSibling = true;
+            this.reverseSiblings = false; // visit siblings in reverse execution order
+        }
         stopWalk(stop = true) {
             this.goChildren = !stop;
             this.goNextSibling = !stop;
@@ -549,11 +552,6 @@ var TypeScript;
     }
     TypeScript.AstWalkOptions = AstWalkOptions;
     class AstWalker {
-        childrenWalkers;
-        pre;
-        post;
-        options;
-        state;
         constructor(childrenWalkers, pre, post, options, state) {
             this.childrenWalkers = childrenWalkers;
             this.pre = pre;
@@ -590,8 +588,8 @@ var TypeScript;
         }
     }
     class AstWalkerFactory {
-        childrenWalkers = [];
         constructor() {
+            this.childrenWalkers = [];
             this.initChildrenWalkers();
         }
         walk(ast, pre, post, options, state) {

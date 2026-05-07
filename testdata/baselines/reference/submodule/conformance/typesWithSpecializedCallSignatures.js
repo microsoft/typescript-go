@@ -44,15 +44,13 @@ var r2: Derived2 = c.foo('bye');
 var r3: Base = c.foo('hm');
 
 //// [typesWithSpecializedCallSignatures.js]
+"use strict";
 // basic uses of specialized signatures without errors
 class Base {
-    foo;
 }
 class Derived1 extends Base {
-    bar;
 }
 class Derived2 extends Base {
-    baz;
 }
 class C {
     foo(x) {

@@ -36,6 +36,8 @@ catch (e: any) {
 }
 
 //// [useUnknownInCatchVariables01.js]
+"use strict";
+var _a;
 try {
     // ...
 }
@@ -50,7 +52,7 @@ catch (e) {
         console.log(e.toUpperCase());
     }
     if (e instanceof Error) {
-        e.stack?.toUpperCase();
+        (_a = e.stack) === null || _a === void 0 ? void 0 : _a.toUpperCase();
     }
     if (typeof e === "number") {
         e.toExponential();

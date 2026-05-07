@@ -15,8 +15,8 @@ class Animal {
 
 
 //// [unusedLocalProperty.js]
+"use strict";
 class Animal {
-    species;
     constructor(species) {
         this.species = species;
     }

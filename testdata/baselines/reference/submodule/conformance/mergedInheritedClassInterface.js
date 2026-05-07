@@ -49,16 +49,14 @@ grandchild.method2();
 
 
 //// [mergedInheritedClassInterface.js]
+"use strict";
 class BaseClass {
     baseMethod() { }
-    baseNumber;
 }
 class Child extends BaseClass {
-    classNumber;
     method() { }
 }
 class ChildNoBaseClass {
-    classString;
     method2() { }
 }
 class Grandchild extends ChildNoBaseClass {

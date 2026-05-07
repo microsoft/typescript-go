@@ -14,7 +14,6 @@ import (
 type ResolutionHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
-	Trace(msg string)
 }
 
 type ModeAwareCacheKey struct {
@@ -34,12 +33,15 @@ const (
 	NodeResolutionFeaturesSelfName
 	NodeResolutionFeaturesExports
 	NodeResolutionFeaturesExportsPatternTrailers
+	// allowing `#/` root imports in package.json imports field
+	// not supported until mass adoption - https://github.com/nodejs/node/pull/60864
+	NodeResolutionFeaturesImportsPatternRoot
 
 	NodeResolutionFeaturesNone            NodeResolutionFeatures = 0
-	NodeResolutionFeaturesAll                                    = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers
+	NodeResolutionFeaturesAll                                    = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers | NodeResolutionFeaturesImportsPatternRoot
 	NodeResolutionFeaturesNode16Default                          = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers
 	NodeResolutionFeaturesNodeNextDefault                        = NodeResolutionFeaturesAll
-	NodeResolutionFeaturesBundlerDefault                         = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers
+	NodeResolutionFeaturesBundlerDefault                         = NodeResolutionFeaturesImports | NodeResolutionFeaturesSelfName | NodeResolutionFeaturesExports | NodeResolutionFeaturesExportsPatternTrailers | NodeResolutionFeaturesImportsPatternRoot
 )
 
 type PackageId struct {
@@ -50,7 +52,7 @@ type PackageId struct {
 }
 
 func (p *PackageId) String() string {
-	return fmt.Sprintf("%s@%s%s", p.Name, p.Version, p.PeerDependencies)
+	return fmt.Sprintf("%s@%s%s", p.PackageName(), p.Version, p.PeerDependencies)
 }
 
 func (p *PackageId) PackageName() string {
@@ -60,14 +62,8 @@ func (p *PackageId) PackageName() string {
 	return p.Name
 }
 
-type LookupLocations struct {
-	FailedLookupLocations []string
-	AffectingLocations    []string
-	ResolutionDiagnostics []ast.Diagnostic
-}
-
 type ResolvedModule struct {
-	LookupLocations
+	ResolutionDiagnostics    []*ast.Diagnostic
 	ResolvedFileName         string
 	OriginalPath             string
 	Extension                string
@@ -81,12 +77,8 @@ func (r *ResolvedModule) IsResolved() bool {
 	return r != nil && r.ResolvedFileName != ""
 }
 
-func (r *ResolvedModule) GetLookupLocations() *LookupLocations {
-	return &r.LookupLocations
-}
-
 type ResolvedTypeReferenceDirective struct {
-	LookupLocations
+	ResolutionDiagnostics   []*ast.Diagnostic
 	Primary                 bool
 	ResolvedFileName        string
 	OriginalPath            string
@@ -96,10 +88,6 @@ type ResolvedTypeReferenceDirective struct {
 
 func (r *ResolvedTypeReferenceDirective) IsResolved() bool {
 	return r.ResolvedFileName != ""
-}
-
-func (r *ResolvedTypeReferenceDirective) GetLookupLocations() *LookupLocations {
-	return &r.LookupLocations
 }
 
 type extensions int32
@@ -133,13 +121,13 @@ func (e extensions) String() string {
 func (e extensions) Array() []string {
 	result := []string{}
 	if e&extensionsTypeScript != 0 {
-		result = append(result, tspath.ExtensionTs, tspath.ExtensionTsx)
+		result = append(result, tspath.SupportedTSImplementationExtensions...)
 	}
 	if e&extensionsJavaScript != 0 {
-		result = append(result, tspath.ExtensionJs, tspath.ExtensionJsx)
+		result = append(result, tspath.SupportedJSExtensionsFlat...)
 	}
 	if e&extensionsDeclaration != 0 {
-		result = append(result, tspath.ExtensionDts)
+		result = append(result, tspath.SupportedDeclarationExtensions...)
 	}
 	if e&extensionsJson != 0 {
 		result = append(result, tspath.ExtensionJson)

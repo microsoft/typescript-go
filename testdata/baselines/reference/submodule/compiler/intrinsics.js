@@ -3,7 +3,7 @@
 //// [intrinsics.ts]
 var hasOwnProperty: hasOwnProperty; // Error
 
-module m1 {
+namespace m1 {
     export var __proto__;
     interface __proto__ {}
 
@@ -17,6 +17,7 @@ class Foo<__proto__> { }
 var foo: (__proto__: number) => void;
 
 //// [intrinsics.js]
+"use strict";
 var hasOwnProperty; // Error
 var m1;
 (function (m1) {
@@ -31,7 +32,7 @@ var foo;
 
 
 //// [intrinsics.d.ts]
-declare var hasOwnProperty: hasOwnProperty; // Error
+declare var hasOwnProperty: hasOwnProperty;
 declare namespace m1 {
     var __proto__: any;
 }

@@ -17,17 +17,15 @@ class TestComponent extends React.Component<{ isAny: <T>(obj: any) => obj is T }
 const TestRender = () => <TestComponent />;
 
 //// [returnTypePredicateIsInstantiateInContextOfTarget.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="react16.d.ts" />
-const React = require("react");
+/// <reference path="/.lib/react16.d.ts" />
+import * as React from "react";
 class TestComponent extends React.Component {
-    static defaultProps = {
-        isAny: TestComponent.isAny
-    };
     // Type guard is defined as a static class property
     static isAny(obj) {
         return true;
     }
 }
+TestComponent.defaultProps = {
+    isAny: TestComponent.isAny
+};
 const TestRender = () => React.createElement(TestComponent, null);

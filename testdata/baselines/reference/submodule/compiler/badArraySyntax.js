@@ -14,8 +14,11 @@ var a6: Z[][] = new   Z     [      ]   [  ];
 
 
 //// [badArraySyntax.js]
+"use strict";
 class Z {
-    x = "";
+    constructor() {
+        this.x = "";
+    }
 }
 var a1 = [];
 var a2 = new Z[];

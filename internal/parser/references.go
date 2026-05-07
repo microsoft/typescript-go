@@ -28,7 +28,7 @@ func collectModuleReferences(file *ast.SourceFile, node *ast.Statement, inAmbien
 		// An ExternalImportDeclaration in an AmbientExternalModuleDeclaration may reference other external modules
 		// only through top - level external module names. Relative external module names are not permitted.
 		if moduleNameExpr != nil && ast.IsStringLiteral(moduleNameExpr) {
-			moduleName := moduleNameExpr.AsStringLiteral().Text
+			moduleName := moduleNameExpr.Text()
 			if moduleName != "" && (!inAmbientModule || !tspath.IsExternalModuleNameRelative(moduleName)) {
 				ast.SetImportsOfSourceFile(file, append(file.Imports(), moduleNameExpr))
 				// !!! removed `&& p.currentNodeModulesDepth == 0`
@@ -55,17 +55,14 @@ func collectModuleReferences(file *ast.SourceFile, node *ast.Statement, inAmbien
 		if ast.IsExternalModule(file) || (inAmbientModule && !tspath.IsExternalModuleNameRelative(nameText)) {
 			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name())
 		} else if !inAmbientModule {
-			if file.IsDeclarationFile {
-				// for global .d.ts files record name of ambient module
-				file.AmbientModuleNames = append(file.AmbientModuleNames, nameText)
-			}
+			file.AmbientModuleNames = append(file.AmbientModuleNames, nameText)
 			// An AmbientExternalModuleDeclaration declares an external module.
 			// This type of declaration is permitted only in the global module.
 			// The StringLiteral must specify a top - level external module name.
 			// Relative external module names are not permitted
 			// NOTE: body of ambient module is always a module block, if it exists
-			if node.AsModuleDeclaration().Body != nil {
-				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes {
+			if node.Body() != nil {
+				for _, statement := range node.Body().Statements() {
 					collectModuleReferences(file, statement, true /*inAmbientModule*/)
 				}
 			}

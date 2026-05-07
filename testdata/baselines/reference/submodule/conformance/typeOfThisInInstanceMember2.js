@@ -38,12 +38,13 @@ rs.forEach(x => {
 });
 
 //// [typeOfThisInInstanceMember2.js]
+"use strict";
 class C {
-    x = this;
     foo() {
         return this;
     }
     constructor(x) {
+        this.x = this;
         var t = this;
         t.x;
         t.y;
@@ -53,7 +54,6 @@ class C {
     get y() {
         return this;
     }
-    z;
 }
 var c;
 // all ok

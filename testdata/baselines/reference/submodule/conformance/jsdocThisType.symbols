@@ -5,7 +5,7 @@ export interface Foo {
 >Foo : Symbol(Foo, Decl(types.d.ts, 0, 0))
 
     foo: () => void;
->foo : Symbol(foo, Decl(types.d.ts, 0, 22))
+>foo : Symbol(Foo.foo, Decl(types.d.ts, 0, 22))
 }
 
 export type M = (this: Foo) => void;
@@ -27,6 +27,7 @@ export function f2() {
 >f2 : Symbol(f2, Decl(a.js, 3, 1))
 
     this.test();
+>this : Symbol(Foo, Decl(types.d.ts, 0, 0))
 }
 
 /** @type {(this: import('./types').Foo) => void} */
@@ -42,6 +43,7 @@ export function f4() {
 >f4 : Symbol(f4, Decl(a.js, 13, 1))
 
     this.test();
+>this : Symbol(Foo, Decl(types.d.ts, 0, 0))
 }
 
 /** @type {function(this: import('./types').Foo): void} */

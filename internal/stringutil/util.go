@@ -2,9 +2,9 @@
 package stringutil
 
 import (
-	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -142,29 +142,40 @@ func GuessIndentation(lines []string) int {
 // https://tc39.es/ecma262/multipage/global-object.html#sec-encodeuri-uri
 func EncodeURI(s string) string {
 	var builder strings.Builder
-	start := 0
-	pos := indexAny(s, ";/?:@&=+$,#", 0)
-	for pos >= 0 {
-		builder.WriteString(url.QueryEscape(s[start:pos]))
-		builder.WriteString(s[pos : pos+1])
-		start = pos + 1
-		pos = indexAny(s, ";/?:@&=+$,#", start)
-	}
-	if start < len(s) {
-		builder.WriteString(url.QueryEscape(s[start:]))
+	for i := range len(s) {
+		b := s[i]
+		if !shouldEscapeForEncodeURI(b) {
+			builder.WriteByte(b)
+			continue
+		}
+
+		for _, escaped := range []byte(s[i : i+1]) {
+			builder.WriteByte('%')
+			builder.WriteByte(upperhex[escaped>>4])
+			builder.WriteByte(upperhex[escaped&0x0f])
+		}
 	}
 	return builder.String()
 }
 
-func indexAny(s, chars string, start int) int {
-	if start < 0 || start >= len(s) {
-		return -1
+const upperhex = "0123456789ABCDEF"
+
+func shouldEscapeForEncodeURI(b byte) bool {
+	switch {
+	case b >= 'A' && b <= 'Z':
+		return false
+	case b >= 'a' && b <= 'z':
+		return false
+	case b >= '0' && b <= '9':
+		return false
 	}
-	index := strings.IndexAny(s[start:], chars)
-	if index < 0 {
-		return -1
+
+	switch b {
+	case ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '#', '-', '_', '.', '!', '~', '*', '\'', '(', ')':
+		return false
+	default:
+		return true
 	}
-	return start + index
 }
 
 func getByteOrderMarkLength(text string) int {
@@ -208,6 +219,9 @@ func AddUTF8ByteOrderMark(text string) string {
 }
 
 func StripQuotes(name string) string {
+	if len(name) < 2 {
+		return name
+	}
 	firstChar, _ := utf8.DecodeRuneInString(name)
 	lastChar, _ := utf8.DecodeLastRuneInString(name)
 	if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
@@ -216,7 +230,7 @@ func StripQuotes(name string) string {
 	return name
 }
 
-var matchSlashSomething = regexp.MustCompile(`\.`)
+var matchSlashSomething = regexp.MustCompile(`\\.`)
 
 func matchSlashReplacer(in string) string {
 	return in[1:]
@@ -228,4 +242,29 @@ func UnquoteString(str string) string {
 	// In strada we do str.replace(/\\./g, s => s.substring(1)) - which is to say, replace all backslash-something with just something
 	// That's replicated here faithfully, but it seems wrong! This should probably be an actual unquote operation?
 	return matchSlashSomething.ReplaceAllStringFunc(inner, matchSlashReplacer)
+}
+
+func LowerFirstChar(str string) string {
+	char, size := utf8.DecodeRuneInString(str)
+	if size > 0 {
+		return string(unicode.ToLower(char)) + str[size:]
+	}
+	return str
+}
+
+func TruncateByRunes(str string, maxLength int) string {
+	if len(str) < maxLength {
+		return str
+	}
+	if maxLength <= 0 {
+		return ""
+	}
+	var runeCount int
+	for i := range str {
+		runeCount++
+		if runeCount > maxLength {
+			return str[:i]
+		}
+	}
+	return str
 }

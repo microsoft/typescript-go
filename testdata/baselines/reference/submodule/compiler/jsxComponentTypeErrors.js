@@ -42,6 +42,7 @@ const elem6 = <obj. MemberClassComponent />;
 
 
 //// [jsxComponentTypeErrors.jsx]
+"use strict";
 function FunctionComponent({ type }) {
     return {
         type
@@ -51,7 +52,9 @@ FunctionComponent.useThis = function () {
     return <this type="foo"/>;
 };
 class ClassComponent {
-    type = 'string';
+    constructor() {
+        this.type = 'string';
+    }
 }
 const MixedComponent = Math.random() ? FunctionComponent : ClassComponent;
 const elem1 = <FunctionComponent type="abc"/>;

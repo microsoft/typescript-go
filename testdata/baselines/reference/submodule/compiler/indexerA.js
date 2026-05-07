@@ -13,8 +13,8 @@ var jq:JQuery={ 0: { id : "a" }, 1: { id : "b" } };
 jq[0].id;
 
 //// [indexerA.js]
+"use strict";
 class JQueryElement {
-    id;
 }
 class JQuery {
 }
