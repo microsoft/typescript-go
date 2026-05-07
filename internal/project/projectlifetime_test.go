@@ -332,15 +332,6 @@ func TestProjectLifetime(t *testing.T) {
 
 	t.Run("workspace is always watched", func(t *testing.T) {
 		t.Parallel()
-		// Demonstrate what happens to LSP file watchers when we:
-		//   1. Open a file in project A (watchers created)
-		//   2. Close project A's file
-		//   3. Open a file in project B (project A removed, project B added)
-		//
-		// When the workspace directory is "/" all project globs collapse to "/**/*",
-		// so the ref-counted watcher is never removed. To exercise real watcher churn,
-		// we set CurrentDirectory to a narrow directory so that projects outside it
-		// produce distinct outside-workspace watcher globs.
 		files := map[string]any{
 			// Project A - inside the workspace
 			"/home/projects/workspace/projA/tsconfig.json": `{
