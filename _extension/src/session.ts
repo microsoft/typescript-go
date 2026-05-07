@@ -45,7 +45,7 @@ export class SessionManager implements vscode.Disposable {
     registerCommands(context: vscode.ExtensionContext): void {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", async () => {
             this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
-            
+
             // Most of the time we can restart the client without fully restarting the session.
             const clientRestarted = await this.currentSession?.tryRestartClient(context);
             if (!clientRestarted) {
