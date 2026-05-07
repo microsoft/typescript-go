@@ -1,0 +1,97 @@
+error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
+error TS5055: Cannot write file 'exclamation.js' because it would overwrite input file.
+  Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+error TS5055: Cannot write file 'question.js' because it would overwrite input file.
+  Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+exclamation.js(1,14): error TS1110: Type expected.
+exclamation.js(10,15): error TS1110: Type expected.
+exclamation.js(13,15): error TS1110: Type expected.
+exclamation.js(16,24): error TS1110: Type expected.
+exclamation.js(19,32): error TS1110: Type expected.
+question.js(1,14): error TS1110: Type expected.
+question.js(19,32): error TS1110: Type expected.
+question.js(25,19): error TS1005: '}' expected.
+
+
+!!! error TS5053: Option 'allowJs' cannot be specified with option 'isolatedDeclarations'.
+!!! error TS5055: Cannot write file 'exclamation.js' because it would overwrite input file.
+!!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+!!! error TS5055: Cannot write file 'question.js' because it would overwrite input file.
+!!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+==== question.js (3 errors) ====
+    /** @param {?} x */
+                 ~
+!!! error TS1110: Type expected.
+    export function f0(x) {}
+    
+    /** @param {?never} x */
+    export function f1(x) {}
+    
+    /** @param {never?} x */
+    export function f2(x) {}
+    
+    /** @param {? | never} x */
+    export function f3(x) {}
+    
+    /** @param {? | string} x */
+    export function f4(x) {}
+    
+    /** @param {number | ? | string} x */
+    export function f5(x) {}
+    
+    /** @param {number | string | ?} x */
+                                   ~
+!!! error TS1110: Type expected.
+    export function f6(x) {}
+    
+    /** @param {? number | string} x */
+    export function f7(x) {}
+    
+    /** @param {number? | string} x */
+                      ~
+!!! error TS1005: '}' expected.
+    export function f8(x) {}
+    
+    /** @param {number | ? string} x */
+    export function f9(x) {}
+    
+==== exclamation.js (5 errors) ====
+    /** @param {!} x */
+                 ~
+!!! error TS1110: Type expected.
+    export function g0(x) {}
+    
+    /** @param {!never} x */
+    export function g1(x) {}
+    
+    /** @param {never!} x */
+    export function g2(x) {}
+    
+    /** @param {! | never} x */
+                  ~
+!!! error TS1110: Type expected.
+    export function g3(x) {}
+    
+    /** @param {! | string} x */
+                  ~
+!!! error TS1110: Type expected.
+    export function g4(x) {}
+    
+    /** @param {number | ! | string} x */
+                           ~
+!!! error TS1110: Type expected.
+    export function g5(x) {}
+    
+    /** @param {number | string | !} x */
+                                   ~
+!!! error TS1110: Type expected.
+    export function g6(x) {}
+    
+    /** @param {! number | string} x */
+    export function g7(x) {}
+    
+    /** @param {number! | string} x */
+    export function g8(x) {}
+    
+    /** @param {number | ! string} x */
+    export function g9(x) {}

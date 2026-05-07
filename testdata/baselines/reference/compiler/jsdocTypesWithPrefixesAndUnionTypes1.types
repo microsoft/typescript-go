@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/jsdocTypesWithPrefixesAndUnionTypes1.ts] ////
+
+=== question.js ===
+/** @param {?} x */
+export function f0(x) {}
+>f0 : (x: any | null) => void
+>x : any
+
+/** @param {?never} x */
+export function f1(x) {}
+>f1 : (x: never | null) => void
+>x : null
+
+/** @param {never?} x */
+export function f2(x) {}
+>f2 : (x: never | null) => void
+>x : null
+
+/** @param {? | never} x */
+export function f3(x) {}
+>f3 : (x: (never) | null) => void
+>x : null
+
+/** @param {? | string} x */
+export function f4(x) {}
+>f4 : (x: (string) | null) => void
+>x : string | null
+
+/** @param {number | ? | string} x */
+export function f5(x) {}
+>f5 : (x: number | ((string) | null)) => void
+>x : string | number | null
+
+/** @param {number | string | ?} x */
+export function f6(x) {}
+>f6 : (x: number | string | (any | null)) => void
+>x : any
+
+/** @param {? number | string} x */
+export function f7(x) {}
+>f7 : (x: (number | string) | null) => void
+>x : string | number | null
+
+/** @param {number? | string} x */
+export function f8(x) {}
+>f8 : (x: number) => void
+>x : number
+
+/** @param {number | ? string} x */
+export function f9(x) {}
+>f9 : (x: number | (string | null)) => void
+>x : string | number | null
+
+=== exclamation.js ===
+/** @param {!} x */
+export function g0(x) {}
+>g0 : (x: any) => void
+>x : any
+
+/** @param {!never} x */
+export function g1(x) {}
+>g1 : (x: never) => void
+>x : never
+
+/** @param {never!} x */
+export function g2(x) {}
+>g2 : (x: never) => void
+>x : never
+
+/** @param {! | never} x */
+export function g3(x) {}
+>g3 : (x: any | never) => void
+>x : any
+
+/** @param {! | string} x */
+export function g4(x) {}
+>g4 : (x: any | string) => void
+>x : any
+
+/** @param {number | ! | string} x */
+export function g5(x) {}
+>g5 : (x: number | any | string) => void
+>x : any
+
+/** @param {number | string | !} x */
+export function g6(x) {}
+>g6 : (x: number | string | any) => void
+>x : any
+
+/** @param {! number | string} x */
+export function g7(x) {}
+>g7 : (x: number | string) => void
+>x : string | number
+
+/** @param {number! | string} x */
+export function g8(x) {}
+>g8 : (x: number | string) => void
+>x : string | number
+
+/** @param {number | ! string} x */
+export function g9(x) {}
+>g9 : (x: number | string) => void
+>x : string | number
+
