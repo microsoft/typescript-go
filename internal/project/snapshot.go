@@ -291,13 +291,18 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		customConfigFileName = change.newConfig.CustomConfigFileName
 	}
 
-	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath(s.sessionOptions.CurrentDirectory), s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if change.fileChanges.InvalidateAll {
 			fs.invalidateCache()
 			logger.Logf("InvalidateAll: invalidated file cache in %v", time.Since(invalidateStart))
-		} else if !fs.watchChangesOverlapCache(change.fileChanges, customConfigFileName) {
+		} else if !fs.watchChangesAreConfigOrOverlapCache(
+			change.fileChanges,
+			s.toPath(s.sessionOptions.CurrentDirectory),
+			s.ConfigFileRegistry.customConfigFileName,
+			customConfigFileName,
+		) {
 			// All watch changes/deletes are files we haven't seen; should be irrelevant to us (probably an external tool's build or something)
 			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
 			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
@@ -321,7 +326,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
-	change.ResourceRequest = fs.convertConfigWatchEventsToResourceRequest(customConfigFileName, change.fileChanges, change.ResourceRequest)
+	change.ResourceRequest = fs.convertConfigWatchEventsToResourceRequest(
+		change.fileChanges,
+		change.ResourceRequest,
+		s.toPath(s.sessionOptions.CurrentDirectory),
+		s.ConfigFileRegistry.customConfigFileName,
+		customConfigFileName,
+	)
 
 	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(

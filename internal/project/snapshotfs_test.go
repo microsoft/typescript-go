@@ -32,7 +32,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -73,7 +72,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -122,7 +120,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			existingDirs,
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -176,7 +173,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			existingDirs,
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -239,7 +235,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			existingDirs,
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -284,7 +279,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			existingDirs,
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -318,7 +312,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -364,7 +357,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			existingDirs,
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -452,7 +444,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -495,7 +486,6 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -872,7 +862,6 @@ func TestAutoImportBuilderFS(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil, // nodeModulesRealpathAliases
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -925,7 +914,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -965,7 +953,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -992,7 +979,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder1.GetFile("/project/node_modules/mylib/package.json")
@@ -1007,7 +993,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			snapshot1.diskDirectories,
 			snapshot1.nodeModulesRealpathAliases,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		snapshot2, _ := builder2.Finalize()
@@ -1035,7 +1020,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder1.GetFile("/project/node_modules/mylib/package.json")
@@ -1057,7 +1041,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			snapshot1.diskDirectories,
 			snapshot1.nodeModulesRealpathAliases,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -1095,7 +1078,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -1130,7 +1112,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder1.GetFile("/project/node_modules/mylib/package.json")
@@ -1146,7 +1127,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			snapshot1.diskDirectories,
 			snapshot1.nodeModulesRealpathAliases,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		if entry, ok := builder2.diskFiles.Load(tspath.Path("/project/node_modules/alias/package.json")); ok {
@@ -1176,7 +1156,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder.GetFile("/project/node_modules/mylib/package.json")
@@ -1208,7 +1187,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder.GetFile("/project/node_modules/mylib/package.json")
@@ -1254,7 +1232,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		fh := builder1.GetFile("/project/node_modules/mylib/package.json")
@@ -1275,7 +1252,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			snapshot1.diskDirectories,
 			snapshot1.nodeModulesRealpathAliases,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 
@@ -1318,7 +1294,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder1.GetFile("/project/node_modules/mylib/package.json")
@@ -1333,7 +1308,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			snapshot1.diskDirectories,
 			snapshot1.nodeModulesRealpathAliases,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder2.GetFile("/project/node_modules/other/package.json")
@@ -1369,7 +1343,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
 			nil,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder1.GetFile("/project/node_modules/mylib/package.json")
@@ -1392,7 +1365,6 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 			snapshot1.diskDirectories,
 			snapshot1.nodeModulesRealpathAliases,
 			lsproto.PositionEncodingKindUTF16,
-			tspath.Path("/"),
 			toPath,
 		)
 		builder2.GetFile("/project/node_modules/alias/package.json")

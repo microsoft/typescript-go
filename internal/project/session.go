@@ -1191,7 +1191,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 				s.logger.Log(err)
 			}
 		}
-		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
+		s.publishProgramDiagnostics(oldSnapshot, newSnapshot, change)
 		s.sendProjectInfoTelemetryForNewProjects(oldSnapshot, newSnapshot)
 		s.warmAutoImportCache(ctx, change, oldSnapshot, newSnapshot)
 	})
@@ -1592,7 +1592,7 @@ func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs l
 	}
 }
 
-func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot, change SnapshotChange) {
 	if !s.options.PushDiagnosticsEnabled {
 		return
 	}
@@ -1616,6 +1616,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 				oldProgramDiagnostics = removedProject.Program.GetProgramDiagnostics()
 			}
 			// Remove global checker project diagnostics if the project is removed, since we will no longer keep those updated.
+			// Updated for deleted config files will be handled below.
 			s.publishProjectDiagnostics(ctx, string(configFilePath), oldProgramDiagnostics, oldSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, oldProject, newProject *Project) {
@@ -1625,6 +1626,14 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
 		},
 	)
+
+	// We need to handle deleted config files separately,
+	// since its project may not be in any of the snapshot's project collections anymore.
+	for uri := range change.fileChanges.Deleted.Keys() {
+		if isWatchedConfigFile(uri, s.toPath, tspath.Path(s.options.CurrentDirectory), oldSnapshot.ConfigFileRegistry.customConfigFileName, newSnapshot.ConfigFileRegistry.customConfigFileName) {
+			s.publishProjectDiagnostics(ctx, uri.FileName(), nil, nil /*converters*/)
+		}
+	}
 }
 
 func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
