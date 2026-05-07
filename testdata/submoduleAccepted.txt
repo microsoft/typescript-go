@@ -683,6 +683,9 @@ compiler/declarationEmitUnknownImport2(target=es2015).errors.txt.diff
 conformance/circular1.errors.txt.diff
 conformance/circular3.errors.txt.diff
 
+## Corsa no longer requires tslib helpers for esModuleInterop, decorators at ES6+, or default re-exports
+## due to those flags being removed (or mandatory)
+
 ## Related spans in various errors changed (these baselines are all --pretty)
 compiler/deeplyNestedAssignabilityIssue.errors.txt.diff
 compiler/esModuleInteropPrettyErrorRelatedInformation.errors.txt.diff

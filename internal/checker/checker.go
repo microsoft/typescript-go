@@ -2685,9 +2685,6 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 		if (functionFlags&ast.FunctionFlagsAsyncGenerator) == ast.FunctionFlagsAsync && c.languageVersion < LanguageFeatureMinimumTarget.AsyncFunctions {
 			c.checkExternalEmitHelpers(node, ExternalEmitHelpersAwaiter)
 		}
-		if (functionFlags&ast.FunctionFlagsAsyncGenerator) != ast.FunctionFlagsNormal && c.languageVersion < LanguageFeatureMinimumTarget.Generators {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersGenerator)
-		}
 	}
 	c.checkTypeParameters(node.TypeParameters())
 	c.checkUnmatchedJSDocParameters(node)
@@ -3987,8 +3984,6 @@ func (c *Checker) checkForOfStatement(node *ast.Node) {
 				c.checkExternalEmitHelpers(node, ExternalEmitHelpersForAwaitOfIncludes)
 			}
 		}
-	} else if c.compilerOptions.DownlevelIteration == core.TSTrue && c.languageVersion < LanguageFeatureMinimumTarget.ForOf {
-		c.checkExternalEmitHelpers(node, ExternalEmitHelpersForOfIncludes)
 	} // Check the LHS and RHS
 	// If the LHS is a declaration, just check it as a variable declaration, which will in turn check the RHS
 	// via checkRightHandSideOfForOf.
@@ -4250,9 +4245,6 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	baseTypeNode := ast.GetExtendsHeritageClauseElement(node)
 	if baseTypeNode != nil {
 		c.checkSourceElements(baseTypeNode.TypeArguments())
-		if c.languageVersion < LanguageFeatureMinimumTarget.Classes {
-			c.checkExternalEmitHelpers(baseTypeNode.Parent, ExternalEmitHelpersExtends)
-		}
 		baseTypes := c.getBaseTypes(classType)
 		if len(baseTypes) != 0 {
 			baseType := baseTypes[0]
@@ -5752,9 +5744,6 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 	}
 	// For a binding pattern, check contained binding elements
 	if ast.IsBindingPattern(name) {
-		if name.Kind == ast.KindArrayBindingPattern && c.languageVersion < LanguageFeatureMinimumTarget.BindingPatterns && c.compilerOptions.DownlevelIteration == core.TSTrue {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersRead)
-		}
 		c.checkSourceElements(name.Elements())
 	}
 	// For a parameter declaration with an initializer, error and exit if the containing function doesn't have a body
@@ -7928,13 +7917,6 @@ func (c *Checker) checkArrayLiteral(node *ast.Node, checkMode CheckMode) *Type {
 	for i, e := range elements {
 		switch {
 		case ast.IsSpreadElement(e):
-			if c.languageVersion < LanguageFeatureMinimumTarget.SpreadElements {
-				if c.compilerOptions.DownlevelIteration == core.TSTrue {
-					c.checkExternalEmitHelpers(e, ExternalEmitHelpersSpreadIncludes)
-				} else {
-					c.checkExternalEmitHelpers(e, ExternalEmitHelpersSpreadArray)
-				}
-			}
 			spreadType := c.checkExpressionEx(e.Expression(), checkMode)
 			switch {
 			case c.isArrayLikeType(spreadType):
@@ -9929,9 +9911,6 @@ func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
 	if !c.checkGrammarTaggedTemplateChain(node.AsTaggedTemplateExpression()) {
 		c.checkGrammarTypeArguments(node, node.TypeArgumentList())
 	}
-	if c.languageVersion < LanguageFeatureMinimumTarget.TaggedTemplates {
-		c.checkExternalEmitHelpers(node, ExternalEmitHelpersMakeTemplateObject)
-	}
 	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
 	c.checkDeprecatedSignature(signature, node)
 	return c.getReturnTypeOfSignature(signature)
@@ -10768,13 +10747,6 @@ func (c *Checker) checkTruthinessExpression(node *ast.Node, checkMode CheckMode)
 }
 
 func (c *Checker) checkSpreadExpression(node *ast.Node, checkMode CheckMode) *Type {
-	if c.languageVersion < LanguageFeatureMinimumTarget.SpreadElements {
-		if c.compilerOptions.DownlevelIteration == core.TSTrue {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersSpreadIncludes)
-		} else {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersSpreadArray)
-		}
-	}
 	arrayOrIterableType := c.checkExpressionEx(node.Expression(), checkMode)
 	return c.checkIteratedTypeOrElementType(IterationUseSpread, arrayOrIterableType, c.undefinedType, node.Expression())
 }
@@ -10819,9 +10791,6 @@ func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
 	if node.AsYieldExpression().AsteriskToken != nil {
 		if isAsync && c.languageVersion < LanguageFeatureMinimumTarget.AsyncGenerators {
 			c.checkExternalEmitHelpers(node, ExternalEmitHelpersAsyncDelegatorIncludes)
-		}
-		if !isAsync && c.languageVersion < LanguageFeatureMinimumTarget.Generators && c.compilerOptions.DownlevelIteration == core.TSTrue {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersValues)
 		}
 		use := core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar)
 		return core.OrElse(c.getIterationTypeOfIterable(use, IterationTypeKindReturn, yieldExpressionType, node.Expression()), c.anyType)
@@ -12456,9 +12425,6 @@ func (c *Checker) checkObjectLiteralDestructuringPropertyAssignment(node *ast.No
 
 func (c *Checker) checkArrayLiteralAssignment(node *ast.Node, sourceType *Type, checkMode CheckMode) *Type {
 	elements := node.Elements()
-	if c.languageVersion < LanguageFeatureMinimumTarget.DestructuringAssignment && c.compilerOptions.DownlevelIteration == core.TSTrue {
-		c.checkExternalEmitHelpers(node, ExternalEmitHelpersRead)
-	}
 	// This elementType will be used if the specific property corresponding to this index is not
 	// present (aka the tuple element property). This call also checks that the parentType is in
 	// fact an iterable or array (depending on target language).
@@ -13084,9 +13050,6 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 				c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, t)
 			}
 		} else if memberDecl.Kind == ast.KindSpreadAssignment {
-			if c.languageVersion < LanguageFeatureMinimumTarget.ObjectAssign {
-				c.checkExternalEmitHelpers(memberDecl, ExternalEmitHelpersAssign)
-			}
 			if len(propertiesArray) > 0 {
 				spread = c.getSpreadType(spread, createObjectLiteralType(), node.Symbol(), objectFlags, inConstContext)
 				propertiesArray = nil
