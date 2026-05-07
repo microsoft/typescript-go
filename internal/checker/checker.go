@@ -2677,6 +2677,18 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 	case ast.KindFunctionType, ast.KindFunctionDeclaration, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructor, ast.KindConstructSignature:
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
+	functionFlags := ast.GetFunctionFlags(node)
+	if functionFlags&ast.FunctionFlagsInvalid == 0 {
+		if (functionFlags&ast.FunctionFlagsAsyncGenerator) == ast.FunctionFlagsAsyncGenerator && c.languageVersion < LanguageFeatureMinimumTarget.AsyncGenerators {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersAsyncGeneratorIncludes)
+		}
+		if (functionFlags&ast.FunctionFlagsAsyncGenerator) == ast.FunctionFlagsAsync && c.languageVersion < LanguageFeatureMinimumTarget.AsyncFunctions {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersAwaiter)
+		}
+		if (functionFlags&ast.FunctionFlagsAsyncGenerator) != ast.FunctionFlagsNormal && c.languageVersion < LanguageFeatureMinimumTarget.Generators {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersGenerator)
+		}
+	}
 	c.checkTypeParameters(node.TypeParameters())
 	c.checkUnmatchedJSDocParameters(node)
 	c.checkSourceElements(node.Parameters())
@@ -3969,7 +3981,14 @@ func (c *Checker) checkForOfStatement(node *ast.Node) {
 	if data.AwaitModifier != nil {
 		if container != nil && ast.IsClassStaticBlockDeclaration(container) {
 			c.grammarErrorOnNode(data.AwaitModifier, diagnostics.X_for_await_loops_cannot_be_used_inside_a_class_static_block)
+		} else {
+			functionFlags := ast.GetFunctionFlags(container)
+			if (functionFlags&(ast.FunctionFlagsInvalid|ast.FunctionFlagsAsync)) == ast.FunctionFlagsAsync && c.languageVersion < LanguageFeatureMinimumTarget.ForAwaitOf {
+				c.checkExternalEmitHelpers(node, ExternalEmitHelpersForAwaitOfIncludes)
+			}
 		}
+	} else if c.compilerOptions.DownlevelIteration == core.TSTrue && c.languageVersion < LanguageFeatureMinimumTarget.ForOf {
+		c.checkExternalEmitHelpers(node, ExternalEmitHelpersForOfIncludes)
 	} // Check the LHS and RHS
 	// If the LHS is a declaration, just check it as a variable declaration, which will in turn check the RHS
 	// via checkRightHandSideOfForOf.
@@ -4231,6 +4250,9 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	baseTypeNode := ast.GetExtendsHeritageClauseElement(node)
 	if baseTypeNode != nil {
 		c.checkSourceElements(baseTypeNode.TypeArguments())
+		if c.languageVersion < LanguageFeatureMinimumTarget.Classes {
+			c.checkExternalEmitHelpers(baseTypeNode.Parent, ExternalEmitHelpersExtends)
+		}
 		baseTypes := c.getBaseTypes(classType)
 		if len(baseTypes) != 0 {
 			baseType := baseTypes[0]
@@ -5186,6 +5208,9 @@ func (c *Checker) checkImportDeclaration(node *ast.Node) {
 			if namedBindings != nil {
 				if ast.IsNamespaceImport(namedBindings) {
 					c.checkImportBinding(namedBindings)
+					if c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem && !c.compilerOptions.ESModuleInterop.IsFalse() {
+						c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportStar)
+					}
 				} else {
 					resolvedModule = c.resolveExternalModuleName(node, node.ModuleSpecifier(), false)
 					if resolvedModule != nil {
@@ -5261,6 +5286,12 @@ func (c *Checker) checkImportBinding(node *ast.Node) {
 	c.checkAliasSymbol(node)
 	if ast.IsImportSpecifier(node) {
 		c.checkModuleExportName(node.PropertyName(), true /*allowStringLiteral*/)
+		exportName := core.OrElse(node.PropertyName(), node.Name())
+		if c.moduleExportNameIsDefault(exportName) &&
+			!c.compilerOptions.ESModuleInterop.IsFalse() &&
+			c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
+		}
 	}
 }
 
@@ -5411,6 +5442,15 @@ func (c *Checker) checkExportDeclaration(node *ast.Node) {
 				c.checkAliasSymbol(exportDecl.ExportClause)
 				c.checkModuleExportName(exportDecl.ExportClause.Name(), true /*allowStringLiteral*/)
 			}
+			if c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem {
+				if exportDecl.ExportClause != nil {
+					if !c.compilerOptions.ESModuleInterop.IsFalse() {
+						c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportStar)
+					}
+				} else {
+					c.checkExternalEmitHelpers(node, ExternalEmitHelpersExportStar)
+				}
+			}
 		}
 	}
 	c.checkImportAttributes(node)
@@ -5433,6 +5473,12 @@ func (c *Checker) checkExportSpecifier(node *ast.Node) {
 			c.error(exportedName, diagnostics.Cannot_export_0_Only_local_declarations_can_be_exported_from_a_module, exportedName.Text())
 		} else {
 			c.markLinkedReferences(node, ReferenceHintExportSpecifier, nil /*propSymbol*/, nil /*parentType*/)
+		}
+	} else {
+		if !c.compilerOptions.ESModuleInterop.IsFalse() &&
+			c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem &&
+			c.moduleExportNameIsDefault(node.PropertyNameOrName()) {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
 		}
 	}
 }
@@ -5632,6 +5678,10 @@ func (c *Checker) checkVariableStatement(node *ast.Node) {
 }
 
 func (c *Checker) checkVariableDeclarationList(node *ast.Node) {
+	blockScopeKind := ast.GetCombinedNodeFlags(node) & ast.NodeFlagsBlockScoped
+	if (blockScopeKind == ast.NodeFlagsUsing || blockScopeKind == ast.NodeFlagsAwaitUsing) && c.languageVersion < LanguageFeatureMinimumTarget.UsingAndAwaitUsing {
+		c.checkExternalEmitHelpers(node, ExternalEmitHelpersAddDisposableResourceAndDisposeResources)
+	}
 	c.checkSourceElements(node.AsVariableDeclarationList().Declarations.Nodes)
 }
 
@@ -5675,6 +5725,9 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 			c.renamedBindingElementsInTypes = append(c.renamedBindingElementsInTypes, node)
 			return
 		}
+		if ast.IsObjectBindingPattern(node.Parent) && hasDotDotDotToken(node) && c.languageVersion < LanguageFeatureMinimumTarget.ObjectSpreadRest {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersRest)
+		}
 		// check computed properties inside property names of binding elements
 		if propName != nil && ast.IsComputedPropertyName(propName) {
 			c.checkComputedPropertyName(propName)
@@ -5699,6 +5752,9 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 	}
 	// For a binding pattern, check contained binding elements
 	if ast.IsBindingPattern(name) {
+		if name.Kind == ast.KindArrayBindingPattern && c.languageVersion < LanguageFeatureMinimumTarget.BindingPatterns && c.compilerOptions.DownlevelIteration == core.TSTrue {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersRead)
+		}
 		c.checkSourceElements(name.Elements())
 	}
 	// For a parameter declaration with an initializer, error and exit if the containing function doesn't have a body
@@ -5882,6 +5938,14 @@ func (c *Checker) checkDecorators(node *ast.Node) {
 	firstDecorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
 	if firstDecorator == nil {
 		return
+	}
+	if c.legacyDecorators {
+		c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersDecorate)
+		if node.Kind == ast.KindParameter {
+			c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersParam)
+		}
+	} else if c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators {
+		c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersESDecorateAndRunInitializers)
 	}
 	c.markLinkedReferences(node, ReferenceHintDecorator, nil, nil)
 	for _, modifier := range node.ModifierNodes() {
@@ -7864,6 +7928,13 @@ func (c *Checker) checkArrayLiteral(node *ast.Node, checkMode CheckMode) *Type {
 	for i, e := range elements {
 		switch {
 		case ast.IsSpreadElement(e):
+			if c.languageVersion < LanguageFeatureMinimumTarget.SpreadElements {
+				if c.compilerOptions.DownlevelIteration == core.TSTrue {
+					c.checkExternalEmitHelpers(e, ExternalEmitHelpersSpreadIncludes)
+				} else {
+					c.checkExternalEmitHelpers(e, ExternalEmitHelpersSpreadArray)
+				}
+			}
 			spreadType := c.checkExpressionEx(e.Expression(), checkMode)
 			switch {
 			case c.isArrayLikeType(spreadType):
@@ -9858,6 +9929,9 @@ func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
 	if !c.checkGrammarTaggedTemplateChain(node.AsTaggedTemplateExpression()) {
 		c.checkGrammarTypeArguments(node, node.TypeArgumentList())
 	}
+	if c.languageVersion < LanguageFeatureMinimumTarget.TaggedTemplates {
+		c.checkExternalEmitHelpers(node, ExternalEmitHelpersMakeTemplateObject)
+	}
 	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
 	c.checkDeprecatedSignature(signature, node)
 	return c.getReturnTypeOfSignature(signature)
@@ -10694,6 +10768,13 @@ func (c *Checker) checkTruthinessExpression(node *ast.Node, checkMode CheckMode)
 }
 
 func (c *Checker) checkSpreadExpression(node *ast.Node, checkMode CheckMode) *Type {
+	if c.languageVersion < LanguageFeatureMinimumTarget.SpreadElements {
+		if c.compilerOptions.DownlevelIteration == core.TSTrue {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersSpreadIncludes)
+		} else {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersSpreadArray)
+		}
+	}
 	arrayOrIterableType := c.checkExpressionEx(node.Expression(), checkMode)
 	return c.checkIteratedTypeOrElementType(IterationUseSpread, arrayOrIterableType, c.undefinedType, node.Expression())
 }
@@ -10736,6 +10817,12 @@ func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
 		c.checkTypeAssignableToAndOptionallyElaborate(yieldedType, signatureYieldType, core.OrElse(node.Expression(), node), node.Expression(), nil, nil)
 	}
 	if node.AsYieldExpression().AsteriskToken != nil {
+		if isAsync && c.languageVersion < LanguageFeatureMinimumTarget.AsyncGenerators {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersAsyncDelegatorIncludes)
+		}
+		if !isAsync && c.languageVersion < LanguageFeatureMinimumTarget.Generators && c.compilerOptions.DownlevelIteration == core.TSTrue {
+			c.checkExternalEmitHelpers(node, ExternalEmitHelpersValues)
+		}
 		use := core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar)
 		return core.OrElse(c.getIterationTypeOfIterable(use, IterationTypeKindReturn, yieldExpressionType, node.Expression()), c.anyType)
 	}
@@ -11006,6 +11093,16 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 	isAnyLike := IsTypeAny(apparentType) || apparentType == c.silentNeverType
 	var prop *ast.Symbol
 	if ast.IsPrivateIdentifier(right) {
+		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks ||
+			c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators ||
+			!c.compilerOptions.GetUseDefineForClassFields() {
+			if assignmentKind != AssignmentKindNone {
+				c.checkExternalEmitHelpers(node, ExternalEmitHelpersClassPrivateFieldSet)
+			}
+			if assignmentKind != AssignmentKindDefinite {
+				c.checkExternalEmitHelpers(node, ExternalEmitHelpersClassPrivateFieldGet)
+			}
+		}
 		lexicallyScopedSymbol := c.lookupSymbolForPrivateIdentifierDeclaration(right.Text(), right)
 		if assignmentKind != AssignmentKindNone && lexicallyScopedSymbol != nil && lexicallyScopedSymbol.ValueDeclaration != nil && ast.IsMethodDeclaration(lexicallyScopedSymbol.ValueDeclaration) {
 			c.grammarErrorOnNode(right, diagnostics.Cannot_assign_to_private_method_0_Private_methods_are_not_writable, right.Text())
@@ -12338,6 +12435,9 @@ func (c *Checker) checkObjectLiteralDestructuringPropertyAssignment(node *ast.No
 			c.error(property, diagnostics.A_rest_element_must_be_last_in_a_destructuring_pattern)
 			return nil
 		}
+		if c.languageVersion < LanguageFeatureMinimumTarget.ObjectSpreadRest {
+			c.checkExternalEmitHelpers(property, ExternalEmitHelpersRest)
+		}
 		var nonRestNames []*ast.Node
 		if allProperties != nil {
 			for _, otherProperty := range allProperties.Nodes {
@@ -12356,6 +12456,9 @@ func (c *Checker) checkObjectLiteralDestructuringPropertyAssignment(node *ast.No
 
 func (c *Checker) checkArrayLiteralAssignment(node *ast.Node, sourceType *Type, checkMode CheckMode) *Type {
 	elements := node.Elements()
+	if c.languageVersion < LanguageFeatureMinimumTarget.DestructuringAssignment && c.compilerOptions.DownlevelIteration == core.TSTrue {
+		c.checkExternalEmitHelpers(node, ExternalEmitHelpersRead)
+	}
 	// This elementType will be used if the specific property corresponding to this index is not
 	// present (aka the tuple element property). This call also checks that the parentType is in
 	// fact an iterable or array (depending on target language).
@@ -12425,6 +12528,9 @@ func (c *Checker) checkReferenceAssignment(target *ast.Node, sourceType *Type, c
 		diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access)
 	if c.checkReferenceExpression(target, message, optionalMessage) {
 		c.checkTypeAssignableToAndOptionallyElaborate(sourceType, targetType, target, target, nil, nil)
+	}
+	if ast.IsPropertyAccessExpression(target) && ast.IsPrivateIdentifier(target.Name()) {
+		c.checkExternalEmitHelpers(target.Parent, ExternalEmitHelpersClassPrivateFieldSet)
 	}
 	return sourceType
 }
@@ -12781,6 +12887,11 @@ func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression,
 		return c.silentNeverType
 	}
 	if ast.IsPrivateIdentifier(left) {
+		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks ||
+			c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators ||
+			!c.compilerOptions.GetUseDefineForClassFields() {
+			c.checkExternalEmitHelpers(left, ExternalEmitHelpersClassPrivateFieldIn)
+		}
 		// Unlike in 'checkPrivateIdentifierExpression' we now have access to the RHS type
 		// which provides us with the opportunity to emit more detailed errors
 		if c.symbolNodeLinks.Get(left).resolvedSymbol == nil && ast.GetContainingClass(left) != nil {
@@ -12973,6 +13084,9 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 				c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, t)
 			}
 		} else if memberDecl.Kind == ast.KindSpreadAssignment {
+			if c.languageVersion < LanguageFeatureMinimumTarget.ObjectAssign {
+				c.checkExternalEmitHelpers(memberDecl, ExternalEmitHelpersAssign)
+			}
 			if len(propertiesArray) > 0 {
 				spread = c.getSpreadType(spread, createObjectLiteralType(), node.Symbol(), objectFlags, inConstContext)
 				propertiesArray = nil
@@ -27989,7 +28103,7 @@ func (c *Checker) markDecoratorAliasReferenced(node *ast.Node /*HasDecorators*/)
 		return
 	}
 
-	// c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersMetadata) // !!! `importHelpers` checking missing?
+	c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersMetadata)
 
 	// we only need to perform these checks if we are emitting serialized type metadata for the target of a decorator.
 	switch node.Kind {
@@ -31441,6 +31555,136 @@ func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
 	containsArguments := visit(node.Body())
 	c.cachedArgumentsReferenced[node] = containsArguments
 	return containsArguments
+}
+
+const externalHelpersModuleNameText = "tslib"
+
+func (c *Checker) resolveHelpersModule(file *ast.SourceFile, errorNode *ast.Node) *ast.Symbol {
+	links := c.sourceFileLinks.Get(file)
+	if links.externalHelpersModule == nil {
+		specifier := c.program.GetImportHelpersImportSpecifier(file.Path())
+		resolved := c.resolveExternalModule(specifier, externalHelpersModuleNameText, diagnostics.This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found, errorNode, false /*isForAugmentation*/)
+		if resolved != nil {
+			links.externalHelpersModule = resolved
+		} else {
+			links.externalHelpersModule = c.unknownSymbol
+		}
+	}
+	return links.externalHelpersModule
+}
+
+func (c *Checker) getHelperNames(helper ExternalEmitHelpers) []string {
+	switch helper {
+	case ExternalEmitHelpersExtends:
+		return []string{"__extends"}
+	case ExternalEmitHelpersAssign:
+		return []string{"__assign"}
+	case ExternalEmitHelpersRest:
+		return []string{"__rest"}
+	case ExternalEmitHelpersDecorate:
+		if c.legacyDecorators {
+			return []string{"__decorate"}
+		}
+		return []string{"__esDecorate", "__runInitializers"}
+	case ExternalEmitHelpersMetadata:
+		return []string{"__metadata"}
+	case ExternalEmitHelpersParam:
+		return []string{"__param"}
+	case ExternalEmitHelpersAwaiter:
+		return []string{"__awaiter"}
+	case ExternalEmitHelpersGenerator:
+		return []string{"__generator"}
+	case ExternalEmitHelpersValues:
+		return []string{"__values"}
+	case ExternalEmitHelpersRead:
+		return []string{"__read"}
+	case ExternalEmitHelpersSpreadArray:
+		return []string{"__spreadArray"}
+	case ExternalEmitHelpersAwait:
+		return []string{"__await"}
+	case ExternalEmitHelpersAsyncGenerator:
+		return []string{"__asyncGenerator"}
+	case ExternalEmitHelpersAsyncDelegator:
+		return []string{"__asyncDelegator"}
+	case ExternalEmitHelpersAsyncValues:
+		return []string{"__asyncValues"}
+	case ExternalEmitHelpersExportStar:
+		return []string{"__exportStar"}
+	case ExternalEmitHelpersImportStar:
+		return []string{"__importStar"}
+	case ExternalEmitHelpersImportDefault:
+		return []string{"__importDefault"}
+	case ExternalEmitHelpersMakeTemplateObject:
+		return []string{"__makeTemplateObject"}
+	case ExternalEmitHelpersClassPrivateFieldGet:
+		return []string{"__classPrivateFieldGet"}
+	case ExternalEmitHelpersClassPrivateFieldSet:
+		return []string{"__classPrivateFieldSet"}
+	case ExternalEmitHelpersClassPrivateFieldIn:
+		return []string{"__classPrivateFieldIn"}
+	case ExternalEmitHelpersSetFunctionName:
+		return []string{"__setFunctionName"}
+	case ExternalEmitHelpersPropKey:
+		return []string{"__propKey"}
+	case ExternalEmitHelpersAddDisposableResourceAndDisposeResources:
+		return []string{"__addDisposableResource", "__disposeResources"}
+	default:
+		panic("Unrecognized helper")
+	}
+}
+
+func (c *Checker) checkExternalEmitHelpers(location *ast.Node, helpers ExternalEmitHelpers) {
+	if c.compilerOptions.ImportHelpers.IsTrue() {
+		sourceFile := ast.GetSourceFileOfNode(location)
+		if ast.IsEffectiveExternalModule(sourceFile, c.compilerOptions) && location.Flags&ast.NodeFlagsAmbient == 0 {
+			helpersModule := c.resolveHelpersModule(sourceFile, location)
+			if helpersModule != c.unknownSymbol {
+				links := c.valueSymbolLinks.Get(helpersModule)
+				if links.requestedExternalEmitHelpers&helpers != helpers {
+					uncheckedHelpers := helpers & ^links.requestedExternalEmitHelpers
+					for helper := ExternalEmitHelpersFirstEmitHelper; helper <= ExternalEmitHelpersLastEmitHelper; helper <<= 1 {
+						if uncheckedHelpers&helper != 0 {
+							for _, name := range c.getHelperNames(helper) {
+								symbol := c.resolveSymbol(c.getSymbol(c.getExportsOfModule(helpersModule), name, ast.SymbolFlagsValue))
+								if symbol == nil {
+									c.error(location, diagnostics.This_syntax_requires_an_imported_helper_named_1_which_does_not_exist_in_0_Consider_upgrading_your_version_of_0, externalHelpersModuleNameText, name)
+								} else if helper&ExternalEmitHelpersClassPrivateFieldGet != 0 {
+									if !core.Some(c.getSignaturesOfSymbol(symbol), func(signature *Signature) bool {
+										return c.getParameterCount(signature) > 3
+									}) {
+										c.error(location, diagnostics.This_syntax_requires_an_imported_helper_named_1_with_2_parameters_which_is_not_compatible_with_the_one_in_0_Consider_upgrading_your_version_of_0, externalHelpersModuleNameText, name, 4)
+									}
+								} else if helper&ExternalEmitHelpersClassPrivateFieldSet != 0 {
+									if !core.Some(c.getSignaturesOfSymbol(symbol), func(signature *Signature) bool {
+										return c.getParameterCount(signature) > 4
+									}) {
+										c.error(location, diagnostics.This_syntax_requires_an_imported_helper_named_1_with_2_parameters_which_is_not_compatible_with_the_one_in_0_Consider_upgrading_your_version_of_0, externalHelpersModuleNameText, name, 5)
+									}
+								} else if helper&ExternalEmitHelpersSpreadArray != 0 {
+									if !core.Some(c.getSignaturesOfSymbol(symbol), func(signature *Signature) bool {
+										return c.getParameterCount(signature) > 2
+									}) {
+										c.error(location, diagnostics.This_syntax_requires_an_imported_helper_named_1_with_2_parameters_which_is_not_compatible_with_the_one_in_0_Consider_upgrading_your_version_of_0, externalHelpersModuleNameText, name, 3)
+									}
+								}
+							}
+						}
+					}
+				}
+				links.requestedExternalEmitHelpers |= helpers
+			}
+		}
+	}
+}
+
+func (c *Checker) moduleExportNameIsDefault(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	if ast.IsStringLiteral(node) {
+		return node.Text() == "default"
+	}
+	return node.Text() == "default"
 }
 
 func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {

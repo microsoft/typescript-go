@@ -131,6 +131,7 @@ type ValueSymbolLinks struct {
 	nameType                     *Type
 	containingType               *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
 	functionOrConstructorChecked bool
+	requestedExternalEmitHelpers ExternalEmitHelpers // External emit helpers already checked for this symbol
 }
 
 // Additional links for mapped symbols
@@ -355,6 +356,7 @@ type SourceFileLinks struct {
 	localJsxFactory           *ast.EntityName
 	localJsxFragmentFactory   *ast.EntityName
 	jsxFragmentType           *Type
+	externalHelpersModule     *ast.Symbol
 }
 
 // Signature specific links
@@ -1340,6 +1342,14 @@ const (
 type TypeComparer func(s *Type, t *Type, reportErrors bool) Ternary
 
 type LanguageFeatureMinimumTargetMap struct {
+	Classes                           core.ScriptTarget
+	ForOf                             core.ScriptTarget
+	Generators                        core.ScriptTarget
+	SpreadElements                    core.ScriptTarget
+	TaggedTemplates                   core.ScriptTarget
+	DestructuringAssignment           core.ScriptTarget
+	BindingPatterns                   core.ScriptTarget
+	ObjectAssign                      core.ScriptTarget
 	Exponentiation                    core.ScriptTarget
 	AsyncFunctions                    core.ScriptTarget
 	ForAwaitOf                        core.ScriptTarget
@@ -1363,6 +1373,14 @@ type LanguageFeatureMinimumTargetMap struct {
 }
 
 var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
+	Classes:                           core.ScriptTargetES2015,
+	ForOf:                             core.ScriptTargetES2015,
+	Generators:                        core.ScriptTargetES2015,
+	SpreadElements:                    core.ScriptTargetES2015,
+	TaggedTemplates:                   core.ScriptTargetES2015,
+	DestructuringAssignment:           core.ScriptTargetES2015,
+	BindingPatterns:                   core.ScriptTargetES2015,
+	ObjectAssign:                      core.ScriptTargetES2015,
 	Exponentiation:                    core.ScriptTargetES2016,
 	AsyncFunctions:                    core.ScriptTargetES2017,
 	ForAwaitOf:                        core.ScriptTargetES2018,
@@ -1384,6 +1402,47 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
 }
+
+// ExternalEmitHelpers is used by the checker to keep track of external emit helpers that should be type checked.
+type ExternalEmitHelpers uint32
+
+const (
+	ExternalEmitHelpersExtends                               ExternalEmitHelpers = 1 << 0  // __extends
+	ExternalEmitHelpersAssign                                ExternalEmitHelpers = 1 << 1  // __assign
+	ExternalEmitHelpersRest                                  ExternalEmitHelpers = 1 << 2  // __rest
+	ExternalEmitHelpersDecorate                              ExternalEmitHelpers = 1 << 3  // __decorate (legacy) or __esDecorate/__runInitializers (standard)
+	ExternalEmitHelpersESDecorateAndRunInitializers           ExternalEmitHelpers = ExternalEmitHelpersDecorate
+	ExternalEmitHelpersMetadata                              ExternalEmitHelpers = 1 << 4  // __metadata
+	ExternalEmitHelpersParam                                 ExternalEmitHelpers = 1 << 5  // __param
+	ExternalEmitHelpersAwaiter                               ExternalEmitHelpers = 1 << 6  // __awaiter
+	ExternalEmitHelpersGenerator                             ExternalEmitHelpers = 1 << 7  // __generator
+	ExternalEmitHelpersValues                                ExternalEmitHelpers = 1 << 8  // __values
+	ExternalEmitHelpersRead                                  ExternalEmitHelpers = 1 << 9  // __read
+	ExternalEmitHelpersSpreadArray                           ExternalEmitHelpers = 1 << 10 // __spreadArray
+	ExternalEmitHelpersAwait                                 ExternalEmitHelpers = 1 << 11 // __await
+	ExternalEmitHelpersAsyncGenerator                        ExternalEmitHelpers = 1 << 12 // __asyncGenerator
+	ExternalEmitHelpersAsyncDelegator                        ExternalEmitHelpers = 1 << 13 // __asyncDelegator
+	ExternalEmitHelpersAsyncValues                           ExternalEmitHelpers = 1 << 14 // __asyncValues
+	ExternalEmitHelpersExportStar                            ExternalEmitHelpers = 1 << 15 // __exportStar
+	ExternalEmitHelpersImportStar                            ExternalEmitHelpers = 1 << 16 // __importStar
+	ExternalEmitHelpersImportDefault                         ExternalEmitHelpers = 1 << 17 // __importDefault
+	ExternalEmitHelpersMakeTemplateObject                    ExternalEmitHelpers = 1 << 18 // __makeTemplateObject
+	ExternalEmitHelpersClassPrivateFieldGet                  ExternalEmitHelpers = 1 << 19 // __classPrivateFieldGet
+	ExternalEmitHelpersClassPrivateFieldSet                  ExternalEmitHelpers = 1 << 20 // __classPrivateFieldSet
+	ExternalEmitHelpersClassPrivateFieldIn                   ExternalEmitHelpers = 1 << 21 // __classPrivateFieldIn
+	ExternalEmitHelpersSetFunctionName                       ExternalEmitHelpers = 1 << 22 // __setFunctionName
+	ExternalEmitHelpersPropKey                               ExternalEmitHelpers = 1 << 23 // __propKey
+	ExternalEmitHelpersAddDisposableResourceAndDisposeResources ExternalEmitHelpers = 1 << 24 // __addDisposableResource and __disposeResources
+
+	ExternalEmitHelpersFirstEmitHelper = ExternalEmitHelpersExtends
+	ExternalEmitHelpersLastEmitHelper  = ExternalEmitHelpersAddDisposableResourceAndDisposeResources
+
+	ExternalEmitHelpersForOfIncludes          = ExternalEmitHelpersValues
+	ExternalEmitHelpersForAwaitOfIncludes     = ExternalEmitHelpersAsyncValues
+	ExternalEmitHelpersAsyncGeneratorIncludes = ExternalEmitHelpersAwait | ExternalEmitHelpersAsyncGenerator
+	ExternalEmitHelpersAsyncDelegatorIncludes = ExternalEmitHelpersAwait | ExternalEmitHelpersAsyncDelegator | ExternalEmitHelpersAsyncValues
+	ExternalEmitHelpersSpreadIncludes         = ExternalEmitHelpersRead | ExternalEmitHelpersSpreadArray
+)
 
 // Aliases for types
 type StringLiteralType = Type
