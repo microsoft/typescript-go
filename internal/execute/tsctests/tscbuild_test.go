@@ -1663,6 +1663,123 @@ func TestBuildModuleSpecifiers(t *testing.T) {
 		},
 	}
 
+	symlinkedProjectReferenceFiles := func(withPaths bool) FileMap {
+		baseConfig := stringtestutil.Dedent(`
+		{
+			"compilerOptions": {
+				"target": "es2022",
+				"module": "node16",
+				"moduleResolution": "node16",
+				"strict": true,
+				"declaration": true,
+				"composite": true,
+				"skipLibCheck": true
+			}
+		}`)
+		if withPaths {
+			baseConfig = stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"target": "es2022",
+					"module": "node16",
+					"moduleResolution": "node16",
+					"strict": true,
+					"declaration": true,
+					"composite": true,
+					"skipLibCheck": true,
+					"paths": {
+						"@lab/feature-gating": ["./packages/feature-gating/src/index.ts"]
+					}
+				}
+			}`)
+		}
+		return FileMap{
+			"/home/src/workspaces/project/tsconfig.base.json": baseConfig,
+			"/home/src/workspaces/project/packages/feature-gating/package.json": stringtestutil.Dedent(`
+			{
+				"name": "@lab/feature-gating",
+				"version": "0.0.0",
+				"private": true,
+				"type": "module",
+				"main": "./dist/index.js",
+				"types": "./dist/index.d.ts",
+				"exports": {
+					".": {
+						"types": "./dist/index.d.ts",
+						"default": "./dist/index.js"
+					}
+				}
+			}`),
+			"/home/src/workspaces/project/packages/feature-gating/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"extends": "../../tsconfig.base.json",
+				"compilerOptions": {
+					"rootDir": "src",
+					"outDir": "dist",
+					"tsBuildInfoFile": "dist/.tsbuildinfo"
+				},
+				"include": ["src/**/*.ts"]
+			}`),
+			"/home/src/workspaces/project/packages/feature-gating/src/index.ts": stringtestutil.Dedent(`
+				import type { State } from "./types.js";
+
+				export type Selector<TState, TResult> = (state: TState) => TResult;
+
+				export const createFeatureGateSelector =
+					(featureGate: string) =>
+					(state: State): boolean =>
+						state.featureGates[0] === featureGate;`),
+			"/home/src/workspaces/project/packages/feature-gating/src/types.ts": stringtestutil.Dedent(`
+				export interface State {
+					featureGates: string[];
+				}`),
+			"/home/src/workspaces/project/packages/app/package.json": stringtestutil.Dedent(`
+			{
+				"name": "@lab/app",
+				"version": "0.0.0",
+				"private": true,
+				"type": "module",
+				"main": "./dist/index.js",
+				"types": "./dist/index.d.ts",
+				"dependencies": {
+					"@lab/feature-gating": "workspace:*"
+				}
+			}`),
+			"/home/src/workspaces/project/packages/app/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"extends": "../../tsconfig.base.json",
+				"compilerOptions": {
+					"rootDir": "src",
+					"outDir": "dist",
+					"tsBuildInfoFile": "dist/.tsbuildinfo"
+				},
+				"references": [
+					{ "path": "../feature-gating" }
+				],
+				"include": ["src/**/*.ts"]
+			}`),
+			"/home/src/workspaces/project/packages/app/src/index.ts": stringtestutil.Dedent(`
+				import { createFeatureGateSelector } from "@lab/feature-gating";
+
+				export const isFooEnabled = createFeatureGateSelector("foo");`),
+			"/home/src/workspaces/project/packages/app/node_modules/@lab/feature-gating": vfstest.Symlink("/home/src/workspaces/project/packages/feature-gating"),
+		}
+	}
+	testCases = append(testCases,
+		&tscInput{
+			subScenario:     "symlinked project reference prefers project path with paths mapping",
+			files:           symlinkedProjectReferenceFiles(true),
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"-b", "packages/app/tsconfig.json"},
+		},
+		&tscInput{
+			subScenario:     "symlinked project reference reports portability error without paths mapping",
+			files:           symlinkedProjectReferenceFiles(false),
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"-b", "packages/app/tsconfig.json"},
+		},
+	)
+
 	for _, test := range testCases {
 		test.run(t, "moduleSpecifiers")
 	}
