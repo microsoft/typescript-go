@@ -1,0 +1,19 @@
+--- old.importHelpersES6.errors.txt
++++ new.importHelpersES6.errors.txt
+@@= skipped -0, +0 lines =@@
+-a.ts(2,1): error TS2354: This syntax requires an imported helper but module 'tslib' cannot be found.
++a.ts(4,11): error TS2354: This syntax requires an imported helper but module 'tslib' cannot be found.
+
+
+ ==== a.ts (1 errors) ====
+     declare var dec: any;
+     @dec export class A {
+-    ~~~~
+-!!! error TS2354: This syntax requires an imported helper but module 'tslib' cannot be found.
+         #x: number = 1;
+         async f() { this.#x = await this.#x; }
++              ~
++!!! error TS2354: This syntax requires an imported helper but module 'tslib' cannot be found.
+         g(u) { return #x in u; }
+     }
+     

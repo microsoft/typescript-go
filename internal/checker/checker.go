@@ -5200,9 +5200,6 @@ func (c *Checker) checkImportDeclaration(node *ast.Node) {
 			if namedBindings != nil {
 				if ast.IsNamespaceImport(namedBindings) {
 					c.checkImportBinding(namedBindings)
-					if c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem && !c.compilerOptions.ESModuleInterop.IsFalse() {
-						c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportStar)
-					}
 				} else {
 					resolvedModule = c.resolveExternalModuleName(node, node.ModuleSpecifier(), false)
 					if resolvedModule != nil {
@@ -5278,12 +5275,6 @@ func (c *Checker) checkImportBinding(node *ast.Node) {
 	c.checkAliasSymbol(node)
 	if ast.IsImportSpecifier(node) {
 		c.checkModuleExportName(node.PropertyName(), true /*allowStringLiteral*/)
-		exportName := core.OrElse(node.PropertyName(), node.Name())
-		if c.moduleExportNameIsDefault(exportName) &&
-			!c.compilerOptions.ESModuleInterop.IsFalse() &&
-			c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
-		}
 	}
 }
 
@@ -5434,15 +5425,6 @@ func (c *Checker) checkExportDeclaration(node *ast.Node) {
 				c.checkAliasSymbol(exportDecl.ExportClause)
 				c.checkModuleExportName(exportDecl.ExportClause.Name(), true /*allowStringLiteral*/)
 			}
-			if c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem {
-				if exportDecl.ExportClause != nil {
-					if !c.compilerOptions.ESModuleInterop.IsFalse() {
-						c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportStar)
-					}
-				} else {
-					c.checkExternalEmitHelpers(node, ExternalEmitHelpersExportStar)
-				}
-			}
 		}
 	}
 	c.checkImportAttributes(node)
@@ -5465,12 +5447,6 @@ func (c *Checker) checkExportSpecifier(node *ast.Node) {
 			c.error(exportedName, diagnostics.Cannot_export_0_Only_local_declarations_can_be_exported_from_a_module, exportedName.Text())
 		} else {
 			c.markLinkedReferences(node, ReferenceHintExportSpecifier, nil /*propSymbol*/, nil /*parentType*/)
-		}
-	} else {
-		if !c.compilerOptions.ESModuleInterop.IsFalse() &&
-			c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) < core.ModuleKindSystem &&
-			c.moduleExportNameIsDefault(node.PropertyNameOrName()) {
-			c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
 		}
 	}
 }
@@ -5928,12 +5904,7 @@ func (c *Checker) checkDecorators(node *ast.Node) {
 	if firstDecorator == nil {
 		return
 	}
-	if c.legacyDecorators {
-		c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersDecorate)
-		if node.Kind == ast.KindParameter {
-			c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersParam)
-		}
-	} else if c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators {
+	if !c.legacyDecorators && c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators {
 		c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersESDecorateAndRunInitializers)
 	}
 	c.markLinkedReferences(node, ReferenceHintDecorator, nil, nil)
@@ -28065,8 +28036,6 @@ func (c *Checker) markDecoratorAliasReferenced(node *ast.Node /*HasDecorators*/)
 	if firstDecorator == nil {
 		return
 	}
-
-	c.checkExternalEmitHelpers(firstDecorator, ExternalEmitHelpersMetadata)
 
 	// we only need to perform these checks if we are emitting serialized type metadata for the target of a decorator.
 	switch node.Kind {
