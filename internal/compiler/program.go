@@ -1534,22 +1534,39 @@ func (p *Program) GetDefaultLibFile(path tspath.Path) *LibFile {
 
 func (p *Program) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
+		files := core.MapFiltered(p.files, func(file *ast.SourceFile) (string, bool) {
+			return file.FileName(), sourceFileMayBeEmitted(file, p, false /*forceDtsEmit*/) && !file.IsDeclarationFile
+		})
 		p.commonSourceDirectory = outputpaths.GetCommonSourceDirectory(
 			p.Options(),
-			func() []string {
-				var files []string
-				for _, file := range p.files {
-					if sourceFileMayBeEmitted(file, p, false /*forceDtsEmit*/) {
-						files = append(files, file.FileName())
-					}
-				}
-				return files
-			},
+			files,
 			p.GetCurrentDirectory(),
 			p.UseCaseSensitiveFileNames(),
+			p.checkSourceFilesBelongToPath,
 		)
 	})
 	return p.commonSourceDirectory
+}
+
+func (p *Program) checkSourceFilesBelongToPath(sourceFiles []string, rootDirectory string) bool {
+	allFilesBelongToPath := true
+	absoluteRootDirectoryPath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(rootDirectory, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
+	for _, file := range sourceFiles {
+		absoluteSourceFilePath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(file, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
+		if !strings.HasPrefix(absoluteSourceFilePath, absoluteRootDirectoryPath) {
+			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+				kind: processingDiagnosticKindExplainingFileInclude,
+				data: &includeExplainingDiagnostic{
+					file:    tspath.Path(absoluteSourceFilePath),
+					message: diagnostics.File_0_is_not_under_rootDir_1_rootDir_is_expected_to_contain_all_source_files,
+					args:    []any{file, rootDirectory},
+				},
+			})
+			allFilesBelongToPath = false
+		}
+	}
+
+	return allFilesBelongToPath
 }
 
 type WriteFileData struct {
