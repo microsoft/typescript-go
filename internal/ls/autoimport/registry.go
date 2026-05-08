@@ -1127,8 +1127,8 @@ func (b *registryBuilder) buildProjectBucket(
 		}
 		wg.Go(func() {
 			if ctx.Err() == nil {
-				checker, done := getChecker(ctx)
-				if checker == nil {
+				checker, done, err := getChecker(ctx)
+				if err != nil {
 					return
 				}
 				defer done()

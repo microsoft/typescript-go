@@ -44,11 +44,11 @@ import (
 )
 
 const (
-	envRuntimeTrace              = "TS_GO_RUNTIME_TRACE"
-	envRuntimeTraceFlight        = "TS_GO_RUNTIME_TRACE_FLIGHT"
-	envRuntimeTraceFlightMinAge  = "TS_GO_RUNTIME_TRACE_FLIGHT_MIN_AGE"
-	envRuntimeTraceFlightMaxByte = "TS_GO_RUNTIME_TRACE_FLIGHT_MAX_BYTES"
-	envRuntimeTraceDetail        = "TS_GO_RUNTIME_TRACE_DETAIL"
+	envRuntimeTrace               = "TS_GO_RUNTIME_TRACE"
+	envRuntimeTraceFlight         = "TS_GO_RUNTIME_TRACE_FLIGHT"
+	envRuntimeTraceFlightMinAge   = "TS_GO_RUNTIME_TRACE_FLIGHT_MIN_AGE"
+	envRuntimeTraceFlightMaxBytes = "TS_GO_RUNTIME_TRACE_FLIGHT_MAX_BYTES"
+	envRuntimeTraceDetail         = "TS_GO_RUNTIME_TRACE_DETAIL"
 )
 
 // Session represents an active runtime tracing setup (regular trace and/or
@@ -74,7 +74,7 @@ func Start(logWriter io.Writer) *Session {
 
 	switch os.Getenv(envRuntimeTraceDetail) {
 	case "", "0", "false", "no", "off":
-		// detail logging disabled
+		unsafeLogging.Store(false)
 	default:
 		unsafeLogging.Store(true)
 	}
@@ -116,10 +116,10 @@ func (s *Session) startFlight(path string) error {
 	if err := cfg.SetMinAgeString(os.Getenv(envRuntimeTraceFlightMinAge)); err != nil {
 		return fmt.Errorf("%s: %w", envRuntimeTraceFlightMinAge, err)
 	}
-	if v := os.Getenv(envRuntimeTraceFlightMaxByte); v != "" {
+	if v := os.Getenv(envRuntimeTraceFlightMaxBytes); v != "" {
 		n, err := strconv.ParseUint(v, 10, 64)
 		if err != nil {
-			return fmt.Errorf("parse %s=%q: %w", envRuntimeTraceFlightMaxByte, v, err)
+			return fmt.Errorf("parse %s=%q: %w", envRuntimeTraceFlightMaxBytes, v, err)
 		}
 		cfg.MaxBytes = n
 	}
