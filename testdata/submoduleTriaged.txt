@@ -153,11 +153,6 @@ conformance/moduleExportsElementAccessAssignment.js.diff
 ## https://github.com/microsoft/typescript-go/issues/3547
 conformance/typeFromPropertyAssignment39.js.diff
 
-# Decorator metadata reflects stable union type ordering
-## https://github.com/microsoft/typescript-go/issues/3548
-compiler/metadataOfUnionWithNull(strictnullchecks=true).js.diff
-compiler/metadataReferencedWithinFilteredUnion(strictnullchecks=true,target=es2015).js.diff
-
 # Missing generic type arguments no longer auto-filled with any (produces TS2314 errors)
 ## https://github.com/microsoft/typescript-go/issues/3549
 conformance/jsDeclarationsMissingGenerics(target=es2015).js.diff
@@ -173,13 +168,6 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
-
-# export = a reordered; ESM side-effect import replaces export {}
-## https://github.com/microsoft/typescript-go/issues/3552
-conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
-conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
-conformance/nodeModulesAllowJsExportAssignment(module=node20).js.diff
-conformance/nodeModulesAllowJsExportAssignment(module=nodenext).js.diff
 
 # @overload handling changes in JS declaration emit
 ## https://github.com/microsoft/typescript-go/issues/3555
@@ -201,20 +189,12 @@ conformance/callbackTagVariadicType.js.diff
 ## https://github.com/microsoft/typescript-go/issues/3557
 conformance/checkJsdocSatisfiesTag15.js.diff
 
-# Labeled statement followed by export declaration loses original text
-## https://github.com/microsoft/typescript-go/issues/3558
-conformance/labeledStatementExportDeclarationNoCrash1(module=commonjs).js.diff
-
 # CJS exports pattern changes in declaration emit
 ## https://github.com/microsoft/typescript-go/issues/3559
 compiler/jsExportAssignmentNonMutableLocation.js.diff
 conformance/commonJSImportClassTypeReference.js.diff
 conformance/commonJSImportNestedClassTypeReference.js.diff
 conformance/jsDeclarationsExportDoubleAssignmentInClosure.js.diff
-
-# exportNonInitializedVariables crash in declaration emit
-## https://github.com/microsoft/typescript-go/issues/3560
-conformance/exportNonInitializedVariablesInIfThenStatementNoCrash1(module=commonjs).js.diff
 
 # noImplicitThis functions returning this now fully expand the object type
 ## https://github.com/microsoft/typescript-go/issues/3561
@@ -227,10 +207,6 @@ conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff
 # definiteAssignment shorthand in object literal loses optional modifier
 ## https://github.com/microsoft/typescript-go/issues/3563
 conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff
-
-# Generic function parameter inference change
-## https://github.com/microsoft/typescript-go/issues/3564
-conformance/genericFunctionParameters.js.diff
 
 # Late-bound computed property [prop] preserved instead of resolved to plain prop
 ## https://github.com/microsoft/typescript-go/issues/3566
