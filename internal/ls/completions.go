@@ -5149,9 +5149,7 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 	if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindJSDocImportTag {
 		var specifier *ast.Node
 		if importClause := node.ImportClause(); importClause != nil {
-			if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil {
-				specifier = getPotentiallyInvalidImportSpecifier(namedBindings)
-			}
+			specifier = getPotentiallyInvalidImportSpecifier(importClause.AsImportClause().NamedBindings)
 		}
 
 		if specifier != nil {
