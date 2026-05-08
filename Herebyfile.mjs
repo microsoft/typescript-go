@@ -1389,7 +1389,7 @@ const nativePreviewPlatforms = memoize(() => {
     /**
      * Additional platforms that produce npm packages only (no vsix).
      * Mirrors esbuild's platform matrix (minus android and ia32).
-     * @type {[os: OS, arch: Arch][]}   
+     * @type {[os: OS, arch: Arch][]}
      */
     const npmOnlyPlatforms = [
         ["aix", "ppc64"],
