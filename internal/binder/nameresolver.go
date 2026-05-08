@@ -57,7 +57,12 @@ loop:
 					//   list and return type. However, local types are only in scope in the function body.
 					// - parameters are only in the scope of function body
 					if meaning&result.Flags&ast.SymbolFlagsType != 0 {
-						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation == location.Type() || ast.IsParameterLike(lastLocation))
+						// type parameters are visible in parameter list, return type and type parameter list.
+						// Synthetic fake scopes are added for signatures so type parameters are accessible from them.
+						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 &&
+							(lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
+								lastLocation == location.Type() ||
+								ast.IsParameterLike(lastLocation))
 					}
 					if meaning&result.Flags&ast.SymbolFlagsVariable != 0 {
 						// expression inside parameter will lookup as normal variable scope when targeting es2015+
