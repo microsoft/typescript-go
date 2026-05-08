@@ -59,18 +59,6 @@ function PropDeco(target, propKey) { }
 class A {
 }
 class B {
-    x;
-    y;
-    z;
-    a;
-    b;
-    c;
-    d;
-    e;
-    f;
-    g;
-    h;
-    j;
 }
 __decorate([
     PropDeco,
@@ -82,7 +70,7 @@ __decorate([
 ], B.prototype, "y", void 0);
 __decorate([
     PropDeco,
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], B.prototype, "z", void 0);
 __decorate([
     PropDeco,

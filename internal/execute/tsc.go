@@ -19,9 +19,35 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) *tracing.Tracing {
+	traceDir := config.CompilerOptions().GenerateTrace
+	if traceDir == "" {
+		return nil
+	}
+	configFilePath := ""
+	if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
+		configFilePath = config.ConfigFile.SourceFile.FileName()
+	}
+	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath, testing != nil)
+	if err != nil {
+		fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
+	}
+	return tr
+}
+
+func stopTracing(sys tsc.System, tr *tracing.Tracing) {
+	if tr == nil {
+		return
+	}
+	if err := tr.StopTracing(); err != nil {
+		fmt.Fprintf(sys.Writer(), "Warning: Failed to stop tracing: %v\n", err)
+	}
+}
 
 func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
@@ -54,7 +80,7 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 	edits := format.FormatDocument(ctx, sourceFile)
 	newText := core.ApplyBulkEdits(text, edits)
 
-	if err := sys.FS().WriteFile(output, newText, false); err != nil {
+	if err := sys.FS().WriteFile(output, newText); err != nil {
 		fmt.Fprintln(sys.Writer(), err.Error())
 		return tsc.ExitStatusNotImplemented
 	}
@@ -200,7 +226,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 
 	reportErrorSummary := tsc.CreateReportErrorSummary(sys, locale, configForCompilation.CompilerOptions())
 	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-		showConfig(sys, configForCompilation.CompilerOptions())
+		showConfig(sys, configForCompilation, configFileName)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
@@ -267,11 +293,14 @@ func performIncrementalCompilation(
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
-	// todo: cache, statistics, tracing
+
+	tr := startTracingIfNeeded(sys, config, testing)
+
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:  config,
+		Host:    host,
+		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
@@ -287,7 +316,11 @@ func performIncrementalCompilation(
 		Writer:             sys.Writer(),
 		CompileTimes:       compileTimes,
 		Testing:            testing,
+		Tracing:            tr,
 	})
+
+	stopTracing(sys, tr)
+
 	if testing != nil {
 		testing.OnProgram(incrementalProgram)
 	}
@@ -306,11 +339,14 @@ func performCompilation(
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
-	// todo: cache, statistics, tracing
+
+	tr := startTracingIfNeeded(sys, config, testing)
+
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:  config,
+		Host:    host,
+		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
@@ -323,13 +359,17 @@ func performCompilation(
 		Writer:             sys.Writer(),
 		CompileTimes:       compileTimes,
 		Testing:            testing,
+		Tracing:            tr,
 	})
+
+	stopTracing(sys, tr)
+
 	return tsc.CommandLineResult{
 		Status: result.Status,
 	}
 }
 
-func showConfig(sys tsc.System, config *core.CompilerOptions) {
-	// !!!
-	_ = json.MarshalIndentWrite(sys.Writer(), config, "", "    ")
+func showConfig(sys tsc.System, config *tsoptions.ParsedCommandLine, configFileName string) {
+	tsConfig := tsoptions.ConvertToTSConfig(config, configFileName)
+	_ = json.MarshalIndentWrite(sys.Writer(), tsConfig, "", "    ")
 }

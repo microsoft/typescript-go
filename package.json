@@ -7,20 +7,20 @@
         "node": ">=20.19"
     },
     "devDependencies": {
-        "@types/adm-zip": "^0.5.7",
+        "@types/adm-zip": "^0.5.8",
         "@types/node": "latest",
         "@types/tmp": "^0.2.6",
         "@types/which": "^3.0.4",
-        "adm-zip": "^0.5.16",
+        "adm-zip": "^0.5.17",
         "chokidar": "^5.0.0",
-        "dprint": "^0.51.1",
+        "dprint": "^0.54.0",
         "execa": "^9.6.1",
-        "glob": "^13.0.5",
-        "hereby": "^1.11.1",
+        "glob": "^13.0.6",
+        "hereby": "^1.14.0",
         "p-limit": "^7.3.0",
         "picocolors": "^1.1.1",
         "tmp": "^0.2.5",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.2",
         "which": "^6.0.1"
     },
     "scripts": {
@@ -39,9 +39,14 @@
         "./_extension",
         "./_packages/*"
     ],
-    "packageManager": "npm@11.10.0+sha512.8bc844e37892200305b98562f13c6c10849d10b3387c8cdaeb4d1a2e32746a79063cba9dd284cf28c26a01c3bf4169b7d3b31b4a5586cc970d6749463108073c",
+    "overrides": {
+        "@microsoft/applicationinsights-web-basic": "3.3.11",
+        "@microsoft/1ds-core-js": "4.3.11",
+        "@microsoft/1ds-post-js": "4.3.11"
+    },
+    "packageManager": "npm@11.12.1+sha512.cdca14b85d647b3192028d02aadbe82d75f79a446aceea9874be98e6d768f20ebd3555770a48d0e9906106007877bbc690f715e9372f2e2dc644a3c3157fb14c",
     "volta": {
         "node": "22.22.0",
-        "npm": "11.10.0"
+        "npm": "11.12.1"
     }
 }

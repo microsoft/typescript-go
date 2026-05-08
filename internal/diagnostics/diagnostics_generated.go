@@ -558,7 +558,7 @@ var Class_constructor_may_not_be_an_accessor = &Message{code: 1341, category: Ca
 
 var The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_node18_node20_or_nodenext = &Message{code: 1343, category: CategoryError, key: "The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system__1343", text: "The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'."}
 
-var A_label_is_not_allowed_here = &Message{code: 1344, category: CategoryError, key: "A_label_is_not_allowed_here_1344", text: "'A label is not allowed here."}
+var A_label_is_not_allowed_here = &Message{code: 1344, category: CategoryError, key: "A_label_is_not_allowed_here_1344", text: "A label is not allowed here."}
 
 var An_expression_of_type_void_cannot_be_tested_for_truthiness = &Message{code: 1345, category: CategoryError, key: "An_expression_of_type_void_cannot_be_tested_for_truthiness_1345", text: "An expression of type 'void' cannot be tested for truthiness."}
 
@@ -2008,6 +2008,8 @@ var This_expression_is_never_nullish = &Message{code: 2881, category: CategoryEr
 
 var Cannot_find_module_or_type_declarations_for_side_effect_import_of_0 = &Message{code: 2882, category: CategoryError, key: "Cannot_find_module_or_type_declarations_for_side_effect_import_of_0_2882", text: "Cannot find module or type declarations for side-effect import of '{0}'."}
 
+var The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_type_annotation_is_necessary = &Message{code: 2883, category: CategoryError, key: "The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_2883", text: "The inferred type of '{0}' cannot be named without a reference to '{2}' from '{1}'. This is likely not portable. A type annotation is necessary."}
+
 var Import_declaration_0_is_using_private_name_1 = &Message{code: 4000, category: CategoryError, key: "Import_declaration_0_is_using_private_name_1_4000", text: "Import declaration '{0}' is using private name '{1}'."}
 
 var Type_parameter_0_of_exported_class_has_or_is_using_private_name_1 = &Message{code: 4002, category: CategoryError, key: "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002", text: "Type parameter '{0}' of exported class has or is using private name '{1}'."}
@@ -3026,6 +3028,10 @@ var Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their
 
 var Project_0_is_out_of_date_because_it_has_errors = &Message{code: 6423, category: CategoryMessage, key: "Project_0_is_out_of_date_because_it_has_errors_6423", text: "Project '{0}' is out of date because it has errors."}
 
+var Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit = &Message{code: 6424, category: CategoryError, key: "Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit_6424", text: "Multiple 'module.exports' assignments cannot be serialized for declaration emit."}
+
+var Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit = &Message{code: 6425, category: CategoryError, key: "Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit_6425", text: "Nested CommonJS export constructs cannot be serialized for declaration emit."}
+
 var The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1 = &Message{code: 6500, category: CategoryMessage, key: "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500", text: "The expected type comes from property '{0}' which is declared here on type '{1}'"}
 
 var The_expected_type_comes_from_this_index_signature = &Message{code: 6501, category: CategoryMessage, key: "The_expected_type_comes_from_this_index_signature_6501", text: "The expected type comes from this index signature."}
@@ -3533,6 +3539,8 @@ var Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files = &Messag
 var Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export = &Message{code: 8038, category: CategoryError, key: "Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export_8038", text: "Decorators may not appear after 'export' or 'export default' if they also appear before 'export'."}
 
 var A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag = &Message{code: 8039, category: CategoryError, key: "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039", text: "A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag"}
+
+var File_rename_is_not_supported_by_the_editor = &Message{code: 8040, category: CategoryError, key: "File_rename_is_not_supported_by_the_editor_8040", text: "File rename is not supported by the editor"}
 
 var Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit = &Message{code: 9005, category: CategoryError, key: "Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_9005", text: "Declaration emit for this file requires using private name '{0}'. An explicit type annotation may unblock declaration emit."}
 
@@ -4285,6 +4293,20 @@ var X_1_implementation = &Message{code: 100008, category: CategoryMessage, key: 
 var Set_the_number_of_projects_to_build_concurrently = &Message{code: 100009, category: CategoryMessage, key: "Set_the_number_of_projects_to_build_concurrently_100009", text: "Set the number of projects to build concurrently."}
 
 var Deduplicate_packages_with_the_same_name_and_version = &Message{code: 100011, category: CategoryMessage, key: "Deduplicate_packages_with_the_same_name_and_version_100011", text: "Deduplicate packages with the same name and version."}
+
+var Loading = &Message{code: 100012, category: CategoryMessage, key: "Loading_100012", text: "Loading"}
+
+var Installing_types_for_0 = &Message{code: 100013, category: CategoryMessage, key: "Installing_types_for_0_100013", text: "Installing types for '{0}'"}
+
+var Project_0 = &Message{code: 100014, category: CategoryMessage, key: "Project_0_100014", text: "Project '{0}'"}
+
+var Fix_All = &Message{code: 100015, category: CategoryMessage, key: "Fix_All_100015", text: "Fix All"}
+
+var Organize_Imports = &Message{code: 100016, category: CategoryMessage, key: "Organize_Imports_100016", text: "Organize Imports"}
+
+var Remove_Unused_Imports = &Message{code: 100017, category: CategoryMessage, key: "Remove_Unused_Imports_100017", text: "Remove Unused Imports"}
+
+var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_Imports_100018", text: "Sort Imports"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -6294,6 +6316,8 @@ func keyToMessage(key Key) *Message {
 		return This_expression_is_never_nullish
 	case "Cannot_find_module_or_type_declarations_for_side_effect_import_of_0_2882":
 		return Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
+	case "The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_2883":
+		return The_inferred_type_of_0_cannot_be_named_without_a_reference_to_2_from_1_This_is_likely_not_portable_A_type_annotation_is_necessary
 	case "Import_declaration_0_is_using_private_name_1_4000":
 		return Import_declaration_0_is_using_private_name_1
 	case "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002":
@@ -7312,6 +7336,10 @@ func keyToMessage(key Key) *Message {
 		return Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their_JavaScript_equivalent_in_output_files
 	case "Project_0_is_out_of_date_because_it_has_errors_6423":
 		return Project_0_is_out_of_date_because_it_has_errors
+	case "Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit_6424":
+		return Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit
+	case "Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit_6425":
+		return Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit
 	case "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500":
 		return The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1
 	case "The_expected_type_comes_from_this_index_signature_6501":
@@ -7820,6 +7848,8 @@ func keyToMessage(key Key) *Message {
 		return Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export
 	case "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039":
 		return A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag
+	case "File_rename_is_not_supported_by_the_editor_8040":
+		return File_rename_is_not_supported_by_the_editor
 	case "Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_9005":
 		return Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit
 	case "Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotati_9006":
@@ -8572,6 +8602,20 @@ func keyToMessage(key Key) *Message {
 		return Set_the_number_of_projects_to_build_concurrently
 	case "Deduplicate_packages_with_the_same_name_and_version_100011":
 		return Deduplicate_packages_with_the_same_name_and_version
+	case "Loading_100012":
+		return Loading
+	case "Installing_types_for_0_100013":
+		return Installing_types_for_0
+	case "Project_0_100014":
+		return Project_0
+	case "Fix_All_100015":
+		return Fix_All
+	case "Organize_Imports_100016":
+		return Organize_Imports
+	case "Remove_Unused_Imports_100017":
+		return Remove_Unused_Imports
+	case "Sort_Imports_100018":
+		return Sort_Imports
 	default:
 		return nil
 	}

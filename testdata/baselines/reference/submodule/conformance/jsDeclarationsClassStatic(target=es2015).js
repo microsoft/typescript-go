@@ -49,16 +49,21 @@ module.exports.Strings = Strings;
 
 
 //// [source.d.ts]
+declare class Handler {
+    static get OPTIONS(): number;
+    process(): void;
+}
 declare namespace Handler {
     var statische: () => void;
 }
-export = Handler;
-export declare var Strings: {
+declare const Strings: {
     a: string;
     b: string;
 };
+export = Handler;
+export { Strings };
 export type HandlerOptions = {
-    name: String;
+    name: string;
 };
 /**
  * @typedef {Object} HandlerOptions

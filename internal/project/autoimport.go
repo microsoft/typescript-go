@@ -59,6 +59,11 @@ func (a *autoImportBuilderFS) GetAccessibleEntries(path string) vfs.Entries {
 	return a.snapshotFSBuilder.GetAccessibleEntries(path)
 }
 
+// FileExists implements FileSource.
+func (a *autoImportBuilderFS) FileExists(fileName string, path tspath.Path) bool {
+	return a.snapshotFSBuilder.FileExists(fileName, path)
+}
+
 type autoImportRegistryCloneHost struct {
 	projectCollection *ProjectCollection
 	parseCache        *ParseCache
@@ -82,6 +87,7 @@ func newAutoImportRegistryCloneHost(
 		projectCollection: projectCollection,
 		parseCache:        parseCache,
 		fs:                newSourceFS(false, &autoImportBuilderFS{snapshotFSBuilder: snapshotFSBuilder}, toPath),
+		currentDirectory:  currentDirectory,
 	}
 }
 
@@ -155,13 +161,12 @@ func (a *autoImportRegistryCloneHost) GetSourceFile(fileName string, path tspath
 		Path:     path,
 	}
 	key := NewParseCacheKey(opts, fh.Hash(), fh.Kind())
-	result := a.parseCache.Load(key, fh)
+	result := a.parseCache.Acquire(key, fh)
 
 	a.filesMu.Lock()
 	a.files = append(a.files, key)
 	a.filesMu.Unlock()
 
-	a.parseCache.Ref(key)
 	return result
 }
 

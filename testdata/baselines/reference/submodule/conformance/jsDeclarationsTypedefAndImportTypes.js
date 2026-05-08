@@ -40,8 +40,9 @@ module.exports = {
  * @typedef {string | number} Whatever
  */
 class Conn {
-    constructor() { }
-    item = 3;
+    constructor() {
+        this.item = 3;
+    }
     method() { }
 }
 module.exports = Conn;
@@ -70,6 +71,11 @@ module.exports = {
  * @typedef {string | number} Whatever
  */
 export type Whatever = string | number;
+declare class Conn {
+    constructor();
+    item: number;
+    method(): void;
+}
 export = Conn;
 //// [usage.d.ts]
 /**
@@ -77,6 +83,9 @@ export = Conn;
  */
 export type Conn = import("./conn");
 declare class Wrap {
+    connItem: number;
+    /** @type {import("./conn").Whatever} */
+    another: import("./conn").Whatever;
     /**
      * @param {Conn} c
      */

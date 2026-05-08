@@ -132,7 +132,8 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 			var baselineContent strings.Builder
 			for i, jsonText := range rec.input {
 				baselineContent.WriteString("Input::\n")
-				baselineContent.WriteString(jsonText + "\n")
+				baselineContent.WriteString(jsonText)
+				baselineContent.WriteString("\n")
 				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText)
 				baselineContent.WriteString("Config::\n")
 				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
@@ -498,6 +499,29 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
+		title:               "reports errors for incorrectly cased option names",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+			    "compilerOptions": {
+				"sourcemap": true,
+				"declarationmap": true,
+				"nouncheckedindexedaccess": true,
+				"exactoptionalpropertytypes": true,
+				"verbatimmodulesyntax": true,
+				"isolatedmodules": true,
+				"nouncheckedsideeffectimports": true,
+				"moduledetection": "force",
+				"skiplibcheck": true,
+				"checkjs": true
+			    }
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/app.ts": ""},
+		}},
+	},
+	{
 		title:               "handles empty types array",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
@@ -848,7 +872,9 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 			t.Fatal(err)
 		}
 		baselineContent.WriteString("\n")
-		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
+		baselineContent.WriteString("configFileName:: ")
+		baselineContent.WriteString(config.configFileName)
+		baselineContent.WriteString("\n")
 		if noSubmoduleBaseline {
 			baselineContent.WriteString("CompilerOptions::\n")
 			assert.NilError(t, json.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.CompilerOptions, "", "  "))
@@ -863,7 +889,8 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 			}
 		}
 		baselineContent.WriteString("FileNames::\n")
-		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
+		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ","))
+		baselineContent.WriteString("\n")
 		baselineContent.WriteString("Errors::\n")
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, diagnosticwriter.FromASTDiagnostics(parsedConfigFileContent.Errors), &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",

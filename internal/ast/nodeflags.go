@@ -22,7 +22,8 @@ const (
 	NodeFlagsThisNodeHasError                NodeFlags = 1 << 15 // If the parser encountered an error when parsing the code that created this node
 	NodeFlagsJavaScriptFile                  NodeFlags = 1 << 16 // If node was parsed in a JavaScript
 	NodeFlagsThisNodeOrAnySubNodesHasError   NodeFlags = 1 << 17 // If this node or any of its children had an error
-	NodeFlagsHasAggregatedChildData          NodeFlags = 1 << 18 // If we've computed data from children and cached it in this node
+	NodeFlagsHasAsyncFunctions               NodeFlags = 1 << 18 // If the file has async functions (initialized by binding)
+	// NodeFlagsHasAggregatedChildData is deprecated. Use `subtreeFacts` instead.
 
 	// These flags will be set when the parser encounters a dynamic import expression or 'import.meta' to avoid
 	// walking the tree if the flags are not set. However, these flags are just a approximation
@@ -48,7 +49,8 @@ const (
 	NodeFlagsConstant    = NodeFlagsConst | NodeFlagsUsing
 	NodeFlagsAwaitUsing  = NodeFlagsConst | NodeFlagsUsing // Variable declaration (NOTE: on a single node these flags would otherwise be mutually exclusive)
 
-	NodeFlagsReachabilityCheckFlags = NodeFlagsHasImplicitReturn | NodeFlagsHasExplicitReturn
+	NodeFlagsReachabilityCheckFlags   = NodeFlagsHasImplicitReturn | NodeFlagsHasExplicitReturn
+	NodeFlagsReachabilityAndEmitFlags = NodeFlagsReachabilityCheckFlags | NodeFlagsHasAsyncFunctions
 
 	// Parsing context flags
 	NodeFlagsContextFlags NodeFlags = NodeFlagsDisallowInContext | NodeFlagsDisallowConditionalTypesContext | NodeFlagsYieldContext | NodeFlagsDecoratorContext | NodeFlagsAwaitContext | NodeFlagsJavaScriptFile | NodeFlagsInWithStatement | NodeFlagsAmbient

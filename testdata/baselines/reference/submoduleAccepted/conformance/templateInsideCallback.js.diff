@@ -1,0 +1,34 @@
+--- old.templateInsideCallback.js
++++ new.templateInsideCallback.js
+@@= skipped -112, +112 lines =@@
+
+
+ //// [templateInsideCallback.d.ts]
+-/**
+- * @overload
+- * @template T
+- * @template U
+- * @param {T[]} array
+- * @param {(x: T) => U[]} iterable
+- * @returns {U[]}
+- */
+-declare function flatMap<U>(): any;
+-/**
+- * @overload
+- * @template T
+- * @param {T[][]} array
+- * @returns {T[]}
+- */
+-declare function flatMap(): any;
++type Call = () => any;
+ /**
+  * @typedef Oops
+  * @template T
+@@= skipped -39, +24 lines =@@
+         noooooo: string;
+     };
+ };
+-type Oops = any;
+-type Call = () => any;
++declare function flatMap(): any;
++declare function flatMap(): any;

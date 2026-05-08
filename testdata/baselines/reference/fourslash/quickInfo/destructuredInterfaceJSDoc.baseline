@@ -1,5 +1,6 @@
 // === QuickInfo ===
 === /destructuredInterfaceJSDoc.ts ===
+// 
 // interface FooBar {
 //     /** foo comment */
 //     foo: number;
@@ -14,28 +15,28 @@
 // const {foo, bar, baz: biz} = fubar;
 //        ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const foo: number
 // | ```
 // | foo comment
 // | ----------------------------------------------------------------------
 //             ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const bar: string
 // | ```
 // | bar comment
 // | ----------------------------------------------------------------------
 //                  ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) FooBar.baz: string
 // | ```
 // | baz comment
 // | ----------------------------------------------------------------------
 //                       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const biz: string
 // | ```
 // | baz comment
@@ -44,9 +45,9 @@
 [
   {
     "marker": {
-      "Position": 179,
+      "Position": 180,
       "LSPosition": {
-        "line": 11,
+        "line": 12,
         "character": 7
       },
       "Name": "1",
@@ -55,15 +56,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst foo: number\n```\nfoo comment"
+        "value": "```typescript\nconst foo: number\n```\nfoo comment"
       },
       "range": {
         "start": {
-          "line": 11,
+          "line": 12,
           "character": 7
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "character": 10
         }
       }
@@ -71,9 +72,9 @@
   },
   {
     "marker": {
-      "Position": 184,
+      "Position": 185,
       "LSPosition": {
-        "line": 11,
+        "line": 12,
         "character": 12
       },
       "Name": "2",
@@ -82,15 +83,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst bar: string\n```\nbar comment"
+        "value": "```typescript\nconst bar: string\n```\nbar comment"
       },
       "range": {
         "start": {
-          "line": 11,
+          "line": 12,
           "character": 12
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "character": 15
         }
       }
@@ -98,9 +99,9 @@
   },
   {
     "marker": {
-      "Position": 189,
+      "Position": 190,
       "LSPosition": {
-        "line": 11,
+        "line": 12,
         "character": 17
       },
       "Name": "3",
@@ -109,15 +110,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) FooBar.baz: string\n```\nbaz comment"
+        "value": "```typescript\n(property) FooBar.baz: string\n```\nbaz comment"
       },
       "range": {
         "start": {
-          "line": 11,
+          "line": 12,
           "character": 17
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "character": 20
         }
       }
@@ -125,9 +126,9 @@
   },
   {
     "marker": {
-      "Position": 194,
+      "Position": 195,
       "LSPosition": {
-        "line": 11,
+        "line": 12,
         "character": 22
       },
       "Name": "4",
@@ -136,15 +137,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst biz: string\n```\nbaz comment"
+        "value": "```typescript\nconst biz: string\n```\nbaz comment"
       },
       "range": {
         "start": {
-          "line": 11,
+          "line": 12,
           "character": 22
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "character": 25
         }
       }

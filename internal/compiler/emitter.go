@@ -1,8 +1,6 @@
 package compiler
 
 import (
-	"encoding/base64"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -11,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
 	"github.com/microsoft/typescript-go/internal/transformers/estransforms"
@@ -39,11 +38,14 @@ type emitter struct {
 	paths              *outputpaths.OutputPaths
 	sourceFile         *ast.SourceFile
 	emitResult         EmitResult
-	writeFile          func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+	writeFile          func(fileName string, text string, data *WriteFileData) error
+	tr                 *tracing.Tracing
 }
 
 func (e *emitter) emit() {
-	// !!! tracing
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "emit", map[string]any{"path": string(e.sourceFile.Path())}, true)()
+	}
 	e.emitJSFile(e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
 	e.emitDeclarationFile(e.sourceFile, e.paths.DeclarationFilePath(), e.paths.DeclarationMapPath())
 	e.emitResult.Diagnostics = e.emitterDiagnostics.GetDiagnostics()
@@ -52,6 +54,28 @@ func (e *emitter) emit() {
 func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, declarationFilePath string, declarationMapPath string) []*declarations.DeclarationTransformer {
 	transform := declarations.NewDeclarationTransformer(e.host, emitContext, e.host.Options(), declarationFilePath, declarationMapPath)
 	return []*declarations.DeclarationTransformer{transform}
+}
+
+func (e *emitter) runScriptTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile) *ast.SourceFile {
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "transformNodes", map[string]any{"path": string(sourceFile.Path())}, false)()
+	}
+	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
+		sourceFile = transformer.TransformSourceFile(sourceFile)
+	}
+	return sourceFile
+}
+
+func (e *emitter) runDeclarationTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, declarationFilePath, declarationMapPath string) (*ast.SourceFile, []*ast.Diagnostic) {
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "transformNodes", map[string]any{"path": string(sourceFile.Path())}, false)()
+	}
+	var diags []*ast.Diagnostic
+	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
+		sourceFile = transformer.TransformSourceFile(sourceFile)
+		diags = append(diags, transformer.GetDiagnostics()...)
+	}
+	return sourceFile, diags
 }
 
 func getModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
@@ -82,11 +106,12 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	// JS files don't use reference calculations as they don't do import elision, no need to calculate it
 	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
+	jsxTransformEnabled := options.GetJSXTransformEnabled() && sourceFile.LanguageVariant == core.LanguageVariantJSX
 
-	var emitResolver printer.EmitResolver
+	emitResolver := host.GetEmitResolver()
+
 	var referenceResolver binder.ReferenceResolver
-	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.GetIsolatedModules() || options.EmitDecoratorMetadata.IsTrue() { // full emit resolver is needed for import ellision and const enum inlining
-		emitResolver = host.GetEmitResolver()
+	if importElisionEnabled || jsxTransformEnabled || !options.GetIsolatedModules() || options.EmitDecoratorMetadata.IsTrue() {
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
 	} else {
@@ -124,8 +149,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 		}
 	}
 
-	// !!! transform legacy decorator syntax
-	if options.GetJSXTransformEnabled() {
+	if jsxTransformEnabled {
 		tx = append(tx, jsxtransforms.NewJSXTransformer(&opts))
 	}
 
@@ -158,12 +182,14 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "emitJsFileOrBundle", map[string]any{"jsFilePath": jsFilePath}, true)()
+	}
+
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
 
-	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
-		sourceFile = transformer.TransformSourceFile(sourceFile)
-	}
+	sourceFile = e.runScriptTransformers(emitContext, sourceFile)
 
 	printerOptions := printer.PrinterOptions{
 		RemoveComments:  options.RemoveComments.IsTrue(),
@@ -196,13 +222,13 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		return
 	}
 
-	var diags []*ast.Diagnostic
+	if e.tr != nil {
+		defer e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", map[string]any{"declarationFilePath": declarationFilePath}, true)()
+	}
+
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
-	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
-		sourceFile = transformer.TransformSourceFile(sourceFile)
-		diags = append(diags, transformer.GetDiagnostics()...)
-	}
+	sourceFile, diags := e.runDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath)
 
 	// !!! strada skipped emit if there were diagnostics
 
@@ -270,13 +296,14 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 				e.writer.RawWrite(core.IfElse(options.NewLine == core.NewLineKindCRLF, "\r\n", "\n"))
 			}
 			sourceMapUrlPos = e.writer.GetTextPos()
-			e.writer.WriteComment("//# sourceMappingURL=" + sourceMappingURL)
+			e.writer.WriteComment("//# sourceMappingURL=")
+			e.writer.WriteComment(sourceMappingURL)
 		}
 
 		// Write the source map
 		if len(sourceMapFilePath) > 0 {
 			sourceMap := sourceMapGenerator.String()
-			err := e.writeText(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/, nil)
+			err := e.writeText(sourceMapFilePath, sourceMap, nil)
 			if err != nil {
 				e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
 			} else {
@@ -289,11 +316,14 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 
 	// Write the output file
 	text := e.writer.String()
+	if options.EmitBOM.IsTrue() {
+		text = stringutil.AddUTF8ByteOrderMark(text)
+	}
 	data := &WriteFileData{
 		SourceMapUrlPos: sourceMapUrlPos,
 		Diagnostics:     e.emitterDiagnostics.GetDiagnostics(),
 	}
-	err := e.writeText(jsFilePath, text, options.EmitBOM.IsTrue(), data)
+	err := e.writeText(jsFilePath, text, data)
 	skippedDtsWrite := data.SkippedDtsWrite
 	if err != nil {
 		e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
@@ -305,11 +335,11 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	e.writer.Clear()
 }
 
-func (e *emitter) writeText(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error {
+func (e *emitter) writeText(fileName string, text string, data *WriteFileData) error {
 	if e.writeFile != nil {
-		return e.writeFile(fileName, text, writeByteOrderMark, data)
+		return e.writeFile(fileName, text, data)
 	}
-	return e.host.WriteFile(fileName, text, writeByteOrderMark)
+	return e.host.WriteFile(fileName, text)
 }
 
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
@@ -361,9 +391,7 @@ func (e *emitter) getSourceMapDirectory(mapOptions *core.CompilerOptions, filePa
 func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMapGenerator *sourcemap.Generator, filePath string, sourceMapFilePath string, sourceFile *ast.SourceFile) string {
 	if mapOptions.InlineSourceMap.IsTrue() {
 		// Encode the sourceMap into the sourceMap url
-		sourceMapText := sourceMapGenerator.String()
-		base64SourceMapText := base64.StdEncoding.EncodeToString([]byte(sourceMapText))
-		return "data:application/json;base64," + base64SourceMapText
+		return sourceMapGenerator.Base64DataURL()
 	}
 
 	sourceMapFile := tspath.GetBaseFileName(tspath.NormalizeSlashes(sourceMapFilePath))

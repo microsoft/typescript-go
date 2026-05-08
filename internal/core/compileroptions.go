@@ -2,6 +2,7 @@ package core
 
 import (
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -10,14 +11,13 @@ import (
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind -trimprefix=ModuleKind -output=modulekind_stringer_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
+//go:generate npx dprint fmt modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
 type CompilerOptions struct {
 	_ noCopy
 
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
 	AllowArbitraryExtensions                  Tristate                                  `json:"allowArbitraryExtensions,omitzero"`
-	AllowSyntheticDefaultImports              Tristate                                  `json:"allowSyntheticDefaultImports,omitzero"`
 	AllowImportingTsExtensions                Tristate                                  `json:"allowImportingTsExtensions,omitzero"`
 	AllowNonTsExtensions                      Tristate                                  `json:"allowNonTsExtensions,omitzero"`
 	AllowUmdGlobalAccess                      Tristate                                  `json:"allowUmdGlobalAccess,omitzero"`
@@ -30,7 +30,6 @@ type CompilerOptions struct {
 	EmitDeclarationOnly                       Tristate                                  `json:"emitDeclarationOnly,omitzero"`
 	EmitBOM                                   Tristate                                  `json:"emitBOM,omitzero"`
 	EmitDecoratorMetadata                     Tristate                                  `json:"emitDecoratorMetadata,omitzero"`
-	DownlevelIteration                        Tristate                                  `json:"downlevelIteration,omitzero"`
 	Declaration                               Tristate                                  `json:"declaration,omitzero"`
 	DeclarationDir                            string                                    `json:"declarationDir,omitzero"`
 	DeclarationMap                            Tristate                                  `json:"declarationMap,omitzero"`
@@ -40,7 +39,6 @@ type CompilerOptions struct {
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
 	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
-	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
 	ExperimentalDecorators                    Tristate                                  `json:"experimentalDecorators,omitzero"`
 	ForceConsistentCasingInFileNames          Tristate                                  `json:"forceConsistentCasingInFileNames,omitzero"`
@@ -120,9 +118,15 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
 	// Deprecated: Do not use outside of options parsing and validation.
+	AllowSyntheticDefaultImports Tristate `json:"allowSyntheticDefaultImports,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	DownlevelIteration Tristate `json:"downlevelIteration,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	ESModuleInterop Tristate `json:"esModuleInterop,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	OutFile string `json:"outFile,omitzero"`
 
@@ -257,16 +261,6 @@ func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) 
 	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
-// Deprecated: always returns true
-func (options *CompilerOptions) GetESModuleInterop() bool {
-	return true
-}
-
-// Deprecated: always returns true
-func (options *CompilerOptions) GetAllowSyntheticDefaultImports() bool {
-	return true
-}
-
 func (options *CompilerOptions) GetResolveJsonModule() bool {
 	if options.ResolveJsonModule != TSUnknown {
 		return options.ResolveJsonModule == TSTrue
@@ -326,6 +320,11 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 	return typeRoots, false
 }
 
+// UsesWildcardTypes returns true if this option's types array includes "*"
+func (options *CompilerOptions) UsesWildcardTypes() bool {
+	return slices.Contains(options.Types, "*")
+}
+
 func (options *CompilerOptions) GetIsolatedModules() bool {
 	return options.IsolatedModules == TSTrue || options.VerbatimModuleSyntax == TSTrue
 }
@@ -338,6 +337,13 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 	return options.UseDefineForClassFields != TSFalse && options.GetEmitScriptTarget() >= ScriptTargetES2022
 }
 
+func (options *CompilerOptions) GetUseDefineForClassFields() bool {
+	if options.UseDefineForClassFields == TSUnknown {
+		return options.GetEmitScriptTarget() >= ScriptTargetES2022
+	}
+	return options.UseDefineForClassFields == TSTrue
+}
+
 func (options *CompilerOptions) GetEmitDeclarations() bool {
 	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
@@ -348,7 +354,7 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
+	case ModuleKindSystem, ModuleKindUMD:
 		return false
 	}
 	return true
@@ -376,7 +382,6 @@ const (
 type ModuleKind int32
 
 const (
-	// Deprecated: Do not use outside of options parsing and validation.
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
 	// Deprecated: Do not use outside of options parsing and validation.
@@ -453,6 +458,10 @@ func (m ModuleResolutionKind) String() string {
 	switch m {
 	case ModuleResolutionKindUnknown:
 		panic("should not use zero value of ModuleResolutionKind")
+	case ModuleResolutionKindClassic:
+		return "Classic"
+	case ModuleResolutionKindNode10:
+		return "Node10"
 	case ModuleResolutionKindNode16:
 		return "Node16"
 	case ModuleResolutionKindNodeNext:
@@ -525,3 +534,22 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
+
+func (j JsxEmit) String() string {
+	switch j {
+	case JsxEmitNone:
+		panic("should not use zero value of JsxEmit")
+	case JsxEmitPreserve:
+		return "preserve"
+	case JsxEmitReactNative:
+		return "react-native"
+	case JsxEmitReact:
+		return "react"
+	case JsxEmitReactJSX:
+		return "react-jsx"
+	case JsxEmitReactJSXDev:
+		return "react-jsxdev"
+	default:
+		panic("unhandled case in JsxEmit.String")
+	}
+}

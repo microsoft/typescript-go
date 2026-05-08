@@ -56,6 +56,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 			return &testUnit{content: content, name: filename}, nil
 		},
 	)
+
 	if currentDirectory == "" {
 		currentDirectory = srcFolder
 	}
@@ -140,6 +141,7 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 	// Stuff related to the subfile we're parsing
 	var currentFileContent strings.Builder
 	var currentFileName string
+	seenContentLine := false
 	hasSeenFile := false
 	if options.AllowImplicitFirstFile {
 		// For fourslash tests, initialize currentFileName to the fileName parameter
@@ -165,7 +167,14 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 				currentDirectory = metaDataValue
 			}
 			if metaDataName != "filename" {
-				if slices.Contains(fourslashDirectives, metaDataName) {
+				if metaDataName == "symlink" && currentFileName != "" {
+					for link := range strings.SplitSeq(metaDataValue, ",") {
+						link = strings.TrimSpace(link)
+						if link != "" {
+							symlinks[link] = currentFileName
+						}
+					}
+				} else if slices.Contains(fourslashDirectives, metaDataName) {
 					// File-specific option
 					currentFileOptions[metaDataName] = metaDataValue
 				} else {
@@ -195,6 +204,7 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 
 				// Reset local data
 				currentFileContent.Reset()
+				seenContentLine = false
 				currentFileName = metaDataValue
 				currentFileOptions = make(map[string]string)
 			} else {
@@ -219,15 +229,25 @@ func ParseTestFilesAndSymlinksWithOptions[T any](
 
 				// Reset for the new file
 				currentFileContent.Reset()
+				seenContentLine = false
 				currentFileName = strings.TrimSpace(testMetaData[2])
 				currentFileOptions = make(map[string]string)
 			}
 		} else {
 			// Subfile content line
 			// Append to the current subfile content, inserting a newline if needed
-			if currentFileContent.Len() != 0 {
-				// End-of-line
-				currentFileContent.WriteRune('\n')
+			// For fourslash tests, use seenContentLine to preserve leading blank lines
+			// (matching TS fourslash's //// content markers). For compiler tests, use
+			// Len() != 0 which drops leading blanks (matching TS's harness behavior).
+			if options.AllowImplicitFirstFile {
+				if seenContentLine {
+					currentFileContent.WriteRune('\n')
+				}
+				seenContentLine = true
+			} else {
+				if currentFileContent.Len() != 0 {
+					currentFileContent.WriteRune('\n')
+				}
 			}
 			currentFileContent.WriteString(line)
 		}

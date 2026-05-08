@@ -77,6 +77,7 @@ func (c *EmitContext) onUpdate(updated *ast.Node, original *ast.Node) {
 }
 
 func (c *EmitContext) onClone(updated *ast.Node, original *ast.Node) {
+	c.SetOriginal(updated, original)
 	if ast.IsIdentifier(updated) || ast.IsPrivateIdentifier(updated) {
 		if autoGenerate := c.autoGenerate[original]; autoGenerate != nil {
 			autoGenerateCopy := *autoGenerate
@@ -120,7 +121,7 @@ func (c *EmitContext) EndVariableEnvironment() []*ast.Statement {
 		statements = slices.Clone(scope.functions)
 	}
 	if len(scope.variables) > 0 {
-		varDeclList := c.Factory.NewVariableDeclarationList(ast.NodeFlagsNone, c.Factory.NewNodeList(scope.variables))
+		varDeclList := c.Factory.NewVariableDeclarationList(c.Factory.NewNodeList(scope.variables), ast.NodeFlagsNone)
 		varStatement := c.Factory.NewVariableStatement(nil /*modifiers*/, varDeclList)
 		c.SetEmitFlags(varStatement, EFCustomPrologue)
 		statements = append(statements, varStatement)
@@ -197,7 +198,7 @@ func (c *EmitContext) EndLexicalEnvironment() []*ast.Statement {
 	scope := c.letScopeStack.Pop()
 	var statements []*ast.Statement
 	if len(scope.variables) > 0 {
-		varDeclList := c.Factory.NewVariableDeclarationList(ast.NodeFlagsLet, c.Factory.NewNodeList(scope.variables))
+		varDeclList := c.Factory.NewVariableDeclarationList(c.Factory.NewNodeList(scope.variables), ast.NodeFlagsLet)
 		varStatement := c.Factory.NewVariableStatement(nil /*modifiers*/, varDeclList)
 		c.SetEmitFlags(varStatement, EFCustomPrologue)
 		statements = append(statements, varStatement)
@@ -534,6 +535,7 @@ type emitNode struct {
 	externalHelpersModuleName *ast.IdentifierNode
 	leadingComments           []SynthesizedComment
 	trailingComments          []SynthesizedComment
+	typeNode                  *ast.TypeNode
 }
 
 // NOTE: This method is not guaranteed to be thread-safe
@@ -635,6 +637,10 @@ func (c *EmitContext) AssignedName(node *ast.Node) *ast.Expression {
 	return c.assignedName[node]
 }
 
+func (c *EmitContext) TextSource(node *ast.StringLiteralNode) *ast.Node {
+	return c.textSource[node]
+}
+
 func (c *EmitContext) SetAssignedName(node *ast.Node, name *ast.Expression) {
 	if c.assignedName == nil {
 		c.assignedName = make(map[*ast.Node]*ast.Expression)
@@ -671,7 +677,9 @@ func (c *EmitContext) ReadEmitHelpers() []*EmitHelper {
 
 func (c *EmitContext) AddEmitHelper(node *ast.Node, helper ...*EmitHelper) {
 	emitNode := c.emitNodes.Get(node)
-	emitNode.helpers = append(emitNode.helpers, helper...)
+	for _, h := range helper {
+		emitNode.helpers = core.AppendIfUnique(emitNode.helpers, h)
+	}
 }
 
 func (c *EmitContext) MoveEmitHelpers(source *ast.Node, target *ast.Node, predicate func(helper *EmitHelper) bool) {
@@ -828,12 +836,12 @@ func (c *EmitContext) addDefaultValueAssignmentForBindingPattern(parameter *ast.
 	}
 	c.AddInitializationStatement(c.Factory.NewVariableStatement(
 		nil,
-		c.Factory.NewVariableDeclarationList(ast.NodeFlagsNone, c.Factory.NewNodeList([]*ast.Node{c.Factory.NewVariableDeclaration(
+		c.Factory.NewVariableDeclarationList(c.Factory.NewNodeList([]*ast.Node{c.Factory.NewVariableDeclaration(
 			parameter.Name(),
 			nil,
 			parameter.Type,
 			initNode,
-		)})),
+		)}), ast.NodeFlagsNone),
 	))
 	return c.Factory.UpdateParameterDeclaration(
 		parameter,
@@ -898,12 +906,13 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 
 	if !ast.IsBlock(updated) {
 		statements := c.MergeEnvironment([]*ast.Statement{c.Factory.NewReturnStatement(updated)}, declarations)
-		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), true /*multiLine*/)
+		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), false /*multiLine*/)
 	}
 
 	return c.Factory.UpdateBlock(
 		updated.AsBlock(),
 		c.MergeEnvironmentList(updated.StatementList(), declarations),
+		updated.AsBlock().MultiLine,
 	)
 }
 
@@ -924,7 +933,7 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 			statements = append(statements, updated.Statements()...)
 			statementsList := c.Factory.NewNodeList(statements)
 			statementsList.Loc = updated.StatementList().Loc
-			return c.Factory.UpdateBlock(updated.AsBlock(), statementsList)
+			return c.Factory.UpdateBlock(updated.AsBlock(), statementsList, updated.AsBlock().MultiLine)
 		}
 		statements = append(statements, updated)
 		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), true /*multiLine*/)
@@ -978,6 +987,20 @@ func (c *EmitContext) AddSyntheticTrailingComment(node *ast.Node, kind ast.Kind,
 func (c *EmitContext) GetSyntheticTrailingComments(node *ast.Node) []SynthesizedComment {
 	if c.emitNodes.Has(node) {
 		return c.emitNodes.Get(node).trailingComments
+	}
+	return nil
+}
+
+// SetTypeNode stores the original type node on a name node when the type is erased,
+// so the emitter can use the type's position for comment preservation.
+func (c *EmitContext) SetTypeNode(node *ast.Node, typeNode *ast.TypeNode) {
+	c.emitNodes.Get(node).typeNode = typeNode
+}
+
+// GetTypeNode gets the type node stored on a name node by the type eraser.
+func (c *EmitContext) GetTypeNode(node *ast.Node) *ast.TypeNode {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		return emitNode.typeNode
 	}
 	return nil
 }

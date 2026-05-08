@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import {
+    ClientCapabilities,
     CloseAction,
     CloseHandlerResult,
     ErrorAction,
@@ -11,6 +12,7 @@ import {
     Message,
     NotebookDocumentFilter,
     ServerOptions,
+    StaticFeature,
     TextDocumentFilter,
     TransportKind,
 } from "vscode-languageclient/node";
@@ -20,7 +22,10 @@ import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
-import { registerTagClosingFeature } from "./languageFeatures/tagClosing";
+import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
+import { registerHoverFeature } from "./languageFeatures/hover";
+import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
+import { registerSourceDefinitionFeature } from "./languageFeatures/sourceDefinition";
 import * as tr from "./telemetryReporting";
 import {
     ExeInfo,
@@ -65,6 +70,7 @@ export class Client implements vscode.Disposable {
             traceOutputChannel: this.traceOutputChannel,
             initializationOptions: {
                 codeLensShowLocationsCommandName,
+                enableTelemetry: true,
             },
             errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5),
             middleware: {
@@ -72,7 +78,9 @@ export class Client implements vscode.Disposable {
                     ...configurationMiddleware,
                 },
                 sendNotification: sendNotificationMiddleware,
+                provideHover: () => undefined,
             },
+            diagnosticCollectionName: "typescript",
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -170,6 +178,22 @@ export class Client implements vscode.Disposable {
         );
         this.disposables.push(this.client);
 
+        // Register a static feature to advertise verbosityLevel support in hover capabilities.
+        this.client.registerFeature(
+            {
+                fillClientCapabilities(capabilities: ClientCapabilities): void {
+                    capabilities.textDocument = capabilities.textDocument ?? {};
+                    capabilities.textDocument.hover = capabilities.textDocument.hover ?? {};
+                    (capabilities.textDocument.hover as { verbosityLevel?: boolean; }).verbosityLevel = true;
+                },
+                initialize(): void {},
+                getState() {
+                    return { kind: "static" as const };
+                },
+                clear(): void {},
+            } satisfies StaticFeature,
+        );
+
         this.outputChannel.appendLine(`Starting language server...`);
         await this.client.start();
         this.isInitialized = true;
@@ -205,8 +229,10 @@ export class Client implements vscode.Disposable {
 
         this.disposables.push(
             serverTelemetryListener,
-            registerTagClosingFeature("typescript", this.documentSelector, this.client),
-            registerTagClosingFeature("javascript", this.documentSelector, this.client),
+            registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
+            registerSourceDefinitionFeature(this.client),
+            registerHoverFeature(this.documentSelector, this.client),
+            registerOnAutoInsertFeature(this.documentSelector, this.client),
         );
     }
 
@@ -220,6 +246,10 @@ export class Client implements vscode.Disposable {
 
     getCurrentExe(): { path: string; version: string; } | undefined {
         return this.exe;
+    }
+
+    get serverPid(): number | undefined {
+        return (this.client as any)?._serverProcess?.pid;
     }
 
     /**
@@ -248,7 +278,13 @@ export class Client implements vscode.Disposable {
 
         this.isInitialized = false;
         this.outputChannel.appendLine(`Restarting language server...`);
-        await this.client.restart();
+        try {
+            await this.client.restart();
+        }
+        catch (err) {
+            this.outputChannel.appendLine(`Graceful shutdown failed, forcing restart: ${err}`);
+            await this.client.start();
+        }
         return true;
     }
 
@@ -290,6 +326,15 @@ export class Client implements vscode.Disposable {
         }
         const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
         return result.file;
+    }
+
+    async getProjectInfo(uri: string, token?: vscode.CancellationToken): Promise<{ configFilePath: string; }> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        return this.client.sendRequest<{ configFilePath: string; }>("custom/projectInfo", {
+            textDocument: { uri },
+        }, token);
     }
 }
 
