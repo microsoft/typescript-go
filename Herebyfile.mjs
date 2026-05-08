@@ -1364,16 +1364,19 @@ const mainNativePreviewPackage = {
 };
 
 /**
- * @typedef {"win32" | "linux" | "darwin"} OS
- * @typedef {"x64" | "arm" | "arm64"} Arch
+ * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos"} OS
+ * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  */
 void 0;
 
 const nativePreviewPlatforms = memoize(() => {
-    /** @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]} */
-    let supportedPlatforms = [
+    /**
+     * Platforms that produce both npm packages and vsix extensions.
+     * @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]}
+     */
+    const vsixPlatforms = [
         ["win32", "x64", "Microsoft400"],
         ["win32", "arm64", "Microsoft400"],
         ["linux", "x64", "LinuxSign", true],
@@ -1381,40 +1384,72 @@ const nativePreviewPlatforms = memoize(() => {
         ["linux", "arm64", "LinuxSign", true],
         ["darwin", "x64", "MacDeveloperHarden"],
         ["darwin", "arm64", "MacDeveloperHarden"],
-        // Wasm?
     ];
 
-    return supportedPlatforms.map(([os, arch, cert, alpine]) => {
+    /**
+     * Additional platforms that produce npm packages only (no vsix).
+     * Mirrors esbuild's platform matrix (minus android and ia32).
+     * @type {[os: OS, arch: Arch][]}   
+     */
+    const npmOnlyPlatforms = [
+        ["aix", "ppc64"],
+        ["freebsd", "arm64"],
+        ["freebsd", "x64"],
+        ["linux", "loong64"],
+        ["linux", "mips64el"],
+        ["linux", "ppc64"],
+        ["linux", "riscv64"],
+        ["linux", "s390x"],
+        ["netbsd", "arm64"],
+        ["netbsd", "x64"],
+        ["openbsd", "arm64"],
+        ["openbsd", "x64"],
+        ["sunos", "x64"],
+    ];
+
+    /** @type {typeof vsixPlatforms} */
+    const allPlatforms = [
+        ...vsixPlatforms,
+        ...npmOnlyPlatforms.map(([os, arch]) => /** @type {[OS, Arch, Cert]} */ ([os, arch, "LinuxSign"])),
+    ];
+
+    return allPlatforms.map(([os, arch, cert, alpine]) => {
         const npmDirName = `typescript-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
 
-        /** @type {VSCodeTarget[]} */
-        const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
-        if (alpine) {
-            vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
-        }
+        const isVsixPlatform = vsixPlatforms.some(([vo, va]) => vo === os && va === arch);
 
-        const extensions = vscodeTargets.map(vscodeTarget => {
-            const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
-            const vsixPath = extensionDir + ".vsix";
-            const vsixManifestPath = extensionDir + ".manifest";
-            const vsixSignaturePath = extensionDir + ".signature.p7s";
-            return {
-                vscodeTarget,
-                extensionDir,
-                vsixPath,
-                vsixManifestPath,
-                vsixSignaturePath,
-            };
-        });
+        /** @type {{ vscodeTarget: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }[]} */
+        let extensions = [];
+        if (isVsixPlatform) {
+            /** @type {string[]} */
+            const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
+            if (alpine) {
+                vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
+            }
+
+            extensions = vscodeTargets.map(vscodeTarget => {
+                const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
+                const vsixPath = extensionDir + ".vsix";
+                const vsixManifestPath = extensionDir + ".manifest";
+                const vsixSignaturePath = extensionDir + ".signature.p7s";
+                return {
+                    vscodeTarget,
+                    extensionDir,
+                    vsixPath,
+                    vsixManifestPath,
+                    vsixSignaturePath,
+                };
+            });
+        }
 
         return {
             nodeOs: os,
             nodeArch: arch,
             goos: nodeToGOOS(os),
-            goarch: nodeToGOARCH(arch),
+            goarch: nodeToGOARCH(arch, os),
             npmPackageName,
             npmDirName,
             npmDir,
@@ -1426,16 +1461,22 @@ const nativePreviewPlatforms = memoize(() => {
 
     /**
      * @param {string} os
-     * @returns {"darwin" | "linux" | "windows"}
+     * @returns {"windows" | "illumos" | "darwin" | "linux" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd"}
      */
     function nodeToGOOS(os) {
         switch (os) {
-            case "darwin":
-                return "darwin";
-            case "linux":
-                return "linux";
             case "win32":
                 return "windows";
+            case "sunos":
+                return "illumos";
+            case "darwin":
+            case "linux":
+            case "aix":
+            case "android":
+            case "freebsd":
+            case "netbsd":
+            case "openbsd":
+                return os;
             default:
                 throw new Error(`Unsupported OS: ${os}`);
         }
@@ -1443,16 +1484,26 @@ const nativePreviewPlatforms = memoize(() => {
 
     /**
      * @param {string} arch
-     * @returns {"amd64" | "arm" | "arm64"}
+     * @param {string} os
+     * @returns {"amd64" | "386" | "mips64le" | "ppc64" | "ppc64le" | "arm" | "arm64" | "loong64" | "riscv64" | "s390x"}
      */
-    function nodeToGOARCH(arch) {
+    function nodeToGOARCH(arch, os) {
         switch (arch) {
             case "x64":
                 return "amd64";
+            case "ia32":
+                return "386";
+            case "mips64el":
+                return "mips64le";
+            case "ppc64":
+                // AIX uses big-endian ppc64; Linux uses little-endian ppc64le
+                return os === "aix" ? "ppc64" : "ppc64le";
             case "arm":
-                return "arm";
             case "arm64":
-                return "arm64";
+            case "loong64":
+            case "riscv64":
+            case "s390x":
+                return arch;
             default:
                 throw new Error(`Unsupported ARCH: ${arch}`);
         }
@@ -1590,8 +1641,9 @@ async function runBuildNativePreviewPackages() {
         }
     }
     else {
-        const buildLimit = pLimit(os.availableParallelism());
-        await Promise.all(platformBuilders.map(f => buildLimit(f)));
+        for (const f of platformBuilders) {
+            await f();
+        }
     }
 }
 
