@@ -76,7 +76,7 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
     if (tsdk?.isWorkspaceLevel) {
         const useWorkspaceTsdk = context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false);
         if (!useWorkspaceTsdk) {
-            tsdk = getExplicitTsdkPath(/* workspaceOnly */ false, /* globalOnly */ true);
+            tsdk = getExplicitTsdkPath(/* globalOnly */ true);
         }
     }
 
@@ -100,7 +100,7 @@ interface TsdkSetting {
  * `typescript.native-preview.tsdk`, using `inspect()` to only consider
  * explicitly set values. The unified `js/ts.tsdk.path` takes precedence.
  */
-function getExplicitTsdkPath(_workspaceOnly?: boolean, globalOnly?: boolean): TsdkSetting | undefined {
+function getExplicitTsdkPath(globalOnly?: boolean): TsdkSetting | undefined {
     // Check unified `js/ts.tsdk.path` first
     const unified = vscode.workspace.getConfiguration("js/ts").inspect<string>("tsdk.path");
     if (unified) {
