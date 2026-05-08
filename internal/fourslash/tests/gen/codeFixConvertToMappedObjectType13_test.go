@@ -19,5 +19,5 @@ func TestCodeFixConvertToMappedObjectType13(t *testing.T) {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixConvertToMappedObjectType"})
+	f.VerifyCodeFixNotAvailable(t, "fixConvertToMappedObjectType")
 }

@@ -18,5 +18,5 @@ func TestCodeFixAddMissingConstToArrayDestructuring3(t *testing.T) {
 [x, y] = [0, 1];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

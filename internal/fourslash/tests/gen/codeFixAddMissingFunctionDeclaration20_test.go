@@ -20,5 +20,5 @@ func TestCodeFixAddMissingFunctionDeclaration20(t *testing.T) {
 a.b.f(foo);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixMissingFunctionDeclaration"})
+	f.VerifyCodeFixNotAvailable(t, "fixMissingFunctionDeclaration")
 }

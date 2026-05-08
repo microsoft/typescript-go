@@ -30,5 +30,5 @@ class C implements I1,I2 {[|
 	f.VerifyRangeAfterCodeFix(t, `
 y: "𣋝ઢȴ¬⏊";
 `, false, 0, 0)
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

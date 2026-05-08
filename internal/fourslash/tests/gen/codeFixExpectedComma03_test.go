@@ -19,5 +19,5 @@ func TestCodeFixExpectedComma03(t *testing.T) {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixExpectedComma"})
+	f.VerifyCodeFixNotAvailable(t, "fixExpectedComma")
 }

@@ -20,5 +20,5 @@ for await (const _ of p);
 export {};`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixModuleOption"})
+	f.VerifyCodeFixNotAvailable(t, "fixModuleOption")
 }

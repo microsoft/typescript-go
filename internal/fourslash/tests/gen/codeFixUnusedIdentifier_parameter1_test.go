@@ -20,5 +20,5 @@ function g(a, b) { b; }
 g(1, 2);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"Remove unused declaration for: 'a'"})
+	f.VerifyCodeFixNotAvailable(t, "Remove unused declaration for: 'a'")
 }

@@ -17,5 +17,5 @@ func TestCodeFixCorrectReturnValue27(t *testing.T) {
 	const content = `const a: ((() => number) | (() => undefined)) = () => { "" }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

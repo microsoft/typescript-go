@@ -21,5 +21,5 @@ func TestCodeFixInferFromUsageCallbackParameter6(t *testing.T) {
 const foo = [(/** @type {number} */ x) => x + 1];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

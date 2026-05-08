@@ -18,5 +18,5 @@ func TestCodeFixRequireInTs3(t *testing.T) {
 const { a, b: { c } } = [|require("a")|];`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

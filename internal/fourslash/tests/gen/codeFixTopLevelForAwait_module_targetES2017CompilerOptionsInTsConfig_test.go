@@ -26,6 +26,6 @@ export {};
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixTargetOption"})
+	f.VerifyCodeFixNotAvailable(t, "fixTargetOption")
 	f.VerifyCodeFixAvailable(t, nil)
 }

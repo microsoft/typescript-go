@@ -26,6 +26,6 @@ declare function f(x: string, y: number): any;
 	f.Insert(t, "\"")
 	f.Insert(t, "\"")
 	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{})
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 	f.VerifyErrorExistsBetweenMarkers(t, "1", "2")
 }

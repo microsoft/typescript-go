@@ -23,5 +23,5 @@ class B extends A {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixAddOverrideModifier"})
+	f.VerifyCodeFixNotAvailable(t, "fixAddOverrideModifier")
 }

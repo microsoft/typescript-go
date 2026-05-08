@@ -20,5 +20,5 @@ func TestCodeFixAddVoidToPromise5(t *testing.T) {
 const p4: Promise<number> = new Promise(resolve => resolve());`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

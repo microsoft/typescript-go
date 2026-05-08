@@ -18,5 +18,5 @@ func TestCodeFixAddMissingConstToCommaSeparatedInitializer4(t *testing.T) {
 x = 0, y = 0;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

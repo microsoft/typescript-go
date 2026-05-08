@@ -21,5 +21,5 @@ func TestCodeFixClassImplementInterfaceIndexSignaturesNoFix(t *testing.T) {
 class C implements I {[|  |]}`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

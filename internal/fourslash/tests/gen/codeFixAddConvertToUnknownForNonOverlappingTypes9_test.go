@@ -20,5 +20,5 @@ func TestCodeFixAddConvertToUnknownForNonOverlappingTypes9(t *testing.T) {
 let x = /** @type {string} */ (100);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"Add 'unknown' conversion for non-overlapping types"})
+	f.VerifyCodeFixNotAvailable(t, "Add 'unknown' conversion for non-overlapping types")
 }

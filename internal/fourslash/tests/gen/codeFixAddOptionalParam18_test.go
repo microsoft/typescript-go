@@ -18,5 +18,5 @@ func TestCodeFixAddOptionalParam18(t *testing.T) {
 f(1, 1, "");`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"addOptionalParam"})
+	f.VerifyCodeFixNotAvailable(t, "addOptionalParam")
 }

@@ -19,5 +19,5 @@ func TestCodeFixAddMissingAwait_notAvailableWithoutPromise(t *testing.T) {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"addMissingAwait"})
+	f.VerifyCodeFixNotAvailable(t, "addMissingAwait")
 }

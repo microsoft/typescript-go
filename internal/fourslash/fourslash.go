@@ -1634,13 +1634,7 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 	}
 
 	if len(expectedDescriptions) == 0 {
-		if len(actions) != 0 {
-			var titles []string
-			for _, a := range actions {
-				titles = append(titles, a.Title)
-			}
-			t.Fatalf("Expected no code fixes, but got: %v", titles)
-		}
+		f.VerifyCodeFixNotAvailable(t)
 		return
 	}
 
@@ -1662,14 +1656,25 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 	}
 }
 
-func (f *FourslashTest) VerifyCodeFixNotAvailable(t *testing.T, unexpectedDescriptions []string) {
+func (f *FourslashTest) VerifyCodeFixNotAvailable(t *testing.T, expected ...string) {
 	t.Helper()
 
 	actions := f.getCodeFixActions(t)
-	for _, unexpected := range unexpectedDescriptions {
+	if len(expected) == 0 {
+		if len(actions) == 0 {
+			return
+		}
+
+		var titles []string
 		for _, action := range actions {
-			if action.Title == unexpected {
-				t.Fatalf("Expected code fix with description %q not to be available.", unexpected)
+			titles = append(titles, action.Title)
+		}
+		t.Fatalf("Expected no code fixes, but got: %v", titles)
+	}
+	for _, title := range expected {
+		for _, action := range actions {
+			if action.Title == title {
+				t.Fatalf("Expected code fix with description %q not to be available.", title)
 			}
 		}
 	}

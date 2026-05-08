@@ -23,5 +23,5 @@ import { bar } from "./a";`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToFile(t, "/b.ts")
-	f.VerifyCodeFixNotAvailable(t, []string{"fixImportNonExportedMember"})
+	f.VerifyCodeFixNotAvailable(t, "fixImportNonExportedMember")
 }

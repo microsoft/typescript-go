@@ -4252,10 +4252,10 @@ ${
 })`;
         case "verifyCodeFixAvailable":
             if (cmd.unavailableDescriptions.length > 0) {
-                return `f.VerifyCodeFixNotAvailable(t, []string{${cmd.unavailableDescriptions.map(d => getGoStringLiteral(d)).join(", ")}})`;
+                return `f.VerifyCodeFixNotAvailable(t, ${cmd.unavailableDescriptions.map(d => getGoStringLiteral(d)).join(", ")})`;
             }
             if (cmd.expectNone) {
-                return `f.VerifyCodeFixAvailable(t, []string{})`;
+                return `f.VerifyCodeFixNotAvailable(t)`;
             }
             if (cmd.descriptions.length === 0) {
                 return `f.VerifyCodeFixAvailable(t, nil)`;

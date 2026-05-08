@@ -27,5 +27,5 @@ const Bar = () =>
    [|<A></A>|]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixMissingAttributes"})
+	f.VerifyCodeFixNotAvailable(t, "fixMissingAttributes")
 }

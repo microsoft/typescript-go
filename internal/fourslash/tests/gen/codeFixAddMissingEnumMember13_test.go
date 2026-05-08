@@ -19,5 +19,5 @@ declare var a: E;
 a.C;`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixMissingMember"})
+	f.VerifyCodeFixNotAvailable(t, "fixMissingMember")
 }

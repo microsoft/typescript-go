@@ -20,5 +20,5 @@ const b = 2;
 const foo = require(` + "`" + `foo${a}${b}` + "`" + `);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixAvailable(t, []string{})
+	f.VerifyCodeFixNotAvailable(t)
 }

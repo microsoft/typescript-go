@@ -22,6 +22,6 @@ while (true) {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"addMissingAwait"})
-	f.VerifyCodeFixNotAvailable(t, []string{"addMissingAwaitToInitializer"})
+	f.VerifyCodeFixNotAvailable(t, "addMissingAwait")
+	f.VerifyCodeFixNotAvailable(t, "addMissingAwaitToInitializer")
 }

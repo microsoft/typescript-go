@@ -24,5 +24,5 @@ func TestCodeFixAddVoidToPromiseJS5(t *testing.T) {
 const p2 = new Promise(resolve => resolve());`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"Add 'void' to Promise resolved without a value"})
+	f.VerifyCodeFixNotAvailable(t, "Add 'void' to Promise resolved without a value")
 }

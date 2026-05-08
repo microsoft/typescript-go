@@ -30,5 +30,5 @@ const Bar = () =>
     [|<A a={100} b={""} c={[]} d={undefined}></A>|]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"fixMissingAttributes"})
+	f.VerifyCodeFixNotAvailable(t, "fixMissingAttributes")
 }

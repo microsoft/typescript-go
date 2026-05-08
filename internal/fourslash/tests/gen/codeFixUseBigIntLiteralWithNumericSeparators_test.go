@@ -18,5 +18,5 @@ func TestCodeFixUseBigIntLiteralWithNumericSeparators(t *testing.T) {
 0x16_BE_EC_CA_73_00_00; // 18! < 2 ** 53`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyCodeFixNotAvailable(t, []string{"useBigintLiteral"})
+	f.VerifyCodeFixNotAvailable(t, "useBigintLiteral")
 }
