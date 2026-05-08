@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -25,7 +26,7 @@ module.exports = function () {
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyBaselineInlayHints(t, nil /*span*/, &lsutil.UserPreferences{InlayHints: lsutil.InlayHintsPreferences{
-		IncludeInlayFunctionLikeReturnTypeHints: true,
-		IncludeInlayFunctionParameterTypeHints:  true,
+		IncludeInlayFunctionLikeReturnTypeHints: core.TSTrue,
+		IncludeInlayFunctionParameterTypeHints:  core.TSTrue,
 	}})
 }
