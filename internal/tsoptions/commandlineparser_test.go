@@ -87,6 +87,13 @@ func TestCommandLineParseResult(t *testing.T) {
 	}
 }
 
+func TestParseEmptyResponseFile(t *testing.T) {
+	t.Parallel()
+	// Regression test: `tsgo @` (bare @ with no filename) should not panic.
+	cmdLine := tsoptions.ParseCommandLine([]string{"@"}, tsoptionstest.NewVFSParseConfigHost(nil, "/", true))
+	assert.Assert(t, len(cmdLine.Errors) > 0, "expected an error for empty response file name")
+}
+
 func TestCustomConditionsNullOverride(t *testing.T) {
 	t.Parallel()
 
