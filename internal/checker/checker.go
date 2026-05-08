@@ -28929,6 +28929,9 @@ func (c *Checker) getContextualTypeForReturnExpression(node *ast.Node, contextFl
 			if functionFlags&ast.FunctionFlagsAsync != 0 {
 				// Get the awaited type without the `Awaited<T>` alias
 				contextualAwaitedType := c.mapType(contextualReturnType, c.getAwaitedTypeNoAlias)
+				if contextualAwaitedType == nil {
+					return nil
+				}
 				return c.getUnionType([]*Type{contextualAwaitedType, c.createPromiseLikeType(contextualAwaitedType)})
 			}
 			// Regular function or Generator function
