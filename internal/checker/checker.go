@@ -1297,7 +1297,7 @@ func (c *Checker) initializeChecker() {
 			for _, symbol := range file.Locals {
 				// We defer merging of global ambient module declarations since they may require other global symbols
 				// and types to be resolved. See https://github.com/microsoft/typescript-go/issues/2953.
-				if symbol.Flags&ast.SymbolFlagsModule != 0 && strings.HasPrefix(symbol.Name, "\"") && strings.HasSuffix(symbol.Name, "\"") {
+				if symbol.Flags&ast.SymbolFlagsModule != 0 && ast.IsAmbientModuleSymbolName(symbol.Name) {
 					ambientModuleSymbols = append(ambientModuleSymbols, symbol)
 				} else {
 					c.mergeGlobalSymbol(symbol)
