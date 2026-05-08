@@ -1383,3 +1383,6 @@ conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff
 ## tslib helper checks now per-file to avoid multiple checker inconsistencies
 compiler/tslibMissingHelper.errors.txt.diff
 compiler/tslibMultipleMissingHelper.errors.txt.diff
+
+## tslib helper checks bug in Strada fixed in Corsa
+compiler/esModuleInteropTslibHelpers.errors.txt.diff

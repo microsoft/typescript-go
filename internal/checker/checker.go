@@ -5219,15 +5219,14 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 		importClause := node.ImportClause()
 		moduleSpecifier := node.ModuleSpecifier()
 		if importClause != nil && !c.checkGrammarImportClause(importClause.AsImportClause()) {
-			if importClause.Name() != nil {
-				c.checkImportBinding(importClause)
-			}
+			var needsImportStar bool
 			namedBindings := importClause.AsImportClause().NamedBindings
 			if namedBindings != nil {
 				if ast.IsNamespaceImport(namedBindings) {
 					c.checkImportBinding(namedBindings)
 					if c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
 						// import * as ns from "foo";
+						needsImportStar = true
 						c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportStar)
 					}
 				} else {
@@ -5239,6 +5238,14 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 					}
 				}
 			}
+			if importClause.Name() != nil {
+				c.checkImportBinding(importClause)
+				if !needsImportStar && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
+					// import d from "foo";
+					c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
+				}
+			}
+
 			if !importClause.IsTypeOnly() &&
 				core.ModuleKindNode18 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext &&
 				c.isOnlyImportableAsDefault(moduleSpecifier, resolvedModule) &&
@@ -12589,10 +12596,6 @@ func (c *Checker) checkReferenceAssignment(target *ast.Node, sourceType *Type, c
 		diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access)
 	if c.checkReferenceExpression(target, message, optionalMessage) {
 		c.checkTypeAssignableToAndOptionallyElaborate(sourceType, targetType, target, target, nil, nil)
-	}
-	if ast.IsPropertyAccessExpression(target) && ast.IsPrivateIdentifier(target.AsPropertyAccessExpression().Name()) {
-		// NOTE: we do not limit this to LanguageFeatureTargets.PrivateNames as some other feature downleveling still requires this.
-		c.checkExternalEmitHelpers(target, ExternalEmitHelpersClassPrivateFieldSet)
 	}
 	return sourceType
 }
