@@ -163,10 +163,6 @@ func getInputOptionName(input string) string {
 }
 
 func (p *commandLineParser) parseResponseFile(fileName string) {
-	if fileName == "" {
-		p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0, fileName))
-		return
-	}
 	fileContents, errors := tryReadFile(fileName, func(fileName string) (string, bool) {
 		if p.fs == nil {
 			return "", false
@@ -215,6 +211,10 @@ func (p *commandLineParser) parseResponseFile(fileName string) {
 
 func tryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
 	// this function adds a compiler diagnostic if the file cannot be read
+	if fileName == "" {
+		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0, fileName))
+		return "", errors
+	}
 	text, e := readFile(fileName)
 
 	if !e || text == "" {
