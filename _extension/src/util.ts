@@ -67,28 +67,77 @@ function workspaceResolve(relativePath: string): vscode.Uri {
 export const useWorkspaceTsdkStorageKey = "typescript.native-preview.useWorkspaceTsdk";
 
 export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo> {
-    const config = vscode.workspace.getConfiguration("typescript.native-preview");
-
-    let tsdk = config.get<string>("tsdk");
-    const exeInspection = config.inspect<string>("tsdk");
+    // Check the unified `js/ts.tsdk.path` setting first, then fall back to
+    // `typescript.native-preview.tsdk`.
+    let tsdk = getExplicitTsdkPath();
 
     // If tsdk is set at the workspace level, require the user to have
     // explicitly opted in via the version picker (stored in workspace state).
-    if (tsdk && (exeInspection?.workspaceValue !== undefined || exeInspection?.workspaceFolderValue !== undefined)) {
+    if (tsdk?.isWorkspaceLevel) {
         const useWorkspaceTsdk = context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false);
         if (!useWorkspaceTsdk) {
-            tsdk = exeInspection.globalValue;
+            tsdk = getExplicitTsdkPath(/* workspaceOnly */ false, /* globalOnly */ true);
         }
     }
 
-    if (tsdk) {
-        const exe = await resolveTsdkPathToExe(tsdk);
+    if (tsdk?.value) {
+        const exe = await resolveTsdkPathToExe(tsdk.value);
         if (exe) {
             return exe;
         }
     }
 
     return getBuiltinExePath(context);
+}
+
+interface TsdkSetting {
+    value: string;
+    isWorkspaceLevel: boolean;
+}
+
+/**
+ * Read the tsdk path from both `js/ts.tsdk.path` and
+ * `typescript.native-preview.tsdk`, using `inspect()` to only consider
+ * explicitly set values. The unified `js/ts.tsdk.path` takes precedence.
+ */
+function getExplicitTsdkPath(_workspaceOnly?: boolean, globalOnly?: boolean): TsdkSetting | undefined {
+    // Check unified `js/ts.tsdk.path` first
+    const unified = vscode.workspace.getConfiguration("js/ts").inspect<string>("tsdk.path");
+    if (unified) {
+        if (!globalOnly) {
+            const workspaceValue = unified.workspaceFolderLanguageValue
+                ?? unified.workspaceFolderValue
+                ?? unified.workspaceLanguageValue
+                ?? unified.workspaceValue;
+            if (workspaceValue !== undefined) {
+                return { value: workspaceValue, isWorkspaceLevel: true };
+            }
+        }
+        const globalValue = unified.globalLanguageValue ?? unified.globalValue;
+        if (globalValue !== undefined) {
+            return { value: globalValue, isWorkspaceLevel: false };
+        }
+    }
+
+    // Fall back to `typescript.native-preview.tsdk`
+    const legacy = vscode.workspace.getConfiguration("typescript.native-preview").inspect<string>("tsdk");
+    if (legacy) {
+        if (!globalOnly) {
+            const workspaceValue = legacy.workspaceFolderLanguageValue
+                ?? legacy.workspaceFolderValue
+                ?? legacy.workspaceLanguageValue
+                ?? legacy.workspaceValue;
+            if (workspaceValue !== undefined) {
+                return { value: workspaceValue, isWorkspaceLevel: true };
+            }
+        }
+        const globalValue = legacy.globalLanguageValue ?? legacy.globalValue;
+        if (globalValue !== undefined) {
+            return { value: globalValue, isWorkspaceLevel: false };
+        }
+    }
+
+    return undefined;
 }
 
 export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: string; version: string; } | undefined> {
