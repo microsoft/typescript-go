@@ -1,0 +1,10 @@
+//// [tests/cases/compiler/noLibAndNoUncheckedIndexedAccessDestructuringArray.ts] ////
+
+=== noLibAndNoUncheckedIndexedAccessDestructuringArray.ts ===
+declare var x: string[];
+>x : {}
+
+var [a] = x;
+>a : any
+>x : {}
+
