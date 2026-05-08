@@ -5,7 +5,6 @@ import (
 	"testing"
 	"testing/fstest"
 
-	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"gotest.tools/v3/assert"
@@ -46,7 +45,9 @@ func TestIOFS(t *testing.T) {
 	t.Run("ReadFileUnrooted", func(t *testing.T) {
 		t.Parallel()
 
-		testutil.AssertPanics(t, func() { fs.ReadFile("bar") }, `vfs: path "bar" is not absolute`)
+		contents, ok := fs.ReadFile("bar")
+		assert.Assert(t, !ok)
+		assert.Assert(t, contents == "")
 	})
 
 	t.Run("FileExists", func(t *testing.T) {

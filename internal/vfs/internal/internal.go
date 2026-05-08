@@ -139,6 +139,9 @@ func (vfs *Common) WalkDir(root string, walkFn fs.WalkDirFunc) error {
 }
 
 func (vfs *Common) ReadFile(path string) (contents string, ok bool) {
+	if tspath.GetEncodedRootLength(path) == 0 {
+		return "", false
+	}
 	fsys, _, rest := vfs.RootAndPath(path)
 	if fsys == nil {
 		return "", false

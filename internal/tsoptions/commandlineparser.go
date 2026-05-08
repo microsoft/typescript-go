@@ -211,10 +211,6 @@ func (p *commandLineParser) parseResponseFile(fileName string) {
 
 func tryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
 	// this function adds a compiler diagnostic if the file cannot be read
-	if fileName == "" {
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0, fileName))
-		return "", errors
-	}
 	text, e := readFile(fileName)
 
 	if !e || text == "" {
