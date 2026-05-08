@@ -5149,8 +5149,11 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 	if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindJSDocImportTag {
 		var specifier *ast.Node
 		if importClause := node.ImportClause(); importClause != nil {
-			specifier = getPotentiallyInvalidImportSpecifier(importClause.AsImportClause().NamedBindings)
+			if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil {
+				specifier = getPotentiallyInvalidImportSpecifier(namedBindings)
+			}
 		}
+
 		if specifier != nil {
 			potentialSplitPoint = specifier
 		} else {
@@ -5209,7 +5212,7 @@ func canCompleteFromNamedBindings(namedBindings *ast.NamedImportBindings) bool {
 // in which `Foo`, `interface`, and `Bar` are all parsed as import specifiers. The caller
 // will also check if this token is on a separate line from the rest of the import.
 func getPotentiallyInvalidImportSpecifier(namedBindings *ast.NamedImportBindings) *ast.Node {
-	if namedBindings.Kind != ast.KindNamedImports {
+	if namedBindings == nil || namedBindings.Kind != ast.KindNamedImports {
 		return nil
 	}
 	return core.Find(namedBindings.Elements(), func(e *ast.Node) bool {
