@@ -84,10 +84,6 @@ const { values: rawOptions } = parseArgs({
  */
 const options = /** @type {Options} */ (rawOptions);
 
-if (options.forRelease && !options.setPrerelease) {
-    throw new Error("forRelease requires setPrerelease");
-}
-
 const defaultGoBuildTags = [
     ...(options.noembed ? ["noembed"] : []),
 ];
@@ -1137,18 +1133,17 @@ export class Debouncer {
 }
 
 const getVersion = memoize(() => {
-    const f = fs.readFileSync("./internal/core/version.go", "utf8");
-
-    const match = f.match(/var version\s*=\s*"(\d+\.\d+\.\d+)(-[^"]+)?"/);
+    const packageJson = JSON.parse(fs.readFileSync("./_packages/native-preview/package.json", "utf8"));
+    const match = packageJson.version.match(/^(\d+\.\d+\.\d+)(-[^"]+)?$/);
     if (!match) {
-        throw new Error("Failed to extract version from version.go");
+        throw new Error("Failed to extract version from _packages/native-preview/package.json");
     }
 
     let version = match[1];
     if (options.setPrerelease) {
-        version += `-${options.setPrerelease}`;
+        console.warn(pc.yellow("Warning: --setPrerelease is ignored; version is read from _packages/native-preview/package.json"));
     }
-    else if (match[2]) {
+    if (match[2]) {
         version += match[2];
     }
 
@@ -1389,9 +1384,9 @@ function cpWithoutNodeModulesOrTsconfig(src, dest) {
 }
 
 const mainNativePreviewPackage = {
-    npmPackageName: "@typescript/native-preview",
-    npmDir: path.join(builtNpm, "native-preview"),
-    npmTarball: path.join(builtNpm, "native-preview.tgz"),
+    npmPackageName: "typescript",
+    npmDir: path.join(builtNpm, "typescript"),
+    npmTarball: path.join(builtNpm, "typescript.tgz"),
 };
 
 /**
@@ -1415,13 +1410,8 @@ const nativePreviewPlatforms = memoize(() => {
         // Wasm?
     ];
 
-    if (!options.forRelease) {
-        supportedPlatforms = supportedPlatforms.filter(([os, arch]) => os === process.platform && arch === process.arch);
-        assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
-    }
-
     return supportedPlatforms.map(([os, arch, cert, alpine]) => {
-        const npmDirName = `native-preview-${os}-${arch}`;
+        const npmDirName = `typescript-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
@@ -1560,43 +1550,25 @@ async function runBuildNativePreviewPackages() {
 
     await fs.promises.mkdir(mainPackageDir, { recursive: true });
 
-    // Copy package contents excluding node_modules and dist (dist is copied separately after build).
+    // Copy package contents excluding node_modules, dist, and src (no public API in this release).
     // The package.json "files" field controls what npm pack actually includes.
-    await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist"));
+    await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist") && !p.includes("/src"));
+
+    // Override the package name for publishing as "typescript".
+    mainPackage.name = mainNativePreviewPackage.npmPackageName;
+    // Add "tsc" bin alias alongside "tsgo".
+    mainPackage.bin = { tsc: "./bin/tsgo.js", tsgo: "./bin/tsgo.js" };
+    // Strip public API exports/imports from the package.json, keeping only bin and package.json export.
+    delete mainPackage.exports;
+    delete mainPackage.imports;
+    mainPackage.exports = { "./package.json": "./package.json" };
+    // Remove dist and src from files since we're not shipping the API.
+    mainPackage.files = (/** @type {string[]} */ (mainPackage.files) || []).filter(f => f !== "dist" && f !== "src");
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
     await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
-    // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
 
-    // Build JS API and copy dist into the package.
-    await $`npm run -w @typescript/native-preview build`;
-    await cpRecursive(path.join(inputDir, "dist"), path.join(mainPackageDir, "dist"));
-
-    // Validate that .d.ts files contain no external imports (all imports must start with "." or "#").
-    const dtsFiles = await glob(`${mainPackageDir}/dist/**/*.d.ts`);
-    const importErrors = [];
-    for (const dtsFile of dtsFiles) {
-        const content = await fs.promises.readFile(dtsFile, "utf-8");
-        const relPath = path.relative(mainPackageDir, dtsFile);
-        for (const [i, line] of content.split("\n").entries()) {
-            // Match: import ... from "specifier" / export ... from "specifier"
-            const fromMatch = line.match(/(?:import|export)\s.*?\sfrom\s+["']([^"']+)["']/);
-            if (fromMatch && !fromMatch[1].startsWith(".") && !fromMatch[1].startsWith("#")) {
-                importErrors.push(`${relPath}:${i + 1}: external import declaration "${fromMatch[1]}"`);
-            }
-            // Match: import("specifier")
-            for (const m of line.matchAll(/import\(["']([^"']+)["']\)/g)) {
-                if (!m[1].startsWith(".") && !m[1].startsWith("#")) {
-                    importErrors.push(`${relPath}:${i + 1}: external dynamic import "${m[1]}"`);
-                }
-            }
-        }
-    }
-    if (importErrors.length) {
-        throw new Error(`Found external imports in .d.ts files:\n${importErrors.map(e => "  " + e).join("\n")}`);
-    }
-
-    const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
+    const extraFlags = getReleaseBuildFlags(getVersion());
 
     const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
         const packageJson = {
