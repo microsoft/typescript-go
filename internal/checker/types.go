@@ -200,10 +200,9 @@ type AliasSymbolLinks struct {
 // Links for module symbols
 
 type ModuleSymbolLinks struct {
-	resolvedExports              ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
-	typeOnlyExportStarMap        map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
-	exportsChecked               bool
-	requestedExternalEmitHelpers ExternalEmitHelpers
+	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
+	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
+	exportsChecked        bool
 }
 
 type ReverseMappedSymbolLinks struct {
@@ -387,16 +386,17 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked               bool
-	unusedChecked             bool
-	externalHelpersModule     *ast.Symbol
-	deferredNodes             collections.OrderedSet[*ast.Node]
-	identifierCheckNodes      []*ast.Node
-	localJsxNamespace         string
-	localJsxFragmentNamespace string
-	localJsxFactory           *ast.EntityName
-	localJsxFragmentFactory   *ast.EntityName
-	jsxFragmentType           *Type
+	typeChecked                  bool
+	unusedChecked                bool
+	externalHelpersModule        *ast.Symbol
+	requestedExternalEmitHelpers ExternalEmitHelpers
+	deferredNodes                collections.OrderedSet[*ast.Node]
+	identifierCheckNodes         []*ast.Node
+	localJsxNamespace            string
+	localJsxFragmentNamespace    string
+	localJsxFactory              *ast.EntityName
+	localJsxFragmentFactory      *ast.EntityName
+	jsxFragmentType              *Type
 }
 
 // Signature specific links

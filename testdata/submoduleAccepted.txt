@@ -1354,3 +1354,7 @@ conformance/objectLiteralErrors(target=es2015).symbols.diff
 conformance/objectLiteralErrors(target=es2015).types.diff
 conformance/propertyAndAccessorWithSameName.symbols.diff
 conformance/propertyAndAccessorWithSameName.types.diff
+
+## tslib helper checks now per-file to avoid multiple checker inconsistencies
+compiler/tslibMissingHelper.errors.txt.diff
+compiler/tslibMultipleMissingHelper.errors.txt.diff

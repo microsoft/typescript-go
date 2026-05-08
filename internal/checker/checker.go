@@ -28141,7 +28141,7 @@ func (c *Checker) checkExternalEmitHelpers(location *ast.Node, helpers ExternalE
 	if helpersModule == c.unknownSymbol {
 		return
 	}
-	links := c.moduleSymbolLinks.Get(helpersModule)
+	links := c.sourceFileLinks.Get(sourceFile)
 	if links.requestedExternalEmitHelpers&helpers != helpers {
 		uncheckedHelpers := helpers &^ links.requestedExternalEmitHelpers
 		for helper := ExternalEmitHelpersFirstEmitHelper; helper <= ExternalEmitHelpersLastEmitHelper; helper <<= 1 {
