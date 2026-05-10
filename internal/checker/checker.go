@@ -5219,6 +5219,9 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 		importClause := node.ImportClause()
 		moduleSpecifier := node.ModuleSpecifier()
 		if importClause != nil && !c.checkGrammarImportClause(importClause.AsImportClause()) {
+			if importClause.Name() != nil {
+				c.checkImportBinding(importClause)
+			}
 			var needsImportStar bool
 			namedBindings := importClause.AsImportClause().NamedBindings
 			if namedBindings != nil {
@@ -5238,12 +5241,11 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 					}
 				}
 			}
-			if importClause.Name() != nil {
-				c.checkImportBinding(importClause)
-				if !needsImportStar && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
-					// import d from "foo";
-					c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
-				}
+			if importClause.Name() != nil &&
+				!needsImportStar &&
+				c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
+				// import d from "foo";
+				c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportDefault)
 			}
 
 			if !importClause.IsTypeOnly() &&
