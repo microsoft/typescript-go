@@ -4669,6 +4669,9 @@ func (r *Relater) indexSignaturesIdenticalTo(source *Type, target *Type) Ternary
 }
 
 func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type, source *Type, target *Type, headMessage *diagnostics.Message) {
+	if r.overflow {
+		return
+	}
 	sourceHasBase := r.c.getSingleBaseForNonAugmentingSubtype(originalSource) != nil
 	targetHasBase := r.c.getSingleBaseForNonAugmentingSubtype(originalTarget) != nil
 	if originalSource.alias != nil || sourceHasBase {
