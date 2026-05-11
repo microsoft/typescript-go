@@ -1141,11 +1141,10 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 // appendExportAssignmentsForBindingPattern walks an exported binding pattern and invokes
 // `pushExpression` with an `exports.X = X` assignment for each declared identifier (including
 // rest elements and nested patterns). Property renames (`{ x: y }`) emit an assignment for the
-// local binding (`y`). Identifiers that have additional export specifiers (e.g. `export { y as z }`
-// elsewhere) are left to `appendExportsOfVariableStatement`, which emits the alias via the export
-// specifier map.
-func (tx *CommonJSModuleTransformer) appendExportAssignmentsForBindingPattern(name *ast.Node, pushExpression func(*ast.Expression)) {
-	for _, element := range name.Elements() {
+// local binding (`y`). Any additional alias exports (e.g. `export { y as z }` elsewhere) are
+// also emitted by `appendExportsOfVariableStatement` via the export specifier map.
+func (tx *CommonJSModuleTransformer) appendExportAssignmentsForBindingPattern(pattern *ast.Node, pushExpression func(*ast.Expression)) {
+	for _, element := range pattern.Elements() {
 		if ast.IsOmittedExpression(element) {
 			continue
 		}
