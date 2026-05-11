@@ -3,11 +3,8 @@ package autoimport
 import (
 	"cmp"
 	"context"
-	"fmt"
 	"maps"
-	"os"
 	"slices"
-	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -1250,7 +1247,6 @@ type perPackageExtractionResult struct {
 	entrypoints                      []*module.ResolvedEntrypoint
 	exports                          map[tspath.Path][]*Export
 	ambientModules                   map[string][]string
-	searchStats                      module.EntrypointSearchStats
 	statsExports                     int
 	statsUsedChecker                 int
 	skippedEntrypoints               int
@@ -1333,7 +1329,7 @@ func (b *registryBuilder) extractPackage(
 	}
 	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
-	packageEntrypoints, searchStats := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName, b.userPreferences.DisableAutoImportEntrypointDirectorySearch.IsTrue())
+	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName, b.userPreferences.DisableAutoImportEntrypointDirectorySearch.IsTrue())
 	if packageEntrypoints == nil {
 		return nil
 	}
@@ -1355,7 +1351,6 @@ func (b *registryBuilder) extractPackage(
 		entrypoints:                      packageEntrypoints,
 		exports:                          make(map[tspath.Path][]*Export),
 		ambientModules:                   make(map[string][]string),
-		searchStats:                      searchStats,
 		skippedEntrypoints:               skippedEntrypoints,
 		failedAmbientModuleLookupSources: make(map[tspath.Path]*failedAmbientModuleLookupSource),
 		failedAmbientModuleLookupTargets: &collections.Set[string]{},
@@ -1408,7 +1403,6 @@ func (b *registryBuilder) extractPackage(
 	ch, _ := checker.NewChecker(aliasResolver, nil)
 	extractor := b.newExportExtractor(packageName, ch, resolver, toRealpath)
 
-	var nonModuleFiles collections.Set[tspath.Path]
 	for _, entrypoint := range aliasResolver.rootFiles {
 		if ctx.Err() != nil {
 			return nil
@@ -1418,36 +1412,19 @@ func (b *registryBuilder) extractPackage(
 			result.ambientModules[name] = append(result.ambientModules[name], entrypoint.FileName())
 		}
 		result.packageFiles[entrypoint.Path()] = entrypoint.FileName()
-		symlink, hasSymlink := aliasResolver.symlinks[entrypoint.Path()]
-		if hasSymlink {
+		if symlink, ok := aliasResolver.symlinks[entrypoint.Path()]; ok {
 			result.packageFiles[symlink.path] = symlink.fileName
 		}
-
-		hasExports := len(fileExports) > 0 && entrypoint.ExternalModuleIndicator != nil
 		if source, ok := result.failedAmbientModuleLookupSources[entrypoint.Path()]; !ok {
 			result.exports[entrypoint.Path()] = fileExports
 		} else {
 			source.packageName = packageName
-			hasExports = entrypoint.ExternalModuleIndicator != nil
-		}
-
-		if !hasExports {
-			nonModuleFiles.Add(entrypoint.Path())
-			if hasSymlink {
-				nonModuleFiles.Add(symlink.path)
-			}
 		}
 	}
 
 	stats := extractor.Stats()
 	result.statsExports = int(stats.exports.Load())
 	result.statsUsedChecker = int(stats.usedChecker.Load())
-
-	// Discard entrypoints for non-module files and empty modules.
-	result.entrypoints = slices.DeleteFunc(result.entrypoints, func(ep *module.ResolvedEntrypoint) bool {
-		return nonModuleFiles.Has(b.base.toPath(ep.ResolvedFileName))
-	})
-
 	return result
 }
 
@@ -1583,9 +1560,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		}
 		logger.Logf("Built index: %v", time.Since(indexStart))
 	}
-
-	// --- Temporary analytics logging ---
-	logEntrypointAnalytics(discovered, extractionCache, extraction)
 
 	result.err = ctx.Err()
 }
@@ -1727,94 +1701,4 @@ func (b *registryBuilder) resolveAmbientModuleName(moduleName string, fromPath t
 		}
 		return nil, false
 	}))
-}
-
-// --- Temporary analytics logging (remove before merge) ---
-
-type packageSearchAnalytics struct {
-	packageName        string
-	usedExports        bool
-	readDirectoryCalls int
-	entrypointCount    int
-}
-
-func logEntrypointAnalytics(
-	discovered []*discoveredPackage,
-	extractionCache map[string]*perPackageExtractionResult,
-	extraction *packageExtractionResult,
-) {
-	fmt.Fprintln(os.Stderr, "\n=== AUTO-IMPORT ENTRYPOINT ANALYTICS ===")
-
-	// Collect per-package stats
-	var allSpecifiers []string
-	var analytics []packageSearchAnalytics
-	totalReadDirCalls := 0
-	totalEntrypoints := 0
-
-	seen := make(map[string]bool)
-	for _, pkg := range discovered {
-		realpath := pkg.realpath
-		if realpath == "" {
-			realpath = pkg.typesRealpath
-		}
-		if seen[realpath] || realpath == "" {
-			continue
-		}
-		seen[realpath] = true
-
-		ext := extractionCache[realpath]
-		if ext == nil {
-			continue
-		}
-
-		analytics = append(analytics, packageSearchAnalytics{
-			packageName:        pkg.packageName,
-			usedExports:        ext.searchStats.UsedExports,
-			readDirectoryCalls: ext.searchStats.ReadDirectoryCalls,
-			entrypointCount:    ext.searchStats.EntrypointCount,
-		})
-		totalReadDirCalls += ext.searchStats.ReadDirectoryCalls
-		totalEntrypoints += ext.searchStats.EntrypointCount
-
-		for _, ep := range ext.entrypoints {
-			allSpecifiers = append(allSpecifiers, ep.ModuleSpecifier)
-		}
-	}
-
-	// Sort analytics by entrypoint count descending (most expensive first)
-	sort.Slice(analytics, func(i, j int) bool {
-		return analytics[i].entrypointCount > analytics[j].entrypointCount
-	})
-
-	// Print per-package stats
-	fmt.Fprintf(os.Stderr, "\n--- Per-package stats (%d packages, %d total entrypoints, %d ReadDirectory calls) ---\n",
-		len(analytics), totalEntrypoints, totalReadDirCalls)
-	fmt.Fprintf(os.Stderr, "%-60s %8s %10s %s\n", "PACKAGE", "ENTRIES", "READDIR", "SOURCE")
-	for _, a := range analytics {
-		source := "dir-search"
-		if a.usedExports {
-			source = "exports"
-		}
-		fmt.Fprintf(os.Stderr, "%-60s %8d %10d %s\n", a.packageName, a.entrypointCount, a.readDirectoryCalls, source)
-	}
-
-	// Print full list of module specifiers, sorted
-	sort.Strings(allSpecifiers)
-	fmt.Fprintf(os.Stderr, "\n--- All entrypoint module specifiers (%d total) ---\n", len(allSpecifiers))
-	for _, spec := range allSpecifiers {
-		fmt.Fprintln(os.Stderr, spec)
-	}
-
-	// Print all ambient module names, sorted
-	var ambientNames []string
-	for name := range extraction.ambientModuleNames {
-		ambientNames = append(ambientNames, name)
-	}
-	sort.Strings(ambientNames)
-	fmt.Fprintf(os.Stderr, "\n--- Ambient module names (%d total) ---\n", len(ambientNames))
-	for _, name := range ambientNames {
-		fmt.Fprintf(os.Stderr, "%s (%d files)\n", name, len(extraction.ambientModuleNames[name]))
-	}
-
-	fmt.Fprintln(os.Stderr, "\n=== END AUTO-IMPORT ENTRYPOINT ANALYTICS ===")
 }
