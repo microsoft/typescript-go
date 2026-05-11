@@ -30,3 +30,27 @@ export const [c, ...d] = foo();
 >foo() : any
 >foo : () => any
 
+export const [, e, , f] = foo();
+>e : any
+>f : any
+>foo() : any
+>foo : () => any
+
+export const [[g, h], { i, j: k }] = foo();
+>g : any
+>h : any
+>i : any
+>j : any
+>k : any
+>foo() : any
+>foo : () => any
+
+export const { m: [n, o], p: { q } } = foo();
+>m : any
+>n : any
+>o : any
+>p : any
+>q : any
+>foo() : any
+>foo : () => any
+
