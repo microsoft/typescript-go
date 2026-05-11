@@ -1079,6 +1079,38 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 		tx.preserveJsDoc(exportAssignment, input)
 		return exportAssignment
 	}
+	if (ast.IsClassExpression(expression) || ast.IsFunctionExpression(expression)) && expression.Name() != nil {
+		name := expression.Name()
+		var modList *ast.ModifierList
+		if tx.needsDeclare {
+			modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+		} else {
+			modList = tx.Factory().NewModifierList([]*ast.Node{})
+		}
+		var synthDecl *ast.Node
+		if ast.IsClassExpression(expression) {
+			cls := expression.AsClassExpression()
+			synthDecl = tx.Factory().NewClassDeclaration(modList, name, cls.TypeParameters, cls.HeritageClauses, cls.Members)
+		} else {
+			fn := expression.AsFunctionExpression()
+			synthDecl = tx.Factory().NewFunctionDeclaration(modList, fn.AsteriskToken, name, fn.TypeParameters, fn.Parameters, fn.Type, fn.FullSignature, fn.Body)
+		}
+		synthDecl.Parent = input.Parent
+		synthDecl.Flags |= expression.Flags & ast.NodeFlagsJavaScriptFile
+		tx.EmitContext().SetOriginal(synthDecl, expression)
+		var transformedDecl *ast.Node
+		if ast.IsClassExpression(expression) {
+			transformedDecl = tx.transformClassDeclaration(synthDecl.AsClassDeclaration())
+		} else {
+			transformedDecl = tx.transformFunctionDeclaration(synthDecl.AsFunctionDeclaration())
+		}
+		if transformedDecl != nil {
+			nameRef := tx.Factory().NewIdentifier(name.Text())
+			exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, nameRef)
+			tx.preserveJsDoc(exportAssignment, input)
+			return tx.Factory().NewSyntaxList([]*ast.Node{exportAssignment, transformedDecl})
+		}
+	}
 	// expression is non-identifier, create _default typed variable to reference
 	newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 	tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {

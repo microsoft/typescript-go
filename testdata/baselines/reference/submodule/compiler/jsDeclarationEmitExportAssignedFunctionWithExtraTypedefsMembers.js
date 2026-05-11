@@ -35,5 +35,5 @@ export type Options = {
 /**
  * @param {Options} options
  */
-declare const _default: (options: Options) => void;
-export = _default;
+export = loader;
+declare function loader(options: Options): void;
