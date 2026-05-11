@@ -859,6 +859,116 @@ func TestHiddenDirectoriesInNodeModules(t *testing.T) {
 	})
 }
 
+func TestDisableAutoImportEntrypointDirectorySearch(t *testing.T) {
+	t.Parallel()
+
+	projectRoot := "/home/src/entrypoint-search"
+	nodeModulesDir := projectRoot + "/node_modules"
+	pkgDir := nodeModulesDir + "/my-pkg"
+
+	files := map[string]any{
+		projectRoot + "/tsconfig.json": `{
+			"compilerOptions": {
+				"module": "commonjs",
+				"target": "es2020"
+			}
+		}`,
+		projectRoot + "/package.json": `{
+			"name": "test-project",
+			"dependencies": { "my-pkg": "*" }
+		}`,
+		projectRoot + "/index.ts": `import { main } from "my-pkg";`,
+		// Package with NO "exports" field and multiple files.
+		// Without the preference, directory search finds all .d.ts files.
+		// With the preference, only the main entrypoint (index.d.ts) is found.
+		pkgDir + "/package.json":       `{"name":"my-pkg","version":"1.0.0","types":"index.d.ts"}`,
+		pkgDir + "/index.d.ts":         "export declare const main: number;\n",
+		pkgDir + "/extra.d.ts":         "export declare const extra: string;\n",
+		pkgDir + "/nested/deep.d.ts":   "export declare const deep: boolean;\n",
+		pkgDir + "/nested/deeper.d.ts": "export declare const deeper: boolean;\n",
+	}
+
+	t.Run("default includes directory-searched files", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		// Without the preference, all 4 .d.ts files should be found via directory search
+		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files from directory search, got %d", nodeModulesBucket.FileCount)
+	})
+
+	t.Run("disableAutoImportEntrypointDirectorySearch limits to main entrypoint", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.DisableAutoImportEntrypointDirectorySearch = core.TSTrue
+		session.Configure(prefs)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		// With the preference, only the main entrypoint (index.d.ts) should be found
+		assert.Equal(t, 1, nodeModulesBucket.FileCount, "expected only 1 file (main entrypoint) with directory search disabled")
+	})
+
+	t.Run("changing preference triggers rebuild", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Build auto-imports with default preferences (directory search enabled)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files initially")
+
+		// Now disable directory search
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.DisableAutoImportEntrypointDirectorySearch = core.TSTrue
+		session.Configure(prefs)
+
+		// Registry should report not prepared (preference changed)
+		snapshot := session.Snapshot()
+		defaultProject := snapshot.GetDefaultProject(indexURI)
+		assert.Assert(t, defaultProject != nil)
+		projectPath := defaultProject.ConfigFilePath()
+		isPrepared := snapshot.AutoImportRegistry().IsPreparedForImportingFile(
+			projectRoot+"/index.ts", projectPath, prefs)
+		assert.Assert(t, !isPrepared, "registry should not be prepared after preference change")
+
+		// Rebuild
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, 1, nodeModulesBucket.FileCount, "expected only 1 file after rebuild with directory search disabled")
+	})
+}
+
 const (
 	lifecycleProjectRoot = "/home/src/autoimport-lifecycle"
 	monorepoProjectRoot  = "/home/src/autoimport-monorepo"

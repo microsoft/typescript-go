@@ -36,6 +36,32 @@ const (
 	newProgramStructureDifferentFileNames
 )
 
+// bucketBuildPreferences holds user preferences that affect how a bucket is
+// built. When any of these change between builds, the bucket must be rebuilt.
+// Adding a new preference here automatically integrates it into the rebuild
+// checks via Equal.
+type bucketBuildPreferences struct {
+	fileExcludePatterns                        []string
+	disableAutoImportEntrypointDirectorySearch core.Tristate
+}
+
+func bucketBuildPreferencesFromUserPreferences(prefs lsutil.UserPreferences) bucketBuildPreferences {
+	return bucketBuildPreferences{
+		fileExcludePatterns:                        prefs.AutoImportFileExcludePatterns,
+		disableAutoImportEntrypointDirectorySearch: prefs.DisableAutoImportEntrypointDirectorySearch,
+	}
+}
+
+func (p bucketBuildPreferences) Equal(other bucketBuildPreferences) bool {
+	return core.UnorderedEqual(p.fileExcludePatterns, other.fileExcludePatterns) &&
+		p.disableAutoImportEntrypointDirectorySearch == other.disableAutoImportEntrypointDirectorySearch
+}
+
+func (p bucketBuildPreferences) Clone() bucketBuildPreferences {
+	p.fileExcludePatterns = slices.Clone(p.fileExcludePatterns)
+	return p
+}
+
 // BucketState represents the dirty state of a bucket.
 // In general, a bucket can be used for an auto-imports request if it is clean
 // or if the only edited file is the one that was requested for auto-imports.
@@ -53,9 +79,9 @@ type BucketState struct {
 	dirtyFile           tspath.Path
 	multipleFilesDirty  bool
 	newProgramStructure newProgramStructure
-	// fileExcludePatterns is the value of the corresponding user preference when
+	// buildPreferences holds the user preferences that were in effect when
 	// the bucket was built. If changed, the bucket should be rebuilt.
-	fileExcludePatterns []string
+	buildPreferences bucketBuildPreferences
 	// dirtyPackages is the set of package names that need to be re-indexed.
 	// This is used for granular updates: when a file in a local workspace package
 	// changes, only that package needs to be re-extracted rather than rebuilding
@@ -66,7 +92,7 @@ type BucketState struct {
 }
 
 func (b BucketState) Clone() BucketState {
-	b.fileExcludePatterns = slices.Clone(b.fileExcludePatterns)
+	b.buildPreferences = b.buildPreferences.Clone()
 	b.dirtyPackages = b.dirtyPackages.Clone()
 	return b
 }
@@ -92,7 +118,7 @@ func (b BucketState) DirtyPackages() *collections.Set[string] {
 func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences lsutil.UserPreferences) bool {
 	return b.newProgramStructure > 0 ||
 		b.hasDirtyFileBesides(file) ||
-		!core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns) ||
+		!b.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(preferences)) ||
 		b.dirtyPackages.Len() > 0
 }
 
@@ -732,7 +758,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			// !!! Optimization: handle different dependency set via granular updates
 			needsFullRebuild := bucketState.multipleFilesDirty ||
 				!nodeModulesBucket.Value().DependencyNames.Equals(dependencies) ||
-				!core.UnorderedEqual(bucketState.fileExcludePatterns, b.userPreferences.AutoImportFileExcludePatterns)
+				!bucketState.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(b.userPreferences))
 			dirtyPackages := bucketState.DirtyPackages()
 			canDoGranularUpdate := !needsFullRebuild && dirtyPackages.Len() > 0
 
@@ -894,7 +920,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		program := b.host.GetProgramForProject(projectPath)
 		resolvedPackageNames := allResolvedPackageNames[projectPath]
 		shouldRebuild := project.Value().state.hasDirtyFileBesides(change.RequestedFile) ||
-			!core.UnorderedEqual(project.Value().state.fileExcludePatterns, b.userPreferences.AutoImportFileExcludePatterns)
+			!project.Value().state.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(b.userPreferences))
 		if !shouldRebuild && project.Value().state.newProgramStructure > 0 {
 			if !project.Value().ResolvedPackageNames.Equals(resolvedPackageNames) || hasNewNonNodeModulesFiles(program, project.Value()) {
 				shouldRebuild = true
@@ -1156,7 +1182,7 @@ func (b *registryBuilder) buildProjectBucket(
 	result.bucket.Paths = paths
 	result.bucket.Index = idx
 	result.bucket.ResolvedPackageNames = resolvedPackageNames
-	result.bucket.state.fileExcludePatterns = b.userPreferences.AutoImportFileExcludePatterns
+	result.bucket.state.buildPreferences = bucketBuildPreferencesFromUserPreferences(b.userPreferences)
 
 	if logger != nil {
 		logger.Logf("Extracted exports: %v (%d exports, %d used checker, %d created checkers)", indexStart.Sub(start), combinedStats.exports.Load(), combinedStats.usedChecker.Load(), checkerCount())
@@ -1303,7 +1329,7 @@ func (b *registryBuilder) extractPackage(
 	}
 	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
-	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
+	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName, b.userPreferences.DisableAutoImportEntrypointDirectorySearch.IsTrue())
 	if packageEntrypoints == nil {
 		return nil
 	}
@@ -1496,7 +1522,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		AmbientModuleNames: extraction.ambientModuleNames,
 		Paths:              paths,
 		state: BucketState{
-			fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
+			buildPreferences: bucketBuildPreferencesFromUserPreferences(b.userPreferences),
 		},
 	}
 	result.entrypoints = make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports))
@@ -1641,7 +1667,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		AmbientModuleNames: newAmbientModuleNames,
 		Paths:              newPaths,
 		state: BucketState{
-			fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
+			buildPreferences: bucketBuildPreferencesFromUserPreferences(b.userPreferences),
 		},
 	}
 	result.entrypoints = newEntrypoints
