@@ -261,11 +261,6 @@ compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.types.diff
 ## more accurate types/symbols ##
 compiler/allowJscheckJsTypeParameterNoCrash.symbols.diff
 compiler/abstractClassInLocalScopeIsAbstract.types.diff
-compiler/argumentsReferenceInConstructor1_Js.types.diff
-compiler/argumentsReferenceInConstructor2_Js.types.diff
-compiler/argumentsReferenceInConstructor3_Js.types.diff
-compiler/argumentsReferenceInConstructor4_Js.types.diff
-compiler/argumentsReferenceInConstructor5_Js.types.diff
 compiler/argumentsReferenceInFunction1_Js.errors.txt.diff
 compiler/argumentsReferenceInFunction1_Js.types.diff
 compiler/argumentsReferenceInMethod1_Js.types.diff
@@ -329,8 +324,6 @@ compiler/genericFunctionSpecializations1.types.diff
 compiler/genericMemberFunction.types.diff
 compiler/genericOverloadSignatures.types.diff
 compiler/genericSpecializationToTypeLiteral1.types.diff
-compiler/gettersAndSettersErrors.symbols.diff
-compiler/gettersAndSettersErrors.types.diff
 compiler/indexTypeNoSubstitutionTemplateLiteral.symbols.diff
 compiler/indexTypeNoSubstitutionTemplateLiteral.types.diff
 compiler/inferenceDoesNotAddUndefinedOrNull.types.diff
@@ -947,6 +940,7 @@ compiler/jsEmitIntersectionProperty.js.diff
 compiler/lateBoundAssignmentCandidateJS3.js.diff
 conformance/jsDeclarationsClassesErr(target=es2015).js.diff
 conformance/jsDeclarationsClassLeadingOptional(target=es2015).js.diff
+conformance/jsDeclarationsExportFormsErr(target=es2015).js.diff
 conformance/jsDeclarationsExportSpecifierNonlocal(target=es2015).js.diff
 conformance/jsDeclarationsSubclassWithExplicitNoArgumentConstructor.js.diff
 conformance/jsDeclarationsThisTypes.js.diff
@@ -980,6 +974,12 @@ conformance/nodeModulesAllowJsTopLevelAwait(module=node16).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
+
+## JS declaration emit now preserves side-effect imports, declaration order changes inconsequentially
+conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node20).js.diff
+conformance/nodeModulesAllowJsExportAssignment(module=nodenext).js.diff
 
 ## `@class`/`@constructor` no longer makes functions into class declarations (inferred classes from `.prototype` are no longer supported)
 compiler/jsDeclarationsGlobalFileConstFunction.js.diff
@@ -1062,11 +1062,6 @@ conformance/tsxStatelessFunctionComponents1.js.diff
 compiler/declarationEmitClassMemberWithComputedPropertyName.js.diff
 compiler/isolatedDeclarationsLiterals.js.diff
 conformance/constAssertions.js.diff
-
-## Type parameter disambiguation suffixes (`_1`, `_2`) removed in nested/overlapping scopes (shadowing matches runtime semantics; `_1` suffixes were unnecessary)
-## Inner generic type parameters shadow outer ones with the same name instead of being renamed
-compiler/declarationEmitNestedGenerics.js.diff
-conformance/typeParametersAvailableInNestedScope3.js.diff
 
 ## Comma expressions in emitted JS are now parenthesized for correctness (parenthesizing comma expressions prevents precedence bugs)
 ## `a, b` in computed properties and JSX context now emitted as `(a, b)`
@@ -1180,6 +1175,23 @@ conformance/nodeModulesAllowJsPackageImports(module=node16).js.diff
 conformance/nodeModulesAllowJsPackageImports(module=node18).js.diff
 conformance/nodeModulesAllowJsPackageImports(module=node20).js.diff
 conformance/nodeModulesAllowJsPackageImports(module=nodenext).js.diff
+
+## this.x member ordering changed
+## Strada grouped js declaration members by category, corsa keeps them in source order
+compiler/argumentsReferenceInConstructor1_Js.js.diff
+compiler/argumentsReferenceInConstructor2_Js.js.diff
+compiler/argumentsReferenceInConstructor3_Js.js.diff
+compiler/argumentsReferenceInConstructor4_Js.js.diff
+compiler/argumentsReferenceInConstructor5_Js.js.diff
+compiler/argumentsReferenceInConstructor6_Js.js.diff
+compiler/argumentsReferenceInConstructor7_Js.js.diff
+compiler/argumentsReferenceInMethod1_Js.js.diff
+compiler/argumentsReferenceInMethod2_Js.js.diff
+compiler/argumentsReferenceInMethod3_Js.js.diff
+compiler/argumentsReferenceInMethod4_Js.js.diff
+compiler/argumentsReferenceInMethod5_Js.js.diff
+compiler/argumentsReferenceInMethod6_Js.js.diff
+compiler/argumentsReferenceInMethod7_Js.js.diff
 
 ## BOM character handling fixed (bug fix; Strada was incorrectly mangling the BOM)
 ## BOM is now correctly preserved in output instead of being mangled, and spurious TS1127 errors are removed
@@ -1341,3 +1353,38 @@ conformance/privateNameStaticMethod.js.diff
 conformance/jsdocDisallowedInTypescript.js.diff
 ## Corsa correctly emits `any` type for auto-typed variable with `null` initializer
 compiler/letDeclarations.js.diff
+
+## Fix checks for disallowed property/accessor duplicate declarations
+## https://github.com/microsoft/typescript-go/pull/3672
+compiler/allowJscheckJsTypeParameterNoCrash.types.diff
+compiler/fieldAndGetterWithSameName.symbols.diff
+conformance/autoAccessor11.symbols.diff
+conformance/objectLiteralErrors(target=es2015).errors.txt.diff
+conformance/objectLiteralErrors(target=es2015).symbols.diff
+conformance/objectLiteralErrors(target=es2015).types.diff
+conformance/propertyAndAccessorWithSameName.symbols.diff
+conformance/propertyAndAccessorWithSameName.types.diff
+
+## Module resolver does not guess the project root to provide speculative resolutions for self-name
+## imports in the presence of TS2209 "ambiguous project root" errors.
+## After merging repos, consider adding a `rootDir` option to these tests
+## so the core functionality remains tested.
+## https://github.com/microsoft/typescript-go/issues/3775
+compiler/nodeNextPackageSelfNameWithOutDir.errors.txt.diff
+compiler/nodeNextPackageSelfNameWithOutDirDeclDir.errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node16).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node18).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node20).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=nodenext).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node16).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node18).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node20).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=nodenext).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).errors.txt.diff
+
+## JSDoc module namepath module:A emits as unresolved module instead of any
+## https://github.com/microsoft/typescript-go/issues/3562
+conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff

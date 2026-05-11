@@ -324,6 +324,7 @@ const enumDefs = [
     { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums", constEnum: true },
     { name: "EmitFlags", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", constEnum: true },
+    { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
 ];
 
 /**

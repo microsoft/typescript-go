@@ -9,22 +9,6 @@ compiler/baseExpressionTypeParameters.types.diff
 compiler/declarationEmitGenericTypeParamerSerialization3.types.diff
 compiler/declarationEmitLocalClassDeclarationMixin.types.diff
 
-# https://github.com/microsoft/typescript-go/issues/3456
-compiler/argumentsReferenceInConstructor1_Js.js.diff
-compiler/argumentsReferenceInConstructor2_Js.js.diff
-compiler/argumentsReferenceInConstructor3_Js.js.diff
-compiler/argumentsReferenceInConstructor4_Js.js.diff
-compiler/argumentsReferenceInConstructor5_Js.js.diff
-compiler/argumentsReferenceInConstructor6_Js.js.diff
-compiler/argumentsReferenceInConstructor7_Js.js.diff
-compiler/argumentsReferenceInMethod1_Js.js.diff
-compiler/argumentsReferenceInMethod2_Js.js.diff
-compiler/argumentsReferenceInMethod3_Js.js.diff
-compiler/argumentsReferenceInMethod4_Js.js.diff
-compiler/argumentsReferenceInMethod5_Js.js.diff
-compiler/argumentsReferenceInMethod6_Js.js.diff
-compiler/argumentsReferenceInMethod7_Js.js.diff
-
 # Bug: test harness doesn't report tsconfig errors
 ## https://github.com/microsoft/typescript-go/issues/3475
 compiler/deprecatedCompilerOptions1.errors.txt.diff
@@ -79,25 +63,6 @@ compiler/isolatedDeclarationErrors.errors.txt.diff
 compiler/computedPropertiesNarrowed.errors.txt.diff
 compiler/declarationEmitTypeofRest.errors.txt.diff
 
-# Stricter module resolution in nodeNext
-## https://github.com/microsoft/typescript-go/issues/3479
-## Corsa emits new TS2307 "Cannot find module" errors for implicit index resolution and package self-name resolution that Strada accepted
-compiler/nodeNextImportModeImplicitIndexResolution2.errors.txt.diff
-compiler/nodeNextPackageSelfNameWithOutDir.errors.txt.diff
-compiler/nodeNextPackageSelfNameWithOutDirDeclDir.errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=node16).errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=node18).errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=node20).errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=nodenext).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=node16).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=node18).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=node20).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=nodenext).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).errors.txt.diff
-
 # JSX runtime module resolution change
 ## https://github.com/microsoft/typescript-go/issues/3480
 ## TS2875 error requiring `react/jsx-runtime` or `react/jsx-dev-runtime` module is no longer emitted for non-module (script) files
@@ -118,10 +83,6 @@ conformance/staticPropertyNameConflicts(target=es2015,usedefineforclassfields=fa
 compiler/multiLinePropertyAccessAndArrowFunctionIndent1.errors.txt.diff
 compiler/parseErrorIncorrectReturnToken.errors.txt.diff
 conformance/parserStatementIsNotAMemberVariableDeclaration1(alwaysstrict=true).errors.txt.diff
-
-# TS2690 (with "Did you mean 'P in K'?" mapped type suggestion) changed to TS2693 (generic "refers to a type, but is being used as a value") — mapped type suggestion lost
-## https://github.com/microsoft/typescript-go/issues/3509
-compiler/typeUsedAsTypeLiteralIndex.errors.txt.diff
 
 # Unicode escapes in identifier names now displayed as literal characters
 ## https://github.com/microsoft/typescript-go/issues/3511
@@ -173,11 +134,6 @@ conformance/moduleExportsElementAccessAssignment.js.diff
 ## https://github.com/microsoft/typescript-go/issues/3547
 conformance/typeFromPropertyAssignment39.js.diff
 
-# Decorator metadata reflects stable union type ordering
-## https://github.com/microsoft/typescript-go/issues/3548
-compiler/metadataOfUnionWithNull(strictnullchecks=true).js.diff
-compiler/metadataReferencedWithinFilteredUnion(strictnullchecks=true,target=es2015).js.diff
-
 # Missing generic type arguments no longer auto-filled with any (produces TS2314 errors)
 ## https://github.com/microsoft/typescript-go/issues/3549
 conformance/jsDeclarationsMissingGenerics(target=es2015).js.diff
@@ -193,13 +149,6 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
-
-# export = a reordered; ESM side-effect import replaces export {}
-## https://github.com/microsoft/typescript-go/issues/3552
-conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
-conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
-conformance/nodeModulesAllowJsExportAssignment(module=node20).js.diff
-conformance/nodeModulesAllowJsExportAssignment(module=nodenext).js.diff
 
 # @overload handling changes in JS declaration emit
 ## https://github.com/microsoft/typescript-go/issues/3555
@@ -221,10 +170,6 @@ conformance/callbackTagVariadicType.js.diff
 ## https://github.com/microsoft/typescript-go/issues/3557
 conformance/checkJsdocSatisfiesTag15.js.diff
 
-# Labeled statement followed by export declaration loses original text
-## https://github.com/microsoft/typescript-go/issues/3558
-conformance/labeledStatementExportDeclarationNoCrash1(module=commonjs).js.diff
-
 # CJS exports pattern changes in declaration emit
 ## https://github.com/microsoft/typescript-go/issues/3559
 compiler/jsExportAssignmentNonMutableLocation.js.diff
@@ -232,29 +177,13 @@ conformance/commonJSImportClassTypeReference.js.diff
 conformance/commonJSImportNestedClassTypeReference.js.diff
 conformance/jsDeclarationsExportDoubleAssignmentInClosure.js.diff
 
-# exportNonInitializedVariables crash in declaration emit
-## https://github.com/microsoft/typescript-go/issues/3560
-conformance/exportNonInitializedVariablesInIfThenStatementNoCrash1(module=commonjs).js.diff
-
 # noImplicitThis functions returning this now fully expand the object type
 ## https://github.com/microsoft/typescript-go/issues/3561
 compiler/noImplicitThisBigThis.js.diff
 
-# JSDoc module namepath module:A emits as unresolved module instead of any
-## https://github.com/microsoft/typescript-go/issues/3562
-conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff
-
 # definiteAssignment shorthand in object literal loses optional modifier
 ## https://github.com/microsoft/typescript-go/issues/3563
 conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff
-
-# Generic function parameter inference change
-## https://github.com/microsoft/typescript-go/issues/3564
-conformance/genericFunctionParameters.js.diff
-
-# Declaration emit trailing comma changes in destructuring parameters
-## https://github.com/microsoft/typescript-go/issues/3565
-compiler/declarationEmitDestructuring5.js.diff
 
 # Late-bound computed property [prop] preserved instead of resolved to plain prop
 ## https://github.com/microsoft/typescript-go/issues/3566
@@ -265,14 +194,6 @@ compiler/lateBoundMethodNameAssigmentJS.js.diff
 ## https://github.com/microsoft/typescript-go/issues/3567
 conformance/symbolDeclarationEmit12.js.diff
 
-# export as namespace added or restructured in declaration emit
-## https://github.com/microsoft/typescript-go/issues/3568
-conformance/jsDeclarationsExportFormsErr(target=es2015).js.diff
-
 # Declaration emit simplification of class extending built-in Array
 ## https://github.com/microsoft/typescript-go/issues/3569
 compiler/javascriptThisAssignmentInStaticBlock.js.diff
-
-# Declaration emit type parameter renaming bug (regression)
-## https://github.com/microsoft/typescript-go/issues/3570
-compiler/declarationEmitShadowing.js.diff
