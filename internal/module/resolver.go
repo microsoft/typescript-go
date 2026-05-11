@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
@@ -2156,13 +2157,33 @@ func (e *ResolvedEntrypoint) SymlinkOrRealpath() string {
 	return e.ResolvedFileName
 }
 
-func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string, disableDirectorySearch bool) []*ResolvedEntrypoint {
+// EntrypointSearchStats contains analytics about how entrypoints were discovered.
+type EntrypointSearchStats struct {
+	UsedExports        bool
+	ReadDirectoryCalls int
+	EntrypointCount    int
+}
+
+// countingFS wraps a vfs.FS and counts GetAccessibleEntries calls.
+type countingFS struct {
+	vfs.FS
+	calls int
+}
+
+func (c *countingFS) GetAccessibleEntries(path string) vfs.Entries {
+	c.calls++
+	return c.FS.GetAccessibleEntries(path)
+}
+
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string, disableDirectorySearch bool) ([]*ResolvedEntrypoint, EntrypointSearchStats) {
+	cfs := &countingFS{FS: r.host.FS()}
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
 	if packageJson.Exists() && packageJson.Contents.Exports.IsPresent() {
-		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports)
-		return entrypoints
+		entrypoints := state.loadEntrypointsFromExportMap(packageJson, packageName, packageJson.Contents.Exports, cfs)
+		stats := EntrypointSearchStats{UsedExports: true, ReadDirectoryCalls: cfs.calls, EntrypointCount: len(entrypoints)}
+		return entrypoints, stats
 	}
 
 	var result []*ResolvedEntrypoint
@@ -2184,7 +2205,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 
 	if !disableDirectorySearch {
 		otherFiles := vfsmatch.ReadDirectory(
-			r.host.FS(),
+			cfs,
 			r.host.GetCurrentDirectory(),
 			packageJson.PackageDirectory,
 			extensions.Array(),
@@ -2209,10 +2230,11 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		}
 	}
 
+	stats := EntrypointSearchStats{UsedExports: false, ReadDirectoryCalls: cfs.calls, EntrypointCount: len(result)}
 	if len(result) > 0 {
-		return result
+		return result, stats
 	}
-	return nil
+	return nil, stats
 }
 
 func (r *Resolver) createResolvedEntrypointHandlingSymlink(fileName string, moduleSpecifier string, includeConditions *collections.Set[string], excludeConditions *collections.Set[string], ending Ending) *ResolvedEntrypoint {
@@ -2236,6 +2258,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 	packageJson *packagejson.InfoCacheEntry,
 	packageName string,
 	exports packagejson.ExportsOrImports,
+	cfs *countingFS,
 ) []*ResolvedEntrypoint {
 	var loadEntrypointsFromTargetExports func(subpath string, includeConditions *collections.Set[string], excludeConditions *collections.Set[string], exports packagejson.ExportsOrImports)
 	var entrypoints []*ResolvedEntrypoint
@@ -2250,7 +2273,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 				leadingSlice, trailingSlice, _ := strings.Cut(patternPath, "*")
 				caseSensitive := r.resolver.host.FS().UseCaseSensitiveFileNames()
 				files := vfsmatch.ReadDirectory(
-					r.resolver.host.FS(),
+					cfs,
 					r.resolver.host.GetCurrentDirectory(),
 					packageJson.PackageDirectory,
 					r.extensions.Array(),
