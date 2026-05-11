@@ -369,10 +369,8 @@ func traceThreadKeyFromArgs(args map[string]any) (traceThreadKey, bool) {
 		return traceThreadKey{}, false
 	}
 
-	if checkerID, ok := args["checkerId"]; ok {
-		if key, ok := traceCheckerThreadKey(checkerID); ok {
-			return key, true
-		}
+	if checkerID, ok := args["checkerId"].(int); ok {
+		return traceThreadKey{kind: traceThreadKindChecker, index: checkerID, hasIndex: true}, true
 	}
 
 	for _, key := range traceThreadArgKeys {
@@ -384,20 +382,6 @@ func traceThreadKeyFromArgs(args map[string]any) (traceThreadKey, bool) {
 	}
 
 	return traceThreadKey{}, false
-}
-
-func traceCheckerThreadKey(checkerID any) (traceThreadKey, bool) {
-	switch checkerID := checkerID.(type) {
-	case int:
-		return traceThreadKey{kind: traceThreadKindChecker, index: checkerID, hasIndex: true}, true
-	case string:
-		if checkerID == "" {
-			return traceThreadKey{}, false
-		}
-		return traceThreadKey{kind: traceThreadKindChecker, text: checkerID}, true
-	default:
-		return traceThreadKey{kind: traceThreadKindChecker, text: fmt.Sprint(checkerID)}, true
-	}
 }
 
 func (key traceThreadKey) defaultThreadID() int {
