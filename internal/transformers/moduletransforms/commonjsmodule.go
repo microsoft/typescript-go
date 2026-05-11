@@ -1082,20 +1082,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 				// Preserve binding-pattern declarations as-is so that array destructuring keeps
 				// its native iterator semantics, then emit `exports.X = X` for each declared
 				// identifier. This form is recognized by tools like `cjs-module-lexer`.
-				//
-				// Visit the binding pattern once and reuse the visited node for both the
-				// preserved declaration and the generated export assignments so any visitor
-				// rewrites on binding names stay consistent between the two.
-				visitedName := tx.Visitor().VisitNode(v.Name())
-
-				pushVariable(tx.Factory().NewVariableDeclaration(
-					visitedName,
-					v.ExclamationToken,
-					v.Type,
-					tx.Visitor().VisitNode(v.Initializer),
-				))
-
-				tx.appendExportAssignmentsForBindingPattern(visitedName, pushExpression)
+				pushVariable(variable)
+				tx.appendExportAssignmentsForBindingPattern(v.Name(), pushExpression)
 			} else {
 				// For binding patterns, we can't do exports.{pattern} = value
 				// Just emit the assignment and let appendExportsOfVariableStatement handle the exports
