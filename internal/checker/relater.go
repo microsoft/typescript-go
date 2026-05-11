@@ -3035,7 +3035,7 @@ func (r *Relater) eachTypeRelatedToSomeType(source *Type, target *Type) Ternary 
 func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState, recursionFlags RecursionFlags) Ternary {
 	if r.overflow {
 		// Note that stack depth overflows can cause _any_ relation involving structured types to become false, so it is
-		// important do have well-defined behavior even in cases that shouldn't normally occur.
+		// important to have well-defined behavior even in cases that shouldn't normally occur.
 		return TernaryFalse
 	}
 	id, constrained := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
