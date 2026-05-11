@@ -99,10 +99,10 @@ declare const console: { log(msg: any): void; };
 {"pid":1,"tid":1,"ph":"E","cat":"check","ts":24,"name":"checkSourceFile","args":{"path":"/home/src/workspaces/project/main.ts"}},
 {"pid":1,"tid":1,"ph":"E","cat":"check","ts":25,"name":"checkSourceFiles"},
 {"pid":1,"tid":1,"ph":"B","cat":"emit","ts":26,"name":"emit"},
-{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":27,"name":"emit","args":{"path":"/home/src/workspaces/project/main.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":28,"name":"emit","args":{"path":"/home/src/workspaces/project/main.ts"}},
-{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":29,"name":"emit","args":{"path":"/home/src/workspaces/project/types.ts"}},
-{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":30,"name":"emit","args":{"path":"/home/src/workspaces/project/types.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":27,"name":"emit","args":{"path":"/home/src/workspaces/project/types.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":28,"name":"emit","args":{"path":"/home/src/workspaces/project/types.ts"}},
+{"pid":1,"tid":1,"ph":"B","cat":"emit","ts":29,"name":"emit","args":{"path":"/home/src/workspaces/project/main.ts"}},
+{"pid":1,"tid":1,"ph":"E","cat":"emit","ts":30,"name":"emit","args":{"path":"/home/src/workspaces/project/main.ts"}},
 {"pid":1,"tid":1,"ph":"E","cat":"emit","ts":31,"name":"emit"}
 ]
 

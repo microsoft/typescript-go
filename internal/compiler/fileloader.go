@@ -139,8 +139,9 @@ func processAllProgramFiles(
 			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
 		filesParser: &filesParser{
-			wg:       core.NewWorkGroup(singleThreaded),
-			maxDepth: maxNodeModuleJsDepth,
+			wg:        core.NewWorkGroup(singleThreaded),
+			parsePool: core.NewGOMAXPROCSPool(singleThreaded),
+			maxDepth:  maxNodeModuleJsDepth,
 		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
 		supportedExtensions: supportedExtensions,
