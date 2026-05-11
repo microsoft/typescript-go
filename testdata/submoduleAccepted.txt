@@ -384,6 +384,7 @@ compiler/arrayIterationLibES5TargetDifferent(nolib=true,target=esnext).errors.tx
 
 ## emit differences of no consequence ##
 compiler/assignmentToInstantiationExpression.js.diff
+compiler/javascriptThisAssignmentInStaticBlock.js.diff
 compiler/asyncArrowInClassES5(target=es2015).js.diff
 compiler/augmentedTypesVar.js.diff
 compiler/constructorWithIncompleteTypeAnnotation.js.diff
@@ -751,6 +752,7 @@ conformance/privateNamesUnique-3.errors.txt.diff
 conformance/stringLiteralTypesInImplementationSignatures2.errors.txt.diff
 conformance/stringNamedPropertyDuplicates.errors.txt.diff
 conformance/symbolDeclarationEmit12.errors.txt.diff
+conformance/symbolDeclarationEmit12.js.diff
 conformance/symbolProperty37.errors.txt.diff
 conformance/symbolProperty44.errors.txt.diff
 conformance/uniqueSymbolsPropertyNames.errors.txt.diff
@@ -940,6 +942,7 @@ compiler/jsEmitIntersectionProperty.js.diff
 compiler/lateBoundAssignmentCandidateJS3.js.diff
 conformance/jsDeclarationsClassesErr(target=es2015).js.diff
 conformance/jsDeclarationsClassLeadingOptional(target=es2015).js.diff
+conformance/jsDeclarationsExportFormsErr(target=es2015).js.diff
 conformance/jsDeclarationsExportSpecifierNonlocal(target=es2015).js.diff
 conformance/jsDeclarationsSubclassWithExplicitNoArgumentConstructor.js.diff
 conformance/jsDeclarationsThisTypes.js.diff
@@ -973,6 +976,12 @@ conformance/nodeModulesAllowJsTopLevelAwait(module=node16).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
+
+## JS declaration emit now preserves side-effect imports, declaration order changes inconsequentially
+conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node20).js.diff
+conformance/nodeModulesAllowJsExportAssignment(module=nodenext).js.diff
 
 ## `@class`/`@constructor` no longer makes functions into class declarations (inferred classes from `.prototype` are no longer supported)
 compiler/jsDeclarationsGlobalFileConstFunction.js.diff
@@ -1357,3 +1366,29 @@ conformance/objectLiteralErrors(target=es2015).symbols.diff
 conformance/objectLiteralErrors(target=es2015).types.diff
 conformance/propertyAndAccessorWithSameName.symbols.diff
 conformance/propertyAndAccessorWithSameName.types.diff
+
+## Module resolver does not guess the project root to provide speculative resolutions for self-name
+## imports in the presence of TS2209 "ambiguous project root" errors.
+## After merging repos, consider adding a `rootDir` option to these tests
+## so the core functionality remains tested.
+## https://github.com/microsoft/typescript-go/issues/3775
+compiler/nodeNextPackageSelfNameWithOutDir.errors.txt.diff
+compiler/nodeNextPackageSelfNameWithOutDirDeclDir.errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node16).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node18).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node20).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=nodenext).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node16).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node18).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node20).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=nodenext).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).errors.txt.diff
+
+## JSDoc module namepath module:A emits as unresolved module instead of any
+## https://github.com/microsoft/typescript-go/issues/3562
+conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff
+compiler/lateBoundAssignmentCandidateJS2.js.diff
+compiler/lateBoundMethodNameAssigmentJS.js.diff

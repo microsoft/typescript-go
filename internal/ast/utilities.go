@@ -1619,6 +1619,10 @@ func IsAmbientModule(node *Node) bool {
 	return IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name().Kind == KindStringLiteral || IsGlobalScopeAugmentation(node))
 }
 
+func IsAmbientModuleSymbolName(s string) bool {
+	return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
+}
+
 func IsExternalModule(file *SourceFile) bool {
 	return file.ExternalModuleIndicator != nil
 }
@@ -4010,6 +4014,23 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 	}
 	if IsFunctionLike(host) {
 		return host
+	}
+	return nil
+}
+
+// Finds the declaration that owns the JSDoc for a function-like node.
+// Keep these hosts aligned with JSDoc parameter reparsing so unmatched @param diagnostics use the same attachment rules.
+func GetNextJSDocCommentLocation(node *Node) *Node {
+	if parent := node.Parent; parent != nil {
+		switch parent.Kind {
+		case KindPropertyAssignment, KindExportAssignment, KindPropertyDeclaration, KindVariableDeclaration,
+			KindSatisfiesExpression, KindReturnStatement, KindVariableStatement, KindExpressionStatement:
+			return parent
+		case KindVariableDeclarationList:
+			if parent.AsVariableDeclarationList().Declarations.Nodes[0] == node {
+				return parent
+			}
+		}
 	}
 	return nil
 }
