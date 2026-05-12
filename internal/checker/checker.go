@@ -4339,6 +4339,9 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 }
 
 func (c *Checker) checkClassForStaticPropertyNameConflicts(node *ast.Node) {
+	if c.compilerOptions.GetUseDefineForClassFields() {
+		return
+	}
 	for _, member := range node.Members() {
 		memberNameNode := member.Name()
 		isStaticMember := ast.IsStatic(member)
@@ -4346,9 +4349,6 @@ func (c *Checker) checkClassForStaticPropertyNameConflicts(node *ast.Node) {
 			memberName, _ := c.getEffectivePropertyNameForPropertyNameNode(memberNameNode)
 			switch memberName {
 			case "name", "length", "caller", "arguments":
-				if c.compilerOptions.GetUseDefineForClassFields() {
-					break
-				}
 				message := diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1
 				className := c.symbolToString(c.getSymbolOfDeclaration(node))
 				c.error(memberNameNode, message, memberName, className)
