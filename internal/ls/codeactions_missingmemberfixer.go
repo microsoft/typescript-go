@@ -68,7 +68,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 		flags |= nodebuilder.FlagsUseSingleQuotesForStringLiteralType
 	}
 
-	t := f.typeChecker.GetTypeOfSymbolAtLocation(symbol, enclosingDeclaration)
+	t := f.typeChecker.GetWidenedType(f.typeChecker.GetTypeOfSymbolAtLocation(symbol, enclosingDeclaration))
 	var nodes []*ast.Node
 
 	switch kind {
@@ -116,13 +116,14 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 		return nodes
 
 	case ast.KindMethodSignature, ast.KindMethodDeclaration:
-		signatures := f.typeChecker.GetSignaturesOfType(t, checker.SignatureKindCall)
+		signatures := f.getCallSignatures(t)
+		preserveOptional := optional && preserveOptional&preserveOptionalFlagsMethod != 0
 		if len(signatures) == 0 {
 			return nil
 		}
 
 		if len(declarations) == 1 {
-			method := f.createSignatureDeclarationFromSignature(core.FirstOrNil(signatures), ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, ambient, quotePreference), modifiers, declarationName, optional)
+			method := f.createSignatureDeclarationFromSignature(core.FirstOrNil(signatures), ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, ambient, quotePreference), modifiers, declarationName, preserveOptional)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
@@ -134,7 +135,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 				continue
 			}
 
-			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, nil, modifiers, declarationName, optional)
+			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, nil, modifiers, declarationName, preserveOptional)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
@@ -146,12 +147,12 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 
 		if len(declarations) > len(signatures) {
 			signature := f.typeChecker.GetSignatureFromDeclaration(core.LastOrNil(declarations))
-			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, ambient, quotePreference), modifiers, declarationName, optional)
+			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, ambient, quotePreference), modifiers, declarationName, preserveOptional)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
 		} else {
-			method := f.createSignatureDeclarationFromSignatures(signatures, declarationName, optional, modifiers, quotePreference, body, enclosingDeclaration)
+			method := f.createSignatureDeclarationFromSignatures(signatures, declarationName, preserveOptional, modifiers, quotePreference, body, enclosingDeclaration)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
@@ -160,6 +161,13 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 		return nodes
 	}
 	return nil
+}
+
+func (f *missingMemberFixer) getCallSignatures(t *checker.Type) []*checker.Signature {
+	if t.IsUnion() {
+		return core.FlatMap(t.Types(), f.typeChecker.GetCallSignatures)
+	}
+	return f.typeChecker.GetCallSignatures(t)
 }
 
 func (f *missingMemberFixer) createTypeNode(t *checker.Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
