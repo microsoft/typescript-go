@@ -1450,6 +1450,7 @@ func (b *registryBuilder) extractPackage(
 	ch, _ := checker.NewChecker(aliasResolver, nil)
 	extractor := b.newExportExtractor(packageName, ch, resolver, toRealpath)
 
+	var nonModuleFiles collections.Set[tspath.Path]
 	for _, entrypoint := range aliasResolver.rootFiles {
 		if ctx.Err() != nil {
 			return nil
@@ -1459,15 +1460,31 @@ func (b *registryBuilder) extractPackage(
 			result.ambientModules[name] = append(result.ambientModules[name], entrypoint.FileName())
 		}
 		result.packageFiles[entrypoint.Path()] = entrypoint.FileName()
-		if symlink, ok := aliasResolver.symlinks[entrypoint.Path()]; ok {
+		symlink, hasSymlink := aliasResolver.symlinks[entrypoint.Path()]
+		if hasSymlink {
 			result.packageFiles[symlink.path] = symlink.fileName
 		}
+
+		hasExports := len(fileExports) > 0 && entrypoint.ExternalModuleIndicator != nil
 		if source, ok := result.failedAmbientModuleLookupSources[entrypoint.Path()]; !ok {
 			result.exports[entrypoint.Path()] = fileExports
 		} else {
 			source.packageName = packageName
+			hasExports = entrypoint.ExternalModuleIndicator != nil
+		}
+
+		if !hasExports {
+			nonModuleFiles.Add(entrypoint.Path())
+			if hasSymlink {
+				nonModuleFiles.Add(symlink.path)
+			}
 		}
 	}
+
+	// Discard entrypoints for non-module files and empty modules.
+	result.entrypoints = slices.DeleteFunc(result.entrypoints, func(ep *module.ResolvedEntrypoint) bool {
+		return nonModuleFiles.Has(b.base.toPath(ep.ResolvedFileName))
+	})
 
 	stats := extractor.Stats()
 	result.statsExports = int(stats.exports.Load())
