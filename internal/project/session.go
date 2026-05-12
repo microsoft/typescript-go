@@ -46,6 +46,10 @@ const (
 	UpdateReasonIdleCleanDiskCache
 )
 
+// watchRequestTimeout is the maximum time to wait for the client to respond to
+// a WatchFiles or UnwatchFiles request while holding the watches mutex.
+const watchRequestTimeout = time.Second
+
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
@@ -138,6 +142,13 @@ type Session struct {
 	diagnosticsRefreshCancel context.CancelFunc
 	diagnosticsRefreshMu     sync.Mutex
 
+	// warmAutoImportCancel is the cancelation function for a running
+	// auto-import cache warming task. It is cancelled on file opens,
+	// closes, changes, watched-file changes, new auto-import warming
+	// requests, and when the session closes.
+	warmAutoImportCancel context.CancelFunc
+	warmAutoImportMu     sync.Mutex
+
 	// idleCacheCleanTimer is a resettable timer for scheduling idle disk
 	// cache cleans. The timer resets on any file event (open, close,
 	// change, save, watch) and fires after 30 seconds of inactivity.
@@ -152,8 +163,7 @@ type Session struct {
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
-	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
-	watchesMu sync.Mutex
+	watches *watchRegistry
 
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
@@ -220,7 +230,7 @@ func NewSession(init *SessionInit) *Session {
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
 		pendingATAChanges:        make(map[tspath.Path]*ATAStateChange),
-		watches:                  make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
+		watches:                  newWatchRegistry(),
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
@@ -271,6 +281,7 @@ func (s *Session) Configure(config lsutil.UserPreferences) {
 	s.refreshInlayHintsIfNeeded(oldConfig, config)
 	s.refreshCodeLensIfNeeded(oldConfig, config)
 	s.refreshDiagnosticsIfNeeded(oldConfig, config)
+	s.refreshATAIfNeeded(oldConfig, config)
 }
 
 func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
@@ -279,7 +290,7 @@ func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
-	s.cancelDiagnosticsRefresh()
+	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
@@ -303,7 +314,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 }
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
-	s.cancelDiagnosticsRefresh()
+	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
@@ -315,6 +326,7 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
 	s.cancelDiagnosticsRefresh()
+	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
@@ -327,7 +339,6 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
-	s.cancelDiagnosticsRefresh()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
@@ -363,6 +374,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 	// Schedule a debounced diagnostics refresh
 	s.ScheduleDiagnosticsRefresh()
+	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 }
 
@@ -392,6 +404,7 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 
 	// Enqueue the debounced diagnostics refresh
 	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
+		defer cancel()
 		// Sleep for the debounce delay
 		select {
 		case <-time.After(s.options.DebounceDelay):
@@ -425,6 +438,15 @@ func (s *Session) cancelDiagnosticsRefresh() {
 	}
 }
 
+func (s *Session) cancelWarmAutoImportCache() {
+	s.warmAutoImportMu.Lock()
+	defer s.warmAutoImportMu.Unlock()
+	if s.warmAutoImportCancel != nil {
+		s.warmAutoImportCancel()
+		s.warmAutoImportCancel = nil
+	}
+}
+
 const idleCacheCleanDelay = 30 * time.Second
 
 func (s *Session) scheduleIdleCacheClean() {
@@ -453,7 +475,7 @@ func (s *Session) scheduleIdleCacheClean() {
 			cleanDiskCache: true,
 		})
 
-		runtime.GC()
+		go func() { runtime.GC() }()
 	})
 }
 
@@ -713,11 +735,11 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	if opts.Module != core.ModuleKindNone {
 		compilerOptions["module"] = opts.Module.String()
 	}
-	if name := moduleResolutionKindName(opts.ModuleResolution); name != "" {
-		compilerOptions["moduleResolution"] = name
+	if opts.ModuleResolution != core.ModuleResolutionKindUnknown {
+		compilerOptions["moduleResolution"] = opts.ModuleResolution.String()
 	}
 	if opts.Jsx != core.JsxEmitNone {
-		compilerOptions["jsx"] = fmt.Sprintf("%d", opts.Jsx)
+		compilerOptions["jsx"] = opts.Jsx.String()
 	}
 	if b, err := json.Marshal(compilerOptions); err == nil {
 		props["compilerOptions"] = string(b)
@@ -757,9 +779,8 @@ func boolTelemetry(v bool) string {
 func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetryMeasurements {
 	var stats lsproto.ProjectInfoTelemetryMeasurements
 	for _, sf := range sourceFiles {
-		fileName := sf.FileName()
 		size := float64(sf.End())
-		switch core.GetScriptKindFromFileName(fileName) {
+		switch sf.ScriptKind {
 		case core.ScriptKindJS:
 			stats.JsFileCount++
 			stats.JsFileSize += size
@@ -767,7 +788,7 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 			stats.JsxFileCount++
 			stats.JsxFileSize += size
 		case core.ScriptKindTS:
-			if tspath.IsDeclarationFileName(fileName) {
+			if tspath.IsDeclarationFileName(sf.FileName()) {
 				stats.DtsFileCount++
 				stats.DtsFileSize += size
 			} else {
@@ -780,25 +801,6 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 		}
 	}
 	return &stats
-}
-
-func moduleResolutionKindName(kind core.ModuleResolutionKind) string {
-	switch kind {
-	case core.ModuleResolutionKindUnknown:
-		return ""
-	case core.ModuleResolutionKindClassic:
-		return "Classic"
-	case core.ModuleResolutionKindNode10:
-		return "Node10"
-	case core.ModuleResolutionKindNode16:
-		return "Node16"
-	case core.ModuleResolutionKindNodeNext:
-		return "NodeNext"
-	case core.ModuleResolutionKindBundler:
-		return "Bundler"
-	default:
-		return ""
-	}
 }
 
 func (s *Session) Snapshot() *Snapshot {
@@ -1109,7 +1111,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	s.snapshotMu.Unlock()
 
 	// Enqueue ATA updates if needed
-	if s.typingsInstaller != nil {
+	if s.typingsInstaller != nil && !s.Config().IsATADisabled() {
 		s.triggerATAForUpdatedProjects(newSnapshot)
 	}
 
@@ -1144,29 +1146,26 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
-	session.watchesMu.Lock()
-	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
 		w := newWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				value := session.watches[key]
 				globId := WatcherID(fmt.Sprintf("%s.%d", w.WatcherID, i))
-				if value == nil {
-					value = &fileSystemWatcherValue{id: globId}
-					session.watches[key] = value
-				}
-				value.count++
-				if value.count == 1 {
+				if session.watches.Acquire(watcher, globId) {
 					newWatchers.Set(globId, watcher)
 				}
 			}
+			var watchErrors []error
 			for id, watcher := range newWatchers.Entries() {
-				if err := session.client.WatchFiles(ctx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
-					errors = append(errors, err)
+				// Create a fresh timeout per client call so earlier calls
+				// don't consume the deadline for later ones.
+				callCtx, callCancel := context.WithTimeout(ctx, watchRequestTimeout)
+				err := session.client.WatchFiles(callCtx, id, []*lsproto.FileSystemWatcher{watcher})
+				callCancel()
+				if err != nil {
+					watchErrors = append(watchErrors, err)
 				} else if logger != nil {
 					if oldWatcher == nil {
 						logger.Log(fmt.Sprintf("Added new watch: %s", id))
@@ -1176,6 +1175,19 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 					logger.Log("\t" + fileSystemWatcherGlobString(watcher))
 					logger.Log("")
 				}
+			}
+			if len(watchErrors) > 0 {
+				// Roll back ALL newly-acquired watchers on any failure to keep
+				// refcounts clean. On retry, Acquire will see them as new again.
+				// Re-registering an already-registered watcher with the client
+				// is harmless (registerCapability with the same ID replaces it).
+				for _, watcher := range newWatchers.Entries() {
+					session.watches.Release(watcher)
+				}
+				session.watches.MarkPending(w.WatcherID)
+				errors = append(errors, watchErrors...)
+			} else {
+				session.watches.ClearPending(w.WatcherID)
 			}
 			if len(w.IgnoredPaths) > 0 {
 				logger.Logf("%d paths ineligible for watching", len(w.IgnoredPaths))
@@ -1191,22 +1203,17 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		w := oldWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
-			var removedWatchers []WatcherID
+			var removedIDs []WatcherID
 			for _, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				value := session.watches[key]
-				if value == nil {
-					continue
-				}
-				if value.count <= 1 {
-					delete(session.watches, key)
-					removedWatchers = append(removedWatchers, value.id)
-				} else {
-					value.count--
+				if id, removed := session.watches.Release(watcher); removed {
+					removedIDs = append(removedIDs, id)
 				}
 			}
-			for _, id := range removedWatchers {
-				if err := session.client.UnwatchFiles(ctx, id); err != nil {
+			for _, id := range removedIDs {
+				callCtx, callCancel := context.WithTimeout(ctx, watchRequestTimeout)
+				err := session.client.UnwatchFiles(callCtx, id)
+				callCancel()
+				if err != nil {
 					errors = append(errors, err)
 				} else if logger != nil && newWatcher == nil {
 					logger.Log(fmt.Sprintf("Removed watch: %s", id))
@@ -1237,6 +1244,16 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			errors = append(errors, updateWatch(ctx, s, s.logger, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
 		},
 	)
+	// Retry config watchers whose IDs didn't change but whose previous registration failed.
+	for path, newEntry := range newSnapshot.ConfigFileRegistry.configs {
+		if oldEntry, ok := oldSnapshot.ConfigFileRegistry.configs[path]; ok {
+			if oldEntry.rootFilesWatch.ID() == newEntry.rootFilesWatch.ID() {
+				if s.watches.IsPending(newEntry.rootFilesWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newEntry.rootFilesWatch)...)
+				}
+			}
+		}
+	}
 
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
@@ -1252,15 +1269,27 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
+			} else {
+				if s.watches.IsPending(newProject.programFilesWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.programFilesWatch)...)
+				}
 			}
 			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
+			} else {
+				if s.watches.IsPending(newProject.typingsWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
+				}
 			}
 		},
 	)
 
 	if oldSnapshot.autoImportsWatch.ID() != newSnapshot.autoImportsWatch.ID() {
 		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
+	} else {
+		if s.watches.IsPending(newSnapshot.autoImportsWatch.ID()) {
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, newSnapshot.autoImportsWatch)...)
+		}
 	}
 
 	if len(errors) > 0 {
@@ -1274,6 +1303,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 func (s *Session) Close() {
 	// Cancel any pending diagnostics refresh
 	s.cancelDiagnosticsRefresh()
+	// Cancel any pending auto-import cache warming
+	s.cancelWarmAutoImportCache()
 	// Cancel any pending idle cache clean
 	s.cancelIdleCacheClean()
 	// Cancel periodic performance telemetry
@@ -1460,6 +1491,14 @@ func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, ne
 	}
 }
 
+func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
+	if oldPrefs.IsATADisabled() && !newPrefs.IsATADisabled() {
+		// ATA was re-enabled; schedule a diagnostics refresh so the next snapshot update
+		// re-triggers ATA for existing projects with the new setting.
+		s.ScheduleDiagnosticsRefresh()
+	}
+}
+
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
 	if !s.options.PushDiagnosticsEnabled {
 		return
@@ -1619,6 +1658,56 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 		) {
 			return
 		}
-		_, _ = s.GetCurrentLanguageServiceWithAutoImports(ctx, changedFile)
+
+		// Cancel any previous auto-import warming and create a new cancellable context.
+		// Only publish the new cancel func if the derived context is still active,
+		// and make the stored cancel func a no-op once that warming task is done.
+		s.warmAutoImportMu.Lock()
+		if s.warmAutoImportCancel != nil {
+			s.warmAutoImportCancel()
+		}
+		warmCtx, cancel := context.WithCancel(ctx)
+		if warmCtx.Err() == nil {
+			s.warmAutoImportCancel = func() {
+				if warmCtx.Err() != nil {
+					return
+				}
+				s.logger.Logf("Cancelling auto-import warming for file %s", changedFile.FileName())
+				cancel()
+			}
+		}
+		s.warmAutoImportMu.Unlock()
+
+		if warmCtx.Err() != nil {
+			cancel()
+			return
+		}
+		defer cancel()
+
+		// Clone the snapshot with auto-imports using warmCtx so the expensive
+		// extraction work is cancelled if a file change arrives.
+		if !newSnapshot.tryRef() {
+			return
+		}
+		defer newSnapshot.Deref(s)
+
+		warmChange := SnapshotChange{
+			reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
+			ResourceRequest: ResourceRequest{
+				Documents:   []lsproto.DocumentUri{changedFile},
+				AutoImports: changedFile,
+			},
+		}
+		clonedSnapshot := newSnapshot.Clone(warmCtx, warmChange, newSnapshot.fs.overlays, s)
+
+		// If cancelled during clone, discard the incomplete result.
+		if warmCtx.Err() != nil {
+			clonedSnapshot.Deref(s)
+			return
+		}
+
+		// Conditionally adopt: if the session hasn't moved past newSnapshot,
+		// promote the clone so future requests benefit from the warmed cache.
+		s.adoptSnapshotChange(newSnapshot, clonedSnapshot)
 	}
 }

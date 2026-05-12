@@ -1,0 +1,13 @@
+--- old.commonJSImportClassTypeReference.js
++++ new.commonJSImportClassTypeReference.js
+@@= skipped -33, +33 lines =@@
+
+
+ //// [mod1.d.ts]
+-export class K {
++declare class K {
+     values(): K;
+ }
++export { K };
+ //// [main.d.ts]
+ export {};

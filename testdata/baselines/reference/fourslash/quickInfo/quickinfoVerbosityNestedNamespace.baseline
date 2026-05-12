@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityNestedNamespace.ts ===
+// 
 // declare namespace Outer {
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace Outer {
 // |     namespace Inner {
 // |         let x: number;
@@ -18,7 +19,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace Outer
 // | ```
 // | 
@@ -34,9 +35,9 @@
 [
   {
     "marker": {
-      "Position": 23,
+      "Position": 24,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 23
       },
       "Name": "1",
@@ -46,15 +47,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Outer\n```\n"
+          "value": "```typescript\nnamespace Outer\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 23
           }
         },
@@ -65,9 +66,9 @@
   },
   {
     "marker": {
-      "Position": 23,
+      "Position": 24,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 23
       },
       "Name": "1",
@@ -77,15 +78,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Outer {\n    namespace Inner {\n        let x: number;\n        function f(): string;\n        namespace f { }\n    }\n    let outerVal: boolean;\n}\n```\n"
+          "value": "```typescript\nnamespace Outer {\n    namespace Inner {\n        let x: number;\n        function f(): string;\n        namespace f { }\n    }\n    let outerVal: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 23
           }
         }

@@ -1,11 +1,12 @@
 // === QuickInfo ===
 === /quickinfoVerbosityNamespaceTypeAliases.ts ===
+// 
 // type BaseConfig = { host: string; port: number };
 // 
 // declare namespace Config {
 //                   ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace Config {
 // |     type Readonly<T> = { readonly [K in keyof T]: T[K]; };
 // |     type Optional<T> = { [K in keyof T]?: T[K] | undefined; };
@@ -20,7 +21,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace Config
 // | ```
 // | 
@@ -34,9 +35,9 @@
 [
   {
     "marker": {
-      "Position": 75,
+      "Position": 76,
       "LSPosition": {
-        "line": 2,
+        "line": 3,
         "character": 24
       },
       "Name": "1",
@@ -46,15 +47,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Config\n```\n"
+          "value": "```typescript\nnamespace Config\n```\n"
         },
         "range": {
           "start": {
-            "line": 2,
+            "line": 3,
             "character": 18
           },
           "end": {
-            "line": 2,
+            "line": 3,
             "character": 24
           }
         },
@@ -65,9 +66,9 @@
   },
   {
     "marker": {
-      "Position": 75,
+      "Position": 76,
       "LSPosition": {
-        "line": 2,
+        "line": 3,
         "character": 24
       },
       "Name": "1",
@@ -77,15 +78,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace Config {\n    type Readonly<T> = { readonly [K in keyof T]: T[K]; };\n    type Optional<T> = { [K in keyof T]?: T[K] | undefined; };\n    type ServerConfig = {\n        readonly host: string;\n        readonly port: number;\n    };\n}\n```\n"
+          "value": "```typescript\nnamespace Config {\n    type Readonly<T> = { readonly [K in keyof T]: T[K]; };\n    type Optional<T> = { [K in keyof T]?: T[K] | undefined; };\n    type ServerConfig = {\n        readonly host: string;\n        readonly port: number;\n    };\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 2,
+            "line": 3,
             "character": 18
           },
           "end": {
-            "line": 2,
+            "line": 3,
             "character": 24
           }
         }

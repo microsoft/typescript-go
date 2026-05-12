@@ -1007,6 +1007,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 // a boolean indicating whether the update could have caused any structure-affecting changes.
 func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], logger *logging.LogTree) bool {
 	var updateProgram bool
+	var deleteProject bool
 	var filesChanged bool
 	configFileName := entry.Value().configFileName
 	startTime := time.Now()
@@ -1020,13 +1021,13 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				entry.Value(),
 				logger.Fork("Acquiring config for project"),
 			)
+			if commandLine == nil {
+				deleteProject = true
+				filesChanged = true
+				return
+			}
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
-				if commandLine == nil {
-					b.deleteConfiguredProject(entry, logger)
-					filesChanged = true
-					return
-				}
 				entry.Change(func(p *Project) {
 					p.CommandLine = commandLine
 					p.commandLineWithTypingsFiles = nil
@@ -1046,6 +1047,9 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	})
 	if notifiedLoading && b.client != nil {
 		b.client.ProgressStart(diagnostics.Project_0, displayName)
+	}
+	if deleteProject {
+		b.deleteConfiguredProject(entry, logger)
 	}
 	if updateProgram {
 		entry.Locked(func(entry dirty.Value[*Project]) {

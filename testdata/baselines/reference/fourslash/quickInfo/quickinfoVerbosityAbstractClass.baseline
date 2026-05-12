@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityAbstractClass.ts ===
+// 
 // declare abstract class Shape {
 //                        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | abstract class Shape {
 // |     abstract area(): number;
 // |     abstract perimeter(): number;
@@ -15,7 +16,7 @@
 // | ----------------------------------------------------------------------
 //                        ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | abstract class Shape
 // | ```
 // | 
@@ -29,9 +30,9 @@
 [
   {
     "marker": {
-      "Position": 28,
+      "Position": 29,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 28
       },
       "Name": "1",
@@ -41,15 +42,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nabstract class Shape\n```\n"
+          "value": "```typescript\nabstract class Shape\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 23
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 28
           }
         },
@@ -60,9 +61,9 @@
   },
   {
     "marker": {
-      "Position": 28,
+      "Position": 29,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 28
       },
       "Name": "1",
@@ -72,15 +73,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nabstract class Shape {\n    abstract area(): number;\n    abstract perimeter(): number;\n    toString(): string;\n}\n```\n"
+          "value": "```typescript\nabstract class Shape {\n    abstract area(): number;\n    abstract perimeter(): number;\n    toString(): string;\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 23
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 28
           }
         }

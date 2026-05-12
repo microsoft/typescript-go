@@ -122,6 +122,17 @@ func (pnpFS *pnpFS) WriteFile(path string, data string) error {
 	return fs.WriteFile(formattedPath, data)
 }
 
+func (pnpFS *pnpFS) AppendFile(path string, data string) error {
+	path, _, _ = resolveVirtual(path)
+
+	fs, formattedPath, zipPath := getMatchingFS(pnpFS, path)
+	if zipPath != "" {
+		panic("cannot append to zip file")
+	}
+
+	return fs.AppendFile(formattedPath, data)
+}
+
 func splitZipPath(path string) (string, string) {
 	parts := strings.Split(path, ".zip/")
 	if len(parts) < 2 {

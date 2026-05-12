@@ -3,7 +3,6 @@ package ls
 import (
 	"context"
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -17,7 +16,7 @@ import (
 
 const (
 	symbolFormatFlags = checker.SymbolFormatFlagsWriteTypeParametersOrArguments | checker.SymbolFormatFlagsUseOnlyExternalAliasing | checker.SymbolFormatFlagsAllowAnyNodeKind | checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope
-	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
+	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | checker.TypeFormatFlagsUseInstantiationExpressions
 )
 
 func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
@@ -88,7 +87,65 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	if quickInfo == "" {
 		return "", ""
 	}
-	return quickInfo, l.getDocumentationFromDeclaration(c, symbol, declaration, node, contentFormat, false /*commentOnly*/)
+
+	documentation := l.documentationFromSignature(c, symbol, getCallOrNewExpression(node), node, contentFormat, false /*commentOnly*/)
+	if documentation != "" {
+		return quickInfo, documentation
+	}
+
+	documentation = l.getDocumentationFromDeclaration(c, symbol, declaration, node, contentFormat, false /*commentOnly*/)
+	if documentation != "" {
+		return quickInfo, documentation
+	}
+
+	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat)
+}
+
+func (l *LanguageService) documentationFromSignature(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+	if node == nil {
+		return ""
+	}
+	signature := c.GetResolvedSignature(node)
+	if signature == nil {
+		return ""
+	}
+	declaration := signature.Declaration()
+	if declaration == nil {
+		return ""
+	}
+	if ast.IsCallSignatureDeclaration(declaration) || ast.IsConstructSignatureDeclaration(declaration) {
+		return l.getDocumentationFromDeclaration(c, symbol, declaration, location, contentFormat, commentOnly)
+	}
+	return ""
+}
+
+func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) string {
+	if symbol == nil || symbol.Flags&ast.SymbolFlagsAlias == 0 {
+		return ""
+	}
+
+	aliasedSymbol := c.GetAliasedSymbol(symbol)
+	if aliasedSymbol == nil || aliasedSymbol == c.GetUnknownSymbol() {
+		return ""
+	}
+
+	candidates := []*ast.Symbol{aliasedSymbol}
+	if aliasedSymbol.ExportSymbol != nil {
+		candidates = append(candidates, aliasedSymbol.ExportSymbol)
+	}
+
+	for _, candidate := range candidates {
+		aliasedDeclaration := core.OrElse(candidate.ValueDeclaration, core.FirstOrNil(candidate.Declarations))
+		if aliasedDeclaration == nil {
+			continue
+		}
+
+		if documentation := l.getDocumentationFromDeclaration(c, candidate, aliasedDeclaration, node, contentFormat, false /*commentOnly*/); documentation != "" {
+			return documentation
+		}
+	}
+
+	return ""
 }
 
 func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
@@ -225,7 +282,7 @@ func getCommentText(comments []*ast.Node) string {
 func formatQuickInfo(quickInfo string) string {
 	var b strings.Builder
 	b.Grow(32)
-	writeCode(&b, "tsx", quickInfo)
+	writeCode(&b, "typescript", quickInfo)
 	return b.String()
 }
 
@@ -250,15 +307,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		vc = &checker.VerbosityContext{}
 	}
 	typeToString := func(t *checker.Type, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
-		if vc.Level > 0 {
-			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
-		}
+		flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		return c.TypeToStringEx(t, enclosing, flags, vc)
 	}
 	signatureToString := func(sig *checker.Signature, enclosing *ast.Node, flags checker.TypeFormatFlags) string {
-		if vc.Level > 0 {
-			flags |= checker.TypeFormatFlagsMultilineObjectLiterals
-		}
+		flags |= checker.TypeFormatFlagsMultilineObjectLiterals
 		return c.SignatureToStringEx(sig, enclosing, flags, vc)
 	}
 	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) || ast.IsThisInTypeQuery(node) {
@@ -296,6 +349,9 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			}
 			b.WriteString(prefix)
 			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
+			if symbol.Flags&ast.SymbolFlagsOptional != 0 {
+				b.WriteByte('?')
+			}
 			b.WriteString(signatureToString(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
 		}
 	}
@@ -311,6 +367,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				if cons != nil {
 					b.WriteString(" extends ")
 					b.WriteString(typeToString(cons, nil, typeFormatFlags))
+				}
+				def := c.GetDefaultFromTypeParameter(tp)
+				if def != nil {
+					b.WriteString(" = ")
+					b.WriteString(typeToString(def, nil, typeFormatFlags))
 				}
 			}
 			b.WriteString(">")
@@ -430,10 +491,17 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 				} else {
 					b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
 				}
+				if symbol.Flags&ast.SymbolFlagsOptional != 0 {
+					b.WriteByte('?')
+				}
 				b.WriteString(": ")
 			}
 			if callNode := getCallOrNewExpression(node); callNode != nil {
-				b.WriteString(signatureToString(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
+				flags := typeFormatFlags | checker.TypeFormatFlagsWriteTypeArgumentsOfSignature | checker.TypeFormatFlagsWriteArrowStyleSignature
+				if ast.IsCallExpression(callNode) {
+					flags |= checker.TypeFormatFlagsWriteCallStyleSignature
+				}
+				b.WriteString(signatureToString(c.GetResolvedSignature(callNode), container, flags))
 			} else {
 				t := c.GetTypeOfSymbolAtLocation(symbol, node)
 				// If the type is a constrained type parameter, support expansion:
@@ -471,7 +539,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		if flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0 {
 			prefix := core.IfElse(flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
-			if ast.IsIdentifier(node) && ast.IsFunctionLikeDeclaration(node.Parent) && node.Parent.Name() == node {
+			if ast.IsIdentifier(node) && (ast.IsFunctionLikeDeclaration(node.Parent) || ast.IsMethodSignatureDeclaration(node.Parent)) && node.Parent.Name() == node {
 				setDeclaration(node.Parent)
 				signatures := []*checker.Signature{c.GetSignatureFromDeclaration(node.Parent)}
 				writeSignatures(signatures, prefix, symbol)
@@ -673,14 +741,11 @@ func getSymbolAtLocationForQuickInfo(c *checker.Checker, node *ast.Node) *ast.Sy
 }
 
 func getSignaturesAtLocation(c *checker.Checker, symbol *ast.Symbol, kind checker.SignatureKind, node *ast.Node) []*checker.Signature {
-	signatures := c.GetSignaturesOfType(c.GetTypeOfSymbol(symbol), kind)
+	signatures := c.GetSignaturesOfType(c.RemoveMissingOrUndefinedType(c.GetTypeOfSymbol(symbol)), kind)
 	if len(signatures) > 1 || len(signatures) == 1 && len(signatures[0].TypeParameters()) != 0 {
 		if callNode := getCallOrNewExpression(node); callNode != nil {
-			signature := c.GetResolvedSignature(callNode)
-			// If we have a resolved signature, make sure it isn't a synthetic signature
-			if signature != nil && (slices.Contains(signatures, signature) || signature.Target() != nil && slices.Contains(signatures, signature.Target())) {
-				return []*checker.Signature{signature}
-			}
+			// We have a call or new expression, return the resolved signature
+			return []*checker.Signature{c.GetResolvedSignature(callNode)}
 		}
 	}
 	return signatures

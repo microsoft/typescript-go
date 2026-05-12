@@ -6,7 +6,7 @@
 // class Foo<T> {
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo<T> {
 // |     static whatever(): void;
 // |     constructor(public x: T);
@@ -23,7 +23,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo<T> {
 // |     static whatever(): void;
 // |     constructor(public x: T);
@@ -38,7 +38,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo<T>
 // | ```
 // | 
@@ -56,7 +56,7 @@
 // type Whatever = Foo<string>;
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | type Whatever = {
 // |     x: string;
 // |     y: string;
@@ -71,7 +71,7 @@
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | type Whatever = {
 // |     x: string;
 // |     y: string;
@@ -84,7 +84,7 @@
 // | ----------------------------------------------------------------------
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | type Whatever = Foo<string>
 // | ```
 // | 
@@ -93,7 +93,7 @@
 // const a = Foo;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const a: {
 // |     new <T>(x: T): Foo<T>;
 // |     whatever(): void;
@@ -104,7 +104,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const a: typeof Foo
 // | ```
 // | 
@@ -113,8 +113,11 @@
 // const c = Foo<string>;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | const c: { new (x: string): Foo<string>; whatever(): void; }
+// | ```typescript
+// | const c: {
+// |     new (x: string): Foo<string>;
+// |     whatever(): void;
+// | }
 // | ```
 // | 
 // | (verbosity level: 0)
@@ -122,7 +125,7 @@
 // [1].forEach(class <T> {
 //             ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (local class) class<T> {
 // |     static whatever(): void;
 // |     constructor(public x: T);
@@ -139,7 +142,7 @@
 // | ----------------------------------------------------------------------
 //             ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (local class) class<T> {
 // |     static whatever(): void;
 // |     constructor(public x: T);
@@ -154,7 +157,7 @@
 // | ----------------------------------------------------------------------
 //             ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (local class) (Anonymous class)<T>
 // | ```
 // | 
@@ -172,7 +175,7 @@
 // const b = Bar<number>;
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const b: any
 // | ```
 // | 
@@ -182,7 +185,7 @@
 // abstract class Animal {
 //                ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | abstract class Animal {
 // |     name: string;
 // |     abstract makeSound(): void;
@@ -193,7 +196,7 @@
 // | ----------------------------------------------------------------------
 //                ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | abstract class Animal
 // | ```
 // | 
@@ -205,7 +208,7 @@
 // class Dog {
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Dog {
 // |     what(this: this, that: Dog): void;
 // |     #bones: string[];
@@ -216,7 +219,7 @@
 // | ----------------------------------------------------------------------
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Dog
 // | ```
 // | 
@@ -228,7 +231,7 @@
 // const d = new Dog();
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const d: {
 // |     what(this: Dog, that: Dog): void;
 // |     #bones: string[];
@@ -239,7 +242,7 @@
 // | ----------------------------------------------------------------------
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const d: Dog
 // | ```
 // | 
@@ -260,7 +263,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo<T>\n```\n"
+          "value": "```typescript\nclass Foo<T>\n```\n"
         },
         "range": {
           "start": {
@@ -291,7 +294,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): Apple;\n    protected z: boolean;\n}\n```\n"
+          "value": "```typescript\nclass Foo<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): Apple;\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -322,7 +325,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): {\n        color: string;\n    };\n    protected z: boolean;\n}\n```\n"
+          "value": "```typescript\nclass Foo<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): {\n        color: string;\n    };\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -352,7 +355,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype Whatever = Foo<string>\n```\n"
+          "value": "```typescript\ntype Whatever = Foo<string>\n```\n"
         },
         "range": {
           "start": {
@@ -383,7 +386,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): Apple;\n    z: boolean;\n}\n```\n"
+          "value": "```typescript\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): Apple;\n    z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -414,7 +417,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): {\n        color: string;\n    };\n    z: boolean;\n}\n```\n"
+          "value": "```typescript\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): {\n        color: string;\n    };\n    z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -444,7 +447,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst a: typeof Foo\n```\n"
+          "value": "```typescript\nconst a: typeof Foo\n```\n"
         },
         "range": {
           "start": {
@@ -475,7 +478,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst a: {\n    new <T>(x: T): Foo<T>;\n    whatever(): void;\n}\n```\n"
+          "value": "```typescript\nconst a: {\n    new <T>(x: T): Foo<T>;\n    whatever(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -506,7 +509,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst c: { new (x: string): Foo<string>; whatever(): void; }\n```\n"
+          "value": "```typescript\nconst c: {\n    new (x: string): Foo<string>;\n    whatever(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -537,7 +540,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(local class) (Anonymous class)<T>\n```\n"
+          "value": "```typescript\n(local class) (Anonymous class)<T>\n```\n"
         },
         "range": {
           "start": {
@@ -568,7 +571,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(local class) class<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): Apple;\n    protected z: boolean;\n}\n```\n"
+          "value": "```typescript\n(local class) class<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): Apple;\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -599,7 +602,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\n(local class) class<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): {\n        color: string;\n    };\n    protected z: boolean;\n}\n```\n"
+          "value": "```typescript\n(local class) class<T> {\n    static whatever(): void;\n    constructor(public x: T);\n    public x: T;\n    public y: T;\n    private foo(): {\n        color: string;\n    };\n    protected z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -629,7 +632,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst b: any\n```\n"
+          "value": "```typescript\nconst b: any\n```\n"
         },
         "range": {
           "start": {
@@ -659,7 +662,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nabstract class Animal\n```\n"
+          "value": "```typescript\nabstract class Animal\n```\n"
         },
         "range": {
           "start": {
@@ -690,7 +693,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nabstract class Animal {\n    name: string;\n    abstract makeSound(): void;\n}\n```\n"
+          "value": "```typescript\nabstract class Animal {\n    name: string;\n    abstract makeSound(): void;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -720,7 +723,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Dog\n```\n"
+          "value": "```typescript\nclass Dog\n```\n"
         },
         "range": {
           "start": {
@@ -751,7 +754,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Dog {\n    what(this: this, that: Dog): void;\n    #bones: string[];\n}\n```\n"
+          "value": "```typescript\nclass Dog {\n    what(this: this, that: Dog): void;\n    #bones: string[];\n}\n```\n"
         },
         "range": {
           "start": {
@@ -781,7 +784,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst d: Dog\n```\n"
+          "value": "```typescript\nconst d: Dog\n```\n"
         },
         "range": {
           "start": {
@@ -812,7 +815,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nconst d: {\n    what(this: Dog, that: Dog): void;\n    #bones: string[];\n}\n```\n"
+          "value": "```typescript\nconst d: {\n    what(this: Dog, that: Dog): void;\n    #bones: string[];\n}\n```\n"
         },
         "range": {
           "start": {

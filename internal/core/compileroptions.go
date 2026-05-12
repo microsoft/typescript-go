@@ -30,7 +30,6 @@ type CompilerOptions struct {
 	EmitDeclarationOnly                       Tristate                                  `json:"emitDeclarationOnly,omitzero"`
 	EmitBOM                                   Tristate                                  `json:"emitBOM,omitzero"`
 	EmitDecoratorMetadata                     Tristate                                  `json:"emitDecoratorMetadata,omitzero"`
-	DownlevelIteration                        Tristate                                  `json:"downlevelIteration,omitzero"`
 	Declaration                               Tristate                                  `json:"declaration,omitzero"`
 	DeclarationDir                            string                                    `json:"declarationDir,omitzero"`
 	DeclarationMap                            Tristate                                  `json:"declarationMap,omitzero"`
@@ -124,6 +123,8 @@ type CompilerOptions struct {
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	DownlevelIteration Tristate `json:"downlevelIteration,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
 	ESModuleInterop Tristate `json:"esModuleInterop,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.
@@ -467,6 +468,10 @@ func (m ModuleResolutionKind) String() string {
 	switch m {
 	case ModuleResolutionKindUnknown:
 		panic("should not use zero value of ModuleResolutionKind")
+	case ModuleResolutionKindClassic:
+		return "Classic"
+	case ModuleResolutionKindNode10:
+		return "Node10"
 	case ModuleResolutionKindNode16:
 		return "Node16"
 	case ModuleResolutionKindNodeNext:
@@ -539,3 +544,22 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
+
+func (j JsxEmit) String() string {
+	switch j {
+	case JsxEmitNone:
+		panic("should not use zero value of JsxEmit")
+	case JsxEmitPreserve:
+		return "preserve"
+	case JsxEmitReactNative:
+		return "react-native"
+	case JsxEmitReact:
+		return "react"
+	case JsxEmitReactJSX:
+		return "react-jsx"
+	case JsxEmitReactJSXDev:
+		return "react-jsxdev"
+	default:
+		panic("unhandled case in JsxEmit.String")
+	}
+}

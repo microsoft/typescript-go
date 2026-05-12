@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityNamespacePrivateTypes.ts ===
+// 
 // declare namespace API {
 //                   ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace API {
 // |     interface InternalConfig {
 // |         secret: string;
@@ -19,7 +20,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace API
 // | ```
 // | 
@@ -36,9 +37,9 @@
 [
   {
     "marker": {
-      "Position": 21,
+      "Position": 22,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 21
       },
       "Name": "1",
@@ -48,15 +49,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace API\n```\n"
+          "value": "```typescript\nnamespace API\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 21
           }
         },
@@ -67,9 +68,9 @@
   },
   {
     "marker": {
-      "Position": 21,
+      "Position": 22,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 21
       },
       "Name": "1",
@@ -79,15 +80,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace API {\n    interface InternalConfig {\n        secret: string;\n        timeout: number;\n    }\n    function configure(config: InternalConfig): void;\n    namespace configure { }\n    let defaultConfig: InternalConfig;\n}\n```\n"
+          "value": "```typescript\nnamespace API {\n    interface InternalConfig {\n        secret: string;\n        timeout: number;\n    }\n    function configure(config: InternalConfig): void;\n    namespace configure { }\n    let defaultConfig: InternalConfig;\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 21
           }
         },

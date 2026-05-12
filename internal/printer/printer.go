@@ -233,12 +233,13 @@ func (p *Printer) getTextOfNode(node *ast.Node, includeTrivia bool) string {
 		}
 	}
 
+	canUseSourceFile := p.currentSourceFile != nil && node.Parent != nil && !ast.NodeIsSynthesized(node)
+
 	switch node.Kind {
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindJsxNamespacedName:
-		// !!! If `node` is not a parse tree node, verify its original node comes from the same source file
-		if p.currentSourceFile == nil || node.Parent == nil || ast.NodeIsSynthesized(node) {
+		if !canUseSourceFile || ast.GetSourceFileOfNode(node) != p.emitContext.MostOriginal(p.currentSourceFile.AsNode()).AsSourceFile() {
 			return node.Text()
 		}
 	case ast.KindStringLiteral,
@@ -1200,6 +1201,10 @@ func (p *Printer) emitEntityName(node *ast.EntityName) {
 		p.emitIdentifierReference(node.AsIdentifier())
 	case ast.KindQualifiedName:
 		p.emitQualifiedName(node.AsQualifiedName())
+	case ast.KindPropertyAccessExpression:
+		// TypeQuery nodes may have PropertyAccessExpression as exprName (e.g. typeof foo.x).
+		// TS's emitter handles this via generic emit(); we dispatch to expression emitter here.
+		p.emitExpression(node, ast.OperatorPrecedenceDisallowComma)
 	default:
 		panic(fmt.Sprintf("unexpected EntityName: %v", node.Kind))
 	}
@@ -1872,7 +1877,7 @@ func (p *Printer) emitTypeArguments(parentNode *ast.Node, nodes *ast.TypeArgumen
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitTypeParameterDeclarationNode, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
@@ -2317,6 +2322,9 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
 
+	case ast.KindPropertyAccessExpression:
+		// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type
+		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindExpressionWithTypeArguments:
 		// !!! Should this actually be considered a type?
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())

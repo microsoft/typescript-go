@@ -64,6 +64,10 @@ type FourslashTest struct {
 
 	capabilities   *lsproto.ClientCapabilities
 	isStradaServer bool // Whether this is a fourslash server test in Strada. !!! Remove once we don't need to diff baselines.
+
+	// Semantic token configuration
+	semanticTokenTypes     []string
+	semanticTokenModifiers []string
 }
 
 type scriptInfo struct {
@@ -192,6 +196,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		converters:              converters,
 		baselines:               make(map[baselineCommand]*strings.Builder),
 		openFiles:               make(map[string]struct{}),
+		semanticTokenTypes:      defaultSemanticTokenTypes(),
+		semanticTokenModifiers:  defaultSemanticTokenModifiers(),
 	}
 	client, closeClient := lsptestutil.NewLSPClient(t, serverOpts, f.handleServerRequest)
 	f.client = client
@@ -324,6 +330,50 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	// Wait for the initial configuration exchange to complete
 	// The server will send workspace/configuration as part of handleInitialized
 	<-f.client.Server.InitComplete()
+}
+
+func defaultSemanticTokenTypes() []string {
+	return []string{
+		string(lsproto.SemanticTokenTypeNamespace),
+		string(lsproto.SemanticTokenTypeClass),
+		string(lsproto.SemanticTokenTypeEnum),
+		string(lsproto.SemanticTokenTypeInterface),
+		string(lsproto.SemanticTokenTypeStruct),
+		string(lsproto.SemanticTokenTypeTypeParameter),
+		string(lsproto.SemanticTokenTypeType),
+		string(lsproto.SemanticTokenTypeParameter),
+		string(lsproto.SemanticTokenTypeVariable),
+		string(lsproto.SemanticTokenTypeProperty),
+		string(lsproto.SemanticTokenTypeEnumMember),
+		string(lsproto.SemanticTokenTypeDecorator),
+		string(lsproto.SemanticTokenTypeEvent),
+		string(lsproto.SemanticTokenTypeFunction),
+		string(lsproto.SemanticTokenTypeMethod),
+		string(lsproto.SemanticTokenTypeMacro),
+		string(lsproto.SemanticTokenTypeLabel),
+		string(lsproto.SemanticTokenTypeComment),
+		string(lsproto.SemanticTokenTypeString),
+		string(lsproto.SemanticTokenTypeKeyword),
+		string(lsproto.SemanticTokenTypeNumber),
+		string(lsproto.SemanticTokenTypeRegexp),
+		string(lsproto.SemanticTokenTypeOperator),
+	}
+}
+
+func defaultSemanticTokenModifiers() []string {
+	return []string{
+		string(lsproto.SemanticTokenModifierDeclaration),
+		string(lsproto.SemanticTokenModifierDefinition),
+		string(lsproto.SemanticTokenModifierReadonly),
+		string(lsproto.SemanticTokenModifierStatic),
+		string(lsproto.SemanticTokenModifierDeprecated),
+		string(lsproto.SemanticTokenModifierAbstract),
+		string(lsproto.SemanticTokenModifierAsync),
+		string(lsproto.SemanticTokenModifierModification),
+		string(lsproto.SemanticTokenModifierDocumentation),
+		string(lsproto.SemanticTokenModifierDefaultLibrary),
+		"local",
+	}
 }
 
 // If modifying the defaults, update GetDefaultCapabilities too.
@@ -518,6 +568,18 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
 		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = defaultPublishDiagnosticCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.SemanticTokens == nil {
+		capabilitiesWithDefaults.TextDocument.SemanticTokens = &lsproto.SemanticTokensClientCapabilities{
+			Requests: &lsproto.ClientSemanticTokensRequestOptions{
+				Full: &lsproto.BooleanOrClientSemanticTokensRequestFullDelta{
+					Boolean: ptrTrue,
+				},
+			},
+			TokenTypes:     defaultSemanticTokenTypes(),
+			TokenModifiers: defaultSemanticTokenModifiers(),
+			Formats:        []lsproto.TokenFormat{lsproto.TokenFormatRelative},
+		}
 	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
@@ -1500,6 +1562,40 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 			t.Fatalf("Expected no code fixes, but got: %v", titles)
 		}
 		return
+	}
+
+	for _, expected := range expectedDescriptions {
+		found := false
+		for _, action := range actions {
+			if action.Title == expected {
+				found = true
+				break
+			}
+		}
+		if !found {
+			var titles []string
+			for _, a := range actions {
+				titles = append(titles, a.Title)
+			}
+			t.Fatalf("Expected code fix with description %q not found. Available fixes: %v", expected, titles)
+		}
+	}
+}
+
+// VerifyCodeFixAvailableExact verifies that the exact set of code fix descriptions matches.
+// Unlike VerifyCodeFixAvailable, this checks both that all expected descriptions are present
+// and that no additional unexpected code fixes exist (exact count match).
+func (f *FourslashTest) VerifyCodeFixAvailableExact(t *testing.T, expectedDescriptions []string) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+
+	if len(actions) != len(expectedDescriptions) {
+		var titles []string
+		for _, a := range actions {
+			titles = append(titles, a.Title)
+		}
+		t.Fatalf("Expected exactly %d code fixes, but got %d. Available fixes: %v", len(expectedDescriptions), len(actions), titles)
 	}
 
 	for _, expected := range expectedDescriptions {
@@ -3140,6 +3236,15 @@ func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 	preferences *lsutil.UserPreferences,
 	markerOrRangeOrNames ...MarkerOrRangeOrName,
 ) {
+	f.VerifyBaselineDocumentHighlightsWithOptions(t, preferences, nil /*filesToSearch*/, markerOrRangeOrNames...)
+}
+
+func (f *FourslashTest) VerifyBaselineDocumentHighlightsWithOptions(
+	t *testing.T,
+	preferences *lsutil.UserPreferences,
+	filesToSearch []string,
+	markerOrRangeOrNames ...MarkerOrRangeOrName,
+) {
 	var markerOrRanges []MarkerOrRange
 	for _, markerOrRangeOrName := range markerOrRangeOrNames {
 		switch markerOrNameOrRange := markerOrRangeOrName.(type) {
@@ -3158,39 +3263,81 @@ func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 		}
 	}
 
-	f.verifyBaselineDocumentHighlights(t, preferences, markerOrRanges)
+	f.verifyBaselineDocumentHighlights(t, preferences, filesToSearch, markerOrRanges)
 }
 
 func (f *FourslashTest) verifyBaselineDocumentHighlights(
 	t *testing.T,
 	preferences *lsutil.UserPreferences,
+	filesToSearch []string,
 	markerOrRanges []MarkerOrRange,
 ) {
 	for _, markerOrRange := range markerOrRanges {
 		f.goToMarker(t, markerOrRange)
 
-		params := &lsproto.DocumentHighlightParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-			},
-			Position: f.currentCaretPosition,
-		}
-		result := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
-		highlights := result.DocumentHighlights
-		if highlights == nil {
-			highlights = &[]*lsproto.DocumentHighlight{}
-		}
-
 		var spans []lsproto.Location
-		for _, h := range *highlights {
-			spans = append(spans, lsproto.Location{
-				Uri:   lsconv.FileNameToDocumentURI(f.activeFilename),
-				Range: h.Range,
-			})
+		var header string
+
+		if len(filesToSearch) > 0 {
+			// Multi-file: use the custom method.
+			var searchURIs []lsproto.DocumentUri
+			for _, file := range filesToSearch {
+				searchURIs = append(searchURIs, lsconv.FileNameToDocumentURI(file))
+			}
+
+			params := &lsproto.MultiDocumentHighlightParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position:      f.currentCaretPosition,
+				FilesToSearch: searchURIs,
+			}
+			result := sendRequest(t, f, lsproto.CustomTextDocumentMultiDocumentHighlightInfo, params)
+			multiHighlights := result.MultiDocumentHighlights
+			if multiHighlights == nil {
+				multiHighlights = &[]*lsproto.MultiDocumentHighlight{}
+			}
+
+			for _, mh := range *multiHighlights {
+				for _, h := range mh.Highlights {
+					spans = append(spans, lsproto.Location{
+						Uri:   mh.Uri,
+						Range: h.Range,
+					})
+				}
+			}
+
+			var sb strings.Builder
+			sb.WriteString("// filesToSearch:\n")
+			for _, file := range filesToSearch {
+				fmt.Fprintf(&sb, "//   %s\n", file)
+			}
+			sb.WriteString("\n")
+			header = sb.String()
+		} else {
+			// Single-file: use the standard LSP method.
+			params := &lsproto.DocumentHighlightParams{
+				TextDocument: lsproto.TextDocumentIdentifier{
+					Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+				},
+				Position: f.currentCaretPosition,
+			}
+			result := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
+			highlights := result.DocumentHighlights
+			if highlights == nil {
+				highlights = &[]*lsproto.DocumentHighlight{}
+			}
+
+			for _, h := range *highlights {
+				spans = append(spans, lsproto.Location{
+					Uri:   lsconv.FileNameToDocumentURI(f.activeFilename),
+					Range: h.Range,
+				})
+			}
 		}
 
 		// Add result to baseline
-		f.addResultToBaseline(t, documentHighlightsCmd, f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+		f.addResultToBaseline(t, documentHighlightsCmd, header+f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*HIGHLIGHTS*/",
 		}))
@@ -3562,7 +3709,7 @@ func (f *FourslashTest) verifyHoverMarkdown(
 	expectedDocumentation string,
 	prefix string,
 ) {
-	expected := fmt.Sprintf("```tsx\n%s\n```\n%s", expectedText, expectedDocumentation)
+	expected := fmt.Sprintf("```typescript\n%s\n```\n%s", expectedText, expectedDocumentation)
 	assertDeepEqual(t, actual, expected, prefix+"Hover markdown content mismatch")
 }
 
@@ -3595,18 +3742,27 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
 	for marker, expectedText := range markersToNewText {
 		f.GoToMarker(t, marker)
-		params := &lsproto.TextDocumentPositionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
+		params := &lsproto.VsOnAutoInsertParams{
+			VSTextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
-			Position: f.currentCaretPosition,
+			VSPosition: f.currentCaretPosition,
+			VSCh:       ">",
 		}
 
-		requestResult := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
+		requestResult := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
 
 		var actualText *string
-		if closingTag := requestResult.CustomClosingTagCompletion; closingTag != nil {
-			actualText = &closingTag.NewText
+		if item := requestResult.VsOnAutoInsertResponseItem; item != nil && item.VSTextEdit != nil {
+			newText := item.VSTextEdit.NewText
+			if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
+				var ok bool
+				newText, ok = strings.CutPrefix(newText, "$0")
+				if !ok {
+					t.Fatalf("%sexpected JSX closing tag snippet to begin with $0, got %q", f.getCurrentPositionPrefix(), item.VSTextEdit.NewText)
+				}
+			}
+			actualText = &newText
 		}
 		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
 	}
@@ -3616,31 +3772,39 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
 	t.Helper()
 
-	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.CustomClosingTagCompletion], bool) {
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.VsOnAutoInsertResponseItem], bool) {
 		if marker.Name == nil {
-			return markerAndItem[*lsproto.CustomClosingTagCompletion]{}, false
+			return markerAndItem[*lsproto.VsOnAutoInsertResponseItem]{}, false
 		}
 
-		params := &lsproto.TextDocumentPositionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
+		params := &lsproto.VsOnAutoInsertParams{
+			VSTextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
 			},
-			Position: marker.LSPosition,
+			VSPosition: marker.LSPosition,
+			VSCh:       ">",
 		}
 
-		result := sendRequest(t, f, lsproto.CustomTextDocumentClosingTagCompletionInfo, params)
-		return markerAndItem[*lsproto.CustomClosingTagCompletion]{Marker: marker, Item: result.CustomClosingTagCompletion}, true
+		result := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
+		return markerAndItem[*lsproto.VsOnAutoInsertResponseItem]{Marker: marker, Item: result.VsOnAutoInsertResponseItem}, true
 	})
 
-	getRange := func(item *lsproto.CustomClosingTagCompletion) *lsproto.Range {
+	getRange := func(item *lsproto.VsOnAutoInsertResponseItem) *lsproto.Range {
+		// Returning nil lets annotateContentWithTooltips render the caret marker at
+		// the marker position. The text edit's range is zero-width at the cursor,
+		// which would render as an empty underline.
 		return nil
 	}
 
-	getTooltipLines := func(item, _prev *lsproto.CustomClosingTagCompletion) []string {
-		if item == nil {
+	getTooltipLines := func(item, _prev *lsproto.VsOnAutoInsertResponseItem) []string {
+		if item == nil || item.VSTextEdit == nil {
 			return []string{"No closing tag"}
 		}
-		return []string{fmt.Sprintf("newText: %q", item.NewText)}
+		format := "plaintext"
+		if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
+			format = "snippet"
+		}
+		return []string{fmt.Sprintf("%s: %q", format, item.VSTextEdit.NewText)}
 	}
 
 	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)
