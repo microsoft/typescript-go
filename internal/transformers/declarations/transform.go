@@ -2175,9 +2175,9 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 func (tx *DeclarationTransformer) getNameExpressionPreferringIdentifier(nameExpr *ast.Node) *ast.Node {
 	if ast.IsStringLiteralLike(nameExpr) && scanner.IsIdentifierText(nameExpr.Text(), core.LanguageVariantStandard) {
 		result := tx.Factory().NewIdentifier(nameExpr.Text()) // prefer non-string literal names where possible
-		// fake this into a parse tree node to the reference resolver resolves the node via `resolveName`
+		// fake this into a parse tree node so the reference resolver resolves the node via `resolveName`
 		result.Parent = nameExpr.Parent
-		result.Flags &= ^ast.NodeFlagsSynthesized
+		result.Flags &^= ast.NodeFlagsSynthesized
 		// intentionally leave Loc unset so the string isn't used as the text source of the identifier
 		return result
 	}
