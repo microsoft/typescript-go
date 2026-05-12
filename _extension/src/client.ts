@@ -178,6 +178,16 @@ export class Client implements vscode.Disposable {
         );
         this.disposables.push(this.client);
 
+        // Monkey-patch the output channel's error method to capture recent stderr lines.
+        // When the server crashes, vscode-languageclient pipes stderr to outputChannel.error(),
+        // so the error handler can include the last N lines in crash telemetry.
+        const errorHandler = this.clientOptions.errorHandler as ReportingErrorHandler;
+        const originalError = this.outputChannel.error.bind(this.outputChannel);
+        this.outputChannel.error = (...args: Parameters<typeof this.outputChannel.error>) => {
+            originalError(...args);
+            errorHandler.pushStderrLine(String(args[0]));
+        };
+
         // Register a static feature to advertise verbosityLevel support in hover capabilities.
         this.client.registerFeature(
             {
@@ -345,11 +355,26 @@ class ReportingErrorHandler implements ErrorHandler {
     telemetryReporter: tr.TelemetryReporter;
     maxRestartCount: number;
     restarts: number[];
+    private stderrBuffer: string[] = [];
+    private static readonly maxStderrLines = 40;
 
     constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number) {
         this.telemetryReporter = telemetryReporter;
         this.maxRestartCount = maxRestartCount;
         this.restarts = [];
+    }
+
+    pushStderrLine(line: string): void {
+        this.stderrBuffer.push(line);
+        if (this.stderrBuffer.length > ReportingErrorHandler.maxStderrLines) {
+            this.stderrBuffer.shift();
+        }
+    }
+
+    private consumeStderrBuffer(): string {
+        const result = this.stderrBuffer.join("\n");
+        this.stderrBuffer = [];
+        return result;
     }
 
     error(_error: Error, _message: Message | undefined, count: number | undefined): ErrorHandlerResult | Promise<ErrorHandlerResult> {
@@ -405,8 +430,10 @@ class ReportingErrorHandler implements ErrorHandler {
             default:
                 const _: never = resultingAction;
         }
+        const lastStderr = this.consumeStderrBuffer();
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionClosed", {
             resultingAction: actionString,
+            lastStderr,
         });
 
         if (resultingAction === CloseAction.DoNotRestart) {
