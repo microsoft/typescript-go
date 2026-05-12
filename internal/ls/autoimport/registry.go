@@ -28,6 +28,61 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
+var knownRecursiveSearchPackages = map[string]struct{}{
+	"@material-ui/core":             {},
+	"@material-ui/icons":            {},
+	"@sap/cds":                      {},
+	"@testing-library/react-native": {},
+	"ajv":                           {},
+	"asap":                          {},
+	"async":                         {},
+	"aws-sdk":                       {},
+	"braintree-web":                 {},
+	"core-js":                       {},
+	"core-js-pure":                  {},
+	"crypto-js":                     {},
+	"cypress-mochawesome-reporter":  {},
+	"dd-trace":                      {},
+	"dumi":                          {},
+	"dva":                           {},
+	"egg-mock":                      {},
+	"electron-log":                  {},
+	"es-abstract":                   {},
+	"es6-promise":                   {},
+	"eslint-config-taro":            {},
+	"expo":                          {},
+	"expo-router":                   {},
+	"flow-remove-types":             {},
+	"gatsby":                        {},
+	"glamor":                        {},
+	"gluegun":                       {},
+	"graphology-indices":            {},
+	"graphology-traversal":          {},
+	"graphology-utils":              {},
+	"jest-expo":                     {},
+	"lodash":                        {},
+	"lodash-es":                     {},
+	"moment":                        {},
+	"mz":                            {},
+	"next":                          {},
+	"pdfjs-dist":                    {},
+	"protobufjs":                    {},
+	"react-app-polyfill":            {},
+	"react-dev-utils":               {},
+	"react-devtools-inline":         {},
+	"recast":                        {},
+	"semver":                        {},
+	"stylelint-config-html":         {},
+	"umi":                           {},
+	"web3-provider-engine":          {},
+	"webpack":                       {},
+}
+
+func isKnownRecursiveSearchPackage(packageName string) bool {
+	_, ok := knownRecursiveSearchPackages[packageName]
+	return ok
+}
+
 type newProgramStructure int
 
 const (
@@ -875,7 +930,9 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			if pkg.realpath != "" {
 				if !seen[pkg.realpath] {
 					seen[pkg.realpath] = true
-					enableDirSearch := targetRecursivePackages == nil || allDeepImportPackages.Has(pkg.packageName)
+					enableDirSearch := targetRecursivePackages == nil ||
+						allDeepImportPackages.Has(pkg.packageName) ||
+						isKnownRecursiveSearchPackage(pkg.packageName)
 					wg.Go(func() {
 						if ctx.Err() != nil {
 							return
