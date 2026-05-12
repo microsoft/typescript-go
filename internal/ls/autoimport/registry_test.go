@@ -967,6 +967,39 @@ func TestAutoImportEntrypointDirectorySearch(t *testing.T) {
 		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
 		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files after rebuild with directory search enabled, got %d", nodeModulesBucket.FileCount)
 	})
+
+	t.Run("deep import from program update enables recursive search for that package", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Initial build with top-level import only ("my-pkg", not a deep import)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, 1, nodeModulesBucket.FileCount, "expected only 1 file (main entrypoint) before deep import")
+
+		// Now update the program to add a deep import from the same package
+		newContent := "import { main } from \"my-pkg\";\nimport { deep } from \"my-pkg/nested/deep\";\n"
+		session.DidChangeFile(ctx, indexURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: newContent}},
+		})
+
+		// After the program update, auto-imports should detect the deep import and
+		// enable recursive directory search for my-pkg, finding all .d.ts files.
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files after deep import triggers recursive search, got %d", nodeModulesBucket.FileCount)
+	})
 }
 
 const (
