@@ -1,11 +1,11 @@
 error TS6059: File 'src1/main.ts' is not under 'rootDir' 'src2'. 'rootDir' is expected to contain all source files.
   The file is in the program because:
-    Matched by default include pattern '**/*'
+    Root file specified for compilation
 
 
 !!! error TS6059: File 'src1/main.ts' is not under 'rootDir' 'src2'. 'rootDir' is expected to contain all source files.
 !!! error TS6059:   The file is in the program because:
-!!! error TS6059:     Matched by default include pattern '**/*'
+!!! error TS6059:     Root file specified for compilation
 ==== tsconfig.json (0 errors) ====
     {
         "compilerOptions": {
@@ -13,8 +13,8 @@ error TS6059: File 'src1/main.ts' is not under 'rootDir' 'src2'. 'rootDir' is ex
             "strictNullChecks": true,
             "stableTypeOrdering": true,
             "rootDir": "./src2",
-            "include": ["src1/*"]
         }
+        "include": ["src1/*"]
     }
 ==== src1/main.ts (0 errors) ====
     

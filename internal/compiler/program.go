@@ -1550,10 +1550,9 @@ func (p *Program) CommonSourceDirectory() string {
 
 func (p *Program) checkSourceFilesBelongToPath(sourceFiles []string, rootDirectory string) bool {
 	allFilesBelongToPath := true
-	absoluteRootDirectoryPath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(rootDirectory, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
 	for _, file := range sourceFiles {
 		absoluteSourceFilePath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(file, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
-		if !strings.HasPrefix(absoluteSourceFilePath, absoluteRootDirectoryPath) {
+		if !tspath.ContainsPath(rootDirectory, file, p.comparePathsOptions) {
 			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
 				kind: processingDiagnosticKindExplainingFileInclude,
 				data: &includeExplainingDiagnostic{

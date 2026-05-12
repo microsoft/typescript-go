@@ -138,11 +138,10 @@ func (p *ParsedCommandLine) CommonSourceDirectory() string {
 
 func (p *ParsedCommandLine) checkSourceFilesBelongToPath(sourceFiles []string, rootDirectory string) bool {
 	allFilesBelongToPath := true
-	absoluteRootDirectoryPath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(rootDirectory, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
 	for _, file := range sourceFiles {
 		absoluteSourceFilePath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(file, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
-		if !strings.HasPrefix(absoluteSourceFilePath, absoluteRootDirectoryPath) {
-			p.Errors = append(p.Errors, ast.NewCompilerDiagnostic(diagnostics.File_0_is_not_under_rootDir_1_rootDir_is_expected_to_contain_all_source_files, file, rootDirectory))
+		if !tspath.ContainsPath(rootDirectory, file, p.comparePathsOptions) {
+			p.Errors = append(p.Errors, ast.NewCompilerDiagnostic(diagnostics.File_0_is_not_under_rootDir_1_rootDir_is_expected_to_contain_all_source_files, absoluteSourceFilePath, rootDirectory))
 			allFilesBelongToPath = false
 		}
 	}
