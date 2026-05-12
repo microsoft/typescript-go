@@ -4255,8 +4255,8 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 
 	// Only check for reserved static identifiers on non-ambient context.
 	nodeInAmbientContext := node.Flags&ast.NodeFlagsAmbient != 0
-	if (!nodeInAmbientContext) {
-		c.checkClassForStaticPropertyNameConflicts(node);
+	if !nodeInAmbientContext {
+		c.checkClassForStaticPropertyNameConflicts(node)
 	}
 
 	baseTypeNode := ast.GetExtendsHeritageClauseElement(node)
@@ -4344,16 +4344,16 @@ func (c *Checker) checkClassForStaticPropertyNameConflicts(node *ast.Node) {
 		isStaticMember := ast.IsStatic(member)
 		if isStaticMember && memberNameNode != nil {
 			memberName, _ := c.getEffectivePropertyNameForPropertyNameNode(memberNameNode)
-			switch (memberName)  {
-				case "name", "length", "caller", "arguments":
-					if (c.compilerOptions.GetUseDefineForClassFields() ) {
-						break;
-					}
-					fallthrough;
-				case "prototype":
-					message := diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1;
-					className := c.symbolToString(c.getSymbolOfDeclaration(node))
-					c.error(memberNameNode, message, memberName, className);
+			switch memberName {
+			case "name", "length", "caller", "arguments":
+				if c.compilerOptions.GetUseDefineForClassFields() {
+					break
+				}
+				fallthrough
+			case "prototype":
+				message := diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1
+				className := c.symbolToString(c.getSymbolOfDeclaration(node))
+				c.error(memberNameNode, message, memberName, className)
 			}
 		}
 	}
