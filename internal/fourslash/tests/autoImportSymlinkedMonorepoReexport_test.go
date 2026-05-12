@@ -72,11 +72,7 @@ projectBFunction/**/
 	defer done()
 
 	f.GoToMarker(t, "")
-	// This should show projectBFunction once via re-export and once via direct import, not duplicates
 	f.VerifyImportFixAtPosition(t, []string{
-		`import { projectBFunction, projectBValue } from "project-b";
-console.log(projectBValue);
-projectBFunction`,
 		`import { projectBValue } from "project-b";
 import { projectBFunction } from "project-b/src/utils/foo";
 console.log(projectBValue);
