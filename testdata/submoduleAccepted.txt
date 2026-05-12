@@ -384,6 +384,7 @@ compiler/arrayIterationLibES5TargetDifferent(nolib=true,target=esnext).errors.tx
 
 ## emit differences of no consequence ##
 compiler/assignmentToInstantiationExpression.js.diff
+compiler/javascriptThisAssignmentInStaticBlock.js.diff
 compiler/asyncArrowInClassES5(target=es2015).js.diff
 compiler/augmentedTypesVar.js.diff
 compiler/constructorWithIncompleteTypeAnnotation.js.diff
@@ -682,15 +683,6 @@ compiler/declarationEmitUnknownImport2(target=es2015).errors.txt.diff
 conformance/circular1.errors.txt.diff
 conformance/circular3.errors.txt.diff
 
-## Corsa no longer requires tslib helpers for esModuleInterop, decorators at ES6+, or default re-exports
-## due to those flags being removed (or mandatory)
-compiler/esModuleInteropTslibHelpers.errors.txt.diff
-compiler/ctsFileInEsnextHelpers.errors.txt.diff
-compiler/importHelpersES6.errors.txt.diff
-compiler/importHelpersWithImportOrExportDefaultNoTslib.1(esmoduleinterop=true,module=commonjs).errors.txt.diff
-compiler/importHelpersWithImportOrExportDefaultNoTslib.2(esmoduleinterop=true,module=commonjs).errors.txt.diff
-compiler/importHelpersWithImportOrExportDefaultNoTslib.3(esmoduleinterop=true,module=commonjs).errors.txt.diff
-
 ## Related spans in various errors changed (these baselines are all --pretty)
 compiler/deeplyNestedAssignabilityIssue.errors.txt.diff
 compiler/esModuleInteropPrettyErrorRelatedInformation.errors.txt.diff
@@ -750,6 +742,7 @@ conformance/privateNamesUnique-3.errors.txt.diff
 conformance/stringLiteralTypesInImplementationSignatures2.errors.txt.diff
 conformance/stringNamedPropertyDuplicates.errors.txt.diff
 conformance/symbolDeclarationEmit12.errors.txt.diff
+conformance/symbolDeclarationEmit12.js.diff
 conformance/symbolProperty37.errors.txt.diff
 conformance/symbolProperty44.errors.txt.diff
 conformance/uniqueSymbolsPropertyNames.errors.txt.diff
@@ -938,6 +931,7 @@ compiler/jsEmitIntersectionProperty.js.diff
 compiler/lateBoundAssignmentCandidateJS3.js.diff
 conformance/jsDeclarationsClassesErr(target=es2015).js.diff
 conformance/jsDeclarationsClassLeadingOptional(target=es2015).js.diff
+conformance/jsDeclarationsExportFormsErr(target=es2015).js.diff
 conformance/jsDeclarationsExportSpecifierNonlocal(target=es2015).js.diff
 conformance/jsDeclarationsSubclassWithExplicitNoArgumentConstructor.js.diff
 conformance/jsDeclarationsThisTypes.js.diff
@@ -1361,3 +1355,36 @@ conformance/objectLiteralErrors(target=es2015).symbols.diff
 conformance/objectLiteralErrors(target=es2015).types.diff
 conformance/propertyAndAccessorWithSameName.symbols.diff
 conformance/propertyAndAccessorWithSameName.types.diff
+
+## Module resolver does not guess the project root to provide speculative resolutions for self-name
+## imports in the presence of TS2209 "ambiguous project root" errors.
+## After merging repos, consider adding a `rootDir` option to these tests
+## so the core functionality remains tested.
+## https://github.com/microsoft/typescript-go/issues/3775
+compiler/nodeNextPackageSelfNameWithOutDir.errors.txt.diff
+compiler/nodeNextPackageSelfNameWithOutDirDeclDir.errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node16).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node18).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=node20).errors.txt.diff
+conformance/nodeAllowJsPackageSelfName(module=nodenext).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node16).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node18).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=node20).errors.txt.diff
+conformance/nodeModulesAllowJsPackageImports(module=nodenext).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).errors.txt.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).errors.txt.diff
+
+## JSDoc module namepath module:A emits as unresolved module instead of any
+## https://github.com/microsoft/typescript-go/issues/3562
+conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff
+compiler/lateBoundAssignmentCandidateJS2.js.diff
+compiler/lateBoundMethodNameAssigmentJS.js.diff
+
+## tslib helper checks now per-file to avoid multiple checker inconsistencies
+compiler/tslibMissingHelper.errors.txt.diff
+compiler/tslibMultipleMissingHelper.errors.txt.diff
+
+## tslib helper check missing in Strada fixed in Corsa
+compiler/esModuleInteropTslibHelpers.errors.txt.diff

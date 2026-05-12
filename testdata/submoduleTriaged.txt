@@ -16,40 +16,6 @@ compiler/deprecatedCompilerOptions3.errors.txt.diff
 compiler/deprecatedCompilerOptions4.errors.txt.diff
 compiler/deprecatedCompilerOptions5.errors.txt.diff
 
-# Bug: no error reported on missing tslib helpers
-## https://github.com/microsoft/typescript-go/issues/3476
-compiler/tslibMissingHelper.errors.txt.diff
-compiler/tslibNotFoundDifferentModules.errors.txt.diff
-compiler/tslibMultipleMissingHelper.errors.txt.diff
-conformance/awaitUsingDeclarationsWithImportHelpers.errors.txt.diff
-conformance/exportAsNamespace_missingEmitHelpers.errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions1(module=node16).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions1(module=node18).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions1(module=node20).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions1(module=nodenext).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions2(module=node16).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions2(module=node18).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions2(module=node20).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions2(module=nodenext).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions3(module=node16,target=es2015).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions3(module=node18,target=es2015).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions3(module=node20,target=es2015).errors.txt.diff
-conformance/nodeModulesAllowJsImportHelpersCollisions3(module=nodenext,target=es2015).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions(module=node16).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions(module=node18).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions(module=node20).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions(module=nodenext).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions2(module=node16).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions2(module=node18).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions2(module=node20).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions2(module=nodenext).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions3(module=node16,target=es2015).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions3(module=node18,target=es2015).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions3(module=node20,target=es2015).errors.txt.diff
-conformance/nodeModulesImportHelpersCollisions3(module=nodenext,target=es2015).errors.txt.diff
-conformance/privateNameEmitHelpers.errors.txt.diff
-conformance/privateNameStaticEmitHelpers.errors.txt.diff
-conformance/usingDeclarationsWithImportHelpers.errors.txt.diff
 
 # Omnibus: Isolated declarations error changes - needs investigation
 ## https://github.com/microsoft/typescript-go/issues/3477
@@ -62,25 +28,6 @@ compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
 compiler/isolatedDeclarationErrors.errors.txt.diff
 compiler/computedPropertiesNarrowed.errors.txt.diff
 compiler/declarationEmitTypeofRest.errors.txt.diff
-
-# Stricter module resolution in nodeNext
-## https://github.com/microsoft/typescript-go/issues/3479
-## Corsa emits new TS2307 "Cannot find module" errors for implicit index resolution and package self-name resolution that Strada accepted
-compiler/nodeNextImportModeImplicitIndexResolution2.errors.txt.diff
-compiler/nodeNextPackageSelfNameWithOutDir.errors.txt.diff
-compiler/nodeNextPackageSelfNameWithOutDirDeclDir.errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=node16).errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=node18).errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=node20).errors.txt.diff
-conformance/nodeAllowJsPackageSelfName(module=nodenext).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=node16).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=node18).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=node20).errors.txt.diff
-conformance/nodeModulesAllowJsPackageImports(module=nodenext).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).errors.txt.diff
-conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).errors.txt.diff
 
 # JSX runtime module resolution change
 ## https://github.com/microsoft/typescript-go/issues/3480
@@ -200,31 +147,15 @@ conformance/jsDeclarationsExportDoubleAssignmentInClosure.js.diff
 ## https://github.com/microsoft/typescript-go/issues/3561
 compiler/noImplicitThisBigThis.js.diff
 
-# JSDoc module namepath module:A emits as unresolved module instead of any
-## https://github.com/microsoft/typescript-go/issues/3562
-conformance/jsDeclarationsModuleReferenceHasEmit(target=es2015).js.diff
-
 # definiteAssignment shorthand in object literal loses optional modifier
 ## https://github.com/microsoft/typescript-go/issues/3563
 conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff
 
-# Generic function parameter inference change
-## https://github.com/microsoft/typescript-go/issues/3564
-conformance/genericFunctionParameters.js.diff
-
 # Late-bound computed property [prop] preserved instead of resolved to plain prop
 ## https://github.com/microsoft/typescript-go/issues/3566
-compiler/lateBoundAssignmentCandidateJS2.js.diff
-compiler/lateBoundMethodNameAssigmentJS.js.diff
 
 # Symbol getter/setter declaration emit change
 ## https://github.com/microsoft/typescript-go/issues/3567
-conformance/symbolDeclarationEmit12.js.diff
-
-# export as namespace added or restructured in declaration emit
-## https://github.com/microsoft/typescript-go/issues/3568
-conformance/jsDeclarationsExportFormsErr(target=es2015).js.diff
 
 # Declaration emit simplification of class extending built-in Array
 ## https://github.com/microsoft/typescript-go/issues/3569
-compiler/javascriptThisAssignmentInStaticBlock.js.diff
