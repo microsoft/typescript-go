@@ -2156,7 +2156,7 @@ func (e *ResolvedEntrypoint) SymlinkOrRealpath() string {
 	return e.ResolvedFileName
 }
 
-func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string, disableDirectorySearch bool) []*ResolvedEntrypoint {
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string, enableDirectorySearch bool) []*ResolvedEntrypoint {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
@@ -2182,7 +2182,7 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		))
 	}
 
-	if !disableDirectorySearch {
+	if enableDirectorySearch {
 		otherFiles := vfsmatch.ReadDirectory(
 			r.host.FS(),
 			r.host.GetCurrentDirectory(),

@@ -1463,6 +1463,13 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 				s.logger.Logf("\t\t\tTotal packages: %d", bucket.PackageNames.Len())
 				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
 				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
+				if bucket.State.RecursiveSearchPackages() == nil {
+					s.logger.Log("\t\t\tRecursive search: all")
+				} else if bucket.State.RecursiveSearchPackages().Len() > 0 {
+					s.logger.Logf("\t\t\tRecursive search: %d packages", bucket.State.RecursiveSearchPackages().Len())
+				} else {
+					s.logger.Log("\t\t\tRecursive search: none")
+				}
 			}
 		}
 	}

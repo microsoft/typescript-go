@@ -41,20 +41,20 @@ const (
 // Adding a new preference here automatically integrates it into the rebuild
 // checks via Equal.
 type bucketBuildPreferences struct {
-	fileExcludePatterns                        []string
-	disableAutoImportEntrypointDirectorySearch core.Tristate
+	fileExcludePatterns                 []string
+	autoImportEntrypointDirectorySearch core.Tristate
 }
 
 func bucketBuildPreferencesFromUserPreferences(prefs lsutil.UserPreferences) bucketBuildPreferences {
 	return bucketBuildPreferences{
-		fileExcludePatterns:                        prefs.AutoImportFileExcludePatterns,
-		disableAutoImportEntrypointDirectorySearch: prefs.DisableAutoImportEntrypointDirectorySearch,
+		fileExcludePatterns:                 prefs.AutoImportFileExcludePatterns,
+		autoImportEntrypointDirectorySearch: prefs.AutoImportEntrypointDirectorySearch,
 	}
 }
 
 func (p bucketBuildPreferences) Equal(other bucketBuildPreferences) bool {
 	return core.UnorderedEqual(p.fileExcludePatterns, other.fileExcludePatterns) &&
-		p.disableAutoImportEntrypointDirectorySearch == other.disableAutoImportEntrypointDirectorySearch
+		p.autoImportEntrypointDirectorySearch == other.autoImportEntrypointDirectorySearch
 }
 
 func (p bucketBuildPreferences) Clone() bucketBuildPreferences {
@@ -89,11 +89,19 @@ type BucketState struct {
 	// If nil, no granular updates are pending.
 	// If set but multipleFilesDirty is true, the entire bucket needs to be rebuilt.
 	dirtyPackages *collections.Set[string]
+	// recursiveSearchPackages tracks which packages were recursively directory-searched
+	// when the bucket was built. nil means all non-exports packages were searched
+	// (e.g. when the autoImportEntrypointDirectorySearch preference is enabled).
+	// A non-nil set lists only the specific packages that were searched.
+	// Used for rebuild detection: a rebuild is triggered when target packages are
+	// not a subset of the currently searched packages.
+	recursiveSearchPackages *collections.Set[string]
 }
 
 func (b BucketState) Clone() BucketState {
 	b.buildPreferences = b.buildPreferences.Clone()
 	b.dirtyPackages = b.dirtyPackages.Clone()
+	b.recursiveSearchPackages = b.recursiveSearchPackages.Clone()
 	return b
 }
 
@@ -115,6 +123,10 @@ func (b BucketState) DirtyPackages() *collections.Set[string] {
 	return b.dirtyPackages
 }
 
+func (b BucketState) RecursiveSearchPackages() *collections.Set[string] {
+	return b.recursiveSearchPackages
+}
+
 func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences lsutil.UserPreferences) bool {
 	return b.newProgramStructure > 0 ||
 		b.hasDirtyFileBesides(file) ||
@@ -124,6 +136,22 @@ func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences l
 
 func (b BucketState) hasDirtyFileBesides(file tspath.Path) bool {
 	return b.multipleFilesDirty || b.dirtyFile != "" && b.dirtyFile != file
+}
+
+// recursiveSearchSubset reports whether target is a subset of current.
+// nil represents "all packages" — a superset of every concrete set.
+// Returns true if the current set already covers everything the target needs,
+// meaning no rebuild is required for recursive search purposes.
+func recursiveSearchSubset(target, current *collections.Set[string]) bool {
+	if target == nil {
+		// Target wants all packages searched — only satisfied if current is also all.
+		return current == nil
+	}
+	if current == nil {
+		// Current searched all packages, so any concrete target is satisfied.
+		return true
+	}
+	return target.IsSubsetOf(current)
 }
 
 type RegistryBucket struct {
@@ -737,16 +765,30 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	// We need all projects because a node_modules directory can be used by multiple projects.
 	allResolvedPackageNames := make(map[tspath.Path]*collections.Set[string])
 	projectReferenceOutputs := make(map[tspath.Path]string)
+	// Compute which packages have implicit deep imports (subpath imports in packages
+	// without exports). These packages need recursive directory search to discover
+	// all auto-importable files, even when the preference is disabled.
+	allDeepImportPackages := &collections.Set[string]{}
 	b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
 		program := b.host.GetProgramForProject(entry.Key())
 		if program != nil {
 			allResolvedPackageNames[entry.Key()] = getResolvedPackageNames(ctx, program)
 			addProjectReferenceOutputMappings(program, projectReferenceOutputs)
+			for name := range program.DeepImportPackageNames().Keys() {
+				allDeepImportPackages.Add(name)
+			}
 		}
 		return true
 	})
 
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
+
+	// Determine which packages need recursive directory search for this build.
+	// nil means all packages (preference is enabled for all).
+	var targetRecursivePackages *collections.Set[string]
+	if !b.userPreferences.AutoImportEntrypointDirectorySearch.IsTrue() {
+		targetRecursivePackages = allDeepImportPackages
+	}
 
 	// --- Collect node_modules tasks ---
 	var nodeModulesTasks []*nodeModulesBucketTask
@@ -758,7 +800,8 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			// !!! Optimization: handle different dependency set via granular updates
 			needsFullRebuild := bucketState.multipleFilesDirty ||
 				!nodeModulesBucket.Value().DependencyNames.Equals(dependencies) ||
-				!bucketState.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(b.userPreferences))
+				!bucketState.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(b.userPreferences)) ||
+				!recursiveSearchSubset(targetRecursivePackages, bucketState.recursiveSearchPackages)
 			dirtyPackages := bucketState.DirtyPackages()
 			canDoGranularUpdate := !needsFullRebuild && dirtyPackages.Len() > 0
 
@@ -832,11 +875,12 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			if pkg.realpath != "" {
 				if !seen[pkg.realpath] {
 					seen[pkg.realpath] = true
+					enableDirSearch := targetRecursivePackages == nil || allDeepImportPackages.Has(pkg.packageName)
 					wg.Go(func() {
 						if ctx.Err() != nil {
 							return
 						}
-						result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+						result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, enableDirSearch)
 						if result != nil {
 							extractionMu.Lock()
 							extractionCache[pkg.realpath] = result
@@ -850,11 +894,12 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			} else if pkg.typesRealpath != "" {
 				if !seen[pkg.typesRealpath] {
 					seen[pkg.typesRealpath] = true
+					// @types packages always get directory search
 					wg.Go(func() {
 						if ctx.Err() != nil {
 							return
 						}
-						result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+						result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, true /*enableDirectorySearch*/)
 						if result != nil {
 							extractionMu.Lock()
 							extractionCache[pkg.typesRealpath] = result
@@ -877,7 +922,8 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			if ctx.Err() != nil {
 				return
 			}
-			result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns)
+			// @types fallback packages always get directory search
+			result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, true /*enableDirectorySearch*/)
 			if result != nil {
 				extractionMu.Lock()
 				extractionCache[pkg.typesRealpath] = result
@@ -906,11 +952,11 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			if task.isUpdate {
 				b.updateNodeModulesBucket(
 					ctx, br, task.existingBucket, task.dirtyPackages, task.discovered, extractionCache,
-					nodeModulesLogger.Fork(task.dirName))
+					targetRecursivePackages, nodeModulesLogger.Fork(task.dirName))
 			} else {
 				b.buildNodeModulesBucket(
 					ctx, br, task.dependencyNames, task.dirPath, task.discovered, task.directoryPackageNames, extractionCache,
-					nodeModulesLogger.Fork(task.dirName))
+					targetRecursivePackages, nodeModulesLogger.Fork(task.dirName))
 			}
 		})
 	}
@@ -1323,13 +1369,14 @@ func (b *registryBuilder) extractPackage(
 	packageName string,
 	projectReferenceOutputs map[tspath.Path]string,
 	fileExcludePatterns *vfsmatch.SpecMatcher,
+	enableDirectorySearch bool,
 ) *perPackageExtractionResult {
 	if packageJson == nil || !packageJson.DirectoryExists {
 		return nil
 	}
 	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
-	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName, b.userPreferences.DisableAutoImportEntrypointDirectorySearch.IsTrue())
+	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName, enableDirectorySearch)
 	if packageEntrypoints == nil {
 		return nil
 	}
@@ -1487,6 +1534,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	discovered []*discoveredPackage,
 	directoryPackageNames *collections.Set[string],
 	extractionCache map[string]*perPackageExtractionResult,
+	recursiveSearchPackages *collections.Set[string],
 	logger *logging.LogTree,
 ) {
 	if ctx.Err() != nil {
@@ -1522,7 +1570,8 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		AmbientModuleNames: extraction.ambientModuleNames,
 		Paths:              paths,
 		state: BucketState{
-			buildPreferences: bucketBuildPreferencesFromUserPreferences(b.userPreferences),
+			buildPreferences:        bucketBuildPreferencesFromUserPreferences(b.userPreferences),
+			recursiveSearchPackages: recursiveSearchPackages.Clone(),
 		},
 	}
 	result.entrypoints = make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports))
@@ -1573,6 +1622,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	dirtyPackages *collections.Set[string],
 	discovered []*discoveredPackage,
 	extractionCache map[string]*perPackageExtractionResult,
+	recursiveSearchPackages *collections.Set[string],
 	logger *logging.LogTree,
 ) {
 	if ctx.Err() != nil {
@@ -1667,7 +1717,8 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		AmbientModuleNames: newAmbientModuleNames,
 		Paths:              newPaths,
 		state: BucketState{
-			buildPreferences: bucketBuildPreferencesFromUserPreferences(b.userPreferences),
+			buildPreferences:        bucketBuildPreferencesFromUserPreferences(b.userPreferences),
+			recursiveSearchPackages: recursiveSearchPackages.Clone(),
 		},
 	}
 	result.entrypoints = newEntrypoints

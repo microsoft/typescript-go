@@ -101,10 +101,10 @@
             {
                 "title": "TypeScript",
                 "properties": {
-                    "js/ts.preferences.disableAutoImportEntrypointDirectorySearch": {
+                    "js/ts.preferences.autoImportEntrypointDirectorySearch": {
                         "type": "boolean",
                         "default": false,
-                        "markdownDescription": "Disables recursive directory search for auto-importable files in packages that lack `exports` in their `package.json`. When enabled, only the main entrypoint of such packages is available for auto-import.",
+                        "markdownDescription": "Enables recursive directory search for auto-importable files in all packages that lack `exports` in their `package.json`. When disabled (default), only the main entrypoint and subpaths that are directly imported by your project are available for auto-import.",
                         "scope": "language-overridable"
                     }
                 }

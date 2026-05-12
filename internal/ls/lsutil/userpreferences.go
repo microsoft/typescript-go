@@ -76,11 +76,11 @@ type UserPreferences struct {
 
 	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `raw:"importModuleSpecifierPreference" config:"preferences.importModuleSpecifier"` // !!!
 	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding                modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
-	AutoImportSpecifierExcludeRegexes          []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
-	AutoImportFileExcludePatterns              []string                                               `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
-	DisableAutoImportEntrypointDirectorySearch core.Tristate                                          `raw:"disableAutoImportEntrypointDirectorySearch" config:"preferences.disableAutoImportEntrypointDirectorySearch"`
-	PreferTypeOnlyAutoImports                  core.Tristate                                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
+	ImportModuleSpecifierEnding         modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
+	AutoImportSpecifierExcludeRegexes   []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
+	AutoImportFileExcludePatterns       []string                                               `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
+	AutoImportEntrypointDirectorySearch core.Tristate                                          `raw:"autoImportEntrypointDirectorySearch" config:"preferences.autoImportEntrypointDirectorySearch"`
+	PreferTypeOnlyAutoImports           core.Tristate                                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
 
 	// ------- OrganizeImports -------
 
