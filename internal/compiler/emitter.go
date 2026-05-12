@@ -239,7 +239,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		NoEmitHelpers:       options.NoEmitHelpers.IsTrue(),
 		SourceMap:           options.DeclarationMap.IsTrue(),
 		InlineSourceMap:     options.InlineSourceMap.IsTrue(),
-		// Explicitly do not passthru either `inline` option
+		// Explicitly do not passthru `inlineSources`
 		// !!!
 	}
 
