@@ -7721,7 +7721,7 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 	case ast.KindExpressionWithTypeArguments:
 		return c.checkExpressionWithTypeArguments(node)
 	case ast.KindSatisfiesExpression:
-		return c.checkSatisfiesExpression(node)
+		return c.checkSatisfiesExpression(node, checkMode)
 	case ast.KindMetaProperty:
 		return c.checkMetaProperty(node)
 	case ast.KindDeleteExpression:
@@ -10639,7 +10639,7 @@ func (c *Checker) getInstantiationExpressionType(exprType *Type, node *ast.Node)
 	return result
 }
 
-func (c *Checker) checkSatisfiesExpression(node *ast.Node) *Type {
+func (c *Checker) checkSatisfiesExpression(node *ast.Node, checkMode CheckMode) *Type {
 	typeNode := node.Type()
 	c.checkSourceElement(typeNode)
 	exprType := c.checkExpression(node.Expression())
@@ -10647,8 +10647,10 @@ func (c *Checker) checkSatisfiesExpression(node *ast.Node) *Type {
 	if c.isErrorType(targetType) {
 		return targetType
 	}
-	errorNode := core.IfElse(typeNode.Flags&ast.NodeFlagsReparsed != 0, typeNode, node)
-	c.checkTypeAssignableToAndOptionallyElaborate(exprType, targetType, errorNode, node.Expression(), diagnostics.Type_0_does_not_satisfy_the_expected_type_1, nil)
+	if checkMode&CheckModeTypeOnly == 0 {
+		errorNode := core.IfElse(typeNode.Flags&ast.NodeFlagsReparsed != 0, typeNode, node)
+		c.checkTypeAssignableToAndOptionallyElaborate(exprType, targetType, errorNode, node.Expression(), diagnostics.Type_0_does_not_satisfy_the_expected_type_1, nil)
+	}
 	return exprType
 }
 

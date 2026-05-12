@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/satisfiesCircularReference.ts] ////
+
+=== satisfiesCircularReference.ts ===
+// Circular reference after satisfies should produce errors, not panic
+const f = () => 42 satisfies typeof f
+>f : () => any
+>() => 42 satisfies typeof f : () => any
+>42 satisfies typeof f : 42
+>42 : 42
+>f : () => any
+
+// These cases should work without errors
+const g = () => g satisfies typeof g
+>g : () => any
+>() => g satisfies typeof g : () => any
+>g satisfies typeof g : () => any
+>g : () => any
+>g : () => any
+

@@ -1,0 +1,15 @@
+satisfiesCircularReference.ts(2,7): error TS7023: 'f' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+satisfiesCircularReference.ts(2,20): error TS1360: Type 'number' does not satisfy the expected type '() => any'.
+
+
+==== satisfiesCircularReference.ts (2 errors) ====
+    // Circular reference after satisfies should produce errors, not panic
+    const f = () => 42 satisfies typeof f
+          ~
+!!! error TS7023: 'f' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+                       ~~~~~~~~~
+!!! error TS1360: Type 'number' does not satisfy the expected type '() => any'.
+    
+    // These cases should work without errors
+    const g = () => g satisfies typeof g
+    
