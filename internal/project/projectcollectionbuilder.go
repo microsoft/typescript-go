@@ -249,12 +249,15 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		return true
 	})
 
-	// Handle opened file
-	if summary.Opened != "" || summary.Reopened != "" {
+	// Handle opened/closed files
+	if summary.Opened != "" || summary.Reopened != "" || summary.Closed.Len() > 0 {
 		var toRemoveProjects collections.Set[tspath.Path]
-		fileName := core.FirstNonZero(summary.Opened, summary.Reopened).FileName()
-		path := b.toPath(fileName)
-		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		var openFileResult searchResult
+		if summary.Opened != "" || summary.Reopened != "" {
+			fileName := core.FirstNonZero(summary.Opened, summary.Reopened).FileName()
+			path := b.toPath(fileName)
+			openFileResult = b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		}
 		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 			toRemoveProjects.Add(entry.Key())
 			return true

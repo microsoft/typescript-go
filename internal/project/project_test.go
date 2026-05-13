@@ -14,6 +14,23 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+type publishDiagnosticsCall = struct {
+	Ctx    context.Context
+	Params *lsproto.PublishDiagnosticsParams
+}
+
+// filterDiagnosticsByURI returns all PublishDiagnostics calls matching the given URI,
+// starting from the given index.
+func filterDiagnosticsByURI(calls []publishDiagnosticsCall, uri lsproto.DocumentUri, from int) []publishDiagnosticsCall {
+	var result []publishDiagnosticsCall
+	for i := from; i < len(calls); i++ {
+		if calls[i].Params.Uri == uri {
+			result = append(result, calls[i])
+		}
+	}
+	return result
+}
+
 // These tests explicitly verify ProgramUpdateKind using subtests with shared helpers.
 func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Parallel()
@@ -354,6 +371,38 @@ func TestPushDiagnostics(t *testing.T) {
 			}
 		}
 		assert.Assert(t, hasGlobalDiag, "expected a 'Cannot find global' diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+	})
+
+	t.Run("updates tsconfig diagnostics after all TS files in project have been closed", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// After opening, there should be a tsconfig diagnostics call with one diagnostic.
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after opening file")
+		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after opening file")
+
+		callsBeforeClose := len(calls)
+
+		// Close the only open file in the project.
+		session.DidCloseFile(context.Background(), "file:///src/index.ts")
+		session.WaitForBackgroundTasks()
+
+		// After closing project, tsconfig diagnostics call with empty diagnostics.
+		calls = utils.Client().PublishDiagnosticsCalls()
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeClose)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after project close")
+		lastClearCall := clearCalls[len(clearCalls)-1]
+		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after project close")
 	})
 }
 

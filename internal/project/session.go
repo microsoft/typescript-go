@@ -35,6 +35,7 @@ type UpdateReason int
 const (
 	UpdateReasonUnknown UpdateReason = iota
 	UpdateReasonDidOpenFile
+	UpdateReasonDidCloseFile
 	UpdateReasonDidChangeCompilerOptionsForInferredProjects
 	UpdateReasonRequestedLanguageServicePendingChanges
 	UpdateReasonRequestedLanguageServiceProjectNotLoaded
@@ -118,6 +119,11 @@ type Session struct {
 	snapshot         *Snapshot
 	snapshotMu       sync.RWMutex
 	snapshotUpdateMu sync.Mutex
+
+	// scheduledSnapshotUpdateCancel is the cancelation function for a scheduled
+	// snapshot update. Snapshot updates are scheduled and debounced after file closes.
+	scheduledSnapshotUpdateCancel context.CancelFunc
+	scheduledSnapshotUpdateMu     sync.Mutex
 
 	pendingUserConfigChanges bool
 	userConfigRWMu           sync.Mutex
@@ -282,6 +288,7 @@ func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
+	s.cancelScheduledSnapshotUpdate()
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
 	s.pendingFileChangesMu.Lock()
@@ -307,11 +314,12 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
-	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind: FileChangeKindClose,
 		URI:  uri,
 	})
+	s.pendingFileChangesMu.Unlock()
+	s.ScheduleSnapshotUpdate(UpdateReasonDidCloseFile)
 }
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
@@ -428,6 +436,74 @@ func (s *Session) cancelDiagnosticsRefresh() {
 	}
 }
 
+func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
+	s.scheduledSnapshotUpdateMu.Lock()
+	defer s.scheduledSnapshotUpdateMu.Unlock()
+
+	// Cancel any existing scheduled snapshot update
+	if s.scheduledSnapshotUpdateCancel != nil {
+		s.scheduledSnapshotUpdateCancel()
+		if s.options.LoggingEnabled {
+			s.logger.Log("Delaying scheduled snapshot update...")
+		}
+	} else if s.options.LoggingEnabled {
+		s.logger.Log("Scheduling new snapshot update...")
+	}
+
+	// Create a new cancellable context for the debounce task
+	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
+	s.scheduledSnapshotUpdateCancel = cancel
+
+	// Enqueue the debounced snapshot update
+	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
+		defer cancel()
+		// Sleep for the debounce delay
+		select {
+		case <-time.After(s.options.DebounceDelay):
+			// Delay completed, proceed with update
+		case <-ctx.Done():
+			// Context was cancelled, newer events arrived or another snapshot update ran
+			return
+		}
+
+		// Clear the cancel function since we're about to execute the update
+		s.scheduledSnapshotUpdateMu.Lock()
+		s.scheduledSnapshotUpdateCancel = nil
+		s.scheduledSnapshotUpdateMu.Unlock()
+
+		if s.options.LoggingEnabled {
+			s.logger.Log("Running scheduled snapshot update")
+		}
+
+		s.snapshotUpdateMu.Lock()
+		defer s.snapshotUpdateMu.Unlock()
+
+		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+		if fileChanges.IsEmpty() && len(ataChanges) == 0 && newConfig == nil {
+			return
+		}
+
+		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:      reason,
+			fileChanges: fileChanges,
+			ataChanges:  ataChanges,
+			newConfig:   newConfig,
+		})
+	})
+}
+
+func (s *Session) cancelScheduledSnapshotUpdate() {
+	s.scheduledSnapshotUpdateMu.Lock()
+	defer s.scheduledSnapshotUpdateMu.Unlock()
+	if s.scheduledSnapshotUpdateCancel != nil {
+		s.scheduledSnapshotUpdateCancel()
+		if s.options.LoggingEnabled {
+			s.logger.Log("Canceled scheduled snapshot update")
+		}
+		s.scheduledSnapshotUpdateCancel = nil
+	}
+}
+
 func (s *Session) cancelWarmAutoImportCache() {
 	s.warmAutoImportMu.Lock()
 	defer s.warmAutoImportMu.Unlock()
@@ -454,6 +530,7 @@ func (s *Session) scheduleIdleCacheClean() {
 
 		s.snapshotUpdateMu.Lock()
 		defer s.snapshotUpdateMu.Unlock()
+		s.cancelScheduledSnapshotUpdate()
 
 		ctx := s.backgroundCtx
 		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
@@ -810,6 +887,7 @@ func (s *Session) getSnapshot(
 ) *Snapshot {
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
+	s.cancelScheduledSnapshotUpdate()
 
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
@@ -1291,6 +1369,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 }
 
 func (s *Session) Close() {
+	// Cancel any pending scheduled snapshot update
+	s.cancelScheduledSnapshotUpdate()
 	// Cancel any pending diagnostics refresh
 	s.cancelDiagnosticsRefresh()
 	// Cancel any pending auto-import cache warming
