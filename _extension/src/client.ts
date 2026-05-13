@@ -221,7 +221,7 @@ export class Client implements vscode.Disposable {
                 default:
                     const _: never = d.telemetryPurpose;
                     this.telemetryReporter.sendTelemetryErrorEvent("languageServer.unexpectedTelemetryPurpose", {
-                        telemetryPurpose: vscode.l10n.t(String(d.telemetryPurpose)),
+                        telemetryPurpose: String(d.telemetryPurpose),
                     });
                     break;
             }
