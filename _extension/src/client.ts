@@ -358,8 +358,9 @@ class ReportingErrorHandler implements ErrorHandler {
     maxRestartCount: number;
     restarts: number[];
     private stderrBuffer: string[] = [];
+    private capturingPanic = false;
     private static readonly maxStderrLines = 40;
-    private static readonly maxStderrBytes = 8192;
+    private static readonly maxStderrLength = 8192;
 
     constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number) {
         this.telemetryReporter = telemetryReporter;
@@ -369,9 +370,16 @@ class ReportingErrorHandler implements ErrorHandler {
 
     pushStderrLine(line: string): void {
         for (const l of line.split("\n")) {
-            this.stderrBuffer.push(l);
-            if (this.stderrBuffer.length > ReportingErrorHandler.maxStderrLines) {
-                this.stderrBuffer.shift();
+            if (!this.capturingPanic) {
+                if (/^panic:/.test(l.trimStart())) {
+                    this.capturingPanic = true;
+                }
+                else {
+                    continue;
+                }
+            }
+            if (this.stderrBuffer.length < ReportingErrorHandler.maxStderrLines) {
+                this.stderrBuffer.push(l);
             }
         }
     }
@@ -379,7 +387,8 @@ class ReportingErrorHandler implements ErrorHandler {
     private consumeStderrBuffer(): string {
         const raw = this.stderrBuffer.join("\n");
         this.stderrBuffer = [];
-        return sanitizeStderr(raw).slice(0, ReportingErrorHandler.maxStderrBytes);
+        this.capturingPanic = false;
+        return sanitizeStderr(raw).slice(0, ReportingErrorHandler.maxStderrLength);
     }
 
     error(_error: Error, _message: Message | undefined, count: number | undefined): ErrorHandlerResult | Promise<ErrorHandlerResult> {
@@ -457,16 +466,10 @@ class ReportingErrorHandler implements ErrorHandler {
 const genericSecretKeywordRegex = /\b(key|token|signature|sig|pwd)([(\[.|])/gi;
 
 function sanitizeStderr(stderr: string): string {
-    // Extract only the panic block: from "panic:" to "Server process exited".
-    // Everything outside that range is discarded.
-    const lines = stderr.split("\n");
-    const panicStart = lines.findIndex(l => /^panic:/.test(l.trimStart()));
-    if (panicStart === -1) {
+    if (!stderr) {
         return "";
     }
-    const exitIdx = lines.findIndex((l, i) => i > panicStart && l.includes("Server process exited"));
-    const panicLines = exitIdx === -1 ? lines.slice(panicStart) : lines.slice(panicStart, exitIdx);
-    return panicLines.map(sanitizeStderrLine).join("\n");
+    return stderr.split("\n").map(sanitizeStderrLine).join("\n");
 }
 
 function sanitizeStderrLine(line: string): string {
@@ -483,12 +486,13 @@ function sanitizeStderrLine(line: string): string {
         return line;
     }
 
+    const leadingWhitespace = line.match(/^(\s*)/)?.[1] ?? "";
+
     // Stack frame file path lines look like: \t/full/path/to/file.go:123 +0x40
     // Function lines look like: github.com/microsoft/typescript-go/internal/foo.Bar(...)
     const ourModuleMarker = "typescript-go/internal";
     const idx = line.indexOf(ourModuleMarker);
     if (idx >= 0) {
-        const leadingWhitespace = line.match(/^(\s*)/)?.[1] ?? "";
         let relevantPart = line.slice(idx);
         // Strip hex offset suffixes like " +0x40"
         relevantPart = relevantPart.replace(/ \+0x[0-9a-fA-F]+$/, "");
@@ -503,11 +507,11 @@ function sanitizeStderrLine(line: string): string {
         return leadingWhitespace + relevantPart;
     }
 
-    // Non-internal frames get fully redacted.
-    const leadingWhitespace = line.match(/^(\s*)/)?.[1] ?? "";
     // Preserve completely blank lines.
     if (line.trim() === "") {
         return "";
     }
+
+    // Non-internal frames get fully redacted.
     return leadingWhitespace + "(REDACTED)";
 }
