@@ -4008,7 +4008,6 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 	if host == nil {
 		return nil
 	}
-	// !!! Strada's getEffectiveJSDocHost applies JS assignment pattern transforms (getSourceOfAssignment, getSourceOfDefaultedAssignment, etc.) not yet ported
 	if IsPropertySignatureDeclaration(host) && host.Type() != nil && IsFunctionLike(host.Type()) {
 		return host.Type()
 	}

@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
 func (p *Parser) finishReparsedNode(node *ast.Node, locationNode *ast.Node) {
@@ -482,7 +483,11 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			p.finishMutatedNode(parent)
 		}
 	case ast.KindJSDocImplementsTag:
-		if class := getClassLikeData(parent); class != nil {
+		classNode := getClassLikeNode(parent)
+		if classNode == nil {
+			p.jsErrorAtRange(jsDocHostErrorLoc(parent), diagnostics.JSDoc_0_is_not_attached_to_a_class, tag.TagName().Text())
+		} else {
+			class := getClassLikeData(classNode)
 			implementsTag := tag.AsJSDocImplementsTag()
 
 			if class.HeritageClauses != nil {
@@ -505,23 +510,29 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			} else {
 				class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
 			}
-			p.finishMutatedNode(parent)
+			p.finishMutatedNode(classNode)
 		}
 	case ast.KindJSDocAugmentsTag:
-		if class := getClassLikeData(parent); class != nil && class.HeritageClauses != nil {
-			if extendsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
-				return node.AsHeritageClause().Token == ast.KindExtendsKeyword
-			}); extendsClause != nil && len(extendsClause.AsHeritageClause().Types.Nodes) == 1 {
-				target := extendsClause.AsHeritageClause().Types.Nodes[0].AsExpressionWithTypeArguments()
-				source := tag.ClassName().AsExpressionWithTypeArguments()
-				if ast.HasSamePropertyAccessName(target.Expression, source.Expression) {
-					if target.TypeArguments == nil && source.TypeArguments != nil {
-						newArguments := p.nodeSliceArena.NewSlice(len(source.TypeArguments.Nodes))
-						for i, arg := range source.TypeArguments.Nodes {
-							newArguments[i] = p.addDeepCloneReparse(arg)
+		classNode := getClassLikeNode(parent)
+		if classNode == nil {
+			p.jsErrorAtRange(jsDocHostErrorLoc(parent), diagnostics.JSDoc_0_is_not_attached_to_a_class, tag.TagName().Text())
+		} else {
+			class := getClassLikeData(classNode)
+			if class.HeritageClauses != nil {
+				if extendsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
+					return node.AsHeritageClause().Token == ast.KindExtendsKeyword
+				}); extendsClause != nil && len(extendsClause.AsHeritageClause().Types.Nodes) == 1 {
+					target := extendsClause.AsHeritageClause().Types.Nodes[0].AsExpressionWithTypeArguments()
+					source := tag.ClassName().AsExpressionWithTypeArguments()
+					if ast.HasSamePropertyAccessName(target.Expression, source.Expression) {
+						if target.TypeArguments == nil && source.TypeArguments != nil {
+							newArguments := p.nodeSliceArena.NewSlice(len(source.TypeArguments.Nodes))
+							for i, arg := range source.TypeArguments.Nodes {
+								newArguments[i] = p.addDeepCloneReparse(arg)
+							}
+							target.TypeArguments = p.newNodeList(source.TypeArguments.Loc, newArguments)
+							p.finishMutatedNode(target.AsNode())
 						}
-						target.TypeArguments = p.newNodeList(source.TypeArguments.Loc, newArguments)
-						p.finishMutatedNode(target.AsNode())
 					}
 				}
 			}
@@ -603,13 +614,57 @@ func (p *Parser) makeNewCast(t *ast.TypeNode, e *ast.Node, isAssertion bool) *as
 	return assert
 }
 
-func getClassLikeData(parent *ast.Node) *ast.ClassLikeBase {
-	var class *ast.ClassLikeBase
-	switch parent.Kind {
+func getClassLikeNode(node *ast.Node) *ast.Node {
+	switch node.Kind {
 	case ast.KindClassDeclaration:
-		class = parent.AsClassDeclaration().ClassLikeData()
+		return node
 	case ast.KindClassExpression:
-		class = parent.AsClassExpression().ClassLikeData()
+		return node
+	case ast.KindBinaryExpression:
+		if node.AsBinaryExpression().OperatorToken.Kind == ast.KindBarBarToken {
+			return getClassLikeNode(node.AsBinaryExpression().Right)
+		}
+	case ast.KindVariableStatement:
+		declaration := core.FirstOrNil(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes)
+		if declaration == nil {
+			return nil
+		}
+		initializer := declaration.Initializer()
+		if initializer == nil {
+			return nil
+		}
+		return getClassLikeNode(initializer)
+	case ast.KindPropertyAssignment, ast.KindPropertyDeclaration:
+		initializer := node.Initializer()
+		if initializer == nil {
+			return nil
+		}
+		return getClassLikeNode(initializer)
+	case ast.KindExpressionStatement:
+		if ast.IsBinaryExpression(node.Expression()) {
+			if ast.GetAssignmentDeclarationKind(node.Expression()) == ast.JSDeclarationKindNone {
+				return nil
+			}
+			return getClassLikeNode(ast.GetRightMostAssignedExpression(node.Expression()))
+		}
 	}
-	return class
+	return nil
+}
+
+func getClassLikeData(classNode *ast.Node) *ast.ClassLikeBase {
+	switch classNode.Kind {
+	case ast.KindClassDeclaration:
+		return classNode.AsClassDeclaration().ClassLikeData()
+	case ast.KindClassExpression:
+		return classNode.AsClassExpression().ClassLikeData()
+	}
+	return nil
+}
+
+func jsDocHostErrorLoc(node *ast.Node) core.TextRange {
+	name := node.Name()
+	if name == nil {
+		return node.Loc
+	}
+	return name.Loc
 }
