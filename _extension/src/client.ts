@@ -49,6 +49,7 @@ export class Client implements vscode.Disposable {
     isInitialized = false;
 
     private exe: ExeInfo | undefined;
+    private errorHandler: ReportingErrorHandler;
 
     constructor(
         outputChannel: vscode.LogOutputChannel,
@@ -60,6 +61,17 @@ export class Client implements vscode.Disposable {
         this.traceOutputChannel = traceOutputChannel;
         this.initializedEventEmitter = initializedEventEmitter;
         this.telemetryReporter = telemetryReporter;
+        this.errorHandler = new ReportingErrorHandler(this.telemetryReporter, 5);
+
+        // Monkey-patch the output channel's error method to capture recent stderr lines.
+        // When the server crashes, vscode-languageclient pipes stderr to outputChannel.error(),
+        // so the error handler can include the last N lines in crash telemetry.
+        const originalError = this.outputChannel.error.bind(this.outputChannel);
+        this.outputChannel.error = (...args: Parameters<typeof this.outputChannel.error>) => {
+            originalError(...args);
+            this.errorHandler.pushStderrLine(String(args[0]));
+        };
+
         this.documentSelector = [
             ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
             ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
@@ -72,7 +84,7 @@ export class Client implements vscode.Disposable {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
             },
-            errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5),
+            errorHandler: this.errorHandler,
             middleware: {
                 workspace: {
                     ...configurationMiddleware,
@@ -177,16 +189,6 @@ export class Client implements vscode.Disposable {
             this.clientOptions,
         );
         this.disposables.push(this.client);
-
-        // Monkey-patch the output channel's error method to capture recent stderr lines.
-        // When the server crashes, vscode-languageclient pipes stderr to outputChannel.error(),
-        // so the error handler can include the last N lines in crash telemetry.
-        const errorHandler = this.clientOptions.errorHandler as ReportingErrorHandler;
-        const originalError = this.outputChannel.error.bind(this.outputChannel);
-        this.outputChannel.error = (...args: Parameters<typeof this.outputChannel.error>) => {
-            originalError(...args);
-            errorHandler.pushStderrLine(String(args[0]));
-        };
 
         // Register a static feature to advertise verbosityLevel support in hover capabilities.
         this.client.registerFeature(
@@ -357,6 +359,7 @@ class ReportingErrorHandler implements ErrorHandler {
     restarts: number[];
     private stderrBuffer: string[] = [];
     private static readonly maxStderrLines = 40;
+    private static readonly maxStderrBytes = 8192;
 
     constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number) {
         this.telemetryReporter = telemetryReporter;
@@ -365,14 +368,16 @@ class ReportingErrorHandler implements ErrorHandler {
     }
 
     pushStderrLine(line: string): void {
-        this.stderrBuffer.push(line);
-        if (this.stderrBuffer.length > ReportingErrorHandler.maxStderrLines) {
-            this.stderrBuffer.shift();
+        for (const l of line.split("\n")) {
+            this.stderrBuffer.push(l);
+            if (this.stderrBuffer.length > ReportingErrorHandler.maxStderrLines) {
+                this.stderrBuffer.shift();
+            }
         }
     }
 
     private consumeStderrBuffer(): string {
-        const result = this.stderrBuffer.join("\n");
+        const result = this.stderrBuffer.join("\n").slice(0, ReportingErrorHandler.maxStderrBytes);
         this.stderrBuffer = [];
         return result;
     }
