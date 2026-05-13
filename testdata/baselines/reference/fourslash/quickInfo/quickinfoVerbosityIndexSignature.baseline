@@ -28,12 +28,8 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const f: {
-// |     [a: string]: {
-// |         banana: number;
-// |     };
-// |     [a: number]: {
-// |         banana: number;
-// |     };
+// |     [a: string]: Apple;
+// |     [a: number]: Apple;
 // | }
 // | ```
 // | 
@@ -196,7 +192,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst f: {\n    [a: string]: {\n        banana: number;\n    };\n    [a: number]: {\n        banana: number;\n    };\n}\n```\n"
+          "value": "```typescript\nconst f: {\n    [a: string]: Apple;\n    [a: number]: Apple;\n}\n```\n"
         },
         "range": {
           "start": {

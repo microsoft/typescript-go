@@ -53,9 +53,7 @@
 // |     value: T;
 // |     left: TreeNode<T> | undefined;
 // |     right: TreeNode<T> | undefined;
-// |     orange?: {
-// |         name: string;
-// |     } | undefined;
+// |     orange?: Orange;
 // | }
 // | ```
 // | 
@@ -87,9 +85,7 @@
 // |     value: number;
 // |     left: TreeNode<number> | undefined;
 // |     right: TreeNode<number> | undefined;
-// |     orange?: {
-// |         name: string;
-// |     } | undefined;
+// |     orange?: Orange;
 // | }
 // | ```
 // | 
@@ -258,7 +254,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype TreeNode<T> = {\n    value: T;\n    left: TreeNode<T> | undefined;\n    right: TreeNode<T> | undefined;\n    orange?: {\n        name: string;\n    } | undefined;\n}\n```\n"
+          "value": "```typescript\ntype TreeNode<T> = {\n    value: T;\n    left: TreeNode<T> | undefined;\n    right: TreeNode<T> | undefined;\n    orange?: Orange;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -350,7 +346,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst m: {\n    value: number;\n    left: TreeNode<number> | undefined;\n    right: TreeNode<number> | undefined;\n    orange?: {\n        name: string;\n    } | undefined;\n}\n```\n"
+          "value": "```typescript\nconst m: {\n    value: number;\n    left: TreeNode<number> | undefined;\n    right: TreeNode<number> | undefined;\n    orange?: Orange;\n}\n```\n"
         },
         "range": {
           "start": {

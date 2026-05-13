@@ -11,10 +11,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const g: () => Promise<{
-// |     color: string;
-// |     size: number;
-// | }>
+// | const g: () => Promise<Apple>
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -102,7 +99,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst g: () => Promise<{\n    color: string;\n    size: number;\n}>\n```\n"
+          "value": "```typescript\nconst g: () => Promise<Apple>\n```\n"
         },
         "range": {
           "start": {

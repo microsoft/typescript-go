@@ -70,11 +70,9 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const f: {
-// |     a: "a" | "c";
-// |     foo: (a: {
-// |         param: "a" | "c";
-// |     }) => number;
-// |     bar(b: "b" | "d"): string;
+// |     a: FooType;
+// |     foo: (a: FooParam) => number;
+// |     bar(b: BarParam): string;
 // | }
 // | ```
 // | 
@@ -84,11 +82,9 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const f: {
-// |     a: "a" | "c";
-// |     foo: (a: {
-// |         param: FooType;
-// |     }) => number;
-// |     bar(b: "b" | "d"): string;
+// |     a: FooType;
+// |     foo: (a: FooParam) => number;
+// |     bar(b: BarParam): string;
 // | }
 // | ```
 // | 
@@ -132,12 +128,8 @@
 // | ```typescript
 // | const f: {
 // |     a: "a" | "c";
-// |     foo: (a: {
-// |         param: "a" | "c";
-// |     }) => number;
-// |     bar(b: {
-// |         param: "a" | "c";
-// |     }): string;
+// |     foo: (a: FooParam) => number;
+// |     bar(b: FooParam): string;
 // | }
 // | ```
 // | 
@@ -192,9 +184,7 @@
 //           ^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const a: {
-// |     a: string;
-// | }
+// | const a: Foo<string>
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -443,7 +433,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: FooType;\n    }) => number;\n    bar(b: \"b\" | \"d\"): string;\n}\n```\n"
+          "value": "```typescript\nconst f: {\n    a: FooType;\n    foo: (a: FooParam) => number;\n    bar(b: BarParam): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -454,8 +444,7 @@
             "line": 28,
             "character": 11
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 2
     }
@@ -474,7 +463,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n    bar(b: \"b\" | \"d\"): string;\n}\n```\n"
+          "value": "```typescript\nconst f: {\n    a: FooType;\n    foo: (a: FooParam) => number;\n    bar(b: BarParam): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -566,7 +555,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: {\n        param: \"a\" | \"c\";\n    }) => number;\n    bar(b: {\n        param: \"a\" | \"c\";\n    }): string;\n}\n```\n"
+          "value": "```typescript\nconst f: {\n    a: \"a\" | \"c\";\n    foo: (a: FooParam) => number;\n    bar(b: FooParam): string;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -719,7 +708,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst a: {\n    a: string;\n}\n```\n"
+          "value": "```typescript\nconst a: Foo<string>\n```\n"
         },
         "range": {
           "start": {

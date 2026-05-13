@@ -10,9 +10,9 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const obj1: {
-// |     foo: number | (string | {});
-// |     bar: boolean | (symbol | (() => void));
-// |     str: string | {};
+// |     foo: FooType;
+// |     bar: BarType;
+// |     str: Str;
 // | }
 // | ```
 // | 
@@ -22,9 +22,9 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const obj1: {
-// |     foo: number | Str;
-// |     bar: boolean | Sym;
-// |     str: string | {};
+// |     foo: FooType;
+// |     bar: BarType;
+// |     str: Str;
 // | }
 // | ```
 // | 
@@ -55,9 +55,9 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const obj2: {
-// |     foo: number | (string | {});
-// |     bar: boolean | (symbol | (() => void));
-// |     str: string | {};
+// |     foo: FooType;
+// |     bar: BarType;
+// |     str: Str;
 // | }
 // | ```
 // | 
@@ -67,9 +67,9 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const obj2: {
-// |     foo: number | Str;
-// |     bar: boolean | Sym;
-// |     str: string | {};
+// |     foo: FooType;
+// |     bar: BarType;
+// |     str: Str;
 // | }
 // | ```
 // | 
@@ -164,7 +164,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst obj1: {\n    foo: number | Str;\n    bar: boolean | Sym;\n    str: string | {};\n}\n```\n"
+          "value": "```typescript\nconst obj1: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -175,8 +175,7 @@
             "line": 5,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 2
     }
@@ -195,7 +194,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst obj1: {\n    foo: number | (string | {});\n    bar: boolean | (symbol | (() => void));\n    str: string | {};\n}\n```\n"
+          "value": "```typescript\nconst obj1: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -256,7 +255,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst obj2: {\n    foo: number | Str;\n    bar: boolean | Sym;\n    str: string | {};\n}\n```\n"
+          "value": "```typescript\nconst obj2: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -267,8 +266,7 @@
             "line": 6,
             "character": 10
           }
-        },
-        "canIncreaseVerbosity": true
+        }
       },
       "verbosityLevel": 1
     }
@@ -287,7 +285,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst obj2: {\n    foo: number | (string | {});\n    bar: boolean | (symbol | (() => void));\n    str: string | {};\n}\n```\n"
+          "value": "```typescript\nconst obj2: {\n    foo: FooType;\n    bar: BarType;\n    str: Str;\n}\n```\n"
         },
         "range": {
           "start": {
