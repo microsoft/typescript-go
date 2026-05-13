@@ -154,6 +154,9 @@ const (
 	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
 	MethodGetTypeArguments                  Method = "getTypeArguments"
 
+	// Reference methods
+	MethodGetSymbolReferencesInFile Method = "getSymbolReferencesInFile"
+
 	// Diagnostic methods
 	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
 	MethodGetSemanticDiagnostics          Method = "getSemanticDiagnostics"
@@ -375,6 +378,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
+	MethodGetSymbolReferencesInFile:         unmarshallerFor[GetSymbolReferencesInFileParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -703,6 +707,14 @@ type GetTypeOfSymbolAtLocationParams struct {
 	Project  Handle[project.Project]  `json:"project"`
 	Symbol   Handle[ast.Symbol]       `json:"symbol"`
 	Location Handle[ast.Node]         `json:"location"`
+}
+
+// GetSymbolReferencesInFileParams are the parameters for the getSymbolReferencesInFile method.
+type GetSymbolReferencesInFileParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     DocumentIdentifier       `json:"file"`
+	Symbol   Handle[ast.Symbol]       `json:"symbol"`
 }
 
 // GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).

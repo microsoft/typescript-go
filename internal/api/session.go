@@ -465,6 +465,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetDeclarationDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetConfigFileParsingDiagnostics):
 		return s.handleGetConfigFileParsingDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodGetSymbolReferencesInFile):
+		return s.handleGetSymbolReferencesInFile(ctx, parsed.(*GetSymbolReferencesInFileParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -2071,4 +2073,33 @@ func (s *Session) resolveOptionalSourceFile(program *compiler.Program, file *Doc
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, file)
 	}
 	return sourceFile, nil
+}
+
+// handleGetSymbolReferencesInFile returns node handles for all identifiers in a file that reference the given symbol.
+func (s *Session) handleGetSymbolReferencesInFile(ctx context.Context, params *GetSymbolReferencesInFileParams) ([]Handle[ast.Node], error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+	if symbol == nil {
+		return nil, nil
+	}
+
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+	}
+
+	nodes := setup.checker.GetSymbolReferencesInFile(sourceFile, symbol)
+	result := make([]Handle[ast.Node], len(nodes))
+	for i, node := range nodes {
+		result[i] = NodeHandleFrom(node)
+	}
+	return result, nil
 }

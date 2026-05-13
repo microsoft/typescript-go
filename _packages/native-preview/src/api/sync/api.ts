@@ -518,6 +518,16 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
 
+    getSymbolReferencesInFile(file: DocumentIdentifier, symbol: Symbol): NodeHandle[] {
+        const data = this.client.apiRequest<string[] | null>("getSymbolReferencesInFile", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+            symbol: symbol.id,
+        });
+        return (data ?? []).map(h => new NodeHandle(h));
+    }
+
     getTypeAtLocation(node: Node): Type | undefined;
     getTypeAtLocation(nodes: readonly Node[]): (Type | undefined)[];
     getTypeAtLocation(nodeOrNodes: Node | readonly Node[]): Type | (Type | undefined)[] | undefined {

@@ -510,6 +510,16 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
 
+    async getSymbolReferencesInFile(file: DocumentIdentifier, symbol: Symbol): Promise<NodeHandle[]> {
+        const data = await this.client.apiRequest<string[] | null>("getSymbolReferencesInFile", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+            symbol: symbol.id,
+        });
+        return (data ?? []).map(h => new NodeHandle(h));
+    }
+
     getTypeAtLocation(node: Node): Promise<Type | undefined>;
     getTypeAtLocation(nodes: readonly Node[]): Promise<(Type | undefined)[]>;
     async getTypeAtLocation(nodeOrNodes: Node | readonly Node[]): Promise<Type | (Type | undefined)[] | undefined> {
