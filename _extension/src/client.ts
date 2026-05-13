@@ -244,7 +244,7 @@ export class Client implements vscode.Disposable {
         await Promise.all(this.disposables.map(d => d.dispose()));
     }
 
-    getCurrentExe(): { path: string; version: string; } | undefined {
+    getCurrentExe(): ExeInfo | undefined {
         return this.exe;
     }
 
