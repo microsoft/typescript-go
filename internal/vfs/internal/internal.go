@@ -66,6 +66,8 @@ func (vfs *Common) DirectoryExists(path string) bool {
 }
 
 func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
+	result.Symlinks = map[string]struct{}{}
+
 	addToResult := func(name string, mode fs.FileMode, isLink bool) (added bool) {
 		if mode.IsDir() {
 			result.Directories = append(result.Directories, name)
@@ -76,9 +78,6 @@ func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
 		}
 
 		if isLink {
-			if result.Symlinks == nil {
-				result.Symlinks = map[string]struct{}{}
-			}
 			result.Symlinks[name] = struct{}{}
 		}
 		return true

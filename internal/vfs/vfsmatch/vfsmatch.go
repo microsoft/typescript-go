@@ -632,11 +632,15 @@ func (v *globVisitor) visit(path, absolutePath string, depth int, resolvedRealPa
 		}
 		absDir := absPrefix + dir
 		var childRealPath string
-		if _, isSymlink := entries.Symlinks[dir]; !isSymlink {
-			// Non-symlink directory: compute realpath incrementally.
-			childRealPath = realPath + "/" + dir
+		if entries.Symlinks != nil {
+			if _, isSymlink := entries.Symlinks[dir]; !isSymlink {
+				// Non-symlink directory: compute realpath incrementally.
+				childRealPath = tspath.CombinePaths(realPath, dir)
+			}
+			// else: symlink directory; leave childRealPath empty to force Realpath call.
 		}
-		// else: symlink directory; leave childRealPath empty to force Realpath call.
+		// If Symlinks is nil, the FS doesn't track symlinks;
+		// leave childRealPath empty to call Realpath (preserving old behavior).
 		v.visit(pathPrefix+dir, absDir, depth, childRealPath)
 	}
 }

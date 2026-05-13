@@ -116,9 +116,9 @@ func TestGetAccessibleEntries(t *testing.T) {
 		assert.Check(t, ok, "expected %q to be in Symlinks", name)
 	}
 
-	// Non-symlink directory should have nil Symlinks.
+	// Non-symlink directory should have empty Symlinks.
 	entries = fs.GetAccessibleEntries(tspath.NormalizePath(target))
 	assert.DeepEqual(t, entries.Directories, []string{"dir1", "dir2"})
 	assert.DeepEqual(t, entries.Files, []string{"file1", "file2"})
-	assert.Check(t, entries.Symlinks == nil, "expected Symlinks to be nil for directory without symlinks")
+	assert.Check(t, cmp.Len(entries.Symlinks, 0), "expected Symlinks to be empty for directory without symlinks")
 }
