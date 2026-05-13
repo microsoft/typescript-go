@@ -52,6 +52,7 @@ type FS interface {
 type Entries struct {
 	Files       []string
 	Directories []string
+	Symlinks    map[string]struct{}
 }
 
 type (
