@@ -377,9 +377,9 @@ class ReportingErrorHandler implements ErrorHandler {
     }
 
     private consumeStderrBuffer(): string {
-        const result = this.stderrBuffer.join("\n").slice(0, ReportingErrorHandler.maxStderrBytes);
+        const raw = this.stderrBuffer.join("\n");
         this.stderrBuffer = [];
-        return result;
+        return sanitizeStderr(raw).slice(0, ReportingErrorHandler.maxStderrBytes);
     }
 
     error(_error: Error, _message: Message | undefined, count: number | undefined): ErrorHandlerResult | Promise<ErrorHandlerResult> {
@@ -450,4 +450,64 @@ class ReportingErrorHandler implements ErrorHandler {
 
         return { action: resultingAction };
     }
+}
+
+// Matches the server-side sanitizeStackTrace in internal/lsp/stack_sanitizer.go.
+// Strips file path prefixes that may contain PII and redacts frames outside of our module.
+const genericSecretKeywordRegex = /\b(key|token|signature|sig|pwd)([(\[.|])/gi;
+
+function sanitizeStderr(stderr: string): string {
+    // Extract only the panic block: from "panic:" to "Server process exited".
+    // Everything outside that range is discarded.
+    const lines = stderr.split("\n");
+    const panicStart = lines.findIndex(l => /^panic:/.test(l.trimStart()));
+    if (panicStart === -1) {
+        return "";
+    }
+    const exitIdx = lines.findIndex((l, i) => i > panicStart && l.includes("Server process exited"));
+    const panicLines = exitIdx === -1 ? lines.slice(panicStart) : lines.slice(panicStart, exitIdx);
+    return panicLines.map(sanitizeStderrLine).join("\n");
+}
+
+function sanitizeStderrLine(line: string): string {
+    // Keep "goroutine N [status]:" headers as-is.
+    if (/^goroutine \d+/.test(line)) {
+        return line;
+    }
+    // Keep panic message line, but redact any file path after "panic:"
+    if (/^panic:/.test(line.trimStart())) {
+        return line.trimStart();
+    }
+    // Keep "Server process exited" messages from vscode-languageclient.
+    if (line.includes("Server process exited")) {
+        return line;
+    }
+
+    // Stack frame file path lines look like: \t/full/path/to/file.go:123 +0x40
+    // Function lines look like: github.com/microsoft/typescript-go/internal/foo.Bar(...)
+    const ourModuleMarker = "typescript-go/internal";
+    const idx = line.indexOf(ourModuleMarker);
+    if (idx >= 0) {
+        const leadingWhitespace = line.match(/^(\s*)/)?.[1] ?? "";
+        let relevantPart = line.slice(idx);
+        // Strip hex offset suffixes like " +0x40"
+        relevantPart = relevantPart.replace(/ \+0x[0-9a-fA-F]+$/, "");
+        // Strip " in goroutine N" suffixes
+        relevantPart = relevantPart.replace(/ in goroutine \d+$/, "");
+        // Strip function arguments (keep parens empty)
+        relevantPart = relevantPart.replace(/\([^)]*\)$/, "()");
+        // Replace / with |> to defeat path-based secret detection
+        relevantPart = relevantPart.replace(/\//g, "|>");
+        // Defeat generic secret keyword regex
+        relevantPart = relevantPart.replace(genericSecretKeywordRegex, "$1X_X$2");
+        return leadingWhitespace + relevantPart;
+    }
+
+    // Non-internal frames get fully redacted.
+    const leadingWhitespace = line.match(/^(\s*)/)?.[1] ?? "";
+    // Preserve completely blank lines.
+    if (line.trim() === "") {
+        return "";
+    }
+    return leadingWhitespace + "(REDACTED)";
 }

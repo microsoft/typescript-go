@@ -1144,6 +1144,10 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
+	go func() {
+		time.Sleep(2 * time.Second)
+		panic("test panic after 2 seconds")
+	}()
 	if s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration {
 		s.watchEnabled = true
 	}
