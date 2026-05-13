@@ -1368,8 +1368,8 @@ func ignorePaths(paths ...string) cmp.Option {
 }
 
 var (
-	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".AdditionalTextEdits")
-	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+	completionIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Tags", ".Data", ".AdditionalTextEdits")
+	autoImportIgnoreOpts  = ignorePaths(".Kind", ".SortText", ".FilterText", ".Tags", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
 	diagnosticsIgnoreOpts = ignorePaths(".Severity", ".Source", ".RelatedInformation")
 )
 
@@ -1427,6 +1427,11 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 	if expected.Kind != nil {
 		if err := cmp.Diff(actual.Kind, expected.Kind); err != "" {
 			return fmt.Sprintf("%s:\n%s", "Kind mismatch", err)
+		}
+	}
+	if expected.Tags != nil {
+		if err := cmp.Diff(actual.Tags, expected.Tags); err != "" {
+			return fmt.Sprintf("%s:\n%s", "Tags mismatch", err)
 		}
 	}
 	if err := cmp.Diff(actual.SortText, core.OrElse(expected.SortText, new(string(ls.SortTextLocationPriority)))); err != "" {
