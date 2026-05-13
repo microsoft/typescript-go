@@ -158,14 +158,14 @@ export class Client implements vscode.Disposable {
                     this.telemetryReporter.sendTelemetryEventUntyped(
                         d.eventName,
                         { ...this.reporterCommonProperties, ...d.properties },
-                        d.measurements
+                        d.measurements,
                     );
                     break;
                 case "error":
                     this.telemetryReporter.sendTelemetryErrorEventUntyped(
                         d.eventName,
                         { ...this.reporterCommonProperties, ...d.properties },
-                        d.measurements
+                        d.measurements,
                     );
                     break;
                 default:
@@ -370,7 +370,7 @@ class ReportingErrorHandler implements ErrorHandler {
         this.telemetryReporter = telemetryReporter;
         this.maxRestartCount = maxRestartCount;
         this.restarts = [];
-        
+
         this.reporterCommonProperties = reporterCommonProperties;
     }
 

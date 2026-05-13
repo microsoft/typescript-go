@@ -85,17 +85,17 @@ export interface LSServerStart extends LSCommonProperties {
 
 export interface LSConnectionError extends LSCommonProperties {
     resultingAction: string;
-};
+}
 
 export interface LSServerConnectionClosed extends LSCommonProperties {
     resultingAction: string;
-};
+}
 
 export interface LSErrorResponse extends LSCommonProperties {
     errorCode: string;
     requestMethod: string;
     stack: string;
-};
+}
 
 export type EnableNativePreview = {};
 
