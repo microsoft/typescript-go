@@ -8,7 +8,7 @@
 // | type X = {
 // |     a: number;
 // |     b: string;
-// |     c: C;
+// |     c: {};
 // | }
 // | ```
 // | 
@@ -78,7 +78,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype X = {\n    a: number;\n    b: string;\n    c: C;\n}\n```\n"
+          "value": "```typescript\ntype X = {\n    a: number;\n    b: string;\n    c: {};\n}\n```\n"
         },
         "range": {
           "start": {

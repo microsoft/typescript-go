@@ -33,7 +33,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const y: <T extends FooType>(x: T) => void
+// | const y: <T extends number | (string | {})>(x: T) => void
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -41,7 +41,7 @@
 //       ^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const y: <T extends FooType>(x: T) => void
+// | const y: <T extends number | Str>(x: T) => void
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -202,7 +202,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst y: <T extends FooType>(x: T) => void\n```\n"
+          "value": "```typescript\nconst y: <T extends number | Str>(x: T) => void\n```\n"
         },
         "range": {
           "start": {
@@ -213,7 +213,8 @@
             "line": 5,
             "character": 7
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -232,7 +233,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst y: <T extends FooType>(x: T) => void\n```\n"
+          "value": "```typescript\nconst y: <T extends number | (string | {})>(x: T) => void\n```\n"
         },
         "range": {
           "start": {

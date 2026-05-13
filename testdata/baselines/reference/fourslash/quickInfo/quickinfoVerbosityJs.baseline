@@ -33,7 +33,9 @@
 // | ```typescript
 // | type SomeType2 = {
 // |     prop2: number;
-// |     prop3: SomeType;
+// |     prop3: {
+// |         prop1: string;
+// |     };
 // | }
 // | ```
 // | 
@@ -251,7 +253,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype SomeType2 = {\n    prop2: number;\n    prop3: SomeType;\n}\n```\n"
+          "value": "```typescript\ntype SomeType2 = {\n    prop2: number;\n    prop3: {\n        prop1: string;\n    };\n}\n```\n"
         },
         "range": {
           "start": {

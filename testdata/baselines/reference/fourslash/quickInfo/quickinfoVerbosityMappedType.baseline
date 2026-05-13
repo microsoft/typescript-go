@@ -31,7 +31,7 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type F<T> = { [K in keyof T as T[K] extends Apple ? never : K]: T[K]; }
+// | type F<T> = { [K in keyof T as T[K] extends number | boolean ? never : K]: T[K]; }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -63,7 +63,7 @@
 //          ^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type G<T> = { [K in keyof T]: T[K] & Apple; }
+// | type G<T> = { [K in keyof T]: T[K] & (number | boolean); }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -183,7 +183,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype F<T> = { [K in keyof T as T[K] extends Apple ? never : K]: T[K]; }\n```\n"
+          "value": "```typescript\ntype F<T> = { [K in keyof T as T[K] extends number | boolean ? never : K]: T[K]; }\n```\n"
         },
         "range": {
           "start": {
@@ -274,7 +274,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype G<T> = { [K in keyof T]: T[K] & Apple; }\n```\n"
+          "value": "```typescript\ntype G<T> = { [K in keyof T]: T[K] & (number | boolean); }\n```\n"
         },
         "range": {
           "start": {

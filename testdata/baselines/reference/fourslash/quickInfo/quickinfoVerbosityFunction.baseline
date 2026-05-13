@@ -14,9 +14,18 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const o: {
-// |     takeOneApple(a: Apple): void;
-// |     getApple(): Apple;
-// |     getApple(size: number): Apple[];
+// |     takeOneApple(a: {
+// |         color: string;
+// |         size: number;
+// |     }): void;
+// |     getApple(): {
+// |         color: string;
+// |         size: number;
+// |     };
+// |     getApple(size: number): {
+// |         color: string;
+// |         size: number;
+// |     }[];
 // | }
 // | ```
 // | 
@@ -166,7 +175,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst o: {\n    takeOneApple(a: Apple): void;\n    getApple(): Apple;\n    getApple(size: number): Apple[];\n}\n```\n"
+          "value": "```typescript\nconst o: {\n    takeOneApple(a: {\n        color: string;\n        size: number;\n    }): void;\n    getApple(): {\n        color: string;\n        size: number;\n    };\n    getApple(size: number): {\n        color: string;\n        size: number;\n    }[];\n}\n```\n"
         },
         "range": {
           "start": {

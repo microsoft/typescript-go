@@ -6,8 +6,16 @@
 // | ----------------------------------------------------------------------
 // | ```typescript
 // | const b: {
-// |     readonly a: zero.Apple;
-// |     Color: typeof zero.Color;
+// |     readonly a: {
+// |         a: number;
+// |         b: string;
+// |     };
+// |     Color: {
+// |         readonly [x: number]: string;
+// |         readonly Red: zero.Color.Red;
+// |         readonly Green: zero.Color.Green;
+// |         readonly Blue: zero.Color.Blue;
+// |     };
 // | }
 // | ```
 // | 
@@ -202,7 +210,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst b: {\n    readonly a: zero.Apple;\n    Color: typeof zero.Color;\n}\n```\n"
+          "value": "```typescript\nconst b: {\n    readonly a: {\n        a: number;\n        b: string;\n    };\n    Color: {\n        readonly [x: number]: string;\n        readonly Red: zero.Color.Red;\n        readonly Green: zero.Color.Green;\n        readonly Blue: zero.Color.Blue;\n    };\n}\n```\n"
         },
         "range": {
           "start": {

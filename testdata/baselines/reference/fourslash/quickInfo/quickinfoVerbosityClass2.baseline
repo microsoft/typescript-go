@@ -57,7 +57,14 @@
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type Whatever = Foo<string>
+// | type Whatever = {
+// |     x: string;
+// |     y: string;
+// |     foo(): {
+// |         color: string;
+// |     };
+// |     z: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -65,7 +72,12 @@
 //      ^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type Whatever = Foo<string>
+// | type Whatever = {
+// |     x: string;
+// |     y: string;
+// |     foo(): Apple;
+// |     z: boolean;
+// | }
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -374,7 +386,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype Whatever = Foo<string>\n```\n"
+          "value": "```typescript\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): Apple;\n    z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {
@@ -385,7 +397,8 @@
             "line": 13,
             "character": 13
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -404,7 +417,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype Whatever = Foo<string>\n```\n"
+          "value": "```typescript\ntype Whatever = {\n    x: string;\n    y: string;\n    foo(): {\n        color: string;\n    };\n    z: boolean;\n}\n```\n"
         },
         "range": {
           "start": {

@@ -11,7 +11,14 @@
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type TwoFruits = [Orange, Apple]
+// | type TwoFruits = [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -19,7 +26,12 @@
 //      ^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type TwoFruits = [Orange, Apple]
+// | type TwoFruits = [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -36,7 +48,14 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const tf: [Orange, Apple]
+// | const tf: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | }]
 // | ```
 // | 
 // | (verbosity level: 3)
@@ -44,7 +63,12 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const tf: [Orange, Apple]
+// | const tf: [{
+// |     color: string;
+// | }, {
+// |     color: string;
+// |     other: Orange;
+// | }]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -76,7 +100,9 @@
 // |     color: string;
 // | }, {
 // |     color: string;
-// |     other: Orange;
+// |     other: {
+// |         color: string;
+// |     };
 // | }]
 // | ```
 // | 
@@ -110,7 +136,14 @@
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type ManyFruits = (Apple | Orange)[]
+// | type ManyFruits = ({
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -118,7 +151,12 @@
 //      ^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | type ManyFruits = (Apple | Orange)[]
+// | type ManyFruits = ({
+// |     color: string;
+// |     other: Orange;
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
 // | (verbosity level: 1)
@@ -135,7 +173,14 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const mf: (Apple | Orange)[]
+// | const mf: ({
+// |     color: string;
+// |     other: {
+// |         color: string;
+// |     };
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
 // | (verbosity level: 3)
@@ -143,7 +188,12 @@
 //       ^^
 // | ----------------------------------------------------------------------
 // | ```typescript
-// | const mf: (Apple | Orange)[]
+// | const mf: ({
+// |     color: string;
+// |     other: Orange;
+// | } | {
+// |     color: string;
+// | })[]
 // | ```
 // | 
 // | (verbosity level: 2)
@@ -210,7 +260,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype TwoFruits = [Orange, Apple]\n```\n"
+          "value": "```typescript\ntype TwoFruits = [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -221,7 +271,8 @@
             "line": 7,
             "character": 14
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -240,7 +291,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype TwoFruits = [Orange, Apple]\n```\n"
+          "value": "```typescript\ntype TwoFruits = [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -312,7 +363,8 @@
             "line": 8,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -331,7 +383,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst tf: [Orange, Apple]\n```\n"
+          "value": "```typescript\nconst tf: [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -342,7 +394,8 @@
             "line": 8,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 2
     }
@@ -361,7 +414,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst tf: [Orange, Apple]\n```\n"
+          "value": "```typescript\nconst tf: [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -453,7 +506,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst tf2: [{\n    color: string;\n}, {\n    color: string;\n    other: Orange;\n}]\n```\n"
+          "value": "```typescript\nconst tf2: [{\n    color: string;\n}, {\n    color: string;\n    other: {\n        color: string;\n    };\n}]\n```\n"
         },
         "range": {
           "start": {
@@ -514,7 +567,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype ManyFruits = (Apple | Orange)[]\n```\n"
+          "value": "```typescript\ntype ManyFruits = ({\n    color: string;\n    other: Orange;\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {
@@ -525,7 +578,8 @@
             "line": 16,
             "character": 15
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -544,7 +598,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\ntype ManyFruits = (Apple | Orange)[]\n```\n"
+          "value": "```typescript\ntype ManyFruits = ({\n    color: string;\n    other: {\n        color: string;\n    };\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {
@@ -616,7 +670,8 @@
             "line": 17,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 1
     }
@@ -635,7 +690,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst mf: (Apple | Orange)[]\n```\n"
+          "value": "```typescript\nconst mf: ({\n    color: string;\n    other: Orange;\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {
@@ -646,7 +701,8 @@
             "line": 17,
             "character": 8
           }
-        }
+        },
+        "canIncreaseVerbosity": true
       },
       "verbosityLevel": 2
     }
@@ -665,7 +721,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst mf: (Apple | Orange)[]\n```\n"
+          "value": "```typescript\nconst mf: ({\n    color: string;\n    other: {\n        color: string;\n    };\n} | {\n    color: string;\n})[]\n```\n"
         },
         "range": {
           "start": {

@@ -38,7 +38,7 @@
 // | ```typescript
 // | const f: {
 // |     x: string;
-// |     foo(p: FooParam): void;
+// |     foo(p: "a" | "b"): void;
 // | }
 // | ```
 // | 
@@ -358,7 +358,7 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```typescript\nconst f: {\n    x: string;\n    foo(p: FooParam): void;\n}\n```\n"
+          "value": "```typescript\nconst f: {\n    x: string;\n    foo(p: \"a\" | \"b\"): void;\n}\n```\n"
         },
         "range": {
           "start": {
