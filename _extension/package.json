@@ -1,13 +1,14 @@
 {
     "name": "native-preview",
-    "displayName": "TypeScript (Native Preview)",
+    "displayName": "%displayName%",
     "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
-    "description": "Preview of the native TypeScript language server for Visual Studio Code.",
+    "description": "%description%",
     "icon": "logo.png",
     "private": true,
     "version": "0.0.0",
     "type": "commonjs",
+    "l10n": "./l10n",
     "repository": {
         "type": "git",
         "url": "https://github.com/microsoft/typescript-go"
@@ -21,7 +22,8 @@
     },
     "capabilities": {
         "untrustedWorkspaces": {
-            "supported": false
+            "supported": false,
+            "description": "%workspaceTrust%"
         }
     },
     "activationEvents": [
@@ -38,7 +40,7 @@
                     "typescript.native-preview.customConfigFileName": {
                         "type": "string",
                         "default": "",
-                        "description": "Custom config file name to use e.g. 'tsconfig.all.json', before defaulting to tsconfig.json/jsconfig.json.",
+                        "description": "%native-preview.trace.customConfigFileName.description%",
                         "tags": ["experimental"]
                     },
                     "typescript.native-preview.trace.server": {
@@ -49,21 +51,21 @@
                             "verbose"
                         ],
                         "default": "verbose",
-                        "description": "Trace TypeScript Go server communication.",
+                        "description": "%native-preview.trace.server.description%",
                         "tags": [
                             "experimental"
                         ]
                     },
                     "typescript.native-preview.pprofDir": {
                         "type": "string",
-                        "description": "Directory to write pprof profiles to.",
+                        "description": "%native-preview.pprofDir.description%",
                         "tags": [
                             "experimental"
                         ]
                     },
                     "typescript.native-preview.tsdk": {
                         "type": "string",
-                        "description": "Path to the @typescript/native-preview package or tsgo binary directory. If not specified, the extension will look for it in the default location.",
+                        "description": "%native-preview.tsserver.tsdk.description%",
                         "tags": [
                             "experimental"
                         ]
@@ -74,7 +76,7 @@
                             "type": "string"
                         },
                         "default": [],
-                        "description": "Additional paths to tsgo binary directories or @typescript/native-preview packages that should appear in the version selector.",
+                        "description": "%native-preview.additionalTsdkLocations.description%",
                         "tags": [
                             "experimental"
                         ]
@@ -82,16 +84,16 @@
                     "typescript.native-preview.showDebugInfo": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Show debug information (PID, executable path) in the server menu.",
+                        "description": "%native-preview.showDebugInfo.description%",
                         "tags": [
                             "experimental"
                         ]
                     },
                     "typescript.native-preview.goMemLimit": {
                         "type": "string",
-                        "description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
+                        "description": "%native-preview.goMemLimit.description%",
                         "pattern": "^[0-9]+(([KMGT]i)?B)?$",
-                        "patternErrorMessage": "Must be a valid memory limit (e.g., '2048MiB', '4GiB').",
+                        "patternErrorMessage": "%native-preview.goMemLimit.error%",
                         "tags": [
                             "experimental"
                         ]
