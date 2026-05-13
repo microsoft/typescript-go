@@ -931,8 +931,13 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				if !seen[pkg.realpath] {
 					seen[pkg.realpath] = true
 					enableDirSearch := targetRecursivePackages == nil ||
-						allDeepImportPackages.Has(pkg.packageName) ||
+						targetRecursivePackages.Has(pkg.packageName) ||
 						isKnownRecursiveSearchPackage(pkg.packageName)
+					// Record actual directory-searched packages so the stored set
+					// reflects reality for rebuild detection and stats.
+					if enableDirSearch && targetRecursivePackages != nil {
+						targetRecursivePackages.Add(pkg.packageName)
+					}
 					wg.Go(func() {
 						if ctx.Err() != nil {
 							return
@@ -952,6 +957,9 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				if !seen[pkg.typesRealpath] {
 					seen[pkg.typesRealpath] = true
 					// @types packages always get directory search
+					if targetRecursivePackages != nil {
+						targetRecursivePackages.Add(pkg.packageName)
+					}
 					wg.Go(func() {
 						if ctx.Err() != nil {
 							return
@@ -975,11 +983,14 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			continue
 		}
 		seen[pkg.typesRealpath] = true
+		// @types fallback packages always get directory search
+		if targetRecursivePackages != nil {
+			targetRecursivePackages.Add(pkg.packageName)
+		}
 		wg.Go(func() {
 			if ctx.Err() != nil {
 				return
 			}
-			// @types fallback packages always get directory search
 			result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, true /*enableDirectorySearch*/)
 			if result != nil {
 				extractionMu.Lock()
