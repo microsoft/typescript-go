@@ -197,7 +197,8 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 	if noTruncation {
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
 	if vc != nil {
 		nodeBuilder.verbosity = vc
 	}
@@ -270,7 +271,8 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 		internalNodeFlags |= nodebuilder.InternalFlagsWriteComputedProps
 	}
 
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
@@ -319,7 +321,8 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 		}
 	}
 
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
 	if vc != nil {
 		nodeBuilder.verbosity = vc
 	}
@@ -348,7 +351,8 @@ func (c *Checker) typePredicateToString(typePredicate *TypePredicate) string {
 func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
 	writer, putWriter := printer.GetSingleLineStringWriter()
 	defer putWriter()
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	predicate := nodeBuilder.TypePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
 	printer_ := createPrinterWithRemoveComments(nodeBuilder.EmitContext())
@@ -405,13 +409,17 @@ func (c *Checker) TypeToTypeNode(t *Type, enclosingDeclaration *ast.Node, flags 
 }
 
 func (c *Checker) SignatureToSignatureDeclaration(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags) *ast.Node {
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
 	return nodeBuilder.SignatureToSignatureDeclaration(signature, kind, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }
 
 // ExpandSymbolForHover produces declaration strings for a symbol with verbosity support for expandable hover.
 func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFlags, vc *VerbosityContext) string {
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
+	oldVerbosity := nodeBuilder.verbosity
+	defer func() { nodeBuilder.verbosity = oldVerbosity }()
 	nodeBuilder.verbosity = vc
 	nodes := nodeBuilder.ExpandSymbolForHover(symbol, meaning)
 	if len(nodes) == 0 {
@@ -434,7 +442,10 @@ func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFla
 
 // TypeParameterToStringEx renders a type parameter declaration (e.g. "T extends Foo") with optional verbosity support.
 func (c *Checker) TypeParameterToStringEx(t *Type, enclosingDeclaration *ast.Node, vc *VerbosityContext) string {
-	nodeBuilder := c.getNodeBuilder()
+	nodeBuilder, release := c.getNodeBuilder()
+	defer release()
+	oldVerbosity := nodeBuilder.verbosity
+	defer func() { nodeBuilder.verbosity = oldVerbosity }()
 	nodeBuilder.verbosity = vc
 	typeParamNode := nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsNone, nil)
 	if typeParamNode == nil {

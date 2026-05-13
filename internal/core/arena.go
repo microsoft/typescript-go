@@ -58,6 +58,11 @@ func (a *Arena[T]) Clone(t []T) []T {
 	return slice
 }
 
+// Reset arena back to zero, removing GC refs between the arena and any objects in the arena, allowing them to be freed
+func (a *Arena[T]) Release() {
+	a.data = nil
+}
+
 func nextArenaSize(size int) int {
 	// This compiles down branch-free.
 	size = max(size, 1)
