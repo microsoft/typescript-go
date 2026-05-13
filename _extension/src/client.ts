@@ -41,7 +41,6 @@ export class Client implements vscode.Disposable {
     private telemetryReporter: tr.TelemetryReporter;
 
     private documentSelector: Array<{ scheme: string; language: string; }>;
-    private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
 
     private isDisposed = false;
@@ -49,6 +48,8 @@ export class Client implements vscode.Disposable {
     isInitialized = false;
 
     private exe: ExeInfo | undefined;
+
+    private reporterCommonProperties: tr.LSCommonProperties | undefined;
 
     constructor(
         outputChannel: vscode.LogOutputChannel,
@@ -64,7 +65,142 @@ export class Client implements vscode.Disposable {
             ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
             ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
         ];
-        this.clientOptions = {
+    }
+
+    async start(exe: { path: string; version: string; }): Promise<void> {
+        this.exe = exe;
+        this.reporterCommonProperties = {
+            "tscommon.version": exe.version,
+            "tscommon.serverSessionId": `${Date.now()}`,
+        };
+        this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
+        this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
+            version: exe.version,
+            ...this.reporterCommonProperties,
+        });
+
+        // Get pprofDir
+        const config = vscode.workspace.getConfiguration("typescript.native-preview");
+        const pprofDir = config.get<string>("pprofDir");
+        const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
+
+        const goMemLimit = config.get<string>("goMemLimit");
+        const env = { ...process.env };
+        if (goMemLimit) {
+            // Keep this regex aligned with the pattern in package.json.
+            if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
+                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
+                env.GOMEMLIMIT = goMemLimit;
+            }
+            else {
+                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
+            }
+        }
+
+        const serverOptions: ServerOptions = {
+            run: {
+                command: this.exe.path,
+                args: ["--lsp", ...pprofArgs],
+                transport: TransportKind.stdio,
+                options: { env },
+            },
+            debug: {
+                command: this.exe.path,
+                args: ["--lsp", ...pprofArgs],
+                transport: TransportKind.stdio,
+                options: { env },
+            },
+        };
+
+        this.client = new LanguageClient(
+            "typescript.native-preview",
+            "typescript.native-preview-lsp",
+            serverOptions,
+            this.makeClientOptions(this.reporterCommonProperties),
+        );
+        this.disposables.push(this.client);
+
+        // Register a static feature to advertise verbosityLevel support in hover capabilities.
+        this.client.registerFeature(
+            {
+                fillClientCapabilities(capabilities: ClientCapabilities): void {
+                    capabilities.textDocument = capabilities.textDocument ?? {};
+                    capabilities.textDocument.hover = capabilities.textDocument.hover ?? {};
+                    (capabilities.textDocument.hover as { verbosityLevel?: boolean; }).verbosityLevel = true;
+                },
+                initialize(): void {},
+                getState() {
+                    return { kind: "static" as const };
+                },
+                clear(): void {},
+            } satisfies StaticFeature,
+        );
+
+        this.outputChannel.appendLine(`Starting language server...`);
+        await this.client.start();
+        this.isInitialized = true;
+        this.initializedEventEmitter.fire();
+
+        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
+            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
+        }
+
+        type TelemetryData = {
+            eventName: string;
+            telemetryPurpose: "usage" | "error";
+            properties?: Record<string, string>;
+            measurements?: Record<string, number>;
+        };
+
+        const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
+            switch (d.telemetryPurpose) {
+                case "usage":
+                    this.telemetryReporter.sendTelemetryEventUntyped(
+                        d.eventName,
+                        { ...this.reporterCommonProperties, ...d.properties },
+                        d.measurements
+                    );
+                    break;
+                case "error":
+                    this.telemetryReporter.sendTelemetryErrorEventUntyped(
+                        d.eventName,
+                        { ...this.reporterCommonProperties, ...d.properties },
+                        d.measurements
+                    );
+                    break;
+                default:
+                    const _: never = d.telemetryPurpose;
+                    this.telemetryReporter.sendTelemetryErrorEvent("languageServer.unexpectedTelemetryPurpose", {
+                        ...this.reporterCommonProperties,
+                        telemetryPurpose: String(d.telemetryPurpose),
+                    });
+                    break;
+            }
+        });
+
+        this.disposables.push(
+            serverTelemetryListener,
+            registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
+            registerSourceDefinitionFeature(this.client),
+            registerHoverFeature(this.documentSelector, this.client),
+            registerOnAutoInsertFeature(this.documentSelector, this.client),
+        );
+    }
+
+    async dispose(): Promise<void> {
+        if (this.isDisposed) {
+            return;
+        }
+        this.isDisposed = true;
+        await Promise.all(this.disposables.map(d => d.dispose()));
+    }
+
+    getCurrentExe(): ExeInfo | undefined {
+        return this.exe;
+    }
+
+    private makeClientOptions(reporterCommonProperties: tr.LSCommonProperties): LanguageClientOptions {
+        return {
             documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
             traceOutputChannel: this.traceOutputChannel,
@@ -72,7 +208,7 @@ export class Client implements vscode.Disposable {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
             },
-            errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5),
+            errorHandler: new ReportingErrorHandler(this.telemetryReporter, 5, reporterCommonProperties),
             middleware: {
                 workspace: {
                     ...configurationMiddleware,
@@ -128,124 +264,6 @@ export class Client implements vscode.Disposable {
                 },
             },
         };
-    }
-
-    async start(exe: { path: string; version: string; }): Promise<void> {
-        this.exe = exe;
-        this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
-        this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
-            version: this.exe.version,
-        });
-
-        // Get pprofDir
-        const config = vscode.workspace.getConfiguration("typescript.native-preview");
-        const pprofDir = config.get<string>("pprofDir");
-        const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
-
-        const goMemLimit = config.get<string>("goMemLimit");
-        const env = { ...process.env };
-        if (goMemLimit) {
-            // Keep this regex aligned with the pattern in package.json.
-            if (/^[0-9]+(([KMGT]i)?B)?$/.test(goMemLimit)) {
-                this.outputChannel.appendLine(`Setting GOMEMLIMIT=${goMemLimit}`);
-                env.GOMEMLIMIT = goMemLimit;
-            }
-            else {
-                this.outputChannel.error(`Invalid goMemLimit: ${goMemLimit}. Must be a valid memory limit (e.g., '2048MiB', '4GiB'). Not overriding GOMEMLIMIT.`);
-            }
-        }
-
-        const serverOptions: ServerOptions = {
-            run: {
-                command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
-                transport: TransportKind.stdio,
-                options: { env },
-            },
-            debug: {
-                command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
-                transport: TransportKind.stdio,
-                options: { env },
-            },
-        };
-
-        this.client = new LanguageClient(
-            "typescript.native-preview",
-            "typescript.native-preview-lsp",
-            serverOptions,
-            this.clientOptions,
-        );
-        this.disposables.push(this.client);
-
-        // Register a static feature to advertise verbosityLevel support in hover capabilities.
-        this.client.registerFeature(
-            {
-                fillClientCapabilities(capabilities: ClientCapabilities): void {
-                    capabilities.textDocument = capabilities.textDocument ?? {};
-                    capabilities.textDocument.hover = capabilities.textDocument.hover ?? {};
-                    (capabilities.textDocument.hover as { verbosityLevel?: boolean; }).verbosityLevel = true;
-                },
-                initialize(): void {},
-                getState() {
-                    return { kind: "static" as const };
-                },
-                clear(): void {},
-            } satisfies StaticFeature,
-        );
-
-        this.outputChannel.appendLine(`Starting language server...`);
-        await this.client.start();
-        this.isInitialized = true;
-        this.initializedEventEmitter.fire();
-
-        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
-            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
-        }
-
-        type TelemetryData = {
-            eventName: string;
-            telemetryPurpose: "usage" | "error";
-            properties?: Record<string, string>;
-            measurements?: Record<string, number>;
-        };
-
-        const serverTelemetryListener = this.client.onTelemetry((d: TelemetryData) => {
-            switch (d.telemetryPurpose) {
-                case "usage":
-                    this.telemetryReporter.sendTelemetryEventUntyped(d.eventName, d.properties, d.measurements);
-                    break;
-                case "error":
-                    this.telemetryReporter.sendTelemetryErrorEventUntyped(d.eventName, d.properties, d.measurements);
-                    break;
-                default:
-                    const _: never = d.telemetryPurpose;
-                    this.telemetryReporter.sendTelemetryErrorEvent("languageServer.unexpectedTelemetryPurpose", {
-                        telemetryPurpose: String(d.telemetryPurpose),
-                    });
-                    break;
-            }
-        });
-
-        this.disposables.push(
-            serverTelemetryListener,
-            registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
-            registerSourceDefinitionFeature(this.client),
-            registerHoverFeature(this.documentSelector, this.client),
-            registerOnAutoInsertFeature(this.documentSelector, this.client),
-        );
-    }
-
-    async dispose(): Promise<void> {
-        if (this.isDisposed) {
-            return;
-        }
-        this.isDisposed = true;
-        await Promise.all(this.disposables.map(d => d.dispose()));
-    }
-
-    getCurrentExe(): ExeInfo | undefined {
-        return this.exe;
     }
 
     get serverPid(): number | undefined {
@@ -342,14 +360,18 @@ export class Client implements vscode.Disposable {
 
 // Adapted from the default error handler in vscode-languageclient.
 class ReportingErrorHandler implements ErrorHandler {
-    telemetryReporter: tr.TelemetryReporter;
-    maxRestartCount: number;
-    restarts: number[];
+    private telemetryReporter: tr.TelemetryReporter;
+    private maxRestartCount: number;
+    private restarts: number[];
 
-    constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number) {
+    private reporterCommonProperties: tr.LSCommonProperties;
+
+    constructor(telemetryReporter: tr.TelemetryReporter, maxRestartCount: number, reporterCommonProperties: tr.LSCommonProperties) {
         this.telemetryReporter = telemetryReporter;
         this.maxRestartCount = maxRestartCount;
         this.restarts = [];
+        
+        this.reporterCommonProperties = reporterCommonProperties;
     }
 
     error(_error: Error, _message: Message | undefined, count: number | undefined): ErrorHandlerResult | Promise<ErrorHandlerResult> {
@@ -370,6 +392,7 @@ class ReportingErrorHandler implements ErrorHandler {
                 const _: never = errorAction;
         }
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionError", {
+            ...this.reporterCommonProperties,
             resultingAction: actionString,
         });
 
@@ -406,6 +429,7 @@ class ReportingErrorHandler implements ErrorHandler {
                 const _: never = resultingAction;
         }
         this.telemetryReporter.sendTelemetryErrorEvent("languageServer.connectionClosed", {
+            ...this.reporterCommonProperties,
             resultingAction: actionString,
         });
 
