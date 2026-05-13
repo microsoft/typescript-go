@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tsgo Playground</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        background: #1e1e1e;
+        color: #d4d4d4;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      #app {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      #header {
+        padding: 8px 16px;
+        background: #252526;
+        border-bottom: 1px solid #3c3c3c;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      #header h1 {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      #status {
+        font-size: 12px;
+        color: #858585;
+      }
+      #status.error {
+        color: #f44747;
+      }
+      #status.ready {
+        color: #89d185;
+      }
+      #editor {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="header">
+        <h1>tsgo Playground</h1>
+        <span id="status">Loading TypeScript...</span>
+      </div>
+      <div id="editor"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

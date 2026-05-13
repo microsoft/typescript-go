@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist",
+
+        "target": "es2024",
+        "module": "preserve",
+        "moduleResolution": "bundler",
+
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noUnusedParameters": true,
+    },
+    "include": ["src"]
+}

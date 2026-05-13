@@ -1,0 +1,4 @@
+node_modules/
+dist/
+public/tsgo.wasm
+public/wasm_exec.js
