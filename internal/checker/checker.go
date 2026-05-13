@@ -4268,6 +4268,13 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	c.checkTypeParameterListsIdentical(symbol)
 	c.checkFunctionOrConstructorSymbol(symbol)
 	c.checkObjectTypeForDuplicateDeclarations(node, true /*checkPrivateNames*/)
+
+	// Only check for reserved static identifiers on non-ambient context.
+	nodeInAmbientContext := node.Flags&ast.NodeFlagsAmbient != 0
+	if !nodeInAmbientContext {
+		c.checkClassForStaticPropertyNameConflicts(node)
+	}
+
 	baseTypeNode := ast.GetExtendsHeritageClauseElement(node)
 	if baseTypeNode != nil {
 		c.checkSourceElements(baseTypeNode.TypeArguments())
@@ -4345,6 +4352,28 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	c.checkIndexConstraints(staticType, symbol, true /*isStaticIndex*/)
 	c.checkClassOrInterfaceForDuplicateIndexSignatures(node)
 	c.checkPropertyInitialization(node)
+}
+
+func (c *Checker) checkClassForStaticPropertyNameConflicts(node *ast.Node) {
+	if c.compilerOptions.GetUseDefineForClassFields() {
+		return
+	}
+	for _, member := range node.Members() {
+		memberNameNode := member.Name()
+		isStaticMember := ast.IsStatic(member)
+		if isStaticMember && memberNameNode != nil {
+			memberName, _ := c.getEffectivePropertyNameForPropertyNameNode(memberNameNode)
+			switch memberName {
+			case "name", "length", "caller", "arguments":
+				c.error(
+					memberNameNode,
+					diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1,
+					memberName,
+					c.symbolToString(c.getSymbolOfDeclaration(node)),
+				)
+			}
+		}
+	}
 }
 
 // Check that type parameter lists are identical across multiple declarations
@@ -5328,7 +5357,9 @@ func (c *Checker) checkModuleExportName(name *ast.Node, allowStringLiteral bool)
 	if !allowStringLiteral {
 		c.grammarErrorOnNode(name, diagnostics.Identifier_expected)
 	} else if c.moduleKind == core.ModuleKindES2015 || c.moduleKind == core.ModuleKindES2020 {
-		c.grammarErrorOnNode(name, diagnostics.String_literal_import_and_export_names_are_not_supported_when_the_module_flag_is_set_to_es2015_or_es2020)
+		if !ast.GetSourceFileOfNode(name).IsDeclarationFile {
+			c.grammarErrorOnNode(name, diagnostics.String_literal_import_and_export_names_are_not_supported_when_the_module_flag_is_set_to_es2015_or_es2020)
+		}
 	}
 }
 
