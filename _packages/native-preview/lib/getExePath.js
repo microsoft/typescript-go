@@ -7,15 +7,21 @@ export default function getExePath() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const normalizedDirname = __dirname.replace(/\\/g, "/");
 
+    // Read our own package.json to derive the package base name and binary name.
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
+    const pkgName = pkg.name;
+    const baseName = pkgName.startsWith("@") ? pkgName.split("/")[1] : pkgName;
+    const binName = Object.keys(pkg.bin)[0];
+
     let exeDir;
 
-    const expectedPackage = "native-preview-" + process.platform + "-" + process.arch;
+    const expectedPackage = baseName + "-" + process.platform + "-" + process.arch;
 
-    if (normalizedDirname.endsWith("/_packages/native-preview/lib")) {
+    if (normalizedDirname.endsWith("/_packages/" + baseName + "/lib")) {
         // We're running directly from source in the repo.
         exeDir = path.resolve(__dirname, "..", "..", "..", "built", "local");
     }
-    else if (normalizedDirname.endsWith("/built/npm/native-preview/lib")) {
+    else if (normalizedDirname.endsWith("/built/npm/" + baseName + "/lib")) {
         // We're running from the built output.
         exeDir = path.resolve(__dirname, "..", "..", expectedPackage, "lib");
     }
@@ -41,7 +47,7 @@ export default function getExePath() {
         }
     }
 
-    let exe = path.join(exeDir, "tsgo");
+    let exe = path.join(exeDir, binName);
     if (process.platform === "win32") {
         exe += ".exe";
         if (exe.length >= 248) {

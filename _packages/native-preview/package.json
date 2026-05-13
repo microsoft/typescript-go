@@ -1,5 +1,4 @@
 {
-    "private": true,
     "name": "@typescript/native-preview",
     "version": "7.0.1-rc",
     "license": "Apache-2.0",
@@ -32,70 +31,16 @@
     "files": [
         "bin",
         "lib",
-        "dist",
         "vendor"
     ],
     "bin": {
-        "tsgo": "./bin/tsgo.js"
+        "tsc": "./bin/tsc"
     },
     "exports": {
-        "./package.json": "./package.json",
-        "./sync": {
-            "@typescript/source": "./src/api/sync/api.ts",
-            "default": "./dist/api/sync/api.js"
-        },
-        "./async": {
-            "@typescript/source": "./src/api/async/api.ts",
-            "default": "./dist/api/async/api.js"
-        },
-        "./fs": {
-            "@typescript/source": "./src/api/fs.ts",
-            "default": "./dist/api/fs.js"
-        },
-        "./proto": {
-            "@typescript/source": "./src/api/proto.ts",
-            "default": "./dist/api/proto.js"
-        },
-        "./ast": {
-            "@typescript/source": "./src/ast/index.ts",
-            "default": "./dist/ast/index.js"
-        },
-        "./ast/is": {
-            "@typescript/source": "./src/ast/is.ts",
-            "default": "./dist/ast/is.js"
-        },
-        "./ast/factory": {
-            "@typescript/source": "./src/ast/factory.generated.ts",
-            "default": "./dist/ast/factory.generated.js"
-        },
-        "./ast/utils": {
-            "@typescript/source": "./src/ast/utils.ts",
-            "default": "./dist/ast/utils.js"
-        },
-        "./ast/scanner": {
-            "@typescript/source": "./src/ast/scanner.ts",
-            "default": "./dist/ast/scanner.js"
-        },
-        "./ast/visitor": {
-            "@typescript/source": "./src/ast/visitor.ts",
-            "default": "./dist/ast/visitor.js"
-        },
-        "./ast/clone": {
-            "@typescript/source": "./src/ast/clone.ts",
-            "default": "./dist/ast/clone.js"
-        }
+        "./package.json": "./package.json"
     },
     "imports": {
-        "#getExePath": "./lib/getExePath.js",
-        "#enums/*": {
-            "@typescript/source": {
-                "types": "./src/enums/*.enum.ts",
-                "default": "./src/enums/*.ts"
-            },
-            "types": "./dist/enums/*.enum.d.ts",
-            "default": "./dist/enums/*.js"
-        },
-        "#vscode-jsonrpc/node": "./vendor/vscode-jsonrpc/lib/node/main.js"
+        "#getExePath": "./lib/getExePath.js"
     },
     "scripts": {
         "node": "node --experimental-strip-types --no-warnings --conditions @typescript/source",

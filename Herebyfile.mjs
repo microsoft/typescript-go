@@ -1581,14 +1581,6 @@ async function runBuildNativePreviewPackages() {
 
     // Override the package name for publishing as "typescript".
     mainPackage.name = mainNativePreviewPackage.npmPackageName;
-    // Add "tsc" bin alias alongside "tsgo".
-    mainPackage.bin = { tsc: "./bin/tsgo.js", tsgo: "./bin/tsgo.js" };
-    // Strip public API exports/imports from the package.json, keeping only bin and package.json export.
-    delete mainPackage.exports;
-    delete mainPackage.imports;
-    mainPackage.exports = { "./package.json": "./package.json" };
-    // Remove dist and src from files since we're not shipping the API.
-    mainPackage.files = (/** @type {string[]} */ (mainPackage.files) || []).filter(f => f !== "dist" && f !== "src");
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
     await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
@@ -1625,8 +1617,9 @@ async function runBuildNativePreviewPackages() {
 
         await generateLibs(out);
 
+        const exeName = nodeOs === "win32" ? "tsc.exe" : "tsc";
         await buildTsgo({
-            out,
+            out: path.join(out, exeName),
             env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
             extraFlags,
         });
@@ -1669,7 +1662,7 @@ async function runSignNativePreviewPackages() {
         }
         certFilelist.push({
             tmpName: npmDirName,
-            path: path.join(npmDir, "lib", nodeOs === "win32" ? "tsgo.exe" : "tsgo"),
+            path: path.join(npmDir, "lib", nodeOs === "win32" ? "tsc.exe" : "tsc"),
         });
     }
 
