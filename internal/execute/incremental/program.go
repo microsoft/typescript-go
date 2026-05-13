@@ -197,7 +197,6 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, file *ast.Source
 	return p.program.GetSuggestionDiagnostics(ctx, file) // TODO: incremental suggestion diagnostics (only relevant in editor incremental builder?)
 }
 
-// GetModeForUsageLocation implements compiler.AnyProgram interface.
 func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	p.panicIfNoProgram("Emit")
 

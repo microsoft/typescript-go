@@ -598,6 +598,21 @@ func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory s
 	}
 }
 
+func getAllDiagnostics(ctx context.Context, program compiler.ProgramLike, captureSuggestions bool) []*ast.Diagnostic {
+	var diags []*ast.Diagnostic
+	diags = append(diags, program.GetProgramDiagnostics()...)
+	diags = append(diags, program.GetSyntacticDiagnostics(ctx, nil)...)
+	diags = append(diags, program.GetGlobalDiagnostics(ctx)...)
+	diags = append(diags, program.GetSemanticDiagnostics(ctx, nil)...)
+	if program.Options().GetEmitDeclarations() {
+		diags = append(diags, program.GetDeclarationDiagnostics(ctx, nil)...)
+	}
+	if captureSuggestions {
+		diags = append(diags, program.GetSuggestionDiagnostics(ctx, nil)...)
+	}
+	return compiler.SortAndDeduplicateDiagnostics(diags)
+}
+
 func compileFilesWithHost(
 	host compiler.CompilerHost,
 	config *tsoptions.ParsedCommandLine,
@@ -636,33 +651,14 @@ func compileFilesWithHost(
 			Errors:     config.Errors,
 		}
 		preProgram := createProgram(host, preConfig)
-		preErrors = append(preErrors, preProgram.GetProgramDiagnostics()...)
-		preErrors = append(preErrors, preProgram.GetSyntacticDiagnostics(ctx, nil)...)
-		preErrors = append(preErrors, preProgram.GetGlobalDiagnostics(ctx)...)
-		preErrors = append(preErrors, preProgram.GetSemanticDiagnostics(ctx, nil)...)
-		if preProgram.Options().GetEmitDeclarations() {
-			preErrors = append(preErrors, preProgram.GetDeclarationDiagnostics(ctx, nil)...)
-		}
-		if harnessOptions.CaptureSuggestions {
-			preErrors = append(preErrors, preProgram.GetSuggestionDiagnostics(ctx, nil)...)
-		}
-		preErrors = compiler.SortAndDeduplicateDiagnostics(preErrors)
+		preErrors = getAllDiagnostics(ctx, preProgram, harnessOptions.CaptureSuggestions)
 	}
 
 	postProgram := createProgram(host, config)
+	// Force checking to happen before emit
+	_ = getAllDiagnostics(ctx, postProgram, harnessOptions.CaptureSuggestions)
 	emitResult := postProgram.Emit(ctx, compiler.EmitOptions{})
-	var postErrors []*ast.Diagnostic
-	postErrors = append(postErrors, postProgram.GetProgramDiagnostics()...)
-	postErrors = append(postErrors, postProgram.GetSyntacticDiagnostics(ctx, nil)...)
-	postErrors = append(postErrors, postProgram.GetGlobalDiagnostics(ctx)...)
-	postErrors = append(postErrors, postProgram.GetSemanticDiagnostics(ctx, nil)...)
-	if postProgram.Options().GetEmitDeclarations() {
-		postErrors = append(postErrors, postProgram.GetDeclarationDiagnostics(ctx, nil)...)
-	}
-	if harnessOptions.CaptureSuggestions {
-		postErrors = append(postErrors, postProgram.GetSuggestionDiagnostics(ctx, nil)...)
-	}
-	postErrors = compiler.SortAndDeduplicateDiagnostics(postErrors)
+	postErrors := getAllDiagnostics(ctx, postProgram, harnessOptions.CaptureSuggestions)
 
 	errors := postErrors
 	if !skipErrorComparison && len(postErrors) != len(preErrors) {
