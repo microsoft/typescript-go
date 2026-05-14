@@ -884,6 +884,7 @@ type Checker struct {
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 	deferredDiagnosticCallbacks                 []func()
+	typeToStringNodebuilder                     *NodeBuilder
 
 	mu     sync.Mutex
 	tracer *Tracer // Optional tracer for trace events and type recording (for --generateTrace)
@@ -4268,6 +4269,13 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	c.checkTypeParameterListsIdentical(symbol)
 	c.checkFunctionOrConstructorSymbol(symbol)
 	c.checkObjectTypeForDuplicateDeclarations(node, true /*checkPrivateNames*/)
+
+	// Only check for reserved static identifiers on non-ambient context.
+	nodeInAmbientContext := node.Flags&ast.NodeFlagsAmbient != 0
+	if !nodeInAmbientContext {
+		c.checkClassForStaticPropertyNameConflicts(node)
+	}
+
 	baseTypeNode := ast.GetExtendsHeritageClauseElement(node)
 	if baseTypeNode != nil {
 		c.checkSourceElements(baseTypeNode.TypeArguments())
@@ -4345,6 +4353,28 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	c.checkIndexConstraints(staticType, symbol, true /*isStaticIndex*/)
 	c.checkClassOrInterfaceForDuplicateIndexSignatures(node)
 	c.checkPropertyInitialization(node)
+}
+
+func (c *Checker) checkClassForStaticPropertyNameConflicts(node *ast.Node) {
+	if c.compilerOptions.GetUseDefineForClassFields() {
+		return
+	}
+	for _, member := range node.Members() {
+		memberNameNode := member.Name()
+		isStaticMember := ast.IsStatic(member)
+		if isStaticMember && memberNameNode != nil {
+			memberName, _ := c.getEffectivePropertyNameForPropertyNameNode(memberNameNode)
+			switch memberName {
+			case "name", "length", "caller", "arguments":
+				c.error(
+					memberNameNode,
+					diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1,
+					memberName,
+					c.symbolToString(c.getSymbolOfDeclaration(node)),
+				)
+			}
+		}
+	}
 }
 
 // Check that type parameter lists are identical across multiple declarations
@@ -5328,7 +5358,9 @@ func (c *Checker) checkModuleExportName(name *ast.Node, allowStringLiteral bool)
 	if !allowStringLiteral {
 		c.grammarErrorOnNode(name, diagnostics.Identifier_expected)
 	} else if c.moduleKind == core.ModuleKindES2015 || c.moduleKind == core.ModuleKindES2020 {
-		c.grammarErrorOnNode(name, diagnostics.String_literal_import_and_export_names_are_not_supported_when_the_module_flag_is_set_to_es2015_or_es2020)
+		if !ast.GetSourceFileOfNode(name).IsDeclarationFile {
+			c.grammarErrorOnNode(name, diagnostics.String_literal_import_and_export_names_are_not_supported_when_the_module_flag_is_set_to_es2015_or_es2020)
+		}
 	}
 }
 
@@ -23737,22 +23769,23 @@ func (c *Checker) computeEnumMemberValues(node *ast.Node) {
 	nodeLinks := c.nodeLinks.Get(node)
 	if !(nodeLinks.flags&NodeCheckFlagsEnumValuesComputed != 0) {
 		nodeLinks.flags |= NodeCheckFlagsEnumValuesComputed
-		var autoValue jsnum.Number
+		autoValue := new(jsnum.Number)
 		var previous *ast.Node
 		for _, member := range node.Members() {
 			result := c.computeEnumMemberValue(member, autoValue, previous)
 			c.enumMemberLinks.Get(member).value = result
 			if value, isNumber := result.Value.(jsnum.Number); isNumber {
-				autoValue = value + 1
+				nextValue := value + 1
+				autoValue = &nextValue
 			} else {
-				autoValue = jsnum.NaN()
+				autoValue = nil
 			}
 			previous = member
 		}
 	}
 }
 
-func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Number, previous *ast.Node) evaluator.Result {
+func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue *jsnum.Number, previous *ast.Node) evaluator.Result {
 	if ast.IsComputedNonLiteralName(member.Name()) {
 		c.error(member.Name(), diagnostics.Computed_property_names_are_not_allowed_in_enums)
 	} else if ast.IsBigIntLiteral(member.Name()) {
@@ -23775,7 +23808,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 	// If the member is the first member in the enum declaration, it is assigned the value zero.
 	// Otherwise, it is assigned the value of the immediately preceding member plus one, and an error
 	// occurs if the immediately preceding member is not a constant enum member.
-	if autoValue.IsNaN() {
+	if autoValue == nil {
 		c.error(member.Name(), diagnostics.Enum_member_must_have_initializer)
 		return evaluator.NewResult(nil, false, false, false)
 	}
@@ -23786,7 +23819,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 			c.error(member.Name(), diagnostics.Enum_member_following_a_non_literal_numeric_member_must_have_an_initializer_when_isolatedModules_is_enabled)
 		}
 	}
-	return evaluator.NewResult(autoValue, false, false, false)
+	return evaluator.NewResult(*autoValue, false, false, false)
 }
 
 func (c *Checker) computeConstantEnumMemberValue(member *ast.Node) evaluator.Result {
