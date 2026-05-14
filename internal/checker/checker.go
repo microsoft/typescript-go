@@ -30121,7 +30121,7 @@ func (c *Checker) getParentTypeOfClassElement(node *ast.Node) *Type {
 func (c *Checker) getClassElementPropertyKeyType(element *ast.Node) *Type {
 	name := element.Name()
 	switch name.Kind {
-	case ast.KindIdentifier, ast.KindNumericLiteral, ast.KindStringLiteral, ast.KindPrivateIdentifier:
+	case ast.KindIdentifier, ast.KindNumericLiteral, ast.KindStringLiteral:
 		return c.getStringLiteralType(name.Text())
 	case ast.KindComputedPropertyName:
 		nameType := c.checkComputedPropertyName(name)
@@ -30130,7 +30130,7 @@ func (c *Checker) getClassElementPropertyKeyType(element *ast.Node) *Type {
 		}
 		return c.stringType
 	}
-	panic("Unhandled case in getClassElementPropertyKeyType")
+	return c.errorType
 }
 
 func (c *Checker) getTypeOfPropertyOfContextualType(t *Type, name string) *Type {
