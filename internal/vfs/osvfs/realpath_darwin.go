@@ -13,10 +13,10 @@ import (
 // path component — O(depth).
 //
 // How it works:
-//   - open(path, O_EVTONLY|O_CLOEXEC) follows all symlinks and gives us a
-//     lightweight fd. O_EVTONLY is macOS's event-only descriptor — it doesn't
-//     require read permission (similar to Linux's O_PATH) but still references
-//     the vnode.
+//   - open(path, O_EVTONLY|O_NONBLOCK|O_CLOEXEC) follows all symlinks and gives
+//     us a lightweight fd. O_EVTONLY is macOS's event-only descriptor — it
+//     doesn't require read permission (similar to Linux's O_PATH) but still
+//     references the vnode. O_NONBLOCK prevents blocking on FIFOs.
 //   - fcntl(fd, F_GETPATH, buf) asks the kernel for the canonical path of the
 //     open file descriptor, written into a MAXPATHLEN buffer.
 //
@@ -27,7 +27,7 @@ import (
 var hasFGetPath = sync.OnceValue(func() bool {
 	// Verify that F_GETPATH is supported by this kernel version.
 	var buf [unix.PathMax]byte
-	fd, err := unix.Open(".", unix.O_EVTONLY|unix.O_CLOEXEC, 0)
+	fd, err := unix.Open(".", unix.O_EVTONLY|unix.O_NONBLOCK|unix.O_CLOEXEC, 0)
 	if err != nil {
 		return false
 	}
@@ -47,7 +47,7 @@ func realpath(path string) (string, error) {
 		return filepath.EvalSymlinks(path)
 	}
 
-	fd, err := unix.Open(path, unix.O_EVTONLY|unix.O_CLOEXEC, 0)
+	fd, err := unix.Open(path, unix.O_EVTONLY|unix.O_NONBLOCK|unix.O_CLOEXEC, 0)
 	if err != nil {
 		return "", err
 	}
