@@ -214,7 +214,7 @@
         "LICENSE",
         "NOTICE.txt",
         "logo.png",
-        "l10n",
+        "l10n/bundle.l10n.json",
         "package.nls.json"
     ],
     "scripts": {
