@@ -41,7 +41,7 @@ func realpath(path string) (string, error) {
 		return filepath.EvalSymlinks(path)
 	}
 
-	fd, err := ignoringEINTR2(func() (int, error) {
+	fd, err := ignoringEINTR(func() (int, error) {
 		return unix.Open(path, unix.O_CLOEXEC|unix.O_PATH, 0)
 	})
 	if err != nil {
@@ -56,7 +56,7 @@ func realpath(path string) (string, error) {
 
 	buf := make([]byte, 256)
 	for {
-		nn, err := ignoringEINTR2(func() (int, error) {
+		nn, err := ignoringEINTR(func() (int, error) {
 			return unix.Readlink(procPath, buf)
 		})
 		if err != nil {

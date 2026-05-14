@@ -37,7 +37,7 @@ var hasFGetPath = sync.OnceValue(func() bool {
 })
 
 func fcntlGetPath(fd int, buf *[unix.PathMax]byte) (int, error) {
-	return ignoringEINTR2(func() (int, error) {
+	return ignoringEINTR(func() (int, error) {
 		return unix.FcntlInt(uintptr(fd), unix.F_GETPATH, int(uintptr(unsafe.Pointer(&buf[0]))))
 	})
 }
