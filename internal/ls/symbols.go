@@ -560,16 +560,26 @@ func ProvideWorkspaceSymbols(
 	for i, info := range infos[0:count] {
 		node := info.declaration
 		sourceFile := ast.GetSourceFileOfNode(node)
-		pos := astnav.GetStartOfNode(node, sourceFile, false /*includeJsDoc*/)
 		container := getContainerNode(info.declaration)
 		var containerName *string
 		if container != nil {
 			containerName = strPtrTo(ast.GetDeclarationName(container))
 		}
+		// Use the name node's span so that VS selects just the symbol name (matching
+		// the TS5 navto behaviour). Fall back to the declaration start position if the
+		// declaration has no explicit name node (e.g. anonymous default exports).
+		var nameRange core.TextRange
+		if nameNode := ast.GetNameOfDeclaration(node); nameNode != nil {
+			nameStart := astnav.GetStartOfNode(nameNode, sourceFile, false /*includeJsDoc*/)
+			nameRange = core.NewTextRange(nameStart, nameNode.End())
+		} else {
+			pos := astnav.GetStartOfNode(node, sourceFile, false /*includeJsDoc*/)
+			nameRange = core.NewTextRange(pos, pos)
+		}
 		var symbol lsproto.SymbolInformation
 		symbol.Name = info.name
 		symbol.Kind = getSymbolKindFromNode(info.declaration)
-		symbol.Location = converters.ToLSPLocation(sourceFile, core.NewTextRange(pos, node.End()))
+		symbol.Location = converters.ToLSPLocation(sourceFile, nameRange)
 		symbol.ContainerName = containerName
 		symbols[i] = &symbol
 	}
