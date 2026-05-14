@@ -276,6 +276,7 @@ func (l *LanguageService) findSignatureHelpFromNamedDeclarations(ctx context.Con
 func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool) *lsproto.SignatureHelp {
 	caps := lsproto.GetClientCapabilities(ctx)
 	docFormat := lsproto.PreferredMarkupKind(caps.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat)
+	vsCapability := caps.VSSupportsVisualStudioExtensions
 
 	enclosingDeclaration := getEnclosingDeclarationFromInvocation(argumentInfo.invocation)
 	if enclosingDeclaration == nil {
@@ -301,7 +302,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	}
 	items := make([][]signatureInformation, len(candidates))
 	for i, candidateSignature := range candidates {
-		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), callTargetSymbol, enclosingDeclaration, sourceFile, c, docFormat)
+		items[i] = l.getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), callTargetSymbol, enclosingDeclaration, sourceFile, c, docFormat, vsCapability)
 	}
 
 	selectedItemIndex := 0
@@ -367,13 +368,6 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 			}
 		}
 
-		// Set VS-specific colorized label if we have classified runs
-		if len(item.ColorizedRuns) > 0 {
-			sigInfo.VSColorizedLabel = &lsproto.ClassifiedTextElement{
-				Runs: item.ColorizedRuns,
-			}
-		}
-
 		// If client supports per-signature activeParameter, set it on each SignatureInformation
 		if supportsPerSignatureActiveParam {
 			sigInfo.ActiveParameter = l.computeActiveParameter(item, argumentInfo.argumentIndex, supportsNullActiveParam)
@@ -428,15 +422,15 @@ func (l *LanguageService) computeActiveParameter(sig signatureInformation, argum
 	return &lsproto.UintegerOrNull{Uinteger: new(activeParam)}
 }
 
-func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, callTargetSym *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind) []signatureInformation {
+func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, callTargetSym *ast.Symbol, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker, docFormat lsproto.MarkupKind, vsCapability bool) []signatureInformation {
 	var infos []*signatureHelpItemInfo
 	if isTypeParameterList {
-		infos = l.itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat)
+		infos = l.itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat, vsCapability)
 	} else {
-		infos = l.itemInfoForParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat)
+		infos = l.itemInfoForParameters(candidate, c, enclosingDeclaration, sourceFile, docFormat, vsCapability)
 	}
 
-	suffixDisplayParts, suffixRuns := returnTypeToDisplayParts(candidate, c, enclosingDeclaration, sourceFile)
+	suffixDpw := returnTypeToDisplayParts(candidate, c, enclosingDeclaration, sourceFile, vsCapability)
 
 	// Generate documentation from the signature's declaration
 	var documentation *string
@@ -447,73 +441,53 @@ func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isT
 		}
 	}
 
-	// Build classified runs for the call target symbol
-	var callTargetRuns []*lsproto.ClassifiedTextRun
-	if callTargetSymbol != "" {
-		classification := classificationForSymbol(callTargetSym)
-		callTargetRuns = []*lsproto.ClassifiedTextRun{
-			{ClassificationTypeName: string(classification), Text: callTargetSymbol},
-		}
-	}
-
 	result := make([]signatureInformation, len(infos))
 	for i, info := range infos {
-		var display strings.Builder
-		display.WriteString(callTargetSymbol)
-		display.WriteString(info.displayParts)
-		display.WriteString(suffixDisplayParts)
-
-		// Combine classified runs: callTarget + info runs + suffix runs
-		var allRuns []*lsproto.ClassifiedTextRun
-		allRuns = append(allRuns, callTargetRuns...)
-		allRuns = append(allRuns, info.colorizedRuns...)
-		allRuns = append(allRuns, suffixRuns...)
+		labelDpw := newDisplayPartsWriter(vsCapability)
+		if callTargetSymbol != "" {
+			labelDpw.WriteSymbol(callTargetSymbol, callTargetSym)
+		}
+		labelDpw.WriteFrom(info.writer)
+		labelDpw.WriteFrom(suffixDpw)
 
 		result[i] = signatureInformation{
-			Label:         display.String(),
+			Label:         labelDpw.String(),
 			Documentation: documentation,
 			Parameters:    info.parameters,
 			IsVariadic:    info.isVariadic,
-			ColorizedRuns: allRuns,
+			ColorizedRuns: labelDpw.GetRuns(),
 		}
 	}
 	return result
 }
 
-func returnTypeToDisplayParts(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile) (string, []*lsproto.ClassifiedTextRun) {
-	var runs []*lsproto.ClassifiedTextRun
-	var result strings.Builder
+func returnTypeToDisplayParts(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, vsCapability bool) *displayPartsWriter {
+	dpw := newDisplayPartsWriter(vsCapability)
 
 	// Add ": " prefix
-	result.WriteString(": ")
-	runs = append(runs, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: ":"})
-	runs = append(runs, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameWhiteSpace), Text: " "})
+	dpw.WritePunctuation(":")
+	dpw.WriteSpace(" ")
 
 	predicate := c.GetTypePredicateOfSignature(candidateSignature)
 	if predicate != nil {
-		text := c.TypePredicateToString(predicate)
-		result.WriteString(text)
-		runs = append(runs, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameText), Text: text})
+		dpw.Write(c.TypePredicateToString(predicate))
 	} else {
 		returnType := c.GetReturnTypeOfSignature(candidateSignature)
 		typeNode := c.TypeToTypeNode(returnType, enclosingDeclaration, signatureHelpNodeBuilderFlags, nil)
 		if typeNode != nil {
-			// Write through displayPartsWriter for classified output
-			dpw := newDisplayPartsWriter()
 			p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, printer.NewEmitContext())
-			p.Write(typeNode, sourceFile, dpw, nil)
-			result.WriteString(dpw.String())
-			runs = append(runs, dpw.GetRuns()...)
+			// Use a temporary writer for p.Write since the printer calls Clear() on its writer
+			tempDpw := newDisplayPartsWriter(vsCapability)
+			p.Write(typeNode, sourceFile, tempDpw, nil)
+			dpw.WriteFrom(tempDpw)
 		} else {
-			text := c.TypeToString(returnType)
-			result.WriteString(text)
-			runs = append(runs, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameText), Text: text})
+			dpw.Write(c.TypeToString(returnType))
 		}
 	}
-	return result.String(), runs
+	return dpw
 }
 
-func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind) []*signatureHelpItemInfo {
+func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind, vsCapability bool) []*signatureHelpItemInfo {
 	emitContext := printer.NewEmitContext()
 	p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
 
@@ -534,73 +508,63 @@ func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.
 	}
 
 	// Creating type parameter display label
-	var displayParts strings.Builder
-	var displayRuns []*lsproto.ClassifiedTextRun
+	dpw := newDisplayPartsWriter(vsCapability)
+
 	lessThanToken := scanner.TokenToString(ast.KindLessThanToken)
-	displayParts.WriteString(lessThanToken)
-	displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: lessThanToken})
+	dpw.WritePunctuation(lessThanToken)
 	for i, typeParameter := range signatureHelpTypeParameters {
 		if i > 0 {
-			displayParts.WriteString(", ")
-			displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: ","})
-			displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameWhiteSpace), Text: " "})
+			dpw.WritePunctuation(",")
+			dpw.WriteSpace(" ")
 		}
 		label := *typeParameter.parameterInfo.Label.String
-		displayParts.WriteString(label)
-		displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameTypeParameterName), Text: label})
+		dpw.WriteClassified(label, lsproto.ClassificationTypeNameTypeParameterName)
 	}
 	greaterThanToken := scanner.TokenToString(ast.KindGreaterThanToken)
-	displayParts.WriteString(greaterThanToken)
-	displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: greaterThanToken})
+	dpw.WritePunctuation(greaterThanToken)
 
 	// Creating display label for parameters like, (a: string, b: number)
 	lists := c.GetExpandedParameters(candidateSignature, false)
 	if len(lists) != 0 {
 		openParen := scanner.TokenToString(ast.KindOpenParenToken)
-		displayParts.WriteString(openParen)
-		displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: openParen})
+		dpw.WritePunctuation(openParen)
 	}
 
 	result := make([]*signatureHelpItemInfo, len(lists))
 	for i, parameterList := range lists {
-		var displayParameters strings.Builder
-		displayParameters.WriteString(displayParts.String())
-		var paramRuns []*lsproto.ClassifiedTextRun
-		paramRuns = append(paramRuns, displayRuns...)
+		paramDpw := newDisplayPartsWriter(vsCapability)
+		paramDpw.WriteFrom(dpw)
+
 		parameters := thisParameter
 		for j, param := range parameterList {
 			paramNode := checker.NewNodeBuilder(c, emitContext).SymbolToParameterDeclaration(param, enclosingDeclaration, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil)
-			// Use Emit for the label (preserves original formatting)
-			paramLabel := p.Emit(paramNode, sourceFile)
-			// Use Write with displayPartsWriter for classified runs
-			dpw := newDisplayPartsWriter()
-			p.Write(paramNode, sourceFile, dpw, nil)
+
+			if j > 0 {
+				paramDpw.WritePunctuation(",")
+				paramDpw.WriteSpace(" ")
+			}
+			// Use a temporary writer for p.Write since the printer calls Clear() on its writer
+			tempDpw := newDisplayPartsWriter(vsCapability)
+			p.Write(paramNode, sourceFile, tempDpw, nil)
+			paramLabel := tempDpw.String()
+			paramDpw.WriteFrom(tempDpw)
 
 			parameter := l.createSignatureHelpParameterFromLabel(param, paramLabel, c, docFormat)
 			parameters = append(parameters, parameter)
-			if j > 0 {
-				displayParameters.WriteString(", ")
-				paramRuns = append(paramRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: ","})
-				paramRuns = append(paramRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameWhiteSpace), Text: " "})
-			}
-			displayParameters.WriteString(paramLabel)
-			paramRuns = append(paramRuns, dpw.GetRuns()...)
 		}
 		closeParen := scanner.TokenToString(ast.KindCloseParenToken)
-		displayParameters.WriteString(closeParen)
-		paramRuns = append(paramRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: closeParen})
+		paramDpw.WritePunctuation(closeParen)
 
 		result[i] = &signatureHelpItemInfo{
-			isVariadic:    false,
-			parameters:    signatureHelpTypeParameters,
-			displayParts:  displayParameters.String(),
-			colorizedRuns: paramRuns,
+			isVariadic: false,
+			parameters: signatureHelpTypeParameters,
+			writer:     paramDpw,
 		}
 	}
 	return result
 }
 
-func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind) []*signatureHelpItemInfo {
+func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile, docFormat lsproto.MarkupKind, vsCapability bool) []*signatureHelpItemInfo {
 	emitContext := printer.NewEmitContext()
 	p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
 
@@ -612,33 +576,28 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 	}
 
 	// Creating display label for type parameters like, <T, U>
-	var displayParts strings.Builder
-	var displayRuns []*lsproto.ClassifiedTextRun
+	dpw := newDisplayPartsWriter(vsCapability)
+
 	if len(signatureHelpTypeParameters) != 0 {
 		lessThanToken := scanner.TokenToString(ast.KindLessThanToken)
-		displayParts.WriteString(lessThanToken)
-		displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: lessThanToken})
+		dpw.WritePunctuation(lessThanToken)
 		for i, typeParameter := range signatureHelpTypeParameters {
 			if i > 0 {
-				displayParts.WriteString(", ")
-				displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: ","})
-				displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameWhiteSpace), Text: " "})
+				dpw.WritePunctuation(",")
+				dpw.WriteSpace(" ")
 			}
 			label := *typeParameter.parameterInfo.Label.String
-			displayParts.WriteString(label)
-			displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameTypeParameterName), Text: label})
+			dpw.WriteClassified(label, lsproto.ClassificationTypeNameTypeParameterName)
 		}
 		greaterThanToken := scanner.TokenToString(ast.KindGreaterThanToken)
-		displayParts.WriteString(greaterThanToken)
-		displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: greaterThanToken})
+		dpw.WritePunctuation(greaterThanToken)
 	}
 
 	// Creating display parts for parameters. For example, (a: string, b: number)
 	lists := c.GetExpandedParameters(candidateSignature, false)
 	if len(lists) != 0 {
 		openParen := scanner.TokenToString(ast.KindOpenParenToken)
-		displayParts.WriteString(openParen)
-		displayRuns = append(displayRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: openParen})
+		dpw.WritePunctuation(openParen)
 	}
 
 	isVariadic := func(parameterList []*ast.Symbol) bool {
@@ -654,39 +613,33 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 	result := make([]*signatureHelpItemInfo, len(lists))
 	for i, parameterList := range lists {
 		parameters := make([]signatureHelpParameter, len(parameterList))
-		var displayParameters strings.Builder
-		displayParameters.WriteString(displayParts.String())
-		var paramRuns []*lsproto.ClassifiedTextRun
-		paramRuns = append(paramRuns, displayRuns...)
+		paramDpw := newDisplayPartsWriter(vsCapability)
+		paramDpw.WriteFrom(dpw)
+
 		for j, param := range parameterList {
 			paramNode := checker.NewNodeBuilder(c, emitContext).SymbolToParameterDeclaration(param, enclosingDeclaratipn, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil)
-			// Use Emit for the label (preserves original formatting)
-			paramLabel := p.Emit(paramNode, sourceFile)
-			// Use Write with displayPartsWriter for classified runs
-			dpw := newDisplayPartsWriter()
-			p.Write(paramNode, sourceFile, dpw, nil)
+
+			if j > 0 {
+				paramDpw.WritePunctuation(",")
+				paramDpw.WriteSpace(" ")
+			}
+			// Use a temporary writer for p.Write since the printer calls Clear() on its writer
+			tempDpw := newDisplayPartsWriter(vsCapability)
+			p.Write(paramNode, sourceFile, tempDpw, nil)
+			paramLabel := tempDpw.String()
+			paramDpw.WriteFrom(tempDpw)
 
 			parameter := l.createSignatureHelpParameterFromLabel(param, paramLabel, c, docFormat)
 			parameters[j] = parameter
-			if j > 0 {
-				displayParameters.WriteString(", ")
-				paramRuns = append(paramRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: ","})
-				paramRuns = append(paramRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNameWhiteSpace), Text: " "})
-			}
-			displayParameters.WriteString(paramLabel)
-			paramRuns = append(paramRuns, dpw.GetRuns()...)
 		}
 		closeParen := scanner.TokenToString(ast.KindCloseParenToken)
-		displayParameters.WriteString(closeParen)
-		paramRuns = append(paramRuns, &lsproto.ClassifiedTextRun{ClassificationTypeName: string(lsproto.ClassificationTypeNamePunctuation), Text: closeParen})
+		paramDpw.WritePunctuation(closeParen)
 
 		result[i] = &signatureHelpItemInfo{
-			isVariadic:    isVariadic(parameterList),
-			parameters:    parameters,
-			displayParts:  displayParameters.String(),
-			colorizedRuns: paramRuns,
+			isVariadic: isVariadic(parameterList),
+			parameters: parameters,
+			writer:     paramDpw,
 		}
-
 	}
 	return result
 }
@@ -754,10 +707,9 @@ type signatureInformation struct {
 }
 
 type signatureHelpItemInfo struct {
-	isVariadic    bool
-	parameters    []signatureHelpParameter
-	displayParts  string
-	colorizedRuns []*lsproto.ClassifiedTextRun
+	isVariadic bool
+	parameters []signatureHelpParameter
+	writer     *displayPartsWriter
 }
 
 type signatureHelpParameter struct {
@@ -873,7 +825,7 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 	pos := startingToken.Pos()
 	// There's a possibility that `startingToken.parent` contains only `startingToken` and
 	// missing nodes, none of which are valid to be returned by `findPrecedingToken`. In that
-	// case, the preceding token we want is actually higher up the treeâ€”almost definitely the
+	// case, the preceding token we want is actually higher up the tree—almost definitely the
 	// next parent, but theoretically the situation with missing nodes might be happening on
 	// multiple nested levels.
 	currentParent := startingToken.Parent

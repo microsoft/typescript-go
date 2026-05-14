@@ -100,51 +100,7 @@
               "label": "value: number"
             }
           ],
-          "activeParameter": 0,
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "class name",
-                "Text": "Foo"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "parameter name",
-                "Text": "value"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "number"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "text",
-                "Text": "Foo"
-              }
-            ]
-          }
+          "activeParameter": 0
         }
       ],
       "activeSignature": 0
@@ -168,35 +124,7 @@
             "kind": "markdown",
             "value": "method1 documentation"
           },
-          "parameters": [],
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "method1"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "void"
-              }
-            ]
-          }
+          "parameters": []
         }
       ],
       "activeSignature": 0
@@ -216,35 +144,7 @@
       "signatures": [
         {
           "label": "method2(): void",
-          "parameters": [],
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "method2"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "void"
-              }
-            ]
-          }
+          "parameters": []
         }
       ],
       "activeSignature": 0
@@ -264,35 +164,7 @@
       "signatures": [
         {
           "label": "method3(): number",
-          "parameters": [],
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "method3"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "number"
-              }
-            ]
-          }
+          "parameters": []
         }
       ],
       "activeSignature": 0

@@ -15,26 +15,46 @@ var _ printer.EmitTextWriter = &displayPartsWriter{}
 
 // displayPartsWriter implements EmitTextWriter and captures classified text runs
 // for VS colorized labels, while also building a plain string.
+// When vsCapability is false, only the plain string is built; runs are skipped.
 type displayPartsWriter struct {
-	builder     strings.Builder
-	runs        []*lsproto.ClassifiedTextRun
-	lastWritten string
+	builder      strings.Builder
+	runs         []*lsproto.ClassifiedTextRun
+	vsCapability bool
+	lastWritten  string
 }
 
-func newDisplayPartsWriter() *displayPartsWriter {
-	return &displayPartsWriter{}
+func newDisplayPartsWriter(vsCapability bool) *displayPartsWriter {
+	return &displayPartsWriter{vsCapability: vsCapability}
 }
 
 func (w *displayPartsWriter) addRun(classification lsproto.ClassificationTypeName, text string) {
 	if text == "" {
 		return
 	}
-	w.runs = append(w.runs, &lsproto.ClassifiedTextRun{
-		ClassificationTypeName: string(classification),
-		Text:                   text,
-	})
+	if w.vsCapability {
+		w.runs = append(w.runs, &lsproto.ClassifiedTextRun{
+			ClassificationTypeName: string(classification),
+			Text:                   text,
+		})
+	}
 	w.lastWritten = text
 	w.builder.WriteString(text)
+}
+
+// WriteClassified writes text with an explicit classification type.
+func (w *displayPartsWriter) WriteClassified(text string, classification lsproto.ClassificationTypeName) {
+	w.addRun(classification, text)
+}
+
+// WriteFrom copies the accumulated content from another displayPartsWriter.
+func (w *displayPartsWriter) WriteFrom(other *displayPartsWriter) {
+	w.builder.WriteString(other.String())
+	if w.vsCapability {
+		w.runs = append(w.runs, other.GetRuns()...)
+	}
+	if other.lastWritten != "" {
+		w.lastWritten = other.lastWritten
+	}
 }
 
 func (w *displayPartsWriter) GetRuns() []*lsproto.ClassifiedTextRun {
