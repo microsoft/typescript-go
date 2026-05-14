@@ -41,7 +41,9 @@ func realpath(path string) (string, error) {
 		return filepath.EvalSymlinks(path)
 	}
 
-	fd, err := unix.Open(path, unix.O_CLOEXEC|unix.O_PATH, 0)
+	fd, err := ignoringEINTR2(func() (int, error) {
+		return unix.Open(path, unix.O_CLOEXEC|unix.O_PATH, 0)
+	})
 	if err != nil {
 		return "", &os.PathError{Op: "open", Path: path, Err: err}
 	}
@@ -50,10 +52,13 @@ func realpath(path string) (string, error) {
 	var procBuf [len(_procSelfFD) + 20]byte // 20 digits is enough for any int64 fd
 	n := copy(procBuf[:], _procSelfFD)
 	n += copy(procBuf[n:], strconv.Itoa(fd))
+	procPath := string(procBuf[:n])
 
 	buf := make([]byte, 256)
 	for {
-		nn, err := unix.Readlink(string(procBuf[:n]), buf)
+		nn, err := ignoringEINTR2(func() (int, error) {
+			return unix.Readlink(procPath, buf)
+		})
 		if err != nil {
 			return "", &os.PathError{Op: "readlink", Path: path, Err: err}
 		}
