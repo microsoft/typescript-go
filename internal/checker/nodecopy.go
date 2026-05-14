@@ -75,13 +75,14 @@ func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
 }
 
 type recoveryBoundary struct {
-	ctx                 *NodeBuilderContext
-	hadError            bool
-	deferredReports     []func()
-	oldTracker          nodebuilder.SymbolTracker
-	oldTrackedSymbols   []*TrackedSymbolArgs
-	trackedSymbols      []*TrackedSymbolArgs
-	oldEncounteredError bool
+	ctx                    *NodeBuilderContext
+	hadError               bool
+	deferredReports        []func()
+	oldTracker             nodebuilder.SymbolTracker
+	oldTrackedSymbols      []*TrackedSymbolArgs
+	trackedSymbols         []*TrackedSymbolArgs
+	oldEncounteredError    bool
+	oldApproximateLength   int
 }
 
 func (b *recoveryBoundary) markError(f func()) {
@@ -172,7 +173,7 @@ func newWrappingTracker(inner nodebuilder.SymbolTracker, bound *recoveryBoundary
 
 func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	b.ch.checkNotCanceled()
-	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError}
+	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError, oldApproximateLength: b.ctx.approximateLength}
 	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound))
 	b.ctx.tracker = newTracker
 	b.ctx.trackedSymbols = nil
@@ -183,6 +184,7 @@ func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 	b.ctx.tracker = bound.oldTracker
 	b.ctx.trackedSymbols = bound.oldTrackedSymbols
 	b.ctx.encounteredError = bound.oldEncounteredError
+	b.ctx.approximateLength = bound.oldApproximateLength
 
 	for _, f := range bound.deferredReports {
 		f()
@@ -198,19 +200,13 @@ func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 
 func (b *NodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
 	bound := b.createRecoveryBoundary()
-	startLength := b.ctx.approximateLength
 	var transformed *ast.Node
 	v := getExistingNodeTreeVisitor(b, bound) // !!! TODO: Cache visitor and just reset bound+host builder? We try this for a *lot* of nodes.
 	transformed = v.VisitNode(existing)
 	if !b.finalizeBoundary(bound) {
 		return nil
 	}
-	// Use the text range of the existing node as the approximate length contribution,
-	// resetting to startLength first. This prevents double-counting when the visitor's
-	// fallback path re-enters tryReuseExistingNodeHelper for child nodes via the pseudo
-	// type checker (which resolves types with context, succeeding where tsc's
-	// getTypeFromTypeNodeWithoutContext would produce a different type object and bail).
-	b.ctx.approximateLength = startLength + existing.Loc.End() - existing.Loc.Pos()
+	b.ctx.approximateLength += existing.Loc.End() - existing.Loc.Pos()
 	return transformed
 }
 
