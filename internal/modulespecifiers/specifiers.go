@@ -647,10 +647,6 @@ func processEnding(
 	if fileName == noExtension {
 		return fileName
 	}
-	if tspath.TryGetExtensionFromPath(fileName) == "" {
-		// File has an unknown extension (e.g. .css) - return as-is
-		return fileName
-	}
 
 	jsPriority := slices.Index(allowedEndings, ModuleSpecifierEndingJsExtension)
 	tsPriority := slices.Index(allowedEndings, ModuleSpecifierEndingTsExtension)
