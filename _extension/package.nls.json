@@ -1,5 +1,4 @@
 {
-    "displayName": "TypeScript (Native Preview)",
     "description": "Preview of the native TypeScript language server for Visual Studio Code.",
     "workspaceTrust": "The extension requires workspace trust when the workspace version is used because it executes code specified by the workspace.",
     "native-preview.trace.customConfigFileName.description": "Custom config file name to use e.g. 'tsconfig.all.json', before defaulting to tsconfig.json/jsconfig.json.",
@@ -24,5 +23,6 @@
 	"native-preview.dev.saveAllocProfile.title": "TypeScript Native Preview: Save Allocation Profile",
 	"native-preview.dev.startCPUProfile.title": "TypeScript Native Preview: Start CPU Profile",
 	"native-preview.dev.stopCPUProfile.title": "TypeScript Native Preview: Stop CPU Profile",
-	"native-preview.initializeAPIConnection.ui.title": "Initialize API Connection"
+	"native-preview.initializeAPIConnection.ui.title": "TypeScript Native Preview: Initialize API Connection",
+	"developer": "Developer"
 }

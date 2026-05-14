@@ -1,6 +1,6 @@
 {
     "name": "native-preview",
-    "displayName": "%displayName%",
+    "displayName": "TypeScript (Native Preview)",
     "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
     "description": "%description%",
@@ -159,37 +159,37 @@
                 "command": "typescript.native-preview.dev.runGC",
                 "title": "%native-preview.dev.runGC.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "Developer"
+                "category": "%developer%"
             },
             {
                 "command": "typescript.native-preview.dev.saveHeapProfile",
                 "title": "%native-preview.dev.saveHeapProfile.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "Developer"
+                "category": "%developer%"
             },
             {
                 "command": "typescript.native-preview.dev.saveAllocProfile",
                 "title": "%native-preview.dev.saveAllocProfile.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "Developer"
+                "category": "%developer%"
             },
             {
                 "command": "typescript.native-preview.dev.startCPUProfile",
                 "title": "%native-preview.dev.startCPUProfile.title%",
                 "enablement": "typescript.native-preview.serverRunning && !typescript.native-preview.cpuProfileRunning",
-                "category": "Developer"
+                "category": "%developer%"
             },
             {
                 "command": "typescript.native-preview.dev.stopCPUProfile",
                 "title": "%native-preview.dev.stopCPUProfile.title%",
                 "enablement": "typescript.native-preview.cpuProfileRunning",
-                "category": "Developer"
+                "category": "%developer%"
             },
             {
                 "command": "typescript.native-preview.initializeAPIConnection.ui",
                 "title": "%native-preview.initializeAPIConnection.ui.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "Developer: TypeScript Native Preview"
+                "category": "%developer%"
             }
         ],
         "menus": {
