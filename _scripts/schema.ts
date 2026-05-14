@@ -546,8 +546,11 @@ export class ListType extends TypeBase {
 
     formatTypeScript(): string {
         const elementType = this.elementType.formatTypeScript();
-        if (this.listKind === "raw") {
+        if (this.elementType.baseKind() === "primitive") {
             return `readonly ${elementType}[]`;
+        }
+        if (this.listKind === "raw") {
+            return `readonly ${elementType}[] | NodeArray<${elementType}>`;
         }
         return `NodeArray<${elementType}>`;
     }
@@ -561,6 +564,13 @@ export class ListType extends TypeBase {
             return this;
         }
         return this.api.listType(this.elementType, "raw");
+    }
+
+    nodeList(): ListType {
+        if (this.listKind === "NodeList") {
+            return this;
+        }
+        return this.api.listType(this.elementType, "NodeList");
     }
 }
 

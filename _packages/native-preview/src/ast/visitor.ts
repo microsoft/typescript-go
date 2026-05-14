@@ -29,7 +29,7 @@ import {
 } from "./visitor.generated.ts";
 
 export type { Visitor };
-export { visitEachChild, visitNode, visitNodes, visitNodesArray } from "./visitor.generated.ts";
+export { visitEachChild, visitNode, visitNodes } from "./visitor.generated.ts";
 
 // ── forEachChild helpers (same signature as forEachChildTable entries) ──
 

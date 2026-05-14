@@ -234,9 +234,6 @@ function visitorGuardName(member: MemberInfo): string | undefined {
 
 function visitorVisitExpression(member: MemberInfo): { expression: string; guardName?: string; } {
     const propName = api.uncapitalize(member.name);
-    if (member.listKind === "raw") {
-        return { expression: `visitNodesArray(node.${propName}, visitor)` };
-    }
     if (member.type.kind === "list") {
         return { expression: `visitNodes(node.${propName}, visitor)` };
     }
@@ -341,7 +338,7 @@ import type { Node, NodeArray } from "./ast.ts";`);
         for (const m of tsInterfaceMembers(node)) {
             if (m.rawType === "SyntaxKind" && m.name === "SyntaxKind") continue;
             const propName = api.uncapitalize(m.name);
-            const propType = m.type.formatTypeScript();
+            const propType = m.type.kind === "list" ? m.type.nodeList().formatTypeScript() : m.type.formatTypeScript();
             const opt = m.optional ? "?" : "";
             memberLines += `\n    readonly ${propName}${opt}: ${propType};`;
         }
@@ -485,7 +482,6 @@ function generateFactory(): string {
         const kindTypeParam = kindTypeParameter(node);
         if (kindTypeParam) addType(kindTypeParam.constraint);
         for (const m of tsMembers(node)) {
-            addType(tsParamTypeFrom(m.type));
             addType(m.type.formatTypeScript());
         }
     }
@@ -577,11 +573,11 @@ function generateFactory(): string {
     out.push(``);
 
     // ── Utility functions ──
-    out.push(`function isNodeArray<T extends Node>(array: readonly T[]): array is NodeArray<T> {`);
+    out.push(`function isNodeArray<T extends Node>(array: readonly T[] | NodeArray<T>): array is NodeArray<T> {`);
     out.push(`    return "pos" in array && "end" in array;`);
     out.push(`}`);
     out.push(``);
-    out.push(`export function createNodeArray<T extends Node>(elements: readonly T[], pos: number = -1, end: number = -1): NodeArray<T> {`);
+    out.push(`export function createNodeArray<T extends Node>(elements: readonly T[] | NodeArray<T>, pos: number = -1, end: number = -1): NodeArray<T> {`);
     out.push(`    if (isNodeArray(elements)) return elements;`);
     out.push(`    const arr = elements.slice() as unknown as NodeArray<T> & { pos: number; end: number; };`);
     out.push(`    arr.pos = pos;`);
@@ -984,7 +980,7 @@ function generateFactory(): string {
     }
 
     // ── createSourceFile (hand-written — SourceFile is handWritten in schema) ──
-    out.push(`export function createSourceFile(statements: readonly Statement[], endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {`);
+    out.push(`export function createSourceFile(statements: readonly Statement[] | NodeArray<Statement>, endOfFileToken: EndOfFile, text: string, fileName: string, path: Path): SourceFile {`);
     out.push(`    return new NodeObject(SyntaxKind.SourceFile, {`);
     out.push(`        statements: createNodeArray(statements),`);
     out.push(`        endOfFileToken,`);
@@ -996,7 +992,7 @@ function generateFactory(): string {
     out.push(``);
 
     // ── updateSourceFile (hand-written in schema) ──
-    out.push(`export function updateSourceFile(node: SourceFile, statements: readonly Statement[], endOfFileToken: EndOfFile): SourceFile {`);
+    out.push(`export function updateSourceFile(node: SourceFile, statements: readonly Statement[] | NodeArray<Statement>, endOfFileToken: EndOfFile): SourceFile {`);
     out.push(`    return node.statements !== statements || node.endOfFileToken !== endOfFileToken`);
     out.push(`        ? createSourceFile(statements, endOfFileToken, node.text, node.fileName, node.path)`);
     out.push(`        : node;`);
@@ -1413,31 +1409,23 @@ function generateVisitor(): string {
     out.push(`export function visitNodes<T extends Node>(nodes: NodeArray<T> | undefined, visitor: Visitor): NodeArray<T> | undefined;`);
     out.push(`export function visitNodes(nodes: NodeArray<Node> | undefined, visitor: Visitor): NodeArray<Node> | undefined {`);
     out.push(`    if (nodes === undefined) return undefined;`);
-    out.push(`    const updated = visitNodesArray(nodes, visitor);`);
-    out.push(`    if (updated === nodes) {`);
-    out.push(`        return nodes;`);
-    out.push(`    }`);
-    out.push(`    return createNodeArray(updated, nodes.pos, nodes.end);`);
-    out.push(`}`);
-    out.push("");
-    out.push(`export function visitNodesArray<T extends Node>(nodes: readonly T[], visitor: Visitor): readonly T[];`);
-    out.push(`export function visitNodesArray<T extends Node>(nodes: readonly T[] | undefined, visitor: Visitor): readonly T[] | undefined;`);
-    out.push(`export function visitNodesArray(nodes: readonly Node[] | undefined, visitor: Visitor): readonly Node[] | undefined {`);
-    out.push(`    if (nodes === undefined) return undefined;`);
     out.push(`    let updated: Node[] | undefined;`);
     out.push(`    for (let i = 0; i < nodes.length; i++) {`);
-    out.push(`        const node = nodes[i];`);
+    out.push(`        const node = nodes.at(i);`);
     out.push(`        const visited = visitor(node);`);
     out.push(`        if (updated) {`);
     out.push(`            if (visited) updated.push(visited);`);
     out.push(`        }`);
     out.push(`        else if (visited !== node) {`);
     out.push(`            updated = [];`);
-    out.push(`            for (let j = 0; j < i; j++) updated.push(nodes[j]);`);
+    out.push(`            for (let j = 0; j < i; j++) updated.push(nodes.at(j));`);
     out.push(`            if (visited) updated.push(visited);`);
     out.push(`        }`);
     out.push(`    }`);
-    out.push(`    return updated ?? nodes;`);
+    out.push(`    if (updated === undefined) {`);
+    out.push(`        return nodes;`);
+    out.push(`    }`);
+    out.push(`    return createNodeArray(updated, nodes.pos, nodes.end);`);
     out.push(`}`);
     out.push("");
     out.push(`/**`);

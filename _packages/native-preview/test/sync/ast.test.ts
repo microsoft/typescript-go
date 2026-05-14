@@ -542,7 +542,7 @@ describe("RemoteNode + cloneNode", () => {
         const api = spawnAPI();
         try {
             const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
-            const importDecl = sf.statements[0];
+            const importDecl = sf.statements.at(0);
             assert.ok(isImportDeclaration(importDecl));
 
             const clone = cloneNode(importDecl);
@@ -560,11 +560,11 @@ describe("RemoteNode + cloneNode", () => {
         const api = spawnAPI();
         try {
             const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
-            const importDecl = sf.statements[0];
+            const importDecl = sf.statements.at(0);
             assert.ok(isImportDeclaration(importDecl));
             const named = importDecl.importClause?.namedBindings;
             assert.ok(named && isNamedImports(named));
-            const fooName = named.elements[0].name;
+            const fooName = named.elements.at(0).name;
 
             const clone = cloneNode(fooName);
             assert.strictEqual(clone.kind, SyntaxKind.Identifier);
@@ -581,7 +581,7 @@ describe("RemoteNode + visitEachChild", () => {
         const api = spawnAPI();
         try {
             const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.ts");
-            const firstStmt = sf.statements[0];
+            const firstStmt = sf.statements.at(0);
             assert.ok(firstStmt);
 
             // visitEachChild with identity should return the same node
@@ -597,7 +597,7 @@ describe("RemoteNode + visitEachChild", () => {
         const api = spawnAPI();
         try {
             const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
-            const importDecl = sf.statements[0];
+            const importDecl = sf.statements.at(0);
             assert.ok(isImportDeclaration(importDecl));
 
             // Replace the module specifier with a new string literal
@@ -623,7 +623,7 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
         const api = spawnAPI();
         try {
             const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
-            const importDecl = sf.statements[0];
+            const importDecl = sf.statements.at(0);
             assert.ok(isImportDeclaration(importDecl));
 
             const clone = getSynthesizedDeepClone(importDecl);
@@ -643,7 +643,7 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
         const api = spawnAPI();
         try {
             const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.ts");
-            const firstStmt = sf.statements[0];
+            const firstStmt = sf.statements.at(0);
             assert.ok(firstStmt);
 
             const clone = getSynthesizedDeepClone(firstStmt);

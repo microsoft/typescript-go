@@ -14,11 +14,6 @@ import {
 } from "./factory.generated.ts";
 import { visitEachChild } from "./visitor.ts";
 
-function isArray(value: any): value is readonly unknown[] {
-    // See: https://github.com/microsoft/TypeScript/issues/17002
-    return Array.isArray(value);
-}
-
 function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent: Node) => T | "skip" | undefined, cbNodes?: (nodes: NodeArray<Node>, parent: Node) => T | "skip" | undefined): T | undefined {
     const queue: (Node | NodeArray<Node>)[] = gatherPossibleChildren(rootNode);
     const parents: Node[] = []; // tracks parent references for elements in queue
@@ -28,7 +23,7 @@ function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent:
     while (queue.length !== 0) {
         const current = queue.pop()!;
         const parent = parents.pop()!;
-        if (isArray(current)) {
+        if (Symbol.iterator in current) {
             if (cbNodes) {
                 const res = cbNodes(current, parent);
                 if (res) {
@@ -37,7 +32,7 @@ function forEachChildRecursively<T>(rootNode: Node, cbNode: (node: Node, parent:
                 }
             }
             for (let i = current.length - 1; i >= 0; --i) {
-                queue.push(current[i]);
+                queue.push(current.at(i));
                 parents.push(parent);
             }
         }
@@ -110,12 +105,13 @@ export function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T>, in
 export function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T> | undefined, includeTrivia?: boolean): NodeArray<T> | undefined;
 export function getSynthesizedDeepClones<T extends Node>(nodes: NodeArray<T> | undefined, includeTrivia = true): NodeArray<T> | undefined {
     if (nodes) {
-        const cloned = createNodeArray(
-            nodes.map(n => getSynthesizedDeepClone(n, includeTrivia)),
-            nodes.pos,
-            nodes.end,
-        );
-        return cloned;
+        const cloned = new Array(nodes.length) as T[] & { pos: number; end: number; };
+        cloned.pos = nodes.pos;
+        cloned.end = nodes.end;
+        for (let i = 0; i < nodes.length; i++) {
+            cloned[i] = getSynthesizedDeepClone(nodes.at(i), includeTrivia);
+        }
+        return cloned as unknown as NodeArray<T>;
     }
     return nodes;
 }

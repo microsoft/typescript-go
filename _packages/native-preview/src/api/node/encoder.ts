@@ -207,7 +207,7 @@ function getChildPropertiesForNode(node: Node): readonly (string | undefined)[] 
 
 // Returns whether a value is a NodeArray (array-like with pos and end).
 function isNodeArray(value: any): value is NodeArray<Node> {
-    return Array.isArray(value) && typeof (value as any).pos === "number" && typeof (value as any).end === "number";
+    return Symbol.iterator in value && typeof (value as any).pos === "number" && typeof (value as any).end === "number";
 }
 
 /**

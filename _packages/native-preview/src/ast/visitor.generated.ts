@@ -467,31 +467,23 @@ export function visitNodes<T extends Node>(nodes: NodeArray<T>, visitor: Visitor
 export function visitNodes<T extends Node>(nodes: NodeArray<T> | undefined, visitor: Visitor): NodeArray<T> | undefined;
 export function visitNodes(nodes: NodeArray<Node> | undefined, visitor: Visitor): NodeArray<Node> | undefined {
     if (nodes === undefined) return undefined;
-    const updated = visitNodesArray(nodes, visitor);
-    if (updated === nodes) {
-        return nodes;
-    }
-    return createNodeArray(updated, nodes.pos, nodes.end);
-}
-
-export function visitNodesArray<T extends Node>(nodes: readonly T[], visitor: Visitor): readonly T[];
-export function visitNodesArray<T extends Node>(nodes: readonly T[] | undefined, visitor: Visitor): readonly T[] | undefined;
-export function visitNodesArray(nodes: readonly Node[] | undefined, visitor: Visitor): readonly Node[] | undefined {
-    if (nodes === undefined) return undefined;
     let updated: Node[] | undefined;
     for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
+        const node = nodes.at(i);
         const visited = visitor(node);
         if (updated) {
             if (visited) updated.push(visited);
         }
         else if (visited !== node) {
             updated = [];
-            for (let j = 0; j < i; j++) updated.push(nodes[j]);
+            for (let j = 0; j < i; j++) updated.push(nodes.at(j));
             if (visited) updated.push(visited);
         }
     }
-    return updated ?? nodes;
+    if (updated === undefined) {
+        return nodes;
+    }
+    return createNodeArray(updated, nodes.pos, nodes.end);
 }
 
 /**
@@ -1177,7 +1169,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         return updateJsxExpression(node, _dotDotDotToken, _expression);
     },
     [SyntaxKind.SyntaxList]: (node: SyntaxList, visitor: Visitor): SyntaxList => {
-        const _children = visitNodesArray(node.children, visitor);
+        const _children = visitNodes(node.children, visitor);
         return updateSyntaxList(node, _children);
     },
     [SyntaxKind.JSDoc]: (node: JSDoc, visitor: Visitor): JSDoc => {
@@ -1400,7 +1392,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         return updateSyntheticReferenceExpression(node, _expression, _thisArg);
     },
     [SyntaxKind.JSDocTypeLiteral]: (node: JSDocTypeLiteral, visitor: Visitor): JSDocTypeLiteral => {
-        const _jsdocPropertyTags = visitNodesArray(node.jsdocPropertyTags, visitor);
+        const _jsdocPropertyTags = visitNodes(node.jsdocPropertyTags, visitor);
         return updateJSDocTypeLiteral(node, _jsdocPropertyTags);
     },
     [SyntaxKind.ForInStatement]: (node: ForInStatement, visitor: Visitor): ForInStatement => {

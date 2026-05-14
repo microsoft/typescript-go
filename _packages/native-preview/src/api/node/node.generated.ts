@@ -34,8 +34,9 @@ import {
     NODE_OFFSET_POS,
 } from "./protocol.ts";
 
-export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {
+export class RemoteNodeList implements NodeArray<RemoteNode> {
     parent: RemoteNode;
+    length: number;
     hasTrailingComma?: boolean;
     transformFlags: number = 0;
     protected view: DataView;
@@ -61,70 +62,12 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     private sourceFile: SourceFileInfo;
 
     constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: SourceFileInfo, offsetNodes: number) {
-        super();
         this.view = view;
         this.index = index;
         this.parent = parent;
         this.sourceFile = sourceFile;
         this._byteIndex = offsetNodes + index * NODE_LEN;
         this.length = this.data;
-
-        const length = this.length;
-        for (let i = 16; i < length; i++) {
-            Object.defineProperty(this, i, {
-                get() {
-                    return this.at(i);
-                },
-            });
-        }
-    }
-    get 0(): RemoteNode {
-        return this.at(0);
-    }
-    get 1(): RemoteNode {
-        return this.at(1);
-    }
-    get 2(): RemoteNode {
-        return this.at(2);
-    }
-    get 3(): RemoteNode {
-        return this.at(3);
-    }
-    get 4(): RemoteNode {
-        return this.at(4);
-    }
-    get 5(): RemoteNode {
-        return this.at(5);
-    }
-    get 6(): RemoteNode {
-        return this.at(6);
-    }
-    get 7(): RemoteNode {
-        return this.at(7);
-    }
-    get 8(): RemoteNode {
-        return this.at(8);
-    }
-    get 9(): RemoteNode {
-        return this.at(9);
-    }
-    get 10(): RemoteNode {
-        return this.at(10);
-    }
-    get 11(): RemoteNode {
-        return this.at(11);
-    }
-    get 12(): RemoteNode {
-        return this.at(12);
-    }
-    get 13(): RemoteNode {
-        return this.at(13);
-    }
-    get 14(): RemoteNode {
-        return this.at(14);
-    }
-    get 15(): RemoteNode {
-        return this.at(15);
     }
 
     *[Symbol.iterator](): ArrayIterator<RemoteNode> {
