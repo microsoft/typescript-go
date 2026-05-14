@@ -75,14 +75,14 @@ func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
 }
 
 type recoveryBoundary struct {
-	ctx                    *NodeBuilderContext
-	hadError               bool
-	deferredReports        []func()
-	oldTracker             nodebuilder.SymbolTracker
-	oldTrackedSymbols      []*TrackedSymbolArgs
-	trackedSymbols         []*TrackedSymbolArgs
-	oldEncounteredError    bool
-	oldApproximateLength   int
+	ctx                  *NodeBuilderContext
+	hadError             bool
+	deferredReports      []func()
+	oldTracker           nodebuilder.SymbolTracker
+	oldTrackedSymbols    []*TrackedSymbolArgs
+	trackedSymbols       []*TrackedSymbolArgs
+	oldEncounteredError  bool
+	oldApproximateLength int
 }
 
 func (b *recoveryBoundary) markError(f func()) {
