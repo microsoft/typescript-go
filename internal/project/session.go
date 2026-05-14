@@ -1595,9 +1595,11 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 	}
 
 	ctx := s.backgroundCtx
+	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
+	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
 	collections.DiffOrderedMaps(
-		oldSnapshot.ProjectCollection.ProjectsByPath(),
-		newSnapshot.ProjectCollection.ProjectsByPath(),
+		oldProjects,
+		newProjects,
 		func(configFilePath tspath.Path, addedProject *Project) {
 			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) {
 				return
@@ -1617,6 +1619,15 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
 		},
 	)
+	// Clean up diagnostics for projects that lost all open files, even if we haven't cleaned up the project yet.
+	for configFilePath, newProject := range newProjects.Entries() {
+		if newProject.Kind != KindConfigured {
+			continue
+		}
+		if !projectHasOpenFiles(newSnapshot, newProject) {
+			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, newSnapshot.converters)
+		}
+	}
 }
 
 func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
@@ -1624,6 +1635,15 @@ func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
 		return false
 	}
 	return p.ProgramUpdateKind > ProgramUpdateKindCloned
+}
+
+func projectHasOpenFiles(snapshot *Snapshot, project *Project) bool {
+	for path := range snapshot.fs.overlays {
+		if project.containsFile(path) {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
