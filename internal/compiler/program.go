@@ -71,8 +71,9 @@ func (l *lazyValue[T]) tryReuse(from *lazyValue[T]) {
 }
 
 type packageNamesInfo struct {
-	resolved   *collections.Set[string]
-	unresolved *collections.Set[string]
+	resolved           *collections.Set[string]
+	unresolved         *collections.Set[string]
+	deepImportPackages *collections.Set[string]
 }
 
 type Program struct {
@@ -1534,22 +1535,40 @@ func (p *Program) GetDefaultLibFile(path tspath.Path) *LibFile {
 
 func (p *Program) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
+		files := func() []string {
+			return core.MapFiltered(p.files, func(file *ast.SourceFile) (string, bool) {
+				return file.FileName(), sourceFileMayBeEmitted(file, p, false /*forceDtsEmit*/) && !file.IsDeclarationFile
+			})
+		}
 		p.commonSourceDirectory = outputpaths.GetCommonSourceDirectory(
 			p.Options(),
-			func() []string {
-				var files []string
-				for _, file := range p.files {
-					if sourceFileMayBeEmitted(file, p, false /*forceDtsEmit*/) {
-						files = append(files, file.FileName())
-					}
-				}
-				return files
-			},
+			files,
 			p.GetCurrentDirectory(),
 			p.UseCaseSensitiveFileNames(),
+			p.checkSourceFilesBelongToPath,
 		)
 	})
 	return p.commonSourceDirectory
+}
+
+func (p *Program) checkSourceFilesBelongToPath(sourceFiles []string, rootDirectory string) bool {
+	allFilesBelongToPath := true
+	for _, file := range sourceFiles {
+		absoluteSourceFilePath := tspath.GetCanonicalFileName(tspath.GetNormalizedAbsolutePath(file, p.GetCurrentDirectory()), p.UseCaseSensitiveFileNames())
+		if !tspath.ContainsPath(rootDirectory, file, p.comparePathsOptions) {
+			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+				kind: processingDiagnosticKindExplainingFileInclude,
+				data: &includeExplainingDiagnostic{
+					file:    tspath.Path(absoluteSourceFilePath),
+					message: diagnostics.File_0_is_not_under_rootDir_1_rootDir_is_expected_to_contain_all_source_files,
+					args:    []any{file, rootDirectory},
+				},
+			})
+			allFilesBelongToPath = false
+		}
+	}
+
+	return allFilesBelongToPath
 }
 
 type WriteFileData struct {
@@ -1888,9 +1907,13 @@ func (p *Program) UnresolvedPackageNames() *collections.Set[string] {
 	return p.collectPackageNames().unresolved
 }
 
+func (p *Program) DeepImportPackageNames() *collections.Set[string] {
+	return p.collectPackageNames().deepImportPackages
+}
+
 func (p *Program) collectPackageNames() *packageNamesInfo {
 	return p.packageNames.getValue(func() *packageNamesInfo {
-		packageNames := &packageNamesInfo{&collections.Set[string]{}, &collections.Set[string]{}}
+		packageNames := &packageNamesInfo{&collections.Set[string]{}, &collections.Set[string]{}, &collections.Set[string]{}}
 		for _, file := range p.files {
 			if p.IsSourceFileDefaultLibrary(file.Path()) || p.IsSourceFileFromExternalLibrary(file) || strings.Contains(file.FileName(), "/node_modules/") {
 				// Checking for /node_modules/ is a little imprecise, but ATA treats locally installed typings
@@ -1925,6 +1948,15 @@ func (p *Program) collectPackageNames() *packageNamesInfo {
 						// 4. If all fail, don't add empty string
 						if name != "" {
 							packageNames.resolved.Add(name)
+							// Detect deep imports: subpath imports in packages without exports.
+							// These are imports like "lodash/fp" where the package has no exports
+							// map, so auto-import can only find them via recursive directory search.
+							_, rest := module.ParsePackageName(imp.Text())
+							if rest != "" {
+								if scope := p.resolver.GetPackageScopeForPath(resolvedModule.ResolvedFileName); scope != nil && scope.Exists() && !scope.Contents.Exports.IsPresent() {
+									packageNames.deepImportPackages.Add(module.GetPackageNameFromTypesPackageName(name))
+								}
+							}
 						}
 						continue
 					}
