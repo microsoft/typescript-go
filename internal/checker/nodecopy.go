@@ -205,10 +205,11 @@ func (b *NodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *as
 	if !b.finalizeBoundary(bound) {
 		return nil
 	}
-	// Use the text range of the existing node as the approximate length contribution.
-	// Reset to startLength first to avoid double-counting any approximateLength that was
-	// accumulated during the visitor's execution (e.g., from fallback serialization of
-	// child nodes via the pseudo type checker that re-enters tryReuseExistingNodeHelper).
+	// Use the text range of the existing node as the approximate length contribution,
+	// resetting to startLength first. This prevents double-counting when the visitor's
+	// fallback path re-enters tryReuseExistingNodeHelper for child nodes via the pseudo
+	// type checker (which resolves types with context, succeeding where tsc's
+	// getTypeFromTypeNodeWithoutContext would produce a different type object and bail).
 	b.ctx.approximateLength = startLength + existing.Loc.End() - existing.Loc.Pos()
 	return transformed
 }
