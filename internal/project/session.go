@@ -14,6 +14,7 @@ import (
 
 	osmemory "github.com/mackerelio/go-osstat/memory"
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -1155,6 +1156,10 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		if len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
+				// Skip bundled paths - they are embedded so the client cannot watch them.
+				if bundled.IsBundled(fileSystemWatcherGlobString(watcher)) {
+					continue
+				}
 				globId := WatcherID(fmt.Sprintf("%s.%d", w.WatcherID, i))
 				if session.watches.Acquire(watcher, globId) {
 					newWatchers.Set(globId, watcher)
