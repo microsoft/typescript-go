@@ -198,13 +198,18 @@ func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 
 func (b *NodeBuilderImpl) tryReuseExistingNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
 	bound := b.createRecoveryBoundary()
+	startLength := b.ctx.approximateLength
 	var transformed *ast.Node
 	v := getExistingNodeTreeVisitor(b, bound) // !!! TODO: Cache visitor and just reset bound+host builder? We try this for a *lot* of nodes.
 	transformed = v.VisitNode(existing)
 	if !b.finalizeBoundary(bound) {
 		return nil
 	}
-	b.ctx.approximateLength += existing.Loc.End() - existing.Loc.Pos()
+	// Use the text range of the existing node as the approximate length contribution.
+	// Reset to startLength first to avoid double-counting any approximateLength that was
+	// accumulated during the visitor's execution (e.g., from fallback serialization of
+	// child nodes via the pseudo type checker that re-enters tryReuseExistingNodeHelper).
+	b.ctx.approximateLength = startLength + existing.Loc.End() - existing.Loc.Pos()
 	return transformed
 }
 
