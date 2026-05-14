@@ -1,0 +1,8 @@
+--- old.jsDeclarationsExportAssignedClassExpression(target=es2015).js
++++ new.jsDeclarationsExportAssignedClassExpression(target=es2015).js
+@@= skipped -28, +28 lines =@@
+      * @param {number} p
+      */
+     constructor(p: number);
+-    t: number;
+ }

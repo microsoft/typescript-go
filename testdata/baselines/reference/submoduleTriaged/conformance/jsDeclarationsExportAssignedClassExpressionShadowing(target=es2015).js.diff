@@ -17,8 +17,8 @@
 -declare class Q_1 {
      x: number;
  }
-+declare const _default: {
-+    new (): import(".");
-+};
-+export = _default;
++export = Q;
++declare class Q {
++    constructor();
++}
 +export { Q as Another };

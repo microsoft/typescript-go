@@ -39,8 +39,8 @@ module.exports.Another = Q;
 declare class Q {
     x: number;
 }
-declare const _default: {
-    new (): import(".");
-};
-export = _default;
+export = Q;
+declare class Q {
+    constructor();
+}
 export { Q as Another };
