@@ -518,14 +518,38 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
 
-    getSymbolReferencesInFile(file: DocumentIdentifier, symbol: Symbol): NodeHandle[] {
-        const data = this.client.apiRequest<string[] | null>("getSymbolReferencesInFile", {
+    getReferencesToSymbolInFile(file: DocumentIdentifier, symbol: Symbol): NodeHandle[] {
+        const data = this.client.apiRequest<string[] | null>("getReferencesToSymbolInFile", {
             snapshot: this.snapshotId,
             project: this.projectId,
             file,
             symbol: symbol.id,
         });
         return (data ?? []).map(h => new NodeHandle(h));
+    }
+
+    getReferencedSymbolsForNode(file: DocumentIdentifier, node: Node, position: number): NodeHandle[] {
+        const data = this.client.apiRequest<string[] | null>("getReferencedSymbolsForNode", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+            node: getNodeId(node),
+            position,
+        });
+        return (data ?? []).map(h => new NodeHandle(h));
+    }
+
+    getSignatureUsages(file: DocumentIdentifier, signatureDecl: Node): { name: NodeHandle; call: NodeHandle | null; }[] {
+        const data = this.client.apiRequest<{ name: string; call?: string; }[] | null>("getSignatureUsages", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+            signatureDecl: getNodeId(signatureDecl),
+        });
+        return (data ?? []).map(entry => ({
+            name: new NodeHandle(entry.name),
+            call: entry.call ? new NodeHandle(entry.call) : null,
+        }));
     }
 
     getTypeAtLocation(node: Node): Type | undefined;

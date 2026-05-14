@@ -155,7 +155,9 @@ const (
 	MethodGetTypeArguments                  Method = "getTypeArguments"
 
 	// Reference methods
-	MethodGetSymbolReferencesInFile Method = "getSymbolReferencesInFile"
+	MethodGetReferencesToSymbolInFile Method = "getReferencesToSymbolInFile"
+	MethodGetReferencedSymbolsForNode Method = "getReferencedSymbolsForNode"
+	MethodGetSignatureUsages          Method = "getSignatureUsages"
 
 	// Diagnostic methods
 	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
@@ -378,7 +380,9 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
-	MethodGetSymbolReferencesInFile:         unmarshallerFor[GetSymbolReferencesInFileParams],
+	MethodGetReferencesToSymbolInFile:       unmarshallerFor[GetReferencesToSymbolInFileParams],
+	MethodGetReferencedSymbolsForNode:       unmarshallerFor[GetReferencedSymbolsForNodeParams],
+	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -709,12 +713,35 @@ type GetTypeOfSymbolAtLocationParams struct {
 	Location Handle[ast.Node]         `json:"location"`
 }
 
-// GetSymbolReferencesInFileParams are the parameters for the getSymbolReferencesInFile method.
-type GetSymbolReferencesInFileParams struct {
+// GetReferencesToSymbolInFileParams are the parameters for the getReferencesToSymbolInFile method.
+type GetReferencesToSymbolInFileParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
 	File     DocumentIdentifier       `json:"file"`
 	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+}
+
+// GetReferencedSymbolsForNodeParams are the parameters for the getReferencedSymbolsForNode method.
+type GetReferencedSymbolsForNodeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     DocumentIdentifier       `json:"file"`
+	Node     Handle[ast.Node]         `json:"node"`
+	Position int                      `json:"position"`
+}
+
+// GetSignatureUsagesParams are the parameters for the getSignatureUsages method.
+type GetSignatureUsagesParams struct {
+	Snapshot      Handle[project.Snapshot] `json:"snapshot"`
+	Project       Handle[project.Project]  `json:"project"`
+	File          DocumentIdentifier       `json:"file"`
+	SignatureDecl Handle[ast.Node]         `json:"signatureDecl"`
+}
+
+// SignatureUsageResponse represents a single usage of a signature as a name-call pair.
+type SignatureUsageResponse struct {
+	Name Handle[ast.Node]  `json:"name"`
+	Call *Handle[ast.Node] `json:"call,omitempty"`
 }
 
 // GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).

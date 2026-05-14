@@ -510,14 +510,38 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
 
-    async getSymbolReferencesInFile(file: DocumentIdentifier, symbol: Symbol): Promise<NodeHandle[]> {
-        const data = await this.client.apiRequest<string[] | null>("getSymbolReferencesInFile", {
+    async getReferencesToSymbolInFile(file: DocumentIdentifier, symbol: Symbol): Promise<NodeHandle[]> {
+        const data = await this.client.apiRequest<string[] | null>("getReferencesToSymbolInFile", {
             snapshot: this.snapshotId,
             project: this.projectId,
             file,
             symbol: symbol.id,
         });
         return (data ?? []).map(h => new NodeHandle(h));
+    }
+
+    async getReferencedSymbolsForNode(file: DocumentIdentifier, node: Node, position: number): Promise<NodeHandle[]> {
+        const data = await this.client.apiRequest<string[] | null>("getReferencedSymbolsForNode", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+            node: getNodeId(node),
+            position,
+        });
+        return (data ?? []).map(h => new NodeHandle(h));
+    }
+
+    async getSignatureUsages(file: DocumentIdentifier, signatureDecl: Node): Promise<{ name: NodeHandle; call: NodeHandle | null; }[]> {
+        const data = await this.client.apiRequest<{ name: string; call?: string; }[] | null>("getSignatureUsages", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file,
+            signatureDecl: getNodeId(signatureDecl),
+        });
+        return (data ?? []).map(entry => ({
+            name: new NodeHandle(entry.name),
+            call: entry.call ? new NodeHandle(entry.call) : null,
+        }));
     }
 
     getTypeAtLocation(node: Node): Promise<Type | undefined>;

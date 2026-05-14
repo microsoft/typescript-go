@@ -110,6 +110,21 @@ type ReferenceEntry struct {
 	lspRange  *lsproto.Location
 }
 
+// Node returns the AST node for this reference entry.
+func (e *ReferenceEntry) Node() *ast.Node {
+	return e.node
+}
+
+// IsNodeEntry returns true if this is a node-backed reference entry.
+func (e *ReferenceEntry) IsNodeEntry() bool {
+	return e.kind == entryKindNode
+}
+
+// References returns the reference entries for this symbol.
+func (s *SymbolAndEntries) References() []*ReferenceEntry {
+	return s.references
+}
+
 func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 	if entry.definition == nil {
 		return false
@@ -839,6 +854,60 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 				definition: reference.definition,
 				references: sortedRefs,
 			}
+		}
+	}
+	return result
+}
+
+// GetReferencedSymbolsForNode returns all referenced symbols and their reference entries for the given node.
+// It returns all referenced symbols and their reference entries for the given node across the provided source files.
+func (l *LanguageService) GetReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
+	return l.getReferencedSymbolsForNode(ctx, position, node, l.program, sourceFiles, refOptions{
+		use: referenceUseReferences,
+	})
+}
+
+// SignatureUsage represents a single usage of a signature declaration,
+// pairing the reference name node with its containing call expression (if any).
+type SignatureUsage struct {
+	Name *ast.Node // The identifier reference node
+	Call *ast.Node // The containing call expression, or nil if not a call usage
+}
+
+// GetSignatureUsages returns all usages of a signature declaration as name-call pairs.
+// For each reference to the signature's name, it returns the reference node and
+// the call expression it appears in (nil if the reference is not in a call position).
+func (l *LanguageService) GetSignatureUsages(ctx context.Context, signatureDecl *ast.Node) []SignatureUsage {
+	name := signatureDecl.Name()
+	if name == nil || !ast.IsIdentifier(name) {
+		return nil
+	}
+
+	sourceFiles := l.program.GetSourceFiles()
+	entries := l.GetReferencedSymbolsForNode(ctx, name.Pos(), name, sourceFiles)
+
+	var result []SignatureUsage
+	for _, entry := range entries {
+		for _, ref := range entry.References() {
+			if !ref.IsNodeEntry() {
+				continue
+			}
+			node := ref.Node()
+			if node == nil || node == name {
+				continue
+			}
+
+			called := ast.ClimbPastPropertyAccess(node)
+
+			var callExpr *ast.Node
+			if called.Parent != nil && ast.IsCallExpression(called.Parent) && called.Parent.Expression() == called {
+				callExpr = called.Parent
+			}
+
+			result = append(result, SignatureUsage{
+				Name: node,
+				Call: callExpr,
+			})
 		}
 	}
 	return result

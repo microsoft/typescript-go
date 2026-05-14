@@ -571,8 +571,8 @@ func (c *Checker) IsSymbolReferencedInFile(
 	return false
 }
 
-// GetSymbolReferencesInFile returns all identifier nodes in the file that reference the given symbol.
-func (c *Checker) GetSymbolReferencesInFile(
+// GetReferencesToSymbolInFile returns all identifier nodes in the file that reference the given symbol.
+func (c *Checker) GetReferencesToSymbolInFile(
 	sourceFile *ast.SourceFile,
 	symbol *ast.Symbol,
 ) []*ast.Node {
