@@ -228,6 +228,16 @@ func TestTscCommandline(t *testing.T) {
 			subScenario:     "bad locale",
 			commandLineArgs: []string{"--locale", "whoops", "--version"},
 		},
+		{
+			subScenario: "file in tsconfig does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`{
+					"files": ["./src/doesNotExist.ts"]
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./tsconfig.json"},
+		},
 	}
 
 	for _, testCase := range testCases {

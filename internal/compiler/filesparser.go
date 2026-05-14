@@ -60,6 +60,19 @@ func (t *parseTask) load(loader *fileLoader) {
 		t.loadAutomaticTypeDirectives(loader)
 		return
 	}
+	if t.includeReason.kind == fileIncludeKindRootFile {
+		if !loader.opts.Host.FS().FileExists(t.normalizedFilePath) {
+			t.processingDiagnostics = append(t.processingDiagnostics, &processingDiagnostic{
+				kind: processingDiagnosticKindExplainingFileInclude,
+				data: &includeExplainingDiagnostic{
+					diagnosticReason: t.includeReason,
+					message:          diagnostics.File_0_not_found, args: []any{t.normalizedFilePath},
+				},
+			},
+			)
+			return
+		}
+	}
 	if loader.opts.Tracing != nil {
 		defer loader.opts.Tracing.Push(tracing.PhaseProgram, "findSourceFile", map[string]any{"fileName": t.normalizedFilePath}, false)()
 	}
