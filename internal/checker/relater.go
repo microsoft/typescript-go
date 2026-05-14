@@ -4584,7 +4584,7 @@ func (r *Relater) typeRelatedToIndexInfo(source *Type, targetInfo *IndexInfo, re
 }
 
 // Return true if the type was inferred from
-//   - an oject literal, object type literal, enum type, or a value module and has no call or construct signatures, or
+//   - an object literal, object type literal, enum type, or a value module and has no call or construct signatures, or
 //   - a JS expando object literal or a rest type, or
 //   - a reverse mapped type with a source for which one of the above is true.
 func (c *Checker) isObjectTypeWithInferableIndex(t *Type) bool {
@@ -4592,8 +4592,7 @@ func (c *Checker) isObjectTypeWithInferableIndex(t *Type) bool {
 		return core.Every(t.Types(), c.isObjectTypeWithInferableIndex)
 	}
 	return t.symbol != nil &&
-		t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 &&
-		t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||
+		t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 && t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||
 		t.objectFlags&(ObjectFlagsJSLiteral|ObjectFlagsObjectRestType) != 0 ||
 		t.objectFlags&ObjectFlagsReverseMapped != 0 && c.isObjectTypeWithInferableIndex(t.AsReverseMappedType().source)
 }
