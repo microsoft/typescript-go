@@ -22,8 +22,7 @@
     },
     "capabilities": {
         "untrustedWorkspaces": {
-            "supported": false,
-            "description": "%workspaceTrust%"
+            "supported": false
         }
     },
     "activationEvents": [
@@ -214,7 +213,9 @@
         "lib",
         "LICENSE",
         "NOTICE.txt",
-        "logo.png"
+        "logo.png",
+        "l10n",
+        "package.nls.json"
     ],
     "scripts": {
         "build": "tsc && npm run bundle",

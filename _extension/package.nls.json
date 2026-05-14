@@ -1,6 +1,5 @@
 {
     "description": "Preview of the native TypeScript language server for Visual Studio Code.",
-    "workspaceTrust": "The extension requires workspace trust when the workspace version is used because it executes code specified by the workspace.",
     "native-preview.trace.customConfigFileName.description": "Custom config file name to use e.g. 'tsconfig.all.json', before defaulting to tsconfig.json/jsconfig.json.",
     "native-preview.trace.server.description": "Trace TypeScript Go server communication.",
     "native-preview.pprofDir.description": "Directory to write pprof profiles to.",
