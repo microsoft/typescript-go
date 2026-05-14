@@ -372,6 +372,8 @@ class ReportingErrorHandler implements ErrorHandler {
         for (const l of line.split("\n")) {
             if (!this.capturingPanic) {
                 if (/^panic:/.test(l.trimStart())) {
+                    // Clear any stale data from a previous session/panic.
+                    this.stderrBuffer = [];
                     this.capturingPanic = true;
                 }
                 else {
@@ -380,6 +382,9 @@ class ReportingErrorHandler implements ErrorHandler {
             }
             if (this.stderrBuffer.length < ReportingErrorHandler.maxStderrLines) {
                 this.stderrBuffer.push(l);
+            }
+            else {
+                this.capturingPanic = false;
             }
         }
     }
@@ -477,9 +482,10 @@ function sanitizeStderrLine(line: string): string {
     if (/^goroutine \d+/.test(line)) {
         return line;
     }
-    // Keep panic message line, but redact any file path after "panic:"
+    // Redact the panic message itself — assert messages may contain user data.
+    // Keep only "panic:" as a marker.
     if (/^panic:/.test(line.trimStart())) {
-        return line.trimStart();
+        return "panic: (REDACTED)";
     }
     // Keep "Server process exited" messages from vscode-languageclient.
     if (line.includes("Server process exited")) {
