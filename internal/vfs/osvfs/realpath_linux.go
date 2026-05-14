@@ -68,4 +68,3 @@ func realpath(path string) (string, error) {
 		buf = make([]byte, len(buf)*2)
 	}
 }
-
