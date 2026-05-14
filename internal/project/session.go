@@ -1597,11 +1597,13 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 	ctx := s.backgroundCtx
 	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
 	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
+	oldOpenProjects := openConfiguredProjects(oldSnapshot)
+	newOpenProjects := openConfiguredProjects(newSnapshot)
 	collections.DiffOrderedMaps(
 		oldProjects,
 		newProjects,
 		func(configFilePath tspath.Path, addedProject *Project) {
-			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) {
+			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
@@ -1613,18 +1615,29 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, oldProject, newProject *Project) {
-			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) {
+			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
 		},
 	)
-	// Clean up diagnostics for projects that lost all open files, even if we haven't cleaned up the project yet.
+	// Sync diagnostics for projects whose open-file state changed without a program update.
 	for configFilePath, newProject := range newProjects.Entries() {
 		if newProject.Kind != KindConfigured {
 			continue
 		}
-		if !projectHasOpenFiles(newSnapshot, newProject) {
+		if !oldProjects.Has(configFilePath) {
+			continue // Handled by added project case above
+		}
+		oldProject, _ := oldProjects.Get(configFilePath)
+		newHasOpenFiles := newOpenProjects.Has(configFilePath)
+		oldHasOpenFiles := oldOpenProjects.Has(configFilePath)
+		if newHasOpenFiles && !oldHasOpenFiles &&
+			(newProject == oldProject || !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID())) {
+			// Project reopened without a program update
+			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+		} else if !newHasOpenFiles && oldHasOpenFiles {
+			// Project closed
 			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, newSnapshot.converters)
 		}
 	}
@@ -1637,13 +1650,17 @@ func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
 	return p.ProgramUpdateKind > ProgramUpdateKindCloned
 }
 
-func projectHasOpenFiles(snapshot *Snapshot, project *Project) bool {
-	for path := range snapshot.fs.overlays {
-		if project.containsFile(path) {
-			return true
+func openConfiguredProjects(snapshot *Snapshot) *collections.Set[tspath.Path] {
+	openProjects := &collections.Set[tspath.Path]{}
+	for _, project := range snapshot.ProjectCollection.ConfiguredProjects() {
+		for path := range snapshot.fs.overlays {
+			if project.containsFile(path) {
+				openProjects.Add(project.configFilePath)
+				break
+			}
 		}
 	}
-	return false
+	return openProjects
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
