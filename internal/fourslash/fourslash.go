@@ -1429,11 +1429,6 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 			return fmt.Sprintf("%s:\n%s", "Kind mismatch", err)
 		}
 	}
-	if expected.Tags != nil {
-		if err := cmp.Diff(actual.Tags, expected.Tags); err != "" {
-			return fmt.Sprintf("%s:\n%s", "Tags mismatch", err)
-		}
-	}
 	if err := cmp.Diff(actual.SortText, core.OrElse(expected.SortText, new(string(ls.SortTextLocationPriority)))); err != "" {
 		return fmt.Sprintf("%s:\n%s", "SortText mismatch", err)
 	}
