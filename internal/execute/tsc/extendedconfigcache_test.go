@@ -14,7 +14,7 @@ type testParseConfigHost struct {
 	cwd string
 }
 
-func (h *testParseConfigHost) FS() vfs.FS                 { return h.fs }
+func (h *testParseConfigHost) FS() vfs.FS                  { return h.fs }
 func (h *testParseConfigHost) GetCurrentDirectory() string { return h.cwd }
 
 func TestExtendedConfigCacheExtendsCircularity(t *testing.T) {
@@ -27,8 +27,8 @@ func TestExtendedConfigCacheExtendsCircularity(t *testing.T) {
 		// not a deadlock when using the tsc ExtendedConfigCache.
 		files := map[string]any{
 			"/project/tsconfig.json": `{"extends": "./base.json"}`,
-			"/project/base.json":    `{"extends": "./base.json"}`,
-			"/project/main.ts":      `// Hello World!`,
+			"/project/base.json":     `{"extends": "./base.json"}`,
+			"/project/main.ts":       `// Hello World!`,
 		}
 
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
