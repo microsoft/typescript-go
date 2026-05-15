@@ -1,17 +1,17 @@
 package fourslash_test
 
 import (
-"testing"
+	"testing"
 
-"github.com/microsoft/typescript-go/internal/fourslash"
-"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestSignatureHelpCommentsFunctionExpressionVS(t *testing.T) {
-t.Parallel()
-defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-const content = `/** lambdaFoo var comment*/
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `/** lambdaFoo var comment*/
 var lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
 var lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
 lambdaFoo(/*5*/10, /*6*/20);
@@ -37,7 +37,7 @@ var assigned = /**
   return s.length;
 }
 assigned(/*18*/"hey");`
-f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
-defer done()
-f.VerifyBaselineSignatureHelp(t)
+	f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
+	defer done()
+	f.VerifyBaselineSignatureHelp(t)
 }

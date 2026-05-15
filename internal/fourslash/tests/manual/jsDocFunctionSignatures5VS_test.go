@@ -1,17 +1,17 @@
 package fourslash_test
 
 import (
-"testing"
+	"testing"
 
-"github.com/microsoft/typescript-go/internal/fourslash"
-"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestJsDocFunctionSignatures5VS(t *testing.T) {
-t.Parallel()
-defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-const content = `// @strict: true
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @strict: true
 // @allowJs: true
 // @Filename: Foo.js
 /**
@@ -26,7 +26,7 @@ function pathFilter(basePath, pattern, type, options){
 //...
 }
 pathFilter(/**/'foo', 'bar', 'baz', {});`
-f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
-defer done()
-f.VerifyBaselineSignatureHelp(t)
+	f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
+	defer done()
+	f.VerifyBaselineSignatureHelp(t)
 }

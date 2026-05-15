@@ -1,17 +1,17 @@
 package fourslash_test
 
 import (
-"testing"
+	"testing"
 
-"github.com/microsoft/typescript-go/internal/fourslash"
-"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestSignatureHelpCommentsClassVS(t *testing.T) {
-t.Parallel()
-defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-const content = `/** This is class c2 without constructor*/
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `/** This is class c2 without constructor*/
 class c2 {
 }
 var i2 = new c2(/*3*/);
@@ -68,7 +68,7 @@ namespace m {
     }
 }
 var myVar = new m.m2.c1();`
-f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
-defer done()
-f.VerifyBaselineSignatureHelp(t)
+	f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
+	defer done()
+	f.VerifyBaselineSignatureHelp(t)
 }

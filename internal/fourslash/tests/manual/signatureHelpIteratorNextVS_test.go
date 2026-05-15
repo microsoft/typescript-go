@@ -1,17 +1,17 @@
 package fourslash_test
 
 import (
-"testing"
+	"testing"
 
-"github.com/microsoft/typescript-go/internal/fourslash"
-"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestSignatureHelpIteratorNextVS(t *testing.T) {
-t.Parallel()
-defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-const content = `// @lib: esnext
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `// @lib: esnext
 declare const iterator: Iterator<string, void, number>;
 
 iterator.next(/*1*/);
@@ -31,7 +31,7 @@ declare const asyncGenerator: AsyncGenerator<string, void, number>;
 
 asyncGenerator.next(/*7*/);
 asyncGenerator.next(/*8*/ 0);`
-f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
-defer done()
-f.VerifyBaselineSignatureHelp(t)
+	f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
+	defer done()
+	f.VerifyBaselineSignatureHelp(t)
 }

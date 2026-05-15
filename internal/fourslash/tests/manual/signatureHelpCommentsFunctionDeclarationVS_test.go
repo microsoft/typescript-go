@@ -1,17 +1,17 @@
 package fourslash_test
 
 import (
-"testing"
+	"testing"
 
-"github.com/microsoft/typescript-go/internal/fourslash"
-"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestSignatureHelpCommentsFunctionDeclarationVS(t *testing.T) {
-t.Parallel()
-defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-const content = `/** This comment should appear for foo*/
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `/** This comment should appear for foo*/
 function foo() {
 }
 foo(/*4*/);
@@ -28,7 +28,7 @@ fooWithParameters(/*10*/"a",/*11*/10);
 */
 declare function fn(a: string);
 fn(/*12*/"hello");`
-f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
-defer done()
-f.VerifyBaselineSignatureHelp(t)
+	f, done := fourslash.NewFourslash(t, &lsproto.ClientCapabilities{VSSupportsVisualStudioExtensions: new(true)}, content)
+	defer done()
+	f.VerifyBaselineSignatureHelp(t)
 }
