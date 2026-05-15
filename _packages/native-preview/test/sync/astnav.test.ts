@@ -6,6 +6,7 @@
 // Source: test/async/astnav.test.ts
 // Regenerate: npm run generate (from _packages/native-preview)
 //
+import { API } from "@typescript/native-preview/unstable/sync";
 import {
     findNextToken,
     findPrecedingToken,
@@ -18,7 +19,6 @@ import type {
     SourceFile,
 } from "@typescript/native-preview/unstable/ast";
 import { createVirtualFileSystem } from "@typescript/native-preview/unstable/fs";
-import { API } from "@typescript/native-preview/unstable/sync";
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
