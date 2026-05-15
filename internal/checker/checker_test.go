@@ -1,6 +1,7 @@
 package checker_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -8,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -81,4 +83,43 @@ func BenchmarkNewChecker(b *testing.B) {
 	for b.Loop() {
 		checker.NewChecker(p, nil)
 	}
+}
+
+func TestObjectNameCollisionInCommonJS(t *testing.T) {
+	t.Parallel()
+
+	makeProgram := func(module core.ModuleKind) *compiler.Program {
+		fs := vfstest.FromMap(map[string]string{
+			"/index.ts": `let Object = 0; export const x = 1;`,
+		}, false /*useCaseSensitiveFileNames*/)
+		fs = bundled.WrapFS(fs)
+
+		opts := core.CompilerOptions{Module: module, Target: core.ScriptTargetESNext}
+		return compiler.NewProgram(compiler.ProgramOptions{
+			Config: &tsoptions.ParsedCommandLine{
+				ParsedConfig: &core.ParsedOptions{
+					FileNames:       []string{"/index.ts"},
+					CompilerOptions: &opts,
+				},
+			},
+			Host: compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil),
+		})
+	}
+
+	hasReservedObjectDiagnostic := func(diags []*ast.Diagnostic) bool {
+		for _, diag := range diags {
+			if diag.Code() == diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module.Code() {
+				return true
+			}
+		}
+		return false
+	}
+
+	commonJSProgram := makeProgram(core.ModuleKindCommonJS)
+	commonJSDiagnostics := commonJSProgram.GetSemanticDiagnostics(context.Background(), commonJSProgram.GetSourceFile("/index.ts"))
+	assert.Assert(t, hasReservedObjectDiagnostic(commonJSDiagnostics), "expected CommonJS reserved-name diagnostic for Object")
+
+	esNextProgram := makeProgram(core.ModuleKindESNext)
+	esNextDiagnostics := esNextProgram.GetSemanticDiagnostics(context.Background(), esNextProgram.GetSourceFile("/index.ts"))
+	assert.Assert(t, !hasReservedObjectDiagnostic(esNextDiagnostics), "did not expect CommonJS-only reserved-name diagnostic in ESNext module emit")
 }
