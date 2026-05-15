@@ -1150,6 +1150,8 @@ const getVersion = memoize(() => {
     return version;
 });
 
+const vsixEnabled = false;
+
 const extensionDir = path.resolve("./_extension");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
@@ -1826,6 +1828,10 @@ export const packNativePreviewExtensions = task({
 });
 
 async function runPackNativePreviewExtensions() {
+    if (!vsixEnabled) {
+        console.log("VSIX production is disabled; skipping pack extensions.");
+        return;
+    }
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
 
@@ -1885,6 +1891,10 @@ export const signNativePreviewExtensions = task({
 });
 
 async function runSignNativePreviewExtensions() {
+    if (!vsixEnabled) {
+        console.log("VSIX production is disabled; skipping sign extensions.");
+        return;
+    }
     if (!options.forRelease) {
         throw new Error("This task should not be run in non-release builds.");
     }
@@ -1922,7 +1932,7 @@ export const nativePreviewRelease = task({
 export const nativePreview = task({
     name: "native-preview",
     hiddenFromTaskList: true,
-    dependencies: options.forRelease ? undefined : [packNativePreviewPackages, packNativePreviewExtensions],
+    dependencies: options.forRelease ? undefined : [packNativePreviewPackages, ...(vsixEnabled ? [packNativePreviewExtensions] : [])],
     run: options.forRelease ? async () => {
         throw new Error("This task should not be run in release builds.");
     } : undefined,
