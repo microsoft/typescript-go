@@ -42,35 +42,7 @@
       "signatures": [
         {
           "label": "foo(): module",
-          "parameters": [],
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "foo"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "text",
-                "Text": "module"
-              }
-            ]
-          }
+          "parameters": []
         }
       ],
       "activeSignature": 0
@@ -90,35 +62,7 @@
       "signatures": [
         {
           "label": "bar(): void",
-          "parameters": [],
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "bar"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "void"
-              }
-            ]
-          }
+          "parameters": []
         }
       ],
       "activeSignature": 0
@@ -138,35 +82,7 @@
       "signatures": [
         {
           "label": "zee(): void",
-          "parameters": [],
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "zee"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "void"
-              }
-            ]
-          }
+          "parameters": []
         }
       ],
       "activeSignature": 0

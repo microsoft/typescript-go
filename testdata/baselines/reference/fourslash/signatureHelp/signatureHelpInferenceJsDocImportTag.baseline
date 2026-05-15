@@ -35,51 +35,7 @@
               "label": "a: Foo"
             }
           ],
-          "activeParameter": 0,
-          "_vs_colorizedLabel": {
-            "Runs": [
-              {
-                "ClassificationTypeName": "method name",
-                "Text": "foo"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": "("
-              },
-              {
-                "ClassificationTypeName": "parameter name",
-                "Text": "a"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "text",
-                "Text": "Foo"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ")"
-              },
-              {
-                "ClassificationTypeName": "punctuation",
-                "Text": ":"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " "
-              },
-              {
-                "ClassificationTypeName": "keyword",
-                "Text": "void"
-              }
-            ]
-          }
+          "activeParameter": 0
         }
       ],
       "activeSignature": 0
