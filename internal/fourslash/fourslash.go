@@ -4285,6 +4285,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		AutoImportSpecifierExcludeRegexes:     f.userPreferences.AutoImportSpecifierExcludeRegexes,
 		AutoImportFileExcludePatterns:         f.userPreferences.AutoImportFileExcludePatterns,
 		PreferTypeOnlyAutoImports:             f.userPreferences.PreferTypeOnlyAutoImports,
+		AutoImportEntrypointDirectorySearch:   f.userPreferences.AutoImportEntrypointDirectorySearch,
 	})
 	defer reset()
 

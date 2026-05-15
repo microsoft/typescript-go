@@ -884,6 +884,7 @@ type Checker struct {
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 	deferredDiagnosticCallbacks                 []func()
+	typeToStringNodebuilder                     *NodeBuilder
 
 	mu     sync.Mutex
 	tracer *Tracer // Optional tracer for trace events and type recording (for --generateTrace)
@@ -1561,10 +1562,14 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		c.checkAndReportErrorForUsingValueAsType(errorLocation, name, meaning)) {
 		return
 	}
+	declarationName := name
+	if errorLocation != nil && ast.IsIdentifier(errorLocation) && errorLocation.Text() == name {
+		declarationName = scanner.DeclarationNameToString(errorLocation) // use escape sequences from original file
+	}
 	// Report missing lib first
 	suggestedLib := c.getSuggestedLibForNonExistentName(name)
 	if suggestedLib != "" {
-		c.error(errorLocation, nameNotFoundMessage, name, suggestedLib)
+		c.error(errorLocation, nameNotFoundMessage, declarationName, suggestedLib)
 		return
 	}
 	// Then spelling suggestions
@@ -1574,7 +1579,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		isUncheckedJS := c.isUncheckedJSSuggestion(errorLocation, suggestion, false /*excludeClasses*/)
 		message := core.IfElse(meaning == ast.SymbolFlagsNamespace, diagnostics.Cannot_find_namespace_0_Did_you_mean_1,
 			core.IfElse(isUncheckedJS, diagnostics.Could_not_find_name_0_Did_you_mean_1, diagnostics.Cannot_find_name_0_Did_you_mean_1))
-		diagnostic := NewDiagnosticForNode(errorLocation, message, name, suggestionName)
+		diagnostic := NewDiagnosticForNode(errorLocation, message, declarationName, suggestionName)
 		if suggestion.ValueDeclaration != nil {
 			diagnostic.AddRelatedInfo(NewDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
 		}
@@ -1582,7 +1587,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		return
 	}
 	// And then fall back to unspecified "not found"
-	c.error(errorLocation, nameNotFoundMessage, name)
+	c.error(errorLocation, nameNotFoundMessage, declarationName)
 }
 
 func (c *Checker) checkAndReportErrorForUsingTypeAsNamespace(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
@@ -23759,22 +23764,23 @@ func (c *Checker) computeEnumMemberValues(node *ast.Node) {
 	nodeLinks := c.nodeLinks.Get(node)
 	if !(nodeLinks.flags&NodeCheckFlagsEnumValuesComputed != 0) {
 		nodeLinks.flags |= NodeCheckFlagsEnumValuesComputed
-		var autoValue jsnum.Number
+		autoValue := new(jsnum.Number)
 		var previous *ast.Node
 		for _, member := range node.Members() {
 			result := c.computeEnumMemberValue(member, autoValue, previous)
 			c.enumMemberLinks.Get(member).value = result
 			if value, isNumber := result.Value.(jsnum.Number); isNumber {
-				autoValue = value + 1
+				nextValue := value + 1
+				autoValue = &nextValue
 			} else {
-				autoValue = jsnum.NaN()
+				autoValue = nil
 			}
 			previous = member
 		}
 	}
 }
 
-func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Number, previous *ast.Node) evaluator.Result {
+func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue *jsnum.Number, previous *ast.Node) evaluator.Result {
 	if ast.IsComputedNonLiteralName(member.Name()) {
 		c.error(member.Name(), diagnostics.Computed_property_names_are_not_allowed_in_enums)
 	} else if ast.IsBigIntLiteral(member.Name()) {
@@ -23797,7 +23803,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 	// If the member is the first member in the enum declaration, it is assigned the value zero.
 	// Otherwise, it is assigned the value of the immediately preceding member plus one, and an error
 	// occurs if the immediately preceding member is not a constant enum member.
-	if autoValue.IsNaN() {
+	if autoValue == nil {
 		c.error(member.Name(), diagnostics.Enum_member_must_have_initializer)
 		return evaluator.NewResult(nil, false, false, false)
 	}
@@ -23808,7 +23814,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 			c.error(member.Name(), diagnostics.Enum_member_following_a_non_literal_numeric_member_must_have_an_initializer_when_isolatedModules_is_enabled)
 		}
 	}
-	return evaluator.NewResult(autoValue, false, false, false)
+	return evaluator.NewResult(*autoValue, false, false, false)
 }
 
 func (c *Checker) computeConstantEnumMemberValue(member *ast.Node) evaluator.Result {
