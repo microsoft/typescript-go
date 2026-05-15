@@ -1,5 +1,6 @@
 // === QuickInfo ===
 === /destructuredIntersectionJSDoc.ts ===
+// 
 // type X = {
 //     /** Description of a. */
 //     a: {}
@@ -10,7 +11,7 @@
 // declare function f({ a }: Y): void
 //                      ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (parameter) a: {}
 // | ```
 // | Description of a.
@@ -19,9 +20,9 @@
 [
   {
     "marker": {
-      "Position": 98,
+      "Position": 99,
       "LSPosition": {
-        "line": 7,
+        "line": 8,
         "character": 21
       },
       "Name": "1",
@@ -30,15 +31,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: {}\n```\nDescription of a."
+        "value": "```typescript\n(parameter) a: {}\n```\nDescription of a."
       },
       "range": {
         "start": {
-          "line": 7,
+          "line": 8,
           "character": 21
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "character": 22
         }
       }
