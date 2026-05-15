@@ -44,7 +44,51 @@
               }
             }
           ],
-          "activeParameter": 0
+          "activeParameter": 0,
+          "_vs_colorizedLabel": {
+            "Runs": [
+              {
+                "ClassificationTypeName": "class name",
+                "Text": "Circle"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": "("
+              },
+              {
+                "ClassificationTypeName": "parameter name",
+                "Text": "radius"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ":"
+              },
+              {
+                "ClassificationTypeName": "whitespace",
+                "Text": " "
+              },
+              {
+                "ClassificationTypeName": "keyword",
+                "Text": "number"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ")"
+              },
+              {
+                "ClassificationTypeName": "punctuation",
+                "Text": ":"
+              },
+              {
+                "ClassificationTypeName": "whitespace",
+                "Text": " "
+              },
+              {
+                "ClassificationTypeName": "text",
+                "Text": "Circle"
+              }
+            ]
+          }
         }
       ],
       "activeSignature": 0

@@ -610,6 +610,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.SignatureHelp == nil {
 		capabilitiesWithDefaults.TextDocument.SignatureHelp = defaultSignatureHelpCapabilities
 	}
+	if capabilitiesWithDefaults.VSSupportsVisualStudioExtensions == nil {
+		capabilitiesWithDefaults.VSSupportsVisualStudioExtensions = ptrTrue
+	}
 	if capabilitiesWithDefaults.TextDocument.DocumentSymbol == nil {
 		capabilitiesWithDefaults.TextDocument.DocumentSymbol = defaultDocumentSymbolCapabilities
 	}
