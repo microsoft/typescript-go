@@ -52,12 +52,14 @@ import type {
     ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
+    ImportAdderActionRequest,
     IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
     ProjectResponse,
     SignatureResponse,
     SymbolResponse,
+    TextEdit,
     TypePredicateResponse,
     TypeResponse,
     UpdateSnapshotParams,
@@ -75,7 +77,9 @@ import type {
     AssertsThisTypePredicate,
     ConditionalType,
     Diagnostic,
+    GetImportEditsForSymbolsOptions,
     IdentifierTypePredicate,
+    ImportAdderAction,
     IndexedAccessType,
     IndexInfo,
     IndexType,
@@ -98,8 +102,8 @@ import type {
 } from "./types.ts";
 
 export { DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions, TextEdit };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -286,6 +290,7 @@ export class Project {
     readonly checker: Checker;
     readonly emitter: Emitter;
     private client: Client;
+    private snapshotId: string;
 
     constructor(
         data: ProjectResponse,
@@ -300,6 +305,7 @@ export class Project {
         this.compilerOptions = data.compilerOptions;
         this.rootFiles = data.rootFiles;
         this.client = client;
+        this.snapshotId = snapshotId;
         this.program = new Program(
             snapshotId,
             this.id,
@@ -314,6 +320,42 @@ export class Project {
             objectRegistry,
         );
         this.emitter = new Emitter(client);
+    }
+
+    getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[] {
+        const requestActions: ImportAdderActionRequest[] = actions.map(action => {
+            const requestAction = action as ImportAdderAction & { kind: string; symbol?: Symbol | string; };
+            switch (requestAction.kind) {
+                case "importSymbol":
+                    const symbol = typeof requestAction.symbol === "string" ? requestAction.symbol : requestAction.symbol?.id;
+                    return {
+                        kind: "importSymbol",
+                        symbol,
+                        isValidTypeOnlyUseSite: action.isValidTypeOnlyUseSite,
+                    } as ImportAdderActionRequest;
+                default:
+                    return requestAction as unknown as ImportAdderActionRequest;
+            }
+        });
+
+        const data = this.client.apiRequest<TextEdit[]>("getImportAdderEdits", {
+            snapshot: this.snapshotId,
+            project: this.id,
+            file,
+            actions: requestActions,
+        });
+        return data ?? [];
+    }
+
+    getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options: GetImportEditsForSymbolsOptions = {}): readonly TextEdit[] {
+        return this.getImportAdderEdits(
+            file,
+            symbols.map(symbol => ({
+                kind: "importSymbol",
+                symbol,
+                isValidTypeOnlyUseSite: options.isValidTypeOnlyUseSite,
+            })),
+        );
     }
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
 // APIOpenProject opens a project and returns a ref'd snapshot.
@@ -48,4 +49,15 @@ func (s *Session) APIUpdateWithFileChanges(ctx context.Context, apiFileChanges F
 		fileChanges: fileChanges,
 		ataChanges:  ataChanges,
 	})
+}
+
+// APIPrepareAutoImports clones baseSnapshot with auto-imports prepared for uri.
+// The returned snapshot is ref'd; caller must call Deref when done.
+func (s *Session) APIPrepareAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) *Snapshot {
+	return baseSnapshot.Clone(ctx, SnapshotChange{
+		ResourceRequest: ResourceRequest{
+			Documents:   []lsproto.DocumentUri{uri},
+			AutoImports: uri,
+		},
+	}, baseSnapshot.fs.overlays, s)
 }
