@@ -1,15 +1,18 @@
+error TS-1: Pre-emit (6) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
 importDeclWithClassModifiers.ts(5,8): error TS1044: 'public' modifier cannot appear on a module or namespace element.
-importDeclWithClassModifiers.ts(5,26): error TS2708: Cannot use namespace 'x' as a value.
 importDeclWithClassModifiers.ts(5,28): error TS2694: Namespace 'x' has no exported member 'c'.
 importDeclWithClassModifiers.ts(6,8): error TS1044: 'private' modifier cannot appear on a module or namespace element.
-importDeclWithClassModifiers.ts(6,27): error TS2708: Cannot use namespace 'x' as a value.
 importDeclWithClassModifiers.ts(6,29): error TS2694: Namespace 'x' has no exported member 'c'.
 importDeclWithClassModifiers.ts(7,8): error TS1044: 'static' modifier cannot appear on a module or namespace element.
-importDeclWithClassModifiers.ts(7,26): error TS2708: Cannot use namespace 'x' as a value.
 importDeclWithClassModifiers.ts(7,28): error TS2694: Namespace 'x' has no exported member 'c'.
 
 
-==== importDeclWithClassModifiers.ts (9 errors) ====
+!!! error TS-1: Pre-emit (6) and post-emit (9) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
+!!! related TS-1: The excess diagnostics are:
+!!! related TS2708 importDeclWithClassModifiers.ts:5:26: Cannot use namespace 'x' as a value.
+!!! related TS2708 importDeclWithClassModifiers.ts:6:27: Cannot use namespace 'x' as a value.
+!!! related TS2708 importDeclWithClassModifiers.ts:7:26: Cannot use namespace 'x' as a value.
+==== importDeclWithClassModifiers.ts (6 errors) ====
     namespace x {
         interface c {
         }
@@ -17,22 +20,16 @@ importDeclWithClassModifiers.ts(7,28): error TS2694: Namespace 'x' has no export
     export public import a = x.c;
            ~~~~~~
 !!! error TS1044: 'public' modifier cannot appear on a module or namespace element.
-                             ~
-!!! error TS2708: Cannot use namespace 'x' as a value.
                                ~
 !!! error TS2694: Namespace 'x' has no exported member 'c'.
     export private import b = x.c;
            ~~~~~~~
 !!! error TS1044: 'private' modifier cannot appear on a module or namespace element.
-                              ~
-!!! error TS2708: Cannot use namespace 'x' as a value.
                                 ~
 !!! error TS2694: Namespace 'x' has no exported member 'c'.
     export static import c = x.c;
            ~~~~~~
 !!! error TS1044: 'static' modifier cannot appear on a module or namespace element.
-                             ~
-!!! error TS2708: Cannot use namespace 'x' as a value.
                                ~
 !!! error TS2694: Namespace 'x' has no exported member 'c'.
     var b: a;
