@@ -31,7 +31,7 @@ export declare function __runInitializers(thisArg: any, initializers: any, value
 export declare function __setFunctionName(f: any, name: any, prefix?: string): any;
 
 // @Filename: /main.ts
-export async function doStuff() {
+export async function /*1*/doStuff() {
     return 1;
 }
 
@@ -39,10 +39,11 @@ function decorator(target: any, context: any) {}
 
 export
 @decorator
-class /*1*/MyClass {
+class /*2*/MyClass {
 }
 `
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyQuickInfoAt(t, "1", "class MyClass", "")
+	f.VerifyQuickInfoAt(t, "1", "function doStuff(): Promise<number>", "")
+	f.VerifyQuickInfoAt(t, "2", "class MyClass", "")
 }
