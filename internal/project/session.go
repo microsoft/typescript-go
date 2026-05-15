@@ -122,8 +122,9 @@ type Session struct {
 
 	// scheduledSnapshotUpdateCancel is the cancelation function for a scheduled
 	// snapshot update. Snapshot updates are scheduled and debounced after file closes.
-	scheduledSnapshotUpdateCancel context.CancelFunc
-	scheduledSnapshotUpdateMu     sync.Mutex
+	scheduledSnapshotUpdateCancel     context.CancelFunc
+	scheduledSnapshotUpdateGeneration uint64
+	scheduledSnapshotUpdateMu         sync.Mutex
 
 	pendingUserConfigChanges bool
 	userConfigRWMu           sync.Mutex
@@ -142,8 +143,9 @@ type Session struct {
 	// diagnosticsRefreshCancel is the cancelation function for a scheduled
 	// diagnostics refresh. Diagnostics refreshes are scheduled and debounced
 	// after file watch changes and ATA updates.
-	diagnosticsRefreshCancel context.CancelFunc
-	diagnosticsRefreshMu     sync.Mutex
+	diagnosticsRefreshCancel     context.CancelFunc
+	diagnosticsRefreshGeneration uint64
+	diagnosticsRefreshMu         sync.Mutex
 
 	// warmAutoImportCancel is the cancelation function for a running
 	// auto-import cache warming task. It is cancelled on file opens,
@@ -398,6 +400,8 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 
 	// Create a new cancellable context for the debounce task
 	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
+	s.diagnosticsRefreshGeneration++
+	generation := s.diagnosticsRefreshGeneration
 	s.diagnosticsRefreshCancel = cancel
 
 	// Enqueue the debounced diagnostics refresh
@@ -414,6 +418,10 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 
 		// Clear the cancel function since we're about to execute the refresh
 		s.diagnosticsRefreshMu.Lock()
+		if s.diagnosticsRefreshGeneration != generation {
+			s.diagnosticsRefreshMu.Unlock()
+			return
+		}
 		s.diagnosticsRefreshCancel = nil
 		s.diagnosticsRefreshMu.Unlock()
 
@@ -433,6 +441,7 @@ func (s *Session) cancelDiagnosticsRefresh() {
 		s.diagnosticsRefreshCancel()
 		s.logger.Log("Canceled scheduled diagnostics refresh")
 		s.diagnosticsRefreshCancel = nil
+		s.diagnosticsRefreshGeneration++
 	}
 }
 
@@ -452,6 +461,8 @@ func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
 
 	// Create a new cancellable context for the debounce task
 	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
+	s.scheduledSnapshotUpdateGeneration++
+	generation := s.scheduledSnapshotUpdateGeneration
 	s.scheduledSnapshotUpdateCancel = cancel
 
 	// Enqueue the debounced snapshot update
@@ -468,6 +479,10 @@ func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
 
 		// Clear the cancel function since we're about to execute the update
 		s.scheduledSnapshotUpdateMu.Lock()
+		if s.scheduledSnapshotUpdateGeneration != generation {
+			s.scheduledSnapshotUpdateMu.Unlock()
+			return
+		}
 		s.scheduledSnapshotUpdateCancel = nil
 		s.scheduledSnapshotUpdateMu.Unlock()
 
@@ -501,6 +516,7 @@ func (s *Session) cancelScheduledSnapshotUpdate() {
 			s.logger.Log("Canceled scheduled snapshot update")
 		}
 		s.scheduledSnapshotUpdateCancel = nil
+		s.scheduledSnapshotUpdateGeneration++
 	}
 }
 
