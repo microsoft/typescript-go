@@ -725,7 +725,6 @@ type GetReferencesToSymbolInFileParams struct {
 type GetReferencedSymbolsForNodeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
-	File     DocumentIdentifier       `json:"file"`
 	Node     Handle[ast.Node]         `json:"node"`
 	Position int                      `json:"position"`
 }
@@ -734,7 +733,6 @@ type GetReferencedSymbolsForNodeParams struct {
 type GetSignatureUsagesParams struct {
 	Snapshot      Handle[project.Snapshot] `json:"snapshot"`
 	Project       Handle[project.Project]  `json:"project"`
-	File          DocumentIdentifier       `json:"file"`
 	SignatureDecl Handle[ast.Node]         `json:"signatureDecl"`
 }
 

@@ -520,22 +520,20 @@ export class Checker {
         return (data ?? []).map(h => new NodeHandle(h));
     }
 
-    async getReferencedSymbolsForNode(file: DocumentIdentifier, node: Node, position: number): Promise<NodeHandle[]> {
+    async getReferencedSymbolsForNode(node: Node, position: number): Promise<NodeHandle[]> {
         const data = await this.client.apiRequest<string[] | null>("getReferencedSymbolsForNode", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            file,
             node: getNodeId(node),
             position,
         });
         return (data ?? []).map(h => new NodeHandle(h));
     }
 
-    async getSignatureUsage(file: DocumentIdentifier, signatureDecl: Node): Promise<SignatureUsage[]> {
+    async getSignatureUsage(signatureDecl: Node): Promise<SignatureUsage[]> {
         const data = await this.client.apiRequest<{ name: string; call?: string; }[] | null>("getSignatureUsages", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            file,
             signatureDecl: getNodeId(signatureDecl),
         });
         return (data ?? []).map(entry => ({

@@ -117,7 +117,7 @@ func (e *ReferenceEntry) Node() *ast.Node {
 
 // IsNodeEntry returns true if this is a node-backed reference entry.
 func (e *ReferenceEntry) IsNodeEntry() bool {
-	return e.kind == entryKindNode
+	return e.node != nil
 }
 
 // References returns the reference entries for this symbol.
