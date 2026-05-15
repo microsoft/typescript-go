@@ -729,6 +729,12 @@ type GetReferencedSymbolsForNodeParams struct {
 	Position int                      `json:"position"`
 }
 
+// ReferencedSymbolEntry represents a symbol definition and its references.
+type ReferencedSymbolEntry struct {
+	Definition Handle[ast.Node]   `json:"definition"`
+	References []Handle[ast.Node] `json:"references"`
+}
+
 // GetSignatureUsagesParams are the parameters for the getSignatureUsages method.
 type GetSignatureUsagesParams struct {
 	Snapshot      Handle[project.Snapshot] `json:"snapshot"`

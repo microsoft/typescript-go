@@ -125,6 +125,20 @@ func (s *SymbolAndEntries) References() []*ReferenceEntry {
 	return s.references
 }
 
+// DefinitionNode returns the defining AST node for this symbol, if any.
+func (s *SymbolAndEntries) DefinitionNode() *ast.Node {
+	if s.definition == nil {
+		return nil
+	}
+	if s.definition.node != nil {
+		return s.definition.node
+	}
+	if s.definition.symbol != nil && len(s.definition.symbol.Declarations) > 0 {
+		return s.definition.symbol.Declarations[0]
+	}
+	return nil
+}
+
 func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 	if entry.definition == nil {
 		return false
@@ -886,6 +900,19 @@ func (l *LanguageService) GetSignatureUsages(ctx context.Context, signatureDecl 
 	sourceFiles := l.program.GetSourceFiles()
 	entries := l.GetReferencedSymbolsForNode(ctx, name.Pos(), name, sourceFiles)
 
+	// Collect all declaration name nodes for the target symbol so we can
+	// filter them out — the caller wants usages, not declarations.
+	declNames := make(map[*ast.Node]bool)
+	for _, entry := range entries {
+		if entry.definition != nil && entry.definition.symbol != nil {
+			for _, decl := range entry.definition.symbol.Declarations {
+				if n := decl.Name(); n != nil {
+					declNames[n] = true
+				}
+			}
+		}
+	}
+
 	var result []SignatureUsage
 	for _, entry := range entries {
 		for _, ref := range entry.References() {
@@ -893,7 +920,7 @@ func (l *LanguageService) GetSignatureUsages(ctx context.Context, signatureDecl 
 				continue
 			}
 			node := ref.Node()
-			if node == nil || node == name {
+			if node == nil || declNames[node] {
 				continue
 			}
 

@@ -528,14 +528,17 @@ export class Checker {
         return (data ?? []).map(h => new NodeHandle(h));
     }
 
-    getReferencedSymbolsForNode(node: Node, position: number): NodeHandle[] {
-        const data = this.client.apiRequest<string[] | null>("getReferencedSymbolsForNode", {
+    getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[] {
+        const data = this.client.apiRequest<{ definition: string; references: string[]; }[] | null>("getReferencedSymbolsForNode", {
             snapshot: this.snapshotId,
             project: this.projectId,
             node: getNodeId(node),
             position,
         });
-        return (data ?? []).map(h => new NodeHandle(h));
+        return (data ?? []).map(entry => ({
+            definition: new NodeHandle(entry.definition),
+            references: (entry.references ?? []).map(h => new NodeHandle(h)),
+        }));
     }
 
     getSignatureUsage(signatureDecl: Node): SignatureUsage[] {
@@ -936,6 +939,14 @@ export class NodeHandle {
         // Find the node at the stored position with matching kind and end
         return findDescendant(sourceFile, this.pos, this.end, this.kind);
     }
+}
+
+/** A symbol definition paired with all of its reference nodes. */
+export interface ReferencedSymbolEntry {
+    /** The node handle for the symbol's definition. */
+    definition: NodeHandle;
+    /** The node handles for each reference to the symbol. */
+    references: NodeHandle[];
 }
 
 /** A single usage of a signature, pairing the reference name with its call expression (if any). */

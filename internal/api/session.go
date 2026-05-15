@@ -2159,7 +2159,7 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 }
 
 // handleGetReferencedSymbolsForNode returns node handles for all references found at a node.
-func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params *GetReferencedSymbolsForNodeParams) ([]Handle[ast.Node], error) {
+func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params *GetReferencedSymbolsForNodeParams) ([]ReferencedSymbolEntry, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
@@ -2185,13 +2185,22 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 		return nil, nil
 	}
 
-	var result []Handle[ast.Node]
+	var result []ReferencedSymbolEntry
 	for _, entry := range entries {
+		defNode := entry.DefinitionNode()
+		if defNode == nil {
+			continue
+		}
+		var refs []Handle[ast.Node]
 		for _, ref := range entry.References() {
 			if ref.IsNodeEntry() {
-				result = append(result, NodeHandleFrom(ref.Node()))
+				refs = append(refs, NodeHandleFrom(ref.Node()))
 			}
 		}
+		result = append(result, ReferencedSymbolEntry{
+			Definition: NodeHandleFrom(defNode),
+			References: refs,
+		})
 	}
 	return result, nil
 }

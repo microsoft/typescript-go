@@ -2579,6 +2579,10 @@ describe("Checker - getReferencedSymbolsForNode", () => {
             const funcName = funcDecl.name!;
             const refs = await project.checker.getReferencedSymbolsForNode(funcName, funcName.pos);
             assert.ok(refs.length > 0);
+            // Each entry should have a definition and references
+            const entry = refs[0];
+            assert.ok(entry.definition);
+            assert.ok(entry.references.length > 0);
         }
         finally {
             await api.close();
