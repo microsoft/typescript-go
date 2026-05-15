@@ -968,15 +968,19 @@ func getExtendedConfig(
 	result *extendsResult,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	var errors []*ast.Diagnostic
-	extendedConfigPath := tspath.ToPath(extendedConfigFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
+	useCaseSensitive := host.FS().UseCaseSensitiveFileNames()
+	extendedConfigPath := tspath.ToPath(extendedConfigFileName, host.GetCurrentDirectory(), useCaseSensitive)
 
 	var cacheEntry *ExtendedConfigCacheEntry
 	// Bypass the cache when we detect a cycle in the resolution stack.
 	// The cache locks entries during parsing, and a cycle would cause the same goroutine
 	// to re-lock the same entry, resulting in a deadlock. Let parseConfig handle the
 	// circularity error via its own resolution stack check.
+	// Resolution stack entries and extendedConfigFileName are already normalized absolute
+	// paths, so we only need to canonicalize for case-insensitive comparison.
+	canonicalExtended := string(extendedConfigPath)
 	if extendedConfigCache != nil && !slices.ContainsFunc(resolutionStack, func(s string) bool {
-		return tspath.ToPath(s, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()) == extendedConfigPath
+		return tspath.GetCanonicalFileName(s, useCaseSensitive) == canonicalExtended
 	}) {
 		cacheEntry = extendedConfigCache.GetExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host)
 	} else {
