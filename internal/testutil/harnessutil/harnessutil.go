@@ -602,8 +602,8 @@ func getAllDiagnostics(ctx context.Context, program compiler.ProgramLike, captur
 	var diags []*ast.Diagnostic
 	diags = append(diags, program.GetProgramDiagnostics()...)
 	diags = append(diags, program.GetSyntacticDiagnostics(ctx, nil)...)
-	diags = append(diags, program.GetGlobalDiagnostics(ctx)...)
 	diags = append(diags, program.GetSemanticDiagnostics(ctx, nil)...)
+	diags = append(diags, program.GetGlobalDiagnostics(ctx)...)
 	if program.Options().GetEmitDeclarations() {
 		diags = append(diags, program.GetDeclarationDiagnostics(ctx, nil)...)
 	}
@@ -655,7 +655,7 @@ func compileFilesWithHost(
 	}
 
 	postProgram := createProgram(host, config)
-	// Force checking to happen before emit
+	// Force checking to happen before emit, otherwise emit may mutate checker state in a way that affects diagnostics.
 	_ = getAllDiagnostics(ctx, postProgram, harnessOptions.CaptureSuggestions)
 	emitResult := postProgram.Emit(ctx, compiler.EmitOptions{})
 	postErrors := getAllDiagnostics(ctx, postProgram, harnessOptions.CaptureSuggestions)
@@ -668,7 +668,7 @@ func compileFilesWithHost(
 			longerErrors, shorterErrors = preErrors, postErrors
 		}
 		diag := ast.NewCompilerDiagnostic(
-			diagnostics.NewAdHocMessage(fmt.Sprintf("Pre-emit (%d) and post-emit (%d) diagnostic counts do not match! This can indicate a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!", len(preErrors), len(postErrors))),
+			diagnostics.NewAdHocMessage(fmt.Sprintf("Pre-emit (%d) and post-emit (%d) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!", len(preErrors), len(postErrors))),
 		)
 		diag = diag.AddRelatedInfo(ast.NewCompilerDiagnostic(diagnostics.NewAdHocMessage("The excess diagnostics are:")))
 		for _, d := range longerErrors {
