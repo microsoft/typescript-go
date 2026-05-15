@@ -233,14 +233,18 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	// !!! strada skipped emit if there were diagnostics
 
 	printerOptions := printer.PrinterOptions{
-		RemoveComments:      options.RemoveComments.IsTrue(),
-		OnlyPrintJSDocStyle: true,
-		NewLine:             options.NewLine,
-		NoEmitHelpers:       options.NoEmitHelpers.IsTrue(),
-		SourceMap:           options.DeclarationMap.IsTrue(),
-		InlineSourceMap:     options.InlineSourceMap.IsTrue(),
-		InlineSources:       options.InlineSources.IsTrue(),
-		// !!!
+		RemoveComments: options.RemoveComments.IsTrue(),
+		NewLine:        options.NewLine,
+		NoEmitHelpers:  true,
+		// Module: 			   options.Module, // NYI
+		// ModuleResolution:   options.ModuleResolution, // NYI
+		Target:          options.GetEmitScriptTarget(),
+		SourceMap:       e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(),
+		InlineSourceMap: options.InlineSourceMap.IsTrue(),
+		// InlineSources:       options.InlineSources.IsTrue(), // ignored, per strada
+		// ExtendedDiagnostics: options.ExtendedDiagnostics.IsTrue(), // NYI
+		OnlyPrintJSDocStyle:         true,
+		OmitBraceSourceMapPositions: true,
 	}
 
 	// create a printer to print the nodes
@@ -480,7 +484,7 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 
 	// Otherwise, if rootDir is specified or a config file exists, we know the common source directory and can check if the file would be emitted in the same location
 	if options.RootDir != "" || options.ConfigFilePath != "" {
-		commonDir := tspath.GetNormalizedAbsolutePath(outputpaths.GetCommonSourceDirectory(options, func() []string { return nil }, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames()), host.GetCurrentDirectory())
+		commonDir := tspath.GetNormalizedAbsolutePath(outputpaths.GetCommonSourceDirectory(options, func() []string { return nil }, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames(), nil), host.GetCurrentDirectory())
 		outputPath := outputpaths.GetSourceFilePathInNewDirWorker(sourceFile.FileName(), options.OutDir, host.GetCurrentDirectory(), commonDir, host.UseCaseSensitiveFileNames())
 		if tspath.ComparePaths(sourceFile.FileName(), outputPath, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),

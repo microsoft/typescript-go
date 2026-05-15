@@ -1619,6 +1619,10 @@ func IsAmbientModule(node *Node) bool {
 	return IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name().Kind == KindStringLiteral || IsGlobalScopeAugmentation(node))
 }
 
+func IsAmbientModuleSymbolName(s string) bool {
+	return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
+}
+
 func IsExternalModule(file *SourceFile) bool {
 	return file.ExternalModuleIndicator != nil
 }
@@ -4014,6 +4018,23 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 	return nil
 }
 
+// Finds the declaration that owns the JSDoc for a function-like node.
+// Keep these hosts aligned with JSDoc parameter reparsing so unmatched @param diagnostics use the same attachment rules.
+func GetNextJSDocCommentLocation(node *Node) *Node {
+	if parent := node.Parent; parent != nil {
+		switch parent.Kind {
+		case KindPropertyAssignment, KindExportAssignment, KindPropertyDeclaration, KindVariableDeclaration,
+			KindSatisfiesExpression, KindReturnStatement, KindVariableStatement, KindExpressionStatement:
+			return parent
+		case KindVariableDeclarationList:
+			if parent.AsVariableDeclarationList().Declarations.Nodes[0] == node {
+				return parent
+			}
+		}
+	}
+	return nil
+}
+
 func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
@@ -4236,7 +4257,7 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 		var firstAccessorWithDecorators *Node
 		if HasDecorators(decls.FirstAccessor) {
 			firstAccessorWithDecorators = decls.FirstAccessor
-		} else if HasDecorators(decls.SecondAccessor) {
+		} else if decls.SecondAccessor != nil && HasDecorators(decls.SecondAccessor) {
 			firstAccessorWithDecorators = decls.SecondAccessor
 		}
 		if firstAccessorWithDecorators == nil || node != firstAccessorWithDecorators {
@@ -4483,4 +4504,38 @@ func IsExpandoPropertyDeclaration(node *Node) bool {
 func IsSuperProperty(node *Node) bool {
 	return (IsPropertyAccessExpression(node) || IsElementAccessExpression(node)) &&
 		node.Expression().Kind == KindSuperKeyword
+}
+
+// Indicates whether a node is a potential source of an assigned name for a class, function, or arrow function.
+func IsNamedEvaluationSource(node *Node) bool {
+	switch node.Kind {
+	case KindPropertyAssignment:
+		return !IsProtoSetter(node.AsPropertyAssignment().Name())
+	case KindShorthandPropertyAssignment:
+		return node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil
+	case KindVariableDeclaration:
+		return IsIdentifier(node.AsVariableDeclaration().Name()) && node.Initializer() != nil
+	case KindParameter:
+		return IsIdentifier(node.AsParameterDeclaration().Name()) && node.Initializer() != nil && node.AsParameterDeclaration().DotDotDotToken == nil
+	case KindBindingElement:
+		return IsIdentifier(node.AsBindingElement().Name()) && node.Initializer() != nil && node.AsBindingElement().DotDotDotToken == nil
+	case KindPropertyDeclaration:
+		return node.Initializer() != nil
+	case KindBinaryExpression:
+		switch node.AsBinaryExpression().OperatorToken.Kind {
+		case KindEqualsToken, KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken, KindQuestionQuestionEqualsToken:
+			return IsIdentifier(node.AsBinaryExpression().Left)
+		}
+	case KindExportAssignment:
+		return true
+	}
+	return false
+}
+
+// Indicates whether a property name is the special `__proto__` property.
+// Per the ECMA-262 spec, this only matters for property assignments whose name is
+// the Identifier `__proto__`, or the string literal `"__proto__"`, but not for
+// computed property names.
+func IsProtoSetter(node *Node) bool {
+	return (IsIdentifier(node) || IsStringLiteral(node)) && node.Text() == "__proto__"
 }

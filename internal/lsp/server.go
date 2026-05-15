@@ -45,6 +45,7 @@ type ServerOptions struct {
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
 	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
+	SetParentProcessID func(parentPID int)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -66,6 +67,7 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
+		startWatchdog:         opts.SetParentProcessID,
 		initComplete:          make(chan struct{}),
 		progressDelay:         opts.ProgressDelay,
 	}
@@ -204,6 +206,8 @@ type Server struct {
 
 	progressDelay   time.Duration
 	projectProgress *projectLoadingProgress
+
+	startWatchdog func(parentPID int)
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -957,24 +961,21 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
-			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
-			if err != nil {
-				return
-			}
-
-			if s.telemetryEnabled {
-				_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
-					RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
-						Properties: &lsproto.RequestFailureTelemetryProperties{
-							ErrorCode:     lsproto.ErrorCodeInternalError.String(),
-							RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
-							Stack:         sanitizeStackTrace(string(stack)),
-						},
-					},
-				})
-			}
+			_ = s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
+		}
+
+		if s.telemetryEnabled {
+			_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+					Properties: &lsproto.RequestFailureTelemetryProperties{
+						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+						RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
+						Stack:         sanitizeStackTrace(string(stack)),
+					},
+				},
+			})
 		}
 	}
 }
@@ -1009,6 +1010,10 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
 		s.logger.SetVerbose(true)
+	}
+
+	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
+		s.startWatchdog(int(*params.ProcessId.Integer))
 	}
 
 	response := &lsproto.InitializeResult{
