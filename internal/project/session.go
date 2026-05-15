@@ -1597,8 +1597,8 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 	ctx := s.backgroundCtx
 	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
 	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
-	oldOpenProjects := openConfiguredProjects(oldSnapshot)
-	newOpenProjects := openConfiguredProjects(newSnapshot)
+	oldOpenProjects := oldSnapshot.ProjectCollection.GetOpenConfiguredProjects()
+	newOpenProjects := newSnapshot.ProjectCollection.GetOpenConfiguredProjects()
 	collections.DiffOrderedMaps(
 		oldProjects,
 		newProjects,
@@ -1648,19 +1648,6 @@ func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
 		return false
 	}
 	return p.ProgramUpdateKind > ProgramUpdateKindCloned
-}
-
-func openConfiguredProjects(snapshot *Snapshot) *collections.Set[tspath.Path] {
-	openProjects := &collections.Set[tspath.Path]{}
-	for _, project := range snapshot.ProjectCollection.ConfiguredProjects() {
-		for path := range snapshot.fs.overlays {
-			if project.containsFile(path) {
-				openProjects.Add(project.configFilePath)
-				break
-			}
-		}
-	}
-	return openProjects
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
