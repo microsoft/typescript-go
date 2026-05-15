@@ -332,7 +332,7 @@ func TestFormatSelectionPreservesComments(t *testing.T) {
 		assert.Equal(t, formatted, originalText, "format selection should not delete the block comment or alter the statement")
 	})
 
-	t.Run("full document format should preserve block comment", func(t *testing.T) {
+	t.Run("full document format should preserve block comment and add spaces", func(t *testing.T) {
 		t.Parallel()
 		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
@@ -344,6 +344,7 @@ func TestFormatSelectionPreservesComments(t *testing.T) {
 				IndentStyle:            lsutil.IndentStyleSmart,
 				TrimTrailingWhitespace: true,
 			},
+			InsertSpaceBeforeAndAfterBinaryOperators: core.TSTrue,
 		}, "\n")
 
 		originalText := `const test/* comment */=5;`
@@ -356,8 +357,8 @@ func TestFormatSelectionPreservesComments(t *testing.T) {
 		edits := format.FormatDocument(ctx, sourceFile)
 		formatted := applyBulkEdits(originalText, edits)
 
-		// Full document format should preserve the comment and the entire statement
-		assert.Equal(t, formatted, originalText, "full format should preserve the block comment and the statement")
+		// Full document format should preserve the comment and add spaces around `=`
+		assert.Equal(t, "const test/* comment */ = 5;", formatted, "full format should preserve the block comment and add spaces")
 	})
 }
 
