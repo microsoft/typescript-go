@@ -1163,7 +1163,7 @@ func (s *Session) handleGetImportAdderEdits(ctx context.Context, params *GetImpo
 	userPreferences := workingSnapshot.UserPreferences()
 	if registry := workingSnapshot.AutoImportRegistry(); registry == nil ||
 		!registry.IsPreparedForImportingFile(sourceFile.FileName(), projectPath, userPreferences) {
-		preparedSnapshot := s.projectSession.APIPrepareAutoImports(ctx, workingSnapshot, params.File.ToURI())
+		preparedSnapshot := s.projectSession.GetSnapshotWithAutoImports(ctx, workingSnapshot, params.File.ToURI())
 		defer preparedSnapshot.Deref(s.projectSession)
 
 		workingSnapshot = preparedSnapshot
