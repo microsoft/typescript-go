@@ -12,8 +12,15 @@ import {
 } from "./util";
 
 import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
-import { SessionManager } from "./session";
+import {
+    promptUseWorkspaceVersion,
+    SessionManager,
+} from "./session";
+
+import { ExperimentationService } from "./experimentationService";
 import { createTelemetryReporter } from "./telemetryReporting";
+
+import assert from "node:assert";
 
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
@@ -25,6 +32,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
+
+    const version = context.extension.packageJSON.version;
+    assert(typeof version === "string");
+    // Constructing the experimentation service actually sets shared properties
+    // so that events include context on treatments/flights.
+    // If we actually need to read treatment variables we would hold onto this instance,
+    // but for now we just construct it to ensure shared properties are set for telemetry.
+    void new ExperimentationService(telemetryReporter, context.extension.id, version, context.globalState);
 
     registerEnablementCommands(context, telemetryReporter);
 
@@ -110,6 +125,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }
 
     await sessionManager.start(context);
+
+    // Prompt user to use workspace version if one is detected and they haven't opted in yet.
+    promptUseWorkspaceVersion(context).catch(err => {
+        output.appendLine(`Error prompting to use workspace version: ${err}`);
+    });
 
     function onLanguageServerInitialized(listener: () => void): vscode.Disposable {
         if (sessionManager.currentSession?.client.isInitialized) {

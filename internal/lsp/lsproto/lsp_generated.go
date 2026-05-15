@@ -3,6 +3,7 @@
 package lsproto
 
 import (
+	"cmp"
 	"fmt"
 	"strings"
 
@@ -7530,6 +7531,13 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+func (s *TextEdit) Compare(other *TextEdit) int {
+	if c := s.Range.Compare(&other.Range); c != 0 {
+		return c
+	}
+	return cmp.Compare(s.NewText, other.NewText)
+}
+
 // The watched files change notification's parameters.
 type DidChangeWatchedFilesParams struct {
 	// The actual file events.
@@ -13162,6 +13170,13 @@ func (s *Range) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+func (s *Range) Compare(other *Range) int {
+	if c := s.Start.Compare(&other.Start); c != 0 {
+		return c
+	}
+	return s.End.Compare(&other.End)
+}
+
 type ImplementationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
@@ -13777,6 +13792,13 @@ func (s *Position) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 
 	return nil
+}
+
+func (s *Position) Compare(other *Position) int {
+	if c := cmp.Compare(s.Line, other.Line); c != 0 {
+		return c
+	}
+	return cmp.Compare(s.Character, other.Character)
 }
 
 type SelectionRangeOptions struct {
@@ -17160,6 +17182,12 @@ type ServerCapabilities struct {
 
 	// The server provides source definition support via custom/textDocument/sourceDefinition.
 	CustomSourceDefinitionProvider *bool `json:"customSourceDefinitionProvider,omitzero"`
+
+	// Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.
+	VSOnAutoInsertProvider *VsOnAutoInsertOptions `json:"_vs_onAutoInsertProvider,omitzero"`
+
+	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
+	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*ServerCapabilities)(nil)
@@ -17421,6 +17449,20 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("customSourceDefinitionProvider")
 			}
 			if err := json.UnmarshalDecode(dec, &s.CustomSourceDefinitionProvider); err != nil {
+				return err
+			}
+		case `"_vs_onAutoInsertProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_onAutoInsertProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSOnAutoInsertProvider); err != nil {
+				return err
+			}
+		case `"customMultiDocumentHighlightProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("customMultiDocumentHighlightProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
 				return err
 			}
 		default:
@@ -21086,6 +21128,21 @@ type ClientCapabilities struct {
 	//
 	// Since: 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitzero"`
+
+	// Whether the client supports Visual Studio extensions.
+	VSSupportsVisualStudioExtensions *bool `json:"_vs_supportsVisualStudioExtensions,omitzero"`
+
+	// The snippet version supported by the client.
+	VSSupportedSnippetVersion *int32 `json:"_vs_supportedSnippetVersion,omitzero"`
+
+	// Whether the client supports not including text in textDocument/didOpen notifications.
+	VSSupportsNotIncludingTextInTextDocumentDidOpen *bool `json:"_vs_supportsNotIncludingTextInTextDocumentDidOpen,omitzero"`
+
+	// Whether the client supports icon extensions.
+	VSSupportsIconExtensions *bool `json:"_vs_supportsIconExtensions,omitzero"`
+
+	// Whether the client supports diagnostic requests.
+	VSSupportsDiagnosticRequests *bool `json:"_vs_supportsDiagnosticRequests,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*ClientCapabilities)(nil)
@@ -21130,6 +21187,41 @@ func (s *ClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("general")
 			}
 			if err := json.UnmarshalDecode(dec, &s.General); err != nil {
+				return err
+			}
+		case `"_vs_supportsVisualStudioExtensions"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_supportsVisualStudioExtensions")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSSupportsVisualStudioExtensions); err != nil {
+				return err
+			}
+		case `"_vs_supportedSnippetVersion"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_supportedSnippetVersion")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSSupportedSnippetVersion); err != nil {
+				return err
+			}
+		case `"_vs_supportsNotIncludingTextInTextDocumentDidOpen"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_supportsNotIncludingTextInTextDocumentDidOpen")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSSupportsNotIncludingTextInTextDocumentDidOpen); err != nil {
+				return err
+			}
+		case `"_vs_supportsIconExtensions"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_supportsIconExtensions")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSSupportsIconExtensions); err != nil {
+				return err
+			}
+		case `"_vs_supportsDiagnosticRequests"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_supportsDiagnosticRequests")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSSupportsDiagnosticRequests); err != nil {
 				return err
 			}
 		default:
@@ -28316,17 +28408,17 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
-// CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.
-type CustomClosingTagCompletion struct {
-	// The text to insert at the closing tag position.
-	NewText string `json:"newText"`
+// Options for the textDocument/_vs_onAutoInsert provider capability.
+type VsOnAutoInsertOptions struct {
+	// List of trigger characters that trigger auto-insert.
+	VSTriggerCharacters []string `json:"_vs_triggerCharacters"`
 }
 
-var _ json.UnmarshalerFrom = (*CustomClosingTagCompletion)(nil)
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertOptions)(nil)
 
-func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error {
+func (s *VsOnAutoInsertOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	const (
-		missingNewText uint = 1 << iota
+		missingVSTriggerCharacters uint = 1 << iota
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -28344,9 +28436,12 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error 
 			return err
 		}
 		switch string(name) {
-		case `"newText"`:
-			missing &^= missingNewText
-			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+		case `"_vs_triggerCharacters"`:
+			missing &^= missingVSTriggerCharacters
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_triggerCharacters")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSTriggerCharacters); err != nil {
 				return err
 			}
 		default:
@@ -28362,8 +28457,165 @@ func (s *CustomClosingTagCompletion) UnmarshalJSONFrom(dec *json.Decoder) error 
 
 	if missing != 0 {
 		var missingProps []string
-		if missing&missingNewText != 0 {
-			missingProps = append(missingProps, "newText")
+		if missing&missingVSTriggerCharacters != 0 {
+			missingProps = append(missingProps, "_vs_triggerCharacters")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Parameters for the textDocument/_vs_onAutoInsert request.
+type VsOnAutoInsertParams struct {
+	// The text document.
+	VSTextDocument TextDocumentIdentifier `json:"_vs_textDocument"`
+
+	// The position inside the text document.
+	VSPosition Position `json:"_vs_position"`
+
+	// The character that triggered the auto-insert.
+	VSCh string `json:"_vs_ch"`
+}
+
+func (s *VsOnAutoInsertParams) TextDocumentURI() DocumentUri {
+	return s.VSTextDocument.Uri
+}
+
+func (s *VsOnAutoInsertParams) TextDocumentPosition() Position {
+	return s.VSPosition
+}
+
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertParams)(nil)
+
+func (s *VsOnAutoInsertParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVSTextDocument uint = 1 << iota
+		missingVSPosition
+		missingVSCh
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"_vs_textDocument"`:
+			missing &^= missingVSTextDocument
+			if err := json.UnmarshalDecode(dec, &s.VSTextDocument); err != nil {
+				return err
+			}
+		case `"_vs_position"`:
+			missing &^= missingVSPosition
+			if err := json.UnmarshalDecode(dec, &s.VSPosition); err != nil {
+				return err
+			}
+		case `"_vs_ch"`:
+			missing &^= missingVSCh
+			if err := json.UnmarshalDecode(dec, &s.VSCh); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVSTextDocument != 0 {
+			missingProps = append(missingProps, "_vs_textDocument")
+		}
+		if missing&missingVSPosition != 0 {
+			missingProps = append(missingProps, "_vs_position")
+		}
+		if missing&missingVSCh != 0 {
+			missingProps = append(missingProps, "_vs_ch")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Response item for the textDocument/_vs_onAutoInsert request.
+type VsOnAutoInsertResponseItem struct {
+	// The format of the text edit (plaintext or snippet).
+	VSTextEditFormat InsertTextFormat `json:"_vs_textEditFormat"`
+
+	// The text edit to apply for the auto-insertion.
+	VSTextEdit *TextEdit `json:"_vs_textEdit"`
+}
+
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertResponseItem)(nil)
+
+func (s *VsOnAutoInsertResponseItem) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVSTextEditFormat uint = 1 << iota
+		missingVSTextEdit
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"_vs_textEditFormat"`:
+			missing &^= missingVSTextEditFormat
+			if err := json.UnmarshalDecode(dec, &s.VSTextEditFormat); err != nil {
+				return err
+			}
+		case `"_vs_textEdit"`:
+			missing &^= missingVSTextEdit
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_textEdit")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSTextEdit); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVSTextEditFormat != 0 {
+			missingProps = append(missingProps, "_vs_textEditFormat")
+		}
+		if missing&missingVSTextEdit != 0 {
+			missingProps = append(missingProps, "_vs_textEdit")
 		}
 		return errMissing(missingProps)
 	}
@@ -29159,6 +29411,166 @@ type ProjectInfoTelemetryMeasurements struct {
 	DtsFileCount float64 `json:"dtsFileCount,omitzero"`
 
 	DtsFileSize float64 `json:"dtsFileSize,omitzero"`
+}
+
+// Represents a collection of document highlights from a single document, used in multi-document highlight responses.
+type MultiDocumentHighlight struct {
+	// The URI of the document containing the highlights.
+	Uri DocumentUri `json:"uri"`
+
+	// The highlights for the document.
+	Highlights []*DocumentHighlight `json:"highlights"`
+}
+
+var _ json.UnmarshalerFrom = (*MultiDocumentHighlight)(nil)
+
+func (s *MultiDocumentHighlight) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingUri uint = 1 << iota
+		missingHighlights
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"uri"`:
+			missing &^= missingUri
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case `"highlights"`:
+			missing &^= missingHighlights
+			if dec.PeekKind() == 'n' {
+				return errNull("highlights")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Highlights); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingUri != 0 {
+			missingProps = append(missingProps, "uri")
+		}
+		if missing&missingHighlights != 0 {
+			missingProps = append(missingProps, "highlights")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Parameters for the custom/textDocument/multiDocumentHighlight request.
+type MultiDocumentHighlightParams struct {
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// The list of file URIs to search for highlights across.
+	FilesToSearch []DocumentUri `json:"filesToSearch"`
+}
+
+func (s *MultiDocumentHighlightParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
+func (s *MultiDocumentHighlightParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
+var _ json.UnmarshalerFrom = (*MultiDocumentHighlightParams)(nil)
+
+func (s *MultiDocumentHighlightParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingTextDocument uint = 1 << iota
+		missingPosition
+		missingFilesToSearch
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"textDocument"`:
+			missing &^= missingTextDocument
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case `"position"`:
+			missing &^= missingPosition
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case `"filesToSearch"`:
+			missing &^= missingFilesToSearch
+			if dec.PeekKind() == 'n' {
+				return errNull("filesToSearch")
+			}
+			if err := json.UnmarshalDecode(dec, &s.FilesToSearch); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingTextDocument != 0 {
+			missingProps = append(missingProps, "textDocument")
+		}
+		if missing&missingPosition != 0 {
+			missingProps = append(missingProps, "position")
+		}
+		if missing&missingFilesToSearch != 0 {
+			missingProps = append(missingProps, "filesToSearch")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
 }
 
 // CallHierarchyItemData is a placeholder for custom data preserved on a CallHierarchyItem.
@@ -30529,8 +30941,6 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ExecuteCommandParams](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalPtrTo[ApplyWorkspaceEditParams](data)
-	case MethodCustomTextDocumentClosingTagCompletion:
-		return unmarshalPtrTo[TextDocumentPositionParams](data)
 	case MethodCustomRunGC:
 		return unmarshalEmpty(data)
 	case MethodCustomSaveHeapProfile:
@@ -30547,6 +30957,10 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ProjectInfoParams](data)
 	case MethodCustomTextDocumentSourceDefinition:
 		return unmarshalPtrTo[TextDocumentPositionParams](data)
+	case MethodCustomTextDocumentMultiDocumentHighlight:
+		return unmarshalPtrTo[MultiDocumentHighlightParams](data)
+	case MethodTextDocumentVSOnAutoInsert:
+		return unmarshalPtrTo[VsOnAutoInsertParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
 	case MethodWindowWorkDoneProgressCancel:
@@ -30736,8 +31150,6 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[ExecuteCommandResponse](data)
 	case MethodWorkspaceApplyEdit:
 		return unmarshalValue[ApplyWorkspaceEditResponse](data)
-	case MethodCustomTextDocumentClosingTagCompletion:
-		return unmarshalValue[CustomClosingTagCompletionResponse](data)
 	case MethodCustomRunGC:
 		return unmarshalValue[RunGCResponse](data)
 	case MethodCustomSaveHeapProfile:
@@ -30754,6 +31166,10 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[CustomProjectInfoResponse](data)
 	case MethodCustomTextDocumentSourceDefinition:
 		return unmarshalValue[CustomTextDocumentSourceDefinitionResponse](data)
+	case MethodCustomTextDocumentMultiDocumentHighlight:
+		return unmarshalValue[CustomMultiDocumentHighlightResponse](data)
+	case MethodTextDocumentVSOnAutoInsert:
+		return unmarshalValue[VsOnAutoInsertResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -31058,8 +31474,6 @@ const (
 	MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
-	// Request to get the closing tag completion at a given position.
-	MethodCustomTextDocumentClosingTagCompletion Method = "custom/textDocument/closingTagCompletion"
 	// Triggers garbage collection in the language server.
 	MethodCustomRunGC Method = "custom/runGC"
 	// Saves a heap profile to the specified directory.
@@ -31076,6 +31490,10 @@ const (
 	MethodCustomProjectInfo Method = "custom/projectInfo"
 	// Request to get source definitions for a position.
 	MethodCustomTextDocumentSourceDefinition Method = "custom/textDocument/sourceDefinition"
+	// Request to get document highlights across multiple files.
+	MethodCustomTextDocumentMultiDocumentHighlight Method = "custom/textDocument/multiDocumentHighlight"
+	// Request for auto-insert when a trigger character is typed (VS-specific).
+	MethodTextDocumentVSOnAutoInsert Method = "textDocument/_vs_onAutoInsert"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -31573,12 +31991,6 @@ type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 // Type mapping info for `workspace/applyEdit`
 var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
-// Response type for `custom/textDocument/closingTagCompletion`
-type CustomClosingTagCompletionResponse = CustomClosingTagCompletionOrNull
-
-// Type mapping info for `custom/textDocument/closingTagCompletion`
-var CustomTextDocumentClosingTagCompletionInfo = RequestInfo[*TextDocumentPositionParams, CustomClosingTagCompletionResponse]{Method: MethodCustomTextDocumentClosingTagCompletion}
-
 // Response type for `custom/runGC`
 type RunGCResponse = Null
 
@@ -31626,6 +32038,18 @@ type CustomTextDocumentSourceDefinitionResponse = *LocationOrLocationsOrDefiniti
 
 // Type mapping info for `custom/textDocument/sourceDefinition`
 var CustomTextDocumentSourceDefinitionInfo = RequestInfo[*TextDocumentPositionParams, CustomTextDocumentSourceDefinitionResponse]{Method: MethodCustomTextDocumentSourceDefinition}
+
+// Response type for `custom/textDocument/multiDocumentHighlight`
+type CustomMultiDocumentHighlightResponse = MultiDocumentHighlightsOrNull
+
+// Type mapping info for `custom/textDocument/multiDocumentHighlight`
+var CustomTextDocumentMultiDocumentHighlightInfo = RequestInfo[*MultiDocumentHighlightParams, CustomMultiDocumentHighlightResponse]{Method: MethodCustomTextDocumentMultiDocumentHighlight}
+
+// Response type for `textDocument/_vs_onAutoInsert`
+type VsOnAutoInsertResponse = VsOnAutoInsertResponseItemOrNull
+
+// Type mapping info for `textDocument/_vs_onAutoInsert`
+var TextDocumentVSOnAutoInsertInfo = RequestInfo[*VsOnAutoInsertParams, VsOnAutoInsertResponse]{Method: MethodTextDocumentVSOnAutoInsert}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
@@ -35108,33 +35532,63 @@ func (o *LSPAnyOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return errInvalidValue("LSPAnyOrNull", data)
 }
 
-type CustomClosingTagCompletionOrNull struct {
-	CustomClosingTagCompletion *CustomClosingTagCompletion
+type MultiDocumentHighlightsOrNull struct {
+	MultiDocumentHighlights *[]*MultiDocumentHighlight
 }
 
-var _ json.MarshalerTo = (*CustomClosingTagCompletionOrNull)(nil)
+var _ json.MarshalerTo = (*MultiDocumentHighlightsOrNull)(nil)
 
-func (o *CustomClosingTagCompletionOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CustomClosingTagCompletion != nil {
-		return json.MarshalEncode(enc, o.CustomClosingTagCompletion)
+func (o *MultiDocumentHighlightsOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	if o.MultiDocumentHighlights != nil {
+		return json.MarshalEncode(enc, o.MultiDocumentHighlights)
 	}
 	return enc.WriteToken(json.Null)
 }
 
-var _ json.UnmarshalerFrom = (*CustomClosingTagCompletionOrNull)(nil)
+var _ json.UnmarshalerFrom = (*MultiDocumentHighlightsOrNull)(nil)
 
-func (o *CustomClosingTagCompletionOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = CustomClosingTagCompletionOrNull{}
+func (o *MultiDocumentHighlightsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = MultiDocumentHighlightsOrNull{}
+
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
+		return err
+	case '[':
+		o.MultiDocumentHighlights = new([]*MultiDocumentHighlight)
+		return json.UnmarshalDecode(dec, o.MultiDocumentHighlights)
+	default:
+		return errInvalidKind("MultiDocumentHighlightsOrNull", dec.PeekKind())
+	}
+}
+
+type VsOnAutoInsertResponseItemOrNull struct {
+	VsOnAutoInsertResponseItem *VsOnAutoInsertResponseItem
+}
+
+var _ json.MarshalerTo = (*VsOnAutoInsertResponseItemOrNull)(nil)
+
+func (o *VsOnAutoInsertResponseItemOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	if o.VsOnAutoInsertResponseItem != nil {
+		return json.MarshalEncode(enc, o.VsOnAutoInsertResponseItem)
+	}
+	return enc.WriteToken(json.Null)
+}
+
+var _ json.UnmarshalerFrom = (*VsOnAutoInsertResponseItemOrNull)(nil)
+
+func (o *VsOnAutoInsertResponseItemOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = VsOnAutoInsertResponseItemOrNull{}
 
 	switch dec.PeekKind() {
 	case 'n':
 		_, err := dec.ReadToken()
 		return err
 	case '{':
-		o.CustomClosingTagCompletion = new(CustomClosingTagCompletion)
-		return json.UnmarshalDecode(dec, o.CustomClosingTagCompletion)
+		o.VsOnAutoInsertResponseItem = new(VsOnAutoInsertResponseItem)
+		return json.UnmarshalDecode(dec, o.VsOnAutoInsertResponseItem)
 	default:
-		return errInvalidKind("CustomClosingTagCompletionOrNull", dec.PeekKind())
+		return errInvalidKind("VsOnAutoInsertResponseItemOrNull", dec.PeekKind())
 	}
 }
 
@@ -35653,7 +36107,7 @@ type ResolvedChangeAnnotationsSupportOptions struct {
 	GroupsOnLabel bool `json:"groupsOnLabel,omitzero"`
 }
 
-func resolveChangeAnnotationsSupportOptions(v *ChangeAnnotationsSupportOptions) ResolvedChangeAnnotationsSupportOptions {
+func (v *ChangeAnnotationsSupportOptions) resolve() ResolvedChangeAnnotationsSupportOptions {
 	if v == nil {
 		return ResolvedChangeAnnotationsSupportOptions{}
 	}
@@ -35704,7 +36158,7 @@ type ResolvedWorkspaceEditClientCapabilities struct {
 	SnippetEditSupport bool `json:"snippetEditSupport,omitzero"`
 }
 
-func resolveWorkspaceEditClientCapabilities(v *WorkspaceEditClientCapabilities) ResolvedWorkspaceEditClientCapabilities {
+func (v *WorkspaceEditClientCapabilities) resolve() ResolvedWorkspaceEditClientCapabilities {
 	if v == nil {
 		return ResolvedWorkspaceEditClientCapabilities{}
 	}
@@ -35713,7 +36167,7 @@ func resolveWorkspaceEditClientCapabilities(v *WorkspaceEditClientCapabilities) 
 		ResourceOperations:      derefOr(v.ResourceOperations),
 		FailureHandling:         derefOr(v.FailureHandling),
 		NormalizesLineEndings:   derefOr(v.NormalizesLineEndings),
-		ChangeAnnotationSupport: resolveChangeAnnotationsSupportOptions(v.ChangeAnnotationSupport),
+		ChangeAnnotationSupport: v.ChangeAnnotationSupport.resolve(),
 		MetadataSupport:         derefOr(v.MetadataSupport),
 		SnippetEditSupport:      derefOr(v.SnippetEditSupport),
 	}
@@ -35726,7 +36180,7 @@ type ResolvedDidChangeConfigurationClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveDidChangeConfigurationClientCapabilities(v *DidChangeConfigurationClientCapabilities) ResolvedDidChangeConfigurationClientCapabilities {
+func (v *DidChangeConfigurationClientCapabilities) resolve() ResolvedDidChangeConfigurationClientCapabilities {
 	if v == nil {
 		return ResolvedDidChangeConfigurationClientCapabilities{}
 	}
@@ -35749,7 +36203,7 @@ type ResolvedDidChangeWatchedFilesClientCapabilities struct {
 	RelativePatternSupport bool `json:"relativePatternSupport,omitzero"`
 }
 
-func resolveDidChangeWatchedFilesClientCapabilities(v *DidChangeWatchedFilesClientCapabilities) ResolvedDidChangeWatchedFilesClientCapabilities {
+func (v *DidChangeWatchedFilesClientCapabilities) resolve() ResolvedDidChangeWatchedFilesClientCapabilities {
 	if v == nil {
 		return ResolvedDidChangeWatchedFilesClientCapabilities{}
 	}
@@ -35775,7 +36229,7 @@ type ResolvedClientSymbolKindOptions struct {
 	ValueSet []SymbolKind `json:"valueSet,omitzero"`
 }
 
-func resolveClientSymbolKindOptions(v *ClientSymbolKindOptions) ResolvedClientSymbolKindOptions {
+func (v *ClientSymbolKindOptions) resolve() ResolvedClientSymbolKindOptions {
 	if v == nil {
 		return ResolvedClientSymbolKindOptions{}
 	}
@@ -35793,7 +36247,7 @@ type ResolvedClientSymbolTagOptions struct {
 	ValueSet []SymbolTag `json:"valueSet,omitzero"`
 }
 
-func resolveClientSymbolTagOptions(v *ClientSymbolTagOptions) ResolvedClientSymbolTagOptions {
+func (v *ClientSymbolTagOptions) resolve() ResolvedClientSymbolTagOptions {
 	if v == nil {
 		return ResolvedClientSymbolTagOptions{}
 	}
@@ -35812,7 +36266,7 @@ type ResolvedClientSymbolResolveOptions struct {
 	Properties []string `json:"properties,omitzero"`
 }
 
-func resolveClientSymbolResolveOptions(v *ClientSymbolResolveOptions) ResolvedClientSymbolResolveOptions {
+func (v *ClientSymbolResolveOptions) resolve() ResolvedClientSymbolResolveOptions {
 	if v == nil {
 		return ResolvedClientSymbolResolveOptions{}
 	}
@@ -35843,15 +36297,15 @@ type ResolvedWorkspaceSymbolClientCapabilities struct {
 	ResolveSupport ResolvedClientSymbolResolveOptions `json:"resolveSupport,omitzero"`
 }
 
-func resolveWorkspaceSymbolClientCapabilities(v *WorkspaceSymbolClientCapabilities) ResolvedWorkspaceSymbolClientCapabilities {
+func (v *WorkspaceSymbolClientCapabilities) resolve() ResolvedWorkspaceSymbolClientCapabilities {
 	if v == nil {
 		return ResolvedWorkspaceSymbolClientCapabilities{}
 	}
 	return ResolvedWorkspaceSymbolClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
-		SymbolKind:          resolveClientSymbolKindOptions(v.SymbolKind),
-		TagSupport:          resolveClientSymbolTagOptions(v.TagSupport),
-		ResolveSupport:      resolveClientSymbolResolveOptions(v.ResolveSupport),
+		SymbolKind:          v.SymbolKind.resolve(),
+		TagSupport:          v.TagSupport.resolve(),
+		ResolveSupport:      v.ResolveSupport.resolve(),
 	}
 }
 
@@ -35864,7 +36318,7 @@ type ResolvedExecuteCommandClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveExecuteCommandClientCapabilities(v *ExecuteCommandClientCapabilities) ResolvedExecuteCommandClientCapabilities {
+func (v *ExecuteCommandClientCapabilities) resolve() ResolvedExecuteCommandClientCapabilities {
 	if v == nil {
 		return ResolvedExecuteCommandClientCapabilities{}
 	}
@@ -35888,7 +36342,7 @@ type ResolvedSemanticTokensWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
-func resolveSemanticTokensWorkspaceClientCapabilities(v *SemanticTokensWorkspaceClientCapabilities) ResolvedSemanticTokensWorkspaceClientCapabilities {
+func (v *SemanticTokensWorkspaceClientCapabilities) resolve() ResolvedSemanticTokensWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedSemanticTokensWorkspaceClientCapabilities{}
 	}
@@ -35912,7 +36366,7 @@ type ResolvedCodeLensWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
-func resolveCodeLensWorkspaceClientCapabilities(v *CodeLensWorkspaceClientCapabilities) ResolvedCodeLensWorkspaceClientCapabilities {
+func (v *CodeLensWorkspaceClientCapabilities) resolve() ResolvedCodeLensWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedCodeLensWorkspaceClientCapabilities{}
 	}
@@ -35947,7 +36401,7 @@ type ResolvedFileOperationClientCapabilities struct {
 	WillDelete bool `json:"willDelete,omitzero"`
 }
 
-func resolveFileOperationClientCapabilities(v *FileOperationClientCapabilities) ResolvedFileOperationClientCapabilities {
+func (v *FileOperationClientCapabilities) resolve() ResolvedFileOperationClientCapabilities {
 	if v == nil {
 		return ResolvedFileOperationClientCapabilities{}
 	}
@@ -35979,7 +36433,7 @@ type ResolvedInlineValueWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
-func resolveInlineValueWorkspaceClientCapabilities(v *InlineValueWorkspaceClientCapabilities) ResolvedInlineValueWorkspaceClientCapabilities {
+func (v *InlineValueWorkspaceClientCapabilities) resolve() ResolvedInlineValueWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedInlineValueWorkspaceClientCapabilities{}
 	}
@@ -36005,7 +36459,7 @@ type ResolvedInlayHintWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
-func resolveInlayHintWorkspaceClientCapabilities(v *InlayHintWorkspaceClientCapabilities) ResolvedInlayHintWorkspaceClientCapabilities {
+func (v *InlayHintWorkspaceClientCapabilities) resolve() ResolvedInlayHintWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedInlayHintWorkspaceClientCapabilities{}
 	}
@@ -36031,7 +36485,7 @@ type ResolvedDiagnosticWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
-func resolveDiagnosticWorkspaceClientCapabilities(v *DiagnosticWorkspaceClientCapabilities) ResolvedDiagnosticWorkspaceClientCapabilities {
+func (v *DiagnosticWorkspaceClientCapabilities) resolve() ResolvedDiagnosticWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedDiagnosticWorkspaceClientCapabilities{}
 	}
@@ -36063,7 +36517,7 @@ type ResolvedFoldingRangeWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitzero"`
 }
 
-func resolveFoldingRangeWorkspaceClientCapabilities(v *FoldingRangeWorkspaceClientCapabilities) ResolvedFoldingRangeWorkspaceClientCapabilities {
+func (v *FoldingRangeWorkspaceClientCapabilities) resolve() ResolvedFoldingRangeWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedFoldingRangeWorkspaceClientCapabilities{}
 	}
@@ -36085,7 +36539,7 @@ type ResolvedTextDocumentContentClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveTextDocumentContentClientCapabilities(v *TextDocumentContentClientCapabilities) ResolvedTextDocumentContentClientCapabilities {
+func (v *TextDocumentContentClientCapabilities) resolve() ResolvedTextDocumentContentClientCapabilities {
 	if v == nil {
 		return ResolvedTextDocumentContentClientCapabilities{}
 	}
@@ -36164,27 +36618,27 @@ type ResolvedWorkspaceClientCapabilities struct {
 	TextDocumentContent ResolvedTextDocumentContentClientCapabilities `json:"textDocumentContent,omitzero"`
 }
 
-func resolveWorkspaceClientCapabilities(v *WorkspaceClientCapabilities) ResolvedWorkspaceClientCapabilities {
+func (v *WorkspaceClientCapabilities) resolve() ResolvedWorkspaceClientCapabilities {
 	if v == nil {
 		return ResolvedWorkspaceClientCapabilities{}
 	}
 	return ResolvedWorkspaceClientCapabilities{
 		ApplyEdit:              derefOr(v.ApplyEdit),
-		WorkspaceEdit:          resolveWorkspaceEditClientCapabilities(v.WorkspaceEdit),
-		DidChangeConfiguration: resolveDidChangeConfigurationClientCapabilities(v.DidChangeConfiguration),
-		DidChangeWatchedFiles:  resolveDidChangeWatchedFilesClientCapabilities(v.DidChangeWatchedFiles),
-		Symbol:                 resolveWorkspaceSymbolClientCapabilities(v.Symbol),
-		ExecuteCommand:         resolveExecuteCommandClientCapabilities(v.ExecuteCommand),
+		WorkspaceEdit:          v.WorkspaceEdit.resolve(),
+		DidChangeConfiguration: v.DidChangeConfiguration.resolve(),
+		DidChangeWatchedFiles:  v.DidChangeWatchedFiles.resolve(),
+		Symbol:                 v.Symbol.resolve(),
+		ExecuteCommand:         v.ExecuteCommand.resolve(),
 		WorkspaceFolders:       derefOr(v.WorkspaceFolders),
 		Configuration:          derefOr(v.Configuration),
-		SemanticTokens:         resolveSemanticTokensWorkspaceClientCapabilities(v.SemanticTokens),
-		CodeLens:               resolveCodeLensWorkspaceClientCapabilities(v.CodeLens),
-		FileOperations:         resolveFileOperationClientCapabilities(v.FileOperations),
-		InlineValue:            resolveInlineValueWorkspaceClientCapabilities(v.InlineValue),
-		InlayHint:              resolveInlayHintWorkspaceClientCapabilities(v.InlayHint),
-		Diagnostics:            resolveDiagnosticWorkspaceClientCapabilities(v.Diagnostics),
-		FoldingRange:           resolveFoldingRangeWorkspaceClientCapabilities(v.FoldingRange),
-		TextDocumentContent:    resolveTextDocumentContentClientCapabilities(v.TextDocumentContent),
+		SemanticTokens:         v.SemanticTokens.resolve(),
+		CodeLens:               v.CodeLens.resolve(),
+		FileOperations:         v.FileOperations.resolve(),
+		InlineValue:            v.InlineValue.resolve(),
+		InlayHint:              v.InlayHint.resolve(),
+		Diagnostics:            v.Diagnostics.resolve(),
+		FoldingRange:           v.FoldingRange.resolve(),
+		TextDocumentContent:    v.TextDocumentContent.resolve(),
 	}
 }
 
@@ -36203,7 +36657,7 @@ type ResolvedTextDocumentSyncClientCapabilities struct {
 	DidSave bool `json:"didSave,omitzero"`
 }
 
-func resolveTextDocumentSyncClientCapabilities(v *TextDocumentSyncClientCapabilities) ResolvedTextDocumentSyncClientCapabilities {
+func (v *TextDocumentSyncClientCapabilities) resolve() ResolvedTextDocumentSyncClientCapabilities {
 	if v == nil {
 		return ResolvedTextDocumentSyncClientCapabilities{}
 	}
@@ -36224,7 +36678,7 @@ type ResolvedTextDocumentFilterClientCapabilities struct {
 	RelativePatternSupport bool `json:"relativePatternSupport,omitzero"`
 }
 
-func resolveTextDocumentFilterClientCapabilities(v *TextDocumentFilterClientCapabilities) ResolvedTextDocumentFilterClientCapabilities {
+func (v *TextDocumentFilterClientCapabilities) resolve() ResolvedTextDocumentFilterClientCapabilities {
 	if v == nil {
 		return ResolvedTextDocumentFilterClientCapabilities{}
 	}
@@ -36242,7 +36696,7 @@ type ResolvedCompletionItemTagOptions struct {
 	ValueSet []CompletionItemTag `json:"valueSet,omitzero"`
 }
 
-func resolveCompletionItemTagOptions(v *CompletionItemTagOptions) ResolvedCompletionItemTagOptions {
+func (v *CompletionItemTagOptions) resolve() ResolvedCompletionItemTagOptions {
 	if v == nil {
 		return ResolvedCompletionItemTagOptions{}
 	}
@@ -36260,7 +36714,7 @@ type ResolvedClientCompletionItemResolveOptions struct {
 	Properties []string `json:"properties,omitzero"`
 }
 
-func resolveClientCompletionItemResolveOptions(v *ClientCompletionItemResolveOptions) ResolvedClientCompletionItemResolveOptions {
+func (v *ClientCompletionItemResolveOptions) resolve() ResolvedClientCompletionItemResolveOptions {
 	if v == nil {
 		return ResolvedClientCompletionItemResolveOptions{}
 	}
@@ -36277,7 +36731,7 @@ type ResolvedClientCompletionItemInsertTextModeOptions struct {
 	ValueSet []InsertTextMode `json:"valueSet,omitzero"`
 }
 
-func resolveClientCompletionItemInsertTextModeOptions(v *ClientCompletionItemInsertTextModeOptions) ResolvedClientCompletionItemInsertTextModeOptions {
+func (v *ClientCompletionItemInsertTextModeOptions) resolve() ResolvedClientCompletionItemInsertTextModeOptions {
 	if v == nil {
 		return ResolvedClientCompletionItemInsertTextModeOptions{}
 	}
@@ -36338,7 +36792,7 @@ type ResolvedClientCompletionItemOptions struct {
 	LabelDetailsSupport bool `json:"labelDetailsSupport,omitzero"`
 }
 
-func resolveClientCompletionItemOptions(v *ClientCompletionItemOptions) ResolvedClientCompletionItemOptions {
+func (v *ClientCompletionItemOptions) resolve() ResolvedClientCompletionItemOptions {
 	if v == nil {
 		return ResolvedClientCompletionItemOptions{}
 	}
@@ -36348,10 +36802,10 @@ func resolveClientCompletionItemOptions(v *ClientCompletionItemOptions) Resolved
 		DocumentationFormat:     derefOr(v.DocumentationFormat),
 		DeprecatedSupport:       derefOr(v.DeprecatedSupport),
 		PreselectSupport:        derefOr(v.PreselectSupport),
-		TagSupport:              resolveCompletionItemTagOptions(v.TagSupport),
+		TagSupport:              v.TagSupport.resolve(),
 		InsertReplaceSupport:    derefOr(v.InsertReplaceSupport),
-		ResolveSupport:          resolveClientCompletionItemResolveOptions(v.ResolveSupport),
-		InsertTextModeSupport:   resolveClientCompletionItemInsertTextModeOptions(v.InsertTextModeSupport),
+		ResolveSupport:          v.ResolveSupport.resolve(),
+		InsertTextModeSupport:   v.InsertTextModeSupport.resolve(),
 		LabelDetailsSupport:     derefOr(v.LabelDetailsSupport),
 	}
 }
@@ -36372,7 +36826,7 @@ type ResolvedClientCompletionItemOptionsKind struct {
 	ValueSet []CompletionItemKind `json:"valueSet,omitzero"`
 }
 
-func resolveClientCompletionItemOptionsKind(v *ClientCompletionItemOptionsKind) ResolvedClientCompletionItemOptionsKind {
+func (v *ClientCompletionItemOptionsKind) resolve() ResolvedClientCompletionItemOptionsKind {
 	if v == nil {
 		return ResolvedClientCompletionItemOptionsKind{}
 	}
@@ -36412,7 +36866,7 @@ type ResolvedCompletionListCapabilities struct {
 	ApplyKindSupport bool `json:"applyKindSupport,omitzero"`
 }
 
-func resolveCompletionListCapabilities(v *CompletionListCapabilities) ResolvedCompletionListCapabilities {
+func (v *CompletionListCapabilities) resolve() ResolvedCompletionListCapabilities {
 	if v == nil {
 		return ResolvedCompletionListCapabilities{}
 	}
@@ -36449,17 +36903,17 @@ type ResolvedCompletionClientCapabilities struct {
 	CompletionList ResolvedCompletionListCapabilities `json:"completionList,omitzero"`
 }
 
-func resolveCompletionClientCapabilities(v *CompletionClientCapabilities) ResolvedCompletionClientCapabilities {
+func (v *CompletionClientCapabilities) resolve() ResolvedCompletionClientCapabilities {
 	if v == nil {
 		return ResolvedCompletionClientCapabilities{}
 	}
 	return ResolvedCompletionClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
-		CompletionItem:      resolveClientCompletionItemOptions(v.CompletionItem),
-		CompletionItemKind:  resolveClientCompletionItemOptionsKind(v.CompletionItemKind),
+		CompletionItem:      v.CompletionItem.resolve(),
+		CompletionItemKind:  v.CompletionItemKind.resolve(),
 		InsertTextMode:      derefOr(v.InsertTextMode),
 		ContextSupport:      derefOr(v.ContextSupport),
-		CompletionList:      resolveCompletionListCapabilities(v.CompletionList),
+		CompletionList:      v.CompletionList.resolve(),
 	}
 }
 
@@ -36475,7 +36929,7 @@ type ResolvedHoverClientCapabilities struct {
 	VerbosityLevel bool `json:"verbosityLevel,omitzero"`
 }
 
-func resolveHoverClientCapabilities(v *HoverClientCapabilities) ResolvedHoverClientCapabilities {
+func (v *HoverClientCapabilities) resolve() ResolvedHoverClientCapabilities {
 	if v == nil {
 		return ResolvedHoverClientCapabilities{}
 	}
@@ -36498,7 +36952,7 @@ type ResolvedClientSignatureParameterInformationOptions struct {
 	LabelOffsetSupport bool `json:"labelOffsetSupport,omitzero"`
 }
 
-func resolveClientSignatureParameterInformationOptions(v *ClientSignatureParameterInformationOptions) ResolvedClientSignatureParameterInformationOptions {
+func (v *ClientSignatureParameterInformationOptions) resolve() ResolvedClientSignatureParameterInformationOptions {
 	if v == nil {
 		return ResolvedClientSignatureParameterInformationOptions{}
 	}
@@ -36532,13 +36986,13 @@ type ResolvedClientSignatureInformationOptions struct {
 	NoActiveParameterSupport bool `json:"noActiveParameterSupport,omitzero"`
 }
 
-func resolveClientSignatureInformationOptions(v *ClientSignatureInformationOptions) ResolvedClientSignatureInformationOptions {
+func (v *ClientSignatureInformationOptions) resolve() ResolvedClientSignatureInformationOptions {
 	if v == nil {
 		return ResolvedClientSignatureInformationOptions{}
 	}
 	return ResolvedClientSignatureInformationOptions{
 		DocumentationFormat:      derefOr(v.DocumentationFormat),
-		ParameterInformation:     resolveClientSignatureParameterInformationOptions(v.ParameterInformation),
+		ParameterInformation:     v.ParameterInformation.resolve(),
 		ActiveParameterSupport:   derefOr(v.ActiveParameterSupport),
 		NoActiveParameterSupport: derefOr(v.NoActiveParameterSupport),
 	}
@@ -36563,13 +37017,13 @@ type ResolvedSignatureHelpClientCapabilities struct {
 	ContextSupport bool `json:"contextSupport,omitzero"`
 }
 
-func resolveSignatureHelpClientCapabilities(v *SignatureHelpClientCapabilities) ResolvedSignatureHelpClientCapabilities {
+func (v *SignatureHelpClientCapabilities) resolve() ResolvedSignatureHelpClientCapabilities {
 	if v == nil {
 		return ResolvedSignatureHelpClientCapabilities{}
 	}
 	return ResolvedSignatureHelpClientCapabilities{
 		DynamicRegistration:  derefOr(v.DynamicRegistration),
-		SignatureInformation: resolveClientSignatureInformationOptions(v.SignatureInformation),
+		SignatureInformation: v.SignatureInformation.resolve(),
 		ContextSupport:       derefOr(v.ContextSupport),
 	}
 }
@@ -36587,7 +37041,7 @@ type ResolvedDeclarationClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitzero"`
 }
 
-func resolveDeclarationClientCapabilities(v *DeclarationClientCapabilities) ResolvedDeclarationClientCapabilities {
+func (v *DeclarationClientCapabilities) resolve() ResolvedDeclarationClientCapabilities {
 	if v == nil {
 		return ResolvedDeclarationClientCapabilities{}
 	}
@@ -36610,7 +37064,7 @@ type ResolvedDefinitionClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitzero"`
 }
 
-func resolveDefinitionClientCapabilities(v *DefinitionClientCapabilities) ResolvedDefinitionClientCapabilities {
+func (v *DefinitionClientCapabilities) resolve() ResolvedDefinitionClientCapabilities {
 	if v == nil {
 		return ResolvedDefinitionClientCapabilities{}
 	}
@@ -36635,7 +37089,7 @@ type ResolvedTypeDefinitionClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitzero"`
 }
 
-func resolveTypeDefinitionClientCapabilities(v *TypeDefinitionClientCapabilities) ResolvedTypeDefinitionClientCapabilities {
+func (v *TypeDefinitionClientCapabilities) resolve() ResolvedTypeDefinitionClientCapabilities {
 	if v == nil {
 		return ResolvedTypeDefinitionClientCapabilities{}
 	}
@@ -36660,7 +37114,7 @@ type ResolvedImplementationClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitzero"`
 }
 
-func resolveImplementationClientCapabilities(v *ImplementationClientCapabilities) ResolvedImplementationClientCapabilities {
+func (v *ImplementationClientCapabilities) resolve() ResolvedImplementationClientCapabilities {
 	if v == nil {
 		return ResolvedImplementationClientCapabilities{}
 	}
@@ -36679,7 +37133,7 @@ type ResolvedReferenceClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveReferenceClientCapabilities(v *ReferenceClientCapabilities) ResolvedReferenceClientCapabilities {
+func (v *ReferenceClientCapabilities) resolve() ResolvedReferenceClientCapabilities {
 	if v == nil {
 		return ResolvedReferenceClientCapabilities{}
 	}
@@ -36697,7 +37151,7 @@ type ResolvedDocumentHighlightClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveDocumentHighlightClientCapabilities(v *DocumentHighlightClientCapabilities) ResolvedDocumentHighlightClientCapabilities {
+func (v *DocumentHighlightClientCapabilities) resolve() ResolvedDocumentHighlightClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentHighlightClientCapabilities{}
 	}
@@ -36731,15 +37185,15 @@ type ResolvedDocumentSymbolClientCapabilities struct {
 	LabelSupport bool `json:"labelSupport,omitzero"`
 }
 
-func resolveDocumentSymbolClientCapabilities(v *DocumentSymbolClientCapabilities) ResolvedDocumentSymbolClientCapabilities {
+func (v *DocumentSymbolClientCapabilities) resolve() ResolvedDocumentSymbolClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentSymbolClientCapabilities{}
 	}
 	return ResolvedDocumentSymbolClientCapabilities{
 		DynamicRegistration:               derefOr(v.DynamicRegistration),
-		SymbolKind:                        resolveClientSymbolKindOptions(v.SymbolKind),
+		SymbolKind:                        v.SymbolKind.resolve(),
 		HierarchicalDocumentSymbolSupport: derefOr(v.HierarchicalDocumentSymbolSupport),
-		TagSupport:                        resolveClientSymbolTagOptions(v.TagSupport),
+		TagSupport:                        v.TagSupport.resolve(),
 		LabelSupport:                      derefOr(v.LabelSupport),
 	}
 }
@@ -36756,7 +37210,7 @@ type ResolvedClientCodeActionKindOptions struct {
 	ValueSet []CodeActionKind `json:"valueSet,omitzero"`
 }
 
-func resolveClientCodeActionKindOptions(v *ClientCodeActionKindOptions) ResolvedClientCodeActionKindOptions {
+func (v *ClientCodeActionKindOptions) resolve() ResolvedClientCodeActionKindOptions {
 	if v == nil {
 		return ResolvedClientCodeActionKindOptions{}
 	}
@@ -36775,12 +37229,12 @@ type ResolvedClientCodeActionLiteralOptions struct {
 	CodeActionKind ResolvedClientCodeActionKindOptions `json:"codeActionKind,omitzero"`
 }
 
-func resolveClientCodeActionLiteralOptions(v *ClientCodeActionLiteralOptions) ResolvedClientCodeActionLiteralOptions {
+func (v *ClientCodeActionLiteralOptions) resolve() ResolvedClientCodeActionLiteralOptions {
 	if v == nil {
 		return ResolvedClientCodeActionLiteralOptions{}
 	}
 	return ResolvedClientCodeActionLiteralOptions{
-		CodeActionKind: resolveClientCodeActionKindOptions(v.CodeActionKind),
+		CodeActionKind: v.CodeActionKind.resolve(),
 	}
 }
 
@@ -36793,7 +37247,7 @@ type ResolvedClientCodeActionResolveOptions struct {
 	Properties []string `json:"properties,omitzero"`
 }
 
-func resolveClientCodeActionResolveOptions(v *ClientCodeActionResolveOptions) ResolvedClientCodeActionResolveOptions {
+func (v *ClientCodeActionResolveOptions) resolve() ResolvedClientCodeActionResolveOptions {
 	if v == nil {
 		return ResolvedClientCodeActionResolveOptions{}
 	}
@@ -36811,7 +37265,7 @@ type ResolvedCodeActionTagOptions struct {
 	ValueSet []CodeActionTag `json:"valueSet,omitzero"`
 }
 
-func resolveCodeActionTagOptions(v *CodeActionTagOptions) ResolvedCodeActionTagOptions {
+func (v *CodeActionTagOptions) resolve() ResolvedCodeActionTagOptions {
 	if v == nil {
 		return ResolvedCodeActionTagOptions{}
 	}
@@ -36874,20 +37328,20 @@ type ResolvedCodeActionClientCapabilities struct {
 	TagSupport ResolvedCodeActionTagOptions `json:"tagSupport,omitzero"`
 }
 
-func resolveCodeActionClientCapabilities(v *CodeActionClientCapabilities) ResolvedCodeActionClientCapabilities {
+func (v *CodeActionClientCapabilities) resolve() ResolvedCodeActionClientCapabilities {
 	if v == nil {
 		return ResolvedCodeActionClientCapabilities{}
 	}
 	return ResolvedCodeActionClientCapabilities{
 		DynamicRegistration:      derefOr(v.DynamicRegistration),
-		CodeActionLiteralSupport: resolveClientCodeActionLiteralOptions(v.CodeActionLiteralSupport),
+		CodeActionLiteralSupport: v.CodeActionLiteralSupport.resolve(),
 		IsPreferredSupport:       derefOr(v.IsPreferredSupport),
 		DisabledSupport:          derefOr(v.DisabledSupport),
 		DataSupport:              derefOr(v.DataSupport),
-		ResolveSupport:           resolveClientCodeActionResolveOptions(v.ResolveSupport),
+		ResolveSupport:           v.ResolveSupport.resolve(),
 		HonorsChangeAnnotations:  derefOr(v.HonorsChangeAnnotations),
 		DocumentationSupport:     derefOr(v.DocumentationSupport),
-		TagSupport:               resolveCodeActionTagOptions(v.TagSupport),
+		TagSupport:               v.TagSupport.resolve(),
 	}
 }
 
@@ -36900,7 +37354,7 @@ type ResolvedClientCodeLensResolveOptions struct {
 	Properties []string `json:"properties,omitzero"`
 }
 
-func resolveClientCodeLensResolveOptions(v *ClientCodeLensResolveOptions) ResolvedClientCodeLensResolveOptions {
+func (v *ClientCodeLensResolveOptions) resolve() ResolvedClientCodeLensResolveOptions {
 	if v == nil {
 		return ResolvedClientCodeLensResolveOptions{}
 	}
@@ -36923,13 +37377,13 @@ type ResolvedCodeLensClientCapabilities struct {
 	ResolveSupport ResolvedClientCodeLensResolveOptions `json:"resolveSupport,omitzero"`
 }
 
-func resolveCodeLensClientCapabilities(v *CodeLensClientCapabilities) ResolvedCodeLensClientCapabilities {
+func (v *CodeLensClientCapabilities) resolve() ResolvedCodeLensClientCapabilities {
 	if v == nil {
 		return ResolvedCodeLensClientCapabilities{}
 	}
 	return ResolvedCodeLensClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
-		ResolveSupport:      resolveClientCodeLensResolveOptions(v.ResolveSupport),
+		ResolveSupport:      v.ResolveSupport.resolve(),
 	}
 }
 
@@ -36946,7 +37400,7 @@ type ResolvedDocumentLinkClientCapabilities struct {
 	TooltipSupport bool `json:"tooltipSupport,omitzero"`
 }
 
-func resolveDocumentLinkClientCapabilities(v *DocumentLinkClientCapabilities) ResolvedDocumentLinkClientCapabilities {
+func (v *DocumentLinkClientCapabilities) resolve() ResolvedDocumentLinkClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentLinkClientCapabilities{}
 	}
@@ -36965,7 +37419,7 @@ type ResolvedDocumentColorClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveDocumentColorClientCapabilities(v *DocumentColorClientCapabilities) ResolvedDocumentColorClientCapabilities {
+func (v *DocumentColorClientCapabilities) resolve() ResolvedDocumentColorClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentColorClientCapabilities{}
 	}
@@ -36983,7 +37437,7 @@ type ResolvedDocumentFormattingClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveDocumentFormattingClientCapabilities(v *DocumentFormattingClientCapabilities) ResolvedDocumentFormattingClientCapabilities {
+func (v *DocumentFormattingClientCapabilities) resolve() ResolvedDocumentFormattingClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentFormattingClientCapabilities{}
 	}
@@ -37007,7 +37461,7 @@ type ResolvedDocumentRangeFormattingClientCapabilities struct {
 	RangesSupport bool `json:"rangesSupport,omitzero"`
 }
 
-func resolveDocumentRangeFormattingClientCapabilities(v *DocumentRangeFormattingClientCapabilities) ResolvedDocumentRangeFormattingClientCapabilities {
+func (v *DocumentRangeFormattingClientCapabilities) resolve() ResolvedDocumentRangeFormattingClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentRangeFormattingClientCapabilities{}
 	}
@@ -37026,7 +37480,7 @@ type ResolvedDocumentOnTypeFormattingClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveDocumentOnTypeFormattingClientCapabilities(v *DocumentOnTypeFormattingClientCapabilities) ResolvedDocumentOnTypeFormattingClientCapabilities {
+func (v *DocumentOnTypeFormattingClientCapabilities) resolve() ResolvedDocumentOnTypeFormattingClientCapabilities {
 	if v == nil {
 		return ResolvedDocumentOnTypeFormattingClientCapabilities{}
 	}
@@ -37062,7 +37516,7 @@ type ResolvedRenameClientCapabilities struct {
 	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitzero"`
 }
 
-func resolveRenameClientCapabilities(v *RenameClientCapabilities) ResolvedRenameClientCapabilities {
+func (v *RenameClientCapabilities) resolve() ResolvedRenameClientCapabilities {
 	if v == nil {
 		return ResolvedRenameClientCapabilities{}
 	}
@@ -37086,7 +37540,7 @@ type ResolvedClientFoldingRangeKindOptions struct {
 	ValueSet []FoldingRangeKind `json:"valueSet,omitzero"`
 }
 
-func resolveClientFoldingRangeKindOptions(v *ClientFoldingRangeKindOptions) ResolvedClientFoldingRangeKindOptions {
+func (v *ClientFoldingRangeKindOptions) resolve() ResolvedClientFoldingRangeKindOptions {
 	if v == nil {
 		return ResolvedClientFoldingRangeKindOptions{}
 	}
@@ -37107,7 +37561,7 @@ type ResolvedClientFoldingRangeOptions struct {
 	CollapsedText bool `json:"collapsedText,omitzero"`
 }
 
-func resolveClientFoldingRangeOptions(v *ClientFoldingRangeOptions) ResolvedClientFoldingRangeOptions {
+func (v *ClientFoldingRangeOptions) resolve() ResolvedClientFoldingRangeOptions {
 	if v == nil {
 		return ResolvedClientFoldingRangeOptions{}
 	}
@@ -37142,7 +37596,7 @@ type ResolvedFoldingRangeClientCapabilities struct {
 	FoldingRange ResolvedClientFoldingRangeOptions `json:"foldingRange,omitzero"`
 }
 
-func resolveFoldingRangeClientCapabilities(v *FoldingRangeClientCapabilities) ResolvedFoldingRangeClientCapabilities {
+func (v *FoldingRangeClientCapabilities) resolve() ResolvedFoldingRangeClientCapabilities {
 	if v == nil {
 		return ResolvedFoldingRangeClientCapabilities{}
 	}
@@ -37150,8 +37604,8 @@ func resolveFoldingRangeClientCapabilities(v *FoldingRangeClientCapabilities) Re
 		DynamicRegistration: derefOr(v.DynamicRegistration),
 		RangeLimit:          derefOr(v.RangeLimit),
 		LineFoldingOnly:     derefOr(v.LineFoldingOnly),
-		FoldingRangeKind:    resolveClientFoldingRangeKindOptions(v.FoldingRangeKind),
-		FoldingRange:        resolveClientFoldingRangeOptions(v.FoldingRange),
+		FoldingRangeKind:    v.FoldingRangeKind.resolve(),
+		FoldingRange:        v.FoldingRange.resolve(),
 	}
 }
 
@@ -37164,7 +37618,7 @@ type ResolvedSelectionRangeClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveSelectionRangeClientCapabilities(v *SelectionRangeClientCapabilities) ResolvedSelectionRangeClientCapabilities {
+func (v *SelectionRangeClientCapabilities) resolve() ResolvedSelectionRangeClientCapabilities {
 	if v == nil {
 		return ResolvedSelectionRangeClientCapabilities{}
 	}
@@ -37182,7 +37636,7 @@ type ResolvedClientDiagnosticsTagOptions struct {
 	ValueSet []DiagnosticTag `json:"valueSet,omitzero"`
 }
 
-func resolveClientDiagnosticsTagOptions(v *ClientDiagnosticsTagOptions) ResolvedClientDiagnosticsTagOptions {
+func (v *ClientDiagnosticsTagOptions) resolve() ResolvedClientDiagnosticsTagOptions {
 	if v == nil {
 		return ResolvedClientDiagnosticsTagOptions{}
 	}
@@ -37220,13 +37674,13 @@ type ResolvedPublishDiagnosticsClientCapabilities struct {
 	VersionSupport bool `json:"versionSupport,omitzero"`
 }
 
-func resolvePublishDiagnosticsClientCapabilities(v *PublishDiagnosticsClientCapabilities) ResolvedPublishDiagnosticsClientCapabilities {
+func (v *PublishDiagnosticsClientCapabilities) resolve() ResolvedPublishDiagnosticsClientCapabilities {
 	if v == nil {
 		return ResolvedPublishDiagnosticsClientCapabilities{}
 	}
 	return ResolvedPublishDiagnosticsClientCapabilities{
 		RelatedInformation:     derefOr(v.RelatedInformation),
-		TagSupport:             resolveClientDiagnosticsTagOptions(v.TagSupport),
+		TagSupport:             v.TagSupport.resolve(),
 		CodeDescriptionSupport: derefOr(v.CodeDescriptionSupport),
 		DataSupport:            derefOr(v.DataSupport),
 		VersionSupport:         derefOr(v.VersionSupport),
@@ -37244,7 +37698,7 @@ type ResolvedCallHierarchyClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveCallHierarchyClientCapabilities(v *CallHierarchyClientCapabilities) ResolvedCallHierarchyClientCapabilities {
+func (v *CallHierarchyClientCapabilities) resolve() ResolvedCallHierarchyClientCapabilities {
 	if v == nil {
 		return ResolvedCallHierarchyClientCapabilities{}
 	}
@@ -37266,7 +37720,7 @@ type ResolvedClientSemanticTokensRequestOptions struct {
 	Full BooleanOrClientSemanticTokensRequestFullDelta `json:"full,omitzero"`
 }
 
-func resolveClientSemanticTokensRequestOptions(v *ClientSemanticTokensRequestOptions) ResolvedClientSemanticTokensRequestOptions {
+func (v *ClientSemanticTokensRequestOptions) resolve() ResolvedClientSemanticTokensRequestOptions {
 	if v == nil {
 		return ResolvedClientSemanticTokensRequestOptions{}
 	}
@@ -37324,13 +37778,13 @@ type ResolvedSemanticTokensClientCapabilities struct {
 	AugmentsSyntaxTokens bool `json:"augmentsSyntaxTokens,omitzero"`
 }
 
-func resolveSemanticTokensClientCapabilities(v *SemanticTokensClientCapabilities) ResolvedSemanticTokensClientCapabilities {
+func (v *SemanticTokensClientCapabilities) resolve() ResolvedSemanticTokensClientCapabilities {
 	if v == nil {
 		return ResolvedSemanticTokensClientCapabilities{}
 	}
 	return ResolvedSemanticTokensClientCapabilities{
 		DynamicRegistration:     derefOr(v.DynamicRegistration),
-		Requests:                resolveClientSemanticTokensRequestOptions(v.Requests),
+		Requests:                v.Requests.resolve(),
 		TokenTypes:              v.TokenTypes,
 		TokenModifiers:          v.TokenModifiers,
 		Formats:                 v.Formats,
@@ -37354,7 +37808,7 @@ type ResolvedLinkedEditingRangeClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveLinkedEditingRangeClientCapabilities(v *LinkedEditingRangeClientCapabilities) ResolvedLinkedEditingRangeClientCapabilities {
+func (v *LinkedEditingRangeClientCapabilities) resolve() ResolvedLinkedEditingRangeClientCapabilities {
 	if v == nil {
 		return ResolvedLinkedEditingRangeClientCapabilities{}
 	}
@@ -37376,7 +37830,7 @@ type ResolvedMonikerClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveMonikerClientCapabilities(v *MonikerClientCapabilities) ResolvedMonikerClientCapabilities {
+func (v *MonikerClientCapabilities) resolve() ResolvedMonikerClientCapabilities {
 	if v == nil {
 		return ResolvedMonikerClientCapabilities{}
 	}
@@ -37396,7 +37850,7 @@ type ResolvedTypeHierarchyClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveTypeHierarchyClientCapabilities(v *TypeHierarchyClientCapabilities) ResolvedTypeHierarchyClientCapabilities {
+func (v *TypeHierarchyClientCapabilities) resolve() ResolvedTypeHierarchyClientCapabilities {
 	if v == nil {
 		return ResolvedTypeHierarchyClientCapabilities{}
 	}
@@ -37416,7 +37870,7 @@ type ResolvedInlineValueClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveInlineValueClientCapabilities(v *InlineValueClientCapabilities) ResolvedInlineValueClientCapabilities {
+func (v *InlineValueClientCapabilities) resolve() ResolvedInlineValueClientCapabilities {
 	if v == nil {
 		return ResolvedInlineValueClientCapabilities{}
 	}
@@ -37434,7 +37888,7 @@ type ResolvedClientInlayHintResolveOptions struct {
 	Properties []string `json:"properties,omitzero"`
 }
 
-func resolveClientInlayHintResolveOptions(v *ClientInlayHintResolveOptions) ResolvedClientInlayHintResolveOptions {
+func (v *ClientInlayHintResolveOptions) resolve() ResolvedClientInlayHintResolveOptions {
 	if v == nil {
 		return ResolvedClientInlayHintResolveOptions{}
 	}
@@ -37457,13 +37911,13 @@ type ResolvedInlayHintClientCapabilities struct {
 	ResolveSupport ResolvedClientInlayHintResolveOptions `json:"resolveSupport,omitzero"`
 }
 
-func resolveInlayHintClientCapabilities(v *InlayHintClientCapabilities) ResolvedInlayHintClientCapabilities {
+func (v *InlayHintClientCapabilities) resolve() ResolvedInlayHintClientCapabilities {
 	if v == nil {
 		return ResolvedInlayHintClientCapabilities{}
 	}
 	return ResolvedInlayHintClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
-		ResolveSupport:      resolveClientInlayHintResolveOptions(v.ResolveSupport),
+		ResolveSupport:      v.ResolveSupport.resolve(),
 	}
 }
 
@@ -37499,13 +37953,13 @@ type ResolvedDiagnosticClientCapabilities struct {
 	RelatedDocumentSupport bool `json:"relatedDocumentSupport,omitzero"`
 }
 
-func resolveDiagnosticClientCapabilities(v *DiagnosticClientCapabilities) ResolvedDiagnosticClientCapabilities {
+func (v *DiagnosticClientCapabilities) resolve() ResolvedDiagnosticClientCapabilities {
 	if v == nil {
 		return ResolvedDiagnosticClientCapabilities{}
 	}
 	return ResolvedDiagnosticClientCapabilities{
 		RelatedInformation:     derefOr(v.RelatedInformation),
-		TagSupport:             resolveClientDiagnosticsTagOptions(v.TagSupport),
+		TagSupport:             v.TagSupport.resolve(),
 		CodeDescriptionSupport: derefOr(v.CodeDescriptionSupport),
 		DataSupport:            derefOr(v.DataSupport),
 		DynamicRegistration:    derefOr(v.DynamicRegistration),
@@ -37526,7 +37980,7 @@ type ResolvedInlineCompletionClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitzero"`
 }
 
-func resolveInlineCompletionClientCapabilities(v *InlineCompletionClientCapabilities) ResolvedInlineCompletionClientCapabilities {
+func (v *InlineCompletionClientCapabilities) resolve() ResolvedInlineCompletionClientCapabilities {
 	if v == nil {
 		return ResolvedInlineCompletionClientCapabilities{}
 	}
@@ -37641,43 +38095,43 @@ type ResolvedTextDocumentClientCapabilities struct {
 	InlineCompletion ResolvedInlineCompletionClientCapabilities `json:"inlineCompletion,omitzero"`
 }
 
-func resolveTextDocumentClientCapabilities(v *TextDocumentClientCapabilities) ResolvedTextDocumentClientCapabilities {
+func (v *TextDocumentClientCapabilities) resolve() ResolvedTextDocumentClientCapabilities {
 	if v == nil {
 		return ResolvedTextDocumentClientCapabilities{}
 	}
 	return ResolvedTextDocumentClientCapabilities{
-		Synchronization:    resolveTextDocumentSyncClientCapabilities(v.Synchronization),
-		Filters:            resolveTextDocumentFilterClientCapabilities(v.Filters),
-		Completion:         resolveCompletionClientCapabilities(v.Completion),
-		Hover:              resolveHoverClientCapabilities(v.Hover),
-		SignatureHelp:      resolveSignatureHelpClientCapabilities(v.SignatureHelp),
-		Declaration:        resolveDeclarationClientCapabilities(v.Declaration),
-		Definition:         resolveDefinitionClientCapabilities(v.Definition),
-		TypeDefinition:     resolveTypeDefinitionClientCapabilities(v.TypeDefinition),
-		Implementation:     resolveImplementationClientCapabilities(v.Implementation),
-		References:         resolveReferenceClientCapabilities(v.References),
-		DocumentHighlight:  resolveDocumentHighlightClientCapabilities(v.DocumentHighlight),
-		DocumentSymbol:     resolveDocumentSymbolClientCapabilities(v.DocumentSymbol),
-		CodeAction:         resolveCodeActionClientCapabilities(v.CodeAction),
-		CodeLens:           resolveCodeLensClientCapabilities(v.CodeLens),
-		DocumentLink:       resolveDocumentLinkClientCapabilities(v.DocumentLink),
-		ColorProvider:      resolveDocumentColorClientCapabilities(v.ColorProvider),
-		Formatting:         resolveDocumentFormattingClientCapabilities(v.Formatting),
-		RangeFormatting:    resolveDocumentRangeFormattingClientCapabilities(v.RangeFormatting),
-		OnTypeFormatting:   resolveDocumentOnTypeFormattingClientCapabilities(v.OnTypeFormatting),
-		Rename:             resolveRenameClientCapabilities(v.Rename),
-		FoldingRange:       resolveFoldingRangeClientCapabilities(v.FoldingRange),
-		SelectionRange:     resolveSelectionRangeClientCapabilities(v.SelectionRange),
-		PublishDiagnostics: resolvePublishDiagnosticsClientCapabilities(v.PublishDiagnostics),
-		CallHierarchy:      resolveCallHierarchyClientCapabilities(v.CallHierarchy),
-		SemanticTokens:     resolveSemanticTokensClientCapabilities(v.SemanticTokens),
-		LinkedEditingRange: resolveLinkedEditingRangeClientCapabilities(v.LinkedEditingRange),
-		Moniker:            resolveMonikerClientCapabilities(v.Moniker),
-		TypeHierarchy:      resolveTypeHierarchyClientCapabilities(v.TypeHierarchy),
-		InlineValue:        resolveInlineValueClientCapabilities(v.InlineValue),
-		InlayHint:          resolveInlayHintClientCapabilities(v.InlayHint),
-		Diagnostic:         resolveDiagnosticClientCapabilities(v.Diagnostic),
-		InlineCompletion:   resolveInlineCompletionClientCapabilities(v.InlineCompletion),
+		Synchronization:    v.Synchronization.resolve(),
+		Filters:            v.Filters.resolve(),
+		Completion:         v.Completion.resolve(),
+		Hover:              v.Hover.resolve(),
+		SignatureHelp:      v.SignatureHelp.resolve(),
+		Declaration:        v.Declaration.resolve(),
+		Definition:         v.Definition.resolve(),
+		TypeDefinition:     v.TypeDefinition.resolve(),
+		Implementation:     v.Implementation.resolve(),
+		References:         v.References.resolve(),
+		DocumentHighlight:  v.DocumentHighlight.resolve(),
+		DocumentSymbol:     v.DocumentSymbol.resolve(),
+		CodeAction:         v.CodeAction.resolve(),
+		CodeLens:           v.CodeLens.resolve(),
+		DocumentLink:       v.DocumentLink.resolve(),
+		ColorProvider:      v.ColorProvider.resolve(),
+		Formatting:         v.Formatting.resolve(),
+		RangeFormatting:    v.RangeFormatting.resolve(),
+		OnTypeFormatting:   v.OnTypeFormatting.resolve(),
+		Rename:             v.Rename.resolve(),
+		FoldingRange:       v.FoldingRange.resolve(),
+		SelectionRange:     v.SelectionRange.resolve(),
+		PublishDiagnostics: v.PublishDiagnostics.resolve(),
+		CallHierarchy:      v.CallHierarchy.resolve(),
+		SemanticTokens:     v.SemanticTokens.resolve(),
+		LinkedEditingRange: v.LinkedEditingRange.resolve(),
+		Moniker:            v.Moniker.resolve(),
+		TypeHierarchy:      v.TypeHierarchy.resolve(),
+		InlineValue:        v.InlineValue.resolve(),
+		InlayHint:          v.InlayHint.resolve(),
+		Diagnostic:         v.Diagnostic.resolve(),
+		InlineCompletion:   v.InlineCompletion.resolve(),
 	}
 }
 
@@ -37692,7 +38146,7 @@ type ResolvedClientShowMessageActionItemOptions struct {
 	AdditionalPropertiesSupport bool `json:"additionalPropertiesSupport,omitzero"`
 }
 
-func resolveClientShowMessageActionItemOptions(v *ClientShowMessageActionItemOptions) ResolvedClientShowMessageActionItemOptions {
+func (v *ClientShowMessageActionItemOptions) resolve() ResolvedClientShowMessageActionItemOptions {
 	if v == nil {
 		return ResolvedClientShowMessageActionItemOptions{}
 	}
@@ -37710,12 +38164,12 @@ type ResolvedShowMessageRequestClientCapabilities struct {
 	MessageActionItem ResolvedClientShowMessageActionItemOptions `json:"messageActionItem,omitzero"`
 }
 
-func resolveShowMessageRequestClientCapabilities(v *ShowMessageRequestClientCapabilities) ResolvedShowMessageRequestClientCapabilities {
+func (v *ShowMessageRequestClientCapabilities) resolve() ResolvedShowMessageRequestClientCapabilities {
 	if v == nil {
 		return ResolvedShowMessageRequestClientCapabilities{}
 	}
 	return ResolvedShowMessageRequestClientCapabilities{
-		MessageActionItem: resolveClientShowMessageActionItemOptions(v.MessageActionItem),
+		MessageActionItem: v.MessageActionItem.resolve(),
 	}
 }
 
@@ -37731,7 +38185,7 @@ type ResolvedShowDocumentClientCapabilities struct {
 	Support bool `json:"support,omitzero"`
 }
 
-func resolveShowDocumentClientCapabilities(v *ShowDocumentClientCapabilities) ResolvedShowDocumentClientCapabilities {
+func (v *ShowDocumentClientCapabilities) resolve() ResolvedShowDocumentClientCapabilities {
 	if v == nil {
 		return ResolvedShowDocumentClientCapabilities{}
 	}
@@ -37763,14 +38217,14 @@ type ResolvedWindowClientCapabilities struct {
 	ShowDocument ResolvedShowDocumentClientCapabilities `json:"showDocument,omitzero"`
 }
 
-func resolveWindowClientCapabilities(v *WindowClientCapabilities) ResolvedWindowClientCapabilities {
+func (v *WindowClientCapabilities) resolve() ResolvedWindowClientCapabilities {
 	if v == nil {
 		return ResolvedWindowClientCapabilities{}
 	}
 	return ResolvedWindowClientCapabilities{
 		WorkDoneProgress: derefOr(v.WorkDoneProgress),
-		ShowMessage:      resolveShowMessageRequestClientCapabilities(v.ShowMessage),
-		ShowDocument:     resolveShowDocumentClientCapabilities(v.ShowDocument),
+		ShowMessage:      v.ShowMessage.resolve(),
+		ShowDocument:     v.ShowDocument.resolve(),
 	}
 }
 
@@ -37787,7 +38241,7 @@ type ResolvedStaleRequestSupportOptions struct {
 	RetryOnContentModified []string `json:"retryOnContentModified,omitzero"`
 }
 
-func resolveStaleRequestSupportOptions(v *StaleRequestSupportOptions) ResolvedStaleRequestSupportOptions {
+func (v *StaleRequestSupportOptions) resolve() ResolvedStaleRequestSupportOptions {
 	if v == nil {
 		return ResolvedStaleRequestSupportOptions{}
 	}
@@ -37810,7 +38264,7 @@ type ResolvedRegularExpressionsClientCapabilities struct {
 	Version string `json:"version,omitzero"`
 }
 
-func resolveRegularExpressionsClientCapabilities(v *RegularExpressionsClientCapabilities) ResolvedRegularExpressionsClientCapabilities {
+func (v *RegularExpressionsClientCapabilities) resolve() ResolvedRegularExpressionsClientCapabilities {
 	if v == nil {
 		return ResolvedRegularExpressionsClientCapabilities{}
 	}
@@ -37838,7 +38292,7 @@ type ResolvedMarkdownClientCapabilities struct {
 	AllowedTags []string `json:"allowedTags,omitzero"`
 }
 
-func resolveMarkdownClientCapabilities(v *MarkdownClientCapabilities) ResolvedMarkdownClientCapabilities {
+func (v *MarkdownClientCapabilities) resolve() ResolvedMarkdownClientCapabilities {
 	if v == nil {
 		return ResolvedMarkdownClientCapabilities{}
 	}
@@ -37892,21 +38346,21 @@ type ResolvedGeneralClientCapabilities struct {
 	PositionEncodings []PositionEncodingKind `json:"positionEncodings,omitzero"`
 }
 
-func resolveGeneralClientCapabilities(v *GeneralClientCapabilities) ResolvedGeneralClientCapabilities {
+func (v *GeneralClientCapabilities) resolve() ResolvedGeneralClientCapabilities {
 	if v == nil {
 		return ResolvedGeneralClientCapabilities{}
 	}
 	return ResolvedGeneralClientCapabilities{
-		StaleRequestSupport: resolveStaleRequestSupportOptions(v.StaleRequestSupport),
-		RegularExpressions:  resolveRegularExpressionsClientCapabilities(v.RegularExpressions),
-		Markdown:            resolveMarkdownClientCapabilities(v.Markdown),
+		StaleRequestSupport: v.StaleRequestSupport.resolve(),
+		RegularExpressions:  v.RegularExpressions.resolve(),
+		Markdown:            v.Markdown.resolve(),
 		PositionEncodings:   derefOr(v.PositionEncodings),
 	}
 }
 
 // ResolvedClientCapabilities is a version of ClientCapabilities where all nested
 // fields are values (not pointers), making it easier to access deeply nested capabilities.
-// Use ResolveClientCapabilities to convert from ClientCapabilities.
+// Use (*ClientCapabilities).Resolve() to convert from ClientCapabilities.
 //
 // Defines the capabilities provided by the client.
 type ResolvedClientCapabilities struct {
@@ -37920,16 +38374,31 @@ type ResolvedClientCapabilities struct {
 	//
 	// Since: 3.16.0
 	General ResolvedGeneralClientCapabilities `json:"general,omitzero"`
+	// Whether the client supports Visual Studio extensions.
+	VSSupportsVisualStudioExtensions bool `json:"_vs_supportsVisualStudioExtensions,omitzero"`
+	// The snippet version supported by the client.
+	VSSupportedSnippetVersion int32 `json:"_vs_supportedSnippetVersion,omitzero"`
+	// Whether the client supports not including text in textDocument/didOpen notifications.
+	VSSupportsNotIncludingTextInTextDocumentDidOpen bool `json:"_vs_supportsNotIncludingTextInTextDocumentDidOpen,omitzero"`
+	// Whether the client supports icon extensions.
+	VSSupportsIconExtensions bool `json:"_vs_supportsIconExtensions,omitzero"`
+	// Whether the client supports diagnostic requests.
+	VSSupportsDiagnosticRequests bool `json:"_vs_supportsDiagnosticRequests,omitzero"`
 }
 
-func ResolveClientCapabilities(v *ClientCapabilities) ResolvedClientCapabilities {
+func (v *ClientCapabilities) Resolve() ResolvedClientCapabilities {
 	if v == nil {
 		return ResolvedClientCapabilities{}
 	}
 	return ResolvedClientCapabilities{
-		Workspace:    resolveWorkspaceClientCapabilities(v.Workspace),
-		TextDocument: resolveTextDocumentClientCapabilities(v.TextDocument),
-		Window:       resolveWindowClientCapabilities(v.Window),
-		General:      resolveGeneralClientCapabilities(v.General),
+		Workspace:                        v.Workspace.resolve(),
+		TextDocument:                     v.TextDocument.resolve(),
+		Window:                           v.Window.resolve(),
+		General:                          v.General.resolve(),
+		VSSupportsVisualStudioExtensions: derefOr(v.VSSupportsVisualStudioExtensions),
+		VSSupportedSnippetVersion:        derefOr(v.VSSupportedSnippetVersion),
+		VSSupportsNotIncludingTextInTextDocumentDidOpen: derefOr(v.VSSupportsNotIncludingTextInTextDocumentDidOpen),
+		VSSupportsIconExtensions:                        derefOr(v.VSSupportsIconExtensions),
+		VSSupportsDiagnosticRequests:                    derefOr(v.VSSupportsDiagnosticRequests),
 	}
 }

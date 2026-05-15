@@ -5,8 +5,10 @@
 //  * @implements {_a.Foo}
 //                    ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type Foo = { getName: _a.Bar; }
+// | ```typescript
+// | type Foo = {
+// |     getName: _a.Bar;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -17,8 +19,10 @@
 //  * @extends {_a.Foo}
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type Foo = { getName: _a.Bar; }
+// | ```typescript
+// | type Foo = {
+// |     getName: _a.Bar;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -29,8 +33,10 @@
 //  * @augments {_a.Foo}
 //                  ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type Foo = { getName: _a.Bar; }
+// | ```typescript
+// | type Foo = {
+// |     getName: _a.Bar;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -50,7 +56,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype Foo = { getName: _a.Bar; }\n```\n"
+        "value": "```typescript\ntype Foo = {\n    getName: _a.Bar;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -78,7 +84,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype Foo = { getName: _a.Bar; }\n```\n"
+        "value": "```typescript\ntype Foo = {\n    getName: _a.Bar;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -106,7 +112,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype Foo = { getName: _a.Bar; }\n```\n"
+        "value": "```typescript\ntype Foo = {\n    getName: _a.Bar;\n}\n```\n"
       },
       "range": {
         "start": {

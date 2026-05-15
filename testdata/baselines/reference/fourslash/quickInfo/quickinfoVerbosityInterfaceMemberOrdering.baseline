@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityInterfaceMemberOrdering.ts ===
+// 
 // interface Callable {
 //           ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | interface Callable {
 // |     [key: string]: any;
 // |     new (x: string): Callable;
@@ -16,7 +17,7 @@
 // | ----------------------------------------------------------------------
 //           ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | interface Callable
 // | ```
 // | 
@@ -31,9 +32,9 @@
 [
   {
     "marker": {
-      "Position": 18,
+      "Position": 19,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 18
       },
       "Name": "1",
@@ -43,15 +44,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Callable\n```\n"
+          "value": "```typescript\ninterface Callable\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 10
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 18
           }
         },
@@ -62,9 +63,9 @@
   },
   {
     "marker": {
-      "Position": 18,
+      "Position": 19,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 18
       },
       "Name": "1",
@@ -74,15 +75,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\ninterface Callable {\n    [key: string]: any;\n    new (x: string): Callable;\n    (x: string): boolean;\n    name: string;\n}\n```\n"
+          "value": "```typescript\ninterface Callable {\n    [key: string]: any;\n    new (x: string): Callable;\n    (x: string): boolean;\n    name: string;\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 10
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 18
           }
         }

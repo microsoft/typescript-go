@@ -43,6 +43,7 @@ type ProjectCollectionBuilder struct {
 	newSnapshotID              uint64
 	programStructureChanged    bool
 	defaultProjectsInvalidated bool
+	openFilesChanged           bool
 
 	fileDefaultProjects map[tspath.Path]tspath.Path
 	configuredProjects  *dirty.SyncMap[tspath.Path, *Project]
@@ -96,6 +97,11 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 	if configuredProjects, configuredProjectsChanged := b.configuredProjects.Finalize(); configuredProjectsChanged {
 		ensureCloned()
 		newProjectCollection.configuredProjects = configuredProjects
+	}
+
+	if b.openFilesChanged {
+		ensureCloned()
+		newProjectCollection.openFiles = openFilePaths(b.fs.overlays)
 	}
 
 	if !maps.Equal(b.fileDefaultProjects, b.base.fileDefaultProjects) {
@@ -183,6 +189,8 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 }
 
 func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
+	b.openFilesChanged = b.openFilesChanged || summary.Opened != "" || summary.Closed.Len() > 0
+
 	changedFiles := make([]tspath.Path, 0, summary.Changed.Len())
 	for uri := range summary.Changed.Keys() {
 		fileName := uri.FileName()
@@ -1003,6 +1011,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 // a boolean indicating whether the update could have caused any structure-affecting changes.
 func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], logger *logging.LogTree) bool {
 	var updateProgram bool
+	var deleteProject bool
 	var filesChanged bool
 	configFileName := entry.Value().configFileName
 	startTime := time.Now()
@@ -1016,13 +1025,13 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				entry.Value(),
 				logger.Fork("Acquiring config for project"),
 			)
+			if commandLine == nil {
+				deleteProject = true
+				filesChanged = true
+				return
+			}
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
-				if commandLine == nil {
-					b.deleteConfiguredProject(entry, logger)
-					filesChanged = true
-					return
-				}
 				entry.Change(func(p *Project) {
 					p.CommandLine = commandLine
 					p.commandLineWithTypingsFiles = nil
@@ -1042,6 +1051,9 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	})
 	if notifiedLoading && b.client != nil {
 		b.client.ProgressStart(diagnostics.Project_0, displayName)
+	}
+	if deleteProject {
+		b.deleteConfiguredProject(entry, logger)
 	}
 	if updateProgram {
 		entry.Locked(func(entry dirty.Value[*Project]) {

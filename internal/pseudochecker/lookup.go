@@ -79,10 +79,10 @@ func (ch *PseudoChecker) typeFromPropertyAssignment(node *ast.Node) *PseudoType 
 		init := node.Initializer()
 		if init != nil {
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.AsPseudoTypeInferred().ErrorNodes) > 0) {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred without error nodes
 		}
 	}
 	return NewPseudoTypeNoResult(node)
@@ -112,14 +112,14 @@ func (ch *PseudoChecker) typeFromProperty(node *ast.Node) *PseudoType {
 				return NewPseudoTypeNoResult(node)
 			}
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.AsPseudoTypeInferred().ErrorNodes) > 0) {
 				if expr.Kind != PseudoTypeKindDirect && node.AsPropertyDeclaration().PostfixToken != nil && node.AsPropertyDeclaration().PostfixToken.Kind == ast.KindQuestionToken {
 					// type comes from the initializer expression on a property with a `?` - add `| undefined` to the type
 					return addUndefinedIfDefinitelyRequired(expr)
 				}
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred without error nodes
 		}
 	}
 	return NewPseudoTypeNoResult(node)
@@ -138,10 +138,10 @@ func (ch *PseudoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 				return NewPseudoTypeNoResult(declaration.AsNode())
 			}
 			expr := ch.typeFromExpression(init)
-			if expr != nil && expr.Kind != PseudoTypeKindInferred {
+			if expr != nil && (expr.Kind != PseudoTypeKindInferred || len(expr.AsPseudoTypeInferred().ErrorNodes) > 0) {
 				return expr
 			}
-			// fallback to NoResult if PseudoTypeKindInferred
+			// fallback to NoResult if PseudoTypeKindInferred without error nodes
 		}
 	}
 	return NewPseudoTypeNoResult(declaration.AsNode())
@@ -316,8 +316,8 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 }
 
 func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression) *PseudoType {
-	if !ch.canGetTypeFromObjectLiteral(node) {
-		return NewPseudoTypeInferred(node.AsNode())
+	if errorNodes := ch.canGetTypeFromObjectLiteral(node); errorNodes != nil {
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
 	}
 	// we are in a const context producing an object literal type, there are no shorthand or spread assignments
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
@@ -403,41 +403,44 @@ func (ch *PseudoChecker) getAccessorMember(accessor *ast.Node, name *ast.Node) *
 	return nil
 }
 
-func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpression) bool {
+// canGetTypeFromObjectLiteral checks whether an object literal can be typed by the pseudochecker.
+// Returns nil if the object can be typed, or a slice of error nodes (shorthand/spread properties,
+// non-literal computed names) that prevent typing.
+func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpression) []*ast.Node {
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
-		return true // empty object
+		return nil // empty object, ok
 	}
-	// !!! TODO: strada reports errors on multiple non-inferrable props
-	// via calling reportInferenceFallback multiple times here before returning.
-	// Does that logic need to be included in this checker? Or can it
-	// be kept to the `PseudoType` -> `Node` mapping logic, so this
-	// checker can avoid needing any error reporting logic?
+	var errorNodes []*ast.Node
 	for _, e := range node.Properties.Nodes {
 		if e.Flags&ast.NodeFlagsThisNodeHasError != 0 {
-			return false
+			errorNodes = append(errorNodes, e)
+			continue
 		}
 		if e.Kind == ast.KindShorthandPropertyAssignment || e.Kind == ast.KindSpreadAssignment {
-			return false
+			errorNodes = append(errorNodes, e)
+			continue
 		}
 		if e.Name().Flags&ast.NodeFlagsThisNodeHasError != 0 {
-			return false
+			errorNodes = append(errorNodes, e.Name())
+			continue
 		}
 		if e.Name().Kind == ast.KindPrivateIdentifier {
-			return false
+			errorNodes = append(errorNodes, e)
+			continue
 		}
 		if e.Name().Kind == ast.KindComputedPropertyName {
 			expression := e.Name().Expression()
 			if !ast.IsPrimitiveLiteralValue(expression, false) {
-				return false
+				errorNodes = append(errorNodes, e.Name())
 			}
 		}
 	}
-	return true
+	return errorNodes
 }
 
 func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) *PseudoType {
-	if !ch.canGetTypeFromArrayLiteral(node) {
-		return NewPseudoTypeInferred(node.AsNode())
+	if errorNodes := ch.canGetTypeFromArrayLiteral(node); errorNodes != nil {
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
 	}
 	if IsInConstContext(node.AsNode()) && isContextuallyTyped(node.AsNode()) {
 		return NewPseudoTypeInferred(node.AsNode()) // expr in an as const cast with a contextual type has variable readonly state, bail
@@ -450,16 +453,20 @@ func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) 
 	return NewPseudoTypeTuple(results)
 }
 
-func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpression) bool {
+// canGetTypeFromArrayLiteral checks whether an array literal can be typed by the pseudochecker.
+// Returns nil if the array can be typed, or a slice of error nodes that prevent typing.
+// For non-const arrays, the error node is the array expression itself.
+// For const arrays with spreads, the error node is the spread element.
+func (ch *PseudoChecker) canGetTypeFromArrayLiteral(node *ast.ArrayLiteralExpression) []*ast.Node {
 	if !IsInConstContext(node.AsNode()) {
-		return false
+		return []*ast.Node{node.AsNode()}
 	}
 	for _, e := range node.Elements.Nodes {
 		if e.Kind == ast.KindSpreadElement {
-			return false
+			return []*ast.Node{e}
 		}
 	}
-	return true
+	return nil
 }
 
 // See `isConstContext` in `checker.go` - this is basically any node kind mentioned in that
@@ -567,7 +574,9 @@ func typeNodeCouldReferToUndefined(node *ast.Node) bool {
 		return true
 	case ast.KindTypePredicate: // suspect - always refers to `never` or `boolean`, depending on kind - considered possibly-`undefined` referencing for strada compat
 		return true
-	default: // all keywords (why is `undefined` not excluded???), literal types, function-y types, array/tuple types, type literals, template types, this types
+	case ast.KindUndefinedKeyword:
+		return true
+	default: // all other keywords, literal types, function-y types, array/tuple types, type literals, template types, this types
 		return false
 	}
 }
@@ -600,6 +609,20 @@ func isOptionalInitializedOrRestParameter(node *ast.ParameterDeclarationNode) bo
 	return false
 }
 
+// lastRequiredParamIndex returns the index just past the last required parameter
+// in the list. A parameter is "required" if it has no question token, no initializer,
+// and no rest token. This is computed in a single reverse pass so callers can
+// determine "has required parameter after index i" with `i+1 < lastRequired`
+// (equivalently, `i < lastRequired-1`) in O(1).
+func lastRequiredParamIndex(params []*ast.Node) int {
+	for i := len(params) - 1; i >= 0; i-- {
+		if !isOptionalInitializedOrRestParameter(params[i]) {
+			return i + 1
+		}
+	}
+	return 0
+}
+
 func addUndefinedIfDefinitelyRequired(expr *PseudoType) *PseudoType {
 	// If `expr` doesn't already contain `| undefined` or a direct/inferred type that may contain `undefined`, add `| undefined`
 	// in Strada, this reached into the checker to see if `undefined` was necessary, using `isRequiredOptionalParameter` from the emit resolver,
@@ -617,25 +640,45 @@ func (ch *PseudoChecker) typeFromParameter(node *ast.ParameterDeclaration) *Pseu
 	if parent.Kind == ast.KindSetAccessor {
 		return ch.GetTypeOfAccessor(parent)
 	}
+	// Fast path: no initializer means we never need parameter position info.
+	if node.Initializer == nil {
+		if node.Type != nil {
+			return NewPseudoTypeDirect(node.Type)
+		}
+		return NewPseudoTypeNoResult(node.AsNode())
+	}
+	p := parent.Parameters()
+	selfIdx := slices.Index(p, node.AsNode())
+	lastRequired := lastRequiredParamIndex(p)
+	return ch.typeFromParameterWorker(node, selfIdx, lastRequired)
+}
+
+func (ch *PseudoChecker) typeFromParameterWorker(node *ast.ParameterDeclaration, selfIdx int, lastRequired int) *PseudoType {
+	parent := node.Parent
+	if parent.Kind == ast.KindSetAccessor {
+		return ch.GetTypeOfAccessor(parent)
+	}
+	hasRequiredAfter := selfIdx < lastRequired-1
 	declaredType := node.Type
 	if declaredType != nil {
-		return NewPseudoTypeDirect(declaredType)
+		result := NewPseudoTypeDirect(declaredType)
+		// When the parameter has an initializer and strict null checks are enabled,
+		// check if `| undefined` needs to be added because there are required parameters after this one.
+		// This mirrors the checker's getTypeOfParameter which adds optionality for initialized parameters.
+		if ch.strictNullChecks && node.Initializer != nil && hasRequiredAfter {
+			return addUndefinedIfDefinitelyRequired(result)
+		}
+		return result
 	}
 	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.AsNode()) {
 		expr := ch.typeFromExpression(node.Initializer)
 		if !ch.strictNullChecks {
 			return expr
 		}
-		p := node.Parent.Parameters()
-		selfIdx := slices.Index(p, node.AsNode())
-		if selfIdx == len(p)-1 {
+		if !hasRequiredAfter {
 			return expr
 		}
 		// if there is a non-optional parameter after this one, a `| undefined` will need to explicitly be emitted on this parameter, if it's not already there
-		remainingParams := node.Parent.Parameters()[selfIdx+1:]
-		if core.Every(remainingParams, isOptionalInitializedOrRestParameter) {
-			return expr
-		}
 		return addUndefinedIfDefinitelyRequired(expr)
 	}
 	// TODO: In strada, the ID checker doesn't infer a parameter type from binding pattern names, but the real checker _does_!
@@ -652,13 +695,22 @@ func (ch *PseudoChecker) cloneParameters(nodes *ast.NodeList) []*PseudoParameter
 	if len(nodes.Nodes) == 0 {
 		return nil
 	}
+	lastRequired := lastRequiredParamIndex(nodes.Nodes)
 	result := make([]*PseudoParameter, 0, len(nodes.Nodes))
-	for _, e := range nodes.Nodes {
+	for i, e := range nodes.Nodes {
+		p := e.AsParameterDeclaration()
+		optional := p.QuestionToken != nil
+		if !optional && p.Initializer != nil {
+			// A parameter with an initializer is optional only if all subsequent
+			// parameters are also optional/have initializers/are rest parameters.
+			// This matches the checker's isOptionalParameter semantics.
+			optional = i >= lastRequired-1
+		}
 		result = append(result, NewPseudoParameter(
-			e.AsParameterDeclaration().DotDotDotToken != nil,
+			p.DotDotDotToken != nil,
 			e.Name(),
-			e.AsParameterDeclaration().QuestionToken != nil || e.AsParameterDeclaration().Initializer != nil,
-			ch.typeFromParameter(e.AsParameterDeclaration()),
+			optional,
+			ch.typeFromParameterWorker(p, i, lastRequired),
 		))
 	}
 	return result

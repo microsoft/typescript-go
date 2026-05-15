@@ -1,0 +1,10 @@
+--- old.declarationEmitInvalidExport.js
++++ new.declarationEmitInvalidExport.js
+@@= skipped -13, +13 lines =@@
+ if (false) {
+     exports.myClass = 0;
+ }
++
++
++//// [declarationEmitInvalidExport.d.ts]
++export type MyClass = typeof myClass;
