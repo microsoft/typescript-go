@@ -4665,7 +4665,7 @@
                     },
                     {
                         "name": "FullName",
-                        "type": "Node",
+                        "type": "JSDocFullName",
                         "optional": true
                     },
                     {
@@ -4709,7 +4709,7 @@
                     },
                     {
                         "name": "name",
-                        "type": "Identifier",
+                        "type": "JSDocFullName",
                         "private": true,
                         "optional": true
                     },
@@ -5175,6 +5175,10 @@
             ],
             "ModuleBody": [
                 "ModuleBlock",
+                "ModuleDeclaration"
+            ],
+            "JSDocFullName": [
+                "Identifier",
                 "ModuleDeclaration"
             ],
             "ForInitializer": [

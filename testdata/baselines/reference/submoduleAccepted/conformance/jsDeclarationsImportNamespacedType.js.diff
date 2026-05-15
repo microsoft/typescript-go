@@ -1,10 +1,8 @@
 --- old.jsDeclarationsImportNamespacedType.js
 +++ new.jsDeclarationsImportNamespacedType.js
-@@= skipped -12, +12 lines =@@
-
+@@= skipped -13, +13 lines =@@
 
  //// [mod1.d.ts]
-+export type Dotted = number;
  /** @typedef {number} Dotted.Name */
 -export const dummy: number;
 -export namespace Dotted {

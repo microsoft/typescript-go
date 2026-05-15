@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/jsDocTypedefTagNamespace.ts] ////
+
+=== a.js ===
+/** @typedef {number} NS.T */
+/** @typedef {string} NS.U */
+
+/** @type {NS.T} */
+const x = 1;
+>x : Symbol(x, Decl(a.js, 4, 5))
+
+/** @type {NS.U} */
+const y = "hello";
+>y : Symbol(y, Decl(a.js, 7, 5))
+
+=== b.js ===
+/** @typedef {{age: number}} A.B.MyType */
+
+/** @type {A.B.MyType} */
+const z = { age: 42 };
+>z : Symbol(z, Decl(b.js, 3, 5))
+>age : Symbol(age, Decl(b.js, 3, 11))
+
+=== c.js ===
+/** @callback NS.MyCallback
+ * @param {string} name
+ * @returns {void}
+ */
+
+/** @type {NS.MyCallback} */
+const f = (name) => {};
+>f : Symbol(f, Decl(c.js, 6, 5))
+>name : Symbol(name, Decl(c.js, 6, 11))
+
