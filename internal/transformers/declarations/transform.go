@@ -1086,7 +1086,7 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 		// Use the class expression's name, or fall back to a generated name
 		var className *ast.Node
 		if ce.Name() != nil && len(ce.Name().Text()) > 0 {
-			className = ce.Name()
+			className = tx.Factory().NewIdentifier(ce.Name().Text())
 		} else {
 			className = tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		}
@@ -1096,7 +1096,8 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 		}
 		classDecl := tx.transformClassExpressionToDeclaration(unwrapped, className, tx.Factory().NewModifierList(mods))
 		tx.preserveJsDoc(classDecl, input)
-		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, className)
+		exportName := tx.Factory().NewIdentifier(className.Text())
+		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, exportName)
 		tx.removeAllComments(exportAssignment)
 		return tx.Factory().NewSyntaxList([]*ast.Node{exportAssignment, classDecl})
 	}
@@ -1251,74 +1252,14 @@ func isCommonJSAliasExport(node *ast.Node) bool {
 
 // transformClassExpressionToDeclaration converts a class expression into a class declaration
 // for use in CJS export declarations (e.g., exports.K = class K {} or module.exports = class Thing {}).
+// This delegates to the shared buildClassMembers helper to stay in sync with transformClassDeclaration.
 func (tx *DeclarationTransformer) transformClassExpressionToDeclaration(classExpr *ast.Node, className *ast.Node, modifiers *ast.ModifierList) *ast.Node {
-	ce := classExpr.AsClassExpression()
-
 	previousEnclosingDeclaration := tx.enclosingDeclaration
 	tx.enclosingDeclaration = classExpr
+	defer func() { tx.enclosingDeclaration = previousEnclosingDeclaration }()
 
-	// Handle constructor parameter properties
-	ctor := ast.GetFirstConstructorWithBody(classExpr)
-	var parameterProperties []*ast.Node
-	if ctor != nil {
-		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
-		for _, param := range ctor.AsConstructorDeclaration().Parameters.Nodes {
-			if !ast.HasSyntacticModifier(param, ast.ModifierFlagsParameterPropertyModifier) || tx.shouldStripInternal(param) {
-				continue
-			}
-			tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(param)
-			if param.Name().Kind == ast.KindIdentifier {
-				updated := tx.Factory().NewPropertyDeclaration(
-					tx.ensureModifiers(param),
-					param.Name(),
-					param.QuestionToken(),
-					tx.ensureType(param, false),
-					tx.ensureNoInitializer(param),
-				)
-				tx.preserveJsDoc(updated, param)
-				parameterProperties = append(parameterProperties, updated)
-			} else {
-				parameterProperties = append(parameterProperties, tx.walkBindingPattern(param.Name().AsBindingPattern(), param)...)
-			}
-		}
-		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
-	}
-
-	// Handle private identifiers
-	var privateIdentifier *ast.Node
-	if core.Some(ce.Members.Nodes, func(member *ast.Node) bool {
-		return member.Name() != nil && ast.IsPrivateIdentifier(member.Name())
-	}) {
-		privateIdentifier = tx.Factory().NewPropertyDeclaration(nil, tx.Factory().NewPrivateIdentifier("#private"), nil, nil, nil)
-	}
-
-	// Get late bound index signatures
-	lateIndexes := tx.resolver.CreateLateBoundIndexSignatures(
-		tx.EmitContext(),
-		classExpr,
-		tx.enclosingDeclaration,
-		declarationEmitNodeBuilderFlags,
-		declarationEmitInternalNodeBuilderFlags,
-		tx.tracker,
-	)
-
-	// Build members list
-	memberNodes := make([]*ast.Node, 0, len(ce.Members.Nodes))
-	if privateIdentifier != nil {
-		memberNodes = append(memberNodes, privateIdentifier)
-	}
-	memberNodes = append(memberNodes, lateIndexes...)
-	memberNodes = append(memberNodes, parameterProperties...)
-	visitResult := tx.Visitor().VisitNodes(ce.Members)
-	if visitResult != nil && len(visitResult.Nodes) > 0 {
-		memberNodes = append(memberNodes, visitResult.Nodes...)
-	}
-	members := tx.Factory().NewNodeList(memberNodes)
-
-	// Handle heritage clauses
-	heritageClauses := tx.Visitor().VisitNodes(ce.HeritageClauses)
-
-	tx.enclosingDeclaration = previousEnclosingDeclaration
+	members := tx.buildClassMembers(classExpr)
+	heritageClauses := tx.Visitor().VisitNodes(classExpr.AsClassExpression().HeritageClauses)
 
 	return tx.Factory().NewClassDeclaration(
 		modifiers,
@@ -1635,14 +1576,11 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 	return ast.ReplaceModifiers(tx.Factory().AsNodeFactory(), statement, tx.Factory().NewModifierList(modifiers))
 }
 
-func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDeclaration) *ast.Node {
-	tx.state.errorNameNode = input.Name()
-	tx.tracker.PushErrorFallbackNode(input.AsNode())
-	defer tx.tracker.PopErrorFallbackNode()
-
-	modifiers := tx.ensureModifiers(input.AsNode())
-	typeParameters := tx.ensureTypeParams(input.AsNode(), input.TypeParameters)
-	ctor := ast.GetFirstConstructorWithBody(input.AsNode())
+// buildClassMembers builds the member list for a class-like node (ClassDeclaration or ClassExpression).
+// It handles parameter properties, private identifiers, late-bound index signatures, and visited members.
+// Extra members (e.g., this-property assignments from JS files) can be passed via extraMembers.
+func (tx *DeclarationTransformer) buildClassMembers(classNode *ast.Node, extraMembers ...*ast.Node) *ast.NodeList {
+	ctor := ast.GetFirstConstructorWithBody(classNode)
 	var parameterProperties []*ast.Node
 	if ctor != nil {
 		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
@@ -1672,43 +1610,50 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	// When the class has at least one private identifier, create a unique constant identifier to retain the nominal typing behavior
 	// Prevents other classes with the same public members from being used in place of the current class
 	var privateIdentifier *ast.Node
-	if core.Some(input.Members.Nodes, func(member *ast.Node) bool { return member.Name() != nil && ast.IsPrivateIdentifier(member.Name()) }) {
-		privateIdentifier = tx.Factory().NewPropertyDeclaration(
-			nil,
-			tx.Factory().NewPrivateIdentifier("#private"),
-			nil,
-			nil,
-			nil,
-		)
-	}
-
-	// Collect this.x property assignments from constructors and static blocks in JS files
-	var thisPropertyAssignments []*ast.Node
-	if ast.IsInJSFile(input.AsNode()) {
-		thisPropertyAssignments = tx.collectThisPropertyAssignments(input)
+	if core.Some(classNode.ClassLikeData().Members.Nodes, func(member *ast.Node) bool {
+		return member.Name() != nil && ast.IsPrivateIdentifier(member.Name())
+	}) {
+		privateIdentifier = tx.Factory().NewPropertyDeclaration(nil, tx.Factory().NewPrivateIdentifier("#private"), nil, nil, nil)
 	}
 
 	lateIndexes := tx.resolver.CreateLateBoundIndexSignatures(
 		tx.EmitContext(),
-		input.AsNode(),
+		classNode,
 		tx.enclosingDeclaration,
 		declarationEmitNodeBuilderFlags,
 		declarationEmitInternalNodeBuilderFlags,
 		tx.tracker,
 	)
 
-	memberNodes := make([]*ast.Node, 0, len(input.Members.Nodes))
+	memberNodes := make([]*ast.Node, 0, len(classNode.ClassLikeData().Members.Nodes))
 	if privateIdentifier != nil {
 		memberNodes = append(memberNodes, privateIdentifier)
 	}
 	memberNodes = append(memberNodes, lateIndexes...)
 	memberNodes = append(memberNodes, parameterProperties...)
-	memberNodes = append(memberNodes, thisPropertyAssignments...)
-	visitResult := tx.Visitor().VisitNodes(input.Members)
+	memberNodes = append(memberNodes, extraMembers...)
+	visitResult := tx.Visitor().VisitNodes(classNode.ClassLikeData().Members)
 	if visitResult != nil && len(visitResult.Nodes) > 0 {
 		memberNodes = append(memberNodes, visitResult.Nodes...)
 	}
-	members := tx.Factory().NewNodeList(memberNodes)
+	return tx.Factory().NewNodeList(memberNodes)
+}
+
+func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDeclaration) *ast.Node {
+	tx.state.errorNameNode = input.Name()
+	tx.tracker.PushErrorFallbackNode(input.AsNode())
+	defer tx.tracker.PopErrorFallbackNode()
+
+	modifiers := tx.ensureModifiers(input.AsNode())
+	typeParameters := tx.ensureTypeParams(input.AsNode(), input.TypeParameters)
+
+	// Collect this.x property assignments from constructors and static blocks in JS files
+	var extraMembers []*ast.Node
+	if ast.IsInJSFile(input.AsNode()) {
+		extraMembers = tx.collectThisPropertyAssignments(input)
+	}
+
+	members := tx.buildClassMembers(input.AsNode(), extraMembers...)
 
 	extendsClause := getEffectiveBaseTypeNode(input.AsNode())
 
