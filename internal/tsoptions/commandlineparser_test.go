@@ -87,6 +87,24 @@ func TestCommandLineParseResult(t *testing.T) {
 	}
 }
 
+func TestResponseFileDoesNotPanic(t *testing.T) {
+	t.Parallel()
+
+	// Passing `@` with an empty or relative filename should not panic.
+	// It should produce a diagnostic error instead.
+	t.Run("empty response file", func(t *testing.T) {
+		t.Parallel()
+		parsed := tsoptions.ParseCommandLineTestWorker(nil, []string{"@"}, osvfs.FS(), "/")
+		assert.Assert(t, len(parsed.Errors) > 0, "expected an error for empty response file name")
+	})
+
+	t.Run("relative response file", func(t *testing.T) {
+		t.Parallel()
+		parsed := tsoptions.ParseCommandLineTestWorker(nil, []string{"@blah"}, osvfs.FS(), "/")
+		assert.Assert(t, len(parsed.Errors) > 0, "expected an error for non-existent response file")
+	})
+}
+
 func TestCustomConditionsNullOverride(t *testing.T) {
 	t.Parallel()
 
