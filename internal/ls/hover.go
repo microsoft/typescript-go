@@ -100,8 +100,10 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 	var b strings.Builder
 	jsdoc := getJSDocOrTag(c, declaration)
 
-	// Handle binding elements specially (variables created from destructuring) - we need to get the documentation from the property type
-	// If the binding element doesn't have its own JSDoc, fall back to the property's JSDoc
+	// Handle binding elements specially (variables created from destructuring) - we need to get the documentation from the property type.
+	// If the binding element doesn't have its own JSDoc, fall back to the property's JSDoc.
+	// For intersection types with multiple declarations of the same property, combine JSDoc from all declarations
+	// (matching Strada's getJsDocCommentsFromDeclarations behavior).
 	if jsdoc == nil && symbol != nil && symbol.ValueDeclaration != nil && ast.IsBindingElement(symbol.ValueDeclaration) && ast.IsIdentifier(location) {
 		bindingElement := symbol.ValueDeclaration
 		parent := bindingElement.Parent
@@ -115,111 +117,128 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 			if objectType != nil {
 				propertySymbol := findPropertyInType(c, objectType, propertyName)
 				if propertySymbol != nil {
-					if propertySymbol.ValueDeclaration != nil {
-						jsdoc = getJSDocOrTag(c, propertySymbol.ValueDeclaration)
-						if jsdoc != nil {
-							// Use property declaration for typedef check
-							declaration = propertySymbol.ValueDeclaration
+					var rendered []string
+					seenDecl := collections.Set[*ast.Node]{}
+					for _, decl := range propertySymbol.Declarations {
+						if seenDecl.Has(decl) {
+							continue
+						}
+						seenDecl.Add(decl)
+						declJsdoc := getJSDocOrTag(c, decl)
+						if declJsdoc == nil {
+							continue
+						}
+						var partB strings.Builder
+						l.writeJSDocContent(&partB, c, declJsdoc, decl, isMarkdown, commentOnly)
+						text := partB.String()
+						if text != "" && !slices.Contains(rendered, text) {
+							rendered = append(rendered, text)
 						}
 					}
-					// If no JSDoc found on ValueDeclaration (e.g. intersection types with non-uniform declarations
-					// where ValueDeclaration may be nil), search through all declarations
-					if jsdoc == nil {
-						for _, decl := range propertySymbol.Declarations {
-							if foundJsdoc := getJSDocOrTag(c, decl); foundJsdoc != nil {
-								jsdoc = foundJsdoc
-								declaration = decl
-								break
-							}
+					for i, text := range rendered {
+						if i > 0 {
+							b.WriteString("\n\n")
 						}
+						b.WriteString(text)
 					}
+					return b.String()
 				}
 			}
 		}
 	}
 
-	if jsdoc != nil && !(declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc)) {
-		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
-		if jsdoc.Kind == ast.KindJSDoc && !commentOnly {
-			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
-				for _, tag := range tags.Nodes {
-					if tag.Kind == ast.KindJSDocTypeTag || tag.Kind == ast.KindJSDocTypedefTag || tag.Kind == ast.KindJSDocCallbackTag {
-						continue
-					}
-					b.WriteString("\n\n")
-					if isMarkdown {
-						b.WriteString("*@")
-						b.WriteString(tag.TagName().Text())
-						b.WriteString("*")
-					} else {
-						b.WriteString("@")
-						b.WriteString(tag.TagName().Text())
-					}
-					switch tag.Kind {
-					case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-						writeOptionalEntityName(&b, tag.Name())
-					case ast.KindJSDocAugmentsTag:
-						writeOptionalEntityName(&b, tag.ClassName())
-					case ast.KindJSDocTemplateTag:
-						for i, tp := range tag.TypeParameters() {
-							if i != 0 {
-								b.WriteString(",")
-							}
-							writeOptionalEntityName(&b, tp.Name())
+	if jsdoc != nil {
+		l.writeJSDocContent(&b, c, jsdoc, declaration, isMarkdown, commentOnly)
+	}
+	return b.String()
+}
+
+func (l *LanguageService) writeJSDocContent(b *strings.Builder, c *checker.Checker, jsdoc *ast.Node, declaration *ast.Node, isMarkdown bool, commentOnly bool) {
+	if declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc) {
+		return
+	}
+	l.writeComments(b, c, jsdoc.Comments(), isMarkdown)
+	if jsdoc.Kind != ast.KindJSDoc || commentOnly {
+		return
+	}
+	tags := jsdoc.AsJSDoc().Tags
+	if tags == nil {
+		return
+	}
+	for _, tag := range tags.Nodes {
+		if tag.Kind == ast.KindJSDocTypeTag || tag.Kind == ast.KindJSDocTypedefTag || tag.Kind == ast.KindJSDocCallbackTag {
+			continue
+		}
+		b.WriteString("\n\n")
+		if isMarkdown {
+			b.WriteString("*@")
+			b.WriteString(tag.TagName().Text())
+			b.WriteString("*")
+		} else {
+			b.WriteString("@")
+			b.WriteString(tag.TagName().Text())
+		}
+		switch tag.Kind {
+		case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+			writeOptionalEntityName(b, tag.Name())
+		case ast.KindJSDocAugmentsTag:
+			writeOptionalEntityName(b, tag.ClassName())
+		case ast.KindJSDocTemplateTag:
+			for i, tp := range tag.TypeParameters() {
+				if i != 0 {
+					b.WriteString(",")
+				}
+				writeOptionalEntityName(b, tp.Name())
+			}
+		}
+		comments := tag.Comments()
+		if tag.Kind == ast.KindJSDocUnknownTag && tag.TagName().Text() == "example" {
+			commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
+			if strings.HasPrefix(commentText, "<caption>") {
+				if captionEnd := strings.Index(commentText, "</caption>"); captionEnd > 0 {
+					b.WriteString(" — ")
+					b.WriteString(commentText[len("<caption>"):captionEnd])
+					commentText = commentText[captionEnd+len("</caption>"):]
+					// Trim leading blank lines from commentText
+					for {
+						s1 := strings.TrimLeft(commentText, " \t")
+						s2 := strings.TrimLeft(s1, "\r\n")
+						if len(s1) == len(s2) {
+							break
 						}
-					}
-					comments := tag.Comments()
-					if tag.Kind == ast.KindJSDocUnknownTag && tag.TagName().Text() == "example" {
-						commentText := strings.TrimRight(getCommentText(comments), " \t\r\n")
-						if strings.HasPrefix(commentText, "<caption>") {
-							if captionEnd := strings.Index(commentText, "</caption>"); captionEnd > 0 {
-								b.WriteString(" — ")
-								b.WriteString(commentText[len("<caption>"):captionEnd])
-								commentText = commentText[captionEnd+len("</caption>"):]
-								// Trim leading blank lines from commentText
-								for {
-									s1 := strings.TrimLeft(commentText, " \t")
-									s2 := strings.TrimLeft(s1, "\r\n")
-									if len(s1) == len(s2) {
-										break
-									}
-									commentText = s2
-								}
-							}
-						}
-						b.WriteString("\n")
-						if len(commentText) > 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") && strings.Contains(commentText, "\n") {
-							b.WriteString(commentText)
-							b.WriteString("\n")
-						} else {
-							writeCode(&b, "tsx", commentText)
-						}
-					} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
-						b.WriteString(" — ")
-						l.writeNameLink(&b, c, tag.AsJSDocSeeTag().NameExpression.Name(), "", false /*quote*/, isMarkdown)
-						if len(comments) != 0 {
-							b.WriteString(" ")
-							l.writeComments(&b, c, comments, isMarkdown)
-						}
-					} else if tag.Kind == ast.KindJSDocThrowsTag && tag.AsJSDocThrowsTag().TypeExpression != nil {
-						b.WriteString(" — ")
-						b.WriteString(scanner.GetTextOfNode(tag.AsJSDocThrowsTag().TypeExpression))
-						if len(comments) != 0 {
-							b.WriteString(" ")
-							l.writeComments(&b, c, comments, isMarkdown)
-						}
-					} else if len(comments) != 0 {
-						b.WriteString(" ")
-						if comments[0].Kind != ast.KindJSDocText || !strings.HasPrefix(comments[0].Text(), "-") {
-							b.WriteString("— ")
-						}
-						l.writeComments(&b, c, comments, isMarkdown)
+						commentText = s2
 					}
 				}
 			}
+			b.WriteString("\n")
+			if len(commentText) > 6 && strings.HasPrefix(commentText, "```") && strings.HasSuffix(commentText, "```") && strings.Contains(commentText, "\n") {
+				b.WriteString(commentText)
+				b.WriteString("\n")
+			} else {
+				writeCode(b, "tsx", commentText)
+			}
+		} else if tag.Kind == ast.KindJSDocSeeTag && tag.AsJSDocSeeTag().NameExpression != nil {
+			b.WriteString(" — ")
+			l.writeNameLink(b, c, tag.AsJSDocSeeTag().NameExpression.Name(), "", false /*quote*/, isMarkdown)
+			if len(comments) != 0 {
+				b.WriteString(" ")
+				l.writeComments(b, c, comments, isMarkdown)
+			}
+		} else if tag.Kind == ast.KindJSDocThrowsTag && tag.AsJSDocThrowsTag().TypeExpression != nil {
+			b.WriteString(" — ")
+			b.WriteString(scanner.GetTextOfNode(tag.AsJSDocThrowsTag().TypeExpression))
+			if len(comments) != 0 {
+				b.WriteString(" ")
+				l.writeComments(b, c, comments, isMarkdown)
+			}
+		} else if len(comments) != 0 {
+			b.WriteString(" ")
+			if comments[0].Kind != ast.KindJSDocText || !strings.HasPrefix(comments[0].Text(), "-") {
+				b.WriteString("— ")
+			}
+			l.writeComments(b, c, comments, isMarkdown)
 		}
 	}
-	return b.String()
 }
 
 func getCommentText(comments []*ast.Node) string {

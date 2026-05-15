@@ -43,3 +43,26 @@ const { /*1*/a } = y;
 	defer done()
 	f.VerifyBaselineHover(t)
 }
+
+func TestDestructuredIntersectionJSDocCombined(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `
+type X = {
+    /** Description from X. */
+    a: {}
+}
+
+type Z = {
+    /** Description from Z. */
+    a: {}
+}
+
+type Y = X & Z
+
+declare function f({ /*1*/a }: Y): void
+`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineHover(t)
+}
