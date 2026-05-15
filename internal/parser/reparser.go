@@ -677,13 +677,16 @@ func (p *Parser) wrapInJSDocNamespace(fullName *ast.Node, statement *ast.Node, t
 		}
 		node = body
 	}
-	// Wrap from innermost to outermost
+	// Wrap from innermost to outermost. Inner namespaces always get an export
+	// modifier so members are accessible via dotted access from outside. The
+	// outermost namespace is treated as exported only in module files via
+	// IsImplicitlyExportedJSTypeAlias (in the binder), so it does not get an
+	// explicit export modifier here.
 	result := statement
 	for i := len(chain) - 1; i >= 0; i-- {
 		mod := chain[i]
 		block := p.factory.NewModuleBlock(p.newNodeList(tag.Loc, p.nodeSliceArena.NewSlice1(result)))
 		p.finishReparsedNode(block, tag)
-		// Inner namespaces need export modifiers so they are accessible from outside
 		var modifiers *ast.ModifierList
 		if i > 0 {
 			modifiers = p.createExportModifier(tag)

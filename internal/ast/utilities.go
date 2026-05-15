@@ -4146,8 +4146,16 @@ func TryGetImportFromModuleSpecifier(node *StringLiteralLike) *Node {
 	return nil
 }
 
-func IsImplicitlyExportedJSTypeAlias(node *Node) bool {
-	return IsJSTypeAliasDeclaration(node) && IsSourceFile(node.Parent) && IsExternalOrCommonJSModule(node.Parent.AsSourceFile())
+func IsImplicitlyExportedJSDocDeclaration(node *Node) bool {
+	if !IsSourceFile(node.Parent) || !IsExternalOrCommonJSModule(node.Parent.AsSourceFile()) {
+		return false
+	}
+	if IsJSTypeAliasDeclaration(node) {
+		return true
+	}
+	// A reparsed ModuleDeclaration synthesized from a JSDoc @typedef/@callback
+	// dotted name should also be treated as implicitly exported in modules.
+	return IsModuleDeclaration(node) && node.Flags&NodeFlagsReparsed != 0
 }
 
 func HasContextSensitiveParameters(node *Node) bool {

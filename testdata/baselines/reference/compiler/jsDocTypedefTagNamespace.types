@@ -36,3 +36,20 @@ const f = (name) => {};
 >(name) => {} : (name: string) => void
 >name : string
 
+=== d.js ===
+/** @typedef {number} M.T */
+
+/** @type {M.T} */
+export const xd = 1;
+>xd : number
+>1 : 1
+
+=== e.js ===
+import { xd } from "./d.js";
+>xd : number
+
+/** @type {import("./d.js").M.T} */
+export const ed = xd;
+>ed : number
+>xd : number
+

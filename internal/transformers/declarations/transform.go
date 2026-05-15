@@ -1883,7 +1883,7 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
 	}
-	if ast.IsImplicitlyExportedJSTypeAlias(node) {
+	if ast.IsImplicitlyExportedJSDocDeclaration(node) {
 		additions |= ast.ModifierFlagsExport
 	}
 	return maskModifierFlags(tx.host, node, mask, additions)

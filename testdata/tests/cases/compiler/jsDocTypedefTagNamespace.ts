@@ -27,3 +27,14 @@ const z = { age: 42 };
 
 /** @type {NS.MyCallback} */
 const f = (name) => {};
+
+// @filename: d.js
+/** @typedef {number} M.T */
+
+/** @type {M.T} */
+export const xd = 1;
+
+// @filename: e.js
+import { xd } from "./d.js";
+/** @type {import("./d.js").M.T} */
+export const ed = xd;
