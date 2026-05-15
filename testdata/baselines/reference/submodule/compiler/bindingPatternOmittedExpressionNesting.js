@@ -6,7 +6,7 @@ export let [,,[,[],,[],]] = undefined as any;
 //// [bindingPatternOmittedExpressionNesting.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-let [, , [, [], , [],]] = undefined;
+[, , [, [], , []]] = undefined;
 
 
 //// [bindingPatternOmittedExpressionNesting.d.ts]

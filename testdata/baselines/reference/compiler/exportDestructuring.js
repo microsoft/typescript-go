@@ -10,5 +10,4 @@ export const [a, b] = arr;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.b = exports.a = void 0;
 const arr = [1, 2];
-const [a, b] = arr;
-exports.a = a, exports.b = b;
+[exports.a, exports.b] = arr;

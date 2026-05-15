@@ -1079,11 +1079,12 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 					pushExpression(tx.Visitor().VisitNode(expression))
 				}
 			} else if ast.IsBindingPattern(v.Name()) {
-				// Preserve binding-pattern declarations as-is so that array destructuring keeps
-				// its native iterator semantics, then emit `exports.X = X` for each declared
-				// identifier. This form is recognized by tools like `cjs-module-lexer`.
-				pushVariable(variable)
-				tx.appendExportAssignmentsForBindingPattern(v.Name(), pushExpression)
+				// For binding patterns with export modifier, use flattenDestructuringAssignment
+				// to decompose into individual export assignments
+				expression := tx.transformInitializedVariable(v)
+				if expression != nil {
+					pushExpression(expression)
+				}
 			} else {
 				// For binding patterns, we can't do exports.{pattern} = value
 				// Just emit the assignment and let appendExportsOfVariableStatement handle the exports
@@ -1108,13 +1109,14 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 	}
 	name := node.Name()
 	if ast.IsBindingPattern(name) {
-		return transformers.FlattenDestructuringAssignment(
-			&tx.Transformer,
-			tx.Visitor().VisitNode(node.AsNode()),
-			false, /*needsValue*/
-			transformers.FlattenLevelAll,
-			tx.createAllExportExpressions,
-		)
+		// Convert the binding pattern into an equivalent assignment expression and visit it
+		// as a destructuring assignment. This preserves native destructuring (and therefore
+		// iterator semantics for array patterns) whenever each leaf identifier can be
+		// substituted to an export reference. Only when the destructuring would assign to
+		// re-aliased or multi-exported names (where native destructuring cannot update all
+		// targets) does `visitDestructuringAssignment` fall back to flattening.
+		assignment := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), node)
+		return tx.visitDestructuringAssignment(assignment.AsBinaryExpression(), true /*valueIsDiscarded*/)
 	}
 	propertyAccess := tx.Factory().NewPropertyAccessExpression(
 		tx.Factory().NewIdentifier("exports"),
@@ -1124,45 +1126,6 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 	)
 	tx.EmitContext().AssignCommentAndSourceMapRanges(propertyAccess, name)
 	return tx.Factory().NewAssignmentExpression(propertyAccess, node.Initializer)
-}
-
-// appendExportAssignmentsForBindingPattern walks an exported binding pattern and invokes
-// `pushExpression` with an `exports.X = X` assignment for each declared identifier (including
-// rest elements and nested patterns). Property renames (`{ x: y }`) emit an assignment for the
-// local binding (`y`). Any additional alias exports (e.g. `export { y as z }` elsewhere) are
-// also emitted by `appendExportsOfVariableStatement` via the export specifier map.
-func (tx *CommonJSModuleTransformer) appendExportAssignmentsForBindingPattern(pattern *ast.Node, pushExpression func(*ast.Expression)) {
-	for _, element := range pattern.Elements() {
-		if ast.IsOmittedExpression(element) {
-			continue
-		}
-		bindingName := element.Name()
-		if bindingName == nil {
-			continue
-		}
-		if ast.IsBindingPattern(bindingName) {
-			tx.appendExportAssignmentsForBindingPattern(bindingName, pushExpression)
-			continue
-		}
-		if !ast.IsIdentifier(bindingName) {
-			continue
-		}
-		// Suppress comments and source maps on the synthetic export reference and value
-		// reference so that any JSDoc/comments attached to the original binding element
-		// (preserved on the variable declaration) aren't duplicated on the export assignment.
-		exportName := bindingName.Clone(tx.Factory())
-		tx.EmitContext().AddEmitFlags(exportName, printer.EFNoComments|printer.EFNoSourceMap)
-		propertyAccess := tx.Factory().NewPropertyAccessExpression(
-			tx.Factory().NewIdentifier("exports"),
-			nil, /*questionDotToken*/
-			exportName,
-			ast.NodeFlagsNone,
-		)
-		tx.EmitContext().AddEmitFlags(propertyAccess, printer.EFNoComments|printer.EFNoSourceMap)
-		valueReference := bindingName.Clone(tx.Factory())
-		tx.EmitContext().AddEmitFlags(valueReference, printer.EFNoComments|printer.EFNoSourceMap)
-		pushExpression(tx.Factory().NewAssignmentExpression(propertyAccess, valueReference))
-	}
 }
 
 // Visits a top-level nested variable statement as it may contain `var` declarations that are hoisted and may still be
@@ -1489,11 +1452,22 @@ func (tx *CommonJSModuleTransformer) destructuringNeedsFlattening(node *ast.Node
 		}
 	} else if ast.IsIdentifier(node) {
 		exportedNames := tx.getExports(node)
-		threshold := 0
 		if transformers.IsExportName(tx.EmitContext(), node) {
-			threshold = 1
+			// The identifier is already wrapped to be an export reference; tolerate up to one
+			// matching export.
+			return len(exportedNames) > 1
 		}
-		return len(exportedNames) > threshold
+		if len(exportedNames) == 0 {
+			return false
+		}
+		// A single direct export whose export name matches the identifier text can be handled
+		// natively: substitution will rewrite the identifier to `exports.X`, so no flattening
+		// is needed. Re-aliased exports (where the export name differs from the local name) or
+		// multi-exported names cannot be expressed natively in a destructuring assignment.
+		if len(exportedNames) == 1 && tx.isDirectExport(node) && exportedNames[0].Text() == node.Text() {
+			return false
+		}
+		return true
 	}
 	return false
 }
