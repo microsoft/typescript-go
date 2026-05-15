@@ -2151,8 +2151,7 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 			Name: NodeHandleFrom(u.Name),
 		}
 		if u.Call != nil {
-			callHandle := NodeHandleFrom(u.Call)
-			entry.Call = &callHandle
+			entry.Call = NodeHandleFrom(u.Call)
 		}
 		result = append(result, entry)
 	}

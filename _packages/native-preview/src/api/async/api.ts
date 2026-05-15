@@ -531,7 +531,7 @@ export class Checker {
         return (data ?? []).map(h => new NodeHandle(h));
     }
 
-    async getSignatureUsages(file: DocumentIdentifier, signatureDecl: Node): Promise<{ name: NodeHandle; call: NodeHandle | null; }[]> {
+    async getSignatureUsage(file: DocumentIdentifier, signatureDecl: Node): Promise<SignatureUsage[]> {
         const data = await this.client.apiRequest<{ name: string; call?: string; }[] | null>("getSignatureUsages", {
             snapshot: this.snapshotId,
             project: this.projectId,
@@ -540,7 +540,7 @@ export class Checker {
         });
         return (data ?? []).map(entry => ({
             name: new NodeHandle(entry.name),
-            call: entry.call ? new NodeHandle(entry.call) : null,
+            call: entry.call ? new NodeHandle(entry.call) : undefined,
         }));
     }
 
@@ -930,6 +930,14 @@ export class NodeHandle {
         // Find the node at the stored position with matching kind and end
         return findDescendant(sourceFile, this.pos, this.end, this.kind);
     }
+}
+
+/** A single usage of a signature, pairing the reference name with its call expression (if any). */
+export interface SignatureUsage {
+    /** The node handle for the name reference. */
+    name: NodeHandle;
+    /** The node handle for the call expression, if the reference is invoked. */
+    call?: NodeHandle;
 }
 
 export class Symbol {
