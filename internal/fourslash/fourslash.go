@@ -77,6 +77,12 @@ type scriptInfo struct {
 	version  int32
 }
 
+type textEditSpan struct {
+	start  int
+	end    int
+	length int
+}
+
 func newScriptInfo(fileName string, content string) *scriptInfo {
 	return &scriptInfo{
 		fileName: fileName,
@@ -1472,10 +1478,12 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 
 // VerifyCodeFixOptions are the options for VerifyCodeFix.
 type VerifyCodeFixOptions struct {
-	Description    string
-	NewFileContent string
-	Index          int
-	ApplyChanges   bool
+	Description     string
+	NewFileContent  string
+	NewRangeContent string
+	Index           int
+	ApplyChanges    bool
+	UserPreferences *lsutil.UserPreferences
 }
 
 // VerifyCodeFixAllOptions are the options for VerifyCodeFixAll.
@@ -1487,6 +1495,11 @@ type VerifyCodeFixAllOptions struct {
 // VerifyCodeFix verifies that applying a code fix produces the expected file content.
 func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions) {
 	t.Helper()
+
+	if options.UserPreferences != nil {
+		reset := f.ConfigureWithReset(t, *options.UserPreferences)
+		defer reset()
+	}
 
 	actions := f.getCodeFixActions(t)
 
@@ -1516,6 +1529,20 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 		}
 	}
 
+	originalContent := f.getScriptInfo(f.activeFilename).content
+	expectedContent := options.NewFileContent
+	if options.NewRangeContent != "" {
+		selection := f.getSelection()
+		if selection.Pos() == selection.End() {
+			ranges := f.getRangesInFile(f.activeFilename)
+			if len(ranges) == 0 {
+				t.Fatal("Expected a selected range or fourslash range for NewRangeContent verification.")
+			}
+			selection = ranges[0].Range
+		}
+		expectedContent = originalContent[:selection.Pos()] + options.NewRangeContent + originalContent[selection.End():]
+	}
+
 	if options.ApplyChanges {
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
 			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
@@ -1527,7 +1554,7 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 			}
 		}
 		actual := f.getScriptInfo(f.activeFilename).content
-		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+		assert.Equal(t, expectedContent, actual, "File content after applying code fix did not match expected content.")
 	} else {
 		actual := f.getScriptInfo(f.activeFilename).content
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
@@ -1539,8 +1566,61 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 				actual = f.applyEditsToContent(actual, edits)
 			}
 		}
-		assert.Equal(t, options.NewFileContent, actual, "File content after applying code fix did not match expected content.")
+		assert.Equal(t, expectedContent, actual, "File content after applying code fix did not match expected content.")
 	}
+}
+
+func (f *FourslashTest) VerifyRangeAfterCodeFix(t *testing.T, expectedText string, includeWhitespace bool, errorCode int, index int) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t, errorCode)
+	if len(actions) == 0 {
+		t.Fatalf("No code fixes returned.")
+	}
+
+	if index >= len(actions) {
+		t.Fatalf("Code fix index %d out of range (got %d fixes)", index, len(actions))
+	}
+
+	action := actions[index]
+	ranges := f.getRangesInFile(f.activeFilename)
+	if len(ranges) != 1 {
+		t.Fatalf("Expected exactly one range in %q, got %d.", f.activeFilename, len(ranges))
+	}
+
+	edits := f.getCodeActionEditsForActiveFile(t, action)
+	updatedRange := f.updateTextRangeForTextEdits(ranges[0].Range, edits)
+	assertValidTextRange(t, updatedRange, fmt.Sprintf("Code fix %q replaced part of the expected range; unable to compute rangeAfterCodeFix result.", action.Title))
+
+	f.applyTextEdits(t, edits)
+	actualContent := f.getScriptInfo(f.activeFilename).content
+	actualText := actualContent[updatedRange.Pos():updatedRange.End()]
+
+	if includeWhitespace {
+		assert.Equal(t, expectedText, actualText, "Range content after applying code fix did not match expected content.")
+		return
+	}
+
+	actualText = removeWhitespace(actualText)
+	expectedText = removeWhitespace(expectedText)
+	assert.Equal(t, expectedText, actualText, "Range content after applying code fix did not match expected content.")
+}
+
+func (f *FourslashTest) getCodeActionEditsForActiveFile(t *testing.T, action *lsproto.CodeAction) []*lsproto.TextEdit {
+	t.Helper()
+	if action.Edit == nil || action.Edit.Changes == nil {
+		t.Fatalf("Code fix %q did not return text edits.", action.Title)
+	}
+	if len(*action.Edit.Changes) != 1 {
+		t.Fatalf("Code fix %q returned edits for multiple files; rangeAfterCodeFix expects only the active file.", action.Title)
+	}
+
+	edits, ok := (*action.Edit.Changes)[lsconv.FileNameToDocumentURI(f.activeFilename)]
+	if ok {
+		return edits
+	}
+	t.Fatalf("Code fix %q did not return edits for active file %q.", action.Title, f.activeFilename)
+	panic("unreachable")
 }
 
 // VerifyCodeFixAvailable verifies that code fixes with the given descriptions are available.
@@ -1557,13 +1637,7 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 	}
 
 	if len(expectedDescriptions) == 0 {
-		if len(actions) != 0 {
-			var titles []string
-			for _, a := range actions {
-				titles = append(titles, a.Title)
-			}
-			t.Fatalf("Expected no code fixes, but got: %v", titles)
-		}
+		f.VerifyCodeFixNotAvailable(t)
 		return
 	}
 
@@ -1581,6 +1655,30 @@ func (f *FourslashTest) VerifyCodeFixAvailable(t *testing.T, expectedDescription
 				titles = append(titles, a.Title)
 			}
 			t.Fatalf("Expected code fix with description %q not found. Available fixes: %v", expected, titles)
+		}
+	}
+}
+
+func (f *FourslashTest) VerifyCodeFixNotAvailable(t *testing.T, expected ...string) {
+	t.Helper()
+
+	actions := f.getCodeFixActions(t)
+	if len(expected) == 0 {
+		if len(actions) == 0 {
+			return
+		}
+
+		var titles []string
+		for _, action := range actions {
+			titles = append(titles, action.Title)
+		}
+		t.Fatalf("Expected no code fixes, but got: %v", titles)
+	}
+	for _, title := range expected {
+		for _, action := range actions {
+			if action.Title == title {
+				t.Fatalf("Expected code fix with description %q not to be available.", title)
+			}
 		}
 	}
 }
@@ -1727,9 +1825,9 @@ func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string)
 }
 
 // getCodeFixActions gets per-diagnostic quick fix code actions, excluding fix-all entries.
-func (f *FourslashTest) getCodeFixActions(t *testing.T) []*lsproto.CodeAction {
+func (f *FourslashTest) getCodeFixActions(t *testing.T, errorCode ...int) []*lsproto.CodeAction {
 	t.Helper()
-	all := f.getAllQuickFixActions(t)
+	all := f.getAllQuickFixActions(t, errorCode...)
 	// Filter to only per-diagnostic fixes (those with diagnostics attached)
 	var actions []*lsproto.CodeAction
 	for _, action := range all {
@@ -1741,7 +1839,7 @@ func (f *FourslashTest) getCodeFixActions(t *testing.T) []*lsproto.CodeAction {
 }
 
 // getAllQuickFixActions gets all quick fix code actions including fix-all entries.
-func (f *FourslashTest) getAllQuickFixActions(t *testing.T) []*lsproto.CodeAction {
+func (f *FourslashTest) getAllQuickFixActions(t *testing.T, errorCode ...int) []*lsproto.CodeAction {
 	t.Helper()
 
 	diagParams := &lsproto.DocumentDiagnosticParams{
@@ -1760,13 +1858,18 @@ func (f *FourslashTest) getAllQuickFixActions(t *testing.T) []*lsproto.CodeActio
 		return nil
 	}
 
+	diagnostic := selectCodeFixDiagnostic(diagnostics, core.FirstOrNil(errorCode))
+	if diagnostic == nil {
+		return nil
+	}
+
 	params := &lsproto.CodeActionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Range: lsproto.Range{
-			Start: diagnostics[0].Range.Start,
-			End:   diagnostics[0].Range.End,
+			Start: diagnostic.Range.Start,
+			End:   diagnostic.Range.End,
 		},
 		Context: &lsproto.CodeActionContext{
 			Diagnostics: diagnostics,
@@ -1784,6 +1887,37 @@ func (f *FourslashTest) getAllQuickFixActions(t *testing.T) []*lsproto.CodeActio
 	}
 
 	return actions
+}
+
+func (f *FourslashTest) updateTextRangeForTextEdits(textRange core.TextRange, edits []*lsproto.TextEdit) core.TextRange {
+	script := f.getScriptInfo(f.activeFilename)
+	spans := make([]textEditSpan, 0, len(edits))
+	for _, edit := range edits {
+		spans = append(spans, textEditSpan{
+			start:  int(f.converters.LineAndCharacterToPosition(script, edit.Range.Start)),
+			end:    int(f.converters.LineAndCharacterToPosition(script, edit.Range.End)),
+			length: len(edit.NewText),
+		})
+	}
+	slices.SortFunc(spans, func(a, b textEditSpan) int {
+		return a.start - b.start
+	})
+
+	pos := textRange.Pos()
+	end := textRange.End()
+	for i, edit := range spans {
+		pos = updatePositionForTextEdit(pos, edit.start, edit.end, edit.length)
+		end = updatePositionForTextEdit(end, edit.start, edit.end, edit.length)
+
+		delta := edit.length - (edit.end - edit.start)
+		for j := i + 1; j < len(spans); j++ {
+			if spans[j].start >= edit.start {
+				spans[j].start += delta
+				spans[j].end += delta
+			}
+		}
+	}
+	return core.NewTextRange(pos, end)
 }
 
 // applyEditsToContent applies text edits to a content string without mutating the file.
@@ -4154,6 +4288,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		AutoImportSpecifierExcludeRegexes:     f.userPreferences.AutoImportSpecifierExcludeRegexes,
 		AutoImportFileExcludePatterns:         f.userPreferences.AutoImportFileExcludePatterns,
 		PreferTypeOnlyAutoImports:             f.userPreferences.PreferTypeOnlyAutoImports,
+		AutoImportEntrypointDirectorySearch:   f.userPreferences.AutoImportEntrypointDirectorySearch,
 	})
 	defer reset()
 
@@ -5452,4 +5587,42 @@ func (f *FourslashTest) VerifyErrorExistsBeforeMarker(t *testing.T, markerName s
 		}
 	}
 	t.Fatalf("Expected error before marker '%s' but none was found", markerName)
+}
+
+func updatePositionForTextEdit(position int, editStart int, editEnd int, newTextLength int) int {
+	if position <= editStart {
+		return position
+	}
+	if position < editEnd {
+		return -1
+	}
+	return position + newTextLength - (editEnd - editStart)
+}
+
+func removeWhitespace(text string) string {
+	var builder strings.Builder
+	for _, ch := range text {
+		if stringutil.IsWhiteSpaceLike(ch) {
+			continue
+		}
+		builder.WriteRune(ch)
+	}
+	return builder.String()
+}
+
+func assertValidTextRange(t *testing.T, textRange core.TextRange, message string) {
+	t.Helper()
+	if textRange.Pos() >= 0 && textRange.End() >= 0 {
+		return
+	}
+	t.Fatal(message)
+}
+
+func selectCodeFixDiagnostic(diagnostics []*lsproto.Diagnostic, errorCode int) *lsproto.Diagnostic {
+	if errorCode == 0 {
+		return diagnostics[0]
+	}
+	return core.Find(diagnostics, func(diagnostic *lsproto.Diagnostic) bool {
+		return diagnostic.Code != nil && diagnostic.Code.Integer != nil && *diagnostic.Code.Integer == int32(errorCode)
+	})
 }

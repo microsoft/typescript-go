@@ -37,6 +37,7 @@ foo/**/`
 					Label:    "foo",
 					Kind:     new(lsproto.CompletionItemKindFunction),
 					SortText: new(string(ls.DeprecateSortText(ls.SortTextLocationPriority))),
+					Tags:     &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated},
 				},
 			},
 		},
