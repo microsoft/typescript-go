@@ -732,6 +732,7 @@ type GetReferencedSymbolsForNodeParams struct {
 // ReferencedSymbolEntry represents a symbol definition and its references.
 type ReferencedSymbolEntry struct {
 	Definition Handle[ast.Node]   `json:"definition"`
+	Symbol     *SymbolResponse    `json:"symbol,omitempty"`
 	References []Handle[ast.Node] `json:"references"`
 }
 

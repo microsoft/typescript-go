@@ -529,7 +529,7 @@ export class Checker {
     }
 
     getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[] {
-        const data = this.client.apiRequest<{ definition: string; references: string[]; }[] | null>("getReferencedSymbolsForNode", {
+        const data = this.client.apiRequest<{ definition: string; symbol?: SymbolResponse; references: string[]; }[] | null>("getReferencedSymbolsForNode", {
             snapshot: this.snapshotId,
             project: this.projectId,
             node: getNodeId(node),
@@ -537,6 +537,7 @@ export class Checker {
         });
         return (data ?? []).map(entry => ({
             definition: new NodeHandle(entry.definition),
+            symbol: entry.symbol ? this.objectRegistry.getOrCreateSymbol(entry.symbol) : undefined,
             references: (entry.references ?? []).map(h => new NodeHandle(h)),
         }));
     }
@@ -945,6 +946,8 @@ export class NodeHandle {
 export interface ReferencedSymbolEntry {
     /** The node handle for the symbol's definition. */
     definition: NodeHandle;
+    /** The resolved symbol for the definition, if available. */
+    symbol?: Symbol;
     /** The node handles for each reference to the symbol. */
     references: NodeHandle[];
 }

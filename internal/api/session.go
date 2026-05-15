@@ -2197,10 +2197,14 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 				refs = append(refs, NodeHandleFrom(ref.Node()))
 			}
 		}
-		result = append(result, ReferencedSymbolEntry{
+		re := ReferencedSymbolEntry{
 			Definition: NodeHandleFrom(defNode),
 			References: refs,
-		})
+		}
+		if sym := entry.DefinitionSymbol(); sym != nil {
+			re.Symbol = NewSymbolResponse(sym)
+		}
+		result = append(result, re)
 	}
 	return result, nil
 }

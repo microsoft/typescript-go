@@ -139,6 +139,13 @@ func (s *SymbolAndEntries) DefinitionNode() *ast.Node {
 	return nil
 }
 
+func (s *SymbolAndEntries) DefinitionSymbol() *ast.Symbol {
+	if s.definition == nil {
+		return nil
+	}
+	return s.definition.symbol
+}
+
 func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 	if entry.definition == nil {
 		return false
