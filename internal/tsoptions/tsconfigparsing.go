@@ -971,7 +971,11 @@ func getExtendedConfig(
 	extendedConfigPath := tspath.ToPath(extendedConfigFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
 
 	var cacheEntry *ExtendedConfigCacheEntry
-	if extendedConfigCache != nil {
+	// Bypass the cache when we detect a cycle in the resolution stack.
+	// The cache locks entries during parsing, and a cycle would cause the same goroutine
+	// to re-lock the same entry, resulting in a deadlock. Let parseConfig handle the
+	// circularity error via its own resolution stack check.
+	if extendedConfigCache != nil && !slices.Contains(resolutionStack, extendedConfigFileName) {
 		cacheEntry = extendedConfigCache.GetExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host)
 	} else {
 		cacheEntry = ParseExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host, extendedConfigCache)
