@@ -26,5 +26,5 @@ namespace B {
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyRangeAfterCodeFix(t, ``, false, 0, 0)
+	f.VerifyRangeAfterCodeFix(t, "", false, 0, 0)
 }

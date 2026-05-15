@@ -230,6 +230,10 @@ func (c *Checker) IsArgumentsSymbol(symbol *ast.Symbol) bool {
 	return symbol == c.argumentsSymbol
 }
 
+func (c *Checker) IsReferenced(symbol *ast.Symbol) bool {
+	return c.isReferenced(symbol)
+}
+
 // Originally from services.ts
 func (c *Checker) GetNonOptionalType(t *Type) *Type {
 	return c.removeOptionalTypeMarker(t)

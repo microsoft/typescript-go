@@ -548,7 +548,8 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 		ast.KindCallSignature,
 		ast.KindConstructor,
 		ast.KindConstructorType,
-		ast.KindConstructSignature:
+		ast.KindConstructSignature,
+		ast.KindFunctionType:
 		tpl := getList(node.TypeParameterList(), r, node, sourceFile)
 		if tpl != nil {
 			return tpl

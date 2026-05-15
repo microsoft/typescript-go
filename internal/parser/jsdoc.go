@@ -1245,16 +1245,17 @@ func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
 }
 
 func (p *Parser) parseTemplateTagTypeParameters() *ast.TypeParameterList {
-	typeParameters := ast.TypeParameterList{}
+	pos := p.nodePos()
+	var typeParameters []*ast.Node
 	for ok := true; ok; ok = p.parseOptionalJsdoc(ast.KindCommaToken) { // do-while loop
 		p.skipWhitespace()
 		node := p.parseTemplateTagTypeParameter()
 		if node != nil {
-			typeParameters.Nodes = append(typeParameters.Nodes, node)
+			typeParameters = append(typeParameters, node)
 		}
 		p.skipWhitespaceOrAsterisk()
 	}
-	return &typeParameters
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), typeParameters)
 }
 
 func (p *Parser) parseTemplateTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {

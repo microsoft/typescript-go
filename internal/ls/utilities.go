@@ -1401,3 +1401,10 @@ func getAncestorTypeNode(node *ast.Node) *ast.Node {
 func isSourceFileWithGlobalExports(node *ast.Node) bool {
 	return node != nil && ast.IsSourceFile(node) && node.AsSourceFile().GlobalExports != nil
 }
+
+func getPrecedingNonSpaceCharacterPosition(text string, pos int) int {
+	for pos >= 0 && stringutil.IsWhiteSpaceSingleLine(rune(text[pos])) {
+		pos--
+	}
+	return pos + 1
+}

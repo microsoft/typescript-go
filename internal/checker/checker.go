@@ -7219,8 +7219,12 @@ func (c *Checker) reportUnusedImports(node *ast.Node, unuseds []*ast.Node) {
 			declarationCount += len(namedBindings.Elements())
 		}
 	}
-	if declarationCount > 1 && declarationCount == len(unuseds) {
-		c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.All_imports_in_import_declaration_are_unused))
+	if declarationCount == len(unuseds) {
+		if len(unuseds) == 1 {
+			c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.X_0_is_declared_but_its_value_is_never_read, unuseds[0].Name().Text()))
+		} else {
+			c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.All_imports_in_import_declaration_are_unused))
+		}
 	} else {
 		for _, unused := range unuseds {
 			c.reportUnusedLocal(unused, unused.Name().Text())
@@ -7246,7 +7250,7 @@ func importClauseFromImported(node *ast.Node) *ast.Node {
 func (c *Checker) checkUnusedInferTypeParameter(node *ast.Node) {
 	typeParameter := node.AsInferTypeNode().TypeParameter
 	if c.isUnreferencedTypeParameter(typeParameter) {
-		c.reportUnused(node, UnusedKindParameter, NewDiagnosticForNode(typeParameter.Name(), diagnostics.X_0_is_declared_but_never_used, typeParameter.Name().Text()))
+		c.reportUnused(node, UnusedKindParameter, NewDiagnosticForNode(node, diagnostics.X_0_is_declared_but_never_used, typeParameter.Name().Text()))
 	}
 }
 
@@ -7258,10 +7262,16 @@ func (c *Checker) checkUnusedTypeParameters(node *ast.Node) {
 	if typeParameterList == nil {
 		return
 	}
-	if len(typeParameterList.Nodes) > 1 && core.Every(typeParameterList.Nodes, c.isUnreferencedTypeParameter) {
+	if core.Every(typeParameterList.Nodes, c.isUnreferencedTypeParameter) {
 		file := ast.GetSourceFileOfNode(node)
 		loc := rangeOfTypeParameters(file, typeParameterList)
-		c.reportUnused(node, UnusedKindParameter, ast.NewDiagnostic(file, loc, diagnostics.All_type_parameters_are_unused))
+		var diag *ast.Diagnostic
+		if len(typeParameterList.Nodes) == 1 {
+			diag = ast.NewDiagnostic(file, loc, diagnostics.X_0_is_declared_but_never_used, typeParameterList.Nodes[0].Name().Text())
+		} else {
+			diag = ast.NewDiagnostic(file, loc, diagnostics.All_type_parameters_are_unused)
+		}
+		c.reportUnused(node, UnusedKindParameter, diag)
 	} else {
 		for _, typeParameter := range typeParameterList.Nodes {
 			if c.isUnreferencedTypeParameter(typeParameter) {

@@ -31,7 +31,7 @@ class /*1*/X implements Foo {}`
 	f.GoToMarker(t, "1")
 	f.VerifyCodeFix(t, fourslash.VerifyCodeFixOptions{
 		Description:    "Implement interface 'Foo'",
-		NewFileContent: ``,
+		NewFileContent: "",
 		Index:          0,
 	})
 }

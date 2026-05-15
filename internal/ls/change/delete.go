@@ -21,11 +21,11 @@ func deleteDeclaration(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourc
 		oldFunction := node.Parent
 		if oldFunction.Kind == ast.KindArrowFunction &&
 			len(oldFunction.AsArrowFunction().Parameters.Nodes) == 1 &&
-			astnav.FindChildOfKind(oldFunction, ast.KindOpenParenToken, sourceFile) == nil {
+			astnav.FindChildOfKind(oldFunction, ast.KindCloseParenToken, sourceFile) == nil {
 			// Lambdas with exactly one parameter are special because, after removal, there
 			// must be an empty parameter list (i.e. `()`) and this won't necessarily be the
 			// case if the parameter is simply removed (e.g. in `x => 1`).
-			t.ReplaceRangeWithText(sourceFile, t.GetAdjustedRange(sourceFile, node, node, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude), "()")
+			t.ReplaceRangeWithText(sourceFile, t.GetAdjustedRange(sourceFile, node, node, LeadingTriviaOptionExclude, TrailingTriviaOptionExclude), "()")
 		} else {
 			deleteNodeInList(t, deletedNodesInLists, sourceFile, node)
 		}
@@ -41,7 +41,7 @@ func deleteDeclaration(t *Tracker, deletedNodesInLists map[*ast.Node]bool, sourc
 		} else if hasJSDocNodes(node) {
 			leadingTrivia = LeadingTriviaOptionJSDoc
 		}
-		deleteNode(t, sourceFile, node, leadingTrivia, TrailingTriviaOptionInclude)
+		deleteNode(t, sourceFile, node, leadingTrivia, TrailingTriviaOptionNone)
 
 	case ast.KindBindingElement:
 		pattern := node.Parent
@@ -199,7 +199,7 @@ func deleteNodeInList(t *Tracker, deletedNodesInLists map[*ast.Node]bool, source
 	debug.Assert(index != -1, "node should be in containing list")
 
 	if len(containingList.Nodes) == 1 {
-		deleteNode(t, sourceFile, node, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionInclude)
+		deleteNode(t, sourceFile, node, LeadingTriviaOptionIncludeAll, TrailingTriviaOptionNone)
 		return
 	}
 

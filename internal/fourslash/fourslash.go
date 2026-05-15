@@ -1527,8 +1527,8 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 	}
 
 	originalContent := f.getScriptInfo(f.activeFilename).content
-	expectedContent := options.NewFileContent
-	if options.NewRangeContent != "" {
+	useNewRangeContent := options.NewRangeContent != "" || options.NewFileContent == ""
+	if useNewRangeContent {
 		selection := f.getSelection()
 		if selection.Pos() == selection.End() {
 			ranges := f.getRangesInFile(f.activeFilename)
@@ -1537,9 +1537,22 @@ func (f *FourslashTest) VerifyCodeFix(t *testing.T, options VerifyCodeFixOptions
 			}
 			selection = ranges[0].Range
 		}
-		expectedContent = originalContent[:selection.Pos()] + options.NewRangeContent + originalContent[selection.End():]
+
+		edits := f.getCodeActionEditsForActiveFile(t, matchingAction)
+		updatedRange := f.updateTextRangeForTextEdits(selection, edits)
+
+		var actualContent string
+		if options.ApplyChanges {
+			f.applyTextEdits(t, edits)
+			actualContent = f.getScriptInfo(f.activeFilename).content
+		} else {
+			actualContent = f.applyEditsToContent(originalContent, edits)
+		}
+		assert.Equal(t, options.NewRangeContent, sliceTextRange(actualContent, updatedRange), "Range content after applying code fix did not match expected content.")
+		return
 	}
 
+	expectedContent := options.NewFileContent
 	if options.ApplyChanges {
 		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
 			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
@@ -1587,11 +1600,10 @@ func (f *FourslashTest) VerifyRangeAfterCodeFix(t *testing.T, expectedText strin
 
 	edits := f.getCodeActionEditsForActiveFile(t, action)
 	updatedRange := f.updateTextRangeForTextEdits(ranges[0].Range, edits)
-	assertValidTextRange(t, updatedRange, fmt.Sprintf("Code fix %q replaced part of the expected range; unable to compute rangeAfterCodeFix result.", action.Title))
 
 	f.applyTextEdits(t, edits)
 	actualContent := f.getScriptInfo(f.activeFilename).content
-	actualText := actualContent[updatedRange.Pos():updatedRange.End()]
+	actualText := sliceTextRange(actualContent, updatedRange)
 
 	if includeWhitespace {
 		assert.Equal(t, expectedText, actualText, "Range content after applying code fix did not match expected content.")
@@ -1616,6 +1628,7 @@ func (f *FourslashTest) getCodeActionEditsForActiveFile(t *testing.T, action *ls
 	if ok {
 		return edits
 	}
+
 	t.Fatalf("Code fix %q did not return edits for active file %q.", action.Title, f.activeFilename)
 	panic("unreachable")
 }
@@ -1739,9 +1752,14 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 	if len(fixAllCandidates) == 1 {
 		fixAllAction = fixAllCandidates[0]
 	} else {
-		// If there are multiple fix-all candidates, match by FixID in the title.
+		expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+		originalContent := f.getScriptInfo(f.activeFilename).content
 		for _, action := range fixAllCandidates {
-			if strings.Contains(strings.ToLower(action.Title), strings.ToLower(options.FixID)) {
+			if action.Edit == nil || action.Edit.Changes == nil {
+				continue
+			}
+			edits, ok := (*action.Edit.Changes)[expectedURI]
+			if ok && f.applyEditsToContent(originalContent, slices.Clone(edits)) == options.NewFileContent {
 				fixAllAction = action
 				break
 			}
@@ -2121,15 +2139,14 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
 
-	// Find all auto-import code actions (fixes with fixId/fixName related to imports)
-	// Skip fix-all entries (those without diagnostics attached)
 	var importActions []*lsproto.CodeAction
 	if result.CommandOrCodeActionArray != nil {
 		for _, item := range *result.CommandOrCodeActionArray {
-			if item.CodeAction != nil && item.CodeAction.Kind != nil && *item.CodeAction.Kind == lsproto.CodeActionKindQuickFix {
-				if item.CodeAction.Diagnostics != nil && len(*item.CodeAction.Diagnostics) > 0 {
-					importActions = append(importActions, item.CodeAction)
-				}
+			if item.CodeAction == nil {
+				continue
+			}
+			if isImportFixCodeAction(item.CodeAction) {
+				importActions = append(importActions, item.CodeAction)
 			}
 		}
 	}
@@ -2191,6 +2208,18 @@ func (f *FourslashTest) VerifyImportFixAtPosition(t *testing.T, expectedTexts []
 		actual := actualTextArray[i]
 		assert.Equal(t, expected, actual, fmt.Sprintf("Import fix at index %d doesn't match.\n", i))
 	}
+}
+
+func isImportFixCodeAction(action *lsproto.CodeAction) bool {
+	if action.Diagnostics == nil {
+		return false
+	}
+	for _, diagnostic := range *action.Diagnostics {
+		if diagnostic.Code != nil && ls.IsImportFixDiagnosticCode(*diagnostic.Code) {
+			return true
+		}
+	}
+	return false
 }
 
 func (f *FourslashTest) VerifyImportFixModuleSpecifiers(
@@ -5607,12 +5636,24 @@ func removeWhitespace(text string) string {
 	return builder.String()
 }
 
-func assertValidTextRange(t *testing.T, textRange core.TextRange, message string) {
-	t.Helper()
-	if textRange.Pos() >= 0 && textRange.End() >= 0 {
-		return
+func sliceTextRange(text string, textRange core.TextRange) string {
+	start := normalizeSliceIndex(textRange.Pos(), len(text))
+	end := normalizeSliceIndex(textRange.End(), len(text))
+	end = max(end, start)
+	return text[start:end]
+}
+
+func normalizeSliceIndex(position int, length int) int {
+	if position < 0 {
+		position += length
 	}
-	t.Fatal(message)
+	if position < 0 {
+		return 0
+	}
+	if position > length {
+		return length
+	}
+	return position
 }
 
 func selectCodeFixDiagnostic(diagnostics []*lsproto.Diagnostic, errorCode int) *lsproto.Diagnostic {

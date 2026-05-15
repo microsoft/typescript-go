@@ -34,6 +34,10 @@ const allowedCodeFixIds = new Set([
     "fixMissingImport",
     "fixMissingTypeAnnotationOnExports",
     "fixClassIncorrectlyImplementsInterface",
+    "unusedIdentifier_prefix",
+    "unusedIdentifier_delete",
+    "unusedIdentifier_deleteImports",
+    "unusedIdentifier_infer",
 ]);
 
 // File name prefixes for code fix tests that are allowed even without a fixId.
@@ -54,6 +58,13 @@ const allowedCodeFixDescriptionPrefixes = [
     "Extract binding expressions to variable",
     "Extract to variable and replace with",
     "Mark array literal as const",
+    "Remove template tag",
+    "Remove type parameters",
+    "Remove import from ",
+    "Remove unused declaration for",
+    "Remove unused declarations for",
+    "Replace ",
+    "Prefix ",
 ];
 
 function getManualTests(): Set<string> {
@@ -603,6 +614,9 @@ function parseCurrentContentIsArgs(funcName: string, args: readonly ts.Expressio
 }
 
 function getGoMultiLineStringLiteral(text: string): string {
+    if (text === "") {
+        return getGoStringLiteral(text);
+    }
     if (!text.includes("`") && !text.includes("\\")) {
         return "`" + text + "`";
     }

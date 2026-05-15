@@ -266,6 +266,10 @@ func (t *Tracker) Delete(sourceFile *ast.SourceFile, node *ast.Node) {
 	t.deletedNodes = append(t.deletedNodes, deletedNode{sourceFile: sourceFile, node: node})
 }
 
+func (t *Tracker) DeleteModifier(sourceFile *ast.SourceFile, modifier *ast.Node) {
+	t.DeleteNode(sourceFile, modifier, LeadingTriviaOptionExclude, TrailingTriviaOptionInclude)
+}
+
 // DeleteRange deletes a text range from the source file.
 func (t *Tracker) DeleteRange(sourceFile *ast.SourceFile, textRange core.TextRange) {
 	lspRange := t.converters.ToLSPRange(sourceFile, textRange)

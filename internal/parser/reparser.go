@@ -238,7 +238,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 			continue
 		}
 		if firstTemplate {
-			pos = tag.Pos()
+			pos = tag.Pos() + 1
 			firstTemplate = false
 		}
 		endPos = tag.End()

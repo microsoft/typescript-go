@@ -469,7 +469,6 @@ compiler/dynamicNamesErrors.errors.txt.diff
 compiler/elidedJSImport1.errors.txt.diff
 compiler/exportAsNamespace_augment.errors.txt.diff
 compiler/exportAsNamespaceConflict.errors.txt.diff
-compiler/extendsUntypedModule.errors.txt.diff
 compiler/gettersAndSettersErrors.errors.txt.diff
 compiler/importTypeAssertionDeprecation.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance.errors.txt.diff
@@ -753,15 +752,6 @@ compiler/unusedLocalsInMethod3.errors.txt.diff
 compiler/jsFileCompilationConstructorOverloadSyntax.errors.txt.diff
 compiler/jsFileCompilationMethodOverloadSyntax.errors.txt.diff
 compiler/jsFileCompilationFunctionOverloadSyntax.errors.txt.diff
-
-## to just the imported identifier (e.g., `Calculator`, `React`, `d`, `ns`)
-compiler/unusedImports1.errors.txt.diff
-compiler/unusedImports2.errors.txt.diff
-compiler/unusedImports6.errors.txt.diff
-compiler/unusedImports7.errors.txt.diff
-compiler/unusedImports12.errors.txt.diff
-compiler/reactImportUnusedInNewJSXEmit(jsx=react-jsx).errors.txt.diff
-compiler/reactImportUnusedInNewJSXEmit(jsx=react-jsxdev).errors.txt.diff
 
 ## Minor one-column error span shifts for specific characters
 compiler/slashBeforeVariableDeclaration1.errors.txt.diff

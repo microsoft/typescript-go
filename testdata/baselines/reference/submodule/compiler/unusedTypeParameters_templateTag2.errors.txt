@@ -1,14 +1,14 @@
-/a.js(2,3): error TS6205: All type parameters are unused.
+/a.js(2,4): error TS6205: All type parameters are unused.
 /a.js(8,14): error TS2339: Property 'p' does not exist on type 'C1<T, V>'.
-/a.js(13,3): error TS6205: All type parameters are unused.
-/a.js(20,3): error TS6205: All type parameters are unused.
+/a.js(13,4): error TS6205: All type parameters are unused.
+/a.js(20,4): error TS6205: All type parameters are unused.
 /a.js(25,14): error TS2339: Property 'p' does not exist on type 'C3<T, V, X>'.
 
 
 ==== /a.js (5 errors) ====
     /**
      * @template T
-      ~~~~~~~~~~~~
+       ~~~~~~~~~~~
      * @template V
     ~~~~~~~~~~~~~~
      */
@@ -25,7 +25,7 @@
     
     /**
      * @template T,V
-      ~~~~~~~~~~~~~~
+       ~~~~~~~~~~~~~
      */
     ~~
 !!! error TS6205: All type parameters are unused.
@@ -35,7 +35,7 @@
     
     /**
      * @template T,V,X
-      ~~~~~~~~~~~~~~~~
+       ~~~~~~~~~~~~~~~
      */
     ~~
 !!! error TS6205: All type parameters are unused.

@@ -1213,6 +1213,38 @@ func getAllReferencesForKeyword(sourceFiles []*ast.SourceFile, keywordKind ast.K
 	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindKeyword, references[0].node, nil, references)}
 }
 
+func isSymbolReferencedInFile(node *ast.Identifier, ch *checker.Checker, sourceFile *ast.SourceFile, searchContainer *ast.Node) bool {
+	var symbol *ast.Symbol
+	parent := node.Parent
+
+	if parent != nil && parent.Parent != nil && ast.IsParameterPropertyDeclaration(parent, parent.Parent) {
+		symbol, _ = ch.GetSymbolsOfParameterPropertyDeclaration(parent, node.Text)
+	} else {
+		symbol = ch.GetSymbolAtLocation(node.AsNode())
+	}
+
+	if symbol == nil {
+		return false
+	}
+
+	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, symbol.Name, searchContainer) {
+		if ast.IsIdentifier(token) {
+			id := token.AsIdentifier()
+			if id == node || id.Text != node.Text {
+				continue
+			}
+
+			referenceSymbol := ch.GetSymbolAtLocation(token)
+			if referenceSymbol == symbol || ch.GetShorthandAssignmentValueSymbol(token.Parent) == symbol ||
+				ast.IsExportSpecifier(token.Parent) && getLocalSymbolForExportSpecifier(token, referenceSymbol, token.Parent.AsExportSpecifier(), ch) == symbol {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 func getPossibleSymbolReferenceNodes(sourceFile *ast.SourceFile, symbolName string, container *ast.Node) []*ast.Node {
 	return core.MapNonNil(getPossibleSymbolReferencePositions(sourceFile, symbolName, container), func(pos int) *ast.Node {
 		if referenceLocation := astnav.GetTouchingPropertyName(sourceFile, pos); referenceLocation != sourceFile.AsNode() {

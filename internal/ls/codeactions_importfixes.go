@@ -43,8 +43,13 @@ var importFixErrorCodes = []int32{
 }
 
 const (
-	importFixID = "fixMissingImport"
+	ImportFixName = "import"
+	importFixID   = "fixMissingImport"
 )
+
+func IsImportFixDiagnosticCode(code lsproto.IntegerOrString) bool {
+	return code.Integer != nil && containsErrorCode(importFixErrorCodes, *code.Integer)
+}
 
 // ImportFixProvider is the CodeFixProvider for import-related fixes
 var ImportFixProvider = &CodeFixProvider{
@@ -84,6 +89,7 @@ func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]*C
 		actions = append(actions, &CodeAction{
 			Description:       description,
 			Changes:           edits,
+			FixName:           ImportFixName,
 			FixID:             importFixID,
 			FixAllDescription: diagnostics.Add_all_missing_imports.Localize(locale.FromContext(ctx)),
 		})
