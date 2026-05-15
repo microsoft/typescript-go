@@ -566,16 +566,12 @@ func ProvideWorkspaceSymbols(
 			containerName = strPtrTo(ast.GetDeclarationName(container))
 		}
 		// Use the name node's span so that VS selects just the symbol name (matching
-		// the TS5 navto behaviour). Fall back to the declaration start position if the
-		// declaration has no explicit name node (e.g. anonymous default exports).
-		var nameRange core.TextRange
-		if nameNode := ast.GetNameOfDeclaration(node); nameNode != nil {
-			nameStart := astnav.GetStartOfNode(nameNode, sourceFile, false /*includeJsDoc*/)
-			nameRange = core.NewTextRange(nameStart, nameNode.End())
-		} else {
-			pos := astnav.GetStartOfNode(node, sourceFile, false /*includeJsDoc*/)
-			nameRange = core.NewTextRange(pos, pos)
-		}
+		// the TS5 navto behaviour). GetNameOfDeclaration is always non-nil here because
+		// computeDeclarationMap only adds declarations whose GetDeclarationName (string
+		// form) is non-empty, which implies a name node exists.
+		nameNode := ast.GetNameOfDeclaration(node)
+		nameStart := astnav.GetStartOfNode(nameNode, sourceFile, false /*includeJsDoc*/)
+		nameRange := core.NewTextRange(nameStart, nameNode.End())
 		var symbol lsproto.SymbolInformation
 		symbol.Name = info.name
 		symbol.Kind = getSymbolKindFromNode(info.declaration)
