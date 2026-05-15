@@ -2,8 +2,6 @@ package project
 
 import (
 	"context"
-
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
 // APIUpdate creates a new snapshot incorporating the given file changes and the
@@ -27,15 +25,4 @@ func (s *Session) APIUpdate(ctx context.Context, apiFileChanges FileChangeSummar
 		ataChanges:  ataChanges,
 	})
 	return newSnapshot, newSnapshot.apiError
-}
-
-// APIPrepareAutoImports clones baseSnapshot with auto-imports prepared for uri.
-// The returned snapshot is ref'd; caller must call Deref when done.
-func (s *Session) APIPrepareAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) *Snapshot {
-	return baseSnapshot.Clone(ctx, SnapshotChange{
-		ResourceRequest: ResourceRequest{
-			Documents:   []lsproto.DocumentUri{uri},
-			AutoImports: uri,
-		},
-	}, baseSnapshot.fs.overlays, s)
 }
