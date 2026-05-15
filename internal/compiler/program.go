@@ -413,10 +413,7 @@ func (p *Program) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile) [
 }
 
 func (p *Program) SingleThreaded() bool {
-	if options := p.Options(); options != nil {
-		return p.opts.SingleThreaded.DefaultIfUnknown(options.SingleThreaded).IsTrue()
-	}
-	return p.opts.SingleThreaded.IsTrue()
+	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
 func (p *Program) BindSourceFiles() {

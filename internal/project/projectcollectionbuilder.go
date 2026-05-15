@@ -1051,10 +1051,11 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		entry.Locked(func(entry dirty.Value[*Project]) {
 			entry.Change(func(project *Project) {
 				if project.CommandLine == nil {
-					// CommandLine can be nil for a configured project that hasn't had its
-					// config acquired yet or whose config became invalid. Skip program
-					// creation to avoid a nil-pointer crash; the project will be updated
-					// on a subsequent snapshot when its config becomes available.
+					// Defense-in-depth: skip program creation if CommandLine is nil to
+					// avoid a nil-pointer crash in compiler.NewProgram. The project will
+					// be updated on a subsequent snapshot when its config becomes available.
+					project.dirty = false
+					project.dirtyFilePath = ""
 					return
 				}
 				oldHost := project.host
