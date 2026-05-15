@@ -1050,6 +1050,13 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	if updateProgram {
 		entry.Locked(func(entry dirty.Value[*Project]) {
 			entry.Change(func(project *Project) {
+				if project.CommandLine == nil {
+					// CommandLine can be nil for a configured project that hasn't had its
+					// config acquired yet or whose config became invalid. Skip program
+					// creation to avoid a nil-pointer crash; the project will be updated
+					// on a subsequent snapshot when its config becomes available.
+					return
+				}
 				oldHost := project.host
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
