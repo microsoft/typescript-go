@@ -740,7 +740,7 @@ type GetSignatureUsagesParams struct {
 
 // SignatureUsageResponse represents a single usage of a signature as a name-call pair.
 type SignatureUsageResponse struct {
-	Name Handle[ast.Node]  `json:"name"`
+	Name Handle[ast.Node] `json:"name"`
 	Call Handle[ast.Node] `json:"call,omitempty"`
 }
 
