@@ -95,6 +95,15 @@
                         "tags": [
                             "experimental"
                         ]
+                    },
+                    "js/ts.preferences.autoImportEntrypointDirectorySearch": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Enables recursive directory search for auto-importable files in all packages that lack `exports` in their `package.json`. Enabling this option allows more auto-importable paths to be discovered at the cost of increased scanning time.",
+                        "scope": "window",
+                        "tags": [
+                            "experimental"
+                        ]
                     }
                 }
             }
@@ -224,7 +233,7 @@
     "dependencies": {
         "@vscode/extension-telemetry": "^1.5.1",
         "vscode-languageclient": "^10.0.0-next.21",
-        "vscode-tas-client": "0.1.84"
+        "vscode-tas-client": "^0.2.1"
     },
     "devDependencies": {
         "@types/vscode": "~1.110.0",
