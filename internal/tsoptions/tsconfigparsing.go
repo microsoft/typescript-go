@@ -975,7 +975,9 @@ func getExtendedConfig(
 	// The cache locks entries during parsing, and a cycle would cause the same goroutine
 	// to re-lock the same entry, resulting in a deadlock. Let parseConfig handle the
 	// circularity error via its own resolution stack check.
-	if extendedConfigCache != nil && !slices.Contains(resolutionStack, extendedConfigFileName) {
+	if extendedConfigCache != nil && !slices.ContainsFunc(resolutionStack, func(s string) bool {
+		return tspath.ToPath(s, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()) == extendedConfigPath
+	}) {
 		cacheEntry = extendedConfigCache.GetExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host)
 	} else {
 		cacheEntry = ParseExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host, extendedConfigCache)

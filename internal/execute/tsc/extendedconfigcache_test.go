@@ -62,6 +62,28 @@ func TestExtendedConfigCacheExtendsCircularity(t *testing.T) {
 		}
 		assertHasCircularityDiagnostic(t, cmd)
 	})
+
+	t.Run("case-insensitive self-referencing extends", func(t *testing.T) {
+		t.Parallel()
+
+		// On a case-insensitive FS, ./Base.json and ./base.json resolve to the same
+		// cache entry. The cycle check must use canonical paths to avoid deadlock.
+		files := map[string]any{
+			"/project/tsconfig.json": `{"extends": "./Base.json"}`,
+			"/project/base.json":     `{"extends": "./base.json"}`,
+			"/project/main.ts":       `// Hello World!`,
+		}
+
+		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
+		host := &testParseConfigHost{fs: fs, cwd: "/project"}
+		cache := &tsc.ExtendedConfigCache{}
+
+		cmd, _ := tsoptions.GetParsedCommandLineOfConfigFile("/project/tsconfig.json", nil, nil, host, cache)
+		if cmd == nil {
+			t.Fatal("expected non-nil ParsedCommandLine")
+		}
+		assertHasCircularityDiagnostic(t, cmd)
+	})
 }
 
 func assertHasCircularityDiagnostic(t *testing.T, cmd *tsoptions.ParsedCommandLine) {
