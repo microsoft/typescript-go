@@ -71,6 +71,18 @@ func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
 	b.WriteString(hexCharCode)
 }
 
+// decodeCESU8OrUTF8 decodes a rune from s, recognizing CESU-8 encoded surrogate
+// code units (0xD800–0xDFFF) that the scanner produces for lone surrogates in
+// string literals. Standard utf8.DecodeRuneInString would replace these with
+// U+FFFD, losing the distinction between different surrogates.
+func decodeCESU8OrUTF8(s string) (rune, int) {
+	if len(s) >= 3 && s[0] == 0xED && s[1] >= 0xA0 && s[1] <= 0xBF && s[2] >= 0x80 && s[2] <= 0xBF {
+		r := rune(0xD000) | rune(s[1]&0x3F)<<6 | rune(s[2]&0x3F)
+		return r, 3
+	}
+	return utf8.DecodeRuneInString(s)
+}
+
 // Based heavily on the abstract 'Quote'/'QuoteJSONString' operation from ECMA-262 (24.3.2.2),
 // but augmented for a few select characters (e.g. lineSeparator, paragraphSeparator, nextLine)
 // Note that this doesn't actually wrap the input in double quotes.
@@ -78,7 +90,7 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 	pos := 0
 	i := 0
 	for i < len(s) {
-		ch, size := utf8.DecodeRuneInString(s[i:])
+		ch, size := decodeCESU8OrUTF8(s[i:])
 
 		escape := false
 
@@ -104,7 +116,8 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 				escape = true
 			}
 		default:
-			if ch <= '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
+			if ch <= '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' ||
+				ch >= 0xD800 && ch <= 0xDFFF {
 				escape = true
 			}
 		}

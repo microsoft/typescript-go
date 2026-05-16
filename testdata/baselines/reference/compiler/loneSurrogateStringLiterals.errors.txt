@@ -1,0 +1,37 @@
+loneSurrogateStringLiterals.ts(6,7): error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
+loneSurrogateStringLiterals.ts(7,7): error TS2322: Type '"\uD800"' is not assignable to type '"\uDC00"'.
+loneSurrogateStringLiterals.ts(10,7): error TS2322: Type '"\uD801"' is not assignable to type '"\uD800"'.
+loneSurrogateStringLiterals.ts(11,7): error TS2322: Type '"\uD800"' is not assignable to type '"\uD801"'.
+loneSurrogateStringLiterals.ts(14,7): error TS2322: Type '"\uDC01"' is not assignable to type '"\uDC00"'.
+loneSurrogateStringLiterals.ts(15,7): error TS2322: Type '"\uDC00"' is not assignable to type '"\uDC01"'.
+
+
+==== loneSurrogateStringLiterals.ts (6 errors) ====
+    // Lone surrogates should be distinct string literal types
+    const highSurrogate: "\uD800" = "\uD800"; // ok
+    const lowSurrogate: "\uDC00" = "\uDC00"; // ok
+    
+    // These should be errors - different surrogates are not assignable to each other
+    const highToLow: "\uD800" = "\uDC00"; // error
+          ~~~~~~~~~
+!!! error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
+    const lowToHigh: "\uDC00" = "\uD800"; // error
+          ~~~~~~~~~
+!!! error TS2322: Type '"\uD800"' is not assignable to type '"\uDC00"'.
+    
+    // Different high surrogates should also be distinct
+    const high1: "\uD800" = "\uD801"; // error
+          ~~~~~
+!!! error TS2322: Type '"\uD801"' is not assignable to type '"\uD800"'.
+    const high2: "\uD801" = "\uD800"; // error
+          ~~~~~
+!!! error TS2322: Type '"\uD800"' is not assignable to type '"\uD801"'.
+    
+    // Different low surrogates should also be distinct
+    const low1: "\uDC00" = "\uDC01"; // error
+          ~~~~
+!!! error TS2322: Type '"\uDC01"' is not assignable to type '"\uDC00"'.
+    const low2: "\uDC01" = "\uDC00"; // error
+          ~~~~
+!!! error TS2322: Type '"\uDC00"' is not assignable to type '"\uDC01"'.
+    

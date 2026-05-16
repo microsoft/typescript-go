@@ -1764,13 +1764,11 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
 			}
 			s.pos = savedPos
-			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
-				return encodeSurrogate(codePoint)
-			}
-		} else if (codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint)) &&
-			flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
-			// Lone surrogate inside a non-unicode regex: encode as CESU-8 so scanClassRanges
-			// can compare surrogates numerically. Must NOT apply to string literals.
+			return encodeSurrogate(codePoint)
+		} else if codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint) {
+			// Lone surrogate: encode as CESU-8 so that distinct surrogates remain
+			// distinguishable. Go's string(rune) would replace all surrogates with
+			// U+FFFD, collapsing e.g. "\uD800" and "\uDC00" into the same value.
 			return encodeSurrogate(codePoint)
 		}
 		return string(codePoint)
