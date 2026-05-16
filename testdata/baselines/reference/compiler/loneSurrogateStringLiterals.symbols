@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/loneSurrogateStringLiterals.ts] ////
+
+=== loneSurrogateStringLiterals.ts ===
+// Lone surrogates should be distinct string literal types
+const highSurrogate: "\uD800" = "\uD800"; // ok
+>highSurrogate : Symbol(highSurrogate, Decl(loneSurrogateStringLiterals.ts, 1, 5))
+
+const lowSurrogate: "\uDC00" = "\uDC00"; // ok
+>lowSurrogate : Symbol(lowSurrogate, Decl(loneSurrogateStringLiterals.ts, 2, 5))
+
+// These should be errors - different surrogates are not assignable to each other
+const highToLow: "\uD800" = "\uDC00"; // error
+>highToLow : Symbol(highToLow, Decl(loneSurrogateStringLiterals.ts, 5, 5))
+
+const lowToHigh: "\uDC00" = "\uD800"; // error
+>lowToHigh : Symbol(lowToHigh, Decl(loneSurrogateStringLiterals.ts, 6, 5))
+
+// Different high surrogates should also be distinct
+const high1: "\uD800" = "\uD801"; // error
+>high1 : Symbol(high1, Decl(loneSurrogateStringLiterals.ts, 9, 5))
+
+const high2: "\uD801" = "\uD800"; // error
+>high2 : Symbol(high2, Decl(loneSurrogateStringLiterals.ts, 10, 5))
+
+// Different low surrogates should also be distinct
+const low1: "\uDC00" = "\uDC01"; // error
+>low1 : Symbol(low1, Decl(loneSurrogateStringLiterals.ts, 13, 5))
+
+const low2: "\uDC01" = "\uDC00"; // error
+>low2 : Symbol(low2, Decl(loneSurrogateStringLiterals.ts, 14, 5))
+
