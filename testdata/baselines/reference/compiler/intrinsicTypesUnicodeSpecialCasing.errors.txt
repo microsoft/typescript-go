@@ -1,0 +1,63 @@
+intrinsicTypesUnicodeSpecialCasing.ts(7,7): error TS2322: Type '"SS"' is not assignable to type '"ß"'.
+intrinsicTypesUnicodeSpecialCasing.ts(11,7): error TS2322: Type '"i̇"' is not assignable to type '"i"'.
+intrinsicTypesUnicodeSpecialCasing.ts(15,7): error TS2322: Type '"FI"' is not assignable to type '"ﬁ"'.
+intrinsicTypesUnicodeSpecialCasing.ts(19,7): error TS2322: Type '"FL"' is not assignable to type '"ﬂ"'.
+intrinsicTypesUnicodeSpecialCasing.ts(23,7): error TS2322: Type '"FF"' is not assignable to type '"ﬀ"'.
+intrinsicTypesUnicodeSpecialCasing.ts(27,7): error TS2322: Type '"SStest"' is not assignable to type '"ßtest"'.
+intrinsicTypesUnicodeSpecialCasing.ts(31,7): error TS2322: Type '"i̇SPANYOL"' is not assignable to type '"iSPANYOL"'.
+intrinsicTypesUnicodeSpecialCasing.ts(35,7): error TS2322: Type '"STRASSE"' is not assignable to type '"STRAßE"'.
+
+
+==== intrinsicTypesUnicodeSpecialCasing.ts (8 errors) ====
+    // Test Unicode special case mappings for intrinsic string types
+    // These characters have 1:many case mappings that Go's strings.ToUpper/ToLower
+    // don't handle, but JavaScript's toUpperCase()/toLowerCase() do.
+    
+    // ß (U+00DF) uppercases to "SS" in JavaScript
+    type T1 = Uppercase<"ß">;
+    const t1: T1 = "SS";
+          ~~
+!!! error TS2322: Type '"SS"' is not assignable to type '"ß"'.
+    
+    // İ (U+0130) lowercases to "i̇" (i + combining dot above U+0307) in JavaScript
+    type T2 = Lowercase<"İ">;
+    const t2: T2 = "i\u0307";
+          ~~
+!!! error TS2322: Type '"i̇"' is not assignable to type '"i"'.
+    
+    // Ligatures: ﬁ (U+FB01) uppercases to "FI"
+    type T3 = Uppercase<"ﬁ">;
+    const t3: T3 = "FI";
+          ~~
+!!! error TS2322: Type '"FI"' is not assignable to type '"ﬁ"'.
+    
+    // ﬂ (U+FB02) uppercases to "FL"
+    type T4 = Uppercase<"ﬂ">;
+    const t4: T4 = "FL";
+          ~~
+!!! error TS2322: Type '"FL"' is not assignable to type '"ﬂ"'.
+    
+    // ﬀ (U+FB00) uppercases to "FF"
+    type T5 = Uppercase<"ﬀ">;
+    const t5: T5 = "FF";
+          ~~
+!!! error TS2322: Type '"FF"' is not assignable to type '"ﬀ"'.
+    
+    // Capitalize should only affect first character
+    type T6 = Capitalize<"ßtest">;
+    const t6: T6 = "SStest";
+          ~~
+!!! error TS2322: Type '"SStest"' is not assignable to type '"ßtest"'.
+    
+    // Uncapitalize with İ
+    type T7 = Uncapitalize<"İSPANYOL">;
+    const t7: T7 = "i\u0307SPANYOL";
+          ~~
+!!! error TS2322: Type '"i̇SPANYOL"' is not assignable to type '"iSPANYOL"'.
+    
+    // Mixed string with special characters
+    type T8 = Uppercase<"straße">;
+    const t8: T8 = "STRASSE";
+          ~~
+!!! error TS2322: Type '"STRASSE"' is not assignable to type '"STRAßE"'.
+    

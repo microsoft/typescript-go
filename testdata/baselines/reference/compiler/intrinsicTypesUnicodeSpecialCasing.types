@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/intrinsicTypesUnicodeSpecialCasing.ts] ////
+
+=== intrinsicTypesUnicodeSpecialCasing.ts ===
+// Test Unicode special case mappings for intrinsic string types
+// These characters have 1:many case mappings that Go's strings.ToUpper/ToLower
+// don't handle, but JavaScript's toUpperCase()/toLowerCase() do.
+
+// ß (U+00DF) uppercases to "SS" in JavaScript
+type T1 = Uppercase<"ß">;
+>T1 : "ß"
+
+const t1: T1 = "SS";
+>t1 : "ß"
+>"SS" : "SS"
+
+// İ (U+0130) lowercases to "i̇" (i + combining dot above U+0307) in JavaScript
+type T2 = Lowercase<"İ">;
+>T2 : "i"
+
+const t2: T2 = "i\u0307";
+>t2 : "i"
+>"i\u0307" : "i̇"
+
+// Ligatures: ﬁ (U+FB01) uppercases to "FI"
+type T3 = Uppercase<"ﬁ">;
+>T3 : "ﬁ"
+
+const t3: T3 = "FI";
+>t3 : "ﬁ"
+>"FI" : "FI"
+
+// ﬂ (U+FB02) uppercases to "FL"
+type T4 = Uppercase<"ﬂ">;
+>T4 : "ﬂ"
+
+const t4: T4 = "FL";
+>t4 : "ﬂ"
+>"FL" : "FL"
+
+// ﬀ (U+FB00) uppercases to "FF"
+type T5 = Uppercase<"ﬀ">;
+>T5 : "ﬀ"
+
+const t5: T5 = "FF";
+>t5 : "ﬀ"
+>"FF" : "FF"
+
+// Capitalize should only affect first character
+type T6 = Capitalize<"ßtest">;
+>T6 : "ßtest"
+
+const t6: T6 = "SStest";
+>t6 : "ßtest"
+>"SStest" : "SStest"
+
+// Uncapitalize with İ
+type T7 = Uncapitalize<"İSPANYOL">;
+>T7 : "iSPANYOL"
+
+const t7: T7 = "i\u0307SPANYOL";
+>t7 : "iSPANYOL"
+>"i\u0307SPANYOL" : "i̇SPANYOL"
+
+// Mixed string with special characters
+type T8 = Uppercase<"straße">;
+>T8 : "STRAßE"
+
+const t8: T8 = "STRASSE";
+>t8 : "STRAßE"
+>"STRASSE" : "STRASSE"
+
