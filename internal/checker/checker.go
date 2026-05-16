@@ -11,7 +11,6 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -28873,15 +28872,13 @@ func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
 func applyStringMapping(symbol *ast.Symbol, str string) string {
 	switch intrinsicTypeKinds[symbol.Name] {
 	case IntrinsicTypeKindUppercase:
-		return strings.ToUpper(str)
+		return toUpperCase(str)
 	case IntrinsicTypeKindLowercase:
-		return strings.ToLower(str)
+		return toLowerCase(str)
 	case IntrinsicTypeKindCapitalize:
-		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToUpper(str[:size]) + str[size:]
+		return toUpperCaseFirstRune(str)
 	case IntrinsicTypeKindUncapitalize:
-		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToLower(str[:size]) + str[size:]
+		return toLowerCaseFirstRune(str)
 	}
 	return str
 }

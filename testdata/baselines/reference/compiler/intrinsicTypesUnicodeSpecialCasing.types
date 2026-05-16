@@ -7,65 +7,65 @@
 
 // ß (U+00DF) uppercases to "SS" in JavaScript
 type T1 = Uppercase<"ß">;
->T1 : "ß"
+>T1 : "SS"
 
 const t1: T1 = "SS";
->t1 : "ß"
+>t1 : "SS"
 >"SS" : "SS"
 
 // İ (U+0130) lowercases to "i̇" (i + combining dot above U+0307) in JavaScript
 type T2 = Lowercase<"İ">;
->T2 : "i"
+>T2 : "i̇"
 
 const t2: T2 = "i\u0307";
->t2 : "i"
+>t2 : "i̇"
 >"i\u0307" : "i̇"
 
 // Ligatures: ﬁ (U+FB01) uppercases to "FI"
 type T3 = Uppercase<"ﬁ">;
->T3 : "ﬁ"
+>T3 : "FI"
 
 const t3: T3 = "FI";
->t3 : "ﬁ"
+>t3 : "FI"
 >"FI" : "FI"
 
 // ﬂ (U+FB02) uppercases to "FL"
 type T4 = Uppercase<"ﬂ">;
->T4 : "ﬂ"
+>T4 : "FL"
 
 const t4: T4 = "FL";
->t4 : "ﬂ"
+>t4 : "FL"
 >"FL" : "FL"
 
 // ﬀ (U+FB00) uppercases to "FF"
 type T5 = Uppercase<"ﬀ">;
->T5 : "ﬀ"
+>T5 : "FF"
 
 const t5: T5 = "FF";
->t5 : "ﬀ"
+>t5 : "FF"
 >"FF" : "FF"
 
 // Capitalize should only affect first character
 type T6 = Capitalize<"ßtest">;
->T6 : "ßtest"
+>T6 : "SStest"
 
 const t6: T6 = "SStest";
->t6 : "ßtest"
+>t6 : "SStest"
 >"SStest" : "SStest"
 
 // Uncapitalize with İ
 type T7 = Uncapitalize<"İSPANYOL">;
->T7 : "iSPANYOL"
+>T7 : "i̇SPANYOL"
 
 const t7: T7 = "i\u0307SPANYOL";
->t7 : "iSPANYOL"
+>t7 : "i̇SPANYOL"
 >"i\u0307SPANYOL" : "i̇SPANYOL"
 
 // Mixed string with special characters
 type T8 = Uppercase<"straße">;
->T8 : "STRAßE"
+>T8 : "STRASSE"
 
 const t8: T8 = "STRASSE";
->t8 : "STRAßE"
+>t8 : "STRASSE"
 >"STRASSE" : "STRASSE"
 
