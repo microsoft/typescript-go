@@ -1,35 +1,57 @@
 package checker
 
 import (
+	"strings"
+	"sync"
 	"unicode/utf8"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-// upperCaser and lowerCaser use golang.org/x/text/cases with the "und" (undetermined)
-// locale to perform full Unicode case mapping, matching JavaScript's
-// String.prototype.toUpperCase() / toLowerCase() behavior.
-// Unlike Go's strings.ToUpper/ToLower which use simple case mapping (1:1),
-// these handle special case mappings where a single character maps to multiple
-// characters (e.g., 'ß' → "SS", 'İ' → "i̇").
-// The mapping tables come from Unicode's SpecialCasing.txt and are kept up to
-// date via the golang.org/x/text module.
+// upperCaser and lowerCaser are lazily initialized via sync.OnceValue to avoid
+// paying the cost of loading golang.org/x/text/cases tables unless non-ASCII
+// input is actually encountered.
 var (
-	upperCaser = cases.Upper(language.Und)
-	lowerCaser = cases.Lower(language.Und)
+	upperCaser = sync.OnceValue(func() *cases.Caser {
+		c := cases.Upper(language.Und)
+		return &c
+	})
+	lowerCaser = sync.OnceValue(func() *cases.Caser {
+		c := cases.Lower(language.Und)
+		return &c
+	})
 )
 
-// toUpperCase converts a string to uppercase using the full Unicode case mapping,
-// matching JavaScript's String.prototype.toUpperCase() behavior.
-func toUpperCase(s string) string {
-	return upperCaser.String(s)
+// isASCII reports whether s contains only ASCII bytes.
+func isASCII(s string) bool {
+	for i := range len(s) {
+		if s[i] > 0x7F {
+			return false
+		}
+	}
+	return true
 }
 
-// toLowerCase converts a string to lowercase using the full Unicode case mapping,
+// toUpperCase converts a string to uppercase using full Unicode case mapping,
+// matching JavaScript's String.prototype.toUpperCase() behavior.
+// ASCII strings use a fast path; non-ASCII strings fall through to
+// golang.org/x/text/cases which handles special case mappings where a single
+// character maps to multiple characters (e.g., 'ß' → "SS").
+func toUpperCase(s string) string {
+	if isASCII(s) {
+		return strings.ToUpper(s)
+	}
+	return upperCaser().String(s)
+}
+
+// toLowerCase converts a string to lowercase using full Unicode case mapping,
 // matching JavaScript's String.prototype.toLowerCase() behavior.
 func toLowerCase(s string) string {
-	return lowerCaser.String(s)
+	if isASCII(s) {
+		return strings.ToLower(s)
+	}
+	return lowerCaser().String(s)
 }
 
 // toUpperCaseFirstRune converts the first rune to uppercase using full Unicode
@@ -38,8 +60,17 @@ func toUpperCaseFirstRune(s string) string {
 	if s == "" {
 		return s
 	}
-	_, size := utf8.DecodeRuneInString(s)
-	return upperCaser.String(s[:size]) + s[size:]
+	r, size := utf8.DecodeRuneInString(s)
+	if r < 0x80 {
+		// ASCII fast path: single byte uppercase
+		if r >= 'a' && r <= 'z' {
+			b := []byte(s)
+			b[0] -= 'a' - 'A'
+			return string(b)
+		}
+		return s
+	}
+	return upperCaser().String(s[:size]) + s[size:]
 }
 
 // toLowerCaseFirstRune converts the first rune to lowercase using full Unicode
@@ -48,6 +79,15 @@ func toLowerCaseFirstRune(s string) string {
 	if s == "" {
 		return s
 	}
-	_, size := utf8.DecodeRuneInString(s)
-	return lowerCaser.String(s[:size]) + s[size:]
+	r, size := utf8.DecodeRuneInString(s)
+	if r < 0x80 {
+		// ASCII fast path: single byte lowercase
+		if r >= 'A' && r <= 'Z' {
+			b := []byte(s)
+			b[0] += 'a' - 'A'
+			return string(b)
+		}
+		return s
+	}
+	return lowerCaser().String(s[:size]) + s[size:]
 }
