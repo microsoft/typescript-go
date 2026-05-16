@@ -26448,8 +26448,11 @@ func (c *Checker) getCrossProductUnionSize(types []*Type) int {
 		switch {
 		case t.flags&TypeFlagsUnion != 0:
 			n := len(t.Types())
-			if n > 0 && size > 100_000/n {
-				return 100_000
+			// Cap the result to avoid integer overflow when computing the cross product of many large unions.
+			// In TypeScript, number overflow produces Infinity which naturally exceeds the limit check;
+			// in Go, we must guard against int wrapping to zero or negative.
+			if n > 0 && size > math.MaxInt/n {
+				return math.MaxInt
 			}
 			size *= n
 		case t.flags&TypeFlagsNever != 0:
