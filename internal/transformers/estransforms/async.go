@@ -966,9 +966,16 @@ func (tx *asyncTransformer) getOriginalIfFunctionLike(node *ast.Node) *ast.Node 
 }
 
 func isNameOfPropertyAccessOrAssignment(parent *ast.Node, node *ast.Node) bool {
-	return parent != nil &&
-		(ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) &&
-		parent.Name() == node
+	if parent == nil {
+		return false
+	}
+	if (ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) && parent.Name() == node {
+		return true
+	}
+	if ast.IsBindingElement(parent) && parent.PropertyName() == node {
+		return true
+	}
+	return false
 }
 
 // isSimpleParameterList checks if every parameter has no initializer and an Identifier name.
