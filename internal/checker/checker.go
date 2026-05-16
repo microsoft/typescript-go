@@ -26447,7 +26447,11 @@ func (c *Checker) getCrossProductUnionSize(types []*Type) int {
 	for _, t := range types {
 		switch {
 		case t.flags&TypeFlagsUnion != 0:
-			size *= len(t.Types())
+			n := len(t.Types())
+			if n > 0 && size > 100_000/n {
+				return 100_000
+			}
+			size *= n
 		case t.flags&TypeFlagsNever != 0:
 			return 0
 		}
