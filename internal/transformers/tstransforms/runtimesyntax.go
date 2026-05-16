@@ -676,7 +676,9 @@ func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclara
 	}
 
 	name := tx.Visitor().VisitNode(node.Name())
-	if exported && name == nil {
+	needsName := (exported && name == nil) ||
+		ast.ChildIsDecorated(false /*useLegacyDecorators*/, node.AsNode(), nil)
+	if needsName && name == nil {
 		name = tx.Factory().NewGeneratedNameForNode(node.AsNode())
 	}
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
