@@ -10453,7 +10453,7 @@ func (c *Checker) checkCollisionWithGlobalObjectInGeneratedCode(node *ast.Node, 
 }
 
 func (c *Checker) needCollisionCheckForIdentifier(node *ast.Node, identifier *ast.Node, name string) bool {
-	if identifier != nil && identifier.Text() != name {
+	if identifier == nil || !ast.IsIdentifier(identifier) || identifier.Text() != name {
 		return false
 	}
 	switch node.Kind {

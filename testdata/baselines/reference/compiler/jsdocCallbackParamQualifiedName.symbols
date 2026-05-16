@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/jsdocCallbackParamQualifiedName.ts] ////
+
+=== bug.js ===
+
+/**
+ * @callback cb
+ * @param x.y
+ */
+

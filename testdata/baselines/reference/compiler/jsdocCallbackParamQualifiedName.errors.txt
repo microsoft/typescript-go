@@ -1,0 +1,12 @@
+bug.js(3,4): error TS7006: Parameter 'x.y' implicitly has an 'any' type.
+
+
+==== bug.js (1 errors) ====
+    /**
+     * @callback cb
+     * @param x.y
+       ~~~~~~~~~~
+     */
+    ~
+!!! error TS7006: Parameter 'x.y' implicitly has an 'any' type.
+    
