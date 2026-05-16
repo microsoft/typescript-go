@@ -9,23 +9,23 @@ enum E {
 >NaN : number
 
   B = NaN,
->B : E.B
+>B : E.A
 >NaN : number
 }
 
 const a: E.A = E.B;
->a : E.A
+>a : E
 >E : any
->E.B : E.B
+>E.B : E
 >E : typeof E
->B : E.B
+>B : E
 
 const b: E.B = E.A;
->b : E.B
+>b : E
 >E : any
->E.A : E.A
+>E.A : E
 >E : typeof E
->A : E.A
+>A : E
 
 enum F {
 >F : F
@@ -36,7 +36,7 @@ enum F {
 }
 
 const c: E.A = F.X; // Error expected - different enums
->c : E.A
+>c : E
 >E : any
 >F.X : F
 >F : typeof F
