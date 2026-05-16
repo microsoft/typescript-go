@@ -880,8 +880,8 @@ func decodeEntities(text string) string {
 		// Check if there's another '&' between the current '&' and the ';'.
 		// If so, the current '&' is not part of a valid entity; write it as
 		// a literal and restart from the next '&'.
-		nextAmp := strings.IndexByte(text[1:], '&')
-		if nextAmp >= 0 && nextAmp+1 < semi {
+		nextAmp := strings.IndexByte(text[1:semi], '&')
+		if nextAmp >= 0 {
 			result.WriteByte('&')
 			text = text[1:]
 			i = nextAmp
