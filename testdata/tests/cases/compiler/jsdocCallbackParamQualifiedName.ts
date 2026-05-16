@@ -13,3 +13,17 @@
  * @param {object} x
  * @param {string} x.y
  */
+
+/**
+ * @overload
+ * @param {object} x
+ * @param {string} x.y
+ * @returns {string}
+ */
+/**
+ * @param {object} x
+ * @returns {string}
+ */
+function foo(x) {
+    return x.y;
+}
