@@ -1063,8 +1063,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				ec.SetSourceMapRange(exportStatement, transformers.MoveRangePastDecorators(classNode))
 				statements = append(statements, exportStatement)
 			}
-		} else {
-			debug.Assert(classNode.Name() != nil, "A class declaration that is not a default export must have a name.")
+		} else if classNode.Name() != nil {
 			// produces:
 			//   let C = (() => { ... })();
 			iife := tx.transformClassLike(classNode)
@@ -1086,6 +1085,16 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				ec.SetOriginal(exportStatement, classNode)
 				statements = append(statements, exportStatement)
 			}
+		} else {
+			// Anonymous class declaration that is not a default export.
+			// produces:
+			//   (() => { ... })();
+			iife := tx.transformClassLike(classNode)
+			exprStatement := f.NewExpressionStatement(iife)
+			ec.SetOriginal(exprStatement, classNode)
+			ec.AssignCommentRange(exprStatement, classNode)
+			ec.SetSourceMapRange(exprStatement, transformers.MoveRangePastDecorators(classNode))
+			statements = append(statements, exprStatement)
 		}
 
 		return transformers.SingleOrMany(statements, f)
