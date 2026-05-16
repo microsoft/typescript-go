@@ -1805,6 +1805,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			var size int
 			ch, size = utf8.DecodeRuneInString(s.text[s.pos:])
 			s.pos += size
+			s.containsNonASCII = true
 		}
 		// LineContinuation: a backslash followed by a line terminator is "the empty code unit sequence".
 		if ch == '\u2028' || ch == '\u2029' {
