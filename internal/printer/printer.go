@@ -5773,6 +5773,10 @@ func (p *Printer) emitPos(pos int) {
 		return
 	}
 
+	if pos > len(p.sourceMapSource.Text()) {
+		return
+	}
+
 	sourceLine, sourceCharacter := p.sourceMapLineCharCache.getLineAndCharacter(pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),

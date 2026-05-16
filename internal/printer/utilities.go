@@ -909,11 +909,6 @@ func newLineCharacterCache(source sourcemap.Source) *lineCharacterCache {
 // getLineAndCharacter returns the 0-based line number and UTF-16 code unit
 // offset from the start of that line for the given byte position.
 func (c *lineCharacterCache) getLineAndCharacter(pos int) (line int, character core.UTF16Offset) {
-	// Clamp pos to the text length to avoid panics for positions beyond
-	// the source text (e.g. synthesized end positions for unclosed blocks).
-	if pos > len(c.text) {
-		pos = len(c.text)
-	}
 	line = scanner.ComputeLineOfPosition(c.lineMap, pos)
 	if c.hasCached && line == c.cachedLine && pos >= c.cachedPos {
 		// Incremental: only count UTF-16 code units from the last cached position.
