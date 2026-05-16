@@ -1967,19 +1967,19 @@ func (c *Checker) getSwitchClauseTypeOfWitnesses(node *ast.Node) []string {
 	links := c.switchStatementLinks.Get(node)
 	if !links.witnessesComputed {
 		clauses := node.AsSwitchStatement().CaseBlock.AsCaseBlock().Clauses.Nodes
-		witnesses := make([]string, len(clauses))
-		for i, clause := range clauses {
-			if clause.Kind == ast.KindCaseClause {
-				var text string
-				if ast.IsStringLiteralLike(clause.Expression()) {
-					text = clause.Expression().Text()
-				}
-				if text == "" {
-					witnesses = nil
-					break
-				}
-				if !slices.Contains(witnesses, text) {
-					witnesses[i] = text
+		// Return nil if one or more case clause expressions are not string literals.
+		hasNonStringLiteral := core.Some(clauses, func(clause *ast.Node) bool {
+			return clause.Kind == ast.KindCaseClause && !ast.IsStringLiteralLike(clause.Expression())
+		})
+		var witnesses []string
+		if !hasNonStringLiteral {
+			witnesses = make([]string, len(clauses))
+			for i, clause := range clauses {
+				if clause.Kind == ast.KindCaseClause {
+					text := clause.Expression().Text()
+					if text != "" && !slices.Contains(witnesses, text) {
+						witnesses[i] = text
+					}
 				}
 			}
 		}

@@ -1,0 +1,15 @@
+typeofSwitchEmptyStringCase.ts(3,10): error TS2678: Type '""' is not comparable to type '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"'.
+
+
+==== typeofSwitchEmptyStringCase.ts (1 errors) ====
+    function f(x: string | number) {
+      switch (typeof x) {
+        case "":
+             ~~
+!!! error TS2678: Type '""' is not comparable to type '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"'.
+        case "string":
+          x.charAt(0);
+          break;
+      }
+    }
+    
