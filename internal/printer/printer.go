@@ -4092,13 +4092,6 @@ func (p *Printer) emitExportSpecifierNode(node *ast.ExportSpecifierNode) {
 }
 
 func (p *Printer) emitEmbeddedStatement(parentNode *ast.Node, node *ast.Statement) {
-	if node == nil {
-		p.writeLine()
-		p.increaseIndent()
-		p.writePunctuation(";")
-		p.decreaseIndent()
-		return
-	}
 	if ast.IsBlock(node) ||
 		p.shouldEmitOnSingleLine(parentNode) ||
 		p.Options.PreserveSourceNewlines && p.getLeadingLineTerminatorCount(parentNode, node, LFNone) == 0 {

@@ -945,7 +945,14 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 func (c *EmitContext) VisitEmbeddedStatement(node *ast.Statement, visitor *ast.NodeVisitor) *ast.Statement {
 	embeddedStatement := visitor.VisitEmbeddedStatement(node)
 	if embeddedStatement == nil {
-		return nil
+		if node == nil {
+			return nil
+		}
+		emptyStatement := visitor.Factory.NewEmptyStatement()
+		emptyStatement.Loc = node.Loc
+		c.SetOriginal(emptyStatement, node)
+		c.AssignCommentRange(emptyStatement, node)
+		return emptyStatement
 	}
 	if ast.IsNotEmittedStatement(embeddedStatement) {
 		emptyStatement := visitor.Factory.NewEmptyStatement()
