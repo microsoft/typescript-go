@@ -1,0 +1,26 @@
+enumNaNValues.ts(6,7): error TS2322: Type 'E.B' is not assignable to type 'E.A'.
+enumNaNValues.ts(7,7): error TS2322: Type 'E.A' is not assignable to type 'E.B'.
+enumNaNValues.ts(13,7): error TS2322: Type 'F' is not assignable to type 'E.A'.
+
+
+==== enumNaNValues.ts (3 errors) ====
+    enum E {
+      A = NaN,
+      B = NaN,
+    }
+    
+    const a: E.A = E.B;
+          ~
+!!! error TS2322: Type 'E.B' is not assignable to type 'E.A'.
+    const b: E.B = E.A;
+          ~
+!!! error TS2322: Type 'E.A' is not assignable to type 'E.B'.
+    
+    enum F {
+      X = NaN,
+    }
+    
+    const c: E.A = F.X; // Error expected - different enums
+          ~
+!!! error TS2322: Type 'F' is not assignable to type 'E.A'.
+    
