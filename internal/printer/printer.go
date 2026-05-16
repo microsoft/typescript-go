@@ -1297,6 +1297,8 @@ func (p *Printer) emitModuleExportName(node *ast.ModuleExportName) {
 		p.emitIdentifierName(node.AsIdentifier())
 	case ast.KindStringLiteral:
 		p.emitStringLiteral(node.AsStringLiteral())
+	case ast.KindNumericLiteral:
+		p.emitNumericLiteral(node.AsNumericLiteral())
 	default:
 		panic(fmt.Sprintf("unexpected ModuleExportName: %v", node.Kind))
 	}
