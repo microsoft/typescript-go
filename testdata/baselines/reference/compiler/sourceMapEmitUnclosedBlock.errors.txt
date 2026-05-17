@@ -1,0 +1,9 @@
+sourceMapEmitUnclosedBlock.ts(2,1): error TS1005: '}' expected.
+
+
+==== sourceMapEmitUnclosedBlock.ts (1 errors) ====
+    {
+    
+    
+!!! error TS1005: '}' expected.
+!!! related TS1007 sourceMapEmitUnclosedBlock.ts:1:1: The parser expected to find a '}' to match the '{' token here.
