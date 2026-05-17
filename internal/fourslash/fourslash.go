@@ -1134,7 +1134,8 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		Context:  &lsproto.CompletionContext{},
 	}
 	if userPreferences != nil {
-		reset := f.ConfigureWithReset(t, *userPreferences)
+		config := f.userPreferences.WithOverrides(*userPreferences)
+		reset := f.ConfigureWithReset(t, config)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
@@ -1346,20 +1347,21 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 }
 
 func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected []CompletionsExpectedItem) {
-	// Verify labels first
-	assertDeepEqual(t, core.Map(actual, func(item *lsproto.CompletionItem) string {
-		return item.Label
-	}), core.Map(expected, func(item CompletionsExpectedItem) string {
-		return getExpectedLabel(t, item)
-	}), prefix+"Labels mismatch")
+	labelMismatchPrefix := prefix + "Label mismatch"
 	for i, actualItem := range actual {
 		switch expectedItem := expected[i].(type) {
 		case string:
-			continue // already checked labels
+			if actualItem.Data != nil && actualItem.Data.Name == expectedItem {
+				continue
+			}
+			assertDeepEqual(t, actualItem.Label, expectedItem, labelMismatchPrefix)
 		case *lsproto.CompletionItem:
+			assertDeepEqual(t, actualItem.Label, expectedItem.Label, labelMismatchPrefix)
 			if err := f.verifyCompletionItem(t, prefix+"Completion item mismatch for label "+actualItem.Label, actualItem, expectedItem); err != "" {
 				t.Fatalf("%s:\n%s", prefix+"Completion item mismatch for label "+actualItem.Label, err)
 			}
+		default:
+			t.Fatalf("Expected completion item to be a string or *lsproto.CompletionItem, got %T", expectedItem)
 		}
 	}
 }
@@ -1395,6 +1397,20 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 
 	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportFix != nil {
 		actual = f.resolveCompletionItem(t, actual)
+	}
+
+	if expected.InsertText != nil && expected.TextEdit == nil && actual.InsertText == nil && actual.TextEdit != nil {
+		var newText *string
+		if actual.TextEdit.TextEdit != nil {
+			newText = &actual.TextEdit.TextEdit.NewText
+		} else if actual.TextEdit.InsertReplaceEdit != nil {
+			newText = &actual.TextEdit.InsertReplaceEdit.NewText
+		}
+
+		if newText != nil && *newText == *expected.InsertText {
+			actual.InsertText = expected.InsertText
+			actual.TextEdit = nil
+		}
 	}
 
 	if actualAutoImportFix != nil {
@@ -2387,6 +2403,7 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 
 func (f *FourslashTest) MarkTestAsStradaServer() {
 	f.isStradaServer = true
+	f.userPreferences.FormatCodeSettings.NewLineCharacter = core.NewLineKindCRLF.GetNewLineCharacter()
 }
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(

@@ -167,6 +167,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				false, /*preselect*/
 				"",    /*source*/
 				nil,   /*autoImportEntryData*/
+				nil,   /*additionalTextEdits*/
 				nil,   /*detail*/
 			)
 		})
@@ -225,6 +226,7 @@ func (l *LanguageService) convertPathCompletions(
 			false, /*preselect*/
 			"",    /*source*/
 			nil,   /*autoImportEntryData*/
+			nil,   /*additionalTextEdits*/
 			&detail,
 		)
 	})
