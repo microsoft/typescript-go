@@ -1298,7 +1298,11 @@ func (p *Printer) emitModuleExportName(node *ast.ModuleExportName) {
 	case ast.KindStringLiteral:
 		p.emitStringLiteral(node.AsStringLiteral())
 	case ast.KindNumericLiteral:
-		p.emitNumericLiteral(node.AsNumericLiteral())
+		// ModuleExportName only accepts identifiers or string literals;
+		// numeric property names are string properties, so emit as a string literal.
+		p.writePunctuation("\"")
+		p.writeLiteral(node.AsNumericLiteral().Text)
+		p.writePunctuation("\"")
 	default:
 		panic(fmt.Sprintf("unexpected ModuleExportName: %v", node.Kind))
 	}
