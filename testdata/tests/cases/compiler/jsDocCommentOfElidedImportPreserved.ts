@@ -10,3 +10,17 @@ export interface Foo {}
 /* trigger */
 import * as x from './index.js';
 export const foo = 1;
+
+// @filename: detachedCopyright.ts
+/**
+ * Copyright header
+ */
+
+import * as x from './index.js';
+export const bar = 2;
+
+// @filename: detachedCopyrightNonJSDoc.ts
+/* Non-JSDoc copyright header */
+
+import * as x from './index.js';
+export const baz = 3;
