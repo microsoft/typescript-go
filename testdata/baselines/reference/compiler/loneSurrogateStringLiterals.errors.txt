@@ -4,9 +4,13 @@ loneSurrogateStringLiterals.ts(10,7): error TS2322: Type '"\uD801"' is not assig
 loneSurrogateStringLiterals.ts(11,7): error TS2322: Type '"\uD800"' is not assignable to type '"\uD801"'.
 loneSurrogateStringLiterals.ts(14,7): error TS2322: Type '"\uDC01"' is not assignable to type '"\uDC00"'.
 loneSurrogateStringLiterals.ts(15,7): error TS2322: Type '"\uDC00"' is not assignable to type '"\uDC01"'.
+loneSurrogateStringLiterals.ts(20,7): error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
+loneSurrogateStringLiterals.ts(21,7): error TS2322: Type '"\uD800"' is not assignable to type '"\uDC00"'.
+loneSurrogateStringLiterals.ts(26,7): error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
+loneSurrogateStringLiterals.ts(27,7): error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
 
 
-==== loneSurrogateStringLiterals.ts (6 errors) ====
+==== loneSurrogateStringLiterals.ts (10 errors) ====
     // Lone surrogates should be distinct string literal types
     const highSurrogate: "\uD800" = "\uD800"; // ok
     const lowSurrogate: "\uDC00" = "\uDC00"; // ok
@@ -34,4 +38,24 @@ loneSurrogateStringLiterals.ts(15,7): error TS2322: Type '"\uDC00"' is not assig
     const low2: "\uDC01" = "\uDC00"; // error
           ~~~~
 !!! error TS2322: Type '"\uDC00"' is not assignable to type '"\uDC01"'.
+    
+    // Extended Unicode escape syntax should also work
+    const extHigh: "\u{D800}" = "\u{D800}"; // ok
+    const extLow: "\u{DC00}" = "\u{DC00}"; // ok
+    const extHighToLow: "\u{D800}" = "\u{DC00}"; // error
+          ~~~~~~~~~~~~
+!!! error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
+    const extLowToHigh: "\u{DC00}" = "\u{D800}"; // error
+          ~~~~~~~~~~~~
+!!! error TS2322: Type '"\uD800"' is not assignable to type '"\uDC00"'.
+    
+    // Mixed syntax should also be equivalent
+    const mixedHigh: "\uD800" = "\u{D800}"; // ok
+    const mixedLow: "\u{DC00}" = "\uDC00"; // ok
+    const mixedError1: "\uD800" = "\u{DC00}"; // error
+          ~~~~~~~~~~~
+!!! error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
+    const mixedError2: "\u{D800}" = "\uDC00"; // error
+          ~~~~~~~~~~~
+!!! error TS2322: Type '"\uDC00"' is not assignable to type '"\uD800"'.
     

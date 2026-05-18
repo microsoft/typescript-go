@@ -37,3 +37,37 @@ const low2: "\uDC01" = "\uDC00"; // error
 >low2 : "\uDC01"
 >"\uDC00" : "\uDC00"
 
+// Extended Unicode escape syntax should also work
+const extHigh: "\u{D800}" = "\u{D800}"; // ok
+>extHigh : "\uD800"
+>"\u{D800}" : "\uD800"
+
+const extLow: "\u{DC00}" = "\u{DC00}"; // ok
+>extLow : "\uDC00"
+>"\u{DC00}" : "\uDC00"
+
+const extHighToLow: "\u{D800}" = "\u{DC00}"; // error
+>extHighToLow : "\uD800"
+>"\u{DC00}" : "\uDC00"
+
+const extLowToHigh: "\u{DC00}" = "\u{D800}"; // error
+>extLowToHigh : "\uDC00"
+>"\u{D800}" : "\uD800"
+
+// Mixed syntax should also be equivalent
+const mixedHigh: "\uD800" = "\u{D800}"; // ok
+>mixedHigh : "\uD800"
+>"\u{D800}" : "\uD800"
+
+const mixedLow: "\u{DC00}" = "\uDC00"; // ok
+>mixedLow : "\uDC00"
+>"\uDC00" : "\uDC00"
+
+const mixedError1: "\uD800" = "\u{DC00}"; // error
+>mixedError1 : "\uD800"
+>"\u{DC00}" : "\uDC00"
+
+const mixedError2: "\u{D800}" = "\uDC00"; // error
+>mixedError2 : "\uD800"
+>"\uDC00" : "\uDC00"
+

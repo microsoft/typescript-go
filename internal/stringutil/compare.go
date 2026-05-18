@@ -36,8 +36,8 @@ func CompareStringsCaseInsensitive(a string, b string) Comparison {
 		return ComparisonEqual
 	}
 	for {
-		ca, sa := utf8.DecodeRuneInString(a)
-		cb, sb := utf8.DecodeRuneInString(b)
+		ca, sa := decodeCESU8OrUTF8(a)
+		cb, sb := decodeCESU8OrUTF8(b)
 		if sa == 0 {
 			if sb == 0 {
 				return ComparisonEqual
@@ -58,6 +58,18 @@ func CompareStringsCaseInsensitive(a string, b string) Comparison {
 		a = a[sa:]
 		b = b[sb:]
 	}
+}
+
+// decodeCESU8OrUTF8 decodes a rune from s, recognizing CESU-8 encoded surrogate
+// code units (0xD800–0xDFFF) that the scanner produces for lone surrogates in
+// string literals. Standard utf8.DecodeRuneInString would see these as invalid
+// UTF-8 and return RuneError for each byte individually.
+func decodeCESU8OrUTF8(s string) (rune, int) {
+	if len(s) >= 3 && s[0] == 0xED && s[1] >= 0xA0 && s[1] <= 0xBF && s[2] >= 0x80 && s[2] <= 0xBF {
+		r := rune(0xD000) | rune(s[1]&0x3F)<<6 | rune(s[2]&0x3F)
+		return r, 3
+	}
+	return utf8.DecodeRuneInString(s)
 }
 
 func CompareStringsCaseSensitive(a string, b string) Comparison {

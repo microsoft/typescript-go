@@ -1749,6 +1749,9 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			if codePoint < 0 {
 				return s.text[start:s.pos]
 			}
+			if codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint) {
+				return encodeSurrogate(codePoint)
+			}
 			return string(codePoint)
 		}
 		if codePoint < 0 {
