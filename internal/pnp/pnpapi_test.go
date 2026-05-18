@@ -72,24 +72,31 @@ func TestResolveUnqualified(t *testing.T) {
 		testSuite := &suites[si]
 
 		rawManifest := &testSuite.Manifest
-		manifest, err := parseManifestFromData(rawManifest.String(), "/path/to/project/.pnp.cjs")
+		manifest, err := parseManifestFromData(rawManifest.String(), "/path/to/project")
 		if err != nil {
 			t.Fatalf("failed to init pnp manifest: %v", err)
 		}
 
 		for _, tc := range testSuite.Tests {
-			parent := filepath.Join(tc.Importer, "fooo")
+			parent := tspath.CombinePaths(tc.Importer, "fooo")
 			pnpApi := &PnpApi{fs: osvfs.FS(), url: "/path/to/project/.pnp.cjs", manifest: manifest}
 
 			t.Run(tc.It, func(t *testing.T) {
 				t.Parallel()
 				res, unqualifiedErr := pnpApi.ResolveToUnqualified(tc.Imported, parent)
 
-				switch {
-				case unqualifiedErr == nil && res != "":
-					if res != tc.Expected {
-						t.Fatalf("'%s': expected resolved path %q, got %q", tc.It, tc.Expected, res)
+				if tc.Expected == "error!" {
+					if unqualifiedErr == nil {
+						t.Fatalf("'%s': expected resolution to fail, got %q", tc.It, res)
 					}
+					return
+				}
+
+				if unqualifiedErr != nil {
+					t.Fatalf("'%s': expected resolved path %q, got error: %v", tc.It, tc.Expected, unqualifiedErr.Message)
+				}
+				if res != tc.Expected {
+					t.Fatalf("'%s': expected resolved path %q, got %q", tc.It, tc.Expected, res)
 				}
 			})
 		}
