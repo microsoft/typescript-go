@@ -261,7 +261,6 @@ func flattenCommaElements(expressions []*ast.Expression) []*ast.Expression {
 }
 
 // Converts a slice of expressions into a single comma-delimited expression. Returns nil if expressions is nil or empty.
-// NOTE: Unlike Strada, the Corsa implementation does not currently use `ast.KindCommaListExpression`.
 func (f *NodeFactory) InlineExpressions(expressions []*ast.Expression) *ast.Expression {
 	if len(expressions) == 0 {
 		return nil
@@ -330,6 +329,7 @@ func (f *NodeFactory) CreateForOfBindingStatement(node *ast.Node, boundValue *as
 			f.UpdateVariableDeclarationList(
 				node.AsVariableDeclarationList(),
 				f.NewNodeList([]*ast.Node{updatedDeclaration}),
+				node.AsVariableDeclarationList().Flags,
 			),
 		)
 		statement.Loc = node.Loc
@@ -424,7 +424,7 @@ func (f *NodeFactory) updateOuterExpression(outerExpression *ast.Expression /*Ou
 	case ast.KindSatisfiesExpression:
 		return f.UpdateSatisfiesExpression(outerExpression.AsSatisfiesExpression(), expression, outerExpression.Type())
 	case ast.KindNonNullExpression:
-		return f.UpdateNonNullExpression(outerExpression.AsNonNullExpression(), expression)
+		return f.UpdateNonNullExpression(outerExpression.AsNonNullExpression(), expression, outerExpression.Flags)
 	case ast.KindExpressionWithTypeArguments:
 		return f.UpdateExpressionWithTypeArguments(outerExpression.AsExpressionWithTypeArguments(), expression, outerExpression.TypeArgumentList())
 	case ast.KindPartiallyEmittedExpression:
@@ -835,7 +835,7 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 		propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
 		if propertyName != nil {
 			if ast.IsComputedPropertyName(propertyName) {
-				debug.AssertIsDefined(computedTempVariables, "Encountered computed property name but 'computedTempVariables' argument was not provided.")
+				debug.Assert(computedTempVariables != nil, "Encountered computed property name but 'computedTempVariables' argument was not provided.")
 				temp := computedTempVariables[computedTempVariableOffset]
 				computedTempVariableOffset++
 				// typeof _tmp === "symbol" ? _tmp : _tmp + ""

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
@@ -500,6 +502,163 @@ export declare const otherValue: string;`,
 		assert.Equal(t, nodeModulesBucket.State.Dirty(), false, "bucket should be clean after rebuild")
 	})
 
+	t.Run("pnpm-style symlinks only grant granular updates to workspace packages", func(t *testing.T) {
+		// In pnpm, every package in node_modules is symlinked — registry packages
+		// are symlinked into node_modules/.pnpm/<pkg>@<version>/node_modules/<pkg>.
+		// Only local workspace packages (whose realpaths are outside node_modules
+		// and within the workspace root) should be eligible for granular updates.
+		// Registry packages should trigger full bucket rebuilds.
+		t.Parallel()
+		monorepoRoot := "/home/src/pnpm-monorepo"
+		projectADir := tspath.CombinePaths(monorepoRoot, "packages", "project-a")
+		projectBDir := tspath.CombinePaths(monorepoRoot, "packages", "project-b")
+		projectAIndex := tspath.CombinePaths(projectADir, "src", "index.ts")
+		projectBSrcIndex := tspath.CombinePaths(projectBDir, "src", "index.ts")
+		projectBDistIndex := tspath.CombinePaths(projectBDir, "dist", "index.d.ts")
+
+		// Simulated pnpm virtual store for a registry package (inside project-a's node_modules).
+		// In real pnpm, this would be node_modules/.pnpm/other-pkg@1.0.0/node_modules/other-pkg,
+		// but we use a simplified path to avoid creating nested node_modules buckets in tests.
+		pnpmStoreDir := tspath.CombinePaths(projectADir, "node_modules", ".pnpm-store", "other-pkg@1.0.0")
+		otherPkgIndex := tspath.CombinePaths(pnpmStoreDir, "index.d.ts")
+
+		files := map[string]any{
+			// project-b: a local workspace package
+			tspath.CombinePaths(projectBDir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"composite": true,
+					"outDir": "./dist",
+					"rootDir": "./src",
+					"declaration": true,
+					"module": "esnext",
+					"strict": true
+				},
+				"include": ["src"]
+			}`,
+			tspath.CombinePaths(projectBDir, "package.json"): `{
+				"name": "project-b",
+				"version": "1.0.0",
+				"main": "dist/index.js",
+				"types": "dist/index.d.ts"
+			}`,
+			projectBSrcIndex: `export function projectBFunction(): string { return "hello"; }
+export const projectBValue: number = 42;`,
+			projectBDistIndex: `export declare function projectBFunction(): string;
+export declare const projectBValue: number;`,
+			// other-pkg: a registry package in pnpm's virtual store
+			tspath.CombinePaths(pnpmStoreDir, "package.json"): `{
+				"name": "other-pkg",
+				"version": "1.0.0",
+				"main": "index.js",
+				"types": "index.d.ts"
+			}`,
+			otherPkgIndex: `export declare function otherFunction(): void;
+export declare const otherValue: string;`,
+			// project-a: the consumer package
+			tspath.CombinePaths(projectADir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"strict": true,
+					"outDir": "./dist",
+					"rootDir": "./src"
+				},
+				"include": ["src"],
+				"references": [{ "path": "../project-b" }]
+			}`,
+			tspath.CombinePaths(projectADir, "package.json"): `{
+				"name": "project-a",
+				"dependencies": { "project-b": "*", "other-pkg": "*" }
+			}`,
+			projectAIndex: `console.log("hello");
+`,
+			// Symlink: local workspace package (realpath outside node_modules)
+			tspath.CombinePaths(projectADir, "node_modules", "project-b"): vfstest.Symlink(projectBDir),
+			// Symlink: pnpm-style registry package (realpath inside node_modules/.pnpm)
+			tspath.CombinePaths(projectADir, "node_modules", "other-pkg"): vfstest.Symlink(pnpmStoreDir),
+		}
+
+		session, _ := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+			CurrentDirectory:       monorepoRoot,
+			DefaultLibraryPath:     bundled.LibPath(),
+			PositionEncoding:       lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:           true,
+			LoggingEnabled:         true,
+			PushDiagnosticsEnabled: true,
+		})
+		t.Cleanup(session.Close)
+		ctx := context.Background()
+
+		// Open project-a's index file and build auto-imports
+		projectAURI := lsconv.FileNameToDocumentURI(projectAIndex)
+		projectAContent := files[projectAIndex].(string)
+		session.DidOpenFile(ctx, projectAURI, 1, projectAContent, lsproto.LanguageKindTypeScript)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, projectAURI)
+		assert.NilError(t, err)
+
+		// Verify initial state: bucket is clean
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), false, "bucket should be clean initially")
+
+		// Modify project-b's source file (local workspace package)
+		projectBURI := lsconv.FileNameToDocumentURI(projectBSrcIndex)
+		projectBContent := files[projectBSrcIndex].(string)
+		session.DidOpenFile(ctx, projectBURI, 1, projectBContent, lsproto.LanguageKindTypeScript)
+		session.DidChangeFile(ctx, projectBURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `export const projectBValue: number = 42;`}},
+		})
+
+		// project-b should get a granular update (tracked in dirtyPackages)
+		_, err = session.GetLanguageService(ctx, projectAURI)
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), true, "bucket should be dirty after workspace package change")
+		dirtyPackages := nodeModulesBucket.State.DirtyPackages()
+		assert.Assert(t, dirtyPackages != nil, "dirty packages should be tracked for workspace package")
+		assert.Assert(t, dirtyPackages.Has("project-b"), "project-b should be in dirty packages")
+		assert.Equal(t, dirtyPackages.Len(), 1, "only project-b should be dirty")
+
+		// Rebuild to clear dirty state
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, projectAURI)
+		assert.NilError(t, err)
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), false, "bucket should be clean after rebuild")
+
+		// Now modify other-pkg (pnpm registry package, realpath inside node_modules/.pnpm)
+		otherPkgURI := lsconv.FileNameToDocumentURI(otherPkgIndex)
+		otherPkgContent := files[otherPkgIndex].(string)
+		session.DidOpenFile(ctx, otherPkgURI, 1, otherPkgContent, lsproto.LanguageKindTypeScript)
+		session.DidChangeFile(ctx, otherPkgURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `export declare function otherFunction(): void;`}},
+		})
+
+		// other-pkg should trigger a full rebuild (multipleFilesDirty), not a granular update.
+		// Read stats from the request-time snapshot (held by ref via WithLanguageServiceAndSnapshot)
+		// rather than session.Snapshot(), so a background auto-import warm task — which would
+		// walk otherPkgURI's ancestor chain through project-a's node_modules and rebuild that
+		// bucket — cannot race with the assertion by adopting a freshly-cleaned snapshot
+		// before we read it.
+		_, err = session.WithLanguageServiceAndSnapshot(
+			ctx,
+			projectAURI,
+			func(_ *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
+				stats = snapshot.AutoImportRegistry().GetCacheStats()
+				return nil, nil
+			},
+		)
+		assert.NilError(t, err)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, nodeModulesBucket.State.Dirty(), true, "bucket should be dirty after registry package change")
+		dirtyPackages = nodeModulesBucket.State.DirtyPackages()
+		// A full rebuild means dirtyPackages is nil (multipleFilesDirty takes precedence)
+		// or dirtyPackages doesn't contain "other-pkg" as a granular entry
+		if dirtyPackages != nil {
+			assert.Assert(t, !dirtyPackages.Has("other-pkg"), "other-pkg should NOT be in dirty packages (should trigger full rebuild)")
+		}
+	})
+
 	t.Run("changed fileExcludePatterns triggers bucket rebuild", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
@@ -537,7 +696,7 @@ export declare const otherValue: string;`,
 		newPreferences.IncludeCompletionsForModuleExports = core.TSTrue
 		newPreferences.IncludeCompletionsForImportStatements = core.TSTrue
 		newPreferences.AutoImportFileExcludePatterns = []string{"**/node_modules/**/*.d.ts"}
-		session.Configure(lsutil.NewUserConfig(newPreferences))
+		session.Configure(newPreferences)
 
 		// IsPreparedForImportingFile should return false since exclude patterns changed
 		snapshot2 := session.Snapshot()
@@ -697,6 +856,149 @@ func TestHiddenDirectoriesInNodeModules(t *testing.T) {
 		for name := range nodeModulesBucket.DependencyNames.Keys() {
 			assert.Assert(t, name[0] != '.', "hidden directory %q should not appear as a dependency name", name)
 		}
+	})
+}
+
+func TestAutoImportEntrypointDirectorySearch(t *testing.T) {
+	t.Parallel()
+
+	projectRoot := "/home/src/entrypoint-search"
+	nodeModulesDir := projectRoot + "/node_modules"
+	pkgDir := nodeModulesDir + "/my-pkg"
+
+	files := map[string]any{
+		projectRoot + "/tsconfig.json": `{
+			"compilerOptions": {
+				"module": "commonjs",
+				"target": "es2020"
+			}
+		}`,
+		projectRoot + "/package.json": `{
+			"name": "test-project",
+			"dependencies": { "my-pkg": "*" }
+		}`,
+		projectRoot + "/index.ts": `import { main } from "my-pkg";`,
+		// Package with NO "exports" field and multiple files.
+		// Without the preference, only the main entrypoint is found.
+		// With the preference, directory search finds all .d.ts files.
+		pkgDir + "/package.json":       `{"name":"my-pkg","version":"1.0.0","types":"index.d.ts"}`,
+		pkgDir + "/index.d.ts":         "export declare const main: number;\n",
+		pkgDir + "/extra.d.ts":         "export declare const extra: string;\n",
+		pkgDir + "/nested/deep.d.ts":   "export declare const deep: boolean;\n",
+		pkgDir + "/nested/deeper.d.ts": "export declare const deeper: boolean;\n",
+	}
+
+	t.Run("default limits to main entrypoint", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		// Without the preference, only the main entrypoint (index.d.ts) should be found
+		assert.Equal(t, 1, nodeModulesBucket.FileCount, "expected only 1 file (main entrypoint) by default")
+	})
+
+	t.Run("autoImportEntrypointDirectorySearch enables all files", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.AutoImportEntrypointDirectorySearch = core.TSTrue
+		session.Configure(prefs)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		// With the preference, all 4 .d.ts files should be found via directory search
+		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files from directory search, got %d", nodeModulesBucket.FileCount)
+	})
+
+	t.Run("changing preference triggers rebuild", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Build auto-imports with default preferences (directory search disabled)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, 1, nodeModulesBucket.FileCount, "expected only 1 file initially")
+
+		// Now enable directory search
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.AutoImportEntrypointDirectorySearch = core.TSTrue
+		session.Configure(prefs)
+
+		// Registry should report not prepared (preference changed)
+		snapshot := session.Snapshot()
+		defaultProject := snapshot.GetDefaultProject(indexURI)
+		assert.Assert(t, defaultProject != nil)
+		projectPath := defaultProject.ConfigFilePath()
+		isPrepared := snapshot.AutoImportRegistry().IsPreparedForImportingFile(
+			projectRoot+"/index.ts", projectPath, prefs)
+		assert.Assert(t, !isPrepared, "registry should not be prepared after preference change")
+
+		// Rebuild
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files after rebuild with directory search enabled, got %d", nodeModulesBucket.FileCount)
+	})
+
+	t.Run("deep import from program update enables recursive search for that package", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+
+		ctx := context.Background()
+		indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+		session.DidOpenFile(ctx, indexURI, 1, files[projectRoot+"/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Initial build with top-level import only ("my-pkg", not a deep import)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+		assert.Equal(t, 1, nodeModulesBucket.FileCount, "expected only 1 file (main entrypoint) before deep import")
+
+		// Now update the program to add a deep import from the same package
+		newContent := "import { main } from \"my-pkg\";\nimport { deep } from \"my-pkg/nested/deep\";\n"
+		session.DidChangeFile(ctx, indexURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: newContent}},
+		})
+
+		// After the program update, auto-imports should detect the deep import and
+		// enable recursive directory search for my-pkg, finding all .d.ts files.
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+		assert.NilError(t, err)
+
+		stats = autoImportStats(t, session)
+		nodeModulesBucket = singleBucket(t, stats.NodeModulesBuckets)
+		assert.Assert(t, nodeModulesBucket.FileCount >= 4, "expected at least 4 files after deep import triggers recursive search, got %d", nodeModulesBucket.FileCount)
 	})
 }
 

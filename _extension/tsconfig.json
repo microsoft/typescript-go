@@ -1,15 +1,16 @@
 {
     "compilerOptions": {
-        "target": "es2023",
-        "module": "NodeNext",
         "rootDir": "./src",
         "outDir": "./dist",
-        "esModuleInterop": true,
+        "noEmit": true,
+
+        "target": "es2023",
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "types": ["node"],
+
         "strict": true,
-        "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "sourceMap": true,
-        "noEmit": true
+        "noImplicitOverride": true
     },
     "include": ["./src/**/*"]
 }

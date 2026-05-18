@@ -1,10 +1,12 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -150,12 +152,14 @@ func NewProject(
 	project.programFilesWatch = NewWatchedFiles(
 		"program files for "+configFileName,
 		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 	)
 	if builder.sessionOptions.TypingsLocation != "" {
 		project.typingsWatch = NewWatchedFiles(
 			"typings installer files",
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+			lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 			core.Identity,
 		)
 	}
@@ -164,6 +168,19 @@ func NewProject(
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+// DisplayName returns a short, human-readable name for the project,
+// relative to the given workspace root directory.
+// For configured projects, this is the config file path made relative.
+// For inferred projects, this is the last component of the current directory.
+func (p *Project) DisplayName(cwd string) string {
+	if p.Kind == KindInferred {
+		return tspath.GetBaseFileName(p.currentDirectory)
+	}
+	return tspath.ConvertToRelativePath(p.configFileName, tspath.ComparePathsOptions{
+		CurrentDirectory: cwd,
+	})
 }
 
 func (p *Project) ID() tspath.Path {
@@ -192,6 +209,20 @@ func (p *Project) Id() tspath.Path {
 
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
+}
+
+// GetProjectDiagnostics returns program diagnostics combined with any global
+// diagnostics discovered during checking. These are the diagnostics reported on
+// the tsconfig.json file.
+func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	var globalDiags []*ast.Diagnostic
+	if p.checkerPool != nil {
+		globalDiags = p.checkerPool.GetGlobalDiagnostics()
+	}
+	return compiler.SortAndDeduplicateDiagnostics(core.Concatenate(
+		p.Program.GetProgramDiagnostics(),
+		globalDiags,
+	))
 }
 
 func (p *Project) HasFile(fileName string) bool {
@@ -306,13 +337,36 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
+	// Define a fresh CreateCheckerPool closure for this call. Each invocation of
+	// CreateProgram must use its own closure so that concurrent goroutines cloning
+	// the same project never share a captured variable through a stale closure
+	// stored in the old program's options.
+	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
+		checkerPool = newCheckerPool(4, program, nil)
+		return checkerPool
+	}
+
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
 
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
-		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
+		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
+			for _, file := range newProgram.SourceFiles() {
+				if file.Path() != p.dirtyFilePath {
+					// UpdateProgram acquired the changed file only, so we need to ref everything else
+					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
+			for _, file := range newProgram.DuplicateSourceFiles() {
+				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+			}
+		} else if newFile := newProgram.GetSourceFileByPath(p.dirtyFilePath); newFile != nil {
+			// UpdateProgram always acquires the dirty file before deciding whether it can
+			// reuse the old program. If it falls back to a full rebuild, release that
+			// speculative acquire so the rebuilt program is the only remaining owner.
+			p.host.builder.parseCache.Deref(NewParseCacheKey(newFile.ParseOptions(), newFile.Hash, newFile.ScriptKind))
 		}
 	} else {
 		var typingsLocation string
@@ -325,10 +379,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					checkerPool = newCheckerPool(4, program, p.log)
-					return checkerPool
-				},
+				CreateCheckerPool:           createCheckerPool,
 			},
 		)
 	}

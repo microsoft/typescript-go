@@ -54,9 +54,9 @@ func (f *Fix) Edits(
 	ctx context.Context,
 	file *ast.SourceFile,
 	compilerOptions *core.CompilerOptions,
-	formatOptions *lsutil.FormatCodeSettings,
+	formatOptions lsutil.FormatCodeSettings,
 	converters *lsconv.Converters,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 ) ([]*lsproto.TextEdit, string) {
 	locale := locale.FromContext(ctx)
 	tracker := change.NewTracker(ctx, compilerOptions, formatOptions, converters)
@@ -118,7 +118,7 @@ func (f *Fix) Edits(
 	}
 }
 
-func addImportType(f *Fix, file *ast.SourceFile, preferences *lsutil.UserPreferences, tracker *change.Tracker, locale locale.Locale) string {
+func addImportType(f *Fix, file *ast.SourceFile, preferences lsutil.UserPreferences, tracker *change.Tracker, locale locale.Locale) string {
 	if f.UsagePosition == nil {
 		panic("UsagePosition must be set for JSDoc type import fix")
 	}
@@ -184,7 +184,7 @@ func addToExistingImport(
 	importClauseOrBindingPattern *ast.Node,
 	defaultImport *newImportBinding,
 	namedImports []*newImportBinding,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 ) {
 	switch importClauseOrBindingPattern.Kind {
 	case ast.KindObjectBindingPattern:
@@ -334,7 +334,7 @@ func getNewImports(
 	namedImports []*newImportBinding,
 	namespaceLikeImport *newImportBinding, // { lsproto.importKind: lsproto.ImportKind.CommonJS | lsproto.ImportKind.Namespace; }
 	compilerOptions *core.CompilerOptions,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 ) []*ast.AnyImportSyntax {
 	tokenFlags := core.IfElse(quotePreference == lsutil.QuotePreferenceSingle, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone)
 	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier, tokenFlags)
@@ -456,7 +456,7 @@ func getNewRequires(
 		statements = append(statements, declaration)
 	}
 
-	debug.AssertIsDefined(statements)
+	debug.Assert(statements != nil)
 	return statements
 }
 
@@ -464,7 +464,6 @@ func createConstEqualsRequireDeclaration(changeTracker *change.Tracker, name *as
 	return changeTracker.NodeFactory.NewVariableStatement(
 		/*modifiers*/ nil,
 		changeTracker.NodeFactory.NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			changeTracker.NodeFactory.NewNodeList([]*ast.Node{
 				changeTracker.NodeFactory.NewVariableDeclaration(
 					name,
@@ -479,11 +478,12 @@ func createConstEqualsRequireDeclaration(changeTracker *change.Tracker, name *as
 					),
 				),
 			}),
+			ast.NodeFlagsConst,
 		),
 	)
 }
 
-func insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*ast.AnyImportOrRequireStatement, blankLineBetween bool, preferences *lsutil.UserPreferences) {
+func insertImports(ct *change.Tracker, sourceFile *ast.SourceFile, imports []*ast.AnyImportOrRequireStatement, blankLineBetween bool, preferences lsutil.UserPreferences) {
 	var existingImportStatements []*ast.Statement
 
 	if imports[0].Kind == ast.KindVariableStatement {
@@ -695,6 +695,7 @@ func (v *View) tryAddToExistingImport(
 
 	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export, v.program.Options())
 
+	var best *Fix
 	for _, existingImport := range matchingDeclarations {
 		if existingImport.node.Kind == ast.KindImportEqualsDeclaration {
 			continue
@@ -702,7 +703,7 @@ func (v *View) tryAddToExistingImport(
 
 		if existingImport.node.Kind == ast.KindVariableDeclaration {
 			if (importKind == lsproto.ImportKindNamed || importKind == lsproto.ImportKindDefault) && existingImport.node.Name().Kind == ast.KindObjectBindingPattern {
-				return &Fix{
+				fix := &Fix{
 					AutoImportFix: &lsproto.AutoImportFix{
 						Kind:            lsproto.AutoImportFixKindAddToExisting,
 						Name:            export.Name(),
@@ -711,6 +712,15 @@ func (v *View) tryAddToExistingImport(
 						ModuleSpecifier: existingImport.moduleSpecifier,
 						AddAsTypeOnly:   addAsTypeOnly,
 					},
+				}
+				// Variable declarations are never type-only.
+				// Give preference to putting types in existing type-only imports and avoiding conversions
+				// of import statements to/from type-only.
+				if addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed {
+					return fix
+				}
+				if best == nil {
+					best = fix
 				}
 			}
 			continue
@@ -730,8 +740,9 @@ func (v *View) tryAddToExistingImport(
 			continue
 		}
 
-		if importKind == lsproto.ImportKindDefault && importClause.Name() != nil {
-			// Cannot add a default import to a declaration that already has one
+		if importKind == lsproto.ImportKindDefault && (importClause.Name() != nil ||
+			// Cannot add a default import as type-only if the import already has named bindings
+			addAsTypeOnly == lsproto.AddAsTypeOnlyRequired && namedBindings != nil) {
 			continue
 		}
 
@@ -740,7 +751,7 @@ func (v *View) tryAddToExistingImport(
 			continue
 		}
 
-		return &Fix{
+		fix := &Fix{
 			AutoImportFix: &lsproto.AutoImportFix{
 				Kind:            lsproto.AutoImportFixKindAddToExisting,
 				Name:            export.Name(),
@@ -750,9 +761,20 @@ func (v *View) tryAddToExistingImport(
 				AddAsTypeOnly:   addAsTypeOnly,
 			},
 		}
+
+		isTypeOnly := importClause.IsTypeOnly()
+		// Give preference to putting types in existing type-only imports and avoiding conversions
+		// of import statements to/from type-only.
+		if (addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && isTypeOnly) ||
+			(addAsTypeOnly == lsproto.AddAsTypeOnlyNotAllowed && !isTypeOnly) {
+			return fix
+		}
+		if best == nil {
+			best = fix
+		}
 	}
 
-	return nil
+	return best
 }
 
 func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program) lsproto.ImportKind {
@@ -816,11 +838,15 @@ func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[Mod
 			panic("error: did not expect node kind " + moduleSpecifier.Kind.String())
 		} else if ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
 			if moduleSymbol := ch.ResolveExternalModuleName(moduleSpecifier); moduleSymbol != nil {
-				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				if moduleID, _, ok := tryGetModuleIDAndFileNameOfModuleSymbol(moduleSymbol); ok {
+					result.Add(moduleID, existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				}
 			}
 		} else if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindJSDocImportTag {
 			if moduleSymbol := ch.GetSymbolAtLocation(moduleSpecifier); moduleSymbol != nil {
-				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				if moduleID, _, ok := tryGetModuleIDAndFileNameOfModuleSymbol(moduleSymbol); ok {
+					result.Add(moduleID, existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				}
 			}
 		}
 	}
@@ -837,6 +863,69 @@ func (v *View) shouldUseRequire() bool {
 	return shouldUseRequire
 }
 
+// fileSyntaxKind represents the detected module syntax of a source file.
+type fileSyntaxKind int
+
+const (
+	fileSyntaxKindAmbiguous fileSyntaxKind = iota
+	fileSyntaxKindESM
+	fileSyntaxKindCJS
+)
+
+// detectSyntax returns whether a source file has unambiguous ESM or CJS syntax.
+// When moduleDetection is "force", ExternalModuleIndicator may be set to the
+// source file node itself rather than a genuine syntax indicator, so we fall back
+// to inspecting the file's Imports() to find actual import/export declarations.
+func detectSyntax(file *ast.SourceFile, options *core.CompilerOptions) fileSyntaxKind {
+	hasESM, hasCJS := detectSyntaxIndicators(file, options)
+	switch {
+	case hasCJS && !hasESM:
+		return fileSyntaxKindCJS
+	case hasESM && !hasCJS:
+		return fileSyntaxKindESM
+	default:
+		return fileSyntaxKindAmbiguous
+	}
+}
+
+// detectSyntaxIndicators checks whether a source file contains genuine ESM
+// and/or CJS syntax. Under moduleDetection "force", the cached
+// ExternalModuleIndicator may be the source file itself rather than a real
+// statement, so we look at Imports() for actual import/export declarations.
+func detectSyntaxIndicators(file *ast.SourceFile, options *core.CompilerOptions) (hasESM bool, hasCJS bool) {
+	hasCJS = file.CommonJSModuleIndicator != nil
+	if options.GetEmitModuleDetectionKind() != core.ModuleDetectionKindForce {
+		// ExternalModuleIndicator is reliable when moduleDetection is not "force"
+		hasESM = file.ExternalModuleIndicator != nil
+		return hasESM, hasCJS
+	}
+	// Under moduleDetection "force", ExternalModuleIndicator is set to
+	// file.AsNode() when there is no genuine ESM syntax, so only trust it
+	// when it points to a real statement node.
+	if file.ExternalModuleIndicator != nil && file.ExternalModuleIndicator != file.AsNode() {
+		return true, hasCJS
+	}
+	// Fall back to scanning Imports() for actual import/export declarations
+	// (not require() calls or dynamic imports).
+	for _, imp := range file.Imports() {
+		if imp.Flags&ast.NodeFlagsSynthesized != 0 {
+			continue
+		}
+		parent := imp.Parent
+		if parent == nil {
+			continue
+		}
+		switch parent.Kind {
+		case ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindExportDeclaration:
+			return true, hasCJS
+		case ast.KindExternalModuleReference:
+			// import x = require("...") — this is ESM-ish syntax
+			return true, hasCJS
+		}
+	}
+	return hasESM, hasCJS
+}
+
 func (v *View) computeShouldUseRequire() bool {
 	// 1. TypeScript files don't use require variable declarations
 	if !tspath.HasJSFileExtension(v.importingFile.FileName()) {
@@ -844,20 +933,14 @@ func (v *View) computeShouldUseRequire() bool {
 	}
 
 	// 2. If the current source file is unambiguously CJS or ESM, go with that
-	switch {
-	case v.importingFile.CommonJSModuleIndicator != nil && v.importingFile.ExternalModuleIndicator == nil:
+	switch detectSyntax(v.importingFile, v.program.Options()) {
+	case fileSyntaxKindCJS:
 		return true
-	case v.importingFile.ExternalModuleIndicator != nil && v.importingFile.CommonJSModuleIndicator == nil:
+	case fileSyntaxKindESM:
 		return false
 	}
 
-	// 3. If there's a tsconfig/jsconfig, use its module setting
-	if v.program.Options().ConfigFilePath != "" {
-		return v.program.Options().GetEmitModuleKind() < core.ModuleKindES2015
-	}
-
-	// 4. In --module nodenext, assume we're not emitting JS -> JS, so use
-	//    whatever syntax Node expects based on the detected module kind
+	// 3. Use the implied node format to determine CJS vs ESM
 	//    TODO: consider removing `impliedNodeFormatForEmit`
 	switch v.program.GetImpliedNodeFormatForEmit(v.importingFile) {
 	case core.ModuleKindCommonJS:
@@ -866,14 +949,21 @@ func (v *View) computeShouldUseRequire() bool {
 		return false
 	}
 
+	// 4. If there's a tsconfig/jsconfig, use its module setting
+	if v.program.Options().ConfigFilePath != "" {
+		return v.program.Options().GetEmitModuleKind() < core.ModuleKindES2015
+	}
+
 	// 5. Match the first other JS file in the program that's unambiguously CJS or ESM
 	for _, otherFile := range v.program.GetSourceFiles() {
 		switch {
 		case otherFile == v.importingFile, !ast.IsSourceFileJS(otherFile), v.program.IsSourceFileFromExternalLibrary(otherFile):
 			continue
-		case otherFile.CommonJSModuleIndicator != nil && otherFile.ExternalModuleIndicator == nil:
+		}
+		switch detectSyntax(otherFile, v.program.Options()) {
+		case fileSyntaxKindCJS:
 			return true
-		case otherFile.ExternalModuleIndicator != nil && otherFile.CommonJSModuleIndicator == nil:
+		case fileSyntaxKindESM:
 			return false
 		}
 	}
@@ -886,7 +976,7 @@ func needsTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly) bool {
 	return addAsTypeOnly == lsproto.AddAsTypeOnlyRequired
 }
 
-func shouldUseTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
+func shouldUseTypeOnly(addAsTypeOnly lsproto.AddAsTypeOnly, preferences lsutil.UserPreferences) bool {
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != lsproto.AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports.IsTrue()
 }
 
@@ -1009,7 +1099,7 @@ func promoteFromTypeOnly(
 	aliasDeclaration *ast.Declaration,
 	compilerOptions *core.CompilerOptions,
 	sourceFile *ast.SourceFile,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 ) *ast.Declaration {
 	// See comment in `doAddExistingFix` on constant with the same name.
 	convertExistingToTypeOnly := compilerOptions.VerbatimModuleSyntax
@@ -1102,7 +1192,7 @@ func promoteImportClause(
 	importClause *ast.ImportClause,
 	compilerOptions *core.CompilerOptions,
 	sourceFile *ast.SourceFile,
-	preferences *lsutil.UserPreferences,
+	preferences lsutil.UserPreferences,
 	convertExistingToTypeOnly core.Tristate,
 	aliasDeclaration *ast.Declaration,
 ) {
