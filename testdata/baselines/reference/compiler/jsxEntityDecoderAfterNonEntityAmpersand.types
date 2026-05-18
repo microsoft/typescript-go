@@ -25,3 +25,9 @@ const d = <div>&amp;&&amp;</div>;
 >div : any
 >div : any
 
+const e = <div>a&b&c&amp;</div>;
+>e : any
+><div>a&b&c&amp;</div> : any
+>div : any
+>div : any
+

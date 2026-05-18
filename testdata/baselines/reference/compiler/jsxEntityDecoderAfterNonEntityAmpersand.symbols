@@ -13,3 +13,6 @@ const c = <div>&amp;&amp;</div>;
 const d = <div>&amp;&&amp;</div>;
 >d : Symbol(d, Decl(jsxEntityDecoderAfterNonEntityAmpersand.tsx, 3, 5))
 
+const e = <div>a&b&c&amp;</div>;
+>e : Symbol(e, Decl(jsxEntityDecoderAfterNonEntityAmpersand.tsx, 4, 5))
+
