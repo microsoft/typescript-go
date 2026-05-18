@@ -302,7 +302,7 @@ func isFirstDeclarationOfSymbolParameter(symbol *ast.Symbol) bool {
 		declaration = symbol.Declarations[0]
 	}
 	result := ast.FindAncestorOrQuit(declaration, func(n *ast.Node) ast.FindAncestorResult {
-		if ast.IsParameter(n) {
+		if ast.IsParameterDeclaration(n) {
 			return ast.FindAncestorTrue
 		}
 		if ast.IsBindingElement(n) || ast.IsObjectBindingPattern(n) || ast.IsArrayBindingPattern(n) {
@@ -379,7 +379,7 @@ func getNormalizedSymbolModifiers(typeChecker *checker.Checker, symbol *ast.Symb
 		} else {
 			excludeFlags = ast.ModifierFlagsNone
 		}
-		modifierSet = getNodeModifiers(declaration, excludeFlags)
+		modifierSet = getNodeModifiers(typeChecker, declaration, excludeFlags)
 	}
 
 	return modifierSet
@@ -392,11 +392,15 @@ func isDeprecatedDeclaration(typeChecker *checker.Checker, declaration *ast.Node
 	return ast.IsDeprecatedDeclaration(declaration)
 }
 
-func getNodeModifiers(node *ast.Node, excludeFlags ast.ModifierFlags) ScriptElementKindModifier {
+func getNodeModifiers(typeChecker *checker.Checker, node *ast.Node, excludeFlags ast.ModifierFlags) ScriptElementKindModifier {
 	var result ScriptElementKindModifier
 	var flags ast.ModifierFlags
 	if ast.IsDeclaration(node) {
-		flags = ast.GetCombinedModifierFlags(node) & ^excludeFlags // !!! include jsdoc node flags
+		flags = ast.GetCombinedModifierFlags(node)
+		if isDeprecatedDeclaration(typeChecker, node) {
+			flags |= ast.ModifierFlagsDeprecated
+		}
+		flags &^= excludeFlags
 	}
 
 	if flags&ast.ModifierFlagsPrivate != 0 {

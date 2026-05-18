@@ -335,7 +335,7 @@ func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
 	return rangeStartIsOnSameLineAsRangeEnd(r, r, sourceFile)
 }
 
-func rangeStartPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
+func RangeStartPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
 	return PositionsAreOnSameLine(
 		getStartPositionOfRange(range1, sourceFile, false /*includeComments*/),
 		getStartPositionOfRange(range2, sourceFile, false /*includeComments*/),
@@ -487,8 +487,6 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		return parent.AsIntersectionTypeNode().Types
 	case ast.KindArrayLiteralExpression, ast.KindTupleType, ast.KindNamedImports, ast.KindNamedExports:
 		return parent.ElementList()
-	case ast.KindCommaListExpression:
-		panic("not implemented")
 	case ast.KindObjectLiteralExpression, ast.KindJsxAttributes:
 		return parent.PropertyList()
 	case ast.KindCallExpression:

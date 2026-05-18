@@ -1,0 +1,49 @@
+--- old.jsDeclarationsParameterTagReusesInputNodeInEmit1.js
++++ new.jsDeclarationsParameterTagReusesInputNodeInEmit1.js
+@@= skipped -61, +61 lines =@@
+
+
+ //// [base.d.ts]
+-export = BaseFactory;
++declare class Base {
++    constructor();
++}
+ declare function BaseFactory(): Base;
+ declare namespace BaseFactory {
+-    export { Base };
+-}
+-declare class Base {
+-}
++    var Base: typeof Base;
++}
++export = BaseFactory;
+ //// [file.d.ts]
+-type couldntThinkOfAny = {
+-    (): {};
+-    Base: {
+-        new (): {};
+-    };
+-};
++type BaseFactory = import('./base');
++type BaseFactoryFactory = (factory: import('./base')) => any;
+ /** @typedef {import('./base')} BaseFactory */
+ /**
+  * @callback BaseFactoryFactory
+@@= skipped -26, +23 lines =@@
+  * @param {InstanceType<BaseFactory["Base"]>} base
+  * @returns {InstanceType<BaseFactory["Base"]>}
+  */
+-declare function test(base: InstanceType<BaseFactory["Base"]>): InstanceType<BaseFactory["Base"]>;
+-type BaseFactory = {
+-    (): {};
+-    Base: {
+-        new (): {};
+-    };
+-};
+-type BaseFactoryFactory = (factory: {
+-    (): {};
+-    Base: {
+-        new (): {};
+-    };
+-}) => any;
++declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;

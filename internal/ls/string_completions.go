@@ -1813,7 +1813,7 @@ func getFilenameWithExtensionOption(
 	extensionOptions *extensionOptions,
 	isExportsOrImportsWildcard bool,
 ) (string, string) {
-	nonJSResult := tryGetRealFileNameForNonJSDeclarationFileName(name)
+	nonJSResult := modulespecifiers.TryGetRealFileNameForNonJSDeclarationFileName(name)
 	if nonJSResult != "" {
 		return nonJSResult, tspath.TryGetExtensionFromPath(nonJSResult)
 	}
@@ -1863,22 +1863,6 @@ func getFilenameWithExtensionOption(
 	return name, tspath.TryGetExtensionFromPath(name)
 }
 
-// Remaps files like `foo.d.json.ts` back to `foo.json`.
-func tryGetRealFileNameForNonJSDeclarationFileName(fileName string) string {
-	baseName := tspath.GetBaseFileName(fileName)
-	// Ends with .ts, contains ".d.", and is NOT a standard .d.ts file
-	if !strings.HasSuffix(fileName, tspath.ExtensionTs) ||
-		!strings.Contains(baseName, ".d.") ||
-		strings.HasSuffix(baseName, tspath.ExtensionDts) {
-		return ""
-	}
-	noExtension := tspath.RemoveExtension(fileName, tspath.ExtensionTs)
-	lastDotIndex := strings.LastIndex(noExtension, ".")
-	ext := noExtension[lastDotIndex:]
-	before, _, _ := strings.Cut(noExtension, ".d.")
-	return before + ext
-}
-
 func walkUpParentheses(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindParenthesizedType:
@@ -1911,7 +1895,7 @@ func getStringLiteralTypes(t *checker.Type, uniques *collections.Set[string], ty
 	return nil
 }
 
-func getAlreadyUsedTypesInStringLiteralUnion(union *ast.UnionType, current *ast.LiteralType) []string {
+func getAlreadyUsedTypesInStringLiteralUnion(union *ast.UnionTypeNodeNode, current *ast.LiteralTypeNodeNode) []string {
 	typesList := union.AsUnionTypeNode().Types
 	if typesList == nil {
 		return nil

@@ -56,13 +56,14 @@ declare class Handler {
 declare namespace Handler {
     var statische: () => void;
 }
-export = Handler;
-export declare var Strings: {
+declare const Strings: {
     a: string;
     b: string;
 };
+export = Handler;
+export { Strings };
 export type HandlerOptions = {
-    name: String;
+    name: string;
 };
 /**
  * @typedef {Object} HandlerOptions

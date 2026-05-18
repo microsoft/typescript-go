@@ -13,12 +13,10 @@
 
  mod1.toFixed(12)
  >mod1.toFixed(12) : string
-->mod1.toFixed : (fractionDigits?: number) => string
+ >mod1.toFixed : (fractionDigits?: number) => string
 ->mod1 : number
-->toFixed : (fractionDigits?: number) => string
-+>mod1.toFixed : (fractionDigits?: number | undefined) => string
 +>mod1 : 1
-+>toFixed : (fractionDigits?: number | undefined) => string
+ >toFixed : (fractionDigits?: number) => string
  >12 : 12
 
  mod1.f() // error, 'f' is not a property on 'number'
@@ -39,7 +37,7 @@
 ->exports : number
 +>module.exports = 1 : 1
 +>module.exports : 1
-+>module : { "export=": 1; }
++>module : { exports: 1; }
 +>exports : 1
  >1 : 1
 
@@ -50,7 +48,7 @@
 ->module : { exports: number; }
 ->exports : number
 +>module.exports : 1
-+>module : { "export=": 1; }
++>module : { exports: 1; }
 +>exports : 1
  >f : any
  >function () { } : () => void

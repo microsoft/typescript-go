@@ -2,13 +2,10 @@ package tsoptions
 
 import (
 	"cmp"
-	"fmt"
 	"reflect"
-	"regexp"
 	"slices"
 	"strings"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -20,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type extendsResult struct {
@@ -106,13 +104,15 @@ func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions ts
 	if len(c.validatedExcludeSpecs) == 0 {
 		return false
 	}
-	excludePattern := vfs.GetRegularExpressionForWildcard(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude")
-	excludeRegex := vfs.GetRegexFromPattern(excludePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-	if match, err := excludeRegex.MatchString(fileName); err == nil && match {
+	excludeMatcher := vfsmatch.NewSpecMatcher(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, vfsmatch.UsageExclude, comparePathsOptions.UseCaseSensitiveFileNames)
+	if excludeMatcher == nil {
+		return false
+	}
+	if excludeMatcher.MatchString(fileName) {
 		return true
 	}
 	if !tspath.HasExtension(fileName) {
-		if match, err := excludeRegex.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)); err == nil && match {
+		if excludeMatcher.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)) {
 			return true
 		}
 	}
@@ -124,12 +124,9 @@ func (c *configFileSpecs) getMatchedIncludeSpec(fileName string, comparePathsOpt
 		return ""
 	}
 	for index, spec := range c.validatedIncludeSpecs {
-		includePattern := vfs.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
-		if includePattern != "" {
-			includeRegex := vfs.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-			if match, err := includeRegex.MatchString(fileName); err == nil && match {
-				return c.validatedIncludeSpecsBeforeSubstitution[index]
-			}
+		includeMatcher := vfsmatch.NewSpecMatcher([]string{spec}, comparePathsOptions.CurrentDirectory, vfsmatch.UsageFiles, comparePathsOptions.UseCaseSensitiveFileNames)
+		if includeMatcher != nil && includeMatcher.MatchString(fileName) {
+			return c.validatedIncludeSpecsBeforeSubstitution[index]
 		}
 	}
 	return ""
@@ -155,7 +152,7 @@ type FileExtensionInfo struct {
 }
 
 type ExtendedConfigCache interface {
-	GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host ParseConfigHost) *ExtendedConfigCacheEntry
+	GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []tspath.Path, host ParseConfigHost) *ExtendedConfigCacheEntry
 }
 
 type ExtendedConfigCacheEntry struct {
@@ -217,15 +214,25 @@ func parseOwnConfigOfJsonSourceFile(
 			} else if keyText != "" && extraKeyDiagnostics(parentOption.Name) != nil {
 				unknownNameDiag := extraKeyDiagnostics(parentOption.Name)
 				if parentOption.ElementOptions != nil {
-					// !!! TODO: support suggestion
-					propertySetErrors = append(propertySetErrors, createUnknownOptionError(
-						keyText,
-						unknownNameDiag,
-						"", /*unknownOptionErrorText*/
-						propertyAssignment.Name(),
-						sourceFile,
-						nil, /*alternateMode*/
-					))
+					possibleOption := parentOption.ElementOptions.Get(keyText)
+					if possibleOption != nil && possibleOption.Name != keyText {
+						propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(
+							sourceFile,
+							propertyAssignment.Name(),
+							extraKeyDidYouMeanDiagnostics(parentOption.Name),
+							keyText,
+							possibleOption.Name,
+						))
+					} else {
+						propertySetErrors = append(propertySetErrors, createUnknownOptionError(
+							keyText,
+							unknownNameDiag,
+							"", /*unknownOptionErrorText*/
+							propertyAssignment.Name(),
+							sourceFile,
+							nil, /*alternateMode*/
+						))
+					}
 				} else {
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
@@ -614,8 +621,12 @@ func convertOptionsFromJson[O optionParser](optionsNameMap CommandLineOptionName
 	var errors []*ast.Diagnostic
 	for key, value := range jsonMap.Entries() {
 		opt := optionsNameMap.Get(key)
+		if opt != nil && opt.Name != key {
+			// Case-insensitive match found but exact case doesn't match - provide "did you mean" suggestion
+			errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(nil, nil, result.UnknownDidYouMeanDiagnostic(), key, opt.Name))
+			continue
+		}
 		if opt == nil {
-			// !!! TODO?: support suggestion
 			errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil))
 			continue
 		}
@@ -749,6 +760,9 @@ func convertObjectLiteralExpressionToJson(
 		var option *CommandLineOption = nil
 		if keyText != "" && objectOption != nil && objectOption.ElementOptions != nil {
 			option = objectOption.ElementOptions.Get(keyText)
+			if option != nil && option.Name != keyText {
+				option = nil
+			}
 		}
 		value, err := convertPropertyValueToJson(sourceFile, element.AsPropertyAssignment().Initializer, option, returnValue, jsonConversionNotifier)
 		errors = append(errors, err...)
@@ -949,7 +963,7 @@ func getExtendedConfig(
 	sourceFile *TsConfigSourceFile,
 	extendedConfigFileName string,
 	host ParseConfigHost,
-	resolutionStack []string,
+	resolutionStack []tspath.Path,
 	extendedConfigCache ExtendedConfigCache,
 	result *extendsResult,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
@@ -957,7 +971,11 @@ func getExtendedConfig(
 	extendedConfigPath := tspath.ToPath(extendedConfigFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
 
 	var cacheEntry *ExtendedConfigCacheEntry
-	if extendedConfigCache != nil {
+	// Bypass the cache when we detect a cycle in the resolution stack.
+	// The cache locks entries during parsing, and a cycle would cause the same goroutine
+	// to re-lock the same entry, resulting in a deadlock. Let parseConfig handle the
+	// circularity error via its own resolution stack check.
+	if extendedConfigCache != nil && !slices.Contains(resolutionStack, extendedConfigPath) {
 		cacheEntry = extendedConfigCache.GetExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host)
 	} else {
 		cacheEntry = ParseExtendedConfig(extendedConfigFileName, extendedConfigPath, resolutionStack, host, extendedConfigCache)
@@ -981,7 +999,7 @@ func getExtendedConfig(
 func ParseExtendedConfig(
 	fileName string,
 	path tspath.Path,
-	resolutionStack []string,
+	resolutionStack []tspath.Path,
 	host ParseConfigHost,
 	extendedConfigCache ExtendedConfigCache,
 ) *ExtendedConfigCacheEntry {
@@ -1008,11 +1026,11 @@ func parseConfig(
 	host ParseConfigHost,
 	basePath string,
 	configFileName string,
-	resolutionStack []string,
+	resolutionStack []tspath.Path,
 	extendedConfigCache ExtendedConfigCache,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	basePath = tspath.NormalizeSlashes(basePath)
-	resolvedPath := tspath.GetNormalizedAbsolutePath(configFileName, basePath)
+	resolvedPath := tspath.ToPath(configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
 	var errors []*ast.Diagnostic
 	if slices.Contains(resolutionStack, resolvedPath) {
 		var result *parsedTsconfig
@@ -1167,8 +1185,7 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	var errors []*ast.Diagnostic
-	resolutionStackString := []string{}
-	parsedConfig, errors := parseConfig(json, sourceFile, host, basePath, configFileName, resolutionStackString, extendedConfigCache)
+	parsedConfig, errors := parseConfig(json, sourceFile, host, basePath, configFileName, resolutionStack, extendedConfigCache)
 	mergeCompilerOptions(parsedConfig.options, existingOptions, existingOptionsRaw)
 	handleOptionConfigDirTemplateSubstitution(parsedConfig.options, basePathForFileNames)
 	rawConfig := parseJsonToStringKey(parsedConfig.raw)
@@ -1385,13 +1402,20 @@ func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *as
 
 func specToDiagnostic(spec string, disallowTrailingRecursion bool) *diagnostics.Message {
 	if disallowTrailingRecursion {
-		if ok, _ := regexp.MatchString(invalidTrailingRecursionPattern, spec); ok {
+		if invalidTrailingRecursion(spec) {
 			return diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 		}
 	} else if invalidDotDotAfterRecursiveWildcard(spec) {
 		return diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 	}
 	return nil
+}
+
+func invalidTrailingRecursion(spec string) bool {
+	// Matches **, /**, **/, and /**/, but not a**b.
+	// Strip optional trailing slash, then check if it ends with /** or is just **
+	s := strings.TrimSuffix(spec, "/")
+	return s == "**" || strings.HasSuffix(s, "/**")
 }
 
 func invalidDotDotAfterRecursiveWildcard(s string) bool {
@@ -1417,18 +1441,6 @@ func invalidDotDotAfterRecursiveWildcard(s string) bool {
 	}
 	return lastDotIndex > wildcardIndex
 }
-
-// Tests for a path that ends in a recursive directory wildcard.
-//
-//	Matches **, \**, **\, and \**\, but not a**b.
-//	NOTE: used \ in place of / above to avoid issues with multiline comments.
-//
-// Breakdown:
-//
-//	(^|\/)      # matches either the beginning of the string or a directory separator.
-//	\*\*        # matches the recursive directory wildcard "**".
-//	\/?$        # matches an optional trailing directory separator at the end of the string.
-const invalidTrailingRecursionPattern = `(?:^|\/)\*\*\/?$`
 
 func GetTsConfigPropArrayElementValue(tsConfigSourceFile *ast.SourceFile, propKey string, elementValue string) *ast.StringLiteral {
 	callback := GetCallbackForFindingPropertyAssignmentByValue(elementValue)
@@ -1660,23 +1672,19 @@ func getFileNamesFromConfigSpecs(
 		literalFileMap.Set(keyMappper(fileName), file)
 	}
 
-	var jsonOnlyIncludeRegexes []*regexp2.Regexp
+	var jsonOnlyIncludeMatchers *vfsmatch.SpecMatcher
 	if len(validatedIncludeSpecs) > 0 {
-		files := vfs.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
+		files := vfsmatch.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, vfsmatch.UnlimitedDepth)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
-				if jsonOnlyIncludeRegexes == nil {
+				if jsonOnlyIncludeMatchers == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(vfs.GetRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
-					if includeFilePatterns != nil {
-						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return vfs.GetRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
-						})
-					} else {
-						jsonOnlyIncludeRegexes = nil
-					}
+					jsonOnlyIncludeMatchers = vfsmatch.NewSpecMatcher(includes, basePath, vfsmatch.UsageFiles, host.UseCaseSensitiveFileNames())
 				}
-				includeIndex := core.FindIndex(jsonOnlyIncludeRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(file)) })
+				var includeIndex int = -1
+				if jsonOnlyIncludeMatchers != nil {
+					includeIndex = jsonOnlyIncludeMatchers.MatchIndex(file)
+				}
 				if includeIndex != -1 {
 					key := keyMappper(file)
 					if !literalFileMap.Has(key) && !wildCardJsonFileMap.Has(key) {

@@ -3,7 +3,7 @@
 // let a = 10;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let a: number
 // | ```
 // | 
@@ -12,14 +12,14 @@
 //     let b = a;
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let b: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //             ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let a: number
 // | ```
 // | 
@@ -28,7 +28,7 @@
 //         let b1 = 10;
 //             ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let b1: number
 // | ```
 // | 
@@ -39,7 +39,7 @@
 //     let c = 10;
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let c: number
 // | ```
 // | 
@@ -47,7 +47,7 @@
 //     export let d = 10;
 //                ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let d: number
 // | ```
 // | 
@@ -56,7 +56,7 @@
 //         let e = 10;
 //             ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let e: number
 // | ```
 // | 
@@ -66,7 +66,7 @@
 // let f: () => number;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let f: () => number
 // | ```
 // | 
@@ -74,14 +74,14 @@
 // let g = f;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let g: () => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let f: () => number
 // | ```
 // | 
@@ -89,7 +89,7 @@
 // f();
 // ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let f: () => number
 // | ```
 // | 
@@ -97,30 +97,39 @@
 // let h: { (a: string): number; (a: number): string; };
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | let h: { (a: string): number; (a: number): string; }
+// | ```typescript
+// | let h: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 // let i = h;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | let i: { (a: string): number; (a: number): string; }
+// | ```typescript
+// | let i: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | let h: { (a: string): number; (a: number): string; }
+// | ```typescript
+// | let h: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 // h(10);
 // ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let h: (a: number) => string
 // | ```
 // | 
@@ -128,7 +137,7 @@
 // h("hello");
 // ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | let h: (a: string) => number
 // | ```
 // | 
@@ -147,7 +156,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet a: number\n```\n"
+        "value": "```typescript\nlet a: number\n```\n"
       },
       "range": {
         "start": {
@@ -174,7 +183,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet b: number\n```\n"
+        "value": "```typescript\nlet b: number\n```\n"
       },
       "range": {
         "start": {
@@ -201,7 +210,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet a: number\n```\n"
+        "value": "```typescript\nlet a: number\n```\n"
       },
       "range": {
         "start": {
@@ -228,7 +237,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet b1: number\n```\n"
+        "value": "```typescript\nlet b1: number\n```\n"
       },
       "range": {
         "start": {
@@ -255,7 +264,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet c: number\n```\n"
+        "value": "```typescript\nlet c: number\n```\n"
       },
       "range": {
         "start": {
@@ -282,7 +291,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet d: number\n```\n"
+        "value": "```typescript\nlet d: number\n```\n"
       },
       "range": {
         "start": {
@@ -309,7 +318,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet e: number\n```\n"
+        "value": "```typescript\nlet e: number\n```\n"
       },
       "range": {
         "start": {
@@ -336,7 +345,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet f: () => number\n```\n"
+        "value": "```typescript\nlet f: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -363,7 +372,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet g: () => number\n```\n"
+        "value": "```typescript\nlet g: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -390,7 +399,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet f: () => number\n```\n"
+        "value": "```typescript\nlet f: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -417,7 +426,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet f: () => number\n```\n"
+        "value": "```typescript\nlet f: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -444,7 +453,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet h: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```typescript\nlet h: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -471,7 +480,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet i: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```typescript\nlet i: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -498,7 +507,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet h: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```typescript\nlet h: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -525,7 +534,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet h: (a: number) => string\n```\n"
+        "value": "```typescript\nlet h: (a: number) => string\n```\n"
       },
       "range": {
         "start": {
@@ -552,7 +561,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nlet h: (a: string) => number\n```\n"
+        "value": "```typescript\nlet h: (a: string) => number\n```\n"
       },
       "range": {
         "start": {
