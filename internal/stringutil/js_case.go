@@ -47,7 +47,7 @@ func ToUpperJS(str string) string {
 
 func toLowerASCII(str string) (string, bool) {
 	needsMapping := false
-	for i := 0; i < len(str); i++ {
+	for i := range len(str) {
 		ch := str[i]
 		if ch >= utf8.RuneSelf {
 			return "", false
@@ -69,7 +69,7 @@ func toLowerASCII(str string) (string, bool) {
 
 func toUpperASCII(str string) (string, bool) {
 	needsMapping := false
-	for i := 0; i < len(str); i++ {
+	for i := range len(str) {
 		ch := str[i]
 		if ch >= utf8.RuneSelf {
 			return "", false
