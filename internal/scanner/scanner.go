@@ -2503,6 +2503,38 @@ func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) c
 	return core.NewTextRange(pos, node.End())
 }
 
+func findOriginatingJSDocSatisfiesTag(sourceFile *ast.SourceFile, node *ast.Node) *ast.Node {
+	targetType := node.AsSatisfiesExpression().Type
+	if targetType.Flags&ast.NodeFlagsReparsed == 0 {
+		return nil
+	}
+	for current := node.Parent; current != nil; current = current.Parent {
+		if current.Flags&ast.NodeFlagsHasJSDoc == 0 {
+			continue
+		}
+		var firstSatisfiesTag *ast.Node
+		for _, jsDoc := range current.JSDoc(sourceFile) {
+			if tags := jsDoc.AsJSDoc().Tags; tags != nil {
+				for _, tag := range tags.Nodes {
+					if !ast.IsJSDocSatisfiesTag(tag) {
+						continue
+					}
+					if firstSatisfiesTag == nil {
+						firstSatisfiesTag = tag
+					}
+					if typeExpr := tag.AsJSDocSatisfiesTag().TypeExpression; typeExpr != nil {
+						if t := typeExpr.Type(); t != nil && t.Loc == targetType.Loc {
+							return tag
+						}
+					}
+				}
+			}
+		}
+		return firstSatisfiesTag
+	}
+	return nil
+}
+
 func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
 	errorNode := node
 	switch node.Kind {
@@ -2541,19 +2573,9 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		pos := SkipTrivia(sourceFile.Text(), node.Pos())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindSatisfiesExpression:
-		if node.AsSatisfiesExpression().Type.Flags&ast.NodeFlagsReparsed != 0 {
-			for current := node.Parent; current != nil; current = current.Parent {
-				for _, jsDoc := range current.JSDoc(nil) {
-					if tags := jsDoc.AsJSDoc().Tags; tags != nil {
-						for _, tag := range tags.Nodes {
-							if ast.IsJSDocSatisfiesTag(tag) {
-								pos := SkipTrivia(sourceFile.Text(), tag.TagName().Pos())
-								return GetRangeOfTokenAtPosition(sourceFile, pos)
-							}
-						}
-					}
-				}
-			}
+		if jsDocSatisfiesTag := findOriginatingJSDocSatisfiesTag(sourceFile, node); jsDocSatisfiesTag != nil {
+			pos := SkipTrivia(sourceFile.Text(), jsDocSatisfiesTag.TagName().Pos())
+			return GetRangeOfTokenAtPosition(sourceFile, pos)
 		}
 		pos := SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
