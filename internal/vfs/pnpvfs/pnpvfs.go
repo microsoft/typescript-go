@@ -231,6 +231,8 @@ func makeVirtualPath(basePath string, hash string, targetPath string) string {
 	return path.Join(basePath, hash, strconv.Itoa(depth), subPath)
 }
 
+// TODO: improve the cache clearing system, as somehow the GC is not able to collect all zip readers
+// even when they are all closed and cleared from the map
 func (pnpFS *pnpFS) ClearCache() error {
 	pnpFS.cacheReaderMutex.Lock()
 	defer pnpFS.cacheReaderMutex.Unlock()
