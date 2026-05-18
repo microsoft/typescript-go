@@ -1562,10 +1562,14 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		c.checkAndReportErrorForUsingValueAsType(errorLocation, name, meaning)) {
 		return
 	}
+	declarationName := name
+	if errorLocation != nil && ast.IsIdentifier(errorLocation) && errorLocation.Text() == name {
+		declarationName = scanner.DeclarationNameToString(errorLocation) // use escape sequences from original file
+	}
 	// Report missing lib first
 	suggestedLib := c.getSuggestedLibForNonExistentName(name)
 	if suggestedLib != "" {
-		c.error(errorLocation, nameNotFoundMessage, name, suggestedLib)
+		c.error(errorLocation, nameNotFoundMessage, declarationName, suggestedLib)
 		return
 	}
 	// Then spelling suggestions
@@ -1575,7 +1579,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		isUncheckedJS := c.isUncheckedJSSuggestion(errorLocation, suggestion, false /*excludeClasses*/)
 		message := core.IfElse(meaning == ast.SymbolFlagsNamespace, diagnostics.Cannot_find_namespace_0_Did_you_mean_1,
 			core.IfElse(isUncheckedJS, diagnostics.Could_not_find_name_0_Did_you_mean_1, diagnostics.Cannot_find_name_0_Did_you_mean_1))
-		diagnostic := NewDiagnosticForNode(errorLocation, message, name, suggestionName)
+		diagnostic := NewDiagnosticForNode(errorLocation, message, declarationName, suggestionName)
 		if suggestion.ValueDeclaration != nil {
 			diagnostic.AddRelatedInfo(NewDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
 		}
@@ -1583,7 +1587,7 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 		return
 	}
 	// And then fall back to unspecified "not found"
-	c.error(errorLocation, nameNotFoundMessage, name)
+	c.error(errorLocation, nameNotFoundMessage, declarationName)
 }
 
 func (c *Checker) checkAndReportErrorForUsingTypeAsNamespace(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
@@ -10398,6 +10402,7 @@ func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.No
 		return
 	}
 	c.checkCollisionWithRequireExportsInGeneratedCode(node, name)
+	c.checkCollisionWithGlobalObjectInGeneratedCode(node, name)
 	c.checkCollisionWithGlobalPromiseInGeneratedCode(node, name)
 	c.recordPotentialCollisionWithWeakMapSetInGeneratedCode(node, name)
 	c.recordPotentialCollisionWithReflectInGeneratedCode(node, name)
@@ -10427,6 +10432,22 @@ func (c *Checker) checkCollisionWithRequireExportsInGeneratedCode(node *ast.Node
 	parent := ast.GetDeclarationContainer(node)
 	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
 		// If the declaration happens to be in external module, report error that require and exports are reserved keywords
+		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
+	}
+}
+
+func (c *Checker) checkCollisionWithGlobalObjectInGeneratedCode(node *ast.Node, name *ast.Node) {
+	if name == nil || ast.IsClassLike(node) || !c.needCollisionCheckForIdentifier(node, name, "Object") {
+		return
+	}
+	// Uninstantiated modules shouldn't do this check
+	if ast.IsModuleDeclaration(node) && ast.GetModuleInstanceState(node) != ast.ModuleInstanceStateInstantiated {
+		return
+	}
+	// In case of variable declaration, node.parent is variable statement so look at the variable statement's parent
+	parent := ast.GetDeclarationContainer(node)
+	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) && c.program.GetEmitModuleFormatOfFile(parent.AsSourceFile()) == core.ModuleKindCommonJS {
+		// If the declaration happens to be in external module, report error that Object is a reserved identifier.
 		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
 	}
 }
@@ -19931,18 +19952,9 @@ func (c *Checker) getAnnotatedAccessorTypeNode(accessor *ast.Node) *ast.Node {
 }
 
 func getEffectiveSetAccessorTypeAnnotationNode(node *ast.Node) *ast.Node {
-	param := getSetAccessorValueParameter(node)
+	param := GetSetAccessorValueParameter(node)
 	if param != nil {
 		return param.Type()
-	}
-	return nil
-}
-
-func getSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
-	parameters := accessor.Parameters()
-	if len(parameters) > 0 {
-		hasThis := len(parameters) == 2 && ast.IsThisParameter(parameters[0])
-		return parameters[core.IfElse(hasThis, 1, 0)]
 	}
 	return nil
 }
@@ -26435,7 +26447,14 @@ func (c *Checker) getCrossProductUnionSize(types []*Type) int {
 	for _, t := range types {
 		switch {
 		case t.flags&TypeFlagsUnion != 0:
-			size *= len(t.Types())
+			n := len(t.Types())
+			// Cap the result to avoid integer overflow when computing the cross product of many large unions.
+			// In TypeScript, number overflow produces Infinity which naturally exceeds the limit check;
+			// in Go, we must guard against int wrapping to zero or negative.
+			if n > 0 && size > math.MaxInt/n {
+				return math.MaxInt
+			}
+			size *= n
 		case t.flags&TypeFlagsNever != 0:
 			return 0
 		}

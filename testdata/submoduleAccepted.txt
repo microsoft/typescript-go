@@ -447,7 +447,6 @@ compiler/declarationEmitMappedTypePreservesTypeParameterConstraint.types.diff
 compiler/awaitInNonAsyncFunction.errors.txt.diff
 compiler/bitwiseCompoundAssignmentOperators.errors.txt.diff
 compiler/circularModuleImports.errors.txt.diff
-compiler/classExpressionExtendingAbstractClass.errors.txt.diff
 compiler/classWithDuplicateIdentifier.errors.txt.diff
 compiler/classWithDuplicateIdentifier.symbols.diff
 compiler/classWithDuplicateIdentifier.types.diff
@@ -799,7 +798,6 @@ conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=nodenext
 ## Error squiggle position/column shifted to a different token or expression (misc)
 
 conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
-conformance/classAbstractInheritance2.errors.txt.diff
 conformance/jsdocPrivateName2.errors.txt.diff
 conformance/jsdocImplements_missingType.errors.txt.diff
 conformance/symbolProperty24.errors.txt.diff
@@ -1382,9 +1380,43 @@ conformance/moduleExportDuplicateAlias2.js.diff
 conformance/moduleExportDuplicateAlias3.js.diff
 conformance/moduleExportsElementAccessAssignment.js.diff
 
+# CJS `module.exports = {}` now emits `export = _default` with inlined object type instead of named exports
+## https://github.com/microsoft/typescript-go/issues/3543
+compiler/jsDeclarationEmitExportAssignedArray.js.diff
+compiler/jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.js.diff
+conformance/jsDeclarationsCommonjsRelativePath.js.diff
+conformance/jsDeclarationsDocCommentsOnConsts(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignmentExpressionPlusSecondary(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignmentWithKeywordName(target=es2015).js.diff
+conformance/jsDeclarationsExportedClassAliases.js.diff
+conformance/jsDeclarationsImportAliasExposedWithinNamespaceCjs.js.diff
+conformance/jsDeclarationsReexportedCjsAlias(target=es2015).js.diff
+conformance/jsDeclarationsReferenceToClassInstanceCrossFile.js.diff
+conformance/jsDeclarationsTypeAliases.js.diff
+conformance/jsDeclarationsTypeReferences(target=es2015).js.diff
+conformance/jsDeclarationsTypeReferences2(target=es2015).js.diff
+conformance/jsDeclarationsTypedefAndImportTypes.js.diff
+conformance/jsDeclarationsTypedefPropertyAndExportAssignment.js.diff
+
+# @overload handling changes in JS declaration emit (we no longer support @overload on declarations that can't have TS overloads)
+## https://github.com/microsoft/typescript-go/issues/3555
+compiler/jsFileAlternativeUseOfOverloadTag.js.diff
+compiler/jsFileFunctionOverloads.js.diff
+compiler/jsFileFunctionOverloads2.js.diff
+compiler/jsFileMethodOverloads.js.diff
+compiler/jsFileMethodOverloads2.js.diff
+compiler/jsFileMethodOverloads5.js.diff
+conformance/overloadTag1.js.diff
+conformance/overloadTag2.js.diff
+
 # Output file ordering changed + declaration types resolve to any instead of typeof references due to respecting `out` in package self-name resolution
 ## https://github.com/microsoft/typescript-go/issues/3551
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
+
+# @callback/@overload variadic intepreted differently than strada
+## https://github.com/microsoft/typescript-go/issues/3556
+conformance/callbackTagNestedParameter.js.diff
+conformance/callbackTagVariadicType.js.diff
