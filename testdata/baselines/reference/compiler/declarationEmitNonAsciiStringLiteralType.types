@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/declarationEmitNonAsciiStringLiteralType.ts] ////
+
+=== declarationEmitNonAsciiStringLiteralType.ts ===
+export const IconEmojis = {
+>IconEmojis : { readonly alert_low: "⚠️"; }
+>{    alert_low: "⚠️",} as const : { readonly alert_low: "⚠️"; }
+>{    alert_low: "⚠️",} : { readonly alert_low: "⚠️"; }
+
+    alert_low: "⚠️",
+>alert_low : "⚠️"
+>"⚠️" : "⚠️"
+
+} as const;
+
+export const singleEmoji = "⚠️" as const;
+>singleEmoji : "⚠️"
+>"⚠️" as const : "⚠️"
+>"⚠️" : "⚠️"
+
+export const tuple = ["⚠️", "日本語"] as const;
+>tuple : readonly ["⚠️", "日本語"]
+>["⚠️", "日本語"] as const : readonly ["⚠️", "日本語"]
+>["⚠️", "日本語"] : readonly ["⚠️", "日本語"]
+>"⚠️" : "⚠️"
+>"日本語" : "日本語"
+
+export function returnsEmoji(): "⚠️" {
+>returnsEmoji : () => "\u26A0\uFE0F"
+
+    return "⚠️";
+>"⚠️" : "⚠️"
+}
+

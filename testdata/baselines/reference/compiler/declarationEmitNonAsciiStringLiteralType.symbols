@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/declarationEmitNonAsciiStringLiteralType.ts] ////
+
+=== declarationEmitNonAsciiStringLiteralType.ts ===
+export const IconEmojis = {
+>IconEmojis : Symbol(IconEmojis, Decl(declarationEmitNonAsciiStringLiteralType.ts, 0, 12))
+
+    alert_low: "⚠️",
+>alert_low : Symbol(alert_low, Decl(declarationEmitNonAsciiStringLiteralType.ts, 0, 27))
+
+} as const;
+>const : Symbol(const)
+
+export const singleEmoji = "⚠️" as const;
+>singleEmoji : Symbol(singleEmoji, Decl(declarationEmitNonAsciiStringLiteralType.ts, 4, 12))
+>const : Symbol(const)
+
+export const tuple = ["⚠️", "日本語"] as const;
+>tuple : Symbol(tuple, Decl(declarationEmitNonAsciiStringLiteralType.ts, 6, 12))
+>const : Symbol(const)
+
+export function returnsEmoji(): "⚠️" {
+>returnsEmoji : Symbol(returnsEmoji, Decl(declarationEmitNonAsciiStringLiteralType.ts, 6, 44))
+
+    return "⚠️";
+}
+

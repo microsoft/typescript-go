@@ -287,7 +287,14 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return result
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
-		return b.f.NewLiteralTypeNode(b.reuseNode(source))
+		reused := b.reuseNode(source)
+		if reused != nil && source.Kind == ast.KindStringLiteral {
+			// Preserve the original characters of the literal (e.g. emojis) in declaration emit
+			// rather than escaping them as ASCII Unicode escapes. Mirrors TypeScript's behavior
+			// for synthesized string literal types in the node builder.
+			b.e.AddEmitFlags(reused, printer.EFNoAsciiEscaping)
+		}
+		return b.f.NewLiteralTypeNode(reused)
 	default:
 		debug.AssertNever(t.Kind, "Unhandled pseudotype kind in pseudotype node construction")
 		return nil
