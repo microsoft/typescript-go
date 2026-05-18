@@ -334,10 +334,14 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 				if isUnusableName(export.localName) {
 					// Use the target's original file name (preserves casing) rather than
 					// the lowercased ModuleID/Path, so PascalCase names are not lost on
-					// case-insensitive file systems.
-					targetFileName := moduleFileName
-					if targetSymbol != nil && len(targetSymbol.Declarations) > 0 {
+					// case-insensitive file systems. Prefer the target symbol's source
+					// file name since it's closer to the actual export origin.
+					targetFileName := ""
+					if len(targetSymbol.Declarations) > 0 {
 						targetFileName = ast.GetSourceFileOfNode(targetSymbol.Declarations[0]).FileName()
+					}
+					if targetFileName == "" {
+						targetFileName = moduleFileName
 					}
 					if targetFileName != "" {
 						export.localName = lsutil.ModuleSpecifierToValidIdentifier(targetFileName, false)
