@@ -12,3 +12,10 @@ export const tuple = ["⚠️", "日本語"] as const;
 export function returnsEmoji(): "⚠️" {
     return "⚠️";
 }
+
+export const templateEmoji = `⚠️` as const;
+
+export const templateObj = {
+    alert: `⚠️`,
+    greet: `日本語`,
+} as const;

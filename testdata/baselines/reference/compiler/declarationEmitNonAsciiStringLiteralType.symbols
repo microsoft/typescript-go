@@ -24,3 +24,19 @@ export function returnsEmoji(): "⚠️" {
     return "⚠️";
 }
 
+export const templateEmoji = `⚠️` as const;
+>templateEmoji : Symbol(templateEmoji, Decl(declarationEmitNonAsciiStringLiteralType.ts, 12, 12))
+>const : Symbol(const)
+
+export const templateObj = {
+>templateObj : Symbol(templateObj, Decl(declarationEmitNonAsciiStringLiteralType.ts, 14, 12))
+
+    alert: `⚠️`,
+>alert : Symbol(alert, Decl(declarationEmitNonAsciiStringLiteralType.ts, 14, 28))
+
+    greet: `日本語`,
+>greet : Symbol(greet, Decl(declarationEmitNonAsciiStringLiteralType.ts, 15, 16))
+
+} as const;
+>const : Symbol(const)
+

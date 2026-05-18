@@ -13,6 +13,13 @@ export function returnsEmoji(): "⚠️" {
     return "⚠️";
 }
 
+export const templateEmoji = `⚠️` as const;
+
+export const templateObj = {
+    alert: `⚠️`,
+    greet: `日本語`,
+} as const;
+
 
 
 
@@ -23,3 +30,8 @@ export declare const IconEmojis: {
 export declare const singleEmoji: "⚠️";
 export declare const tuple: readonly ["⚠️", "日本語"];
 export declare function returnsEmoji(): "⚠️";
+export declare const templateEmoji: `⚠️`;
+export declare const templateObj: {
+    readonly alert: `⚠️`;
+    readonly greet: `日本語`;
+};
