@@ -988,15 +988,16 @@ func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *
 func (tx *DeclarationTransformer) omitPrivateMethodType(input *ast.Node) *ast.Node {
 	if input.Symbol() != nil && len(input.Symbol().Declarations) > 0 && input.Symbol().Declarations[0] != input {
 		return nil
-	} else {
-		return tx.Factory().NewPropertyDeclaration(
-			tx.ensureModifiers(input),
-			input.Name(),
-			nil,
-			nil,
-			nil,
-		)
 	}
+	result := tx.Factory().NewPropertyDeclaration(
+		tx.ensureModifiers(input),
+		input.Name(),
+		nil,
+		nil,
+		nil,
+	)
+	tx.preserveJsDoc(result, input)
+	return result
 }
 
 func (tx *DeclarationTransformer) transformMethodSignatureDeclaration(input *ast.MethodSignatureDeclaration) *ast.Node {
@@ -2181,6 +2182,10 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 }
 
 func (tx *DeclarationTransformer) getNameExpressionPreferringIdentifier(nameExpr *ast.Node) *ast.Node {
+	if ast.IsNumericLiteral(nameExpr) {
+		// Numeric property names are string properties in JS; convert to string literal
+		nameExpr = tx.Factory().NewStringLiteral(nameExpr.Text(), ast.TokenFlagsNone)
+	}
 	if ast.IsStringLiteralLike(nameExpr) && scanner.IsIdentifierText(nameExpr.Text(), core.LanguageVariantStandard) {
 		result := tx.Factory().NewIdentifier(nameExpr.Text()) // prefer non-string literal names where possible
 		kwKind := scanner.IdentifierToKeywordKind(result.AsIdentifier())
