@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/callableTypePropertyEmptyArrayAssignment.ts] ////
+
+=== callableTypePropertyEmptyArrayAssignment.ts ===
+// https://github.com/microsoft/typescript-go/issues/3976
+
+// Assigning [] to a property of a callable-type variable with a declared type
+// annotation should not produce TS7008.
+
+const fn1: {
+>fn1 : { (): void; items?: string[]; }
+
+    (): void;
+    items?: string[];
+>items : string[] | undefined
+
+} = () => undefined;
+>() => undefined : { (): undefined; items: string[] | undefined; }
+>undefined : undefined
+
+fn1.items = [];  // No error: items is declared as string[] | undefined
+>fn1.items = [] : never[]
+>fn1.items : string[] | undefined
+>fn1 : { (): void; items?: string[]; }
+>items : string[] | undefined
+>[] : never[]
+
+const fn2: {
+>fn2 : { (): void; counts?: number[]; }
+
+    (): void;
+    counts?: number[];
+>counts : number[] | undefined
+
+} = () => undefined;
+>() => undefined : { (): undefined; counts: number[] | undefined; }
+>undefined : undefined
+
+fn2.counts = [];  // No error: counts is declared as number[] | undefined
+>fn2.counts = [] : never[]
+>fn2.counts : number[] | undefined
+>fn2 : { (): void; counts?: number[]; }
+>counts : number[] | undefined
+>[] : never[]
+
+// A variable with a simple object type annotation also benefits from this.
+const obj: { tags?: string[] } = {};
+>obj : { tags?: string[]; }
+>tags : string[] | undefined
+>{} : {}
+
+obj.tags = [];  // No error: tags is declared as string[] | undefined
+>obj.tags = [] : never[]
+>obj.tags : string[] | undefined
+>obj : { tags?: string[]; }
+>tags : string[] | undefined
+>[] : never[]
+
