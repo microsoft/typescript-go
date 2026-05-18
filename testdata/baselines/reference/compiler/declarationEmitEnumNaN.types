@@ -10,7 +10,7 @@ export declare enum E {
 >NaN : number
 
     B = NaN,
->B : E.B
+>B : E.A
 >NaN : number
 
     C = Infinity,
