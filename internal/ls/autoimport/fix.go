@@ -1288,10 +1288,10 @@ func getModuleSpecifierText(promotedDeclaration *ast.Node) string {
 		importEqualsDeclaration := promotedDeclaration.AsImportEqualsDeclaration()
 		if ast.IsExternalModuleReference(importEqualsDeclaration.ModuleReference) {
 			expr := importEqualsDeclaration.ModuleReference.Expression()
-			if expr != nil && ast.IsStringLiteralLike(expr) {
-				return expr.Text()
-			}
 			if expr != nil {
+				if ast.IsStringLiteralLike(expr) {
+					return expr.Text()
+				}
 				return scanner.GetTextOfNode(expr)
 			}
 		}
