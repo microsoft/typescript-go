@@ -42,7 +42,7 @@ func (h *VfsParseConfigHost) PnpApi() *pnp.PnpApi {
 
 func NewVFSParseConfigHost(files map[string]string, currentDirectory string, useCaseSensitiveFileNames bool) *VfsParseConfigHost {
 	var fs vfs.FS = vfstest.FromMap(files, useCaseSensitiveFileNames)
-	pnpApi := pnp.InitPnpApi(fs, tspath.NormalizePath(currentDirectory))
+	pnpApi := pnp.InitPnpApi(fs, currentDirectory)
 	if pnpApi != nil {
 		fs = pnpvfs.From(fs)
 	}
@@ -50,6 +50,6 @@ func NewVFSParseConfigHost(files map[string]string, currentDirectory string, use
 	return &VfsParseConfigHost{
 		Vfs:              fs,
 		CurrentDirectory: currentDirectory,
-		pnpApi:           nil,
+		pnpApi:           pnpApi,
 	}
 }
