@@ -1786,7 +1786,7 @@ async function runPackNativePreviewPackages() {
     ].map(p => path.basename(p));
 
     const publishManifest = publishOrder.map(pkg => ({
-        package: pkg,
+        filename: pkg,
         tag: "beta",
     }));
 
