@@ -55,3 +55,16 @@ obj.tags = [];  // No error: tags is declared as string[] | undefined
 >tags : string[] | undefined
 >[] : never[]
 
+// Without a type annotation, the empty array assignment should still produce TS7008.
+const fn3 = () => undefined;
+>fn3 : { (): undefined; labels: any[]; }
+>() => undefined : { (): undefined; labels: any[]; }
+>undefined : undefined
+
+fn3.labels = [];  // Error: Member 'labels' implicitly has an 'any[]' type.
+>fn3.labels = [] : never[]
+>fn3.labels : any[]
+>fn3 : { (): undefined; labels: any[]; }
+>labels : any[]
+>[] : never[]
+

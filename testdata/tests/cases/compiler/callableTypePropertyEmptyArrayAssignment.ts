@@ -21,3 +21,7 @@ fn2.counts = [];  // No error: counts is declared as number[] | undefined
 // A variable with a simple object type annotation also benefits from this.
 const obj: { tags?: string[] } = {};
 obj.tags = [];  // No error: tags is declared as string[] | undefined
+
+// Without a type annotation, the empty array assignment should still produce TS7008.
+const fn3 = () => undefined;
+fn3.labels = [];  // Error: Member 'labels' implicitly has an 'any[]' type.

@@ -46,3 +46,13 @@ obj.tags = [];  // No error: tags is declared as string[] | undefined
 >obj : Symbol(obj, Decl(callableTypePropertyEmptyArrayAssignment.ts, 18, 5))
 >tags : Symbol(tags, Decl(callableTypePropertyEmptyArrayAssignment.ts, 18, 12))
 
+// Without a type annotation, the empty array assignment should still produce TS7008.
+const fn3 = () => undefined;
+>fn3 : Symbol(fn3, Decl(callableTypePropertyEmptyArrayAssignment.ts, 22, 5))
+>undefined : Symbol(undefined)
+
+fn3.labels = [];  // Error: Member 'labels' implicitly has an 'any[]' type.
+>fn3.labels : Symbol(fn3.labels, Decl(callableTypePropertyEmptyArrayAssignment.ts, 22, 28))
+>fn3 : Symbol(fn3, Decl(callableTypePropertyEmptyArrayAssignment.ts, 22, 5))
+>labels : Symbol(fn3.labels, Decl(callableTypePropertyEmptyArrayAssignment.ts, 22, 28))
+
