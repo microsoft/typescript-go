@@ -582,7 +582,7 @@ func getLocalModuleSpecifier(
 	if preferences.relativePreference == RelativePreferenceExternalNonRelative && !tspath.PathIsRelative(maybeNonRelative) {
 		var projectDirectory tspath.Path
 		if len(compilerOptions.ConfigFilePath) > 0 {
-			projectDirectory = tspath.ToPath(compilerOptions.ConfigFilePath, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames())
+			projectDirectory = tspath.ToPath(tspath.GetDirectoryPath(compilerOptions.ConfigFilePath), host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames())
 		} else {
 			projectDirectory = tspath.ToPath(host.GetCurrentDirectory(), host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames())
 		}
@@ -621,9 +621,8 @@ func getLocalModuleSpecifier(
 			//
 			return maybeNonRelative
 		}
-		if len(fromPackageJsonImports) > 0 {
-			return relativePath
-		}
+
+		return relativePath
 	}
 
 	// Prefer a relative import over a baseUrl import if it has fewer components.
