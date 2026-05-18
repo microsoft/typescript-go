@@ -135,6 +135,11 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 			}
 		} else if param.Kind == ast.KindJSDocParameterTag || param.Kind == ast.KindJSDocPropertyTag {
 			jsparam := param.AsJSDocParameterOrPropertyTag()
+			// Skip sub-property parameters (e.g., @param x.y) - these have QualifiedNames
+			// and describe properties of a parent parameter, not standalone parameters.
+			if ast.IsQualifiedName(jsparam.Name()) {
+				continue
+			}
 			var dotDotDotToken *ast.Node
 			var paramType *ast.TypeNode
 
@@ -179,6 +184,9 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 		isArrayType := jstypeliteral.IsArrayType
 		properties := p.nodeSliceArena.NewSlice(0)
 		for _, prop := range jstypeliteral.JSDocPropertyTags {
+			if prop.Kind != ast.KindJSDocPropertyTag && prop.Kind != ast.KindJSDocParameterTag {
+				continue
+			}
 			jsprop := prop.AsJSDocParameterOrPropertyTag()
 			name := prop.Name()
 			if name.Kind == ast.KindQualifiedName {
@@ -415,7 +423,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 	case ast.KindJSDocThisTag:
 		if fun := getFunctionLikeHost(parent); fun != nil {
 			params := fun.Parameters()
-			if len(params) == 0 || params[0].Name().Kind != ast.KindThisKeyword {
+			if len(params) == 0 || (params[0].Name().Kind != ast.KindThisKeyword && !ast.IsThisIdentifier(params[0].Name())) {
 				thisParam := p.factory.NewParameterDeclaration(
 					nil, /* decorators */
 					nil, /* modifiers */
