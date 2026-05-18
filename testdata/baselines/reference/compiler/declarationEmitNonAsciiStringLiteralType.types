@@ -25,7 +25,7 @@ export const tuple = ["⚠️", "日本語"] as const;
 >"日本語" : "日本語"
 
 export function returnsEmoji(): "⚠️" {
->returnsEmoji : () => "\u26A0\uFE0F"
+>returnsEmoji : () => "⚠️"
 
     return "⚠️";
 >"⚠️" : "⚠️"
