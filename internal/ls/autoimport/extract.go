@@ -332,10 +332,27 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 				}
 				export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
 				if isUnusableName(export.localName) {
-					export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(export.Target.ModuleID), false)
+					// Use the target's original file name (preserves casing) rather than
+					// the lowercased ModuleID/Path, so PascalCase names are not lost on
+					// case-insensitive file systems.
+					targetFileName := moduleFileName
+					if targetSymbol != nil && len(targetSymbol.Declarations) > 0 {
+						targetFileName = ast.GetSourceFileOfNode(targetSymbol.Declarations[0]).FileName()
+					}
+					if targetFileName != "" {
+						export.localName = lsutil.ModuleSpecifierToValidIdentifier(targetFileName, false)
+					} else {
+						export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(export.Target.ModuleID), false)
+					}
 				}
 			} else {
-				export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), false)
+				// Use the original file name (preserves casing) rather than the lowercased
+				// ModuleID/Path, so PascalCase names are not lost on case-insensitive file systems.
+				if moduleFileName != "" {
+					export.localName = lsutil.ModuleSpecifierToValidIdentifier(moduleFileName, false)
+				} else {
+					export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), false)
+				}
 			}
 		}
 	}
