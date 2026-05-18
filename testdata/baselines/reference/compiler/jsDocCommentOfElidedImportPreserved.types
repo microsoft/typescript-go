@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/jsDocCommentOfElidedImportPreserved.ts] ////
+
+=== index.ts ===
+
+export interface Foo {}
+
+=== main.ts ===
+/**
+ * Some random docs not related to foo
+ */
+/* trigger */
+import * as x from './index.js';
+>x : typeof x
+
+export const foo = 1;
+>foo : 1
+>1 : 1
+
