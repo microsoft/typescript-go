@@ -975,6 +975,9 @@ func isNameOfPropertyAccessOrAssignment(parent *ast.Node, node *ast.Node) bool {
 	if ast.IsBindingElement(parent) && parent.PropertyName() == node {
 		return true
 	}
+	if ast.IsJsxAttribute(parent) && parent.Name() == node {
+		return true
+	}
 	return false
 }
 
