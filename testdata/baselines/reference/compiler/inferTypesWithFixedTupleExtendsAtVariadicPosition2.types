@@ -1,0 +1,331 @@
+//// [tests/cases/compiler/inferTypesWithFixedTupleExtendsAtVariadicPosition2.ts] ////
+
+=== inferTypesWithFixedTupleExtendsAtVariadicPosition2.ts ===
+// repro #51138
+
+type SubTup2FixedLength<T extends unknown[]> = T extends [
+>SubTup2FixedLength : SubTup2FixedLength<T>
+
+  ...infer B extends [any, any],
+  any
+]
+  ? B
+  : never;
+
+type SubTup2FixedLengthTest2 = SubTup2FixedLength<[a: 0]>;
+>SubTup2FixedLengthTest2 : never
+
+type SubTup2Variadic<T extends unknown[]> = T extends [
+>SubTup2Variadic : SubTup2Variadic<T>
+
+  ...infer B extends [any, any],
+  ...any
+]
+  ? B
+  : never;
+
+type SubTup2VariadicTest3 = SubTup2Variadic<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicTest3 : never
+
+type SubTup2VariadicTest4 = SubTup2Variadic<[...a: 0[]]>;
+>SubTup2VariadicTest4 : never
+
+type SubTup2VariadicTest5 = SubTup2Variadic<[a: 0, b: 1]>;
+>SubTup2VariadicTest5 : [a: 0, b: 1]
+
+type SubTup2VariadicAndRest<T extends unknown[]> = T extends [
+>SubTup2VariadicAndRest : SubTup2VariadicAndRest<T>
+
+  ...infer B extends [any, any],
+  ...(infer C)[]
+]
+  ? [...B, ...[C]]
+  : never;
+
+type SubTup2VariadicAndRestTest2 = SubTup2VariadicAndRest<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicAndRestTest2 : never
+
+type SubTup2VariadicAndRestTest3 = SubTup2VariadicAndRest<[...a: 0[]]>;
+>SubTup2VariadicAndRestTest3 : never
+
+type SubTup2VariadicAndRestTest4 = SubTup2VariadicAndRest<[a: 0, b: 1]>;
+>SubTup2VariadicAndRestTest4 : [a: 0, b: 1, unknown]
+
+type SubTup2TrailingVariadic<T extends unknown[]> = T extends [
+>SubTup2TrailingVariadic : SubTup2TrailingVariadic<T>
+
+  ...any,
+  ...infer B extends [any, any],
+]
+  ? B
+  : never;
+
+type SubTup2TrailingVariadicTest3 = SubTup2TrailingVariadic<[...a: 0[], b: 1]>;
+>SubTup2TrailingVariadicTest3 : never
+
+type SubTup2TrailingVariadicTest4 = SubTup2TrailingVariadic<[...a: 0[]]>;
+>SubTup2TrailingVariadicTest4 : never
+
+type SubTup2TrailingVariadicTest5 = SubTup2TrailingVariadic<[b: 1, c: 2]>;
+>SubTup2TrailingVariadicTest5 : [b: 1, c: 2]
+
+type SubTup2RestAndTrailingVariadic2<T extends unknown[]> = T extends [
+>SubTup2RestAndTrailingVariadic2 : SubTup2RestAndTrailingVariadic2<T>
+
+  ...(infer C)[],
+  ...infer B extends [any, any],
+]
+  ? [C, ...B]
+  : never;
+
+type SubTup2RestAndTrailingVariadic2Test2 = SubTup2RestAndTrailingVariadic2<[...a: 0[], b: 1]>;
+>SubTup2RestAndTrailingVariadic2Test2 : never
+
+type SubTup2RestAndTrailingVariadic2Test3 = SubTup2RestAndTrailingVariadic2<[...a: 0[]]>;
+>SubTup2RestAndTrailingVariadic2Test3 : never
+
+type SubTup2RestAndTrailingVariadic2Test4 = SubTup2RestAndTrailingVariadic2<[b: 1, c: 2]>;
+>SubTup2RestAndTrailingVariadic2Test4 : [unknown, b: 1, c: 2]
+
+type SubTup2VariadicWithLeadingFixedElements<T extends unknown[]> = T extends [
+>SubTup2VariadicWithLeadingFixedElements : SubTup2VariadicWithLeadingFixedElements<T>
+
+  any,
+  ...infer B extends [any, any],
+  ...any
+]
+  ? B
+  : never;
+
+type SubTup2VariadicWithLeadingFixedElementsTest3 = SubTup2VariadicWithLeadingFixedElements<[a: 0, b: 1, ...c: 2[]]>;
+>SubTup2VariadicWithLeadingFixedElementsTest3 : never
+
+type SubTup2VariadicWithLeadingFixedElementsTest4 = SubTup2VariadicWithLeadingFixedElements<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicWithLeadingFixedElementsTest4 : never
+
+type SubTup2VariadicWithLeadingFixedElementsTest5 = SubTup2VariadicWithLeadingFixedElements<[...a: 0[]]>;
+>SubTup2VariadicWithLeadingFixedElementsTest5 : never
+
+type SubTup2VariadicWithLeadingFixedElements2<T extends unknown[]> = T extends [
+>SubTup2VariadicWithLeadingFixedElements2 : SubTup2VariadicWithLeadingFixedElements2<T>
+
+  any,
+  any,
+  ...infer B extends [any],
+  ...any
+]
+  ? B
+  : never;
+
+type SubTup2VariadicWithLeadingFixedElements2Test = SubTup2VariadicWithLeadingFixedElements2<[a: 0, b: 1, c: 2, ...d: 3[]]>;
+>SubTup2VariadicWithLeadingFixedElements2Test : [c: 2]
+
+type SubTup2VariadicWithLeadingFixedElements2Test2 = SubTup2VariadicWithLeadingFixedElements2<[a: 0, b: 1, c: 2, d: 3, ...e: 4[]]>;
+>SubTup2VariadicWithLeadingFixedElements2Test2 : [c: 2]
+
+type SubTup2VariadicWithLeadingFixedElements2Test3 = SubTup2VariadicWithLeadingFixedElements2<[a: 0, b: 1, ...c: 2[]]>;
+>SubTup2VariadicWithLeadingFixedElements2Test3 : never
+
+type SubTup2VariadicWithLeadingFixedElements2Test4 = SubTup2VariadicWithLeadingFixedElements2<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicWithLeadingFixedElements2Test4 : never
+
+type SubTup2VariadicWithLeadingFixedElements2Test5 = SubTup2VariadicWithLeadingFixedElements2<[...a: 0[]]>;
+>SubTup2VariadicWithLeadingFixedElements2Test5 : never
+
+type SubTup2VariadicWithLeadingFixedElements3<T extends unknown[]> = T extends [
+>SubTup2VariadicWithLeadingFixedElements3 : SubTup2VariadicWithLeadingFixedElements3<T>
+
+  any,
+  ...infer B extends [any, any],
+  ...(infer C)[]
+]
+  ? [B, C]
+  : never;
+
+type SubTup2VariadicWithLeadingFixedElements3Test = SubTup2VariadicWithLeadingFixedElements3<[a: 0, b: 1, c: 2, d: 3, ...e: 4[]]>;
+>SubTup2VariadicWithLeadingFixedElements3Test : [[b: 1, c: 2], 3 | 4]
+
+type SubTup2VariadicWithLeadingFixedElements3Test2 = SubTup2VariadicWithLeadingFixedElements3<[a: 0, b: 1, c: 2, ...d: 3[]]>;
+>SubTup2VariadicWithLeadingFixedElements3Test2 : [[b: 1, c: 2], 3]
+
+type SubTup2VariadicWithLeadingFixedElements3Test3 = SubTup2VariadicWithLeadingFixedElements3<[a: 0, b: 1, ...c: 2[]]>;
+>SubTup2VariadicWithLeadingFixedElements3Test3 : never
+
+type SubTup2VariadicWithLeadingFixedElements3Test4 = SubTup2VariadicWithLeadingFixedElements3<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicWithLeadingFixedElements3Test4 : never
+
+type SubTup2VariadicWithLeadingFixedElements3Test5 = SubTup2VariadicWithLeadingFixedElements3<[...a: 0[]]>;
+>SubTup2VariadicWithLeadingFixedElements3Test5 : never
+
+type SubTup2VariadicWithLeadingFixedElements3Test6 = SubTup2VariadicWithLeadingFixedElements3<[a: 0, b: 1, c: 2]>;
+>SubTup2VariadicWithLeadingFixedElements3Test6 : [[b: 1, c: 2], unknown]
+
+type SubTup2VariadicWithTrailingOptionalElement<T extends unknown[]> = T extends [
+>SubTup2VariadicWithTrailingOptionalElement : SubTup2VariadicWithTrailingOptionalElement<T>
+
+  ...infer B extends [0, 1?],
+  ...any
+]
+  ? B
+  : never;
+
+type SubTup2VariadicWithTrailingOptionalElementTest = SubTup2VariadicWithTrailingOptionalElement<[a: 0]>;
+>SubTup2VariadicWithTrailingOptionalElementTest : [0, (1 | undefined)?]
+
+type SubTup2VariadicWithTrailingOptionalElementTest2 = SubTup2VariadicWithTrailingOptionalElement<[a: 0, b: 1]>;
+>SubTup2VariadicWithTrailingOptionalElementTest2 : [a: 0, b: 1]
+
+type SubTup2VariadicWithTrailingOptionalElementTest3 = SubTup2VariadicWithTrailingOptionalElement<[a: 0, b: 1, c: 2]>;
+>SubTup2VariadicWithTrailingOptionalElementTest3 : [a: 0, b: 1]
+
+type SubTup2VariadicWithTrailingOptionalElementTest4 = SubTup2VariadicWithTrailingOptionalElement<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicWithTrailingOptionalElementTest4 : [0, (1 | undefined)?]
+
+type SubTup2VariadicWithTrailingOptionalElementTest5 = SubTup2VariadicWithTrailingOptionalElement<[...a: 0[]]>;
+>SubTup2VariadicWithTrailingOptionalElementTest5 : never
+
+type SubTup2VariadicWithLeadingOptionalElement<T extends unknown[]> = T extends [
+>SubTup2VariadicWithLeadingOptionalElement : SubTup2VariadicWithLeadingOptionalElement<T>
+
+  ...infer B extends [0?, 1],
+  ...any
+]
+  ? B
+  : never;
+
+type SubTup2VariadicWithLeadingOptionalElementTest = SubTup2VariadicWithLeadingOptionalElement<[b: 1]>;
+>SubTup2VariadicWithLeadingOptionalElementTest : never
+
+type SubTup2VariadicWithLeadingOptionalElementTest2 = SubTup2VariadicWithLeadingOptionalElement<[a: 0, b: 1]>;
+>SubTup2VariadicWithLeadingOptionalElementTest2 : [a: 0, b: 1]
+
+type SubTup2VariadicWithLeadingOptionalElementTest3 = SubTup2VariadicWithLeadingOptionalElement<[a: 0, b: 1, c: 2]>;
+>SubTup2VariadicWithLeadingOptionalElementTest3 : [a: 0, b: 1]
+
+type SubTup2VariadicWithLeadingOptionalElementTest4 = SubTup2VariadicWithLeadingOptionalElement<[a: 0, ...b: 1[]]>;
+>SubTup2VariadicWithLeadingOptionalElementTest4 : never
+
+type SubTup2VariadicWithLeadingOptionalElementTest5 = SubTup2VariadicWithLeadingOptionalElement<[...a: 1[]]>;
+>SubTup2VariadicWithLeadingOptionalElementTest5 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements<T extends unknown[]> = T extends [
+>SubTup2TrailingVariadicWithTrailingFixedElements : SubTup2TrailingVariadicWithTrailingFixedElements<T>
+
+  ...any,
+  ...infer B extends [any, any],
+  any,
+]
+  ? B
+  : never;
+
+type SubTup2TrailingVariadicWithTrailingFixedElementsTest3 = SubTup2TrailingVariadicWithTrailingFixedElements<[...a: 0[], b: 1, c: 2]>;
+>SubTup2TrailingVariadicWithTrailingFixedElementsTest3 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElementsTest4 = SubTup2TrailingVariadicWithTrailingFixedElements<[...a: 0[], b: 1]>;
+>SubTup2TrailingVariadicWithTrailingFixedElementsTest4 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElementsTest5 = SubTup2TrailingVariadicWithTrailingFixedElements<[...a: 0[]]>;
+>SubTup2TrailingVariadicWithTrailingFixedElementsTest5 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements2<T extends unknown[]> = T extends [
+>SubTup2TrailingVariadicWithTrailingFixedElements2 : SubTup2TrailingVariadicWithTrailingFixedElements2<T>
+
+  ...any,
+  ...infer B extends [any],
+  any,
+  any,
+]
+  ? B
+  : never;
+
+type SubTup2TrailingVariadicWithTrailingFixedElements2Test = SubTup2TrailingVariadicWithTrailingFixedElements2<[...a: 0[], b: 1, c: 2, d: 3]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements2Test : [b: 1]
+
+type SubTup2TrailingVariadicWithTrailingFixedElements2Test2 = SubTup2TrailingVariadicWithTrailingFixedElements2<[...a: 0[], b: 1, c: 2, d: 3, e: 4]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements2Test2 : [c: 2]
+
+type SubTup2TrailingVariadicWithTrailingFixedElements2Test3 = SubTup2TrailingVariadicWithTrailingFixedElements2<[...a: 0[], b: 1, c: 2]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements2Test3 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements2Test4 = SubTup2TrailingVariadicWithTrailingFixedElements2<[...a: 0[], b: 1]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements2Test4 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements2Test5 = SubTup2TrailingVariadicWithTrailingFixedElements2<[...a: 0[]]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements2Test5 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3<T extends unknown[]> = T extends [
+>SubTup2TrailingVariadicWithTrailingFixedElements3 : SubTup2TrailingVariadicWithTrailingFixedElements3<T>
+
+  ...(infer C)[],
+  ...infer B extends [any, any],
+  any,
+]
+  ? [C, B]
+  : never;
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3Test = SubTup2TrailingVariadicWithTrailingFixedElements3<[...a: 0[], b: 1, c: 2, d: 3, e: 4]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements3Test : [0 | 1, [c: 2, d: 3]]
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3Test2 = SubTup2TrailingVariadicWithTrailingFixedElements3<[...a: 0[], b: 1, c: 2, d: 3]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements3Test2 : [0, [b: 1, c: 2]]
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3Test3 = SubTup2TrailingVariadicWithTrailingFixedElements3<[...a: 0[], b: 1, c: 2]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements3Test3 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3Test4 = SubTup2TrailingVariadicWithTrailingFixedElements3<[...a: 0[], b: 1]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements3Test4 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3Test5 = SubTup2TrailingVariadicWithTrailingFixedElements3<[...a: 0[]]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements3Test5 : never
+
+type SubTup2TrailingVariadicWithTrailingFixedElements3Test6 = SubTup2TrailingVariadicWithTrailingFixedElements3<[b: 1, c: 2, d: 3]>;
+>SubTup2TrailingVariadicWithTrailingFixedElements3Test6 : [unknown, [b: 1, c: 2]]
+
+type SubTup2TrailingVariadicWithLeadingOptionalElement<T extends unknown[]> = T extends [
+>SubTup2TrailingVariadicWithLeadingOptionalElement : SubTup2TrailingVariadicWithLeadingOptionalElement<T>
+
+  ...any,
+  ...infer B extends [0?, 1],
+]
+  ? B
+  : never;
+
+type SubTup2TrailingVariadicWithLeadingOptionalElementTest = SubTup2TrailingVariadicWithLeadingOptionalElement<[b: 1]>;
+>SubTup2TrailingVariadicWithLeadingOptionalElementTest : never
+
+type SubTup2TrailingVariadicWithLeadingOptionalElementTest2 = SubTup2TrailingVariadicWithLeadingOptionalElement<[a: 0, b: 1]>;
+>SubTup2TrailingVariadicWithLeadingOptionalElementTest2 : [a: 0, b: 1]
+
+type SubTup2TrailingVariadicWithLeadingOptionalElementTest3 = SubTup2TrailingVariadicWithLeadingOptionalElement<[a: 2, b: 0, c: 1]>;
+>SubTup2TrailingVariadicWithLeadingOptionalElementTest3 : [b: 0, c: 1]
+
+type SubTup2TrailingVariadicWithLeadingOptionalElementTest4 = SubTup2TrailingVariadicWithLeadingOptionalElement<[...a: 0[], b: 1]>;
+>SubTup2TrailingVariadicWithLeadingOptionalElementTest4 : never
+
+type SubTup2TrailingVariadicWithLeadingOptionalElementTest5 = SubTup2TrailingVariadicWithLeadingOptionalElement<[...a: 1[]]>;
+>SubTup2TrailingVariadicWithLeadingOptionalElementTest5 : never
+
+type SubTup2TrailingVariadicWithTrailingOptionalElement<T extends unknown[]> = T extends [
+>SubTup2TrailingVariadicWithTrailingOptionalElement : SubTup2TrailingVariadicWithTrailingOptionalElement<T>
+
+  ...any,
+  ...infer B extends [0, 1?],
+]
+  ? B
+  : never;
+
+type SubTup2TrailingVariadicWithTrailingOptionalElementTest = SubTup2TrailingVariadicWithTrailingOptionalElement<[a: 0]>;
+>SubTup2TrailingVariadicWithTrailingOptionalElementTest : [0, (1 | undefined)?]
+
+type SubTup2TrailingVariadicWithTrailingOptionalElementTest2 = SubTup2TrailingVariadicWithTrailingOptionalElement<[a: 0, b: 1]>;
+>SubTup2TrailingVariadicWithTrailingOptionalElementTest2 : [a: 0, b: 1]
+
+type SubTup2TrailingVariadicWithTrailingOptionalElementTest3 = SubTup2TrailingVariadicWithTrailingOptionalElement<[a: 2, b: 0, c: 1]>;
+>SubTup2TrailingVariadicWithTrailingOptionalElementTest3 : [b: 0, c: 1]
+
+type SubTup2TrailingVariadicWithTrailingOptionalElementTest4 = SubTup2TrailingVariadicWithTrailingOptionalElement<[...a: 0[]]>;
+>SubTup2TrailingVariadicWithTrailingOptionalElementTest4 : [0, (1 | undefined)?]
+
+type SubTup2TrailingVariadicWithTrailingOptionalElementTest5 = SubTup2TrailingVariadicWithTrailingOptionalElement<[...a: 0[], b: 1]>;
+>SubTup2TrailingVariadicWithTrailingOptionalElementTest5 : [0, (1 | undefined)?]
+
