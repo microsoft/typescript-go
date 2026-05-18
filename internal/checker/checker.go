@@ -17981,10 +17981,7 @@ func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type 
 		default:
 			t = c.checkExpressionForMutableLocation(node.AsBinaryExpression().Right, CheckModeNormal)
 			if t != nil && c.isEmptyArrayLiteralType(t) {
-				// If the container has an explicit type annotation that covers this property,
-				// use that type instead of falling back to any[] with an implicit-any diagnostic.
-				// This prevents false TS7008 errors when the declared type provides context
-				// (e.g. example.items = [] where example: { items?: string[] }).
+				// Skip TS7008 if the container's explicit annotation names the property type.
 				if annotatedPropType := c.getPropertyTypeFromContainerAnnotation(node); annotatedPropType != nil {
 					return annotatedPropType
 				}
@@ -18000,18 +17997,7 @@ func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type 
 	return nil
 }
 
-// getPropertyTypeFromContainerAnnotation returns the declared property type from the type
-// annotation on the container variable of an assignment declaration. Used to avoid false TS7008
-// diagnostics when the property has a known declared type (e.g. fn.items = [] where fn is
-// typed as { items?: string[] }).
-//
-// For expando assignments on function values (const fn: T = () => {}), the binder stores the
-// property on the function expression's symbol (not the variable's). We navigate from the
-// function expression's ValueDeclaration back up to the enclosing VariableDeclaration to find
-// the type annotation.
-//
-// Returns nil if no explicit annotation is found or if any step in the chain is missing,
-// preserving the existing TS7008 behavior as the safe fallback.
+// getPropertyTypeFromContainerAnnotation reads the property type from the container's explicit annotation, bypassing the circular resolution path that causes false TS7008 on expando assignments.
 func (c *Checker) getPropertyTypeFromContainerAnnotation(node *ast.Node) *Type {
 	if !ast.IsBinaryExpression(node) {
 		return nil
@@ -18020,7 +18006,6 @@ func (c *Checker) getPropertyTypeFromContainerAnnotation(node *ast.Node) *Type {
 	if !ast.IsPropertyAccessExpression(lhs) {
 		return nil
 	}
-	// Get the assignment declaration symbol for this binary expression.
 	assignSym := c.getSymbolOfNode(node)
 	if assignSym == nil || assignSym.Parent == nil {
 		return nil
@@ -18029,14 +18014,10 @@ func (c *Checker) getPropertyTypeFromContainerAnnotation(node *ast.Node) *Type {
 	if parentSym.ValueDeclaration == nil {
 		return nil
 	}
-	// Locate the VariableDeclaration that carries the explicit type annotation.
-	// For `const fn: T = () => undefined`, the binder attaches the expando property to the
-	// arrow-function's symbol. The arrow function's Parent in the AST is the VariableDeclaration.
 	parentDecl := parentSym.ValueDeclaration
 	var varDecl *ast.Node
 	switch {
 	case ast.IsFunctionExpressionOrArrowFunction(parentDecl):
-		// Navigate up: ArrowFunction → VariableDeclaration
 		if p := parentDecl.Parent; p != nil && ast.IsVariableDeclaration(p) {
 			varDecl = p
 		}
@@ -18046,8 +18027,6 @@ func (c *Checker) getPropertyTypeFromContainerAnnotation(node *ast.Node) *Type {
 	if varDecl == nil {
 		return nil
 	}
-	// Use only the explicit type annotation to avoid triggering inferred-type resolution,
-	// which could cause circular dependencies.
 	containerType := c.tryGetTypeFromTypeNode(varDecl)
 	if containerType == nil || containerType == c.errorType {
 		return nil
