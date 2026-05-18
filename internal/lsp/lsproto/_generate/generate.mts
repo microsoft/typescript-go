@@ -1112,6 +1112,22 @@ function patchAndPreprocessModel() {
         (reg as any).isRegistrationOnly = !allRequestMethods.has(reg.registrationMethod);
     }
 
+    // Add Visual Studio-specific DiagnosticTag values.
+    // These are VS-internal extensions not part of the LSP spec. They use sentinel
+    // values near int32.MaxValue to avoid collisions with future standard additions.
+    // Servers should only emit them when the client advertises
+    // _vs_supportsVisualStudioExtensions.
+    const diagnosticTagEnum = model.enumerations.find(e => e.name === "DiagnosticTag");
+    if (diagnosticTagEnum) {
+        diagnosticTagEnum.values.push(
+            {
+                name: "VsHiddenInEditor",
+                value: 2147483641, // int32.MaxValue - 6
+                documentation: "Visual Studio-specific tag: the diagnostic is not rendered with a squiggle in the editor. When combined with Unnecessary, Visual Studio renders the code as faded-out text rather than a squiggle.",
+            },
+        );
+    }
+
     // Merge LSPErrorCodes into ErrorCodes and remove LSPErrorCodes
     const errorCodesEnum = model.enumerations.find(e => e.name === "ErrorCodes");
     const lspErrorCodesEnum = model.enumerations.find(e => e.name === "LSPErrorCodes");

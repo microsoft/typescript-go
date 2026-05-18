@@ -300,9 +300,16 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 
 	var tags []lsproto.DiagnosticTag
 	if len(opts.tagValueSet) > 0 && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
-		tags = make([]lsproto.DiagnosticTag, 0, 2)
+		tags = make([]lsproto.DiagnosticTag, 0, 3)
 		if diagnostic.ReportsUnnecessary() && slices.Contains(opts.tagValueSet, lsproto.DiagnosticTagUnnecessary) {
 			tags = append(tags, lsproto.DiagnosticTagUnnecessary)
+			// Visual Studio's LSP client only renders Unnecessary diagnostics as
+			// faded-out text when they also carry the VS-internal HiddenInEditor
+			// tag; otherwise they appear as a regular squiggle. Emit it so VS
+			// matches the LSP-spec intent of the Unnecessary tag.
+			if opts.visualStudio {
+				tags = append(tags, lsproto.DiagnosticTagVsHiddenInEditor)
+			}
 		}
 		if diagnostic.ReportsDeprecated() && slices.Contains(opts.tagValueSet, lsproto.DiagnosticTagDeprecated) {
 			tags = append(tags, lsproto.DiagnosticTagDeprecated)
