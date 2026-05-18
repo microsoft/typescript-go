@@ -114,7 +114,7 @@ func hasCasedLetterAfter(runes []rune, index int) bool {
 }
 
 func isUnicodeCased(r rune) bool {
-	return IsInRuneRanges(r, unicodeCasedRanges)
+	return unicode.IsLower(r) || unicode.IsUpper(r) || unicode.IsTitle(r)
 }
 
 func isUnicodeCaseIgnorable(r rune) bool {

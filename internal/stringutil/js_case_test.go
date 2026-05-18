@@ -18,6 +18,10 @@ func TestJSCasing(t *testing.T) {
 		{name: "uppercase ligature", got: ToUpperJS("ﬁoo"), want: "FIOO"},
 		{name: "capitalize-style uppercase", got: ToUpperJS("ß") + "foo", want: "SSfoo"},
 		{name: "uncapitalize-style lowercase", got: ToLowerJS("İ") + "foo", want: "i̇foo"},
+		{name: "lowercase final sigma after lowercase letter without uppercase mapping", got: ToLowerJS("ʕΣ"), want: "ʕς"},
+		{name: "lowercase sigma after modifier letter", got: ToLowerJS("ʰΣ"), want: "ʰσ"},
+		{name: "lowercase sigma after case ignorable ypogegrammeni", got: ToLowerJS("ͅΣ"), want: "ͅσ"},
+		{name: "lowercase sigma after uncased extended latin letter", got: ToLowerJS("ꟋΣ"), want: "Ɤσ"},
 	}
 
 	for _, tt := range tests {
