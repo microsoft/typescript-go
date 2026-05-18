@@ -589,8 +589,8 @@ func getLocalModuleSpecifier(
 		canonicalSourceDirectory := tspath.ToPath(sourceDirectory, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames())
 		modulePath := tspath.ToPath(moduleFileName, string(projectDirectory), host.UseCaseSensitiveFileNames())
 
-		sourceIsInternal := strings.HasPrefix(string(canonicalSourceDirectory), string(projectDirectory))
-		targetIsInternal := strings.HasPrefix(string(modulePath), string(projectDirectory))
+		sourceIsInternal := projectDirectory.ContainsPath(canonicalSourceDirectory)
+		targetIsInternal := projectDirectory.ContainsPath(modulePath)
 		if sourceIsInternal && !targetIsInternal || !sourceIsInternal && targetIsInternal {
 			// 1. The import path crosses the boundary of the tsconfig.json-containing directory.
 			//
