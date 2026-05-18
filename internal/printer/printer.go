@@ -547,7 +547,7 @@ func (p *Printer) getLeadingLineTerminatorCount(parentNode *ast.Node, firstChild
 					},
 				)
 			}
-			return core.IfElse(rangeStartPositionsAreOnSameLine(parentNode.Loc, firstChild.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(RangeStartPositionsAreOnSameLine(parentNode.Loc, firstChild.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.shouldEmitOnNewLine(firstChild, format) {
 			return 1
@@ -1877,7 +1877,7 @@ func (p *Printer) emitTypeArguments(parentNode *ast.Node, nodes *ast.TypeArgumen
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitTypeParameterDeclarationNode, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
@@ -2322,6 +2322,9 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
 
+	case ast.KindPropertyAccessExpression:
+		// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type
+		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindExpressionWithTypeArguments:
 		// !!! Should this actually be considered a type?
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
@@ -4387,7 +4390,7 @@ func (p *Printer) emitJsxAttributeValue(node *ast.JsxAttributeValue) {
 	case ast.KindJsxFragment:
 		p.emitJsxFragment(node.AsJsxFragment())
 	default:
-		panic(fmt.Sprintf("unhandled JsxAttributeValue: %v", node.Kind))
+		p.emitExpression(node, ast.OperatorPrecedenceLowest)
 	}
 }
 
@@ -4401,7 +4404,7 @@ func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClaus
 		(p.currentSourceFile == nil ||
 			ast.NodeIsSynthesized(node.AsNode()) ||
 			ast.NodeIsSynthesized(node.Statements.Nodes[0]) ||
-			rangeStartPositionsAreOnSameLine(node.Loc, node.Statements.Nodes[0].Loc, p.currentSourceFile))
+			RangeStartPositionsAreOnSameLine(node.Loc, node.Statements.Nodes[0].Loc, p.currentSourceFile))
 
 	format := LFCaseOrDefaultClauseStatements
 	if emitAsSingleStatement {

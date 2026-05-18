@@ -1045,7 +1045,15 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 }
 
 func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensions, moduleName string, nodeModulesDirectory string) *resolved {
-	candidate := tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, moduleName))
+	// Strip any trailing directory separator so that imports like `pkg/` and `pkg`
+	// produce identical `candidate` and `packageDirectory` strings. Otherwise the
+	// `package.json` info cache (which is keyed by normalized path but stores the
+	// caller's `PackageDirectory` verbatim) can hand back, under concurrent
+	// inserts, an entry whose `PackageDirectory` doesn't match `candidate`,
+	// causing `loadNodeModuleFromDirectoryWorker`'s `ComparePaths(candidate, ...)`
+	// check to fail and skip loading the package's `main`/`types` entry.
+	// https://github.com/microsoft/typescript-go/issues/3526
+	candidate := tspath.RemoveTrailingDirectorySeparator(tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, moduleName)))
 	packageName, rest := ParsePackageName(moduleName)
 	packageDirectory := tspath.CombinePaths(nodeModulesDirectory, packageName)
 	if packageName == "" {
@@ -1090,7 +1098,6 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			fromDirectory.packageId = r.getPackageId(fromDirectory.path, packageInfo)
 			return fromDirectory
 		}
-		// !!! this is ported exactly, but checking for null seems wrong?
 		if rest == "" && packageInfo.Exists() &&
 			(packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNotPresent || packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNull) &&
 			r.esmMode {
@@ -1115,8 +1122,10 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 		r.resolvedPackageDirectory = true
 		if r.features&NodeResolutionFeaturesExports != 0 &&
 			packageInfo.Exists() &&
-			packageInfo.Contents.Exports.Type != packagejson.JSONValueTypeNotPresent {
-			// package exports are higher priority than file/directory/typesVersions lookups and (and, if there's exports present, blocks them)
+			!packageInfo.Contents.Exports.IsFalsy() {
+			// package exports are higher priority than file/directory/typesVersions lookups and (and, if there's exports present*, blocks them)
+			// *Well, weirdly enough a top-level `"exports": null` does NOT block fallback resolution.
+			// https://github.com/microsoft/TypeScript/pull/49327
 			return r.loadModuleFromExports(packageInfo, ext, tspath.CombinePaths(".", rest))
 		}
 		if rest != "" {
@@ -2147,7 +2156,7 @@ func (e *ResolvedEntrypoint) SymlinkOrRealpath() string {
 	return e.ResolvedFileName
 }
 
-func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string) []*ResolvedEntrypoint {
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.InfoCacheEntry, packageName string, enableDirectorySearch bool) []*ResolvedEntrypoint {
 	extensions := extensionsTypeScript | extensionsDeclaration
 	features := NodeResolutionFeaturesAll
 	state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: r.compilerOptions}
@@ -2163,16 +2172,6 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		packageJson,
 	)
 
-	otherFiles := vfsmatch.ReadDirectory(
-		r.host.FS(),
-		r.host.GetCurrentDirectory(),
-		packageJson.PackageDirectory,
-		extensions.Array(),
-		[]string{"node_modules"},
-		[]string{"**/*"},
-		vfsmatch.UnlimitedDepth,
-	)
-
 	if mainResolution.isResolved() {
 		result = append(result, r.createResolvedEntrypointHandlingSymlink(
 			mainResolution.path,
@@ -2183,19 +2182,31 @@ func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageJson *packagejson.In
 		))
 	}
 
-	comparePathsOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.host.FS().UseCaseSensitiveFileNames()}
-	for _, file := range otherFiles {
-		if mainResolution.isResolved() && tspath.ComparePaths(file, mainResolution.path, comparePathsOptions) == 0 {
-			continue
-		}
+	if enableDirectorySearch {
+		otherFiles := vfsmatch.ReadDirectory(
+			r.host.FS(),
+			r.host.GetCurrentDirectory(),
+			packageJson.PackageDirectory,
+			extensions.Array(),
+			[]string{"node_modules"},
+			[]string{"**/*"},
+			vfsmatch.UnlimitedDepth,
+		)
 
-		result = append(result, r.createResolvedEntrypointHandlingSymlink(
-			file,
-			tspath.ResolvePath(packageName, tspath.GetRelativePathFromDirectory(packageJson.PackageDirectory, file, comparePathsOptions)),
-			nil,
-			nil,
-			EndingChangeable,
-		))
+		comparePathsOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.host.FS().UseCaseSensitiveFileNames()}
+		for _, file := range otherFiles {
+			if mainResolution.isResolved() && tspath.ComparePaths(file, mainResolution.path, comparePathsOptions) == 0 {
+				continue
+			}
+
+			result = append(result, r.createResolvedEntrypointHandlingSymlink(
+				file,
+				tspath.ResolvePath(packageName, tspath.GetRelativePathFromDirectory(packageJson.PackageDirectory, file, comparePathsOptions)),
+				nil,
+				nil,
+				EndingChangeable,
+			))
+		}
 	}
 
 	if len(result) > 0 {

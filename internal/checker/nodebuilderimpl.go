@@ -82,12 +82,10 @@ type NodeBuilderContext struct {
 	remappedSymbolReferences        map[ast.SymbolId]*ast.Symbol
 
 	// per signature scope state
-	hasCreatedTypeParameterSymbolList     bool
-	hasCreatedTypeParametersNamesLookups  bool
-	typeParameterNames                    map[TypeId]*ast.Identifier
-	typeParameterNamesByText              map[string]struct{}
-	typeParameterNamesByTextNextNameCount map[string]int
-	typeParameterSymbolList               map[ast.SymbolId]struct{}
+	typeParameterNames                    collections.CopyOnWriteMap[TypeId, *ast.Identifier]
+	typeParameterNamesByText              collections.CopyOnWriteSet[string]
+	typeParameterNamesByTextNextNameCount collections.CopyOnWriteMap[string, int]
+	typeParameterSymbolList               collections.CopyOnWriteSet[ast.SymbolId]
 }
 
 type NodeBuilderImpl struct {
@@ -290,29 +288,26 @@ func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.Typ
 			}
 		}
 		return b.f.UpdateImportTypeNode(imprt, imprt.IsTypeOf, imprt.Argument, imprt.Attributes, qualifier, ref.TypeArgumentList())
-	} else {
-		// first shift type arguments
-		// !!! In the old emitter, an Identifier could have type arguments for use with quickinfo:
-		// typeArguments := root.TypeArguments
-		// typeName := root.AsTypeReferenceNode().TypeName
-		// if ast.IsIdentifier(typeName) {
-		// 	if typeArguments != getIdentifierTypeArguments(typeName) {
-		// 		typeName = setIdentifierTypeArguments(b.f.cloneNode(typeName), typeArguments)
-		// 	}
-		// } else {
-		// 	if typeArguments != getIdentifierTypeArguments(typeName.Right) {
-		// 		typeName = b.f.UpdateQualifiedName(typeName, typeName.Left, setIdentifierTypeArguments(b.f.cloneNode(typeName.Right), typeArguments))
-		// 	}
-		// }
-		// !!! Without the above, nested type args are silently elided
-		// then move qualifiers
-		ids := getAccessStack(ref)
-		var typeName *ast.Node = root.AsTypeReferenceNode().TypeName
-		for _, id := range ids {
+	} else if ast.IsTypeReferenceNode(root) {
+		typeRef := root.AsTypeReferenceNode()
+		if b.ctx.flags&nodebuilder.FlagsUseInstantiationExpressions != 0 && typeRef.TypeArguments != nil && len(typeRef.TypeArguments.Nodes) != 0 {
+			expr := b.createExpressionWithTypeArguments(b.createAccessExpression(typeRef.TypeName), typeRef.TypeArguments)
+			for _, id := range getAccessStack(ref) {
+				expr = b.f.NewPropertyAccessExpression(expr, nil, id, ast.NodeFlagsNone)
+			}
+			return expr
+		}
+		var typeName *ast.Node = typeRef.TypeName
+		for _, id := range getAccessStack(ref) {
 			typeName = b.f.NewQualifiedName(typeName, id)
 		}
 		return b.f.UpdateTypeReferenceNode(root.AsTypeReferenceNode(), typeName, ref.TypeArgumentList())
 	}
+	expr := b.createAccessExpression(root)
+	for _, id := range getAccessStack(ref) {
+		expr = b.f.NewPropertyAccessExpression(expr, nil, id, ast.NodeFlagsNone)
+	}
+	return expr
 }
 
 func getAccessStack(ref *ast.Node) []*ast.Node {
@@ -383,11 +378,12 @@ func (b *NodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.Nod
 	result := make([]*ast.Node, 0, len(list))
 
 	for i, t := range list {
-		if b.checkTruncationLength() && (i+2 < len(list)-1) {
+		displayIndex := i + 1
+		if b.checkTruncationLength() && (displayIndex+2 < len(list)-1) {
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				result = append(result, b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(list)-i), false /*hasTrailingNewLine*/))
+				result = append(result, b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(list)-displayIndex), false /*hasTrailingNewLine*/))
 			} else {
-				text := fmt.Sprintf("... %d more ...", len(list)-i)
+				text := fmt.Sprintf("... %d more ...", len(list)-displayIndex)
 				result = append(result, b.f.NewTypeReferenceNode(b.f.NewIdentifier(text), nil /*typeArguments*/))
 			}
 			typeNode := b.typeToTypeNode(list[len(list)-1])
@@ -742,15 +738,17 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 	if ast.IsIndexedAccessTypeNode(entityName) {
 		return entityName // Indexed accesses can never be `typeof`
 	}
-	if isTypeOf {
-		return b.f.NewTypeQueryNode(entityName, nil)
+	if ast.IsEntityName(entityName) {
+		if isTypeOf {
+			return b.f.NewTypeQueryNode(entityName, nil)
+		}
+		return b.f.NewTypeReferenceNode(entityName, typeArguments)
 	}
-	// !!! TODO: smuggle type arguments out
-	// Move type arguments from last identifier on chain to type reference
-	// const lastId = isIdentifier(entityName) ? entityName : entityName.right;
-	// const lastTypeArgs = getIdentifierTypeArguments(lastId);
-	// setIdentifierTypeArguments(lastId, /*typeArguments*/ undefined);
-	return b.f.NewTypeReferenceNode(entityName, typeArguments)
+	if isTypeOf && ast.IsExpressionWithTypeArguments(entityName) {
+		expr := entityName.AsExpressionWithTypeArguments()
+		return b.f.NewTypeQueryNode(b.f.DeepCloneNode(expr.Expression), expr.TypeArguments)
+	}
+	return entityName
 }
 
 func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAccessTypeNode {
@@ -761,7 +759,6 @@ func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAc
 }
 
 func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index int, stopper int, overrideTypeArguments *ast.NodeList) *ast.Node {
-	// !!! TODO: smuggle type arguments out
 	typeParameterNodes := overrideTypeArguments
 	if index != (len(chain) - 1) {
 		typeParameterNodes = b.lookupTypeParameterNodes(chain, index)
@@ -846,18 +843,14 @@ func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 
 	identifier := b.newIdentifier(symbolName, symbol)
 	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
-	// !!! TODO: smuggle type arguments out
-	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
-	// identifier.symbol = symbol;
 
 	if index > stopper {
 		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
-		if !ast.IsEntityName(lhs) {
-			panic("Impossible construct - an export of an indexed access cannot be reachable")
+		if b.ctx.flags&nodebuilder.FlagsUseInstantiationExpressions == 0 || ast.IsEntityName(lhs) && (typeParameterNodes == nil || len(typeParameterNodes.Nodes) == 0) {
+			return b.f.NewQualifiedName(lhs, identifier)
 		}
-		return b.f.NewQualifiedName(lhs, identifier)
+		return b.createExpressionWithTypeArguments(b.f.NewPropertyAccessExpression(b.createAccessExpression(lhs), nil, identifier, ast.NodeFlagsNone), typeParameterNodes)
 	}
-
 	return identifier
 }
 
@@ -867,7 +860,7 @@ func (b *NodeBuilderImpl) symbolToExpression(symbol *ast.Symbol, mask ast.Symbol
 }
 
 func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, index int) *ast.Expression {
-	// typeParameterNodes := b.lookupTypeParameterNodes(chain, index)
+	typeParameterNodes := b.lookupExpressionChainTypeArgumentNodes(chain, index)
 	symbol := chain[index]
 
 	if index == 0 {
@@ -887,16 +880,13 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 	if index == 0 || canUsePropertyAccess(symbolName) {
 		identifier := b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
-		// !!! TODO: smuggle type arguments out
-		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
-		// identifier.symbol = symbol;
 		b.ctx.approximateLength += 1 + len(symbolName)
 		if index > 0 {
 			result := b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
 			b.e.AddEmitFlags(result, printer.EFNoIndentation)
-			return result
+			return b.createExpressionWithTypeArguments(result, typeParameterNodes)
 		}
-		return identifier
+		return b.createExpressionWithTypeArguments(identifier, typeParameterNodes)
 	}
 
 	if startsWithSquareBracket(symbolName) {
@@ -918,13 +908,9 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		b.ctx.approximateLength += len(symbolName)
 		expression = b.newIdentifier(symbolName, symbol)
 		b.e.AddEmitFlags(expression, printer.EFNoAsciiEscaping)
-		// !!! TODO: smuggle type arguments out
-		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
-		// identifier.symbol = symbol;
-		// expression = identifier;
 	}
 	b.ctx.approximateLength += 2 // []
-	return b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone)
+	return b.createExpressionWithTypeArguments(b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone), typeParameterNodes)
 }
 
 func canUsePropertyAccess(name string) bool {
@@ -1058,31 +1044,14 @@ func (b *NodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 	debug.Assert(chain != nil && 0 <= index && index < len(chain))
 	symbol := chain[index]
 	symbolId := ast.GetSymbolId(symbol)
-	if !b.ctx.hasCreatedTypeParameterSymbolList {
-		b.ctx.hasCreatedTypeParameterSymbolList = true
-		b.ctx.typeParameterSymbolList = make(map[ast.SymbolId]struct{})
-	}
-	_, ok := b.ctx.typeParameterSymbolList[symbolId]
-	if ok {
+	if b.ctx.typeParameterSymbolList.Has(symbolId) {
 		return nil
 	}
-	b.ctx.typeParameterSymbolList[symbolId] = struct{}{}
+	b.ctx.typeParameterSymbolList.Add(symbolId)
 
 	if b.ctx.flags&nodebuilder.FlagsWriteTypeParametersInQualifiedName != 0 && index < (len(chain)-1) {
-		parentSymbol := symbol
-		nextSymbol := chain[index+1]
-
-		if nextSymbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
-			targetSymbol := parentSymbol
-			if parentSymbol.Flags&ast.SymbolFlagsAlias != 0 {
-				targetSymbol = b.ch.resolveAlias(parentSymbol)
-			}
-			params := b.getTypeParametersOfClassOrInterface(targetSymbol)
-			targetMapper := b.ch.valueSymbolLinks.Get(nextSymbol).mapper
-			if targetMapper != nil {
-				params = core.Map(params, targetMapper.Map)
-			}
-			return b.mapToTypeNodes(params, false /*isBareList*/)
+		if typeArgumentNodes := b.lookupInstantiatedTypeArgumentNodes(chain, index); typeArgumentNodes != nil {
+			return typeArgumentNodes
 		} else {
 			typeParameterNodes := b.typeParametersToTypeParameterDeclarations(symbol)
 			if len(typeParameterNodes) > 0 {
@@ -1207,10 +1176,6 @@ func (b_ *NodeBuilderImpl) sortByBestName(a sortedSymbolNamePair, b sortedSymbol
 	return b_.ch.compareSymbols(a.sym, b.sym) // must sort symbols for stable ordering
 }
 
-func isAmbientModuleSymbolName(s string) bool {
-	return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
-}
-
 func canHaveModuleSpecifier(node *ast.Node) bool {
 	if node == nil {
 		return false
@@ -1300,12 +1265,12 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	}
 
 	if file == nil {
-		if isAmbientModuleSymbolName(symbol.Name) {
+		if ast.IsAmbientModuleSymbolName(symbol.Name) {
 			return stringutil.StripQuotes(symbol.Name)
 		}
 	}
 	if b.ctx.enclosingFile == nil {
-		if isAmbientModuleSymbolName(symbol.Name) {
+		if ast.IsAmbientModuleSymbolName(symbol.Name) {
 			return stringutil.StripQuotes(symbol.Name)
 		}
 		return ast.GetSourceFileOfModule(symbol).FileName()
@@ -1444,9 +1409,8 @@ func (b *NodeBuilderImpl) typeParameterShadowsOtherTypeParameterInScope(name str
 }
 
 func (b *NodeBuilderImpl) typeParameterToName(typeParameter *Type) *ast.Identifier {
-	if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && b.ctx.typeParameterNames != nil {
-		cached, ok := b.ctx.typeParameterNames[typeParameter.id]
-		if ok {
+	if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 {
+		if cached, ok := b.ctx.typeParameterNames.Get(typeParameter.id); ok {
 			return cached
 		}
 	}
@@ -1461,24 +1425,12 @@ func (b *NodeBuilderImpl) typeParameterToName(typeParameter *Type) *ast.Identifi
 		}
 	}
 	if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 {
-		if !b.ctx.hasCreatedTypeParametersNamesLookups {
-			b.ctx.hasCreatedTypeParametersNamesLookups = true
-			b.ctx.typeParameterNames = make(map[TypeId]*ast.Identifier)
-			b.ctx.typeParameterNamesByText = make(map[string]struct{})
-			b.ctx.typeParameterNamesByTextNextNameCount = make(map[string]int)
-		}
-
 		rawText := result.Text()
-		i := 0
-		cached, ok := b.ctx.typeParameterNamesByTextNextNameCount[rawText]
-		if ok {
-			i = cached
-		}
+		i, _ := b.ctx.typeParameterNamesByTextNextNameCount.Get(rawText)
 		text := rawText
 
 		for true {
-			_, present := b.ctx.typeParameterNamesByText[text]
-			if !present && !b.typeParameterShadowsOtherTypeParameterInScope(text, typeParameter) {
+			if !b.ctx.typeParameterNamesByText.Has(text) && !b.typeParameterShadowsOtherTypeParameterInScope(text, typeParameter) {
 				break
 			}
 			i++
@@ -1494,9 +1446,9 @@ func (b *NodeBuilderImpl) typeParameterToName(typeParameter *Type) *ast.Identifi
 
 		// avoiding iterations of the above loop turns out to be worth it when `i` starts to get large, so we cache the max
 		// `i` we've used thus far, to save work later
-		b.ctx.typeParameterNamesByTextNextNameCount[rawText] = i
-		b.ctx.typeParameterNames[typeParameter.id] = result.AsIdentifier()
-		b.ctx.typeParameterNamesByText[text] = struct{}{}
+		b.ctx.typeParameterNamesByTextNextNameCount.Set(rawText, i)
+		b.ctx.typeParameterNames.Set(typeParameter.id, result.AsIdentifier())
+		b.ctx.typeParameterNamesByText.Add(text)
 	}
 
 	return result.AsIdentifier()
@@ -1847,8 +1799,7 @@ type SignatureToSignatureDeclarationOptions struct {
 func (b *NodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signature, kind ast.Kind, options *SignatureToSignatureDeclarationOptions) *ast.Node {
 	var typeParameters []*ast.Node
 
-	expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
-	cleanup := b.enterNewScope(signature.declaration, expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
+	expandedParams, cleanup := b.enterSignatureScope(signature)
 	b.ctx.approximateLength += 3
 	// Usually a signature contributes a few more characters than this, but 3 is the minimum
 
@@ -2568,7 +2519,7 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 	if b.checkTruncationLength() {
 		if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
 			elem := b.f.NewNotEmittedTypeElement()
-			return b.f.NewNodeList([]*ast.TypeElement{b.e.AddSyntheticLeadingComment(elem, ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)})
+			return b.f.NewNodeList([]*ast.TypeElement{b.e.AddSyntheticTrailingComment(elem, ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)})
 		}
 		return b.f.NewNodeList([]*ast.Node{b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier("..."), nil, nil, nil)})
 	}
@@ -2610,7 +2561,7 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 		}
 		if b.checkTruncationLength() && (i+2 < len(properties)-1) {
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				typeElements[len(typeElements)-1] = b.e.AddSyntheticLeadingComment(typeElements[len(typeElements)-1], ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(properties)-i), false /*hasTrailingNewLine*/)
+				typeElements[len(typeElements)-1] = b.e.AddSyntheticTrailingComment(typeElements[len(typeElements)-1], ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(properties)-i), false /*hasTrailingNewLine*/)
 			} else {
 				text := fmt.Sprintf("... %d more ...", len(properties)-i)
 				typeElements = append(typeElements, b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier(text), nil, nil, nil))
@@ -3039,7 +2990,7 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	// of types allows us to catch circular references to instantiations of the same anonymous type
 
 	key := CompositeTypeCacheIdentity{typeId, b.ctx.flags, b.ctx.internalFlags}
-	if b.ctx.enclosingDeclaration != nil && b.links.Has(b.ctx.enclosingDeclaration) {
+	if b.ctx.maxExpansionDepth <= 0 && b.ctx.enclosingDeclaration != nil && b.links.Has(b.ctx.enclosingDeclaration) {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
 		cachedResult, ok := links.serializedTypes[key]
 		if ok {
@@ -3183,7 +3134,7 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 				panic("Unhandled type node kind returned from `symbolToTypeNode`.")
 			}
 		}
-		if !b.shouldExpandType(t, false /*isAlias*/) {
+		if t.flags&TypeFlagsUnion == 0 || !b.shouldExpandType(t, false /*isAlias*/) {
 			return b.symbolToTypeNode(t.symbol, ast.SymbolFlagsType, nil)
 		}
 		expandingEnum = true
@@ -3448,4 +3399,69 @@ func (b *NodeBuilderImpl) newIdentifier(text string, symbol *ast.Symbol) *ast.No
 		b.idToSymbol[id] = symbol
 	}
 	return id
+}
+
+func (b *NodeBuilderImpl) createAccessExpression(node *ast.Node) *ast.Expression {
+	switch {
+	case ast.IsQualifiedName(node):
+		return b.f.NewPropertyAccessExpression(b.createAccessExpression(node.AsQualifiedName().Left), nil /*questionDotToken*/, b.f.DeepCloneNode(node.AsQualifiedName().Right), ast.NodeFlagsNone)
+	case ast.IsIdentifier(node), ast.IsPropertyAccessExpression(node), ast.IsExpressionWithTypeArguments(node):
+		return b.f.DeepCloneNode(node)
+	default:
+		panic("unexpected access node kind: " + node.Kind.String())
+	}
+}
+
+func (b *NodeBuilderImpl) createExpressionWithTypeArguments(expr *ast.Expression, typeArguments *ast.NodeList) *ast.Expression {
+	if typeArguments == nil || len(typeArguments.Nodes) == 0 {
+		return expr
+	}
+	return b.f.NewExpressionWithTypeArguments(expr, typeArguments)
+}
+
+func (b *NodeBuilderImpl) lookupInstantiatedTypeArgumentNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
+	if b.shouldWriteTypeParametersInQualifiedName(chain, index) {
+		symbol := chain[index]
+		nextSymbol := chain[index+1]
+		if nextSymbol.CheckFlags&ast.CheckFlagsInstantiated == 0 {
+			return nil
+		}
+
+		targetSymbol := symbol
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			targetSymbol = b.ch.resolveAlias(symbol)
+		}
+
+		params := b.getTypeParametersOfClassOrInterface(targetSymbol)
+		targetMapper := b.ch.valueSymbolLinks.Get(nextSymbol).mapper
+		if targetMapper != nil {
+			params = core.Map(params, targetMapper.Map)
+		}
+		return b.mapToTypeNodes(params, false /*isBareList*/)
+	}
+	return nil
+}
+
+func (b *NodeBuilderImpl) lookupExpressionChainTypeArgumentNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
+	if b.shouldWriteTypeParametersInQualifiedName(chain, index) {
+		symbol := chain[index]
+		symbolId := ast.GetSymbolId(symbol)
+		if b.ctx.typeParameterSymbolList.Has(symbolId) {
+			return nil
+		}
+
+		b.ctx.typeParameterSymbolList.Add(symbolId)
+		if typeArgumentNodes := b.lookupInstantiatedTypeArgumentNodes(chain, index); typeArgumentNodes != nil {
+			return typeArgumentNodes
+		}
+		typeParameterNodes := b.typeParametersToTypeParameterDeclarations(symbol)
+		if len(typeParameterNodes) > 0 {
+			return b.f.NewNodeList(typeParameterNodes)
+		}
+	}
+	return nil
+}
+
+func (b *NodeBuilderImpl) shouldWriteTypeParametersInQualifiedName(chain []*ast.Symbol, index int) bool {
+	return b.ctx.flags&nodebuilder.FlagsWriteTypeParametersInQualifiedName != 0 && index < len(chain)-1
 }

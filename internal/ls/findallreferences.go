@@ -913,6 +913,9 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	}
 
 	if symbol.Name == ast.InternalSymbolNameExportEquals {
+		if symbol.Parent == nil {
+			return nil
+		}
 		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
@@ -1370,8 +1373,8 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 					references = append(references, newNodeEntry(decl.AsModuleDeclaration().Name()))
 				}
 			default:
-				// This may be merged with something.
-				debug.Assert(symbol.Flags&ast.SymbolFlagsTransient != 0, "Expected a module symbol to be declared by a SourceFile or ModuleDeclaration.")
+				// This may be merged with something (e.g. a class merged with a namespace).
+				continue
 			}
 		}
 	}

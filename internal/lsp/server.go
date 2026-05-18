@@ -45,6 +45,7 @@ type ServerOptions struct {
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
 	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
+	SetParentProcessID func(parentPID int)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -66,6 +67,7 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
+		startWatchdog:         opts.SetParentProcessID,
 		initComplete:          make(chan struct{}),
 		progressDelay:         opts.ProgressDelay,
 	}
@@ -204,6 +206,8 @@ type Server struct {
 
 	progressDelay   time.Duration
 	projectProgress *projectLoadingProgress
+
+	startWatchdog func(parentPID int)
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -263,7 +267,14 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceDiagnosticRefreshInfo, lsproto.NoParams{}); err != nil {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	// Fire-and-forget: the client always returns null, and waiting for the response
+	// can cause the server to hang if the client is slow or unresponsive.
+	// Any response from the client will be silently ignored by the read loop.
+	if err := sendClientRequestFireAndForget(s, lsproto.WorkspaceDiagnosticRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh diagnostics: %w", err)
 	}
 
@@ -587,6 +598,16 @@ func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lspro
 	}
 }
 
+// sendClientRequestFireAndForget sends a request to the client without waiting for a response.
+// The response, if any, will be silently ignored by the read loop since no pending channel is registered.
+// This means any error returned by the client will not be observed. Use only for requests where the
+// response value is not needed (e.g., the client always returns null).
+func sendClientRequestFireAndForget[Req, Resp any](s *Server, info lsproto.RequestInfo[Req, Resp], params Req) error {
+	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
+	req := info.NewRequestMessage(id, params)
+	return s.send(req.Message())
+}
+
 func (s *Server) sendResult(id *jsonrpc.ID, result any) error {
 	return s.sendResponse(&lsproto.ResponseMessage{
 		ID:     id,
@@ -724,7 +745,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTextDocumentClosingTagCompletionInfo, (*Server).handleClosingTagCompletion)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVsOnAutoInsert)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
@@ -940,24 +961,21 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
-			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
-			if err != nil {
-				return
-			}
-
-			if s.telemetryEnabled {
-				_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
-					RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
-						Properties: &lsproto.RequestFailureTelemetryProperties{
-							ErrorCode:     lsproto.ErrorCodeInternalError.String(),
-							RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
-							Stack:         sanitizeStackTrace(string(stack)),
-						},
-					},
-				})
-			}
+			_ = s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
+		}
+
+		if s.telemetryEnabled {
+			_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+					Properties: &lsproto.RequestFailureTelemetryProperties{
+						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+						RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
+						Stack:         sanitizeStackTrace(string(stack)),
+					},
+				},
+			})
 		}
 	}
 }
@@ -992,6 +1010,10 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
 		s.logger.SetVerbose(true)
+	}
+
+	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
+		s.startWatchdog(int(*params.ProcessId.Integer))
 	}
 
 	response := &lsproto.InitializeResult{
@@ -1094,6 +1116,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			CustomSourceDefinitionProvider:       new(true),
 			CustomMultiDocumentHighlightProvider: new(true),
+			VSOnAutoInsertProvider: &lsproto.VsOnAutoInsertOptions{
+				VSTriggerCharacters: []string{">"},
+			},
 			Workspace: &lsproto.WorkspaceOptions{
 				FileOperations: &lsproto.FileOperationOptions{
 					WillRename: &lsproto.FileOperationRegistrationOptions{
@@ -1446,8 +1471,8 @@ func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService,
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleClosingTagCompletion(ctx context.Context, ls *ls.LanguageService, params *lsproto.TextDocumentPositionParams) (lsproto.CustomClosingTagCompletionResponse, error) {
-	return ls.ProvideClosingTagCompletion(ctx, params)
+func (s *Server) handleVsOnAutoInsert(ctx context.Context, ls *ls.LanguageService, params *lsproto.VsOnAutoInsertParams) (lsproto.VsOnAutoInsertResponse, error) {
+	return ls.ProvideOnAutoInsert(ctx, params)
 }
 
 func (s *Server) handleLinkedEditingRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
