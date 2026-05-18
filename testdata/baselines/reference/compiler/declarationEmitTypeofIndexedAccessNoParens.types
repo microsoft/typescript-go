@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/declarationEmitTypeofIndexedAccessNoParens.ts] ////
+
+=== declarationEmitTypeofIndexedAccessNoParens.ts ===
+export const C = { A: 1 };
+>C : { A: number; }
+>{ A: 1 } : { A: number; }
+>A : number
+>1 : 1
+
+export type C = typeof C[keyof typeof C];
+>C : number
+>C : { A: number; }
+>C : { A: number; }
+
+// Parenthesized form should also round-trip
+export type C2 = (typeof C)[keyof typeof C];
+>C2 : number
+>C : { A: number; }
+>C : { A: number; }
+
+// Array type of a parsed typeof should also preserve source
+export const arr = [C];
+>arr : { A: number; }[]
+>[C] : { A: number; }[]
+>C : { A: number; }
+
+export type ArrAlias = typeof arr[number];
+>ArrAlias : { A: number; }
+>arr : { A: number; }[]
+

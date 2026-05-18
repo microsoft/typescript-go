@@ -1,0 +1,27 @@
+//// [tests/cases/compiler/declarationEmitTypeofIndexedAccessNoParens.ts] ////
+
+=== declarationEmitTypeofIndexedAccessNoParens.ts ===
+export const C = { A: 1 };
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+>A : Symbol(A, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 18))
+
+export type C = typeof C[keyof typeof C];
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+
+// Parenthesized form should also round-trip
+export type C2 = (typeof C)[keyof typeof C];
+>C2 : Symbol(C2, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 1, 41))
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+
+// Array type of a parsed typeof should also preserve source
+export const arr = [C];
+>arr : Symbol(arr, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 7, 12))
+>C : Symbol(C, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 12), Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 0, 26))
+
+export type ArrAlias = typeof arr[number];
+>ArrAlias : Symbol(ArrAlias, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 7, 23))
+>arr : Symbol(arr, Decl(declarationEmitTypeofIndexedAccessNoParens.ts, 7, 12))
+
