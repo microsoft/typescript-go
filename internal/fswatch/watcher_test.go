@@ -1161,15 +1161,17 @@ func TestSubscribeRejectsNilCallback(t *testing.T) {
 	})
 }
 
-func TestSubscribePanicsOnRelativePath(t *testing.T) {
+func TestSubscribeRejectsRelativePath(t *testing.T) {
 	t.Parallel()
 	runForEachWatcher(t, func(t *testing.T, watcherImpl Watcher) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Fatal("WatchDirectory with relative path should panic")
-			}
-		}()
-		watcherImpl.WatchDirectory("relative/path", func([]Event, error) {})
+		_, err := watcherImpl.WatchDirectory("relative/path", func([]Event, error) {})
+		if err == nil {
+			t.Fatal("WatchDirectory with relative path should return an error")
+		}
+		_, err = watcherImpl.WatchFile("relative/path/file.txt", func([]Event, error) {})
+		if err == nil {
+			t.Fatal("WatchFile with relative path should return an error")
+		}
 	})
 }
 

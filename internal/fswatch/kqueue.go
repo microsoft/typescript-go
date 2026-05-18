@@ -213,8 +213,6 @@ func (b *kqueueBackend) start() error {
 
 			if fflags&unix.NOTE_WRITE != 0 && entry.isDir {
 				b.compareDir(fd, entry.path, watchersTouched)
-			}
-			if entry.isDir && fflags&unix.NOTE_WRITE != 0 {
 				// NOTE_WRITE on a dir already ran compareDir above.
 				// On DragonFlyBSD, rename-over coalesces NOTE_DELETE
 				// with NOTE_WRITE on the parent directory (rather than

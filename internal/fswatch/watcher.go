@@ -16,6 +16,10 @@ var errNilCallback = errors.New("fswatch: callback must not be nil")
 // filesystem root with no parent directory to watch.
 var errRootPath = errors.New("fswatch: cannot watch a root path")
 
+// errNotAbsolute is returned by [Watcher.WatchDirectory] and
+// [Watcher.WatchFile] when the supplied path is not absolute.
+var errNotAbsolute = errors.New("fswatch: path must be absolute")
+
 // ErrOverflow indicates that the kernel event queue overflowed and
 // some filesystem changes were missed. The watch remains
 // active; further events will continue to be delivered. Callers
@@ -93,7 +97,6 @@ func (o ignoreOption) applyWatchOption(opts *watchOptions) {
 // WithIgnore returns a [WatchOption] that filters events before delivery.
 // If the function returns true for a path, events for that path are
 // silently dropped. The filtering is per-subscriber; multiple watches
-// on the same directory may have different ignore functions.
 // on the same directory may have different ignore functions.
 func WithIgnore(fn func(path string) bool) WatchOption {
 	return ignoreOption{fn: fn}
@@ -281,7 +284,7 @@ func (w *watcher) WatchDirectory(dir string, fn WatchCallback, opts ...WatchOpti
 	}
 	dir = filepath.Clean(dir)
 	if !filepath.IsAbs(dir) {
-		panic("fswatch: dir must be an absolute path")
+		return nil, errNotAbsolute
 	}
 	dir = canonicalizePath(dir)
 
@@ -316,7 +319,7 @@ func (w *watcher) WatchFile(path string, fn WatchCallback) (Watch, error) {
 	}
 	path = filepath.Clean(path)
 	if !filepath.IsAbs(path) {
-		panic("fswatch: path must be an absolute path")
+		return nil, errNotAbsolute
 	}
 	path = canonicalizePath(path)
 	dir := filepath.Dir(path)

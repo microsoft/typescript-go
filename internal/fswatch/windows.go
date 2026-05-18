@@ -260,11 +260,15 @@ func (r *windowsRead) wait(s *windowsSubscription) (uint32, error, error) {
 func (s *windowsSubscription) run() {
 	defer close(s.doneCh)
 	defer windows.CloseHandle(s.handle)
-	current := s.first
-	s.first = nil
-	if current == nil {
+	if s.first == nil {
+		// subscribe always arms the initial read before spawning run.
+		// Guard the invariant rather than silently producing a watch
+		// that delivers neither events nor errors if it ever breaks.
+		s.fatal(&dirWatchError{err: errors.New("fswatch: windows: missing initial read"), dirWatch: s.dirWatch})
 		return
 	}
+	current := s.first
+	s.first = nil
 	for {
 		bytes, waitErr, gErr := current.wait(s)
 		if waitErr != nil && gErr != nil {
