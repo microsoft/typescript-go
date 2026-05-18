@@ -77,6 +77,28 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 					)
 				}
 			}
+			// Check the type expression even for unmatched params so diagnostics
+			// like TS2314 (generic type missing type arguments) are still reported.
+			// Restrict to JS files: in TS files the JSDoc type is not the source
+			// of truth and surfacing name-resolution errors there produces false
+			// positives (e.g. a local variable name used in a @param type).
+			// Skip function/constructor/signature types: their parameters are not
+			// symbol-bound inside JSDoc type expressions and checkSignatureDeclaration
+			// would nil-panic on them.
+			if isJs {
+				if typeExpr := tag.AsJSDocParameterOrPropertyTag().TypeExpression; typeExpr != nil {
+					if typeNode := typeExpr.Type(); typeNode != nil {
+						switch typeNode.Kind {
+						case ast.KindFunctionType, ast.KindConstructorType,
+							ast.KindCallSignature, ast.KindConstructSignature,
+							ast.KindIndexSignature:
+							// skip
+						default:
+							c.checkSourceElement(typeNode)
+						}
+					}
+				}
+			}
 		}
 	}
 }

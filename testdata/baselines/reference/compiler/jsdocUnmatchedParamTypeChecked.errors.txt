@@ -1,0 +1,14 @@
+jsdocUnmatchedParamTypeChecked.js(2,12): error TS2314: Generic type 'Record' requires 2 type argument(s).
+jsdocUnmatchedParamTypeChecked.js(2,20): error TS8024: JSDoc '@param' tag has name 'bar', but there is no parameter with that name.
+
+
+==== jsdocUnmatchedParamTypeChecked.js (2 errors) ====
+    /**
+     * @param {Record} bar
+               ~~~~~~
+!!! error TS2314: Generic type 'Record' requires 2 type argument(s).
+                       ~~~
+!!! error TS8024: JSDoc '@param' tag has name 'bar', but there is no parameter with that name.
+     */
+    function foo() {}
+    

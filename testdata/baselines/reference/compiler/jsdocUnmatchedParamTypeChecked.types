@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/jsdocUnmatchedParamTypeChecked.ts] ////
+
+=== jsdocUnmatchedParamTypeChecked.js ===
+/**
+ * @param {Record} bar
+ */
+function foo() {}
+>foo : () => void
+
