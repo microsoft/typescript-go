@@ -267,15 +267,15 @@ func TestFormatSelectionPreservesComments(t *testing.T) {
 
 	t.Run("format selection should not delete block comment when selection ends inside comment", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 		}, "\n")
 
@@ -302,15 +302,15 @@ func TestFormatSelectionPreservesComments(t *testing.T) {
 
 	t.Run("format selection should not delete block comment when selection starts inside comment", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 		}, "\n")
 
@@ -334,15 +334,15 @@ func TestFormatSelectionPreservesComments(t *testing.T) {
 
 	t.Run("full document format should preserve block comment and add spaces", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeAndAfterBinaryOperators: core.TSTrue,
 		}, "\n")
