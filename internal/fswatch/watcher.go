@@ -78,7 +78,7 @@ type Watcher interface {
 
 // WatchOption configures a watch.
 type WatchOption interface {
-	applyWatchOption(*watchOptions)
+	applyWatchOption(opts *watchOptions)
 }
 
 type watchOptions struct {
@@ -408,6 +408,7 @@ func (b *watcherBase) init(self watcherImpl) {
 func (b *watcherBase) notifyStarted() {
 	select {
 	case <-b.started:
+		// Do nothing; already started.
 	default:
 		close(b.started)
 	}

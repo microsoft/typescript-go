@@ -73,7 +73,10 @@ func init() {
 func runForEachWatcher(t *testing.T, fn func(t *testing.T, watcherImpl Watcher)) {
 	t.Helper()
 	for _, b := range availableWatchers {
-		t.Run(b.Name(), func(t *testing.T) { fn(t, b) })
+		t.Run(b.Name(), func(t *testing.T) {
+			t.Parallel()
+			fn(t, b)
+		})
 	}
 }
 
@@ -81,15 +84,11 @@ func runForEachWatcher(t *testing.T, fn func(t *testing.T, watcherImpl Watcher))
 // it matches what backends report, and registers cleanup.
 func newTmpDir(t *testing.T) string {
 	t.Helper()
-	d, err := os.MkdirTemp("", "fswatch-*")
-	if err != nil {
-		t.Fatal(err)
-	}
+	d := t.TempDir()
 	resolved, err := filepath.EvalSymlinks(d)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { _ = os.RemoveAll(resolved) })
 	return resolved
 }
 
@@ -298,13 +297,11 @@ func (r *recordingWatcher) waitForEvent(d time.Duration, pred func(Event) bool) 
 	deadline := time.Now().Add(d)
 	for {
 		r.mu.Lock()
-		for _, e := range r.buf {
-			if pred(e) {
-				out := slices.Clone(r.buf)
-				r.buf = nil
-				r.mu.Unlock()
-				return out
-			}
+		if slices.ContainsFunc(r.buf, pred) {
+			out := slices.Clone(r.buf)
+			r.buf = nil
+			r.mu.Unlock()
+			return out
 		}
 		remaining := time.Until(deadline)
 		if remaining <= 0 {
@@ -1214,7 +1211,7 @@ func TestSubscribeCloseThenReSubscribe(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if err := s1.Close(); err != nil {
+		if err = s1.Close(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -1250,9 +1247,9 @@ func TestSubscribeCloseThenReSubscribe(t *testing.T) {
 	})
 }
 
-func TestSubscribeNoGoroutineLeak(t *testing.T) {
+func TestSubscribeNoGoroutineLeak(t *testing.T) { //nolint:paralleltest // goroutine counting requires sequential execution
 	// No t.Parallel(): goroutine counting requires sequential execution.
-	for _, b := range availableWatchers {
+	for _, b := range availableWatchers { //nolint:paralleltest // goroutine counting requires sequential execution
 		t.Run(b.Name(), func(t *testing.T) {
 			dir := newTmpDir(t)
 			// Warm up: trigger any lazy singleton init (backend,

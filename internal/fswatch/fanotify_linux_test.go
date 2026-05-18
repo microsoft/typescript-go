@@ -59,7 +59,7 @@ func TestLinuxFanotifyParseDfidNameRoundTrip(t *testing.T) {
 		t.Skipf("NameToHandleAt not supported: %v", err)
 	}
 	var st unix.Statfs_t
-	if err := unix.Statfs(dir, &st); err != nil {
+	if err = unix.Statfs(dir, &st); err != nil {
 		t.Fatal(err)
 	}
 	key := makeFanotifyHandleKey(st.Fsid.Val, handle.Type(), handle.Bytes())
@@ -76,7 +76,7 @@ func TestLinuxFanotifyParseDfidNameRoundTrip(t *testing.T) {
 	}
 }
 
-func TestFanotifyNoRenameFallback(t *testing.T) {
+func TestFanotifyNoRenameFallback(t *testing.T) { //nolint:tparallel // subtests share fanotifyTestNoRename global toggle
 	t.Parallel()
 	if !fanotifyAvailable() {
 		t.Skip("fanotify not available")
@@ -87,7 +87,7 @@ func TestFanotifyNoRenameFallback(t *testing.T) {
 		fanotifyTestNoRename.Store(false)
 	})
 
-	t.Run("FileRename", func(t *testing.T) {
+	t.Run("FileRename", func(t *testing.T) { //nolint:paralleltest // parent uses shared global toggle
 		dir := newTmpDir(t)
 		f1 := subPath(dir)
 		f2 := subPath(dir)
@@ -105,7 +105,7 @@ func TestFanotifyNoRenameFallback(t *testing.T) {
 		})
 	})
 
-	t.Run("FileCreate", func(t *testing.T) {
+	t.Run("FileCreate", func(t *testing.T) { //nolint:paralleltest // parent uses shared global toggle
 		dir := newTmpDir(t)
 		r, _ := subscribeFor(t, dir, Fanotify())
 		f := subPath(dir)
@@ -124,7 +124,7 @@ func TestFanotifyNoRenameFallback(t *testing.T) {
 	// would be reported against the no-longer-existing original path.
 	// FAN_RENAME's handleRenameEvent already had the prefix cleanup;
 	// this regression test pins the fallback path to the same shape.
-	t.Run("RenameDirOutDropsDescendants", func(t *testing.T) {
+	t.Run("RenameDirOutDropsDescendants", func(t *testing.T) { //nolint:paralleltest // parent uses shared global toggle
 		watched := newTmpDir(t)
 		outside := newTmpDir(t)
 
@@ -177,6 +177,7 @@ func TestFanotifyCrossWatcherSameFs(t *testing.T) {
 	}
 
 	t.Run("Modify", func(t *testing.T) {
+		t.Parallel()
 		dirA, dirB := newTmpDir(t), newTmpDir(t)
 		pathA := filepath.Join(dirA, "child")
 		pathB := filepath.Join(dirB, "child")

@@ -2,7 +2,6 @@ package fswatch
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -28,7 +27,7 @@ func runWalkDirTest(t *testing.T, fn func(t *testing.T, walk walkDirFunc)) {
 	}
 }
 
-func TestWalkDirDoesNotFollowSymlinkedDir(t *testing.T) {
+func TestWalkDirDoesNotFollowSymlinkedDir(t *testing.T) { //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 	runWalkDirTest(t, testWalkDirDoesNotFollowSymlinkedDir)
 }
 
@@ -66,7 +65,7 @@ func testWalkDirDoesNotFollowSymlinkedDir(t *testing.T, walk walkDirFunc) {
 	}
 }
 
-func TestWalkDirIgnoresUnreadableSubdir(t *testing.T) {
+func TestWalkDirIgnoresUnreadableSubdir(t *testing.T) { //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 	runWalkDirTest(t, testWalkDirIgnoresUnreadableSubdir)
 }
 
@@ -107,7 +106,7 @@ func testWalkDirIgnoresUnreadableSubdir(t *testing.T, walk walkDirFunc) {
 	}
 }
 
-func TestWalkDirMissingDir(t *testing.T) { runWalkDirTest(t, testWalkDirMissingDir) }
+func TestWalkDirMissingDir(t *testing.T) { runWalkDirTest(t, testWalkDirMissingDir) } //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 func testWalkDirMissingDir(t *testing.T, walk walkDirFunc) {
 	dir := filepath.Join(t.TempDir(), "nonexistent")
 	if err := walk(dir, true, nil); err == nil {
@@ -115,7 +114,7 @@ func testWalkDirMissingDir(t *testing.T, walk walkDirFunc) {
 	}
 }
 
-func TestWalkDirNotADir(t *testing.T) { runWalkDirTest(t, testWalkDirNotADir) }
+func TestWalkDirNotADir(t *testing.T) { runWalkDirTest(t, testWalkDirNotADir) } //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 func testWalkDirNotADir(t *testing.T, walk walkDirFunc) {
 	f := filepath.Join(t.TempDir(), "file")
 	if err := os.WriteFile(f, []byte("x"), 0o644); err != nil {
@@ -126,7 +125,7 @@ func testWalkDirNotADir(t *testing.T, walk walkDirFunc) {
 	}
 }
 
-func TestWalkDirEntries(t *testing.T) { runWalkDirTest(t, testWalkDirEntries) }
+func TestWalkDirEntries(t *testing.T) { runWalkDirTest(t, testWalkDirEntries) } //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 func testWalkDirEntries(t *testing.T, walk walkDirFunc) {
 	root := newTmpDir(t)
 	if err := os.WriteFile(filepath.Join(root, "a.txt"), []byte("a"), 0o644); err != nil {
@@ -158,7 +157,7 @@ func testWalkDirEntries(t *testing.T, walk walkDirFunc) {
 	}
 }
 
-func TestWalkDirCallback(t *testing.T) { runWalkDirTest(t, testWalkDirCallback) }
+func TestWalkDirCallback(t *testing.T) { runWalkDirTest(t, testWalkDirCallback) } //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 func testWalkDirCallback(t *testing.T, walk walkDirFunc) {
 	root := newTmpDir(t)
 	sub := filepath.Join(root, "sub")
@@ -189,14 +188,14 @@ func testWalkDirCallback(t *testing.T, walk walkDirFunc) {
 	}
 }
 
-func TestWalkDirCallbackError(t *testing.T) { runWalkDirTest(t, testWalkDirCallbackError) }
+func TestWalkDirCallbackError(t *testing.T) { runWalkDirTest(t, testWalkDirCallbackError) } //nolint:paralleltest // runWalkDirTest calls t.Parallel.
 func testWalkDirCallbackError(t *testing.T, walk walkDirFunc) {
 	root := newTmpDir(t)
 	if err := os.WriteFile(filepath.Join(root, "a.txt"), []byte("a"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
-	sentinel := fmt.Errorf("stop")
+	sentinel := errors.New("stop")
 	err := walk(root, true, func(path string, isDir bool) error {
 		return sentinel
 	})

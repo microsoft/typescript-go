@@ -97,6 +97,7 @@ func (d *debounce) coalesceWait() {
 	d.latchMu.Unlock()
 	select {
 	case <-ch:
+		// Do nothing; new event triggered, fire on the next tick.
 	case <-time.After(minWaitTime):
 		d.fireCallbacks()
 	}

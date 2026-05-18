@@ -284,7 +284,7 @@ func (b *inotifyBackend) handleEvents() error {
 				name = string(nameBytes)
 			}
 
-			if uint32(ev.Mask)&unix.IN_Q_OVERFLOW != 0 {
+			if ev.Mask&unix.IN_Q_OVERFLOW != 0 {
 				b.mu.Lock()
 				for _, subs := range b.subscriptions {
 					for _, sub := range subs {
@@ -367,7 +367,7 @@ func (b *inotifyBackend) handleSubscription(ev *unix.InotifyEvent, name string, 
 					kept = append(kept, s)
 				}
 				if len(kept) == 0 {
-					unix.InotifyRmWatch(b.inotify, uint32(wd))
+					_, _ = unix.InotifyRmWatch(b.inotify, uint32(wd))
 					delete(b.subscriptions, wd)
 				} else {
 					b.subscriptions[wd] = kept

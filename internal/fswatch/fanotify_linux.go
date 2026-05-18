@@ -349,12 +349,12 @@ func (b *fanotifyBackend) markDir(w *dirWatch, path string) error {
 	handle, _, err := unix.NameToHandleAt(unix.AT_FDCWD, path, 0)
 	if err != nil {
 		// Unmark since we can't track this directory without a handle.
-		unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
+		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
 		return fmt.Errorf("name_to_handle_at: %w", err)
 	}
 	var st unix.Statfs_t
 	if err := unix.Statfs(path, &st); err != nil {
-		unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
+		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
 		return fmt.Errorf("statfs: %w", err)
 	}
 	key := makeFanotifyHandleKey(st.Fsid.Val, handle.Type(), handle.Bytes())
@@ -624,12 +624,12 @@ func parseFanotifyDfidNames(data []byte) (primary *fanotifyDfidName, rename *fan
 		}
 
 		if primary != nil && rename != nil {
-			return
+			return primary, rename
 		}
 
 		offset += infoLen
 	}
-	return
+	return primary, rename
 }
 
 // parseFanotifyFidRecord parses a single fanotify_event_info_fid record.
