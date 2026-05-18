@@ -18,7 +18,7 @@ export type C2 = (typeof C)[keyof typeof C];
 >C : { A: number; }
 >C : { A: number; }
 
-// Array type of a parsed typeof should also preserve source
+// IndexedAccessType: index access of a parsed typeof should preserve source
 export const arr = [C];
 >arr : { A: number; }[]
 >[C] : { A: number; }[]
@@ -27,4 +27,25 @@ export const arr = [C];
 export type ArrAlias = typeof arr[number];
 >ArrAlias : { A: number; }
 >arr : { A: number; }[]
+
+// ArrayType: array of a parsed typeof should preserve source
+export type CArr = typeof C[];
+>CArr : CArr
+>C : { A: number; }
+
+// Parenthesized array form should also round-trip
+export type CArr2 = (typeof C)[];
+>CArr2 : CArr2
+>C : { A: number; }
+
+// OptionalType (tuple element): optional of a parsed typeof should preserve source
+export type CTuple = [typeof C?];
+>CTuple : CTuple
+>C : { A: number; }
+
+// Parenthesized optional form should also round-trip
+export type CTuple2 = [(typeof C)?];
+>CTuple2 : CTuple2
+>C : { A: number; }
+
 
