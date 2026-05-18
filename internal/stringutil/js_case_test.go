@@ -10,6 +10,8 @@ func TestJSCasing(t *testing.T) {
 		got  string
 		want string
 	}{
+		{name: "ascii lowercase", got: ToLowerJS("HELLO"), want: "hello"},
+		{name: "ascii uppercase", got: ToUpperJS("hello"), want: "HELLO"},
 		{name: "lowercase dotted i", got: ToLowerJS("İSPANYOL"), want: "i̇spanyol"},
 		{name: "lowercase final sigma", got: ToLowerJS("ΟΣ"), want: "ος"},
 		{name: "uppercase sharp s", got: ToUpperJS("ßfoo"), want: "SSFOO"},
