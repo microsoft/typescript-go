@@ -1468,8 +1468,20 @@ func (l *LanguageService) getCompletionsForPathMapping(
 ) []moduleCompletionNameAndKind {
 	justPathMappingName := func(name string, kind moduleCompletionKind, extension string) []moduleCompletionNameAndKind {
 		if strings.HasPrefix(name, fragment) {
+			completionName := name
+			// When fragment ends with '/', the cursor is right after a directory separator
+			// and no replacement span will be set (textRange = nil), so the name is inserted
+			// verbatim at the cursor. Strip the already-traversed prefix so the completion
+			// doesn't duplicate path components already present in the import string.
+			// e.g. fragment="unstable/" + name="unstable/sync" -> insert "sync", not "unstable/sync"
+			if tspath.HasTrailingDirectorySeparator(fragment) {
+				completionName = name[len(fragment):]
+				if completionName == "" {
+					return nil
+				}
+			}
 			return []moduleCompletionNameAndKind{{
-				name:      tspath.RemoveTrailingDirectorySeparator(name),
+				name:      tspath.RemoveTrailingDirectorySeparator(completionName),
 				kind:      kind,
 				extension: extension,
 			}}
