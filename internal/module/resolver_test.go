@@ -70,6 +70,46 @@ func (f *blockingFS) FileExists(path string) bool {
 	return f.FS.FileExists(path)
 }
 
+// flipFileExistsFS wraps a vfs.FS and returns false for the first
+// FileExists call to `targetPath`, then true for the second. Both calls
+// block until released via their respective gate channels. It also blocks
+// ReadFile for the target path so that the "file doesn't exist" Set
+// completes before the "file exists" Set (reproducing the LoadOrStore race).
+type flipFileExistsFS struct {
+	vfs.FS
+	targetPath     string
+	callCount      atomic.Int32
+	feWaiting      atomic.Int32
+	firstGate      chan struct{}
+	secondGate     chan struct{}
+	readGate       chan struct{}
+	readWaiting    atomic.Int32
+}
+
+func (f *flipFileExistsFS) FileExists(path string) bool {
+	if path == f.targetPath {
+		n := f.callCount.Add(1)
+		f.feWaiting.Add(1)
+		if n == 1 {
+			<-f.firstGate
+			return false // first caller: simulate "file not yet visible"
+		}
+		if n == 2 {
+			<-f.secondGate
+			return f.FS.FileExists(path) // second caller: file is visible
+		}
+	}
+	return f.FS.FileExists(path)
+}
+
+func (f *flipFileExistsFS) ReadFile(path string) (string, bool) {
+	if path == f.targetPath {
+		f.readWaiting.Add(1)
+		<-f.readGate
+	}
+	return f.FS.ReadFile(path)
+}
+
 // Regression test for https://github.com/microsoft/typescript-go/issues/3526.
 //
 // Two goroutines resolve the same package via specifiers that differ only by
@@ -149,5 +189,95 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 		if !r.resolved {
 			t.Errorf("%q failed to resolve", r.name)
 		}
+	}
+}
+
+// Regression test for https://github.com/microsoft/typescript-go/issues/1290.
+//
+// Two goroutines resolve `pkg/sub` concurrently. Both miss the package.json
+// info-cache for the root package directory. A `flipFileExistsFS` forces the
+// first goroutine's `FileExists` to return false (simulating the file not yet
+// being visible), so it stores a nil-Contents cache entry. The second
+// goroutine's `FileExists` returns true, but its `Set` call (`LoadOrStore`)
+// returns the first goroutine's nil-Contents entry. Without the `Exists()`
+// guard on the `typesVersions` lookup, `packageInfo.Contents.GetVersionPaths`
+// dereferences nil and panics. With the guard the nil-Contents entry is safely
+// skipped.
+func TestResolveSubpathNilContentsRace(t *testing.T) {
+	t.Parallel()
+
+	const rootPkgJSON = "/repo/node_modules/pkg/package.json"
+	files := map[string]string{
+		rootPkgJSON:                             `{"name":"pkg","version":"1.0.0"}`,
+		"/repo/node_modules/pkg/sub/index.d.ts": "export declare const sub: number;",
+		"/repo/node_modules/pkg/sub/index.js":   "exports.sub = 1;",
+		"/repo/src/a/file.ts":                   "",
+		"/repo/src/b/file.ts":                   "",
+	}
+	fs := &flipFileExistsFS{
+		FS:         vfstest.FromMap(files, true),
+		targetPath: rootPkgJSON,
+		firstGate:  make(chan struct{}),
+		secondGate: make(chan struct{}),
+		readGate:   make(chan struct{}),
+	}
+	host := &resolutionHostStub{fs: fs, cwd: "/repo"}
+	opts := &core.CompilerOptions{
+		ModuleResolution: core.ModuleResolutionKindBundler,
+		Module:           core.ModuleKindESNext,
+		Target:           core.ScriptTargetESNext,
+	}
+	resolver := module.NewResolver(host, opts, "", "")
+
+	var panicked atomic.Bool
+	var wg sync.WaitGroup
+	// Two goroutines both resolve "pkg/sub". Each calls getPackageJsonInfo
+	// for the root package directory, reaching FileExists for rootPkgJSON.
+	for _, containingFile := range []string{"/repo/src/a/file.ts", "/repo/src/b/file.ts"} {
+		wg.Go(func() {
+			defer func() {
+				if r := recover(); r != nil {
+					panicked.Store(true)
+				}
+			}()
+			resolver.ResolveModuleName("pkg/sub", containingFile, core.ModuleKindESNext, nil)
+		})
+	}
+
+	// Phase 1: Wait for both goroutines to reach FileExists for the root
+	// package.json, guaranteeing both have observed a cache miss.
+	deadline := time.Now().Add(5 * time.Second)
+	for fs.feWaiting.Load() < 2 {
+		if time.Now().After(deadline) {
+			t.Fatalf("timed out waiting for both goroutines to reach FileExists gate; got %d", fs.feWaiting.Load())
+		}
+		time.Sleep(time.Millisecond)
+	}
+
+	// Phase 2: Release the first FileExists caller (returns false).
+	// It enters the "file not found" branch and stores a nil-Contents entry
+	// via Set — this is nearly instant (no ReadFile).
+	close(fs.firstGate)
+
+	// Phase 3: Release the second FileExists caller (returns true).
+	// It proceeds to ReadFile, which we gate separately to ensure the first
+	// goroutine's nil-Contents Set has completed.
+	close(fs.secondGate)
+
+	// Phase 4: Wait for the second goroutine to reach ReadFile, then release.
+	// By this point the first goroutine has stored its nil-Contents entry.
+	// The second goroutine's Set (LoadOrStore) will return that stale entry.
+	deadline = time.Now().Add(5 * time.Second)
+	for fs.readWaiting.Load() < 1 {
+		if time.Now().After(deadline) {
+			t.Fatalf("timed out waiting for second goroutine to reach ReadFile gate")
+		}
+		time.Sleep(time.Millisecond)
+	}
+	close(fs.readGate)
+
+	wg.Wait()
+	if panicked.Load() {
+		t.Fatal("resolver panicked due to nil Contents dereference in loadModuleFromSpecificNodeModulesDirectory")
 	}
 }
