@@ -30,9 +30,6 @@ type asyncTransformer struct {
 	enclosingFunctionParameterNames *collections.Set[string]
 	lexicalArguments                lexicalArgumentsInfo
 
-	parentNode  *ast.Node
-	currentNode *ast.Node
-
 	asyncBodyVisitor    *ast.NodeVisitor
 	fallbackNodeVisitor *ast.NodeVisitor
 }
@@ -111,7 +108,10 @@ func (tx *asyncTransformer) fallbackVisitor(node *ast.Node) *ast.Node {
 		ast.KindVariableDeclaration:
 		// fall through to visitEachChild
 	case ast.KindIdentifier:
-		if tx.lexicalArguments.binding != nil && node.Text() == "arguments" && !isNameOfPropertyAccessOrAssignment(tx.parentNode, node) {
+		if tx.lexicalArguments.binding != nil &&
+			node.Text() == "arguments" &&
+			!ast.IsIdentifierName(node) &&
+			!ast.IsLabelName(node) {
 			tx.lexicalArguments.used = true
 			return tx.lexicalArguments.binding
 		}
@@ -119,23 +119,11 @@ func (tx *asyncTransformer) fallbackVisitor(node *ast.Node) *ast.Node {
 	return tx.fallbackNodeVisitor.VisitEachChild(node)
 }
 
-func (tx *asyncTransformer) descendInto(node *ast.Node) func() {
-	savedParent := tx.parentNode
-	tx.parentNode = tx.currentNode
-	tx.currentNode = node
-	return func() { tx.currentNode = tx.parentNode; tx.parentNode = savedParent }
-}
-
 func (tx *asyncTransformer) visitFallback(node *ast.Node) *ast.Node {
-	cleanup := tx.descendInto(node)
-	defer cleanup()
 	return tx.fallbackVisitor(node)
 }
 
 func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
-	cleanup := tx.descendInto(node)
-	defer cleanup()
-
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
 		return tx.fallbackVisitor(node)
 	}
@@ -963,22 +951,6 @@ func (tx *asyncTransformer) getOriginalIfFunctionLike(node *ast.Node) *ast.Node 
 		return original
 	}
 	return node
-}
-
-func isNameOfPropertyAccessOrAssignment(parent *ast.Node, node *ast.Node) bool {
-	if parent == nil {
-		return false
-	}
-	if (ast.IsPropertyAccessExpression(parent) || ast.IsPropertyAssignment(parent)) && parent.Name() == node {
-		return true
-	}
-	if ast.IsBindingElement(parent) && parent.PropertyName() == node {
-		return true
-	}
-	if ast.IsJsxAttribute(parent) && parent.Name() == node {
-		return true
-	}
-	return false
 }
 
 // isSimpleParameterList checks if every parameter has no initializer and an Identifier name.
