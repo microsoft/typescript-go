@@ -171,7 +171,7 @@ func getMatchingFS(pnpFS *pnpFS, path string) (vfs.FS, string, string) {
 		pnpFS.cachedZipReadersMap[zipPath] = usedReader
 	}
 
-	return iovfs.From(usedReader, pnpFS.fs.UseCaseSensitiveFileNames()), internalPath, zipPath
+	return iovfs.From(usedReader /*useCaseSensitiveFileNames, always true for pnpfs*/, true), internalPath, zipPath
 }
 
 // Virtual paths are used to make different paths resolve to the same real file or folder, which is necessary in some cases when PnP is enabled
