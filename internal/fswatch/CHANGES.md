@@ -101,6 +101,22 @@ simpler:
 - `delete + update` yields delete (a bare `update` does not resurrect a deleted
   entry; only an explicit `create` does).
 
+### Per-backend debouncer
+
+Upstream uses one process-wide `Debounce::getShared()` singleton that batches
+events for every `Watcher` in the process. This is a fine choice for
+parcel-watcher's setting: Node consumers serialize through the libuv event loop
+anyway, so spawning multiple debounce threads wouldn't buy any downstream
+parallelism.
+
+Go can handle concurrent work cheaply, so the Go port creates one debouncer per
+backend (inotify, fanotify, kqueue, fsevents, windows) instead of one per
+process. Each backend's debouncer is created lazily on first subscribe and
+serves only that backend's `dirWatch`es, so a slow user callback on one backend
+can't starve event delivery on any of the others. In practice most callers will
+only ever use one backend (`Default()`), so this mainly matters for processes
+that mix backends, but the cost of the split is essentially nothing.
+
 ## New backends
 
 **fanotify** (Linux, kernel ≥ 5.13) is the default on Linux when available. It

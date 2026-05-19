@@ -206,6 +206,7 @@ type watcher struct {
 	impl       watcherImpl
 	factory    func() watcherImpl // nil if not available on this platform
 	dirWatches map[string]*dirWatch
+	debounce   *debounce // lazily created in getOrCreateDirWatch
 }
 
 func (w *watcher) Name() string    { return w.name }
@@ -249,6 +250,9 @@ func (w *watcher) getOrCreateDirWatch(dir string, recursive bool) *dirWatch {
 	if w.dirWatches == nil {
 		w.dirWatches = make(map[string]*dirWatch)
 	}
+	if w.debounce == nil {
+		w.debounce = newDebounce()
+	}
 	key := dir
 	if recursive {
 		key = dir + "\x00recursive"
@@ -256,7 +260,7 @@ func (w *watcher) getOrCreateDirWatch(dir string, recursive bool) *dirWatch {
 	if dw, ok := w.dirWatches[key]; ok {
 		return dw
 	}
-	dw := newDirWatch(dir)
+	dw := newDirWatch(dir, w.debounce)
 	dw.recursive = recursive
 	w.dirWatches[key] = dw
 	return dw
@@ -515,9 +519,9 @@ type dirWatch struct {
 	nextCBID  uint64
 }
 
-func newDirWatch(dir string) *dirWatch {
+func newDirWatch(dir string, db *debounce) *dirWatch {
 	dw := &dirWatch{dir: dir}
-	dw.debounce = sharedDebounce()
+	dw.debounce = db
 	dw.debounce.add(dw, func() { dw.triggerCallbacks() })
 	return dw
 }

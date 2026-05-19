@@ -132,10 +132,11 @@ func subPath(dir string) string {
 }
 
 // newDirectWatcher creates a bare dirWatch for unit-testing tree/debounce
-// helpers without going through the full backend subscribe path.
+// helpers without going through the full backend subscribe path. Each
+// test gets its own debouncer so tests don't share goroutine state.
 func newDirectWatcher(t testingT, dir string) *dirWatch {
 	t.Helper()
-	w := newDirWatch(dir)
+	w := newDirWatch(dir, newDebounce())
 	w.recursive = true
 	t.Cleanup(func() { w.destroyDebounce() })
 	return w

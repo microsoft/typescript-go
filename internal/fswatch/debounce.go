@@ -10,9 +10,13 @@ const (
 	maxWaitTime = 500 * time.Millisecond
 )
 
-// debounce batches filesystem events across all watchers. A single
-// process-wide instance lives for the process lifetime, created on
-// first use. The background goroutine costs nothing when idle.
+// debounce batches filesystem events for one backend. Each *watcher
+// owns one debounce instance, created lazily on first subscribe and
+// living for the process lifetime. The background goroutine costs
+// nothing when idle.
+//
+// Per-backend (rather than process-wide) isolation means a slow user
+// callback on one backend cannot starve event delivery on the others.
 //
 // Internally uses a resettable latch: the loop blocks until trigger()
 // is called, then coalesces for minWaitTime before firing callbacks.
@@ -29,19 +33,12 @@ type debounce struct {
 	notified  bool
 }
 
-var (
-	debounceOnce     sync.Once
-	debounceInstance *debounce
-)
-
-func sharedDebounce() *debounce {
-	debounceOnce.Do(func() {
-		debounceInstance = &debounce{
-			callbacks: make(map[any]func()),
-		}
-		go debounceInstance.loop()
-	})
-	return debounceInstance
+func newDebounce() *debounce {
+	d := &debounce{
+		callbacks: make(map[any]func()),
+	}
+	go d.loop()
+	return d
 }
 
 // add registers a callback under key.
