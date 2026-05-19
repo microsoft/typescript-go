@@ -461,6 +461,25 @@ func expectContains(t testingT, r *recordingWatcher, kind EventKind, path string
 	return got
 }
 
+func expectNoBufferedEvents(t testingT, r *recordingWatcher, msg string) {
+	t.Helper()
+	r.mu.Lock()
+	got := slices.Clone(r.buf)
+	r.buf = nil
+	r.mu.Unlock()
+	if len(got) > 0 {
+		t.Fatalf("%s, got %v", msg, toWantEvents(got))
+	}
+}
+
+func assertNoEventsForPath(t testingT, got []Event, path, msg string) {
+	t.Helper()
+	got = filterEventsForPaths(got, path)
+	if len(got) > 0 {
+		t.Fatalf("%s %s, got %v", msg, path, toWantEvents(got))
+	}
+}
+
 // ----- assertion helpers -------------------------------------------------
 
 type wantEvent struct {
@@ -1835,12 +1854,16 @@ func TestNonRecursiveGrandchildIgnored(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// Should NOT see the grandchild event.
-		got := r.drainQuiet(1 * time.Second)
-		got = filterEventsForPaths(got, grandchild)
-		if len(got) > 0 {
-			t.Fatalf("expected no events for grandchild %s, got %v", grandchild, toWantEvents(got))
+		marker := subPath(dir)
+		if err := os.WriteFile(marker, []byte("flush"), 0o644); err != nil {
+			t.Fatal(err)
 		}
+
+		// The marker proves the non-recursive watcher processed a later
+		// direct-child batch. It still must not report the grandchild.
+		got := expectContains(t, r, EventUpdate, marker)
+		got = append(got, r.drainQuiet(2*maxWaitTime)...)
+		assertNoEventsForPath(t, got, grandchild, "expected no events for grandchild")
 	})
 }
 
@@ -1856,7 +1879,7 @@ func TestNonRecursiveNewSubdirContentIgnored(t *testing.T) {
 			t.Fatal(err)
 		}
 		// Wait for the dir create event.
-		_ = r.drainQuiet(500 * time.Millisecond)
+		expectContains(t, r, EventUpdate, sub)
 
 		// Write a file inside the new subdirectory.
 		grandchild := subPath(sub)
@@ -1864,12 +1887,15 @@ func TestNonRecursiveNewSubdirContentIgnored(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// Should NOT see the grandchild event.
-		got := r.drainQuiet(1 * time.Second)
-		got = filterEventsForPaths(got, grandchild)
-		if len(got) > 0 {
-			t.Fatalf("expected no events for nested file %s, got %v", grandchild, toWantEvents(got))
+		marker := subPath(dir)
+		if err := os.WriteFile(marker, []byte("flush"), 0o644); err != nil {
+			t.Fatal(err)
 		}
+
+		// Should NOT see the grandchild event.
+		got := expectContains(t, r, EventUpdate, marker)
+		got = append(got, r.drainQuiet(2*maxWaitTime)...)
+		assertNoEventsForPath(t, got, grandchild, "expected no events for nested file")
 	})
 }
 
@@ -1890,20 +1916,18 @@ func TestNonRecursiveAndRecursiveSameDir(t *testing.T) {
 		if err := os.WriteFile(grandchild, []byte("deep"), 0o644); err != nil {
 			t.Fatal(err)
 		}
+		marker := subPath(dir)
+		if err := os.WriteFile(marker, []byte("flush"), 0o644); err != nil {
+			t.Fatal(err)
+		}
 
 		// Recursive should see the grandchild.
-		gotRec := rRec.gatherUntilQuiet(rRec.deadline(), 500*time.Millisecond)
-		gotRec = filterEventsForPaths(gotRec, grandchild)
-		if !containsEvent(gotRec, EventUpdate, grandchild) {
-			t.Fatalf("recursive: expected create event for %s, got %v", grandchild, toWantEvents(gotRec))
-		}
+		expectContains(t, rRec, EventUpdate, grandchild)
 
 		// Non-recursive should NOT see the grandchild.
-		gotNonRec := rNonRec.drainQuiet(1 * time.Second)
-		gotNonRec = filterEventsForPaths(gotNonRec, grandchild)
-		if len(gotNonRec) > 0 {
-			t.Fatalf("non-recursive: expected no events for %s, got %v", grandchild, toWantEvents(gotNonRec))
-		}
+		gotNonRec := expectContains(t, rNonRec, EventUpdate, marker)
+		gotNonRec = append(gotNonRec, rNonRec.drainQuiet(2*maxWaitTime)...)
+		assertNoEventsForPath(t, gotNonRec, grandchild, "non-recursive: expected no events for")
 	})
 }
 
@@ -1997,15 +2021,14 @@ func TestFileWatchIgnoresSiblings(t *testing.T) {
 		sibling := filepath.Join(dir, "sibling.txt")
 
 		r, _ := subscribeFileFor(t, target, watcherImpl)
+		witness, _ := subscribeForOpts(t, dir, watcherImpl)
 
 		// Write to sibling; should NOT see this.
 		if err := os.WriteFile(sibling, []byte("noise"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		got := r.drainQuiet(1 * time.Second)
-		if len(got) > 0 {
-			t.Fatalf("expected no events for sibling, got %v", toWantEvents(got))
-		}
+		expectContains(t, witness, EventUpdate, sibling)
+		expectNoBufferedEvents(t, r, "expected no events for sibling")
 	})
 }
 
@@ -2029,22 +2052,16 @@ func TestFileWatchMultipleSameDir(t *testing.T) { //nolint:tparallel,paralleltes
 		got1 := r1.next(r1.deadline())
 		assertEventSequence(t, got1, []wantEvent{{EventUpdate, f1}})
 
-		got2 := r2.drainQuiet(1 * time.Second)
-		if len(got2) > 0 {
-			t.Fatalf("r2 should not see f1 events, got %v", toWantEvents(got2))
-		}
+		expectNoBufferedEvents(t, r2, "r2 should not see f1 events")
 
 		// Write to f2; only r2 should see it.
 		if err := os.WriteFile(f2, []byte("world"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		got2 = r2.next(r2.deadline())
+		got2 := r2.next(r2.deadline())
 		assertEventSequence(t, got2, []wantEvent{{EventUpdate, f2}})
 
-		got1 = r1.drainQuiet(1 * time.Second)
-		if len(got1) > 0 {
-			t.Fatalf("r1 should not see f2 events, got %v", toWantEvents(got1))
-		}
+		expectNoBufferedEvents(t, r1, "r1 should not see f2 events")
 	})
 }
 

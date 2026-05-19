@@ -6,8 +6,13 @@ import (
 )
 
 const (
-	minWaitTime = 50 * time.Millisecond
-	maxWaitTime = 500 * time.Millisecond
+	defaultMinWaitTime = 50 * time.Millisecond
+	defaultMaxWaitTime = 500 * time.Millisecond
+)
+
+var (
+	minWaitTime = defaultMinWaitTime
+	maxWaitTime = defaultMaxWaitTime
 )
 
 // debounce batches filesystem events for one backend. Each *watcher

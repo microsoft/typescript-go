@@ -1,8 +1,6 @@
 package fswatch
 
-import (
-	"testing"
-)
+import "testing"
 
 // testingT is the subset of [testing.T] (and [testing.TB]) used by every
 // test in this package. It exists so that the per-backend test bodies
