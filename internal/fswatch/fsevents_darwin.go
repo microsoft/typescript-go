@@ -29,7 +29,7 @@ import (
 //
 //	┌───────────────────────────────────────────────────────────┐
 //	│ fsEventsBackend                                           │
-//	│ (no event loop; start() just loads the FFI layer)         │
+//	│ (no event loop; start() just signals readiness)           │
 //	│                                                           │
 //	│ subscribe() per directory:                                │
 //	│      │                                                    │
@@ -37,7 +37,7 @@ import (
 //	│ ┌─────────────────────────────────────────────────────┐   │
 //	│ │ fseventsState                                       │   │
 //	│ │                                                     │   │
-//	│ │  FSEventStream ──► shared GCD dispatch queue        │   │
+//	│ │  FSEventStream ──► per-stream GCD dispatch queue    │   │
 //	│ │  (UseCFTypes | FileEvents = 0x11)                   │   │
 //	│ │                                                     │   │
 //	│ │  callback fires on GCD thread:                      │   │
@@ -83,9 +83,10 @@ import (
 //
 // WatchDirectory flow (caller goroutine):
 //   subscribe → startStream: create an FSEventStream with
-//   kFSEventStreamEventIdSinceNow and start it on the shared GCD queue.
-//   No directory walk or tree is needed; FSEvents watches recursively
-//   via the kernel, and event classification uses only the flags.
+//   kFSEventStreamEventIdSinceNow and start it on its own serial GCD
+//   queue. No directory walk or tree is needed; FSEvents watches
+//   recursively via the kernel, and event classification uses only the
+//   flags.
 //
 // Event classification (fsEventsCallback, on eventLoop goroutine):
 //   Each batch delivers arrays of paths, flags, and event IDs. The flags
@@ -185,11 +186,7 @@ func newFSEventsBackend() *fsEventsBackend {
 	return b
 }
 
-// start initializes the dispatch queue and pipe infrastructure.
 func (b *fsEventsBackend) start() error {
-	if err := loadFSEvents(); err != nil {
-		return err
-	}
 	b.notifyStarted()
 	return nil
 }
@@ -218,7 +215,8 @@ var (
 	errFSEventsTooMany       = fmt.Errorf("too many events: %w", ErrOverflow)
 )
 
-// startStream creates and starts an FSEventStream on the dispatch queue.
+// startStream creates and starts an FSEventStream on its per-stream
+// serial dispatch queue.
 func (b *fsEventsBackend) startStream(w *dirWatch, since uint64) error {
 	if err := checkWatcher(w); err != nil {
 		return err
@@ -260,7 +258,7 @@ func (b *fsEventsBackend) startStream(w *dirWatch, since uint64) error {
 		return &dirWatchError{err: errStreamCreateNull, dirWatch: w}
 	}
 
-	fsEventStreamSetDispatchQueue(stream, dispatchQueue)
+	fsEventStreamSetDispatchQueue(stream, cb.queue)
 	if fsEventStreamStart(stream) == 0 {
 		fsEventStreamInvalidate(stream)
 		fsEventStreamRelease(stream)

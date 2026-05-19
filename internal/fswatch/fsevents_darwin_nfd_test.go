@@ -133,7 +133,7 @@ func TestFSEventsNFDOnDiskNFCSubscribe(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	got := r.next(defaultEventTimeout())
+	got := r.next(r.deadline())
 	if len(got) == 0 {
 		t.Fatal("no events received")
 	}
@@ -163,7 +163,7 @@ func TestFSEventsNFDOnDiskNFCWatchFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	got := r.next(defaultEventTimeout())
+	got := r.next(r.deadline())
 	if len(got) == 0 {
 		t.Fatal("WatchFile delivered no events: FSEvents reported the path in its on-disk (NFD) form and the e.Path == path filter in WatchFile dropped it")
 	}

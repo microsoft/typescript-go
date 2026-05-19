@@ -88,6 +88,12 @@ TEXT fse_dispatch_queue_create_trampoline<>(SB), NOSPLIT, $0-0
 GLOBL ·fse_dispatch_queue_create_trampoline_addr(SB), RODATA, $8
 DATA ·fse_dispatch_queue_create_trampoline_addr(SB)/8, $fse_dispatch_queue_create_trampoline<>(SB)
 
+TEXT fse_dispatch_release_trampoline<>(SB), NOSPLIT, $0-0
+	JMP fse_dispatch_release(SB)
+
+GLOBL ·fse_dispatch_release_trampoline_addr(SB), RODATA, $8
+DATA ·fse_dispatch_release_trampoline_addr(SB)/8, $fse_dispatch_release_trampoline<>(SB)
+
 // ----- CoreServices / FSEvents -----
 // (FSEventStreamCreate is arch-specific; see fsevents_darwin_ffi_{arm64,amd64}.s)
 

@@ -125,8 +125,10 @@ configuration. The Go port is pure Go on all platforms:
   waking a dedicated Go event-loop goroutine that classifies the events and
   frees the payload. The shim then blocks on the stream's done pipe until the Go
   side signals completion, so the dispatch thread never enters Go ABI. Each
-  FSEventStream has its own (event, done) pipe pair, so callbacks for different
-  streams run concurrently without contention.
+  FSEventStream has its own serial GCD dispatch queue and (event, done) pipe
+  pair, so callbacks for different streams run concurrently without contention:
+  a stuck callback for one stream cannot back up callbacks for any other stream
+  behind it.
 - **Windows**: direct `x/sys/windows` syscalls.
 - **Linux/BSD**: direct `x/sys/unix` syscalls.
 

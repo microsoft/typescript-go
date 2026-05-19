@@ -3,12 +3,10 @@
 package fswatch
 
 import (
-	"errors"
 	"io"
 	"math"
 	"os"
 	"runtime"
-	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -310,10 +308,18 @@ func normalizeNFC(s string) string {
 
 var fse_dispatch_queue_create_trampoline_addr uintptr
 
-func dispatchQueueCreate(label unsafe.Pointer, attr uintptr) uintptr {
-	ret, _, _ := syscall_syscall6(fse_dispatch_queue_create_trampoline_addr, uintptr(label), attr, 0, 0, 0, 0)
+func dispatchQueueCreate(label unsafe.Pointer) uintptr {
+	ret, _, _ := syscall_syscall6(fse_dispatch_queue_create_trampoline_addr, uintptr(label), 0, 0, 0, 0, 0)
 	runtime.KeepAlive(label)
 	return ret
+}
+
+//go:cgo_import_dynamic fse_dispatch_release dispatch_release "/usr/lib/libSystem.B.dylib"
+
+var fse_dispatch_release_trampoline_addr uintptr
+
+func dispatchRelease(obj uintptr) {
+	_, _, _ = syscall_syscall6(fse_dispatch_release_trampoline_addr, obj, 0, 0, 0, 0, 0)
 }
 
 // ---------------------------------------------------------------------------
@@ -430,17 +436,6 @@ var fsEventsCallbackAsmAddr uintptr
 // Per-stream callback infrastructure
 // ---------------------------------------------------------------------------
 
-var (
-	// dispatchQueue is a shared GCD dispatch queue for FSEventStream
-	// callbacks. With per-stream pipes, each stream's callbacks are
-	// independently serialized, so the queue type doesn't matter for
-	// correctness.
-	dispatchQueue uintptr
-
-	loadOnce sync.Once
-	loadErr  error //nolint:errname // not a sentinel; just the result of loadFSEvents()
-)
-
 // streamCallback is the per-stream buffer shared between the C callback
 // assembly and the Go event loop goroutine. The assembly receives a pointer
 // to this struct as the FSEventStreamContext.info parameter and uses offset
@@ -461,6 +456,7 @@ type streamCallback struct {
 	// Go-only fields (not accessed by assembly, offset doesn't matter).
 	eventFile     *os.File
 	donePipeWrite int
+	queue         uintptr // per-stream serial dispatch queue
 	done          chan struct{}
 	dirWatch      *dirWatch
 	closed        atomic.Bool
@@ -486,7 +482,11 @@ func (p *fsEventsCallbackPayload) close() {
 }
 
 // newStreamCallback allocates a pinned streamCallback with its own pipe pair
-// and starts a goroutine to process callbacks.
+// and per-stream serial dispatch queue, and starts a goroutine to process
+// callbacks. The per-stream serial queue both serializes this stream's
+// callbacks (the asm shim's activeCallback flag and pipe handshake are not
+// re-entrant) and prevents cross-stream head-of-line blocking that a
+// process-wide serial queue would cause.
 func newStreamCallback(w *dirWatch) (*streamCallback, error) {
 	var eventPipe, donePipe [2]int
 	if err := unix.Pipe(eventPipe[:]); err != nil {
@@ -502,11 +502,23 @@ func newStreamCallback(w *dirWatch) (*streamCallback, error) {
 	unix.CloseOnExec(donePipe[0])
 	unix.CloseOnExec(donePipe[1])
 
+	label := []byte("typescript.fswatch.fsevents.stream\x00")
+	queue := dispatchQueueCreate(unsafe.Pointer(&label[0]))
+	runtime.KeepAlive(label)
+	if queue == 0 {
+		unix.Close(eventPipe[0])
+		unix.Close(eventPipe[1])
+		unix.Close(donePipe[0])
+		unix.Close(donePipe[1])
+		return nil, errStreamCreateNull
+	}
+
 	cb := &streamCallback{
 		eventPipeWrite: uintptr(eventPipe[1]),
 		donePipeRead:   uintptr(donePipe[0]),
 		eventFile:      os.NewFile(uintptr(eventPipe[0]), "fsevents-event"),
 		donePipeWrite:  donePipe[1],
+		queue:          queue,
 		done:           make(chan struct{}),
 		dirWatch:       w,
 	}
@@ -551,6 +563,10 @@ func (cb *streamCallback) close() {
 	cb.eventFile.Close()
 	cb.closeDonePipeRead()
 	unix.Close(cb.donePipeWrite)
+	if cb.queue != 0 {
+		dispatchRelease(cb.queue)
+		cb.queue = 0
+	}
 }
 
 // eventLoop runs on a dedicated goroutine for this stream. It reads signals
@@ -575,16 +591,4 @@ func (cb *streamCallback) eventLoop() {
 			return
 		}
 	}
-}
-
-func loadFSEvents() error {
-	loadOnce.Do(func() {
-		label := []byte("typescript.fswatch.fsevents\x00")
-		dispatchQueue = dispatchQueueCreate(unsafe.Pointer(&label[0]), 0)
-		runtime.KeepAlive(label)
-		if dispatchQueue == 0 {
-			loadErr = errors.New("dispatch_queue_create failed")
-		}
-	})
-	return loadErr
 }

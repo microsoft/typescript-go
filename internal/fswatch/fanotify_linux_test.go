@@ -98,7 +98,7 @@ func TestFanotifyNoRenameFallback(t *testing.T) { //nolint:tparallel // subtests
 		if err := os.Rename(f1, f2); err != nil {
 			t.Fatal(err)
 		}
-		got := r.gather(defaultEventTimeout(), 100*time.Millisecond)
+		got := r.gather(r.deadline(), 100*time.Millisecond)
 		assertEventSet(t, got, []wantEvent{
 			{EventDelete, f1},
 			{EventUpdate, f2},
@@ -112,7 +112,7 @@ func TestFanotifyNoRenameFallback(t *testing.T) { //nolint:tparallel // subtests
 		if err := os.WriteFile(f, []byte("hello"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		got := r.next(defaultEventTimeout())
+		got := r.next(r.deadline())
 		assertEventSequence(t, got, []wantEvent{{EventUpdate, f}})
 	})
 
@@ -144,7 +144,7 @@ func TestFanotifyNoRenameFallback(t *testing.T) { //nolint:tparallel // subtests
 		if err := os.Rename(sub, dest); err != nil {
 			t.Fatal(err)
 		}
-		_ = r.gatherUntilQuiet(defaultEventTimeout(), 500*time.Millisecond)
+		_ = r.gatherUntilQuiet(r.deadline(), 500*time.Millisecond)
 
 		// Modify the file at its new location. The kernel mark on
 		// inner's inode is still active; without descendant cleanup
@@ -192,7 +192,7 @@ func TestFanotifyCrossWatcherSameFs(t *testing.T) {
 		if err := os.WriteFile(pathA, []byte("changed"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		gotA := rA.gather(defaultEventTimeout(), 200*time.Millisecond)
+		gotA := rA.gather(rA.deadline(), 200*time.Millisecond)
 		assertEventSet(t, gotA, []wantEvent{{EventUpdate, pathA}})
 
 		if gotB := rB.drainQuiet(200 * time.Millisecond); len(gotB) != 0 {
