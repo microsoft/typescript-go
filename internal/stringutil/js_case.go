@@ -90,31 +90,41 @@ func toUpperASCII(str string) (string, bool) {
 }
 
 func isFinalSigmaContext(runes []rune, index int) bool {
-	return hasCasedLetterBefore(runes, index) && !hasCasedLetterAfter(runes, index)
+	// ECMAScript points at Unicode Default Case Conversion for toLowerCase, and
+	// modern V8 reaches that behavior through Intl::ConvertToLower, which uses
+	// ICU root-locale lowercasing for non-Latin1 strings like Greek sigma.
+	// SpiderMonkey models Final_Sigma with a more explicit context walk, while
+	// Unicode Table 3-17 describes it in terms of Cased and Case_Ignorable.
+	// We model the exposed V8/ICU behavior directly here: skip Case_Ignorable
+	// code points and then look for lowercase/uppercase/titlecase code points,
+	// including the DerivedCoreProperties Lowercase/Uppercase extras such as ª,
+	// º, and Roman numerals.
+	return hasSigmaCasedBefore(runes, index) && !hasSigmaCasedAfter(runes, index)
 }
 
-func hasCasedLetterBefore(runes []rune, index int) bool {
+func hasSigmaCasedBefore(runes []rune, index int) bool {
 	for i := index - 1; i >= 0; i-- {
 		if isUnicodeCaseIgnorable(runes[i]) {
 			continue
 		}
-		return isUnicodeCased(runes[i])
+		return isSigmaCased(runes[i])
 	}
 	return false
 }
 
-func hasCasedLetterAfter(runes []rune, index int) bool {
+func hasSigmaCasedAfter(runes []rune, index int) bool {
 	for i := index + 1; i < len(runes); i++ {
 		if isUnicodeCaseIgnorable(runes[i]) {
 			continue
 		}
-		return isUnicodeCased(runes[i])
+		return isSigmaCased(runes[i])
 	}
 	return false
 }
 
-func isUnicodeCased(r rune) bool {
-	return unicode.IsLower(r) || unicode.IsUpper(r) || unicode.IsTitle(r)
+func isSigmaCased(r rune) bool {
+	return unicode.IsLower(r) || unicode.IsUpper(r) || unicode.IsTitle(r) ||
+		IsInRuneRanges(r, unicodeLowercaseRanges) || IsInRuneRanges(r, unicodeUppercaseRanges)
 }
 
 func isUnicodeCaseIgnorable(r rune) bool {
