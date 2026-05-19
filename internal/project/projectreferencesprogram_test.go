@@ -275,6 +275,58 @@ func TestProjectReferencesProgram(t *testing.T) {
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Check(t, snapshot.ProjectCollection.Projects()[0].Program != programBefore)
 	})
+
+	// Regression test for https://github.com/microsoft/typescript-go/issues/3942.
+	// When a project reference is removed and the program rebuilt, the dropped reference's
+	// retainingProjects entry must be released. Otherwise markProjectsAffectedByConfigChanges
+	// panics when the referenced config changes after the project is deleted.
+	t.Run("no panic when referenced config changes after reference is removed from tsconfig", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/main/tsconfig.json": `{"compilerOptions":{"noLib":true,"composite":true},"references":[{"path":"../dep"}]}`,
+			"/main/index.ts":      `export const x = 1;`,
+			"/dep/tsconfig.json":  `{"compilerOptions":{"noLib":true,"composite":true}}`,
+			"/dep/index.ts":       `export const y = 2;`,
+		}
+		session, utils := projecttestutil.Setup(files)
+
+		mainURI := lsproto.DocumentUri("file:///main/index.ts")
+		depURI := lsproto.DocumentUri("file:///dep/index.ts")
+
+		// Build main's program with a reference to dep.
+		session.DidOpenFile(context.Background(), mainURI, 1, files["/main/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), mainURI)
+		assert.NilError(t, err)
+
+		// Remove the reference to dep and rebuild. Without the fix, dep's
+		// retainingProjects still holds main's path after this rebuild.
+		err = utils.FS().WriteFile("/main/tsconfig.json", `{"compilerOptions":{"noLib":true,"composite":true}}`)
+		assert.NilError(t, err)
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{Uri: "file:///main/tsconfig.json", Type: lsproto.FileChangeTypeChanged},
+		})
+		_, err = session.GetLanguageService(context.Background(), mainURI)
+		assert.NilError(t, err)
+
+		// Close main and open dep. The close+open snapshot deletes the main project.
+		// deleteConfiguredProject only releases current-program refs (none after the
+		// rebuild), so without the fix dep.retainingProjects still has main.
+		session.DidCloseFile(context.Background(), mainURI)
+		session.DidOpenFile(context.Background(), depURI, 1, files["/dep/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageService(context.Background(), depURI)
+		assert.NilError(t, err)
+
+		// Change dep's tsconfig. markProjectsAffectedByConfigChanges would panic
+		// here without the fix because it finds main in dep's retainingProjects but
+		// main is no longer in configuredProjects.
+		err = utils.FS().WriteFile("/dep/tsconfig.json", `{"compilerOptions":{"noLib":true,"composite":true,"strict":true}}`)
+		assert.NilError(t, err)
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{Uri: "file:///dep/tsconfig.json", Type: lsproto.FileChangeTypeChanged},
+		})
+		_, err = session.GetLanguageService(context.Background(), depURI)
+		assert.NilError(t, err)
+	})
 }
 
 func filesForReferencedProjectProgram(disableSourceOfProjectReferenceRedirect bool) map[string]any {

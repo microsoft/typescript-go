@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -1056,12 +1057,16 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		b.deleteConfiguredProject(entry, logger)
 	}
 	if updateProgram {
+		projectPath := entry.Value().configFilePath
+		oldProgram := entry.Value().Program
+		var newProgram *compiler.Program
 		entry.Locked(func(entry dirty.Value[*Project]) {
 			entry.Change(func(project *Project) {
 				oldHost := project.host
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
 				project.Program = result.Program
+				newProgram = result.Program
 				project.checkerPool = result.CheckerPool
 				project.ProgramUpdateKind = result.UpdateKind
 				project.ProgramLastUpdate = b.newSnapshotID
@@ -1076,6 +1081,27 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				project.dirtyFilePath = ""
 			})
 		})
+		// Release project references that were dropped during the rebuild.
+		// We diff old vs new rather than releasing all old refs eagerly, because
+		// incremental updates (single dirty file, same command line) reuse the
+		// existing reference graph without calling GetResolvedProjectReference,
+		// so an eager release would remove the project from retainingProjects of
+		// refs it still holds.
+		if oldProgram != nil {
+			newRefs := make(map[tspath.Path]struct{})
+			if newProgram != nil {
+				newProgram.RangeResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+					newRefs[referencePath] = struct{}{}
+					return true
+				})
+			}
+			oldProgram.RangeResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+				if _, kept := newRefs[referencePath]; !kept {
+					b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
+				}
+				return true
+			})
+		}
 	}
 	if notifiedLoading && b.client != nil {
 		b.client.ProgressFinish(diagnostics.Project_0, displayName)
@@ -1141,17 +1167,22 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 	)
 }
 
+func (b *ProjectCollectionBuilder) releaseProjectReferences(program *compiler.Program, projectPath tspath.Path) {
+	if program == nil {
+		return
+	}
+	program.RangeResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+		b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
+		return true
+	})
+}
+
 func (b *ProjectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*Project], logger *logging.LogTree) {
 	projectPath := project.Value().configFilePath
 	if logger != nil {
 		logger.Log("Deleting configured project: " + project.Value().configFileName)
 	}
-	if program := project.Value().Program; program != nil {
-		program.RangeResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
-			b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
-			return true
-		})
-	}
+	b.releaseProjectReferences(project.Value().Program, projectPath)
 	b.configFileRegistryBuilder.releaseConfigForProject(projectPath, projectPath)
 	project.Delete()
 }
