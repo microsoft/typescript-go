@@ -990,7 +990,7 @@ func (p *Parser) parseThisTag(start int, tagName *ast.IdentifierNode, margin int
 func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	typeExpression := p.tryParseTypeExpression()
 	p.skipWhitespaceOrAsterisk()
-	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	fullName := p.parseJSDocIdentifierName(nil /*diagnosticMessage*/)
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 

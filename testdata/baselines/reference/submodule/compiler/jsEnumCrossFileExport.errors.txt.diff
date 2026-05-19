@@ -2,13 +2,12 @@
 +++ new.jsEnumCrossFileExport.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+enumDef.js(14,21): error TS1003: Identifier expected.
 +index.js(4,17): error TS2702: 'Host' only refers to a type, but is being used as a namespace here.
 +index.js(13,11): error TS2702: 'Host' only refers to a type, but is being used as a namespace here.
 +index.js(18,11): error TS2702: 'Host' only refers to a type, but is being used as a namespace here.
 +
 +
-+==== enumDef.js (1 errors) ====
++==== enumDef.js (0 errors) ====
 +    var Host = {};
 +    Host.UserMetrics = {};
 +    /** @enum {number} */
@@ -23,10 +22,7 @@
 +     */
 +    /**
 +     * @typedef {string}
-+                        
 +     */
-+    
-+!!! error TS1003: Identifier expected.
 +    Host.UserMetrics.Blah = {
 +        x: 12
 +    }
