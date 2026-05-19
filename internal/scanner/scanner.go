@@ -2513,7 +2513,7 @@ func findOriginatingJSDocSatisfiesTag(sourceFile *ast.SourceFile, node *ast.Node
 			continue
 		}
 		var firstSatisfiesTag *ast.Node
-		for _, jsDoc := range current.JSDoc(sourceFile) {
+		for _, jsDoc := range current.EagerJSDoc(sourceFile) {
 			if tags := jsDoc.AsJSDoc().Tags; tags != nil {
 				for _, tag := range tags.Nodes {
 					if !ast.IsJSDocSatisfiesTag(tag) {
