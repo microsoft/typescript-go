@@ -18036,7 +18036,7 @@ func (c *Checker) getPropertyTypeFromContainerAnnotation(node *ast.Node) *Type {
 	if prop == nil {
 		return nil
 	}
-	return c.getTypeOfSymbol(prop)
+	return c.getWriteTypeOfSymbol(prop)
 }
 
 func (c *Checker) containsSameNamedThisProperty(thisProperty *ast.Node, expression *ast.Node) bool {

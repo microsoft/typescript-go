@@ -1,0 +1,51 @@
+//// [tests/cases/compiler/callableTypePropertyEmptyArrayAssignmentExactOptional.ts] ////
+
+=== callableTypePropertyEmptyArrayAssignmentExactOptional.ts ===
+// https://github.com/microsoft/typescript-go/issues/3976
+// Regression: under exactOptionalPropertyTypes the helper must use getWriteTypeOfSymbol
+// (not getTypeOfSymbol) so the internal `missing` type is stripped before being
+// returned as the initializer type of the assignment declaration.
+
+const fn1: {
+>fn1 : { (): void; items?: string[]; }
+
+    (): void;
+    items?: string[];
+>items : string[] | undefined
+
+} = () => undefined;
+>() => undefined : { (): undefined; items: string[]; }
+>undefined : undefined
+
+fn1.items = [];  // No error: items is declared as string[]
+>fn1.items = [] : never[]
+>fn1.items : string[]
+>fn1 : { (): void; items?: string[]; }
+>items : string[]
+>[] : never[]
+
+const obj: { tags?: string[] } = {};
+>obj : { tags?: string[]; }
+>tags : string[] | undefined
+>{} : {}
+
+obj.tags = [];  // No error: tags is declared as string[]
+>obj.tags = [] : never[]
+>obj.tags : string[]
+>obj : { tags?: string[]; }
+>tags : string[]
+>[] : never[]
+
+// Without a type annotation TS7008 should still fire.
+const fn2 = () => undefined;
+>fn2 : { (): undefined; labels: any[]; }
+>() => undefined : { (): undefined; labels: any[]; }
+>undefined : undefined
+
+fn2.labels = [];  // Error: Member 'labels' implicitly has an 'any[]' type.
+>fn2.labels = [] : never[]
+>fn2.labels : any[]
+>fn2 : { (): undefined; labels: any[]; }
+>labels : any[]
+>[] : never[]
+
