@@ -179,11 +179,11 @@ func newWindowsSubscription(watcherImpl *windowsBackend, w *dirWatch) (*windowsS
 	}
 	var info windows.ByHandleFileInformation
 	if err := windows.GetFileInformationByHandle(h, &info); err != nil {
-		windows.CloseHandle(h)
+		_ = windows.CloseHandle(h)
 		return nil, &dirWatchError{err: errGetFileInfo, dirWatch: w}
 	}
 	if info.FileAttributes&windows.FILE_ATTRIBUTE_DIRECTORY == 0 {
-		windows.CloseHandle(h)
+		_ = windows.CloseHandle(h)
 		return nil, &dirWatchError{err: syscall.ENOTDIR, dirWatch: w}
 	}
 	return &windowsSubscription{
@@ -226,7 +226,7 @@ func (s *windowsSubscription) beginRead() (*windowsRead, error) {
 		0,
 	)
 	if err != nil {
-		windows.CloseHandle(ev)
+		_ = windows.CloseHandle(ev)
 		return nil, &dirWatchError{err: errReadChanges, dirWatch: s.dirWatch}
 	}
 	return req, nil
@@ -237,15 +237,16 @@ func (r *windowsRead) wait(s *windowsSubscription) (uint32, error, error) {
 	go func() {
 		select {
 		case <-s.stopCh:
-			windows.CancelIoEx(s.handle, &r.overlapped)
+			_ = windows.CancelIoEx(s.handle, &r.overlapped)
 		case <-stopWait:
+			// Do nothing; wait completed normally.
 		}
 	}()
 	_, waitErr := windows.WaitForSingleObject(r.event, windows.INFINITE)
 	close(stopWait)
 	var bytes uint32
 	completionErr := windows.GetOverlappedResult(s.handle, &r.overlapped, &bytes, false)
-	windows.CloseHandle(r.event)
+	_ = windows.CloseHandle(r.event)
 	return bytes, waitErr, completionErr
 }
 
@@ -259,7 +260,7 @@ func (r *windowsRead) wait(s *windowsSubscription) (uint32, error, error) {
 // it is undefined behavior on Windows.
 func (s *windowsSubscription) run() {
 	defer close(s.doneCh)
-	defer windows.CloseHandle(s.handle)
+	defer func() { _ = windows.CloseHandle(s.handle) }()
 	if s.first == nil {
 		// subscribe always arms the initial read before spawning run.
 		// Guard the invariant rather than silently producing a watch
@@ -318,19 +319,19 @@ func (s *windowsSubscription) run() {
 // the cases that translate cleanly to Go's overlapped wrapper.
 func (s *windowsSubscription) processCompletion(callErr error, buf []byte, bytes uint32) (stop bool) {
 	if callErr != nil {
-		switch callErr {
-		case windows.ERROR_OPERATION_ABORTED:
+		switch {
+		case errors.Is(callErr, windows.ERROR_OPERATION_ABORTED):
 			return true
-		case windows.ERROR_INVALID_PARAMETER:
+		case errors.Is(callErr, windows.ERROR_INVALID_PARAMETER):
 			s.mu.Lock()
 			s.bufBytes = networkBufSize
 			s.mu.Unlock()
 			return false
-		case windows.ERROR_NOTIFY_ENUM_DIR:
+		case errors.Is(callErr, windows.ERROR_NOTIFY_ENUM_DIR):
 			s.dirWatch.events.setError(ErrOverflow)
 			s.dirWatch.notify()
 			return false
-		case windows.ERROR_ACCESS_DENIED:
+		case errors.Is(callErr, windows.ERROR_ACCESS_DENIED):
 			// Possibly the watched dir was deleted; check and handle.
 			pathPtr, _ := windows.UTF16PtrFromString(s.dirWatch.dir)
 			attrs, err := windows.GetFileAttributes(pathPtr)
@@ -415,7 +416,7 @@ func (s *windowsSubscription) stopLocked() {
 	// Cancel any in-flight IO so the wait returns; the run goroutine
 	// closes the handle in its deferred cleanup once the IO has fully
 	// finished and GetOverlappedResult has returned.
-	windows.CancelIoEx(s.handle, nil)
+	_ = windows.CancelIoEx(s.handle, nil)
 }
 
 func (s *windowsSubscription) stop() {
@@ -437,7 +438,7 @@ func (b *windowsBackend) subscribe(w *dirWatch) error {
 	// missing the initial create event or seeing it as a stray modify.
 	first, err := sub.beginRead()
 	if err != nil {
-		windows.CloseHandle(sub.handle)
+		_ = windows.CloseHandle(sub.handle)
 		return err
 	}
 	sub.first = first

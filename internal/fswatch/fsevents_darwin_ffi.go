@@ -124,7 +124,7 @@ func syscall_syscall6(fn, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err s
 var fse_CFRelease_trampoline_addr uintptr
 
 func cfRelease(ref uintptr) {
-	syscall_syscall6(fse_CFRelease_trampoline_addr, ref, 0, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_CFRelease_trampoline_addr, ref, 0, 0, 0, 0, 0)
 }
 
 //go:cgo_import_dynamic fse_CFStringCreateWithCString CFStringCreateWithCString "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
@@ -191,7 +191,7 @@ func cfStringCreateMutableCopy(allocator uintptr, maxLength int, str uintptr) ui
 var fse_CFStringNormalize_trampoline_addr uintptr
 
 func cfStringNormalize(mutStr uintptr, form uintptr) {
-	syscall_syscall6(fse_CFStringNormalize_trampoline_addr, mutStr, form, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_CFStringNormalize_trampoline_addr, mutStr, form, 0, 0, 0, 0)
 }
 
 //go:cgo_import_dynamic fse_CFStringGetLength CFStringGetLength "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
@@ -226,7 +226,7 @@ func cfStringGetCString(str uintptr, buf unsafe.Pointer, bufSize int, encoding u
 // are identical in every Unicode normalization form, so we can skip the
 // CoreFoundation round-trip entirely, which is the overwhelming common case.
 func isASCII(s string) bool {
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if s[i] >= 0x80 {
 			return false
 		}
@@ -347,7 +347,7 @@ func fsEventStreamCreate(allocator, callback uintptr, ctx unsafe.Pointer, paths 
 var fse_FSEventStreamSetDispatchQueue_trampoline_addr uintptr
 
 func fsEventStreamSetDispatchQueue(stream, queue uintptr) {
-	syscall_syscall6(fse_FSEventStreamSetDispatchQueue_trampoline_addr, stream, queue, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_FSEventStreamSetDispatchQueue_trampoline_addr, stream, queue, 0, 0, 0, 0)
 }
 
 //go:cgo_import_dynamic fse_FSEventStreamStart FSEventStreamStart "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
@@ -364,7 +364,7 @@ func fsEventStreamStart(stream uintptr) uint8 {
 var fse_FSEventStreamFlushSync_trampoline_addr uintptr
 
 func fsEventStreamFlushSync(stream uintptr) {
-	syscall_syscall6(fse_FSEventStreamFlushSync_trampoline_addr, stream, 0, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_FSEventStreamFlushSync_trampoline_addr, stream, 0, 0, 0, 0, 0)
 }
 
 //go:cgo_import_dynamic fse_FSEventStreamStop FSEventStreamStop "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
@@ -372,7 +372,7 @@ func fsEventStreamFlushSync(stream uintptr) {
 var fse_FSEventStreamStop_trampoline_addr uintptr
 
 func fsEventStreamStop(stream uintptr) {
-	syscall_syscall6(fse_FSEventStreamStop_trampoline_addr, stream, 0, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_FSEventStreamStop_trampoline_addr, stream, 0, 0, 0, 0, 0)
 }
 
 //go:cgo_import_dynamic fse_FSEventStreamInvalidate FSEventStreamInvalidate "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
@@ -380,7 +380,7 @@ func fsEventStreamStop(stream uintptr) {
 var fse_FSEventStreamInvalidate_trampoline_addr uintptr
 
 func fsEventStreamInvalidate(stream uintptr) {
-	syscall_syscall6(fse_FSEventStreamInvalidate_trampoline_addr, stream, 0, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_FSEventStreamInvalidate_trampoline_addr, stream, 0, 0, 0, 0, 0)
 }
 
 //go:cgo_import_dynamic fse_FSEventStreamRelease FSEventStreamRelease "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
@@ -388,7 +388,7 @@ func fsEventStreamInvalidate(stream uintptr) {
 var fse_FSEventStreamRelease_trampoline_addr uintptr
 
 func fsEventStreamRelease(stream uintptr) {
-	syscall_syscall6(fse_FSEventStreamRelease_trampoline_addr, stream, 0, 0, 0, 0, 0)
+	_, _, _ = syscall_syscall6(fse_FSEventStreamRelease_trampoline_addr, stream, 0, 0, 0, 0, 0)
 }
 
 // ---------------------------------------------------------------------------
@@ -414,7 +414,7 @@ var fse_free_trampoline_addr uintptr
 
 func libcFree(ptr uintptr) {
 	if ptr != 0 {
-		syscall_syscall6(fse_free_trampoline_addr, ptr, 0, 0, 0, 0, 0)
+		_, _, _ = syscall_syscall6(fse_free_trampoline_addr, ptr, 0, 0, 0, 0, 0)
 	}
 }
 
@@ -438,7 +438,7 @@ var (
 	dispatchQueue uintptr
 
 	loadOnce sync.Once
-	loadErr  error
+	loadErr  error //nolint:errname // not a sentinel; just the result of loadFSEvents()
 )
 
 // streamCallback is the per-stream buffer shared between the C callback

@@ -331,7 +331,7 @@ func (b *fsEventsBackend) closeWatch(w *dirWatch) error {
 func ignoringEINTR[T any](fn func() (T, error)) (T, error) {
 	for {
 		v, err := fn()
-		if err != syscall.EINTR {
+		if !errors.Is(err, syscall.EINTR) {
 			return v, err
 		}
 	}

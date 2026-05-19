@@ -84,11 +84,11 @@ func TestCallbackASMTouchesOnlySafeRegisters(t *testing.T) {
 		"R29": true, "R30": true,
 	}
 	// Caller-saved general-purpose: R0-R17.
-	for i := 0; i <= 17; i++ {
+	for i := range 18 {
 		safe[fmt.Sprintf("R%d", i)] = true
 	}
 	// Caller-saved float: F0-F7 and F16-F31.
-	for i := 0; i <= 7; i++ {
+	for i := range 8 {
 		safe[fmt.Sprintf("F%d", i)] = true
 	}
 	for i := 16; i <= 31; i++ {
@@ -107,7 +107,7 @@ func TestCallbackASMTouchesOnlySafeRegisters(t *testing.T) {
 	var violations []violation
 	seen := map[string]bool{}
 
-	for _, raw := range strings.Split(string(out), "\n") {
+	for raw := range strings.SplitSeq(string(out), "\n") {
 		line := strings.TrimRight(raw, " \t")
 		if line == "" || strings.HasPrefix(line, "TEXT ") {
 			continue
