@@ -38,6 +38,10 @@ type tscInput struct {
 	env              map[string]string
 	ignoreCase       bool
 	windowsStyleRoot string
+	// extracted is true when this tscInput was constructed from a [TestSpec]
+	// (e.g. by a generated test file). When true, run() skips the call to
+	// writeTestSourceFile to avoid re-emitting the same generated file.
+	extracted bool
 }
 
 func (test *tscInput) executeCommand(sys *TestSys, baselineBuilder *strings.Builder, commandLineArgs []string) tsc.CommandLineResult {
@@ -66,72 +70,144 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
 	t.Run(test.getBaselineSubFolder()+"/"+test.subScenario, func(t *testing.T) {
 		t.Parallel()
-		// initial test tsc compile
-		baselineBuilder := &strings.Builder{}
-		sys := newTestSys(test, false)
-		fmt.Fprint(
-			baselineBuilder,
-			"currentDirectory::",
-			sys.GetCurrentDirectory(),
-			"\nuseCaseSensitiveFileNames::",
-			sys.FS().UseCaseSensitiveFileNames(),
-			"\nInput::\n",
-		)
-		sys.baselineFSwithDiff(baselineBuilder)
-		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
-		sys.serializeState(baselineBuilder)
-		var unexpectedDiff strings.Builder
-		unexpectedDiff.WriteString(sys.baselinePrograms(baselineBuilder, "Initial build"))
-
-		for index, do := range test.edits {
-			sys.clearOutput()
-			wg := core.NewWorkGroup(false)
-			var nonIncrementalSys *TestSys
-			commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
-			wg.Queue(func() {
-				baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
-				if do.edit != nil {
-					do.edit(sys)
-				}
-				sys.baselineFSwithDiff(baselineBuilder)
-
-				if result.Watcher == nil {
-					test.executeCommand(sys, baselineBuilder, commandLineArgs)
-				} else {
-					result.Watcher.DoCycle()
-				}
-				sys.serializeState(baselineBuilder)
-				unexpectedDiff.WriteString(sys.baselinePrograms(baselineBuilder, fmt.Sprintf("Edit [%d]:: %s\n", index, do.caption)))
-			})
-			wg.Queue(func() {
-				// Compute build with all the edits
-				nonIncrementalSys = newTestSys(test, true)
-				for i := range index + 1 {
-					if test.edits[i].edit != nil {
-						test.edits[i].edit(nonIncrementalSys)
-					}
-				}
-				execute.CommandLine(nonIncrementalSys, commandLineArgs, nonIncrementalSys)
-			})
-			wg.RunAndWait()
-
-			diff := getDiffForIncremental(sys, nonIncrementalSys)
-			if diff != "" {
-				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
-				baselineBuilder.WriteString(diff)
-				if do.expectedDiff == "" {
-					unexpectedDiff.WriteString(fmt.Sprintf("Edit [%d]:: %s\n!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!\n%s\n", index, do.caption, diff))
-				}
-			} else if do.expectedDiff != "" {
-				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff))
-				unexpectedDiff.WriteString(fmt.Sprintf("Edit [%d]:: %s\n!!! Diff not found but explanation present, please review and remove the explanation !!!\n", index, do.caption))
-			}
+		state := test.start(t, scenario)
+		for _, do := range test.edits {
+			test.runEdit(state, do)
 		}
-		baseline.Run(t, strings.ReplaceAll(test.subScenario, " ", "-")+".js", baselineBuilder.String(), baseline.Options{Subfolder: filepath.Join(test.getBaselineSubFolder(), scenario)})
-		if unexpectedDiff.String() != "" {
-			t.Errorf("Test %s has unexpected diff %s with incremental build, please review the baseline file", test.subScenario, unexpectedDiff.String())
-		}
+		test.end(state)
 	})
+}
+
+// tscInputState holds the per-run state created by [tscInput.start] and
+// threaded through [tscInput.runEdit] and [tscInput.end]. It is used both by
+// the legacy declarative [tscInput.run] entry point and by the imperative
+// Start/Edit/End methods on [TestSpec] used by generated test files.
+type tscInputState struct {
+	t               *testing.T
+	scenario        string
+	sys             *TestSys
+	result          tsc.CommandLineResult
+	baselineBuilder *strings.Builder
+	unexpectedDiff  *strings.Builder
+	// editOps records the file-system operations observed while running each
+	// edit. Only populated when the test was not loaded from an extracted
+	// source file, since generated tests do not need to re-emit themselves.
+	editOps [][]capturedEditOp
+	// appliedEdits is the list of edits that have been run so far (in order).
+	// The non-incremental comparison build needs to replay every preceding
+	// edit before applying the current one, so we keep them around for the
+	// lifetime of the test.
+	appliedEdits []*tscEdit
+	// editIndex is the 0-based index of the next edit to be run.
+	editIndex int
+	// ended indicates that [tscInput.end] has already run, so subsequent
+	// Edit/End calls can be rejected.
+	ended bool
+}
+
+// start performs the initial build for a test and returns the in-progress
+// state. Callers must invoke runEdit zero or more times followed by end.
+func (test *tscInput) start(t *testing.T, scenario string) *tscInputState {
+	t.Helper()
+	state := &tscInputState{
+		t:               t,
+		scenario:        scenario,
+		baselineBuilder: &strings.Builder{},
+		unexpectedDiff:  &strings.Builder{},
+	}
+	state.sys = newTestSys(test, false)
+	fmt.Fprint(
+		state.baselineBuilder,
+		"currentDirectory::",
+		state.sys.GetCurrentDirectory(),
+		"\nuseCaseSensitiveFileNames::",
+		state.sys.FS().UseCaseSensitiveFileNames(),
+		"\nInput::\n",
+	)
+	state.sys.baselineFSwithDiff(state.baselineBuilder)
+	state.result = test.executeCommand(state.sys, state.baselineBuilder, test.commandLineArgs)
+	state.sys.serializeState(state.baselineBuilder)
+	state.unexpectedDiff.WriteString(state.sys.baselinePrograms(state.baselineBuilder, "Initial build"))
+	return state
+}
+
+// runEdit applies a single edit to the in-progress state, runs the
+// incremental and non-incremental builds, and appends the result to the
+// baseline being accumulated.
+func (test *tscInput) runEdit(state *tscInputState, do *tscEdit) {
+	if state.ended {
+		panic("tscInput.runEdit called after end")
+	}
+	index := state.editIndex
+	state.editIndex++
+	state.appliedEdits = append(state.appliedEdits, do)
+	extractEdits := !test.extracted
+
+	sys := state.sys
+	sys.clearOutput()
+	var nonIncrementalSys *TestSys
+	commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
+	state.baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
+	var beforeSnap map[string]capturedFsEntry
+	if extractEdits {
+		beforeSnap = captureFsSnapshot(sys)
+	}
+	if do.edit != nil {
+		do.edit(sys)
+	}
+	if extractEdits {
+		for len(state.editOps) <= index {
+			state.editOps = append(state.editOps, nil)
+		}
+		state.editOps[index] = diffFsSnapshots(beforeSnap, captureFsSnapshot(sys))
+	}
+	sys.baselineFSwithDiff(state.baselineBuilder)
+
+	if state.result.Watcher == nil {
+		test.executeCommand(sys, state.baselineBuilder, commandLineArgs)
+	} else {
+		state.result.Watcher.DoCycle()
+	}
+	sys.serializeState(state.baselineBuilder)
+	state.unexpectedDiff.WriteString(sys.baselinePrograms(state.baselineBuilder, fmt.Sprintf("Edit [%d]:: %s\n", index, do.caption)))
+
+	// Compute build with all the edits applied so far in order.
+	nonIncrementalSys = newTestSys(test, true)
+	for _, e := range state.appliedEdits {
+		if e.edit != nil {
+			e.edit(nonIncrementalSys)
+		}
+	}
+	execute.CommandLine(nonIncrementalSys, commandLineArgs, nonIncrementalSys)
+
+	diff := getDiffForIncremental(sys, nonIncrementalSys)
+	if diff != "" {
+		state.baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
+		state.baselineBuilder.WriteString(diff)
+		if do.expectedDiff == "" {
+			state.unexpectedDiff.WriteString(fmt.Sprintf("Edit [%d]:: %s\n!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!\n%s\n", index, do.caption, diff))
+		}
+	} else if do.expectedDiff != "" {
+		state.baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff))
+		state.unexpectedDiff.WriteString(fmt.Sprintf("Edit [%d]:: %s\n!!! Diff not found but explanation present, please review and remove the explanation !!!\n", index, do.caption))
+	}
+}
+
+// end finalises the run by writing the extracted test source file (when
+// applicable), running the baseline comparison, and reporting unexpected
+// diffs against the non-incremental build.
+func (test *tscInput) end(state *tscInputState) {
+	if state.ended {
+		panic("tscInput.end called twice")
+	}
+	state.ended = true
+	if !test.extracted {
+		test.writeTestSourceFile(state.scenario, state.editOps)
+	}
+	baseline.Run(state.t, strings.ReplaceAll(test.subScenario, " ", "-")+".js", state.baselineBuilder.String(), baseline.Options{Subfolder: filepath.Join(test.getBaselineSubFolder(), state.scenario)})
+	if state.unexpectedDiff.String() != "" {
+		state.t.Errorf("Test %s has unexpected diff %s with incremental build, please review the baseline file", test.subScenario, state.unexpectedDiff.String())
+	}
 }
 
 func getDiffForIncremental(incrementalSys *TestSys, nonIncrementalSys *TestSys) string {
