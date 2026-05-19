@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -64,7 +63,6 @@ foo.bar;`
 
 func TestImportHelpersAfterProgramUpdateWithoutSyntheticImportSpecifier(t *testing.T) {
 	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on import helpers after program update")
 
 	const config = `{
 		"compilerOptions": {
@@ -108,7 +106,7 @@ export class C {}`
 	}, false /*useCaseSensitiveFileNames*/))
 	updatedHost := compiler.NewCompilerHost("/", updatedFS, bundled.LibPath(), nil, nil)
 	updatedProgram, reused := p.UpdateProgram(path, updatedHost, nil)
-	assert.Assert(t, !reused, "Expected module indicator change to rebuild program state")
+	assert.Assert(t, !reused, "Expected module indicator change to rebuild stale state without a synthetic tslib import")
 	updatedFile := updatedProgram.GetSourceFile("/foo.ts")
 	assert.Assert(t, updatedProgram.GetImportHelpersImportSpecifier(updatedFile.Path()) != nil, "Expected rebuilt program to synthesize tslib import")
 	diagnostics := updatedProgram.GetSemanticDiagnostics(t.Context(), updatedFile)
