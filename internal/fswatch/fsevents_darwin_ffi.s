@@ -2,7 +2,7 @@
 
 #include "textflag.h"
 
-// fsevents_darwin_ffi.s — shared (amd64+arm64) assembly trampolines
+// fsevents_darwin_ffi.s: shared (amd64+arm64) assembly trampolines
 //
 // Provides JMP trampolines for CoreFoundation, libdispatch, and CoreServices
 // functions imported via //go:cgo_import_dynamic. Each trampoline is paired
@@ -16,7 +16,7 @@
 // Each TEXT trampoline JMPs to the corresponding cgo_import_dynamic symbol.
 // JMP is a Go pseudo-instruction that works on all architectures.
 //
-// Trampoline TEXT symbols are file-scoped (`<>` suffix) — there is no
+// Trampoline TEXT symbols are file-scoped (`<>` suffix); there is no
 // Go-side declaration for them. Only the `_addr` variables (declared
 // `·name(SB)` for package-scope) are visible from Go. Following the
 // pattern used by golang.org/x/sys/unix/zsyscall_darwin_*.s.

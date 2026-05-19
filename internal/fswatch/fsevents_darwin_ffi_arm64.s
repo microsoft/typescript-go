@@ -2,17 +2,17 @@
 
 #include "textflag.h"
 
-// fsevents_darwin_ffi_arm64.s — arm64 assembly for the FSEvents backend
+// fsevents_darwin_ffi_arm64.s: arm64 assembly for the FSEvents backend
 //
 // Contains two functions:
 //
-//  1. FSEventStreamCreate trampoline — moves the float64 latency bits
+//  1. FSEventStreamCreate trampoline: moves the float64 latency bits
 //     from R5 (integer register, where syscall6 puts it) into F0 (the
 //     AAPCS64 first float argument register), and hardcodes flags to
 //     0x11 (kFSEventStreamCreateFlagUseCFTypes |
 //     kFSEventStreamCreateFlagFileEvents).
 //
-//  2. fsEventsCallbackASM — the C-convention callback invoked by FSEvents
+//  2. fsEventsCallbackASM: the C-convention callback invoked by FSEvents
 //     on a GCD dispatch queue thread. Retains/copies callback data into a
 //     payload, writes the payload pointer to eventPipe to wake the Go event-loop
 //     goroutine, then blocks on donePipe until processing is complete. Never
@@ -21,7 +21,7 @@
 //     See TestCallbackASMTouchesOnlySafeRegisters for the static check.
 
 // ---------------------------------------------------------------------------
-// FSEventStreamCreate trampoline — shuffles the float64 latency argument.
+// FSEventStreamCreate trampoline: shuffles the float64 latency argument.
 //
 // The runtime's syscall6 trampoline loads 6 args into R0-R5:
 //   R0=allocator  R1=callback  R2=ctx  R3=paths
@@ -41,7 +41,7 @@ GLOBL ·fse_FSEventStreamCreate_trampoline_addr(SB), RODATA, $8
 DATA ·fse_FSEventStreamCreate_trampoline_addr(SB)/8, $fse_FSEventStreamCreate_trampoline<>(SB)
 
 // ---------------------------------------------------------------------------
-// FSEvents callback — called from a GCD dispatch queue with C convention.
+// FSEvents callback: called from a GCD dispatch queue with C convention.
 //   R0=streamRef  R1=info  R2=numEvents  R3=paths  R4=flags  R5=ids
 //
 // `info` (R1) is a pointer to a streamCallback struct:
@@ -135,7 +135,7 @@ writeAgain:
 	BEQ  writeAgain
 	B    freePayload
 
-	// read(info->donePipeRead, &buf, 1) — block until Go is done.
+	// read(info->donePipeRead, &buf, 1): block until Go is done.
 waitDone:
 readAgain:
 	MOVD 32(RSP), R6     // reload info

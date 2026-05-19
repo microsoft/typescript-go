@@ -2,25 +2,25 @@
 
 #include "textflag.h"
 
-// fsevents_darwin_ffi_amd64.s — amd64 assembly for the FSEvents backend
+// fsevents_darwin_ffi_amd64.s: amd64 assembly for the FSEvents backend
 //
 // Contains two functions:
 //
-//  1. FSEventStreamCreate trampoline — shuffles the float64 latency arg
+//  1. FSEventStreamCreate trampoline: shuffles the float64 latency arg
 //     from R9 (integer register, where syscall6 puts it) into X0 (xmm0,
 //     where the System V AMD64 ABI expects the first float argument),
 //     and hardcodes the flags argument to 0x11
 //     (kFSEventStreamCreateFlagUseCFTypes |
 //     kFSEventStreamCreateFlagFileEvents).
 //
-//  2. fsEventsCallbackASM — the C-convention callback invoked by FSEvents
+//  2. fsEventsCallbackASM: the C-convention callback invoked by FSEvents
 //     on a GCD dispatch queue thread. Retains/copies callback data into a
 //     payload, writes the payload pointer to eventPipe to wake the Go event-loop
 //     goroutine, then blocks on donePipe until processing is complete. Never
-//     enters Go ABI — stays entirely in System V AMD64 calling convention.
+//     enters Go ABI; stays entirely in System V AMD64 calling convention.
 
 // ---------------------------------------------------------------------------
-// FSEventStreamCreate trampoline — shuffles the float64 latency argument.
+// FSEventStreamCreate trampoline: shuffles the float64 latency argument.
 //
 // The runtime's syscall6 trampoline loads 6 args into registers:
 //   DI=allocator  SI=callback  DX=ctx  CX=paths
@@ -40,7 +40,7 @@ GLOBL ·fse_FSEventStreamCreate_trampoline_addr(SB), RODATA, $8
 DATA ·fse_FSEventStreamCreate_trampoline_addr(SB)/8, $fse_FSEventStreamCreate_trampoline<>(SB)
 
 // ---------------------------------------------------------------------------
-// FSEvents callback — called from a GCD dispatch queue with C convention.
+// FSEvents callback: called from a GCD dispatch queue with C convention.
 //   DI=streamRef  SI=info  DX=numEvents  CX=paths  R8=flags  R9=ids
 //
 // `info` is a pointer to a streamCallback struct (see fsevents_darwin_ffi.go):
@@ -150,7 +150,7 @@ writeAgain:
 	JEQ  writeAgain
 	JMP  freePayload
 
-// read(info->donePipeRead, &buf, 1) — block until Go is done.
+// read(info->donePipeRead, &buf, 1): block until Go is done.
 waitDone:
 readAgain:
 	MOVQ 16(SP), AX      // reload info
