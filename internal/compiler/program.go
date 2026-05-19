@@ -343,6 +343,8 @@ func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool 
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
+		(file1.ExternalModuleIndicator != nil) == (file2.ExternalModuleIndicator != nil) &&
+		(file1.CommonJSModuleIndicator != nil) == (file2.CommonJSModuleIndicator != nil) &&
 		slices.EqualFunc(file1.Imports(), file2.Imports(), equalModuleSpecifiers) &&
 		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, equalModuleAugmentationNames) &&
 		slices.Equal(file1.AmbientModuleNames, file2.AmbientModuleNames) &&
