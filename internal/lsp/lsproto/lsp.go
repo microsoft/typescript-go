@@ -312,7 +312,9 @@ func PreferredMarkupKind(formats []MarkupKind) MarkupKind {
 const (
 	CodeActionKindSourceRemoveUnusedImports CodeActionKind = "source.removeUnusedImports"
 	CodeActionKindSourceSortImports         CodeActionKind = "source.sortImports"
+)
 
+const (
 	// VSDiagnosticTagHiddenInEditor is a Visual Studio-specific DiagnosticTag
 	// (see Microsoft.VisualStudio.LanguageServer.Protocol.Extensions.VSDiagnosticTags)
 	// indicating the diagnostic should not be rendered with a squiggle in the
