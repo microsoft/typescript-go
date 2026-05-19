@@ -40,6 +40,7 @@ exports.__decorate = function () {};
 
 	f.GoToFile(t, "/foo.ts")
 	f.VerifyNumberOfErrorsInCurrentFile(t, 0)
-	f.Replace(t, f.MarkerByName(t, "insert").Position, 0, "@dec\nexport ")
+	f.Replace(t, f.MarkerByName(t, "insert").Position, 0, `@dec
+export `)
 	f.VerifyNumberOfErrorsInCurrentFile(t, 0)
 }
