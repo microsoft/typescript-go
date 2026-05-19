@@ -176,10 +176,10 @@ class Session implements vscode.Disposable {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.dev.runGC", async () => {
             try {
                 await this.client.runGC();
-                vscode.window.showInformationMessage(vscode.l10n.t("Garbage collection triggered"));
+                vscode.window.showInformationMessage("Garbage collection triggered");
             }
             catch (error) {
-                vscode.window.showErrorMessage(vscode.l10n.t(`Failed to run GC: {0}`, String(error)));
+                vscode.window.showErrorMessage(`Failed to run GC: ${String(error)}`);
             }
         }));
 
@@ -188,10 +188,10 @@ class Session implements vscode.Disposable {
             if (!dir) return;
             try {
                 const file = await this.client.saveHeapProfile(dir);
-                vscode.window.showInformationMessage(vscode.l10n.t(`Heap profile saved to: {0}`, file));
+                vscode.window.showInformationMessage(`Heap profile saved to: ${file}`);
             }
             catch (error) {
-                vscode.window.showErrorMessage(vscode.l10n.t(`Failed to save heap profile: {0}`, String(error)));
+                vscode.window.showErrorMessage(`Failed to save heap profile: ${String(error)}`);
             }
         }));
 
@@ -269,32 +269,32 @@ async function showCommands(client: Client): Promise<void> {
     }
     const commands: CommandItem[] = [
         {
-            label: "$(refresh) " + vscode.l10n.t("Restart Server"),
+            label: vscode.l10n.t("$(refresh) Restart Server"),
             description: vscode.l10n.t("Restart the TypeScript Native Preview language server"),
             command: "typescript.native-preview.restart",
         },
         {
-            label: "$(output) " + vscode.l10n.t("Show TS Server Log"),
+            label: vscode.l10n.t("$(output) Show TS Server Log"),
             description: vscode.l10n.t("Show the TypeScript Native Preview server log"),
             command: "typescript.native-preview.output.focus",
         },
         {
-            label: "$(debug-console) " + vscode.l10n.t("Show LSP Messages"),
+            label: vscode.l10n.t("$(debug-console) Show LSP Messages"),
             description: vscode.l10n.t("Show the LSP communication trace"),
             command: "typescript.native-preview.lsp-trace.focus",
         },
         {
-            label: "$(report) " + vscode.l10n.t("Report Issue"),
+            label: vscode.l10n.t("$(report) Report Issue"),
             description: vscode.l10n.t("Report an issue with TypeScript Native Preview"),
             command: "typescript.native-preview.reportIssue",
         },
         {
-            label: "$(versions) " + vscode.l10n.t("Select Version"),
+            label: vscode.l10n.t("$(versions) Select Version"),
             description: vscode.l10n.t("Choose between bundled and workspace versions"),
             command: "typescript.native-preview.selectVersion",
         },
         {
-            label: "$(stop-circle) " + vscode.l10n.t("Disable TypeScript Native Preview"),
+            label: vscode.l10n.t("$(stop-circle) Disable TypeScript Native Preview"),
             description: vscode.l10n.t("Switch back to the built-in TypeScript extension"),
             command: "typescript.native-preview.disable",
         },
@@ -307,7 +307,7 @@ async function showCommands(client: Client): Promise<void> {
         commands.push({ label: "", kind: vscode.QuickPickItemKind.Separator });
         if (exe) {
             commands.push({
-                label: `Executable`,
+                label: vscode.l10n.t(`Executable`),
                 description: exe.path,
                 action: async () => {
                     await vscode.env.clipboard.writeText(exe.path);
@@ -317,7 +317,7 @@ async function showCommands(client: Client): Promise<void> {
         }
         if (pid) {
             commands.push({
-                label: `PID`,
+                label: vscode.l10n.t(`PID`),
                 description: `${pid}`,
                 action: async () => {
                     await vscode.env.clipboard.writeText(`${pid}`);
@@ -328,7 +328,7 @@ async function showCommands(client: Client): Promise<void> {
     }
 
     const selected = await vscode.window.showQuickPick(commands, {
-        placeHolder: vscode.l10n.t("TypeScript Native Preview Commands"),
+        placeHolder: vscode.l10n.t("{0} Commands", "TypeScript Native Preview"),
     });
 
     if (selected) {
@@ -384,7 +384,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
             await config.update("tsdk", undefined, vscode.ConfigurationTarget.Workspace);
-            outputChannel.appendLine(vscode.l10n.t("Switched to bundled tsgo version."));
+            outputChannel.appendLine("Switched to bundled tsgo version.");
         },
     });
 
@@ -399,7 +399,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await config.update("tsdk", wsVersion.tsdkPath, vscode.ConfigurationTarget.Workspace);
-                    outputChannel.appendLine(vscode.l10n.t(`Switched to workspace tsgo version ({0}).`, wsVersion.version));
+                    outputChannel.appendLine(`Switched to workspace tsgo version ${wsVersion.version}.`);
                 },
             });
         }
@@ -411,7 +411,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
             run: async () => {},
         });
         items.push({
-            label: "$(lock) Manage Workspace Trust to select a workspace version",
+            label: vscode.l10n.t("$(lock) Manage Workspace Trust to select a workspace version"),
             run: async () => {
                 await vscode.commands.executeCommand("workbench.trust.manage");
             },
@@ -439,7 +439,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await config.update("tsdk", loc, vscode.ConfigurationTarget.Workspace);
-                    outputChannel.appendLine(vscode.l10n.t(`Switched to custom tsgo version at {0}.`, loc));
+                    outputChannel.appendLine(`Switched to custom tsgo version at ${loc}.`);
                 },
             });
         }
