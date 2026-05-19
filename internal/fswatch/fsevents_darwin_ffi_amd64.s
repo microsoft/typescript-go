@@ -71,26 +71,26 @@ TEXT fsEventsCallbackASM<>(SB), NOSPLIT|NOFRAME, $0
 	MOVQ BP, 80(SP)
 	LEAQ 80(SP), BP
 
-	MOVQ SI, 8(SP)     // info
-	MOVQ DX, 16(SP)    // numEvents
-	MOVQ R8, 24(SP)    // original flags
+	MOVQ SI, 8(SP)  // info
+	MOVQ DX, 16(SP) // numEvents
+	MOVQ R8, 24(SP) // original flags
 
 	// Retain the CFArray paths because FSEvents owns the callback argument.
-	MOVQ CX, DI
-	XORL AX, AX
-	CALL fse_CFRetain(SB)
-	CMPQ AX, $0
-	JEQ  done
-	MOVQ AX, 32(SP)
+	MOVQ  CX, DI
+	XORL  AX, AX
+	CALL  fse_CFRetain(SB)
+	TESTQ AX, AX
+	JEQ   done
+	MOVQ  AX, 32(SP)
 
 	// Copy the flags array into C heap memory owned by the Go event loop.
-	MOVQ 16(SP), DI
-	SHLQ $2, DI
-	XORL AX, AX
-	CALL fse_malloc(SB)
-	CMPQ AX, $0
-	JEQ  releasePaths
-	MOVQ AX, 40(SP)
+	MOVQ  16(SP), DI
+	SHLQ  $2, DI
+	XORL  AX, AX
+	CALL  fse_malloc(SB)
+	TESTQ AX, AX
+	JEQ   releasePaths
+	MOVQ  AX, 40(SP)
 
 	MOVQ AX, DI
 	MOVQ 24(SP), SI
@@ -100,12 +100,12 @@ TEXT fsEventsCallbackASM<>(SB), NOSPLIT|NOFRAME, $0
 	CALL fse_memcpy(SB)
 
 	// Allocate and populate fsEventsCallbackPayload.
-	MOVQ $24, DI
-	XORL AX, AX
-	CALL fse_malloc(SB)
-	CMPQ AX, $0
-	JEQ  freeFlags
-	MOVQ AX, 0(SP)
+	MOVQ  $24, DI
+	XORL  AX, AX
+	CALL  fse_malloc(SB)
+	TESTQ AX, AX
+	JEQ   freeFlags
+	MOVQ  AX, 0(SP)
 
 	MOVQ 16(SP), CX
 	MOVQ CX, (0*8)(AX)

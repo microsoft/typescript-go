@@ -67,9 +67,9 @@ TEXT fsEventsCallbackASM<>(SB), NOSPLIT|NOFRAME, $0
 	MOVD R30, 8(RSP)
 	MOVD RSP, R29
 
-	MOVD R1, 24(RSP)   // info
-	MOVD R2, 32(RSP)   // numEvents
-	MOVD R4, 40(RSP)   // original flags
+	MOVD R1, 24(RSP) // info
+	MOVD R2, 32(RSP) // numEvents
+	MOVD R4, 40(RSP) // original flags
 
 	// Retain the CFArray paths because FSEvents owns the callback argument.
 	MOVD R3, R0
