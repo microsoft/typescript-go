@@ -612,7 +612,10 @@ func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(
 	for projectPath := range configChangeResult.affectedProjects {
 		project, ok := b.configuredProjects.Load(projectPath)
 		if !ok {
-			panic(fmt.Sprintf("project %s affected by config change not found", projectPath))
+			if logger != nil {
+				logger.Logf("Skipping stale project %s affected by config change", projectPath)
+			}
+			continue
 		}
 		project.ChangeIf(
 			func(p *Project) bool { return !p.dirty || p.dirtyFilePath != "" },
