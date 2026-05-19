@@ -20,110 +20,110 @@ type specialCasingMapping struct {
 }
 
 var specialCasingMappings = map[rune]specialCasingMapping{
-	0xDF: {lower: "\u00DF", upper: "\u0053\u0053", condition: specialCasingConditionNone}, // LATIN SMALL LETTER SHARP S
-	0x130: {lower: "\u0069\u0307", upper: "\u0130", condition: specialCasingConditionNone}, // LATIN CAPITAL LETTER I WITH DOT ABOVE
-	0xFB00: {lower: "\uFB00", upper: "\u0046\u0046", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE FF
-	0xFB01: {lower: "\uFB01", upper: "\u0046\u0049", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE FI
-	0xFB02: {lower: "\uFB02", upper: "\u0046\u004C", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE FL
+	0xDF:   {lower: "\u00DF", upper: "\u0053\u0053", condition: specialCasingConditionNone},       // LATIN SMALL LETTER SHARP S
+	0x130:  {lower: "\u0069\u0307", upper: "\u0130", condition: specialCasingConditionNone},       // LATIN CAPITAL LETTER I WITH DOT ABOVE
+	0xFB00: {lower: "\uFB00", upper: "\u0046\u0046", condition: specialCasingConditionNone},       // LATIN SMALL LIGATURE FF
+	0xFB01: {lower: "\uFB01", upper: "\u0046\u0049", condition: specialCasingConditionNone},       // LATIN SMALL LIGATURE FI
+	0xFB02: {lower: "\uFB02", upper: "\u0046\u004C", condition: specialCasingConditionNone},       // LATIN SMALL LIGATURE FL
 	0xFB03: {lower: "\uFB03", upper: "\u0046\u0046\u0049", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE FFI
 	0xFB04: {lower: "\uFB04", upper: "\u0046\u0046\u004C", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE FFL
-	0xFB05: {lower: "\uFB05", upper: "\u0053\u0054", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE LONG S T
-	0xFB06: {lower: "\uFB06", upper: "\u0053\u0054", condition: specialCasingConditionNone}, // LATIN SMALL LIGATURE ST
-	0x587: {lower: "\u0587", upper: "\u0535\u0552", condition: specialCasingConditionNone}, // ARMENIAN SMALL LIGATURE ECH YIWN
-	0xFB13: {lower: "\uFB13", upper: "\u0544\u0546", condition: specialCasingConditionNone}, // ARMENIAN SMALL LIGATURE MEN NOW
-	0xFB14: {lower: "\uFB14", upper: "\u0544\u0535", condition: specialCasingConditionNone}, // ARMENIAN SMALL LIGATURE MEN ECH
-	0xFB15: {lower: "\uFB15", upper: "\u0544\u053B", condition: specialCasingConditionNone}, // ARMENIAN SMALL LIGATURE MEN INI
-	0xFB16: {lower: "\uFB16", upper: "\u054E\u0546", condition: specialCasingConditionNone}, // ARMENIAN SMALL LIGATURE VEW NOW
-	0xFB17: {lower: "\uFB17", upper: "\u0544\u053D", condition: specialCasingConditionNone}, // ARMENIAN SMALL LIGATURE MEN XEH
-	0x149: {lower: "\u0149", upper: "\u02BC\u004E", condition: specialCasingConditionNone}, // LATIN SMALL LETTER N PRECEDED BY APOSTROPHE
-	0x390: {lower: "\u0390", upper: "\u0399\u0308\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS
-	0x3B0: {lower: "\u03B0", upper: "\u03A5\u0308\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS
-	0x1F0: {lower: "\u01F0", upper: "\u004A\u030C", condition: specialCasingConditionNone}, // LATIN SMALL LETTER J WITH CARON
-	0x1E96: {lower: "\u1E96", upper: "\u0048\u0331", condition: specialCasingConditionNone}, // LATIN SMALL LETTER H WITH LINE BELOW
-	0x1E97: {lower: "\u1E97", upper: "\u0054\u0308", condition: specialCasingConditionNone}, // LATIN SMALL LETTER T WITH DIAERESIS
-	0x1E98: {lower: "\u1E98", upper: "\u0057\u030A", condition: specialCasingConditionNone}, // LATIN SMALL LETTER W WITH RING ABOVE
-	0x1E99: {lower: "\u1E99", upper: "\u0059\u030A", condition: specialCasingConditionNone}, // LATIN SMALL LETTER Y WITH RING ABOVE
-	0x1E9A: {lower: "\u1E9A", upper: "\u0041\u02BE", condition: specialCasingConditionNone}, // LATIN SMALL LETTER A WITH RIGHT HALF RING
-	0x1F50: {lower: "\u1F50", upper: "\u03A5\u0313", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH PSILI
+	0xFB05: {lower: "\uFB05", upper: "\u0053\u0054", condition: specialCasingConditionNone},       // LATIN SMALL LIGATURE LONG S T
+	0xFB06: {lower: "\uFB06", upper: "\u0053\u0054", condition: specialCasingConditionNone},       // LATIN SMALL LIGATURE ST
+	0x587:  {lower: "\u0587", upper: "\u0535\u0552", condition: specialCasingConditionNone},       // ARMENIAN SMALL LIGATURE ECH YIWN
+	0xFB13: {lower: "\uFB13", upper: "\u0544\u0546", condition: specialCasingConditionNone},       // ARMENIAN SMALL LIGATURE MEN NOW
+	0xFB14: {lower: "\uFB14", upper: "\u0544\u0535", condition: specialCasingConditionNone},       // ARMENIAN SMALL LIGATURE MEN ECH
+	0xFB15: {lower: "\uFB15", upper: "\u0544\u053B", condition: specialCasingConditionNone},       // ARMENIAN SMALL LIGATURE MEN INI
+	0xFB16: {lower: "\uFB16", upper: "\u054E\u0546", condition: specialCasingConditionNone},       // ARMENIAN SMALL LIGATURE VEW NOW
+	0xFB17: {lower: "\uFB17", upper: "\u0544\u053D", condition: specialCasingConditionNone},       // ARMENIAN SMALL LIGATURE MEN XEH
+	0x149:  {lower: "\u0149", upper: "\u02BC\u004E", condition: specialCasingConditionNone},       // LATIN SMALL LETTER N PRECEDED BY APOSTROPHE
+	0x390:  {lower: "\u0390", upper: "\u0399\u0308\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS
+	0x3B0:  {lower: "\u03B0", upper: "\u03A5\u0308\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS
+	0x1F0:  {lower: "\u01F0", upper: "\u004A\u030C", condition: specialCasingConditionNone},       // LATIN SMALL LETTER J WITH CARON
+	0x1E96: {lower: "\u1E96", upper: "\u0048\u0331", condition: specialCasingConditionNone},       // LATIN SMALL LETTER H WITH LINE BELOW
+	0x1E97: {lower: "\u1E97", upper: "\u0054\u0308", condition: specialCasingConditionNone},       // LATIN SMALL LETTER T WITH DIAERESIS
+	0x1E98: {lower: "\u1E98", upper: "\u0057\u030A", condition: specialCasingConditionNone},       // LATIN SMALL LETTER W WITH RING ABOVE
+	0x1E99: {lower: "\u1E99", upper: "\u0059\u030A", condition: specialCasingConditionNone},       // LATIN SMALL LETTER Y WITH RING ABOVE
+	0x1E9A: {lower: "\u1E9A", upper: "\u0041\u02BE", condition: specialCasingConditionNone},       // LATIN SMALL LETTER A WITH RIGHT HALF RING
+	0x1F50: {lower: "\u1F50", upper: "\u03A5\u0313", condition: specialCasingConditionNone},       // GREEK SMALL LETTER UPSILON WITH PSILI
 	0x1F52: {lower: "\u1F52", upper: "\u03A5\u0313\u0300", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH PSILI AND VARIA
 	0x1F54: {lower: "\u1F54", upper: "\u03A5\u0313\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH PSILI AND OXIA
 	0x1F56: {lower: "\u1F56", upper: "\u03A5\u0313\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH PSILI AND PERISPOMENI
-	0x1FB6: {lower: "\u1FB6", upper: "\u0391\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH PERISPOMENI
-	0x1FC6: {lower: "\u1FC6", upper: "\u0397\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH PERISPOMENI
+	0x1FB6: {lower: "\u1FB6", upper: "\u0391\u0342", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH PERISPOMENI
+	0x1FC6: {lower: "\u1FC6", upper: "\u0397\u0342", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH PERISPOMENI
 	0x1FD2: {lower: "\u1FD2", upper: "\u0399\u0308\u0300", condition: specialCasingConditionNone}, // GREEK SMALL LETTER IOTA WITH DIALYTIKA AND VARIA
 	0x1FD3: {lower: "\u1FD3", upper: "\u0399\u0308\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER IOTA WITH DIALYTIKA AND OXIA
-	0x1FD6: {lower: "\u1FD6", upper: "\u0399\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER IOTA WITH PERISPOMENI
+	0x1FD6: {lower: "\u1FD6", upper: "\u0399\u0342", condition: specialCasingConditionNone},       // GREEK SMALL LETTER IOTA WITH PERISPOMENI
 	0x1FD7: {lower: "\u1FD7", upper: "\u0399\u0308\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER IOTA WITH DIALYTIKA AND PERISPOMENI
 	0x1FE2: {lower: "\u1FE2", upper: "\u03A5\u0308\u0300", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND VARIA
 	0x1FE3: {lower: "\u1FE3", upper: "\u03A5\u0308\u0301", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND OXIA
-	0x1FE4: {lower: "\u1FE4", upper: "\u03A1\u0313", condition: specialCasingConditionNone}, // GREEK SMALL LETTER RHO WITH PSILI
-	0x1FE6: {lower: "\u1FE6", upper: "\u03A5\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH PERISPOMENI
+	0x1FE4: {lower: "\u1FE4", upper: "\u03A1\u0313", condition: specialCasingConditionNone},       // GREEK SMALL LETTER RHO WITH PSILI
+	0x1FE6: {lower: "\u1FE6", upper: "\u03A5\u0342", condition: specialCasingConditionNone},       // GREEK SMALL LETTER UPSILON WITH PERISPOMENI
 	0x1FE7: {lower: "\u1FE7", upper: "\u03A5\u0308\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND PERISPOMENI
-	0x1FF6: {lower: "\u1FF6", upper: "\u03A9\u0342", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH PERISPOMENI
-	0x1F80: {lower: "\u1F80", upper: "\u1F08\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
-	0x1F81: {lower: "\u1F81", upper: "\u1F09\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH DASIA AND YPOGEGRAMMENI
-	0x1F82: {lower: "\u1F82", upper: "\u1F0A\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH PSILI AND VARIA AND YPOGEGRAMMENI
-	0x1F83: {lower: "\u1F83", upper: "\u1F0B\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH DASIA AND VARIA AND YPOGEGRAMMENI
-	0x1F84: {lower: "\u1F84", upper: "\u1F0C\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH PSILI AND OXIA AND YPOGEGRAMMENI
-	0x1F85: {lower: "\u1F85", upper: "\u1F0D\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH DASIA AND OXIA AND YPOGEGRAMMENI
-	0x1F86: {lower: "\u1F86", upper: "\u1F0E\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
-	0x1F87: {lower: "\u1F87", upper: "\u1F0F\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
-	0x1F88: {lower: "\u1F80", upper: "\u1F08\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH PSILI AND PROSGEGRAMMENI
-	0x1F89: {lower: "\u1F81", upper: "\u1F09\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH DASIA AND PROSGEGRAMMENI
-	0x1F8A: {lower: "\u1F82", upper: "\u1F0A\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH PSILI AND VARIA AND PROSGEGRAMMENI
-	0x1F8B: {lower: "\u1F83", upper: "\u1F0B\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH DASIA AND VARIA AND PROSGEGRAMMENI
-	0x1F8C: {lower: "\u1F84", upper: "\u1F0C\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH PSILI AND OXIA AND PROSGEGRAMMENI
-	0x1F8D: {lower: "\u1F85", upper: "\u1F0D\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH DASIA AND OXIA AND PROSGEGRAMMENI
-	0x1F8E: {lower: "\u1F86", upper: "\u1F0E\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
-	0x1F8F: {lower: "\u1F87", upper: "\u1F0F\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
-	0x1F90: {lower: "\u1F90", upper: "\u1F28\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH PSILI AND YPOGEGRAMMENI
-	0x1F91: {lower: "\u1F91", upper: "\u1F29\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH DASIA AND YPOGEGRAMMENI
-	0x1F92: {lower: "\u1F92", upper: "\u1F2A\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH PSILI AND VARIA AND YPOGEGRAMMENI
-	0x1F93: {lower: "\u1F93", upper: "\u1F2B\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH DASIA AND VARIA AND YPOGEGRAMMENI
-	0x1F94: {lower: "\u1F94", upper: "\u1F2C\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH PSILI AND OXIA AND YPOGEGRAMMENI
-	0x1F95: {lower: "\u1F95", upper: "\u1F2D\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH DASIA AND OXIA AND YPOGEGRAMMENI
-	0x1F96: {lower: "\u1F96", upper: "\u1F2E\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
-	0x1F97: {lower: "\u1F97", upper: "\u1F2F\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
-	0x1F98: {lower: "\u1F90", upper: "\u1F28\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
-	0x1F99: {lower: "\u1F91", upper: "\u1F29\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH DASIA AND PROSGEGRAMMENI
-	0x1F9A: {lower: "\u1F92", upper: "\u1F2A\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH PSILI AND VARIA AND PROSGEGRAMMENI
-	0x1F9B: {lower: "\u1F93", upper: "\u1F2B\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH DASIA AND VARIA AND PROSGEGRAMMENI
-	0x1F9C: {lower: "\u1F94", upper: "\u1F2C\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH PSILI AND OXIA AND PROSGEGRAMMENI
-	0x1F9D: {lower: "\u1F95", upper: "\u1F2D\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH DASIA AND OXIA AND PROSGEGRAMMENI
-	0x1F9E: {lower: "\u1F96", upper: "\u1F2E\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
-	0x1F9F: {lower: "\u1F97", upper: "\u1F2F\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
-	0x1FA0: {lower: "\u1FA0", upper: "\u1F68\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH PSILI AND YPOGEGRAMMENI
-	0x1FA1: {lower: "\u1FA1", upper: "\u1F69\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH DASIA AND YPOGEGRAMMENI
-	0x1FA2: {lower: "\u1FA2", upper: "\u1F6A\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH PSILI AND VARIA AND YPOGEGRAMMENI
-	0x1FA3: {lower: "\u1FA3", upper: "\u1F6B\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH DASIA AND VARIA AND YPOGEGRAMMENI
-	0x1FA4: {lower: "\u1FA4", upper: "\u1F6C\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH PSILI AND OXIA AND YPOGEGRAMMENI
-	0x1FA5: {lower: "\u1FA5", upper: "\u1F6D\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH DASIA AND OXIA AND YPOGEGRAMMENI
-	0x1FA6: {lower: "\u1FA6", upper: "\u1F6E\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
-	0x1FA7: {lower: "\u1FA7", upper: "\u1F6F\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
-	0x1FA8: {lower: "\u1FA0", upper: "\u1F68\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH PSILI AND PROSGEGRAMMENI
-	0x1FA9: {lower: "\u1FA1", upper: "\u1F69\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH DASIA AND PROSGEGRAMMENI
-	0x1FAA: {lower: "\u1FA2", upper: "\u1F6A\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH PSILI AND VARIA AND PROSGEGRAMMENI
-	0x1FAB: {lower: "\u1FA3", upper: "\u1F6B\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH DASIA AND VARIA AND PROSGEGRAMMENI
-	0x1FAC: {lower: "\u1FA4", upper: "\u1F6C\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH PSILI AND OXIA AND PROSGEGRAMMENI
-	0x1FAD: {lower: "\u1FA5", upper: "\u1F6D\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH DASIA AND OXIA AND PROSGEGRAMMENI
-	0x1FAE: {lower: "\u1FA6", upper: "\u1F6E\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
-	0x1FAF: {lower: "\u1FA7", upper: "\u1F6F\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
-	0x1FB3: {lower: "\u1FB3", upper: "\u0391\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH YPOGEGRAMMENI
-	0x1FBC: {lower: "\u1FB3", upper: "\u0391\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ALPHA WITH PROSGEGRAMMENI
-	0x1FC3: {lower: "\u1FC3", upper: "\u0397\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH YPOGEGRAMMENI
-	0x1FCC: {lower: "\u1FC3", upper: "\u0397\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER ETA WITH PROSGEGRAMMENI
-	0x1FF3: {lower: "\u1FF3", upper: "\u03A9\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH YPOGEGRAMMENI
-	0x1FFC: {lower: "\u1FF3", upper: "\u03A9\u0399", condition: specialCasingConditionNone}, // GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
-	0x1FB2: {lower: "\u1FB2", upper: "\u1FBA\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
-	0x1FB4: {lower: "\u1FB4", upper: "\u0386\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH OXIA AND YPOGEGRAMMENI
-	0x1FC2: {lower: "\u1FC2", upper: "\u1FCA\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH VARIA AND YPOGEGRAMMENI
-	0x1FC4: {lower: "\u1FC4", upper: "\u0389\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH OXIA AND YPOGEGRAMMENI
-	0x1FF2: {lower: "\u1FF2", upper: "\u1FFA\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH VARIA AND YPOGEGRAMMENI
-	0x1FF4: {lower: "\u1FF4", upper: "\u038F\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH OXIA AND YPOGEGRAMMENI
+	0x1FF6: {lower: "\u1FF6", upper: "\u03A9\u0342", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH PERISPOMENI
+	0x1F80: {lower: "\u1F80", upper: "\u1F08\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH PSILI AND YPOGEGRAMMENI
+	0x1F81: {lower: "\u1F81", upper: "\u1F09\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH DASIA AND YPOGEGRAMMENI
+	0x1F82: {lower: "\u1F82", upper: "\u1F0A\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH PSILI AND VARIA AND YPOGEGRAMMENI
+	0x1F83: {lower: "\u1F83", upper: "\u1F0B\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH DASIA AND VARIA AND YPOGEGRAMMENI
+	0x1F84: {lower: "\u1F84", upper: "\u1F0C\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH PSILI AND OXIA AND YPOGEGRAMMENI
+	0x1F85: {lower: "\u1F85", upper: "\u1F0D\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH DASIA AND OXIA AND YPOGEGRAMMENI
+	0x1F86: {lower: "\u1F86", upper: "\u1F0E\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
+	0x1F87: {lower: "\u1F87", upper: "\u1F0F\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
+	0x1F88: {lower: "\u1F80", upper: "\u1F08\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH PSILI AND PROSGEGRAMMENI
+	0x1F89: {lower: "\u1F81", upper: "\u1F09\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH DASIA AND PROSGEGRAMMENI
+	0x1F8A: {lower: "\u1F82", upper: "\u1F0A\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH PSILI AND VARIA AND PROSGEGRAMMENI
+	0x1F8B: {lower: "\u1F83", upper: "\u1F0B\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH DASIA AND VARIA AND PROSGEGRAMMENI
+	0x1F8C: {lower: "\u1F84", upper: "\u1F0C\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH PSILI AND OXIA AND PROSGEGRAMMENI
+	0x1F8D: {lower: "\u1F85", upper: "\u1F0D\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH DASIA AND OXIA AND PROSGEGRAMMENI
+	0x1F8E: {lower: "\u1F86", upper: "\u1F0E\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
+	0x1F8F: {lower: "\u1F87", upper: "\u1F0F\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
+	0x1F90: {lower: "\u1F90", upper: "\u1F28\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH PSILI AND YPOGEGRAMMENI
+	0x1F91: {lower: "\u1F91", upper: "\u1F29\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH DASIA AND YPOGEGRAMMENI
+	0x1F92: {lower: "\u1F92", upper: "\u1F2A\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH PSILI AND VARIA AND YPOGEGRAMMENI
+	0x1F93: {lower: "\u1F93", upper: "\u1F2B\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH DASIA AND VARIA AND YPOGEGRAMMENI
+	0x1F94: {lower: "\u1F94", upper: "\u1F2C\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH PSILI AND OXIA AND YPOGEGRAMMENI
+	0x1F95: {lower: "\u1F95", upper: "\u1F2D\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH DASIA AND OXIA AND YPOGEGRAMMENI
+	0x1F96: {lower: "\u1F96", upper: "\u1F2E\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
+	0x1F97: {lower: "\u1F97", upper: "\u1F2F\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
+	0x1F98: {lower: "\u1F90", upper: "\u1F28\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH PSILI AND PROSGEGRAMMENI
+	0x1F99: {lower: "\u1F91", upper: "\u1F29\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH DASIA AND PROSGEGRAMMENI
+	0x1F9A: {lower: "\u1F92", upper: "\u1F2A\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH PSILI AND VARIA AND PROSGEGRAMMENI
+	0x1F9B: {lower: "\u1F93", upper: "\u1F2B\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH DASIA AND VARIA AND PROSGEGRAMMENI
+	0x1F9C: {lower: "\u1F94", upper: "\u1F2C\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH PSILI AND OXIA AND PROSGEGRAMMENI
+	0x1F9D: {lower: "\u1F95", upper: "\u1F2D\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH DASIA AND OXIA AND PROSGEGRAMMENI
+	0x1F9E: {lower: "\u1F96", upper: "\u1F2E\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
+	0x1F9F: {lower: "\u1F97", upper: "\u1F2F\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
+	0x1FA0: {lower: "\u1FA0", upper: "\u1F68\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH PSILI AND YPOGEGRAMMENI
+	0x1FA1: {lower: "\u1FA1", upper: "\u1F69\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH DASIA AND YPOGEGRAMMENI
+	0x1FA2: {lower: "\u1FA2", upper: "\u1F6A\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH PSILI AND VARIA AND YPOGEGRAMMENI
+	0x1FA3: {lower: "\u1FA3", upper: "\u1F6B\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH DASIA AND VARIA AND YPOGEGRAMMENI
+	0x1FA4: {lower: "\u1FA4", upper: "\u1F6C\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH PSILI AND OXIA AND YPOGEGRAMMENI
+	0x1FA5: {lower: "\u1FA5", upper: "\u1F6D\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH DASIA AND OXIA AND YPOGEGRAMMENI
+	0x1FA6: {lower: "\u1FA6", upper: "\u1F6E\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH PSILI AND PERISPOMENI AND YPOGEGRAMMENI
+	0x1FA7: {lower: "\u1FA7", upper: "\u1F6F\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH DASIA AND PERISPOMENI AND YPOGEGRAMMENI
+	0x1FA8: {lower: "\u1FA0", upper: "\u1F68\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH PSILI AND PROSGEGRAMMENI
+	0x1FA9: {lower: "\u1FA1", upper: "\u1F69\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH DASIA AND PROSGEGRAMMENI
+	0x1FAA: {lower: "\u1FA2", upper: "\u1F6A\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH PSILI AND VARIA AND PROSGEGRAMMENI
+	0x1FAB: {lower: "\u1FA3", upper: "\u1F6B\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH DASIA AND VARIA AND PROSGEGRAMMENI
+	0x1FAC: {lower: "\u1FA4", upper: "\u1F6C\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH PSILI AND OXIA AND PROSGEGRAMMENI
+	0x1FAD: {lower: "\u1FA5", upper: "\u1F6D\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH DASIA AND OXIA AND PROSGEGRAMMENI
+	0x1FAE: {lower: "\u1FA6", upper: "\u1F6E\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH PSILI AND PERISPOMENI AND PROSGEGRAMMENI
+	0x1FAF: {lower: "\u1FA7", upper: "\u1F6F\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH DASIA AND PERISPOMENI AND PROSGEGRAMMENI
+	0x1FB3: {lower: "\u1FB3", upper: "\u0391\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH YPOGEGRAMMENI
+	0x1FBC: {lower: "\u1FB3", upper: "\u0391\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ALPHA WITH PROSGEGRAMMENI
+	0x1FC3: {lower: "\u1FC3", upper: "\u0397\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH YPOGEGRAMMENI
+	0x1FCC: {lower: "\u1FC3", upper: "\u0397\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER ETA WITH PROSGEGRAMMENI
+	0x1FF3: {lower: "\u1FF3", upper: "\u03A9\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH YPOGEGRAMMENI
+	0x1FFC: {lower: "\u1FF3", upper: "\u03A9\u0399", condition: specialCasingConditionNone},       // GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI
+	0x1FB2: {lower: "\u1FB2", upper: "\u1FBA\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH VARIA AND YPOGEGRAMMENI
+	0x1FB4: {lower: "\u1FB4", upper: "\u0386\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ALPHA WITH OXIA AND YPOGEGRAMMENI
+	0x1FC2: {lower: "\u1FC2", upper: "\u1FCA\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH VARIA AND YPOGEGRAMMENI
+	0x1FC4: {lower: "\u1FC4", upper: "\u0389\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER ETA WITH OXIA AND YPOGEGRAMMENI
+	0x1FF2: {lower: "\u1FF2", upper: "\u1FFA\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH VARIA AND YPOGEGRAMMENI
+	0x1FF4: {lower: "\u1FF4", upper: "\u038F\u0399", condition: specialCasingConditionNone},       // GREEK SMALL LETTER OMEGA WITH OXIA AND YPOGEGRAMMENI
 	0x1FB7: {lower: "\u1FB7", upper: "\u0391\u0342\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ALPHA WITH PERISPOMENI AND YPOGEGRAMMENI
 	0x1FC7: {lower: "\u1FC7", upper: "\u0397\u0342\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER ETA WITH PERISPOMENI AND YPOGEGRAMMENI
 	0x1FF7: {lower: "\u1FF7", upper: "\u03A9\u0342\u0399", condition: specialCasingConditionNone}, // GREEK SMALL LETTER OMEGA WITH PERISPOMENI AND YPOGEGRAMMENI
-	0x3A3: {lower: "\u03C2", upper: "\u03A3", condition: specialCasingConditionFinalSigma}, // GREEK CAPITAL LETTER SIGMA
+	0x3A3:  {lower: "\u03C2", upper: "\u03A3", condition: specialCasingConditionFinalSigma},       // GREEK CAPITAL LETTER SIGMA
 }
 
 var unicodeCasedRanges = []rune{0x41, 0x5A, 0x61, 0x7A, 0xAA, 0xAA, 0xB5, 0xB5, 0xBA, 0xBA, 0xC0, 0xD6, 0xD8, 0xF6, 0xF8, 0x1BA, 0x1BC, 0x1BF, 0x1C4, 0x293, 0x295, 0x2AF, 0x2B0, 0x2B8, 0x2C0, 0x2C1, 0x2E0, 0x2E4, 0x345, 0x345, 0x370, 0x373, 0x376, 0x377, 0x37A, 0x37A, 0x37B, 0x37D, 0x37F, 0x37F, 0x386, 0x386, 0x388, 0x38A, 0x38C, 0x38C, 0x38E, 0x3A1, 0x3A3, 0x3F5, 0x3F7, 0x481, 0x48A, 0x52F, 0x531, 0x556, 0x560, 0x588, 0x10A0, 0x10C5, 0x10C7, 0x10C7, 0x10CD, 0x10CD, 0x10D0, 0x10FA, 0x10FC, 0x10FC, 0x10FD, 0x10FF, 0x13A0, 0x13F5, 0x13F8, 0x13FD, 0x1C80, 0x1C88, 0x1C90, 0x1CBA, 0x1CBD, 0x1CBF, 0x1D00, 0x1D2B, 0x1D2C, 0x1D6A, 0x1D6B, 0x1D77, 0x1D78, 0x1D78, 0x1D79, 0x1D9A, 0x1D9B, 0x1DBF, 0x1E00, 0x1F15, 0x1F18, 0x1F1D, 0x1F20, 0x1F45, 0x1F48, 0x1F4D, 0x1F50, 0x1F57, 0x1F59, 0x1F59, 0x1F5B, 0x1F5B, 0x1F5D, 0x1F5D, 0x1F5F, 0x1F7D, 0x1F80, 0x1FB4, 0x1FB6, 0x1FBC, 0x1FBE, 0x1FBE, 0x1FC2, 0x1FC4, 0x1FC6, 0x1FCC, 0x1FD0, 0x1FD3, 0x1FD6, 0x1FDB, 0x1FE0, 0x1FEC, 0x1FF2, 0x1FF4, 0x1FF6, 0x1FFC, 0x2071, 0x2071, 0x207F, 0x207F, 0x2090, 0x209C, 0x2102, 0x2102, 0x2107, 0x2107, 0x210A, 0x2113, 0x2115, 0x2115, 0x2119, 0x211D, 0x2124, 0x2124, 0x2126, 0x2126, 0x2128, 0x2128, 0x212A, 0x212D, 0x212F, 0x2134, 0x2139, 0x2139, 0x213C, 0x213F, 0x2145, 0x2149, 0x214E, 0x214E, 0x2160, 0x217F, 0x2183, 0x2184, 0x24B6, 0x24E9, 0x2C00, 0x2C7B, 0x2C7C, 0x2C7D, 0x2C7E, 0x2CE4, 0x2CEB, 0x2CEE, 0x2CF2, 0x2CF3, 0x2D00, 0x2D25, 0x2D27, 0x2D27, 0x2D2D, 0x2D2D, 0xA640, 0xA66D, 0xA680, 0xA69B, 0xA69C, 0xA69D, 0xA722, 0xA76F, 0xA770, 0xA770, 0xA771, 0xA787, 0xA78B, 0xA78E, 0xA790, 0xA7CA, 0xA7D0, 0xA7D1, 0xA7D3, 0xA7D3, 0xA7D5, 0xA7D9, 0xA7F2, 0xA7F4, 0xA7F5, 0xA7F6, 0xA7F8, 0xA7F9, 0xA7FA, 0xA7FA, 0xAB30, 0xAB5A, 0xAB5C, 0xAB5F, 0xAB60, 0xAB68, 0xAB69, 0xAB69, 0xAB70, 0xABBF, 0xFB00, 0xFB06, 0xFB13, 0xFB17, 0xFF21, 0xFF3A, 0xFF41, 0xFF5A, 0x10400, 0x1044F, 0x104B0, 0x104D3, 0x104D8, 0x104FB, 0x10570, 0x1057A, 0x1057C, 0x1058A, 0x1058C, 0x10592, 0x10594, 0x10595, 0x10597, 0x105A1, 0x105A3, 0x105B1, 0x105B3, 0x105B9, 0x105BB, 0x105BC, 0x10780, 0x10780, 0x10783, 0x10785, 0x10787, 0x107B0, 0x107B2, 0x107BA, 0x10C80, 0x10CB2, 0x10CC0, 0x10CF2, 0x118A0, 0x118DF, 0x16E40, 0x16E7F, 0x1D400, 0x1D454, 0x1D456, 0x1D49C, 0x1D49E, 0x1D49F, 0x1D4A2, 0x1D4A2, 0x1D4A5, 0x1D4A6, 0x1D4A9, 0x1D4AC, 0x1D4AE, 0x1D4B9, 0x1D4BB, 0x1D4BB, 0x1D4BD, 0x1D4C3, 0x1D4C5, 0x1D505, 0x1D507, 0x1D50A, 0x1D50D, 0x1D514, 0x1D516, 0x1D51C, 0x1D51E, 0x1D539, 0x1D53B, 0x1D53E, 0x1D540, 0x1D544, 0x1D546, 0x1D546, 0x1D54A, 0x1D550, 0x1D552, 0x1D6A5, 0x1D6A8, 0x1D6C0, 0x1D6C2, 0x1D6DA, 0x1D6DC, 0x1D6FA, 0x1D6FC, 0x1D714, 0x1D716, 0x1D734, 0x1D736, 0x1D74E, 0x1D750, 0x1D76E, 0x1D770, 0x1D788, 0x1D78A, 0x1D7A8, 0x1D7AA, 0x1D7C2, 0x1D7C4, 0x1D7CB, 0x1DF00, 0x1DF09, 0x1DF0B, 0x1DF1E, 0x1DF25, 0x1DF2A, 0x1E030, 0x1E06D, 0x1E900, 0x1E943, 0x1F130, 0x1F149, 0x1F150, 0x1F169, 0x1F170, 0x1F189}
