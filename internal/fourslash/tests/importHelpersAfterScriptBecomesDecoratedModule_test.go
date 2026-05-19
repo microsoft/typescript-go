@@ -42,5 +42,6 @@ exports.__decorate = function () {};
 	f.VerifyNumberOfErrorsInCurrentFile(t, 0)
 	f.Replace(t, f.MarkerByName(t, "insert").Position, 0, `@dec
 export `)
+	// The second diagnostics request forces external helper resolution after the edit.
 	f.VerifyNumberOfErrorsInCurrentFile(t, 0)
 }
