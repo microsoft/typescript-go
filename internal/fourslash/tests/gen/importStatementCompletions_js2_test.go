@@ -53,7 +53,7 @@ export = React;
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
-							NewText: "React",
+							NewText: "import * as React from \"react\";",
 							Range:   f.Ranges()[0].LSRange,
 						},
 					},

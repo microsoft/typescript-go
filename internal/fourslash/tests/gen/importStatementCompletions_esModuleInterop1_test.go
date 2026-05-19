@@ -48,7 +48,7 @@ export = foo;
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
-							NewText: "foo",
+							NewText: "import foo$1 = require(\"./mod\");",
 							Range:   f.Ranges()[0].LSRange,
 						},
 					},

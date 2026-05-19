@@ -1385,7 +1385,7 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
         if (replacementSpanIdx) {
             itemProps.push(`TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
                 TextEdit: &lsproto.TextEdit{
-                    NewText: ${getGoStringLiteral(name)},
+                    NewText: ${getGoStringLiteral(insertText ?? name)},
                     Range:   f.Ranges()[${replacementSpanIdx}].LSRange,
                 },
             },`);

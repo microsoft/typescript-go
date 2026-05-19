@@ -1968,7 +1968,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		)
 
 		if insertText != "" {
-			entry.InsertText = &insertText
+			setNewText(entry, insertText)
 		}
 
 		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
@@ -2819,6 +2819,17 @@ func strPtrTo(v string) *string {
 		return nil
 	}
 	return &v
+}
+
+func setNewText(item *lsproto.CompletionItem, insertText string) {
+	item.InsertText = &insertText
+	if item.TextEdit != nil {
+		if item.TextEdit.TextEdit != nil {
+			item.TextEdit.TextEdit.NewText = insertText
+		} else if item.TextEdit.InsertReplaceEdit != nil {
+			item.TextEdit.InsertReplaceEdit.NewText = insertText
+		}
+	}
 }
 
 func boolToPtr(v bool) *bool {

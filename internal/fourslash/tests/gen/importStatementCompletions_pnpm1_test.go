@@ -49,7 +49,7 @@ export declare function Component(): void;
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
-							NewText: "Component",
+							NewText: "import { Component$1 } from \"react\";",
 							Range:   f.Ranges()[0].LSRange,
 						},
 					},

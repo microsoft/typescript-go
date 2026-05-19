@@ -45,7 +45,7 @@ import * as fs from "fs"
 					InsertTextFormat: new(lsproto.InsertTextFormatSnippet),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
-							NewText: "foo",
+							NewText: "import { foo$1 } from \"./mod\"",
 							Range:   f.Ranges()[0].LSRange,
 						},
 					},
