@@ -93,6 +93,11 @@ func isFinalSigmaContext(runes []rune, index int) bool {
 	// ECMAScript points at Unicode Default Case Conversion for toLowerCase, and
 	// modern V8 reaches that behavior through Intl::ConvertToLower, which uses
 	// ICU root-locale lowercasing for non-Latin1 strings like Greek sigma.
+	// We intentionally do not delegate this to golang.org/x/text/cases: x/text
+	// is a general Unicode casing library, but its root-locale behavior is not
+	// an exact match for the JS semantics exercised by String.prototype
+	// .toLowerCase(), especially around Final_Sigma context. TypeScript needs the
+	// JS behavior itself here, so we keep the context-sensitive part explicit.
 	// SpiderMonkey models Final_Sigma with a more explicit context walk, while
 	// Unicode Table 3-17 describes it in terms of Cased and Case_Ignorable.
 	// We model the exposed V8/ICU behavior directly here: skip Case_Ignorable
