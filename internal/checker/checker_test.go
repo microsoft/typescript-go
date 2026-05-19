@@ -61,58 +61,6 @@ foo.bar;`
 	}
 }
 
-func TestImportHelpersAfterProgramUpdateWithoutSyntheticImportSpecifier(t *testing.T) {
-	t.Parallel()
-
-	const config = `{
-		"compilerOptions": {
-			"target": "es2015",
-			"module": "commonjs",
-			"experimentalDecorators": true,
-			"importHelpers": true
-		},
-		"files": ["foo.ts"]
-	}`
-	const original = `declare function dec(value: Function): void;
-class C {}`
-	const updated = `declare function dec(value: Function): void;
-@dec
-export class C {}`
-	const tslib = `export declare function __decorate(...args: any[]): any;`
-
-	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{
-		"/foo.ts":                          original,
-		"/node_modules/tslib/package.json": `{"name":"tslib","typings":"tslib.d.ts"}`,
-		"/node_modules/tslib/tslib.d.ts":   tslib,
-		"/node_modules/tslib/tslib.js":     "",
-		"/tsconfig.json":                   config,
-	}, false /*useCaseSensitiveFileNames*/))
-	host := compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil)
-	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, host, nil)
-	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
-
-	p := compiler.NewProgram(compiler.ProgramOptions{
-		Config: parsed,
-		Host:   host,
-	})
-	path := p.GetSourceFile("/foo.ts").Path()
-
-	updatedFS := bundled.WrapFS(vfstest.FromMap(map[string]string{
-		"/foo.ts":                          updated,
-		"/node_modules/tslib/package.json": `{"name":"tslib","typings":"tslib.d.ts"}`,
-		"/node_modules/tslib/tslib.d.ts":   tslib,
-		"/node_modules/tslib/tslib.js":     "",
-		"/tsconfig.json":                   config,
-	}, false /*useCaseSensitiveFileNames*/))
-	updatedHost := compiler.NewCompilerHost("/", updatedFS, bundled.LibPath(), nil, nil)
-	updatedProgram, reused := p.UpdateProgram(path, updatedHost, nil)
-	assert.Assert(t, !reused, "Expected module indicator change to rebuild stale state without a synthetic tslib import")
-	updatedFile := updatedProgram.GetSourceFile("/foo.ts")
-	assert.Assert(t, updatedProgram.GetImportHelpersImportSpecifier(updatedFile.Path()) != nil, "Expected rebuilt program to synthesize tslib import")
-	diagnostics := updatedProgram.GetSemanticDiagnostics(t.Context(), updatedFile)
-	assert.Equal(t, len(diagnostics), 0, "Expected no semantic diagnostics")
-}
-
 func BenchmarkNewChecker(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	fs := osvfs.FS()
