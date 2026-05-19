@@ -613,7 +613,7 @@ func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(
 		project, ok := b.configuredProjects.Load(projectPath)
 		if !ok {
 			if logger != nil {
-				logger.Logf("Skipping stale project %s affected by config change", projectPath)
+				logger.Logf("Skipping stale project %s affected by config change (project may have been removed)", projectPath)
 			}
 			continue
 		}

@@ -11,7 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
-func TestProjectCollectionBuilder_PanicOnStaleConfigRetainer(t *testing.T) {
+func TestProjectCollectionBuilder_HandlesStaleConfigRetainer(t *testing.T) {
 	t.Parallel()
 
 	if !bundled.Embedded {
