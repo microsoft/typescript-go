@@ -221,6 +221,7 @@
         "build": "tsc && npm run bundle",
         "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --sourcemap",
         "watch": "npm run bundle -- --watch",
+        "testLocalization": "npx @vscode/l10n-dev generate-pseudo -o ./l10n/ ./l10n/bundle.l10n.json ./package.nls.json",
         "//vscode:prepublish": "we do not use this hook; the Herebyfile runs bundle:release once instead",
         "bundle:release": "npm run bundle -- --minify"
     },
