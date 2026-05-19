@@ -107,8 +107,10 @@ export class C {}`
 		"/tsconfig.json":                   config,
 	}, false /*useCaseSensitiveFileNames*/))
 	updatedHost := compiler.NewCompilerHost("/", updatedFS, bundled.LibPath(), nil, nil)
-	updatedProgram, _ := p.UpdateProgram(path, updatedHost, nil)
+	updatedProgram, reused := p.UpdateProgram(path, updatedHost, nil)
+	assert.Assert(t, !reused, "Expected module indicator change to rebuild program state")
 	updatedFile := updatedProgram.GetSourceFile("/foo.ts")
+	assert.Assert(t, updatedProgram.GetImportHelpersImportSpecifier(updatedFile.Path()) != nil, "Expected rebuilt program to synthesize tslib import")
 	diagnostics := updatedProgram.GetSemanticDiagnostics(t.Context(), updatedFile)
 	assert.Equal(t, len(diagnostics), 0, "Expected no semantic diagnostics")
 }
