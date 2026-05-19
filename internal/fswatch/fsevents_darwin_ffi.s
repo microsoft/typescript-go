@@ -94,6 +94,18 @@ TEXT fse_dispatch_release_trampoline<>(SB), NOSPLIT, $0-0
 GLOBL ·fse_dispatch_release_trampoline_addr(SB), RODATA, $8
 DATA ·fse_dispatch_release_trampoline_addr(SB)/8, $fse_dispatch_release_trampoline<>(SB)
 
+TEXT fse_dispatch_sync_f_trampoline<>(SB), NOSPLIT, $0-0
+	JMP fse_dispatch_sync_f(SB)
+
+GLOBL ·fse_dispatch_sync_f_trampoline_addr(SB), RODATA, $8
+DATA ·fse_dispatch_sync_f_trampoline_addr(SB)/8, $fse_dispatch_sync_f_trampoline<>(SB)
+
+TEXT fse_dispatch_noop<>(SB), NOSPLIT|NOFRAME, $0
+	RET
+
+GLOBL ·fse_dispatch_noop_addr(SB), RODATA, $8
+DATA ·fse_dispatch_noop_addr(SB)/8, $fse_dispatch_noop<>(SB)
+
 // ----- CoreServices / FSEvents -----
 // (FSEventStreamCreate is arch-specific; see fsevents_darwin_ffi_{arm64,amd64}.s)
 

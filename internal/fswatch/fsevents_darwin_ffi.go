@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"sync/atomic"
 	"syscall"
-	"time"
 	"unsafe"
 
 	"golang.org/x/sys/unix"
@@ -73,28 +72,20 @@ import (
 //	         │
 //	  write(eventPipeWrite, payload*) ─► read(eventFile) unblocks
 //	         │                                │
-//	         │  (GCD thread blocked)   fsEventsCallback(cb, payload)
-//	         │                         classifies events,
-//	         │                         frees payload,
-//	         │                         posts to dirWatch.events
-//	         │                                │
-//	  read(donePipeRead)  ◄──────────── write(donePipeWrite)
-//	         │
-//	  asm: return to FSEvents
-//	  (GCD thread released)
+//	  asm: return to FSEvents          fsEventsCallback(cb, payload)
+//	                                   classifies events,
+//	                                   frees payload,
+//	                                   posts to dirWatch.events
 //
 // The assembly callback never enters Go ABI; it stays entirely in C
-// context. Two pipe pairs per stream (eventPipe and donePipe) synchronize
-// the C dispatch queue thread with a dedicated Go event-loop goroutine.
+// context. One pipe per stream hands retained/copied callback payloads from
+// the C dispatch queue thread to a dedicated Go event-loop goroutine.
 // The Go side uses os.File.Read (integrated with netpoll/kqueue on macOS)
 // so the goroutine parks efficiently without blocking an OS thread.
 //
 // streamCallback memory layout (must match assembly offsets):
 //
-//	offset  0: eventPipeWrite fd        ─┐ Read by asm to call
-//	offset  8: donePipeRead fd          ─┘ write() / read()
-//	offset 16: active callback flag
-//	offset 24: closing flag
+//	offset  0: eventPipeWrite fd        Read by asm to call write()
 // ---------------------------------------------------------------------------
 
 // Framework linker flags for the external linker.
@@ -322,6 +313,17 @@ func dispatchRelease(obj uintptr) {
 	_, _, _ = syscall_syscall6(fse_dispatch_release_trampoline_addr, obj, 0, 0, 0, 0, 0)
 }
 
+//go:cgo_import_dynamic fse_dispatch_sync_f dispatch_sync_f "/usr/lib/libSystem.B.dylib"
+
+var (
+	fse_dispatch_sync_f_trampoline_addr uintptr
+	fse_dispatch_noop_addr              uintptr
+)
+
+func dispatchSync(queue, context, work uintptr) {
+	_, _, _ = syscall_syscall6(fse_dispatch_sync_f_trampoline_addr, queue, context, work, 0, 0, 0)
+}
+
 // ---------------------------------------------------------------------------
 // CoreServices / FSEvents imports, trampoline addresses, and Go wrappers.
 // ---------------------------------------------------------------------------
@@ -405,7 +407,6 @@ func fsEventStreamRelease(stream uintptr) {
 // wrappers.
 //go:cgo_import_dynamic fse_CFRetain CFRetain "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
 //go:cgo_import_dynamic fse_write write "/usr/lib/libSystem.B.dylib"
-//go:cgo_import_dynamic fse_read read "/usr/lib/libSystem.B.dylib"
 //go:cgo_import_dynamic fse___error __error "/usr/lib/libSystem.B.dylib"
 //go:cgo_import_dynamic fse_malloc malloc "/usr/lib/libSystem.B.dylib"
 //go:cgo_import_dynamic fse_memcpy memcpy "/usr/lib/libSystem.B.dylib"
@@ -439,27 +440,20 @@ var fsEventsCallbackAsmAddr uintptr
 // streamCallback is the per-stream buffer shared between the C callback
 // assembly and the Go event loop goroutine. The assembly receives a pointer
 // to this struct as the FSEventStreamContext.info parameter and uses offset
-// addressing to access the pipe fds and lifecycle flags.
+// addressing to access the pipe fd.
 //
 // The struct layout must match the assembly (fsevents_darwin_ffi_{amd64,arm64}.s):
 //
 //	offset  0: eventPipeWrite fd
-//	offset  8: donePipeRead fd
-//	offset 16: active callback flag
-//	offset 24: closing flag
 type streamCallback struct {
 	eventPipeWrite uintptr
-	donePipeRead   uintptr
-	activeCallback uintptr
-	closing        uintptr
 
 	// Go-only fields (not accessed by assembly, offset doesn't matter).
-	eventFile     *os.File
-	donePipeWrite int
-	queue         uintptr // per-stream serial dispatch queue
-	done          chan struct{}
-	dirWatch      *dirWatch
-	closed        atomic.Bool
+	eventFile *os.File
+	queue     uintptr // per-stream serial dispatch queue
+	done      chan struct{}
+	dirWatch  *dirWatch
+	closed    atomic.Bool
 }
 
 type fsEventsCallbackPayload struct {
@@ -467,8 +461,6 @@ type fsEventsCallbackPayload struct {
 	paths     uintptr
 	flags     uintptr
 }
-
-const closedFD = ^uintptr(0)
 
 func (p *fsEventsCallbackPayload) close() {
 	if p == nil {
@@ -481,26 +473,18 @@ func (p *fsEventsCallbackPayload) close() {
 	libcFree(uintptr(unsafe.Pointer(p)))
 }
 
-// newStreamCallback allocates a pinned streamCallback with its own pipe pair
-// and per-stream serial dispatch queue, and starts a goroutine to process
-// callbacks. The per-stream serial queue both serializes this stream's
-// callbacks (the asm shim's activeCallback flag and pipe handshake are not
-// re-entrant) and prevents cross-stream head-of-line blocking that a
-// process-wide serial queue would cause.
+// newStreamCallback allocates a pinned streamCallback with its own pipe and
+// per-stream serial dispatch queue, and starts a goroutine to process
+// callbacks. The per-stream serial queue serializes this stream's callbacks
+// and prevents cross-stream head-of-line blocking that a process-wide serial
+// queue would cause.
 func newStreamCallback(w *dirWatch) (*streamCallback, error) {
-	var eventPipe, donePipe [2]int
+	var eventPipe [2]int
 	if err := unix.Pipe(eventPipe[:]); err != nil {
 		return nil, err
 	}
 	unix.CloseOnExec(eventPipe[0])
 	unix.CloseOnExec(eventPipe[1])
-	if err := unix.Pipe(donePipe[:]); err != nil {
-		unix.Close(eventPipe[0])
-		unix.Close(eventPipe[1])
-		return nil, err
-	}
-	unix.CloseOnExec(donePipe[0])
-	unix.CloseOnExec(donePipe[1])
 
 	label := []byte("typescript.fswatch.fsevents.stream\x00")
 	queue := dispatchQueueCreate(unsafe.Pointer(&label[0]))
@@ -508,16 +492,12 @@ func newStreamCallback(w *dirWatch) (*streamCallback, error) {
 	if queue == 0 {
 		unix.Close(eventPipe[0])
 		unix.Close(eventPipe[1])
-		unix.Close(donePipe[0])
-		unix.Close(donePipe[1])
 		return nil, errStreamCreateNull
 	}
 
 	cb := &streamCallback{
 		eventPipeWrite: uintptr(eventPipe[1]),
-		donePipeRead:   uintptr(donePipe[0]),
 		eventFile:      os.NewFile(uintptr(eventPipe[0]), "fsevents-event"),
-		donePipeWrite:  donePipe[1],
 		queue:          queue,
 		done:           make(chan struct{}),
 		dirWatch:       w,
@@ -526,33 +506,9 @@ func newStreamCallback(w *dirWatch) (*streamCallback, error) {
 	return cb, nil
 }
 
-func (cb *streamCallback) beginClose() {
-	atomic.StoreUintptr(&cb.closing, 1)
-}
-
-func (cb *streamCallback) waitIdle() {
-	// Yield first: in the common case the asm callback unblocks on
-	// donePipeRead's close immediately and we never even need to sleep.
-	// If the asm goroutine has been preempted, escalate to a real sleep
-	// so we don't pin a P spinning on the atomic load.
-	const yieldRounds = 16
-	for i := 0; atomic.LoadUintptr(&cb.activeCallback) != 0; i++ {
-		if i < yieldRounds {
-			runtime.Gosched()
-			continue
-		}
-		time.Sleep(time.Millisecond)
-	}
-}
-
-func (cb *streamCallback) unblockCallbacks() {
-	cb.closeDonePipeRead()
-}
-
-func (cb *streamCallback) closeDonePipeRead() {
-	fd := atomic.SwapUintptr(&cb.donePipeRead, closedFD)
-	if fd != closedFD {
-		unix.Close(int(fd))
+func (cb *streamCallback) waitDispatchQueue() {
+	if cb.queue != 0 {
+		dispatchSync(cb.queue, 0, fse_dispatch_noop_addr)
 	}
 }
 
@@ -561,8 +517,6 @@ func (cb *streamCallback) close() {
 	unix.Close(int(cb.eventPipeWrite))
 	<-cb.done
 	cb.eventFile.Close()
-	cb.closeDonePipeRead()
-	unix.Close(cb.donePipeWrite)
 	if cb.queue != 0 {
 		dispatchRelease(cb.queue)
 		cb.queue = 0
@@ -570,15 +524,14 @@ func (cb *streamCallback) close() {
 }
 
 // eventLoop runs on a dedicated goroutine for this stream. It reads signals
-// from the callback assembly (via eventPipe), processes the event using the
-// retained/copied payload, then signals completion (via donePipe).
+// from the callback assembly (via eventPipe) and processes each retained/copied
+// payload.
 // The eventFile.Read() call integrates with Go's netpoll (kqueue on macOS),
 // so the goroutine parks without blocking an OS thread while idle.
 func (cb *streamCallback) eventLoop() {
 	defer close(cb.done)
 	var payload *fsEventsCallbackPayload
 	buf := unsafe.Slice((*byte)(unsafe.Pointer(&payload)), unsafe.Sizeof(payload))
-	done := []byte{0}
 	for {
 		payload = nil
 		if _, err := io.ReadFull(cb.eventFile, buf); err != nil {
@@ -586,9 +539,5 @@ func (cb *streamCallback) eventLoop() {
 		}
 
 		fsEventsCallback(cb, payload)
-
-		if _, err := ignoringEINTR(func() (int, error) { return unix.Write(cb.donePipeWrite, done) }); err != nil {
-			return
-		}
 	}
 }

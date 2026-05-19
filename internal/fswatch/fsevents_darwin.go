@@ -48,8 +48,6 @@ import (
 //	│ │    │                          goroutine      │      │   │
 //	│ │    │                              │          │      │   │
 //	│ │    │                     fsEventsCallback()  │      │   │
-//	│ │    │                              │          │      │   │
-//	│ │    │ asm: read(donePipe) ◄────────┘          │      │   │
 //	│ │    │ asm: return to FSEvents                 │      │   │
 //	│ │    └─────────────────────────────────────────┘      │   │
 //	│ └─────────────────────────────────────────────────────┘   │
@@ -60,14 +58,13 @@ import (
 //     (an OS thread managed by libdispatch, not a Go goroutine).
 //   - The assembly callback (fsEventsCallbackASM, in the .s files) runs on
 //     that GCD thread in the C calling convention. It never enters Go ABI.
-//     It saves the six C arguments into the streamCallback struct and
-//     synchronizes with Go via two pipes (eventPipe and donePipe).
+//     It retains/copies the callback payload and passes it to Go through
+//     eventPipe.
 //   - One Go goroutine per stream (eventLoop, in fsevents_darwin_ffi.go)
 //     blocks on eventFile.Read(), integrated with Go's netpoll so it parks
 //     without consuming an OS thread. When woken by the asm callback, it
 //     calls fsEventsCallback() to classify events and post them to the
-//     dirWatch's eventList. The GCD thread is blocked on donePipeRead for
-//     the duration, so fsEventsCallback has exclusive access to the args.
+//     dirWatch's eventList.
 //   - subscribe/closeWatch and stream lifecycle (startStream/stopStream)
 //     run on the caller's goroutine under watcherBase.mu. Stream teardown
 //     uses atomic.Swap on the stream pointer so that only one of
@@ -101,8 +98,7 @@ import (
 //
 // Root deletion:
 //   Detected in the callback; cb.closed is set so future callbacks are
-//   no-ops. Stream teardown is deferred to Close (the asm callback
-//   is blocked on donePipeRead, so pipes can't be closed mid-callback).
+//   no-ops. Stream teardown is deferred to Close.
 // ---------------------------------------------------------------------------
 
 // ----- FSEvents flag bits (from FSEvents.h) ------------------------------
@@ -272,17 +268,19 @@ func (b *fsEventsBackend) startStream(w *dirWatch, since uint64) error {
 	return nil
 }
 
-// teardownStream performs the full FSEventStream cleanup. Stop prevents new
-// callbacks, waitIdle waits for callbacks that already entered the pipe bridge,
-// and cb.close joins the Go event loop before the stream is released.
+// teardownStream performs the full FSEventStream cleanup. Stop and Invalidate
+// prevent new callbacks, waitDispatchQueue waits for callbacks already queued
+// on the stream's serial dispatch queue, and cb.close joins the Go event loop
+// after it drains payloads already written to the pipe.
 func teardownStream(stream uintptr, cb *streamCallback) {
 	fsEventStreamStop(stream)
 	if cb != nil {
-		cb.unblockCallbacks()
-		cb.waitIdle()
+		fsEventStreamInvalidate(stream)
+		cb.waitDispatchQueue()
 		cb.close()
+	} else {
+		fsEventStreamInvalidate(stream)
 	}
-	fsEventStreamInvalidate(stream)
 	fsEventStreamRelease(stream)
 }
 
@@ -298,9 +296,6 @@ func (b *fsEventsBackend) stopStream(state *fseventsState) {
 		return
 	}
 	cb := state.cb
-	if cb != nil {
-		cb.beginClose()
-	}
 	teardownStream(stream, cb)
 	state.cb = nil
 	state.pinner.Unpin()
@@ -322,17 +317,6 @@ func (b *fsEventsBackend) closeWatch(w *dirWatch) error {
 	}
 	b.stopStream(state)
 	return nil
-}
-
-// ignoringEINTR retries fn until it succeeds or fails with a non-EINTR error.
-// Matches the pattern used by internal/poll in the Go standard library.
-func ignoringEINTR[T any](fn func() (T, error)) (T, error) {
-	for {
-		v, err := fn()
-		if !errors.Is(err, syscall.EINTR) {
-			return v, err
-		}
-	}
 }
 
 // fsEventsCallback processes a batch of FSEvents. The payload contains callback
@@ -435,8 +419,7 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	if deletedRoot {
 		// Surface ErrWatchTerminated alongside the delete event so the
 		// caller knows no further events will arrive. Stream teardown is
-		// still deferred to Close (the asm callback is blocked on
-		// donePipeRead and we can't close the pipes here).
+		// still deferred to Close.
 		w.events.setError(fmt.Errorf("%w: watched directory removed", ErrWatchTerminated))
 	}
 
@@ -445,9 +428,7 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	if deletedRoot {
 		// The watched root was deleted. Mark the callback as closed so
 		// future callbacks are no-ops. Stream teardown and pipe cleanup
-		// are deferred to Close; we can't close the pipes here
-		// because the assembly callback is blocked on donePipeRead
-		// waiting for us to return.
+		// are deferred to Close.
 		cb.closed.Store(true)
 	}
 }

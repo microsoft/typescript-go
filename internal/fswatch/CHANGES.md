@@ -139,12 +139,14 @@ configuration. The Go port is pure Go on all platforms:
   of paths, allocates a per-callback payload on the C heap, copies the flags
   array into it, and writes the payload pointer to the stream's event pipe,
   waking a dedicated Go event-loop goroutine that classifies the events and
-  frees the payload. The shim then blocks on the stream's done pipe until the Go
-  side signals completion, so the dispatch thread never enters Go ABI. Each
-  FSEventStream has its own serial GCD dispatch queue and (event, done) pipe
-  pair, so callbacks for different streams run concurrently without contention:
-  a stuck callback for one stream cannot back up callbacks for any other stream
-  behind it.
+  frees the payload. The shim then returns immediately, so the dispatch thread
+  never enters Go ABI and does not wait for Go-side event classification. Each
+  FSEventStream has its own serial GCD dispatch queue and event pipe, so
+  callbacks for different streams run concurrently without contention: a stuck
+  callback for one stream cannot back up callbacks for any other stream behind
+  it. Teardown invalidates the stream and uses a `dispatch_sync_f` barrier on
+  the stream's serial queue before closing the pipe, releasing the queue, and
+  unpinning the callback state.
 - **Windows**: direct `x/sys/windows` syscalls.
 - **Linux/BSD**: direct `x/sys/unix` syscalls.
 
