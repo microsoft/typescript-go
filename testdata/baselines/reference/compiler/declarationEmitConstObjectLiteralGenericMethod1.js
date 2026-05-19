@@ -25,5 +25,5 @@ export const obj1 = {
 //// [declarationEmitConstObjectLiteralGenericMethod1.d.ts]
 export declare const obj1: {
     readonly id: <T>(value: T) => T;
-    readonly pair: <T_1>(left: T_1, right: T_1) => T_1[];
+    readonly pair: <T>(left: T, right: T) => T[];
 };
