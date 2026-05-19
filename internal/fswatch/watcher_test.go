@@ -59,11 +59,27 @@ func watcherEventTimeout(t testingT, w Watcher) time.Duration {
 }
 
 // availableWatchers is populated at init time from whichever backends
-// are available on the current platform.
+// are available on the current platform, plus any test-only watcher
+// variants registered in additionalTestWatchers (see e.g.
+// fanotify_linux_test.go).
 var availableWatchers []Watcher
+
+// additionalTestWatchers is appended to by platform-specific *_test.go
+// init() functions to register test-only watcher variants (e.g. the
+// fanotify-no-rename backend that exercises the FAN_MOVED_FROM/_TO
+// fallback path). Producers' init() must run before this file's init();
+// since Go runs file inits in lexicographic file-name order and this
+// file is watcher_test.go, that ordering is satisfied for every other
+// *_test.go file in the package.
+var additionalTestWatchers []Watcher
 
 func init() {
 	for _, b := range AllWatchers() {
+		if b.Available() {
+			availableWatchers = append(availableWatchers, b)
+		}
+	}
+	for _, b := range additionalTestWatchers {
 		if b.Available() {
 			availableWatchers = append(availableWatchers, b)
 		}

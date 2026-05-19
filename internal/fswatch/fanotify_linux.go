@@ -177,13 +177,9 @@ type fanotifyBackend struct {
 	watchersTouched map[*dirWatch]struct{}
 }
 
-// fanotifyTestNoRename is a test hook. When true, newFanotifyBackend sets
-// noRename to skip the FAN_RENAME probe and force MOVED_FROM/MOVED_TO.
-var fanotifyTestNoRename atomic.Bool
-
 func init() {
 	if fanotifyAvailable() {
-		fanotifyWatcher.factory = func() watcherImpl { return newFanotifyBackend() }
+		fanotifyWatcher.factory = func() watcherImpl { return newFanotifyBackend(false) }
 	}
 }
 
@@ -198,11 +194,15 @@ func fanotifyAvailable() bool {
 	return true
 }
 
-func newFanotifyBackend() *fanotifyBackend {
+// newFanotifyBackend creates a fanotify backend. If noRename is true, the
+// backend skips the FAN_RENAME probe and forces the FAN_MOVED_FROM/FAN_MOVED_TO
+// fallback path; this is only used by the fanotify-no-rename test watcher to
+// exercise the fallback path on kernels that natively support FAN_RENAME.
+func newFanotifyBackend(noRename bool) *fanotifyBackend {
 	b := &fanotifyBackend{
 		pipeFDs:         [2]int{-1, -1},
 		fanotifyFD:      -1,
-		noRename:        fanotifyTestNoRename.Load(),
+		noRename:        noRename,
 		subscriptions:   map[fanotifyHandleKey][]*fanotifySubscription{},
 		endedSignal:     make(chan struct{}),
 		readBuf:         make([]byte, fanotifyBufferSize),
