@@ -482,6 +482,9 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if node.Kind == ast.KindJSDocTypeLiteral {
 			var members []*ast.Node
 			for _, t := range node.AsJSDocTypeLiteral().JSDocPropertyTags {
+				if t.Kind != ast.KindJSDocPropertyTag && t.Kind != ast.KindJSDocParameterTag {
+					continue
+				}
 				n := t.Name()
 				var targetName *ast.Node
 				if ast.IsIdentifier(n) {
@@ -779,10 +782,16 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			return res
 		}
 
-		if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
-			// set single quote on string literals
+		if ast.IsStringLiteralLike(node) {
+			// Preserve the original characters of the literal (e.g. emojis) in declaration emit
+			// rather than escaping them as ASCII Unicode escapes. Mirrors TypeScript's behavior
+			// for synthesized string literal types in the node builder (checker.ts:6853).
 			c := node.Clone(b.f)
-			c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
+				// set single quote on string literals
+				c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			}
+			b.e.AddEmitFlags(c, printer.EFNoAsciiEscaping)
 			return c
 		}
 
