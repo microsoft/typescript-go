@@ -2071,10 +2071,6 @@ compiler/misspelledJsDocTypedefTags.symbols.diff
 ## `Symbol((Missing))` → `Symbol("invalid 2")` — string-named exports now get their actual name
 conformance/arbitraryModuleNamespaceIdentifiers_syntax.symbols.diff
 
-# Previously-missing symbols for destructuring pattern bindings now emitted
-## Destructured parameter names like `additionalFiles` and `a` now have symbol entries
-conformance/destructuringParameterDeclaration9(strict=true).symbols.diff
-
 # Prototype reference now uses specific class instead of generic `Function.prototype`
 ## e.g. `Function.prototype` → `MobileDetect.prototype` or `A.prototype` — more precise type
 conformance/fixSignatureCaching.symbols.diff
