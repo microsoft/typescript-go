@@ -735,17 +735,25 @@ func (tx *DeclarationTransformer) transformExpressionWithTypeArguments(input *as
 }
 
 func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.TypeParameterDeclaration) *ast.Node {
+	name := tx.sanitizeIdentifier(input.Name())
 	if isPrivateMethodTypeParameter(tx.host, input) && (input.DefaultType != nil || input.Constraint != nil) {
 		return tx.Factory().UpdateTypeParameterDeclaration(
 			input,
 			input.Modifiers(),
-			input.Name(),
+			name,
 			nil,
 			input.Expression,
 			nil,
 		)
 	}
-	return tx.Visitor().VisitEachChild(input.AsNode())
+	return tx.Factory().UpdateTypeParameterDeclaration(
+		input,
+		input.Modifiers(),
+		name,
+		tx.Visitor().Visit(input.Constraint),
+		input.Expression,
+		tx.Visitor().Visit(input.DefaultType),
+	)
 }
 
 func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
@@ -1386,7 +1394,7 @@ func (tx *DeclarationTransformer) transformTypeAliasDeclaration(input *ast.TypeA
 	return tx.Factory().UpdateTypeAliasDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
-		input.Name(),
+		tx.sanitizeIdentifier(input.Name()),
 		tx.Visitor().VisitNodes(input.TypeParameters),
 		tx.Visitor().Visit(input.Type),
 	)
@@ -1964,13 +1972,46 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 		p,
 		nil,
 		p.DotDotDotToken,
-		tx.bindingNameVisitor.VisitNode(p.Name()),
+		tx.sanitizeBindingName(tx.bindingNameVisitor.VisitNode(p.Name())),
 		questionToken,
 		tx.ensureType(p.AsNode(), true),
 		tx.ensureNoInitializer(p.AsNode()),
 	)
 	tx.state.getSymbolAccessibilityDiagnostic = oldDiag
 	return result
+}
+
+func (tx *DeclarationTransformer) sanitizeBindingName(name *ast.Node) *ast.Node {
+	if ast.IsIdentifier(name) {
+		return tx.sanitizeIdentifier(name)
+	}
+	return name
+}
+
+func (tx *DeclarationTransformer) sanitizeIdentifier(name *ast.IdentifierNode) *ast.Node {
+	if name == nil || scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+		return name
+	}
+	return tx.Factory().NewIdentifier(sanitizeIdentifierText(name.Text()))
+}
+
+func sanitizeIdentifierText(text string) string {
+	var result strings.Builder
+	result.WriteByte('_')
+	for pos, ch := range text {
+		if pos == 0 {
+			if scanner.IsIdentifierStart(ch) {
+				result.WriteRune(ch)
+			} else if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
+				result.WriteRune(ch)
+			}
+		} else if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
+			result.WriteRune(ch)
+		} else {
+			result.WriteByte('_')
+		}
+	}
+	return result.String()
 }
 
 func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node {

@@ -6,6 +6,7 @@
  * @property {string} label The button label
  * @property {string | null | undefined} [data-test-name] Test automation attribute
  * @property {string | null | undefined} [aria-label] Accessibility label
+ * @property {string | undefined} [`back-quoted-name`] Backquoted property
  */
 
 /**
@@ -14,9 +15,39 @@
  */
 export function Button(props) {
 >Button : Symbol(Button, Decl(index.js, 0, 0))
->props : Symbol(props, Decl(index.js, 11, 23))
+>props : Symbol(props, Decl(index.js, 12, 23))
 
     return props;
->props : Symbol(props, Decl(index.js, 11, 23))
+>props : Symbol(props, Decl(index.js, 12, 23))
 }
+
+/** @typedef {string} typedef-name */
+
+/**
+ * @callback callback-name
+ * @param {string} data-test-name
+ * @param {string} [`back-quoted-param`]
+ * @returns {void}
+ */
+
+/**
+ * @param {Object} options
+ * @param {string} options.aria-label
+ * @param {string} options.data-test-name
+ * @returns {Object}
+ */
+export function nestedProps(options) {
+>nestedProps : Symbol(nestedProps, Decl(index.js, 14, 1))
+>options : Symbol(options, Decl(index.js, 31, 28))
+
+    return options;
+>options : Symbol(options, Decl(index.js, 31, 28))
+}
+
+/**
+ * @template template-name
+ * @returns {void}
+ */
+export function templated() {}
+>templated : Symbol(templated, Decl(index.js, 33, 1))
 
