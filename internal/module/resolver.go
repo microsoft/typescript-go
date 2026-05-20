@@ -1790,6 +1790,17 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string) *packagejs
 			},
 		}
 		result = r.resolver.packageJsonInfoCache.Set(packageJsonPath, result)
+		// The cache uses LoadOrStore, so another goroutine may have stored an entry
+		// with a different PackageDirectory (e.g., with/without trailing separator).
+		// Ensure we return an entry with the caller's packageDirectory, matching the
+		// cache-hit logic above.
+		if result.PackageDirectory != packageDirectory {
+			result = &packagejson.InfoCacheEntry{
+				PackageDirectory: packageDirectory,
+				DirectoryExists:  true,
+				Contents:         result.Contents,
+			}
+		}
 		return result
 	} else {
 		if directoryExists && r.tracer != nil {
