@@ -87,6 +87,15 @@ func TestCommandLineParseResult(t *testing.T) {
 	}
 }
 
+func TestParseCommandLineEmptyResponseFile(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{}, "/home/project", true)
+	cmdLine := tsoptions.ParseCommandLine([]string{"@"}, host)
+
+	assert.Assert(t, len(cmdLine.Errors) > 0, "expected a diagnostic error for bare '@' argument")
+}
+
 func TestParseCommandLineTypeRootsRelativePath(t *testing.T) {
 	t.Parallel()
 
