@@ -1977,6 +1977,8 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 	return result
 }
 
+// sanitizePropertyName converts invalid identifier property names to string
+// literals so declaration emit produces valid property signatures.
 func (tx *DeclarationTransformer) sanitizePropertyName(name *ast.Node) *ast.Node {
 	if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
 		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
@@ -1992,10 +1994,14 @@ func (tx *DeclarationTransformer) sanitizeBindingName(name *ast.Node) *ast.Node 
 }
 
 func (tx *DeclarationTransformer) sanitizeIdentifier(name *ast.IdentifierNode) *ast.Node {
-	if name == nil || name.Text() == "" || scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+	if name == nil {
 		return name
 	}
-	return tx.Factory().NewIdentifier(sanitizeIdentifierText(name.Text()))
+	text := name.Text()
+	if text == "" || scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
+		return name
+	}
+	return tx.Factory().NewIdentifier(sanitizeIdentifierText(text))
 }
 
 func sanitizeIdentifierText(text string) string {
