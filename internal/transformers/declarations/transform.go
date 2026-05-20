@@ -1997,12 +1997,20 @@ func (tx *DeclarationTransformer) sanitizeIdentifier(name *ast.IdentifierNode) *
 
 func sanitizeIdentifierText(text string) string {
 	var result strings.Builder
-	result.WriteByte('_')
+	lastWasUnderscore := false
+	writeUnderscore := func() {
+		if !lastWasUnderscore {
+			result.WriteByte('_')
+			lastWasUnderscore = true
+		}
+	}
+	writeUnderscore()
 	for pos, ch := range text {
 		if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
 			result.WriteRune(ch)
+			lastWasUnderscore = false
 		} else if pos != 0 {
-			result.WriteByte('_')
+			writeUnderscore()
 		}
 	}
 	return result.String()

@@ -1287,7 +1287,7 @@ func (p *Parser) parseOptionalJsdoc(t ast.Kind) bool {
 }
 
 func (p *Parser) parseJSDocEntityName(diagnosticMessage *diagnostics.Message) *ast.EntityName {
-	var entity *ast.EntityName = p.parseJSDocPropertyNamePart(diagnosticMessage)
+	var entity *ast.EntityName = p.parseJSDocHyphenatedNamePart(diagnosticMessage)
 	if p.parseOptional(ast.KindOpenBracketToken) {
 		p.parseExpected(ast.KindCloseBracketToken)
 		// Note that y[] is accepted as an entity name, but the postfix brackets are not saved for checking.
@@ -1295,7 +1295,7 @@ func (p *Parser) parseJSDocEntityName(diagnosticMessage *diagnostics.Message) *a
 		// but it's not worth it to enforce that restriction.
 	}
 	for p.parseOptionalJsdoc(ast.KindDotToken) {
-		name := p.parseJSDocPropertyNamePart(diagnostics.Identifier_expected)
+		name := p.parseJSDocHyphenatedNamePart(diagnostics.Identifier_expected)
 		if p.parseOptional(ast.KindOpenBracketToken) {
 			p.parseExpected(ast.KindCloseBracketToken)
 		}
@@ -1305,7 +1305,7 @@ func (p *Parser) parseJSDocEntityName(diagnosticMessage *diagnostics.Message) *a
 	return entity
 }
 
-func (p *Parser) parseJSDocPropertyNamePart(diagnosticMessage *diagnostics.Message) *ast.IdentifierNode {
+func (p *Parser) parseJSDocHyphenatedNamePart(diagnosticMessage *diagnostics.Message) *ast.IdentifierNode {
 	name := p.parseJSDocIdentifierName(diagnosticMessage)
 	text := name.Text()
 	end := name.End()
