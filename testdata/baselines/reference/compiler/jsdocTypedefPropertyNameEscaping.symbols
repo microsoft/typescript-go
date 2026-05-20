@@ -31,23 +31,9 @@ export function Button(props) {
  */
 
 /**
- * @param {Object} options
- * @param {string} options.aria-label
- * @param {string} options.data-test-name
- * @returns {Object}
- */
-export function nestedProps(options) {
->nestedProps : Symbol(nestedProps, Decl(index.js, 14, 1))
->options : Symbol(options, Decl(index.js, 31, 28))
-
-    return options;
->options : Symbol(options, Decl(index.js, 31, 28))
-}
-
-/**
  * @template template-name
  * @returns {void}
  */
 export function templated() {}
->templated : Symbol(templated, Decl(index.js, 33, 1))
+>templated : Symbol(templated, Decl(index.js, 14, 1))
 

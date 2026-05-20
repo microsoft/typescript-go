@@ -30,16 +30,6 @@ export function Button(props) {
  */
 
 /**
- * @param {Object} options
- * @param {string} options.aria-label
- * @param {string} options.data-test-name
- * @returns {Object}
- */
-export function nestedProps(options) {
-    return options;
-}
-
-/**
  * @template template-name
  * @returns {void}
  */

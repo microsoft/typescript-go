@@ -1287,15 +1287,15 @@ func (p *Parser) parseOptionalJsdoc(t ast.Kind) bool {
 }
 
 func (p *Parser) parseJSDocEntityName(diagnosticMessage *diagnostics.Message) *ast.EntityName {
-	var entity *ast.EntityName = p.parseJSDocHyphenatedNamePart(diagnosticMessage)
+	var entity *ast.EntityName = p.parseJSDocIdentifierName(diagnosticMessage)
 	if p.parseOptional(ast.KindOpenBracketToken) {
 		p.parseExpected(ast.KindCloseBracketToken)
 		// Note that y[] is accepted as an entity name, but the postfix brackets are not saved for checking.
 		// Technically usejsdoc.org requires them for specifying a property of a type equivalent to Array<{ x: ...}>
 		// but it's not worth it to enforce that restriction.
 	}
-	for p.parseOptionalJsdoc(ast.KindDotToken) {
-		name := p.parseJSDocHyphenatedNamePart(diagnostics.Identifier_expected)
+	for p.parseOptional(ast.KindDotToken) {
+		name := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
 		if p.parseOptional(ast.KindOpenBracketToken) {
 			p.parseExpected(ast.KindCloseBracketToken)
 		}
@@ -1303,28 +1303,6 @@ func (p *Parser) parseJSDocEntityName(diagnosticMessage *diagnostics.Message) *a
 		entity = p.finishNode(p.factory.NewQualifiedName(entity, name), pos)
 	}
 	return entity
-}
-
-func (p *Parser) parseJSDocHyphenatedNamePart(diagnosticMessage *diagnostics.Message) *ast.IdentifierNode {
-	name := p.parseJSDocIdentifierName(diagnosticMessage)
-	text := name.Text()
-	end := name.End()
-	for p.token == ast.KindMinusToken {
-		state := p.mark()
-		p.nextTokenJSDoc()
-		if !tokenIsIdentifierOrKeyword(p.token) {
-			p.rewind(state)
-			break
-		}
-		text += "-" + p.scanner.TokenValue()
-		end = p.scanner.TokenEnd()
-		p.nextTokenJSDoc()
-	}
-	if end == name.End() {
-		return name
-	}
-	p.internIdentifier(text)
-	return p.finishNodeWithEnd(p.newIdentifier(text), name.Pos(), end)
 }
 
 func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message) *ast.IdentifierNode {

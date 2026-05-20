@@ -872,14 +872,10 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	name := input.Name()
-	if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
-		name = tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
-	}
 	return tx.Factory().UpdatePropertySignatureDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
-		name,
+		tx.sanitizePropertyName(input.Name()),
 		input.PostfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()), // TODO: possible strada bug (fixed here) - const property signatures never initialized
@@ -1981,6 +1977,13 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 	return result
 }
 
+func (tx *DeclarationTransformer) sanitizePropertyName(name *ast.Node) *ast.Node {
+	if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
+	}
+	return name
+}
+
 func (tx *DeclarationTransformer) sanitizeBindingName(name *ast.Node) *ast.Node {
 	if ast.IsIdentifier(name) {
 		return tx.sanitizeIdentifier(name)
@@ -1989,7 +1992,7 @@ func (tx *DeclarationTransformer) sanitizeBindingName(name *ast.Node) *ast.Node 
 }
 
 func (tx *DeclarationTransformer) sanitizeIdentifier(name *ast.IdentifierNode) *ast.Node {
-	if name == nil || scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+	if name == nil || name.Text() == "" || scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
 		return name
 	}
 	return tx.Factory().NewIdentifier(sanitizeIdentifierText(name.Text()))
@@ -2185,7 +2188,7 @@ func (tx *DeclarationTransformer) transformJSDocTypeLiteral(input *ast.JSDocType
 func (tx *DeclarationTransformer) transformJSDocPropertyTag(input *ast.JSDocParameterOrPropertyTag) *ast.Node {
 	replacement := tx.Factory().NewPropertySignatureDeclaration(
 		nil,
-		tx.Visitor().Visit(input.TagName),
+		tx.sanitizePropertyName(tx.Visitor().Visit(input.TagName)),
 		nil,
 		tx.Visitor().Visit(input.TypeExpression),
 		nil,

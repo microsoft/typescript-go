@@ -27,16 +27,6 @@ export function Button(props) {
  */
 
 /**
- * @param {Object} options
- * @param {string} options.aria-label
- * @param {string} options.data-test-name
- * @returns {Object}
- */
-export function nestedProps(options) {
-    return options;
-}
-
-/**
  * @template template-name
  * @returns {void}
  */
@@ -73,16 +63,6 @@ export type _callback_name = (_data_test_name: string, _back_quoted_param?: stri
  * @param {string} [`back-quoted-param`]
  * @returns {void}
  */
-/**
- * @param {Object} options
- * @param {string} options.aria-label
- * @param {string} options.data-test-name
- * @returns {Object}
- */
-export declare function nestedProps(options: {
-    "aria-label": string;
-    "data-test-name": string;
-}): Object;
 /**
  * @template template-name
  * @returns {void}

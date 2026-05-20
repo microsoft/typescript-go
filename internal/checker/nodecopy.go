@@ -23,11 +23,11 @@ func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
 }
 
 // a wrapper around `reuseNode` for property names. It handles renaming `new` to `"new"` so we don't
-// accidentally emit constructor signatures when we don't mean to, converts invalid identifiers to
-// string-literal property names, and normalizes string-literal property names whose text is a valid
-// identifier into identifiers, matching the behavior of `createPropertyNameNodeForIdentifierOrLiteral`
-// used when constructing fresh property name nodes (so that reused names emit consistently regardless
-// of whether their containing type was reused from source or rebuilt from a type).
+// accidentally emit constructor signatures when we don't mean to, and normalizes string-literal
+// property names whose text is a valid identifier into identifiers, matching the behavior of
+// `createPropertyNameNodeForIdentifierOrLiteral` used when constructing fresh property name nodes
+// (so that reused names emit consistently regardless of whether their containing type was reused
+// from source or rebuilt from a type).
 func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
 	res := b.reuseNode(node)
 	if res == nil {
@@ -35,11 +35,6 @@ func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
 	}
 	if res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
 		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
-		b.e.SetOriginal(str, res)
-		return b.setTextRange(str, res)
-	}
-	if res.Kind == ast.KindIdentifier && !scanner.IsIdentifierText(res.Text(), core.LanguageVariantStandard) {
-		str := b.f.NewStringLiteral(res.Text(), ast.TokenFlagsNone)
 		b.e.SetOriginal(str, res)
 		return b.setTextRange(str, res)
 	}
@@ -518,7 +513,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				} else {
 					targetName = n.AsQualifiedName().Right // !!! TODO: without typesystem backup, doing this cast unguarded seems really suspect, even though it is what strada does
 				}
-				name := b.reuseName(targetName)
+				name := visitor.VisitNode(targetName)
 				shouldBeOptional := t.AsJSDocParameterOrPropertyTag().IsBracketed || (t.TypeExpression() != nil && t.TypeExpression().Kind == ast.KindJSDocOptionalType)
 				var question *ast.Node
 				if shouldBeOptional {
@@ -678,7 +673,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return factory.UpdatePropertySignatureDeclaration(
 					node.AsPropertySignatureDeclaration(),
 					node.Modifiers(),
-					b.reuseName(node.Name()),
+					node.Name(),
 					node.PostfixToken(),
 					newType,
 					nil,
@@ -747,16 +742,6 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 					newType,
 				)
 			}
-		}
-		if ast.IsPropertySignatureDeclaration(node) {
-			return factory.UpdatePropertySignatureDeclaration(
-				node.AsPropertySignatureDeclaration(),
-				visitor.VisitModifiers(node.Modifiers()),
-				b.reuseName(node.Name()),
-				node.PostfixToken(),
-				visitor.VisitNode(node.Type()),
-				visitor.VisitNode(node.Initializer()),
-			)
 		}
 		if ast.IsComputedPropertyName(node) && ast.IsEntityNameExpression(node.AsComputedPropertyName().Expression) {
 			introducesError, result, _ := trackExistingEntityName(node.AsComputedPropertyName().Expression, nil)
