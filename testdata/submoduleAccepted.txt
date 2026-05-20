@@ -436,7 +436,6 @@ compiler/declarationEmitFirstTypeArgumentGenericFunctionType.js.diff
 compiler/declarationEmitFirstTypeArgumentGenericFunctionType.types.diff
 compiler/declarationEmitFunctionDuplicateNamespace.symbols.diff
 compiler/declarationEmitFunctionDuplicateNamespace.types.diff
-compiler/declarationEmitGlobalThisPreserved.js.diff
 compiler/declarationEmitHigherOrderRetainedGenerics.js.diff
 compiler/declarationEmitHigherOrderRetainedGenerics.types.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.js.diff
@@ -1248,9 +1247,6 @@ compiler/defaultDeclarationEmitShadowedNamedCorrectly.js.diff
 compiler/es5ExportEqualsDts(target=es2015).js.diff
 compiler/declarationEmitNameConflicts.js.diff
 
-## Properties with __proto__-like names now quoted in declaration emit (it's quoted in the originating sourcefile)
-compiler/escapedReservedCompilerNamedIdentifier.js.diff
-
 ## Nested /*elided*/ type annotation comments removed at deeper nesting levels (`/*elided*/` comments are internal artifacts with no semantic meaning)
 ## Declaration emit no longer preserves elided comments in nested class expressions
 compiler/emitClassExpressionInDeclarationFile.js.diff
@@ -1332,6 +1328,16 @@ conformance/objectLiteralErrors(target=es2015).types.diff
 conformance/propertyAndAccessorWithSameName.symbols.diff
 conformance/propertyAndAccessorWithSameName.types.diff
 
+## Preserve native destructuring for CommonJS exports to keep iterator semantics
+## https://github.com/microsoft/typescript-go/issues/3701
+compiler/bindingPatternOmittedExpressionNesting.js.diff
+compiler/declarationEmitRetainsJsdocyComments.js.diff
+compiler/destructuringInVariableDeclarations1.js.diff
+compiler/downlevelLetConst13(target=es2015).js.diff
+compiler/exportEmptyArrayBindingPattern(module=commonjs,target=esnext).js.diff
+compiler/exportEmptyObjectBindingPattern(module=commonjs,target=esnext).js.diff
+compiler/exportObjectRest(module=commonjs,target=esnext).js.diff
+
 ## Module resolver does not guess the project root to provide speculative resolutions for self-name
 ## imports in the presence of TS2209 "ambiguous project root" errors.
 ## After merging repos, consider adding a `rootDir` option to these tests
@@ -1380,6 +1386,24 @@ conformance/moduleExportDuplicateAlias2.js.diff
 conformance/moduleExportDuplicateAlias3.js.diff
 conformance/moduleExportsElementAccessAssignment.js.diff
 
+# CJS `module.exports = {}` now emits `export = _default` with inlined object type instead of named exports
+## https://github.com/microsoft/typescript-go/issues/3543
+compiler/jsDeclarationEmitExportAssignedArray.js.diff
+compiler/jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.js.diff
+conformance/jsDeclarationsCommonjsRelativePath.js.diff
+conformance/jsDeclarationsDocCommentsOnConsts(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignmentExpressionPlusSecondary(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignmentWithKeywordName(target=es2015).js.diff
+conformance/jsDeclarationsExportedClassAliases.js.diff
+conformance/jsDeclarationsImportAliasExposedWithinNamespaceCjs.js.diff
+conformance/jsDeclarationsReexportedCjsAlias(target=es2015).js.diff
+conformance/jsDeclarationsReferenceToClassInstanceCrossFile.js.diff
+conformance/jsDeclarationsTypeAliases.js.diff
+conformance/jsDeclarationsTypeReferences(target=es2015).js.diff
+conformance/jsDeclarationsTypeReferences2(target=es2015).js.diff
+conformance/jsDeclarationsTypedefAndImportTypes.js.diff
+conformance/jsDeclarationsTypedefPropertyAndExportAssignment.js.diff
+
 # @overload handling changes in JS declaration emit (we no longer support @overload on declarations that can't have TS overloads)
 ## https://github.com/microsoft/typescript-go/issues/3555
 compiler/jsFileAlternativeUseOfOverloadTag.js.diff
@@ -1402,3 +1426,7 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.dif
 ## https://github.com/microsoft/typescript-go/issues/3556
 conformance/callbackTagNestedParameter.js.diff
 conformance/callbackTagVariadicType.js.diff
+
+# definiteAssignment shorthand in object literal loses optional modifier
+## https://github.com/microsoft/typescript-go/issues/3563
+conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff

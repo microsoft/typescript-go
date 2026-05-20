@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func (b *NodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
@@ -21,13 +22,33 @@ func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
 	return b.reuseNode(node)
 }
 
-// a wrapper around `reuseNode` that handles renaming `new` to `"new"` so we don't accidentally emit constructor signatures when we don't mean to
+// a wrapper around `reuseNode` for property names. It handles renaming `new` to `"new"` so we don't
+// accidentally emit constructor signatures when we don't mean to, and normalizes string-literal
+// property names whose text is a valid identifier into identifiers, matching the behavior of
+// `createPropertyNameNodeForIdentifierOrLiteral` used when constructing fresh property name nodes
+// (so that reused names emit consistently regardless of whether their containing type was reused
+// from source or rebuilt from a type).
 func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
 	res := b.reuseNode(node)
-	if res != nil && res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
+	if res == nil {
+		return res
+	}
+	if res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
 		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
 		b.e.SetOriginal(str, res)
 		return b.setTextRange(str, res)
+	}
+	if res.Kind == ast.KindStringLiteral {
+		text := res.AsStringLiteral().Text
+		// Skip normalization for "new" so that reused names like `"new"(): void` on a
+		// method signature are not converted to an identifier (which would become a
+		// construct signature). This mirrors the `isMethodNamedNew` guard in
+		// createPropertyNameNodeForIdentifierOrLiteral.
+		if text != "new" && scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
+			ident := b.newIdentifier(text, nil)
+			b.e.SetOriginal(ident, res)
+			return b.setTextRange(ident, res)
+		}
 	}
 	return res
 }
@@ -482,6 +503,9 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if node.Kind == ast.KindJSDocTypeLiteral {
 			var members []*ast.Node
 			for _, t := range node.AsJSDocTypeLiteral().JSDocPropertyTags {
+				if t.Kind != ast.KindJSDocPropertyTag && t.Kind != ast.KindJSDocParameterTag {
+					continue
+				}
 				n := t.Name()
 				var targetName *ast.Node
 				if ast.IsIdentifier(n) {
@@ -779,10 +803,16 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			return res
 		}
 
-		if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
-			// set single quote on string literals
+		if ast.IsStringLiteralLike(node) {
+			// Preserve the original characters of the literal (e.g. emojis) in declaration emit
+			// rather than escaping them as ASCII Unicode escapes. Mirrors TypeScript's behavior
+			// for synthesized string literal types in the node builder (checker.ts:6853).
 			c := node.Clone(b.f)
-			c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
+				// set single quote on string literals
+				c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			}
+			b.e.AddEmitFlags(c, printer.EFNoAsciiEscaping)
 			return c
 		}
 

@@ -532,7 +532,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		})
 		var diagnosticEnd int
 		if diagnosticStart >= 0 {
-			diagnosticEnd = core.FindIndex(savedParseDiagnostics[:diagnosticStart], func(diagnostic *ast.Diagnostic) bool {
+			diagnosticEnd = core.FindIndex(savedParseDiagnostics[diagnosticStart:], func(diagnostic *ast.Diagnostic) bool {
 				return diagnostic.Pos() >= nextStatement.Pos()
 			})
 		} else {
@@ -6330,7 +6330,7 @@ func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine(di
 	if disallowOf && p.token == ast.KindOfKeyword {
 		return p.lookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
 	}
-	return p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken && !p.hasPrecedingLineBreak()
+	return (p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken) && !p.hasPrecedingLineBreak()
 }
 
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf() bool {
