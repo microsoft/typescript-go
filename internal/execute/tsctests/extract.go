@@ -107,7 +107,9 @@ func (test *tscInput) writeTestSourceFile(scenario string, editOps [][]capturedE
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		panic(fmt.Errorf("tsctests: failed to create %s: %w", outDir, err))
 	}
-	outPath := filepath.Join(outDir, funcName+"_test.go")
+	testFileName := funcName + "_test.go"
+	testFileName = strings.ToLower(testFileName[:1]) + testFileName[1:]
+	outPath := filepath.Join(outDir, testFileName)
 	if existing, err := os.ReadFile(outPath); err == nil && string(existing) == source {
 		return
 	}
@@ -134,7 +136,7 @@ func (test *tscInput) renderTestSource(scenario string, funcName string, editOps
 	b.WriteString(")\n")
 	b.WriteString("\n")
 
-	fmt.Fprintf(&b, "func %s(t *testing.T) {\n", funcName)
+	fmt.Fprintf(&b, "func Test%s(t *testing.T) {\n", funcName)
 	b.WriteString("\ttest := &tsctests.TestSpec{\n")
 	fmt.Fprintf(&b, "\t\tScenario:    %s,\n", strconv.Quote(scenario))
 	fmt.Fprintf(&b, "\t\tSubScenario: %s,\n", strconv.Quote(test.subScenario))
@@ -313,15 +315,19 @@ var (
 // appends a short hash suffix when the sanitized result would be ambiguous.
 func makeTestFuncName(parts ...string) string {
 	var b strings.Builder
-	b.WriteString("Test")
 	joinedRaw := strings.Join(parts, "/")
-	for _, p := range parts {
+	for i, p := range parts {
 		sanitized := identSanitizer.ReplaceAllString(p, "_")
 		sanitized = strings.Trim(sanitized, "_")
 		if sanitized == "" {
 			continue
 		}
-		b.WriteByte('_')
+		if i != 0 {
+			b.WriteByte('_')
+		} else {
+			sanitized = strings.ToUpper(sanitized[:1]) + sanitized[1:] // Test function must start with uppercase
+		}
+
 		b.WriteString(sanitized)
 	}
 
