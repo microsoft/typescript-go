@@ -1121,7 +1121,7 @@ function patchAndPreprocessModel() {
     if (diagnosticTagEnum) {
         diagnosticTagEnum.values.push(
             {
-                name: "VsHiddenInEditor",
+                name: "VSHiddenInEditor",
                 value: 2147483641, // int32.MaxValue - 6
                 documentation: "Visual Studio-specific tag: the diagnostic is not rendered with a squiggle in the editor. When combined with Unnecessary, Visual Studio renders the code as faded-out text rather than a squiggle.",
             },
