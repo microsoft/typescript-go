@@ -54,6 +54,8 @@ type caches struct {
 
 	moduleResolutionCache           moduleResolutionCache
 	typeRefDirectiveResolutionCache typeRefDirectiveResolutionCache
+	moduleResolutionLocks           collections.SyncMap[moduleResolutionCacheKey, *sync.Mutex]
+	typeRefDirectiveResolutionLocks collections.SyncMap[typeRefDirectiveResolutionCacheKey, *sync.Mutex]
 
 	// Cached representation for `core.CompilerOptions.paths`.
 	// Doesn't handle other path patterns like in `typesVersions`.

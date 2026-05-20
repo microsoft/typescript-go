@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -149,5 +150,38 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 		if !r.resolved {
 			t.Errorf("%q failed to resolve", r.name)
 		}
+	}
+}
+
+func TestResolveModuleNamePathsDirectoryPackageId(t *testing.T) {
+	t.Parallel()
+
+	fs := vfstest.FromMap(map[string]string{
+		"/repo/node_modules/preact/package.json":          `{"name":"preact","version":"10.0.0","types":"src/index.d.ts"}`,
+		"/repo/node_modules/preact/compat/package.json":   `{"name":"preact-compat","version":"4.0.0","main":"dist/compat.js","types":"src/index.d.ts"}`,
+		"/repo/node_modules/preact/compat/src/index.d.ts": "export const x: number;",
+		"/repo/src/file.ts":                               "",
+	}, true)
+	host := &resolutionHostStub{fs: fs, cwd: "/repo"}
+	opts := &core.CompilerOptions{
+		ModuleResolution: core.ModuleResolutionKindBundler,
+		Module:           core.ModuleKindESNext,
+		Target:           core.ScriptTargetESNext,
+		PathsBasePath:    "/repo",
+		Paths: collections.NewOrderedMapFromList([]collections.MapEntry[string, []string]{
+			{Key: "react", Value: []string{"node_modules/preact/compat/"}},
+		}),
+	}
+	resolver := module.NewResolver(host, opts, "", "")
+
+	r, _ := resolver.ResolveModuleName("react", "/repo/src/file.ts", core.ModuleKindESNext, nil)
+	if !r.IsResolved() {
+		t.Fatal("react failed to resolve")
+	}
+	if r.PackageId.Name != "preact-compat" {
+		t.Fatalf("PackageId.Name = %q, want %q", r.PackageId.Name, "preact-compat")
+	}
+	if r.PackageId.SubModuleName != "src/index.d.ts" {
+		t.Fatalf("PackageId.SubModuleName = %q, want %q", r.PackageId.SubModuleName, "src/index.d.ts")
 	}
 }
