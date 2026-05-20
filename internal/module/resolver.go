@@ -241,12 +241,6 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 		if cached, ok := r.typeRefDirectiveResolutionCache.Get(cacheKey); ok {
 			return cached, nil
 		}
-		lock, _ := r.typeRefDirectiveResolutionLocks.LoadOrStore(cacheKey, &sync.Mutex{})
-		lock.Lock()
-		defer lock.Unlock()
-		if cached, ok := r.typeRefDirectiveResolutionCache.Get(cacheKey); ok {
-			return cached, nil
-		}
 	}
 
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
@@ -281,12 +275,6 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	}
 
 	if traceBuilder == nil {
-		if cached, ok := r.moduleResolutionCache.Get(cacheKey); ok {
-			return cached, nil
-		}
-		lock, _ := r.moduleResolutionLocks.LoadOrStore(cacheKey, &sync.Mutex{})
-		lock.Lock()
-		defer lock.Unlock()
 		if cached, ok := r.moduleResolutionCache.Get(cacheKey); ok {
 			return cached, nil
 		}
@@ -1610,7 +1598,9 @@ func (r *resolutionState) tryFileLookup(fileName string) bool {
 }
 
 func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, candidate string, considerPackageJson bool) *resolved {
-	candidate = tspath.RemoveTrailingDirectorySeparator(candidate)
+	if len(candidate) > tspath.GetRootLength(candidate) {
+		candidate = tspath.RemoveTrailingDirectorySeparator(candidate)
+	}
 	var packageInfo *packagejson.InfoCacheEntry
 	if considerPackageJson {
 		packageInfo = r.getPackageJsonInfo(candidate)

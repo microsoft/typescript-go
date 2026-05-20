@@ -55,7 +55,8 @@ Loading module as file / folder, candidate module location '/.src/node_modules/e
 File '/.src/node_modules/ext/ts3.1/index.ts' does not exist according to earlier cached lookups.
 File '/.src/node_modules/ext/ts3.1/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/ext/ts3.1/index.d.ts' exists - use it as a name resolution result.
-======== Module name '../' was successfully resolved to '/.src/node_modules/ext/ts3.1/index.d.ts'. ========
+'package.json' does not have a 'peerDependencies' field.
+======== Module name '../' was successfully resolved to '/.src/node_modules/ext/ts3.1/index.d.ts' with Package ID 'ext/ts3.1/index.d.ts@1.0.0'. ========
 ======== Resolving module '../other' from '/.src/node_modules/ext/ts3.1/other.d.ts'. ========
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
