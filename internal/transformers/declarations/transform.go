@@ -1999,15 +1999,9 @@ func sanitizeIdentifierText(text string) string {
 	var result strings.Builder
 	result.WriteByte('_')
 	for pos, ch := range text {
-		if pos == 0 {
-			if scanner.IsIdentifierStart(ch) {
-				result.WriteRune(ch)
-			} else if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
-				result.WriteRune(ch)
-			}
-		} else if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
+		if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
 			result.WriteRune(ch)
-		} else {
+		} else if pos != 0 {
 			result.WriteByte('_')
 		}
 	}

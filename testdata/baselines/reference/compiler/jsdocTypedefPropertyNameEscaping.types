@@ -37,11 +37,11 @@ export function Button(props) {
  * @returns {Object}
  */
 export function nestedProps(options) {
->nestedProps : (options: { aria: string; data: string; }) => Object
->options : { aria: string; data: string; }
+>nestedProps : (options: { "aria-label": string; "data-test-name": string; }) => Object
+>options : { "aria-label": string; "data-test-name": string; }
 
     return options;
->options : { aria: string; data: string; }
+>options : { "aria-label": string; "data-test-name": string; }
 }
 
 /**

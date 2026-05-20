@@ -80,8 +80,8 @@ export type _callback_name = (_data_test_name: string, _back_quoted_param?: stri
  * @returns {Object}
  */
 export declare function nestedProps(options: {
-    aria: string;
-    data: string;
+    "aria-label": string;
+    "data-test-name": string;
 }): Object;
 /**
  * @template template-name
