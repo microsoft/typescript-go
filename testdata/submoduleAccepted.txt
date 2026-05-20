@@ -1430,3 +1430,699 @@ conformance/callbackTagVariadicType.js.diff
 # definiteAssignment shorthand in object literal loses optional modifier
 ## https://github.com/microsoft/typescript-go/issues/3563
 conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff
+
+# Index signature symbols now use bracket notation instead of dot notation
+## Cosmetic internal display change only, `Parent.__index` → `Parent[__index]` in symbol display names. Applies to JSX IntrinsicElements, static index signatures, and other index-signature-bearing types.
+conformance/tsxEmit1.symbols.diff
+conformance/tsxEmit2.symbols.diff
+conformance/tsxReactEmit1.symbols.diff
+conformance/tsxReactEmit2.symbols.diff
+conformance/tsxReactEmit4.symbols.diff
+conformance/tsxReactEmit5.symbols.diff
+conformance/tsxReactEmit6.symbols.diff
+conformance/tsxReactEmit7.symbols.diff
+conformance/tsxReactEmitEntities.symbols.diff
+conformance/tsxReactEmitWhitespace.symbols.diff
+conformance/tsxReactEmitWhitespace2.symbols.diff
+conformance/tsxSpreadChildren.symbols.diff
+conformance/tsxSpreadChildrenInvalidType(jsx=react,target=es2015).symbols.diff
+conformance/tsxSpreadInvalidType.symbols.diff
+conformance/tsxElementResolution2.symbols.diff
+conformance/tsxElementResolution3.symbols.diff
+conformance/tsxFragmentPreserveEmit.symbols.diff
+conformance/tsxFragmentReactEmit.symbols.diff
+conformance/inlineJsxAndJsxFragPragma.symbols.diff
+conformance/inlineJsxAndJsxFragPragmaOverridesCompilerOptions.symbols.diff
+conformance/inlineJsxFactoryDeclarations.symbols.diff
+conformance/inlineJsxFactoryDeclarationsLocalTypes.symbols.diff
+conformance/inlineJsxFactoryLocalTypeGlobalFallback.symbols.diff
+conformance/inlineJsxFactoryOverridesCompilerOption.symbols.diff
+conformance/inlineJsxFactoryWithFragmentIsError.symbols.diff
+conformance/jsxParsingError1.symbols.diff
+conformance/jsxParsingError2.symbols.diff
+conformance/jsxParsingError3.symbols.diff
+conformance/jsxParsingError4(strict=false).symbols.diff
+conformance/jsxParsingError4(strict=true).symbols.diff
+conformance/staticIndexSignature1.symbols.diff
+conformance/staticIndexSignature2.symbols.diff
+conformance/staticIndexSignature4.symbols.diff
+conformance/staticIndexSignature6.symbols.diff
+conformance/noPropertyAccessFromIndexSignature1.symbols.diff
+conformance/noUncheckedIndexedAccessDestructuring.symbols.diff
+conformance/propertyAccessStringIndexSignature(noimplicitany=false).symbols.diff
+conformance/propertyAccessStringIndexSignature(noimplicitany=true).symbols.diff
+conformance/thisTypeInFunctions2.symbols.diff
+conformance/typeGuardOfFromPropNameInUnionType.symbols.diff
+compiler/jsxChildrenGenericContextualTypes.symbols.diff
+compiler/jsxIntrinsicDeclaredUsingTemplateLiteralTypeSignatures.symbols.diff
+compiler/jsxNamespaceReexports.symbols.diff
+compiler/propertyAccessOfReadonlyIndexSignature.symbols.diff
+compiler/reactJsxReactResolvedNodeNext.symbols.diff
+compiler/reactJsxReactResolvedNodeNextEsm.symbols.diff
+compiler/jsxLocalNamespaceIndexSignatureNoCrash.symbols.diff
+conformance/controlFlowStringIndex.symbols.diff
+
+# Property access on index signatures now resolves to the `[__index]` symbol
+## New symbol resolution lines are added where previously none existed (e.g. `c.x` now resolves to `T[__index]`). Benign improvement.
+conformance/keyofAndIndexedAccess2.symbols.diff
+conformance/noUncheckedIndexedAccessDestructuring.symbols.diff
+conformance/objectSpreadIndexSignature.symbols.diff
+compiler/propertyAccessOfReadonlyIndexSignature.symbols.diff
+
+# `@enum` JSDoc tag no longer creates an additional declaration on the variable
+## See CHANGES.md (removal of enum Closure tag support)
+conformance/enumTag.symbols.diff
+conformance/enumTagCircularReference.symbols.diff
+conformance/enumTagImported.symbols.diff
+conformance/enumTagOnExports.symbols.diff
+conformance/enumTagUseBeforeDefCrash.symbols.diff
+conformance/enumMergeWithExpando.symbols.diff
+conformance/exportedAliasedEnumTag.symbols.diff
+conformance/exportedEnumTypeAndValue.symbols.diff
+conformance/jsDeclarationsEnumTag(target=es2015).symbols.diff
+conformance/jsDeclarationsParameterTagReusesInputNodeInEmit1.symbols.diff
+compiler/jsEnumCrossFileExport.symbols.diff
+compiler/jsEnumTagOnObjectFrozen.symbols.diff
+compiler/jsFileESModuleWithEnumTag.symbols.diff
+
+# Unicode-escaped property names use bracket notation in symbol display
+## e.g. `Class.x\u0078` → `Class[x\u0078]`, including private identifiers like `#x\u0078`. Latter is easier to read/reason about
+compiler/escapedIdentifiers.symbols.diff
+compiler/unicodeEscapesInNames01(target=es2015).symbols.diff
+compiler/unicodeEscapesInNames01(target=esnext).symbols.diff
+
+# Constructor function `this` and `this.property` bindings removed
+## See CHANGES.md (dropping support for `prototype`-based ES5-style classes)
+conformance/constructorFunctions.symbols.diff
+conformance/constructorFunctions2.symbols.diff
+conformance/constructorFunctions3.symbols.diff
+conformance/constructorFunctionsStrict.symbols.diff
+conformance/constructorFunctionMergeWithClass.symbols.diff
+conformance/constructorFunctionMethodTypeParameters.symbols.diff
+conformance/constructorTagOnNestedBinaryExpression.symbols.diff
+conformance/classCanExtendConstructorFunction.symbols.diff
+conformance/propertiesOfGenericConstructorFunctions.symbols.diff
+conformance/privateConstructorFunction.symbols.diff
+conformance/thisPropertyAssignment.symbols.diff
+conformance/thisPropertyAssignmentCircular.symbols.diff
+conformance/thisTypeOfConstructorFunctions.symbols.diff
+conformance/prototypePropertyAssignmentMergeAcrossFiles.symbols.diff
+conformance/typeFromJSConstructor.symbols.diff
+conformance/typeFromJSInitializer.symbols.diff
+conformance/typeFromPropertyAssignment2.symbols.diff
+conformance/typeFromPropertyAssignment3.symbols.diff
+conformance/typeFromPropertyAssignment9.symbols.diff
+conformance/typeFromPropertyAssignment9_1.symbols.diff
+conformance/typeFromPropertyAssignment19.symbols.diff
+conformance/typeFromPropertyAssignment20.symbols.diff
+conformance/typeFromPropertyAssignment22.symbols.diff
+conformance/typeFromPropertyAssignment27.symbols.diff
+conformance/typeFromPropertyAssignment28.symbols.diff
+conformance/typeFromPropertyAssignment40.symbols.diff
+conformance/typeFromParamTagForFunction.symbols.diff
+conformance/typeFromPrototypeAssignment.symbols.diff
+conformance/typeFromPrototypeAssignment2.symbols.diff
+conformance/typeFromPrototypeAssignment3.symbols.diff
+conformance/typeFromPrototypeAssignment4.symbols.diff
+conformance/typedefCrossModule.symbols.diff
+conformance/assignmentToVoidZero2.symbols.diff
+conformance/chainedPrototypeAssignment.symbols.diff
+conformance/checkExportsObjectAssignPrototypeProperty.symbols.diff
+conformance/exportNestedNamespaces.symbols.diff
+conformance/inferringClassMembersFromAssignments2.symbols.diff
+conformance/inferringClassMembersFromAssignments6.symbols.diff
+conformance/callbackCrossModule.symbols.diff
+conformance/moduleExportAlias2.symbols.diff
+conformance/moduleExportNestedNamespaces.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment4.symbols.diff
+compiler/functionExpressionNames.symbols.diff
+compiler/javascriptDefinePropertyPrototypeNonConstructor.symbols.diff
+compiler/jsdocFunctionClassPropertiesDeclaration.symbols.diff
+compiler/jsDeclarationsGlobalFileConstFunction.symbols.diff
+compiler/jsDeclarationsGlobalFileConstFunctionNamed.symbols.diff
+compiler/jsFunctionWithPrototypeNoErrorTruncationNoCrash.symbols.diff
+compiler/objectPropertyAsClass.symbols.diff
+compiler/thisInObjectJs.symbols.diff
+conformance/jsDeclarationsClassMethod.symbols.diff
+conformance/jsDeclarationsExportAssignedConstructorFunction(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionClassesCjsExportAssignment(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionLikeClasses(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionLikeClasses2(target=es2015).symbols.diff
+conformance/jsdocConstructorFunctionTypeReference.symbols.diff
+conformance/jsdocFunctionType.symbols.diff
+conformance/jsdocPrototypePropertyAccessWithType.symbols.diff
+conformance/jsdocTemplateConstructorFunction.symbols.diff
+conformance/jsdocTemplateConstructorFunction2.symbols.diff
+conformance/jsdocTemplateTag4.symbols.diff
+conformance/jsdocTemplateTag5.symbols.diff
+conformance/jsdocTypeFromChainedAssignment.symbols.diff
+conformance/jsdocTypeTagCast.symbols.diff
+conformance/typeFromPrototypeAssignment.symbols.diff
+conformance/typeFromPrototypeAssignment2.symbols.diff
+conformance/typeFromPrototypeAssignment3.symbols.diff
+conformance/typeFromPrototypeAssignment4.symbols.diff
+conformance/typeFromContextualThisType.symbols.diff
+compiler/jsFunctionWithPrototypeNoErrorTruncationNoCrash.symbols.diff
+compiler/jsFileMethodOverloads4.symbols.diff
+
+# Expando property declarations no longer merge with the base function/variable
+## See CHANGES.md re dropping support for certain forms of expando declaration
+conformance/nullPropertyName.symbols.diff
+conformance/newTargetNarrowing.symbols.diff
+conformance/nestedPrototypeAssignment.symbols.diff
+conformance/defaultPropertyAssignedClassWithPrototype.symbols.diff
+conformance/circularMultipleAssignmentDeclaration.symbols.diff
+conformance/checkJsdocTypeTagOnObjectProperty1.symbols.diff
+conformance/checkSpecialPropertyAssignments.symbols.diff
+conformance/classCanExtendConstructorFunction.symbols.diff
+conformance/constructorFunctionMergeWithClass.symbols.diff
+conformance/constructorFunctionMethodTypeParameters.symbols.diff
+conformance/constructorFunctions2.symbols.diff
+conformance/constructorFunctions3.symbols.diff
+conformance/constructorFunctionsStrict.symbols.diff
+conformance/contextualTypedSpecialAssignment.symbols.diff
+conformance/exportDefaultNamespace.symbols.diff
+conformance/exportNestedNamespaces.symbols.diff
+conformance/globalMergeWithCommonJSAssignmentDeclaration.symbols.diff
+conformance/commonJSImportNestedClassTypeReference.symbols.diff
+conformance/inferringClassMembersFromAssignments2.symbols.diff
+conformance/inferringClassMembersFromAssignments6.symbols.diff
+conformance/inferringClassStaticMembersFromAssignments.symbols.diff
+conformance/propertiesOfGenericConstructorFunctions.symbols.diff
+conformance/propertyAssignmentUseParentType1.symbols.diff
+conformance/propertyAssignmentUseParentType2.symbols.diff
+conformance/propertyAssignmentUseParentType3.symbols.diff
+conformance/prototypePropertyAssignmentMergeAcrossFiles2.symbols.diff
+conformance/prototypePropertyAssignmentMergedTypeReference.symbols.diff
+conformance/prototypePropertyAssignmentMergeWithInterfaceMethod.symbols.diff
+conformance/spellingUncheckedJS.symbols.diff
+conformance/thisTypeOfConstructorFunctions.symbols.diff
+conformance/typedefTagExtraneousProperty.symbols.diff
+conformance/typeFromJSConstructor.symbols.diff
+conformance/typeFromJSInitializer.symbols.diff
+conformance/typeFromPropertyAssignment.symbols.diff
+conformance/typeFromPropertyAssignment4.symbols.diff
+conformance/typeFromPropertyAssignment5.symbols.diff
+conformance/typeFromPropertyAssignment6.symbols.diff
+conformance/typeFromPropertyAssignment7.symbols.diff
+conformance/typeFromPropertyAssignment8.symbols.diff
+conformance/typeFromPropertyAssignment8_1.symbols.diff
+conformance/typeFromPropertyAssignment9.symbols.diff
+conformance/typeFromPropertyAssignment9_1.symbols.diff
+conformance/typeFromPropertyAssignment10.symbols.diff
+conformance/typeFromPropertyAssignment10_1.symbols.diff
+conformance/typeFromPropertyAssignment11.symbols.diff
+conformance/typeFromPropertyAssignment12.symbols.diff
+conformance/typeFromPropertyAssignment13.symbols.diff
+conformance/typeFromPropertyAssignment14.symbols.diff
+conformance/typeFromPropertyAssignment15.symbols.diff
+conformance/typeFromPropertyAssignment16.symbols.diff
+conformance/typeFromPropertyAssignment17.symbols.diff
+conformance/typeFromPropertyAssignment18.symbols.diff
+conformance/typeFromPropertyAssignment19.symbols.diff
+conformance/typeFromPropertyAssignment20.symbols.diff
+conformance/typeFromPropertyAssignment22.symbols.diff
+conformance/typeFromPropertyAssignment24.symbols.diff
+conformance/typeFromPropertyAssignment25.symbols.diff
+conformance/typeFromPropertyAssignment26.symbols.diff
+conformance/typeFromPropertyAssignment27.symbols.diff
+conformance/typeFromPropertyAssignment28.symbols.diff
+conformance/typeFromPropertyAssignment29.symbols.diff
+conformance/typeFromPropertyAssignment30.symbols.diff
+conformance/typeFromPropertyAssignment31.symbols.diff
+conformance/typeFromPropertyAssignment32.symbols.diff
+conformance/typeFromPropertyAssignment33.symbols.diff
+conformance/typeFromPropertyAssignment34.symbols.diff
+conformance/typeFromPropertyAssignment35.symbols.diff
+conformance/typeFromPropertyAssignment36.symbols.diff
+conformance/typeFromPropertyAssignment37.symbols.diff
+conformance/typeFromPropertyAssignment38.symbols.diff
+conformance/typeFromPropertyAssignment39.symbols.diff
+conformance/typeFromPropertyAssignment40.symbols.diff
+conformance/typeFromPropertyAssignmentOutOfOrder(target=es2015).symbols.diff
+conformance/typeFromPropertyAssignmentWithExport.symbols.diff
+conformance/typeFromPrototypeAssignment.symbols.diff
+conformance/typeFromPrototypeAssignment2.symbols.diff
+conformance/typeFromPrototypeAssignment3.symbols.diff
+conformance/typeFromPrototypeAssignment4.symbols.diff
+conformance/typeTagCircularReferenceOnConstructorFunction.symbols.diff
+conformance/typeTagPrototypeAssignment.symbols.diff
+conformance/typedefCrossModule2.symbols.diff
+conformance/typedefCrossModule3.symbols.diff
+conformance/assignmentToVoidZero2.symbols.diff
+conformance/chainedPrototypeAssignment.symbols.diff
+conformance/checkExportsObjectAssignPrototypeProperty.symbols.diff
+conformance/moduleExportAlias.symbols.diff
+conformance/moduleExportAlias2.symbols.diff
+conformance/moduleExportAlias4.symbols.diff
+conformance/moduleExportAlias5.symbols.diff
+conformance/moduleExportAliasImported.symbols.diff
+conformance/moduleExportAliasUnknown.symbols.diff
+conformance/moduleExportAssignment.symbols.diff
+conformance/moduleExportAssignment2.symbols.diff
+conformance/moduleExportAssignment4.symbols.diff
+conformance/moduleExportAssignment5.symbols.diff
+conformance/moduleExportAssignment7.symbols.diff
+conformance/moduleExportNestedNamespaces.symbols.diff
+conformance/moduleExportPropertyAssignmentDefault.symbols.diff
+conformance/moduleExportsElementAccessAssignment.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment2.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment3.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment4.symbols.diff
+conformance/privateNameJsBadDeclaration(target=es2015).symbols.diff
+conformance/jsdocConstructorFunctionTypeReference.symbols.diff
+conformance/jsdocImplements_class.symbols.diff
+conformance/jsdocPrototypePropertyAccessWithType.symbols.diff
+conformance/jsdocReadonly.symbols.diff
+conformance/jsdocTemplateClass.symbols.diff
+conformance/jsdocTemplateConstructorFunction.symbols.diff
+conformance/jsdocTemplateConstructorFunction2.symbols.diff
+conformance/jsdocTemplateTag4.symbols.diff
+conformance/jsdocTemplateTag5.symbols.diff
+conformance/jsdocTypeFromChainedAssignment.symbols.diff
+conformance/jsdocTypeReferenceToMergedClass.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport5.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport6.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport7.symbols.diff
+conformance/jsContainerMergeJsContainer.symbols.diff
+conformance/jsContainerMergeTsDeclaration.symbols.diff
+conformance/jsContainerMergeTsDeclaration2.symbols.diff
+conformance/jsContainerMergeTsDeclaration3.symbols.diff
+conformance/jsDeclarationsClassLikeHeuristic(target=es2015).symbols.diff
+conformance/jsDeclarationsClassMethod.symbols.diff
+conformance/jsDeclarationsClassStatic(target=es2015).symbols.diff
+conformance/jsDeclarationsClassStatic2.symbols.diff
+conformance/jsDeclarationsClassStaticMethodAugmentation(target=es2015).symbols.diff
+conformance/jsDeclarationsCrossfileMerge(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassInstance3(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedConstructorFunction(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedConstructorFunctionWithSub(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignmentExpressionPlusSecondary(target=es2015).symbols.diff
+conformance/jsDeclarationsExportForms(target=es2015).symbols.diff
+conformance/jsDeclarationsExportSubAssignments(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionClassesCjsExportAssignment(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionKeywordProp(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionKeywordPropExhaustive(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionLikeClasses2(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionPrototypeStatic(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctions.symbols.diff
+conformance/jsDeclarationsFunctionsCjs.symbols.diff
+conformance/jsDeclarationsFunctionWithDefaultAssignedMember.symbols.diff
+conformance/jsDeclarationsParameterTagReusesInputNodeInEmit1.symbols.diff
+conformance/jsDeclarationsParameterTagReusesInputNodeInEmit2.symbols.diff
+conformance/jsDeclarationsReactComponents(target=es2015).symbols.diff
+conformance/jsDeclarationsTypeReferences3(target=es2015).symbols.diff
+compiler/expandoFunctionNestedAssigments.symbols.diff
+compiler/isolatedDeclarationErrors.symbols.diff
+compiler/isolatedDeclarationErrorsExpandoFunctions.symbols.diff
+compiler/isolatedDeclarationLazySymbols.symbols.diff
+compiler/jsDeclarationsGlobalFileConstFunction.symbols.diff
+compiler/jsDeclarationsGlobalFileConstFunctionNamed.symbols.diff
+compiler/jsElementAccessNoContextualTypeCrash.symbols.diff
+compiler/jsFunctionWithPrototypeNoErrorTruncationNoCrash.symbols.diff
+compiler/jsxComponentTypeErrors.symbols.diff
+compiler/jsxDeclarationsWithEsModuleInteropNoCrash.symbols.diff
+compiler/lateBoundFunctionMemberAssignmentDeclarations.symbols.diff
+compiler/noParameterReassignmentIIFEAnnotated.symbols.diff
+compiler/noParameterReassignmentJSIIFE.symbols.diff
+compiler/targetTypeTest1.symbols.diff
+compiler/topLevelBlockExpando.symbols.diff
+compiler/tsxStatelessComponentDefaultProps.symbols.diff
+compiler/wellKnownSymbolExpando.symbols.diff
+
+# CommonJS `exports`/`module.exports` symbol names and structure changed
+## See CHANGES.md for changes in CommonJS module.export syntax forms support
+conformance/assignmentToVoidZero1.symbols.diff
+conformance/assignmentToVoidZero2.symbols.diff
+conformance/binderUninitializedModuleExportsAssignment.symbols.diff
+conformance/callbackCrossModule.symbols.diff
+conformance/chainedPrototypeAssignment.symbols.diff
+conformance/checkExportsObjectAssignProperty.symbols.diff
+conformance/checkExportsObjectAssignPrototypeProperty.symbols.diff
+conformance/checkObjectDefineProperty.symbols.diff
+conformance/checkOtherObjectAssignProperty.symbols.diff
+conformance/commonJSAliasedExport.symbols.diff
+conformance/commonJSImportClassTypeReference.symbols.diff
+conformance/commonJSImportExportedClassExpression.symbols.diff
+conformance/commonJSImportNestedClassTypeReference.symbols.diff
+conformance/commonJSReexport.symbols.diff
+conformance/constructorFunctions2.symbols.diff
+conformance/contextualTypedSpecialAssignment.symbols.diff
+conformance/enumTagOnExports.symbols.diff
+conformance/enumTagOnExports2.symbols.diff
+conformance/exportedAliasedEnumTag.symbols.diff
+conformance/exportNestedNamespaces.symbols.diff
+conformance/exportNestedNamespaces2.symbols.diff
+conformance/exportPropertyAssignmentNameResolution.symbols.diff
+conformance/globalMergeWithCommonJSAssignmentDeclaration.symbols.diff
+conformance/importAliasModuleExports.symbols.diff
+conformance/jsdocTypeFromChainedAssignment2.symbols.diff
+conformance/jsdocTypeFromChainedAssignment3.symbols.diff
+conformance/jsdocTypeReferenceExports.symbols.diff
+conformance/jsdocImportType.symbols.diff
+conformance/jsdocImportType2.symbols.diff
+conformance/jsdocImportTypeReferenceToClassAlias.symbols.diff
+conformance/jsdocTypeReferenceToImportOfClassExpression.symbols.diff
+conformance/jsdocTypeReferenceToImportOfFunctionExpression.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport1.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport2.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport3.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport4.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport5.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport6.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport7.symbols.diff
+conformance/moduleExportAlias.symbols.diff
+conformance/moduleExportAlias2.symbols.diff
+conformance/moduleExportAlias3.symbols.diff
+conformance/moduleExportAlias4.symbols.diff
+conformance/moduleExportAlias5.symbols.diff
+conformance/moduleExportAliasElementAccessExpression.symbols.diff
+conformance/moduleExportAliasExports.symbols.diff
+conformance/moduleExportAliasImported.symbols.diff
+conformance/moduleExportAliasUnknown.symbols.diff
+conformance/moduleExportAssignment.symbols.diff
+conformance/moduleExportAssignment2.symbols.diff
+conformance/moduleExportAssignment3.symbols.diff
+conformance/moduleExportAssignment4.symbols.diff
+conformance/moduleExportAssignment5.symbols.diff
+conformance/moduleExportAssignment7.symbols.diff
+conformance/moduleExportDuplicateAlias.symbols.diff
+conformance/moduleExportDuplicateAlias2.symbols.diff
+conformance/moduleExportDuplicateAlias3.symbols.diff
+conformance/moduleExportNestedNamespaces.symbols.diff
+conformance/moduleExportPropertyAssignmentDefault.symbols.diff
+conformance/moduleExportsAliasLoop1.symbols.diff
+conformance/moduleExportsAliasLoop2.symbols.diff
+conformance/moduleExportsElementAccessAssignment.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment2.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment3.symbols.diff
+conformance/moduleExportWithExportPropertyAssignment4.symbols.diff
+conformance/nestedDestructuringOfRequire.symbols.diff
+conformance/nodeModulesAllowJsCjsFromJs(module=node16).symbols.diff
+conformance/nodeModulesAllowJsCjsFromJs(module=node18).symbols.diff
+conformance/nodeModulesAllowJsCjsFromJs(module=node20).symbols.diff
+conformance/nodeModulesAllowJsCjsFromJs(module=nodenext).symbols.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node16).symbols.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node18).symbols.diff
+conformance/nodeModulesAllowJsExportAssignment(module=node20).symbols.diff
+conformance/nodeModulesAllowJsExportAssignment(module=nodenext).symbols.diff
+conformance/paramTagOnCallExpression.symbols.diff
+conformance/paramTagTypeResolution.symbols.diff
+conformance/reExportJsFromTs.symbols.diff
+conformance/requireOfESWithPropertyAccess.symbols.diff
+conformance/requireTwoPropertyAccesses.symbols.diff
+conformance/typeFromParamTagForFunction.symbols.diff
+conformance/typeFromPropertyAssignment17.symbols.diff
+conformance/typeFromPropertyAssignment37.symbols.diff
+conformance/typedefCrossModule.symbols.diff
+conformance/typedefCrossModule2.symbols.diff
+conformance/typedefCrossModule3.symbols.diff
+conformance/typedefCrossModule4.symbols.diff
+conformance/typeTagModuleExports.symbols.diff
+conformance/untypedModuleImport_allowJs.symbols.diff
+conformance/jsDeclarationsClassExtendsVisibility(target=es2015).symbols.diff
+conformance/jsDeclarationsClassStatic(target=es2015).symbols.diff
+conformance/jsDeclarationsCommonjsRelativePath.symbols.diff
+conformance/jsDeclarationsComputedNames(target=es2015).symbols.diff
+conformance/jsDeclarationsCrossfileMerge(target=es2015).symbols.diff
+conformance/jsDeclarationsDocCommentsOnConsts(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassExpression(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymous(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassInstance1(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassInstance2(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedClassInstance3(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedConstructorFunction(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedConstructorFunctionWithSub(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignedVisibility(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignmentExpressionPlusSecondary(target=es2015).symbols.diff
+conformance/jsDeclarationsExportAssignmentWithKeywordName(target=es2015).symbols.diff
+conformance/jsDeclarationsExportDefinePropertyEmit.symbols.diff
+conformance/jsDeclarationsExportDoubleAssignmentInClosure.symbols.diff
+conformance/jsDeclarationsExportedClassAliases.symbols.diff
+conformance/jsDeclarationsExportForms(target=es2015).symbols.diff
+conformance/jsDeclarationsExportSubAssignments(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionClassesCjsExportAssignment(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionPrototypeStatic(target=es2015).symbols.diff
+conformance/jsDeclarationsFunctionsCjs.symbols.diff
+conformance/jsDeclarationsFunctionWithDefaultAssignedMember.symbols.diff
+conformance/jsDeclarationsImportAliasExposedWithinNamespaceCjs.symbols.diff
+conformance/jsDeclarationsJson(target=es2015).symbols.diff
+conformance/jsDeclarationsPackageJson(target=es2015).symbols.diff
+conformance/jsDeclarationsParameterTagReusesInputNodeInEmit1.symbols.diff
+conformance/jsDeclarationsParameterTagReusesInputNodeInEmit2.symbols.diff
+conformance/jsDeclarationsReexportAliasesEsModuleInterop(target=es2015).symbols.diff
+conformance/jsDeclarationsReexportedCjsAlias(target=es2015).symbols.diff
+conformance/jsDeclarationsReferenceToClassInstanceCrossFile.symbols.diff
+conformance/jsDeclarationsTypeAliases.symbols.diff
+conformance/jsDeclarationsTypedefAndImportTypes.symbols.diff
+conformance/jsDeclarationsTypedefAndLatebound.symbols.diff
+conformance/jsDeclarationsTypedefPropertyAndExportAssignment.symbols.diff
+conformance/jsDeclarationsTypeReassignmentFromDeclaration.symbols.diff
+conformance/jsDeclarationsTypeReassignmentFromDeclaration2.symbols.diff
+conformance/jsDeclarationsTypeReferences(target=es2015).symbols.diff
+conformance/jsDeclarationsTypeReferences2(target=es2015).symbols.diff
+conformance/jsDeclarationsTypeReferences3(target=es2015).symbols.diff
+compiler/functionExpressionNames.symbols.diff
+compiler/importHelpersCommonJSJavaScript(verbatimmodulesyntax=false).symbols.diff
+compiler/importHelpersCommonJSJavaScript(verbatimmodulesyntax=true).symbols.diff
+compiler/importNonExportedMember12.symbols.diff
+compiler/javascriptCommonjsModule.symbols.diff
+compiler/javascriptImportDefaultBadExport.symbols.diff
+compiler/jsDeclarationEmitExportAssignedArray.symbols.diff
+compiler/jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.symbols.diff
+compiler/jsEnumTagOnObjectFrozen.symbols.diff
+compiler/jsExportAssignmentNonMutableLocation.symbols.diff
+compiler/jsExportMemberMergedWithModuleAugmentation.symbols.diff
+compiler/jsExportMemberMergedWithModuleAugmentation2.symbols.diff
+compiler/jsExportMemberMergedWithModuleAugmentation3.symbols.diff
+compiler/jsFileClassPropertyInitalizationInObjectLiteral.symbols.diff
+compiler/jsFileCompilationBindDeepExportsAssignment.symbols.diff
+compiler/jsFileCompilationExternalPackageError.symbols.diff
+compiler/moduleExportsTypeNoExcessPropertyCheckFromContainedLiteral.symbols.diff
+compiler/modulePreserve4.symbols.diff
+compiler/moduleResolution_explicitNodeModulesImport.symbols.diff
+compiler/pushTypeGetTypeOfAlias.symbols.diff
+compiler/requireOfJsonFileInJsFile.symbols.diff
+compiler/resolveNameWithNamspace.symbols.diff
+compiler/truthinessCallExpressionCoercion4.symbols.diff
+
+# `import =` alias resolves to the target's own symbol name
+## e.g. `import m4 = b.a` — the `.a` now resolves to `Symbol(m4, ...)` instead of `Symbol(m3.a, ...)`
+## Both are correct.
+conformance/commonJSImportNotAsPrimaryExpression.symbols.diff
+conformance/exportsAndImports4-es6.symbols.diff
+conformance/exportsAndImports4(target=es2015).symbols.diff
+conformance/importEquals3.symbols.diff
+conformance/importStatementsInterfaces.symbols.diff
+compiler/dottedModuleName2.symbols.diff
+compiler/exportDefaultProperty.symbols.diff
+compiler/importedEnumMemberMergedWithExportedAliasIsError.symbols.diff
+compiler/importOnAliasedIdentifiers.symbols.diff
+compiler/isolatedModulesReExportType.symbols.diff
+compiler/moduledecl(target=es2015).symbols.diff
+compiler/nodeNextCjsNamespaceImportDefault1.symbols.diff
+compiler/nodeNextCjsNamespaceImportDefault2.symbols.diff
+
+# Declaration position `(file, --, --)` changed to actual numeric positions
+## This is a baseline-specific behavior with no corresponding product behavior
+compiler/importHelpersCommonJSJavaScript(verbatimmodulesyntax=false).symbols.diff
+compiler/importHelpersCommonJSJavaScript(verbatimmodulesyntax=true).symbols.diff
+compiler/importHelpersES6.symbols.diff
+compiler/importHelpersInAmbientContext(target=es2015).symbols.diff
+compiler/importHelpersVerbatimModuleSyntax.symbols.diff
+compiler/importHelpersWithExportStarAs(esmoduleinterop=true,module=commonjs).symbols.diff
+compiler/importHelpersWithExportStarAs(esmoduleinterop=true,module=es2015).symbols.diff
+compiler/importHelpersWithExportStarAs(esmoduleinterop=true,module=es2020).symbols.diff
+compiler/importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=commonjs).symbols.diff
+compiler/importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=es2015).symbols.diff
+compiler/importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=es2020).symbols.diff
+compiler/importHelpersWithImportStarAs(esmoduleinterop=true,module=commonjs).symbols.diff
+compiler/importHelpersWithImportStarAs(esmoduleinterop=true,module=es2015).symbols.diff
+compiler/importHelpersWithImportStarAs(esmoduleinterop=true,module=es2020).symbols.diff
+compiler/jsNoImplicitAnyNoCascadingReferenceErrors.symbols.diff
+compiler/modulePreserveImportHelpers.symbols.diff
+compiler/tslibMissingHelper.symbols.diff
+compiler/tslibMultipleMissingHelper.symbols.diff
+compiler/tslibNotFoundDifferentModules.symbols.diff
+
+# `this.property` without initializer in class constructor no longer creates a property symbol
+## See CHANGES.md: "A this-property expression with a type annotation in the constructor no longer creates a property." Users should use class field declarations or provide an initializer.
+conformance/callbackTag2.symbols.diff
+conformance/constructorTagOnObjectLiteralMethod.symbols.diff
+conformance/assignmentToVoidZero2.symbols.diff
+compiler/objectPropertyAsClass.symbols.diff
+compiler/thisInObjectJs.symbols.diff
+compiler/unusedTypeParameters_templateTag2.symbols.diff
+
+# Namespace-qualified symbol names simplified
+## Cosmetic: e.g. `valueZ.otherType` → `otherType` — the parent qualifier is dropped from the symbol name
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=commonjs).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=es2020).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=es2022).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=es6).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=esnext).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=node16).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=node18).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=node20).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=nodenext).symbols.diff
+conformance/arbitraryModuleNamespaceIdentifiers_module(module=preserve).symbols.diff
+conformance/extendsClause.symbols.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).symbols.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).symbols.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).symbols.diff
+conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).symbols.diff
+conformance/verbatimModuleSyntaxRestrictionsCJS.symbols.diff
+conformance/jsdocImplements_class.symbols.diff
+conformance/jsdocTemplateTag4.symbols.diff
+conformance/jsdocTemplateTag5.symbols.diff
+compiler/defaultDeclarationEmitShadowedNamedCorrectly.symbols.diff
+compiler/isolatedModulesReExportType.symbols.diff
+compiler/jsEnumCrossFileExport.symbols.diff
+
+# `@overload` JSDoc tags now contribute Decl entries to the host function/method symbol
+## The host function symbol now includes declaration entries from @overload JSDoc tags
+compiler/jsFileFunctionOverloads.symbols.diff
+compiler/jsFileFunctionOverloads2.symbols.diff
+compiler/jsFileMethodOverloads.symbols.diff
+compiler/jsFileMethodOverloads2.symbols.diff
+compiler/jsFileMethodOverloads3.symbols.diff
+conformance/overloadTag1.symbols.diff
+
+# File path normalization in symbol baseline headers
+## `./` prefix dropped from file paths, double-slashes collapsed, or Windows path separators normalized. Internal test harness change only.
+compiler/mergeSymbolReexportedTypeAliasInstantiation.symbols.diff
+compiler/mergeSymbolReexportInterface.symbols.diff
+compiler/mergeSymbolRexportFunction.symbols.diff
+compiler/taggedTemplateWithoutDeclaredHelper(target=es2015).symbols.diff
+compiler/tripleSlashReferenceAbsoluteWindowsPath.symbols.diff
+compiler/typeGuardNarrowsIndexedAccessOfKnownProperty8.symbols.diff
+compiler/uniqueSymbolJs.symbols.diff
+conformance/callbackTag4.symbols.diff
+conformance/exportSpecifiers_js.symbols.diff
+conformance/importAttributes10.symbols.diff
+conformance/importAttributes11.symbols.diff
+conformance/importAttributes9.symbols.diff
+conformance/importSpecifiers_js.symbols.diff
+conformance/typeSatisfactionWithDefaultExport.symbols.diff
+compiler/jsDeclarationEmitExportedClassWithExtends.symbols.diff
+
+# `Object.defineProperty` key symbol now uses bracket-string or quoted form
+## e.g. `m1.thing` → `m1["thing"]` or `Symbol(a)` → `Symbol("a")` for string-literal property keys in defineProperty calls
+conformance/checkExportsObjectAssignProperty.symbols.diff
+conformance/checkObjectDefineProperty.symbols.diff
+conformance/checkOtherObjectAssignProperty.symbols.diff
+conformance/jsDeclarationsExportDefinePropertyEmit.symbols.diff
+conformance/jsDeclarationsGetterSetter.symbols.diff
+compiler/jsExpandoObjectDefineProperty.symbols.diff
+
+# `require("...")` string-literal source-module symbol entry removed
+## The symbol entry for the string literal argument to `require()` is no longer emitted as it's unneeded. Interal harness change only.
+conformance/jsDeclarationsTypeReassignmentFromDeclaration2.symbols.diff
+conformance/jsDeclarationsTypeReferences(target=es2015).symbols.diff
+conformance/jsDeclarationsTypeReferences2(target=es2015).symbols.diff
+conformance/jsDeclarationsTypeReferences4(target=es2015).symbols.diff
+conformance/jsdocTypeReferenceToImport.symbols.diff
+
+# `.constructor` property access now resolves to `Object.constructor` from lib
+## Accessing `.constructor` on a class type now correctly resolves to the inherited `Object.constructor` symbol
+conformance/typesWithPrivateConstructor.symbols.diff
+conformance/typesWithProtectedConstructor.symbols.diff
+
+# Import specifier in re-exports resolves to alias target symbol name
+## In `import { x as y }`, the symbol for `x` now reports as the target name `y`. Either is arguably correct.
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=node16).symbols.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=node18).symbols.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=node20).symbols.diff
+conformance/nodeModulesAllowJsSynchronousCallErrors(module=nodenext).symbols.diff
+conformance/nodeModulesSynchronousCallErrors(module=node16).symbols.diff
+conformance/nodeModulesSynchronousCallErrors(module=node18).symbols.diff
+conformance/nodeModulesSynchronousCallErrors(module=node20).symbols.diff
+conformance/nodeModulesSynchronousCallErrors(module=nodenext).symbols.diff
+
+# Test baseline reduction (removed extra file outputs)
+## This test has an error, fix later.
+compiler/augmentExportEquals2.symbols.diff
+
+# Private field symbol uses dot notation instead of bracket notation
+## e.g. `K[#𝑚]` → `K.#𝑚` — private fields use standard dot notation in symbol display
+compiler/extendedUnicodePlaneIdentifiers.symbols.diff
+
+# False merging of JS exports with TS module augmentation removed
+## JS export member no longer incorrectly merges its symbol with a TS module augmentation declaration
+compiler/jsExportMemberMergedWithModuleAugmentation.symbols.diff
+
+# Spurious duplicate Decl entries removed from late-bound assignments
+## Removes extra Decl entries that were incorrectly added to property symbols
+compiler/lateBoundAssignmentCandidateJS3.symbols.diff
+compiler/jsdocTypedefNoCrash.symbols.diff
+conformance/lateBoundAssignmentDeclarationSupport7.symbols.diff
+
+# Misspelled JSDoc typedef no longer creates false user-code declaration
+## `Animation` now only shows lib.dom declarations, not a spurious user-code Decl from a misspelled typedef
+compiler/misspelledJsDocTypedefTags.symbols.diff
+
+# Arbitrary module namespace identifiers now resolve correctly
+## `Symbol((Missing))` → `Symbol("invalid 2")` — string-named exports now get their actual name
+conformance/arbitraryModuleNamespaceIdentifiers_syntax.symbols.diff
+
+# Previously-missing symbols for destructuring pattern bindings now emitted
+## Destructured parameter names like `additionalFiles` and `a` now have symbol entries
+conformance/destructuringParameterDeclaration9(strict=true).symbols.diff
+
+# Prototype reference now uses specific class instead of generic `Function.prototype`
+## e.g. `Function.prototype` → `MobileDetect.prototype` or `A.prototype` — more precise type
+conformance/fixSignatureCaching.symbols.diff
+conformance/privateNameBadDeclaration(target=es2015).symbols.diff
+
+# `globalThis`/`window` user declarations removed
+## User-code property assignments to `globalThis` no longer add Decl entries to the global symbol. Documented in CHANGES.md
+conformance/globalThisPropertyAssignment.symbols.diff
+
+# Class member inference corrected for derived classes
+## `Base.p` → `Derived.p` — property assigned in derived class now correctly attributed to derived
+conformance/inferringClassMembersFromAssignments3.symbols.diff
+conformance/inferringClassMembersFromAssignments4.symbols.diff
+conformance/inferringClassMembersFromAssignments7.symbols.diff
+
+# `this.x` property references now tracked in JSDoc augmentation contexts
+## Previously-untracked `this.x` references in `@augments`-tagged classes now have symbol entries
+conformance/jsdocAugmentsMissingType.symbols.diff
+
+# JSDoc type syntax in TypeScript files corrected
+## Symbol names for parsed JSDoc types updated to match corrected parser behavior
+conformance/jsdocDisallowedInTypescript.symbols.diff
+
+# Minor symbol reference formatting changes
+## Removed one `s.toString` symbol reference; minor cleanup
+conformance/jsdocParseParenthesizedJSDocParameter.symbols.diff
+
+# `this` correctly resolves to class type in `@this`-typed context
+## `this` symbol resolves to `Foo` class rather than bare `this` reference
+conformance/jsdocThisType.symbols.diff
+
+# Declaration positions corrected in import alias declarations
+## Column numbers in Decl position tuples corrected (e.g. `9,50` → `9,4`)
+conformance/jsDeclarationsImportAliasExposedWithinNamespace.symbols.diff
+conformance/jsDeclarationsImportAliasExposedWithinNamespaceCjs.symbols.diff
+
+# Duplicate Decl entries for conflicting private names removed
+## When a private method and field conflict (already an error), duplicate Decl entries are eliminated
+conformance/privateNameDuplicateField.symbols.diff
+
+# False private field tracking removed for invalid assignment
+## Invalid private name assignment outside class no longer creates a symbol entry
+conformance/privateNameJsBadAssignment.symbols.diff
+
+# Additional Decl entries for multi-declaration function symbols
+## `flatMap` function with multiple declarations now shows all Decl entries on the symbol
+conformance/templateInsideCallback.symbols.diff
+
+# Expando/class-expression symbol cleanup
+## Removed duplicate declarations; fixed class-expression inner name usage. Documented in CHANGES.md
+conformance/typeFromPropertyAssignment.symbols.diff
