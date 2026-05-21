@@ -118,7 +118,7 @@ function generateNodeFactoryStruct(w: CodeWriter) {
     w.write("}");
     w.write("");
 
-    w.write("func (f *NodeFactory) ReleaseArenas() {")
+    w.write("func (f *NodeFactory) ReleaseArenas() {");
     w.push();
     for (const { fieldName } of arenaFields) {
         w.write(`f.${fieldName}.Release()`);
