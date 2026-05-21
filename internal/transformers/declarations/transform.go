@@ -735,17 +735,25 @@ func (tx *DeclarationTransformer) transformExpressionWithTypeArguments(input *as
 }
 
 func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.TypeParameterDeclaration) *ast.Node {
+	name := tx.sanitizeIdentifier(input.Name())
 	if isPrivateMethodTypeParameter(tx.host, input) && (input.DefaultType != nil || input.Constraint != nil) {
 		return tx.Factory().UpdateTypeParameterDeclaration(
 			input,
 			input.Modifiers(),
-			input.Name(),
+			name,
 			nil,
 			input.Expression,
 			nil,
 		)
 	}
-	return tx.Visitor().VisitEachChild(input.AsNode())
+	return tx.Factory().UpdateTypeParameterDeclaration(
+		input,
+		input.Modifiers(),
+		name,
+		tx.Visitor().Visit(input.Constraint),
+		input.Expression,
+		tx.Visitor().Visit(input.DefaultType),
+	)
 }
 
 func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
@@ -867,7 +875,7 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	return tx.Factory().UpdatePropertySignatureDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
-		input.Name(),
+		tx.sanitizePropertyName(input.Name()),
 		input.PostfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()), // TODO: possible strada bug (fixed here) - const property signatures never initialized
@@ -1382,7 +1390,7 @@ func (tx *DeclarationTransformer) transformTypeAliasDeclaration(input *ast.TypeA
 	return tx.Factory().UpdateTypeAliasDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
-		input.Name(),
+		tx.sanitizeIdentifier(input.Name()),
 		tx.Visitor().VisitNodes(input.TypeParameters),
 		tx.Visitor().Visit(input.Type),
 	)
@@ -1960,13 +1968,61 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 		p,
 		nil,
 		p.DotDotDotToken,
-		tx.bindingNameVisitor.VisitNode(p.Name()),
+		tx.sanitizeBindingName(tx.bindingNameVisitor.VisitNode(p.Name())),
 		questionToken,
 		tx.ensureType(p.AsNode(), true),
 		tx.ensureNoInitializer(p.AsNode()),
 	)
 	tx.state.getSymbolAccessibilityDiagnostic = oldDiag
 	return result
+}
+
+// sanitizePropertyName converts invalid identifier property names to string
+// literals so declaration emit produces valid property signatures.
+func (tx *DeclarationTransformer) sanitizePropertyName(name *ast.Node) *ast.Node {
+	if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
+	}
+	return name
+}
+
+func (tx *DeclarationTransformer) sanitizeBindingName(name *ast.Node) *ast.Node {
+	if ast.IsIdentifier(name) {
+		return tx.sanitizeIdentifier(name)
+	}
+	return name
+}
+
+func (tx *DeclarationTransformer) sanitizeIdentifier(name *ast.IdentifierNode) *ast.Node {
+	if name == nil {
+		return name
+	}
+	text := name.Text()
+	if text == "" || scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
+		return name
+	}
+	return tx.Factory().NewIdentifier(sanitizeIdentifierText(text))
+}
+
+func sanitizeIdentifierText(text string) string {
+	var result strings.Builder
+	lastWasUnderscore := false
+	writeUnderscore := func() {
+		if !lastWasUnderscore {
+			result.WriteByte('_')
+			lastWasUnderscore = true
+		}
+	}
+	writeUnderscore()
+	for pos, ch := range text {
+		if scanner.IsIdentifierPartEx(ch, core.LanguageVariantStandard) {
+			result.WriteRune(ch)
+			lastWasUnderscore = false
+		} else if pos != 0 {
+			writeUnderscore()
+		}
+	}
+	return result.String()
 }
 
 func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node {
@@ -2138,7 +2194,7 @@ func (tx *DeclarationTransformer) transformJSDocTypeLiteral(input *ast.JSDocType
 func (tx *DeclarationTransformer) transformJSDocPropertyTag(input *ast.JSDocParameterOrPropertyTag) *ast.Node {
 	replacement := tx.Factory().NewPropertySignatureDeclaration(
 		nil,
-		tx.Visitor().Visit(input.TagName),
+		tx.sanitizePropertyName(tx.Visitor().Visit(input.TagName)),
 		nil,
 		tx.Visitor().Visit(input.TypeExpression),
 		nil,
