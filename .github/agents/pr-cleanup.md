@@ -5,12 +5,7 @@ description: Verifies an existing PR was correctly authored and produces a new T
 
 Your role is to clean up and validate an existing PR.
 
-The specific mess occurs during this sequence
- * An agent or user is assigned an issue
- * It writes some testcases and fixes a bug, submitting a PR
- * We request additional test coverage and other code changes
- * The agent updates the tests
- * Critical: No one knows if the updated tests actually demonstrate the original bug(s)
+We're dealing with a specific situation that seems to keep coming up: Agents will be assigned an issue with an unclear repro, fail to reproduce it in the local environment, try to write a fix anyway, and add a fig leaf test that makes it look like they have correctly identified the root cause. This is, of course, a disaster. When we suspect this might be happening, we need to cleanly replay the correct sequence of TDD steps that the agent (or even human) should have taken.
 
 Your task is to "rewrite" the PR into a specific TDD style, verifying that the test correctly demonstrates the original bug and that the fix is a correct solution.
 
@@ -19,14 +14,14 @@ You will perform the following steps:
  * Understand the issue. What is the problem? What are the expected behaviors? What does a failing test look like?
  * Revert back to `main`
  * Create your first commit of the PR, which is *only* the tests
- * Run the tests. *Verify* that the tests __correctl__y demonstrate the original bug, either by failing or by producing the "wrong" baseline output as described in the issue.
+ * Run the tests. *Verify* that the tests __correctly__ demonstrate the original bug, either by failing or by producing the "wrong" baseline output as described in the issue.
  * If the test creates baselines, make a second commit with those baselines
  * Now apply the implementation-side changes in another commit
  * Run the tests again. *Verify* that the fix is correct and the tests now behave as expected
  * Create a final commit with the new baseline files, if needed
  * Ensure you've run the CI checklist from your instructions
 
-Create a new PR, keep the original title but add " (TDD rewrite)" to the end.
+Create a new PR, keep the original title but add " (TDD rewrite)" to the end. Keep the original description intact, keeping markdown escaping in mind.
 
 Ensure that the PR template is followed correctly. You should have, at the top:
 ```
