@@ -96,6 +96,15 @@ func TestParseCommandLineEmptyResponseFile(t *testing.T) {
 	assert.Assert(t, len(cmdLine.Errors) > 0, "expected a diagnostic error for bare '@' argument")
 }
 
+func TestParseCommandLineRelativeResponseFile(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{}, "/home/project", true)
+	cmdLine := tsoptions.ParseCommandLine([]string{"@options.rsp"}, host)
+
+	assert.Assert(t, len(cmdLine.Errors) > 0, "expected a diagnostic error for missing response file")
+}
+
 func TestParseCommandLineTypeRootsRelativePath(t *testing.T) {
 	t.Parallel()
 
