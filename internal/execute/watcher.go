@@ -76,10 +76,10 @@ type Watcher struct {
 
 	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
 	fileWatcher     *vfswatch.FileWatcher
-	subscription    fswatch.Watch // only accessed from the main goroutine
-	watchTerminated chan struct{} // closed when fswatch subscription terminates
-	doCycleCh       chan struct{} // buffered signal to run DoCycle off the callback goroutine
-	debugLog        io.Writer     // nil = silent; set via TS_WATCH_DEBUG
+	watches         []fswatch.Watch // targeted directory/file watches
+	watchTerminated chan struct{}   // closed when a watch terminates
+	doCycleCh       chan struct{}   // buffered signal to run DoCycle off the callback goroutine
+	debugLog        io.Writer       // nil = silent; set via TS_WATCH_DEBUG
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -141,28 +141,78 @@ func (w *Watcher) start() {
 				w.DoCycle()
 			}
 		}()
-		// Block until the fswatch subscription terminates (e.g. watched
-		// directory deleted), then clean up.
+		// Block until a watch terminates (e.g. watched directory deleted),
+		// then clean up.
 		<-w.watchTerminated
-		w.subscription.Close()
+		w.closeWatches()
 		close(w.doCycleCh)
 	}
 }
 
 func (w *Watcher) subscribe() error {
-	dir := w.sys.FS().Realpath(w.sys.GetCurrentDirectory())
+	watcher := fswatch.Default()
 	if w.debugLog != nil {
-		fmt.Fprintf(w.debugLog, "[watch] subscribing to %s via %s\n", dir, fswatch.Default().Name())
+		fmt.Fprintf(w.debugLog, "[watch] using %s backend\n", watcher.Name())
 	}
-	watch, err := fswatch.Default().WatchDirectory(dir, w.onWatchEvents,
-		fswatch.WithRecursive(),
-		fswatch.WithIgnore(shouldIgnoreWatchPath),
-	)
-	if err != nil {
-		return err
+
+	// Watch wildcard directories from tsconfig (recursive or non-recursive
+	// based on the include patterns). This detects new/deleted source files.
+	if w.config.ConfigFile != nil {
+		for dir, recursive := range w.config.WildcardDirectories() {
+			realDir := w.sys.FS().Realpath(dir)
+			opts := []fswatch.WatchOption{fswatch.WithIgnore(shouldIgnoreWatchPath)}
+			if recursive {
+				opts = append(opts, fswatch.WithRecursive())
+			}
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] watching directory %s (recursive=%v)\n", realDir, recursive)
+			}
+			watch, err := watcher.WatchDirectory(realDir, w.onWatchEvents, opts...)
+			if err != nil {
+				w.closeWatches()
+				return fmt.Errorf("watching %s: %w", realDir, err)
+			}
+			w.watches = append(w.watches, watch)
+		}
 	}
-	w.subscription = watch
+
+	// Watch config files (tsconfig.json and extended configs) for changes.
+	for _, path := range w.configFilePaths {
+		realPath := w.sys.FS().Realpath(path)
+		if w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] watching file %s\n", realPath)
+		}
+		watch, err := watcher.WatchFile(realPath, w.onWatchEvents)
+		if err != nil {
+			w.closeWatches()
+			return fmt.Errorf("watching %s: %w", realPath, err)
+		}
+		w.watches = append(w.watches, watch)
+	}
+
+	if len(w.watches) == 0 {
+		// No config file — watch the current directory non-recursively.
+		dir := w.sys.FS().Realpath(w.sys.GetCurrentDirectory())
+		if w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] no tsconfig, watching %s\n", dir)
+		}
+		watch, err := watcher.WatchDirectory(dir, w.onWatchEvents,
+			fswatch.WithIgnore(shouldIgnoreWatchPath),
+		)
+		if err != nil {
+			return err
+		}
+		w.watches = append(w.watches, watch)
+	}
+
 	return nil
+}
+
+func (w *Watcher) closeWatches() {
+	for _, watch := range w.watches {
+		watch.Close()
+	}
+	w.watches = nil
 }
 
 func shouldIgnoreWatchPath(path string) bool {
