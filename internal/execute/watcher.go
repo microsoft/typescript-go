@@ -1,7 +1,11 @@
 package execute
 
 import (
+	"errors"
+	"fmt"
+	"io"
 	"reflect"
+	"strings"
 	"sync"
 	"time"
 
@@ -12,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
@@ -71,6 +76,10 @@ type Watcher struct {
 
 	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
 	fileWatcher     *vfswatch.FileWatcher
+	subscription    fswatch.Watch // only accessed from the main goroutine
+	watchTerminated chan struct{} // closed when fswatch subscription terminates
+	doCycleCh       chan struct{} // buffered signal to run DoCycle off the callback goroutine
+	debugLog        io.Writer     // nil = silent; set via TS_WATCH_DEBUG
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -92,16 +101,13 @@ func createWatcher(
 		reportWatchStatus:              tsc.CreateWatchStatusReporter(sys, configParseResult.Locale(), configParseResult.CompilerOptions(), testing),
 		testing:                        testing,
 		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
+		watchTerminated:                make(chan struct{}),
+		doCycleCh:                      make(chan struct{}, 1),
 	}
 	if configParseResult.ConfigFile != nil {
 		w.configFileName = configParseResult.ConfigFile.SourceFile.FileName()
 	}
-	w.fileWatcher = vfswatch.NewFileWatcher(
-		sys.FS(),
-		w.config.ParsedConfig.WatchOptions.WatchInterval(),
-		testing != nil,
-		w.DoCycle,
-	)
+	w.fileWatcher = vfswatch.NewFileWatcher(sys.FS())
 	return w
 }
 
@@ -116,7 +122,7 @@ func (w *Watcher) start() {
 	}
 
 	if w.sys.GetEnvironmentVariable("TS_WATCH_DEBUG") != "" {
-		w.fileWatcher.SetDebugLog(w.sys.Writer())
+		w.debugLog = w.sys.Writer()
 	}
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
@@ -124,7 +130,93 @@ func (w *Watcher) start() {
 	w.mu.Unlock()
 
 	if w.testing == nil {
-		w.fileWatcher.Run(w.sys.Now)
+		if err := w.subscribe(); err != nil {
+			fmt.Fprintf(w.sys.Writer(), "Error: Failed to start file watcher: %v\n", err)
+			return
+		}
+		// Process DoCycle signals on a dedicated goroutine so fswatch
+		// callbacks return immediately and don't block event delivery.
+		go func() {
+			for range w.doCycleCh {
+				w.DoCycle()
+			}
+		}()
+		// Block until the fswatch subscription terminates (e.g. watched
+		// directory deleted).
+		<-w.watchTerminated
+		w.subscription.Close()
+	}
+}
+
+func (w *Watcher) subscribe() error {
+	dir := w.sys.FS().Realpath(w.sys.GetCurrentDirectory())
+	if w.debugLog != nil {
+		fmt.Fprintf(w.debugLog, "[watch] subscribing to %s via %s\n", dir, fswatch.Default().Name())
+	}
+	watch, err := fswatch.Default().WatchDirectory(dir, w.onWatchEvents,
+		fswatch.WithRecursive(),
+		fswatch.WithIgnore(shouldIgnoreWatchPath),
+	)
+	if err != nil {
+		return err
+	}
+	w.subscription = watch
+	return nil
+}
+
+func shouldIgnoreWatchPath(path string) bool {
+	p := tspath.NormalizeSlashes(path)
+	return strings.Contains(p, "/.git/") ||
+		strings.Contains(p, "/node_modules/.") ||
+		strings.Contains(p, "/.#")
+}
+
+func (w *Watcher) onWatchEvents(events []fswatch.Event, err error) {
+	if err != nil {
+		if errors.Is(err, fswatch.ErrOverflow) {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] event overflow, triggering rebuild\n")
+			}
+			w.signalDoCycle()
+			return
+		}
+		if errors.Is(err, fswatch.ErrWatchTerminated) {
+			fmt.Fprintf(w.sys.Writer(), "Warning: File watcher terminated: %v\n", err)
+			close(w.watchTerminated)
+			return
+		}
+		fmt.Fprintf(w.sys.Writer(), "Warning: File watch error: %v\n", err)
+		return
+	}
+
+	if len(events) > 0 {
+		if w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] %d event(s): ", len(events))
+			for i, e := range events {
+				if i > 0 {
+					fmt.Fprint(w.debugLog, ", ")
+				}
+				if i >= 5 {
+					fmt.Fprintf(w.debugLog, "... and %d more", len(events)-i)
+					break
+				}
+				fmt.Fprintf(w.debugLog, "%s %s", e.Kind, e.Path)
+			}
+			fmt.Fprintln(w.debugLog)
+		}
+		w.signalDoCycle()
+	}
+}
+
+// signalDoCycle sends a non-blocking signal to the DoCycle goroutine.
+// If a signal is already pending, additional signals are coalesced.
+func (w *Watcher) signalDoCycle() {
+	select {
+	case w.doCycleCh <- struct{}{}:
+		// Signal sent; the DoCycle goroutine will pick it up.
+	default:
+		// A signal is already pending; this event will be covered
+		// by the next DoCycle's filesystem scan.
 	}
 }
 
@@ -135,6 +227,9 @@ func (w *Watcher) DoCycle() {
 		return
 	}
 	if !w.fileWatcher.WatchStateUninitialized() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
+		if w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] DoCycle: no tracked files changed, skipping rebuild\n")
+		}
 		if w.testing != nil {
 			w.testing.OnProgram(w.program)
 		}
@@ -177,7 +272,6 @@ func (w *Watcher) doBuild() {
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
 	w.fileWatcher.UpdateWatchState(tfs.SeenFiles.ToSlice(), wildcardDirs)
-	w.fileWatcher.SetPollInterval(w.config.ParsedConfig.WatchOptions.WatchInterval())
 	w.configModified = false
 
 	programFiles := w.program.GetProgram().FilesByPath()

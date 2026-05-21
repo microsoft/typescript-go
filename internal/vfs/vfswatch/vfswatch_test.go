@@ -3,7 +3,6 @@ package vfswatch_test
 import (
 	"sync/atomic"
 	"testing"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -45,7 +44,7 @@ func TestHasChangesNoRedundantGetAccessibleEntries(t *testing.T) {
 	}, true)
 	cfs := &countingFS{FS: inner}
 
-	fw := vfswatch.NewFileWatcher(cfs, 10*time.Millisecond, true, func() {})
+	fw := vfswatch.NewFileWatcher(cfs)
 	fw.UpdateWatchState(
 		[]string{"/src/a.ts", "/src/b.ts", "/src/sub/c.ts", "/node_modules", "/tsconfig.json"},
 		map[string]bool{"/src": true},

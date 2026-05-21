@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -30,7 +29,7 @@ func newTestFS() vfs.FS {
 }
 
 func newWatcherWithState(fs vfs.FS) *vfswatch.FileWatcher {
-	fw := vfswatch.NewFileWatcher(fs, 10*time.Millisecond, true, func() {})
+	fw := vfswatch.NewFileWatcher(fs)
 	fw.UpdateWatchState(defaultPaths, nil)
 	return fw
 }
@@ -94,39 +93,8 @@ func TestRaceWildcardDirectoriesAccess(t *testing.T) {
 	wg.Wait()
 }
 
-// TestRacePollIntervalAccess tests for data races on the PollInterval
-// field when it is read and written from multiple goroutines.
-func TestRacePollIntervalAccess(t *testing.T) {
-	t.Parallel()
-	fs := newTestFS()
-	fw := newWatcherWithState(fs)
-
-	var wg sync.WaitGroup
-
-	for range 10 {
-		wg.Go(func() {
-			for range 500 {
-				fw.HasChangesFromWatchState()
-			}
-		})
-	}
-
-	for i := range 5 {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-			for j := range 200 {
-				fw.SetPollInterval(time.Duration(i*200+j) * time.Millisecond)
-			}
-		}(i)
-	}
-
-	wg.Wait()
-}
-
 // TestRaceMixedOperations hammers all FileWatcher operations
-// concurrently: HasChanges, UpdateWatchState, FS mutations,
-// and PollInterval writes.
+// concurrently: HasChanges, UpdateWatchState, and FS mutations.
 func TestRaceMixedOperations(t *testing.T) {
 	t.Parallel()
 	fs := newTestFS()
@@ -167,17 +135,6 @@ func TestRaceMixedOperations(t *testing.T) {
 				if j%3 == 0 {
 					_ = fs.Remove(path)
 				}
-			}
-		}(i)
-	}
-
-	// PollInterval writers
-	for i := range 2 {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-			for j := range 100 {
-				fw.SetPollInterval(time.Duration(50+j) * time.Millisecond)
 			}
 		}(i)
 	}
@@ -246,7 +203,7 @@ func FuzzFileWatcherOperations(f *testing.F) {
 		for i, op := range ops {
 			path := files[i%len(files)]
 
-			switch op % 6 {
+			switch op % 5 {
 			case 0: // Write/modify a file
 				_ = fs.WriteFile(path, fmt.Sprintf("const x = %d;", i))
 			case 1: // Remove a file
@@ -258,8 +215,6 @@ func FuzzFileWatcherOperations(f *testing.F) {
 			case 4: // Set wildcard directories and check for changes
 				fw.UpdateWatchState(files, map[string]bool{"/src": true})
 				fw.HasChangesFromWatchState()
-			case 5: // Modify PollInterval
-				fw.SetPollInterval(time.Duration(i*10) * time.Millisecond)
 			}
 		}
 	})
