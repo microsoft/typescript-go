@@ -1237,7 +1237,12 @@ func (p *Printer) emitPropertyName(node *ast.PropertyName) {
 
 	switch node.Kind {
 	case ast.KindIdentifier:
-		p.emitIdentifierName(node.AsIdentifier())
+		text := p.getTextOfNode(node, false /*includeTrivia*/)
+		if scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
+			p.emitIdentifierName(node.AsIdentifier())
+		} else {
+			p.writer.WriteStringLiteral("\"" + escapeNonAsciiString(text, QuoteCharDoubleQuote) + "\"")
+		}
 	case ast.KindPrivateIdentifier:
 		p.emitPrivateIdentifier(node.AsPrivateIdentifier())
 	case ast.KindStringLiteral:

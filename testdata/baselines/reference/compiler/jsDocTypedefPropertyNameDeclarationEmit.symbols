@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/jsDocTypedefPropertyNameDeclarationEmit.ts] ////
+
+=== button.js ===
+/**
+ * @typedef {Object} ButtonProps
+ * @property {string} label The button label
+ * @property {string | null | undefined} [data-test-name] Test automation attribute
+ * @property {string | null | undefined} [aria-label] Accessibility label
+ */
+
+/**
+ * @param {ButtonProps} props
+ * @returns {ButtonProps}
+ */
+export function Button(props) {
+>Button : Symbol(Button, Decl(button.js, 0, 0))
+>props : Symbol(props, Decl(button.js, 11, 23))
+
+    return props;
+>props : Symbol(props, Decl(button.js, 11, 23))
+}
+
