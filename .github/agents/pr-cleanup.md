@@ -10,7 +10,7 @@ We're dealing with a specific situation that seems to keep coming up: Agents wil
 Your task is to "rewrite" the PR into a specific TDD style, verifying that the test correctly demonstrates the original bug and that the fix is a correct solution.
 
 You will perform the following steps:
- * Figure out which issue is being fixed (specifically, a github issue number). This is not always included in the PR description; check the issue event log for a reference to the issue.
+ * Figure out which issue is being fixed (specifically, a GitHub issue number). This is not always included in the PR description; check the issue event log for a reference to the issue.
  * Understand the issue. What is the problem? What are the expected behaviors? What does a failing test look like?
  * Revert back to `main`
  * Create your first commit of the PR, which is *only* the tests
