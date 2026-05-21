@@ -148,10 +148,14 @@ func (fw *FileWatcher) hasChanges(baseline map[string]WatchEntry) bool {
 }
 
 // HasChangesFromWatchState compares the current filesystem against the
-// stored watch state. Safe for concurrent use.
+// stored watch state. Returns true if the watch state has not been
+// initialized yet. Safe for concurrent use.
 func (fw *FileWatcher) HasChangesFromWatchState() bool {
 	fw.mu.Lock()
 	ws := fw.watchState
 	fw.mu.Unlock()
+	if ws == nil {
+		return true
+	}
 	return fw.hasChanges(ws)
 }

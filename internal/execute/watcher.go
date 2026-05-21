@@ -142,9 +142,10 @@ func (w *Watcher) start() {
 			}
 		}()
 		// Block until the fswatch subscription terminates (e.g. watched
-		// directory deleted).
+		// directory deleted), then clean up.
 		<-w.watchTerminated
 		w.subscription.Close()
+		close(w.doCycleCh)
 	}
 }
 
@@ -166,7 +167,8 @@ func (w *Watcher) subscribe() error {
 
 func shouldIgnoreWatchPath(path string) bool {
 	p := tspath.NormalizeSlashes(path)
-	return strings.Contains(p, "/.git/") ||
+	return strings.HasSuffix(p, "/.git") ||
+		strings.Contains(p, "/.git/") ||
 		strings.Contains(p, "/node_modules/.") ||
 		strings.Contains(p, "/.#")
 }
