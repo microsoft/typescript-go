@@ -1,0 +1,1336 @@
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 10
+        },
+        "end": {
+          "line": 3,
+          "character": 13
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "Foo.foo",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 10
+        },
+        "end": {
+          "line": 7,
+          "character": 13
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "Bar.foo",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 2,
+    "_vs_definitionId": 1,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 61,
+          "character": 4
+        },
+        "end": {
+          "line": 61,
+          "character": 7
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 14,
+          "character": 3
+        },
+        "end": {
+          "line": 14,
+          "character": 7
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "IFoo.ifoo",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 17,
+          "character": 3
+        },
+        "end": {
+          "line": 17,
+          "character": 7
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "IBar.ifoo",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 2,
+    "_vs_definitionId": 1,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 64,
+          "character": 4
+        },
+        "end": {
+          "line": 64,
+          "character": 8
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 23,
+          "character": 3
+        },
+        "end": {
+          "line": 23,
+          "character": 8
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "IFoo.icfoo",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 26,
+          "character": 10
+        },
+        "end": {
+          "line": 26,
+          "character": 15
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "Bar.icfoo",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 2,
+    "_vs_definitionId": 1,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 67,
+          "character": 10
+        },
+        "end": {
+          "line": 67,
+          "character": 15
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 33,
+          "character": 3
+        },
+        "end": {
+          "line": 33,
+          "character": 8
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "property",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "IBase.field",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "string",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 38,
+          "character": 3
+        },
+        "end": {
+          "line": 38,
+          "character": 8
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "property",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "IBlah.field",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "string",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 2,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 42,
+          "character": 3
+        },
+        "end": {
+          "line": 42,
+          "character": 8
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "property",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "IBlah2.field",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "string",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 3,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 50,
+          "character": 10
+        },
+        "end": {
+          "line": 50,
+          "character": 15
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "property",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "Bar.field",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "string",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 4,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 55,
+          "character": 10
+        },
+        "end": {
+          "line": 55,
+          "character": 15
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "property",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "property name",
+          "Text": "BarBlah.field",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ": ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "string",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 5,
+    "_vs_definitionId": 4,
+    "_vs_kind": [
+      4
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 70,
+          "character": 4
+        },
+        "end": {
+          "line": 70,
+          "character": 9
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 34,
+          "character": 3
+        },
+        "end": {
+          "line": 34,
+          "character": 9
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "IBase.method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 46,
+          "character": 3
+        },
+        "end": {
+          "line": 46,
+          "character": 9
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "IDerived.method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 2,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 51,
+          "character": 10
+        },
+        "end": {
+          "line": 51,
+          "character": 16
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "method name",
+          "Text": "Bar.method",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ")",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ":",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "void",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ";",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 3,
+    "_vs_definitionId": 2,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForOverridesVS.ts",
+      "range": {
+        "start": {
+          "line": 71,
+          "character": 10
+        },
+        "end": {
+          "line": 71,
+          "character": 16
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]

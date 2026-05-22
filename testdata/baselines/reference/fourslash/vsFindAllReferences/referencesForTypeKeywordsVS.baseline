@@ -1,0 +1,595 @@
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 10
+        },
+        "end": {
+          "line": 0,
+          "character": 11
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "interface ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "interface name",
+          "Text": "I",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_definitionId": 0,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 21
+        },
+        "end": {
+          "line": 1,
+          "character": 22
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 11
+        },
+        "end": {
+          "line": 2,
+          "character": 12
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "type parameter",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "U",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": " in ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "type ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "identifier",
+          "Text": "A1",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "<",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ", ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "U",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ">",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_definitionId": 0,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 26
+        },
+        "end": {
+          "line": 2,
+          "character": 27
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 29
+        },
+        "end": {
+          "line": 3,
+          "character": 30
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "type parameter",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "U",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 16
+        },
+        "end": {
+          "line": 4,
+          "character": 17
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "type parameter",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "P",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": " extends ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "keyof",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 8
+        },
+        "end": {
+          "line": 5,
+          "character": 9
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "type parameter",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": " in ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "type ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "identifier",
+          "Text": "A4",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "<",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ">",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_definitionId": 0,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 5,
+          "character": 19
+        },
+        "end": {
+          "line": 5,
+          "character": 20
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 8
+        },
+        "end": {
+          "line": 6,
+          "character": 9
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "(",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "type parameter",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ") ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": " in ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "type ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "identifier",
+          "Text": "A5",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": "<",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "type parameter name",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "punctuation",
+          "Text": ">",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_definitionId": 0,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///referencesForTypeKeywordsVS.ts",
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 22
+        },
+        "end": {
+          "line": 6,
+          "character": 23
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]

@@ -1,0 +1,240 @@
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_definitionId": 1,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 20
+        },
+        "end": {
+          "line": 2,
+          "character": 21
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///node_modules/foo/index.d.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 12
+        },
+        "end": {
+          "line": 0,
+          "character": 13
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "type ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "identifier",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "operator",
+          "Text": " = ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "number",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_definitionId": 1,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 20
+        },
+        "end": {
+          "line": 2,
+          "character": 21
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///node_modules/foo/index.d.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 12
+        },
+        "end": {
+          "line": 0,
+          "character": 13
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "type ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "identifier",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "operator",
+          "Text": " = ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "number",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]
+
+
+
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_definitionId": 1,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///a.ts",
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 20
+        },
+        "end": {
+          "line": 2,
+          "character": 21
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  },
+  {
+    "_vs_id": 1,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///node_modules/foo/index.d.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 12
+        },
+        "end": {
+          "line": 0,
+          "character": 13
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "type ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "identifier",
+          "Text": "T",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "operator",
+          "Text": " = ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "number",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]

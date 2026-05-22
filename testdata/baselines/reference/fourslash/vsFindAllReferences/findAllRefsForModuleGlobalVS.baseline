@@ -1,0 +1,85 @@
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_definitionId": 2,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///b.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 22
+        },
+        "end": {
+          "line": 0,
+          "character": 25
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  },
+  {
+    "_vs_id": 1,
+    "_vs_definitionId": 2,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///b.ts",
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 19
+        },
+        "end": {
+          "line": 1,
+          "character": 22
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  },
+  {
+    "_vs_id": 2,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///node_modules/foo/index.d.ts",
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 0
+        },
+        "end": {
+          "line": 0,
+          "character": 19
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "module ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "module name",
+          "Text": "\"foo\"",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  }
+]

@@ -1,0 +1,57 @@
+// === vsFindAllReferences ===
+[
+  {
+    "_vs_id": 0,
+    "_vs_kind": [
+      17
+    ],
+    "_vs_location": {
+      "uri": "file:///src/parser.js",
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 43
+        },
+        "end": {
+          "line": 13,
+          "character": 44
+        }
+      }
+    },
+    "_vs_definitionText": {
+      "Runs": [
+        {
+          "ClassificationTypeName": "string",
+          "Text": "@",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        }
+      ],
+      "_vs_type": "ClassifiedTextElement"
+    },
+    "_vs_projectName": "/dev/null/inferred",
+    "_vs_containingType": ""
+  },
+  {
+    "_vs_id": 1,
+    "_vs_definitionId": 0,
+    "_vs_kind": [
+      3
+    ],
+    "_vs_location": {
+      "uri": "file:///src/parser.js",
+      "range": {
+        "start": {
+          "line": 13,
+          "character": 43
+        },
+        "end": {
+          "line": 13,
+          "character": 44
+        }
+      }
+    },
+    "_vs_projectName": "/dev/null/inferred"
+  }
+]

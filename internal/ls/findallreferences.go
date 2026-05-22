@@ -703,7 +703,7 @@ func (l *LanguageService) symbolAndEntriesToVsReferences(ctx context.Context, pa
 			continue
 		}
 
-		// Convert definition to info (matching Strada's definitionToReferencedSymbolDefinitionInfo)
+		// Convert definition to info
 		defInfo := l.definitionToReferencedSymbolDefinitionInfo(ctx, s.definition, data.OriginalNode, vsCapability)
 		if defInfo == nil {
 			continue
@@ -753,16 +753,14 @@ func (l *LanguageService) symbolAndEntriesToVsReferences(ctx context.Context, pa
 	return lsproto.VsReferencesResponse{VsReferenceItems: &items}, nil
 }
 
-// referencedSymbolDefinitionInfo holds the computed info for a definition,
-// matching Strada's ReferencedSymbolDefinitionInfo structure.
+// referencedSymbolDefinitionInfo holds the computed info for a definition
 type referencedSymbolDefinitionInfo struct {
 	node        *ast.Node
 	location    lsproto.Location
 	displayText *lsproto.ClassifiedTextElement
 }
 
-// definitionToReferencedSymbolDefinitionInfo converts a Definition to display info.
-// Equivalent to Strada's definitionToReferencedSymbolDefinitionInfo (findAllReferences.ts:622).
+// definitionToReferencedSymbolDefinitionInfo converts a Definition to display info
 func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context.Context, def *Definition, originalNode *ast.Node, vsCapability bool) *referencedSymbolDefinitionInfo {
 	switch def.Kind {
 	case definitionKindSymbol:
@@ -770,10 +768,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 		if symbol == nil {
 			return nil
 		}
-		// Get display parts (Strada: getDefinitionKindAndDisplayParts)
+		// Get display parts
 		element := l.getDefinitionKindAndDisplayParts(ctx, symbol, originalNode, vsCapability)
 
-		// Get the definition node: getNameOfDeclaration(declaration) || declaration
+		// Get the definition node
 		var node *ast.Node
 		if len(symbol.Declarations) > 0 {
 			decl := symbol.Declarations[0]
@@ -829,7 +827,6 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 		if symbol == nil {
 			return nil
 		}
-		// Strada calls getSymbolDisplayPartsDocumentationAndSymbolKind for "this"
 		element := l.getDefinitionKindAndDisplayParts(ctx, symbol, node, vsCapability)
 		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
 		return &referencedSymbolDefinitionInfo{
@@ -854,7 +851,7 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 		}
 
 	case definitionKindTripleSlashReference:
-		if def.tripleSlashFileRef == nil {
+		if def.tripleSlashFileRef == nil || def.tripleSlashFileRef.file == nil {
 			return nil
 		}
 		node := def.tripleSlashFileRef.file.AsNode()
@@ -874,24 +871,14 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 }
 
 // getDefinitionKindAndDisplayParts returns the classified display text for a symbol definition.
-// Equivalent to Strada's getDefinitionKindAndDisplayParts (findAllReferences.ts:704):
-//
-//	const meaning = Core.getIntersectingMeaningFromDeclarations(node, symbol);
-//	const enclosingDeclaration = symbol.declarations?.[0] || node;
-//	const { displayParts } = SymbolDisplay.getSymbolDisplayPartsDocumentationAndSymbolKind(
-//	    checker, symbol, enclosingDeclaration.getSourceFile(), enclosingDeclaration, enclosingDeclaration, meaning);
-//	return { displayParts, kind: symbolKind };
 func (l *LanguageService) getDefinitionKindAndDisplayParts(ctx context.Context, symbol *ast.Symbol, originalNode *ast.Node, vsCapability bool) *lsproto.ClassifiedTextElement {
 	program := l.GetProgram()
 	c, done := program.GetTypeChecker(ctx)
 	defer done()
 
-	// Strada: const meaning = Core.getIntersectingMeaningFromDeclarations(node, symbol);
 	meaning := getIntersectingMeaningFromDeclarations(originalNode, symbol, ast.SemanticMeaningAll)
 
-	// Get display parts using getQuickInfoAndDeclarationAtLocation (equivalent to
-	// Strada's getSymbolDisplayPartsDocumentationAndSymbolKindWorker).
-	info := getQuickInfoAndDeclarationAtLocation(c, symbol, originalNode, nil /*vc*/, vsCapability, meaning)
+	info := getQuickInfoAndDeclarationAtLocation(c, symbol, originalNode, nil /*vsCapability */, vsCapability, meaning)
 
 	if vsCapability {
 		return &lsproto.ClassifiedTextElement{Runs: info.displayParts.GetRuns(), VSType: "ClassifiedTextElement"}
@@ -956,7 +943,7 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 }
 
 func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
-	if target == nil {
+	if node == nil || target == nil {
 		return false
 	}
 
