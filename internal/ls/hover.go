@@ -794,16 +794,14 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			dpw.WriteKeyword("type ")
 			writeSymbolClassified(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags)
 			writeTypeParams(c.GetTypeAliasTypeParameters(symbol))
-			if len(symbol.Declarations) != 0 {
-				dpw.WriteOperator(" = ")
-				var typeAliasType *checker.Type
-				if node.Parent != nil && ast.IsConstTypeReference(node.Parent) {
-					typeAliasType = c.GetTypeAtLocation(node.Parent)
-				} else {
-					typeAliasType = c.GetDeclaredTypeOfSymbol(symbol)
-				}
-				writeTypeClassified(typeAliasType, container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias)
+			dpw.WriteOperator(" = ")
+			var typeAliasType *checker.Type
+			if node.Parent != nil && ast.IsConstTypeReference(node.Parent) {
+				typeAliasType = c.GetTypeAtLocation(node.Parent)
+			} else {
+				typeAliasType = c.GetDeclaredTypeOfSymbol(symbol)
 			}
+			writeTypeClassified(typeAliasType, container, typeFormatFlags|checker.TypeFormatFlagsInTypeAlias)
 			setDeclaration(core.Find(symbol.Declarations, ast.IsTypeOrJSTypeAliasDeclaration))
 		}
 		if flags&ast.SymbolFlagsSignature != 0 {

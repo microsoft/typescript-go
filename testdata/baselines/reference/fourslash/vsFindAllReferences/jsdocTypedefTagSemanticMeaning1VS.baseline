@@ -195,6 +195,34 @@
           "MarkerTagType": null,
           "Style": 0,
           "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "operator",
+          "Text": " = ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "text",
+          "Text": "/*unresolved*/",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "whitespace",
+          "Text": " ",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
+        },
+        {
+          "ClassificationTypeName": "keyword",
+          "Text": "any",
+          "MarkerTagType": null,
+          "Style": 0,
+          "_vs_type": "ClassifiedTextRun"
         }
       ],
       "_vs_type": "ClassifiedTextElement"
