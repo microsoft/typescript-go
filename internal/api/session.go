@@ -1839,6 +1839,12 @@ func (s *Session) resolveNodeHandle(program *compiler.Program, handle Handle[ast
 
 	// Verify the kind and end match
 	if node.Kind != kind || node.End() != end {
+		// Try to find the exact node by walking ancestors
+		for parent := node.Parent; parent != nil && parent.Kind != ast.KindSourceFile; parent = parent.Parent {
+			if parent.Pos() == pos && parent.End() == end && parent.Kind == kind {
+				return parent, nil
+			}
+		}
 		// Try to find the exact node by walking children
 		var found *ast.Node
 		node.ForEachChild(func(child *ast.Node) bool {
