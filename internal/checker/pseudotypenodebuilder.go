@@ -308,22 +308,24 @@ func (b *NodeBuilderImpl) pseudoParametersToNodeList(params []*pseudochecker.Pse
 func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter) *ast.Node {
 	var dotDotDot *ast.Node
 	var questionMark *ast.Node
-	if p.Declaration.DotDotDotToken != nil {
+	if p.Rest {
 		dotDotDot = b.f.NewToken(ast.KindDotDotDotToken)
 	}
-	if p.Declaration.QuestionToken != nil || p.Declaration.Initializer != nil {
+	if p.Optional {
 		questionMark = b.f.NewToken(ast.KindQuestionToken)
 	}
 	parameter := b.f.NewParameterDeclaration(
 		nil,
 		dotDotDot,
 		// matches strada behavior of always reserializing param names from scratch
-		b.parameterToParameterDeclarationName(p.Declaration.Symbol, p.Declaration.AsNode()),
+		b.parameterToParameterDeclarationName(p.Name.Parent.Symbol(), p.Name.Parent),
 		questionMark,
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
-	b.setCommentRange(parameter, p.Declaration.AsNode())
+	if original := p.Name.Parent; ast.IsParameterDeclaration(original) {
+		b.setCommentRange(parameter, original)
+	}
 	return parameter
 }
 
@@ -461,8 +463,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 				for i, p := range d.Parameters {
 					targetParam := targetSig.parameters[i]
 					paramType := b.ch.getTypeOfParameter(targetParam)
-					isOptional := p.Declaration.QuestionToken != nil || p.Declaration.Initializer != nil
-					if !b.pseudoTypeEquivalentToType(p.Type, paramType, isOptional, false) {
+					if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
 						if reportErrors {
 							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
 						}
@@ -544,17 +545,16 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		}
 		for i, p := range pt.Parameters {
 			targetParam := targetSig.parameters[i]
-			isOptional := p.Declaration.QuestionToken != nil || p.Declaration.Initializer != nil
-			if isOptional != b.ch.isOptionalParameter(targetParam.ValueDeclaration) {
+			if p.Optional != b.ch.isOptionalParameter(targetParam.ValueDeclaration) {
 				if reportErrors {
-					b.ctx.tracker.ReportInferenceFallback(p.Declaration.AsNode())
+					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
 				}
 				return false
 			}
 			paramType := b.ch.getTypeOfParameter(targetParam)
-			if !b.pseudoTypeEquivalentToType(p.Type, paramType, isOptional, false) {
+			if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
 				if reportErrors {
-					b.ctx.tracker.ReportInferenceFallback(p.Declaration.AsNode())
+					b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
 				}
 				return false
 			}
