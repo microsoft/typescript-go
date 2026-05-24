@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func (b *NodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
@@ -17,13 +18,37 @@ func (b *NodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
 	return b.tryReuseExistingNodeHelper(node)
 }
 
-// a wrapper around `reuseNode` that handles renaming `new` to `"new"` so we don't accidentally emit constructor signatures when we don't mean to
+func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
+	return b.reuseNode(node)
+}
+
+// a wrapper around `reuseNode` for property names. It handles renaming `new` to `"new"` so we don't
+// accidentally emit constructor signatures when we don't mean to, and normalizes string-literal
+// property names whose text is a valid identifier into identifiers, matching the behavior of
+// `createPropertyNameNodeForIdentifierOrLiteral` used when constructing fresh property name nodes
+// (so that reused names emit consistently regardless of whether their containing type was reused
+// from source or rebuilt from a type).
 func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
 	res := b.reuseNode(node)
-	if res != nil && res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
+	if res == nil {
+		return res
+	}
+	if res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
 		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
 		b.e.SetOriginal(str, res)
 		return b.setTextRange(str, res)
+	}
+	if res.Kind == ast.KindStringLiteral {
+		text := res.AsStringLiteral().Text
+		// Skip normalization for "new" so that reused names like `"new"(): void` on a
+		// method signature are not converted to an identifier (which would become a
+		// construct signature). This mirrors the `isMethodNamedNew` guard in
+		// createPropertyNameNodeForIdentifierOrLiteral.
+		if text != "new" && scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
+			ident := b.newIdentifier(text, nil)
+			b.e.SetOriginal(ident, res)
+			return b.setTextRange(ident, res)
+		}
 	}
 	return res
 }
@@ -34,6 +59,12 @@ func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	}
 	r := b.reuseNode(node)
 	if r != nil {
+		// After successful reuse during hover, probe the reused AST for expandable
+		// type references so canIncreaseExpansionDepth is set even though
+		// typeToTypeNode (and shouldExpandType) were never called.
+		if b.ctx.maxExpansionDepth >= 0 && !b.ctx.canIncreaseExpansionDepth {
+			b.walkNodeForExpandability(node)
+		}
 		return r
 	}
 	b.ctx.tracker.ReportInferenceFallback(node)
@@ -41,14 +72,38 @@ func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
 	return b.typeToTypeNode(t)
 }
 
+// walkNodeForExpandability walks a reused AST node tree, calling checkTypeExpandability
+// on each type reference, type predicate, or import type node.
+// Short-circuits once canIncreaseExpansionDepth is set.
+func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
+	if b.ctx.canIncreaseExpansionDepth || node == nil {
+		return
+	}
+	// Check these explicitly so we look into type arguments wehther or not they are in the tree or not.
+	if ast.IsTypeReferenceNode(node) || ast.IsExpressionWithTypeArguments(node) || ast.IsTypePredicateNode(node) || ast.IsImportTypeNode(node) {
+		t := b.getTypeFromTypeNode(node, false)
+		if t != nil {
+			b.checkTypeExpandability(t)
+			if b.ctx.canIncreaseExpansionDepth {
+				return
+			}
+		}
+	}
+	node.ForEachChild(func(child *ast.Node) bool {
+		b.walkNodeForExpandability(child)
+		return b.ctx.canIncreaseExpansionDepth
+	})
+}
+
 type recoveryBoundary struct {
-	ctx                 *NodeBuilderContext
-	hadError            bool
-	deferredReports     []func()
-	oldTracker          nodebuilder.SymbolTracker
-	oldTrackedSymbols   []*TrackedSymbolArgs
-	trackedSymbols      []*TrackedSymbolArgs
-	oldEncounteredError bool
+	ctx                  *NodeBuilderContext
+	hadError             bool
+	deferredReports      []func()
+	oldTracker           nodebuilder.SymbolTracker
+	oldTrackedSymbols    []*TrackedSymbolArgs
+	trackedSymbols       []*TrackedSymbolArgs
+	oldEncounteredError  bool
+	oldApproximateLength int
 }
 
 func (b *recoveryBoundary) markError(f func()) {
@@ -139,7 +194,7 @@ func newWrappingTracker(inner nodebuilder.SymbolTracker, bound *recoveryBoundary
 
 func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	b.ch.checkNotCanceled()
-	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError}
+	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError, oldApproximateLength: b.ctx.approximateLength}
 	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound))
 	b.ctx.tracker = newTracker
 	b.ctx.trackedSymbols = nil
@@ -150,6 +205,7 @@ func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 	b.ctx.tracker = bound.oldTracker
 	b.ctx.trackedSymbols = bound.oldTrackedSymbols
 	b.ctx.encounteredError = bound.oldEncounteredError
+	b.ctx.approximateLength = bound.oldApproximateLength
 
 	for _, f := range bound.deferredReports {
 		f()
@@ -331,23 +387,24 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if resultObjectType == nil {
 			return nil
 		}
-		return b.f.UpdateIndexedAccessTypeNode(node.AsIndexedAccessTypeNode(), resultObjectType, visitor.VisitNode(node.AsIndexedAccessTypeNode().IndexType))
+		return b.setTextRange(b.f.UpdateIndexedAccessTypeNode(node.AsIndexedAccessTypeNode(), resultObjectType, visitor.VisitNode(node.AsIndexedAccessTypeNode().IndexType)), node)
 	}
 	tryVisitKeyOf := func(node *ast.Node) *ast.Node {
-		t := tryVisitSimpleTypeNode(node.AsTypeOperatorNode().Type)
+		to := node.AsTypeOperatorNode()
+		t := tryVisitSimpleTypeNode(to.Type)
 		if t == nil {
 			return nil
 		}
-		return b.f.UpdateTypeOperatorNode(node.AsTypeOperatorNode(), t)
+		return b.setTextRange(b.f.UpdateTypeOperatorNode(to, to.Operator, t), node)
 	}
 	tryVisitTypeQuery := func(node *ast.Node) *ast.Node {
 		introducesError, exprName, _ := trackExistingEntityName(node.AsTypeQueryNode().ExprName, nil)
 		if !introducesError {
-			return b.f.UpdateTypeQueryNode(
+			return b.setTextRange(b.f.UpdateTypeQueryNode(
 				node.AsTypeQueryNode(),
 				exprName,
 				visitor.VisitNodes(node.AsTypeQueryNode().TypeArguments),
-			)
+			), node)
 		}
 
 		serializedName := b.serializeTypeName(node.AsTypeQueryNode().ExprName, true, visitor.VisitNodes(node.AsTypeQueryNode().TypeArguments))
@@ -374,11 +431,11 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		introducesError, newName, _ := trackExistingEntityName(node.AsTypeReferenceNode().TypeName, nil)
 		if !introducesError {
 			typeArguments := visitor.VisitNodes(node.AsTypeReferenceNode().TypeArguments)
-			return b.f.UpdateTypeReferenceNode(
+			return b.setTextRange(b.f.UpdateTypeReferenceNode(
 				node.AsTypeReferenceNode(),
 				newName,
 				typeArguments,
-			)
+			), node)
 		} else {
 			serializedName := b.serializeTypeName(node.AsTypeReferenceNode().TypeName, false, visitor.VisitNodes(node.AsTypeReferenceNode().TypeArguments))
 			if serializedName != nil {
@@ -401,7 +458,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return tryVisitKeyOf(innerNode)
 			}
 		}
-		return visitor.VisitEachChild(node)
+		return visitor.VisitNode(node)
 	}
 	visitExistingNodeTreeSymbolsWorker := func(node *ast.Node) *ast.Node {
 		factory := b.f
@@ -446,6 +503,9 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if node.Kind == ast.KindJSDocTypeLiteral {
 			var members []*ast.Node
 			for _, t := range node.AsJSDocTypeLiteral().JSDocPropertyTags {
+				if t.Kind != ast.KindJSDocPropertyTag && t.Kind != ast.KindJSDocParameterTag {
+					continue
+				}
 				n := t.Name()
 				var targetName *ast.Node
 				if ast.IsIdentifier(n) {
@@ -495,12 +555,12 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if ast.IsTypeParameterDeclaration(node) {
 			_, newName, _ := trackExistingEntityName(node.Name(), nil)
 			return factory.UpdateTypeParameterDeclaration(
-				node.AsTypeParameter(),
+				node.AsTypeParameterDeclaration(),
 				visitor.VisitModifiers(node.Modifiers()),
 				newName,
-				visitor.VisitNode(node.AsTypeParameter().Constraint),
-				visitor.VisitNode(node.AsTypeParameter().Expression),
-				visitor.VisitNode(node.AsTypeParameter().DefaultType),
+				visitor.VisitNode(node.AsTypeParameterDeclaration().Constraint),
+				visitor.VisitNode(node.AsTypeParameterDeclaration().Expression),
+				visitor.VisitNode(node.AsTypeParameterDeclaration().DefaultType),
 			)
 		}
 		if ast.IsIndexedAccessTypeNode(node) {
@@ -592,7 +652,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return nil
 			}
 		}
-		if (ast.IsFunctionLike(node) && node.Type() == nil) || (ast.IsPropertyDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsPropertySignatureDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsParameter(node) && node.Type() == nil && node.Initializer() == nil) {
+		if (ast.IsFunctionLike(node) && node.Type() == nil) || (ast.IsPropertyDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsPropertySignatureDeclaration(node) && node.Type() == nil && node.Initializer() == nil) || (ast.IsParameterDeclaration(node) && node.Type() == nil && node.Initializer() == nil) {
 			visited := visitor.VisitEachChild(node)
 			if visited == node {
 				visited = b.setTextRange(node.Clone(factory), node)
@@ -743,10 +803,16 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			return res
 		}
 
-		if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
-			// set single quote on string literals
+		if ast.IsStringLiteralLike(node) {
+			// Preserve the original characters of the literal (e.g. emojis) in declaration emit
+			// rather than escaping them as ASCII Unicode escapes. Mirrors TypeScript's behavior
+			// for synthesized string literal types in the node builder (checker.ts:6853).
 			c := node.Clone(b.f)
-			c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
+				// set single quote on string literals
+				c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			}
+			b.e.AddEmitFlags(c, printer.EFNoAsciiEscaping)
 			return c
 		}
 

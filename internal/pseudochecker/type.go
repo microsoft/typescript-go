@@ -94,18 +94,25 @@ func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*Ps
 // PseudoTypeInferred directly encodes the type referred to by a given Expression
 // These represent cases where the expression was too complex for the pseudochecker.
 // Most of the time, these locations will produce an error under ID.
+// Specific error nodes (shorthand properties, spread assignments, etc.) are stored on the
+// ErrorNodes field, collected during pseudochecker construction.
 type PseudoTypeInferred struct {
 	PseudoTypeBase
 	Expression *ast.Node
+	ErrorNodes []*ast.Node
 }
 
 func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
 	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
 }
 
+func NewPseudoTypeInferredWithErrors(expr *ast.Node, errorNodes []*ast.Node) *PseudoType {
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, ErrorNodes: errorNodes})
+}
+
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }
 
-// PseudoTypeNoResult is anlogous to PseudoTypeInferred in that it references a case
+// PseudoTypeNoResult is analogous to PseudoTypeInferred in that it references a case
 // where the type was too complex for the pseudochecker. Rather than an expression, however,
 // it is referring to the return type of a signature or declaration.
 type PseudoTypeNoResult struct {
@@ -159,12 +166,14 @@ func (t *PseudoType) AsPseudoTypeUnion() *PseudoTypeUnion {
 }
 
 type PseudoParameter struct {
-	Declaration *ast.ParameterDeclaration
+	Rest     bool
+	Name     *ast.Node
+	Optional bool
 	Type        *PseudoType
 }
 
-func NewPseudoParameter(declaration *ast.ParameterDeclaration, t *PseudoType) *PseudoParameter {
-	return &PseudoParameter{Declaration: declaration, Type: t}
+func NewPseudoParameter(isRest bool, name *ast.Node, isOptional bool, t *PseudoType) *PseudoParameter {
+	return &PseudoParameter{Rest: isRest, Name: name, Optional: isOptional, Type: t}
 }
 
 // PseudoTypeSingleCallSignature represents an object type with a single call signature, like an arrow or function expression
@@ -251,16 +260,18 @@ func newPseudoObjectElement(kind PseudoObjectElementKind, name *ast.Node, option
 
 type PseudoObjectMethod struct {
 	PseudoObjectElement
-	Signature  *ast.Node
-	Parameters []*PseudoParameter
-	ReturnType *PseudoType
+	Signature      *ast.Node
+	TypeParameters []*ast.TypeParameterDeclaration
+	Parameters     []*PseudoParameter
+	ReturnType     *PseudoType
 }
 
-func NewPseudoObjectMethod(signature *ast.Node, name *ast.Node, optional bool, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
+func NewPseudoObjectMethod(signature *ast.Node, name *ast.Node, optional bool, typeParameters []*ast.TypeParameterDeclaration, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
 	return newPseudoObjectElement(PseudoObjectElementKindMethod, name, optional, &PseudoObjectMethod{
-		Signature:  signature,
-		Parameters: parameters,
-		ReturnType: returnType,
+		Signature:      signature,
+		TypeParameters: typeParameters,
+		Parameters:     parameters,
+		ReturnType:     returnType,
 	})
 }
 

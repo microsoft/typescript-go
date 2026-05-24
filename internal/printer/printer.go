@@ -134,11 +134,11 @@ type Printer struct {
 	declarationListContainerEnd       int
 	detachedCommentsInfo              core.Stack[detachedCommentsInfo]
 	commentsDisabled                  bool
-	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
+	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalTypeNode or InferTypeNode
 	nameGenerator                     NameGenerator
 	makeFileLevelOptimisticUniqueName func(string) string
-	commentStatePool                  core.Pool[commentState]
-	sourceMapStatePool                core.Pool[sourceMapState]
+	commentStateArena                 core.Arena[commentState]
+	sourceMapStateArena               core.Arena[sourceMapState]
 }
 
 type detachedCommentsInfo struct {
@@ -233,12 +233,13 @@ func (p *Printer) getTextOfNode(node *ast.Node, includeTrivia bool) string {
 		}
 	}
 
+	canUseSourceFile := p.currentSourceFile != nil && node.Parent != nil && !ast.NodeIsSynthesized(node)
+
 	switch node.Kind {
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
 		ast.KindJsxNamespacedName:
-		// !!! If `node` is not a parse tree node, verify its original node comes from the same source file
-		if p.currentSourceFile == nil || node.Parent == nil || ast.NodeIsSynthesized(node) {
+		if !canUseSourceFile || ast.GetSourceFileOfNode(node) != p.emitContext.MostOriginal(p.currentSourceFile.AsNode()).AsSourceFile() {
 			return node.Text()
 		}
 	case ast.KindStringLiteral,
@@ -546,7 +547,7 @@ func (p *Printer) getLeadingLineTerminatorCount(parentNode *ast.Node, firstChild
 					},
 				)
 			}
-			return core.IfElse(rangeStartPositionsAreOnSameLine(parentNode.Loc, firstChild.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(RangeStartPositionsAreOnSameLine(parentNode.Loc, firstChild.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.shouldEmitOnNewLine(firstChild, format) {
 			return 1
@@ -564,7 +565,7 @@ func (p *Printer) getSeparatingLineTerminatorCount(previousNode *ast.Node, nextN
 			// JsxText will be written with its leading whitespace, so don't add more manually.
 			return 0
 		} else if p.currentSourceFile != nil && !ast.NodeIsSynthesized(previousNode) && !ast.NodeIsSynthesized(nextNode) {
-			if p.Options.PreserveSourceNewlines && siblingNodePositionsAreComparable(previousNode, nextNode) {
+			if p.Options.PreserveSourceNewlines && siblingNodePositionsAreComparable(p.emitContext, previousNode, nextNode) {
 				return p.getEffectiveLines(
 					func(includeComments bool) int {
 						return getLinesBetweenRangeEndAndRangeStart(
@@ -575,7 +576,7 @@ func (p *Printer) getSeparatingLineTerminatorCount(previousNode *ast.Node, nextN
 						)
 					},
 				)
-			} else if !p.Options.PreserveSourceNewlines && originalNodesHaveSameParent(previousNode, nextNode) {
+			} else if !p.Options.PreserveSourceNewlines && originalNodesHaveSameParent(p.emitContext, previousNode, nextNode) {
 				// If `preserveSourceNewlines` is `false` we do not intend to preserve the effective lines between the
 				// previous and next node. Instead we naively check whether nodes are on separate lines within the
 				// same node parent. If so, we intend to preserve a single line terminator. This is less precise and
@@ -763,7 +764,7 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 		return true
 	}
 
-	if body.Multiline {
+	if body.MultiLine {
 		return false
 	}
 
@@ -992,6 +993,9 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 	if p.Options.NeverAsciiEscape {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
 	}
+	if p.Options.TerminateUnterminatedLiterals {
+		flags |= getLiteralTextFlagsTerminateUnterminatedLiterals
+	}
 
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
@@ -1197,6 +1201,10 @@ func (p *Printer) emitEntityName(node *ast.EntityName) {
 		p.emitIdentifierReference(node.AsIdentifier())
 	case ast.KindQualifiedName:
 		p.emitQualifiedName(node.AsQualifiedName())
+	case ast.KindPropertyAccessExpression:
+		// TypeQuery nodes may have PropertyAccessExpression as exprName (e.g. typeof foo.x).
+		// TS's emitter handles this via generic emit(); we dispatch to expression emitter here.
+		p.emitExpression(node, ast.OperatorPrecedenceDisallowComma)
 	default:
 		panic(fmt.Sprintf("unexpected EntityName: %v", node.Kind))
 	}
@@ -1424,11 +1432,11 @@ func (p *Printer) emitTypeParameter(node *ast.TypeParameterDeclaration) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitTypeParameterNode(node *ast.TypeParameterDeclarationNode) {
+func (p *Printer) emitTypeParameterDeclarationNode(node *ast.TypeParameterDeclarationNode) {
 	// NOTE: QuickInfo uses TypeFormatFlagsWriteTypeArgumentsOfSignature to instruct the NodeBuilder to store type arguments
 	// (i.e. type nodes) instead of type parameter declarations in the type parameter list.
 	if ast.IsTypeParameterDeclaration(node) {
-		p.emitTypeParameter(node.AsTypeParameter())
+		p.emitTypeParameter(node.AsTypeParameterDeclaration())
 	} else {
 		p.emitTypeArgument(node)
 	}
@@ -1456,7 +1464,7 @@ func (p *Printer) emitParameter(node *ast.ParameterDeclaration) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitParameterNode(node *ast.ParameterDeclarationNode) {
+func (p *Printer) emitParameterDeclarationNode(node *ast.ParameterDeclarationNode) {
 	p.emitParameter(node.AsParameterDeclaration())
 }
 
@@ -1482,7 +1490,7 @@ func (p *Printer) emitTypeParameters(parentNode *ast.Node, nodes *ast.TypeParame
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitTypeParameterDeclarationNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeAnnotation(node *ast.TypeNode) {
@@ -1508,7 +1516,7 @@ func (p *Printer) emitInitializer(node *ast.Expression, equalTokenPos int, conte
 
 func (p *Printer) emitParameters(parentNode *ast.Node, parameters *ast.ParameterList) {
 	p.generateAllNames(parameters)
-	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFParameters /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitParameterDeclarationNode, parentNode, parameters, LFParameters /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList) bool {
@@ -1533,10 +1541,10 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 		ast.IsIdentifier(parameter.Name()) // parameter name must be identifier
 }
 
-func (p *Printer) emitParametersForArrow(parentNode *ast.Node /*FunctionTypeNode | ConstructorTypeNode | ArrowFunction*/, parameters *ast.ParameterList) {
+func (p *Printer) emitParametersForArrow(parentNode *ast.Node /*FunctionType | ConstructorType | ArrowFunction*/, parameters *ast.ParameterList) {
 	if canEmitSimpleArrowHead(parentNode, parameters) {
 		p.generateAllNames(parameters)
-		p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFSingleArrowParameter)
+		p.emitList((*Printer).emitParameterDeclarationNode, parentNode, parameters, LFSingleArrowParameter)
 	} else {
 		p.emitParameters(parentNode, parameters)
 	}
@@ -1544,7 +1552,7 @@ func (p *Printer) emitParametersForArrow(parentNode *ast.Node /*FunctionTypeNode
 
 func (p *Printer) emitParametersForIndexSignature(parentNode *ast.Node, parameters *ast.ParameterList) {
 	p.generateAllNames(parameters)
-	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFIndexSignatureParameters)
+	p.emitList((*Printer).emitParameterDeclarationNode, parentNode, parameters, LFIndexSignatureParameters)
 }
 
 func (p *Printer) emitSignature(node *ast.Node) {
@@ -1869,7 +1877,7 @@ func (p *Printer) emitTypeArguments(parentNode *ast.Node, nodes *ast.TypeArgumen
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
+	p.emitList((*Printer).emitTypeParameterDeclarationNode, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
@@ -1886,7 +1894,7 @@ func (p *Printer) emitReturnType(node *ast.TypeNode) {
 	}
 	p.writePunctuation("=>")
 	p.writeSpace()
-	if p.inExtends && node.Kind == ast.KindInferType && node.AsInferTypeNode().TypeParameter.AsTypeParameter().Constraint != nil {
+	if p.inExtends && node.Kind == ast.KindInferType && node.AsInferTypeNode().TypeParameter.AsTypeParameterDeclaration().Constraint != nil {
 		// if the parent FunctionTypeNode or ConstructorTypeNode is in the `extends` clause of a ConditionalTypeNode,
 		// we must parenthesize `infer ... extends ...` so as not to result in an ambiguous parse.
 		//
@@ -1954,10 +1962,25 @@ func (p *Printer) emitTypeLiteral(node *ast.TypeLiteralNode) {
 
 func (p *Printer) emitArrayType(node *ast.ArrayTypeNode) {
 	state := p.enterNode(node.AsNode())
-	p.emitTypeNode(node.ElementType, ast.TypePrecedencePostfix)
+	p.emitPostfixTypeOperand(node.ElementType, node.AsNode())
 	p.writePunctuation("[")
 	p.writePunctuation("]")
 	p.exitNode(node.AsNode(), state)
+}
+
+// emitPostfixTypeOperand emits the operand of a postfix type (ArrayType, IndexedAccessType,
+// OptionalType). It is equivalent to `emitTypeNode(operand, TypePrecedencePostfix)` except
+// that it preserves a parsed `typeof X` operand without adding parentheses (e.g.,
+// `typeof C[K]` instead of `(typeof C)[K]`). TypeScript's `parenthesizeNonArrayTypeOfPostfixType`
+// factory rule wraps `TypeQuery` in `ParenthesizedType` only when a postfix type is constructed
+// via the factory, so parsed postfix types preserve the source as written during round-trip
+// emit while synthesized postfix types (e.g., from declaration emit) still get the parentheses.
+func (p *Printer) emitPostfixTypeOperand(operand *ast.TypeNode, parent *ast.Node) {
+	if ast.IsParseTreeNode(parent) && operand.Kind == ast.KindTypeQuery {
+		p.emitTypeNode(operand, ast.TypePrecedenceTypeOperator)
+		return
+	}
+	p.emitTypeNode(operand, ast.TypePrecedencePostfix)
 }
 
 func (p *Printer) emitTupleElementType(node *ast.Node) {
@@ -1983,7 +2006,7 @@ func (p *Printer) emitRestType(node *ast.RestTypeNode) {
 func (p *Printer) emitOptionalType(node *ast.OptionalTypeNode) {
 	state := p.enterNode(node.AsNode())
 	// !!! May need extra parenthesization if we also have JSDocNullableType
-	p.emitTypeNode(node.Type, ast.TypePrecedencePostfix)
+	p.emitPostfixTypeOperand(node.Type, node.AsNode())
 	p.writePunctuation("?")
 	p.exitNode(node.AsNode(), state)
 }
@@ -2053,7 +2076,7 @@ func (p *Printer) emitInferType(node *ast.InferTypeNode) {
 	state := p.enterNode(node.AsNode())
 	p.writeKeyword("infer")
 	p.writeSpace()
-	p.emitInferTypeParameter(node.TypeParameter.AsTypeParameter())
+	p.emitInferTypeParameter(node.TypeParameter.AsTypeParameterDeclaration())
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -2081,7 +2104,7 @@ func (p *Printer) emitTypeOperator(node *ast.TypeOperatorNode) {
 
 func (p *Printer) emitIndexedAccessType(node *ast.IndexedAccessTypeNode) {
 	state := p.enterNode(node.AsNode())
-	p.emitTypeNode(node.ObjectType, ast.TypePrecedencePostfix)
+	p.emitPostfixTypeOperand(node.ObjectType, node.AsNode())
 	p.writePunctuation("[")
 	p.emitTypeNodeOutsideExtends(node.IndexType)
 	p.writePunctuation("]")
@@ -2116,7 +2139,7 @@ func (p *Printer) emitMappedType(node *ast.MappedTypeNode) {
 		p.writeSpace()
 	}
 	p.writePunctuation("[")
-	p.emitMappedTypeParameter(node.TypeParameter.AsTypeParameter())
+	p.emitMappedTypeParameter(node.TypeParameter.AsTypeParameterDeclaration())
 	if node.NameType != nil {
 		p.writeSpace()
 		p.writeKeyword("as")
@@ -2314,6 +2337,9 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
 
+	case ast.KindPropertyAccessExpression:
+		// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type
+		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindExpressionWithTypeArguments:
 		// !!! Should this actually be considered a type?
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
@@ -3082,6 +3108,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				p.parenthesizeExpressionForNoAsi(pae.Expression),
 				pae.QuestionDotToken,
 				pae.Name(),
+				pae.Flags,
 			)
 		case ast.KindElementAccessExpression:
 			eae := node.AsElementAccessExpression()
@@ -3090,6 +3117,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				p.parenthesizeExpressionForNoAsi(eae.Expression),
 				eae.QuestionDotToken,
 				eae.ArgumentExpression,
+				eae.Flags,
 			)
 		case ast.KindCallExpression:
 			ce := node.AsCallExpression()
@@ -3099,6 +3127,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				ce.QuestionDotToken,
 				ce.TypeArguments,
 				ce.Arguments,
+				ce.Flags,
 			)
 		case ast.KindTaggedTemplateExpression:
 			tte := node.AsTaggedTemplateExpression()
@@ -3108,12 +3137,14 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 				tte.QuestionDotToken,
 				tte.TypeArguments,
 				tte.Template,
+				tte.Flags,
 			)
 		case ast.KindPostfixUnaryExpression:
 			pue := node.AsPostfixUnaryExpression()
 			return p.emitContext.Factory.UpdatePostfixUnaryExpression(
 				pue,
 				p.parenthesizeExpressionForNoAsi(pue.Operand),
+				pue.Operator,
 			)
 		case ast.KindBinaryExpression:
 			be := node.AsBinaryExpression()
@@ -3154,6 +3185,7 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 			return p.emitContext.Factory.UpdateNonNullExpression(
 				nne,
 				p.parenthesizeExpressionForNoAsi(nne.Expression),
+				nne.Flags,
 			)
 		}
 	}
@@ -3280,10 +3312,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindSyntheticReferenceExpression:
 		panic("SyntheticReferenceExpression should not be printed")
 
-	// !!!
-	////case ast.KindCommaListExpression:
-	////	p.emitCommaList(node.AsCommaListExpression())
-
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
 	}
@@ -3328,7 +3356,7 @@ func (p *Printer) emitBlock(node *ast.Block) {
 	p.generateNames(node.AsNode())
 	p.emitToken(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
 
-	format := core.IfElse(!node.Multiline && p.isEmptyBlock(node.AsNode(), node.Statements) || p.shouldEmitOnSingleLine(node.AsNode()),
+	format := core.IfElse(!node.MultiLine && p.isEmptyBlock(node.AsNode(), node.Statements) || p.shouldEmitOnSingleLine(node.AsNode()),
 		LFSingleLineBlockStatements,
 		LFMultiLineBlockStatements)
 	p.emitList((*Printer).emitStatement, node.AsNode(), node.Statements, format)
@@ -4163,12 +4191,10 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
 	case ast.KindImportDeclaration:
 		p.emitImportDeclaration(node.AsImportDeclaration())
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())
 	case ast.KindExportDeclaration:
 		p.emitExportDeclaration(node.AsExportDeclaration())
-	case ast.KindCommonJSExport:
-		break
 
 	default:
 		panic(fmt.Sprintf("unhandled statement: %v", node.Kind))
@@ -4379,7 +4405,7 @@ func (p *Printer) emitJsxAttributeValue(node *ast.JsxAttributeValue) {
 	case ast.KindJsxFragment:
 		p.emitJsxFragment(node.AsJsxFragment())
 	default:
-		panic(fmt.Sprintf("unhandled JsxAttributeValue: %v", node.Kind))
+		p.emitExpression(node, ast.OperatorPrecedenceLowest)
 	}
 }
 
@@ -4393,7 +4419,7 @@ func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClaus
 		(p.currentSourceFile == nil ||
 			ast.NodeIsSynthesized(node.AsNode()) ||
 			ast.NodeIsSynthesized(node.Statements.Nodes[0]) ||
-			rangeStartPositionsAreOnSameLine(node.Loc, node.Statements.Nodes[0].Loc, p.currentSourceFile))
+			RangeStartPositionsAreOnSameLine(node.Loc, node.Statements.Nodes[0].Loc, p.currentSourceFile))
 
 	format := LFCaseOrDefaultClauseStatements
 	if emitAsSingleStatement {
@@ -5054,7 +5080,7 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 
 	// Signature elements
 	case ast.KindTypeParameter:
-		p.emitTypeParameter(node.AsTypeParameter())
+		p.emitTypeParameter(node.AsTypeParameterDeclaration())
 	case ast.KindParameter:
 		p.emitParameter(node.AsParameterDeclaration())
 	case ast.KindDecorator:
@@ -5233,7 +5259,7 @@ func (p *Printer) emitCommentsBeforeNode(node *ast.Node) *commentState {
 		p.commentsDisabled = true
 	}
 
-	c := p.commentStatePool.New()
+	c := p.commentStateArena.New()
 	*c = commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
 	return c
 }
@@ -5292,7 +5318,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 		p.decreaseIndentIf(needsIndent)
 	}
 
-	return p.commentStatePool.New(), pos
+	return p.commentStateArena.New(), pos
 }
 
 func (p *Printer) emitCommentsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, state *commentState) {
@@ -5645,10 +5671,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 				}
 			}
 
-			if p.shouldWriteComment(comment) {
-				detachedComments = append(detachedComments, comment)
-			}
-
+			detachedComments = append(detachedComments, comment)
 			lastComment = comment
 		}
 
@@ -5661,11 +5684,21 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 			if nodeLine >= lastCommentLine+2 {
 				// Valid detachedComments
 
-				if len(leadingComments) > 0 && p.shouldEmitNewLineBeforeLeadingCommentOfPosition(textRange.Pos(), leadingComments[0].Pos()) {
-					p.writeLine()
+				// Filter to only comments that should be written (e.g., JSDoc-style in declaration emit)
+				var commentsToEmit []ast.CommentRange
+				for _, comment := range detachedComments {
+					if p.shouldWriteComment(comment) {
+						commentsToEmit = append(commentsToEmit, comment)
+					}
 				}
 
-				p.emitComments(detachedComments, commentSeparatorAfter)
+				if len(commentsToEmit) > 0 {
+					if p.shouldEmitNewLineBeforeLeadingCommentOfPosition(textRange.Pos(), commentsToEmit[0].Pos()) {
+						p.writeLine()
+					}
+
+					p.emitComments(commentsToEmit, commentSeparatorAfter)
+				}
 				result = detachedCommentsInfo{nodePos: textRange.Pos(), detachedCommentEndPos: core.LastOrNil(detachedComments).End()}
 				hasResult = true
 			}
@@ -5842,7 +5875,7 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 		p.sourceMapsDisabled = true
 	}
 
-	state := p.sourceMapStatePool.New()
+	state := p.sourceMapStateArena.New()
 	*state = sourceMapState{emitFlags, loc, false}
 	return state
 }
@@ -5883,7 +5916,7 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 		p.emitSourcePos(p.sourceMapSource, pos)
 	}
 
-	state := p.sourceMapStatePool.New()
+	state := p.sourceMapStateArena.New()
 	*state = sourceMapState{emitFlags, loc, hasLoc}
 	return state
 }

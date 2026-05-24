@@ -508,7 +508,7 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 			}
 			sym := symbol
 			if useLhsSymbol {
-				sym = checker.GetSymbolAtLocation(ast.GetElementOrPropertyAccessName(node.AsBinaryExpression().Left))
+				sym = node.Symbol()
 			}
 			if sym == nil {
 				return nil
@@ -565,13 +565,22 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		if !isNodeImport(node) {
 			return nil
 		}
-		// A symbol being imported is always an alias. So get what that aliases to find the local symbol.
-		importedSymbol := checker.GetImmediateAliasedSymbol(symbol)
+		// JS destructuring from `require(...)` is import-like for references, but the binding element
+		// itself is still a local variable symbol rather than an alias.
+		var importedSymbol *ast.Symbol
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			importedSymbol = checker.GetImmediateAliasedSymbol(symbol)
+		} else {
+			importedSymbol = getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol, checker)
+		}
 		if importedSymbol == nil {
 			return nil
 		}
 		// Search on the local symbol in the exporting module, not the exported symbol.
 		importedSymbol = skipExportSpecifierSymbol(importedSymbol, checker)
+		if importedSymbol == nil {
+			return nil
+		}
 		// Similarly, skip past the symbol for 'export ='
 		if importedSymbol.Name == "export=" {
 			importedSymbol = getExportEqualsLocalSymbol(importedSymbol, checker)

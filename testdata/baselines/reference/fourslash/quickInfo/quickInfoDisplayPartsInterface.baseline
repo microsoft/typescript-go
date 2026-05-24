@@ -3,7 +3,7 @@
 // interface i {
 //           ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | interface i
 // | ```
 // | 
@@ -12,14 +12,14 @@
 // var iInstance: i;
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var iInstance: i
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | interface i
 // | ```
 // | 
@@ -38,7 +38,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface i\n```\n"
+        "value": "```typescript\ninterface i\n```\n"
       },
       "range": {
         "start": {
@@ -49,7 +49,8 @@
           "line": 0,
           "character": 11
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -65,7 +66,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iInstance: i\n```\n"
+        "value": "```typescript\nvar iInstance: i\n```\n"
       },
       "range": {
         "start": {
@@ -76,7 +77,8 @@
           "line": 2,
           "character": 13
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -92,7 +94,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface i\n```\n"
+        "value": "```typescript\ninterface i\n```\n"
       },
       "range": {
         "start": {
@@ -103,7 +105,8 @@
           "line": 2,
           "character": 16
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   }
 ]

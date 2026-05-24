@@ -32,12 +32,16 @@ Output::
         "module": "commonjs",
         "strict": true,
         "target": "es5",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "useDefineForClassFields": false
     },
     "references": [
         {
             "path": "./test"
         }
+    ],
+    "files": [
+        "./src/index.ts"
     ],
     "include": [
         "src/*"

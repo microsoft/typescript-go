@@ -210,8 +210,8 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 	statementsUpdated := false
 	if tx.filenameDeclaration != nil {
 		statements = tx.insertStatementAfterCustomPrologue(statements, tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList([]*ast.Node{tx.filenameDeclaration}),
+			ast.NodeFlagsConst,
 		)))
 		statementsUpdated = true
 	}
@@ -243,7 +243,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 				for _, elem := range sorted {
 					asBindingElems = append(asBindingElems, tx.Factory().NewBindingElement(nil, elem.PropertyName(), elem.AsImportSpecifier().Name(), nil))
 				}
-				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
+				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
 					tx.Factory().NewBindingPattern(ast.KindObjectBindingPattern, tx.Factory().NewNodeList(asBindingElems)),
 					nil,
 					nil,
@@ -252,7 +252,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 						nil,
 						nil,
 						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone),
-				)})))
+				)}), ast.NodeFlagsConst))
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)
 			}
@@ -875,6 +875,19 @@ func decodeEntities(text string) string {
 		semi := strings.IndexByte(text, ';')
 		if semi < 0 {
 			break
+		}
+
+		// Skip past any intervening '&' characters between the current '&'
+		// and the ';'. Each such '&' is not part of a valid entity, so emit
+		// it (and any text before the next '&') as literals.
+		for {
+			nextAmp := strings.IndexByte(text[1:semi], '&')
+			if nextAmp < 0 {
+				break
+			}
+			result.WriteString(text[:nextAmp+1])
+			text = text[nextAmp+1:]
+			semi -= nextAmp + 1
 		}
 
 		entity := text[1:semi]

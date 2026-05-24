@@ -94,7 +94,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNested(node *ast.Node) *ast.No
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedNoStack(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindVariableStatement:
-		node = tx.visitTopLevelNestedVariableStatement(node.AsVariableStatement())
+		node = tx.visitTopLevelVariableStatement(node.AsVariableStatement())
 	case ast.KindForStatement:
 		node = tx.visitTopLevelNestedForStatement(node.AsForStatement())
 	case ast.KindForInStatement, ast.KindForOfStatement:
@@ -758,8 +758,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 	varStatement := tx.Factory().NewVariableStatement(
 		nil, /*modifiers*/
 		tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList(variables),
+			ast.NodeFlagsConst,
 		),
 	)
 
@@ -796,7 +796,6 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportEqualsDeclaration(node *
 		statement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsConst,
 				tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						node.Name().Clone(tx.Factory()),
@@ -805,6 +804,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportEqualsDeclaration(node *
 						tx.createRequireCall(node.AsNode()),
 					),
 				}),
+				ast.NodeFlagsConst,
 			),
 		)
 		tx.EmitContext().SetOriginal(statement, node.AsNode())
@@ -830,7 +830,6 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		varStatement := tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsNone,
 				tx.Factory().NewNodeList([]*ast.VariableDeclarationNode{
 					tx.Factory().NewVariableDeclaration(
 						generatedName,
@@ -839,6 +838,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 						tx.createRequireCall(node.AsNode()),
 					),
 				}),
+				ast.NodeFlagsNone,
 			),
 		)
 		tx.EmitContext().SetOriginal(varStatement, node.AsNode())
@@ -986,6 +986,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 					tx.Factory().UpdateVariableDeclarationList(
 						node.DeclarationList.AsVariableDeclarationList(),
 						variableList,
+						node.DeclarationList.Flags,
 					),
 				)
 				if len(statements) > 0 {
@@ -1108,13 +1109,14 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 	}
 	name := node.Name()
 	if ast.IsBindingPattern(name) {
-		return transformers.FlattenDestructuringAssignment(
-			&tx.Transformer,
-			tx.Visitor().VisitNode(node.AsNode()),
-			false, /*needsValue*/
-			transformers.FlattenLevelAll,
-			tx.createAllExportExpressions,
-		)
+		// Convert the binding pattern into an equivalent assignment expression and visit it
+		// as a destructuring assignment. This preserves native destructuring (and therefore
+		// iterator semantics for array patterns) whenever each leaf identifier can be
+		// substituted to an export reference. Only when the destructuring would assign to
+		// re-aliased or multi-exported names (where native destructuring cannot update all
+		// targets) does `visitDestructuringAssignment` fall back to flattening.
+		assignment := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), node)
+		return tx.visitDestructuringAssignment(assignment.AsBinaryExpression(), true /*valueIsDiscarded*/)
 	}
 	propertyAccess := tx.Factory().NewPropertyAccessExpression(
 		tx.Factory().NewIdentifier("exports"),
@@ -1202,7 +1204,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedForInOrOfStatement(node 
 				bodyStatements := append(exportStatements, block.Statements.Nodes...)
 				bodyStatementList := tx.Factory().NewNodeList(bodyStatements)
 				bodyStatementList.Loc = block.Statements.Loc
-				body = tx.Factory().UpdateBlock(block, bodyStatementList)
+				body = tx.Factory().UpdateBlock(block, bodyStatementList, block.MultiLine)
 			} else {
 				bodyStatements := append(exportStatements, body)
 				body = tx.Factory().NewBlock(tx.Factory().NewNodeList(bodyStatements), true /*multiLine*/)
@@ -1242,11 +1244,11 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedWhileStatement(node *ast
 // Visits a top-level nested labeled statement as it may contain `var` declarations that are hoisted and may still be
 // exported with `export {}`.
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedLabeledStatement(node *ast.LabeledStatement) *ast.Node {
-	return tx.Factory().UpdateLabeledStatement(
-		node,
-		node.Label,
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement),
-	)
+	statement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement)
+	if statement == nil {
+		statement = tx.Factory().NewEmptyStatement()
+	}
+	return tx.Factory().UpdateLabeledStatement(node, node.Label, statement)
 }
 
 // Visits a top-level nested `with` statement as it may contain `var` declarations that are hoisted and may still be
@@ -1262,12 +1264,13 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedWithStatement(node *ast.
 // Visits a top-level nested `if` statement as it may contain `var` declarations that are hoisted and may still be
 // exported with `export {}`.
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedIfStatement(node *ast.IfStatement) *ast.Node {
-	return tx.Factory().UpdateIfStatement(
-		node,
-		tx.Visitor().VisitNode(node.Expression),
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement),
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement),
-	)
+	expression := tx.Visitor().VisitNode(node.Expression)
+	thenStatement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement)
+	if thenStatement == nil {
+		thenStatement = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false /*multiLine*/)
+	}
+	elseStatement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement)
+	return tx.Factory().UpdateIfStatement(node, expression, thenStatement, elseStatement)
 }
 
 // Visits a top-level nested `switch` statement as it may contain `var` declarations that are hoisted and may still be
@@ -1450,11 +1453,22 @@ func (tx *CommonJSModuleTransformer) destructuringNeedsFlattening(node *ast.Node
 		}
 	} else if ast.IsIdentifier(node) {
 		exportedNames := tx.getExports(node)
-		threshold := 0
 		if transformers.IsExportName(tx.EmitContext(), node) {
-			threshold = 1
+			// The identifier is already wrapped to be an export reference; tolerate up to one
+			// matching export.
+			return len(exportedNames) > 1
 		}
-		return len(exportedNames) > threshold
+		if len(exportedNames) == 0 {
+			return false
+		}
+		// A single direct export whose export name matches the identifier text can be handled
+		// natively: substitution will rewrite the identifier to `exports.X`, so no flattening
+		// is needed. Re-aliased exports (where the export name differs from the local name) or
+		// multi-exported names cannot be expressed natively in a destructuring assignment.
+		if len(exportedNames) == 1 && tx.isDirectExport(node) && exportedNames[0].Text() == node.Text() {
+			return false
+		}
+		return true
 	}
 	return false
 }
@@ -1696,7 +1710,7 @@ func (tx *CommonJSModuleTransformer) visitPrefixUnaryExpression(node *ast.Prefix
 			// note:
 			//   after the operation, `exports.x` will hold the value of `x` after the increment.
 
-			expression := tx.Factory().UpdatePrefixUnaryExpression(node, tx.Visitor().VisitNode(node.Operand))
+			expression := tx.Factory().UpdatePrefixUnaryExpression(node, node.Operator, tx.Visitor().VisitNode(node.Operand))
 			for _, exportName := range exportedNames {
 				expression = tx.createExportExpression(exportName, expression, nil /*location*/, false /*liveBinding*/)
 				tx.EmitContext().AssignCommentAndSourceMapRanges(expression, node.AsNode())
@@ -1748,7 +1762,7 @@ func (tx *CommonJSModuleTransformer) visitPostfixUnaryExpression(node *ast.Postf
 			//   `y` will hold the value of `x` before the increment.
 
 			var temp *ast.IdentifierNode
-			expression := tx.Factory().UpdatePostfixUnaryExpression(node, tx.Visitor().VisitNode(node.Operand))
+			expression := tx.Factory().UpdatePostfixUnaryExpression(node, tx.Visitor().VisitNode(node.Operand), node.Operator)
 			if !resultIsDiscarded {
 				temp = tx.Factory().NewTempVariable()
 				tx.EmitContext().AddVariableDeclaration(temp)
@@ -1809,6 +1823,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 			node.QuestionDotToken,
 			nil, /*typeArguments*/
 			tx.Visitor().VisitNodes(node.Arguments),
+			node.Flags,
 		)
 		if !ast.IsIdentifier(expression) && !transformers.IsHelperName(tx.EmitContext(), node.Expression) {
 			tx.EmitContext().AddEmitFlags(updated, printer.EFIndirectCall)
@@ -1968,6 +1983,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 		node.QuestionDotToken,
 		nil, /*typeArguments*/
 		argumentsList,
+		node.Flags,
 	)
 }
 
@@ -1990,6 +2006,7 @@ func (tx *CommonJSModuleTransformer) visitTaggedTemplateExpression(node *ast.Tag
 			nil, /*questionDotToken*/
 			nil, /*typeArguments*/
 			tx.Visitor().VisitNode(node.Template),
+			node.Flags,
 		)
 		if !ast.IsIdentifier(expression) && !transformers.IsHelperName(tx.EmitContext(), node.Tag) {
 			tx.EmitContext().AddEmitFlags(updated, printer.EFIndirectCall)

@@ -880,6 +880,11 @@ func (c *Checker) GetCandidateSignaturesForStringLiteralCompletions(call *ast.Ca
 	return candidates
 }
 
+// GetTypeAtPosition returns the type of a parameter at a given index in a signature.
+func (c *Checker) GetTypeAtPosition(s *Signature, pos int) *Type {
+	return c.getTypeAtPosition(s, pos)
+}
+
 func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
 	t := c.getTypeAtPosition(s, pos)
 	if t.IsIndex() && isThisTypeParameter(t.AsIndexType().target) {
@@ -1062,4 +1067,33 @@ func (c *Checker) getTypeOfAssignmentPattern(expr *ast.Node) *Type {
 
 func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
 	return c.getSignatureFromDeclaration(node)
+}
+
+// IsLibSymbolForHoverVerbosity returns true if a symbol is declared in a lib file.
+func (c *Checker) IsLibSymbolForHoverVerbosity(symbol *ast.Symbol) bool {
+	if symbol == nil {
+		return false
+	}
+	for _, decl := range symbol.Declarations {
+		sf := ast.GetSourceFileOfNode(decl)
+		if sf != nil && c.program.IsSourceFileDefaultLibrary(sf.Path()) {
+			return true
+		}
+	}
+	return false
+}
+
+// IsLibTypeForHoverVerbosity returns true if a type is declared in a lib file.
+// Don't expand types like Array or Promise, instead treating them as opaque.
+func (c *Checker) IsLibTypeForHoverVerbosity(t *Type) bool {
+	var symbol *ast.Symbol
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		symbol = t.Target().Symbol()
+	} else {
+		symbol = t.Symbol()
+	}
+	if c.IsLibSymbolForHoverVerbosity(symbol) {
+		return true
+	}
+	return isTupleType(t)
 }

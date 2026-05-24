@@ -178,15 +178,16 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 		return nil
 	}
 
-	if !ast.IsDeclaration(node.Parent) && node.Parent.Kind != ast.KindExportAssignment && node.Parent.Kind != ast.KindJSExportAssignment {
+	if !ast.IsDeclaration(node.Parent) && !ast.IsExportAssignment(node.Parent) {
 		// Special property assignment in javascript
 		if ast.IsInJSFile(node) {
 			// !!! jsdoc: check if branch still needed
-			binaryExpression := core.IfElse(node.Parent.Kind == ast.KindBinaryExpression,
-				node.Parent,
-				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
-					node.Parent.Parent,
-					nil))
+			var binaryExpression *ast.Node
+			if ast.IsBinaryExpression(node.Parent) {
+				binaryExpression = node.Parent
+			} else if ast.IsAccessExpression(node.Parent) && ast.IsBinaryExpression(node.Parent.Parent) && node.Parent.Parent.AsBinaryExpression().Left == node.Parent {
+				binaryExpression = node.Parent.Parent
+			}
 			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression) != ast.JSDeclarationKindNone {
 				return getContextNode(binaryExpression)
 			}
@@ -221,7 +222,6 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 	if node.Parent.Name() == node || // node is name of declaration, use parent
 		node.Parent.Kind == ast.KindConstructor ||
 		node.Parent.Kind == ast.KindExportAssignment ||
-		node.Parent.Kind == ast.KindJSExportAssignment ||
 		// Property name of the import export specifier or binding pattern, use parent
 		((ast.IsImportOrExportSpecifier(node.Parent) || node.Parent.Kind == ast.KindBindingElement) && node.Parent.PropertyName() == node) ||
 		// Is default export
@@ -348,8 +348,8 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
 	return core.FirstNonNil(symbol.Declarations, func(decl *ast.Node) *ast.Symbol {
 		if decl.Parent == nil {
-			// Ignore UMD module and global merge
-			if symbol.Flags&ast.SymbolFlagsTransient != 0 {
+			// Ignore UMD module and global merge and CJS module end exports symbols
+			if symbol.Flags&(ast.SymbolFlagsTransient|ast.SymbolFlagsModuleExports) != 0 {
 				return nil
 			}
 			// Assertions for GH#21814. We should be handling SourceFile symbols in `getReferencedSymbolsForModule` instead of getting here.
@@ -913,6 +913,9 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	}
 
 	if symbol.Name == ast.InternalSymbolNameExportEquals {
+		if symbol.Parent == nil {
+			return nil
+		}
 		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
@@ -1370,8 +1373,8 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 					references = append(references, newNodeEntry(decl.AsModuleDeclaration().Name()))
 				}
 			default:
-				// This may be merged with something.
-				debug.Assert(symbol.Flags&ast.SymbolFlagsTransient != 0, "Expected a module symbol to be declared by a SourceFile or ModuleDeclaration.")
+				// This may be merged with something (e.g. a class merged with a namespace).
+				continue
 			}
 		}
 	}

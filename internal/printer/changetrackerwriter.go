@@ -1,6 +1,8 @@
 package printer
 
 import (
+	"unicode/utf8"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -88,12 +90,17 @@ func (ct *ChangeTrackerWriter) getEnd(node triviaPositionKey) int {
 func (ct *ChangeTrackerWriter) setLastNonTriviaPosition(s string, force bool) {
 	if force || scanner.SkipTrivia(s, 0) != len(s) {
 		ct.lastNonTriviaPosition = ct.textWriter.GetTextPos()
-		i := 0
-		for stringutil.IsWhiteSpaceLike(rune(s[len(s)-i-1])) {
-			i++
-		}
 		// trim trailing whitespaces
-		ct.lastNonTriviaPosition -= i
+		pos := len(s)
+		for pos > 0 {
+			r, size := utf8.DecodeLastRuneInString(s[:pos])
+			if stringutil.IsWhiteSpaceLike(r) {
+				pos -= size
+			} else {
+				break
+			}
+		}
+		ct.lastNonTriviaPosition -= len(s) - pos
 	}
 }
 
@@ -108,7 +115,10 @@ func (ct *ChangeTrackerWriter) AssignPositionsToNode(node *ast.Node, factory *as
 			VisitToken: ct.assignPositionsToNodeWorker,
 			VisitModifiers: func(modifiers *ast.ModifierList, v *ast.NodeVisitor) *ast.ModifierList {
 				if modifiers != nil {
-					ct.assignPositionsToNodeArray(&modifiers.NodeList, v)
+					newNodeList := ct.assignPositionsToNodeArray(&modifiers.NodeList, v)
+					// Return a new ModifierList so that VisitEachChild/Update detects the
+					// change and creates a new node with reassigned child positions.
+					return factory.NewModifierList(newNodeList.Nodes)
 				}
 				return modifiers
 			},

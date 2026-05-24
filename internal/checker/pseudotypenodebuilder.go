@@ -8,6 +8,42 @@ import (
 	"github.com/microsoft/typescript-go/internal/pseudochecker"
 )
 
+// pseudoTypeToNodeWithCheckerFallback is like pseudoTypeToNode but when the top-level pseudo type
+// is PseudoTypeInferred, it reports any error nodes and then serializes from the checker's type.
+// This avoids incorrect type output when PseudoTypeInferred would derive the type from the
+// original declaration expression in an instantiated context.
+func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.PseudoType, checkerType *Type) *ast.Node {
+	if t.Kind == pseudochecker.PseudoTypeKindInferred {
+		if !b.ctx.suppressReportInferenceFallback {
+			if errorNodes := t.AsPseudoTypeInferred().ErrorNodes; len(errorNodes) > 0 {
+				for _, n := range errorNodes {
+					b.ctx.tracker.ReportInferenceFallback(n)
+				}
+			} else {
+				b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
+			}
+		}
+		oldSuppress := b.ctx.suppressReportInferenceFallback
+		b.ctx.suppressReportInferenceFallback = true
+		result := b.typeToTypeNode(checkerType)
+		b.ctx.suppressReportInferenceFallback = oldSuppress
+		return result
+	} else if t.Kind == pseudochecker.PseudoTypeKindDirect {
+		existing := t.AsPseudoTypeDirect().TypeNode
+		if !b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, checkerType) {
+			if !b.ctx.suppressReportInferenceFallback {
+				b.ctx.tracker.ReportInferenceFallback(existing)
+			}
+			oldSuppress := b.ctx.suppressReportInferenceFallback
+			b.ctx.suppressReportInferenceFallback = true
+			result := b.typeToTypeNode(checkerType)
+			b.ctx.suppressReportInferenceFallback = oldSuppress
+			return result
+		}
+	}
+	return b.pseudoTypeToNode(t)
+}
+
 // Maps a pseudochecker's pseudotypes into ast nodes and reports any inference fallback errors the pseudotype structure implies
 func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Node {
 	debug.Assert(t != nil, "Attempted to serialize nil pseudotype")
@@ -15,8 +51,17 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindDirect:
 		return b.reuseTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
-		node := t.AsPseudoTypeInferred().Expression
-		b.ctx.tracker.ReportInferenceFallback(node)
+		inferred := t.AsPseudoTypeInferred()
+		node := inferred.Expression
+		if errorNodes := inferred.ErrorNodes; len(errorNodes) > 0 {
+			for _, n := range errorNodes {
+				b.ctx.tracker.ReportInferenceFallback(n)
+			}
+		} else if ast.IsEntityNameExpression(node) && ast.IsDeclaration(node.Parent) {
+			b.ctx.tracker.ReportInferenceFallback(node.Parent)
+		} else {
+			b.ctx.tracker.ReportInferenceFallback(node)
+		}
 		// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
 		if ast.IsReturnStatement(node.Parent) {
 			enclosing := ast.GetContainingFunction(node)
@@ -150,7 +195,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// something a true syntactic ID emitter couldn't possibly know (since the signature could
 		// be from across files). This can't *really* happen in any cases ID doesn't already error on, though.
 		// Just something to keep in mind if the ID checker keeps growing.
-		isConst := b.ch.isConstContext(elements[0].Name)
+		isConst := b.ch.isConstContext(elements[0].Name.Parent.Parent)
 		newElements := make([]*ast.Node, 0, len(elements))
 
 		for _, e := range elements {
@@ -158,23 +203,31 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
 				modifiers = b.f.NewModifierList([]*ast.Node{b.f.NewModifier(ast.KindReadonlyKeyword)})
 			}
+			var cleanup func()
 			if e.Kind != pseudochecker.PseudoObjectElementKindPropertyAssignment {
 				signature := b.ch.getSignatureFromDeclaration(e.Signature())
 				expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
-				cleanup := b.enterNewScope(e.Signature(), expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
-				defer cleanup()
+				cleanup = b.enterNewScope(e.Signature(), expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
 			}
 			var newProp *ast.Node
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindMethod:
 				d := e.AsPseudoObjectMethod()
+				var typeParams *ast.NodeList
+				if len(d.TypeParameters) > 0 {
+					res := make([]*ast.Node, 0, len(d.TypeParameters))
+					for _, tp := range d.TypeParameters {
+						res = append(res, b.reuseNode(tp.AsNode()))
+					}
+					typeParams = b.f.NewNodeList(res)
+				}
 				if isConst {
 					newProp = b.f.NewPropertySignatureDeclaration(
 						modifiers,
 						b.reuseName(e.Name),
 						nil,
 						b.f.NewFunctionTypeNode(
-							nil,
+							typeParams,
 							b.pseudoParametersToNodeList(d.Parameters),
 							b.pseudoTypeToNode(d.ReturnType),
 						),
@@ -186,7 +239,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					modifiers,
 					b.reuseName(e.Name),
 					nil,
-					nil,
+					typeParams,
 					b.pseudoParametersToNodeList(d.Parameters),
 					b.pseudoTypeToNode(d.ReturnType),
 				)
@@ -226,6 +279,9 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				b.e.SetCommentRange(newProp, e.Name.Parent.Loc)
 			}
 			newElements = append(newElements, newProp)
+			if cleanup != nil {
+				cleanup()
+			}
 		}
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
 		if b.ctx.flags&nodebuilder.FlagsMultilineObjectLiterals == 0 {
@@ -310,6 +366,23 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	}
 	// otherwise, fallback to actual pseudo/type cross-comparisons
 	switch t.Kind {
+	case pseudochecker.PseudoTypeKindInferred:
+		// PseudoTypeInferred with error nodes identifies specific problematic children.
+		// Report fine-grained errors on them, then return false so the parent falls back
+		// to checker-based serialization (avoiding issues like reusing raw JSON string
+		// literal property names from the pseudochecker's AST).
+		if errorNodes := t.AsPseudoTypeInferred().ErrorNodes; len(errorNodes) > 0 {
+			if reportErrors {
+				for _, n := range errorNodes {
+					b.ctx.tracker.ReportInferenceFallback(n)
+				}
+			}
+			return false
+		}
+		if reportErrors {
+			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
+		}
+		return false
 	case pseudochecker.PseudoTypeKindObjectLiteral:
 		pt := t.AsPseudoTypeObjectLiteral()
 		if type_ == nil {
@@ -361,7 +434,14 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 				d := e.AsPseudoPropertyAssignment()
 				if !b.pseudoTypeEquivalentToType(d.Type, propType, e.Optional, false) {
 					if reportErrors {
-						b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+						if d.Type.Kind == pseudochecker.PseudoTypeKindInferred && len(d.Type.AsPseudoTypeInferred().ErrorNodes) > 0 {
+							// Re-report the fine-grained error nodes; the recursive call used reportErrors=false
+							for _, n := range d.Type.AsPseudoTypeInferred().ErrorNodes {
+								b.ctx.tracker.ReportInferenceFallback(n)
+							}
+						} else if !isStructuralPseudoType(d.Type) {
+							b.ctx.tracker.ReportInferenceFallback(e.Name.Parent)
+						}
 					}
 					return false
 				}
@@ -497,18 +577,24 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeNoResult().Declaration)
 		}
 		return false
-	case pseudochecker.PseudoTypeKindInferred:
-		if reportErrors {
-			b.ctx.tracker.ReportInferenceFallback(t.AsPseudoTypeInferred().Expression)
-		}
-		return false
 	default:
 		return false
 	}
 }
 
+func isStructuralPseudoType(t *pseudochecker.PseudoType) bool {
+	switch t.Kind {
+	case pseudochecker.PseudoTypeKindObjectLiteral, pseudochecker.PseudoTypeKindTuple, pseudochecker.PseudoTypeKindSingleCallSignature:
+		return true
+	case pseudochecker.PseudoTypeKindMaybeConstLocation:
+		d := t.AsPseudoTypeMaybeConstLocation()
+		return isStructuralPseudoType(d.ConstType) || isStructuralPseudoType(d.RegularType)
+	}
+	return false
+}
+
 // pseudoReturnTypeMatchesPredicate checks if a pseudo return type (which should be a Direct type
-// wrapping a TypePredicateNode) matches the given type predicate from the checker.
+// wrapping a TypePredicate) matches the given type predicate from the checker.
 func (b *NodeBuilderImpl) pseudoReturnTypeMatchesPredicate(rt *pseudochecker.PseudoType, predicate *TypePredicate) bool {
 	if rt.Kind != pseudochecker.PseudoTypeKindDirect {
 		return false
@@ -619,7 +705,7 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.trueType
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
-		return b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(source)) // big shortcut, uses cached expression types where possible
+		return b.ch.getRegularTypeOfExpression(source) // big shortcut, uses cached expression types where possible
 	case pseudochecker.PseudoTypeKindObjectLiteral, pseudochecker.PseudoTypeKindSingleCallSignature, pseudochecker.PseudoTypeKindTuple:
 		return nil // no simple mapping to a type, since these are structural types
 	default:
