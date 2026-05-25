@@ -21,9 +21,9 @@ export const fsApi = "fs";
 // @Filename: /src/foo/sync.ts
 export const syncApi = "sync";`
 
-	fixture, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	fixture.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -57,9 +57,9 @@ export const syncApi = "sync";
 // @Filename: /src/main.ts
 import { } from "@typescript/native-preview/unstable//*$*/";`
 
-	fixture, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	fixture.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -103,9 +103,9 @@ export const syncApi = "sync";
 // @Filename: /src/main.ts
 import { } from "@typescript/native-preview/unstable//*$*/";`
 
-	fixture, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	fixture.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -145,9 +145,9 @@ export declare const syncApi: string;
 // @Filename: /src/main.ts
 import { } from "@typescript/native-preview/unstable//*$*/";`
 
-	fixture, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	fixture.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
@@ -187,9 +187,9 @@ export declare const syncApi: string;
 // @Filename: /src/main.ts
 import { } from "@typescript/native-preview/unstable//*$*/";`
 
-	fixture, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	fixture.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
