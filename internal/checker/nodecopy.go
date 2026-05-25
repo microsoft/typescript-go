@@ -22,8 +22,7 @@ func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
 	return b.reuseNode(node)
 }
 
-// a wrapper around `reuseNode` for property names. It handles renaming `new` to `"new"` so we don't
-// accidentally emit constructor signatures when we don't mean to, and normalizes string-literal
+// a wrapper around `reuseNode` for property names. It normalizes string-literal
 // property names whose text is a valid identifier into identifiers, matching the behavior of
 // `createPropertyNameNodeForIdentifierOrLiteral` used when constructing fresh property name nodes
 // (so that reused names emit consistently regardless of whether their containing type was reused
@@ -33,18 +32,9 @@ func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
 	if res == nil {
 		return res
 	}
-	if res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
-		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
-		b.e.SetOriginal(str, res)
-		return b.setTextRange(str, res)
-	}
 	if res.Kind == ast.KindStringLiteral {
 		text := res.AsStringLiteral().Text
-		// Skip normalization for "new" so that reused names like `"new"(): void` on a
-		// method signature are not converted to an identifier (which would become a
-		// construct signature). This mirrors the `isMethodNamedNew` guard in
-		// createPropertyNameNodeForIdentifierOrLiteral.
-		if text != "new" && scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
+		if scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
 			ident := b.newIdentifier(text, nil)
 			b.e.SetOriginal(ident, res)
 			return b.setTextRange(ident, res)

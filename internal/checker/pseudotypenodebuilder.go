@@ -213,6 +213,11 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindMethod:
 				d := e.AsPseudoObjectMethod()
+				name := b.reuseName(e.Name)
+				if text := ast.GetTextOfPropertyName(e.Name); text == "new" {
+					name = b.setTextRange(b.f.NewStringLiteral(text, ast.TokenFlagsNone), e.Name)
+					b.e.SetOriginal(name, e.Name)
+				}
 				var typeParams *ast.NodeList
 				if len(d.TypeParameters) > 0 {
 					res := make([]*ast.Node, 0, len(d.TypeParameters))
@@ -224,7 +229,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				if isConst {
 					newProp = b.f.NewPropertySignatureDeclaration(
 						modifiers,
-						b.reuseName(e.Name),
+						name,
 						nil,
 						b.f.NewFunctionTypeNode(
 							typeParams,
@@ -237,7 +242,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				}
 				newProp = b.f.NewMethodSignatureDeclaration(
 					modifiers,
-					b.reuseName(e.Name),
+					name,
 					nil,
 					typeParams,
 					b.pseudoParametersToNodeList(d.Parameters),
