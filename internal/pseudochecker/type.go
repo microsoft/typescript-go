@@ -169,7 +169,7 @@ type PseudoParameter struct {
 	Rest     bool
 	Name     *ast.Node
 	Optional bool
-	Type        *PseudoType
+	Type     *PseudoType
 }
 
 func NewPseudoParameter(isRest bool, name *ast.Node, isOptional bool, t *PseudoType) *PseudoParameter {
