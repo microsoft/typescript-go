@@ -89,6 +89,7 @@ export interface LSConnectionError extends LSCommonProperties {
 
 export interface LSServerConnectionClosed extends LSCommonProperties {
     resultingAction: string;
+    lastStderr: string;
 }
 
 export interface LSErrorResponse extends LSCommonProperties {

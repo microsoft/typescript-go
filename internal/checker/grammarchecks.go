@@ -922,18 +922,20 @@ func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLik
 					return c.grammarErrorOnFirstToken(typeNodes[1], diagnostics.Classes_can_only_extend_a_single_class)
 				}
 
-				for _, j := range node.EagerJSDoc(file) {
-					if j.AsJSDoc().Tags == nil {
-						continue
-					}
-					for _, tag := range j.AsJSDoc().Tags.Nodes {
-						if tag.Kind == ast.KindJSDocAugmentsTag {
-							target := typeNodes[0].AsExpressionWithTypeArguments()
-							source := tag.ClassName().AsExpressionWithTypeArguments()
-							targetName := getIdentifierFromEntityNameExpression(target.Expression)
-							sourceName := getIdentifierFromEntityNameExpression(source.Expression)
-							if targetName != nil && sourceName != nil && targetName.Text() != sourceName.Text() {
-								return c.grammarErrorOnNode(sourceName, diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.TagName().Text(), sourceName.Text(), targetName.Text())
+				if len(typeNodes) > 0 {
+					for _, j := range node.EagerJSDoc(file) {
+						if j.AsJSDoc().Tags == nil {
+							continue
+						}
+						for _, tag := range j.AsJSDoc().Tags.Nodes {
+							if tag.Kind == ast.KindJSDocAugmentsTag {
+								target := typeNodes[0].AsExpressionWithTypeArguments()
+								source := tag.ClassName().AsExpressionWithTypeArguments()
+								targetName := getIdentifierFromEntityNameExpression(target.Expression)
+								sourceName := getIdentifierFromEntityNameExpression(source.Expression)
+								if targetName != nil && sourceName != nil && targetName.Text() != sourceName.Text() {
+									return c.grammarErrorOnNode(sourceName, diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.TagName().Text(), sourceName.Text(), targetName.Text())
+								}
 							}
 						}
 					}
@@ -1246,9 +1248,6 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 					containingFunc := ast.GetContainingFunction(forInOrOfStatement.AsNode())
 					if containingFunc != nil && containingFunc.Kind != ast.KindConstructor {
 						debug.Assert((ast.GetFunctionFlags(containingFunc)&ast.FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
-						if hasAsyncModifier(containingFunc) {
-							panic("Enclosing function should never be an async function.")
-						}
 						relatedInfo := createDiagnosticForNode(containingFunc, diagnostics.Did_you_mean_to_mark_this_function_as_async)
 						diagnostic.AddRelatedInfo(relatedInfo)
 					}
@@ -1348,7 +1347,7 @@ func (c *Checker) checkGrammarAccessor(accessor *ast.AccessorDeclaration) bool {
 			return c.grammarErrorOnNode(accessor.Name(), diagnostics.A_set_accessor_cannot_have_a_return_type_annotation)
 		}
 
-		parameterNode := getSetAccessorValueParameter(accessor)
+		parameterNode := GetSetAccessorValueParameter(accessor)
 		if parameterNode == nil {
 			panic("Return value does not match parameter count assertion.")
 		}

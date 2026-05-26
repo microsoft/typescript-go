@@ -2519,7 +2519,7 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 	if b.checkTruncationLength() {
 		if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
 			elem := b.f.NewNotEmittedTypeElement()
-			return b.f.NewNodeList([]*ast.TypeElement{b.e.AddSyntheticLeadingComment(elem, ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)})
+			return b.f.NewNodeList([]*ast.TypeElement{b.e.AddSyntheticTrailingComment(elem, ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)})
 		}
 		return b.f.NewNodeList([]*ast.Node{b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier("..."), nil, nil, nil)})
 	}
@@ -2561,7 +2561,7 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 		}
 		if b.checkTruncationLength() && (i+2 < len(properties)-1) {
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				typeElements[len(typeElements)-1] = b.e.AddSyntheticLeadingComment(typeElements[len(typeElements)-1], ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(properties)-i), false /*hasTrailingNewLine*/)
+				typeElements[len(typeElements)-1] = b.e.AddSyntheticTrailingComment(typeElements[len(typeElements)-1], ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(properties)-i), false /*hasTrailingNewLine*/)
 			} else {
 				text := fmt.Sprintf("... %d more ...", len(properties)-i)
 				typeElements = append(typeElements, b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier(text), nil, nil, nil))
@@ -2693,7 +2693,17 @@ func (b *NodeBuilderImpl) createAnonymousTypeNodeEx(t *Type, forceClassExpansion
 			// The problem is each constituent of the intersection will be associated with typeof Err<number>
 			// And when extracting a type for typeof ErrImpl from typeof Err<number> does not make sense.
 			if ast.IsTypeQueryNode(existing) && b.getTypeFromTypeNode(existing, false) == t {
+				// Guard against unbounded recursion when the existing typeof node fails to be reused
+				// (e.g. its entity name isn't accessible from this scope) and the recovery boundary's
+				// fallback re-enters typeToTypeNode with the very same instantiation type, which would
+				// in turn try to reuse the same node again. Mark the type as visited around the reuse
+				// attempt so the inner recursion bottoms out via the visitedTypes guard below.
+				if b.ctx.visitedTypes.Has(typeId) {
+					return b.createElidedInformationPlaceholder()
+				}
+				b.ctx.visitedTypes.Add(typeId)
 				typeNode := b.tryReuseExistingNonParameterTypeNode(existing, t, nil, nil)
+				b.ctx.visitedTypes.Delete(typeId)
 				if typeNode != nil {
 					return typeNode
 				}
@@ -2990,7 +3000,9 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	// of types allows us to catch circular references to instantiations of the same anonymous type
 
 	key := CompositeTypeCacheIdentity{typeId, b.ctx.flags, b.ctx.internalFlags}
-	if b.ctx.enclosingDeclaration != nil && b.links.Has(b.ctx.enclosingDeclaration) {
+	// Don't rely on type cache if we're expanding a type, because we need to compute `canIncreaseExpansionDepth`.
+	canUseCache := b.ctx.maxExpansionDepth < 0
+	if canUseCache && b.ctx.enclosingDeclaration != nil && b.links.Has(b.ctx.enclosingDeclaration) {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
 		cachedResult, ok := links.serializedTypes[key]
 		if ok {
@@ -3020,7 +3032,7 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	startLength := b.ctx.approximateLength
 	result := transform(b, t)
 	addedLength := b.ctx.approximateLength - startLength
-	if !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
+	if canUseCache && !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
 		if links.serializedTypes == nil {
 			links.serializedTypes = make(map[CompositeTypeCacheIdentity]*SerializedTypeEntry)
