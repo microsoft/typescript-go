@@ -31,9 +31,11 @@ func (p *Parser) addDeepCloneReparse(node *ast.Node) *ast.Node {
 	return clone
 }
 
-func (p *Parser) addTransformedReparse(new *ast.Node, old *ast.Node) *ast.Node {
-	p.reparsedClones = append(p.reparsedClones, new)
-	return new
+func (p *Parser) addTransformedReparse(newNode *ast.Node, old *ast.Node) *ast.Node {
+	p.reparsedClones = append(p.reparsedClones, newNode)
+	// TODO: reference `old` with `.original` lookups? Can't set `.Loc` as it would set text source
+	// Don't need to set `.Parent` as `finishReparsedNode` will handle that
+	return newNode
 }
 
 func (p *Parser) checkNonIdentifierName(name *ast.Node) *ast.Node {
