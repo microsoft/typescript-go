@@ -75,7 +75,7 @@ export class Client implements vscode.Disposable {
             "tscommon.version": exe.version,
             "tscommon.serverSessionId": `${Date.now()}`,
         };
-        
+
         this.errorHandler = new ReportingErrorHandler(this.telemetryReporter, 5, this.reporterCommonProperties);
 
         // Monkey-patch the output channel's error method to capture recent stderr lines.
@@ -88,10 +88,10 @@ export class Client implements vscode.Disposable {
             this.errorHandler!.pushStderrLine(String(args[0]));
         };
         // Remember to dispose here so that we don't keep stacking references to the original Client instance.
-         this.disposables.push({
+        this.disposables.push({
             dispose: () => {
                 this.outputChannel.error = unboundOriginalError;
-            }
+            },
         });
 
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
