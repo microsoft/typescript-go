@@ -33,7 +33,13 @@ let metaModelSchema = await metaModelSchemaResponse.text();
 // Patch the schema to add omitzeroValue property to Property type
 metaModelSchema = metaModelSchema.replace(
     /(\t \* Whether the property is deprecated or not\. If deprecated\n\t \* the property contains the deprecation message\.\n\t \*\/\n\tdeprecated\?: string;)\n}/m,
-    `$1\n\n\t/**\n\t * Whether this property uses omitzero without being a pointer.\n\t * Custom extension for special value types.\n\t */\n\tomitzeroValue?: boolean;\n}`,
+    `$1\n\n\t/**\n\t * Whether this property uses omitzero without being a pointer.\n\t * Custom extension for special value types.\n\t */\n\tomitzeroValue?: boolean;\n\n\t/**\n\t * Whether this property should always serialize (no omitzero),\n\t * even when optional. Used for fields that must appear as null on the wire.\n\t */\n\tserializeNull?: boolean;\n}`,
+);
+
+// Patch the schema to add vsTypeDiscriminator property to Structure type
+metaModelSchema = metaModelSchema.replace(
+    /(export type Structure = \{[\s\S]*?\tdeprecated\?: string;)\n}/m,
+    `$1\n\n\t/**\n\t * If set, adds a _vs_type field with this value as a type discriminator\n\t * for VS client-side deserialization.\n\t */\n\tvsTypeDiscriminator?: string;\n}`,
 );
 
 fs.writeFileSync(metaModelSchemaPath, metaModelSchema);
