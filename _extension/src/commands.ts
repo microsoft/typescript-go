@@ -7,7 +7,7 @@ import type {
 } from "vscode-languageclient";
 
 import type * as tr from "./telemetryReporting";
-import { restartExtHostOnChangeIfNeeded } from "./util";
+import { getExplicitConfigTarget, restartExtHostOnChangeIfNeeded } from "./util";
 
 export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: tr.TelemetryReporter): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
@@ -34,26 +34,28 @@ export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     const jsTsTarget = getExplicitConfigTarget(jsTsConfig, "experimental.useTsgo");
     const tsTarget = getExplicitConfigTarget(tsConfig, "experimental.useTsgo");
 
-    if (jsTsTarget !== undefined || tsTarget === undefined) {
-        await jsTsConfig.update("experimental.useTsgo", enable, jsTsTarget ?? vscode.ConfigurationTarget.Global);
-    }
-    else if (tsTarget !== undefined) {
-        await tsConfig.update("experimental.useTsgo", enable, tsTarget);
+    // If any are defined, we'll use the most-specific target,
+    // but we'll only set it through `js/ts`.
+    if (jsTsTarget !== undefined || tsTarget !== undefined) {
+        const updates = [];
+
+        const mostSpecificTarget = Math.max(
+            jsTsTarget ?? vscode.ConfigurationTarget.Global,
+            tsTarget ?? vscode.ConfigurationTarget.Global,
+        );
+        updates.push(jsTsConfig.update("experimental.useTsgo", enable, mostSpecificTarget));
+
+        // If `typescript` had the most-specific target
+        // (or shared the most-specific target), then
+        // we'll erase that since we've just set `js/ts` above.
+        if (tsTarget === mostSpecificTarget) {
+            updates.push(tsConfig.update("experimental.useTsgo", undefined, mostSpecificTarget));
+        }
+
+        await Promise.all(updates);
     }
 
     return restartExtHostOnChangeIfNeeded();
-}
-
-function getExplicitConfigTarget(
-    config: vscode.WorkspaceConfiguration,
-    key: string,
-): vscode.ConfigurationTarget | undefined {
-    const inspection = config.inspect(key);
-    if (!inspection) return undefined;
-    if (inspection.workspaceFolderValue !== undefined) return vscode.ConfigurationTarget.WorkspaceFolder;
-    if (inspection.workspaceValue !== undefined) return vscode.ConfigurationTarget.Workspace;
-    if (inspection.globalValue !== undefined) return vscode.ConfigurationTarget.Global;
-    return undefined;
 }
 
 export const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";

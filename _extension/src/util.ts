@@ -156,8 +156,26 @@ export async function restartExtHostOnChangeIfNeeded(): Promise<void> {
 export function getUseTsgo(): boolean | undefined {
     const tsValue = getExplicitUseTsgo("typescript");
     const jsTsValue = getExplicitUseTsgo("js/ts");
-    if (tsValue === true || jsTsValue === true) return true;
-    if (tsValue === false || jsTsValue === false) return false;
+
+    if (tsValue !== undefined || jsTsValue !== undefined) {
+        const jsTsTarget = getExplicitConfigTarget(vscode.workspace.getConfiguration("js/ts"), "experimental.useTsgo");
+        const tsTarget = getExplicitConfigTarget(vscode.workspace.getConfiguration("typescript"), "experimental.useTsgo");
+        const mostSpecific = Math.max(jsTsTarget ?? vscode.ConfigurationTarget.Global, tsTarget ?? vscode.ConfigurationTarget.Global);
+        return jsTsTarget === mostSpecific ? jsTsValue : tsValue;
+    }
+
+    return undefined;
+}
+
+export function getExplicitConfigTarget(
+    config: vscode.WorkspaceConfiguration,
+    key: string,
+): vscode.ConfigurationTarget | undefined {
+    const inspection = config.inspect(key);
+    if (!inspection) return undefined;
+    if (inspection.workspaceFolderValue !== undefined) return vscode.ConfigurationTarget.WorkspaceFolder;
+    if (inspection.workspaceValue !== undefined) return vscode.ConfigurationTarget.Workspace;
+    if (inspection.globalValue !== undefined) return vscode.ConfigurationTarget.Global;
     return undefined;
 }
 
