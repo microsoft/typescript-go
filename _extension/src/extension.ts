@@ -95,6 +95,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                     "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.",
                     "OK",
                 );
+                return;
             }
         }
         else if (useTsgo === false) {
@@ -108,6 +109,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                     vscode.commands.executeCommand("typescript.native-preview.enable");
                 }
             });
+            return;
         }
     }
     else if (useTsgo === false) {
