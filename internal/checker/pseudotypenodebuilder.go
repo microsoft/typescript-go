@@ -213,11 +213,6 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			switch e.Kind {
 			case pseudochecker.PseudoObjectElementKindMethod:
 				d := e.AsPseudoObjectMethod()
-				name := b.reuseName(e.Name)
-				if text := ast.GetTextOfPropertyName(e.Name); text == "new" {
-					name = b.setTextRange(b.f.NewStringLiteral(text, ast.TokenFlagsNone), e.Name)
-					b.e.SetOriginal(name, e.Name)
-				}
 				var typeParams *ast.NodeList
 				if len(d.TypeParameters) > 0 {
 					res := make([]*ast.Node, 0, len(d.TypeParameters))
@@ -229,7 +224,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				if isConst {
 					newProp = b.f.NewPropertySignatureDeclaration(
 						modifiers,
-						name,
+						b.reuseName(e.Name, false /*isMethod*/),
 						nil,
 						b.f.NewFunctionTypeNode(
 							typeParams,
@@ -242,7 +237,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				}
 				newProp = b.f.NewMethodSignatureDeclaration(
 					modifiers,
-					name,
+					b.reuseName(e.Name, true /*isMethod*/),
 					nil,
 					typeParams,
 					b.pseudoParametersToNodeList(d.Parameters),
@@ -252,7 +247,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoPropertyAssignment()
 				newProp = b.f.NewPropertySignatureDeclaration(
 					modifiers,
-					b.reuseName(e.Name),
+					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
 					b.pseudoTypeToNode(d.Type),
 					nil,
@@ -261,7 +256,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoSetAccessor()
 				newProp = b.f.NewSetAccessorDeclaration(
 					nil,
-					b.reuseName(e.Name),
+					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
 					b.f.NewNodeList([]*ast.Node{b.pseudoParameterToNode(d.Parameter)}),
 					nil,
@@ -272,7 +267,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				d := e.AsPseudoGetAccessor()
 				newProp = b.f.NewGetAccessorDeclaration(
 					nil,
-					b.reuseName(e.Name),
+					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
 					nil,
 					b.pseudoTypeToNode(d.Type),

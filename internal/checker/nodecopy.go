@@ -7,7 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func (b *NodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
@@ -22,25 +21,36 @@ func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
 	return b.reuseNode(node)
 }
 
-// a wrapper around `reuseNode` for property names. It normalizes string-literal
-// property names whose text is a valid identifier into identifiers, matching the behavior of
-// `createPropertyNameNodeForIdentifierOrLiteral` used when constructing fresh property name nodes
-// (so that reused names emit consistently regardless of whether their containing type was reused
-// from source or rebuilt from a type).
-func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
+func (b *NodeBuilderImpl) reuseName(node *ast.Node, isMethod bool) *ast.Node {
 	res := b.reuseNode(node)
 	if res == nil {
 		return res
 	}
-	if res.Kind == ast.KindStringLiteral {
-		text := res.AsStringLiteral().Text
-		if scanner.IsIdentifierText(text, core.LanguageVariantStandard) {
-			ident := b.newIdentifier(text, nil)
-			b.e.SetOriginal(ident, res)
-			return b.setTextRange(ident, res)
-		}
+
+	text, ok := ast.TryGetTextOfPropertyName(res)
+	if !ok {
+		return res
 	}
-	return res
+
+	kind := classifyPropertyName(text, ast.IsStringLiteral(res), isMethod)
+	if ast.IsIdentifier(res) && kind == propertyNameNodeKindIdentifier {
+		return res
+	}
+	if ast.IsStringLiteral(res) && kind == propertyNameNodeKindStringLiteral {
+		return res
+	}
+
+	var renamed *ast.Node
+	switch kind {
+	case propertyNameNodeKindIdentifier:
+		renamed = b.newIdentifier(text, nil)
+	case propertyNameNodeKindStringLiteral:
+		renamed = b.f.NewStringLiteral(text, ast.TokenFlagsNone)
+	default:
+		return res
+	}
+	b.e.SetOriginal(renamed, res)
+	return b.setTextRange(renamed, res)
 }
 
 func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
