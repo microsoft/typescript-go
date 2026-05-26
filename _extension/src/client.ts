@@ -208,12 +208,15 @@ export class Client implements vscode.Disposable {
         );
     }
 
-    async dispose(): Promise<void> {
+    dispose(): void {
         if (this.isDisposed) {
             return;
         }
         this.isDisposed = true;
-        await Promise.all(this.disposables.map(d => d.dispose()));
+        while (this.disposables.length > 0) {
+            const disposable = this.disposables.pop()!;
+            disposable.dispose();
+        }
     }
 
     getCurrentExe(): ExeInfo | undefined {
