@@ -14,7 +14,7 @@ func TestFindAllRefsForRestVS(t *testing.T) {
 	const content = `interface Gen {
     x: number
     /*1*/parent: Gen;
-    millenial: string;
+    millennial: string;
 }
 let t: Gen;
 var { x, ...rest } = t;
