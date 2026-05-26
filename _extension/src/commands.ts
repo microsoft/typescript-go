@@ -7,7 +7,10 @@ import type {
 } from "vscode-languageclient";
 
 import type * as tr from "./telemetryReporting";
-import { getExplicitConfigTarget, restartExtHostOnChangeIfNeeded } from "./util";
+import {
+    getExplicitConfigTarget,
+    restartExtHostOnChangeIfNeeded,
+} from "./util";
 
 export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: tr.TelemetryReporter): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
