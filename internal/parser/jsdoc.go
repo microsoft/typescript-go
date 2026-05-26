@@ -865,9 +865,10 @@ func (p *Parser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.Enti
 				p.rewind(state)
 				break
 			}
-			if child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag {
+			switch child.Kind {
+			case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
 				children = append(children, child)
-			} else if child.Kind == ast.KindJSDocTemplateTag {
+			case ast.KindJSDocTemplateTag:
 				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			}
 		}
@@ -1007,11 +1008,11 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 				p.rewind(state)
 				break
 			}
-			if child.Kind == ast.KindJSDocTemplateTag {
-				break
-			}
 			hasChildren = true
-			if child.Kind == ast.KindJSDocTypeTag {
+			switch child.Kind {
+			case ast.KindJSDocTemplateTag:
+				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+			case ast.KindJSDocTypeTag:
 				if childTypeTag == nil {
 					childTypeTag = child.AsJSDocTypeTag()
 				} else {
@@ -1020,9 +1021,8 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 						related := ast.NewDiagnostic(nil, core.NewTextRange(0, 0), diagnostics.The_tag_was_first_specified_here)
 						lastError.AddRelatedInfo(related)
 					}
-					break
 				}
-			} else {
+			default:
 				jsdocPropertyTags = append(jsdocPropertyTags, child)
 			}
 		}
@@ -1082,9 +1082,9 @@ func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 		}
 		if child.Kind == ast.KindJSDocTemplateTag {
 			p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
-			break
+		} else {
+			parameters = append(parameters, child)
 		}
-		parameters = append(parameters, child)
 	}
 	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), parameters)
 }
