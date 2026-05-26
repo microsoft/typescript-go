@@ -149,9 +149,10 @@ export async function restartExtHostOnChangeIfNeeded(): Promise<void> {
  *
  * Each setting key is resolved using standard VS Code precedence (workspace
  * folder > workspace > global, with language-specific overrides taking
- * priority within each scope). Returns `true` if either resolved value is
- * `true`, `false` if either is `false` (and neither is `true`), or
- * `undefined` if neither setting has been explicitly configured.
+ * priority within each scope). When both keys are explicitly configured, the
+ * value set at the most specific scope wins, and `js/ts` wins over
+ * `typescript` at the same scope. Returns `undefined` if neither setting has
+ * been explicitly configured.
  */
 export function getUseTsgo(): boolean | undefined {
     const tsValue = getExplicitUseTsgo("typescript");
