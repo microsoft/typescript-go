@@ -28,22 +28,20 @@ export function registerEnablementCommands(context: vscode.ExtensionContext, tel
  * Handles both `js/ts.experimental.useTsgo` and `typescript.experimental.useTsgo`.
  */
 export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
-    const tsConfig = vscode.workspace.getConfiguration("typescript");
     const jsTsConfig = vscode.workspace.getConfiguration("js/ts");
+    const tsConfig = vscode.workspace.getConfiguration("typescript");
 
-    const tsTarget = getExplicitConfigTarget(tsConfig, "experimental.useTsgo");
     const jsTsTarget = getExplicitConfigTarget(jsTsConfig, "experimental.useTsgo");
+    const tsTarget = getExplicitConfigTarget(tsConfig, "experimental.useTsgo");
 
-    const updates: Thenable<void>[] = [];
-    if (jsTsTarget !== undefined) {
-        updates.push(jsTsConfig.update("experimental.useTsgo", enable, jsTsTarget));
+    if (jsTsTarget !== undefined || tsTarget === undefined) {
+        await jsTsConfig.update("experimental.useTsgo", enable, jsTsTarget ?? vscode.ConfigurationTarget.Global);
     }
-    if (tsTarget !== undefined || jsTsTarget === undefined) {
-        updates.push(tsConfig.update("experimental.useTsgo", enable, tsTarget ?? vscode.ConfigurationTarget.Global));
+    else if (tsTarget !== undefined) {
+        await tsConfig.update("experimental.useTsgo", enable, tsTarget);
     }
-    await Promise.all(updates);
 
-    await restartExtHostOnChangeIfNeeded();
+    return restartExtHostOnChangeIfNeeded();
 }
 
 function getExplicitConfigTarget(

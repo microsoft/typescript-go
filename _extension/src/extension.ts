@@ -98,7 +98,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             }
         }
         else if (useTsgo === false) {
-            const settingName = getUseTsgoFalseSetting() ?? "typescript.experimental.useTsgo";
+            const settingName = getUseTsgoFalseSetting() ?? "js/ts.experimental.useTsgo";
             vscode.window.showWarningMessage(
                 `TypeScript Native Preview is running in development mode with "${settingName}" set to false.`,
                 "Enable Setting",
