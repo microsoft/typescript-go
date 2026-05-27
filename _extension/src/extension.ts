@@ -185,7 +185,7 @@ async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output
         return;
     }
 
-    const settingName = getWinningTsgoConfigKey()!;
+    const settingName = getWinningTsgoConfigKey();
     assert(settingName !== undefined, "Expected some useTsgo configuration to be explicitly set.");
 
     const target = getExplicitConfigTarget(vscode.workspace.getConfiguration(), settingName);
