@@ -1,10 +1,9 @@
 --- old.jsDeclarationsExportAssignedVisibility(target=es2015).js
 +++ new.jsDeclarationsExportAssignedVisibility(target=es2015).js
-@@= skipped -37, +37 lines =@@
- //// [obj.d.ts]
+@@= skipped -38, +38 lines =@@
  export = Obj;
  declare class Obj {
--    x: number;
+     x: number;
 +    constructor();
  }
  //// [index.d.ts]

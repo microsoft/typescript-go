@@ -25,6 +25,7 @@ module.exports = class Thing {
 //// [index.d.ts]
 export = Thing;
 declare class Thing {
+    t: number;
     /**
      * @param {number} p
      */

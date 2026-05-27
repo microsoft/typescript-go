@@ -25,6 +25,7 @@ module.exports = class {
 //// [index.d.ts]
 export = _default;
 declare class _default {
+    t: number;
     /**
      * @param {number} p
      */

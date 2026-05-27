@@ -8,6 +8,7 @@
 -declare class exports {
 +export = _default;
 +declare class _default {
++    t: number;
      /**
       * @param {number} p
       */
@@ -20,6 +21,9 @@
 -declare class Sub {
 -    instance: import(".");
 +}
-+export declare class Sub {
-+    constructor();
++declare namespace _default {
++    export class Sub {
++        instance: import(".");
++        constructor();
++    }
  }

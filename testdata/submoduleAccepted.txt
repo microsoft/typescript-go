@@ -1406,6 +1406,7 @@ conformance/commonJSImportExportedClassExpression.js.diff
 conformance/jsDeclarationsExportAssignedClassExpression(target=es2015).js.diff
 conformance/jsDeclarationsExportAssignedClassExpressionAnonymous(target=es2015).js.diff
 conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).js.diff
 conformance/jsDeclarationsExportAssignedVisibility(target=es2015).js.diff
 
 # @callback/@overload variadic intepreted differently than strada

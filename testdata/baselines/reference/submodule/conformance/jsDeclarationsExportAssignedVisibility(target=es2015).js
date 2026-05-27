@@ -38,6 +38,7 @@ module.exports = Container;
 //// [obj.d.ts]
 export = Obj;
 declare class Obj {
+    x: number;
     constructor();
 }
 //// [index.d.ts]
