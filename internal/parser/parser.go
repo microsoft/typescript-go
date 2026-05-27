@@ -6606,15 +6606,10 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			}
 		case "ts-check", "ts-nocheck":
 			// _last_ of either nocheck or check in a file is the "winner"
-			for _, directive := range context.Pragmas {
-				if directive.Name != "ts-check" && directive.Name != "ts-nocheck" {
-					continue
-				}
-				if context.CheckJsDirective == nil || directive.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
-					context.CheckJsDirective = &ast.CheckJsDirective{
-						Enabled: directive.Name == "ts-check",
-						Range:   directive.CommentRange,
-					}
+			if context.CheckJsDirective == nil || pragma.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
+				context.CheckJsDirective = &ast.CheckJsDirective{
+					Enabled: pragma.Name == "ts-check",
+					Range:   pragma.CommentRange,
 				}
 			}
 		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
