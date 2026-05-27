@@ -878,7 +878,7 @@ func (l *LanguageService) getDefinitionKindAndDisplayParts(ctx context.Context, 
 
 	meaning := getIntersectingMeaningFromDeclarations(originalNode, symbol, ast.SemanticMeaningAll)
 
-	info := getQuickInfoAndDeclarationAtLocation(c, symbol, originalNode, nil /*vsCapability */, vsCapability, meaning)
+	info := getQuickInfoAndDeclarationAtLocation(c, symbol, originalNode, nil, vsCapability, meaning)
 
 	if vsCapability {
 		return &lsproto.ClassifiedTextElement{Runs: info.displayParts.GetRuns(), VSType: "ClassifiedTextElement"}

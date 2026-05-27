@@ -2214,7 +2214,7 @@ function generateCode() {
                 const type = resolveType(prop.type);
 
                 // For properties marked with omitzeroValue, use value type with omitzero instead of pointer
-                const useOmitzero = (prop.optional || prop.omitzeroValue) && !prop.serializeNull;
+                const useOmitzero = prop.optional || prop.omitzeroValue;
                 const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
 
                 writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
