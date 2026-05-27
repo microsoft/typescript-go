@@ -48,127 +48,81 @@
               {
                 "ClassificationTypeName": "method name",
                 "Text": "find",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "(",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "parameter name",
                 "Text": "l",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": ":",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "whitespace",
                 "Text": " ",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "keyword",
                 "Text": "any",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "[",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": "]",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
-                "Text": ",",
-                "MarkerTagType": null,
-                "Style": 0,
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " ",
-                "MarkerTagType": null,
-                "Style": 0,
+                "Text": ", ",
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "parameter name",
                 "Text": "x",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": ":",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "whitespace",
                 "Text": " ",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "keyword",
                 "Text": "any",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
                 "Text": ")",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "punctuation",
-                "Text": ":",
-                "MarkerTagType": null,
-                "Style": 0,
-                "_vs_type": "ClassifiedTextRun"
-              },
-              {
-                "ClassificationTypeName": "whitespace",
-                "Text": " ",
-                "MarkerTagType": null,
-                "Style": 0,
+                "Text": ": ",
                 "_vs_type": "ClassifiedTextRun"
               },
               {
                 "ClassificationTypeName": "keyword",
                 "Text": "any",
-                "MarkerTagType": null,
-                "Style": 0,
                 "_vs_type": "ClassifiedTextRun"
               }
             ],
