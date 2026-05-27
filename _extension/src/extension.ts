@@ -6,6 +6,7 @@ import {
 } from "./commands";
 import {
     aiConnectionString,
+    defer,
     getExplicitConfigTarget,
     getUseTsgo,
     getWinningTsgoConfigKey,
@@ -127,6 +128,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         return;
     }
 
+    let isTsserverWarnDialogShowing = false;
     warnAboutTsServerPlugins(context, output);
     context.subscriptions.push(vscode.extensions.onDidChange(() => {
         warnAboutTsServerPlugins(context, output);
@@ -154,6 +156,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     };
 
     async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output: vscode.LogOutputChannel): Promise<void> {
+        // Don't show multiple at a time.
+        // Kind of a form of debouncing.
+        if (isTsserverWarnDialogShowing) {
+            return;
+        }
+        isTsserverWarnDialogShowing = true;
+        using _clearDialog = defer(() => {
+            isTsserverWarnDialogShowing = false;
+        });
+
         if (getUseTsgo() !== true) {
             return;
         }
