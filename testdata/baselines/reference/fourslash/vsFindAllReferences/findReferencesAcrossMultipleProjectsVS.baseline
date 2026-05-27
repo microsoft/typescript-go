@@ -1,4 +1,15 @@
 // === vsFindAllReferences ===
+// === /a.ts ===
+// /*FIND ALL REFS*/var [|x|]: number;
+
+// === /b.ts ===
+// /// <reference path="a.ts" />
+// [|x|]++;
+
+// === /c.ts ===
+// /// <reference path="a.ts" />
+// [|x|]++;
+
 [
   {
     "_vs_id": 0,
@@ -23,29 +34,21 @@
         {
           "ClassificationTypeName": "keyword",
           "Text": "var ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "local name",
           "Text": "x",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "number",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -101,6 +104,17 @@
 
 
 // === vsFindAllReferences ===
+// === /a.ts ===
+// var /*FIND ALL REFS*/[|x|]: number;
+
+// === /b.ts ===
+// /// <reference path="a.ts" />
+// [|x|]++;
+
+// === /c.ts ===
+// /// <reference path="a.ts" />
+// [|x|]++;
+
 [
   {
     "_vs_id": 0,
@@ -125,29 +139,21 @@
         {
           "ClassificationTypeName": "keyword",
           "Text": "var ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "local name",
           "Text": "x",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "number",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -203,6 +209,17 @@
 
 
 // === vsFindAllReferences ===
+// === /a.ts ===
+// var [|x|]: number;
+
+// === /b.ts ===
+// /// <reference path="a.ts" />
+// /*FIND ALL REFS*/[|x|]++;
+
+// === /c.ts ===
+// /// <reference path="a.ts" />
+// [|x|]++;
+
 [
   {
     "_vs_id": 0,
@@ -227,29 +244,21 @@
         {
           "ClassificationTypeName": "keyword",
           "Text": "var ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "local name",
           "Text": "x",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "number",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -305,6 +314,17 @@
 
 
 // === vsFindAllReferences ===
+// === /a.ts ===
+// var [|x|]: number;
+
+// === /b.ts ===
+// /// <reference path="a.ts" />
+// [|x|]++;
+
+// === /c.ts ===
+// /// <reference path="a.ts" />
+// /*FIND ALL REFS*/[|x|]++;
+
 [
   {
     "_vs_id": 0,
@@ -329,29 +349,21 @@
         {
           "ClassificationTypeName": "keyword",
           "Text": "var ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "local name",
           "Text": "x",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "number",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],

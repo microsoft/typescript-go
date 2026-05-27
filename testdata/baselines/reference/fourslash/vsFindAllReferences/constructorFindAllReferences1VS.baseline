@@ -1,4 +1,12 @@
 // === vsFindAllReferences ===
+// === /constructorFindAllReferences1VS.ts ===
+// export class [|C|] {
+//     /*FIND ALL REFS*/public constructor() { }
+//     public foo() { }
+// }
+// 
+// new [|C|]().foo();
+
 [
   {
     "_vs_id": 0,
@@ -23,15 +31,11 @@
         {
           "ClassificationTypeName": "keyword",
           "Text": "class ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "class name",
           "Text": "C",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],

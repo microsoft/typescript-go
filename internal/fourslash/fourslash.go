@@ -2390,8 +2390,20 @@ func (f *FourslashTest) VerifyBaselineVsFindAllReferences(
 				}
 			}
 		}
+		// Include file contents with markers
+		var locations []lsproto.Location
+		if result.VsReferenceItems != nil {
+			for _, item := range *result.VsReferenceItems {
+				locations = append(locations, item.VSLocation)
+			}
+		}
+		fileContents := f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
+			marker:     markerOrRange,
+			markerName: "/*FIND ALL REFS*/",
+		})
+
 		if jsonStr, err := core.StringifyJson(result, "", "  "); err == nil {
-			f.addResultToBaseline(t, vsFindAllReferencesCmd, jsonStr)
+			f.addResultToBaseline(t, vsFindAllReferencesCmd, fileContents+"\n\n"+jsonStr)
 		} else {
 			t.Fatalf("Failed to stringify VS references result for baseline: %v", err)
 		}

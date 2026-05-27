@@ -1,4 +1,14 @@
 // === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.ts ===
+// class class1 extends class1 {
+//    /*FIND ALL REFS*/[|doStuff|]() { }
+//    propName: string;
+// }
+// 
+// var v: class1;
+// v.[|doStuff|]();
+// v.propName;
+
 [
   {
     "_vs_id": 0,
@@ -23,71 +33,51 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "method",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "method name",
           "Text": "class1.doStuff",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ")",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "void",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -122,6 +112,16 @@
 
 
 // === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.ts ===
+// class class1 extends class1 {
+//    doStuff() { }
+//    /*FIND ALL REFS*/[|propName|]: string;
+// }
+// 
+// var v: class1;
+// v.doStuff();
+// v.[|propName|];
+
 [
   {
     "_vs_id": 0,
@@ -146,43 +146,31 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "property",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "class1.propName",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "string",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -217,6 +205,16 @@
 
 
 // === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.ts ===
+// class class1 extends class1 {
+//    [|doStuff|]() { }
+//    propName: string;
+// }
+// 
+// var v: class1;
+// v./*FIND ALL REFS*/[|doStuff|]();
+// v.propName;
+
 [
   {
     "_vs_id": 0,
@@ -241,71 +239,51 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "method",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "method name",
           "Text": "class1.doStuff",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ")",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "void",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -340,6 +318,16 @@
 
 
 // === vsFindAllReferences ===
+// === /findAllRefsInheritedProperties1VS.ts ===
+// class class1 extends class1 {
+//    doStuff() { }
+//    [|propName|]: string;
+// }
+// 
+// var v: class1;
+// v.doStuff();
+// v./*FIND ALL REFS*/[|propName|];
+
 [
   {
     "_vs_id": 0,
@@ -364,43 +352,31 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "property",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "class1.propName",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "string",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],

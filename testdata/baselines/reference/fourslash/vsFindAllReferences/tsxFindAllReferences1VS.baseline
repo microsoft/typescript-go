@@ -1,4 +1,17 @@
 // === vsFindAllReferences ===
+// === /file.tsx ===
+// declare namespace JSX {
+//     interface Element { }
+//     interface IntrinsicElements {
+//         /*FIND ALL REFS*/[|div|]: {
+//             name?: string;
+//             isOpen?: boolean;
+//         };
+//         span: { n: string; };
+//     }
+// }
+// var x = <[|div|] />;
+
 [
   {
     "_vs_id": 0,
@@ -23,155 +36,111 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "property",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "IntrinsicElements.div",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "{",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "name",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "?",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "string",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "isOpen",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "?",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "boolean",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "}",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -206,11 +175,31 @@
 
 
 // === vsFindAllReferences ===
+// === /file.tsx ===
+// --- (line: 7) skipped ---
+//         span: { n: string; };
+//     }
+// }
+// var x = /*FIND ALL REFS*/<div />;
+
 []
 
 
 
 // === vsFindAllReferences ===
+// === /file.tsx ===
+// declare namespace JSX {
+//     interface Element { }
+//     interface IntrinsicElements {
+//         [|div|]: {
+//             name?: string;
+//             isOpen?: boolean;
+//         };
+//         span: { n: string; };
+//     }
+// }
+// var x = </*FIND ALL REFS*/[|div|] />;
+
 [
   {
     "_vs_id": 0,
@@ -235,155 +224,111 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "property",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "JSX.IntrinsicElements.div",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ": ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "{",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "name",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "?",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "string",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "property name",
           "Text": "isOpen",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "?",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "boolean",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "}",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],

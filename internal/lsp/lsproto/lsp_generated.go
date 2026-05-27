@@ -29719,10 +29719,10 @@ type ClassifiedTextRun struct {
 	Text string `json:"Text"`
 
 	// Optional marker tag type.
-	MarkerTagType *string `json:"MarkerTagType"`
+	MarkerTagType *string `json:"MarkerTagType,omitzero"`
 
 	// The style of this text run.
-	Style int32 `json:"Style"`
+	Style int32 `json:"Style,omitzero"`
 
 	// VS type discriminator required by ObjectContentConverter for deserialization.
 	VSType string `json:"_vs_type"`
@@ -29734,7 +29734,6 @@ func (s *ClassifiedTextRun) UnmarshalJSONFrom(dec *json.Decoder) error {
 	const (
 		missingClassificationTypeName uint = 1 << iota
 		missingText
-		missingStyle
 		_missingLast
 	)
 	missing := _missingLast - 1
@@ -29770,7 +29769,6 @@ func (s *ClassifiedTextRun) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		case `"Style"`:
-			missing &^= missingStyle
 			if err := json.UnmarshalDecode(dec, &s.Style); err != nil {
 				return err
 			}
@@ -29792,9 +29790,6 @@ func (s *ClassifiedTextRun) UnmarshalJSONFrom(dec *json.Decoder) error {
 		}
 		if missing&missingText != 0 {
 			missingProps = append(missingProps, "Text")
-		}
-		if missing&missingStyle != 0 {
-			missingProps = append(missingProps, "Style")
 		}
 		return errMissing(missingProps)
 	}

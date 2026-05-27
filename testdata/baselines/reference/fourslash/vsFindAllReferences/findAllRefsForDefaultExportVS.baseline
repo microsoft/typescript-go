@@ -1,4 +1,11 @@
 // === vsFindAllReferences ===
+// === /a.ts ===
+// export default function /*FIND ALL REFS*/[|f|]() {}
+
+// === /b.ts ===
+// import [|g|] from "./a";
+// [|g|]();
+
 [
   {
     "_vs_id": 0,
@@ -23,57 +30,41 @@
         {
           "ClassificationTypeName": "keyword",
           "Text": "function ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "method name",
           "Text": "f",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ")",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "void",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -105,78 +96,56 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "alias",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "function ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "method name",
           "Text": "f",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ")",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "void",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
@@ -211,6 +180,10 @@
 
 
 // === vsFindAllReferences ===
+// === /b.ts ===
+// import /*FIND ALL REFS*/[|g|] from "./a";
+// [|g|]();
+
 [
   {
     "_vs_id": 0,
@@ -235,78 +208,56 @@
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "text",
           "Text": "alias",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ") ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "function ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "method name",
           "Text": "f",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": "(",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ")",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ":",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "whitespace",
           "Text": " ",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "keyword",
           "Text": "void",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         },
         {
           "ClassificationTypeName": "punctuation",
           "Text": ";",
-          "MarkerTagType": null,
-          "Style": 0,
           "_vs_type": "ClassifiedTextRun"
         }
       ],
