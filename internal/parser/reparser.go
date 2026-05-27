@@ -32,9 +32,9 @@ func (p *Parser) addDeepCloneReparse(node *ast.Node) *ast.Node {
 }
 
 func (p *Parser) addTransformedReparse(newNode *ast.Node, old *ast.Node) *ast.Node {
+	p.finishReparsedNode(newNode, old)
+	newNode.Flags |= ast.NodeFlagsReparserTransformedLiteral
 	p.reparsedClones = append(p.reparsedClones, newNode)
-	// TODO: reference `old` with `.original` lookups? Can't set `.Loc` as it would set text source
-	// Don't need to set `.Parent` as `finishReparsedNode` will handle that
 	return newNode
 }
 
