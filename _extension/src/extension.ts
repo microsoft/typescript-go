@@ -152,6 +152,63 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             return sessionManager.initializeAPIConnection(pipe);
         },
     };
+
+    async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output: vscode.LogOutputChannel): Promise<void> {
+        if (getUseTsgo() !== true) {
+            return;
+        }
+
+        const settingName = getWinningTsgoConfigKey();
+        assert(settingName !== undefined, "Expected some useTsgo configuration to be explicitly set.");
+
+        const target = getExplicitConfigTarget(vscode.workspace.getConfiguration(), settingName);
+        assert(target !== undefined, "Expected an explicit configuration target.");
+
+        // We only want to warn about plugins in the global configuration.
+        // Setting in the workspace is an indication that the user is aware of the potential issues.
+        if (target !== vscode.ConfigurationTarget.Global) {
+            return;
+        }
+
+        const hasWorkspaceFolder = !!vscode.workspace.workspaceFolders?.length;
+
+        if (context.workspaceState.get<true>(pluginWarningDismissedKey) ?? context.globalState.get<true>(pluginWarningDismissedKey)) {
+            return;
+        }
+
+        const pluginExtensions = getExtensionsWithTsServerPlugins();
+        if (pluginExtensions.length === 0) {
+            return;
+        }
+
+        const uniqueExtensionNames = [...new Set(pluginExtensions.map(p => p.extensionId))];
+        const extensionNames = uniqueExtensionNames.join(", ");
+        output.appendLine(`Extensions contributing tsserver plugins that will not apply with tsgo: ${extensionNames}`);
+
+        const message = uniqueExtensionNames.length === 1
+            // Pick the first extension & plugin, even though extensions can have multiple plugins
+            ? `The ${pluginExtensions[0].pluginName} plugin from the extension "${pluginExtensions[0].extensionId}" will not be applied because TypeScript Native Preview is enabled globally.`
+            : `${uniqueExtensionNames.length} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: ${extensionNames}`;
+
+        const ok = "OK";
+        const disableInWorkspace = "Disable in Workspace";
+        const dontShowAgain = hasWorkspaceFolder ? "Don't Show Again in Workspace" : "Don't Show Again";
+
+        const options = [ok];
+        if (hasWorkspaceFolder) {
+            options.push(disableInWorkspace);
+        }
+        options.push(dontShowAgain);
+
+        const selected = await vscode.window.showWarningMessage(message, ...options);
+        if (selected === disableInWorkspace) {
+            await vscode.workspace.getConfiguration("js/ts").update("experimental.useTsgo", false, vscode.ConfigurationTarget.Workspace);
+        }
+        else if (selected === dontShowAgain) {
+            const stateStorage = hasWorkspaceFolder ? context.workspaceState : context.globalState;
+            await stateStorage.update(pluginWarningDismissedKey, true);
+        }
+    }
 }
 
 const suppressedPluginExtensionIds: Set<string> = new Set([
@@ -164,10 +221,18 @@ const pluginWarningDismissedKey = "tsServerPluginWarningDismissed";
 function getExtensionsWithTsServerPlugins(): { extensionId: string; pluginName: string; }[] {
     const results: { extensionId: string; pluginName: string; }[] = [];
     for (const extension of vscode.extensions.all) {
+        // Technically the built-in extension always loads
+        // plugins, but we only want to consider active extensions.
+        if (!extension.isActive) {
+            continue;
+        }
+
+        // Ignore built-in extensions that always try to contribute plugins.
         const id = extension.id.toLowerCase();
         if (suppressedPluginExtensionIds.has(id)) {
             continue;
         }
+
         const contributes = extension.packageJSON?.contributes;
         if (contributes && Array.isArray(contributes.typescriptServerPlugins)) {
             for (const plugin of contributes.typescriptServerPlugins) {
@@ -178,61 +243,4 @@ function getExtensionsWithTsServerPlugins(): { extensionId: string; pluginName: 
         }
     }
     return results;
-}
-
-async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output: vscode.LogOutputChannel): Promise<void> {
-    if (getUseTsgo() !== true) {
-        return;
-    }
-
-    const settingName = getWinningTsgoConfigKey();
-    assert(settingName !== undefined, "Expected some useTsgo configuration to be explicitly set.");
-
-    const target = getExplicitConfigTarget(vscode.workspace.getConfiguration(), settingName);
-    assert(target !== undefined, "Expected an explicit configuration target.");
-
-    // We only want to warn about plugins in the global configuration.
-    // Setting in the workspace is an indication that the user is aware of the potential issues.
-    if (target !== vscode.ConfigurationTarget.Global) {
-        return;
-    }
-
-    const hasWorkspaceFolder = !!vscode.workspace.workspaceFolders?.length;
-
-    if (context.workspaceState.get<true>(pluginWarningDismissedKey) ?? context.globalState.get<true>(pluginWarningDismissedKey)) {
-        return;
-    }
-
-    const pluginExtensions = getExtensionsWithTsServerPlugins();
-    if (pluginExtensions.length === 0) {
-        return;
-    }
-
-    const uniqueExtensionNames = [...new Set(pluginExtensions.map(p => p.extensionId))];
-    const extensionNames = uniqueExtensionNames.join(", ");
-    output.appendLine(`Extensions contributing tsserver plugins that will not apply with tsgo: ${extensionNames}`);
-
-    const message = uniqueExtensionNames.length === 1
-        // Pick the first extension & plugin, even though extensions can have multiple plugins
-        ? `The ${pluginExtensions[0].pluginName} plugin from the extension "${pluginExtensions[0].extensionId}" will not be applied because TypeScript Native Preview is enabled globally.`
-        : `${uniqueExtensionNames.length} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: ${extensionNames}`;
-
-    const ok = "OK";
-    const disableInWorkspace = "Disable in Workspace";
-    const dontShowAgain = hasWorkspaceFolder ? "Don't Show Again in Workspace" : "Don't Show Again";
-
-    const options = [ok];
-    if (hasWorkspaceFolder) {
-        options.push(disableInWorkspace);
-    }
-    options.push(dontShowAgain);
-
-    const selected = await vscode.window.showWarningMessage(message, ...options);
-    if (selected === disableInWorkspace) {
-        await vscode.workspace.getConfiguration("js/ts").update("experimental.useTsgo", false, vscode.ConfigurationTarget.Workspace);
-    }
-    else if (selected === dontShowAgain) {
-        const stateStorage = hasWorkspaceFolder ? context.workspaceState : context.globalState;
-        await stateStorage.update(pluginWarningDismissedKey, true);
-    }
 }
