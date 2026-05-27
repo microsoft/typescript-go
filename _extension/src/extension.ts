@@ -215,7 +215,7 @@ async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output
     const message = uniqueExtensionNames.length === 1
         // Pick the first extension & plugin, even though extensions can have multiple plugins
         ? `The ${pluginExtensions[0].pluginName} plugin from the extension "${pluginExtensions[0].extensionId}" will not be applied because TypeScript Native Preview is enabled globally.`
-        : `${uniqueExtensionNames.length} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: ${uniqueExtensionNames}`;
+        : `${uniqueExtensionNames.length} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: ${extensionNames}`;
 
     const ok = "OK";
     const disableInWorkspace = "Disable in Workspace";
