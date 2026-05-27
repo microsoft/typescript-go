@@ -2281,16 +2281,33 @@ func (b *NodeBuilderImpl) trackComputedName(accessExpression *ast.Node, enclosin
 	}
 }
 
+type propertyNameNodeKind int
+
+const (
+	propertyNameNodeKindIdentifier propertyNameNodeKind = iota
+	propertyNameNodeKindNumericLiteral
+	propertyNameNodeKindStringLiteral
+)
+
+func classifyPropertyName(name string, stringNamed bool, isMethod bool) propertyNameNodeKind {
+	if isMethod && name == "new" {
+		return propertyNameNodeKindStringLiteral
+	}
+	if scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
+		return propertyNameNodeKindIdentifier
+	}
+	return core.IfElse(!stringNamed && isNumericLiteralName(name) && jsnum.FromString(name) >= 0, propertyNameNodeKindNumericLiteral, propertyNameNodeKindStringLiteral)
+}
+
 func (b *NodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name string, singleQuote bool, stringNamed bool, isMethod bool, symbol *ast.Symbol) *ast.Node {
-	isMethodNamedNew := isMethod && name == "new"
-	if !isMethodNamedNew && scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
+	switch classifyPropertyName(name, stringNamed, isMethod) {
+	case propertyNameNodeKindIdentifier:
 		return b.newIdentifier(name, symbol)
-	}
-	if !stringNamed && !isMethodNamedNew && isNumericLiteralName(name) && jsnum.FromString(name) >= 0 {
+	case propertyNameNodeKindNumericLiteral:
 		return b.f.NewNumericLiteral(name, ast.TokenFlagsNone)
+	default:
+		return b.f.NewStringLiteral(name, core.IfElse(singleQuote, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone))
 	}
-	result := b.f.NewStringLiteral(name, core.IfElse(singleQuote, ast.TokenFlagsSingleQuote, ast.TokenFlagsNone))
-	return result
 }
 
 func (b *NodeBuilderImpl) isStringNamed(d *ast.Declaration) bool {
@@ -3000,7 +3017,9 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	// of types allows us to catch circular references to instantiations of the same anonymous type
 
 	key := CompositeTypeCacheIdentity{typeId, b.ctx.flags, b.ctx.internalFlags}
-	if b.ctx.maxExpansionDepth <= 0 && b.ctx.enclosingDeclaration != nil && b.links.Has(b.ctx.enclosingDeclaration) {
+	// Don't rely on type cache if we're expanding a type, because we need to compute `canIncreaseExpansionDepth`.
+	canUseCache := b.ctx.maxExpansionDepth < 0
+	if canUseCache && b.ctx.enclosingDeclaration != nil && b.links.Has(b.ctx.enclosingDeclaration) {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
 		cachedResult, ok := links.serializedTypes[key]
 		if ok {
@@ -3030,7 +3049,7 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	startLength := b.ctx.approximateLength
 	result := transform(b, t)
 	addedLength := b.ctx.approximateLength - startLength
-	if !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
+	if canUseCache && !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
 		if links.serializedTypes == nil {
 			links.serializedTypes = make(map[CompositeTypeCacheIdentity]*SerializedTypeEntry)
