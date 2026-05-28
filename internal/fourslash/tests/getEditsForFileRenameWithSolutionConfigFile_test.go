@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestGetEditsForFileRenameSolutionNoCrash(t *testing.T) {
+func TestGetEditsForFileRenameWithSolutionConfigFile(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	// The parent-directory solution tsconfig only references the composite child
