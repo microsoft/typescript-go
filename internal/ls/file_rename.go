@@ -26,6 +26,9 @@ type toImport struct {
 
 func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lsproto.DocumentUri, newURI lsproto.DocumentUri) []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile {
 	program := l.GetProgram()
+	if program == nil {
+		return nil
+	}
 	oldPath := oldURI.FileName()
 	newPath := newURI.FileName()
 
