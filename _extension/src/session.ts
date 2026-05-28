@@ -476,7 +476,7 @@ export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext
     if (workspaceVersions.length === 0) return;
 
     // If the existing tsdk setting already resolves to a workspace install,
-    // treat it as already opted in — don't prompt and don't overwrite the setting.
+    // treat it as already opted in - don't prompt and don't overwrite the setting.
     const config = vscode.workspace.getConfiguration("typescript.native-preview");
     const currentTsdk = config.get<string>("tsdk");
     if (currentTsdk) {
