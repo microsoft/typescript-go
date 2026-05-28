@@ -614,8 +614,10 @@ type Checker struct {
 	evaluate                                    evaluator.Evaluator
 	stringLiteralTypes                          map[string]*Type
 	numberLiteralTypes                          map[jsnum.Number]*Type
+	nanType                                     *Type
 	bigintLiteralTypes                          map[jsnum.PseudoBigInt]*Type
 	enumLiteralTypes                            map[EnumLiteralKey]*Type
+	enumNaNLiteralTypes                         map[*ast.Symbol]*Type
 	indexedAccessTypes                          map[CacheHashKey]*Type
 	templateLiteralTypes                        map[CacheHashKey]*Type
 	stringMappingTypes                          map[StringMappingKey]*Type
@@ -643,6 +645,7 @@ type Checker struct {
 	errorTypes                                  map[CacheHashKey]*Type
 	moduleSymbols                               map[*ast.Node]*ast.Symbol
 	globalThisSymbol                            *ast.Symbol
+	symbolTableAliasCache                       map[symbolTableID][]*ast.Symbol
 	resolveName                                 func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	resolveNameForSymbolSuggestion              func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	tupleTypes                                  map[CacheHashKey]*Type
@@ -924,6 +927,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.numberLiteralTypes = make(map[jsnum.Number]*Type)
 	c.bigintLiteralTypes = make(map[jsnum.PseudoBigInt]*Type)
 	c.enumLiteralTypes = make(map[EnumLiteralKey]*Type)
+	c.enumNaNLiteralTypes = make(map[*ast.Symbol]*Type)
 	c.indexedAccessTypes = make(map[CacheHashKey]*Type)
 	c.templateLiteralTypes = make(map[CacheHashKey]*Type)
 	c.stringMappingTypes = make(map[StringMappingKey]*Type)
@@ -10402,6 +10406,7 @@ func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.No
 		return
 	}
 	c.checkCollisionWithRequireExportsInGeneratedCode(node, name)
+	c.checkCollisionWithGlobalObjectInGeneratedCode(node, name)
 	c.checkCollisionWithGlobalPromiseInGeneratedCode(node, name)
 	c.recordPotentialCollisionWithWeakMapSetInGeneratedCode(node, name)
 	c.recordPotentialCollisionWithReflectInGeneratedCode(node, name)
@@ -10431,6 +10436,22 @@ func (c *Checker) checkCollisionWithRequireExportsInGeneratedCode(node *ast.Node
 	parent := ast.GetDeclarationContainer(node)
 	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
 		// If the declaration happens to be in external module, report error that require and exports are reserved keywords
+		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
+	}
+}
+
+func (c *Checker) checkCollisionWithGlobalObjectInGeneratedCode(node *ast.Node, name *ast.Node) {
+	if name == nil || ast.IsClassLike(node) || !c.needCollisionCheckForIdentifier(node, name, "Object") {
+		return
+	}
+	// Uninstantiated modules shouldn't do this check
+	if ast.IsModuleDeclaration(node) && ast.GetModuleInstanceState(node) != ast.ModuleInstanceStateInstantiated {
+		return
+	}
+	// In case of variable declaration, node.parent is variable statement so look at the variable statement's parent
+	parent := ast.GetDeclarationContainer(node)
+	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) && c.program.GetEmitModuleFormatOfFile(parent.AsSourceFile()) == core.ModuleKindCommonJS {
+		// If the declaration happens to be in external module, report error that Object is a reserved identifier.
 		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
 	}
 }
@@ -15670,8 +15691,9 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 			(symbol.Flags&ast.SymbolFlagsAlias != 0 || name.Parent != nil && name.Parent.Kind == ast.KindExportAssignment) {
 			c.markSymbolOfAliasDeclarationIfTypeOnly(getAliasDeclarationFromName(name), nil)
 		}
-		if symbol.Flags&meaning == 0 && !dontResolveAlias && symbol.Flags&ast.SymbolFlagsAlias != 0 {
-			return c.resolveAlias(symbol)
+		// We know a symbol with the given meaning exists along the alias chain, so resolve until we find it.
+		for symbol.Flags&meaning == 0 && !dontResolveAlias && symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			symbol = c.resolveAlias(symbol)
 		}
 	}
 	return symbol
@@ -17964,7 +17986,7 @@ func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type 
 		default:
 			t = c.checkExpressionForMutableLocation(node.AsBinaryExpression().Right, CheckModeNormal)
 		}
-		if c.isEmptyArrayLiteralType(t) {
+		if c.isEmptyArrayLiteralType(t) && !c.hasParentWithTypeAnnotation(node.Symbol()) {
 			c.reportImplicitAny(node, c.anyArrayType, WideningKindNormal)
 			return c.anyArrayType
 		}
@@ -17974,6 +17996,20 @@ func (c *Checker) getAssignmentDeclarationInitializerType(node *ast.Node) *Type 
 		return c.getTypeFromPropertyDescriptor(node.Arguments()[2])
 	}
 	return nil
+}
+
+// Return true if the parent symbol of the given assignment declaration symbol has declaration with a type
+// annotation. For example, returns true for the symbol associated with `f.a` below:
+//
+//	const f: { (): void, a: string[] } = () => {};
+//	f.a = [];
+func (c *Checker) hasParentWithTypeAnnotation(symbol *ast.Symbol) bool {
+	if symbol.Parent != nil && symbol.Parent.ValueDeclaration != nil && ast.IsFunctionExpressionOrArrowFunction(symbol.Parent.ValueDeclaration) {
+		if possiblyAnnotatedSymbol := c.getSymbolOfNode(symbol.Parent.ValueDeclaration.Parent); possiblyAnnotatedSymbol != nil && possiblyAnnotatedSymbol.ValueDeclaration != nil {
+			return possiblyAnnotatedSymbol.ValueDeclaration.Type() != nil
+		}
+	}
+	return false
 }
 
 func (c *Checker) containsSameNamedThisProperty(thisProperty *ast.Node, expression *ast.Node) bool {
@@ -19935,18 +19971,9 @@ func (c *Checker) getAnnotatedAccessorTypeNode(accessor *ast.Node) *ast.Node {
 }
 
 func getEffectiveSetAccessorTypeAnnotationNode(node *ast.Node) *ast.Node {
-	param := getSetAccessorValueParameter(node)
+	param := GetSetAccessorValueParameter(node)
 	if param != nil {
 		return param.Type()
-	}
-	return nil
-}
-
-func getSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
-	parameters := accessor.Parameters()
-	if len(parameters) > 0 {
-		hasThis := len(parameters) == 2 && ast.IsThisParameter(parameters[0])
-		return parameters[core.IfElse(hasThis, 1, 0)]
 	}
 	return nil
 }
@@ -25144,6 +25171,14 @@ func (c *Checker) getStringLiteralType(value string) *Type {
 }
 
 func (c *Checker) getNumberLiteralType(value jsnum.Number) *Type {
+	// NaN cannot be used as a Go map key because NaN != NaN in IEEE 754,
+	// so Go map lookups for NaN always miss. Cache NaN type separately.
+	if value.IsNaN() {
+		if c.nanType == nil {
+			c.nanType = c.newLiteralType(TypeFlagsNumberLiteral, value, nil)
+		}
+		return c.nanType
+	}
 	t := c.numberLiteralTypes[value]
 	if t == nil {
 		t = c.newLiteralType(TypeFlagsNumberLiteral, value, nil)
@@ -25185,11 +25220,22 @@ func getBooleanLiteralValue(t *Type) bool {
 
 func (c *Checker) getEnumLiteralType(value any, enumSymbol *ast.Symbol, symbol *ast.Symbol) *Type {
 	var flags TypeFlags
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		flags = TypeFlagsEnumLiteral | TypeFlagsStringLiteral
 	case jsnum.Number:
 		flags = TypeFlagsEnumLiteral | TypeFlagsNumberLiteral
+		// NaN cannot be used as a Go map key because NaN != NaN in IEEE 754,
+		// so Go map lookups for NaN always miss. Cache NaN enum types separately by enum symbol.
+		if v.IsNaN() {
+			t := c.enumNaNLiteralTypes[enumSymbol]
+			if t == nil {
+				t = c.newLiteralType(flags, value, nil)
+				t.symbol = symbol
+				c.enumNaNLiteralTypes[enumSymbol] = t
+			}
+			return t
+		}
 	default:
 		panic("Unhandled case in getEnumLiteralType")
 	}
@@ -26439,7 +26485,14 @@ func (c *Checker) getCrossProductUnionSize(types []*Type) int {
 	for _, t := range types {
 		switch {
 		case t.flags&TypeFlagsUnion != 0:
-			size *= len(t.Types())
+			n := len(t.Types())
+			// Cap the result to avoid integer overflow when computing the cross product of many large unions.
+			// In TypeScript, number overflow produces Infinity which naturally exceeds the limit check;
+			// in Go, we must guard against int wrapping to zero or negative.
+			if n > 0 && size > math.MaxInt/n {
+				return math.MaxInt
+			}
+			size *= n
 		case t.flags&TypeFlagsNever != 0:
 			return 0
 		}
@@ -30167,7 +30220,7 @@ func (c *Checker) getClassElementPropertyKeyType(element *ast.Node) *Type {
 		}
 		return c.stringType
 	}
-	panic("Unhandled case in getClassElementPropertyKeyType")
+	return c.errorType
 }
 
 func (c *Checker) getTypeOfPropertyOfContextualType(t *Type, name string) *Type {

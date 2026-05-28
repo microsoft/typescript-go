@@ -1801,8 +1801,12 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly boo
 			return c.createArrayType(c.getIndexedAccessType(restType, c.numberType))
 		}
 	}
-	types := make([]*Type, parameterCount-pos)
-	infos := make([]TupleElementInfo, parameterCount-pos)
+	length := parameterCount - pos
+	if length <= 0 {
+		return c.createTupleTypeEx(nil, nil, readonly)
+	}
+	types := make([]*Type, length)
+	infos := make([]TupleElementInfo, length)
 	for i := range types {
 		var flags ElementFlags
 		if restType == nil || i < len(types)-1 {
@@ -1879,6 +1883,9 @@ func (c *Checker) sliceTupleType(t *Type, index int, endSkipCount int) *Type {
 		if restArrayType := c.getRestArrayTypeOfTupleType(t); restArrayType != nil {
 			return restArrayType
 		}
+		return c.createTupleType(nil)
+	}
+	if index >= endIndex {
 		return c.createTupleType(nil)
 	}
 	return c.createTupleTypeEx(c.getTypeArguments(t)[index:endIndex], target.elementInfos[index:endIndex], false /*readonly*/)
