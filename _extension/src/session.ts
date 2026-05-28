@@ -355,15 +355,23 @@ interface DetectedVersion {
 
 async function findWorkspaceNativePreviewPackages(): Promise<DetectedVersion[]> {
     const results: DetectedVersion[] = [];
-    for (const folder of vscode.workspace.workspaceFolders ?? []) {
+    const folders = vscode.workspace.workspaceFolders ?? [];
+    for (let i = 0; i < folders.length; i++) {
+        const folder = folders[i];
         const packagePath = vscode.Uri.joinPath(folder.uri, "node_modules", "@typescript", "native-preview");
         const resolved = await resolveTsdkPathToExe(path.normalize(packagePath.fsPath));
         if (!resolved) continue;
+        // Use a relative path only for the first workspace folder since
+        // workspaceResolve anchors relative paths there. For other folders,
+        // fall back to the absolute path so the setting resolves correctly.
+        const relativeTsdkPath = i === 0
+            ? "./node_modules/@typescript/native-preview"
+            : path.normalize(packagePath.fsPath);
         results.push({
             label: folder.name,
             version: resolved?.version ?? "unknown",
             tsdkPath: path.normalize(packagePath.fsPath),
-            relativeTsdkPath: "./node_modules/@typescript/native-preview",
+            relativeTsdkPath,
             exePath: resolved?.path ?? "",
         });
     }
@@ -483,6 +491,8 @@ export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext
         const resolvedCurrent = await resolveTsdkPathToExe(currentTsdk);
         if (resolvedCurrent && workspaceVersions.some(ws => ws.exePath === resolvedCurrent.path)) {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
+            // Restart so the workspace tsdk takes effect for the current session.
+            await vscode.commands.executeCommand("typescript.native-preview.restart");
             return;
         }
     }
