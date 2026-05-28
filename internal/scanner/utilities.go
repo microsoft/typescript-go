@@ -75,9 +75,9 @@ func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivi
 		// This is similar to `getLiteralTextOfNode` in the printer, but without the context of an `emitContext` to provide overrides
 		if ast.IsStringLiteral(node) {
 			if node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0 {
-				return "'"+text+"'"
+				return "'" + text + "'"
 			}
-			return "\""+text+"\""
+			return "\"" + text + "\""
 		} else if ast.IsIdentifier(node) {
 			return node.Text()
 		}
