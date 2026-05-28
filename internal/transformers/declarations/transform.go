@@ -1785,31 +1785,58 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		extraImports, _ = tx.Visitor().VisitSlice(imports)
 	}
 
-	nodes, _ := tx.Visitor().VisitSlice(inputNodes)
-	if len(nodes) == 0 {
-		if len(extraImports) > 0 {
-			return tx.Factory().NewSyntaxList(extraImports)
+	var nodes []*ast.Node
+	var statements []*ast.Node
+	for _, n := range inputNodes {
+		if target := tx.getBoundFunctionTargetDeclaration(n); target != nil {
+			statements = append(statements, tx.createBoundFunctionDeclaration(
+				n,
+				tx.ensureModifiers(input.AsNode()),
+				n.Name(),
+				target,
+			))
+			statements = append(statements, tx.transformBoundFunctionSourceProperties(n, target)...)
+			continue
 		}
-		return nil
-	}
-	nodeList := tx.Factory().NewNodeList(nodes)
 
-	modifiers := tx.ensureModifiers(input.AsNode())
-
-	var declList *ast.Node
-	if ast.IsVarUsing(input.DeclarationList) || ast.IsVarAwaitUsing(input.DeclarationList) {
-		declList = tx.Factory().NewVariableDeclarationList(nodeList, ast.NodeFlagsConst)
-		tx.EmitContext().SetOriginal(declList, input.DeclarationList)
-		tx.EmitContext().SetCommentRange(declList, input.DeclarationList.Loc)
-		declList.Loc = input.DeclarationList.Loc
-	} else {
-		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodeList, input.DeclarationList.Flags)
+		visited := tx.Visitor().Visit(n)
+		switch {
+		case visited == nil:
+			continue
+		case visited.Kind == ast.KindSyntaxList:
+			nodes = append(nodes, visited.AsSyntaxList().Children...)
+		default:
+			nodes = append(nodes, visited)
+		}
 	}
-	res := tx.Factory().UpdateVariableStatement(input, modifiers, declList)
+
+	if len(nodes) > 0 {
+		nodeList := tx.Factory().NewNodeList(nodes)
+		modifiers := tx.ensureModifiers(input.AsNode())
+
+		var declList *ast.Node
+		if ast.IsVarUsing(input.DeclarationList) || ast.IsVarAwaitUsing(input.DeclarationList) {
+			declList = tx.Factory().NewVariableDeclarationList(nodeList, ast.NodeFlagsConst)
+			tx.EmitContext().SetOriginal(declList, input.DeclarationList)
+			tx.EmitContext().SetCommentRange(declList, input.DeclarationList.Loc)
+			declList.Loc = input.DeclarationList.Loc
+		} else {
+			declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodeList, input.DeclarationList.Flags)
+		}
+		statements = append(statements, tx.Factory().UpdateVariableStatement(input, modifiers, declList))
+	}
+
 	if len(extraImports) > 0 {
-		return tx.Factory().NewSyntaxList(append(extraImports, res))
+		statements = append(extraImports, statements...)
 	}
-	return res
+	switch len(statements) {
+	case 0:
+		return nil
+	case 1:
+		return statements[0]
+	default:
+		return tx.Factory().NewSyntaxList(statements)
+	}
 }
 
 func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclaration) *ast.Node {
@@ -2226,11 +2253,6 @@ func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.Node) *ast.
 func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) *ast.Node {
 	left := node.Left
 
-	symbol := node.Symbol
-	if symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
-		return nil
-	}
-
 	ns := ast.GetLeftmostAccessExpression(left)
 	if ns == nil || ns.Kind != ast.KindIdentifier {
 		return nil
@@ -2245,11 +2267,17 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return nil
 	}
 
+	boundFunctionTarget := tx.getBoundFunctionTargetDeclaration(declaration)
+	symbol := node.Symbol
+	if (symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0) && boundFunctionTarget == nil {
+		return nil
+	}
+
 	if ast.IsFunctionDeclaration(declaration) && declaration.FunctionLikeData().FullSignature != nil {
 		return nil
 	}
 
-	if ast.IsVariableDeclaration(declaration) && !ast.IsFunctionLike(declaration.Initializer()) {
+	if ast.IsVariableDeclaration(declaration) && !ast.IsFunctionLike(declaration.Initializer()) && boundFunctionTarget == nil {
 		return nil // We're going to add a type, no need to dupe members with a namespace
 	}
 
@@ -2268,14 +2296,65 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return nil
 	}
 
-	tx.transformExpandoHost(name, declaration)
+	if boundFunctionTarget == nil {
+		tx.transformExpandoHost(name, declaration)
+	}
 
 	if ast.IsFunctionDeclaration(declaration) && !shouldEmitFunctionProperties(declaration.AsFunctionDeclaration()) {
 		return nil
 	}
 
+	typeExpression := left
+	if boundFunctionTarget != nil {
+		typeExpression = node.Right
+	}
+	return tx.transformExpandoProperty(name, host, declaration, property, node.AsNode(), func(synthesizedNamespace *ast.Node) *ast.Node {
+		return tx.resolver.CreateTypeOfExpression(tx.EmitContext(), typeExpression, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
+	})
+}
+
+func (tx *DeclarationTransformer) transformBoundFunctionSourceProperties(declaration *ast.Node, target *ast.Node) []*ast.Node {
+	host := declaration.Symbol()
+	if host == nil {
+		return nil
+	}
+	if ast.IsFunctionDeclaration(target) && !shouldEmitFunctionProperties(target.AsFunctionDeclaration()) {
+		return nil
+	}
+
+	props := tx.resolver.GetPropertiesOfContainerFunction(target)
+	if len(props) == 0 {
+		return nil
+	}
+
+	var results []*ast.Node
+	for _, prop := range props {
+		if prop.ValueDeclaration == nil || !ast.IsExpandoPropertyDeclaration(prop.ValueDeclaration) {
+			continue
+		}
+		property := prop.Name
+		if property == "" || !scanner.IsIdentifierText(property, core.LanguageVariantStandard) {
+			continue
+		}
+		if tx.hasOwnExpandoAssignment(declaration.Name().Text(), property) {
+			continue
+		}
+		if ns := tx.transformExpandoPropertyDeclaration(tx.Factory().NewIdentifier(declaration.Name().Text()), host, declaration, property, prop.ValueDeclaration); ns != nil {
+			results = append(results, ns)
+		}
+	}
+	return results
+}
+
+func (tx *DeclarationTransformer) transformExpandoPropertyDeclaration(name *ast.Node, host *ast.Symbol, declaration *ast.Node, property string, valueDeclaration *ast.Node) *ast.Node {
+	return tx.transformExpandoProperty(name, host, declaration, property, valueDeclaration, func(synthesizedNamespace *ast.Node) *ast.Node {
+		return tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), valueDeclaration, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
+	})
+}
+
+func (tx *DeclarationTransformer) transformExpandoProperty(name *ast.Node, host *ast.Symbol, declaration *ast.Node, property string, diagnosticNode *ast.Node, createType func(synthesizedNamespace *ast.Node) *ast.Node) *ast.Node {
 	isNonContextualKeywordName := ast.IsNonContextualKeyword(scanner.StringToToken(property))
-	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left), tx.Factory().NewIdentifier(property))
+	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(diagnosticNode), tx.Factory().NewIdentifier(property))
 
 	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
@@ -2287,8 +2366,8 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	containerData.Locals = make(ast.SymbolTable, 0)
 
 	saveDiag := tx.state.getSymbolAccessibilityDiagnostic
-	tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(node.AsNode())
-	t := tx.resolver.CreateTypeOfExpression(tx.EmitContext(), left, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
+	tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(diagnosticNode)
+	t := createType(synthesizedNamespace)
 	tx.state.getSymbolAccessibilityDiagnostic = saveDiag
 
 	statements := []*ast.Statement{
@@ -2326,6 +2405,89 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	return tx.Factory().NewModuleDeclaration(tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier)), ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(statements)))
 }
 
+func (tx *DeclarationTransformer) hasOwnExpandoAssignment(name string, property string) bool {
+	if tx.state.currentSourceFile == nil {
+		return false
+	}
+	for _, statement := range tx.state.currentSourceFile.Statements.Nodes {
+		if !ast.IsExpressionStatement(statement) {
+			continue
+		}
+		expression := statement.Expression()
+		if expression == nil || ast.GetAssignmentDeclarationKind(expression) != ast.JSDeclarationKindProperty || !ast.IsBinaryExpression(expression) {
+			continue
+		}
+		left := expression.AsBinaryExpression().Left
+		ns := ast.GetLeftmostAccessExpression(left)
+		if ns == nil || ns.Kind != ast.KindIdentifier || ns.Text() != name {
+			continue
+		}
+		if tx.tryGetPropertyName(left) == property {
+			return true
+		}
+	}
+	return false
+}
+
+func (tx *DeclarationTransformer) getBoundFunctionTargetDeclaration(declaration *ast.Node) *ast.Node {
+	if declaration == nil ||
+		!ast.IsVariableDeclaration(declaration) ||
+		declaration.Type() != nil ||
+		!ast.IsIdentifier(declaration.Name()) ||
+		!ast.IsInJSFile(declaration) {
+		return nil
+	}
+
+	initializer := declaration.Initializer()
+	if initializer == nil {
+		return nil
+	}
+	initializer = unwrapParenthesizedExpression(initializer)
+	if !ast.IsCallExpression(initializer) {
+		return nil
+	}
+
+	call := initializer.AsCallExpression()
+	if call.Arguments == nil || len(call.Arguments.Nodes) != 1 {
+		return nil
+	}
+
+	expression := unwrapParenthesizedExpression(call.Expression)
+	if !ast.IsPropertyAccessExpression(expression) ||
+		expression.AsPropertyAccessExpression().QuestionDotToken != nil ||
+		expression.Name() == nil ||
+		expression.Name().Text() != "bind" {
+		return nil
+	}
+
+	targetExpression := unwrapParenthesizedExpression(expression.AsPropertyAccessExpression().Expression)
+	target := tx.resolver.GetReferencedValueDeclaration(targetExpression)
+	if target == nil {
+		return nil
+	}
+	if ast.IsFunctionDeclaration(target) {
+		if target.FunctionLikeData().FullSignature != nil {
+			return nil
+		}
+		return target
+	}
+	if ast.IsVariableDeclaration(target) && target.Type() == nil && ast.IsFunctionExpressionOrArrowFunction(target.Initializer()) {
+		return target
+	}
+	return nil
+}
+
+func (tx *DeclarationTransformer) createBoundFunctionDeclaration(declaration *ast.Node, modifiers *ast.ModifierList, name *ast.Node, target *ast.Node) *ast.Node {
+	signature := target
+	if ast.IsVariableDeclaration(target) {
+		signature = target.Initializer()
+	}
+	typeParameters, parameters, asteriskToken := extractExpandoHostParams(signature)
+	result := tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(signature, typeParameters), tx.updateParamList(signature, parameters), tx.ensureType(signature, false), nil /*fullSignature*/, nil /*body*/)
+	tx.preserveJsDoc(result, signature)
+	return result
+}
+
 func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declaration *ast.Declaration) {
 	root := core.IfElse(ast.IsVariableDeclaration(declaration), declaration.Parent.Parent, declaration)
 	id := ast.GetNodeId(tx.EmitContext().MostOriginal(root))
@@ -2358,6 +2520,12 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 		fn := declaration.Initializer()
 		typeParameters, parameters, asteriskToken := extractExpandoHostParams(fn)
 		replacement = append(replacement, tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(fn, typeParameters), tx.updateParamList(fn, parameters), tx.ensureType(fn, false), nil /*fullSignature*/, nil /*body*/))
+	} else if ast.IsVariableDeclaration(declaration) {
+		target := tx.getBoundFunctionTargetDeclaration(declaration)
+		if target == nil {
+			return
+		}
+		replacement = append(replacement, tx.createBoundFunctionDeclaration(declaration, modifiers, name, target))
 	} else {
 		return
 	}

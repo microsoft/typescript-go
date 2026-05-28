@@ -1,0 +1,81 @@
+//// [tests/cases/compiler/declarationEmitJsBindExpandoFunction.ts] ////
+
+=== repro.js ===
+/** @param {{ text: string }} args */
+function Internal(args) {
+>Internal : Symbol(Internal, Decl(repro.js, 0, 0))
+>args : Symbol(args, Decl(repro.js, 1, 18))
+
+    return args.text;
+>args.text : Symbol(text, Decl(repro.js, 0, 13))
+>args : Symbol(args, Decl(repro.js, 1, 18))
+>text : Symbol(text, Decl(repro.js, 0, 13))
+}
+Internal.args = { text: "source" };
+>Internal.args : Symbol(Internal.args, Decl(repro.js, 3, 1))
+>Internal : Symbol(Internal, Decl(repro.js, 0, 0))
+>args : Symbol(Internal.args, Decl(repro.js, 3, 1))
+>text : Symbol(text, Decl(repro.js, 4, 17))
+
+export const PublicInternalBinding = Internal.bind({});
+>PublicInternalBinding : Symbol(PublicInternalBinding, Decl(repro.js, 6, 12))
+>Internal.bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Internal : Symbol(Internal, Decl(repro.js, 0, 0))
+>bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+/** @param {{ text: string }} args */
+function Plain(args) {
+>Plain : Symbol(Plain, Decl(repro.js, 6, 55))
+>args : Symbol(args, Decl(repro.js, 9, 15))
+
+    return args.text;
+>args.text : Symbol(text, Decl(repro.js, 8, 13))
+>args : Symbol(args, Decl(repro.js, 9, 15))
+>text : Symbol(text, Decl(repro.js, 8, 13))
+}
+export const PublicPlainBinding = Plain.bind({});
+>PublicPlainBinding : Symbol(PublicPlainBinding, Decl(repro.js, 12, 12))
+>Plain.bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Plain : Symbol(Plain, Decl(repro.js, 6, 55))
+>bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+// @ts-ignore
+PublicPlainBinding.args = { text: "bound" };
+>PublicPlainBinding : Symbol(PublicPlainBinding, Decl(repro.js, 12, 12))
+>text : Symbol(text, Decl(repro.js, 14, 27))
+
+/** @param {{ text: string }} args */
+function Mixed(args) {
+>Mixed : Symbol(Mixed, Decl(repro.js, 14, 44))
+>args : Symbol(args, Decl(repro.js, 17, 15))
+
+    return args.text;
+>args.text : Symbol(text, Decl(repro.js, 16, 13))
+>args : Symbol(args, Decl(repro.js, 17, 15))
+>text : Symbol(text, Decl(repro.js, 16, 13))
+}
+Mixed.first = { text: "source" };
+>Mixed.first : Symbol(Mixed.first, Decl(repro.js, 19, 1))
+>Mixed : Symbol(Mixed, Decl(repro.js, 14, 44))
+>first : Symbol(Mixed.first, Decl(repro.js, 19, 1))
+>text : Symbol(text, Decl(repro.js, 20, 15))
+
+Mixed.second = { count: 0 };
+>Mixed.second : Symbol(Mixed.second, Decl(repro.js, 20, 33))
+>Mixed : Symbol(Mixed, Decl(repro.js, 14, 44))
+>second : Symbol(Mixed.second, Decl(repro.js, 20, 33))
+>count : Symbol(count, Decl(repro.js, 21, 16))
+
+export const PublicMixedBinding = Mixed.bind({});
+>PublicMixedBinding : Symbol(PublicMixedBinding, Decl(repro.js, 23, 12))
+>Mixed.bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>Mixed : Symbol(Mixed, Decl(repro.js, 14, 44))
+>bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+// @ts-ignore
+PublicMixedBinding.first = { count: 1 };
+>PublicMixedBinding.first : Symbol(Mixed.first, Decl(repro.js, 19, 1))
+>PublicMixedBinding : Symbol(PublicMixedBinding, Decl(repro.js, 23, 12))
+>first : Symbol(Mixed.first, Decl(repro.js, 19, 1))
+>count : Symbol(count, Decl(repro.js, 25, 28))
+

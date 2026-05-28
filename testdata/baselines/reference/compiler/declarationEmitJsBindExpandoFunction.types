@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/declarationEmitJsBindExpandoFunction.ts] ////
+
+=== repro.js ===
+/** @param {{ text: string }} args */
+function Internal(args) {
+>Internal : { (args: { text: string; }): string; args: { text: string; }; }
+>args : { text: string; }
+
+    return args.text;
+>args.text : string
+>args : { text: string; }
+>text : string
+}
+Internal.args = { text: "source" };
+>Internal.args = { text: "source" } : { text: string; }
+>Internal.args : { text: string; }
+>Internal : { (args: { text: string; }): string; args: { text: string; }; }
+>args : { text: string; }
+>{ text: "source" } : { text: string; }
+>text : string
+>"source" : "source"
+
+export const PublicInternalBinding = Internal.bind({});
+>PublicInternalBinding : { (args: { text: string; }): string; args: { text: string; }; }
+>Internal.bind({}) : { (args: { text: string; }): string; args: { text: string; }; }
+>Internal.bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>Internal : { (args: { text: string; }): string; args: { text: string; }; }
+>bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>{} : {}
+
+/** @param {{ text: string }} args */
+function Plain(args) {
+>Plain : (args: { text: string; }) => string
+>args : { text: string; }
+
+    return args.text;
+>args.text : string
+>args : { text: string; }
+>text : string
+}
+export const PublicPlainBinding = Plain.bind({});
+>PublicPlainBinding : (args: { text: string; }) => string
+>Plain.bind({}) : (args: { text: string; }) => string
+>Plain.bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>Plain : (args: { text: string; }) => string
+>bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>{} : {}
+
+// @ts-ignore
+PublicPlainBinding.args = { text: "bound" };
+>PublicPlainBinding.args = { text: "bound" } : { text: string; }
+>PublicPlainBinding.args : error
+>PublicPlainBinding : (args: { text: string; }) => string
+>args : any
+>{ text: "bound" } : { text: string; }
+>text : string
+>"bound" : "bound"
+
+/** @param {{ text: string }} args */
+function Mixed(args) {
+>Mixed : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>args : { text: string; }
+
+    return args.text;
+>args.text : string
+>args : { text: string; }
+>text : string
+}
+Mixed.first = { text: "source" };
+>Mixed.first = { text: "source" } : { text: string; }
+>Mixed.first : { text: string; }
+>Mixed : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>first : { text: string; }
+>{ text: "source" } : { text: string; }
+>text : string
+>"source" : "source"
+
+Mixed.second = { count: 0 };
+>Mixed.second = { count: 0 } : { count: number; }
+>Mixed.second : { count: number; }
+>Mixed : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>second : { count: number; }
+>{ count: 0 } : { count: number; }
+>count : number
+>0 : 0
+
+export const PublicMixedBinding = Mixed.bind({});
+>PublicMixedBinding : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>Mixed.bind({}) : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>Mixed.bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>Mixed : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>{} : {}
+
+// @ts-ignore
+PublicMixedBinding.first = { count: 1 };
+>PublicMixedBinding.first = { count: 1 } : { count: number; }
+>PublicMixedBinding.first : { text: string; }
+>PublicMixedBinding : { (args: { text: string; }): string; first: { text: string; }; second: { count: number; }; }
+>first : { text: string; }
+>{ count: 1 } : { count: number; }
+>count : number
+>1 : 1
+
