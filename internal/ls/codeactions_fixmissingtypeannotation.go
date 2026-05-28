@@ -136,7 +136,7 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 	ch, done := fixContext.Program.GetTypeCheckerForFile(ctx, fixContext.SourceFile)
 	defer done()
 
-	changeTracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+	changeTracker := change.NewTracker(ctx, fixContext.Program.Options().NewLine.GetNewLineCharacter(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 
 	fixer := &isolatedDeclarationsFixer{
 		sourceFile:    fixContext.SourceFile,
@@ -173,7 +173,7 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 }
 
 func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.Checker, fn func(*isolatedDeclarationsFixer) string) *CodeAction {
-	changeTracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+	changeTracker := change.NewTracker(ctx, fixContext.Program.Options().NewLine.GetNewLineCharacter(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 
 	var importAdder autoimport.ImportAdder
 	// importAdder may be nil if the auto-import registry is not available;

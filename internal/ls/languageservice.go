@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
@@ -17,6 +18,7 @@ type LanguageService struct {
 	host                    Host
 	activeConfig            lsutil.UserPreferences
 	program                 *compiler.Program
+	commandLine             *tsoptions.ParsedCommandLine
 	converters              *lsconv.Converters
 	documentPositionMappers map[string]*sourcemap.DocumentPositionMapper
 }
@@ -24,6 +26,7 @@ type LanguageService struct {
 func NewLanguageService(
 	projectPath tspath.Path,
 	program *compiler.Program,
+	commandLine *tsoptions.ParsedCommandLine,
 	host Host,
 	activeFile string,
 ) *LanguageService {
@@ -31,6 +34,7 @@ func NewLanguageService(
 		projectPath:             projectPath,
 		host:                    host,
 		program:                 program,
+		commandLine:             commandLine,
 		converters:              host.Converters(),
 		activeConfig:            host.GetPreferences(activeFile),
 		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},

@@ -44,7 +44,7 @@ func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Cont
 
 	var actions []*CodeAction
 	for _, implementedTypeNode := range implementsTypes {
-		changeTracker := change.NewTracker(context, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+		changeTracker := change.NewTracker(context, fixContext.Program.Options().NewLine.GetNewLineCharacter(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 		importAdder, err := createImportAdder(context, fixContext, typeChecker)
 		if err != nil {
 			return nil, err
@@ -70,7 +70,7 @@ func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.C
 	typeChecker, done := fixContext.Program.GetTypeCheckerForFile(context, fixContext.SourceFile)
 	defer done()
 
-	changeTracker := change.NewTracker(context, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+	changeTracker := change.NewTracker(context, fixContext.Program.Options().NewLine.GetNewLineCharacter(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
 	importAdder, err := createImportAdder(context, fixContext, typeChecker)
 	if err != nil {
 		return nil, err
