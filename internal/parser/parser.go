@@ -532,7 +532,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		})
 		var diagnosticEnd int
 		if diagnosticStart >= 0 {
-			diagnosticEnd = core.FindIndex(savedParseDiagnostics[:diagnosticStart], func(diagnostic *ast.Diagnostic) bool {
+			diagnosticEnd = core.FindIndex(savedParseDiagnostics[diagnosticStart:], func(diagnostic *ast.Diagnostic) bool {
 				return diagnostic.Pos() >= nextStatement.Pos()
 			})
 		} else {
@@ -6479,7 +6479,8 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			}
 			pragmaName := extractName(text, pos+1)
 			if !(pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime") {
-				break
+				pos++
+				continue
 			}
 			start := skipBlanks(text, pos+len(pragmaName)+1)
 			pos = skipNonBlanks(text, start)
