@@ -176,10 +176,10 @@ class Session implements vscode.Disposable {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.dev.runGC", async () => {
             try {
                 await this.client.runGC();
-                vscode.window.showInformationMessage("Garbage collection triggered");
+                vscode.window.showInformationMessage(vscode.l10n.t(`Garbage collection triggered`));
             }
             catch (error) {
-                vscode.window.showErrorMessage(`Failed to run GC: ${String(error)}`);
+                vscode.window.showErrorMessage(vscode.l10n.t(`Failed to run GC: {0}`, String(error)));
             }
         }));
 
@@ -188,10 +188,10 @@ class Session implements vscode.Disposable {
             if (!dir) return;
             try {
                 const file = await this.client.saveHeapProfile(dir);
-                vscode.window.showInformationMessage(`Heap profile saved to: ${file}`);
+                vscode.window.showInformationMessage(vscode.l10n.t(`Heap profile saved to: {0}`, file));
             }
             catch (error) {
-                vscode.window.showErrorMessage(`Failed to save heap profile: ${String(error)}`);
+                vscode.window.showErrorMessage(vscode.l10n.t(`Failed to save heap profile: {0}`, String(error)));
             }
         }));
 
