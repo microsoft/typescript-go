@@ -7,8 +7,8 @@ var s = Symbol();
 >Symbol : SymbolConstructor
 
 var x = {
->x : { [s]: number; [s]: number; [s]: number; }
->{    [s]: 0,    [s]() { },    get [s]() {        return 0;    }} : { [s]: number; [s]: number; [s]: number; }
+>x : { [s]: number; [s]: () => void; [s]: number; }
+>{    [s]: 0,    [s]() { },    get [s]() {        return 0;    }} : { [s]: number; [s]: () => void; [s]: number; }
 
     [s]: 0,
 >[s] : number

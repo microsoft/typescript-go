@@ -2115,14 +2115,17 @@ func (b *NodeBuilderImpl) indexInfoToObjectComputedNamesOrSignatureDeclaration(i
 					if e.PostfixToken() != nil {
 						postfixToken = e.PostfixToken().Clone(b.f)
 					}
-					if typeNode == nil {
-						typeNode = b.typeToTypeNode(b.ch.getTypeOfSymbol(e.Symbol()))
+					var currentTypeNode *ast.TypeNode
+					if typeNode != nil {
+						currentTypeNode = b.f.DeepCloneNode(typeNode)
+					} else {
+						currentTypeNode = b.typeToTypeNode(b.ch.getTypeOfSymbol(e.Symbol()))
 					}
 					sig := b.f.NewPropertySignatureDeclaration(
 						mods,
 						name,
 						postfixToken,
-						typeNode,
+						currentTypeNode,
 						nil,
 					)
 					sig.Loc = e.Loc
