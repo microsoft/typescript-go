@@ -673,10 +673,10 @@ func (p *Parser) wrapInJSDocNamespace(fullName *ast.Node, statement *ast.Node, n
 	if fullName == nil || !ast.IsModuleDeclaration(fullName) {
 		return statement
 	}
-	// Recursively wrap from outermost to innerpost. Inner namespaces always get an export modifier
+	// Recursively wrap from outermost to innermost. Inner namespaces always get an export modifier
 	// so members are accessible via dotted access from outside. The outermost namespace is treated as
-	// exported only in module files via IsImplicitlyExportedJSTypeAlias (in the binder), so it does
-	// not get an explicit export modifier here.
+	// exported only in module files via IsImplicitlyExportedJSDocDeclaration (in the binder), so it
+	// does not get an explicit export modifier here.
 	wrapped := p.wrapInJSDocNamespace(fullName.Body(), statement, true /*nested*/)
 	block := p.factory.NewModuleBlock(p.newNodeList(fullName.Loc, p.nodeSliceArena.NewSlice1(wrapped)))
 	p.finishReparsedNode(block, fullName)
