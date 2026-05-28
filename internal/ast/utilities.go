@@ -3713,7 +3713,7 @@ func IndexOfNode(nodes []*Node, node *Node) int {
 }
 
 func CompareNodePositions(n1, n2 *Node) int {
-	return n1.Pos() - n2.Pos()
+	return core.CompareTextRanges(n1.Loc, n2.Loc)
 }
 
 func IsUnterminatedLiteral(node *Node) bool {
