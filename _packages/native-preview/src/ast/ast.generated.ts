@@ -1242,7 +1242,7 @@ export interface JSDocImportTag extends JSDocTagBase {
 export interface JSDocCallbackTag extends JSDocTagBase {
     readonly kind: SyntaxKind.JSDocCallbackTag;
     readonly typeExpression: TypeNode;
-    readonly fullName?: JSDocFullName;
+    readonly name?: JSDocFullName;
 }
 export interface JSDocOverloadTag extends JSDocTagBase {
     readonly kind: SyntaxKind.JSDocOverloadTag;

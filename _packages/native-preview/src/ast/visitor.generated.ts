@@ -1307,9 +1307,9 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.JSDocCallbackTag]: (node: JSDocCallbackTag, visitor: Visitor): JSDocCallbackTag => {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);
         const _typeExpression = visitNode(node.typeExpression, visitor, isTypeNode);
-        const _fullName = visitNode(node.fullName, visitor, isJSDocFullName);
+        const _name = visitNode(node.name, visitor, isJSDocFullName);
         const _comment = visitNodes(node.comment, visitor);
-        return updateJSDocCallbackTag(node, _tagName, _typeExpression, _fullName, _comment);
+        return updateJSDocCallbackTag(node, _tagName, _typeExpression, _name, _comment);
     },
     [SyntaxKind.JSDocOverloadTag]: (node: JSDocOverloadTag, visitor: Visitor): JSDocOverloadTag => {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);

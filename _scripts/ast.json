@@ -4664,8 +4664,9 @@
                         "type": "TypeNode"
                     },
                     {
-                        "name": "FullName",
+                        "name": "name",
                         "type": "JSDocFullName",
+                        "private": true,
                         "optional": true
                     },
                     {
