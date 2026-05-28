@@ -2087,17 +2087,8 @@ func (b *NodeBuilderImpl) isTriviallySerializableComputedName(e *ast.Node) bool 
 	if !shapeGood {
 		return false
 	}
-	// Strada used `isEntityNameVisible` here, which is maybe not entirely correct, since it does declaration visibility walking
-	// If the name resolves, we can attempt to serialize it, and `trackComputedName` later will handle the rest.
-	lhsId := ast.GetFirstIdentifier(e.Name().Expression())
-	if ast.IsThisIdentifier(lhsId) {
-		return false
-	}
-	s := b.ch.resolveName(lhsId, lhsId.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil, false, false)
-	if s == nil || s == b.ch.unknownSymbol {
-		return false
-	}
-	return true
+	// TODO: going through emit resolver here is weird. Relayer these APIs.
+	return b.ch.GetEmitResolver().isEntityNameVisible(e.Name().Expression(), b.ctx.enclosingDeclaration, false).Accessibility == printer.SymbolAccessibilityAccessible
 }
 
 func (b *NodeBuilderImpl) indexInfoToObjectComputedNamesOrSignatureDeclaration(indexInfo *IndexInfo, typeNode *ast.TypeNode) []*ast.Node {
