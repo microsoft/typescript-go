@@ -553,7 +553,7 @@ func (b *NodeBuilderImpl) pseudoParametersEquivalentToParameters(params []*pseud
 		if reportErrors {
 			b.ctx.tracker.ReportInferenceFallback(nonParamErrorLocation) // missing `this` param
 		}
-		return false;
+		return false
 	} else if targetSig.thisParameter != nil && ast.IsThisIdentifier(params[0].Name) {
 		targetParam := targetSig.thisParameter
 		paramType := b.ch.getTypeOfParameter(targetParam)
