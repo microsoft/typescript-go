@@ -1,5 +1,7 @@
 {
+  "TypeScript Native Preview": "TypeScript Native Preview",
   "$(beaker) tsgo {0}": "$(beaker) tsgo {0}",
+  "TypeScript Native Preview Language Server": "TypeScript Native Preview Language Server",
   "Show Menu": "Show Menu",
   "Language server is not running.": "Language server is not running.",
   "Garbage collection triggered": "Garbage collection triggered",
