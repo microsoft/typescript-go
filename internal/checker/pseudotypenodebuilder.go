@@ -549,7 +549,12 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 }
 
 func (b *NodeBuilderImpl) pseudoParametersEquivalentToParameters(params []*pseudochecker.PseudoParameter, targetSig *Signature, reportErrors bool, nonParamErrorLocation *ast.Node) bool {
-	if targetSig.thisParameter != nil && ast.IsThisIdentifier(params[0].Name) {
+	if targetSig.thisParameter != nil && len(params) == 0 {
+		if reportErrors {
+			b.ctx.tracker.ReportInferenceFallback(nonParamErrorLocation) // missing `this` param
+		}
+		return false;
+	} else if targetSig.thisParameter != nil && ast.IsThisIdentifier(params[0].Name) {
 		targetParam := targetSig.thisParameter
 		paramType := b.ch.getTypeOfParameter(targetParam)
 		if !b.pseudoTypeEquivalentToType(params[0].Type, paramType, params[0].Optional, false) {
@@ -569,10 +574,16 @@ func (b *NodeBuilderImpl) pseudoParametersEquivalentToParameters(params []*pseud
 		if reportErrors {
 			b.ctx.tracker.ReportInferenceFallback(nonParamErrorLocation)
 		}
-		return false
+		return false // TODO: spread tuple params may mess with this check
 	}
 	for i, p := range params {
 		targetParam := targetSig.parameters[i]
+		if p.Optional != b.ch.isOptionalParameter(targetParam.ValueDeclaration) {
+			if reportErrors {
+				b.ctx.tracker.ReportInferenceFallback(p.Name.Parent)
+			}
+			return false
+		}
 		paramType := b.ch.getTypeOfParameter(targetParam)
 		if !b.pseudoTypeEquivalentToType(p.Type, paramType, p.Optional, false) {
 			if reportErrors {
