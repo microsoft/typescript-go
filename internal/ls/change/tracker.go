@@ -103,8 +103,9 @@ type deletedNode struct {
 	node       *ast.Node
 }
 
-func NewTracker(ctx context.Context, newLine string, formatOptions lsutil.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
+func NewTracker(ctx context.Context, compilerOptions *core.CompilerOptions, formatOptions lsutil.FormatCodeSettings, converters *lsconv.Converters) *Tracker {
 	emitContext := printer.NewEmitContext()
+	newLine := compilerOptions.NewLine.GetNewLineCharacter()
 	ctx = format.WithFormatCodeSettings(ctx, formatOptions, newLine) // !!! formatSettings in context?
 	return &Tracker{
 		EmitContext:                emitContext,

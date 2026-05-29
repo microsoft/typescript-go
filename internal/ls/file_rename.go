@@ -26,20 +26,17 @@ type toImport struct {
 
 func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lsproto.DocumentUri, newURI lsproto.DocumentUri) []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile {
 	program := l.GetProgram()
+	if program == nil {
+		return nil
+	}
 	oldPath := oldURI.FileName()
 	newPath := newURI.FileName()
 
 	oldToNew := l.createPathUpdater(oldPath, newPath)
 
-	newLine := "\n"
-	if program != nil {
-		newLine = program.Options().NewLine.GetNewLineCharacter()
-	}
-	changeTracker := change.NewTracker(ctx, newLine, l.FormatOptions(), l.converters)
-	l.updateTsconfigFiles(l.commandLine, changeTracker, oldToNew, oldPath, newPath)
-	if program != nil {
-		l.updateImportsForFileRename(program, changeTracker, oldToNew)
-	}
+	changeTracker := change.NewTracker(ctx, program.Options(), l.FormatOptions(), l.converters)
+	l.updateTsconfigFiles(program, changeTracker, oldToNew, oldPath, newPath)
+	l.updateImportsForFileRename(program, changeTracker, oldToNew)
 
 	var documentChanges []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile
 
@@ -97,7 +94,8 @@ func (l *LanguageService) createPathUpdater(oldPath string, newPath string) path
 	}
 }
 
-func (l *LanguageService) updateTsconfigFiles(commandLine *tsoptions.ParsedCommandLine, changeTracker *change.Tracker, oldToNew pathUpdater, oldPath string, newPath string) {
+func (l *LanguageService) updateTsconfigFiles(program *compiler.Program, changeTracker *change.Tracker, oldToNew pathUpdater, oldPath string, newPath string) {
+	commandLine := program.CommandLine()
 	if commandLine == nil || commandLine.ConfigFile == nil {
 		return
 	}

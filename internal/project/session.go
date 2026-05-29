@@ -977,7 +977,7 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	if project == nil {
 		return nil, nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return snapshot, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), project.CommandLine, snapshot, uri.FileName()), nil
+	return snapshot, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
@@ -1025,7 +1025,7 @@ func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []ls
 	projects := snapshot.ProjectCollection.Projects()
 	services := make([]*ls.LanguageService, 0, len(projects))
 	for _, project := range projects {
-		services = append(services, ls.NewLanguageService(project.configFilePath, project.GetProgram(), project.CommandLine, snapshot, activeFile))
+		services = append(services, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, activeFile))
 	}
 	return services
 }
@@ -1045,7 +1045,7 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 	if !project.HasFile(uri.FileName()) {
 		return nil
 	}
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), project.CommandLine, snapshot, uri.FileName())
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName())
 }
 
 // WithSnapshotLoadingProjectTree acquires a ref'd snapshot with the
@@ -1079,7 +1079,7 @@ func (s *Session) GetCurrentLanguageServiceWithAutoImports(ctx context.Context, 
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), project.CommandLine, snapshot, uri.FileName()), nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
 }
 
 // WithLanguageServiceAndSnapshot synchronously acquires a ref'd snapshot and
@@ -1140,7 +1140,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 		s.adoptSnapshotChange(baseSnapshot, newSnapshot)
 	})
 
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), project.CommandLine, newSnapshot, uri.FileName()), nil
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), nil
 }
 
 // adoptSnapshotChange promotes a cloned snapshot as the session's current
