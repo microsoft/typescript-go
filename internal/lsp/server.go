@@ -847,11 +847,12 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 
 func registerDocumentDiagnosticHandler(handlers handlerMap) {
 	handlers[lsproto.TextDocumentDiagnosticInfo.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
-		var params *lsproto.DocumentDiagnosticParams
-		if req.Params != nil {
-			params = req.Params.(*lsproto.DocumentDiagnosticParams)
+		params, ok := req.Params.(*lsproto.DocumentDiagnosticParams)
+		if !ok || params == nil {
+			return nil, lsproto.ErrorCodeInvalidParams
 		}
-		return s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
+		documentURI := params.TextDocumentURI()
+		return s.session.WithLanguageServiceAndSnapshot(ctx, documentURI, func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
 			return func() error {
 				defer s.recover(req)
 				resp, lsErr := s.handleDocumentDiagnostic(ctx, languageService, params)
@@ -864,7 +865,7 @@ func registerDocumentDiagnosticHandler(handlers handlerMap) {
 				if ctx.Err() != nil {
 					return ctx.Err()
 				}
-				if !s.session.IsSnapshotCurrentForDocument(snapshot, params.TextDocument.Uri) {
+				if !s.session.IsSnapshotCurrentForDocument(snapshot, documentURI) {
 					return lsproto.ErrorCodeContentModified
 				}
 				return s.sendResult(req.ID, resp)

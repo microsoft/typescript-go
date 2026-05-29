@@ -1115,10 +1115,7 @@ func (s *Session) WithLanguageServiceAndSnapshot(
 // IsSnapshotCurrentForDocument reports whether a request-time snapshot still
 // matches the session's current view of a document and its default project.
 func (s *Session) IsSnapshotCurrentForDocument(snapshot *Snapshot, uri lsproto.DocumentUri) bool {
-	s.pendingFileChangesMu.Lock()
-	hasPendingChanges := len(s.pendingFileChanges) > 0
-	s.pendingFileChangesMu.Unlock()
-	if hasPendingChanges {
+	if s.hasPendingChangesForDocument(snapshot, uri) {
 		return false
 	}
 
@@ -1140,6 +1137,31 @@ func (s *Session) IsSnapshotCurrentForDocument(snapshot *Snapshot, uri lsproto.D
 		return requestProject == currentProject
 	}
 	return requestProject.GetProgram() == currentProject.GetProgram()
+}
+
+func (s *Session) hasPendingChangesForDocument(snapshot *Snapshot, uri lsproto.DocumentUri) bool {
+	project := snapshot.GetDefaultProject(uri)
+	documentPath := snapshot.toPath(uri.FileName())
+	s.pendingFileChangesMu.Lock()
+	defer s.pendingFileChangesMu.Unlock()
+	for _, change := range s.pendingFileChanges {
+		if pendingChangeAffectsDocument(snapshot, project, documentPath, change) {
+			return true
+		}
+	}
+	return false
+}
+
+func pendingChangeAffectsDocument(snapshot *Snapshot, project *Project, documentPath tspath.Path, change FileChange) bool {
+	changedFileName := change.URI.FileName()
+	changedPath := snapshot.toPath(changedFileName)
+	if changedPath == documentPath {
+		return true
+	}
+	if project == nil {
+		return false
+	}
+	return changedPath == project.configFilePath || project.HasFile(changedFileName)
 }
 
 func sameFileHandle(a FileHandle, b FileHandle) bool {
