@@ -142,6 +142,7 @@ const (
 	MethodGetWidenedType                    Method = "getWidenedType"
 	MethodGetParameterType                  Method = "getParameterType"
 	MethodIsArrayLikeType                   Method = "isArrayLikeType"
+	MethodIsTypeAssignableTo                Method = "isTypeAssignableTo"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
@@ -367,6 +368,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
 	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
 	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
+	MethodIsTypeAssignableTo:                unmarshallerFor[IsTypeAssignableToParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
@@ -784,6 +786,14 @@ type IsArrayLikeTypeParams struct {
 	Snapshot Handle[project.Snapshot] `json:"snapshot"`
 	Project  Handle[project.Project]  `json:"project"`
 	Type     Handle[checker.Type]     `json:"type"`
+}
+
+// IsTypeAssignableToParams checks assignability between two types.
+type IsTypeAssignableToParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Source   Handle[checker.Type]     `json:"source"`
+	Target   Handle[checker.Type]     `json:"target"`
 }
 
 type GetSignaturesOfTypeParams struct {

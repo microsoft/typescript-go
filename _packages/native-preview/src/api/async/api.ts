@@ -660,6 +660,15 @@ export class Checker {
         });
     }
 
+    async isTypeAssignableTo(source: Type, target: Type): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isTypeAssignableTo", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            source: source.id,
+            target: target.id,
+        });
+    }
+
     async getShorthandAssignmentValueSymbol(node: Node): Promise<Symbol | undefined> {
         const data = await this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
             snapshot: this.snapshotId,

@@ -409,6 +409,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetParameterType(ctx, parsed.(*GetParameterTypeParams))
 	case string(MethodIsArrayLikeType):
 		return s.handleIsArrayLikeType(ctx, parsed.(*IsArrayLikeTypeParams))
+	case string(MethodIsTypeAssignableTo):
+		return s.handleIsTypeAssignableTo(ctx, parsed.(*IsTypeAssignableToParams))
 	case string(MethodGetShorthandAssignmentValueSymbol):
 		return s.handleGetShorthandAssignmentValueSymbol(ctx, parsed.(*GetTypeAtLocationParams))
 	case string(MethodGetTypeOfSymbolAtLocation):
@@ -1435,6 +1437,26 @@ func (s *Session) handleIsArrayLikeType(ctx context.Context, params *IsArrayLike
 	}
 
 	return setup.checker.IsArrayLikeType(t), nil
+}
+
+// handleIsTypeAssignableTo returns whether source is assignable to target.
+func (s *Session) handleIsTypeAssignableTo(ctx context.Context, params *IsTypeAssignableToParams) (bool, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return false, err
+	}
+	defer setup.done()
+
+	source, err := setup.sd.resolveTypeHandle(params.Source)
+	if err != nil {
+		return false, err
+	}
+	target, err := setup.sd.resolveTypeHandle(params.Target)
+	if err != nil {
+		return false, err
+	}
+
+	return setup.checker.IsTypeAssignableTo(source, target), nil
 }
 
 // handleGetShorthandAssignmentValueSymbol returns the value symbol of a shorthand property assignment.
