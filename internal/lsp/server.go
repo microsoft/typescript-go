@@ -721,7 +721,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerNotificationHandler(handlers, lsproto.SetTraceInfo, (*Server).handleSetTrace)
 	registerRequestHandler(handlers, lsproto.WorkspaceWillRenameFilesInfo, (*Server).handleWillRenameFiles)
 
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
+	registerDocumentDiagnosticHandler(handlers)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.CustomTextDocumentSourceDefinitionInfo, (*Server).handleSourceDefinition)
@@ -842,6 +842,34 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 			}
 			return s.sendResult(req.ID, resp)
 		}, nil
+	}
+}
+
+func registerDocumentDiagnosticHandler(handlers handlerMap) {
+	handlers[lsproto.TextDocumentDiagnosticInfo.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
+		var params *lsproto.DocumentDiagnosticParams
+		if req.Params != nil {
+			params = req.Params.(*lsproto.DocumentDiagnosticParams)
+		}
+		return s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
+			return func() error {
+				defer s.recover(req)
+				resp, lsErr := s.handleDocumentDiagnostic(ctx, languageService, params)
+				// After any language service request, check if new global diagnostics were
+				// discovered during checking and push updated tsconfig diagnostics if so.
+				s.session.EnqueuePublishGlobalDiagnostics()
+				if lsErr != nil {
+					return lsErr
+				}
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+				if !s.session.IsSnapshotCurrentForDocument(snapshot, params.TextDocument.Uri) {
+					return lsproto.ErrorCodeContentModified
+				}
+				return s.sendResult(req.ID, resp)
+			}, nil
+		})
 	}
 }
 

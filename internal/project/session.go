@@ -1112,6 +1112,43 @@ func (s *Session) WithLanguageServiceAndSnapshot(
 	}, nil
 }
 
+// IsSnapshotCurrentForDocument reports whether a request-time snapshot still
+// matches the session's current view of a document and its default project.
+func (s *Session) IsSnapshotCurrentForDocument(snapshot *Snapshot, uri lsproto.DocumentUri) bool {
+	s.pendingFileChangesMu.Lock()
+	hasPendingChanges := len(s.pendingFileChanges) > 0
+	s.pendingFileChangesMu.Unlock()
+	if hasPendingChanges {
+		return false
+	}
+
+	s.snapshotMu.RLock()
+	defer s.snapshotMu.RUnlock()
+	currentSnapshot := s.snapshot
+	if currentSnapshot == snapshot {
+		return true
+	}
+
+	fileName := uri.FileName()
+	if !sameFileHandle(snapshot.GetFile(fileName), currentSnapshot.GetFile(fileName)) {
+		return false
+	}
+
+	requestProject := snapshot.GetDefaultProject(uri)
+	currentProject := currentSnapshot.GetDefaultProject(uri)
+	if requestProject == nil || currentProject == nil {
+		return requestProject == currentProject
+	}
+	return requestProject.GetProgram() == currentProject.GetProgram()
+}
+
+func sameFileHandle(a FileHandle, b FileHandle) bool {
+	if a == nil || b == nil {
+		return a == nil && b == nil
+	}
+	return a.IsOverlay() == b.IsOverlay() && a.Version() == b.Version() && a.Hash() == b.Hash()
+}
+
 // GetLanguageServiceWithAutoImports clones the given snapshot with auto-import
 // preparation for the given URI, without flushing pending file changes.
 // The cloned snapshot will be adopted as the session's current snapshot in the background
