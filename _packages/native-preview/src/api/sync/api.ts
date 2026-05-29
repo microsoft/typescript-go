@@ -75,6 +75,7 @@ import type {
     AssertsThisTypePredicate,
     ConditionalType,
     Diagnostic,
+    FreshableType,
     IdentifierTypePredicate,
     IndexedAccessType,
     IndexInfo,
@@ -99,7 +100,7 @@ import type {
 
 export { DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -989,6 +990,8 @@ class TypeObject implements Type {
     readonly objectFlags!: ObjectFlags;
     readonly value!: string | number | boolean;
     readonly isThisType!: boolean;
+    readonly freshType!: number;
+    readonly regularType!: number;
     readonly target!: number;
     readonly typeParameters!: readonly number[];
     readonly outerTypeParameters!: readonly number[];
@@ -1015,6 +1018,8 @@ class TypeObject implements Type {
         if (data.objectFlags !== undefined) this.objectFlags = data.objectFlags;
         if (data.value !== undefined) this.value = data.value;
         if (data.isThisType !== undefined) this.isThisType = data.isThisType;
+        if (data.freshType !== undefined) this.freshType = data.freshType;
+        if (data.regularType !== undefined) this.regularType = data.regularType;
         if (data.target !== undefined) this.target = data.target;
         if (data.typeParameters !== undefined) this.typeParameters = data.typeParameters;
         if (data.outerTypeParameters !== undefined) this.outerTypeParameters = data.outerTypeParameters;
@@ -1052,6 +1057,22 @@ class TypeObject implements Type {
 
     getTarget(): Type {
         return this.fetchType(this.target, "getTargetOfType");
+    }
+
+    getFreshType(): FreshableType | undefined {
+        if (!this.freshType) return undefined;
+        const cached = this.objectRegistry.getType(this.freshType);
+        if (cached) return cached as FreshableType;
+        const data = this.client.apiRequest<TypeResponse | null>("getFreshTypeOfType", { snapshot: this.snapshotId, type: this.id });
+        return data ? this.objectRegistry.getOrCreateType(data) as FreshableType : undefined;
+    }
+
+    getRegularType(): FreshableType | undefined {
+        if (!this.regularType) return undefined;
+        const cached = this.objectRegistry.getType(this.regularType);
+        if (cached) return cached as FreshableType;
+        const data = this.client.apiRequest<TypeResponse | null>("getRegularTypeOfType", { snapshot: this.snapshotId, type: this.id });
+        return data ? this.objectRegistry.getOrCreateType(data) as FreshableType : undefined;
     }
 
     getTypes(): readonly Type[] {

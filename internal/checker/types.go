@@ -881,6 +881,14 @@ func (t *LiteralType) Value() any {
 	return t.value
 }
 
+func (t *LiteralType) FreshType() *Type {
+	return t.freshType
+}
+
+func (t *LiteralType) RegularType() *Type {
+	return t.regularType
+}
+
 func (t *LiteralType) String() string {
 	return ValueToString(t.value)
 }

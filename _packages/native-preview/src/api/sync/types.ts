@@ -38,8 +38,18 @@ export interface Type {
     getAliasTypeArguments(): readonly Type[];
 }
 
+/**
+ * Freshable types (TypeFlags.Freshable) - literal types (TypeFlags.Literal) and computed enum types (TypeFlags.Enum).
+ */
+export interface FreshableType extends Type {
+    /** Get the fresh version of this type, if any */
+    getFreshType(): FreshableType | undefined;
+    /** Get the regular (non-fresh) version of this type, if any */
+    getRegularType(): FreshableType | undefined;
+}
+
 /** Literal types: StringLiteral, NumberLiteral, BigIntLiteral, BooleanLiteral */
-export interface LiteralType extends Type {
+export interface LiteralType extends FreshableType {
     /** The literal value */
     readonly value: string | number | boolean;
 }

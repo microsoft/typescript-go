@@ -34,8 +34,10 @@ import {
     API,
     type ConditionalType,
     DiagnosticCategory,
+    type FreshableType,
     type IndexedAccessType,
     type IndexType,
+    type LiteralType,
     ModifierFlags,
     ObjectFlags,
     SignatureKind,
@@ -2079,6 +2081,129 @@ describe("Type - getAliasTypeArguments", () => {
             assert.ok(type);
             const aliasArgs = await type.getAliasTypeArguments();
             assert.equal(aliasArgs.length, 0, "Expected no alias type arguments for a direct generic reference");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("FreshableType - getFreshType and getRegularType", () => {
+    test("LiteralType.value is accessible via the FreshableType hierarchy", async () => {
+        const src = `\nexport const greeting: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("greeting:");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.StringLiteral, "Expected StringLiteral");
+            const literal = type as LiteralType;
+            assert.equal(literal.value, "hello");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getFreshType() returns a fresh twin with matching value", async () => {
+        const src = `\nexport const greeting: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("greeting:");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.Freshable, "Type should be a freshable type");
+            const fresh = await (type as FreshableType).getFreshType();
+            assert.ok(fresh, "Expected getFreshType() to return non-undefined for a literal type");
+            assert.ok(fresh.flags & TypeFlags.StringLiteral, "Fresh type should be a StringLiteral");
+            assert.equal((fresh as LiteralType).value, "hello", "Fresh type should carry the same value");
+            assert.notEqual(fresh.id, type.id, "Fresh type should not be the original type");
+            const freshFresh = await fresh.getFreshType();
+            assert.ok(freshFresh, "Expected getFreshType() to return non-undefined for a fresh type");
+            assert.equal(freshFresh.id, fresh.id, "Fresh type of a fresh type should be the fresh type");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getRegularType() on a fresh literal returns the regular twin", async () => {
+        // The initial type response from getTypeOfSymbol does not always include the
+        // regularType handle, so getRegularType() is tested via the fresh twin which
+        // always includes its regularType in its own response.
+        const src = `\nexport const greeting: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("greeting:");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.Freshable, "Type should be a freshable type");
+            const fresh = await (type as FreshableType).getFreshType();
+            assert.ok(fresh, "Need fresh type for this test");
+            assert.ok(fresh.flags & TypeFlags.Freshable, "Fresh type should be a freshable type");
+            const regular = await fresh.getRegularType();
+            assert.ok(regular, "Expected getRegularType() on the fresh twin to return non-undefined");
+            assert.ok(regular.flags & TypeFlags.StringLiteral, "Regular type should be a StringLiteral");
+            assert.equal((regular as LiteralType).value, "hello", "Regular type should carry the same value");
+            assert.equal(regular.id, type.id, "Regular type should be the original type");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getFreshType() and getRegularType() work for computed enum types (TypeFlags.Enum)", async () => {
+        // getTypeOfSymbol on an ambient enum member returns the FRESH computed enum type.
+        // For fresh types: getFreshType() returns self, getRegularType() returns the regular twin.
+        const src = `\ndeclare enum Status { Pending }\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("Pending");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.Enum, `Expected TypeFlags.Enum, got ${type.flags}`);
+            assert.ok(type.flags & TypeFlags.Freshable, "Enum type should be freshable");
+            // The returned type IS the fresh type: getFreshType() returns itself
+            const fresh = await (type as FreshableType).getFreshType();
+            assert.ok(fresh, "Expected getFreshType() to return non-undefined");
+            assert.equal(fresh.id, type.id, "getFreshType() on a fresh enum type returns itself");
+            // getRegularType() returns the regular twin (a different type)
+            const regular = await (type as FreshableType).getRegularType();
+            assert.ok(regular, "Expected getRegularType() to return non-undefined");
+            assert.ok(regular.flags & TypeFlags.Enum, "Regular enum type should also have TypeFlags.Enum");
+            assert.notEqual(regular.id, type.id, "Regular type should be distinct from the fresh type");
+            // Round-trip: regular → getFreshType() → back to the original fresh type
+            const backToFresh = await (regular as FreshableType).getFreshType();
+            assert.ok(backToFresh);
+            assert.equal(backToFresh.id, type.id, "Round-trip through regular/fresh returns the original type");
         }
         finally {
             await api.close();

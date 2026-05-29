@@ -140,6 +140,8 @@ export interface TypeResponse {
     flags: number;
     objectFlags?: number;
     value?: string | number | boolean;
+    freshType?: number;
+    regularType?: number;
     target?: number;
     typeParameters?: number[];
     outerTypeParameters?: number[];

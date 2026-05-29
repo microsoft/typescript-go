@@ -83,6 +83,8 @@ const (
 
 	// Type sub-property methods
 	MethodGetTargetOfType              Method = "getTargetOfType"
+	MethodGetFreshTypeOfType           Method = "getFreshTypeOfType"
+	MethodGetRegularTypeOfType         Method = "getRegularTypeOfType"
 	MethodGetTypesOfType               Method = "getTypesOfType"
 	MethodGetTypeParametersOfType      Method = "getTypeParametersOfType"
 	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
@@ -313,6 +315,8 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
 
 	MethodGetTargetOfType:                   unmarshallerFor[GetTypePropertyParams],
+	MethodGetFreshTypeOfType:                unmarshallerFor[GetTypePropertyParams],
+	MethodGetRegularTypeOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypesOfType:                    unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeParametersOfType:           unmarshallerFor[GetTypePropertyParams],
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
@@ -509,6 +513,10 @@ type TypeResponse struct {
 	// TemplateLiteralType text segments
 	Texts []string `json:"texts,omitempty"`
 
+	// FreshableType data (LiteralType and computed enum types)
+	FreshType   TypeID `json:"freshType,omitempty"`
+	RegularType TypeID `json:"regularType,omitempty"`
+
 	// TypeParameter data
 	IsThisType bool `json:"isThisType,omitempty"`
 
@@ -534,8 +542,17 @@ func newTypeData(t *checker.Type) *TypeResponse {
 	}
 
 	switch flags := t.Flags(); {
-	case flags&checker.TypeFlagsLiteral != 0:
-		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
+	case flags&checker.TypeFlagsFreshable != 0:
+		lit := t.AsLiteralType()
+		if flags&checker.TypeFlagsLiteral != 0 {
+			resp.Value = literalValueToJSON(lit.Value())
+		}
+		if lit.FreshType() != nil {
+			resp.FreshType = TypeHandle(lit.FreshType())
+		}
+		if lit.RegularType() != nil {
+			resp.RegularType = TypeHandle(lit.RegularType())
+		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()
