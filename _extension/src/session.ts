@@ -357,9 +357,10 @@ async function findWorkspaceNativePreviewPackages(): Promise<DetectedVersion[]> 
     const results: DetectedVersion[] = [];
     const folders = vscode.workspace.workspaceFolders ?? [];
     const relativeWorkspacePath = "node_modules/@typescript/native-preview";
+    const pathSegments = relativeWorkspacePath.split("/");
     for (let i = 0; i < folders.length; i++) {
         const folder = folders[i];
-        const packagePath = vscode.Uri.joinPath(folder.uri, ...relativeWorkspacePath.split("/"));
+        const packagePath = vscode.Uri.joinPath(folder.uri, ...pathSegments);
         const resolved = await resolveTsdkPathToExe(path.normalize(packagePath.fsPath));
         if (!resolved) continue;
         // Use a relative path only for the first workspace folder since
