@@ -393,7 +393,6 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         detail: builtinExe.path,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
-            await config.update("tsdk", undefined, vscode.ConfigurationTarget.Workspace);
             outputChannel.appendLine("Switched to bundled tsgo version.");
         },
     });
