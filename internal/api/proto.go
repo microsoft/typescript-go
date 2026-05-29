@@ -507,6 +507,9 @@ type TypeResponse struct {
 	// TemplateLiteralType text segments
 	Texts []string `json:"texts,omitempty"`
 
+	// TypeParameter data
+	IsThisType bool `json:"isThisType,omitempty"`
+
 	// Symbol associated with structured types
 	Symbol SymbolID `json:"symbol,omitempty"`
 }
@@ -572,6 +575,8 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		// types omitted; fetched via separate request
 	case flags&checker.TypeFlagsStringMapping != 0:
 		resp.Target = TypeHandle(t.AsStringMappingType().Target())
+	case flags&checker.TypeFlagsTypeParameter != 0:
+		resp.IsThisType = t.AsTypeParameter().IsThisType()
 	}
 
 	return resp

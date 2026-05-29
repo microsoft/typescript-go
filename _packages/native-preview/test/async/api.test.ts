@@ -44,6 +44,7 @@ import {
     type TemplateLiteralType,
     TypeFlags,
     TypePredicateKind,
+    type TypeParameter,
     type TypeReference,
     type UnionOrIntersectionType,
 } from "@typescript/native-preview/unstable/async"; // @sync: } from "@typescript/native-preview/unstable/sync";
@@ -1959,6 +1960,54 @@ describe("Checker - getTypeArguments", () => {
             const typeArgs = await project.checker.getTypeArguments(type);
             assert.ok(typeArgs.length > 0, "Should have type arguments");
             assert.ok(typeArgs[0].flags & TypeFlags.Number, `Expected number type argument, got flags ${typeArgs[0].flags}`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("TypeParameter - isThisType", () => {
+    test("isThisType is true for the polymorphic 'this' type in a class method", async () => {
+        const src = `\nexport class Builder {\n    setName(name: string): this { return this; }\n}\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            // ": this {" — offset 2 past ': ' lands on 't' in the return-type 'this'
+            const pos = src.indexOf(": this {") + 2;
+            const type = await project.checker.getTypeAtPosition("/src/main.ts", pos);
+            assert.ok(type, "Expected a type at the 'this' position");
+            assert.ok(type.flags & TypeFlags.TypeParameter, "Expected TypeParameter");
+            const typeParam = type as TypeParameter;
+            assert.equal(typeParam.isThisType, true);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("isThisType is absent for a regular generic type parameter", async () => {
+        const src = `\nexport function identity<T>(x: T): T { return x; }\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            // Point to 'T' in the type parameter declaration '<T>' — getTypeAtPosition
+            // on a type annotation reference doesn't resolve to TypeParameter, but
+            // the declaration position does.
+            const pos = src.indexOf("<T>") + 1;
+            const type = await project.checker.getTypeAtPosition("/src/main.ts", pos);
+            assert.ok(type, "Expected a type at the 'T' position");
+            assert.ok(type.flags & TypeFlags.TypeParameter, "Expected TypeParameter");
+            const typeParam = type as TypeParameter;
+            assert.ok(!typeParam.isThisType, "Expected isThisType to be absent/false for a regular type parameter");
         }
         finally {
             await api.close();
