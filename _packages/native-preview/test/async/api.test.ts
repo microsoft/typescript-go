@@ -2015,6 +2015,77 @@ describe("TypeParameter - isThisType", () => {
     });
 });
 
+describe("Type - getAliasTypeArguments", () => {
+    test("returns the type arguments of a single-param generic type alias", async () => {
+        const src = `\ntype Box<T> = { value: T };\nexport const x: Box<string> = { value: "hi" };\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("x:");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasArgs = await type.getAliasTypeArguments();
+            assert.equal(aliasArgs.length, 1, "Expected 1 alias type argument");
+            assert.ok(aliasArgs[0].flags & TypeFlags.String, `Expected string, got flags ${aliasArgs[0].flags}`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("returns multiple type arguments for a multi-param generic type alias", async () => {
+        const src = `\ntype Pair<A, B> = [A, B];\nexport const p: Pair<string, number> = ["hello", 42];\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("p:");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasArgs = await type.getAliasTypeArguments();
+            assert.equal(aliasArgs.length, 2, "Expected 2 alias type arguments");
+            assert.ok(aliasArgs[0].flags & TypeFlags.String, `Expected first arg to be string, got flags ${aliasArgs[0].flags}`);
+            assert.ok(aliasArgs[1].flags & TypeFlags.Number, `Expected second arg to be number, got flags ${aliasArgs[1].flags}`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("returns empty array for a non-alias generic type", async () => {
+        const src = `\nexport const arr: Array<string> = ["hello"];\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("arr:");
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasArgs = await type.getAliasTypeArguments();
+            assert.equal(aliasArgs.length, 0, "Expected no alias type arguments for a direct generic reference");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 describe("Checker - isContextSensitive", () => {
     test("arrow function with no type annotation is context sensitive", async () => {
         const api = spawnAPI({

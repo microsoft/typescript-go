@@ -993,6 +993,7 @@ class TypeObject implements Type {
     readonly typeParameters!: readonly number[];
     readonly outerTypeParameters!: readonly number[];
     readonly localTypeParameters!: readonly number[];
+    readonly aliasTypeArguments!: readonly number[];
     readonly elementFlags!: readonly ElementFlags[];
     readonly fixedLength!: number;
     readonly readonly!: boolean;
@@ -1018,6 +1019,7 @@ class TypeObject implements Type {
         if (data.typeParameters !== undefined) this.typeParameters = data.typeParameters;
         if (data.outerTypeParameters !== undefined) this.outerTypeParameters = data.outerTypeParameters;
         if (data.localTypeParameters !== undefined) this.localTypeParameters = data.localTypeParameters;
+        if (data.aliasTypeArguments !== undefined) this.aliasTypeArguments = data.aliasTypeArguments;
         if (data.elementFlags !== undefined) this.elementFlags = data.elementFlags;
         if (data.fixedLength !== undefined) this.fixedLength = data.fixedLength;
         if (data.readonly !== undefined) this.readonly = data.readonly;
@@ -1066,6 +1068,10 @@ class TypeObject implements Type {
 
     getLocalTypeParameters(): readonly Type[] {
         return this.fetchTypes("getLocalTypeParametersOfType");
+    }
+
+    getAliasTypeArguments(): readonly Type[] {
+        return this.fetchTypes("getAliasTypeArgumentsOfType");
     }
 
     getObjectType(): Type {

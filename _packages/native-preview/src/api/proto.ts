@@ -155,6 +155,7 @@ export interface TypeResponse {
     substConstraint?: number;
     texts?: string[];
     isThisType?: boolean;
+    aliasTypeArguments?: number[];
     symbol?: number;
 }
 
