@@ -28,6 +28,9 @@ export interface Type {
 
     /** Get the type arguments of the type alias this type was instantiated from, if any */
     getAliasTypeArguments(): Promise<readonly Type[]>;
+
+    /** Get the symbol of the type alias this type was instantiated from, if any */
+    getAliasSymbol(): Promise<Symbol | undefined>;
 }
 
 /** Literal types: StringLiteral, NumberLiteral, BigIntLiteral, BooleanLiteral */

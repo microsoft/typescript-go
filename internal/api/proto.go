@@ -126,6 +126,7 @@ const (
 	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
 	MethodGetLocalTypeParametersOfType Method = "getLocalTypeParametersOfType"
 	MethodGetAliasTypeArgumentsOfType  Method = "getAliasTypeArgumentsOfType"
+	MethodGetAliasSymbolOfType         Method = "getAliasSymbolOfType"
 	MethodGetObjectTypeOfType          Method = "getObjectTypeOfType"
 	MethodGetIndexTypeOfType           Method = "getIndexTypeOfType"
 	MethodGetCheckTypeOfType           Method = "getCheckTypeOfType"
@@ -352,6 +353,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetLocalTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetAliasTypeArgumentsOfType:       unmarshallerFor[GetTypePropertyParams],
+	MethodGetAliasSymbolOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetObjectTypeOfType:               unmarshallerFor[GetTypePropertyParams],
 	MethodGetIndexTypeOfType:                unmarshallerFor[GetTypePropertyParams],
 	MethodGetCheckTypeOfType:                unmarshallerFor[GetTypePropertyParams],
@@ -546,6 +548,7 @@ type TypeResponse struct {
 
 	// TypeAlias data
 	AliasTypeArguments []Handle[checker.Type] `json:"aliasTypeArguments,omitempty"`
+	AliasSymbol        Handle[ast.Symbol]     `json:"aliasSymbol,omitempty"`
 
 	// Symbol associated with structured types
 	Symbol Handle[ast.Symbol] `json:"symbol,omitempty"`
@@ -563,6 +566,9 @@ func newTypeData(t *checker.Type) *TypeResponse {
 
 	if t.Alias() != nil {
 		resp.AliasTypeArguments = typeHandles(t.Alias().TypeArguments())
+		if t.Alias().Symbol() != nil {
+			resp.AliasSymbol = SymbolHandle(t.Alias().Symbol())
+		}
 	}
 
 	switch flags := t.Flags(); {

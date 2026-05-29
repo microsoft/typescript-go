@@ -381,6 +381,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetLocalTypeParametersOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetAliasTypeArgumentsOfType):
 		return s.handleGetAliasTypeArgumentsOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetAliasSymbolOfType):
+		return s.handleGetAliasSymbolOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetObjectTypeOfType):
 		return s.handleGetObjectTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetIndexTypeOfType):
@@ -1227,6 +1229,24 @@ func (s *Session) handleGetAliasTypeArgumentsOfType(_ context.Context, params *G
 		}
 		return t.Alias().TypeArguments()
 	})
+}
+
+func (s *Session) handleGetAliasSymbolOfType(_ context.Context, params *GetTypePropertyParams) (*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	if t.Alias() == nil || t.Alias().Symbol() == nil {
+		return nil, nil
+	}
+
+	return sd.registerSymbol(t.Alias().Symbol()), nil
 }
 
 func (s *Session) handleGetObjectTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {

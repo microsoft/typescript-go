@@ -157,6 +157,7 @@ export interface TypeResponse {
     texts?: string[];
     isThisType?: boolean;
     aliasTypeArguments?: string[];
+    aliasSymbol?: string;
     symbol?: string;
 }
 
