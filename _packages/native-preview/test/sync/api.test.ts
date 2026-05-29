@@ -2096,6 +2096,77 @@ describe("Type - getAliasTypeArguments", () => {
     });
 });
 
+describe("Type - getAliasSymbol", () => {
+    test("returns the symbol for a non-generic type alias", () => {
+        // Object-type aliases preserve aliasSymbol; primitive aliases (type Foo = string) do not.
+        const src = `\ntype Point = { x: number; y: number };\nexport const p: Point = { x: 1, y: 2 };\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("p:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasSymbol = type.getAliasSymbol();
+            assert.ok(aliasSymbol, "Expected alias symbol to exist");
+            assert.equal(aliasSymbol.name, "Point");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns the symbol for a generic type alias", () => {
+        const src = `\ntype Container<T> = { item: T };\nexport const c: Container<number> = { item: 42 };\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("c:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasSymbol = type.getAliasSymbol();
+            assert.ok(aliasSymbol, "Expected alias symbol for generic alias");
+            assert.equal(aliasSymbol.name, "Container");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns undefined for a non-alias type", () => {
+        const src = `\nexport const str: string = "test";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("str:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasSymbol = type.getAliasSymbol();
+            assert.equal(aliasSymbol, undefined, "Expected no alias symbol for primitive type");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("FreshableType - getFreshType and getRegularType", () => {
     test("LiteralType.value is accessible via the FreshableType hierarchy", () => {
         const src = `\nexport const greeting: "hello" = "hello";\n`;

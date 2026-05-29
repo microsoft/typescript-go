@@ -158,6 +158,7 @@ export interface TypeResponse {
     texts?: string[];
     isThisType?: boolean;
     aliasTypeArguments?: number[];
+    aliasSymbol?: number;
     symbol?: number;
 }
 

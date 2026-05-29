@@ -997,6 +997,7 @@ class TypeObject implements Type {
     readonly outerTypeParameters!: readonly number[];
     readonly localTypeParameters!: readonly number[];
     readonly aliasTypeArguments!: readonly number[];
+    readonly aliasSymbol!: number;
     readonly elementFlags!: readonly ElementFlags[];
     readonly fixedLength!: number;
     readonly readonly!: boolean;
@@ -1025,6 +1026,7 @@ class TypeObject implements Type {
         if (data.outerTypeParameters !== undefined) this.outerTypeParameters = data.outerTypeParameters;
         if (data.localTypeParameters !== undefined) this.localTypeParameters = data.localTypeParameters;
         if (data.aliasTypeArguments !== undefined) this.aliasTypeArguments = data.aliasTypeArguments;
+        if (data.aliasSymbol !== undefined) this.aliasSymbol = data.aliasSymbol;
         if (data.elementFlags !== undefined) this.elementFlags = data.elementFlags;
         if (data.fixedLength !== undefined) this.fixedLength = data.fixedLength;
         if (data.readonly !== undefined) this.readonly = data.readonly;
@@ -1039,6 +1041,14 @@ class TypeObject implements Type {
 
     getSymbol(): Symbol | undefined {
         const data = this.client.apiRequest<SymbolResponse | null>("getSymbolOfType", { snapshot: this.snapshotId, type: this.id });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    getAliasSymbol(): Symbol | undefined {
+        if (!this.aliasSymbol) return undefined;
+        const cached = this.objectRegistry.getSymbol(this.aliasSymbol);
+        if (cached) return cached;
+        const data = this.client.apiRequest<SymbolResponse | null>("getAliasSymbolOfType", { snapshot: this.snapshotId, type: this.id });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
