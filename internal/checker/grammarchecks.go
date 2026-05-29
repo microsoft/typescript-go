@@ -302,9 +302,12 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					return c.grammarErrorOnNode(node, diagnostics.A_class_member_cannot_have_the_0_keyword, scanner.TokenToString(ast.KindConstKeyword))
 				}
 
-				// !!!
-				// parent := (isJSDocTemplateTag(node.Parent) && getEffectiveJSDocHost(node.Parent)) || node.Parent
 				parent := node.Parent
+				if node.Parent != nil && node.Parent.Kind == ast.KindJSDocTemplateTag {
+					if host := ast.GetJSDocHost(node.Parent); host != nil {
+						parent = host
+					}
+				}
 
 				if node.Kind == ast.KindTypeParameter {
 					if !(ast.IsFunctionLikeDeclaration(parent) || ast.IsClassLike(parent) ||
@@ -532,10 +535,22 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				} else {
 					inOutText = "out"
 				}
-				// !!!
-				// parent := isJSDocTemplateTag(node.Parent) && (getEffectiveJSDocHost(node.Parent) || core.Find(getJSDocRoot(node.Parent). /* ? */ tags, isJSDocTypedefTag)) || node.Parent
 				parent := node.Parent
-				if node.Kind != ast.KindTypeParameter || parent != nil && !(ast.IsInterfaceDeclaration(parent) || ast.IsClassLike(parent) || ast.IsTypeAliasDeclaration(parent) || isJSDocTypedefTag(parent)) {
+				if node.Parent != nil && node.Parent.Kind == ast.KindJSDocTemplateTag {
+					if host := ast.GetJSDocHost(node.Parent); host != nil {
+						parent = host
+					} else if root := ast.GetJSDocRoot(node.Parent); root != nil {
+						if tags := root.AsJSDoc().Tags; tags != nil {
+							for _, tag := range tags.Nodes {
+								if tag.Kind == ast.KindJSDocTypedefTag {
+									parent = tag
+									break
+								}
+							}
+						}
+					}
+				}
+				if node.Kind != ast.KindTypeParameter || parent != nil && !(ast.IsInterfaceDeclaration(parent) || ast.IsClassLike(parent) || ast.IsTypeOrJSTypeAliasDeclaration(parent) || isJSDocTypedefTag(parent)) {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_can_only_appear_on_a_type_parameter_of_a_class_interface_or_type_alias, inOutText)
 				}
 				if flags&inOutFlag != 0 {
@@ -573,9 +588,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	return false
 }
 
-func isJSDocTypedefTag(_ *ast.Node) bool {
-	// !!!
-	return false
+func isJSDocTypedefTag(node *ast.Node) bool {
+	return node.Kind == ast.KindJSDocTypedefTag
 }
 
 func (c *Checker) reportObviousModifierErrors(node *ast.Node) bool {
