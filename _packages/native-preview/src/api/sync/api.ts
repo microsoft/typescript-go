@@ -82,6 +82,7 @@ import type {
     IndexType,
     InterfaceType,
     IntersectionType,
+    IntrinsicType,
     LiteralType,
     ObjectType,
     StringMappingType,
@@ -100,7 +101,7 @@ import type {
 
 export { DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -989,6 +990,7 @@ class TypeObject implements Type {
     readonly flags: TypeFlags;
     readonly objectFlags!: ObjectFlags;
     readonly value!: string | number | boolean;
+    readonly intrinsicName!: string;
     readonly isThisType!: boolean;
     readonly freshType!: number;
     readonly regularType!: number;
@@ -1018,6 +1020,7 @@ class TypeObject implements Type {
         this.flags = data.flags;
         if (data.objectFlags !== undefined) this.objectFlags = data.objectFlags;
         if (data.value !== undefined) this.value = data.value;
+        if (data.intrinsicName !== undefined) this.intrinsicName = data.intrinsicName;
         if (data.isThisType !== undefined) this.isThisType = data.isThisType;
         if (data.freshType !== undefined) this.freshType = data.freshType;
         if (data.regularType !== undefined) this.regularType = data.regularType;

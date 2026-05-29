@@ -522,6 +522,9 @@ type TypeResponse struct {
 	// TypeParameter data
 	IsThisType bool `json:"isThisType,omitempty"`
 
+	// IntrinsicType data
+	IntrinsicName string `json:"intrinsicName,omitempty"`
+
 	// TypeAlias data
 	AliasTypeArguments []TypeID `json:"aliasTypeArguments,omitempty"`
 	AliasSymbol        SymbolID     `json:"aliasSymbol,omitempty"`
@@ -609,6 +612,8 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		resp.Target = TypeHandle(t.AsStringMappingType().Target())
 	case flags&checker.TypeFlagsTypeParameter != 0:
 		resp.IsThisType = t.AsTypeParameter().IsThisType()
+	case flags&checker.TypeFlagsIntrinsic != 0:
+		resp.IntrinsicName = t.AsIntrinsicType().IntrinsicName()
 	}
 
 	return resp

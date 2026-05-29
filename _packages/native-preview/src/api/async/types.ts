@@ -143,6 +143,12 @@ export interface StringMappingType extends Type {
     getTarget(): Promise<Type>;
 }
 
+/** Intrinsic types — any, unknown, string, number, bigint, symbol, void, undefined, null, never, object (TypeFlags.Intrinsic) */
+export interface IntrinsicType extends Type {
+    /** The intrinsic type name (e.g. "any", "string", "never") */
+    readonly intrinsicName: string;
+}
+
 /** Base for all type predicates */
 export interface TypePredicateBase {
     readonly kind: TypePredicateKind;

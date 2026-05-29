@@ -36,6 +36,7 @@ import {
     DiagnosticCategory,
     type FreshableType,
     type IndexedAccessType,
+    type IntrinsicType,
     type IndexType,
     type LiteralType,
     ModifierFlags,
@@ -2152,6 +2153,36 @@ describe("Type - getAliasSymbol", () => {
             assert.ok(type);
             const aliasSymbol = await type.getAliasSymbol();
             assert.equal(aliasSymbol, undefined, "Expected no alias symbol for primitive type");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("IntrinsicType - intrinsicName", () => {
+    test("intrinsicName matches the primitive type name", async () => {
+        const src = `\nexport const x: string = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = await project.checker.getStringType();
+            assert.equal((stringType as IntrinsicType).intrinsicName, "string");
+            const anyType = await project.checker.getAnyType();
+            assert.equal((anyType as IntrinsicType).intrinsicName, "any");
+            const neverType = await project.checker.getNeverType();
+            assert.equal((neverType as IntrinsicType).intrinsicName, "never");
+            const pos = src.indexOf("x:");
+            const sym = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(sym);
+            const litType = await project.checker.getTypeOfSymbol(sym);
+            assert.ok(litType);
+            assert.ok(litType.flags & TypeFlags.Intrinsic);
+            assert.equal((litType as IntrinsicType).intrinsicName, "string");
         }
         finally {
             await api.close();
