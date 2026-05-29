@@ -33,6 +33,9 @@ export interface Type {
 
     /** Get the symbol associated with this type, if any */
     getSymbol(): Symbol | undefined;
+
+    /** Get the type arguments of the type alias this type was instantiated from, if any */
+    getAliasTypeArguments(): readonly Type[];
 }
 
 /** Literal types: StringLiteral, NumberLiteral, BigIntLiteral, BooleanLiteral */

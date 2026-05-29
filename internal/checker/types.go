@@ -777,6 +777,10 @@ func (t *Type) Symbol() *ast.Symbol {
 	return t.symbol
 }
 
+func (t *Type) Alias() *TypeAlias {
+	return t.alias
+}
+
 func (t *Type) IsUnion() bool {
 	return t.flags&TypeFlagsUnion != 0
 }
