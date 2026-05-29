@@ -393,6 +393,9 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         detail: builtinExe.path,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
+            // Suppress the workspace-version prompt so it doesn't re-fire
+            // after the user explicitly chose bundled.
+            await context.workspaceState.update("typescript.native-preview.suppressPromptWorkspaceTsdk", true);
             outputChannel.appendLine("Switched to bundled tsgo version.");
         },
     });
@@ -407,6 +410,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 detail: wsVersion.relativeTsdkPath,
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
+                    await context.workspaceState.update("typescript.native-preview.suppressPromptWorkspaceTsdk", false);
                     await config.update("tsdk", wsVersion.relativeTsdkPath, vscode.ConfigurationTarget.Workspace);
                     outputChannel.appendLine(`Switched to workspace tsgo version (${wsVersion.version}).`);
                 },
