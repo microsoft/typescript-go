@@ -41,6 +41,12 @@ export interface Type {
     getAliasSymbol(): Symbol | undefined;
 }
 
+/** Intrinsic types — any, unknown, string, number, bigint, symbol, void, undefined, null, never, object (TypeFlags.Intrinsic) */
+export interface IntrinsicType extends Type {
+    /** The intrinsic type name (e.g. "any", "string", "never") */
+    readonly intrinsicName: string;
+}
+
 /** Literal types: StringLiteral, NumberLiteral, BigIntLiteral, BooleanLiteral */
 export interface LiteralType extends Type {
     /** The literal value */

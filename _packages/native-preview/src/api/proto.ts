@@ -155,6 +155,7 @@ export interface TypeResponse {
     baseType?: string;
     substConstraint?: string;
     texts?: string[];
+    intrinsicName?: string;
     isThisType?: boolean;
     aliasTypeArguments?: string[];
     aliasSymbol?: string;
