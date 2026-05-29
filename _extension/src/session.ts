@@ -483,20 +483,7 @@ export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext
     const workspaceVersions = await findWorkspaceNativePreviewPackages();
     if (workspaceVersions.length === 0) return;
 
-    // If the existing tsdk setting already resolves to a workspace install,
-    // treat it as already opted in - don't prompt and don't overwrite the setting.
     const config = vscode.workspace.getConfiguration("typescript.native-preview");
-    const currentTsdk = config.get<string>("tsdk");
-    if (currentTsdk) {
-        const resolvedCurrent = await resolveTsdkPathToExe(currentTsdk);
-        if (resolvedCurrent && workspaceVersions.some(ws => ws.exePath === resolvedCurrent.path)) {
-            await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
-            // Restart so the workspace tsdk takes effect for the current session.
-            await vscode.commands.executeCommand("typescript.native-preview.restart");
-            return;
-        }
-    }
-
     const wsVersion = workspaceVersions[0];
     const allow = "Allow";
     const dismiss = "Dismiss";
@@ -512,7 +499,14 @@ export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext
     if (result === allow) {
         if (!vscode.workspace.isTrusted) return;
         await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
-        await config.update("tsdk", wsVersion.relativeTsdkPath, vscode.ConfigurationTarget.Workspace);
+        // Only write tsdk if it isn't already pointing at the workspace install,
+        // so we don't overwrite a committed relative path with a new value.
+        const currentTsdk = config.get<string>("tsdk");
+        const resolvedCurrent = currentTsdk ? await resolveTsdkPathToExe(currentTsdk) : undefined;
+        const alreadyResolved = resolvedCurrent && workspaceVersions.some(ws => ws.exePath === resolvedCurrent.path);
+        if (!alreadyResolved) {
+            await config.update("tsdk", wsVersion.relativeTsdkPath, vscode.ConfigurationTarget.Workspace);
+        }
         await vscode.commands.executeCommand("typescript.native-preview.restart");
     }
     else if (result === suppress) {
