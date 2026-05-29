@@ -106,6 +106,7 @@ const (
 	MethodGetWidenedType                    Method = "getWidenedType"
 	MethodGetParameterType                  Method = "getParameterType"
 	MethodIsArrayLikeType                   Method = "isArrayLikeType"
+	MethodIsTypeAssignableTo                Method = "isTypeAssignableTo"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
@@ -337,6 +338,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
 	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
 	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
+	MethodIsTypeAssignableTo:                unmarshallerFor[IsTypeAssignableToParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
@@ -527,7 +529,7 @@ type TypeResponse struct {
 
 	// TypeAlias data
 	AliasTypeArguments []TypeID `json:"aliasTypeArguments,omitempty"`
-	AliasSymbol        SymbolID     `json:"aliasSymbol,omitempty"`
+	AliasSymbol        SymbolID `json:"aliasSymbol,omitempty"`
 
 	// Symbol associated with structured types
 	Symbol SymbolID `json:"symbol,omitempty"`
@@ -765,6 +767,14 @@ type IsArrayLikeTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
 	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"type"`
+}
+
+// IsTypeAssignableToParams checks assignability between two types.
+type IsTypeAssignableToParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Source   TypeID     `json:"source"`
+	Target   TypeID     `json:"target"`
 }
 
 type GetSignaturesOfTypeParams struct {

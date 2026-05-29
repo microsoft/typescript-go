@@ -699,6 +699,15 @@ export class Checker {
         });
     }
 
+    isTypeAssignableTo(source: Type, target: Type): boolean {
+        return this.client.apiRequest<boolean>("isTypeAssignableTo", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            source: source.id,
+            target: target.id,
+        });
+    }
+
     getShorthandAssignmentValueSymbol(node: Node): Symbol | undefined {
         const data = this.client.apiRequest<SymbolResponse | null>("getShorthandAssignmentValueSymbol", {
             snapshot: this.snapshotId,

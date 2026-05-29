@@ -2350,6 +2350,71 @@ describe("Checker - isContextSensitive", () => {
     });
 });
 
+describe("Checker - isTypeAssignableTo", () => {
+    test("returns true when source is assignable to target", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": `export {};`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = project.checker.getStringType();
+            const anyType = project.checker.getAnyType();
+            const neverType = project.checker.getNeverType();
+            assert.ok(project.checker.isTypeAssignableTo(stringType, stringType), "string assignable to string");
+            assert.ok(project.checker.isTypeAssignableTo(stringType, anyType), "string assignable to any");
+            assert.ok(project.checker.isTypeAssignableTo(neverType, stringType), "never assignable to string (bottom type)");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns false when source is not assignable to target", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": `export {};`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = project.checker.getStringType();
+            const numberType = project.checker.getNumberType();
+            assert.ok(!project.checker.isTypeAssignableTo(numberType, stringType), "number not assignable to string");
+            assert.ok(!project.checker.isTypeAssignableTo(stringType, numberType), "string not assignable to number");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("a string literal type is assignable to string but not number", () => {
+        const src = `\nexport const x: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("x:");
+            const sym = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(sym);
+            const litType = project.checker.getTypeOfSymbol(sym);
+            assert.ok(litType);
+            assert.ok(litType.flags & TypeFlags.StringLiteral);
+            const stringType = project.checker.getStringType();
+            const numberType = project.checker.getNumberType();
+            assert.ok(project.checker.isTypeAssignableTo(litType, stringType));
+            assert.ok(!project.checker.isTypeAssignableTo(litType, numberType));
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("Emitter - printNode", () => {
     const emitterFiles = {
         "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),

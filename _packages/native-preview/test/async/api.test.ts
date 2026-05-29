@@ -2342,6 +2342,71 @@ describe("Checker - isContextSensitive", () => {
     });
 });
 
+describe("Checker - isTypeAssignableTo", () => {
+    test("returns true when source is assignable to target", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": `export {};`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = await project.checker.getStringType();
+            const anyType = await project.checker.getAnyType();
+            const neverType = await project.checker.getNeverType();
+            assert.ok(await project.checker.isTypeAssignableTo(stringType, stringType), "string assignable to string");
+            assert.ok(await project.checker.isTypeAssignableTo(stringType, anyType), "string assignable to any");
+            assert.ok(await project.checker.isTypeAssignableTo(neverType, stringType), "never assignable to string (bottom type)");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("returns false when source is not assignable to target", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": `export {};`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = await project.checker.getStringType();
+            const numberType = await project.checker.getNumberType();
+            assert.ok(!await project.checker.isTypeAssignableTo(numberType, stringType), "number not assignable to string");
+            assert.ok(!await project.checker.isTypeAssignableTo(stringType, numberType), "string not assignable to number");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("a string literal type is assignable to string but not number", async () => {
+        const src = `\nexport const x: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("x:");
+            const sym = await project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(sym);
+            const litType = await project.checker.getTypeOfSymbol(sym);
+            assert.ok(litType);
+            assert.ok(litType.flags & TypeFlags.StringLiteral);
+            const stringType = await project.checker.getStringType();
+            const numberType = await project.checker.getNumberType();
+            assert.ok(await project.checker.isTypeAssignableTo(litType, stringType));
+            assert.ok(!await project.checker.isTypeAssignableTo(litType, numberType));
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 describe("Emitter - printNode", () => {
     const emitterFiles = {
         "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
