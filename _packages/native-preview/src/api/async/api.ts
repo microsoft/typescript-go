@@ -953,6 +953,7 @@ class TypeObject implements Type {
     readonly flags: TypeFlags;
     readonly objectFlags!: ObjectFlags;
     readonly value!: string | number | boolean;
+    readonly isThisType!: boolean;
     readonly target!: string;
     readonly typeParameters!: readonly string[];
     readonly outerTypeParameters!: readonly string[];
@@ -977,6 +978,7 @@ class TypeObject implements Type {
         this.flags = data.flags;
         if (data.objectFlags !== undefined) this.objectFlags = data.objectFlags;
         if (data.value !== undefined) this.value = data.value;
+        if (data.isThisType !== undefined) this.isThisType = data.isThisType;
         if (data.target !== undefined) this.target = data.target;
         if (data.typeParameters !== undefined) this.typeParameters = data.typeParameters;
         if (data.outerTypeParameters !== undefined) this.outerTypeParameters = data.outerTypeParameters;

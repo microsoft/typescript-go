@@ -81,6 +81,8 @@ export interface IntersectionType extends UnionOrIntersectionType {
 
 /** Type parameters (TypeFlags.TypeParameter) */
 export interface TypeParameter extends Type {
+    /** True if this is the synthetic `this` type of an interface, class, or tuple */
+    readonly isThisType?: boolean;
 }
 
 /** Index types — keyof T (TypeFlags.Index) */

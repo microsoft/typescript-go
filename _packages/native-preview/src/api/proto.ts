@@ -154,6 +154,7 @@ export interface TypeResponse {
     baseType?: string;
     substConstraint?: string;
     texts?: string[];
+    isThisType?: boolean;
     symbol?: string;
 }
 
