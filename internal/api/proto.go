@@ -120,6 +120,7 @@ const (
 
 	// Type sub-property methods
 	MethodGetTargetOfType              Method = "getTargetOfType"
+	MethodGetFreshTypeOfType           Method = "getFreshTypeOfType"
 	MethodGetTypesOfType               Method = "getTypesOfType"
 	MethodGetTypeParametersOfType      Method = "getTypeParametersOfType"
 	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
@@ -345,6 +346,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
 
 	MethodGetTargetOfType:                   unmarshallerFor[GetTypePropertyParams],
+	MethodGetFreshTypeOfType:                unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypesOfType:                    unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeParametersOfType:           unmarshallerFor[GetTypePropertyParams],
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
@@ -508,7 +510,8 @@ type TypeResponse struct {
 	ObjectFlags uint32               `json:"objectFlags,omitempty"`
 
 	// LiteralType data
-	Value any `json:"value,omitempty"`
+	Value     any                  `json:"value,omitempty"`
+	FreshType Handle[checker.Type] `json:"freshType,omitempty"`
 
 	// ObjectType / TypeReference / StringMappingType / IndexType target
 	Target Handle[checker.Type] `json:"target,omitempty"`
@@ -564,7 +567,11 @@ func newTypeData(t *checker.Type) *TypeResponse {
 
 	switch flags := t.Flags(); {
 	case flags&checker.TypeFlagsLiteral != 0:
-		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
+		lit := t.AsLiteralType()
+		resp.Value = literalValueToJSON(lit.Value())
+		if lit.FreshType() != nil {
+			resp.FreshType = TypeHandle(lit.FreshType())
+		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()

@@ -954,6 +954,7 @@ class TypeObject implements Type {
     readonly objectFlags!: ObjectFlags;
     readonly value!: string | number | boolean;
     readonly isThisType!: boolean;
+    readonly freshType!: string;
     readonly target!: string;
     readonly typeParameters!: readonly string[];
     readonly outerTypeParameters!: readonly string[];
@@ -980,6 +981,7 @@ class TypeObject implements Type {
         if (data.objectFlags !== undefined) this.objectFlags = data.objectFlags;
         if (data.value !== undefined) this.value = data.value;
         if (data.isThisType !== undefined) this.isThisType = data.isThisType;
+        if (data.freshType !== undefined) this.freshType = data.freshType;
         if (data.target !== undefined) this.target = data.target;
         if (data.typeParameters !== undefined) this.typeParameters = data.typeParameters;
         if (data.outerTypeParameters !== undefined) this.outerTypeParameters = data.outerTypeParameters;
@@ -1017,6 +1019,14 @@ class TypeObject implements Type {
 
     async getTarget(): Promise<Type> {
         return this.fetchType(this.target, "getTargetOfType");
+    }
+
+    async getFreshType(): Promise<Type | undefined> {
+        if (!this.freshType) return undefined;
+        const cached = this.objectRegistry.getType(this.freshType);
+        if (cached) return cached as Type;
+        const data = await this.client.apiRequest<TypeResponse | null>("getFreshTypeOfType", { snapshot: this.snapshotId, type: this.id });
+        return data ? this.objectRegistry.getOrCreateType(data) as Type : undefined;
     }
 
     async getTypes(): Promise<readonly Type[]> {

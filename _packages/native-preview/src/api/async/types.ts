@@ -34,6 +34,8 @@ export interface Type {
 export interface LiteralType extends Type {
     /** The literal value */
     readonly value: string | number | boolean;
+    /** Get the fresh version of this literal type, if any */
+    getFreshType(): Promise<Type | undefined>;
 }
 
 /** Object types (TypeFlags.Object) */
