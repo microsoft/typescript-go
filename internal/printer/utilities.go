@@ -71,6 +71,13 @@ func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
 	b.WriteString(hexCharCode)
 }
 
+func decodeSurrogateInString(s string) (rune, int) {
+	if len(s) >= 3 && s[0] == 0xED && s[1] >= 0xA0 && s[1] <= 0xBF && s[2] >= 0x80 && s[2] <= 0xBF {
+		return rune(0xD000) | rune(s[1]&0x3F)<<6 | rune(s[2]&0x3F), 3
+	}
+	return utf8.DecodeRuneInString(s)
+}
+
 // Based heavily on the abstract 'Quote'/'QuoteJSONString' operation from ECMA-262 (24.3.2.2),
 // but augmented for a few select characters (e.g. lineSeparator, paragraphSeparator, nextLine)
 // Note that this doesn't actually wrap the input in double quotes.
@@ -78,7 +85,7 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 	pos := 0
 	i := 0
 	for i < len(s) {
-		ch, size := utf8.DecodeRuneInString(s[i:])
+		ch, size := decodeSurrogateInString(s[i:])
 
 		escape := false
 
@@ -104,7 +111,7 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 				escape = true
 			}
 		default:
-			if ch <= '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
+			if ch <= '\u001f' || ch >= 0xD800 && ch <= 0xDFFF || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
 				escape = true
 			}
 		}

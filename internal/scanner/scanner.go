@@ -1749,6 +1749,10 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			if codePoint < 0 {
 				return s.text[start:s.pos]
 			}
+			if (codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint)) &&
+				flags&EscapeSequenceScanningFlagsString != 0 {
+				return encodeSurrogate(codePoint)
+			}
 			return string(codePoint)
 		}
 		if codePoint < 0 {
@@ -1764,13 +1768,14 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
 			}
 			s.pos = savedPos
-			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
-				return encodeSurrogate(codePoint)
-			}
+			return encodeSurrogate(codePoint)
+		} else if (codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint)) &&
+			flags&EscapeSequenceScanningFlagsString != 0 {
+			return encodeSurrogate(codePoint)
 		} else if (codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint)) &&
 			flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
 			// Lone surrogate inside a non-unicode regex: encode as CESU-8 so scanClassRanges
-			// can compare surrogates numerically. Must NOT apply to string literals.
+			// can compare surrogates numerically.
 			return encodeSurrogate(codePoint)
 		}
 		return string(codePoint)

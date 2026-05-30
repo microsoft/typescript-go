@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/loneSurrogateStringLiteralEmit.ts] ////
+
+=== loneSurrogateStringLiteralEmit.ts ===
+enum E {
+>E : E
+
+  "\uD800lone" = 1,
+>"\uD800lone" : (typeof E)["\uD800lone"]
+>1 : 1
+}
+
+const enum S {
+>S : S
+
+  C = "\uD800",
+>C : S.C
+>"\uD800" : "\uD800"
+}
+
+const c = S.C;
+>c : S.C
+>S.C : S
+>S : typeof S
+>C : S
+

@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/loneSurrogateStringLiteralEmit.ts] ////
+
+=== loneSurrogateStringLiteralEmit.ts ===
+enum E {
+>E : Symbol(E, Decl(loneSurrogateStringLiteralEmit.ts, 0, 0))
+
+  "\uD800lone" = 1,
+>"\uD800lone" : Symbol(E["\uD800lone"], Decl(loneSurrogateStringLiteralEmit.ts, 0, 8))
+}
+
+const enum S {
+>S : Symbol(S, Decl(loneSurrogateStringLiteralEmit.ts, 2, 1))
+
+  C = "\uD800",
+>C : Symbol(S.C, Decl(loneSurrogateStringLiteralEmit.ts, 4, 14))
+}
+
+const c = S.C;
+>c : Symbol(c, Decl(loneSurrogateStringLiteralEmit.ts, 8, 5))
+>S.C : Symbol(S.C, Decl(loneSurrogateStringLiteralEmit.ts, 4, 14))
+>S : Symbol(S, Decl(loneSurrogateStringLiteralEmit.ts, 2, 1))
+>C : Symbol(S.C, Decl(loneSurrogateStringLiteralEmit.ts, 4, 14))
+
