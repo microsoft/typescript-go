@@ -782,6 +782,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	}
 
 	hasLexicalThis := tx.inHasLexicalThisContext()
+	lexicalThisArg := tx.getLexicalThisArgForAsyncArrow(node)
 
 	asyncBody := tx.transformAsyncFunctionBodyWorker(node.Body())
 	asyncBody = tx.Factory().UpdateBlock(
@@ -814,8 +815,9 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		statements := []*ast.Node{
 			tx.Factory().NewReturnStatement(
-				tx.Factory().NewAwaiterHelper(
+				tx.Factory().NewAwaiterHelperEx(
 					hasLexicalThis,
+					lexicalThisArg,
 					argumentsExpression,
 					innerParameters,
 					asyncBody,
@@ -839,8 +841,9 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		result = block
 	} else {
-		result = tx.Factory().NewAwaiterHelper(
+		result = tx.Factory().NewAwaiterHelperEx(
 			hasLexicalThis,
+			lexicalThisArg,
 			argumentsExpression,
 			innerParameters,
 			asyncBody,
@@ -874,6 +877,39 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		tx.lexicalArguments.used = false
 	}
 	return result
+}
+
+func (tx *asyncTransformer) getLexicalThisArgForAsyncArrow(node *ast.Node) *ast.Expression {
+	if node.Kind != ast.KindArrowFunction {
+		return nil
+	}
+
+	for current := node.Parent; current != nil; current = current.Parent {
+		switch current.Kind {
+		case ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression:
+			return nil
+		case ast.KindPropertyDeclaration:
+			if ast.HasStaticModifier(current) {
+				if classThis := tx.EmitContext().ClassThis(current); classThis != nil {
+					return classThis.Clone(tx.Factory())
+				}
+			}
+			return nil
+		case ast.KindClassStaticBlockDeclaration:
+			if classThis := tx.EmitContext().ClassThis(current); classThis != nil {
+				return classThis.Clone(tx.Factory())
+			}
+			return nil
+		}
+	}
+	return nil
 }
 
 func (tx *asyncTransformer) transformAsyncFunctionBodyWorker(body *ast.Node) *ast.Node {

@@ -944,6 +944,16 @@ func (f *NodeFactory) NewAwaiterHelper(
 	parameters *ast.NodeList,
 	body *ast.BlockNode,
 ) *ast.Expression {
+	return f.NewAwaiterHelperEx(hasLexicalThis, nil /*thisArg*/, argumentsExpression, parameters, body)
+}
+
+func (f *NodeFactory) NewAwaiterHelperEx(
+	hasLexicalThis bool,
+	thisArgOverride *ast.Expression,
+	argumentsExpression *ast.Expression,
+	parameters *ast.NodeList,
+	body *ast.BlockNode,
+) *ast.Expression {
 	f.emitContext.RequestEmitHelper(awaiterHelper)
 
 	var params *ast.NodeList
@@ -968,7 +978,9 @@ func (f *NodeFactory) NewAwaiterHelper(
 	f.emitContext.AddEmitFlags(generatorFunc, EFAsyncFunctionBody|EFReuseTempVariableScope)
 
 	var thisArg *ast.Expression
-	if hasLexicalThis {
+	if thisArgOverride != nil {
+		thisArg = thisArgOverride
+	} else if hasLexicalThis {
 		thisArg = f.NewKeywordExpression(ast.KindThisKeyword)
 	} else {
 		thisArg = f.NewVoidZeroExpression()

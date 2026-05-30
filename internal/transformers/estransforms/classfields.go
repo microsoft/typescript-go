@@ -96,6 +96,7 @@ type classFieldsTransformer struct {
 	shouldTransformInitializers                       bool
 	shouldTransformPrivateElementsOrClassStaticBlocks bool
 	shouldTransformAutoAccessors                      bool
+	shouldTransformAsyncFunctions                     bool
 	shouldTransformThisInStaticInitializers           bool
 	shouldTransformSuperInStaticInitializers          bool
 	shouldTransformPrivateStaticElementsInFile        bool
@@ -168,6 +169,8 @@ func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformer
 	// We need to transform `accessor` fields when target < ESNext.
 	// We may need to transform `accessor` fields when `useDefineForClassFields: false`
 	tx.shouldTransformAutoAccessors = languageVersion < core.ScriptTargetESNext
+
+	tx.shouldTransformAsyncFunctions = languageVersion < core.ScriptTargetES2017
 
 	// We need to transform `this` in a static initializer into a reference to the class
 	// when target < ES2022 since the assignment will be moved outside of the class body.
@@ -1384,6 +1387,10 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 }
 
 func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast.Node) *ast.Expression {
+	if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
+		tx.EmitContext().SetClassThis(node, classThis.Clone(tx.Factory()))
+	}
+
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks {
 		if isClassThisAssignmentBlock(tx.EmitContext(), node) {
 			result := tx.Visitor().VisitNode(node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes[0].Expression())
@@ -1771,6 +1778,9 @@ func (tx *classFieldsTransformer) getClassFacts(node *ast.Node) classFacts {
 				facts |= classFactsNeedsClassConstructorReference
 			}
 			if ast.IsPropertyDeclaration(member) || ast.IsClassStaticBlockDeclaration(member) {
+				if tx.shouldTransformAsyncFunctions && tx.memberContainsAsyncArrowFunction(member) {
+					facts |= classFactsNeedsClassConstructorReference
+				}
 				if tx.shouldTransformThisInStaticInitializers && member.SubtreeFacts()&ast.SubtreeContainsLexicalThis != 0 {
 					facts |= classFactsNeedsSubstitutionForThisInClassStaticField
 					if facts&classFactsClassWasDecorated == 0 {
@@ -1829,6 +1839,36 @@ func (tx *classFieldsTransformer) visitExpressionWithTypeArgumentsInHeritageClau
 		)
 	}
 	return tx.heritageClauseVisitor.VisitEachChild(node.AsNode())
+}
+
+func (tx *classFieldsTransformer) memberContainsAsyncArrowFunction(member *ast.Node) bool {
+	var check func(n *ast.Node) bool
+	check = func(n *ast.Node) bool {
+		switch n.Kind {
+		case ast.KindArrowFunction:
+			return ast.GetFunctionFlags(n)&ast.FunctionFlagsAsync != 0 || n.ForEachChild(check)
+		case ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression:
+			return false
+		default:
+			return n.ForEachChild(check)
+		}
+	}
+	if ast.IsClassStaticBlockDeclaration(member) {
+		body := member.AsClassStaticBlockDeclaration().Body
+		return body != nil && check(body.AsNode())
+	}
+	if ast.IsPropertyDeclaration(member) {
+		init := member.Initializer()
+		return init != nil && check(init)
+	}
+	return false
 }
 
 func (tx *classFieldsTransformer) visitInNewClassLexicalEnvironment(node *ast.Node, visitor func(tx *classFieldsTransformer, node *ast.Node, facts classFacts) *ast.Node) *ast.Node {
@@ -2712,6 +2752,11 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
 	savedCurrentClassElement := tx.currentClassElement
 	transformed := tx.transformPropertyWorker(property, receiver)
+	if transformed != nil && ast.HasStaticModifier(property.AsNode()) {
+		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
+			tx.EmitContext().SetClassThis(property.AsNode(), classThis.Clone(tx.Factory()))
+		}
+	}
 	if transformed != nil && ast.HasStaticModifier(property.AsNode()) &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil && tx.lexicalEnvironment.data.facts != 0 {
 		// capture the lexical environment for the member
