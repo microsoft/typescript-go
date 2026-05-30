@@ -229,6 +229,8 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, typedefOrCallback bool) *ast.
 	endPos := -1
 	firstTemplate := true
 	for _, tag := range j.AsJSDoc().Tags.Nodes {
+		// When a JSDoc comment contains an `@typedef` or `@callback` tag, `@template` type parameter
+		// declarations apply to the type being defined.
 		if !typedefOrCallback && (ast.IsJSDocTypedefTag(tag) || ast.IsJSDocCallbackTag(tag)) {
 			return nil
 		}
