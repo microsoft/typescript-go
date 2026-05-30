@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/jsdocParamRefersToObjectProperty.ts] ////
+
+=== main.js ===
+export const map = /** @type {const} */ ({
+>map : { readonly foo: 'foo'; readonly bar: 'bar'; }
+>({    foo: 'foo',    bar: 'bar',}) : { readonly foo: 'foo'; readonly bar: 'bar'; }
+>{    foo: 'foo',    bar: 'bar',} : { readonly foo: 'foo'; readonly bar: 'bar'; }
+
+    foo: 'foo',
+>foo : "foo"
+>'foo' : "foo"
+
+    bar: 'bar',
+>bar : "bar"
+>'bar' : "bar"
+
+});
+
+/**
+ * @param {map.foo} foo
+ */
+export function buzz(foo) {}
+>buzz : (foo: map.foo) => void
+>foo : map.foo
+

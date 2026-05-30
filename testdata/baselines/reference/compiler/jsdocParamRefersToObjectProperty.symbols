@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/jsdocParamRefersToObjectProperty.ts] ////
+
+=== main.js ===
+export const map = /** @type {const} */ ({
+>map : Symbol(map, Decl(main.js, 0, 12))
+
+    foo: 'foo',
+>foo : Symbol(foo, Decl(main.js, 0, 42))
+
+    bar: 'bar',
+>bar : Symbol(bar, Decl(main.js, 1, 15))
+
+});
+
+/**
+ * @param {map.foo} foo
+ */
+export function buzz(foo) {}
+>buzz : Symbol(buzz, Decl(main.js, 3, 3))
+>foo : Symbol(foo, Decl(main.js, 8, 21))
+

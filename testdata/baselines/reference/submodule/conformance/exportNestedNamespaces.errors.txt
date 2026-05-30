@@ -1,7 +1,7 @@
 mod.js(2,11): error TS2339: Property 'K' does not exist on type '{}'.
 mod.js(3,10): error TS2339: Property 'x' does not exist on type '{}'.
 use.js(3,17): error TS2339: Property 'K' does not exist on type '{}'.
-use.js(8,15): error TS2694: Namespace '"mod"' has no exported member 'n'.
+use.js(8,17): error TS2694: Namespace '"mod".n' has no exported member 'K'.
 
 
 ==== mod.js (2 errors) ====
@@ -30,8 +30,8 @@ use.js(8,15): error TS2694: Namespace '"mod"' has no exported member 'n'.
     
     
     /** @param {s.n.K} c
-                  ~
-!!! error TS2694: Namespace '"mod"' has no exported member 'n'.
+                    ~
+!!! error TS2694: Namespace '"mod".n' has no exported member 'K'.
         @param {s.Classic} classic */
     function f(c, classic) {
         c.x

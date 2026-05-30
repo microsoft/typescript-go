@@ -1,11 +1,11 @@
 file.js(10,51): error TS2300: Duplicate identifier 'myTypes'.
 file.js(13,13): error TS2300: Duplicate identifier 'myTypes'.
-file.js(14,15): error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
-file.js(18,15): error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
+file.js(14,23): error TS2694: Namespace 'myTypes' has no exported member 'typeA'.
+file.js(18,23): error TS2694: Namespace 'myTypes' has no exported member 'typeB'.
 file.js(18,39): error TS2300: Duplicate identifier 'myTypes'.
 file.js(20,9): error TS2300: Duplicate identifier 'myTypes'.
-file2.js(12,23): error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
-file2.js(17,12): error TS2702: 'testFnTypes' only refers to a type, but is being used as a namespace here.
+file2.js(12,31): error TS2694: Namespace '"file".myTypes' has no exported member 'typeC'.
+file2.js(17,24): error TS2694: Namespace 'testFnTypes' has no exported member 'input'.
 
 
 ==== file2.js (2 errors) ====
@@ -21,15 +21,15 @@ file2.js(17,12): error TS2702: 'testFnTypes' only refers to a type, but is being
     };
     
     /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
-                          ~~~~~~~
-!!! error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
+                                  ~~~~~
+!!! error TS2694: Namespace '"file".myTypes' has no exported member 'typeC'.
     
     /**
      * @function testFn
      * @description A test function.
      * @param {testFnTypes.input} input - Input.
-               ~~~~~~~~~~~
-!!! error TS2702: 'testFnTypes' only refers to a type, but is being used as a namespace here.
+                           ~~~~~
+!!! error TS2694: Namespace 'testFnTypes' has no exported member 'input'.
      * @returns {number|null} Result.
      */
     function testFn(input) {
@@ -60,14 +60,14 @@ file2.js(17,12): error TS2702: 'testFnTypes' only refers to a type, but is being
                 ~~~~~~~
 !!! error TS2300: Duplicate identifier 'myTypes'.
      * @property {myTypes.typeA}    prop1 - Prop 1.
-                  ~~~~~~~
-!!! error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
+                          ~~~~~
+!!! error TS2694: Namespace 'myTypes' has no exported member 'typeA'.
      * @property {string}           prop2 - Prop 2.
      */
     
     /** @typedef {myTypes.typeB|Function} myTypes.typeC */
-                  ~~~~~~~
-!!! error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
+                          ~~~~~
+!!! error TS2694: Namespace 'myTypes' has no exported member 'typeB'.
                                           ~~~~~~~
 !!! error TS2300: Duplicate identifier 'myTypes'.
     

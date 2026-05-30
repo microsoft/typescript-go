@@ -1,5 +1,5 @@
-other.js(2,11): error TS2503: Cannot find namespace 'Ns'.
-other.js(7,11): error TS2503: Cannot find namespace 'Ns'.
+other.js(2,11): error TS2749: 'Ns.One' refers to a value, but is being used as a type here. Did you mean 'typeof Ns.One'?
+other.js(7,11): error TS2749: 'Ns.Two' refers to a value, but is being used as a type here. Did you mean 'typeof Ns.Two'?
 
 
 ==== prototypePropertyAssignmentMergeAcrossFiles2.js (0 errors) ====
@@ -16,15 +16,15 @@ other.js(7,11): error TS2503: Cannot find namespace 'Ns'.
 ==== other.js (2 errors) ====
     /**
      * @type {Ns.One}
-              ~~
-!!! error TS2503: Cannot find namespace 'Ns'.
+              ~~~~~~
+!!! error TS2749: 'Ns.One' refers to a value, but is being used as a type here. Did you mean 'typeof Ns.One'?
      */
     var one = undefined;
     one.wat;
     /**
      * @type {Ns.Two}
-              ~~
-!!! error TS2503: Cannot find namespace 'Ns'.
+              ~~~~~~
+!!! error TS2749: 'Ns.Two' refers to a value, but is being used as a type here. Did you mean 'typeof Ns.Two'?
      */
     var two = undefined;
     two.wat;

@@ -1,4 +1,4 @@
-use.js(1,12): error TS2503: Cannot find namespace 'Outer'.
+use.js(1,18): error TS2694: Namespace 'Outer' has no exported member 'Inner'.
 
 
 ==== def.js (0 errors) ====
@@ -13,8 +13,8 @@ use.js(1,12): error TS2503: Cannot find namespace 'Outer'.
     
 ==== use.js (1 errors) ====
     /** @type {Outer.Inner} */
-               ~~~~~
-!!! error TS2503: Cannot find namespace 'Outer'.
+                     ~~~~~
+!!! error TS2694: Namespace 'Outer' has no exported member 'Inner'.
     var inner
     inner.x
     inner.m()
