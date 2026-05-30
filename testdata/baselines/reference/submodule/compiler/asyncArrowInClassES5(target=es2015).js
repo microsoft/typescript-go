@@ -13,6 +13,8 @@ class Test {
 "use strict";
 // https://github.com/Microsoft/TypeScript/issues/16924
 // Should capture `this`
+var _a;
 class Test {
 }
-Test.member = (x) => __awaiter(void 0, void 0, void 0, function* () { });
+_a = Test;
+Test.member = (x) => __awaiter(_a, void 0, void 0, function* () { });

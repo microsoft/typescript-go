@@ -884,29 +884,12 @@ func (tx *asyncTransformer) getLexicalThisArgForAsyncArrow(node *ast.Node) *ast.
 		return nil
 	}
 
-	for current := node.Parent; current != nil; current = current.Parent {
-		switch current.Kind {
-		case ast.KindFunctionDeclaration,
-			ast.KindFunctionExpression,
-			ast.KindMethodDeclaration,
-			ast.KindGetAccessor,
-			ast.KindSetAccessor,
-			ast.KindConstructor,
-			ast.KindClassDeclaration,
-			ast.KindClassExpression:
-			return nil
-		case ast.KindPropertyDeclaration:
-			if ast.HasStaticModifier(current) {
-				if classThis := tx.EmitContext().ClassThis(current); classThis != nil {
-					return classThis.Clone(tx.Factory())
-				}
-			}
-			return nil
-		case ast.KindClassStaticBlockDeclaration:
-			if classThis := tx.EmitContext().ClassThis(current); classThis != nil {
-				return classThis.Clone(tx.Factory())
-			}
-			return nil
+	if classThis := tx.EmitContext().ClassThis(node); classThis != nil {
+		return classThis.Clone(tx.Factory())
+	}
+	if original := tx.EmitContext().MostOriginal(node); original != node {
+		if classThis := tx.EmitContext().ClassThis(original); classThis != nil {
+			return classThis.Clone(tx.Factory())
 		}
 	}
 	return nil

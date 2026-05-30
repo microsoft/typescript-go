@@ -1388,7 +1388,7 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 
 func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast.Node) *ast.Expression {
 	if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
-		tx.EmitContext().SetClassThis(node, classThis.Clone(tx.Factory()))
+		tx.markAsyncArrowsWithClassThis(node.AsClassStaticBlockDeclaration().Body.AsNode(), classThis)
 	}
 
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks {
@@ -2751,12 +2751,12 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 // transformProperty transforms a property initializer into an assignment expression.
 func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
 	savedCurrentClassElement := tx.currentClassElement
-	transformed := tx.transformPropertyWorker(property, receiver)
-	if transformed != nil && ast.HasStaticModifier(property.AsNode()) {
+	if ast.HasStaticModifier(property.AsNode()) {
 		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
-			tx.EmitContext().SetClassThis(property.AsNode(), classThis.Clone(tx.Factory()))
+			tx.markAsyncArrowsWithClassThis(property.Initializer, classThis)
 		}
 	}
+	transformed := tx.transformPropertyWorker(property, receiver)
 	if transformed != nil && ast.HasStaticModifier(property.AsNode()) &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil && tx.lexicalEnvironment.data.facts != 0 {
 		// capture the lexical environment for the member
@@ -2765,6 +2765,32 @@ func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclar
 	}
 	tx.currentClassElement = savedCurrentClassElement
 	return transformed
+}
+
+func (tx *classFieldsTransformer) markAsyncArrowsWithClassThis(node *ast.Node, classThis *ast.IdentifierNode) {
+	if node == nil {
+		return
+	}
+	var visit func(n *ast.Node) bool
+	visit = func(n *ast.Node) bool {
+		switch n.Kind {
+		case ast.KindArrowFunction:
+			if ast.GetFunctionFlags(n)&ast.FunctionFlagsAsync != 0 && tx.EmitContext().ClassThis(n) == nil {
+				tx.EmitContext().SetClassThis(n, classThis.Clone(tx.Factory()))
+			}
+		case ast.KindFunctionDeclaration,
+			ast.KindFunctionExpression,
+			ast.KindMethodDeclaration,
+			ast.KindGetAccessor,
+			ast.KindSetAccessor,
+			ast.KindConstructor,
+			ast.KindClassDeclaration,
+			ast.KindClassExpression:
+			return false
+		}
+		return n.ForEachChild(visit)
+	}
+	visit(node)
 }
 
 func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
