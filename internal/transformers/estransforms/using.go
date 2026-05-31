@@ -3,6 +3,7 @@ package estransforms
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -132,7 +133,9 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 		if len(tx.exportBindings) > 0 {
 			exportSpecifiers := make([]*ast.ExportSpecifierNode, 0, len(tx.exportBindingNames))
 			for _, name := range tx.exportBindingNames {
-				exportSpecifiers = append(exportSpecifiers, tx.exportBindings[name])
+				specifier := tx.exportBindings[name]
+				debug.Assert(specifier != nil, "Missing export binding for hoisted export name")
+				exportSpecifiers = append(exportSpecifiers, specifier)
 			}
 			topLevelStatements = append(
 				topLevelStatements,
