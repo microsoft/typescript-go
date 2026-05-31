@@ -1407,7 +1407,8 @@ func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *as
 func specToDiagnostic(spec string, disallowTrailingRecursion bool) *diagnostics.Message {
 	if disallowTrailingRecursion && invalidTrailingRecursion(spec) {
 		return diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
-	} else if invalidDotDotAfterRecursiveWildcard(spec) {
+	}
+	if invalidDotDotAfterRecursiveWildcard(spec) {
 		return diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 	}
 	return nil
