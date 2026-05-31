@@ -393,7 +393,7 @@ func (e *emitter) getSourceMapDirectory(mapOptions *core.CompilerOptions, filePa
 }
 
 func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMapGenerator *sourcemap.Generator, filePath string, sourceMapFilePath string, sourceFile *ast.SourceFile) string {
-	if mapOptions.InlineSourceMap.IsTrue() {
+	if mapOptions.InlineSourceMap.IsTrue() && !tspath.IsDeclarationFileName(filePath) {
 		// Encode the sourceMap into the sourceMap url
 		return sourceMapGenerator.Base64DataURL()
 	}
