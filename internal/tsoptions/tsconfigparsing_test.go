@@ -864,11 +864,13 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 		return diagnostic.Code() == diagnostics.X_0_expected.Code()
 	})
 	expectedParseErrorMessages := []string{":", ",", ",", "}"}
+	expectedParseErrorPositions := []int{7, 10, 14, 18}
+	assert.Assert(t, len(parseErrors) > 0)
 	assert.Equal(t, len(expectedParseErrorMessages), len(parseErrors))
 	assert.DeepEqual(t, core.Map(parseErrors, func(diagnostic *ast.Diagnostic) string {
 		return diagnostic.MessageArgs()[0]
 	}), expectedParseErrorMessages)
-	assert.DeepEqual(t, core.Map(parseErrors, (*ast.Diagnostic).Pos), []int{7, 10, 14, 18})
+	assert.DeepEqual(t, core.Map(parseErrors, (*ast.Diagnostic).Pos), expectedParseErrorPositions)
 	for _, diagnostic := range parseErrors {
 		assert.Equal(t, diagnostic.File().FileName(), "/project/bad.json")
 	}
