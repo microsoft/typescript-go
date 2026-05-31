@@ -865,7 +865,6 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 	})
 	expectedParseErrorMessages := []string{":", ",", ",", "}"}
 	expectedParseErrorPositions := []int{7, 10, 14, 18}
-	assert.Assert(t, len(parseErrors) > 0)
 	assert.Equal(t, len(expectedParseErrorMessages), len(parseErrors))
 	assert.DeepEqual(t, core.Map(parseErrors, func(diagnostic *ast.Diagnostic) string {
 		return diagnostic.MessageArgs()[0]
