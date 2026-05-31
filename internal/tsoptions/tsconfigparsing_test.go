@@ -836,6 +836,7 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 		"/project/tsconfig.json": `{
   "extends": "./bad.json"
 }`,
+		// The parser recovers from this as object-like JSON, producing expected-token errors for ':', ',', ',', and '}'.
 		"/project/bad.json": "{ this is not json",
 		"/project/main.ts":  "export const x = 1;",
 	}
@@ -867,6 +868,7 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 	assert.DeepEqual(t, core.Map(parseErrors, func(diagnostic *ast.Diagnostic) string {
 		return diagnostic.MessageArgs()[0]
 	}), expectedParseErrorMessages)
+	assert.DeepEqual(t, core.Map(parseErrors, (*ast.Diagnostic).Pos), []int{7, 10, 14, 18})
 	for _, diagnostic := range parseErrors {
 		assert.Equal(t, diagnostic.File().FileName(), "/project/bad.json")
 	}
