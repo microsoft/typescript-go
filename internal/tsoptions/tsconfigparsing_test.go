@@ -836,7 +836,7 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 		"/project/tsconfig.json": `{
   "extends": "./bad.json"
 }`,
-		"/project/bad.json": "{ this is not json\n",
+		"/project/bad.json": "{ this is not json",
 		"/project/main.ts":  "export const x = 1;",
 	}
 	host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true /*useCaseSensitiveFileNames*/)
