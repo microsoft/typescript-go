@@ -748,10 +748,6 @@ func convertObjectLiteralExpressionToJson(
 		// if ast.IsQuestionToken(element) {
 		// 	errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.Property_assignment_expected))
 		// }
-		if element.Name() != nil && !isDoubleQuotedString(element.Name()) {
-			errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.String_literal_with_double_quotes_expected))
-		}
-
 		textOfKey := ""
 		if !ast.IsComputedNonLiteralName(element.Name()) {
 			textOfKey, _ = ast.TryGetTextOfPropertyName(element.Name())

@@ -12,11 +12,13 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tsoptions/tsoptionstest"
@@ -826,6 +828,31 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonSourceFileApi)
 		})
+	}
+}
+
+func TestParseJsonSourceFileConfigFileContentDoesNotDuplicateUnquotedKeyDiagnostics(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  compilerOptions: {
+    strict: true
+  }
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+
+	diags := parsed.GetConfigFileParsingDiagnostics()
+	assert.Equal(t, len(diags), 2)
+	expectedLocations := []struct {
+		line      int
+		character int
+	}{
+		{line: 1, character: 2},
+		{line: 2, character: 4},
+	}
+	for index, diagnostic := range diags {
+		assert.Equal(t, diagnostic.Code(), diagnostics.String_literal_with_double_quotes_expected.Code())
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		assert.Equal(t, line, expectedLocations[index].line)
+		assert.Equal(t, int(character), expectedLocations[index].character)
 	}
 }
 
