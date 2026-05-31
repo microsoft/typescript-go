@@ -1,9 +1,6 @@
 package estransforms
 
 import (
-	"maps"
-	"slices"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -14,6 +11,7 @@ type usingDeclarationTransformer struct {
 	transformers.Transformer
 
 	exportBindings       map[string]*ast.ExportSpecifierNode
+	exportBindingNames   []string
 	exportVars           []*ast.VariableDeclarationNode
 	defaultExportBinding *ast.IdentifierNode
 	exportEqualsBinding  *ast.IdentifierNode
@@ -132,6 +130,10 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 
 		// add `export {}` declarations for any hoisted bindings.
 		if len(tx.exportBindings) > 0 {
+			exportSpecifiers := make([]*ast.ExportSpecifierNode, 0, len(tx.exportBindingNames))
+			for _, name := range tx.exportBindingNames {
+				exportSpecifiers = append(exportSpecifiers, tx.exportBindings[name])
+			}
 			topLevelStatements = append(
 				topLevelStatements,
 				tx.Factory().NewExportDeclaration(
@@ -139,7 +141,7 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 					false, /*isTypeOnly*/
 					tx.Factory().NewNamedExports(
 						tx.Factory().NewNodeList(
-							slices.Collect(maps.Values(tx.exportBindings)),
+							exportSpecifiers,
 						),
 					),
 					nil, /*moduleSpecifier*/
@@ -178,6 +180,7 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 	tx.EmitContext().AddEmitHelper(visited, tx.EmitContext().ReadEmitHelpers()...)
 	tx.exportVars = nil
 	tx.exportBindings = nil
+	tx.exportBindingNames = nil
 	tx.defaultExportBinding = nil
 	tx.exportEqualsBinding = nil
 	return visited
@@ -636,6 +639,9 @@ func (tx *usingDeclarationTransformer) hoistBindingIdentifier(node *ast.Identifi
 		}
 		if tx.exportBindings == nil {
 			tx.exportBindings = make(map[string]*ast.ExportSpecifierNode)
+		}
+		if _, ok := tx.exportBindings[name.Text()]; !ok {
+			tx.exportBindingNames = append(tx.exportBindingNames, name.Text())
 		}
 		tx.exportBindings[name.Text()] = specifier
 	}
