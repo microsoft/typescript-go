@@ -1010,6 +1010,8 @@ func ParseExtendedConfig(
 	if len(extendedResult.SourceFile.Diagnostics()) == 0 {
 		extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
 		entryErrors = append(entryErrors, err...)
+	} else {
+		entryErrors = append(entryErrors, extendedResult.SourceFile.Diagnostics()...)
 	}
 	return &ExtendedConfigCacheEntry{
 		extendedResult: extendedResult,

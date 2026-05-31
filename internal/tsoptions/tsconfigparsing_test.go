@@ -12,6 +12,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -826,6 +827,43 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonSourceFileApi)
 		})
+	}
+}
+
+func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *testing.T) {
+	t.Parallel()
+	files := map[string]string{
+		"/project/tsconfig.json": `{
+  "extends": "./bad.json"
+}`,
+		"/project/bad.json": "{ this is not json\n",
+		"/project/main.ts":  "export const x = 1;",
+	}
+	host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true /*useCaseSensitiveFileNames*/)
+	configFileName := "/project/tsconfig.json"
+	configFile := tsoptions.NewTsconfigSourceFileFromFilePath(
+		configFileName,
+		tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()),
+		files[configFileName],
+	)
+
+	parsed := tsoptions.ParseJsonSourceFileConfigFileContent(
+		configFile,
+		host,
+		host.GetCurrentDirectory(),
+		nil,
+		nil,
+		configFileName,
+		nil,
+		nil,
+		nil,
+	)
+
+	assert.Equal(t, core.CountWhere(parsed.Errors, func(diagnostic *ast.Diagnostic) bool {
+		return diagnostic.Code() == diagnostics.X_0_expected.Code()
+	}), 4)
+	for _, diagnostic := range parsed.Errors {
+		assert.Equal(t, diagnostic.File().FileName(), "/project/bad.json")
 	}
 }
 
