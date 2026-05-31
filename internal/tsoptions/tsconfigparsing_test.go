@@ -860,9 +860,10 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 	)
 
 	const expectedParseErrorCount = 4 // ':', ',', ',', and '}' expected
-	assert.Equal(t, core.CountWhere(parsed.Errors, func(diagnostic *ast.Diagnostic) bool {
+	actualParseErrorCount := core.CountWhere(parsed.Errors, func(diagnostic *ast.Diagnostic) bool {
 		return diagnostic.Code() == diagnostics.X_0_expected.Code()
-	}), expectedParseErrorCount)
+	})
+	assert.Equal(t, expectedParseErrorCount, actualParseErrorCount)
 	for _, diagnostic := range parsed.Errors {
 		assert.Equal(t, diagnostic.File().FileName(), "/project/bad.json")
 	}
