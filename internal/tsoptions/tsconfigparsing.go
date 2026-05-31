@@ -1005,12 +1005,13 @@ func ParseExtendedConfig(
 ) *ExtendedConfigCacheEntry {
 	var extendedConfig *parsedTsconfig
 	var entryErrors []*ast.Diagnostic
-	extendedResult, err := readJsonConfigFile(fileName, path, host.FS().ReadFile)
-	entryErrors = append(entryErrors, err...)
+	extendedResult, readErrors := readJsonConfigFile(fileName, path, host.FS().ReadFile)
+	entryErrors = append(entryErrors, readErrors...)
 	if len(extendedResult.SourceFile.Diagnostics()) == 0 {
-		extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
-		entryErrors = append(entryErrors, err...)
-	} else if len(err) == 0 {
+		var parseErrors []*ast.Diagnostic
+		extendedConfig, parseErrors = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
+		entryErrors = append(entryErrors, parseErrors...)
+	} else if len(readErrors) == 0 {
 		entryErrors = append(entryErrors, extendedResult.SourceFile.Diagnostics()...)
 	}
 	return &ExtendedConfigCacheEntry{

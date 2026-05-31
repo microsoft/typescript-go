@@ -867,7 +867,7 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *tes
 	assert.DeepEqual(t, core.Map(parseErrors, func(diagnostic *ast.Diagnostic) string {
 		return diagnostic.MessageArgs()[0]
 	}), []string{":", ",", ",", "}"})
-	for _, diagnostic := range parsed.Errors {
+	for _, diagnostic := range parseErrors {
 		assert.Equal(t, diagnostic.File().FileName(), "/project/bad.json")
 	}
 }
