@@ -23,6 +23,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -73,6 +74,7 @@ type SessionInit struct {
 	Logger        logging.Logger
 	NpmExecutor   ata.NpmExecutor
 	ParseCache    *ParseCache
+	PnpApi *pnp.PnpApi
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -90,6 +92,7 @@ type Session struct {
 	logger        logging.Logger
 	npmExecutor   ata.NpmExecutor
 	fs            *overlayFS
+	pnpApi        *pnp.PnpApi
 
 	// parseCache is the ref-counted cache of source files used when
 	// creating programs during snapshot cloning.
@@ -197,6 +200,7 @@ func NewSession(init *SessionInit) *Session {
 		logger:              init.Logger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
+		pnpApi:              init.PnpApi,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
@@ -229,6 +233,7 @@ func NewSession(init *SessionInit) *Session {
 				},
 			),
 			toPath,
+			init.PnpApi,
 		),
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
@@ -254,6 +259,11 @@ func (s *Session) FS() vfs.FS {
 // GetCurrentDirectory implements module.ResolutionHost
 func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
+}
+
+// PnpApi implements module.ResolutionHost
+func (s *Session) PnpApi() *pnp.PnpApi {
+	return s.pnpApi
 }
 
 // Gets copy of current configuration

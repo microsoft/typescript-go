@@ -25,11 +25,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -1167,6 +1169,12 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
+	fs := s.fs
+	pnpApi := pnp.InitPnpApi(fs, cwd)
+	if pnpApi != nil {
+		fs = pnpvfs.From(fs)
+	}
+
 	var disablePushDiagnostics bool
 	var enableTelemetry bool
 	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil {
@@ -1193,7 +1201,8 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
 			Locale:                 s.locale,
 		},
-		FS:          s.fs,
+		FS:                fs,
+		PnpApi:            pnpApi,
 		Logger:      s.logger,
 		Client:      s,
 		NpmExecutor: s,
