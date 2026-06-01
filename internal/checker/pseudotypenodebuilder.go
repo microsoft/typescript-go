@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/pseudochecker"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // pseudoTypeToNodeWithCheckerFallback is like pseudoTypeToNode but when the top-level pseudo type
@@ -174,9 +175,12 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindTuple:
 		var res []*ast.Node
 		elements := t.AsPseudoTypeTuple().Elements
+		savedInCollection := b.inReusedLiteralCollection
+		b.inReusedLiteralCollection = true
 		for _, e := range elements {
 			res = append(res, b.pseudoTypeToNode(e))
 		}
+		b.inReusedLiteralCollection = savedInCollection
 		// pseudo-tuples are implicitly `readonly` since they originate from `as const` contexts
 		// but strada *sometimes* fails to add the `readonly` modifier to the generated node.
 		result := b.f.NewTupleTypeNode(b.f.NewNodeList(res))
@@ -198,6 +202,8 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		isConst := b.ch.isConstContext(elements[0].Name.Parent.Parent)
 		newElements := make([]*ast.Node, 0, len(elements))
 
+		savedInCollection := b.inReusedLiteralCollection
+		b.inReusedLiteralCollection = true
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
 			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
@@ -283,6 +289,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				cleanup()
 			}
 		}
+		b.inReusedLiteralCollection = savedInCollection
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
 		if b.ctx.flags&nodebuilder.FlagsMultilineObjectLiterals == 0 {
 			b.e.AddEmitFlags(result, printer.EFSingleLine)
@@ -290,11 +297,53 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return result
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
+		if node := b.reuseNegativeNumericLiteralType(source); node != nil {
+			return node
+		}
 		return b.f.NewLiteralTypeNode(b.reuseNode(source))
 	default:
 		debug.AssertNever(t.Kind, "Unhandled pseudotype kind in pseudotype node construction")
 		return nil
 	}
+}
+
+// reuseNegativeNumericLiteralType handles the `-<numeric literal> as const` case (e.g. `-1e500 as const`).
+//
+// The scanner stores the canonical numeric form (e.g. `1e500` -> `Infinity`,
+// `123456789012345678901234567890` -> `1.2345678901234568e+29`) as a numeric literal's text. When the
+// negated literal expression is reused for declaration emit it is cloned and detached from its source
+// file, so the printer can no longer recover the original text and would otherwise emit the canonical
+// form (`-Infinity`). To match TypeScript, rebuild the operand from the original source text so the
+// authored literal is preserved exactly.
+//
+// This intentionally only applies to numeric literals (not BigInt literals, which always use their
+// canonical text) and skips literals with numeric separators or invalid text, mirroring the rules in
+// the printer's canUseOriginalText. Positive literals are unaffected: TypeScript emits their canonical
+// form (e.g. `0xFF as const` -> `255`), which is already the reused literal's text.
+func (b *NodeBuilderImpl) reuseNegativeNumericLiteralType(source *ast.Node) *ast.Node {
+	if b.inReusedLiteralCollection {
+		// Negative numeric literals nested inside a reused object/tuple `as const` literal use their
+		// canonical form (e.g. `[-1e500] as const` -> `readonly [-Infinity]`), matching TypeScript.
+		return nil
+	}
+	if !ast.IsPrefixUnaryExpression(source) {
+		return nil
+	}
+	unary := source.AsPrefixUnaryExpression()
+	operand := unary.Operand
+	if !ast.IsNumericLiteral(operand) || ast.NodeIsSynthesized(operand) {
+		return nil
+	}
+	if operand.AsNumericLiteral().TokenFlags&(ast.TokenFlagsIsInvalid|ast.TokenFlagsContainsSeparator) != 0 {
+		return nil
+	}
+	sourceFile := ast.GetSourceFileOfNode(operand)
+	if sourceFile == nil {
+		return nil
+	}
+	text := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, operand, false /*includeTrivia*/)
+	newOperand := b.f.NewNumericLiteral(text, operand.AsNumericLiteral().TokenFlags)
+	return b.f.NewLiteralTypeNode(b.f.NewPrefixUnaryExpression(unary.Operator, newOperand))
 }
 
 func (b *NodeBuilderImpl) pseudoParametersToNodeList(params []*pseudochecker.PseudoParameter) *ast.NodeList {
