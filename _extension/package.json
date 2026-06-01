@@ -231,7 +231,7 @@
         "bundle:release": "npm run bundle -- --minify"
     },
     "dependencies": {
-        "@vscode/extension-telemetry": "^1.5.1",
+        "@vscode/extension-telemetry": "^1.5.2",
         "vscode-languageclient": "^10.0.0-next.21",
         "vscode-tas-client": "^0.2.1"
     },
