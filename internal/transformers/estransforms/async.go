@@ -156,33 +156,33 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindAwaitExpression:
 		return tx.visitAwaitExpression(node.AsAwaitExpression())
 	case ast.KindMethodDeclaration:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitMethodDeclaration, node)
 		})
 	case ast.KindFunctionDeclaration:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionDeclaration, node)
 		})
 	case ast.KindFunctionExpression:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
 		})
 	case ast.KindArrowFunction:
 		return tx.doWithContext(asyncContextNonTopLevel, (*asyncTransformer).visitArrowFunction, node)
 	case ast.KindGetAccessor:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
 		})
 	case ast.KindSetAccessor:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitSetAccessorDeclaration, node)
 		})
 	case ast.KindConstructor:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitConstructorDeclaration, node)
 		})
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithThisArg(nil, func() *ast.Node {
+		return tx.withoutThisArg(func() *ast.Node {
 			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitDefault, node)
 		})
 	default:
@@ -190,9 +190,9 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	}
 }
 
-func (tx *asyncTransformer) doWithThisArg(thisArg *ast.Expression, cb func() *ast.Node) *ast.Node {
+func (tx *asyncTransformer) withoutThisArg(cb func() *ast.Node) *ast.Node {
 	savedThisArg := tx.thisArg
-	tx.thisArg = thisArg
+	tx.thisArg = nil
 	result := cb()
 	tx.thisArg = savedThisArg
 	return result
