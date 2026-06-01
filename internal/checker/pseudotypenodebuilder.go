@@ -529,7 +529,14 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		}
 		return true
 	case pseudochecker.PseudoTypeKindSingleCallSignature:
-		targetSig := b.ch.getSingleCallSignature(type_)
+		targetType := type_
+		if isOptionalAnnotated && targetType != nil {
+			// An optional parameter's type includes `| undefined`; strip it so the
+			// underlying call signature can be compared (mirroring the optional
+			// handling in the fast path above).
+			targetType = b.ch.getTypeWithFacts(targetType, TypeFactsNEUndefined)
+		}
+		targetSig := b.ch.getSingleCallSignature(targetType)
 		if targetSig == nil {
 			return false
 		}
