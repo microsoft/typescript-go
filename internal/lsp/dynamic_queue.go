@@ -9,8 +9,8 @@ import (
 //
 // This queue is a state machine, where each state is a channel, "idle" or "ready".
 // Only one caller ever has the actual state struct at a time. The Get function
-// will wait until the the "ready" channel holds the state. Putting an item
-// means grabbing the state from any any channel, modifying it, and putting it
+// will wait until the "ready" channel holds the state. Putting an item
+// means grabbing the state from any channel, modifying it, and putting it
 // back on the "ready" channel. Since this is all managed via contexts, any method
 // can be cancelled while waiting for the state.
 
