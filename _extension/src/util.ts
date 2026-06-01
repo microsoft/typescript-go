@@ -128,7 +128,7 @@ export function resolveTsdkPath(tsdkPath: string): string {
 }
 
 export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: string; version: string; } | undefined> {
-    if (tsdkPath.endsWith("/@typescript/native-preview")) {
+    if (tsdkPath.endsWith("/@typescript/native-preview") || tsdkPath.endsWith("\\@typescript\\native-preview")) {
         try {
             const packagePath = workspaceResolve(tsdkPath);
             const packageJsonPath = vscode.Uri.joinPath(packagePath, "package.json");
