@@ -652,7 +652,7 @@ func (c *EmitContext) ClassThis(node *ast.Node) *ast.Expression {
 	return c.classThis[node]
 }
 
-func (c *EmitContext) SetClassThis(node *ast.Node, classThis *ast.IdentifierNode) {
+func (c *EmitContext) SetClassThis(node *ast.Node, classThis *ast.Expression) {
 	if c.classThis == nil {
 		c.classThis = make(map[*ast.Node]*ast.Expression)
 	}

@@ -1387,11 +1387,11 @@ func (tx *classFieldsTransformer) visitTaggedTemplateExpression(node *ast.Tagged
 }
 
 func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast.Node) *ast.Expression {
-	if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
-		tx.markAsyncArrowsWithClassThis(node.AsClassStaticBlockDeclaration().Body.AsNode(), classThis)
-	}
-
 	if tx.shouldTransformPrivateElementsOrClassStaticBlocks {
+		setClassThis := func(result *ast.Expression) *ast.Expression {
+			tx.setClassThisForStaticInitializer(result)
+			return result
+		}
 		if isClassThisAssignmentBlock(tx.EmitContext(), node) {
 			result := tx.Visitor().VisitNode(node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes[0].Expression())
 			// If the generated `_classThis` assignment is a noop (i.e., `_classThis = _classThis`), we can
@@ -1402,11 +1402,11 @@ func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast
 					return nil
 				}
 			}
-			return result
+			return setClassThis(result)
 		}
 
 		if isClassNamedEvaluationHelperBlock(tx.EmitContext(), node) {
-			return tx.Visitor().VisitNode(node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes[0].Expression())
+			return setClassThis(tx.Visitor().VisitNode(node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes[0].Expression()))
 		}
 
 		tx.EmitContext().StartVariableEnvironment()
@@ -1422,7 +1422,7 @@ func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast
 		arrowFunction.AsArrowFunction().Body.AsBlock().Statements.Loc = node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Loc
 		tx.EmitContext().SetOriginal(iife, node)
 		tx.EmitContext().AssignSourceMapRange(iife, node)
-		return iife
+		return setClassThis(iife)
 	}
 	return nil
 }
@@ -1778,7 +1778,7 @@ func (tx *classFieldsTransformer) getClassFacts(node *ast.Node) classFacts {
 				facts |= classFactsNeedsClassConstructorReference
 			}
 			if ast.IsPropertyDeclaration(member) || ast.IsClassStaticBlockDeclaration(member) {
-				if tx.shouldTransformAsyncFunctions && tx.memberContainsAsyncArrowFunction(member) {
+				if tx.shouldTransformAsyncFunctions && tx.staticInitializerContainsAsyncArrowFunction(member) {
 					facts |= classFactsNeedsClassConstructorReference
 				}
 				if tx.shouldTransformThisInStaticInitializers && member.SubtreeFacts()&ast.SubtreeContainsLexicalThis != 0 {
@@ -1841,7 +1841,7 @@ func (tx *classFieldsTransformer) visitExpressionWithTypeArgumentsInHeritageClau
 	return tx.heritageClauseVisitor.VisitEachChild(node.AsNode())
 }
 
-func (tx *classFieldsTransformer) memberContainsAsyncArrowFunction(member *ast.Node) bool {
+func (tx *classFieldsTransformer) staticInitializerContainsAsyncArrowFunction(member *ast.Node) bool {
 	var check func(n *ast.Node) bool
 	check = func(n *ast.Node) bool {
 		switch n.Kind {
@@ -2751,12 +2751,10 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 // transformProperty transforms a property initializer into an assignment expression.
 func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
 	savedCurrentClassElement := tx.currentClassElement
-	if ast.HasStaticModifier(property.AsNode()) {
-		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
-			tx.markAsyncArrowsWithClassThis(property.Initializer, classThis)
-		}
-	}
 	transformed := tx.transformPropertyWorker(property, receiver)
+	if transformed != nil && ast.HasStaticModifier(property.AsNode()) {
+		tx.setClassThisForStaticInitializer(transformed)
+	}
 	if transformed != nil && ast.HasStaticModifier(property.AsNode()) &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil && tx.lexicalEnvironment.data.facts != 0 {
 		// capture the lexical environment for the member
@@ -2767,30 +2765,12 @@ func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclar
 	return transformed
 }
 
-func (tx *classFieldsTransformer) markAsyncArrowsWithClassThis(node *ast.Node, classThis *ast.IdentifierNode) {
-	if node == nil {
-		return
-	}
-	var visit func(n *ast.Node) bool
-	visit = func(n *ast.Node) bool {
-		switch n.Kind {
-		case ast.KindArrowFunction:
-			if ast.GetFunctionFlags(n)&ast.FunctionFlagsAsync != 0 && tx.EmitContext().ClassThis(n) == nil {
-				tx.EmitContext().SetClassThis(n, classThis.Clone(tx.Factory()))
-			}
-		case ast.KindFunctionDeclaration,
-			ast.KindFunctionExpression,
-			ast.KindMethodDeclaration,
-			ast.KindGetAccessor,
-			ast.KindSetAccessor,
-			ast.KindConstructor,
-			ast.KindClassDeclaration,
-			ast.KindClassExpression:
-			return false
+func (tx *classFieldsTransformer) setClassThisForStaticInitializer(expression *ast.Expression) {
+	if expression != nil {
+		if classThis := tx.tryGetClassThisNoContainer(); classThis != nil {
+			tx.EmitContext().SetClassThis(expression, classThis.Clone(tx.Factory()))
 		}
-		return n.ForEachChild(visit)
 	}
-	visit(node)
 }
 
 func (tx *classFieldsTransformer) transformPropertyWorker(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {

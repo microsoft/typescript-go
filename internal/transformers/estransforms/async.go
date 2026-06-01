@@ -32,6 +32,7 @@ type asyncTransformer struct {
 
 	parentNode  *ast.Node
 	currentNode *ast.Node
+	thisArg     *ast.Expression
 
 	asyncBodyVisitor    *ast.NodeVisitor
 	fallbackNodeVisitor *ast.NodeVisitor
@@ -136,6 +137,12 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	cleanup := tx.descendInto(node)
 	defer cleanup()
 
+	if classThis := tx.EmitContext().ClassThis(node); classThis != nil && !ast.IsClassLike(node) {
+		savedThisArg := tx.thisArg
+		tx.thisArg = classThis
+		defer func() { tx.thisArg = savedThisArg }()
+	}
+
 	if node.SubtreeFacts()&(ast.SubtreeContainsAnyAwait|ast.SubtreeContainsAwait) == 0 {
 		return tx.fallbackVisitor(node)
 	}
@@ -149,24 +156,46 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindAwaitExpression:
 		return tx.visitAwaitExpression(node.AsAwaitExpression())
 	case ast.KindMethodDeclaration:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitMethodDeclaration, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitMethodDeclaration, node)
+		})
 	case ast.KindFunctionDeclaration:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionDeclaration, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionDeclaration, node)
+		})
 	case ast.KindFunctionExpression:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
+		})
 	case ast.KindArrowFunction:
 		return tx.doWithContext(asyncContextNonTopLevel, (*asyncTransformer).visitArrowFunction, node)
 	case ast.KindGetAccessor:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
+		})
 	case ast.KindSetAccessor:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitSetAccessorDeclaration, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitSetAccessorDeclaration, node)
+		})
 	case ast.KindConstructor:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitConstructorDeclaration, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitConstructorDeclaration, node)
+		})
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitDefault, node)
+		return tx.doWithThisArg(nil, func() *ast.Node {
+			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitDefault, node)
+		})
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
+}
+
+func (tx *asyncTransformer) doWithThisArg(thisArg *ast.Expression, cb func() *ast.Node) *ast.Node {
+	savedThisArg := tx.thisArg
+	tx.thisArg = thisArg
+	result := cb()
+	tx.thisArg = savedThisArg
+	return result
 }
 
 func (tx *asyncTransformer) visitAsyncBodyNode(node *ast.Node) *ast.Node {
@@ -781,8 +810,7 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 		tx.superIndexBinding = tx.Factory().NewUniqueNameEx("_superIndex", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel})
 	}
 
-	hasLexicalThis := tx.inHasLexicalThisContext()
-	lexicalThisArg := tx.getLexicalThisArgForAsyncArrow(node)
+	thisArg := tx.createThisArgForAwaiter()
 
 	asyncBody := tx.transformAsyncFunctionBodyWorker(node.Body())
 	asyncBody = tx.Factory().UpdateBlock(
@@ -815,9 +843,8 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		statements := []*ast.Node{
 			tx.Factory().NewReturnStatement(
-				tx.Factory().NewAwaiterHelperEx(
-					hasLexicalThis,
-					lexicalThisArg,
+				tx.Factory().NewAwaiterHelper(
+					thisArg,
 					argumentsExpression,
 					innerParameters,
 					asyncBody,
@@ -841,9 +868,8 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		result = block
 	} else {
-		result = tx.Factory().NewAwaiterHelperEx(
-			hasLexicalThis,
-			lexicalThisArg,
+		result = tx.Factory().NewAwaiterHelper(
+			thisArg,
 			argumentsExpression,
 			innerParameters,
 			asyncBody,
@@ -879,18 +905,12 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 	return result
 }
 
-func (tx *asyncTransformer) getLexicalThisArgForAsyncArrow(node *ast.Node) *ast.Expression {
-	if node.Kind != ast.KindArrowFunction {
-		return nil
+func (tx *asyncTransformer) createThisArgForAwaiter() *ast.Expression {
+	if tx.thisArg != nil {
+		return tx.thisArg.Clone(tx.Factory())
 	}
-
-	if classThis := tx.EmitContext().ClassThis(node); classThis != nil {
-		return classThis.Clone(tx.Factory())
-	}
-	if original := tx.EmitContext().MostOriginal(node); original != node {
-		if classThis := tx.EmitContext().ClassThis(original); classThis != nil {
-			return classThis.Clone(tx.Factory())
-		}
+	if tx.inHasLexicalThisContext() {
+		return tx.Factory().NewKeywordExpression(ast.KindThisKeyword)
 	}
 	return nil
 }
