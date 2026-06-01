@@ -111,7 +111,7 @@ func (c *Checker) checkJsxFragment(node *ast.Node) *Type {
 	// by default, jsx:'react' will use jsxFactory = React.createElement and jsxFragmentFactory = React.Fragment
 	// if jsxFactory compiler option is provided, ensure jsxFragmentFactory compiler option or @jsxFrag pragma is provided too
 	nodeSourceFile := ast.GetSourceFileOfNode(node)
-	if c.compilerOptions.GetJSXTransformEnabled() && (c.compilerOptions.JsxFactory != "" || ast.GetPragmaFromSourceFile(nodeSourceFile, "jsx") != nil) && c.compilerOptions.JsxFragmentFactory == "" && ast.GetPragmaFromSourceFile(nodeSourceFile, "jsxfrag") == nil {
+	if c.compilerOptions.GetJSXTransformEnabled() && (c.compilerOptions.JsxFactory != "" || ast.GetFirstPragmaFromSourceFile(nodeSourceFile, "jsx") != nil) && c.compilerOptions.JsxFragmentFactory == "" && ast.GetFirstPragmaFromSourceFile(nodeSourceFile, "jsxfrag") == nil {
 		message := core.IfElse(c.compilerOptions.JsxFactory != "",
 			diagnostics.The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_compiler_option,
 			diagnostics.An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments)
