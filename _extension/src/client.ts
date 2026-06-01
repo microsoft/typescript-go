@@ -76,7 +76,6 @@ export class Client implements vscode.Disposable {
         this.clientOptions = {
             documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
-            traceOutputChannel: this.outputChannel,
             initializationOptions: {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,

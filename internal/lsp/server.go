@@ -1291,12 +1291,7 @@ func (s *Server) handleSetTrace(_ context.Context, _ *lsproto.SetTraceParams) er
 }
 
 func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLogVerbosityParams) error {
-	// LogLevel values from VS Code: 0=Off, 1=Trace, 2=Debug, 3=Info, 4=Warning, 5=Error
-	// Enable verbose logging when the output channel is at Debug (2) or Trace (1) level.
-	s.logger.SetVerbose(params.Verbosity <= 2)
-	// At Trace level, the LSP client logs all requests/responses, making the
-	// server's "handled method" logs redundant. Suppress them.
-	s.logger.SetTracing(params.Verbosity <= 1)
+	s.logger.SetVerbosity(int(params.Verbosity))
 	return nil
 }
 

@@ -10,16 +10,42 @@ import (
 
 var _ logging.Logger = (*logger)(nil)
 
+// logVerbosity mirrors the VS Code LogLevel enum values.
+// Higher values mean less verbose output.
+const (
+	logVerbosityOff     = 0
+	logVerbosityTrace   = 1
+	logVerbosityDebug   = 2
+	logVerbosityInfo    = 3
+	logVerbosityWarning = 4
+	logVerbosityError   = 5
+)
+
 type logger struct {
-	server  *Server
-	mu      sync.Mutex
-	verbose bool
-	tracing bool
+	server    *Server
+	mu        sync.Mutex
+	verbosity int
 }
 
 func newLogger(server *Server) *logger {
 	return &logger{
-		server: server,
+		server:    server,
+		verbosity: logVerbosityInfo,
+	}
+}
+
+// maxVerbosityForMessageType returns the least-verbose log level at which
+// messages of the given LSP MessageType should still be sent.
+func maxVerbosityForMessageType(msgType lsproto.MessageType) int {
+	switch msgType {
+	case lsproto.MessageTypeError:
+		return logVerbosityError
+	case lsproto.MessageTypeWarning:
+		return logVerbosityWarning
+	case lsproto.MessageTypeInfo:
+		return logVerbosityInfo
+	default:
+		return logVerbosityInfo
 	}
 }
 
@@ -30,6 +56,14 @@ func (l *logger) sendLogMessage(msgType lsproto.MessageType, message string) {
 
 	if !l.server.initStarted.Load() {
 		fmt.Fprintln(l.server.stderr, message)
+		return
+	}
+
+	// Don't send messages that the client will filter out anyway.
+	l.mu.Lock()
+	verbosity := l.verbosity
+	l.mu.Unlock()
+	if verbosity > maxVerbosityForMessageType(msgType) {
 		return
 	}
 
@@ -66,7 +100,7 @@ func (l *logger) Verbose() logging.Logger {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	if !l.verbose {
+	if l.verbosity > logVerbosityDebug {
 		return nil
 	}
 	return l
@@ -78,7 +112,7 @@ func (l *logger) IsVerbose() bool {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	return l.verbose
+	return l.verbosity <= logVerbosityDebug
 }
 
 func (l *logger) SetVerbose(verbose bool) {
@@ -87,7 +121,11 @@ func (l *logger) SetVerbose(verbose bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.verbose = verbose
+	if verbose {
+		l.verbosity = logVerbosityDebug
+	} else {
+		l.verbosity = logVerbosityInfo
+	}
 }
 
 func (l *logger) IsTracing() bool {
@@ -96,16 +134,16 @@ func (l *logger) IsTracing() bool {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	return l.tracing
+	return l.verbosity <= logVerbosityTrace
 }
 
-func (l *logger) SetTracing(tracing bool) {
+func (l *logger) SetVerbosity(verbosity int) {
 	if l == nil {
 		return
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.tracing = tracing
+	l.verbosity = verbosity
 }
 
 func (l *logger) Error(msg ...any) {

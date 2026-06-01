@@ -84,6 +84,8 @@ The output channel's **log level** (the gear icon next to the channel dropdown) 
 
 | Log level | What you'll see |
 |---|---|
+| **Error** | Only unrecovered crashes |
+| **Warning** | There are currently no warning-level messages |
 | **Info** (default) | Server lifecycle events, project loading, file changes |
 | **Debug** | All of the above, plus verbose server details (cache statistics, project trees) |
 | **Trace** | All of the above, plus full LSP request/response protocol traces |
