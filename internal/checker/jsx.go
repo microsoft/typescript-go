@@ -1346,7 +1346,7 @@ func (c *Checker) getJsxNamespace(location *ast.Node) string {
 				if links.localJsxFragmentNamespace != "" {
 					return links.localJsxFragmentNamespace
 				}
-				jsxFragmentPragma := ast.GetPragmaFromSourceFile(file, "jsxfrag")
+				jsxFragmentPragma := ast.GetFirstPragmaFromSourceFile(file, "jsxfrag")
 				if jsxFragmentPragma != nil {
 					links.localJsxFragmentFactory = c.parseIsolatedEntityName(jsxFragmentPragma.Args["factory"].Value)
 					if links.localJsxFragmentFactory != nil {
@@ -1391,7 +1391,7 @@ func (c *Checker) getLocalJsxNamespace(file *ast.SourceFile) string {
 	if links.localJsxNamespace != "" {
 		return links.localJsxNamespace
 	}
-	jsxPragma := ast.GetPragmaFromSourceFile(file, "jsx")
+	jsxPragma := ast.GetFirstPragmaFromSourceFile(file, "jsx")
 	if jsxPragma != nil {
 		links.localJsxFactory = c.parseIsolatedEntityName(jsxPragma.Args["factory"].Value)
 		if links.localJsxFactory != nil {
@@ -1420,7 +1420,7 @@ func (c *Checker) getJsxFragmentFactoryEntity(location *ast.Node) *ast.EntityNam
 			if links.localJsxFragmentFactory != nil {
 				return links.localJsxFragmentFactory
 			}
-			jsxFragPragma := ast.GetPragmaFromSourceFile(file, "jsxfrag")
+			jsxFragPragma := ast.GetFirstPragmaFromSourceFile(file, "jsxfrag")
 			if jsxFragPragma != nil {
 				links.localJsxFragmentFactory = c.parseIsolatedEntityName(jsxFragPragma.Args["factory"].Value)
 				return links.localJsxFragmentFactory

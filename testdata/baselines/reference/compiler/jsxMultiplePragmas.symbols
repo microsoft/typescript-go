@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/jsxMultiplePragmas.tsx] ////
+
+=== jsxMultiplePragmas.tsx ===
+/** @jsx h */
+/** @jsx g */
+declare const h: any, g: any;
+>h : Symbol(h, Decl(jsxMultiplePragmas.tsx, 2, 13))
+>g : Symbol(g, Decl(jsxMultiplePragmas.tsx, 2, 21))
+
+export const x = <div/>;
+>x : Symbol(x, Decl(jsxMultiplePragmas.tsx, 3, 12))
+

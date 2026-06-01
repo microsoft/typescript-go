@@ -2776,6 +2776,17 @@ func GetPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
 	return result
 }
 
+func GetFirstPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
+	if file != nil {
+		for i := range file.Pragmas {
+			if file.Pragmas[i].Name == name {
+				return &file.Pragmas[i] // First one wins
+			}
+		}
+	}
+	return nil
+}
+
 func GetPragmaArgument(pragma *Pragma, name string) string {
 	if pragma != nil {
 		if arg, ok := pragma.Args[name]; ok {
