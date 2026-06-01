@@ -138,16 +138,23 @@ export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: st
             const platformPackage = `native-preview-${process.platform}-${process.arch}`;
             const exePath = vscode.Uri.joinPath(packagePath, "..", platformPackage, "lib", exeName);
             await vscode.workspace.fs.stat(exePath);
-            return { path: exePath.fsPath, version: packageJson.version };
+            return { path: withLongPathPrefix(exePath.fsPath), version: packageJson.version };
         }
         catch {}
     }
     try {
         const exePath = workspaceResolve(path.join(tsdkPath, `tsgo${process.platform === "win32" ? ".exe" : ""}`));
         await vscode.workspace.fs.stat(exePath);
-        return { path: exePath.fsPath, version: "(local)" };
+        return { path: withLongPathPrefix(exePath.fsPath), version: "(local)" };
     }
     catch {}
+}
+
+function withLongPathPrefix(exePath: string): string {
+    if (process.platform === "win32" && exePath.length >= 248 && !exePath.startsWith("\\\\?\\")) {
+        return "\\\\?\\" + exePath;
+    }
+    return exePath;
 }
 
 export function getLanguageForUri(uri: vscode.Uri): string | undefined {
