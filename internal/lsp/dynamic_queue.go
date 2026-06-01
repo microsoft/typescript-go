@@ -33,6 +33,10 @@ func newDynamicQueue[T any]() *dynamicQueue[T] {
 }
 
 func (q *dynamicQueue[T]) Put(ctx context.Context, item T) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
 	state, err := q.getAny(ctx)
 	if err != nil {
 		return err
@@ -44,6 +48,11 @@ func (q *dynamicQueue[T]) Put(ctx context.Context, item T) error {
 }
 
 func (q *dynamicQueue[T]) Get(ctx context.Context) (T, error) {
+	if err := ctx.Err(); err != nil {
+		var zero T
+		return zero, err
+	}
+
 	state, err := q.getReady(ctx)
 	if err != nil {
 		var zero T
@@ -56,6 +65,7 @@ func (q *dynamicQueue[T]) Get(ctx context.Context) (T, error) {
 	state.items = state.items[1:]
 
 	if len(state.items) == 0 {
+		state.items = nil
 		q.idle <- state
 	} else {
 		q.ready <- state
