@@ -100,6 +100,9 @@ The **`typescript.native-preview.trace.server`** setting controls the detail lev
 
 When filing an issue, copy the relevant section of log output and include it in your report.
 
+> [!WARNING]
+> Logs contain personally identifiable information (mostly file paths). When the log level is set to Trace and `typescript.native-preview.trace.server` is set to `"verbose"`, this includes the full contents of open files. Always review log content before sharing.
+
 #### Collecting Heap Profiles
 
 Heap profiles are essential for diagnosing high memory usage. When the language server is consuming too much memory:
