@@ -2334,7 +2334,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	}
 }
 
-func (f *FourslashTest) VerifyBaselineVsFindAllReferences(
+func (f *FourslashTest) VerifyBaselineVSFindAllReferences(
 	t *testing.T,
 	markers ...string,
 ) {

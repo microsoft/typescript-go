@@ -669,14 +669,14 @@ func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto
 	)
 }
 
-func (l *LanguageService) ProvideVsReferences(ctx context.Context, params *lsproto.ReferenceParams, orchestrator CrossProjectOrchestrator) (lsproto.VSReferencesResponse, error) {
+func (l *LanguageService) ProvideVSReferences(ctx context.Context, params *lsproto.ReferenceParams, orchestrator CrossProjectOrchestrator) (lsproto.VSReferencesResponse, error) {
 	return handleCrossProject(
 		l,
 		ctx,
 		params,
 		orchestrator,
-		(*LanguageService).symbolAndEntriesToVsReferences,
-		combineVsReferences,
+		(*LanguageService).symbolAndEntriesToVSReferences,
+		combineVSReferences,
 		false, /*isRename*/
 		false, /*implementations*/
 		symbolEntryTransformOptions{},
@@ -691,7 +691,7 @@ func (l *LanguageService) symbolAndEntriesToReferences(ctx context.Context, para
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) symbolAndEntriesToVsReferences(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.VSReferencesResponse, error) {
+func (l *LanguageService) symbolAndEntriesToVSReferences(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.VSReferencesResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	vsCapability := caps.VSSupportsVisualStudioExtensions
 	var items []*lsproto.VSReferenceItem

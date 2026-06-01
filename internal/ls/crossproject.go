@@ -308,7 +308,7 @@ func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.Ref
 	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
 }
 
-func combineVsReferences(results iter.Seq[lsproto.VSReferencesResponse]) lsproto.VSReferencesResponse {
+func combineVSReferences(results iter.Seq[lsproto.VSReferencesResponse]) lsproto.VSReferencesResponse {
 	var combined []*lsproto.VSReferenceItem
 	// Re-number IDs across projects to maintain unique IDs and correct definition references
 	nextId := int32(0)
