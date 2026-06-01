@@ -5322,7 +5322,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
 		code:               code,
 		category:           category,
-		message:            lspDiagnostic.Message,
+		message:            lspDiagnostic.Message.AsString(),
 		relatedDiagnostics: relatedDiagnostics,
 	}
 	return diagnostic
@@ -5551,7 +5551,7 @@ func (f *FourslashTest) VerifyNoErrors(t *testing.T) {
 		if len(errors) > 0 {
 			var messages []string
 			for _, err := range errors {
-				messages = append(messages, err.Message)
+				messages = append(messages, err.Message.AsString())
 			}
 			t.Fatalf("Expected no errors but found %d in %s: %v", len(errors), fileName, messages)
 		}
@@ -5569,8 +5569,8 @@ func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *Rang
 				diag.Range.End.Line == rangeMarker.LSRange.End.Line &&
 				diag.Range.End.Character == rangeMarker.LSRange.End.Character {
 				// If message is provided, verify it matches
-				if message != "" && diag.Message != message {
-					t.Fatalf("Error at range has code %d but message mismatch. Expected: %q, Got: %q", code, message, diag.Message)
+				if message != "" && diag.Message.AsString() != message {
+					t.Fatalf("Error at range has code %d but message mismatch. Expected: %q, Got: %q", code, message, diag.Message.AsString())
 				}
 				return
 			}
