@@ -470,16 +470,16 @@ func typesAreSameReference(a, b *Type) bool {
 	return a == b || a.symbol != nil && a.symbol == b.symbol || a.alias != nil && a.alias == b.alias
 }
 
-func pseudoTypeCouldAlreadyReferToUndefined(b *NodeBuilderImpl, t *pseudochecker.PseudoType) bool {
+func (b *NodeBuilderImpl) pseudoTypeCouldAlreadyReferToUndefined(t *pseudochecker.PseudoType) bool {
 	switch t.Kind {
 	case pseudochecker.PseudoTypeKindNoResult,
 		pseudochecker.PseudoTypeKindInferred:
 		return true
 	case pseudochecker.PseudoTypeKindMaybeConstLocation:
-		return pseudoTypeCouldAlreadyReferToUndefined(b, t.AsPseudoTypeMaybeConstLocation().RegularType)
+		return b.pseudoTypeCouldAlreadyReferToUndefined(t.AsPseudoTypeMaybeConstLocation().RegularType)
 	case pseudochecker.PseudoTypeKindUnion:
 		return core.Some(t.AsPseudoTypeUnion().Types, func(t *pseudochecker.PseudoType) bool {
-			return pseudoTypeCouldAlreadyReferToUndefined(b, t)
+			return b.pseudoTypeCouldAlreadyReferToUndefined(t)
 		})
 	default:
 		if type_ := b.pseudoTypeToType(t); type_ != nil {
@@ -491,7 +491,12 @@ func pseudoTypeCouldAlreadyReferToUndefined(b *NodeBuilderImpl, t *pseudochecker
 
 func (b *NodeBuilderImpl) tryCreatePrimitiveUnionWithUndefinedTypeNode(declaration *ast.Node) *ast.Node {
 	typeNode := declaration.Type()
-	if typeNode == nil || !ast.IsUnionTypeNode(typeNode) || !core.Every(typeNode.AsUnionTypeNode().Types.Nodes, func(node *ast.Node) bool {
+	if typeNode == nil || !ast.IsUnionTypeNode(typeNode) {
+		return nil
+	}
+
+	unionType := typeNode.AsUnionTypeNode()
+	if !core.Every(unionType.Types.Nodes, func(node *ast.Node) bool {
 		switch node.Kind {
 		case ast.KindBigIntKeyword,
 			ast.KindBooleanKeyword,
@@ -510,8 +515,12 @@ func (b *NodeBuilderImpl) tryCreatePrimitiveUnionWithUndefinedTypeNode(declarati
 	}) {
 		return nil
 	}
-	types := make([]*ast.Node, 0, len(typeNode.AsUnionTypeNode().Types.Nodes)+1)
-	for _, node := range typeNode.AsUnionTypeNode().Types.Nodes {
+
+	types := make([]*ast.Node, 0, len(unionType.Types.Nodes)+1)
+	for _, node := range unionType.Types.Nodes {
+		if node.Kind == ast.KindUndefinedKeyword {
+			return typeNode
+		}
 		types = append(types, b.reuseTypeNode(node))
 	}
 	types = append(types, b.f.NewKeywordTypeNode(ast.KindUndefinedKeyword))
@@ -2280,7 +2289,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			// see: canReuseTypeNodeAnnotation in strada for context
 			ptt := b.pseudoTypeToType(pt)
 			if ptt != nil && requiresAddingUndefined && containsNonMissingUndefinedType(b.ch, t) && !containsNonMissingUndefinedType(b.ch, ptt) {
-				if !pseudoTypeCouldAlreadyReferToUndefined(b, pt) {
+				if !b.pseudoTypeCouldAlreadyReferToUndefined(pt) {
 					pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 				}
 			}
@@ -2291,7 +2300,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			// typeToTypeNode serialization (mirroring the suppression that
 			// pseudoTypeToNodeWithCheckerFallback provides).
 			reportedInferenceFallback = reportErrors && pt.Kind == pseudochecker.PseudoTypeKindInferred && len(pt.AsPseudoTypeInferred().ErrorNodes) > 0
-			if requiresAddingUndefined && !pseudoTypeCouldAlreadyReferToUndefined(b, pt) {
+			if requiresAddingUndefined && !b.pseudoTypeCouldAlreadyReferToUndefined(pt) {
 				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 				if b.pseudoTypeEquivalentToType(pt, t, false, reportErrors) {
 					result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
