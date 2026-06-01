@@ -856,6 +856,35 @@ func TestParseJsonSourceFileConfigFileContentDoesNotDuplicateUnquotedKeyDiagnost
 	}
 }
 
+func TestParseJsonSourceFileConfigFileContentReportsQuestionTokenDiagnostics(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  compilerOptions?: {
+    strict?: true
+  }
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+
+	var questionTokenDiagnostics []*ast.Diagnostic
+	for _, diagnostic := range parsed.GetConfigFileParsingDiagnostics() {
+		if diagnostic.Code() == diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files.Code() {
+			questionTokenDiagnostics = append(questionTokenDiagnostics, diagnostic)
+		}
+	}
+	assert.Equal(t, len(questionTokenDiagnostics), 2)
+	expectedLocations := []struct {
+		line      int
+		character int
+	}{
+		{line: 1, character: 17},
+		{line: 2, character: 10},
+	}
+	for index, diagnostic := range questionTokenDiagnostics {
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		assert.Equal(t, line, expectedLocations[index].line)
+		assert.Equal(t, int(character), expectedLocations[index].character)
+	}
+}
+
 func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
