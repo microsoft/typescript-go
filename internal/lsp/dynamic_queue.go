@@ -2,7 +2,6 @@ package lsp
 
 import (
 	"context"
-	"slices"
 )
 
 // Inspired by Brian C. Mills' "Rethinking Classical Concurrency Patterns" talk:
@@ -52,7 +51,9 @@ func (q *dynamicQueue[T]) Get(ctx context.Context) (T, error) {
 	}
 
 	item := state.items[0]
-	state.items = slices.Delete(state.items, 0, 1)
+	var zero T
+	state.items[0] = zero
+	state.items = state.items[1:]
 
 	if len(state.items) == 0 {
 		q.idle <- state
