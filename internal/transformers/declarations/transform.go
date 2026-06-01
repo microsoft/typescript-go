@@ -2313,7 +2313,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	flags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(declaration), ast.ModifierFlagsAll)
-	modifierFlags := ast.ModifierFlagsAmbient
+	modifierFlags := ast.ModifierFlagsNone
+	if tx.needsDeclare {
+		modifierFlags |= ast.ModifierFlagsAmbient
+	}
 
 	if flags&ast.ModifierFlagsExport != 0 {
 		if flags&ast.ModifierFlagsDefault == 0 {
