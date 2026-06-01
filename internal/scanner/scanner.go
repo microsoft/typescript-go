@@ -1796,12 +1796,23 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		}
 		fallthrough
 	case '\n':
-		// case CharacterCodes.lineSeparator !!!
-		// case CharacterCodes.paragraphSeparator !!!
 		return ""
 	default:
+		// ch was read as a single byte; for multi-byte UTF-8 characters,
+		// we need to decode the full rune and advance past all its bytes.
+		if ch >= utf8.RuneSelf {
+			s.pos-- // back up past the single-byte advance
+			var size int
+			ch, size = utf8.DecodeRuneInString(s.text[s.pos:])
+			s.pos += size
+			s.containsNonASCII = true
+		}
+		// LineContinuation: a backslash followed by a line terminator is "the empty code unit sequence".
+		if ch == '\u2028' || ch == '\u2029' {
+			return ""
+		}
 		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && IsIdentifierPart(ch) {
-			s.errorAt(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, s.pos-2, 2)
+			s.errorAt(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, start, s.pos-start)
 		}
 		return string(ch)
 	}
@@ -2278,6 +2289,9 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 	canConsumeStar := false
 	// Keep in sync with couldStartTrivia
 	for {
+		if pos >= textLen {
+			return pos
+		}
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		switch ch {
 		case '\r':
@@ -2500,6 +2514,38 @@ func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) c
 	return core.NewTextRange(pos, node.End())
 }
 
+func findOriginatingJSDocSatisfiesTag(sourceFile *ast.SourceFile, node *ast.Node) *ast.Node {
+	targetType := node.AsSatisfiesExpression().Type
+	if targetType.Flags&ast.NodeFlagsReparsed == 0 {
+		return nil
+	}
+	for current := node.Parent; current != nil; current = current.Parent {
+		if current.Flags&ast.NodeFlagsHasJSDoc == 0 {
+			continue
+		}
+		var firstSatisfiesTag *ast.Node
+		for _, jsDoc := range current.EagerJSDoc(sourceFile) {
+			if tags := jsDoc.AsJSDoc().Tags; tags != nil {
+				for _, tag := range tags.Nodes {
+					if !ast.IsJSDocSatisfiesTag(tag) {
+						continue
+					}
+					if firstSatisfiesTag == nil {
+						firstSatisfiesTag = tag
+					}
+					if typeExpr := tag.AsJSDocSatisfiesTag().TypeExpression; typeExpr != nil {
+						if t := typeExpr.Type(); t != nil && t.Loc == targetType.Loc {
+							return tag
+						}
+					}
+				}
+			}
+		}
+		return firstSatisfiesTag
+	}
+	return nil
+}
+
 func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
 	errorNode := node
 	switch node.Kind {
@@ -2516,11 +2562,14 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 			break
 		}
 		fallthrough
-	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
+	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindInterfaceDeclaration,
 		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
 		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
+	case ast.KindClassExpression:
+		errorNode = node.Name()
+
 	case ast.KindArrowFunction:
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case ast.KindCaseClause, ast.KindDefaultClause:
@@ -2535,6 +2584,10 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		pos := SkipTrivia(sourceFile.Text(), node.Pos())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindSatisfiesExpression:
+		if jsDocSatisfiesTag := findOriginatingJSDocSatisfiesTag(sourceFile, node); jsDocSatisfiesTag != nil {
+			pos := SkipTrivia(sourceFile.Text(), jsDocSatisfiesTag.TagName().Pos())
+			return GetRangeOfTokenAtPosition(sourceFile, pos)
+		}
 		pos := SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
@@ -2548,10 +2601,6 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 			scanner.Scan()
 		}
 		return core.NewTextRange(start, scanner.TokenEnd())
-		// !!!
-		// case KindJSDocSatisfiesTag:
-		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
-		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	}
 	if errorNode == nil {
 		// If we don't have a better node, then just set the error on the first token of

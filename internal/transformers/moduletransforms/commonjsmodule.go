@@ -94,7 +94,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNested(node *ast.Node) *ast.No
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedNoStack(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindVariableStatement:
-		node = tx.visitTopLevelNestedVariableStatement(node.AsVariableStatement())
+		node = tx.visitTopLevelVariableStatement(node.AsVariableStatement())
 	case ast.KindForStatement:
 		node = tx.visitTopLevelNestedForStatement(node.AsForStatement())
 	case ast.KindForInStatement, ast.KindForOfStatement:
@@ -1113,13 +1113,14 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 	}
 	name := node.Name()
 	if ast.IsBindingPattern(name) {
-		return transformers.FlattenDestructuringAssignment(
-			&tx.Transformer,
-			tx.Visitor().VisitNode(node.AsNode()),
-			false, /*needsValue*/
-			transformers.FlattenLevelAll,
-			tx.createAllExportExpressions,
-		)
+		// Convert the binding pattern into an equivalent assignment expression and visit it
+		// as a destructuring assignment. This preserves native destructuring (and therefore
+		// iterator semantics for array patterns) whenever each leaf identifier can be
+		// substituted to an export reference. Only when the destructuring would assign to
+		// re-aliased or multi-exported names (where native destructuring cannot update all
+		// targets) does `visitDestructuringAssignment` fall back to flattening.
+		assignment := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), node)
+		return tx.visitDestructuringAssignment(assignment.AsBinaryExpression(), true /*valueIsDiscarded*/)
 	}
 	propertyAccess := tx.Factory().NewPropertyAccessExpression(
 		tx.Factory().NewIdentifier("exports"),
@@ -1247,11 +1248,11 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedWhileStatement(node *ast
 // Visits a top-level nested labeled statement as it may contain `var` declarations that are hoisted and may still be
 // exported with `export {}`.
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedLabeledStatement(node *ast.LabeledStatement) *ast.Node {
-	return tx.Factory().UpdateLabeledStatement(
-		node,
-		node.Label,
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement),
-	)
+	statement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.Statement)
+	if statement == nil {
+		statement = tx.Factory().NewEmptyStatement()
+	}
+	return tx.Factory().UpdateLabeledStatement(node, node.Label, statement)
 }
 
 // Visits a top-level nested `with` statement as it may contain `var` declarations that are hoisted and may still be
@@ -1267,12 +1268,13 @@ func (tx *CommonJSModuleTransformer) visitTopLevelNestedWithStatement(node *ast.
 // Visits a top-level nested `if` statement as it may contain `var` declarations that are hoisted and may still be
 // exported with `export {}`.
 func (tx *CommonJSModuleTransformer) visitTopLevelNestedIfStatement(node *ast.IfStatement) *ast.Node {
-	return tx.Factory().UpdateIfStatement(
-		node,
-		tx.Visitor().VisitNode(node.Expression),
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement),
-		tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement),
-	)
+	expression := tx.Visitor().VisitNode(node.Expression)
+	thenStatement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ThenStatement)
+	if thenStatement == nil {
+		thenStatement = tx.Factory().NewBlock(tx.Factory().NewNodeList(nil), false /*multiLine*/)
+	}
+	elseStatement := tx.topLevelNestedVisitor.VisitEmbeddedStatement(node.ElseStatement)
+	return tx.Factory().UpdateIfStatement(node, expression, thenStatement, elseStatement)
 }
 
 // Visits a top-level nested `switch` statement as it may contain `var` declarations that are hoisted and may still be
@@ -1455,11 +1457,22 @@ func (tx *CommonJSModuleTransformer) destructuringNeedsFlattening(node *ast.Node
 		}
 	} else if ast.IsIdentifier(node) {
 		exportedNames := tx.getExports(node)
-		threshold := 0
 		if transformers.IsExportName(tx.EmitContext(), node) {
-			threshold = 1
+			// The identifier is already wrapped to be an export reference; tolerate up to one
+			// matching export.
+			return len(exportedNames) > 1
 		}
-		return len(exportedNames) > threshold
+		if len(exportedNames) == 0 {
+			return false
+		}
+		// A single direct export whose export name matches the identifier text can be handled
+		// natively: substitution will rewrite the identifier to `exports.X`, so no flattening
+		// is needed. Re-aliased exports (where the export name differs from the local name) or
+		// multi-exported names cannot be expressed natively in a destructuring assignment.
+		if len(exportedNames) == 1 && tx.isDirectExport(node) && exportedNames[0].Text() == node.Text() {
+			return false
+		}
+		return true
 	}
 	return false
 }

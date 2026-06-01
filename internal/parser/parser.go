@@ -532,7 +532,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		})
 		var diagnosticEnd int
 		if diagnosticStart >= 0 {
-			diagnosticEnd = core.FindIndex(savedParseDiagnostics[:diagnosticStart], func(diagnostic *ast.Diagnostic) bool {
+			diagnosticEnd = core.FindIndex(savedParseDiagnostics[diagnosticStart:], func(diagnostic *ast.Diagnostic) bool {
 				return diagnostic.Pos() >= nextStatement.Pos()
 			})
 		} else {
@@ -2845,14 +2845,14 @@ func (p *Parser) parseJSDocAllType() *ast.Node {
 func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
 	pos := p.nodePos()
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseNonArrayType()), pos)
+	return p.finishNode(p.factory.NewJSDocNonNullableType(p.parseTypeOperatorOrHigher()), pos)
 }
 
 func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	// skip the ?
 	p.nextToken()
-	return p.finishNode(p.factory.NewJSDocNullableType(p.parseType()), pos)
+	return p.finishNode(p.factory.NewJSDocNullableType(p.parseTypeOperatorOrHigher()), pos)
 }
 
 func (p *Parser) parseJSDocType() *ast.TypeNode {
@@ -6332,7 +6332,7 @@ func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine(di
 	if disallowOf && p.token == ast.KindOfKeyword {
 		return p.lookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
 	}
-	return p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken && !p.hasPrecedingLineBreak()
+	return (p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken) && !p.hasPrecedingLineBreak()
 }
 
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf() bool {
@@ -6481,7 +6481,8 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			}
 			pragmaName := extractName(text, pos+1)
 			if !(pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime") {
-				break
+				pos++
+				continue
 			}
 			start := skipBlanks(text, pos+len(pragmaName)+1)
 			pos = skipNonBlanks(text, start)

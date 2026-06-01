@@ -17186,6 +17186,9 @@ type ServerCapabilities struct {
 	// Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.
 	VSOnAutoInsertProvider *VsOnAutoInsertOptions `json:"_vs_onAutoInsertProvider,omitzero"`
 
+	// The server provides VS-specific grouped references via textDocument/_vs_references.
+	VSReferencesProvider *bool `json:"_vs_referencesProvider,omitzero"`
+
 	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
 	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
 }
@@ -17456,6 +17459,13 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("_vs_onAutoInsertProvider")
 			}
 			if err := json.UnmarshalDecode(dec, &s.VSOnAutoInsertProvider); err != nil {
+				return err
+			}
+		case `"_vs_referencesProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_referencesProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSReferencesProvider); err != nil {
 				return err
 			}
 		case `"customMultiDocumentHighlightProvider"`:
@@ -18625,6 +18635,9 @@ type SignatureInformation struct {
 	//
 	// Since: 3.16.0
 	ActiveParameter *UintegerOrNull `json:"activeParameter,omitzero"`
+
+	// A colorized label for the signature, providing classified text runs for VS syntax coloring.
+	VSColorizedLabel *ClassifiedTextElement `json:"_vs_colorizedLabel,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*SignatureInformation)(nil)
@@ -18670,6 +18683,13 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"activeParameter"`:
 			if err := json.UnmarshalDecode(dec, &s.ActiveParameter); err != nil {
+				return err
+			}
+		case `"_vs_colorizedLabel"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_colorizedLabel")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSColorizedLabel); err != nil {
 				return err
 			}
 		default:
@@ -28466,6 +28486,123 @@ func (s *VsOnAutoInsertOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+// A VS-specific reference item with grouping support for Find All References.
+type VsReferenceItem struct {
+	// Unique identifier for this reference item.
+	VSId int32 `json:"_vs_id"`
+
+	// The ID of the definition item this reference belongs to. Absent for definition items themselves.
+	VSDefinitionId *int32 `json:"_vs_definitionId,omitzero"`
+
+	// The kind(s) of this reference (read, write, etc.).
+	VSKind *[]VsReferenceKind `json:"_vs_kind,omitzero"`
+
+	// The location of this reference.
+	VSLocation Location `json:"_vs_location"`
+
+	// Classified display text for the definition (used for grouping headers in the UI).
+	VSDefinitionText *ClassifiedTextElement `json:"_vs_definitionText,omitzero"`
+
+	// The project name for this reference.
+	VSProjectName *string `json:"_vs_projectName,omitzero"`
+
+	// The containing type for this reference.
+	VSContainingType *string `json:"_vs_containingType,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*VsReferenceItem)(nil)
+
+func (s *VsReferenceItem) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVSId uint = 1 << iota
+		missingVSLocation
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"_vs_id"`:
+			missing &^= missingVSId
+			if err := json.UnmarshalDecode(dec, &s.VSId); err != nil {
+				return err
+			}
+		case `"_vs_definitionId"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_definitionId")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSDefinitionId); err != nil {
+				return err
+			}
+		case `"_vs_kind"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_kind")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSKind); err != nil {
+				return err
+			}
+		case `"_vs_location"`:
+			missing &^= missingVSLocation
+			if err := json.UnmarshalDecode(dec, &s.VSLocation); err != nil {
+				return err
+			}
+		case `"_vs_definitionText"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_definitionText")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSDefinitionText); err != nil {
+				return err
+			}
+		case `"_vs_projectName"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_projectName")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSProjectName); err != nil {
+				return err
+			}
+		case `"_vs_containingType"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_containingType")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSContainingType); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVSId != 0 {
+			missingProps = append(missingProps, "_vs_id")
+		}
+		if missing&missingVSLocation != 0 {
+			missingProps = append(missingProps, "_vs_location")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
 // Parameters for the textDocument/_vs_onAutoInsert request.
 type VsOnAutoInsertParams struct {
 	// The text document.
@@ -29566,6 +29703,154 @@ func (s *MultiDocumentHighlightParams) UnmarshalJSONFrom(dec *json.Decoder) erro
 		}
 		if missing&missingFilesToSearch != 0 {
 			missingProps = append(missingProps, "filesToSearch")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// A classified text run with text and classification type, used for colorized display in VS.
+type ClassifiedTextRun struct {
+	// The classification type name (e.g. 'keyword', 'class name', 'parameter name').
+	ClassificationTypeName string `json:"ClassificationTypeName"`
+
+	// The text content of this run.
+	Text string `json:"Text"`
+
+	// Optional marker tag type.
+	MarkerTagType *string `json:"MarkerTagType,omitzero"`
+
+	// The style of this text run.
+	Style int32 `json:"Style,omitzero"`
+
+	// VS type discriminator required by ObjectContentConverter for deserialization.
+	VSType string `json:"_vs_type"`
+}
+
+var _ json.UnmarshalerFrom = (*ClassifiedTextRun)(nil)
+
+func (s *ClassifiedTextRun) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingClassificationTypeName uint = 1 << iota
+		missingText
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"ClassificationTypeName"`:
+			missing &^= missingClassificationTypeName
+			if err := json.UnmarshalDecode(dec, &s.ClassificationTypeName); err != nil {
+				return err
+			}
+		case `"Text"`:
+			missing &^= missingText
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		case `"MarkerTagType"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("MarkerTagType")
+			}
+			if err := json.UnmarshalDecode(dec, &s.MarkerTagType); err != nil {
+				return err
+			}
+		case `"Style"`:
+			if err := json.UnmarshalDecode(dec, &s.Style); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingClassificationTypeName != 0 {
+			missingProps = append(missingProps, "ClassificationTypeName")
+		}
+		if missing&missingText != 0 {
+			missingProps = append(missingProps, "Text")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// A classified text element containing an array of classified text runs, used for colorized labels in VS.
+type ClassifiedTextElement struct {
+	// The classified text runs that make up this element.
+	Runs []*ClassifiedTextRun `json:"Runs"`
+
+	// VS type discriminator required by ObjectContentConverter for deserialization.
+	VSType string `json:"_vs_type"`
+}
+
+var _ json.UnmarshalerFrom = (*ClassifiedTextElement)(nil)
+
+func (s *ClassifiedTextElement) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingRuns uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"Runs"`:
+			missing &^= missingRuns
+			if dec.PeekKind() == 'n' {
+				return errNull("Runs")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Runs); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingRuns != 0 {
+			missingProps = append(missingProps, "Runs")
 		}
 		return errMissing(missingProps)
 	}
@@ -30712,6 +30997,41 @@ const (
 	TokenFormatRelative TokenFormat = "relative"
 )
 
+type VsReferenceKind int32
+
+const (
+	VsReferenceKindInactive       VsReferenceKind = 0
+	VsReferenceKindComment        VsReferenceKind = 1
+	VsReferenceKindString         VsReferenceKind = 2
+	VsReferenceKindRead           VsReferenceKind = 3
+	VsReferenceKindWrite          VsReferenceKind = 4
+	VsReferenceKindReference      VsReferenceKind = 5
+	VsReferenceKindName           VsReferenceKind = 6
+	VsReferenceKindQualified      VsReferenceKind = 7
+	VsReferenceKindTypeArgument   VsReferenceKind = 8
+	VsReferenceKindTypeConstraint VsReferenceKind = 9
+	VsReferenceKindBaseType       VsReferenceKind = 10
+	VsReferenceKindConstructor    VsReferenceKind = 11
+	VsReferenceKindDestructor     VsReferenceKind = 12
+	VsReferenceKindImport         VsReferenceKind = 13
+	VsReferenceKindDeclaration    VsReferenceKind = 14
+	VsReferenceKindAddressOf      VsReferenceKind = 15
+	VsReferenceKindNotReference   VsReferenceKind = 16
+	VsReferenceKindUnknown        VsReferenceKind = 17
+)
+
+const _VsReferenceKind_name = "InactiveCommentStringReadWriteReferenceNameQualifiedTypeArgumentTypeConstraintBaseTypeConstructorDestructorImportDeclarationAddressOfNotReferenceUnknown"
+
+var _VsReferenceKind_index = [...]uint16{0, 8, 15, 21, 25, 30, 39, 43, 52, 64, 78, 86, 97, 107, 113, 124, 133, 145, 152}
+
+func (e VsReferenceKind) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_VsReferenceKind_index)-1 {
+		return fmt.Sprintf("VsReferenceKind(%d)", e)
+	}
+	return _VsReferenceKind_name[_VsReferenceKind_index[i]:_VsReferenceKind_index[i+1]]
+}
+
 type CodeLensKind string
 
 const (
@@ -30800,6 +31120,50 @@ func (e AddAsTypeOnly) String() string {
 		return fmt.Sprintf("AddAsTypeOnly(%d)", e)
 	}
 }
+
+// Roslyn classification type names used by VS for syntax coloring in tooltips and other UI elements.
+type ClassificationTypeName string
+
+const (
+	// Language keyword (e.g., function, const, class).
+	ClassificationTypeNameKeyword ClassificationTypeName = "keyword"
+	// Punctuation characters (e.g., parentheses, commas, semicolons).
+	ClassificationTypeNamePunctuation ClassificationTypeName = "punctuation"
+	// Operators (e.g., =, +, ?).
+	ClassificationTypeNameOperator ClassificationTypeName = "operator"
+	// Whitespace including spaces and line breaks.
+	ClassificationTypeNameWhiteSpace ClassificationTypeName = "whitespace"
+	// Plain text with no special classification.
+	ClassificationTypeNameText ClassificationTypeName = "text"
+	// String and literal values.
+	ClassificationTypeNameString ClassificationTypeName = "string"
+	// Numeric literal values.
+	ClassificationTypeNameNumber ClassificationTypeName = "number"
+	// Comment text.
+	ClassificationTypeNameComment ClassificationTypeName = "comment"
+	// Class names.
+	ClassificationTypeNameClassName ClassificationTypeName = "class name"
+	// Interface names.
+	ClassificationTypeNameInterfaceName ClassificationTypeName = "interface name"
+	// Enum names.
+	ClassificationTypeNameEnumName ClassificationTypeName = "enum name"
+	// Module/namespace names.
+	ClassificationTypeNameModuleName ClassificationTypeName = "module name"
+	// Method and function names.
+	ClassificationTypeNameMethodName ClassificationTypeName = "method name"
+	// Parameter names.
+	ClassificationTypeNameParameterName ClassificationTypeName = "parameter name"
+	// Property and accessor names.
+	ClassificationTypeNamePropertyName ClassificationTypeName = "property name"
+	// Field names (e.g., enum members).
+	ClassificationTypeNameFieldName ClassificationTypeName = "field name"
+	// Local variable names.
+	ClassificationTypeNameLocalName ClassificationTypeName = "local name"
+	// Type parameter names.
+	ClassificationTypeNameTypeParameterName ClassificationTypeName = "type parameter name"
+	// General identifiers (e.g., type aliases, imports).
+	ClassificationTypeNameIdentifier ClassificationTypeName = "identifier"
+)
 
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {
@@ -30961,6 +31325,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[MultiDocumentHighlightParams](data)
 	case MethodTextDocumentVSOnAutoInsert:
 		return unmarshalPtrTo[VsOnAutoInsertParams](data)
+	case MethodTextDocumentVSReferences:
+		return unmarshalPtrTo[ReferenceParams](data)
 	case MethodWorkspaceDidChangeWorkspaceFolders:
 		return unmarshalPtrTo[DidChangeWorkspaceFoldersParams](data)
 	case MethodWindowWorkDoneProgressCancel:
@@ -31170,6 +31536,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[CustomMultiDocumentHighlightResponse](data)
 	case MethodTextDocumentVSOnAutoInsert:
 		return unmarshalValue[VsOnAutoInsertResponse](data)
+	case MethodTextDocumentVSReferences:
+		return unmarshalValue[VsReferencesResponse](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -31494,6 +31862,8 @@ const (
 	MethodCustomTextDocumentMultiDocumentHighlight Method = "custom/textDocument/multiDocumentHighlight"
 	// Request for auto-insert when a trigger character is typed (VS-specific).
 	MethodTextDocumentVSOnAutoInsert Method = "textDocument/_vs_onAutoInsert"
+	// VS-specific request for Find All References with grouped reference items.
+	MethodTextDocumentVSReferences Method = "textDocument/_vs_references"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -32050,6 +32420,12 @@ type VsOnAutoInsertResponse = VsOnAutoInsertResponseItemOrNull
 
 // Type mapping info for `textDocument/_vs_onAutoInsert`
 var TextDocumentVSOnAutoInsertInfo = RequestInfo[*VsOnAutoInsertParams, VsOnAutoInsertResponse]{Method: MethodTextDocumentVSOnAutoInsert}
+
+// Response type for `textDocument/_vs_references`
+type VsReferencesResponse = VsReferenceItemsOrNull
+
+// Type mapping info for `textDocument/_vs_references`
+var TextDocumentVSReferencesInfo = RequestInfo[*ReferenceParams, VsReferencesResponse]{Method: MethodTextDocumentVSReferences}
 
 // Type mapping info for `workspace/didChangeWorkspaceFolders`
 var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
@@ -35589,6 +35965,36 @@ func (o *VsOnAutoInsertResponseItemOrNull) UnmarshalJSONFrom(dec *json.Decoder) 
 		return json.UnmarshalDecode(dec, o.VsOnAutoInsertResponseItem)
 	default:
 		return errInvalidKind("VsOnAutoInsertResponseItemOrNull", dec.PeekKind())
+	}
+}
+
+type VsReferenceItemsOrNull struct {
+	VsReferenceItems *[]*VsReferenceItem
+}
+
+var _ json.MarshalerTo = (*VsReferenceItemsOrNull)(nil)
+
+func (o *VsReferenceItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	if o.VsReferenceItems != nil {
+		return json.MarshalEncode(enc, o.VsReferenceItems)
+	}
+	return enc.WriteToken(json.Null)
+}
+
+var _ json.UnmarshalerFrom = (*VsReferenceItemsOrNull)(nil)
+
+func (o *VsReferenceItemsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = VsReferenceItemsOrNull{}
+
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
+		return err
+	case '[':
+		o.VsReferenceItems = new([]*VsReferenceItem)
+		return json.UnmarshalDecode(dec, o.VsReferenceItems)
+	default:
+		return errInvalidKind("VsReferenceItemsOrNull", dec.PeekKind())
 	}
 }
 

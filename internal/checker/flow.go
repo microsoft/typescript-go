@@ -1970,15 +1970,11 @@ func (c *Checker) getSwitchClauseTypeOfWitnesses(node *ast.Node) []string {
 		witnesses := make([]string, len(clauses))
 		for i, clause := range clauses {
 			if clause.Kind == ast.KindCaseClause {
-				var text string
-				if ast.IsStringLiteralLike(clause.Expression()) {
-					text = clause.Expression().Text()
-				}
-				if text == "" {
+				if !ast.IsStringLiteralLike(clause.Expression()) {
 					witnesses = nil
 					break
 				}
-				if !slices.Contains(witnesses, text) {
+				if text := clause.Expression().Text(); !slices.Contains(witnesses, text) {
 					witnesses[i] = text
 				}
 			}
@@ -2314,6 +2310,9 @@ func (c *Checker) getTypeOfDestructuredArrayElement(t *Type, index int) *Type {
 }
 
 func (c *Checker) includeUndefinedInIndexSignature(t *Type) *Type {
+	if t == nil {
+		return nil
+	}
 	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue {
 		return c.getUnionType([]*Type{t, c.missingType})
 	}

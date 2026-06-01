@@ -838,11 +838,15 @@ func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[Mod
 			panic("error: did not expect node kind " + moduleSpecifier.Kind.String())
 		} else if ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
 			if moduleSymbol := ch.ResolveExternalModuleName(moduleSpecifier); moduleSymbol != nil {
-				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				if moduleID, _, ok := tryGetModuleIDAndFileNameOfModuleSymbol(moduleSymbol); ok {
+					result.Add(moduleID, existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				}
 			}
 		} else if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindJSDocImportTag {
 			if moduleSymbol := ch.GetSymbolAtLocation(moduleSpecifier); moduleSymbol != nil {
-				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				if moduleID, _, ok := tryGetModuleIDAndFileNameOfModuleSymbol(moduleSymbol); ok {
+					result.Add(moduleID, existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				}
 			}
 		}
 	}
@@ -1284,14 +1288,20 @@ func getModuleSpecifierText(promotedDeclaration *ast.Node) string {
 		importEqualsDeclaration := promotedDeclaration.AsImportEqualsDeclaration()
 		if ast.IsExternalModuleReference(importEqualsDeclaration.ModuleReference) {
 			expr := importEqualsDeclaration.ModuleReference.Expression()
-			if expr != nil && expr.Kind == ast.KindStringLiteral {
-				return expr.Text()
+			if expr != nil {
+				if ast.IsStringLiteralLike(expr) {
+					return expr.Text()
+				}
+				return scanner.GetTextOfNode(expr)
 			}
-
 		}
-		return importEqualsDeclaration.ModuleReference.Text()
+		return scanner.GetTextOfNode(importEqualsDeclaration.ModuleReference)
 	}
-	return promotedDeclaration.Parent.ModuleSpecifier().Text()
+	moduleSpecifier := promotedDeclaration.Parent.ModuleSpecifier()
+	if ast.IsStringLiteralLike(moduleSpecifier) {
+		return moduleSpecifier.Text()
+	}
+	return scanner.GetTextOfNode(moduleSpecifier)
 }
 
 // returns `-1` if `a` is better than `b`
