@@ -375,6 +375,17 @@ const customStructures: Structure[] = [
         documentation: "Result for the custom/projectInfo request.",
     },
     {
+        name: "SetLogVerbosityParams",
+        properties: [
+            {
+                name: "verbosity",
+                type: { kind: "base", name: "integer" },
+                documentation: "The log verbosity level. Maps to the VS Code LogLevel enum: 0=Off, 1=Trace, 2=Debug, 3=Info, 4=Warning, 5=Error.",
+            },
+        ],
+        documentation: "Parameters for the custom/setLogVerbosity notification.",
+    },
+    {
         name: "PerformanceStatsTelemetryEvent",
         properties: [
             {
@@ -760,6 +771,16 @@ const customRequests: Request[] = [
     },
 ];
 
+const customNotifications: Notification[] = [
+    {
+        method: "custom/setLogVerbosity",
+        typeName: "CustomSetLogVerbosityNotification",
+        params: { kind: "reference", name: "SetLogVerbosityParams" },
+        messageDirection: "clientToServer",
+        documentation: "Notification to set the server's log verbosity level based on the output channel's log level.",
+    },
+];
+
 // compareStructures is the set of generated structures for which a Compare method should be emitted.
 // The Compare method defines a total ordering by comparing fields in declaration order.
 // All listed structures (and any structure-typed fields they reference) must contain only
@@ -1025,6 +1046,7 @@ function patchAndPreprocessModel() {
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
     model.requests.push(...customRequests);
+    model.notifications.push(...customNotifications);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();

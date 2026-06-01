@@ -29255,6 +29255,61 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+// Parameters for the custom/setLogVerbosity notification.
+type SetLogVerbosityParams struct {
+	// The log verbosity level. Maps to the VS Code LogLevel enum: 0=Off, 1=Trace, 2=Debug, 3=Info, 4=Warning, 5=Error.
+	Verbosity int32 `json:"verbosity"`
+}
+
+var _ json.UnmarshalerFrom = (*SetLogVerbosityParams)(nil)
+
+func (s *SetLogVerbosityParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVerbosity uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"verbosity"`:
+			missing &^= missingVerbosity
+			if err := json.UnmarshalDecode(dec, &s.Verbosity); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVerbosity != 0 {
+			missingProps = append(missingProps, "verbosity")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
 // A PerformanceStatsTelemetryEvent is sent periodically with performance and resource usage statistics.
 type PerformanceStatsTelemetryEvent struct {
 	// The name of the telemetry event.
@@ -31371,6 +31426,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[CancelParams](data)
 	case MethodProgress:
 		return unmarshalPtrTo[ProgressParams](data)
+	case MethodCustomSetLogVerbosity:
+		return unmarshalPtrTo[SetLogVerbosityParams](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -31941,6 +31998,8 @@ const (
 	MethodLogTrace                       Method = "$/logTrace"
 	MethodCancelRequest                  Method = "$/cancelRequest"
 	MethodProgress                       Method = "$/progress"
+	// Notification to set the server's log verbosity level based on the output channel's log level.
+	MethodCustomSetLogVerbosity Method = "custom/setLogVerbosity"
 	// Registration-only method for textDocument/semanticTokens.
 	MethodTextDocumentSemanticTokens Method = "textDocument/semanticTokens"
 )
@@ -32492,6 +32551,9 @@ var CancelRequestInfo = NotificationInfo[*CancelParams]{Method: MethodCancelRequ
 
 // Type mapping info for `$/progress`
 var ProgressInfo = NotificationInfo[*ProgressParams]{Method: MethodProgress}
+
+// Type mapping info for `custom/setLogVerbosity`
+var CustomSetLogVerbosityInfo = NotificationInfo[*SetLogVerbosityParams]{Method: MethodCustomSetLogVerbosity}
 
 // Type aliases
 

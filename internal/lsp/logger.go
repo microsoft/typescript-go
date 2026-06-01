@@ -14,6 +14,7 @@ type logger struct {
 	server  *Server
 	mu      sync.Mutex
 	verbose bool
+	tracing bool
 }
 
 func newLogger(server *Server) *logger {
@@ -49,14 +50,14 @@ func (l *logger) Log(msg ...any) {
 	if l == nil {
 		return
 	}
-	l.sendLogMessage(lsproto.MessageTypeLog, fmt.Sprint(msg...))
+	l.sendLogMessage(lsproto.MessageTypeInfo, fmt.Sprint(msg...))
 }
 
 func (l *logger) Logf(format string, args ...any) {
 	if l == nil {
 		return
 	}
-	l.sendLogMessage(lsproto.MessageTypeLog, fmt.Sprintf(format, args...))
+	l.sendLogMessage(lsproto.MessageTypeInfo, fmt.Sprintf(format, args...))
 }
 
 func (l *logger) Verbose() logging.Logger {
@@ -87,6 +88,24 @@ func (l *logger) SetVerbose(verbose bool) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.verbose = verbose
+}
+
+func (l *logger) IsTracing() bool {
+	if l == nil {
+		return false
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.tracing
+}
+
+func (l *logger) SetTracing(tracing bool) {
+	if l == nil {
+		return
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.tracing = tracing
 }
 
 func (l *logger) Error(msg ...any) {
