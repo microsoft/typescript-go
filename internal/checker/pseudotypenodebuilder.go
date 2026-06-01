@@ -314,7 +314,7 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 	if p.Optional {
 		questionMark = b.f.NewToken(ast.KindQuestionToken)
 	}
-	return b.f.NewParameterDeclaration(
+	parameterNode := b.f.NewParameterDeclaration(
 		nil,
 		dotDotDot,
 		// matches strada behavior of always reserializing param names from scratch
@@ -323,6 +323,13 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
+	// Preserve the original parameter's range so the printer can emit any
+	// trailing comments attached to the parameter (e.g. inline comments on
+	// arrow function parameters) into the declaration output.
+	if b.ctx.enclosingFile == ast.GetSourceFileOfNode(p.Name) {
+		b.e.SetCommentRange(parameterNode, p.Name.Parent.Loc)
+	}
+	return parameterNode
 }
 
 // see `typeNodeIsEquivalentToType` in strada, but applied more broadly here, so is setup to handle more equivalences - strada only used it via
@@ -563,6 +570,10 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 				}
 				return false
 			}
+		} else if pt.ReturnType.Kind == pseudochecker.PseudoTypeKindNoResult {
+			// The return type could not be determined syntactically; it will be serialized
+			// from the checker's inferred return type when the node is built, so the
+			// signature is equivalent as long as the parameters match.
 		} else if !b.pseudoTypeEquivalentToType(pt.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, reportErrors) {
 			// error reported within the return type
 			return false
