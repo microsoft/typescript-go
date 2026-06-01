@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"testing"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -122,7 +121,7 @@ func TestServerOutgoingQueueDoesNotBlockWithoutWriter(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-	case <-time.After(time.Second):
+	case <-t.Context().Done():
 		t.Fatal("sending outgoing messages blocked without a writer")
 	}
 }
