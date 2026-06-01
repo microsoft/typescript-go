@@ -947,7 +947,7 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 			// TODO: strada bug - no type printed on set accessor missing arg as though private
 			var t *ast.Node
 			if !isPrivate {
-				t = tx.Factory().NewKeywordExpression(ast.KindAnyKeyword)
+				t = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
 			}
 			valueParam = tx.Factory().NewParameterDeclaration(
 				nil,
