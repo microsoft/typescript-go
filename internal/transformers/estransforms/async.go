@@ -156,44 +156,30 @@ func (tx *asyncTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindAwaitExpression:
 		return tx.visitAwaitExpression(node.AsAwaitExpression())
 	case ast.KindMethodDeclaration:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitMethodDeclaration, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitMethodDeclaration, node)
 	case ast.KindFunctionDeclaration:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionDeclaration, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionDeclaration, node)
 	case ast.KindFunctionExpression:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitFunctionExpression, node)
 	case ast.KindArrowFunction:
 		return tx.doWithContext(asyncContextNonTopLevel, (*asyncTransformer).visitArrowFunction, node)
 	case ast.KindGetAccessor:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitGetAccessorDeclaration, node)
 	case ast.KindSetAccessor:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitSetAccessorDeclaration, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitSetAccessorDeclaration, node)
 	case ast.KindConstructor:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitConstructorDeclaration, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitConstructorDeclaration, node)
 	case ast.KindClassDeclaration, ast.KindClassExpression:
-		return tx.withoutThisArg(func() *ast.Node {
-			return tx.doWithContext(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitDefault, node)
-		})
+		return tx.doWithContextWithoutThisArg(asyncContextNonTopLevel|asyncContextHasLexicalThis, (*asyncTransformer).visitDefault, node)
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}
 }
 
-func (tx *asyncTransformer) withoutThisArg(cb func() *ast.Node) *ast.Node {
+func (tx *asyncTransformer) doWithContextWithoutThisArg(flags asyncContextFlags, cb func(*asyncTransformer, *ast.Node) *ast.Node, node *ast.Node) *ast.Node {
 	savedThisArg := tx.thisArg
 	tx.thisArg = nil
-	result := cb()
+	result := tx.doWithContext(flags, cb, node)
 	tx.thisArg = savedThisArg
 	return result
 }
