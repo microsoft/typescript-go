@@ -3405,7 +3405,13 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 		// - if node.localSymbol === undefined - this node is non-exported so we can just pick the result of getSymbolOfNode
 		symbol := c.getSymbolOfDeclaration(node)
 		localSymbol := core.OrElse(node.LocalSymbol(), symbol)
-		c.checkFunctionOrConstructorSymbol(localSymbol)
+		// Get first non javascript function declaration
+		firstDeclaration := core.Find(localSymbol.Declarations, func(declaration *ast.Node) bool {
+			return declaration.Kind == node.Kind && declaration.Flags&ast.NodeFlagsJavaScriptFile == 0
+		})
+		if node == firstDeclaration {
+			c.checkFunctionOrConstructorSymbol(localSymbol)
+		}
 		if symbol.Parent != nil {
 			// run check on export symbol to check that modifiers agree across all exported declarations
 			c.checkFunctionOrConstructorSymbol(symbol)
