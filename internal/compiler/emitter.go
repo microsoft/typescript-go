@@ -260,6 +260,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		SourceMap:  core.IfElse(e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(), core.TSTrue, core.TSFalse),
 		SourceRoot: options.SourceRoot,
 		MapRoot:    options.MapRoot,
+		// Explicitly do not pass through either inline option.
 	}
 	e.printSourceFile(declarationFilePath, declarationMapPath, sourceFile, printer, declarationMapOptions, shouldEmitSourceMaps(declarationMapOptions, sourceFile))
 }
