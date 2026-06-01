@@ -207,7 +207,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		// !!!
 	}, emitContext)
 
-	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer, shouldEmitSourceMaps(options, sourceFile))
+	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer, options, shouldEmitSourceMaps(options, sourceFile))
 }
 
 func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) {
@@ -256,18 +256,23 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		// Add declaration transform diagnostics to emit diagnostics
 		e.emitterDiagnostics.Add(elem)
 	}
-	e.printSourceFile(declarationFilePath, declarationMapPath, sourceFile, printer, e.emitOnly != EmitOnlyForcedDts && shouldEmitDeclarationSourceMaps(options, sourceFile))
+	declarationMapOptions := &core.CompilerOptions{
+		SourceMap:  core.IfElse(e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(), core.TSTrue, core.TSFalse),
+		SourceRoot: options.SourceRoot,
+		MapRoot:    options.MapRoot,
+	}
+	e.printSourceFile(declarationFilePath, declarationMapPath, sourceFile, printer, declarationMapOptions, shouldEmitSourceMaps(declarationMapOptions, sourceFile))
 }
 
-func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer_ *printer.Printer, shouldEmitSourceMaps bool) {
+func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer_ *printer.Printer, mapOptions *core.CompilerOptions, shouldEmitSourceMaps bool) {
 	// !!! sourceMapGenerator
 	options := e.host.Options()
 	var sourceMapGenerator *sourcemap.Generator
 	if shouldEmitSourceMaps {
 		sourceMapGenerator = sourcemap.NewGenerator(
 			tspath.GetBaseFileName(tspath.NormalizeSlashes(jsFilePath)),
-			getSourceRoot(options),
-			e.getSourceMapDirectory(options, jsFilePath, sourceFile),
+			getSourceRoot(mapOptions),
+			e.getSourceMapDirectory(mapOptions, jsFilePath, sourceFile),
 			tspath.ComparePathsOptions{
 				UseCaseSensitiveFileNames: e.host.UseCaseSensitiveFileNames(),
 				CurrentDirectory:          e.host.GetCurrentDirectory(),
@@ -279,7 +284,7 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 
 	sourceMapUrlPos := -1
 	if sourceMapGenerator != nil {
-		if options.SourceMap.IsTrue() || options.InlineSourceMap.IsTrue() || options.GetAreDeclarationMapsEnabled() {
+		if mapOptions.SourceMap.IsTrue() || mapOptions.InlineSourceMap.IsTrue() {
 			e.emitResult.SourceMaps = append(e.emitResult.SourceMaps, &SourceMapEmitResult{
 				InputSourceFileNames: sourceMapGenerator.Sources(),
 				SourceMap:            sourceMapGenerator.RawSourceMap(),
@@ -288,7 +293,7 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 		}
 
 		sourceMappingURL := e.getSourceMappingURL(
-			options,
+			mapOptions,
 			sourceMapGenerator,
 			jsFilePath,
 			sourceMapFilePath,
@@ -351,11 +356,6 @@ func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.Sour
 		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
 }
 
-func shouldEmitDeclarationSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
-	return mapOptions.DeclarationMap.IsTrue() &&
-		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
-}
-
 func getSourceRoot(mapOptions *core.CompilerOptions) string {
 	// Normalize source root and make sure it has trailing "/" so that it can be used to combine paths with the
 	// relative paths of the sources list in the sourcemap
@@ -393,7 +393,7 @@ func (e *emitter) getSourceMapDirectory(mapOptions *core.CompilerOptions, filePa
 }
 
 func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMapGenerator *sourcemap.Generator, filePath string, sourceMapFilePath string, sourceFile *ast.SourceFile) string {
-	if mapOptions.InlineSourceMap.IsTrue() && !tspath.IsDeclarationFileName(filePath) {
+	if mapOptions.InlineSourceMap.IsTrue() {
 		// Encode the sourceMap into the sourceMap url
 		return sourceMapGenerator.Base64DataURL()
 	}
