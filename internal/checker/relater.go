@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -2438,10 +2439,10 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			r, size := utf8.DecodeRuneInString(sourceText[pos:])
 
 			if r > 0xFFFF {
-				// Simulating tsc's UTF-16 code unit behavior by splitting the 4-byte UTF-8
-				// sequence of a supplementary character into two 2-byte chunks.
-				matches = append(matches, c.getStringLiteralType(sourceText[pos:pos+2]))
-				newSourceText := sourceText[:pos] + sourceText[pos+2:]
+				// Convert the rune to its UTF-16 surrogate pair per Copilot review
+				high, low := utf16.EncodeRune(r)
+				matches = append(matches, c.getStringLiteralType(string(high)))
+				newSourceText := sourceText[:pos] + string(low) + sourceText[pos+size:]
 
 				if seg < lastSourceIndex {
 					newSourceTexts := make([]string, len(sourceTexts))
@@ -2463,6 +2464,7 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 	addMatch(lastSourceIndex, len(getSourceText(lastSourceIndex)))
 	return matches
 }
+
 func (c *Checker) getStringLikeTypeForType(t *Type) *Type {
 	if t.flags&(TypeFlagsAny|TypeFlagsStringLike) != 0 {
 		return t
