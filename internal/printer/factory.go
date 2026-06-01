@@ -939,7 +939,7 @@ func (f *NodeFactory) NewAsyncValuesHelper(expression *ast.Expression) *ast.Expr
 
 // Allocates a new Call expression to the `__awaiter` helper.
 func (f *NodeFactory) NewAwaiterHelper(
-	thisArg *ast.Expression,
+	hasLexicalThis bool,
 	argumentsExpression *ast.Expression,
 	parameters *ast.NodeList,
 	body *ast.BlockNode,
@@ -967,7 +967,10 @@ func (f *NodeFactory) NewAwaiterHelper(
 	// Mark this node as originally an async function body
 	f.emitContext.AddEmitFlags(generatorFunc, EFAsyncFunctionBody|EFReuseTempVariableScope)
 
-	if thisArg == nil {
+	var thisArg *ast.Expression
+	if hasLexicalThis {
+		thisArg = f.NewKeywordExpression(ast.KindThisKeyword)
+	} else {
 		thisArg = f.NewVoidZeroExpression()
 	}
 

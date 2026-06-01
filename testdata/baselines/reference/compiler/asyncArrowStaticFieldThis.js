@@ -4,6 +4,7 @@
 namespace NS {
     export class C {
         static h = async () => 1;
+        static i = async () => this.h;
     }
 }
 
@@ -25,6 +26,7 @@ var NS;
     class C {
     }
     _a = C;
-    C.h = () => __awaiter(_a, void 0, void 0, function* () { return 1; });
+    C.h = () => __awaiter(void 0, void 0, void 0, function* () { return 1; });
+    C.i = () => __awaiter(void 0, void 0, void 0, function* () { return _a.h; });
     NS.C = C;
 })(NS || (NS = {}));
