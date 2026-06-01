@@ -2435,8 +2435,25 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			addMatch(s, p)
 			pos += len(delim)
 		} else if sourceText := getSourceText(seg); pos < len(sourceText) {
-			_, size := utf8.DecodeRuneInString(sourceText[pos:])
-			addMatch(seg, pos+size)
+			r, size := utf8.DecodeRuneInString(sourceText[pos:])
+
+			if r > 0xFFFF {
+				// Simulating tsc's UTF-16 code unit behavior by splitting the 4-byte UTF-8
+				// sequence of a supplementary character into two 2-byte chunks.
+				matches = append(matches, c.getStringLiteralType(sourceText[pos:pos+2]))
+				newSourceText := sourceText[:pos] + sourceText[pos+2:]
+
+				if seg < lastSourceIndex {
+					newSourceTexts := make([]string, len(sourceTexts))
+					copy(newSourceTexts, sourceTexts)
+					newSourceTexts[seg] = newSourceText
+					sourceTexts = newSourceTexts
+				} else {
+					remainingEndText = newSourceText
+				}
+			} else {
+				addMatch(seg, pos+size)
+			}
 		} else if seg < lastSourceIndex {
 			addMatch(seg+1, 0)
 		} else {
@@ -2446,7 +2463,6 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 	addMatch(lastSourceIndex, len(getSourceText(lastSourceIndex)))
 	return matches
 }
-
 func (c *Checker) getStringLikeTypeForType(t *Type) *Type {
 	if t.flags&(TypeFlagsAny|TypeFlagsStringLike) != 0 {
 		return t
