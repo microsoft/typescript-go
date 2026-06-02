@@ -532,7 +532,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		})
 		var diagnosticEnd int
 		if diagnosticStart >= 0 {
-			diagnosticEnd = core.FindIndex(savedParseDiagnostics[:diagnosticStart], func(diagnostic *ast.Diagnostic) bool {
+			diagnosticEnd = core.FindIndex(savedParseDiagnostics[diagnosticStart:], func(diagnostic *ast.Diagnostic) bool {
 				return diagnostic.Pos() >= nextStatement.Pos()
 			})
 		} else {
@@ -3329,7 +3329,8 @@ func (p *Parser) parseParameterEx(inOuterAwaitContext bool, allowAmbiguity bool)
 			p.createIdentifier(true /*isIdentifier*/),
 			nil, /*questionToken*/
 			p.parseTypeAnnotation(),
-			nil /*initializer*/)
+			nil, /*initializer*/
+		)
 		if modifiers != nil {
 			p.parseErrorAtRange(modifiers.Nodes[0].Loc, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 		}
@@ -3346,7 +3347,8 @@ func (p *Parser) parseParameterEx(inOuterAwaitContext bool, allowAmbiguity bool)
 		p.parseNameOfParameter(modifiers),
 		p.parseOptionalToken(ast.KindQuestionToken),
 		p.parseTypeAnnotation(),
-		p.parseInitializer())
+		p.parseInitializer(),
+	)
 	p.withJSDoc(p.finishNode(result, pos), jsdoc)
 	return result
 }
@@ -6330,7 +6332,7 @@ func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine(di
 	if disallowOf && p.token == ast.KindOfKeyword {
 		return p.lookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
 	}
-	return p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken && !p.hasPrecedingLineBreak()
+	return (p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken) && !p.hasPrecedingLineBreak()
 }
 
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf() bool {
@@ -6479,7 +6481,8 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			}
 			pragmaName := extractName(text, pos+1)
 			if !(pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime") {
-				break
+				pos++
+				continue
 			}
 			start := skipBlanks(text, pos+len(pragmaName)+1)
 			pos = skipNonBlanks(text, start)

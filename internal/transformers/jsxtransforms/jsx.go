@@ -251,7 +251,8 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 						tx.Factory().NewIdentifier("require"),
 						nil,
 						nil,
-						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone),
+						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone,
+					),
 				)}), ast.NodeFlagsConst))
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)
@@ -875,6 +876,19 @@ func decodeEntities(text string) string {
 		semi := strings.IndexByte(text, ';')
 		if semi < 0 {
 			break
+		}
+
+		// Skip past any intervening '&' characters between the current '&'
+		// and the ';'. Each such '&' is not part of a valid entity, so emit
+		// it (and any text before the next '&') as literals.
+		for {
+			nextAmp := strings.IndexByte(text[1:semi], '&')
+			if nextAmp < 0 {
+				break
+			}
+			result.WriteString(text[:nextAmp+1])
+			text = text[nextAmp+1:]
+			semi -= nextAmp + 1
 		}
 
 		entity := text[1:semi]
