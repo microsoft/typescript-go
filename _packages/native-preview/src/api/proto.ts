@@ -179,3 +179,11 @@ export interface IndexInfoResponse {
     valueType: TypeResponse;
     isReadonly?: boolean;
 }
+
+export interface ProfileParams {
+    dir: string;
+}
+
+export interface ProfileResult {
+    file: string;
+}

@@ -309,9 +309,8 @@ type NodeIndexTable struct {
 
 // GetIndex returns the encoder index for the given node.
 // On the first call the sortedIdx array is built (O(n log n) sort on a flat []uint32),
-// then subsequent calls use binary search (O(log n)).  This avoids the map[*ast.Node]uint32
-// allocation overhead that dominated EncodeSourceFile CPU time while still being fast
-// enough for practical use: log₂(100k) ≈ 17 comparisons per lookup.
+// then subsequent calls use binary search (O(log n)). This turns out to be much faster than
+// building a map[*ast.Node]uint32 and not significantly slower for lookups.
 func (t *NodeIndexTable) GetIndex(node *ast.Node) uint32 {
 	t.sortedOnce.Do(func() {
 		idx := make([]uint32, 0, len(t.Nodes))

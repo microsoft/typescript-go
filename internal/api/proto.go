@@ -139,6 +139,11 @@ const (
 	MethodGetUnknownType   Method = "getUnknownType"
 	MethodGetBigIntType    Method = "getBigIntType"
 	MethodGetESSymbolType  Method = "getESSymbolType"
+
+	// Profiling methods
+	MethodStartCPUProfile Method = "startCPUProfile"
+	MethodStopCPUProfile  Method = "stopCPUProfile"
+	MethodSaveHeapProfile Method = "saveHeapProfile"
 )
 
 // InitializeResponse is returned by the initialize method.
@@ -355,6 +360,9 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
 	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
 	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
+	MethodStartCPUProfile:                   unmarshallerFor[ProfileParams],
+	MethodStopCPUProfile:                    noParams,
+	MethodSaveHeapProfile:                   unmarshallerFor[ProfileParams],
 }
 
 type ParseConfigFileParams struct {
@@ -364,6 +372,14 @@ type ParseConfigFileParams struct {
 // ReleaseParams are the parameters for the release method.
 type ReleaseParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+}
+
+type ProfileParams struct {
+	Dir string `json:"dir"`
+}
+
+type ProfileResult struct {
+	File string `json:"file"`
 }
 
 type ConfigFileResponse struct {

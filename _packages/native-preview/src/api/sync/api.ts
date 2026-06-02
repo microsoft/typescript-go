@@ -54,6 +54,7 @@ import type {
     IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
+    ProfileResult,
     ProjectResponse,
     SignatureResponse,
     SymbolResponse,
@@ -194,6 +195,23 @@ export class API<FromLSP extends boolean = false> {
 
     clearSourceFileCache(): void {
         this.sourceFileCache.clear();
+    }
+
+    startCPUProfile(dir: string): void {
+        this.ensureInitialized();
+        this.client.apiRequest("startCPUProfile", { dir });
+    }
+
+    stopCPUProfile(): string {
+        this.ensureInitialized();
+        const result = this.client.apiRequest<ProfileResult>("stopCPUProfile", null);
+        return result.file;
+    }
+
+    saveHeapProfile(dir: string): string {
+        this.ensureInitialized();
+        const result = this.client.apiRequest<ProfileResult>("saveHeapProfile", { dir });
+        return result.file;
     }
 }
 
