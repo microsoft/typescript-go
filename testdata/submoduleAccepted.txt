@@ -254,8 +254,6 @@ compiler/conflictingDeclarationsImportFromNamespace1.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace1.types.diff
 compiler/conflictingDeclarationsImportFromNamespace2.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace2.types.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.errors.txt.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.types.diff
 
 ## more accurate types/symbols ##
 compiler/allowJscheckJsTypeParameterNoCrash.symbols.diff
@@ -464,9 +462,6 @@ compiler/invalidUnicodeEscapeSequance.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance2.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance3.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance4.errors.txt.diff
-
-## wrong errors ##
-compiler/classFieldSuperAccessibleJs1.errors.txt.diff
 
 ## deprecated errors ##
 compiler/declarationFileNoCrashOnExtraExportModifier.errors.txt.diff
