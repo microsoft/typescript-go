@@ -472,10 +472,10 @@ func (tx *esDecoratorTransformer) createLet(name *ast.IdentifierNode, initialize
 	return tx.Factory().NewVariableStatement(
 		nil,
 		tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsLet,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().NewVariableDeclaration(name, nil, nil, initializer),
 			}),
+			ast.NodeFlagsLet,
 		),
 	)
 }
@@ -621,7 +621,8 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 			f.NewNodeList(classDecorators),
 			false,
 		)
-		classDefinitionStatements = append(classDefinitionStatements,
+		classDefinitionStatements = append(
+			classDefinitionStatements,
 			tx.createLet(ci.classDecoratorsName, decoratorsArray),
 			tx.createLet(ci.classDescriptorName, nil),
 			tx.createLet(ci.classExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)),
@@ -669,7 +670,8 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		classDefinitionStatements = append(classDefinitionStatements, tx.createLet(ci.classSuper, safeExtendsExpression))
 
 		updatedExtendsElement := f.UpdateExpressionWithTypeArguments(extendsElement.AsExpressionWithTypeArguments(), ci.classSuper, nil)
-		updatedExtendsClause := f.UpdateHeritageClause(extendsClause.AsHeritageClause(), f.NewNodeList([]*ast.Node{updatedExtendsElement}))
+		hc := extendsClause.AsHeritageClause()
+		updatedExtendsClause := f.UpdateHeritageClause(hc, hc.Token, f.NewNodeList([]*ast.Node{updatedExtendsElement}))
 		heritageClauses = f.NewNodeList([]*ast.Node{updatedExtendsClause})
 	}
 
@@ -747,14 +749,16 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 
 	// Used in class definition steps 5,7,11
 	if ci.staticMethodExtraInitializersName != nil {
-		classDefinitionStatements = append(classDefinitionStatements,
+		classDefinitionStatements = append(
+			classDefinitionStatements,
 			tx.createLet(ci.staticMethodExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)),
 		)
 	}
 
 	// Used in class definition steps 6,8, and construction
 	if ci.instanceMethodExtraInitializersName != nil {
-		classDefinitionStatements = append(classDefinitionStatements,
+		classDefinitionStatements = append(
+			classDefinitionStatements,
 			tx.createLet(ci.instanceMethodExtraInitializersName, f.NewArrayLiteralExpression(f.NewNodeList(nil), false)),
 		)
 	}
@@ -952,14 +956,15 @@ func (tx *esDecoratorTransformer) transformClassLike(node *ast.Node) *ast.Expres
 		//   })();
 
 		classReferenceDeclaration := f.NewVariableDeclaration(classReference, nil, nil, classExpression)
-		classReferenceVarDeclList := f.NewVariableDeclarationList(ast.NodeFlagsNone, f.NewNodeList([]*ast.Node{classReferenceDeclaration}))
+		classReferenceVarDeclList := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{classReferenceDeclaration}), ast.NodeFlagsNone)
 		var returnExpr *ast.Expression
 		if ci.classThis != nil {
 			returnExpr = f.NewAssignmentExpression(classReference, ci.classThis)
 		} else {
 			returnExpr = classReference
 		}
-		classDefinitionStatements = append(classDefinitionStatements,
+		classDefinitionStatements = append(
+			classDefinitionStatements,
 			f.NewVariableStatement(nil, classReferenceVarDeclList),
 			f.NewReturnStatement(returnExpr),
 		)
@@ -1044,7 +1049,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 				//   export default C;
 				varDecl := f.NewVariableDeclaration(f.GetLocalName(classNode), nil, nil, iife)
 				ec.SetOriginal(varDecl, classNode)
-				varDecls := f.NewVariableDeclarationList(ast.NodeFlagsLet, f.NewNodeList([]*ast.Node{varDecl}))
+				varDecls := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsLet)
 				varStatement := f.NewVariableStatement(nil, varDecls)
 				statements = append(statements, varStatement)
 
@@ -1072,7 +1077,7 @@ func (tx *esDecoratorTransformer) visitClassDeclaration(node *ast.ClassDeclarati
 			declName := f.GetLocalNameEx(classNode, printer.AssignedNameOptions{AllowSourceMaps: true})
 			varDecl := f.NewVariableDeclaration(declName, nil, nil, iife)
 			ec.SetOriginal(varDecl, classNode)
-			varDecls := f.NewVariableDeclarationList(ast.NodeFlagsLet, f.NewNodeList([]*ast.Node{varDecl}))
+			varDecls := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsLet)
 			varStatement := f.NewVariableStatement(modifiers, varDecls)
 			ec.SetOriginal(varStatement, classNode)
 			ec.AssignCommentRange(varStatement, classNode)
@@ -1538,7 +1543,7 @@ func (tx *esDecoratorTransformer) visitClassStaticBlockDeclaration(node *ast.Nod
 			newStmts := make([]*ast.Statement, 0, len(varStatements)+len(blockBody.Statements.Nodes))
 			newStmts = append(newStmts, varStatements...)
 			newStmts = append(newStmts, blockBody.Statements.Nodes...)
-			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.Multiline))
+			result = f.NewClassStaticBlockDeclaration(nil, f.NewBlock(f.NewNodeList(newStmts), blockBody.MultiLine))
 		}
 		if tx.classInfoStack != nil {
 			tx.classInfoStack.hasStaticInitializers = true
@@ -1632,14 +1637,16 @@ func (tx *esDecoratorTransformer) visitPropertyDeclaration(node *ast.Node) *ast.
 				} else {
 					thisArg = f.NewThisExpression()
 				}
-				tx.classInfoStack.pendingStaticInitializers = append(tx.classInfoStack.pendingStaticInitializers,
+				tx.classInfoStack.pendingStaticInitializers = append(
+					tx.classInfoStack.pendingStaticInitializers,
 					f.NewRunInitializersHelper(thisArg, result.extraInitializersName, nil),
 				)
 			}
 		} else {
 			initializer = tx.injectPendingInitializers(tx.classInfoStack, false, initializer)
 			if result.extraInitializersName != nil {
-				tx.classInfoStack.pendingInstanceInitializers = append(tx.classInfoStack.pendingInstanceInitializers,
+				tx.classInfoStack.pendingInstanceInitializers = append(
+					tx.classInfoStack.pendingInstanceInitializers,
 					f.NewRunInitializersHelper(f.NewThisExpression(), result.extraInitializersName, nil),
 				)
 			}
@@ -1742,7 +1749,7 @@ func (tx *esDecoratorTransformer) visitTaggedTemplateExpression(node *ast.Node) 
 		tx.EmitContext().SetOriginal(boundTag, node)
 		boundTag.Loc = node.Loc
 		template := tx.Visitor().VisitNode(tte.Template)
-		return tx.Factory().UpdateTaggedTemplateExpression(tte, boundTag, nil, nil, template)
+		return tx.Factory().UpdateTaggedTemplateExpression(tte, boundTag, nil, nil, template, tte.Flags)
 	}
 	return tx.Visitor().VisitEachChild(node)
 }
@@ -2272,11 +2279,11 @@ func (tx *esDecoratorTransformer) visitAssignmentPattern(node *ast.Node) *ast.No
 	if ast.IsArrayLiteralExpression(node) {
 		ale := node.AsArrayLiteralExpression()
 		elements := tx.arrayAssignmentVisitor.VisitNodes(ale.Elements)
-		return f.UpdateArrayLiteralExpression(ale, elements)
+		return f.UpdateArrayLiteralExpression(ale, elements, ale.MultiLine)
 	}
 	ole := node.AsObjectLiteralExpression()
 	properties := tx.objectAssignmentVisitor.VisitNodes(ole.Properties)
-	return f.UpdateObjectLiteralExpression(ole, properties)
+	return f.UpdateObjectLiteralExpression(ole, properties, ole.MultiLine)
 }
 
 func (tx *esDecoratorTransformer) visitExportAssignment(node *ast.Node) *ast.Node {
@@ -2510,7 +2517,7 @@ func (tx *esDecoratorTransformer) createMethodDescriptorObject(member *ast.Node,
 	)
 }
 
-// Creates a pseudo-PropertyDescriptor object used when decorating a private GetAccessorDeclaration.
+// Creates a pseudo-PropertyDescriptor object used when decorating a private GetAccessor.
 func (tx *esDecoratorTransformer) createGetAccessorDescriptorObject(member *ast.Node, modifiers *ast.ModifierList) *ast.Expression {
 	f := tx.Factory()
 	body := tx.Visitor().VisitNode(member.Body())
@@ -2522,7 +2529,7 @@ func (tx *esDecoratorTransformer) createGetAccessorDescriptorObject(member *ast.
 	)
 }
 
-// Creates a pseudo-PropertyDescriptor object used when decorating a private SetAccessorDeclaration.
+// Creates a pseudo-PropertyDescriptor object used when decorating a private SetAccessor.
 func (tx *esDecoratorTransformer) createSetAccessorDescriptorObject(member *ast.Node, modifiers *ast.ModifierList) *ast.Expression {
 	f := tx.Factory()
 	parameters := tx.Visitor().VisitNodes(member.ParameterList())
@@ -2593,7 +2600,7 @@ func (tx *esDecoratorTransformer) createMethodDescriptorForwarder(modifiers *ast
 	)
 }
 
-// Creates a GetAccessorDeclaration that forwards its invocation to a PropertyDescriptor object.
+// Creates a GetAccessor that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)
@@ -2616,7 +2623,7 @@ func (tx *esDecoratorTransformer) createGetAccessorDescriptorForwarder(modifiers
 	)
 }
 
-// Creates a SetAccessorDeclaration that forwards its invocation to a PropertyDescriptor object.
+// Creates a SetAccessor that forwards its invocation to a PropertyDescriptor object.
 func (tx *esDecoratorTransformer) createSetAccessorDescriptorForwarder(modifiers *ast.ModifierList, name *ast.Node, descriptorName *ast.IdentifierNode) *ast.Node {
 	f := tx.Factory()
 	staticOnly := tx.staticOnlyModifierVisitor.VisitModifiers(modifiers)
@@ -2672,7 +2679,7 @@ func (tx *esDecoratorTransformer) createMetadata(name *ast.IdentifierNode, class
 	)
 
 	varDecl := f.NewVariableDeclaration(name, nil, nil, conditional)
-	varDeclList := f.NewVariableDeclarationList(ast.NodeFlagsConst, f.NewNodeList([]*ast.Node{varDecl}))
+	varDeclList := f.NewVariableDeclarationList(f.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst)
 	return f.NewVariableStatement(nil, varDeclList)
 }
 

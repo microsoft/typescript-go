@@ -5,8 +5,10 @@
 //  * @implements {_a.Foo}
 //                    ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type Foo = { getName: _a.Bar; }
+// | ```typescript
+// | type Foo = {
+// |     getName: _a.Bar;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -17,8 +19,10 @@
 //  * @extends {_a.Foo}
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type Foo = { getName: _a.Bar; }
+// | ```typescript
+// | type Foo = {
+// |     getName: _a.Bar;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -29,8 +33,10 @@
 //  * @augments {_a.Foo}
 //                  ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type Foo = { getName: _a.Bar; }
+// | ```typescript
+// | type Foo = {
+// |     getName: _a.Bar;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -50,7 +56,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype Foo = { getName: _a.Bar; }\n```\n"
+        "value": "```typescript\ntype Foo = {\n    getName: _a.Bar;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -61,7 +67,8 @@
           "line": 2,
           "character": 22
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -77,7 +84,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype Foo = { getName: _a.Bar; }\n```\n"
+        "value": "```typescript\ntype Foo = {\n    getName: _a.Bar;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -88,7 +95,8 @@
           "line": 7,
           "character": 19
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -104,7 +112,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype Foo = { getName: _a.Bar; }\n```\n"
+        "value": "```typescript\ntype Foo = {\n    getName: _a.Bar;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -115,7 +123,8 @@
           "line": 12,
           "character": 20
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   }
 ]

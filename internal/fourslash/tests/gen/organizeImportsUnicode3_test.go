@@ -26,7 +26,8 @@ func TestOrganizeImportsUnicode3(t *testing.T) {
 console.log(A, À, B);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t,
+	f.VerifyOrganizeImports(
+		t,
 		`import {
     À,
     A,
@@ -38,10 +39,11 @@ console.log(A, À, B);`,
 		&lsutil.UserPreferences{
 			OrganizeImportsIgnoreCase:      core.TSFalse,
 			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-			OrganizeImportsAccentCollation: false,
+			OrganizeImportsAccentCollation: core.TSFalse,
 		},
 	)
-	f.VerifyOrganizeImports(t,
+	f.VerifyOrganizeImports(
+		t,
 		`import {
     A,
     À,
@@ -53,7 +55,7 @@ console.log(A, À, B);`,
 		&lsutil.UserPreferences{
 			OrganizeImportsIgnoreCase:      core.TSFalse,
 			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-			OrganizeImportsAccentCollation: true,
+			OrganizeImportsAccentCollation: core.TSTrue,
 		},
 	)
 }

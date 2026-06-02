@@ -34,7 +34,7 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsMethodDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsFunctionDeclaration(node) ||
-		ast.IsParameter(node) ||
+		ast.IsParameterDeclaration(node) ||
 		ast.IsTypeParameterDeclaration(node) ||
 		ast.IsExpressionWithTypeArguments(node) ||
 		ast.IsImportEqualsDeclaration(node) ||
@@ -66,7 +66,6 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		ast.KindImportDeclaration,
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
-		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
 		return false
 	case ast.KindClassStaticBlockDeclaration:
@@ -116,8 +115,8 @@ func isAlwaysType(node *ast.Node) bool {
 	return false
 }
 
-func maskModifierFlags(host DeclarationEmitHost, node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {
-	flags := host.GetEffectiveDeclarationFlags(node, modifierMask) | modifierAdditions
+func maskModifierFlags(node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {
+	flags := (ast.GetCombinedModifierFlags(node) & modifierMask) | modifierAdditions
 	if flags&ast.ModifierFlagsDefault != 0 && (flags&ast.ModifierFlagsExport == 0) {
 		// A non-exported default is a nonsequitor - we usually try to remove all export modifiers
 		// from statements in ambient declarations; but a default export must retain its export modifier to be syntactically valid

@@ -397,6 +397,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSymbolOfType(ctx, parsed.(*GetSymbolOfTypeParams))
 	case string(MethodGetSignaturesOfType):
 		return s.handleGetSignaturesOfType(ctx, parsed.(*GetSignaturesOfTypeParams))
+	case string(MethodGetResolvedSignature):
+		return s.handleGetResolvedSignature(ctx, parsed.(*GetResolvedSignatureParams))
 	case string(MethodGetTypeAtLocation):
 		return s.handleGetTypeAtLocation(ctx, parsed.(*GetTypeAtLocationParams))
 	case string(MethodGetTypeAtLocations):
@@ -431,12 +433,24 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetContextualType(ctx, parsed.(*GetContextualTypeParams))
 	case string(MethodGetBaseTypeOfLiteralType):
 		return s.handleGetBaseTypeOfLiteralType(ctx, parsed.(*GetBaseTypeOfLiteralTypeParams))
+	case string(MethodGetNonNullableType):
+		return s.handleGetNonNullableType(ctx, parsed.(*GetNonNullableTypeParams))
+	case string(MethodGetTypeFromTypeNode):
+		return s.handleGetTypeFromTypeNode(ctx, parsed.(*GetTypeFromTypeNodeParams))
+	case string(MethodGetWidenedType):
+		return s.handleGetWidenedType(ctx, parsed.(*GetWidenedTypeParams))
+	case string(MethodGetParameterType):
+		return s.handleGetParameterType(ctx, parsed.(*GetParameterTypeParams))
+	case string(MethodIsArrayLikeType):
+		return s.handleIsArrayLikeType(ctx, parsed.(*IsArrayLikeTypeParams))
 	case string(MethodGetShorthandAssignmentValueSymbol):
 		return s.handleGetShorthandAssignmentValueSymbol(ctx, parsed.(*GetTypeAtLocationParams))
 	case string(MethodGetTypeOfSymbolAtLocation):
 		return s.handleGetTypeOfSymbolAtLocation(ctx, parsed.(*GetTypeOfSymbolAtLocationParams))
 	case string(MethodTypeToTypeNode):
 		return s.handleTypeToTypeNode(ctx, parsed.(*TypeToTypeNodeParams))
+	case string(MethodSignatureToSignatureDeclaration):
+		return s.handleSignatureToSignatureDeclaration(ctx, parsed.(*SignatureToSignatureDeclarationParams))
 	case string(MethodTypeToString):
 		return s.handleTypeToString(ctx, parsed.(*TypeToTypeNodeParams))
 	case string(MethodPrintNode):
@@ -481,6 +495,16 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetBigIntType)
 	case string(MethodGetESSymbolType):
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetESSymbolType)
+	case string(MethodGetSyntacticDiagnostics):
+		return s.handleGetSyntacticDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetSemanticDiagnostics):
+		return s.handleGetSemanticDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetSuggestionDiagnostics):
+		return s.handleGetSuggestionDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetDeclarationDiagnostics):
+		return s.handleGetDeclarationDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetConfigFileParsingDiagnostics):
+		return s.handleGetConfigFileParsingDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -511,6 +535,8 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		configFileName := s.toAbsoluteFileName(params.OpenProject)
 		_, newSnapshot, err := s.projectSession.APIOpenProject(ctx, configFileName, fileChanges)
 		if err != nil {
+			// APIOpenProject returns a ref'd snapshot even on error; release it.
+			newSnapshot.Deref(s.projectSession)
 			return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
 		}
 		snapshot = newSnapshot
@@ -529,6 +555,9 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	s.snapshotsMu.Lock()
 	sd, exists := s.snapshots[handle]
 	if exists {
+		// Same snapshot already stored — release the caller's ref since
+		// the stored snapshot already has one, and bump the API refcount.
+		snapshot.Deref(s.projectSession)
 		sd.refCount++
 	} else {
 		sd = &snapshotData{
@@ -587,6 +616,8 @@ func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any
 	sd.refCount--
 	if sd.refCount <= 0 {
 		delete(s.snapshots, params.Snapshot)
+		// Release the API session's ref on the project snapshot.
+		sd.snapshot.Deref(s.projectSession)
 	}
 	s.snapshotsMu.Unlock()
 	return true, nil
@@ -1020,6 +1051,26 @@ func (s *Session) handleGetSignaturesOfType(ctx context.Context, params *GetSign
 	return results, nil
 }
 
+// handleGetResolvedSignature returns the resolved signature of a call-like expression.
+func (s *Session) handleGetResolvedSignature(ctx context.Context, params *GetResolvedSignatureParams) (*SignatureResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	sig := setup.checker.GetResolvedSignature(node)
+	return setup.sd.registerSignature(sig), nil
+}
+
 // handleGetTypeAtLocation returns the type at a node location.
 func (s *Session) handleGetTypeAtLocation(ctx context.Context, params *GetTypeAtLocationParams) (*TypeResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -1277,6 +1328,113 @@ func (s *Session) handleGetBaseTypeOfLiteralType(ctx context.Context, params *Ge
 	return setup.sd.registerType(result), nil
 }
 
+// handleGetNonNullableType returns the type with null and undefined removed.
+func (s *Session) handleGetNonNullableType(ctx context.Context, params *GetNonNullableTypeParams) (*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	result := setup.checker.GetNonNullableType(t)
+	if result == nil {
+		return nil, nil
+	}
+
+	return setup.sd.registerType(result), nil
+}
+
+// handleGetTypeFromTypeNode returns the type for a type node.
+func (s *Session) handleGetTypeFromTypeNode(ctx context.Context, params *GetTypeFromTypeNodeParams) (*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	node, err := s.resolveNodeHandle(setup.program, params.Location)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	t := setup.checker.GetTypeFromTypeNode(node)
+	if t == nil {
+		return nil, nil
+	}
+
+	return setup.sd.registerType(t), nil
+}
+
+// handleGetWidenedType returns the widened type.
+func (s *Session) handleGetWidenedType(ctx context.Context, params *GetWidenedTypeParams) (*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	result := setup.checker.GetWidenedType(t)
+	if result == nil {
+		return nil, nil
+	}
+
+	return setup.sd.registerType(result), nil
+}
+
+// handleGetParameterType returns the type of a parameter at a given index in a signature.
+func (s *Session) handleGetParameterType(ctx context.Context, params *GetParameterTypeParams) (*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	sig, err := setup.sd.resolveSignatureHandle(params.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	if params.Index < 0 {
+		return nil, fmt.Errorf("%w: invalid parameter index", ErrClientError)
+	}
+
+	t := setup.checker.GetTypeAtPosition(sig, int(params.Index))
+	if t == nil {
+		return nil, nil
+	}
+
+	return setup.sd.registerType(t), nil
+}
+
+// handleIsArrayLikeType returns whether a type is array-like.
+func (s *Session) handleIsArrayLikeType(ctx context.Context, params *IsArrayLikeTypeParams) (bool, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return false, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return false, err
+	}
+
+	return setup.checker.IsArrayLikeType(t), nil
+}
+
 // handleGetShorthandAssignmentValueSymbol returns the value symbol of a shorthand property assignment.
 func (s *Session) handleGetShorthandAssignmentValueSymbol(ctx context.Context, params *GetTypeAtLocationParams) (*SymbolResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -1372,6 +1530,44 @@ func (s *Session) handleTypeToTypeNode(ctx context.Context, params *TypeToTypeNo
 	}, nil
 }
 
+func (s *Session) handleSignatureToSignatureDeclaration(ctx context.Context, params *SignatureToSignatureDeclarationParams) (any, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	sig, err := setup.sd.resolveSignatureHandle(params.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	var enclosingDeclaration *ast.Node
+	if params.Location != "" {
+		enclosingDeclaration, err = s.resolveNodeHandle(setup.program, params.Location)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	node := setup.checker.SignatureToSignatureDeclaration(sig, ast.Kind(params.Kind), enclosingDeclaration, nodebuilder.Flags(params.Flags))
+	if node == nil {
+		return nil, nil
+	}
+
+	data, err := encoder.EncodeNode(node.AsNode(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode signature declaration: %w", err)
+	}
+
+	if s.useBinaryResponses {
+		return RawBinary(data), nil
+	}
+	return &SourceFileResponse{
+		Data: base64.StdEncoding.EncodeToString(data),
+	}, nil
+}
+
 // handleTypeToString converts a Type to its string representation.
 func (s *Session) handleTypeToString(ctx context.Context, params *TypeToTypeNodeParams) (any, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -1394,9 +1590,9 @@ func (s *Session) handleTypeToString(ctx context.Context, params *TypeToTypeNode
 	}
 
 	if params.Flags != 0 {
-		return setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlags(params.Flags)), nil
+		return setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlags(params.Flags), nil), nil
 	}
-	return setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlagsAllowUniqueESSymbolType|checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope), nil
+	return setup.checker.TypeToStringEx(t, enclosingDeclaration, checker.TypeFormatFlagsAllowUniqueESSymbolType|checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope, nil), nil
 }
 
 // handlePrintNode decodes a binary-encoded AST node and prints it to text.
@@ -1411,7 +1607,11 @@ func (s *Session) handlePrintNode(_ context.Context, params *PrintNodeParams) (s
 		return "", fmt.Errorf("%w: failed to decode AST: %w", ErrClientError, err)
 	}
 
-	p := printer.NewPrinter(printer.PrinterOptions{}, printer.PrintHandlers{}, nil)
+	p := printer.NewPrinter(printer.PrinterOptions{
+		PreserveSourceNewlines:        params.PreserveSourceNewlines,
+		NeverAsciiEscape:              params.NeverAsciiEscape,
+		TerminateUnterminatedLiterals: params.TerminateUnterminatedLiterals,
+	}, printer.PrintHandlers{}, nil)
 	return p.Emit(node, nil), nil
 }
 
@@ -1686,7 +1886,8 @@ func computeSnapshotChanges(prev *project.Snapshot, next *project.Snapshot) *Sna
 
 	var changes SnapshotChanges
 
-	collections.DiffOrderedMaps(prevProjects, nextProjects,
+	collections.DiffOrderedMaps(
+		prevProjects, nextProjects,
 		// onAdded: new project — nothing to retain from previous snapshot.
 		func(_ tspath.Path, _ *project.Project) {},
 		// onRemoved: project removed entirely.
@@ -1706,7 +1907,8 @@ func computeSnapshotChanges(prev *project.Snapshot, next *project.Snapshot) *Sna
 				newFiles = p.FilesByPath()
 			}
 			var projectChanges ProjectFileChanges
-			core.DiffMaps(oldFiles, newFiles,
+			core.DiffMaps(
+				oldFiles, newFiles,
 				nil, // onAdded: new file in project, not a change.
 				func(path tspath.Path, _ *ast.SourceFile) {
 					projectChanges.DeletedFiles = append(projectChanges.DeletedFiles, path)
@@ -1778,4 +1980,117 @@ func (s *Session) toFileChangeSummary(changes *APIFileChanges) project.FileChang
 		summary.IncludesWatchChangeOutsideNodeModules = true
 	}
 	return summary
+}
+
+// handleGetSyntacticDiagnostics returns syntactic diagnostics for a file or all files.
+func (s *Session) handleGetSyntacticDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetSyntacticDiagnostics(ctx, sourceFile)
+	return NewDiagnosticResponses(diags), nil
+}
+
+// handleGetSemanticDiagnostics returns semantic diagnostics for a file or all files.
+func (s *Session) handleGetSemanticDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetSemanticDiagnostics(ctx, sourceFile)
+	return NewDiagnosticResponses(diags), nil
+}
+
+// handleGetSuggestionDiagnostics returns suggestion diagnostics for a file or all files.
+func (s *Session) handleGetSuggestionDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetSuggestionDiagnostics(ctx, sourceFile)
+	return NewDiagnosticResponses(diags), nil
+}
+
+// handleGetDeclarationDiagnostics returns declaration diagnostics for a file or all files.
+func (s *Session) handleGetDeclarationDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetDeclarationDiagnostics(ctx, sourceFile)
+	return NewDiagnosticResponses(diags), nil
+}
+
+// handleGetConfigFileParsingDiagnostics returns config file parsing diagnostics.
+func (s *Session) handleGetConfigFileParsingDiagnostics(ctx context.Context, params *GetProjectDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetConfigFileParsingDiagnostics()
+	return NewDiagnosticResponses(diags), nil
+}
+
+// resolveOptionalSourceFile resolves an optional DocumentIdentifier to a source file.
+// Returns nil if the identifier is nil (meaning all files).
+func (s *Session) resolveOptionalSourceFile(program *compiler.Program, file *DocumentIdentifier) (*ast.SourceFile, error) {
+	if file == nil {
+		return nil, nil
+	}
+	sourceFile := program.GetSourceFile(file.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, file)
+	}
+	return sourceFile, nil
 }

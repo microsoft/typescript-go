@@ -308,6 +308,34 @@ func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.Ref
 	return lsproto.LocationsOrNull{Locations: combineResponseLocations(results)}
 }
 
+func combineVsReferences(results iter.Seq[lsproto.VsReferencesResponse]) lsproto.VsReferencesResponse {
+	var combined []*lsproto.VsReferenceItem
+	// Re-number IDs across projects to maintain unique IDs and correct definition references
+	nextId := int32(0)
+	for resp := range results {
+		if resp.VsReferenceItems == nil {
+			continue
+		}
+		// Map old IDs to new IDs for this batch
+		idMap := make(map[int32]int32)
+		for _, item := range *resp.VsReferenceItems {
+			oldId := item.VSId
+			newId := nextId
+			idMap[oldId] = newId
+			nextId++
+
+			newItem := *item
+			newItem.VSId = newId
+			if item.VSDefinitionId != nil {
+				newDefId := idMap[*item.VSDefinitionId]
+				newItem.VSDefinitionId = &newDefId
+			}
+			combined = append(combined, &newItem)
+		}
+	}
+	return lsproto.VsReferencesResponse{VsReferenceItems: &combined}
+}
+
 func combineImplementations(results iter.Seq[lsproto.ImplementationResponse]) lsproto.ImplementationResponse {
 	var combined []*lsproto.LocationLink
 	var seenLocations collections.Set[lsproto.Location]
@@ -324,11 +352,23 @@ func combineImplementations(results iter.Seq[lsproto.ImplementationResponse]) ls
 func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
 	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.Range])
-	// !!! this is not used any more so we will skip this part of deduplication and combining
-	// 	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
-	// 	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
+	var documentChanges []lsproto.TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile
+	seenRenames := collections.Set[[2]lsproto.DocumentUri]{}
 
 	for resp := range results {
+		if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.DocumentChanges != nil {
+			for _, change := range *resp.WorkspaceEdit.DocumentChanges {
+				switch {
+				case change.RenameFile != nil:
+					key := [2]lsproto.DocumentUri{change.RenameFile.OldUri, change.RenameFile.NewUri}
+					if seenRenames.AddIfAbsent(key) {
+						documentChanges = append(documentChanges, change)
+					}
+				default:
+					documentChanges = append(documentChanges, change)
+				}
+			}
+		}
 		if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.Changes != nil {
 			for doc, changes := range *resp.WorkspaceEdit.Changes {
 				seenSet, ok := seenChanges[doc]
@@ -350,11 +390,16 @@ func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.Ren
 			}
 		}
 	}
-	if len(combined) > 0 {
+	if len(documentChanges) > 0 || len(combined) > 0 {
+		workspaceEdit := &lsproto.WorkspaceEdit{}
+		if len(documentChanges) > 0 {
+			workspaceEdit.DocumentChanges = &documentChanges
+		}
+		if len(combined) > 0 {
+			workspaceEdit.Changes = &combined
+		}
 		return lsproto.RenameResponse{
-			WorkspaceEdit: &lsproto.WorkspaceEdit{
-				Changes: &combined,
-			},
+			WorkspaceEdit: workspaceEdit,
 		}
 	}
 	return lsproto.RenameResponse{}

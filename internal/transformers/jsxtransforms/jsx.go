@@ -210,8 +210,8 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 	statementsUpdated := false
 	if tx.filenameDeclaration != nil {
 		statements = tx.insertStatementAfterCustomPrologue(statements, tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList([]*ast.Node{tx.filenameDeclaration}),
+			ast.NodeFlagsConst,
 		)))
 		statementsUpdated = true
 	}
@@ -243,7 +243,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 				for _, elem := range sorted {
 					asBindingElems = append(asBindingElems, tx.Factory().NewBindingElement(nil, elem.PropertyName(), elem.AsImportSpecifier().Name(), nil))
 				}
-				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
+				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
 					tx.Factory().NewBindingPattern(ast.KindObjectBindingPattern, tx.Factory().NewNodeList(asBindingElems)),
 					nil,
 					nil,
@@ -251,8 +251,9 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 						tx.Factory().NewIdentifier("require"),
 						nil,
 						nil,
-						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone),
-				)})))
+						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone,
+					),
+				)}), ast.NodeFlagsConst))
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)
 			}
@@ -630,11 +631,11 @@ func (tx *JSXTransformer) createReactNamespace(reactNamespace string, parent *as
 		reactNamespace = "React"
 	}
 	react := tx.Factory().NewIdentifier(reactNamespace)
-	react.Flags &= ^ast.NodeFlagsSynthesized
+	react.Flags &^= ast.NodeFlagsSynthesized
 
 	// Set the parent that is in parse tree
 	// this makes sure that parent chain is intact for checker to traverse complete scope tree
-	react.Parent = tx.EmitContext().ParseNode(parent)
+	react.Parent = tx.EmitContext().ParseNode(parent) //nolint:customlint // Parent is intentionally wired to a parse-tree node for resolver traversal.
 
 	// If the identifier refers to an exported member of a namespace, substitute with
 	// a qualified namespace property access (e.g., `React` -> `M.React`).
@@ -875,6 +876,19 @@ func decodeEntities(text string) string {
 		semi := strings.IndexByte(text, ';')
 		if semi < 0 {
 			break
+		}
+
+		// Skip past any intervening '&' characters between the current '&'
+		// and the ';'. Each such '&' is not part of a valid entity, so emit
+		// it (and any text before the next '&') as literals.
+		for {
+			nextAmp := strings.IndexByte(text[1:semi], '&')
+			if nextAmp < 0 {
+				break
+			}
+			result.WriteString(text[:nextAmp+1])
+			text = text[nextAmp+1:]
+			semi -= nextAmp + 1
 		}
 
 		entity := text[1:semi]

@@ -499,6 +499,29 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
+		title:               "reports errors for incorrectly cased option names",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+			    "compilerOptions": {
+				"sourcemap": true,
+				"declarationmap": true,
+				"nouncheckedindexedaccess": true,
+				"exactoptionalpropertytypes": true,
+				"verbatimmodulesyntax": true,
+				"isolatedmodules": true,
+				"nouncheckedsideeffectimports": true,
+				"moduledetection": "force",
+				"skiplibcheck": true,
+				"checkjs": true
+			    }
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/app.ts": ""},
+		}},
+	},
+	{
 		title:               "handles empty types array",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
@@ -1225,7 +1248,7 @@ type memoCache struct {
 	m map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry
 }
 
-func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
+func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []tspath.Path, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
 	if mc.m == nil {
 		mc.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
 	}

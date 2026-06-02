@@ -24,7 +24,8 @@ import * as A from "./A";
 console.log(A, À, B);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t,
+	f.VerifyOrganizeImports(
+		t,
 		`import * as À from "./À";
 import * as A from "./A";
 import * as B from "./B";
@@ -34,10 +35,11 @@ console.log(A, À, B);`,
 		&lsutil.UserPreferences{
 			OrganizeImportsIgnoreCase:      core.TSFalse,
 			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-			OrganizeImportsAccentCollation: false,
+			OrganizeImportsAccentCollation: core.TSFalse,
 		},
 	)
-	f.VerifyOrganizeImports(t,
+	f.VerifyOrganizeImports(
+		t,
 		`import * as A from "./A";
 import * as À from "./À";
 import * as B from "./B";
@@ -47,7 +49,7 @@ console.log(A, À, B);`,
 		&lsutil.UserPreferences{
 			OrganizeImportsIgnoreCase:      core.TSFalse,
 			OrganizeImportsCollation:       lsutil.OrganizeImportsCollationUnicode,
-			OrganizeImportsAccentCollation: true,
+			OrganizeImportsAccentCollation: core.TSTrue,
 		},
 	)
 }

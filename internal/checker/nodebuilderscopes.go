@@ -1,8 +1,6 @@
 package checker
 
 import (
-	"maps"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
@@ -22,25 +20,15 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 	// we write it out like that, rather than as
 	// export const x: <T>(x: T) => T
 	// export const y: <T_1>(x: T_1) => T_1
-	oldMustCreateTypeParameterSymbolList := context.hasCreatedTypeParameterSymbolList
-	oldMustCreateTypeParametersNamesLookups := context.hasCreatedTypeParametersNamesLookups
-	oldTypeParameterNames := context.typeParameterNames
-	oldTypeParameterNamesByText := context.typeParameterNamesByText
-	oldTypeParameterNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount
-	oldTypeParameterSymbolList := context.typeParameterSymbolList
-	context.hasCreatedTypeParameterSymbolList = oldTypeParameterSymbolList != nil
-	context.hasCreatedTypeParametersNamesLookups = oldTypeParameterNames != nil
-	context.typeParameterNames = maps.Clone(context.typeParameterNames)
-	context.typeParameterNamesByText = maps.Clone(context.typeParameterNamesByText)
-	context.typeParameterNamesByTextNextNameCount = maps.Clone(context.typeParameterNamesByTextNextNameCount)
-	context.typeParameterSymbolList = maps.Clone(context.typeParameterSymbolList)
+	restoreNames := context.typeParameterNames.EnterScope()
+	restoreNamesByText := context.typeParameterNamesByText.EnterScope()
+	restoreNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount.EnterScope()
+	restoreSymbolList := context.typeParameterSymbolList.EnterScope()
 	return func() {
-		context.typeParameterNames = oldTypeParameterNames
-		context.typeParameterNamesByText = oldTypeParameterNamesByText
-		context.typeParameterNamesByTextNextNameCount = oldTypeParameterNamesByTextNextNameCount
-		context.typeParameterSymbolList = oldTypeParameterSymbolList
-		context.hasCreatedTypeParameterSymbolList = oldMustCreateTypeParameterSymbolList
-		context.hasCreatedTypeParametersNamesLookups = oldMustCreateTypeParametersNamesLookups
+		restoreNames()
+		restoreNamesByText()
+		restoreNamesByTextNextNameCount()
+		restoreSymbolList()
 	}
 }
 
@@ -60,6 +48,12 @@ func (b *NodeBuilderImpl) addSymbolTypeToContext(symbol *ast.Symbol, t *Type) fu
 			delete(b.ctx.enclosingSymbolTypes, id)
 		}
 	}
+}
+
+func (b *NodeBuilderImpl) enterSignatureScope(signature *Signature) (expandedParams []*ast.Symbol, cleanup func()) {
+	expandedParams = b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
+	cleanup = b.enterNewScope(signature.declaration, expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
+	return expandedParams, cleanup
 }
 
 func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
@@ -176,7 +170,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 				for pIndex, param := range expandedParams {
 					var originalParam *ast.Symbol
 					if pIndex < len(originalParameters) {
-						originalParam = (originalParameters)[pIndex]
+						originalParam = originalParameters[pIndex]
 					}
 					if originalParameters != nil && originalParam != param {
 						// Can't reference parameters that come from an expansion
@@ -216,7 +210,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 						bindElement = bindElementWorker
 						bindPattern = bindPatternWorker
 
-						if ast.IsParameter(d) && d.Name() != nil && ast.IsBindingPattern(d.Name()) {
+						if ast.IsParameterDeclaration(d) && d.Name() != nil && ast.IsBindingPattern(d.Name()) {
 							bindPattern(d.Name().AsBindingPattern())
 							return true
 						}

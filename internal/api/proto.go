@@ -7,8 +7,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -71,6 +73,7 @@ const (
 	MethodGetExportSymbolOfSymbol  Method = "getExportSymbolOfSymbol"
 	MethodGetSymbolOfType          Method = "getSymbolOfType"
 	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
+	MethodGetResolvedSignature     Method = "getResolvedSignature"
 	MethodGetTypeAtLocation        Method = "getTypeAtLocation"
 	MethodGetTypeAtLocations       Method = "getTypeAtLocations"
 	MethodGetTypeAtPosition        Method = "getTypeAtPosition"
@@ -92,9 +95,15 @@ const (
 	// Checker methods
 	MethodGetContextualType                 Method = "getContextualType"
 	MethodGetBaseTypeOfLiteralType          Method = "getBaseTypeOfLiteralType"
+	MethodGetNonNullableType                Method = "getNonNullableType"
+	MethodGetTypeFromTypeNode               Method = "getTypeFromTypeNode"
+	MethodGetWidenedType                    Method = "getWidenedType"
+	MethodGetParameterType                  Method = "getParameterType"
+	MethodIsArrayLikeType                   Method = "isArrayLikeType"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
+	MethodSignatureToSignatureDeclaration   Method = "signatureToSignatureDeclaration"
 	MethodTypeToString                      Method = "typeToString"
 	MethodIsContextSensitive                Method = "isContextSensitive"
 	MethodGetReturnTypeOfSignature          Method = "getReturnTypeOfSignature"
@@ -105,6 +114,13 @@ const (
 	MethodGetIndexInfosOfType               Method = "getIndexInfosOfType"
 	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
 	MethodGetTypeArguments                  Method = "getTypeArguments"
+
+	// Diagnostic methods
+	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
+	MethodGetSemanticDiagnostics          Method = "getSemanticDiagnostics"
+	MethodGetSuggestionDiagnostics        Method = "getSuggestionDiagnostics"
+	MethodGetDeclarationDiagnostics       Method = "getDeclarationDiagnostics"
+	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
@@ -282,6 +298,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetExportSymbolOfSymbol:  unmarshallerFor[GetExportSymbolOfSymbolParams],
 	MethodGetSymbolOfType:          unmarshallerFor[GetSymbolOfTypeParams],
 	MethodGetSignaturesOfType:      unmarshallerFor[GetSignaturesOfTypeParams],
+	MethodGetResolvedSignature:     unmarshallerFor[GetResolvedSignatureParams],
 	MethodGetTypeAtLocation:        unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeAtLocations:       unmarshallerFor[GetTypeAtLocationsParams],
 	MethodGetTypeAtPosition:        unmarshallerFor[GetTypeAtPositionParams],
@@ -300,9 +317,15 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetConstraintOfType:               unmarshallerFor[GetTypePropertyParams],
 	MethodGetContextualType:                 unmarshallerFor[GetContextualTypeParams],
 	MethodGetBaseTypeOfLiteralType:          unmarshallerFor[GetBaseTypeOfLiteralTypeParams],
+	MethodGetNonNullableType:                unmarshallerFor[GetNonNullableTypeParams],
+	MethodGetTypeFromTypeNode:               unmarshallerFor[GetTypeFromTypeNodeParams],
+	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
+	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
+	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
+	MethodSignatureToSignatureDeclaration:   unmarshallerFor[SignatureToSignatureDeclarationParams],
 	MethodTypeToString:                      unmarshallerFor[TypeToTypeNodeParams],
 	MethodIsContextSensitive:                unmarshallerFor[GetContextualTypeParams],
 	MethodGetReturnTypeOfSignature:          unmarshallerFor[CheckerSignatureParams],
@@ -325,6 +348,11 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetUnknownType:                    unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetBigIntType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetESSymbolType:                   unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetSyntacticDiagnostics:           unmarshallerFor[GetDiagnosticsParams],
+	MethodGetSemanticDiagnostics:            unmarshallerFor[GetDiagnosticsParams],
+	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
+	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
+	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
 }
 
 type ParseConfigFileParams struct {
@@ -643,11 +671,53 @@ type GetBaseTypeOfLiteralTypeParams struct {
 	Type     TypeID     `json:"type"`
 }
 
+// GetNonNullableTypeParams are the parameters for the getNonNullableType method.
+type GetNonNullableTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
+// GetTypeFromTypeNodeParams are the parameters for the getTypeFromTypeNode method.
+type GetTypeFromTypeNodeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Location Handle[ast.Node]         `json:"location"`
+}
+
+// GetWidenedTypeParams are the parameters for the getWidenedType method.
+type GetWidenedTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
+// GetParameterTypeParams are the parameters for the getParameterType method.
+type GetParameterTypeParams struct {
+	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
+	Project   Handle[project.Project]   `json:"project"`
+	Signature Handle[checker.Signature] `json:"signature"`
+	Index     int32                     `json:"index"`
+}
+
+// IsArrayLikeTypeParams checks whether a type is array-like.
+type IsArrayLikeTypeParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Type     Handle[checker.Type]     `json:"type"`
+}
+
 type GetSignaturesOfTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
 	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"type"`
 	Kind     int32                    `json:"kind"`
+}
+
+type GetResolvedSignatureParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	Location Handle[ast.Node]         `json:"location"`
 }
 
 type GetTypeAtLocationParams struct {
@@ -685,9 +755,22 @@ type TypeToTypeNodeParams struct {
 	Flags    int32                    `json:"flags,omitempty"`
 }
 
+// SignatureToSignatureDeclarationParams are the parameters for the signatureToSignatureDeclaration method.
+type SignatureToSignatureDeclarationParams struct {
+	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
+	Project   Handle[project.Project]   `json:"project"`
+	Signature Handle[checker.Signature] `json:"signature"`
+	Kind      int32                     `json:"kind"`
+	Location  Handle[ast.Node]          `json:"location,omitempty"`
+	Flags     int32                     `json:"flags,omitempty"`
+}
+
 // PrintNodeParams are the parameters for the printNode method.
 type PrintNodeParams struct {
-	Data string `json:"data"` // base64-encoded binary AST data
+	Data                          string `json:"data"` // base64-encoded binary AST data
+	PreserveSourceNewlines        bool   `json:"preserveSourceNewlines,omitempty"`
+	NeverAsciiEscape              bool   `json:"neverAsciiEscape,omitempty"`
+	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
 }
 
 // CheckerTypeParams are parameters for checker methods that operate on a type.
@@ -723,6 +806,88 @@ type IndexInfoResponse struct {
 // The Data field is base64-encoded binary data in the encoder's format.
 type SourceFileResponse struct {
 	Data string `json:"data"`
+}
+
+// GetDiagnosticsParams are parameters for per-file diagnostic methods.
+type GetDiagnosticsParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+	File     *DocumentIdentifier      `json:"file,omitempty"`
+}
+
+// GetProjectDiagnosticsParams are parameters for project-wide diagnostic methods.
+type GetProjectDiagnosticsParams struct {
+	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Project  Handle[project.Project]  `json:"project"`
+}
+
+// DiagnosticResponse is the API response for a single diagnostic.
+type DiagnosticResponse struct {
+	// FileName is the path of the file this diagnostic belongs to, if any.
+	FileName string `json:"fileName,omitempty"`
+	// Pos is the start position of the diagnostic in the source file.
+	Pos int `json:"pos"`
+	// End is the end position of the diagnostic in the source file.
+	End int `json:"end"`
+	// Code is the diagnostic error code.
+	Code int32 `json:"code"`
+	// Category is the diagnostic category (error, warning, suggestion, message).
+	Category diagnostics.Category `json:"category"`
+	// Text is the localized diagnostic message text.
+	Text string `json:"text"`
+	// ReportsUnnecessary indicates this diagnostic highlights unnecessary code.
+	ReportsUnnecessary bool `json:"reportsUnnecessary,omitzero"`
+	// ReportsDeprecated indicates this diagnostic highlights deprecated code.
+	ReportsDeprecated bool `json:"reportsDeprecated,omitzero"`
+	// MessageChain contains chained diagnostic messages, if any.
+	MessageChain []*DiagnosticResponse `json:"messageChain,omitempty"`
+	// RelatedInformation contains related diagnostic information, if any.
+	RelatedInformation []*DiagnosticResponse `json:"relatedInformation,omitempty"`
+}
+
+// NewDiagnosticResponse converts an ast.Diagnostic to a DiagnosticResponse.
+func NewDiagnosticResponse(d *ast.Diagnostic) *DiagnosticResponse {
+	resp := &DiagnosticResponse{
+		Pos:                d.Pos(),
+		End:                d.End(),
+		Code:               d.Code(),
+		Category:           d.Category(),
+		Text:               d.Localize(locale.Default),
+		ReportsUnnecessary: d.ReportsUnnecessary(),
+		ReportsDeprecated:  d.ReportsDeprecated(),
+	}
+
+	if d.File() != nil {
+		resp.FileName = d.File().FileName()
+	}
+
+	if chain := d.MessageChain(); len(chain) > 0 {
+		resp.MessageChain = make([]*DiagnosticResponse, len(chain))
+		for i, c := range chain {
+			resp.MessageChain[i] = NewDiagnosticResponse(c)
+		}
+	}
+
+	if related := d.RelatedInformation(); len(related) > 0 {
+		resp.RelatedInformation = make([]*DiagnosticResponse, len(related))
+		for i, r := range related {
+			resp.RelatedInformation[i] = NewDiagnosticResponse(r)
+		}
+	}
+
+	return resp
+}
+
+// NewDiagnosticResponses converts a slice of ast.Diagnostics to DiagnosticResponses.
+func NewDiagnosticResponses(diags []*ast.Diagnostic) []*DiagnosticResponse {
+	if len(diags) == 0 {
+		return nil
+	}
+	result := make([]*DiagnosticResponse, len(diags))
+	for i, d := range diags {
+		result[i] = NewDiagnosticResponse(d)
+	}
+	return result
 }
 
 func unmarshalPayload(method string, payload json.Value) (any, error) {

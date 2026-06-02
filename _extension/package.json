@@ -12,8 +12,12 @@
         "type": "git",
         "url": "https://github.com/microsoft/typescript-go"
     },
+    "enabledApiProposals": [
+        "editorHoverVerbosityLevel",
+        "multiDocumentHighlightProvider"
+    ],
     "engines": {
-        "vscode": "^1.106.0"
+        "vscode": "^1.110.0"
     },
     "capabilities": {
         "untrustedWorkspaces": {
@@ -31,6 +35,12 @@
             {
                 "title": "TypeScript Native Preview",
                 "properties": {
+                    "typescript.native-preview.customConfigFileName": {
+                        "type": "string",
+                        "default": "",
+                        "description": "Custom config file name to use e.g. 'tsconfig.all.json', before defaulting to tsconfig.json/jsconfig.json.",
+                        "tags": ["experimental"]
+                    },
                     "typescript.native-preview.trace.server": {
                         "type": "string",
                         "enum": [
@@ -53,7 +63,27 @@
                     },
                     "typescript.native-preview.tsdk": {
                         "type": "string",
+                        "scope": "window",
                         "description": "Path to the @typescript/native-preview package or tsgo binary directory. If not specified, the extension will look for it in the default location.",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "typescript.native-preview.additionalTsdkLocations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [],
+                        "description": "Additional paths to tsgo binary directories or @typescript/native-preview packages that should appear in the version selector.",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "typescript.native-preview.showDebugInfo": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Show debug information (PID, executable path) in the server menu.",
                         "tags": [
                             "experimental"
                         ]
@@ -63,6 +93,15 @@
                         "description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
                         "pattern": "^[0-9]+(([KMGT]i)?B)?$",
                         "patternErrorMessage": "Must be a valid memory limit (e.g., '2048MiB', '4GiB').",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "js/ts.preferences.autoImportEntrypointDirectorySearch": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Enables recursive directory search for auto-importable files in all packages that lack `exports` in their `package.json`. Enabling this option allows more auto-importable paths to be discovered at the cost of increased scanning time.",
+                        "scope": "window",
                         "tags": [
                             "experimental"
                         ]
@@ -108,6 +147,18 @@
                 "category": "TypeScript Native Preview"
             },
             {
+                "command": "typescript.native-preview.selectVersion",
+                "title": "Select TypeScript Version...",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "TypeScript Native Preview"
+            },
+            {
+                "command": "typescript.native-preview.goToSourceDefinition",
+                "title": "Go to Source Definition",
+                "enablement": "typescript.native-preview.serverRunning",
+                "category": "TypeScript Native Preview"
+            },
+            {
                 "title": "Show References of CodeLens",
                 "command": "typescript.native-preview.codeLens.showLocations",
                 "enablement": "false"
@@ -148,7 +199,22 @@
                 "enablement": "typescript.native-preview.serverRunning",
                 "category": "Developer: TypeScript Native Preview"
             }
-        ]
+        ],
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "typescript.native-preview.goToSourceDefinition",
+                    "when": "typescript.native-preview.serverRunning && tsSupportsSourceDefinition"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "typescript.native-preview.goToSourceDefinition",
+                    "when": "typescript.native-preview.serverRunning && tsSupportsSourceDefinition && (resourceLangId == typescript || resourceLangId == typescriptreact || resourceLangId == javascript || resourceLangId == javascriptreact)",
+                    "group": "navigation@1.41"
+                }
+            ]
+        }
     },
     "main": "./dist/extension.bundle.js",
     "files": [
@@ -166,12 +232,13 @@
         "bundle:release": "npm run bundle -- --minify"
     },
     "dependencies": {
-        "@vscode/extension-telemetry": "^1.5.1",
-        "vscode-languageclient": "^10.0.0-next.21"
+        "@vscode/extension-telemetry": "^1.5.2",
+        "vscode-languageclient": "^10.0.0-next.21",
+        "vscode-tas-client": "^0.2.1"
     },
     "devDependencies": {
-        "@types/vscode": "~1.106.1",
-        "@vscode/vsce": "^3.7.1",
-        "esbuild": "^0.27.4"
+        "@types/vscode": "~1.110.0",
+        "@vscode/vsce": "^3.9.1",
+        "esbuild": "^0.28.0"
     }
 }

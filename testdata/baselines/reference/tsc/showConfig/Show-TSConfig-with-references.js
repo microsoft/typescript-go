@@ -21,7 +21,9 @@ Output::
 {
     "compilerOptions": {
         "composite": true,
-        "strict": true
+        "strict": true,
+        "declaration": true,
+        "incremental": true
     },
     "references": [
         {
@@ -30,5 +32,8 @@ Output::
         {
             "path": "./packages/b"
         }
+    ],
+    "files": [
+        "./src/index.ts"
     ]
 }

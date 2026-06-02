@@ -96,7 +96,17 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindIndexSignature:
 		return nil
 
-	case ast.KindJSExportAssignment, ast.KindJSImportDeclaration:
+	case ast.KindInKeyword, ast.KindOutKeyword:
+		// TypeScript `in`/`out` variance modifiers are elided. These keywords are only
+		// meaningful as modifiers on type parameters (which are themselves elided), but they may
+		// appear as a grammar error on other declarations and must not leak into the emitted JS.
+		// The `in` binary operator shares this token kind, so only elide when used as a modifier.
+		if tx.parentNode == nil || !ast.IsBinaryExpression(tx.parentNode) {
+			return nil
+		}
+		return tx.Visitor().VisitEachChild(node)
+
+	case ast.KindJSImportDeclaration:
 		// reparsed commonjs are elided
 		return nil
 	case ast.KindTypeAliasDeclaration,
@@ -189,7 +199,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript `implements` clauses are elided
 			return nil
 		}
-		return tx.Factory().UpdateHeritageClause(n, tx.Visitor().VisitNodes(n.Types))
+		return tx.Factory().UpdateHeritageClause(n, n.Token, tx.Visitor().VisitNodes(n.Types))
 
 	case ast.KindClassDeclaration:
 		n := node.AsClassDeclaration()
@@ -240,7 +250,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
-		return tx.Factory().UpdateCallExpression(n, tx.Visitor().VisitNode(n.Expression), n.QuestionDotToken, nil, tx.Visitor().VisitNodes(n.Arguments))
+		return tx.Factory().UpdateCallExpression(n, tx.Visitor().VisitNode(n.Expression), n.QuestionDotToken, nil, tx.Visitor().VisitNodes(n.Arguments), n.Flags)
 
 	case ast.KindNewExpression:
 		n := node.AsNewExpression()
@@ -248,7 +258,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindTaggedTemplateExpression:
 		n := node.AsTaggedTemplateExpression()
-		return tx.Factory().UpdateTaggedTemplateExpression(n, tx.Visitor().VisitNode(n.Tag), n.QuestionDotToken, nil, tx.Visitor().VisitNode(n.Template))
+		return tx.Factory().UpdateTaggedTemplateExpression(n, tx.Visitor().VisitNode(n.Tag), n.QuestionDotToken, nil, tx.Visitor().VisitNode(n.Template), n.Flags)
 
 	case ast.KindNonNullExpression, ast.KindTypeAssertionExpression, ast.KindAsExpression, ast.KindSatisfiesExpression:
 		partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(node.Expression()))
