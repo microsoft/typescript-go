@@ -89,7 +89,7 @@ func (sd *snapshotData) nodeHandleFrom(node *ast.Node) NodeHandle {
 	}
 
 	idx := table.GetIndex(node)
-	return NodeHandle(fmt.Sprintf("%d.%s", idx, path))
+	return NodeHandle(fmt.Sprintf("%d.%d.%s", idx, node.Kind, path))
 }
 
 // registerSymbol registers a symbol in this snapshot's registry and returns the response.
@@ -1891,16 +1891,22 @@ func (s *Session) handleGetTypeArguments(ctx context.Context, params *CheckerTyp
 
 func (sd *snapshotData) resolveNodeHandle(program *compiler.Program, handle NodeHandle) (*ast.Node, error) {
 	s := string(handle)
-	dot := strings.IndexByte(s, '.')
-	if dot == -1 || dot+1 >= len(s) {
+	// Format: "index.kind.path" — we need index and path, kind is informational only.
+	firstDot := strings.IndexByte(s, '.')
+	if firstDot == -1 {
 		return nil, fmt.Errorf("%w: invalid node handle %q", ErrClientError, handle)
 	}
+	secondDot := strings.IndexByte(s[firstDot+1:], '.')
+	if secondDot == -1 {
+		return nil, fmt.Errorf("%w: invalid node handle %q", ErrClientError, handle)
+	}
+	secondDot += firstDot + 1 // adjust to absolute index
 
-	idx, err := strconv.ParseUint(s[:dot], 10, 32)
+	idx, err := strconv.ParseUint(s[:firstDot], 10, 32)
 	if err != nil {
 		return nil, fmt.Errorf("%w: invalid node handle %q: %w", ErrClientError, handle, err)
 	}
-	path := tspath.Path(s[dot+1:])
+	path := tspath.Path(s[secondDot+1:])
 
 	sd.nodeTablesByPathMu.RLock()
 	table := sd.nodeTablesByPath[path]

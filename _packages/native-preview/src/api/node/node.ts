@@ -210,22 +210,28 @@ export function findDescendant(root: Node, pos: number, end: number, kind: Synta
  */
 export interface ParsedNodeHandle {
     index: number;
+    kind: SyntaxKind;
     path: Path;
 }
 
 /**
  * Parse a node handle string into its components.
- * Handle format: "index.path" where path may contain dots.
+ * Handle format: "index.kind.path" where path may contain dots.
  */
 export function parseNodeHandle(handle: string): ParsedNodeHandle {
-    const dot = handle.indexOf(".");
-    if (dot === -1) {
+    const firstDot = handle.indexOf(".");
+    if (firstDot === -1) {
+        throw new Error(`Invalid node handle: ${handle}`);
+    }
+    const secondDot = handle.indexOf(".", firstDot + 1);
+    if (secondDot === -1) {
         throw new Error(`Invalid node handle: ${handle}`);
     }
 
     return {
-        index: parseInt(handle.slice(0, dot), 10),
-        path: handle.slice(dot + 1) as Path,
+        index: parseInt(handle.slice(0, firstDot), 10),
+        kind: parseInt(handle.slice(firstDot + 1, secondDot), 10) as SyntaxKind,
+        path: handle.slice(secondDot + 1) as Path,
     };
 }
 

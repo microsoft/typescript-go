@@ -910,11 +910,13 @@ export class Emitter {
 
 export class NodeHandle {
     readonly index: number;
+    readonly kind: SyntaxKind;
     readonly path: Path;
 
     constructor(handle: string) {
         const parsed = parseNodeHandle(handle);
         this.index = parsed.index;
+        this.kind = parsed.kind;
         this.path = parsed.path;
     }
 
