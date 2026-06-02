@@ -237,7 +237,7 @@ jobs:
         run: |
           ${{ matrix.os.install }}
           go version
-          go test ./internal/fswatch/...
+          go test -v ./internal/fswatch/...
 
   lint:
     strategy:
