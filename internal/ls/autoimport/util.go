@@ -196,30 +196,39 @@ func addProjectReferenceOutputMappings(program *compiler.Program, result map[tsp
 	}
 }
 
-func createCheckerPool(program checker.Program) (getChecker func() (*checker.Checker, func()), closePool func(), getCreatedCount func() int32) {
+func createCheckerPool(program checker.Program) (getChecker func(ctx context.Context) (*checker.Checker, func(), error), closePool func(), getCreatedCount func() int32) {
 	maxSize := int32(runtime.GOMAXPROCS(0))
 	pool := make(chan *checker.Checker, maxSize)
 	var created atomic.Int32
 
-	return func() (*checker.Checker, func()) {
+	return func(ctx context.Context) (*checker.Checker, func(), error) {
 			// Try to get an existing checker
 			select {
 			case ch := <-pool:
-				return ch, func() { pool <- ch }
+				return ch, func() { pool <- ch }, nil
+			case <-ctx.Done():
+				return nil, func() {}, ctx.Err()
 			default:
 				break
 			}
 			// Try to create a new one if under limit
 			for {
+				if err := ctx.Err(); err != nil {
+					return nil, func() {}, err
+				}
 				current := created.Load()
 				if current >= maxSize {
 					// At limit, wait for one to become available
-					ch := <-pool
-					return ch, func() { pool <- ch }
+					select {
+					case ch := <-pool:
+						return ch, func() { pool <- ch }, nil
+					case <-ctx.Done():
+						return nil, func() {}, ctx.Err()
+					}
 				}
 				if created.CompareAndSwap(current, current+1) {
-					ch := core.FirstResult(checker.NewChecker(program, nil))
-					return ch, func() { pool <- ch }
+					ch := core.FirstResult(checker.NewChecker(ctx, program, nil))
+					return ch, func() { pool <- ch }, nil
 				}
 			}
 		}, func() {

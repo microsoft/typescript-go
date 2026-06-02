@@ -342,6 +342,28 @@ export class Client implements vscode.Disposable {
         return result.file;
     }
 
+    async startFlightRecorder(opts?: { minAge?: string; maxBytes?: number; }): Promise<void> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        await this.client.sendRequest("custom/startFlightRecorder", opts ?? {});
+    }
+
+    async snapshotFlightRecorder(dir: string): Promise<string> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        const result = await this.client.sendRequest<{ file: string; }>("custom/snapshotFlightRecorder", { dir });
+        return result.file;
+    }
+
+    async stopFlightRecorder(): Promise<void> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        await this.client.sendRequest("custom/stopFlightRecorder");
+    }
+
     async getProjectInfo(uri: string, token?: vscode.CancellationToken): Promise<{ configFilePath: string; }> {
         if (!this.client) {
             throw new Error("Language client is not initialized");

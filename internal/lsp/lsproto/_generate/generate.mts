@@ -325,6 +325,24 @@ const customStructures: Structure[] = [
         documentation: "Result of a profiling request.",
     },
     {
+        name: "FlightRecorderStartParams",
+        properties: [
+            {
+                name: "minAge",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "Optional Go duration string (e.g. '10s') used as MinAge for the flight recorder. If unset, the runtime default is used.",
+            },
+            {
+                name: "maxBytes",
+                type: { kind: "base", name: "uinteger" },
+                optional: true,
+                documentation: "Optional upper bound, in bytes, for the size of the flight recorder window. If unset, the runtime default is used.",
+            },
+        ],
+        documentation: "Parameters for the custom/startFlightRecorder request.",
+    },
+    {
         name: "InitializeAPISessionParams",
         properties: [
             {
@@ -699,6 +717,29 @@ const customRequests: Request[] = [
         messageDirection: "clientToServer",
         result: { kind: "reference", name: "ProfileResult" },
         documentation: "Stops CPU profiling and saves the profile.",
+    },
+    {
+        method: "custom/startFlightRecorder",
+        typeName: "StartFlightRecorderRequest",
+        params: { kind: "reference", name: "FlightRecorderStartParams" },
+        messageDirection: "clientToServer",
+        result: { kind: "base", name: "null" },
+        documentation: "Starts the runtime/trace flight recorder.",
+    },
+    {
+        method: "custom/snapshotFlightRecorder",
+        typeName: "SnapshotFlightRecorderRequest",
+        params: { kind: "reference", name: "ProfileParams" },
+        messageDirection: "clientToServer",
+        result: { kind: "reference", name: "ProfileResult" },
+        documentation: "Writes a snapshot of the flight recorder window to the specified directory.",
+    },
+    {
+        method: "custom/stopFlightRecorder",
+        typeName: "StopFlightRecorderRequest",
+        messageDirection: "clientToServer",
+        result: { kind: "base", name: "null" },
+        documentation: "Stops the runtime/trace flight recorder.",
     },
     {
         method: "custom/initializeAPISession",

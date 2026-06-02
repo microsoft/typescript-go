@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"cmp"
+	"context"
 	"slices"
 	"strings"
 	"sync"
@@ -12,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/runtimetrace"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -123,6 +125,7 @@ func processAllProgramFiles(
 	opts ProgramOptions,
 	singleThreaded bool,
 ) processedFiles {
+	defer runtimetrace.Region(context.TODO(), "compiler.processAllProgramFiles")()
 	compilerOptions := opts.Config.CompilerOptions()
 	rootFiles := opts.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)

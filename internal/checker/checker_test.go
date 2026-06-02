@@ -45,7 +45,7 @@ foo.bar;`
 		Config: parsed,
 		Host:   host,
 	})
-	p.BindSourceFiles()
+	p.BindSourceFiles(t.Context())
 	c, done := p.GetTypeChecker(t.Context())
 	defer done()
 	file := p.GetSourceFile("/foo.ts")
@@ -79,6 +79,6 @@ func BenchmarkNewChecker(b *testing.B) {
 	b.ReportAllocs()
 
 	for b.Loop() {
-		checker.NewChecker(p, nil)
+		checker.NewChecker(b.Context(), p, nil)
 	}
 }

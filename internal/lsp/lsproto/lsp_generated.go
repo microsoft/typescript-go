@@ -29048,6 +29048,59 @@ func (s *ProfileResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+// Parameters for the custom/startFlightRecorder request.
+type FlightRecorderStartParams struct {
+	// Optional Go duration string (e.g. '10s') used as MinAge for the flight recorder. If unset, the runtime default is used.
+	MinAge *string `json:"minAge,omitzero"`
+
+	// Optional upper bound, in bytes, for the size of the flight recorder window. If unset, the runtime default is used.
+	MaxBytes *uint32 `json:"maxBytes,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*FlightRecorderStartParams)(nil)
+
+func (s *FlightRecorderStartParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"minAge"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("minAge")
+			}
+			if err := json.UnmarshalDecode(dec, &s.MinAge); err != nil {
+				return err
+			}
+		case `"maxBytes"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("maxBytes")
+			}
+			if err := json.UnmarshalDecode(dec, &s.MaxBytes); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Parameters for the initializeAPISession request.
 type InitializeAPISessionParams struct {
 	// Optional path to use for the named pipe or Unix domain socket. If not provided, a unique path will be generated.
@@ -31350,6 +31403,12 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[ProfileParams](data)
 	case MethodCustomStopCPUProfile:
 		return unmarshalEmpty(data)
+	case MethodCustomStartFlightRecorder:
+		return unmarshalPtrTo[FlightRecorderStartParams](data)
+	case MethodCustomSnapshotFlightRecorder:
+		return unmarshalPtrTo[ProfileParams](data)
+	case MethodCustomStopFlightRecorder:
+		return unmarshalEmpty(data)
 	case MethodCustomInitializeAPISession:
 		return unmarshalPtrTo[InitializeAPISessionParams](data)
 	case MethodCustomProjectInfo:
@@ -31561,6 +31620,12 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[StartCPUProfileResponse](data)
 	case MethodCustomStopCPUProfile:
 		return unmarshalValue[StopCPUProfileResponse](data)
+	case MethodCustomStartFlightRecorder:
+		return unmarshalValue[StartFlightRecorderResponse](data)
+	case MethodCustomSnapshotFlightRecorder:
+		return unmarshalValue[SnapshotFlightRecorderResponse](data)
+	case MethodCustomStopFlightRecorder:
+		return unmarshalValue[StopFlightRecorderResponse](data)
 	case MethodCustomInitializeAPISession:
 		return unmarshalValue[CustomInitializeAPISessionResponse](data)
 	case MethodCustomProjectInfo:
@@ -31887,6 +31952,12 @@ const (
 	MethodCustomStartCPUProfile Method = "custom/startCPUProfile"
 	// Stops CPU profiling and saves the profile.
 	MethodCustomStopCPUProfile Method = "custom/stopCPUProfile"
+	// Starts the runtime/trace flight recorder.
+	MethodCustomStartFlightRecorder Method = "custom/startFlightRecorder"
+	// Writes a snapshot of the flight recorder window to the specified directory.
+	MethodCustomSnapshotFlightRecorder Method = "custom/snapshotFlightRecorder"
+	// Stops the runtime/trace flight recorder.
+	MethodCustomStopFlightRecorder Method = "custom/stopFlightRecorder"
 	// Custom request to initialize an API session.
 	MethodCustomInitializeAPISession Method = "custom/initializeAPISession"
 	// Returns project information (e.g. the tsconfig.json path) for a given text document.
@@ -32425,6 +32496,24 @@ type StopCPUProfileResponse = *ProfileResult
 
 // Type mapping info for `custom/stopCPUProfile`
 var CustomStopCPUProfileInfo = RequestInfo[NoParams, StopCPUProfileResponse]{Method: MethodCustomStopCPUProfile}
+
+// Response type for `custom/startFlightRecorder`
+type StartFlightRecorderResponse = Null
+
+// Type mapping info for `custom/startFlightRecorder`
+var CustomStartFlightRecorderInfo = RequestInfo[*FlightRecorderStartParams, StartFlightRecorderResponse]{Method: MethodCustomStartFlightRecorder}
+
+// Response type for `custom/snapshotFlightRecorder`
+type SnapshotFlightRecorderResponse = *ProfileResult
+
+// Type mapping info for `custom/snapshotFlightRecorder`
+var CustomSnapshotFlightRecorderInfo = RequestInfo[*ProfileParams, SnapshotFlightRecorderResponse]{Method: MethodCustomSnapshotFlightRecorder}
+
+// Response type for `custom/stopFlightRecorder`
+type StopFlightRecorderResponse = Null
+
+// Type mapping info for `custom/stopFlightRecorder`
+var CustomStopFlightRecorderInfo = RequestInfo[NoParams, StopFlightRecorderResponse]{Method: MethodCustomStopFlightRecorder}
 
 // Response type for `custom/initializeAPISession`
 type CustomInitializeAPISessionResponse = *InitializeAPISessionResult

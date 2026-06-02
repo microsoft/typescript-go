@@ -194,6 +194,24 @@
                 "category": "Developer"
             },
             {
+                "command": "typescript.native-preview.dev.startFlightRecorder",
+                "title": "TypeScript Native Preview: Start Flight Recorder",
+                "enablement": "typescript.native-preview.serverRunning && !typescript.native-preview.flightRecorderRunning",
+                "category": "Developer"
+            },
+            {
+                "command": "typescript.native-preview.dev.snapshotFlightRecorder",
+                "title": "TypeScript Native Preview: Capture Flight Recorder Snapshot",
+                "enablement": "typescript.native-preview.flightRecorderRunning",
+                "category": "Developer"
+            },
+            {
+                "command": "typescript.native-preview.dev.stopFlightRecorder",
+                "title": "TypeScript Native Preview: Stop Flight Recorder",
+                "enablement": "typescript.native-preview.flightRecorderRunning",
+                "category": "Developer"
+            },
+            {
                 "command": "typescript.native-preview.initializeAPIConnection.ui",
                 "title": "Initialize API Connection",
                 "enablement": "typescript.native-preview.serverRunning",

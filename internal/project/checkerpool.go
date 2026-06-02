@@ -79,7 +79,7 @@ func (p *CheckerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 		}
 	}
 
-	checker, index := p.getCheckerLocked(requestID)
+	checker, index := p.getCheckerLocked(ctx, requestID)
 	if file != nil {
 		if p.fileAssociations == nil {
 			p.fileAssociations = make(map[*ast.SourceFile]int)
@@ -89,7 +89,7 @@ func (p *CheckerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 	return checker, p.createRelease(requestID, index, checker)
 }
 
-func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
+func (p *CheckerPool) getCheckerLocked(ctx context.Context, requestID string) (*checker.Checker, int) {
 	if checker, index := p.getImmediatelyAvailableChecker(); checker != nil {
 		p.inUse[checker] = true
 		if requestID != "" {
@@ -99,7 +99,7 @@ func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int)
 	}
 
 	if !p.isFullLocked() {
-		checker, index := p.createCheckerLocked()
+		checker, index := p.createCheckerLocked(ctx)
 		p.inUse[checker] = true
 		if requestID != "" {
 			p.requestAssociations[requestID] = index
@@ -218,10 +218,10 @@ func (p *CheckerPool) isFullLocked() bool {
 	return true
 }
 
-func (p *CheckerPool) createCheckerLocked() (*checker.Checker, int) {
+func (p *CheckerPool) createCheckerLocked(ctx context.Context) (*checker.Checker, int) {
 	for i, existing := range p.checkers {
 		if existing == nil {
-			checker, _ := checker.NewChecker(p.program, nil)
+			checker, _ := checker.NewChecker(ctx, p.program, nil)
 			p.checkers[i] = checker
 			return checker, i
 		}

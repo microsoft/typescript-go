@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/runtimetrace"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
@@ -231,6 +232,7 @@ type ATAStateChange struct {
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*Overlay, session *Session) *Snapshot {
+	defer runtimetrace.Region(ctx, "project.Snapshot.Clone")()
 	var logger *logging.LogTree
 
 	// Print in-progress logs immediately if cloning fails

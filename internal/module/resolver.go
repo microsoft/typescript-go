@@ -1,6 +1,7 @@
 package module
 
 import (
+	"context"
 	"fmt"
 	"maps"
 	"slices"
@@ -12,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/runtimetrace"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
@@ -264,6 +266,10 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 }
 
 func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []DiagAndArgs) {
+	if runtimetrace.IsEnabled() {
+		defer runtimetrace.Region(context.TODO(), "module.ResolveModuleName")()
+		runtimetrace.LogUnsafef(context.TODO(), "resolve", "module=%s from=%s", moduleName, containingFile)
+	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
 	traceBuilder := r.newTraceBuilder()
 
