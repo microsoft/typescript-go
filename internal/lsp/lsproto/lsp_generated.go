@@ -17180,17 +17180,14 @@ type ServerCapabilities struct {
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace,omitzero"`
 
-	// The server provides source definition support via custom/textDocument/sourceDefinition.
-	CustomSourceDefinitionProvider *bool `json:"customSourceDefinitionProvider,omitzero"`
+	// Experimental server capabilities.
+	Experimental *ExperimentalServerCapabilities `json:"experimental,omitzero"`
 
 	// Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.
 	VSOnAutoInsertProvider *VSOnAutoInsertOptions `json:"_vs_onAutoInsertProvider,omitzero"`
 
 	// The server provides VS-specific grouped references via textDocument/_vs_references.
 	VSReferencesProvider *bool `json:"_vs_referencesProvider,omitzero"`
-
-	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
-	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*ServerCapabilities)(nil)
@@ -17447,11 +17444,11 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 			if err := json.UnmarshalDecode(dec, &s.Workspace); err != nil {
 				return err
 			}
-		case `"customSourceDefinitionProvider"`:
+		case `"experimental"`:
 			if dec.PeekKind() == 'n' {
-				return errNull("customSourceDefinitionProvider")
+				return errNull("experimental")
 			}
-			if err := json.UnmarshalDecode(dec, &s.CustomSourceDefinitionProvider); err != nil {
+			if err := json.UnmarshalDecode(dec, &s.Experimental); err != nil {
 				return err
 			}
 		case `"_vs_onAutoInsertProvider"`:
@@ -17466,13 +17463,6 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("_vs_referencesProvider")
 			}
 			if err := json.UnmarshalDecode(dec, &s.VSReferencesProvider); err != nil {
-				return err
-			}
-		case `"customMultiDocumentHighlightProvider"`:
-			if dec.PeekKind() == 'n' {
-				return errNull("customMultiDocumentHighlightProvider")
-			}
-			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
 				return err
 			}
 		default:
@@ -28440,6 +28430,59 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *json.Decoder) error {
 			missingProps = append(missingProps, "uri")
 		}
 		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// ExperimentalServerCapabilities contains experimental capabilities under development.
+type ExperimentalServerCapabilities struct {
+	// The server provides source definition support via custom/textDocument/sourceDefinition.
+	CustomSourceDefinitionProvider *bool `json:"customSourceDefinitionProvider,omitzero"`
+
+	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
+	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*ExperimentalServerCapabilities)(nil)
+
+func (s *ExperimentalServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"customSourceDefinitionProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("customSourceDefinitionProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.CustomSourceDefinitionProvider); err != nil {
+				return err
+			}
+		case `"customMultiDocumentHighlightProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("customMultiDocumentHighlightProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
 	}
 
 	return nil

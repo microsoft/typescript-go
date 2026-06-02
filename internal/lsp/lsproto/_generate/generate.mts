@@ -167,6 +167,24 @@ const customStructures: Structure[] = [
         ],
     },
     {
+        name: "ExperimentalServerCapabilities",
+        properties: [
+            {
+                name: "customSourceDefinitionProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+            },
+            {
+                name: "customMultiDocumentHighlightProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
+            },
+        ],
+        documentation: "ExperimentalServerCapabilities contains experimental capabilities under development.",
+    },
+    {
         name: "VSOnAutoInsertOptions",
         properties: [
             {
@@ -865,12 +883,6 @@ function patchAndPreprocessModel() {
         // Patch ServerCapabilities to add custom tsgo capability flags
         if (structure.name === "ServerCapabilities") {
             structure.properties.push({
-                name: "customSourceDefinitionProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
-            });
-            structure.properties.push({
                 name: "_vs_onAutoInsertProvider",
                 type: { kind: "reference", name: "VSOnAutoInsertOptions" },
                 optional: true,
@@ -959,16 +971,6 @@ function patchAndPreprocessModel() {
                 type: { kind: "reference", name: "VSClassifiedTextElement" },
                 optional: true,
                 documentation: "A colorized label for the signature, providing classified text runs for VS syntax coloring.",
-            });
-        }
-
-        // Patch ServerCapabilities to add custom tsgo capability flags
-        if (structure.name === "ServerCapabilities") {
-            structure.properties.push({
-                name: "customMultiDocumentHighlightProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
             });
         }
 
@@ -1078,9 +1080,18 @@ function patchAndPreprocessModel() {
         structure.extends = undefined;
         structure.mixins = undefined;
 
-        // Remove experimental properties from ServerCapabilities and ClientCapabilities
-        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
+        // Remove experimental properties from ClientCapabilities
+        if (structure.name === "ClientCapabilities") {
             structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        }
+
+        // Replace experimental LSPAny with typed ExperimentalServerCapabilities in ServerCapabilities
+        if (structure.name === "ServerCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalServerCapabilities" };
+                expProp.optional = true;
+            }
         }
 
         // Remove method and registerOptions from Registration (handled by custom codegen)
