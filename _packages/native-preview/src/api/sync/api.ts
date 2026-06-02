@@ -112,10 +112,12 @@ export class API<FromLSP extends boolean = false> {
     private initialized: boolean = false;
     private activeSnapshots: Set<Snapshot> = new Set();
     private latestSnapshot: Snapshot | undefined;
+    readonly internal: InternalAPI;
 
     constructor(options: APIOptions | LSPConnectionOptions) {
         this.client = new Client(options);
         this.sourceFileCache = new SourceFileCache();
+        this.internal = new InternalAPI(this.client, () => this.ensureInitialized());
     }
 
     /**
@@ -195,6 +197,17 @@ export class API<FromLSP extends boolean = false> {
 
     clearSourceFileCache(): void {
         this.sourceFileCache.clear();
+    }
+}
+
+export class InternalAPI {
+    private client: Client;
+    private ensureInitialized: () => void;
+
+    /** @internal */
+    constructor(client: Client, ensureInitialized: () => void) {
+        this.client = client;
+        this.ensureInitialized = ensureInitialized;
     }
 
     startCPUProfile(dir: string): void {
