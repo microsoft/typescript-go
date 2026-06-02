@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -11,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -6545,8 +6547,12 @@ func skipTo(text string, pos int, s string) int {
 }
 
 func lineEndPos(text string, pos int) int {
-	if i := strings.IndexByte(text[pos:], '\n'); i >= 0 {
-		return pos + i
+	for pos < len(text) {
+		ch, size := utf8.DecodeRuneInString(text[pos:])
+		if stringutil.IsLineBreak(ch) {
+			return pos
+		}
+		pos += size
 	}
 	return len(text)
 }
