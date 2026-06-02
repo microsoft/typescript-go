@@ -49,7 +49,8 @@ func (l *LanguageService) ProvideSignatureHelp(
 		int(l.converters.LineAndCharacterToPosition(sourceFile, position)),
 		program,
 		sourceFile,
-		context)
+		context,
+	)
 	return lsproto.SignatureHelpOrNull{SignatureHelp: items}, nil
 }
 
@@ -309,7 +310,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	itemSeen := 0
 	for i := range items {
 		item := items[i]
-		if (candidates)[i] == resolvedSignature {
+		if candidates[i] == resolvedSignature {
 			selectedItemIndex = itemSeen
 			if len(item) > 1 {
 				count := 0
@@ -363,9 +364,8 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 
 		// Set VS-specific colorized label if we have classified runs
 		if len(item.ColorizedRuns) > 0 {
-			sigInfo.VSColorizedLabel = &lsproto.ClassifiedTextElement{
-				Runs:   item.ColorizedRuns,
-				VSType: "ClassifiedTextElement",
+			sigInfo.VSColorizedLabel = &lsproto.VSClassifiedTextElement{
+				Runs: item.ColorizedRuns,
 			}
 		}
 
@@ -699,7 +699,7 @@ type signatureInformation struct {
 	// Needed only here, not in lsp
 	IsVariadic bool
 	// Classified text runs for VS colorized label
-	ColorizedRuns []*lsproto.ClassifiedTextRun
+	ColorizedRuns []*lsproto.VSClassifiedTextRun
 }
 
 type signatureHelpItemInfo struct {
