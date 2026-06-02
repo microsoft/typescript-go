@@ -80,6 +80,10 @@ type Watcher struct {
 	watchTerminated chan struct{}   // closed when a watch terminates
 	doCycleCh       chan struct{}   // buffered signal to run DoCycle off the callback goroutine
 	debugLog        io.Writer       // nil = silent; set via TS_WATCH_DEBUG
+
+	changedMu       sync.Mutex
+	changedPaths    map[string]fswatch.EventKind // event path → last event kind
+	changedOverflow bool                         // true on ErrOverflow; forces full scan fallback
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -224,12 +228,38 @@ func shouldIgnoreWatchPath(path string) bool {
 		strings.Contains(p, "/.#")
 }
 
+func (w *Watcher) hasRelevantChanges(changedPaths map[string]fswatch.EventKind) bool {
+	for eventPath := range changedPaths {
+		if _, ok := w.fileWatcher.WatchStateEntry(eventPath); ok {
+			return true
+		}
+	}
+	return false
+}
+
+func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventKind) {
+	caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
+	cwd := w.sys.GetCurrentDirectory()
+	for eventPath := range changedPaths {
+		p := tspath.ToPath(eventPath, cwd, caseSensitive)
+		if _, ok := w.sourceFileCache.Load(p); ok {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] evicting cached source file: %s\n", p)
+			}
+			w.sourceFileCache.Delete(p)
+		}
+	}
+}
+
 func (w *Watcher) onWatchEvents(events []fswatch.Event, err error) {
 	if err != nil {
 		if errors.Is(err, fswatch.ErrOverflow) {
 			if w.debugLog != nil {
 				fmt.Fprintf(w.debugLog, "[watch] event overflow, triggering rebuild\n")
 			}
+			w.changedMu.Lock()
+			w.changedOverflow = true
+			w.changedMu.Unlock()
 			w.signalDoCycle()
 			return
 		}
@@ -257,6 +287,14 @@ func (w *Watcher) onWatchEvents(events []fswatch.Event, err error) {
 			}
 			fmt.Fprintln(w.debugLog)
 		}
+		w.changedMu.Lock()
+		if w.changedPaths == nil {
+			w.changedPaths = make(map[string]fswatch.EventKind, len(events))
+		}
+		for _, e := range events {
+			w.changedPaths[e.Path] = e.Kind
+		}
+		w.changedMu.Unlock()
 		w.signalDoCycle()
 	}
 }
@@ -276,17 +314,42 @@ func (w *Watcher) signalDoCycle() {
 func (w *Watcher) DoCycle() {
 	w.mu.Lock()
 	defer w.mu.Unlock()
+
+	w.changedMu.Lock()
+	changedPaths := w.changedPaths
+	overflow := w.changedOverflow
+	w.changedPaths = nil
+	w.changedOverflow = false
+	w.changedMu.Unlock()
+
+	hasEvents := len(changedPaths) > 0 || overflow
+
 	if w.recheckTsConfig() {
 		return
 	}
-	if !w.fileWatcher.WatchStateUninitialized() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
-		if w.debugLog != nil {
-			fmt.Fprintf(w.debugLog, "[watch] DoCycle: no tracked files changed, skipping rebuild\n")
+
+	if hasEvents && !overflow && !w.configModified {
+		if w.hasRelevantChanges(changedPaths) {
+			w.evictChangedSourceFiles(changedPaths)
+		} else if !w.fileWatcher.WatchStateUninitialized() && !w.fileWatcher.HasChangesFromWatchState() {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] DoCycle: %d event(s) not relevant to compilation, skipping rebuild\n", len(changedPaths))
+			}
+			if w.testing != nil {
+				w.testing.OnProgram(w.program)
+			}
+			return
 		}
-		if w.testing != nil {
-			w.testing.OnProgram(w.program)
+	} else if !hasEvents {
+		if !w.fileWatcher.WatchStateUninitialized() && !w.configModified && !w.fileWatcher.HasChangesFromWatchState() {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] DoCycle: no tracked files changed, skipping rebuild\n")
+			}
+			if w.testing != nil {
+				w.testing.OnProgram(w.program)
+			}
+			return
 		}
-		return
 	}
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
