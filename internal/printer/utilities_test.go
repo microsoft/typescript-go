@@ -91,6 +91,29 @@ func TestEscapeJsxAttributeString(t *testing.T) {
 	}
 }
 
+func TestLineTerminatorStartBefore(t *testing.T) {
+	t.Parallel()
+	data := []struct {
+		text          string
+		nextLineStart int
+		expected      int
+	}{
+		{"a\nb", 2, 1},
+		{"a\rb", 2, 1},
+		{"a\r\nb", 3, 1},
+		{"abc", 4, 4},
+		{"a\u2028b", 4, 1},
+		{"a\u2029b", 4, 1},
+	}
+	for i, rec := range data {
+		t.Run(fmt.Sprintf("[%d]", i), func(t *testing.T) {
+			t.Parallel()
+			actual := lineTerminatorStartBefore(rec.text, rec.nextLineStart)
+			assert.Equal(t, rec.expected, actual)
+		})
+	}
+}
+
 func TestIsRecognizedTripleSlashComment(t *testing.T) {
 	t.Parallel()
 	data := []struct {

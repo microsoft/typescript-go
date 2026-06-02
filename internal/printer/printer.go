@@ -700,7 +700,7 @@ func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, k
 			}
 
 			// Write the comment line text
-			end := min(loc.End(), nextLineStart-1)
+			end := min(loc.End(), lineTerminatorStartBefore(text, nextLineStart))
 			currentLineText := strings.TrimSpace(text[pos:end])
 			if len(currentLineText) > 0 {
 				p.writeComment(currentLineText)

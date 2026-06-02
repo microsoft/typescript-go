@@ -881,6 +881,21 @@ func calculateIndent(text string, pos int, end int) int {
 	return currentLineIndent
 }
 
+func lineTerminatorStartBefore(text string, nextLineStart int) int {
+	if nextLineStart <= 0 || nextLineStart > len(text) {
+		return nextLineStart
+	}
+	r, size := utf8.DecodeLastRuneInString(text[:nextLineStart])
+	if !stringutil.IsLineBreak(r) {
+		return nextLineStart
+	}
+	// Handle \r\n: the '\n' is preceded by a '\r'.
+	if r == '\n' && nextLineStart-size > 0 && text[nextLineStart-size-1] == '\r' {
+		return nextLineStart - size - 1
+	}
+	return nextLineStart - size
+}
+
 // lineCharacterCache provides cached line/character lookups for a source file,
 // optimized for monotonically increasing positions (e.g., during source map emit).
 //

@@ -163,6 +163,8 @@ func TestEmit(t *testing.T) {
 		{title: "ArrayLiteralExpression#4", input: `[,a]`, output: `[, a];`},
 		{title: "ArrayLiteralExpression#5", input: `[...a]`, output: `[...a];`},
 		{title: "ArrayLiteralExpression#6", input: `const array = [/* comment */];`, output: `const array = [ /* comment */];`},
+		{title: "MultiLineComment_LineSeparator", input: "/* a\u2028b */ const x = 1;", output: "/* a\nb */ const x = 1;"},
+		{title: "MultiLineComment_ParagraphSeparator", input: "/* a\u2029b */ const x = 1;", output: "/* a\nb */ const x = 1;"},
 		{title: "ObjectLiteralExpression#1", input: `({})`, output: `({});`},
 		{title: "ObjectLiteralExpression#2", input: `({a,})`, output: `({ a, });`},
 		{title: "ShorthandPropertyAssignment", input: `({a})`, output: `({ a });`},
