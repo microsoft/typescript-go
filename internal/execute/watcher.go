@@ -230,7 +230,8 @@ func shouldIgnoreWatchPath(path string) bool {
 
 func (w *Watcher) hasRelevantChanges(changedPaths map[string]fswatch.EventKind) bool {
 	for eventPath := range changedPaths {
-		if _, ok := w.fileWatcher.WatchStateEntry(eventPath); ok {
+		p := tspath.NormalizeSlashes(eventPath)
+		if _, ok := w.fileWatcher.WatchStateEntry(p); ok {
 			return true
 		}
 	}
