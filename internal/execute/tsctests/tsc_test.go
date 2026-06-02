@@ -119,6 +119,11 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--lib", "es6 ", "first.ts"},
 		},
 		{
+			subScenario:     "option diagnostics are suppressed when there are syntactic errors",
+			files:           FileMap{"/home/src/workspaces/project/a.ts": `const x: = 1;`},
+			commandLineArgs: []string{"--strictPropertyInitialization", "--strictNullChecks", "false", "a.ts"},
+		},
+		{
 			subScenario: "Project is empty string",
 			files: FileMap{
 				"/home/src/workspaces/project/first.ts": `export const a = 1`,
@@ -3713,7 +3718,8 @@ func TestTscNoEmitOnError(t *testing.T) {
 					},
 				})
 			}
-			edits = append(edits,
+			edits = append(
+				edits,
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
