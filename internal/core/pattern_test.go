@@ -3,6 +3,8 @@ package core
 import "testing"
 
 func TestPatternOverlappingMatch(t *testing.T) {
+	t.Parallel()
+
 	p := TryParsePattern("ab*ab")
 	if p.Matches("ab") {
 		t.Errorf("expected 'ab' not to match 'ab*ab'")
