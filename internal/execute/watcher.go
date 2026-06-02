@@ -196,7 +196,8 @@ func (w *Watcher) subscribe() error {
 		if w.debugLog != nil {
 			fmt.Fprintf(w.debugLog, "[watch] no tsconfig, watching %s\n", dir)
 		}
-		watch, err := watcher.WatchDirectory(dir, w.onWatchEvents,
+		watch, err := watcher.WatchDirectory(
+			dir, w.onWatchEvents,
 			fswatch.WithIgnore(shouldIgnoreWatchPath),
 		)
 		if err != nil {
