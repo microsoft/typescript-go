@@ -45,8 +45,9 @@ type snapshotData struct {
 	signatureNextID     uint64
 	signatureRegistryMu sync.RWMutex
 
-	// nodeTablesByPath maps file paths to node index tables built during getSourceFile.
-	// Used for O(1) node handle resolution via index-based handles.
+	// nodeTablesByPath maps file paths to node index tables used for index-based node handles.
+	// Tables are populated when a file is encoded (getSourceFile) and may also be built lazily
+	// on-demand when generating handles before getSourceFile is called.
 	nodeTablesByPath   map[tspath.Path]*encoder.NodeIndexTable
 	nodeTablesByPathMu sync.RWMutex
 }
@@ -67,8 +68,8 @@ func (sd *snapshotData) getProgram(projectHandle ProjectID) (*compiler.Program, 
 	return program, nil
 }
 
-// nodeHandleFrom creates a node handle using index-based format if the file has been encoded,
-// falling back to the position-based format otherwise.
+// nodeHandleFrom creates an index-based node handle (index.kind.path), building a node index table
+// for the file on-demand if needed.
 func (sd *snapshotData) nodeHandleFrom(node *ast.Node) NodeHandle {
 	sourceFile := ast.GetSourceFileOfNode(node)
 	path := sourceFile.Path()
@@ -1912,7 +1913,7 @@ func (sd *snapshotData) resolveNodeHandle(program *compiler.Program, handle Node
 	table := sd.nodeTablesByPath[path]
 	sd.nodeTablesByPathMu.RUnlock()
 
-	if table != nil && int(idx) < len(table.Nodes) {
+	if table != nil && idx < uint64(len(table.Nodes)) {
 		node := table.Nodes[idx]
 		if node != nil {
 			return node, nil
