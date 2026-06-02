@@ -379,8 +379,8 @@ const customStructures: Structure[] = [
         properties: [
             {
                 name: "verbosity",
-                type: { kind: "base", name: "integer" },
-                documentation: "The log verbosity level. Maps to the VS Code LogLevel enum: 0=Off, 1=Trace, 2=Debug, 3=Info, 4=Warning, 5=Error.",
+                type: { kind: "reference", name: "LogVerbosity" },
+                documentation: "The log verbosity level.",
             },
         ],
         documentation: "Parameters for the custom/setLogVerbosity notification.",
@@ -566,6 +566,19 @@ const customStructures: Structure[] = [
 ];
 
 const customEnumerations: Enumeration[] = [
+    {
+        name: "LogVerbosity",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All logging disabled." },
+            { name: "Trace", value: 1, documentation: "Most verbose; includes LSP request/response traces." },
+            { name: "Debug", value: 2, documentation: "Verbose server logs." },
+            { name: "Info", value: 3, documentation: "Normal server logs." },
+            { name: "Warning", value: 4, documentation: "Warnings only." },
+            { name: "Error", value: 5, documentation: "Errors only." },
+        ],
+        documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
     {
         name: "VsReferenceKind",
         type: { kind: "base", name: "integer" },

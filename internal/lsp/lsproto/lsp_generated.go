@@ -29257,8 +29257,8 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // Parameters for the custom/setLogVerbosity notification.
 type SetLogVerbosityParams struct {
-	// The log verbosity level. Maps to the VS Code LogLevel enum: 0=Off, 1=Trace, 2=Debug, 3=Info, 4=Warning, 5=Error.
-	Verbosity int32 `json:"verbosity"`
+	// The log verbosity level.
+	Verbosity LogVerbosity `json:"verbosity"`
 }
 
 var _ json.UnmarshalerFrom = (*SetLogVerbosityParams)(nil)
@@ -31051,6 +31051,36 @@ type TokenFormat string
 const (
 	TokenFormatRelative TokenFormat = "relative"
 )
+
+// Log verbosity level, mirroring the VS Code LogLevel enum values.
+type LogVerbosity int32
+
+const (
+	// All logging disabled.
+	LogVerbosityOff LogVerbosity = 0
+	// Most verbose; includes LSP request/response traces.
+	LogVerbosityTrace LogVerbosity = 1
+	// Verbose server logs.
+	LogVerbosityDebug LogVerbosity = 2
+	// Normal server logs.
+	LogVerbosityInfo LogVerbosity = 3
+	// Warnings only.
+	LogVerbosityWarning LogVerbosity = 4
+	// Errors only.
+	LogVerbosityError LogVerbosity = 5
+)
+
+const _LogVerbosity_name = "OffTraceDebugInfoWarningError"
+
+var _LogVerbosity_index = [...]uint16{0, 3, 8, 13, 17, 24, 29}
+
+func (e LogVerbosity) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_LogVerbosity_index)-1 {
+		return fmt.Sprintf("LogVerbosity(%d)", e)
+	}
+	return _LogVerbosity_name[_LogVerbosity_index[i]:_LogVerbosity_index[i+1]]
+}
 
 type VsReferenceKind int32
 

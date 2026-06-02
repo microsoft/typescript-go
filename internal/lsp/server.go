@@ -1291,7 +1291,7 @@ func (s *Server) handleSetTrace(_ context.Context, _ *lsproto.SetTraceParams) er
 }
 
 func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLogVerbosityParams) error {
-	s.logger.SetVerbosity(int(params.Verbosity))
+	s.logger.SetVerbosity(params.Verbosity)
 	return nil
 }
 
