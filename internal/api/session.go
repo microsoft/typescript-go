@@ -1059,7 +1059,7 @@ func (s *Session) handleGetResolvedSignature(ctx context.Context, params *GetRes
 	}
 	defer setup.done()
 
-	node, err := s.resolveNodeHandle(setup.program, params.Location)
+	node, err := setup.sd.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -1357,7 +1357,7 @@ func (s *Session) handleGetTypeFromTypeNode(ctx context.Context, params *GetType
 	}
 	defer setup.done()
 
-	node, err := s.resolveNodeHandle(setup.program, params.Location)
+	node, err := setup.sd.resolveNodeHandle(setup.program, params.Location)
 	if err != nil {
 		return nil, err
 	}
@@ -1544,7 +1544,7 @@ func (s *Session) handleSignatureToSignatureDeclaration(ctx context.Context, par
 
 	var enclosingDeclaration *ast.Node
 	if params.Location != "" {
-		enclosingDeclaration, err = s.resolveNodeHandle(setup.program, params.Location)
+		enclosingDeclaration, err = setup.sd.resolveNodeHandle(setup.program, params.Location)
 		if err != nil {
 			return nil, err
 		}
@@ -1555,7 +1555,7 @@ func (s *Session) handleSignatureToSignatureDeclaration(ctx context.Context, par
 		return nil, nil
 	}
 
-	data, err := encoder.EncodeNode(node.AsNode(), nil)
+	data, _, err := encoder.EncodeNode(node.AsNode(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode signature declaration: %w", err)
 	}
