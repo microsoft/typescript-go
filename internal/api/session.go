@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -87,7 +88,7 @@ func (sd *snapshotData) nodeHandleFrom(node *ast.Node) NodeHandle {
 		sd.nodeTablesByPathMu.Unlock()
 	}
 
-	idx := table.Indices[node]
+	idx := table.GetIndex(node)
 	return NodeHandle(fmt.Sprintf("%d.%s", idx, path))
 }
 
@@ -256,6 +257,8 @@ type Session struct {
 
 	// latestSnapshot tracks the most recently created snapshot for computing diffs.
 	latestSnapshot SnapshotID
+
+	cpuProfiler pprof.CPUProfiler
 }
 
 // Ensure Session implements Handler
@@ -505,9 +508,44 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetDeclarationDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetConfigFileParsingDiagnostics):
 		return s.handleGetConfigFileParsingDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodStartCPUProfile):
+		return s.handleStartCPUProfile(ctx, parsed.(*ProfileParams))
+	case string(MethodStopCPUProfile):
+		return s.handleStopCPUProfile(ctx)
+	case string(MethodSaveHeapProfile):
+		return s.handleSaveHeapProfile(ctx, parsed.(*ProfileParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
+}
+
+func (s *Session) handleStartCPUProfile(_ context.Context, params *ProfileParams) (any, error) {
+	if params == nil || params.Dir == "" {
+		return nil, fmt.Errorf("%w: dir is required", ErrClientError)
+	}
+	if err := s.cpuProfiler.StartCPUProfile(params.Dir); err != nil {
+		return nil, fmt.Errorf("%w: failed to start CPU profile: %w", ErrClientError, err)
+	}
+	return nil, nil
+}
+
+func (s *Session) handleStopCPUProfile(_ context.Context) (*ProfileResult, error) {
+	filePath, err := s.cpuProfiler.StopCPUProfile()
+	if err != nil {
+		return nil, fmt.Errorf("%w: failed to stop CPU profile: %w", ErrClientError, err)
+	}
+	return &ProfileResult{File: filePath}, nil
+}
+
+func (s *Session) handleSaveHeapProfile(_ context.Context, params *ProfileParams) (*ProfileResult, error) {
+	if params == nil || params.Dir == "" {
+		return nil, fmt.Errorf("%w: dir is required", ErrClientError)
+	}
+	filePath, err := pprof.SaveHeapProfile(params.Dir)
+	if err != nil {
+		return nil, fmt.Errorf("%w: failed to save heap profile: %w", ErrClientError, err)
+	}
+	return &ProfileResult{File: filePath}, nil
 }
 
 // HandleNotification implements Handler.

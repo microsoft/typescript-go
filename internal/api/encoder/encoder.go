@@ -1,11 +1,14 @@
 package encoder
 
 import (
+	"cmp"
 	"encoding/binary"
 	"fmt"
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/zeebo/xxh3"
 )
 
@@ -299,8 +302,38 @@ func encodeParseOptions(opts ast.ExternalModuleIndicatorOptions) uint32 {
 
 // NodeIndexTable maps between AST nodes and their encoder indices for O(1) node handle resolution.
 type NodeIndexTable struct {
-	Nodes   []*ast.Node          // index → node (for resolution)
-	Indices map[*ast.Node]uint32 // node → index (for handle creation)
+	Nodes      []*ast.Node // index → node (for resolution)
+	sortedOnce sync.Once
+	sortedIdx  []uint32 // indices into Nodes, sorted by node ID; built lazily
+}
+
+// GetIndex returns the encoder index for the given node.
+// On the first call the sortedIdx array is built (O(n log n) sort on a flat []uint32),
+// then subsequent calls use binary search (O(log n)).  This avoids the map[*ast.Node]uint32
+// allocation overhead that dominated EncodeSourceFile CPU time while still being fast
+// enough for practical use: log₂(100k) ≈ 17 comparisons per lookup.
+func (t *NodeIndexTable) GetIndex(node *ast.Node) uint32 {
+	t.sortedOnce.Do(func() {
+		idx := make([]uint32, 0, len(t.Nodes))
+		for i, n := range t.Nodes {
+			if n != nil {
+				idx = append(idx, uint32(i))
+			}
+		}
+		nodes := t.Nodes
+		slices.SortFunc(idx, func(a, b uint32) int {
+			return cmp.Compare(ast.GetNodeId(nodes[a]), ast.GetNodeId(nodes[b]))
+		})
+		t.sortedIdx = idx
+	})
+	target := ast.GetNodeId(node)
+	i, found := core.BinarySearchUniqueFunc(t.sortedIdx, func(_ int, el uint32) int {
+		return cmp.Compare(ast.GetNodeId(t.Nodes[el]), target)
+	})
+	if found {
+		return t.sortedIdx[i]
+	}
+	return 0
 }
 
 // BuildNodeIndexTable walks the AST in the same order as encodeTree and builds
@@ -310,12 +343,11 @@ type NodeIndexTable struct {
 func BuildNodeIndexTable(sourceFile *ast.SourceFile) *NodeIndexTable {
 	var nodeCount uint32
 	nodeTable := make([]*ast.Node, 1, sourceFile.NodeCount+1) // index 0 = nil sentinel
-	nodeIndices := make(map[*ast.Node]uint32, sourceFile.NodeCount)
 
 	visitor := &ast.NodeVisitor{
 		Hooks: ast.NodeVisitorHooks{
 			VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-				if nodeList == nil || len(nodeList.Nodes) == 0 {
+				if nodeList == nil {
 					return nodeList
 				}
 				nodeCount++
@@ -334,7 +366,6 @@ func BuildNodeIndexTable(sourceFile *ast.SourceFile) *NodeIndexTable {
 	visitor.Visit = func(node *ast.Node) *ast.Node {
 		nodeCount++
 		nodeTable = append(nodeTable, node)
-		nodeIndices[node] = nodeCount
 		visitor.VisitEachChild(node)
 		for _, jsdoc := range node.JSDoc(sourceFile) {
 			visitor.Visit(jsdoc)
@@ -346,14 +377,13 @@ func BuildNodeIndexTable(sourceFile *ast.SourceFile) *NodeIndexTable {
 	// Index 1 = root node (matches encodeTree)
 	nodeCount++
 	nodeTable = append(nodeTable, rootNode)
-	nodeIndices[rootNode] = nodeCount
 
 	visitor.VisitEachChild(rootNode)
 	for _, jsdoc := range rootNode.JSDoc(sourceFile) {
 		visitor.Visit(jsdoc)
 	}
 
-	return &NodeIndexTable{Nodes: nodeTable, Indices: nodeIndices}
+	return &NodeIndexTable{Nodes: nodeTable}
 }
 
 // EncodeSourceFile encodes an entire source file AST into the binary format.
@@ -400,7 +430,6 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, *NodeIn
 	// Build node index table for O(1) handle resolution.
 	// Index 0 is a nil sentinel; real nodes start at index 1.
 	nodeTable := make([]*ast.Node, 1, initialNodeCount+1) // index 0 = nil sentinel
-	nodeIndices := make(map[*ast.Node]uint32, initialNodeCount)
 
 	// Build a small map of nodes we need to track indices for (imports + moduleAugmentations).
 	// Values start at 0 and are filled in during the walk.
@@ -468,7 +497,6 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, *NodeIn
 	visitor.Visit = func(node *ast.Node) *ast.Node {
 		nodeCount++
 		nodeTable = append(nodeTable, node)
-		nodeIndices[node] = nodeCount
 		if prevIndex != 0 {
 			// this is the next sibling of `prevNode`
 			b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
@@ -507,7 +535,6 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, *NodeIn
 	nodeCount++
 	parentIndex++
 	nodeTable = append(nodeTable, rootNode) // index 1 = root node
-	nodeIndices[rootNode] = nodeCount
 
 	sfExtendedDataOffset = len(extendedData)
 	nodes = appendUint32s(nodes, uint32(rootNode.Kind), utf16(rootNode.Pos()), utf16(rootNode.End()), 0, 0, getNodeData(rootNode, strs, positionMap, &extendedData, &structuredData), uint32(rootNode.Flags))
@@ -576,7 +603,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, *NodeIn
 		extendedData,
 		structuredData,
 		nodes,
-	), &NodeIndexTable{Nodes: nodeTable, Indices: nodeIndices}, nil
+	), &NodeIndexTable{Nodes: nodeTable}, nil
 }
 
 func appendUint32s(buf []byte, values ...uint32) []byte {

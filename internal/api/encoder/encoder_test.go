@@ -65,20 +65,23 @@ func TestBuildNodeIndexTableMatchesEncode(t *testing.T) {
 
 	buildTable := encoder.BuildNodeIndexTable(sourceFile)
 
-	// Both tables should have the same length
+	// Both tables should produce identical Nodes slices
 	assert.Equal(t, len(buildTable.Nodes), len(encodeTable.Nodes), "Nodes slice length mismatch")
-	assert.Equal(t, len(buildTable.Indices), len(encodeTable.Indices), "Indices map length mismatch")
-
-	// Every node should have the same index in both tables
-	for node, encIdx := range encodeTable.Indices {
-		buildIdx, ok := buildTable.Indices[node]
-		assert.Assert(t, ok, "node at encode index %d missing from build table", encIdx)
-		assert.Equal(t, buildIdx, encIdx, "index mismatch for node kind=%s", node.Kind.String())
-	}
 
 	// Every index should map to the same node
 	for i := range encodeTable.Nodes {
 		assert.Equal(t, buildTable.Nodes[i], encodeTable.Nodes[i], "node mismatch at index %d", i)
+	}
+
+	// GetIndex on both tables should agree for every non-nil node
+	for i, node := range encodeTable.Nodes {
+		if node == nil {
+			continue
+		}
+		encIdx := encodeTable.GetIndex(node)
+		buildIdx := buildTable.GetIndex(node)
+		assert.Equal(t, encIdx, uint32(i), "encodeTable.GetIndex mismatch at index %d, node kind=%s", i, node.Kind.String())
+		assert.Equal(t, buildIdx, encIdx, "buildTable.GetIndex mismatch for node kind=%s", node.Kind.String())
 	}
 }
 
@@ -95,6 +98,53 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	for b.Loop() {
 		_, _, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(b, err)
+	}
+}
+
+func BenchmarkGetIndex(b *testing.B) {
+	repo.SkipIfNoTypeScriptSubmodule(b)
+	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
+	fileContent, err := os.ReadFile(filePath)
+	assert.NilError(b, err)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/checker.ts",
+		Path:     "/checker.ts",
+	}, string(fileContent), core.ScriptKindTS)
+
+	_, table, err := encoder.EncodeSourceFile(sourceFile)
+	assert.NilError(b, err)
+
+	// Collect non-nil nodes for lookup.
+	var nodes []*ast.Node
+	for _, n := range table.Nodes {
+		if n != nil {
+			nodes = append(nodes, n)
+		}
+	}
+
+	// Warm up the index build before timing.
+	_ = table.GetIndex(nodes[0])
+
+	b.ResetTimer()
+	for b.Loop() {
+		for _, n := range nodes {
+			_ = table.GetIndex(n)
+		}
+	}
+}
+
+func BenchmarkBuildNodeIndexTable(b *testing.B) {
+	repo.SkipIfNoTypeScriptSubmodule(b)
+	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
+	fileContent, err := os.ReadFile(filePath)
+	assert.NilError(b, err)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/checker.ts",
+		Path:     "/checker.ts",
+	}, string(fileContent), core.ScriptKindTS)
+
+	for b.Loop() {
+		encoder.BuildNodeIndexTable(sourceFile)
 	}
 }
 

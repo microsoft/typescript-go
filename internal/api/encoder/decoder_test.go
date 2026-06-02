@@ -89,7 +89,7 @@ func TestDecodeSourceFile_VariableDeclarationListFlags(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			sf := parseSourceFile(tt.code)
-			buf, err := encoder.EncodeSourceFile(sf)
+			buf, _, err := encoder.EncodeSourceFile(sf)
 			assert.NilError(t, err)
 
 			decoded, err := encoder.DecodeSourceFile(buf)
@@ -285,7 +285,7 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 	t.Parallel()
 	// "this" must decode as KeywordExpression, not Token, or the printer panics
 	sf := parseSourceFile("const x = this;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -302,7 +302,7 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 func TestDecodeSourceFile_EmptyModuleBlock(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("namespace N { }")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -322,7 +322,7 @@ func TestDecodeSourceFile_EmptyBlockAndParams(t *testing.T) {
 	// Empty blocks and parameter lists must decode with non-nil NodeLists (not nil),
 	// matching parser behavior. Previously the decoder left them nil, crashing the printer.
 	sf := parseSourceFile("function foo() {}")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -342,7 +342,7 @@ func TestDecodeSourceFile_ArrowFunctionEmptyParams(t *testing.T) {
 	// `() => {}` must decode with non-nil Parameters (empty NodeList),
 	// matching parser behavior. Previously the decoder left it nil, crashing the printer.
 	sf := parseSourceFile("const f = () => {};")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -362,7 +362,7 @@ func TestDecodeSourceFile_FunctionExpressionEmptyParams(t *testing.T) {
 	t.Parallel()
 	// `function() {}` must decode with non-nil Parameters (empty NodeList).
 	sf := parseSourceFile("const f = function() {};")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -377,7 +377,7 @@ func TestDecodeSourceFile_FunctionExpressionEmptyParams(t *testing.T) {
 func TestDecodeSourceFile_PostfixUnaryOperator(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let i = 0; i++;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -392,7 +392,7 @@ func TestDecodeSourceFile_PostfixUnaryOperator(t *testing.T) {
 func TestDecodeSourceFile_PrefixUnaryOperator(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let x = true; !x;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -407,7 +407,7 @@ func TestDecodeSourceFile_PrefixUnaryOperator(t *testing.T) {
 func TestDecodeSourceFile_PostfixDecrement(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let n = 5; n--;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
