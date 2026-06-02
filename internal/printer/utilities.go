@@ -924,10 +924,11 @@ func (c *lineCharacterCache) getLineAndCharacter(pos int) (line int, character c
 		// Full computation from line start.
 		character = core.UTF16Len(c.text[lineStart:endPos])
 	}
+	cachedChar := character
 	character += core.UTF16Offset(pos - endPos)
 	c.cachedLine = line
 	c.cachedPos = endPos
-	c.cachedChar = character
+	c.cachedChar = cachedChar
 	c.hasCached = true
 	return line, character
 }
