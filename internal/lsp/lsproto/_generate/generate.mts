@@ -375,6 +375,33 @@ const customStructures: Structure[] = [
         documentation: "Result for the custom/projectInfo request.",
     },
     {
+        name: "ProjectFilesProject",
+        properties: [
+            {
+                name: "configFilePath",
+                type: { kind: "base", name: "string" },
+                documentation: "The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project, or an empty string for an inferred project.",
+            },
+            {
+                name: "files",
+                type: { kind: "array", element: { kind: "base", name: "DocumentUri" } },
+                documentation: "The list of source file URIs in this project.",
+            },
+        ],
+        documentation: "A project and its source files.",
+    },
+    {
+        name: "ProjectFilesResult",
+        properties: [
+            {
+                name: "projects",
+                type: { kind: "array", element: { kind: "reference", name: "ProjectFilesProject" } },
+                documentation: "The list of projects and their source files.",
+            },
+        ],
+        documentation: "Result for the custom/projectFiles request.",
+    },
+    {
         name: "PerformanceStatsTelemetryEvent",
         properties: [
             {
@@ -707,6 +734,13 @@ const customRequests: Request[] = [
         result: { kind: "reference", name: "ProjectInfoResult" },
         messageDirection: "clientToServer",
         documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
+    },
+    {
+        method: "custom/projectFiles",
+        typeName: "CustomProjectFilesRequest",
+        result: { kind: "reference", name: "ProjectFilesResult" },
+        messageDirection: "clientToServer",
+        documentation: "Returns all projects and the list of source files in each project.",
     },
     {
         method: "custom/textDocument/sourceDefinition",
