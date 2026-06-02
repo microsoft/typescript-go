@@ -79,6 +79,7 @@ export class Client implements vscode.Disposable {
             initializationOptions: {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
+                logVerbosity: this.outputChannel.logLevel,
             },
             errorHandler: this.errorHandler,
             middleware: {
@@ -177,6 +178,10 @@ export class Client implements vscode.Disposable {
                 options: { env },
             },
         };
+
+        // Refresh the initial log verbosity in case the output channel's log
+        // level changed between construction and start.
+        this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
 
         this.client = new LanguageClient(
             "typescript.native-preview",

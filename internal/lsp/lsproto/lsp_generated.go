@@ -28117,6 +28117,9 @@ type InitializationOptions struct {
 
 	// EnableTelemetry enables sending telemetry events from the server to the client.
 	EnableTelemetry *bool `json:"enableTelemetry,omitzero"`
+
+	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
+	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptions)(nil)
@@ -28158,6 +28161,13 @@ func (s *InitializationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("enableTelemetry")
 			}
 			if err := json.UnmarshalDecode(dec, &s.EnableTelemetry); err != nil {
+				return err
+			}
+		case `"logVerbosity"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("logVerbosity")
+			}
+			if err := json.UnmarshalDecode(dec, &s.LogVerbosity); err != nil {
 				return err
 			}
 		default:

@@ -62,6 +62,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
             },
+            {
+                name: "logVerbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                optional: true,
+                documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },

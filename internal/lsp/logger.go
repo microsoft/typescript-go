@@ -33,9 +33,16 @@ func maxVerbosityForMessageType(msgType lsproto.MessageType) lsproto.LogVerbosit
 		return lsproto.LogVerbosityWarning
 	case lsproto.MessageTypeInfo:
 		return lsproto.LogVerbosityInfo
+	case lsproto.MessageTypeDebug:
+		return lsproto.LogVerbosityDebug
 	default:
 		return lsproto.LogVerbosityInfo
 	}
+}
+
+// isValidLogVerbosity reports whether v is one of the defined LogVerbosity values.
+func isValidLogVerbosity(v lsproto.LogVerbosity) bool {
+	return v >= lsproto.LogVerbosityOff && v <= lsproto.LogVerbosityError
 }
 
 func (l *logger) sendLogMessage(msgType lsproto.MessageType, message string) {

@@ -998,6 +998,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	s.initStarted.Store(true)
 
 	s.initializeParams = params
+	if params.InitializationOptions != nil && params.InitializationOptions.LogVerbosity != nil {
+		if v := *params.InitializationOptions.LogVerbosity; isValidLogVerbosity(v) {
+			s.logger.SetVerbosity(v)
+		}
+	}
 	s.clientCapabilities = params.Capabilities.Resolve()
 	if s.clientCapabilities.Window.WorkDoneProgress {
 		s.projectProgress = newProjectLoadingProgress(s, s.progressDelay)
@@ -1291,6 +1296,9 @@ func (s *Server) handleSetTrace(_ context.Context, _ *lsproto.SetTraceParams) er
 }
 
 func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLogVerbosityParams) error {
+	if !isValidLogVerbosity(params.Verbosity) {
+		return fmt.Errorf("%w: invalid log verbosity %d", lsproto.ErrorCodeInvalidParams, params.Verbosity)
+	}
 	s.logger.SetVerbosity(params.Verbosity)
 	return nil
 }
