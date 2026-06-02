@@ -5,26 +5,26 @@
 // Currently tsgo corrupts them to U+FFFD; this baseline documents that behavior.
 // (Fix tracked separately alongside other intrinsic string mapping work.)
 type U = Uppercase<"\uD800">;
->U : "ï¿½"
+>U : "ï¿½ï¿½ï¿½"
 
 type L = Lowercase<"A\uD800B">;
->L : "aï¿½b"
+>L : "aï¿½ï¿½ï¿½b"
 
 type C = Capitalize<"\uDC00x">;
->C : "ï¿½x"
+>C : "ï¿½°€x"
 
 type Un = Uncapitalize<"\uD834X">;
->Un : "ï¿½X"
+>Un : "ï¿½ ´X"
 
 const u: "\uD800" = "x" as unknown as U;
->u : "ï¿½"
->"x" as unknown as U : "ï¿½"
+>u : "\uD800"
+>"x" as unknown as U : "ï¿½ï¿½ï¿½"
 >"x" as unknown : unknown
 >"x" : "x"
 
 const l: "a\uD800b" = "x" as unknown as L;
->l : "aï¿½b"
->"x" as unknown as L : "aï¿½b"
+>l : "a\uD800b"
+>"x" as unknown as L : "aï¿½ï¿½ï¿½b"
 >"x" as unknown : unknown
 >"x" : "x"
 

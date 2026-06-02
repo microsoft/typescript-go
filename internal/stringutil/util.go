@@ -268,3 +268,48 @@ func TruncateByRunes(str string, maxLength int) string {
 	}
 	return str
 }
+
+const (
+	SurrogateHighStart = 0xD800
+	SurrogateLowStart  = 0xDC00
+	SurrogateEnd       = 0xE000
+	SupplementaryStart = 0x10000
+)
+
+func IsHighSurrogate(ch rune) bool {
+	return SurrogateHighStart <= ch && ch < SurrogateLowStart
+}
+
+func IsLowSurrogate(ch rune) bool {
+	return SurrogateLowStart <= ch && ch < SurrogateEnd
+}
+
+func IsSurrogate(ch rune) bool {
+	return SurrogateHighStart <= ch && ch < SurrogateEnd
+}
+
+func SurrogatePairToCodePoint(high rune, low rune) rune {
+	return (high-SurrogateHighStart)<<10 | (low - SurrogateLowStart) + SupplementaryStart
+}
+
+func CodePointToSurrogatePair(ch rune) (high rune, low rune) {
+	return SurrogateHighStart + (ch-SupplementaryStart)>>10, SurrogateLowStart + (ch-SupplementaryStart)&0x3FF
+}
+
+func EncodeJSStringRune(ch rune) string {
+	if IsSurrogate(ch) {
+		return string([]byte{
+			0xED,
+			byte(0x80 | ((ch >> 6) & 0x3F)),
+			byte(0x80 | (ch & 0x3F)),
+		})
+	}
+	return string(ch)
+}
+
+func DecodeJSStringRune(s string) (rune, int) {
+	if len(s) >= 3 && s[0] == 0xED && s[1] >= 0xA0 && s[1] <= 0xBF && s[2] >= 0x80 && s[2] <= 0xBF {
+		return rune(0xD000) | rune(s[1]&0x3F)<<6 | rune(s[2]&0x3F), 3
+	}
+	return utf8.DecodeRuneInString(s)
+}

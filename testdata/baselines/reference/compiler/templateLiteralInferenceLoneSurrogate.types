@@ -11,20 +11,20 @@ type Rest<S extends string> = S extends `${infer _H}${infer R}` ? R : never;
 >Rest : Rest<S>
 
 type H = Head<"\uD800abc">;
->H : "ï¿½"
+>H : "í"
 
 type R = Rest<"\uD800abc">;
->R : "abc"
+>R : " €abc"
 
 const h: "\uD800" = "x" as unknown as H;
->h : "ï¿½"
->"x" as unknown as H : "ï¿½"
+>h : "\uD800"
+>"x" as unknown as H : "í"
 >"x" as unknown : unknown
 >"x" : "x"
 
 const r: "abc" = "x" as unknown as R;
 >r : "abc"
->"x" as unknown as R : "abc"
+>"x" as unknown as R : " €abc"
 >"x" as unknown : unknown
 >"x" : "x"
 

@@ -6,29 +6,29 @@
 // string: "\uD83D" + "\uDE00" === "😀". The combined literal type should be
 // "😀", with no leftover lone surrogates.
 type Hi = "\uD83D";
->Hi : "�"
+>Hi : "\uD83D"
 
 type Lo = "\uDE00";
->Lo : "�"
+>Lo : "\uDE00"
 
 type Pair = `${Hi}${Lo}`;
->Pair : "��"
+>Pair : "\uD83D\uDE00"
 
 const p: Pair = "😀";
->p : "��"
+>p : "\uD83D\uDE00"
 >"😀" : "😀"
 
 const q: "😀" = "x" as unknown as Pair;
 >q : "😀"
->"x" as unknown as Pair : "��"
+>"x" as unknown as Pair : "\uD83D\uDE00"
 >"x" as unknown : unknown
 >"x" : "x"
 
 // A non-adjacent boundary must NOT combine: the gap keeps the halves lone.
 type Gapped = `${Hi}-${Lo}`;
->Gapped : "�-�"
+>Gapped : "\uD83D-\uDE00"
 
 const g: Gapped = "\uD83D-\uDE00";
->g : "�-�"
->"\uD83D-\uDE00" : "�-�"
+>g : "\uD83D-\uDE00"
+>"\uD83D-\uDE00" : "\uD83D-\uDE00"
 

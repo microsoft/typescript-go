@@ -1,6 +1,6 @@
-braceEscapedSurrogatePairLiteralType.ts(7,7): error TS2322: Type '"��"' is not assignable to type '"😀"'.
-braceEscapedSurrogatePairLiteralType.ts(8,7): error TS2322: Type '"��"' is not assignable to type '"😀"'.
-braceEscapedSurrogatePairLiteralType.ts(9,7): error TS2322: Type '"��"' is not assignable to type '"😀"'.
+braceEscapedSurrogatePairLiteralType.ts(7,7): error TS2322: Type '"\uD83D\uDE00"' is not assignable to type '"😀"'.
+braceEscapedSurrogatePairLiteralType.ts(8,7): error TS2322: Type '"\uD83D\uDE00"' is not assignable to type '"😀"'.
+braceEscapedSurrogatePairLiteralType.ts(9,7): error TS2322: Type '"\uD83D\uDE00"' is not assignable to type '"😀"'.
 
 
 ==== braceEscapedSurrogatePairLiteralType.ts (3 errors) ====
@@ -12,11 +12,11 @@ braceEscapedSurrogatePairLiteralType.ts(9,7): error TS2322: Type '"��"' is n
     
     const a: "😀" = braceEscaped;
           ~
-!!! error TS2322: Type '"��"' is not assignable to type '"😀"'.
+!!! error TS2322: Type '"\uD83D\uDE00"' is not assignable to type '"😀"'.
     const b: typeof literal = braceEscaped;
           ~
-!!! error TS2322: Type '"��"' is not assignable to type '"😀"'.
+!!! error TS2322: Type '"\uD83D\uDE00"' is not assignable to type '"😀"'.
     const c: typeof adjacentEscaped = braceEscaped;
           ~
-!!! error TS2322: Type '"��"' is not assignable to type '"😀"'.
+!!! error TS2322: Type '"\uD83D\uDE00"' is not assignable to type '"😀"'.
     

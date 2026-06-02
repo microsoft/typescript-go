@@ -1749,31 +1749,31 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			if codePoint < 0 {
 				return s.text[start:s.pos]
 			}
-			return string(codePoint)
+			return stringutil.EncodeJSStringRune(codePoint)
 		}
 		if codePoint < 0 {
 			return s.text[start:s.pos]
-		} else if codePointIsHighSurrogate(codePoint) &&
+		} else if stringutil.IsHighSurrogate(codePoint) &&
 			(flags&EscapeSequenceScanningFlagsRegularExpression == 0 || flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0) &&
 			s.char() == '\\' && s.charAt(1) == 'u' && s.charAt(2) != '{' {
 			// Combine \uHigh\uLow into a single code point in string literals (always) and
 			// in regex AnyUnicodeMode. In non-unicode regex mode they are separate atoms.
 			savedPos := s.pos
 			nextCodePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
-			if codePointIsLowSurrogate(nextCodePoint) {
-				return string(surrogatePairToCodepoint(codePoint, nextCodePoint))
+			if stringutil.IsLowSurrogate(nextCodePoint) {
+				return string(stringutil.SurrogatePairToCodePoint(codePoint, nextCodePoint))
 			}
 			s.pos = savedPos
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
-				return encodeSurrogate(codePoint)
+				return stringutil.EncodeJSStringRune(codePoint)
 			}
-		} else if (codePointIsHighSurrogate(codePoint) || codePointIsLowSurrogate(codePoint)) &&
+		} else if stringutil.IsSurrogate(codePoint) &&
 			flags&EscapeSequenceScanningFlagsRegularExpression != 0 {
 			// Lone surrogate inside a non-unicode regex: encode as CESU-8 so scanClassRanges
 			// can compare surrogates numerically. Must NOT apply to string literals.
-			return encodeSurrogate(codePoint)
+			return stringutil.EncodeJSStringRune(codePoint)
 		}
-		return string(codePoint)
+		return stringutil.EncodeJSStringRune(codePoint)
 	case 'x':
 		// '\xDD'
 		for ; s.pos < start+4; s.pos++ {

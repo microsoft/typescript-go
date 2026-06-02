@@ -78,9 +78,12 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 	pos := 0
 	i := 0
 	for i < len(s) {
-		ch, size := utf8.DecodeRuneInString(s[i:])
+		ch, size := stringutil.DecodeJSStringRune(s[i:])
 
 		escape := false
+		if ch >= 0xD800 && ch <= 0xDFFF {
+			escape = true
+		}
 
 		// This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,
 		// paragraphSeparator, and nextLine. The latter three are just desirable to suppress new lines in
@@ -136,6 +139,8 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 					ch -= 0x10000
 					encodeUtf16EscapeSequence(b, (ch&0b11111111110000000000>>10)+0xD800)
 					encodeUtf16EscapeSequence(b, (ch&0b00000000001111111111)+0xDC00)
+				} else if ch >= 0xD800 && ch <= 0xDFFF {
+					encodeUtf16EscapeSequence(b, ch)
 				} else if ch == 0 {
 					if i+1 < len(s) && stringutil.IsDigit(rune(s[i+1])) {
 						// If the null character is followed by digits, print as a hex escape to prevent the result from
