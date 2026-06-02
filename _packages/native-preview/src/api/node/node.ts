@@ -215,7 +215,7 @@ export interface ParsedNodeHandle {
 
 /**
  * Parse a node handle string into its components.
- * Handle format: "index.path" where path starts with / and may contain dots.
+ * Handle format: "index.path" where path may contain dots.
  */
 export function parseNodeHandle(handle: string): ParsedNodeHandle {
     const dot = handle.indexOf(".");

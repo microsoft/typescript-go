@@ -101,38 +101,6 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	}
 }
 
-func BenchmarkGetIndex(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
-	fileContent, err := os.ReadFile(filePath)
-	assert.NilError(b, err)
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/checker.ts",
-		Path:     "/checker.ts",
-	}, string(fileContent), core.ScriptKindTS)
-
-	_, table, err := encoder.EncodeSourceFile(sourceFile)
-	assert.NilError(b, err)
-
-	// Collect non-nil nodes for lookup.
-	var nodes []*ast.Node
-	for _, n := range table.Nodes {
-		if n != nil {
-			nodes = append(nodes, n)
-		}
-	}
-
-	// Warm up the index build before timing.
-	_ = table.GetIndex(nodes[0])
-
-	b.ResetTimer()
-	for b.Loop() {
-		for _, n := range nodes {
-			_ = table.GetIndex(n)
-		}
-	}
-}
-
 func BenchmarkBuildNodeIndexTable(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
