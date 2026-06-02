@@ -6,5 +6,5 @@
 
 //// [unicodeLineSeparatorInMultilineComment.js]
 "use strict";
-/* aâ€
+/* a
 b */ const x = 1;
