@@ -240,8 +240,9 @@ class Session implements vscode.Disposable {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection.ui", async () => {
             try {
                 const result = await this.client.initializeAPISession();
-                const copy = await vscode.window.showInformationMessage(vscode.l10n.t(`API session initialized. Listening on: {0}`, result.pipe), vscode.l10n.t("Copy"));
-                if (copy === vscode.l10n.t("Copy")) {
+                const copyString = vscode.l10n.t("Copy");
+                const copy = await vscode.window.showInformationMessage(vscode.l10n.t(`API session initialized. Listening on: {0}`, result.pipe), copyString);
+                if (copy === copyString) {
                     await vscode.env.clipboard.writeText(result.pipe);
                 }
             }
@@ -399,7 +400,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await config.update("tsdk", wsVersion.tsdkPath, vscode.ConfigurationTarget.Workspace);
-                    outputChannel.appendLine(`Switched to workspace tsgo version ${wsVersion.version}.`);
+                    outputChannel.appendLine(`Switched to workspace tsgo version (${wsVersion.version}).`);
                 },
             });
         }
