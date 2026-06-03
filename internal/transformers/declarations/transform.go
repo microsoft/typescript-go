@@ -1161,22 +1161,51 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 	// Check if the RHS is a class expression - emit as a class declaration instead of a typed variable
 	if ast.IsBinaryExpression(input) {
 		if rhs := unwrapParenthesizedExpression(input.AsBinaryExpression().Right); ast.IsClassExpression(rhs) {
-			// When there is a CJS export assignment (module.exports = ...), the class
-			// goes inside a namespace merge rather than being a top-level named export.
+			// When there is a CJS export assignment (module.exports = ...), each class
+			// expression gets its own unique namespace to avoid name conflicts when
+			// multiple exports share the same class name.
 			if tx.cjsExportAssignmentName != nil {
-				classMods := []*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)}
-				className := name
-				if !ast.IsIdentifier(className) {
+				ce := rhs.AsClassExpression()
+				var className *ast.Node
+				if ce.Name() != nil && len(ce.Name().Text()) > 0 {
+					className = tx.Factory().NewIdentifier(ce.Name().Text())
+				} else {
 					className = tx.Factory().NewUniqueNameEx("_class", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 				}
+
+				classMods := []*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)}
 				classDecl := tx.transformClassExpressionToDeclaration(rhs, className, tx.Factory().NewModifierList(classMods))
 				tx.preserveJsDoc(classDecl, input)
-				if !ast.IsIdentifier(name) {
-					exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, className, name)})), nil, nil)
-					tx.removeAllComments(exportDecl)
-					return tx.wrapInCJSExportNamespace(tx.Factory().NewSyntaxList([]*ast.Node{classDecl, exportDecl}))
+
+				nsName := tx.Factory().NewUniqueNameEx("_ns", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+				var nsMods []*ast.Node
+				if tx.needsDeclare {
+					nsMods = append(nsMods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
 				}
-				return tx.wrapInCJSExportNamespace(classDecl)
+				nsDecl := tx.Factory().NewModuleDeclaration(
+					tx.Factory().NewModifierList(nsMods),
+					ast.KindNamespaceKeyword,
+					nsName,
+					tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
+				)
+
+				aliasBase := "_exported"
+				if nameText := name.Text(); ast.IsIdentifier(name) && scanner.IsIdentifierText("_"+nameText, core.LanguageVariantStandard) {
+					aliasBase = "_" + nameText
+				}
+				importAlias := tx.Factory().NewUniqueNameEx(aliasBase, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+				qualifiedName := tx.Factory().NewQualifiedName(nsName, className)
+				importDecl := tx.Factory().NewImportEqualsDeclaration(nil, false, importAlias, qualifiedName)
+
+				exportSpecifier := tx.Factory().NewExportSpecifier(false, importAlias, name)
+				exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{exportSpecifier})), nil, nil)
+				tx.removeAllComments(exportDecl)
+
+				return tx.Factory().NewSyntaxList([]*ast.Node{
+					nsDecl,
+					importDecl,
+					tx.wrapInCJSExportNamespace(exportDecl),
+				})
 			}
 			var mods []*ast.Node
 			mods = append(mods, tx.Factory().NewModifier(ast.KindExportKeyword))
