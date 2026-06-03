@@ -28,11 +28,8 @@ var (
 
 func comparePathsByRedirect(a ModulePath, b ModulePath, useCaseSensitiveFileNames bool) int {
 	// Redirects sort first, matching Strada's compareBooleans(b.isRedirect, a.isRedirect).
-	if a.IsRedirect != b.IsRedirect {
-		if a.IsRedirect {
-			return -1
-		}
-		return 1
+	if c := core.CompareBooleans(b.IsRedirect, a.IsRedirect); c != 0 {
+		return c
 	}
 	if c := tspath.CompareNumberOfDirectorySeparators(a.FileName, b.FileName); c != 0 {
 		return c
