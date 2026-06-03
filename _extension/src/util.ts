@@ -37,7 +37,7 @@ export interface ExeInfo {
     version: string;
 }
 
-export async function getBuiltinExePath(context: vscode.ExtensionContext): Promise<{ path: string; version: string; }> {
+export async function getBuiltinExePath(context: vscode.ExtensionContext): Promise<ExeInfo> {
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         const exeName = `tsgo${process.platform === "win32" ? ".exe" : ""}`;
         const exe = context.asAbsolutePath(path.join("../", "built", "local", exeName));

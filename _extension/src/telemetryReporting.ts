@@ -60,35 +60,43 @@ export function createTelemetryReporter(vscReporter: VSCodeTelemetryReporter): E
         vscReporter.sendTelemetryEvent(eventName, propsAsObj);
     }
 
-    function sendTelemetryEvent(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void {
+    function sendTelemetryEvent(eventName: string, data?: {}, measurements?: {}): void {
         data = { ...sharedProperties, ...data };
         vscReporter.sendTelemetryEvent(eventName, data, measurements);
     }
 
-    function sendTelemetryErrorEvent(eventName: string, data?: Record<string, string>, measurements?: Record<string, number>): void {
+    function sendTelemetryErrorEvent(eventName: string, data?: {}, measurements?: {}): void {
         data = { ...sharedProperties, ...data };
         vscReporter.sendTelemetryErrorEvent(eventName, data, measurements);
     }
 }
 
-export type LSServerStart = {
+// These use a common prefix to avoid conflicts with server-side events.
+export interface LSCommonProperties {
+    "tscommon.version": string;
+    "tscommon.serverSessionId": string;
+}
+
+export interface LSServerStart extends LSCommonProperties {
+    // Unnecessary with tscommon.version, but some server-side events
+    // include a 'version' which may have different precise contents.
     version: string;
-};
+}
 
-export type LSConnectionError = {
+export interface LSConnectionError extends LSCommonProperties {
     resultingAction: string;
-};
+}
 
-export type LSServerConnectionClosed = {
+export interface LSServerConnectionClosed extends LSCommonProperties {
     resultingAction: string;
     lastStderr: string;
-};
+}
 
-export type LSErrorResponse = {
+export interface LSErrorResponse extends LSCommonProperties {
     errorCode: string;
     requestMethod: string;
     stack: string;
-};
+}
 
 export type EnableNativePreview = {};
 
