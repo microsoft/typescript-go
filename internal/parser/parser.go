@@ -4634,7 +4634,7 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 				// We stop parsing if we have an operator with higher precedence than `as` or `satisfies` because
 				// continuing would make it impossible to erase the `as` or `satisfies` without changing the meaning
 				// of the expression. See https://github.com/microsoft/TypeScript/issues/63527.
-				if ast.GetBinaryOperatorPrecedence(p.token) > ast.OperatorPrecedenceRelational {
+				if ast.GetBinaryOperatorPrecedence(p.reScanGreaterThanToken()) > ast.OperatorPrecedenceRelational {
 					break
 				}
 			}
