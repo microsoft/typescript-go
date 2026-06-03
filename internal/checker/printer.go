@@ -199,9 +199,11 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 	}
 	nodeBuilder, release := c.getNodeBuilder()
 	defer release()
-	if vc != nil {
-		nodeBuilder.verbosity = vc
-	}
+	oldVerbosity := nodeBuilder.verbosity
+	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	typeNode := nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	if typeNode == nil {
 		panic("should always get typenode")
@@ -323,9 +325,11 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 
 	nodeBuilder, release := c.getNodeBuilder()
 	defer release()
-	if vc != nil {
-		nodeBuilder.verbosity = vc
-	}
+	oldVerbosity := nodeBuilder.verbosity
+	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	sig := nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	p := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
@@ -419,8 +423,10 @@ func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFla
 	nodeBuilder, release := c.getNodeBuilder()
 	defer release()
 	oldVerbosity := nodeBuilder.verbosity
-	defer func() { nodeBuilder.verbosity = oldVerbosity }()
 	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	nodes := nodeBuilder.ExpandSymbolForHover(symbol, meaning)
 	if len(nodes) == 0 {
 		return ""
@@ -445,8 +451,10 @@ func (c *Checker) TypeParameterToStringEx(t *Type, enclosingDeclaration *ast.Nod
 	nodeBuilder, release := c.getNodeBuilder()
 	defer release()
 	oldVerbosity := nodeBuilder.verbosity
-	defer func() { nodeBuilder.verbosity = oldVerbosity }()
 	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	typeParamNode := nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsNone, nil)
 	if typeParamNode == nil {
 		return c.TypeToString(t)
