@@ -169,11 +169,11 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 	}
 	resolver := module.NewResolver(host, opts, "", "")
 
-	type result struct {
+	type resolutionResult struct {
 		name     string
 		resolved bool
 	}
-	results := make(chan result, 2)
+	results := make(chan resolutionResult, 2)
 	var wg sync.WaitGroup
 	for _, name := range []string{"pkg", "pkg/"} {
 		containingFile := "/repo/src/a/file.ts"
@@ -182,7 +182,7 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 		}
 		wg.Go(func() {
 			r, _ := resolver.ResolveModuleName(name, containingFile, core.ModuleKindESNext, nil)
-			results <- result{name, r.IsResolved()}
+			results <- resolutionResult{name, r.IsResolved()}
 		})
 	}
 
@@ -242,11 +242,11 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 	resolver := module.NewResolver(host, opts, "", "")
 
 	var panicked atomic.Bool
-	type result struct {
+	type resolutionResult struct {
 		containingFile string
 		resolved       bool
 	}
-	results := make(chan result, 2)
+	results := make(chan resolutionResult, 2)
 	var wg sync.WaitGroup
 	// Two goroutines both resolve "pkg/sub". Each calls getPackageJsonInfo
 	// for the root package directory, reaching FileExists for rootPkgJSON.
@@ -258,7 +258,7 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 				if r := recover(); r != nil {
 					panicked.Store(true)
 				}
-				results <- result{containingFile: containingFile, resolved: resolved}
+				results <- resolutionResult{containingFile: containingFile, resolved: resolved}
 			}()
 			r, _ := resolver.ResolveModuleName("pkg/sub", containingFile, core.ModuleKindESNext, nil)
 			resolved = r.IsResolved()
