@@ -240,6 +240,7 @@ func throwDiagnostic(result printer.SymbolAccessibilityResult) *SymbolAccessibil
 }
 
 func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
+	tx.cjsExportAssignmentName = nil
 	if node.IsDeclarationFile {
 		return node.AsNode()
 	}
@@ -1314,6 +1315,18 @@ func sourceFileHasDeclaration(node *ast.Node, name string) bool {
 			if n := stmt.AsFunctionDeclaration().Name(); n != nil && n.Text() == name {
 				return true
 			}
+		case ast.KindEnumDeclaration:
+			if n := stmt.AsEnumDeclaration().Name(); n != nil && n.Text() == name {
+				return true
+			}
+		case ast.KindInterfaceDeclaration:
+			if n := stmt.AsInterfaceDeclaration().Name(); n != nil && n.Text() == name {
+				return true
+			}
+		case ast.KindTypeAliasDeclaration:
+			if n := stmt.AsTypeAliasDeclaration().Name(); n != nil && n.Text() == name {
+				return true
+			}
 		case ast.KindVariableStatement:
 			for _, decl := range stmt.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 				if n := decl.Name(); n != nil && ast.IsIdentifier(n) && n.Text() == name {
@@ -1347,12 +1360,13 @@ func (tx *DeclarationTransformer) transformClassExpressionToDeclaration(classExp
 		extraMembers = tx.collectThisPropertyAssignments(classExpr)
 	}
 	members := tx.buildClassMembers(classExpr, extraMembers...)
+	typeParameters := tx.ensureTypeParams(classExpr, classExpr.AsClassExpression().TypeParameters)
 	heritageClauses := tx.Visitor().VisitNodes(classExpr.AsClassExpression().HeritageClauses)
 
 	return tx.Factory().NewClassDeclaration(
 		modifiers,
 		className,
-		nil, // type parameters are not used on JS class expressions
+		typeParameters,
 		heritageClauses,
 		members,
 	)
