@@ -27,13 +27,19 @@ var (
 )
 
 func comparePathsByRedirect(a ModulePath, b ModulePath, useCaseSensitiveFileNames bool) int {
-	if a.IsRedirect == b.IsRedirect {
-		return tspath.ComparePaths(a.FileName, b.FileName, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
-	}
-	if a.IsRedirect {
+	// Redirects sort first, matching Strada's compareBooleans(b.isRedirect, a.isRedirect).
+	if a.IsRedirect != b.IsRedirect {
+		if a.IsRedirect {
+			return -1
+		}
 		return 1
 	}
-	return -1
+	if c := tspath.CompareNumberOfDirectorySeparators(a.FileName, b.FileName); c != 0 {
+		return c
+	}
+	// Strada relies on Map insertion order to break remaining ties deterministically;
+	// Go maps are unordered, so compare paths to keep the ordering stable.
+	return tspath.ComparePaths(a.FileName, b.FileName, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
 }
 
 func PathIsBareSpecifier(path string) bool {
