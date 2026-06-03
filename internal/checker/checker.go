@@ -18377,11 +18377,7 @@ func (c *Checker) getTypeOfAccessors(symbol *ast.Symbol) *Type {
 		}
 		getter := ast.GetDeclarationOfKind(symbol, ast.KindGetAccessor)
 		setter := ast.GetDeclarationOfKind(symbol, ast.KindSetAccessor)
-		property := ast.GetDeclarationOfKind(symbol, ast.KindPropertyDeclaration)
-		var accessor *ast.Node
-		if property != nil && ast.IsAutoAccessorPropertyDeclaration(property) {
-			accessor = property
-		}
+		accessor := core.Find(symbol.Declarations, ast.IsAutoAccessorPropertyDeclaration)
 		// We try to resolve a getter type annotation, a setter type annotation, or a getter function
 		// body return type inference, in that order.
 		t := c.getAnnotatedAccessorType(getter)
@@ -28099,6 +28095,9 @@ func (c *Checker) markIdentifierAliasReferenced(location *ast.IdentifierNode) {
 }
 
 func (c *Checker) markPropertyAliasReferenced(location *ast.Node /*PropertyAccessExpression | QualifiedName*/, propSymbol *ast.Symbol, parentType *Type) {
+	if isPartOfImportEqualsModuleReference(location) {
+		return
+	}
 	var left *ast.Node
 	if ast.IsPropertyAccessExpression(location) {
 		left = location.Expression()
@@ -28165,6 +28164,19 @@ func (c *Checker) markPropertyAliasReferenced(location *ast.Node /*PropertyAcces
 	if !(prop != nil && (isConstEnumOrConstEnumOnlyModule(prop) || prop.Flags&ast.SymbolFlagsEnumMember != 0 && location.Parent.Kind == ast.KindEnumMember)) {
 		c.markAliasReferenced(parentSymbol, location)
 	}
+}
+
+func isPartOfImportEqualsModuleReference(location *ast.Node) bool {
+	importEquals := ast.FindAncestorKind(location, ast.KindImportEqualsDeclaration)
+	if importEquals == nil {
+		return false
+	}
+	for node := location; node != nil && node != importEquals; node = node.Parent {
+		if node == importEquals.AsImportEqualsDeclaration().ModuleReference {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Checker) markExportAssignmentAliasReferenced(location *ast.Node /*ExportAssignment*/) {
