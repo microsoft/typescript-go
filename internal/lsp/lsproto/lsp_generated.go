@@ -21142,6 +21142,9 @@ type ClientCapabilities struct {
 	// Since: 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitzero"`
 
+	// Experimental client capabilities.
+	Experimental *ExperimentalClientCapabilities `json:"experimental,omitzero"`
+
 	// Whether the client supports Visual Studio extensions.
 	VSSupportsVisualStudioExtensions *bool `json:"_vs_supportsVisualStudioExtensions,omitzero"`
 
@@ -21200,6 +21203,13 @@ func (s *ClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("general")
 			}
 			if err := json.UnmarshalDecode(dec, &s.General); err != nil {
+				return err
+			}
+		case `"experimental"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("experimental")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Experimental); err != nil {
 				return err
 			}
 		case `"_vs_supportsVisualStudioExtensions"`:
@@ -24346,9 +24356,6 @@ type HoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat *[]MarkupKind `json:"contentFormat,omitzero"`
-
-	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.
-	VerbosityLevel *bool `json:"verbosityLevel,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*HoverClientCapabilities)(nil)
@@ -24379,13 +24386,6 @@ func (s *HoverClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("contentFormat")
 			}
 			if err := json.UnmarshalDecode(dec, &s.ContentFormat); err != nil {
-				return err
-			}
-		case `"verbosityLevel"`:
-			if dec.PeekKind() == 'n' {
-				return errNull("verbosityLevel")
-			}
-			if err := json.UnmarshalDecode(dec, &s.VerbosityLevel); err != nil {
 				return err
 			}
 		default:
@@ -28472,6 +28472,49 @@ func (s *ExperimentalServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) er
 				return errNull("customMultiDocumentHighlightProvider")
 			}
 			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ExperimentalClientCapabilities contains experimental capabilities under development.
+type ExperimentalClientCapabilities struct {
+	// The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.
+	HoverVerbosityLevel *bool `json:"hoverVerbosityLevel,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*ExperimentalClientCapabilities)(nil)
+
+func (s *ExperimentalClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"hoverVerbosityLevel"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("hoverVerbosityLevel")
+			}
+			if err := json.UnmarshalDecode(dec, &s.HoverVerbosityLevel); err != nil {
 				return err
 			}
 		default:
@@ -37513,8 +37556,6 @@ type ResolvedHoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat []MarkupKind `json:"contentFormat,omitzero"`
-	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.
-	VerbosityLevel bool `json:"verbosityLevel,omitzero"`
 }
 
 func (v *HoverClientCapabilities) resolve() ResolvedHoverClientCapabilities {
@@ -37524,7 +37565,6 @@ func (v *HoverClientCapabilities) resolve() ResolvedHoverClientCapabilities {
 	return ResolvedHoverClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
 		ContentFormat:       derefOr(v.ContentFormat),
-		VerbosityLevel:      derefOr(v.VerbosityLevel),
 	}
 }
 
@@ -38953,6 +38993,24 @@ func (v *GeneralClientCapabilities) resolve() ResolvedGeneralClientCapabilities 
 	}
 }
 
+// ResolvedExperimentalClientCapabilities is a resolved version of ExperimentalClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// ExperimentalClientCapabilities contains experimental capabilities under development.
+type ResolvedExperimentalClientCapabilities struct {
+	// The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.
+	HoverVerbosityLevel bool `json:"hoverVerbosityLevel,omitzero"`
+}
+
+func (v *ExperimentalClientCapabilities) resolve() ResolvedExperimentalClientCapabilities {
+	if v == nil {
+		return ResolvedExperimentalClientCapabilities{}
+	}
+	return ResolvedExperimentalClientCapabilities{
+		HoverVerbosityLevel: derefOr(v.HoverVerbosityLevel),
+	}
+}
+
 // ResolvedClientCapabilities is a version of ClientCapabilities where all nested
 // fields are values (not pointers), making it easier to access deeply nested capabilities.
 // Use (*ClientCapabilities).Resolve() to convert from ClientCapabilities.
@@ -38969,6 +39027,8 @@ type ResolvedClientCapabilities struct {
 	//
 	// Since: 3.16.0
 	General ResolvedGeneralClientCapabilities `json:"general,omitzero"`
+	// Experimental client capabilities.
+	Experimental ResolvedExperimentalClientCapabilities `json:"experimental,omitzero"`
 	// Whether the client supports Visual Studio extensions.
 	VSSupportsVisualStudioExtensions bool `json:"_vs_supportsVisualStudioExtensions,omitzero"`
 	// The snippet version supported by the client.
@@ -38990,6 +39050,7 @@ func (v *ClientCapabilities) Resolve() ResolvedClientCapabilities {
 		TextDocument:                     v.TextDocument.resolve(),
 		Window:                           v.Window.resolve(),
 		General:                          v.General.resolve(),
+		Experimental:                     v.Experimental.resolve(),
 		VSSupportsVisualStudioExtensions: derefOr(v.VSSupportsVisualStudioExtensions),
 		VSSupportedSnippetVersion:        derefOr(v.VSSupportedSnippetVersion),
 		VSSupportsNotIncludingTextInTextDocumentDidOpen: derefOr(v.VSSupportsNotIncludingTextInTextDocumentDidOpen),

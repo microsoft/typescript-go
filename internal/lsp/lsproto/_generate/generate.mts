@@ -185,6 +185,18 @@ const customStructures: Structure[] = [
         documentation: "ExperimentalServerCapabilities contains experimental capabilities under development.",
     },
     {
+        name: "ExperimentalClientCapabilities",
+        properties: [
+            {
+                name: "hoverVerbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.",
+            },
+        ],
+        documentation: "ExperimentalClientCapabilities contains experimental capabilities under development.",
+    },
+    {
         name: "VSOnAutoInsertOptions",
         properties: [
             {
@@ -954,16 +966,6 @@ function patchAndPreprocessModel() {
             );
         }
 
-        // Patch HoverClientCapabilities to add verbosityLevel support flag
-        if (structure.name === "HoverClientCapabilities") {
-            structure.properties.push({
-                name: "verbosityLevel",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
-            });
-        }
-
         // Patch SignatureInformation to add VS-specific colorized label
         if (structure.name === "SignatureInformation") {
             structure.properties.push({
@@ -1080,9 +1082,13 @@ function patchAndPreprocessModel() {
         structure.extends = undefined;
         structure.mixins = undefined;
 
-        // Remove experimental properties from ClientCapabilities
+        // Replace experimental LSPAny with typed ExperimentalClientCapabilities in ClientCapabilities
         if (structure.name === "ClientCapabilities") {
-            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalClientCapabilities" };
+                expProp.optional = true;
+            }
         }
 
         // Replace experimental LSPAny with typed ExperimentalServerCapabilities in ServerCapabilities
