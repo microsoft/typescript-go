@@ -78,6 +78,7 @@ type Watcher struct {
 	fileWatcher     *vfswatch.FileWatcher
 	watches         []fswatch.Watch // targeted directory/file watches
 	watchTerminated chan struct{}   // closed when a watch terminates
+	closeOnce       sync.Once       // guards closing watchTerminated exactly once
 	doCycleCh       chan struct{}   // buffered signal to run DoCycle off the callback goroutine
 	debugLog        io.Writer       // nil = silent; set via TS_WATCH_DEBUG
 
@@ -140,16 +141,21 @@ func (w *Watcher) start() {
 		}
 		// Process DoCycle signals on a dedicated goroutine so fswatch
 		// callbacks return immediately and don't block event delivery.
+		// The goroutine exits when watchTerminated is closed.
 		go func() {
-			for range w.doCycleCh {
-				w.DoCycle()
+			for {
+				select {
+				case <-w.watchTerminated:
+					return
+				case <-w.doCycleCh:
+					w.DoCycle()
+				}
 			}
 		}()
 		// Block until a watch terminates (e.g. watched directory deleted),
 		// then clean up.
 		<-w.watchTerminated
 		w.closeWatches()
-		close(w.doCycleCh)
 	}
 }
 
@@ -178,6 +184,23 @@ func (w *Watcher) subscribe() error {
 			}
 			w.watches = append(w.watches, watch)
 		}
+
+		// Watch files explicitly listed in the "files" field of tsconfig.
+		// These aren't covered by wildcard directory watches.
+		for _, path := range w.config.LiteralFileNames() {
+			realPath := w.sys.FS().Realpath(path)
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] watching literal file %s\n", realPath)
+			}
+			watch, err := watcher.WatchFile(realPath, w.onWatchEvents)
+			if err != nil {
+				if w.debugLog != nil {
+					fmt.Fprintf(w.debugLog, "[watch] failed to watch literal file %s: %v\n", realPath, err)
+				}
+				continue
+			}
+			w.watches = append(w.watches, watch)
+		}
 	}
 
 	// Watch config files (tsconfig.json and extended configs) for changes.
@@ -195,7 +218,9 @@ func (w *Watcher) subscribe() error {
 	}
 
 	if len(w.watches) == 0 {
-		// No config file — watch the current directory non-recursively.
+		// No config file — watch the current directory non-recursively
+		// to detect new files, and watch each CLI-specified file individually
+		// in case they reside outside the current directory.
 		dir := w.sys.FS().Realpath(w.sys.GetCurrentDirectory())
 		if w.debugLog != nil {
 			fmt.Fprintf(w.debugLog, "[watch] no tsconfig, watching %s\n", dir)
@@ -208,6 +233,21 @@ func (w *Watcher) subscribe() error {
 			return err
 		}
 		w.watches = append(w.watches, watch)
+
+		for _, path := range w.config.FileNames() {
+			realPath := w.sys.FS().Realpath(tspath.GetNormalizedAbsolutePath(path, w.sys.GetCurrentDirectory()))
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] watching CLI file %s\n", realPath)
+			}
+			watch, err := watcher.WatchFile(realPath, w.onWatchEvents)
+			if err != nil {
+				if w.debugLog != nil {
+					fmt.Fprintf(w.debugLog, "[watch] failed to watch CLI file %s: %v\n", realPath, err)
+				}
+				continue
+			}
+			w.watches = append(w.watches, watch)
+		}
 	}
 
 	return nil
@@ -266,7 +306,7 @@ func (w *Watcher) onWatchEvents(events []fswatch.Event, err error) {
 		}
 		if errors.Is(err, fswatch.ErrWatchTerminated) {
 			fmt.Fprintf(w.sys.Writer(), "Warning: File watcher terminated: %v\n", err)
-			close(w.watchTerminated)
+			w.closeOnce.Do(func() { close(w.watchTerminated) })
 			return
 		}
 		fmt.Fprintf(w.sys.Writer(), "Warning: File watch error: %v\n", err)
@@ -302,10 +342,13 @@ func (w *Watcher) onWatchEvents(events []fswatch.Event, err error) {
 
 // signalDoCycle sends a non-blocking signal to the DoCycle goroutine.
 // If a signal is already pending, additional signals are coalesced.
+// After watchTerminated is closed, signals are silently dropped.
 func (w *Watcher) signalDoCycle() {
 	select {
 	case w.doCycleCh <- struct{}{}:
 		// Signal sent; the DoCycle goroutine will pick it up.
+	case <-w.watchTerminated:
+		// Watch has terminated; drop the signal.
 	default:
 		// A signal is already pending; this event will be covered
 		// by the next DoCycle's filesystem scan.
