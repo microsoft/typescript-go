@@ -196,7 +196,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     protected _sourceFile: SourceFileInfo;
     get id(): string {
-        return `${this.pos}.${this.end}.${this.kind}.${this.sourceFile.path}`;
+        return `${this.index}.${this.kind}.${this.sourceFile.path}`;
     }
 
     constructor(view: DataView, index: number, parent: RemoteNode, sourceFile: SourceFileInfo, offsetNodes: number) {
@@ -652,9 +652,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get finallyBlock(): RemoteNode | undefined {
         return this.getNamedChild("finallyBlock") as RemoteNode;
-    }
-    get fullName(): RemoteNode | undefined {
-        return this.getNamedChild("fullName") as RemoteNode;
     }
     get head(): RemoteNode | undefined {
         return this.getNamedChild("head") as RemoteNode;
