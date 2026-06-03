@@ -12,7 +12,6 @@
     "native-preview.disable.title": "Disable",
     "native-preview.restart.title": "Restart Language Server",
     "native-preview.output.focus.title": "Show Output",
-    "native-preview.lsp-trace.focus.title": "Show LSP Trace",
     "native-preview.reportIssue.title": "Report Issue",
     "native-preview.selectVersion.title": "Select TypeScript Version...",
     "native-preview.goToSourceDefinition.title": "Go to Source Definition",
