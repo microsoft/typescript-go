@@ -136,12 +136,6 @@
                 "category": "TypeScript Native Preview"
             },
             {
-                "command": "typescript.native-preview.lsp-trace.focus",
-                "title": "%native-preview.lsp-trace.focus.title%",
-                "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
-            },
-            {
                 "command": "typescript.native-preview.reportIssue",
                 "title": "%native-preview.reportIssue.title%",
                 "enablement": "typescript.native-preview.serverRunning",
