@@ -61,6 +61,15 @@ type blockingFS struct {
 	arrived    chan struct{} // each blocked goroutine sends one value
 }
 
+func waitForSignal(t *testing.T, ch <-chan struct{}, description string) {
+	t.Helper()
+	select {
+	case <-ch:
+	case <-t.Context().Done():
+		t.Fatalf("timed out waiting for %s", description)
+	}
+}
+
 func (f *blockingFS) FileExists(path string) bool {
 	if path == f.targetPath {
 		f.arrived <- struct{}{}
@@ -77,14 +86,14 @@ func (f *blockingFS) FileExists(path string) bool {
 // Set (reproducing the LoadOrStore race).
 type flipFileExistsFS struct {
 	vfs.FS
-	targetPath     string
-	callCount      atomic.Int32
-	firstArrived   chan struct{} // closed when the first FileExists caller arrives
-	secondArrived  chan struct{} // closed when the second FileExists caller arrives
-	firstGate      chan struct{}
-	secondGate     chan struct{}
-	readArrived    chan struct{} // closed when ReadFile caller arrives
-	readGate       chan struct{}
+	targetPath    string
+	callCount     atomic.Int32
+	firstArrived  chan struct{} // closed when the first FileExists caller arrives
+	secondArrived chan struct{} // closed when the second FileExists caller arrives
+	firstGate     chan struct{}
+	secondGate    chan struct{}
+	readArrived   chan struct{} // closed when ReadFile caller arrives
+	readGate      chan struct{}
 }
 
 func (f *flipFileExistsFS) FileExists(path string) bool {
@@ -177,8 +186,8 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 
 	// Wait for both goroutines to reach the FileExists gate, guaranteeing
 	// both have observed a package.json info-cache miss.
-	<-fs.arrived
-	<-fs.arrived
+	waitForSignal(t, fs.arrived, "first FileExists gate arrival")
+	waitForSignal(t, fs.arrived, "second FileExists gate arrival")
 	close(fs.gate)
 
 	wg.Wait()
@@ -231,24 +240,32 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 	resolver := module.NewResolver(host, opts, "", "")
 
 	var panicked atomic.Bool
+	type result struct {
+		containingFile string
+		resolved       bool
+	}
+	results := make(chan result, 2)
 	var wg sync.WaitGroup
 	// Two goroutines both resolve "pkg/sub". Each calls getPackageJsonInfo
 	// for the root package directory, reaching FileExists for rootPkgJSON.
 	for _, containingFile := range []string{"/repo/src/a/file.ts", "/repo/src/b/file.ts"} {
 		wg.Go(func() {
+			resolved := false
 			defer func() {
 				if r := recover(); r != nil {
 					panicked.Store(true)
 				}
+				results <- result{containingFile: containingFile, resolved: resolved}
 			}()
-			resolver.ResolveModuleName("pkg/sub", containingFile, core.ModuleKindESNext, nil)
+			r, _ := resolver.ResolveModuleName("pkg/sub", containingFile, core.ModuleKindESNext, nil)
+			resolved = r.IsResolved()
 		})
 	}
 
 	// Phase 1: Wait for both goroutines to reach FileExists for the root
 	// package.json, guaranteeing both have observed a cache miss.
-	<-fs.firstArrived
-	<-fs.secondArrived
+	waitForSignal(t, fs.firstArrived, "first root package.json FileExists arrival")
+	waitForSignal(t, fs.secondArrived, "second root package.json FileExists arrival")
 
 	// Phase 2: Release the first FileExists caller (returns false).
 	// It enters the "file not found" branch and stores a nil-Contents entry
@@ -263,11 +280,17 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 	// Phase 4: Wait for the second goroutine to reach ReadFile, then release.
 	// By this point the first goroutine has stored its nil-Contents entry.
 	// The second goroutine's Set (LoadOrStore) will return that stale entry.
-	<-fs.readArrived
+	waitForSignal(t, fs.readArrived, "root package.json ReadFile arrival")
 	close(fs.readGate)
 
 	wg.Wait()
+	close(results)
 	if panicked.Load() {
 		t.Fatal("resolver panicked due to nil Contents dereference in loadModuleFromSpecificNodeModulesDirectory")
+	}
+	for r := range results {
+		if !r.resolved {
+			t.Fatalf("%q failed to resolve pkg/sub", r.containingFile)
+		}
 	}
 }
