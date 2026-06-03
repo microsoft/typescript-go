@@ -53,10 +53,9 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 			if options.TargetSourceFile != nil {
 				// Result from cache
 				diagnostics, _ := h.program.snapshot.emitDiagnosticsPerFile.Load(options.TargetSourceFile.Path())
-				diags := diagnostics.getDiagnostics(h.program.program, options.TargetSourceFile)
 				result := &compiler.EmitResult{
 					EmitSkipped: true,
-					Diagnostics: diags,
+					Diagnostics: diagnostics.getDiagnostics(h.program.program, options.TargetSourceFile),
 				}
 				h.updateHasEmitDiagnostics(result)
 				return result
