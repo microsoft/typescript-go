@@ -5,7 +5,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -51,20 +50,20 @@ func TestResolveModuleNameTrailingSlash(t *testing.T) {
 }
 
 // blockingFS wraps a vfs.FS and forces FileExists calls for `targetPath` to
-// block on `gate` until released. It also counts how many goroutines are
-// waiting at the gate. This is used to deterministically reproduce the
+// block on `gate` until released. Each caller sends on `arrived` when it
+// reaches the gate. This is used to deterministically reproduce the
 // `package.json` info-cache insert race described in
 // https://github.com/microsoft/typescript-go/issues/3526.
 type blockingFS struct {
 	vfs.FS
 	targetPath string
 	gate       chan struct{}
-	waiting    atomic.Int32
+	arrived    chan struct{} // each blocked goroutine sends one value
 }
 
 func (f *blockingFS) FileExists(path string) bool {
 	if path == f.targetPath {
-		f.waiting.Add(1)
+		f.arrived <- struct{}{}
 		<-f.gate
 	}
 	return f.FS.FileExists(path)
@@ -72,29 +71,32 @@ func (f *blockingFS) FileExists(path string) bool {
 
 // flipFileExistsFS wraps a vfs.FS and returns false for the first
 // FileExists call to `targetPath`, then true for the second. Both calls
-// block until released via their respective gate channels. It also blocks
-// ReadFile for the target path so that the "file doesn't exist" Set
-// completes before the "file exists" Set (reproducing the LoadOrStore race).
+// signal arrival via channel then block until released via their respective
+// gate channels. ReadFile for the target path also signals arrival then
+// blocks, so the "file doesn't exist" Set completes before the "file exists"
+// Set (reproducing the LoadOrStore race).
 type flipFileExistsFS struct {
 	vfs.FS
 	targetPath     string
 	callCount      atomic.Int32
-	feWaiting      atomic.Int32
+	firstArrived   chan struct{} // closed when the first FileExists caller arrives
+	secondArrived  chan struct{} // closed when the second FileExists caller arrives
 	firstGate      chan struct{}
 	secondGate     chan struct{}
+	readArrived    chan struct{} // closed when ReadFile caller arrives
 	readGate       chan struct{}
-	readWaiting    atomic.Int32
 }
 
 func (f *flipFileExistsFS) FileExists(path string) bool {
 	if path == f.targetPath {
 		n := f.callCount.Add(1)
-		f.feWaiting.Add(1)
 		if n == 1 {
+			close(f.firstArrived)
 			<-f.firstGate
 			return false // first caller: simulate "file not yet visible"
 		}
 		if n == 2 {
+			close(f.secondArrived)
 			<-f.secondGate
 			return f.FS.FileExists(path) // second caller: file is visible
 		}
@@ -104,7 +106,7 @@ func (f *flipFileExistsFS) FileExists(path string) bool {
 
 func (f *flipFileExistsFS) ReadFile(path string) (string, bool) {
 	if path == f.targetPath {
-		f.readWaiting.Add(1)
+		close(f.readArrived)
 		<-f.readGate
 	}
 	return f.FS.ReadFile(path)
@@ -146,6 +148,7 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 		FS:         vfstest.FromMap(files, true),
 		targetPath: pkgJSONPath,
 		gate:       make(chan struct{}),
+		arrived:    make(chan struct{}, 2),
 	}
 	host := &resolutionHostStub{fs: fs, cwd: "/repo"}
 	opts := &core.CompilerOptions{
@@ -174,13 +177,8 @@ func TestResolveModuleNameTrailingSlashRace(t *testing.T) {
 
 	// Wait for both goroutines to reach the FileExists gate, guaranteeing
 	// both have observed a package.json info-cache miss.
-	deadline := time.Now().Add(5 * time.Second)
-	for fs.waiting.Load() < 2 {
-		if time.Now().After(deadline) {
-			t.Fatalf("timed out waiting for both goroutines to reach FileExists gate; got %d", fs.waiting.Load())
-		}
-		time.Sleep(time.Millisecond)
-	}
+	<-fs.arrived
+	<-fs.arrived
 	close(fs.gate)
 
 	wg.Wait()
@@ -215,11 +213,14 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 		"/repo/src/b/file.ts":                   "",
 	}
 	fs := &flipFileExistsFS{
-		FS:         vfstest.FromMap(files, true),
-		targetPath: rootPkgJSON,
-		firstGate:  make(chan struct{}),
-		secondGate: make(chan struct{}),
-		readGate:   make(chan struct{}),
+		FS:            vfstest.FromMap(files, true),
+		targetPath:    rootPkgJSON,
+		firstArrived:  make(chan struct{}),
+		secondArrived: make(chan struct{}),
+		firstGate:     make(chan struct{}),
+		secondGate:    make(chan struct{}),
+		readArrived:   make(chan struct{}),
+		readGate:      make(chan struct{}),
 	}
 	host := &resolutionHostStub{fs: fs, cwd: "/repo"}
 	opts := &core.CompilerOptions{
@@ -246,13 +247,8 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 
 	// Phase 1: Wait for both goroutines to reach FileExists for the root
 	// package.json, guaranteeing both have observed a cache miss.
-	deadline := time.Now().Add(5 * time.Second)
-	for fs.feWaiting.Load() < 2 {
-		if time.Now().After(deadline) {
-			t.Fatalf("timed out waiting for both goroutines to reach FileExists gate; got %d", fs.feWaiting.Load())
-		}
-		time.Sleep(time.Millisecond)
-	}
+	<-fs.firstArrived
+	<-fs.secondArrived
 
 	// Phase 2: Release the first FileExists caller (returns false).
 	// It enters the "file not found" branch and stores a nil-Contents entry
@@ -267,13 +263,7 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 	// Phase 4: Wait for the second goroutine to reach ReadFile, then release.
 	// By this point the first goroutine has stored its nil-Contents entry.
 	// The second goroutine's Set (LoadOrStore) will return that stale entry.
-	deadline = time.Now().Add(5 * time.Second)
-	for fs.readWaiting.Load() < 1 {
-		if time.Now().After(deadline) {
-			t.Fatalf("timed out waiting for second goroutine to reach ReadFile gate")
-		}
-		time.Sleep(time.Millisecond)
-	}
+	<-fs.readArrived
 	close(fs.readGate)
 
 	wg.Wait()
