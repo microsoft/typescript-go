@@ -61,6 +61,8 @@ type blockingFS struct {
 	arrived    chan struct{} // each blocked goroutine sends one value
 }
 
+// waitForSignal waits for a synchronization point in these race regression
+// tests and converts deadlocks into deterministic test failures.
 func waitForSignal(t *testing.T, ch <-chan struct{}, description string) {
 	t.Helper()
 	select {
@@ -249,6 +251,7 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 	// Two goroutines both resolve "pkg/sub". Each calls getPackageJsonInfo
 	// for the root package directory, reaching FileExists for rootPkgJSON.
 	for _, containingFile := range []string{"/repo/src/a/file.ts", "/repo/src/b/file.ts"} {
+		containingFile := containingFile
 		wg.Go(func() {
 			resolved := false
 			defer func() {
