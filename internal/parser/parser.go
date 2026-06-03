@@ -3329,7 +3329,8 @@ func (p *Parser) parseParameterEx(inOuterAwaitContext bool, allowAmbiguity bool)
 			p.createIdentifier(true /*isIdentifier*/),
 			nil, /*questionToken*/
 			p.parseTypeAnnotation(),
-			nil /*initializer*/)
+			nil, /*initializer*/
+		)
 		if modifiers != nil {
 			p.parseErrorAtRange(modifiers.Nodes[0].Loc, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 		}
@@ -3346,7 +3347,8 @@ func (p *Parser) parseParameterEx(inOuterAwaitContext bool, allowAmbiguity bool)
 		p.parseNameOfParameter(modifiers),
 		p.parseOptionalToken(ast.KindQuestionToken),
 		p.parseTypeAnnotation(),
-		p.parseInitializer())
+		p.parseInitializer(),
+	)
 	p.withJSDoc(p.finishNode(result, pos), jsdoc)
 	return result
 }
@@ -6606,12 +6608,10 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			}
 		case "ts-check", "ts-nocheck":
 			// _last_ of either nocheck or check in a file is the "winner"
-			for _, directive := range context.Pragmas {
-				if context.CheckJsDirective == nil || directive.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
-					context.CheckJsDirective = &ast.CheckJsDirective{
-						Enabled: directive.Name == "ts-check",
-						Range:   directive.CommentRange,
-					}
+			if context.CheckJsDirective == nil || pragma.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
+				context.CheckJsDirective = &ast.CheckJsDirective{
+					Enabled: pragma.Name == "ts-check",
+					Range:   pragma.CommentRange,
 				}
 			}
 		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
