@@ -376,14 +376,16 @@ func (r *tracer) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName st
 	if !result.IsResolved() {
 		r.write(diagnostics.Type_reference_directive_0_was_not_resolved, typeReferenceDirectiveName)
 	} else if result.PackageId.Name != "" {
-		r.write(diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_with_Package_ID_2_primary_Colon_3,
+		r.write(
+			diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_with_Package_ID_2_primary_Colon_3,
 			typeReferenceDirectiveName,
 			result.ResolvedFileName,
 			result.PackageId.String(),
 			result.Primary,
 		)
 	} else {
-		r.write(diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_primary_Colon_2,
+		r.write(
+			diagnostics.Type_reference_directive_0_was_successfully_resolved_to_1_primary_Colon_2,
 			typeReferenceDirectiveName,
 			result.ResolvedFileName,
 			result.Primary,
@@ -910,7 +912,8 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 			diagnostic := ast.NewDiagnostic(
 				nil,
 				core.TextRange{},
-				core.IfElse(isImports,
+				core.IfElse(
+					isImports,
 					diagnostics.The_project_root_is_ambiguous_but_is_required_to_resolve_import_map_entry_0_in_file_1_Supply_the_rootDir_compiler_option_to_disambiguate,
 					diagnostics.The_project_root_is_ambiguous_but_is_required_to_resolve_export_map_entry_0_in_file_1_Supply_the_rootDir_compiler_option_to_disambiguate,
 				),
@@ -1756,15 +1759,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string) *packagejs
 			if r.tracer != nil {
 				r.tracer.write(diagnostics.File_0_exists_according_to_earlier_cached_lookups, packageJsonPath)
 			}
-			if existing.PackageDirectory == packageDirectory {
-				return existing
-			}
-			// https://github.com/microsoft/TypeScript/pull/50740
-			return &packagejson.InfoCacheEntry{
-				PackageDirectory: packageDirectory,
-				DirectoryExists:  true,
-				Contents:         existing.Contents,
-			}
+			return existing.WithPackageDirectory(packageDirectory)
 		} else {
 			if existing.DirectoryExists && r.tracer != nil {
 				r.tracer.write(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups, packageJsonPath)
@@ -1790,7 +1785,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string) *packagejs
 			},
 		}
 		result = r.resolver.packageJsonInfoCache.Set(packageJsonPath, result)
-		return result
+		return result.WithPackageDirectory(packageDirectory)
 	} else {
 		if directoryExists && r.tracer != nil {
 			r.tracer.write(diagnostics.File_0_does_not_exist, packageJsonPath)
@@ -2303,7 +2298,7 @@ func (r *resolutionState) loadEntrypointsFromExportMap(
 
 				conditionAlwaysMatches := condition == "default" || condition == "types" || IsApplicableVersionedTypesKey(condition)
 				newIncludeConditions := includeConditions
-				if !(conditionAlwaysMatches) {
+				if !conditionAlwaysMatches {
 					newIncludeConditions = includeConditions.Clone()
 					excludeConditions = excludeConditions.Clone()
 					if newIncludeConditions == nil {

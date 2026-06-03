@@ -237,6 +237,17 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
+		title: "generates errors for include with parent directory after recursive wildcard",
+		input: []testConfig{{
+			jsonText: `{
+                "include": ["**/../*.ts"]
+            }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    map[string]string{"/apath/main.ts": ""},
+		}},
+	},
+	{
 		title:               "parses tsconfig with compilerOptions, files, include, and exclude",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
@@ -825,6 +836,37 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 		t.Run(rec.title+" with jsonSourceFile api", func(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonSourceFileApi)
+		})
+	}
+}
+
+func TestParseNullEnumCompilerOptions(t *testing.T) {
+	t.Parallel()
+
+	config := testConfig{
+		jsonText: `{
+			"compilerOptions": {
+				"target": null,
+				"module": null
+			}
+		}`,
+		configFileName: "tsconfig.json",
+		basePath:       "/",
+		allFileList:    map[string]string{"/app.ts": ""},
+	}
+	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
+		"json api":           getParsedWithJsonApi,
+		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			allFileLists := make(map[string]string, len(config.allFileList)+1)
+			maps.Copy(allFileLists, config.allFileList)
+			allFileLists["/tsconfig.json"] = config.jsonText
+			host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
+			parsedConfigFileContent := getParsed(config, host, config.basePath)
+			assert.Equal(t, len(parsedConfigFileContent.Errors), 0)
 		})
 	}
 }
