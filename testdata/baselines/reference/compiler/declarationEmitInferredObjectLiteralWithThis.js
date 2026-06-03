@@ -25,10 +25,3 @@ export class C {
         self: this,
     };
 }
-
-
-//// [declarationEmitInferredObjectLiteralWithThis.d.ts]
-export declare class C {
-    foo(): any;
-    prop: any;
-}
