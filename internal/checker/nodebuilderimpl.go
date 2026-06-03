@@ -107,6 +107,11 @@ type NodeBuilderImpl struct {
 
 	// symbols for synthesized identifiers, needed for e.g. inlay hints
 	idToSymbol map[*ast.IdentifierNode]*ast.Symbol
+
+	// set while serializing the members of a reused object/tuple `as const` literal, where negative
+	// numeric literal types use their canonical form rather than the original source text (see
+	// reuseNegativeNumericLiteralType).
+	inReusedLiteralCollection bool
 }
 
 const (
