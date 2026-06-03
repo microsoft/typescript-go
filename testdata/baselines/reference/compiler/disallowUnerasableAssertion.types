@@ -28,3 +28,41 @@ export const c3 = 1 + 1 as number === 2;
 >1 : 1
 >2 : 2
 
+export const c4 = 1 + 1 as number > 2;
+>c4 : boolean
+>1 + 1 as number > 2 : boolean
+>1 + 1 as number : number
+>1 + 1 : number
+>1 : 1
+>1 : 1
+>2 : 2
+
+export const c5 = 1 + 1 as number >= 2;
+>c5 : boolean
+>1 + 1 as number >= 2 : boolean
+>1 + 1 as number : number
+>1 + 1 : number
+>1 : 1
+>1 : 1
+>2 : 2
+
+export const c6 = 1 + 1 as number >> 2;
+>c6 : number
+>1 + 1 as number : number
+>1 + 1 : number
+>1 : 1
+>1 : 1
+>>> 2 : number
+> : any
+>2 : 2
+
+export const c7 = 1 + 1 as number << 2;
+>c7 : number
+>1 + 1 as number : number
+>1 + 1 : number
+>1 : 1
+>1 : 1
+><< 2 : number
+> : any
+>2 : 2
+

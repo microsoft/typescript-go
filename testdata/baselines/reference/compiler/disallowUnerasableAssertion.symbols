@@ -10,3 +10,15 @@ export const c2 = (1 + 1 as number) / 2;
 export const c3 = 1 + 1 as number === 2;
 >c3 : Symbol(c3, Decl(disallowUnerasableAssertion.ts, 2, 12))
 
+export const c4 = 1 + 1 as number > 2;
+>c4 : Symbol(c4, Decl(disallowUnerasableAssertion.ts, 3, 12))
+
+export const c5 = 1 + 1 as number >= 2;
+>c5 : Symbol(c5, Decl(disallowUnerasableAssertion.ts, 4, 12))
+
+export const c6 = 1 + 1 as number >> 2;
+>c6 : Symbol(c6, Decl(disallowUnerasableAssertion.ts, 5, 12))
+
+export const c7 = 1 + 1 as number << 2;
+>c7 : Symbol(c7, Decl(disallowUnerasableAssertion.ts, 6, 12))
+
