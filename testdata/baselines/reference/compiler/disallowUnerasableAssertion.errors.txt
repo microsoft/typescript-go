@@ -1,0 +1,10 @@
+disallowUnerasableAssertion.ts(1,35): error TS1005: ',' expected.
+
+
+==== disallowUnerasableAssertion.ts (1 errors) ====
+    export const c1 = 1 + 1 as number / 2;
+                                      ~
+!!! error TS1005: ',' expected.
+    export const c2 = (1 + 1 as number) / 2;
+    export const c3 = 1 + 1 as number === 2;
+    

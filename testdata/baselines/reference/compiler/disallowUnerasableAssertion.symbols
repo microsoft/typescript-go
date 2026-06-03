@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/disallowUnerasableAssertion.ts] ////
+
+=== disallowUnerasableAssertion.ts ===
+export const c1 = 1 + 1 as number / 2;
+>c1 : Symbol(c1, Decl(disallowUnerasableAssertion.ts, 0, 12))
+
+export const c2 = (1 + 1 as number) / 2;
+>c2 : Symbol(c2, Decl(disallowUnerasableAssertion.ts, 1, 12))
+
+export const c3 = 1 + 1 as number === 2;
+>c3 : Symbol(c3, Decl(disallowUnerasableAssertion.ts, 2, 12))
+
