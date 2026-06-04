@@ -348,6 +348,7 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 	results := make([]*ast.Node, 0, len(statements.Nodes))
 	for _, statement := range statements.Nodes {
 		if statement.Kind == ast.KindSyntaxList {
+			// Expando function declarations can produce a function plus namespace pair.
 			results = append(results, statement.AsSyntaxList().Children...)
 			continue
 		}
@@ -1434,6 +1435,7 @@ func (tx *DeclarationTransformer) transformExpandoFunctionDeclaration(input *ast
 
 	name := clean.Name()
 	if name == nil {
+		// Default-exported function declarations may be anonymous, but the synthesized namespace needs a name.
 		name = tx.Factory().NewIdentifier("_default")
 	}
 
@@ -1595,7 +1597,8 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 		return nil
 	}
 	parseNode := tx.EmitContext().ParseNode(statement)
-	if ast.IsImportEqualsDeclaration(statement) || parseNode != nil && tx.host.GetEffectiveDeclarationFlags(parseNode, ast.ModifierFlagsDefault) != 0 || !ast.CanHaveModifiers(statement) {
+	isDefaultExport := parseNode != nil && tx.host.GetEffectiveDeclarationFlags(parseNode, ast.ModifierFlagsDefault) != 0
+	if ast.IsImportEqualsDeclaration(statement) || isDefaultExport || !ast.CanHaveModifiers(statement) {
 		// `export import` statements should remain as-is, as imports are _not_ implicitly exported in an ambient namespace
 		// Likewise, `export default` classes and the like and just be `default`, so we preserve their `export` modifiers, too
 		return statement
