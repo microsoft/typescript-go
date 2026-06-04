@@ -67,6 +67,7 @@ func waitForSignal(t *testing.T, ch <-chan struct{}, description string) {
 	t.Helper()
 	select {
 	case <-ch:
+		return
 	case <-t.Context().Done():
 		t.Fatalf("timed out waiting for %s", description)
 	}
@@ -251,7 +252,6 @@ func TestResolveSubpathNilContentsRace(t *testing.T) {
 	// Two goroutines both resolve "pkg/sub". Each calls getPackageJsonInfo
 	// for the root package directory, reaching FileExists for rootPkgJSON.
 	for _, containingFile := range []string{"/repo/src/a/file.ts", "/repo/src/b/file.ts"} {
-		containingFile := containingFile
 		wg.Go(func() {
 			resolved := false
 			defer func() {
