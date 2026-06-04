@@ -254,8 +254,6 @@ compiler/conflictingDeclarationsImportFromNamespace1.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace1.types.diff
 compiler/conflictingDeclarationsImportFromNamespace2.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace2.types.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.errors.txt.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.types.diff
 
 ## more accurate types/symbols ##
 compiler/allowJscheckJsTypeParameterNoCrash.symbols.diff
@@ -378,17 +376,14 @@ compiler/accessorDeclarationEmitJs.js.diff
 compiler/argumentsPropertyNameInJsMode1.js.diff
 compiler/checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.errors.txt.diff
-compiler/declarationEmitExpandoPropertyPrivateName.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.symbols.diff
 compiler/declarationEmitExpandoPropertyPrivateName.types.diff
 compiler/declarationEmitExpandoWithGenericConstraint.js.diff
 compiler/declarationEmitExpandoWithGenericConstraint.symbols.diff
 compiler/declarationEmitExpandoWithGenericConstraint.types.diff
-compiler/declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitInvalidExport.js.diff
 compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
@@ -413,7 +408,6 @@ compiler/checkJsTypeDefNoUnusedLocalMarked.types.diff
 compiler/circularObjectLiteralAccessors(target=es2015).types.diff
 compiler/circularTypeArgumentsLocalAndOuterNoCrash1.types.diff
 compiler/complexRecursiveCollections.errors.txt.diff
-compiler/computedPropertiesNarrowed.js.diff
 compiler/contextuallyTypedJsxAttribute2.types.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.symbols.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.types.diff
@@ -464,9 +458,6 @@ compiler/invalidUnicodeEscapeSequance.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance2.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance3.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance4.errors.txt.diff
-
-## wrong errors ##
-compiler/classFieldSuperAccessibleJs1.errors.txt.diff
 
 ## deprecated errors ##
 compiler/declarationFileNoCrashOnExtraExportModifier.errors.txt.diff

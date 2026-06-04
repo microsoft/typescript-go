@@ -207,18 +207,13 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		// !!!
 	}, emitContext)
 
-	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer, shouldEmitSourceMaps(options, sourceFile))
+	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer, options, shouldEmitSourceMaps(options, sourceFile))
 }
 
 func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) {
 	options := e.host.Options()
 
 	if sourceFile == nil || e.emitOnly == EmitOnlyJs || len(declarationFilePath) == 0 {
-		return
-	}
-
-	if e.emitOnly != EmitOnlyForcedDts && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
-		e.emitResult.EmitSkipped = true
 		return
 	}
 
@@ -230,7 +225,21 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	defer putEmitContext()
 	sourceFile, diags := e.runDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath)
 
-	// !!! strada skipped emit if there were diagnostics
+	for _, elem := range diags {
+		// Add declaration transform diagnostics to emit diagnostics
+		e.emitterDiagnostics.Add(elem)
+	}
+
+	if e.emitOnly != EmitOnlyForcedDts && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
+		e.emitResult.EmitSkipped = true
+		return
+	}
+
+	declBlocked := len(diags) > 0 && e.emitOnly != EmitOnlyForcedDts
+	if declBlocked {
+		e.emitResult.EmitSkipped = true
+		return
+	}
 
 	printerOptions := printer.PrinterOptions{
 		RemoveComments: options.RemoveComments.IsTrue(),
@@ -252,22 +261,24 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		// !!!
 	}, emitContext)
 
-	for _, elem := range diags {
-		// Add declaration transform diagnostics to emit diagnostics
-		e.emitterDiagnostics.Add(elem)
+	declarationMapOptions := &core.CompilerOptions{
+		SourceMap:  core.IfElse(e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(), core.TSTrue, core.TSFalse),
+		SourceRoot: options.SourceRoot,
+		MapRoot:    options.MapRoot,
+		// Explicitly do not pass through either inline option.
 	}
-	e.printSourceFile(declarationFilePath, declarationMapPath, sourceFile, printer, e.emitOnly != EmitOnlyForcedDts && shouldEmitDeclarationSourceMaps(options, sourceFile))
+	e.printSourceFile(declarationFilePath, declarationMapPath, sourceFile, printer, declarationMapOptions, shouldEmitSourceMaps(declarationMapOptions, sourceFile))
 }
 
-func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer_ *printer.Printer, shouldEmitSourceMaps bool) {
+func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer_ *printer.Printer, mapOptions *core.CompilerOptions, shouldEmitSourceMaps bool) {
 	// !!! sourceMapGenerator
 	options := e.host.Options()
 	var sourceMapGenerator *sourcemap.Generator
 	if shouldEmitSourceMaps {
 		sourceMapGenerator = sourcemap.NewGenerator(
 			tspath.GetBaseFileName(tspath.NormalizeSlashes(jsFilePath)),
-			getSourceRoot(options),
-			e.getSourceMapDirectory(options, jsFilePath, sourceFile),
+			getSourceRoot(mapOptions),
+			e.getSourceMapDirectory(mapOptions, jsFilePath, sourceFile),
 			tspath.ComparePathsOptions{
 				UseCaseSensitiveFileNames: e.host.UseCaseSensitiveFileNames(),
 				CurrentDirectory:          e.host.GetCurrentDirectory(),
@@ -279,7 +290,7 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 
 	sourceMapUrlPos := -1
 	if sourceMapGenerator != nil {
-		if options.SourceMap.IsTrue() || options.InlineSourceMap.IsTrue() || options.GetAreDeclarationMapsEnabled() {
+		if mapOptions.SourceMap.IsTrue() || mapOptions.InlineSourceMap.IsTrue() {
 			e.emitResult.SourceMaps = append(e.emitResult.SourceMaps, &SourceMapEmitResult{
 				InputSourceFileNames: sourceMapGenerator.Sources(),
 				SourceMap:            sourceMapGenerator.RawSourceMap(),
@@ -288,7 +299,7 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 		}
 
 		sourceMappingURL := e.getSourceMappingURL(
-			options,
+			mapOptions,
 			sourceMapGenerator,
 			jsFilePath,
 			sourceMapFilePath,
@@ -348,11 +359,6 @@ func (e *emitter) writeText(fileName string, text string, data *WriteFileData) e
 
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
 	return (mapOptions.SourceMap.IsTrue() || mapOptions.InlineSourceMap.IsTrue()) &&
-		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
-}
-
-func shouldEmitDeclarationSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
-	return mapOptions.DeclarationMap.IsTrue() &&
 		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
 }
 
