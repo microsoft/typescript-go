@@ -407,7 +407,7 @@ type SignatureLinks struct {
 	decoratorSignature *Signature // Signature for decorator as if invoked by the runtime
 }
 
-type TypeFlags uint32
+type TypeFlags uint64
 
 // Note that for types of different kinds, the numeric values of TypeFlags determine the order
 // computed by the CompareTypes function and therefore the order of constituent types in union types.
@@ -449,6 +449,7 @@ const (
 	TypeFlagsReserved1       TypeFlags = 1 << 29 // Used by union/intersection type construction
 	TypeFlagsReserved2       TypeFlags = 1 << 30 // Used by union/intersection type construction
 	TypeFlagsReserved3       TypeFlags = 1 << 31
+	TypeFlagsNegated         TypeFlags = 1 << 32 // not T
 
 	TypeFlagsAnyOrUnknown                  = TypeFlagsAny | TypeFlagsUnknown
 	TypeFlagsNullable                      = TypeFlagsUndefined | TypeFlagsNull
@@ -473,7 +474,7 @@ const (
 	TypeFlagsUnionOrIntersection           = TypeFlagsUnion | TypeFlagsIntersection
 	TypeFlagsStructuredType                = TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
 	TypeFlagsTypeVariable                  = TypeFlagsTypeParameter | TypeFlagsIndexedAccess
-	TypeFlagsInstantiableNonPrimitive      = TypeFlagsTypeVariable | TypeFlagsConditional | TypeFlagsSubstitution
+	TypeFlagsInstantiableNonPrimitive      = TypeFlagsTypeVariable | TypeFlagsConditional | TypeFlagsSubstitution | TypeFlagsNegated
 	TypeFlagsInstantiablePrimitive         = TypeFlagsIndex | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
 	TypeFlagsInstantiable                  = TypeFlagsInstantiableNonPrimitive | TypeFlagsInstantiablePrimitive
 	TypeFlagsStructuredOrInstantiable      = TypeFlagsStructuredType | TypeFlagsInstantiable
@@ -529,11 +530,12 @@ var typeFlagNames = [...]struct {
 	{TypeFlagsConditional, "Conditional"},
 	{TypeFlagsUnion, "Union"},
 	{TypeFlagsIntersection, "Intersection"},
+	{TypeFlagsNegated, "Negated"},
 }
 
 // FormatTypeFlags returns the individual flag names as a slice of strings.
 func FormatTypeFlags(flags TypeFlags) []string {
-	result := make([]string, 0, bits.OnesCount32(uint32(flags)))
+	result := make([]string, 0, bits.OnesCount64(uint64(flags)))
 	for _, fn := range typeFlagNames {
 		if flags&fn.flag != 0 {
 			result = append(result, fn.name)
@@ -703,6 +705,7 @@ func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*Te
 func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
 func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
 func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
+func (t *Type) AsNegatedType() *NegatedType                 { return t.data.(*NegatedType) }
 
 // Casts for embedded struct types
 
@@ -1203,6 +1206,15 @@ type SubstitutionType struct {
 
 func (t *SubstitutionType) BaseType() *Type        { return t.baseType }
 func (t *SubstitutionType) SubstConstraint() *Type { return t.constraint }
+
+// NegatedType (the type 'not T')
+
+type NegatedType struct {
+	ConstrainedType
+	baseType *Type // The negated type T in 'not T'
+}
+
+func (t *NegatedType) BaseType() *Type { return t.baseType }
 
 type ConditionalRoot struct {
 	node                *ast.ConditionalTypeNode
