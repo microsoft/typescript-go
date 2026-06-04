@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/declarationEmitArrowParameterComments.ts] ////
+
+=== declarationEmitArrowParameterComments.ts ===
+export function gn(
+>gn : Symbol(gn, Decl(declarationEmitArrowParameterComments.ts, 0, 0))
+
+    foo: boolean, // comment on foo
+>foo : Symbol(foo, Decl(declarationEmitArrowParameterComments.ts, 0, 19))
+
+    bar: string, // comment on bar
+>bar : Symbol(bar, Decl(declarationEmitArrowParameterComments.ts, 1, 17))
+
+    buzz: number,  // comment on buzz
+>buzz : Symbol(buzz, Decl(declarationEmitArrowParameterComments.ts, 2, 16))
+
+): void {}
+
+export const fn = (
+>fn : Symbol(fn, Decl(declarationEmitArrowParameterComments.ts, 6, 12))
+
+    foo: boolean, // comment on foo
+>foo : Symbol(foo, Decl(declarationEmitArrowParameterComments.ts, 6, 19))
+
+    bar: string, // comment on bar
+>bar : Symbol(bar, Decl(declarationEmitArrowParameterComments.ts, 7, 17))
+
+    buzz: number,  // comment on buzz
+>buzz : Symbol(buzz, Decl(declarationEmitArrowParameterComments.ts, 8, 16))
+
+) => {};
+
