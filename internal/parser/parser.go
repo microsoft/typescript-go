@@ -4578,6 +4578,7 @@ func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence
 }
 
 func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
+	lastOperand := leftOperand
 	for {
 		// We either have a binary operator here, or we're finished.  We call
 		// reScanGreaterToken so that we merge token sequences like > and = into >=
@@ -4630,9 +4631,9 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 				// operator, we want to stop parsing on any following operator with a higher precedence than ##
 				// because continuing would make it impossible to erase the `as` or `satisfies` without changing
 				// the meaning of the expression. See https://github.com/microsoft/TypeScript/issues/63527.
-				leftPrecedence := ast.OperatorPrecedenceHighest
-				if ast.IsBinaryExpression(leftOperand) {
-					leftPrecedence = ast.GetBinaryOperatorPrecedence(leftOperand.AsBinaryExpression().OperatorToken.Kind)
+				lastPrecedence := ast.OperatorPrecedenceHighest
+				if ast.IsBinaryExpression(lastOperand) {
+					lastPrecedence = ast.GetBinaryOperatorPrecedence(lastOperand.AsBinaryExpression().OperatorToken.Kind)
 				}
 				if operator == ast.KindSatisfiesKeyword {
 					leftOperand = p.makeSatisfiesExpression(leftOperand, p.parseType())
@@ -4640,12 +4641,13 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 					leftOperand = p.makeAsExpression(leftOperand, p.parseType())
 				}
 				// Stop if the precedence of the next operator is too high.
-				if ast.GetBinaryOperatorPrecedence(p.reScanGreaterThanToken()) > leftPrecedence {
+				if ast.GetBinaryOperatorPrecedence(p.reScanGreaterThanToken()) > lastPrecedence {
 					break
 				}
 			}
 		} else {
 			leftOperand = p.makeBinaryExpression(leftOperand, p.parseTokenNode(), p.parseBinaryExpressionOrHigher(newPrecedence), pos)
+			lastOperand = leftOperand
 		}
 	}
 	return leftOperand
