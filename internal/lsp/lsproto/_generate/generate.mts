@@ -63,6 +63,12 @@ const customStructures: Structure[] = [
                 documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
             },
             {
+                name: "useBuiltinWatcher",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "UseBuiltinWatcher requests that the server use its own in-process file watcher instead of LSP-based file watching, regardless of client capabilities.",
+            },
+            {
                 name: "logVerbosity",
                 type: { kind: "reference", name: "LogVerbosity" },
                 optional: true,

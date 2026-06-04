@@ -88,6 +88,14 @@
                             "experimental"
                         ]
                     },
+                    "typescript.native-preview.useBuiltinWatcher": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Use tsgo's built-in in-process file watcher instead of LSP client watcher registrations.",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
                     "typescript.native-preview.goMemLimit": {
                         "type": "string",
                         "description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",

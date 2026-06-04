@@ -76,11 +76,12 @@ export class Client implements vscode.Disposable {
         this.clientOptions = {
             documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
-            initializationOptions: {
+            initializationOptions: () => ({
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
+                useBuiltinWatcher: vscode.workspace.getConfiguration("typescript.native-preview").get<boolean>("useBuiltinWatcher", false),
                 logVerbosity: this.outputChannel.logLevel,
-            },
+            }),
             errorHandler: this.errorHandler,
             middleware: {
                 workspace: {

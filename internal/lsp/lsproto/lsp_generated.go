@@ -28125,6 +28125,9 @@ type InitializationOptions struct {
 	// EnableTelemetry enables sending telemetry events from the server to the client.
 	EnableTelemetry *bool `json:"enableTelemetry,omitzero"`
 
+	// UseBuiltinWatcher requests that the server use its own in-process file watcher instead of LSP-based file watching, regardless of client capabilities.
+	UseBuiltinWatcher *bool `json:"useBuiltinWatcher,omitzero"`
+
 	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
 	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
 }
@@ -28168,6 +28171,13 @@ func (s *InitializationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("enableTelemetry")
 			}
 			if err := json.UnmarshalDecode(dec, &s.EnableTelemetry); err != nil {
+				return err
+			}
+		case `"useBuiltinWatcher"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("useBuiltinWatcher")
+			}
+			if err := json.UnmarshalDecode(dec, &s.UseBuiltinWatcher); err != nil {
 				return err
 			}
 		case `"logVerbosity"`:
