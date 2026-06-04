@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -11,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -500,6 +502,10 @@ func (p *Parser) createJSDocCache() map[*ast.Node][]*ast.Node {
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
 	p.statementHasAwaitIdentifier = false
 	statement := p.parseStatement()
+	// Reparsed nodes (e.g. JSDoc @typedef) produced while parsing this statement are inserted
+	// into the statement list before this statement, so account for them when recording the
+	// statement's index for possibleAwaitSpans.
+	i += len(p.reparseList)
 	if p.statementHasAwaitIdentifier && statement.Flags&ast.NodeFlagsAwaitContext == 0 {
 		if len(p.possibleAwaitSpans) == 0 || p.possibleAwaitSpans[len(p.possibleAwaitSpans)-1] != i {
 			p.possibleAwaitSpans = append(p.possibleAwaitSpans, i, i+1)
@@ -6479,27 +6485,38 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			if pos = skipTo(text, pos, "@"); pos < 0 {
 				break
 			}
-			pragmaName := extractName(text, pos+1)
-			if !(pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime") {
+			// Mirrors the /@(\S+)(\s+(?:\S.*)?)?$/gm pragma regex used by TypeScript: the '@'
+			// must be immediately followed by a non-whitespace pragma name, and the remainder
+			// of the line is consumed as that pragma's arguments. As a consequence, only the
+			// first '@'-token on a line is considered, so an unrelated '@token' earlier on the
+			// line (e.g. an email address) prevents a later '@jsx' on the same line from being
+			// treated as a pragma.
+			namePos := pos + 1
+			nameEnd := skipNonBlanks(text, namePos)
+			if nameEnd == namePos {
 				pos++
 				continue
 			}
-			start := skipBlanks(text, pos+len(pragmaName)+1)
-			pos = skipNonBlanks(text, start)
-			if pos == start {
-				break
+			lineEnd := lineEndPos(text, pos)
+			pragmaName := strings.ToLower(text[namePos:nameEnd])
+			if pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime" {
+				start := skipBlanks(text, nameEnd)
+				argEnd := skipNonBlanks(text, start)
+				if argEnd != start {
+					args := make(map[string]ast.PragmaArgument, 1)
+					args["factory"] = ast.PragmaArgument{
+						Name:      "factory",
+						Value:     text[start:argEnd],
+						TextRange: core.NewTextRange(commentRange.Pos()+start, commentRange.Pos()+argEnd),
+					}
+					pragmas = append(pragmas, ast.Pragma{
+						CommentRange: commentRange,
+						Name:         pragmaName,
+						Args:         args,
+					})
+				}
 			}
-			args := make(map[string]ast.PragmaArgument, 1)
-			args["factory"] = ast.PragmaArgument{
-				Name:      "factory",
-				Value:     text[start:pos],
-				TextRange: core.NewTextRange(commentRange.Pos()+start, commentRange.Pos()+pos),
-			}
-			pragmas = append(pragmas, ast.Pragma{
-				CommentRange: commentRange,
-				Name:         pragmaName,
-				Args:         args,
-			})
+			pos = lineEnd
 		}
 		return pragmas
 	}
@@ -6533,6 +6550,17 @@ func skipTo(text string, pos int, s string) int {
 		return -1
 	}
 	return pos + i
+}
+
+func lineEndPos(text string, pos int) int {
+	for pos < len(text) {
+		ch, size := utf8.DecodeRuneInString(text[pos:])
+		if stringutil.IsLineBreak(ch) {
+			return pos
+		}
+		pos += size
+	}
+	return len(text)
 }
 
 func extractName(text string, pos int) string {
@@ -6608,12 +6636,10 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			}
 		case "ts-check", "ts-nocheck":
 			// _last_ of either nocheck or check in a file is the "winner"
-			for _, directive := range context.Pragmas {
-				if context.CheckJsDirective == nil || directive.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
-					context.CheckJsDirective = &ast.CheckJsDirective{
-						Enabled: directive.Name == "ts-check",
-						Range:   directive.CommentRange,
-					}
+			if context.CheckJsDirective == nil || pragma.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
+				context.CheckJsDirective = &ast.CheckJsDirective{
+					Enabled: pragma.Name == "ts-check",
+					Range:   pragma.CommentRange,
 				}
 			}
 		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":

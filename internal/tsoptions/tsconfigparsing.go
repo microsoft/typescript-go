@@ -754,14 +754,9 @@ func convertObjectLiteralExpressionToJson(
 			continue
 		}
 
-		// !!!
-		// if ast.IsQuestionToken(element) {
-		// 	errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.Property_assignment_expected))
-		// }
-		if element.Name() != nil && !isDoubleQuotedString(element.Name()) {
-			errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.String_literal_with_double_quotes_expected))
+		if token := element.QuestionToken(); token != nil {
+			errors = append(errors, ast.NewDiagnostic(sourceFile, token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
 		}
-
 		textOfKey := ""
 		if !ast.IsComputedNonLiteralName(element.Name()) {
 			textOfKey, _ = ast.TryGetTextOfPropertyName(element.Name())
@@ -1398,7 +1393,11 @@ func shouldReportNoInputFiles(fileNames []string, canJsonReportNoInputFiles bool
 func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *ast.SourceFile, specKey string) ([]string, []*ast.Diagnostic) {
 	createDiagnostic := func(message *diagnostics.Message, spec string) *ast.Diagnostic {
 		element := GetTsConfigPropArrayElementValue(jsonSourceFile, specKey, spec)
-		return CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(jsonSourceFile, element.AsNode(), message, spec)
+		var node *ast.Node
+		if element != nil {
+			node = element.AsNode()
+		}
+		return CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(jsonSourceFile, node, message, spec)
 	}
 	var errors []*ast.Diagnostic
 	var finalSpecs []string
@@ -1417,11 +1416,10 @@ func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *as
 }
 
 func specToDiagnostic(spec string, disallowTrailingRecursion bool) *diagnostics.Message {
-	if disallowTrailingRecursion {
-		if invalidTrailingRecursion(spec) {
-			return diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
-		}
-	} else if invalidDotDotAfterRecursiveWildcard(spec) {
+	if disallowTrailingRecursion && invalidTrailingRecursion(spec) {
+		return diagnostics.File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
+	}
+	if invalidDotDotAfterRecursiveWildcard(spec) {
 		return diagnostics.File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 	}
 	return nil

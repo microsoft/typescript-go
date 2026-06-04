@@ -17180,17 +17180,14 @@ type ServerCapabilities struct {
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace,omitzero"`
 
-	// The server provides source definition support via custom/textDocument/sourceDefinition.
-	CustomSourceDefinitionProvider *bool `json:"customSourceDefinitionProvider,omitzero"`
+	// Experimental server capabilities.
+	Experimental *ExperimentalServerCapabilities `json:"experimental,omitzero"`
 
 	// Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.
 	VSOnAutoInsertProvider *VSOnAutoInsertOptions `json:"_vs_onAutoInsertProvider,omitzero"`
 
 	// The server provides VS-specific grouped references via textDocument/_vs_references.
 	VSReferencesProvider *bool `json:"_vs_referencesProvider,omitzero"`
-
-	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
-	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*ServerCapabilities)(nil)
@@ -17447,11 +17444,11 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 			if err := json.UnmarshalDecode(dec, &s.Workspace); err != nil {
 				return err
 			}
-		case `"customSourceDefinitionProvider"`:
+		case `"experimental"`:
 			if dec.PeekKind() == 'n' {
-				return errNull("customSourceDefinitionProvider")
+				return errNull("experimental")
 			}
-			if err := json.UnmarshalDecode(dec, &s.CustomSourceDefinitionProvider); err != nil {
+			if err := json.UnmarshalDecode(dec, &s.Experimental); err != nil {
 				return err
 			}
 		case `"_vs_onAutoInsertProvider"`:
@@ -17466,13 +17463,6 @@ func (s *ServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("_vs_referencesProvider")
 			}
 			if err := json.UnmarshalDecode(dec, &s.VSReferencesProvider); err != nil {
-				return err
-			}
-		case `"customMultiDocumentHighlightProvider"`:
-			if dec.PeekKind() == 'n' {
-				return errNull("customMultiDocumentHighlightProvider")
-			}
-			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
 				return err
 			}
 		default:
@@ -21152,6 +21142,9 @@ type ClientCapabilities struct {
 	// Since: 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitzero"`
 
+	// Experimental client capabilities.
+	Experimental *ExperimentalClientCapabilities `json:"experimental,omitzero"`
+
 	// Whether the client supports Visual Studio extensions.
 	VSSupportsVisualStudioExtensions *bool `json:"_vs_supportsVisualStudioExtensions,omitzero"`
 
@@ -21210,6 +21203,13 @@ func (s *ClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("general")
 			}
 			if err := json.UnmarshalDecode(dec, &s.General); err != nil {
+				return err
+			}
+		case `"experimental"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("experimental")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Experimental); err != nil {
 				return err
 			}
 		case `"_vs_supportsVisualStudioExtensions"`:
@@ -24356,9 +24356,6 @@ type HoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat *[]MarkupKind `json:"contentFormat,omitzero"`
-
-	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.
-	VerbosityLevel *bool `json:"verbosityLevel,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*HoverClientCapabilities)(nil)
@@ -24389,13 +24386,6 @@ func (s *HoverClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("contentFormat")
 			}
 			if err := json.UnmarshalDecode(dec, &s.ContentFormat); err != nil {
-				return err
-			}
-		case `"verbosityLevel"`:
-			if dec.PeekKind() == 'n' {
-				return errNull("verbosityLevel")
-			}
-			if err := json.UnmarshalDecode(dec, &s.VerbosityLevel); err != nil {
 				return err
 			}
 		default:
@@ -28134,6 +28124,9 @@ type InitializationOptions struct {
 
 	// EnableTelemetry enables sending telemetry events from the server to the client.
 	EnableTelemetry *bool `json:"enableTelemetry,omitzero"`
+
+	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
+	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptions)(nil)
@@ -28175,6 +28168,13 @@ func (s *InitializationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("enableTelemetry")
 			}
 			if err := json.UnmarshalDecode(dec, &s.EnableTelemetry); err != nil {
+				return err
+			}
+		case `"logVerbosity"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("logVerbosity")
+			}
+			if err := json.UnmarshalDecode(dec, &s.LogVerbosity); err != nil {
 				return err
 			}
 		default:
@@ -28440,6 +28440,102 @@ func (s *CodeLensData) UnmarshalJSONFrom(dec *json.Decoder) error {
 			missingProps = append(missingProps, "uri")
 		}
 		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// ExperimentalServerCapabilities contains experimental capabilities under development.
+type ExperimentalServerCapabilities struct {
+	// The server provides source definition support via custom/textDocument/sourceDefinition.
+	CustomSourceDefinitionProvider *bool `json:"customSourceDefinitionProvider,omitzero"`
+
+	// The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.
+	CustomMultiDocumentHighlightProvider *bool `json:"customMultiDocumentHighlightProvider,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*ExperimentalServerCapabilities)(nil)
+
+func (s *ExperimentalServerCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"customSourceDefinitionProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("customSourceDefinitionProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.CustomSourceDefinitionProvider); err != nil {
+				return err
+			}
+		case `"customMultiDocumentHighlightProvider"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("customMultiDocumentHighlightProvider")
+			}
+			if err := json.UnmarshalDecode(dec, &s.CustomMultiDocumentHighlightProvider); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ExperimentalClientCapabilities contains experimental capabilities under development.
+type ExperimentalClientCapabilities struct {
+	// The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.
+	HoverVerbosityLevel *bool `json:"hoverVerbosityLevel,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*ExperimentalClientCapabilities)(nil)
+
+func (s *ExperimentalClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) error {
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"hoverVerbosityLevel"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("hoverVerbosityLevel")
+			}
+			if err := json.UnmarshalDecode(dec, &s.HoverVerbosityLevel); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
 	}
 
 	return nil
@@ -29265,6 +29361,61 @@ func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 		var missingProps []string
 		if missing&missingConfigFilePath != 0 {
 			missingProps = append(missingProps, "configFilePath")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Parameters for the custom/setLogVerbosity notification.
+type SetLogVerbosityParams struct {
+	// The log verbosity level.
+	Verbosity LogVerbosity `json:"verbosity"`
+}
+
+var _ json.UnmarshalerFrom = (*SetLogVerbosityParams)(nil)
+
+func (s *SetLogVerbosityParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingVerbosity uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"verbosity"`:
+			missing &^= missingVerbosity
+			if err := json.UnmarshalDecode(dec, &s.Verbosity); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingVerbosity != 0 {
+			missingProps = append(missingProps, "verbosity")
 		}
 		return errMissing(missingProps)
 	}
@@ -31032,6 +31183,36 @@ const (
 	TokenFormatRelative TokenFormat = "relative"
 )
 
+// Log verbosity level, mirroring the VS Code LogLevel enum values.
+type LogVerbosity int32
+
+const (
+	// All logging disabled.
+	LogVerbosityOff LogVerbosity = 0
+	// Most verbose; includes LSP request/response traces.
+	LogVerbosityTrace LogVerbosity = 1
+	// Verbose server logs.
+	LogVerbosityDebug LogVerbosity = 2
+	// Normal server logs.
+	LogVerbosityInfo LogVerbosity = 3
+	// Warnings only.
+	LogVerbosityWarning LogVerbosity = 4
+	// Errors only.
+	LogVerbosityError LogVerbosity = 5
+)
+
+const _LogVerbosity_name = "OffTraceDebugInfoWarningError"
+
+var _LogVerbosity_index = [...]uint16{0, 3, 8, 13, 17, 24, 29}
+
+func (e LogVerbosity) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_LogVerbosity_index)-1 {
+		return fmt.Sprintf("LogVerbosity(%d)", e)
+	}
+	return _LogVerbosity_name[_LogVerbosity_index[i]:_LogVerbosity_index[i+1]]
+}
+
 type VSReferenceKind int32
 
 const (
@@ -31406,6 +31587,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[CancelParams](data)
 	case MethodProgress:
 		return unmarshalPtrTo[ProgressParams](data)
+	case MethodCustomSetLogVerbosity:
+		return unmarshalPtrTo[SetLogVerbosityParams](data)
 	default:
 		return unmarshalAny(data)
 	}
@@ -31976,6 +32159,8 @@ const (
 	MethodLogTrace                       Method = "$/logTrace"
 	MethodCancelRequest                  Method = "$/cancelRequest"
 	MethodProgress                       Method = "$/progress"
+	// Notification to set the server's log verbosity level based on the output channel's log level.
+	MethodCustomSetLogVerbosity Method = "custom/setLogVerbosity"
 	// Registration-only method for textDocument/semanticTokens.
 	MethodTextDocumentSemanticTokens Method = "textDocument/semanticTokens"
 )
@@ -32527,6 +32712,9 @@ var CancelRequestInfo = NotificationInfo[*CancelParams]{Method: MethodCancelRequ
 
 // Type mapping info for `$/progress`
 var ProgressInfo = NotificationInfo[*ProgressParams]{Method: MethodProgress}
+
+// Type mapping info for `custom/setLogVerbosity`
+var CustomSetLogVerbosityInfo = NotificationInfo[*SetLogVerbosityParams]{Method: MethodCustomSetLogVerbosity}
 
 // Type aliases
 
@@ -37470,8 +37658,6 @@ type ResolvedHoverClientCapabilities struct {
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat []MarkupKind `json:"contentFormat,omitzero"`
-	// The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.
-	VerbosityLevel bool `json:"verbosityLevel,omitzero"`
 }
 
 func (v *HoverClientCapabilities) resolve() ResolvedHoverClientCapabilities {
@@ -37481,7 +37667,6 @@ func (v *HoverClientCapabilities) resolve() ResolvedHoverClientCapabilities {
 	return ResolvedHoverClientCapabilities{
 		DynamicRegistration: derefOr(v.DynamicRegistration),
 		ContentFormat:       derefOr(v.ContentFormat),
-		VerbosityLevel:      derefOr(v.VerbosityLevel),
 	}
 }
 
@@ -38910,6 +39095,24 @@ func (v *GeneralClientCapabilities) resolve() ResolvedGeneralClientCapabilities 
 	}
 }
 
+// ResolvedExperimentalClientCapabilities is a resolved version of ExperimentalClientCapabilities with all optional fields
+// converted to non-pointer values for easier access.
+//
+// ExperimentalClientCapabilities contains experimental capabilities under development.
+type ResolvedExperimentalClientCapabilities struct {
+	// The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.
+	HoverVerbosityLevel bool `json:"hoverVerbosityLevel,omitzero"`
+}
+
+func (v *ExperimentalClientCapabilities) resolve() ResolvedExperimentalClientCapabilities {
+	if v == nil {
+		return ResolvedExperimentalClientCapabilities{}
+	}
+	return ResolvedExperimentalClientCapabilities{
+		HoverVerbosityLevel: derefOr(v.HoverVerbosityLevel),
+	}
+}
+
 // ResolvedClientCapabilities is a version of ClientCapabilities where all nested
 // fields are values (not pointers), making it easier to access deeply nested capabilities.
 // Use (*ClientCapabilities).Resolve() to convert from ClientCapabilities.
@@ -38926,6 +39129,8 @@ type ResolvedClientCapabilities struct {
 	//
 	// Since: 3.16.0
 	General ResolvedGeneralClientCapabilities `json:"general,omitzero"`
+	// Experimental client capabilities.
+	Experimental ResolvedExperimentalClientCapabilities `json:"experimental,omitzero"`
 	// Whether the client supports Visual Studio extensions.
 	VSSupportsVisualStudioExtensions bool `json:"_vs_supportsVisualStudioExtensions,omitzero"`
 	// The snippet version supported by the client.
@@ -38947,6 +39152,7 @@ func (v *ClientCapabilities) Resolve() ResolvedClientCapabilities {
 		TextDocument:                     v.TextDocument.resolve(),
 		Window:                           v.Window.resolve(),
 		General:                          v.General.resolve(),
+		Experimental:                     v.Experimental.resolve(),
 		VSSupportsVisualStudioExtensions: derefOr(v.VSSupportsVisualStudioExtensions),
 		VSSupportedSnippetVersion:        derefOr(v.VSSupportedSnippetVersion),
 		VSSupportsNotIncludingTextInTextDocumentDidOpen: derefOr(v.VSSupportsNotIncludingTextInTextDocumentDidOpen),
