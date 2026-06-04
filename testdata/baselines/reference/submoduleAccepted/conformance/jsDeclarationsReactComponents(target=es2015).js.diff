@@ -76,16 +76,13 @@
 -        export { classes_1 as classes };
 -        export let parentSource: string;
 -    }
--}
--import PropTypes from 'prop-types';
 +    var propTypes: {
 +        classes: PropTypes.Requireable<object>;
 +    };
-+}
-+declare namespace Tree {
 +    var defaultProps: {
 +        classes: {};
 +        parentSource: string;
 +    };
-+}
+ }
+-import PropTypes from 'prop-types';
 +export default Tree;

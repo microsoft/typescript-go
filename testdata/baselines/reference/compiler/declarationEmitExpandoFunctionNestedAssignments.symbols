@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/declarationEmitExpandoFunctionNestedAssignments.ts] ////
+
+=== declarationEmitExpandoFunctionNestedAssignments.ts ===
+function Foo(): void { }
+>Foo : Symbol(Foo, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 0, 0))
+
+Foo.top = 1;
+>Foo.top : Symbol(Foo.top, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 0, 24))
+>Foo : Symbol(Foo, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 0, 0))
+>top : Symbol(Foo.top, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 0, 24))
+
+let d: number = (Foo.inInitializer = 2);
+>d : Symbol(d, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 2, 3))
+>Foo.inInitializer : Symbol(Foo.inInitializer, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 2, 17))
+>Foo : Symbol(Foo, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 0, 0))
+>inInitializer : Symbol(Foo.inInitializer, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 2, 17))
+
+if (true) {
+    Foo.inBlock = 3;
+>Foo.inBlock : Symbol(Foo.inBlock, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 3, 11))
+>Foo : Symbol(Foo, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 0, 0))
+>inBlock : Symbol(Foo.inBlock, Decl(declarationEmitExpandoFunctionNestedAssignments.ts, 3, 11))
+}
+

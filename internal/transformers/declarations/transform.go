@@ -61,6 +61,7 @@ type DeclarationTransformer struct {
 	suppressNewDiagnosticContexts    bool
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
 	expandoHosts                     map[ast.NodeId]*ast.Node // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
+	emittedExpandoAssignments        map[ast.NodeId]bool
 	rawReferencedFiles               []ReferencedFilePair
 	rawTypeReferenceDirectives       []*ast.FileReference
 	rawLibReferenceDirectives        []*ast.FileReference
@@ -253,6 +254,7 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.state.lateMarkedStatements = make([]*ast.Node, 0)
 	tx.lateStatementReplacementMap = make(map[ast.NodeId]*ast.Node)
 	tx.expandoHosts = make(map[ast.NodeId]*ast.Node)
+	tx.emittedExpandoAssignments = make(map[ast.NodeId]bool)
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
@@ -345,6 +347,10 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 	// (and remove them from the set to examine for outter declarations)
 	results := make([]*ast.Node, 0, len(statements.Nodes))
 	for _, statement := range statements.Nodes {
+		if statement.Kind == ast.KindSyntaxList {
+			results = append(results, statement.AsSyntaxList().Children...)
+			continue
+		}
 		if !ast.IsLateVisibilityPaintedStatement(statement) {
 			results = append(results, statement)
 			continue
@@ -1403,7 +1409,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 	if tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) && tx.state.isolatedDeclarations {
 		tx.state.reportExpandoFunctionErrors(input.AsNode())
 	}
-	return tx.Factory().UpdateFunctionDeclaration(
+	clean := tx.Factory().UpdateFunctionDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		nil,
@@ -1414,6 +1420,101 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		nil, /*fullSignature*/
 		nil,
 	)
+	if tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) && shouldEmitFunctionProperties(input) {
+		return tx.transformExpandoFunctionDeclaration(input, clean)
+	}
+	return clean
+}
+
+func (tx *DeclarationTransformer) transformExpandoFunctionDeclaration(input *ast.FunctionDeclaration, clean *ast.Node) *ast.Node {
+	props := tx.resolver.GetPropertiesOfContainerFunction(input.AsNode())
+	if len(props) == 0 {
+		return clean
+	}
+
+	name := clean.Name()
+	if name == nil {
+		name = tx.Factory().NewIdentifier("_default")
+	}
+
+	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
+	synthesizedNamespace.Parent = tx.enclosingDeclaration
+
+	declarationData := synthesizedNamespace.DeclarationData()
+	declarationData.Symbol = props[0].Parent
+
+	containerData := synthesizedNamespace.LocalsContainerData()
+	containerData.Locals = make(ast.SymbolTable, len(props))
+	for _, p := range props {
+		containerData.Locals[p.Name] = p
+	}
+
+	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
+	statements := make([]*ast.Statement, 0, len(props))
+	for _, p := range props {
+		valueDeclaration := p.ValueDeclaration
+		if !ast.IsExpandoPropertyDeclaration(valueDeclaration) {
+			continue
+		}
+
+		property := p.Name
+		if !scanner.IsIdentifierText(property, core.LanguageVariantStandard) {
+			continue
+		}
+
+		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(valueDeclaration)
+		t := tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), valueDeclaration, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
+		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+
+		isNonContextualKeywordName := ast.IsNonContextualKeyword(scanner.StringToToken(property))
+		exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(valueDeclaration), tx.Factory().NewIdentifier(property))
+		statements = append(statements, tx.Factory().NewVariableStatement(
+			nil, /*modifiers*/
+			tx.Factory().NewVariableDeclarationList(
+				tx.Factory().NewNodeList([]*ast.Node{
+					tx.Factory().NewVariableDeclaration(exportName, nil /*exclamationToken*/, t, nil /*initializer*/),
+				}),
+				ast.NodeFlagsNone,
+			),
+		))
+
+		if isNonContextualKeywordName {
+			namedExports := tx.Factory().NewNamedExports(tx.Factory().NewNodeList(
+				[]*ast.Node{
+					tx.Factory().NewExportSpecifier(false /*isTypeOnly*/, exportName, tx.Factory().NewIdentifier(property)),
+				},
+			))
+			statements = append(statements, tx.Factory().NewExportDeclaration(nil /*modifiers*/, false /*isTypeOnly*/, namedExports, nil /*moduleSpecifier*/, nil /*attributes*/))
+		}
+
+		id := ast.GetNodeId(tx.EmitContext().MostOriginal(valueDeclaration))
+		tx.emittedExpandoAssignments[id] = true
+	}
+	tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+
+	if len(statements) == 0 {
+		return clean
+	}
+
+	modifierFlags := tx.ensureModifierFlags(input.AsNode())
+	defaultExport := modifierFlags&ast.ModifierFlagsExport != 0 && modifierFlags&ast.ModifierFlagsDefault != 0
+	namespaceDecl := tx.Factory().NewModuleDeclaration(tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier)), ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(statements)))
+	if !defaultExport {
+		return tx.Factory().NewSyntaxList([]*ast.Node{clean, namespaceDecl})
+	}
+
+	modifierFlags |= ast.ModifierFlagsAmbient
+	modifierFlags ^= ast.ModifierFlagsDefault
+	modifierFlags ^= ast.ModifierFlagsExport
+	modifiers := tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier))
+	cleanDeclaration := tx.Factory().UpdateFunctionDeclaration(clean.AsFunctionDeclaration(), modifiers, nil /*asteriskToken*/, clean.Name(), clean.AsFunctionDeclaration().TypeParameters, clean.AsFunctionDeclaration().Parameters, clean.Type(), nil /*fullSignature*/, nil /*body*/)
+	namespaceDeclaration := tx.Factory().UpdateModuleDeclaration(namespaceDecl.AsModuleDeclaration(), modifiers, namespaceDecl.AsModuleDeclaration().Keyword, namespaceDecl.Name(), namespaceDecl.Body())
+	exportDefaultDeclaration := tx.Factory().NewExportAssignment(nil /*modifiers*/, false /*isExportEquals*/, nil /*typeNode*/, name)
+	if ast.IsSourceFile(input.AsNode().Parent) {
+		tx.resultHasExternalModuleIndicator = true
+	}
+	tx.resultHasScopeMarker = true
+	return tx.Factory().NewSyntaxList([]*ast.Node{cleanDeclaration, namespaceDeclaration, exportDefaultDeclaration})
 }
 
 func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDeclaration) *ast.Node {
@@ -1493,7 +1594,8 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 	if statement == nil {
 		return nil
 	}
-	if ast.IsImportEqualsDeclaration(statement) || tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(statement), ast.ModifierFlagsDefault) != 0 || !ast.CanHaveModifiers(statement) {
+	parseNode := tx.EmitContext().ParseNode(statement)
+	if ast.IsImportEqualsDeclaration(statement) || parseNode != nil && tx.host.GetEffectiveDeclarationFlags(parseNode, ast.ModifierFlagsDefault) != 0 || !ast.CanHaveModifiers(statement) {
 		// `export import` statements should remain as-is, as imports are _not_ implicitly exported in an ambient namespace
 		// Likewise, `export default` classes and the like and just be `default`, so we preserve their `export` modifiers, too
 		return statement
@@ -2225,6 +2327,10 @@ func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.Node) *ast.
 
 func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) *ast.Node {
 	left := node.Left
+	id := ast.GetNodeId(tx.EmitContext().MostOriginal(node.AsNode()))
+	if tx.emittedExpandoAssignments[id] {
+		return nil
+	}
 
 	symbol := node.Symbol
 	if symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
@@ -2330,6 +2436,7 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		tx.resultHasExternalModuleIndicator = true
 	}
 
+	tx.emittedExpandoAssignments[id] = true
 	return tx.Factory().NewModuleDeclaration(tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier)), ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(statements)))
 }
 

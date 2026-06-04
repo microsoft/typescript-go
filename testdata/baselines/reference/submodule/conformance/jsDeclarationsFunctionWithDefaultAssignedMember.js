@@ -19,8 +19,6 @@ module.exports = foo;
 declare function foo(): void;
 declare namespace foo {
     var foo: typeof import(".");
-}
-declare namespace foo {
     var _a: typeof import(".");
     export { _a as default };
 }

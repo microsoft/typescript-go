@@ -102,6 +102,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 
 	if params.Context != nil && params.Context.Diagnostics != nil && wantsQuickFixes(params.Context.Only) {
 		fixIdSeen := make(map[string]*CodeFixProvider)
+		actionSeen := make(map[string]bool)
 
 		for _, diag := range params.Context.Diagnostics {
 			if diag.Code == nil || diag.Code.Integer == nil {
@@ -132,6 +133,13 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					return lsproto.CodeActionResponse{}, err
 				}
 				for _, action := range providerActions {
+					key := action.FixID + "\x00" + action.Description
+					if action.FixID == fixMissingTypeAnnotationOnExportsFixID && actionSeen[key] {
+						continue
+					}
+					if action.FixID == fixMissingTypeAnnotationOnExportsFixID {
+						actionSeen[key] = true
+					}
 					actions = append(actions, convertToLSPCodeAction(action, diag, params.TextDocument.Uri))
 					if action.FixID != "" {
 						fixIdSeen[action.FixID] = provider

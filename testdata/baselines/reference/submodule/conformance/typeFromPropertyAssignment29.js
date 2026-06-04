@@ -177,8 +177,6 @@ var n = ExpandoExpr3.prop + ExpandoExpr3.m(13) + new ExpandoExpr3().n;
 declare function ExpandoDecl(n: number): string;
 declare namespace ExpandoDecl {
     var prop: number;
-}
-declare namespace ExpandoDecl {
     var m: (n: number) => number;
 }
 declare var n: number;

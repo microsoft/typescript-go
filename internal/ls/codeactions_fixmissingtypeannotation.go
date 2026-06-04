@@ -238,7 +238,14 @@ func (f *isolatedDeclarationsFixer) addTypeAnnotation(span core.TextRange) strin
 
 	expandoFunction := findExpandoFunction(f.checker, nodeWithDiag)
 	if expandoFunction != nil {
+		if f.typePrintMode != typePrintModeFull {
+			return ""
+		}
 		if ast.IsFunctionDeclaration(expandoFunction) {
+			if f.fixedNodes[expandoFunction] {
+				return ""
+			}
+			f.fixedNodes[expandoFunction] = true
 			return f.createNamespaceForExpandoProperties(expandoFunction)
 		}
 		return f.fixIsolatedDeclarationError(expandoFunction)

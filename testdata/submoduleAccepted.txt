@@ -359,7 +359,6 @@ compiler/declarationEmitClassAccessorsJs1.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs2.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs3.js.diff
-compiler/declarationEmitDefaultExportWithStaticAssignment.js.diff
 compiler/declarationEmitDefaultExportWithStaticAssignment.symbols.diff
 compiler/declarationEmitDefaultExportWithStaticAssignment.types.diff
 compiler/decoratorMetadataTypeOnlyExport.symbols.diff
@@ -384,7 +383,6 @@ compiler/declarationEmitExpandoWithGenericConstraint.types.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
 compiler/declarationEmitLateBoundAssignments2.js.diff
@@ -417,6 +415,7 @@ compiler/declarationEmitExactOptionalPropertyTypesNodeNotReused(exactoptionalpro
 compiler/declarationEmitExactOptionalPropertyTypesNodeNotReused(exactoptionalpropertytypes=true).types.diff
 compiler/declarationEmitFirstTypeArgumentGenericFunctionType.js.diff
 compiler/declarationEmitFirstTypeArgumentGenericFunctionType.types.diff
+compiler/declarationEmitFunctionDuplicateNamespace.js.diff
 compiler/declarationEmitFunctionDuplicateNamespace.symbols.diff
 compiler/declarationEmitFunctionDuplicateNamespace.types.diff
 compiler/declarationEmitHigherOrderRetainedGenerics.js.diff
@@ -960,7 +959,6 @@ compiler/declarationEmitCastReusesTypeNode4(strictnullchecks=true).js.diff
 compiler/jsDeclarationsInheritedTypes.js.diff
 compiler/nodeNextPackageSelfNameWithOutDirDeclDirCompositeNestedDirs.js.diff
 compiler/nodeNextPackageSelfNameWithOutDirDeclDirNestedDirs.js.diff
-conformance/exportDefaultNamespace.js.diff
 conformance/jsDeclarationsClassStatic2.js.diff
 conformance/jsDeclarationsComputedNames(target=es2015).js.diff
 conformance/jsDeclarationsExportAssignedClassInstance1(target=es2015).js.diff
@@ -1064,7 +1062,6 @@ conformance/typeFromPropertyAssignment29.js.diff
 
 ## Expando function namespace removed entirely (Documented in CHANGES.md in section "Expando declarations")
 ## Expando namespace with nested property assignments is completely removed from declaration emit
-compiler/expandoFunctionNestedAssigments.js.diff
 
 ## Namespace converted to type alias in declaration emit (Documented in CHANGES.md in section "JSDoc Tags and Types")
 ## `namespace Dotted { type Name = number }` → `type Dotted = number`

@@ -14,6 +14,9 @@ A.a = 1;
 
 //// [declarationEmitExpandoOverloads.d.ts]
 export declare function A(a: number): void;
+export declare namespace A {
+    var a: number;
+}
 export declare function A(a: string): void;
 export declare namespace A {
     var a: number;

@@ -236,8 +236,6 @@ declare namespace Tree {
     var propTypes: {
         classes: PropTypes.Requireable<object>;
     };
-}
-declare namespace Tree {
     var defaultProps: {
         classes: {};
         parentSource: string;
