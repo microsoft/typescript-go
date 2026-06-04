@@ -3,6 +3,13 @@
 === disallowUnerasableAssertion.ts ===
 // https://github.com/microsoft/TypeScript/issues/63527
 
+export const c0 = 1 as number / 2;
+>c0 : number
+>1 as number / 2 : number
+>1 as number : number
+>1 : 1
+>2 : 2
+
 export const c1 = 1 + 1 as number / 2;
 >c1 : number
 >1 + 1 as number : number
