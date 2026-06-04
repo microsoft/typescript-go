@@ -944,10 +944,10 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 			}
 		}
 		if valueParam == nil {
-			// TODO: strada bug - no type printed on set accessor missing arg as though private
+			// When synthesizing a missing value parameter, emit `value: any` for non-private accessors to match TypeScript's declaration emit behavior.
 			var t *ast.Node
 			if !isPrivate {
-				t = tx.Factory().NewKeywordExpression(ast.KindAnyKeyword)
+				t = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
 			}
 			valueParam = tx.Factory().NewParameterDeclaration(
 				nil,
@@ -1864,7 +1864,7 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 }
 
 func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierList {
-	currentFlags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsAll)
+	currentFlags := ast.GetCombinedModifierFlags(tx.EmitContext().ParseNode(node)) & ast.ModifierFlagsAll
 	newFlags := tx.ensureModifierFlags(node)
 	if currentFlags == newFlags {
 		// Elide decorators
@@ -1895,7 +1895,7 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 	if ast.IsImplicitlyExportedJSDocDeclaration(node) {
 		additions |= ast.ModifierFlagsExport
 	}
-	return maskModifierFlags(tx.host, node, mask, additions)
+	return maskModifierFlags(node, mask, additions)
 }
 
 func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.TypeParameterList) *ast.TypeParameterList {
@@ -2241,6 +2241,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return nil
 	}
 
+	if tx.shouldStripInternal(declaration) {
+		return nil
+	}
+
 	if ast.IsVariableDeclaration(declaration) && declaration.Type() != nil {
 		return nil
 	}
@@ -2313,7 +2317,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	flags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(declaration), ast.ModifierFlagsAll)
-	modifierFlags := ast.ModifierFlagsAmbient
+	modifierFlags := ast.ModifierFlagsNone
+	if tx.needsDeclare {
+		modifierFlags |= ast.ModifierFlagsAmbient
+	}
 
 	if flags&ast.ModifierFlagsExport != 0 {
 		if flags&ast.ModifierFlagsDefault == 0 {
