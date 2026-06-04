@@ -98,19 +98,21 @@ func TestWatcher_CreateChangeDelete(t *testing.T) {
 func TestWatcher_KindFilter(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
+	dirNorm := tspath.NormalizeSlashes(dir)
 
 	var (
 		mu  sync.Mutex
 		got []*lsproto.FileEvent
 	)
-	w := New(bundled.WrapFS(osvfs.FS()), func(changes []*lsproto.FileEvent) {
+	backend := newFakeBackend()
+	w := newWithBackend(bundled.WrapFS(osvfs.FS()), backend, func(changes []*lsproto.FileEvent) {
 		mu.Lock()
 		defer mu.Unlock()
 		got = append(got, changes...)
 	}, logging.NewLogger(os.Stderr))
 	t.Cleanup(w.Close)
 
-	pattern := tspath.NormalizeSlashes(dir) + "/**/*"
+	pattern := dirNorm + "/**/*"
 	kind := lsproto.WatchKindDelete
 	if err := w.WatchFiles("test", []*lsproto.FileSystemWatcher{{
 		GlobPattern: lsproto.PatternOrRelativePattern{Pattern: &pattern},
@@ -118,15 +120,10 @@ func TestWatcher_KindFilter(t *testing.T) {
 	}}); err != nil {
 		t.Fatal(err)
 	}
-	time.Sleep(200 * time.Millisecond)
-
-	file := filepath.Join(dir, "x.ts")
-	if err := os.WriteFile(file, []byte("x"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Remove(file); err != nil {
-		t.Fatal(err)
-	}
+	backend.emitAll([]fswatch.Event{
+		{Kind: fswatch.EventUpdate, Path: filepath.FromSlash(filepath.Join(dirNorm, "x.ts"))},
+		{Kind: fswatch.EventDelete, Path: filepath.FromSlash(filepath.Join(dirNorm, "x.ts"))},
+	}, nil)
 
 	waitFor(t, func() bool {
 		mu.Lock()
