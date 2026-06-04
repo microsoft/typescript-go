@@ -67,6 +67,7 @@ import type {
     AssertsThisTypePredicate,
     ConditionalType,
     Diagnostic,
+    FreshableType,
     IdentifierTypePredicate,
     IndexedAccessType,
     IndexInfo,
@@ -92,7 +93,7 @@ import type {
 
 export { DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -1075,6 +1076,11 @@ class TypeObject implements Type {
         const cached = this.objectRegistry.getType(this.freshType);
         if (cached) return cached as Type;
         const data = await this.client.apiRequest<TypeResponse | null>("getFreshTypeOfType", { snapshot: this.snapshotId, type: this.id });
+        return data ? this.objectRegistry.getOrCreateType(data) as Type : undefined;
+    }
+
+    async getRegularType(): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getRegularTypeOfType", { snapshot: this.snapshotId, type: this.id });
         return data ? this.objectRegistry.getOrCreateType(data) as Type : undefined;
     }
 

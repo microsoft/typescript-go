@@ -84,6 +84,7 @@ const (
 	// Type sub-property methods
 	MethodGetTargetOfType              Method = "getTargetOfType"
 	MethodGetFreshTypeOfType           Method = "getFreshTypeOfType"
+	MethodGetRegularTypeOfType         Method = "getRegularTypeOfType"
 	MethodGetTypesOfType               Method = "getTypesOfType"
 	MethodGetTypeParametersOfType      Method = "getTypeParametersOfType"
 	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
@@ -317,6 +318,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 
 	MethodGetTargetOfType:                   unmarshallerFor[GetTypePropertyParams],
 	MethodGetFreshTypeOfType:                unmarshallerFor[GetTypePropertyParams],
+	MethodGetRegularTypeOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypesOfType:                    unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeParametersOfType:           unmarshallerFor[GetTypePropertyParams],
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],

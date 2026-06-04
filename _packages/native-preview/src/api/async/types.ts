@@ -39,12 +39,18 @@ export interface IntrinsicType extends Type {
     readonly intrinsicName: string;
 }
 
+/** Freshable types (TypeFlags.Freshable), including literal and enum types. */
+export interface FreshableType extends Type {
+    /** Get the fresh version of this type, if any */
+    getFreshType(): Promise<Type | undefined>;
+    /** Get the regular (non-fresh) version of this type, if any */
+    getRegularType(): Promise<Type | undefined>;
+}
+
 /** Literal types: StringLiteral, NumberLiteral, BigIntLiteral, BooleanLiteral */
-export interface LiteralType extends Type {
+export interface LiteralType extends FreshableType {
     /** The literal value */
     readonly value: string | number | boolean;
-    /** Get the fresh version of this literal type, if any */
-    getFreshType(): Promise<Type | undefined>;
 }
 
 /** Object types (TypeFlags.Object) */

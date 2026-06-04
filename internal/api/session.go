@@ -415,6 +415,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTargetOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetFreshTypeOfType):
 		return s.handleGetFreshTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetRegularTypeOfType):
+		return s.handleGetRegularTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetTypesOfType):
 		return s.handleGetTypesOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetTypeParametersOfType):
@@ -1274,10 +1276,19 @@ func (s *Session) handleGetTargetOfType(_ context.Context, params *GetTypeProper
 
 func (s *Session) handleGetFreshTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
-		if t.Flags()&checker.TypeFlagsLiteral == 0 {
+		if t.Flags()&checker.TypeFlagsFreshable == 0 {
 			return nil
 		}
 		return t.AsLiteralType().FreshType()
+	})
+}
+
+func (s *Session) handleGetRegularTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		if t.Flags()&checker.TypeFlagsFreshable == 0 {
+			return nil
+		}
+		return t.AsLiteralType().RegularType()
 	})
 }
 
