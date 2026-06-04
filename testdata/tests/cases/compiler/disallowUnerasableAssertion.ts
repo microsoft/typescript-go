@@ -1,3 +1,5 @@
+// https://github.com/microsoft/TypeScript/issues/63527
+
 export const c1 = 1 + 1 as number / 2;
 export const c2 = (1 + 1 as number) / 2;
 export const c3 = 1 + 1 as number === 2;
@@ -5,3 +7,5 @@ export const c4 = 1 + 1 as number > 2;
 export const c5 = 1 + 1 as number >= 2;
 export const c6 = 1 + 1 as number >> 2;
 export const c7 = 1 + 1 as number << 2;
+export const c8 = 1 << 1 as number + 2;
+export const c9 = 1 >> 1 as number + 2;

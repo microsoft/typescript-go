@@ -1,24 +1,32 @@
 //// [tests/cases/compiler/disallowUnerasableAssertion.ts] ////
 
 === disallowUnerasableAssertion.ts ===
+// https://github.com/microsoft/TypeScript/issues/63527
+
 export const c1 = 1 + 1 as number / 2;
->c1 : Symbol(c1, Decl(disallowUnerasableAssertion.ts, 0, 12))
+>c1 : Symbol(c1, Decl(disallowUnerasableAssertion.ts, 2, 12))
 
 export const c2 = (1 + 1 as number) / 2;
->c2 : Symbol(c2, Decl(disallowUnerasableAssertion.ts, 1, 12))
+>c2 : Symbol(c2, Decl(disallowUnerasableAssertion.ts, 3, 12))
 
 export const c3 = 1 + 1 as number === 2;
->c3 : Symbol(c3, Decl(disallowUnerasableAssertion.ts, 2, 12))
+>c3 : Symbol(c3, Decl(disallowUnerasableAssertion.ts, 4, 12))
 
 export const c4 = 1 + 1 as number > 2;
->c4 : Symbol(c4, Decl(disallowUnerasableAssertion.ts, 3, 12))
+>c4 : Symbol(c4, Decl(disallowUnerasableAssertion.ts, 5, 12))
 
 export const c5 = 1 + 1 as number >= 2;
->c5 : Symbol(c5, Decl(disallowUnerasableAssertion.ts, 4, 12))
+>c5 : Symbol(c5, Decl(disallowUnerasableAssertion.ts, 6, 12))
 
 export const c6 = 1 + 1 as number >> 2;
->c6 : Symbol(c6, Decl(disallowUnerasableAssertion.ts, 5, 12))
+>c6 : Symbol(c6, Decl(disallowUnerasableAssertion.ts, 7, 12))
 
 export const c7 = 1 + 1 as number << 2;
->c7 : Symbol(c7, Decl(disallowUnerasableAssertion.ts, 6, 12))
+>c7 : Symbol(c7, Decl(disallowUnerasableAssertion.ts, 8, 12))
+
+export const c8 = 1 << 1 as number + 2;
+>c8 : Symbol(c8, Decl(disallowUnerasableAssertion.ts, 9, 12))
+
+export const c9 = 1 >> 1 as number + 2;
+>c9 : Symbol(c9, Decl(disallowUnerasableAssertion.ts, 10, 12))
 

@@ -1,9 +1,11 @@
-disallowUnerasableAssertion.ts(1,35): error TS1005: ',' expected.
-disallowUnerasableAssertion.ts(6,35): error TS1005: ',' expected.
-disallowUnerasableAssertion.ts(7,35): error TS1005: ',' expected.
+disallowUnerasableAssertion.ts(3,35): error TS1005: ',' expected.
+disallowUnerasableAssertion.ts(10,36): error TS1005: ',' expected.
+disallowUnerasableAssertion.ts(11,36): error TS1005: ',' expected.
 
 
 ==== disallowUnerasableAssertion.ts (3 errors) ====
+    // https://github.com/microsoft/TypeScript/issues/63527
+    
     export const c1 = 1 + 1 as number / 2;
                                       ~
 !!! error TS1005: ',' expected.
@@ -12,9 +14,11 @@ disallowUnerasableAssertion.ts(7,35): error TS1005: ',' expected.
     export const c4 = 1 + 1 as number > 2;
     export const c5 = 1 + 1 as number >= 2;
     export const c6 = 1 + 1 as number >> 2;
-                                      ~~
-!!! error TS1005: ',' expected.
     export const c7 = 1 + 1 as number << 2;
-                                      ~~
+    export const c8 = 1 << 1 as number + 2;
+                                       ~
+!!! error TS1005: ',' expected.
+    export const c9 = 1 >> 1 as number + 2;
+                                       ~
 !!! error TS1005: ',' expected.
     
