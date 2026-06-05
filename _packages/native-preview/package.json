@@ -106,7 +106,6 @@
         "generate:enums": "npx hereby generate:enums --herebyfile ../../Herebyfile.mjs",
         "prebuild": "npm run generate",
         "build": "tsc -b",
-        "postinstall": "node ./lib/optimizeBin.js",
         "prebuild:test": "npm run generate",
         "build:test": "tsc -b test",
         "test:only": "npm run node -- --test './test/**/*.test.ts'",
