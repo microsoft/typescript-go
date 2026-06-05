@@ -2,8 +2,8 @@
 
 import type { ModifierFlags } from "#enums/modifierFlags";
 import type { NodeFlags } from "#enums/nodeFlags";
-import { SyntaxKind } from "#enums/syntaxKind";
-import { TokenFlags } from "#enums/tokenFlags";
+import type { SyntaxKind } from "#enums/syntaxKind";
+import type { TokenFlags } from "#enums/tokenFlags";
 import type {
     Node,
     NodeArray,

@@ -8,10 +8,10 @@
  * Usage: node --experimental-strip-types _scripts/generate-ts-ast.ts
  */
 
-import { execaSync } from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import { execaSync } from "execa";
 import type {
     MemberInfo,
     NodeType,
@@ -288,8 +288,8 @@ function generateAstGenerated(): string {
 
 import type { ModifierFlags } from "#enums/modifierFlags";
 import type { NodeFlags } from "#enums/nodeFlags";
-import { SyntaxKind } from "#enums/syntaxKind";
-import { TokenFlags } from "#enums/tokenFlags";
+import type { SyntaxKind } from "#enums/syntaxKind";
+import type { TokenFlags } from "#enums/tokenFlags";
 import type { Node, NodeArray } from "./ast.ts";`);
 
     // ── SyntaxKind union aliases from schema ──
