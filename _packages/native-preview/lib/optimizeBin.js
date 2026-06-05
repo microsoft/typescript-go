@@ -3,11 +3,27 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import getExePath from "./getExePath.js";
 
-function optimizeBin() {
+let optimizedExePath;
+
+export function optimizeBin() {
+    if (optimizedExePath !== undefined) {
+        return optimizedExePath;
+    }
+
+    try {
+        optimizedExePath = tryOptimizeBin();
+    }
+    catch {
+        // Keep the JS wrapper in place when the platform package is unavailable.
+    }
+    return optimizedExePath;
+}
+
+function tryOptimizeBin() {
     const dirname = path.dirname(fileURLToPath(import.meta.url));
     const normalizedDirname = dirname.replace(/\\/g, "/");
     if (normalizedDirname.endsWith("/_packages/native-preview/lib")) {
-        return;
+        return undefined;
     }
 
     const packageDir = path.resolve(dirname, "..");
@@ -17,18 +33,26 @@ function optimizeBin() {
     const tempBinPath = path.join(binDir, `.${path.basename(binPath)}.tmp`);
     const relativeExe = path.relative(binDir, exe);
 
-    fs.rmSync(tempBinPath, { force: true });
     try {
+        fs.rmSync(tempBinPath, { force: true });
         fs.symlinkSync(relativeExe, tempBinPath);
         fs.renameSync(tempBinPath, binPath);
+
+        if (process.platform === "win32") {
+            patchWindowsShims(packageDir, binPath);
+        }
     }
-    finally {
+    catch {
+        // Keep the JS wrapper in place when the package manager does not allow symlinks.
+    }
+    try {
         fs.rmSync(tempBinPath, { force: true });
     }
-
-    if (process.platform === "win32") {
-        patchWindowsShims(packageDir, binPath);
+    catch {
+        // ignore cleanup failures
     }
+
+    return exe;
 }
 
 function patchWindowsShims(packageDir, exePath) {
@@ -86,10 +110,4 @@ function writeShellShim(shimPath, exePath) {
     );
 }
 
-try {
-    optimizeBin();
-}
-catch {
-    // Keep the JS wrapper in place when the platform package is unavailable or
-    // the package manager does not allow symlinks.
-}
+optimizeBin();
