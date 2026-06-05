@@ -78,7 +78,14 @@ type singleWatch struct {
 // New constructs a Watcher backed by internal/fswatch's platform-default
 // watcher implementation.
 func New(fs vfs.FS, onChanges func(changes []*lsproto.FileEvent), logger logging.Logger) *Watcher {
-	return newWithBackend(fs, defaultWatcherBackend{w: fswatch.Default()}, onChanges, logger)
+	return NewWithFSWatcher(fs, fswatch.Default(), onChanges, logger)
+}
+
+// NewWithFSWatcher constructs a Watcher backed by the provided fswatch.Watcher.
+// Use this to select a specific backend (e.g. fswatch.Kqueue()) instead of the
+// platform default.
+func NewWithFSWatcher(fs vfs.FS, w fswatch.Watcher, onChanges func(changes []*lsproto.FileEvent), logger logging.Logger) *Watcher {
+	return newWithBackend(fs, defaultWatcherBackend{w: w}, onChanges, logger)
 }
 
 func newWithBackend(fs vfs.FS, backend watcherBackend, onChanges func(changes []*lsproto.FileEvent), logger logging.Logger) *Watcher {
