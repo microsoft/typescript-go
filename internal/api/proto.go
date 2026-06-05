@@ -561,9 +561,11 @@ func newTypeData(t *checker.Type) *TypeResponse {
 	}
 
 	switch flags := t.Flags(); {
-	case flags&checker.TypeFlagsLiteral != 0:
+	case flags&checker.TypeFlagsFreshable != 0:
 		lit := t.AsLiteralType()
-		resp.Value = literalValueToJSON(lit.Value())
+		if flags&checker.TypeFlagsLiteral != 0 {
+			resp.Value = literalValueToJSON(lit.Value())
+		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()
