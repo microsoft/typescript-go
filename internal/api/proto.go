@@ -487,8 +487,9 @@ type TypeResponse struct {
 	ObjectFlags uint32 `json:"objectFlags,omitempty"`
 
 	// LiteralType data
-	Value     any    `json:"value,omitempty"`
-	FreshType TypeID `json:"freshType,omitempty"`
+	Value       any    `json:"value,omitempty"`
+	FreshType   TypeID `json:"freshType,omitempty"`
+	RegularType TypeID `json:"regularType,omitempty"`
 
 	// ObjectType / TypeReference / StringMappingType / IndexType target
 	Target TypeID `json:"target,omitempty"`
@@ -549,13 +550,20 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		}
 	}
 
+	if t.Flags()&checker.TypeFlagsFreshable != 0 {
+		lit := t.AsLiteralType()
+		if lit.FreshType() != nil {
+			resp.FreshType = TypeHandle(lit.FreshType())
+		}
+		if lit.RegularType() != nil {
+			resp.RegularType = TypeHandle(lit.RegularType())
+		}
+	}
+
 	switch flags := t.Flags(); {
 	case flags&checker.TypeFlagsLiteral != 0:
 		lit := t.AsLiteralType()
 		resp.Value = literalValueToJSON(lit.Value())
-		if lit.FreshType() != nil {
-			resp.FreshType = TypeHandle(lit.FreshType())
-		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()

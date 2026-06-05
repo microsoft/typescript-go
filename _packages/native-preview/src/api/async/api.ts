@@ -994,6 +994,7 @@ class TypeObject implements Type {
     readonly intrinsicName!: string;
     readonly isThisType!: boolean;
     readonly freshType!: number;
+    readonly regularType!: number;
     readonly target!: number;
     readonly typeParameters!: readonly number[];
     readonly outerTypeParameters!: readonly number[];
@@ -1023,6 +1024,7 @@ class TypeObject implements Type {
         if (data.intrinsicName !== undefined) this.intrinsicName = data.intrinsicName;
         if (data.isThisType !== undefined) this.isThisType = data.isThisType;
         if (data.freshType !== undefined) this.freshType = data.freshType;
+        if (data.regularType !== undefined) this.regularType = data.regularType;
         if (data.target !== undefined) this.target = data.target;
         if (data.typeParameters !== undefined) this.typeParameters = data.typeParameters;
         if (data.outerTypeParameters !== undefined) this.outerTypeParameters = data.outerTypeParameters;
@@ -1080,6 +1082,9 @@ class TypeObject implements Type {
     }
 
     async getRegularType(): Promise<Type | undefined> {
+        if (!this.regularType) return undefined;
+        const cached = this.objectRegistry.getType(this.regularType);
+        if (cached) return cached as Type;
         const data = await this.client.apiRequest<TypeResponse | null>("getRegularTypeOfType", { snapshot: this.snapshotId, type: this.id });
         return data ? this.objectRegistry.getOrCreateType(data) as Type : undefined;
     }
