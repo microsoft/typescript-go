@@ -62,6 +62,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
             },
+            {
+                name: "logVerbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                optional: true,
+                documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -165,6 +171,36 @@ const customStructures: Structure[] = [
                 documentation: `The document in which the code lens and its range are located.`,
             },
         ],
+    },
+    {
+        name: "ExperimentalServerCapabilities",
+        properties: [
+            {
+                name: "customSourceDefinitionProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+            },
+            {
+                name: "customMultiDocumentHighlightProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
+            },
+        ],
+        documentation: "ExperimentalServerCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "ExperimentalClientCapabilities",
+        properties: [
+            {
+                name: "hoverVerbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.",
+            },
+        ],
+        documentation: "ExperimentalClientCapabilities contains experimental capabilities under development.",
     },
     {
         name: "VSOnAutoInsertOptions",
@@ -373,6 +409,17 @@ const customStructures: Structure[] = [
             },
         ],
         documentation: "Result for the custom/projectInfo request.",
+    },
+    {
+        name: "SetLogVerbosityParams",
+        properties: [
+            {
+                name: "verbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                documentation: "The log verbosity level.",
+            },
+        ],
+        documentation: "Parameters for the custom/setLogVerbosity notification.",
     },
     {
         name: "ProjectFilesProject",
@@ -591,6 +638,19 @@ const customStructures: Structure[] = [
 
 const customEnumerations: Enumeration[] = [
     {
+        name: "LogVerbosity",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All logging disabled." },
+            { name: "Trace", value: 1, documentation: "Most verbose; includes LSP request/response traces." },
+            { name: "Debug", value: 2, documentation: "Verbose server logs." },
+            { name: "Info", value: 3, documentation: "Normal server logs." },
+            { name: "Warning", value: 4, documentation: "Warnings only." },
+            { name: "Error", value: 5, documentation: "Errors only." },
+        ],
+        documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
+    {
         name: "VSReferenceKind",
         type: { kind: "base", name: "integer" },
         values: [
@@ -802,6 +862,16 @@ const customRequests: Request[] = [
     },
 ];
 
+const customNotifications: Notification[] = [
+    {
+        method: "custom/setLogVerbosity",
+        typeName: "CustomSetLogVerbosityNotification",
+        params: { kind: "reference", name: "SetLogVerbosityParams" },
+        messageDirection: "clientToServer",
+        documentation: "Notification to set the server's log verbosity level based on the output channel's log level.",
+    },
+];
+
 // compareStructures is the set of generated structures for which a Compare method should be emitted.
 // The Compare method defines a total ordering by comparing fields in declaration order.
 // All listed structures (and any structure-typed fields they reference) must contain only
@@ -899,12 +969,6 @@ function patchAndPreprocessModel() {
         // Patch ServerCapabilities to add custom tsgo capability flags
         if (structure.name === "ServerCapabilities") {
             structure.properties.push({
-                name: "customSourceDefinitionProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
-            });
-            structure.properties.push({
                 name: "_vs_onAutoInsertProvider",
                 type: { kind: "reference", name: "VSOnAutoInsertOptions" },
                 optional: true,
@@ -976,16 +1040,6 @@ function patchAndPreprocessModel() {
             );
         }
 
-        // Patch HoverClientCapabilities to add verbosityLevel support flag
-        if (structure.name === "HoverClientCapabilities") {
-            structure.properties.push({
-                name: "verbosityLevel",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
-            });
-        }
-
         // Patch SignatureInformation to add VS-specific colorized label
         if (structure.name === "SignatureInformation") {
             structure.properties.push({
@@ -993,16 +1047,6 @@ function patchAndPreprocessModel() {
                 type: { kind: "reference", name: "VSClassifiedTextElement" },
                 optional: true,
                 documentation: "A colorized label for the signature, providing classified text runs for VS syntax coloring.",
-            });
-        }
-
-        // Patch ServerCapabilities to add custom tsgo capability flags
-        if (structure.name === "ServerCapabilities") {
-            structure.properties.push({
-                name: "customMultiDocumentHighlightProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
             });
         }
 
@@ -1067,6 +1111,7 @@ function patchAndPreprocessModel() {
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
     model.requests.push(...customRequests);
+    model.notifications.push(...customNotifications);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
@@ -1112,9 +1157,22 @@ function patchAndPreprocessModel() {
         structure.extends = undefined;
         structure.mixins = undefined;
 
-        // Remove experimental properties from ServerCapabilities and ClientCapabilities
-        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
-            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        // Replace experimental LSPAny with typed ExperimentalClientCapabilities in ClientCapabilities
+        if (structure.name === "ClientCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalClientCapabilities" };
+                expProp.optional = true;
+            }
+        }
+
+        // Replace experimental LSPAny with typed ExperimentalServerCapabilities in ServerCapabilities
+        if (structure.name === "ServerCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalServerCapabilities" };
+                expProp.optional = true;
+            }
         }
 
         // Remove method and registerOptions from Registration (handled by custom codegen)
