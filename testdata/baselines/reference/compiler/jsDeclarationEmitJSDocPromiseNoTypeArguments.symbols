@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/jsDeclarationEmitJSDocPromiseNoTypeArguments.ts] ////
+
+=== /a.js ===
+/** @returns {Promise} */
+export async function foo() {}
+>foo : Symbol(foo, Decl(a.js, 0, 0))
+

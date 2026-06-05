@@ -414,7 +414,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		return nil
 	}
 	tryVisitTypeReference := func(node *ast.Node) *ast.Node {
-		if ast.IsConstTypeReference(node) {
+		if ast.IsConstTypeReference(node) || !b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(node, b.getTypeFromTypeNode(node, false /*noMappedTypes*/)) {
 			return nil
 		}
 		s := b.ch.symbolNodeLinks.Get(node).resolvedSymbol
