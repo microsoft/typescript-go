@@ -32,6 +32,7 @@ import type {
     QuestionToken,
     ReadonlyKeyword,
     SatisfiesExpression,
+    SourceFile,
     Statement,
     TemplateMiddle,
     TemplateTail,
@@ -56,6 +57,10 @@ type WrappedExpression<T extends Expression> =
     | PartiallyEmittedExpression;
 
 type OuterExpression = WrappedExpression<Expression>;
+
+export function isSourceFile(node: Node): node is SourceFile {
+    return node.kind === SyntaxKind.SourceFile;
+}
 
 export function isTypeNode(node: Node): node is TypeNode {
     return isTypeNodeKind(node.kind);
