@@ -8,10 +8,10 @@
  * Usage: node --experimental-strip-types _scripts/generate-ts-ast.ts
  */
 
+import { execaSync } from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { execaSync } from "execa";
 import type {
     MemberInfo,
     NodeType,
