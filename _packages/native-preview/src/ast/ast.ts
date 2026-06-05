@@ -4,7 +4,7 @@
 import type { LanguageVariant } from "#enums/languageVariant";
 import type { NodeFlags } from "#enums/nodeFlags";
 import type { ScriptKind } from "#enums/scriptKind";
-import { SyntaxKind } from "#enums/syntaxKind";
+import type { SyntaxKind } from "#enums/syntaxKind";
 import type {
     EndOfFile,
     EntityName,
