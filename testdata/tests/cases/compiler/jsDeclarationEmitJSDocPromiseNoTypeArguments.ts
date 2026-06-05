@@ -1,6 +1,5 @@
 // @allowJs: true
 // @declaration: true
-// @declaration: true
 // @emitDeclarationOnly: true
 
 // @filename: /a.js
