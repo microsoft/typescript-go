@@ -59,7 +59,7 @@ func (s *IdLinkStore[V]) Get(id uint64) *V {
 func (s *IdLinkStore[V]) getSlow(id uint64) *V {
 	page := id >> idLinkPageShift
 	if page >= uint64(len(s.pages)) {
-		s.pages = append(s.pages, make([][]*V, page+1-uint64(len(s.pages)))...)
+		s.pages = append(s.pages, make([][]*V, int(page)+1-len(s.pages))...)
 	}
 	if s.pages[page] == nil {
 		s.pages[page] = make([]*V, idLinkPageSize)
