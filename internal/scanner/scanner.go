@@ -738,7 +738,7 @@ func (s *Scanner) Scan() ast.Kind {
 			s.pos++
 			s.token = ast.KindSemicolonToken
 		case '<':
-			if isConflictMarkerTrivia(s.text, s.pos) {
+			if s.charAt(1) == '<' && isConflictMarkerTrivia(s.text, s.pos) {
 				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
 				if s.skipTrivia {
 					continue
@@ -766,7 +766,7 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindLessThanToken
 			}
 		case '=':
-			if isConflictMarkerTrivia(s.text, s.pos) {
+			if s.charAt(1) == '=' && isConflictMarkerTrivia(s.text, s.pos) {
 				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
 				if s.skipTrivia {
 					continue
@@ -791,7 +791,7 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindEqualsToken
 			}
 		case '>':
-			if isConflictMarkerTrivia(s.text, s.pos) {
+			if s.charAt(1) == '>' && isConflictMarkerTrivia(s.text, s.pos) {
 				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
 				if s.skipTrivia {
 					continue
@@ -836,7 +836,7 @@ func (s *Scanner) Scan() ast.Kind {
 			s.pos++
 			s.token = ast.KindOpenBraceToken
 		case '|':
-			if isConflictMarkerTrivia(s.text, s.pos) {
+			if s.charAt(1) == '|' && isConflictMarkerTrivia(s.text, s.pos) {
 				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
 				if s.skipTrivia {
 					continue
@@ -2380,12 +2380,20 @@ func isConflictMarkerTrivia(text string, pos int) bool {
 		panic("pos < 0")
 	}
 
-	// Conflict markers must be at the start of a line.
-	var prev rune
-	if pos >= 2 {
-		prev, _ = utf8.DecodeLastRuneInString(text[:pos-2])
+	// Fast reject: a conflict marker is the same byte repeated seven times. If the
+	// second byte differs (the overwhelmingly common case for `<`, `>`, `=`, `|`
+	// tokens), it cannot be a marker, so skip the line-start check entirely.
+	if pos+1 >= len(text) || text[pos+1] != text[pos] {
+		return false
 	}
-	if pos == 0 || stringutil.IsLineBreak(prev) || pos >= 1 && stringutil.IsLineBreak(rune(text[pos-1])) {
+
+	// Conflict markers must be at the start of a line.
+	atLineStart := pos == 0 || stringutil.IsLineBreak(rune(text[pos-1]))
+	if !atLineStart && pos >= 2 {
+		prev, _ := utf8.DecodeLastRuneInString(text[:pos-2])
+		atLineStart = stringutil.IsLineBreak(prev)
+	}
+	if atLineStart {
 		ch := text[pos]
 
 		if (pos + mergeConflictMarkerLength) < len(text) {
