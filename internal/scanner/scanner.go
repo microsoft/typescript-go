@@ -456,6 +456,14 @@ func (s *Scanner) charAt(offset int) rune {
 }
 
 func (s *Scanner) charAndSize() (rune, int) {
+	// Fast path: a single ASCII byte. The vast majority of source bytes are
+	// ASCII; handling them here avoids constructing a string slice header and
+	// calling the non-inlined utf8.DecodeRuneInString on every byte.
+	if s.pos < s.end {
+		if b := s.text[s.pos]; b < utf8.RuneSelf {
+			return rune(b), 1
+		}
+	}
 	r, size := utf8.DecodeRuneInString(s.text[s.pos:])
 	if size > 1 {
 		s.containsNonASCII = true
