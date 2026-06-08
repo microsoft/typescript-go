@@ -388,7 +388,7 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 		}
 		// This path only needs the synthetic import's module name and resolution
 		// mode. Defer allocating the actual node until checker/LS code asks for
-		// the specifier.
+		// the specifier; passing nil creates the lazy wrapper.
 		p.importHelpersImportSpecifiers[path] = newImportHelpersImportSpecifier(nil)
 		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(newFile)
 		optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
@@ -2090,7 +2090,9 @@ func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReferenc
 
 func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 	if specifier := p.importHelpersImportSpecifiers[path]; specifier != nil {
-		return specifier.getSpecifier(p.filesByPath[path])
+		if file := p.filesByPath[path]; file != nil {
+			return specifier.getSpecifier(file)
+		}
 	}
 	return nil
 }
