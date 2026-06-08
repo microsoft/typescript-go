@@ -220,14 +220,7 @@ func NewSession(init *SessionInit) *Session {
 				lsproto.GetClientCapabilities(init.BackgroundCtx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 				init.Options.GranularWatches,
 				func(nodeModulesDirs map[tspath.Path]string, _ vfs.FS) PatternsAndIgnored {
-					patterns := make([]string, 0, len(nodeModulesDirs))
-					for _, dir := range nodeModulesDirs {
-						patterns = append(patterns, getRecursiveGlobPattern(dir))
-					}
-					slices.Sort(patterns)
-					return PatternsAndIgnored{
-						patternsInsideWorkspace: patterns,
-					}
+					return autoImportWatchGlobs(nodeModulesDirs, init.Options.GranularWatches)
 				},
 			),
 			toPath,

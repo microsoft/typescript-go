@@ -224,7 +224,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	if c.sessionOptions.GranularWatches {
-		globs = appendRecursiveGlobs(globs, granularDirectories, c.FS().DirectoryExists)
+		globs = appendDirectoryGlobs(globs, granularDirectories)
 	} else {
 		if includeWorkspace {
 			globs = append(globs, getRecursiveGlobPattern(c.sessionOptions.CurrentDirectory))

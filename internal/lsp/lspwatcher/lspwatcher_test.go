@@ -164,22 +164,25 @@ func TestRootFromGlob(t *testing.T) {
 }
 
 type fakeBackend struct {
-	mu     sync.Mutex
-	byDir  map[string]fswatch.WatchCallback
-	closed map[string]int
+	mu       sync.Mutex
+	byDir    map[string]fswatch.WatchCallback
+	closed   map[string]int
+	optCount map[string]int
 }
 
 func newFakeBackend() *fakeBackend {
 	return &fakeBackend{
-		byDir:  make(map[string]fswatch.WatchCallback),
-		closed: make(map[string]int),
+		byDir:    make(map[string]fswatch.WatchCallback),
+		closed:   make(map[string]int),
+		optCount: make(map[string]int),
 	}
 }
 
-func (f *fakeBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, _ ...fswatch.WatchOption) (watch, error) {
+func (f *fakeBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, opts ...fswatch.WatchOption) (watch, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	f.byDir[dir] = fn
+	f.optCount[dir] = len(opts)
 	return fakeWatch{closeFn: func() error {
 		f.mu.Lock()
 		defer f.mu.Unlock()
@@ -265,6 +268,43 @@ func TestWatcher_BookkeepingAndOverflow(t *testing.T) {
 	w.Close()
 	if err := w.WatchFiles("id3", nil); err == nil {
 		t.Fatal("expected closed error")
+	}
+}
+
+func TestWatcher_NonRecursiveGlobIsNotRecursive(t *testing.T) {
+	t.Parallel()
+
+	dir := t.TempDir()
+	dirNorm := tspath.NormalizeSlashes(dir)
+	if err := os.MkdirAll(filepath.Join(dir, "sub"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	subNorm := tspath.NormalizeSlashes(filepath.Join(dir, "sub"))
+
+	fs := bundled.WrapFS(osvfs.FS())
+	backend := newFakeBackend()
+	w := newWithBackend(fs, backend, func([]*lsproto.FileEvent) {}, logging.NewLogger(os.Stderr))
+	t.Cleanup(w.Close)
+
+	recursive := dirNorm + "/**/*"
+	nonRecursive := subNorm + "/*"
+	if err := w.WatchFiles("id", []*lsproto.FileSystemWatcher{
+		{GlobPattern: lsproto.PatternOrRelativePattern{Pattern: &recursive}},
+		{GlobPattern: lsproto.PatternOrRelativePattern{Pattern: &nonRecursive}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	realDir := tspath.NormalizeSlashes(fs.Realpath(dirNorm))
+	realSub := tspath.NormalizeSlashes(fs.Realpath(subNorm))
+
+	backend.mu.Lock()
+	defer backend.mu.Unlock()
+	if got := backend.optCount[realDir]; got != 1 {
+		t.Errorf("recursive glob %q: expected 1 watch option (WithRecursive), got %d", recursive, got)
+	}
+	if got := backend.optCount[realSub]; got != 0 {
+		t.Errorf("non-recursive glob %q: expected 0 watch options, got %d", nonRecursive, got)
 	}
 }
 

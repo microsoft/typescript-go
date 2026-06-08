@@ -351,10 +351,17 @@ func createResolutionLookupGlobMapper(
 
 		var globs []string
 		if granularWatches {
-			globs = appendRecursiveGlobs(globs, workspaceDirectories, fs.DirectoryExists)
-			globs = appendRecursiveGlobs(globs, rootDirectories, fs.DirectoryExists)
-			globs = appendRecursiveGlobs(globs, libDirectories, fs.DirectoryExists)
-			globs = appendRecursiveGlobs(globs, nodeModulesDirectories, fs.DirectoryExists)
+			// Granular watches register the specific directory of each probed
+			// (often missing) file, non-recursively. We deliberately do not
+			// consolidate to recursive watches on the workspace/root/node_modules
+			// directories: that would collapse back into the broad watches this
+			// mode exists to avoid. Directories that don't exist yet are emitted
+			// as-is; the watcher backend is responsible for watching into
+			// not-yet-existing trees.
+			globs = appendDirectoryGlobs(globs, workspaceDirectories)
+			globs = appendDirectoryGlobs(globs, rootDirectories)
+			globs = appendDirectoryGlobs(globs, libDirectories)
+			globs = appendDirectoryGlobs(globs, nodeModulesDirectories)
 		} else {
 			if includeWorkspace {
 				globs = append(globs, getRecursiveGlobPattern(string(workspaceDirectoryPath)))
@@ -413,12 +420,33 @@ func createResolutionLookupGlobMapper(
 	}
 }
 
-func appendRecursiveGlobs(globs []string, directories collections.Set[tspath.Path], directoryExists func(path string) bool) []string {
-	resolved := appendResolvedDirectories(nil, directories, directoryExists)
-	for _, dir := range resolved {
-		globs = append(globs, getRecursiveGlobPattern(dir))
+// appendDirectoryGlobs appends a non-recursive glob (`<dir>/*`) for each
+// directory. This is used by granular watch mode so that each watch covers only
+// the immediate directory of a probed file, rather than its entire subtree.
+func appendDirectoryGlobs(globs []string, directories collections.Set[tspath.Path]) []string {
+	for dir := range directories.Keys() {
+		globs = append(globs, getDirectoryGlobPattern(string(dir)))
 	}
 	return globs
+}
+
+// autoImportWatchGlobs computes the watch globs for the auto-import node_modules
+// watcher. In broad mode each node_modules directory is watched recursively
+// (`<nm>/**/*`); in granular mode it is watched non-recursively (`<nm>/*`) to
+// avoid registering a recursive watch over the entire dependency tree.
+func autoImportWatchGlobs(nodeModulesDirs map[tspath.Path]string, granularWatches bool) PatternsAndIgnored {
+	patterns := make([]string, 0, len(nodeModulesDirs))
+	for _, dir := range nodeModulesDirs {
+		if granularWatches {
+			patterns = append(patterns, getDirectoryGlobPattern(dir))
+		} else {
+			patterns = append(patterns, getRecursiveGlobPattern(dir))
+		}
+	}
+	slices.Sort(patterns)
+	return PatternsAndIgnored{
+		patternsInsideWorkspace: patterns,
+	}
 }
 
 func appendResolvedDirectories(dirs []string, directories collections.Set[tspath.Path], directoryExists func(path string) bool) []string {
@@ -526,6 +554,12 @@ func perceivedOsRootLengthForWatching(pathComponents []string) int {
 
 func getRecursiveGlobPattern(directory string) string {
 	return fmt.Sprintf("%s/%s", tspath.RemoveTrailingDirectorySeparator(directory), "**/*")
+}
+
+// getDirectoryGlobPattern returns a non-recursive glob matching only the
+// immediate children of directory (`<dir>/*`).
+func getDirectoryGlobPattern(directory string) string {
+	return fmt.Sprintf("%s/%s", tspath.RemoveTrailingDirectorySeparator(directory), "*")
 }
 
 // recursiveDirectoryGlobPattern returns the string form of a recursive watcher

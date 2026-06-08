@@ -129,7 +129,11 @@ func (w *Watcher) WatchFiles(id string, watchers []*lsproto.FileSystemWatcher) e
 			continue
 		}
 		sw := &singleWatch{rootReal: realRoot, rootOrig: root, kind: kind}
-		sub, err := w.backend.WatchDirectory(realRoot, w.makeCallback(sw), fswatch.WithRecursive())
+		var opts []fswatch.WatchOption
+		if isRecursiveGlob(fsw) {
+			opts = append(opts, fswatch.WithRecursive())
+		}
+		sub, err := w.backend.WatchDirectory(realRoot, w.makeCallback(sw), opts...)
 		if err != nil {
 			w.logger.Logf("lspwatcher: failed to subscribe to %q: %v", realRoot, err)
 			continue
@@ -279,10 +283,12 @@ func (w *Watcher) flush() {
 
 // watchRoot extracts the directory the fswatch subscription should be
 // rooted at from a FileSystemWatcher. The patterns the project layer
-// produces are always of the form `<dir>/**/*` (either as a Pattern
+// produces are of the form `<dir>/**/*` (recursive) or `<dir>/*`
+// (non-recursive, used by granular watch mode), either as a Pattern
 // with a fully-qualified directory or as a RelativePattern with a
-// file:// BaseUri and a `**/*` pattern), so the heuristic of
-// "everything before the first glob meta character" is reliable.
+// file:// BaseUri, so the heuristic of "everything before the first
+// glob meta character" is reliable. Use [isRecursiveGlob] to determine
+// whether the subscription should be recursive.
 //
 // Returned roots are tspath-normalized (forward-slash) absolute paths.
 func watchRoot(fsw *lsproto.FileSystemWatcher) (string, bool) {
@@ -337,6 +343,13 @@ func watchPatternString(fsw *lsproto.FileSystemWatcher) string {
 		return base + "/" + rp.Pattern
 	}
 	return ""
+}
+
+// isRecursiveGlob reports whether a FileSystemWatcher's pattern requests
+// recursive watching (contains a `**` segment). Granular watch mode emits
+// non-recursive `<dir>/*` patterns, which watch only the immediate directory.
+func isRecursiveGlob(fsw *lsproto.FileSystemWatcher) bool {
+	return strings.Contains(watchPatternString(fsw), "**")
 }
 
 func effectiveKind(fsw *lsproto.FileSystemWatcher) lsproto.WatchKind {
