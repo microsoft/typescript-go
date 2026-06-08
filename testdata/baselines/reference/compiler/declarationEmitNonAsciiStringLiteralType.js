@@ -37,4 +37,4 @@ export declare const templateObj: {
     readonly alert: `⚠️`;
     readonly greet: `日本語`;
 };
-export declare const speaker: (msg: string) => readonly [`🔈`, `\uD83D\uDD08 ${string}`];
+export declare const speaker: (msg: string) => readonly [`🔈`, `🔈 ${string}`];
