@@ -109,6 +109,9 @@ func (r *FileIncludeReason) getReferencedLocation(program *Program) *referenceFi
 		if ref.synthetic != nil {
 			specifier = ref.synthetic
 			isSynthetic = true
+		} else if ref.index == syntheticImportIndex {
+			specifier = program.GetImportHelpersImportSpecifier(file.Path())
+			isSynthetic = true
 		} else if ref.index < len(file.Imports()) {
 			specifier = file.Imports()[ref.index]
 		} else {
@@ -228,7 +231,7 @@ func (r *FileIncludeReason) computeReferenceFileDiagnostic(program *Program, toF
 			} else {
 				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1, referenceText, toFileName(referenceLocation.file.FileName()))
 			}
-		} else if specifier, ok := program.importHelpersImportSpecifiers[referenceLocation.file.Path()]; ok && specifier == referenceLocation.node {
+		} else if specifier := program.GetImportHelpersImportSpecifier(referenceLocation.file.Path()); specifier == referenceLocation.node {
 			if referenceLocation.packageId.Name != "" {
 				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions, referenceText, toFileName(referenceLocation.file.FileName()), referenceLocation.packageId.String())
 			} else {

@@ -361,8 +361,8 @@ func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool 
 func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, newFile *ast.SourceFile) {
 	path := newFile.Path()
 	oldSpecifier := p.importHelpersImportSpecifiers[path]
-	newSpecifier := p.createImportHelpersImportSpecifier(newFile)
-	if oldSpecifier == nil && newSpecifier == nil {
+	needsNewSpecifier := p.needsImportHelpersImportSpecifier(newFile)
+	if oldSpecifier == nil && !needsNewSpecifier {
 		return
 	}
 
@@ -373,7 +373,7 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 
 	if oldSpecifier != nil {
 		delete(p.importHelpersImportSpecifiers, path)
-		key := module.ModeAwareCacheKey{Name: externalHelpersModuleNameText, Mode: p.GetModeForUsageLocation(oldFile, oldSpecifier)}
+		key := module.ModeAwareCacheKey{Name: externalHelpersModuleNameText, Mode: p.getModeForSyntheticImport(oldFile)}
 		if resolved := resolutions[key]; resolved != nil && resolved.IsResolved() {
 			p.removeSyntheticFileIncludeReason(resolved, oldFile, oldSpecifier)
 		}
@@ -382,21 +382,21 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 		}
 	}
 
-	if newSpecifier != nil {
+	if needsNewSpecifier {
 		if p.importHelpersImportSpecifiers == nil {
-			p.importHelpersImportSpecifiers = make(map[tspath.Path]*ast.StringLiteralNode)
+			p.importHelpersImportSpecifiers = make(map[tspath.Path]*importHelpersImportSpecifier)
 		}
-		p.importHelpersImportSpecifiers[path] = newSpecifier
+		p.importHelpersImportSpecifiers[path] = newImportHelpersImportSpecifier(nil)
 		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(newFile)
 		optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
-		mode := p.GetModeForUsageLocation(newFile, newSpecifier)
+		mode := p.getModeForSyntheticImport(newFile)
 		resolved, _ := p.resolver.ResolveModuleName(externalHelpersModuleNameText, fileName, mode, redirect)
 		key := module.ModeAwareCacheKey{Name: externalHelpersModuleNameText, Mode: mode}
 		resolutions[key] = resolved
 		if resolved.IsResolved() &&
 			module.GetResolutionDiagnostic(optionsForFile, resolved, newFile) == nil &&
 			!optionsForFile.NoResolve.IsTrue() {
-			p.addSyntheticFileIncludeReason(resolved, newFile, newSpecifier)
+			p.addSyntheticFileIncludeReason(resolved, newFile)
 		}
 	}
 
@@ -407,24 +407,35 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 	}
 }
 
-func (p *Program) createImportHelpersImportSpecifier(file *ast.SourceFile) *ast.StringLiteralNode {
+func (p *Program) needsImportHelpersImportSpecifier(file *ast.SourceFile) bool {
 	redirect, _ := p.projectReferenceFileMapper.getRedirectForResolution(file)
 	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
 	if !optionsForFile.ImportHelpers.IsTrue() {
-		return nil
+		return false
 	}
 	isJavaScriptFile := ast.IsSourceFileJS(file)
 	isExternalModuleFile := ast.IsExternalModule(file)
 	if !isJavaScriptFile && (file.IsDeclarationFile || (!optionsForFile.GetIsolatedModules() && !isExternalModuleFile)) {
-		return nil
+		return false
 	}
+	return true
+}
 
-	factory := &ast.NodeFactory{}
-	specifier := factory.NewStringLiteral(externalHelpersModuleNameText, ast.TokenFlagsNone)
-	importDecl := factory.NewImportDeclaration(nil, nil, specifier, nil)
-	specifier.Parent = importDecl
-	importDecl.Parent = file.AsNode()
-	return specifier
+func (p *Program) getModeForSyntheticImport(file ast.HasFileName) core.ResolutionMode {
+	return getModeForSyntheticImport(file.FileName(), p.sourceFileMetaDatas[file.Path()], p.projectReferenceFileMapper.getCompilerOptionsForFile(file))
+}
+
+func getModeForSyntheticImport(fileName string, meta ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
+	if options != nil && importSyntaxAffectsModuleResolution(options) {
+		fileEmitMode := ast.GetEmitModuleFormatOfFileWorker(fileName, options, meta)
+		if fileEmitMode == core.ModuleKindCommonJS {
+			return core.ModuleKindCommonJS
+		}
+		if fileEmitMode.IsNonNodeESM() || fileEmitMode == core.ModuleKindPreserve {
+			return core.ModuleKindESNext
+		}
+	}
+	return core.ResolutionModeNone
 }
 
 // hasModuleSpecifierWithKey reports whether the new file still has a real import or
@@ -449,14 +460,13 @@ func (p *Program) hasModuleSpecifierWithKey(file *ast.SourceFile, key module.Mod
 // synthetic importHelpers import. If that resolution brings in a file that the old
 // program did not contain, add the parsed file and its metadata to keep the reused
 // program consistent with a full rebuild.
-func (p *Program) addSyntheticFileIncludeReason(resolved *module.ResolvedModule, file *ast.SourceFile, specifier *ast.Node) {
+func (p *Program) addSyntheticFileIncludeReason(resolved *module.ResolvedModule, file *ast.SourceFile) {
 	resolvedPath := tspath.ToPath(resolved.ResolvedFileName, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 	p.includeProcessor.fileIncludeReasons[resolvedPath] = append(p.includeProcessor.fileIncludeReasons[resolvedPath], &FileIncludeReason{
 		kind: fileIncludeKindImport,
 		data: &referencedFileData{
-			file:      file.Path(),
-			index:     syntheticImportIndex,
-			synthetic: specifier,
+			file:  file.Path(),
+			index: syntheticImportIndex,
 		},
 	})
 	if p.filesByPath[resolvedPath] != nil {
@@ -488,7 +498,7 @@ func (p *Program) addSyntheticFileIncludeReason(resolved *module.ResolvedModule,
 // reason. If no include reasons remain for the resolved helper file, remove that
 // non-lib file and its side-table entries from the reused program as a full rebuild
 // would have done.
-func (p *Program) removeSyntheticFileIncludeReason(resolved *module.ResolvedModule, file *ast.SourceFile, specifier *ast.Node) {
+func (p *Program) removeSyntheticFileIncludeReason(resolved *module.ResolvedModule, file *ast.SourceFile, specifier *importHelpersImportSpecifier) {
 	resolvedPath := tspath.ToPath(resolved.ResolvedFileName, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 	reasons := p.includeProcessor.fileIncludeReasons[resolvedPath]
 	reasons = slices.DeleteFunc(reasons, func(reason *FileIncludeReason) bool {
@@ -496,7 +506,13 @@ func (p *Program) removeSyntheticFileIncludeReason(resolved *module.ResolvedModu
 			return false
 		}
 		ref := reason.asReferencedFileData()
-		return ref.file == file.Path() && ref.synthetic == specifier
+		if ref.file != file.Path() || ref.index != syntheticImportIndex {
+			return false
+		}
+		if ref.synthetic == nil {
+			return true
+		}
+		return specifier != nil && specifier.specifier == ref.synthetic
 	})
 	if len(reasons) != 0 {
 		p.includeProcessor.fileIncludeReasons[resolvedPath] = reasons
@@ -2060,7 +2076,10 @@ func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReferenc
 }
 
 func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
-	return p.importHelpersImportSpecifiers[path]
+	if specifier := p.importHelpersImportSpecifiers[path]; specifier != nil {
+		return specifier.getSpecifier(p.filesByPath[path])
+	}
+	return nil
 }
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {

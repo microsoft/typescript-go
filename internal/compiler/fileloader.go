@@ -99,7 +99,7 @@ type processedFiles struct {
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
-	importHelpersImportSpecifiers map[tspath.Path]*ast.StringLiteralNode
+	importHelpersImportSpecifiers map[tspath.Path]*importHelpersImportSpecifier
 	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
@@ -117,6 +117,24 @@ type processedFiles struct {
 type jsxRuntimeImportSpecifier struct {
 	moduleReference string
 	specifier       *ast.StringLiteralNode
+}
+
+type importHelpersImportSpecifier struct {
+	specifier     *ast.StringLiteralNode
+	specifierOnce sync.Once
+}
+
+func newImportHelpersImportSpecifier(specifier *ast.StringLiteralNode) *importHelpersImportSpecifier {
+	return &importHelpersImportSpecifier{specifier: specifier}
+}
+
+func (s *importHelpersImportSpecifier) getSpecifier(file *ast.SourceFile) *ast.StringLiteralNode {
+	s.specifierOnce.Do(func() {
+		if s.specifier == nil {
+			s.specifier = createSyntheticImport(externalHelpersModuleNameText, file)
+		}
+	})
+	return s.specifier
 }
 
 func processAllProgramFiles(
@@ -521,7 +539,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 		if optionsForFile.ImportHelpers.IsTrue() {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
 			moduleNames = append(moduleNames, specifier)
-			t.importHelpersImportSpecifier = specifier
+			t.importHelpersImportSpecifier = newImportHelpersImportSpecifier(specifier)
 		}
 	}
 
@@ -612,11 +630,20 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *ast.StringLiteralNode {
 	p.factoryMu.Lock()
 	defer p.factoryMu.Unlock()
-	externalHelpersModuleReference := p.factory.NewStringLiteral(text, ast.TokenFlagsNone)
-	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference, nil)
-	externalHelpersModuleReference.Parent = importDecl
+	return createSyntheticImportWithFactory(&p.factory, text, file)
+}
+
+func createSyntheticImport(text string, file *ast.SourceFile) *ast.StringLiteralNode {
+	factory := &ast.NodeFactory{}
+	return createSyntheticImportWithFactory(factory, text, file)
+}
+
+func createSyntheticImportWithFactory(factory *ast.NodeFactory, text string, file *ast.SourceFile) *ast.StringLiteralNode {
+	moduleReference := factory.NewStringLiteral(text, ast.TokenFlagsNone)
+	importDecl := factory.NewImportDeclaration(nil, nil, moduleReference, nil)
+	moduleReference.Parent = importDecl
 	importDecl.Parent = file.AsNode()
-	return externalHelpersModuleReference
+	return moduleReference
 }
 
 func (p *fileLoader) pathForLibFile(name string) *LibFile {
