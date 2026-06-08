@@ -471,6 +471,22 @@ func (s *Scanner) charAndSize() (rune, int) {
 	return r, size
 }
 
+// scanASCIIWhile advances s.pos over the longest run of ASCII bytes for which
+// pred returns true. It stops at end-of-text, the first non-ASCII byte, or the
+// first byte where pred is false.
+func (s *Scanner) scanASCIIWhile(pred func(byte) bool) {
+	text := s.text[s.pos:s.end]
+	i := 0
+	for i < len(text) {
+		b := text[i]
+		if b >= utf8.RuneSelf || !pred(b) {
+			break
+		}
+		i++
+	}
+	s.pos += i
+}
+
 func (s *Scanner) Scan() ast.Kind {
 	s.fullStartPos = s.pos
 	s.tokenFlags = ast.TokenFlagsNone
@@ -496,6 +512,9 @@ func (s *Scanner) Scan() ast.Kind {
 			s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 			if s.skipTrivia {
 				s.pos++
+				s.scanASCIIWhile(func(b byte) bool {
+					return b == ' ' || (b >= '\t' && b <= '\r')
+				})
 				continue
 			}
 			if ch == '\r' && s.charAt(1) == '\n' {
@@ -615,6 +634,9 @@ func (s *Scanner) Scan() ast.Kind {
 				s.pos += 2
 
 				for {
+					s.scanASCIIWhile(func(b byte) bool {
+						return b != '\n' && b != '\r'
+					})
 					ch1, size := s.charAndSize()
 					if size == 0 || stringutil.IsLineBreak(ch1) {
 						break
@@ -638,6 +660,9 @@ func (s *Scanner) Scan() ast.Kind {
 				commentClosed := false
 				lastLineStart := s.tokenStart
 				for {
+					s.scanASCIIWhile(func(b byte) bool {
+						return b != '*' && b != '\n' && b != '\r'
+					})
 					ch1, size := s.charAndSize()
 					if size == 0 {
 						break
@@ -1517,13 +1542,11 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 	ch := s.char()
 	// Fast path for simple ASCII identifiers
 	if stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' {
-		for {
-			s.pos++
-			ch = s.char()
-			if !(isWordCharacter(ch) || ch == '$') {
-				break
-			}
-		}
+		s.pos++
+		s.scanASCIIWhile(func(b byte) bool {
+			return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || (b >= '0' && b <= '9') || b == '_' || b == '$'
+		})
+		ch = s.char()
 		if ch < utf8.RuneSelf && ch != '\\' {
 			s.tokenValue = s.text[start:s.pos]
 			return true
@@ -1630,6 +1653,9 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 	parts := make([]string, 0, 4)
 	var token ast.Kind
 	for {
+		s.scanASCIIWhile(func(b byte) bool {
+			return b != '`' && b != '$' && b != '\\' && b != '\r'
+		})
 		ch := s.char()
 		if ch < 0 || ch == '`' {
 			parts = append(parts, s.text[start:s.pos])
@@ -1997,6 +2023,14 @@ func (s *Scanner) scanNumberFragment() string {
 	isPreviousTokenSeparator := false
 	var result strings.Builder
 	for {
+		before := s.pos
+		s.scanASCIIWhile(func(b byte) bool {
+			return b >= '0' && b <= '9'
+		})
+		if s.pos > before {
+			allowSeparator = true
+			isPreviousTokenSeparator = false
+		}
 		ch := s.char()
 		if ch == '_' {
 			s.tokenFlags |= ast.TokenFlagsContainsSeparator
@@ -2014,12 +2048,6 @@ func (s *Scanner) scanNumberFragment() string {
 			}
 			s.pos++
 			start = s.pos
-			continue
-		}
-		if stringutil.IsDigit(ch) {
-			allowSeparator = true
-			isPreviousTokenSeparator = false
-			s.pos++
 			continue
 		}
 		break
