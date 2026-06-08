@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"maps"
 	"slices"
 	"sync"
 
@@ -27,7 +28,7 @@ type includeProcessor struct {
 
 func updateFileIncludeProcessor(p *Program) {
 	p.includeProcessor = &includeProcessor{
-		fileIncludeReasons:    p.includeProcessor.fileIncludeReasons,
+		fileIncludeReasons:    maps.Clone(p.includeProcessor.fileIncludeReasons),
 		processingDiagnostics: p.includeProcessor.processingDiagnostics,
 	}
 }
