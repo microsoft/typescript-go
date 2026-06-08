@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/project"
 	"gotest.tools/v3/assert"
 )
 
@@ -57,4 +58,13 @@ func TestDocumentIdentifierUnmarshalJSON(t *testing.T) {
 			assert.Equal(t, string(d.URI), tt.uri)
 		})
 	}
+}
+
+func TestNewProjectResponse_NilCommandLine(t *testing.T) {
+	t.Parallel()
+	p := &project.Project{}
+	resp := api.NewProjectResponse(p)
+	assert.Assert(t, resp != nil)
+	assert.DeepEqual(t, resp.RootFiles, []string{})
+	assert.Assert(t, resp.CompilerOptions == nil)
 }
