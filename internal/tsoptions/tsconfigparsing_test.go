@@ -927,6 +927,15 @@ func TestParseNullEnumCompilerOptions(t *testing.T) {
 	}
 }
 
+func TestParseNullExtendsDoesNotPanic(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  "extends": null
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+	// Should not panic; diagnostics may be produced but no crash
+	_ = parsed.GetConfigFileParsingDiagnostics()
+}
+
 func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
