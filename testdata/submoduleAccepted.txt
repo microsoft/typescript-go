@@ -433,7 +433,6 @@ compiler/classWithDuplicateIdentifier.errors.txt.diff
 compiler/classWithDuplicateIdentifier.symbols.diff
 compiler/classWithDuplicateIdentifier.types.diff
 compiler/commonMissingSemicolons.errors.txt.diff
-compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
 compiler/duplicateClassElements.errors.txt.diff
 compiler/duplicateClassElements.symbols.diff
 compiler/duplicateClassElements.types.diff
@@ -633,8 +632,6 @@ compiler/recursiveExportAssignmentAndFindAliasedType3.errors.txt.diff
 compiler/recursiveExportAssignmentAndFindAliasedType4.errors.txt.diff
 compiler/recursiveExportAssignmentAndFindAliasedType5.errors.txt.diff
 compiler/recursiveExportAssignmentAndFindAliasedType6.errors.txt.diff
-compiler/declarationEmitUnknownImport(target=es2015).errors.txt.diff
-compiler/declarationEmitUnknownImport2(target=es2015).errors.txt.diff
 conformance/circular1.errors.txt.diff
 conformance/circular3.errors.txt.diff
 
