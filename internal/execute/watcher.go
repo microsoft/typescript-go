@@ -223,7 +223,7 @@ func (w *Watcher) reconcileWatches() {
 		}
 	}
 
-	// 2. Parent directories of all seen files 
+	// 2. Parent directories of all seen files
 	for dir := range w.seenFileDirs {
 		if _, already := desiredDirs[dir]; already {
 			continue
