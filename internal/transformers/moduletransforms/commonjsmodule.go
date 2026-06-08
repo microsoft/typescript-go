@@ -687,7 +687,8 @@ func (tx *CommonJSModuleTransformer) createRequireCall(node *ast.Node /*ImportDe
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
 		tx.Factory().NewNodeList(args),
-		ast.NodeFlagsNone)
+		ast.NodeFlagsNone,
+	)
 }
 
 func (tx *CommonJSModuleTransformer) getHelperExpressionForExport(node *ast.ExportDeclaration, innerExpr *ast.Expression) *ast.Expression {
@@ -721,7 +722,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 	namespaceDeclaration := ast.GetNamespaceDeclarationNode(node.AsNode())
 	if namespaceDeclaration != nil && !ast.IsDefaultImport(node.AsNode()) {
 		// import * as n from "mod";
-		variables = append(variables,
+		variables = append(
+			variables,
 			tx.Factory().NewVariableDeclaration(
 				namespaceDeclaration.Name().Clone(tx.Factory()),
 				nil, /*exclamationToken*/
@@ -734,7 +736,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 		// import { x, y } from "mod";
 		// import d, { x, y } from "mod";
 		// import d, * as n from "mod";
-		variables = append(variables,
+		variables = append(
+			variables,
 			tx.Factory().NewVariableDeclaration(
 				tx.Factory().NewGeneratedNameForNode(node.AsNode()),
 				nil, /*exclamationToken*/
@@ -744,7 +747,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 		)
 
 		if namespaceDeclaration != nil && ast.IsDefaultImport(node.AsNode()) {
-			variables = append(variables,
+			variables = append(
+				variables,
 				tx.Factory().NewVariableDeclaration(
 					namespaceDeclaration.Name().Clone(tx.Factory()),
 					nil, /*exclamationToken*/
@@ -1109,13 +1113,14 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 	}
 	name := node.Name()
 	if ast.IsBindingPattern(name) {
-		return transformers.FlattenDestructuringAssignment(
-			&tx.Transformer,
-			tx.Visitor().VisitNode(node.AsNode()),
-			false, /*needsValue*/
-			transformers.FlattenLevelAll,
-			tx.createAllExportExpressions,
-		)
+		// Convert the binding pattern into an equivalent assignment expression and visit it
+		// as a destructuring assignment. This preserves native destructuring (and therefore
+		// iterator semantics for array patterns) whenever each leaf identifier can be
+		// substituted to an export reference. Only when the destructuring would assign to
+		// re-aliased or multi-exported names (where native destructuring cannot update all
+		// targets) does `visitDestructuringAssignment` fall back to flattening.
+		assignment := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), node)
+		return tx.visitDestructuringAssignment(assignment.AsBinaryExpression(), true /*valueIsDiscarded*/)
 	}
 	propertyAccess := tx.Factory().NewPropertyAccessExpression(
 		tx.Factory().NewIdentifier("exports"),
@@ -1452,11 +1457,22 @@ func (tx *CommonJSModuleTransformer) destructuringNeedsFlattening(node *ast.Node
 		}
 	} else if ast.IsIdentifier(node) {
 		exportedNames := tx.getExports(node)
-		threshold := 0
 		if transformers.IsExportName(tx.EmitContext(), node) {
-			threshold = 1
+			// The identifier is already wrapped to be an export reference; tolerate up to one
+			// matching export.
+			return len(exportedNames) > 1
 		}
-		return len(exportedNames) > threshold
+		if len(exportedNames) == 0 {
+			return false
+		}
+		// A single direct export whose export name matches the identifier text can be handled
+		// natively: substitution will rewrite the identifier to `exports.X`, so no flattening
+		// is needed. Re-aliased exports (where the export name differs from the local name) or
+		// multi-exported names cannot be expressed natively in a destructuring assignment.
+		if len(exportedNames) == 1 && tx.isDirectExport(node) && exportedNames[0].Text() == node.Text() {
+			return false
+		}
+		return true
 	}
 	return false
 }
@@ -2023,7 +2039,8 @@ func (tx *CommonJSModuleTransformer) visitShorthandPropertyAssignment(node *ast.
 		tx.EmitContext().AssignCommentAndSourceMapRanges(assignment, node.AsNode())
 		return assignment
 	}
-	return tx.Factory().UpdateShorthandPropertyAssignment(node,
+	return tx.Factory().UpdateShorthandPropertyAssignment(
+		node,
 		nil, /*modifiers*/
 		exportedOrImportedName,
 		nil, /*postfixToken*/

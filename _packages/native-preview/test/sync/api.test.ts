@@ -25,7 +25,7 @@ import {
     type Node,
     NodeFlags,
     SyntaxKind,
-} from "@typescript/native-preview/ast";
+} from "@typescript/native-preview/unstable/ast";
 import {
     createArrayTypeNode,
     createFunctionTypeNode,
@@ -36,17 +36,20 @@ import {
     createTypeAliasDeclaration,
     createTypeReferenceNode,
     createUnionTypeNode,
-} from "@typescript/native-preview/ast/factory";
-import { visitEachChild } from "@typescript/native-preview/ast/visitor";
-import { createVirtualFileSystem } from "@typescript/native-preview/fs";
-import type { FileSystem } from "@typescript/native-preview/fs";
+} from "@typescript/native-preview/unstable/ast/factory";
+import { visitEachChild } from "@typescript/native-preview/unstable/ast/visitor";
+import { createVirtualFileSystem } from "@typescript/native-preview/unstable/fs";
+import type { FileSystem } from "@typescript/native-preview/unstable/fs";
 import {
     API,
     type ConditionalType,
     DiagnosticCategory,
     type ImportAdderAction,
+    type FreshableType,
     type IndexedAccessType,
     type IndexType,
+    type IntrinsicType,
+    type LiteralType,
     ModifierFlags,
     ObjectFlags,
     SignatureKind,
@@ -55,10 +58,11 @@ import {
     type TemplateLiteralType,
     type TextEdit,
     TypeFlags,
+    type TypeParameter,
     TypePredicateKind,
     type TypeReference,
     type UnionOrIntersectionType,
-} from "@typescript/native-preview/sync";
+} from "@typescript/native-preview/unstable/sync";
 import assert from "node:assert";
 import { globSync } from "node:fs";
 import { resolve } from "node:path";
@@ -833,6 +837,111 @@ export class MyClass {
         }
     });
 
+    test("getTypeAtLocation returns property type for parenthesized and chained access (issue #3938)", () => {
+        const files = {
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `
+interface A {
+    a: number;
+    b: { c: number };
+}
+const obj: A = { a: 1, b: { c: 2 } };
+const a1 = obj.a;
+const a2 = (obj).a;
+const c = obj.b.c;
+`,
+        };
+
+        const api = spawnAPI(files);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/main.ts");
+            assert.ok(sourceFile);
+
+            const targetNodes = new Map<string, Node>();
+            sourceFile.forEachChild(function visit(node) {
+                if (node.kind === SyntaxKind.PropertyAccessExpression) {
+                    const text = sourceFile.text.slice(node.pos, node.end).trim();
+                    if (text === "obj.a" || text === "(obj).a" || text === "obj.b.c") {
+                        targetNodes.set(text, node);
+                    }
+                }
+                node.forEachChild(visit);
+            });
+
+            assert.equal(targetNodes.size, 3, "Should find all target property access expressions");
+            for (const expr of ["obj.a", "(obj).a", "obj.b.c"] as const) {
+                const node = targetNodes.get(expr);
+                assert.ok(node, `Should find expression '${expr}'`);
+                const type = project.checker.getTypeAtLocation(node);
+                assert.ok(type, `Should get a type for '${expr}'`);
+                assert.ok(type.flags & TypeFlags.Number, `Expected '${expr}' to have number type flags, got ${type.flags}`);
+            }
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getTypeAtLocation returns call result type for private method call (issue #4041)", () => {
+        const files = {
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true, target: "esnext" } }),
+            "/src/main.ts": `
+type Result = { readonly value: string };
+
+export class Cache {
+    run(): Result {
+        return this.#buildCapabilities();
+    }
+
+    #buildCapabilities(): Result {
+        return { value: "ok" };
+    }
+}
+`,
+        };
+
+        const api = spawnAPI(files);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/main.ts");
+            assert.ok(sourceFile);
+
+            let callNode: import("@typescript/native-preview/unstable/ast").CallExpression | undefined;
+            sourceFile.forEachChild(function visit(node) {
+                if (isCallExpression(node)) {
+                    const text = sourceFile.text.slice(node.pos, node.end).trim();
+                    if (text === "this.#buildCapabilities()") {
+                        callNode = node;
+                    }
+                }
+                node.forEachChild(visit);
+            });
+
+            assert.ok(callNode, "Should find private method call expression");
+            const callType = project.checker.getTypeAtLocation(callNode);
+            const calleeType = project.checker.getTypeAtLocation(callNode.expression);
+            assert.ok(callType, "Should get type for call expression");
+            assert.ok(calleeType, "Should get type for callee expression");
+
+            const callSignatures = project.checker.getSignaturesOfType(calleeType, SignatureKind.Call);
+            assert.ok(callSignatures.length > 0, "Callee should be callable");
+            const returnType = project.checker.getReturnTypeOfSignature(callSignatures[0]);
+            assert.ok(returnType, "Should get return type for private method call");
+            const callExprSignatures = project.checker.getSignaturesOfType(callType, SignatureKind.Call);
+
+            assert.ok(callType.flags & TypeFlags.Object, `Expected call expression type to be object-like, got ${callType.flags}`);
+            assert.ok(returnType.flags & TypeFlags.Object, `Expected return type to be object-like, got ${returnType.flags}`);
+            assert.equal(callType.flags, returnType.flags, "Call expression type should have same flags as method return type");
+            assert.equal(callExprSignatures.length, 0, "Call expression result type should not itself be callable");
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("getSignaturesOfType - call signatures", () => {
         const api = spawnAPI(checkerFiles);
         try {
@@ -896,6 +1005,15 @@ export class MyClass {
             assert.ok(sig.declaration);
             const node = sig.declaration.resolve(project);
             assert.ok(node);
+
+            const methodPos = src.indexOf("getValue");
+            const methodSymbol = project.checker.getSymbolAtPosition("/src/main.ts", methodPos);
+            assert.ok(methodSymbol);
+            assert.ok(methodSymbol.valueDeclaration);
+            const methodNode = methodSymbol.valueDeclaration.resolve(project);
+            assert.ok(methodNode);
+            assert.strictEqual(methodNode.parent.kind, SyntaxKind.ClassDeclaration);
+            assert.strictEqual(methodNode.parent.parent.kind, SyntaxKind.SourceFile);
         }
         finally {
             api.close();
@@ -1424,7 +1542,7 @@ foo(42);
             // statement[1] = foo(42); which is an ExpressionStatement -> CallExpression
             const callStmt = sourceFile.statements[1];
             assert.ok(callStmt);
-            let numLiteral: import("@typescript/native-preview/ast").Expression | undefined;
+            let numLiteral: import("@typescript/native-preview/unstable/ast").Expression | undefined;
             callStmt.forEachChild(function visit(node) {
                 if (isCallExpression(node)) {
                     // First argument
@@ -1480,7 +1598,7 @@ export function check(x: string | number) {
             const funcDecl = sourceFile.statements[0];
             assert.ok(funcDecl);
             // Walk to find the first "return x" — inside the if, x should be narrowed to string
-            let firstReturnX: import("@typescript/native-preview/ast").Node | undefined;
+            let firstReturnX: import("@typescript/native-preview/unstable/ast").Node | undefined;
             funcDecl.forEachChild(function visit(node) {
                 if (isReturnStatement(node) && !firstReturnX) {
                     // The expression of the return statement is the identifier "x"
@@ -1520,7 +1638,7 @@ export const obj = { name };
 
             // Find the shorthand property assignment { name }
             // statement[1] = export const obj = { name };
-            let shorthandNode: import("@typescript/native-preview/ast").Node | undefined;
+            let shorthandNode: import("@typescript/native-preview/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isShorthandPropertyAssignment(node)) {
                     shorthandNode = node;
@@ -1981,6 +2099,349 @@ describe("Checker - getTypeArguments", () => {
     });
 });
 
+describe("TypeParameter - isThisType", () => {
+    test("isThisType is true for the polymorphic 'this' type in a class method", () => {
+        const src = `\nexport class Builder {\n    setName(name: string): this { return this; }\n}\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            // ": this {" — offset 2 past ': ' lands on 't' in the return-type 'this'
+            const pos = src.indexOf(": this {") + 2;
+            const type = project.checker.getTypeAtPosition("/src/main.ts", pos);
+            assert.ok(type, "Expected a type at the 'this' position");
+            assert.ok(type.flags & TypeFlags.TypeParameter, "Expected TypeParameter");
+            const typeParam = type as TypeParameter;
+            assert.equal(typeParam.isThisType, true);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("isThisType is absent for a regular generic type parameter", () => {
+        const src = `\nexport function identity<T>(x: T): T { return x; }\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            // Point to 'T' in the type parameter declaration '<T>' — getTypeAtPosition
+            // on a type annotation reference doesn't resolve to TypeParameter, but
+            // the declaration position does.
+            const pos = src.indexOf("<T>") + 1;
+            const type = project.checker.getTypeAtPosition("/src/main.ts", pos);
+            assert.ok(type, "Expected a type at the 'T' position");
+            assert.ok(type.flags & TypeFlags.TypeParameter, "Expected TypeParameter");
+            const typeParam = type as TypeParameter;
+            assert.ok(!typeParam.isThisType, "Expected isThisType to be absent/false for a regular type parameter");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Type - getAliasTypeArguments", () => {
+    test("returns the type arguments of a single-param generic type alias", () => {
+        const src = `\ntype Box<T> = { value: T };\nexport const x: Box<string> = { value: "hi" };\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("x:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasArgs = type.getAliasTypeArguments();
+            assert.equal(aliasArgs.length, 1, "Expected 1 alias type argument");
+            assert.ok(aliasArgs[0].flags & TypeFlags.String, `Expected string, got flags ${aliasArgs[0].flags}`);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns multiple type arguments for a multi-param generic type alias", () => {
+        const src = `\ntype Pair<A, B> = [A, B];\nexport const p: Pair<string, number> = ["hello", 42];\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("p:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasArgs = type.getAliasTypeArguments();
+            assert.equal(aliasArgs.length, 2, "Expected 2 alias type arguments");
+            assert.ok(aliasArgs[0].flags & TypeFlags.String, `Expected first arg to be string, got flags ${aliasArgs[0].flags}`);
+            assert.ok(aliasArgs[1].flags & TypeFlags.Number, `Expected second arg to be number, got flags ${aliasArgs[1].flags}`);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns empty array for a non-alias generic type", () => {
+        const src = `\nexport const arr: Array<string> = ["hello"];\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("arr:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasArgs = type.getAliasTypeArguments();
+            assert.equal(aliasArgs.length, 0, "Expected no alias type arguments for a direct generic reference");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Type - getAliasSymbol", () => {
+    test("returns the symbol for a non-generic type alias", () => {
+        // Object-type aliases preserve aliasSymbol; primitive aliases (type Foo = string) do not.
+        const src = `\ntype Point = { x: number; y: number };\nexport const p: Point = { x: 1, y: 2 };\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("p:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasSymbol = type.getAliasSymbol();
+            assert.ok(aliasSymbol, "Expected alias symbol to exist");
+            assert.equal(aliasSymbol.name, "Point");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns the symbol for a generic type alias", () => {
+        const src = `\ntype Container<T> = { item: T };\nexport const c: Container<number> = { item: 42 };\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("c:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasSymbol = type.getAliasSymbol();
+            assert.ok(aliasSymbol, "Expected alias symbol for generic alias");
+            assert.equal(aliasSymbol.name, "Container");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns undefined for a non-alias type", () => {
+        const src = `\nexport const str: string = "test";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("str:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const aliasSymbol = type.getAliasSymbol();
+            assert.equal(aliasSymbol, undefined, "Expected no alias symbol for primitive type");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("IntrinsicType - intrinsicName", () => {
+    test("intrinsicName matches the primitive type name", () => {
+        const src = `\nexport const x: string = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = project.checker.getStringType();
+            assert.equal((stringType as IntrinsicType).intrinsicName, "string");
+            const anyType = project.checker.getAnyType();
+            assert.equal((anyType as IntrinsicType).intrinsicName, "any");
+            const neverType = project.checker.getNeverType();
+            assert.equal((neverType as IntrinsicType).intrinsicName, "never");
+            const pos = src.indexOf("x:");
+            const sym = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(sym);
+            const litType = project.checker.getTypeOfSymbol(sym);
+            assert.ok(litType);
+            assert.ok(litType.flags & TypeFlags.Intrinsic);
+            assert.equal((litType as IntrinsicType).intrinsicName, "string");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("FreshableType - getFreshType and getRegularType", () => {
+    test("LiteralType.value is accessible via the FreshableType hierarchy", () => {
+        const src = `\nexport const greeting: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("greeting:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.StringLiteral, "Expected StringLiteral");
+            const literal = type as LiteralType;
+            assert.equal(literal.value, "hello");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getFreshType() returns a fresh twin with matching value", () => {
+        const src = `\nexport const greeting: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("greeting:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.Freshable, "Type should be a freshable type");
+            const fresh = (type as FreshableType).getFreshType();
+            assert.ok(fresh, "Expected getFreshType() to return non-undefined for a literal type");
+            assert.ok(fresh.flags & TypeFlags.StringLiteral, "Fresh type should be a StringLiteral");
+            assert.equal((fresh as LiteralType).value, "hello", "Fresh type should carry the same value");
+            assert.notEqual(fresh.id, type.id, "Fresh type should not be the original type");
+            const freshFresh = fresh.getFreshType();
+            assert.ok(freshFresh, "Expected getFreshType() to return non-undefined for a fresh type");
+            assert.equal(freshFresh.id, fresh.id, "Fresh type of a fresh type should be the fresh type");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getRegularType() on a fresh literal returns the regular twin", () => {
+        // The initial type response from getTypeOfSymbol does not always include the
+        // regularType handle, so getRegularType() is tested via the fresh twin which
+        // always includes its regularType in its own response.
+        const src = `\nexport const greeting: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("greeting:");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.Freshable, "Type should be a freshable type");
+            const fresh = (type as FreshableType).getFreshType();
+            assert.ok(fresh, "Need fresh type for this test");
+            assert.ok(fresh.flags & TypeFlags.Freshable, "Fresh type should be a freshable type");
+            const regular = fresh.getRegularType();
+            assert.ok(regular, "Expected getRegularType() on the fresh twin to return non-undefined");
+            assert.ok(regular.flags & TypeFlags.StringLiteral, "Regular type should be a StringLiteral");
+            assert.equal((regular as LiteralType).value, "hello", "Regular type should carry the same value");
+            assert.equal(regular.id, type.id, "Regular type should be the original type");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getFreshType() and getRegularType() work for computed enum types (TypeFlags.Enum)", () => {
+        // getTypeOfSymbol on an ambient enum member returns the FRESH computed enum type.
+        // For fresh types: getFreshType() returns self, getRegularType() returns the regular twin.
+        const src = `\ndeclare enum Status { Pending }\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("Pending");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.ok(type.flags & TypeFlags.Enum, `Expected TypeFlags.Enum, got ${type.flags}`);
+            assert.ok(type.flags & TypeFlags.Freshable, "Enum type should be freshable");
+            // The returned type IS the fresh type: getFreshType() returns itself
+            const fresh = (type as FreshableType).getFreshType();
+            assert.ok(fresh, "Expected getFreshType() to return non-undefined");
+            assert.equal(fresh.id, type.id, "getFreshType() on a fresh enum type returns itself");
+            // getRegularType() returns the regular twin (a different type)
+            const regular = (type as FreshableType).getRegularType();
+            assert.ok(regular, "Expected getRegularType() to return non-undefined");
+            assert.ok(regular.flags & TypeFlags.Enum, "Regular enum type should also have TypeFlags.Enum");
+            assert.notEqual(regular.id, type.id, "Regular type should be distinct from the fresh type");
+            // Round-trip: regular → getFreshType() → back to the original fresh type
+            const backToFresh = (regular as FreshableType).getFreshType();
+            assert.ok(backToFresh);
+            assert.equal(backToFresh.id, type.id, "Round-trip through regular/fresh returns the original type");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("Checker - isContextSensitive", () => {
     test("arrow function with no type annotation is context sensitive", () => {
         const api = spawnAPI({
@@ -1993,7 +2454,7 @@ describe("Checker - isContextSensitive", () => {
             const sourceFile = project.program.getSourceFile("/src/main.ts");
             assert.ok(sourceFile);
             // Find the arrow function node
-            let arrowFn: import("@typescript/native-preview/ast").Node | undefined;
+            let arrowFn: import("@typescript/native-preview/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (node.kind === SyntaxKind.ArrowFunction) {
                     arrowFn = node;
@@ -2003,6 +2464,71 @@ describe("Checker - isContextSensitive", () => {
             assert.ok(arrowFn, "Should find an arrow function");
             const result = project.checker.isContextSensitive(arrowFn);
             assert.equal(result, true);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Checker - isTypeAssignableTo", () => {
+    test("returns true when source is assignable to target", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": `export {};`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = project.checker.getStringType();
+            const anyType = project.checker.getAnyType();
+            const neverType = project.checker.getNeverType();
+            assert.ok(project.checker.isTypeAssignableTo(stringType, stringType), "string assignable to string");
+            assert.ok(project.checker.isTypeAssignableTo(stringType, anyType), "string assignable to any");
+            assert.ok(project.checker.isTypeAssignableTo(neverType, stringType), "never assignable to string (bottom type)");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("returns false when source is not assignable to target", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": `export {};`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const stringType = project.checker.getStringType();
+            const numberType = project.checker.getNumberType();
+            assert.ok(!project.checker.isTypeAssignableTo(numberType, stringType), "number not assignable to string");
+            assert.ok(!project.checker.isTypeAssignableTo(stringType, numberType), "string not assignable to number");
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("a string literal type is assignable to string but not number", () => {
+        const src = `\nexport const x: "hello" = "hello";\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const pos = src.indexOf("x:");
+            const sym = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(sym);
+            const litType = project.checker.getTypeOfSymbol(sym);
+            assert.ok(litType);
+            assert.ok(litType.flags & TypeFlags.StringLiteral);
+            const stringType = project.checker.getStringType();
+            const numberType = project.checker.getNumberType();
+            assert.ok(project.checker.isTypeAssignableTo(litType, stringType));
+            assert.ok(!project.checker.isTypeAssignableTo(litType, numberType));
         }
         finally {
             api.close();
@@ -2215,7 +2741,7 @@ export const obj = { m: 1, s: "hi", b: true };
             assert.ok(sourceFile);
 
             // Find the regex literal node
-            let regexNode: import("@typescript/native-preview/ast").Node | undefined;
+            let regexNode: import("@typescript/native-preview/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (node.kind === SyntaxKind.RegularExpressionLiteral) {
                     regexNode = node;
@@ -2251,7 +2777,7 @@ describe("modifierFlags", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
-            let fnNode: import("@typescript/native-preview/ast").FunctionDeclaration | undefined;
+            let fnNode: import("@typescript/native-preview/unstable/ast").FunctionDeclaration | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isFunctionDeclaration(node)) {
                     fnNode = node;
@@ -2279,7 +2805,7 @@ describe("modifierFlags", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
-            let fnNode: import("@typescript/native-preview/ast").FunctionDeclaration | undefined;
+            let fnNode: import("@typescript/native-preview/unstable/ast").FunctionDeclaration | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isFunctionDeclaration(node)) {
                     fnNode = node;
@@ -2308,7 +2834,7 @@ describe("Checker - getResolvedSymbol", () => {
             assert.ok(sourceFile);
 
             // Find the 'x' identifier in `const y = x`
-            let refNode: import("@typescript/native-preview/ast").Identifier | undefined;
+            let refNode: import("@typescript/native-preview/unstable/ast").Identifier | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isIdentifier(node) && node.text === "x") {
                     // We want the reference, not the declaration - take the last one
@@ -2340,7 +2866,7 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
-            let declList: import("@typescript/native-preview/ast").Node | undefined;
+            let declList: import("@typescript/native-preview/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isVariableDeclarationList(node)) {
                     declList = node;
@@ -2366,7 +2892,7 @@ describe("VariableDeclarationList - BlockScoped flags", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
-            let declList: import("@typescript/native-preview/ast").Node | undefined;
+            let declList: import("@typescript/native-preview/unstable/ast").Node | undefined;
             sourceFile.forEachChild(function visit(node) {
                 if (isVariableDeclarationList(node)) {
                     declList = node;
@@ -2392,9 +2918,9 @@ test("TypeOperator operator kind", () => {
         const project = snapshot.getProject("/tsconfig.json")!;
         const sourceFile = project.program.getSourceFile("/src/index.ts");
         assert(sourceFile);
-        const param = (sourceFile.statements[0] as import("@typescript/native-preview/ast").FunctionDeclaration).parameters[0];
+        const param = (sourceFile.statements[0] as import("@typescript/native-preview/unstable/ast").FunctionDeclaration).parameters[0];
         assert(param);
-        const type = param.type as import("@typescript/native-preview/ast").TypeOperatorNode;
+        const type = param.type as import("@typescript/native-preview/unstable/ast").TypeOperatorNode;
         assert(type);
         assert.equal(type.kind, SyntaxKind.TypeOperator);
         assert.equal(type.operator, SyntaxKind.ReadonlyKeyword);
@@ -2416,9 +2942,9 @@ test("SpreadAssignment roundtrip", () => {
         const project = snapshot.getProject("/tsconfig.json")!;
         const sourceFile = project.program.getSourceFile("/src/index.ts");
         assert(sourceFile);
-        const stmt = sourceFile.statements[0] as import("@typescript/native-preview/ast").VariableStatement;
-        const object = stmt.declarationList.declarations[0].initializer as import("@typescript/native-preview/ast").ObjectLiteralExpression;
-        const assignment = object.properties[0] as import("@typescript/native-preview/ast").SpreadAssignment;
+        const stmt = sourceFile.statements[0] as import("@typescript/native-preview/unstable/ast").VariableStatement;
+        const object = stmt.declarationList.declarations[0].initializer as import("@typescript/native-preview/unstable/ast").ObjectLiteralExpression;
+        const assignment = object.properties[0] as import("@typescript/native-preview/unstable/ast").SpreadAssignment;
         assert(assignment);
         assert.equal(assignment.kind, SyntaxKind.SpreadAssignment);
         const expr = assignment.expression;
@@ -2443,13 +2969,13 @@ test("VariableDeclarationList const flag clone", () => {
         const sourceFile = project.program.getSourceFile("/src/index.ts");
         assert(sourceFile);
         {
-            const stmt = sourceFile.statements[0] as import("@typescript/native-preview/ast").VariableStatement;
+            const stmt = sourceFile.statements[0] as import("@typescript/native-preview/unstable/ast").VariableStatement;
             const list = stmt.declarationList;
             assert(list.flags & NodeFlags.Const);
         }
         const cloned = getSynthesizedDeepClone(sourceFile);
         {
-            const stmt = cloned.statements[0] as import("@typescript/native-preview/ast").VariableStatement;
+            const stmt = cloned.statements[0] as import("@typescript/native-preview/unstable/ast").VariableStatement;
             const list = stmt.declarationList;
             assert(list.flags & NodeFlags.Const);
         }

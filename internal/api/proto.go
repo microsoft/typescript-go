@@ -3,8 +3,6 @@ package api
 import (
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -26,68 +24,33 @@ var (
 
 type Method string
 
-type Handle[T any] string
-
-const (
-	handlePrefixProject   = 'p'
-	handlePrefixSymbol    = 's'
-	handlePrefixType      = 't'
-	handlePrefixSnapshot  = 'n'
-	handlePrefixSignature = 'g'
+type (
+	SnapshotID  uint64
+	ProjectID   string
+	SymbolID    uint64
+	TypeID      uint32
+	SignatureID uint64
+	NodeHandle  string
 )
 
-func ProjectHandle(p *project.Project) Handle[project.Project] {
-	return Handle[project.Project](fmt.Sprintf("%c.%s", handlePrefixProject, p.ID()))
+func ProjectHandle(p *project.Project) ProjectID {
+	return ProjectID(p.ID())
 }
 
-func SymbolHandle(symbol *ast.Symbol) Handle[ast.Symbol] {
-	return createHandle[ast.Symbol](handlePrefixSymbol, ast.GetSymbolId(symbol))
+func SymbolHandle(symbol *ast.Symbol) SymbolID {
+	return SymbolID(ast.GetSymbolId(symbol))
 }
 
-func TypeHandle(t *checker.Type) Handle[checker.Type] {
-	return createHandle[checker.Type](handlePrefixType, t.Id())
+func TypeHandle(t *checker.Type) TypeID {
+	return TypeID(t.Id())
 }
 
-func SignatureHandle(id uint64) Handle[checker.Signature] {
-	return createHandle[checker.Signature](handlePrefixSignature, id)
+func SignatureHandle(id uint64) SignatureID {
+	return SignatureID(id)
 }
 
-// NodeHandleFrom creates a node handle from a node.
-// Format: pos.end.kind.path
-func NodeHandleFrom(node *ast.Node) Handle[ast.Node] {
-	sourceFile := ast.GetSourceFileOfNode(node)
-	return Handle[ast.Node](fmt.Sprintf("%d.%d.%d.%s", node.Pos(), node.End(), node.Kind, sourceFile.Path()))
-}
-
-// parseNodeHandle parses a node handle into its components.
-// Format: pos.end.kind.path
-func parseNodeHandle(handle Handle[ast.Node]) (pos int, end int, kind ast.Kind, path tspath.Path, err error) {
-	parts := strings.SplitN(string(handle), ".", 4)
-	if len(parts) != 4 {
-		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q", handle)
-	}
-
-	posInt, err := strconv.ParseInt(parts[0], 10, 32)
-	if err != nil {
-		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
-	}
-	endInt, err := strconv.ParseInt(parts[1], 10, 32)
-	if err != nil {
-		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
-	}
-	kindInt, err := strconv.ParseInt(parts[2], 10, 16)
-	if err != nil {
-		return 0, 0, 0, "", fmt.Errorf("invalid node handle %q: %w", handle, err)
-	}
-	return int(posInt), int(endInt), ast.Kind(kindInt), tspath.Path(parts[3]), nil
-}
-
-func parseProjectHandle(handle Handle[project.Project]) tspath.Path {
-	return tspath.Path(handle[2:])
-}
-
-func createHandle[T any](prefix rune, id any) Handle[T] {
-	return Handle[T](fmt.Sprintf("%c%016x", prefix, id))
+func parseProjectHandle(handle ProjectID) tspath.Path {
+	return tspath.Path(handle)
 }
 
 const (
@@ -120,10 +83,14 @@ const (
 
 	// Type sub-property methods
 	MethodGetTargetOfType              Method = "getTargetOfType"
+	MethodGetFreshTypeOfType           Method = "getFreshTypeOfType"
+	MethodGetRegularTypeOfType         Method = "getRegularTypeOfType"
 	MethodGetTypesOfType               Method = "getTypesOfType"
 	MethodGetTypeParametersOfType      Method = "getTypeParametersOfType"
 	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
 	MethodGetLocalTypeParametersOfType Method = "getLocalTypeParametersOfType"
+	MethodGetAliasTypeArgumentsOfType  Method = "getAliasTypeArgumentsOfType"
+	MethodGetAliasSymbolOfType         Method = "getAliasSymbolOfType"
 	MethodGetObjectTypeOfType          Method = "getObjectTypeOfType"
 	MethodGetIndexTypeOfType           Method = "getIndexTypeOfType"
 	MethodGetCheckTypeOfType           Method = "getCheckTypeOfType"
@@ -139,6 +106,7 @@ const (
 	MethodGetWidenedType                    Method = "getWidenedType"
 	MethodGetParameterType                  Method = "getParameterType"
 	MethodIsArrayLikeType                   Method = "isArrayLikeType"
+	MethodIsTypeAssignableTo                Method = "isTypeAssignableTo"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
@@ -177,6 +145,11 @@ const (
 	MethodGetUnknownType   Method = "getUnknownType"
 	MethodGetBigIntType    Method = "getBigIntType"
 	MethodGetESSymbolType  Method = "getESSymbolType"
+
+	// Profiling methods
+	MethodStartCPUProfile Method = "startCPUProfile"
+	MethodStopCPUProfile  Method = "stopCPUProfile"
+	MethodSaveHeapProfile Method = "saveHeapProfile"
 )
 
 // InitializeResponse is returned by the initialize method.
@@ -300,16 +273,16 @@ type ProjectFileChanges struct {
 type SnapshotChanges struct {
 	// ChangedProjects maps project handles to the file changes within that project.
 	// Projects not listed here (and not in RemovedProjects) are unchanged.
-	ChangedProjects map[Handle[project.Project]]*ProjectFileChanges `json:"changedProjects,omitempty"`
+	ChangedProjects map[ProjectID]*ProjectFileChanges `json:"changedProjects,omitempty"`
 	// RemovedProjects lists project handles that were present in the previous
 	// snapshot but absent from the new one.
-	RemovedProjects []Handle[project.Project] `json:"removedProjects,omitempty"`
+	RemovedProjects []ProjectID `json:"removedProjects,omitempty"`
 }
 
 // UpdateSnapshotResponse is returned by updateSnapshot.
 type UpdateSnapshotResponse struct {
 	// Snapshot is the handle for the newly created snapshot.
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
+	Snapshot SnapshotID `json:"snapshot"`
 	// Projects is the list of projects in the snapshot.
 	Projects []*ProjectResponse `json:"projects"`
 	// Changes describes source file differences from the previous snapshot.
@@ -345,10 +318,14 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
 
 	MethodGetTargetOfType:                   unmarshallerFor[GetTypePropertyParams],
+	MethodGetFreshTypeOfType:                unmarshallerFor[GetTypePropertyParams],
+	MethodGetRegularTypeOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypesOfType:                    unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeParametersOfType:           unmarshallerFor[GetTypePropertyParams],
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetLocalTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
+	MethodGetAliasTypeArgumentsOfType:       unmarshallerFor[GetTypePropertyParams],
+	MethodGetAliasSymbolOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetObjectTypeOfType:               unmarshallerFor[GetTypePropertyParams],
 	MethodGetIndexTypeOfType:                unmarshallerFor[GetTypePropertyParams],
 	MethodGetCheckTypeOfType:                unmarshallerFor[GetTypePropertyParams],
@@ -362,6 +339,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
 	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
 	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
+	MethodIsTypeAssignableTo:                unmarshallerFor[IsTypeAssignableToParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
@@ -394,6 +372,9 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
 	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
 	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
+	MethodStartCPUProfile:                   unmarshallerFor[ProfileParams],
+	MethodStopCPUProfile:                    noParams,
+	MethodSaveHeapProfile:                   unmarshallerFor[ProfileParams],
 }
 
 type ParseConfigFileParams struct {
@@ -402,7 +383,15 @@ type ParseConfigFileParams struct {
 
 // ReleaseParams are the parameters for the release method.
 type ReleaseParams struct {
-	Handle string `json:"handle"`
+	Snapshot SnapshotID `json:"snapshot"`
+}
+
+type ProfileParams struct {
+	Dir string `json:"dir"`
+}
+
+type ProfileResult struct {
+	File string `json:"file"`
 }
 
 type ConfigFileResponse struct {
@@ -411,15 +400,15 @@ type ConfigFileResponse struct {
 }
 
 type GetDefaultProjectForFileParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	File     DocumentIdentifier       `json:"file"`
+	Snapshot SnapshotID         `json:"snapshot"`
+	File     DocumentIdentifier `json:"file"`
 }
 
 type ProjectResponse struct {
-	Id              Handle[project.Project] `json:"id"`
-	ConfigFileName  string                  `json:"configFileName"`
-	RootFiles       []string                `json:"rootFiles"`
-	CompilerOptions *core.CompilerOptions   `json:"compilerOptions"`
+	Id              ProjectID             `json:"id"`
+	ConfigFileName  string                `json:"configFileName"`
+	RootFiles       []string              `json:"rootFiles"`
+	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
@@ -432,38 +421,38 @@ func NewProjectResponse(p *project.Project) *ProjectResponse {
 }
 
 type GetSymbolAtPositionParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     DocumentIdentifier       `json:"file"`
-	Position uint32                   `json:"position"`
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`
+	Position uint32             `json:"position"`
 }
 
 type GetSymbolsAtPositionsParams struct {
-	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
-	Project   Handle[project.Project]  `json:"project"`
-	File      DocumentIdentifier       `json:"file"`
-	Positions []uint32                 `json:"positions"`
+	Snapshot  SnapshotID         `json:"snapshot"`
+	Project   ProjectID          `json:"project"`
+	File      DocumentIdentifier `json:"file"`
+	Positions []uint32           `json:"positions"`
 }
 
 type GetSymbolAtLocationParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Location Handle[ast.Node]         `json:"location"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Location NodeHandle `json:"location"`
 }
 
 type GetSymbolsAtLocationsParams struct {
-	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
-	Project   Handle[project.Project]  `json:"project"`
-	Locations []Handle[ast.Node]       `json:"locations"`
+	Snapshot  SnapshotID   `json:"snapshot"`
+	Project   ProjectID    `json:"project"`
+	Locations []NodeHandle `json:"locations"`
 }
 
 type SymbolResponse struct {
-	Id               Handle[ast.Symbol] `json:"id"`
-	Name             string             `json:"name"`
-	Flags            uint32             `json:"flags"`
-	CheckFlags       uint32             `json:"checkFlags"`
-	Declarations     []Handle[ast.Node] `json:"declarations,omitempty"`
-	ValueDeclaration Handle[ast.Node]   `json:"valueDeclaration,omitempty"`
+	Id               SymbolID     `json:"id"`
+	Name             string       `json:"name"`
+	Flags            uint32       `json:"flags"`
+	CheckFlags       uint32       `json:"checkFlags"`
+	Declarations     []NodeHandle `json:"declarations,omitempty"`
+	ValueDeclaration NodeHandle   `json:"valueDeclaration,omitempty"`
 }
 
 func NewSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
@@ -474,49 +463,41 @@ func NewSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
 		CheckFlags: uint32(symbol.CheckFlags),
 	}
 
-	// Add declarations
+	// Allocate declaration slices; callers fill in the handles.
 	if len(symbol.Declarations) > 0 {
-		resp.Declarations = make([]Handle[ast.Node], len(symbol.Declarations))
-		for i, decl := range symbol.Declarations {
-			resp.Declarations[i] = NodeHandleFrom(decl)
-		}
-	}
-
-	// Add value declaration
-	if symbol.ValueDeclaration != nil {
-		resp.ValueDeclaration = NodeHandleFrom(symbol.ValueDeclaration)
+		resp.Declarations = make([]NodeHandle, len(symbol.Declarations))
 	}
 
 	return resp
 }
 
 type GetTypeOfSymbolParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetTypesOfSymbolsParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Symbols  []Handle[ast.Symbol]     `json:"symbols"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Symbols  []SymbolID `json:"symbols"`
 }
 
 type TypeResponse struct {
-	Id          Handle[checker.Type] `json:"id"`
-	Flags       uint32               `json:"flags"`
-	ObjectFlags uint32               `json:"objectFlags,omitempty"`
+	Id          TypeID `json:"id"`
+	Flags       uint32 `json:"flags"`
+	ObjectFlags uint32 `json:"objectFlags,omitempty"`
 
 	// LiteralType data
 	Value any `json:"value,omitempty"`
 
 	// ObjectType / TypeReference / StringMappingType / IndexType target
-	Target Handle[checker.Type] `json:"target,omitempty"`
+	Target TypeID `json:"target,omitempty"`
 
 	// InterfaceType type parameters
-	TypeParameters      []Handle[checker.Type] `json:"typeParameters,omitempty"`
-	OuterTypeParameters []Handle[checker.Type] `json:"outerTypeParameters,omitempty"`
-	LocalTypeParameters []Handle[checker.Type] `json:"localTypeParameters,omitempty"`
+	TypeParameters      []TypeID `json:"typeParameters,omitempty"`
+	OuterTypeParameters []TypeID `json:"outerTypeParameters,omitempty"`
+	LocalTypeParameters []TypeID `json:"localTypeParameters,omitempty"`
 
 	// TupleType data
 	ElementFlags  []checker.ElementFlags `json:"elementFlags,omitempty"`
@@ -524,22 +505,36 @@ type TypeResponse struct {
 	TupleReadonly *bool                  `json:"readonly,omitempty"`
 
 	// IndexedAccessType data
-	ObjectType Handle[checker.Type] `json:"objectType,omitempty"`
-	IndexType  Handle[checker.Type] `json:"indexType,omitempty"`
+	ObjectType TypeID `json:"objectType,omitempty"`
+	IndexType  TypeID `json:"indexType,omitempty"`
 
 	// ConditionalType data
-	CheckType   Handle[checker.Type] `json:"checkType,omitempty"`
-	ExtendsType Handle[checker.Type] `json:"extendsType,omitempty"`
+	CheckType   TypeID `json:"checkType,omitempty"`
+	ExtendsType TypeID `json:"extendsType,omitempty"`
 
 	// SubstitutionType data
-	BaseType        Handle[checker.Type] `json:"baseType,omitempty"`
-	SubstConstraint Handle[checker.Type] `json:"substConstraint,omitempty"`
+	BaseType        TypeID `json:"baseType,omitempty"`
+	SubstConstraint TypeID `json:"substConstraint,omitempty"`
 
 	// TemplateLiteralType text segments
 	Texts []string `json:"texts,omitempty"`
 
+	// FreshableType data (LiteralType and computed enum types)
+	FreshType   TypeID `json:"freshType,omitempty"`
+	RegularType TypeID `json:"regularType,omitempty"`
+
+	// TypeParameter data
+	IsThisType bool `json:"isThisType,omitempty"`
+
+	// IntrinsicType data
+	IntrinsicName string `json:"intrinsicName,omitempty"`
+
+	// TypeAlias data
+	AliasTypeArguments []TypeID `json:"aliasTypeArguments,omitempty"`
+	AliasSymbol        SymbolID `json:"aliasSymbol,omitempty"`
+
 	// Symbol associated with structured types
-	Symbol Handle[ast.Symbol] `json:"symbol,omitempty"`
+	Symbol SymbolID `json:"symbol,omitempty"`
 }
 
 func newTypeData(t *checker.Type) *TypeResponse {
@@ -552,9 +547,25 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		resp.Symbol = SymbolHandle(t.Symbol())
 	}
 
+	if t.Alias() != nil {
+		resp.AliasTypeArguments = typeHandles(t.Alias().TypeArguments())
+		if t.Alias().Symbol() != nil {
+			resp.AliasSymbol = SymbolHandle(t.Alias().Symbol())
+		}
+	}
+
 	switch flags := t.Flags(); {
-	case flags&checker.TypeFlagsLiteral != 0:
-		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
+	case flags&checker.TypeFlagsFreshable != 0:
+		lit := t.AsLiteralType()
+		if flags&checker.TypeFlagsLiteral != 0 {
+			resp.Value = literalValueToJSON(lit.Value())
+		}
+		if lit.FreshType() != nil {
+			resp.FreshType = TypeHandle(lit.FreshType())
+		}
+		if lit.RegularType() != nil {
+			resp.RegularType = TypeHandle(lit.RegularType())
+		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()
@@ -603,16 +614,20 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		// types omitted; fetched via separate request
 	case flags&checker.TypeFlagsStringMapping != 0:
 		resp.Target = TypeHandle(t.AsStringMappingType().Target())
+	case flags&checker.TypeFlagsTypeParameter != 0:
+		resp.IsThisType = t.AsTypeParameter().IsThisType()
+	case flags&checker.TypeFlagsIntrinsic != 0:
+		resp.IntrinsicName = t.AsIntrinsicType().IntrinsicName()
 	}
 
 	return resp
 }
 
-func typeHandles(types []*checker.Type) []Handle[checker.Type] {
+func typeHandles(types []*checker.Type) []TypeID {
 	if len(types) == 0 {
 		return nil
 	}
-	handles := make([]Handle[checker.Type], len(types))
+	handles := make([]TypeID, len(types))
 	for i, t := range types {
 		handles[i] = TypeHandle(t)
 	}
@@ -635,164 +650,172 @@ func literalValueToJSON(value any) any {
 }
 
 type SignatureResponse struct {
-	Id             Handle[checker.Signature] `json:"id"`
-	Flags          uint32                    `json:"flags"`
-	Declaration    Handle[ast.Node]          `json:"declaration,omitempty"`
-	TypeParameters []Handle[checker.Type]    `json:"typeParameters,omitempty"`
-	Parameters     []Handle[ast.Symbol]      `json:"parameters,omitempty"`
-	ThisParameter  Handle[ast.Symbol]        `json:"thisParameter,omitempty"`
-	Target         Handle[checker.Signature] `json:"target,omitempty"`
+	Id             SignatureID `json:"id"`
+	Flags          uint32      `json:"flags"`
+	Declaration    NodeHandle  `json:"declaration,omitempty"`
+	TypeParameters []TypeID    `json:"typeParameters,omitempty"`
+	Parameters     []SymbolID  `json:"parameters,omitempty"`
+	ThisParameter  SymbolID    `json:"thisParameter,omitempty"`
+	Target         SignatureID `json:"target,omitempty"`
 }
 
 type GetSourceFileParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     DocumentIdentifier       `json:"file"`
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`
 }
 
 type ResolveNameParams struct {
-	Snapshot       Handle[project.Snapshot] `json:"snapshot"`
-	Project        Handle[project.Project]  `json:"project"`
-	Name           string                   `json:"name"`
-	Location       Handle[ast.Node]         `json:"location,omitempty"`       // Optional: node handle for location context
-	File           *DocumentIdentifier      `json:"file,omitempty"`           // Optional: file for location context (alternative to Location)
-	Position       *uint32                  `json:"position,omitempty"`       // Optional: position in file for location context (with File)
-	Meaning        uint32                   `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
-	ExcludeGlobals bool                     `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
+	Snapshot       SnapshotID          `json:"snapshot"`
+	Project        ProjectID           `json:"project"`
+	Name           string              `json:"name"`
+	Location       NodeHandle          `json:"location,omitempty"`       // Optional: node handle for location context
+	File           *DocumentIdentifier `json:"file,omitempty"`           // Optional: file for location context (alternative to Location)
+	Position       *uint32             `json:"position,omitempty"`       // Optional: position in file for location context (with File)
+	Meaning        uint32              `json:"meaning"`                  // SymbolFlags for what kind of symbol to find
+	ExcludeGlobals bool                `json:"excludeGlobals,omitempty"` // Whether to exclude global symbols
 }
 
 type GetParentOfSymbolParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetMembersOfSymbolParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetExportsOfSymbolParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetExportSymbolOfSymbolParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetSymbolOfTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Type     TypeID     `json:"type"`
 }
 
 // GetTypePropertyParams is used for all type sub-property endpoints.
 type GetTypePropertyParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Type     TypeID     `json:"type"`
 }
 
 // GetContextualTypeParams returns the contextual type for a node.
 type GetContextualTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Location Handle[ast.Node]         `json:"location"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Location NodeHandle `json:"location"`
 }
 
 // GetTypeOfSymbolAtLocationParams returns the narrowed type of a symbol at a specific location.
 type GetTypeOfSymbolAtLocationParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
-	Location Handle[ast.Node]         `json:"location"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Symbol   SymbolID   `json:"symbol"`
+	Location NodeHandle `json:"location"`
 }
 
 // GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).
 type GetIntrinsicTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 }
 
 // GetBaseTypeOfLiteralTypeParams returns the base type of a literal type.
 type GetBaseTypeOfLiteralTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
 }
 
 // GetNonNullableTypeParams are the parameters for the getNonNullableType method.
 type GetNonNullableTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
 }
 
 // GetTypeFromTypeNodeParams are the parameters for the getTypeFromTypeNode method.
 type GetTypeFromTypeNodeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Location Handle[ast.Node]         `json:"location"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Location NodeHandle `json:"location"`
 }
 
 // GetWidenedTypeParams are the parameters for the getWidenedType method.
 type GetWidenedTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
 }
 
 // GetParameterTypeParams are the parameters for the getParameterType method.
 type GetParameterTypeParams struct {
-	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
-	Project   Handle[project.Project]   `json:"project"`
-	Signature Handle[checker.Signature] `json:"signature"`
-	Index     int32                     `json:"index"`
+	Snapshot  SnapshotID  `json:"snapshot"`
+	Project   ProjectID   `json:"project"`
+	Signature SignatureID `json:"signature"`
+	Index     int32       `json:"index"`
 }
 
 // IsArrayLikeTypeParams checks whether a type is array-like.
 type IsArrayLikeTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
+}
+
+// IsTypeAssignableToParams checks assignability between two types.
+type IsTypeAssignableToParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Source   TypeID     `json:"source"`
+	Target   TypeID     `json:"target"`
 }
 
 type GetSignaturesOfTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
-	Kind     int32                    `json:"kind"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
+	Kind     int32      `json:"kind"`
 }
 
 type GetResolvedSignatureParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Location Handle[ast.Node]         `json:"location"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Location NodeHandle `json:"location"`
 }
 
 type GetTypeAtLocationParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Location Handle[ast.Node]         `json:"location"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Location NodeHandle `json:"location"`
 }
 
 type GetTypeAtLocationsParams struct {
-	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
-	Project   Handle[project.Project]  `json:"project"`
-	Locations []Handle[ast.Node]       `json:"locations"`
+	Snapshot  SnapshotID   `json:"snapshot"`
+	Project   ProjectID    `json:"project"`
+	Locations []NodeHandle `json:"locations"`
 }
 
 type GetTypeAtPositionParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     DocumentIdentifier       `json:"file"`
-	Position uint32                   `json:"position"`
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`
+	Position uint32             `json:"position"`
 }
 
 type GetTypesAtPositionsParams struct {
-	Snapshot  Handle[project.Snapshot] `json:"snapshot"`
-	Project   Handle[project.Project]  `json:"project"`
-	File      DocumentIdentifier       `json:"file"`
-	Positions []uint32                 `json:"positions"`
+	Snapshot  SnapshotID         `json:"snapshot"`
+	Project   ProjectID          `json:"project"`
+	File      DocumentIdentifier `json:"file"`
+	Positions []uint32           `json:"positions"`
 }
 
 type ImportAdderActionKind string
@@ -822,21 +845,21 @@ type TextEdit struct {
 
 // TypeToTypeNodeParams are the parameters for the typeToTypeNode method.
 type TypeToTypeNodeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
-	Location Handle[ast.Node]         `json:"location,omitempty"`
-	Flags    int32                    `json:"flags,omitempty"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
+	Location NodeHandle `json:"location,omitempty"`
+	Flags    int32      `json:"flags,omitempty"`
 }
 
 // SignatureToSignatureDeclarationParams are the parameters for the signatureToSignatureDeclaration method.
 type SignatureToSignatureDeclarationParams struct {
-	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
-	Project   Handle[project.Project]   `json:"project"`
-	Signature Handle[checker.Signature] `json:"signature"`
-	Kind      int32                     `json:"kind"`
-	Location  Handle[ast.Node]          `json:"location,omitempty"`
-	Flags     int32                     `json:"flags,omitempty"`
+	Snapshot  SnapshotID  `json:"snapshot"`
+	Project   ProjectID   `json:"project"`
+	Signature SignatureID `json:"signature"`
+	Kind      int32       `json:"kind"`
+	Location  NodeHandle  `json:"location,omitempty"`
+	Flags     int32       `json:"flags,omitempty"`
 }
 
 // PrintNodeParams are the parameters for the printNode method.
@@ -849,16 +872,16 @@ type PrintNodeParams struct {
 
 // CheckerTypeParams are parameters for checker methods that operate on a type.
 type CheckerTypeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Type     Handle[checker.Type]     `json:"type"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
 }
 
 // CheckerSignatureParams are parameters for checker methods that operate on a signature.
 type CheckerSignatureParams struct {
-	Snapshot  Handle[project.Snapshot]  `json:"snapshot"`
-	Project   Handle[project.Project]   `json:"project"`
-	Signature Handle[checker.Signature] `json:"signature"`
+	Snapshot  SnapshotID  `json:"snapshot"`
+	Project   ProjectID   `json:"project"`
+	Signature SignatureID `json:"signature"`
 }
 
 // TypePredicateResponse is the response for getTypePredicateOfSignature.
@@ -884,15 +907,15 @@ type SourceFileResponse struct {
 
 // GetDiagnosticsParams are parameters for per-file diagnostic methods.
 type GetDiagnosticsParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     *DocumentIdentifier      `json:"file,omitempty"`
+	Snapshot SnapshotID          `json:"snapshot"`
+	Project  ProjectID           `json:"project"`
+	File     *DocumentIdentifier `json:"file,omitempty"`
 }
 
 // GetProjectDiagnosticsParams are parameters for project-wide diagnostic methods.
 type GetProjectDiagnosticsParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 }
 
 // DiagnosticResponse is the API response for a single diagnostic.

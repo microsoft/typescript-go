@@ -777,6 +777,10 @@ func (t *Type) Symbol() *ast.Symbol {
 	return t.symbol
 }
 
+func (t *Type) Alias() *TypeAlias {
+	return t.alias
+}
+
 func (t *Type) IsUnion() bool {
 	return t.flags&TypeFlagsUnion != 0
 }
@@ -875,6 +879,14 @@ type LiteralType struct {
 
 func (t *LiteralType) Value() any {
 	return t.value
+}
+
+func (t *LiteralType) FreshType() *Type {
+	return t.freshType
+}
+
+func (t *LiteralType) RegularType() *Type {
+	return t.regularType
 }
 
 func (t *LiteralType) String() string {
@@ -1300,6 +1312,10 @@ func (s *Signature) Parameters() []*ast.Symbol {
 
 func (s *Signature) HasRestParameter() bool {
 	return s.flags&SignatureFlagsHasRestParameter != 0
+}
+
+func (s *Signature) MinArgumentCount() int {
+	return int(s.minArgumentCount)
 }
 
 type CompositeSignature struct {
