@@ -40,10 +40,6 @@ import {
     createVariableDeclaration,
     createVariableDeclarationList,
     createVariableStatement,
-} from "@typescript/native-preview/ast/factory";
-import { visitEachChild } from "@typescript/native-preview/ast/visitor";
-import { createVirtualFileSystem } from "@typescript/native-preview/fs";
-import type { FileSystem } from "@typescript/native-preview/fs";
 } from "@typescript/native-preview/unstable/ast/factory";
 import { visitEachChild } from "@typescript/native-preview/unstable/ast/visitor";
 import { createVirtualFileSystem } from "@typescript/native-preview/unstable/fs";

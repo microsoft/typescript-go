@@ -32,8 +32,6 @@ import {
     createVariableDeclaration,
     createVariableDeclarationList,
     createVariableStatement,
-} from "@typescript/native-preview/ast/factory";
-import { visitEachChild } from "@typescript/native-preview/ast/visitor";
 } from "@typescript/native-preview/unstable/ast/factory";
 import { visitEachChild } from "@typescript/native-preview/unstable/ast/visitor";
 import {
