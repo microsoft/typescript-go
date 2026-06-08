@@ -201,9 +201,9 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	configForCompilation := commandLine
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	var compileTimes tsc.CompileTimes
+	var commandLineRaw *collections.OrderedMap[string, any]
 	if configFileName != "" {
 		configStart := sys.Now()
-		var commandLineRaw *collections.OrderedMap[string, any]
 		if raw, ok := commandLine.Raw.(*collections.OrderedMap[string, any]); ok {
 			// Wrap command line options in a "compilerOptions" key to match tsconfig.json structure
 			wrapped := &collections.OrderedMap[string, any]{}
@@ -234,6 +234,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 			sys,
 			configForCompilation,
 			compilerOptionsFromCommandLine,
+			commandLineRaw,
 			reportDiagnostic,
 			reportErrorSummary,
 			testing,

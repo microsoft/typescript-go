@@ -80,6 +80,9 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		sys.baselineFSwithDiff(baselineBuilder)
 		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
 		sys.serializeState(baselineBuilder)
+		if result.Watcher != nil && sys.mockWatchBackend.HasWatches() {
+			baselineBuilder.WriteString(sys.mockWatchBackend.WatchState())
+		}
 		var unexpectedDiff strings.Builder
 		unexpectedDiff.WriteString(sys.baselinePrograms(baselineBuilder, "Initial build"))
 
@@ -93,14 +96,19 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 				if do.edit != nil {
 					do.edit(sys)
 				}
+				changedPaths := sys.fsDiffer.ChangedPaths()
 				sys.baselineFSwithDiff(baselineBuilder)
 
 				if result.Watcher == nil {
 					test.executeCommand(sys, baselineBuilder, commandLineArgs)
 				} else {
+					sys.mockWatchBackend.SendChangedPaths(changedPaths)
 					result.Watcher.DoCycle()
 				}
 				sys.serializeState(baselineBuilder)
+				if result.Watcher != nil && sys.mockWatchBackend.HasWatches() {
+					baselineBuilder.WriteString(sys.mockWatchBackend.WatchState())
+				}
 				unexpectedDiff.WriteString(sys.baselinePrograms(baselineBuilder, fmt.Sprintf("Edit [%d]:: %s\n", index, do.caption)))
 			})
 			wg.Queue(func() {

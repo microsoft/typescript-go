@@ -38,6 +38,11 @@ declare const console: { log(msg: any): void; };
 "use strict";
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+File watches::
+  /home/src/workspaces/project/index.ts
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/index.ts

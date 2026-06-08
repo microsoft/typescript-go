@@ -48,6 +48,12 @@ declare const console: { log(msg: any): void; };
 export {};
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
+File watches::
+  /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -70,6 +76,12 @@ Output::
 export const util = "hello";
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
+File watches::
+  /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/lib/util.ts
