@@ -1193,6 +1193,21 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		}
 	}
 	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
+
+	// Determine if we should use granular watches.
+	// Use broad recursive watches for:
+	// - LSP client-side watching (VS Code already uses recursion)
+	// - fsevents (macOS) and Windows backends
+	// Use granular watches for other backends (e.g., Linux inotify) to avoid
+	// expensive full tree walks.
+	granularWatches := false
+	if useBuiltinWatcher || !hasDynamicWatchRegistration {
+		// Using builtin watcher; determine based on platform.
+		// TODO: detect fswatch backend at runtime and set based on that.
+		// For now, assume granular watches are not needed for builtin watchers.
+		granularWatches = false
+	}
+
 	if useBuiltinWatcher || !hasDynamicWatchRegistration {
 		if useBuiltinWatcher {
 			s.logger.Logf("file watching: using builtin in-process watcher (useBuiltinWatcher=true)")
@@ -1240,6 +1255,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			DebounceDelay:          500 * time.Millisecond,
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
 			Locale:                 s.locale,
+			GranularWatches:        granularWatches,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,

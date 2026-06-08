@@ -63,6 +63,7 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	GranularWatches        bool
 }
 
 type SessionInit struct {
@@ -217,6 +218,7 @@ func NewSession(init *SessionInit) *Session {
 				"auto-import",
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 				lsproto.GetClientCapabilities(init.BackgroundCtx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
+				init.Options.GranularWatches,
 				func(nodeModulesDirs map[tspath.Path]string) PatternsAndIgnored {
 					patterns := make([]string, 0, len(nodeModulesDirs))
 					for _, dir := range nodeModulesDirs {

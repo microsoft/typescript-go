@@ -187,6 +187,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	var ignored map[string]struct{}
 	var globs []string
 	var externalDirectories []string
+	var granularDirectories collections.Set[tspath.Path]
 	var includeWorkspace bool
 	var includeTsconfigDir bool
 	tsconfigDir := tspath.GetDirectoryPath(fileName)
@@ -196,6 +197,10 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		UseCaseSensitiveFileNames: c.FS().UseCaseSensitiveFileNames(),
 	}
 	for dir := range wildcardDirectories {
+		if c.sessionOptions.GranularWatches {
+			granularDirectories.Add(tspath.ToPath(dir, c.sessionOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames))
+			continue
+		}
 		if tspath.ContainsPath(c.sessionOptions.CurrentDirectory, dir, comparePathsOptions) {
 			includeWorkspace = true
 		} else if tspath.ContainsPath(tsconfigDir, dir, comparePathsOptions) {
@@ -205,6 +210,10 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		}
 	}
 	for _, fileName := range entry.commandLine.LiteralFileNames() {
+		if c.sessionOptions.GranularWatches {
+			granularDirectories.Add(tspath.ToPath(tspath.GetDirectoryPath(fileName), c.sessionOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames))
+			continue
+		}
 		if tspath.ContainsPath(c.sessionOptions.CurrentDirectory, fileName, comparePathsOptions) {
 			includeWorkspace = true
 		} else if tspath.ContainsPath(tsconfigDir, fileName, comparePathsOptions) {
@@ -214,11 +223,15 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		}
 	}
 
-	if includeWorkspace {
-		globs = append(globs, getRecursiveGlobPattern(c.sessionOptions.CurrentDirectory))
-	}
-	if includeTsconfigDir {
-		globs = append(globs, getRecursiveGlobPattern(tsconfigDir))
+	if c.sessionOptions.GranularWatches {
+		globs = appendRecursiveGlobs(globs, granularDirectories, c.FS().DirectoryExists)
+	} else {
+		if includeWorkspace {
+			globs = append(globs, getRecursiveGlobPattern(c.sessionOptions.CurrentDirectory))
+		}
+		if includeTsconfigDir {
+			globs = append(globs, getRecursiveGlobPattern(tsconfigDir))
+		}
 	}
 	for _, fileName := range entry.commandLine.ExtendedSourceFiles() {
 		if includeWorkspace && tspath.ContainsPath(c.sessionOptions.CurrentDirectory, fileName, comparePathsOptions) {
@@ -226,7 +239,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		}
 		globs = append(globs, fileName)
 	}
-	if len(externalDirectories) > 0 {
+	if !c.sessionOptions.GranularWatches && len(externalDirectories) > 0 {
 		commonParents, ignoredExternalDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
 		for _, parent := range commonParents {
 			globs = append(globs, getRecursiveGlobPattern(parent))
@@ -235,6 +248,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	slices.Sort(globs)
+	globs = slices.Compact(globs)
 	entry.rootFilesWatch = entry.rootFilesWatch.Clone(PatternsAndIgnored{
 		patternsInsideWorkspace: globs,
 		ignored:                 ignored,
@@ -246,7 +260,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 // in the cache. Each `acquireConfigForProject` call that passes a `project` should be accompanied
 // by an eventual `releaseConfigForProject` call with the same project.
 func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(c.hasRelativePatternCapability, fileName))
+	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(c.hasRelativePatternCapability, c.sessionOptions.GranularWatches, fileName))
 	var needsRetainProject bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
@@ -272,7 +286,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 // Each `acquireConfigForFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
 func (c *configFileRegistryBuilder) acquireConfigForFile(configFileName string, configFilePath tspath.Path, filePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(c.hasRelativePatternCapability, configFileName))
+	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(c.hasRelativePatternCapability, c.sessionOptions.GranularWatches, configFileName))
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {

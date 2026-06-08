@@ -160,6 +160,7 @@ type WatchedFiles[T any] struct {
 	name                         string
 	watchKind                    lsproto.WatchKind
 	hasRelativePatternCapability bool
+	granularWatches              bool
 	computeGlobPatterns          func(input T) PatternsAndIgnored
 
 	mu                       sync.RWMutex
@@ -171,12 +172,13 @@ type WatchedFiles[T any] struct {
 	id                       uint64
 }
 
-func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, hasRelativePatternCapability bool, computeGlobPatterns func(input T) PatternsAndIgnored) *WatchedFiles[T] {
+func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, hasRelativePatternCapability bool, granularWatches bool, computeGlobPatterns func(input T) PatternsAndIgnored) *WatchedFiles[T] {
 	return &WatchedFiles[T]{
 		id:                           watcherID.Add(1),
 		name:                         name,
 		watchKind:                    watchKind,
 		hasRelativePatternCapability: hasRelativePatternCapability,
+		granularWatches:              granularWatches,
 		computeGlobPatterns:          computeGlobPatterns,
 	}
 }
@@ -261,6 +263,7 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 		name:                         w.name,
 		watchKind:                    w.watchKind,
 		hasRelativePatternCapability: w.hasRelativePatternCapability,
+		granularWatches:              w.granularWatches,
 		computeGlobPatterns:          w.computeGlobPatterns,
 		workspaceWatchers:            w.workspaceWatchers,
 		outsideWorkspaceWatchers:     w.outsideWorkspaceWatchers,
@@ -268,7 +271,14 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 	}
 }
 
-func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory string, currentDirectory string, useCaseSensitiveFileNames bool) func(data *collections.SyncSet[tspath.Path]) PatternsAndIgnored {
+func createResolutionLookupGlobMapper(
+	workspaceDirectory string,
+	libDirectory string,
+	currentDirectory string,
+	useCaseSensitiveFileNames bool,
+	granularWatches bool,
+	directoryExists func(path string) bool,
+) func(data *collections.SyncSet[tspath.Path]) PatternsAndIgnored {
 	workspaceDirectoryPath := tspath.ToPath(workspaceDirectory, currentDirectory, useCaseSensitiveFileNames)
 	currentDirectoryPath := tspath.ToPath(currentDirectory, currentDirectory, useCaseSensitiveFileNames)
 	libDirectoryPath := tspath.ToPath(libDirectory, currentDirectory, useCaseSensitiveFileNames)
@@ -277,6 +287,9 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 		var ignored map[string]struct{}
 		var seenDirs collections.Set[tspath.Path]
 		var includeWorkspace, includeRoot, includeLib bool
+		var workspaceDirectories collections.Set[tspath.Path]
+		var rootDirectories collections.Set[tspath.Path]
+		var libDirectories collections.Set[tspath.Path]
 		var nodeModulesDirectories collections.Set[tspath.Path]
 		var externalDirectories collections.Set[tspath.Path]
 
@@ -293,13 +306,29 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 				}
 
 				if workspaceDirectoryPath.ContainsPath(path) {
-					includeWorkspace = true
+					if granularWatches {
+						workspaceDirectories.Add(path.GetDirectoryPath())
+					} else {
+						includeWorkspace = true
+					}
 				} else if currentDirectoryPath.ContainsPath(path) {
-					includeRoot = true
+					if granularWatches {
+						rootDirectories.Add(path.GetDirectoryPath())
+					} else {
+						includeRoot = true
+					}
 				} else if libDirectoryPath.ContainsPath(path) {
-					includeLib = true
+					if granularWatches {
+						libDirectories.Add(path.GetDirectoryPath())
+					} else {
+						includeLib = true
+					}
 				} else if idx := strings.Index(string(path), "/node_modules/"); idx != -1 {
-					nodeModulesDirectories.Add(path[:idx+len("/node_modules")])
+					if granularWatches {
+						nodeModulesDirectories.Add(path.GetDirectoryPath())
+					} else {
+						nodeModulesDirectories.Add(path[:idx+len("/node_modules")])
+					}
 				} else {
 					externalDirectories.Add(path.GetDirectoryPath())
 				}
@@ -308,38 +337,59 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 		}
 
 		var globs []string
-		if includeWorkspace {
-			globs = append(globs, getRecursiveGlobPattern(string(workspaceDirectoryPath)))
-		}
-		if includeRoot {
-			globs = append(globs, getRecursiveGlobPattern(string(currentDirectoryPath)))
-		}
-		if includeLib {
-			globs = append(globs, getRecursiveGlobPattern(string(libDirectoryPath)))
-		}
-		if nodeModulesDirectories.Len() > 0 {
-			nodeModulesGlobs := make([]string, 0, nodeModulesDirectories.Len())
-			for dir := range nodeModulesDirectories.Keys() {
-				nodeModulesGlobs = append(nodeModulesGlobs, getRecursiveGlobPattern(string(dir)))
+		if granularWatches {
+			globs = appendRecursiveGlobs(globs, workspaceDirectories, directoryExists)
+			globs = appendRecursiveGlobs(globs, rootDirectories, directoryExists)
+			globs = appendRecursiveGlobs(globs, libDirectories, directoryExists)
+			globs = appendRecursiveGlobs(globs, nodeModulesDirectories, directoryExists)
+		} else {
+			if includeWorkspace {
+				globs = append(globs, getRecursiveGlobPattern(string(workspaceDirectoryPath)))
 			}
-			slices.Sort(nodeModulesGlobs)
-			globs = append(globs, nodeModulesGlobs...)
+			if includeRoot {
+				globs = append(globs, getRecursiveGlobPattern(string(currentDirectoryPath)))
+			}
+			if includeLib {
+				globs = append(globs, getRecursiveGlobPattern(string(libDirectoryPath)))
+			}
+			if nodeModulesDirectories.Len() > 0 {
+				nodeModulesGlobs := make([]string, 0, nodeModulesDirectories.Len())
+				for dir := range nodeModulesDirectories.Keys() {
+					nodeModulesGlobs = append(nodeModulesGlobs, getRecursiveGlobPattern(string(dir)))
+				}
+				slices.Sort(nodeModulesGlobs)
+				globs = append(globs, nodeModulesGlobs...)
+			}
 		}
+
+		slices.Sort(globs)
+		globs = slices.Compact(globs)
+
 		var outsideDirs []string
 		if externalDirectories.Len() > 0 {
 			externalDirStrings := make([]string, 0, externalDirectories.Len())
 			for dir := range externalDirectories.Keys() {
 				externalDirStrings = append(externalDirStrings, string(dir))
 			}
-			externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(
-				externalDirStrings,
-				minWatchLocationDepth,
-				getPathComponentsForWatching,
-				tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true}, // Already using tspath.Path
-			)
-			slices.Sort(externalDirectoryParents)
-			ignored = ignoredExternalDirs
-			outsideDirs = externalDirectoryParents
+			if granularWatches {
+				var externalDirs collections.Set[tspath.Path]
+				for dir := range externalDirectories.Keys() {
+					externalDirs.Add(dir)
+				}
+				outsideDirs = appendResolvedDirectories(outsideDirs, externalDirs, directoryExists)
+				slices.Sort(outsideDirs)
+				outsideDirs = slices.Compact(outsideDirs)
+			} else {
+				externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(
+					externalDirStrings,
+					minWatchLocationDepth,
+					getPathComponentsForWatching,
+					tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true}, // Already using tspath.Path
+				)
+				slices.Sort(externalDirectoryParents)
+				ignored = ignoredExternalDirs
+				outsideDirs = externalDirectoryParents
+			}
 		}
 
 		return PatternsAndIgnored{
@@ -347,6 +397,39 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 			patternsInsideWorkspace:     globs,
 			ignored:                     ignored,
 		}
+	}
+}
+
+func appendRecursiveGlobs(globs []string, directories collections.Set[tspath.Path], directoryExists func(path string) bool) []string {
+	resolved := appendResolvedDirectories(nil, directories, directoryExists)
+	for _, dir := range resolved {
+		globs = append(globs, getRecursiveGlobPattern(dir))
+	}
+	return globs
+}
+
+func appendResolvedDirectories(dirs []string, directories collections.Set[tspath.Path], directoryExists func(path string) bool) []string {
+	for dir := range directories.Keys() {
+		if resolvedDir, ok := nearestExistingWatchDirectory(dir, directoryExists); ok {
+			dirs = append(dirs, string(resolvedDir))
+		}
+	}
+	return dirs
+}
+
+func nearestExistingWatchDirectory(dir tspath.Path, directoryExists func(path string) bool) (tspath.Path, bool) {
+	if directoryExists == nil {
+		return dir, true
+	}
+	for {
+		if directoryExists(string(dir)) {
+			return dir, true
+		}
+		parent := dir.GetDirectoryPath()
+		if parent == dir {
+			return "", false
+		}
+		dir = parent
 	}
 }
 

@@ -153,13 +153,22 @@ func NewProject(
 		"program files for "+configFileName,
 		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 		lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
-		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+		builder.sessionOptions.GranularWatches,
+		createResolutionLookupGlobMapper(
+			builder.sessionOptions.CurrentDirectory,
+			builder.sessionOptions.DefaultLibraryPath,
+			project.currentDirectory,
+			builder.fs.fs.UseCaseSensitiveFileNames(),
+			builder.sessionOptions.GranularWatches,
+			builder.fs.FS().DirectoryExists,
+		),
 	)
 	if builder.sessionOptions.TypingsLocation != "" {
 		project.typingsWatch = NewWatchedFiles(
 			"typings installer files",
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 			lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
+			builder.sessionOptions.GranularWatches,
 			core.Identity,
 		)
 	}

@@ -30,6 +30,7 @@ var benchDir = flag.String("bench-dir", "", "project root for WatchRegistration 
 // benchBackend selects the fswatch backend for the WatchFiles sub-benchmark.
 // Valid values: "default", "fsevents", "kqueue", "inotify", "fanotify", "windows".
 var benchBackend = flag.String("bench-backend", "default", "fswatch backend for WatchFiles sub-benchmark (default|fsevents|kqueue|inotify|fanotify|windows)")
+var benchGranular = flag.Bool("bench-granular", false, "enable granular watcher computation")
 
 // BenchmarkWatchRegistration measures the two separate phases of setting up
 // the builtin (in-process) file watcher as driven by the project system.
@@ -54,11 +55,10 @@ func BenchmarkWatchRegistration(b *testing.B) {
 	vfsFS := bundled.WrapFS(osvfs.FS())
 	bgCtx := benchClientCapabilities()
 	entryURI := benchEntryURI(root)
-	wd := benchWD(b)
 
 	// Boot one session upfront to capture the watcher set used by WatchFiles.
 	seedClient := &benchClientMock{}
-	seedSess := newBenchSession(b, bgCtx, vfsFS, seedClient, wd)
+	seedSess := newBenchSession(b, bgCtx, vfsFS, seedClient, root)
 	seedSess.DidOpenFile(context.Background(), entryURI, 1, "", lsproto.LanguageKindTypeScript)
 	seedSess.WaitForBackgroundTasks()
 
@@ -77,7 +77,7 @@ func BenchmarkWatchRegistration(b *testing.B) {
 	b.Run("Watchers", func(b *testing.B) {
 		for b.Loop() {
 			client := &benchClientMock{}
-			sess := newBenchSession(b, bgCtx, vfsFS, client, wd)
+			sess := newBenchSession(b, bgCtx, vfsFS, client, root)
 			sess.DidOpenFile(context.Background(), entryURI, 1, "", lsproto.LanguageKindTypeScript)
 			sess.WaitForBackgroundTasks()
 		}
@@ -115,19 +115,14 @@ func benchClientCapabilities() context.Context {
 }
 
 func benchEntryURI(root string) lsproto.DocumentUri {
-	return lsproto.DocumentUri("file://" + tspath.NormalizePath(filepath.Join(root, "src", "compiler", "checker.ts")))
-}
-
-func benchWD(b *testing.B) string {
-	b.Helper()
-	wd, err := os.Getwd()
-	if err != nil {
-		b.Fatal(err)
+	entry := filepath.Join(root, "src", "compiler", "checker.ts")
+	if _, err := os.Stat(entry); err == nil {
+		return lsproto.DocumentUri("file://" + tspath.NormalizePath(entry))
 	}
-	return wd
+	return lsproto.DocumentUri("file://" + tspath.NormalizePath(filepath.Join(root, "compiler", "checker.ts")))
 }
 
-func newBenchSession(b *testing.B, bgCtx context.Context, vfsFS vfs.FS, client Client, wd string) *Session {
+func newBenchSession(b *testing.B, bgCtx context.Context, vfsFS vfs.FS, client Client, root string) *Session {
 	b.Helper()
 	return NewSession(&SessionInit{
 		BackgroundCtx: bgCtx,
@@ -135,10 +130,11 @@ func newBenchSession(b *testing.B, bgCtx context.Context, vfsFS vfs.FS, client C
 		Client:        client,
 		Logger:        logging.NewLogger(io.Discard),
 		Options: &SessionOptions{
-			CurrentDirectory:   wd,
+			CurrentDirectory:   root,
 			DefaultLibraryPath: bundled.LibPath(),
 			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 			WatchEnabled:       true,
+			GranularWatches:    *benchGranular,
 		},
 	})
 }
