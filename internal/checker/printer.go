@@ -204,9 +204,11 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
 	nodeBuilder := c.getNodeBuilder()
-	if vc != nil {
-		nodeBuilder.verbosity = vc
-	}
+	oldVerbosity := nodeBuilder.verbosity
+	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	c.serializationLevel++
 	typeNode := nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	c.serializationLevel--
@@ -328,9 +330,11 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 	}
 
 	nodeBuilder := c.getNodeBuilder()
-	if vc != nil {
-		nodeBuilder.verbosity = vc
-	}
+	oldVerbosity := nodeBuilder.verbosity
+	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	sig := nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	p := createPrinterWithRemoveCommentsOmitTrailingSemicolonNeverAsciiEscape(nodeBuilder.EmitContext())
@@ -420,7 +424,11 @@ func (c *Checker) SignatureToSignatureDeclaration(signature *Signature, kind ast
 // ExpandSymbolForHover produces declaration strings for a symbol with verbosity support for expandable hover.
 func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFlags, vc *VerbosityContext) string {
 	nodeBuilder := c.getNodeBuilder()
+	oldVerbosity := nodeBuilder.verbosity
 	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	nodes := nodeBuilder.ExpandSymbolForHover(symbol, meaning)
 	if len(nodes) == 0 {
 		return ""
@@ -443,7 +451,11 @@ func (c *Checker) ExpandSymbolForHover(symbol *ast.Symbol, meaning ast.SymbolFla
 // TypeParameterToStringEx renders a type parameter declaration (e.g. "T extends Foo") with optional verbosity support.
 func (c *Checker) TypeParameterToStringEx(t *Type, enclosingDeclaration *ast.Node, vc *VerbosityContext) string {
 	nodeBuilder := c.getNodeBuilder()
+	oldVerbosity := nodeBuilder.verbosity
 	nodeBuilder.verbosity = vc
+	defer func() {
+		nodeBuilder.verbosity = oldVerbosity
+	}()
 	typeParamNode := nodeBuilder.TypeParameterToDeclaration(t, enclosingDeclaration, nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsNone, nil)
 	if typeParamNode == nil {
 		return c.TypeToString(t)
