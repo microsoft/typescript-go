@@ -102,6 +102,9 @@ func TestExtendedConfigCacheNullExtendsDoesNotPanic(t *testing.T) {
 	if cmd == nil {
 		t.Fatal("expected non-nil ParsedCommandLine")
 	}
+	if len(cmd.Errors) == 0 {
+		t.Fatal("expected diagnostics for invalid null extends")
+	}
 }
 
 func assertHasCircularityDiagnostic(t *testing.T, cmd *tsoptions.ParsedCommandLine) {
