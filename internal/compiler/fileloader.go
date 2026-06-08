@@ -498,7 +498,10 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 	t.typeResolutionsTrace = typeResolutionsTrace
 }
 
-const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
+const (
+	externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
+	syntheticImportIndex          = -1
+)
 
 func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 	if p.opts.Tracing != nil {

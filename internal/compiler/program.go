@@ -368,7 +368,8 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 
 	p.importHelpersImportSpecifiers = maps.Clone(p.importHelpersImportSpecifiers)
 	p.resolvedModules = maps.Clone(p.resolvedModules)
-	resolutions := maps.Clone(p.resolvedModules[path])
+	resolutions := make(module.ModeAwareCache[*module.ResolvedModule])
+	maps.Copy(resolutions, p.resolvedModules[path])
 
 	if oldSpecifier != nil {
 		delete(p.importHelpersImportSpecifiers, path)
@@ -388,12 +389,9 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 		p.importHelpersImportSpecifiers[path] = newSpecifier
 		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(newFile)
 		optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
-		mode := getModeForUsageLocation(newFile.FileName(), p.sourceFileMetaDatas[path], newSpecifier, optionsForFile)
+		mode := p.GetModeForUsageLocation(newFile, newSpecifier)
 		resolved, _ := p.resolver.ResolveModuleName(externalHelpersModuleNameText, fileName, mode, redirect)
 		key := module.ModeAwareCacheKey{Name: externalHelpersModuleNameText, Mode: mode}
-		if resolutions == nil {
-			resolutions = make(module.ModeAwareCache[*module.ResolvedModule])
-		}
 		resolutions[key] = resolved
 		if resolved.IsResolved() &&
 			module.GetResolutionDiagnostic(optionsForFile, resolved, newFile) == nil &&
@@ -457,7 +455,7 @@ func (p *Program) addSyntheticFileIncludeReason(resolved *module.ResolvedModule,
 		kind: fileIncludeKindImport,
 		data: &referencedFileData{
 			file:      file.Path(),
-			index:     -1,
+			index:     syntheticImportIndex,
 			synthetic: specifier,
 		},
 	})
