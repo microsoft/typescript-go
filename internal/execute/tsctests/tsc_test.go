@@ -119,6 +119,11 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--lib", "es6 ", "first.ts"},
 		},
 		{
+			subScenario:     "option diagnostics are suppressed when there are syntactic errors",
+			files:           FileMap{"/home/src/workspaces/project/a.ts": `const x: = 1;`},
+			commandLineArgs: []string{"--strictPropertyInitialization", "--strictNullChecks", "false", "a.ts"},
+		},
+		{
 			subScenario: "Project is empty string",
 			files: FileMap{
 				"/home/src/workspaces/project/first.ts": `export const a = 1`,
@@ -173,6 +178,14 @@ func TestTscCommandline(t *testing.T) {
 				}`),
 			},
 			commandLineArgs: []string{"-p", "/home/src/workspaces/project"},
+		},
+		{
+			subScenario: "Parse -p with empty tsconfig file",
+			files: FileMap{
+				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": ``,
+			},
+			commandLineArgs: []string{"-p", "."},
 		},
 		{
 			subScenario:     "Parse enum type options",
@@ -3705,7 +3718,8 @@ func TestTscNoEmitOnError(t *testing.T) {
 					},
 				})
 			}
-			edits = append(edits,
+			edits = append(
+				edits,
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
@@ -4472,4 +4486,59 @@ func TestTypeAcquisition(t *testing.T) {
 		},
 		commandLineArgs: []string{},
 	}).run(t, "typeAcquisition")
+}
+
+func TestGenerateTrace(t *testing.T) {
+	t.Parallel()
+	cases := []*tscInput{
+		{
+			subScenario: "generateTrace generates types file",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
+				"/home/src/workspaces/project/a.ts": stringtestutil.Dedent(`
+				interface Person {
+					name: string;
+					age: number;
+				}
+				const p: Person = { name: "Alice", age: 30 };
+				`),
+			},
+			commandLineArgs: []string{"--generateTrace", "/home/src/workspaces/project/trace", "--singleThreaded"},
+		},
+		{
+			subScenario: "generateTrace with multiple files and complex types",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
+				"/home/src/workspaces/project/types.ts": stringtestutil.Dedent(`
+				export interface Container<T> {
+					value: T;
+					map<U>(fn: (x: T) => U): Container<U>;
+				}
+				export type Nullable<T> = T | null | undefined;
+				`),
+				"/home/src/workspaces/project/main.ts": stringtestutil.Dedent(`
+				import { Container, Nullable } from "./types";
+				const c: Container<number> = { value: 42, map: (fn) => ({ value: fn(42), map: c.map }) };
+				const n: Nullable<string> = "hello";
+				`),
+			},
+			commandLineArgs: []string{"--generateTrace", "/home/src/workspaces/project/trace", "--singleThreaded"},
+		},
+	}
+
+	for _, c := range cases {
+		c.run(t, "generateTrace")
+	}
 }

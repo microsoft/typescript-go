@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"slices"
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -85,41 +86,48 @@ const (
 	typePrintModeWidened                // widened literal type
 )
 
-func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]CodeAction, error) {
+func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]*CodeAction, error) {
 	ch, done := fixContext.Program.GetTypeCheckerForFile(ctx, fixContext.SourceFile)
 	defer done()
 
-	var fixes []CodeAction
+	var fixes []*CodeAction
+	var seen []*CodeAction // sorted for binary search dedup
+
+	addFix := func(action *CodeAction) {
+		if action == nil {
+			return
+		}
+		i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
+		if found {
+			return
+		}
+		seen = slices.Insert(seen, i, action)
+		fixes = append(fixes, action)
+	}
 
 	// Match TS ordering: Full annotation, Relative annotation, Widened annotation,
 	// Full inline, Relative inline, Widened inline, Full extract
 	modes := []typePrintMode{typePrintModeFull, typePrintModeRelative, typePrintModeWidened}
 
 	for _, mode := range modes {
-		if action := tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+		addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 			f.typePrintMode = mode
 			return f.addTypeAnnotation(fixContext.Span)
-		}); action != nil {
-			fixes = append(fixes, *action)
-		}
+		}))
 	}
 
 	for _, mode := range modes {
-		if action := tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+		addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 			f.typePrintMode = mode
 			return f.addInlineAssertion(fixContext.Span)
-		}); action != nil {
-			fixes = append(fixes, *action)
-		}
+		}))
 	}
 
 	// extractAsVariable only in Full mode
-	if action := tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+	addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 		f.typePrintMode = typePrintModeFull
 		return f.extractAsVariable(fixContext.Span)
-	}); action != nil {
-		fixes = append(fixes, *action)
-	}
+	}))
 
 	return fixes, nil
 }
@@ -932,7 +940,8 @@ func (f *isolatedDeclarationsFixer) getExtraFlags(node *ast.Node, t *checker.Typ
 // createTypeOfFromEntityNameExpression creates a `typeof X` type query node.
 func (f *isolatedDeclarationsFixer) createTypeOfFromEntityNameExpression(node *ast.Node) *ast.TypeNode {
 	return f.changeTracker.NodeFactory.NewTypeQueryNode(
-		f.changeTracker.NodeFactory.DeepCloneNode(node), nil)
+		f.changeTracker.NodeFactory.DeepCloneNode(node), nil,
+	)
 }
 
 // typeFromArraySpreadElements decomposes an array literal with spread elements into

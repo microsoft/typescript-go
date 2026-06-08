@@ -265,6 +265,22 @@ func (p *Project) Clone() *Project {
 	}
 }
 
+// SetCommandLine reassigns the project's command line and resets all state derived
+// from it. Changing the command line always requires a full program rebuild, so the
+// project is marked fully dirty. It also resets:
+//   - the memoized command line augmented with typings files (and its sync.Once, so
+//     the augmented command line is rebuilt from the new command line on next access);
+//   - potentialProjectReferences, the pre-load placeholder derived from the old
+//     command line (always nil for inferred projects, which have no project references).
+func (p *Project) SetCommandLine(commandLine *tsoptions.ParsedCommandLine) {
+	p.CommandLine = commandLine
+	p.commandLineWithTypingsFiles = nil
+	p.commandLineWithTypingsFilesOnce = sync.Once{}
+	p.potentialProjectReferences = nil
+	p.dirty = true
+	p.dirtyFilePath = ""
+}
+
 // getCommandLineWithTypingsFiles returns the command line augmented with typing files if ATA is enabled.
 func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine {
 	if len(p.typingsFiles) == 0 {
@@ -337,11 +353,20 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
+	// Define a fresh CreateCheckerPool closure for this call. Each invocation of
+	// CreateProgram must use its own closure so that concurrent goroutines cloning
+	// the same project never share a captured variable through a stale closure
+	// stored in the old program's options.
+	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
+		checkerPool = newCheckerPool(4, program, nil)
+		return checkerPool
+	}
+
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
 
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
-		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
+		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
 			for _, file := range newProgram.SourceFiles() {
@@ -370,10 +395,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					checkerPool = newCheckerPool(4, program, p.log)
-					return checkerPool
-				},
+				CreateCheckerPool:           createCheckerPool,
 			},
 		)
 	}

@@ -62,6 +62,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
             },
+            {
+                name: "logVerbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                optional: true,
+                documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -167,16 +173,128 @@ const customStructures: Structure[] = [
         ],
     },
     {
-        // Longer-term, we may just want to use TextEdit.
-        name: "CustomClosingTagCompletion",
+        name: "ExperimentalServerCapabilities",
         properties: [
             {
-                name: "newText",
-                type: { kind: "base", name: "string" },
-                documentation: "The text to insert at the closing tag position.",
+                name: "customSourceDefinitionProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+            },
+            {
+                name: "customMultiDocumentHighlightProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
             },
         ],
-        documentation: "CustomClosingTagCompletion is the response for the custom/textDocument/closingTagCompletion request.",
+        documentation: "ExperimentalServerCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "ExperimentalClientCapabilities",
+        properties: [
+            {
+                name: "hoverVerbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.",
+            },
+        ],
+        documentation: "ExperimentalClientCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "VSOnAutoInsertOptions",
+        properties: [
+            {
+                name: "_vs_triggerCharacters",
+                type: { kind: "array", element: { kind: "base", name: "string" } },
+                documentation: "List of trigger characters that trigger auto-insert.",
+            },
+        ],
+        documentation: "Options for the textDocument/_vs_onAutoInsert provider capability.",
+    },
+    {
+        name: "VSReferenceItem",
+        properties: [
+            {
+                name: "_vs_id",
+                type: { kind: "base", name: "integer" },
+                documentation: "Unique identifier for this reference item.",
+            },
+            {
+                name: "_vs_definitionId",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "The ID of the definition item this reference belongs to. Absent for definition items themselves.",
+            },
+            {
+                name: "_vs_kind",
+                type: { kind: "array", element: { kind: "reference", name: "VSReferenceKind" } },
+                optional: true,
+                documentation: "The kind(s) of this reference (read, write, etc.).",
+            },
+            {
+                name: "_vs_location",
+                type: { kind: "reference", name: "Location" },
+                documentation: "The location of this reference.",
+            },
+            {
+                name: "_vs_definitionText",
+                type: { kind: "reference", name: "VSClassifiedTextElement" },
+                optional: true,
+                documentation: "Classified display text for the definition (used for grouping headers in the UI).",
+            },
+            {
+                name: "_vs_projectName",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The project name for this reference.",
+            },
+            {
+                name: "_vs_containingType",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The containing type for this reference.",
+            },
+        ],
+        documentation: "A VS-specific reference item with grouping support for Find All References.",
+    },
+    {
+        name: "VSOnAutoInsertParams",
+        properties: [
+            {
+                name: "_vs_textDocument",
+                type: { kind: "reference", name: "TextDocumentIdentifier" },
+                documentation: "The text document.",
+            },
+            {
+                name: "_vs_position",
+                type: { kind: "reference", name: "Position" },
+                documentation: "The position inside the text document.",
+            },
+            {
+                name: "_vs_ch",
+                type: { kind: "base", name: "string" },
+                documentation: "The character that triggered the auto-insert.",
+            },
+        ],
+        documentation: "Parameters for the textDocument/_vs_onAutoInsert request.",
+    },
+    {
+        name: "VSOnAutoInsertResponseItem",
+        properties: [
+            {
+                name: "_vs_textEditFormat",
+                type: { kind: "reference", name: "InsertTextFormat" },
+                documentation: "The format of the text edit (plaintext or snippet).",
+            },
+            {
+                name: "_vs_textEdit",
+                type: { kind: "reference", name: "TextEdit" },
+                documentation: "The text edit to apply for the auto-insertion.",
+            },
+        ],
+        documentation: "Response item for the textDocument/_vs_onAutoInsert request.",
     },
     {
         name: "RequestFailureTelemetryEvent",
@@ -291,6 +409,17 @@ const customStructures: Structure[] = [
             },
         ],
         documentation: "Result for the custom/projectInfo request.",
+    },
+    {
+        name: "SetLogVerbosityParams",
+        properties: [
+            {
+                name: "verbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                documentation: "The log verbosity level.",
+            },
+        ],
+        documentation: "Parameters for the custom/setLogVerbosity notification.",
     },
     {
         name: "PerformanceStatsTelemetryEvent",
@@ -428,9 +557,96 @@ const customStructures: Structure[] = [
         ],
         documentation: "Parameters for the custom/textDocument/multiDocumentHighlight request.",
     },
+    {
+        name: "VSClassifiedTextRun",
+        properties: [
+            {
+                name: "ClassificationTypeName",
+                type: { kind: "base", name: "string" },
+                documentation: "The classification type name (e.g. 'keyword', 'class name', 'parameter name').",
+            },
+            {
+                name: "Text",
+                type: { kind: "base", name: "string" },
+                documentation: "The text content of this run.",
+            },
+            {
+                name: "MarkerTagType",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "Optional marker tag type.",
+            },
+            {
+                name: "Style",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                omitzeroValue: true,
+                documentation: "The style of this text run.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ClassifiedTextRun" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
+            },
+        ],
+        documentation: "A classified text run with text and classification type, used for colorized display in VS.",
+    },
+    {
+        name: "VSClassifiedTextElement",
+        properties: [
+            {
+                name: "Runs",
+                type: { kind: "array", element: { kind: "reference", name: "VSClassifiedTextRun" } },
+                documentation: "The classified text runs that make up this element.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ClassifiedTextElement" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
+            },
+        ],
+        documentation: "A classified text element containing an array of classified text runs, used for colorized labels in VS.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
+    {
+        name: "LogVerbosity",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All logging disabled." },
+            { name: "Trace", value: 1, documentation: "Most verbose; includes LSP request/response traces." },
+            { name: "Debug", value: 2, documentation: "Verbose server logs." },
+            { name: "Info", value: 3, documentation: "Normal server logs." },
+            { name: "Warning", value: 4, documentation: "Warnings only." },
+            { name: "Error", value: 5, documentation: "Errors only." },
+        ],
+        documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
+    {
+        name: "VSReferenceKind",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Inactive", value: 0 },
+            { name: "Comment", value: 1 },
+            { name: "String", value: 2 },
+            { name: "Read", value: 3 },
+            { name: "Write", value: 4 },
+            { name: "Reference", value: 5 },
+            { name: "Name", value: 6 },
+            { name: "Qualified", value: 7 },
+            { name: "TypeArgument", value: 8 },
+            { name: "TypeConstraint", value: 9 },
+            { name: "BaseType", value: 10 },
+            { name: "Constructor", value: 11 },
+            { name: "Destructor", value: 12 },
+            { name: "Import", value: 13 },
+            { name: "Declaration", value: 14 },
+            { name: "AddressOf", value: 15 },
+            { name: "NotReference", value: 16 },
+            { name: "Unknown", value: 17 },
+        ],
+    },
     {
         name: "CodeLensKind",
         type: {
@@ -478,24 +694,34 @@ const customEnumerations: Enumeration[] = [
             { name: "NotAllowed", value: 4, documentation: "Import cannot be marked type-only." },
         ],
     },
-];
-
-// Custom requests to add to the model (tsgo-specific)
-const customRequests: Request[] = [
     {
-        method: "custom/textDocument/closingTagCompletion",
-        typeName: "CustomClosingTagCompletionRequest",
-        params: { kind: "reference", name: "TextDocumentPositionParams" },
-        result: {
-            kind: "or",
-            items: [
-                { kind: "reference", name: "CustomClosingTagCompletion" },
-                { kind: "base", name: "null" },
-            ],
-        },
-        messageDirection: "clientToServer",
-        documentation: "Request to get the closing tag completion at a given position.",
+        name: "ClassificationTypeName",
+        type: { kind: "base", name: "string" },
+        values: [
+            { name: "Keyword", value: "keyword", documentation: "Language keyword (e.g., function, const, class)." },
+            { name: "Punctuation", value: "punctuation", documentation: "Punctuation characters (e.g., parentheses, commas, semicolons)." },
+            { name: "Operator", value: "operator", documentation: "Operators (e.g., =, +, ?)." },
+            { name: "WhiteSpace", value: "whitespace", documentation: "Whitespace including spaces and line breaks." },
+            { name: "Text", value: "text", documentation: "Plain text with no special classification." },
+            { name: "String", value: "string", documentation: "String and literal values." },
+            { name: "Number", value: "number", documentation: "Numeric literal values." },
+            { name: "Comment", value: "comment", documentation: "Comment text." },
+            { name: "ClassName", value: "class name", documentation: "Class names." },
+            { name: "InterfaceName", value: "interface name", documentation: "Interface names." },
+            { name: "EnumName", value: "enum name", documentation: "Enum names." },
+            { name: "ModuleName", value: "module name", documentation: "Module/namespace names." },
+            { name: "MethodName", value: "method name", documentation: "Method and function names." },
+            { name: "ParameterName", value: "parameter name", documentation: "Parameter names." },
+            { name: "PropertyName", value: "property name", documentation: "Property and accessor names." },
+            { name: "FieldName", value: "field name", documentation: "Field names (e.g., enum members)." },
+            { name: "LocalName", value: "local name", documentation: "Local variable names." },
+            { name: "TypeParameterName", value: "type parameter name", documentation: "Type parameter names." },
+            { name: "Identifier", value: "identifier", documentation: "General identifiers (e.g., type aliases, imports)." },
+        ],
+        documentation: "Roslyn classification type names used by VS for syntax coloring in tooltips and other UI elements.",
     },
+];
+const customRequests: Request[] = [
     {
         method: "custom/runGC",
         typeName: "RunGCRequest",
@@ -572,7 +798,55 @@ const customRequests: Request[] = [
         messageDirection: "clientToServer",
         documentation: "Request to get document highlights across multiple files.",
     },
+    {
+        method: "textDocument/_vs_onAutoInsert",
+        typeName: "VSOnAutoInsertRequest",
+        params: { kind: "reference", name: "VSOnAutoInsertParams" },
+        result: {
+            kind: "or",
+            items: [
+                { kind: "reference", name: "VSOnAutoInsertResponseItem" },
+                { kind: "base", name: "null" },
+            ],
+        },
+        messageDirection: "clientToServer",
+        documentation: "Request for auto-insert when a trigger character is typed (VS-specific).",
+    },
+    {
+        method: "textDocument/_vs_references",
+        typeName: "VSReferencesRequest",
+        params: { kind: "reference", name: "ReferenceParams" },
+        result: {
+            kind: "or",
+            items: [
+                { kind: "array", element: { kind: "reference", name: "VSReferenceItem" } },
+                { kind: "base", name: "null" },
+            ],
+        },
+        messageDirection: "clientToServer",
+        documentation: "VS-specific request for Find All References with grouped reference items.",
+    },
 ];
+
+const customNotifications: Notification[] = [
+    {
+        method: "custom/setLogVerbosity",
+        typeName: "CustomSetLogVerbosityNotification",
+        params: { kind: "reference", name: "SetLogVerbosityParams" },
+        messageDirection: "clientToServer",
+        documentation: "Notification to set the server's log verbosity level based on the output channel's log level.",
+    },
+];
+
+// compareStructures is the set of generated structures for which a Compare method should be emitted.
+// The Compare method defines a total ordering by comparing fields in declaration order.
+// All listed structures (and any structure-typed fields they reference) must contain only
+// comparable fields: base scalar types, or other structures that are themselves in this set.
+const compareStructures = new Set<string>([
+    "Position",
+    "Range",
+    "TextEdit",
+]);
 
 const customTypeAliases: TypeAlias[] = [
     {
@@ -661,10 +935,16 @@ function patchAndPreprocessModel() {
         // Patch ServerCapabilities to add custom tsgo capability flags
         if (structure.name === "ServerCapabilities") {
             structure.properties.push({
-                name: "customSourceDefinitionProvider",
+                name: "_vs_onAutoInsertProvider",
+                type: { kind: "reference", name: "VSOnAutoInsertOptions" },
+                optional: true,
+                documentation: "Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.",
+            });
+            structure.properties.push({
+                name: "_vs_referencesProvider",
                 type: { kind: "base", name: "boolean" },
                 optional: true,
-                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+                documentation: "The server provides VS-specific grouped references via textDocument/_vs_references.",
             });
         }
 
@@ -726,23 +1006,13 @@ function patchAndPreprocessModel() {
             );
         }
 
-        // Patch HoverClientCapabilities to add verbosityLevel support flag
-        if (structure.name === "HoverClientCapabilities") {
+        // Patch SignatureInformation to add VS-specific colorized label
+        if (structure.name === "SignatureInformation") {
             structure.properties.push({
-                name: "verbosityLevel",
-                type: { kind: "base", name: "boolean" },
+                name: "_vs_colorizedLabel",
+                type: { kind: "reference", name: "VSClassifiedTextElement" },
                 optional: true,
-                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
-            });
-        }
-
-        // Patch ServerCapabilities to add custom tsgo capability flags
-        if (structure.name === "ServerCapabilities") {
-            structure.properties.push({
-                name: "customMultiDocumentHighlightProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
+                documentation: "A colorized label for the signature, providing classified text runs for VS syntax coloring.",
             });
         }
 
@@ -807,6 +1077,7 @@ function patchAndPreprocessModel() {
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
     model.requests.push(...customRequests);
+    model.notifications.push(...customNotifications);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
@@ -852,9 +1123,22 @@ function patchAndPreprocessModel() {
         structure.extends = undefined;
         structure.mixins = undefined;
 
-        // Remove experimental properties from ServerCapabilities and ClientCapabilities
-        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
-            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        // Replace experimental LSPAny with typed ExperimentalClientCapabilities in ClientCapabilities
+        if (structure.name === "ClientCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalClientCapabilities" };
+                expProp.optional = true;
+            }
+        }
+
+        // Replace experimental LSPAny with typed ExperimentalServerCapabilities in ServerCapabilities
+        if (structure.name === "ServerCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalServerCapabilities" };
+                expProp.optional = true;
+            }
         }
 
         // Remove method and registerOptions from Registration (handled by custom codegen)
@@ -1430,6 +1714,11 @@ function formatDocumentation(s: string | undefined): string {
     for (let line of s.split("\n")) {
         line = line.trimEnd();
         line = line.replace(/(\w ) +/g, "$1");
+        // Some upstream docs include dangling block comment delimiters; remove them
+        // so they don't leak into generated `//` comments.
+        line = line.replace(/\s*\/\*+\s*/g, " ");
+        line = line.replace(/\s*\*+\/\s*/g, " ");
+        line = line.replace(/\s{2,}/g, " ").trimEnd();
         line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
         line = line.replace(/^@(since|proposed|deprecated)(.*)/, (_, tag, rest) => {
             lines.push("");
@@ -1454,7 +1743,12 @@ function formatDocumentation(s: string | undefined): string {
 }
 
 function methodNameIdentifier(name: string) {
-    return name.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
+    return name.split("/").map(v => {
+        if (v === "$") return "";
+        // Mirror goFieldName: "_vs_foo" -> "VSFoo".
+        if (v.startsWith("_vs_")) return "VS" + titleCase(v.slice(4));
+        return titleCase(v);
+    }).join("");
 }
 
 /**
@@ -1961,6 +2255,7 @@ function generateCode() {
     writeLine("package lsproto");
     writeLine("");
     writeLine(`import (`);
+    writeLine(`\t"cmp"`);
     writeLine(`\t"fmt"`);
     writeLine(`\t"strings"`);
     writeLine("");
@@ -2016,15 +2311,19 @@ function generateCode() {
 
         if (hasTextDocumentURI(structure)) {
             // Generate TextDocumentURI method
+            const textDocProp = structure.properties?.find(p => (p.name === "textDocument" || p.name === "_vs_textDocument") && p.type.kind === "reference" && p.type.name === "TextDocumentIdentifier");
+            const textDocFieldName = textDocProp ? goFieldName(textDocProp) : "TextDocument";
             writeLine(`func (s *${structure.name}) TextDocumentURI() DocumentUri {`);
-            writeLine(`\treturn s.TextDocument.Uri`);
+            writeLine(`\treturn s.${textDocFieldName}.Uri`);
             writeLine(`}`);
             writeLine("");
 
             if (hasTextDocumentPosition(structure)) {
                 // Generate TextDocumentPosition method
+                const posProp = structure.properties?.find(p => (p.name === "position" || p.name === "_vs_position") && p.type.kind === "reference" && p.type.name === "Position");
+                const posFieldName = posProp ? goFieldName(posProp) : "Position";
                 writeLine(`func (s *${structure.name}) TextDocumentPosition() Position {`);
-                writeLine(`\treturn s.Position`);
+                writeLine(`\treturn s.${posFieldName}`);
                 writeLine(`}`);
                 writeLine("");
             }
@@ -2294,6 +2593,60 @@ function generateCode() {
             writeLine(`}`);
             writeLine("");
         }
+
+        if (compareStructures.has(structure.name)) {
+            generateCompareMethod(structure);
+        }
+    }
+
+    function generateCompareMethod(structure: Structure) {
+        const props = structure.properties ?? [];
+        writeLine(`func (s *${structure.name}) Compare(other *${structure.name}) int {`);
+        for (let i = 0; i < props.length; i++) {
+            const prop = props[i];
+            const isLast = i === props.length - 1;
+            const fieldName = goFieldName(prop);
+            const expr = compareExpressionForProperty(structure.name, prop, fieldName);
+            if (isLast) {
+                writeLine(`\treturn ${expr}`);
+            }
+            else {
+                writeLine(`\tif c := ${expr}; c != 0 {`);
+                writeLine(`\t\treturn c`);
+                writeLine(`\t}`);
+            }
+        }
+        writeLine(`}`);
+        writeLine("");
+    }
+
+    function compareExpressionForProperty(structName: string, prop: Property, fieldName: string): string {
+        const resolved = resolveType(prop.type);
+        const isPointerField = (prop.optional || resolved.needsPointer) && !prop.omitzeroValue;
+
+        if (prop.type.kind === "reference") {
+            const refName = prop.type.name;
+            if (compareStructures.has(refName)) {
+                if (isPointerField) {
+                    return `s.${fieldName}.Compare(other.${fieldName})`;
+                }
+                return `s.${fieldName}.Compare(&other.${fieldName})`;
+            }
+        }
+
+        if (prop.type.kind === "base") {
+            switch (prop.type.name) {
+                case "string":
+                case "URI":
+                case "DocumentUri":
+                case "integer":
+                case "uinteger":
+                case "decimal":
+                    return `cmp.Compare(s.${fieldName}, other.${fieldName})`;
+            }
+        }
+
+        throw new Error(`Cannot generate Compare for ${structName}.${fieldName}: unsupported field type ${JSON.stringify(prop.type)}. Add support in compareExpressionForProperty.`);
     }
 
     // Helper function to detect if an enum is a bitflag enum
@@ -3185,11 +3538,13 @@ function hasSomeProp(structure: Structure, propName: string, propTypeName: strin
 }
 
 function hasTextDocumentURI(structure: Structure) {
-    return hasSomeProp(structure, "textDocument", "TextDocumentIdentifier");
+    return hasSomeProp(structure, "textDocument", "TextDocumentIdentifier") ||
+        hasSomeProp(structure, "_vs_textDocument", "TextDocumentIdentifier");
 }
 
 function hasTextDocumentPosition(structure: Structure) {
-    return hasSomeProp(structure, "position", "Position");
+    return hasSomeProp(structure, "position", "Position") ||
+        hasSomeProp(structure, "_vs_position", "Position");
 }
 
 function getLocationUriProperty(structure: Structure) {

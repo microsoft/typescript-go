@@ -35,6 +35,7 @@ type UpdateReason int
 const (
 	UpdateReasonUnknown UpdateReason = iota
 	UpdateReasonDidOpenFile
+	UpdateReasonDidCloseFile
 	UpdateReasonDidChangeCompilerOptionsForInferredProjects
 	UpdateReasonRequestedLanguageServicePendingChanges
 	UpdateReasonRequestedLanguageServiceProjectNotLoaded
@@ -44,6 +45,10 @@ const (
 	UpdateReasonRequestedLanguageServiceWithAutoImports
 	UpdateReasonIdleCleanDiskCache
 )
+
+// watchRequestTimeout is the maximum time to wait for the client to respond to
+// a WatchFiles or UnwatchFiles request while holding the watches mutex.
+const watchRequestTimeout = time.Second
 
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
@@ -115,6 +120,12 @@ type Session struct {
 	snapshotMu       sync.RWMutex
 	snapshotUpdateMu sync.Mutex
 
+	// scheduledSnapshotUpdateCancel is the cancelation function for a scheduled
+	// snapshot update. Snapshot updates are scheduled and debounced after file closes.
+	scheduledSnapshotUpdateCancel     context.CancelFunc
+	scheduledSnapshotUpdateGeneration uint64
+	scheduledSnapshotUpdateMu         sync.Mutex
+
 	pendingUserConfigChanges bool
 	userConfigRWMu           sync.Mutex
 
@@ -132,8 +143,9 @@ type Session struct {
 	// diagnosticsRefreshCancel is the cancelation function for a scheduled
 	// diagnostics refresh. Diagnostics refreshes are scheduled and debounced
 	// after file watch changes and ATA updates.
-	diagnosticsRefreshCancel context.CancelFunc
-	diagnosticsRefreshMu     sync.Mutex
+	diagnosticsRefreshCancel     context.CancelFunc
+	diagnosticsRefreshGeneration uint64
+	diagnosticsRefreshMu         sync.Mutex
 
 	// warmAutoImportCancel is the cancelation function for a running
 	// auto-import cache warming task. It is cancelled on file opens,
@@ -156,8 +168,7 @@ type Session struct {
 
 	// watches tracks the current watch globs and how many individual WatchedFiles
 	// are using each glob.
-	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
-	watchesMu sync.Mutex
+	watches *watchRegistry
 
 	// globalDiagPublishPending is set to true when a global diagnostics publish
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
@@ -222,7 +233,7 @@ func NewSession(init *SessionInit) *Session {
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
 		pendingATAChanges:        make(map[tspath.Path]*ATAStateChange),
-		watches:                  make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
+		watches:                  newWatchRegistry(),
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
@@ -268,6 +279,7 @@ func (s *Session) Configure(config lsutil.UserPreferences) {
 	s.refreshInlayHintsIfNeeded(oldConfig, config)
 	s.refreshCodeLensIfNeeded(oldConfig, config)
 	s.refreshDiagnosticsIfNeeded(oldConfig, config)
+	s.refreshATAIfNeeded(oldConfig, config)
 }
 
 func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
@@ -276,9 +288,9 @@ func (s *Session) InitializeWithUserConfig(config lsutil.UserPreferences) {
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
-	s.cancelDiagnosticsRefresh()
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
+	s.cancelScheduledSnapshotUpdate()
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
 	s.pendingFileChangesMu.Lock()
@@ -301,15 +313,15 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 }
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
-	s.cancelDiagnosticsRefresh()
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
-	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind: FileChangeKindClose,
 		URI:  uri,
 	})
+	s.pendingFileChangesMu.Unlock()
+	s.ScheduleSnapshotUpdate(UpdateReasonDidCloseFile)
 }
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
@@ -327,7 +339,6 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
-	s.cancelDiagnosticsRefresh()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
@@ -389,6 +400,8 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 
 	// Create a new cancellable context for the debounce task
 	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
+	s.diagnosticsRefreshGeneration++
+	generation := s.diagnosticsRefreshGeneration
 	s.diagnosticsRefreshCancel = cancel
 
 	// Enqueue the debounced diagnostics refresh
@@ -405,6 +418,10 @@ func (s *Session) ScheduleDiagnosticsRefresh() {
 
 		// Clear the cancel function since we're about to execute the refresh
 		s.diagnosticsRefreshMu.Lock()
+		if s.diagnosticsRefreshGeneration != generation {
+			s.diagnosticsRefreshMu.Unlock()
+			return
+		}
 		s.diagnosticsRefreshCancel = nil
 		s.diagnosticsRefreshMu.Unlock()
 
@@ -424,6 +441,82 @@ func (s *Session) cancelDiagnosticsRefresh() {
 		s.diagnosticsRefreshCancel()
 		s.logger.Log("Canceled scheduled diagnostics refresh")
 		s.diagnosticsRefreshCancel = nil
+		s.diagnosticsRefreshGeneration++
+	}
+}
+
+func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
+	s.scheduledSnapshotUpdateMu.Lock()
+	defer s.scheduledSnapshotUpdateMu.Unlock()
+
+	// Cancel any existing scheduled snapshot update
+	if s.scheduledSnapshotUpdateCancel != nil {
+		s.scheduledSnapshotUpdateCancel()
+		if s.options.LoggingEnabled {
+			s.logger.Log("Delaying scheduled snapshot update...")
+		}
+	} else if s.options.LoggingEnabled {
+		s.logger.Log("Scheduling new snapshot update...")
+	}
+
+	// Create a new cancellable context for the debounce task
+	debounceCtx, cancel := context.WithCancel(s.backgroundCtx)
+	s.scheduledSnapshotUpdateGeneration++
+	generation := s.scheduledSnapshotUpdateGeneration
+	s.scheduledSnapshotUpdateCancel = cancel
+
+	// Enqueue the debounced snapshot update
+	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
+		defer cancel()
+		// Sleep for the debounce delay
+		select {
+		case <-time.After(s.options.DebounceDelay):
+			// Delay completed, proceed with update
+		case <-ctx.Done():
+			// Context was cancelled, newer events arrived or another snapshot update ran
+			return
+		}
+
+		// Clear the cancel function since we're about to execute the update
+		s.scheduledSnapshotUpdateMu.Lock()
+		if s.scheduledSnapshotUpdateGeneration != generation {
+			s.scheduledSnapshotUpdateMu.Unlock()
+			return
+		}
+		s.scheduledSnapshotUpdateCancel = nil
+		s.scheduledSnapshotUpdateMu.Unlock()
+
+		if s.options.LoggingEnabled {
+			s.logger.Log("Running scheduled snapshot update")
+		}
+
+		s.snapshotUpdateMu.Lock()
+		defer s.snapshotUpdateMu.Unlock()
+
+		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+		if fileChanges.IsEmpty() && len(ataChanges) == 0 && newConfig == nil {
+			return
+		}
+
+		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:      reason,
+			fileChanges: fileChanges,
+			ataChanges:  ataChanges,
+			newConfig:   newConfig,
+		})
+	})
+}
+
+func (s *Session) cancelScheduledSnapshotUpdate() {
+	s.scheduledSnapshotUpdateMu.Lock()
+	defer s.scheduledSnapshotUpdateMu.Unlock()
+	if s.scheduledSnapshotUpdateCancel != nil {
+		s.scheduledSnapshotUpdateCancel()
+		if s.options.LoggingEnabled {
+			s.logger.Log("Canceled scheduled snapshot update")
+		}
+		s.scheduledSnapshotUpdateCancel = nil
+		s.scheduledSnapshotUpdateGeneration++
 	}
 }
 
@@ -453,6 +546,7 @@ func (s *Session) scheduleIdleCacheClean() {
 
 		s.snapshotUpdateMu.Lock()
 		defer s.snapshotUpdateMu.Unlock()
+		s.cancelScheduledSnapshotUpdate()
 
 		ctx := s.backgroundCtx
 		fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
@@ -464,7 +558,7 @@ func (s *Session) scheduleIdleCacheClean() {
 			cleanDiskCache: true,
 		})
 
-		runtime.GC()
+		go func() { runtime.GC() }()
 	})
 }
 
@@ -809,6 +903,7 @@ func (s *Session) getSnapshot(
 ) *Snapshot {
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
+	s.cancelScheduledSnapshotUpdate()
 
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
@@ -930,7 +1025,12 @@ func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []ls
 	projects := snapshot.ProjectCollection.Projects()
 	services := make([]*ls.LanguageService, 0, len(projects))
 	for _, project := range projects {
-		services = append(services, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, activeFile))
+		program := project.GetProgram()
+		if program == nil {
+			continue
+		}
+
+		services = append(services, ls.NewLanguageService(project.configFilePath, program, snapshot, activeFile))
 	}
 	return services
 }
@@ -1060,12 +1160,24 @@ func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
 		// ref is transferred to become the session's ref for its current snapshot.
 		s.snapshot = newSnapshot
 		s.snapshotMu.Unlock()
+		if s.options.LoggingEnabled {
+			s.logger.Logf("Adopted snapshot %d (parent %d) as current session snapshot (replacing %d)", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
+			s.logger.Log(newSnapshot.builderLogs.String())
+		}
 		oldSnapshot.Deref(s)
 	} else {
 		// Session has moved on to a newer snapshot; discard this one.
 		// Release the clone's initial ref. If a handler is still using
 		// the snapshot, its own ref keeps it alive.
 		s.snapshotMu.Unlock()
+		if s.options.LoggingEnabled {
+			s.logger.Logf("Discarded snapshot %d (parent %d); session has moved on to snapshot %d", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
+			if logs := newSnapshot.builderLogs.String(); logs != "" {
+				s.logger.Logf("--- Discarded snapshot %d builder logs (NOT adopted) ---", newSnapshot.id)
+				s.logger.Log(logs)
+				s.logger.Logf("--- End discarded snapshot %d builder logs ---", newSnapshot.id)
+			}
+		}
 		newSnapshot.Deref(s)
 	}
 }
@@ -1100,7 +1212,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	s.snapshotMu.Unlock()
 
 	// Enqueue ATA updates if needed
-	if s.typingsInstaller != nil {
+	if s.typingsInstaller != nil && !s.Config().IsATADisabled() {
 		s.triggerATAForUpdatedProjects(newSnapshot)
 	}
 
@@ -1108,6 +1220,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	// !!! userPreferences/configuration updates
 	s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
 		if s.options.LoggingEnabled {
+			s.logger.Logf("Adopted snapshot %d (parent %d) as current session snapshot (replacing %d)", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
 			s.logRuntimeMetrics()
@@ -1135,29 +1248,26 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
-	session.watchesMu.Lock()
-	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
 		w := newWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				value := session.watches[key]
 				globId := WatcherID(fmt.Sprintf("%s.%d", w.WatcherID, i))
-				if value == nil {
-					value = &fileSystemWatcherValue{id: globId}
-					session.watches[key] = value
-				}
-				value.count++
-				if value.count == 1 {
+				if session.watches.Acquire(watcher, globId) {
 					newWatchers.Set(globId, watcher)
 				}
 			}
+			var watchErrors []error
 			for id, watcher := range newWatchers.Entries() {
-				if err := session.client.WatchFiles(ctx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
-					errors = append(errors, err)
+				// Create a fresh timeout per client call so earlier calls
+				// don't consume the deadline for later ones.
+				callCtx, callCancel := context.WithTimeout(ctx, watchRequestTimeout)
+				err := session.client.WatchFiles(callCtx, id, []*lsproto.FileSystemWatcher{watcher})
+				callCancel()
+				if err != nil {
+					watchErrors = append(watchErrors, err)
 				} else if logger != nil {
 					if oldWatcher == nil {
 						logger.Log(fmt.Sprintf("Added new watch: %s", id))
@@ -1167,6 +1277,19 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 					logger.Log("\t" + fileSystemWatcherGlobString(watcher))
 					logger.Log("")
 				}
+			}
+			if len(watchErrors) > 0 {
+				// Roll back ALL newly-acquired watchers on any failure to keep
+				// refcounts clean. On retry, Acquire will see them as new again.
+				// Re-registering an already-registered watcher with the client
+				// is harmless (registerCapability with the same ID replaces it).
+				for _, watcher := range newWatchers.Entries() {
+					session.watches.Release(watcher)
+				}
+				session.watches.MarkPending(w.WatcherID)
+				errors = append(errors, watchErrors...)
+			} else {
+				session.watches.ClearPending(w.WatcherID)
 			}
 			if len(w.IgnoredPaths) > 0 {
 				logger.Logf("%d paths ineligible for watching", len(w.IgnoredPaths))
@@ -1182,22 +1305,17 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		w := oldWatcher.Watchers()
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
-			var removedWatchers []WatcherID
+			var removedIDs []WatcherID
 			for _, watcher := range watchers {
-				key := toFileSystemWatcherKey(watcher)
-				value := session.watches[key]
-				if value == nil {
-					continue
-				}
-				if value.count <= 1 {
-					delete(session.watches, key)
-					removedWatchers = append(removedWatchers, value.id)
-				} else {
-					value.count--
+				if id, removed := session.watches.Release(watcher); removed {
+					removedIDs = append(removedIDs, id)
 				}
 			}
-			for _, id := range removedWatchers {
-				if err := session.client.UnwatchFiles(ctx, id); err != nil {
+			for _, id := range removedIDs {
+				callCtx, callCancel := context.WithTimeout(ctx, watchRequestTimeout)
+				err := session.client.UnwatchFiles(callCtx, id)
+				callCancel()
+				if err != nil {
 					errors = append(errors, err)
 				} else if logger != nil && newWatcher == nil {
 					logger.Log(fmt.Sprintf("Removed watch: %s", id))
@@ -1228,6 +1346,16 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			errors = append(errors, updateWatch(ctx, s, s.logger, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
 		},
 	)
+	// Retry config watchers whose IDs didn't change but whose previous registration failed.
+	for path, newEntry := range newSnapshot.ConfigFileRegistry.configs {
+		if oldEntry, ok := oldSnapshot.ConfigFileRegistry.configs[path]; ok {
+			if oldEntry.rootFilesWatch.ID() == newEntry.rootFilesWatch.ID() {
+				if s.watches.IsPending(newEntry.rootFilesWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newEntry.rootFilesWatch)...)
+				}
+			}
+		}
+	}
 
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
@@ -1243,15 +1371,27 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
+			} else {
+				if s.watches.IsPending(newProject.programFilesWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.programFilesWatch)...)
+				}
 			}
 			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
+			} else {
+				if s.watches.IsPending(newProject.typingsWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
+				}
 			}
 		},
 	)
 
 	if oldSnapshot.autoImportsWatch.ID() != newSnapshot.autoImportsWatch.ID() {
 		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
+	} else {
+		if s.watches.IsPending(newSnapshot.autoImportsWatch.ID()) {
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, newSnapshot.autoImportsWatch)...)
+		}
 	}
 
 	if len(errors) > 0 {
@@ -1263,6 +1403,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 }
 
 func (s *Session) Close() {
+	// Cancel any pending scheduled snapshot update
+	s.cancelScheduledSnapshotUpdate()
 	// Cancel any pending diagnostics refresh
 	s.cancelDiagnosticsRefresh()
 	// Cancel any pending auto-import cache warming
@@ -1422,6 +1564,13 @@ func (s *Session) logCacheStats(snapshot *Snapshot) {
 				s.logger.Logf("\t\t\tTotal packages: %d", bucket.PackageNames.Len())
 				s.logger.Logf("\t\t\tFiles: %d", bucket.FileCount)
 				s.logger.Logf("\t\t\tExports: %d", bucket.ExportCount)
+				if bucket.State.RecursiveSearchPackages() == nil {
+					s.logger.Log("\t\t\tRecursive search: all")
+				} else if bucket.State.RecursiveSearchPackages().Len() > 0 {
+					s.logger.Logf("\t\t\tRecursive search: %d packages", bucket.State.RecursiveSearchPackages().Len())
+				} else {
+					s.logger.Log("\t\t\tRecursive search: none")
+				}
 			}
 		}
 	}
@@ -1453,17 +1602,29 @@ func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, ne
 	}
 }
 
+func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
+	if oldPrefs.IsATADisabled() && !newPrefs.IsATADisabled() {
+		// ATA was re-enabled; schedule a diagnostics refresh so the next snapshot update
+		// re-triggers ATA for existing projects with the new setting.
+		s.ScheduleDiagnosticsRefresh()
+	}
+}
+
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
 	if !s.options.PushDiagnosticsEnabled {
 		return
 	}
 
 	ctx := s.backgroundCtx
+	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
+	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
+	oldOpenProjects := oldSnapshot.ProjectCollection.GetOpenConfiguredProjects()
+	newOpenProjects := newSnapshot.ProjectCollection.GetOpenConfiguredProjects()
 	collections.DiffOrderedMaps(
-		oldSnapshot.ProjectCollection.ProjectsByPath(),
-		newSnapshot.ProjectCollection.ProjectsByPath(),
+		oldProjects,
+		newProjects,
 		func(configFilePath tspath.Path, addedProject *Project) {
-			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) {
+			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
@@ -1475,12 +1636,32 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, oldProject, newProject *Project) {
-			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) {
+			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
 			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
 		},
 	)
+	// Sync diagnostics for projects whose open-file state changed without a program update.
+	for configFilePath, newProject := range newProjects.Entries() {
+		if newProject.Kind != KindConfigured {
+			continue
+		}
+		if !oldProjects.Has(configFilePath) {
+			continue // Handled by added project case above
+		}
+		oldProject, _ := oldProjects.Get(configFilePath)
+		newHasOpenFiles := newOpenProjects.Has(configFilePath)
+		oldHasOpenFiles := oldOpenProjects.Has(configFilePath)
+		if newHasOpenFiles && !oldHasOpenFiles &&
+			(newProject == oldProject || !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID())) {
+			// Project reopened without a program update
+			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+		} else if !newHasOpenFiles && oldHasOpenFiles {
+			// Project closed
+			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, newSnapshot.converters)
+		}
+	}
 }
 
 func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
