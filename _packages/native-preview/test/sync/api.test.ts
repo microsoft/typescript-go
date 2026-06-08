@@ -271,8 +271,8 @@ describe("Snapshot", () => {
                 /unknown import adder action kind "unknown"/,
             );
             assert.throws(
-                () => project.getImportAdderEdits("/src/index.ts", [{ kind: "importSymbol", symbol: { ...symbol, id: "sbad" } } as unknown as ImportAdderAction]),
-                /symbol handle "sbad" not found/,
+                () => project.getImportAdderEdits("/src/index.ts", [{ kind: "importSymbol", symbol: { ...symbol, id: 999_999_999 } } as unknown as ImportAdderAction]),
+                /symbol handle \d+ not found/,
             );
         }
         finally {
