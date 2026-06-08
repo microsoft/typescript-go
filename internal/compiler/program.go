@@ -386,6 +386,9 @@ func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, ne
 		if p.importHelpersImportSpecifiers == nil {
 			p.importHelpersImportSpecifiers = make(map[tspath.Path]*importHelpersImportSpecifier)
 		}
+		// This path only needs the synthetic import's module name and resolution
+		// mode. Defer allocating the actual node until checker/LS code asks for
+		// the specifier.
 		p.importHelpersImportSpecifiers[path] = newImportHelpersImportSpecifier(nil)
 		redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(newFile)
 		optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
@@ -516,8 +519,9 @@ func (p *Program) removeSyntheticFileIncludeReason(resolved *module.ResolvedModu
 			return false
 		}
 		// Program construction stored the original synthetic node in the include
-		// reason; reused programs only store the synthetic import index and create
-		// the node lazily if it is later requested.
+		// reason; reused programs only store the synthetic import index. That
+		// compact nil-synthetic form is unique to the importHelpers include reason
+		// for this file, so file + synthetic index identifies the reason.
 		if ref.synthetic == nil {
 			return true
 		}

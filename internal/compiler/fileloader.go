@@ -128,6 +128,9 @@ type importHelpersImportSpecifier struct {
 	specifierOnce sync.Once
 }
 
+// newImportHelpersImportSpecifier wraps an existing specifier from initial
+// program construction; reused programs pass nil to defer creating an equivalent
+// specifier until it is needed.
 func newImportHelpersImportSpecifier(specifier *ast.StringLiteralNode) *importHelpersImportSpecifier {
 	return &importHelpersImportSpecifier{specifier: specifier}
 }
