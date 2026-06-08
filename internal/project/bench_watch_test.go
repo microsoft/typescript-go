@@ -32,6 +32,7 @@ var benchDir = flag.String("bench-dir", "", "project root for WatchRegistration 
 var (
 	benchBackend  = flag.String("bench-backend", "default", "fswatch backend for WatchFiles sub-benchmark (default|fsevents|kqueue|inotify|fanotify|windows)")
 	benchGranular = flag.Bool("bench-granular", false, "enable granular watcher computation")
+	benchEntry    = flag.String("bench-entry", "", "relative path to entry file within bench-dir (default: src/compiler/checker.ts)")
 )
 
 // BenchmarkWatchRegistration measures the two separate phases of setting up
@@ -117,6 +118,10 @@ func benchClientCapabilities() context.Context {
 }
 
 func benchEntryURI(root string) lsproto.DocumentUri {
+	if *benchEntry != "" {
+		entry := filepath.Join(root, *benchEntry)
+		return lsproto.DocumentUri("file://" + tspath.NormalizePath(entry))
+	}
 	entry := filepath.Join(root, "src", "compiler", "checker.ts")
 	if _, err := os.Stat(entry); err == nil {
 		return lsproto.DocumentUri("file://" + tspath.NormalizePath(entry))
