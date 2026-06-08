@@ -425,6 +425,9 @@ func (p *Program) getModeForSyntheticImport(file ast.HasFileName) core.Resolutio
 	return getModeForSyntheticImport(file.FileName(), p.sourceFileMetaDatas[file.Path()], p.projectReferenceFileMapper.getCompilerOptionsForFile(file))
 }
 
+// getModeForSyntheticImport returns the resolution mode for an importHelpers
+// synthetic import without allocating the import's AST node. It matches the
+// import-declaration path of getModeForUsageLocation for value imports.
 func getModeForSyntheticImport(fileName string, meta ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
 	// Synthetic helper imports are always import declarations with value
 	// syntax, so this is the import-declaration path of getModeForUsageLocation

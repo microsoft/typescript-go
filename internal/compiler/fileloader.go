@@ -119,6 +119,10 @@ type jsxRuntimeImportSpecifier struct {
 	specifier       *ast.StringLiteralNode
 }
 
+// importHelpersImportSpecifier tracks a program-owned synthetic tslib import.
+// Reused programs may copy this wrapper with a nil specifier so they can update
+// resolution side tables without eagerly allocating an AST node; specifierOnce
+// serializes lazy creation for later checker or language service access.
 type importHelpersImportSpecifier struct {
 	specifier     *ast.StringLiteralNode
 	specifierOnce sync.Once
@@ -128,6 +132,8 @@ func newImportHelpersImportSpecifier(specifier *ast.StringLiteralNode) *importHe
 	return &importHelpersImportSpecifier{specifier: specifier}
 }
 
+// getSpecifier returns the cached synthetic tslib import specifier, creating it
+// on first access for reused programs that only recorded the compact wrapper.
 func (s *importHelpersImportSpecifier) getSpecifier(file *ast.SourceFile) *ast.StringLiteralNode {
 	s.specifierOnce.Do(func() {
 		if s.specifier == nil {
@@ -636,11 +642,15 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 	return createSyntheticImportWithFactory(&p.factory, text, file)
 }
 
+// createSyntheticImport creates a synthetic import declaration and returns its
+// module specifier for lazy importHelpers state in reused programs.
 func createSyntheticImport(text string, file *ast.SourceFile) *ast.StringLiteralNode {
 	factory := &ast.NodeFactory{}
 	return createSyntheticImportWithFactory(factory, text, file)
 }
 
+// createSyntheticImportWithFactory creates a synthetic import declaration with
+// parent links connecting the returned specifier to the containing source file.
 func createSyntheticImportWithFactory(factory *ast.NodeFactory, text string, file *ast.SourceFile) *ast.StringLiteralNode {
 	moduleReference := factory.NewStringLiteral(text, ast.TokenFlagsNone)
 	importDecl := factory.NewImportDeclaration(nil, nil, moduleReference, nil)
