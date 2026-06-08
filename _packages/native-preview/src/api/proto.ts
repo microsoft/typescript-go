@@ -107,7 +107,7 @@ export interface SnapshotChanges {
  */
 export interface UpdateSnapshotResponse {
     /** Handle for the newly created snapshot */
-    snapshot: string;
+    snapshot: number;
     /** List of projects in the snapshot */
     projects: ProjectResponse[];
     /** Changes from the previous snapshot (absent for the first snapshot) */
@@ -127,7 +127,7 @@ export interface SourceFileResponse {
 }
 
 export interface SymbolResponse {
-    id: string;
+    id: number;
     name: string;
     flags: number;
     checkFlags: number;
@@ -136,35 +136,41 @@ export interface SymbolResponse {
 }
 
 export interface TypeResponse {
-    id: string;
+    id: number;
     flags: number;
     objectFlags?: number;
     value?: string | number | boolean;
-    target?: string;
-    typeParameters?: string[];
-    outerTypeParameters?: string[];
-    localTypeParameters?: string[];
+    freshType?: number;
+    regularType?: number;
+    target?: number;
+    typeParameters?: number[];
+    outerTypeParameters?: number[];
+    localTypeParameters?: number[];
     elementFlags?: number[];
     fixedLength?: number;
     readonly?: boolean;
-    objectType?: string;
-    indexType?: string;
-    checkType?: string;
-    extendsType?: string;
-    baseType?: string;
-    substConstraint?: string;
+    objectType?: number;
+    indexType?: number;
+    checkType?: number;
+    extendsType?: number;
+    baseType?: number;
+    substConstraint?: number;
     texts?: string[];
-    symbol?: string;
+    intrinsicName?: string;
+    isThisType?: boolean;
+    aliasTypeArguments?: number[];
+    aliasSymbol?: number;
+    symbol?: number;
 }
 
 export interface SignatureResponse {
-    id: string;
+    id: number;
     flags: number;
     declaration?: string;
-    typeParameters?: string[];
-    parameters?: string[];
-    thisParameter?: string;
-    target?: string;
+    typeParameters?: number[];
+    parameters?: number[];
+    thisParameter?: number;
+    target?: number;
 }
 
 export interface TypePredicateResponse {
@@ -178,4 +184,12 @@ export interface IndexInfoResponse {
     keyType: TypeResponse;
     valueType: TypeResponse;
     isReadonly?: boolean;
+}
+
+export interface ProfileParams {
+    dir: string;
+}
+
+export interface ProfileResult {
+    file: string;
 }

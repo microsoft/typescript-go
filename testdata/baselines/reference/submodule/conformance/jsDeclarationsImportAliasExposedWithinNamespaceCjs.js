@@ -60,15 +60,30 @@ module.exports = {testFn, testFnTypes};
  * @type {Object<string,*>}
  */
 declare const myTypes: Record<string, any>;
-export type myTypes = string | RegExp | Array<string | RegExp>;
-export type myTypes = {
-    prop1: myTypes.typeA;
-    prop2: string;
-};
-export type myTypes = myTypes.typeB | Function;
-export declare var myTypes: Record<string, any>;
+export declare namespace myTypes {
+    export type typeA = string | RegExp | Array<string | RegExp>;
+}
+export declare namespace myTypes {
+    export type typeB = {
+        prop1: myTypes.typeA;
+        prop2: string;
+    };
+}
+export declare namespace myTypes {
+    export type typeC = myTypes.typeB | Function;
+}
+export { myTypes };
 //// [file2.d.ts]
-export type testFnTypes = boolean | myTypes.typeC;
+import { myTypes } from './file.js';
+/**
+ * @namespace testFnTypes
+ * @global
+ * @type {Object<string,*>}
+ */
+declare const testFnTypes: Record<string, any>;
+export declare namespace testFnTypes {
+    export type input = boolean | myTypes.typeC;
+}
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
 /**
  * @function testFn
