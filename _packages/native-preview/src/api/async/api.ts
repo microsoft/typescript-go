@@ -106,7 +106,7 @@ export class API<FromLSP extends boolean = false> {
     private initialized: boolean = false;
     private activeSnapshots: Set<Snapshot> = new Set();
     private latestSnapshot: Snapshot | undefined;
-    readonly internal: InternalAPI;
+    readonly internal: SnapshotInternalAPI;
 
     constructor(options: APIOptions | LSPConnectionOptions) {
         this.client = new Client(options);
@@ -257,7 +257,7 @@ export class Snapshot {
             this.projectMap.set(toPath(projData.configFileName), project);
         }
 
-        this.internal = new InternalAPI(this.id, client);
+        this.internal = new SnapshotInternalAPI(this.id, client);
     }
 
     getProjects(): readonly Project[] {
@@ -914,7 +914,7 @@ export class Emitter {
     }
 }
 
-export class InternalAPI {
+export class SnapshotInternalAPI {
     private snapshotId: string;
     private client: Client;
 
