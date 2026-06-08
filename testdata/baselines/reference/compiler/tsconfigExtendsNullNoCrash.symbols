@@ -1,6 +1,0 @@
-//// [tests/cases/compiler/tsconfigExtendsNullNoCrash.ts] ////
-
-=== index.ts ===
-export const x = 1;
->x : Symbol(x, Decl(index.ts, 0, 12))
-

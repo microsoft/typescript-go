@@ -86,6 +86,24 @@ func TestExtendedConfigCacheExtendsCircularity(t *testing.T) {
 	})
 }
 
+func TestExtendedConfigCacheNullExtendsDoesNotPanic(t *testing.T) {
+	t.Parallel()
+
+	files := map[string]any{
+		"/project/tsconfig.json": `{"extends": null}`,
+		"/project/main.ts":       `// Hello World!`,
+	}
+
+	fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
+	host := &testParseConfigHost{fs: fs, cwd: "/project"}
+	cache := &tsc.ExtendedConfigCache{}
+
+	cmd, _ := tsoptions.GetParsedCommandLineOfConfigFile("/project/tsconfig.json", nil, nil, host, cache)
+	if cmd == nil {
+		t.Fatal("expected non-nil ParsedCommandLine")
+	}
+}
+
 func assertHasCircularityDiagnostic(t *testing.T, cmd *tsoptions.ParsedCommandLine) {
 	t.Helper()
 	for _, d := range cmd.Errors {
