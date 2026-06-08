@@ -74,6 +74,7 @@ export const helper = "added";
 Watch Registrations::
 Directory watches::
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project
   /home/src/workspaces/project/src (recursive)
 File watches::
   /home/src/workspaces/project/tsconfig.json

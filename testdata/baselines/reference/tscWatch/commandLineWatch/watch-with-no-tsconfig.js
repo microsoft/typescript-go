@@ -41,6 +41,7 @@ declare const console: { log(msg: any): void; };
 Watch Registrations::
 Directory watches::
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project
 File watches::
   /home/src/workspaces/project/index.ts
 SemanticDiagnostics::

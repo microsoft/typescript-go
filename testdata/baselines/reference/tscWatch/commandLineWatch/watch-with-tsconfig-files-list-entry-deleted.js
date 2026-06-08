@@ -51,6 +51,7 @@ export const b = 2;
 Watch Registrations::
 Directory watches::
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project
 File watches::
   /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
@@ -66,15 +67,17 @@ Edit [0]:: delete file listed in files array
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 
 Watch Registrations::
 Directory watches::
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project
 File watches::
   /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-*refresh*    /home/src/workspaces/project/a.ts
-*refresh*    /home/src/workspaces/project/b.ts
 Signatures::

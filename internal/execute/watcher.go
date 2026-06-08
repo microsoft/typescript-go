@@ -224,6 +224,7 @@ func (w *Watcher) reconcileWatches() {
 	}
 
 	// 2. Parent directories of all seen files
+	opts := w.comparePathsOptions()
 	for dir := range w.seenFileDirs {
 		if _, already := desiredDirs[dir]; already {
 			continue
@@ -231,7 +232,7 @@ func (w *Watcher) reconcileWatches() {
 		if w.coveredByRecursiveWildcard(dir, desiredDirs) {
 			continue
 		}
-		if isAncestorDir(cwd, dir) {
+		if isStrictAncestorDir(cwd, dir, opts) {
 			continue
 		}
 		desiredDirs[dir] = false
@@ -296,7 +297,7 @@ func (w *Watcher) reconcileWatches() {
 		}
 		watchDir := dir
 		watch, err := w.backend.WatchDirectory(watchDir, cb, recursive, shouldIgnoreWatchPath)
-		for err != nil && watchDir != cwd && !isAncestorDir(cwd, watchDir) {
+		for err != nil && watchDir != cwd && !isStrictAncestorDir(cwd, watchDir, opts) {
 			parent := tspath.GetDirectoryPath(watchDir)
 			if parent == watchDir {
 				break
@@ -366,22 +367,29 @@ func (w *Watcher) reconcileWatches() {
 }
 
 func (w *Watcher) coveredByRecursiveWildcard(dir string, desiredDirs map[string]bool) bool {
+	opts := w.comparePathsOptions()
 	for wdir, recursive := range desiredDirs {
 		if !recursive {
 			continue
 		}
-		if dir == wdir || strings.HasPrefix(dir, wdir+"/") {
+		if tspath.ContainsPath(wdir, dir, opts) {
 			return true
 		}
 	}
 	return false
 }
 
-func isAncestorDir(path, candidate string) bool {
-	if candidate == "/" {
-		return true
+func (w *Watcher) comparePathsOptions() tspath.ComparePathsOptions {
+	return tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: w.sys.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          w.sys.GetCurrentDirectory(),
 	}
-	return path == candidate || strings.HasPrefix(path, candidate+"/")
+}
+
+// isStrictAncestorDir reports whether candidate is a strict ancestor of
+// path (i.e. path is contained within candidate, but they are not equal).
+func isStrictAncestorDir(path, candidate string, opts tspath.ComparePathsOptions) bool {
+	return path != candidate && tspath.ContainsPath(candidate, path, opts)
 }
 
 func (w *Watcher) closeAllWatches() {
