@@ -23,6 +23,12 @@ type RefCountCache[K comparable, V any, AcquireArgs any] struct {
 	entries collections.SyncMap[K, *refCountCacheEntry[V]]
 
 	parse func(K, AcquireArgs) V
+
+	// refHook, if non-nil, is invoked at the very start of Ref, before the entry
+	// is loaded from the map. It exists only so tests can deterministically
+	// interleave a concurrent Deref into the window that produces the
+	// "cache entry not found" panic. It is always nil in normal operation.
+	refHook func(identity K)
 }
 
 func NewRefCountCache[K comparable, V any, AcquireArgs any](
@@ -60,6 +66,9 @@ func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
 // Ref increments the reference count for an existing entry.
 // Panics if the entry does not exist.
 func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
+	if c.refHook != nil {
+		c.refHook(identity)
+	}
 	entry, ok := c.entries.Load(identity)
 	if !ok {
 		panic("cache entry not found")
