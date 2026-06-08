@@ -143,6 +143,7 @@ const (
 	KeywordCompletionFiltersInterfaceElementKeywords                                     // Keywords inside interface body
 	KeywordCompletionFiltersConstructorParameterKeywords                                 // Keywords at constructor parameter
 	KeywordCompletionFiltersFunctionLikeBodyKeywords                                     // Keywords at function like body
+	KeywordCompletionFiltersArrowFunctionExpressionBodyKeywords                           // Keywords in concise arrow expression bodies
 	KeywordCompletionFiltersTypeAssertionKeywords
 	KeywordCompletionFiltersTypeKeywords
 	KeywordCompletionFiltersTypeKeyword // Literally just `type`
@@ -1435,7 +1436,10 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	getGlobalCompletions := func() (globalsSearch, error) {
-		if tryGetFunctionLikeBodyCompletionContainer(contextToken) != nil {
+		// Check for concise arrow function expression body first (narrower filter)
+		if isArrowFunctionExpressionBody(contextToken) {
+			keywordFilters = KeywordCompletionFiltersArrowFunctionExpressionBodyKeywords
+		} else if tryGetFunctionLikeBodyCompletionContainer(contextToken) != nil {
 			keywordFilters = KeywordCompletionFiltersFunctionLikeBodyKeywords
 		} else {
 			keywordFilters = KeywordCompletionFiltersAll
@@ -3268,6 +3272,8 @@ func getTypescriptKeywordCompletions(keywordFilter KeywordCompletionFilters) []*
 				isTypeKeyword(kind) && kind != ast.KindUndefinedKeyword
 		case KeywordCompletionFiltersFunctionLikeBodyKeywords:
 			return isFunctionLikeBodyKeyword(kind)
+		case KeywordCompletionFiltersArrowFunctionExpressionBodyKeywords:
+			return isArrowFunctionExpressionBodyKeyword(kind)
 		case KeywordCompletionFiltersClassElementKeywords:
 			return isClassMemberCompletionKeyword(kind)
 		case KeywordCompletionFiltersInterfaceElementKeywords:
@@ -3318,6 +3324,34 @@ func isTypeScriptOnlyKeyword(kind ast.Kind) bool {
 		ast.KindTypeKeyword,
 		ast.KindUniqueKeyword,
 		ast.KindUnknownKeyword:
+		return true
+	default:
+		return false
+	}
+}
+
+func isArrowFunctionExpressionBodyKeyword(kind ast.Kind) bool {
+	// Only allow keywords valid in expression position
+	// Disallows: statements (return, break, etc.), var/let/const, type declarations, etc.
+	switch kind {
+	case ast.KindAsyncKeyword,
+		ast.KindAwaitKeyword,
+		ast.KindClassKeyword,
+		ast.KindDeleteKeyword,
+		ast.KindFalseKeyword,
+		ast.KindFunctionKeyword,
+		ast.KindImportKeyword,
+		ast.KindInKeyword,
+		ast.KindInstanceOfKeyword,
+		ast.KindNewKeyword,
+		ast.KindNullKeyword,
+		ast.KindSuperKeyword,
+		ast.KindThisKeyword,
+		ast.KindTrueKeyword,
+		ast.KindTypeOfKeyword,
+		ast.KindVoidKeyword,
+		ast.KindAsKeyword,
+		ast.KindSatisfiesKeyword:
 		return true
 	default:
 		return false
@@ -3425,6 +3459,28 @@ func isMemberCompletionKind(kind CompletionKind) bool {
 	return kind == CompletionKindObjectPropertyDeclaration ||
 		kind == CompletionKindMemberLike ||
 		kind == CompletionKindPropertyAccess
+}
+
+func isArrowFunctionExpressionBody(contextToken *ast.Node) bool {
+	if contextToken == nil {
+		return false
+	}
+
+	var prev *ast.Node
+	result := ast.FindAncestorOrQuit(contextToken, func(node *ast.Node) ast.FindAncestorResult {
+		// Only arrow functions with non-block bodies
+		if node.Kind == ast.KindArrowFunction {
+			arrow := node.AsArrowFunction()
+			body := arrow.Body
+			// If body is not a block, and prev is the body (not part of parameters), we're in expression body
+			if body != nil && body.Kind != ast.KindBlock && prev == body {
+				return ast.FindAncestorTrue
+			}
+		}
+		prev = node
+		return ast.FindAncestorFalse
+	})
+	return result != nil
 }
 
 func tryGetFunctionLikeBodyCompletionContainer(contextToken *ast.Node) *ast.Node {
