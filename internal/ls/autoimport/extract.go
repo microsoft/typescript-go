@@ -14,9 +14,8 @@ import (
 )
 
 type symbolExtractor struct {
-	nodeModulesDirectory tspath.Path
-	packageName          string
-	stats                *extractorStats
+	packageName string
+	stats       *extractorStats
 
 	localNameResolver *binder.NameResolver
 	checker           *checker.Checker
@@ -58,11 +57,10 @@ func (l *checkerLease) TryChecker() *checker.Checker {
 	return nil
 }
 
-func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker, toPath func(string) tspath.Path, realpath func(string) string) *symbolExtractor {
+func newSymbolExtractor(packageName string, checker *checker.Checker, toPath func(string) tspath.Path, realpath func(string) string) *symbolExtractor {
 	return &symbolExtractor{
-		nodeModulesDirectory: nodeModulesDirectory,
-		packageName:          packageName,
-		checker:              checker,
+		packageName: packageName,
+		checker:     checker,
 		localNameResolver: &binder.NameResolver{
 			CompilerOptions: core.EmptyCompilerOptions,
 		},
@@ -72,9 +70,9 @@ func newSymbolExtractor(nodeModulesDirectory tspath.Path, packageName string, ch
 	}
 }
 
-func (b *registryBuilder) newExportExtractor(nodeModulesDirectory tspath.Path, packageName string, checker *checker.Checker, moduleResolver *module.Resolver, realpath func(string) string) *exportExtractor {
+func (b *registryBuilder) newExportExtractor(packageName string, checker *checker.Checker, moduleResolver *module.Resolver, realpath func(string) string) *exportExtractor {
 	return &exportExtractor{
-		symbolExtractor: newSymbolExtractor(nodeModulesDirectory, packageName, checker, b.base.toPath, realpath),
+		symbolExtractor: newSymbolExtractor(packageName, checker, b.base.toPath, realpath),
 		moduleResolver:  moduleResolver,
 	}
 }
@@ -228,7 +226,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 			}
 		}
 	} else if syntax == ExportSyntaxCommonJSModuleExports {
-		expression := symbol.Declarations[0].AsExportAssignment().Expression
+		expression := symbol.Declarations[0].AsBinaryExpression().Right
 		if expression.Kind == ast.KindObjectLiteralExpression {
 			// what is actually desirable here? I think it would be reasonable to only treat these as exports
 			// if *every* property is a shorthand property or identifier: identifier
@@ -258,12 +256,11 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 			ExportName: symbol.Name,
 			ModuleID:   moduleID,
 		},
-		ModuleFileName:       moduleFileName,
-		Syntax:               syntax,
-		Flags:                symbol.CombinedLocalAndExportSymbolFlags(),
-		Path:                 file.Path(),
-		NodeModulesDirectory: e.nodeModulesDirectory,
-		PackageName:          e.packageName,
+		ModuleFileName: moduleFileName,
+		Syntax:         syntax,
+		Flags:          symbol.CombinedLocalAndExportSymbolFlags(),
+		Path:           file.Path(),
+		PackageName:    e.packageName,
 	}
 
 	if syntax == ExportSyntaxUMD {
@@ -334,12 +331,13 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 					namedSymbol = s
 				}
 				export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
-				if isUnusableName(export.localName) {
-					export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(export.Target.ModuleID), false)
-				}
-			} else {
-				export.localName = lsutil.ModuleSpecifierToValidIdentifier(string(moduleID), false)
 			}
+		}
+		if isUnusableName(export.localName) {
+			// Last resort: derive identifier from the file name. Use FileName() (original
+			// casing) rather than ModuleID/Path() which is lowercased on case-insensitive
+			// file systems, losing PascalCase.
+			export.localName = lsutil.ModuleSpecifierToValidIdentifier(fileNameForDefaultExportName(targetSymbol, moduleFileName, moduleID), false)
 		}
 	}
 
@@ -419,10 +417,13 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 			)
 		case ast.KindNamespaceExportDeclaration:
 			return ExportSyntaxUMD
-		case ast.KindJSExportAssignment:
-			return ExportSyntaxCommonJSModuleExports
-		case ast.KindCommonJSExport:
-			return ExportSyntaxCommonJSExportsProperty
+		case ast.KindBinaryExpression:
+			switch ast.GetAssignmentDeclarationKind(decl) {
+			case ast.JSDeclarationKindModuleExports:
+				return ExportSyntaxCommonJSModuleExports
+			case ast.JSDeclarationKindExportsProperty:
+				return ExportSyntaxCommonJSExportsProperty
+			}
 		default:
 			if ast.GetCombinedModifierFlags(decl)&ast.ModifierFlagsDefault != 0 {
 				return ExportSyntaxDefaultModifier
@@ -440,4 +441,21 @@ func isUnusableName(name string) bool {
 		name == ast.InternalSymbolNameExportStar ||
 		name == ast.InternalSymbolNameDefault ||
 		name == ast.InternalSymbolNameExportEquals
+}
+
+// fileNameForDefaultExportName returns the best file name to use when deriving
+// a fallback identifier for a default-like export. It prefers the target symbol's
+// source file (closest to the export origin), falls back to the module's original
+// file name, and uses the lowercased moduleID only for ambient modules where no
+// original file name is available.
+func fileNameForDefaultExportName(targetSymbol *ast.Symbol, moduleFileName string, moduleID ModuleID) string {
+	if targetSymbol != nil && len(targetSymbol.Declarations) > 0 {
+		if fn := ast.GetSourceFileOfNode(targetSymbol.Declarations[0]).FileName(); fn != "" {
+			return fn
+		}
+	}
+	if moduleFileName != "" {
+		return moduleFileName
+	}
+	return string(moduleID)
 }

@@ -40,8 +40,6 @@ namespace Test {
 var Test;
 (function (Test) {
     class FileSystemObject {
-        path;
-        isFSO;
         get isFile() {
             return this instanceof File;
         }
@@ -51,14 +49,12 @@ var Test;
         get isDirectory() {
             return this instanceof Directory;
         }
-        isNetworked;
         constructor(path) {
             this.path = path;
         }
     }
     Test.FileSystemObject = FileSystemObject;
     class File extends FileSystemObject {
-        content;
         constructor(path, content) {
             super(path);
             this.content = content;
@@ -66,7 +62,6 @@ var Test;
     }
     Test.File = File;
     class Directory extends FileSystemObject {
-        children;
     }
     Test.Directory = Directory;
     let file = new File("foo/bar.txt", "foo");
@@ -82,7 +77,7 @@ declare namespace Test {
         path: string;
         isFSO: this is FileSystemObject;
         get isFile(): this is File;
-        set isFile(param: boolean);
+        set isFile(param: this is File);
         get isDirectory(): this is Directory;
         isNetworked: this is (Networked & this);
         constructor(path: string);

@@ -103,7 +103,7 @@ function flatMap(array, iterable = identity) {
     /** @type {unknown[]} */
     const result = [];
     for (let i = 0; i < array.length; i += 1) {
-        result.push(... /** @type {unknown[]} */iterable(array[i]));
+        result.push(... /** @type {unknown[]} */(iterable(array[i])));
     }
     return result;
 }
@@ -120,30 +120,4 @@ declare function getTypeName(x: boolean): 'boolean';
  */
 declare const identity: <T>(x: T) => T;
 declare function flatMap<T, U>(array: T[], iterable: (x: T) => U[]): U[];
-declare function flatMap(array: T[][]): T[];
-
-
-//// [DtsFileErrors]
-
-
-dist/jsFileFunctionOverloads2.d.ts(11,33): error TS2304: Cannot find name 'T'.
-dist/jsFileFunctionOverloads2.d.ts(11,41): error TS2304: Cannot find name 'T'.
-
-
-==== dist/jsFileFunctionOverloads2.d.ts (2 errors) ====
-    declare function getTypeName(x: number): 'number';
-    declare function getTypeName(x: string): 'string';
-    declare function getTypeName(x: boolean): 'boolean';
-    /**
-     * @template T
-     * @param {T} x
-     * @returns {T}
-     */
-    declare const identity: <T>(x: T) => T;
-    declare function flatMap<T, U>(array: T[], iterable: (x: T) => U[]): U[];
-    declare function flatMap(array: T[][]): T[];
-                                    ~
-!!! error TS2304: Cannot find name 'T'.
-                                            ~
-!!! error TS2304: Cannot find name 'T'.
-    
+declare function flatMap<T, U>(array: T[][]): T[];

@@ -35,8 +35,8 @@ var M;
 (function (M) {
     M.baz = 100;
     M.baz2 = true;
-    [M.bar5] = [1];
-    [M.bar6] = [2];
-    ({ a: M.bar7 } = { a: 1 });
-    ({ a: M.bar8 } = { a: 1 });
+    M.bar5 = [1][0];
+    M.bar6 = [2][0];
+    M.bar7 = { a: 1 }.a;
+    M.bar8 = { a: 1 }.a;
 })(M || (exports.M = M = {}));

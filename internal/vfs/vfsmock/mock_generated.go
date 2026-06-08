@@ -20,6 +20,9 @@ var _ vfs.FS = &FSMock{}
 //
 //		// make and configure a mocked vfs.FS
 //		mockedFS := &FSMock{
+//			AppendFileFunc: func(path string, data string) error {
+//				panic("mock out the AppendFile method")
+//			},
 //			ChtimesFunc: func(path string, aTime time.Time, mTime time.Time) error {
 //				panic("mock out the Chtimes method")
 //			},
@@ -50,7 +53,7 @@ var _ vfs.FS = &FSMock{}
 //			WalkDirFunc: func(root string, walkFn vfs.WalkDirFunc) error {
 //				panic("mock out the WalkDir method")
 //			},
-//			WriteFileFunc: func(path string, data string, writeByteOrderMark bool) error {
+//			WriteFileFunc: func(path string, data string) error {
 //				panic("mock out the WriteFile method")
 //			},
 //		}
@@ -60,6 +63,9 @@ var _ vfs.FS = &FSMock{}
 //
 //	}
 type FSMock struct {
+	// AppendFileFunc mocks the AppendFile method.
+	AppendFileFunc func(path string, data string) error
+
 	// ChtimesFunc mocks the Chtimes method.
 	ChtimesFunc func(path string, aTime time.Time, mTime time.Time) error
 
@@ -91,10 +97,17 @@ type FSMock struct {
 	WalkDirFunc func(root string, walkFn vfs.WalkDirFunc) error
 
 	// WriteFileFunc mocks the WriteFile method.
-	WriteFileFunc func(path string, data string, writeByteOrderMark bool) error
+	WriteFileFunc func(path string, data string) error
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// AppendFile holds details about calls to the AppendFile method.
+		AppendFile []struct {
+			// Path is the path argument value.
+			Path string
+			// Data is the data argument value.
+			Data string
+		}
 		// Chtimes holds details about calls to the Chtimes method.
 		Chtimes []struct {
 			// Path is the path argument value.
@@ -154,10 +167,9 @@ type FSMock struct {
 			Path string
 			// Data is the data argument value.
 			Data string
-			// WriteByteOrderMark is the writeByteOrderMark argument value.
-			WriteByteOrderMark bool
 		}
 	}
+	lockAppendFile                sync.RWMutex
 	lockChtimes                   sync.RWMutex
 	lockDirectoryExists           sync.RWMutex
 	lockFileExists                sync.RWMutex
@@ -169,6 +181,42 @@ type FSMock struct {
 	lockUseCaseSensitiveFileNames sync.RWMutex
 	lockWalkDir                   sync.RWMutex
 	lockWriteFile                 sync.RWMutex
+}
+
+// AppendFile calls AppendFileFunc.
+func (mock *FSMock) AppendFile(path string, data string) error {
+	if mock.AppendFileFunc == nil {
+		panic("FSMock.AppendFileFunc: method is nil but FS.AppendFile was just called")
+	}
+	callInfo := struct {
+		Path string
+		Data string
+	}{
+		Path: path,
+		Data: data,
+	}
+	mock.lockAppendFile.Lock()
+	mock.calls.AppendFile = append(mock.calls.AppendFile, callInfo)
+	mock.lockAppendFile.Unlock()
+	return mock.AppendFileFunc(path, data)
+}
+
+// AppendFileCalls gets all the calls that were made to AppendFile.
+// Check the length with:
+//
+//	len(mockedFS.AppendFileCalls())
+func (mock *FSMock) AppendFileCalls() []struct {
+	Path string
+	Data string
+} {
+	var calls []struct {
+		Path string
+		Data string
+	}
+	mock.lockAppendFile.RLock()
+	calls = mock.calls.AppendFile
+	mock.lockAppendFile.RUnlock()
+	return calls
 }
 
 // Chtimes calls ChtimesFunc.
@@ -496,23 +544,21 @@ func (mock *FSMock) WalkDirCalls() []struct {
 }
 
 // WriteFile calls WriteFileFunc.
-func (mock *FSMock) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (mock *FSMock) WriteFile(path string, data string) error {
 	if mock.WriteFileFunc == nil {
 		panic("FSMock.WriteFileFunc: method is nil but FS.WriteFile was just called")
 	}
 	callInfo := struct {
-		Path               string
-		Data               string
-		WriteByteOrderMark bool
+		Path string
+		Data string
 	}{
-		Path:               path,
-		Data:               data,
-		WriteByteOrderMark: writeByteOrderMark,
+		Path: path,
+		Data: data,
 	}
 	mock.lockWriteFile.Lock()
 	mock.calls.WriteFile = append(mock.calls.WriteFile, callInfo)
 	mock.lockWriteFile.Unlock()
-	return mock.WriteFileFunc(path, data, writeByteOrderMark)
+	return mock.WriteFileFunc(path, data)
 }
 
 // WriteFileCalls gets all the calls that were made to WriteFile.
@@ -520,14 +566,12 @@ func (mock *FSMock) WriteFile(path string, data string, writeByteOrderMark bool)
 //
 //	len(mockedFS.WriteFileCalls())
 func (mock *FSMock) WriteFileCalls() []struct {
-	Path               string
-	Data               string
-	WriteByteOrderMark bool
+	Path string
+	Data string
 } {
 	var calls []struct {
-		Path               string
-		Data               string
-		WriteByteOrderMark bool
+		Path string
+		Data string
 	}
 	mock.lockWriteFile.RLock()
 	calls = mock.calls.WriteFile

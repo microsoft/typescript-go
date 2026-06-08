@@ -53,20 +53,27 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 			if options.TargetSourceFile != nil {
 				// Result from cache
 				diagnostics, _ := h.program.snapshot.emitDiagnosticsPerFile.Load(options.TargetSourceFile.Path())
-				return &compiler.EmitResult{
+				result := &compiler.EmitResult{
 					EmitSkipped: true,
 					Diagnostics: diagnostics.getDiagnostics(h.program.program, options.TargetSourceFile),
 				}
+				h.updateHasEmitDiagnostics(result)
+				return result
+			}
+			for _, result := range results {
+				h.updateHasEmitDiagnostics(result)
 			}
 			return compiler.CombineEmitResults(results)
 		} else {
 			// Combine results and update buildInfo
 			result := compiler.CombineEmitResults(results)
+			h.updateHasEmitDiagnostics(result)
 			h.emitBuildInfo(options, result)
 			return result
 		}
 	} else if !h.isForDtsErrors {
 		result := h.program.program.Emit(h.ctx, h.getEmitOptions(options))
+		h.updateHasEmitDiagnostics(result)
 		h.updateSnapshot()
 		h.emitBuildInfo(options, result)
 		return result
@@ -76,9 +83,16 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 			Diagnostics: h.program.program.GetDeclarationDiagnostics(h.ctx, options.TargetSourceFile),
 		}
 		if len(result.Diagnostics) != 0 {
+			h.updateHasEmitDiagnostics(result)
 			h.program.snapshot.hasEmitDiagnostics = true
 		}
 		return result
+	}
+}
+
+func (h *emitFilesHandler) updateHasEmitDiagnostics(result *compiler.EmitResult) {
+	if result != nil && len(result.Diagnostics) != 0 {
+		h.hasEmitDiagnostics.Store(true)
 	}
 }
 
@@ -132,6 +146,7 @@ func (h *emitFilesHandler) emitFilesIncremental(options compiler.EmitOptions) []
 						Diagnostics: h.program.program.GetDeclarationDiagnostics(h.ctx, affectedFile),
 					}
 				}
+				h.updateHasEmitDiagnostics(result)
 
 				// Update the pendingEmit for the file
 				h.emitUpdates.Store(path, &emitUpdate{pendingKind: getPendingEmitKind(emitKind, pendingKind), result: result})
@@ -176,7 +191,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 	return compiler.EmitOptions{
 		TargetSourceFile: options.TargetSourceFile,
 		EmitOnly:         options.EmitOnly,
-		WriteFile: func(fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
+		WriteFile: func(fileName string, text string, data *compiler.WriteFileData) error {
 			var differsOnlyInMap bool
 			if tspath.IsDeclarationFileName(fileName) {
 				if canUseIncrementalState {
@@ -199,8 +214,6 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 					if h.skipDtsOutputOfComposite(options.TargetSourceFile, fileName, text, data, emitSignature, &differsOnlyInMap) {
 						return nil
 					}
-				} else if len(data.Diagnostics) > 0 {
-					h.hasEmitDiagnostics.Store(true)
 				}
 			}
 
@@ -210,9 +223,9 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 			}
 			var err error
 			if options.WriteFile != nil {
-				err = options.WriteFile(fileName, text, writeByteOrderMark, data)
+				err = options.WriteFile(fileName, text, data)
 			} else {
-				err = h.program.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
+				err = h.program.program.Host().FS().WriteFile(fileName, text)
 			}
 			if err == nil && differsOnlyInMap {
 				// Revert the time to original one
@@ -317,6 +330,7 @@ func emitFiles(ctx context.Context, program *Program, options compiler.EmitOptio
 	// Single file emit - do direct from program
 	if !isForDtsErrors && options.TargetSourceFile != nil {
 		result := program.program.Emit(ctx, emitHandler.getEmitOptions(options))
+		emitHandler.updateHasEmitDiagnostics(result)
 		if ctx.Err() != nil {
 			return nil
 		}

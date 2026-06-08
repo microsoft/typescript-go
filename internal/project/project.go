@@ -1,10 +1,12 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -22,7 +24,7 @@ const (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -trimprefix=Kind -output=project_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w project_stringer_generated.go
+//go:generate npx dprint fmt project_stringer_generated.go
 
 type Kind int
 
@@ -72,10 +74,8 @@ type Project struct {
 	// Only set before actually loading config file to get actual project references
 	potentialProjectReferences *collections.Set[tspath.Path]
 
-	programFilesWatch       *WatchedFiles[PatternsAndIgnored]
-	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
-	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
-	typingsWatch            *WatchedFiles[PatternsAndIgnored]
+	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
+	typingsWatch      *WatchedFiles[PatternsAndIgnored]
 
 	checkerPool *CheckerPool
 
@@ -116,7 +116,6 @@ func NewInferredProject(
 			StrictNullChecks:           core.TSTrue,
 			StrictFunctionTypes:        core.TSTrue,
 			SourceMap:                  core.TSTrue,
-			ESModuleInterop:            core.TSTrue,
 			AllowNonTsExtensions:       core.TSTrue,
 			ResolveJsonModule:          core.TSTrue,
 		}
@@ -151,24 +150,16 @@ func NewProject(
 
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	project.programFilesWatch = NewWatchedFiles(
-		"non-root program files for "+configFileName,
+		"program files for "+configFileName,
 		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-		core.Identity,
-	)
-	project.failedLookupsWatch = NewWatchedFiles(
-		"failed lookups for "+configFileName,
-		lsproto.WatchKindCreate,
-		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-	)
-	project.affectingLocationsWatch = NewWatchedFiles(
-		"affecting locations for "+configFileName,
-		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 		createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 	)
 	if builder.sessionOptions.TypingsLocation != "" {
 		project.typingsWatch = NewWatchedFiles(
 			"typings installer files",
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+			lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 			core.Identity,
 		)
 	}
@@ -177,6 +168,19 @@ func NewProject(
 
 func (p *Project) Name() string {
 	return p.configFileName
+}
+
+// DisplayName returns a short, human-readable name for the project,
+// relative to the given workspace root directory.
+// For configured projects, this is the config file path made relative.
+// For inferred projects, this is the last component of the current directory.
+func (p *Project) DisplayName(cwd string) string {
+	if p.Kind == KindInferred {
+		return tspath.GetBaseFileName(p.currentDirectory)
+	}
+	return tspath.ConvertToRelativePath(p.configFileName, tspath.ComparePathsOptions{
+		CurrentDirectory: cwd,
+	})
 }
 
 func (p *Project) ID() tspath.Path {
@@ -205,6 +209,20 @@ func (p *Project) Id() tspath.Path {
 
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
+}
+
+// GetProjectDiagnostics returns program diagnostics combined with any global
+// diagnostics discovered during checking. These are the diagnostics reported on
+// the tsconfig.json file.
+func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	var globalDiags []*ast.Diagnostic
+	if p.checkerPool != nil {
+		globalDiags = p.checkerPool.GetGlobalDiagnostics()
+	}
+	return compiler.SortAndDeduplicateDiagnostics(core.Concatenate(
+		p.Program.GetProgramDiagnostics(),
+		globalDiags,
+	))
 }
 
 func (p *Project) HasFile(fileName string) bool {
@@ -237,16 +255,30 @@ func (p *Project) Clone() *Project {
 		ProgramLastUpdate:           p.ProgramLastUpdate,
 		potentialProjectReferences:  p.potentialProjectReferences,
 
-		programFilesWatch:       p.programFilesWatch,
-		failedLookupsWatch:      p.failedLookupsWatch,
-		affectingLocationsWatch: p.affectingLocationsWatch,
-		typingsWatch:            p.typingsWatch,
+		programFilesWatch: p.programFilesWatch,
+		typingsWatch:      p.typingsWatch,
 
 		checkerPool: p.checkerPool,
 
 		installedTypingsInfo: p.installedTypingsInfo,
 		typingsFiles:         p.typingsFiles,
 	}
+}
+
+// SetCommandLine reassigns the project's command line and resets all state derived
+// from it. Changing the command line always requires a full program rebuild, so the
+// project is marked fully dirty. It also resets:
+//   - the memoized command line augmented with typings files (and its sync.Once, so
+//     the augmented command line is rebuilt from the new command line on next access);
+//   - potentialProjectReferences, the pre-load placeholder derived from the old
+//     command line (always nil for inferred projects, which have no project references).
+func (p *Project) SetCommandLine(commandLine *tsoptions.ParsedCommandLine) {
+	p.CommandLine = commandLine
+	p.commandLineWithTypingsFiles = nil
+	p.commandLineWithTypingsFilesOnce = sync.Once{}
+	p.potentialProjectReferences = nil
+	p.dirty = true
+	p.dirtyFilePath = ""
 }
 
 // getCommandLineWithTypingsFiles returns the command line augmented with typing files if ATA is enabled.
@@ -321,13 +353,36 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
+	// Define a fresh CreateCheckerPool closure for this call. Each invocation of
+	// CreateProgram must use its own closure so that concurrent goroutines cloning
+	// the same project never share a captured variable through a stale closure
+	// stored in the old program's options.
+	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
+		checkerPool = newCheckerPool(4, program, nil)
+		return checkerPool
+	}
+
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
 
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
-		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
+		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
+			for _, file := range newProgram.SourceFiles() {
+				if file.Path() != p.dirtyFilePath {
+					// UpdateProgram acquired the changed file only, so we need to ref everything else
+					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				}
+			}
+			for _, file := range newProgram.DuplicateSourceFiles() {
+				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+			}
+		} else if newFile := newProgram.GetSourceFileByPath(p.dirtyFilePath); newFile != nil {
+			// UpdateProgram always acquires the dirty file before deciding whether it can
+			// reuse the old program. If it falls back to a full rebuild, release that
+			// speculative acquire so the rebuilt program is the only remaining owner.
+			p.host.builder.parseCache.Deref(NewParseCacheKey(newFile.ParseOptions(), newFile.Hash, newFile.ScriptKind))
 		}
 	} else {
 		var typingsLocation string
@@ -340,10 +395,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             typingsLocation,
-				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					checkerPool = newCheckerPool(4, program, p.log)
-					return checkerPool
-				},
+				CreateCheckerPool:           createCheckerPool,
 			},
 		)
 	}
@@ -361,19 +413,8 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	}
 }
 
-func (p *Project) CloneWatchers(workspaceDir string, libDir string) (programFilesWatch *WatchedFiles[PatternsAndIgnored], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
-	failedLookups := make(map[tspath.Path]string)
-	affectingLocations := make(map[tspath.Path]string)
-	programFiles := getNonRootFileGlobs(workspaceDir, libDir, p.Program.GetSourceFiles(), p.CommandLine.FileNamesByPath(), tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
-		CurrentDirectory:          p.currentDirectory,
-	})
-	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedModules())
-	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedTypeReferenceDirectives())
-	programFilesWatch = p.programFilesWatch.Clone(programFiles)
-	failedLookupsWatch = p.failedLookupsWatch.Clone(failedLookups)
-	affectingLocationsWatch = p.affectingLocationsWatch.Clone(affectingLocations)
-	return programFilesWatch, failedLookupsWatch, affectingLocationsWatch
+func (p *Project) CloneWatchers() *WatchedFiles[*collections.SyncSet[tspath.Path]] {
+	return p.programFilesWatch.Clone(p.host.sourceFS.seenFiles)
 }
 
 func (p *Project) log(msg string) {
@@ -393,7 +434,9 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder 
 		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
-				builder.WriteString("\t\t" + sourceFile.FileName() + "\n")
+				builder.WriteString("\t\t")
+				builder.WriteString(sourceFile.FileName())
+				builder.WriteString("\n")
 			}
 			// !!!
 			// if writeFileExplanation {}

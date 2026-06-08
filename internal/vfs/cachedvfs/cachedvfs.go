@@ -145,6 +145,10 @@ func (fsys *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	return fsys.fs.WalkDir(root, walkFn)
 }
 
-func (fsys *FS) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	return fsys.fs.WriteFile(path, data, writeByteOrderMark)
+func (fsys *FS) WriteFile(path string, data string) error {
+	return fsys.fs.WriteFile(path, data)
+}
+
+func (fsys *FS) AppendFile(path string, data string) error {
+	return fsys.fs.AppendFile(path, data)
 }

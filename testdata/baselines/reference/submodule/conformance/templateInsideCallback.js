@@ -106,14 +106,18 @@ function flatMap(array, iterable = identity) {
     /** @type {unknown[]} */
     const result = [];
     for (let i = 0; i < array.length; i += 1) {
-        result.push(... /** @type {unknown[]} */iterable(array[i]));
+        result.push(... /** @type {unknown[]} */(iterable(array[i])));
     }
     return result;
 }
 
 
 //// [templateInsideCallback.d.ts]
-type Call = () => any;
+type Oops = {
+    a: T;
+    b: T;
+};
+type Call = (x: T) => T;
 /**
  * @typedef Oops
  * @template T
@@ -137,5 +141,5 @@ type Nested = {
         noooooo: string;
     };
 };
-declare function flatMap(): any;
-declare function flatMap(): any;
+declare function flatMap(array: T[], iterable: (x: T) => U[]): U[];
+declare function flatMap(array: T[][]): T[];

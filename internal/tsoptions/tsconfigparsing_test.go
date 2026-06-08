@@ -12,11 +12,13 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tsoptions/tsoptionstest"
@@ -132,7 +134,8 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 			var baselineContent strings.Builder
 			for i, jsonText := range rec.input {
 				baselineContent.WriteString("Input::\n")
-				baselineContent.WriteString(jsonText + "\n")
+				baselineContent.WriteString(jsonText)
+				baselineContent.WriteString("\n")
 				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText)
 				baselineContent.WriteString("Config::\n")
 				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
@@ -233,6 +236,17 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "tests/cases/unittests",
 			allFileList:    map[string]string{"/apath/a.ts": ""},
+		}},
+	},
+	{
+		title: "generates errors for include with parent directory after recursive wildcard",
+		input: []testConfig{{
+			jsonText: `{
+                "include": ["**/../*.ts"]
+            }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    map[string]string{"/apath/main.ts": ""},
 		}},
 	},
 	{
@@ -490,6 +504,29 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 				"target": "invalid value",
 				"removeComments": "should be a boolean",
 				"moduleResolution": "invalid value"
+			    }
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/app.ts": ""},
+		}},
+	},
+	{
+		title:               "reports errors for incorrectly cased option names",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+			    "compilerOptions": {
+				"sourcemap": true,
+				"declarationmap": true,
+				"nouncheckedindexedaccess": true,
+				"exactoptionalpropertytypes": true,
+				"verbatimmodulesyntax": true,
+				"isolatedmodules": true,
+				"nouncheckedsideeffectimports": true,
+				"moduledetection": "force",
+				"skiplibcheck": true,
+				"checkjs": true
 			    }
 			}`,
 			configFileName: "tsconfig.json",
@@ -805,6 +842,91 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 	}
 }
 
+func TestParseJsonSourceFileConfigFileContentDoesNotDuplicateUnquotedKeyDiagnostics(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  compilerOptions: {
+    strict: true
+  }
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+
+	diags := parsed.GetConfigFileParsingDiagnostics()
+	assert.Equal(t, len(diags), 2)
+	expectedLocations := []struct {
+		line      int
+		character int
+	}{
+		{line: 1, character: 2},
+		{line: 2, character: 4},
+	}
+	for index, diagnostic := range diags {
+		assert.Equal(t, diagnostic.Code(), diagnostics.String_literal_with_double_quotes_expected.Code())
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		assert.Equal(t, line, expectedLocations[index].line)
+		assert.Equal(t, int(character), expectedLocations[index].character)
+	}
+}
+
+func TestParseJsonSourceFileConfigFileContentReportsQuestionTokenDiagnostics(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  compilerOptions?: {
+    strict?: true
+  }
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+
+	var questionTokenDiagnostics []*ast.Diagnostic
+	for _, diagnostic := range parsed.GetConfigFileParsingDiagnostics() {
+		if diagnostic.Code() == diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files.Code() {
+			questionTokenDiagnostics = append(questionTokenDiagnostics, diagnostic)
+		}
+	}
+	assert.Equal(t, len(questionTokenDiagnostics), 2)
+	expectedLocations := []struct {
+		line      int
+		character int
+	}{
+		{line: 1, character: 17},
+		{line: 2, character: 10},
+	}
+	for index, diagnostic := range questionTokenDiagnostics {
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		assert.Equal(t, line, expectedLocations[index].line)
+		assert.Equal(t, int(character), expectedLocations[index].character)
+	}
+}
+
+func TestParseNullEnumCompilerOptions(t *testing.T) {
+	t.Parallel()
+
+	config := testConfig{
+		jsonText: `{
+			"compilerOptions": {
+				"target": null,
+				"module": null
+			}
+		}`,
+		configFileName: "tsconfig.json",
+		basePath:       "/",
+		allFileList:    map[string]string{"/app.ts": ""},
+	}
+	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
+		"json api":           getParsedWithJsonApi,
+		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			allFileLists := make(map[string]string, len(config.allFileList)+1)
+			maps.Copy(allFileLists, config.allFileList)
+			allFileLists["/tsconfig.json"] = config.jsonText
+			host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
+			parsedConfigFileContent := getParsed(config, host, config.basePath)
+			assert.Equal(t, len(parsedConfigFileContent.Errors), 0)
+		})
+	}
+}
+
 func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
@@ -848,7 +970,9 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 			t.Fatal(err)
 		}
 		baselineContent.WriteString("\n")
-		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
+		baselineContent.WriteString("configFileName:: ")
+		baselineContent.WriteString(config.configFileName)
+		baselineContent.WriteString("\n")
 		if noSubmoduleBaseline {
 			baselineContent.WriteString("CompilerOptions::\n")
 			assert.NilError(t, json.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.CompilerOptions, "", "  "))
@@ -863,7 +987,8 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 			}
 		}
 		baselineContent.WriteString("FileNames::\n")
-		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
+		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ","))
+		baselineContent.WriteString("\n")
 		baselineContent.WriteString("Errors::\n")
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, diagnosticwriter.FromASTDiagnostics(parsedConfigFileContent.Errors), &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
@@ -1221,7 +1346,7 @@ type memoCache struct {
 	m map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry
 }
 
-func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
+func (mc *memoCache) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []tspath.Path, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
 	if mc.m == nil {
 		mc.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
 	}

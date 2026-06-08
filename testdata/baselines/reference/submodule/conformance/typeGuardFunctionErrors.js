@@ -172,18 +172,14 @@ declare function newError3(x: number): x is NeedsFoo<number>; // should error
 //// [typeGuardFunctionErrors.js]
 "use strict";
 class A {
-    propA;
 }
 class B {
-    propB;
 }
 class C extends A {
-    propC;
 }
 function hasANonBooleanReturnStatement(x) {
     return '';
 }
-function hasTypeGuardTypeInsideTypeGuardType(x) { }
 is;
 A;
 {
@@ -242,7 +238,6 @@ assign3 = function (p1, p2, p3) {
 var b1, is, A;
 function b2(a, is, A) { }
 ;
-function b3() { }
 is;
 A;
 {

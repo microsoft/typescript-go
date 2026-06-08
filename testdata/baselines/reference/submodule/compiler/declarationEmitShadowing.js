@@ -20,9 +20,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.A = void 0;
 exports.needsRenameForShadowing = needsRenameForShadowing;
 class A {
-    ShadowedButDoesNotRequireRenaming = () => {
-        return null;
-    };
+    constructor() {
+        this.ShadowedButDoesNotRequireRenaming = () => {
+            return null;
+        };
+    }
 }
 exports.A = A;
 function needsRenameForShadowing() {
@@ -35,20 +37,4 @@ function needsRenameForShadowing() {
 export declare class A<T = any> {
     readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
 }
-export declare function needsRenameForShadowing<T>(): <T>(t: T_1, t2: T) => void;
-
-
-//// [DtsFileErrors]
-
-
-declarationEmitShadowing.d.ts(4,62): error TS2304: Cannot find name 'T_1'.
-
-
-==== declarationEmitShadowing.d.ts (1 errors) ====
-    export declare class A<T = any> {
-        readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
-    }
-    export declare function needsRenameForShadowing<T>(): <T>(t: T_1, t2: T) => void;
-                                                                 ~~~
-!!! error TS2304: Cannot find name 'T_1'.
-    
+export declare function needsRenameForShadowing<T>(): <T_1>(t: T, t2: T_1) => void;

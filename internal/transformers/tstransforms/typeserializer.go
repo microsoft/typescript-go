@@ -2,6 +2,7 @@ package tstransforms
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -9,6 +10,7 @@ import (
 
 type metadataSerializer struct {
 	resolver         printer.EmitResolver
+	languageVersion  core.ScriptTarget
 	strictNullChecks bool
 	f                *printer.NodeFactory
 	ec               *printer.EmitContext
@@ -16,12 +18,13 @@ type metadataSerializer struct {
 }
 
 type metadataSerializerContext struct {
-	currentLexicalScope *ast.Node
-	currentNameScope    *ast.Node
+	currentLexicalScope              *ast.Node
+	currentNameScope                 *ast.Node
+	serializingConditionalTypeBranch bool
 }
 
-func newMetadataSerializer(resolver printer.EmitResolver, f *printer.NodeFactory, ec *printer.EmitContext, strictNullChecks bool) *metadataSerializer {
-	return &metadataSerializer{resolver: resolver, f: f, ec: ec, strictNullChecks: strictNullChecks}
+func newMetadataSerializer(resolver printer.EmitResolver, f *printer.NodeFactory, ec *printer.EmitContext, languageVersion core.ScriptTarget, strictNullChecks bool) *metadataSerializer {
+	return &metadataSerializer{resolver: resolver, languageVersion: languageVersion, f: f, ec: ec, strictNullChecks: strictNullChecks}
 }
 
 func (s *metadataSerializer) setContext(ctx metadataSerializerContext) {
@@ -49,7 +52,7 @@ func (s *metadataSerializer) SerializeReturnTypeOfNode(ctx metadataSerializerCon
 	return s.serializeReturnTypeOfNode(node)
 }
 
-func getSetAccessorValueParameter(node *ast.SetAccessorDeclaration) *ast.Node {
+func GetSetAccessorValueParameter(node *ast.SetAccessorDeclaration) *ast.Node {
 	if node != nil && len(node.Parameters.Nodes) > 0 {
 		if len(node.Parameters.Nodes) >= 2 && ast.IsThisParameter(node.Parameters.Nodes[0]) {
 			return node.Parameters.Nodes[1]
@@ -65,7 +68,7 @@ func getSetAccessorValueParameter(node *ast.SetAccessorDeclaration) *ast.Node {
  * @internal
  */
 func getSetAccessorTypeAnnotationNode(node *ast.SetAccessorDeclaration) *ast.Node {
-	p := getSetAccessorValueParameter(node)
+	p := GetSetAccessorValueParameter(node)
 	if p != nil && p.Type() != nil {
 		return p.Type()
 	}
@@ -202,7 +205,7 @@ func (s *metadataSerializer) serializeTypeNode(node *ast.Node) *ast.Node {
 	case ast.KindNumberKeyword:
 		return s.f.NewIdentifier("Number")
 	case ast.KindBigIntKeyword:
-		return s.f.NewIdentifier("BigInt") // !!! todo: fallback for targets < es2020
+		return s.serializeBigIntConstructor()
 	case ast.KindSymbolKeyword:
 		return s.f.NewIdentifier("Symbol")
 	case ast.KindTypeReference:
@@ -212,6 +215,9 @@ func (s *metadataSerializer) serializeTypeNode(node *ast.Node) *ast.Node {
 	case ast.KindUnionType:
 		return s.serializeUnionOrIntersectionConstituents(node.AsUnionTypeNode().Types.Nodes, false)
 	case ast.KindConditionalType:
+		oldState := s.c.serializingConditionalTypeBranch
+		s.c.serializingConditionalTypeBranch = true
+		defer func() { s.c.serializingConditionalTypeBranch = oldState }()
 		return s.serializeUnionOrIntersectionConstituents([]*ast.Node{node.AsConditionalTypeNode().TrueType, node.AsConditionalTypeNode().FalseType}, false)
 	case ast.KindTypeOperator:
 		if node.AsTypeOperatorNode().Operator == ast.KindReadonlyKeyword {
@@ -256,7 +262,7 @@ func (s *metadataSerializer) serializeUnionOrIntersectionConstituents(types []*a
 			return s.f.NewIdentifier("Object") // Reduce to `any` in a union or intersection
 		}
 
-		if !s.strictNullChecks && (ast.IsLiteralTypeNode(typeNode) && typeNode.AsLiteralTypeNode().Literal.Kind == ast.KindNullKeyword) || typeNode.Kind == ast.KindUndefinedKeyword {
+		if !s.strictNullChecks && ((ast.IsLiteralTypeNode(typeNode) && typeNode.AsLiteralTypeNode().Literal.Kind == ast.KindNullKeyword) || typeNode.Kind == ast.KindUndefinedKeyword) {
 			continue // Elide null and undefined from unions for metadata, just like what we did prior to the implementation of strict null checks
 		}
 
@@ -301,7 +307,7 @@ func (s *metadataSerializer) serializeLiteralOfLiteralTypeNode(node *ast.Node) *
 	case ast.KindNumericLiteral:
 		return s.f.NewIdentifier("Number")
 	case ast.KindBigIntLiteral:
-		return s.f.NewIdentifier("BigInt") // !!! todo: fallback for targets < es2020
+		return s.serializeBigIntConstructor()
 	case ast.KindTrueKeyword, ast.KindFalseKeyword:
 		return s.f.NewIdentifier("Boolean")
 	case ast.KindNullKeyword:
@@ -311,10 +317,6 @@ func (s *metadataSerializer) serializeLiteralOfLiteralTypeNode(node *ast.Node) *
 		return nil
 	}
 	return nil
-}
-
-func isConditionalTypeBranch(n *ast.Node) bool {
-	return n.Parent != nil && ast.IsConditionalTypeNode(n.Parent) && (n.Parent.AsConditionalTypeNode().TrueType == n || n.Parent.AsConditionalTypeNode().FalseType == n)
 }
 
 /**
@@ -330,7 +332,7 @@ func (s *metadataSerializer) serializeTypeReferenceNode(node *ast.TypeReferenceN
 	switch kind {
 	case printer.TypeReferenceSerializationKindUnknown:
 		// From conditional type type reference that cannot be resolved is Similar to any or unknown
-		if ast.FindAncestor(node.AsNode(), isConditionalTypeBranch) != nil {
+		if s.c.serializingConditionalTypeBranch {
 			return s.f.NewIdentifier("Object")
 		}
 
@@ -352,7 +354,7 @@ func (s *metadataSerializer) serializeTypeReferenceNode(node *ast.TypeReferenceN
 		return s.f.NewVoidZeroExpression()
 
 	case printer.TypeReferenceSerializationKindBigIntLikeType:
-		return s.f.NewIdentifier("BigInt")
+		return s.serializeBigIntConstructor()
 
 	case printer.TypeReferenceSerializationKindBooleanType:
 		return s.f.NewIdentifier("Boolean")
@@ -383,6 +385,19 @@ func (s *metadataSerializer) serializeTypeReferenceNode(node *ast.TypeReferenceN
 	}
 }
 
+func (s *metadataSerializer) serializeBigIntConstructor() *ast.Node {
+	if s.languageVersion >= core.ScriptTargetES2020 {
+		return s.f.NewIdentifier("BigInt")
+	}
+	return s.f.NewConditionalExpression(
+		s.f.NewTypeCheck(s.f.NewIdentifier("BigInt"), "function"),
+		s.f.NewToken(ast.KindQuestionToken),
+		s.f.NewIdentifier("BigInt"),
+		s.f.NewToken(ast.KindColonToken),
+		s.f.NewIdentifier("Object"),
+	)
+}
+
 /**
 * Serializes an entity name as an expression for decorator type metadata.
 * @param node The entity name to serialize.
@@ -395,7 +410,7 @@ func (s *metadataSerializer) serializeEntityNameAsExpression(node *ast.EntityNam
 		name := node.Clone(s.f)
 		name.Loc = node.Loc
 		s.ec.UnsetOriginal(name)                              // make this identifier emulate a parse node, making it behave correctly when inspected by the module transforms
-		name.Parent = s.ec.ParseNode(s.c.currentLexicalScope) // ensure the parent is set to a parse tree node.
+		name.Parent = s.ec.ParseNode(s.c.currentLexicalScope) //nolint:customlint // ensure the parent is set to a parse tree node.
 		return name
 	case ast.KindQualifiedName:
 		return s.serializeQualifiedNameAsExpression(node.AsQualifiedName())

@@ -169,7 +169,6 @@ var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 })
 
 var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "none", Value: core.ModuleKindNone},
 	{Key: "commonjs", Value: core.ModuleKindCommonJS},
 	{Key: "amd", Value: core.ModuleKindAMD},
 	{Key: "system", Value: core.ModuleKindSystem},
@@ -199,17 +198,6 @@ var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[stri
 	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
 	{Key: "react", Value: core.JsxEmitReact},
 })
-
-var InverseJsxOptionMap = collections.NewOrderedMapFromList(func() []collections.MapEntry[core.JsxEmit, string] {
-	entries := make([]collections.MapEntry[core.JsxEmit, string], 0, jsxOptionMap.Size())
-	for key, value := range jsxOptionMap.Entries() {
-		entries = append(entries, collections.MapEntry[core.JsxEmit, string]{
-			Key:   value.(core.JsxEmit),
-			Value: key,
-		})
-	}
-	return entries
-}())
 
 var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "crlf", Value: core.NewLineKindCRLF},

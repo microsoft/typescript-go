@@ -84,8 +84,17 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 }
 
 var skippedTests = []string{
-	// Flaky
-	"for-of29.ts",
+	// Tests that depended on typescript.d.ts in built.
+	"APILibCheck.ts",
+	"APISample_Watch.ts",
+	"APISample_WatchWithDefaults.ts",
+	"APISample_WatchWithOwnWatchHost.ts",
+	"APISample_compile.ts",
+	"APISample_jsdoc.ts",
+	"APISample_linter.ts",
+	"APISample_parseConfig.ts",
+	"APISample_transform.ts",
+	"APISample_watcher.ts",
 
 	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",
@@ -115,6 +124,14 @@ var skippedTests = []string{
 	"noImplicitUseStrict_amd.ts",
 	"noImplicitAnyIndexingSuppressed.ts",
 	"excessPropertyErrorsSuppressed.ts",
+	"moduleNoneDynamicImport.ts",
+	"moduleNoneErrors.ts",
+	"moduleNoneOutFile.ts",
+	"noErrorUsingImportExportModuleAugmentationInDeclarationFile1.ts",
+	"noErrorUsingImportExportModuleAugmentationInDeclarationFile2.ts",
+	"noErrorUsingImportExportModuleAugmentationInDeclarationFile3.ts",
+	"requireOfJsonFileWithModuleEmitNone.ts",
+	"requireOfJsonFileWithModuleNodeResolutionEmitNone.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
@@ -161,7 +178,8 @@ func getCompilerVaryByMap() map[string]struct{} {
 		}),
 		// explicit variations that do not match above conditions
 		"noEmit",
-		"isolatedModules")
+		"isolatedModules",
+	)
 	varyByMap := make(map[string]struct{})
 	for _, option := range varyByOptions {
 		varyByMap[strings.ToLower(option)] = struct{}{}
@@ -276,7 +294,8 @@ func newCompilerTest(
 	var tsConfig *tsoptions.ParsedCommandLine
 	hasNonDtsFiles := core.Some(
 		units,
-		func(unit *testUnit) bool { return !tspath.FileExtensionIs(unit.name, tspath.ExtensionDts) })
+		func(unit *testUnit) bool { return !tspath.FileExtensionIs(unit.name, tspath.ExtensionDts) },
+	)
 	var tsConfigFiles []*harnessutil.TestFile
 	if testCaseContentWithConfig.tsConfig != nil {
 		tsConfig = testCaseContentWithConfig.tsConfig

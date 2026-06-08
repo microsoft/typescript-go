@@ -14,7 +14,3 @@ module.exports = items;
 "use strict";
 const items = require("./some-mod")();
 module.exports = items;
-
-
-//// [index.d.ts]
-export = items;

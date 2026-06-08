@@ -8,6 +8,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
+func shouldRescanLessThanLessThanToken(s *scanner.Scanner, containingNode *ast.Node, token ast.Kind) bool {
+	return token == ast.KindLessThanLessThanToken && ast.IsJsxChild(containingNode)
+}
+
+func scanNavigationToken(s *scanner.Scanner, containingNode *ast.Node) ast.Kind {
+	token := s.Token()
+	if shouldRescanLessThanLessThanToken(s, containingNode, token) {
+		return s.ReScanJsxToken(true /*allowMultilineJsxText*/)
+	}
+	return token
+}
+
 func GetTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
 	return getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
 		return ast.IsPropertyNameLiteral(node) || ast.IsKeywordKind(node.Kind) || ast.IsPrivateIdentifier(node)
@@ -52,11 +64,17 @@ func getTokenAtPosition(
 	var nodeAfterLeft *ast.Node
 
 	testNode := func(node *ast.Node) int {
-		if node.Kind != ast.KindEndOfFile && node.End() == position && includePrecedingTokenAtEndPosition != nil {
+		if node.Kind != ast.KindEndOfFile && node.End() == position &&
+			includePrecedingTokenAtEndPosition != nil && node.Flags&ast.NodeFlagsReparsed == 0 {
 			prevSubtree = node
 		}
 
-		if node.End() < position || node.Kind != ast.KindEndOfFile && node.End() == position {
+		// A node "contains" the position if position < end, except nodes at the file end
+		// treat end as inclusive (there's nowhere else to look). This applies to the EOF
+		// token itself, and to JSDoc nodes reaching EOF (e.g. unterminated JSDoc comments).
+		if node.End() < position || node.End() == position &&
+			node.Kind != ast.KindEndOfFile &&
+			(!ast.IsJSDocKind(node.Kind) || node.End() != sourceFile.EndOfFileToken.End()) {
 			return -1
 		}
 		nodePos := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
@@ -113,7 +131,12 @@ func getTokenAtPosition(
 			if nodeList.End() == position && includePrecedingTokenAtEndPosition != nil {
 				left = nodeList.End()
 				nodeAfterLeft = nil
-				prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
+				for i := len(nodeList.Nodes) - 1; i >= 0; i-- {
+					if nodeList.Nodes[i].Flags&ast.NodeFlagsReparsed == 0 {
+						prevSubtree = nodeList.Nodes[i]
+						break
+					}
+				}
 			} else if nodeList.End() <= position {
 				left = nodeList.End()
 				nodeAfterLeft = nil
@@ -204,7 +227,7 @@ func getTokenAtPosition(
 				end = nodeAfterLeft.Pos()
 			}
 			for left < end {
-				token := scanner.Token()
+				token := scanNavigationToken(scanner, current)
 				tokenFullStart := scanner.TokenFullStart()
 				tokenStart := core.IfElse(allowPositionInLeadingTrivia, tokenFullStart, scanner.TokenStart())
 				tokenEnd := scanner.TokenEnd()
@@ -528,11 +551,11 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 			for _, visitedNode := range rightmostVisitedNodes {
 				// Trailing tokens that occur before this node.
 				for startPos < min(visitedNode.Pos(), position) {
+					token := scanNavigationToken(scanner, n)
 					tokenStart := scanner.TokenStart()
 					if tokenStart >= position {
 						break
 					}
-					token := scanner.Token()
 					tokenFullStart := scanner.TokenFullStart()
 					tokenEnd := scanner.TokenEnd()
 					startPos = tokenEnd
@@ -546,11 +569,11 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 			}
 			// Trailing tokens after last visited node.
 			for startPos < min(endPos, position) {
+				token := scanNavigationToken(scanner, n)
 				tokenStart := scanner.TokenStart()
 				if tokenStart >= position {
 					break
 				}
-				token := scanner.Token()
 				tokenFullStart := scanner.TokenFullStart()
 				tokenEnd := scanner.TokenEnd()
 				startPos = tokenEnd
@@ -638,13 +661,15 @@ func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFi
 			scanner := scanner.GetScannerForSourceFile(file, startPos)
 			token := scanner.Token()
 			tokenFullStart := scanner.TokenFullStart()
-			tokenStart := scanner.TokenStart()
 			tokenEnd := scanner.TokenEnd()
 			flags := scanner.TokenFlags()
-			if tokenStart == previousToken.End() {
+			// Use tokenFullStart (which includes leading trivia) to match TS's
+			// findNextToken behavior where `n.pos === previousToken.end` is checked
+			// (TS's pos includes trivia, same as Go's Pos()/tokenFullStart).
+			if tokenFullStart == previousToken.End() {
 				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n, flags)
 			}
-			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenStart))
+			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenFullStart))
 		}
 		// Case 3: no answer.
 		return nil

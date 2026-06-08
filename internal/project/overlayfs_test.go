@@ -3,6 +3,7 @@ package project
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -162,6 +163,26 @@ func TestProcessChanges(t *testing.T) {
 		assert.Assert(t, fh.MatchesDiskText())
 	})
 
+	t.Run("open falls back to file extension for unknown language kind", func(t *testing.T) {
+		t.Parallel()
+		fs := createOverlayFS()
+		uri := lsproto.DocumentUri("file:///test1.mts")
+
+		fs.processChanges([]FileChange{
+			{
+				Kind:         FileChangeKindOpen,
+				URI:          uri,
+				Version:      1,
+				Content:      "export const x = 1;",
+				LanguageKind: lsproto.LanguageKind("mts"),
+			},
+		})
+
+		fh := fs.getFile(uri.FileName())
+		assert.Assert(t, fh != nil)
+		assert.Equal(t, fh.Kind(), core.ScriptKindTS)
+	})
+
 	t.Run("watch change on overlay marks as not matching disk", func(t *testing.T) {
 		t.Parallel()
 		fs := createOverlayFS()
@@ -195,6 +216,23 @@ func TestProcessChanges(t *testing.T) {
 			},
 		})
 		assert.Assert(t, !fs.getFile(testURI1.FileName()).MatchesDiskText())
+	})
+
+	t.Run("save without overlay should not panic", func(t *testing.T) {
+		t.Parallel()
+		fs := createOverlayFS()
+
+		// Save a file that was never opened (no overlay exists).
+		// This can happen when an editor sends didSave for a file
+		// that is not managed by the LSP server (e.g., package.json).
+		result, _ := fs.processChanges([]FileChange{
+			{
+				Kind: FileChangeKindSave,
+				URI:  testURI1,
+			},
+		})
+		// Should be treated as a disk change
+		assert.Assert(t, result.Changed.Has(testURI1))
 	})
 
 	t.Run("close then open in same batch marks as changed", func(t *testing.T) {

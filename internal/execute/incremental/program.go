@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -130,12 +131,6 @@ func (p *Program) GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceF
 func (p *Program) GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 	p.panicIfNoProgram("GetBindDiagnostics")
 	return p.program.GetBindDiagnostics(ctx, file)
-}
-
-// GetOptionsDiagnostics implements compiler.AnyProgram interface.
-func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	p.panicIfNoProgram("GetOptionsDiagnostics")
-	return p.program.GetOptionsDiagnostics(ctx)
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
@@ -279,6 +274,9 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 }
 
 func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
+	if tr := p.program.Tracing(); tr != nil {
+		defer tr.Push(tracing.PhaseEmit, "emitBuildInfo", nil, true)()
+	}
 	buildInfoFileName := outputpaths.GetBuildInfoFileName(p.snapshot.options, tspath.ComparePathsOptions{
 		CurrentDirectory:          p.program.GetCurrentDirectory(),
 		UseCaseSensitiveFileNames: p.program.UseCaseSensitiveFileNames(),
@@ -304,11 +302,11 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		panic(fmt.Sprintf("Failed to marshal build info: %v", err))
 	}
 	if options.WriteFile != nil {
-		err = options.WriteFile(buildInfoFileName, string(text), false, &compiler.WriteFileData{
+		err = options.WriteFile(buildInfoFileName, string(text), &compiler.WriteFileData{
 			BuildInfo: buildInfo,
 		})
 	} else {
-		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text), false)
+		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text))
 	}
 	if err != nil {
 		return &compiler.EmitResult{
@@ -365,7 +363,6 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 		len(program.GetConfigFileParsingDiagnostics()) > 0 ||
 		len(program.GetSyntacticDiagnostics(ctx, nil)) > 0 ||
 		len(program.GetProgramDiagnostics()) > 0 ||
-		len(program.GetOptionsDiagnostics(ctx)) > 0 ||
 		len(program.GetGlobalDiagnostics(ctx)) > 0 {
 		p.snapshot.hasErrors = core.TSTrue
 		// Dont need to encode semantic errors state since the syntax and program diagnostics are encoded as present

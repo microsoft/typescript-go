@@ -1,4 +1,4 @@
-// @strict: true
+// @noEmit: true
 
 // Repro from https://github.com/microsoft/TypeScript/issues/63192
 

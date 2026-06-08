@@ -1,7 +1,9 @@
 package checker
 
 import (
+	"math/bits"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -10,7 +12,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
+//go:generate npx dprint fmt stringer_generated.go
 
 // ParseFlags
 
@@ -63,6 +65,7 @@ const (
 	TypeFormatFlagsUseAliasDefinedOutsideCurrentScope  TypeFormatFlags = 1 << 14 // For a `type T = ... ` defined in a different file, write `T` instead of its value, even though `T` can't be accessed in the current scope.
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType TypeFormatFlags = 1 << 28 // Use single quotes for string literal type
 	TypeFormatFlagsNoTypeReduction                     TypeFormatFlags = 1 << 29 // Don't call getReducedType
+	TypeFormatFlagsUseInstantiationExpressions         TypeFormatFlags = 1 << 30 // Use instantiation expressions for qualified instantiated names like Foo<string>.Bar
 	TypeFormatFlagsOmitThisParameter                   TypeFormatFlags = 1 << 25
 	TypeFormatFlagsWriteCallStyleSignature             TypeFormatFlags = 1 << 27 // Write construct signatures as call style signatures
 	// Error Handling
@@ -80,6 +83,7 @@ const (
 const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFormatFlagsWriteArrayAsGenericType | TypeFormatFlagsGenerateNamesForShadowedTypeParams | TypeFormatFlagsUseStructuralFallback | TypeFormatFlagsWriteTypeArgumentsOfSignature |
 	TypeFormatFlagsUseFullyQualifiedType | TypeFormatFlagsSuppressAnyReturnType | TypeFormatFlagsMultilineObjectLiterals | TypeFormatFlagsWriteClassExpressionAsTypeLiteral |
 	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
+	TypeFormatFlagsUseInstantiationExpressions |
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
 
 type SymbolFormatFlags uint32
@@ -106,6 +110,46 @@ const (
 	/** @internal */
 	SymbolFormatFlagsDoNotIncludeSymbolChain SymbolFormatFlags = 1 << 5
 )
+
+type ExternalEmitHelpers uint32
+
+const (
+	ExternalEmitHelpersRest                                     ExternalEmitHelpers           = 1 << iota // __rest (used by ESNext object rest transformation)
+	ExternalEmitHelpersDecorate                                                                           // __decorate (used by TypeScript decorators transformation)
+	ExternalEmitHelpersMetadata                                                                           // __metadata (used by TypeScript decorators transformation)
+	ExternalEmitHelpersParam                                                                              // __param (used by TypeScript decorators transformation)
+	ExternalEmitHelpersAwaiter                                                                            // __awaiter (used by ES2017 async functions transformation)
+	ExternalEmitHelpersAwait                                                                              // __await (used by ES2017 async generator transformation)
+	ExternalEmitHelpersAsyncGenerator                                                                     // __asyncGenerator (used by ES2017 async generator transformation)
+	ExternalEmitHelpersAsyncDelegator                                                                     // __asyncDelegator (used by ES2017 async generator yield* transformation)
+	ExternalEmitHelpersAsyncValues                                                                        // __asyncValues (used by ES2017 for..await..of transformation)
+	ExternalEmitHelpersExportStar                                                                         // __exportStar (used by CommonJS/AMD/UMD module transformation)
+	ExternalEmitHelpersImportStar                                                                         // __importStar (used by CommonJS/AMD/UMD module transformation)
+	ExternalEmitHelpersImportDefault                                                                      // __importDefault (used by CommonJS/AMD/UMD module transformation)
+	ExternalEmitHelpersMakeTemplateObject                                                                 // __makeTemplateObject (used for constructing template string array objects)
+	ExternalEmitHelpersClassPrivateFieldGet                                                               // __classPrivateFieldGet (used by the class private field transformation)
+	ExternalEmitHelpersClassPrivateFieldSet                                                               // __classPrivateFieldSet (used by the class private field transformation)
+	ExternalEmitHelpersClassPrivateFieldIn                                                                // __classPrivateFieldIn (used by the class private field transformation)
+	ExternalEmitHelpersSetFunctionName                                                                    // __setFunctionName (used by class fields and ECMAScript decorators)
+	ExternalEmitHelpersPropKey                                                                            // __propKey (used by class fields and ECMAScript decorators)
+	ExternalEmitHelpersAddDisposableResourceAndDisposeResources                                           // __addDisposableResource and __disposeResources (used by ESNext transformations)
+	ExternalEmitHelpersRewriteRelativeImportExtension                                                     // __rewriteRelativeImportExtension (used by --rewriteRelativeImportExtensions)
+	ExternalEmitHelpersESDecorateAndRunInitializers             = ExternalEmitHelpersDecorate             // __esDecorate and __runInitializers (used by ECMAScript decorators transformation)
+
+	ExternalEmitHelpersFirstEmitHelper = ExternalEmitHelpersRest
+	ExternalEmitHelpersLastEmitHelper  = ExternalEmitHelpersRewriteRelativeImportExtension
+
+	// Helpers included by ES2017 for..await..of
+	ExternalEmitHelpersForAwaitOfIncludes = ExternalEmitHelpersAsyncValues
+
+	// Helpers included by ES2017 async generators
+	ExternalEmitHelpersAsyncGeneratorIncludes = ExternalEmitHelpersAwait | ExternalEmitHelpersAsyncGenerator
+
+	// Helpers included by yield* in ES2017 async generators
+	ExternalEmitHelpersAsyncDelegatorIncludes = ExternalEmitHelpersAwait | ExternalEmitHelpersAsyncDelegator | ExternalEmitHelpersAsyncValues
+)
+
+const externalHelpersModuleNameText = "tslib"
 
 // Ids
 
@@ -262,10 +306,6 @@ const (
 	VarianceFlagsAllowsStructuralFallback               = VarianceFlagsUnmeasurable | VarianceFlagsUnreliable
 )
 
-type IndexSymbolLinks struct {
-	filteredIndexSymbolCache map[CacheHashKey]*ast.Symbol // Symbol with applicable declarations
-}
-
 type MarkedAssignmentSymbolLinks struct {
 	lastAssignmentPos     int32
 	hasDefiniteAssignment bool // Symbol is definitely assigned somewhere
@@ -304,31 +344,14 @@ type NodeCheckFlags uint32
 const (
 	NodeCheckFlagsNone                                     NodeCheckFlags = 0
 	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // Node has been type checked
-	NodeCheckFlagsLexicalThis                              NodeCheckFlags = 1 << 1  // Lexical 'this' reference
-	NodeCheckFlagsCaptureThis                              NodeCheckFlags = 1 << 2  // Lexical 'this' used in body
-	NodeCheckFlagsCaptureNewTarget                         NodeCheckFlags = 1 << 3  // Lexical 'new.target' used in body
-	NodeCheckFlagsSuperInstance                            NodeCheckFlags = 1 << 4  // Instance 'super' reference
-	NodeCheckFlagsSuperStatic                              NodeCheckFlags = 1 << 5  // Static 'super' reference
 	NodeCheckFlagsContextChecked                           NodeCheckFlags = 1 << 6  // Contextual types have been assigned
-	NodeCheckFlagsMethodWithSuperPropertyAccessInAsync     NodeCheckFlags = 1 << 7  // A method that contains a SuperProperty access in an async context.
-	NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync NodeCheckFlags = 1 << 8  // A method that contains a SuperProperty assignment in an async context.
-	NodeCheckFlagsCaptureArguments                         NodeCheckFlags = 1 << 9  // Lexical 'arguments' used in body
 	NodeCheckFlagsEnumValuesComputed                       NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
-	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
-	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
-	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // Block-scoped binding that is captured in some function
-	NodeCheckFlagsBlockScopedBindingInLoop                 NodeCheckFlags = 1 << 15 // Block-scoped binding with declaration nested inside iteration statement
-	NodeCheckFlagsNeedsLoopOutParameter                    NodeCheckFlags = 1 << 16 // Block scoped binding whose value should be explicitly copied outside of the converted loop
 	NodeCheckFlagsAssignmentsMarked                        NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
-	NodeCheckFlagsContainsConstructorReference             NodeCheckFlags = 1 << 18 // Class or class element that contains a binding that references the class constructor.
-	NodeCheckFlagsConstructorReference                     NodeCheckFlags = 1 << 29 // Binding to a class constructor inside of the class's body.
 	NodeCheckFlagsContainsClassWithPrivateIdentifiers      NodeCheckFlags = 1 << 20 // Marked on all block-scoped containers containing a class with private identifiers.
 	NodeCheckFlagsContainsSuperPropertyInStaticInitializer NodeCheckFlags = 1 << 21 // Marked on all block-scoped containers containing a static initializer with 'super.x' or 'super[x]'.
 	NodeCheckFlagsInCheckIdentifier                        NodeCheckFlags = 1 << 22
-	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // Node has been partially type checked
 	NodeCheckFlagsInitializerIsUndefined                   NodeCheckFlags = 1 << 24
 	NodeCheckFlagsInitializerIsUndefinedComputed           NodeCheckFlags = 1 << 25
-	NodeCheckFlagsResolvingInitialType                     NodeCheckFlags = 1 << 26
 )
 
 // Common links
@@ -340,8 +363,7 @@ type NodeLinks struct {
 }
 
 type SymbolNodeLinks struct {
-	resolvedSymbol              *ast.Symbol // Resolved symbol associated with node
-	resolvedSymbolNoDiagnostics *ast.Symbol // Resolved symbol associated with node, generated without producing diagnostics for an API call
+	resolvedSymbol *ast.Symbol // Resolved symbol associated with node
 }
 
 type TypeNodeLinks struct {
@@ -364,14 +386,17 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked               bool
-	deferredNodes             collections.OrderedSet[*ast.Node]
-	identifierCheckNodes      []*ast.Node
-	localJsxNamespace         string
-	localJsxFragmentNamespace string
-	localJsxFactory           *ast.EntityName
-	localJsxFragmentFactory   *ast.EntityName
-	jsxFragmentType           *Type
+	typeChecked                  bool
+	unusedChecked                bool
+	externalHelpersModule        *ast.Symbol
+	requestedExternalEmitHelpers ExternalEmitHelpers
+	deferredNodes                collections.OrderedSet[*ast.Node]
+	identifierCheckNodes         []*ast.Node
+	localJsxNamespace            string
+	localJsxFragmentNamespace    string
+	localJsxFactory              *ast.EntityName
+	localJsxFragmentFactory      *ast.EntityName
+	jsxFragmentType              *Type
 }
 
 // Signature specific links
@@ -471,6 +496,85 @@ const (
 	TypeFlagsNotPrimitiveUnion               = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsVoid | TypeFlagsNever | TypeFlagsObject | TypeFlagsIntersection | TypeFlagsIncludesInstantiable
 )
 
+var typeFlagNames = [...]struct {
+	flag TypeFlags
+	name string
+}{
+	{TypeFlagsAny, "Any"},
+	{TypeFlagsUnknown, "Unknown"},
+	{TypeFlagsUndefined, "Undefined"},
+	{TypeFlagsNull, "Null"},
+	{TypeFlagsVoid, "Void"},
+	{TypeFlagsString, "String"},
+	{TypeFlagsNumber, "Number"},
+	{TypeFlagsBigInt, "BigInt"},
+	{TypeFlagsBoolean, "Boolean"},
+	{TypeFlagsESSymbol, "ESSymbol"},
+	{TypeFlagsStringLiteral, "StringLiteral"},
+	{TypeFlagsNumberLiteral, "NumberLiteral"},
+	{TypeFlagsBigIntLiteral, "BigIntLiteral"},
+	{TypeFlagsBooleanLiteral, "BooleanLiteral"},
+	{TypeFlagsUniqueESSymbol, "UniqueESSymbol"},
+	{TypeFlagsEnumLiteral, "EnumLiteral"},
+	{TypeFlagsEnum, "Enum"},
+	{TypeFlagsNonPrimitive, "NonPrimitive"},
+	{TypeFlagsNever, "Never"},
+	{TypeFlagsTypeParameter, "TypeParameter"},
+	{TypeFlagsObject, "Object"},
+	{TypeFlagsIndex, "Index"},
+	{TypeFlagsTemplateLiteral, "TemplateLiteral"},
+	{TypeFlagsStringMapping, "StringMapping"},
+	{TypeFlagsSubstitution, "Substitution"},
+	{TypeFlagsIndexedAccess, "IndexedAccess"},
+	{TypeFlagsConditional, "Conditional"},
+	{TypeFlagsUnion, "Union"},
+	{TypeFlagsIntersection, "Intersection"},
+}
+
+// FormatTypeFlags returns the individual flag names as a slice of strings.
+func FormatTypeFlags(flags TypeFlags) []string {
+	result := make([]string, 0, bits.OnesCount32(uint32(flags)))
+	for _, fn := range typeFlagNames {
+		if flags&fn.flag != 0 {
+			result = append(result, fn.name)
+		}
+	}
+	if len(result) == 0 {
+		result = append(result, "None")
+	}
+	return result
+}
+
+// String returns a pipe-separated string of flag names.
+func (f TypeFlags) String() string {
+	return strings.Join(FormatTypeFlags(f), "|")
+}
+
+func (v VarianceFlags) String() string {
+	variance := v & VarianceFlagsVarianceMask
+	var result string
+	switch variance {
+	case VarianceFlagsInvariant:
+		result = "in out"
+	case VarianceFlagsBivariant:
+		result = "[bivariant]"
+	case VarianceFlagsContravariant:
+		result = "in"
+	case VarianceFlagsCovariant:
+		result = "out"
+	case VarianceFlagsIndependent:
+		result = "[independent]"
+	default:
+		result = ""
+	}
+	if v&VarianceFlagsUnmeasurable != 0 {
+		result += " (unmeasurable)"
+	} else if v&VarianceFlagsUnreliable != 0 {
+		result += " (unreliable)"
+	}
+	return result
+}
+
 type ObjectFlags uint32
 
 // Types included in TypeFlags.ObjectFlagsType have an objectFlags property. Some ObjectFlags
@@ -516,6 +620,8 @@ const (
 	// Flags that require TypeFlags.Object and ObjectFlags.Reference
 	ObjectFlagsIdenticalBaseTypeCalculated = 1 << 27 // has had `getSingleBaseForNonAugmentingSubtype` invoked on it already
 	ObjectFlagsIdenticalBaseTypeExists     = 1 << 28 // has a defined cachedEquivalentBaseType member
+	ObjectFlagsUnresolvedMembers           = 1 << 29 // Member resolution in process
+	ObjectFlagsFromTypeNode                = 1 << 30 // Originates in resolution of AST type node
 	// Flags that require TypeFlags.UnionOrIntersection or TypeFlags.Substitution
 	ObjectFlagsIsGenericTypeComputed = 1 << 22 // IsGenericObjectType flag has been computed
 	ObjectFlagsIsGenericObjectType   = 1 << 23 // Union or intersection contains generic object type
@@ -671,6 +777,10 @@ func (t *Type) Symbol() *ast.Symbol {
 	return t.symbol
 }
 
+func (t *Type) Alias() *TypeAlias {
+	return t.alias
+}
+
 func (t *Type) IsUnion() bool {
 	return t.flags&TypeFlagsUnion != 0
 }
@@ -769,6 +879,14 @@ type LiteralType struct {
 
 func (t *LiteralType) Value() any {
 	return t.value
+}
+
+func (t *LiteralType) FreshType() *Type {
+	return t.freshType
+}
+
+func (t *LiteralType) RegularType() *Type {
+	return t.regularType
 }
 
 func (t *LiteralType) String() string {
@@ -1196,6 +1314,10 @@ func (s *Signature) HasRestParameter() bool {
 	return s.flags&SignatureFlagsHasRestParameter != 0
 }
 
+func (s *Signature) MinArgumentCount() int {
+	return int(s.minArgumentCount)
+}
+
 type CompositeSignature struct {
 	isUnion    bool         // True for union, false for intersection
 	signatures []*Signature // Individual signatures
@@ -1221,6 +1343,18 @@ func (typePredicate *TypePredicate) Type() *Type {
 	return typePredicate.t
 }
 
+func (typePredicate *TypePredicate) Kind() TypePredicateKind {
+	return typePredicate.kind
+}
+
+func (typePredicate *TypePredicate) ParameterIndex() int32 {
+	return typePredicate.parameterIndex
+}
+
+func (typePredicate *TypePredicate) ParameterName() string {
+	return typePredicate.parameterName
+}
+
 // IndexInfo
 
 type IndexInfo struct {
@@ -1228,7 +1362,20 @@ type IndexInfo struct {
 	valueType   *Type
 	isReadonly  bool
 	declaration *ast.Node   // IndexSignatureDeclaration
+	indexSymbol *ast.Symbol // Synthetic property symbol for this index signature
 	components  []*ast.Node // ElementWithComputedPropertyName
+}
+
+func (info *IndexInfo) KeyType() *Type {
+	return info.keyType
+}
+
+func (info *IndexInfo) ValueType() *Type {
+	return info.valueType
+}
+
+func (info *IndexInfo) IsReadonly() bool {
+	return info.isReadonly
 }
 
 /**

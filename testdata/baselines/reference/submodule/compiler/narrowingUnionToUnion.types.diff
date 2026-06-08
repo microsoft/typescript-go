@@ -1,92 +1,149 @@
 --- old.narrowingUnionToUnion.types
 +++ new.narrowingUnionToUnion.types
-@@= skipped -244, +244 lines =@@
-         }
-     },
-     (value?: string) => {
-->(value?: string) => {        if (isMaybeEmptyString(value)) {            value;  // "" | undefined        }        else {            value;  // string        }    } : (value?: string) => void
-+>(value?: string) => {        if (isMaybeEmptyString(value)) {            value;  // "" | undefined        }        else {            value;  // string        }    } : (value?: string | undefined) => void
- >value : string | undefined
+@@= skipped -187, +187 lines =@@
+ // #39105
 
-         if (isMaybeEmptyString(value)) {
-@@= skipped -46, +46 lines =@@
-         }
-     },
-     (value?: number) => {
-->(value?: number) => {        if (isMaybeZero(value)) {            value;  // 0 | undefined        }        else {            value;  // number        }    } : (value?: number) => void
-+>(value?: number) => {        if (isMaybeZero(value)) {            value;  // 0 | undefined        }        else {            value;  // number        }    } : (value?: number | undefined) => void
- >value : number | undefined
+ declare function isEmptyString(value: string): value is '';
+->isEmptyString : (value: string) => value is ""
++>isEmptyString : (value: string) => value is ''
+ >value : string
 
-         if (isMaybeZero(value)) {
-@@= skipped -46, +46 lines =@@
-         }
-     },
-     (value?: string[]) => {
-->(value?: string[]) => {        if (isMaybeEmptyArray(value)) {            value;  // [] | undefined        }        else {            value;  // string[]        }    } : (value?: string[]) => void
-+>(value?: string[]) => {        if (isMaybeEmptyArray(value)) {            value;  // [] | undefined        }        else {            value;  // string[]        }    } : (value?: string[] | undefined) => void
- >value : string[] | undefined
-
-         if (isMaybeEmptyArray(value)) {
-@@= skipped -24, +24 lines =@@
- >EmptyString : EmptyString
-
- function isEmpty(value: string | EmptyString): value is EmptyString {
-->isEmpty : (value: string | EmptyString) => value is EmptyString
-+>isEmpty : (value: string | null | undefined) => value is EmptyString
+ declare function isMaybeEmptyString(value: string | null | undefined): value is '' | null | undefined;
+->isMaybeEmptyString : (value: string | null | undefined) => value is "" | null | undefined
++>isMaybeEmptyString : (value: string | null | undefined) => value is '' | null | undefined
  >value : string | null | undefined
 
-     return value === '' || value === null || value === undefined;
-@@= skipped -21, +21 lines =@@
+ declare function isZero(value: number): value is 0;
+@@= skipped -33, +33 lines =@@
 
- if (isEmpty(test)) {
- >isEmpty(test) : boolean
-->isEmpty : (value: string | EmptyString) => value is EmptyString
-+>isEmpty : (value: string | null | undefined) => value is EmptyString
- >test : string | null | undefined
+         if (isEmptyString(value)) {
+ >isEmptyString(value) : boolean
+->isEmptyString : (value: string) => value is ""
++>isEmptyString : (value: string) => value is ''
+ >value : string
 
-     test;  // EmptyString
-@@= skipped -14, +14 lines =@@
- >value : any
+             value;  // ""
+@@= skipped -12, +12 lines =@@
+         }
+         if (isMaybeEmptyString(value)) {
+ >isMaybeEmptyString(value) : boolean
+->isMaybeEmptyString : (value: string | null | undefined) => value is "" | null | undefined
++>isMaybeEmptyString : (value: string | null | undefined) => value is '' | null | undefined
+ >value : string
 
- function test1(foo: number | string | boolean) {
-->test1 : (foo: number | string | boolean) => void
-+>test1 : (foo: string | number | boolean) => void
- >foo : string | number | boolean
+             value;  // ""
+@@= skipped -17, +17 lines =@@
 
-     assert<1 | string>(foo);
+         if (isMaybeEmptyString(value)) {
+ >isMaybeEmptyString(value) : boolean
+->isMaybeEmptyString : (value: string | null | undefined) => value is "" | null | undefined
++>isMaybeEmptyString : (value: string | null | undefined) => value is '' | null | undefined
+ >value : string | undefined
+
+             value;  // "" | undefined
+@@= skipped -291, +291 lines =@@
+ >type : "A" | "B"
+ >'A' : "A"
+ >working.aProp : number
+->working : { type: "A"; aProp: number; }
++>working : { type: 'A'; aProp: number; }
+ >aProp : number
+
+ isMyDiscriminatedUnion(broken) && broken.type === 'A' && broken.aProp;
 @@= skipped -15, +15 lines =@@
- // Repro from #46909
+ >type : "A" | "B"
+ >'A' : "A"
+ >broken.aProp : number
+->broken : { type: "A"; aProp: number; }
++>broken : { type: 'A'; aProp: number; }
+ >aProp : number
 
- function check1(x: unknown): x is (string | 0) {
-->check1 : (x: unknown) => x is (string | 0)
-+>check1 : (x: unknown) => x is string | 0
- >x : unknown
-
- 	return typeof x === "string" || x === 0;
+ isMyDiscriminatedUnion(workingAgain) && workingAgain.type === 'A' && workingAgain.aProp;
 @@= skipped -15, +15 lines =@@
+ >type : "A" | "B"
+ >'A' : "A"
+ >workingAgain.aProp : number
+->workingAgain : { type: "A"; aProp: number; }
++>workingAgain : { type: 'A'; aProp: number; }
+ >aProp : number
+
+ // Repro from #56144
+@@= skipped -20, +20 lines =@@
+ >type : "b"
+
+ function example1(value: Union): { type: 'a'; variant: 2 } | null {
+->example1 : (value: Union) => { type: "a"; variant: 2; } | null
++>example1 : (value: Union) => { type: 'a'; variant: 2; } | null
+ >value : Union
+ >type : "a"
+ >variant : 2
+@@= skipped -17, +17 lines =@@
+     if (value.variant === 1) {
+ >value.variant === 1 : boolean
+ >value.variant : 1 | 2
+->value : { type: "a"; variant: 1; } | { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 1; } | { type: 'a'; variant: 2; }
+ >variant : 1 | 2
+ >1 : 1
+
+         return null;
+     }
+     return value;
+->value : { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 2; }
  }
 
- function check2(x: unknown): x is ("hello" | 0) {
-->check2 : (x: unknown) => x is ("hello" | 0)
-+>check2 : (x: unknown) => x is "hello" | 0
- >x : unknown
+ function example2(value: Union): { type: 'a'; variant: 2 } | null {
+->example2 : (value: Union) => { type: "a"; variant: 2; } | null
++>example2 : (value: Union) => { type: 'a'; variant: 2; } | null
+ >value : Union
+ >type : "a"
+ >variant : 2
+@@= skipped -29, +29 lines =@@
+ >value.type === 'a' && value.variant === 1 : boolean
+ >value.type === 'a' : boolean
+ >value.type : "a"
+->value : { type: "a"; variant: 1; } | { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 1; } | { type: 'a'; variant: 2; }
+ >type : "a"
+ >'a' : "a"
+ >value.variant === 1 : boolean
+ >value.variant : 1 | 2
+->value : { type: "a"; variant: 1; } | { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 1; } | { type: 'a'; variant: 2; }
+ >variant : 1 | 2
+ >1 : 1
 
- 	return x === "hello" || x === 0;
-@@= skipped -45, +45 lines =@@
- 	}
- 	if (check1(x)) {
- >check1(x) : boolean
-->check1 : (x: unknown) => x is (string | 0)
-+>check1 : (x: unknown) => x is string | 0
- >x : unknown
+         return null;
+     }
+     return value;
+->value : { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 2; }
+ }
 
- 		x;  // string | 0
-@@= skipped -8, +8 lines =@@
+ function example3(value: Union): { type: 'a'; variant: 2 } | null {
+->example3 : (value: Union) => { type: "a"; variant: 2; } | null
++>example3 : (value: Union) => { type: 'a'; variant: 2; } | null
+ >value : Union
+ >type : "a"
+ >variant : 2
+@@= skipped -33, +33 lines =@@
+     if (value.type && value.variant === 1) {
+ >value.type && value.variant === 1 : boolean
+ >value.type : "a"
+->value : { type: "a"; variant: 1; } | { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 1; } | { type: 'a'; variant: 2; }
+ >type : "a"
+ >value.variant === 1 : boolean
+ >value.variant : 1 | 2
+->value : { type: "a"; variant: 1; } | { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 1; } | { type: 'a'; variant: 2; }
+ >variant : 1 | 2
+ >1 : 1
 
- 		if (check2(x)) {
- >check2(x) : boolean
-->check2 : (x: unknown) => x is ("hello" | 0)
-+>check2 : (x: unknown) => x is "hello" | 0
- >x : string | 0
-
- 			x;  // 0 | "hello"
+         return null;
+     }
+     return value;
+->value : { type: "a"; variant: 2; }
++>value : { type: 'a'; variant: 2; }
+ }

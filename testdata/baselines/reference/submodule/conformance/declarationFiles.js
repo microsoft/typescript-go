@@ -52,29 +52,20 @@ class C4 {
 //// [declarationFiles.js]
 "use strict";
 class C1 {
-    x;
     f(x) { return undefined; }
     constructor(x) { }
 }
 class C2 {
 }
 class C3 {
-    a;
-    b;
-    c;
-    d;
-    e;
-    f;
-    g;
-    h;
-    i;
-    j;
 }
 class C4 {
-    x1 = { a: this };
-    x2 = [this];
-    x3 = [{ a: this }];
-    x4 = () => this;
+    constructor() {
+        this.x1 = { a: this };
+        this.x2 = [this];
+        this.x3 = [{ a: this }];
+        this.x4 = () => this;
+    }
     f1() {
         return { a: this };
     }
@@ -87,41 +78,4 @@ class C4 {
     f4() {
         return () => this;
     }
-}
-
-
-//// [declarationFiles.d.ts]
-declare class C1 {
-    x: this;
-    f(x: this): this;
-    constructor(x: this);
-}
-declare class C2 {
-    [x: string]: this;
-}
-interface Foo<T> {
-    x: T;
-    y: this;
-}
-declare class C3 {
-    a: this[];
-    b: [this, this];
-    c: this | Date;
-    d: this & Date;
-    e: (((this)));
-    f: (x: this) => this;
-    g: new (x: this) => this;
-    h: Foo<this>;
-    i: Foo<this | (() => this)>;
-    j: (x: any) => x is this;
-}
-declare class C4 {
-    x1: any;
-    x2: this[];
-    x3: any;
-    x4: () => this;
-    f1(): any;
-    f2(): this[];
-    f3(): any;
-    f4(): () => this;
 }

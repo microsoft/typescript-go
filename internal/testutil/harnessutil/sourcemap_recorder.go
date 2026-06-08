@@ -22,7 +22,8 @@ func (w *writerAggregator) WriteStringf(format string, args ...any) {
 }
 
 func (w *writerAggregator) WriteLine(s string) {
-	w.WriteString(s + "\r\n")
+	w.WriteString(s)
+	w.WriteString("\r\n")
 }
 
 func (w *writerAggregator) WriteLinef(format string, args ...any) {
@@ -145,7 +146,8 @@ func (w *sourceMapSpanWriter) recordSourceMapSpan(sourceMapSpan *sourcemap.Mappi
 		} else {
 			decodeErrors = []string{"!!^^ !!^^ The decoded span from sourcemap's mapping entry does not match what was encoded for this span:"}
 		}
-		decodeErrors = append(decodeErrors,
+		decodeErrors = append(
+			decodeErrors,
 			"!!^^ !!^^ Decoded span from sourcemap's mappings entry: "+
 				w.getSourceMapSpanString(decodeResult.sourceMapSpan, true /*getAbsentNameIndex*/)+
 				" Span encoded by the emitter:"+

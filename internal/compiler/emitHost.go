@@ -108,6 +108,7 @@ func (host *emitHost) Options() *core.CompilerOptions { return host.program.Opti
 func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
 func (host *emitHost) GetCurrentDirectory() string    { return host.program.GetCurrentDirectory() }
 func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
+
 func (host *emitHost) UseCaseSensitiveFileNames() bool {
 	return host.program.UseCaseSensitiveFileNames()
 }
@@ -116,8 +117,8 @@ func (host *emitHost) IsEmitBlocked(file string) bool {
 	return host.program.IsEmitBlocked(file)
 }
 
-func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool) error {
-	return host.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
+func (host *emitHost) WriteFile(fileName string, text string) error {
+	return host.program.Host().FS().WriteFile(fileName, text)
 }
 
 func (host *emitHost) GetEmitResolver() printer.EmitResolver {

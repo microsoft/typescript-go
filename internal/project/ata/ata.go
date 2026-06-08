@@ -406,7 +406,7 @@ func (ti *TypingsInstaller) processCacheLocation(projectID string, fs vfs.FS, lo
 	packageJson := tspath.CombinePaths(ti.typingsLocation, "package.json")
 	packageLockJson := tspath.CombinePaths(ti.typingsLocation, "package-lock.json")
 	logger.Log("ATA:: Trying to find '" + packageJson + "'...")
-	if fs.FileExists(packageJson) && fs.FileExists((packageLockJson)) {
+	if fs.FileExists(packageJson) && fs.FileExists(packageLockJson) {
 		var npmConfig npmConfig
 		npmConfigContents := parseNpmConfigOrLock(fs, logger, packageJson, &npmConfig)
 		var npmLock npmLock
@@ -469,7 +469,7 @@ func (ti *TypingsInstaller) ensureTypingsLocationExists(fs vfs.FS, logger loggin
 
 	if !fs.FileExists(npmConfigPath) {
 		logger.Log(fmt.Sprintf("ATA:: Npm config file: '%s' is missing, creating new one...", npmConfigPath))
-		err := fs.WriteFile(npmConfigPath, "{ \"private\": true }", false)
+		err := fs.WriteFile(npmConfigPath, "{ \"private\": true }")
 		if err != nil {
 			logger.Log(fmt.Sprintf("ATA:: Npm config file write failed: %v", err))
 		}

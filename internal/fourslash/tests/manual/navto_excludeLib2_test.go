@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -14,7 +15,7 @@ func TestNavto_excludeLib2(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /index.ts
-import { [|someName as weirdName|] } from "bar";
+import { someName as [|weirdName|] } from "bar";
 // @filename: /tsconfig.json
 {}
 // @filename: /node_modules/bar/index.d.ts
@@ -26,7 +27,7 @@ export const someName: number;
 	f.VerifyWorkspaceSymbol(t, []*fourslash.VerifyWorkspaceSymbolCase{
 		{
 			Pattern:     "weirdName",
-			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: false},
+			Preferences: &lsutil.UserPreferences{ExcludeLibrarySymbolsInNavTo: core.TSFalse},
 			Exact: new([]*lsproto.SymbolInformation{
 				{
 					Name:     "weirdName",
