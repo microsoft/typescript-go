@@ -353,6 +353,11 @@ func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool 
 		equalCheckJSDirectives(file1.CheckJsDirective, file2.CheckJsDirective)
 }
 
+// updateImportHelpersImportSpecifier refreshes the synthetic `tslib` import state
+// for a reused program after replacing one source file. Program construction stores
+// importHelpers resolution state in program-owned side tables rather than on the
+// SourceFile, so file reuse must add or remove the synthetic specifier, module
+// resolution, include reason, and any directly included helper file together.
 func (p *Program) updateImportHelpersImportSpecifier(oldFile *ast.SourceFile, newFile *ast.SourceFile) {
 	path := newFile.Path()
 	oldSpecifier := p.importHelpersImportSpecifiers[path]
@@ -424,6 +429,10 @@ func (p *Program) createImportHelpersImportSpecifier(file *ast.SourceFile) *ast.
 	return specifier
 }
 
+// hasModuleSpecifierWithKey reports whether the new file still has a real import or
+// module augmentation using the same module name and resolution mode as a removed
+// synthetic import. Module augmentations share the same resolution cache as imports,
+// and mode is part of the cache key, so matching only the text is insufficient.
 func (p *Program) hasModuleSpecifierWithKey(file *ast.SourceFile, key module.ModeAwareCacheKey) bool {
 	if slices.ContainsFunc(file.Imports(), func(imp *ast.Node) bool {
 		return imp.Text() == key.Name && p.GetModeForUsageLocation(file, imp) == key.Mode
@@ -438,6 +447,10 @@ func (p *Program) hasModuleSpecifierWithKey(file *ast.SourceFile, key module.Mod
 	return false
 }
 
+// addSyntheticFileIncludeReason records that the helper module was included via a
+// synthetic importHelpers import. If that resolution brings in a file that the old
+// program did not contain, add the parsed file and its metadata to keep the reused
+// program consistent with a full rebuild.
 func (p *Program) addSyntheticFileIncludeReason(resolved *module.ResolvedModule, file *ast.SourceFile, specifier *ast.Node) {
 	resolvedPath := tspath.ToPath(resolved.ResolvedFileName, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 	p.includeProcessor.fileIncludeReasons[resolvedPath] = append(p.includeProcessor.fileIncludeReasons[resolvedPath], &FileIncludeReason{
@@ -473,6 +486,10 @@ func (p *Program) addSyntheticFileIncludeReason(resolved *module.ResolvedModule,
 	}
 }
 
+// removeSyntheticFileIncludeReason removes the old synthetic importHelpers include
+// reason. If no include reasons remain for the resolved helper file, remove that
+// non-lib file and its side-table entries from the reused program as a full rebuild
+// would have done.
 func (p *Program) removeSyntheticFileIncludeReason(resolved *module.ResolvedModule, file *ast.SourceFile, specifier *ast.Node) {
 	resolvedPath := tspath.ToPath(resolved.ResolvedFileName, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 	reasons := p.includeProcessor.fileIncludeReasons[resolvedPath]
