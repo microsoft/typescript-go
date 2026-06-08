@@ -29,8 +29,10 @@ var benchDir = flag.String("bench-dir", "", "project root for WatchRegistration 
 
 // benchBackend selects the fswatch backend for the WatchFiles sub-benchmark.
 // Valid values: "default", "fsevents", "kqueue", "inotify", "fanotify", "windows".
-var benchBackend = flag.String("bench-backend", "default", "fswatch backend for WatchFiles sub-benchmark (default|fsevents|kqueue|inotify|fanotify|windows)")
-var benchGranular = flag.Bool("bench-granular", false, "enable granular watcher computation")
+var (
+	benchBackend  = flag.String("bench-backend", "default", "fswatch backend for WatchFiles sub-benchmark (default|fsevents|kqueue|inotify|fanotify|windows)")
+	benchGranular = flag.Bool("bench-granular", false, "enable granular watcher computation")
+)
 
 // BenchmarkWatchRegistration measures the two separate phases of setting up
 // the builtin (in-process) file watcher as driven by the project system.

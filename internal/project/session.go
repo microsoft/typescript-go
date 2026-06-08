@@ -219,7 +219,7 @@ func NewSession(init *SessionInit) *Session {
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 				lsproto.GetClientCapabilities(init.BackgroundCtx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 				init.Options.GranularWatches,
-				func(nodeModulesDirs map[tspath.Path]string) PatternsAndIgnored {
+				func(nodeModulesDirs map[tspath.Path]string, _ vfs.FS) PatternsAndIgnored {
 					patterns := make([]string, 0, len(nodeModulesDirs))
 					for _, dir := range nodeModulesDirs {
 						patterns = append(patterns, getRecursiveGlobPattern(dir))
@@ -1246,7 +1246,7 @@ func (s *Session) WaitForBackgroundTasks() {
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
 	if newWatcher != nil {
-		w := newWatcher.Watchers()
+		w := newWatcher.Watchers(session.fs.fs)
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
@@ -1299,7 +1299,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		}
 	}
 	if oldWatcher != nil {
-		w := oldWatcher.Watchers()
+		w := oldWatcher.Watchers(session.fs.fs)
 		watchers := append(w.WorkspaceWatchers, w.OutsideWorkspaceWatchers...)
 		if len(watchers) > 0 {
 			var removedIDs []WatcherID
@@ -1331,7 +1331,7 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		oldSnapshot.ConfigFileRegistry.configs,
 		newSnapshot.ConfigFileRegistry.configs,
 		func(a, b *configFileEntry) bool {
-			return a.rootFilesWatch.ID() == b.rootFilesWatch.ID()
+			return a.rootFilesWatch.ID(s.fs.fs) == b.rootFilesWatch.ID(s.fs.fs)
 		},
 		func(_ tspath.Path, addedEntry *configFileEntry) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedEntry.rootFilesWatch)...)
@@ -1346,8 +1346,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 	// Retry config watchers whose IDs didn't change but whose previous registration failed.
 	for path, newEntry := range newSnapshot.ConfigFileRegistry.configs {
 		if oldEntry, ok := oldSnapshot.ConfigFileRegistry.configs[path]; ok {
-			if oldEntry.rootFilesWatch.ID() == newEntry.rootFilesWatch.ID() {
-				if s.watches.IsPending(newEntry.rootFilesWatch.ID()) {
+			if oldEntry.rootFilesWatch.ID(s.fs.fs) == newEntry.rootFilesWatch.ID(s.fs.fs) {
+				if s.watches.IsPending(newEntry.rootFilesWatch.ID(s.fs.fs)) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newEntry.rootFilesWatch)...)
 				}
 			}
@@ -1366,27 +1366,27 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.typingsWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
-			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
+			if oldProject.programFilesWatch.ID(s.fs.fs) != newProject.programFilesWatch.ID(s.fs.fs) {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
 			} else {
-				if s.watches.IsPending(newProject.programFilesWatch.ID()) {
+				if s.watches.IsPending(newProject.programFilesWatch.ID(s.fs.fs)) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.programFilesWatch)...)
 				}
 			}
-			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
+			if oldProject.typingsWatch.ID(s.fs.fs) != newProject.typingsWatch.ID(s.fs.fs) {
 				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
 			} else {
-				if s.watches.IsPending(newProject.typingsWatch.ID()) {
+				if s.watches.IsPending(newProject.typingsWatch.ID(s.fs.fs)) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
 				}
 			}
 		},
 	)
 
-	if oldSnapshot.autoImportsWatch.ID() != newSnapshot.autoImportsWatch.ID() {
+	if oldSnapshot.autoImportsWatch.ID(s.fs.fs) != newSnapshot.autoImportsWatch.ID(s.fs.fs) {
 		errors = append(errors, updateWatch(ctx, s, s.logger, oldSnapshot.autoImportsWatch, newSnapshot.autoImportsWatch)...)
 	} else {
-		if s.watches.IsPending(newSnapshot.autoImportsWatch.ID()) {
+		if s.watches.IsPending(newSnapshot.autoImportsWatch.ID(s.fs.fs)) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, newSnapshot.autoImportsWatch)...)
 		}
 	}

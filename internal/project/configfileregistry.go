@@ -4,10 +4,10 @@ import (
 	"iter"
 	"maps"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ConfigFileRegistry struct {
@@ -58,7 +58,9 @@ func newConfigFileEntry(hasRelativePatternCapability bool, granularWatches bool,
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 			hasRelativePatternCapability,
 			granularWatches,
-			core.Identity,
+			func(data PatternsAndIgnored, _ vfs.FS) PatternsAndIgnored {
+				return data
+			},
 		),
 	}
 }

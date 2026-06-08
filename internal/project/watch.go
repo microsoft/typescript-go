@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 const (
@@ -161,7 +162,11 @@ type WatchedFiles[T any] struct {
 	watchKind                    lsproto.WatchKind
 	hasRelativePatternCapability bool
 	granularWatches              bool
-	computeGlobPatterns          func(input T) PatternsAndIgnored
+	// computeGlobPatterns computes the set of watcher glob patterns from the
+	// input. The provided fs must be the live session file system, not a
+	// snapshot-cached FS: it is used to probe which directories currently
+	// exist on disk so that only safe-to-watch directories are registered.
+	computeGlobPatterns func(input T, fs vfs.FS) PatternsAndIgnored
 
 	mu                       sync.RWMutex
 	input                    T
@@ -172,7 +177,7 @@ type WatchedFiles[T any] struct {
 	id                       uint64
 }
 
-func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, hasRelativePatternCapability bool, granularWatches bool, computeGlobPatterns func(input T) PatternsAndIgnored) *WatchedFiles[T] {
+func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, hasRelativePatternCapability bool, granularWatches bool, computeGlobPatterns func(input T, fs vfs.FS) PatternsAndIgnored) *WatchedFiles[T] {
 	return &WatchedFiles[T]{
 		id:                           watcherID.Add(1),
 		name:                         name,
@@ -190,11 +195,15 @@ type Watchers struct {
 	IgnoredPaths             map[string]struct{}
 }
 
-func (w *WatchedFiles[T]) Watchers() Watchers {
+// Watchers computes the watcher set for these watched files. The provided fs
+// must be the live session file system, not a snapshot-cached FS: it is used to
+// probe which directories currently exist on disk so that only safe-to-watch
+// directories are registered.
+func (w *WatchedFiles[T]) Watchers(fs vfs.FS) Watchers {
 	w.computeWatchersOnce.Do(func() {
 		w.mu.Lock()
 		defer w.mu.Unlock()
-		result := w.computeGlobPatterns(w.input)
+		result := w.computeGlobPatterns(w.input, fs)
 		globs := slices.Compact(slices.Sorted(slices.Values(result.patternsInsideWorkspace)))
 
 		ignored := result.ignored
@@ -238,11 +247,14 @@ func (w *WatchedFiles[T]) Watchers() Watchers {
 	}
 }
 
-func (w *WatchedFiles[T]) ID() WatcherID {
+// ID returns the identity of the current watcher set. Because computing the
+// watchers can change the identity (when the resulting globs change), the
+// provided fs must be the live session file system, not a snapshot-cached FS.
+func (w *WatchedFiles[T]) ID(fs vfs.FS) WatcherID {
 	if w == nil {
 		return ""
 	}
-	return w.Watchers().WatcherID
+	return w.Watchers(fs).WatcherID
 }
 
 func (w *WatchedFiles[T]) Name() string {
@@ -277,13 +289,14 @@ func createResolutionLookupGlobMapper(
 	currentDirectory string,
 	useCaseSensitiveFileNames bool,
 	granularWatches bool,
-	directoryExists func(path string) bool,
-) func(data *collections.SyncSet[tspath.Path]) PatternsAndIgnored {
+) func(data *collections.SyncSet[tspath.Path], fs vfs.FS) PatternsAndIgnored {
 	workspaceDirectoryPath := tspath.ToPath(workspaceDirectory, currentDirectory, useCaseSensitiveFileNames)
 	currentDirectoryPath := tspath.ToPath(currentDirectory, currentDirectory, useCaseSensitiveFileNames)
 	libDirectoryPath := tspath.ToPath(libDirectory, currentDirectory, useCaseSensitiveFileNames)
 
-	return func(data *collections.SyncSet[tspath.Path]) PatternsAndIgnored {
+	// fs must be the live session file system, not a snapshot-cached FS: it is
+	// used to probe which directories currently exist on disk.
+	return func(data *collections.SyncSet[tspath.Path], fs vfs.FS) PatternsAndIgnored {
 		var ignored map[string]struct{}
 		var seenDirs collections.Set[tspath.Path]
 		var includeWorkspace, includeRoot, includeLib bool
@@ -338,10 +351,10 @@ func createResolutionLookupGlobMapper(
 
 		var globs []string
 		if granularWatches {
-			globs = appendRecursiveGlobs(globs, workspaceDirectories, directoryExists)
-			globs = appendRecursiveGlobs(globs, rootDirectories, directoryExists)
-			globs = appendRecursiveGlobs(globs, libDirectories, directoryExists)
-			globs = appendRecursiveGlobs(globs, nodeModulesDirectories, directoryExists)
+			globs = appendRecursiveGlobs(globs, workspaceDirectories, fs.DirectoryExists)
+			globs = appendRecursiveGlobs(globs, rootDirectories, fs.DirectoryExists)
+			globs = appendRecursiveGlobs(globs, libDirectories, fs.DirectoryExists)
+			globs = appendRecursiveGlobs(globs, nodeModulesDirectories, fs.DirectoryExists)
 		} else {
 			if includeWorkspace {
 				globs = append(globs, getRecursiveGlobPattern(string(workspaceDirectoryPath)))
@@ -376,7 +389,7 @@ func createResolutionLookupGlobMapper(
 				for dir := range externalDirectories.Keys() {
 					externalDirs.Add(dir)
 				}
-				outsideDirs = appendResolvedDirectories(outsideDirs, externalDirs, directoryExists)
+				outsideDirs = appendResolvedDirectories(outsideDirs, externalDirs, fs.DirectoryExists)
 				slices.Sort(outsideDirs)
 				outsideDirs = slices.Compact(outsideDirs)
 			} else {

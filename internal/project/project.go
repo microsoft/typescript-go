@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 const (
@@ -160,7 +161,6 @@ func NewProject(
 			project.currentDirectory,
 			builder.fs.fs.UseCaseSensitiveFileNames(),
 			builder.sessionOptions.GranularWatches,
-			builder.fs.FS().DirectoryExists,
 		),
 	)
 	if builder.sessionOptions.TypingsLocation != "" {
@@ -169,7 +169,9 @@ func NewProject(
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 			lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 			builder.sessionOptions.GranularWatches,
-			core.Identity,
+			func(data PatternsAndIgnored, _ vfs.FS) PatternsAndIgnored {
+				return data
+			},
 		)
 	}
 	return project
