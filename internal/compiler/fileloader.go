@@ -131,6 +131,9 @@ func newImportHelpersImportSpecifier(specifier *ast.StringLiteralNode) *importHe
 func (s *importHelpersImportSpecifier) getSpecifier(file *ast.SourceFile) *ast.StringLiteralNode {
 	s.specifierOnce.Do(func() {
 		if s.specifier == nil {
+			// Reused programs store only the need for this synthetic import and
+			// defer allocating the node until a checker or language service asks
+			// for it.
 			s.specifier = createSyntheticImport(externalHelpersModuleNameText, file)
 		}
 	})

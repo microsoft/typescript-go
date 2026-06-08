@@ -426,6 +426,9 @@ func (p *Program) getModeForSyntheticImport(file ast.HasFileName) core.Resolutio
 }
 
 func getModeForSyntheticImport(fileName string, meta ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
+	// Synthetic helper imports are always import declarations with value
+	// syntax, so this is the import-declaration path of getModeForUsageLocation
+	// without needing to allocate a StringLiteral node first.
 	if options != nil && importSyntaxAffectsModuleResolution(options) {
 		fileEmitMode := ast.GetEmitModuleFormatOfFileWorker(fileName, options, meta)
 		if fileEmitMode == core.ModuleKindCommonJS {
@@ -509,6 +512,9 @@ func (p *Program) removeSyntheticFileIncludeReason(resolved *module.ResolvedModu
 		if ref.file != file.Path() || ref.index != syntheticImportIndex {
 			return false
 		}
+		// Program construction stored the original synthetic node in the include
+		// reason; reused programs only store the synthetic import index and create
+		// the node lazily if it is later requested.
 		if ref.synthetic == nil {
 			return true
 		}

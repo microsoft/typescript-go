@@ -110,6 +110,8 @@ func (r *FileIncludeReason) getReferencedLocation(program *Program) *referenceFi
 			specifier = ref.synthetic
 			isSynthetic = true
 		} else if ref.index == syntheticImportIndex {
+			// Reused programs may record only that this is the synthetic
+			// importHelpers import; create the specifier lazily if needed.
 			specifier = program.GetImportHelpersImportSpecifier(file.Path())
 			isSynthetic = true
 		} else if ref.index < len(file.Imports()) {
