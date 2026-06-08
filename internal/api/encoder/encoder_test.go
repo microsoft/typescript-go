@@ -25,7 +25,7 @@ func TestEncodeSourceFile(t *testing.T) {
 	}, "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
-		buf, err := encoder.EncodeSourceFile(sourceFile)
+		buf, _, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(t, err)
 
 		str := formatEncodedSourceFile(buf)
@@ -43,7 +43,7 @@ func TestEncodeSourceFileWithUnicodeEscapes(t *testing.T) {
 	}, `let a = "😃"; let b = "\ud83d\ude03"; let c = "\udc00\ud83d\ude03"; let d = "\ud83d\ud83d\ude03"`, core.ScriptKindTS)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
-		buf, err := encoder.EncodeSourceFile(sourceFile)
+		buf, _, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(t, err)
 
 		str := formatEncodedSourceFile(buf)
@@ -60,7 +60,7 @@ func TestEncodeSourceFilePreservesSurrogateEscapes(t *testing.T) {
 		Path:     "/test.ts",
 	}, `let s = "\uD83E\uDD80\uD800a\uDC00\uD7FF\uD801\uDBFF\uDFFF";`, core.ScriptKindTS)
 
-	buf, err := encoder.EncodeSourceFile(sourceFile)
+	buf, _, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(t, err)
 
 	text, ok := findExtendedNodeText(buf, ast.KindStringLiteral)
@@ -83,7 +83,7 @@ func TestEncodeSourceFilePreservesTemplateSurrogateEscapes(t *testing.T) {
 		Path:     "/test.ts",
 	}, "let s = `\\uD800${1}\\uDC00`;", core.ScriptKindTS)
 
-	buf, err := encoder.EncodeSourceFile(sourceFile)
+	buf, _, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(t, err)
 
 	headText, ok := findExtendedNodeText(buf, ast.KindTemplateHead)
@@ -102,12 +102,44 @@ func TestEncodeSourceFileFallsBackForUnterminatedSurrogateEscape(t *testing.T) {
 		Path:     "/test.ts",
 	}, `let s = "\uD800a`, core.ScriptKindTS)
 
-	buf, err := encoder.EncodeSourceFile(sourceFile)
+	buf, _, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(t, err)
 
 	text, ok := findExtendedNodeText(buf, ast.KindStringLiteral)
 	assert.Assert(t, ok)
 	assert.DeepEqual(t, text, []byte("\ufffda"))
+}
+
+func TestBuildNodeIndexTableMatchesEncode(t *testing.T) {
+	t.Parallel()
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.ts",
+		Path:     "/test.ts",
+	}, "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
+
+	_, encodeTable, err := encoder.EncodeSourceFile(sourceFile)
+	assert.NilError(t, err)
+
+	buildTable := encoder.BuildNodeIndexTable(sourceFile)
+
+	// Both tables should produce identical Nodes slices
+	assert.Equal(t, len(buildTable.Nodes), len(encodeTable.Nodes), "Nodes slice length mismatch")
+
+	// Every index should map to the same node
+	for i := range encodeTable.Nodes {
+		assert.Equal(t, buildTable.Nodes[i], encodeTable.Nodes[i], "node mismatch at index %d", i)
+	}
+
+	// GetIndex on both tables should agree for every non-nil node
+	for i, node := range encodeTable.Nodes {
+		if node == nil {
+			continue
+		}
+		encIdx := encodeTable.GetIndex(node)
+		buildIdx := buildTable.GetIndex(node)
+		assert.Equal(t, encIdx, uint32(i), "encodeTable.GetIndex mismatch at index %d, node kind=%s", i, node.Kind.String())
+		assert.Equal(t, buildIdx, encIdx, "buildTable.GetIndex mismatch for node kind=%s", node.Kind.String())
+	}
 }
 
 func BenchmarkEncodeSourceFile(b *testing.B) {
@@ -121,8 +153,23 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	}, string(fileContent), core.ScriptKindTS)
 
 	for b.Loop() {
-		_, err := encoder.EncodeSourceFile(sourceFile)
+		_, _, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(b, err)
+	}
+}
+
+func BenchmarkBuildNodeIndexTable(b *testing.B) {
+	repo.SkipIfNoTypeScriptSubmodule(b)
+	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
+	fileContent, err := os.ReadFile(filePath)
+	assert.NilError(b, err)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/checker.ts",
+		Path:     "/checker.ts",
+	}, string(fileContent), core.ScriptKindTS)
+
+	for b.Loop() {
+		encoder.BuildNodeIndexTable(sourceFile)
 	}
 }
 

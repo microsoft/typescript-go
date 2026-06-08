@@ -256,6 +256,13 @@ func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) Flow
 		if !c.isReachableFlowNode(flow) {
 			return FlowType{t: c.unreachableNeverType}
 		}
+		// A matching dotted name might also be an expando property on a function *expression*,
+		// in which case we continue control flow analysis back to the function's declaration
+		if ast.IsVariableDeclaration(node) && (ast.IsInJSFile(node) || ast.IsVarConstLike(node)) {
+			if init := node.Initializer(); init != nil && ast.IsFunctionExpressionOrArrowFunction(init) {
+				return c.getTypeAtFlowNode(f, flow.Antecedent)
+			}
+		}
 		return FlowType{t: f.declaredType}
 	}
 	// for (const _ in ref) acts as a nonnull on ref
@@ -314,7 +321,7 @@ func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *Ty
 			if c.isMatchingReference(f.reference, predicateArgument) {
 				return c.getNarrowedType(t, predicate.t, assumeTrue, false /*checkDerived*/)
 			}
-			if c.strictNullChecks && c.optionalChainContainsReference(predicateArgument, f.reference) && (assumeTrue && !(c.hasTypeFacts(predicate.t, TypeFactsEQUndefined)) || !assumeTrue && everyType(predicate.t, c.IsNullableType)) {
+			if c.strictNullChecks && c.optionalChainContainsReference(predicateArgument, f.reference) && (assumeTrue && !c.hasTypeFacts(predicate.t, TypeFactsEQUndefined) || !assumeTrue && everyType(predicate.t, c.IsNullableType)) {
 				t = c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
 			}
 			access := c.getDiscriminantPropertyAccess(f, predicateArgument, t)
@@ -1737,16 +1744,11 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 			return name, true
 		}
 	}
-	if hasOnlyExpressionInitializer(declaration) && c.isBlockScopedNameDeclaredBeforeUse(declaration, node) {
-		initializer := declaration.Initializer()
-		if initializer != nil {
-			var initializerType *Type
-			if ast.IsBindingPattern(declaration.Parent) {
-				initializerType = c.getTypeForBindingElement(declaration)
-			} else {
-				initializerType = c.getTypeOfExpression(initializer)
-			}
-			if initializerType != nil {
+	// We exclude binding elements because their initializers don't solely determine their types and resolving
+	// full types can cause circularities (see https://github.com/microsoft/TypeScript/issues/63192).
+	if hasOnlyExpressionInitializer(declaration) && !ast.IsBindingElement(declaration) && c.isBlockScopedNameDeclaredBeforeUse(declaration, node) {
+		if initializer := declaration.Initializer(); initializer != nil {
+			if initializerType := c.getTypeOfExpression(initializer); initializerType != nil {
 				return tryGetNameFromType(initializerType)
 			}
 		} else if ast.IsEnumMember(declaration) {
@@ -1970,15 +1972,11 @@ func (c *Checker) getSwitchClauseTypeOfWitnesses(node *ast.Node) []string {
 		witnesses := make([]string, len(clauses))
 		for i, clause := range clauses {
 			if clause.Kind == ast.KindCaseClause {
-				var text string
-				if ast.IsStringLiteralLike(clause.Expression()) {
-					text = clause.Expression().Text()
-				}
-				if text == "" {
+				if !ast.IsStringLiteralLike(clause.Expression()) {
 					witnesses = nil
 					break
 				}
-				if !slices.Contains(witnesses, text) {
+				if text := clause.Expression().Text(); !slices.Contains(witnesses, text) {
 					witnesses[i] = text
 				}
 			}
@@ -2314,6 +2312,9 @@ func (c *Checker) getTypeOfDestructuredArrayElement(t *Type, index int) *Type {
 }
 
 func (c *Checker) includeUndefinedInIndexSignature(t *Type) *Type {
+	if t == nil {
+		return nil
+	}
 	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue {
 		return c.getUnionType([]*Type{t, c.missingType})
 	}

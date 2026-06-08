@@ -16,7 +16,11 @@ import {
     promptUseWorkspaceVersion,
     SessionManager,
 } from "./session";
+
+import { ExperimentationService } from "./experimentationService";
 import { createTelemetryReporter } from "./telemetryReporting";
+
+import assert from "node:assert";
 
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
@@ -29,16 +33,23 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
 
+    const version = context.extension.packageJSON.version;
+    assert(typeof version === "string");
+    // Constructing the experimentation service actually sets shared properties
+    // so that events include context on treatments/flights.
+    // If we actually need to read treatment variables we would hold onto this instance,
+    // but for now we just construct it to ensure shared properties are set for telemetry.
+    void new ExperimentationService(telemetryReporter, context.extension.id, version, context.globalState);
+
     registerEnablementCommands(context, telemetryReporter);
 
     const output = vscode.window.createOutputChannel("typescript-native-preview", { log: true });
-    const traceOutput = vscode.window.createOutputChannel("typescript-native-preview (LSP)", { log: true });
-    context.subscriptions.push(output, traceOutput);
+    context.subscriptions.push(output);
 
     const languageServerInitializedEventEmitter = new vscode.EventEmitter<void>();
     context.subscriptions.push(languageServerInitializedEventEmitter);
 
-    const sessionManager = new SessionManager(context, output, traceOutput, languageServerInitializedEventEmitter, telemetryReporter);
+    const sessionManager = new SessionManager(context, output, languageServerInitializedEventEmitter, telemetryReporter);
     context.subscriptions.push(sessionManager);
 
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -83,10 +94,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                     "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.",
                     "OK",
                 );
+                return;
             }
         }
         else if (useTsgo === false) {
-            const settingName = getUseTsgoFalseSetting() ?? "typescript.experimental.useTsgo";
+            const settingName = getUseTsgoFalseSetting() ?? "js/ts.experimental.useTsgo";
             vscode.window.showWarningMessage(
                 `TypeScript Native Preview is running in development mode with "${settingName}" set to false.`,
                 "Enable Setting",
@@ -96,6 +108,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                     vscode.commands.executeCommand("typescript.native-preview.enable");
                 }
             });
+            return;
         }
     }
     else if (useTsgo === false) {

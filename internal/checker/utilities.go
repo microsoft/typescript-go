@@ -1810,3 +1810,20 @@ func CreateModeMismatchDetails(program Program, file *ast.SourceFile) Diagnostic
 		Args:    nil,
 	}
 }
+
+func walkUpOuterExpressions(node *ast.Node) *ast.Node {
+	parent := node.Parent
+	for parent != nil && ast.IsOuterExpression(parent, ast.OEKAll) {
+		parent = parent.Parent
+	}
+	return parent
+}
+
+func GetSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
+	parameters := accessor.Parameters()
+	if len(parameters) > 0 {
+		hasThis := len(parameters) == 2 && ast.IsThisParameter(parameters[0])
+		return parameters[core.IfElse(hasThis, 1, 0)]
+	}
+	return nil
+}
