@@ -17,7 +17,7 @@ type ReferenceResolver interface {
 
 type ReferenceResolverHooks struct {
 	ResolveName                            func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
-	GetResolvedSymbol                      func(*ast.Node) *ast.Symbol
+	GetCachedResolvedSymbol                func(*ast.Node) *ast.Symbol
 	GetMergedSymbol                        func(*ast.Symbol) *ast.Symbol
 	GetParentOfSymbol                      func(*ast.Symbol) *ast.Symbol
 	GetSymbolOfDeclaration                 func(*ast.Declaration) *ast.Symbol
@@ -41,10 +41,10 @@ func NewReferenceResolver(options *core.CompilerOptions, hooks ReferenceResolver
 	}
 }
 
-func (r *referenceResolver) getResolvedSymbol(node *ast.Node) *ast.Symbol {
+func (r *referenceResolver) getCachedResolvedSymbol(node *ast.Node) *ast.Symbol {
 	if node != nil {
-		if r.hooks.GetResolvedSymbol != nil {
-			return r.hooks.GetResolvedSymbol(node)
+		if r.hooks.GetCachedResolvedSymbol != nil {
+			return r.hooks.GetCachedResolvedSymbol(node)
 		}
 	}
 	return nil
@@ -81,7 +81,7 @@ func (r *referenceResolver) getSymbolOfDeclaration(declaration *ast.Declaration)
 }
 
 func (r *referenceResolver) getReferencedValueSymbol(reference *ast.IdentifierNode, startInDeclarationContainer bool) *ast.Symbol {
-	resolvedSymbol := r.getResolvedSymbol(reference)
+	resolvedSymbol := r.getCachedResolvedSymbol(reference)
 	if resolvedSymbol != nil {
 		return resolvedSymbol
 	}
@@ -250,7 +250,7 @@ func (r *referenceResolver) GetElementAccessExpressionName(expression *ast.Eleme
 
 func (r *referenceResolver) GetReferencedMemberValueDeclaration(node *ast.Node) *ast.Declaration {
 	// member references are `this.something` or `this[something]`, so should always simply have a resolved symbol
-	s := r.getResolvedSymbol(node)
+	s := r.getCachedResolvedSymbol(node)
 	if s == nil && node.Symbol() != nil {
 		// might be a declaration instead of a ref, get the merged declaration symbol
 		s = r.getMergedSymbol(node.Symbol())
