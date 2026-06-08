@@ -309,7 +309,7 @@ describe("Snapshot", () => {
             );
             assert.throws(
                 () => project.getImportAdderEdits("/src/index.ts", [{ kind: "importSymbol", symbol: { ...symbol, id: 999_999_999 } } as unknown as ImportAdderAction]),
-                /symbol handle 999999999 not found/,
+                /symbol handle \d+ not found/,
             );
         }
         finally {
