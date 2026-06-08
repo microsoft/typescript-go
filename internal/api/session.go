@@ -1300,7 +1300,7 @@ func (s *Session) handleGetImportAdderEdits(ctx context.Context, params *GetImpo
 	for i, action := range params.Actions {
 		switch action.Kind {
 		case ImportAdderActionKindImportSymbol:
-			if action.Symbol == "" {
+			if action.Symbol == 0 {
 				return nil, fmt.Errorf("%w: import adder action %d missing symbol", ErrClientError, i)
 			}
 			symbol, err := sd.resolveSymbolHandle(action.Symbol)

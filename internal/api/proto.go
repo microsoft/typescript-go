@@ -826,15 +826,15 @@ const (
 
 type ImportAdderAction struct {
 	Kind                   ImportAdderActionKind `json:"kind"`
-	Symbol                 Handle[ast.Symbol]    `json:"symbol,omitempty"`
+	Symbol                 SymbolID              `json:"symbol,omitempty"`
 	IsValidTypeOnlyUseSite *bool                 `json:"isValidTypeOnlyUseSite,omitempty"`
 }
 
 type GetImportAdderEditsParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     DocumentIdentifier       `json:"file"`
-	Actions  []ImportAdderAction      `json:"actions"`
+	Snapshot SnapshotID          `json:"snapshot"`
+	Project  ProjectID           `json:"project"`
+	File     DocumentIdentifier  `json:"file"`
+	Actions  []ImportAdderAction `json:"actions"`
 }
 
 type TextEdit struct {
