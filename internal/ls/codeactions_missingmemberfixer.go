@@ -55,6 +55,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 
 	quotePreference := lsutil.GetQuotePreference(sourceFile, f.preferences)
 	ambient := enclosingDeclaration.Flags&ast.NodeFlagsAmbient != 0
+	signatureOnly := ambient || abstract
 	optional := symbol.Flags&ast.SymbolFlagsOptional != 0
 	kind := ast.KindPropertySignature
 	if declaration != nil {
@@ -97,7 +98,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 					nodes,
 					f.changeTracker.NodeFactory.NewGetAccessorDeclaration(
 						modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
-						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, ambient || abstract, quotePreference),
+						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, quotePreference, signatureOnly),
 					),
 				)
 			}
@@ -111,7 +112,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 				nodes = append(nodes, f.changeTracker.NodeFactory.NewSetAccessorDeclaration(
 					modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
 					nil /*typeParameters*/, createDummyParameters(f.changeTracker.NodeFactory, 1, []string{parameter.Name().Text()}, []*ast.TypeNode{f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol)}, 1, ast.IsInJSFile(enclosingDeclaration)),
-					nil /*type*/, nil /*fullSignature*/, f.createBody(body, ambient || abstract, quotePreference),
+					nil /*type*/, nil /*fullSignature*/, f.createBody(body, quotePreference, signatureOnly),
 				),
 				)
 			}
@@ -126,7 +127,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 		}
 
 		if len(declarations) == 1 {
-			method := f.createSignatureDeclarationFromSignature(core.FirstOrNil(signatures), ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, ambient || abstract, quotePreference), modifiers, declarationName, preserveOptional)
+			method := f.createSignatureDeclarationFromSignature(core.FirstOrNil(signatures), ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, quotePreference, signatureOnly), modifiers, declarationName, preserveOptional)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
@@ -138,24 +139,24 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 				continue
 			}
 
-			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, nil, modifiers, declarationName, preserveOptional)
+			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, nil /*body*/, modifiers, declarationName, preserveOptional)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
 		}
 
-		if ambient || abstract {
+		if signatureOnly {
 			return nodes
 		}
 
 		if len(declarations) > len(signatures) {
 			signature := f.typeChecker.GetSignatureFromDeclaration(core.LastOrNil(declarations))
-			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, ambient || abstract, quotePreference), modifiers, declarationName, preserveOptional)
+			method := f.createSignatureDeclarationFromSignature(signature, ast.KindMethodDeclaration, sourceFile, enclosingDeclaration, f.createBody(body, quotePreference, false /*signatureOnly*/), modifiers, declarationName, preserveOptional)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
 		} else {
-			method := f.createSignatureDeclarationFromSignatures(sourceFile, signatures, declarationName, preserveOptional, modifiers, quotePreference, core.IfElse(abstract, nil, body), enclosingDeclaration)
+			method := f.createSignatureDeclarationFromSignatures(sourceFile, signatures, declarationName, preserveOptional, modifiers, quotePreference, body, enclosingDeclaration)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
@@ -351,7 +352,7 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(sourceFile
 	return f.changeTracker.NodeFactory.NewMethodDeclaration(
 		modifiers, nil /*asteriskToken*/, methodName, core.IfElse(optional, f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken), nil),
 		nil /*typeParameters*/, parameters, f.getReturnTypeFromSignatures(sourceFile, signatures, enclosingDeclaration, nodeBuilder, idToSymbol),
-		nil /*fullSignature*/, f.createBody(body, false /*ambient*/, quotePreference),
+		nil /*fullSignature*/, f.createBody(body, quotePreference, false /*signatureOnly*/),
 	)
 }
 
@@ -419,8 +420,8 @@ func (f *missingMemberFixer) createIndexSignatureDeclarationFromType(classDeclar
 	return builder.IndexInfoToIndexSignatureDeclaration(indexInfo, classDeclaration, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, nil)
 }
 
-func (f *missingMemberFixer) createBody(body *ast.FunctionBody, ambient bool, quotePreference lsutil.QuotePreference) *ast.FunctionBody {
-	if ambient {
+func (f *missingMemberFixer) createBody(body *ast.FunctionBody, quotePreference lsutil.QuotePreference, signatureOnly bool) *ast.FunctionBody {
+	if signatureOnly {
 		return nil
 	}
 	body = f.changeTracker.NodeFactory.DeepCloneNode(body)
