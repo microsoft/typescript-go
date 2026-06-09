@@ -303,8 +303,13 @@ func (w *Watcher) reconcileWatches() {
 				break
 			}
 			watchDir = parent
-			if _, have := w.watchedDirs[watchDir]; have {
-				break
+			if wd, have := w.watchedDirs[watchDir]; have {
+				if recursive && !wd.recursive {
+					wd.closer.Close()
+					delete(w.watchedDirs, watchDir)
+				} else {
+					break
+				}
 			}
 			watch, err = w.backend.WatchDirectory(watchDir, cb, recursive, shouldIgnoreWatchPath)
 		}
