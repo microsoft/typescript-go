@@ -27701,6 +27701,16 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 		return core.IfElse(cached == c.circularConstraintType, t, cached)
 	}
 	c.cachedTypes[key] = t
+	result := c.getSimplifiedIndexedAccessTypeWorker(t, writing)
+	if result != t {
+		// If the simplification is a union type that includes t, remove t from the type.
+		result = c.removeType(result, t)
+		c.cachedTypes[key] = result
+	}
+	return result
+}
+
+func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *Type {
 	// We recursively simplify the object type as it may in turn be an indexed access type. For example, with
 	// '{ [P in T]: { [Q in U]: number } }[T][U]' we want to first simplify the inner indexed access type.
 	objectType := c.getSimplifiedType(t.AsIndexedAccessType().objectType, writing)
@@ -27709,7 +27719,6 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 	// T[A | B] -> T[A] & T[B] (writing)
 	distributedOverIndex := c.distributeObjectOverIndexType(objectType, indexType, writing)
 	if distributedOverIndex != nil {
-		c.cachedTypes[key] = distributedOverIndex
 		return distributedOverIndex
 	}
 	// Only do the inner distributions if the index can no longer be instantiated to cause index distribution again
@@ -27719,7 +27728,6 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 		// (T & U)[K] -> T[K] & U[K]
 		distributedOverObject := c.distributeIndexOverObjectType(objectType, indexType, writing)
 		if distributedOverObject != nil {
-			c.cachedTypes[key] = distributedOverObject
 			return distributedOverObject
 		}
 	}
@@ -27731,7 +27739,6 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 	if c.isGenericTupleType(objectType) && indexType.flags&TypeFlagsNumberLike != 0 {
 		elementType := c.getElementTypeOfSliceOfTupleType(objectType, core.IfElse(indexType.flags&TypeFlagsNumber != 0, 0, objectType.TargetTupleType().fixedLength), 0 /*endSkipCount*/, writing, false)
 		if elementType != nil {
-			c.cachedTypes[key] = elementType
 			return elementType
 		}
 	}
@@ -27740,11 +27747,9 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 	// For example, for an index access { [P in K]: Box<T[P]> }[X], we construct the type Box<T[X]>.
 	if c.isGenericMappedType(objectType) {
 		if c.getMappedTypeNameTypeKind(objectType) != MappedTypeNameTypeKindRemapping {
-			result := c.mapType(c.substituteIndexedMappedType(objectType, t.AsIndexedAccessType().indexType), func(t *Type) *Type {
+			return c.mapType(c.substituteIndexedMappedType(objectType, t.AsIndexedAccessType().indexType), func(t *Type) *Type {
 				return c.getSimplifiedType(t, writing)
 			})
-			c.cachedTypes[key] = result
-			return result
 		}
 	}
 	return t
