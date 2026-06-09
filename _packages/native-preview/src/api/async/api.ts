@@ -106,7 +106,7 @@ export class API<FromLSP extends boolean = false> {
     private initialized: boolean = false;
     private activeSnapshots: Set<Snapshot> = new Set();
     private latestSnapshot: Snapshot | undefined;
-    readonly internal: SnapshotInternalAPI;
+    readonly internal: InternalAPI;
 
     constructor(options: APIOptions | LSPConnectionOptions) {
         this.client = new Client(options);
@@ -230,7 +230,7 @@ export class Snapshot {
     private objectRegistry: SnapshotObjectRegistry;
     private disposed: boolean = false;
     private onDispose: () => void;
-    readonly internal: InternalAPI;
+    readonly internal: SnapshotInternalAPI;
 
     constructor(
         data: UpdateSnapshotResponse,
@@ -915,10 +915,10 @@ export class Emitter {
 }
 
 export class SnapshotInternalAPI {
-    private snapshotId: string;
+    private snapshotId: number;
     private client: Client;
 
-    constructor(snapshotId: string, client: Client) {
+    constructor(snapshotId: number, client: Client) {
         this.snapshotId = snapshotId;
         this.client = client;
     }
