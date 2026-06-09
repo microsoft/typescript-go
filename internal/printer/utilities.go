@@ -83,6 +83,12 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 		escape := false
 		if ch >= 0xD800 && ch <= 0xDFFF {
 			escape = true
+		} else if ch == utf8.RuneError && size == 1 {
+			// A stray byte that is not valid UTF-8 (for example, a fragment of a
+			// surrogate sentinel left behind by code that sliced the string by
+			// byte). Escape it as the Unicode replacement character so the output
+			// is always well-formed rather than containing raw invalid bytes.
+			escape = true
 		}
 
 		// This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,

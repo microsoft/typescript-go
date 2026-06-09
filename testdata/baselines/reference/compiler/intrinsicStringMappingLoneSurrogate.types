@@ -11,10 +11,10 @@ type L = Lowercase<"A\uD800B">;
 >L : "aï¿½ï¿½ï¿½b"
 
 type C = Capitalize<"\uDC00x">;
->C : "ï¿½°€x"
+>C : "ï¿½\uFFFD\uFFFDx"
 
 type Un = Uncapitalize<"\uD834X">;
->Un : "ï¿½ ´X"
+>Un : "ï¿½\uFFFD\uFFFDX"
 
 const u: "\uD800" = "x" as unknown as U;
 >u : "\uD800"
