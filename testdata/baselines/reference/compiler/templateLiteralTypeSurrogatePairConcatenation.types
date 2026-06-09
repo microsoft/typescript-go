@@ -12,15 +12,15 @@ type Lo = "\uDE00";
 >Lo : "\uDE00"
 
 type Pair = `${Hi}${Lo}`;
->Pair : "\uD83D\uDE00"
+>Pair : "😀"
 
 const p: Pair = "😀";
->p : "\uD83D\uDE00"
+>p : "😀"
 >"😀" : "😀"
 
 const q: "😀" = "x" as unknown as Pair;
 >q : "😀"
->"x" as unknown as Pair : "\uD83D\uDE00"
+>"x" as unknown as Pair : "😀"
 >"x" as unknown : unknown
 >"x" : "x"
 

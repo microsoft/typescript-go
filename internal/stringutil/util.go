@@ -313,3 +313,32 @@ func DecodeJSStringRune(s string) (rune, int) {
 	}
 	return utf8.DecodeRuneInString(s)
 }
+
+// CombineSurrogatePairs canonicalizes a JS-string value produced by
+// concatenation, merging any adjacent high+low surrogate sentinel pair (as
+// written by EncodeJSStringRune) into the single supplementary code point they
+// represent. This mirrors how concatenating two UTF-16 code units forms a
+// surrogate pair in a JavaScript string. It must be applied wherever separately
+// scanned string values are joined, since each half is only a lone surrogate
+// until it meets its partner. Strings without a lone-surrogate sentinel (the
+// common case) are returned unchanged.
+func CombineSurrogatePairs(s string) string {
+	if strings.IndexByte(s, 0xED) < 0 {
+		return s
+	}
+	var b strings.Builder
+	b.Grow(len(s))
+	for i := 0; i < len(s); {
+		r, size := DecodeJSStringRune(s[i:])
+		if IsHighSurrogate(r) {
+			if low, lowSize := DecodeJSStringRune(s[i+size:]); IsLowSurrogate(low) {
+				b.WriteRune(SurrogatePairToCodePoint(r, low))
+				i += size + lowSize
+				continue
+			}
+		}
+		b.WriteString(s[i : i+size])
+		i += size
+	}
+	return b.String()
+}
