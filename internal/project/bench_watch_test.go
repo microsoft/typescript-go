@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/fswatch"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/lsp/lspwatcher"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -120,13 +121,13 @@ func benchClientCapabilities() context.Context {
 func benchEntryURI(root string) lsproto.DocumentUri {
 	if *benchEntry != "" {
 		entry := filepath.Join(root, *benchEntry)
-		return lsproto.DocumentUri("file://" + tspath.NormalizePath(entry))
+		return lsconv.FileNameToDocumentURI(tspath.NormalizePath(entry))
 	}
 	entry := filepath.Join(root, "src", "compiler", "checker.ts")
 	if _, err := os.Stat(entry); err == nil {
-		return lsproto.DocumentUri("file://" + tspath.NormalizePath(entry))
+		return lsconv.FileNameToDocumentURI(tspath.NormalizePath(entry))
 	}
-	return lsproto.DocumentUri("file://" + tspath.NormalizePath(filepath.Join(root, "compiler", "checker.ts")))
+	return lsconv.FileNameToDocumentURI(tspath.NormalizePath(filepath.Join(root, "compiler", "checker.ts")))
 }
 
 func newBenchSession(b *testing.B, bgCtx context.Context, vfsFS vfs.FS, client Client, root string) *Session {
