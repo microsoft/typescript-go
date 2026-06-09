@@ -21,15 +21,36 @@ func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
 	return b.reuseNode(node)
 }
 
-// a wrapper around `reuseNode` that handles renaming `new` to `"new"` so we don't accidentally emit constructor signatures when we don't mean to
-func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
+func (b *NodeBuilderImpl) reuseName(node *ast.Node, isMethod bool) *ast.Node {
 	res := b.reuseNode(node)
-	if res != nil && res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
-		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
-		b.e.SetOriginal(str, res)
-		return b.setTextRange(str, res)
+	if res == nil {
+		return res
 	}
-	return res
+
+	text, ok := ast.TryGetTextOfPropertyName(res)
+	if !ok {
+		return res
+	}
+
+	kind := classifyPropertyName(text, ast.IsStringLiteral(res), isMethod)
+	if ast.IsIdentifier(res) && kind == propertyNameNodeKindIdentifier {
+		return res
+	}
+	if ast.IsStringLiteral(res) && kind == propertyNameNodeKindStringLiteral {
+		return res
+	}
+
+	var renamed *ast.Node
+	switch kind {
+	case propertyNameNodeKindIdentifier:
+		renamed = b.newIdentifier(text, nil)
+	case propertyNameNodeKindStringLiteral:
+		renamed = b.f.NewStringLiteral(text, ast.TokenFlagsNone)
+	default:
+		return res
+	}
+	b.e.SetOriginal(renamed, res)
+	return b.setTextRange(renamed, res)
 }
 
 func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {

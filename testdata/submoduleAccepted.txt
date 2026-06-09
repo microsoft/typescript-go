@@ -10,7 +10,6 @@ conformance/callbackOnConstructor.types.diff
 conformance/callbackTag2.errors.txt.diff
 conformance/callbackTag2.types.diff
 conformance/callbackTag4.types.diff
-conformance/callbackTagNamespace.types.diff
 conformance/callOfPropertylessConstructorFunction.errors.txt.diff
 conformance/callOfPropertylessConstructorFunction.types.diff
 conformance/callWithMissingVoidUndefinedUnknownAnyInJs(strict=false).errors.txt.diff
@@ -255,8 +254,6 @@ compiler/conflictingDeclarationsImportFromNamespace1.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace1.types.diff
 compiler/conflictingDeclarationsImportFromNamespace2.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace2.types.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.errors.txt.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.types.diff
 
 ## more accurate types/symbols ##
 compiler/allowJscheckJsTypeParameterNoCrash.symbols.diff
@@ -272,17 +269,12 @@ compiler/argumentsReferenceInMethod6_Js.types.diff
 compiler/argumentsReferenceInMethod7_Js.types.diff
 compiler/assertionFunctionWildcardImport1.symbols.diff
 compiler/assertionFunctionWildcardImport1.types.diff
-compiler/capturedParametersInInitializers1.types.diff
 compiler/classFieldSuperAccessibleJs1.symbols.diff
 compiler/classFieldSuperAccessibleJs2.symbols.diff
-compiler/classNonUniqueSymbolMethodHasSymbolIndexer.js.diff
-compiler/commaOperatorInConditionalExpression.types.diff
 compiler/commonJsExportTypeDeclarationError(target=es2015).symbols.diff
 compiler/commonJsIsolatedModules.symbols.diff
 compiler/commonJsIsolatedModules.types.diff
 compiler/commonJsUnusedLocals.symbols.diff
-compiler/computedPropertiesInDestructuring1_ES6.types.diff
-compiler/computedPropertiesInDestructuring1.types.diff
 compiler/conditionalTypeContextualTypeSimplificationsSuceeds.types.diff
 compiler/declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.js.diff
 compiler/declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.types.diff
@@ -291,7 +283,6 @@ compiler/deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptional
 compiler/deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=true).symbols.diff
 compiler/deleteExpressionMustBeOptional(strict=false).symbols.diff
 compiler/deleteExpressionMustBeOptional(strict=true).symbols.diff
-compiler/duplicateObjectLiteralProperty_computedNameNegative1.types.diff
 compiler/duplicateStringNamedProperty1.errors.txt.diff
 compiler/expandoFunctionBlockShadowing.symbols.diff
 compiler/expandoFunctionBlockShadowing.types.diff
@@ -331,7 +322,6 @@ compiler/constructorOverloads1.errors.txt.diff
 compiler/destructuringTuple.errors.txt.diff
 compiler/differentTypesWithSameName.errors.txt.diff
 compiler/dissallowSymbolAsWeakType.errors.txt.diff
-compiler/es5-asyncFunctionObjectLiterals(target=es2015).types.diff
 compiler/excessPropertiesInOverloads.errors.txt.diff
 compiler/excessPropertyCheckWithUnions.errors.txt.diff
 compiler/exportDefaultStripsFreshness.errors.txt.diff
@@ -374,7 +364,6 @@ compiler/declarationEmitDefaultExportWithStaticAssignment.symbols.diff
 compiler/declarationEmitDefaultExportWithStaticAssignment.types.diff
 compiler/decoratorMetadataTypeOnlyExport.symbols.diff
 compiler/decoratorMetadataTypeOnlyImport.symbols.diff
-compiler/emitMethodCalledNew.js.diff
 compiler/es6ImportWithJsDocTags.symbols.diff
 compiler/es2018ObjectAssign.types.diff
 compiler/expandoFunctionSymbolPropertyJs.js.diff
@@ -387,17 +376,14 @@ compiler/accessorDeclarationEmitJs.js.diff
 compiler/argumentsPropertyNameInJsMode1.js.diff
 compiler/checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.errors.txt.diff
-compiler/declarationEmitExpandoPropertyPrivateName.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.symbols.diff
 compiler/declarationEmitExpandoPropertyPrivateName.types.diff
 compiler/declarationEmitExpandoWithGenericConstraint.js.diff
 compiler/declarationEmitExpandoWithGenericConstraint.symbols.diff
 compiler/declarationEmitExpandoWithGenericConstraint.types.diff
-compiler/declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitInvalidExport.js.diff
 compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
@@ -417,14 +403,11 @@ compiler/aliasErrors.types.diff
 compiler/arrayFromAsync.symbols.diff
 compiler/baseClassImprovedMismatchErrors.errors.txt.diff
 compiler/checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.symbols.diff
-compiler/checkJsObjectLiteralIndexSignatures.types.diff
 compiler/checkJsTypeDefNoUnusedLocalMarked.symbols.diff
 compiler/checkJsTypeDefNoUnusedLocalMarked.types.diff
 compiler/circularObjectLiteralAccessors(target=es2015).types.diff
 compiler/circularTypeArgumentsLocalAndOuterNoCrash1.types.diff
 compiler/complexRecursiveCollections.errors.txt.diff
-compiler/computedPropertiesNarrowed.js.diff
-compiler/computedPropertiesNarrowed.types.diff
 compiler/contextuallyTypedJsxAttribute2.types.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.symbols.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.types.diff
@@ -475,9 +458,6 @@ compiler/invalidUnicodeEscapeSequance.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance2.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance3.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance4.errors.txt.diff
-
-## wrong errors ##
-compiler/classFieldSuperAccessibleJs1.errors.txt.diff
 
 ## deprecated errors ##
 compiler/declarationFileNoCrashOnExtraExportModifier.errors.txt.diff
@@ -799,7 +779,6 @@ conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=nodenext
 conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
 conformance/jsdocPrivateName2.errors.txt.diff
 conformance/jsdocImplements_missingType.errors.txt.diff
-conformance/symbolProperty24.errors.txt.diff
 
 ## Type arguments are dropped from anonymous mixin class types in error messages — e.g. `mixB<typeof A>.(Anonymous class)` becomes `mixB.(Anonymous class)`
 compiler/mixinPrivateAndProtected.errors.txt.diff
@@ -1181,10 +1160,6 @@ compiler/nameCollisions.js.diff
 ## `namespace global {}` inside a class no longer generates an empty IIFE in JS output
 compiler/nestedGlobalNamespaceInClass.js.diff
 
-## Inline JSDoc parameter comments no longer emitted in function type declarations (comments are cosmetic; type signatures are identical)
-## Comments like `/** fooFunctionValue param */` stripped from declaration output
-compiler/commentsFunction(target=es2015).js.diff
-
 ## JSDoc @typedef descriptions preserved inline instead of being converted to per-property comments (comment format change only; the type structure is identical)
 ## Full `@typedef`/`@property` JSDoc blocks are now preserved with the type alias
 conformance/jsDeclarationsTypedefDescriptionsPreserved.js.diff
@@ -1230,10 +1205,6 @@ conformance/defaultExportsCannotMerge04(target=es2015).js.diff
 ## Declaration emit changes how numeric-string-keyed properties are represented
 compiler/declarationEmitPropertyNumericStringKey.js.diff
 
-## Non-literal computed property [fieldName] changed to index signature [x: string] in declaration emit (fieldName is not a legal const to use in a computed position, so this is an error case)
-## Dynamic computed property keys resolved to index signatures
-compiler/declarationEmitSimpleComputedNames1.js.diff
-
 ## `typeof` references resolved to concrete types in declaration emit (concrete types are equivalent to what `typeof` resolves to)
 ## `typeof a` rest parameters and symbol references resolved to tuple/symbol types instead of typeof
 compiler/declarationEmitTypeofRest.js.diff
@@ -1246,9 +1217,6 @@ compiler/defaultDeclarationEmitShadowedNamedCorrectly.js.diff
 ## `A.B` changed to `import("./file").B` in some declaration contexts
 compiler/es5ExportEqualsDts(target=es2015).js.diff
 compiler/declarationEmitNameConflicts.js.diff
-
-## Properties with __proto__-like names now quoted in declaration emit (it's quoted in the originating sourcefile)
-compiler/escapedReservedCompilerNamedIdentifier.js.diff
 
 ## Nested /*elided*/ type annotation comments removed at deeper nesting levels (`/*elided*/` comments are internal artifacts with no semantic meaning)
 ## Declaration emit no longer preserves elided comments in nested class expressions
@@ -1330,6 +1298,16 @@ conformance/objectLiteralErrors(target=es2015).symbols.diff
 conformance/objectLiteralErrors(target=es2015).types.diff
 conformance/propertyAndAccessorWithSameName.symbols.diff
 conformance/propertyAndAccessorWithSameName.types.diff
+
+## Preserve native destructuring for CommonJS exports to keep iterator semantics
+## https://github.com/microsoft/typescript-go/issues/3701
+compiler/bindingPatternOmittedExpressionNesting.js.diff
+compiler/declarationEmitRetainsJsdocyComments.js.diff
+compiler/destructuringInVariableDeclarations1.js.diff
+compiler/downlevelLetConst13(target=es2015).js.diff
+compiler/exportEmptyArrayBindingPattern(module=commonjs,target=esnext).js.diff
+compiler/exportEmptyObjectBindingPattern(module=commonjs,target=esnext).js.diff
+compiler/exportObjectRest(module=commonjs,target=esnext).js.diff
 
 ## Module resolver does not guess the project root to provide speculative resolutions for self-name
 ## imports in the presence of TS2209 "ambiguous project root" errors.
@@ -1419,3 +1397,7 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.dif
 ## https://github.com/microsoft/typescript-go/issues/3556
 conformance/callbackTagNestedParameter.js.diff
 conformance/callbackTagVariadicType.js.diff
+
+# definiteAssignment shorthand in object literal loses optional modifier
+## https://github.com/microsoft/typescript-go/issues/3563
+conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff

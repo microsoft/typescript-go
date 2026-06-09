@@ -139,6 +139,7 @@ type Printer struct {
 	makeFileLevelOptimisticUniqueName func(string) string
 	commentStateArena                 core.Arena[commentState]
 	sourceMapStateArena               core.Arena[sourceMapState]
+	IdToSymbol                        map[*ast.IdentifierNode]*ast.Symbol
 }
 
 type detachedCommentsInfo struct {
@@ -1092,13 +1093,13 @@ func (p *Printer) emitIdentifierText(node *ast.Identifier) {
 	debug.Assert(f == nil || p.currentSourceFile == nil || f.FileName() == p.currentSourceFile.FileName())
 	text := p.getTextOfNode(node.AsNode(), false /*includeTrivia*/)
 
-	// !!! In the old emitter, an Identifier could have a Symbol associated with it. That
-	// doesn't seem to be the case in the new emitter. Do we need to get the symbol from somewhere else?
-	////p.writeSymbol(text, node.Symbol())
+	if p.IdToSymbol != nil {
+		if symbol, ok := p.IdToSymbol[node.AsNode()]; ok {
+			p.writeSymbol(text, symbol)
+			return
+		}
+	}
 	p.write(text)
-
-	// !!! In the old emitter, an Identifier could have type arguments for use with quickinfo:
-	////p.emitList(node, getIdentifierTypeArguments(node), LFTypeParameters); // Call emitList directly since it could be an array of TypeParameterDeclarations _or_ type arguments
 }
 
 func (p *Printer) emitIdentifierName(node *ast.Identifier) {
@@ -5671,10 +5672,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 				}
 			}
 
-			if p.shouldWriteComment(comment) {
-				detachedComments = append(detachedComments, comment)
-			}
-
+			detachedComments = append(detachedComments, comment)
 			lastComment = comment
 		}
 
@@ -5687,11 +5685,21 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 			if nodeLine >= lastCommentLine+2 {
 				// Valid detachedComments
 
-				if len(leadingComments) > 0 && p.shouldEmitNewLineBeforeLeadingCommentOfPosition(textRange.Pos(), leadingComments[0].Pos()) {
-					p.writeLine()
+				// Filter to only comments that should be written (e.g., JSDoc-style in declaration emit)
+				var commentsToEmit []ast.CommentRange
+				for _, comment := range detachedComments {
+					if p.shouldWriteComment(comment) {
+						commentsToEmit = append(commentsToEmit, comment)
+					}
 				}
 
-				p.emitComments(detachedComments, commentSeparatorAfter)
+				if len(commentsToEmit) > 0 {
+					if p.shouldEmitNewLineBeforeLeadingCommentOfPosition(textRange.Pos(), commentsToEmit[0].Pos()) {
+						p.writeLine()
+					}
+
+					p.emitComments(commentsToEmit, commentSeparatorAfter)
+				}
 				result = detachedCommentsInfo{nodePos: textRange.Pos(), detachedCommentEndPos: core.LastOrNil(detachedComments).End()}
 				hasResult = true
 			}

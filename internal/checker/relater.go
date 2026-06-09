@@ -1379,8 +1379,8 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				// invariance, covariance, contravariance or bivariance.
 				typeWithSuper := c.createMarkerType(symbol, tp, c.markerSuperType)
 				typeWithSub := c.createMarkerType(symbol, tp, c.markerSubType)
-				variance = (core.IfElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0)) |
-					(core.IfElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0))
+				variance = core.IfElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0) |
+					core.IfElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0)
 				// If the instantiations appear to be related bivariantly it may be because the
 				// type parameter is independent (i.e. it isn't witnessed anywhere in the generic
 				// type). To determine this we compare instantiations where the type parameter is
@@ -1932,7 +1932,7 @@ func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) stri
 	restType := c.getTypeOfSymbol(restParameter)
 	if isTupleType(restType) {
 		index := pos - paramCount
-		c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
+		return c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
 	}
 	return restParameter.Name
 }
@@ -3444,7 +3444,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			baseObjectType := r.c.getBaseConstraintOrType(objectType)
 			baseIndexType := r.c.getBaseConstraintOrType(indexType)
 			if !r.c.isGenericObjectType(baseObjectType) && !r.c.isGenericIndexType(baseIndexType) {
-				accessFlags := AccessFlagsWriting | (core.IfElse(baseObjectType != objectType, AccessFlagsNoIndexSignatures, 0))
+				accessFlags := AccessFlagsWriting | core.IfElse(baseObjectType != objectType, AccessFlagsNoIndexSignatures, 0)
 				constraint := r.c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, accessFlags, nil, nil)
 				if constraint != nil {
 					if reportErrors && originalErrorChain != nil {
@@ -4769,6 +4769,8 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			}
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
+	} else if message == diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1 && r.c.exactOptionalPropertyTypes && len(r.c.getExactOptionalUnassignableProperties(source, target)) > 0 {
+		message = diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
 	}
 	switch r.getChainMessage(0) {
 	// Suppress if next message is an excess property error

@@ -93,7 +93,8 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 
 		for _, accessor := range orderedAccessors {
 			if ast.IsGetAccessorDeclaration(accessor) {
-				nodes = append(nodes,
+				nodes = append(
+					nodes,
 					f.changeTracker.NodeFactory.NewGetAccessorDeclaration(
 						modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
 						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, ambient || abstract, quotePreference)),
