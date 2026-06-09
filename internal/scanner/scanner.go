@@ -550,7 +550,8 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindPercentToken
 			}
 		case '&':
-			if s.charAt(1) == '&' {
+			next := s.charAt(1)
+			if next == '&' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
 					s.token = ast.KindAmpersandAmpersandEqualsToken
@@ -558,7 +559,7 @@ func (s *Scanner) Scan() ast.Kind {
 					s.pos += 2
 					s.token = ast.KindAmpersandAmpersandToken
 				}
-			} else if s.charAt(1) == '=' {
+			} else if next == '=' {
 				s.pos += 2
 				s.token = ast.KindAmpersandEqualsToken
 			} else {
@@ -572,10 +573,11 @@ func (s *Scanner) Scan() ast.Kind {
 			s.pos++
 			s.token = ast.KindCloseParenToken
 		case '*':
-			if s.charAt(1) == '=' {
+			next := s.charAt(1)
+			if next == '=' {
 				s.pos += 2
 				s.token = ast.KindAsteriskEqualsToken
-			} else if s.charAt(1) == '*' {
+			} else if next == '*' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
 					s.token = ast.KindAsteriskAsteriskEqualsToken
@@ -594,10 +596,11 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindAsteriskToken
 			}
 		case '+':
-			if s.charAt(1) == '=' {
+			next := s.charAt(1)
+			if next == '=' {
 				s.pos += 2
 				s.token = ast.KindPlusEqualsToken
-			} else if s.charAt(1) == '+' {
+			} else if next == '+' {
 				s.pos += 2
 				s.token = ast.KindPlusPlusToken
 			} else {
@@ -608,10 +611,11 @@ func (s *Scanner) Scan() ast.Kind {
 			s.pos++
 			s.token = ast.KindCommaToken
 		case '-':
-			if s.charAt(1) == '=' {
+			next := s.charAt(1)
+			if next == '=' {
 				s.pos += 2
 				s.token = ast.KindMinusEqualsToken
-			} else if s.charAt(1) == '-' {
+			} else if next == '-' {
 				s.pos += 2
 				s.token = ast.KindMinusMinusToken
 			} else {
@@ -619,9 +623,10 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindMinusToken
 			}
 		case '.':
-			if stringutil.IsDigit(s.charAt(1)) {
+			next := s.charAt(1)
+			if stringutil.IsDigit(next) {
 				s.token = s.scanNumber()
-			} else if s.charAt(1) == '.' && s.charAt(2) == '.' {
+			} else if next == '.' && s.charAt(2) == '.' {
 				s.pos += 3
 				s.token = ast.KindDotDotDotToken
 			} else {
