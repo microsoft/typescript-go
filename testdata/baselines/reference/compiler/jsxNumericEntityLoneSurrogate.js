@@ -22,7 +22,7 @@ const supplementary = <div>&#x1F600;</div>;
 "use strict";
 // Numeric character references for lone surrogates should be preserved, not
 // corrupted to U+FFFD. "\uD800" is a lone high surrogate; "\uDC00" a lone low.
-const text = React.createElement("div", null, "\uFFFDa\uFFFD");
-const attr = React.createElement("div", { title: "\uFFFD" });
+const text = React.createElement("div", null, "\uD800a\uDC00");
+const attr = React.createElement("div", { title: "\uD800" });
 // A non-BMP code point reference is a single supplementary character.
 const supplementary = React.createElement("div", null, "\uD83D\uDE00");
