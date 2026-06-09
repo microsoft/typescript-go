@@ -730,38 +730,38 @@ type GetTypeOfSymbolAtLocationParams struct {
 
 // GetReferencesToSymbolInFileParams are the parameters for the getReferencesToSymbolInFile method.
 type GetReferencesToSymbolInFileParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	File     DocumentIdentifier       `json:"file"`
-	Symbol   Handle[ast.Symbol]       `json:"symbol"`
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`
+	Symbol   SymbolID           `json:"symbol"`
 }
 
 // GetReferencedSymbolsForNodeParams are the parameters for the getReferencedSymbolsForNode method.
 type GetReferencedSymbolsForNodeParams struct {
-	Snapshot Handle[project.Snapshot] `json:"snapshot"`
-	Project  Handle[project.Project]  `json:"project"`
-	Node     Handle[ast.Node]         `json:"node"`
-	Position int                      `json:"position"`
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Node     NodeHandle `json:"node"`
+	Position int        `json:"position"`
 }
 
 // ReferencedSymbolEntry represents a symbol definition and its references.
 type ReferencedSymbolEntry struct {
-	Definition Handle[ast.Node]   `json:"definition"`
-	Symbol     *SymbolResponse    `json:"symbol,omitempty"`
-	References []Handle[ast.Node] `json:"references"`
+	Definition NodeHandle      `json:"definition"`
+	Symbol     *SymbolResponse `json:"symbol,omitempty"`
+	References []NodeHandle    `json:"references"`
 }
 
 // GetSignatureUsagesParams are the parameters for the getSignatureUsages method.
 type GetSignatureUsagesParams struct {
-	Snapshot      Handle[project.Snapshot] `json:"snapshot"`
-	Project       Handle[project.Project]  `json:"project"`
-	SignatureDecl Handle[ast.Node]         `json:"signatureDecl"`
+	Snapshot      SnapshotID `json:"snapshot"`
+	Project       ProjectID  `json:"project"`
+	SignatureDecl NodeHandle `json:"signatureDecl"`
 }
 
 // SignatureUsageResponse represents a single usage of a signature as a name-call pair.
 type SignatureUsageResponse struct {
-	Name Handle[ast.Node] `json:"name"`
-	Call Handle[ast.Node] `json:"call,omitempty"`
+	Name NodeHandle `json:"name"`
+	Call NodeHandle `json:"call,omitempty"`
 }
 
 // GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).

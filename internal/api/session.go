@@ -342,15 +342,16 @@ func (s *Session) setupChecker(ctx context.Context, snapshot SnapshotID, project
 	}, nil
 }
 
-// setupLanguageService creates a LanguageService from the same snapshot/project used by setupChecker.
-// This ensures the LS operates on the same program and state as the checker.
-func (s *Session) setupLanguageService(setup checkerSetup, projectHandle Handle[project.Project], activeFile string) (*ls.LanguageService, error) {
+// setupLanguageService creates a LanguageService for the given snapshot/project.
+// Unlike setupChecker, this does NOT acquire a checker from the pool, so callers that
+// only need an LS (and not a Checker) can avoid blocking on / holding a pooled checker.
+func (s *Session) setupLanguageService(sd *snapshotData, program *compiler.Program, projectHandle ProjectID, activeFile string) (*ls.LanguageService, error) {
 	projectName := parseProjectHandle(projectHandle)
-	proj := setup.sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
+	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
 	if proj == nil {
 		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
 	}
-	return ls.NewLanguageService(proj.ConfigFilePath(), setup.program, setup.sd.snapshot, activeFile), nil
+	return ls.NewLanguageService(proj.ConfigFilePath(), program, sd.snapshot, activeFile), nil
 }
 
 // HandleRequest implements Handler.
@@ -2234,7 +2235,7 @@ func (s *Session) resolveOptionalSourceFile(program *compiler.Program, file *Doc
 }
 
 // handleGetReferencesToSymbolInFile returns node handles for all identifiers in a file that reference the given symbol.
-func (s *Session) handleGetReferencesToSymbolInFile(ctx context.Context, params *GetReferencesToSymbolInFileParams) ([]Handle[ast.Node], error) {
+func (s *Session) handleGetReferencesToSymbolInFile(ctx context.Context, params *GetReferencesToSymbolInFileParams) ([]NodeHandle, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
@@ -2255,21 +2256,24 @@ func (s *Session) handleGetReferencesToSymbolInFile(ctx context.Context, params 
 	}
 
 	nodes := setup.checker.GetReferencesToSymbolInFile(sourceFile, symbol)
-	result := make([]Handle[ast.Node], len(nodes))
+	result := make([]NodeHandle, len(nodes))
 	for i, node := range nodes {
-		result[i] = NodeHandleFrom(node)
+		result[i] = setup.sd.nodeHandleFrom(node)
 	}
 	return result, nil
 }
 
 func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSignatureUsagesParams) ([]SignatureUsageResponse, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err
 	}
-	defer setup.done()
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
 
-	signatureDecl, err := s.resolveNodeHandle(setup.program, params.SignatureDecl)
+	signatureDecl, err := sd.resolveNodeHandle(program, params.SignatureDecl)
 	if err != nil {
 		return nil, err
 	}
@@ -2277,7 +2281,7 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 		return nil, nil
 	}
 
-	langSvc, err := s.setupLanguageService(setup, params.Project, "")
+	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
 	if err != nil {
 		return nil, err
 	}
@@ -2290,10 +2294,10 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 	result := make([]SignatureUsageResponse, 0, len(usages))
 	for _, u := range usages {
 		entry := SignatureUsageResponse{
-			Name: NodeHandleFrom(u.Name),
+			Name: sd.nodeHandleFrom(u.Name),
 		}
 		if u.Call != nil {
-			entry.Call = NodeHandleFrom(u.Call)
+			entry.Call = sd.nodeHandleFrom(u.Call)
 		}
 		result = append(result, entry)
 	}
@@ -2302,13 +2306,16 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 
 // handleGetReferencedSymbolsForNode returns node handles for all references found at a node.
 func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params *GetReferencedSymbolsForNodeParams) ([]ReferencedSymbolEntry, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err
 	}
-	defer setup.done()
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
 
-	node, err := s.resolveNodeHandle(setup.program, params.Node)
+	node, err := sd.resolveNodeHandle(program, params.Node)
 	if err != nil {
 		return nil, err
 	}
@@ -2316,12 +2323,12 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 		return nil, nil
 	}
 
-	langSvc, err := s.setupLanguageService(setup, params.Project, "")
+	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
 	if err != nil {
 		return nil, err
 	}
 
-	sourceFiles := setup.program.GetSourceFiles()
+	sourceFiles := program.GetSourceFiles()
 	entries := langSvc.GetReferencedSymbolsForNode(ctx, params.Position, node, sourceFiles)
 	if entries == nil {
 		return nil, nil
@@ -2333,14 +2340,14 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 		if defNode == nil {
 			continue
 		}
-		var refs []Handle[ast.Node]
+		var refs []NodeHandle
 		for _, ref := range entry.References() {
 			if ref.IsNodeEntry() {
-				refs = append(refs, NodeHandleFrom(ref.Node()))
+				refs = append(refs, sd.nodeHandleFrom(ref.Node()))
 			}
 		}
 		re := ReferencedSymbolEntry{
-			Definition: NodeHandleFrom(defNode),
+			Definition: sd.nodeHandleFrom(defNode),
 			References: refs,
 		}
 		if sym := entry.DefinitionSymbol(); sym != nil {
