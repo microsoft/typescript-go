@@ -190,19 +190,15 @@ func (w *Watcher) start() {
 	w.mu.Unlock()
 
 	if w.testing == nil {
-		go func() {
-			for {
-				select {
-				case <-w.ctx.Done():
-					return
-				case <-w.doCycleCh:
-					w.DoCycle()
-				}
+		for {
+			select {
+			case <-w.ctx.Done():
+				w.closeAllWatches()
+				return
+			case <-w.doCycleCh:
+				w.DoCycle()
 			}
-		}()
-		// Block until the context is cancelled (e.g. SIGINT), then clean up watches.
-		<-w.ctx.Done()
-		w.closeAllWatches()
+		}
 	}
 }
 
