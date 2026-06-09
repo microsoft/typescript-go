@@ -77,7 +77,11 @@ const p: Prop = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
 	})
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -119,7 +123,11 @@ const p: Prop = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
 	})
 	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -135,7 +143,10 @@ const p: Prop = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyCompletions(t, "d", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -162,7 +173,11 @@ const p: Prop = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
 	})
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -190,7 +205,11 @@ const p: Prop = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSTrue, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(true),
+			LabelDetailsSupport: new(true),
+		},
 	})
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -215,6 +234,10 @@ const p: Prop = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSTrue, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSFalse},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(true),
+			LabelDetailsSupport: new(false),
+		},
 	})
 }

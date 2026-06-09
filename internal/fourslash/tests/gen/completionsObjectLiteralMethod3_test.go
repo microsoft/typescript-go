@@ -78,7 +78,11 @@ const op: Op = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
 	})
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -94,7 +98,10 @@ const op: Op = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -110,7 +117,10 @@ const op: Op = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyCompletions(t, "d", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -167,6 +177,10 @@ const op: Op = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
 	})
 }

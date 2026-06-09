@@ -56,7 +56,10 @@ abstract class B1 extends A {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -78,7 +81,10 @@ abstract class B1 extends A {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new("b"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "P",

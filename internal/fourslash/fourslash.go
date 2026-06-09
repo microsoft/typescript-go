@@ -386,12 +386,13 @@ func defaultSemanticTokenModifiers() []string {
 // If modifying the defaults, update GetDefaultCapabilities too.
 var (
 	ptrTrue                       = new(true)
+	ptrFalse                      = new(false)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport:          ptrTrue,
+			SnippetSupport:          ptrFalse,
 			CommitCharactersSupport: ptrTrue,
 			PreselectSupport:        ptrTrue,
-			LabelDetailsSupport:     ptrTrue,
+			LabelDetailsSupport:     ptrFalse,
 			InsertReplaceSupport:    ptrTrue,
 			DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 		},
@@ -478,10 +479,10 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 		TextDocument: &lsproto.TextDocumentClientCapabilities{
 			Completion: &lsproto.CompletionClientCapabilities{
 				CompletionItem: &lsproto.ClientCompletionItemOptions{
-					SnippetSupport:          ptrTrue,
+					SnippetSupport:          ptrFalse,
 					CommitCharactersSupport: ptrTrue,
 					PreselectSupport:        ptrTrue,
-					LabelDetailsSupport:     ptrTrue,
+					LabelDetailsSupport:     ptrFalse,
 					InsertReplaceSupport:    ptrTrue,
 					DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 				},
@@ -559,6 +560,12 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 			},
 		},
 	}
+}
+
+func GetDefaultCapabilitiesWithSnippetSupport() *lsproto.ClientCapabilities {
+	capabilities := GetDefaultCapabilities()
+	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = ptrTrue
+	return capabilities
 }
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -1007,10 +1014,11 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 }
 
 type CompletionsExpectedList struct {
-	IsIncomplete    bool
-	ItemDefaults    *CompletionsExpectedItemDefaults
-	Items           *CompletionsExpectedItems
-	UserPreferences *lsutil.UserPreferences
+	IsIncomplete       bool
+	ItemDefaults       *CompletionsExpectedItemDefaults
+	Items              *CompletionsExpectedItems
+	UserPreferences    *lsutil.UserPreferences
+	ClientCapabilities *CompletionsClientCapabilities
 }
 
 type Ignored = struct{}
@@ -1036,6 +1044,11 @@ type CompletionsExpectedItems struct {
 	Excludes []string
 	Exact    []CompletionsExpectedItem
 	Unsorted []CompletionsExpectedItem
+}
+
+type CompletionsClientCapabilities struct {
+	SnippetSupport      *bool
+	LabelDetailsSupport *bool
 }
 
 type CompletionsExpectedCodeAction struct {
@@ -1122,20 +1135,22 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	t.Helper()
 	prefix := f.getCurrentPositionPrefix()
 	var userPreferences *lsutil.UserPreferences
+	var clientCapabilities *CompletionsClientCapabilities
 	if expected != nil {
 		userPreferences = expected.UserPreferences
+		clientCapabilities = expected.ClientCapabilities
 	}
-	list := f.getCompletions(t, userPreferences)
+	list := f.getCompletions(t, userPreferences, clientCapabilities)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
 }
 
 func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
 	t.Helper()
-	return f.getCompletions(t, userPreferences)
+	return f.getCompletions(t, userPreferences, nil)
 }
 
-func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
+func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences, clientCapabilityOverrides *CompletionsClientCapabilities) *lsproto.CompletionList {
 	t.Helper()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -1147,6 +1162,19 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 	if userPreferences != nil {
 		config := f.userPreferences.WithOverrides(*userPreferences)
 		reset := f.ConfigureWithReset(t, config)
+		defer reset()
+	}
+	if f.capabilities != nil {
+		capabilities := f.capabilities.Resolve()
+		if clientCapabilityOverrides != nil {
+			if clientCapabilityOverrides.SnippetSupport != nil {
+				capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = *clientCapabilityOverrides.SnippetSupport
+			}
+			if clientCapabilityOverrides.LabelDetailsSupport != nil {
+				capabilities.TextDocument.Completion.CompletionItem.LabelDetailsSupport = *clientCapabilityOverrides.LabelDetailsSupport
+			}
+		}
+		reset := f.client.Server.SetClientCapabilitiesForTesting(capabilities)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
@@ -2040,7 +2068,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 
 	reset := f.ConfigureWithReset(t, *userPreferences)
 	defer reset()
-	completionsList := f.getCompletions(t, nil) // Already configured, so we do not need to pass it in again
+	completionsList := f.getCompletions(t, nil, nil) // Already configured, so we do not need to pass it in again
 	items := core.Filter(completionsList.Items, func(item *lsproto.CompletionItem) bool {
 		if item.Label != options.Name || item.Data == nil {
 			return false

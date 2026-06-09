@@ -33,7 +33,7 @@ declare const u: d.E;
 switch (u) {
     case/*2*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithSnippetSupport(), content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

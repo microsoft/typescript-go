@@ -57,7 +57,10 @@ abstract class Abc extends Ab {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -89,7 +92,10 @@ abstract class Abc extends Ab {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -121,6 +127,9 @@ abstract class Abc extends Ab {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(false),
+		},
 	})
 }

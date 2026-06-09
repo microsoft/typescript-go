@@ -39,6 +39,9 @@ class C implements I {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSTrue, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(true),
+		},
 	})
 }

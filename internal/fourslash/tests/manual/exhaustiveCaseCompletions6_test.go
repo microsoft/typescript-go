@@ -20,7 +20,7 @@ declare const p: 'A' | 'B' | 'C';
 switch (p) {
     /*1*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithSnippetSupport(), content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

@@ -652,6 +652,14 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 	return s.send(resp.Message())
 }
 
+func (s *Server) SetClientCapabilitiesForTesting(caps lsproto.ResolvedClientCapabilities) (reset func()) {
+	original := s.clientCapabilities
+	s.clientCapabilities = caps
+	return func() {
+		s.clientCapabilities = original
+	}
+}
+
 // send writes a message to the outgoing queue, respecting context cancellation.
 func (s *Server) send(msg *lsproto.Message) error {
 	return s.outgoingQueue.Put(s.backgroundCtx, msg)

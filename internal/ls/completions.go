@@ -1922,7 +1922,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		sortText := SortTextAutoImportSuggestions
 
 		if data.importStatementCompletion != nil {
-			isSnippet = clientSupportsItemSnippet(ctx) && preferences.IncludeCompletionsWithSnippetText.IsTrue()
+			isSnippet = clientSupportsItemSnippet(ctx)
 			insertText, replacementSpan = getInsertTextAndReplacementSpanForImportCompletion(
 				autoImport.Fix,
 				data.importStatementCompletion,
@@ -2212,7 +2212,7 @@ func (l *LanguageService) createCompletionItem(
 		insertText = origin.asObjectLiteralMethod().insertText
 		isSnippet = origin.asObjectLiteralMethod().isSnippet
 		labelDetails = origin.asObjectLiteralMethod().labelDetails
-		if !clientSupportsItemLabelDetails(ctx) || preferences.UseLabelDetailsInCompletionEntries.IsFalse() {
+		if !clientSupportsItemLabelDetails(ctx) {
 			name = name + *origin.asObjectLiteralMethod().labelDetails.Detail
 			labelDetails = nil
 		}
@@ -2223,7 +2223,6 @@ func (l *LanguageService) createCompletionItem(
 	if data.isJsxIdentifierExpected &&
 		!data.isRightOfOpenTag &&
 		clientSupportsItemSnippet(ctx) &&
-		preferences.IncludeCompletionsWithSnippetText.IsTrue() &&
 		preferences.JsxAttributeCompletionStyle != lsutil.JsxAttributeCompletionStyleNone &&
 		!(data.location.Parent != nil && ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
 		useBraces := preferences.JsxAttributeCompletionStyle == lsutil.JsxAttributeCompletionStyleBraces
@@ -2347,7 +2346,7 @@ func (l *LanguageService) getEntryForObjectLiteralMethodCompletion(ctx context.C
 		Target:         l.GetProgram().Options().GetEmitScriptTarget(),
 	})
 
-	isSnippet := clientSupportsItemSnippet(ctx) && l.UserPreferences().IncludeCompletionsWithSnippetText.IsTrue()
+	isSnippet := clientSupportsItemSnippet(ctx)
 	insertText := snippetPrinter.printAndFormatNodeWithSettings(ctx, method, file, change.GetFormatCodeSettingsForWriting(l.FormatOptions(), file))
 	if isSnippet {
 		insertText = addClassMemberSnippet(insertText, l.FormatOptions().NewLineCharacter)
@@ -2478,7 +2477,7 @@ func (l *LanguageService) getEntryForMemberCompletion(ctx context.Context, typeC
 		return nil
 	}
 
-	isSnippet := clientSupportsItemSnippet(ctx) && l.UserPreferences().IncludeCompletionsWithSnippetText.IsTrue()
+	isSnippet := clientSupportsItemSnippet(ctx)
 	modifiers := ast.ModifierFlagsNone
 
 	completionNodes := make([]*ast.Node, 0, len(nodes))

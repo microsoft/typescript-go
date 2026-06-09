@@ -65,7 +65,10 @@ export class MyComponent extends Component {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSTrue, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(true),
+		},
 	})
 	f.GoToFile(t, "/home/src/workspaces/project/utils.ts")
 	f.GoToMarker(t, "")
@@ -91,6 +94,9 @@ export class MyComponent extends Component {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSTrue, IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(true),
+		},
 	})
 }

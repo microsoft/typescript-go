@@ -55,6 +55,10 @@ const obj: IFoo = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSTrue, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(true),
+			LabelDetailsSupport: new(true),
+		},
 	})
 }

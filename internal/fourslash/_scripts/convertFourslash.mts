@@ -977,6 +977,45 @@ const completionPlus = new Map([
     ["completion.typeKeywordsPlus", "CompletionTypeKeywordsPlus"],
 ]);
 
+interface CompletionCapabilityContext {
+    includeCompletionsWithSnippetText?: boolean;
+    useLabelDetailsInCompletionEntries?: boolean;
+}
+
+function parseCompletionCapabilityContext(arg: ts.ObjectLiteralExpression): CompletionCapabilityContext {
+    const result: CompletionCapabilityContext = {};
+    for (const prop of arg.properties) {
+        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+            continue;
+        }
+        switch (prop.name.text) {
+            case "includeCompletionsWithSnippetText":
+                result.includeCompletionsWithSnippetText = prop.initializer.kind === ts.SyntaxKind.TrueKeyword;
+                break;
+            case "useLabelDetailsInCompletionEntries":
+                result.useLabelDetailsInCompletionEntries = prop.initializer.kind === ts.SyntaxKind.TrueKeyword;
+                break;
+        }
+    }
+    return result;
+}
+
+function formatCompletionClientCapabilities(context: CompletionCapabilityContext): string | undefined {
+    const props: string[] = [];
+    if (context.includeCompletionsWithSnippetText !== undefined) {
+        props.push(`SnippetSupport: new(${context.includeCompletionsWithSnippetText}),`);
+    }
+    if (context.useLabelDetailsInCompletionEntries !== undefined) {
+        props.push(`LabelDetailsSupport: new(${context.useLabelDetailsInCompletionEntries}),`);
+    }
+    if (props.length === 0) {
+        return undefined;
+    }
+    return `&fourslash.CompletionsClientCapabilities{
+        ${props.join("\n")}
+    }`;
+}
+
 function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApplyCodeActionArgs): VerifyCompletionsCmd {
     let marker: string | undefined;
     let includes: string | undefined;
@@ -984,11 +1023,26 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
     let exact: string | undefined;
     let unsorted: string | undefined;
     let preferences = "nil /*preferences*/";
+    let completionCapabilityContext: CompletionCapabilityContext = {};
     const obj = getObjectLiteralExpression(arg);
     if (!obj) {
         throw new Error(`Expected object literal expression in verify.completions, got ${arg.getText()}`);
     }
     let isNewIdentifierLocation: true | undefined;
+    for (const prop of obj.properties) {
+        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name) || prop.name.text !== "preferences") {
+            continue;
+        }
+        const preferenceLiteral = getObjectLiteralExpression(prop.initializer);
+        if (!preferenceLiteral) {
+            throw new Error(`Expected object literal for user preferences, got ${prop.initializer.getText()}`);
+        }
+        completionCapabilityContext = {
+            ...completionCapabilityContext,
+            ...parseCompletionCapabilityContext(preferenceLiteral),
+        };
+        break;
+    }
     for (const prop of obj.properties) {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
             if (ts.isShorthandPropertyAssignment(prop) && prop.name.text === "preferences") {
@@ -996,6 +1050,10 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                 if (!preferenceLiteral) {
                     throw new Error(`Expected object literal for user preferences, got ${prop.name.getText()}`);
                 }
+                completionCapabilityContext = {
+                    ...completionCapabilityContext,
+                    ...parseCompletionCapabilityContext(preferenceLiteral),
+                };
                 preferences = parseUserPreferences(preferenceLiteral);
                 continue;
             }
@@ -1148,6 +1206,10 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                 if (!preferenceLiteral) {
                     throw new Error(`Expected object literal for user preferences, got ${init.getText()}`);
                 }
+                completionCapabilityContext = {
+                    ...completionCapabilityContext,
+                    ...parseCompletionCapabilityContext(preferenceLiteral),
+                };
                 preferences = parseUserPreferences(preferenceLiteral);
                 break;
             }
@@ -1164,7 +1226,7 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
     return {
         kind: "verifyCompletions",
         marker: marker ? marker : "nil",
-        args: { includes, excludes, exact, unsorted, preferences },
+        args: { includes, excludes, exact, unsorted, preferences, clientCapabilities: formatCompletionClientCapabilities(completionCapabilityContext) },
         isNewIdentifierLocation: isNewIdentifierLocation,
     };
 }
@@ -2241,10 +2303,7 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string {
                     preferences.push(`IncludeCompletionsWithClassMemberSnippets: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeCompletionsWithSnippetText":
-                    preferences.push(`IncludeCompletionsWithSnippetText: ${stringToTristate(prop.initializer.getText())}`);
-                    break;
                 case "useLabelDetailsInCompletionEntries":
-                    preferences.push(`UseLabelDetailsInCompletionEntries: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "includeCompletionsWithObjectLiteralMethodSnippets":
                     preferences.push(`IncludeCompletionsWithObjectLiteralMethodSnippets: ${stringToTristate(prop.initializer.getText())}`);
@@ -3700,6 +3759,7 @@ interface VerifyCompletionsArgs {
     exact?: string;
     unsorted?: string;
     preferences: string;
+    clientCapabilities?: string;
 }
 
 interface VerifyApplyCodeActionArgs {
@@ -4052,6 +4112,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andA
         ${expected.join("\n")}
     },
     ${args?.preferences && !args.preferences.startsWith("nil") ? `UserPreferences: ${args.preferences},` : ""}
+    ${args?.clientCapabilities ? `ClientCapabilities: ${args.clientCapabilities},` : ""}
 }`;
     }
 

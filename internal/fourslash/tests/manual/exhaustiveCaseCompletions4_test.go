@@ -81,7 +81,7 @@ switch (z) {
     case H.C:
     /*6*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithSnippetSupport(), content)
 	defer done()
 
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{

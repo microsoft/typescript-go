@@ -6,7 +6,6 @@ package fourslash_test
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -110,6 +109,9 @@ declare namespace JSX {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleAuto, IncludeCompletionsWithSnippetText: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleAuto},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport: new(true),
+		},
 	})
 }

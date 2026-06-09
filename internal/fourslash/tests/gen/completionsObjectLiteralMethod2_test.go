@@ -61,6 +61,10 @@ const obj: IBar = {
 				},
 			},
 		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithSnippetText: core.TSFalse, IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue, UseLabelDetailsInCompletionEntries: core.TSTrue},
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
 	})
 }

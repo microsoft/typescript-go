@@ -45,7 +45,7 @@ switch (u) {
 switch (u) {
     case E./*8*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithSnippetSupport(), content)
 	defer done()
 
 	exhaustiveCaseCompletion := &lsproto.CompletionItem{
