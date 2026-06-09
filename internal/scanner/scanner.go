@@ -2065,6 +2065,9 @@ func (s *Scanner) scanNumberFragment() string {
 		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
+	if result.Len() == 0 {
+		return s.text[start:s.pos]
+	}
 	result.WriteString(s.text[start:s.pos])
 	return result.String()
 }
