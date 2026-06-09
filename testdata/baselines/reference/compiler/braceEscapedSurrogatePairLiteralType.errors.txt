@@ -1,0 +1,22 @@
+braceEscapedSurrogatePairLiteralType.ts(7,7): error TS2322: Type '"��"' is not assignable to type '"😀"'.
+braceEscapedSurrogatePairLiteralType.ts(8,7): error TS2322: Type '"��"' is not assignable to type '"😀"'.
+braceEscapedSurrogatePairLiteralType.ts(9,7): error TS2322: Type '"��"' is not assignable to type '"😀"'.
+
+
+==== braceEscapedSurrogatePairLiteralType.ts (3 errors) ====
+    // In JavaScript, "\u{D83D}\u{DE00}", "\uD83D\uDE00", and "😀" are all the
+    // same string, so they should all have the same string literal type.
+    const literal = "😀" as const;
+    const braceEscaped = "\u{D83D}\u{DE00}" as const;
+    const adjacentEscaped = "\uD83D\uDE00" as const;
+    
+    const a: "😀" = braceEscaped;
+          ~
+!!! error TS2322: Type '"��"' is not assignable to type '"😀"'.
+    const b: typeof literal = braceEscaped;
+          ~
+!!! error TS2322: Type '"��"' is not assignable to type '"😀"'.
+    const c: typeof adjacentEscaped = braceEscaped;
+          ~
+!!! error TS2322: Type '"��"' is not assignable to type '"😀"'.
+    
