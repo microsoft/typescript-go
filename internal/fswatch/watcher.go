@@ -197,6 +197,29 @@ func Default() Watcher {
 	}
 }
 
+// HasFastRecursiveBackend reports whether the provided watcher backend supports
+// efficient recursive watching without requiring a full userspace tree walk.
+//
+// This is true for Windows (ReadDirectoryChangesW subtree mode) and macOS
+// FSEvents (inherently recursive), and false for all other backends.
+func HasFastRecursiveBackend(w Watcher) bool {
+	if w == nil {
+		return false
+	}
+	switch w.Name() {
+	case "windows", "fsevents":
+		return true
+	default:
+		return false
+	}
+}
+
+// DefaultHasFastRecursiveBackend reports whether [Default] uses a backend with
+// efficient recursive watching semantics.
+func DefaultHasFastRecursiveBackend() bool {
+	return HasFastRecursiveBackend(Default())
+}
+
 // watcher is the concrete implementation of [Watcher]. Each platform
 // watcher is a package-level *watcher whose factory is set by the
 // platform's init() function.

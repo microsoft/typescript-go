@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -1202,10 +1203,8 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	// expensive full tree walks.
 	granularWatches := false
 	if useBuiltinWatcher || !hasDynamicWatchRegistration {
-		// Using builtin watcher; determine based on platform.
-		// TODO: detect fswatch backend at runtime and set based on that.
-		// For now, assume granular watches are not needed for builtin watchers.
-		granularWatches = false
+		// Using builtin watcher; determine based on active fswatch backend.
+		granularWatches = !fswatch.DefaultHasFastRecursiveBackend()
 	}
 
 	if useBuiltinWatcher || !hasDynamicWatchRegistration {
