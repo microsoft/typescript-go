@@ -198,6 +198,12 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		isConst := b.ch.isConstContext(elements[0].Name.Parent.Parent)
 		newElements := make([]*ast.Node, 0, len(elements))
 
+		// Member types are serialized within an object type literal, so set the
+		// corresponding flag to mirror createTypeNodeFromObjectType. This ensures
+		// inaccessible `this` references inside the members are reported (TS2527).
+		restoreObjectLiteralFlags := b.saveRestoreFlags()
+		b.ctx.flags |= nodebuilder.FlagsInObjectTypeLiteral
+
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
 			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
@@ -283,6 +289,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				cleanup()
 			}
 		}
+		restoreObjectLiteralFlags()
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
 		if b.ctx.flags&nodebuilder.FlagsMultilineObjectLiterals == 0 {
 			b.e.AddEmitFlags(result, printer.EFSingleLine)
@@ -314,7 +321,7 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 	if p.Optional {
 		questionMark = b.f.NewToken(ast.KindQuestionToken)
 	}
-	return b.f.NewParameterDeclaration(
+	parameter := b.f.NewParameterDeclaration(
 		nil,
 		dotDotDot,
 		// matches strada behavior of always reserializing param names from scratch
@@ -323,6 +330,10 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
+	if original := p.Name.Parent; ast.IsParameterDeclaration(original) {
+		b.setCommentRange(parameter, original)
+	}
+	return parameter
 }
 
 // see `typeNodeIsEquivalentToType` in strada, but applied more broadly here, so is setup to handle more equivalences - strada only used it via
