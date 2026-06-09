@@ -2893,13 +2893,10 @@ func iterateCommentRanges(f *ast.NodeFactory, text string, pos int, trailing boo
 							pos += s
 						}
 					} else {
-						for pos < len(text) {
-							c, s := utf8.DecodeRuneInString(text[pos:])
-							if c == '*' && pos+1 < len(text) && text[pos+1] == '/' {
-								pos += 2
-								break
-							}
-							pos += s
+						if i := strings.Index(text[pos:], "*/"); i >= 0 {
+							pos += i + 2
+						} else {
+							pos = len(text)
 						}
 					}
 
