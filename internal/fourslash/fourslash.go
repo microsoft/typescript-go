@@ -46,6 +46,7 @@ type FourslashTest struct {
 	vfs    vfs.FS
 
 	testData      *TestData // !!! consolidate test files from test data and script info
+	content       string
 	baselines     map[baselineCommand]*strings.Builder
 	rangesByText  *collections.MultiMap[string, *RangeMarker]
 	openFiles     map[string]struct{}
@@ -195,6 +196,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	f := &FourslashTest{
 		testData:                &testData,
+		content:                 content,
 		stateEnableFormatting:   true,
 		reportFormatOnTypeCrash: true,
 		userPreferences:         lsutil.NewDefaultUserPreferences(),
@@ -1051,6 +1053,23 @@ type CompletionsClientCapabilities struct {
 	LabelDetailsSupport *bool
 }
 
+func (f *FourslashTest) capabilitiesWithCompletionOverrides(overrides *CompletionsClientCapabilities) *lsproto.ClientCapabilities {
+	capabilities := *getCapabilitiesWithDefaults(f.capabilities)
+	textDocument := *capabilities.TextDocument
+	completion := *textDocument.Completion
+	completionItem := *completion.CompletionItem
+	if overrides.SnippetSupport != nil {
+		completionItem.SnippetSupport = overrides.SnippetSupport
+	}
+	if overrides.LabelDetailsSupport != nil {
+		completionItem.LabelDetailsSupport = overrides.LabelDetailsSupport
+	}
+	completion.CompletionItem = &completionItem
+	textDocument.Completion = &completion
+	capabilities.TextDocument = &textDocument
+	return &capabilities
+}
+
 type CompletionsExpectedCodeAction struct {
 	Name           string
 	Source         string
@@ -1150,8 +1169,30 @@ func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.Use
 	return f.getCompletions(t, userPreferences, nil)
 }
 
+func (f *FourslashTest) getCompletionsWithCapabilities(t *testing.T, userPreferences *lsutil.UserPreferences, capabilities *lsproto.ClientCapabilities) *lsproto.CompletionList {
+	t.Helper()
+	ff, done := NewFourslash(t, capabilities, f.content)
+	defer done()
+	ff.isStradaServer = f.isStradaServer
+	ff.Configure(t, f.userPreferences)
+	for fileName := range f.openFiles {
+		script := f.getScriptInfo(fileName)
+		ffScript := ff.getScriptInfo(fileName)
+		if script != nil && ffScript != nil && script.content != ffScript.content {
+			ff.editScriptAndUpdateMarkers(t, fileName, 0, len(ffScript.content), script.content)
+		}
+	}
+	ff.ensureActiveFile(t, f.activeFilename)
+	ff.goToPosition(t, f.currentCaretPosition)
+	return ff.getCompletions(t, userPreferences, nil)
+}
+
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences, clientCapabilityOverrides *CompletionsClientCapabilities) *lsproto.CompletionList {
 	t.Helper()
+	if clientCapabilityOverrides != nil {
+		capabilities := f.capabilitiesWithCompletionOverrides(clientCapabilityOverrides)
+		return f.getCompletionsWithCapabilities(t, userPreferences, capabilities)
+	}
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -1162,19 +1203,6 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 	if userPreferences != nil {
 		config := f.userPreferences.WithOverrides(*userPreferences)
 		reset := f.ConfigureWithReset(t, config)
-		defer reset()
-	}
-	if f.capabilities != nil {
-		capabilities := f.capabilities.Resolve()
-		if clientCapabilityOverrides != nil {
-			if clientCapabilityOverrides.SnippetSupport != nil {
-				capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = *clientCapabilityOverrides.SnippetSupport
-			}
-			if clientCapabilityOverrides.LabelDetailsSupport != nil {
-				capabilities.TextDocument.Completion.CompletionItem.LabelDetailsSupport = *clientCapabilityOverrides.LabelDetailsSupport
-			}
-		}
-		reset := f.client.Server.SetClientCapabilitiesForTesting(capabilities)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
