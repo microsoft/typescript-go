@@ -332,7 +332,7 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 		Range:              lspRange,
 		Code:               code,
 		Severity:           &severity,
-		Message:            lsproto.StringOrMarkupContent{String: new(messageChainToString(diagnostic, locale))},
+		Message:            messageChainToString(diagnostic, locale),
 		Source:             source,
 		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
 		Tags:               ptrToSliceIfNonEmpty(tags),
