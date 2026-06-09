@@ -45,6 +45,7 @@ type ProjectCollectionBuilder struct {
 	newSnapshotID              uint64
 	programStructureChanged    bool
 	defaultProjectsInvalidated bool
+	openFilesChanged           bool
 
 	fileDefaultProjects map[tspath.Path]tspath.Path
 	configuredProjects  *dirty.SyncMap[tspath.Path, *Project]
@@ -100,6 +101,11 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 	if configuredProjects, configuredProjectsChanged := b.configuredProjects.Finalize(); configuredProjectsChanged {
 		ensureCloned()
 		newProjectCollection.configuredProjects = configuredProjects
+	}
+
+	if b.openFilesChanged {
+		ensureCloned()
+		newProjectCollection.openFiles = openFilePaths(b.fs.overlays)
 	}
 
 	if !maps.Equal(b.fileDefaultProjects, b.base.fileDefaultProjects) {
@@ -187,6 +193,8 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 }
 
 func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
+	b.openFilesChanged = b.openFilesChanged || summary.Opened != "" || summary.Closed.Len() > 0
+
 	changedFiles := make([]tspath.Path, 0, summary.Changed.Len())
 	for uri := range summary.Changed.Keys() {
 		fileName := uri.FileName()
@@ -531,7 +539,8 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 				childConfig,
 				func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
 					return !projectTreeRequest.IsProjectReferenced(referencePath)
-				}) {
+				},
+			) {
 				return
 			}
 
@@ -990,10 +999,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 				if logger != nil {
 					logger.Log(fmt.Sprintf("Updating inferred project config with %d root files", len(rootFileNames)))
 				}
-				p.CommandLine = newCommandLine
-				p.commandLineWithTypingsFiles = nil
-				p.dirty = true
-				p.dirtyFilePath = ""
+				p.SetCommandLine(newCommandLine)
 			},
 		)
 		if !changed {
@@ -1029,9 +1035,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
 				entry.Change(func(p *Project) {
-					p.CommandLine = commandLine
-					p.commandLineWithTypingsFiles = nil
-					p.potentialProjectReferences = nil
+					p.SetCommandLine(commandLine)
 				})
 			}
 		}
