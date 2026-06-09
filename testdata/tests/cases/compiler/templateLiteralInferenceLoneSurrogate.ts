@@ -2,8 +2,8 @@
 // @noEmit: true
 
 // Template literal type inference over a string containing a lone surrogate
-// should preserve the surrogate, matching tsc. Currently tsgo corrupts the
-// inferred lone surrogate to U+FFFD; this baseline documents that behavior.
+// should preserve the surrogate, matching tsc. This baseline verifies the
+// inferred lone surrogate is preserved rather than corrupted to U+FFFD.
 type Head<S extends string> = S extends `${infer H}${infer _R}` ? H : never;
 type Rest<S extends string> = S extends `${infer _H}${infer R}` ? R : never;
 
