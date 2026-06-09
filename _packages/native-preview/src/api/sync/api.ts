@@ -166,7 +166,7 @@ export class API<FromLSP extends boolean = false> {
     private initialized: boolean = false;
     private activeSnapshots: Set<Snapshot> = new Set();
     private latestSnapshot: Snapshot | undefined;
-    readonly internal: SnapshotInternalAPI;
+    readonly internal: InternalAPI;
 
     constructor(options: APIOptions | LSPConnectionOptions = {}) {
         this.client = new Client(options);
