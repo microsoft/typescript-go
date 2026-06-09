@@ -48,11 +48,11 @@ export const shared = "v1";
 
 Watch Registrations::
 Directory watches::
-  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project (recursive)
-  /home/src/workspaces/shared
 File watches::
+  /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
   /home/src/workspaces/project/tsconfig.json
+  /home/src/workspaces/shared/index.ts
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -78,11 +78,11 @@ export const shared = "v2";
 
 Watch Registrations::
 Directory watches::
-  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project (recursive)
-  /home/src/workspaces/shared
 File watches::
+  /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
   /home/src/workspaces/project/tsconfig.json
+  /home/src/workspaces/shared/index.ts
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/link.ts

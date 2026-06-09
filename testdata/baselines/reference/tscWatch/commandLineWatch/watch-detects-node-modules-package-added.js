@@ -50,9 +50,9 @@ export {};
 
 Watch Registrations::
 Directory watches::
-  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project (recursive)
 File watches::
+  /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
   /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
 SemanticDiagnostics::
@@ -79,9 +79,9 @@ Output::
 
 Watch Registrations::
 Directory watches::
-  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project (recursive)
 File watches::
+  /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
   /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
 SemanticDiagnostics::

@@ -50,6 +50,10 @@ func stopTracing(sys tsc.System, tr *tracing.Tracing) {
 }
 
 func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+	return CommandLineCtx(context.Background(), sys, commandLineArgs, testing)
+}
+
+func CommandLineCtx(ctx context.Context, sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
@@ -59,7 +63,7 @@ func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLi
 		}
 	}
 
-	return tscCompilation(sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
+	return tscCompilation(ctx, sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
 }
 
 func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
@@ -118,7 +122,7 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 	return orchestrator.Start()
 }
 
-func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	configFileName := ""
 	locale := commandLine.Locale()
 	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, commandLine.CompilerOptions())
@@ -231,6 +235,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
 		watcher := createWatcher(
+			ctx,
 			sys,
 			configForCompilation,
 			compilerOptionsFromCommandLine,

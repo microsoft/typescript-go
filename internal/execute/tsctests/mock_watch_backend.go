@@ -3,6 +3,7 @@ package tsctests
 import (
 	"fmt"
 	"io"
+	"path"
 	"sort"
 	"strings"
 	"sync"
@@ -126,15 +127,34 @@ func (m *MockWatchBackend) SendEvents(events []fswatch.Event) {
 
 // SendChangedPaths converts a list of file changes into fswatch
 // events with appropriate event kinds and routes them through
-// registered watches via SendEvents.
+// registered watches via SendEvents. For new/modified files, it also
+// emits update events for their parent directories, simulating how
+// real filesystem watchers report directory events.
 func (m *MockWatchBackend) SendChangedPaths(changes []fsbaselineutil.FileChange) {
-	events := make([]fswatch.Event, len(changes))
-	for i, c := range changes {
+	events := make([]fswatch.Event, 0, len(changes)*2)
+	seenDirs := make(map[string]struct{})
+	for _, c := range changes {
 		kind := fswatch.EventUpdate
 		if c.Deleted {
 			kind = fswatch.EventDelete
 		}
-		events[i] = fswatch.Event{Kind: kind, Path: c.Path}
+		events = append(events, fswatch.Event{Kind: kind, Path: c.Path})
+		// Emit update events for parent directories of changed files.
+		// Real filesystem watchers deliver events to non-recursive watches
+		// when a child directory is created, which the mock must replicate.
+		dir := path.Dir(c.Path)
+		for dir != "" && dir != "/" && dir != "." {
+			if _, seen := seenDirs[dir]; seen {
+				break
+			}
+			seenDirs[dir] = struct{}{}
+			events = append(events, fswatch.Event{Kind: fswatch.EventUpdate, Path: dir})
+			parent := path.Dir(dir)
+			if parent == dir {
+				break
+			}
+			dir = parent
+		}
 	}
 	m.SendEvents(events)
 }

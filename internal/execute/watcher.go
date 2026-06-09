@@ -1,6 +1,7 @@
 package execute
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -94,6 +95,7 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 
 type Watcher struct {
 	mu                             sync.Mutex
+	ctx                            context.Context
 	sys                            tsc.System
 	configFileName                 string
 	config                         *tsoptions.ParsedCommandLine
@@ -112,15 +114,13 @@ type Watcher struct {
 
 	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
 
-	backend         WatchBackend
-	watchedDirs     map[string]*watchedDir   // dir path → watch state
-	watchedFiles    map[string]*watchedFile  // file path → watch state
-	seenFiles       map[tspath.Path]struct{} // all build dependencies (for event filtering)
-	seenFileDirs    map[string]struct{}      // parent dirs of seen files (for watch registration)
-	configMtimes    map[string]time.Time
-	watchTerminated chan struct{}
-	doCycleCh       chan struct{}
-	debugLog        io.Writer // nil = silent; set via TS_WATCH_DEBUG
+	backend      WatchBackend
+	watchedDirs  map[string]*watchedDir   // dir path → watch state
+	watchedFiles map[string]*watchedFile  // file path → watch state
+	seenFiles    map[tspath.Path]struct{} // all build dependencies (for event filtering)
+	configMtimes map[string]time.Time
+	doCycleCh    chan struct{}
+	debugLog     io.Writer // nil = silent; set via TS_WATCH_DEBUG
 
 	changedMu       sync.Mutex
 	changedPaths    map[string]fswatch.EventKind // event path → last event kind
@@ -130,6 +130,7 @@ type Watcher struct {
 var _ tsc.Watcher = (*Watcher)(nil)
 
 func createWatcher(
+	ctx context.Context,
 	sys tsc.System,
 	configParseResult *tsoptions.ParsedCommandLine,
 	compilerOptionsFromCommandLine *core.CompilerOptions,
@@ -139,6 +140,7 @@ func createWatcher(
 	testing tsc.CommandLineTesting,
 ) *Watcher {
 	w := &Watcher{
+		ctx:                            ctx,
 		sys:                            sys,
 		config:                         configParseResult,
 		compilerOptionsFromCommandLine: compilerOptionsFromCommandLine,
@@ -148,7 +150,6 @@ func createWatcher(
 		reportWatchStatus:              tsc.CreateWatchStatusReporter(sys, configParseResult.Locale(), configParseResult.CompilerOptions(), testing),
 		testing:                        testing,
 		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
-		watchTerminated:                make(chan struct{}),
 		doCycleCh:                      make(chan struct{}, 1),
 		watchedDirs:                    make(map[string]*watchedDir),
 		watchedFiles:                   make(map[string]*watchedFile),
@@ -192,16 +193,15 @@ func (w *Watcher) start() {
 		go func() {
 			for {
 				select {
-				case <-w.watchTerminated:
+				case <-w.ctx.Done():
 					return
 				case <-w.doCycleCh:
 					w.DoCycle()
 				}
 			}
 		}()
-		// Block until a watch terminates (e.g. watched directory deleted),
-		// then clean up.
-		<-w.watchTerminated
+		// Block until the context is cancelled (e.g. SIGINT), then clean up watches.
+		<-w.ctx.Done()
 		w.closeAllWatches()
 	}
 }
@@ -223,22 +223,7 @@ func (w *Watcher) reconcileWatches() {
 		}
 	}
 
-	// 2. Parent directories of all seen files
-	opts := w.comparePathsOptions()
-	for dir := range w.seenFileDirs {
-		if _, already := desiredDirs[dir]; already {
-			continue
-		}
-		if w.coveredByRecursiveWildcard(dir, desiredDirs) {
-			continue
-		}
-		if isStrictAncestorDir(cwd, dir, opts) {
-			continue
-		}
-		desiredDirs[dir] = false
-	}
-
-	// 3. For no-config CLI mode, ensure CWD is watched
+	// 2. For no-config CLI mode, ensure CWD is watched
 	if w.config.ConfigFile == nil && len(desiredDirs) == 0 {
 		dir := w.sys.FS().Realpath(cwd)
 		desiredDirs[dir] = false
@@ -257,6 +242,30 @@ func (w *Watcher) reconcileWatches() {
 			absPath := tspath.GetNormalizedAbsolutePath(path, cwd)
 			realPath := w.sys.FS().Realpath(absPath)
 			desiredFiles[realPath] = struct{}{}
+		}
+	}
+
+	// Watch source files not covered by any directory watch (e.g. symlink
+	// targets that resolve outside the project's wildcard directories)
+	opts := w.comparePathsOptions()
+	for _, sf := range w.program.GetProgram().GetSourceFiles() {
+		for _, filePath := range []string{sf.FileName(), w.sys.FS().Realpath(sf.FileName())} {
+			dir := tspath.GetDirectoryPath(filePath)
+			covered := false
+			for wdir, recursive := range desiredDirs {
+				if recursive {
+					if tspath.ContainsPath(wdir, dir, opts) {
+						covered = true
+						break
+					}
+				} else if dir == wdir {
+					covered = true
+					break
+				}
+			}
+			if !covered {
+				desiredFiles[filePath] = struct{}{}
+			}
 		}
 	}
 
@@ -297,7 +306,7 @@ func (w *Watcher) reconcileWatches() {
 		}
 		watchDir := dir
 		watch, err := w.backend.WatchDirectory(watchDir, cb, recursive, shouldIgnoreWatchPath)
-		for err != nil && watchDir != cwd && !isStrictAncestorDir(cwd, watchDir, opts) {
+		for err != nil && watchDir != cwd {
 			parent := tspath.GetDirectoryPath(watchDir)
 			if parent == watchDir {
 				break
@@ -311,7 +320,8 @@ func (w *Watcher) reconcileWatches() {
 					break
 				}
 			}
-			watch, err = w.backend.WatchDirectory(watchDir, cb, recursive, shouldIgnoreWatchPath)
+			// Ancestor fallback watches are always non-recursive
+			watch, err = w.backend.WatchDirectory(watchDir, cb, false, shouldIgnoreWatchPath)
 		}
 		if err != nil {
 			if w.debugLog != nil {
@@ -324,6 +334,7 @@ func (w *Watcher) reconcileWatches() {
 				fmt.Fprintf(w.debugLog, "[watch] watching ancestor %s for missing %s\n", watchDir, dir)
 			}
 			dirPath = watchDir
+			entry.recursive = false
 		}
 		entry.closer = watch
 		w.watchedDirs[dirPath] = entry
@@ -371,30 +382,11 @@ func (w *Watcher) reconcileWatches() {
 	}
 }
 
-func (w *Watcher) coveredByRecursiveWildcard(dir string, desiredDirs map[string]bool) bool {
-	opts := w.comparePathsOptions()
-	for wdir, recursive := range desiredDirs {
-		if !recursive {
-			continue
-		}
-		if tspath.ContainsPath(wdir, dir, opts) {
-			return true
-		}
-	}
-	return false
-}
-
 func (w *Watcher) comparePathsOptions() tspath.ComparePathsOptions {
 	return tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: w.sys.FS().UseCaseSensitiveFileNames(),
 		CurrentDirectory:          w.sys.GetCurrentDirectory(),
 	}
-}
-
-// isStrictAncestorDir reports whether candidate is a strict ancestor of
-// path (i.e. path is contained within candidate, but they are not equal).
-func isStrictAncestorDir(path, candidate string, opts tspath.ComparePathsOptions) bool {
-	return path != candidate && tspath.ContainsPath(candidate, path, opts)
 }
 
 func (w *Watcher) closeAllWatches() {
@@ -499,9 +491,7 @@ func (w *Watcher) onWatchEvents(events []fswatch.Event, err error) {
 func (w *Watcher) signalDoCycle() {
 	select {
 	case w.doCycleCh <- struct{}{}:
-		// Signal sent; the DoCycle goroutine will pick it up.
-	case <-w.watchTerminated:
-		// Watch has terminated; drop the signal.
+		// Signal sent; the DoCycle loop will pick it up.
 	default:
 		// A signal is already pending; coalesced.
 	}
@@ -566,6 +556,9 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 		if w.config.ConfigFile != nil && w.config.PossiblyMatchesFileName(eventPath) {
 			return true
 		}
+		if w.config.ConfigFile != nil && w.config.PossiblyMatchesDirectoryName(p) {
+			return true
+		}
 	}
 	return false
 }
@@ -606,24 +599,10 @@ func (w *Watcher) doBuild() {
 	cwd := w.sys.GetCurrentDirectory()
 	seenSlice := tfs.SeenFiles.ToSlice()
 	w.seenFiles = make(map[tspath.Path]struct{}, len(seenSlice)*2)
-	w.seenFileDirs = make(map[string]struct{}, len(seenSlice))
 	for _, p := range seenSlice {
 		w.seenFiles[tspath.ToPath(p, cwd, caseSensitive)] = struct{}{}
 		if rp := w.sys.FS().Realpath(p); rp != p {
 			w.seenFiles[tspath.ToPath(rp, cwd, caseSensitive)] = struct{}{}
-		}
-		dir := tspath.GetDirectoryPath(p)
-		if tspath.IsRootedDiskPath(dir) {
-			w.seenFileDirs[dir] = struct{}{}
-		}
-	}
-	for _, sf := range w.program.GetProgram().GetSourceFiles() {
-		realFile := w.sys.FS().Realpath(sf.FileName())
-		if realFile != sf.FileName() {
-			realFileDir := tspath.GetDirectoryPath(realFile)
-			if tspath.IsRootedDiskPath(realFileDir) {
-				w.seenFileDirs[realFileDir] = struct{}{}
-			}
 		}
 	}
 
