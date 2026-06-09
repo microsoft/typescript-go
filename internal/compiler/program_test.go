@@ -291,7 +291,7 @@ func TestIncludeProcessorDiagnosticsWithMissingFileCasing(t *testing.T) {
 				CompilerOptions: &opts,
 			},
 		},
-		Host: compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil),
+		Host: compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil, nil),
 	})
 
 	// GetProgramDiagnostics triggers getDiagnostics which processes all
