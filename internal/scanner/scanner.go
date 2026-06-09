@@ -1611,14 +1611,15 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 	}
 	s.pos++
 	// Fast path for simple strings without escape sequences.
-	strLen := strings.IndexRune(s.text[s.pos:], quote)
+	strLen := strings.IndexByte(s.text[s.pos:], byte(quote))
 	if strLen == 0 {
 		s.pos++
 		return ""
 	}
 	if strLen > 0 {
 		str := s.text[s.pos : s.pos+strLen]
-		if !jsxAttributeString && !strings.ContainsAny(str, "\r\n\\") {
+		if jsxAttributeString ||
+			strings.IndexByte(str, '\\') < 0 && strings.IndexByte(str, '\r') < 0 && strings.IndexByte(str, '\n') < 0 {
 			s.pos += strLen + 1
 			return str
 		}
