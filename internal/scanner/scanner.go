@@ -491,8 +491,8 @@ func (s *Scanner) Scan() ast.Kind {
 	s.fullStartPos = s.pos
 	s.tokenFlags = ast.TokenFlagsNone
 	for {
-		s.tokenStart = s.pos
 		ch := s.char()
+		s.tokenStart = s.pos
 
 		switch ch {
 		case '\t', '\v', '\f', ' ':
