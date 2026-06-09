@@ -314,7 +314,7 @@ export class Project {
     readonly checker: Checker;
     readonly emitter: Emitter;
     private client: Client;
-    private snapshotId: string;
+    private snapshotId: number;
 
     constructor(
         data: ProjectResponse,
