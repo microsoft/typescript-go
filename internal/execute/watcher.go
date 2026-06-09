@@ -247,9 +247,17 @@ func (w *Watcher) reconcileWatches() {
 
 	// Watch source files not covered by any directory watch (e.g. symlink
 	// targets that resolve outside the project's wildcard directories)
+	// Only resolve realpaths for node_modules files, matching the TS compiler's
+	// behavior
 	opts := w.comparePathsOptions()
 	for _, sf := range w.program.GetProgram().GetSourceFiles() {
-		for _, filePath := range []string{sf.FileName(), w.sys.FS().Realpath(sf.FileName())} {
+		filePaths := []string{sf.FileName()}
+		if strings.Contains(sf.FileName(), "/node_modules/") {
+			if rp := w.sys.FS().Realpath(sf.FileName()); rp != sf.FileName() {
+				filePaths = append(filePaths, rp)
+			}
+		}
+		for _, filePath := range filePaths {
 			dir := tspath.GetDirectoryPath(filePath)
 			covered := false
 			for wdir, recursive := range desiredDirs {
@@ -598,11 +606,15 @@ func (w *Watcher) doBuild() {
 	caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
 	cwd := w.sys.GetCurrentDirectory()
 	seenSlice := tfs.SeenFiles.ToSlice()
-	w.seenFiles = make(map[tspath.Path]struct{}, len(seenSlice)*2)
+	w.seenFiles = make(map[tspath.Path]struct{}, len(seenSlice))
 	for _, p := range seenSlice {
 		w.seenFiles[tspath.ToPath(p, cwd, caseSensitive)] = struct{}{}
-		if rp := w.sys.FS().Realpath(p); rp != p {
-			w.seenFiles[tspath.ToPath(rp, cwd, caseSensitive)] = struct{}{}
+		// Only resolve realpaths for node_modules files to avoid expensive
+		// syscalls on every build dependency
+		if strings.Contains(p, "/node_modules/") {
+			if rp := w.sys.FS().Realpath(p); rp != p {
+				w.seenFiles[tspath.ToPath(rp, cwd, caseSensitive)] = struct{}{}
+			}
 		}
 	}
 

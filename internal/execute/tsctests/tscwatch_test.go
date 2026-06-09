@@ -479,14 +479,15 @@ func TestWatch(t *testing.T) {
 				}),
 			},
 		},
-		// Symlinks
+		// Symlinks — only node_modules symlinks are resolved via Realpath,
+		// matching the TypeScript compiler's behavior (see program.ts:2119).
 		{
-			subScenario: "watch detects change in symlinked file",
+			subScenario: "watch detects change in symlinked node_modules file",
 			files: FileMap{
-				"/home/src/workspaces/project/index.ts":      `import { shared } from "./link";`,
-				"/home/src/workspaces/shared/index.ts":       `export const shared = "v1";`,
-				"/home/src/workspaces/project/link.ts":       vfstest.Symlink("/home/src/workspaces/shared/index.ts"),
-				"/home/src/workspaces/project/tsconfig.json": `{}`,
+				"/home/src/workspaces/project/index.ts":                     `import { shared } from "shared";`,
+				"/home/src/workspaces/shared/index.ts":                      `export const shared = "v1";`,
+				"/home/src/workspaces/project/node_modules/shared/index.ts": vfstest.Symlink("/home/src/workspaces/shared/index.ts"),
+				"/home/src/workspaces/project/tsconfig.json":                `{}`,
 			},
 			commandLineArgs: []string{"--watch"},
 			edits: []*tscEdit{
