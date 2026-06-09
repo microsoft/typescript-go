@@ -42,13 +42,7 @@ declare class _default {
      */
     constructor(p: number);
 }
-declare namespace _ns {
-    export class _class {
-        instance: import(".");
-        constructor();
-    }
-}
-import _Sub = _ns._class;
-declare namespace _default {
-    export { _Sub as Sub };
+export declare class Sub {
+    instance: import(".");
+    constructor();
 }

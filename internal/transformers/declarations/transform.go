@@ -261,9 +261,44 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.state.currentSourceFile = node
 	tx.collectFileReferences(node)
 	tx.resolver.PrecalculateDeclarationEmitVisibility(node)
+	tx.prescanCJSExportAssignment(node)
 	updated := tx.transformSourceFile(node)
 	tx.state.currentSourceFile = nil
 	return updated
+}
+
+// prescanCJSExportAssignment scans the source file for a `module.exports = class X {}`
+// statement and pre-creates the cjsExportAssignmentName so that all CJS property exports
+// (both before and after the assignment in source order) can reference it.
+func (tx *DeclarationTransformer) prescanCJSExportAssignment(node *ast.SourceFile) {
+	if !ast.IsExternalOrCommonJSModule(node) || node.CommonJSModuleIndicator == nil || !ast.IsInJSFile(node.AsNode()) {
+		return
+	}
+	for _, stmt := range node.Statements.Nodes {
+		if stmt.Kind != ast.KindExpressionStatement {
+			continue
+		}
+		expr := stmt.Expression()
+		if expr == nil || ast.GetAssignmentDeclarationKind(expr) != ast.JSDeclarationKindModuleExports {
+			continue
+		}
+		rhs := unwrapParenthesizedExpression(expr.AsBinaryExpression().Right)
+		if !ast.IsClassExpression(rhs) {
+			continue
+		}
+		ce := rhs.AsClassExpression()
+		if ce.Name() != nil && len(ce.Name().Text()) > 0 {
+			nameText := ce.Name().Text()
+			if tx.resolver.IsNameResolvedToDeclaration(node.AsNode(), nameText, nil) {
+				tx.cjsExportAssignmentName = tx.Factory().NewUniqueNameEx(nameText, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+			} else {
+				tx.cjsExportAssignmentName = tx.Factory().NewIdentifier(nameText)
+			}
+		} else {
+			tx.cjsExportAssignmentName = tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		}
+		return
+	}
 }
 
 func (tx *DeclarationTransformer) collectFileReferences(sourceFile *ast.SourceFile) {
@@ -1085,19 +1120,21 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 
 	// Check if the expression is a class expression - emit as a class declaration + export assignment
 	if unwrapped := unwrapParenthesizedExpression(expression); ast.IsClassExpression(unwrapped) {
-		ce := unwrapped.AsClassExpression()
-		var className *ast.Node
-		if ce.Name() != nil && len(ce.Name().Text()) > 0 {
-			nameText := ce.Name().Text()
-			if sourceFileHasDeclaration(input, nameText) {
-				// Shadowing: another declaration at file level uses this name,
-				// so generate a unique name to avoid duplicates.
-				className = tx.Factory().NewUniqueNameEx(nameText, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		// Reuse the name pre-created by prescanCJSExportAssignment if available
+		className := tx.cjsExportAssignmentName
+		if className == nil {
+			ce := unwrapped.AsClassExpression()
+			if ce.Name() != nil && len(ce.Name().Text()) > 0 {
+				nameText := ce.Name().Text()
+				if tx.resolver.IsNameResolvedToDeclaration(tx.enclosingDeclaration, nameText, nil) {
+					className = tx.Factory().NewUniqueNameEx(nameText, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+				} else {
+					className = tx.Factory().NewIdentifier(nameText)
+				}
 			} else {
-				className = tx.Factory().NewIdentifier(nameText)
+				className = tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 			}
-		} else {
-			className = tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+			tx.cjsExportAssignmentName = className
 		}
 		var mods []*ast.Node
 		if tx.needsDeclare {
@@ -1108,7 +1145,6 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 		// Reuse the same name node for the export so unique names resolve consistently
 		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, className)
 		tx.removeAllComments(exportAssignment)
-		tx.cjsExportAssignmentName = className
 		return tx.Factory().NewSyntaxList([]*ast.Node{exportAssignment, classDecl})
 	}
 
@@ -1161,17 +1197,17 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 	// Check if the RHS is a class expression - emit as a class declaration instead of a typed variable
 	if ast.IsBinaryExpression(input) {
 		if rhs := unwrapParenthesizedExpression(input.AsBinaryExpression().Right); ast.IsClassExpression(rhs) {
-			// When there is a CJS export assignment (module.exports = ...), each class
-			// expression gets its own unique namespace to avoid name conflicts when
-			// multiple exports share the same class name.
-			if tx.cjsExportAssignmentName != nil {
-				ce := rhs.AsClassExpression()
-				var className *ast.Node
-				if ce.Name() != nil && len(ce.Name().Text()) > 0 {
-					className = tx.Factory().NewIdentifier(ce.Name().Text())
-				} else {
-					className = tx.Factory().NewUniqueNameEx("_class", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				}
+			ce := rhs.AsClassExpression()
+			// When the class expression has a name that differs from the export name,
+			// or when the class body references its own name (self-reference),
+			// wrap it in its own namespace to provide a private scope for the name.
+			// This is needed because the class expression name creates a distinct
+			// scope that a file-level `export class` declaration cannot replicate.
+			classExprName := ce.Name()
+			needsIsolation := classExprName != nil && len(classExprName.Text()) > 0 &&
+				(!ast.IsIdentifier(name) || classExprName.Text() != name.Text() || classBodyReferencesName(rhs, classExprName.Text()))
+			if needsIsolation {
+				className := tx.Factory().NewIdentifier(ce.Name().Text())
 
 				classMods := []*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)}
 				classDecl := tx.transformClassExpressionToDeclaration(rhs, className, tx.Factory().NewModifierList(classMods))
@@ -1201,11 +1237,13 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 				exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{exportSpecifier})), nil, nil)
 				tx.removeAllComments(exportDecl)
 
-				return tx.Factory().NewSyntaxList([]*ast.Node{
-					nsDecl,
-					importDecl,
-					tx.wrapInCJSExportNamespace(exportDecl),
-				})
+				result := []*ast.Node{nsDecl, importDecl}
+				if tx.cjsExportAssignmentName != nil {
+					result = append(result, tx.wrapInCJSExportNamespace(exportDecl))
+				} else {
+					result = append(result, exportDecl)
+				}
+				return tx.Factory().NewSyntaxList(result)
 			}
 			var mods []*ast.Node
 			mods = append(mods, tx.Factory().NewModifier(ast.KindExportKeyword))
@@ -1322,54 +1360,34 @@ func (tx *DeclarationTransformer) wrapInCJSExportNamespace(content *ast.Node) *a
 	)
 }
 
-func sourceFileHasDeclaration(node *ast.Node, name string) bool {
-	sourceFile := node.Parent
-	if sourceFile == nil || !ast.IsSourceFile(sourceFile) {
-		return false
-	}
-	for _, stmt := range sourceFile.AsSourceFile().Statements.Nodes {
-		if stmt == node {
-			continue
-		}
-		// Check expression statements wrapping the same export assignment
-		if stmt.Kind == ast.KindExpressionStatement && stmt.Expression() == node {
-			continue
-		}
-		switch stmt.Kind {
-		case ast.KindClassDeclaration:
-			if n := stmt.AsClassDeclaration().Name(); n != nil && n.Text() == name {
-				return true
-			}
-		case ast.KindFunctionDeclaration:
-			if n := stmt.AsFunctionDeclaration().Name(); n != nil && n.Text() == name {
-				return true
-			}
-		case ast.KindEnumDeclaration:
-			if n := stmt.AsEnumDeclaration().Name(); n != nil && n.Text() == name {
-				return true
-			}
-		case ast.KindInterfaceDeclaration:
-			if n := stmt.AsInterfaceDeclaration().Name(); n != nil && n.Text() == name {
-				return true
-			}
-		case ast.KindTypeAliasDeclaration:
-			if n := stmt.AsTypeAliasDeclaration().Name(); n != nil && n.Text() == name {
-				return true
-			}
-		case ast.KindVariableStatement:
-			for _, decl := range stmt.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-				if n := decl.Name(); n != nil && ast.IsIdentifier(n) && n.Text() == name {
-					return true
-				}
-			}
+func isCommonJSAliasExport(node *ast.Node) bool {
+	if ast.IsBinaryExpression(node) && ast.IsIdentifier(node.AsBinaryExpression().Right) {
+		if symbol := node.Symbol(); symbol != nil && len(symbol.Declarations) == 1 {
+			return true
 		}
 	}
 	return false
 }
 
-func isCommonJSAliasExport(node *ast.Node) bool {
-	if ast.IsBinaryExpression(node) && ast.IsIdentifier(node.AsBinaryExpression().Right) {
-		if symbol := node.Symbol(); symbol != nil && len(symbol.Declarations) == 1 {
+// classBodyReferencesName checks whether any member initializer or method body
+// in the class expression references the given name (e.g., self-references like `new B()`).
+func classBodyReferencesName(classExpr *ast.Node, name string) bool {
+	found := false
+	var walk func(node *ast.Node) bool
+	walk = func(node *ast.Node) bool {
+		if found {
+			return true
+		}
+		if ast.IsIdentifier(node) && node.Text() == name {
+			found = true
+			return true
+		}
+		node.ForEachChild(walk)
+		return found
+	}
+	for _, member := range classExpr.ClassLikeData().Members.Nodes {
+		member.ForEachChild(walk)
+		if found {
 			return true
 		}
 	}
