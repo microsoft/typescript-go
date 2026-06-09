@@ -2351,7 +2351,7 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 			References: refs,
 		}
 		if sym := entry.DefinitionSymbol(); sym != nil {
-			re.Symbol = NewSymbolResponse(sym)
+			re.Symbol = sd.registerSymbol(sym)
 		}
 		result = append(result, re)
 	}
