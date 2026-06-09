@@ -408,6 +408,14 @@ func (c *Checker) GetMappedTypeSymbolOfProperty(symbol *ast.Symbol) *ast.Symbol 
 	return nil
 }
 
+// GetMappedSyntheticOrigin returns the syntheticOrigin of a mapped symbol (the original property it was derived from).
+func (c *Checker) GetMappedSyntheticOrigin(symbol *ast.Symbol) *ast.Symbol {
+	if symbol.CheckFlags&ast.CheckFlagsMapped != 0 && c.mappedSymbolLinks.Has(symbol) {
+		return c.mappedSymbolLinks.Get(symbol).syntheticOrigin
+	}
+	return nil
+}
+
 func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	if symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
 		return core.MapNonNil(

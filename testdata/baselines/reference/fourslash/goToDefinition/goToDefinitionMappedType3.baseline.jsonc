@@ -1,0 +1,14 @@
+// === goToDefinition ===
+// === /goToDefinitionMappedType3.ts ===
+// interface Source {
+//   <|[|alpha|]: number;|>
+//   beta: string;
+// }
+// 
+// --- (line: 6) skipped ---
+
+// --- (line: 21) skipped ---
+//   betaSuffix: () => "hello",
+// };
+// 
+// obj./*GOTO DEF*/alphaSuffix();
