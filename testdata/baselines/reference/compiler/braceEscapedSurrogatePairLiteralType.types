@@ -9,9 +9,9 @@ const literal = "😀" as const;
 >"😀" : "😀"
 
 const braceEscaped = "\u{D83D}\u{DE00}" as const;
->braceEscaped : "\uD83D\uDE00"
->"\u{D83D}\u{DE00}" as const : "\uD83D\uDE00"
->"\u{D83D}\u{DE00}" : "\uD83D\uDE00"
+>braceEscaped : "😀"
+>"\u{D83D}\u{DE00}" as const : "😀"
+>"\u{D83D}\u{DE00}" : "😀"
 
 const adjacentEscaped = "\uD83D\uDE00" as const;
 >adjacentEscaped : "😀"
@@ -20,15 +20,15 @@ const adjacentEscaped = "\uD83D\uDE00" as const;
 
 const a: "😀" = braceEscaped;
 >a : "😀"
->braceEscaped : "\uD83D\uDE00"
+>braceEscaped : "😀"
 
 const b: typeof literal = braceEscaped;
 >b : "😀"
 >literal : "😀"
->braceEscaped : "\uD83D\uDE00"
+>braceEscaped : "😀"
 
 const c: typeof adjacentEscaped = braceEscaped;
 >c : "😀"
 >adjacentEscaped : "😀"
->braceEscaped : "\uD83D\uDE00"
+>braceEscaped : "😀"
 
