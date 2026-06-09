@@ -1036,29 +1036,33 @@ func (s *Scanner) ReScanLessThanToken() ast.Kind {
 
 func (s *Scanner) ReScanGreaterThanToken() ast.Kind {
 	if s.token == ast.KindGreaterThanToken {
-		s.pos = s.tokenStart + 1
-		if s.char() == '>' {
-			if s.charAt(1) == '>' {
-				if s.charAt(2) == '=' {
-					s.pos += 3
-					s.token = ast.KindGreaterThanGreaterThanGreaterThanEqualsToken
-				} else {
-					s.pos += 2
-					s.token = ast.KindGreaterThanGreaterThanGreaterThanToken
-				}
-			} else if s.charAt(1) == '=' {
-				s.pos += 2
-				s.token = ast.KindGreaterThanGreaterThanEqualsToken
-			} else {
-				s.pos++
-				s.token = ast.KindGreaterThanGreaterThanToken
-			}
-		} else if s.char() == '=' {
-			s.pos++
-			s.token = ast.KindGreaterThanEqualsToken
-		}
+		s.reScanGreaterThanTokenInner()
 	}
 	return s.token
+}
+
+func (s *Scanner) reScanGreaterThanTokenInner() {
+	s.pos = s.tokenStart + 1
+	if s.char() == '>' {
+		if s.charAt(1) == '>' {
+			if s.charAt(2) == '=' {
+				s.pos += 3
+				s.token = ast.KindGreaterThanGreaterThanGreaterThanEqualsToken
+			} else {
+				s.pos += 2
+				s.token = ast.KindGreaterThanGreaterThanGreaterThanToken
+			}
+		} else if s.charAt(1) == '=' {
+			s.pos += 2
+			s.token = ast.KindGreaterThanGreaterThanEqualsToken
+		} else {
+			s.pos++
+			s.token = ast.KindGreaterThanGreaterThanToken
+		}
+	} else if s.char() == '=' {
+		s.pos++
+		s.token = ast.KindGreaterThanEqualsToken
+	}
 }
 
 func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
