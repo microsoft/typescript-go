@@ -2196,8 +2196,8 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
 			c.checkUnusedRenamedBindingElements()
 		}
-		c.checkingSourceFile = false
 		c.produceDeferredDiagnostics()
+		c.checkingSourceFile = false
 		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
 	}
