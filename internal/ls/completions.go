@@ -1078,8 +1078,7 @@ func (l *LanguageService) getCompletionData(
 				}
 			}
 
-			if objectLikeContainer.Kind == ast.KindObjectLiteralExpression &&
-				preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() {
+			if objectLikeContainer.Kind == ast.KindObjectLiteralExpression && preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() {
 				for _, entry := range l.collectObjectLiteralMethodSymbols(ctx, typeChecker, filteredMembers, objectLikeContainer, file) {
 					symbolToOriginInfoMap[len(symbols)] = entry.origin
 					symbols = append(symbols, entry.symbol)
