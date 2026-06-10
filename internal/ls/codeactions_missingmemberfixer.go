@@ -202,7 +202,7 @@ func (f *missingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *as
 }
 
 func (f *missingMemberFixer) shouldAddOverrideKeyword(declaration *ast.Node) bool {
-	return declaration != nil && f.program.Options().NoImplicitOverride.IsTrue() && ast.IsClassElement(declaration)
+	return declaration != nil && f.program.Options().NoImplicitOverride.IsTrue() && declaration.Parent != nil && ast.IsClassLike(declaration.Parent)
 }
 
 func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *checker.Signature, kind ast.Kind, sourceFile *ast.SourceFile, enclosingDeclaration *ast.Node, body *ast.FunctionBody, modifiers *ast.ModifierList, name *ast.PropertyName, optional bool) *ast.Node {
