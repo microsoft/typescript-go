@@ -221,6 +221,13 @@ export interface CompletionOptions {
     includeSymbol?: boolean;
 }
 
+/** Options for {@link Checker.getCompletionsAtPosition}. */
+export interface CompletionOptions {
+    triggerCharacter?: string;
+    /** Include a `symbol` property on each completion entry. Only populated for symbol-based completions (not keywords or literals). */
+    includeSymbol?: boolean;
+}
+
 /** A single completion item returned by {@link Checker.getCompletionsAtPosition}. */
 export interface CompletionEntry {
     readonly name: string;
@@ -230,6 +237,8 @@ export interface CompletionEntry {
     readonly filterText?: string;
     readonly detail?: string;
     readonly labelDetails?: CompletionEntryLabelDetails;
+    /** The symbol associated with this completion entry. Only set when `includeSymbol: true` is passed and a symbol is available. */
+    readonly symbol?: Symbol;
 }
 
 /** The result of {@link Checker.getCompletionsAtPosition}. */

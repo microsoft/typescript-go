@@ -208,6 +208,7 @@ export interface CompletionEntryResponse {
     filterText?: string;
     detail?: string;
     labelDetails?: CompletionEntryLabelDetailsResponse;
+    symbol?: SymbolResponse;
 }
 
 export interface CompletionInfoResponse {

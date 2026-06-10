@@ -2326,12 +2326,12 @@ func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *Ge
 	}
 	positionMap := sourceFile.GetPositionMap()
 	internalPos := positionMap.UTF16ToUTF8(int(params.Position))
-	completionList, err := langSvc.GetCompletionsAtPosition(ctx, sourceFile, internalPos, params.TriggerCharacter)
-	if err != nil || completionList == nil {
+	result, err := langSvc.GetCompletionsAtPosition(ctx, sourceFile, internalPos, params.TriggerCharacter, params.IncludeSymbol)
+	if err != nil || result == nil {
 		return nil, err
 	}
-	entries := make([]*CompletionEntryResponse, 0, len(completionList.Items))
-	for _, item := range completionList.Items {
+	entries := make([]*CompletionEntryResponse, 0, len(result.Items))
+	for _, item := range result.Items {
 		entry := &CompletionEntryResponse{
 			Name:       item.Label,
 			SortText:   item.SortText,
@@ -2348,10 +2348,13 @@ func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *Ge
 				Description: item.LabelDetails.Description,
 			}
 		}
+		if item.Symbol != nil {
+			entry.Symbol = sd.registerSymbol(item.Symbol)
+		}
 		entries = append(entries, entry)
 	}
 	return &CompletionInfoResponse{
-		IsIncomplete: completionList.IsIncomplete,
+		IsIncomplete: result.IsIncomplete,
 		Entries:      entries,
 	}, nil
 }

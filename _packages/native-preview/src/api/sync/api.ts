@@ -77,6 +77,7 @@ import type {
     AssertsThisTypePredicate,
     CompletionEntry,
     CompletionInfo,
+    CompletionOptions,
     ConditionalType,
     Diagnostic,
     FreshableType,
@@ -105,7 +106,7 @@ import type {
 
 export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, CompletionEntry, CompletionInfo, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -590,15 +591,23 @@ export class Checker {
         }));
     }
 
-    getCompletionsAtPosition(document: string, position: number, triggerCharacter?: string): CompletionInfo | undefined {
+    getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined {
         const data = this.client.apiRequest<CompletionInfoResponse | null>("getCompletionsAtPosition", {
             snapshot: this.snapshotId,
             project: this.projectId,
             file: document,
             position,
-            triggerCharacter,
+            triggerCharacter: options?.triggerCharacter,
+            includeSymbol: options?.includeSymbol,
         });
-        return data ?? undefined;
+        if (!data) return undefined;
+        return {
+            isIncomplete: data.isIncomplete,
+            entries: data.entries.map(e => ({
+                ...e,
+                symbol: e.symbol ? this.objectRegistry.getOrCreateSymbol(e.symbol) : undefined,
+            })),
+        };
     }
 
     getTypeAtLocation(node: Node): Type | undefined;

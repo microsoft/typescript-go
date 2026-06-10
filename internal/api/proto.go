@@ -775,6 +775,7 @@ type GetCompletionsAtPositionParams struct {
 	File             DocumentIdentifier `json:"file"`
 	Position         uint32             `json:"position"`
 	TriggerCharacter *string            `json:"triggerCharacter,omitempty"`
+	IncludeSymbol    bool               `json:"includeSymbol,omitempty"`
 }
 
 // CompletionEntryLabelDetailsResponse holds additional label display text for a completion entry.
@@ -792,6 +793,7 @@ type CompletionEntryResponse struct {
 	FilterText   *string                              `json:"filterText,omitempty"`
 	Detail       *string                              `json:"detail,omitempty"`
 	LabelDetails *CompletionEntryLabelDetailsResponse `json:"labelDetails,omitempty"`
+	Symbol       *SymbolResponse                      `json:"symbol,omitempty"`
 }
 
 // CompletionInfoResponse wraps a list of completion entries.
