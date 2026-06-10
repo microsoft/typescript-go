@@ -125,10 +125,12 @@ func toUpperASCII(str string) (string, bool) {
 // JS behavior itself here, so we keep the context-sensitive part explicit.
 // SpiderMonkey models Final_Sigma with a more explicit context walk, while
 // Unicode Table 3-17 describes it in terms of Cased and Case_Ignorable.
-// We model the exposed V8/ICU behavior directly here: skip Case_Ignorable
-// code points and then look for lowercase/uppercase/titlecase code points,
-// including the DerivedCoreProperties Lowercase/Uppercase extras such as ª,
-// º, and Roman numerals.
+// We model the exposed V8/ICU behavior directly here: skip Case_Ignorable code
+// points and then look for a Cased code point, exactly as Unicode Table 3-17
+// defines the Final_Sigma condition. The Cased property already subsumes
+// lowercase, uppercase, and titlecase letters, including the
+// DerivedCoreProperties Lowercase/Uppercase extras such as ª, º, and Roman
+// numerals.
 func isFinalSigmaContext(casedBefore bool, str string, afterOffset int) bool {
 	return casedBefore && !hasSigmaCasedAfter(str, afterOffset)
 }
@@ -146,10 +148,9 @@ func hasSigmaCasedAfter(str string, start int) bool {
 }
 
 func isSigmaCased(r rune) bool {
-	return unicode.IsLower(r) || unicode.IsUpper(r) || unicode.IsTitle(r) ||
-		isInRuneRanges(r, unicodeLowercaseRanges) || isInRuneRanges(r, unicodeUppercaseRanges)
+	return unicode.Is(unicodeCasedRanges, r)
 }
 
 func isUnicodeCaseIgnorable(r rune) bool {
-	return isInRuneRanges(r, unicodeCaseIgnorableRanges)
+	return unicode.Is(unicodeCaseIgnorableRanges, r)
 }
