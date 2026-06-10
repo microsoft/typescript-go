@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+	"unicode/utf16"
 	"unicode/utf8"
 )
 
@@ -270,30 +271,30 @@ func TruncateByRunes(str string, maxLength int) string {
 }
 
 const (
-	SurrogateHighStart = 0xD800
-	SurrogateLowStart  = 0xDC00
-	SurrogateEnd       = 0xE000
-	SupplementaryStart = 0x10000
+	// SurrogateLowStart is the boundary between the high and low halves of the
+	// UTF-16 surrogate range. unicode/utf16 only exposes IsSurrogate for the
+	// whole range, so this split point is defined here to distinguish the two.
+	SurrogateLowStart = 0xDC00
 )
 
 func IsHighSurrogate(ch rune) bool {
-	return SurrogateHighStart <= ch && ch < SurrogateLowStart
+	return utf16.IsSurrogate(ch) && ch < SurrogateLowStart
 }
 
 func IsLowSurrogate(ch rune) bool {
-	return SurrogateLowStart <= ch && ch < SurrogateEnd
+	return utf16.IsSurrogate(ch) && ch >= SurrogateLowStart
 }
 
 func IsSurrogate(ch rune) bool {
-	return SurrogateHighStart <= ch && ch < SurrogateEnd
+	return utf16.IsSurrogate(ch)
 }
 
 func SurrogatePairToCodePoint(high rune, low rune) rune {
-	return (high-SurrogateHighStart)<<10 | (low - SurrogateLowStart) + SupplementaryStart
+	return utf16.DecodeRune(high, low)
 }
 
 func CodePointToSurrogatePair(ch rune) (high rune, low rune) {
-	return SurrogateHighStart + (ch-SupplementaryStart)>>10, SurrogateLowStart + (ch-SupplementaryStart)&0x3FF
+	return utf16.EncodeRune(ch)
 }
 
 func EncodeJSStringRune(ch rune) string {

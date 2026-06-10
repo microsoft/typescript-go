@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -1003,7 +1004,7 @@ func (p *regExpParser) scanSourceCharacter() string {
 			p.incPos(1)
 			return string(p.text()[p.pos()-1])
 		}
-		if ch >= stringutil.SupplementaryStart {
+		if utf16.RuneLen(ch) == 2 {
 			// Non-BMP character: emit the high surrogate first WITHOUT advancing.
 			// The low surrogate will be emitted on the next call, which also advances.
 			high, low := stringutil.CodePointToSurrogatePair(ch)
