@@ -1601,9 +1601,9 @@ async function runBuildNativePreviewPackages() {
 
     await fs.promises.mkdir(mainPackageDir, { recursive: true });
 
-    // Copy package contents excluding node_modules, dist, and src (no public API in this release).
+    // Copy package contents excluding node_modules and src.
     // The package.json "files" field controls what npm pack actually includes.
-    await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist") && !p.includes("/src"));
+    await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/src"));
 
     // Override the package name for publishing as "typescript".
     mainPackage.name = mainNativePreviewPackage.npmPackageName;
