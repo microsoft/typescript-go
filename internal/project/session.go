@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -219,7 +220,7 @@ func NewSession(init *SessionInit) *Session {
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 				lsproto.GetClientCapabilities(init.BackgroundCtx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 				init.Options.GranularWatches,
-				func(nodeModulesDirs map[tspath.Path]string, _ vfs.FS) PatternsAndIgnored {
+				func(nodeModulesDirs map[tspath.Path]autoimport.NodeModulesWatchDir, _ vfs.FS) PatternsAndIgnored {
 					return autoImportWatchGlobs(nodeModulesDirs, init.Options.GranularWatches)
 				},
 			),

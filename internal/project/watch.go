@@ -10,6 +10,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -443,18 +444,56 @@ func appendRecursiveDirectoryGlobs(globs []string, directories collections.Set[t
 
 // autoImportWatchGlobs computes the watch globs for the auto-import node_modules
 // watcher. In broad mode each node_modules directory is watched recursively
-// (`<nm>/**/*`); in granular mode it is watched non-recursively (`<nm>/*`) to
-// avoid registering a recursive watch over the entire dependency tree.
-func autoImportWatchGlobs(nodeModulesDirs map[tspath.Path]string, granularWatches bool) PatternsAndIgnored {
-	patterns := make([]string, 0, len(nodeModulesDirs))
-	for _, dir := range nodeModulesDirs {
-		if granularWatches {
-			patterns = append(patterns, getDirectoryGlobPattern(dir))
-		} else {
-			patterns = append(patterns, getRecursiveGlobPattern(dir))
+// (`<nm>/**/*`).
+//
+// In granular mode a recursive watch over the whole dependency tree is avoided.
+// Instead, for each node_modules directory we register non-recursive (`<dir>/*`)
+// watches over:
+//
+//   - the node_modules directory itself (to detect packages being added or
+//     removed, and scope directories appearing);
+//   - each scope directory (e.g. `@types`, `@scope`), derived from the package
+//     directory paths (to detect scoped packages being added or removed);
+//   - each package directory (e.g. `react`, `@scope/pkg`, `@types/node`), to
+//     detect changes to the files directly in the package root.
+//
+// Only real package directories reported by the built bucket are watched, so
+// non-package entries such as `.pnpm` are never watched. Package directories are
+// frequently symlinks (e.g. under pnpm); resolving those to their realpath is
+// the responsibility of the watcher backend.
+//
+// The returned patterns are deduplicated but intentionally left unsorted: the
+// caller ([WatchedFiles.Watchers]) sorts and compacts the combined pattern set
+// canonically, so sorting here would be redundant. Callers that need a
+// deterministic order (e.g. tests invoking this directly) must sort the result
+// themselves.
+func autoImportWatchGlobs(nodeModulesDirs map[tspath.Path]autoimport.NodeModulesWatchDir, granularWatches bool) PatternsAndIgnored {
+	var patterns []string
+	if granularWatches {
+		seen := make(map[string]struct{})
+		add := func(dir string) {
+			glob := getDirectoryGlobPattern(dir)
+			if _, ok := seen[glob]; ok {
+				return
+			}
+			seen[glob] = struct{}{}
+			patterns = append(patterns, glob)
+		}
+		for _, nm := range nodeModulesDirs {
+			add(nm.Dir)
+			for _, pkgDir := range nm.PackageDirs {
+				if scope, _, isScoped := strings.Cut(pkgDir, "/"); isScoped {
+					add(tspath.CombinePaths(nm.Dir, scope))
+				}
+				add(tspath.CombinePaths(nm.Dir, pkgDir))
+			}
+		}
+	} else {
+		patterns = make([]string, 0, len(nodeModulesDirs))
+		for _, nm := range nodeModulesDirs {
+			patterns = append(patterns, getRecursiveGlobPattern(nm.Dir))
 		}
 	}
-	slices.Sort(patterns)
 	return PatternsAndIgnored{
 		patternsInsideWorkspace: patterns,
 	}

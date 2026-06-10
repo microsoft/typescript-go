@@ -226,6 +226,17 @@ type RegistryBucket struct {
 	// PackageFiles is considered immutable after the bucket is finalized.
 	// It should be fully replaced rather than mutated while changing a bucket.
 	PackageFiles map[string]map[tspath.Path]string
+	// PackageDirectories is only defined for node_modules buckets. It is the list
+	// of raw package directory paths relative to the bucket's node_modules
+	// directory (e.g. "react", "@scope/pkg", "@types/node"). Unlike PackageFiles
+	// keys, these preserve the actual on-disk directory (including the @types/
+	// prefix and scope), which the file watcher needs to register a watch over
+	// each real package directory. Non-package entries such as ".pnpm" are
+	// excluded.
+	//
+	// PackageDirectories is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
+	PackageDirectories []string
 	// ResolvedPackageNames is only defined for project buckets. It is the set of
 	// package names that were resolved from imports in the project's program files.
 	// This is passed to node_modules buckets so they include packages that are
@@ -269,6 +280,7 @@ func (b *RegistryBucket) Clone() *RegistryBucket {
 		state:                b.state.Clone(),
 		Paths:                b.Paths,
 		PackageFiles:         b.PackageFiles,
+		PackageDirectories:   b.PackageDirectories,
 		ResolvedPackageNames: b.ResolvedPackageNames,
 		DependencyNames:      b.DependencyNames,
 		AmbientModuleNames:   b.AmbientModuleNames,
@@ -324,6 +336,12 @@ type Registry struct {
 	toPath          func(fileName string) tspath.Path
 	userPreferences lsutil.UserPreferences
 
+	// trackPackageDirectories controls whether node_modules buckets record their
+	// raw package directory paths (RegistryBucket.PackageDirectories). It is only
+	// needed by the granular file watcher, so it is left false when granular
+	// watches are disabled to avoid retaining the per-package directory slices.
+	trackPackageDirectories bool
+
 	// exports      map[tspath.Path][]*RawExport
 	directories map[tspath.Path]*directory
 
@@ -338,11 +356,12 @@ type Registry struct {
 	specifierCache map[tspath.Path]*collections.SyncMap[tspath.Path, string]
 }
 
-func NewRegistry(toPath func(fileName string) tspath.Path, preferences lsutil.UserPreferences) *Registry {
+func NewRegistry(toPath func(fileName string) tspath.Path, preferences lsutil.UserPreferences, trackPackageDirectories bool) *Registry {
 	return &Registry{
-		toPath:          toPath,
-		userPreferences: preferences,
-		directories:     make(map[tspath.Path]*directory),
+		toPath:                  toPath,
+		userPreferences:         preferences,
+		trackPackageDirectories: trackPackageDirectories,
+		directories:             make(map[tspath.Path]*directory),
 	}
 }
 
@@ -375,11 +394,34 @@ func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspat
 	return true
 }
 
-func (r *Registry) NodeModulesDirectories() map[tspath.Path]string {
-	dirs := make(map[tspath.Path]string)
-	for dirPath, dir := range r.directories {
-		if dir.hasNodeModules {
-			dirs[tspath.Path(tspath.CombinePaths(string(dirPath), "node_modules"))] = tspath.CombinePaths(dir.name, "node_modules")
+// NodeModulesWatchDir describes a single node_modules directory that the file
+// watcher should observe for auto-import index invalidation.
+type NodeModulesWatchDir struct {
+	// Dir is the absolute path of the node_modules directory.
+	Dir string
+	// PackageDirs are the raw package directory paths relative to Dir
+	// (e.g. "react", "@scope/pkg", "@types/node"). These come from the built
+	// bucket and preserve the actual on-disk directories, so the watcher can
+	// register a watch over each real package directory (and derive each scope
+	// directory) without re-reading the filesystem.
+	PackageDirs []string
+}
+
+// NodeModulesDirectories returns the node_modules directories that currently
+// have a built bucket, keyed by the node_modules directory path. Directories
+// without a built bucket are omitted: there is nothing to index (and thus
+// nothing to watch) until a bucket exists.
+func (r *Registry) NodeModulesDirectories() map[tspath.Path]NodeModulesWatchDir {
+	dirs := make(map[tspath.Path]NodeModulesWatchDir, len(r.nodeModules))
+	for dirPath, bucket := range r.nodeModules {
+		dir, ok := r.directories[dirPath]
+		if !ok {
+			continue
+		}
+		nodeModulesPath := tspath.Path(tspath.CombinePaths(string(dirPath), "node_modules"))
+		dirs[nodeModulesPath] = NodeModulesWatchDir{
+			Dir:         tspath.CombinePaths(dir.name, "node_modules"),
+			PackageDirs: bucket.PackageDirectories,
 		}
 	}
 	return dirs
@@ -506,12 +548,13 @@ type registryBuilder struct {
 	host RegistryCloneHost
 	base *Registry
 
-	userPreferences lsutil.UserPreferences
-	directories     *dirty.Map[tspath.Path, *directory]
-	nodeModules     *dirty.Map[tspath.Path, *RegistryBucket]
-	projects        *dirty.Map[tspath.Path, *RegistryBucket]
-	specifierCache  *dirty.MapBuilder[tspath.Path, *collections.SyncMap[tspath.Path, string], *collections.SyncMap[tspath.Path, string]]
-	resolverOptions module.ResolverOptions
+	userPreferences         lsutil.UserPreferences
+	trackPackageDirectories bool
+	directories             *dirty.Map[tspath.Path, *directory]
+	nodeModules             *dirty.Map[tspath.Path, *RegistryBucket]
+	projects                *dirty.Map[tspath.Path, *RegistryBucket]
+	specifierCache          *dirty.MapBuilder[tspath.Path, *collections.SyncMap[tspath.Path, string], *collections.SyncMap[tspath.Path, string]]
+	resolverOptions         module.ResolverOptions
 
 	uniquePackageCount int
 	entrypoints        *dirty.MapBuilder[tspath.Path, []*module.ResolvedEntrypoint, []*module.ResolvedEntrypoint]
@@ -522,26 +565,28 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		host: host,
 		base: registry,
 
-		userPreferences:    registry.userPreferences,
-		directories:        dirty.NewMap(registry.directories),
-		nodeModules:        dirty.NewMap(registry.nodeModules),
-		projects:           dirty.NewMap(registry.projects),
-		specifierCache:     dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
-		uniquePackageCount: registry.uniquePackageCount,
-		entrypoints:        dirty.NewMapBuilder(registry.entrypoints, core.Identity, core.Identity),
+		userPreferences:         registry.userPreferences,
+		trackPackageDirectories: registry.trackPackageDirectories,
+		directories:             dirty.NewMap(registry.directories),
+		nodeModules:             dirty.NewMap(registry.nodeModules),
+		projects:                dirty.NewMap(registry.projects),
+		specifierCache:          dirty.NewMapBuilder(registry.specifierCache, core.Identity, core.Identity),
+		uniquePackageCount:      registry.uniquePackageCount,
+		entrypoints:             dirty.NewMapBuilder(registry.entrypoints, core.Identity, core.Identity),
 	}
 }
 
 func (b *registryBuilder) Build() *Registry {
 	return &Registry{
-		toPath:             b.base.toPath,
-		userPreferences:    b.userPreferences,
-		directories:        core.FirstResult(b.directories.Finalize()),
-		nodeModules:        core.FirstResult(b.nodeModules.Finalize()),
-		projects:           core.FirstResult(b.projects.Finalize()),
-		specifierCache:     core.FirstResult(b.specifierCache.Build()),
-		uniquePackageCount: b.uniquePackageCount,
-		entrypoints:        b.entrypoints.Build(),
+		toPath:                  b.base.toPath,
+		userPreferences:         b.userPreferences,
+		trackPackageDirectories: b.trackPackageDirectories,
+		directories:             core.FirstResult(b.directories.Finalize()),
+		nodeModules:             core.FirstResult(b.nodeModules.Finalize()),
+		projects:                core.FirstResult(b.projects.Finalize()),
+		specifierCache:          core.FirstResult(b.specifierCache.Build()),
+		uniquePackageCount:      b.uniquePackageCount,
+		entrypoints:             b.entrypoints.Build(),
 	}
 }
 
@@ -796,6 +841,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		// Filled by discovery.
 		packageNames          *collections.Set[string]
 		directoryPackageNames *collections.Set[string]
+		directoryPackageDirs  []string
 		discovered            []*discoveredPackage
 		discoverErr           error
 	}
@@ -891,7 +937,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				task.packageNames = task.dirtyPackages
 			} else {
 				var err error
-				task.directoryPackageNames, err = getPackageNamesInNodeModules(tspath.CombinePaths(task.dirName, "node_modules"), b.host.FS())
+				task.directoryPackageNames, task.directoryPackageDirs, err = getPackageNamesInNodeModules(tspath.CombinePaths(task.dirName, "node_modules"), b.host.FS(), b.trackPackageDirectories)
 				if err != nil {
 					task.discoverErr = err
 					return
@@ -1019,7 +1065,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 				)
 			} else {
 				b.buildNodeModulesBucket(
-					ctx, br, task.dependencyNames, task.dirPath, task.discovered, task.directoryPackageNames, extractionCache,
+					ctx, br, task.dependencyNames, task.dirPath, task.discovered, task.directoryPackageNames, task.directoryPackageDirs, extractionCache,
 					targetRecursivePackages, nodeModulesLogger.Fork(task.dirName),
 				)
 			}
@@ -1616,6 +1662,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	dirPath tspath.Path,
 	discovered []*discoveredPackage,
 	directoryPackageNames *collections.Set[string],
+	directoryPackageDirs []string,
 	extractionCache map[string]*perPackageExtractionResult,
 	recursiveSearchPackages *collections.Set[string],
 	logger *logging.LogTree,
@@ -1650,6 +1697,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		Index:              &Index[*Export]{},
 		DependencyNames:    dependencies,
 		PackageFiles:       allPackageFiles,
+		PackageDirectories: directoryPackageDirs,
 		AmbientModuleNames: extraction.ambientModuleNames,
 		Paths:              paths,
 		state: BucketState{
@@ -1797,6 +1845,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		Index:              newIndex,
 		DependencyNames:    existingBucket.DependencyNames,
 		PackageFiles:       newPackageFiles,
+		PackageDirectories: existingBucket.PackageDirectories,
 		AmbientModuleNames: newAmbientModuleNames,
 		Paths:              newPaths,
 		state: BucketState{

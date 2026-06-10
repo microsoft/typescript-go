@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -59,27 +60,49 @@ func TestGranularResolutionGlobsAreNonRecursive(t *testing.T) {
 }
 
 // TestAutoImportWatchGlobsGranular verifies that the auto-import node_modules
-// watcher emits non-recursive `<nm>/*` globs in granular mode and recursive
-// `<nm>/**/*` globs in broad mode.
+// watcher emits non-recursive `<dir>/*` globs in granular mode for the
+// node_modules directory, each scope directory, and each package directory
+// (and never for non-package entries like `.pnpm`), and recursive `<nm>/**/*`
+// globs in broad mode.
 func TestAutoImportWatchGlobsGranular(t *testing.T) {
 	t.Parallel()
 
-	dirs := map[tspath.Path]string{
-		"/proj/node_modules":     "/proj/node_modules",
-		"/proj/pkg/node_modules": "/proj/pkg/node_modules",
+	dirs := map[tspath.Path]autoimport.NodeModulesWatchDir{
+		"/proj/node_modules": {
+			Dir:         "/proj/node_modules",
+			PackageDirs: []string{"react", "@scope/pkg", "@types/node"},
+		},
+		"/proj/pkg/node_modules": {
+			Dir:         "/proj/pkg/node_modules",
+			PackageDirs: []string{"left-pad"},
+		},
 	}
 
+	// autoImportWatchGlobs returns deduplicated but unsorted patterns (the
+	// production caller sorts canonically), so sort here for a deterministic
+	// comparison.
 	granular := autoImportWatchGlobs(dirs, true)
-	assert.DeepEqual(t, granular.patternsInsideWorkspace, []string{
+	granularGlobs := slices.Clone(granular.patternsInsideWorkspace)
+	slices.Sort(granularGlobs)
+	assert.DeepEqual(t, granularGlobs, []string{
 		"/proj/node_modules/*",
+		"/proj/node_modules/@scope/*",
+		"/proj/node_modules/@scope/pkg/*",
+		"/proj/node_modules/@types/*",
+		"/proj/node_modules/@types/node/*",
+		"/proj/node_modules/react/*",
 		"/proj/pkg/node_modules/*",
+		"/proj/pkg/node_modules/left-pad/*",
 	})
 	for _, g := range granular.patternsInsideWorkspace {
 		assert.Assert(t, !strings.Contains(g, "**"), "granular auto-import glob should be non-recursive, got %q", g)
+		assert.Assert(t, !strings.Contains(g, ".pnpm"), "granular auto-import glob should not watch non-package entries, got %q", g)
 	}
 
 	broad := autoImportWatchGlobs(dirs, false)
-	assert.DeepEqual(t, broad.patternsInsideWorkspace, []string{
+	broadGlobs := slices.Clone(broad.patternsInsideWorkspace)
+	slices.Sort(broadGlobs)
+	assert.DeepEqual(t, broadGlobs, []string{
 		"/proj/node_modules/**/*",
 		"/proj/pkg/node_modules/**/*",
 	})

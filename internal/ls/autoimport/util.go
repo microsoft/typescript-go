@@ -85,13 +85,25 @@ func wordIndices(s string) []int {
 	return indices
 }
 
-func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS) (*collections.Set[string], error) {
-	packageNames := &collections.Set[string]{}
+// getPackageNamesInNodeModules enumerates the packages installed in a
+// node_modules directory. It always returns the normalized package names (with
+// @types/ stripped, e.g. "@types/react" → "react"), used as bucket keys
+// throughout the registry.
+//
+// When trackPackageDirs is true it additionally returns packageDirs: the raw
+// package directory paths relative to nodeModulesDir (e.g. "react", "@scope/pkg",
+// "@types/node"). Unlike packageNames these preserve the actual on-disk location,
+// which the granular file watcher needs to register a watch over each real
+// package directory. When trackPackageDirs is false the slice is left nil to
+// avoid retaining per-package directory strings the watcher won't use.
+// Non-package entries such as ".pnpm" and ".bin" are always skipped.
+func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS, trackPackageDirs bool) (packageNames *collections.Set[string], packageDirs []string, err error) {
+	packageNames = &collections.Set[string]{}
 	if tspath.GetBaseFileName(nodeModulesDir) != "node_modules" {
 		panic("nodeModulesDir is not a node_modules directory")
 	}
 	if !fs.DirectoryExists(nodeModulesDir) {
-		return nil, vfs.ErrNotExist
+		return nil, nil, vfs.ErrNotExist
 	}
 	entries := fs.GetAccessibleEntries(nodeModulesDir)
 	for _, baseName := range entries.Directories {
@@ -102,17 +114,24 @@ func getPackageNamesInNodeModules(nodeModulesDir string, fs vfs.FS) (*collection
 			scopedDirPath := tspath.CombinePaths(nodeModulesDir, baseName)
 			for _, scopedPackageDirName := range fs.GetAccessibleEntries(scopedDirPath).Directories {
 				scopedBaseName := tspath.GetBaseFileName(scopedPackageDirName)
+				packageDir := tspath.CombinePaths(baseName, scopedBaseName)
+				if trackPackageDirs {
+					packageDirs = append(packageDirs, packageDir)
+				}
 				if baseName == "@types" {
-					packageNames.Add(module.GetPackageNameFromTypesPackageName(tspath.CombinePaths("@types", scopedBaseName)))
+					packageNames.Add(module.GetPackageNameFromTypesPackageName(packageDir))
 				} else {
-					packageNames.Add(tspath.CombinePaths(baseName, scopedBaseName))
+					packageNames.Add(packageDir)
 				}
 			}
 			continue
 		}
+		if trackPackageDirs {
+			packageDirs = append(packageDirs, baseName)
+		}
 		packageNames.Add(baseName)
 	}
-	return packageNames, nil
+	return packageNames, packageDirs, nil
 }
 
 func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {

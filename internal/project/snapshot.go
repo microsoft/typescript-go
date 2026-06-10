@@ -39,7 +39,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	AutoImports                        *autoimport.Registry
-	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
+	autoImportsWatch                   *WatchedFiles[map[tspath.Path]autoimport.NodeModulesWatchDir]
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	userPreferences                    lsutil.UserPreferences
 
@@ -57,7 +57,7 @@ func NewSnapshot(
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	userPreferences lsutil.UserPreferences,
 	autoImports *autoimport.Registry,
-	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
+	autoImportsWatch *WatchedFiles[map[tspath.Path]autoimport.NodeModulesWatchDir],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	s := &Snapshot{
@@ -427,9 +427,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath, s.userPreferences)
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.userPreferences, s.sessionOptions.GranularWatches)
 	}
-	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]
+	var autoImportsWatch *WatchedFiles[map[tspath.Path]autoimport.NodeModulesWatchDir]
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
 		RequestedFile:   prepareAutoImports,
 		OpenFiles:       openFiles,
