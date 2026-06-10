@@ -1,3 +1,4 @@
+import type { CompletionItemKind } from "#enums/completionItemKind";
 import {
     documentURIToFileName,
     fileNameToDocumentURI,
@@ -192,4 +193,24 @@ export interface ProfileParams {
 
 export interface ProfileResult {
     file: string;
+}
+
+export interface CompletionEntryLabelDetailsResponse {
+    detail?: string;
+    description?: string;
+}
+
+export interface CompletionEntryResponse {
+    name: string;
+    kind?: CompletionItemKind;
+    sortText?: string;
+    insertText?: string;
+    filterText?: string;
+    detail?: string;
+    labelDetails?: CompletionEntryLabelDetailsResponse;
+}
+
+export interface CompletionInfoResponse {
+    isIncomplete: boolean;
+    entries: CompletionEntryResponse[];
 }

@@ -544,6 +544,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetReferencedSymbolsForNode(ctx, parsed.(*GetReferencedSymbolsForNodeParams))
 	case string(MethodGetSignatureUsages):
 		return s.handleGetSignatureUsages(ctx, parsed.(*GetSignatureUsagesParams))
+	case string(MethodGetCompletionsAtPosition):
+		return s.handleGetCompletionsAtPosition(ctx, parsed.(*GetCompletionsAtPositionParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -2302,6 +2304,56 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 		result = append(result, entry)
 	}
 	return result, nil
+}
+
+// handleGetCompletionsAtPosition returns completions at a position in a document.
+func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *GetCompletionsAtPositionParams) (*CompletionInfoResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, nil
+	}
+	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
+	if err != nil {
+		return nil, err
+	}
+	positionMap := sourceFile.GetPositionMap()
+	internalPos := positionMap.UTF16ToUTF8(int(params.Position))
+	completionList, err := langSvc.GetCompletionsAtPosition(ctx, sourceFile, internalPos, params.TriggerCharacter)
+	if err != nil || completionList == nil {
+		return nil, err
+	}
+	entries := make([]*CompletionEntryResponse, 0, len(completionList.Items))
+	for _, item := range completionList.Items {
+		entry := &CompletionEntryResponse{
+			Name:       item.Label,
+			SortText:   item.SortText,
+			InsertText: item.InsertText,
+			FilterText: item.FilterText,
+			Detail:     item.Detail,
+		}
+		if item.Kind != nil {
+			entry.Kind = uint32(*item.Kind)
+		}
+		if item.LabelDetails != nil {
+			entry.LabelDetails = &CompletionEntryLabelDetailsResponse{
+				Detail:      item.LabelDetails.Detail,
+				Description: item.LabelDetails.Description,
+			}
+		}
+		entries = append(entries, entry)
+	}
+	return &CompletionInfoResponse{
+		IsIncomplete: completionList.IsIncomplete,
+		Entries:      entries,
+	}, nil
 }
 
 // handleGetReferencedSymbolsForNode returns node handles for all references found at a node.

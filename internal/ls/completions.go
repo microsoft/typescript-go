@@ -290,6 +290,11 @@ const (
 	globalsSearchFail
 )
 
+// GetCompletionsAtPosition returns completions at the given position in a source file.
+func (l *LanguageService) GetCompletionsAtPosition(ctx context.Context, file *ast.SourceFile, position int, triggerCharacter *string) (*lsproto.CompletionList, error) {
+	return l.getCompletionsAtPosition(ctx, file, position, triggerCharacter)
+}
+
 func (l *LanguageService) getCompletionsAtPosition(
 	ctx context.Context,
 	file *ast.SourceFile,
