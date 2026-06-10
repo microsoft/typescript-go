@@ -60,6 +60,11 @@ type watchedFile struct {
 	closer io.Closer
 }
 
+type dirWatch struct {
+	dir       string
+	recursive bool
+}
+
 type cachedSourceFile struct {
 	file    *ast.SourceFile
 	modTime time.Time
@@ -202,16 +207,12 @@ func (w *Watcher) start() {
 	}
 }
 
-func (w *Watcher) reconcileWatches() {
-	if w.backend == nil {
-		return
-	}
-
+func (w *Watcher) computeDesiredWatches(seenFilePaths []string) (resolvedDirs map[string]bool, desiredFiles map[string]struct{}) {
 	cwd := w.sys.GetCurrentDirectory()
 
 	desiredDirs := make(map[string]bool) // path → recursive
 
-	// 1. Wildcard directories from tsconfig (recursive or non-recursive)
+	// Wildcard directories from tsconfig (recursive or non-recursive)
 	if w.config.ConfigFile != nil {
 		for dir, recursive := range w.config.WildcardDirectories() {
 			realDir := w.sys.FS().Realpath(dir)
@@ -219,14 +220,17 @@ func (w *Watcher) reconcileWatches() {
 		}
 	}
 
-	// 2. For no-config CLI mode, ensure CWD is watched
+	// For no-config CLI mode, ensure CWD is watched
 	if w.config.ConfigFile == nil && len(desiredDirs) == 0 {
 		dir := w.sys.FS().Realpath(cwd)
 		desiredDirs[dir] = false
 	}
 
-	// Compute desired file watches for config files
-	desiredFiles := make(map[string]struct{})
+	// Resolve ancestor fallbacks for non-existent directories
+	resolvedDirs = w.resolveDesiredDirs(desiredDirs)
+
+	// Config file watches
+	desiredFiles = make(map[string]struct{})
 	for _, path := range w.configFilePaths {
 		realPath := w.sys.FS().Realpath(path)
 		desiredFiles[realPath] = struct{}{}
@@ -241,148 +245,102 @@ func (w *Watcher) reconcileWatches() {
 		}
 	}
 
-	// Watch source files not covered by any directory watch (e.g. symlink
-	// targets that resolve outside the project's wildcard directories)
-	// Only resolve realpaths for node_modules files, matching the TS compiler's
-	// behavior
+	// Watch files not covered by any directory watch
 	opts := w.comparePathsOptions()
-	for _, sf := range w.program.GetProgram().GetSourceFiles() {
-		filePaths := []string{sf.FileName()}
-		if strings.Contains(sf.FileName(), "/node_modules/") {
-			if rp := w.sys.FS().Realpath(sf.FileName()); rp != sf.FileName() {
-				filePaths = append(filePaths, rp)
-			}
-		}
-		for _, filePath := range filePaths {
-			dir := tspath.GetDirectoryPath(filePath)
-			covered := false
-			for wdir, recursive := range desiredDirs {
-				if recursive {
-					if tspath.ContainsPath(wdir, dir, opts) {
-						covered = true
-						break
-					}
-				} else if dir == wdir {
+	for _, filePath := range seenFilePaths {
+		dir := tspath.GetDirectoryPath(filePath)
+		covered := false
+		for wdir, recursive := range resolvedDirs {
+			if recursive {
+				if tspath.ContainsPath(wdir, dir, opts) {
 					covered = true
 					break
 				}
+			} else if dir == wdir {
+				covered = true
+				break
 			}
-			if !covered {
-				desiredFiles[filePath] = struct{}{}
-			}
+		}
+		if !covered && w.sys.FS().FileExists(filePath) {
+			desiredFiles[filePath] = struct{}{}
 		}
 	}
 
-	// Reconcile directory watches: collect stale ones, close outside critical path
+	return resolvedDirs, desiredFiles
+}
+
+func (w *Watcher) reconcileWatches(seenFilePaths []string) {
+	if w.backend == nil {
+		return
+	}
+
+	resolvedDirs, desiredFiles := w.computeDesiredWatches(seenFilePaths)
+
+	// Reconcile directory watches using DiffMaps
 	var staleDirClosers []io.Closer
-	for dir, wd := range w.watchedDirs {
-		wantRecursive, want := desiredDirs[dir]
-		if !want || wd.recursive != wantRecursive {
+	var newDirs []dirWatch
+
+	core.DiffMapsFunc(
+		w.watchedDirs,
+		resolvedDirs,
+		func(wd *watchedDir, recursive bool) bool { return wd.recursive == recursive },
+		func(dir string, recursive bool) {
 			if w.debugLog != nil {
-				if !want {
-					fmt.Fprintf(w.debugLog, "[watch] closing stale dir watch: %s\n", dir)
-				} else {
-					fmt.Fprintf(w.debugLog, "[watch] recreating dir watch %s (recursive %v→%v)\n", dir, wd.recursive, wantRecursive)
-				}
+				fmt.Fprintf(w.debugLog, "[watch] watching directory %s (recursive=%v)\n", dir, recursive)
+			}
+			newDirs = append(newDirs, dirWatch{dir, recursive})
+		},
+		func(dir string, wd *watchedDir) {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] closing stale dir watch: %s\n", dir)
 			}
 			staleDirClosers = append(staleDirClosers, wd.closer)
 			delete(w.watchedDirs, dir)
-		}
-	}
+		},
+		func(dir string, wd *watchedDir, recursive bool) {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] recreating dir watch %s (recursive %v→%v)\n", dir, wd.recursive, recursive)
+			}
+			staleDirClosers = append(staleDirClosers, wd.closer)
+			delete(w.watchedDirs, dir)
+			newDirs = append(newDirs, dirWatch{dir, recursive})
+		},
+	)
 	for _, c := range staleDirClosers {
 		c.Close()
 	}
-	for dir, recursive := range desiredDirs {
-		if _, have := w.watchedDirs[dir]; have {
-			continue
-		}
-		if w.debugLog != nil {
-			fmt.Fprintf(w.debugLog, "[watch] watching directory %s (recursive=%v)\n", dir, recursive)
-		}
-		entry := &watchedDir{recursive: recursive}
-		dirPath := dir
-		cb := func(events []fswatch.Event, err error) {
-			if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
-				w.handleWatchTerminated(dirPath, entry, true)
-				return
-			}
-			w.onWatchEvents(events, err)
-		}
-		watchDir := dir
-		watch, err := w.backend.WatchDirectory(watchDir, cb, recursive, shouldIgnoreWatchPath)
-		for err != nil && watchDir != cwd {
-			parent := tspath.GetDirectoryPath(watchDir)
-			if parent == watchDir {
-				break
-			}
-			watchDir = parent
-			if wd, have := w.watchedDirs[watchDir]; have {
-				if recursive && !wd.recursive {
-					wd.closer.Close()
-					delete(w.watchedDirs, watchDir)
-				} else {
-					break
-				}
-			}
-			// Ancestor fallback watches are always non-recursive
-			watch, err = w.backend.WatchDirectory(watchDir, cb, false, shouldIgnoreWatchPath)
-		}
-		if err != nil {
-			if w.debugLog != nil {
-				fmt.Fprintf(w.debugLog, "[watch] failed to watch directory %s: %v\n", dir, err)
-			}
-			continue
-		}
-		if watchDir != dir {
-			if w.debugLog != nil {
-				fmt.Fprintf(w.debugLog, "[watch] watching ancestor %s for missing %s\n", watchDir, dir)
-			}
-			dirPath = watchDir
-			entry.recursive = false
-		}
-		entry.closer = watch
-		w.watchedDirs[dirPath] = entry
+	for _, nd := range newDirs {
+		w.createDirWatch(nd.dir, nd.recursive)
 	}
 
-	// Reconcile file watches
+	// Reconcile file watches using DiffMaps
 	var staleFileClosers []io.Closer
-	for path, wf := range w.watchedFiles {
-		if _, want := desiredFiles[path]; !want {
+	var newFiles []string
+
+	core.DiffMapsFunc(
+		w.watchedFiles,
+		desiredFiles,
+		func(_ *watchedFile, _ struct{}) bool { return true },
+		func(path string, _ struct{}) {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] watching file %s\n", path)
+			}
+			newFiles = append(newFiles, path)
+		},
+		func(path string, wf *watchedFile) {
 			if w.debugLog != nil {
 				fmt.Fprintf(w.debugLog, "[watch] closing stale file watch: %s\n", path)
 			}
 			staleFileClosers = append(staleFileClosers, wf.closer)
 			delete(w.watchedFiles, path)
-		}
-	}
+		},
+		nil,
+	)
 	for _, c := range staleFileClosers {
 		c.Close()
 	}
-	for path := range desiredFiles {
-		if _, have := w.watchedFiles[path]; have {
-			continue
-		}
-		if w.debugLog != nil {
-			fmt.Fprintf(w.debugLog, "[watch] watching file %s\n", path)
-		}
-		entry := &watchedFile{}
-		filePath := path // capture for closure
-		cb := func(events []fswatch.Event, err error) {
-			if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
-				w.handleWatchTerminated(filePath, entry, false)
-				return
-			}
-			w.onWatchEvents(events, err)
-		}
-		watch, err := w.backend.WatchFile(path, cb)
-		if err != nil {
-			if w.debugLog != nil {
-				fmt.Fprintf(w.debugLog, "[watch] failed to watch file %s: %v\n", path, err)
-			}
-			continue
-		}
-		entry.closer = watch
-		w.watchedFiles[path] = entry
+	for _, f := range newFiles {
+		w.createFileWatch(f)
 	}
 }
 
@@ -391,6 +349,79 @@ func (w *Watcher) comparePathsOptions() tspath.ComparePathsOptions {
 		UseCaseSensitiveFileNames: w.sys.FS().UseCaseSensitiveFileNames(),
 		CurrentDirectory:          w.sys.GetCurrentDirectory(),
 	}
+}
+
+func (w *Watcher) resolveDesiredDirs(desiredDirs map[string]bool) map[string]bool {
+	resolved := make(map[string]bool, len(desiredDirs))
+	for dir, recursive := range desiredDirs {
+		watchDir := dir
+		watchRecursive := recursive
+		for !w.sys.FS().DirectoryExists(watchDir) {
+			parent := tspath.GetDirectoryPath(watchDir)
+			if parent == watchDir {
+				break
+			}
+			watchDir = parent
+			watchRecursive = false // ancestor fallbacks are always non-recursive
+		}
+		if !w.sys.FS().DirectoryExists(watchDir) {
+			if w.debugLog != nil {
+				fmt.Fprintf(w.debugLog, "[watch] no watchable ancestor for %s\n", dir)
+			}
+			continue
+		}
+		if watchDir != dir && w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] resolved %s to ancestor %s\n", dir, watchDir)
+		}
+		if existing, has := resolved[watchDir]; has {
+			resolved[watchDir] = existing || watchRecursive
+		} else {
+			resolved[watchDir] = watchRecursive
+		}
+	}
+	return resolved
+}
+
+func (w *Watcher) createDirWatch(dir string, recursive bool) {
+	entry := &watchedDir{recursive: recursive}
+	dirPath := dir
+	cb := func(events []fswatch.Event, err error) {
+		if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
+			w.handleWatchTerminated(dirPath, entry, true)
+			return
+		}
+		w.onWatchEvents(events, err)
+	}
+	watch, err := w.backend.WatchDirectory(dir, cb, recursive, shouldIgnoreWatchPath)
+	if err != nil {
+		if w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] failed to watch directory %s: %v\n", dir, err)
+		}
+		return
+	}
+	entry.closer = watch
+	w.watchedDirs[dir] = entry
+}
+
+func (w *Watcher) createFileWatch(path string) {
+	entry := &watchedFile{}
+	filePath := path
+	cb := func(events []fswatch.Event, err error) {
+		if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
+			w.handleWatchTerminated(filePath, entry, false)
+			return
+		}
+		w.onWatchEvents(events, err)
+	}
+	watch, err := w.backend.WatchFile(path, cb)
+	if err != nil {
+		if w.debugLog != nil {
+			fmt.Fprintf(w.debugLog, "[watch] failed to watch file %s: %v\n", path, err)
+		}
+		return
+	}
+	entry.closer = watch
+	w.watchedFiles[path] = entry
 }
 
 func (w *Watcher) closeAllWatches() {
@@ -605,13 +636,6 @@ func (w *Watcher) doBuild() {
 	w.seenFiles = make(map[tspath.Path]struct{}, len(seenSlice))
 	for _, p := range seenSlice {
 		w.seenFiles[tspath.ToPath(p, cwd, caseSensitive)] = struct{}{}
-		// Only resolve realpaths for node_modules files to avoid expensive
-		// syscalls on every build dependency
-		if strings.Contains(p, "/node_modules/") {
-			if rp := w.sys.FS().Realpath(p); rp != p {
-				w.seenFiles[tspath.ToPath(rp, cwd, caseSensitive)] = struct{}{}
-			}
-		}
 	}
 
 	w.configMtimes = make(map[string]time.Time, len(w.configFilePaths))
@@ -621,7 +645,7 @@ func (w *Watcher) doBuild() {
 		}
 	}
 
-	w.reconcileWatches()
+	w.reconcileWatches(seenSlice)
 	w.configModified = false
 
 	programFiles := w.program.GetProgram().FilesByPath()

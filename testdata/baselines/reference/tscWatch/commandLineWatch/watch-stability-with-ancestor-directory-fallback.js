@@ -2,12 +2,9 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/index.ts] *new* 
-const x = 1;
+const x: number = 1;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
-{
-	"compilerOptions": {},
-	"include": ["index.ts", "src/**/*.ts"]
-}
+{ "include": ["*.ts", "missing/**/*"] }
 
 tsgo --watch
 ExitStatus:: Success
@@ -57,9 +54,9 @@ SemanticDiagnostics::
 Signatures::
 
 
-Edit [0]:: create src dir with ts file matching include
-//// [/home/src/workspaces/project/src/helper.ts] *new* 
-export const helper = "added";
+Edit [0]:: trivial file change
+//// [/home/src/workspaces/project/index.ts] *modified* 
+const x: number = 2;
 
 
 Output::
@@ -67,19 +64,20 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
-//// [/home/src/workspaces/project/src/helper.js] *new* 
-export const helper = "added";
+//// [/home/src/workspaces/project/index.js] *modified* 
+"use strict";
+const x = 2;
 
 
 Watch Registrations::
 Directory watches::
-  /home/src/workspaces/project/src (recursive)
+  /home/src/workspaces/project
 File watches::
   /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-  /home/src/workspaces/project/index.ts
   /home/src/workspaces/project/tsconfig.json
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/workspaces/project/src/helper.ts
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
+*refresh*    /home/src/workspaces/project/index.ts
 Signatures::
-(computed .d.ts) /home/src/workspaces/project/src/helper.ts
+(computed .d.ts) /home/src/workspaces/project/index.ts

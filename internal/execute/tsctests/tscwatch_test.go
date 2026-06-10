@@ -496,6 +496,21 @@ func TestWatch(t *testing.T) {
 				}),
 			},
 		},
+		// Ancestor fallback stability — when a tsconfig include references a
+		// directory that doesn't exist
+		{
+			subScenario: "watch stability with ancestor directory fallback",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":      `const x: number = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{ "include": ["*.ts", "missing/**/*"] }`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("trivial file change", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/index.ts", `const x: number = 2;`)
+				}),
+			},
+		},
 	}
 
 	for _, test := range testCases {
