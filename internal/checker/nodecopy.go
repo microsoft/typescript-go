@@ -631,13 +631,12 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			if specifier != originalSpec {
 				arg = factory.NewLiteralTypeNode(specifier)
 			}
-			qualifier := visitor.VisitNode(node.AsImportTypeNode().Qualifier)
 			return factory.UpdateImportTypeNode(
 				node.AsImportTypeNode(),
 				node.AsImportTypeNode().IsTypeOf,
 				arg,
 				visitor.VisitNode(node.AsImportTypeNode().Attributes),
-				qualifier,
+				visitor.VisitNode(node.AsImportTypeNode().Qualifier),
 				visitor.VisitNodes(node.AsImportTypeNode().TypeArguments),
 			)
 		}
