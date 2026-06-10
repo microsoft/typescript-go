@@ -52,7 +52,6 @@ const p: Prop = {
 }`
 	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport:      new(false),
 			LabelDetailsSupport: new(true),
 		},
 	}), content)
@@ -127,11 +126,7 @@ const p: Prop = {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
 	})
 	{
-		f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-			CompletionItem: &lsproto.ClientCompletionItemOptions{
-				SnippetSupport: new(false),
-			},
-		}), content)
+		f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 		defer done()
 		f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 			IsIncomplete: false,
@@ -217,8 +212,7 @@ const p: Prop = {
 	{
 		f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
 			CompletionItem: &lsproto.ClientCompletionItemOptions{
-				SnippetSupport:      new(true),
-				LabelDetailsSupport: new(false),
+				SnippetSupport: new(true),
 			},
 		}), content)
 		defer done()

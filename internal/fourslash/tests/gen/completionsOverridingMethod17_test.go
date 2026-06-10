@@ -30,11 +30,7 @@ export class Class implements Interface {
 
     /**/
 }`
-	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport: new(false),
-		},
-	}), content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

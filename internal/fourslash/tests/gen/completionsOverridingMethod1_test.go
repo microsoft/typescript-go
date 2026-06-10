@@ -29,11 +29,7 @@ class HBase {
 class HSub extends HBase {
     f/*h*/
 }`
-	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport: new(false),
-		},
-	}), content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "h", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

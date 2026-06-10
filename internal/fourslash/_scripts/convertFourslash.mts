@@ -155,25 +155,25 @@ function parseFileContent(filename: string, content: string): GoTest | NoTest {
     };
     for (const statement of statements) {
         const result = parseFourslashStatement(statement);
-        for (const cmd of result) {
-            const clientCapabilities = getCommandClientCapabilities(cmd);
-            if (clientCapabilities) {
-                if (goTest.clientCapabilities === undefined) {
-                    goTest.clientCapabilities = clientCapabilities;
-                }
-                else if (goTest.clientCapabilities !== clientCapabilities && cmd.kind === "verifyCompletions") {
-                    cmd.useScopedFourslash = true;
-                }
-            }
-        }
         goTest.commands.push(...result);
     }
     if (goTest.commands.length === 0) {
         console.error(`No commands parsed in file (skipping): ${filename}`);
         return NO_TEST;
     }
+    setFourslashCapabilities(goTest);
     validateCodeFixCommands(goTest.commands);
     return goTest;
+}
+
+function setFourslashCapabilities(goTest: GoTest): void {
+    const clientCapabilitiesCommand = goTest.commands.find(cmd => getCommandClientCapabilities(cmd) !== undefined);
+    goTest.clientCapabilities = clientCapabilitiesCommand ? getCommandClientCapabilities(clientCapabilitiesCommand) : undefined;
+    for (const cmd of goTest.commands) {
+        if (cmd.kind === "verifyCompletions" && getCommandClientCapabilities(cmd) !== goTest.clientCapabilities) {
+            cmd.useScopedFourslash = true;
+        }
+    }
 }
 
 function validateCodeFixCommands(commands: Cmd[]): void {
@@ -996,10 +996,14 @@ function parseCompletionClientCapabilities(arg: ts.ObjectLiteralExpression): str
         }
         switch (prop.name.text) {
             case "includeCompletionsWithSnippetText":
-                props.push(`SnippetSupport: new(${prop.initializer.kind === ts.SyntaxKind.TrueKeyword}),`);
+                if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+                    props.push(`SnippetSupport: new(true),`);
+                }
                 break;
             case "useLabelDetailsInCompletionEntries":
-                props.push(`LabelDetailsSupport: new(${prop.initializer.kind === ts.SyntaxKind.TrueKeyword}),`);
+                if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+                    props.push(`LabelDetailsSupport: new(true),`);
+                }
                 break;
         }
     }
@@ -4102,7 +4106,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andA
         })` : call;
 
     const clientCapabilities = getCommandClientCapabilities({ kind: "verifyCompletions", marker, args, isNewIdentifierLocation, andApplyCodeActionArgs });
-    if (clientCapabilities && useScopedFourslash) {
+    if (useScopedFourslash) {
         const command = `${createFourslash(clientCapabilities, isServer)}${completionCall}`;
         return `{
     ${command}

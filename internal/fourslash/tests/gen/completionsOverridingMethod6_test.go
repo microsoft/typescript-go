@@ -40,11 +40,7 @@ class C extends Base {
 class f extends Base {
     protected /*f*/
 }`
-	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport: new(false),
-		},
-	}), content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,

@@ -53,7 +53,6 @@ const op: Op = {
 }`
 	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport:      new(false),
 			LabelDetailsSupport: new(true),
 		},
 	}), content)
@@ -86,11 +85,7 @@ const op: Op = {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
 	})
 	{
-		f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-			CompletionItem: &lsproto.ClientCompletionItemOptions{
-				SnippetSupport: new(false),
-			},
-		}), content)
+		f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 		defer done()
 		f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 			IsIncomplete: false,
@@ -110,11 +105,7 @@ const op: Op = {
 		})
 	}
 	{
-		f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-			CompletionItem: &lsproto.ClientCompletionItemOptions{
-				SnippetSupport: new(false),
-			},
-		}), content)
+		f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 		defer done()
 		f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 			IsIncomplete: false,

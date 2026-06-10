@@ -30,11 +30,7 @@ import { Base } from "./types2";
 export class C implements Base {
   /**/
 }`
-	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
-		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport: new(false),
-		},
-	}), content)
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
