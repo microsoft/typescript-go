@@ -13,37 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
 
-func TestOmitTrailingSemicolon(t *testing.T) {
-	t.Parallel()
-
-	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
-	methodSignature := factory.NewMethodSignatureDeclaration(
-		nil, /*modifiers*/
-		factory.NewIdentifier("m"),
-		nil, /*postfixToken*/
-		nil, /*typeParameters*/
-		factory.NewNodeList(nil),
-		factory.NewKeywordTypeNode(ast.KindVoidKeyword),
-	)
-	file := parsetestutil.ParseTypeScript("interface I {}", false)
-
-	defaultPrinter := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
-	if got := defaultPrinter.Emit(methodSignature, file); got != "m(): void;" {
-		t.Fatalf("default Emit() = %q, want %q", got, "m(): void;")
-	}
-
-	omitPrinter := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF, OmitTrailingSemicolon: true}, printer.PrintHandlers{}, nil)
-	if got := omitPrinter.Emit(methodSignature, file); got != "m(): void" {
-		t.Fatalf("omit Emit() = %q, want %q", got, "m(): void")
-	}
-
-	forFile := parsetestutil.ParseTypeScript("for (;;) {}", false)
-	got := strings.TrimSuffix(omitPrinter.EmitSourceFile(forFile), "\n")
-	if got != "for (;;) { }" {
-		t.Fatalf("omit EmitSourceFile(for) = %q, want %q", got, "for (;;) { }")
-	}
-}
-
 func TestEmit(t *testing.T) {
 	t.Parallel()
 	data := []struct {
@@ -2620,5 +2589,36 @@ func TestParenthesizeBinaryExpressionMixingNullishCoalescing(t *testing.T) {
 			parsetestutil.MarkSyntheticRecursive(file)
 			emittestutil.CheckEmit(t, nil, file.AsSourceFile(), tt.output)
 		})
+	}
+}
+
+func TestOmitTrailingSemicolon(t *testing.T) {
+	t.Parallel()
+
+	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
+	methodSignature := factory.NewMethodSignatureDeclaration(
+		nil, /*modifiers*/
+		factory.NewIdentifier("m"),
+		nil, /*postfixToken*/
+		nil, /*typeParameters*/
+		factory.NewNodeList(nil),
+		factory.NewKeywordTypeNode(ast.KindVoidKeyword),
+	)
+	file := parsetestutil.ParseTypeScript("interface I {}", false)
+
+	defaultPrinter := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
+	if got := defaultPrinter.Emit(methodSignature, file); got != "m(): void;" {
+		t.Fatalf("default Emit() = %q, want %q", got, "m(): void;")
+	}
+
+	omitPrinter := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF, OmitTrailingSemicolon: true}, printer.PrintHandlers{}, nil)
+	if got := omitPrinter.Emit(methodSignature, file); got != "m(): void" {
+		t.Fatalf("omit Emit() = %q, want %q", got, "m(): void")
+	}
+
+	forFile := parsetestutil.ParseTypeScript("for (;;) {}", false)
+	got := strings.TrimSuffix(omitPrinter.EmitSourceFile(forFile), "\n")
+	if got != "for (;;) { }" {
+		t.Fatalf("omit EmitSourceFile(for) = %q, want %q", got, "for (;;) { }")
 	}
 }
