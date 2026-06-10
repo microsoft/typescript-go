@@ -1753,7 +1753,7 @@ func (l *LanguageService) completionInfoFromData(
 		return nil, nil
 	}
 
-	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
+	uniqueNames, sortedEntries, err := l.getCompletionEntriesFromSymbols(
 		ctx,
 		typeChecker,
 		data,
@@ -1762,6 +1762,9 @@ func (l *LanguageService) completionInfoFromData(
 		file,
 		compilerOptions,
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(data.keywordFilters, !data.insideJSDocTagTypeExpression && ast.IsSourceFileJS(file))
@@ -1842,7 +1845,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	position int,
 	file *ast.SourceFile,
 	compilerOptions *core.CompilerOptions,
-) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
+) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem, err error) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := lsutil.ProbablyUsesSemicolons(file)
 	preferences := l.UserPreferences()
@@ -1884,7 +1887,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		} else {
 			sortText = originalSortText
 		}
-		entry := l.createCompletionItem(
+		entry, err := l.createCompletionItem(
 			ctx,
 			typeChecker,
 			symbol,
@@ -1900,6 +1903,9 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			compilerOptions,
 			isMemberCompletion,
 		)
+		if err != nil {
+			return uniqueNames, nil, err
+		}
 		if entry == nil {
 			continue
 		}
@@ -1989,7 +1995,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	for name := range uniques {
 		uniqueSet.Add(name)
 	}
-	return *uniqueSet, sortedEntries
+	return *uniqueSet, sortedEntries, nil
 }
 
 func completionNameForLiteral(
@@ -2059,7 +2065,7 @@ func (l *LanguageService) createCompletionItem(
 	useSemicolons bool,
 	compilerOptions *core.CompilerOptions,
 	isMemberCompletion bool,
-) *lsproto.CompletionItem {
+) (*lsproto.CompletionItem, error) {
 	contextToken := data.contextToken
 	var insertText string
 	var filterText string
@@ -2107,7 +2113,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 
 		if dot == nil {
-			return nil
+			return nil, nil
 		}
 
 		// If the text after the '.' starts with this name, write over it. Else, add new text.
@@ -2193,9 +2199,12 @@ func (l *LanguageService) createCompletionItem(
 	var additionalTextEdits *[]*lsproto.TextEdit
 	isClassMemberSnippetCompletion := false
 	if preferences.IncludeCompletionsWithClassMemberSnippets.IsTrueOrUnknown() && data.completionKind == CompletionKindMemberLike && isClassLikeMemberCompletion(symbol, data.location, file) {
-		memberCompletionEntry := l.getEntryForMemberCompletion(ctx, typeChecker, symbol, name, data.location, position, contextToken, file)
+		memberCompletionEntry, err := l.getEntryForMemberCompletion(ctx, typeChecker, symbol, name, data.location, position, contextToken, file)
+		if err != nil {
+			return nil, err
+		}
 		if memberCompletionEntry == nil {
-			return nil
+			return nil, nil
 		}
 		isClassMemberSnippetCompletion = true
 		insertText = memberCompletionEntry.insertText
@@ -2322,7 +2331,7 @@ func (l *LanguageService) createCompletionItem(
 		nil, /*autoImportFix*/
 		additionalTextEdits,
 		nil, /*detail*/
-	)
+	), nil
 }
 
 type memberCompletionEntry struct {
@@ -2459,14 +2468,25 @@ func (l *LanguageService) printObjectLiteralMethodLabelDetail(method *ast.Node, 
 	return strings.TrimSuffix(signaturePrinter.Emit(methodSignature, file), ";")
 }
 
-func (l *LanguageService) getEntryForMemberCompletion(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, name string, location *ast.Node, position int, contextToken *ast.Node, file *ast.SourceFile) *memberCompletionEntry {
+func (l *LanguageService) getEntryForMemberCompletion(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, name string, location *ast.Node, position int, contextToken *ast.Node, file *ast.SourceFile) (*memberCompletionEntry, error) {
 	classLikeDeclaration := ast.FindAncestor(location, ast.IsClassLike)
+	if classLikeDeclaration == nil {
+		return nil, nil
+	}
+
+	importAdder, err := l.createImportAdder(ctx, typeChecker, file)
+	if err != nil {
+		return nil, err
+	}
+	return l.getEntryForMemberCompletionWithImportAdder(ctx, typeChecker, symbol, name, classLikeDeclaration, position, contextToken, file, importAdder), nil
+}
+
+func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, name string, classLikeDeclaration *ast.Node, position int, contextToken *ast.Node, file *ast.SourceFile, importAdder autoimport.ImportAdder) *memberCompletionEntry {
 	if classLikeDeclaration == nil {
 		return nil
 	}
 
 	changeTracker := change.NewTracker(ctx, l.GetProgram().Options(), l.FormatOptions(), l.converters)
-	importAdder := l.createImportAdder(ctx, typeChecker, file)
 	fixer := newMissingMemberFixer(changeTracker, l.GetProgram(), typeChecker, l.UserPreferences(), importAdder, locale.FromContext(ctx))
 
 	presentModifiers := l.getPresentMemberModifiers(contextToken, file, position)
@@ -2667,14 +2687,25 @@ func addClassMemberSnippet(text string, newLine string) string {
 	return text
 }
 
-func (l *LanguageService) createImportAdder(ctx context.Context, typeChecker *checker.Checker, file *ast.SourceFile) autoimport.ImportAdder {
+func (l *LanguageService) createImportAdder(ctx context.Context, typeChecker *checker.Checker, file *ast.SourceFile) (autoimport.ImportAdder, error) {
 	if tspath.IsDynamicFileName(file.FileName()) {
-		return nil
+		return nil, nil
 	}
 	view, err := l.getPreparedAutoImportView(file)
 	if err != nil {
-		view = l.getCurrentAutoImportView(file)
+		return nil, err
 	}
+	if view == nil {
+		return nil, nil
+	}
+	return autoimport.NewImportAdder(ctx, l.GetProgram(), typeChecker, file, view, l.FormatOptions(), l.converters, l.UserPreferences()), nil
+}
+
+func (l *LanguageService) createImportAdderFromAutoImportView(ctx context.Context, typeChecker *checker.Checker, file *ast.SourceFile) autoimport.ImportAdder {
+	if tspath.IsDynamicFileName(file.FileName()) {
+		return nil
+	}
+	view := l.getCurrentAutoImportView(file)
 	if view == nil {
 		return nil
 	}
@@ -5377,7 +5408,9 @@ func (l *LanguageService) getCompletionItemDetails(
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
 		if data.Source == string(completionSourceClassMemberSnippet) {
-			memberCompletion := l.getEntryForMemberCompletion(ctx, checker, symbolDetails.symbol, data.Name, symbolDetails.location, position, symbolDetails.contextToken, file)
+			classLikeDeclaration := ast.FindAncestor(symbolDetails.location, ast.IsClassLike)
+			importAdder := l.createImportAdderFromAutoImportView(ctx, checker, file)
+			memberCompletion := l.getEntryForMemberCompletionWithImportAdder(ctx, checker, symbolDetails.symbol, data.Name, classLikeDeclaration, position, symbolDetails.contextToken, file, importAdder)
 			if memberCompletion != nil && len(memberCompletion.additionalTextEdits) > 0 {
 				item.AdditionalTextEdits = &memberCompletion.additionalTextEdits
 				if memberCompletion.hasImportEdits {

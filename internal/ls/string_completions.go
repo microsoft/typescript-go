@@ -113,7 +113,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			location:                file.AsNode(),
 			contextToken:            contextToken,
 		}
-		_, items := l.getCompletionEntriesFromSymbols(
+		_, items, _ := l.getCompletionEntriesFromSymbols(
 			ctx,
 			typeChecker,
 			data,
