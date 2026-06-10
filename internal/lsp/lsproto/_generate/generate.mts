@@ -607,6 +607,22 @@ const customStructures: Structure[] = [
         ],
         documentation: "A classified text element containing an array of classified text runs, used for colorized labels in VS.",
     },
+    {
+        name: "ContainerElement",
+        properties: [
+            {
+                name: "Elements",
+                type: { kind: "array", element: { kind: "reference", name: "VSClassifiedTextElement" } },
+                documentation: "The child elements of this container.",
+            },
+            {
+                name: "Style",
+                type: { kind: "base", name: "integer" },
+                documentation: "The container style (0=Stacked, 1=Wrapped).",
+            },
+        ],
+        documentation: "A container element that holds child content elements with a layout style, used for VS hover display.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
@@ -958,7 +974,7 @@ function patchAndPreprocessModel() {
             });
         }
 
-        // Patch Hover to add canIncreaseVerbosity
+        // Patch Hover to add canIncreaseVerbosity and _vs_rawContent
         if (structure.name === "Hover") {
             structure.properties.push(
                 {
@@ -966,6 +982,12 @@ function patchAndPreprocessModel() {
                     type: { kind: "base", name: "boolean" },
                     omitzeroValue: true,
                     documentation: "Whether the verbosity level can be increased for this hover.",
+                },
+                {
+                    name: "_vs_rawContent",
+                    type: { kind: "reference", name: "JSONRawValue" },
+                    optional: true,
+                    documentation: "VS-specific rich content for hover display, containing classified text elements.",
                 },
             );
         }
@@ -1655,6 +1677,7 @@ const typeAliasOverrides = new Map([
     ["LSPArray", { name: "[]any", needsPointer: false }],
     ["LSPObject", { name: "map[string]any", needsPointer: false }],
     ["uint64", { name: "uint64", needsPointer: false }],
+    ["JSONRawValue", { name: "json.Value", needsPointer: false }],
 ]);
 
 // These type aliases are intentionally not resolved to their underlying types.
