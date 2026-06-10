@@ -39,7 +39,11 @@ function fn3() {
         <butto/*3*/ style=""
     </>;
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -56,9 +60,6 @@ function fn3() {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
-		},
 	})
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -75,9 +76,6 @@ function fn3() {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
-		},
 	})
 	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -94,8 +92,5 @@ function fn3() {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
-		},
 	})
 }

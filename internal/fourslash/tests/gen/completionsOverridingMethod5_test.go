@@ -33,7 +33,11 @@ abstract class Abc extends Ab {
     abstract /*b*/
     abstract m/*c*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(false),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -58,9 +62,6 @@ abstract class Abc extends Ab {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -93,9 +94,6 @@ abstract class Abc extends Ab {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -128,8 +126,5 @@ abstract class Abc extends Ab {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 }

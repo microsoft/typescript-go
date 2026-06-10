@@ -111,7 +111,11 @@ class IBase {
 class ISub extends IBase {
     /*i*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(false),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -130,9 +134,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -151,9 +152,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -172,9 +170,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "d", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -193,9 +188,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "e", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -214,9 +206,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "f", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -235,9 +224,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "g", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -256,9 +242,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "h1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -272,9 +255,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "h2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -297,9 +277,6 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyCompletions(t, "i", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -324,8 +301,5 @@ class ISub extends IBase {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 }

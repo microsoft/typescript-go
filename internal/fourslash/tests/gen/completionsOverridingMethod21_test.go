@@ -27,7 +27,11 @@ abstract class AFoo {
 class BFoo extends AFoo {
     async /*b*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(false),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -50,9 +54,6 @@ class BFoo extends AFoo {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new("b"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "bar",

@@ -54,7 +54,11 @@ function fn4() {
         <GenericElement<number> /*4*/ ></GenericElement>
     </>
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, f.Markers(), &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -75,8 +79,5 @@ function fn4() {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
-		},
 	})
 }

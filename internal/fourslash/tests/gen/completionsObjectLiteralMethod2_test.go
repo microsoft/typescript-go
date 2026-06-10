@@ -34,7 +34,12 @@ import { IBar } from "./b";
 const obj: IBar = {
     /*a*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -62,9 +67,5 @@ const obj: IBar = {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport:      new(false),
-			LabelDetailsSupport: new(true),
-		},
 	})
 }

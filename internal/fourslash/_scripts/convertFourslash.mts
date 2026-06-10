@@ -155,6 +155,17 @@ function parseFileContent(filename: string, content: string): GoTest | NoTest {
     };
     for (const statement of statements) {
         const result = parseFourslashStatement(statement);
+        for (const cmd of result) {
+            const clientCapabilities = getCommandClientCapabilities(cmd);
+            if (clientCapabilities) {
+                if (goTest.clientCapabilities === undefined) {
+                    goTest.clientCapabilities = clientCapabilities;
+                }
+                else if (goTest.clientCapabilities !== clientCapabilities && cmd.kind === "verifyCompletions") {
+                    cmd.useScopedFourslash = true;
+                }
+            }
+        }
         goTest.commands.push(...result);
     }
     if (goTest.commands.length === 0) {
@@ -977,43 +988,29 @@ const completionPlus = new Map([
     ["completion.typeKeywordsPlus", "CompletionTypeKeywordsPlus"],
 ]);
 
-interface CompletionCapabilityContext {
-    includeCompletionsWithSnippetText?: boolean;
-    useLabelDetailsInCompletionEntries?: boolean;
-}
-
-function parseCompletionCapabilityContext(arg: ts.ObjectLiteralExpression): CompletionCapabilityContext {
-    const result: CompletionCapabilityContext = {};
+function parseCompletionClientCapabilities(arg: ts.ObjectLiteralExpression): string | undefined {
+    const props: string[] = [];
     for (const prop of arg.properties) {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
             continue;
         }
         switch (prop.name.text) {
             case "includeCompletionsWithSnippetText":
-                result.includeCompletionsWithSnippetText = prop.initializer.kind === ts.SyntaxKind.TrueKeyword;
+                props.push(`SnippetSupport: new(${prop.initializer.kind === ts.SyntaxKind.TrueKeyword}),`);
                 break;
             case "useLabelDetailsInCompletionEntries":
-                result.useLabelDetailsInCompletionEntries = prop.initializer.kind === ts.SyntaxKind.TrueKeyword;
+                props.push(`LabelDetailsSupport: new(${prop.initializer.kind === ts.SyntaxKind.TrueKeyword}),`);
                 break;
         }
-    }
-    return result;
-}
-
-function formatCompletionClientCapabilities(context: CompletionCapabilityContext): string | undefined {
-    const props: string[] = [];
-    if (context.includeCompletionsWithSnippetText !== undefined) {
-        props.push(`SnippetSupport: new(${context.includeCompletionsWithSnippetText}),`);
-    }
-    if (context.useLabelDetailsInCompletionEntries !== undefined) {
-        props.push(`LabelDetailsSupport: new(${context.useLabelDetailsInCompletionEntries}),`);
     }
     if (props.length === 0) {
         return undefined;
     }
-    return `&fourslash.CompletionsClientCapabilities{
+    return `&fourslash.ClientCapabilitiesOptions{
+    CompletionItem: &lsproto.ClientCompletionItemOptions{
         ${props.join("\n")}
-    }`;
+    },
+}`;
 }
 
 function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApplyCodeActionArgs): VerifyCompletionsCmd {
@@ -1023,26 +1020,12 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
     let exact: string | undefined;
     let unsorted: string | undefined;
     let preferences = "nil /*preferences*/";
-    let completionCapabilityContext: CompletionCapabilityContext = {};
+    let clientCapabilities: string | undefined;
     const obj = getObjectLiteralExpression(arg);
     if (!obj) {
         throw new Error(`Expected object literal expression in verify.completions, got ${arg.getText()}`);
     }
     let isNewIdentifierLocation: true | undefined;
-    for (const prop of obj.properties) {
-        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name) || prop.name.text !== "preferences") {
-            continue;
-        }
-        const preferenceLiteral = getObjectLiteralExpression(prop.initializer);
-        if (!preferenceLiteral) {
-            throw new Error(`Expected object literal for user preferences, got ${prop.initializer.getText()}`);
-        }
-        completionCapabilityContext = {
-            ...completionCapabilityContext,
-            ...parseCompletionCapabilityContext(preferenceLiteral),
-        };
-        break;
-    }
     for (const prop of obj.properties) {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
             if (ts.isShorthandPropertyAssignment(prop) && prop.name.text === "preferences") {
@@ -1050,10 +1033,7 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                 if (!preferenceLiteral) {
                     throw new Error(`Expected object literal for user preferences, got ${prop.name.getText()}`);
                 }
-                completionCapabilityContext = {
-                    ...completionCapabilityContext,
-                    ...parseCompletionCapabilityContext(preferenceLiteral),
-                };
+                clientCapabilities = parseCompletionClientCapabilities(preferenceLiteral);
                 preferences = parseUserPreferences(preferenceLiteral);
                 continue;
             }
@@ -1206,10 +1186,7 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
                 if (!preferenceLiteral) {
                     throw new Error(`Expected object literal for user preferences, got ${init.getText()}`);
                 }
-                completionCapabilityContext = {
-                    ...completionCapabilityContext,
-                    ...parseCompletionCapabilityContext(preferenceLiteral),
-                };
+                clientCapabilities = parseCompletionClientCapabilities(preferenceLiteral);
                 preferences = parseUserPreferences(preferenceLiteral);
                 break;
             }
@@ -1226,7 +1203,7 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
     return {
         kind: "verifyCompletions",
         marker: marker ? marker : "nil",
-        args: { includes, excludes, exact, unsorted, preferences, clientCapabilities: formatCompletionClientCapabilities(completionCapabilityContext) },
+        args: { includes, excludes, exact, unsorted, preferences, clientCapabilities },
         isNewIdentifierLocation: isNewIdentifierLocation,
     };
 }
@@ -3751,6 +3728,7 @@ interface VerifyCompletionsCmd {
     isNewIdentifierLocation?: true;
     args?: VerifyCompletionsArgs | "nil";
     andApplyCodeActionArgs?: VerifyApplyCodeActionArgs;
+    useScopedFourslash?: true;
 }
 
 interface VerifyCompletionsArgs {
@@ -4088,7 +4066,7 @@ function generateVerifyOutliningSpans({ foldingRangeKind }: VerifyOutliningSpans
     return `f.VerifyOutliningSpans(t)`;
 }
 
-function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd, imports: Set<string>): string {
+function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs, useScopedFourslash }: VerifyCompletionsCmd, imports: Set<string>, isServer: boolean): string {
     let expectedList: string;
     if (args === "nil") {
         expectedList = "nil";
@@ -4112,20 +4090,25 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andA
         ${expected.join("\n")}
     },
     ${args?.preferences && !args.preferences.startsWith("nil") ? `UserPreferences: ${args.preferences},` : ""}
-    ${args?.clientCapabilities ? `ClientCapabilities: ${args.clientCapabilities},` : ""}
 }`;
     }
 
     const call = `f.VerifyCompletions(t, ${marker}, ${expectedList})`;
-    if (andApplyCodeActionArgs) {
-        return `${call}.AndApplyCodeAction(t, &fourslash.CompletionsExpectedCodeAction{
+    const completionCall = andApplyCodeActionArgs ? `${call}.AndApplyCodeAction(t, &fourslash.CompletionsExpectedCodeAction{
             Name: ${getGoStringLiteral(andApplyCodeActionArgs.name)},
             Source: ${getGoStringLiteral(andApplyCodeActionArgs.source)},
             Description: ${getGoStringLiteral(andApplyCodeActionArgs.description)},
             NewFileContent: ${getGoMultiLineStringLiteral(andApplyCodeActionArgs.newFileContent)},
-        })`;
+        })` : call;
+
+    const clientCapabilities = getCommandClientCapabilities({ kind: "verifyCompletions", marker, args, isNewIdentifierLocation, andApplyCodeActionArgs });
+    if (clientCapabilities && useScopedFourslash) {
+        const command = `${createFourslash(clientCapabilities, isServer)}${completionCall}`;
+        return `{
+    ${command}
+}`;
     }
-    return call;
+    return completionCall;
 }
 
 function generateVerifyApplyCodeActionFromCompletion({ marker, options }: VerifyApplyCodeActionFromCompletionCmd): string {
@@ -4357,10 +4340,10 @@ function generateSemanticClassifications({ format, tokens }: VerifySemanticClass
 	})`;
 }
 
-function generateCmd(cmd: Cmd, imports: Set<string>): string {
+function generateCmd(cmd: Cmd, imports: Set<string>, isServer: boolean): string {
     switch (cmd.kind) {
         case "verifyCompletions":
-            return generateVerifyCompletions(cmd, imports);
+            return generateVerifyCompletions(cmd, imports, isServer);
         case "verifyApplyCodeActionFromCompletion":
             return generateVerifyApplyCodeActionFromCompletion(cmd);
         case "verifyBaselineFindAllReferences":
@@ -4500,6 +4483,23 @@ interface GoTest {
     name: string;
     content: string;
     commands: Cmd[];
+    clientCapabilities?: string;
+}
+
+function getCommandClientCapabilities(cmd: Cmd): string | undefined {
+    return cmd.kind === "verifyCompletions" && cmd.args !== "nil" ? cmd.args.clientCapabilities : undefined;
+}
+
+function createFourslash(clientCapabilities: string | undefined, isServer: boolean): string {
+    const capabilities = clientCapabilities
+        ? `fourslash.GetDefaultCapabilitiesWithOptions(${clientCapabilities})`
+        : "nil /*capabilities*/";
+    return `f, done := fourslash.NewFourslash(t, ${capabilities}, content)
+    defer done()
+    ${
+        isServer ? `f.MarkTestAsStradaServer()
+    ` : ""
+    }`;
 }
 
 function generateGoTest(test: GoTest, isServer: boolean): string {
@@ -4508,7 +4508,8 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
     const neededImports = new Set<string>();
     neededImports.add(IMPORT_FOURSLASH);
     neededImports.add(IMPORT_TESTUTIL);
-    const commands = test.commands.map(cmd => generateCmd(cmd, neededImports)).join("\n");
+    const commands = test.commands.map(cmd => generateCmd(cmd, neededImports, isServer)).join("\n");
+
     // Scan the generated command code for package-qualified names that may come from
     // parsed command fields (e.g. UserPreferences generated during parsing).
     // These qualified names (core., ls., lsutil., lsproto.) are safe to detect via regex
@@ -4539,6 +4540,7 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
         if (aDot !== bDot) return aDot ? 1 : -1;
         return a.localeCompare(b);
     });
+    const fourslash = `    ${createFourslash(test.clientCapabilities, isServer)}`;
     const template = `// Code generated by convertFourslash; DO NOT EDIT.
 // To modify this test, run "npm run makemanual ${test.name}"
 
@@ -4555,9 +4557,7 @@ func Test${testName}(t *testing.T) {
     t.Parallel()
     defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ${content}
-    f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-    defer done()
-    ${isServer ? `f.MarkTestAsStradaServer()\n` : ""}${commands}
+${fourslash}${commands}
 }`;
     return template;
 }

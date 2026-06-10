@@ -40,7 +40,11 @@ import { Component } from "./utils.js";
 export class MyComponent extends Component {
     render/**/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.MarkTestAsStradaServer()
 	f.GoToMarker(t, "")
@@ -66,9 +70,6 @@ export class MyComponent extends Component {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
-		},
 	})
 	f.GoToFile(t, "/home/src/workspaces/project/utils.ts")
 	f.GoToMarker(t, "")
@@ -95,8 +96,5 @@ export class MyComponent extends Component {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
-		},
 	})
 }

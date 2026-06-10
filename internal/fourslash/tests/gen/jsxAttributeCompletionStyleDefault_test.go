@@ -37,7 +37,11 @@ declare namespace JSX {
 }
 
 <foo [|prop_/**/|] />`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -87,10 +91,6 @@ declare namespace JSX {
 					SortText:   new(string(ls.SortTextOptionalMember)),
 				},
 			},
-		},
-
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
 		},
 	})
 }

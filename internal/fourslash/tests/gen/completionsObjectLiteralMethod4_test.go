@@ -27,7 +27,12 @@ interface IFoo {
 const obj: IFoo = {
     /*1*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport:      new(true),
+			LabelDetailsSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -56,9 +61,5 @@ const obj: IFoo = {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport:      new(true),
-			LabelDetailsSupport: new(true),
-		},
 	})
 }

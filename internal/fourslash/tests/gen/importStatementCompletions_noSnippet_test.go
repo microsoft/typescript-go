@@ -21,7 +21,11 @@ func TestImportStatementCompletions_noSnippet(t *testing.T) {
 export const foo = 0;
 // @Filename: /index0.ts
 [|import f/**/|]`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(false),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -51,10 +55,6 @@ export const foo = 0;
 					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
-		},
-
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
 		},
 	})
 }

@@ -570,6 +570,52 @@ func GetDefaultCapabilitiesWithSnippetSupport() *lsproto.ClientCapabilities {
 	return capabilities
 }
 
+type ClientCapabilitiesOptions struct {
+	CompletionItem *lsproto.ClientCompletionItemOptions
+}
+
+func GetDefaultCapabilitiesWithOptions(options *ClientCapabilitiesOptions) *lsproto.ClientCapabilities {
+	capabilities := GetDefaultCapabilities()
+	if options == nil {
+		return capabilities
+	}
+	if options.CompletionItem != nil {
+		target := capabilities.TextDocument.Completion.CompletionItem
+		completionItemOptions := options.CompletionItem
+		if completionItemOptions.SnippetSupport != nil {
+			target.SnippetSupport = completionItemOptions.SnippetSupport
+		}
+		if completionItemOptions.CommitCharactersSupport != nil {
+			target.CommitCharactersSupport = completionItemOptions.CommitCharactersSupport
+		}
+		if completionItemOptions.DocumentationFormat != nil {
+			target.DocumentationFormat = completionItemOptions.DocumentationFormat
+		}
+		if completionItemOptions.DeprecatedSupport != nil {
+			target.DeprecatedSupport = completionItemOptions.DeprecatedSupport
+		}
+		if completionItemOptions.PreselectSupport != nil {
+			target.PreselectSupport = completionItemOptions.PreselectSupport
+		}
+		if completionItemOptions.TagSupport != nil {
+			target.TagSupport = completionItemOptions.TagSupport
+		}
+		if completionItemOptions.InsertReplaceSupport != nil {
+			target.InsertReplaceSupport = completionItemOptions.InsertReplaceSupport
+		}
+		if completionItemOptions.ResolveSupport != nil {
+			target.ResolveSupport = completionItemOptions.ResolveSupport
+		}
+		if completionItemOptions.InsertTextModeSupport != nil {
+			target.InsertTextModeSupport = completionItemOptions.InsertTextModeSupport
+		}
+		if completionItemOptions.LabelDetailsSupport != nil {
+			target.LabelDetailsSupport = completionItemOptions.LabelDetailsSupport
+		}
+	}
+	return capabilities
+}
+
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
 	var capabilitiesWithDefaults lsproto.ClientCapabilities
 	if capabilities != nil {
@@ -1016,11 +1062,10 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 }
 
 type CompletionsExpectedList struct {
-	IsIncomplete       bool
-	ItemDefaults       *CompletionsExpectedItemDefaults
-	Items              *CompletionsExpectedItems
-	UserPreferences    *lsutil.UserPreferences
-	ClientCapabilities *CompletionsClientCapabilities
+	IsIncomplete    bool
+	ItemDefaults    *CompletionsExpectedItemDefaults
+	Items           *CompletionsExpectedItems
+	UserPreferences *lsutil.UserPreferences
 }
 
 type Ignored = struct{}
@@ -1046,28 +1091,6 @@ type CompletionsExpectedItems struct {
 	Excludes []string
 	Exact    []CompletionsExpectedItem
 	Unsorted []CompletionsExpectedItem
-}
-
-type CompletionsClientCapabilities struct {
-	SnippetSupport      *bool
-	LabelDetailsSupport *bool
-}
-
-func (f *FourslashTest) capabilitiesWithCompletionOverrides(overrides *CompletionsClientCapabilities) *lsproto.ClientCapabilities {
-	capabilities := *getCapabilitiesWithDefaults(f.capabilities)
-	textDocument := *capabilities.TextDocument
-	completion := *textDocument.Completion
-	completionItem := *completion.CompletionItem
-	if overrides.SnippetSupport != nil {
-		completionItem.SnippetSupport = overrides.SnippetSupport
-	}
-	if overrides.LabelDetailsSupport != nil {
-		completionItem.LabelDetailsSupport = overrides.LabelDetailsSupport
-	}
-	completion.CompletionItem = &completionItem
-	textDocument.Completion = &completion
-	capabilities.TextDocument = &textDocument
-	return &capabilities
 }
 
 type CompletionsExpectedCodeAction struct {
@@ -1112,7 +1135,10 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 	default:
 		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
 	}
+	return f.verifyCompletionsActions(list)
+}
 
+func (f *FourslashTest) verifyCompletionsActions(list *lsproto.CompletionList) VerifyCompletionsResult {
 	return VerifyCompletionsResult{
 		AndApplyCodeAction: func(t *testing.T, expectedAction *CompletionsExpectedCodeAction) {
 			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
@@ -1152,47 +1178,23 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
 	t.Helper()
-	prefix := f.getCurrentPositionPrefix()
 	var userPreferences *lsutil.UserPreferences
-	var clientCapabilities *CompletionsClientCapabilities
 	if expected != nil {
 		userPreferences = expected.UserPreferences
-		clientCapabilities = expected.ClientCapabilities
 	}
-	list := f.getCompletions(t, userPreferences, clientCapabilities)
+	prefix := f.getCurrentPositionPrefix()
+	list := f.getCompletions(t, userPreferences)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
 }
 
 func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
 	t.Helper()
-	return f.getCompletions(t, userPreferences, nil)
+	return f.getCompletions(t, userPreferences)
 }
 
-func (f *FourslashTest) getCompletionsWithCapabilities(t *testing.T, userPreferences *lsutil.UserPreferences, capabilities *lsproto.ClientCapabilities) *lsproto.CompletionList {
+func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
 	t.Helper()
-	ff, done := NewFourslash(t, capabilities, f.content)
-	defer done()
-	ff.isStradaServer = f.isStradaServer
-	ff.Configure(t, f.userPreferences)
-	for fileName := range f.openFiles {
-		script := f.getScriptInfo(fileName)
-		ffScript := ff.getScriptInfo(fileName)
-		if script != nil && ffScript != nil && script.content != ffScript.content {
-			ff.editScriptAndUpdateMarkers(t, fileName, 0, len(ffScript.content), script.content)
-		}
-	}
-	ff.ensureActiveFile(t, f.activeFilename)
-	ff.goToPosition(t, f.currentCaretPosition)
-	return ff.getCompletions(t, userPreferences, nil)
-}
-
-func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences, clientCapabilityOverrides *CompletionsClientCapabilities) *lsproto.CompletionList {
-	t.Helper()
-	if clientCapabilityOverrides != nil {
-		capabilities := f.capabilitiesWithCompletionOverrides(clientCapabilityOverrides)
-		return f.getCompletionsWithCapabilities(t, userPreferences, capabilities)
-	}
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -2096,7 +2098,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 
 	reset := f.ConfigureWithReset(t, *userPreferences)
 	defer reset()
-	completionsList := f.getCompletions(t, nil, nil) // Already configured, so we do not need to pass it in again
+	completionsList := f.getCompletions(t, nil /*userPreferences*/) // Already configured, so we do not need to pass it in again
 	items := core.Filter(completionsList.Items, func(item *lsproto.CompletionItem) bool {
 		if item.Label != options.Name || item.Data == nil {
 			return false

@@ -25,7 +25,11 @@ const foo = 0;
 export = foo;
 // @Filename: /importExportEquals.ts
 [|import f/**/|]`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -56,10 +60,6 @@ export = foo;
 					SortText: new(string(ls.SortTextGlobalsOrKeywords)),
 				},
 			},
-		},
-
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(true),
 		},
 	})
 }

@@ -51,7 +51,12 @@ interface Op {
 const op: Op = {
     /*d*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport:      new(false),
+			LabelDetailsSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -79,49 +84,55 @@ const op: Op = {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport:      new(false),
-			LabelDetailsSupport: new(true),
-		},
 	})
-	f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				&lsproto.CompletionItem{
-					Label:    "M",
-					SortText: new(string(ls.ObjectLiteralPropertySortText(ls.SortTextLocationPriority, "M"))),
+	{
+		f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+			CompletionItem: &lsproto.ClientCompletionItemOptions{
+				SnippetSupport: new(false),
+			},
+		}), content)
+		defer done()
+		f.VerifyCompletions(t, "b", &fourslash.CompletionsExpectedList{
+			IsIncomplete: false,
+			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+				CommitCharacters: &DefaultCommitCharacters,
+				EditRange:        Ignored,
+			},
+			Items: &fourslash.CompletionsExpectedItems{
+				Includes: []fourslash.CompletionsExpectedItem{
+					&lsproto.CompletionItem{
+						Label:    "M",
+						SortText: new(string(ls.ObjectLiteralPropertySortText(ls.SortTextLocationPriority, "M"))),
+					},
 				},
 			},
-		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
-	})
-	f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{
-				&lsproto.CompletionItem{
-					Label:    "M",
-					SortText: new(string(ls.ObjectLiteralPropertySortText(ls.SortTextLocationPriority, "M"))),
+			UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		})
+	}
+	{
+		f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+			CompletionItem: &lsproto.ClientCompletionItemOptions{
+				SnippetSupport: new(false),
+			},
+		}), content)
+		defer done()
+		f.VerifyCompletions(t, "c", &fourslash.CompletionsExpectedList{
+			IsIncomplete: false,
+			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+				CommitCharacters: &DefaultCommitCharacters,
+				EditRange:        Ignored,
+			},
+			Items: &fourslash.CompletionsExpectedItems{
+				Exact: []fourslash.CompletionsExpectedItem{
+					&lsproto.CompletionItem{
+						Label:    "M",
+						SortText: new(string(ls.ObjectLiteralPropertySortText(ls.SortTextLocationPriority, "M"))),
+					},
 				},
 			},
-		},
-		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport: new(false),
-		},
-	})
+			UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
+		})
+	}
 	f.VerifyCompletions(t, "d", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -178,9 +189,5 @@ const op: Op = {
 			},
 		},
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithObjectLiteralMethodSnippets: core.TSTrue},
-		ClientCapabilities: &fourslash.CompletionsClientCapabilities{
-			SnippetSupport:      new(false),
-			LabelDetailsSupport: new(true),
-		},
 	})
 }
