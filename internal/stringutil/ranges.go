@@ -1,6 +1,6 @@
 package stringutil
 
-func IsInRuneRanges(cp rune, ranges []rune) bool {
+func isInRuneRanges(cp rune, ranges []rune) bool {
 	// Bail out quickly if it couldn't possibly be in the map
 	if cp < ranges[0] {
 		return false

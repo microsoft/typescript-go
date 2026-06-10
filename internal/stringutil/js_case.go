@@ -147,9 +147,9 @@ func hasSigmaCasedAfter(str string, start int) bool {
 
 func isSigmaCased(r rune) bool {
 	return unicode.IsLower(r) || unicode.IsUpper(r) || unicode.IsTitle(r) ||
-		IsInRuneRanges(r, unicodeLowercaseRanges) || IsInRuneRanges(r, unicodeUppercaseRanges)
+		isInRuneRanges(r, unicodeLowercaseRanges) || isInRuneRanges(r, unicodeUppercaseRanges)
 }
 
 func isUnicodeCaseIgnorable(r rune) bool {
-	return IsInRuneRanges(r, unicodeCaseIgnorableRanges)
+	return isInRuneRanges(r, unicodeCaseIgnorableRanges)
 }
