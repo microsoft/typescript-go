@@ -4487,7 +4487,10 @@ interface GoTest {
 }
 
 function getCommandClientCapabilities(cmd: Cmd): string | undefined {
-    return cmd.kind === "verifyCompletions" && cmd.args !== "nil" ? cmd.args.clientCapabilities : undefined;
+    if (cmd.kind !== "verifyCompletions" || !cmd.args || cmd.args === "nil") {
+        return undefined;
+    }
+    return cmd.args.clientCapabilities;
 }
 
 function createFourslash(clientCapabilities: string | undefined, isServer: boolean): string {
