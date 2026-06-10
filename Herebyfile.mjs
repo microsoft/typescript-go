@@ -739,10 +739,12 @@ export const testTools = task({
 export const buildAPI = task({
     name: "build:api",
     description: "Builds @typescript/native-preview JS API.",
-    run: async () => {
-        await $`npm run -w @typescript/native-preview build`;
-    },
+    run: runBuildAPI,
 });
+
+async function runBuildAPI() {
+    await $`npm run -w @typescript/native-preview build`;
+}
 
 export const buildAPITests = task({
     name: "build:api:test",
@@ -1579,6 +1581,7 @@ export const buildNativePreviewPackages = task({
 
 async function runBuildNativePreviewPackages() {
     await rimraf(builtNpm);
+    await runBuildAPI();
 
     const platforms = nativePreviewPlatforms();
 
