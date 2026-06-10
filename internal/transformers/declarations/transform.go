@@ -864,7 +864,7 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	return tx.Factory().UpdatePropertySignatureDeclaration(
+	result := tx.Factory().UpdatePropertySignatureDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -872,6 +872,8 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()), // TODO: possible strada bug (fixed here) - const property signatures never initialized
 	)
+	tx.preservePartialJsDoc(result, input.AsNode())
+	return result
 }
 
 func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.PropertyDeclaration) *ast.Node {
@@ -944,10 +946,10 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 			}
 		}
 		if valueParam == nil {
-			// TODO: strada bug - no type printed on set accessor missing arg as though private
+			// When synthesizing a missing value parameter, emit `value: any` for non-private accessors to match TypeScript's declaration emit behavior.
 			var t *ast.Node
 			if !isPrivate {
-				t = tx.Factory().NewKeywordExpression(ast.KindAnyKeyword)
+				t = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
 			}
 			valueParam = tx.Factory().NewParameterDeclaration(
 				nil,
@@ -1224,6 +1226,22 @@ func (tx *DeclarationTransformer) tryGetResolutionModeOverride(node *ast.Node) *
 func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast.Node) {
 	// Copy comment range from original to updated node so JSDoc comments are preserved
 	tx.EmitContext().AssignCommentRange(updated, original)
+}
+
+func (tx *DeclarationTransformer) preservePartialJsDoc(updated *ast.Node, original *ast.Node) {
+	if original.Flags&ast.NodeFlagsReparsed == 0 {
+		return
+	}
+	jsdoc := core.FirstOrNil(original.EagerJSDoc(ast.GetSourceFileOfNode(original)))
+	if jsdoc == nil {
+		return
+	}
+	description := scanner.GetTextOfJSDocComment(jsdoc.AsJSDoc().Comment)
+	if description == "" {
+		return
+	}
+	comment := "*\n * " + strings.ReplaceAll(description, "\n", "\n * ") + "\n "
+	tx.EmitContext().AddSyntheticLeadingComment(updated, ast.KindMultiLineCommentTrivia, comment, true /*hasTrailingNewLine*/)
 }
 
 func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
@@ -1834,7 +1852,15 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 			var newInitializer *ast.Node
 			switch value := enumValue.Value.(type) {
 			case jsnum.Number:
-				if value >= 0 {
+				if value.IsInf() {
+					if value > 0 {
+						newInitializer = tx.Factory().NewIdentifier("Infinity")
+					} else {
+						newInitializer = tx.Factory().NewPrefixUnaryExpression(ast.KindMinusToken, tx.Factory().NewIdentifier("Infinity"))
+					}
+				} else if value.IsNaN() {
+					newInitializer = tx.Factory().NewIdentifier("NaN")
+				} else if value >= 0 {
 					newInitializer = tx.Factory().NewNumericLiteral(value.String(), ast.TokenFlagsNone)
 				} else {
 					newInitializer = tx.Factory().NewPrefixUnaryExpression(
@@ -1856,7 +1882,7 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 }
 
 func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierList {
-	currentFlags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsAll)
+	currentFlags := ast.GetCombinedModifierFlags(tx.EmitContext().ParseNode(node)) & ast.ModifierFlagsAll
 	newFlags := tx.ensureModifierFlags(node)
 	if currentFlags == newFlags {
 		// Elide decorators
@@ -1884,10 +1910,10 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
 	}
-	if ast.IsImplicitlyExportedJSTypeAlias(node) {
+	if ast.IsImplicitlyExportedJSDocDeclaration(node) {
 		additions |= ast.ModifierFlagsExport
 	}
-	return maskModifierFlags(tx.host, node, mask, additions)
+	return maskModifierFlags(node, mask, additions)
 }
 
 func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.TypeParameterList) *ast.TypeParameterList {
@@ -2174,6 +2200,10 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 }
 
 func (tx *DeclarationTransformer) getNameExpressionPreferringIdentifier(nameExpr *ast.Node) *ast.Node {
+	if ast.IsNumericLiteral(nameExpr) {
+		// Numeric property names are string properties in JS; convert to string literal
+		nameExpr = tx.Factory().NewStringLiteral(nameExpr.Text(), ast.TokenFlagsNone)
+	}
 	if ast.IsStringLiteralLike(nameExpr) && scanner.IsIdentifierText(nameExpr.Text(), core.LanguageVariantStandard) {
 		result := tx.Factory().NewIdentifier(nameExpr.Text()) // prefer non-string literal names where possible
 		kwKind := scanner.IdentifierToKeywordKind(result.AsIdentifier())
@@ -2226,6 +2256,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 
 	declaration := tx.resolver.GetReferencedValueDeclaration(ns)
 	if declaration == nil {
+		return nil
+	}
+
+	if tx.shouldStripInternal(declaration) {
 		return nil
 	}
 
@@ -2301,7 +2335,10 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	flags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(declaration), ast.ModifierFlagsAll)
-	modifierFlags := ast.ModifierFlagsAmbient
+	modifierFlags := ast.ModifierFlagsNone
+	if tx.needsDeclare {
+		modifierFlags |= ast.ModifierFlagsAmbient
+	}
 
 	if flags&ast.ModifierFlagsExport != 0 {
 		if flags&ast.ModifierFlagsDefault == 0 {
