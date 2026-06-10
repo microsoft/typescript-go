@@ -1059,8 +1059,6 @@ func (l *LanguageService) getCompletionData(
 			symbols = append(symbols, filteredMembers...)
 
 			// Set sort texts.
-			transformObjectLiteralMembers := preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() &&
-				objectLikeContainer.Kind == ast.KindObjectLiteralExpression
 			for _, member := range filteredMembers {
 				symbolId := ast.GetSymbolId(member)
 				if spreadMemberNames.Has(member.Name) {
@@ -1072,19 +1070,19 @@ func (l *LanguageService) getCompletionData(
 						symbolToSortTextMap[symbolId] = SortTextOptionalMember
 					}
 				}
-				if transformObjectLiteralMembers {
+				if objectLikeContainer.Kind == ast.KindObjectLiteralExpression && preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() {
 					if displayName := getObjectLiteralPropertyCompletionName(member); displayName != "" {
 						originalSortText := core.OrElse(symbolToSortTextMap[symbolId], SortTextLocationPriority)
 						symbolToSortTextMap[symbolId] = ObjectLiteralPropertySortText(originalSortText, displayName)
 					}
-					entry := l.getEntryForObjectLiteralMethodCompletion(ctx, typeChecker, member, objectLikeContainer, file)
-					if entry != nil {
-						symbolToOriginInfoMap[len(symbols)] = &symbolOriginInfo{
-							kind: symbolOriginInfoKindObjectLiteralMethod,
-							data: entry,
-						}
-						symbols = append(symbols, member)
-					}
+				}
+			}
+
+			if objectLikeContainer.Kind == ast.KindObjectLiteralExpression &&
+				preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() {
+				for _, entry := range l.collectObjectLiteralMethodSymbols(ctx, typeChecker, filteredMembers, objectLikeContainer, file) {
+					symbolToOriginInfoMap[len(symbols)] = entry.origin
+					symbols = append(symbols, entry.symbol)
 				}
 			}
 		}
@@ -2448,6 +2446,39 @@ func isObjectLiteralMethodCompletionCandidateDeclaration(declaration *ast.Node) 
 	default:
 		return false
 	}
+}
+
+type objectLiteralMethodSymbol struct {
+	symbol *ast.Symbol
+	origin *symbolOriginInfo
+}
+
+func (l *LanguageService) collectObjectLiteralMethodSymbols(ctx context.Context, typeChecker *checker.Checker, members []*ast.Symbol, enclosingDeclaration *ast.Node, file *ast.SourceFile) []objectLiteralMethodSymbol {
+	if ast.IsSourceFileJS(file) {
+		return nil
+	}
+
+	var methods []objectLiteralMethodSymbol
+	for _, member := range members {
+		if isObjectLiteralMethodSymbol(member) {
+			entry := l.getEntryForObjectLiteralMethodCompletion(ctx, typeChecker, member, enclosingDeclaration, file)
+			if entry == nil {
+				continue
+			}
+			methods = append(methods, objectLiteralMethodSymbol{
+				symbol: member,
+				origin: &symbolOriginInfo{
+					kind: symbolOriginInfoKindObjectLiteralMethod,
+					data: entry,
+				},
+			})
+		}
+	}
+	return methods
+}
+
+func isObjectLiteralMethodSymbol(symbol *ast.Symbol) bool {
+	return symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0
 }
 
 func (l *LanguageService) printObjectLiteralMethodLabelDetail(method *ast.Node, file *ast.SourceFile, factory *ast.NodeFactory) string {
