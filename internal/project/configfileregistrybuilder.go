@@ -188,6 +188,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	var globs []string
 	var externalDirectories []string
 	var granularDirectories collections.Set[tspath.Path]
+	var granularRecursiveDirectories collections.Set[tspath.Path]
 	var includeWorkspace bool
 	var includeTsconfigDir bool
 	tsconfigDir := tspath.GetDirectoryPath(fileName)
@@ -196,9 +197,18 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		CurrentDirectory:          c.sessionOptions.CurrentDirectory,
 		UseCaseSensitiveFileNames: c.FS().UseCaseSensitiveFileNames(),
 	}
-	for dir := range wildcardDirectories {
+	for dir, recursive := range wildcardDirectories {
 		if c.sessionOptions.GranularWatches {
-			granularDirectories.Add(tspath.ToPath(dir, c.sessionOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames))
+			// Honor the wildcard's recursion flag: a recursive include such as
+			// `<dir>/**/*.ts` must be watched recursively even in granular mode,
+			// otherwise new files in subdirectories of the wildcard root would go
+			// undetected. Non-recursive wildcards (`<dir>/*`) stay shallow.
+			dirPath := tspath.ToPath(dir, c.sessionOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
+			if recursive {
+				granularRecursiveDirectories.Add(dirPath)
+			} else {
+				granularDirectories.Add(dirPath)
+			}
 			continue
 		}
 		if tspath.ContainsPath(c.sessionOptions.CurrentDirectory, dir, comparePathsOptions) {
@@ -225,6 +235,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 
 	if c.sessionOptions.GranularWatches {
 		globs = appendDirectoryGlobs(globs, granularDirectories)
+		globs = appendRecursiveDirectoryGlobs(globs, granularRecursiveDirectories)
 	} else {
 		if includeWorkspace {
 			globs = append(globs, getRecursiveGlobPattern(c.sessionOptions.CurrentDirectory))

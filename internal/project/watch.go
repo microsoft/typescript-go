@@ -430,6 +430,17 @@ func appendDirectoryGlobs(globs []string, directories collections.Set[tspath.Pat
 	return globs
 }
 
+// appendRecursiveDirectoryGlobs appends a recursive glob (`<dir>/**/*`) for each
+// directory. Granular watch mode uses this for wildcard `include` directories
+// that were specified with a recursive wildcard (e.g. `<dir>/**/*.ts`), which
+// genuinely require watching the whole subtree to detect newly added files.
+func appendRecursiveDirectoryGlobs(globs []string, directories collections.Set[tspath.Path]) []string {
+	for dir := range directories.Keys() {
+		globs = append(globs, getRecursiveGlobPattern(string(dir)))
+	}
+	return globs
+}
+
 // autoImportWatchGlobs computes the watch globs for the auto-import node_modules
 // watcher. In broad mode each node_modules directory is watched recursively
 // (`<nm>/**/*`); in granular mode it is watched non-recursively (`<nm>/*`) to
