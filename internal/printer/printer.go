@@ -32,10 +32,10 @@ import (
 )
 
 type PrinterOptions struct {
-	RemoveComments bool
-	NewLine        core.NewLineKind
-	// OmitTrailingSemicolon         bool
-	NoEmitHelpers bool
+	RemoveComments        bool
+	NewLine               core.NewLineKind
+	OmitTrailingSemicolon bool
+	NoEmitHelpers         bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
 	Target                      core.ScriptTarget
@@ -5047,6 +5047,9 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	p.sourceMapLineCharCache = nil
 
 	p.setSourceFile(sourceFile)
+	if p.Options.OmitTrailingSemicolon {
+		writer = getTrailingSemicolonDeferringWriter(writer)
+	}
 	p.writer = writer
 	p.writer.Clear()
 	if sourceFile != nil {

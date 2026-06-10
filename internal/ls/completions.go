@@ -2492,11 +2492,12 @@ func (l *LanguageService) printObjectLiteralMethodLabelDetail(method *ast.Node, 
 		methodDeclaration.Type,
 	)
 	signaturePrinter := printer.NewPrinter(printer.PrinterOptions{
-		RemoveComments: true,
-		NewLine:        core.GetNewLineKind(l.FormatOptions().NewLineCharacter),
-		Target:         l.GetProgram().Options().GetEmitScriptTarget(),
+		RemoveComments:        true,
+		OmitTrailingSemicolon: true,
+		NewLine:               core.GetNewLineKind(l.FormatOptions().NewLineCharacter),
+		Target:                l.GetProgram().Options().GetEmitScriptTarget(),
 	}, printer.PrintHandlers{}, nil /*emitContext*/)
-	return strings.TrimSuffix(signaturePrinter.Emit(methodSignature, file), ";")
+	return signaturePrinter.Emit(methodSignature, file)
 }
 
 func (l *LanguageService) getEntryForMemberCompletion(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, name string, location *ast.Node, position int, contextToken *ast.Node, file *ast.SourceFile) (*memberCompletionEntry, error) {
