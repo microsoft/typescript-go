@@ -11,7 +11,6 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -28963,10 +28962,10 @@ func applyStringMapping(symbol *ast.Symbol, str string) string {
 	case IntrinsicTypeKindLowercase:
 		return stringutil.ToLowerJS(str)
 	case IntrinsicTypeKindCapitalize:
-		_, size := utf8.DecodeRuneInString(str)
+		_, size := stringutil.DecodeJSStringRune(str)
 		return stringutil.ToUpperJS(str[:size]) + str[size:]
 	case IntrinsicTypeKindUncapitalize:
-		_, size := utf8.DecodeRuneInString(str)
+		_, size := stringutil.DecodeJSStringRune(str)
 		return stringutil.ToLowerJS(str[:size]) + str[size:]
 	}
 	return str

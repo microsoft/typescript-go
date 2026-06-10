@@ -30,6 +30,10 @@ func TestJSCasing(t *testing.T) {
 		{name: "lowercase sigma before immediate latin letter", got: ToLowerJS("ΣA"), want: "σa"},
 		{name: "lowercase sigma before immediate roman numeral letter", got: ToLowerJS("ΣⅠ"), want: "σⅰ"},
 		{name: "lowercase sigma before case ignorable then latin letter", got: ToLowerJS("ΣͅA"), want: "σͅa"},
+		{name: "uppercase lone surrogate", got: ToUpperJS(EncodeJSStringRune(0xD800)), want: EncodeJSStringRune(0xD800)},
+		{name: "lowercase lone surrogate", got: ToLowerJS("A" + EncodeJSStringRune(0xD800) + "B"), want: "a" + EncodeJSStringRune(0xD800) + "b"},
+		{name: "uppercase lone low surrogate with text", got: ToUpperJS(EncodeJSStringRune(0xDC00) + "x"), want: EncodeJSStringRune(0xDC00) + "X"},
+		{name: "lowercase lone surrogate before sigma", got: ToLowerJS(EncodeJSStringRune(0xD800) + "Σ"), want: EncodeJSStringRune(0xD800) + "σ"},
 	}
 
 	for _, tt := range tests {
