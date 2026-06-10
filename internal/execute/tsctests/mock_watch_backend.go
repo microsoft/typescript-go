@@ -14,14 +14,13 @@ import (
 )
 
 // MockWatchBackend implements execute.WatchBackend for testing. It
-// records all WatchDirectory/WatchFile calls so tests can verify that
+// records all WatchDirectory calls so tests can verify that
 // the correct watches are registered.  Events can be delivered through
 // SendEvents, which routes them only through watches whose paths
 // match, enforcing that tests fail if the wrong watches are set up.
 type MockWatchBackend struct {
 	mu              sync.Mutex
 	Dirs            map[string]*MockWatch
-	Files           map[string]*MockWatch
 	DirectoryExists func(string) bool // if set, WatchDirectory fails for non-existent dirs
 }
 
@@ -30,8 +29,7 @@ var _ execute.WatchBackend = (*MockWatchBackend)(nil)
 // NewMockWatchBackend creates a ready-to-use mock backend.
 func NewMockWatchBackend() *MockWatchBackend {
 	return &MockWatchBackend{
-		Dirs:  make(map[string]*MockWatch),
-		Files: make(map[string]*MockWatch),
+		Dirs: make(map[string]*MockWatch),
 	}
 }
 
@@ -39,7 +37,7 @@ func NewMockWatchBackend() *MockWatchBackend {
 func (m *MockWatchBackend) HasWatches() bool {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	return len(m.Dirs) > 0 || len(m.Files) > 0
+	return len(m.Dirs) > 0
 }
 
 // MockWatch records a single registered watch.
@@ -67,20 +65,12 @@ func (m *MockWatchBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, 
 	return w, nil
 }
 
-func (m *MockWatchBackend) WatchFile(path string, fn fswatch.WatchCallback) (io.Closer, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	w := &MockWatch{Path: path, Callback: fn}
-	m.Files[path] = w
-	return w, nil
-}
-
 // SendEvents routes events through the registered watch callbacks
 // that match each event's path. Directory watches match if the event
 // path is a child (or recursive descendant) of the watched directory.
-// File watches match on exact path. Events that match no watch are
-// silently dropped — this is by design so that tests fail when the
-// production code doesn't register the needed watches.
+// Events that match no watch are silently dropped — this is by design
+// so that tests fail when the production code doesn't register the
+// needed watches.
 func (m *MockWatchBackend) SendEvents(events []fswatch.Event) {
 	// Snapshot callbacks under the lock, then invoke outside the lock
 	// to avoid deadlock if the callback re-enters the mock.
@@ -92,14 +82,6 @@ func (m *MockWatchBackend) SendEvents(events []fswatch.Event) {
 	targets := make(map[*MockWatch]*target)
 
 	for _, e := range events {
-		// Check file watches (exact match).
-		if w, ok := m.Files[e.Path]; ok && !w.Closed {
-			if t, ok := targets[w]; ok {
-				t.events = append(t.events, e)
-			} else {
-				targets[w] = &target{cb: w.Callback, events: []fswatch.Event{e}}
-			}
-		}
 		// Check directory watches.
 		for _, w := range m.Dirs {
 			if w.Closed {
@@ -191,9 +173,9 @@ func (m *MockWatchBackend) WatchState() string {
 
 	// Directory watches, sorted by path.
 	var dirs []string
-	for path, w := range m.Dirs {
+	for dir, w := range m.Dirs {
 		if !w.Closed {
-			dirs = append(dirs, path)
+			dirs = append(dirs, dir)
 		}
 	}
 	sort.Strings(dirs)
@@ -209,23 +191,6 @@ func (m *MockWatchBackend) WatchState() string {
 		} else {
 			fmt.Fprintf(&b, "  %s\n", d)
 		}
-	}
-
-	// File watches, sorted by path.
-	var files []string
-	for path, w := range m.Files {
-		if !w.Closed {
-			files = append(files, path)
-		}
-	}
-	sort.Strings(files)
-
-	b.WriteString("File watches::\n")
-	if len(files) == 0 {
-		b.WriteString("  (none)\n")
-	}
-	for _, f := range files {
-		fmt.Fprintf(&b, "  %s\n", f)
 	}
 
 	return b.String()

@@ -511,6 +511,21 @@ func TestWatch(t *testing.T) {
 				}),
 			},
 		},
+		// Ancestor fallback: creating deeply nested directories that didn't
+		// exist at initial build time should trigger a rebuild and re-watch.
+		{
+			subScenario: "watch detects file added in deeply nested non-existent include path",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":      `const x: number = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{ "include": ["*.ts", "deep/nested/dir/**/*"] }`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("create deeply nested file matching include", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/deep/nested/dir/added.ts", `export const added = 1;`)
+				}),
+			},
+		},
 	}
 
 	for _, test := range testCases {

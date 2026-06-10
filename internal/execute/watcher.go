@@ -27,7 +27,6 @@ import (
 // WatchBackend abstracts fswatch.Watcher for testing
 type WatchBackend interface {
 	WatchDirectory(dir string, fn fswatch.WatchCallback, recursive bool, ignore func(string) bool) (io.Closer, error)
-	WatchFile(path string, fn fswatch.WatchCallback) (io.Closer, error)
 }
 
 type commandLineTestingWithWatchBackend interface {
@@ -47,21 +46,8 @@ func (b *fswatchBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, re
 	return b.inner.WatchDirectory(dir, fn, opts...)
 }
 
-func (b *fswatchBackend) WatchFile(path string, fn fswatch.WatchCallback) (io.Closer, error) {
-	return b.inner.WatchFile(path, fn)
-}
-
 type watchedDir struct {
 	closer    io.Closer
-	recursive bool
-}
-
-type watchedFile struct {
-	closer io.Closer
-}
-
-type dirWatch struct {
-	dir       string
 	recursive bool
 }
 
@@ -121,7 +107,6 @@ type Watcher struct {
 
 	backend      WatchBackend
 	watchedDirs  map[string]*watchedDir   // dir path → watch state
-	watchedFiles map[string]*watchedFile  // file path → watch state
 	seenFiles    map[tspath.Path]struct{} // all build dependencies (for event filtering)
 	configMtimes map[string]time.Time
 	doCycleCh    chan struct{}
@@ -157,7 +142,6 @@ func createWatcher(
 		sourceFileCache:                &collections.SyncMap[tspath.Path, *cachedSourceFile]{},
 		doCycleCh:                      make(chan struct{}, 1),
 		watchedDirs:                    make(map[string]*watchedDir),
-		watchedFiles:                   make(map[string]*watchedFile),
 	}
 	if configParseResult.ConfigFile != nil {
 		w.configFileName = configParseResult.ConfigFile.SourceFile.FileName()
@@ -207,10 +191,10 @@ func (w *Watcher) start() {
 	}
 }
 
-func (w *Watcher) computeDesiredWatches(seenFilePaths []string) (resolvedDirs map[string]bool, desiredFiles map[string]struct{}) {
+func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool {
 	cwd := w.sys.GetCurrentDirectory()
 
-	desiredDirs := make(map[string]bool) // path → recursive
+	desiredDirs := make(map[string]bool) // dir → recursive
 
 	// Wildcard directories from tsconfig (recursive or non-recursive)
 	if w.config.ConfigFile != nil {
@@ -226,26 +210,31 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) (resolvedDirs ma
 		desiredDirs[dir] = false
 	}
 
-	// Resolve ancestor fallbacks for non-existent directories
-	resolvedDirs = w.resolveDesiredDirs(desiredDirs)
-
-	// Config file watches
-	desiredFiles = make(map[string]struct{})
+	// Config file parent directories as non-recursive watches
 	for _, cfgPath := range w.configFilePaths {
 		realPath := w.sys.FS().Realpath(cfgPath)
-		desiredFiles[realPath] = struct{}{}
+		dir := tspath.GetDirectoryPath(realPath)
+		if _, has := desiredDirs[dir]; !has {
+			desiredDirs[dir] = false
+		}
 	}
 
-	// For no-config CLI mode, also watch the CLI-specified files directly
+	// For no-config CLI mode, also watch the CLI-specified files' directories
 	if w.config.ConfigFile == nil {
 		for _, fileName := range w.config.FileNames() {
 			absPath := tspath.GetNormalizedAbsolutePath(fileName, cwd)
 			realPath := w.sys.FS().Realpath(absPath)
-			desiredFiles[realPath] = struct{}{}
+			dir := tspath.GetDirectoryPath(realPath)
+			if _, has := desiredDirs[dir]; !has {
+				desiredDirs[dir] = false
+			}
 		}
 	}
 
-	// Watch files not covered by any directory watch
+	// Add parent directories for seen files not covered by existing dir watches.
+	// Resolve ancestor fallbacks first so coverage checks use final dirs.
+	resolvedDirs := w.resolveDesiredDirs(desiredDirs)
+
 	opts := w.comparePathsOptions()
 	for _, filePath := range seenFilePaths {
 		dir := tspath.GetDirectoryPath(filePath)
@@ -262,11 +251,12 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) (resolvedDirs ma
 			}
 		}
 		if !covered && w.sys.FS().FileExists(filePath) {
-			desiredFiles[filePath] = struct{}{}
+			resolvedDirs[dir] = false
 		}
 	}
 
-	return resolvedDirs, desiredFiles
+	// Re-resolve in case newly added dirs don't exist
+	return w.resolveDesiredDirs(resolvedDirs)
 }
 
 func (w *Watcher) reconcileWatches(seenFilePaths []string) {
@@ -274,74 +264,35 @@ func (w *Watcher) reconcileWatches(seenFilePaths []string) {
 		return
 	}
 
-	resolvedDirs, desiredFiles := w.computeDesiredWatches(seenFilePaths)
+	desiredDirs := w.computeDesiredWatches(seenFilePaths)
 
-	// Reconcile directory watches using DiffMaps
-	var staleDirClosers []io.Closer
-	var newDirs []dirWatch
-
+	// Reconcile directory watches using DiffMaps, performing effects inline
 	core.DiffMapsFunc(
 		w.watchedDirs,
-		resolvedDirs,
+		desiredDirs,
 		func(wd *watchedDir, recursive bool) bool { return wd.recursive == recursive },
 		func(dir string, recursive bool) {
 			if w.debugLog != nil {
 				fmt.Fprintf(w.debugLog, "[watch] watching directory %s (recursive=%v)\n", dir, recursive)
 			}
-			newDirs = append(newDirs, dirWatch{dir, recursive})
+			w.createDirWatch(dir, recursive)
 		},
 		func(dir string, wd *watchedDir) {
 			if w.debugLog != nil {
 				fmt.Fprintf(w.debugLog, "[watch] closing stale dir watch: %s\n", dir)
 			}
-			staleDirClosers = append(staleDirClosers, wd.closer)
+			wd.closer.Close()
 			delete(w.watchedDirs, dir)
 		},
 		func(dir string, wd *watchedDir, recursive bool) {
 			if w.debugLog != nil {
 				fmt.Fprintf(w.debugLog, "[watch] recreating dir watch %s (recursive %v→%v)\n", dir, wd.recursive, recursive)
 			}
-			staleDirClosers = append(staleDirClosers, wd.closer)
+			wd.closer.Close()
 			delete(w.watchedDirs, dir)
-			newDirs = append(newDirs, dirWatch{dir, recursive})
+			w.createDirWatch(dir, recursive)
 		},
 	)
-	for _, c := range staleDirClosers {
-		c.Close()
-	}
-	for _, nd := range newDirs {
-		w.createDirWatch(nd.dir, nd.recursive)
-	}
-
-	// Reconcile file watches using DiffMaps
-	var staleFileClosers []io.Closer
-	var newFiles []string
-
-	core.DiffMapsFunc(
-		w.watchedFiles,
-		desiredFiles,
-		func(_ *watchedFile, _ struct{}) bool { return true },
-		func(filePath string, _ struct{}) {
-			if w.debugLog != nil {
-				fmt.Fprintf(w.debugLog, "[watch] watching file %s\n", filePath)
-			}
-			newFiles = append(newFiles, filePath)
-		},
-		func(filePath string, wf *watchedFile) {
-			if w.debugLog != nil {
-				fmt.Fprintf(w.debugLog, "[watch] closing stale file watch: %s\n", filePath)
-			}
-			staleFileClosers = append(staleFileClosers, wf.closer)
-			delete(w.watchedFiles, filePath)
-		},
-		nil,
-	)
-	for _, c := range staleFileClosers {
-		c.Close()
-	}
-	for _, f := range newFiles {
-		w.createFileWatch(f)
-	}
 }
 
 func (w *Watcher) comparePathsOptions() tspath.ComparePathsOptions {
@@ -386,7 +337,7 @@ func (w *Watcher) createDirWatch(dir string, recursive bool) {
 	entry := &watchedDir{recursive: recursive}
 	cb := func(events []fswatch.Event, err error) {
 		if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
-			w.handleWatchTerminated(dir, entry, true)
+			w.handleWatchTerminated(dir, entry)
 			return
 		}
 		w.onWatchEvents(events, err)
@@ -402,26 +353,6 @@ func (w *Watcher) createDirWatch(dir string, recursive bool) {
 	w.watchedDirs[dir] = entry
 }
 
-func (w *Watcher) createFileWatch(filePath string) {
-	entry := &watchedFile{}
-	cb := func(events []fswatch.Event, err error) {
-		if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
-			w.handleWatchTerminated(filePath, entry, false)
-			return
-		}
-		w.onWatchEvents(events, err)
-	}
-	watch, err := w.backend.WatchFile(filePath, cb)
-	if err != nil {
-		if w.debugLog != nil {
-			fmt.Fprintf(w.debugLog, "[watch] failed to watch file %s: %v\n", filePath, err)
-		}
-		return
-	}
-	entry.closer = watch
-	w.watchedFiles[filePath] = entry
-}
-
 func (w *Watcher) closeAllWatches() {
 	w.mu.Lock()
 	dirs := make([]io.Closer, 0, len(w.watchedDirs))
@@ -429,36 +360,21 @@ func (w *Watcher) closeAllWatches() {
 		dirs = append(dirs, wd.closer)
 		delete(w.watchedDirs, dir)
 	}
-	files := make([]io.Closer, 0, len(w.watchedFiles))
-	for path, wf := range w.watchedFiles {
-		files = append(files, wf.closer)
-		delete(w.watchedFiles, path)
-	}
 	w.mu.Unlock()
 	for _, c := range dirs {
 		c.Close()
 	}
-	for _, c := range files {
-		c.Close()
-	}
 }
 
-func (w *Watcher) handleWatchTerminated(path string, identity any, isDir bool) {
+func (w *Watcher) handleWatchTerminated(dir string, identity *watchedDir) {
 	if w.debugLog != nil {
-		fmt.Fprintf(w.debugLog, "[watch] watch terminated: %s\n", path)
+		fmt.Fprintf(w.debugLog, "[watch] watch terminated: %s\n", dir)
 	}
 	var staleCloser io.Closer
 	w.mu.Lock()
-	if isDir {
-		if wd, ok := w.watchedDirs[path]; ok && wd == identity {
-			staleCloser = wd.closer
-			delete(w.watchedDirs, path)
-		}
-	} else {
-		if wf, ok := w.watchedFiles[path]; ok && wf == identity {
-			staleCloser = wf.closer
-			delete(w.watchedFiles, path)
-		}
+	if wd, ok := w.watchedDirs[dir]; ok && wd == identity {
+		staleCloser = wd.closer
+		delete(w.watchedDirs, dir)
 	}
 	w.mu.Unlock()
 	if staleCloser != nil {
@@ -581,6 +497,7 @@ func (w *Watcher) DoCycle() {
 func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bool {
 	caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
 	cwd := w.sys.GetCurrentDirectory()
+	opts := w.comparePathsOptions()
 	for eventPath := range changedPaths {
 		p := tspath.ToPath(eventPath, cwd, caseSensitive)
 		if _, ok := w.seenFiles[p]; ok {
@@ -591,6 +508,18 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 		}
 		if w.config.ConfigFile != nil && w.config.PossiblyMatchesDirectoryName(p) {
 			return true
+		}
+		// If a directory was created under an ancestor fallback watch,
+		// treat it as relevant — it may be on the path to a previously
+		// non-existent directory we want to watch. Err on the side of
+		// false positives (unnecessary rebuild) over false negatives
+		// (missed rebuild).
+		if w.sys.FS().DirectoryExists(eventPath) {
+			for dir := range w.watchedDirs {
+				if tspath.ContainsPath(dir, eventPath, opts) {
+					return true
+				}
+			}
 		}
 	}
 	return false

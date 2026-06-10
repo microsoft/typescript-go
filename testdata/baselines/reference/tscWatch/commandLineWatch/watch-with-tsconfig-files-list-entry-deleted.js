@@ -50,12 +50,8 @@ export const b = 2;
 
 Watch Registrations::
 Directory watches::
-  (none)
-File watches::
-  /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-  /home/src/workspaces/project/a.ts
-  /home/src/workspaces/project/b.ts
-  /home/src/workspaces/project/tsconfig.json
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -76,11 +72,8 @@ Output::
 
 Watch Registrations::
 Directory watches::
-  (none)
-File watches::
-  /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
-  /home/src/workspaces/project/a.ts
-  /home/src/workspaces/project/tsconfig.json
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
