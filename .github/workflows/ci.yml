@@ -288,9 +288,9 @@ jobs:
 
       - name: generate localization files for extension
         run: |
-          cd _extension 
+          cd _extension
           npm run generateLocBundle
-          cd .. 
+          cd ..
 
       - name: Regenerate fourslash tests and update failing test list
         run: |
