@@ -1082,7 +1082,19 @@ func (p *Printer) emitTemplateMiddleTail(node *ast.TemplateMiddleOrTail) {
 // Snippet Elements
 //
 
-// !!! Snippet elements
+func (p *Printer) emitSnippetNode(node *ast.Node, snippetElement *SnippetElement) {
+	switch snippetElement.Kind {
+	case SnippetKindTabStop:
+		p.emitTabStop(node, snippetElement)
+	default:
+		panic(fmt.Sprintf("Unhandled snippet element kind: %v", snippetElement.Kind))
+	}
+}
+
+func (p *Printer) emitTabStop(node *ast.Node, snippetElement *SnippetElement) {
+	debug.Assert(node.Kind == ast.KindEmptyStatement, "Snippet tab stops can only be emitted on empty statements")
+	p.writer.RawWrite(fmt.Sprintf("$%d", snippetElement.Order))
+}
 
 //
 // Names
@@ -4126,6 +4138,11 @@ func (p *Printer) emitEmbeddedStatement(parentNode *ast.Node, node *ast.Statemen
 }
 
 func (p *Printer) emitStatement(node *ast.Statement) {
+	if snippetElement := p.emitContext.SnippetElement(node); snippetElement != nil {
+		p.emitSnippetNode(node, snippetElement)
+		return
+	}
+
 	switch node.Kind {
 	// Statements
 	case ast.KindBlock:

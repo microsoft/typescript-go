@@ -2342,22 +2342,19 @@ type memberCompletionEntry struct {
 }
 
 func (l *LanguageService) getEntryForObjectLiteralMethodCompletion(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, enclosingDeclaration *ast.Node, file *ast.SourceFile) *symbolOriginInfoObjectLiteralMethod {
-	method := l.createObjectLiteralMethod(typeChecker, symbol, enclosingDeclaration, file)
-	if method == nil {
-		return nil
-	}
-
 	snippetPrinter := createSnippetPrinter(printer.PrinterOptions{
 		RemoveComments: true,
 		NewLine:        core.GetNewLineKind(l.FormatOptions().NewLineCharacter),
 		Target:         l.GetProgram().Options().GetEmitScriptTarget(),
-	})
+	}, nil /*emitContext*/)
 
 	isSnippet := clientSupportsItemSnippet(ctx)
-	insertText := snippetPrinter.printAndFormatNodeWithSettings(ctx, method, file, change.GetFormatCodeSettingsForWriting(l.FormatOptions(), file))
-	if isSnippet {
-		insertText = addClassMemberSnippet(insertText, l.FormatOptions().NewLineCharacter)
+	method := l.createObjectLiteralMethod(snippetPrinter, typeChecker, symbol, enclosingDeclaration, file, isSnippet)
+	if method == nil {
+		return nil
 	}
+
+	insertText := snippetPrinter.printAndFormatNodeWithSettings(ctx, method, file, change.GetFormatCodeSettingsForWriting(l.FormatOptions(), file))
 	insertText += ","
 
 	return &symbolOriginInfoObjectLiteralMethod{
@@ -2369,7 +2366,10 @@ func (l *LanguageService) getEntryForObjectLiteralMethodCompletion(ctx context.C
 	}
 }
 
-func (l *LanguageService) createObjectLiteralMethod(typeChecker *checker.Checker, symbol *ast.Symbol, enclosingDeclaration *ast.Node, file *ast.SourceFile) *ast.Node {
+func (l *LanguageService) createObjectLiteralMethod(snippetPrinter *snippetPrinter, typeChecker *checker.Checker, symbol *ast.Symbol, enclosingDeclaration *ast.Node, file *ast.SourceFile, isSnippet bool) *ast.Node {
+	factory := snippetPrinter.factory
+	emitContext := snippetPrinter.emitContext
+
 	declaration := core.FirstOrNil(symbol.Declarations)
 	if !isObjectLiteralMethodCompletionCandidateDeclaration(declaration) {
 		return nil
@@ -2410,7 +2410,6 @@ func (l *LanguageService) createObjectLiteralMethod(typeChecker *checker.Checker
 		return nil
 	}
 
-	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
 	parameters := make([]*ast.Node, 0, len(typeNode.AsFunctionTypeNode().Parameters.Nodes))
 	for _, parameter := range typeNode.AsFunctionTypeNode().Parameters.Nodes {
 		parameters = append(parameters, factory.NewParameterDeclaration(
@@ -2423,6 +2422,11 @@ func (l *LanguageService) createObjectLiteralMethod(typeChecker *checker.Checker
 		))
 	}
 
+	body := factory.NewBlock(factory.NewNodeList(nil /*nodes*/), true /*multiLine*/)
+	if isSnippet {
+		body = createSnippetTabStopBody(factory, emitContext)
+	}
+
 	return factory.NewMethodDeclaration(
 		nil, /*modifiers*/
 		nil, /*asteriskToken*/
@@ -2432,7 +2436,7 @@ func (l *LanguageService) createObjectLiteralMethod(typeChecker *checker.Checker
 		factory.NewNodeList(parameters),
 		nil, /*typeNode*/
 		nil, /*fullSignature*/
-		factory.NewBlock(factory.NewNodeList(nil /*nodes*/), true /*multiLine*/),
+		body,
 	)
 }
 
@@ -2523,15 +2527,17 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 
 	presentModifiers := l.getPresentMemberModifiers(contextToken, file, position)
 	abstract := presentModifiers.modifiers&ast.ModifierFlagsAbstract != 0 && classLikeDeclaration.ModifierFlags()&ast.ModifierFlagsAbstract != 0
+	isSnippet := clientSupportsItemSnippet(ctx)
 	body := changeTracker.NodeFactory.NewBlock(changeTracker.NodeFactory.NewNodeList(nil), true /*multiLine*/)
+	if isSnippet {
+		body = createSnippetTabStopBody(changeTracker.NodeFactory, changeTracker.EmitContext)
+	}
 	nodes := fixer.createMemberFromSymbol(symbol, classLikeDeclaration, file, body, preserveOptionalFlagsProperty, abstract)
 	if len(nodes) == 0 {
 		return nil
 	}
 
-	isSnippet := clientSupportsItemSnippet(ctx)
 	modifiers := ast.ModifierFlagsNone
-
 	completionNodes := make([]*ast.Node, 0, len(nodes))
 	for _, node := range nodes {
 		if node == nil {
@@ -2576,7 +2582,7 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 		RemoveComments: true,
 		NewLine:        core.GetNewLineKind(newLine),
 		Target:         l.GetProgram().Options().GetEmitScriptTarget(),
-	})
+	}, changeTracker.EmitContext)
 
 	var decoratedNode *ast.Node
 	if len(presentModifiers.decorators) > 0 {
@@ -2590,11 +2596,6 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 	for _, node := range completionNodes {
 		node = ast.ReplaceModifiers(changeTracker.NodeFactory, node, createModifierList(changeTracker.NodeFactory, modifiers, core.IfElse(node == decoratedNode, presentModifiers.decorators, nil)))
 		text := snippetPrinter.printAndFormatNodeWithSettings(ctx, node, file, change.GetFormatCodeSettingsForWriting(l.FormatOptions(), file))
-
-		if isSnippet {
-			text = addClassMemberSnippet(text, newLine)
-		}
-
 		texts = append(texts, text)
 	}
 
@@ -2711,12 +2712,13 @@ func createModifierList(factory *ast.NodeFactory, flags ast.ModifierFlags, decor
 	return factory.NewModifierList(nodes)
 }
 
-func addClassMemberSnippet(text string, newLine string) string {
-	emptyBody := "{" + newLine + "}"
-	if strings.Contains(text, emptyBody) {
-		return strings.Replace(text, emptyBody, "{"+newLine+"    $0"+newLine+"}", 1)
-	}
-	return text
+func createSnippetTabStopBody(factory *ast.NodeFactory, emitContext *printer.EmitContext) *ast.FunctionBody {
+	emptyStatement := factory.NewEmptyStatement()
+	emitContext.SetSnippetElement(emptyStatement, printer.SnippetElement{
+		Kind:  printer.SnippetKindTabStop,
+		Order: 0,
+	})
+	return factory.NewBlock(factory.NewNodeList([]*ast.Node{emptyStatement}), true /*multiLine*/)
 }
 
 func (l *LanguageService) createImportAdder(ctx context.Context, typeChecker *checker.Checker, file *ast.SourceFile) (autoimport.ImportAdder, error) {
@@ -6522,7 +6524,7 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 		printer := createSnippetPrinter(printer.PrinterOptions{
 			RemoveComments: true,
 			NewLine:        core.GetNewLineKind(newLineChar),
-		})
+		}, nil /*emitContext*/)
 		printNode := func(node *ast.Node) string { return printer.printAndFormatNode(ctx, node, file) }
 		insertText := strings.Join(core.MapIndex(newClauses, func(clause *ast.Node, i int) string {
 			if clientSupportsItemSnippet(ctx) {
@@ -6637,10 +6639,11 @@ func entityNameToExpression(
 }
 
 type snippetPrinter struct {
-	baseWriter *printer.ChangeTrackerWriter
-	printer    *printer.Printer
-	writer     *snippetEmitTextWriter
-	factory    *ast.NodeFactory
+	baseWriter  *printer.ChangeTrackerWriter
+	emitContext *printer.EmitContext
+	printer     *printer.Printer
+	writer      *snippetEmitTextWriter
+	factory     *ast.NodeFactory
 }
 
 /** Snippet-escaping version of `printer.printNode`. */
@@ -6705,17 +6708,21 @@ func (p *snippetPrinter) createSyntheticFile(node *ast.Node, text string, target
 	return syntheticFile.AsSourceFile()
 }
 
-func createSnippetPrinter(options printer.PrinterOptions) *snippetPrinter {
+func createSnippetPrinter(options printer.PrinterOptions, emitContext *printer.EmitContext) *snippetPrinter {
+	if emitContext == nil {
+		emitContext = printer.NewEmitContext()
+	}
 	baseWriter := printer.NewChangeTrackerWriter(options.NewLine.GetNewLineCharacter(), -1)
-	printer := printer.NewPrinter(options, baseWriter.GetPrintHandlers(), nil /*emitContext*/)
+	printer := printer.NewPrinter(options, baseWriter.GetPrintHandlers(), emitContext)
 	writer := &snippetEmitTextWriter{
 		ChangeTrackerWriter: baseWriter,
 	}
 	return &snippetPrinter{
-		baseWriter: baseWriter,
-		printer:    printer,
-		writer:     writer,
-		factory:    ast.NewNodeFactory(ast.NodeFactoryHooks{}),
+		baseWriter:  baseWriter,
+		emitContext: emitContext,
+		printer:     printer,
+		writer:      writer,
+		factory:     emitContext.Factory.AsNodeFactory(),
 	}
 }
 
