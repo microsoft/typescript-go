@@ -297,20 +297,46 @@ func CodePointToSurrogatePair(ch rune) (high rune, low rune) {
 	return utf16.EncodeRune(ch)
 }
 
+const (
+	// A lone surrogate (U+D800–U+DFFF) cannot be represented in valid UTF-8, so
+	// EncodeJSStringRune stores it as the 3-byte CESU-8/WTF-8 sentinel that UTF-8
+	// would use for that code point if surrogates were encodable. unicode/utf8
+	// and unicode/utf16 deliberately refuse to encode or decode surrogates, so
+	// the byte math is spelled out here.
+	//
+	// Byte layout for a code point cp in U+D000–U+DFFF (lead nibble 0xD):
+	//   byte0 = 0xE0 | (cp >> 12)          == 0xED
+	//   byte1 = 0x80 | ((cp >> 6) & 0x3F)
+	//   byte2 = 0x80 | (cp & 0x3F)
+	surrogateUTF8Lead     = 0xED   // byte0, shared by the whole U+D000–U+DFFF block
+	surrogateUTF8LeadBits = 0xD000 // (surrogateUTF8Lead & 0x0F) << 12, byte0's decoded contribution
+	utf8ContMarker        = 0x80   // continuation byte marker / min value (10xxxxxx)
+	utf8ContMax           = 0xBF   // continuation byte max value
+	utf8ContMask          = 0x3F   // data bits carried by a continuation byte
+
+	// byte1 bounds that pin the block down to the surrogate range U+D800–U+DFFF:
+	// 0xD800 -> 0xA0, 0xDFFF -> 0xBF.
+	surrogateUTF8Byte1Min = 0xA0
+	surrogateUTF8Byte1Max = 0xBF
+)
+
 func EncodeJSStringRune(ch rune) string {
 	if IsSurrogate(ch) {
 		return string([]byte{
-			0xED,
-			byte(0x80 | ((ch >> 6) & 0x3F)),
-			byte(0x80 | (ch & 0x3F)),
+			surrogateUTF8Lead,
+			byte(utf8ContMarker | ((ch >> 6) & utf8ContMask)),
+			byte(utf8ContMarker | (ch & utf8ContMask)),
 		})
 	}
 	return string(ch)
 }
 
 func DecodeJSStringRune(s string) (rune, int) {
-	if len(s) >= 3 && s[0] == 0xED && s[1] >= 0xA0 && s[1] <= 0xBF && s[2] >= 0x80 && s[2] <= 0xBF {
-		return rune(0xD000) | rune(s[1]&0x3F)<<6 | rune(s[2]&0x3F), 3
+	if len(s) >= 3 &&
+		s[0] == surrogateUTF8Lead &&
+		s[1] >= surrogateUTF8Byte1Min && s[1] <= surrogateUTF8Byte1Max &&
+		s[2] >= utf8ContMarker && s[2] <= utf8ContMax {
+		return surrogateUTF8LeadBits | rune(s[1]&utf8ContMask)<<6 | rune(s[2]&utf8ContMask), 3
 	}
 	return utf8.DecodeRuneInString(s)
 }
@@ -324,7 +350,7 @@ func DecodeJSStringRune(s string) (rune, int) {
 // until it meets its partner. Strings without a lone-surrogate sentinel (the
 // common case) are returned unchanged.
 func CombineSurrogatePairs(s string) string {
-	if strings.IndexByte(s, 0xED) < 0 {
+	if strings.IndexByte(s, surrogateUTF8Lead) < 0 {
 		return s
 	}
 	var b strings.Builder
