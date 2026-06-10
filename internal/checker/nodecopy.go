@@ -631,9 +631,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			if specifier != originalSpec {
 				arg = factory.NewLiteralTypeNode(specifier)
 			}
-			originalQualifier := node.AsImportTypeNode().Qualifier
-			qualifier := visitor.VisitNode(originalQualifier)
-			b.copyImportTypeQualifierSymbol(originalQualifier, qualifier)
+			qualifier := visitor.VisitNode(node.AsImportTypeNode().Qualifier)
 			return factory.UpdateImportTypeNode(
 				node.AsImportTypeNode(),
 				node.AsImportTypeNode().IsTypeOf,
@@ -895,15 +893,4 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		},
 	})
 	return visitor
-}
-
-func (b *NodeBuilderImpl) copyImportTypeQualifierSymbol(node *ast.Node, qualifier *ast.Node) {
-	if node == nil || qualifier == nil {
-		return
-	}
-	symbol := b.ch.symbolNodeLinks.Get(ast.GetFirstIdentifier(node)).resolvedSymbol
-	if symbol == nil {
-		return
-	}
-	b.idToSymbol[ast.GetFirstIdentifier(qualifier)] = symbol
 }

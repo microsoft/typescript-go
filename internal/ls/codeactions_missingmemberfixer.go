@@ -75,7 +75,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 	switch kind {
 	case ast.KindPropertySignature, ast.KindPropertyDeclaration:
 		nodeBuilder, idToSymbol := f.createNodeBuilder()
-		typeNode := f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol)
+		typeNode := f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)
 		var questionToken *ast.TokenNode
 		if optional && preserveOptional&preserveOptionalFlagsProperty != 0 {
 			questionToken = f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken)
@@ -98,7 +98,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 					nodes,
 					f.changeTracker.NodeFactory.NewGetAccessorDeclaration(
 						modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
-						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, quotePreference, signatureOnly),
+						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, quotePreference, signatureOnly),
 					),
 				)
 			}
@@ -111,7 +111,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 
 				nodes = append(nodes, f.changeTracker.NodeFactory.NewSetAccessorDeclaration(
 					modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
-					nil /*typeParameters*/, createDummyParameters(f.changeTracker.NodeFactory, 1, []string{parameter.Name().Text()}, []*ast.TypeNode{f.createTypeNode(t, sourceFile, enclosingDeclaration, flags, nodeBuilder, idToSymbol)}, 1, ast.IsInJSFile(enclosingDeclaration)),
+					nil /*typeParameters*/, createDummyParameters(f.changeTracker.NodeFactory, 1, []string{parameter.Name().Text()}, []*ast.TypeNode{f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)}, 1, ast.IsInJSFile(enclosingDeclaration)),
 					nil /*type*/, nil /*fullSignature*/, f.createBody(body, quotePreference, signatureOnly),
 				),
 				)
@@ -174,8 +174,8 @@ func (f *missingMemberFixer) getCallSignatures(t *checker.Type) []*checker.Signa
 	return f.typeChecker.GetCallSignatures(t)
 }
 
-func (f *missingMemberFixer) createTypeNode(t *checker.Type, sourceFile *ast.SourceFile, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
-	return f.importTypeNode(nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil /*tracker*/), sourceFile, idToSymbol)
+func (f *missingMemberFixer) createTypeNode(t *checker.Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+	return f.importTypeNode(nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil /*tracker*/), idToSymbol)
 }
 
 func (f *missingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *ast.Node) *ast.ModifierList {
@@ -235,12 +235,12 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 
 				constraint := typeParameter.Constraint
 				if constraint != nil {
-					constraint = f.importTypeNode(constraint, sourceFile, idToSymbol)
+					constraint = f.importTypeNode(constraint, idToSymbol)
 				}
 
 				defaultType := typeParameter.DefaultType
 				if defaultType != nil {
-					defaultType = f.importTypeNode(defaultType, sourceFile, idToSymbol)
+					defaultType = f.importTypeNode(defaultType, idToSymbol)
 				}
 
 				nodes = append(nodes,
@@ -262,7 +262,7 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 			parameter := p.AsParameterDeclaration()
 			parameterTypeNode := parameter.Type
 			if parameterTypeNode != nil {
-				parameterTypeNode = f.importTypeNode(parameterTypeNode, sourceFile, idToSymbol)
+				parameterTypeNode = f.importTypeNode(parameterTypeNode, idToSymbol)
 			}
 
 			nodes = append(nodes,
@@ -272,7 +272,7 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 	}
 
 	if typeNode != nil {
-		typeNode = f.importTypeNode(typeNode, sourceFile, idToSymbol)
+		typeNode = f.importTypeNode(typeNode, idToSymbol)
 	}
 
 	var questionToken *ast.TokenNode
@@ -351,12 +351,12 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(sourceFile
 
 	return f.changeTracker.NodeFactory.NewMethodDeclaration(
 		modifiers, nil /*asteriskToken*/, methodName, core.IfElse(optional, f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken), nil),
-		nil /*typeParameters*/, parameters, f.getReturnTypeFromSignatures(sourceFile, signatures, enclosingDeclaration, nodeBuilder, idToSymbol),
+		nil /*typeParameters*/, parameters, f.getReturnTypeFromSignatures(signatures, enclosingDeclaration, nodeBuilder, idToSymbol),
 		nil /*fullSignature*/, f.createBody(body, quotePreference, false /*signatureOnly*/),
 	)
 }
 
-func (f *missingMemberFixer) getReturnTypeFromSignatures(sourceFile *ast.SourceFile, signatures []*checker.Signature, enclosingDeclaration *ast.Node, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+func (f *missingMemberFixer) getReturnTypeFromSignatures(signatures []*checker.Signature, enclosingDeclaration *ast.Node, nodeBuilder *checker.NodeBuilder, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
 	if len(signatures) == 0 {
 		return nil
 	}
@@ -367,11 +367,11 @@ func (f *missingMemberFixer) getReturnTypeFromSignatures(sourceFile *ast.SourceF
 	}
 
 	unionType := f.typeChecker.GetUnionType(returnTypes)
-	return f.importTypeNode(nodeBuilder.TypeToTypeNode(unionType, enclosingDeclaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*typeArguments*/), sourceFile, idToSymbol)
+	return f.importTypeNode(nodeBuilder.TypeToTypeNode(unionType, enclosingDeclaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, nil /*typeArguments*/), idToSymbol)
 }
 
-func (f *missingMemberFixer) importTypeNode(typeNode *ast.TypeNode, sourceFile *ast.SourceFile, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
-	if typeNode == nil || f.importAdder == nil || sourceFile.IsDeclarationFile {
+func (f *missingMemberFixer) importTypeNode(typeNode *ast.TypeNode, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypeNode {
+	if typeNode == nil || f.importAdder == nil {
 		return typeNode
 	}
 
