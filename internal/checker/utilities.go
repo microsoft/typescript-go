@@ -806,6 +806,10 @@ func isDeclarationReadonly(declaration *ast.Node) bool {
 	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !ast.IsParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
+// orderedSetMapThreshold is the size at which an orderedSet materializes its dedup map.
+// Below this, contains() scans the values slice.
+const orderedSetMapThreshold = 16
+
 type orderedSet[T comparable] struct {
 	valuesByKey map[T]struct{}
 	values      []T
@@ -824,7 +828,7 @@ func (s *orderedSet[T]) add(value T) {
 	// Small sets are served by a linear scan over values; only materialize the map once the set
 	// grows large enough for hashing to win.
 	if s.valuesByKey == nil {
-		if len(s.values) <= 16 {
+		if len(s.values) <= orderedSetMapThreshold {
 			return
 		}
 		s.valuesByKey = make(map[T]struct{}, len(s.values))
