@@ -536,8 +536,9 @@ func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
 			// This program is no longer referenced by any snapshot.
-			// Mark its checker pool as discarded so idle checkers are disposed
-			// immediately rather than waiting for its idle timer.
+			// Mark its checker pool as discarded so its idle-cleanup timer stops
+			// keeping the pool alive, allowing the pool and any idle checkers it
+			// still references to be reclaimed when the pool is garbage-collected.
 			if project.checkerPool != nil {
 				project.checkerPool.Discard()
 			}

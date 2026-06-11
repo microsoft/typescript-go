@@ -124,6 +124,14 @@ func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 	lifetime := core.GetCheckerLifetime(ctx)
 	requestID := core.GetRequestID(ctx)
 
+	// Request affinity is cleaned up via context.AfterFunc when the request
+	// context is done. If the context can never be canceled (ctx.Done() == nil,
+	// e.g. context.Background()), that cleanup would never run and
+	// requestAssociations would grow unboundedly, so disable affinity entirely.
+	if ctx.Done() == nil {
+		requestID = ""
+	}
+
 	switch lifetime {
 	case core.CheckerLifetimeDiagnostics:
 		return p.getDiagnosticsChecker(ctx, requestID)
@@ -321,6 +329,14 @@ func (p *checkerPool) getPersistentChecker() (*checker.Checker, func()) {
 	return c, sync.OnceFunc(func() {
 		p.mu.Lock()
 		p.persistentHeld = false
+		if c.WasCanceled() {
+			// A canceled checker panics on reuse, so drop it; the next API
+			// acquisition will create a fresh persistent checker.
+			p.log("checkerpool: Persistent checker was canceled, disposing")
+			if p.persistentChecker == c {
+				p.persistentChecker = nil
+			}
+		}
 		p.mu.Unlock()
 		<-p.persistentSem
 	})
@@ -412,6 +428,12 @@ func (p *checkerPool) scheduleCleanupLocked() {
 func (p *checkerPool) cleanupIdleCheckers() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	// The timer callback may already have been in flight when Discard() called
+	// Stop() (which does not guarantee the callback won't run). Bail out without
+	// rescheduling so a discarded pool doesn't keep itself alive via a new timer.
+	if p.discarded {
+		return
+	}
 	now := time.Now()
 	for i := range p.checkers {
 		c := p.checkers[i]

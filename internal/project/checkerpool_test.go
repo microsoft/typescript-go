@@ -1191,3 +1191,105 @@ func TestCheckerPoolTakeNewGlobalDiagnostics(t *testing.T) {
 	_ = firstTake
 	assert.Assert(t, !pool.TakeNewGlobalDiagnostics(), "should not report new globals when checker state is unchanged")
 }
+
+func TestCheckerPoolAPICheckerDisposedOnCancel(t *testing.T) {
+	t.Parallel()
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+	sourceFile := program.GetSourceFile("/src/index.ts")
+	assert.Assert(t, sourceFile != nil)
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		ctx := core.WithCheckerLifetime(context.Background(), core.CheckerLifetimeAPI)
+		c, release := pool.GetChecker(ctx, nil)
+		assert.Assert(t, c != nil)
+
+		// Cancel the API checker.
+		canceledCtx, cancel := context.WithCancel(context.Background())
+		cancel()
+		c.GetDiagnostics(canceledCtx, sourceFile)
+		assert.Assert(t, c.WasCanceled())
+
+		// Releasing a canceled API checker must drop it so it isn't reused.
+		release()
+		synctest.Wait()
+
+		pool.mu.Lock()
+		assert.Assert(t, pool.persistentChecker == nil, "canceled API checker should be dropped on release")
+		pool.mu.Unlock()
+
+		// Next API acquisition gets a fresh, usable checker rather than panicking.
+		c2, release2 := pool.GetChecker(ctx, nil)
+		assert.Assert(t, c2 != c, "should get a fresh API checker after cancellation")
+		release2()
+	})
+}
+
+func TestCheckerPoolNonCancelableContextNoAffinity(t *testing.T) {
+	t.Parallel()
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		// A context that carries a request ID but can never be canceled
+		// (ctx.Done() == nil) must not register a request association, since
+		// there would be no way to clean it up.
+		ctx := core.WithRequestID(context.Background(), "uncancelable-req")
+		ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeTemporary)
+		assert.Assert(t, ctx.Done() == nil, "test precondition: context must be non-cancelable")
+
+		c, release := pool.GetChecker(ctx, nil)
+		assert.Assert(t, c != nil)
+		release()
+		synctest.Wait()
+
+		pool.mu.Lock()
+		assert.Equal(t, len(pool.requestAssociations), 0, "non-cancelable context must not grow requestAssociations")
+		pool.mu.Unlock()
+	})
+}
+
+func TestCheckerPoolCleanupAfterDiscardIsNoop(t *testing.T) {
+	t.Parallel()
+	session, _ := setupCheckerPoolSession(t, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 10 * time.Second})
+	ls, err := session.GetLanguageService(context.Background(), "file:///src/index.ts")
+	assert.NilError(t, err)
+	program := ls.GetProgram()
+
+	synctest.Test(t, func(t *testing.T) {
+		pool := newTestCheckerPool(program, CheckerPoolOptions{MaxCheckers: 4, IdleTimeout: 30 * time.Second})
+
+		ctx := core.WithRequestID(context.Background(), "discard-cleanup")
+		ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeTemporary)
+		c, release := pool.GetChecker(ctx, nil)
+		assert.Assert(t, c != nil)
+		release()
+		synctest.Wait()
+
+		pool.Discard()
+
+		// Simulate the timer callback firing after Discard() (Stop() does not
+		// guarantee the callback won't run). It must be a no-op and must not
+		// re-arm the cleanup timer, which would keep the discarded pool alive.
+		pool.cleanupIdleCheckers()
+
+		pool.mu.Lock()
+		assert.Assert(t, pool.cleanupTimer == nil, "cleanup must not reschedule a timer on a discarded pool")
+		hasChecker := false
+		for _, cc := range pool.checkers {
+			if cc != nil {
+				hasChecker = true
+			}
+		}
+		assert.Assert(t, hasChecker, "idle checkers must survive cleanup on a discarded pool")
+		pool.mu.Unlock()
+	})
+}
