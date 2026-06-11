@@ -1,6 +1,82 @@
 # TypeScript 7
 
+> [!NOTE]
+> **Parable fork notice.** This is `parable-work/typescript-go`, a fork of
+> [microsoft/typescript-go](https://github.com/microsoft/typescript-go) (Project Corsa). It exists
+> solely to expose the compiler API to Parable's `psgen` TypeScript reader, which drives the
+> compiler in-process from the `parable-platform` Go module. See
+> [Fork policy and upgrade procedure](#fork-policy-and-upgrade-procedure) below.
+
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
+
+## Fork policy and upgrade procedure
+
+### What this fork changes
+
+Upstream keeps its entire Go API under `internal/`, which external modules cannot import. This fork
+adds a `shim/` re-export layer — and nothing else:
+
+- `shim/<pkg>` packages (`compiler`, `checker`, `ast`, `tsoptions`, `vfs`, `vfs/osvfs`, `bundled`,
+  `core`) re-export internal APIs via type aliases (`type Program = compiler.Program`) and var/const
+  bindings (`var NewProgram = compiler.NewProgram`). No wrapper logic. The surface is intentionally
+  minimal and expands only as `psgen` walker code demands.
+- `shim/shim_test.go` is a smoke test that drives the full consumer flow (tsconfig parse → Program
+  → type checker → AST walk) through the shim packages only. It is the canary that catches
+  upstream API moves during a sync.
+- This README section.
+
+**Never touch `internal/`** (or anything else outside the list above) in fork-only commits. That
+discipline is what keeps upstream syncs conflict-free.
+
+The module path intentionally remains `github.com/microsoft/typescript-go` so that upstream merges
+never conflict on import paths.
+
+### How parable-platform consumes this fork
+
+`parable-platform` imports the shim packages under the upstream module path and redirects the
+module to this fork with a `replace` directive pinned to a commit pseudo-version (no tags):
+
+```go
+// go.mod
+require github.com/microsoft/typescript-go v0.0.0
+
+replace github.com/microsoft/typescript-go => github.com/parable-work/typescript-go v0.0.0-20260610201500-abcdef123456
+```
+
+```go
+import (
+    "github.com/microsoft/typescript-go/shim/compiler"
+    "github.com/microsoft/typescript-go/shim/tsoptions"
+)
+```
+
+To pin a new fork commit: `go mod edit -replace github.com/microsoft/typescript-go=github.com/parable-work/typescript-go@<commit-sha>` then `go mod tidy` (Go resolves the SHA to a pseudo-version).
+
+All Corsa API calls in `parable-platform` stay localized to `utils/psgen/internal/loader/tsreader/`;
+nothing else in that repo may import these packages.
+
+### Upgrade procedure (dedicated PR cadence)
+
+Upstream syncs always land as **dedicated PRs** — never mixed with shim surface changes or any
+other work:
+
+1. `git remote add upstream https://github.com/microsoft/typescript-go.git` (first time only).
+2. `git fetch upstream`.
+3. Branch from `main`: `git checkout -b upgrade/upstream-YYYYMMDD`.
+4. `git merge upstream/main` (or a specific upstream tag/commit when pinning to a release).
+   Conflicts should be rare to nonexistent given the fork-change policy above.
+5. Fix any shim compile breaks caused by upstream API moves **in the same PR**, keeping the shim a
+   pure re-export layer.
+6. Verify: `go build ./...` and `go test ./shim/`.
+7. Open the PR, merge to `main`.
+8. In `parable-platform`, bump the `replace` pseudo-version to the new fork commit — also as its own
+   dedicated PR there — and fix any `tsreader` breaks in that PR.
+
+Shim surface expansions (new aliases/bindings demanded by walker code) follow the same rule in
+reverse: they are their own small PRs against fork `main` and never ride along with an upstream
+sync.
+
+---
 
 ## Preview
 
