@@ -2224,7 +2224,7 @@ func (s *Session) handleGetConfigFileParsingDiagnostics(ctx context.Context, par
 	return NewDiagnosticResponses(diags), nil
 }
 
-func getEmitOnlyFromByte(v byte) (compiler.EmitOnly, error) {
+func getEmitOnlyFromUint32(v uint32) (compiler.EmitOnly, error) {
 	s := compiler.EmitOnly(v)
 
 	switch s {
@@ -2252,7 +2252,7 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 		return nil, err
 	}
 
-	emitOnly, err := getEmitOnlyFromByte(params.EmitOnly)
+	emitOnly, err := getEmitOnlyFromUint32(params.EmitOnly)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 	}

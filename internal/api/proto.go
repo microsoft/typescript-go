@@ -967,7 +967,7 @@ type EmitParams struct {
 	Snapshot         SnapshotID          `json:"snapshot"`
 	Project          ProjectID           `json:"project"`
 	TargetSourceFile *DocumentIdentifier `json:"targetSourceFile,omitempty"`
-	EmitOnly         byte                `json:"emitOnly"`
+	EmitOnly         uint32              `json:"emitOnly"`
 }
 
 // EmitResponse is the response for the emit method.
