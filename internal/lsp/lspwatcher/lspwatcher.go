@@ -1,8 +1,6 @@
 // Package lspwatcher implements an in-process file watcher used as a
-// drop-in replacement for LSP-based file watching when the client either
-// does not support dynamic registration of file watchers or has
-// requested the server-side watcher explicitly via the
-// `useBuiltinWatcher` initialization option.
+// drop-in replacement for LSP-based file watching when the client does not
+// support dynamic registration of file watchers.
 package lspwatcher
 
 import (
@@ -388,13 +386,9 @@ func nearestExistingAncestor(fs vfs.FS, dir string) (string, bool) {
 	}
 }
 
-// forwardEvents translates fswatch events from a watch rooted at watchedReal
-// into LSP file events (remapping paths back into the requested origRoot
-// namespace) and enqueues them for the next debounced flush.
-// forwardEvents translates fswatch events from a watch rooted at
-// watchedDirectory into LSP file events (remapping paths back into the
-// requested directory namespace) and enqueues them for the next debounced
-// flush.
+// forwardEvents translates fswatch events rooted at watchedDirectory into LSP
+// file events (remapping paths back into the requestedDirectory namespace) and
+// enqueues them for the next debounced flush.
 func (w *Watcher) forwardEvents(watchedDirectory, requestedDirectory string, kind lsproto.WatchKind, events []fswatch.Event) {
 	w.mu.Lock()
 	if w.closed {
