@@ -785,6 +785,19 @@ func (c *Checker) someSymbolTableInScope(
 			if table != nil && callback(table, symbolTableIDFromMembers(sym), false, false, location) {
 				return true
 			}
+			// Class expression names (e.g., `B` in `class B {}`) are not stored in any
+			// scope table — the binder uses bindAnonymousDeclaration. Expose the name
+			// binding here so getAccessibleSymbolChain can resolve self-references.
+			if ast.IsClassExpression(location) && location.AsClassExpression().Name() != nil {
+				classSymbol := c.getSymbolOfDeclaration(location)
+				nameText := location.AsClassExpression().Name().Text()
+				if len(nameText) > 0 && classSymbol != nil {
+					nameTable := ast.SymbolTable{nameText: classSymbol}
+					if callback(nameTable, symbolTableIDFromLocals(location.AsNode()), false, true, location) {
+						return true
+					}
+				}
+			}
 		}
 	}
 

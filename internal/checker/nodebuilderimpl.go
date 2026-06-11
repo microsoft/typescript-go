@@ -2929,16 +2929,6 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 		// TODO: GH#18217
 	} else if b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral != 0 && t.symbol.ValueDeclaration != nil && ast.IsClassLike(t.symbol.ValueDeclaration) && !b.ch.IsValueSymbolAccessible(t.symbol, b.ctx.enclosingDeclaration) {
 		return b.createAnonymousTypeNode(t)
-	} else if b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral == 0 &&
-		b.ctx.flags&nodebuilder.FlagsUseTypeOfFunction != 0 &&
-		b.ctx.enclosingDeclaration != nil &&
-		t.symbol.ValueDeclaration != nil && ast.IsClassExpression(t.symbol.ValueDeclaration) &&
-		t.symbol.ValueDeclaration.AsClassExpression().Name() != nil &&
-		ast.FindAncestor(b.ctx.enclosingDeclaration, ast.IsClassExpression) == t.symbol.ValueDeclaration {
-		b.ctx.tracker.TrackSymbol(t.symbol, b.ctx.enclosingDeclaration, ast.SymbolFlagsType)
-		name := t.symbol.ValueDeclaration.AsClassExpression().Name().Text()
-		b.ctx.approximateLength += len(name)
-		return b.f.NewTypeReferenceNode(b.f.NewIdentifier(name), nil)
 	} else {
 		outerTypeParameters := t.Target().AsInterfaceType().OuterTypeParameters()
 		i := 0
