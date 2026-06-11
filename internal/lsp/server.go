@@ -1193,7 +1193,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	if hasDynamicWatchRegistration {
 		s.logger.Logf("file watching: using LSP client-side watching (client supports dynamic registration)")
 		s.watchEnabled = true
-	} else if fswatch.DefaultHasFastRecursiveBackend() {
+	} else if fswatch.Default().HasFastRecursiveBackend() {
 		// The client cannot watch files itself, but the builtin watcher has a
 		// backend with efficient recursive watching (Windows or FSEvents), so
 		// fall back to watching files in-process.

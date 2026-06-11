@@ -48,6 +48,11 @@ type Watcher interface {
 	Name() string
 	// Available reports whether this watcher works on the current OS.
 	Available() bool
+	// HasFastRecursiveBackend reports whether this watcher supports efficient
+	// recursive watching without requiring a full userspace tree walk. This is
+	// true for Windows (ReadDirectoryChangesW subtree mode) and macOS FSEvents
+	// (inherently recursive), and false for all other backends.
+	HasFastRecursiveBackend() bool
 	// WatchDirectory watches dir for changes, calling fn with batched
 	// events. By default, only direct children are watched. Use
 	// [WithRecursive] to watch the entire directory tree.
@@ -197,29 +202,6 @@ func Default() Watcher {
 	}
 }
 
-// HasFastRecursiveBackend reports whether the provided watcher backend supports
-// efficient recursive watching without requiring a full userspace tree walk.
-//
-// This is true for Windows (ReadDirectoryChangesW subtree mode) and macOS
-// FSEvents (inherently recursive), and false for all other backends.
-func HasFastRecursiveBackend(w Watcher) bool {
-	if w == nil {
-		return false
-	}
-	switch w.Name() {
-	case "windows", "fsevents":
-		return true
-	default:
-		return false
-	}
-}
-
-// DefaultHasFastRecursiveBackend reports whether [Default] uses a backend with
-// efficient recursive watching semantics.
-func DefaultHasFastRecursiveBackend() bool {
-	return HasFastRecursiveBackend(Default())
-}
-
 // watcher is the concrete implementation of [Watcher]. Each platform
 // watcher is a package-level *watcher whose factory is set by the
 // platform's init() function.
@@ -236,6 +218,16 @@ func (w *watcher) Name() string    { return w.name }
 func (w *watcher) String() string  { return w.name }
 func (w *watcher) Available() bool { return w.factory != nil }
 func (w *watcher) unexported()     {}
+
+// HasFastRecursiveBackend implements [Watcher.HasFastRecursiveBackend].
+func (w *watcher) HasFastRecursiveBackend() bool {
+	switch w.name {
+	case "windows", "fsevents":
+		return true
+	default:
+		return false
+	}
+}
 
 func (w *watcher) getImpl() (watcherImpl, error) {
 	w.mu.Lock()
