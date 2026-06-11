@@ -10,6 +10,8 @@ import { TelemetryReporter } from "./telemetryReporting";
 import {
     getBuiltinExePath,
     getExe,
+    getTypeScriptLanguageFeaturesApi,
+    JsTsServerSelection,
     resolveTsdkPath,
     resolveTsdkPathToExe,
     useWorkspaceTsdkStorageKey,
@@ -42,26 +44,27 @@ export class SessionManager implements vscode.Disposable {
     registerCommands(context: vscode.ExtensionContext): void {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", async () => {
             this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
-            if (await this.currentSession?.tryRestartClient(context)) {
+            const selection = (await getTypeScriptLanguageFeaturesApi())?.getServerSelection();
+            if (await this.currentSession?.tryRestartClient(context, selection)) {
                 // Language client was able to restart without a full session restart
                 return;
             }
 
-            await this.restart(context);
+            await this.restart(context, selection);
         }));
     }
 
-    start(context: vscode.ExtensionContext): Promise<void> {
-        return this.restart(context);
+    start(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<void> {
+        return this.restart(context, selection);
     }
 
-    async restart(context: vscode.ExtensionContext): Promise<void> {
+    async restart(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<void> {
         if (this.currentSession) {
             this.outputChannel.appendLine("Restarting TypeScript Native Preview...");
             await this.currentSession.dispose();
         }
         this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter);
-        return this.currentSession.start(context);
+        return this.currentSession.start(context, selection);
     }
 
     async stop(): Promise<void> {
@@ -116,8 +119,8 @@ class Session implements vscode.Disposable {
         this.registerCommands();
     }
 
-    async start(context: vscode.ExtensionContext): Promise<void> {
-        const exe = await getExe(context);
+    async start(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<void> {
+        const exe = await getExe(context, selection);
         await this.client.start(exe);
         this.disposables.push(setupStatusBar(exe.version));
 
@@ -139,8 +142,8 @@ class Session implements vscode.Disposable {
         await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
     }
 
-    tryRestartClient(context: vscode.ExtensionContext): Promise<boolean> {
-        return this.client.tryRestart(context);
+    tryRestartClient(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<boolean> {
+        return this.client.tryRestart(context, selection);
     }
 
     registerCommands(): void {
@@ -151,7 +154,12 @@ class Session implements vscode.Disposable {
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.selectVersion", async () => {
-            await promptSelectVersion(this.context, this.client, this.outputChannel);
+            if (await getTypeScriptLanguageFeaturesApi()) {
+                await vscode.commands.executeCommand("typescript.selectTypeScriptVersion");
+            }
+            else {
+                await promptSelectVersion(this.context, this.client, this.outputChannel);
+            }
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", () => {
@@ -278,7 +286,7 @@ async function showCommands(client: Client): Promise<void> {
         },
         {
             label: vscode.l10n.t("$(versions) Select Version"),
-            description: vscode.l10n.t("Choose between bundled and workspace versions"),
+            description: vscode.l10n.t("Choose the TypeScript language server and version"),
             command: "typescript.native-preview.selectVersion",
         },
         {

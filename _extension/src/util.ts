@@ -12,6 +12,26 @@ export const jsTsLanguageModes = [
 
 export const builtinTSExtensionId = "vscode.typescript-language-features";
 
+export type LanguageServerPreference = "auto" | "preferTsserver" | "preferLsp";
+
+export interface JsTsServerSelection {
+    readonly kind: "tsserver" | "lsp";
+    readonly source: "bundled" | "user" | "workspace";
+    readonly tsdk: string | undefined;
+    readonly preference: LanguageServerPreference;
+    readonly reason: string;
+}
+
+export interface TypeScriptLanguageFeaturesApiV0 {
+    getServerSelection(): JsTsServerSelection;
+    readonly onDidChangeServerSelection: vscode.Event<JsTsServerSelection>;
+    setLanguageServerPreference(preference: LanguageServerPreference): Thenable<void>;
+}
+
+interface TypeScriptLanguageFeaturesApi {
+    getAPI?(version: 0): unknown;
+}
+
 /**
  * URI schemes for which JS/TS language features should be disabled.
  */
@@ -95,7 +115,30 @@ function workspaceResolve(relativePath: string): vscode.Uri {
  */
 export const useWorkspaceTsdkStorageKey = "typescript.native-preview.useWorkspaceTsdk";
 
-export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo> {
+export async function getTypeScriptLanguageFeaturesApi(): Promise<TypeScriptLanguageFeaturesApiV0 | undefined> {
+    const tsExtension = vscode.extensions.getExtension<TypeScriptLanguageFeaturesApi>(builtinTSExtensionId);
+    const api = (await tsExtension?.activate())?.getAPI?.(0);
+    return isTypeScriptLanguageFeaturesApiV0(api) ? api : undefined;
+}
+
+function isTypeScriptLanguageFeaturesApiV0(api: unknown): api is TypeScriptLanguageFeaturesApiV0 {
+    if (api === undefined || api === null || typeof api !== "object") {
+        return false;
+    }
+    const candidate = api as Partial<TypeScriptLanguageFeaturesApiV0>;
+    return typeof candidate.getServerSelection === "function"
+        && typeof candidate.onDidChangeServerSelection === "function"
+        && typeof candidate.setLanguageServerPreference === "function";
+}
+
+export async function getExe(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<ExeInfo> {
+    if (selection?.kind === "lsp" && selection.tsdk) {
+        const exe = await resolveTsdkPathToExe(selection.tsdk);
+        if (exe) {
+            return exe;
+        }
+    }
+
     const config = vscode.workspace.getConfiguration("typescript.native-preview");
 
     let tsdk = config.get<string>("tsdk");

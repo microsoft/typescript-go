@@ -144,7 +144,7 @@
             {
                 "command": "typescript.native-preview.selectVersion",
                 "title": "%native-preview.selectVersion.title%",
-                "enablement": "typescript.native-preview.serverRunning",
+                "enablement": "typescript.native-preview.serverRunning && !typescript.native-preview.usingTypeScriptLanguageFeaturesApi",
                 "category": "TypeScript Native Preview"
             },
             {

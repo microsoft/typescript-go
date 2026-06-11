@@ -30,6 +30,7 @@ import * as tr from "./telemetryReporting";
 import {
     ExeInfo,
     getExe,
+    JsTsServerSelection,
     jsTsLanguageModes,
 } from "./util";
 import { getLanguageForUri } from "./util";
@@ -285,11 +286,11 @@ export class Client implements vscode.Disposable {
      * Restart the language server if the executable path has not changed.
      * Returns true if a restart was performed.
      */
-    async tryRestart(context: vscode.ExtensionContext): Promise<boolean> {
+    async tryRestart(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<boolean> {
         if (!this.client) {
             return Promise.reject(new Error(vscode.l10n.t("Language client is not initialized")));
         }
-        const exe = await getExe(context);
+        const exe = await getExe(context, selection);
         if (exe.path !== this.exe?.path) {
             return false;
         }

@@ -9,6 +9,7 @@ import type {
 import type * as tr from "./telemetryReporting";
 import {
     getExplicitConfigTarget,
+    getTypeScriptLanguageFeaturesApi,
     restartExtHostOnChangeIfNeeded,
 } from "./util";
 
@@ -31,6 +32,12 @@ export function registerEnablementCommands(context: vscode.ExtensionContext, tel
  * Handles both `js/ts.experimental.useTsgo` and `typescript.experimental.useTsgo`.
  */
 export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
+    const api = await getTypeScriptLanguageFeaturesApi();
+    if (api) {
+        await api.setLanguageServerPreference(enable ? "preferLsp" : "preferTsserver");
+        return;
+    }
+
     const jsTsConfig = vscode.workspace.getConfiguration("js/ts");
     const tsConfig = vscode.workspace.getConfiguration("typescript");
 
@@ -39,24 +46,22 @@ export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
 
     // If any are defined, we'll use the most-specific target,
     // but we'll only set it through `js/ts`.
-    if (jsTsTarget !== undefined || tsTarget !== undefined) {
-        const updates = [];
+    const updates = [];
 
-        const mostSpecificTarget = Math.max(
-            jsTsTarget ?? vscode.ConfigurationTarget.Global,
-            tsTarget ?? vscode.ConfigurationTarget.Global,
-        );
-        updates.push(jsTsConfig.update("experimental.useTsgo", enable, mostSpecificTarget));
+    const mostSpecificTarget = Math.max(
+        jsTsTarget ?? vscode.ConfigurationTarget.Global,
+        tsTarget ?? vscode.ConfigurationTarget.Global,
+    );
+    updates.push(jsTsConfig.update("experimental.useTsgo", enable, mostSpecificTarget));
 
-        // If `typescript` had the most-specific target
-        // (or shared the most-specific target), then
-        // we'll erase that since we've just set `js/ts` above.
-        if (tsTarget === mostSpecificTarget) {
-            updates.push(tsConfig.update("experimental.useTsgo", undefined, mostSpecificTarget));
-        }
-
-        await Promise.all(updates);
+    // If `typescript` had the most-specific target
+    // (or shared the most-specific target), then
+    // we'll erase that since we've just set `js/ts` above.
+    if (tsTarget === mostSpecificTarget) {
+        updates.push(tsConfig.update("experimental.useTsgo", undefined, mostSpecificTarget));
     }
+
+    await Promise.all(updates);
 
     return restartExtHostOnChangeIfNeeded();
 }
