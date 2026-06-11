@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -2262,7 +2263,7 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 		if err := ctx.Err(); err != nil {
 			return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 		}
-		return nil, fmt.Errorf("compiler emit returned nil result")
+		return nil, errors.New("compiler emit returned nil result")
 	}
 
 	return NewEmitResponse(result), nil
