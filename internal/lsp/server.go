@@ -341,12 +341,13 @@ func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferenc
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
 		if opts := s.initializationOptions; opts.UserPreferences != nil {
+			userPrefs := *opts.UserPreferences
 			s.logger.Logf(
 				"received formatting options from initialization: %T\n%+v",
-				*opts.UserPreferences,
-				*opts.UserPreferences,
+				userPrefs,
+				userPrefs,
 			)
-			if config, ok := (*opts.UserPreferences).(map[string]any); ok {
+			if config, ok := userPrefs.(map[string]any); ok {
 				return lsutil.ParseUserPreferences(map[string]any{"js/ts": config}), nil
 			}
 		}
