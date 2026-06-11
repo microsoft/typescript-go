@@ -57,8 +57,8 @@ func NewServer(opts *ServerOptions) *Server {
 		r:                     opts.In,
 		w:                     opts.Out,
 		stderr:                opts.Err,
-		requestQueue:          make(chan *lsproto.RequestMessage, 100),
-		outgoingQueue:         make(chan *lsproto.Message, 100),
+		requestQueue:          newDynamicQueue[*lsproto.RequestMessage](),
+		outgoingQueue:         newDynamicQueue[*lsproto.Message](),
 		pendingClientRequests: make(map[jsonrpc.ID]pendingClientRequest),
 		pendingServerRequests: make(map[jsonrpc.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
@@ -158,8 +158,8 @@ type Server struct {
 	logger                  *logger
 	initStarted             atomic.Bool
 	clientSeq               atomic.Int32
-	requestQueue            chan *lsproto.RequestMessage
-	outgoingQueue           chan *lsproto.Message
+	requestQueue            *dynamicQueue[*lsproto.RequestMessage]
+	outgoingQueue           *dynamicQueue[*lsproto.Message]
 	pendingClientRequests   map[jsonrpc.ID]pendingClientRequest
 	pendingClientRequestsMu sync.Mutex
 	pendingServerRequests   map[jsonrpc.ID]chan *lsproto.ResponseMessage
@@ -305,7 +305,7 @@ func (s *Server) RefreshInlayHints(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceInlayHintRefreshInfo, lsproto.NoParams{}); err != nil {
+	if err := sendClientRequestFireAndForget(s, lsproto.WorkspaceInlayHintRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh inlay hints: %w", err)
 	}
 	return nil
@@ -316,7 +316,7 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceCodeLensRefreshInfo, lsproto.NoParams{}); err != nil {
+	if err := sendClientRequestFireAndForget(s, lsproto.WorkspaceCodeLensRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh code lens: %w", err)
 	}
 	return nil
@@ -471,7 +471,9 @@ func (s *Server) readLoop(ctx context.Context) error {
 			if req.Method == lsproto.MethodCancelRequest {
 				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
 			} else {
-				s.requestQueue <- req
+				if err := s.requestQueue.Put(ctx, req); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -495,76 +497,77 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 	ctx, lspExit := context.WithCancelCause(ctx)
 	defer lspExit(nil)
 	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case req := <-s.requestQueue:
-			s.lastRequestTimeMs.Store(time.Now().UnixMilli())
-			requestCtx := locale.WithLocale(ctx, s.locale)
-			var cancel context.CancelFunc
-			if req.ID != nil {
-				requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
-				s.pendingClientRequestsMu.Lock()
-				s.pendingClientRequests[*req.ID] = pendingClientRequest{
-					req:    req,
-					cancel: cancel,
-				}
-				s.pendingClientRequestsMu.Unlock()
-			}
+		req, err := s.requestQueue.Get(ctx)
+		if err != nil {
+			return err
+		}
 
-			handleError := func(err error) {
-				if errors.Is(err, context.Canceled) {
-					if err := s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled); err != nil {
-						lspExit(err)
-					}
-				} else if errors.Is(err, io.EOF) {
-					lspExit(nil)
-				} else {
-					if err := s.sendError(req.ID, err); err != nil {
-						lspExit(err)
-					}
-				}
+		s.lastRequestTimeMs.Store(time.Now().UnixMilli())
+		requestCtx := locale.WithLocale(ctx, s.locale)
+		var cancel context.CancelFunc
+		if req.ID != nil {
+			requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
+			s.pendingClientRequestsMu.Lock()
+			s.pendingClientRequests[*req.ID] = pendingClientRequest{
+				req:    req,
+				cancel: cancel,
 			}
+			s.pendingClientRequestsMu.Unlock()
+		}
 
-			removeRequest := func() {
-				if req.ID != nil {
-					defer cancel()
-					s.pendingClientRequestsMu.Lock()
-					defer s.pendingClientRequestsMu.Unlock()
-					delete(s.pendingClientRequests, *req.ID)
+		handleError := func(err error) {
+			if errors.Is(err, context.Canceled) {
+				if err := s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled); err != nil {
+					lspExit(err)
 				}
-			}
-
-			if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
-				handleError(err)
-				removeRequest()
-			} else if doAsyncWork != nil {
-				go func() {
-					if lsError := doAsyncWork(); lsError != nil {
-						handleError(lsError)
-					}
-					removeRequest()
-				}()
+			} else if errors.Is(err, io.EOF) {
+				lspExit(nil)
 			} else {
-				removeRequest()
+				if err := s.sendError(req.ID, err); err != nil {
+					lspExit(err)
+				}
 			}
+		}
+
+		removeRequest := func() {
+			if req.ID != nil {
+				defer cancel()
+				s.pendingClientRequestsMu.Lock()
+				defer s.pendingClientRequestsMu.Unlock()
+				delete(s.pendingClientRequests, *req.ID)
+			}
+		}
+
+		if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
+			handleError(err)
+			removeRequest()
+		} else if doAsyncWork != nil {
+			go func() {
+				if lsError := doAsyncWork(); lsError != nil {
+					handleError(lsError)
+				}
+				removeRequest()
+			}()
+		} else {
+			removeRequest()
 		}
 	}
 }
 
 func (s *Server) writeLoop(ctx context.Context) error {
 	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case msg := <-s.outgoingQueue:
-			if err := s.w.Write(msg); err != nil {
-				return fmt.Errorf("failed to write message: %w", err)
-			}
+		msg, err := s.outgoingQueue.Get(ctx)
+		if err != nil {
+			return err
+		}
+		if err := s.w.Write(msg); err != nil {
+			return fmt.Errorf("failed to write message: %w", err)
 		}
 	}
 }
 
+// WARNING: this should only be called in the async portion of a request handler,
+// otherwise a deadlock can occur.
 func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lsproto.RequestInfo[Req, Resp], params Req) (Resp, error) {
 	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
 	req := info.NewRequestMessage(id, params)
@@ -651,12 +654,7 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 
 // send writes a message to the outgoing queue, respecting context cancellation.
 func (s *Server) send(msg *lsproto.Message) error {
-	select {
-	case s.outgoingQueue <- msg:
-		return nil
-	case <-s.backgroundCtx.Done():
-		return s.backgroundCtx.Err()
-	}
+	return s.outgoingQueue.Put(s.backgroundCtx, msg)
 }
 
 // handleRequestOrNotification looks up the handler for the given request or notification, executes its synchronous work
@@ -674,7 +672,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		if err != nil {
 			if _, ok := errors.AsType[userFacingRequestFailedError](err); !ok {
 				s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
-			} else {
+			} else if !s.logger.IsTracing() {
 				s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
 			}
 			return nil, err
@@ -685,11 +683,17 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 				asyncWorkErr := doAsyncWork()
 				_, isUserFacing := errors.AsType[userFacingRequestFailedError](asyncWorkErr)
 				isRealError := asyncWorkErr != nil && !isUserFacing
-				s.logger.Info(core.IfElse(isRealError, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
+				if isRealError {
+					s.logger.Info("error handling method '", req.Method, "'", idStr, " in ", time.Since(start))
+				} else if !s.logger.IsTracing() {
+					s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+				}
 				return asyncWorkErr
 			}, nil
 		}
-		s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+		if !s.logger.IsTracing() {
+			s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+		}
 		return nil, nil
 	}
 	s.logger.Warn("unknown method '", req.Method, "'")
@@ -719,6 +723,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
 	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
 	registerNotificationHandler(handlers, lsproto.SetTraceInfo, (*Server).handleSetTrace)
+	registerNotificationHandler(handlers, lsproto.CustomSetLogVerbosityInfo, (*Server).handleSetLogVerbosity)
 	registerRequestHandler(handlers, lsproto.WorkspaceWillRenameFilesInfo, (*Server).handleWillRenameFiles)
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
@@ -745,10 +750,10 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVsOnAutoInsert)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVSOnAutoInsert)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
-	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentVSReferencesInfo, (*ls.LanguageService).ProvideVsReferences)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentVSReferencesInfo, (*ls.LanguageService).ProvideVSReferences)
 	registerRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementations)
 
@@ -989,6 +994,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	s.initStarted.Store(true)
 
 	s.initializeParams = params
+	if params.InitializationOptions != nil && params.InitializationOptions.LogVerbosity != nil {
+		if v := *params.InitializationOptions.LogVerbosity; isValidLogVerbosity(v) {
+			s.logger.SetVerbosity(v)
+		}
+	}
 	s.clientCapabilities = params.Capabilities.Resolve()
 	if s.clientCapabilities.Window.WorkDoneProgress {
 		s.projectProgress = newProjectLoadingProgress(s, s.progressDelay)
@@ -1007,10 +1017,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	if s.initializeParams.Locale != nil {
 		s.locale, _ = locale.Parse(*s.initializeParams.Locale)
-	}
-
-	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
-		s.logger.SetVerbose(true)
 	}
 
 	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
@@ -1115,10 +1121,12 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
-			CustomSourceDefinitionProvider:       new(true),
-			CustomMultiDocumentHighlightProvider: new(true),
-			VSReferencesProvider:                 new(true),
-			VSOnAutoInsertProvider: &lsproto.VsOnAutoInsertOptions{
+			Experimental: &lsproto.ExperimentalServerCapabilities{
+				CustomSourceDefinitionProvider:       new(true),
+				CustomMultiDocumentHighlightProvider: new(true),
+			},
+			VSReferencesProvider: new(true),
+			VSOnAutoInsertProvider: &lsproto.VSOnAutoInsertOptions{
 				VSTriggerCharacters: []string{">"},
 			},
 			Workspace: &lsproto.WorkspaceOptions{
@@ -1278,18 +1286,18 @@ func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, params *lsprot
 	return nil
 }
 
-func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTraceParams) error {
-	switch params.Value {
-	case "verbose":
-		s.logger.SetVerbose(true)
-	case "messages":
-		s.logger.SetVerbose(false)
-	case "off":
-		// !!! logging cannot be completely turned off for now
-		s.logger.SetVerbose(false)
-	default:
-		return fmt.Errorf("unknown trace value: %s", params.Value)
+func (s *Server) handleSetTrace(_ context.Context, _ *lsproto.SetTraceParams) error {
+	// $/setTrace is sent by vscode-languageclient when trace settings change.
+	// Server log verbosity is controlled separately by custom/setLogVerbosity,
+	// so this handler is intentionally a no-op.
+	return nil
+}
+
+func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLogVerbosityParams) error {
+	if !isValidLogVerbosity(params.Verbosity) {
+		return fmt.Errorf("%w: invalid log verbosity %d", lsproto.ErrorCodeInvalidParams, params.Verbosity)
 	}
+	s.logger.SetVerbosity(params.Verbosity)
 	return nil
 }
 
@@ -1473,7 +1481,7 @@ func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService,
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleVsOnAutoInsert(ctx context.Context, ls *ls.LanguageService, params *lsproto.VsOnAutoInsertParams) (lsproto.VsOnAutoInsertResponse, error) {
+func (s *Server) handleVSOnAutoInsert(ctx context.Context, ls *ls.LanguageService, params *lsproto.VSOnAutoInsertParams) (lsproto.VSOnAutoInsertResponse, error) {
 	return ls.ProvideOnAutoInsert(ctx, params)
 }
 
@@ -1558,7 +1566,8 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 			programs,
 			snapshot.Converters(),
 			snapshot.UserPreferences(),
-			params.Query)
+			params.Query,
+		)
 	})
 	return resp, lsErr
 }

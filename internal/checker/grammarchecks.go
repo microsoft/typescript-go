@@ -19,7 +19,7 @@ func (c *Checker) grammarErrorOnFirstToken(node *ast.Node, message *diagnostics.
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
 		span := scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
-		c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, message, args...))
+		c.addDiagnostic(ast.NewDiagnostic(sourceFile, span, message, args...))
 		return true
 	}
 	return false
@@ -28,7 +28,7 @@ func (c *Checker) grammarErrorOnFirstToken(node *ast.Node, message *diagnostics.
 func (c *Checker) grammarErrorAtPos(nodeForSourceFile *ast.Node, start int, length int, message *diagnostics.Message, args ...any) bool {
 	sourceFile := ast.GetSourceFileOfNode(nodeForSourceFile)
 	if !c.hasParseDiagnostics(sourceFile) {
-		c.diagnostics.Add(ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...))
+		c.addDiagnostic(ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...))
 		return true
 	}
 	return false
@@ -48,7 +48,7 @@ func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *dia
 	if !c.hasParseDiagnostics(sourceFile) {
 		d := NewDiagnosticForNode(node, message, args...)
 		d.SetSkippedOnNoEmit()
-		c.diagnostics.Add(d)
+		c.addDiagnostic(d)
 		return true
 	}
 	return false
@@ -81,7 +81,7 @@ func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressi
 				lastError.AddRelatedInfo(err)
 			} else if lastError == nil || start != lastError.Pos() {
 				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...)
-				c.diagnostics.Add(lastError)
+				c.addDiagnostic(lastError)
 			}
 		})
 		c.regExpScanner.SetText(sourceFile.Text())
@@ -301,11 +301,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				if node.Kind != ast.KindEnumDeclaration && node.Kind != ast.KindTypeParameter {
 					return c.grammarErrorOnNode(node, diagnostics.A_class_member_cannot_have_the_0_keyword, scanner.TokenToString(ast.KindConstKeyword))
 				}
-
-				// !!!
-				// parent := (isJSDocTemplateTag(node.Parent) && getEffectiveJSDocHost(node.Parent)) || node.Parent
 				parent := node.Parent
-
 				if node.Kind == ast.KindTypeParameter {
 					if !(ast.IsFunctionLikeDeclaration(parent) || ast.IsClassLike(parent) ||
 						ast.IsFunctionTypeNode(parent) || ast.IsConstructorTypeNode(parent) ||
@@ -532,10 +528,8 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				} else {
 					inOutText = "out"
 				}
-				// !!!
-				// parent := isJSDocTemplateTag(node.Parent) && (getEffectiveJSDocHost(node.Parent) || core.Find(getJSDocRoot(node.Parent). /* ? */ tags, isJSDocTypedefTag)) || node.Parent
 				parent := node.Parent
-				if node.Kind != ast.KindTypeParameter || parent != nil && !(ast.IsInterfaceDeclaration(parent) || ast.IsClassLike(parent) || ast.IsTypeAliasDeclaration(parent) || isJSDocTypedefTag(parent)) {
+				if node.Kind != ast.KindTypeParameter || parent != nil && !(ast.IsInterfaceDeclaration(parent) || ast.IsClassLike(parent) || ast.IsTypeOrJSTypeAliasDeclaration(parent)) {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_can_only_appear_on_a_type_parameter_of_a_class_interface_or_type_alias, inOutText)
 				}
 				if flags&inOutFlag != 0 {
@@ -570,11 +564,6 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if flags&ast.ModifierFlagsAsync != 0 {
 		return c.checkGrammarAsyncModifier(node, lastAsync)
 	}
-	return false
-}
-
-func isJSDocTypedefTag(_ *ast.Node) bool {
-	// !!!
 	return false
 }
 
@@ -993,7 +982,7 @@ func (c *Checker) checkGrammarComputedPropertyName(node *ast.Node) bool {
 	}
 
 	computedPropertyName := node.AsComputedPropertyName()
-	if computedPropertyName.Expression.Kind == ast.KindBinaryExpression && (computedPropertyName.Expression.AsBinaryExpression()).OperatorToken.Kind == ast.KindCommaToken {
+	if computedPropertyName.Expression.Kind == ast.KindBinaryExpression && computedPropertyName.Expression.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
 		return c.grammarErrorOnNode(computedPropertyName.Expression, diagnostics.A_comma_expression_is_not_allowed_in_a_computed_property_name)
 	}
 	return false
@@ -1219,13 +1208,13 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 			if ast.IsInTopLevelContext(asNode) {
 				if !c.hasParseDiagnostics(sourceFile) {
 					if !ast.IsEffectiveExternalModule(sourceFile, c.compilerOptions) {
-						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module))
+						c.addDiagnostic(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module))
 					}
 					switch c.moduleKind {
 					case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNode20, core.ModuleKindNodeNext:
 						sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
 						if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
-							c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
+							c.addDiagnostic(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
 							break
 						}
 						fallthrough
@@ -1238,7 +1227,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						}
 						fallthrough
 					default:
-						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_node20_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
+						c.addDiagnostic(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_node20_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
 					}
 				}
 			} else {
@@ -1251,7 +1240,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						relatedInfo := createDiagnosticForNode(containingFunc, diagnostics.Did_you_mean_to_mark_this_function_as_async)
 						diagnostic.AddRelatedInfo(relatedInfo)
 					}
-					c.diagnostics.Add(diagnostic)
+					c.addDiagnostic(diagnostic)
 					return true
 				}
 			}
@@ -1373,7 +1362,7 @@ func (c *Checker) checkGrammarAccessor(accessor *ast.AccessorDeclaration) bool {
 func (c *Checker) doesAccessorHaveCorrectParameterCount(accessor *ast.AccessorDeclaration) bool {
 	// `getAccessorThisParameter` returns `nil` if the accessor's arity is incorrect,
 	// even if there is a `this` parameter declared.
-	return c.getAccessorThisParameter(accessor) != nil || len(accessor.Parameters()) == (core.IfElse(accessor.Kind == ast.KindGetAccessor, 0, 1))
+	return c.getAccessorThisParameter(accessor) != nil || len(accessor.Parameters()) == core.IfElse(accessor.Kind == ast.KindGetAccessor, 0, 1)
 }
 
 func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool {
@@ -1393,15 +1382,15 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 				return c.grammarErrorOnNode(node.AsNode(), diagnostics.X_unique_symbol_types_are_only_allowed_on_variables_in_a_variable_statement)
 			}
 			if decl.Parent.Flags&ast.NodeFlagsConst == 0 {
-				return c.grammarErrorOnNode((parent.AsVariableDeclaration()).Name(), diagnostics.A_variable_whose_type_is_a_unique_symbol_type_must_be_const)
+				return c.grammarErrorOnNode(parent.AsVariableDeclaration().Name(), diagnostics.A_variable_whose_type_is_a_unique_symbol_type_must_be_const)
 			}
 		case ast.KindPropertyDeclaration:
 			if !ast.IsStatic(parent) || !hasReadonlyModifier(parent) {
-				return c.grammarErrorOnNode((parent.AsPropertyDeclaration()).Name(), diagnostics.A_property_of_a_class_whose_type_is_a_unique_symbol_type_must_be_both_static_and_readonly)
+				return c.grammarErrorOnNode(parent.AsPropertyDeclaration().Name(), diagnostics.A_property_of_a_class_whose_type_is_a_unique_symbol_type_must_be_both_static_and_readonly)
 			}
 		case ast.KindPropertySignature:
 			if !ast.HasSyntacticModifier(parent, ast.ModifierFlagsReadonly) {
-				return c.grammarErrorOnNode((parent.AsPropertySignatureDeclaration()).Name(), diagnostics.A_property_of_an_interface_or_type_literal_whose_type_is_a_unique_symbol_type_must_be_readonly)
+				return c.grammarErrorOnNode(parent.AsPropertySignatureDeclaration().Name(), diagnostics.A_property_of_an_interface_or_type_literal_whose_type_is_a_unique_symbol_type_must_be_readonly)
 			}
 		default:
 			return c.grammarErrorOnNode(node.AsNode(), diagnostics.X_unique_symbol_types_are_not_allowed_here)
@@ -1713,7 +1702,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 						message = diagnostics.X_await_using_statements_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module
 					}
 					diagnostic := ast.NewDiagnostic(sourceFile, span, message)
-					c.diagnostics.Add(diagnostic)
+					c.addDiagnostic(diagnostic)
 					hasError = true
 				}
 				switch c.moduleKind {
@@ -1726,7 +1715,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 						if !spanCalculated {
 							span = scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 						}
-						c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
+						c.addDiagnostic(ast.NewDiagnostic(sourceFile, span, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
 						hasError = true
 						break
 					}
@@ -1749,7 +1738,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 					} else {
 						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_node20_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					}
-					c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, message))
+					c.addDiagnostic(ast.NewDiagnostic(sourceFile, span, message))
 					hasError = true
 				}
 			}
@@ -1769,7 +1758,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 					relatedInfo := NewDiagnosticForNode(container, diagnostics.Did_you_mean_to_mark_this_function_as_async)
 					diagnostic.AddRelatedInfo(relatedInfo)
 				}
-				c.diagnostics.Add(diagnostic)
+				c.addDiagnostic(diagnostic)
 				hasError = true
 			}
 		}
@@ -1972,7 +1961,7 @@ func (c *Checker) checkAmbientInitializer(node *ast.Node) bool {
 
 	if initializer != nil {
 		isInvalidInitializer := !(isInitializerStringOrNumberLiteralExpression(initializer) || c.isInitializerSimpleLiteralEnumReference(initializer) || initializer.Kind == ast.KindTrueKeyword || initializer.Kind == ast.KindFalseKeyword || isInitializerBigIntLiteralExpression(initializer))
-		isConstOrReadonly := isDeclarationReadonly(node) || ast.IsVariableDeclaration(node) && (c.isVarConstLike(node))
+		isConstOrReadonly := isDeclarationReadonly(node) || ast.IsVariableDeclaration(node) && c.isVarConstLike(node)
 		if isConstOrReadonly && (typeNode == nil) {
 			if isInvalidInitializer {
 				return c.grammarErrorOnNode(initializer, diagnostics.A_const_initializer_in_an_ambient_context_must_be_a_string_or_numeric_literal_or_literal_enum_reference)
@@ -1987,7 +1976,7 @@ func (c *Checker) checkAmbientInitializer(node *ast.Node) bool {
 
 func isInitializerStringOrNumberLiteralExpression(expr *ast.Expression) bool {
 	return ast.IsStringOrNumericLiteralLike(expr) ||
-		expr.Kind == ast.KindPrefixUnaryExpression && (expr.AsPrefixUnaryExpression()).Operator == ast.KindMinusToken && (expr.AsPrefixUnaryExpression()).Operand.Kind == ast.KindNumericLiteral
+		expr.Kind == ast.KindPrefixUnaryExpression && expr.AsPrefixUnaryExpression().Operator == ast.KindMinusToken && expr.AsPrefixUnaryExpression().Operand.Kind == ast.KindNumericLiteral
 }
 
 func isInitializerBigIntLiteralExpression(expr *ast.Expression) bool {
