@@ -2224,6 +2224,17 @@ func (s *Session) handleGetConfigFileParsingDiagnostics(ctx context.Context, par
 	return NewDiagnosticResponses(diags), nil
 }
 
+func getEmitOnlyFromByte(v byte) (compiler.EmitOnly, error) {
+	s := compiler.EmitOnly(v)
+
+	switch s {
+	case compiler.EmitAll, compiler.EmitOnlyJs, compiler.EmitOnlyDts, compiler.EmitOnlyForcedDts:
+		return s, nil
+	default:
+		return compiler.EmitAll, fmt.Errorf("invalid value for EmitOnly flag: %d", v)
+	}
+}
+
 // handleEmit emits JavaScript and declaration files for a project or a specific file.
 func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResponse, error) {
 	sd, err := s.getSnapshotData(params.Snapshot)
@@ -2241,7 +2252,7 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 		return nil, err
 	}
 
-	emitOnly, err := compiler.EmitOnlyFromByte(params.EmitOnly)
+	emitOnly, err := getEmitOnlyFromByte(params.EmitOnly)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 	}
