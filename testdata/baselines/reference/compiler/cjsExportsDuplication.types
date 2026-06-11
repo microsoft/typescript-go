@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/cjsExportsDuplication.ts] ////
+
+=== file.js ===
+exports.foo = 42
+>exports.foo = 42 : 42
+>exports.foo : "hello" | 42 | true
+>exports : typeof import("./file")
+>foo : "hello" | 42 | true
+>42 : 42
+
+exports.foo = "hello"
+>exports.foo = "hello" : "hello"
+>exports.foo : "hello" | 42 | true
+>exports : typeof import("./file")
+>foo : "hello" | 42 | true
+>"hello" : "hello"
+
+exports.foo = true
+>exports.foo = true : true
+>exports.foo : "hello" | 42 | true
+>exports : typeof import("./file")
+>foo : "hello" | 42 | true
+>true : true
+
