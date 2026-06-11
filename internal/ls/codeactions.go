@@ -70,6 +70,7 @@ type CombinedCodeActions struct {
 var codeFixProviders = []*CodeFixProvider{
 	ImportFixProvider,
 	IsolatedDeclarationsFixProvider,
+	FixClassIncorrectlyImplementsInterfaceProvider,
 	// Add more code fix providers here as they are implemented
 }
 
@@ -102,6 +103,8 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	if params.Context != nil && params.Context.Diagnostics != nil && wantsQuickFixes(params.Context.Only) {
 		fixIdSeen := make(map[string]*CodeFixProvider)
 
+		var seen []*CodeAction // sorted for binary search dedup, dedup across all diagnostics and providers so if multiple diags produce the same codefix, only one is returned
+
 		for _, diag := range params.Context.Diagnostics {
 			if diag.Code == nil || diag.Code.Integer == nil {
 				continue
@@ -131,6 +134,11 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					return lsproto.CodeActionResponse{}, err
 				}
 				for _, action := range providerActions {
+					i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
+					if found {
+						continue
+					}
+					seen = slices.Insert(seen, i, action)
 					actions = append(actions, convertToLSPCodeAction(action, diag, params.TextDocument.Uri))
 					if action.FixID != "" {
 						fixIdSeen[action.FixID] = provider
