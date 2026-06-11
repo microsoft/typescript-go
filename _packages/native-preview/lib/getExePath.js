@@ -12,7 +12,7 @@ export default function getExePath() {
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
     const pkgName = pkg.name;
     const baseName = pkgName.startsWith("@") ? pkgName.split("/")[1] : pkgName;
-    const binName = Object.keys(pkg.bin)[0];
+    let binName = Object.keys(pkg.bin)[0];
 
     let exeDir;
 
@@ -20,7 +20,10 @@ export default function getExePath() {
 
     if (normalizedDirname.endsWith("/_packages/" + baseName + "/lib")) {
         // We're running directly from source in the repo.
+        // The local repo build (`hereby build`) always produces `tsgo`, regardless
+        // of the published `bin` name, so don't use binName here.
         exeDir = path.resolve(__dirname, "..", "..", "..", "built", "local");
+        binName = "tsgo";
     }
     else if (normalizedDirname.endsWith("/built/npm/" + baseName + "/lib")) {
         // We're running from the built output.
