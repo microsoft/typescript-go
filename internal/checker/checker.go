@@ -635,6 +635,7 @@ type Checker struct {
 	discriminatedContextualTypes                map[DiscriminatedContextualTypeKey]*Type
 	instantiationExpressionTypes                map[InstantiationExpressionKey]*Type
 	substitutionTypes                           map[SubstitutionTypeKey]*Type
+	negatedTypes                                map[TypeId]*Type
 	reverseMappedCache                          map[ReverseMappedTypeKey]*Type
 	reverseHomomorphicMappedCache               map[ReverseMappedTypeKey]*Type
 	iterationTypesCache                         map[IterationTypesKey]IterationTypes
@@ -945,6 +946,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.discriminatedContextualTypes = make(map[DiscriminatedContextualTypeKey]*Type)
 	c.instantiationExpressionTypes = make(map[InstantiationExpressionKey]*Type)
 	c.substitutionTypes = make(map[SubstitutionTypeKey]*Type)
+	c.negatedTypes = make(map[TypeId]*Type)
 	c.reverseMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.reverseHomomorphicMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.iterationTypesCache = make(map[IterationTypesKey]IterationTypes)
@@ -22071,7 +22073,8 @@ func (c *Checker) couldContainTypeVariablesWorker(t *Type) bool {
 	if objectFlags&ObjectFlagsCouldContainTypeVariablesComputed != 0 {
 		return objectFlags&ObjectFlagsCouldContainTypeVariables != 0
 	}
-	result := t.flags&TypeFlagsInstantiable != 0 ||
+	result := t.flags&(TypeFlagsInstantiable & ^TypeFlagsNegated) != 0 ||
+		t.flags&TypeFlagsNegated != 0 && c.couldContainTypeVariables(t.AsNegatedType().baseType) ||
 		t.flags&TypeFlagsObject != 0 && !c.isNonGenericTopLevelType(t) && (objectFlags&ObjectFlagsReference != 0 && (t.AsTypeReference().node != nil || core.Some(c.getTypeArguments(t), c.couldContainTypeVariables)) ||
 			objectFlags&ObjectFlagsAnonymous != 0 && t.symbol != nil && t.symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod|ast.SymbolFlagsClass|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsObjectLiteral) != 0 && t.symbol.Declarations != nil ||
 			objectFlags&(ObjectFlagsMapped|ObjectFlagsReverseMapped|ObjectFlagsObjectRestType|ObjectFlagsInstantiationExpressionType) != 0) ||
@@ -22155,6 +22158,8 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 		return c.getStringMappingType(t.symbol, c.instantiateType(t.AsStringMappingType().target, m))
 	case flags&TypeFlagsConditional != 0:
 		return c.getConditionalTypeInstantiation(t, c.combineTypeMappers(t.AsConditionalType().mapper, m), false /*forConstraint*/, alias)
+	case flags&TypeFlagsNegated != 0:
+		return c.getNegatedType(c.instantiateType(t.AsNegatedType().baseType, m))
 	case flags&TypeFlagsSubstitution != 0:
 		newBaseType := c.instantiateType(t.AsSubstitutionType().baseType, m)
 		if c.isNoInferType(t) {
@@ -22855,6 +22860,8 @@ func (c *Checker) getTypeFromTypeOperatorNode(node *ast.Node) *Type {
 			}
 		case ast.KindReadonlyKeyword:
 			links.resolvedType = c.getTypeFromTypeNode(argType)
+		case ast.KindNotKeyword:
+			links.resolvedType = c.getNegatedType(c.getTypeFromTypeNode(argType))
 		default:
 			panic("Unhandled case in getTypeFromTypeOperatorNode")
 		}
@@ -24777,6 +24784,12 @@ func (c *Checker) getGenericObjectFlags(t *Type) ObjectFlags {
 		}
 		return t.objectFlags & ObjectFlagsIsGenericType
 	}
+	if t.flags&TypeFlagsNegated != 0 {
+		// A negated type 'not T' is generic only if its base type is generic. This unwrapping
+		// mirrors maybeTypeOfKindUnwrapNegations, ensuring e.g. 'not "a"' is not treated as a
+		// generic (instantiable) type even though Negated is part of InstantiableNonPrimitive.
+		return c.getGenericObjectFlags(t.AsNegatedType().baseType)
+	}
 	if t.flags&TypeFlagsInstantiableNonPrimitive != 0 || c.isGenericMappedType(t) || c.isGenericTupleType(t) {
 		combinedFlags |= ObjectFlagsIsGenericObjectType
 	}
@@ -25990,6 +26003,12 @@ func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, 
 	if includes&TypeFlagsIncludesMissingType != 0 {
 		typeSet[slices.Index(typeSet, c.undefinedType)] = c.missingType
 	}
+	if core.Some(typeSet, isNegatedType) {
+		if c.checkForUnsatisfiedNegatedType(typeSet) {
+			return c.neverType
+		}
+		typeSet = c.removeNegatedSubtypes(typeSet)
+	}
 	if len(typeSet) == 0 {
 		return c.unknownType
 	}
@@ -26101,6 +26120,10 @@ func isUnionWithNull(t *Type) bool {
 
 func isIntersectionType(t *Type) bool {
 	return t.flags&TypeFlagsIntersection != 0
+}
+
+func isNegatedType(t *Type) bool {
+	return t.flags&TypeFlagsNegated != 0
 }
 
 func isPrimitiveUnion(t *Type) bool {
@@ -27402,6 +27425,8 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		return c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
 	case t.flags&TypeFlagsConditional != 0:
 		return c.getNextBaseConstraint(c.getConstraintFromConditionalType(t), stack)
+	case t.flags&TypeFlagsNegated != 0:
+		return c.unknownType
 	case t.flags&TypeFlagsSubstitution != 0:
 		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
 	case c.isGenericTupleType(t):

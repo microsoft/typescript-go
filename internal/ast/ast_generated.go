@@ -754,6 +754,7 @@ func IsToken(node *Node) bool {
 	case KindModuleKeyword:
 	case KindNamespaceKeyword:
 	case KindNeverKeyword:
+	case KindNotKeyword:
 	case KindOutKeyword:
 	case KindReadonlyKeyword:
 	case KindRequireKeyword:
