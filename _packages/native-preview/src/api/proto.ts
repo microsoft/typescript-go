@@ -185,6 +185,7 @@ export interface IndexInfoResponse {
     keyType: TypeResponse;
     valueType: TypeResponse;
     isReadonly?: boolean;
+    declaration?: string;
 }
 
 export interface ProfileParams {
