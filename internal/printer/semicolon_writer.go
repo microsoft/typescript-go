@@ -29,6 +29,7 @@ func (w *trailingSemicolonDeferringWriter) Write(s string) {
 }
 
 func (w *trailingSemicolonDeferringWriter) WriteTrailingSemicolon(text string) {
+	w.commitSemicolon()
 	w.hasPendingSemicolon = true
 	w.pendingSemicolon = text
 }
