@@ -329,7 +329,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetLocalTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetAliasTypeArgumentsOfType:       unmarshallerFor[GetTypePropertyParams],
-	MethodGetAliasSymbolOfType:              unmarshallerFor[GetTypePropertyParams],
+	MethodGetAliasSymbolOfType:              unmarshallerFor[GetAliasSymbolOfTypeParams],
 	MethodGetObjectTypeOfType:               unmarshallerFor[GetTypePropertyParams],
 	MethodGetIndexTypeOfType:                unmarshallerFor[GetTypePropertyParams],
 	MethodGetCheckTypeOfType:                unmarshallerFor[GetTypePropertyParams],
@@ -684,26 +684,37 @@ type ResolveNameParams struct {
 
 type GetParentOfSymbolParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetMembersOfSymbolParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetExportsOfSymbolParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetExportSymbolOfSymbolParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Symbol   SymbolID   `json:"symbol"`
 }
 
 type GetSymbolOfTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Type     TypeID     `json:"type"`
+}
+
+type GetAliasSymbolOfTypeParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"type"`
 }
 

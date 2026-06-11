@@ -38,6 +38,8 @@ type snapshotData struct {
 
 	symbolRegistry   map[SymbolID]*ast.Symbol
 	symbolRegistryMu sync.RWMutex
+	symbolTargets    map[SymbolID]*ast.Symbol
+	symbolTargetsMu  sync.RWMutex
 
 	typeRegistry   map[TypeID]*checker.Type
 	typeRegistryMu sync.RWMutex
@@ -95,7 +97,8 @@ func (sd *snapshotData) nodeHandleFrom(node *ast.Node) NodeHandle {
 }
 
 // registerSymbol registers a symbol in this snapshot's registry and returns the response.
-func (sd *snapshotData) registerSymbol(symbol *ast.Symbol) *SymbolResponse {
+// c is the checker that produced the symbol.
+func (sd *snapshotData) registerSymbol(symbol *ast.Symbol, c *checker.Checker) *SymbolResponse {
 	if symbol == nil {
 		return nil
 	}
@@ -112,6 +115,14 @@ func (sd *snapshotData) registerSymbol(symbol *ast.Symbol) *SymbolResponse {
 	sd.symbolRegistryMu.Lock()
 	sd.symbolRegistry[resp.Id] = symbol
 	sd.symbolRegistryMu.Unlock()
+
+	if symbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+		if target := c.GetTargetSymbol(symbol); target != nil && target != symbol {
+			sd.symbolTargetsMu.Lock()
+			sd.symbolTargets[resp.Id] = target
+			sd.symbolTargetsMu.Unlock()
+		}
+	}
 
 	return resp
 }
@@ -131,7 +142,9 @@ func (sd *snapshotData) registerType(t *checker.Type) *TypeResponse {
 }
 
 // resolveSymbolHandle resolves a symbol handle to a symbol within this snapshot.
-func (sd *snapshotData) resolveSymbolHandle(handle SymbolID) (*ast.Symbol, error) {
+// c is the checker that will use the symbol. When the symbol is instantiated, the stored
+// target is restored into the checker's valueSymbolLinks so GetTypeOfSymbol works across checkers.
+func (sd *snapshotData) resolveSymbolHandle(handle SymbolID, c *checker.Checker) (*ast.Symbol, error) {
 	if handle == 0 {
 		return nil, fmt.Errorf("%w: empty symbol handle", ErrClientError)
 	}
@@ -142,6 +155,15 @@ func (sd *snapshotData) resolveSymbolHandle(handle SymbolID) (*ast.Symbol, error
 
 	if !ok {
 		return nil, fmt.Errorf("%w: symbol handle %d not found in snapshot registry", ErrClientError, handle)
+	}
+
+	if symbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+		sd.symbolTargetsMu.RLock()
+		target := sd.symbolTargets[handle]
+		sd.symbolTargetsMu.RUnlock()
+		if target != nil {
+			c.EnsureInstantiatedSymbolTarget(symbol, target)
+		}
 	}
 
 	return symbol, nil
@@ -441,7 +463,7 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 	case string(MethodGetAliasTypeArgumentsOfType):
 		return s.handleGetAliasTypeArgumentsOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetAliasSymbolOfType):
-		return s.handleGetAliasSymbolOfType(ctx, parsed.(*GetTypePropertyParams))
+		return s.handleGetAliasSymbolOfType(ctx, parsed.(*GetAliasSymbolOfTypeParams))
 	case string(MethodGetObjectTypeOfType):
 		return s.handleGetObjectTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetIndexTypeOfType):
@@ -632,6 +654,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 			snapshot:          snapshot,
 			refCount:          1,
 			symbolRegistry:    make(map[SymbolID]*ast.Symbol),
+			symbolTargets:     make(map[SymbolID]*ast.Symbol),
 			typeRegistry:      make(map[TypeID]*checker.Type),
 			signatureRegistry: make(map[SignatureID]*checker.Signature),
 			nodeTablesByPath:  make(map[tspath.Path]*encoder.NodeIndexTable),
@@ -803,7 +826,7 @@ func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymb
 		return nil, nil
 	}
 
-	return setup.sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol, setup.checker), nil
 }
 
 // handleGetSymbolsAtPositions returns symbols at multiple positions in a file.
@@ -828,7 +851,7 @@ func (s *Session) handleGetSymbolsAtPositions(ctx context.Context, params *GetSy
 		}
 		symbol := setup.checker.GetSymbolAtLocation(node)
 		if symbol != nil {
-			results[i] = setup.sd.registerSymbol(symbol)
+			results[i] = setup.sd.registerSymbol(symbol, setup.checker)
 		}
 	}
 
@@ -856,7 +879,7 @@ func (s *Session) handleGetSymbolAtLocation(ctx context.Context, params *GetSymb
 		return nil, nil
 	}
 
-	return setup.sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol, setup.checker), nil
 }
 
 // handleGetSymbolsAtLocations returns symbols at multiple node locations.
@@ -878,7 +901,7 @@ func (s *Session) handleGetSymbolsAtLocations(ctx context.Context, params *GetSy
 		}
 		symbol := setup.checker.GetSymbolAtLocation(node)
 		if symbol != nil {
-			results[i] = setup.sd.registerSymbol(symbol)
+			results[i] = setup.sd.registerSymbol(symbol, setup.checker)
 		}
 	}
 
@@ -893,7 +916,7 @@ func (s *Session) handleGetTypeOfSymbol(ctx context.Context, params *GetTypeOfSy
 	}
 	defer setup.done()
 
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -919,7 +942,7 @@ func (s *Session) handleGetTypesOfSymbols(ctx context.Context, params *GetTypesO
 
 	results := make([]*TypeResponse, len(params.Symbols))
 	for i, symHandle := range params.Symbols {
-		symbol, err := setup.sd.resolveSymbolHandle(symHandle)
+		symbol, err := setup.sd.resolveSymbolHandle(symHandle, setup.checker)
 		if err != nil {
 			return nil, err
 		}
@@ -943,7 +966,7 @@ func (s *Session) handleGetDeclaredTypeOfSymbol(ctx context.Context, params *Get
 	}
 	defer setup.done()
 
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -987,17 +1010,18 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 		return nil, nil
 	}
 
-	return setup.sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol, setup.checker), nil
 }
 
 // handleGetParentOfSymbol returns the parent of a symbol.
 func (s *Session) handleGetParentOfSymbol(ctx context.Context, params *GetParentOfSymbolParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -1007,17 +1031,18 @@ func (s *Session) handleGetParentOfSymbol(ctx context.Context, params *GetParent
 		return nil, nil
 	}
 
-	return sd.registerSymbol(parent), nil
+	return setup.sd.registerSymbol(parent, setup.checker), nil
 }
 
 // handleGetMembersOfSymbol returns the members of a symbol.
 func (s *Session) handleGetMembersOfSymbol(ctx context.Context, params *GetMembersOfSymbolParams) ([]*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -1028,7 +1053,7 @@ func (s *Session) handleGetMembersOfSymbol(ctx context.Context, params *GetMembe
 
 	results := make([]*SymbolResponse, 0, len(symbol.Members))
 	for _, member := range symbol.Members {
-		results = append(results, sd.registerSymbol(member))
+		results = append(results, setup.sd.registerSymbol(member, setup.checker))
 	}
 
 	return results, nil
@@ -1036,12 +1061,13 @@ func (s *Session) handleGetMembersOfSymbol(ctx context.Context, params *GetMembe
 
 // handleGetExportsOfSymbol returns the exports of a symbol.
 func (s *Session) handleGetExportsOfSymbol(ctx context.Context, params *GetExportsOfSymbolParams) ([]*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -1052,7 +1078,7 @@ func (s *Session) handleGetExportsOfSymbol(ctx context.Context, params *GetExpor
 
 	results := make([]*SymbolResponse, 0, len(symbol.Exports))
 	for _, exp := range symbol.Exports {
-		results = append(results, sd.registerSymbol(exp))
+		results = append(results, setup.sd.registerSymbol(exp, setup.checker))
 	}
 
 	return results, nil
@@ -1060,31 +1086,33 @@ func (s *Session) handleGetExportsOfSymbol(ctx context.Context, params *GetExpor
 
 // handleGetExportSymbolOfSymbol returns the export symbol of a symbol.
 func (s *Session) handleGetExportSymbolOfSymbol(ctx context.Context, params *GetExportSymbolOfSymbolParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	symbol, err := sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
 
 	if symbol.ExportSymbol != nil {
-		return sd.registerSymbol(symbol.ExportSymbol), nil
+		return setup.sd.registerSymbol(symbol.ExportSymbol, setup.checker), nil
 	}
 
-	return sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol, setup.checker), nil
 }
 
 // handleGetSymbolOfType returns the symbol associated with a type.
 func (s *Session) handleGetSymbolOfType(ctx context.Context, params *GetSymbolOfTypeParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	t, err := sd.resolveTypeHandle(params.Type)
+	t, err := setup.sd.resolveTypeHandle(params.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -1094,7 +1122,7 @@ func (s *Session) handleGetSymbolOfType(ctx context.Context, params *GetSymbolOf
 		return nil, nil
 	}
 
-	return sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol, setup.checker), nil
 }
 
 // handleGetSignaturesOfType returns the call or construct signatures of a type.
@@ -1342,13 +1370,14 @@ func (s *Session) handleGetAliasTypeArgumentsOfType(_ context.Context, params *G
 	})
 }
 
-func (s *Session) handleGetAliasSymbolOfType(_ context.Context, params *GetTypePropertyParams) (*SymbolResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+func (s *Session) handleGetAliasSymbolOfType(ctx context.Context, params *GetAliasSymbolOfTypeParams) (*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
+	defer setup.done()
 
-	t, err := sd.resolveTypeHandle(params.Type)
+	t, err := setup.sd.resolveTypeHandle(params.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -1357,7 +1386,7 @@ func (s *Session) handleGetAliasSymbolOfType(_ context.Context, params *GetTypeP
 		return nil, nil
 	}
 
-	return sd.registerSymbol(t.Alias().Symbol()), nil
+	return setup.sd.registerSymbol(t.Alias().Symbol(), setup.checker), nil
 }
 
 func (s *Session) handleGetObjectTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
@@ -1589,7 +1618,7 @@ func (s *Session) handleGetShorthandAssignmentValueSymbol(ctx context.Context, p
 		return nil, nil
 	}
 
-	return setup.sd.registerSymbol(symbol), nil
+	return setup.sd.registerSymbol(symbol, setup.checker), nil
 }
 
 // handleGetTypeOfSymbolAtLocation returns the narrowed type of a symbol at a specific location.
@@ -1600,7 +1629,7 @@ func (s *Session) handleGetTypeOfSymbolAtLocation(ctx context.Context, params *G
 	}
 	defer setup.done()
 
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -1901,7 +1930,7 @@ func (s *Session) handleGetPropertiesOfType(ctx context.Context, params *Checker
 
 	results := make([]*SymbolResponse, len(props))
 	for i, prop := range props {
-		results[i] = setup.sd.registerSymbol(prop)
+		results[i] = setup.sd.registerSymbol(prop, setup.checker)
 	}
 
 	return results, nil
@@ -2242,7 +2271,7 @@ func (s *Session) handleGetReferencesToSymbolInFile(ctx context.Context, params 
 	}
 	defer setup.done()
 
-	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol, setup.checker)
 	if err != nil {
 		return nil, err
 	}
@@ -2306,16 +2335,13 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 
 // handleGetReferencedSymbolsForNode returns node handles for all references found at a node.
 func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params *GetReferencedSymbolsForNodeParams) ([]ReferencedSymbolEntry, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
 	}
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
+	defer setup.done()
 
-	node, err := sd.resolveNodeHandle(program, params.Node)
+	node, err := setup.sd.resolveNodeHandle(setup.program, params.Node)
 	if err != nil {
 		return nil, err
 	}
@@ -2323,12 +2349,12 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 		return nil, nil
 	}
 
-	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
+	langSvc, err := s.setupLanguageService(setup.sd, setup.program, params.Project, "")
 	if err != nil {
 		return nil, err
 	}
 
-	sourceFiles := program.GetSourceFiles()
+	sourceFiles := setup.program.GetSourceFiles()
 	entries := langSvc.GetReferencedSymbolsForNode(ctx, params.Position, node, sourceFiles)
 	if entries == nil {
 		return nil, nil
@@ -2343,15 +2369,15 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 		var refs []NodeHandle
 		for _, ref := range entry.References() {
 			if ref.IsNodeEntry() {
-				refs = append(refs, sd.nodeHandleFrom(ref.Node()))
+				refs = append(refs, setup.sd.nodeHandleFrom(ref.Node()))
 			}
 		}
 		re := ReferencedSymbolEntry{
-			Definition: sd.nodeHandleFrom(defNode),
+			Definition: setup.sd.nodeHandleFrom(defNode),
 			References: refs,
 		}
 		if sym := entry.DefinitionSymbol(); sym != nil {
-			re.Symbol = sd.registerSymbol(sym)
+			re.Symbol = setup.sd.registerSymbol(sym, setup.checker)
 		}
 		result = append(result, re)
 	}

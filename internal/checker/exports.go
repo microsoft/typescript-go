@@ -165,6 +165,25 @@ func (c *Checker) GetTypeOfSymbol(symbol *ast.Symbol) *Type {
 	return c.getTypeOfSymbol(symbol)
 }
 
+// GetTargetSymbol returns the original non-instantiated symbol for an instantiated
+// symbol, or the symbol itself if not instantiated.
+func (c *Checker) GetTargetSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.getTargetSymbol(symbol)
+}
+
+// EnsureInstantiatedSymbolTarget restores a known target into this checker's
+// valueSymbolLinks for an instantiated symbol whose target is not yet known
+// to this checker (e.g. the symbol was created by a different checker in the pool).
+// Safe to call when the target is already set — it only writes if target is nil.
+func (c *Checker) EnsureInstantiatedSymbolTarget(symbol *ast.Symbol, target *ast.Symbol) {
+	if symbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+		links := c.valueSymbolLinks.Get(symbol)
+		if links.target == nil {
+			links.target = target
+		}
+	}
+}
+
 func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
 	return c.getConstraintOfTypeParameter(typeParameter)
 }
