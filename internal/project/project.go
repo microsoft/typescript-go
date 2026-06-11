@@ -353,12 +353,17 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
+	maxCheckers := p.host.sessionOptions.MaxCheckersPerProgram
+	if maxCheckers <= 0 {
+		maxCheckers = 4
+	}
+
 	// Define a fresh CreateCheckerPool closure for this call. Each invocation of
 	// CreateProgram must use its own closure so that concurrent goroutines cloning
 	// the same project never share a captured variable through a stale closure
 	// stored in the old program's options.
 	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
-		checkerPool = newCheckerPool(4, program, nil)
+		checkerPool = newCheckerPool(maxCheckers, program, nil)
 		return checkerPool
 	}
 

@@ -77,10 +77,11 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		Logger:        nil, // TODO: Add logging support
 		FS:            fs,
 		Options: &project.SessionOptions{
-			CurrentDirectory:   s.options.Cwd,
-			DefaultLibraryPath: s.options.DefaultLibraryPath,
-			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
-			LoggingEnabled:     false,
+			CurrentDirectory:      s.options.Cwd,
+			DefaultLibraryPath:    s.options.DefaultLibraryPath,
+			PositionEncoding:      lsproto.PositionEncodingKindUTF8,
+			LoggingEnabled:        false,
+			MaxCheckersPerProgram: 1,
 		},
 	})
 

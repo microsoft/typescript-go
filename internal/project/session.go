@@ -63,6 +63,10 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	// MaxCheckersPerProgram caps the number of checkers a program's checker pool
+	// will create. When <= 0, a default of 4 is used. The API server sets this to
+	// 1 so each opened project's program has only a single checker.
+	MaxCheckersPerProgram int
 }
 
 type SessionInit struct {
