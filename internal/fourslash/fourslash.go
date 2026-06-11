@@ -564,12 +564,6 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 	}
 }
 
-func GetDefaultCapabilitiesWithSnippetSupport() *lsproto.ClientCapabilities {
-	capabilities := GetDefaultCapabilities()
-	capabilities.TextDocument.Completion.CompletionItem.SnippetSupport = ptrTrue
-	return capabilities
-}
-
 type ClientCapabilitiesOptions struct {
 	CompletionItem *lsproto.ClientCompletionItemOptions
 }

@@ -39,7 +39,11 @@ declare const f: F;
 switch (f) {
     case/*3*/
 }`
-	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithSnippetSupport(), content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
