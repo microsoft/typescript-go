@@ -825,7 +825,10 @@ func (s *orderedSet[T]) init(hint int) {
 }
 
 func (s *orderedSet[T]) usesInline() bool {
-	return cap(s.values) != 0 && &s.values[:1][0] == &s.inline[0]
+	if len(s.values) == 0 {
+		return cap(s.values) == len(s.inline)
+	}
+	return &s.values[0] == &s.inline[0]
 }
 
 func (s *orderedSet[T]) contains(value T) bool {
