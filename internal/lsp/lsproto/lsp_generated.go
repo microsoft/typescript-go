@@ -6353,7 +6353,7 @@ type InitializeParams struct {
 	Capabilities *ClientCapabilities `json:"capabilities"`
 
 	// User provided initialization options.
-	InitializationOptions *InitializationOptions `json:"initializationOptions,omitzero"`
+	InitializationOptions *InitializationOptionsOrNull `json:"initializationOptions,omitzero"`
 
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValue `json:"trace,omitzero"`
@@ -33108,6 +33108,36 @@ func (o *DocumentUriOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
 		return json.UnmarshalDecode(dec, o.DocumentUri)
 	default:
 		return errInvalidKind("DocumentUriOrNull", dec.PeekKind())
+	}
+}
+
+type InitializationOptionsOrNull struct {
+	InitializationOptions *InitializationOptions
+}
+
+var _ json.MarshalerTo = (*InitializationOptionsOrNull)(nil)
+
+func (o *InitializationOptionsOrNull) MarshalJSONTo(enc *json.Encoder) error {
+	if o.InitializationOptions != nil {
+		return json.MarshalEncode(enc, o.InitializationOptions)
+	}
+	return enc.WriteToken(json.Null)
+}
+
+var _ json.UnmarshalerFrom = (*InitializationOptionsOrNull)(nil)
+
+func (o *InitializationOptionsOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = InitializationOptionsOrNull{}
+
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
+		return err
+	case '{':
+		o.InitializationOptions = new(InitializationOptions)
+		return json.UnmarshalDecode(dec, o.InitializationOptions)
+	default:
+		return errInvalidKind("InitializationOptionsOrNull", dec.PeekKind())
 	}
 }
 

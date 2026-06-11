@@ -1018,11 +1018,16 @@ function patchAndPreprocessModel() {
 
         for (const prop of structure.properties) {
             // Replace initializationOptions type with custom InitializationOptions.
-            // The spec types this field as LSPAny?, which includes null, so we
-            // must still accept (and ignore) a null value sent by loose clients.
+            // The spec types this field as LSPAny?, which includes null, so keep
+            // it nullable so a null value sent by loose clients is accepted.
             if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
-                prop.type = { kind: "reference", name: "InitializationOptions" };
-                prop.allowNull = true;
+                prop.type = {
+                    kind: "or",
+                    items: [
+                        { kind: "reference", name: "InitializationOptions" },
+                        { kind: "base", name: "null" },
+                    ],
+                };
             }
 
             // Replace Data *any fields with custom typed Data fields
@@ -2406,7 +2411,7 @@ function generateCode() {
                 // silently accept it (pointers, slices, maps).
                 const resolvedType = resolveType(prop.type);
                 const goTypeAcceptsNull = (prop.optional || resolvedType.needsPointer || resolvedType.name.startsWith("[]") || resolvedType.name.startsWith("map[")) && !prop.omitzeroValue;
-                if (goTypeAcceptsNull && !typeCanBeNull(prop.type) && !prop.allowNull) {
+                if (goTypeAcceptsNull && !typeCanBeNull(prop.type)) {
                     writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
                     writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
                     writeLine(`\t\t\t}`);
