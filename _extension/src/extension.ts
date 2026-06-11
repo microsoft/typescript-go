@@ -57,10 +57,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const tsApi = await getTypeScriptLanguageFeaturesApi();
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.usingTypeScriptLanguageFeaturesApi", !!tsApi);
     let selection = tsApi?.getServerSelection();
+    let selectionUpdate = Promise.resolve();
     if (tsApi) {
-        context.subscriptions.push(tsApi.onDidChangeServerSelection(async nextSelection => {
+        context.subscriptions.push(tsApi.onDidChangeServerSelection(nextSelection => {
             selection = nextSelection;
-            await updateSessionForSelection(nextSelection);
+            selectionUpdate = selectionUpdate.then(
+                () => updateSessionForSelection(nextSelection),
+                () => updateSessionForSelection(nextSelection),
+            ).catch(err => output.appendLine(vscode.l10n.t(`Error updating TypeScript Native Preview selection: {0}`, String(err))));
         }));
     }
     else {

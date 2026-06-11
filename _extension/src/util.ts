@@ -132,11 +132,14 @@ function isTypeScriptLanguageFeaturesApiV0(api: unknown): api is TypeScriptLangu
 }
 
 export async function getExe(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<ExeInfo> {
-    if (selection?.kind === "lsp" && selection.tsdk) {
-        const exe = await resolveTsdkPathToExe(selection.tsdk);
-        if (exe) {
-            return exe;
+    if (selection?.kind === "lsp") {
+        if (selection.tsdk) {
+            const exe = await resolveTsdkPathToExe(selection.tsdk);
+            if (exe) {
+                return exe;
+            }
         }
+        return getBuiltinExePath(context);
     }
 
     const config = vscode.workspace.getConfiguration("typescript.native-preview");
