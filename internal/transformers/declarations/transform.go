@@ -1131,12 +1131,8 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 
 func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name *ast.Node) *ast.Node {
 	var nameText string
-	if ast.IsIdentifier(name) {
+	if ast.IsIdentifier(name) || ast.IsStringLiteral(name) {
 		nameText = name.Text()
-	} else if ast.IsStringLiteral(name) {
-		nameText = name.Text()
-	} else {
-		nameText = ""
 	}
 	if _, ok := tx.witnessedCjsExports[nameText]; ok && nameText != "" {
 		return nil // Already emitted this export name
