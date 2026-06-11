@@ -813,6 +813,17 @@ const orderedSetMapThreshold = 16
 type orderedSet[T comparable] struct {
 	valuesByKey map[T]struct{}
 	values      []T
+	inline      [orderedSetMapThreshold]T
+	usingInline bool
+}
+
+func (s *orderedSet[T]) init(hint int) {
+	if hint <= orderedSetMapThreshold {
+		s.values = s.inline[:0]
+		s.usingInline = true
+	} else {
+		s.values = make([]T, 0, hint)
+	}
 }
 
 func (s *orderedSet[T]) contains(value T) bool {
@@ -823,7 +834,24 @@ func (s *orderedSet[T]) contains(value T) bool {
 	return ok
 }
 
+func (s *orderedSet[T]) addIfAbsent(value T) bool {
+	if s.contains(value) {
+		return false
+	}
+	s.add(value)
+	return true
+}
+
 func (s *orderedSet[T]) add(value T) {
+	if s.values == nil {
+		s.init(0)
+	}
+	if s.usingInline && len(s.values) == cap(s.values) {
+		values := make([]T, len(s.values), len(s.values)*2)
+		copy(values, s.values)
+		s.values = values
+		s.usingInline = false
+	}
 	s.values = append(s.values, value)
 	// Small sets are served by a linear scan over values; only materialize the map once the set
 	// grows large enough for hashing to win.
@@ -837,6 +865,13 @@ func (s *orderedSet[T]) add(value T) {
 		}
 	}
 	s.valuesByKey[value] = struct{}{}
+}
+
+func (s *orderedSet[T]) valuesForStorage(values []T) []T {
+	if s.usingInline {
+		return slices.Clone(values)
+	}
+	return values
 }
 
 func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
