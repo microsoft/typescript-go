@@ -1198,52 +1198,80 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 	if ast.IsBinaryExpression(input) {
 		if rhs := unwrapParenthesizedExpression(input.AsBinaryExpression().Right); ast.IsClassExpression(rhs) {
 			ce := rhs.AsClassExpression()
-			// When the class expression has a name that differs from the export name,
-			// or when the class body references its own name (self-reference),
-			// wrap it in its own namespace to provide a private scope for the name.
-			// This is needed because the class expression name creates a distinct
-			// scope that a file-level `export class` declaration cannot replicate.
 			classExprName := ce.Name()
-			needsIsolation := classExprName != nil && len(classExprName.Text()) > 0 &&
-				(!ast.IsIdentifier(name) || classExprName.Text() != name.Text() || classBodyReferencesName(rhs, classExprName.Text()))
-			if needsIsolation {
-				className := tx.Factory().NewIdentifier(ce.Name().Text())
+			hasExprName := classExprName != nil && len(classExprName.Text()) > 0
 
+			if hasExprName {
+				// Set up TrackSymbol watch to detect if the class expression's own
+				// symbol is referenced during member type serialization.
+				tx.tracker.watchedClassSymbol = rhs.Symbol()
+				tx.tracker.classSymbolTracked = false
+
+				// Serialize class members using the class expression name, which
+				// triggers TrackSymbol for any self-referential member types.
+				className := tx.Factory().NewIdentifier(classExprName.Text())
 				classMods := []*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)}
 				classDecl := tx.transformClassExpressionToDeclaration(rhs, className, tx.Factory().NewModifierList(classMods))
 				tx.preserveJsDoc(classDecl, input)
 
-				nsName := tx.Factory().NewUniqueNameEx("_ns", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				var nsMods []*ast.Node
+				// Determine if namespace isolation is needed:
+				// - The class expression name differs from the export name, OR
+				// - The class's own symbol was used in a member's serialized type
+				namesDiffer := !ast.IsIdentifier(name) || classExprName.Text() != name.Text()
+				needsIsolation := namesDiffer || tx.tracker.classSymbolTracked
+				tx.tracker.watchedClassSymbol = nil
+				tx.tracker.classSymbolTracked = false
+
+				if needsIsolation {
+					nsName := tx.Factory().NewUniqueNameEx("_ns", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+					var nsMods []*ast.Node
+					if tx.needsDeclare {
+						nsMods = append(nsMods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+					}
+					nsDecl := tx.Factory().NewModuleDeclaration(
+						tx.Factory().NewModifierList(nsMods),
+						ast.KindNamespaceKeyword,
+						nsName,
+						tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
+					)
+
+					aliasBase := "_exported"
+					if nameText := name.Text(); ast.IsIdentifier(name) && scanner.IsIdentifierText("_"+nameText, core.LanguageVariantStandard) {
+						aliasBase = "_" + nameText
+					}
+					importAlias := tx.Factory().NewUniqueNameEx(aliasBase, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+					qualifiedName := tx.Factory().NewQualifiedName(nsName, className)
+					importDecl := tx.Factory().NewImportEqualsDeclaration(nil, false, importAlias, qualifiedName)
+
+					exportSpecifier := tx.Factory().NewExportSpecifier(false, importAlias, name)
+					exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{exportSpecifier})), nil, nil)
+					tx.removeAllComments(exportDecl)
+
+					result := []*ast.Node{nsDecl, importDecl}
+					if tx.cjsExportAssignmentName != nil {
+						result = append(result, tx.wrapInCJSExportNamespace(exportDecl))
+					} else {
+						result = append(result, exportDecl)
+					}
+					return tx.Factory().NewSyntaxList(result)
+				}
+
+				// No isolation needed: names match and no self-references.
+				// Update modifiers to include declare if needed.
+				var mods []*ast.Node
+				mods = append(mods, tx.Factory().NewModifier(ast.KindExportKeyword))
 				if tx.needsDeclare {
-					nsMods = append(nsMods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+					mods = append(mods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
 				}
-				nsDecl := tx.Factory().NewModuleDeclaration(
-					tx.Factory().NewModifierList(nsMods),
-					ast.KindNamespaceKeyword,
-					nsName,
-					tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
+				classDecl = tx.Factory().UpdateClassDeclaration(
+					classDecl.AsClassDeclaration(),
+					tx.Factory().NewModifierList(mods),
+					classDecl.AsClassDeclaration().Name(),
+					classDecl.AsClassDeclaration().TypeParameters,
+					classDecl.AsClassDeclaration().HeritageClauses,
+					classDecl.AsClassDeclaration().Members,
 				)
-
-				aliasBase := "_exported"
-				if nameText := name.Text(); ast.IsIdentifier(name) && scanner.IsIdentifierText("_"+nameText, core.LanguageVariantStandard) {
-					aliasBase = "_" + nameText
-				}
-				importAlias := tx.Factory().NewUniqueNameEx(aliasBase, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				qualifiedName := tx.Factory().NewQualifiedName(nsName, className)
-				importDecl := tx.Factory().NewImportEqualsDeclaration(nil, false, importAlias, qualifiedName)
-
-				exportSpecifier := tx.Factory().NewExportSpecifier(false, importAlias, name)
-				exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{exportSpecifier})), nil, nil)
-				tx.removeAllComments(exportDecl)
-
-				result := []*ast.Node{nsDecl, importDecl}
-				if tx.cjsExportAssignmentName != nil {
-					result = append(result, tx.wrapInCJSExportNamespace(exportDecl))
-				} else {
-					result = append(result, exportDecl)
-				}
-				return tx.Factory().NewSyntaxList(result)
+				return classDecl
 			}
 			var mods []*ast.Node
 			mods = append(mods, tx.Factory().NewModifier(ast.KindExportKeyword))
@@ -1363,31 +1391,6 @@ func (tx *DeclarationTransformer) wrapInCJSExportNamespace(content *ast.Node) *a
 func isCommonJSAliasExport(node *ast.Node) bool {
 	if ast.IsBinaryExpression(node) && ast.IsIdentifier(node.AsBinaryExpression().Right) {
 		if symbol := node.Symbol(); symbol != nil && len(symbol.Declarations) == 1 {
-			return true
-		}
-	}
-	return false
-}
-
-// classBodyReferencesName checks whether any member initializer or method body
-// in the class expression references the given name (e.g., self-references like `new B()`).
-func classBodyReferencesName(classExpr *ast.Node, name string) bool {
-	found := false
-	var walk func(node *ast.Node) bool
-	walk = func(node *ast.Node) bool {
-		if found {
-			return true
-		}
-		if ast.IsIdentifier(node) && node.Text() == name {
-			found = true
-			return true
-		}
-		node.ForEachChild(walk)
-		return found
-	}
-	for _, member := range classExpr.ClassLikeData().Members.Nodes {
-		member.ForEachChild(walk)
-		if found {
 			return true
 		}
 	}
@@ -1789,6 +1792,10 @@ func (tx *DeclarationTransformer) buildClassMembers(classNode *ast.Node, extraMe
 }
 
 func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDeclaration) *ast.Node {
+	previousEnclosingDeclaration := tx.enclosingDeclaration
+	tx.enclosingDeclaration = input.AsNode()
+	defer func() { tx.enclosingDeclaration = previousEnclosingDeclaration }()
+
 	tx.state.errorNameNode = input.Name()
 	tx.tracker.PushErrorFallbackNode(input.AsNode())
 	defer tx.tracker.PopErrorFallbackNode()

@@ -24,10 +24,7 @@ module.exports.A = class B {
 declare namespace _ns {
     export class B {
         f1: number;
-        self: {
-            f1: number;
-            self: /*elided*/ any;
-        };
+        self: B;
     }
 }
 import _A = _ns.B;
