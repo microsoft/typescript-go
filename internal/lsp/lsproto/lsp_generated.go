@@ -30922,18 +30922,27 @@ const (
 	//
 	// Clients are allowed to rendered diagnostics with this tag strike through.
 	DiagnosticTagDeprecated DiagnosticTag = 2
+	// Visual Studio-specific tag: the diagnostic is not rendered with a squiggle in the editor. When combined with Unnecessary, Visual Studio renders the code as faded-out text rather than a squiggle.
+	DiagnosticTagVsHiddenInEditor DiagnosticTag = 2147483641
 )
 
-const _DiagnosticTag_name = "UnnecessaryDeprecated"
+const _DiagnosticTag_name = "UnnecessaryDeprecatedVsHiddenInEditor"
 
-var _DiagnosticTag_index = [...]uint16{0, 11, 21}
+var (
+	_DiagnosticTag_index_0 = [...]uint16{0, 11, 21}
+	_DiagnosticTag_index_1 = [...]uint16{0, 16}
+)
 
 func (e DiagnosticTag) String() string {
-	i := int(e) - 1
-	if i < 0 || i >= len(_DiagnosticTag_index)-1 {
+	switch {
+	case 1 <= e && e <= 2:
+		i := int(e) - 1
+		return _DiagnosticTag_name[0+_DiagnosticTag_index_0[i] : 0+_DiagnosticTag_index_0[i+1]]
+	case e == 2147483641:
+		return _DiagnosticTag_name[21:37]
+	default:
 		return fmt.Sprintf("DiagnosticTag(%d)", e)
 	}
-	return _DiagnosticTag_name[_DiagnosticTag_index[i]:_DiagnosticTag_index[i+1]]
 }
 
 // How a completion was triggered
