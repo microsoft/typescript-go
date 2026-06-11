@@ -1,0 +1,148 @@
+//// [tests/cases/compiler/forLoopInitializerAlwaysThrowsInTryCatch.ts] ////
+
+=== forLoopInitializerAlwaysThrowsInTryCatch.ts ===
+// Repro from github.com/microsoft/TypeScript/issues/63092
+// A for-loop initializer that always throws, wrapped in try/catch,
+// should not cause a stack overflow in control flow analysis.
+
+function test1(v: 0 | 1 | 2) {
+>test1 : (v: 0 | 1 | 2) => void
+>v : 0 | 1 | 2
+
+  try {
+    for (
+      (function () {
+>(function () {        throw new Error("");      })() : never
+>(function () {        throw new Error("");      }) : () => never
+>function () {        throw new Error("");      } : () => never
+
+        throw new Error("");
+>new Error("") : Error
+>Error : ErrorConstructor
+>"" : ""
+
+      })();
+      v;
+>v : 0 | 1 | 2
+
+      v++
+>v++ : number
+>v : number
+
+    ) {}
+  } catch (e) {}
+>e : unknown
+
+  v;
+>v : 0 | 1 | 2
+}
+
+function test2() {
+>test2 : () => void
+
+  try {
+    for (
+      (function () { throw "1"; })();
+>(function () { throw "1"; })() : never
+>(function () { throw "1"; }) : () => never
+>function () { throw "1"; } : () => never
+>"1" : "1"
+
+      (function* () { throw "2"; })();
+>(function* () { throw "2"; })() : Generator<never, never, unknown>
+>(function* () { throw "2"; }) : () => Generator<never, never, unknown>
+>function* () { throw "2"; } : () => Generator<never, never, unknown>
+>"2" : "2"
+
+      (function* () { throw "3"; })()
+>(function* () { throw "3"; })() : Generator<never, never, unknown>
+>(function* () { throw "3"; }) : () => Generator<never, never, unknown>
+>function* () { throw "3"; } : () => Generator<never, never, unknown>
+>"3" : "3"
+
+    ) {}
+  } catch (e) {}
+>e : unknown
+}
+
+function test3() {
+>test3 : () => void
+
+  let x = 0;
+>x : number
+>0 : 0
+
+  while (true) {
+>true : true
+
+    try {
+      for (
+        (function () { throw new Error(""); })();
+>(function () { throw new Error(""); })() : never
+>(function () { throw new Error(""); }) : () => never
+>function () { throw new Error(""); } : () => never
+>new Error("") : Error
+>Error : ErrorConstructor
+>"" : ""
+
+        true;
+>true : true
+
+        x++
+>x++ : number
+>x : number
+
+      ) {
+        break;
+        continue;
+      }
+    } catch (e) {}
+>e : unknown
+  }
+}
+
+function test4() {
+>test4 : () => void
+
+  let x = 0;
+>x : number
+>0 : 0
+
+  outer: for (; x < 10; x++) {
+>outer : any
+>x < 10 : boolean
+>x : number
+>10 : 10
+>x++ : number
+>x : number
+
+    try {
+      inner: for (
+>inner : any
+
+        (function () { throw new Error(""); })();
+>(function () { throw new Error(""); })() : never
+>(function () { throw new Error(""); }) : () => never
+>function () { throw new Error(""); } : () => never
+>new Error("") : Error
+>Error : ErrorConstructor
+>"" : ""
+
+        true;
+>true : true
+
+        x++
+>x++ : number
+>x : number
+
+      ) {
+        continue inner;
+>inner : any
+      }
+    } catch (e) {}
+>e : unknown
+  }
+}
+
+
+
