@@ -6436,9 +6436,6 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return err
 			}
 		case `"initializationOptions"`:
-			if dec.PeekKind() == 'n' {
-				return errNull("initializationOptions")
-			}
 			if err := json.UnmarshalDecode(dec, &s.InitializationOptions); err != nil {
 				return err
 			}

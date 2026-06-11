@@ -345,6 +345,12 @@ export type Property = {
 	 * Custom extension for special value types.
 	 */
 	omitzeroValue?: boolean;
+
+	/**
+	 * Whether this property accepts a JSON null value, treating it as absent.
+	 * Custom extension used when overriding a nullable type with a non-nullable one.
+	 */
+	allowNull?: boolean;
 };
 
 /**

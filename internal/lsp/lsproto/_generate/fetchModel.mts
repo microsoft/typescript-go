@@ -33,7 +33,7 @@ let metaModelSchema = await metaModelSchemaResponse.text();
 // Patch the schema to add omitzeroValue property to Property type
 metaModelSchema = metaModelSchema.replace(
     /(\t \* Whether the property is deprecated or not\. If deprecated\n\t \* the property contains the deprecation message\.\n\t \*\/\n\tdeprecated\?: string;)\n}/m,
-    `$1\n\n\t/**\n\t * Whether this property uses omitzero without being a pointer.\n\t * Custom extension for special value types.\n\t */\n\tomitzeroValue?: boolean;\n}`,
+    `$1\n\n\t/**\n\t * Whether this property uses omitzero without being a pointer.\n\t * Custom extension for special value types.\n\t */\n\tomitzeroValue?: boolean;\n\n\t/**\n\t * Whether this property accepts a JSON null value, treating it as absent.\n\t * Custom extension used when overriding a nullable type with a non-nullable one.\n\t */\n\tallowNull?: boolean;\n}`,
 );
 
 fs.writeFileSync(metaModelSchemaPath, metaModelSchema);
