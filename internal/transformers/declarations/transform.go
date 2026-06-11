@@ -59,7 +59,7 @@ type DeclarationTransformer struct {
 	enclosingDeclaration             *ast.Node
 	resultHasExternalModuleIndicator bool
 	suppressNewDiagnosticContexts    bool
-	witnessedCjsExports              map[string]struct{}
+	witnessedCjsExports              collections.Set[string]
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
 	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
 	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
@@ -270,7 +270,7 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
-	tx.witnessedCjsExports = make(map[string]struct{})
+	tx.witnessedCjsExports.Clear()
 	tx.state.currentSourceFile = node
 	tx.collectFileReferences(node)
 	tx.resolver.PrecalculateDeclarationEmitVisibility(node)
@@ -1134,10 +1134,10 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 	if ast.IsIdentifier(name) || ast.IsStringLiteral(name) {
 		nameText = name.Text()
 	}
-	if _, ok := tx.witnessedCjsExports[nameText]; ok && nameText != "" {
+	if tx.witnessedCjsExports.Has(nameText) && nameText != "" {
 		return nil // Already emitted this export name
 	}
-	tx.witnessedCjsExports[nameText] = struct{}{}
+	tx.witnessedCjsExports.Add(nameText)
 	tx.resultHasExternalModuleIndicator = true
 	tx.resultHasScopeMarker = true
 	if isCommonJSAliasExport(input) {
