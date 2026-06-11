@@ -296,6 +296,14 @@ export const generate = task({
     },
 });
 
+export const generateExtension = task({
+    name: "generate:extension",
+    description: "Generates files in the extension",
+    run: async () => {
+        await $`npm run -w _extension generateLocBundle`;
+    },
+});
+
 // ── Enum generation from Go source ──────────────────────────────
 
 /**
@@ -323,6 +331,7 @@ const enumDefs = [
     { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
 ];
 
 /**

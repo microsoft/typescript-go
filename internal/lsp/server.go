@@ -172,10 +172,11 @@ type Server struct {
 	defaultLibraryPath string
 	typingsLocation    string
 
-	initializeParams   *lsproto.InitializeParams
-	clientCapabilities lsproto.ResolvedClientCapabilities
-	positionEncoding   lsproto.PositionEncodingKind
-	locale             locale.Locale
+	initializeParams      *lsproto.InitializeParams
+	initializationOptions *lsproto.InitializationOptions
+	clientCapabilities    lsproto.ResolvedClientCapabilities
+	positionEncoding      lsproto.PositionEncodingKind
+	locale                locale.Locale
 
 	watchEnabled     bool
 	telemetryEnabled bool
@@ -364,13 +365,14 @@ func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.UserPreferences != nil {
+		if opts := s.initializationOptions; opts.UserPreferences != nil {
+			userPrefs := *opts.UserPreferences
 			s.logger.Logf(
 				"received formatting options from initialization: %T\n%+v",
-				*s.initializeParams.InitializationOptions.UserPreferences,
-				*s.initializeParams.InitializationOptions.UserPreferences,
+				userPrefs,
+				userPrefs,
 			)
-			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
+			if config, ok := userPrefs.(map[string]any); ok {
 				return lsutil.ParseUserPreferences(map[string]any{"js/ts": config}), nil
 			}
 		}
@@ -1019,8 +1021,16 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	s.initStarted.Store(true)
 
 	s.initializeParams = params
-	if params.InitializationOptions != nil && params.InitializationOptions.LogVerbosity != nil {
-		if v := *params.InitializationOptions.LogVerbosity; isValidLogVerbosity(v) {
+	// The spec types initializationOptions as nullable; treat both null and an
+	// absent value as empty options so the rest of the server can read fields
+	// off s.initializationOptions without nil-checking the container.
+	if params.InitializationOptions != nil && params.InitializationOptions.InitializationOptions != nil {
+		s.initializationOptions = params.InitializationOptions.InitializationOptions
+	} else {
+		s.initializationOptions = &lsproto.InitializationOptions{}
+	}
+	if s.initializationOptions.LogVerbosity != nil {
+		if v := *s.initializationOptions.LogVerbosity; isValidLogVerbosity(v) {
 			s.logger.SetVerbosity(v)
 		}
 	}
@@ -1181,13 +1191,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
 	var disablePushDiagnostics bool
 	var enableTelemetry bool
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil {
-		if s.initializeParams.InitializationOptions.DisablePushDiagnostics != nil {
-			disablePushDiagnostics = *s.initializeParams.InitializationOptions.DisablePushDiagnostics
-		}
-		if s.initializeParams.InitializationOptions.EnableTelemetry != nil {
-			enableTelemetry = *s.initializeParams.InitializationOptions.EnableTelemetry
-		}
+	if s.initializationOptions.DisablePushDiagnostics != nil {
+		disablePushDiagnostics = *s.initializationOptions.DisablePushDiagnostics
+	}
+	if s.initializationOptions.EnableTelemetry != nil {
+		enableTelemetry = *s.initializationOptions.EnableTelemetry
 	}
 	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
 	if hasDynamicWatchRegistration {
@@ -1668,7 +1676,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 	return defaultLs.ResolveCodeLens(
 		ctx,
 		codeLens,
-		s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName,
+		s.initializationOptions.CodeLensShowLocationsCommandName,
 		orchestrator,
 	)
 }

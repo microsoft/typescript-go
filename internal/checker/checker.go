@@ -11,7 +11,6 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -25926,7 +25925,6 @@ func (c *Checker) getIntersectionType(types []*Type) *Type {
 func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, alias *TypeAlias) *Type {
 	var orderedTypes orderedSet[*Type]
 	orderedTypes.values = make([]*Type, 0, len(types))
-	orderedTypes.valuesByKey = make(map[*Type]struct{}, len(types))
 	includes := c.addTypesToIntersection(&orderedTypes, 0, types)
 	typeSet := orderedTypes.values
 	objectFlags := ObjectFlagsNone
@@ -28893,7 +28891,7 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 				sb.WriteString(texts[i+1])
 			case c.isGenericIndexType(t) || c.isPatternLiteralPlaceholderType(t):
 				newTypes = append(newTypes, t)
-				newTexts = append(newTexts, sb.String())
+				newTexts = append(newTexts, stringutil.CombineSurrogatePairs(sb.String()))
 				sb.Reset()
 				sb.WriteString(texts[i+1])
 			default:
@@ -28906,9 +28904,9 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 		return c.stringType
 	}
 	if len(newTypes) == 0 {
-		return c.getStringLiteralType(sb.String())
+		return c.getStringLiteralType(stringutil.CombineSurrogatePairs(sb.String()))
 	}
-	newTexts = append(newTexts, sb.String())
+	newTexts = append(newTexts, stringutil.CombineSurrogatePairs(sb.String()))
 	if core.Every(newTexts, func(t string) bool { return t == "" }) {
 		if core.Every(newTypes, func(t *Type) bool { return t.flags&TypeFlagsString != 0 }) {
 			return c.stringType
@@ -28959,15 +28957,15 @@ func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
 func applyStringMapping(symbol *ast.Symbol, str string) string {
 	switch intrinsicTypeKinds[symbol.Name] {
 	case IntrinsicTypeKindUppercase:
-		return strings.ToUpper(str)
+		return stringutil.ToUpperJS(str)
 	case IntrinsicTypeKindLowercase:
-		return strings.ToLower(str)
+		return stringutil.ToLowerJS(str)
 	case IntrinsicTypeKindCapitalize:
-		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToUpper(str[:size]) + str[size:]
+		_, size := stringutil.DecodeJSStringRune(str)
+		return stringutil.ToUpperJS(str[:size]) + str[size:]
 	case IntrinsicTypeKindUncapitalize:
-		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToLower(str[:size]) + str[size:]
+		_, size := stringutil.DecodeJSStringRune(str)
+		return stringutil.ToLowerJS(str[:size]) + str[size:]
 	}
 	return str
 }
