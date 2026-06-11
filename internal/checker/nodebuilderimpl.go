@@ -2742,17 +2742,6 @@ func (b *NodeBuilderImpl) createAnonymousTypeNodeEx(t *Type, forceClassExpansion
 		// 	// Instance and static types share the same symbol; only add 'typeof' for the static side.
 		// 	return b.symbolToTypeNode(symbol, isInstanceType, nil)
 		// } else
-		// For named class expressions, when the type references the enclosing class expression's own symbol,
-		// use the class name directly instead of expanding as a type literal
-		if !forceExpansion && b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral != 0 &&
-			b.ctx.enclosingDeclaration != nil && ast.IsClassExpression(b.ctx.enclosingDeclaration) &&
-			b.ctx.enclosingDeclaration.AsClassExpression().Name() != nil &&
-			symbol.ValueDeclaration == b.ctx.enclosingDeclaration {
-			b.ctx.tracker.TrackSymbol(symbol, b.ctx.enclosingDeclaration, isInstanceType)
-			name := b.ctx.enclosingDeclaration.AsClassExpression().Name().Text()
-			b.ctx.approximateLength += len(name)
-			return b.f.NewTypeReferenceNode(b.f.NewIdentifier(name), nil)
-		}
 		if !forceExpansion &&
 			(symbol.Flags&ast.SymbolFlagsClass != 0 && !forceClassExpansion && b.ch.getBaseTypeVariableOfClass(symbol) == nil && !(symbol.ValueDeclaration != nil && ast.IsClassLike(symbol.ValueDeclaration) && b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral != 0 && (!ast.IsClassDeclaration(symbol.ValueDeclaration) || b.ch.IsSymbolAccessible(symbol, b.ctx.enclosingDeclaration, isInstanceType, false /*shouldComputeAliasesToMakeVisible*/).Accessibility != printer.SymbolAccessibilityAccessible)) || symbol.Flags&(ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 || b.shouldWriteTypeOfFunctionSymbol(symbol, typeId)) {
 			if b.shouldExpandType(t, false /*isAlias*/) {
@@ -2940,6 +2929,16 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 		// TODO: GH#18217
 	} else if b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral != 0 && t.symbol.ValueDeclaration != nil && ast.IsClassLike(t.symbol.ValueDeclaration) && !b.ch.IsValueSymbolAccessible(t.symbol, b.ctx.enclosingDeclaration) {
 		return b.createAnonymousTypeNode(t)
+	} else if b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral == 0 &&
+		b.ctx.flags&nodebuilder.FlagsUseTypeOfFunction != 0 &&
+		b.ctx.enclosingDeclaration != nil &&
+		t.symbol.ValueDeclaration != nil && ast.IsClassExpression(t.symbol.ValueDeclaration) &&
+		t.symbol.ValueDeclaration.AsClassExpression().Name() != nil &&
+		ast.FindAncestor(b.ctx.enclosingDeclaration, ast.IsClassExpression) == t.symbol.ValueDeclaration {
+		b.ctx.tracker.TrackSymbol(t.symbol, b.ctx.enclosingDeclaration, ast.SymbolFlagsType)
+		name := t.symbol.ValueDeclaration.AsClassExpression().Name().Text()
+		b.ctx.approximateLength += len(name)
+		return b.f.NewTypeReferenceNode(b.f.NewIdentifier(name), nil)
 	} else {
 		outerTypeParameters := t.Target().AsInterfaceType().OuterTypeParameters()
 		i := 0

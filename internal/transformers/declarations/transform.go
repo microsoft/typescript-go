@@ -66,6 +66,7 @@ type DeclarationTransformer struct {
 	rawLibReferenceDirectives        []*ast.FileReference
 	bindingNameVisitor               *ast.NodeVisitor
 	cjsExportAssignmentName          *ast.Node // tracks the name node used for `export =` in CJS module.exports assignments
+	inClassExpressionDeclaration     bool      // true when serializing members of a class expression kept as a class declaration
 }
 
 // TODO: Convert to transformers.TransformerFactory signature to allow more automatic composition with other transforms
@@ -1403,7 +1404,12 @@ func isCommonJSAliasExport(node *ast.Node) bool {
 func (tx *DeclarationTransformer) transformClassExpressionToDeclaration(classExpr *ast.Node, className *ast.Node, modifiers *ast.ModifierList) *ast.Node {
 	previousEnclosingDeclaration := tx.enclosingDeclaration
 	tx.enclosingDeclaration = classExpr
-	defer func() { tx.enclosingDeclaration = previousEnclosingDeclaration }()
+	previousInClassExpressionDeclaration := tx.inClassExpressionDeclaration
+	tx.inClassExpressionDeclaration = true
+	defer func() {
+		tx.enclosingDeclaration = previousEnclosingDeclaration
+		tx.inClassExpressionDeclaration = previousInClassExpressionDeclaration
+	}()
 
 	var extraMembers []*ast.Node
 	if ast.IsInJSFile(classExpr) {
@@ -1470,7 +1476,11 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 		if tx.state.currentSourceFile.IsJS() {
 			// JS types have a heap of constructs we can't directly emit into .d.ts files; the node builder contains logic to remap those where possible, so we invoke it here
 			// In strada we always built js declarations symbolically, so all js type nodes went through this postprocessing
-			res := tx.resolver.TryJSTypeNodeToTypeNode(tx.EmitContext(), node.Type(), tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+			jsFlags := declarationEmitNodeBuilderFlags
+			if tx.inClassExpressionDeclaration {
+				jsFlags &^= nodebuilder.FlagsWriteClassExpressionAsTypeLiteral
+			}
+			res := tx.resolver.TryJSTypeNodeToTypeNode(tx.EmitContext(), node.Type(), tx.enclosingDeclaration, jsFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 			if res != nil {
 				return res
 			}
@@ -1491,10 +1501,14 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 	}
 	var typeNode *ast.Node
 
+	flags := declarationEmitNodeBuilderFlags
+	if tx.inClassExpressionDeclaration {
+		flags &^= nodebuilder.FlagsWriteClassExpressionAsTypeLiteral
+	}
 	if ast.HasInferredType(node) {
-		typeNode = tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+		typeNode = tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, flags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else if ast.IsFunctionLike(node) {
-		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, flags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else {
 		debug.AssertNever(node)
 	}
