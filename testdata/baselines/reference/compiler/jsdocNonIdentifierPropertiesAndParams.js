@@ -33,8 +33,17 @@ export function Button(props) {
  * @property {string | null | undefined} [aria-label] Accessibility label
  */
 export type ButtonProps = {
+    /**
+     * The button label
+     */
     label: string;
+    /**
+     * Test automation attribute
+     */
     "data-test-name"?: string | null | undefined;
+    /**
+     * Accessibility label
+     */
     "aria-label"?: string | null | undefined;
 };
 /**
