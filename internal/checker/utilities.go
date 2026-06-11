@@ -814,16 +814,18 @@ type orderedSet[T comparable] struct {
 	valuesByKey map[T]struct{}
 	values      []T
 	inline      [orderedSetMapThreshold]T
-	usingInline bool
 }
 
 func (s *orderedSet[T]) init(hint int) {
 	if hint <= orderedSetMapThreshold {
 		s.values = s.inline[:0]
-		s.usingInline = true
 	} else {
 		s.values = make([]T, 0, hint)
 	}
+}
+
+func (s *orderedSet[T]) usesInline() bool {
+	return cap(s.values) != 0 && &s.values[:1][0] == &s.inline[0]
 }
 
 func (s *orderedSet[T]) contains(value T) bool {
@@ -846,11 +848,10 @@ func (s *orderedSet[T]) add(value T) {
 	if s.values == nil {
 		s.init(0)
 	}
-	if s.usingInline && len(s.values) == cap(s.values) {
+	if s.usesInline() && len(s.values) == cap(s.values) {
 		values := make([]T, len(s.values), len(s.values)*2)
 		copy(values, s.values)
 		s.values = values
-		s.usingInline = false
 	}
 	s.values = append(s.values, value)
 	// Small sets are served by a linear scan over values; only materialize the map once the set
@@ -868,7 +869,7 @@ func (s *orderedSet[T]) add(value T) {
 }
 
 func (s *orderedSet[T]) valuesForStorage(values []T) []T {
-	if s.usingInline {
+	if s.usesInline() {
 		return slices.Clone(values)
 	}
 	return values
