@@ -2257,8 +2257,9 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
 	}
 
-	// The WriteFile callback writes emitted files to the session's file system,
-	// which should trigger a callback in JavaScript or panic...
+	// The WriteFile callback writes emitted files to the session's file system.
+	// If callbackFS has writeFile enabled, this delegates to the client-provided
+	// virtual FS; otherwise it writes to the base FS.
 	writeFile := func(fileName string, text string, data *compiler.WriteFileData) error {
 		return s.projectSession.FS().WriteFile(fileName, text)
 	}
