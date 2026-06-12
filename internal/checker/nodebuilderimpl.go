@@ -96,9 +96,8 @@ type NodeBuilderImpl struct {
 	pc *pseudochecker.PseudoChecker
 
 	// cache
-	links       core.LinkStore[*ast.Node, NodeBuilderLinks]
-	symbolLinks core.LinkStore[*ast.Symbol, NodeBuilderSymbolLinks]
-
+	links       ast.NodeLinkStore[NodeBuilderLinks]
+	symbolLinks ast.SymbolLinkStore[NodeBuilderSymbolLinks]
 	// state
 	ctx *NodeBuilderContext
 
@@ -3119,7 +3118,7 @@ func (b *NodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *NodeB
 	startLength := b.ctx.approximateLength
 	result := transform(b, t)
 	addedLength := b.ctx.approximateLength - startLength
-	if canUseCache && !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
+	if canUseCache && !b.ctx.reportedDiagnostic && !b.ctx.encounteredError && b.ctx.enclosingDeclaration != nil {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
 		if links.serializedTypes == nil {
 			links.serializedTypes = make(map[CompositeTypeCacheIdentity]*SerializedTypeEntry)
