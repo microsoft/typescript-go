@@ -4,8 +4,11 @@ import (
 	"iter"
 	"maps"
 	"math"
+	"os"
+	rtdebug "runtime/debug"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"unicode"
@@ -17,6 +20,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+func ApplyDebugStackLimit() {
+	v := os.Getenv("TS_GO_DEBUG_STACK_LIMIT") //nolint:forbidigo
+	if v == "" {
+		return
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n <= 0 {
+		return
+	}
+	rtdebug.SetMaxStack(n)
+}
 
 func Filter[T any](slice []T, f func(T) bool) []T {
 	for i, value := range slice {
@@ -542,17 +557,17 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 //
 // @internal
 func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
-	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
-	bestDistance := math.Floor(float64(len(name))*0.4) + 0.9 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
+	maximumLengthDifference := max(2, int(float64(len(runeName))*0.34))
+	bestDistance := math.Floor(float64(len(runeName))*0.4) + 0.9 // If the best result is worse than this, don't bother.
 	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
 	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
 	hasBest := false
 	for candidate := range candidates {
 		candidateName := getName(candidate)
-		maxLen := max(len(candidateName), len(name))
-		minLen := min(len(candidateName), len(name))
+		maxLen := max(len(candidateName), len(runeName))
+		minLen := min(len(candidateName), len(runeName))
 		if candidateName != "" && maxLen-minLen <= maximumLengthDifference {
 			if candidateName == name {
 				continue

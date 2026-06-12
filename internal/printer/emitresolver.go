@@ -110,6 +110,7 @@ type EmitResolver interface {
 	GetEnumMemberValue(node *ast.Node) evaluator.Result
 	IsLateBound(node *ast.Node) bool
 	IsOptionalParameter(node *ast.Node) bool
+	GetBaseDeclarationsForPropertyDeclaration(node *ast.Node) []*ast.Node
 
 	// isolatedDeclarations-specific declaration emit
 	GetPropertiesOfContainerFunction(node *ast.Node) []*ast.Symbol
@@ -122,4 +123,5 @@ type EmitResolver interface {
 	CreateLiteralConstValue(emitContext *EmitContext, node *ast.Node, tracker nodebuilder.SymbolTracker) *ast.Node
 	CreateTypeOfExpression(emitContext *EmitContext, expression *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	CreateLateBoundIndexSignatures(emitContext *EmitContext, container *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
+	TryJSTypeNodeToTypeNode(emitContext *EmitContext, typeNode *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 }

@@ -1119,6 +1119,8 @@ func (n *Node) TypeExpression() *Node {
 		return n.AsJSDocTypeTag().TypeExpression
 	case KindJSDocTypedefTag:
 		return n.AsJSDocTypedefTag().TypeExpression
+	case KindJSDocCallbackTag:
+		return n.AsJSDocCallbackTag().TypeExpression
 	case KindJSDocSatisfiesTag:
 		return n.AsJSDocSatisfiesTag().TypeExpression
 	case KindJSDocThrowsTag:
@@ -1210,6 +1212,7 @@ func (node *NodeDefault) forEachChildIter(yield func(v *Node) bool) {
 func (node *NodeDefault) IterChildren() iter.Seq[*Node] {
 	return node.forEachChildIter
 }
+
 func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node                   { return node.AsNode() }
 func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                    { return nil }
 func (node *NodeDefault) Name() *DeclarationName                                { return nil }
@@ -1519,7 +1522,8 @@ func (node *ExportableBase) ExportableData() *ExportableBase { return node }
 
 // ModifiersBase
 
-func (node *ModifiersBase) Modifiers() *ModifierList { return node.modifiers }
+func (node *ModifiersBase) Modifiers() *ModifierList             { return node.modifiers }
+func (node *ModifiersBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 
 // LocalsContainerBase
 
@@ -1612,7 +1616,8 @@ func (node *CompositeBase) computeSubtreeFacts() SubtreeFacts {
 
 // TypeSyntaxBase
 
-func (node *TypeSyntaxBase) computeSubtreeFacts() SubtreeFacts   { return SubtreeContainsTypeScript }
+func (node *TypeSyntaxBase) computeSubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
+
 func (node *TypeSyntaxBase) propagateSubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
 
 func (node *Token) computeSubtreeFacts() SubtreeFacts {
@@ -2147,7 +2152,7 @@ func (node *NewExpression) propagateSubtreeFacts() SubtreeFacts {
 }
 
 func (node *MetaProperty) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name)
+	return propagateSubtreeFacts(node.name) &^ SubtreeContainsIdentifier
 }
 
 func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
@@ -2995,4 +3000,12 @@ func forEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag,
 
 func visitEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag, v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocParameterOrPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+}
+
+func (f *NodeFactory) ReleaseArenas() {
+	*f = NodeFactory{
+		hooks:     f.hooks,
+		textCount: f.textCount,
+		nodeCount: f.nodeCount,
+	}
 }

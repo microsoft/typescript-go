@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityNamespaceMembers.ts ===
+// 
 // declare namespace NS {
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace NS {
 // |     type StringAlias = string;
 // |     type Pair<T> = {
@@ -33,7 +34,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace NS
 // | ```
 // | 
@@ -61,9 +62,9 @@
 [
   {
     "marker": {
-      "Position": 20,
+      "Position": 21,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 20
       },
       "Name": "1",
@@ -73,15 +74,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace NS\n```\n"
+          "value": "```typescript\nnamespace NS\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 20
           }
         },
@@ -92,9 +93,9 @@
   },
   {
     "marker": {
-      "Position": 20,
+      "Position": 21,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 20
       },
       "Name": "1",
@@ -104,15 +105,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace NS {\n    type StringAlias = string;\n    type Pair<T> = {\n        first: T;\n        second: T;\n    };\n    enum Color {\n        Red,\n        Green,\n        Blue\n    }\n    class MyClass {\n        name: string;\n        greet(): void;\n    }\n    interface MyInterface {\n        id: number;\n        label: string;\n    }\n    let value: number;\n    function doSomething(x: string): boolean;\n    namespace doSomething { }\n}\n```\n"
+          "value": "```typescript\nnamespace NS {\n    type StringAlias = string;\n    type Pair<T> = {\n        first: T;\n        second: T;\n    };\n    enum Color {\n        Red,\n        Green,\n        Blue\n    }\n    class MyClass {\n        name: string;\n        greet(): void;\n    }\n    interface MyInterface {\n        id: number;\n        label: string;\n    }\n    let value: number;\n    function doSomething(x: string): boolean;\n    namespace doSomething { }\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 20
           }
         }

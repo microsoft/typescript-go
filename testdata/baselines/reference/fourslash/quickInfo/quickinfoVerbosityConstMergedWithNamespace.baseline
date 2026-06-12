@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityConstMergedWithNamespace.ts ===
+// 
 // declare function create(x: string): number;
 //                  ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function create(x: string): number
 // | namespace create {
 // |     let version: string;
@@ -16,7 +17,7 @@
 // | ----------------------------------------------------------------------
 //                  ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function create(x: string): number
 // | namespace create
 // | ```
@@ -26,7 +27,7 @@
 // declare namespace create {
 //                   ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function create(x: string): number
 // | namespace create {
 // |     let version: string;
@@ -39,7 +40,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function create(x: string): number
 // | namespace create
 // | ```
@@ -53,9 +54,9 @@
 [
   {
     "marker": {
-      "Position": 23,
+      "Position": 24,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 23
       },
       "Name": "1",
@@ -65,15 +66,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction create(x: string): number\nnamespace create\n```\n"
+          "value": "```typescript\nfunction create(x: string): number\nnamespace create\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 17
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 23
           }
         },
@@ -84,9 +85,9 @@
   },
   {
     "marker": {
-      "Position": 23,
+      "Position": 24,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 23
       },
       "Name": "1",
@@ -96,15 +97,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction create(x: string): number\nnamespace create {\n    let version: string;\n    function reset(): void;\n    namespace reset { }\n}\n```\n"
+          "value": "```typescript\nfunction create(x: string): number\nnamespace create {\n    let version: string;\n    function reset(): void;\n    namespace reset { }\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 17
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 23
           }
         }
@@ -114,9 +115,9 @@
   },
   {
     "marker": {
-      "Position": 68,
+      "Position": 69,
       "LSPosition": {
-        "line": 1,
+        "line": 2,
         "character": 24
       },
       "Name": "2",
@@ -126,15 +127,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction create(x: string): number\nnamespace create\n```\n"
+          "value": "```typescript\nfunction create(x: string): number\nnamespace create\n```\n"
         },
         "range": {
           "start": {
-            "line": 1,
+            "line": 2,
             "character": 18
           },
           "end": {
-            "line": 1,
+            "line": 2,
             "character": 24
           }
         },
@@ -145,9 +146,9 @@
   },
   {
     "marker": {
-      "Position": 68,
+      "Position": 69,
       "LSPosition": {
-        "line": 1,
+        "line": 2,
         "character": 24
       },
       "Name": "2",
@@ -157,15 +158,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nfunction create(x: string): number\nnamespace create {\n    let version: string;\n    function reset(): void;\n    namespace reset { }\n}\n```\n"
+          "value": "```typescript\nfunction create(x: string): number\nnamespace create {\n    let version: string;\n    function reset(): void;\n    namespace reset { }\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 1,
+            "line": 2,
             "character": 18
           },
           "end": {
-            "line": 1,
+            "line": 2,
             "character": 24
           }
         }

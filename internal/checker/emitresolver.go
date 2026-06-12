@@ -157,7 +157,7 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		}
 		// External module augmentation is always visible
 		// A @typedef at top-level in an external module is always visible
-		if ast.IsExternalModuleAugmentation(node) || ast.IsImplicitlyExportedJSTypeAlias(node) {
+		if ast.IsExternalModuleAugmentation(node) || ast.IsImplicitlyExportedJSDocDeclaration(node) {
 			return true
 		}
 		parent := ast.GetDeclarationContainer(node)
@@ -219,6 +219,15 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 	case ast.KindExportAssignment:
 		return false
 
+	// An `export {X}` (without a module specifier) is itself a visible re-export of
+	// the named binding; it contributes to the symbol's external visibility.
+	case ast.KindExportSpecifier:
+		exportDecl := node.Parent.Parent
+		if ast.IsExportDeclaration(exportDecl) && exportDecl.AsExportDeclaration().ModuleSpecifier == nil {
+			return r.isDeclarationVisible(exportDecl.Parent)
+		}
+		return false
+
 	default:
 		return false
 	}
@@ -238,9 +247,14 @@ func (r *EmitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFil
 }
 
 func isCommonJSModuleExports(node *ast.Node) bool {
-	return ast.IsBinaryExpression(node) && ast.IsExpressionStatement(node.Parent) && ast.IsSourceFile(node.Parent.Parent) &&
-		node.Parent.Parent.AsSourceFile().CommonJSModuleIndicator != nil &&
-		ast.GetAssignmentDeclarationKind(node) == ast.JSDeclarationKindModuleExports
+	if ast.IsBinaryExpression(node) && ast.IsExpressionStatement(node.Parent) && ast.IsSourceFile(node.Parent.Parent) &&
+		node.Parent.Parent.AsSourceFile().CommonJSModuleIndicator != nil {
+		switch ast.GetAssignmentDeclarationKind(node) {
+		case ast.JSDeclarationKindModuleExports, ast.JSDeclarationKindExportsProperty:
+			return true
+		}
+	}
+	return false
 }
 
 func (r *EmitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
@@ -386,7 +400,6 @@ func (r *EmitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 		if ast.IsIdentifier(declaration) {
 			continue
 		}
-
 		if !r.isDeclarationVisible(declaration) {
 			// Mark the unexported alias as visible if its parent is visible
 			// because these kind of aliases can be used to name types in declaration file
@@ -894,6 +907,17 @@ func (r *EmitResolver) GetElementAccessExpressionName(expression *ast.ElementAcc
 	return r.getReferenceResolver().GetElementAccessExpressionName(expression)
 }
 
+func (r *EmitResolver) GetReferencedMemberValueDeclaration(node *ast.Node) *ast.Declaration {
+	if !ast.IsParseTreeNode(node) {
+		return nil
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	return r.getReferenceResolver().GetReferencedMemberValueDeclaration(node)
+}
+
 // TODO: the emit resolver being responsible for some amount of node construction is a very leaky abstraction,
 // and requires giving it access to a lot of context it's otherwise not required to have, which also further complicates the API
 // and likely reduces performance. There's probably some refactoring that could be done here to simplify this.
@@ -968,6 +992,15 @@ func (r *EmitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	case string:
 		return emitContext.Factory.NewStringLiteral(value, ast.TokenFlagsNone)
 	case jsnum.Number:
+		if value.IsInf() {
+			if value > 0 {
+				return emitContext.Factory.NewIdentifier("Infinity")
+			}
+			return emitContext.Factory.NewPrefixUnaryExpression(ast.KindMinusToken, emitContext.Factory.NewIdentifier("Infinity"))
+		}
+		if value.IsNaN() {
+			return emitContext.Factory.NewIdentifier("NaN")
+		}
 		if value.Abs() != value {
 			// negative
 			return emitContext.Factory.NewPrefixUnaryExpression(
@@ -1216,4 +1249,40 @@ func (r *EmitResolver) GetPropertiesOfContainerFunction(node *ast.Node) []*ast.S
 		return []*ast.Symbol{}
 	}
 	return r.checker.getPropertiesOfType(r.checker.getTypeOfSymbol(s))
+}
+
+func (r *EmitResolver) TryJSTypeNodeToTypeNode(emitContext *printer.EmitContext, typeNode *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+	typeNode = emitContext.ParseNode(typeNode)
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
+	return requestNodeBuilder.TryJSTypeNodeToTypeNode(typeNode, enclosingDeclaration, flags, internalFlags, tracker)
+}
+
+func (r *EmitResolver) GetBaseDeclarationsForPropertyDeclaration(node *ast.Node) []*ast.Node {
+	if node == nil {
+		return nil
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	s := r.checker.getSymbolOfDeclaration(node)
+	if s == nil || s.Parent == nil {
+		return nil
+	}
+	parentType := r.checker.getDeclaredTypeOfSymbol(s.Parent)
+	if parentType == nil {
+		return nil
+	}
+	bases := r.checker.getBaseTypes(parentType)
+	for _, b := range bases {
+		baseProp := r.checker.getPropertyOfObjectType(b, s.Name)
+		if baseProp != nil {
+			return baseProp.Declarations
+			// TODO: return base declarations from all base types if any callers actually look at the list
+		}
+	}
+	return nil
 }

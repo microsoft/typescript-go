@@ -37,6 +37,10 @@ func (fs *FS) WriteFile(path string, data string) error {
 	return fs.Inner.WriteFile(path, data)
 }
 
+func (fs *FS) AppendFile(path string, data string) error {
+	return fs.Inner.AppendFile(path, data)
+}
+
 func (fs *FS) Remove(path string) error { return fs.Inner.Remove(path) }
 
 func (fs *FS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
@@ -66,4 +70,7 @@ func (fs *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	})
 }
 
-func (fs *FS) Realpath(path string) string { return fs.Inner.Realpath(path) }
+func (fs *FS) Realpath(path string) string {
+	fs.SeenFiles.Add(path)
+	return fs.Inner.Realpath(path)
+}

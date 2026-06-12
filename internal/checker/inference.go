@@ -98,10 +98,16 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		}
 		return
 	}
-	if target.flags&TypeFlagsUnion != 0 && source.flags&TypeFlagsNever == 0 {
+	if target.flags&TypeFlagsUnion != 0 {
+		var sourceTypes []*Type
+		if source.flags&TypeFlagsUnion != 0 {
+			sourceTypes = source.Types()
+		} else {
+			sourceTypes = []*Type{source}
+		}
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
-		tempSources, tempTargets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
+		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
 		// Next, infer between deeply matching source and target constituents and remove the
 		// matching types. Types deeply match when they are instantiations of the same object
 		// type AND their type arguments are themselves closely matched. This prevents incorrect
@@ -391,7 +397,12 @@ func (c *Checker) inferToMultipleTypes(n *InferenceState, source *Type, targets 
 	typeVariableCount := 0
 	if targetFlags&TypeFlagsUnion != 0 {
 		var nakedTypeVariable *Type
-		sources := source.Distributed()
+		var sources []*Type
+		if source.flags&TypeFlagsUnion != 0 {
+			sources = source.Types()
+		} else {
+			sources = []*Type{source}
+		}
 		matched := make([]bool, len(sources))
 		inferenceCircularity := false
 		// First infer to types that are not naked type variables. For each source type we
@@ -707,7 +718,9 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 							if constraint != nil && isTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
 								impliedArity := constraint.TargetTupleType().fixedLength
 								c.inferFromTypes(n, c.sliceTupleType(source, startLength, sourceArity-(startLength+impliedArity)), elementTypes[startLength])
-								c.inferFromTypes(n, c.getElementTypeOfSliceOfTupleType(source, startLength+impliedArity, endLength, false, false), elementTypes[startLength+1])
+								if restType := c.getElementTypeOfSliceOfTupleType(source, startLength+impliedArity, endLength, false, false); restType != nil {
+									c.inferFromTypes(n, restType, elementTypes[startLength+1])
+								}
 							}
 						}
 					} else if elementInfos[startLength].flags&ElementFlagsRest != 0 && elementInfos[startLength+1].flags&ElementFlagsVariadic != 0 {
@@ -719,9 +732,13 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 								impliedArity := constraint.TargetTupleType().fixedLength
 								endIndex := sourceArity - getEndElementCount(target.TargetTupleType(), ElementFlagsFixed)
 								startIndex := endIndex - impliedArity
-								trailingSlice := c.createTupleTypeEx(c.getTypeArguments(source)[startIndex:endIndex], source.TargetTupleType().elementInfos[startIndex:endIndex], false /*readonly*/)
-								c.inferFromTypes(n, c.getElementTypeOfSliceOfTupleType(source, startLength, endLength+impliedArity, false, false), elementTypes[startLength])
-								c.inferFromTypes(n, trailingSlice, elementTypes[startLength+1])
+								if startIndex >= startLength {
+									trailingSlice := c.createTupleTypeEx(c.getTypeArguments(source)[startIndex:endIndex], source.TargetTupleType().elementInfos[startIndex:endIndex], false /*readonly*/)
+									if restType := c.getElementTypeOfSliceOfTupleType(source, startLength, endLength+impliedArity, false, false); restType != nil {
+										c.inferFromTypes(n, restType, elementTypes[startLength])
+									}
+									c.inferFromTypes(n, trailingSlice, elementTypes[startLength+1])
+								}
 							}
 						}
 					}

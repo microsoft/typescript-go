@@ -68,7 +68,7 @@ func NewSnapshot(
 
 		fs:                                 fs,
 		ConfigFileRegistry:                 configFileRegistry,
-		ProjectCollection:                  &ProjectCollection{toPath: toPath},
+		ProjectCollection:                  &ProjectCollection{toPath: toPath, openFiles: openFilePaths(fs.overlays)},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		userPreferences:                    userPreferences,
 		AutoImports:                        autoImports,
@@ -264,6 +264,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		switch change.reason {
 		case UpdateReasonDidOpenFile:
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
+		case UpdateReasonDidCloseFile:
+			logger.Logf("Reason: DidCloseFile - %v", change.fileChanges.Closed)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
@@ -503,6 +505,21 @@ func (s *Snapshot) ref() {
 	}
 }
 
+// tryRef attempts to increment the snapshot's reference count. If the
+// snapshot is already disposed (refCount == 0), it returns false without
+// modifying the count. On success the caller must eventually call Deref.
+func (s *Snapshot) tryRef() bool {
+	for {
+		rc := s.refCount.Load()
+		if rc <= 0 {
+			return false
+		}
+		if s.refCount.CompareAndSwap(rc, rc+1) {
+			return true
+		}
+	}
+}
+
 // Deref decrements the snapshot's reference count. When the count reaches
 // zero, the snapshot is disposed and its resources are released.
 func (s *Snapshot) Deref(session *Session) {
@@ -518,12 +535,6 @@ func (s *Snapshot) Deref(session *Session) {
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
-			// This program is no longer referenced by any snapshot.
-			// Mark its checker pool as discarded so idle checkers are disposed
-			// immediately rather than waiting for its idle timer.
-			if project.checkerPool != nil {
-				project.checkerPool.Discard()
-			}
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}
