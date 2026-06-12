@@ -14289,7 +14289,12 @@ func (c *Checker) recordMergedSymbol(target *ast.Symbol, source *ast.Symbol) {
 }
 
 func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.Symbol {
-	if c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(s1))) == c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(s2))) {
+	// An instantiated symbol (e.g. a parameter of a signature instantiated to substitute `this`)
+	// refers to the same declaration as its instantiation target. Whether a given context yields the
+	// original symbol or an instantiated copy can depend on incidental checker cache state (see
+	// instantiateSymbol, whose reuse shortcut is gated on the type already being resolved), so unwrap
+	// instantiations here to keep "same reference" answers deterministic.
+	if c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(c.getTargetSymbol(s1)))) == c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(c.getTargetSymbol(s2)))) {
 		return s1
 	}
 	return nil
@@ -21544,7 +21549,7 @@ func (c *Checker) getTargetSymbol(s *ast.Symbol) *ast.Symbol {
 	// if symbol is instantiated its flags are not copied from the 'target'
 	// so we'll need to get back original 'target' symbol to work with correct set of flags
 	// NOTE: cast to TransientSymbol should be safe because only TransientSymbols have CheckFlags.Instantiated
-	if s.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+	if s != nil && s.CheckFlags&ast.CheckFlagsInstantiated != 0 {
 		return c.valueSymbolLinks.Get(s).target
 	}
 	return s
@@ -27401,7 +27406,20 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		}
 		return c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
 	case t.flags&TypeFlagsConditional != 0:
-		return c.getNextBaseConstraint(c.getConstraintFromConditionalType(t), stack)
+		d := t.AsConditionalType()
+		if d.root.isDistributive && c.cachedTypes[CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: t.id}] != t {
+			constraint := c.getSimplifiedType(d.checkType, false /*writing*/)
+			if constraint == d.checkType {
+				constraint = c.getNextBaseConstraint(constraint, stack)
+			}
+			if constraint != nil && constraint != d.checkType {
+				instantiated := c.getConditionalTypeInstantiation(t, prependTypeMapping(d.root.checkType, constraint, d.mapper), true /*forConstraint*/, nil)
+				if instantiated.flags&TypeFlagsNever == 0 {
+					return c.getNextBaseConstraint(instantiated, stack)
+				}
+			}
+		}
+		return c.getNextBaseConstraint(c.getDefaultConstraintOfConditionalType(t), stack)
 	case t.flags&TypeFlagsSubstitution != 0:
 		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
 	case c.isGenericTupleType(t):
