@@ -49,7 +49,8 @@ func (l *LanguageService) ProvideSignatureHelp(
 		int(l.converters.LineAndCharacterToPosition(sourceFile, position)),
 		program,
 		sourceFile,
-		context)
+		context,
+	)
 	return lsproto.SignatureHelpOrNull{SignatureHelp: items}, nil
 }
 
@@ -309,7 +310,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	itemSeen := 0
 	for i := range items {
 		item := items[i]
-		if (candidates)[i] == resolvedSignature {
+		if candidates[i] == resolvedSignature {
 			selectedItemIndex = itemSeen
 			if len(item) > 1 {
 				count := 0
@@ -363,7 +364,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 
 		// Set VS-specific colorized label if we have classified runs
 		if len(item.ColorizedRuns) > 0 {
-			sigInfo.VSColorizedLabel = &lsproto.ClassifiedTextElement{
+			sigInfo.VSColorizedLabel = &lsproto.VSClassifiedTextElement{
 				Runs: item.ColorizedRuns,
 			}
 		}
@@ -465,8 +466,7 @@ func returnTypeToDisplayParts(candidateSignature *checker.Signature, c *checker.
 	dpw := newDisplayPartsWriter(vsCapability)
 
 	// Add ": " prefix
-	dpw.WritePunctuation(":")
-	dpw.WriteSpace(" ")
+	dpw.WritePunctuation(": ")
 
 	predicate := c.GetTypePredicateOfSignature(candidateSignature)
 	if predicate != nil {
@@ -514,8 +514,7 @@ func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.
 	dpw.WritePunctuation(lessThanToken)
 	for i, typeParameter := range signatureHelpTypeParameters {
 		if i > 0 {
-			dpw.WritePunctuation(",")
-			dpw.WriteSpace(" ")
+			dpw.WritePunctuation(", ")
 		}
 		label := *typeParameter.parameterInfo.Label.String
 		dpw.WriteClassified(label, lsproto.ClassificationTypeNameTypeParameterName)
@@ -540,8 +539,7 @@ func (l *LanguageService) itemInfoForTypeParameters(candidateSignature *checker.
 			paramNode := checker.NewNodeBuilder(c, emitContext).SymbolToParameterDeclaration(param, enclosingDeclaration, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil)
 
 			if j > 0 {
-				paramDpw.WritePunctuation(",")
-				paramDpw.WriteSpace(" ")
+				paramDpw.WritePunctuation(", ")
 			}
 			// Use a temporary writer for p.Write since the printer calls Clear() on its writer
 			tempDpw := newDisplayPartsWriter(vsCapability)
@@ -583,8 +581,7 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 		dpw.WritePunctuation(lessThanToken)
 		for i, typeParameter := range signatureHelpTypeParameters {
 			if i > 0 {
-				dpw.WritePunctuation(",")
-				dpw.WriteSpace(" ")
+				dpw.WritePunctuation(", ")
 			}
 			label := *typeParameter.parameterInfo.Label.String
 			dpw.WriteClassified(label, lsproto.ClassificationTypeNameTypeParameterName)
@@ -620,8 +617,7 @@ func (l *LanguageService) itemInfoForParameters(candidateSignature *checker.Sign
 			paramNode := checker.NewNodeBuilder(c, emitContext).SymbolToParameterDeclaration(param, enclosingDeclaratipn, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil)
 
 			if j > 0 {
-				paramDpw.WritePunctuation(",")
-				paramDpw.WriteSpace(" ")
+				paramDpw.WritePunctuation(", ")
 			}
 			// Use a temporary writer for p.Write since the printer calls Clear() on its writer
 			tempDpw := newDisplayPartsWriter(vsCapability)
@@ -703,7 +699,7 @@ type signatureInformation struct {
 	// Needed only here, not in lsp
 	IsVariadic bool
 	// Classified text runs for VS colorized label
-	ColorizedRuns []*lsproto.ClassifiedTextRun
+	ColorizedRuns []*lsproto.VSClassifiedTextRun
 }
 
 type signatureHelpItemInfo struct {

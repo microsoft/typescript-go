@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -139,6 +140,7 @@ type Printer struct {
 	makeFileLevelOptimisticUniqueName func(string) string
 	commentStateArena                 core.Arena[commentState]
 	sourceMapStateArena               core.Arena[sourceMapState]
+	IdToSymbol                        map[*ast.IdentifierNode]*ast.Symbol
 }
 
 type detachedCommentsInfo struct {
@@ -699,7 +701,18 @@ func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, k
 			}
 
 			// Write the comment line text
-			end := min(loc.End(), nextLineStart-1)
+			end := min(loc.End(), nextLineStart)
+			for scan := pos; scan < end; {
+				ch, size := utf8.DecodeRuneInString(text[scan:end])
+				if size == 0 {
+					break
+				}
+				if stringutil.IsLineBreak(ch) {
+					end = scan
+					break
+				}
+				scan += size
+			}
 			currentLineText := strings.TrimSpace(text[pos:end])
 			if len(currentLineText) > 0 {
 				p.writeComment(currentLineText)
@@ -1092,13 +1105,13 @@ func (p *Printer) emitIdentifierText(node *ast.Identifier) {
 	debug.Assert(f == nil || p.currentSourceFile == nil || f.FileName() == p.currentSourceFile.FileName())
 	text := p.getTextOfNode(node.AsNode(), false /*includeTrivia*/)
 
-	// !!! In the old emitter, an Identifier could have a Symbol associated with it. That
-	// doesn't seem to be the case in the new emitter. Do we need to get the symbol from somewhere else?
-	////p.writeSymbol(text, node.Symbol())
+	if p.IdToSymbol != nil {
+		if symbol, ok := p.IdToSymbol[node.AsNode()]; ok {
+			p.writeSymbol(text, symbol)
+			return
+		}
+	}
 	p.write(text)
-
-	// !!! In the old emitter, an Identifier could have type arguments for use with quickinfo:
-	////p.emitList(node, getIdentifierTypeArguments(node), LFTypeParameters); // Call emitList directly since it could be an array of TypeParameterDeclarations _or_ type arguments
 }
 
 func (p *Printer) emitIdentifierName(node *ast.Identifier) {

@@ -124,9 +124,10 @@ func (s *scriptInfo) GetLineContent(line int) string {
 
 const rootDir = "/"
 
-var parseCache = project.NewParseCache(project.RefCountCacheOptions{
-	DisableDeletion: true,
-},
+var parseCache = project.NewParseCache(
+	project.RefCountCacheOptions{
+		DisableDeletion: true,
+	},
 )
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
@@ -318,8 +319,10 @@ const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
 	params := &lsproto.InitializeParams{
 		Locale: new("en-US"),
-		InitializationOptions: &lsproto.InitializationOptions{
-			CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
+		InitializationOptions: &lsproto.InitializationOptionsOrNull{
+			InitializationOptions: &lsproto.InitializationOptions{
+				CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
+			},
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
@@ -408,8 +411,10 @@ var (
 		LinkSupport: ptrTrue,
 	}
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
-		ContentFormat:  &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
-		VerbosityLevel: ptrTrue,
+		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+	}
+	defaultExperimentalCapabilities = &lsproto.ExperimentalClientCapabilities{
+		HoverVerbosityLevel: ptrTrue,
 	}
 	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
 		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
@@ -468,6 +473,9 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 	return &lsproto.ClientCapabilities{
 		General: &lsproto.GeneralClientCapabilities{
 			PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+		},
+		Experimental: &lsproto.ExperimentalClientCapabilities{
+			HoverVerbosityLevel: ptrTrue,
 		},
 		TextDocument: &lsproto.TextDocumentClientCapabilities{
 			Completion: &lsproto.CompletionClientCapabilities{
@@ -562,6 +570,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	capabilitiesWithDefaults.General = &lsproto.GeneralClientCapabilities{
 		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+	}
+	if capabilitiesWithDefaults.Experimental == nil {
+		capabilitiesWithDefaults.Experimental = defaultExperimentalCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument == nil {
 		capabilitiesWithDefaults.TextDocument = &lsproto.TextDocumentClientCapabilities{}
@@ -955,7 +966,8 @@ func (f *FourslashTest) VerifyCurrentFileContent(t *testing.T, expectedContent s
 func (f *FourslashTest) VerifyCurrentLineContent(t *testing.T, expectedContent string) {
 	t.Helper()
 	actualContent := f.getScriptInfo(f.activeFilename).GetLineContent(int(f.currentCaretPosition.Line))
-	assert.Equal(t, actualContent, expectedContent, fmt.Sprintf(`
+	assert.Equal(t, actualContent, expectedContent, fmt.Sprintf(
+		`
   actual line: "%s"
 expected line: "%s"
 `,
@@ -977,7 +989,8 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 		[]string{
 			tspath.ExtensionTs, tspath.ExtensionMts, tspath.ExtensionCts,
 			tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts,
-		}) {
+		},
+	) {
 		return lsproto.LanguageKindTypeScript
 	}
 	if tspath.FileExtensionIsOneOf(filename, []string{tspath.ExtensionJs, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
@@ -1201,7 +1214,8 @@ func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemD
 					Replace: expectedReplace,
 				},
 			},
-			prefix+"EditRange mismatch:")
+			prefix+"EditRange mismatch:",
+		)
 	case nil:
 		if actual.EditRange != nil {
 			t.Fatalf(prefix+"Expected nil EditRange but got non-nil: %s", cmp.Diff(actual.EditRange, nil))
@@ -2327,6 +2341,86 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			markerName: "/*FIND ALL REFS*/",
 		}))
 
+	}
+}
+
+func (f *FourslashTest) VerifyBaselineVSFindAllReferences(
+	t *testing.T,
+	markers ...string,
+) {
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
+
+	for _, markerOrRange := range referenceLocations {
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		params := &lsproto.ReferenceParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+			Context: &lsproto.ReferenceContext{
+				IncludeDeclaration: true,
+			},
+		}
+		result := sendRequest(t, f, lsproto.TextDocumentVSReferencesInfo, params)
+		// Sort cross-project results for deterministic baselines
+		if result.VSReferenceItems != nil && len(*result.VSReferenceItems) > 0 {
+			items := *result.VSReferenceItems
+			slices.SortStableFunc(items, func(a, b *lsproto.VSReferenceItem) int {
+				ap, bp := "", ""
+				if a.VSProjectName != nil {
+					ap = *a.VSProjectName
+				}
+				if b.VSProjectName != nil {
+					bp = *b.VSProjectName
+				}
+				if ap != bp {
+					if ap < bp {
+						return -1
+					}
+					return 1
+				}
+				if a.VSLocation.Uri != b.VSLocation.Uri {
+					if string(a.VSLocation.Uri) < string(b.VSLocation.Uri) {
+						return -1
+					}
+					return 1
+				}
+				if a.VSLocation.Range.Start.Line != b.VSLocation.Range.Start.Line {
+					return int(a.VSLocation.Range.Start.Line) - int(b.VSLocation.Range.Start.Line)
+				}
+				return int(a.VSLocation.Range.Start.Character) - int(b.VSLocation.Range.Start.Character)
+			})
+			// Re-number IDs sequentially after sort
+			idRemap := make(map[int32]int32, len(items))
+			for i, item := range items {
+				idRemap[item.VSId] = int32(i)
+				item.VSId = int32(i)
+			}
+			for _, item := range items {
+				if item.VSDefinitionId != nil {
+					newDefId := idRemap[*item.VSDefinitionId]
+					item.VSDefinitionId = &newDefId
+				}
+			}
+		}
+		// Include file contents with markers
+		var locations []lsproto.Location
+		if result.VSReferenceItems != nil {
+			for _, item := range *result.VSReferenceItems {
+				locations = append(locations, item.VSLocation)
+			}
+		}
+		fileContents := f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
+			marker:     markerOrRange,
+			markerName: "/*FIND ALL REFS*/",
+		})
+
+		if jsonStr, err := core.StringifyJson(result, "", "  "); err == nil {
+			f.addResultToBaseline(t, vsFindAllReferencesCmd, fileContents+"\n\n"+jsonStr)
+		} else {
+			t.Fatalf("Failed to stringify VS references result for baseline: %v", err)
+		}
 	}
 }
 
@@ -3876,7 +3970,7 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
 	for marker, expectedText := range markersToNewText {
 		f.GoToMarker(t, marker)
-		params := &lsproto.VsOnAutoInsertParams{
+		params := &lsproto.VSOnAutoInsertParams{
 			VSTextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
@@ -3887,7 +3981,7 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 		requestResult := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
 
 		var actualText *string
-		if item := requestResult.VsOnAutoInsertResponseItem; item != nil && item.VSTextEdit != nil {
+		if item := requestResult.VSOnAutoInsertResponseItem; item != nil && item.VSTextEdit != nil {
 			newText := item.VSTextEdit.NewText
 			if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
 				var ok bool
@@ -3906,12 +4000,12 @@ func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[s
 func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
 	t.Helper()
 
-	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.VsOnAutoInsertResponseItem], bool) {
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.VSOnAutoInsertResponseItem], bool) {
 		if marker.Name == nil {
-			return markerAndItem[*lsproto.VsOnAutoInsertResponseItem]{}, false
+			return markerAndItem[*lsproto.VSOnAutoInsertResponseItem]{}, false
 		}
 
-		params := &lsproto.VsOnAutoInsertParams{
+		params := &lsproto.VSOnAutoInsertParams{
 			VSTextDocument: lsproto.TextDocumentIdentifier{
 				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
 			},
@@ -3920,17 +4014,17 @@ func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
 		}
 
 		result := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
-		return markerAndItem[*lsproto.VsOnAutoInsertResponseItem]{Marker: marker, Item: result.VsOnAutoInsertResponseItem}, true
+		return markerAndItem[*lsproto.VSOnAutoInsertResponseItem]{Marker: marker, Item: result.VSOnAutoInsertResponseItem}, true
 	})
 
-	getRange := func(item *lsproto.VsOnAutoInsertResponseItem) *lsproto.Range {
+	getRange := func(item *lsproto.VSOnAutoInsertResponseItem) *lsproto.Range {
 		// Returning nil lets annotateContentWithTooltips render the caret marker at
 		// the marker position. The text edit's range is zero-width at the cursor,
 		// which would render as an empty underline.
 		return nil
 	}
 
-	getTooltipLines := func(item, _prev *lsproto.VsOnAutoInsertResponseItem) []string {
+	getTooltipLines := func(item, _prev *lsproto.VSOnAutoInsertResponseItem) []string {
 		if item == nil || item.VSTextEdit == nil {
 			return []string{"No closing tag"}
 		}
@@ -4312,10 +4406,10 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		marker := f.testData.MarkerPositions[markerName]
 		ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
 		lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
-		f.writeToBaseline(autoImportsCmd, (codeFence(
+		f.writeToBaseline(autoImportsCmd, codeFence(
 			lang,
 			"// @FileName: "+f.activeFilename+"\n"+fileContent[:marker.Position]+"/*"+markerName+"*/"+fileContent[marker.Position:],
-		)))
+		))
 
 		currentFile := newScriptInfo(f.activeFilename, fileContent)
 		converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
@@ -4760,7 +4854,8 @@ func (f *FourslashTest) renameFileOrDirectory(t *testing.T, oldPath string, newP
 			t.Fatalf("failed to write renamed file %s: %v", newFileName, err)
 		}
 
-		fileEvents = append(fileEvents,
+		fileEvents = append(
+			fileEvents,
 			&lsproto.FileEvent{Uri: lsconv.FileNameToDocumentURI(oldFileName), Type: lsproto.FileChangeTypeDeleted},
 			&lsproto.FileEvent{Uri: lsconv.FileNameToDocumentURI(newFileName), Type: lsproto.FileChangeTypeCreated},
 		)
@@ -5237,7 +5332,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
 		code:               code,
 		category:           category,
-		message:            lspDiagnostic.Message,
+		message:            lspDiagnostic.Message.AsString(),
 		relatedDiagnostics: relatedDiagnostics,
 	}
 	return diagnostic
@@ -5466,7 +5561,7 @@ func (f *FourslashTest) VerifyNoErrors(t *testing.T) {
 		if len(errors) > 0 {
 			var messages []string
 			for _, err := range errors {
-				messages = append(messages, err.Message)
+				messages = append(messages, err.Message.AsString())
 			}
 			t.Fatalf("Expected no errors but found %d in %s: %v", len(errors), fileName, messages)
 		}
@@ -5484,8 +5579,8 @@ func (f *FourslashTest) VerifyErrorExistsAtRange(t *testing.T, rangeMarker *Rang
 				diag.Range.End.Line == rangeMarker.LSRange.End.Line &&
 				diag.Range.End.Character == rangeMarker.LSRange.End.Character {
 				// If message is provided, verify it matches
-				if message != "" && diag.Message != message {
-					t.Fatalf("Error at range has code %d but message mismatch. Expected: %q, Got: %q", code, message, diag.Message)
+				if message != "" && diag.Message.AsString() != message {
+					t.Fatalf("Error at range has code %d but message mismatch. Expected: %q, Got: %q", code, message, diag.Message.AsString())
 				}
 				return
 			}

@@ -1,6 +1,7 @@
 package build
 
 import (
+	"context"
 	"io"
 	"strings"
 	"sync/atomic"
@@ -43,7 +44,8 @@ func (b *orchestratorResult) report(o *Orchestrator) {
 				strings.Join(core.Map(b.filesToDelete, func(f string) string {
 					return "\r\n * " + f
 				}), ""),
-			))
+			),
+		)
 	}
 	if !o.opts.Command.CompilerOptions.Diagnostics.IsTrue() && !o.opts.Command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
 		return
@@ -207,30 +209,35 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 	}
 }
 
-func (o *Orchestrator) Start() tsc.CommandLineResult {
+func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}
 	o.GenerateGraph(nil)
 	result := o.buildOrClean()
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		o.Watch()
+		o.Watch(ctx)
 		result.Watcher = o
 	}
 	return result
 }
 
-func (o *Orchestrator) Watch() {
+func (o *Orchestrator) Watch(ctx context.Context) {
 	o.updateWatch()
 	o.resetCaches()
 
 	// Start watching for file changes
 	if o.opts.Testing == nil {
 		watchInterval := o.opts.Command.WatchOptions.WatchInterval()
+		ticker := time.NewTicker(watchInterval)
+		defer ticker.Stop()
 		for {
-			// Testing mode: run a single cycle and exit
-			time.Sleep(watchInterval)
-			o.DoCycle()
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				o.DoCycle()
+			}
 		}
 	}
 }

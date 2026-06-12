@@ -62,6 +62,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
             },
+            {
+                name: "logVerbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                optional: true,
+                documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -167,7 +173,37 @@ const customStructures: Structure[] = [
         ],
     },
     {
-        name: "VsOnAutoInsertOptions",
+        name: "ExperimentalServerCapabilities",
+        properties: [
+            {
+                name: "customSourceDefinitionProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+            },
+            {
+                name: "customMultiDocumentHighlightProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
+            },
+        ],
+        documentation: "ExperimentalServerCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "ExperimentalClientCapabilities",
+        properties: [
+            {
+                name: "hoverVerbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.",
+            },
+        ],
+        documentation: "ExperimentalClientCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "VSOnAutoInsertOptions",
         properties: [
             {
                 name: "_vs_triggerCharacters",
@@ -178,7 +214,53 @@ const customStructures: Structure[] = [
         documentation: "Options for the textDocument/_vs_onAutoInsert provider capability.",
     },
     {
-        name: "VsOnAutoInsertParams",
+        name: "VSReferenceItem",
+        properties: [
+            {
+                name: "_vs_id",
+                type: { kind: "base", name: "integer" },
+                documentation: "Unique identifier for this reference item.",
+            },
+            {
+                name: "_vs_definitionId",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "The ID of the definition item this reference belongs to. Absent for definition items themselves.",
+            },
+            {
+                name: "_vs_kind",
+                type: { kind: "array", element: { kind: "reference", name: "VSReferenceKind" } },
+                optional: true,
+                documentation: "The kind(s) of this reference (read, write, etc.).",
+            },
+            {
+                name: "_vs_location",
+                type: { kind: "reference", name: "Location" },
+                documentation: "The location of this reference.",
+            },
+            {
+                name: "_vs_definitionText",
+                type: { kind: "reference", name: "VSClassifiedTextElement" },
+                optional: true,
+                documentation: "Classified display text for the definition (used for grouping headers in the UI).",
+            },
+            {
+                name: "_vs_projectName",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The project name for this reference.",
+            },
+            {
+                name: "_vs_containingType",
+                type: { kind: "base", name: "string" },
+                optional: true,
+                documentation: "The containing type for this reference.",
+            },
+        ],
+        documentation: "A VS-specific reference item with grouping support for Find All References.",
+    },
+    {
+        name: "VSOnAutoInsertParams",
         properties: [
             {
                 name: "_vs_textDocument",
@@ -199,7 +281,7 @@ const customStructures: Structure[] = [
         documentation: "Parameters for the textDocument/_vs_onAutoInsert request.",
     },
     {
-        name: "VsOnAutoInsertResponseItem",
+        name: "VSOnAutoInsertResponseItem",
         properties: [
             {
                 name: "_vs_textEditFormat",
@@ -327,6 +409,17 @@ const customStructures: Structure[] = [
             },
         ],
         documentation: "Result for the custom/projectInfo request.",
+    },
+    {
+        name: "SetLogVerbosityParams",
+        properties: [
+            {
+                name: "verbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                documentation: "The log verbosity level.",
+            },
+        ],
+        documentation: "Parameters for the custom/setLogVerbosity notification.",
     },
     {
         name: "PerformanceStatsTelemetryEvent",
@@ -465,7 +558,7 @@ const customStructures: Structure[] = [
         documentation: "Parameters for the custom/textDocument/multiDocumentHighlight request.",
     },
     {
-        name: "ClassifiedTextRun",
+        name: "VSClassifiedTextRun",
         properties: [
             {
                 name: "ClassificationTypeName",
@@ -486,19 +579,30 @@ const customStructures: Structure[] = [
             {
                 name: "Style",
                 type: { kind: "base", name: "integer" },
+                optional: true,
                 omitzeroValue: true,
                 documentation: "The style of this text run.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ClassifiedTextRun" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
             },
         ],
         documentation: "A classified text run with text and classification type, used for colorized display in VS.",
     },
     {
-        name: "ClassifiedTextElement",
+        name: "VSClassifiedTextElement",
         properties: [
             {
                 name: "Runs",
-                type: { kind: "array", element: { kind: "reference", name: "ClassifiedTextRun" } },
+                type: { kind: "array", element: { kind: "reference", name: "VSClassifiedTextRun" } },
                 documentation: "The classified text runs that make up this element.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ClassifiedTextElement" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
             },
         ],
         documentation: "A classified text element containing an array of classified text runs, used for colorized labels in VS.",
@@ -506,6 +610,43 @@ const customStructures: Structure[] = [
 ];
 
 const customEnumerations: Enumeration[] = [
+    {
+        name: "LogVerbosity",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All logging disabled." },
+            { name: "Trace", value: 1, documentation: "Most verbose; includes LSP request/response traces." },
+            { name: "Debug", value: 2, documentation: "Verbose server logs." },
+            { name: "Info", value: 3, documentation: "Normal server logs." },
+            { name: "Warning", value: 4, documentation: "Warnings only." },
+            { name: "Error", value: 5, documentation: "Errors only." },
+        ],
+        documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
+    {
+        name: "VSReferenceKind",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Inactive", value: 0 },
+            { name: "Comment", value: 1 },
+            { name: "String", value: 2 },
+            { name: "Read", value: 3 },
+            { name: "Write", value: 4 },
+            { name: "Reference", value: 5 },
+            { name: "Name", value: 6 },
+            { name: "Qualified", value: 7 },
+            { name: "TypeArgument", value: 8 },
+            { name: "TypeConstraint", value: 9 },
+            { name: "BaseType", value: 10 },
+            { name: "Constructor", value: 11 },
+            { name: "Destructor", value: 12 },
+            { name: "Import", value: 13 },
+            { name: "Declaration", value: 14 },
+            { name: "AddressOf", value: 15 },
+            { name: "NotReference", value: 16 },
+            { name: "Unknown", value: 17 },
+        ],
+    },
     {
         name: "CodeLensKind",
         type: {
@@ -659,17 +800,41 @@ const customRequests: Request[] = [
     },
     {
         method: "textDocument/_vs_onAutoInsert",
-        typeName: "VsOnAutoInsertRequest",
-        params: { kind: "reference", name: "VsOnAutoInsertParams" },
+        typeName: "VSOnAutoInsertRequest",
+        params: { kind: "reference", name: "VSOnAutoInsertParams" },
         result: {
             kind: "or",
             items: [
-                { kind: "reference", name: "VsOnAutoInsertResponseItem" },
+                { kind: "reference", name: "VSOnAutoInsertResponseItem" },
                 { kind: "base", name: "null" },
             ],
         },
         messageDirection: "clientToServer",
         documentation: "Request for auto-insert when a trigger character is typed (VS-specific).",
+    },
+    {
+        method: "textDocument/_vs_references",
+        typeName: "VSReferencesRequest",
+        params: { kind: "reference", name: "ReferenceParams" },
+        result: {
+            kind: "or",
+            items: [
+                { kind: "array", element: { kind: "reference", name: "VSReferenceItem" } },
+                { kind: "base", name: "null" },
+            ],
+        },
+        messageDirection: "clientToServer",
+        documentation: "VS-specific request for Find All References with grouped reference items.",
+    },
+];
+
+const customNotifications: Notification[] = [
+    {
+        method: "custom/setLogVerbosity",
+        typeName: "CustomSetLogVerbosityNotification",
+        params: { kind: "reference", name: "SetLogVerbosityParams" },
+        messageDirection: "clientToServer",
+        documentation: "Notification to set the server's log verbosity level based on the output channel's log level.",
     },
 ];
 
@@ -770,16 +935,16 @@ function patchAndPreprocessModel() {
         // Patch ServerCapabilities to add custom tsgo capability flags
         if (structure.name === "ServerCapabilities") {
             structure.properties.push({
-                name: "customSourceDefinitionProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
-            });
-            structure.properties.push({
                 name: "_vs_onAutoInsertProvider",
-                type: { kind: "reference", name: "VsOnAutoInsertOptions" },
+                type: { kind: "reference", name: "VSOnAutoInsertOptions" },
                 optional: true,
                 documentation: "Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.",
+            });
+            structure.properties.push({
+                name: "_vs_referencesProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides VS-specific grouped references via textDocument/_vs_references.",
             });
         }
 
@@ -841,40 +1006,28 @@ function patchAndPreprocessModel() {
             );
         }
 
-        // Patch HoverClientCapabilities to add verbosityLevel support flag
-        if (structure.name === "HoverClientCapabilities") {
-            structure.properties.push({
-                name: "verbosityLevel",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
-            });
-        }
-
         // Patch SignatureInformation to add VS-specific colorized label
         if (structure.name === "SignatureInformation") {
             structure.properties.push({
                 name: "_vs_colorizedLabel",
-                type: { kind: "reference", name: "ClassifiedTextElement" },
+                type: { kind: "reference", name: "VSClassifiedTextElement" },
                 optional: true,
                 documentation: "A colorized label for the signature, providing classified text runs for VS syntax coloring.",
             });
         }
 
-        // Patch ServerCapabilities to add custom tsgo capability flags
-        if (structure.name === "ServerCapabilities") {
-            structure.properties.push({
-                name: "customMultiDocumentHighlightProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
-            });
-        }
-
         for (const prop of structure.properties) {
-            // Replace initializationOptions type with custom InitializationOptions
+            // Replace initializationOptions type with custom InitializationOptions.
+            // The spec types this field as LSPAny?, which includes null, so keep
+            // it nullable so a null value sent by loose clients is accepted.
             if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
-                prop.type = { kind: "reference", name: "InitializationOptions" };
+                prop.type = {
+                    kind: "or",
+                    items: [
+                        { kind: "reference", name: "InitializationOptions" },
+                        { kind: "base", name: "null" },
+                    ],
+                };
             }
 
             // Replace Data *any fields with custom typed Data fields
@@ -932,6 +1085,7 @@ function patchAndPreprocessModel() {
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
     model.requests.push(...customRequests);
+    model.notifications.push(...customNotifications);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
@@ -977,9 +1131,22 @@ function patchAndPreprocessModel() {
         structure.extends = undefined;
         structure.mixins = undefined;
 
-        // Remove experimental properties from ServerCapabilities and ClientCapabilities
-        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
-            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        // Replace experimental LSPAny with typed ExperimentalClientCapabilities in ClientCapabilities
+        if (structure.name === "ClientCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalClientCapabilities" };
+                expProp.optional = true;
+            }
+        }
+
+        // Replace experimental LSPAny with typed ExperimentalServerCapabilities in ServerCapabilities
+        if (structure.name === "ServerCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalServerCapabilities" };
+                expProp.optional = true;
+            }
         }
 
         // Remove method and registerOptions from Registration (handled by custom codegen)
@@ -1555,6 +1722,11 @@ function formatDocumentation(s: string | undefined): string {
     for (let line of s.split("\n")) {
         line = line.trimEnd();
         line = line.replace(/(\w ) +/g, "$1");
+        // Some upstream docs include dangling block comment delimiters; remove them
+        // so they don't leak into generated `//` comments.
+        line = line.replace(/\s*\/\*+\s*/g, " ");
+        line = line.replace(/\s*\*+\/\s*/g, " ");
+        line = line.replace(/\s{2,}/g, " ").trimEnd();
         line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
         line = line.replace(/^@(since|proposed|deprecated)(.*)/, (_, tag, rest) => {
             lines.push("");

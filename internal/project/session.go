@@ -189,12 +189,16 @@ func NewSession(init *SessionInit) *Session {
 	}
 	extendedConfigCache := NewExtendedConfigCache()
 
+	sessionLogger := init.Logger
+	if sessionLogger == nil {
+		sessionLogger = logging.NewNopLogger()
+	}
 	session := &Session{
 		backgroundCtx:       init.BackgroundCtx,
 		options:             init.Options,
 		toPath:              toPath,
 		client:              init.Client,
-		logger:              init.Logger,
+		logger:              sessionLogger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
@@ -1025,7 +1029,12 @@ func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []ls
 	projects := snapshot.ProjectCollection.Projects()
 	services := make([]*ls.LanguageService, 0, len(projects))
 	for _, project := range projects {
-		services = append(services, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, activeFile))
+		program := project.GetProgram()
+		if program == nil {
+			continue
+		}
+
+		services = append(services, ls.NewLanguageService(project.configFilePath, program, snapshot, activeFile))
 	}
 	return services
 }
