@@ -192,6 +192,34 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--moduleResolution", "nodenext ", "first.ts", "--module", "nodenext", "--target", "esnext", "--moduleDetection", "auto", "--jsx", "react", "--newLine", "crlf"},
 		},
 		{
+			subScenario: "outputFormat minimal",
+			files: FileMap{
+				"/home/src/workspaces/project/index.tsx": stringtestutil.Dedent(`
+					declare namespace JSX {
+						interface ElementChildrenAttribute { children: {}; }
+						interface IntrinsicElements { div: {} }
+					}
+
+					declare var React: any;
+
+					declare function Component(props: never): any;
+					declare function Component(props: { children?: number }): any;
+					(<Component>
+						<div />
+						<div />
+					</Component>)`),
+			},
+			commandLineArgs: []string{"--outputFormat", "minimal", "--noEmit", "--strict", "--jsx", "react", "index.tsx"},
+		},
+		{
+			subScenario:     "outputFormat minimal without file",
+			commandLineArgs: []string{"--outputFormat", "minimal", "--locale", "whoops", "--version"},
+		},
+		{
+			subScenario:     "outputFormat with invalid value",
+			commandLineArgs: []string{"--outputFormat", "verbose", "--version"},
+		},
+		{
 			subScenario: "Parse watch interval option",
 			files: FileMap{
 				"/home/src/workspaces/project/first.ts": `export const a = 1`,

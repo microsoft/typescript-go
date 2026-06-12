@@ -4308,6 +4308,8 @@ var Remove_Unused_Imports = &Message{code: 100017, category: CategoryMessage, ke
 
 var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_Imports_100018", text: "Sort Imports"}
 
+var Specify_how_TypeScript_reports_diagnostics = &Message{code: 100019, category: CategoryMessage, key: "Specify_how_TypeScript_reports_diagnostics_100019", text: "Specify how TypeScript reports diagnostics."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8616,6 +8618,8 @@ func keyToMessage(key Key) *Message {
 		return Remove_Unused_Imports
 	case "Sort_Imports_100018":
 		return Sort_Imports
+	case "Specify_how_TypeScript_reports_diagnostics_100019":
+		return Specify_how_TypeScript_reports_diagnostics
 	default:
 		return nil
 	}

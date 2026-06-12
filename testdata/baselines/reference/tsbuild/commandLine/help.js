@@ -46,6 +46,11 @@ Enable color and formatting in TypeScript's output to make compiler errors easie
 type: boolean
 default: true
 
+[94m--outputFormat[39m
+Specify how TypeScript reports diagnostics.
+one of: default, minimal
+default: default
+
 [94m--traceResolution[39m
 Log paths used during the 'moduleResolution' process.
 type: boolean

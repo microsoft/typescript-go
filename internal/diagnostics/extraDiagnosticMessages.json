@@ -123,6 +123,10 @@
         "category": "Message",
         "code": 100018
     },
+    "Specify how TypeScript reports diagnostics.": {
+        "category": "Message",
+        "code": 100019
+    },
     "File rename is not supported by the editor": {
         "category": "Error",
         "code": 8040

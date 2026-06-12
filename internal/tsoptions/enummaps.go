@@ -204,6 +204,11 @@ var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[
 	{Key: "lf", Value: core.NewLineKindLF},
 })
 
+var outputFormatOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: core.OutputFormatDefault, Value: core.OutputFormatDefault},
+	{Key: core.OutputFormatMinimal, Value: core.OutputFormatMinimal},
+})
+
 var targetToLibMap = map[core.ScriptTarget]string{
 	core.ScriptTargetESNext: "lib.esnext.full.d.ts",
 	core.ScriptTargetES2025: "lib.es2025.full.d.ts",

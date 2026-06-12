@@ -582,6 +582,11 @@ Disable truncating types in error messages.
 type: boolean
 default: false
 
+[94m--outputFormat[39m
+Specify how TypeScript reports diagnostics.
+one of: default, minimal
+default: default
+
 [94m--preserveWatchOutput[39m
 Disable wiping the console in watch mode.
 type: boolean
