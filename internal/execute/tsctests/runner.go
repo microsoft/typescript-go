@@ -1,6 +1,7 @@
 package tsctests
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 	"slices"
@@ -42,7 +43,7 @@ type tscInput struct {
 
 func (test *tscInput) executeCommand(sys *TestSys, baselineBuilder *strings.Builder, commandLineArgs []string) tsc.CommandLineResult {
 	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
-	result := execute.CommandLine(sys, commandLineArgs, sys)
+	result := execute.CommandLine(context.Background(), sys, commandLineArgs, sys)
 	switch result.Status {
 	case tsc.ExitStatusSuccess:
 		baselineBuilder.WriteString("ExitStatus:: Success")
@@ -119,7 +120,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 						test.edits[i].edit(nonIncrementalSys)
 					}
 				}
-				execute.CommandLine(nonIncrementalSys, commandLineArgs, nonIncrementalSys)
+				execute.CommandLine(context.Background(), nonIncrementalSys, commandLineArgs, nonIncrementalSys)
 			})
 			wg.RunAndWait()
 

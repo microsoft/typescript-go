@@ -86,7 +86,6 @@ func (h *watchCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.
 
 type Watcher struct {
 	mu                             sync.Mutex
-	ctx                            context.Context
 	sys                            tsc.System
 	configFileName                 string
 	config                         *tsoptions.ParsedCommandLine
@@ -120,7 +119,6 @@ type Watcher struct {
 var _ tsc.Watcher = (*Watcher)(nil)
 
 func createWatcher(
-	ctx context.Context,
 	sys tsc.System,
 	configParseResult *tsoptions.ParsedCommandLine,
 	compilerOptionsFromCommandLine *core.CompilerOptions,
@@ -130,7 +128,6 @@ func createWatcher(
 	testing tsc.CommandLineTesting,
 ) *Watcher {
 	w := &Watcher{
-		ctx:                            ctx,
 		sys:                            sys,
 		config:                         configParseResult,
 		compilerOptionsFromCommandLine: compilerOptionsFromCommandLine,
@@ -152,7 +149,7 @@ func createWatcher(
 	return w
 }
 
-func (w *Watcher) start() {
+func (w *Watcher) start(ctx context.Context) {
 	w.mu.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
@@ -181,7 +178,7 @@ func (w *Watcher) start() {
 	if w.testing == nil {
 		for {
 			select {
-			case <-w.ctx.Done():
+			case <-ctx.Done():
 				w.closeAllWatches()
 				return
 			case <-w.doCycleCh:

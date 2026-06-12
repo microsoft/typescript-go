@@ -1,6 +1,7 @@
 package tsctests
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"testing"
@@ -22,7 +23,7 @@ func createTestWatcher(t *testing.T) (*execute.Watcher, *TestSys) {
 		commandLineArgs: []string{"--watch"},
 	}
 	sys := newTestSys(input, false)
-	result := execute.CommandLine(sys, []string{"--watch"}, sys)
+	result := execute.CommandLine(context.Background(), sys, []string{"--watch"}, sys)
 	if result.Watcher == nil {
 		t.Fatal("expected Watcher to be non-nil in watch mode")
 	}

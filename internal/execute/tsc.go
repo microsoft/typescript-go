@@ -49,11 +49,7 @@ func stopTracing(sys tsc.System, tr *tracing.Tracing) {
 	}
 }
 
-func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
-	return CommandLineCtx(context.Background(), sys, commandLineArgs, testing)
-}
-
-func CommandLineCtx(ctx context.Context, sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
@@ -235,7 +231,6 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
 		watcher := createWatcher(
-			ctx,
 			sys,
 			configForCompilation,
 			compilerOptionsFromCommandLine,
@@ -244,7 +239,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 			reportErrorSummary,
 			testing,
 		)
-		watcher.start()
+		watcher.start(ctx)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
 		return performIncrementalCompilation(

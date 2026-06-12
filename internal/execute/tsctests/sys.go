@@ -1,6 +1,7 @@
 package tsctests
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"maps"
@@ -102,7 +103,7 @@ func GetFileMapWithBuild(files FileMap, commandLineArgs []string) FileMap {
 	sys := newTestSys(&tscInput{
 		files: maps.Clone(files),
 	}, false)
-	execute.CommandLine(sys, commandLineArgs, sys)
+	execute.CommandLine(context.Background(), sys, commandLineArgs, sys)
 	sys.fs.writtenFiles.Range(func(key string) bool {
 		if text, ok := sys.fsFromFileMap().ReadFile(key); ok {
 			files[key] = text
