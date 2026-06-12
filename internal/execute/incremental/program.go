@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -290,6 +291,12 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 			p.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
+	if p.snapshot.packageJsons == nil {
+		p.ensurePackageJsonsForState()
+		if !slices.Equal(p.snapshot.packageJsons, p.snapshot.packageJsonsFromOldState) {
+			p.snapshot.buildInfoEmitPending.Store(true)
+		}
+	}
 	if !p.snapshot.buildInfoEmitPending.Load() {
 		return nil
 	}
@@ -372,7 +379,7 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 
 	p.snapshot.hasErrors = core.TSFalse
 	// Check semantic and emit diagnostics first as we dont need to ask program about it
-	if slices.ContainsFunc(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
+	if slices.ContainsFunc(p.program.GetSourceFiles(), func(file *ast.SourceFile) bool {
 		semanticDiagnostics, ok := p.snapshot.semanticDiagnosticsPerFile.Load(file.Path())
 		if !ok {
 			// Missing semantic diagnostics in cache will be encoded in incremental buildInfo
@@ -387,5 +394,23 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 		// Because semantic diagnostics are recorded in buildInfo, we dont need to encode hasErrors in incremental buildInfo
 		// But encode as errors in non incremental buildInfo
 		p.snapshot.hasSemanticErrors = !p.snapshot.options.IsIncremental()
+	}
+}
+
+func (p *Program) ensurePackageJsonsForState() {
+	config := tspath.GetDirectoryPath(p.program.CommandLine().ConfigName())
+	if config != "" {
+		p.program.PackageJsonCacheEntries(func(key tspath.Path, value *packagejson.InfoCacheEntry) bool {
+			if value.Exists() {
+				p.snapshot.packageJsons = append(p.snapshot.packageJsons, p.host.FS().Realpath(tspath.CombinePaths(value.PackageDirectory, "package.json")))
+			}
+			return true
+		})
+	}
+	if p.snapshot.packageJsons == nil {
+		p.snapshot.packageJsons = make([]string, 0)
+	} else {
+		slices.Sort(p.snapshot.packageJsons)
+		p.snapshot.packageJsons = core.Deduplicate(p.snapshot.packageJsons)
 	}
 }

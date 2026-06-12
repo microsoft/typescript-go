@@ -1008,7 +1008,6 @@ func TestBuildDependencyUpdate(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: number;")
 					},
-					expectedDiff: "incremental build does not notice non-root dependency declaration changes yet",
 				},
 				{
 					caption: "restore dependency d.ts",
@@ -1028,7 +1027,6 @@ func TestBuildDependencyUpdate(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.removeNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts")
 					},
-					expectedDiff: "incremental build does not notice deleted non-root dependency declarations yet",
 				},
 			},
 		},
@@ -1067,7 +1065,6 @@ func TestBuildDependencyUpdate(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText("/home/src/workspaces/project/node_modules/my-dep/package.json", "index.d.ts", "alt.d.ts")
 					},
-					expectedDiff: "incremental build does not notice dependency package.json resolution changes yet",
 				},
 			},
 		},
@@ -1103,7 +1100,6 @@ func TestBuildDependencyUpdate(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("D:/deps/dep.d.ts", "export declare const myValue: number;")
 					},
-					expectedDiff: "incremental build does not notice absolute non-root dependency declaration changes yet",
 				},
 			},
 		},

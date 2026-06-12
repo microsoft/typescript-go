@@ -3005,7 +3005,6 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"module"`, `"commonjs"`)
 					},
-					expectedDiff: "Package.json watch pending, so no change detected yet",
 				},
 				{
 					caption: "removes those errors when a package file is changed back",
@@ -3018,7 +3017,6 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"module"`, `"commonjs"`)
 					},
-					expectedDiff: "Package.json watch pending, so no change detected yet",
 				},
 				{
 					caption: "removes those errors when a package file is changed to cjs extensions",
@@ -3074,7 +3072,6 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg2/package.json`, `index.js`, `other.js`)
 					},
-					expectedDiff: "Package.json watch pending, so no change detected yet",
 				},
 				{
 					caption: "removes those errors when a package file is changed back",
