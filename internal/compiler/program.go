@@ -308,7 +308,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		return NewProgram(newOpts), newFile, false
 	}
 	if oldNeedsImportHelpers := p.importHelpersImportSpecifiers[oldFile.Path()] != nil; oldNeedsImportHelpers != p.needsImportHelpersImportSpecifier(newFile) {
-		return NewProgram(newOpts), false
+		return NewProgram(newOpts), newFile, false
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
