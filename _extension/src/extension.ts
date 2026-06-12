@@ -61,7 +61,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             clearTimeout(configChangeTimeout);
             configChangeTimeout = setTimeout(async () => {
                 if (needsExtHostRestartOnChange()) {
-                    const selected = await vscode.window.showInformationMessage("TypeScript Native Preview setting has changed. Restart extensions to apply changes.", "Restart Extensions");
+                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript Native Preview setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
                     if (selected) {
                         vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                     }
@@ -93,20 +93,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         if (!tsExtension) {
             if (!useTsgo) {
                 vscode.window.showWarningMessage(
-                    "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.",
-                    "OK",
+                    vscode.l10n.t("The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable."),
+                    vscode.l10n.t("OK"),
                 );
                 return;
             }
         }
         else if (useTsgo === false) {
             const settingName = getWinningTsgoConfigKey() ?? "js/ts.experimental.useTsgo";
+            const enableSettingString = vscode.l10n.t("Enable Setting");
             vscode.window.showWarningMessage(
-                `TypeScript Native Preview is running in development mode with "${settingName}" set to false.`,
-                "Enable Setting",
-                "Ignore",
+                vscode.l10n.t(`TypeScript Native Preview is running in development mode with "{0}" set to false.`, settingName),
+                enableSettingString,
+                vscode.l10n.t("Ignore"),
             ).then(selected => {
-                if (selected === "Enable Setting") {
+                if (selected === enableSettingString) {
                     vscode.commands.executeCommand("typescript.native-preview.enable");
                 }
             });
@@ -114,7 +115,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
     }
     else if (useTsgo === false) {
-        output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
+        output.appendLine(vscode.l10n.t("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
     else if (useTsgo === undefined) {
@@ -123,7 +124,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             updateUseTsgoSetting(true);
             return;
         }
-        output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
+        output.appendLine(vscode.l10n.t("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
 
@@ -137,7 +138,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     // Prompt user to use workspace version if one is detected and they haven't opted in yet.
     promptUseWorkspaceVersion(context).catch(err => {
-        output.appendLine(`Error prompting to use workspace version: ${err}`);
+        output.appendLine(vscode.l10n.t(`Error prompting to use workspace version: {0}`, String(err)));
     });
 
     function onLanguageServerInitialized(listener: () => void): vscode.Disposable {
@@ -194,16 +195,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const uniqueExtensionNames = [...new Set(pluginExtensions.map(p => p.extensionId))];
         const extensionNames = uniqueExtensionNames.join(", ");
-        output.appendLine(`Extensions contributing tsserver plugins that will not apply with tsgo: ${extensionNames}`);
+        output.appendLine(`Extensions contributing tsserver plugins that will not apply with TypeScript Native Preview: ${extensionNames}`);
 
         const message = uniqueExtensionNames.length === 1
             // Pick the first extension & plugin, even though extensions can have multiple plugins
-            ? `The ${pluginExtensions[0].pluginName} plugin from the extension "${pluginExtensions[0].extensionId}" will not be applied because TypeScript Native Preview is enabled globally.`
-            : `${uniqueExtensionNames.length} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: ${extensionNames}`;
+            ? vscode.l10n.t(`The "{0}" plugin from the extension "{1}" will not be applied because TypeScript Native Preview is enabled globally.`, pluginExtensions[0].pluginName, pluginExtensions[0].extensionId)
+            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
 
-        const ok = "OK";
-        const disableInWorkspace = "Disable in Workspace";
-        const dontShowAgain = hasWorkspaceFolder ? "Don't Show Again in Workspace" : "Don't Show Again";
+        const ok = vscode.l10n.t("OK");
+        const disableInWorkspace = vscode.l10n.t("Disable Native Preview in Workspace");
+        const dontShowAgain = hasWorkspaceFolder ? vscode.l10n.t("Don't Show Again in Workspace") : vscode.l10n.t("Don't Show Again");
 
         const options = [ok];
         if (hasWorkspaceFolder) {
