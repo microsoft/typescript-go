@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -71,7 +72,11 @@ function fn10() {
 function fn11() {
     return <Foo something cla/*11*/
 }`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, fourslash.GetDefaultCapabilitiesWithOptions(&fourslash.ClientCapabilitiesOptions{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport: new(true),
+		},
+	}), content)
 	defer done()
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -91,6 +96,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -110,6 +116,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -129,6 +136,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -148,6 +156,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "5", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -167,6 +176,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "6", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -186,6 +196,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "7", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -205,6 +216,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "8", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -224,6 +236,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "9", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -243,6 +256,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "10", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -262,6 +276,7 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 	f.VerifyCompletions(t, "11", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
@@ -281,5 +296,6 @@ function fn11() {
 				},
 			},
 		},
+		UserPreferences: &lsutil.UserPreferences{JsxAttributeCompletionStyle: lsutil.JsxAttributeCompletionStyleBraces},
 	})
 }

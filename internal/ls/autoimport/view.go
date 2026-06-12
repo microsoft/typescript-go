@@ -97,6 +97,17 @@ func (v *View) SearchByExportID(id ExportID) []*Export {
 	return v.search(search)
 }
 
+func (v *View) SearchByExportIDIfAvailable(id ExportID) []*Export {
+	if v == nil || v.registry == nil {
+		return nil
+	}
+	bucket := v.registry.projects[v.projectKey]
+	if bucket == nil || bucket.Index == nil {
+		return nil
+	}
+	return v.SearchByExportID(id)
+}
+
 func (v *View) search(searchFn func(*RegistryBucket) []*Export) []*Export {
 	var results []*Export
 

@@ -517,6 +517,17 @@ const (
 	hasSourceMapRange
 )
 
+type SnippetKind int
+
+const (
+	SnippetKindTabStop SnippetKind = iota
+)
+
+type SnippetElement struct {
+	Kind  SnippetKind
+	Order int
+}
+
 type SynthesizedComment struct {
 	Kind               ast.Kind
 	Loc                core.TextRange
@@ -536,6 +547,7 @@ type emitNode struct {
 	leadingComments           []SynthesizedComment
 	trailingComments          []SynthesizedComment
 	typeNode                  *ast.TypeNode
+	snippetElement            *SnippetElement
 }
 
 // NOTE: This method is not guaranteed to be thread-safe
@@ -547,6 +559,10 @@ func (e *emitNode) copyFrom(source *emitNode) {
 	e.tokenSourceMapRanges = maps.Clone(source.tokenSourceMapRanges)
 	e.helpers = slices.Clone(source.helpers)
 	e.externalHelpersModuleName = source.externalHelpersModuleName
+	if source.snippetElement != nil {
+		snippetElement := *source.snippetElement
+		e.snippetElement = &snippetElement
+	}
 }
 
 func (c *EmitContext) EmitFlags(node *ast.Node) EmitFlags {
@@ -562,6 +578,17 @@ func (c *EmitContext) SetEmitFlags(node *ast.Node, flags EmitFlags) {
 
 func (c *EmitContext) AddEmitFlags(node *ast.Node, flags EmitFlags) {
 	c.emitNodes.Get(node).emitFlags |= flags
+}
+
+func (c *EmitContext) SnippetElement(node *ast.Node) *SnippetElement {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		return emitNode.snippetElement
+	}
+	return nil
+}
+
+func (c *EmitContext) SetSnippetElement(node *ast.Node, snippetElement SnippetElement) {
+	c.emitNodes.Get(node).snippetElement = &snippetElement
 }
 
 // Gets the range to use for a node when emitting comments.

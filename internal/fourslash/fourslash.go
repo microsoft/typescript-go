@@ -46,6 +46,7 @@ type FourslashTest struct {
 	vfs    vfs.FS
 
 	testData      *TestData // !!! consolidate test files from test data and script info
+	content       string
 	baselines     map[baselineCommand]*strings.Builder
 	rangesByText  *collections.MultiMap[string, *RangeMarker]
 	openFiles     map[string]struct{}
@@ -195,6 +196,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	f := &FourslashTest{
 		testData:                &testData,
+		content:                 content,
 		stateEnableFormatting:   true,
 		reportFormatOnTypeCrash: true,
 		userPreferences:         lsutil.NewDefaultUserPreferences(),
@@ -388,12 +390,13 @@ func defaultSemanticTokenModifiers() []string {
 // If modifying the defaults, update GetDefaultCapabilities too.
 var (
 	ptrTrue                       = new(true)
+	ptrFalse                      = new(false)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport:          ptrTrue,
+			SnippetSupport:          ptrFalse,
 			CommitCharactersSupport: ptrTrue,
 			PreselectSupport:        ptrTrue,
-			LabelDetailsSupport:     ptrTrue,
+			LabelDetailsSupport:     ptrFalse,
 			InsertReplaceSupport:    ptrTrue,
 			DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 		},
@@ -480,10 +483,10 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 		TextDocument: &lsproto.TextDocumentClientCapabilities{
 			Completion: &lsproto.CompletionClientCapabilities{
 				CompletionItem: &lsproto.ClientCompletionItemOptions{
-					SnippetSupport:          ptrTrue,
+					SnippetSupport:          ptrFalse,
 					CommitCharactersSupport: ptrTrue,
 					PreselectSupport:        ptrTrue,
-					LabelDetailsSupport:     ptrTrue,
+					LabelDetailsSupport:     ptrFalse,
 					InsertReplaceSupport:    ptrTrue,
 					DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 				},
@@ -561,6 +564,52 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 			},
 		},
 	}
+}
+
+type ClientCapabilitiesOptions struct {
+	CompletionItem *lsproto.ClientCompletionItemOptions
+}
+
+func GetDefaultCapabilitiesWithOptions(options *ClientCapabilitiesOptions) *lsproto.ClientCapabilities {
+	capabilities := GetDefaultCapabilities()
+	if options == nil {
+		return capabilities
+	}
+	if options.CompletionItem != nil {
+		target := capabilities.TextDocument.Completion.CompletionItem
+		completionItemOptions := options.CompletionItem
+		if completionItemOptions.SnippetSupport != nil {
+			target.SnippetSupport = completionItemOptions.SnippetSupport
+		}
+		if completionItemOptions.CommitCharactersSupport != nil {
+			target.CommitCharactersSupport = completionItemOptions.CommitCharactersSupport
+		}
+		if completionItemOptions.DocumentationFormat != nil {
+			target.DocumentationFormat = completionItemOptions.DocumentationFormat
+		}
+		if completionItemOptions.DeprecatedSupport != nil {
+			target.DeprecatedSupport = completionItemOptions.DeprecatedSupport
+		}
+		if completionItemOptions.PreselectSupport != nil {
+			target.PreselectSupport = completionItemOptions.PreselectSupport
+		}
+		if completionItemOptions.TagSupport != nil {
+			target.TagSupport = completionItemOptions.TagSupport
+		}
+		if completionItemOptions.InsertReplaceSupport != nil {
+			target.InsertReplaceSupport = completionItemOptions.InsertReplaceSupport
+		}
+		if completionItemOptions.ResolveSupport != nil {
+			target.ResolveSupport = completionItemOptions.ResolveSupport
+		}
+		if completionItemOptions.InsertTextModeSupport != nil {
+			target.InsertTextModeSupport = completionItemOptions.InsertTextModeSupport
+		}
+		if completionItemOptions.LabelDetailsSupport != nil {
+			target.LabelDetailsSupport = completionItemOptions.LabelDetailsSupport
+		}
+	}
+	return capabilities
 }
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -1082,7 +1131,10 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 	default:
 		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
 	}
+	return f.verifyCompletionsActions(list)
+}
 
+func (f *FourslashTest) verifyCompletionsActions(list *lsproto.CompletionList) VerifyCompletionsResult {
 	return VerifyCompletionsResult{
 		AndApplyCodeAction: func(t *testing.T, expectedAction *CompletionsExpectedCodeAction) {
 			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
@@ -1122,11 +1174,11 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
 	t.Helper()
-	prefix := f.getCurrentPositionPrefix()
 	var userPreferences *lsutil.UserPreferences
 	if expected != nil {
 		userPreferences = expected.UserPreferences
 	}
+	prefix := f.getCurrentPositionPrefix()
 	list := f.getCompletions(t, userPreferences)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
@@ -1147,7 +1199,8 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		Context:  &lsproto.CompletionContext{},
 	}
 	if userPreferences != nil {
-		reset := f.ConfigureWithReset(t, *userPreferences)
+		config := f.userPreferences.WithOverrides(*userPreferences)
+		reset := f.ConfigureWithReset(t, config)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
@@ -1360,20 +1413,21 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 }
 
 func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected []CompletionsExpectedItem) {
-	// Verify labels first
-	assertDeepEqual(t, core.Map(actual, func(item *lsproto.CompletionItem) string {
-		return item.Label
-	}), core.Map(expected, func(item CompletionsExpectedItem) string {
-		return getExpectedLabel(t, item)
-	}), prefix+"Labels mismatch")
+	labelMismatchPrefix := prefix + "Label mismatch"
 	for i, actualItem := range actual {
 		switch expectedItem := expected[i].(type) {
 		case string:
-			continue // already checked labels
+			if actualItem.Data != nil && actualItem.Data.Name == expectedItem {
+				continue
+			}
+			assertDeepEqual(t, actualItem.Label, expectedItem, labelMismatchPrefix)
 		case *lsproto.CompletionItem:
+			assertDeepEqual(t, actualItem.Label, expectedItem.Label, labelMismatchPrefix)
 			if err := f.verifyCompletionItem(t, prefix+"Completion item mismatch for label "+actualItem.Label, actualItem, expectedItem); err != "" {
 				t.Fatalf("%s:\n%s", prefix+"Completion item mismatch for label "+actualItem.Label, err)
 			}
+		default:
+			t.Fatalf("Expected completion item to be a string or *lsproto.CompletionItem, got %T", expectedItem)
 		}
 	}
 }
@@ -1409,6 +1463,20 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 
 	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportFix != nil {
 		actual = f.resolveCompletionItem(t, actual)
+	}
+
+	if expected.InsertText != nil && expected.TextEdit == nil && actual.InsertText == nil && actual.TextEdit != nil {
+		var newText *string
+		if actual.TextEdit.TextEdit != nil {
+			newText = &actual.TextEdit.TextEdit.NewText
+		} else if actual.TextEdit.InsertReplaceEdit != nil {
+			newText = &actual.TextEdit.InsertReplaceEdit.NewText
+		}
+
+		if newText != nil && *newText == *expected.InsertText {
+			actual.InsertText = expected.InsertText
+			actual.TextEdit = nil
+		}
 	}
 
 	if actualAutoImportFix != nil {
@@ -2026,7 +2094,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 
 	reset := f.ConfigureWithReset(t, *userPreferences)
 	defer reset()
-	completionsList := f.getCompletions(t, nil) // Already configured, so we do not need to pass it in again
+	completionsList := f.getCompletions(t, nil /*userPreferences*/) // Already configured, so we do not need to pass it in again
 	items := core.Filter(completionsList.Items, func(item *lsproto.CompletionItem) bool {
 		if item.Label != options.Name || item.Data == nil {
 			return false
@@ -2481,6 +2549,7 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 
 func (f *FourslashTest) MarkTestAsStradaServer() {
 	f.isStradaServer = true
+	f.userPreferences.FormatCodeSettings.NewLineCharacter = core.NewLineKindCRLF.GetNewLineCharacter()
 }
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
