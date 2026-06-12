@@ -8,6 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
@@ -297,7 +298,9 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, libDirectory st
 				} else if currentDirectoryPath.ContainsPath(path) {
 					includeRoot = true
 				} else if libDirectoryPath.ContainsPath(path) {
-					includeLib = true
+					if !bundled.IsBundled(string(libDirectoryPath)) {
+						includeLib = true
+					}
 				} else if idx := strings.Index(string(path), "/node_modules/"); idx != -1 {
 					nodeModulesDirectories.Add(path[:idx+len("/node_modules")])
 				} else {
