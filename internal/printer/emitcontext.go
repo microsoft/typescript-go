@@ -19,7 +19,7 @@ type EmitContext struct {
 	autoGenerate  map[*ast.MemberName]*AutoGenerateInfo
 	textSource    map[*ast.StringLiteralNode]*ast.Node
 	original      map[*ast.Node]*ast.Node
-	emitNodes     core.LinkStore[*ast.Node, emitNode]
+	emitNodes     ast.NodeLinkStore[emitNode]
 	assignedName  map[*ast.Node]*ast.Expression
 	classThis     map[*ast.Node]*ast.IdentifierNode
 	varScopeStack core.Stack[*varScope]
