@@ -9,12 +9,12 @@ module.exports.A = class B {f1 = 1; self = new B();}
 >exports : typeof import(".")
 >A : typeof A
 >class B {f1 = 1; self = new B();} : typeof A
->B : typeof A
+>B : typeof B
 >f1 : number
 >1 : 1
->self : A
->new B() : A
->B : typeof A
+>self : B
+>new B() : B
+>B : typeof B
 
 module.exports.B = class B {f1 = "ok"; self = new B();}
 >module.exports.B = class B {f1 = "ok"; self = new B();} : typeof B

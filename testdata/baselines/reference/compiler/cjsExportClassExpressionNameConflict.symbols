@@ -7,10 +7,10 @@ module.exports.A = class B {f1 = 1; self = new B();}
 >module : Symbol(module, Decl(index.js, 0, 0))
 >exports : Symbol(exports, Decl(index.js, 0, 0))
 >A : Symbol(A, Decl(index.js, 0, 0))
->B : Symbol(A, Decl(index.js, 0, 18))
->f1 : Symbol(A.f1, Decl(index.js, 0, 28))
->self : Symbol(A.self, Decl(index.js, 0, 35))
->B : Symbol(A, Decl(index.js, 0, 18))
+>B : Symbol(B, Decl(index.js, 0, 18))
+>f1 : Symbol(B.f1, Decl(index.js, 0, 28))
+>self : Symbol(B.self, Decl(index.js, 0, 35))
+>B : Symbol(B, Decl(index.js, 0, 18))
 
 module.exports.B = class B {f1 = "ok"; self = new B();}
 >module.exports.B : Symbol(B, Decl(index.js, 0, 52))
