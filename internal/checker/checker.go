@@ -26778,6 +26778,21 @@ func (c *Checker) getIndexedAccessTypeOrUndefined(objectType *Type, indexType *T
 		return c.wildcardType
 	}
 	objectType = c.getReducedType(objectType)
+	// If the object type is an intersection with conflicting private properties,
+	// report an error — we shouldn't be able to access those properties via T["key"]
+	if objectType.flags&TypeFlagsIntersection != 0 && objectType.flags&TypeFlagsNever == 0 {
+		props := c.getPropertiesOfUnionOrIntersectionType(objectType)
+		for _, prop := range props {
+			if c.isConflictingPrivateProperty(prop) && accessNode != nil {
+				declaringClass := c.getDeclaringClass(prop)
+				if declaringClass != nil {
+					c.error(accessNode, diagnostics.Property_0_is_private_and_only_accessible_within_class_1, 
+						c.symbolToString(prop), c.TypeToString(c.getTypeOfSymbol(declaringClass)))
+				}
+				return nil
+			}
+		}
+	}
 	// If the object type has a string index signature and no other members we know that the result will
 	// always be the type of that index signature and we can simplify accordingly.
 	if c.isStringIndexSignatureOnlyType(objectType) && indexType.flags&TypeFlagsNullable == 0 && c.isTypeAssignableToKind(indexType, TypeFlagsString|TypeFlagsNumber) {
