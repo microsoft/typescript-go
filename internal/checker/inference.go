@@ -108,10 +108,15 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
 		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
+		// Next, infer between deeply matching source and target constituents and remove the
+		// matching types. Types deeply match when they are instantiations of the same object
+		// type AND their type arguments are themselves closely matched. This prevents incorrect
+		// cross-matching of types like Array<T> with Array<T[]> in unions like T[] | T[][].
+		tempSources2, tempTargets2 := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeDeeplyMatchedBy)
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
-		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeCloselyMatchedBy)
+		sources, targets := c.inferFromMatchingTypes(n, tempSources2, tempTargets2, (*Checker).isTypeCloselyMatchedBy)
 		if len(targets) == 0 {
 			return
 		}
@@ -1166,6 +1171,35 @@ func (c *Checker) isTypeOrBaseIdenticalTo(s *Type, t *Type) bool {
 func (c *Checker) isTypeCloselyMatchedBy(s *Type, t *Type) bool {
 	return s.flags&TypeFlagsObject != 0 && t.flags&TypeFlagsObject != 0 && s.symbol != nil && s.symbol == t.symbol ||
 		s.alias != nil && t.alias != nil && len(s.alias.typeArguments) != 0 && s.alias.symbol == t.alias.symbol
+}
+
+// isTypeDeeplyMatchedBy checks that two types are closely matched AND that their type arguments
+// have compatible nesting depth. This provides a more precise matching than isTypeCloselyMatchedBy
+// for cases like T[] | T[][] where all constituents share the same symbol (Array) but differ in
+// nesting depth — preventing cross-matching of Array<Value> with Array<Array<T>>.
+func (c *Checker) isTypeDeeplyMatchedBy(s *Type, t *Type) bool {
+	if !c.isTypeCloselyMatchedBy(s, t) {
+		return false
+	}
+	if s.objectFlags&ObjectFlagsReference != 0 && t.objectFlags&ObjectFlagsReference != 0 {
+		sr := s.AsTypeReference()
+		tr := t.AsTypeReference()
+		sArgs := sr.resolvedTypeArguments
+		tArgs := tr.resolvedTypeArguments
+		if len(sArgs) == len(tArgs) {
+			for i := range sArgs {
+				// Check that type arguments have matching nesting structure: if the source arg
+				// is a nested reference to the same outer type (e.g., Array<Array<...>>), the
+				// target arg must also be nested, and vice versa.
+				saIsNestedRef := sArgs[i].objectFlags&ObjectFlagsReference != 0 && sArgs[i].AsTypeReference().target == sr.target
+				taIsNestedRef := tArgs[i].objectFlags&ObjectFlagsReference != 0 && tArgs[i].AsTypeReference().target == tr.target
+				if saIsNestedRef != taIsNestedRef {
+					return false
+				}
+			}
+		}
+	}
+	return true
 }
 
 // Create an object with properties named in the string literal type. Every property has type `any`.
