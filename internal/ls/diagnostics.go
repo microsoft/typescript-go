@@ -34,6 +34,23 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 	}, nil
 }
 
+// ProvidePushDiagnostics computes diagnostics for a file in the format used by
+// textDocument/publishDiagnostics.
+func (l *LanguageService) ProvidePushDiagnostics(ctx context.Context, uri lsproto.DocumentUri) []*lsproto.Diagnostic {
+	program, file := l.tryGetProgramAndFile(uri.FileName())
+	if file == nil {
+		return nil
+	}
+
+	diagnostics := getAllDiagnostics(ctx, program, file)
+
+	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
+	for _, diag := range diagnostics {
+		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, l.converters, diag))
+	}
+	return lspDiagnostics
+}
+
 func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
 	size := 0
 	for _, diagSlice := range diagnostics {
