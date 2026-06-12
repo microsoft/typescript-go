@@ -176,7 +176,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         const target = getExplicitConfigTarget(vscode.workspace.getConfiguration(), settingName);
         assert(target !== undefined, "Expected an explicit configuration target.");
 
-        // We only want to warn about plugins in the global configuration.
+        // We only want to warn about plugins when Corsa is enabled in a user's the global configuration.
         // Setting in the workspace is an indication that the user is aware of the potential issues.
         if (target !== vscode.ConfigurationTarget.Global) {
             return;
@@ -199,12 +199,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const message = uniqueExtensionNames.length === 1
             // Pick the first extension & plugin, even though extensions can have multiple plugins
-            ? vscode.l10n.t(`The "{0}" plugin from the extension "{1}" will not be applied because TypeScript Native Preview is enabled globally.`, pluginExtensions[0].pluginName, pluginExtensions[0].extensionId)
-            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be applied because TypeScript Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
+            ? vscode.l10n.t(`TypeScript server plugins from the "{1}" extension will not be loaded because TypeScript Native Preview is enabled globally.`, pluginExtensions[0].pluginName, pluginExtensions[0].extensionId)
+            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
 
         const ok = vscode.l10n.t("OK");
         const disableInWorkspace = vscode.l10n.t("Disable Native Preview in Workspace");
-        const dontShowAgain = hasWorkspaceFolder ? vscode.l10n.t("Don't Show Again in Workspace") : vscode.l10n.t("Don't Show Again");
+        const dontShowAgain = vscode.l10n.t("Don't Show Again");
 
         const options = [ok];
         if (hasWorkspaceFolder) {
@@ -217,8 +217,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             await vscode.workspace.getConfiguration("js/ts").update("experimental.useTsgo", false, vscode.ConfigurationTarget.Workspace);
         }
         else if (selected === dontShowAgain) {
-            const stateStorage = hasWorkspaceFolder ? context.workspaceState : context.globalState;
-            await stateStorage.update(pluginWarningDismissedKey, true);
+            await context.globalState.update(pluginWarningDismissedKey, true);
         }
     }
 }
