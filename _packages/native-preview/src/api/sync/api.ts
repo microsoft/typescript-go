@@ -7,6 +7,7 @@
 // Regenerate: npm run generate (from _packages/native-preview)
 //
 /// <reference path="../node/node.ts" preserve="true" />
+import { CompletionItemKind } from "#enums/completionItemKind";
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
 import { EmitFlags } from "#enums/emitFlags";
@@ -49,6 +50,7 @@ import {
     toPath,
 } from "../path.ts";
 import type {
+    CompletionInfoResponse,
     ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
@@ -74,6 +76,9 @@ import {
 import type {
     AssertsIdentifierTypePredicate,
     AssertsThisTypePredicate,
+    CompletionEntry,
+    CompletionInfo,
+    CompletionOptions,
     ConditionalType,
     Diagnostic,
     EmitResult,
@@ -101,9 +106,9 @@ import type {
     UnionType,
 } from "./types.ts";
 
-export { DiagnosticCategory, ElementFlags, EmitFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export { CompletionItemKind, DiagnosticCategory, ElementFlags, EmitFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, ConditionalType, Diagnostic, EmitResult, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, EmitResult, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 /** Type alias for the snapshot-scoped object registry */
@@ -607,6 +612,25 @@ export class Checker {
         }));
     }
 
+    getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined {
+        const data = this.client.apiRequest<CompletionInfoResponse | null>("getCompletionsAtPosition", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            file: document,
+            position,
+            triggerCharacter: options?.triggerCharacter,
+            includeSymbol: options?.includeSymbol,
+        });
+        if (!data) return undefined;
+        return {
+            isIncomplete: data.isIncomplete,
+            entries: data.entries.map(e => ({
+                ...e,
+                symbol: e.symbol ? this.objectRegistry.getOrCreateSymbol(e.symbol) : undefined,
+            })),
+        };
+    }
+
     getTypeAtLocation(node: Node): Type | undefined;
     getTypeAtLocation(nodes: readonly Node[]): (Type | undefined)[];
     getTypeAtLocation(nodeOrNodes: Node | readonly Node[]): Type | (Type | undefined)[] | undefined {
@@ -931,6 +955,7 @@ export class Checker {
             keyType: this.objectRegistry.getOrCreateType(d.keyType),
             valueType: this.objectRegistry.getOrCreateType(d.valueType),
             isReadonly: d.isReadonly ?? false,
+            declaration: d.declaration ? new NodeHandle(d.declaration) : undefined,
         }));
     }
 
