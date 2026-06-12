@@ -1193,19 +1193,28 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 	s.telemetryEnabled = enableTelemetry
 
+	var clientSupportsPullDiagnostics, clientSupportsPublishDiagnostics bool
+	if capabilities := s.initializeParams.Capabilities; capabilities != nil && capabilities.TextDocument != nil {
+		textDocumentCapabilities := capabilities.TextDocument
+		clientSupportsPullDiagnostics = textDocumentCapabilities.Diagnostic != nil
+		clientSupportsPublishDiagnostics = textDocumentCapabilities.PublishDiagnostics != nil
+	}
+	pushFileDiagnostics := !disablePushDiagnostics && !clientSupportsPullDiagnostics && clientSupportsPublishDiagnostics
+
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),
 		Options: &project.SessionOptions{
-			CurrentDirectory:       cwd,
-			DefaultLibraryPath:     s.defaultLibraryPath,
-			TypingsLocation:        s.typingsLocation,
-			PositionEncoding:       s.positionEncoding,
-			WatchEnabled:           s.watchEnabled,
-			LoggingEnabled:         true,
-			TelemetryEnabled:       enableTelemetry,
-			DebounceDelay:          500 * time.Millisecond,
-			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			Locale:                 s.locale,
+			CurrentDirectory:           cwd,
+			DefaultLibraryPath:         s.defaultLibraryPath,
+			TypingsLocation:            s.typingsLocation,
+			PositionEncoding:           s.positionEncoding,
+			WatchEnabled:               s.watchEnabled,
+			LoggingEnabled:             true,
+			TelemetryEnabled:           enableTelemetry,
+			DebounceDelay:              500 * time.Millisecond,
+			PushDiagnosticsEnabled:     !disablePushDiagnostics,
+			PushFileDiagnosticsEnabled: pushFileDiagnostics,
+			Locale:                     s.locale,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
