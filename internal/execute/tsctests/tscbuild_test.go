@@ -969,6 +969,74 @@ func TestBuildFileDelete(t *testing.T) {
 	}
 }
 
+func TestBuildDependencyUpdate(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			// https://github.com/microsoft/typescript-go/issues/2666
+			subScenario: "rebuilds when dependency in node_modules is updated",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "my-dep";
+					export const value: string = myValue;
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/package.json": stringtestutil.Dedent(`
+					{
+						"name": "my-dep",
+						"version": "1.0.0",
+						"types": "index.d.ts"
+					}
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/index.d.ts": "export declare const myValue: string;",
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption: "update dependency d.ts with breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: number;")
+					},
+				},
+				{
+					caption: "restore dependency d.ts",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: string;")
+					},
+				},
+				{
+					caption: "update dependency d.ts timestamp without changing text",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: string;")
+					},
+				},
+				noChange,
+				{
+					caption: "delete dependency d.ts",
+					edit: func(sys *TestSys) {
+						sys.removeNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "dependencyUpdate")
+	}
+}
+
 func TestBuildInferredTypeFromTransitiveModule(t *testing.T) {
 	t.Parallel()
 	getBuildInferredTypeFromTransitiveModuleMap := func(isolatedModules bool, lazyExtraContents string) FileMap {

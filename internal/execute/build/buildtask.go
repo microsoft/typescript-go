@@ -431,6 +431,52 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		}
 	}
 
+	// Check the program files that are not roots (eg: files from node_modules) since they
+	// are not part of config file names and can change without any change to the root files
+	// (eg: when dependencies in node_modules are updated)
+	// https://github.com/microsoft/typescript-go/issues/2666
+	if buildInfo.IsIncremental() {
+		buildInfoDirectory := tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory))
+		var resolvedRoots collections.Set[tspath.Path]
+		for root := range buildInfoRootInfoReader.Roots() {
+			if _, resolved := buildInfoRootInfoReader.GetBuildInfoFileInfo(root); resolved != "" {
+				resolvedRoots.Add(resolved)
+			}
+		}
+		for index, buildInfoFileInfo := range buildInfo.FileInfos {
+			buildInfoFileName := buildInfo.FileNames[index]
+			// Lib files bundled with the compiler can change only with the version of the compiler,
+			// which is already verified with buildInfo.Version
+			if !strings.HasPrefix(buildInfoFileName, ".") {
+				continue
+			}
+			inputFile := tspath.GetNormalizedAbsolutePath(buildInfoFileName, buildInfoDirectory)
+			inputPath := orchestrator.toPath(inputFile)
+			// Root files are already checked
+			if seenRoots.Has(inputPath) || resolvedRoots.Has(inputPath) {
+				continue
+			}
+			inputTime := orchestrator.host.GetMTime(inputFile)
+			if inputTime.IsZero() {
+				// Input file that was part of the program is missing (eg: dependency was removed)
+				return &upToDateStatus{kind: upToDateStatusTypeInputFileMissing, data: inputFile}
+			}
+			if inputTime.After(oldestOutputFileAndTime.time) {
+				var currentVersion string
+				version := buildInfoFileInfo.GetFileInfo().Version()
+				if version != "" {
+					if text, ok := orchestrator.host.FS().ReadFile(inputFile); ok {
+						currentVersion = incremental.ComputeHash(text, orchestrator.opts.Testing != nil)
+					}
+				}
+				if version == "" || version != currentVersion {
+					return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{inputFile, buildInfoPath}}
+				}
+				inputTextUnchanged = true
+			}
+		}
+	}
+
 	if !t.resolved.CompilerOptions().IsIncremental() {
 		// Check output file stamps
 		for outputFile := range t.resolved.GetOutputFileNames() {
