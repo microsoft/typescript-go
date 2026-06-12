@@ -26783,11 +26783,13 @@ func (c *Checker) getIndexedAccessTypeOrUndefined(objectType *Type, indexType *T
 	if objectType.flags&TypeFlagsIntersection != 0 && objectType.flags&TypeFlagsNever == 0 {
 		props := c.getPropertiesOfUnionOrIntersectionType(objectType)
 		for _, prop := range props {
-			if c.isConflictingPrivateProperty(prop) && accessNode != nil {
-				declaringClass := c.getDeclaringClass(prop)
-				if declaringClass != nil {
-					c.error(accessNode, diagnostics.Property_0_is_private_and_only_accessible_within_class_1, 
-						c.symbolToString(prop), c.TypeToString(c.getTypeOfSymbol(declaringClass)))
+			if c.isConflictingPrivateProperty(prop) {
+				if accessNode != nil {
+					declaringClass := c.getDeclaringClass(prop)
+					if declaringClass != nil {
+						c.error(accessNode, diagnostics.Property_0_is_private_and_only_accessible_within_class_1,
+							c.symbolToString(prop), c.TypeToString(c.getTypeOfSymbol(declaringClass)))
+					}
 				}
 				return nil
 			}
