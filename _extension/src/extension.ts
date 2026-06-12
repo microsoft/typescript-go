@@ -171,7 +171,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         const target = getExplicitConfigTarget(vscode.workspace.getConfiguration(), settingName);
         assert(target !== undefined, "Expected an explicit configuration target.");
 
-        // We only want to warn about plugins when Corsa is enabled in a user's the global configuration.
+        // We only want to warn about plugins when Corsa is enabled in a user's global configuration.
         // Setting in the workspace is an indication that the user is aware of the potential issues.
         if (target !== vscode.ConfigurationTarget.Global) {
             return;
