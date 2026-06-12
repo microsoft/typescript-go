@@ -357,14 +357,34 @@ func (c *Checker) getAliasForSymbolInContainer(container *ast.Symbol, symbol *as
 	if ok && quick != nil && c.getSymbolIfSameReference(quick, symbol) != nil {
 		return quick
 	}
-	var candidates []*ast.Symbol
-	for _, exported := range exports {
-		if c.getSymbolIfSameReference(exported, symbol) != nil {
-			candidates = append(candidates, exported)
+
+	target := c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(symbol)))
+	if c.aliasCandidatesByExportedTarget != nil {
+		if candidatesByTarget, ok := c.aliasCandidatesByExportedTarget[container]; ok {
+			candidates := candidatesByTarget[target]
+			if len(candidates) > 0 {
+				if len(candidates) > 1 {
+					c.sortSymbols(candidates) // _must_ sort exports for stable results - symbol table is randomly iterated
+				}
+				return candidates[0]
+			}
+			return nil
 		}
+	} else {
+		c.aliasCandidatesByExportedTarget = make(map[*ast.Symbol]map[*ast.Symbol][]*ast.Symbol)
 	}
+
+	candidatesByTarget := make(map[*ast.Symbol][]*ast.Symbol, len(exports))
+	for _, exported := range exports {
+		exportedTarget := c.getMergedSymbol(c.resolveSymbol(c.getMergedSymbol(exported)))
+		candidatesByTarget[exportedTarget] = append(candidatesByTarget[exportedTarget], exported)
+	}
+	c.aliasCandidatesByExportedTarget[container] = candidatesByTarget
+	candidates := candidatesByTarget[target]
 	if len(candidates) > 0 {
-		c.sortSymbols(candidates) // _must_ sort exports for stable results - symbol table is randomly iterated
+		if len(candidates) > 1 {
+			c.sortSymbols(candidates) // _must_ sort exports for stable results - symbol table is randomly iterated
+		}
 		return candidates[0]
 	}
 	return nil
