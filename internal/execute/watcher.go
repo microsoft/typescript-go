@@ -250,7 +250,7 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool 
 				break
 			}
 		}
-		if !covered && w.sys.FS().FileExists(filePath) {
+		if !covered {
 			resolvedDirs[dir] = false
 		}
 	}

@@ -81,7 +81,11 @@ declare const console: { log(msg: any): void; };
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::

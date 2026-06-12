@@ -43,7 +43,11 @@ const x = 1;
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
@@ -68,8 +72,14 @@ export const added = 1;
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project
+  /home/src/workspaces/project/deep
+  /home/src/workspaces/project/deep/nested
   /home/src/workspaces/project/deep/nested/dir (recursive)
 tsconfig.json::
 SemanticDiagnostics::

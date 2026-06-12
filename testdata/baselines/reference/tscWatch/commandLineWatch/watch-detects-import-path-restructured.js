@@ -47,7 +47,11 @@ export const util = "v1";
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -77,7 +81,11 @@ export const util = "v2";
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::

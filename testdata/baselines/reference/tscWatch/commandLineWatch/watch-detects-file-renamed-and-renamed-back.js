@@ -47,7 +47,11 @@ export {};
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -83,7 +87,11 @@ export const helper = 1;
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -120,7 +128,11 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::

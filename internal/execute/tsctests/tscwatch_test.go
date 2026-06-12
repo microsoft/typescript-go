@@ -290,6 +290,33 @@ func TestWatch(t *testing.T) {
 				},
 			},
 		},
+		// Path resolution: node_modules removed then reinstalled (npm ci after rm -rf)
+		{
+			subScenario: "watch detects node modules reinstalled after deletion",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":                        `import { lib } from "mylib";`,
+				"/home/src/workspaces/project/tsconfig.json":                   `{}`,
+				"/home/src/workspaces/project/node_modules/mylib/package.json": `{"name": "mylib", "main": "index.js", "types": "index.d.ts"}`,
+				"/home/src/workspaces/project/node_modules/mylib/index.js":     `exports.lib = "hello";`,
+				"/home/src/workspaces/project/node_modules/mylib/index.d.ts":   `export declare const lib: string;`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				{
+					caption: "delete node_modules entirely",
+					edit: func(sys *TestSys) {
+						sys.removeNoError("/home/src/workspaces/project/node_modules/mylib/index.d.ts")
+						sys.removeNoError("/home/src/workspaces/project/node_modules/mylib/index.js")
+						sys.removeNoError("/home/src/workspaces/project/node_modules/mylib/package.json")
+					},
+				},
+				newTscEdit("reinstall node_modules", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/node_modules/mylib/package.json", `{"name": "mylib", "main": "index.js", "types": "index.d.ts"}`)
+					sys.writeFileNoError("/home/src/workspaces/project/node_modules/mylib/index.js", `exports.lib = "hello";`)
+					sys.writeFileNoError("/home/src/workspaces/project/node_modules/mylib/index.d.ts", `export declare const lib: string;`)
+				}),
+			},
+		},
 		// Config file lifecycle
 		{
 			subScenario: "watch handles tsconfig deleted",

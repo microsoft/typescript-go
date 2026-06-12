@@ -47,7 +47,11 @@ export const util = "hello";
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -78,7 +82,11 @@ Found 1 error in index.ts[90m:1[0m
 
 Watch Registrations::
 Directory watches::
+  /
+  /home
+  /home/src
   /home/src/tslibs/TS/Lib
+  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
