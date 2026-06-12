@@ -152,7 +152,7 @@ export type { TheNum } from 'const';
 export {};
 
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../const.ts","../index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":1},{"version":"0b8e978a1e274cdc446fbbcbc9e78724-export type { TheNum } from 'const';","signature":"1a74e021c93cb748502ffc92156e3427-export type { TheNum } from 'const';\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../const.ts","../index.ts","../package.json"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":1},{"version":"0b8e978a1e274cdc446fbbcbc9e78724-export type { TheNum } from 'const';","signature":"1a74e021c93cb748502ffc92156e3427-export type { TheNum } from 'const';\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","packageJsonLookups":[[4,"754b3f84a4868af09079d100c0ad1bc4-{\n    \"name\": \"pkg2\",\n    \"version\": \"1.0.0\",\n    \"main\": \"build/index.js\"\n}"]]}
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -171,7 +171,8 @@ export {};
   "fileNames": [
     "lib.es2025.full.d.ts",
     "../const.ts",
-    "../index.ts"
+    "../index.ts",
+    "../package.json"
   ],
   "fileInfos": [
     {
@@ -224,7 +225,13 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1376
+  "packageJsonLookups": [
+    {
+      "fileName": "../package.json",
+      "version": "754b3f84a4868af09079d100c0ad1bc4-{\n    \"name\": \"pkg2\",\n    \"version\": \"1.0.0\",\n    \"main\": \"build/index.js\"\n}"
+    }
+  ],
+  "size": 1549
 }
 
 packages/pkg2/tsconfig.json::

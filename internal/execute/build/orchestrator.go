@@ -257,6 +257,7 @@ func (o *Orchestrator) resetCaches() {
 	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
 	o.host.sourceFiles.reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
+	o.host.packageJsonVersions = collections.SyncMap[tspath.Path, string]{}
 }
 
 func (o *Orchestrator) DoCycle() {

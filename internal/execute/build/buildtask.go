@@ -437,6 +437,21 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	// https://github.com/microsoft/typescript-go/issues/2666
 	if buildInfo.IsIncremental() {
 		buildInfoDirectory := tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory))
+		libDirectory := orchestrator.host.DefaultLibraryPath()
+		toInputFileName := func(buildInfoFileName string) (string, bool) {
+			if strings.HasPrefix(buildInfoFileName, ".") {
+				return tspath.GetNormalizedAbsolutePath(buildInfoFileName, buildInfoDirectory), true
+			}
+			// Names that are not relative are either bundled lib files or absolute paths that
+			// could not be made relative to the build info directory (eg: on another drive)
+			fileName := tspath.CombinePaths(libDirectory, buildInfoFileName)
+			if tspath.ContainsPath(libDirectory, fileName, orchestrator.comparePathsOptions) {
+				// Lib files bundled with the compiler can change only with the version of the
+				// compiler, which is already verified with buildInfo.Version
+				return "", false
+			}
+			return fileName, true
+		}
 		var resolvedRoots collections.Set[tspath.Path]
 		for root := range buildInfoRootInfoReader.Roots() {
 			if _, resolved := buildInfoRootInfoReader.GetBuildInfoFileInfo(root); resolved != "" {
@@ -444,13 +459,10 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 			}
 		}
 		for index, buildInfoFileInfo := range buildInfo.FileInfos {
-			buildInfoFileName := buildInfo.FileNames[index]
-			// Lib files bundled with the compiler can change only with the version of the compiler,
-			// which is already verified with buildInfo.Version
-			if !strings.HasPrefix(buildInfoFileName, ".") {
+			inputFile, ok := toInputFileName(buildInfo.FileNames[index])
+			if !ok {
 				continue
 			}
-			inputFile := tspath.GetNormalizedAbsolutePath(buildInfoFileName, buildInfoDirectory)
 			inputPath := orchestrator.toPath(inputFile)
 			// Root files are already checked
 			if seenRoots.Has(inputPath) || resolvedRoots.Has(inputPath) {
@@ -473,6 +485,26 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 					return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{inputFile, buildInfoPath}}
 				}
 				inputTextUnchanged = true
+			}
+		}
+
+		// Check the package.json files that were used during module resolution since changing
+		// them can redirect resolution to different files without changing any program input
+		// (eg: changing "types" or "exports" in a dependency's package.json). The contents are
+		// compared by hash instead of timestamps so updates that preserve timestamps (eg: a
+		// symlinked dependency pointing at a different target) are detected too.
+		for _, lookup := range buildInfo.PackageJsonLookups {
+			inputFile, ok := toInputFileName(buildInfo.FileNames[lookup.FileId-1])
+			if !ok {
+				continue
+			}
+			currentVersion, found := orchestrator.host.packageJsonVersion(inputFile)
+			if !found {
+				// package.json that was used during module resolution is missing
+				return &upToDateStatus{kind: upToDateStatusTypeInputFileMissing, data: inputFile}
+			}
+			if currentVersion != lookup.Version {
+				return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{inputFile, buildInfoPath}}
 			}
 		}
 	}
@@ -552,15 +584,6 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 			return extendedConfigStatus
 		}
 	}
-
-	// !!! sheetal TODO : watch??
-	// // Check package file time
-	// const packageJsonLookups = state.lastCachedPackageJsonLookups.get(resolvedPath);
-	// const dependentPackageFileStatus = packageJsonLookups && forEachKey(
-	//     packageJsonLookups,
-	//     path => checkConfigFileUpToDateStatus(state, path, oldestOutputFileTime, oldestOutputFileName),
-	// );
-	// if (dependentPackageFileStatus) return dependentPackageFileStatus;
 
 	return &upToDateStatus{
 		kind: core.IfElse(

@@ -22,6 +22,7 @@ type host struct {
 	extendedConfigCache tsc.ExtendedConfigCache
 	sourceFiles         parseCache[ast.SourceFileParseOptions, *ast.SourceFile]
 	configTimes         collections.SyncMap[tspath.Path, time.Duration]
+	packageJsonVersions collections.SyncMap[tspath.Path, string]
 
 	// caches that stay as long as they are needed
 	resolvedReferences parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
@@ -112,6 +113,21 @@ func (h *host) loadOrStoreMTime(file string, oldCache *collections.SyncMap[tspat
 func (h *host) storeMTime(file string, mTime time.Time) {
 	path := h.orchestrator.toPath(file)
 	h.mTimes.Store(path, mTime)
+}
+
+// packageJsonVersion returns the hash of the contents of the package.json file,
+// or false if the file does not exist. The result is cached for the build cycle.
+func (h *host) packageJsonVersion(fileName string) (string, bool) {
+	path := h.orchestrator.toPath(fileName)
+	if existing, loaded := h.packageJsonVersions.Load(path); loaded {
+		return existing, existing != ""
+	}
+	var version string
+	if text, ok := h.FS().ReadFile(fileName); ok {
+		version = incremental.ComputeHash(text, h.orchestrator.opts.Testing != nil)
+	}
+	version, _ = h.packageJsonVersions.LoadOrStore(path, version)
+	return version, version != ""
 }
 
 func (h *host) storeMTimeFromOldCache(file string, oldCache *collections.SyncMap[tspath.Path, time.Time]) {

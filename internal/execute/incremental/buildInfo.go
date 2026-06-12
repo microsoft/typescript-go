@@ -438,6 +438,41 @@ func (b *BuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// BuildInfoPackageJsonLookup is (fileId, version) tuple of a package.json file that
+// was consulted during module resolution and the hash of its contents when the
+// program was created
+type BuildInfoPackageJsonLookup struct {
+	FileId  BuildInfoFileId
+	Version string
+}
+
+func (b *BuildInfoPackageJsonLookup) MarshalJSON() ([]byte, error) {
+	return json.Marshal([2]any{b.FileId, b.Version})
+}
+
+func (b *BuildInfoPackageJsonLookup) UnmarshalJSON(data []byte) error {
+	var fileIdAndVersion []any
+	if err := json.Unmarshal(data, &fileIdAndVersion); err != nil {
+		return fmt.Errorf("invalid BuildInfoPackageJsonLookup: %s", data)
+	}
+	if len(fileIdAndVersion) != 2 {
+		return fmt.Errorf("invalid BuildInfoPackageJsonLookup: expected 2 elements, got %d", len(fileIdAndVersion))
+	}
+	fileId, ok := fileIdAndVersion[0].(float64)
+	if !ok {
+		return fmt.Errorf("invalid fileId in BuildInfoPackageJsonLookup: expected number, got %T", fileIdAndVersion[0])
+	}
+	version, ok := fileIdAndVersion[1].(string)
+	if !ok {
+		return fmt.Errorf("invalid version in BuildInfoPackageJsonLookup: expected string, got %T", fileIdAndVersion[1])
+	}
+	*b = BuildInfoPackageJsonLookup{
+		FileId:  BuildInfoFileId(fileId),
+		Version: version,
+	}
+	return nil
+}
+
 type BuildInfoResolvedRoot struct {
 	Resolved BuildInfoFileId
 	Root     BuildInfoFileId
@@ -480,6 +515,7 @@ type BuildInfo struct {
 	LatestChangedDtsFile       string                               `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
 	EmitSignatures             []*BuildInfoEmitSignature            `json:"emitSignatures,omitzero"`
 	ResolvedRoot               []*BuildInfoResolvedRoot             `json:"resolvedRoot,omitzero"`
+	PackageJsonLookups         []*BuildInfoPackageJsonLookup        `json:"packageJsonLookups,omitzero"`
 
 	// NonIncrementalProgram info
 	SemanticErrors bool `json:"semanticErrors,omitzero"`

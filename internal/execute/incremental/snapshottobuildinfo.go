@@ -46,6 +46,7 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 		if snapshot.latestChangedDtsFile != "" {
 			buildInfo.LatestChangedDtsFile = to.relativeToBuildInfo(snapshot.latestChangedDtsFile)
 		}
+		to.setPackageJsonLookups()
 	} else {
 		to.setRootOfNonIncrementalProgram()
 	}
@@ -358,6 +359,20 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 		t.buildInfo.AffectedFilesPendingEmit = append(t.buildInfo.AffectedFilesPendingEmit, &BuildInfoFilePendingEmit{
 			FileId:   t.toFileId(filePath),
 			EmitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),
+		})
+	}
+}
+
+func (t *toBuildInfo) setPackageJsonLookups() {
+	fs := t.program.Host().FS()
+	for _, fileName := range t.program.PackageJsonLookups() {
+		text, ok := fs.ReadFile(fileName)
+		if !ok {
+			continue
+		}
+		t.buildInfo.PackageJsonLookups = append(t.buildInfo.PackageJsonLookups, &BuildInfoPackageJsonLookup{
+			FileId:  t.toFileId(tspath.ToPath(fileName, t.comparePathsOptions.CurrentDirectory, t.comparePathsOptions.UseCaseSensitiveFileNames)),
+			Version: ComputeHash(text, t.snapshot.hashWithText),
 		})
 	}
 }

@@ -192,3 +192,9 @@ func (p *InfoCache) Set(packageJsonPath string, info *InfoCacheEntry) *InfoCache
 	actual, _ := p.cache.LoadOrStore(key, info)
 	return actual
 }
+
+// Range calls f sequentially for each package.json path and entry in the cache.
+// If f returns false, Range stops the iteration.
+func (p *InfoCache) Range(f func(path tspath.Path, entry *InfoCacheEntry) bool) {
+	p.cache.Range(f)
+}

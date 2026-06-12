@@ -212,6 +212,20 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
+// PackageJsonLookups returns the sorted file names of the package.json files that exist
+// and were consulted during module resolution.
+func (r *Resolver) PackageJsonLookups() []string {
+	var fileNames []string
+	r.packageJsonInfoCache.Range(func(_ tspath.Path, entry *packagejson.InfoCacheEntry) bool {
+		if entry.Exists() {
+			fileNames = append(fileNames, tspath.CombinePaths(entry.PackageDirectory, "package.json"))
+		}
+		return true
+	})
+	slices.Sort(fileNames)
+	return fileNames
+}
+
 func (r *tracer) traceResolutionUsingProjectReference(redirectedReference ResolvedProjectReference) {
 	if redirectedReference != nil && redirectedReference.CompilerOptions() != nil {
 		r.write(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.ConfigName())

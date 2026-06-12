@@ -33,6 +33,7 @@ type readableBuildInfo struct {
 	LatestChangedDtsFile       string                                    `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
 	EmitSignatures             []*readableBuildInfoEmitSignature         `json:"emitSignatures,omitzero"`
 	ResolvedRoot               []*readableBuildInfoResolvedRoot          `json:"resolvedRoot,omitzero"`
+	PackageJsonLookups         []*readableBuildInfoPackageJsonLookup     `json:"packageJsonLookups,omitzero"`
 	Size                       int                                       `json:"size,omitzero"` // Size of the build info file
 
 	// NonIncrementalProgram info
@@ -183,6 +184,11 @@ type readableBuildInfoEmitSignature struct {
 	Original            *incremental.BuildInfoEmitSignature `json:"original,omitzero"`
 }
 
+type readableBuildInfoPackageJsonLookup struct {
+	FileName string `json:"fileName,omitzero"`
+	Version  string `json:"version,omitzero"`
+}
+
 type readableBuildInfoResolvedRoot struct {
 	Resolved string
 	Root     string
@@ -226,6 +232,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 	readable.setAffectedFilesPendingEmit()
 	readable.setEmitSignatures()
 	readable.setResolvedRoot()
+	readable.setPackageJsonLookups()
 	contents, err := json.MarshalIndent(&readable, "", "  ")
 	if err != nil {
 		panic("readableBuildInfo: failed to marshal readable build info: " + err.Error())
@@ -418,6 +425,15 @@ func (r *readableBuildInfo) setResolvedRoot() {
 		return &readableBuildInfoResolvedRoot{
 			Resolved: r.toFilePath(original.Resolved),
 			Root:     r.toFilePath(original.Root),
+		}
+	})
+}
+
+func (r *readableBuildInfo) setPackageJsonLookups() {
+	r.PackageJsonLookups = core.Map(r.buildInfo.PackageJsonLookups, func(original *incremental.BuildInfoPackageJsonLookup) *readableBuildInfoPackageJsonLookup {
+		return &readableBuildInfoPackageJsonLookup{
+			FileName: r.toFilePath(original.FileId),
+			Version:  original.Version,
 		}
 	})
 }

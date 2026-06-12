@@ -152,6 +152,12 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheE
 	return nil
 }
 
+// PackageJsonLookups returns the sorted file names of the package.json files that exist
+// and were consulted during module resolution.
+func (p *Program) PackageJsonLookups() []string {
+	return p.resolver.PackageJsonLookups()
+}
+
 // GetRedirectTargets returns the list of file paths that redirect to the given path.
 // These are files from the same package (same name@version) installed in different locations.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {

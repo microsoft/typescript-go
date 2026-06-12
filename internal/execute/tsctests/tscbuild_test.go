@@ -1030,6 +1030,79 @@ func TestBuildDependencyUpdate(t *testing.T) {
 				},
 			},
 		},
+		{
+			subScenario: "rebuilds when dependency package json redirects to a different declaration file",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "my-dep";
+					export const value: string = myValue;
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/package.json": stringtestutil.Dedent(`
+					{
+						"name": "my-dep",
+						"version": "1.0.0",
+						"types": "index.d.ts"
+					}
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/index.d.ts": "export declare const myValue: string;",
+				"/home/src/workspaces/project/node_modules/my-dep/alt.d.ts":   "export declare const myValue: number;",
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "redirect package types to a declaration file with a breaking type change",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/node_modules/my-dep/package.json", "index.d.ts", "alt.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "rebuilds when absolute non-root dependency is updated",
+			files: FileMap{
+				"C:/work/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"paths": {
+								"abs-dep": ["D:/deps/dep.d.ts"]
+							},
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"C:/work/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "abs-dep";
+					export const value: string = myValue;
+				`),
+				"D:/deps/dep.d.ts": "export declare const myValue: string;",
+			},
+			cwd:              "C:/work/project",
+			windowsStyleRoot: "C:/",
+			ignoreCase:       true,
+			commandLineArgs:  []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "update absolute non-root dependency with breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("D:/deps/dep.d.ts", "export declare const myValue: number;")
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range testCases {
