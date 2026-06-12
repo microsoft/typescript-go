@@ -179,6 +179,14 @@ type Session struct {
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
 	// requests into a single background task.
 	globalDiagPublishPending atomic.Bool
+
+	// pushedDiagnosticsFiles tracks open files whose last published diagnostics
+	// were non-empty, so redundant empty publishes can be skipped.
+	pushedDiagnosticsFiles collections.SyncSet[tspath.Path]
+}
+
+func (s *Session) pushFileDiagnosticsEnabled() bool {
+	return s.options.PushDiagnosticsEnabled && s.options.PushFileDiagnosticsEnabled
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -345,7 +353,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 		Changes: changes,
 	})
 	s.pendingFileChangesMu.Unlock()
-	if s.options.PushFileDiagnosticsEnabled {
+	if s.pushFileDiagnosticsEnabled() {
 		s.ScheduleSnapshotUpdate(UpdateReasonDidChangeFile)
 	}
 }
@@ -399,7 +407,7 @@ func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Contex
 }
 
 func (s *Session) ScheduleDiagnosticsRefresh() {
-	if s.options.PushFileDiagnosticsEnabled {
+	if s.pushFileDiagnosticsEnabled() {
 		// Push-only clients can't re-pull in response to workspace/diagnostic/refresh.
 		s.ScheduleSnapshotUpdate(UpdateReasonDiagnosticsRefresh)
 		return
@@ -522,7 +530,7 @@ func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
 			ataChanges:  ataChanges,
 			newConfig:   newConfig,
 		}
-		if s.options.PushFileDiagnosticsEnabled {
+		if s.pushFileDiagnosticsEnabled() {
 			// Request open documents so dirty programs are rebuilt eagerly;
 			// push-only clients send no requests that would otherwise do it.
 			documents := make([]lsproto.DocumentUri, 0, len(overlays))
@@ -1717,13 +1725,14 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 // publishOpenFileDiagnostics pushes diagnostics for open files after a
 // snapshot update, for clients that do not support pull diagnostics.
 func (s *Session) publishOpenFileDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
-	if !s.options.PushFileDiagnosticsEnabled {
+	if !s.pushFileDiagnosticsEnabled() {
 		return
 	}
 
 	ctx := s.backgroundCtx
 	for path, overlay := range oldSnapshot.fs.overlays {
-		if _, stillOpen := newSnapshot.fs.overlays[path]; !stillOpen {
+		if _, stillOpen := newSnapshot.fs.overlays[path]; !stillOpen && s.pushedDiagnosticsFiles.Has(path) {
+			s.pushedDiagnosticsFiles.Delete(path)
 			s.publishFileDiagnostics(ctx, lsconv.FileNameToDocumentURI(overlay.FileName()), nil, nil)
 		}
 	}
@@ -1743,8 +1752,17 @@ func (s *Session) publishOpenFileDiagnostics(oldSnapshot *Snapshot, newSnapshot 
 			continue
 		}
 		languageService := ls.NewLanguageService(project.configFilePath, program, newSnapshot, overlay.FileName())
+		diagnostics := languageService.ProvidePushDiagnostics(ctx, uri)
+		if len(diagnostics) == 0 {
+			if !s.pushedDiagnosticsFiles.Has(path) {
+				continue
+			}
+			s.pushedDiagnosticsFiles.Delete(path)
+		} else {
+			s.pushedDiagnosticsFiles.Add(path)
+		}
 		version := overlay.Version()
-		s.publishFileDiagnostics(ctx, uri, &version, languageService.ProvidePushDiagnostics(ctx, uri))
+		s.publishFileDiagnostics(ctx, uri, &version, diagnostics)
 	}
 }
 

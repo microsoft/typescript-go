@@ -1193,13 +1193,13 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 	s.telemetryEnabled = enableTelemetry
 
-	var clientSupportsPullDiagnostics, clientSupportsPublishDiagnostics bool
+	// textDocument/publishDiagnostics is a baseline notification; its capability
+	// only advertises extensions like versionSupport, so it is not checked here.
+	var clientSupportsPullDiagnostics bool
 	if capabilities := s.initializeParams.Capabilities; capabilities != nil && capabilities.TextDocument != nil {
-		textDocumentCapabilities := capabilities.TextDocument
-		clientSupportsPullDiagnostics = textDocumentCapabilities.Diagnostic != nil
-		clientSupportsPublishDiagnostics = textDocumentCapabilities.PublishDiagnostics != nil
+		clientSupportsPullDiagnostics = capabilities.TextDocument.Diagnostic != nil
 	}
-	pushFileDiagnostics := !disablePushDiagnostics && !clientSupportsPullDiagnostics && clientSupportsPublishDiagnostics
+	pushFileDiagnostics := !disablePushDiagnostics && !clientSupportsPullDiagnostics
 
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),

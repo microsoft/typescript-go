@@ -752,6 +752,22 @@ func TestPushFileDiagnostics(t *testing.T) {
 		assert.Assert(t, last.Params.Version == nil)
 	})
 
+	t.Run("does not publish empty diagnostics for files that never had any", func(t *testing.T) {
+		t.Parallel()
+		cleanFiles := map[string]any{
+			"/src/tsconfig.json": `{}`,
+			"/src/index.ts":      `const x: number = 1;`,
+		}
+		session, utils := projecttestutil.SetupWithOptions(cleanFiles, options)
+		session.DidOpenFile(context.Background(), uri, 1, cleanFiles["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.WaitForBackgroundTasks()
+		session.DidCloseFile(context.Background(), uri)
+		session.WaitForBackgroundTasks()
+
+		calls := filterDiagnosticsByURI(utils.Client().PublishDiagnosticsCalls(), uri, 0)
+		assert.Equal(t, len(calls), 0)
+	})
+
 	t.Run("does not publish file diagnostics when disabled", func(t *testing.T) {
 		t.Parallel()
 		session, utils := projecttestutil.Setup(files)
