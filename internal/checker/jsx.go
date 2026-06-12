@@ -111,7 +111,7 @@ func (c *Checker) checkJsxFragment(node *ast.Node) *Type {
 	// by default, jsx:'react' will use jsxFactory = React.createElement and jsxFragmentFactory = React.Fragment
 	// if jsxFactory compiler option is provided, ensure jsxFragmentFactory compiler option or @jsxFrag pragma is provided too
 	nodeSourceFile := ast.GetSourceFileOfNode(node)
-	if c.compilerOptions.GetJSXTransformEnabled() && (c.compilerOptions.JsxFactory != "" || ast.GetPragmaFromSourceFile(nodeSourceFile, "jsx") != nil) && c.compilerOptions.JsxFragmentFactory == "" && ast.GetPragmaFromSourceFile(nodeSourceFile, "jsxfrag") == nil {
+	if c.compilerOptions.GetJSXTransformEnabled() && (c.compilerOptions.JsxFactory != "" || ast.GetFirstPragmaFromSourceFile(nodeSourceFile, "jsx") != nil) && c.compilerOptions.JsxFragmentFactory == "" && ast.GetFirstPragmaFromSourceFile(nodeSourceFile, "jsxfrag") == nil {
 		message := core.IfElse(c.compilerOptions.JsxFactory != "",
 			diagnostics.The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_compiler_option,
 			diagnostics.An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments)
@@ -1349,7 +1349,7 @@ func (c *Checker) getJsxNamespace(location *ast.Node) string {
 				if links.localJsxFragmentNamespace != "" {
 					return links.localJsxFragmentNamespace
 				}
-				jsxFragmentPragma := ast.GetPragmaFromSourceFile(file, "jsxfrag")
+				jsxFragmentPragma := ast.GetFirstPragmaFromSourceFile(file, "jsxfrag")
 				if jsxFragmentPragma != nil {
 					links.localJsxFragmentFactory = c.parseIsolatedEntityName(jsxFragmentPragma.Args["factory"].Value)
 					if links.localJsxFragmentFactory != nil {
@@ -1394,7 +1394,7 @@ func (c *Checker) getLocalJsxNamespace(file *ast.SourceFile) string {
 	if links.localJsxNamespace != "" {
 		return links.localJsxNamespace
 	}
-	jsxPragma := ast.GetPragmaFromSourceFile(file, "jsx")
+	jsxPragma := ast.GetFirstPragmaFromSourceFile(file, "jsx")
 	if jsxPragma != nil {
 		links.localJsxFactory = c.parseIsolatedEntityName(jsxPragma.Args["factory"].Value)
 		if links.localJsxFactory != nil {
@@ -1423,7 +1423,7 @@ func (c *Checker) getJsxFragmentFactoryEntity(location *ast.Node) *ast.EntityNam
 			if links.localJsxFragmentFactory != nil {
 				return links.localJsxFragmentFactory
 			}
-			jsxFragPragma := ast.GetPragmaFromSourceFile(file, "jsxfrag")
+			jsxFragPragma := ast.GetFirstPragmaFromSourceFile(file, "jsxfrag")
 			if jsxFragPragma != nil {
 				links.localJsxFragmentFactory = c.parseIsolatedEntityName(jsxFragPragma.Args["factory"].Value)
 				return links.localJsxFragmentFactory

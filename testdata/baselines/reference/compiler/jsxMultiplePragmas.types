@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/jsxMultiplePragmas.tsx] ////
+
+=== jsxMultiplePragmas.tsx ===
+/** @jsx h */
+/** @jsx g */
+declare const h: any, g: any;
+>h : any
+>g : any
+
+export const x = <div/>;
+>x : any
+><div/> : any
+>div : any
+

@@ -1,0 +1,11 @@
+jsxMultiplePragmas.tsx(4,18): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
+==== jsxMultiplePragmas.tsx (1 errors) ====
+    /** @jsx h */
+    /** @jsx g */
+    declare const h: any, g: any;
+    export const x = <div/>;
+                     ~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+    

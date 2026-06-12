@@ -2735,8 +2735,8 @@ func IsRequireVariableStatement(node *Node) bool {
 }
 
 func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {
-	jsxImportSourcePragma := GetPragmaFromSourceFile(file, "jsximportsource")
-	jsxRuntimePragma := GetPragmaFromSourceFile(file, "jsxruntime")
+	jsxImportSourcePragma := GetLastPragmaFromSourceFile(file, "jsximportsource")
+	jsxRuntimePragma := GetLastPragmaFromSourceFile(file, "jsxruntime")
 	if GetPragmaArgument(jsxRuntimePragma, "factory") == "classic" {
 		return ""
 	}
@@ -2764,12 +2764,28 @@ func GetJSXRuntimeImport(base string, options *core.CompilerOptions) string {
 	return base + "/" + core.IfElse(options.Jsx == core.JsxEmitReactJSXDev, "jsx-dev-runtime", "jsx-runtime")
 }
 
-func GetPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
+// GetFirstPragmaFromSourceFile returns the first pragma with the given name, matching
+// TypeScript's `isArray(pragmas) ? pragmas[0] : pragmas` (e.g. for the "jsx"/"jsxfrag" factory pragmas).
+func GetFirstPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
+	if file != nil {
+		for i := range file.Pragmas {
+			if file.Pragmas[i].Name == name {
+				return &file.Pragmas[i]
+			}
+		}
+	}
+	return nil
+}
+
+// GetLastPragmaFromSourceFile returns the last pragma with the given name, matching
+// TypeScript's `isArray(pragmas) ? pragmas[pragmas.length - 1] : pragmas` (e.g. for the
+// "jsximportsource"/"jsxruntime" pragmas).
+func GetLastPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
 	var result *Pragma
 	if file != nil {
 		for i := range file.Pragmas {
 			if file.Pragmas[i].Name == name {
-				result = &file.Pragmas[i] // Last one wins
+				result = &file.Pragmas[i]
 			}
 		}
 	}
