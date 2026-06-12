@@ -490,6 +490,14 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetRestTypeOfSignature(ctx, parsed.(*CheckerSignatureParams))
 	case string(MethodGetTypePredicateOfSignature):
 		return s.handleGetTypePredicateOfSignature(ctx, parsed.(*CheckerSignatureParams))
+	case string(MethodGetTypeParametersOfSignature):
+		return s.handleGetTypeParametersOfSignature(ctx, parsed.(*GetSignaturePropertyParams))
+	case string(MethodGetParametersOfSignature):
+		return s.handleGetParametersOfSignature(ctx, parsed.(*GetSignaturePropertyParams))
+	case string(MethodGetThisParameterOfSignature):
+		return s.handleGetThisParameterOfSignature(ctx, parsed.(*GetSignaturePropertyParams))
+	case string(MethodGetTargetOfSignature):
+		return s.handleGetTargetOfSignature(ctx, parsed.(*GetSignaturePropertyParams))
 	case string(MethodGetBaseTypes):
 		return s.handleGetBaseTypes(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetPropertiesOfType):
@@ -1289,6 +1297,99 @@ func (s *Session) resolveTypeArrayProperty(params *GetTypePropertyParams, getter
 		results[i] = sd.registerType(sub)
 	}
 	return results, nil
+}
+
+// resolveSignatureTypeArrayProperty resolves a signature handle and returns an array of types.
+func (s *Session) resolveSignatureTypeArrayProperty(params *GetSignaturePropertyParams, getter func(*checker.Signature) []*checker.Type) ([]*TypeResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := sd.resolveSignatureHandle(params.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	types := getter(sig)
+	if len(types) == 0 {
+		return nil, nil
+	}
+
+	results := make([]*TypeResponse, len(types))
+	for i, t := range types {
+		results[i] = sd.registerType(t)
+	}
+	return results, nil
+}
+
+// resolveSignatureSymbolProperty resolves a signature handle and returns a single symbol.
+func (s *Session) resolveSignatureSymbolProperty(params *GetSignaturePropertyParams, getter func(*checker.Signature) *ast.Symbol) (*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := sd.resolveSignatureHandle(params.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	sym := getter(sig)
+	if sym == nil {
+		return nil, nil
+	}
+	return sd.registerSymbol(sym), nil
+}
+
+// resolveSignatureSymbolArrayProperty resolves a signature handle and returns an array of symbols.
+func (s *Session) resolveSignatureSymbolArrayProperty(params *GetSignaturePropertyParams, getter func(*checker.Signature) []*ast.Symbol) ([]*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := sd.resolveSignatureHandle(params.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	symbols := getter(sig)
+	if len(symbols) == 0 {
+		return nil, nil
+	}
+
+	results := make([]*SymbolResponse, len(symbols))
+	for i, sym := range symbols {
+		results[i] = sd.registerSymbol(sym)
+	}
+	return results, nil
+}
+
+func (s *Session) handleGetTypeParametersOfSignature(_ context.Context, params *GetSignaturePropertyParams) ([]*TypeResponse, error) {
+	return s.resolveSignatureTypeArrayProperty(params, (*checker.Signature).TypeParameters)
+}
+
+func (s *Session) handleGetParametersOfSignature(_ context.Context, params *GetSignaturePropertyParams) ([]*SymbolResponse, error) {
+	return s.resolveSignatureSymbolArrayProperty(params, (*checker.Signature).Parameters)
+}
+
+func (s *Session) handleGetThisParameterOfSignature(_ context.Context, params *GetSignaturePropertyParams) (*SymbolResponse, error) {
+	return s.resolveSignatureSymbolProperty(params, (*checker.Signature).ThisParameter)
+}
+
+func (s *Session) handleGetTargetOfSignature(_ context.Context, params *GetSignaturePropertyParams) (*SignatureResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := sd.resolveSignatureHandle(params.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	return sd.registerSignature(sig.Target()), nil
 }
 
 func (s *Session) handleGetTargetOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {

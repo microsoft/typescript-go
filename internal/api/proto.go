@@ -116,6 +116,10 @@ const (
 	MethodGetReturnTypeOfSignature          Method = "getReturnTypeOfSignature"
 	MethodGetRestTypeOfSignature            Method = "getRestTypeOfSignature"
 	MethodGetTypePredicateOfSignature       Method = "getTypePredicateOfSignature"
+	MethodGetTypeParametersOfSignature      Method = "getTypeParametersOfSignature"
+	MethodGetParametersOfSignature          Method = "getParametersOfSignature"
+	MethodGetThisParameterOfSignature       Method = "getThisParameterOfSignature"
+	MethodGetTargetOfSignature              Method = "getTargetOfSignature"
 	MethodGetBaseTypes                      Method = "getBaseTypes"
 	MethodGetPropertiesOfType               Method = "getPropertiesOfType"
 	MethodGetIndexInfosOfType               Method = "getIndexInfosOfType"
@@ -356,6 +360,10 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetReturnTypeOfSignature:          unmarshallerFor[CheckerSignatureParams],
 	MethodGetRestTypeOfSignature:            unmarshallerFor[CheckerSignatureParams],
 	MethodGetTypePredicateOfSignature:       unmarshallerFor[CheckerSignatureParams],
+	MethodGetTypeParametersOfSignature:      unmarshallerFor[GetSignaturePropertyParams],
+	MethodGetParametersOfSignature:          unmarshallerFor[GetSignaturePropertyParams],
+	MethodGetThisParameterOfSignature:       unmarshallerFor[GetSignaturePropertyParams],
+	MethodGetTargetOfSignature:              unmarshallerFor[GetSignaturePropertyParams],
 	MethodGetBaseTypes:                      unmarshallerFor[CheckerTypeParams],
 	MethodGetPropertiesOfType:               unmarshallerFor[CheckerTypeParams],
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
@@ -715,6 +723,12 @@ type GetSymbolOfTypeParams struct {
 type GetTypePropertyParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
 	Type     TypeID     `json:"type"`
+}
+
+// GetSignaturePropertyParams is used for all signature sub-property endpoints.
+type GetSignaturePropertyParams struct {
+	Snapshot  SnapshotID  `json:"snapshot"`
+	Signature SignatureID `json:"signature"`
 }
 
 // GetContextualTypeParams returns the contextual type for a node.

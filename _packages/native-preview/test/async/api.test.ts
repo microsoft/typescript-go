@@ -890,6 +890,40 @@ export class Cache {
             await api.close();
         }
     });
+
+    test("getSignaturesOfType - signature type parameters", async () => {
+        const mainFile = `
+            interface Operator<T, R> {
+            }
+            export declare class Observable<T> {
+                lift<R>(operator: Operator<T, R>): Observable<R>;
+            }
+            `;
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": mainFile,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const liftPos = mainFile.indexOf("lift");
+            const type = await project.checker.getTypeAtPosition("/src/main.ts", liftPos);
+            assert.ok(type);
+            const callSigs = await project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(callSigs.length === 1, "should have exactly one call signature, found: " + callSigs.length);
+            const sig = callSigs[0];
+            assert.ok(sig.typeParameters?.length === 1, "should have exactly one type parameter, found: " + sig.typeParameters?.length);
+            const typeParams = await sig.getTypeParameters();
+            const typeParam = typeParams[0];
+            assert.ok(typeParam, "should have type parameter");
+            const name = (await typeParam.getSymbol())?.name;
+            assert.ok(name === "R", "should be named R, instead: " + name);
+            assert.ok(typeParam.flags & TypeFlags.TypeParameter, "should be a type parameter, instead flags: " + typeParam.flags);
+        }
+        finally {
+            await api.close();
+        }
+    });
 });
 
 describe("Symbol - parent, members, exports", () => {
@@ -1933,8 +1967,8 @@ describe("Checker - getConstraintOfTypeParameter", () => {
             assert.ok(type);
             const sigs = await project.checker.getSignaturesOfType(type, SignatureKind.Call);
             assert.ok(sigs.length > 0);
-            const typeParams = sigs[0].typeParameters;
-            assert.ok(typeParams && typeParams.length > 0, "Should have type parameters");
+            assert.ok(sigs[0].typeParameters && sigs[0].typeParameters.length > 0, "Should have type parameters");
+            const typeParams = await sigs[0].getTypeParameters();
             const constraint = await project.checker.getConstraintOfTypeParameter(typeParams[0]);
             assert.ok(constraint);
             assert.ok(constraint.flags & TypeFlags.String, `Expected string constraint, got flags ${constraint.flags}`);
