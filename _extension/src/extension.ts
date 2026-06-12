@@ -6,7 +6,6 @@ import {
 } from "./commands";
 import {
     aiConnectionString,
-    defer,
     getExplicitConfigTarget,
     getUseTsgo,
     getWinningTsgoConfigKey,
