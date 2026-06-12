@@ -509,6 +509,10 @@ func getExtendsConfigPathOrArray(
 	if configFileName != "" {
 		newBase = directoryOfCombinedPath(configFileName, basePath)
 	}
+	if value == nil {
+		_, errors := convertJsonOption(extendsOptionDeclaration, value, basePath, propertyAssignment, valueExpression, sourceFile)
+		return extendedConfigPathArray, errors
+	}
 	if reflect.TypeOf(value).Kind() == reflect.String {
 		val, err := getExtendsConfigPath(value.(string), host, newBase, valueExpression, sourceFile)
 		if val != "" {
@@ -754,14 +758,9 @@ func convertObjectLiteralExpressionToJson(
 			continue
 		}
 
-		// !!!
-		// if ast.IsQuestionToken(element) {
-		// 	errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.Property_assignment_expected))
-		// }
-		if element.Name() != nil && !isDoubleQuotedString(element.Name()) {
-			errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.String_literal_with_double_quotes_expected))
+		if token := element.QuestionToken(); token != nil {
+			errors = append(errors, ast.NewDiagnostic(sourceFile, token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
 		}
-
 		textOfKey := ""
 		if !ast.IsComputedNonLiteralName(element.Name()) {
 			textOfKey, _ = ast.TryGetTextOfPropertyName(element.Name())
@@ -1013,19 +1012,25 @@ func ParseExtendedConfig(
 	host ParseConfigHost,
 	extendedConfigCache ExtendedConfigCache,
 ) *ExtendedConfigCacheEntry {
-	var extendedConfig *parsedTsconfig
-	var entryErrors []*ast.Diagnostic
-	extendedResult, err := readJsonConfigFile(fileName, path, host.FS().ReadFile)
-	entryErrors = append(entryErrors, err...)
-	if len(extendedResult.SourceFile.Diagnostics()) == 0 {
-		extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
-		entryErrors = append(entryErrors, err...)
-	}
-	return &ExtendedConfigCacheEntry{
+	extendedResult, readErrors := readJsonConfigFile(fileName, path, host.FS().ReadFile)
+	entry := &ExtendedConfigCacheEntry{
 		extendedResult: extendedResult,
-		extendedConfig: extendedConfig,
-		errors:         entryErrors,
 	}
+
+	if len(readErrors) > 0 {
+		entry.errors = readErrors
+		return entry
+	}
+
+	if parseDiagnostics := extendedResult.SourceFile.Diagnostics(); len(parseDiagnostics) > 0 {
+		entry.errors = parseDiagnostics
+		return entry
+	}
+
+	var parseErrors []*ast.Diagnostic
+	entry.extendedConfig, parseErrors = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
+	entry.errors = parseErrors
+	return entry
 }
 
 // parseConfig just extracts options/include/exclude/files out of a config file.

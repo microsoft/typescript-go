@@ -83,10 +83,14 @@ const (
 
 	// Type sub-property methods
 	MethodGetTargetOfType              Method = "getTargetOfType"
+	MethodGetFreshTypeOfType           Method = "getFreshTypeOfType"
+	MethodGetRegularTypeOfType         Method = "getRegularTypeOfType"
 	MethodGetTypesOfType               Method = "getTypesOfType"
 	MethodGetTypeParametersOfType      Method = "getTypeParametersOfType"
 	MethodGetOuterTypeParametersOfType Method = "getOuterTypeParametersOfType"
 	MethodGetLocalTypeParametersOfType Method = "getLocalTypeParametersOfType"
+	MethodGetAliasTypeArgumentsOfType  Method = "getAliasTypeArgumentsOfType"
+	MethodGetAliasSymbolOfType         Method = "getAliasSymbolOfType"
 	MethodGetObjectTypeOfType          Method = "getObjectTypeOfType"
 	MethodGetIndexTypeOfType           Method = "getIndexTypeOfType"
 	MethodGetCheckTypeOfType           Method = "getCheckTypeOfType"
@@ -102,6 +106,7 @@ const (
 	MethodGetWidenedType                    Method = "getWidenedType"
 	MethodGetParameterType                  Method = "getParameterType"
 	MethodIsArrayLikeType                   Method = "isArrayLikeType"
+	MethodIsTypeAssignableTo                Method = "isTypeAssignableTo"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
 	MethodGetTypeOfSymbolAtLocation         Method = "getTypeOfSymbolAtLocation"
 	MethodTypeToTypeNode                    Method = "typeToTypeNode"
@@ -116,6 +121,14 @@ const (
 	MethodGetIndexInfosOfType               Method = "getIndexInfosOfType"
 	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
 	MethodGetTypeArguments                  Method = "getTypeArguments"
+
+	// Reference methods
+	MethodGetReferencesToSymbolInFile Method = "getReferencesToSymbolInFile"
+	MethodGetReferencedSymbolsForNode Method = "getReferencedSymbolsForNode"
+	MethodGetSignatureUsages          Method = "getSignatureUsages"
+
+	// Language service methods
+	MethodGetCompletionsAtPosition Method = "getCompletionsAtPosition"
 
 	// Diagnostic methods
 	MethodGetSyntacticDiagnostics         Method = "getSyntacticDiagnostics"
@@ -312,10 +325,14 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
 
 	MethodGetTargetOfType:                   unmarshallerFor[GetTypePropertyParams],
+	MethodGetFreshTypeOfType:                unmarshallerFor[GetTypePropertyParams],
+	MethodGetRegularTypeOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypesOfType:                    unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeParametersOfType:           unmarshallerFor[GetTypePropertyParams],
 	MethodGetOuterTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetLocalTypeParametersOfType:      unmarshallerFor[GetTypePropertyParams],
+	MethodGetAliasTypeArgumentsOfType:       unmarshallerFor[GetTypePropertyParams],
+	MethodGetAliasSymbolOfType:              unmarshallerFor[GetTypePropertyParams],
 	MethodGetObjectTypeOfType:               unmarshallerFor[GetTypePropertyParams],
 	MethodGetIndexTypeOfType:                unmarshallerFor[GetTypePropertyParams],
 	MethodGetCheckTypeOfType:                unmarshallerFor[GetTypePropertyParams],
@@ -329,6 +346,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
 	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
 	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
+	MethodIsTypeAssignableTo:                unmarshallerFor[IsTypeAssignableToParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
 	MethodGetTypeOfSymbolAtLocation:         unmarshallerFor[GetTypeOfSymbolAtLocationParams],
 	MethodTypeToTypeNode:                    unmarshallerFor[TypeToTypeNodeParams],
@@ -343,6 +361,10 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
+	MethodGetReferencesToSymbolInFile:       unmarshallerFor[GetReferencesToSymbolInFileParams],
+	MethodGetReferencedSymbolsForNode:       unmarshallerFor[GetReferencedSymbolsForNodeParams],
+	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
+	MethodGetCompletionsAtPosition:          unmarshallerFor[GetCompletionsAtPositionParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -507,6 +529,20 @@ type TypeResponse struct {
 	// TemplateLiteralType text segments
 	Texts []string `json:"texts,omitempty"`
 
+	// FreshableType data (LiteralType and computed enum types)
+	FreshType   TypeID `json:"freshType,omitempty"`
+	RegularType TypeID `json:"regularType,omitempty"`
+
+	// TypeParameter data
+	IsThisType bool `json:"isThisType,omitempty"`
+
+	// IntrinsicType data
+	IntrinsicName string `json:"intrinsicName,omitempty"`
+
+	// TypeAlias data
+	AliasTypeArguments []TypeID `json:"aliasTypeArguments,omitempty"`
+	AliasSymbol        SymbolID `json:"aliasSymbol,omitempty"`
+
 	// Symbol associated with structured types
 	Symbol SymbolID `json:"symbol,omitempty"`
 }
@@ -521,9 +557,25 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		resp.Symbol = SymbolHandle(t.Symbol())
 	}
 
+	if t.Alias() != nil {
+		resp.AliasTypeArguments = typeHandles(t.Alias().TypeArguments())
+		if t.Alias().Symbol() != nil {
+			resp.AliasSymbol = SymbolHandle(t.Alias().Symbol())
+		}
+	}
+
 	switch flags := t.Flags(); {
-	case flags&checker.TypeFlagsLiteral != 0:
-		resp.Value = literalValueToJSON(t.AsLiteralType().Value())
+	case flags&checker.TypeFlagsFreshable != 0:
+		lit := t.AsLiteralType()
+		if flags&checker.TypeFlagsLiteral != 0 {
+			resp.Value = literalValueToJSON(lit.Value())
+		}
+		if lit.FreshType() != nil {
+			resp.FreshType = TypeHandle(lit.FreshType())
+		}
+		if lit.RegularType() != nil {
+			resp.RegularType = TypeHandle(lit.RegularType())
+		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
 		objectFlags := t.ObjectFlags()
@@ -572,6 +624,10 @@ func newTypeData(t *checker.Type) *TypeResponse {
 		// types omitted; fetched via separate request
 	case flags&checker.TypeFlagsStringMapping != 0:
 		resp.Target = TypeHandle(t.AsStringMappingType().Target())
+	case flags&checker.TypeFlagsTypeParameter != 0:
+		resp.IsThisType = t.AsTypeParameter().IsThisType()
+	case flags&checker.TypeFlagsIntrinsic != 0:
+		resp.IntrinsicName = t.AsIntrinsicType().IntrinsicName()
 	}
 
 	return resp
@@ -676,6 +732,76 @@ type GetTypeOfSymbolAtLocationParams struct {
 	Location NodeHandle `json:"location"`
 }
 
+// GetReferencesToSymbolInFileParams are the parameters for the getReferencesToSymbolInFile method.
+type GetReferencesToSymbolInFileParams struct {
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`
+	Symbol   SymbolID           `json:"symbol"`
+}
+
+// GetReferencedSymbolsForNodeParams are the parameters for the getReferencedSymbolsForNode method.
+type GetReferencedSymbolsForNodeParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Node     NodeHandle `json:"node"`
+	Position int        `json:"position"`
+}
+
+// ReferencedSymbolEntry represents a symbol definition and its references.
+type ReferencedSymbolEntry struct {
+	Definition NodeHandle      `json:"definition"`
+	Symbol     *SymbolResponse `json:"symbol,omitempty"`
+	References []NodeHandle    `json:"references"`
+}
+
+// GetSignatureUsagesParams are the parameters for the getSignatureUsages method.
+type GetSignatureUsagesParams struct {
+	Snapshot      SnapshotID `json:"snapshot"`
+	Project       ProjectID  `json:"project"`
+	SignatureDecl NodeHandle `json:"signatureDecl"`
+}
+
+// SignatureUsageResponse represents a single usage of a signature as a name-call pair.
+type SignatureUsageResponse struct {
+	Name NodeHandle `json:"name"`
+	Call NodeHandle `json:"call,omitempty"`
+}
+
+// GetCompletionsAtPositionParams are the parameters for the getCompletionsAtPosition method.
+type GetCompletionsAtPositionParams struct {
+	Snapshot         SnapshotID         `json:"snapshot"`
+	Project          ProjectID          `json:"project"`
+	File             DocumentIdentifier `json:"file"`
+	Position         uint32             `json:"position"`
+	TriggerCharacter *string            `json:"triggerCharacter,omitempty"`
+	IncludeSymbol    bool               `json:"includeSymbol,omitempty"`
+}
+
+// CompletionEntryLabelDetailsResponse holds additional label display text for a completion entry.
+type CompletionEntryLabelDetailsResponse struct {
+	Detail      *string `json:"detail,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+// CompletionEntryResponse represents a single completion item.
+type CompletionEntryResponse struct {
+	Name         string                               `json:"name"`
+	Kind         uint32                               `json:"kind,omitempty"`
+	SortText     *string                              `json:"sortText,omitempty"`
+	InsertText   *string                              `json:"insertText,omitempty"`
+	FilterText   *string                              `json:"filterText,omitempty"`
+	Detail       *string                              `json:"detail,omitempty"`
+	LabelDetails *CompletionEntryLabelDetailsResponse `json:"labelDetails,omitempty"`
+	Symbol       *SymbolResponse                      `json:"symbol,omitempty"`
+}
+
+// CompletionInfoResponse wraps a list of completion entries.
+type CompletionInfoResponse struct {
+	IsIncomplete bool                       `json:"isIncomplete"`
+	Entries      []*CompletionEntryResponse `json:"entries"`
+}
+
 // GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).
 type GetIntrinsicTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
@@ -723,6 +849,14 @@ type IsArrayLikeTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
 	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"type"`
+}
+
+// IsTypeAssignableToParams checks assignability between two types.
+type IsTypeAssignableToParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Source   TypeID     `json:"source"`
+	Target   TypeID     `json:"target"`
 }
 
 type GetSignaturesOfTypeParams struct {
@@ -815,9 +949,10 @@ type TypePredicateResponse struct {
 
 // IndexInfoResponse represents a single index signature.
 type IndexInfoResponse struct {
-	KeyType    TypeResponse `json:"keyType"`
-	ValueType  TypeResponse `json:"valueType"`
-	IsReadonly bool         `json:"isReadonly,omitempty"`
+	KeyType     TypeResponse `json:"keyType"`
+	ValueType   TypeResponse `json:"valueType"`
+	IsReadonly  bool         `json:"isReadonly,omitempty"`
+	Declaration NodeHandle   `json:"declaration,omitempty"`
 }
 
 // SourceFileResponse contains the binary-encoded AST data for a source file.

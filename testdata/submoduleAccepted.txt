@@ -45,6 +45,12 @@ fourslash/inlayHints/inlayHintsInteractiveFunctionParameterTypes1.baseline.diff
 
 ## regex checking ##
 
+## preserved escaped lone surrogate code units instead of U+FFFD ##
+conformance/unicodeExtendedEscapesInStrings10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInStrings11(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates11(target=es6).types.diff
+
 ## find all references ##
 fourslash/findAllReferences/isDefinitionAcrossGlobalProjects.baseline.jsonc.diff
 fourslash/findAllReferences/findAllRefsNonexistentPropertyNoCrash1.baseline.jsonc.diff
@@ -384,7 +390,6 @@ compiler/declarationEmitExpandoWithGenericConstraint.types.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
 compiler/declarationEmitLateBoundAssignments2.js.diff
@@ -779,7 +784,6 @@ conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=nodenext
 conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
 conformance/jsdocPrivateName2.errors.txt.diff
 conformance/jsdocImplements_missingType.errors.txt.diff
-conformance/symbolProperty24.errors.txt.diff
 
 ## Type arguments are dropped from anonymous mixin class types in error messages — e.g. `mixB<typeof A>.(Anonymous class)` becomes `mixB.(Anonymous class)`
 compiler/mixinPrivateAndProtected.errors.txt.diff
@@ -1066,10 +1070,6 @@ conformance/jsDeclarationsFunctionKeywordPropExhaustive(target=es2015).js.diff
 conformance/nullPropertyName.js.diff
 conformance/typeFromPropertyAssignment29.js.diff
 
-## Expando function namespace removed entirely (Documented in CHANGES.md in section "Expando declarations")
-## Expando namespace with nested property assignments is completely removed from declaration emit
-compiler/expandoFunctionNestedAssigments.js.diff
-
 ## Namespace converted to type alias in declaration emit (Documented in CHANGES.md in section "JSDoc Tags and Types")
 ## `namespace Dotted { type Name = number }` → `type Dotted = number`
 conformance/jsDeclarationsImportNamespacedType.js.diff
@@ -1164,10 +1164,6 @@ compiler/nameCollisions.js.diff
 ## Empty namespace IIFE no longer emitted (empty IIFEs are dead code with no runtime effect)
 ## `namespace global {}` inside a class no longer generates an empty IIFE in JS output
 compiler/nestedGlobalNamespaceInClass.js.diff
-
-## Inline JSDoc parameter comments no longer emitted in function type declarations (comments are cosmetic; type signatures are identical)
-## Comments like `/** fooFunctionValue param */` stripped from declaration output
-compiler/commentsFunction(target=es2015).js.diff
 
 ## JSDoc @typedef descriptions preserved inline instead of being converted to per-property comments (comment format change only; the type structure is identical)
 ## Full `@typedef`/`@property` JSDoc blocks are now preserved with the type alias

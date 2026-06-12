@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -341,6 +342,18 @@ func (s *Session) setupChecker(ctx context.Context, snapshot SnapshotID, project
 	}, nil
 }
 
+// setupLanguageService creates a LanguageService for the given snapshot/project.
+// Unlike setupChecker, this does NOT acquire a checker from the pool, so callers that
+// only need an LS (and not a Checker) can avoid blocking on / holding a pooled checker.
+func (s *Session) setupLanguageService(sd *snapshotData, program *compiler.Program, projectHandle ProjectID, activeFile string) (*ls.LanguageService, error) {
+	projectName := parseProjectHandle(projectHandle)
+	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
+	if proj == nil {
+		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
+	}
+	return ls.NewLanguageService(proj.ConfigFilePath(), program, sd.snapshot, activeFile), nil
+}
+
 // HandleRequest implements Handler.
 func (s *Session) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	// Handle simple methods that don't need param parsing
@@ -413,6 +426,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypesAtPositions(ctx, parsed.(*GetTypesAtPositionsParams))
 	case string(MethodGetTargetOfType):
 		return s.handleGetTargetOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetFreshTypeOfType):
+		return s.handleGetFreshTypeOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetRegularTypeOfType):
+		return s.handleGetRegularTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetTypesOfType):
 		return s.handleGetTypesOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetTypeParametersOfType):
@@ -421,6 +438,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetOuterTypeParametersOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetLocalTypeParametersOfType):
 		return s.handleGetLocalTypeParametersOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetAliasTypeArgumentsOfType):
+		return s.handleGetAliasTypeArgumentsOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetAliasSymbolOfType):
+		return s.handleGetAliasSymbolOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetObjectTypeOfType):
 		return s.handleGetObjectTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetIndexTypeOfType):
@@ -447,6 +468,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetParameterType(ctx, parsed.(*GetParameterTypeParams))
 	case string(MethodIsArrayLikeType):
 		return s.handleIsArrayLikeType(ctx, parsed.(*IsArrayLikeTypeParams))
+	case string(MethodIsTypeAssignableTo):
+		return s.handleIsTypeAssignableTo(ctx, parsed.(*IsTypeAssignableToParams))
 	case string(MethodGetShorthandAssignmentValueSymbol):
 		return s.handleGetShorthandAssignmentValueSymbol(ctx, parsed.(*GetTypeAtLocationParams))
 	case string(MethodGetTypeOfSymbolAtLocation):
@@ -515,6 +538,14 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleStopCPUProfile(ctx)
 	case string(MethodSaveHeapProfile):
 		return s.handleSaveHeapProfile(ctx, parsed.(*ProfileParams))
+	case string(MethodGetReferencesToSymbolInFile):
+		return s.handleGetReferencesToSymbolInFile(ctx, parsed.(*GetReferencesToSymbolInFileParams))
+	case string(MethodGetReferencedSymbolsForNode):
+		return s.handleGetReferencedSymbolsForNode(ctx, parsed.(*GetReferencedSymbolsForNodeParams))
+	case string(MethodGetSignatureUsages):
+		return s.handleGetSignatureUsages(ctx, parsed.(*GetSignatureUsagesParams))
+	case string(MethodGetCompletionsAtPosition):
+		return s.handleGetCompletionsAtPosition(ctx, parsed.(*GetCompletionsAtPositionParams))
 	default:
 		return nil, fmt.Errorf("unknown method: %s", method)
 	}
@@ -1264,6 +1295,24 @@ func (s *Session) handleGetTargetOfType(_ context.Context, params *GetTypeProper
 	return s.resolveTypeProperty(params, (*checker.Type).Target)
 }
 
+func (s *Session) handleGetFreshTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		if t.Flags()&checker.TypeFlagsFreshable == 0 {
+			return nil
+		}
+		return t.AsLiteralType().FreshType()
+	})
+}
+
+func (s *Session) handleGetRegularTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypeProperty(params, func(t *checker.Type) *checker.Type {
+		if t.Flags()&checker.TypeFlagsFreshable == 0 {
+			return nil
+		}
+		return t.AsLiteralType().RegularType()
+	})
+}
+
 func (s *Session) handleGetTypesOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
 	return s.resolveTypeArrayProperty(params, (*checker.Type).Types)
 }
@@ -1284,6 +1333,33 @@ func (s *Session) handleGetLocalTypeParametersOfType(_ context.Context, params *
 	return s.resolveTypeArrayProperty(params, func(t *checker.Type) []*checker.Type {
 		return t.AsInterfaceType().LocalTypeParameters()
 	})
+}
+
+func (s *Session) handleGetAliasTypeArgumentsOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
+	return s.resolveTypeArrayProperty(params, func(t *checker.Type) []*checker.Type {
+		if t.Alias() == nil {
+			return nil
+		}
+		return t.Alias().TypeArguments()
+	})
+}
+
+func (s *Session) handleGetAliasSymbolOfType(_ context.Context, params *GetTypePropertyParams) (*SymbolResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := sd.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	if t.Alias() == nil || t.Alias().Symbol() == nil {
+		return nil, nil
+	}
+
+	return sd.registerSymbol(t.Alias().Symbol()), nil
 }
 
 func (s *Session) handleGetObjectTypeOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
@@ -1472,6 +1548,26 @@ func (s *Session) handleIsArrayLikeType(ctx context.Context, params *IsArrayLike
 	}
 
 	return setup.checker.IsArrayLikeType(t), nil
+}
+
+// handleIsTypeAssignableTo returns whether source is assignable to target.
+func (s *Session) handleIsTypeAssignableTo(ctx context.Context, params *IsTypeAssignableToParams) (bool, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return false, err
+	}
+	defer setup.done()
+
+	source, err := setup.sd.resolveTypeHandle(params.Source)
+	if err != nil {
+		return false, err
+	}
+	target, err := setup.sd.resolveTypeHandle(params.Target)
+	if err != nil {
+		return false, err
+	}
+
+	return setup.checker.IsTypeAssignableTo(source, target), nil
 }
 
 // handleGetShorthandAssignmentValueSymbol returns the value symbol of a shorthand property assignment.
@@ -1838,6 +1934,9 @@ func (s *Session) handleGetIndexInfosOfType(ctx context.Context, params *Checker
 			ValueType:  *setup.sd.registerType(info.ValueType()),
 			IsReadonly: info.IsReadonly(),
 		}
+		if info.Declaration() != nil {
+			results[i].Declaration = setup.sd.nodeHandleFrom(info.Declaration())
+		}
 	}
 
 	return results, nil
@@ -2138,4 +2237,181 @@ func (s *Session) resolveOptionalSourceFile(program *compiler.Program, file *Doc
 		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, file)
 	}
 	return sourceFile, nil
+}
+
+// handleGetReferencesToSymbolInFile returns node handles for all identifiers in a file that reference the given symbol.
+func (s *Session) handleGetReferencesToSymbolInFile(ctx context.Context, params *GetReferencesToSymbolInFileParams) ([]NodeHandle, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	symbol, err := setup.sd.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return nil, err
+	}
+	if symbol == nil {
+		return nil, nil
+	}
+
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+	}
+
+	nodes := setup.checker.GetReferencesToSymbolInFile(sourceFile, symbol)
+	result := make([]NodeHandle, len(nodes))
+	for i, node := range nodes {
+		result[i] = setup.sd.nodeHandleFrom(node)
+	}
+	return result, nil
+}
+
+func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSignatureUsagesParams) ([]SignatureUsageResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	signatureDecl, err := sd.resolveNodeHandle(program, params.SignatureDecl)
+	if err != nil {
+		return nil, err
+	}
+	if signatureDecl == nil {
+		return nil, nil
+	}
+
+	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
+	if err != nil {
+		return nil, err
+	}
+
+	usages := langSvc.GetSignatureUsages(ctx, signatureDecl)
+	if usages == nil {
+		return nil, nil
+	}
+
+	result := make([]SignatureUsageResponse, 0, len(usages))
+	for _, u := range usages {
+		entry := SignatureUsageResponse{
+			Name: sd.nodeHandleFrom(u.Name),
+		}
+		if u.Call != nil {
+			entry.Call = sd.nodeHandleFrom(u.Call)
+		}
+		result = append(result, entry)
+	}
+	return result, nil
+}
+
+// handleGetCompletionsAtPosition returns completions at a position in a document.
+func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *GetCompletionsAtPositionParams) (*CompletionInfoResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, nil
+	}
+	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
+	if err != nil {
+		return nil, err
+	}
+	positionMap := sourceFile.GetPositionMap()
+	internalPos := positionMap.UTF16ToUTF8(int(params.Position))
+	result, err := langSvc.GetCompletionsAtPosition(ctx, sourceFile, internalPos, params.TriggerCharacter, params.IncludeSymbol)
+	if err != nil || result == nil {
+		return nil, err
+	}
+	entries := make([]*CompletionEntryResponse, 0, len(result.Items))
+	for _, item := range result.Items {
+		entry := &CompletionEntryResponse{
+			Name:       item.Label,
+			SortText:   item.SortText,
+			InsertText: item.InsertText,
+			FilterText: item.FilterText,
+			Detail:     item.Detail,
+		}
+		if item.Kind != nil {
+			entry.Kind = uint32(*item.Kind)
+		}
+		if item.LabelDetails != nil {
+			entry.LabelDetails = &CompletionEntryLabelDetailsResponse{
+				Detail:      item.LabelDetails.Detail,
+				Description: item.LabelDetails.Description,
+			}
+		}
+		if item.Symbol != nil {
+			entry.Symbol = sd.registerSymbol(item.Symbol)
+		}
+		entries = append(entries, entry)
+	}
+	return &CompletionInfoResponse{
+		IsIncomplete: result.IsIncomplete,
+		Entries:      entries,
+	}, nil
+}
+
+// handleGetReferencedSymbolsForNode returns node handles for all references found at a node.
+func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params *GetReferencedSymbolsForNodeParams) ([]ReferencedSymbolEntry, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	node, err := sd.resolveNodeHandle(program, params.Node)
+	if err != nil {
+		return nil, err
+	}
+	if node == nil {
+		return nil, nil
+	}
+
+	langSvc, err := s.setupLanguageService(sd, program, params.Project, "")
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFiles := program.GetSourceFiles()
+	entries := langSvc.GetReferencedSymbolsForNode(ctx, params.Position, node, sourceFiles)
+	if entries == nil {
+		return nil, nil
+	}
+
+	var result []ReferencedSymbolEntry
+	for _, entry := range entries {
+		defNode := entry.DefinitionNode()
+		if defNode == nil {
+			continue
+		}
+		var refs []NodeHandle
+		for _, ref := range entry.References() {
+			if ref.IsNodeEntry() {
+				refs = append(refs, sd.nodeHandleFrom(ref.Node()))
+			}
+		}
+		re := ReferencedSymbolEntry{
+			Definition: sd.nodeHandleFrom(defNode),
+			References: refs,
+		}
+		if sym := entry.DefinitionSymbol(); sym != nil {
+			re.Symbol = sd.registerSymbol(sym)
+		}
+		result = append(result, re)
+	}
+	return result, nil
 }

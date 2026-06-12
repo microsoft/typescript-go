@@ -1,3 +1,4 @@
+import type { CompletionItemKind } from "#enums/completionItemKind";
 import {
     documentURIToFileName,
     fileNameToDocumentURI,
@@ -140,6 +141,8 @@ export interface TypeResponse {
     flags: number;
     objectFlags?: number;
     value?: string | number | boolean;
+    freshType?: number;
+    regularType?: number;
     target?: number;
     typeParameters?: number[];
     outerTypeParameters?: number[];
@@ -154,6 +157,10 @@ export interface TypeResponse {
     baseType?: number;
     substConstraint?: number;
     texts?: string[];
+    intrinsicName?: string;
+    isThisType?: boolean;
+    aliasTypeArguments?: number[];
+    aliasSymbol?: number;
     symbol?: number;
 }
 
@@ -178,6 +185,7 @@ export interface IndexInfoResponse {
     keyType: TypeResponse;
     valueType: TypeResponse;
     isReadonly?: boolean;
+    declaration?: string;
 }
 
 export interface ProfileParams {
@@ -186,4 +194,25 @@ export interface ProfileParams {
 
 export interface ProfileResult {
     file: string;
+}
+
+export interface CompletionEntryLabelDetailsResponse {
+    detail?: string;
+    description?: string;
+}
+
+export interface CompletionEntryResponse {
+    name: string;
+    kind?: CompletionItemKind;
+    sortText?: string;
+    insertText?: string;
+    filterText?: string;
+    detail?: string;
+    labelDetails?: CompletionEntryLabelDetailsResponse;
+    symbol?: SymbolResponse;
+}
+
+export interface CompletionInfoResponse {
+    isIncomplete: boolean;
+    entries: CompletionEntryResponse[];
 }
