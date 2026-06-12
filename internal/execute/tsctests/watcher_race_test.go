@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"gotest.tools/v3/assert"
 )
 
 // createTestWatcher sets up a minimal project with a tsconfig and
@@ -260,4 +263,30 @@ func TestWatcherAlternatingModifyAndDoCycle(t *testing.T) {
 	}
 
 	wg.Wait()
+}
+
+func TestBuildWatchStopsWhenContextIsCancelled(t *testing.T) {
+	t.Parallel()
+
+	sys := newTestSys(&tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/tsconfig.json": `{"compilerOptions":{"composite":true},"files":["index.ts"]}`,
+			"/home/src/workspaces/project/index.ts":      `export const x = 1;`,
+		},
+	}, false)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	resultCh := make(chan tsc.CommandLineResult, 1)
+	go func() {
+		resultCh <- execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--watchInterval", "60000"}, nil)
+	}()
+
+	select {
+	case result := <-resultCh:
+		assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
+		assert.Assert(t, result.Watcher != nil)
+	case <-time.After(2 * time.Second):
+		t.Fatal("build watch did not stop after context cancellation")
+	}
 }
