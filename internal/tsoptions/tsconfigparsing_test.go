@@ -12,11 +12,13 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tsoptions/tsoptionstest"
@@ -234,6 +236,17 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "tests/cases/unittests",
 			allFileList:    map[string]string{"/apath/a.ts": ""},
+		}},
+	},
+	{
+		title: "generates errors for include with parent directory after recursive wildcard",
+		input: []testConfig{{
+			jsonText: `{
+                "include": ["**/../*.ts"]
+            }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    map[string]string{"/apath/main.ts": ""},
 		}},
 	},
 	{
@@ -825,6 +838,136 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 		t.Run(rec.title+" with jsonSourceFile api", func(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonSourceFileApi)
+		})
+	}
+}
+
+func TestParseJsonSourceFileConfigFileContentReportsInvalidExtendedConfig(t *testing.T) {
+	t.Parallel()
+	files := map[string]string{
+		"/project/tsconfig.json": `{
+  "extends": "./bad.json"
+}`,
+		// The parser recovers from this as object-like JSON, producing expected-token errors for ':', ',', ',', and '}'.
+		"/project/bad.json": "{ this is not json",
+		"/project/main.ts":  "export const x = 1;",
+	}
+	host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true /*useCaseSensitiveFileNames*/)
+	configFileName := "/project/tsconfig.json"
+	configFile := tsoptions.NewTsconfigSourceFileFromFilePath(
+		configFileName,
+		tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()),
+		files[configFileName],
+	)
+
+	parsed := tsoptions.ParseJsonSourceFileConfigFileContent(
+		configFile,
+		host,
+		host.GetCurrentDirectory(),
+		nil,
+		nil,
+		configFileName,
+		nil,
+		nil,
+		nil,
+	)
+
+	parseErrors := core.Filter(parsed.Errors, func(diagnostic *ast.Diagnostic) bool {
+		return diagnostic.Code() == diagnostics.X_0_expected.Code()
+	})
+	expectedParseErrorMessages := []string{":", ",", ",", "}"}
+	expectedParseErrorPositions := []int{7, 10, 14, 18}
+	assert.Equal(t, len(expectedParseErrorMessages), len(parseErrors))
+	assert.DeepEqual(t, core.Map(parseErrors, func(diagnostic *ast.Diagnostic) string {
+		return diagnostic.MessageArgs()[0]
+	}), expectedParseErrorMessages)
+	assert.DeepEqual(t, core.Map(parseErrors, (*ast.Diagnostic).Pos), expectedParseErrorPositions)
+	for _, diagnostic := range parseErrors {
+		assert.Equal(t, diagnostic.File().FileName(), "/project/bad.json")
+	}
+}
+
+func TestParseJsonSourceFileConfigFileContentDoesNotDuplicateUnquotedKeyDiagnostics(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  compilerOptions: {
+    strict: true
+  }
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+
+	diags := parsed.GetConfigFileParsingDiagnostics()
+	assert.Equal(t, len(diags), 2)
+	expectedLocations := []struct {
+		line      int
+		character int
+	}{
+		{line: 1, character: 2},
+		{line: 2, character: 4},
+	}
+	for index, diagnostic := range diags {
+		assert.Equal(t, diagnostic.Code(), diagnostics.String_literal_with_double_quotes_expected.Code())
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		assert.Equal(t, line, expectedLocations[index].line)
+		assert.Equal(t, int(character), expectedLocations[index].character)
+	}
+}
+
+func TestParseJsonSourceFileConfigFileContentReportsQuestionTokenDiagnostics(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  compilerOptions?: {
+    strict?: true
+  }
+}`, map[string]string{"/main.ts": "export const x = 1;"}, "/", true /*useCaseSensitiveFileNames*/)
+
+	var questionTokenDiagnostics []*ast.Diagnostic
+	for _, diagnostic := range parsed.GetConfigFileParsingDiagnostics() {
+		if diagnostic.Code() == diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files.Code() {
+			questionTokenDiagnostics = append(questionTokenDiagnostics, diagnostic)
+		}
+	}
+	assert.Equal(t, len(questionTokenDiagnostics), 2)
+	expectedLocations := []struct {
+		line      int
+		character int
+	}{
+		{line: 1, character: 17},
+		{line: 2, character: 10},
+	}
+	for index, diagnostic := range questionTokenDiagnostics {
+		line, character := scanner.GetECMALineAndUTF16CharacterOfPosition(diagnostic.File(), diagnostic.Pos())
+		assert.Equal(t, line, expectedLocations[index].line)
+		assert.Equal(t, int(character), expectedLocations[index].character)
+	}
+}
+
+func TestParseNullEnumCompilerOptions(t *testing.T) {
+	t.Parallel()
+
+	config := testConfig{
+		jsonText: `{
+			"compilerOptions": {
+				"target": null,
+				"module": null
+			}
+		}`,
+		configFileName: "tsconfig.json",
+		basePath:       "/",
+		allFileList:    map[string]string{"/app.ts": ""},
+	}
+	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
+		"json api":           getParsedWithJsonApi,
+		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			allFileLists := make(map[string]string, len(config.allFileList)+1)
+			maps.Copy(allFileLists, config.allFileList)
+			allFileLists["/tsconfig.json"] = config.jsonText
+			host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
+			parsedConfigFileContent := getParsed(config, host, config.basePath)
+			assert.Equal(t, len(parsedConfigFileContent.Errors), 0)
 		})
 	}
 }

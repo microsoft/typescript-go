@@ -251,7 +251,8 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 						tx.Factory().NewIdentifier("require"),
 						nil,
 						nil,
-						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone),
+						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone,
+					),
 				)}), ast.NodeFlagsConst))
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)
@@ -893,7 +894,9 @@ func decodeEntities(text string) string {
 		entity := text[1:semi]
 		decoded, ok := decodeEntity(entity)
 		if ok {
-			result.WriteRune(decoded)
+			// Use the JS-string encoder so lone surrogates (e.g. "&#xD800;")
+			// are preserved rather than being lost to U+FFFD by WriteRune.
+			result.WriteString(stringutil.EncodeJSStringRune(decoded))
 		} else {
 			result.WriteString(text[:semi+1])
 		}
@@ -920,7 +923,7 @@ func decodeEntity(entity string) (rune, bool) {
 		}
 
 		base := 10
-		if entity[0] == 'x' || entity[0] == 'X' {
+		if entity[0] == 'x' {
 			base = 16
 			entity = entity[1:]
 		}

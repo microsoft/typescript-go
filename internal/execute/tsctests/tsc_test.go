@@ -119,6 +119,11 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--lib", "es6 ", "first.ts"},
 		},
 		{
+			subScenario:     "option diagnostics are suppressed when there are syntactic errors",
+			files:           FileMap{"/home/src/workspaces/project/a.ts": `const x: = 1;`},
+			commandLineArgs: []string{"--strictPropertyInitialization", "--strictNullChecks", "false", "a.ts"},
+		},
+		{
 			subScenario: "Project is empty string",
 			files: FileMap{
 				"/home/src/workspaces/project/first.ts": `export const a = 1`,
@@ -175,6 +180,14 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"-p", "/home/src/workspaces/project"},
 		},
 		{
+			subScenario: "Parse -p with empty tsconfig file",
+			files: FileMap{
+				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": ``,
+			},
+			commandLineArgs: []string{"-p", "."},
+		},
+		{
 			subScenario:     "Parse enum type options",
 			commandLineArgs: []string{"--moduleResolution", "nodenext ", "first.ts", "--module", "nodenext", "--target", "esnext", "--moduleDetection", "auto", "--jsx", "react", "--newLine", "crlf"},
 		},
@@ -227,6 +240,55 @@ func TestTscCommandline(t *testing.T) {
 		{
 			subScenario:     "bad locale",
 			commandLineArgs: []string{"--locale", "whoops", "--version"},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase.run(t, "commandLine")
+	}
+}
+
+func TestTscMissingFiles(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "file in tsconfig does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(
+					`{
+					"files": ["./src/doesNotExist.ts"]
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./tsconfig.json"},
+		},
+		{
+			subScenario: "extensionless file in tsconfig does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(
+					`{
+					"files": ["./src/doesNotExist"]
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./tsconfig.json"},
+		},
+		{
+			subScenario: "extensionless file in extended tsconfig in different folder does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/src/tsconfig.json": stringtestutil.Dedent(
+					`{
+					"extends": "./../tsconfig.base.json",
+					}`,
+				),
+				"/home/src/workspaces/project/src/oops.ts": "export const abc = 10;",
+				"/home/src/workspaces/project/tsconfig.base.json": stringtestutil.Dedent(
+					`{
+					"files": ["./oops"],
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./src/tsconfig.json"},
 		},
 	}
 
@@ -590,6 +652,27 @@ func TestTscDeclarationEmit(t *testing.T) {
 			files:           getBuildDeclarationEmitDtsReferenceAsTrippleSlashMap(true),
 			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--b", "--verbose"},
+		},
+		{
+			subScenario: "when ts file is referenced through triple slash from another project",
+			files: FileMap{
+				"/home/src/workspaces/solution/include/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { "composite": true, "declaration": true },
+					}`),
+				"/home/src/workspaces/solution/include/include.ts": stringtestutil.Dedent(`
+					export const include = 1;`),
+				"/home/src/workspaces/solution/src/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { "composite": true, "declaration": true },
+						"references": [{ "path": "../include" }],
+					}`),
+				"/home/src/workspaces/solution/src/main.ts": stringtestutil.Dedent(`
+					/// <reference path="../include/include.ts" preserve="true" />
+					export const main = 23;`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src", "--verbose"},
 		},
 		{
 			subScenario: "when declaration file used inferred type from referenced project",
@@ -3705,7 +3788,8 @@ func TestTscNoEmitOnError(t *testing.T) {
 					},
 				})
 			}
-			edits = append(edits,
+			edits = append(
+				edits,
 				&tscEdit{
 					caption: "No Change",
 					edit: func(sys *TestSys) {
