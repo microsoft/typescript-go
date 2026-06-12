@@ -106,7 +106,7 @@ type Watcher struct {
 
 	backend      WatchBackend
 	watchedDirs  map[string]*watchedDir   // dir path → watch state
-	seenFiles    map[tspath.Path]struct{} // all build dependencies (for event filtering)
+	seenFiles    *collections.Set[tspath.Path] // all build dependencies (for event filtering)
 	configMtimes map[string]time.Time
 	doCycleCh    chan struct{}
 	debugLog     io.Writer // nil = silent; set via TS_WATCH_DEBUG
@@ -542,7 +542,7 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 	opts := w.comparePathsOptions()
 	for eventPath := range changedPaths {
 		p := tspath.ToPath(eventPath, cwd, caseSensitive)
-		if _, ok := w.seenFiles[p]; ok {
+		if w.seenFiles.Has(p) {
 			return true
 		}
 		if w.config.ConfigFile != nil && w.config.PossiblyMatchesFileName(eventPath) {
@@ -602,9 +602,9 @@ func (w *Watcher) doBuild() {
 	caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
 	cwd := w.sys.GetCurrentDirectory()
 	seenSlice := tfs.SeenFiles.ToSlice()
-	w.seenFiles = make(map[tspath.Path]struct{}, len(seenSlice))
+	w.seenFiles = collections.NewSetWithSizeHint[tspath.Path](len(seenSlice))
 	for _, p := range seenSlice {
-		w.seenFiles[tspath.ToPath(p, cwd, caseSensitive)] = struct{}{}
+		w.seenFiles.Add(tspath.ToPath(p, cwd, caseSensitive))
 	}
 
 	w.configMtimes = make(map[string]time.Time, len(w.configFilePaths))
