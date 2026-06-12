@@ -99,7 +99,7 @@ type processedFiles struct {
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
-	importHelpersImportSpecifiers map[tspath.Path]*importHelpersImportSpecifier
+	importHelpersImportSpecifiers map[tspath.Path]*ast.StringLiteralNode
 	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
@@ -117,36 +117,6 @@ type processedFiles struct {
 type jsxRuntimeImportSpecifier struct {
 	moduleReference string
 	specifier       *ast.StringLiteralNode
-}
-
-// importHelpersImportSpecifier tracks a program-owned synthetic tslib import.
-// Reused programs may copy this wrapper with a nil specifier so they can update
-// resolution side tables without eagerly allocating an AST node; specifierOnce
-// serializes lazy creation for later checker or language service access.
-type importHelpersImportSpecifier struct {
-	specifier     *ast.StringLiteralNode
-	specifierOnce sync.Once
-}
-
-// newImportHelpersImportSpecifier wraps an existing specifier from initial
-// program construction; reused programs pass nil to defer creating an equivalent
-// specifier until it is needed.
-func newImportHelpersImportSpecifier(specifier *ast.StringLiteralNode) *importHelpersImportSpecifier {
-	return &importHelpersImportSpecifier{specifier: specifier}
-}
-
-// getSpecifier returns the cached synthetic tslib import specifier, creating it
-// on first access for reused programs that only recorded the compact wrapper.
-func (s *importHelpersImportSpecifier) getSpecifier(file *ast.SourceFile) *ast.StringLiteralNode {
-	s.specifierOnce.Do(func() {
-		if s.specifier == nil {
-			// Reused programs store only the need for this synthetic import and
-			// defer allocating the node until a checker or language service asks
-			// for it.
-			s.specifier = createSyntheticImport(externalHelpersModuleNameText, file)
-		}
-	})
-	return s.specifier
 }
 
 func processAllProgramFiles(
@@ -342,12 +312,8 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaData {
-	return loadSourceFileMetaData(p.resolver, p.opts.Config.CompilerOptions(), fileName)
-}
-
-func loadSourceFileMetaData(resolver *module.Resolver, options *core.CompilerOptions, fileName string) ast.SourceFileMetaData {
-	packageJsonScope := resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName))
-	moduleResolutionKind := options.GetModuleResolutionKind()
+	packageJsonScope := p.resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName))
+	moduleResolutionKind := p.opts.Config.CompilerOptions().GetModuleResolutionKind()
 
 	var packageJsonType, packageJsonDirectory string
 	if packageJsonScope.Exists() {
@@ -528,10 +494,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 	t.typeResolutionsTrace = typeResolutionsTrace
 }
 
-const (
-	externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
-	syntheticImportIndex          = -1
-)
+const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
 func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 	if p.opts.Tracing != nil {
@@ -551,7 +514,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 		if optionsForFile.ImportHelpers.IsTrue() {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
 			moduleNames = append(moduleNames, specifier)
-			t.importHelpersImportSpecifier = newImportHelpersImportSpecifier(specifier)
+			t.importHelpersImportSpecifier = specifier
 		}
 	}
 
@@ -642,24 +605,11 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *ast.StringLiteralNode {
 	p.factoryMu.Lock()
 	defer p.factoryMu.Unlock()
-	return createSyntheticImportWithFactory(&p.factory, text, file)
-}
-
-// createSyntheticImport creates a synthetic import declaration and returns its
-// module specifier for lazy importHelpers state in reused programs.
-func createSyntheticImport(text string, file *ast.SourceFile) *ast.StringLiteralNode {
-	factory := &ast.NodeFactory{}
-	return createSyntheticImportWithFactory(factory, text, file)
-}
-
-// createSyntheticImportWithFactory creates a synthetic import declaration with
-// parent links connecting the returned specifier to the containing source file.
-func createSyntheticImportWithFactory(factory *ast.NodeFactory, text string, file *ast.SourceFile) *ast.StringLiteralNode {
-	moduleReference := factory.NewStringLiteral(text, ast.TokenFlagsNone)
-	importDecl := factory.NewImportDeclaration(nil, nil, moduleReference, nil)
-	moduleReference.Parent = importDecl
+	externalHelpersModuleReference := p.factory.NewStringLiteral(text, ast.TokenFlagsNone)
+	importDecl := p.factory.NewImportDeclaration(nil, nil, externalHelpersModuleReference, nil)
+	externalHelpersModuleReference.Parent = importDecl
 	importDecl.Parent = file.AsNode()
-	return moduleReference
+	return externalHelpersModuleReference
 }
 
 func (p *fileLoader) pathForLibFile(name string) *LibFile {
