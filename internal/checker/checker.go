@@ -1426,18 +1426,28 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 				merged := c.mergeSymbol(moduleAugmentation.Symbol, mainModule, true /*unidirectional*/)
 				// moduleName will be a StringLiteral since this is not `declare global`.
 				ast.GetSymbolTable(&c.patternAmbientModuleAugmentations)[moduleName.Text()] = merged
-			} else {
-				if mainModule.Exports[ast.InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
-					// We may need to merge the module augmentation's exports into the target symbols of the resolved exports
-					resolvedExports := c.getResolvedMembersOrExportsOfSymbol(mainModule, MembersOrExportsResolutionKindResolvedExports)
-					for key, value := range moduleAugmentation.Symbol.Exports {
-						if resolvedExports[key] != nil && mainModule.Exports[key] == nil {
-							c.mergeSymbol(resolvedExports[key], value, false /*unidirectional*/)
-						}
-					}
-				}
-				c.mergeSymbol(mainModule, moduleAugmentation.Symbol, false /*unidirectional*/)
-			}
+} else {
+    // Propagate main module's bindings into the augmentation
+    // so that getAccessibleSymbolChain can find them
+    if moduleAugmentation.Symbol.Exports == nil {
+        moduleAugmentation.Symbol.Exports = make(ast.SymbolTable)
+    }
+    for name, sym := range mainModule.Exports {
+        if moduleAugmentation.Symbol.Exports[name] == nil {
+            moduleAugmentation.Symbol.Exports[name] = sym
+        }
+    }
+
+    if mainModule.Exports[ast.InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
+        resolvedExports := c.getResolvedMembersOrExportsOfSymbol(mainModule, MembersOrExportsResolutionKindResolvedExports)
+        for key, value := range moduleAugmentation.Symbol.Exports {
+            if resolvedExports[key] != nil && mainModule.Exports[key] == nil {
+                c.mergeSymbol(resolvedExports[key], value, false)
+            }
+        }
+    }
+    c.mergeSymbol(mainModule, moduleAugmentation.Symbol, false)
+}
 		} else {
 			// moduleName will be a StringLiteral since this is not `declare global`.
 			c.error(moduleName, diagnostics.Cannot_augment_module_0_because_it_resolves_to_a_non_module_entity, moduleName.Text())
@@ -14097,9 +14107,13 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 		if source.Members != nil {
 			c.mergeSymbolTable(ast.GetSymbolTable(&target.Members), source.Members, unidirectional, nil)
 		}
+
 		if source.Exports != nil {
-			c.mergeSymbolTable(ast.GetSymbolTable(&target.Exports), source.Exports, unidirectional, target)
-		}
+    if target.Exports == nil {
+        target.Exports = make(ast.SymbolTable)
+    }
+    c.mergeSymbolTable(ast.GetSymbolTable(&target.Exports), source.Exports, unidirectional, target)
+}
 		if !unidirectional {
 			c.recordMergedSymbol(target, source)
 		}
@@ -15833,7 +15847,18 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 	links := c.membersAndExportsLinks.Get(symbol)
 	if links[resolutionKind] == nil {
 		isStatic := resolutionKind == MembersOrExportsResolutionKindResolvedExports
-		earlySymbols := symbol.Exports
+		 earlySymbols := symbol.Exports
+// If symbol resulted from a merge and has a parent, include parent exports
+if symbol.Parent != nil && symbol.Parent.Exports != nil {
+    if earlySymbols == nil {
+        earlySymbols = make(ast.SymbolTable)
+    }
+    for name, sym := range symbol.Parent.Exports {
+        if earlySymbols[name] == nil {
+            earlySymbols[name] = sym
+        }
+    }
+}
 		switch {
 		case !isStatic:
 			earlySymbols = symbol.Members
