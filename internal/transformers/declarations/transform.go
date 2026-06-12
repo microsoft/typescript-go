@@ -274,6 +274,29 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.state.currentSourceFile = node
 	tx.collectFileReferences(node)
 	tx.resolver.PrecalculateDeclarationEmitVisibility(node)
+	if ast.IsInJSFile(node.AsNode()) {
+		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
+		tx.state.getSymbolAccessibilityDiagnostic = func(result printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+			if result.ErrorNode != nil && canProduceDiagnostics(result.ErrorNode) {
+				return createGetSymbolAccessibilityDiagnosticForNode(result.ErrorNode)(result)
+			}
+			diagnosticMessage := diagnostics.Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit
+			if result.ErrorModuleName != "" {
+				diagnosticMessage = diagnostics.Declaration_emit_for_this_file_requires_using_private_name_0_from_module_1_An_explicit_type_annotation_may_unblock_declaration_emit
+			}
+			errorNode := result.ErrorNode
+			if errorNode == nil {
+				errorNode = node.AsNode()
+			}
+			return &SymbolAccessibilityDiagnostic{
+				diagnosticMessage: diagnosticMessage,
+				errorNode:         errorNode,
+			}
+		}
+		defer func() {
+			tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+		}()
+	}
 	updated := tx.transformSourceFile(node)
 	tx.state.currentSourceFile = nil
 	return updated

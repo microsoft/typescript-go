@@ -1,0 +1,13 @@
+/index.cjs(1,1): error TS9006: Declaration emit for this file requires using private name 'Private' from module '"/node_modules/@types/pkg/index"'. An explicit type annotation may unblock declaration emit.
+
+
+==== /index.cjs (1 errors) ====
+    Object.defineProperty(exports, "api", { value: require("pkg") });
+    ~~~~~~
+!!! error TS9006: Declaration emit for this file requires using private name 'Private' from module '"/node_modules/@types/pkg/index"'. An explicit type annotation may unblock declaration emit.
+    
+==== /node_modules/@types/pkg/index.d.ts (0 errors) ====
+    interface Private {}
+    declare const obj: { fn(x: Private): void };
+    export = obj;
+    
