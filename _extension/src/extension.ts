@@ -128,11 +128,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         return;
     }
 
-    let isTsserverWarnDialogShowing = false;
-    warnAboutTsServerPlugins(context, output);
-    context.subscriptions.push(vscode.extensions.onDidChange(() => {
+    let pluginWarningShown = false;
+    const onDidChangeExtensions = vscode.extensions.onDidChange(() => {
         warnAboutTsServerPlugins(context, output);
-    }));
+    });
+    context.subscriptions.push(onDidChangeExtensions);
+    warnAboutTsServerPlugins(context, output);
 
     await sessionManager.start(context);
 
@@ -156,15 +157,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     };
 
     async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output: vscode.LogOutputChannel): Promise<void> {
-        // Don't show multiple at a time.
-        // Kind of a form of debouncing.
-        if (isTsserverWarnDialogShowing) {
+        // Never show more than once.
+        if (pluginWarningShown) {
             return;
         }
-        isTsserverWarnDialogShowing = true;
-        using _clearDialog = defer(() => {
-            isTsserverWarnDialogShowing = false;
-        });
 
         if (getUseTsgo() !== true) {
             return;
@@ -184,7 +180,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const hasWorkspaceFolder = !!vscode.workspace.workspaceFolders?.length;
 
-        if (context.workspaceState.get<true>(pluginWarningDismissedKey) ?? context.globalState.get<true>(pluginWarningDismissedKey)) {
+        if (context.globalState.get<true>(pluginWarningDismissedKey)) {
             return;
         }
 
@@ -212,6 +208,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
         options.push(dontShowAgain);
 
+        // Make sure we never show this message again in this session.
+        pluginWarningShown = true;
+
         const selected = await vscode.window.showWarningMessage(message, ...options);
         if (selected === disableInWorkspace) {
             await vscode.workspace.getConfiguration("js/ts").update("experimental.useTsgo", false, vscode.ConfigurationTarget.Workspace);
@@ -231,13 +230,8 @@ const pluginWarningDismissedKey = "tsServerPluginWarningDismissed";
 
 function getExtensionsWithTsServerPlugins(): { extensionId: string; pluginName: string; }[] {
     const results: { extensionId: string; pluginName: string; }[] = [];
+    // Despite its name, 'all' actually only seems to contain active extensions.
     for (const extension of vscode.extensions.all) {
-        // Technically the built-in extension always loads
-        // plugins, but we only want to consider active extensions.
-        if (!extension.isActive) {
-            continue;
-        }
-
         // Ignore built-in extensions that always try to contribute plugins.
         const id = extension.id.toLowerCase();
         if (suppressedPluginExtensionIds.has(id)) {
