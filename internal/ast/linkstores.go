@@ -4,19 +4,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type Entry[T any] struct {
+type entry[T any] struct {
 	key  uint64
 	data *T
 }
 
-type IntHashTable[T any] struct {
-	buckets []Entry[T]
-	size    int
+type intHashTable[T any] struct {
+	buckets []entry[T] // Hash table entries (length is power of 2)
+	size    int        // Number of entries in hash table
 }
 
 // MurmurHash3-style bit mixer for balanced index distribution
-func hashInt(key uint64) uint64 {
-	x := uint64(key)
+func hashInt(x uint64) uint64 {
 	x ^= x >> 33
 	x *= 0xff51afd7ed558ccd
 	x ^= x >> 33
@@ -25,12 +24,14 @@ func hashInt(key uint64) uint64 {
 	return x
 }
 
-func (h *IntHashTable[T]) Insert(key uint64, data *T) {
+// Assumes the given key doesn't already exist in the hash table
+func (h *intHashTable[T]) insert(key uint64, data *T) {
 	if data == nil {
 		panic("IntHashTable cannot have nil entries")
 	}
 	if h.size == 0 {
-		h.buckets = make([]Entry[T], 256)
+		// Initial length must be a power of 2
+		h.buckets = make([]entry[T], 256)
 	} else if h.size*4 >= len(h.buckets)*3 {
 		// Resize when 0.75 load factor is crossed
 		h.resize()
@@ -38,17 +39,14 @@ func (h *IntHashTable[T]) Insert(key uint64, data *T) {
 	hash := hashInt(key)
 	mask := uint64(len(h.buckets) - 1)
 	i := hash & mask
-	for {
-		if h.buckets[i].data == nil {
-			h.buckets[i] = Entry[T]{key, data}
-			h.size++
-			return
-		}
+	for h.buckets[i].data != nil {
 		i = (i + 1) & mask
 	}
+	h.buckets[i] = entry[T]{key, data}
+	h.size++
 }
 
-func (h *IntHashTable[T]) Get(key uint64) *T {
+func (h *intHashTable[T]) get(key uint64) *T {
 	if h.size == 0 {
 		return nil
 	}
@@ -64,8 +62,8 @@ func (h *IntHashTable[T]) Get(key uint64) *T {
 	}
 }
 
-func (h *IntHashTable[T]) resize() {
-	newBuckets := make([]Entry[T], len(h.buckets)*2)
+func (h *intHashTable[T]) resize() {
+	newBuckets := make([]entry[T], len(h.buckets)*2)
 	mask := uint64(len(newBuckets) - 1)
 	for i := range h.buckets {
 		if h.buckets[i].data != nil {
@@ -81,47 +79,47 @@ func (h *IntHashTable[T]) resize() {
 }
 
 type NodeLinkStore[T any] struct {
-	entries IntHashTable[T]
+	entries intHashTable[T]
 	arena   core.Arena[T]
 }
 
 func (s *NodeLinkStore[T]) Get(node *Node) *T {
 	key := uint64(GetNodeId(node))
-	value := s.entries.Get(key)
+	value := s.entries.get(key)
 	if value == nil {
 		value = s.arena.New()
-		s.entries.Insert(key, value)
+		s.entries.insert(key, value)
 	}
 	return value
 }
 
 func (s *NodeLinkStore[T]) Has(node *Node) bool {
-	return s.entries.Get(uint64(GetNodeId(node))) != nil
+	return s.entries.get(uint64(GetNodeId(node))) != nil
 }
 
 func (s *NodeLinkStore[T]) TryGet(node *Node) *T {
-	return s.entries.Get(uint64(GetNodeId(node)))
+	return s.entries.get(uint64(GetNodeId(node)))
 }
 
 type SymbolLinkStore[T any] struct {
-	entries IntHashTable[T]
+	entries intHashTable[T]
 	arena   core.Arena[T]
 }
 
 func (s *SymbolLinkStore[T]) Get(symbol *Symbol) *T {
 	key := uint64(GetSymbolId(symbol))
-	value := s.entries.Get(key)
+	value := s.entries.get(key)
 	if value == nil {
 		value = s.arena.New()
-		s.entries.Insert(key, value)
+		s.entries.insert(key, value)
 	}
 	return value
 }
 
 func (s *SymbolLinkStore[T]) Has(symbol *Symbol) bool {
-	return s.entries.Get(uint64(GetSymbolId(symbol))) != nil
+	return s.entries.get(uint64(GetSymbolId(symbol))) != nil
 }
 
 func (s *SymbolLinkStore[T]) TryGet(symbol *Symbol) *T {
-	return s.entries.Get(uint64(GetSymbolId(symbol)))
+	return s.entries.get(uint64(GetSymbolId(symbol)))
 }
