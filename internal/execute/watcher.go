@@ -690,13 +690,7 @@ func (w *Watcher) recheckTsConfig() bool {
 		}
 	}
 
-	configParseResult, parseErr := w.tryParseConfigFile()
-	if parseErr != nil {
-		if w.debugLog != nil {
-			fmt.Fprintf(w.debugLog, "[watch] config parse recovered from panic: %v\n", parseErr)
-		}
-		return false
-	}
+	configParseResult := w.parseConfigFile()
 	if configParseResult == nil {
 		return true
 	}
@@ -712,14 +706,7 @@ func (w *Watcher) recheckTsConfig() bool {
 	return false
 }
 
-func (w *Watcher) tryParseConfigFile() (result *tsoptions.ParsedCommandLine, recovered any) {
-	defer func() {
-		if r := recover(); r != nil {
-			result = nil
-			recovered = r
-		}
-	}()
-
+func (w *Watcher) parseConfigFile() *tsoptions.ParsedCommandLine {
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, w.compilerOptionsFromCommandLine, w.commandLineRaw, w.sys, extendedConfigCache)
 	if len(errors) > 0 {
@@ -733,8 +720,8 @@ func (w *Watcher) tryParseConfigFile() (result *tsoptions.ParsedCommandLine, rec
 		} else {
 			w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_0_errors_Watching_for_file_changes, errorCount))
 		}
-		return nil, nil
+		return nil
 	}
 	w.extendedConfigCache = extendedConfigCache
-	return configParseResult, nil
+	return configParseResult
 }
