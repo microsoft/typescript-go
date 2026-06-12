@@ -537,6 +537,7 @@ func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
 			for _, overlay := range overlays {
 				documents = append(documents, lsconv.FileNameToDocumentURI(overlay.FileName()))
 			}
+			slices.Sort(documents)
 			change.ResourceRequest = ResourceRequest{Documents: documents}
 		}
 		s.UpdateSnapshot(ctx, overlays, change)
