@@ -105,7 +105,7 @@ type Watcher struct {
 	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
 
 	backend      WatchBackend
-	watchedDirs  map[string]*watchedDir   // dir path → watch state
+	watchedDirs  map[string]*watchedDir        // dir path → watch state
 	seenFiles    *collections.Set[tspath.Path] // all build dependencies (for event filtering)
 	configMtimes map[string]time.Time
 	doCycleCh    chan struct{}
