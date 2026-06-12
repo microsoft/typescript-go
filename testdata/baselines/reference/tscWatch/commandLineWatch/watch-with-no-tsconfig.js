@@ -40,11 +40,7 @@ declare const console: { log(msg: any): void; };
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts

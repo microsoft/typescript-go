@@ -46,11 +46,7 @@ const x = 1;
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
@@ -80,11 +76,7 @@ export const extra = 2;
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project
   /home/src/workspaces/project/src (recursive)
 tsconfig.json::

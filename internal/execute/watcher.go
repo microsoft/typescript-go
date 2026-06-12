@@ -251,7 +251,9 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool 
 			}
 		}
 		if !covered {
-			resolvedDirs[dir] = false
+			if canWatchDirectory(dir) {
+				resolvedDirs[dir] = false
+			}
 		}
 	}
 
@@ -315,7 +317,7 @@ func (w *Watcher) resolveDesiredDirs(desiredDirs map[string]bool) map[string]boo
 			watchDir = parent
 			watchRecursive = false // ancestor fallbacks are always non-recursive
 		}
-		if !w.sys.FS().DirectoryExists(watchDir) {
+		if !w.sys.FS().DirectoryExists(watchDir) || !canWatchDirectory(watchDir) {
 			if w.debugLog != nil {
 				fmt.Fprintf(w.debugLog, "[watch] no watchable ancestor for %s\n", dir)
 			}
@@ -331,6 +333,49 @@ func (w *Watcher) resolveDesiredDirs(desiredDirs map[string]bool) map[string]boo
 		}
 	}
 	return resolved
+}
+
+func canWatchDirectory(dir string) bool {
+	components := tspath.GetPathComponents(dir, "")
+	length := len(components)
+	if length <= 2 {
+		return false
+	}
+	rootLength := perceivedOsRootLengthForWatching(components)
+	return length > rootLength+1
+}
+
+func perceivedOsRootLengthForWatching(components []string) int {
+	length := len(components)
+	if length <= 1 {
+		return 1
+	}
+	root := components[0]
+	indexAfterOsRoot := 1
+	isDosStyle := len(root) >= 2 && tspath.IsVolumeCharacter(root[0]) && root[1] == ':'
+
+	if root != "/" && !isDosStyle && len(components) > 1 {
+		// Check for UNC-like paths: //server/c$/...
+		if len(components[1]) >= 2 && tspath.IsVolumeCharacter(components[1][0]) && strings.HasSuffix(components[1], "$") {
+			if length == 2 {
+				return 2
+			}
+			indexAfterOsRoot = 2
+			isDosStyle = true
+		}
+	}
+
+	if isDosStyle && (indexAfterOsRoot >= length || !strings.EqualFold(components[indexAfterOsRoot], "users")) {
+		return indexAfterOsRoot
+	}
+
+	if indexAfterOsRoot < length && strings.EqualFold(components[indexAfterOsRoot], "workspaces") {
+		// Codespaces: /workspaces repos are hoisted here
+		return indexAfterOsRoot + 1
+	}
+
+	// /home/username or C:/Users/username
+	return indexAfterOsRoot + 2
 }
 
 func (w *Watcher) createDirWatch(dir string, recursive bool) {

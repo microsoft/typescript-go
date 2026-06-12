@@ -51,11 +51,7 @@ declare const console: { log(msg: any): void; };
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -77,11 +73,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -112,11 +104,7 @@ const a = "hello";
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -141,11 +129,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -173,11 +157,7 @@ Found 1 error in a.ts[90m:1[0m
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -213,11 +193,7 @@ Found 1 error in a.ts[90m:1[0m
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -250,11 +226,7 @@ Found 1 error in a.ts[90m:1[0m
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::

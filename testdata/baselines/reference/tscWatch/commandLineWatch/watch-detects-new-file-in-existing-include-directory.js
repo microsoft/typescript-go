@@ -45,11 +45,7 @@ export const a = 1;
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project
   /home/src/workspaces/project/src (recursive)
 tsconfig.json::
@@ -75,11 +71,7 @@ export const b = 2;
 
 Watch Registrations::
 Directory watches::
-  /
-  /home
-  /home/src
   /home/src/tslibs/TS/Lib
-  /home/src/workspaces
   /home/src/workspaces/project
   /home/src/workspaces/project/src (recursive)
 tsconfig.json::
