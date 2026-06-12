@@ -11,6 +11,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -55,7 +57,9 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 		MaxTruncationLength: maxTruncLen,
 	}
 
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc)
+	vsCapability := caps.VSSupportsVisualStudioExtensions
+
+	quickInfo, documentation, info := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc, vsCapability)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -78,6 +82,47 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 		Range: &hoverRange,
 	}
 
+	if vsCapability {
+		signatureElement := &lsproto.VSClassifiedTextElement{
+			Runs:   info.displayParts.GetRuns(),
+			VSType: lsproto.StringLiteralClassifiedTextElement{},
+		}
+		elements := []*lsproto.VSClassifiedTextElement{signatureElement}
+		if documentation != "" {
+			docElement := &lsproto.VSClassifiedTextElement{
+				Runs:   []*lsproto.VSClassifiedTextRun{{Text: documentation, ClassificationTypeName: string(lsproto.ClassificationTypeNameText), VSType: lsproto.StringLiteralClassifiedTextRun{}}},
+				VSType: lsproto.StringLiteralClassifiedTextElement{},
+			}
+			elements = append(elements, docElement)
+		}
+
+		// Determine image ID for the symbol icon
+		var imageId *vsImageId
+		if symbol != nil {
+			location := node
+			if info.declaration != nil {
+				location = info.declaration
+			}
+			// If this is an alias (e.g. an imported name), follow it to the
+			// underlying symbol so the icon matches the real entity (function,
+			// class, etc.) instead of a generic alias fallback. Matches the
+			// behavior users see in VS Code.
+			iconSymbol := symbol
+			if iconSymbol.Flags&ast.SymbolFlagsAlias != 0 {
+				if resolved := c.GetAliasedSymbol(iconSymbol); resolved != nil && resolved != c.GetUnknownSymbol() {
+					iconSymbol = resolved
+				}
+			}
+			kind := lsutil.GetSymbolKind(c, iconSymbol, location)
+			modifiers := lsutil.GetSymbolModifiers(c, iconSymbol)
+			imageId = getVSImageId(kind, modifiers)
+		}
+
+		// Build the _vs_rawContent JSON with icon
+		rawContent := buildVSRawContent(elements, imageId)
+		hover.VSRawContent = &rawContent
+	}
+
 	if caps.Experimental.HoverVerbosityLevel {
 		hover.CanIncreaseVerbosity = vc.CanIncreaseVerbosity && !vc.Truncated
 	}
@@ -85,24 +130,24 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	return lsproto.HoverOrNull{Hover: hover}, nil
 }
 
-func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext) (string, string) {
-	info := getQuickInfoAndDeclarationAtLocation(c, symbol, node, vc, false /*vsCapability*/, getMeaningFromLocation(node))
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext, vsCapability bool) (string, string, symbolDisplayInfo) {
+	info := getQuickInfoAndDeclarationAtLocation(c, symbol, node, vc, vsCapability, getMeaningFromLocation(node))
 	quickInfo := info.displayParts.String()
 	if quickInfo == "" {
-		return "", ""
+		return "", "", info
 	}
 
 	documentation := l.documentationFromSignature(c, symbol, getCallOrNewExpression(node), node, contentFormat, false /*commentOnly*/)
 	if documentation != "" {
-		return quickInfo, documentation
+		return quickInfo, documentation, info
 	}
 
 	documentation = l.getDocumentationFromDeclaration(c, symbol, info.declaration, node, contentFormat, false /*commentOnly*/)
 	if documentation != "" {
-		return quickInfo, documentation
+		return quickInfo, documentation, info
 	}
 
-	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat)
+	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat), info
 }
 
 func (l *LanguageService) documentationFromSignature(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
@@ -1130,4 +1175,237 @@ func writeEntityNameParts(b *strings.Builder, node *ast.Node) {
 	case ast.KindJSDocNameReference:
 		writeEntityNameParts(b, node.Name())
 	}
+}
+
+// VS Image Catalog GUID. This is Microsoft.VisualStudio.Imaging.KnownImageIds.ImageCatalogGuid,
+// the public identifier of the VS shared image catalog. Hardcoded because Go can't reference
+// Microsoft.VisualStudio.ImageCatalog.dll directly.
+const imageCatalogGuid = "ae27a6b0-e345-4288-96df-5eaf394ee369"
+
+// KnownImageIds constants from Microsoft.VisualStudio.Imaging.KnownImageIds. Hardcoded
+// because Go can't reference Microsoft.VisualStudio.ImageCatalog.dll directly. Each constant
+// name mirrors the corresponding C# KnownImageIds member.
+// Reference: https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.imaging.knownimageids
+const (
+	imgIntellisenseWarning = 1591
+	imgIntellisenseKeyword = 1589
+	imgNamespace           = 1951
+	imgAssembly            = 196
+	imgType                = 3233
+	imgLabel               = 1661
+	imgLocalVariable       = 1747
+	imgEnumMember          = 1125 // EnumerationItemPublic
+
+	imgModulePrivate      = 1917
+	imgModuleProtected    = 1918
+	imgModulePublic       = 1919
+	imgClassPrivate       = 471
+	imgClassProtected     = 472
+	imgClassPublic        = 473
+	imgInterfacePrivate   = 1606
+	imgInterfaceProtected = 1607
+	imgInterfacePublic    = 1608
+	imgEnumPrivate        = 1129 // EnumerationPrivate
+	imgEnumProtected      = 1130 // EnumerationProtected
+	imgEnumPublic         = 1131 // EnumerationPublic
+	imgConstantPrivate    = 618
+	imgConstantProtected  = 619
+	imgConstantPublic     = 620
+	imgPropertyPrivate    = 2434
+	imgPropertyProtected  = 2435
+	imgPropertyPublic     = 2436
+	imgMethodPrivate      = 1878
+	imgMethodProtected    = 1879
+	imgMethodPublic       = 1880
+)
+
+// vsImageId represents a VS ImageId with Guid and numeric Id.
+type vsImageId struct {
+	Guid string
+	Id   int
+}
+
+// getVSImageId maps a ScriptElementKind + modifiers to a VS KnownImageIds value.
+func getVSImageId(kind lsutil.ScriptElementKind, modifiers lsutil.ScriptElementKindModifier) *vsImageId {
+	// No isInternal arm: *Internal VS icons carry a chevron overlay that conveys
+	// C# assembly-scoped visibility, which doesn't apply to TypeScript.
+	isPrivate := modifiers&lsutil.ScriptElementKindModifierPrivate != 0
+	isProtected := modifiers&lsutil.ScriptElementKindModifierProtected != 0
+
+	var id int
+	switch kind {
+	case lsutil.ScriptElementKindWarning:
+		id = imgIntellisenseWarning
+	case lsutil.ScriptElementKindKeyword:
+		id = imgIntellisenseKeyword
+	case lsutil.ScriptElementKindScriptElement:
+		switch {
+		case isPrivate:
+			id = imgModulePrivate
+		case isProtected:
+			id = imgModuleProtected
+		default:
+			id = imgModulePublic
+		}
+	case lsutil.ScriptElementKindModuleElement:
+		id = imgNamespace
+	case lsutil.ScriptElementKindClassElement, lsutil.ScriptElementKindLocalClassElement,
+		lsutil.ScriptElementKindTypeElement, lsutil.ScriptElementKindConstructorImplementationElement:
+		switch {
+		case isPrivate:
+			id = imgClassPrivate
+		case isProtected:
+			id = imgClassProtected
+		default:
+			id = imgClassPublic
+		}
+	case lsutil.ScriptElementKindInterfaceElement:
+		switch {
+		case isPrivate:
+			id = imgInterfacePrivate
+		case isProtected:
+			id = imgInterfaceProtected
+		default:
+			id = imgInterfacePublic
+		}
+	case lsutil.ScriptElementKindEnumElement:
+		switch {
+		case isPrivate:
+			id = imgEnumPrivate
+		case isProtected:
+			id = imgEnumProtected
+		default:
+			id = imgEnumPublic
+		}
+	case lsutil.ScriptElementKindEnumMemberElement:
+		id = imgEnumMember
+	case lsutil.ScriptElementKindParameterElement:
+		id = imgLocalVariable
+	case lsutil.ScriptElementKindVariableElement, lsutil.ScriptElementKindLocalVariableElement,
+		lsutil.ScriptElementKindLetElement:
+		id = imgLocalVariable
+	case lsutil.ScriptElementKindConstElement:
+		switch {
+		case isPrivate:
+			id = imgConstantPrivate
+		case isProtected:
+			id = imgConstantProtected
+		default:
+			id = imgConstantPublic
+		}
+	case lsutil.ScriptElementKindMemberGetAccessorElement, lsutil.ScriptElementKindMemberSetAccessorElement,
+		lsutil.ScriptElementKindMemberVariableElement:
+		switch {
+		case isPrivate:
+			id = imgPropertyPrivate
+		case isProtected:
+			id = imgPropertyProtected
+		default:
+			id = imgPropertyPublic
+		}
+	case lsutil.ScriptElementKindFunctionElement, lsutil.ScriptElementKindLocalFunctionElement,
+		lsutil.ScriptElementKindMemberFunctionElement, lsutil.ScriptElementKindCallSignatureElement,
+		lsutil.ScriptElementKindIndexSignatureElement, lsutil.ScriptElementKindConstructSignatureElement:
+		switch {
+		case isPrivate:
+			id = imgMethodPrivate
+		case isProtected:
+			id = imgMethodProtected
+		default:
+			id = imgMethodPublic
+		}
+	case lsutil.ScriptElementKindTypeParameterElement, lsutil.ScriptElementKindPrimitiveType:
+		id = imgType
+	case lsutil.ScriptElementKindLabel:
+		id = imgLabel
+	case lsutil.ScriptElementKindAlias:
+		// Fallback for unresolvable aliases (rare; alias dereferencing in ProvideHover
+		// usually resolves to the underlying entity before reaching this point).
+		id = imgAssembly
+	default:
+		return nil
+	}
+
+	return &vsImageId{Guid: imageCatalogGuid, Id: id}
+}
+
+// vsRawContainer is a ContainerElement with heterogeneous Elements for _vs_rawContent.
+type vsRawContainer struct {
+	Elements []json.Value `json:"Elements"`
+	Style    int32        `json:"Style"`
+	VSType   string       `json:"_vs_type"`
+}
+
+// vsImageElement represents an ImageElement for VS hover icons.
+type vsImageElement struct {
+	ImageId vsImageIdJSON `json:"ImageId"`
+	VSType  string        `json:"_vs_type"`
+}
+
+// vsImageIdJSON is the JSON representation of a VS ImageId.
+type vsImageIdJSON struct {
+	Guid string `json:"Guid"`
+	Id   int    `json:"Id"`
+}
+
+// buildVSRawContent constructs the _vs_rawContent JSON bytes.
+// If imageId is provided, the first element is wrapped in a ContainerElement(Wrapped)
+// with [ImageElement, ClassifiedTextElement], matching Strada's hover layout.
+func buildVSRawContent(elements []*lsproto.VSClassifiedTextElement, imageId *vsImageId) json.Value {
+	var topElements []json.Value
+
+	if imageId != nil && len(elements) > 0 {
+		// Serialize the ImageElement
+		imgElem := vsImageElement{
+			ImageId: vsImageIdJSON{Guid: imageId.Guid, Id: imageId.Id},
+			VSType:  "ImageElement",
+		}
+		imgBytes, _ := json.Marshal(imgElem)
+
+		// Serialize the first ClassifiedTextElement
+		firstElemBytes, _ := json.Marshal(elements[0])
+
+		// Build the inner Wrapped container with [ImageElement, ClassifiedTextElement]
+		wrappedContainer := vsRawContainer{
+			Elements: []json.Value{json.Value(imgBytes), json.Value(firstElemBytes)},
+			Style:    0, // Wrapped — renders icon inline with signature
+			VSType:   "ContainerElement",
+		}
+		wrappedBytes, _ := json.Marshal(wrappedContainer)
+		topElements = append(topElements, json.Value(wrappedBytes))
+
+		// Add remaining elements
+		for _, e := range elements[1:] {
+			elemBytes, _ := json.Marshal(e)
+			topElements = append(topElements, json.Value(elemBytes))
+		}
+	} else {
+		for _, e := range elements {
+			elemBytes, _ := json.Marshal(e)
+			topElements = append(topElements, json.Value(elemBytes))
+		}
+	}
+
+	// If there's only one element, return it directly (no extra Stacked wrapper)
+	if len(topElements) == 1 {
+		return topElements[0]
+	}
+
+	// Outer Stacked container for multiple elements
+	container := vsRawContainer{
+		Elements: topElements,
+		Style:    1, // Stacked — places documentation on a new line below the signature
+		VSType:   "ContainerElement",
+	}
+
+	bytes, err := json.Marshal(container)
+	if err != nil {
+		// Fallback: return without icon
+		fallback := &lsproto.ContainerElement{
+			Elements: elements,
+			Style:    0,
+		}
+		bytes, _ = json.Marshal(fallback)
+	}
+	return json.Value(bytes)
 }

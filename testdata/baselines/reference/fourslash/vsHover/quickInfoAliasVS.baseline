@@ -1,0 +1,233 @@
+// === vsHover ===
+=== /b.ts ===
+// import { x } from "./a";
+// x;
+// ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (alias) const x: 0
+// | ```
+// | Doc
+// | 
+// | *@tag* — Tag text
+// | 
+// | ----------------------------------------------------------------------
+=== /c.ts ===
+// /**
+//  * Doc 2
+//  * @tag Tag text 2
+//  */
+// import {
+//     /**
+//      * Doc 3
+//      * @tag Tag text 3
+//      */
+//     x
+// } from "./a";
+// x;
+// ^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (alias) const x: 0
+// | ```
+// | Doc
+// | 
+// | *@tag* — Tag text
+// | 
+// | ----------------------------------------------------------------------
+
+
+[
+  {
+    "marker": {
+      "Position": 26,
+      "LSPosition": {
+        "line": 1,
+        "character": 1
+      },
+      "Name": "b",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(alias) const x: 0\n```\nDoc\n\n*@tag* — Tag text\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 0
+        },
+        "end": {
+          "line": 1,
+          "character": 1
+        }
+      },
+      "_vs_rawContent": {
+        "Elements": [
+          {
+            "Elements": [
+              {
+                "ImageId": {
+                  "Guid": "ae27a6b0-e345-4288-96df-5eaf394ee369",
+                  "Id": 620
+                },
+                "_vs_type": "ImageElement"
+              },
+              {
+                "Runs": [
+                  {
+                    "ClassificationTypeName": "punctuation",
+                    "Text": "(",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "text",
+                    "Text": "alias",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "punctuation",
+                    "Text": ") ",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "keyword",
+                    "Text": "const ",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "local name",
+                    "Text": "x",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "punctuation",
+                    "Text": ": ",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "string",
+                    "Text": "0",
+                    "_vs_type": "ClassifiedTextRun"
+                  }
+                ],
+                "_vs_type": "ClassifiedTextElement"
+              }
+            ],
+            "Style": 0,
+            "_vs_type": "ContainerElement"
+          },
+          {
+            "Runs": [
+              {
+                "ClassificationTypeName": "text",
+                "Text": "Doc\n\n*@tag* — Tag text\n",
+                "_vs_type": "ClassifiedTextRun"
+              }
+            ],
+            "_vs_type": "ClassifiedTextElement"
+          }
+        ],
+        "Style": 1,
+        "_vs_type": "ContainerElement"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 118,
+      "LSPosition": {
+        "line": 11,
+        "character": 1
+      },
+      "Name": "c",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```typescript\n(alias) const x: 0\n```\nDoc\n\n*@tag* — Tag text\n"
+      },
+      "range": {
+        "start": {
+          "line": 11,
+          "character": 0
+        },
+        "end": {
+          "line": 11,
+          "character": 1
+        }
+      },
+      "_vs_rawContent": {
+        "Elements": [
+          {
+            "Elements": [
+              {
+                "ImageId": {
+                  "Guid": "ae27a6b0-e345-4288-96df-5eaf394ee369",
+                  "Id": 620
+                },
+                "_vs_type": "ImageElement"
+              },
+              {
+                "Runs": [
+                  {
+                    "ClassificationTypeName": "punctuation",
+                    "Text": "(",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "text",
+                    "Text": "alias",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "punctuation",
+                    "Text": ") ",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "keyword",
+                    "Text": "const ",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "local name",
+                    "Text": "x",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "punctuation",
+                    "Text": ": ",
+                    "_vs_type": "ClassifiedTextRun"
+                  },
+                  {
+                    "ClassificationTypeName": "string",
+                    "Text": "0",
+                    "_vs_type": "ClassifiedTextRun"
+                  }
+                ],
+                "_vs_type": "ClassifiedTextElement"
+              }
+            ],
+            "Style": 0,
+            "_vs_type": "ContainerElement"
+          },
+          {
+            "Runs": [
+              {
+                "ClassificationTypeName": "text",
+                "Text": "Doc\n\n*@tag* — Tag text\n",
+                "_vs_type": "ClassifiedTextRun"
+              }
+            ],
+            "_vs_type": "ClassifiedTextElement"
+          }
+        ],
+        "Style": 1,
+        "_vs_type": "ContainerElement"
+      }
+    }
+  }
+]

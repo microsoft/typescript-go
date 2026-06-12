@@ -2424,6 +2424,61 @@ func (f *FourslashTest) VerifyBaselineVSFindAllReferences(
 	}
 }
 
+func (f *FourslashTest) VerifyBaselineVSHover(t *testing.T) {
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.Hover]{}, false
+		}
+
+		params := &lsproto.HoverParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(marker.fileName),
+			},
+			Position: marker.LSPosition,
+		}
+
+		result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
+	})
+
+	getRange := func(item *lsproto.Hover) *lsproto.Range {
+		if item == nil || item.Range == nil {
+			return nil
+		}
+		return item.Range
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.Hover) []string {
+		var result []string
+		if item.Contents.MarkupContent != nil {
+			result = strings.Split(item.Contents.MarkupContent.Value, "\n")
+		}
+		if item.Contents.String != nil {
+			result = strings.Split(*item.Contents.String, "\n")
+		}
+		if item.Contents.MarkedStringWithLanguage != nil {
+			result = appendLinesForMarkedStringWithLanguage(result, item.Contents.MarkedStringWithLanguage)
+		}
+		if item.Contents.MarkedStrings != nil {
+			for _, ms := range *item.Contents.MarkedStrings {
+				if ms.MarkedStringWithLanguage != nil {
+					result = appendLinesForMarkedStringWithLanguage(result, ms.MarkedStringWithLanguage)
+				} else {
+					result = append(result, *ms.String)
+				}
+			}
+		}
+		return result
+	}
+
+	f.addResultToBaseline(t, vsHoverCmd, annotateContentWithTooltips(t, f, markersAndItems, "vshover", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.writeToBaseline(vsHoverCmd, jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify VS hover result for baseline: %v", err)
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil.UserPreferences) {
 	if preferences != nil {
 		reset := f.ConfigureWithReset(t, *preferences)
