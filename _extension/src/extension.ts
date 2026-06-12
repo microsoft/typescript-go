@@ -194,7 +194,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const message = uniqueExtensionNames.length === 1
             // Pick the first extension & plugin, even though extensions can have multiple plugins
-            ? vscode.l10n.t(`TypeScript server plugins from the "{1}" extension will not be loaded because TypeScript Native Preview is enabled globally.`, pluginExtensions[0].pluginName, pluginExtensions[0].extensionId)
+            ? vscode.l10n.t(`TypeScript server plugins from the "{0}" extension will not be loaded because TypeScript Native Preview is enabled globally.`, pluginExtensions[0].extensionId)
             : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
 
         const ok = vscode.l10n.t("OK");
