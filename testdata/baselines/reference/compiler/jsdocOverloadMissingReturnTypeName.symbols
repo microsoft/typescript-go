@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/jsdocOverloadMissingReturnTypeName.ts] ////
+
+=== a.js ===
+/**
+ * @overload
+ * @param {number} x
+ */
+
+/**
+ * @overload
+ * @param {string} x
+ */
+
+/**
+ * @param {string | number} x
+ * @returns {string | number}
+ */
+function id(x) {
+>id : Symbol(id, Decl(a.js, 1, 4), Decl(a.js, 6, 4), Decl(a.js, 0, 0))
+>x : Symbol(x, Decl(a.js, 14, 12))
+
+    return x;
+>x : Symbol(x, Decl(a.js, 14, 12))
+}
+
