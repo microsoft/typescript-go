@@ -26,6 +26,8 @@ export class SessionManager implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
     private initializedEventEmitter: vscode.EventEmitter<void>;
     private telemetryReporter: TelemetryReporter;
+    private restartCount: number = 0;
+    private restartPromptShown: boolean = false;
 
     constructor(
         context: vscode.ExtensionContext,
@@ -42,12 +44,41 @@ export class SessionManager implements vscode.Disposable {
     registerCommands(context: vscode.ExtensionContext): void {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", async () => {
             this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
-            if (await this.currentSession?.tryRestartClient(context)) {
-                // Language client was able to restart without a full session restart
-                return;
+
+            // Most of the time we can restart the client without fully restarting the session.
+            const clientRestarted = await this.currentSession?.tryRestartClient(context);
+            if (!clientRestarted) {
+                await this.restart(context);
             }
 
-            await this.restart(context);
+            this.restartCount++;
+            if (this.restartCount >= 5 && !this.restartPromptShown) {
+                this.restartPromptShown = true;
+                this.telemetryReporter.sendTelemetryEvent("restartExceeded.warningShown");
+                const experiencing = await vscode.window.showWarningMessage(
+                    "You've restarted the language server several times. Are you experiencing an issue?",
+                    "Yes",
+                    "No",
+                ) ?? "Dismiss";
+
+                this.telemetryReporter.sendTelemetryEvent("restartExceeded.experiencingIssue", { choice: experiencing });
+                if (experiencing === "Yes") {
+                    const action = await vscode.window.showWarningMessage(
+                        "Would you like to report the issue or view the server output?",
+                        "Report Issue",
+                        "Show Output Logs",
+                        "Dismiss",
+                    ) ?? "Dismiss";
+
+                    this.telemetryReporter.sendTelemetryEvent("restartExceeded.action", { choice: action });
+                    if (action === "Report Issue") {
+                        vscode.commands.executeCommand("typescript.native-preview.reportIssue");
+                    }
+                    else if (action === "Show Output Logs") {
+                        vscode.commands.executeCommand("typescript.native-preview.output.focus");
+                    }
+                }
+            }
         }));
     }
 
