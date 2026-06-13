@@ -45,11 +45,15 @@ export declare namespace FunctionComponentAlias {
         name: string;
     };
 }
-export declare const ArrowComponentAlias: {
-    (props: {
-        name: string;
-    }): string;
-    propTypes: {
+/**
+ * @param {Object} props
+ * @param {string} props.name
+ */
+export declare function ArrowComponentAlias(props: {
+    name: string;
+}): string;
+export declare namespace ArrowComponentAlias {
+    var propTypes: {
         name: string;
     };
-};
+}
