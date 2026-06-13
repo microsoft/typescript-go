@@ -1146,4 +1146,3 @@ func singleBucket(t *testing.T, buckets []autoimport.BucketStats) autoimport.Buc
 	}
 	return buckets[0]
 }
-
