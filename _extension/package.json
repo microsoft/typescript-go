@@ -238,6 +238,6 @@
     "devDependencies": {
         "@types/vscode": "~1.110.0",
         "@vscode/vsce": "^3.9.2",
-        "esbuild": "^0.28.0"
+        "esbuild": "^0.28.1"
     }
 }
