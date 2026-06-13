@@ -1853,6 +1853,10 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 	}
 
 	inputNodes := input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+	if alias := tx.transformExpandoFunctionAlias(input, inputNodes); alias != nil {
+		return alias
+	}
+
 	var extraImports []*ast.Node
 	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
 		var normalDeclarations []*ast.Node
@@ -1893,6 +1897,60 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		return tx.Factory().NewSyntaxList(append(extraImports, res))
 	}
 	return res
+}
+
+func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.VariableStatement, inputNodes []*ast.Node) *ast.Node {
+	if len(inputNodes) != 1 {
+		return nil
+	}
+	decl := inputNodes[0].AsVariableDeclaration()
+	if !ast.IsIdentifier(decl.Name()) || decl.Initializer == nil || !ast.IsIdentifier(decl.Initializer) {
+		return nil
+	}
+	target := tx.resolver.GetReferencedValueDeclaration(decl.Initializer)
+	if target == nil || !ast.IsFunctionDeclaration(target) || !tx.resolver.IsExpandoFunctionDeclaration(target.AsNode()) || !shouldEmitFunctionProperties(target.AsFunctionDeclaration()) {
+		return nil
+	}
+	targetId := tx.getExpandoHostId(target)
+	addOns, ok := tx.expandoMembers[targetId]
+	if !ok {
+		return nil
+	}
+	if ast.GetCombinedModifierFlags(target.AsNode())&ast.ModifierFlagsExport == 0 {
+		tx.expandoHosts[targetId] = nil
+		tx.lateStatementReplacementMap[targetId] = nil
+	}
+
+	tx.state.reportExpandoFunctionErrors(target.AsNode())
+
+	typeParameters, parameters, asteriskToken := extractExpandoHostParams(target.AsNode())
+	modifiers := tx.ensureModifiers(input.AsNode())
+	functionDeclaration := tx.Factory().UpdateFunctionDeclaration(
+		target.AsFunctionDeclaration(),
+		modifiers,
+		asteriskToken,
+		decl.Name(),
+		tx.ensureTypeParams(target.AsNode(), typeParameters),
+		tx.updateParamList(target.AsNode(), parameters),
+		tx.ensureType(target.AsNode(), false),
+		nil, /*fullSignature*/
+		nil,
+	)
+
+	namespaceModifiers := modifiers
+	if modifiers != nil {
+		namespaceModifiers = modifiers.Clone(tx.Factory().AsNodeFactory())
+	}
+	members := core.Map(addOns, func(node *ast.Node) *ast.Node {
+		return node.Clone(tx.Factory())
+	})
+	namespaceDeclaration := tx.Factory().NewModuleDeclaration(
+		namespaceModifiers,
+		ast.KindNamespaceKeyword,
+		decl.Name().Clone(tx.Factory()),
+		tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(members)),
+	)
+	return tx.Factory().NewSyntaxList([]*ast.Node{functionDeclaration, namespaceDeclaration})
 }
 
 func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclaration) *ast.Node {
