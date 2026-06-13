@@ -314,6 +314,8 @@ func TestProjectReferencesProgram(t *testing.T) {
 		assert.Assert(t, program.Options().ImportHelpers.IsTrue())
 		assert.Assert(t, program.GetImportHelpersImportSpecifier(file.Path()) != nil)
 
+		session.WaitForBackgroundTasks()
+
 		response, err := languageService.ProvideDiagnostics(context.Background(), "file:///user/username/projects/myproject/dependency/fn.ts")
 		assert.NilError(t, err)
 		assert.Assert(t, response.FullDocumentDiagnosticReport != nil)
