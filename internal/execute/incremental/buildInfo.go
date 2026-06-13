@@ -466,6 +466,7 @@ type BuildInfo struct {
 	Errors       bool             `json:"errors,omitzero"`
 	CheckPending bool             `json:"checkPending,omitzero"`
 	Root         []*BuildInfoRoot `json:"root,omitzero"`
+	PackageJsons []string         `json:"packageJsons,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                             `json:"fileNames,omitzero"`
@@ -491,6 +492,10 @@ func (b *BuildInfo) IsValidVersion() bool {
 
 func (b *BuildInfo) IsIncremental() bool {
 	return b != nil && len(b.FileNames) != 0
+}
+
+func IsBuildInfoFileNameDefaultLibrary(fileName string) bool {
+	return !tspath.PathIsRelative(fileName) && !tspath.PathIsAbsolute(fileName)
 }
 
 func (b *BuildInfo) fileName(fileId BuildInfoFileId) string {
@@ -527,6 +532,16 @@ func (b *BuildInfo) IsEmitPending(resolved *tsoptions.ParsedCommandLine, buildIn
 		return pendingEmit != 0
 	}
 	return false
+}
+
+func (b *BuildInfo) GetPackageJsons(buildInfoDirectory string) iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for _, packageJson := range b.PackageJsons {
+			if !yield(tspath.GetNormalizedAbsolutePath(packageJson, buildInfoDirectory)) {
+				return
+			}
+		}
+	}
 }
 
 func (b *BuildInfo) GetBuildInfoRootInfoReader(buildInfoDirectory string, comparePathOptions tspath.ComparePathsOptions) *BuildInfoRootInfoReader {
