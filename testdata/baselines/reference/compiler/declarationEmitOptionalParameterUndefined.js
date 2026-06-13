@@ -50,9 +50,9 @@ export function curry_with_explicit_undefined(foo = 2, _) {
 
 
 //// [declarationEmitOptionalParameterUndefined.d.ts]
-export declare function simple_primitive(foo: (number | boolean | null) | undefined, _: string): void;
+export declare function simple_primitive(foo: number | boolean | null | undefined, _: string): void;
 export declare function simple_primitive_with_explicit_undefined(foo: number | boolean | null | undefined, _: string): void;
-export declare function simple_nonPrimitive(foo: (number | RegExp | null) | undefined, _: string): void;
+export declare function simple_nonPrimitive(foo: number | RegExp | null | undefined, _: string): void;
 export declare function simple_nonPrimitive_with_explicit_undefined(foo: number | RegExp | null | undefined, _: string): void;
-export declare function curry(foo: (number | RegExp | null) | undefined, _: string): (bar: (number | RegExp | null | undefined) | undefined, _: string) => (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void;
-export declare function curry_with_explicit_undefined(foo: number | RegExp | null | undefined, _: string): (bar: (number | RegExp | null | undefined) | undefined, _: string) => (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void;
+export declare function curry(foo: number | RegExp | null | undefined, _: string): (bar: number | RegExp | null | undefined, _: string) => (buzz: number | RegExp | null | undefined, _: string) => void;
+export declare function curry_with_explicit_undefined(foo: number | RegExp | null | undefined, _: string): (bar: number | RegExp | null | undefined, _: string) => (buzz: number | RegExp | null | undefined, _: string) => void;

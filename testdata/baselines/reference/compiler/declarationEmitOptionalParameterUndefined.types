@@ -2,7 +2,7 @@
 
 === declarationEmitOptionalParameterUndefined.ts ===
 export function simple_primitive(
->simple_primitive : (foo: (number | boolean | null) | undefined, _: string) => void
+>simple_primitive : (foo: number | boolean | null | undefined, _: string) => void
 
     foo: number | boolean | null = 2,
 >foo : number | boolean | null
@@ -26,7 +26,7 @@ export function simple_primitive_with_explicit_undefined(
 ) {}
 
 export function simple_nonPrimitive(
->simple_nonPrimitive : (foo: (number | RegExp | null) | undefined, _: string) => void
+>simple_nonPrimitive : (foo: number | RegExp | null | undefined, _: string) => void
 
     foo: number | RegExp | null = 2,
 >foo : number | RegExp | null
@@ -50,7 +50,7 @@ export function simple_nonPrimitive_with_explicit_undefined(
 ) {}
 
 export function curry(
->curry : (foo: (number | RegExp | null) | undefined, _: string) => (bar: (number | RegExp | null | undefined) | undefined, _: string) => (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void
+>curry : (foo: number | RegExp | null | undefined, _: string) => (bar: number | RegExp | null | undefined, _: string) => (buzz: number | RegExp | null | undefined, _: string) => void
 
     foo: number | RegExp | null = 2,
 >foo : number | RegExp | null
@@ -61,18 +61,18 @@ export function curry(
 
 ) {
     return (bar = foo, _: string) => (buzz = bar, _: string) => {}
->(bar = foo, _: string) => (buzz = bar, _: string) => {} : (bar: (number | RegExp | null | undefined) | undefined, _: string) => (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void
+>(bar = foo, _: string) => (buzz = bar, _: string) => {} : (bar: number | RegExp | null | undefined, _: string) => (buzz: number | RegExp | null | undefined, _: string) => void
 >bar : number | RegExp | null
 >foo : number | RegExp | null
 >_ : string
->(buzz = bar, _: string) => {} : (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void
+>(buzz = bar, _: string) => {} : (buzz: number | RegExp | null | undefined, _: string) => void
 >buzz : number | RegExp | null
 >bar : number | RegExp | null
 >_ : string
 }
 
 export function curry_with_explicit_undefined(
->curry_with_explicit_undefined : (foo: number | RegExp | null | undefined, _: string) => (bar: (number | RegExp | null | undefined) | undefined, _: string) => (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void
+>curry_with_explicit_undefined : (foo: number | RegExp | null | undefined, _: string) => (bar: number | RegExp | null | undefined, _: string) => (buzz: number | RegExp | null | undefined, _: string) => void
 
     foo: number | RegExp | null | undefined = 2,
 >foo : number | RegExp | null | undefined
@@ -83,11 +83,11 @@ export function curry_with_explicit_undefined(
 
 ) {
     return (bar = foo, _: string) => (buzz = bar, _: string) => {}
->(bar = foo, _: string) => (buzz = bar, _: string) => {} : (bar: (number | RegExp | null | undefined) | undefined, _: string) => (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void
+>(bar = foo, _: string) => (buzz = bar, _: string) => {} : (bar: number | RegExp | null | undefined, _: string) => (buzz: number | RegExp | null | undefined, _: string) => void
 >bar : number | RegExp | null
 >foo : number | RegExp | null
 >_ : string
->(buzz = bar, _: string) => {} : (buzz: (number | RegExp | null | undefined) | undefined, _: string) => void
+>(buzz = bar, _: string) => {} : (buzz: number | RegExp | null | undefined, _: string) => void
 >buzz : number | RegExp | null
 >bar : number | RegExp | null
 >_ : string

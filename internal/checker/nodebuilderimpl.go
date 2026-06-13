@@ -470,6 +470,25 @@ func typesAreSameReference(a, b *Type) bool {
 	return a == b || a.symbol != nil && a.symbol == b.symbol || a.alias != nil && a.alias == b.alias
 }
 
+func (b *NodeBuilderImpl) pseudoTypeCouldAlreadyReferToUndefined(t *pseudochecker.PseudoType) bool {
+	switch t.Kind {
+	case pseudochecker.PseudoTypeKindNoResult,
+		pseudochecker.PseudoTypeKindInferred:
+		return true
+	case pseudochecker.PseudoTypeKindMaybeConstLocation:
+		return b.pseudoTypeCouldAlreadyReferToUndefined(t.AsPseudoTypeMaybeConstLocation().RegularType)
+	case pseudochecker.PseudoTypeKindUnion:
+		return core.Some(t.AsPseudoTypeUnion().Types, func(t *pseudochecker.PseudoType) bool {
+			return b.pseudoTypeCouldAlreadyReferToUndefined(t)
+		})
+	default:
+		if t := b.pseudoTypeToType(t); t != nil {
+			return containsNonMissingUndefinedType(b.ch, t)
+		}
+		return false
+	}
+}
+
 func (b *NodeBuilderImpl) setCommentRange(node *ast.Node, range_ *ast.Node) {
 	if range_ != nil && b.ctx.enclosingFile != nil && b.ctx.enclosingFile == ast.GetSourceFileOfNode(range_) {
 		// Copy comments to node for declaration emit
@@ -488,17 +507,26 @@ func (b *NodeBuilderImpl) tryReuseExistingTypeNode(typeNode *ast.TypeNode, t *Ty
 		if addUndefined && containsNonMissingUndefinedType(b.ch, t) && !someType(b.getTypeFromTypeNode(typeNode, false), func(t *Type) bool {
 			return t.flags&TypeFlagsUndefined != 0
 		}) {
-			return b.f.NewUnionTypeNode(b.f.NewNodeList([]*ast.TypeNode{clone, b.f.NewKeywordTypeNode(ast.KindUndefinedKeyword)}))
+			return b.addUndefinedToTypeNode(clone)
 		}
 		return clone
 	}
 	if addUndefined && originalType != t {
 		cloneMissingUndefined := b.tryReuseExistingNonParameterTypeNode(typeNode, originalType, host, nil)
 		if cloneMissingUndefined != nil {
-			return b.f.NewUnionTypeNode(b.f.NewNodeList([]*ast.TypeNode{cloneMissingUndefined, b.f.NewKeywordTypeNode(ast.KindUndefinedKeyword)}))
+			return b.addUndefinedToTypeNode(cloneMissingUndefined)
 		}
 	}
 	return nil
+}
+
+func (b *NodeBuilderImpl) addUndefinedToTypeNode(typeNode *ast.TypeNode) *ast.TypeNode {
+	if ast.IsUnionTypeNode(typeNode) {
+		types := slices.Clone(typeNode.AsUnionTypeNode().Types.Nodes)
+		types = append(types, b.f.NewKeywordTypeNode(ast.KindUndefinedKeyword))
+		return b.f.NewUnionTypeNode(b.f.NewNodeList(types))
+	}
+	return b.f.NewUnionTypeNode(b.f.NewNodeList([]*ast.TypeNode{typeNode, b.f.NewKeywordTypeNode(ast.KindUndefinedKeyword)}))
 }
 
 func (b *NodeBuilderImpl) typeNodeIsEquivalentToType(annotatedDeclaration *ast.Node, t *Type, typeFromTypeNode *Type) bool {
@@ -2207,6 +2235,11 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	requiresAddingUndefined := declaration != nil && (ast.IsParameterDeclaration(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && b.ch.GetEmitResolver().requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
 	addUndefinedForParameter := requiresAddingUndefined && (ast.IsParameterDeclaration(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/)
 	if addUndefinedForParameter {
+		if typeNode := declaration.Type(); typeNode != nil {
+			if typeNode := b.tryReuseExistingTypeNode(typeNode, t, declaration, true); typeNode != nil {
+				return typeNode
+			}
+		}
 		t = b.ch.getOptionalType(t, false)
 	}
 
@@ -2239,7 +2272,9 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			// see: canReuseTypeNodeAnnotation in strada for context
 			ptt := b.pseudoTypeToType(pt)
 			if ptt != nil && requiresAddingUndefined && containsNonMissingUndefinedType(b.ch, t) && !containsNonMissingUndefinedType(b.ch, ptt) {
-				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
+				if !b.pseudoTypeCouldAlreadyReferToUndefined(pt) {
+					pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
+				}
 			}
 			result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
 		} else {
@@ -2248,7 +2283,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			// typeToTypeNode serialization (mirroring the suppression that
 			// pseudoTypeToNodeWithCheckerFallback provides).
 			reportedInferenceFallback = reportErrors && pt.Kind == pseudochecker.PseudoTypeKindInferred && len(pt.AsPseudoTypeInferred().ErrorNodes) > 0
-			if requiresAddingUndefined {
+			if requiresAddingUndefined && !b.pseudoTypeCouldAlreadyReferToUndefined(pt) {
 				pt = pseudochecker.NewPseudoTypeUnion([]*pseudochecker.PseudoType{pt, pseudochecker.PseudoTypeUndefined})
 				if b.pseudoTypeEquivalentToType(pt, t, false, reportErrors) {
 					result = b.pseudoTypeToNodeWithCheckerFallback(pt, t)
