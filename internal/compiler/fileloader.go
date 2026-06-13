@@ -537,10 +537,11 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 	isJavaScriptFile := ast.IsSourceFileJS(file)
 	isExternalModuleFile := ast.IsExternalModule(file)
 
+	compilerOptions := p.opts.Config.CompilerOptions()
 	redirect, fileName := p.projectReferenceFileMapper.getRedirectForResolution(file)
-	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
+	optionsForFile := module.GetCompilerOptionsWithRedirect(compilerOptions, redirect)
 	if isJavaScriptFile || (!file.IsDeclarationFile && (optionsForFile.GetIsolatedModules() || isExternalModuleFile)) {
-		if optionsForFile.ImportHelpers.IsTrue() {
+		if optionsForFile.ImportHelpers.IsTrue() || compilerOptions.ImportHelpers.IsTrue() {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
 			moduleNames = append(moduleNames, specifier)
 			t.importHelpersImportSpecifier = specifier

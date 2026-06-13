@@ -275,6 +275,51 @@ func TestProjectReferencesProgram(t *testing.T) {
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Check(t, snapshot.ProjectCollection.Projects()[0].Program != programBefore)
 	})
+
+	t.Run("redirected source creates importHelpers specifier from referencing project options", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/user/username/projects/myproject/main/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "es6",
+					"module": "commonjs",
+					"importHelpers": true
+				},
+				"files": ["main.ts"],
+				"references": [{ "path": "../dependency" }]
+			}`,
+			"/user/username/projects/myproject/main/main.ts": `
+				import { fn } from "../decls/fn";
+				fn();
+			`,
+			"/user/username/projects/myproject/dependency/tsconfig.json": `{
+				"compilerOptions": {
+					"composite": true,
+					"declarationDir": "../decls",
+					"target": "es6",
+					"module": "commonjs",
+					"importHelpers": false
+				}
+			}`,
+			"/user/username/projects/myproject/dependency/fn.ts": `export async function fn() {}`,
+		}
+		session, _ := projecttestutil.Setup(files)
+		mainURI := lsproto.DocumentUri("file:///user/username/projects/myproject/main/main.ts")
+		session.DidOpenFile(context.Background(), mainURI, 1, files["/user/username/projects/myproject/main/main.ts"].(string), lsproto.LanguageKindTypeScript)
+		languageService, err := session.GetLanguageService(context.Background(), mainURI)
+		assert.NilError(t, err)
+		program := languageService.GetProgram()
+		file := program.GetSourceFile("/user/username/projects/myproject/dependency/fn.ts")
+		assert.Assert(t, file != nil)
+		assert.Assert(t, program.Options().ImportHelpers.IsTrue())
+		assert.Assert(t, program.GetImportHelpersImportSpecifier(file.Path()) != nil)
+
+		session.WaitForBackgroundTasks()
+
+		response, err := languageService.ProvideDiagnostics(context.Background(), "file:///user/username/projects/myproject/dependency/fn.ts")
+		assert.NilError(t, err)
+		assert.Assert(t, response.FullDocumentDiagnosticReport != nil)
+	})
 }
 
 func filesForReferencedProjectProgram(disableSourceOfProjectReferenceRedirect bool) map[string]any {
