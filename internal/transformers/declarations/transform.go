@@ -1940,11 +1940,15 @@ func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.Varia
 
 	typeParameters, parameters, asteriskToken := extractExpandoHostParams(functionLike)
 	modifiers := tx.ensureModifiers(input.AsNode())
+	functionModifiers := modifiers
+	if functionModifiers != nil {
+		functionModifiers = functionModifiers.Clone(tx.Factory().AsNodeFactory())
+	}
 	var functionDeclaration *ast.Node
 	if ast.IsFunctionDeclaration(target) {
 		functionDeclaration = tx.Factory().UpdateFunctionDeclaration(
 			target.AsFunctionDeclaration(),
-			modifiers,
+			functionModifiers,
 			asteriskToken,
 			decl.Name(),
 			tx.ensureTypeParams(functionLike, typeParameters),
@@ -1955,7 +1959,7 @@ func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.Varia
 		)
 	} else {
 		functionDeclaration = tx.Factory().NewFunctionDeclaration(
-			modifiers,
+			functionModifiers,
 			asteriskToken,
 			decl.Name(),
 			tx.ensureTypeParams(functionLike, typeParameters),
@@ -1964,7 +1968,11 @@ func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.Varia
 			nil, /*fullSignature*/
 			nil,
 		)
-		tx.preserveJsDoc(functionDeclaration, target.Parent.Parent)
+		original := target.AsNode()
+		if target.Parent != nil && target.Parent.Parent != nil {
+			original = target.Parent.Parent
+		}
+		tx.preserveJsDoc(functionDeclaration, original)
 	}
 
 	namespaceModifiers := modifiers
