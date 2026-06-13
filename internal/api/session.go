@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -532,6 +533,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetDeclarationDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetConfigFileParsingDiagnostics):
 		return s.handleGetConfigFileParsingDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodEmit):
+		return s.handleEmit(ctx, parsed.(*EmitParams))
 	case string(MethodStartCPUProfile):
 		return s.handleStartCPUProfile(ctx, parsed.(*ProfileParams))
 	case string(MethodStopCPUProfile):
@@ -2228,6 +2231,63 @@ func (s *Session) handleGetConfigFileParsingDiagnostics(ctx context.Context, par
 
 	diags := program.GetConfigFileParsingDiagnostics()
 	return NewDiagnosticResponses(diags), nil
+}
+
+func getEmitOnlyFromUint32(v uint32) (compiler.EmitOnly, error) {
+	s := compiler.EmitOnly(v)
+
+	switch s {
+	case compiler.EmitAll, compiler.EmitOnlyJs, compiler.EmitOnlyDts, compiler.EmitOnlyForcedDts:
+		return s, nil
+	default:
+		return compiler.EmitAll, fmt.Errorf("invalid value for EmitOnly flag: %d", v)
+	}
+}
+
+// handleEmit emits JavaScript and declaration files for a project or a specific file.
+func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	targetSourceFile, err := s.resolveOptionalSourceFile(program, params.TargetSourceFile)
+	if err != nil {
+		return nil, err
+	}
+
+	emitOnly, err := getEmitOnlyFromUint32(params.EmitOnly)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrClientError, err)
+	}
+
+	// The WriteFile callback writes emitted files to the session's file system.
+	// If callbackFS has writeFile enabled, this delegates to the client-provided
+	// virtual FS; otherwise it writes to the base FS.
+	writeFile := func(fileName string, text string, data *compiler.WriteFileData) error {
+		return s.projectSession.FS().WriteFile(fileName, text)
+	}
+
+	options := compiler.EmitOptions{
+		TargetSourceFile: targetSourceFile,
+		EmitOnly:         emitOnly,
+		WriteFile:        writeFile,
+	}
+
+	result := program.Emit(ctx, options)
+	if result == nil {
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("%w: %w", ErrClientError, err)
+		}
+		return nil, errors.New("compiler emit returned nil result")
+	}
+
+	return NewEmitResponse(result), nil
 }
 
 // resolveOptionalSourceFile resolves an optional DocumentIdentifier to a source file.
