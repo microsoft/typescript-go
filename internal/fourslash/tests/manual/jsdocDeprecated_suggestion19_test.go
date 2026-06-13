@@ -9,7 +9,6 @@ import (
 )
 
 func TestJsdocDeprecated_suggestion19(t *testing.T) {
-
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
