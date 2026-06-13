@@ -610,7 +610,7 @@ type Checker struct {
 	exactOptionalPropertyTypes                  bool
 	canCollectSymbolAliasAccessibilityData      bool
 	wasCanceled                                 bool
-	saveDeferredDiagnostics                     bool
+	checkingSourceFile                          bool
 	arrayVariances                              []VarianceFlags
 	globals                                     ast.SymbolTable
 	evaluate                                    evaluator.Evaluator
@@ -2179,7 +2179,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 	c.ctx = ctx
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
-		c.saveDeferredDiagnostics = true
+		c.checkingSourceFile = true
 		if tr := c.tracer; tr != nil {
 			defer tr.Push(tracing.PhaseCheck, "checkSourceFile", map[string]any{"path": sourceFile.FileName()}, true)()
 		}
@@ -2195,7 +2195,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		if !sourceFile.IsDeclarationFile && !c.isCanceled() {
 			c.checkUnusedRenamedBindingElements()
 		}
-		c.saveDeferredDiagnostics = false
+		c.checkingSourceFile = false
 		c.produceDeferredDiagnostics()
 		c.reportedUnreachableNodes.Clear()
 		links.typeChecked = true
@@ -13892,7 +13892,7 @@ func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
 }
 
 func (c *Checker) addDeferredDiagnostic(callback func()) {
-	if c.saveDeferredDiagnostics {
+	if c.checkingSourceFile {
 		c.deferredDiagnosticCallbacks = append(c.deferredDiagnosticCallbacks, callback)
 	}
 }
@@ -13906,9 +13906,15 @@ func (c *Checker) produceDeferredDiagnostics() {
 
 func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) {
 	// Discard diagnostics created while at the maximum number of recursive TypeToString invocations.
-	if c.serializationLevel < maxSerializationLevel {
-		c.diagnostics.Add(diagnostic)
+	if c.serializationLevel >= maxSerializationLevel {
+		return
 	}
+	// Global diagnostics (those not associated with a file) should only be collected
+	// while a source file is actively being checked.
+	if diagnostic.File() == nil && !c.checkingSourceFile {
+		return
+	}
+	c.diagnostics.Add(diagnostic)
 }
 
 func (c *Checker) addSuggestionDiagnostic(diagnostic *ast.Diagnostic) {
