@@ -1904,11 +1904,17 @@ func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.Varia
 		return nil
 	}
 	decl := inputNodes[0].AsVariableDeclaration()
-	if !ast.IsIdentifier(decl.Name()) || decl.Initializer == nil || !ast.IsIdentifier(decl.Initializer) {
+	if !ast.IsIdentifier(decl.Name()) {
+		return nil
+	}
+	if decl.Initializer == nil || !ast.IsIdentifier(decl.Initializer) {
 		return nil
 	}
 	target := tx.resolver.GetReferencedValueDeclaration(decl.Initializer)
-	if target == nil || !tx.resolver.IsExpandoFunctionDeclaration(target.AsNode()) {
+	if target == nil {
+		return nil
+	}
+	if !tx.resolver.IsExpandoFunctionDeclaration(target.AsNode()) {
 		return nil
 	}
 	var functionLike *ast.Node
@@ -1970,6 +1976,7 @@ func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.Varia
 		)
 		original := target.AsNode()
 		if target.Parent != nil && target.Parent.Parent != nil {
+			// Preserve JSDoc from the variable statement that owns the function expression initializer.
 			original = target.Parent.Parent
 		}
 		tx.preserveJsDoc(functionDeclaration, original)
@@ -1997,7 +2004,9 @@ func (tx *DeclarationTransformer) createExpandoMembersForAlias(target *ast.Node,
 		return nil
 	}
 
-	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name.Clone(tx.Factory()), tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
+	namespaceName := name.Clone(tx.Factory())
+	emptyBlock := tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{}))
+	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, namespaceName, emptyBlock)
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
 	declarationData := synthesizedNamespace.DeclarationData()
 	declarationData.Symbol = props[0].Parent
