@@ -3,7 +3,7 @@
 
 ==== /index.cjs (1 errors) ====
     Object.defineProperty(exports, "api", { value: require("pkg") });
-    ~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS9006: Declaration emit for this file requires using private name 'Private' from module '"/node_modules/@types/pkg/index"'. An explicit type annotation may unblock declaration emit.
     
 ==== /node_modules/@types/pkg/index.d.ts (0 errors) ====
