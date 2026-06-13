@@ -20669,7 +20669,7 @@ func (c *Checker) instantiateSymbol(symbol *ast.Symbol, m *TypeMapper) *ast.Symb
 	return result
 }
 
-// Returns true if the class or interface member given by the symbol is free of "this" references. The
+// Returns true if the parameter or class/interface member given by the symbol is free of "this" references. The
 // function may return false for symbols that are actually free of "this" references because it is not
 // feasible to perform a complete analysis in all cases. In particular, property members with types
 // inferred from their initializers and function members with inferred return types are conservatively
