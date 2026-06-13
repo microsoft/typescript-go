@@ -8933,8 +8933,12 @@ func (c *Checker) reorderCandidates(signatures []*Signature, callChainFlags Sign
 	var cutoffIndex int
 	var spliceIndex int
 	specializedIndex := -1
-	result := make([]*Signature, 0, len(signatures))
-	for _, signature := range signatures {
+	var result []*Signature
+	hasGenericCandidate := false
+	for signatureIndex, signature := range signatures {
+		if len(signature.typeParameters) != 0 {
+			hasGenericCandidate = true
+		}
 		var symbol *ast.Symbol
 		var parent *ast.Node
 		if signature.declaration != nil {
@@ -8951,8 +8955,8 @@ func (c *Checker) reorderCandidates(signatures []*Signature, callChainFlags Sign
 		} else {
 			// current declaration belongs to a different symbol
 			// set cutoffIndex so re-orderings in the future won't change result set from 0 to cutoffIndex
-			index = len(result)
-			cutoffIndex = len(result)
+			index = signatureIndex
+			cutoffIndex = signatureIndex
 			lastParent = parent
 		}
 		lastSymbol = symbol
@@ -8971,9 +8975,24 @@ func (c *Checker) reorderCandidates(signatures []*Signature, callChainFlags Sign
 		if callChainFlags != 0 {
 			signature = c.getOptionalCallSignature(signature, callChainFlags)
 		}
-		result = slices.Insert(result, spliceIndex, signature)
+		if result == nil && spliceIndex == signatureIndex && signature == signatures[signatureIndex] {
+			continue
+		}
+		if result == nil {
+			result = make([]*Signature, signatureIndex, len(signatures))
+			copy(result, signatures[:signatureIndex])
+		}
+		result = append(result, nil)
+		copy(result[spliceIndex+1:], result[spliceIndex:])
+		result[spliceIndex] = signature
 	}
-	return result
+	if result != nil {
+		return result
+	}
+	if hasGenericCandidate {
+		return slices.Clone(signatures)
+	}
+	return signatures
 }
 
 func signatureHasLiteralTypes(s *Signature) bool {
