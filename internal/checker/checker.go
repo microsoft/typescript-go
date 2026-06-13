@@ -28305,9 +28305,6 @@ func (c *Checker) resolveHelpersModule(file *ast.SourceFile, errorNode *ast.Node
 	links := c.sourceFileLinks.Get(file)
 	if links.externalHelpersModule == nil {
 		location := c.program.GetImportHelpersImportSpecifier(file.Path())
-		if location == nil {
-			location = file.AsNode()
-		}
 		helpersModule := c.resolveExternalModule(location, externalHelpersModuleNameText, diagnostics.This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found, errorNode, false /*isForAugmentation*/)
 		if helpersModule == nil {
 			helpersModule = c.unknownSymbol
