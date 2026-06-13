@@ -25520,6 +25520,14 @@ func (c *Checker) getUnionTypeEx(types []*Type, unionReduction UnionReduction, a
 	if len(types) == 1 {
 		return types[0]
 	}
+	if len(types) == 2 && alias == nil && origin == nil && (c.strictNullChecks || (types[0].flags|types[1].flags)&TypeFlagsNullable == 0) {
+		if types[0] == types[1] || types[1].flags&TypeFlagsNever != 0 {
+			return types[0]
+		}
+		if types[0].flags&TypeFlagsNever != 0 {
+			return types[1]
+		}
+	}
 	// We optimize for the common case of unioning a union type with some other type (such as `undefined`).
 	if len(types) == 2 && origin == nil && (types[0].flags&TypeFlagsUnion != 0 || types[1].flags&TypeFlagsUnion != 0) {
 		id1 := types[0].id
