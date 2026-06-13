@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/jsDeclarationsExpandoAlias.ts] ////
+
+=== src/main.js ===
+/**
+ * @param {Object} props
+ * @param {string} props.name
+ */
+function FunctionComponent(props) {
+>FunctionComponent : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>props : { name: string; }
+
+    return props.name;
+>props.name : string
+>props : { name: string; }
+>name : string
+}
+
+FunctionComponent.propTypes = {
+>FunctionComponent.propTypes = {    name: "required",} : { name: string; }
+>FunctionComponent.propTypes : { name: string; }
+>FunctionComponent : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>propTypes : { name: string; }
+>{    name: "required",} : { name: string; }
+
+    name: "required",
+>name : string
+>"required" : "required"
+
+};
+
+export const FunctionComponentAlias = FunctionComponent;
+>FunctionComponentAlias : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>FunctionComponent : { (props: { name: string; }): string; propTypes: { name: string; }; }
+
+/**
+ * @param {Object} props
+ * @param {string} props.name
+ */
+const ArrowComponent = (props) => {
+>ArrowComponent : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>(props) => {    return props.name;} : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>props : { name: string; }
+
+    return props.name;
+>props.name : string
+>props : { name: string; }
+>name : string
+
+};
+
+ArrowComponent.propTypes = {
+>ArrowComponent.propTypes = {    name: "required",} : { name: string; }
+>ArrowComponent.propTypes : { name: string; }
+>ArrowComponent : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>propTypes : { name: string; }
+>{    name: "required",} : { name: string; }
+
+    name: "required",
+>name : string
+>"required" : "required"
+
+};
+
+export const ArrowComponentAlias = ArrowComponent;
+>ArrowComponentAlias : { (props: { name: string; }): string; propTypes: { name: string; }; }
+>ArrowComponent : { (props: { name: string; }): string; propTypes: { name: string; }; }
+

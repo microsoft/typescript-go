@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/jsDeclarationsExpandoAlias.ts] ////
+
+=== src/main.js ===
+/**
+ * @param {Object} props
+ * @param {string} props.name
+ */
+function FunctionComponent(props) {
+>FunctionComponent : Symbol(FunctionComponent, Decl(main.js, 0, 0))
+>props : Symbol(props, Decl(main.js, 4, 27))
+
+    return props.name;
+>props.name : Symbol(name, Decl(main.js, 2, 3))
+>props : Symbol(props, Decl(main.js, 4, 27))
+>name : Symbol(name, Decl(main.js, 2, 3))
+}
+
+FunctionComponent.propTypes = {
+>FunctionComponent.propTypes : Symbol(FunctionComponent.propTypes, Decl(main.js, 6, 1))
+>FunctionComponent : Symbol(FunctionComponent, Decl(main.js, 0, 0))
+>propTypes : Symbol(FunctionComponent.propTypes, Decl(main.js, 6, 1))
+
+    name: "required",
+>name : Symbol(name, Decl(main.js, 8, 31))
+
+};
+
+export const FunctionComponentAlias = FunctionComponent;
+>FunctionComponentAlias : Symbol(FunctionComponentAlias, Decl(main.js, 12, 12))
+>FunctionComponent : Symbol(FunctionComponent, Decl(main.js, 0, 0))
+
+/**
+ * @param {Object} props
+ * @param {string} props.name
+ */
+const ArrowComponent = (props) => {
+>ArrowComponent : Symbol(ArrowComponent, Decl(main.js, 18, 5))
+>props : Symbol(props, Decl(main.js, 18, 24))
+
+    return props.name;
+>props.name : Symbol(name, Decl(main.js, 16, 3))
+>props : Symbol(props, Decl(main.js, 18, 24))
+>name : Symbol(name, Decl(main.js, 16, 3))
+
+};
+
+ArrowComponent.propTypes = {
+>ArrowComponent.propTypes : Symbol(ArrowComponent.propTypes, Decl(main.js, 20, 2))
+>ArrowComponent : Symbol(ArrowComponent, Decl(main.js, 18, 5))
+>propTypes : Symbol(ArrowComponent.propTypes, Decl(main.js, 20, 2))
+
+    name: "required",
+>name : Symbol(name, Decl(main.js, 22, 28))
+
+};
+
+export const ArrowComponentAlias = ArrowComponent;
+>ArrowComponentAlias : Symbol(ArrowComponentAlias, Decl(main.js, 26, 12))
+>ArrowComponent : Symbol(ArrowComponent, Decl(main.js, 18, 5))
+

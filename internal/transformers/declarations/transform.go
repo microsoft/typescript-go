@@ -1853,6 +1853,10 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 	}
 
 	inputNodes := input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+	if alias := tx.transformExpandoFunctionAlias(input, inputNodes); alias != nil {
+		return alias
+	}
+
 	var extraImports []*ast.Node
 	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
 		var normalDeclarations []*ast.Node
@@ -1893,6 +1897,171 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		return tx.Factory().NewSyntaxList(append(extraImports, res))
 	}
 	return res
+}
+
+func (tx *DeclarationTransformer) transformExpandoFunctionAlias(input *ast.VariableStatement, inputNodes []*ast.Node) *ast.Node {
+	if len(inputNodes) != 1 {
+		return nil
+	}
+	decl := inputNodes[0].AsVariableDeclaration()
+	if !ast.IsIdentifier(decl.Name()) {
+		return nil
+	}
+	if decl.Initializer == nil || !ast.IsIdentifier(decl.Initializer) {
+		return nil
+	}
+	target := tx.resolver.GetReferencedValueDeclaration(decl.Initializer)
+	if target == nil {
+		return nil
+	}
+	if !tx.resolver.IsExpandoFunctionDeclaration(target.AsNode()) {
+		return nil
+	}
+	var functionLike *ast.Node
+	switch {
+	case ast.IsFunctionDeclaration(target):
+		if !shouldEmitFunctionProperties(target.AsFunctionDeclaration()) {
+			return nil
+		}
+		functionLike = target.AsNode()
+	case ast.IsVariableDeclaration(target) && ast.IsFunctionExpressionOrArrowFunction(target.Initializer()):
+		functionLike = target.Initializer()
+	default:
+		return nil
+	}
+	targetId := tx.getExpandoHostId(target)
+	addOns, ok := tx.expandoMembers[targetId]
+	if !ok {
+		addOns = tx.createExpandoMembersForAlias(target.AsNode(), decl.Name())
+		if len(addOns) == 0 {
+			return nil
+		}
+	}
+	if ast.GetCombinedModifierFlags(target.AsNode())&ast.ModifierFlagsExport == 0 {
+		tx.expandoHosts[targetId] = nil
+		tx.lateStatementReplacementMap[targetId] = nil
+	}
+
+	tx.state.reportExpandoFunctionErrors(target.AsNode())
+
+	typeParameters, parameters, asteriskToken := extractExpandoHostParams(functionLike)
+	modifiers := tx.ensureModifiers(input.AsNode())
+	functionModifiers := modifiers
+	if functionModifiers != nil {
+		functionModifiers = functionModifiers.Clone(tx.Factory().AsNodeFactory())
+	}
+	var functionDeclaration *ast.Node
+	if ast.IsFunctionDeclaration(target) {
+		functionDeclaration = tx.Factory().UpdateFunctionDeclaration(
+			target.AsFunctionDeclaration(),
+			functionModifiers,
+			asteriskToken,
+			decl.Name(),
+			tx.ensureTypeParams(functionLike, typeParameters),
+			tx.updateParamList(functionLike, parameters),
+			tx.ensureType(functionLike, false),
+			nil, /*fullSignature*/
+			nil,
+		)
+	} else {
+		functionDeclaration = tx.Factory().NewFunctionDeclaration(
+			functionModifiers,
+			asteriskToken,
+			decl.Name(),
+			tx.ensureTypeParams(functionLike, typeParameters),
+			tx.updateParamList(functionLike, parameters),
+			tx.ensureType(functionLike, false),
+			nil, /*fullSignature*/
+			nil,
+		)
+		original := target.AsNode()
+		if target.Parent != nil && target.Parent.Parent != nil {
+			// Preserve JSDoc from the variable statement that owns the function expression initializer.
+			original = target.Parent.Parent
+		}
+		tx.preserveJsDoc(functionDeclaration, original)
+	}
+
+	namespaceModifiers := modifiers
+	if modifiers != nil {
+		namespaceModifiers = modifiers.Clone(tx.Factory().AsNodeFactory())
+	}
+	members := core.Map(addOns, func(node *ast.Node) *ast.Node {
+		return node.Clone(tx.Factory())
+	})
+	namespaceDeclaration := tx.Factory().NewModuleDeclaration(
+		namespaceModifiers,
+		ast.KindNamespaceKeyword,
+		decl.Name().Clone(tx.Factory()),
+		tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(members)),
+	)
+	return tx.Factory().NewSyntaxList([]*ast.Node{functionDeclaration, namespaceDeclaration})
+}
+
+func (tx *DeclarationTransformer) createExpandoMembersForAlias(target *ast.Node, name *ast.Node) []*ast.Node {
+	props := tx.resolver.GetPropertiesOfContainerFunction(target)
+	if len(props) == 0 {
+		return nil
+	}
+
+	namespaceName := name.Clone(tx.Factory())
+	emptyBlock := tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{}))
+	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, namespaceName, emptyBlock)
+	synthesizedNamespace.Parent = tx.enclosingDeclaration
+	declarationData := synthesizedNamespace.DeclarationData()
+	declarationData.Symbol = props[0].Parent
+	containerData := synthesizedNamespace.LocalsContainerData()
+	containerData.Locals = make(ast.SymbolTable, len(props))
+	for _, prop := range props {
+		containerData.Locals[prop.Name] = prop
+	}
+
+	var exportMappings []*ast.Node
+	members := core.MapNonNil(props, func(prop *ast.Symbol) *ast.Node {
+		if !ast.IsExpandoPropertyDeclaration(prop.ValueDeclaration) || !scanner.IsIdentifierText(prop.Name, core.LanguageVariantStandard) {
+			return nil
+		}
+
+		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
+		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(prop.ValueDeclaration)
+		typeNode := tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), prop.ValueDeclaration, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+
+		isNonContextualKeywordName := ast.IsNonContextualKeyword(scanner.StringToToken(prop.Name))
+		exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(prop.ValueDeclaration), tx.Factory().NewIdentifier(prop.Name))
+		if isNonContextualKeywordName {
+			exportMappings = append(exportMappings, tx.Factory().NewExportSpecifier(false /*isTypeOnly*/, exportName, tx.Factory().NewIdentifier(prop.Name)))
+		}
+
+		var modifiers *ast.ModifierList
+		if !isNonContextualKeywordName {
+			modifiers = tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(ast.ModifierFlagsExport, tx.Factory().NewModifier))
+		}
+		return tx.Factory().NewVariableStatement(
+			modifiers,
+			tx.Factory().NewVariableDeclarationList(
+				tx.Factory().NewNodeList([]*ast.Node{
+					tx.Factory().NewVariableDeclaration(exportName, nil /*exclamationToken*/, typeNode, nil /*initializer*/),
+				}),
+				ast.NodeFlagsNone,
+			),
+		)
+	})
+
+	if len(exportMappings) == 0 {
+		for _, member := range members {
+			member.AsMutable().SetModifiers(nil)
+		}
+	} else {
+		members = append(members, tx.Factory().NewExportDeclaration(
+			nil,   /*modifiers*/
+			false, /*isTypeOnly*/
+			tx.Factory().NewNamedExports(tx.Factory().NewNodeList(exportMappings)),
+			nil, /*moduleSpecifier*/
+			nil, /*attributes*/
+		))
+	}
+	return members
 }
 
 func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclaration) *ast.Node {
