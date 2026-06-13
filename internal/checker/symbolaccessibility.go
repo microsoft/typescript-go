@@ -175,8 +175,7 @@ func (c *Checker) getAlternativeContainingModules(symbol *ast.Symbol, enclosingD
 	if links.extendedContainersByFile == nil {
 		links.extendedContainersByFile = make(map[ast.NodeId][]*ast.Symbol)
 	}
-	existing, ok := links.extendedContainersByFile[id]
-	if ok && existing != nil {
+	if existing, ok := links.extendedContainersByFile[id]; ok {
 		return existing
 	}
 	var results []*ast.Symbol
@@ -204,6 +203,7 @@ func (c *Checker) getAlternativeContainingModules(symbol *ast.Symbol, enclosingD
 	}
 
 	if links.extendedContainers != nil {
+		links.extendedContainersByFile[id] = *links.extendedContainers
 		return *links.extendedContainers
 	}
 	// No results from files already being imported by this file - expand search (expensive, but not location-specific, so cached)
@@ -220,6 +220,7 @@ func (c *Checker) getAlternativeContainingModules(symbol *ast.Symbol, enclosingD
 		results = append(results, sym)
 	}
 	links.extendedContainers = &results
+	links.extendedContainersByFile[id] = results
 	return results
 }
 
