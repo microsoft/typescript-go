@@ -763,6 +763,7 @@ func (t *BuildTask) updateWatch(orchestrator *Orchestrator, oldCache *collection
 			}
 		}
 	}
+	t.packageJsonTimes = nil
 	if t.buildInfoEntry != nil && t.buildInfoEntry.buildInfo != nil {
 		for file := range t.buildInfoEntry.buildInfo.GetPackageJsons(tspath.GetDirectoryPath(string(t.buildInfoEntry.path))) {
 			t.packageJsonTimes = append(t.packageJsonTimes, orchestrator.host.loadOrStoreMTime(file, oldCache, false))
@@ -820,11 +821,15 @@ func (t *BuildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) upda
 	if t.buildInfoEntry != nil && t.buildInfoEntry.buildInfo != nil {
 		index := 0
 		for file := range t.buildInfoEntry.buildInfo.GetPackageJsons(tspath.GetDirectoryPath(string(t.buildInfoEntry.path))) {
-			if orchestrator.host.GetMTime(file) != t.packageJsonTimes[index] {
+			if index >= len(t.packageJsonTimes) || orchestrator.host.GetMTime(file) != t.packageJsonTimes[index] {
 				t.resetStatus()
 				needsUpdate = true
 			}
 			index++
+		}
+		if index != len(t.packageJsonTimes) {
+			t.resetStatus()
+			needsUpdate = true
 		}
 	}
 	return core.IfElse(needsConfigUpdate, updateKindConfig, core.IfElse(needsUpdate, updateKindUpdate, updateKindNone))
