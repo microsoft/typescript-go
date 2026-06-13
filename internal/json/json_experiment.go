@@ -1,3 +1,5 @@
+//go:build !go1.27
+
 //nolint:depguard
 package json
 
