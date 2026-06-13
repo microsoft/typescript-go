@@ -281,6 +281,7 @@ type InferenceContext struct {
 	nonFixingMapper               *TypeMapper      // Mapper that doesn't fix inferences
 	returnMapper                  *TypeMapper      // Type mapper for inferences from return types (if any)
 	outerReturnMapper             *TypeMapper      // Type mapper for inferences from return types of outer function (if any)
+	inferredTypes                 []*Type          // Cached resolved inferred types
 	inferredTypeParameters        []*Type          // Inferred type parameters for function result
 	intraExpressionInferenceSites []IntraExpressionInferenceSite
 }

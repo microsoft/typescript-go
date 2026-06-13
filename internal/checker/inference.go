@@ -1347,10 +1347,22 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 }
 
 func (c *Checker) getInferredTypes(n *InferenceContext) []*Type {
+	if n.inferredTypes != nil {
+		for i, t := range n.inferredTypes {
+			if n.inferences[i].inferredType != t {
+				n.inferredTypes = nil
+				break
+			}
+		}
+		if n.inferredTypes != nil {
+			return n.inferredTypes
+		}
+	}
 	result := make([]*Type, len(n.inferences))
 	for i := range n.inferences {
 		result[i] = c.getInferredType(n, i)
 	}
+	n.inferredTypes = result
 	return result
 }
 
