@@ -795,7 +795,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		packageNames          *collections.Set[string]
 		directoryPackageNames *collections.Set[string]
 		discovered            []*discoveredPackage
-		discoverErr           error
 	}
 
 	projectPath, _ := b.host.GetDefaultProject(change.RequestedFile)
@@ -888,12 +887,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			if task.isUpdate {
 				task.packageNames = task.dirtyPackages
 			} else {
-				var err error
-				task.directoryPackageNames, err = getPackageNamesInNodeModules(tspath.CombinePaths(task.dirName, "node_modules"), b.host.FS())
-				if err != nil {
-					task.discoverErr = err
-					return
-				}
+				task.directoryPackageNames = getPackageNamesInNodeModules(tspath.CombinePaths(task.dirName, "node_modules"), b.host.FS())
 				task.packageNames = core.Coalesce(task.dependencyNames, task.directoryPackageNames)
 			}
 			task.discovered = b.discoverBucketPackages(task.packageNames, task.dirName, task.dirPath)
@@ -916,9 +910,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	// filter to only those whose main extraction failed, then deduplicate by typesRealpath.
 	var typesFallbackCandidates []*discoveredPackage
 	for _, task := range nodeModulesTasks {
-		if task.discoverErr != nil {
-			continue
-		}
 		for _, pkg := range task.discovered {
 			if pkg.realpath != "" {
 				if !seen[pkg.realpath] {
@@ -1005,10 +996,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	for _, task := range nodeModulesTasks {
 		br := &bucketBuildResult{entry: task.entry}
 		allResults = append(allResults, br)
-		if task.discoverErr != nil {
-			br.err = task.discoverErr
-			continue
-		}
 		wg.Go(func() {
 			if task.isUpdate {
 				b.updateNodeModulesBucket(
