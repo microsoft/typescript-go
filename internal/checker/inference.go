@@ -110,7 +110,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
 		// Next, infer between deeply matching source and target constituents and remove the
 		// matching types. Types deeply match when they are instantiations of the same object
-		// type AND their type arguments are themselves closely matched. This prevents incorrect
+		// type and their type arguments have matching nesting structure. This prevents incorrect
 		// cross-matching of types like Array<T> with Array<T[]> in unions like T[] | T[][].
 		tempSources2, tempTargets2 := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeDeeplyMatchedBy)
 		// Next, infer between closely matching source and target constituents and remove
@@ -1176,7 +1176,7 @@ func (c *Checker) isTypeCloselyMatchedBy(s *Type, t *Type) bool {
 // isTypeDeeplyMatchedBy checks that two types are closely matched AND that their type arguments
 // have compatible nesting depth. This provides a more precise matching than isTypeCloselyMatchedBy
 // for cases like T[] | T[][] where all constituents share the same symbol (Array) but differ in
-// nesting depth — preventing cross-matching of Array<Value> with Array<Array<T>>.
+// nesting depth, preventing cross-matching of Array<Value> with Array<Array<T>>.
 func (c *Checker) isTypeDeeplyMatchedBy(s *Type, t *Type) bool {
 	if !c.isTypeCloselyMatchedBy(s, t) {
 		return false
@@ -1184,18 +1184,19 @@ func (c *Checker) isTypeDeeplyMatchedBy(s *Type, t *Type) bool {
 	if s.objectFlags&ObjectFlagsReference != 0 && t.objectFlags&ObjectFlagsReference != 0 {
 		sr := s.AsTypeReference()
 		tr := t.AsTypeReference()
-		sArgs := sr.resolvedTypeArguments
-		tArgs := tr.resolvedTypeArguments
-		if len(sArgs) == len(tArgs) {
-			for i := range sArgs {
-				// Check that type arguments have matching nesting structure: if the source arg
-				// is a nested reference to the same outer type (e.g., Array<Array<...>>), the
-				// target arg must also be nested, and vice versa.
-				saIsNestedRef := sArgs[i].objectFlags&ObjectFlagsReference != 0 && sArgs[i].AsTypeReference().target == sr.target
-				taIsNestedRef := tArgs[i].objectFlags&ObjectFlagsReference != 0 && tArgs[i].AsTypeReference().target == tr.target
-				if saIsNestedRef != taIsNestedRef {
-					return false
-				}
+		sArgs := c.getTypeArguments(s)
+		tArgs := c.getTypeArguments(t)
+		if len(sArgs) != len(tArgs) {
+			return false
+		}
+		for i := range sArgs {
+			// Check that type arguments have matching nesting structure: if the source arg
+			// is a nested reference to the same outer type (e.g., Array<Array<...>>), the
+			// target arg must also be nested, and vice versa.
+			saIsNestedRef := sArgs[i].objectFlags&ObjectFlagsReference != 0 && sArgs[i].AsTypeReference().target == sr.target
+			taIsNestedRef := tArgs[i].objectFlags&ObjectFlagsReference != 0 && tArgs[i].AsTypeReference().target == tr.target
+			if saIsNestedRef != taIsNestedRef {
+				return false
 			}
 		}
 	}
