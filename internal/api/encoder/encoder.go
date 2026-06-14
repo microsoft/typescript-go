@@ -630,7 +630,7 @@ const noStructuredData = 0xFFFFFFFF
 
 func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	sf := node.AsSourceFile()
-	textIndex := strs.add(sf.Text(), sf.Kind, sf.Pos(), sf.End())
+	textIndex := strs.add(sf.Text(), sf.Kind, sf.AsNode().Pos(), sf.AsNode().End())
 	fileNameIndex := strs.add(sf.FileName(), 0, 0, 0)
 	pathIndex := strs.add(string(sf.Path()), 0, 0, 0)
 	referencedFilesOffset := encodeFileReferences(sf.ReferencedFiles, positionMap, structuredData)

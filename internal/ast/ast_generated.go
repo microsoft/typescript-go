@@ -602,11 +602,11 @@ func (f *NodeFactory) NewToken(kind TokenSyntaxKind) *Node {
 }
 
 func (node *Token) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewToken(node.Kind), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewToken(node.AsNode().Kind), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsToken(node *Node) bool {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindUnknown:
 	case KindEndOfFile:
 	case KindSingleLineCommentTrivia:
@@ -801,7 +801,7 @@ func (node *Identifier) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsIdentifier(node *Node) bool {
-	return node.Kind == KindIdentifier
+	return node.AsNode().Kind == KindIdentifier
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -825,7 +825,7 @@ func (node *PrivateIdentifier) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsPrivateIdentifier(node *Node) bool {
-	return node.Kind == KindPrivateIdentifier
+	return node.AsNode().Kind == KindPrivateIdentifier
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -872,7 +872,7 @@ func (node *QualifiedName) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsQualifiedName(node *Node) bool {
-	return node.Kind == KindQualifiedName
+	return node.AsNode().Kind == KindQualifiedName
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -915,7 +915,7 @@ func (node *ComputedPropertyName) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsComputedPropertyName(node *Node) bool {
-	return node.Kind == KindComputedPropertyName
+	return node.AsNode().Kind == KindComputedPropertyName
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -954,7 +954,7 @@ func (node *Decorator) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsDecorator(node *Node) bool {
-	return node.Kind == KindDecorator
+	return node.AsNode().Kind == KindDecorator
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -975,7 +975,7 @@ func (node *EmptyStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsEmptyStatement(node *Node) bool {
-	return node.Kind == KindEmptyStatement
+	return node.AsNode().Kind == KindEmptyStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1024,7 +1024,7 @@ func (node *IfStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsIfStatement(node *Node) bool {
-	return node.Kind == KindIfStatement
+	return node.AsNode().Kind == KindIfStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1069,7 +1069,7 @@ func (node *DoStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsDoStatement(node *Node) bool {
-	return node.Kind == KindDoStatement
+	return node.AsNode().Kind == KindDoStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1114,7 +1114,7 @@ func (node *WhileStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsWhileStatement(node *Node) bool {
-	return node.Kind == KindWhileStatement
+	return node.AsNode().Kind == KindWhileStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1169,7 +1169,7 @@ func (node *ForStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsForStatement(node *Node) bool {
-	return node.Kind == KindForStatement
+	return node.AsNode().Kind == KindForStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1197,7 +1197,7 @@ func (f *NodeFactory) NewForInOrOfStatement(kind Kind, awaitModifier *AwaitKeywo
 
 func (f *NodeFactory) UpdateForInOrOfStatement(node *ForInOrOfStatement, awaitModifier *AwaitKeyword, initializer *ForInitializer, expression *Expression, statement *Statement) *Node {
 	if awaitModifier != node.AwaitModifier || initializer != node.Initializer || expression != node.Expression || statement != node.Statement {
-		return updateNode(f.NewForInOrOfStatement(node.Kind, awaitModifier, initializer, expression, statement), node.AsNode(), f.hooks)
+		return updateNode(f.NewForInOrOfStatement(node.AsNode().Kind, awaitModifier, initializer, expression, statement), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -1214,15 +1214,15 @@ func (node *ForInOrOfStatement) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ForInOrOfStatement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewForInOrOfStatement(node.Kind, node.AwaitModifier, node.Initializer, node.Expression, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewForInOrOfStatement(node.AsNode().Kind, node.AwaitModifier, node.Initializer, node.Expression, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsForInStatement(node *Node) bool {
-	return node.Kind == KindForInStatement
+	return node.AsNode().Kind == KindForInStatement
 }
 
 func IsForOfStatement(node *Node) bool {
-	return node.Kind == KindForOfStatement
+	return node.AsNode().Kind == KindForOfStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1260,7 +1260,7 @@ func (node *BreakStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsBreakStatement(node *Node) bool {
-	return node.Kind == KindBreakStatement
+	return node.AsNode().Kind == KindBreakStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1298,7 +1298,7 @@ func (node *ContinueStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsContinueStatement(node *Node) bool {
-	return node.Kind == KindContinueStatement
+	return node.AsNode().Kind == KindContinueStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1337,7 +1337,7 @@ func (node *ReturnStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsReturnStatement(node *Node) bool {
-	return node.Kind == KindReturnStatement
+	return node.AsNode().Kind == KindReturnStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1383,7 +1383,7 @@ func (node *WithStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsWithStatement(node *Node) bool {
-	return node.Kind == KindWithStatement
+	return node.AsNode().Kind == KindWithStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1429,7 +1429,7 @@ func (node *SwitchStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsSwitchStatement(node *Node) bool {
-	return node.Kind == KindSwitchStatement
+	return node.AsNode().Kind == KindSwitchStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1473,7 +1473,7 @@ func (node *CaseBlock) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsCaseBlock(node *Node) bool {
-	return node.Kind == KindCaseBlock
+	return node.AsNode().Kind == KindCaseBlock
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1497,7 +1497,7 @@ func (f *NodeFactory) NewCaseOrDefaultClause(kind Kind, expression *Expression, 
 
 func (f *NodeFactory) UpdateCaseOrDefaultClause(node *CaseOrDefaultClause, expression *Expression, statements *StatementList) *Node {
 	if expression != node.Expression || statements != node.Statements {
-		return updateNode(f.NewCaseOrDefaultClause(node.Kind, expression, statements), node.AsNode(), f.hooks)
+		return updateNode(f.NewCaseOrDefaultClause(node.AsNode().Kind, expression, statements), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -1511,7 +1511,7 @@ func (node *CaseOrDefaultClause) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *CaseOrDefaultClause) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewCaseOrDefaultClause(node.Kind, node.Expression, node.Statements), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewCaseOrDefaultClause(node.AsNode().Kind, node.Expression, node.Statements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *CaseOrDefaultClause) computeSubtreeFacts() SubtreeFacts {
@@ -1520,11 +1520,11 @@ func (node *CaseOrDefaultClause) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsCaseClause(node *Node) bool {
-	return node.Kind == KindCaseClause
+	return node.AsNode().Kind == KindCaseClause
 }
 
 func IsDefaultClause(node *Node) bool {
-	return node.Kind == KindDefaultClause
+	return node.AsNode().Kind == KindDefaultClause
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1567,7 +1567,7 @@ func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsThrowStatement(node *Node) bool {
-	return node.Kind == KindThrowStatement
+	return node.AsNode().Kind == KindThrowStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1616,7 +1616,7 @@ func (node *TryStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsTryStatement(node *Node) bool {
-	return node.Kind == KindTryStatement
+	return node.AsNode().Kind == KindTryStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1658,7 +1658,7 @@ func (node *CatchClause) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsCatchClause(node *Node) bool {
-	return node.Kind == KindCatchClause
+	return node.AsNode().Kind == KindCatchClause
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1679,7 +1679,7 @@ func (node *DebuggerStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsDebuggerStatement(node *Node) bool {
-	return node.Kind == KindDebuggerStatement
+	return node.AsNode().Kind == KindDebuggerStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1724,7 +1724,7 @@ func (node *LabeledStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsLabeledStatement(node *Node) bool {
-	return node.Kind == KindLabeledStatement
+	return node.AsNode().Kind == KindLabeledStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1766,7 +1766,7 @@ func (node *ExpressionStatement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsExpressionStatement(node *Node) bool {
-	return node.Kind == KindExpressionStatement
+	return node.AsNode().Kind == KindExpressionStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1812,7 +1812,7 @@ func (node *Block) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsBlock(node *Node) bool {
-	return node.Kind == KindBlock
+	return node.AsNode().Kind == KindBlock
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1853,7 +1853,7 @@ func (node *VariableStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsVariableStatement(node *Node) bool {
-	return node.Kind == KindVariableStatement
+	return node.AsNode().Kind == KindVariableStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1907,7 +1907,7 @@ func (node *VariableDeclaration) Name() *DeclarationName {
 }
 
 func IsVariableDeclaration(node *Node) bool {
-	return node.Kind == KindVariableDeclaration
+	return node.AsNode().Kind == KindVariableDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1924,12 +1924,12 @@ func (f *NodeFactory) NewVariableDeclarationList(declarations *VariableDeclarati
 	data := f.variableDeclarationListArena.New()
 	data.Declarations = declarations
 	node := f.newNode(KindVariableDeclarationList, data)
-	node.Flags = flags
+	node.AsNode().Flags = flags
 	return node
 }
 
 func (f *NodeFactory) UpdateVariableDeclarationList(node *VariableDeclarationList, declarations *VariableDeclarationNodeList, flags NodeFlags) *Node {
-	if declarations != node.Declarations || flags != node.Flags {
+	if declarations != node.Declarations || flags != node.AsNode().Flags {
 		return updateNode(f.NewVariableDeclarationList(declarations, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -1940,15 +1940,15 @@ func (node *VariableDeclarationList) ForEachChild(v Visitor) bool {
 }
 
 func (node *VariableDeclarationList) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateVariableDeclarationList(node, v.visitNodes(node.Declarations), node.Flags)
+	return v.Factory.UpdateVariableDeclarationList(node, v.visitNodes(node.Declarations), node.AsNode().Flags)
 }
 
 func (node *VariableDeclarationList) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewVariableDeclarationList(node.Declarations, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewVariableDeclarationList(node.Declarations, node.AsNode().Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsVariableDeclarationList(node *Node) bool {
-	return node.Kind == KindVariableDeclarationList
+	return node.AsNode().Kind == KindVariableDeclarationList
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -1969,7 +1969,7 @@ func (f *NodeFactory) NewBindingPattern(kind Kind, elements *BindingElementList)
 
 func (f *NodeFactory) UpdateBindingPattern(node *BindingPattern, elements *BindingElementList) *Node {
 	if elements != node.Elements {
-		return updateNode(f.NewBindingPattern(node.Kind, elements), node.AsNode(), f.hooks)
+		return updateNode(f.NewBindingPattern(node.AsNode().Kind, elements), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -1983,15 +1983,15 @@ func (node *BindingPattern) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *BindingPattern) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewBindingPattern(node.Kind, node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewBindingPattern(node.AsNode().Kind, node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsObjectBindingPattern(node *Node) bool {
-	return node.Kind == KindObjectBindingPattern
+	return node.AsNode().Kind == KindObjectBindingPattern
 }
 
 func IsArrayBindingPattern(node *Node) bool {
-	return node.Kind == KindArrayBindingPattern
+	return node.AsNode().Kind == KindArrayBindingPattern
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2050,7 +2050,7 @@ func (node *ParameterDeclaration) Name() *DeclarationName {
 }
 
 func IsParameterDeclaration(node *Node) bool {
-	return node.Kind == KindParameter
+	return node.AsNode().Kind == KindParameter
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2105,7 +2105,7 @@ func (node *BindingElement) Name() *DeclarationName {
 }
 
 func IsBindingElement(node *Node) bool {
-	return node.Kind == KindBindingElement
+	return node.AsNode().Kind == KindBindingElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2144,7 +2144,7 @@ func (node *MissingDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsMissingDeclaration(node *Node) bool {
-	return node.Kind == KindMissingDeclaration
+	return node.AsNode().Kind == KindMissingDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2206,7 +2206,7 @@ func (node *FunctionDeclaration) Name() *DeclarationName {
 }
 
 func IsFunctionDeclaration(node *Node) bool {
-	return node.Kind == KindFunctionDeclaration
+	return node.AsNode().Kind == KindFunctionDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2257,7 +2257,7 @@ func (node *ClassDeclaration) Name() *DeclarationName {
 }
 
 func IsClassDeclaration(node *Node) bool {
-	return node.Kind == KindClassDeclaration
+	return node.AsNode().Kind == KindClassDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2307,7 +2307,7 @@ func (node *ClassExpression) Name() *DeclarationName {
 }
 
 func IsClassExpression(node *Node) bool {
-	return node.Kind == KindClassExpression
+	return node.AsNode().Kind == KindClassExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2348,7 +2348,7 @@ func (node *HeritageClause) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsHeritageClause(node *Node) bool {
-	return node.Kind == KindHeritageClause
+	return node.AsNode().Kind == KindHeritageClause
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2405,7 +2405,7 @@ func (node *InterfaceDeclaration) Name() *DeclarationName {
 }
 
 func IsInterfaceDeclaration(node *Node) bool {
-	return node.Kind == KindInterfaceDeclaration
+	return node.AsNode().Kind == KindInterfaceDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2444,13 +2444,13 @@ func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *I
 
 func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
-		switch node.Kind {
+		switch node.AsNode().Kind {
 		case KindTypeAliasDeclaration:
 			return updateNode(f.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
 		case KindJSTypeAliasDeclaration:
 			return updateNode(f.NewJSTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
 		default:
-			panic("unexpected kind in UpdateTypeAliasDeclaration: " + node.Kind.String())
+			panic("unexpected kind in UpdateTypeAliasDeclaration: " + node.AsNode().Kind.String())
 		}
 	}
 	return node.AsNode()
@@ -2468,13 +2468,13 @@ func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *TypeAliasDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindTypeAliasDeclaration:
 		return cloneNode(f.AsNodeFactory().NewTypeAliasDeclaration(node.Modifiers(), node.name, node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 	case KindJSTypeAliasDeclaration:
 		return cloneNode(f.AsNodeFactory().NewJSTypeAliasDeclaration(node.Modifiers(), node.name, node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 	default:
-		panic("unexpected kind in TypeAliasDeclaration.Clone: " + node.Kind.String())
+		panic("unexpected kind in TypeAliasDeclaration.Clone: " + node.AsNode().Kind.String())
 	}
 }
 
@@ -2483,11 +2483,11 @@ func (node *TypeAliasDeclaration) Name() *DeclarationName {
 }
 
 func IsTypeAliasDeclaration(node *Node) bool {
-	return node.Kind == KindTypeAliasDeclaration
+	return node.AsNode().Kind == KindTypeAliasDeclaration
 }
 
 func IsJSTypeAliasDeclaration(node *Node) bool {
-	return node.Kind == KindJSTypeAliasDeclaration
+	return node.AsNode().Kind == KindJSTypeAliasDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2532,7 +2532,7 @@ func (node *EnumMember) Name() *DeclarationName {
 }
 
 func IsEnumMember(node *Node) bool {
-	return node.Kind == KindEnumMember
+	return node.AsNode().Kind == KindEnumMember
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2581,7 +2581,7 @@ func (node *EnumDeclaration) Name() *DeclarationName {
 }
 
 func IsEnumDeclaration(node *Node) bool {
-	return node.Kind == KindEnumDeclaration
+	return node.AsNode().Kind == KindEnumDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2624,7 +2624,7 @@ func (node *ModuleBlock) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsModuleBlock(node *Node) bool {
-	return node.Kind == KindModuleBlock
+	return node.AsNode().Kind == KindModuleBlock
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2645,7 +2645,7 @@ func (node *NotEmittedStatement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsNotEmittedStatement(node *Node) bool {
-	return node.Kind == KindNotEmittedStatement
+	return node.AsNode().Kind == KindNotEmittedStatement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2667,7 +2667,7 @@ func (node *NotEmittedTypeElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsNotEmittedTypeElement(node *Node) bool {
-	return node.Kind == KindNotEmittedTypeElement
+	return node.AsNode().Kind == KindNotEmittedTypeElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2704,13 +2704,13 @@ func (f *NodeFactory) NewJSImportDeclaration(modifiers *ModifierList, importClau
 
 func (f *NodeFactory) UpdateImportDeclaration(node *ImportDeclaration, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	if modifiers != node.modifiers || importClause != node.ImportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
-		switch node.Kind {
+		switch node.AsNode().Kind {
 		case KindImportDeclaration:
 			return updateNode(f.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
 		case KindJSImportDeclaration:
 			return updateNode(f.NewJSImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
 		default:
-			panic("unexpected kind in UpdateImportDeclaration: " + node.Kind.String())
+			panic("unexpected kind in UpdateImportDeclaration: " + node.AsNode().Kind.String())
 		}
 	}
 	return node.AsNode()
@@ -2728,13 +2728,13 @@ func (node *ImportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ImportDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindImportDeclaration:
 		return cloneNode(f.AsNodeFactory().NewImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 	case KindJSImportDeclaration:
 		return cloneNode(f.AsNodeFactory().NewJSImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 	default:
-		panic("unexpected kind in ImportDeclaration.Clone: " + node.Kind.String())
+		panic("unexpected kind in ImportDeclaration.Clone: " + node.AsNode().Kind.String())
 	}
 }
 
@@ -2746,11 +2746,11 @@ func (node *ImportDeclaration) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsImportDeclaration(node *Node) bool {
-	return node.Kind == KindImportDeclaration
+	return node.AsNode().Kind == KindImportDeclaration
 }
 
 func IsJSImportDeclaration(node *Node) bool {
-	return node.Kind == KindJSImportDeclaration
+	return node.AsNode().Kind == KindJSImportDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2792,7 +2792,7 @@ func (node *ExternalModuleReference) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsExternalModuleReference(node *Node) bool {
-	return node.Kind == KindExternalModuleReference
+	return node.AsNode().Kind == KindExternalModuleReference
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2840,7 +2840,7 @@ func (node *NamespaceImport) Name() *DeclarationName {
 }
 
 func IsNamespaceImport(node *Node) bool {
-	return node.Kind == KindNamespaceImport
+	return node.AsNode().Kind == KindNamespaceImport
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2883,7 +2883,7 @@ func (node *NamedImports) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsNamedImports(node *Node) bool {
-	return node.Kind == KindNamedImports
+	return node.AsNode().Kind == KindNamedImports
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2929,7 +2929,7 @@ func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsExportAssignment(node *Node) bool {
-	return node.Kind == KindExportAssignment
+	return node.AsNode().Kind == KindExportAssignment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -2975,7 +2975,7 @@ func (node *NamespaceExportDeclaration) Name() *DeclarationName {
 }
 
 func IsNamespaceExportDeclaration(node *Node) bool {
-	return node.Kind == KindNamespaceExportDeclaration
+	return node.AsNode().Kind == KindNamespaceExportDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3022,7 +3022,7 @@ func (node *NamespaceExport) Name() *DeclarationName {
 }
 
 func IsNamespaceExport(node *Node) bool {
-	return node.Kind == KindNamespaceExport
+	return node.AsNode().Kind == KindNamespaceExport
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3065,7 +3065,7 @@ func (node *NamedExports) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsNamedExports(node *Node) bool {
-	return node.Kind == KindNamedExports
+	return node.AsNode().Kind == KindNamedExports
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3114,7 +3114,7 @@ func (node *ExportSpecifier) Name() *DeclarationName {
 }
 
 func IsExportSpecifier(node *Node) bool {
-	return node.Kind == KindExportSpecifier
+	return node.AsNode().Kind == KindExportSpecifier
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3157,7 +3157,7 @@ func (node *CallSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsCallSignatureDeclaration(node *Node) bool {
-	return node.Kind == KindCallSignature
+	return node.AsNode().Kind == KindCallSignature
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3200,7 +3200,7 @@ func (node *ConstructSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsConstructSignatureDeclaration(node *Node) bool {
-	return node.Kind == KindConstructSignature
+	return node.AsNode().Kind == KindConstructSignature
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3253,7 +3253,7 @@ func (node *ConstructorDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsConstructorDeclaration(node *Node) bool {
-	return node.Kind == KindConstructor
+	return node.AsNode().Kind == KindConstructor
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3306,7 +3306,7 @@ func (node *GetAccessorDeclaration) Name() *DeclarationName {
 }
 
 func IsGetAccessorDeclaration(node *Node) bool {
-	return node.Kind == KindGetAccessor
+	return node.AsNode().Kind == KindGetAccessor
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3359,7 +3359,7 @@ func (node *SetAccessorDeclaration) Name() *DeclarationName {
 }
 
 func IsSetAccessorDeclaration(node *Node) bool {
-	return node.Kind == KindSetAccessor
+	return node.AsNode().Kind == KindSetAccessor
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3404,7 +3404,7 @@ func (node *IndexSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsIndexSignatureDeclaration(node *Node) bool {
-	return node.Kind == KindIndexSignature
+	return node.AsNode().Kind == KindIndexSignature
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3459,7 +3459,7 @@ func (node *MethodSignatureDeclaration) Name() *DeclarationName {
 }
 
 func IsMethodSignatureDeclaration(node *Node) bool {
-	return node.Kind == KindMethodSignature
+	return node.AsNode().Kind == KindMethodSignature
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3522,7 +3522,7 @@ func (node *MethodDeclaration) Name() *DeclarationName {
 }
 
 func IsMethodDeclaration(node *Node) bool {
-	return node.Kind == KindMethodDeclaration
+	return node.AsNode().Kind == KindMethodDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3576,7 +3576,7 @@ func (node *PropertySignatureDeclaration) Name() *DeclarationName {
 }
 
 func IsPropertySignatureDeclaration(node *Node) bool {
-	return node.Kind == KindPropertySignature
+	return node.AsNode().Kind == KindPropertySignature
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3630,7 +3630,7 @@ func (node *PropertyDeclaration) Name() *DeclarationName {
 }
 
 func IsPropertyDeclaration(node *Node) bool {
-	return node.Kind == KindPropertyDeclaration
+	return node.AsNode().Kind == KindPropertyDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3653,7 +3653,7 @@ func (node *SemicolonClassElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsSemicolonClassElement(node *Node) bool {
-	return node.Kind == KindSemicolonClassElement
+	return node.AsNode().Kind == KindSemicolonClassElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3698,7 +3698,7 @@ func (node *ClassStaticBlockDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsClassStaticBlockDeclaration(node *Node) bool {
-	return node.Kind == KindClassStaticBlockDeclaration
+	return node.AsNode().Kind == KindClassStaticBlockDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3719,7 +3719,7 @@ func (node *OmittedExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsOmittedExpression(node *Node) bool {
-	return node.Kind == KindOmittedExpression
+	return node.AsNode().Kind == KindOmittedExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3737,11 +3737,11 @@ func (f *NodeFactory) NewKeywordExpression(kind KeywordExpressionSyntaxKind) *No
 }
 
 func (node *KeywordExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewKeywordExpression(node.Kind), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewKeywordExpression(node.AsNode().Kind), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsKeywordExpression(node *Node) bool {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindNullKeyword:
 	case KindTrueKeyword:
 	case KindFalseKeyword:
@@ -3774,7 +3774,7 @@ func (node *StringLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsStringLiteral(node *Node) bool {
-	return node.Kind == KindStringLiteral
+	return node.AsNode().Kind == KindStringLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3798,7 +3798,7 @@ func (node *NumericLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsNumericLiteral(node *Node) bool {
-	return node.Kind == KindNumericLiteral
+	return node.AsNode().Kind == KindNumericLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3822,7 +3822,7 @@ func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsBigIntLiteral(node *Node) bool {
-	return node.Kind == KindBigIntLiteral
+	return node.AsNode().Kind == KindBigIntLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3846,7 +3846,7 @@ func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsRegularExpressionLiteral(node *Node) bool {
-	return node.Kind == KindRegularExpressionLiteral
+	return node.AsNode().Kind == KindRegularExpressionLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3872,7 +3872,7 @@ func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsNoSubstitutionTemplateLiteral(node *Node) bool {
-	return node.Kind == KindNoSubstitutionTemplateLiteral
+	return node.AsNode().Kind == KindNoSubstitutionTemplateLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3924,7 +3924,7 @@ func (node *BinaryExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsBinaryExpression(node *Node) bool {
-	return node.Kind == KindBinaryExpression
+	return node.AsNode().Kind == KindBinaryExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3968,7 +3968,7 @@ func (node *PrefixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsPrefixUnaryExpression(node *Node) bool {
-	return node.Kind == KindPrefixUnaryExpression
+	return node.AsNode().Kind == KindPrefixUnaryExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4012,7 +4012,7 @@ func (node *PostfixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsPostfixUnaryExpression(node *Node) bool {
-	return node.Kind == KindPostfixUnaryExpression
+	return node.AsNode().Kind == KindPostfixUnaryExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4052,7 +4052,7 @@ func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsYieldExpression(node *Node) bool {
-	return node.Kind == KindYieldExpression
+	return node.AsNode().Kind == KindYieldExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4107,7 +4107,7 @@ func (node *ArrowFunction) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsArrowFunction(node *Node) bool {
-	return node.Kind == KindArrowFunction
+	return node.AsNode().Kind == KindArrowFunction
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4169,7 +4169,7 @@ func (node *FunctionExpression) Name() *DeclarationName {
 }
 
 func IsFunctionExpression(node *Node) bool {
-	return node.Kind == KindFunctionExpression
+	return node.AsNode().Kind == KindFunctionExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4209,7 +4209,7 @@ func (node *AsExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsAsExpression(node *Node) bool {
-	return node.Kind == KindAsExpression
+	return node.AsNode().Kind == KindAsExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4249,7 +4249,7 @@ func (node *SatisfiesExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsSatisfiesExpression(node *Node) bool {
-	return node.Kind == KindSatisfiesExpression
+	return node.AsNode().Kind == KindSatisfiesExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4308,7 +4308,7 @@ func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsConditionalExpression(node *Node) bool {
-	return node.Kind == KindConditionalExpression
+	return node.AsNode().Kind == KindConditionalExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4330,12 +4330,12 @@ func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questi
 	data.QuestionDotToken = questionDotToken
 	data.name = name
 	node := f.newNode(KindPropertyAccessExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
+	node.AsNode().Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
 
 func (f *NodeFactory) UpdatePropertyAccessExpression(node *PropertyAccessExpression, expression *Expression, questionDotToken *QuestionDotToken, name *MemberName, flags NodeFlags) *Node {
-	if expression != node.Expression || questionDotToken != node.QuestionDotToken || name != node.name || flags != node.Flags {
+	if expression != node.Expression || questionDotToken != node.QuestionDotToken || name != node.name || flags != node.AsNode().Flags {
 		return updateNode(f.NewPropertyAccessExpression(expression, questionDotToken, name, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -4346,11 +4346,11 @@ func (node *PropertyAccessExpression) ForEachChild(v Visitor) bool {
 }
 
 func (node *PropertyAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdatePropertyAccessExpression(node, v.visitNode(node.Expression), v.visitNode(node.QuestionDotToken), v.visitNode(node.name), node.Flags)
+	return v.Factory.UpdatePropertyAccessExpression(node, v.visitNode(node.Expression), v.visitNode(node.QuestionDotToken), v.visitNode(node.name), node.AsNode().Flags)
 }
 
 func (node *PropertyAccessExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewPropertyAccessExpression(node.Expression, node.QuestionDotToken, node.name, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewPropertyAccessExpression(node.Expression, node.QuestionDotToken, node.name, node.AsNode().Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PropertyAccessExpression) Name() *DeclarationName {
@@ -4358,7 +4358,7 @@ func (node *PropertyAccessExpression) Name() *DeclarationName {
 }
 
 func IsPropertyAccessExpression(node *Node) bool {
-	return node.Kind == KindPropertyAccessExpression
+	return node.AsNode().Kind == KindPropertyAccessExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4380,12 +4380,12 @@ func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questio
 	data.QuestionDotToken = questionDotToken
 	data.ArgumentExpression = argumentExpression
 	node := f.newNode(KindElementAccessExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
+	node.AsNode().Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
 
 func (f *NodeFactory) UpdateElementAccessExpression(node *ElementAccessExpression, expression *Expression, questionDotToken *QuestionDotToken, argumentExpression *Expression, flags NodeFlags) *Node {
-	if expression != node.Expression || questionDotToken != node.QuestionDotToken || argumentExpression != node.ArgumentExpression || flags != node.Flags {
+	if expression != node.Expression || questionDotToken != node.QuestionDotToken || argumentExpression != node.ArgumentExpression || flags != node.AsNode().Flags {
 		return updateNode(f.NewElementAccessExpression(expression, questionDotToken, argumentExpression, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -4396,11 +4396,11 @@ func (node *ElementAccessExpression) ForEachChild(v Visitor) bool {
 }
 
 func (node *ElementAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateElementAccessExpression(node, v.visitNode(node.Expression), v.visitNode(node.QuestionDotToken), v.visitNode(node.ArgumentExpression), node.Flags)
+	return v.Factory.UpdateElementAccessExpression(node, v.visitNode(node.Expression), v.visitNode(node.QuestionDotToken), v.visitNode(node.ArgumentExpression), node.AsNode().Flags)
 }
 
 func (node *ElementAccessExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewElementAccessExpression(node.Expression, node.QuestionDotToken, node.ArgumentExpression, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewElementAccessExpression(node.Expression, node.QuestionDotToken, node.ArgumentExpression, node.AsNode().Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ElementAccessExpression) computeSubtreeFacts() SubtreeFacts {
@@ -4410,7 +4410,7 @@ func (node *ElementAccessExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsElementAccessExpression(node *Node) bool {
-	return node.Kind == KindElementAccessExpression
+	return node.AsNode().Kind == KindElementAccessExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4434,12 +4434,12 @@ func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken
 	data.TypeArguments = typeArguments
 	data.Arguments = arguments
 	node := f.newNode(KindCallExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
+	node.AsNode().Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
 
 func (f *NodeFactory) UpdateCallExpression(node *CallExpression, expression *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, arguments *ElementList, flags NodeFlags) *Node {
-	if expression != node.Expression || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || arguments != node.Arguments || flags != node.Flags {
+	if expression != node.Expression || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || arguments != node.Arguments || flags != node.AsNode().Flags {
 		return updateNode(f.NewCallExpression(expression, questionDotToken, typeArguments, arguments, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -4453,15 +4453,15 @@ func (node *CallExpression) ForEachChild(v Visitor) bool {
 }
 
 func (node *CallExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateCallExpression(node, v.visitNode(node.Expression), v.visitNode(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNodes(node.Arguments), node.Flags)
+	return v.Factory.UpdateCallExpression(node, v.visitNode(node.Expression), v.visitNode(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNodes(node.Arguments), node.AsNode().Flags)
 }
 
 func (node *CallExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewCallExpression(node.Expression, node.QuestionDotToken, node.TypeArguments, node.Arguments, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewCallExpression(node.Expression, node.QuestionDotToken, node.TypeArguments, node.Arguments, node.AsNode().Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsCallExpression(node *Node) bool {
-	return node.Kind == KindCallExpression
+	return node.AsNode().Kind == KindCallExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4504,7 +4504,7 @@ func (node *NewExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsNewExpression(node *Node) bool {
-	return node.Kind == KindNewExpression
+	return node.AsNode().Kind == KindNewExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4550,7 +4550,7 @@ func (node *MetaProperty) Name() *DeclarationName {
 }
 
 func IsMetaProperty(node *Node) bool {
-	return node.Kind == KindMetaProperty
+	return node.AsNode().Kind == KindMetaProperty
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4566,12 +4566,12 @@ func (f *NodeFactory) NewNonNullExpression(expression *Expression, flags NodeFla
 	data := &NonNullExpression{}
 	data.Expression = expression
 	node := f.newNode(KindNonNullExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
+	node.AsNode().Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
 
 func (f *NodeFactory) UpdateNonNullExpression(node *NonNullExpression, expression *Expression, flags NodeFlags) *Node {
-	if expression != node.Expression || flags != node.Flags {
+	if expression != node.Expression || flags != node.AsNode().Flags {
 		return updateNode(f.NewNonNullExpression(expression, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -4582,15 +4582,15 @@ func (node *NonNullExpression) ForEachChild(v Visitor) bool {
 }
 
 func (node *NonNullExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateNonNullExpression(node, v.visitNode(node.Expression), node.Flags)
+	return v.Factory.UpdateNonNullExpression(node, v.visitNode(node.Expression), node.AsNode().Flags)
 }
 
 func (node *NonNullExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewNonNullExpression(node.Expression, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewNonNullExpression(node.Expression, node.AsNode().Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNonNullExpression(node *Node) bool {
-	return node.Kind == KindNonNullExpression
+	return node.AsNode().Kind == KindNonNullExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4628,7 +4628,7 @@ func (node *SpreadElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsSpreadElement(node *Node) bool {
-	return node.Kind == KindSpreadElement
+	return node.AsNode().Kind == KindSpreadElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4674,7 +4674,7 @@ func (node *TemplateExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsTemplateExpression(node *Node) bool {
-	return node.Kind == KindTemplateExpression
+	return node.AsNode().Kind == KindTemplateExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4719,7 +4719,7 @@ func (node *TemplateSpan) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsTemplateSpan(node *Node) bool {
-	return node.Kind == KindTemplateSpan
+	return node.AsNode().Kind == KindTemplateSpan
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4742,12 +4742,12 @@ func (f *NodeFactory) NewTaggedTemplateExpression(tag *Expression, questionDotTo
 	data.TypeArguments = typeArguments
 	data.Template = template
 	node := f.newNode(KindTaggedTemplateExpression, data)
-	node.Flags |= flags & NodeFlagsOptionalChain
+	node.AsNode().Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
 
 func (f *NodeFactory) UpdateTaggedTemplateExpression(node *TaggedTemplateExpression, tag *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, template *TemplateLiteral, flags NodeFlags) *Node {
-	if tag != node.Tag || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || template != node.Template || flags != node.Flags {
+	if tag != node.Tag || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || template != node.Template || flags != node.AsNode().Flags {
 		return updateNode(f.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, flags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -4761,15 +4761,15 @@ func (node *TaggedTemplateExpression) ForEachChild(v Visitor) bool {
 }
 
 func (node *TaggedTemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateTaggedTemplateExpression(node, v.visitNode(node.Tag), v.visitNode(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNode(node.Template), node.Flags)
+	return v.Factory.UpdateTaggedTemplateExpression(node, v.visitNode(node.Tag), v.visitNode(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNode(node.Template), node.AsNode().Flags)
 }
 
 func (node *TaggedTemplateExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.AsNode().Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTaggedTemplateExpression(node *Node) bool {
-	return node.Kind == KindTaggedTemplateExpression
+	return node.AsNode().Kind == KindTaggedTemplateExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4811,7 +4811,7 @@ func (node *ParenthesizedExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsParenthesizedExpression(node *Node) bool {
-	return node.Kind == KindParenthesizedExpression
+	return node.AsNode().Kind == KindParenthesizedExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4856,7 +4856,7 @@ func (node *ArrayLiteralExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsArrayLiteralExpression(node *Node) bool {
-	return node.Kind == KindArrayLiteralExpression
+	return node.AsNode().Kind == KindArrayLiteralExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4902,7 +4902,7 @@ func (node *ObjectLiteralExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsObjectLiteralExpression(node *Node) bool {
-	return node.Kind == KindObjectLiteralExpression
+	return node.AsNode().Kind == KindObjectLiteralExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4942,7 +4942,7 @@ func (node *SpreadAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsSpreadAssignment(node *Node) bool {
-	return node.Kind == KindSpreadAssignment
+	return node.AsNode().Kind == KindSpreadAssignment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -4996,7 +4996,7 @@ func (node *PropertyAssignment) Name() *DeclarationName {
 }
 
 func IsPropertyAssignment(node *Node) bool {
-	return node.Kind == KindPropertyAssignment
+	return node.AsNode().Kind == KindPropertyAssignment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5053,7 +5053,7 @@ func (node *ShorthandPropertyAssignment) Name() *DeclarationName {
 }
 
 func IsShorthandPropertyAssignment(node *Node) bool {
-	return node.Kind == KindShorthandPropertyAssignment
+	return node.AsNode().Kind == KindShorthandPropertyAssignment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5095,7 +5095,7 @@ func (node *DeleteExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsDeleteExpression(node *Node) bool {
-	return node.Kind == KindDeleteExpression
+	return node.AsNode().Kind == KindDeleteExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5137,7 +5137,7 @@ func (node *TypeOfExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsTypeOfExpression(node *Node) bool {
-	return node.Kind == KindTypeOfExpression
+	return node.AsNode().Kind == KindTypeOfExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5179,7 +5179,7 @@ func (node *VoidExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsVoidExpression(node *Node) bool {
-	return node.Kind == KindVoidExpression
+	return node.AsNode().Kind == KindVoidExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5217,7 +5217,7 @@ func (node *AwaitExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsAwaitExpression(node *Node) bool {
-	return node.Kind == KindAwaitExpression
+	return node.AsNode().Kind == KindAwaitExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5257,7 +5257,7 @@ func (node *TypeAssertion) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTypeAssertion(node *Node) bool {
-	return node.Kind == KindTypeAssertionExpression
+	return node.AsNode().Kind == KindTypeAssertionExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5274,11 +5274,11 @@ func (f *NodeFactory) NewKeywordTypeNode(kind KeywordTypeSyntaxKind) *Node {
 }
 
 func (node *KeywordTypeNode) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewKeywordTypeNode(node.Kind), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewKeywordTypeNode(node.AsNode().Kind), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsKeywordTypeNode(node *Node) bool {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindAnyKeyword:
 	case KindBigIntKeyword:
 	case KindBooleanKeyword:
@@ -5331,7 +5331,7 @@ func (node *UnionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsUnionTypeNode(node *Node) bool {
-	return node.Kind == KindUnionType
+	return node.AsNode().Kind == KindUnionType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5369,7 +5369,7 @@ func (node *IntersectionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsIntersectionTypeNode(node *Node) bool {
-	return node.Kind == KindIntersectionType
+	return node.AsNode().Kind == KindIntersectionType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5417,7 +5417,7 @@ func (node *ConditionalTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsConditionalTypeNode(node *Node) bool {
-	return node.Kind == KindConditionalType
+	return node.AsNode().Kind == KindConditionalType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5457,7 +5457,7 @@ func (node *TypeOperatorNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTypeOperatorNode(node *Node) bool {
-	return node.Kind == KindTypeOperator
+	return node.AsNode().Kind == KindTypeOperator
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5495,7 +5495,7 @@ func (node *InferTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsInferTypeNode(node *Node) bool {
-	return node.Kind == KindInferType
+	return node.AsNode().Kind == KindInferType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5533,7 +5533,7 @@ func (node *ArrayTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsArrayTypeNode(node *Node) bool {
-	return node.Kind == KindArrayType
+	return node.AsNode().Kind == KindArrayType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5573,7 +5573,7 @@ func (node *IndexedAccessTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsIndexedAccessTypeNode(node *Node) bool {
-	return node.Kind == KindIndexedAccessType
+	return node.AsNode().Kind == KindIndexedAccessType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5612,7 +5612,7 @@ func (node *TypeReferenceNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTypeReferenceNode(node *Node) bool {
-	return node.Kind == KindTypeReference
+	return node.AsNode().Kind == KindTypeReference
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5653,7 +5653,7 @@ func (node *ExpressionWithTypeArguments) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsExpressionWithTypeArguments(node *Node) bool {
-	return node.Kind == KindExpressionWithTypeArguments
+	return node.AsNode().Kind == KindExpressionWithTypeArguments
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5691,7 +5691,7 @@ func (node *LiteralTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsLiteralTypeNode(node *Node) bool {
-	return node.Kind == KindLiteralType
+	return node.AsNode().Kind == KindLiteralType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5712,7 +5712,7 @@ func (node *ThisTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsThisTypeNode(node *Node) bool {
-	return node.Kind == KindThisType
+	return node.AsNode().Kind == KindThisType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5754,7 +5754,7 @@ func (node *TypePredicateNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTypePredicateNode(node *Node) bool {
-	return node.Kind == KindTypePredicate
+	return node.AsNode().Kind == KindTypePredicate
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5804,7 +5804,7 @@ func (node *ImportAttribute) Name() *DeclarationName {
 }
 
 func IsImportAttribute(node *Node) bool {
-	return node.Kind == KindImportAttribute
+	return node.AsNode().Kind == KindImportAttribute
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5851,7 +5851,7 @@ func (node *ImportAttributes) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsImportAttributes(node *Node) bool {
-	return node.Kind == KindImportAttributes
+	return node.AsNode().Kind == KindImportAttributes
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5890,7 +5890,7 @@ func (node *TypeQueryNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTypeQueryNode(node *Node) bool {
-	return node.Kind == KindTypeQuery
+	return node.AsNode().Kind == KindTypeQuery
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5945,7 +5945,7 @@ func (node *MappedTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsMappedTypeNode(node *Node) bool {
-	return node.Kind == KindMappedType
+	return node.AsNode().Kind == KindMappedType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -5984,7 +5984,7 @@ func (node *TypeLiteralNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTypeLiteralNode(node *Node) bool {
-	return node.Kind == KindTypeLiteral
+	return node.AsNode().Kind == KindTypeLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6022,7 +6022,7 @@ func (node *TupleTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTupleTypeNode(node *Node) bool {
-	return node.Kind == KindTupleType
+	return node.AsNode().Kind == KindTupleType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6074,7 +6074,7 @@ func (node *NamedTupleMember) Name() *DeclarationName {
 }
 
 func IsNamedTupleMember(node *Node) bool {
-	return node.Kind == KindNamedTupleMember
+	return node.AsNode().Kind == KindNamedTupleMember
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6112,7 +6112,7 @@ func (node *OptionalTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsOptionalTypeNode(node *Node) bool {
-	return node.Kind == KindOptionalType
+	return node.AsNode().Kind == KindOptionalType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6150,7 +6150,7 @@ func (node *RestTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsRestTypeNode(node *Node) bool {
-	return node.Kind == KindRestType
+	return node.AsNode().Kind == KindRestType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6188,7 +6188,7 @@ func (node *ParenthesizedTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsParenthesizedTypeNode(node *Node) bool {
-	return node.Kind == KindParenthesizedType
+	return node.AsNode().Kind == KindParenthesizedType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6228,7 +6228,7 @@ func (node *FunctionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsFunctionTypeNode(node *Node) bool {
-	return node.Kind == KindFunctionType
+	return node.AsNode().Kind == KindFunctionType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6272,7 +6272,7 @@ func (node *ConstructorTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsConstructorTypeNode(node *Node) bool {
-	return node.Kind == KindConstructorType
+	return node.AsNode().Kind == KindConstructorType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6298,7 +6298,7 @@ func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTemplateHead(node *Node) bool {
-	return node.Kind == KindTemplateHead
+	return node.AsNode().Kind == KindTemplateHead
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6324,7 +6324,7 @@ func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTemplateMiddle(node *Node) bool {
-	return node.Kind == KindTemplateMiddle
+	return node.AsNode().Kind == KindTemplateMiddle
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6350,7 +6350,7 @@ func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTemplateTail(node *Node) bool {
-	return node.Kind == KindTemplateTail
+	return node.AsNode().Kind == KindTemplateTail
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6390,7 +6390,7 @@ func (node *TemplateLiteralTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTemplateLiteralTypeNode(node *Node) bool {
-	return node.Kind == KindTemplateLiteralType
+	return node.AsNode().Kind == KindTemplateLiteralType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6430,7 +6430,7 @@ func (node *TemplateLiteralTypeSpan) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsTemplateLiteralTypeSpan(node *Node) bool {
-	return node.Kind == KindTemplateLiteralTypeSpan
+	return node.AsNode().Kind == KindTemplateLiteralTypeSpan
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6472,7 +6472,7 @@ func (node *SyntheticExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsSyntheticExpression(node *Node) bool {
-	return node.Kind == KindSyntheticExpression
+	return node.AsNode().Kind == KindSyntheticExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6514,7 +6514,7 @@ func (node *PartiallyEmittedExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsPartiallyEmittedExpression(node *Node) bool {
-	return node.Kind == KindPartiallyEmittedExpression
+	return node.AsNode().Kind == KindPartiallyEmittedExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6557,7 +6557,7 @@ func (node *JsxElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxElement(node *Node) bool {
-	return node.Kind == KindJsxElement
+	return node.AsNode().Kind == KindJsxElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6597,7 +6597,7 @@ func (node *JsxAttributes) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxAttributes(node *Node) bool {
-	return node.Kind == KindJsxAttributes
+	return node.AsNode().Kind == KindJsxAttributes
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6642,7 +6642,7 @@ func (node *JsxNamespacedName) Name() *DeclarationName {
 }
 
 func IsJsxNamespacedName(node *Node) bool {
-	return node.Kind == KindJsxNamespacedName
+	return node.AsNode().Kind == KindJsxNamespacedName
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6685,7 +6685,7 @@ func (node *JsxOpeningElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxOpeningElement(node *Node) bool {
-	return node.Kind == KindJsxOpeningElement
+	return node.AsNode().Kind == KindJsxOpeningElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6728,7 +6728,7 @@ func (node *JsxSelfClosingElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxSelfClosingElement(node *Node) bool {
-	return node.Kind == KindJsxSelfClosingElement
+	return node.AsNode().Kind == KindJsxSelfClosingElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6771,7 +6771,7 @@ func (node *JsxFragment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxFragment(node *Node) bool {
-	return node.Kind == KindJsxFragment
+	return node.AsNode().Kind == KindJsxFragment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6792,7 +6792,7 @@ func (node *JsxOpeningFragment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxOpeningFragment(node *Node) bool {
-	return node.Kind == KindJsxOpeningFragment
+	return node.AsNode().Kind == KindJsxOpeningFragment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6813,7 +6813,7 @@ func (node *JsxClosingFragment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxClosingFragment(node *Node) bool {
-	return node.Kind == KindJsxClosingFragment
+	return node.AsNode().Kind == KindJsxClosingFragment
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6859,7 +6859,7 @@ func (node *JsxAttribute) Name() *DeclarationName {
 }
 
 func IsJsxAttribute(node *Node) bool {
-	return node.Kind == KindJsxAttribute
+	return node.AsNode().Kind == KindJsxAttribute
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6898,7 +6898,7 @@ func (node *JsxSpreadAttribute) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxSpreadAttribute(node *Node) bool {
-	return node.Kind == KindJsxSpreadAttribute
+	return node.AsNode().Kind == KindJsxSpreadAttribute
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6936,7 +6936,7 @@ func (node *JsxClosingElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxClosingElement(node *Node) bool {
-	return node.Kind == KindJsxClosingElement
+	return node.AsNode().Kind == KindJsxClosingElement
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -6976,7 +6976,7 @@ func (node *JsxExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxExpression(node *Node) bool {
-	return node.Kind == KindJsxExpression
+	return node.AsNode().Kind == KindJsxExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7002,7 +7002,7 @@ func (node *JsxText) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJsxText(node *Node) bool {
-	return node.Kind == KindJsxText
+	return node.AsNode().Kind == KindJsxText
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7041,7 +7041,7 @@ func (node *SyntaxList) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsSyntaxList(node *Node) bool {
-	return node.Kind == KindSyntaxList
+	return node.AsNode().Kind == KindSyntaxList
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7081,7 +7081,7 @@ func (node *JSDoc) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDoc(node *Node) bool {
-	return node.Kind == KindJSDoc
+	return node.AsNode().Kind == KindJSDoc
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7119,7 +7119,7 @@ func (node *JSDocTypeExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocTypeExpression(node *Node) bool {
-	return node.Kind == KindJSDocTypeExpression
+	return node.AsNode().Kind == KindJSDocTypeExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7157,7 +7157,7 @@ func (node *JSDocNonNullableType) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocNonNullableType(node *Node) bool {
-	return node.Kind == KindJSDocNonNullableType
+	return node.AsNode().Kind == KindJSDocNonNullableType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7195,7 +7195,7 @@ func (node *JSDocNullableType) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocNullableType(node *Node) bool {
-	return node.Kind == KindJSDocNullableType
+	return node.AsNode().Kind == KindJSDocNullableType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7216,7 +7216,7 @@ func (node *JSDocAllType) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocAllType(node *Node) bool {
-	return node.Kind == KindJSDocAllType
+	return node.AsNode().Kind == KindJSDocAllType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7254,7 +7254,7 @@ func (node *JSDocVariadicType) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocVariadicType(node *Node) bool {
-	return node.Kind == KindJSDocVariadicType
+	return node.AsNode().Kind == KindJSDocVariadicType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7292,7 +7292,7 @@ func (node *JSDocOptionalType) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocOptionalType(node *Node) bool {
-	return node.Kind == KindJSDocOptionalType
+	return node.AsNode().Kind == KindJSDocOptionalType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7332,7 +7332,7 @@ func (node *JSDocTypeTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocTypeTag(node *Node) bool {
-	return node.Kind == KindJSDocTypeTag
+	return node.AsNode().Kind == KindJSDocTypeTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7370,7 +7370,7 @@ func (node *JSDocUnknownTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocUnknownTag(node *Node) bool {
-	return node.Kind == KindJSDocUnknownTag
+	return node.AsNode().Kind == KindJSDocUnknownTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7415,7 +7415,7 @@ func (node *JSDocTemplateTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocTemplateTag(node *Node) bool {
-	return node.Kind == KindJSDocTemplateTag
+	return node.AsNode().Kind == KindJSDocTemplateTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7455,7 +7455,7 @@ func (node *JSDocReturnTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocReturnTag(node *Node) bool {
-	return node.Kind == KindJSDocReturnTag
+	return node.AsNode().Kind == KindJSDocReturnTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7493,7 +7493,7 @@ func (node *JSDocPublicTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocPublicTag(node *Node) bool {
-	return node.Kind == KindJSDocPublicTag
+	return node.AsNode().Kind == KindJSDocPublicTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7531,7 +7531,7 @@ func (node *JSDocPrivateTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocPrivateTag(node *Node) bool {
-	return node.Kind == KindJSDocPrivateTag
+	return node.AsNode().Kind == KindJSDocPrivateTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7569,7 +7569,7 @@ func (node *JSDocProtectedTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocProtectedTag(node *Node) bool {
-	return node.Kind == KindJSDocProtectedTag
+	return node.AsNode().Kind == KindJSDocProtectedTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7607,7 +7607,7 @@ func (node *JSDocReadonlyTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocReadonlyTag(node *Node) bool {
-	return node.Kind == KindJSDocReadonlyTag
+	return node.AsNode().Kind == KindJSDocReadonlyTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7645,7 +7645,7 @@ func (node *JSDocOverrideTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocOverrideTag(node *Node) bool {
-	return node.Kind == KindJSDocOverrideTag
+	return node.AsNode().Kind == KindJSDocOverrideTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7683,7 +7683,7 @@ func (node *JSDocDeprecatedTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocDeprecatedTag(node *Node) bool {
-	return node.Kind == KindJSDocDeprecatedTag
+	return node.AsNode().Kind == KindJSDocDeprecatedTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7723,7 +7723,7 @@ func (node *JSDocSeeTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocSeeTag(node *Node) bool {
-	return node.Kind == KindJSDocSeeTag
+	return node.AsNode().Kind == KindJSDocSeeTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7763,7 +7763,7 @@ func (node *JSDocImplementsTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocImplementsTag(node *Node) bool {
-	return node.Kind == KindJSDocImplementsTag
+	return node.AsNode().Kind == KindJSDocImplementsTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7803,7 +7803,7 @@ func (node *JSDocAugmentsTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocAugmentsTag(node *Node) bool {
-	return node.Kind == KindJSDocAugmentsTag
+	return node.AsNode().Kind == KindJSDocAugmentsTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7843,7 +7843,7 @@ func (node *JSDocSatisfiesTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocSatisfiesTag(node *Node) bool {
-	return node.Kind == KindJSDocSatisfiesTag
+	return node.AsNode().Kind == KindJSDocSatisfiesTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7883,7 +7883,7 @@ func (node *JSDocThrowsTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocThrowsTag(node *Node) bool {
-	return node.Kind == KindJSDocThrowsTag
+	return node.AsNode().Kind == KindJSDocThrowsTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7923,7 +7923,7 @@ func (node *JSDocThisTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocThisTag(node *Node) bool {
-	return node.Kind == KindJSDocThisTag
+	return node.AsNode().Kind == KindJSDocThisTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -7971,7 +7971,7 @@ func (node *JSDocImportTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocImportTag(node *Node) bool {
-	return node.Kind == KindJSDocImportTag
+	return node.AsNode().Kind == KindJSDocImportTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8020,7 +8020,7 @@ func (node *JSDocCallbackTag) Name() *DeclarationName {
 }
 
 func IsJSDocCallbackTag(node *Node) bool {
-	return node.Kind == KindJSDocCallbackTag
+	return node.AsNode().Kind == KindJSDocCallbackTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8060,7 +8060,7 @@ func (node *JSDocOverloadTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocOverloadTag(node *Node) bool {
-	return node.Kind == KindJSDocOverloadTag
+	return node.AsNode().Kind == KindJSDocOverloadTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8109,7 +8109,7 @@ func (node *JSDocTypedefTag) Name() *DeclarationName {
 }
 
 func IsJSDocTypedefTag(node *Node) bool {
-	return node.Kind == KindJSDocTypedefTag
+	return node.AsNode().Kind == KindJSDocTypedefTag
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8149,7 +8149,7 @@ func (node *JSDocSignature) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocSignature(node *Node) bool {
-	return node.Kind == KindJSDocSignature
+	return node.AsNode().Kind == KindJSDocSignature
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8191,7 +8191,7 @@ func (node *JSDocNameReference) Name() *DeclarationName {
 }
 
 func IsJSDocNameReference(node *Node) bool {
-	return node.Kind == KindJSDocNameReference
+	return node.AsNode().Kind == KindJSDocNameReference
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8199,7 +8199,7 @@ func IsJSDocNameReference(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 func IsSourceFile(node *Node) bool {
-	return node.Kind == KindSourceFile
+	return node.AsNode().Kind == KindSourceFile
 }
 
 // Struct and factory methods hand-written in ./ast.go
@@ -8252,7 +8252,7 @@ func (node *ModuleDeclaration) Name() *DeclarationName {
 }
 
 func IsModuleDeclaration(node *Node) bool {
-	return node.Kind == KindModuleDeclaration
+	return node.AsNode().Kind == KindModuleDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8303,7 +8303,7 @@ func (node *ImportEqualsDeclaration) Name() *DeclarationName {
 }
 
 func IsImportEqualsDeclaration(node *Node) bool {
-	return node.Kind == KindImportEqualsDeclaration
+	return node.AsNode().Kind == KindImportEqualsDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8354,7 +8354,7 @@ func (node *ExportDeclaration) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsExportDeclaration(node *Node) bool {
-	return node.Kind == KindExportDeclaration
+	return node.AsNode().Kind == KindExportDeclaration
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8402,7 +8402,7 @@ func (node *ImportTypeNode) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsImportTypeNode(node *Node) bool {
-	return node.Kind == KindImportType
+	return node.AsNode().Kind == KindImportType
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8451,7 +8451,7 @@ func (node *ImportClause) Name() *DeclarationName {
 }
 
 func IsImportClause(node *Node) bool {
-	return node.Kind == KindImportClause
+	return node.AsNode().Kind == KindImportClause
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8500,7 +8500,7 @@ func (node *ImportSpecifier) Name() *DeclarationName {
 }
 
 func IsImportSpecifier(node *Node) bool {
-	return node.Kind == KindImportSpecifier
+	return node.AsNode().Kind == KindImportSpecifier
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8523,7 +8523,7 @@ func (node *JSDocText) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocText(node *Node) bool {
-	return node.Kind == KindJSDocText
+	return node.AsNode().Kind == KindJSDocText
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8567,7 +8567,7 @@ func (node *JSDocLink) Name() *DeclarationName {
 }
 
 func IsJSDocLink(node *Node) bool {
-	return node.Kind == KindJSDocLink
+	return node.AsNode().Kind == KindJSDocLink
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8611,7 +8611,7 @@ func (node *JSDocLinkPlain) Name() *DeclarationName {
 }
 
 func IsJSDocLinkPlain(node *Node) bool {
-	return node.Kind == KindJSDocLinkPlain
+	return node.AsNode().Kind == KindJSDocLinkPlain
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8655,7 +8655,7 @@ func (node *JSDocLinkCode) Name() *DeclarationName {
 }
 
 func IsJSDocLinkCode(node *Node) bool {
-	return node.Kind == KindJSDocLinkCode
+	return node.AsNode().Kind == KindJSDocLinkCode
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8711,7 +8711,7 @@ func (node *TypeParameterDeclaration) Name() *DeclarationName {
 }
 
 func IsTypeParameterDeclaration(node *Node) bool {
-	return node.Kind == KindTypeParameter
+	return node.AsNode().Kind == KindTypeParameter
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8756,7 +8756,7 @@ func (node *SyntheticReferenceExpression) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsSyntheticReferenceExpression(node *Node) bool {
-	return node.Kind == KindSyntheticReferenceExpression
+	return node.AsNode().Kind == KindSyntheticReferenceExpression
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8798,7 +8798,7 @@ func (node *JSDocTypeLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func IsJSDocTypeLiteral(node *Node) bool {
-	return node.Kind == KindJSDocTypeLiteral
+	return node.AsNode().Kind == KindJSDocTypeLiteral
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -8826,7 +8826,7 @@ func (f *NodeFactory) NewJSDocParameterOrPropertyTag(kind Kind, tagName *Identif
 
 func (f *NodeFactory) UpdateJSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
 	if tagName != node.TagName || name != node.name || isBracketed != node.IsBracketed || typeExpression != node.TypeExpression || isNameFirst != node.IsNameFirst || comment != node.Comment {
-		return updateNode(f.NewJSDocParameterOrPropertyTag(node.Kind, tagName, name, isBracketed, typeExpression, isNameFirst, comment), node.AsNode(), f.hooks)
+		return updateNode(f.NewJSDocParameterOrPropertyTag(node.AsNode().Kind, tagName, name, isBracketed, typeExpression, isNameFirst, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -8840,7 +8840,7 @@ func (node *JSDocParameterOrPropertyTag) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *JSDocParameterOrPropertyTag) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocParameterOrPropertyTag(node.Kind, node.TagName, node.name, node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocParameterOrPropertyTag(node.AsNode().Kind, node.TagName, node.name, node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocParameterOrPropertyTag) Name() *DeclarationName {
@@ -8848,11 +8848,11 @@ func (node *JSDocParameterOrPropertyTag) Name() *DeclarationName {
 }
 
 func IsJSDocParameterTag(node *Node) bool {
-	return node.Kind == KindJSDocParameterTag
+	return node.AsNode().Kind == KindJSDocParameterTag
 }
 
 func IsJSDocPropertyTag(node *Node) bool {
-	return node.Kind == KindJSDocPropertyTag
+	return node.AsNode().Kind == KindJSDocPropertyTag
 }
 
 // ──────────────────────────────────────────────────────────────────────

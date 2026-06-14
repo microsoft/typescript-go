@@ -2481,7 +2481,7 @@ func TestNoTrailingCommaAfterTransform(t *testing.T) {
 	})
 	file = visitor.VisitSourceFile(file)
 
-	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), "[a];")
+	emittestutil.CheckEmit(t, emitContext, file.AsNode().AsSourceFile(), "[a];")
 }
 
 func TestTrailingCommaAfterTransform(t *testing.T) {
@@ -2502,7 +2502,7 @@ func TestTrailingCommaAfterTransform(t *testing.T) {
 	})
 	file = visitor.VisitSourceFile(file)
 
-	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), "[a,];")
+	emittestutil.CheckEmit(t, emitContext, file.AsNode().AsSourceFile(), "[a,];")
 }
 
 func TestPartiallyEmittedExpression(t *testing.T) {
@@ -2517,7 +2517,7 @@ func TestPartiallyEmittedExpression(t *testing.T) {
 
 	emitContext := printer.NewEmitContext()
 	file = tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: emitContext}).TransformSourceFile(file)
-	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), `return container.parent
+	emittestutil.CheckEmit(t, emitContext, file.AsNode().AsSourceFile(), `return container.parent
     .left
     .expression
     .expression;`)

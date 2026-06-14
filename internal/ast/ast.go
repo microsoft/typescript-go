@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -175,7 +176,7 @@ func (list *ModifierList) Clone(f *NodeFactory) *ModifierList {
 // Interface values stored in AST nodes are never typed nil values. Construction code must ensure that
 // interface valued properties either store a true nil or a reference to a non-nil struct.
 
-type Node struct {
+type nodeFields struct {
 	Kind   Kind
 	Flags  NodeFlags
 	Loc    core.TextRange
@@ -184,31 +185,42 @@ type Node struct {
 	data   nodeData
 }
 
+type Node struct {
+	nodeFields
+}
+
 // Node accessors. Some accessors are implemented as methods on NodeData, others are implemented though
 // type switches. Either approach is fine. Interface methods are likely more performant, but have higher
 // code size costs because we have hundreds of implementations of the NodeData interface.
 
-func (n *Node) AsNode() *Node                             { return n }
-func (n *Node) Pos() int                                  { return n.Loc.Pos() }
-func (n *Node) End() int                                  { return n.Loc.End() }
-func (n *Node) ForEachChild(v Visitor) bool               { return n.data.ForEachChild(v) }
-func (n *Node) IterChildren() iter.Seq[*Node]             { return n.data.IterChildren() }
-func (n *Node) Clone(f NodeFactoryCoercible) *Node        { return n.data.Clone(f) }
-func (n *Node) VisitEachChild(v *NodeVisitor) *Node       { return n.data.VisitEachChild(v) }
-func (n *Node) Name() *DeclarationName                    { return n.data.Name() }
-func (n *Node) Modifiers() *ModifierList                  { return n.data.Modifiers() }
-func (n *Node) FlowNodeData() *FlowNodeBase               { return n.data.FlowNodeData() }
-func (n *Node) DeclarationData() *DeclarationBase         { return n.data.DeclarationData() }
+func (n *Node) AsNode() *Node                       { return n }
+func (n *Node) Pos() int                            { return n.Loc.Pos() }
+func (n *Node) End() int                            { return n.Loc.End() }
+func (n *Node) ForEachChild(v Visitor) bool         { return n.data.ForEachChild(v) }
+func (n *Node) IterChildren() iter.Seq[*Node]       { return n.data.IterChildren() }
+func (n *Node) Clone(f NodeFactoryCoercible) *Node  { return n.data.Clone(f) }
+func (n *Node) VisitEachChild(v *NodeVisitor) *Node { return n.data.VisitEachChild(v) }
+
+func (n *Node) Name() *DeclarationName { return n.data.Name() }
+
+func (n *Node) Modifiers() *ModifierList { return n.data.Modifiers() }
+
+func (n *Node) FlowNodeData() *FlowNodeBase { return n.data.FlowNodeData() }
+
+func (n *Node) DeclarationData() *DeclarationBase { return n.data.DeclarationData() }
+
 func (n *Node) ExportableData() *ExportableBase           { return n.data.ExportableData() }
 func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.data.LocalsContainerData() }
 func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.data.FunctionLikeData() }
-func (n *Node) ParameterList() *ParameterList             { return n.data.FunctionLikeData().Parameters }
-func (n *Node) Parameters() []*ParameterDeclarationNode   { return n.ParameterList().Nodes }
-func (n *Node) ClassLikeData() *ClassLikeBase             { return n.data.ClassLikeData() }
-func (n *Node) BodyData() *BodyBase                       { return n.data.BodyData() }
-func (n *Node) SubtreeFacts() SubtreeFacts                { return n.data.SubtreeFacts() }
-func (n *Node) propagateSubtreeFacts() SubtreeFacts       { return n.data.propagateSubtreeFacts() }
-func (n *Node) LiteralLikeData() *LiteralLikeNodeBase     { return n.data.LiteralLikeData() }
+
+func (n *Node) ParameterList() *ParameterList { return n.data.FunctionLikeData().Parameters }
+
+func (n *Node) Parameters() []*ParameterDeclarationNode { return n.ParameterList().Nodes }
+func (n *Node) ClassLikeData() *ClassLikeBase           { return n.data.ClassLikeData() }
+func (n *Node) BodyData() *BodyBase                     { return n.data.BodyData() }
+func (n *Node) SubtreeFacts() SubtreeFacts              { return n.data.SubtreeFacts() }
+func (n *Node) propagateSubtreeFacts() SubtreeFacts     { return n.data.propagateSubtreeFacts() }
+func (n *Node) LiteralLikeData() *LiteralLikeNodeBase   { return n.data.LiteralLikeData() }
 func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeNodeBase {
 	return n.data.TemplateLiteralLikeData()
 }
@@ -1194,7 +1206,7 @@ type nodeData interface {
 // NodeDefault
 
 type NodeDefault struct {
-	Node
+	nodeFields
 }
 
 func invert(yield func(v *Node) bool) Visitor {
@@ -1203,7 +1215,10 @@ func invert(yield func(v *Node) bool) Visitor {
 	}
 }
 
-func (node *NodeDefault) AsNode() *Node               { return &node.Node }
+func (node *NodeDefault) AsNode() *Node { return (*Node)(unsafe.Pointer(&node.nodeFields)) }
+func (node *NodeDefault) Pos() int      { return node.Loc.Pos() }
+func (node *NodeDefault) End() int      { return node.Loc.End() }
+
 func (node *NodeDefault) ForEachChild(v Visitor) bool { return false }
 func (node *NodeDefault) forEachChildIter(yield func(v *Node) bool) {
 	node.data.ForEachChild(invert(yield)) // `true` is return early for a ts visitor, `false` is return early for a go iterator yield function
@@ -1621,7 +1636,7 @@ func (node *TypeSyntaxBase) computeSubtreeFacts() SubtreeFacts { return SubtreeC
 func (node *TypeSyntaxBase) propagateSubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
 
 func (node *Token) computeSubtreeFacts() SubtreeFacts {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindUsingKeyword:
 		return SubtreeContainsUsing
 	case KindPublicKeyword,
@@ -1724,7 +1739,7 @@ func (node *VariableDeclaration) computeSubtreeFacts() SubtreeFacts {
 
 func (node *VariableDeclarationList) computeSubtreeFacts() SubtreeFacts {
 	return propagateNodeListSubtreeFacts(node.Declarations, propagateSubtreeFacts) |
-		core.IfElse(node.Flags&NodeFlagsUsing != 0, SubtreeContainsUsing, SubtreeFactsNone)
+		core.IfElse(node.AsNode().Flags&NodeFlagsUsing != 0, SubtreeContainsUsing, SubtreeFactsNone)
 }
 
 func (node *VariableDeclarationList) propagateSubtreeFacts() SubtreeFacts {
@@ -1732,7 +1747,7 @@ func (node *VariableDeclarationList) propagateSubtreeFacts() SubtreeFacts {
 }
 
 func (node *BindingPattern) computeSubtreeFacts() SubtreeFacts {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindObjectBindingPattern:
 		return propagateNodeListSubtreeFacts(node.Elements, propagateObjectBindingElementSubtreeFacts)
 	case KindArrayBindingPattern:
@@ -1770,10 +1785,10 @@ func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
 }
 
 func (node *FunctionDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil || node.ModifierFlags()&ModifierFlagsAmbient != 0 {
+	if node.Body == nil || node.AsNode().ModifierFlags()&ModifierFlagsAmbient != 0 {
 		return SubtreeContainsTypeScript
 	} else {
-		isAsync := node.ModifierFlags()&ModifierFlagsAsync != 0
+		isAsync := node.AsNode().ModifierFlags()&ModifierFlagsAsync != 0
 		isGenerator := node.AsteriskToken != nil
 		return propagateModifierListSubtreeFacts(node.modifiers) |
 			propagateSubtreeFacts(node.AsteriskToken) |
@@ -1851,7 +1866,7 @@ func (node *EnumDeclaration) computeSubtreeFacts() SubtreeFacts {
 }
 
 func (node *ModuleDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.ModifierFlags()&ModifierFlagsAmbient != 0 {
+	if node.AsNode().ModifierFlags()&ModifierFlagsAmbient != 0 {
 		return SubtreeContainsTypeScript
 	} else {
 		return propagateModifierListSubtreeFacts(node.modifiers) |
@@ -2013,7 +2028,7 @@ func (node *ClassStaticBlockDeclaration) computeSubtreeFacts() SubtreeFacts {
 }
 
 func (node *KeywordExpression) computeSubtreeFacts() SubtreeFacts {
-	switch node.Kind {
+	switch node.AsNode().Kind {
 	case KindThisKeyword:
 		return SubtreeContainsLexicalThis
 	case KindSuperKeyword:
@@ -2069,7 +2084,7 @@ func (node *ArrowFunction) computeSubtreeFacts() SubtreeFacts {
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
 		propagateEraseableSyntaxSubtreeFacts(node.FullSignature) |
 		propagateSubtreeFacts(node.Body) |
-		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsAnyAwait, SubtreeFactsNone)
+		core.IfElse(node.AsNode().ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsAnyAwait, SubtreeFactsNone)
 }
 
 func (node *ArrowFunction) propagateSubtreeFacts() SubtreeFacts {
@@ -2626,7 +2641,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.LibReferenceDirectives = other.LibReferenceDirectives
 	node.CommonJSModuleIndicator = other.CommonJSModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
-	node.Flags |= other.Flags
+	node.AsNode().Flags |= other.AsNode().Flags
 }
 
 func (node *SourceFile) Clone(f NodeFactoryCoercible) *Node {
