@@ -933,7 +933,7 @@ func (t *StructuredType) ConstructSignatures() []*Signature {
 }
 
 func (t *StructuredType) Properties() []*ast.Symbol {
-	return t.properties
+	return t.AsType().checker.getPropertiesOfResolvedStructuredType(t.AsType(), t)
 }
 
 // Except for tuple type references and reverse mapped types, all object types have an associated symbol.
