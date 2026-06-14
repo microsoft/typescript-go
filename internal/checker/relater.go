@@ -679,7 +679,7 @@ func (c *Checker) isWeakType(t *Type) bool {
 	if t.flags&TypeFlagsObject != 0 {
 		resolved := c.resolveStructuredTypeMembers(t)
 		properties := c.getPropertiesOfResolvedStructuredType(t, resolved)
-		return len(resolved.signatures) == 0 && len(resolved.indexInfos) == 0 && len(properties) > 0 && core.Every(properties, func(p *ast.Symbol) bool {
+		return len(resolved.Signatures()) == 0 && len(resolved.IndexInfos()) == 0 && len(properties) > 0 && core.Every(properties, func(p *ast.Symbol) bool {
 			return p.Flags&ast.SymbolFlagsOptional != 0
 		})
 	}
