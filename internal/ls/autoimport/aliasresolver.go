@@ -216,7 +216,11 @@ func (r *aliasResolver) GetSourceOfProjectReferenceIfOutputIncluded(file ast.Has
 
 // IsSourceFileDefaultLibrary implements checker.Program.
 func (r *aliasResolver) IsSourceFileDefaultLibrary(path tspath.Path) bool {
-	panic("unimplemented")
+	// The aliasResolver only ever processes package source files, never default
+	// library files, so none of its files are default library files. The checker
+	// can call this during error elaboration (see microsoft/typescript-go#4322);
+	// returning false avoids a crash and the resulting diagnostics are discarded.
+	return false
 }
 
 // IsSourceFromProjectReference implements checker.Program.
