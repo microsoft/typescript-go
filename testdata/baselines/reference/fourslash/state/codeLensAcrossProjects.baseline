@@ -162,6 +162,7 @@ Config File Names::
   "params": {
     "settings": {
       "js/ts": {
+        "customConfigFileName": "",
         "format": {
           "baseIndentSize": 0,
           "indentSize": 0,
@@ -179,9 +180,6 @@ Config File Names::
           "parameterNames": {
             "enabled": ""
           }
-        },
-        "native-preview": {
-          "customConfigFileName": ""
         },
         "preferences": {
           "importModuleSpecifier": "",
@@ -602,6 +600,7 @@ Config::
   "params": {
     "settings": {
       "js/ts": {
+        "customConfigFileName": "",
         "format": {
           "baseIndentSize": 0,
           "convertTabsToSpaces": true,
@@ -631,9 +630,6 @@ Config::
           "parameterNames": {
             "enabled": ""
           }
-        },
-        "native-preview": {
-          "customConfigFileName": ""
         },
         "preferences": {
           "importModuleSpecifier": "",
