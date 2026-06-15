@@ -318,9 +318,6 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 			}
 		}
 
-		// Also check non-root dependencies (e.g. node_modules .d.ts files)
-		// stored in the buildinfo. This mirrors the CLI watcher's seenFiles
-		// approach which tracks ALL compiler dependencies for event filtering.
 		if !rootChanged {
 			task.buildInfoEntryMu.Lock()
 			bi := task.buildInfoEntry
@@ -354,11 +351,6 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 		}
 	}
 
-	// If no task matched, check if a directory was created under a watched
-	// path (e.g. node_modules recreated by npm ci after rm -rf). This
-	// mirrors the CLI watcher's ancestor fallback detection: treat new
-	// directories under watched paths as relevant so watches can be
-	// re-resolved and the project rebuilt.
 	if !needsUpdate.Load() {
 		opts := o.comparePathsOptions
 		for eventPath := range changedPaths {
@@ -427,8 +419,6 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 		}
 
 		// Non-root dependency directories from buildinfo (e.g. node_modules .d.ts files).
-		// This mirrors the CLI watcher's seenFiles approach which watches ALL compiler
-		// dependencies, not just root files.
 		task.buildInfoEntryMu.Lock()
 		bi := task.buildInfoEntry
 		task.buildInfoEntryMu.Unlock()
@@ -472,7 +462,7 @@ func (o *Orchestrator) DoCycle() {
 	var needsUpdate atomic.Bool
 
 	if overflow {
-		// Overflow: reset all tasks to force a full rebuild, matching CLI watcher behavior.
+		// Overflow: reset all tasks to force a full rebuild.
 		o.rangeTask(func(path tspath.Path, task *BuildTask) {
 			task.resetConfig(o, path)
 			task.reportDone = make(chan struct{})
