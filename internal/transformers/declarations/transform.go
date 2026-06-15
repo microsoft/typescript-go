@@ -1241,6 +1241,10 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 				// symbol is referenced during member type serialization.
 				tx.tracker.watchedClassSymbol = rhs.Symbol()
 				tx.tracker.classSymbolTracked = false
+				defer func() {
+					tx.tracker.watchedClassSymbol = nil
+					tx.tracker.classSymbolTracked = false
+				}()
 
 				// Serialize class members using the class expression name, which
 				// triggers TrackSymbol for any self-referential member types.
@@ -1254,8 +1258,6 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 				// - The class's own symbol was used in a member's serialized type
 				namesDiffer := !ast.IsIdentifier(name) || classExprName.Text() != name.Text()
 				needsIsolation := namesDiffer || tx.tracker.classSymbolTracked
-				tx.tracker.watchedClassSymbol = nil
-				tx.tracker.classSymbolTracked = false
 
 				if needsIsolation {
 					nsName := tx.Factory().NewUniqueNameEx("_ns", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
