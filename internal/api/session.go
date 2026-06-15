@@ -663,21 +663,21 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	// This ensures node handles from client-cached source files remain resolvable in the
 	// new snapshot without requiring the client to re-fetch unchanged files.
 	if !exists && prevSD != nil && (params.FileChanges == nil || !params.FileChanges.InvalidateAll) {
-		invalidated := make(map[tspath.Path]bool)
+		invalidated := make(map[tspath.Path]struct{})
 		if changes != nil {
 			for _, proj := range changes.ChangedProjects {
 				for _, p := range proj.ChangedFiles {
-					invalidated[p] = true
+					invalidated[p] = struct{}{}
 				}
 				for _, p := range proj.DeletedFiles {
-					invalidated[p] = true
+					invalidated[p] = struct{}{}
 				}
 			}
 		}
 		prevSD.nodeTablesByPathMu.RLock()
 		sd.nodeTablesByPathMu.Lock()
 		for path, table := range prevSD.nodeTablesByPath {
-			if !invalidated[path] {
+			if _, ok := invalidated[path]; !ok {
 				sd.nodeTablesByPath[path] = table
 			}
 		}
