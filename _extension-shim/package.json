@@ -1,6 +1,6 @@
 {
     "name": "native-preview",
-    "displayName": "TypeScript 7 Native Preview (Obsolete)",
+    "displayName": "[Deprecated] TypeScript (Native Preview)",
     "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
     "description": "%description%",
