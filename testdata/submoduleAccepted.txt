@@ -925,6 +925,13 @@ conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
 
+## JS declaration emit adds `export import` modifier for require-style import assignments
+## https://github.com/microsoft/typescript-go/issues/3542
+conformance/nodeModulesAllowJsImportAssignment(module=node16).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node18).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node20).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=nodenext).js.diff
+
 ## JS declaration emit now preserves side-effect imports, declaration order changes inconsequentially
 conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
 conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
@@ -1393,6 +1400,15 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
+
+# CJS class expressions emit named class declarations instead of anonymous constructor types
+## https://github.com/microsoft/typescript-go/issues/3544
+conformance/commonJSImportExportedClassExpression.js.diff
+conformance/jsDeclarationsExportAssignedClassExpression(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymous(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedVisibility(target=es2015).js.diff
 
 # @callback/@overload variadic intepreted differently than strada
 ## https://github.com/microsoft/typescript-go/issues/3556
