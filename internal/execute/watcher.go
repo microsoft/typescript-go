@@ -130,7 +130,10 @@ func (w *Watcher) start(ctx context.Context) {
 	}
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
-	w.doBuild()
+	if err := w.doBuild(); err != nil {
+		w.wm.Unlock()
+		return
+	}
 	w.wm.Unlock()
 
 	if w.testing == nil {
@@ -247,7 +250,10 @@ func (w *Watcher) DoCycle() {
 	}
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
-	w.doBuild()
+	if err := w.doBuild(); err != nil {
+		// Mid-cycle watch failure; force a full rebuild on the next event
+		w.wm.ForceOverflow()
+	}
 }
 
 func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bool {
@@ -279,7 +285,7 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 	return false
 }
 
-func (w *Watcher) doBuild() {
+func (w *Watcher) doBuild() error {
 	if w.configModified {
 		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
 	}
@@ -328,6 +334,7 @@ func (w *Watcher) doBuild() {
 
 	if err := w.reconcileWatches(seenSlice); err != nil {
 		fmt.Fprintf(w.sys.Writer(), "%v\n", err)
+		return err
 	}
 	w.configModified = false
 
@@ -349,6 +356,7 @@ func (w *Watcher) doBuild() {
 	if w.testing != nil {
 		w.testing.OnProgram(w.program)
 	}
+	return nil
 }
 
 func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventKind) {

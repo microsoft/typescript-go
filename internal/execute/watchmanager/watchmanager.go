@@ -81,6 +81,12 @@ func (wm *WatchManager) DrainEvents() (changed map[string]fswatch.EventKind, ove
 	return
 }
 
+func (wm *WatchManager) ForceOverflow() {
+	wm.changedMu.Lock()
+	wm.changedOverflow = true
+	wm.changedMu.Unlock()
+}
+
 func (wm *WatchManager) signalDoCycle() {
 	select {
 	case wm.doCycleCh <- struct{}{}:

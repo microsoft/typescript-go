@@ -223,13 +223,17 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	o.GenerateGraph(nil)
 	result := o.buildOrClean()
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		o.Watch(ctx)
-		result.Watcher = o
+		if err := o.Watch(ctx); err != nil {
+			fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
+			result.Status = tsc.ExitStatusInvalidProject_OutputsSkipped
+		} else {
+			result.Watcher = o
+		}
 	}
 	return result
 }
 
-func (o *Orchestrator) Watch(ctx context.Context) {
+func (o *Orchestrator) Watch(ctx context.Context) error {
 	o.wm.Lock()
 
 	if o.opts.Testing == nil {
@@ -243,8 +247,7 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
 		o.wm.Unlock()
-		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
-		return
+		return err
 	}
 	o.resetCaches()
 
@@ -253,6 +256,7 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 	if o.opts.Testing == nil {
 		o.wm.RunLoop(ctx, o.DoCycle)
 	}
+	return nil
 }
 
 func (o *Orchestrator) updateWatch() {
@@ -495,6 +499,8 @@ func (o *Orchestrator) DoCycle() {
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
 		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
+		// Mark overflow so the next event triggers a full rebuild
+		o.wm.ForceOverflow()
 	}
 	o.resetCaches()
 }
