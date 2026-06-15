@@ -166,7 +166,7 @@ func (wm *WatchManager) CloseAllWatches() {
 	}
 }
 
-func (wm *WatchManager) createDirWatch(dir string, recursive bool) {
+func (wm *WatchManager) createDirWatch(dir string, recursive bool) error {
 	entry := &watchedDir{recursive: recursive}
 	cb := func(events []fswatch.Event, err error) {
 		if err != nil && errors.Is(err, fswatch.ErrWatchTerminated) {
@@ -180,10 +180,11 @@ func (wm *WatchManager) createDirWatch(dir string, recursive bool) {
 		if wm.DebugLog != nil {
 			fmt.Fprintf(wm.DebugLog, "[watch] failed to watch directory %s: %v\n", dir, err)
 		}
-		return
+		return fmt.Errorf("failed to watch directory %s: %w", dir, err)
 	}
 	entry.closer = watch
 	wm.watchedDirs[dir] = entry
+	return nil
 }
 
 func (wm *WatchManager) ResolveDesiredDirs(desiredDirs map[string]bool) map[string]bool {
@@ -217,11 +218,12 @@ func (wm *WatchManager) ResolveDesiredDirs(desiredDirs map[string]bool) map[stri
 	return resolved
 }
 
-func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) {
+func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) error {
 	if wm.backend == nil {
-		return
+		return nil
 	}
 
+	var watchErr error
 	core.DiffMapsFunc(
 		wm.watchedDirs,
 		desiredDirs,
@@ -230,7 +232,9 @@ func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) {
 			if wm.DebugLog != nil {
 				fmt.Fprintf(wm.DebugLog, "[watch] watching directory %s (recursive=%v)\n", dir, recursive)
 			}
-			wm.createDirWatch(dir, recursive)
+			if err := wm.createDirWatch(dir, recursive); err != nil && watchErr == nil {
+				watchErr = err
+			}
 		},
 		func(dir string, wd *watchedDir) {
 			if wm.DebugLog != nil {
@@ -245,9 +249,12 @@ func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) {
 			}
 			wd.closer.Close()
 			delete(wm.watchedDirs, dir)
-			wm.createDirWatch(dir, recursive)
+			if err := wm.createDirWatch(dir, recursive); err != nil && watchErr == nil {
+				watchErr = err
+			}
 		},
 	)
+	return watchErr
 }
 
 func IsDirCoveredByWatch(dirs map[string]bool, dir string, opts tspath.ComparePathsOptions) bool {

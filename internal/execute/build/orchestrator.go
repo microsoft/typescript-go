@@ -241,7 +241,11 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()
-	o.wm.ReconcileWatches(desiredDirs)
+	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
+		o.wm.Unlock()
+		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
+		return
+	}
 	o.resetCaches()
 
 	o.wm.Unlock()
@@ -489,7 +493,9 @@ func (o *Orchestrator) DoCycle() {
 	o.buildOrClean()
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()
-	o.wm.ReconcileWatches(desiredDirs)
+	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
+		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
+	}
 	o.resetCaches()
 }
 

@@ -196,9 +196,9 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool 
 	return w.wm.ResolveDesiredDirs(resolvedDirs)
 }
 
-func (w *Watcher) reconcileWatches(seenFilePaths []string) {
+func (w *Watcher) reconcileWatches(seenFilePaths []string) error {
 	desiredDirs := w.computeDesiredWatches(seenFilePaths)
-	w.wm.ReconcileWatches(desiredDirs)
+	return w.wm.ReconcileWatches(desiredDirs)
 }
 
 func (w *Watcher) comparePathsOptions() tspath.ComparePathsOptions {
@@ -326,7 +326,9 @@ func (w *Watcher) doBuild() {
 		}
 	}
 
-	w.reconcileWatches(seenSlice)
+	if err := w.reconcileWatches(seenSlice); err != nil {
+		fmt.Fprintf(w.sys.Writer(), "%v\n", err)
+	}
 	w.configModified = false
 
 	programFiles := w.program.GetProgram().FilesByPath()
