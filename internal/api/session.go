@@ -1983,7 +1983,7 @@ func (sd *snapshotData) resolveNodeHandle(program *compiler.Program, handle Node
 
 	sourceFile := program.GetSourceFileByPath(path)
 	if sourceFile == nil {
-		return nil, fmt.Errorf("%w: node handle %q could not be resolved (file may not be loaded)", ErrClientError, handle)
+		return nil, fmt.Errorf("%w: node handle %q could not be resolved (file may not be loaded or handle may be stale)", ErrClientError, handle)
 	}
 	table := encoder.GetNodeIndexTable(sourceFile)
 
@@ -1993,7 +1993,7 @@ func (sd *snapshotData) resolveNodeHandle(program *compiler.Program, handle Node
 			return node, nil
 		}
 	}
-	return nil, fmt.Errorf("%w: node handle %q could not be resolved (file may not be loaded)", ErrClientError, handle)
+	return nil, fmt.Errorf("%w: node handle %q could not be resolved (file may not be loaded or handle may be stale)", ErrClientError, handle)
 }
 
 // computeSnapshotChanges computes the per-project source file differences between

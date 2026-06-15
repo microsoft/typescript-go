@@ -2406,6 +2406,7 @@ type SourceFileMetaData struct {
 // another package. Prefer regular SourceFile fields for ast-owned data.
 type SourceFileDataKey[T any] struct {
 	key sourceFileDataKey
+	_   [0]T
 }
 
 type sourceFileDataKey uint64
@@ -2430,6 +2431,10 @@ func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[
 }
 
 func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *sourceFileDataCell[T] {
+	if key == nil || key.key == 0 {
+		panic("invalid SourceFileDataKey; use NewSourceFileDataKey")
+	}
+
 	file.dataMu.Lock()
 	defer file.dataMu.Unlock()
 
