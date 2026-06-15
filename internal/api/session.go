@@ -658,6 +658,33 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		changes = computeSnapshotChanges(prevSD.snapshot, snapshot)
 	}
 
+	// Pre-populate node tables for unchanged files from the previous snapshot.
+	// NodeIndexTable is immutable after construction, so sharing the pointer is safe.
+	// This ensures node handles from client-cached source files remain resolvable in the
+	// new snapshot without requiring the client to re-fetch unchanged files.
+	if !exists && prevSD != nil && (params.FileChanges == nil || !params.FileChanges.InvalidateAll) {
+		invalidated := make(map[tspath.Path]bool)
+		if changes != nil {
+			for _, proj := range changes.ChangedProjects {
+				for _, p := range proj.ChangedFiles {
+					invalidated[p] = true
+				}
+				for _, p := range proj.DeletedFiles {
+					invalidated[p] = true
+				}
+			}
+		}
+		prevSD.nodeTablesByPathMu.RLock()
+		sd.nodeTablesByPathMu.Lock()
+		for path, table := range prevSD.nodeTablesByPath {
+			if !invalidated[path] {
+				sd.nodeTablesByPath[path] = table
+			}
+		}
+		sd.nodeTablesByPathMu.Unlock()
+		prevSD.nodeTablesByPathMu.RUnlock()
+	}
+
 	// Update the latest snapshot
 	s.snapshotsMu.Lock()
 	s.latestSnapshot = handle
