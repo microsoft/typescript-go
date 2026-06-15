@@ -378,6 +378,23 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 			}
 		}
 	}
+
+	// When any event is detected under a watch and tasks have module
+	// resolution errors, reset those tasks to force re-evaluation.
+	// This handles file events (e.g., node_modules/foo/package.json)
+	// that aren't matched by the per-task root/config/buildinfo checks.
+	for eventPath := range changedPaths {
+		if o.wm.IsPathUnderWatch(eventPath, o.comparePathsOptions) {
+			for i := range o.order {
+				task := o.getTask(o.toPath(o.order[i]))
+				if task.hasModuleResolutionErrors {
+					task.resetStatus()
+					needsUpdate.Store(true)
+				}
+			}
+			break
+		}
+	}
 }
 
 func (o *Orchestrator) computeDesiredWatches() map[string]bool {
@@ -446,6 +463,21 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 				if !watchmanager.IsDirCoveredByWatch(desiredDirs, dir, o.comparePathsOptions) {
 					if watchmanager.CanWatchDirectory(dir) {
 						desiredDirs[dir] = false
+					}
+				}
+			}
+		}
+
+		// When a task has module resolution errors and node_modules exists,
+		// watch it so that file changes inside (e.g., npm install completing)
+		// trigger a rebuild. Without this, only the project root is watched
+		// (non-recursive), which can't see events deep inside node_modules.
+		if task.hasModuleResolutionErrors {
+			nodeModulesDir := tspath.CombinePaths(realConfigDir, "node_modules")
+			if o.host.FS().DirectoryExists(nodeModulesDir) {
+				if !watchmanager.IsDirCoveredByWatch(desiredDirs, nodeModulesDir, o.comparePathsOptions) {
+					if watchmanager.CanWatchDirectory(nodeModulesDir) {
+						desiredDirs[nodeModulesDir] = true
 					}
 				}
 			}

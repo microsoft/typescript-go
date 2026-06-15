@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -69,6 +70,8 @@ type BuildTask struct {
 	isInitialCycle     bool
 	downStreamUpdateMu sync.Mutex
 	dirty              bool
+
+	hasModuleResolutionErrors bool
 }
 
 func (t *BuildTask) waitOnUpstream() {
@@ -237,6 +240,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		t.updateTimeStamps(orchestrator, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 	}
 	t.result.buildKind = buildKindProgram
+	t.hasModuleResolutionErrors = watchmanager.HasModuleResolutionErrors(t.errors)
 	if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
 		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 	} else {

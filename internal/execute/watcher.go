@@ -71,7 +71,8 @@ type Watcher struct {
 	configHasErrors     bool
 	configFilePaths     []string
 
-	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
+	sourceFileCache       *collections.SyncMap[tspath.Path, *cachedSourceFile]
+	filesWithModuleErrors *collections.Set[tspath.Path] // source files that had module resolution errors
 
 	wm           *watchmanager.WatchManager
 	seenFiles    *collections.Set[tspath.Path] // all build dependencies (for event filtering)
@@ -226,6 +227,7 @@ func (w *Watcher) DoCycle() {
 		// Filter fswatch events against known dependencies
 		if w.isRelevantChange(changedPaths) {
 			w.evictChangedSourceFiles(changedPaths)
+			w.evictFilesWithModuleErrors()
 		} else {
 			if w.wm.DebugLog != nil {
 				fmt.Fprintf(w.wm.DebugLog, "[watch] DoCycle: %d event(s) not relevant to compilation, skipping rebuild\n", len(changedPaths))
@@ -317,6 +319,16 @@ func (w *Watcher) doBuild() error {
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
 
+	w.filesWithModuleErrors = nil
+	for _, d := range result.Diagnostics {
+		if watchmanager.IsModuleResolutionError(d) && d.File() != nil {
+			if w.filesWithModuleErrors == nil {
+				w.filesWithModuleErrors = &collections.Set[tspath.Path]{}
+			}
+			w.filesWithModuleErrors.Add(d.File().Path())
+		}
+	}
+
 	caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
 	cwd := w.sys.GetCurrentDirectory()
 	seenSlice := tfs.SeenFiles.ToSlice()
@@ -367,6 +379,20 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventK
 		if _, ok := w.sourceFileCache.Load(p); ok {
 			if w.wm.DebugLog != nil {
 				fmt.Fprintf(w.wm.DebugLog, "[watch] evicting cached source file: %s\n", p)
+			}
+			w.sourceFileCache.Delete(p)
+		}
+	}
+}
+
+func (w *Watcher) evictFilesWithModuleErrors() {
+	if w.filesWithModuleErrors == nil || w.filesWithModuleErrors.Len() == 0 {
+		return
+	}
+	for p := range w.filesWithModuleErrors.Keys() {
+		if _, ok := w.sourceFileCache.Load(p); ok {
+			if w.wm.DebugLog != nil {
+				fmt.Fprintf(w.wm.DebugLog, "[watch] evicting cached source file with module errors: %s\n", p)
 			}
 			w.sourceFileCache.Delete(p)
 		}
