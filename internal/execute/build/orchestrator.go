@@ -315,14 +315,17 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 		}
 
 		rootChanged := false
-		roots := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
-		for _, file := range task.resolved.FileNames() {
+		fileNames := task.resolved.FileNames()
+		roots := collections.NewSetWithSizeHint[tspath.Path](len(fileNames))
+		for _, file := range fileNames {
 			fp := o.toPath(file)
-			if _, changed := normalizedPaths[fp]; changed {
-				task.resetStatus()
-				needsUpdate.Store(true)
-				rootChanged = true
-				break
+			roots.Add(fp)
+			if !rootChanged {
+				if _, changed := normalizedPaths[fp]; changed {
+					task.resetStatus()
+					needsUpdate.Store(true)
+					rootChanged = true
+				}
 			}
 		}
 
