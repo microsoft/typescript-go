@@ -493,37 +493,14 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		}
 	}
 
-	// Check non-root files stored in the buildinfo (e.g. node_modules .d.ts files)
-	// for content changes. Only check files whose mtime is newer than the buildinfo.
-	// This runs after the upstream project reference check so that project reference
-	// .d.ts outputs are handled by the existing upstream logic above.
-	if buildInfo.IsIncremental() && len(buildInfo.FileInfos) == len(buildInfo.FileNames) {
-		buildInfoDirectory := tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory))
-		for i, fileName := range buildInfo.FileNames {
-			if !strings.HasPrefix(fileName, ".") {
-				continue // lib files don't change between builds
-			}
-			absPath := tspath.GetNormalizedAbsolutePath(fileName, buildInfoDirectory)
-			filePath := orchestrator.toPath(absPath)
-			if seenRoots.Has(filePath) {
-				continue // already checked in root loop
-			}
-			fileTime := orchestrator.host.GetMTime(absPath)
-			if fileTime.Before(oldestOutputFileAndTime.time) {
-				continue // file is strictly older than buildinfo, can't have changed
-			}
-			fileInfo := buildInfo.FileInfos[i].GetFileInfo()
-			if fileInfo == nil || fileInfo.Version() == "" {
-				continue
-			}
-			if text, ok := orchestrator.host.FS().ReadFile(absPath); ok {
-				currentVersion := incremental.ComputeHash(text, orchestrator.opts.Testing != nil)
-				if fileInfo.Version() != currentVersion {
-					return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{absPath, buildInfoPath}}
-				}
-			}
-		}
-	}
+	// !!! sheetal TODO : watch??
+	// // Check package file time
+	// const packageJsonLookups = state.lastCachedPackageJsonLookups.get(resolvedPath);
+	// const dependentPackageFileStatus = packageJsonLookups && forEachKey(
+	//     packageJsonLookups,
+	//     path => checkConfigFileUpToDateStatus(state, path, oldestOutputFileTime, oldestOutputFileName),
+	// );
+	// if (dependentPackageFileStatus) return dependentPackageFileStatus;
 
 	return &upToDateStatus{
 		kind: core.IfElse(
