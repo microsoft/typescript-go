@@ -674,15 +674,21 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 				}
 			}
 		}
+
 		prevSD.nodeTablesByPathMu.RLock()
-		sd.nodeTablesByPathMu.Lock()
+		toCarry := make(map[tspath.Path]*encoder.NodeIndexTable, len(prevSD.nodeTablesByPath))
 		for path, table := range prevSD.nodeTablesByPath {
 			if _, ok := invalidated[path]; !ok {
-				sd.nodeTablesByPath[path] = table
+				toCarry[path] = table
 			}
 		}
-		sd.nodeTablesByPathMu.Unlock()
 		prevSD.nodeTablesByPathMu.RUnlock()
+
+		sd.nodeTablesByPathMu.Lock()
+		for path, table := range toCarry {
+			sd.nodeTablesByPath[path] = table
+		}
+		sd.nodeTablesByPathMu.Unlock()
 	}
 
 	// Update the latest snapshot
