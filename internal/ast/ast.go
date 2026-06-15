@@ -2405,8 +2405,12 @@ type SourceFileMetaData struct {
 // SourceFileDataKey identifies lazily-computed data attached to a SourceFile by
 // another package. Prefer regular SourceFile fields for ast-owned data.
 type SourceFileDataKey[T any] struct {
-	_ byte
+	key sourceFileDataKey
 }
+
+type sourceFileDataKey uint64
+
+var sourceFileDataKeyCounter atomic.Uint64
 
 type sourceFileDataCell[T any] struct {
 	once  sync.Once
@@ -2414,7 +2418,7 @@ type sourceFileDataCell[T any] struct {
 }
 
 func NewSourceFileDataKey[T any]() *SourceFileDataKey[T] {
-	return &SourceFileDataKey[T]{}
+	return &SourceFileDataKey[T]{key: sourceFileDataKey(sourceFileDataKeyCounter.Add(1))}
 }
 
 func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[T], compute func(*SourceFile) T) T {
@@ -2430,13 +2434,13 @@ func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *
 	defer file.sourceFileDataMu.Unlock()
 
 	if file.sourceFileData == nil {
-		file.sourceFileData = make(map[any]any)
+		file.sourceFileData = make(map[sourceFileDataKey]any)
 	}
-	if cell, ok := file.sourceFileData[key]; ok {
+	if cell, ok := file.sourceFileData[key.key]; ok {
 		return cell.(*sourceFileDataCell[T])
 	}
 	cell := &sourceFileDataCell[T]{}
-	file.sourceFileData[key] = cell
+	file.sourceFileData[key.key] = cell
 	return cell
 }
 
@@ -2470,7 +2474,7 @@ type SourceFile struct {
 
 	// Fields for lazily-computed data owned by packages outside ast.
 	sourceFileDataMu sync.Mutex
-	sourceFileData   map[any]any
+	sourceFileData   map[sourceFileDataKey]any
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
