@@ -2402,6 +2402,44 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat    core.ResolutionMode
 }
 
+// SourceFileDataKey identifies lazily-computed data attached to a SourceFile by
+// another package. Prefer regular SourceFile fields for ast-owned data.
+type SourceFileDataKey[T any] struct {
+	_ byte
+}
+
+type sourceFileDataCell[T any] struct {
+	once  sync.Once
+	value T
+}
+
+func NewSourceFileDataKey[T any]() *SourceFileDataKey[T] {
+	return &SourceFileDataKey[T]{}
+}
+
+func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[T], compute func(*SourceFile) T) T {
+	cell := getSourceFileDataCell(file, key)
+	cell.once.Do(func() {
+		cell.value = compute(file)
+	})
+	return cell.value
+}
+
+func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *sourceFileDataCell[T] {
+	file.sourceFileDataMu.Lock()
+	defer file.sourceFileDataMu.Unlock()
+
+	if file.sourceFileData == nil {
+		file.sourceFileData = make(map[any]any)
+	}
+	if cell, ok := file.sourceFileData[key]; ok {
+		return cell.(*sourceFileDataCell[T])
+	}
+	cell := &sourceFileDataCell[T]{}
+	file.sourceFileData[key] = cell
+	return cell
+}
+
 type CheckJsDirective struct {
 	Enabled bool
 	Range   CommentRange
@@ -2429,6 +2467,10 @@ type SourceFile struct {
 	text           string
 	Statements     *NodeList  // NodeList[*Statement]
 	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
+
+	// Fields for lazily-computed data owned by packages outside ast.
+	sourceFileDataMu sync.Mutex
+	sourceFileData   map[any]any
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
