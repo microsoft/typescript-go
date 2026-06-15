@@ -1789,10 +1789,6 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 // It handles parameter properties, private identifiers, late-bound index signatures, and visited members.
 // Extra members (e.g., this-property assignments from JS files) can be passed via extraMembers.
 func (tx *DeclarationTransformer) buildClassMembers(classNode *ast.Node, extraMembers ...*ast.Node) *ast.NodeList {
-	previousEnclosingDeclaration := tx.enclosingDeclaration
-	tx.enclosingDeclaration = classNode
-	defer func() { tx.enclosingDeclaration = previousEnclosingDeclaration }()
-
 	ctor := ast.GetFirstConstructorWithBody(classNode)
 	var parameterProperties []*ast.Node
 	if ctor != nil {
@@ -1956,7 +1952,7 @@ func (tx *DeclarationTransformer) visitThisPropertyAssignments(node *ast.Node) *
 	if ast.HasStaticModifier(thisContainer) || ast.IsClassStaticBlockDeclaration(thisContainer) {
 		isStatic = true
 	}
-	if thisTarget != tx.enclosingDeclaration && !(ast.IsClassElement(tx.enclosingDeclaration) && thisTarget == tx.enclosingDeclaration.Parent) {
+	if thisTarget != tx.enclosingDeclaration {
 		return nil // stop searching within new `this` contexts
 	}
 caseBlock:
