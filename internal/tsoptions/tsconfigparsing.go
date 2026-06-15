@@ -1498,7 +1498,7 @@ func CreateDiagnosticAtReferenceSyntax(config *ParsedCommandLine, index int, mes
 // itself is returned. Returns nil if no suitable node is found.
 func getProjectReferencePathNode(sourceFile *ast.SourceFile, refIndex int) *ast.Node {
 	return ForEachTsConfigPropArray(sourceFile, "references", func(property *ast.PropertyAssignment) *ast.Node {
-		if !ast.IsArrayLiteralExpression(property.Initializer) {
+		if property.Initializer == nil || !ast.IsArrayLiteralExpression(property.Initializer) {
 			return nil
 		}
 		elements := property.Initializer.Elements()
