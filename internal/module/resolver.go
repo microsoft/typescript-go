@@ -212,19 +212,6 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
-func (r *Resolver) GetPackageJsonScopeIfApplicable(path string) *packagejson.InfoCacheEntry {
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
-		return nil
-	}
-
-	moduleResolutionKind := r.compilerOptions.GetModuleResolutionKind()
-	if core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/") {
-		return r.GetPackageScopeForPath(tspath.GetDirectoryPath(path))
-	}
-
-	return nil
-}
-
 func (r *Resolver) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
 	r.caches.packageJsonInfoCache.Range(f)
 }
