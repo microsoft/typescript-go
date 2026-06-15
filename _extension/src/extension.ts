@@ -59,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             clearTimeout(configChangeTimeout);
             configChangeTimeout = setTimeout(async () => {
                 if (needsExtHostRestartOnChange()) {
-                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript Native Preview setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
+                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript 7 Native Preview setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
                     if (selected) {
                         vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                     }
@@ -101,7 +101,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             const settingName = getUseTsgoFalseSetting() ?? "js/ts.experimental.useTsgo";
             const enableSettingString = vscode.l10n.t("Enable Setting");
             vscode.window.showWarningMessage(
-                vscode.l10n.t(`TypeScript Native Preview is running in development mode with "{0}" set to false.`, settingName),
+                vscode.l10n.t(`TypeScript 7 Native Preview is running in development mode with "{0}" set to false.`, settingName),
                 enableSettingString,
                 vscode.l10n.t("Ignore"),
             ).then(selected => {
@@ -113,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
     }
     else if (useTsgo === false) {
-        output.appendLine(vscode.l10n.t("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it."));
+        output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
     else if (useTsgo === undefined) {
@@ -122,7 +122,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             updateUseTsgoSetting(true);
             return;
         }
-        output.appendLine(vscode.l10n.t("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it."));
+        output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
 

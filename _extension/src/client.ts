@@ -31,6 +31,7 @@ import {
     ExeInfo,
     getExe,
     jsTsLanguageModes,
+    readNativePreviewConfig,
 } from "./util";
 import { getLanguageForUri } from "./util";
 
@@ -147,11 +148,10 @@ export class Client implements vscode.Disposable {
         });
 
         // Get pprofDir
-        const config = vscode.workspace.getConfiguration("typescript.native-preview");
-        const pprofDir = config.get<string>("pprofDir");
+        const pprofDir = readNativePreviewConfig<string | undefined>("pprofDir", undefined);
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
-        const goMemLimit = config.get<string>("goMemLimit");
+        const goMemLimit = readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
         if (goMemLimit) {
             // Keep this regex aligned with the pattern in package.json.

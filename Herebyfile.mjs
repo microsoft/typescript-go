@@ -1165,6 +1165,7 @@ const getVersion = memoize(() => {
 });
 
 const extensionDir = path.resolve("./_extension");
+const extensionShimDir = path.resolve("./_extension-shim");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 const builtSignTmp = path.resolve("./built/sign-tmp");
@@ -1442,7 +1443,7 @@ const nativePreviewPlatforms = memoize(() => {
         }
 
         const extensions = vscodeTargets.map(vscodeTarget => {
-            const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
+            const extensionDir = path.join(builtVsix, `vscode-typescript-${vscodeTarget}`);
             const vsixPath = extensionDir + ".vsix";
             const vsixManifestPath = extensionDir + ".manifest";
             const vsixSignaturePath = extensionDir + ".signature.p7s";
@@ -1844,6 +1845,10 @@ async function runPackNativePreviewExtensions() {
 
     const platforms = nativePreviewPlatforms();
     const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+    const shimExtensionDir = path.join(builtVsix, "typescript-native-preview-shim");
+    const shimVsixPath = shimExtensionDir + ".vsix";
+    const shimVsixManifestPath = shimExtensionDir + ".manifest";
+    const shimVsixSignaturePath = shimExtensionDir + ".signature.p7s";
 
     await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
         const npmLibDir = path.join(npmDir, "lib");
@@ -1868,6 +1873,23 @@ async function runPackNativePreviewExtensions() {
             await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
         }
     }));
+
+    await cpWithoutNodeModulesOrTsconfig(extensionShimDir, shimExtensionDir);
+
+    const shimPackageJsonPath = path.join(shimExtensionDir, "package.json");
+    const shimPackageJson = JSON.parse(fs.readFileSync(shimPackageJsonPath, "utf8"));
+    shimPackageJson.version = version;
+    fs.writeFileSync(shimPackageJsonPath, JSON.stringify(shimPackageJson, undefined, 4));
+
+    await fs.promises.copyFile("LICENSE", path.join(shimExtensionDir, "LICENSE"));
+    await fs.promises.copyFile("NOTICE.txt", path.join(shimExtensionDir, "NOTICE.txt"));
+
+    await $({ cwd: shimExtensionDir })`vsce package ${version} --no-update-package-json --no-dependencies --out ${shimVsixPath}`;
+
+    if (options.forRelease) {
+        await $({ cwd: shimExtensionDir })`vsce generate-manifest --packagePath ${shimVsixPath} --out ${shimVsixManifestPath}`;
+        await fs.promises.cp(shimVsixManifestPath, shimVsixSignaturePath);
+    }
 }
 
 export const signNativePreviewExtensions = task({
@@ -1883,11 +1905,15 @@ async function runSignNativePreviewExtensions() {
 
     const platforms = nativePreviewPlatforms();
     const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+    const shimVsixSignaturePath = path.join(builtVsix, "typescript-native-preview-shim.signature.p7s");
 
     await sign({
         SignFileRecordList: [
             {
-                SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
+                SignFileList: [
+                    ...extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
+                    { SrcPath: shimVsixSignaturePath, DstPath: null },
+                ],
                 Certs: "VSCodePublisher",
                 MacAppName: undefined,
             },

@@ -1,0 +1,35 @@
+{
+    "name": "native-preview",
+    "displayName": "TypeScript 7 Native Preview (Obsolete)",
+    "publisher": "TypeScriptTeam",
+    "author": "Microsoft Corp.",
+    "description": "%description%",
+    "private": true,
+    "version": "0.0.0",
+    "type": "commonjs",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/typescript-go"
+    },
+    "engines": {
+        "vscode": "^1.110.0"
+    },
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": true
+        }
+    },
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./src/extension.js",
+    "files": [
+        "src/extension.js",
+        "LICENSE",
+        "NOTICE.txt",
+        "package.nls.json",
+        "README.md"
+    ],
+    "scripts": {},
+    "devDependencies": {}
+}

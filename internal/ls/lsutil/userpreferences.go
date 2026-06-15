@@ -180,7 +180,7 @@ type UserPreferences struct {
 	// ------- Project Configuration -------
 
 	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
-	CustomConfigFileName string `raw:"customConfigFileName" config:"native-preview.customConfigFileName"`
+	CustomConfigFileName string `raw:"customConfigFileName" config:"customConfigFileName"`
 }
 
 // IsATADisabled returns whether Automatic Type Acquisition is disabled based on user preferences.
@@ -591,6 +591,12 @@ func (p UserPreferences) withConfig(config map[string]any) UserPreferences {
 			continue
 		}
 		setFieldFromValue(field, val)
+	}
+
+	if _, ok := getNestedValue(config, "customConfigFileName"); !ok {
+		if legacyCustomConfigFileName, ok := getNestedValue(config, "native-preview.customConfigFileName"); ok {
+			p.CustomConfigFileName, _ = legacyCustomConfigFileName.(string)
+		}
 	}
 
 	// Validate CustomConfigFileName for path traversal
