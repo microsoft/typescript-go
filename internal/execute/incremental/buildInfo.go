@@ -499,10 +499,16 @@ func IsBuildInfoFileNameDefaultLibrary(fileName string) bool {
 }
 
 func (b *BuildInfo) fileName(fileId BuildInfoFileId) string {
+	if fileId < 1 || int(fileId) > len(b.FileNames) {
+		return ""
+	}
 	return b.FileNames[fileId-1]
 }
 
 func (b *BuildInfo) fileInfo(fileId BuildInfoFileId) *BuildInfoFileInfo {
+	if fileId < 1 || int(fileId) > len(b.FileInfos) {
+		return nil
+	}
 	return b.FileInfos[fileId-1]
 }
 
@@ -555,10 +561,17 @@ func (b *BuildInfo) GetBuildInfoRootInfoReader(buildInfoDirectory string, compar
 
 	// Create map from resolvedRoot to Root
 	for _, resolved := range b.ResolvedRoot {
-		resolvedToRoot[toPath(b.fileName(resolved.Resolved))] = toPath(b.fileName(resolved.Root))
+		resolvedRoot := b.fileName(resolved.Resolved)
+		root := b.fileName(resolved.Root)
+		if resolvedRoot != "" && root != "" {
+			resolvedToRoot[toPath(resolvedRoot)] = toPath(root)
+		}
 	}
 
 	addRoot := func(resolvedRoot string, fileInfo *BuildInfoFileInfo) {
+		if resolvedRoot == "" {
+			return
+		}
 		resolvedRootPath := toPath(resolvedRoot)
 		if rootPath, ok := resolvedToRoot[resolvedRootPath]; ok {
 			rootToResolved.Set(rootPath, resolvedRootPath)

@@ -2480,6 +2480,23 @@ func TestBuildProgramUpdates(t *testing.T) {
 			commandLineArgs: []string{"--b", "-i", "-w"},
 		},
 		{
+			subScenario: "tsbuildinfo has fewer fileInfos than fileNames",
+			files: FileMap{
+				"/user/username/projects/project/src/a.ts":      "export const a = 1;",
+				"/user/username/projects/project/src/b.ts":      "export const b = 2;",
+				"/user/username/projects/project/tsconfig.json": `{"compilerOptions":{"composite":true,"outDir":"dist"},"files":["src/a.ts","src/b.ts"]}`,
+				"/user/username/projects/project/dist/tsconfig.tsbuildinfo": `{
+					"version": "FakeTSVersion",
+					"fileNames": ["lib.es2025.full.d.ts", "../src/a.ts", "../src/b.ts"],
+					"fileInfos": ["abc123"],
+					"options": {"composite": true, "outDir": "./"},
+					"root": [2, 3]
+				}`,
+			},
+			cwd:             "/user/username/projects/project",
+			commandLineArgs: []string{"--b", "-v"},
+		},
+		{
 			subScenario: "when root is source from project reference",
 			files: FileMap{
 				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
