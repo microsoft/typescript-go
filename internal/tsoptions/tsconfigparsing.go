@@ -1343,11 +1343,14 @@ func parseJsonConfigFileContentWorker(
 		newReferencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element) == orderedMapType }, "object")
 		if newReferencesOfRaw.sliceValue != nil {
 			projectReferences = []*core.ProjectReference{}
-			for _, reference := range newReferencesOfRaw.sliceValue {
+			for refIdx, reference := range newReferencesOfRaw.sliceValue {
 				for _, ref := range parseProjectReference(reference) {
 					if ref.Path == "" {
 						if sourceFile == nil {
 							errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.path", "string"))
+						} else {
+							node := getProjectReferencePathNode(sourceFile.SourceFile, refIdx)
+							errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, node, diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.path", "string"))
 						}
 					} else {
 						projectReferences = append(projectReferences, &core.ProjectReference{
@@ -1486,6 +1489,34 @@ func CreateDiagnosticAtReferenceSyntax(config *ParsedCommandLine, index int, mes
 			}
 		}
 		return nil
+	})
+}
+
+// getProjectReferencePathNode returns the AST node for the "path" property value of
+// the reference at refIndex in the source file. When "path" exists but has a wrong
+// type, the value node is returned. When "path" is absent, the reference object node
+// itself is returned. Returns nil if no suitable node is found.
+func getProjectReferencePathNode(sourceFile *ast.SourceFile, refIndex int) *ast.Node {
+	return ForEachTsConfigPropArray(sourceFile, "references", func(property *ast.PropertyAssignment) *ast.Node {
+		if !ast.IsArrayLiteralExpression(property.Initializer) {
+			return nil
+		}
+		elements := property.Initializer.Elements()
+		if refIndex >= len(elements) {
+			return nil
+		}
+		elem := elements[refIndex]
+		if !ast.IsObjectLiteralExpression(elem) {
+			return elem
+		}
+		// Return the "path" property value node when present, or the whole object.
+		pathNode := ForEachPropertyAssignment(elem.AsObjectLiteralExpression(), "path", func(prop *ast.PropertyAssignment) *ast.Node {
+			return prop.Initializer
+		})
+		if pathNode != nil {
+			return pathNode
+		}
+		return elem
 	})
 }
 

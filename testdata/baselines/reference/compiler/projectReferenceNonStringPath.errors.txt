@@ -1,0 +1,13 @@
+/src/tsconfig.json(2,30): error TS5024: Compiler option 'reference.path' requires a value of type string.
+
+
+==== /src/tsconfig.json (1 errors) ====
+    {
+        "references": [{ "path": true }, { "path": "./other", "circular": "yes" }]
+                                 ~~~~
+!!! error TS5024: Compiler option 'reference.path' requires a value of type string.
+    }
+    
+==== /src/index.ts (0 errors) ====
+    export const x = 1;
+    
