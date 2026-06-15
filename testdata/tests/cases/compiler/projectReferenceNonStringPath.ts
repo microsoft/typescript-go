@@ -1,3 +1,6 @@
+// @noEmit: true
+// @noTypesAndSymbols: true
+
 // @filename: /src/tsconfig.json
 {
     "references": [{ "path": true }, { "path": "./other", "circular": "yes" }]
