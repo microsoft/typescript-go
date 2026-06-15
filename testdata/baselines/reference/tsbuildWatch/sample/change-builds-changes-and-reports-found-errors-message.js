@@ -387,6 +387,11 @@ export const m = mod;
   "size": 2050
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -699,6 +704,11 @@ export class someClass {
   "size": 2087
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/core/index.ts
@@ -999,6 +1009,11 @@ export function multiply(a, b) { return a * b; }
   "size": 2050
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/core/index.ts
@@ -1309,6 +1324,11 @@ export class someClass2 {
   "size": 2125
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/core/index.ts

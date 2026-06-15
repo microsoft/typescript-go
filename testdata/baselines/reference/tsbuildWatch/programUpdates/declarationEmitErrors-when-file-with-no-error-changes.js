@@ -163,6 +163,9 @@ export class myClass {
   "size": 1654
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/solution/app (recursive)
 app/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -294,6 +297,9 @@ export class myClass2 {
   "size": 1656
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/solution/app (recursive)
 app/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/solution/app/fileWithoutError.ts

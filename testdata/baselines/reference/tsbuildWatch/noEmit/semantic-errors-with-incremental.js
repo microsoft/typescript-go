@@ -127,6 +127,9 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -208,6 +211,9 @@ Output::
   "size": 1125
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -292,6 +298,9 @@ const a = "hello";
   "size": 1094
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -323,6 +332,9 @@ Output::
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -425,6 +437,9 @@ Output::
   "size": 1297
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -529,6 +544,9 @@ Output::
   "size": 1266
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -562,6 +580,9 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::

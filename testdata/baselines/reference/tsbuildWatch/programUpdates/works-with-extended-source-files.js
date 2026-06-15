@@ -268,6 +268,9 @@ let k = 0;
   "size": 50
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project1.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -325,6 +328,9 @@ Output::
 //// [/user/username/projects/project/project1.tsconfig.tsbuildinfo] *mTime changed*
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project1.tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -408,6 +414,9 @@ Output::
   "size": 1132
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project2.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -454,6 +463,9 @@ Output::
   "size": 49
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project2.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -491,6 +503,9 @@ Output::
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo] *rewrite with same content*
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project1.tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -527,6 +542,9 @@ Output::
 //// [/user/username/projects/project/project3.tsconfig.tsbuildinfo] *rewrite with same content*
 //// [/user/username/projects/project/project3.tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project3.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -561,6 +579,9 @@ Output::
 //// [/user/username/projects/project/project3.tsconfig.tsbuildinfo] *rewrite with same content*
 //// [/user/username/projects/project/project3.tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project
 project3.tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -586,3 +607,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project

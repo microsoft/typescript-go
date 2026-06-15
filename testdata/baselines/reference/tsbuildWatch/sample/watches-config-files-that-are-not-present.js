@@ -317,6 +317,11 @@ export const m = mod;
   "size": 2364
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -540,6 +545,11 @@ export const m = mod;
   "size": 2050
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 logic/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts

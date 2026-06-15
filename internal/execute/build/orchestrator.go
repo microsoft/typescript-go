@@ -2,7 +2,9 @@ package build
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -13,6 +15,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
@@ -66,6 +70,9 @@ type Orchestrator struct {
 
 	errorSummaryReporter tsc.DiagnosticsReporter
 	watchStatusReporter  tsc.DiagnosticReporter
+
+	// fswatch event-based watching
+	wm *watchmanager.WatchManager
 }
 
 var _ tsc.Watcher = (*Orchestrator)(nil)
@@ -223,22 +230,24 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 }
 
 func (o *Orchestrator) Watch(ctx context.Context) {
+	o.wm.Lock()
+
+	if o.opts.Testing == nil {
+		if o.opts.Sys.GetEnvironmentVariable("TS_WATCH_DEBUG") != "" {
+			o.wm.DebugLog = o.opts.Sys.Writer()
+		}
+		o.wm.EnsureDefaultBackend()
+	}
+
 	o.updateWatch()
+	desiredDirs := o.computeDesiredWatches()
+	o.wm.ReconcileWatches(desiredDirs)
 	o.resetCaches()
 
-	// Start watching for file changes
+	o.wm.Unlock()
+
 	if o.opts.Testing == nil {
-		watchInterval := o.opts.Command.WatchOptions.WatchInterval()
-		ticker := time.NewTicker(watchInterval)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				o.DoCycle()
-			}
-		}
+		o.wm.RunLoop(ctx, o.DoCycle)
 	}
 }
 
@@ -259,21 +268,224 @@ func (o *Orchestrator) resetCaches() {
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
 }
 
-func (o *Orchestrator) DoCycle() {
-	var needsConfigUpdate atomic.Bool
-	var needsUpdate atomic.Bool
-	mTimes := o.host.mTimes.Clone()
-	o.rangeTask(func(path tspath.Path, task *BuildTask) {
-		if updateKind := task.hasUpdate(o, path); updateKind != updateKindNone {
+func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch.EventKind, needsConfigUpdate, needsUpdate *atomic.Bool) {
+	normalizedPaths := make(map[tspath.Path]struct{}, len(changedPaths))
+	for eventPath := range changedPaths {
+		normalizedPaths[o.toPath(eventPath)] = struct{}{}
+	}
+
+	for i := range o.order {
+		config := o.order[i]
+		path := o.toPath(config)
+		task := o.getTask(path)
+
+		configPath := o.toPath(task.config)
+		if _, changed := normalizedPaths[configPath]; changed {
+			task.resetConfig(o, path)
+			needsConfigUpdate.Store(true)
 			needsUpdate.Store(true)
-			if updateKind == updateKindConfig {
+			continue
+		}
+
+		if task.resolved == nil {
+			continue
+		}
+
+		configChanged := false
+		for _, file := range task.resolved.ExtendedSourceFiles() {
+			fp := o.toPath(file)
+			if _, changed := normalizedPaths[fp]; changed {
+				task.resetConfig(o, path)
 				needsConfigUpdate.Store(true)
+				needsUpdate.Store(true)
+				configChanged = true
+				break
 			}
 		}
-	})
+		if configChanged {
+			continue
+		}
+
+		rootChanged := false
+		roots := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
+		for _, file := range task.resolved.FileNames() {
+			fp := o.toPath(file)
+			if _, changed := normalizedPaths[fp]; changed {
+				task.resetStatus()
+				needsUpdate.Store(true)
+				rootChanged = true
+				break
+			}
+		}
+
+		// Also check non-root dependencies (e.g. node_modules .d.ts files)
+		// stored in the buildinfo. This mirrors the CLI watcher's seenFiles
+		// approach which tracks ALL compiler dependencies for event filtering.
+		if !rootChanged {
+			task.buildInfoEntryMu.Lock()
+			bi := task.buildInfoEntry
+			task.buildInfoEntryMu.Unlock()
+			if bi != nil && bi.buildInfo != nil {
+				buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
+				for _, fileName := range bi.buildInfo.FileNames {
+					absPath := tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
+					fp := o.toPath(absPath)
+					if roots.Has(fp) {
+						continue
+					}
+					if _, changed := normalizedPaths[fp]; changed {
+						task.resetStatus()
+						needsUpdate.Store(true)
+						break
+					}
+				}
+			}
+		}
+
+		task.reportDone = make(chan struct{})
+		task.done = make(chan struct{})
+
+		newConfig := task.resolved.ReloadFileNamesOfParsedCommandLine(o.host.FS())
+		if !slices.Equal(task.resolved.FileNames(), newConfig.FileNames()) {
+			o.host.resolvedReferences.store(path, newConfig)
+			task.resolved = newConfig
+			task.resetStatus()
+			needsUpdate.Store(true)
+		}
+	}
+
+	// If no task matched, check if a directory was created under a watched
+	// path (e.g. node_modules recreated by npm ci after rm -rf). This
+	// mirrors the CLI watcher's ancestor fallback detection: treat new
+	// directories under watched paths as relevant so watches can be
+	// re-resolved and the project rebuilt.
+	if !needsUpdate.Load() {
+		opts := o.comparePathsOptions
+		for eventPath := range changedPaths {
+			if o.host.FS().DirectoryExists(eventPath) {
+				if o.wm.IsPathUnderWatch(eventPath, opts) {
+					o.rangeTask(func(path tspath.Path, task *BuildTask) {
+						task.resetStatus()
+						task.reportDone = make(chan struct{})
+						task.done = make(chan struct{})
+					})
+					needsUpdate.Store(true)
+					break
+				}
+			}
+		}
+	}
+}
+
+func (o *Orchestrator) computeDesiredWatches() map[string]bool {
+	desiredDirs := make(map[string]bool)
+
+	for i := range o.order {
+		config := o.order[i]
+		path := o.toPath(config)
+		task := o.getTask(path)
+
+		// Watch config file directory
+		configDir := tspath.GetDirectoryPath(task.config)
+		realConfigDir := o.host.FS().Realpath(configDir)
+		if _, has := desiredDirs[realConfigDir]; !has {
+			desiredDirs[realConfigDir] = false
+		}
+
+		if task.resolved == nil {
+			continue
+		}
+
+		// Extended config file directories
+		for _, cfgPath := range task.resolved.ExtendedSourceFiles() {
+			realPath := o.host.FS().Realpath(cfgPath)
+			dir := tspath.GetDirectoryPath(realPath)
+			if _, has := desiredDirs[dir]; !has {
+				desiredDirs[dir] = false
+			}
+		}
+
+		// Wildcard directories from tsconfig
+		for dir, recursive := range task.resolved.WildcardDirectories() {
+			realDir := o.host.FS().Realpath(dir)
+			if existing, has := desiredDirs[realDir]; has {
+				desiredDirs[realDir] = existing || recursive
+			} else {
+				desiredDirs[realDir] = recursive
+			}
+		}
+
+		// Input file directories not already covered
+		for _, fileName := range task.resolved.FileNames() {
+			absPath := tspath.GetNormalizedAbsolutePath(fileName, o.opts.Sys.GetCurrentDirectory())
+			dir := tspath.GetDirectoryPath(absPath)
+			if !watchmanager.IsDirCoveredByWatch(desiredDirs, dir, o.comparePathsOptions) {
+				if watchmanager.CanWatchDirectory(dir) {
+					desiredDirs[dir] = false
+				}
+			}
+		}
+
+		// Non-root dependency directories from buildinfo (e.g. node_modules .d.ts files).
+		// This mirrors the CLI watcher's seenFiles approach which watches ALL compiler
+		// dependencies, not just root files.
+		task.buildInfoEntryMu.Lock()
+		bi := task.buildInfoEntry
+		task.buildInfoEntryMu.Unlock()
+		if bi != nil && bi.buildInfo != nil {
+			buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
+			roots := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
+			for _, fileName := range bi.buildInfo.FileNames {
+				absPath := tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
+				fp := o.toPath(absPath)
+				if roots.Has(fp) {
+					continue
+				}
+				dir := tspath.GetDirectoryPath(absPath)
+				if !watchmanager.IsDirCoveredByWatch(desiredDirs, dir, o.comparePathsOptions) {
+					if watchmanager.CanWatchDirectory(dir) {
+						desiredDirs[dir] = false
+					}
+				}
+			}
+		}
+	}
+
+	return o.wm.ResolveDesiredDirs(desiredDirs)
+}
+
+func (o *Orchestrator) DoCycle() {
+	o.wm.Lock()
+	defer o.wm.Unlock()
+
+	changedPaths, overflow := o.wm.DrainEvents()
+	hasEvents := len(changedPaths) > 0 || overflow
+
+	if !hasEvents {
+		if o.wm.DebugLog != nil {
+			fmt.Fprintf(o.wm.DebugLog, "[watch] DoCycle: no events, skipping\n")
+		}
+		return
+	}
+
+	var needsConfigUpdate atomic.Bool
+	var needsUpdate atomic.Bool
+
+	if overflow {
+		// Overflow: reset all tasks to force a full rebuild, matching CLI watcher behavior.
+		o.rangeTask(func(path tspath.Path, task *BuildTask) {
+			task.resetConfig(o, path)
+			task.reportDone = make(chan struct{})
+			task.done = make(chan struct{})
+		})
+		needsConfigUpdate.Store(true)
+		needsUpdate.Store(true)
+	} else {
+		// Event-driven: check only tasks affected by changed paths
+		o.checkTasksForEventChanges(changedPaths, &needsConfigUpdate, &needsUpdate)
+	}
 
 	if !needsUpdate.Load() {
-		o.host.mTimes = mTimes
 		o.resetCaches()
 		return
 	}
@@ -286,6 +498,8 @@ func (o *Orchestrator) DoCycle() {
 
 	o.buildOrClean()
 	o.updateWatch()
+	desiredDirs := o.computeDesiredWatches()
+	o.wm.ReconcileWatches(desiredDirs)
 	o.resetCaches()
 }
 
@@ -381,6 +595,7 @@ func (o *Orchestrator) createDiagnosticReporter(task *BuildTask) tsc.DiagnosticR
 }
 
 func NewOrchestrator(opts Options) *Orchestrator {
+	wm := watchmanager.NewWatchManager(opts.Sys.Writer(), opts.Sys.FS().DirectoryExists)
 	orchestrator := &Orchestrator{
 		opts: opts,
 		comparePathsOptions: tspath.ComparePathsOptions{
@@ -388,6 +603,7 @@ func NewOrchestrator(opts Options) *Orchestrator {
 			UseCaseSensitiveFileNames: opts.Sys.FS().UseCaseSensitiveFileNames(),
 		},
 		tasks: &collections.SyncMap[tspath.Path, *BuildTask]{},
+		wm:    wm,
 	}
 	orchestrator.host = &host{
 		orchestrator: orchestrator,
@@ -402,6 +618,9 @@ func NewOrchestrator(opts Options) *Orchestrator {
 	}
 	if opts.Command.CompilerOptions.Watch.IsTrue() {
 		orchestrator.watchStatusReporter = tsc.CreateWatchStatusReporter(opts.Sys, opts.Command.Locale(), opts.Command.CompilerOptions, opts.Testing)
+		if t, ok := opts.Testing.(watchmanager.CommandLineTestingWithWatchBackend); ok {
+			wm.SetBackend(t.WatchBackend())
+		}
 	} else {
 		orchestrator.errorSummaryReporter = tsc.CreateReportErrorSummary(opts.Sys, opts.Command.Locale(), opts.Command.CompilerOptions)
 	}

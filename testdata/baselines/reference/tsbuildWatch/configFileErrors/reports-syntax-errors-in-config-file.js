@@ -129,6 +129,9 @@ export function bar() { }
   "size": 1320
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -163,6 +166,9 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -258,6 +264,9 @@ export function fooBar() { }
   "size": 1408
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/a.ts
@@ -280,6 +289,9 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -369,6 +381,9 @@ Output::
   "size": 1394
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::

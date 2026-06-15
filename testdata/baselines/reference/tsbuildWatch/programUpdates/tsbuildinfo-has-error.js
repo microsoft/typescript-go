@@ -81,6 +81,9 @@ export const x = 10;
   "size": 927
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts

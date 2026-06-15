@@ -163,6 +163,9 @@ declare const console: { log(msg: any): void; };
   "size": 1382
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -194,6 +197,9 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -315,6 +321,9 @@ export {};
   "size": 1389
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -343,6 +352,9 @@ Output::
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 
 
 Edit [3]:: semantic errors
@@ -472,6 +484,9 @@ Output::
   "size": 1575
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
@@ -501,6 +516,9 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -607,6 +625,9 @@ export {};
   "size": 1380
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
@@ -632,6 +653,9 @@ Output::
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 
 
 Edit [7]:: dts errors
@@ -736,6 +760,9 @@ export const a = class {
   "size": 1633
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
@@ -761,6 +788,9 @@ Output::
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 
 
 Edit [9]:: Fix dts errors
@@ -861,6 +891,9 @@ Output::
   "size": 1449
 }
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
@@ -886,3 +919,6 @@ Output::
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /user/username/projects/noEmitOnError (recursive)

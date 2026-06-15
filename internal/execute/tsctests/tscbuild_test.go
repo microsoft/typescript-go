@@ -4315,3 +4315,42 @@ func TestBuildProjectReferenceRedirectWithMultipleSubProjects(t *testing.T) {
 		test.run(t, "projectReferenceRedirect")
 	}
 }
+
+func TestBuildInvalidatesCacheOnDependencyChange(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "detects type change in dependency after update",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"strict": true
+					}
+				}`),
+				"/home/src/workspaces/project/index.ts": stringtestutil.Dedent(`
+					import { value } from "dep";
+					const x: string = value;
+				`),
+				"/home/src/workspaces/project/node_modules/dep/index.d.ts":   `export declare const value: string;`,
+				"/home/src/workspaces/project/node_modules/dep/package.json": `{ "name": "dep", "version": "1.0.0" }`,
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption: "dependency type changes from string to number",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/dep/index.d.ts", "export declare const value: number;")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "dependencyChange")
+	}
+}
