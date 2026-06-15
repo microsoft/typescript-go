@@ -2430,17 +2430,17 @@ func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[
 }
 
 func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *sourceFileDataCell[T] {
-	file.sourceFileDataMu.Lock()
-	defer file.sourceFileDataMu.Unlock()
+	file.dataMu.Lock()
+	defer file.dataMu.Unlock()
 
-	if file.sourceFileData == nil {
-		file.sourceFileData = make(map[sourceFileDataKey]any)
+	if file.data == nil {
+		file.data = make(map[sourceFileDataKey]any)
 	}
-	if cell, ok := file.sourceFileData[key.key]; ok {
+	if cell, ok := file.data[key.key]; ok {
 		return cell.(*sourceFileDataCell[T])
 	}
 	cell := &sourceFileDataCell[T]{}
-	file.sourceFileData[key.key] = cell
+	file.data[key.key] = cell
 	return cell
 }
 
@@ -2473,8 +2473,8 @@ type SourceFile struct {
 	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
 
 	// Fields for lazily-computed data owned by packages outside ast.
-	sourceFileDataMu sync.Mutex
-	sourceFileData   map[sourceFileDataKey]any
+	dataMu sync.Mutex
+	data   map[sourceFileDataKey]any
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
