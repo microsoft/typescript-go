@@ -498,11 +498,7 @@ func (b *BuildInfo) fileName(fileId BuildInfoFileId) string {
 }
 
 func (b *BuildInfo) fileInfo(fileId BuildInfoFileId) *BuildInfoFileInfo {
-	idx := int(fileId - 1)
-	if idx < 0 || idx >= len(b.FileInfos) {
-		return nil
-	}
-	return b.FileInfos[idx]
+	return b.FileInfos[fileId-1]
 }
 
 func (b *BuildInfo) GetCompilerOptions(buildInfoDirectory string) *core.CompilerOptions {
