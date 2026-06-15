@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"maps"
 	"strconv"
 	"strings"
 	"sync"
@@ -685,9 +686,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		prevSD.nodeTablesByPathMu.RUnlock()
 
 		sd.nodeTablesByPathMu.Lock()
-		for path, table := range toCarry {
-			sd.nodeTablesByPath[path] = table
-		}
+		maps.Copy(sd.nodeTablesByPath, toCarry)
 		sd.nodeTablesByPathMu.Unlock()
 	}
 
