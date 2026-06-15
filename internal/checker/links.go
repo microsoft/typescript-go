@@ -5,27 +5,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-// symbolLinkStore is a links store keyed by symbol id rather than by symbol pointer.
-// Indexing by id avoids map overhead in the hottest link stores.
-type symbolLinkStore[V any] struct {
-	store core.IdLinkStore[V]
-}
-
-func (s *symbolLinkStore[V]) Get(symbol *ast.Symbol) *V {
-	return s.store.Get(uint64(ast.GetSymbolId(symbol)))
-}
-
-func (s *symbolLinkStore[V]) Has(symbol *ast.Symbol) bool {
-	return s.store.Has(uint64(ast.GetSymbolId(symbol)))
-}
-
-func (s *symbolLinkStore[V]) TryGet(symbol *ast.Symbol) *V {
-	return s.store.TryGet(uint64(ast.GetSymbolId(symbol)))
-}
-
-// nodeLinkStore is a links store keyed by node id rather than by node pointer.
+// nodeLinkStore is a links store keyed by node references. Values are stored directly
+// in the pages of the store which is suitable for values where sizeof(V) is small.
 type nodeLinkStore[V any] struct {
-	store core.IdLinkStore[V]
+	store core.PagedLinkStore[V]
+}
+
+func (s *nodeLinkStore[V]) Initialize() {
+	s.store.Initialize(ast.GetNextNodeId() < 1_000_000 /*useArrayPageTable*/)
 }
 
 func (s *nodeLinkStore[V]) Get(node *ast.Node) *V {
@@ -38,4 +25,34 @@ func (s *nodeLinkStore[V]) Has(node *ast.Node) bool {
 
 func (s *nodeLinkStore[V]) TryGet(node *ast.Node) *V {
 	return s.store.TryGet(uint64(ast.GetNodeId(node)))
+}
+
+// symbolArenaLinkStore is a links store keyed by symbol references. Values are stored
+// indirectly in an arena which is suitable for values where sizeof(V) is larger.
+type symbolArenaLinkStore[V any] struct {
+	store core.PagedLinkStore[*V]
+	arena core.Arena[V]
+}
+
+func (s *symbolArenaLinkStore[V]) Initialize() {
+	s.store.Initialize(ast.GetNextSymbolId() < 1_000_000 /*useArrayPageTable*/)
+}
+
+func (s *symbolArenaLinkStore[V]) Get(symbol *ast.Symbol) *V {
+	link := s.store.Get(uint64(ast.GetSymbolId(symbol)))
+	if *link == nil {
+		*link = s.arena.New()
+	}
+	return *link
+}
+
+func (s *symbolArenaLinkStore[V]) Has(symbol *ast.Symbol) bool {
+	return s.TryGet(symbol) != nil
+}
+
+func (s *symbolArenaLinkStore[V]) TryGet(symbol *ast.Symbol) *V {
+	if link := s.store.TryGet(uint64(ast.GetSymbolId(symbol))); link != nil {
+		return *link
+	}
+	return nil
 }

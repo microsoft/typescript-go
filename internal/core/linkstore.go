@@ -1,5 +1,7 @@
 package core
 
+import "slices"
+
 // Links store
 
 type LinkStore[K comparable, V any] struct {
@@ -29,58 +31,73 @@ func (s *LinkStore[K, V]) TryGet(key K) *V {
 	return s.entries[key]
 }
 
-// Id-indexed links store
-
 const (
-	idLinkPageShift = 8
-	idLinkPageSize  = 1 << idLinkPageShift
-	idLinkPageMask  = idLinkPageSize - 1
+	pageShift = 8
+	pageSize  = 1 << pageShift
+	pageMask  = pageSize - 1
 )
 
-// IdLinkStore is a links store keyed by a dense uint64 id. It uses a paged array indexed by id
-// instead of a map, which is significantly cheaper for the hottest stores.
-type IdLinkStore[V any] struct {
-	pages [][]*V // pages[id>>idLinkPageShift][id&idLinkPageMask]
-	arena Arena[V]
+// Implements a sparse-array-like structure for storing elements keyed by dense uint64 keys. Elements are
+// stored in fixed-size pages of 256 entries and an index of pages is maintained in either an array or a map.
+type PagedLinkStore[V any] struct {
+	pageMap  map[int]*[pageSize]V // Page table as a map
+	pageList []*[pageSize]V       // Page table as an array
 }
 
-func (s *IdLinkStore[V]) Get(id uint64) *V {
-	page := id >> idLinkPageShift
-	if page < uint64(len(s.pages)) {
-		if p := s.pages[page]; p != nil {
-			if value := p[id&idLinkPageMask]; value != nil {
-				return value
+// Initialize the link store. If useArrayPageTable is true, the store will use an array for the page table.
+// Otherwise, the store defaults to using a map for the page table. An array-based page table is very fast,
+// but requires key values to range densely from 0 to the maximum possible value. A map-based page table
+// places no restrictions on the key values.
+func (s *PagedLinkStore[V]) Initialize(useArrayPageTable bool) {
+	s.pageMap = nil
+	s.pageList = nil
+	if useArrayPageTable {
+		s.pageList = []*[pageSize]V{}
+	}
+}
+
+func (s *PagedLinkStore[V]) Get(key uint64) *V {
+	var page *[pageSize]V
+	pageIndex := int(key >> pageShift)
+	if s.pageList != nil {
+		if pageIndex >= len(s.pageList) {
+			// Grow the length of the list to pageIndex+1
+			s.pageList = slices.Grow(s.pageList, pageIndex-len(s.pageList)+1)[:pageIndex+1]
+		}
+		page = s.pageList[pageIndex]
+		if page == nil {
+			page = new([pageSize]V)
+			s.pageList[pageIndex] = page
+		}
+	} else {
+		page = s.pageMap[pageIndex]
+		if page == nil {
+			page = new([pageSize]V)
+			if s.pageMap == nil {
+				s.pageMap = make(map[int]*[pageSize]V)
 			}
+			s.pageMap[pageIndex] = page
 		}
 	}
-	return s.getSlow(id)
+	return &page[key&pageMask]
 }
 
-func (s *IdLinkStore[V]) getSlow(id uint64) *V {
-	page := id >> idLinkPageShift
-	if page >= uint64(len(s.pages)) {
-		s.pages = append(s.pages, make([][]*V, int(page)+1-len(s.pages))...)
-	}
-	if s.pages[page] == nil {
-		s.pages[page] = make([]*V, idLinkPageSize)
-	}
-	slot := &s.pages[page][id&idLinkPageMask]
-	if *slot == nil {
-		*slot = s.arena.New()
-	}
-	return *slot
+func (s *PagedLinkStore[V]) Has(key uint64) bool {
+	return s.TryGet(key) != nil
 }
 
-func (s *IdLinkStore[V]) Has(id uint64) bool {
-	return s.TryGet(id) != nil
-}
-
-func (s *IdLinkStore[V]) TryGet(id uint64) *V {
-	page := id >> idLinkPageShift
-	if page < uint64(len(s.pages)) {
-		if p := s.pages[page]; p != nil {
-			return p[id&idLinkPageMask]
+func (s *PagedLinkStore[V]) TryGet(key uint64) *V {
+	var page *[pageSize]V
+	pageIndex := int(key >> pageShift)
+	if s.pageList != nil {
+		if pageIndex < len(s.pageList) {
+			page = s.pageList[pageIndex]
 		}
+	} else {
+		page = s.pageMap[pageIndex]
+	}
+	if page != nil {
+		return &page[key&pageMask]
 	}
 	return nil
 }
