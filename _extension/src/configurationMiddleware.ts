@@ -56,7 +56,7 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
         }
     }
 
-    if (merged.customConfigFileName === undefined) {
+    if (configs[0].explicit?.customConfigFileName === undefined) {
         const legacyCustomConfigFileName = legacyNativePreviewConfig.explicit?.customConfigFileName;
         if (legacyCustomConfigFileName !== undefined) {
             merged.customConfigFileName = legacyCustomConfigFileName;
