@@ -12,3 +12,17 @@ export class C {
     }
     foo() {}
 }
+
+export class D {
+    constructor() {
+        this.bar = 1;
+    }
+    static bar() {}
+}
+
+export class E {
+    static init() {
+        this.baz = 1;
+    }
+    baz() {}
+}

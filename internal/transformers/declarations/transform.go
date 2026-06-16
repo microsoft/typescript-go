@@ -63,8 +63,7 @@ type DeclarationTransformer struct {
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
 	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
 	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
-	seenProperties                   collections.Set[*ast.Node]
-	seenPropertyNames                collections.Set[string]
+	seenProperties                   collections.Set[thisPropertyAssignmentKey]
 	thisPropertyAssignmentsCollected []*ast.Node
 	rawReferencedFiles               []ReferencedFilePair
 	rawTypeReferenceDirectives       []*ast.FileReference
@@ -1977,14 +1976,11 @@ caseBlock:
 			}
 		}
 		nameText := ast.GetTextOfPropertyName(name)
-		nameKey := thisPropertyNameKey(nameText, isStatic)
-		if base == nil || tx.seenProperties.Has(base) || nameKey != "" && tx.seenPropertyNames.Has(nameKey) {
+		key := getThisPropertyAssignmentKey(name, base, isStatic)
+		if base == nil || tx.seenProperties.Has(key) {
 			break
 		}
-		tx.seenProperties.Add(base)
-		if nameKey != "" {
-			tx.seenPropertyNames.Add(nameKey)
-		}
+		tx.seenProperties.Add(key)
 
 		// problem: this prop might be overriding a prop from a base type. The checker has special bails for override compat comparisons for binary expression properties,
 		// but what we transform to won't - so we either need to match the base type (for example, if it's a getter/setter) or emit nothing
@@ -2051,35 +2047,34 @@ func isClassExtendingNull(node *ast.Node) bool {
 	return false
 }
 
-func thisPropertyNameKey(name string, isStatic bool) string {
-	if name == "" {
-		return ""
+type thisPropertyAssignmentKey struct {
+	name     string
+	node     *ast.Node
+	isStatic bool
+}
+
+func getThisPropertyAssignmentKey(name *ast.Node, node *ast.Node, isStatic bool) thisPropertyAssignmentKey {
+	if name != nil && !ast.IsPrivateIdentifier(name) && !ast.IsDynamicName(name) {
+		if nameText, ok := ast.TryGetTextOfPropertyName(name); ok {
+			return thisPropertyAssignmentKey{name: nameText, isStatic: isStatic}
+		}
 	}
-	if isStatic {
-		return "static:" + name
-	}
-	return "instance:" + name
+	return thisPropertyAssignmentKey{node: node, isStatic: isStatic}
 }
 
 // collectThisPropertyAssignments finds `this.x = expr` assignments in constructors, methods, and static blocks
 // of JS classes and synthesizes PropertyDeclaration nodes for each unique property name.
 func (tx *DeclarationTransformer) collectThisPropertyAssignments(classNode *ast.Node) []*ast.Node {
 	members := classNode.ClassLikeData().Members
-	seen := collections.Set[*ast.Node]{}
-	seenNames := collections.Set[string]{}
+	seen := collections.Set[thisPropertyAssignmentKey]{}
 	// Pre-populate seen with existing direct member nodes to avoid duplicates
 	for _, member := range members.Nodes {
 		if member.Name() != nil {
-			seen.Add(member)
-			if nameKey := thisPropertyNameKey(ast.GetTextOfPropertyName(member.Name()), ast.IsStatic(member)); nameKey != "" {
-				seenNames.Add(nameKey)
-			}
+			seen.Add(getThisPropertyAssignmentKey(member.Name(), member, ast.IsStatic(member)))
 		}
 	}
 	tx.seenProperties = seen
 	defer tx.seenProperties.Clear()
-	tx.seenPropertyNames = seenNames
-	defer tx.seenPropertyNames.Clear()
 	tx.thisPropertyAssignmentsCollected = []*ast.Node{}
 	defer func() {
 		tx.thisPropertyAssignmentsCollected = nil

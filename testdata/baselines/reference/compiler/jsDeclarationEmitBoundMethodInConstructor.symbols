@@ -20,3 +20,31 @@ export class C {
 >foo : Symbol(C.foo, Decl(main.js, 3, 5))
 }
 
+export class D {
+>D : Symbol(D, Decl(main.js, 5, 1))
+
+    constructor() {
+        this.bar = 1;
+>this.bar : Symbol(D.bar, Decl(main.js, 8, 19))
+>this : Symbol(D, Decl(main.js, 5, 1))
+>bar : Symbol(D.bar, Decl(main.js, 8, 19))
+    }
+    static bar() {}
+>bar : Symbol(D.bar, Decl(main.js, 10, 5))
+}
+
+export class E {
+>E : Symbol(E, Decl(main.js, 12, 1))
+
+    static init() {
+>init : Symbol(E.init, Decl(main.js, 14, 16))
+
+        this.baz = 1;
+>this.baz : Symbol(E.baz, Decl(main.js, 15, 19))
+>this : Symbol(E, Decl(main.js, 12, 1))
+>baz : Symbol(E.baz, Decl(main.js, 15, 19))
+    }
+    baz() {}
+>baz : Symbol(E.baz, Decl(main.js, 17, 5))
+}
+

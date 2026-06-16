@@ -8,6 +8,20 @@ export class C {
     foo() {}
 }
 
+export class D {
+    constructor() {
+        this.bar = 1;
+    }
+    static bar() {}
+}
+
+export class E {
+    static init() {
+        this.baz = 1;
+    }
+    baz() {}
+}
+
 
 
 
@@ -15,4 +29,14 @@ export class C {
 export declare class C {
     constructor();
     foo(): void;
+}
+export declare class D {
+    bar: number;
+    constructor();
+    static bar(): void;
+}
+export declare class E {
+    static baz: number | undefined;
+    static init(): void;
+    baz(): void;
 }
