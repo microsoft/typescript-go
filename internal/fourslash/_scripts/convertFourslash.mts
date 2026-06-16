@@ -2710,8 +2710,8 @@ function parseOrganizeImportsArgs(args: readonly ts.Expression[]): [VerifyOrgani
                         case "natural":
                             prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsSortNatural`);
                             break;
-                        case "naturalCaseSensitive":
-                            prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsSortNaturalCaseSensitive`);
+                        case "naturalIgnoreCase":
+                            prefsFields.push(`${goFieldName}: lsutil.OrganizeImportsSortNaturalIgnoreCase`);
                             break;
                         default:
                             throw new Error(`Unsupported value for organizeImportsSort: ${propValue.text}`);

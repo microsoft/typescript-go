@@ -44,7 +44,7 @@ console.log(a1, a2, a100);`,
 console.log(a1, a2, a100);`,
 		lsproto.CodeActionKindSourceOrganizeImports,
 		&lsutil.UserPreferences{
-			OrganizeImportsSort: lsutil.OrganizeImportsSortNatural,
+			OrganizeImportsSort: lsutil.OrganizeImportsSortNaturalIgnoreCase,
 		},
 	)
 }

@@ -55,9 +55,9 @@ func ResolveOrganizeImportsSort(preferences UserPreferences) OrganizeImportsSort
 
 	if preferences.OrganizeImportsCollation == OrganizeImportsCollationUnicode {
 		if preferences.OrganizeImportsIgnoreCase.IsTrue() {
-			return OrganizeImportsSortNatural
+			return OrganizeImportsSortNaturalIgnoreCase
 		}
-		return OrganizeImportsSortNaturalCaseSensitive
+		return OrganizeImportsSortNatural
 	}
 
 	switch preferences.OrganizeImportsIgnoreCase {
@@ -190,9 +190,9 @@ func getOrganizeImportsStringComparer(sort OrganizeImportsSort) func(a, b string
 	case OrganizeImportsSortOrdinalIgnoreCase:
 		return getOrganizeImportsOrdinalStringComparer(true)
 	case OrganizeImportsSortNatural:
-		return getOrganizeImportsNaturalStringComparer(false)
-	case OrganizeImportsSortNaturalCaseSensitive:
 		return getOrganizeImportsNaturalStringComparer(true)
+	case OrganizeImportsSortNaturalIgnoreCase:
+		return getOrganizeImportsNaturalStringComparer(false)
 	default:
 		return getOrganizeImportsOrdinalStringComparer(false)
 	}

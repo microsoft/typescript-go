@@ -84,20 +84,20 @@ func TestResolveOrganizeImportsSort(t *testing.T) {
 			want: OrganizeImportsSortOrdinal,
 		},
 		{
-			name: "unicode case-sensitive maps to natural case sensitive",
+			name: "unicode case-sensitive maps to natural",
 			preferences: UserPreferences{
 				OrganizeImportsCollation:  OrganizeImportsCollationUnicode,
 				OrganizeImportsIgnoreCase: core.TSFalse,
 			},
-			want: OrganizeImportsSortNaturalCaseSensitive,
+			want: OrganizeImportsSortNatural,
 		},
 		{
-			name: "unicode ignore case maps to natural",
+			name: "unicode ignore case maps to natural ignore case",
 			preferences: UserPreferences{
 				OrganizeImportsCollation:  OrganizeImportsCollationUnicode,
 				OrganizeImportsIgnoreCase: core.TSTrue,
 			},
-			want: OrganizeImportsSortNatural,
+			want: OrganizeImportsSortNaturalIgnoreCase,
 		},
 		{
 			name: "ordinal ignore case maps to ordinal ignore case",
@@ -132,7 +132,7 @@ func TestResolveOrganizeImportsSort(t *testing.T) {
 func TestCompareOrganizeImportsNaturalStrings(t *testing.T) {
 	t.Parallel()
 
-	comparer := getOrganizeImportsStringComparer(OrganizeImportsSortNatural)
+	comparer := getOrganizeImportsStringComparer(OrganizeImportsSortNaturalIgnoreCase)
 	tests := []struct {
 		name string
 		a    string
