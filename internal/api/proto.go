@@ -710,7 +710,7 @@ type GetSymbolPropertyParams struct {
 	Symbol   SymbolID   `json:"objectId"`
 }
 
-// GetSignaturePropertyParams is used for all symbol sub-property endpoints.
+// GetSignaturePropertyParams is used for all signature sub-property endpoints.
 type GetSignaturePropertyParams struct {
 	Snapshot  SnapshotID  `json:"snapshot"`
 	Signature SignatureID `json:"objectId"`

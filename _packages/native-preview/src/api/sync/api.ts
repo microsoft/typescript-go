@@ -340,7 +340,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
             snapshot: this.snapshotId,
             objectId: source.id,
         });
-        if (!data) throw new Error(`${method} returned null type for ${typeof source} ${source.id}`);
+        if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
         return this.getOrCreateType(data) as unknown as T;
     }
 
@@ -353,7 +353,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
             snapshot: this.snapshotId,
             objectId: source.id,
         });
-        if (!data) throw new Error(`${method} returned null symbol for ${typeof source} ${source.id}`);
+        if (!data) throw new Error(`${method} returned null symbol for ${source.constructor.name} ${source.id}`);
         return this.getOrCreateSymbol(data);
     }
 
@@ -366,11 +366,11 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
             snapshot: this.snapshotId,
             objectId: source.id,
         });
-        if (!data) throw new Error(`${method} returned null signature for ${typeof source} ${source.id}`);
+        if (!data) throw new Error(`${method} returned null signature for ${source.constructor.name} ${source.id}`);
         return this.getOrCreateSignature(data);
     }
 
-    fetchTypes(source: Symbol | Signature | Type, method: string, handles?: readonly number[] | undefined): readonly Type[] {
+    fetchTypes(source: Symbol | Signature | Type, method: string, handles?: readonly number[]): readonly Type[] {
         if (handles) {
             const result = new Array<Type>(handles.length);
             let allCached = true;
@@ -388,11 +388,11 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
             snapshot: this.snapshotId,
             objectId: source.id,
         });
-        if (typesData == null) throw new Error(`${method} returned null types array for ${typeof source} ${source.id}`);
-        return typesData.map(data => this.getOrCreateType(data));
+        if (typesData == null) return [];
+        else return typesData.map(data => this.getOrCreateType(data));
     }
 
-    fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[] | undefined): readonly Symbol[] {
+    fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[]): readonly Symbol[] {
         if (handles) {
             const result = new Array<Symbol>(handles.length);
             let allCached = true;
@@ -410,8 +410,8 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
             snapshot: this.snapshotId,
             objectId: source.id,
         });
-        if (symbolData == null) throw new Error(`${method} returned null symbols array for ${typeof source} ${source.id}`);
-        return symbolData.map(data => this.getOrCreateSymbol(data));
+        if (symbolData == null) return [];
+        else return symbolData.map(data => this.getOrCreateSymbol(data));
     }
 }
 
