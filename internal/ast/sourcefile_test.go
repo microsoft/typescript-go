@@ -55,6 +55,7 @@ b`,
 	}
 
 	for _, rec := range data {
+		rec := rec // Shadowing prevents all parallel subtests from observing the final loop value
 		t.Run("SourceFile "+rec.title, func(t *testing.T) {
 			t.Parallel()
 
