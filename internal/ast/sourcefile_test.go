@@ -59,7 +59,7 @@ b`,
 		t.Run("SourceFile "+rec.title, func(t *testing.T) {
 			t.Parallel()
 
-			sourceFile := parsetestutil.ParseTypeScript(rec.input, false)
+			sourceFile := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			lineAndCharacter := sourceFile.GetLineAndCharacterOfPosition(rec.position)
 			assert.Equal(t, lineAndCharacter.Line, rec.expectedLine)
 			assert.Equal(t, lineAndCharacter.Character, rec.expectedCharacter)
