@@ -3,12 +3,14 @@ package ast
 import (
 	"fmt"
 	"iter"
+	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
@@ -2494,6 +2496,36 @@ type SourceFile struct {
 
 	positionMapOnce sync.Once
 	positionMap     *PositionMap
+}
+
+func (node *SourceFile) GetLineStarts() []core.TextPos {
+	return node.ECMALineMap()
+}
+
+type LineAndCharacter struct {
+	Line      int
+	Character int
+}
+
+func (node *SourceFile) GetLineAndCharacterOfPosition(position core.TextPos) LineAndCharacter {
+	return ComputeLineAndCharacterOfPosition(node.GetLineStarts(), position)
+}
+
+func ComputeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.TextPos) LineAndCharacter {
+	lineNumber := ComputeLineOfPosition(lineStarts, position)
+	return LineAndCharacter{
+		Line:      lineNumber,
+		Character: int(position - lineStarts[lineNumber]),
+	}
+}
+
+func ComputeLineOfPosition(lineStarts []core.TextPos, position core.TextPos) int {
+	isLineAfterPosition := func(i int) bool {
+		return lineStarts[i] > position
+	}
+ 	nextLineNumber := sort.Search(len(lineStarts), isLineAfterPosition)
+	debug.Assert(nextLineNumber != 0, "position cannot precede the beginning of the file")
+	return nextLineNumber - 1
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
