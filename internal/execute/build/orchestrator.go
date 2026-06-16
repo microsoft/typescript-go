@@ -85,6 +85,13 @@ func (o *Orchestrator) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, o.comparePathsOptions.CurrentDirectory, o.comparePathsOptions.UseCaseSensitiveFileNames)
 }
 
+func (o *Orchestrator) resolveBuildInfoFileName(fileName string, buildInfoDir string) string {
+	if !strings.HasPrefix(fileName, ".") {
+		return tspath.CombinePaths(o.host.DefaultLibraryPath(), fileName)
+	}
+	return tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
+}
+
 func (o *Orchestrator) Order() []string {
 	return o.order
 }
@@ -331,12 +338,7 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 			if bi != nil && bi.buildInfo != nil {
 				buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
 				for _, fileName := range bi.buildInfo.FileNames {
-					var fp tspath.Path
-					if !strings.HasPrefix(fileName, ".") {
-						fp = o.toPath(tspath.CombinePaths(o.host.DefaultLibraryPath(), fileName))
-					} else {
-						fp = o.toPath(tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir))
-					}
+					fp := o.toPath(o.resolveBuildInfoFileName(fileName, buildInfoDir))
 					if roots.Has(fp) {
 						continue
 					}
@@ -449,12 +451,7 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 			buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
 			roots := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
 			for _, fileName := range bi.buildInfo.FileNames {
-				var absPath string
-				if !strings.HasPrefix(fileName, ".") {
-					absPath = tspath.CombinePaths(o.host.DefaultLibraryPath(), fileName)
-				} else {
-					absPath = tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
-				}
+				absPath := o.resolveBuildInfoFileName(fileName, buildInfoDir)
 				fp := o.toPath(absPath)
 				if roots.Has(fp) {
 					continue
