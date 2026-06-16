@@ -35,10 +35,15 @@ var _ CheckerPool = (*checkerPool)(nil)
 
 // Process small contiguous blocks of files on the same checker before rotating
 // to the next checker. Adjacent files tend to share generic instantiations and
-// symbol/type links; assigning blocks to the least-loaded checker by text size
-// preserves that locality while keeping checker work balanced.
+// symbol/type links; assigning blocks to the least-loaded checker by estimated
+// file weight preserves that locality while keeping checker work balanced.
 const maxCheckerAssociationBlockSize = 32
 
+// getCheckerAssociationBlockSize chooses how many adjacent files to keep together
+// in the initial assignment pass. Very small projects use block size 1 so an
+// explicit --checkers value can still spread work across checkers; larger projects
+// use bigger blocks for locality, capped to avoid one checker receiving too large
+// a contiguous slice before the load balancer can rotate to another checker.
 func getCheckerAssociationBlockSize(fileCount int, checkerCount int) int {
 	const targetBlocksPerChecker = 4
 	if checkerCount <= 1 {
@@ -47,6 +52,13 @@ func getCheckerAssociationBlockSize(fileCount int, checkerCount int) int {
 	return min(max(fileCount/(checkerCount*targetBlocksPerChecker), 1), maxCheckerAssociationBlockSize)
 }
 
+// getCheckerAssociationsForFileWeights builds the initial mapping from file index
+// to checker index. It walks files in program order, assigns one contiguous block
+// at a time to the currently least-loaded checker, then charges that checker for
+// the block's total file weight. This is a greedy balance between preserving
+// program-order locality within each block and distributing estimated checker work.
+// It is a list-scheduling-style assignment for identical machines, applied to
+// blocks of files rather than individual jobs; see https://en.wikipedia.org/wiki/List_scheduling.
 func getCheckerAssociationsForFileWeights(fileWeights []int, checkerCount int) []int {
 	if len(fileWeights) == 0 {
 		return nil
@@ -55,6 +67,8 @@ func getCheckerAssociationsForFileWeights(fileWeights []int, checkerCount int) [
 	associations := make([]int, len(fileWeights))
 	checkerWeights := make([]int, checkerCount)
 	for blockStart := 0; blockStart < len(fileWeights); blockStart += blockSize {
+		// Pick a checker before each block so a large earlier block makes the
+		// following blocks prefer other, lighter checkers.
 		checkerIndex := 0
 		for i, weight := range checkerWeights[1:] {
 			if weight < checkerWeights[checkerIndex] {
@@ -62,6 +76,8 @@ func getCheckerAssociationsForFileWeights(fileWeights []int, checkerCount int) [
 			}
 		}
 		blockEnd := min(blockStart+blockSize, len(fileWeights))
+		// Keep the whole block on the selected checker to retain locality among
+		// nearby files, while adding each file's weight to future load decisions.
 		for i := blockStart; i < blockEnd; i++ {
 			associations[i] = checkerIndex
 			checkerWeights[checkerIndex] += fileWeights[i]
@@ -70,6 +86,17 @@ func getCheckerAssociationsForFileWeights(fileWeights []int, checkerCount int) [
 	return associations
 }
 
+// refineCheckerAssociationsByGraph nudges the initial file-index-to-checker-index
+// mapping toward the import graph. For each file, it counts which checkers own the
+// file's import neighbors and moves the file to the checker with the largest net
+// neighbor gain, as long as the move stays within a small load-balance cap. This
+// favors sharing cached checker state among related files without letting dense
+// import clusters undo the weight balancing from the initial pass.
+// This is a deliberately small one-vertex local-search refinement, similar in
+// spirit to balanced graph-partitioning heuristics like Kernighan-Lin and
+// Fiduccia-Mattheyses, but without their heavier gain queues or swap sequences;
+// see https://en.wikipedia.org/wiki/Kernighan%E2%80%93Lin_algorithm and
+// https://en.wikipedia.org/wiki/Fiduccia%E2%80%93Mattheyses_algorithm.
 func refineCheckerAssociationsByGraph(associations []int, fileWeights []int, adjacentFiles [][]int, checkerCount int) {
 	if len(associations) == 0 || checkerCount <= 1 {
 		return
@@ -77,6 +104,8 @@ func refineCheckerAssociationsByGraph(associations []int, fileWeights []int, adj
 	checkerWeights := make([]int, checkerCount)
 	totalWeight := 0
 	maxFileWeight := 0
+	// Reconstruct checker loads from the current mapping, and remember the
+	// largest single file because any legal cap must be able to fit it.
 	for i, checkerIndex := range associations {
 		checkerWeights[checkerIndex] += fileWeights[i]
 		totalWeight += fileWeights[i]
@@ -85,9 +114,14 @@ func refineCheckerAssociationsByGraph(associations []int, fileWeights []int, adj
 	averageCheckerWeight := (totalWeight + checkerCount - 1) / checkerCount
 	maxCheckerWeight := max(maxFileWeight, averageCheckerWeight+averageCheckerWeight/50)
 	neighborCounts := make([]int, checkerCount)
+	// Make a bounded number of greedy passes. Later moves can create better
+	// placements for files already visited, but this should remain a cheap,
+	// predictable refinement rather than an expensive graph partitioner.
 	for range 2 {
 		moved := false
 		for fileIndex, currentChecker := range associations {
+			// Count how many import neighbors of this file are currently assigned
+			// to each checker.
 			clear(neighborCounts)
 			for _, adjacentFile := range adjacentFiles[fileIndex] {
 				neighborCounts[associations[adjacentFile]]++
@@ -99,6 +133,9 @@ func refineCheckerAssociationsByGraph(associations []int, fileWeights []int, adj
 					continue
 				}
 				gain := neighborCounts[candidate] - neighborCounts[currentChecker]
+				// Prefer a checker that gains more colocated import neighbors. If
+				// the gain is tied, prefer the lighter checker so equal-quality
+				// graph moves still improve balance.
 				if gain > bestGain || gain == bestGain && gain > 0 && checkerWeights[candidate] < checkerWeights[bestChecker] {
 					bestChecker = candidate
 					bestGain = gain
@@ -195,10 +232,16 @@ func (p *checkerPool) createCheckers() {
 
 		wg.RunAndWait()
 
+		// Approximate per-file checker work. Text length captures input size,
+		// while node and file-local symbol counts approximate binder and checker
+		// graph size.
 		fileWeights := make([]int, len(p.program.files))
 		for i, file := range p.program.files {
 			fileWeights[i] = len(file.Text()) + 3*file.NodeCount + 90*file.SymbolCount
 		}
+		// The association algorithm uses p.program.files indices throughout:
+		// start with a weight-balanced locality pass, then refine that mapping
+		// using import adjacency.
 		associations := getCheckerAssociationsForFileWeights(fileWeights, checkerCount)
 		adjacentFiles := p.getImportAdjacency()
 		refineCheckerAssociationsByGraph(associations, fileWeights, adjacentFiles, checkerCount)
@@ -209,6 +252,9 @@ func (p *checkerPool) createCheckers() {
 	})
 }
 
+// getImportAdjacency returns an undirected import graph represented by file
+// index. A directed import from A to B makes both files adjacent because either
+// file can benefit from sharing checker caches with the other.
 func (p *checkerPool) getImportAdjacency() [][]int {
 	fileIndices := make(map[*ast.SourceFile]int, len(p.program.files))
 	for i, file := range p.program.files {
