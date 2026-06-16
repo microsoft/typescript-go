@@ -2563,6 +2563,7 @@ func (node *SourceFile) GetLineAndCharacterOfPosition(position core.TextPos) Lin
 }
 
 func ComputeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.TextPos) LineAndCharacter {
+	debug.Assert(len(lineStarts) != 0, "precondition failed: lineStarts cannot be empty")
 	lineNumber := ComputeLineOfPosition(lineStarts, position)
 	return LineAndCharacter{
 		Line:      lineNumber,
@@ -2571,6 +2572,7 @@ func ComputeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.
 }
 
 func ComputeLineOfPosition(lineStarts []core.TextPos, position core.TextPos) int {
+	debug.Assert(len(lineStarts) != 0, "precondition failed: lineStarts cannot be empty")
 	isLineAfterPosition := func(i int) bool {
 		return lineStarts[i] > position
 	}
