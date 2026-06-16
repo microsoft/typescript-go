@@ -132,7 +132,7 @@ func TestResolveOrganizeImportsSort(t *testing.T) {
 func TestCompareOrganizeImportsNaturalStrings(t *testing.T) {
 	t.Parallel()
 
-	comparer := getOrganizeImportsStringComparer(OrganizeImportsSortNaturalIgnoreCase)
+	comparer := getOrganizeImportsPresetStringComparer(OrganizeImportsSortNaturalIgnoreCase)
 	tests := []struct {
 		name string
 		a    string
