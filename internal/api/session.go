@@ -84,6 +84,17 @@ func (sd *snapshotData) nodeHandleFrom(node *ast.Node) NodeHandle {
 
 // getOrCreateProjectRegistry returns the registry for the given project, creating it if needed.
 func (sd *snapshotData) getOrCreateProjectRegistry(projectID ProjectID) *projectRegistryData {
+	if projectID == "" {
+		panic("getOrCreateProjectRegistry: empty project ID")
+	}
+	// Fast path: registry already exists — read lock only.
+	sd.projectRegistriesMu.RLock()
+	reg := sd.projectRegistries[projectID]
+	sd.projectRegistriesMu.RUnlock()
+	if reg != nil {
+		return reg
+	}
+	// Slow path: create under write lock.
 	sd.projectRegistriesMu.Lock()
 	defer sd.projectRegistriesMu.Unlock()
 	if sd.projectRegistries[projectID] == nil {
@@ -183,6 +194,9 @@ func (sd *snapshotData) resolveSymbolHandle(projectID ProjectID, handle SymbolID
 	if handle == 0 {
 		return nil, fmt.Errorf("%w: empty symbol handle", ErrClientError)
 	}
+	if projectID == "" {
+		return nil, fmt.Errorf("%w: empty project ID for symbol handle %d", ErrClientError, handle)
+	}
 
 	sd.projectRegistriesMu.RLock()
 	reg := sd.projectRegistries[projectID]
@@ -208,6 +222,9 @@ func (sd *snapshotData) resolveTypeHandle(projectID ProjectID, handle TypeID) (*
 	if handle == 0 {
 		return nil, fmt.Errorf("%w: empty type handle", ErrClientError)
 	}
+	if projectID == "" {
+		return nil, fmt.Errorf("%w: empty project ID for type handle %d", ErrClientError, handle)
+	}
 
 	sd.projectRegistriesMu.RLock()
 	reg := sd.projectRegistries[projectID]
@@ -232,6 +249,9 @@ func (sd *snapshotData) resolveTypeHandle(projectID ProjectID, handle TypeID) (*
 func (sd *snapshotData) resolveSignatureHandle(projectID ProjectID, handle SignatureID) (*checker.Signature, error) {
 	if handle == 0 {
 		return nil, fmt.Errorf("%w: empty signature handle", ErrClientError)
+	}
+	if projectID == "" {
+		return nil, fmt.Errorf("%w: empty project ID for signature handle %d", ErrClientError, handle)
 	}
 
 	sd.projectRegistriesMu.RLock()

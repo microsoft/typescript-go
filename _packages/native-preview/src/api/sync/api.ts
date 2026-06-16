@@ -289,6 +289,9 @@ export class Snapshot {
     dispose(): void {
         if (this.disposed) return;
         this.disposed = true;
+        for (const project of this.projectMap.values()) {
+            project.dispose();
+        }
         this.projectMap.clear();
         this.onDispose();
         this.client.apiRequest("release", { snapshot: this.id });
@@ -460,6 +463,10 @@ export class Project {
         );
         this.emitter = new Emitter(client);
     }
+
+    dispose(): void {
+        this.checker.dispose();
+    }
 }
 
 export class Program {
@@ -593,6 +600,10 @@ export class Checker {
         this.projectId = projectId;
         this.client = client;
         this.objectRegistry = objectRegistry;
+    }
+
+    dispose(): void {
+        this.objectRegistry.clear();
     }
 
     getSymbolAtLocation(node: Node): Symbol | undefined;

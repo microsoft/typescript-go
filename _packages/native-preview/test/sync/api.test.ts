@@ -1619,6 +1619,62 @@ describe("Checker - multi-project type ID uniqueness", () => {
             api.close();
         }
     });
+
+    test("symbol and signature handles from 3 projects in the same snapshot have non-colliding IDs", () => {
+        const api = spawnAPI({
+            "/proj1/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj1/src/index.ts": `export function add(a: number, b: number): number { return a + b; }`,
+            "/proj2/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj2/src/index.ts": `export function greet(name: string): string { return "hello " + name; }`,
+            "/proj3/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj3/src/index.ts": `export function toggle(b: boolean): boolean { return !b; }`,
+        });
+        try {
+            api.updateSnapshot({ openProject: "/proj1/tsconfig.json" });
+            api.updateSnapshot({ openProject: "/proj2/tsconfig.json" });
+            const snapshot = api.updateSnapshot({ openProject: "/proj3/tsconfig.json" });
+
+            const proj1 = snapshot.getProject("/proj1/tsconfig.json")!;
+            const proj2 = snapshot.getProject("/proj2/tsconfig.json")!;
+            const proj3 = snapshot.getProject("/proj3/tsconfig.json")!;
+
+            // Get a symbol from each project (exercises symbol registry)
+            const src1 = `export function add(a: number, b: number): number { return a + b; }`;
+            const src2 = `export function greet(name: string): string { return "hello " + name; }`;
+            const src3 = `export function toggle(b: boolean): boolean { return !b; }`;
+
+            const sym1 = proj1.checker.getSymbolAtPosition("/proj1/src/index.ts", src1.indexOf("add"));
+            const sym2 = proj2.checker.getSymbolAtPosition("/proj2/src/index.ts", src2.indexOf("greet"));
+            const sym3 = proj3.checker.getSymbolAtPosition("/proj3/src/index.ts", src3.indexOf("toggle"));
+            assert.ok(sym1, "proj1 symbol");
+            assert.ok(sym2, "proj2 symbol");
+            assert.ok(sym3, "proj3 symbol");
+            assert.equal(sym1.name, "add", "proj1 symbol name");
+            assert.equal(sym2.name, "greet", "proj2 symbol name");
+            assert.equal(sym3.name, "toggle", "proj3 symbol name");
+
+            // Get type of each symbol, then signatures (exercises type + signature registries)
+            const type1 = proj1.checker.getTypeOfSymbol(sym1);
+            const type2 = proj2.checker.getTypeOfSymbol(sym2);
+            const type3 = proj3.checker.getTypeOfSymbol(sym3);
+            assert.ok(type1, "proj1 function type");
+            assert.ok(type2, "proj2 function type");
+            assert.ok(type3, "proj3 function type");
+
+            const sigs1 = proj1.checker.getSignaturesOfType(type1, SignatureKind.Call);
+            const sigs2 = proj2.checker.getSignaturesOfType(type2, SignatureKind.Call);
+            const sigs3 = proj3.checker.getSignaturesOfType(type3, SignatureKind.Call);
+            assert.equal(sigs1.length, 1, "proj1 has 1 call signature");
+            assert.equal(sigs2.length, 1, "proj2 has 1 call signature");
+            assert.equal(sigs3.length, 1, "proj3 has 1 call signature");
+            assert.equal(sigs1[0].parameters.length, 2, "proj1 add() has 2 params");
+            assert.equal(sigs2[0].parameters.length, 1, "proj2 greet() has 1 param");
+            assert.equal(sigs3[0].parameters.length, 1, "proj3 toggle() has 1 param");
+        }
+        finally {
+            api.close();
+        }
+    });
 });
 
 describe("Checker - getBaseTypeOfLiteralType", () => {
