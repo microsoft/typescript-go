@@ -35,8 +35,8 @@ var _ CheckerPool = (*checkerPool)(nil)
 
 // Process small contiguous blocks of files on the same checker before rotating
 // to the next checker. Adjacent files tend to share generic instantiations and
-// symbol/type links; assigning blocks to the least-loaded checker by estimated
-// file weight preserves that locality while keeping checker work balanced.
+// symbol/type links; assigning blocks to the least-loaded checker by text size
+// preserves that locality while keeping checker work balanced.
 const maxCheckerAssociationBlockSize = 32
 
 // getCheckerAssociationBlockSize chooses how many adjacent files to keep together
@@ -232,19 +232,18 @@ func (p *checkerPool) createCheckers() {
 
 		wg.RunAndWait()
 
-		// Approximate per-file checker work. Text length captures input size,
-		// while node and file-local symbol counts approximate binder and checker
-		// graph size.
 		fileWeights := make([]int, len(p.program.files))
 		for i, file := range p.program.files {
-			fileWeights[i] = len(file.Text()) + 3*file.NodeCount + 90*file.SymbolCount
+			fileWeights[i] = len(file.Text())
 		}
 		// The association algorithm uses p.program.files indices throughout:
 		// start with a weight-balanced locality pass, then refine that mapping
 		// using import adjacency.
 		associations := getCheckerAssociationsForFileWeights(fileWeights, checkerCount)
-		adjacentFiles := p.getImportAdjacency()
-		refineCheckerAssociationsByGraph(associations, fileWeights, adjacentFiles, checkerCount)
+		if checkerCount > 1 {
+			adjacentFiles := p.getImportAdjacency()
+			refineCheckerAssociationsByGraph(associations, fileWeights, adjacentFiles, checkerCount)
+		}
 		p.fileAssociations = make(map[*ast.SourceFile]*checker.Checker, len(p.program.files))
 		for i, file := range p.program.files {
 			p.fileAssociations[file] = p.checkers[associations[i]]
