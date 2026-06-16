@@ -329,7 +329,11 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements.Loc = statements.Loc // setTextRange
-	if ast.IsInJSFile(node.AsNode()) && len(node.Statements.Nodes) > 0 && !ast.IsDeclarationStatement(node.Statements.Nodes[0]) && len(combinedStatements.Nodes) > 0 {
+	shouldAdjustStatementRange := ast.IsInJSFile(node.AsNode()) &&
+		len(node.Statements.Nodes) > 0 &&
+		!ast.IsDeclarationStatement(node.Statements.Nodes[0]) &&
+		len(combinedStatements.Nodes) > 0
+	if shouldAdjustStatementRange {
 		combinedStatements.Loc = core.NewTextRange(combinedStatements.Nodes[0].Pos(), statements.Loc.End())
 	}
 	if ast.IsExternalOrCommonJSModule(node) {
