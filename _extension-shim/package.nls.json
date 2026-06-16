@@ -1,3 +1,3 @@
 {
-    "description": "Compatibility shim for the renamed VS Code extension."
+    "description": "Deprecated extension that installs TypeScript 7 Native Preview."
 }

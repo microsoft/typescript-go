@@ -12,7 +12,9 @@ import {
     getExe,
     getWorkspaceTsdkConfigValue,
     getWorkspaceTsdkForPrompt,
+    outputChannelName,
     readNativePreviewConfig,
+    replacementExtensionId,
     resolveTsdkPath,
     resolveTsdkPathToExe,
     updateWorkspaceTsdkConfig,
@@ -61,7 +63,7 @@ export class SessionManager implements vscode.Disposable {
 
     async restart(context: vscode.ExtensionContext): Promise<void> {
         if (this.currentSession) {
-            this.outputChannel.appendLine("Restarting TypeScript 7 Native Preview...");
+            this.outputChannel.appendLine(`Restarting ${outputChannelName}...`);
             await this.currentSession.dispose();
         }
         this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter);
@@ -179,7 +181,7 @@ class Session implements vscode.Disposable {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
             this.telemetryReporter.sendTelemetryEvent("command.reportIssue");
             vscode.commands.executeCommand("workbench.action.openIssueReporter", {
-                extensionId: "TypeScriptTeam.vscode-typescript",
+                extensionId: replacementExtensionId,
             });
         }));
 

@@ -9,6 +9,7 @@ import {
     getUseTsgo,
     getUseTsgoFalseSetting,
     needsExtHostRestartOnChange,
+    outputChannelName,
 } from "./util";
 
 import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
@@ -43,7 +44,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     registerEnablementCommands(context, telemetryReporter);
 
-    const output = vscode.window.createOutputChannel("typescript-native-preview", { log: true });
+    const output = vscode.window.createOutputChannel(outputChannelName, { log: true });
     context.subscriptions.push(output);
 
     const languageServerInitializedEventEmitter = new vscode.EventEmitter<void>();

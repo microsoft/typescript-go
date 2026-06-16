@@ -64,7 +64,7 @@
   "Language client is not initialized": "Language client is not initialized",
   "Restarting language server...": "Restarting language server...",
   "Graceful shutdown failed, forcing restart: {0}": "Graceful shutdown failed, forcing restart: {0}",
-  "The typescript.native-preview-lsp server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.": "The typescript.native-preview-lsp server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.",
+  "The TypeScript 7 Native Preview language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.": "The TypeScript 7 Native Preview language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.",
   "Go to Source Definition failed. No editor is active.": "Go to Source Definition failed. No editor is active.",
   "Go to Source Definition failed. Unsupported file type.": "Go to Source Definition failed. Unsupported file type.",
   "Finding source definitions": "Finding source definitions",
