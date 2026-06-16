@@ -2549,19 +2549,24 @@ type SourceFile struct {
 	positionMap     *PositionMap
 }
 
-func (node *SourceFile) GetLineStarts() []core.TextPos {
-	return node.ECMALineMap()
-}
-
+// LineAndCharacter represents a line and character location.
 type LineAndCharacter struct {
 	Line      int
 	Character int
 }
 
+// GetLineStarts returns the line start text positions of the source file.
+func (node *SourceFile) GetLineStarts() []core.TextPos {
+	return node.ECMALineMap()
+}
+
+// GetLineAndCharacterOfPosition calculates the line and character for a given text position.
 func (node *SourceFile) GetLineAndCharacterOfPosition(position core.TextPos) LineAndCharacter {
 	return computeLineAndCharacterOfPosition(node.GetLineStarts(), position)
 }
 
+// computeLineAndCharacterOfPosition computes line and character values from a text position.
+// This function assumes a non empty lineStarts as a precondition.
 func computeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.TextPos) LineAndCharacter {
 	debug.Assert(len(lineStarts) != 0, "precondition failed: lineStarts cannot be empty")
 	lineNumber := computeLineOfPosition(lineStarts, position)
@@ -2571,6 +2576,8 @@ func computeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.
 	}
 }
 
+// computeLineOfPosition performs a binary search to find the line number containing the given text position.
+// This function assumes a non empty lineStarts as a precondition.
 func computeLineOfPosition(lineStarts []core.TextPos, position core.TextPos) int {
 	debug.Assert(len(lineStarts) != 0, "precondition failed: lineStarts cannot be empty")
 	isLineAfterPosition := func(i int) bool {
