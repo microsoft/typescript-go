@@ -1554,6 +1554,65 @@ describe("Checker - intrinsic type getters", () => {
     });
 });
 
+describe("Checker - multi-project type ID uniqueness", () => {
+    test("intrinsic types from 3 projects in the same snapshot have non-colliding IDs", async () => {
+        const api = spawnAPI({
+            "/proj1/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj1/src/index.ts": `export const x = 1;`,
+            "/proj2/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj2/src/index.ts": `export const y = "hello";`,
+            "/proj3/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj3/src/index.ts": `export const z = true;`,
+        });
+        try {
+            // Open all 3 projects — each updateSnapshot accumulates open projects
+            await api.updateSnapshot({ openProject: "/proj1/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj2/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tsconfig.json" });
+
+            const proj1 = snapshot.getProject("/proj1/tsconfig.json")!;
+            const proj2 = snapshot.getProject("/proj2/tsconfig.json")!;
+            const proj3 = snapshot.getProject("/proj3/tsconfig.json")!;
+            assert.ok(proj1, "proj1 should be in final snapshot");
+            assert.ok(proj2, "proj2 should be in final snapshot");
+            assert.ok(proj3, "proj3 should be in final snapshot");
+
+            // Fetch several intrinsic types from each checker.
+            // If type IDs collide across checkers, registerType panics → API error.
+            const num1 = await proj1.checker.getNumberType();
+            const str1 = await proj1.checker.getStringType();
+            const bool1 = await proj1.checker.getBooleanType();
+            const any1 = await proj1.checker.getAnyType();
+            const num2 = await proj2.checker.getNumberType();
+            const str2 = await proj2.checker.getStringType();
+            const bool2 = await proj2.checker.getBooleanType();
+            const any2 = await proj2.checker.getAnyType();
+            const num3 = await proj3.checker.getNumberType();
+            const str3 = await proj3.checker.getStringType();
+            const bool3 = await proj3.checker.getBooleanType();
+            const any3 = await proj3.checker.getAnyType();
+
+            assert.ok(num1.flags & TypeFlags.Number, "proj1 number type");
+            assert.ok(str1.flags & TypeFlags.String, "proj1 string type");
+            assert.ok(bool1.flags & TypeFlags.Boolean, "proj1 boolean type");
+            assert.ok(any1.flags & TypeFlags.Any, "proj1 any type");
+
+            assert.ok(num2.flags & TypeFlags.Number, "proj2 number type");
+            assert.ok(str2.flags & TypeFlags.String, "proj2 string type");
+            assert.ok(bool2.flags & TypeFlags.Boolean, "proj2 boolean type");
+            assert.ok(any2.flags & TypeFlags.Any, "proj2 any type");
+
+            assert.ok(num3.flags & TypeFlags.Number, "proj3 number type");
+            assert.ok(str3.flags & TypeFlags.String, "proj3 string type");
+            assert.ok(bool3.flags & TypeFlags.Boolean, "proj3 boolean type");
+            assert.ok(any3.flags & TypeFlags.Any, "proj3 any type");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 describe("Checker - getBaseTypeOfLiteralType", () => {
     test("number literal widens to number", async () => {
         const api = spawnAPI({

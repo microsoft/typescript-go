@@ -240,7 +240,6 @@ export class Snapshot {
     private projectMap: Map<Path, Project>;
     private toPath: (fileName: string) => Path;
     private client: Client;
-    private objectRegistry: SnapshotObjectRegistry;
     private disposed: boolean = false;
     private onDispose: () => void;
 
@@ -256,20 +255,9 @@ export class Snapshot {
         this.toPath = toPath;
         this.onDispose = onDispose;
 
-        this.objectRegistry = new SnapshotObjectRegistry(
-            {
-                createSymbol: symbolData => new Symbol(symbolData, this.objectRegistry),
-                createType: typeData => new TypeObject(typeData, this.objectRegistry),
-                createSignature: sigData => new Signature(sigData, this.objectRegistry),
-            },
-            client,
-            this.id,
-        );
-
-        // Create projects
         this.projectMap = new Map();
         for (const projData of data.projects) {
-            const project = new Project(projData, this.id, client, this.objectRegistry, sourceFileCache, toPath);
+            const project = new Project(projData, this.id, client, sourceFileCache, toPath);
             this.projectMap.set(toPath(projData.configFileName), project);
         }
     }
@@ -301,7 +289,7 @@ export class Snapshot {
     dispose(): void {
         if (this.disposed) return;
         this.disposed = true;
-        this.objectRegistry.clear();
+        this.projectMap.clear();
         this.onDispose();
         this.client.apiRequest("release", { snapshot: this.id });
     }
@@ -317,18 +305,21 @@ export class Snapshot {
     }
 }
 
-class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signature> {
+class ProjectObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signature> {
     private client: Client;
     private snapshotId: number;
+    private projectId: string;
 
     constructor(
         factories: ObjectFactories<Symbol, TypeObject, Signature>,
         client: Client,
         snapshotId: number,
+        projectId: string,
     ) {
         super(factories);
         this.client = client;
         this.snapshotId = snapshotId;
+        this.projectId = projectId;
     }
 
     fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | undefined): T {
@@ -338,6 +329,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
 
         const data = this.client.apiRequest<TypeResponse | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
@@ -351,6 +343,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
 
         const data = this.client.apiRequest<SymbolResponse | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (!data) throw new Error(`${method} returned null symbol for ${source.constructor.name} ${source.id}`);
@@ -364,6 +357,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
 
         const data = this.client.apiRequest<SignatureResponse | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (!data) throw new Error(`${method} returned null signature for ${source.constructor.name} ${source.id}`);
@@ -386,6 +380,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
         }
         const typesData = this.client.apiRequest<TypeResponse[] | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (typesData == null) return [];
@@ -408,6 +403,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
         }
         const symbolData = this.client.apiRequest<SymbolResponse[] | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (symbolData == null) return [];
@@ -430,7 +426,6 @@ export class Project {
         data: ProjectResponse,
         snapshotId: number,
         client: Client,
-        objectRegistry: SnapshotObjectRegistry,
         sourceFileCache: SourceFileCache,
         toPath: (fileName: string) => Path,
     ) {
@@ -445,6 +440,17 @@ export class Project {
             client,
             sourceFileCache,
             toPath,
+        );
+        let objectRegistry!: ProjectObjectRegistry;
+        objectRegistry = new ProjectObjectRegistry(
+            {
+                createSymbol: symbolData => new Symbol(symbolData, objectRegistry),
+                createType: typeData => new TypeObject(typeData, objectRegistry),
+                createSignature: sigData => new Signature(sigData, objectRegistry),
+            },
+            client,
+            snapshotId,
+            this.id,
         );
         this.checker = new Checker(
             snapshotId,
@@ -575,13 +581,13 @@ export class Checker {
     private snapshotId: number;
     private projectId: string;
     private client: Client;
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     constructor(
         snapshotId: number,
         projectId: string,
         client: Client,
-        objectRegistry: SnapshotObjectRegistry,
+        objectRegistry: ProjectObjectRegistry,
     ) {
         this.snapshotId = snapshotId;
         this.projectId = projectId;
@@ -1126,7 +1132,7 @@ export interface SignatureUsage {
 }
 
 export class Symbol {
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     readonly id: number;
     readonly name: string;
@@ -1137,7 +1143,7 @@ export class Symbol {
     readonly parent!: number;
     readonly exportSymbol!: number;
 
-    constructor(data: SymbolResponse, objectRegistry: SnapshotObjectRegistry) {
+    constructor(data: SymbolResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
 
         this.id = data.id;
@@ -1170,7 +1176,7 @@ export class Symbol {
 }
 
 class TypeObject implements Type {
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     readonly id: number;
     readonly flags: TypeFlags;
@@ -1198,7 +1204,7 @@ class TypeObject implements Type {
     readonly baseType!: number;
     readonly substConstraint!: number;
 
-    constructor(data: TypeResponse, objectRegistry: SnapshotObjectRegistry) {
+    constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
 
         this.id = data.id;
@@ -1295,7 +1301,7 @@ class TypeObject implements Type {
 
 export class Signature {
     private flags: number;
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     readonly id: number;
     readonly declaration?: NodeHandle | undefined;
@@ -1304,7 +1310,7 @@ export class Signature {
     readonly thisParameter?: number | undefined;
     readonly target?: number | undefined;
 
-    constructor(data: SignatureResponse, objectRegistry: SnapshotObjectRegistry) {
+    constructor(data: SignatureResponse, objectRegistry: ProjectObjectRegistry) {
         this.id = data.id;
         this.flags = data.flags;
         this.objectRegistry = objectRegistry;

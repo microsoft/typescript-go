@@ -701,18 +701,21 @@ type ResolveNameParams struct {
 // GetTypePropertyParams is used for all type sub-property endpoints.
 type GetTypePropertyParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"objectId"`
 }
 
 // GetSymbolPropertyParams is used for all symbol sub-property endpoints.
 type GetSymbolPropertyParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Symbol   SymbolID   `json:"objectId"`
 }
 
 // GetSignaturePropertyParams is used for all signature sub-property endpoints.
 type GetSignaturePropertyParams struct {
 	Snapshot  SnapshotID  `json:"snapshot"`
+	Project   ProjectID   `json:"project"`
 	Signature SignatureID `json:"objectId"`
 }
 
