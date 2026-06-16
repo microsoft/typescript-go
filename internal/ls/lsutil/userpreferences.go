@@ -84,6 +84,9 @@ type UserPreferences struct {
 
 	// ------- OrganizeImports -------
 
+	// Indicates which deterministic preset should be used to sort imports.
+	// "auto" detects the existing ordinal case sensitivity where possible.
+	OrganizeImportsSort OrganizeImportsSort `raw:"organizeImportsSort" config:"preferences.organizeImports.sort"` // !!!
 	// Indicates whether imports should be organized in a case-insensitive manner.
 	//
 	// Default: TSUnknown ("auto" in strada), will perform detection
@@ -240,6 +243,16 @@ const (
 	IncludeInlayParameterNameHintsLiterals IncludeInlayParameterNameHints = "literals"
 )
 
+type OrganizeImportsSort int
+
+const (
+	OrganizeImportsSortAuto OrganizeImportsSort = iota
+	OrganizeImportsSortOrdinal
+	OrganizeImportsSortOrdinalIgnoreCase
+	OrganizeImportsSortNatural
+	OrganizeImportsSortNaturalIgnoreCase
+)
+
 type OrganizeImportsCollation bool
 
 const (
@@ -318,6 +331,21 @@ var typeParsers = map[reflect.Type]func(any) any{
 		}
 		return IncludeInlayParameterNameHintsNone
 	},
+	reflect.TypeFor[OrganizeImportsSort](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "ordinal":
+				return OrganizeImportsSortOrdinal
+			case "ordinalignorecase":
+				return OrganizeImportsSortOrdinalIgnoreCase
+			case "natural":
+				return OrganizeImportsSortNatural
+			case "naturalignorecase":
+				return OrganizeImportsSortNaturalIgnoreCase
+			}
+		}
+		return OrganizeImportsSortAuto
+	},
 	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
 		if s, ok := val.(string); ok && strings.ToLower(s) == "unicode" {
 			return OrganizeImportsCollationUnicode
@@ -387,6 +415,20 @@ var typeSerializers = map[reflect.Type]func(any) any{
 			return false
 		default:
 			return nil
+		}
+	},
+	reflect.TypeFor[OrganizeImportsSort](): func(val any) any {
+		switch val.(OrganizeImportsSort) {
+		case OrganizeImportsSortOrdinal:
+			return "ordinal"
+		case OrganizeImportsSortOrdinalIgnoreCase:
+			return "ordinalIgnoreCase"
+		case OrganizeImportsSortNatural:
+			return "natural"
+		case OrganizeImportsSortNaturalIgnoreCase:
+			return "naturalIgnoreCase"
+		default:
+			return "auto"
 		}
 	},
 	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
@@ -546,27 +588,34 @@ func setNestedValue(config map[string]any, path string, value any) {
 	current[parts[len(parts)-1]] = value
 }
 
+func setRawFieldsFromConfig(v reflect.Value, infos []fieldInfo, settings map[string]any) {
+	index := unstableNameIndex()
+	for name, value := range settings {
+		if idx, found := index[name]; found {
+			info := infos[idx]
+			field := getFieldByPath(v, info.fieldPath)
+			if info.rawInvert {
+				if b, ok := value.(bool); ok {
+					value = !b
+				}
+			}
+			setFieldFromValue(field, value)
+		}
+	}
+}
+
 func (p UserPreferences) withConfig(config map[string]any) UserPreferences {
 	v := reflect.ValueOf(&p).Elem()
 	infos := fieldInfoCache()
+
+	// Raw UserPreferences can be provided directly, notably via LSP initializationOptions.
+	setRawFieldsFromConfig(v, infos, config)
 
 	// Process "unstable" section first - allows any field to be set by raw name.
 	// This mirrors VS Code's behavior: { ...config.get('unstable'), ...stableOptions }
 	// where stable options are spread after and take precedence.
 	if unstable, ok := config["unstable"].(map[string]any); ok {
-		index := unstableNameIndex()
-		for name, value := range unstable {
-			if idx, found := index[name]; found {
-				info := infos[idx]
-				field := getFieldByPath(v, info.fieldPath)
-				if info.rawInvert {
-					if b, ok := value.(bool); ok {
-						value = !b
-					}
-				}
-				setFieldFromValue(field, value)
-			}
-		}
+		setRawFieldsFromConfig(v, infos, unstable)
 	}
 
 	// Process path-based config (VS Code style nested paths).
@@ -618,7 +667,7 @@ func setFieldFromValue(field reflect.Value, val any) {
 		return
 	}
 
-	// Check custom parsers first (for types like Tristate, OrganizeImportsCollation, etc.)
+	// Check custom parsers first (for types like Tristate, enums, etc.)
 	if parser, ok := typeParsers[field.Type()]; ok {
 		field.Set(reflect.ValueOf(parser(val)))
 		return
@@ -687,7 +736,7 @@ func (p *UserPreferences) MarshalJSONTo(enc *json.Encoder) error {
 }
 
 func serializeField(field reflect.Value) any {
-	// Check custom serializers first (for types like Tristate, OrganizeImportsCollation, etc.)
+	// Check custom serializers first (for types like Tristate, enums, etc.)
 	if serializer, ok := typeSerializers[field.Type()]; ok {
 		return serializer(field.Interface())
 	}

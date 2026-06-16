@@ -3,25 +3,21 @@ package lsutil
 import (
 	"cmp"
 	"math"
+	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"golang.org/x/text/collate"
-	"golang.org/x/text/language"
+	"golang.org/x/text/unicode/norm"
 )
 
-var (
-	caseInsensitiveOrganizeImportsComparer = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(true)}
-	caseSensitiveOrganizeImportsComparer   = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(false)}
-	organizeImportsComparers               = []func(a, b string) int{
-		caseInsensitiveOrganizeImportsComparer[0],
-		caseSensitiveOrganizeImportsComparer[0],
-	}
-)
+var organizeImportsAutoComparers = []func(a, b string) int{
+	getOrganizeImportsOrdinalStringComparer(true),
+	getOrganizeImportsOrdinalStringComparer(false),
+}
 
 // FilterImportDeclarations filters out non-import declarations from a list of statements.
 func FilterImportDeclarations(statements []*ast.Statement) []*ast.Statement {
@@ -32,14 +28,11 @@ func FilterImportDeclarations(statements []*ast.Statement) []*ast.Statement {
 
 // GetDetectionLists returns the lists of comparers and type orders to test for organize imports detection.
 func GetDetectionLists(preferences UserPreferences) (comparersToTest []func(a, b string) int, typeOrdersToTest []OrganizeImportsTypeOrder) {
-	if !preferences.OrganizeImportsIgnoreCase.IsUnknown() {
-		ignoreCase := preferences.OrganizeImportsIgnoreCase.IsTrue()
-		comparersToTest = []func(a, b string) int{getOrganizeImportsStringComparer(preferences, ignoreCase)}
+	sort := ResolveOrganizeImportsSort(preferences)
+	if sort != OrganizeImportsSortAuto {
+		comparersToTest = []func(a, b string) int{getOrganizeImportsStringComparer(sort)}
 	} else {
-		comparersToTest = []func(a, b string) int{
-			getOrganizeImportsStringComparer(preferences, true),
-			getOrganizeImportsStringComparer(preferences, false),
-		}
+		comparersToTest = organizeImportsAutoComparers
 	}
 
 	if preferences.OrganizeImportsTypeOrder != OrganizeImportsTypeOrderAuto {
@@ -55,6 +48,28 @@ func GetDetectionLists(preferences UserPreferences) (comparersToTest []func(a, b
 	return comparersToTest, typeOrdersToTest
 }
 
+func ResolveOrganizeImportsSort(preferences UserPreferences) OrganizeImportsSort {
+	if preferences.OrganizeImportsSort != OrganizeImportsSortAuto {
+		return preferences.OrganizeImportsSort
+	}
+
+	if preferences.OrganizeImportsCollation == OrganizeImportsCollationUnicode {
+		if preferences.OrganizeImportsIgnoreCase.IsTrue() {
+			return OrganizeImportsSortNaturalIgnoreCase
+		}
+		return OrganizeImportsSortNatural
+	}
+
+	switch preferences.OrganizeImportsIgnoreCase {
+	case core.TSTrue:
+		return OrganizeImportsSortOrdinalIgnoreCase
+	case core.TSFalse:
+		return OrganizeImportsSortOrdinal
+	default:
+		return OrganizeImportsSortAuto
+	}
+}
+
 func getOrganizeImportsOrdinalStringComparer(ignoreCase bool) func(a, b string) int {
 	if ignoreCase {
 		return stringutil.CompareStringsCaseInsensitiveEslintCompatible
@@ -62,125 +77,133 @@ func getOrganizeImportsOrdinalStringComparer(ignoreCase bool) func(a, b string) 
 	return stringutil.CompareStringsCaseSensitive
 }
 
-func getOrganizeImportsUnicodeStringComparer(ignoreCase bool, preferences UserPreferences) func(a, b string) int {
-	resolvedLocale := getOrganizeImportsLocale(preferences)
+func getOrganizeImportsNaturalStringComparer(ignoreCase bool) func(a, b string) int {
+	return func(a, b string) int {
+		return compareOrganizeImportsNaturalStrings(a, b, ignoreCase)
+	}
+}
 
-	caseFirst := preferences.OrganizeImportsCaseFirst
-	numeric := preferences.OrganizeImportsNumericCollation.IsTrue()
-	accents := !preferences.OrganizeImportsAccentCollation.IsFalse()
-
-	tag, _ := language.Parse(resolvedLocale)
-
-	var opts []collate.Option
-
-	if numeric {
-		opts = append(opts, collate.Numeric)
+func compareOrganizeImportsNaturalStrings(a string, b string, ignoreCase bool) int {
+	if cmp := compareStringsNumeric(naturalCollationPrimaryKey(a), naturalCollationPrimaryKey(b)); cmp != 0 {
+		return cmp
 	}
 
-	looseOpts := append([]collate.Option{}, opts...)
-	looseOpts = append(looseOpts, collate.Loose)
-	looseCollator := collate.New(tag, looseOpts...)
+	if cmp := compareStringsNumeric(naturalCollationAccentKey(a), naturalCollationAccentKey(b)); cmp != 0 {
+		return cmp
+	}
 
 	if !ignoreCase {
-		caseInsensitiveOpts := append([]collate.Option{}, opts...)
-		caseInsensitiveOpts = append(caseInsensitiveOpts, collate.IgnoreCase)
-		caseInsensitiveCollator := collate.New(tag, caseInsensitiveOpts...)
-
-		fullCollator := collate.New(tag, opts...)
-
-		return func(a, b string) int {
-			var primaryCmp int
-			if !accents {
-				primaryCmp = looseCollator.CompareString(a, b)
-			} else {
-				primaryCmp = caseInsensitiveCollator.CompareString(a, b)
-			}
-			if primaryCmp != 0 {
-				return primaryCmp
-			}
-
-			aRunes := []rune(a)
-			bRunes := []rune(b)
-			minLen := min(len(aRunes), len(bRunes))
-
-			for i := range minLen {
-				aUpper := unicode.IsUpper(aRunes[i])
-				bUpper := unicode.IsUpper(bRunes[i])
-				if aUpper != bUpper {
-					switch caseFirst {
-					case OrganizeImportsCaseFirstUpper:
-						if aUpper {
-							return -1
-						}
-						return 1
-					case OrganizeImportsCaseFirstLower:
-						if !aUpper {
-							return -1
-						}
-						return 1
-					default:
-						if aUpper {
-							return 1
-						}
-						return -1
-					}
-				}
-			}
-
-			if !accents {
-				if len(aRunes) != len(bRunes) {
-					return len(aRunes) - len(bRunes)
-				}
-				return 0
-			}
-
-			return fullCollator.CompareString(a, b)
+		if cmp := compareOrganizeImportsCaseUpperFirst(a, b); cmp != 0 {
+			return cmp
 		}
 	}
 
-	if ignoreCase {
-		opts = append(opts, collate.IgnoreCase)
-		if !accents {
-			opts = append(opts, collate.Loose)
-		}
-	}
-
-	collator := collate.New(tag, opts...)
-
-	return func(a, b string) int {
-		return collator.CompareString(a, b)
-	}
+	return 0
 }
 
-func getOrganizeImportsLocale(preferences UserPreferences) string {
-	localeStr := "en"
-	if preferences.OrganizeImportsLocale != "" {
-		localeStr = preferences.OrganizeImportsLocale
-	}
-
-	if localeStr == "auto" {
-		if locale.Default != (locale.Locale{}) {
-			tag := language.Tag(locale.Default)
-			return tag.String()
-		}
-		return "en"
-	}
-
-	if locale, ok := locale.Parse(localeStr); ok {
-		tag := language.Tag(locale)
-		return tag.String()
-	}
-
-	return "en"
+func naturalCollationPrimaryKey(s string) string {
+	return strings.ToLower(removeDiacritics(s))
 }
 
-func getOrganizeImportsStringComparer(preferences UserPreferences, ignoreCase bool) func(a, b string) int {
-	collation := preferences.OrganizeImportsCollation
+func naturalCollationAccentKey(s string) string {
+	return strings.ToLower(s)
+}
 
-	if collation == OrganizeImportsCollationUnicode {
-		return getOrganizeImportsUnicodeStringComparer(ignoreCase, preferences)
+func removeDiacritics(s string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.Is(unicode.Mn, r) {
+			return -1
+		}
+		return r
+	}, norm.NFD.String(s))
+}
+
+func compareStringsNumeric(a string, b string) int {
+	for len(a) > 0 && len(b) > 0 {
+		if isASCIIDigit(a[0]) && isASCIIDigit(b[0]) {
+			aRunEnd := asciiDigitRunEnd(a)
+			bRunEnd := asciiDigitRunEnd(b)
+
+			if cmp := compareNumericText(a[:aRunEnd], b[:bRunEnd]); cmp != 0 {
+				return cmp
+			}
+
+			a = a[aRunEnd:]
+			b = b[bRunEnd:]
+			continue
+		}
+
+		aRune, aSize := utf8.DecodeRuneInString(a)
+		bRune, bSize := utf8.DecodeRuneInString(b)
+		if aRune != bRune {
+			return cmp.Compare(aRune, bRune)
+		}
+
+		a = a[aSize:]
+		b = b[bSize:]
 	}
-	return getOrganizeImportsOrdinalStringComparer(ignoreCase)
+
+	return cmp.Compare(len(a), len(b))
+}
+
+func isASCIIDigit(ch byte) bool {
+	return ch >= '0' && ch <= '9'
+}
+
+func asciiDigitRunEnd(s string) int {
+	i := 0
+	for i < len(s) && isASCIIDigit(s[i]) {
+		i++
+	}
+	return i
+}
+
+func compareNumericText(a string, b string) int {
+	aDigits := strings.TrimLeft(a, "0")
+	bDigits := strings.TrimLeft(b, "0")
+	if aDigits == "" {
+		aDigits = "0"
+	}
+	if bDigits == "" {
+		bDigits = "0"
+	}
+
+	if len(aDigits) != len(bDigits) {
+		return cmp.Compare(len(aDigits), len(bDigits))
+	}
+	return strings.Compare(aDigits, bDigits)
+}
+
+func compareOrganizeImportsCaseUpperFirst(a string, b string) int {
+	aRunes := []rune(a)
+	bRunes := []rune(b)
+	minLen := min(len(aRunes), len(bRunes))
+
+	for i := range minLen {
+		aUpper := unicode.IsUpper(aRunes[i])
+		bUpper := unicode.IsUpper(bRunes[i])
+		if aUpper != bUpper {
+			if aUpper {
+				return -1
+			}
+			return 1
+		}
+	}
+
+	return cmp.Compare(len(aRunes), len(bRunes))
+}
+
+func getOrganizeImportsStringComparer(sort OrganizeImportsSort) func(a, b string) int {
+	switch sort {
+	case OrganizeImportsSortOrdinalIgnoreCase:
+		return getOrganizeImportsOrdinalStringComparer(true)
+	case OrganizeImportsSortNatural:
+		return getOrganizeImportsNaturalStringComparer(false)
+	case OrganizeImportsSortNaturalIgnoreCase:
+		return getOrganizeImportsNaturalStringComparer(true)
+	default:
+		return getOrganizeImportsOrdinalStringComparer(false)
+	}
 }
 
 func getModuleSpecifierExpression(declaration *ast.Statement) *ast.Expression {
@@ -314,11 +337,7 @@ func compareImportOrExportSpecifiers(s1 *ast.Node, s2 *ast.Node, comparer func(a
 // GetNamedImportSpecifierComparer returns a comparer function for sorting import specifiers.
 func GetNamedImportSpecifierComparer(preferences UserPreferences, comparer func(a, b string) int) func(s1, s2 *ast.Node) int {
 	if comparer == nil {
-		ignoreCase := false
-		if !preferences.OrganizeImportsIgnoreCase.IsUnknown() {
-			ignoreCase = preferences.OrganizeImportsIgnoreCase.IsTrue()
-		}
-		comparer = getOrganizeImportsOrdinalStringComparer(ignoreCase)
+		comparer = getOrganizeImportsStringComparer(ResolveOrganizeImportsSort(preferences))
 	}
 	return func(s1, s2 *ast.Node) int {
 		return compareImportOrExportSpecifiers(s1, s2, comparer, preferences)
@@ -346,14 +365,11 @@ func GetOrganizeImportsStringComparerWithDetection(originalImportDecls []*ast.St
 }
 
 func getComparers(preferences UserPreferences) []func(a string, b string) int {
-	switch preferences.OrganizeImportsIgnoreCase {
-	case core.TSTrue:
-		return caseInsensitiveOrganizeImportsComparer
-	case core.TSFalse:
-		return caseSensitiveOrganizeImportsComparer
+	sort := ResolveOrganizeImportsSort(preferences)
+	if sort != OrganizeImportsSortAuto {
+		return []func(a, b string) int{getOrganizeImportsStringComparer(sort)}
 	}
-
-	return organizeImportsComparers
+	return organizeImportsAutoComparers
 }
 
 type namedImportSortResult struct {
@@ -582,7 +598,7 @@ func GetNamedImportSpecifierComparerWithDetection(importDecl *ast.Node, sourceFi
 	specifierComparer = GetNamedImportSpecifierComparer(preferences, comparersToTest[0])
 	isSorted = core.TSUnknown
 
-	if (preferences.OrganizeImportsIgnoreCase.IsUnknown() || preferences.OrganizeImportsTypeOrder == OrganizeImportsTypeOrderAuto) && importStmt != nil {
+	if (ResolveOrganizeImportsSort(preferences) == OrganizeImportsSortAuto || preferences.OrganizeImportsTypeOrder == OrganizeImportsTypeOrderAuto) && importStmt != nil {
 		detectFromDecl := detectNamedImportOrganizationBySort([]*ast.Statement{importStmt}, comparersToTest, typeOrdersToTest)
 		if detectFromDecl != nil {
 			isSorted = core.BoolToTristate(detectFromDecl.isSorted)

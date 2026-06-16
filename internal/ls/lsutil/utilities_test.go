@@ -65,3 +65,66 @@ let c = 3;
 		})
 	}
 }
+
+func TestResolveOrganizeImportsSort(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name        string
+		preferences UserPreferences
+		want        OrganizeImportsSort
+	}{
+		{
+			name: "explicit sort wins",
+			preferences: UserPreferences{
+				OrganizeImportsSort:       OrganizeImportsSortOrdinal,
+				OrganizeImportsCollation:  OrganizeImportsCollationUnicode,
+				OrganizeImportsIgnoreCase: core.TSTrue,
+			},
+			want: OrganizeImportsSortOrdinal,
+		},
+		{
+			name: "unicode maps to natural",
+			preferences: UserPreferences{
+				OrganizeImportsCollation:  OrganizeImportsCollationUnicode,
+				OrganizeImportsIgnoreCase: core.TSFalse,
+			},
+			want: OrganizeImportsSortNatural,
+		},
+		{
+			name: "unicode ignore case maps to natural ignore case",
+			preferences: UserPreferences{
+				OrganizeImportsCollation:  OrganizeImportsCollationUnicode,
+				OrganizeImportsIgnoreCase: core.TSTrue,
+			},
+			want: OrganizeImportsSortNaturalIgnoreCase,
+		},
+		{
+			name: "ordinal ignore case maps to ordinal ignore case",
+			preferences: UserPreferences{
+				OrganizeImportsIgnoreCase: core.TSTrue,
+			},
+			want: OrganizeImportsSortOrdinalIgnoreCase,
+		},
+		{
+			name: "ordinal case sensitive maps to ordinal",
+			preferences: UserPreferences{
+				OrganizeImportsIgnoreCase: core.TSFalse,
+			},
+			want: OrganizeImportsSortOrdinal,
+		},
+		{
+			name: "unknown ordinal stays auto",
+			want: OrganizeImportsSortAuto,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if got := ResolveOrganizeImportsSort(tt.preferences); got != tt.want {
+				t.Fatalf("ResolveOrganizeImportsSort() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
