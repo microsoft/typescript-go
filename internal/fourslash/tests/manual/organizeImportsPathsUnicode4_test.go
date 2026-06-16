@@ -41,7 +41,7 @@ import * as aB from "./aB";
 console.log(_aB, _Ab, aB, Ab);`,
 		lsproto.CodeActionKindSourceOrganizeImports,
 		&lsutil.UserPreferences{
-			OrganizeImportsSort: lsutil.OrganizeImportsSortNaturalIgnoreCase,
+			OrganizeImportsSort: lsutil.OrganizeImportsSortNatural,
 		},
 	)
 }

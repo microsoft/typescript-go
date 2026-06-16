@@ -250,7 +250,7 @@ const (
 	OrganizeImportsSortOrdinal
 	OrganizeImportsSortOrdinalIgnoreCase
 	OrganizeImportsSortNatural
-	OrganizeImportsSortNaturalIgnoreCase
+	OrganizeImportsSortNaturalCaseSensitive
 )
 
 type OrganizeImportsCollation bool
@@ -340,8 +340,8 @@ var typeParsers = map[reflect.Type]func(any) any{
 				return OrganizeImportsSortOrdinalIgnoreCase
 			case "natural":
 				return OrganizeImportsSortNatural
-			case "naturalignorecase":
-				return OrganizeImportsSortNaturalIgnoreCase
+			case "naturalcasesensitive":
+				return OrganizeImportsSortNaturalCaseSensitive
 			}
 		}
 		return OrganizeImportsSortAuto
@@ -425,8 +425,8 @@ var typeSerializers = map[reflect.Type]func(any) any{
 			return "ordinalIgnoreCase"
 		case OrganizeImportsSortNatural:
 			return "natural"
-		case OrganizeImportsSortNaturalIgnoreCase:
-			return "naturalIgnoreCase"
+		case OrganizeImportsSortNaturalCaseSensitive:
+			return "naturalCaseSensitive"
 		default:
 			return "auto"
 		}

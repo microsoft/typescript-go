@@ -55,9 +55,9 @@ func ResolveOrganizeImportsSort(preferences UserPreferences) OrganizeImportsSort
 
 	if preferences.OrganizeImportsCollation == OrganizeImportsCollationUnicode {
 		if preferences.OrganizeImportsIgnoreCase.IsTrue() {
-			return OrganizeImportsSortNaturalIgnoreCase
+			return OrganizeImportsSortNatural
 		}
-		return OrganizeImportsSortNatural
+		return OrganizeImportsSortNaturalCaseSensitive
 	}
 
 	switch preferences.OrganizeImportsIgnoreCase {
@@ -77,36 +77,28 @@ func getOrganizeImportsOrdinalStringComparer(ignoreCase bool) func(a, b string) 
 	return stringutil.CompareStringsCaseSensitive
 }
 
-func getOrganizeImportsNaturalStringComparer(ignoreCase bool) func(a, b string) int {
+func getOrganizeImportsNaturalStringComparer(caseSensitive bool) func(a, b string) int {
 	return func(a, b string) int {
-		return compareOrganizeImportsNaturalStrings(a, b, ignoreCase)
+		return compareOrganizeImportsNaturalStrings(a, b, caseSensitive)
 	}
 }
 
-func compareOrganizeImportsNaturalStrings(a string, b string, ignoreCase bool) int {
-	if cmp := compareStringsNumeric(naturalCollationPrimaryKey(a), naturalCollationPrimaryKey(b)); cmp != 0 {
+func compareOrganizeImportsNaturalStrings(a string, b string, caseSensitive bool) int {
+	if cmp := compareStringsNumeric(naturalCollationKey(a), naturalCollationKey(b)); cmp != 0 {
 		return cmp
 	}
 
-	if cmp := compareStringsNumeric(naturalCollationAccentKey(a), naturalCollationAccentKey(b)); cmp != 0 {
-		return cmp
-	}
-
-	if !ignoreCase {
+	if caseSensitive {
 		if cmp := compareOrganizeImportsCaseUpperFirst(a, b); cmp != 0 {
 			return cmp
 		}
 	}
 
-	return 0
+	return strings.Compare(a, b)
 }
 
-func naturalCollationPrimaryKey(s string) string {
+func naturalCollationKey(s string) string {
 	return strings.ToLower(removeDiacritics(s))
-}
-
-func naturalCollationAccentKey(s string) string {
-	return strings.ToLower(s)
 }
 
 func removeDiacritics(s string) string {
@@ -199,7 +191,7 @@ func getOrganizeImportsStringComparer(sort OrganizeImportsSort) func(a, b string
 		return getOrganizeImportsOrdinalStringComparer(true)
 	case OrganizeImportsSortNatural:
 		return getOrganizeImportsNaturalStringComparer(false)
-	case OrganizeImportsSortNaturalIgnoreCase:
+	case OrganizeImportsSortNaturalCaseSensitive:
 		return getOrganizeImportsNaturalStringComparer(true)
 	default:
 		return getOrganizeImportsOrdinalStringComparer(false)
