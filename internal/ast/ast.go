@@ -2559,19 +2559,19 @@ type LineAndCharacter struct {
 }
 
 func (node *SourceFile) GetLineAndCharacterOfPosition(position core.TextPos) LineAndCharacter {
-	return ComputeLineAndCharacterOfPosition(node.GetLineStarts(), position)
+	return computeLineAndCharacterOfPosition(node.GetLineStarts(), position)
 }
 
-func ComputeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.TextPos) LineAndCharacter {
+func computeLineAndCharacterOfPosition(lineStarts []core.TextPos, position core.TextPos) LineAndCharacter {
 	debug.Assert(len(lineStarts) != 0, "precondition failed: lineStarts cannot be empty")
-	lineNumber := ComputeLineOfPosition(lineStarts, position)
+	lineNumber := computeLineOfPosition(lineStarts, position)
 	return LineAndCharacter{
 		Line:      lineNumber,
 		Character: int(position - lineStarts[lineNumber]),
 	}
 }
 
-func ComputeLineOfPosition(lineStarts []core.TextPos, position core.TextPos) int {
+func computeLineOfPosition(lineStarts []core.TextPos, position core.TextPos) int {
 	debug.Assert(len(lineStarts) != 0, "precondition failed: lineStarts cannot be empty")
 	isLineAfterPosition := func(i int) bool {
 		return lineStarts[i] > position
