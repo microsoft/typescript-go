@@ -379,19 +379,6 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 			}
 		}
 	}
-
-	for eventPath := range changedPaths {
-		if o.wm.IsPathUnderWatch(eventPath, o.comparePathsOptions) {
-			for i := range o.order {
-				task := o.getTask(o.toPath(o.order[i]))
-				if task.hasModuleResolutionErrors {
-					task.resetStatus()
-					needsUpdate.Store(true)
-				}
-			}
-			break
-		}
-	}
 }
 
 func (o *Orchestrator) computeDesiredWatches() map[string]bool {
@@ -460,17 +447,6 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 				if !watchmanager.IsDirCoveredByWatch(desiredDirs, dir, o.comparePathsOptions) {
 					if watchmanager.CanWatchDirectory(dir) {
 						desiredDirs[dir] = false
-					}
-				}
-			}
-		}
-
-		if task.hasModuleResolutionErrors {
-			nodeModulesDir := tspath.CombinePaths(realConfigDir, "node_modules")
-			if o.host.FS().DirectoryExists(nodeModulesDir) {
-				if !watchmanager.IsDirCoveredByWatch(desiredDirs, nodeModulesDir, o.comparePathsOptions) {
-					if watchmanager.CanWatchDirectory(nodeModulesDir) {
-						desiredDirs[nodeModulesDir] = true
 					}
 				}
 			}
