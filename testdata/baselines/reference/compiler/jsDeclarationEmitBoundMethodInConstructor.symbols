@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/jsDeclarationEmitBoundMethodInConstructor.ts] ////
+
+=== main.js ===
+export class C {
+>C : Symbol(C, Decl(main.js, 0, 0))
+
+    constructor() {
+        this.foo = this.foo.bind(this);
+>this.foo : Symbol(C.foo, Decl(main.js, 3, 5))
+>this : Symbol(C, Decl(main.js, 0, 0))
+>foo : Symbol(C.foo, Decl(main.js, 3, 5))
+>this.foo.bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>this.foo : Symbol(C.foo, Decl(main.js, 3, 5))
+>this : Symbol(C, Decl(main.js, 0, 0))
+>foo : Symbol(C.foo, Decl(main.js, 3, 5))
+>bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>this : Symbol(C, Decl(main.js, 0, 0))
+    }
+    foo() {}
+>foo : Symbol(C.foo, Decl(main.js, 3, 5))
+}
+

@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/jsDeclarationEmitBoundMethodInConstructor.ts] ////
+
+=== main.js ===
+export class C {
+>C : C
+
+    constructor() {
+        this.foo = this.foo.bind(this);
+>this.foo = this.foo.bind(this) : () => void
+>this.foo : () => void
+>this : this
+>foo : () => void
+>this.foo.bind(this) : () => void
+>this.foo.bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>this.foo : () => void
+>this : this
+>foo : () => void
+>bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>this : this
+    }
+    foo() {}
+>foo : () => void
+}
+

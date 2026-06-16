@@ -64,6 +64,7 @@ type DeclarationTransformer struct {
 	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
 	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
 	seenProperties                   collections.Set[*ast.Node]
+	seenPropertyNames                collections.Set[string]
 	thisPropertyAssignmentsCollected []*ast.Node
 	rawReferencedFiles               []ReferencedFilePair
 	rawTypeReferenceDirectives       []*ast.FileReference
@@ -1970,10 +1971,20 @@ caseBlock:
 	case ast.JSDeclarationKindThisProperty:
 		name := ast.GetNameOfDeclaration(node)
 		base := tx.resolver.GetReferencedMemberValueDeclaration(node)
-		if base == nil || tx.seenProperties.Has(base) {
+		if ast.IsBinaryExpression(node) {
+			if memberBase := tx.resolver.GetReferencedMemberValueDeclaration(node.AsBinaryExpression().Left); memberBase != nil {
+				base = memberBase
+			}
+		}
+		nameText := ast.GetTextOfPropertyName(name)
+		nameKey := thisPropertyNameKey(nameText, isStatic)
+		if base == nil || tx.seenProperties.Has(base) || nameKey != "" && tx.seenPropertyNames.Has(nameKey) {
 			break
 		}
 		tx.seenProperties.Add(base)
+		if nameKey != "" {
+			tx.seenPropertyNames.Add(nameKey)
+		}
 
 		// problem: this prop might be overriding a prop from a base type. The checker has special bails for override compat comparisons for binary expression properties,
 		// but what we transform to won't - so we either need to match the base type (for example, if it's a getter/setter) or emit nothing
@@ -1999,7 +2010,7 @@ caseBlock:
 			tx.checkName(node)
 			name = tx.Factory().NewComputedPropertyName(name) // Convert `this[foo] = expr` to `[foo]: Type`
 		}
-		if ast.GetTextOfPropertyName(name) == "constructor" {
+		if nameText == "constructor" {
 			break // `constructor` is a builtin class member, not allowed to redeclare it
 		}
 		if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
@@ -2040,19 +2051,35 @@ func isClassExtendingNull(node *ast.Node) bool {
 	return false
 }
 
+func thisPropertyNameKey(name string, isStatic bool) string {
+	if name == "" {
+		return ""
+	}
+	if isStatic {
+		return "static:" + name
+	}
+	return "instance:" + name
+}
+
 // collectThisPropertyAssignments finds `this.x = expr` assignments in constructors, methods, and static blocks
 // of JS classes and synthesizes PropertyDeclaration nodes for each unique property name.
 func (tx *DeclarationTransformer) collectThisPropertyAssignments(classNode *ast.Node) []*ast.Node {
 	members := classNode.ClassLikeData().Members
 	seen := collections.Set[*ast.Node]{}
+	seenNames := collections.Set[string]{}
 	// Pre-populate seen with existing direct member nodes to avoid duplicates
 	for _, member := range members.Nodes {
 		if member.Name() != nil {
 			seen.Add(member)
+			if nameKey := thisPropertyNameKey(ast.GetTextOfPropertyName(member.Name()), ast.IsStatic(member)); nameKey != "" {
+				seenNames.Add(nameKey)
+			}
 		}
 	}
 	tx.seenProperties = seen
 	defer tx.seenProperties.Clear()
+	tx.seenPropertyNames = seenNames
+	defer tx.seenPropertyNames.Clear()
 	tx.thisPropertyAssignmentsCollected = []*ast.Node{}
 	defer func() {
 		tx.thisPropertyAssignmentsCollected = nil
