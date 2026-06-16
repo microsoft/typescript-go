@@ -165,6 +165,7 @@ export class myClass {
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/solution/app (recursive)
 app/tsconfig.json::
 SemanticDiagnostics::
@@ -299,6 +300,7 @@ export class myClass2 {
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/solution/app (recursive)
 app/tsconfig.json::
 SemanticDiagnostics::

@@ -132,8 +132,7 @@ func (w *Watcher) start(ctx context.Context) {
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	if err := w.doBuild(); err != nil {
-		w.wm.Unlock()
-		return
+		w.wm.ForceOverflow()
 	}
 	w.wm.Unlock()
 
@@ -273,11 +272,6 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 		if w.config.ConfigFile != nil && w.config.PossiblyMatchesDirectoryName(p) {
 			return true
 		}
-		// If a directory was created under an ancestor fallback watch,
-		// treat it as relevant — it may be on the path to a previously
-		// non-existent directory we want to watch. Err on the side of
-		// false positives (unnecessary rebuild) over false negatives
-		// (missed rebuild).
 		if w.sys.FS().DirectoryExists(eventPath) {
 			if w.wm.IsPathUnderWatch(eventPath, opts) {
 				return true

@@ -227,6 +227,7 @@ export {};
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject/packages/pkg1 (recursive)
   /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::
@@ -261,6 +262,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject/packages/pkg1 (recursive)
   /user/username/projects/myproject/packages/pkg2 (recursive)
 
@@ -298,6 +300,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject/packages/pkg1 (recursive)
   /user/username/projects/myproject/packages/pkg2 (recursive)
 
@@ -316,6 +319,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject/packages/pkg1 (recursive)
   /user/username/projects/myproject/packages/pkg2 (recursive)
 
@@ -500,6 +504,7 @@ export type { TheNum } from './const.cjs';
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject/packages/pkg1 (recursive)
   /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::

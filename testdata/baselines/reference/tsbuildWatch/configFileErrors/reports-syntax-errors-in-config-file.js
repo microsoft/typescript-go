@@ -131,6 +131,7 @@ export function bar() { }
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
@@ -168,6 +169,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
@@ -266,6 +268,7 @@ export function fooBar() { }
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
@@ -291,6 +294,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::
@@ -383,6 +387,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/project
 tsconfig.json::
 SemanticDiagnostics::

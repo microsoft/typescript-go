@@ -165,6 +165,7 @@ declare const console: { log(msg: any): void; };
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -199,6 +200,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -323,6 +325,7 @@ export {};
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -354,6 +357,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 
 
@@ -486,6 +490,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -518,6 +523,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -627,6 +633,7 @@ export {};
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -655,6 +662,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 
 
@@ -762,6 +770,7 @@ export const a = class {
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -790,6 +799,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 
 
@@ -893,6 +903,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)
 tsconfig.json::
 SemanticDiagnostics::
@@ -921,4 +932,5 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/noEmitOnError (recursive)

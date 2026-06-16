@@ -83,6 +83,7 @@ export const x = 10;
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::

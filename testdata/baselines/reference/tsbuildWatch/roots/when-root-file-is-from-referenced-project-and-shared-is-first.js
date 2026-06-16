@@ -338,12 +338,11 @@ export function randomFn(str) {
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/solution
   /home/src/workspaces/solution/projects/server
-  /home/src/workspaces/solution/projects/server/dist/server
   /home/src/workspaces/solution/projects/server/src (recursive)
   /home/src/workspaces/solution/projects/shared
-  /home/src/workspaces/solution/projects/shared/dist
   /home/src/workspaces/solution/projects/shared/dist/src
   /home/src/workspaces/solution/projects/shared/src (recursive)
 projects/shared/tsconfig.json::
@@ -375,12 +374,11 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/solution
   /home/src/workspaces/solution/projects/server
-  /home/src/workspaces/solution/projects/server/dist/server
   /home/src/workspaces/solution/projects/server/src (recursive)
   /home/src/workspaces/solution/projects/shared
-  /home/src/workspaces/solution/projects/shared/dist
   /home/src/workspaces/solution/projects/shared/dist/src
   /home/src/workspaces/solution/projects/shared/src (recursive)
 
@@ -636,12 +634,11 @@ export const x = 10;
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/solution
   /home/src/workspaces/solution/projects/server
-  /home/src/workspaces/solution/projects/server/dist/server
   /home/src/workspaces/solution/projects/server/src (recursive)
   /home/src/workspaces/solution/projects/shared
-  /home/src/workspaces/solution/projects/shared/dist
   /home/src/workspaces/solution/projects/shared/dist/src
   /home/src/workspaces/solution/projects/shared/src (recursive)
 projects/shared/tsconfig.json::
@@ -664,12 +661,11 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/solution
   /home/src/workspaces/solution/projects/server
-  /home/src/workspaces/solution/projects/server/dist/server
   /home/src/workspaces/solution/projects/server/src (recursive)
   /home/src/workspaces/solution/projects/shared
-  /home/src/workspaces/solution/projects/shared/dist
   /home/src/workspaces/solution/projects/shared/dist/src
   /home/src/workspaces/solution/projects/shared/src (recursive)
 
@@ -881,12 +877,11 @@ projects/server/src/server.ts
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/solution
   /home/src/workspaces/solution/projects/server
-  /home/src/workspaces/solution/projects/server/dist/server
   /home/src/workspaces/solution/projects/server/src (recursive)
   /home/src/workspaces/solution/projects/shared
-  /home/src/workspaces/solution/projects/shared/dist
   /home/src/workspaces/solution/projects/shared/dist/src
   /home/src/workspaces/solution/projects/shared/src (recursive)
 projects/shared/tsconfig.json::
@@ -905,11 +900,10 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /home/src/workspaces/solution
   /home/src/workspaces/solution/projects/server
-  /home/src/workspaces/solution/projects/server/dist/server
   /home/src/workspaces/solution/projects/server/src (recursive)
   /home/src/workspaces/solution/projects/shared
-  /home/src/workspaces/solution/projects/shared/dist
   /home/src/workspaces/solution/projects/shared/dist/src
   /home/src/workspaces/solution/projects/shared/src (recursive)

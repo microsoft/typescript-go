@@ -270,6 +270,7 @@ let k = 0;
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project1.tsconfig.json::
 SemanticDiagnostics::
@@ -330,6 +331,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project1.tsconfig.json::
 SemanticDiagnostics::
@@ -416,6 +418,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project2.tsconfig.json::
 SemanticDiagnostics::
@@ -465,6 +468,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project2.tsconfig.json::
 SemanticDiagnostics::
@@ -505,6 +509,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project1.tsconfig.json::
 SemanticDiagnostics::
@@ -544,6 +549,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project3.tsconfig.json::
 SemanticDiagnostics::
@@ -581,6 +587,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project
 project3.tsconfig.json::
 SemanticDiagnostics::
@@ -609,4 +616,5 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/project

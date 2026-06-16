@@ -327,6 +327,7 @@ export const pkg2 = 2;
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject (recursive)
   /user/username/projects/myproject/pkg0 (recursive)
   /user/username/projects/myproject/pkg1 (recursive)
@@ -451,6 +452,7 @@ const someConst2 = 10;
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject (recursive)
   /user/username/projects/myproject/pkg0 (recursive)
   /user/username/projects/myproject/pkg1 (recursive)
@@ -469,6 +471,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject (recursive)
   /user/username/projects/myproject/pkg0 (recursive)
   /user/username/projects/myproject/pkg1 (recursive)
@@ -651,6 +654,7 @@ export const someConst = 10;
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject (recursive)
   /user/username/projects/myproject/pkg0 (recursive)
   /user/username/projects/myproject/pkg1 (recursive)
@@ -683,6 +687,7 @@ Output::
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject (recursive)
   /user/username/projects/myproject/pkg0 (recursive)
   /user/username/projects/myproject/pkg1 (recursive)

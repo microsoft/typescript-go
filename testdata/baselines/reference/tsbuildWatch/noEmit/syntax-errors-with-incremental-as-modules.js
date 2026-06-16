@@ -130,6 +130,7 @@ declare const console: { log(msg: any): void; };
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 *not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -229,6 +230,7 @@ Output::
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -328,6 +330,7 @@ export const b = 10;
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -362,6 +365,7 @@ Output::
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -457,6 +461,7 @@ Output::
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 *not cached* /home/src/projects/project/a.ts
@@ -563,6 +568,7 @@ const a = "hello;
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 *not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -602,6 +608,7 @@ Output::
 Watch Registrations::
 Directory watches::
   /home/src/projects/project (recursive)
+  /home/src/tslibs/TS/Lib
 tsconfig.json::
 SemanticDiagnostics::
 *not cached* /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts

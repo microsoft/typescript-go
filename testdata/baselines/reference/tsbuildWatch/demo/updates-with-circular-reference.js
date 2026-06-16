@@ -592,12 +592,12 @@ function createZoo() {
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/demo
   /user/username/projects/demo/animals (recursive)
   /user/username/projects/demo/core (recursive)
   /user/username/projects/demo/lib/animals
   /user/username/projects/demo/lib/core
-  /user/username/projects/demo/lib/zoo
   /user/username/projects/demo/zoo (recursive)
 core/tsconfig.json::
 SemanticDiagnostics::

@@ -251,6 +251,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject
   /user/username/projects/myproject/node_modules/@types/bar
   /user/username/projects/myproject/node_modules/@types/foo
@@ -383,6 +384,7 @@ export {};
 
 Watch Registrations::
 Directory watches::
+  /home/src/tslibs/TS/Lib
   /user/username/projects/myproject
   /user/username/projects/myproject/node_modules/@types/bar
   /user/username/projects/myproject/node_modules/@types/foo

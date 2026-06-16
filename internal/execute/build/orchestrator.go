@@ -223,17 +223,13 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	o.GenerateGraph(nil)
 	result := o.buildOrClean()
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		if err := o.Watch(ctx); err != nil {
-			fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
-			result.Status = tsc.ExitStatusInvalidProject_OutputsSkipped
-		} else {
-			result.Watcher = o
-		}
+		o.Watch(ctx)
+		result.Watcher = o
 	}
 	return result
 }
 
-func (o *Orchestrator) Watch(ctx context.Context) error {
+func (o *Orchestrator) Watch(ctx context.Context) {
 	o.wm.Lock()
 
 	if o.opts.Testing == nil {
@@ -246,8 +242,8 @@ func (o *Orchestrator) Watch(ctx context.Context) error {
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
-		o.wm.Unlock()
-		return err
+		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
+		o.wm.ForceOverflow()
 	}
 	o.resetCaches()
 
@@ -256,7 +252,6 @@ func (o *Orchestrator) Watch(ctx context.Context) error {
 	if o.opts.Testing == nil {
 		o.wm.RunLoop(ctx, o.DoCycle)
 	}
-	return nil
 }
 
 func (o *Orchestrator) updateWatch() {
@@ -336,8 +331,12 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 			if bi != nil && bi.buildInfo != nil {
 				buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
 				for _, fileName := range bi.buildInfo.FileNames {
-					absPath := tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
-					fp := o.toPath(absPath)
+					var fp tspath.Path
+					if !strings.HasPrefix(fileName, ".") {
+						fp = o.toPath(tspath.CombinePaths(o.host.DefaultLibraryPath(), fileName))
+					} else {
+						fp = o.toPath(tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir))
+					}
 					if roots.Has(fp) {
 						continue
 					}
@@ -379,10 +378,6 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 		}
 	}
 
-	// When any event is detected under a watch and tasks have module
-	// resolution errors, reset those tasks to force re-evaluation.
-	// This handles file events (e.g., node_modules/foo/package.json)
-	// that aren't matched by the per-task root/config/buildinfo checks.
 	for eventPath := range changedPaths {
 		if o.wm.IsPathUnderWatch(eventPath, o.comparePathsOptions) {
 			for i := range o.order {
@@ -454,7 +449,12 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 			buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
 			roots := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
 			for _, fileName := range bi.buildInfo.FileNames {
-				absPath := tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
+				var absPath string
+				if !strings.HasPrefix(fileName, ".") {
+					absPath = tspath.CombinePaths(o.host.DefaultLibraryPath(), fileName)
+				} else {
+					absPath = tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
+				}
 				fp := o.toPath(absPath)
 				if roots.Has(fp) {
 					continue
@@ -468,10 +468,6 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 			}
 		}
 
-		// When a task has module resolution errors and node_modules exists,
-		// watch it so that file changes inside (e.g., npm install completing)
-		// trigger a rebuild. Without this, only the project root is watched
-		// (non-recursive), which can't see events deep inside node_modules.
 		if task.hasModuleResolutionErrors {
 			nodeModulesDir := tspath.CombinePaths(realConfigDir, "node_modules")
 			if o.host.FS().DirectoryExists(nodeModulesDir) {
