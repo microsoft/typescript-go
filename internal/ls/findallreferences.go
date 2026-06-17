@@ -110,6 +110,42 @@ type ReferenceEntry struct {
 	lspRange  *lsproto.Location
 }
 
+// Node returns the AST node for this reference entry.
+func (e *ReferenceEntry) Node() *ast.Node {
+	return e.node
+}
+
+// IsNodeEntry returns true if this is a node-backed reference entry.
+func (e *ReferenceEntry) IsNodeEntry() bool {
+	return e.node != nil
+}
+
+// References returns the reference entries for this symbol.
+func (s *SymbolAndEntries) References() []*ReferenceEntry {
+	return s.references
+}
+
+// DefinitionNode returns the defining AST node for this symbol, if any.
+func (s *SymbolAndEntries) DefinitionNode() *ast.Node {
+	if s.definition == nil {
+		return nil
+	}
+	if s.definition.node != nil {
+		return s.definition.node
+	}
+	if s.definition.symbol != nil && len(s.definition.symbol.Declarations) > 0 {
+		return s.definition.symbol.Declarations[0]
+	}
+	return nil
+}
+
+func (s *SymbolAndEntries) DefinitionSymbol() *ast.Symbol {
+	if s.definition == nil {
+		return nil
+	}
+	return s.definition.symbol
+}
+
 func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 	if entry.definition == nil {
 		return false
@@ -669,12 +705,221 @@ func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto
 	)
 }
 
+func (l *LanguageService) ProvideVSReferences(ctx context.Context, params *lsproto.ReferenceParams, orchestrator CrossProjectOrchestrator) (lsproto.VSReferencesResponse, error) {
+	return handleCrossProject(
+		l,
+		ctx,
+		params,
+		orchestrator,
+		(*LanguageService).symbolAndEntriesToVSReferences,
+		combineVSReferences,
+		false, /*isRename*/
+		false, /*implementations*/
+		symbolEntryTransformOptions{},
+	)
+}
+
 func (l *LanguageService) symbolAndEntriesToReferences(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	locations := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
 		return l.convertSymbolAndEntriesToLocations(s, params.Context.IncludeDeclaration)
 	})
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
+}
+
+func (l *LanguageService) symbolAndEntriesToVSReferences(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.VSReferencesResponse, error) {
+	caps := lsproto.GetClientCapabilities(ctx)
+	vsCapability := caps.VSSupportsVisualStudioExtensions
+	var items []*lsproto.VSReferenceItem
+	id := int32(0)
+	projectName := string(l.projectPath)
+
+	for _, s := range data.SymbolsAndEntries {
+		if s.definition == nil {
+			continue
+		}
+
+		// Convert definition to info
+		defInfo := l.definitionToReferencedSymbolDefinitionInfo(ctx, s.definition, data.OriginalNode, vsCapability)
+		if defInfo == nil {
+			continue
+		}
+
+		// Create the definition item
+		definitionId := id
+		emptyStr := ""
+		defItem := &lsproto.VSReferenceItem{
+			VSId:             definitionId,
+			VSLocation:       defInfo.location,
+			VSDefinitionText: defInfo.displayText,
+			VSKind:           &[]lsproto.VSReferenceKind{lsproto.VSReferenceKindUnknown},
+			VSProjectName:    &projectName,
+			VSContainingType: &emptyStr,
+		}
+		items = append(items, defItem)
+		id++
+
+		// Create reference items grouped under the definition
+		for _, ref := range s.references {
+			// Skip the declaration itself (already represented by the definition item)
+			if s.definition.symbol != nil && isDeclarationOfSymbol(ref.node, s.definition.symbol) {
+				continue
+			}
+
+			refLocation := l.getLocationOfEntry(ref)
+
+			// Determine read/write kind
+			kind := lsproto.VSReferenceKindRead
+			if ref.kind != entryKindRange && ref.node != nil && ast.IsWriteAccessForReference(ref.node) {
+				kind = lsproto.VSReferenceKindWrite
+			}
+
+			refItem := &lsproto.VSReferenceItem{
+				VSId:           id,
+				VSDefinitionId: &definitionId,
+				VSLocation:     refLocation,
+				VSKind:         &[]lsproto.VSReferenceKind{kind},
+				VSProjectName:  &projectName,
+			}
+			items = append(items, refItem)
+			id++
+		}
+	}
+
+	return lsproto.VSReferencesResponse{VSReferenceItems: &items}, nil
+}
+
+// referencedSymbolDefinitionInfo holds the computed info for a definition
+type referencedSymbolDefinitionInfo struct {
+	node        *ast.Node
+	location    lsproto.Location
+	displayText *lsproto.VSClassifiedTextElement
+}
+
+// definitionToReferencedSymbolDefinitionInfo converts a Definition to display info
+func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context.Context, def *Definition, originalNode *ast.Node, vsCapability bool) *referencedSymbolDefinitionInfo {
+	switch def.Kind {
+	case definitionKindSymbol:
+		symbol := def.symbol
+		if symbol == nil {
+			return nil
+		}
+		// Get display parts
+		element := l.getDefinitionKindAndDisplayParts(ctx, symbol, originalNode, vsCapability)
+
+		// Get the definition node
+		var node *ast.Node
+		if len(symbol.Declarations) > 0 {
+			decl := symbol.Declarations[0]
+			node = core.OrElse(decl.Name(), decl)
+		} else {
+			node = originalNode
+		}
+
+		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		return &referencedSymbolDefinitionInfo{
+			node:        node,
+			location:    loc,
+			displayText: element,
+		}
+
+	case definitionKindLabel:
+		node := def.node
+		if node == nil {
+			return nil
+		}
+		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		return &referencedSymbolDefinitionInfo{
+			node:     node,
+			location: loc,
+			displayText: &lsproto.VSClassifiedTextElement{
+				Runs: []*lsproto.VSClassifiedTextRun{{Text: node.Text(), ClassificationTypeName: string(lsproto.ClassificationTypeNameText)}},
+			},
+		}
+
+	case definitionKindKeyword:
+		node := def.node
+		if node == nil {
+			return nil
+		}
+		name := scanner.TokenToString(node.Kind)
+		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		return &referencedSymbolDefinitionInfo{
+			node:     node,
+			location: loc,
+			displayText: &lsproto.VSClassifiedTextElement{
+				Runs: []*lsproto.VSClassifiedTextRun{{Text: name, ClassificationTypeName: string(lsproto.ClassificationTypeNameKeyword)}},
+			},
+		}
+
+	case definitionKindThis:
+		node := def.node
+		if node == nil {
+			return nil
+		}
+		symbol := def.symbol
+		if symbol == nil {
+			return nil
+		}
+		element := l.getDefinitionKindAndDisplayParts(ctx, symbol, node, vsCapability)
+		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		return &referencedSymbolDefinitionInfo{
+			node:        node,
+			location:    loc,
+			displayText: element,
+		}
+
+	case definitionKindString:
+		node := def.node
+		if node == nil {
+			return nil
+		}
+		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		return &referencedSymbolDefinitionInfo{
+			node:     node,
+			location: loc,
+			displayText: &lsproto.VSClassifiedTextElement{
+				Runs: []*lsproto.VSClassifiedTextRun{{Text: node.Text(), ClassificationTypeName: string(lsproto.ClassificationTypeNameString)}},
+			},
+		}
+
+	case definitionKindTripleSlashReference:
+		if def.tripleSlashFileRef == nil || def.tripleSlashFileRef.file == nil {
+			return nil
+		}
+		node := def.tripleSlashFileRef.file.AsNode()
+		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		return &referencedSymbolDefinitionInfo{
+			node:     node,
+			location: loc,
+			displayText: &lsproto.VSClassifiedTextElement{
+				Runs: []*lsproto.VSClassifiedTextRun{{Text: `"` + def.tripleSlashFileRef.reference.FileName + `"`, ClassificationTypeName: string(lsproto.ClassificationTypeNameString)}},
+			},
+		}
+
+	default:
+		return nil
+	}
+}
+
+// getDefinitionKindAndDisplayParts returns the classified display text for a symbol definition.
+func (l *LanguageService) getDefinitionKindAndDisplayParts(ctx context.Context, symbol *ast.Symbol, originalNode *ast.Node, vsCapability bool) *lsproto.VSClassifiedTextElement {
+	program := l.GetProgram()
+	c, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	meaning := getIntersectingMeaningFromDeclarations(originalNode, symbol, ast.SemanticMeaningAll)
+
+	info := getQuickInfoAndDeclarationAtLocation(c, symbol, originalNode, nil, vsCapability, meaning)
+
+	if vsCapability {
+		return &lsproto.VSClassifiedTextElement{Runs: info.displayParts.GetRuns()}
+	}
+	// Fallback: single unclassified run with the full text
+	text := info.displayParts.String()
+	return &lsproto.VSClassifiedTextElement{
+		Runs: []*lsproto.VSClassifiedTextRun{{Text: text, ClassificationTypeName: string(lsproto.ClassificationTypeNameText)}},
+	}
 }
 
 func (l *LanguageService) ProvideImplementations(ctx context.Context, params *lsproto.ImplementationParams, orchestrator CrossProjectOrchestrator) (lsproto.ImplementationResponse, error) {
@@ -729,7 +974,7 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 }
 
 func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
-	if target == nil {
+	if node == nil || target == nil {
 		return false
 	}
 
@@ -844,6 +1089,73 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 	return result
 }
 
+// GetReferencedSymbolsForNode returns all referenced symbols and their reference entries for the given node.
+// It returns all referenced symbols and their reference entries for the given node across the provided source files.
+func (l *LanguageService) GetReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
+	return l.getReferencedSymbolsForNode(ctx, position, node, l.program, sourceFiles, refOptions{
+		use: referenceUseReferences,
+	})
+}
+
+// SignatureUsage represents a single usage of a signature declaration,
+// pairing the reference name node with its containing call expression (if any).
+type SignatureUsage struct {
+	Name *ast.Node // The identifier reference node
+	Call *ast.Node // The containing call expression, or nil if not a call usage
+}
+
+// GetSignatureUsages returns all usages of a signature declaration as name-call pairs.
+// For each reference to the signature's name, it returns the reference node and
+// the call expression it appears in (nil if the reference is not in a call position).
+func (l *LanguageService) GetSignatureUsages(ctx context.Context, signatureDecl *ast.Node) []SignatureUsage {
+	name := signatureDecl.Name()
+	if name == nil || !ast.IsIdentifier(name) {
+		return nil
+	}
+
+	sourceFiles := l.program.GetSourceFiles()
+	entries := l.GetReferencedSymbolsForNode(ctx, name.Pos(), name, sourceFiles)
+
+	// Collect all declaration name nodes for the target symbol so we can
+	// filter them out — the caller wants usages, not declarations.
+	declNames := make(map[*ast.Node]bool)
+	for _, entry := range entries {
+		if entry.definition != nil && entry.definition.symbol != nil {
+			for _, decl := range entry.definition.symbol.Declarations {
+				if n := decl.Name(); n != nil {
+					declNames[n] = true
+				}
+			}
+		}
+	}
+
+	var result []SignatureUsage
+	for _, entry := range entries {
+		for _, ref := range entry.References() {
+			if !ref.IsNodeEntry() {
+				continue
+			}
+			node := ref.Node()
+			if node == nil || declNames[node] {
+				continue
+			}
+
+			called := ast.ClimbPastPropertyAccess(node)
+
+			var callExpr *ast.Node
+			if called.Parent != nil && ast.IsCallExpression(called.Parent) && called.Parent.Expression() == called {
+				callExpr = called.Parent
+			}
+
+			result = append(result, SignatureUsage{
+				Name: node,
+				Call: callExpr,
+			})
+		}
+	}
+	return result
+}
+
 // === functions for find all ref implementation ===
 
 func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile, options refOptions) []*SymbolAndEntries {
@@ -913,6 +1225,9 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	}
 
 	if symbol.Name == ast.InternalSymbolNameExportEquals {
+		if symbol.Parent == nil {
+			return nil
+		}
 		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
@@ -1124,7 +1439,8 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 						return container.Kind == ast.KindSourceFile && !ast.IsExternalModule(container.AsSourceFile()) && !isParameterName(node)
 					}
 					return false
-				})
+				},
+			)
 		}),
 		func(n *ast.Node) *ReferenceEntry { return newNodeEntry(n) },
 	)
@@ -1370,8 +1686,8 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 					references = append(references, newNodeEntry(decl.AsModuleDeclaration().Name()))
 				}
 			default:
-				// This may be merged with something.
-				debug.Assert(symbol.Flags&ast.SymbolFlagsTransient != 0, "Expected a module symbol to be declared by a SourceFile or ModuleDeclaration.")
+				// This may be merged with something (e.g. a class merged with a namespace).
+				continue
 			}
 		}
 	}
@@ -1715,7 +2031,7 @@ func (state *refState) addImplementationReferences(refNode *ast.Node, addRef fun
 	}
 
 	typeHavingNode := typeNode.Parent
-	if typeHavingNode.Type() == typeNode && !state.seenContainingTypeReferences.AddIfAbsent(typeHavingNode) {
+	if typeHavingNode.Type() == typeNode && state.seenContainingTypeReferences.AddIfAbsent(typeHavingNode) {
 		addIfImplementation := func(e *ast.Expression) {
 			if isImplementationExpression(e) {
 				addRef(e)

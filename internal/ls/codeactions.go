@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"strings"
@@ -18,7 +19,7 @@ import (
 // CodeFixProvider represents a provider for a specific type of code fix
 type CodeFixProvider struct {
 	ErrorCodes        []int32
-	GetCodeActions    func(ctx context.Context, fixContext *CodeFixContext) ([]CodeAction, error)
+	GetCodeActions    func(ctx context.Context, fixContext *CodeFixContext) ([]*CodeAction, error)
 	FixIds            []string
 	GetAllCodeActions func(ctx context.Context, fixContext *CodeFixContext) (*CombinedCodeActions, error)
 }
@@ -42,6 +43,23 @@ type CodeAction struct {
 	FixAllDescription string
 }
 
+// Compare defines a total ordering for CodeAction values, comparing description
+// then text edits lexicographically. Used with slices.BinarySearchFunc.
+func (a *CodeAction) Compare(b *CodeAction) int {
+	if c := strings.Compare(a.Description, b.Description); c != 0 {
+		return c
+	}
+	if c := cmp.Compare(len(a.Changes), len(b.Changes)); c != 0 {
+		return c
+	}
+	for i, edit := range a.Changes {
+		if c := edit.Compare(b.Changes[i]); c != 0 {
+			return c
+		}
+	}
+	return 0
+}
+
 // CombinedCodeActions represents combined code actions for fix-all scenarios
 type CombinedCodeActions struct {
 	Description string
@@ -51,6 +69,8 @@ type CombinedCodeActions struct {
 // codeFixProviders is the list of all registered code fix providers
 var codeFixProviders = []*CodeFixProvider{
 	ImportFixProvider,
+	IsolatedDeclarationsFixProvider,
+	FixClassIncorrectlyImplementsInterfaceProvider,
 	// Add more code fix providers here as they are implemented
 }
 
@@ -83,6 +103,8 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 	if params.Context != nil && params.Context.Diagnostics != nil && wantsQuickFixes(params.Context.Only) {
 		fixIdSeen := make(map[string]*CodeFixProvider)
 
+		var seen []*CodeAction // sorted for binary search dedup, dedup across all diagnostics and providers so if multiple diags produce the same codefix, only one is returned
+
 		for _, diag := range params.Context.Diagnostics {
 			if diag.Code == nil || diag.Code.Integer == nil {
 				continue
@@ -112,7 +134,12 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					return lsproto.CodeActionResponse{}, err
 				}
 				for _, action := range providerActions {
-					actions = append(actions, convertToLSPCodeAction(&action, diag, params.TextDocument.Uri))
+					i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
+					if found {
+						continue
+					}
+					seen = slices.Insert(seen, i, action)
+					actions = append(actions, convertToLSPCodeAction(action, diag, params.TextDocument.Uri))
 					if action.FixID != "" {
 						fixIdSeen[action.FixID] = provider
 					}
@@ -185,9 +212,10 @@ func (l *LanguageService) getFixAllQuickFixes(
 }
 
 // hasMultipleFixableDiagnostics returns true if the file has at least 2 diagnostics
-// matching the given error codes.
+// matching the given error codes. Checks all diagnostic sources (semantic,
+// syntactic, suggestion, declaration) to match ProvideDiagnostics.
 func hasMultipleFixableDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile, errorCodes []int32) bool {
-	allDiags := program.GetSemanticDiagnostics(ctx, file)
+	allDiags := getAllDiagnostics(ctx, program, file)
 	count := 0
 	for _, d := range allDiags {
 		if containsErrorCode(errorCodes, d.Code()) {

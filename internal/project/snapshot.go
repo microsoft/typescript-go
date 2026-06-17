@@ -68,7 +68,7 @@ func NewSnapshot(
 
 		fs:                                 fs,
 		ConfigFileRegistry:                 configFileRegistry,
-		ProjectCollection:                  &ProjectCollection{toPath: toPath},
+		ProjectCollection:                  &ProjectCollection{toPath: toPath, openFiles: openFilePaths(fs.overlays)},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		userPreferences:                    userPreferences,
 		AutoImports:                        autoImports,
@@ -142,6 +142,10 @@ func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 
 func (s *Snapshot) DirectoryExists(path string) bool {
 	return s.fs.fs.DirectoryExists(path)
+}
+
+func (s *Snapshot) FileExists(path string) bool {
+	return s.fs.fs.FileExists(path)
 }
 
 func (s *Snapshot) GetDirectories(path string) []string {
@@ -260,6 +264,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		switch change.reason {
 		case UpdateReasonDidOpenFile:
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
+		case UpdateReasonDidCloseFile:
+			logger.Logf("Reason: DidCloseFile - %v", change.fileChanges.Closed)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
@@ -278,7 +284,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if change.fileChanges.InvalidateAll {
@@ -297,6 +303,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	} else {
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
+		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
@@ -498,6 +505,21 @@ func (s *Snapshot) ref() {
 	}
 }
 
+// tryRef attempts to increment the snapshot's reference count. If the
+// snapshot is already disposed (refCount == 0), it returns false without
+// modifying the count. On success the caller must eventually call Deref.
+func (s *Snapshot) tryRef() bool {
+	for {
+		rc := s.refCount.Load()
+		if rc <= 0 {
+			return false
+		}
+		if s.refCount.CompareAndSwap(rc, rc+1) {
+			return true
+		}
+	}
+}
+
 // Deref decrements the snapshot's reference count. When the count reaches
 // zero, the snapshot is disposed and its resources are released.
 func (s *Snapshot) Deref(session *Session) {
@@ -513,6 +535,13 @@ func (s *Snapshot) Deref(session *Session) {
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			// This program is no longer referenced by any snapshot.
+			// Mark its checker pool as discarded so its idle-cleanup timer stops
+			// keeping the pool alive, allowing the pool and any idle checkers it
+			// still references to be reclaimed when the pool is garbage-collected.
+			if project.checkerPool != nil {
+				project.checkerPool.Discard()
+			}
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}

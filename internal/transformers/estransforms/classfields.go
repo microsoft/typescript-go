@@ -609,7 +609,7 @@ func (tx *classFieldsTransformer) visitExportAssignment(node *ast.ExportAssignme
 	//        a. Let _value_ be ? NamedEvaluation of |AssignmentExpression| with argument `"default"`.
 	//     ...
 
-	// NOTE: Since emit for `export =` translates to `module.exports = ...`, the assigned nameof the class
+	// NOTE: Since emit for `export =` translates to `module.exports = ...`, the assigned name of the class
 	// is `""`.
 
 	if isNamedEvaluationAnd(tx.EmitContext(), node.AsNode(), tx.isAnonymousClassNeedingAssignedName) {
@@ -1417,6 +1417,7 @@ func (tx *classFieldsTransformer) transformClassStaticBlockDeclaration(node *ast
 		arrowFunction.AsArrowFunction().Body.AsBlock().Statements.Loc = node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Loc
 		tx.EmitContext().SetOriginal(iife, node)
 		tx.EmitContext().AssignSourceMapRange(iife, node)
+		tx.EmitContext().AddEmitFlags(arrowFunction, printer.EFNoLexicalThis)
 		return iife
 	}
 	return nil
@@ -2724,6 +2725,9 @@ func (tx *classFieldsTransformer) generateInitializedPropertyExpressionsOrClassS
 func (tx *classFieldsTransformer) transformProperty(property *ast.PropertyDeclaration, receiver *ast.Expression) *ast.Expression {
 	savedCurrentClassElement := tx.currentClassElement
 	transformed := tx.transformPropertyWorker(property, receiver)
+	if transformed != nil && ast.HasStaticModifier(property.AsNode()) {
+		tx.EmitContext().AddEmitFlags(transformed, printer.EFNoLexicalThis)
+	}
 	if transformed != nil && ast.HasStaticModifier(property.AsNode()) &&
 		tx.lexicalEnvironment != nil && tx.lexicalEnvironment.data != nil && tx.lexicalEnvironment.data.facts != 0 {
 		// capture the lexical environment for the member
@@ -2850,7 +2854,8 @@ func (tx *classFieldsTransformer) addInstanceMethodStatements(statements []*ast.
 	weakSetName := env.data.weakSetName
 	debug.Assert(weakSetName != nil, "weakSetName should be set in private identifier environment")
 
-	return append(statements,
+	return append(
+		statements,
 		tx.Factory().NewExpressionStatement(
 			createPrivateInstanceMethodInitializer(tx.Factory(), receiver, weakSetName),
 		),
@@ -3215,7 +3220,8 @@ func (tx *classFieldsTransformer) wrapPrivateIdentifierForDestructuringTarget(no
 			Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes,
 		})
 		tx.EmitContext().AddVariableDeclaration(receiver)
-		tx.pendingExpressions = append(tx.pendingExpressions,
+		tx.pendingExpressions = append(
+			tx.pendingExpressions,
 			tx.Factory().NewAssignmentExpression(receiver, tx.Visitor().VisitNode(prop.Expression)),
 		)
 	}

@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityNamespaceDefaultExport.ts ===
+// 
 // declare namespace ns {
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace ns {
 // |     let circle: Shape;
 // |     export { circle as default };
@@ -15,7 +16,7 @@
 // | ----------------------------------------------------------------------
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | namespace ns
 // | ```
 // | 
@@ -32,9 +33,9 @@
 [
   {
     "marker": {
-      "Position": 20,
+      "Position": 21,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 20
       },
       "Name": "1",
@@ -44,15 +45,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns\n```\n"
+          "value": "```typescript\nnamespace ns\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 20
           }
         },
@@ -63,9 +64,9 @@
   },
   {
     "marker": {
-      "Position": 20,
+      "Position": 21,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 20
       },
       "Name": "1",
@@ -75,15 +76,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nnamespace ns {\n    let circle: Shape;\n    export { circle as default };\n    export { Shape };\n}\n```\n"
+          "value": "```typescript\nnamespace ns {\n    let circle: Shape;\n    export { circle as default };\n    export { Shape };\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 18
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 20
           }
         },

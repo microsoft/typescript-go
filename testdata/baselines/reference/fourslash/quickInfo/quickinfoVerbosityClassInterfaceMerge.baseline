@@ -1,9 +1,10 @@
 // === QuickInfo ===
 === /quickinfoVerbosityClassInterfaceMerge.ts ===
+// 
 // declare class Foo {
 //               ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo {
 // |     x: number;
 // |     y: string;
@@ -14,7 +15,7 @@
 // | ----------------------------------------------------------------------
 //               ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo
 // | ```
 // | 
@@ -28,7 +29,7 @@
 // const f: Foo = { x: 1, y: "hello" };
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo {
 // |     x: number;
 // |     y: string;
@@ -39,7 +40,7 @@
 // | ----------------------------------------------------------------------
 //          ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class Foo
 // | ```
 // | 
@@ -49,9 +50,9 @@
 [
   {
     "marker": {
-      "Position": 17,
+      "Position": 18,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 17
       },
       "Name": "1",
@@ -61,15 +62,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo\n```\n"
+          "value": "```typescript\nclass Foo\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 14
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 17
           }
         },
@@ -80,9 +81,9 @@
   },
   {
     "marker": {
-      "Position": 17,
+      "Position": 18,
       "LSPosition": {
-        "line": 0,
+        "line": 1,
         "character": 17
       },
       "Name": "1",
@@ -92,15 +93,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo {\n    x: number;\n    y: string;\n}\n```\n"
+          "value": "```typescript\nclass Foo {\n    x: number;\n    y: string;\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 0,
+            "line": 1,
             "character": 14
           },
           "end": {
-            "line": 0,
+            "line": 1,
             "character": 17
           }
         }
@@ -110,9 +111,9 @@
   },
   {
     "marker": {
-      "Position": 90,
+      "Position": 91,
       "LSPosition": {
-        "line": 6,
+        "line": 7,
         "character": 12
       },
       "Name": "2",
@@ -122,15 +123,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo\n```\n"
+          "value": "```typescript\nclass Foo\n```\n"
         },
         "range": {
           "start": {
-            "line": 6,
+            "line": 7,
             "character": 9
           },
           "end": {
-            "line": 6,
+            "line": 7,
             "character": 12
           }
         },
@@ -141,9 +142,9 @@
   },
   {
     "marker": {
-      "Position": 90,
+      "Position": 91,
       "LSPosition": {
-        "line": 6,
+        "line": 7,
         "character": 12
       },
       "Name": "2",
@@ -153,15 +154,15 @@
       "hover": {
         "contents": {
           "kind": "markdown",
-          "value": "```tsx\nclass Foo {\n    x: number;\n    y: string;\n}\n```\n"
+          "value": "```typescript\nclass Foo {\n    x: number;\n    y: string;\n}\n```\n"
         },
         "range": {
           "start": {
-            "line": 6,
+            "line": 7,
             "character": 9
           },
           "end": {
-            "line": 6,
+            "line": 7,
             "character": 12
           }
         }

@@ -196,7 +196,7 @@ func (tx *RuntimeSyntaxTransformer) getExpressionForPropertyName(member *ast.Enu
 		// enums don't support computed properties so we always generate the 'expression' part of the name as-is.
 		return tx.Visitor().VisitNode(n.Expression)
 	case ast.KindIdentifier:
-		return tx.Factory().NewStringLiteralFromNode(name)
+		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	case ast.KindStringLiteral: // !!! propagate token flags (will produce new diffs)
 		return tx.Factory().NewStringLiteral(name.Text(), ast.TokenFlagsNone)
 	case ast.KindNumericLiteral:
@@ -676,7 +676,7 @@ func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclara
 	}
 
 	name := tx.Visitor().VisitNode(node.Name())
-	if exported && name == nil {
+	if name == nil && (exported || ast.ChildIsDecorated(tx.compilerOptions.ExperimentalDecorators.IsTrue(), node.AsNode(), nil)) {
 		name = tx.Factory().NewGeneratedNameForNode(node.AsNode())
 	}
 	heritageClauses := tx.Visitor().VisitNodes(node.HeritageClauses)
@@ -784,11 +784,11 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	for _, parameter := range parameterProperties {
 		if ast.IsIdentifier(parameter.Name()) {
 			propertyName := parameter.Name().Clone(tx.Factory())
-			propertyName.Parent = parameter.AsNode() //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
+			propertyName.Parent = parameter.Name().Parent //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
 			tx.EmitContext().AddEmitFlags(propertyName, printer.EFNoComments|printer.EFNoSourceMap)
 
 			localName := parameter.Name().Clone(tx.Factory())
-			localName.Parent = parameter.AsNode() //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
+			localName.Parent = parameter.Name().Parent //nolint:customlint // .Parent set to get node to printback using text from original file instead of processed text; TODO: this should be achievable via EmitFlags instead
 			tx.EmitContext().AddEmitFlags(localName, printer.EFNoComments)
 
 			parameterProperty := tx.Factory().NewExpressionStatement(
@@ -907,7 +907,8 @@ func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.S
 		tx.EmitContext().AssignCommentAndSourceMapRanges(updated, node.AsNode())
 		return updated
 	}
-	return tx.Factory().UpdateShorthandPropertyAssignment(node,
+	return tx.Factory().UpdateShorthandPropertyAssignment(
+		node,
 		nil, /*modifiers*/
 		exportedOrImportedName,
 		nil, /*postfixToken*/

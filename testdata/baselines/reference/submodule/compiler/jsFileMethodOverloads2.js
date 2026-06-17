@@ -96,6 +96,7 @@ class Example {
  * @template T
  */
 declare class Example<T> {
+    value: T;
     /**
      * @param {T} value
      */
@@ -149,5 +150,5 @@ declare class Example<T> {
      * @param {(y: T) => unknown} [fn]
      * @returns {unknown}
      */
-    transform(): T;
+    transform<U>(): T;
 }

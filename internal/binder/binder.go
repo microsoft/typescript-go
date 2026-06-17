@@ -379,7 +379,7 @@ func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, descri
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
 	container := b.container
-	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0 || ast.IsImplicitlyExportedJSTypeAlias(node)
+	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0 || ast.IsImplicitlyExportedJSDocDeclaration(node)
 	if symbolFlags&ast.SymbolFlagsAlias != 0 {
 		if node.Kind == ast.KindExportSpecifier || (node.Kind == ast.KindImportEqualsDeclaration && hasExportModifier) {
 			return b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, symbolFlags, symbolExcludes)
@@ -426,7 +426,7 @@ func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags,
 }
 
 func (b *Binder) declareSourceFileMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
-	if ast.IsExternalOrCommonJSModule(b.file) {
+	if ast.IsExternalModule(b.file) {
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	}
 	return b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, symbolFlags, symbolExcludes)
@@ -665,7 +665,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature:
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsSignature, ast.SymbolFlagsNone)
 	case ast.KindMethodDeclaration, ast.KindMethodSignature:
-		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), core.IfElse(ast.IsObjectLiteralMethod(node), ast.SymbolFlagsPropertyExcludes, ast.SymbolFlagsMethodExcludes))
+		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), core.IfElse(ast.IsObjectLiteralMethod(node), ast.SymbolFlagsValue, ast.SymbolFlagsMethodExcludes))
 	case ast.KindFunctionDeclaration:
 		b.bindFunctionDeclaration(node)
 	case ast.KindConstructor:
@@ -865,12 +865,9 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		// Incorrect export assignment in some sort of block construct
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsValue, b.getDeclarationName(node))
 	} else {
-		flags := ast.SymbolFlagsProperty
-		if ast.ExpressionIsAlias(node.Expression()) {
-			flags = ast.SymbolFlagsAlias
-		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
+		flags := core.IfElse(ast.ExpressionIsAlias(node.Expression()), ast.SymbolFlagsAlias, ast.SymbolFlagsProperty)
 		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsAll)
 		if node.AsExportAssignment().IsExportEquals {
 			// Ensure export assignments have a ValueDeclaration set.
@@ -920,6 +917,9 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 }
 
 func (b *Binder) bindFunctionExpression(node *ast.Node) {
+	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
+		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
+	}
 	setFlowNode(node, b.currentFlow)
 	bindingName := ast.InternalSymbolNameFunction
 	if ast.IsFunctionExpression(node) && node.AsFunctionExpression().Name() != nil {
@@ -983,6 +983,9 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) bindPropertyOrMethodOrAccessor(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) {
+	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
+		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
+	}
 	if b.currentFlow != nil && ast.IsObjectLiteralOrClassExpressionMethodOrAccessor(node) {
 		setFlowNode(node, b.currentFlow)
 	}
@@ -1093,7 +1096,8 @@ func (b *Binder) bindExportsOrObjectDefineProperty(node *ast.Node) {
 	if b.setCommonJSModuleIndicator(node) {
 		b.trackNestedCJSExport(node)
 		container := b.file.AsNode()
-		b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
+		flags := core.IfElse(ast.IsBinaryExpression(node) && ast.ExpressionIsAlias(node.AsBinaryExpression().Right), ast.SymbolFlagsAlias, ast.SymbolFlagsFunctionScopedVariable)
+		b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	}
 }
 
@@ -1104,20 +1108,20 @@ func getInitializerSymbol(symbol *ast.Symbol) *ast.Symbol {
 	declaration := symbol.ValueDeclaration
 	// For an assignment 'fn.xxx = ...', where 'fn' is a previously declared function or a previously
 	// declared const variable initialized with a function expression or arrow function, we add expando
-	// property declarations to the function's symbol.
-	// This also applies to class expressions and empty object literals in JS files.
+	// property declarations to the function's symbol. This also applies to class expressions in JS files,
+	// and empty object literals in JS files when the declaration doesn't have a type annotation.
 	switch {
 	case ast.IsFunctionDeclaration(declaration) || ast.IsInJSFile(declaration) && ast.IsClassDeclaration(declaration):
 		return symbol
 	case ast.IsVariableDeclaration(declaration) &&
 		(declaration.Parent.Flags&ast.NodeFlagsConst != 0 || ast.IsInJSFile(declaration)):
 		initializer := declaration.Initializer()
-		if ast.IsExpandoInitializer(initializer) {
+		if ast.IsExpandoInitializer(declaration, initializer) {
 			return initializer.Symbol()
 		}
 	case ast.IsBinaryExpression(declaration) && ast.IsInJSFile(declaration):
 		initializer := declaration.AsBinaryExpression().Right
-		if ast.IsExpandoInitializer(initializer) {
+		if ast.IsExpandoInitializer(declaration, initializer) {
 			return initializer.Symbol()
 		}
 	}
@@ -1221,6 +1225,9 @@ func (b *Binder) bindParameter(node *ast.Node) {
 }
 
 func (b *Binder) bindFunctionDeclaration(node *ast.Node) {
+	if !b.file.IsDeclarationFile && node.Flags&ast.NodeFlagsAmbient == 0 && ast.IsAsyncFunction(node) {
+		b.emitFlags |= ast.NodeFlagsHasAsyncFunctions
+	}
 	b.checkStrictModeFunctionName(node)
 	b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
 }
@@ -1553,7 +1560,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.seenThisKeyword = false
 		b.bindChildren(node)
 		// Reset flags (for incremental scenarios)
-		node.Flags &^= ast.NodeFlagsReachabilityCheckFlags | ast.NodeFlagsContainsThis
+		node.Flags &^= ast.NodeFlagsReachabilityAndEmitFlags | ast.NodeFlagsContainsThis
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && containerFlags&ContainerFlagsIsFunctionLike != 0 {
 			bodyData := node.BodyData()
 			if bodyData != nil && ast.NodeIsPresent(bodyData.Body) {

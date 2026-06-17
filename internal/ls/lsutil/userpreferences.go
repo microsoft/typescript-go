@@ -76,11 +76,11 @@ type UserPreferences struct {
 
 	ImportModuleSpecifierPreference modulespecifiers.ImportModuleSpecifierPreference `raw:"importModuleSpecifierPreference" config:"preferences.importModuleSpecifier"` // !!!
 	// Determines whether we import `foo/index.ts` as "foo", "foo/index", or "foo/index.js"
-	ImportModuleSpecifierEnding       modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
-	AutoImportSpecifierExcludeRegexes []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
-	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports                          `raw:"includePackageJsonAutoImports" config:"preferences.includePackageJsonAutoImports"`
-	AutoImportFileExcludePatterns     []string                                               `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
-	PreferTypeOnlyAutoImports         core.Tristate                                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
+	ImportModuleSpecifierEnding         modulespecifiers.ImportModuleSpecifierEndingPreference `raw:"importModuleSpecifierEnding" config:"preferences.importModuleSpecifierEnding"`             // !!!
+	AutoImportSpecifierExcludeRegexes   []string                                               `raw:"autoImportSpecifierExcludeRegexes" config:"preferences.autoImportSpecifierExcludeRegexes"` // !!!
+	AutoImportFileExcludePatterns       []string                                               `raw:"autoImportFileExcludePatterns" config:"preferences.autoImportFileExcludePatterns"`
+	AutoImportEntrypointDirectorySearch core.Tristate                                          `raw:"autoImportEntrypointDirectorySearch" config:"preferences.autoImportEntrypointDirectorySearch"`
+	PreferTypeOnlyAutoImports           core.Tristate                                          `raw:"preferTypeOnlyAutoImports" config:"preferences.preferTypeOnlyAutoImports"`
 
 	// ------- OrganizeImports -------
 
@@ -168,10 +168,29 @@ type UserPreferences struct {
 	DisplayPartsForJSDoc        core.Tristate `raw:"displayPartsForJSDoc"`        // !!!
 	ReportStyleChecksAsWarnings core.Tristate `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
 
+	// ------- ATA -------
+
+	// DisableAutomaticTypeAcquisition is the deprecated setting from typescript.disableAutomaticTypeAcquisition.
+	DisableAutomaticTypeAcquisition core.Tristate `raw:"disableAutomaticTypeAcquisition" config:"disableAutomaticTypeAcquisition"`
+	// AutomaticTypeAcquisitionEnabled is the unified setting from tsserver.automaticTypeAcquisition.enabled under the js/ts section.
+	// When set, it takes precedence over DisableAutomaticTypeAcquisition.
+	AutomaticTypeAcquisitionEnabled core.Tristate `raw:"automaticTypeAcquisitionEnabled" config:"tsserver.automaticTypeAcquisition.enabled"`
+	// TODO: add tsserver.web.typeAcquisition.enabled under the js/ts section for the web variant when web support is implemented.
+
 	// ------- Project Configuration -------
 
 	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
 	CustomConfigFileName string `raw:"customConfigFileName" config:"native-preview.customConfigFileName"`
+}
+
+// IsATADisabled returns whether Automatic Type Acquisition is disabled based on user preferences.
+// It checks the unified setting (tsserver.automaticTypeAcquisition.enabled) first,
+// then falls back to the deprecated setting (disableAutomaticTypeAcquisition).
+func (p UserPreferences) IsATADisabled() bool {
+	if !p.AutomaticTypeAcquisitionEnabled.IsUnknown() {
+		return !p.AutomaticTypeAcquisitionEnabled.IsTrue()
+	}
+	return p.DisableAutomaticTypeAcquisition.IsTrue()
 }
 
 type InlayHintsPreferences struct {
@@ -219,15 +238,6 @@ const (
 	IncludeInlayParameterNameHintsNone     IncludeInlayParameterNameHints = ""
 	IncludeInlayParameterNameHintsAll      IncludeInlayParameterNameHints = "all"
 	IncludeInlayParameterNameHintsLiterals IncludeInlayParameterNameHints = "literals"
-)
-
-type IncludePackageJsonAutoImports string
-
-const (
-	IncludePackageJsonAutoImportsUnknown IncludePackageJsonAutoImports = ""
-	IncludePackageJsonAutoImportsAuto    IncludePackageJsonAutoImports = "auto"
-	IncludePackageJsonAutoImportsOn      IncludePackageJsonAutoImports = "on"
-	IncludePackageJsonAutoImportsOff     IncludePackageJsonAutoImports = "off"
 )
 
 type OrganizeImportsCollation bool
@@ -307,19 +317,6 @@ var typeParsers = map[reflect.Type]func(any) any{
 			}
 		}
 		return IncludeInlayParameterNameHintsNone
-	},
-	reflect.TypeFor[IncludePackageJsonAutoImports](): func(val any) any {
-		if s, ok := val.(string); ok {
-			switch strings.ToLower(s) {
-			case "on":
-				return IncludePackageJsonAutoImportsOn
-			case "off":
-				return IncludePackageJsonAutoImportsOff
-			default:
-				return IncludePackageJsonAutoImportsAuto
-			}
-		}
-		return IncludePackageJsonAutoImportsUnknown
 	},
 	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
 		if s, ok := val.(string); ok && strings.ToLower(s) == "unicode" {

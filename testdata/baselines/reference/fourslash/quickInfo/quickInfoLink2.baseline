@@ -4,8 +4,10 @@
 //  * @typedef AdditionalWallabyConfig Additional valid Wallaby config properties
 //             ^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | type AdditionalWallabyConfig = { autoDetect: boolean; }
+// | ```typescript
+// | type AdditionalWallabyConfig = {
+// |     autoDetect: boolean;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
@@ -26,7 +28,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype AdditionalWallabyConfig = { autoDetect: boolean; }\n```\n"
+        "value": "```typescript\ntype AdditionalWallabyConfig = {\n    autoDetect: boolean;\n}\n```\n"
       },
       "range": {
         "start": {
