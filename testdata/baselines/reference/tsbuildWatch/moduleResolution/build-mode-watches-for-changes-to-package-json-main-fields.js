@@ -250,6 +250,11 @@ export {};
   "size": 1611
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -356,6 +361,11 @@ Resolving real path for '/user/username/projects/myproject/node_modules/pkg2/bui
 }
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -456,6 +466,11 @@ File '/user/username/projects/myproject/packages/pkg2/const.ts' exists - use it 
 }
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::
 SemanticDiagnostics::
 Signatures::

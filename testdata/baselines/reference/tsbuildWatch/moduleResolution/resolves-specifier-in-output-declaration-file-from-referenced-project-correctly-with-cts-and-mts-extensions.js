@@ -232,6 +232,11 @@ export {};
   "size": 1438
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -337,6 +342,11 @@ exports.theNum = 42;
   "semanticErrors": true
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg1/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -420,6 +430,11 @@ export const theNum = 42;
   "size": 111
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg1/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -516,6 +531,11 @@ exports.theNum = 42;
   "semanticErrors": true
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg1/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -699,6 +719,11 @@ export type { TheNum } from './const.cjs';
   "size": 1439
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/myproject/packages/pkg1 (recursive)
+  /user/username/projects/myproject/packages/pkg2 (recursive)
 packages/pkg2/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/myproject/packages/pkg2/index.cts
