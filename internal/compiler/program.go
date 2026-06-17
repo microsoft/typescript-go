@@ -669,7 +669,8 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(core.Concatenate(
+	return SortAndDeduplicateDiagnostics(slices.Concat(
+		p.GetConfigFileParsingDiagnostics(),
 		p.programDiagnostics,
 		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics(),
 	))
