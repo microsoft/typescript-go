@@ -297,7 +297,7 @@ func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.Typ
 			}
 			return expr
 		}
-		var typeName *ast.Node = typeRef.TypeName
+		typeName := typeRef.TypeName
 		for _, id := range getAccessStack(ref) {
 			typeName = b.f.NewQualifiedName(typeName, id)
 		}
@@ -1405,10 +1405,7 @@ func (b *NodeBuilderImpl) typeParameterToName(typeParameter *Type) *ast.Identifi
 		i, _ := b.ctx.typeParameterNamesByTextNextNameCount.Get(rawText)
 		text := rawText
 
-		for {
-			if !b.ctx.typeParameterNamesByText.Has(text) && !b.typeParameterShadowsOtherTypeParameterInScope(text, typeParameter) {
-				break
-			}
+		for b.ctx.typeParameterNamesByText.Has(text) || b.typeParameterShadowsOtherTypeParameterInScope(text, typeParameter) {
 			i++
 			text = fmt.Sprintf("%s_%d", rawText, i)
 		}

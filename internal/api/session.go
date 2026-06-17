@@ -1364,7 +1364,7 @@ func (s *Session) resolveSymbolTablePropertyOfSymbol(params *GetSymbolPropertyPa
 	}
 
 	symbolTable := getter(symbol)
-	if symbolTable == nil || len(symbolTable) == 0 {
+	if len(symbolTable) == 0 {
 		return nil, nil
 	}
 

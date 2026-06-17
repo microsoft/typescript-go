@@ -1562,7 +1562,7 @@ type failingBackend struct {
 
 func newFailingBackend(err error) *failingBackend {
 	b := &failingBackend{err: err}
-	b.watcherBase.init(b)
+	b.init(b)
 	return b
 }
 
