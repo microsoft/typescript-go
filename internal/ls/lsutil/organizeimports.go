@@ -127,9 +127,6 @@ func compareOrganizeImportsUnicodeStrings(a string, b string, ignoreCase bool, c
 		}
 	}
 
-	if !accents {
-		return strings.Compare(b, a)
-	}
 	return strings.Compare(a, b)
 }
 
