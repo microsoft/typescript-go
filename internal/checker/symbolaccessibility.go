@@ -170,10 +170,10 @@ func (c *Checker) getAlternativeContainingModules(symbol *ast.Symbol, enclosingD
 		return nil
 	}
 	containingFile := ast.GetSourceFileOfNode(enclosingDeclaration)
-	id := ast.GetNodeId(containingFile.AsNode())
+	id := containingFile.AsNode()
 	links := c.symbolContainerLinks.Get(symbol)
 	if links.extendedContainersByFile == nil {
-		links.extendedContainersByFile = make(map[ast.NodeId][]*ast.Symbol)
+		links.extendedContainersByFile = make(map[*ast.Node][]*ast.Symbol)
 	}
 	existing, ok := links.extendedContainersByFile[id]
 	if ok && existing != nil {
@@ -376,7 +376,7 @@ func (c *Checker) getAccessibleSymbolChain(
 	meaning ast.SymbolFlags,
 	useOnlyExternalAliasing bool,
 ) []*ast.Symbol {
-	return c.getAccessibleSymbolChainEx(accessibleSymbolChainContext{symbol, enclosingDeclaration, meaning, useOnlyExternalAliasing, make(map[ast.SymbolId]map[symbolTableID]struct{})})
+	return c.getAccessibleSymbolChainEx(accessibleSymbolChainContext{symbol, enclosingDeclaration, meaning, useOnlyExternalAliasing, make(map[*ast.Symbol]map[symbolTableID]struct{})})
 }
 
 func (c *Checker) GetAccessibleSymbolChain(
@@ -393,7 +393,7 @@ type accessibleSymbolChainContext struct {
 	enclosingDeclaration    *ast.Node
 	meaning                 ast.SymbolFlags
 	useOnlyExternalAliasing bool
-	visitedSymbolTablesMap  map[ast.SymbolId]map[symbolTableID]struct{}
+	visitedSymbolTablesMap  map[*ast.Symbol]map[symbolTableID]struct{}
 }
 
 // symbolTableID uniquely identifies a symbol table by encoding its source.
@@ -479,11 +479,10 @@ func (c *Checker) getAccessibleSymbolChainEx(ctx accessibleSymbolChainContext) [
 * @param {ignoreQualification} boolean Set when a symbol is being looked for through the exports of another symbol (meaning we have a route to qualify it already)
  */
 func (c *Checker) getAccessibleSymbolChainFromSymbolTable(ctx accessibleSymbolChainContext, t ast.SymbolTable, tableId symbolTableID, ignoreQualification bool, isLocalNameLookup bool) []*ast.Symbol {
-	symId := ast.GetSymbolId(ctx.symbol)
-	visitedSymbolTables, ok := ctx.visitedSymbolTablesMap[symId]
+	visitedSymbolTables, ok := ctx.visitedSymbolTablesMap[ctx.symbol]
 	if !ok {
 		visitedSymbolTables = make(map[symbolTableID]struct{})
-		ctx.visitedSymbolTablesMap[symId] = visitedSymbolTables
+		ctx.visitedSymbolTablesMap[ctx.symbol] = visitedSymbolTables
 	}
 
 	_, present := visitedSymbolTables[tableId]
@@ -808,9 +807,8 @@ func (c *Checker) someSymbolTableInScope(
 // bindAnonymousDeclaration and aren't stored in any container's locals, so this
 // synthesized table lets someSymbolTableInScope expose them during accessibility checks.
 func (c *Checker) getClassExpressionNameTable(location *ast.Node) ast.SymbolTable {
-	nodeId := ast.GetNodeId(location)
 	if c.classExpressionNameTables != nil {
-		if table, ok := c.classExpressionNameTables[nodeId]; ok {
+		if table, ok := c.classExpressionNameTables[location]; ok {
 			return table
 		}
 	}
@@ -821,9 +819,9 @@ func (c *Checker) getClassExpressionNameTable(location *ast.Node) ast.SymbolTabl
 	}
 	table := ast.SymbolTable{nameText: classSymbol}
 	if c.classExpressionNameTables == nil {
-		c.classExpressionNameTables = make(map[ast.NodeId]ast.SymbolTable)
+		c.classExpressionNameTables = make(map[*ast.Node]ast.SymbolTable)
 	}
-	c.classExpressionNameTables[nodeId] = table
+	c.classExpressionNameTables[location] = table
 	return table
 }
 

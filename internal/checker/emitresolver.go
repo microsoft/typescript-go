@@ -283,13 +283,13 @@ func (r *EmitResolver) markLinkedAliases(node *ast.Node) {
 		exportSymbol = r.checker.getTargetOfExportSpecifier(node.Parent, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, false)
 	}
 
-	visited := make(map[ast.SymbolId]struct{}, 2) // guard against circular imports
+	visited := make(map[*ast.Symbol]struct{}, 2) // guard against circular imports
 	for exportSymbol != nil {
-		_, seen := visited[ast.GetSymbolId(exportSymbol)]
+		_, seen := visited[exportSymbol]
 		if seen {
 			break
 		}
-		visited[ast.GetSymbolId(exportSymbol)] = struct{}{}
+		visited[exportSymbol] = struct{}{}
 
 		var nextSymbol *ast.Symbol
 		for _, declaration := range exportSymbol.Declarations {
@@ -381,16 +381,16 @@ func (r *EmitResolver) isEntityNameVisible(entityName *ast.Node, enclosingDeclar
 func noopAddVisibleAlias(declaration *ast.Node, aliasingStatement *ast.Node) {}
 
 func (r *EmitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeAliasToMakeVisible bool) *printer.SymbolAccessibilityResult {
-	var aliasesToMakeVisibleSet map[ast.NodeId]*ast.Node
+	var aliasesToMakeVisibleSet map[*ast.Node]*ast.Node
 
 	var addVisibleAlias func(declaration *ast.Node, aliasingStatement *ast.Node)
 	if shouldComputeAliasToMakeVisible {
 		addVisibleAlias = func(declaration *ast.Node, aliasingStatement *ast.Node) {
 			r.declarationLinks.Get(declaration).isVisible = core.TSTrue
 			if aliasesToMakeVisibleSet == nil {
-				aliasesToMakeVisibleSet = make(map[ast.NodeId]*ast.Node)
+				aliasesToMakeVisibleSet = make(map[*ast.Node]*ast.Node)
 			}
-			aliasesToMakeVisibleSet[ast.GetNodeId(declaration)] = aliasingStatement
+			aliasesToMakeVisibleSet[declaration] = aliasingStatement
 		}
 	} else {
 		addVisibleAlias = noopAddVisibleAlias
