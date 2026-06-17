@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
 // APIOpenProject opens a project and returns a ref'd snapshot.
@@ -36,8 +37,10 @@ func (s *Session) APIOpenProject(ctx context.Context, configFileName string, api
 }
 
 // APIUpdateWithFileChanges creates a new snapshot incorporating the given
-// file changes. Returns a ref'd snapshot; caller must Deref when done.
-func (s *Session) APIUpdateWithFileChanges(ctx context.Context, apiFileChanges FileChangeSummary) *Snapshot {
+// file changes. Documents are URIs that should be loaded into the inferred project
+// if no configured project already contains them.
+// Returns a ref'd snapshot; caller must Deref when done.
+func (s *Session) APIUpdateWithFileChanges(ctx context.Context, apiFileChanges FileChangeSummary, documents []lsproto.DocumentUri) *Snapshot {
 	s.snapshotUpdateMu.Lock()
 	defer s.snapshotUpdateMu.Unlock()
 	s.cancelScheduledSnapshotUpdate()
@@ -46,8 +49,9 @@ func (s *Session) APIUpdateWithFileChanges(ctx context.Context, apiFileChanges F
 	mergeFileChangeSummary(&fileChanges, apiFileChanges)
 
 	return s.updateSnapshotRef(ctx, overlays, SnapshotChange{
-		apiRequest:  &APISnapshotRequest{},
-		fileChanges: fileChanges,
-		ataChanges:  ataChanges,
+		ResourceRequest: ResourceRequest{Documents: documents},
+		apiRequest:      &APISnapshotRequest{},
+		fileChanges:     fileChanges,
+		ataChanges:      ataChanges,
 	})
 }

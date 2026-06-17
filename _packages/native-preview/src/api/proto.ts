@@ -66,6 +66,12 @@ export interface ConfigResponse {
 export interface LSPUpdateSnapshotParams {
     /** Path to a tsconfig.json file to open in the new snapshot */
     openProject?: string;
+    /**
+     * Files to load into the inferred project if no configured project already contains them.
+     * Use this for files (e.g. d.ts in node_modules) not in any project's import graph.
+     * After calling updateSnapshot with openFiles, getDefaultProjectForFile will return the inferred project.
+     */
+    openFiles?: DocumentIdentifier[];
 }
 
 export interface FileChangeSummary {

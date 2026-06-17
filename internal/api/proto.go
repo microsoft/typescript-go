@@ -272,6 +272,10 @@ type UpdateSnapshotParams struct {
 	OpenProject string `json:"openProject,omitempty"`
 	// FileChanges describes file system changes since the last snapshot.
 	FileChanges *APIFileChanges `json:"fileChanges,omitempty"`
+	// OpenFiles lists files to load into the inferred project if no configured project
+	// already contains them. Mirrors old tsserver's openClientFile for orphan files such
+	// as node_modules d.ts files that are not in any project's import graph.
+	OpenFiles []DocumentIdentifier `json:"openFiles,omitempty"`
 }
 
 // ProjectFileChanges describes what source files changed within a single project.

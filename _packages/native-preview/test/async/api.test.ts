@@ -3456,6 +3456,42 @@ describe("Checker - getSignatureUsage", () => {
     });
 });
 
+describe("getDefaultProjectForFile", () => {
+    test("finds inferred project for d.ts in node_modules after openFiles", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x = 1;`,
+            "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
+            "/node_modules/my-lib/index.d.ts": `export declare const foo: string;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            // The d.ts is not imported, so it is not in the project's program
+            const dtsSf = await project.program.getSourceFile("/node_modules/my-lib/index.d.ts");
+            assert.equal(dtsSf, undefined, "d.ts not in import graph should not be found via project.program.getSourceFile");
+
+            // Before opening the file, getDefaultProjectForFile returns undefined (no error)
+            const noProject = await snapshot.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts");
+            assert.equal(noProject, undefined, "getDefaultProjectForFile returns undefined for unloaded file");
+
+            // Load the file into the inferred project via updateSnapshot openFiles
+            const snapshot2 = await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.ts"] });
+            const defaultProject = await snapshot2.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts");
+            assert.ok(defaultProject, "getDefaultProjectForFile should find inferred project after openFiles");
+
+            const fooPos = `export declare const foo: string;`.indexOf("foo");
+            const fooType = await defaultProject.checker.getTypeAtPosition("/node_modules/my-lib/index.d.ts", fooPos);
+            assert.ok(fooType);
+            assert.ok(fooType.flags & TypeFlags.String);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 test("Benchmarks", async () => {
     await runBenchmarks({ singleIteration: true });
 });

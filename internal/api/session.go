@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -636,11 +637,15 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		}
 		snapshot = newSnapshot
 	} else {
+		var openFileURIs []lsproto.DocumentUri
+		for _, f := range params.OpenFiles {
+			openFileURIs = append(openFileURIs, f.ToURI())
+		}
 		// Even when fileChanges is empty, APIUpdateWithFileChanges ensures all projects
 		// opened by the API are up to date. For an API connected to an LSP server, this
 		// brings the API state up to date with the LSP state and ensures projects the
 		// API cares about are ready to be queried.
-		snapshot = s.projectSession.APIUpdateWithFileChanges(ctx, fileChanges)
+		snapshot = s.projectSession.APIUpdateWithFileChanges(ctx, fileChanges, openFileURIs)
 	}
 
 	// Create or ref-count snapshot data.
@@ -717,7 +722,8 @@ func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any
 	return true, nil
 }
 
-// handleGetDefaultProjectForFile returns the default project for a given file.
+// handleGetDefaultProjectForFile returns the default project for a given file,
+// or null if no project currently contains the file.
 func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *GetDefaultProjectForFileParams) (*ProjectResponse, error) {
 	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
@@ -727,7 +733,7 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 	uri := params.File.ToURI()
 	proj := sd.snapshot.GetDefaultProject(uri)
 	if proj == nil {
-		return nil, fmt.Errorf("%w: no project found for file %v", ErrClientError, params.File)
+		return nil, nil
 	}
 
 	return NewProjectResponse(proj), nil
