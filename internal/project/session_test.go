@@ -157,6 +157,16 @@ func TestSession(t *testing.T) {
 		assert.Equal(t, ls.GetProgram().GetSourceFile("/home/projects/TS/p1/src/a.ts").Text(), newContent)
 	})
 
+	t.Run("DidCloseFile ignores unopened file", func(t *testing.T) {
+		t.Parallel()
+		session, _ := projecttestutil.Setup(defaultFiles)
+
+		session.DidCloseFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+		session.WaitForBackgroundTasks()
+
+		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+	})
+
 	t.Run("DidChangeFile", func(t *testing.T) {
 		t.Parallel()
 		t.Run("update file and program", func(t *testing.T) {
