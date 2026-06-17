@@ -142,6 +142,7 @@ export interface TypeResponse {
     id: number;
     flags: number;
     objectFlags?: number;
+    /** Literal value. BigInt literals are encoded as a decimal string (e.g. "-123") since JSON cannot represent bigint. */
     value?: string | number | boolean;
     freshType?: number;
     regularType?: number;
