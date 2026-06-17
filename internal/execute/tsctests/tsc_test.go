@@ -3082,6 +3082,75 @@ func TestTscModuleResolution(t *testing.T) {
 			},
 		},
 		{
+			subScenario: `build mode watches missing package-json lookups`,
+			files: FileMap{
+				`/user/username/projects/myproject/packages/pkg1/index.ts`: stringtestutil.Dedent(`
+					import type { TheNum } from 'pkg2'
+					export const theNum: TheNum = 42;`),
+				`/user/username/projects/myproject/packages/pkg1/tsconfig.json`: stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"outDir": "build",
+						},
+					}`),
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-b", "packages/pkg1", "-w", "--verbose", "--traceResolution"},
+			edits: []*tscEdit{
+				{
+					caption: "resolves import after package is installed",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError(`/user/username/projects/myproject/node_modules/pkg2/package.json`, stringtestutil.Dedent(`
+							{
+								"name": "pkg2",
+								"version": "1.0.0",
+								"types": "index.d.ts"
+							}`))
+						sys.writeFileNoError(`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`, `export type TheNum = 42;`)
+					},
+				},
+				{
+					caption: "reports import errors after package is removed",
+					edit: func(sys *TestSys) {
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/package.json`)
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: `build mode watches package-json lookups from existing buildinfo`,
+			files: GetFileMapWithBuild(FileMap{
+				`/user/username/projects/myproject/packages/pkg1/index.ts`: stringtestutil.Dedent(`
+					import type { TheNum } from 'pkg2'
+					export const theNum: TheNum = 42;`),
+				`/user/username/projects/myproject/packages/pkg1/tsconfig.json`: stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"outDir": "zzbuild",
+						},
+					}`),
+				`/user/username/projects/myproject/node_modules/pkg2/package.json`: stringtestutil.Dedent(`
+					{
+						"name": "pkg2",
+						"version": "1.0.0",
+						"types": "index.d.ts"
+					}`),
+				`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`: `export type TheNum = 42;`,
+			}, []string{"-b", "/user/username/projects/myproject/packages/pkg1", "--verbose", "--traceResolution"}),
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-b", "packages/pkg1", "-w", "--verbose", "--traceResolution"},
+			edits: []*tscEdit{
+				{
+					caption: "reports import errors after package is removed",
+					edit: func(sys *TestSys) {
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/package.json`)
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`)
+					},
+				},
+			},
+		},
+		{
 			subScenario: "resolution from d.ts of referenced project",
 			files: FileMap{
 				"/home/src/workspaces/project/common.d.ts": "export type OnValue = (value: number) => void",
