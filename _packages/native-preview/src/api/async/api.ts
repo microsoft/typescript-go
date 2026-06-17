@@ -1201,10 +1201,10 @@ class TypeObject implements Type {
         this.flags = data.flags;
         if (data.objectFlags !== undefined) this.objectFlags = data.objectFlags;
         if (data.symbol !== undefined) this.symbol = data.symbol;
-        if (data.value !== undefined) {
+        if (data.value != null) {
             // BigInt literal values are serialized as decimal strings (e.g. "-123") because
             // JSON cannot represent bigint. Decode them back into a real bigint here.
-            this.value = (data.flags & TypeFlags.BigIntLiteral) ? BigInt(data.value as string) : data.value;
+            this.value = (data.flags & TypeFlags.BigIntLiteral) ? BigInt(data.value) : data.value;
         }
         if (data.intrinsicName !== undefined) this.intrinsicName = data.intrinsicName;
         if (data.isThisType !== undefined) this.isThisType = data.isThisType;
