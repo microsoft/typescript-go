@@ -537,7 +537,8 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			program2 := ls2.GetProgram()
 
-			assert.Equal(t,
+			assert.Equal(
+				t,
 				program1.GetSourceFile("/home/projects/TS/p1/src/x.ts"),
 				program2.GetSourceFile("/home/projects/TS/p1/src/x.ts"),
 			)
@@ -908,6 +909,94 @@ func TestSession(t *testing.T) {
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/sub/x.ts") == nil)
 			// The import should now be an error since the module is missing.
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+		})
+
+		t.Run("delete sibling folder schedules diagnostics refresh", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["index.ts"]
+				}`,
+				"/home/projects/TS/p1/index.ts": `import { content } from "./f/content";
+
+export const value = content;`,
+				"/home/projects/TS/p1/f/content.ts": `export const content = 1;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			contentURI := lsproto.DocumentUri("file:///home/projects/TS/p1/f/content.ts")
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), contentURI, 1, files["/home/projects/TS/p1/f/content.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+			err = utils.FS().Remove("/home/projects/TS/p1/f")
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/f",
+				},
+			})
+			session.DidCloseFile(context.Background(), contentURI)
+			session.WaitForBackgroundTasks()
+
+			refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+			assert.Assert(t, refreshCount > baselineRefreshCount,
+				"expected RefreshDiagnostics to be called after deleting /home/projects/TS/p1/f, got %d calls (baseline %d)",
+				refreshCount, baselineRefreshCount)
+		})
+
+		t.Run("delete sibling folder schedules diagnostics refresh after opening third file", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["index.ts", "third.ts"]
+				}`,
+				"/home/projects/TS/p1/index.ts": `import { content } from "./f/content";
+
+export const value = content;`,
+				"/home/projects/TS/p1/f/content.ts": `export const content = 1;`,
+				"/home/projects/TS/p1/third.ts":     `export const third = 3;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			contentURI := lsproto.DocumentUri("file:///home/projects/TS/p1/f/content.ts")
+			thirdURI := lsproto.DocumentUri("file:///home/projects/TS/p1/third.ts")
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), contentURI, 1, files["/home/projects/TS/p1/f/content.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+			err = utils.FS().Remove("/home/projects/TS/p1/f")
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/f",
+				},
+			})
+			session.DidOpenFile(context.Background(), thirdURI, 1, files["/home/projects/TS/p1/third.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.WaitForBackgroundTasks()
+
+			refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+			assert.Assert(t, refreshCount > baselineRefreshCount,
+				"expected RefreshDiagnostics to be called after deleting /home/projects/TS/p1/f and opening /home/projects/TS/p1/third.ts, got %d calls (baseline %d)",
+				refreshCount, baselineRefreshCount)
 		})
 
 		t.Run("create explicitly included file", func(t *testing.T) {
@@ -1417,5 +1506,44 @@ func TestSession(t *testing.T) {
 			assert.Assert(t, sourceFile != nil)
 			assert.Equal(t, sourceFile.Text(), `const greeting: string = "hello";`)
 		})
+	})
+
+	t.Run("jsconfig.json used for JS files when tsconfig.json exists in same directory", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"strict": true
+				}
+			}`,
+			"/home/projects/TS/p1/jsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"checkJs": true
+				}
+			}`,
+			"/home/projects/TS/p1/index.ts": `export const x: number = 1;`,
+			"/home/projects/TS/p1/app.js":   `/** @type {number} */ var y = "not a number";`,
+		}
+		session, _ := projecttestutil.Setup(files)
+
+		// Open the JS file - it should be assigned to the jsconfig.json project, not tsconfig.json
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/app.js", 1, files["/home/projects/TS/p1/app.js"].(string), lsproto.LanguageKindJavaScript)
+
+		snapshot := session.Snapshot()
+		jsURI := lsproto.DocumentUri("file:///home/projects/TS/p1/app.js")
+		defaultProject := snapshot.GetDefaultProject(jsURI)
+		assert.Assert(t, defaultProject != nil, "JS file should have a default project")
+		assert.Equal(t, defaultProject.Name(), "/home/projects/TS/p1/jsconfig.json", "JS file should belong to jsconfig.json project, not tsconfig.json")
+
+		// Open the TS file - it should be assigned to tsconfig.json project
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		snapshot = session.Snapshot()
+		tsURI := lsproto.DocumentUri("file:///home/projects/TS/p1/index.ts")
+		defaultTSProject := snapshot.GetDefaultProject(tsURI)
+		assert.Assert(t, defaultTSProject != nil, "TS file should have a default project")
+		assert.Equal(t, defaultTSProject.Name(), "/home/projects/TS/p1/tsconfig.json", "TS file should belong to tsconfig.json project")
 	})
 }

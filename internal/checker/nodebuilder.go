@@ -117,7 +117,10 @@ func (b *NodeBuilder) IndexInfoToIndexSignatureDeclaration(info *IndexInfo, encl
 func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	signature := b.impl.ch.getSignatureFromDeclaration(signatureDeclaration)
-	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature, true))
+	_, cleanup := b.impl.enterSignatureScope(signature)
+	result := b.impl.serializeReturnTypeForSignature(signature, true)
+	cleanup()
+	return b.exitContext(result)
 }
 
 func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
@@ -282,8 +285,15 @@ func NewNodeBuilderEx(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast.I
 	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
 }
 
-func (c *Checker) getNodeBuilder() *NodeBuilder {
-	return c.getNodeBuilderEx(nil /*idToSymbol*/)
+func (c *Checker) getNodeBuilder() (*NodeBuilder, func()) {
+	releaseNodes := func() {
+		c.typeToStringNodebuilder.EmitContext().Factory.ReleaseArenas() // Allow any allocated nodes to be freed if they're no longer in a cache
+	}
+	if c.typeToStringNodebuilder != nil {
+		return c.typeToStringNodebuilder, releaseNodes
+	}
+	c.typeToStringNodebuilder = c.getNodeBuilderEx(nil /*idToSymbol*/)
+	return c.typeToStringNodebuilder, releaseNodes
 }
 
 func (c *Checker) getNodeBuilderEx(idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *NodeBuilder {

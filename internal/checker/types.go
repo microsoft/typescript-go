@@ -111,9 +111,52 @@ const (
 	SymbolFormatFlagsDoNotIncludeSymbolChain SymbolFormatFlags = 1 << 5
 )
 
+type ExternalEmitHelpers uint32
+
+const (
+	ExternalEmitHelpersRest                                     ExternalEmitHelpers           = 1 << iota // __rest (used by ESNext object rest transformation)
+	ExternalEmitHelpersDecorate                                                                           // __decorate (used by TypeScript decorators transformation)
+	ExternalEmitHelpersMetadata                                                                           // __metadata (used by TypeScript decorators transformation)
+	ExternalEmitHelpersParam                                                                              // __param (used by TypeScript decorators transformation)
+	ExternalEmitHelpersAwaiter                                                                            // __awaiter (used by ES2017 async functions transformation)
+	ExternalEmitHelpersAwait                                                                              // __await (used by ES2017 async generator transformation)
+	ExternalEmitHelpersAsyncGenerator                                                                     // __asyncGenerator (used by ES2017 async generator transformation)
+	ExternalEmitHelpersAsyncDelegator                                                                     // __asyncDelegator (used by ES2017 async generator yield* transformation)
+	ExternalEmitHelpersAsyncValues                                                                        // __asyncValues (used by ES2017 for..await..of transformation)
+	ExternalEmitHelpersExportStar                                                                         // __exportStar (used by CommonJS/AMD/UMD module transformation)
+	ExternalEmitHelpersImportStar                                                                         // __importStar (used by CommonJS/AMD/UMD module transformation)
+	ExternalEmitHelpersImportDefault                                                                      // __importDefault (used by CommonJS/AMD/UMD module transformation)
+	ExternalEmitHelpersMakeTemplateObject                                                                 // __makeTemplateObject (used for constructing template string array objects)
+	ExternalEmitHelpersClassPrivateFieldGet                                                               // __classPrivateFieldGet (used by the class private field transformation)
+	ExternalEmitHelpersClassPrivateFieldSet                                                               // __classPrivateFieldSet (used by the class private field transformation)
+	ExternalEmitHelpersClassPrivateFieldIn                                                                // __classPrivateFieldIn (used by the class private field transformation)
+	ExternalEmitHelpersSetFunctionName                                                                    // __setFunctionName (used by class fields and ECMAScript decorators)
+	ExternalEmitHelpersPropKey                                                                            // __propKey (used by class fields and ECMAScript decorators)
+	ExternalEmitHelpersAddDisposableResourceAndDisposeResources                                           // __addDisposableResource and __disposeResources (used by ESNext transformations)
+	ExternalEmitHelpersRewriteRelativeImportExtension                                                     // __rewriteRelativeImportExtension (used by --rewriteRelativeImportExtensions)
+	ExternalEmitHelpersESDecorateAndRunInitializers             = ExternalEmitHelpersDecorate             // __esDecorate and __runInitializers (used by ECMAScript decorators transformation)
+
+	ExternalEmitHelpersFirstEmitHelper = ExternalEmitHelpersRest
+	ExternalEmitHelpersLastEmitHelper  = ExternalEmitHelpersRewriteRelativeImportExtension
+
+	// Helpers included by ES2017 for..await..of
+	ExternalEmitHelpersForAwaitOfIncludes = ExternalEmitHelpersAsyncValues
+
+	// Helpers included by ES2017 async generators
+	ExternalEmitHelpersAsyncGeneratorIncludes = ExternalEmitHelpersAwait | ExternalEmitHelpersAsyncGenerator
+
+	// Helpers included by yield* in ES2017 async generators
+	ExternalEmitHelpersAsyncDelegatorIncludes = ExternalEmitHelpersAwait | ExternalEmitHelpersAsyncDelegator | ExternalEmitHelpersAsyncValues
+)
+
+const externalHelpersModuleNameText = "tslib"
+
 // Ids
 
-type TypeId uint32
+type (
+	TypeId      uint32
+	SignatureId uint32
+)
 
 // Links for referenced symbols
 
@@ -346,15 +389,17 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked               bool
-	unusedChecked             bool
-	deferredNodes             collections.OrderedSet[*ast.Node]
-	identifierCheckNodes      []*ast.Node
-	localJsxNamespace         string
-	localJsxFragmentNamespace string
-	localJsxFactory           *ast.EntityName
-	localJsxFragmentFactory   *ast.EntityName
-	jsxFragmentType           *Type
+	typeChecked                  bool
+	unusedChecked                bool
+	externalHelpersModule        *ast.Symbol
+	requestedExternalEmitHelpers ExternalEmitHelpers
+	deferredNodes                collections.OrderedSet[*ast.Node]
+	identifierCheckNodes         []*ast.Node
+	localJsxNamespace            string
+	localJsxFragmentNamespace    string
+	localJsxFactory              *ast.EntityName
+	localJsxFragmentFactory      *ast.EntityName
+	jsxFragmentType              *Type
 }
 
 // Signature specific links
@@ -579,6 +624,7 @@ const (
 	ObjectFlagsIdenticalBaseTypeCalculated = 1 << 27 // has had `getSingleBaseForNonAugmentingSubtype` invoked on it already
 	ObjectFlagsIdenticalBaseTypeExists     = 1 << 28 // has a defined cachedEquivalentBaseType member
 	ObjectFlagsUnresolvedMembers           = 1 << 29 // Member resolution in process
+	ObjectFlagsFromTypeNode                = 1 << 30 // Originates in resolution of AST type node
 	// Flags that require TypeFlags.UnionOrIntersection or TypeFlags.Substitution
 	ObjectFlagsIsGenericTypeComputed = 1 << 22 // IsGenericObjectType flag has been computed
 	ObjectFlagsIsGenericObjectType   = 1 << 23 // Union or intersection contains generic object type
@@ -734,6 +780,10 @@ func (t *Type) Symbol() *ast.Symbol {
 	return t.symbol
 }
 
+func (t *Type) Alias() *TypeAlias {
+	return t.alias
+}
+
 func (t *Type) IsUnion() bool {
 	return t.flags&TypeFlagsUnion != 0
 }
@@ -832,6 +882,14 @@ type LiteralType struct {
 
 func (t *LiteralType) Value() any {
 	return t.value
+}
+
+func (t *LiteralType) FreshType() *Type {
+	return t.freshType
+}
+
+func (t *LiteralType) RegularType() *Type {
+	return t.regularType
 }
 
 func (t *LiteralType) String() string {
@@ -1216,6 +1274,7 @@ const (
 // Signature
 
 type Signature struct {
+	id                       SignatureId
 	flags                    SignatureFlags
 	minArgumentCount         int32
 	resolvedMinArgumentCount int32
@@ -1229,6 +1288,10 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) Id() SignatureId {
+	return s.id
 }
 
 func (s *Signature) Flags() SignatureFlags {
@@ -1257,6 +1320,10 @@ func (s *Signature) Parameters() []*ast.Symbol {
 
 func (s *Signature) HasRestParameter() bool {
 	return s.flags&SignatureFlagsHasRestParameter != 0
+}
+
+func (s *Signature) MinArgumentCount() int {
+	return int(s.minArgumentCount)
 }
 
 type CompositeSignature struct {
@@ -1317,6 +1384,10 @@ func (info *IndexInfo) ValueType() *Type {
 
 func (info *IndexInfo) IsReadonly() bool {
 	return info.isReadonly
+}
+
+func (info *IndexInfo) Declaration() *ast.Node {
+	return info.declaration
 }
 
 /**
