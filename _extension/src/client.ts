@@ -150,6 +150,8 @@ export class Client implements vscode.Disposable {
         const config = vscode.workspace.getConfiguration("typescript.native-preview");
         const pprofDir = config.get<string>("pprofDir");
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
+        const lowMemoryMode = config.get<boolean>("lowMemoryMode.enabled", false);
+        const lowMemoryModeIdleTime = config.get<number>("lowMemoryMode.idleTime", 300000);
 
         const goMemLimit = config.get<string>("goMemLimit");
         const env = { ...process.env };
@@ -182,6 +184,8 @@ export class Client implements vscode.Disposable {
         // Refresh the initial log verbosity in case the output channel's log
         // level changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
+        this.clientOptions.initializationOptions.lowMemoryMode = lowMemoryMode;
+        this.clientOptions.initializationOptions.lowMemoryModeIdleTime = lowMemoryModeIdleTime;
 
         this.client = new LanguageClient(
             "typescript.native-preview",

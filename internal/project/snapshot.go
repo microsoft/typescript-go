@@ -216,6 +216,10 @@ type SnapshotChange struct {
 	apiRequest *APISnapshotRequest
 	// cleanDiskCache triggers cleaning of cached disk files not referenced by any open project.
 	cleanDiskCache bool
+	// unloadProjects removes loaded projects while preserving open file overlays.
+	unloadProjects collections.Set[tspath.Path]
+	// dropAutoImports discards auto-import indexes so they can be rebuilt on demand.
+	dropAutoImports bool
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -280,6 +284,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
 		case UpdateReasonIdleCleanDiskCache:
 			logger.Logf("Reason: IdleCleanDiskCache")
+		case UpdateReasonLowMemoryModeCleanup:
+			logger.Logf("Reason: LowMemoryModeCleanup")
 		}
 	}
 
@@ -367,6 +373,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollectionBuilder.DidRequestProjectTrees(change.ProjectTree, logger.Fork("DidRequestProjectTrees"))
 	}
 
+	if change.unloadProjects.Len() > 0 {
+		projectCollectionBuilder.UnloadProjects(change.unloadProjects, logger.Fork("LowMemoryCleanup"))
+	}
+
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
 
 	projectsWithNewProgramStructure := make(map[tspath.Path]bool)
@@ -426,7 +436,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		prepareAutoImports = change.ResourceRequest.AutoImports.Path(s.UseCaseSensitiveFileNames())
 	}
 	oldAutoImports := s.AutoImports
-	if oldAutoImports == nil {
+	if oldAutoImports == nil || change.dropAutoImports {
 		oldAutoImports = autoimport.NewRegistry(s.toPath, s.userPreferences)
 	}
 	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]

@@ -3,13 +3,15 @@ package core
 import "time"
 
 type WatchOptions struct {
-	Interval        *int               `json:"watchInterval"`
-	FileKind        WatchFileKind      `json:"watchFile"`
-	DirectoryKind   WatchDirectoryKind `json:"watchDirectory"`
-	FallbackPolling PollingKind        `json:"fallbackPolling"`
-	SyncWatchDir    Tristate           `json:"synchronousWatchDirectory"`
-	ExcludeDir      []string           `json:"excludeDirectories"`
-	ExcludeFiles    []string           `json:"excludeFiles"`
+	Interval              *int               `json:"watchInterval"`
+	FileKind              WatchFileKind      `json:"watchFile"`
+	DirectoryKind         WatchDirectoryKind `json:"watchDirectory"`
+	FallbackPolling       PollingKind        `json:"fallbackPolling"`
+	SyncWatchDir          Tristate           `json:"synchronousWatchDirectory"`
+	ExcludeDir            []string           `json:"excludeDirectories"`
+	ExcludeFiles          []string           `json:"excludeFiles"`
+	LowMemoryMode         Tristate           `json:"lowMemoryMode"`
+	LowMemoryModeIdleTime *int               `json:"lowMemoryModeIdleTime"`
 }
 
 type WatchFileKind int32
@@ -50,4 +52,13 @@ func (w *WatchOptions) WatchInterval() time.Duration {
 		watchInterval = time.Duration(*w.Interval) * time.Millisecond
 	}
 	return watchInterval
+}
+
+const DefaultLowMemoryModeIdleTime = 5 * time.Minute
+
+func (w *WatchOptions) LowMemoryModeIdleDuration() time.Duration {
+	if w != nil && w.LowMemoryModeIdleTime != nil {
+		return time.Duration(*w.LowMemoryModeIdleTime) * time.Millisecond
+	}
+	return DefaultLowMemoryModeIdleTime
 }

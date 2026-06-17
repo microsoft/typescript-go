@@ -98,6 +98,23 @@
                             "experimental"
                         ]
                     },
+                    "typescript.native-preview.lowMemoryMode.enabled": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "%native-preview.lowMemoryMode.enabled.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "typescript.native-preview.lowMemoryMode.idleTime": {
+                        "type": "number",
+                        "default": 300000,
+                        "minimum": 1000,
+                        "description": "%native-preview.lowMemoryMode.idleTime.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
                     "js/ts.preferences.autoImportEntrypointDirectorySearch": {
                         "type": "boolean",
                         "default": false,

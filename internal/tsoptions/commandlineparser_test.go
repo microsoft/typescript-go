@@ -106,6 +106,32 @@ func TestResponseFileDoesNotPanic(t *testing.T) {
 	})
 }
 
+func TestParseLowMemoryWatchOptions(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/home/project/bug.ts": `let x = 1;`,
+	}, "/home/project", true)
+	cmdLine := tsoptions.ParseCommandLine([]string{"--watch", "--lowMemoryMode", "--lowMemoryModeIdleTime", "1234", "bug.ts"}, host)
+
+	assert.Assert(t, cmdLine.ParsedConfig.WatchOptions.LowMemoryMode.IsTrue())
+	assert.Assert(t, cmdLine.ParsedConfig.WatchOptions.LowMemoryModeIdleTime != nil)
+	assert.Equal(t, *cmdLine.ParsedConfig.WatchOptions.LowMemoryModeIdleTime, 1234)
+}
+
+func TestParseBuildLowMemoryWatchOptions(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/home/project/tsconfig.json": `{}`,
+	}, "/home/project", true)
+	cmdLine := tsoptions.ParseBuildCommandLine([]string{"--build", "--watch", "--lowMemoryMode", "--lowMemoryModeIdleTime", "1234"}, host)
+
+	assert.Assert(t, cmdLine.WatchOptions.LowMemoryMode.IsTrue())
+	assert.Assert(t, cmdLine.WatchOptions.LowMemoryModeIdleTime != nil)
+	assert.Equal(t, *cmdLine.WatchOptions.LowMemoryModeIdleTime, 1234)
+}
+
 func TestParseCommandLineTypeRootsRelativePath(t *testing.T) {
 	t.Parallel()
 

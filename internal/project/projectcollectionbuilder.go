@@ -424,6 +424,19 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, confi
 			b.updateProgram(b.inferredProject, logger)
 		}
 
+		if b.sessionOptions.LowMemoryMode {
+			result := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+			if result.project != nil {
+				return
+			}
+			if !configuredProjectsOnly {
+				b.cleanupInferredProject(logger)
+				if b.inferredProject.Value() != nil {
+					b.updateProgram(b.inferredProject, logger)
+				}
+			}
+		}
+
 		// At this point we should be able to find the default project for the file without
 		// creating anything else. Initially, I verified that and panicked if nothing was found,
 		// but that panic was getting triggered by fourslash infrastructure when it told us to
@@ -1154,4 +1167,33 @@ func (b *ProjectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*
 	}
 	b.configFileRegistryBuilder.releaseConfigForProject(projectPath, projectPath)
 	project.Delete()
+}
+
+func (b *ProjectCollectionBuilder) UnloadProjects(projects collections.Set[tspath.Path], logger *logging.LogTree) {
+	for projectPath := range projects.Keys() {
+		if _, apiOpened := b.apiOpenedProjects[projectPath]; apiOpened {
+			continue
+		}
+		if projectPath == inferredProjectName {
+			if b.inferredProject.Value() != nil {
+				if logger != nil {
+					logger.Log("Unloading inferred project")
+				}
+				b.inferredProject.Delete()
+			}
+			continue
+		}
+		if project, ok := b.configuredProjects.Load(projectPath); ok {
+			if logger != nil {
+				logger.Log("Unloading configured project: " + project.Value().configFileName)
+			}
+			b.deleteConfiguredProject(project, logger)
+		}
+	}
+	if b.fileDefaultProjects != nil {
+		maps.DeleteFunc(b.fileDefaultProjects, func(_ tspath.Path, projectPath tspath.Path) bool {
+			return projects.Has(projectPath)
+		})
+	}
+	b.configFileRegistryBuilder.Cleanup()
 }

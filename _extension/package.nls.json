@@ -8,6 +8,8 @@
     "native-preview.showDebugInfo.description": "Show debug information (PID, executable path) in the server menu.",
     "native-preview.goMemLimit.description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
     "native-preview.goMemLimit.error": "Must be a valid memory limit (e.g., '2048MiB', '4GiB').",
+    "native-preview.lowMemoryMode.enabled.description": "Unload idle language server projects from memory and recreate them on demand.",
+    "native-preview.lowMemoryMode.idleTime.description": "Idle time in milliseconds before low memory mode unloads an unused project.",
     "native-preview.enable.title": "Enable (Experimental)",
     "native-preview.disable.title": "Disable",
     "native-preview.restart.title": "Restart Language Server",

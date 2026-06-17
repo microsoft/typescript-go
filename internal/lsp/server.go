@@ -1191,11 +1191,19 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
 	var disablePushDiagnostics bool
 	var enableTelemetry bool
+	var lowMemoryMode bool
+	var lowMemoryProjectIdleTime time.Duration
 	if s.initializationOptions.DisablePushDiagnostics != nil {
 		disablePushDiagnostics = *s.initializationOptions.DisablePushDiagnostics
 	}
 	if s.initializationOptions.EnableTelemetry != nil {
 		enableTelemetry = *s.initializationOptions.EnableTelemetry
+	}
+	if s.initializationOptions.LowMemoryMode != nil {
+		lowMemoryMode = *s.initializationOptions.LowMemoryMode
+	}
+	if s.initializationOptions.LowMemoryModeIdleTime != nil {
+		lowMemoryProjectIdleTime = time.Duration(*s.initializationOptions.LowMemoryModeIdleTime) * time.Millisecond
 	}
 	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
 	if hasDynamicWatchRegistration {
@@ -1238,16 +1246,18 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),
 		Options: &project.SessionOptions{
-			CurrentDirectory:       cwd,
-			DefaultLibraryPath:     s.defaultLibraryPath,
-			TypingsLocation:        s.typingsLocation,
-			PositionEncoding:       s.positionEncoding,
-			WatchEnabled:           s.watchEnabled,
-			LoggingEnabled:         true,
-			TelemetryEnabled:       enableTelemetry,
-			DebounceDelay:          500 * time.Millisecond,
-			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			Locale:                 s.locale,
+			CurrentDirectory:         cwd,
+			DefaultLibraryPath:       s.defaultLibraryPath,
+			TypingsLocation:          s.typingsLocation,
+			PositionEncoding:         s.positionEncoding,
+			WatchEnabled:             s.watchEnabled,
+			LoggingEnabled:           true,
+			TelemetryEnabled:         enableTelemetry,
+			DebounceDelay:            500 * time.Millisecond,
+			PushDiagnosticsEnabled:   !disablePushDiagnostics,
+			Locale:                   s.locale,
+			LowMemoryMode:            lowMemoryMode,
+			LowMemoryProjectIdleTime: lowMemoryProjectIdleTime,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
@@ -1288,6 +1298,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 
 	s.session.StartPerformanceTelemetry()
+	s.session.StartLowMemoryMode()
 
 	close(s.initComplete)
 	return nil

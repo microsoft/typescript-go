@@ -85,4 +85,18 @@ var OptionsForWatch = []*CommandLineOption{
 		Category:                           diagnostics.Watch_and_Build_Modes,
 		Description:                        diagnostics.Remove_a_list_of_files_from_the_watch_mode_s_processing,
 	},
+	{
+		Name:                    "lowMemoryMode",
+		Kind:                    CommandLineOptionTypeBoolean,
+		Category:                diagnostics.Watch_and_Build_Modes,
+		Description:             diagnostics.Specify_how_the_TypeScript_watch_mode_works,
+		DefaultValueDescription: false,
+	},
+	{
+		Name:                    "lowMemoryModeIdleTime",
+		Kind:                    CommandLineOptionTypeNumber,
+		Category:                diagnostics.Watch_and_Build_Modes,
+		Description:             diagnostics.Specify_how_the_TypeScript_watch_mode_works,
+		DefaultValueDescription: int(core.DefaultLowMemoryModeIdleTime / 1_000_000),
+	},
 }

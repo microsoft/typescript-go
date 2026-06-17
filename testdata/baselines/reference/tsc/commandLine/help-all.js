@@ -641,6 +641,16 @@ Remove a list of directories from the watch process.
 [94m--excludeFiles[39m
 Remove a list of files from the watch mode's processing.
 
+[94m--lowMemoryMode[39m
+Specify how the TypeScript watch mode works.
+type: boolean
+default: false
+
+[94m--lowMemoryModeIdleTime[39m
+Specify how the TypeScript watch mode works.
+type: number
+default: 300000
+
 [1mBUILD OPTIONS[22m
 
 Using --build, -b will make tsc behave more like a build orchestrator than a compiler. This is used to trigger building composite projects which you can learn more about at https://aka.ms/tsc-composite-builds

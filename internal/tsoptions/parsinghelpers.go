@@ -511,6 +511,10 @@ func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*
 		allOptions.ExcludeDir = ParseStringArray(value)
 	case "excludeFiles":
 		allOptions.ExcludeFiles = ParseStringArray(value)
+	case "lowMemoryMode":
+		allOptions.LowMemoryMode = ParseTristate(value)
+	case "lowMemoryModeIdleTime":
+		allOptions.LowMemoryModeIdleTime = parseNumber(value)
 	}
 	return nil
 }

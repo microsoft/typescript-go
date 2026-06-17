@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"runtime"
 	"slices"
 	"strings"
 	"sync/atomic"
@@ -257,7 +258,11 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 	o.wm.Unlock()
 
 	if o.opts.Testing == nil {
-		o.wm.RunLoop(ctx, o.DoCycle)
+		if o.opts.Command.WatchOptions != nil && o.opts.Command.WatchOptions.LowMemoryMode.IsTrue() {
+			o.wm.RunLoopWithIdle(ctx, o.opts.Command.WatchOptions.LowMemoryModeIdleDuration(), o.DoCycle, o.DoLowMemoryCleanup)
+		} else {
+			o.wm.RunLoop(ctx, o.DoCycle)
+		}
 	}
 }
 
@@ -507,6 +512,16 @@ func (o *Orchestrator) DoCycle() {
 		o.wm.ForceOverflow()
 	}
 	o.resetCaches()
+}
+
+func (o *Orchestrator) DoLowMemoryCleanup() {
+	o.wm.Lock()
+	defer o.wm.Unlock()
+	if o.wm.DebugLog != nil {
+		fmt.Fprintf(o.wm.DebugLog, "[watch] low memory mode: clearing build-watch caches\n")
+	}
+	o.resetCaches()
+	runtime.GC()
 }
 
 func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {

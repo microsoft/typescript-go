@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // APIOpenProject opens a project and returns a ref'd snapshot.
@@ -31,6 +32,7 @@ func (s *Session) APIOpenProject(ctx context.Context, configFileName string, api
 	if project == nil {
 		panic("OpenProject request returned no error but project not present in snapshot")
 	}
+	s.recordResourceRequestAccess(newSnapshot, ResourceRequest{Projects: []tspath.Path{project.Id()}})
 
 	return project, newSnapshot, nil
 }

@@ -68,6 +68,18 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
             },
+            {
+                name: "lowMemoryMode",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "Enables low memory mode, which unloads idle projects and recreates them on demand.",
+            },
+            {
+                name: "lowMemoryModeIdleTime",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "Low memory mode idle time in milliseconds.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },

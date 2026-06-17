@@ -3,9 +3,11 @@ package project_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
@@ -204,6 +206,52 @@ func TestProjectLifetime(t *testing.T) {
 		snapshot = session.Snapshot()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+	})
+
+	t.Run("low memory mode unloads open configured project and reloads on request", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"module": "nodenext",
+					"strict": true
+				},
+				"include": ["src"]
+			}`,
+			"/home/projects/TS/p1/src/index.ts": `import { x } from "./x"; x;`,
+			"/home/projects/TS/p1/src/x.ts":     `export const x = 1;`,
+		}
+		session, _ := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+			CurrentDirectory:         "/",
+			DefaultLibraryPath:       bundled.LibPath(),
+			PositionEncoding:         lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:             true,
+			LoggingEnabled:           true,
+			PushDiagnosticsEnabled:   true,
+			LowMemoryMode:            true,
+			LowMemoryProjectIdleTime: time.Millisecond,
+		})
+
+		uri := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.ts")
+		session.DidOpenFile(context.Background(), uri, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		snapshot := session.Snapshot()
+		projectPath := tspath.Path("/home/projects/ts/p1/tsconfig.json")
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(projectPath) != nil)
+		assert.Assert(t, snapshot.GetDefaultProject(uri) != nil)
+
+		time.Sleep(2 * time.Millisecond)
+		assert.Equal(t, session.RunLowMemoryCleanup(context.Background()), 1)
+		snapshot = session.Snapshot()
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(projectPath) == nil)
+		assert.Assert(t, snapshot.GetDefaultProject(uri) == nil)
+
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		assert.Assert(t, ls != nil)
+		snapshot = session.Snapshot()
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(projectPath) != nil)
+		assert.Assert(t, snapshot.GetDefaultProject(uri) != nil)
 	})
 
 	t.Run("file move from inferred to configured via didOpen/didClose sequence", func(t *testing.T) {

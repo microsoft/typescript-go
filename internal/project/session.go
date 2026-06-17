@@ -44,6 +44,7 @@ const (
 	UpdateReasonRequestedLoadProjectTree
 	UpdateReasonRequestedLanguageServiceWithAutoImports
 	UpdateReasonIdleCleanDiskCache
+	UpdateReasonLowMemoryModeCleanup
 )
 
 // watchRequestTimeout is the maximum time to wait for the client to respond to
@@ -53,17 +54,19 @@ const watchRequestTimeout = time.Second
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
-	CurrentDirectory       string
-	DefaultLibraryPath     string
-	TypingsLocation        string
-	PositionEncoding       lsproto.PositionEncodingKind
-	WatchEnabled           bool
-	LoggingEnabled         bool
-	TelemetryEnabled       bool
-	PushDiagnosticsEnabled bool
-	DebounceDelay          time.Duration
-	Locale                 locale.Locale
-	CheckerPoolOptions     CheckerPoolOptions
+	CurrentDirectory         string
+	DefaultLibraryPath       string
+	TypingsLocation          string
+	PositionEncoding         lsproto.PositionEncodingKind
+	WatchEnabled             bool
+	LoggingEnabled           bool
+	TelemetryEnabled         bool
+	PushDiagnosticsEnabled   bool
+	DebounceDelay            time.Duration
+	Locale                   locale.Locale
+	CheckerPoolOptions       CheckerPoolOptions
+	LowMemoryMode            bool
+	LowMemoryProjectIdleTime time.Duration
 }
 
 type SessionInit struct {
@@ -164,6 +167,12 @@ type Session struct {
 	// performanceTelemetryCancel cancels the periodic performance telemetry ticker.
 	performanceTelemetryCancel context.CancelFunc
 
+	// lowMemoryModeCancel cancels the periodic low-memory cleanup ticker.
+	lowMemoryModeCancel context.CancelFunc
+
+	projectLastAccessMu sync.Mutex
+	projectLastAccess   map[tspath.Path]time.Time
+
 	// seenProjects tracks projects that have already had telemetry sent.
 	seenProjects collections.SyncSet[tspath.Path]
 
@@ -238,6 +247,7 @@ func NewSession(init *SessionInit) *Session {
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
 		pendingATAChanges:        make(map[tspath.Path]*ATAStateChange),
+		projectLastAccess:        make(map[tspath.Path]time.Time),
 		watches:                  newWatchRegistry(),
 	}
 
@@ -308,13 +318,14 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 	})
 	changes, overlays := s.flushChangesLocked(ctx)
 	s.pendingFileChangesMu.Unlock()
-	s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+	snapshot := s.updateSnapshot(ctx, overlays, SnapshotChange{
 		reason:      UpdateReasonDidOpenFile,
 		fileChanges: changes,
 		ResourceRequest: ResourceRequest{
 			Documents: []lsproto.DocumentUri{uri},
 		},
-	})
+	}, false /*callerRef*/)
+	s.recordResourceRequestAccess(snapshot, ResourceRequest{Documents: []lsproto.DocumentUri{uri}})
 }
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
@@ -601,6 +612,106 @@ func (s *Session) StartPerformanceTelemetry() {
 			}
 		}
 	})
+}
+
+func (s *Session) LowMemoryProjectIdleTime() time.Duration {
+	if s.options.LowMemoryProjectIdleTime > 0 {
+		return s.options.LowMemoryProjectIdleTime
+	}
+	return core.DefaultLowMemoryModeIdleTime
+}
+
+func (s *Session) StartLowMemoryMode() {
+	if !s.options.LowMemoryMode {
+		return
+	}
+	ctx, cancel := context.WithCancel(s.backgroundCtx)
+	s.lowMemoryModeCancel = cancel
+	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
+		ticker := time.NewTicker(s.LowMemoryProjectIdleTime())
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				s.RunLowMemoryCleanup(ctx)
+			}
+		}
+	})
+}
+
+func (s *Session) stopLowMemoryMode() {
+	if s.lowMemoryModeCancel != nil {
+		s.lowMemoryModeCancel()
+		s.lowMemoryModeCancel = nil
+	}
+}
+
+func (s *Session) RunLowMemoryCleanup(ctx context.Context) int {
+	if !s.options.LowMemoryMode {
+		return 0
+	}
+
+	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
+	s.cancelScheduledSnapshotUpdate()
+
+	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+
+	now := time.Now()
+	unloadProjects := s.collectIdleProjects(now)
+	if unloadProjects.Len() == 0 && fileChanges.IsEmpty() && len(ataChanges) == 0 && newConfig == nil {
+		return 0
+	}
+
+	newSnapshot := s.updateSnapshot(ctx, overlays, SnapshotChange{
+		reason:          UpdateReasonLowMemoryModeCleanup,
+		fileChanges:     fileChanges,
+		ataChanges:      ataChanges,
+		newConfig:       newConfig,
+		cleanDiskCache:  true,
+		unloadProjects:  unloadProjects,
+		dropAutoImports: unloadProjects.Len() > 0,
+	}, false /*callerRef*/)
+
+	s.projectLastAccessMu.Lock()
+	for projectPath := range unloadProjects.Keys() {
+		delete(s.projectLastAccess, projectPath)
+	}
+	s.projectLastAccessMu.Unlock()
+
+	if newSnapshot != nil {
+		go func() { runtime.GC() }()
+	}
+
+	return unloadProjects.Len()
+}
+
+func (s *Session) collectIdleProjects(now time.Time) collections.Set[tspath.Path] {
+	s.snapshotMu.RLock()
+	snapshot := s.snapshot
+	projectPaths := snapshot.ProjectCollection.ProjectsByPath()
+	apiOpenedProjects := snapshot.ProjectCollection.apiOpenedProjects
+	s.snapshotMu.RUnlock()
+
+	idleTime := s.LowMemoryProjectIdleTime()
+	unloadProjects := collections.Set[tspath.Path]{}
+	s.projectLastAccessMu.Lock()
+	defer s.projectLastAccessMu.Unlock()
+	for projectPath := range projectPaths.Keys() {
+		if _, apiOpened := apiOpenedProjects[projectPath]; apiOpened {
+			continue
+		}
+		lastAccess, ok := s.projectLastAccess[projectPath]
+		if !ok {
+			lastAccess = s.startTime
+		}
+		if now.Sub(lastAccess) >= idleTime {
+			unloadProjects.Add(projectPath)
+		}
+	}
+	return unloadProjects
 }
 
 func (s *Session) stopPerformanceTelemetry() {
@@ -915,13 +1026,15 @@ func (s *Session) getSnapshot(
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
-		return s.updateSnapshot(ctx, overlays, SnapshotChange{
+		snapshot := s.updateSnapshot(ctx, overlays, SnapshotChange{
 			reason:          UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:     fileChanges,
 			ataChanges:      ataChanges,
 			newConfig:       newConfig,
 			ResourceRequest: request,
 		}, callerRef)
+		s.recordResourceRequestAccess(snapshot, request)
+		return snapshot
 	}
 	// If there are no pending file changes, we can try to use the current snapshot.
 	s.snapshotMu.RLock()
@@ -962,14 +1075,69 @@ func (s *Session) getSnapshot(
 			snapshot.ref()
 		}
 		s.snapshotMu.RUnlock()
+		s.recordResourceRequestAccess(snapshot, request)
 		return snapshot
 	}
 
 	s.snapshotMu.RUnlock()
-	return s.updateSnapshot(ctx, overlays, SnapshotChange{
+	snapshot = s.updateSnapshot(ctx, overlays, SnapshotChange{
 		reason:          updateReason,
 		ResourceRequest: request,
 	}, callerRef)
+	s.recordResourceRequestAccess(snapshot, request)
+	return snapshot
+}
+
+func (s *Session) recordResourceRequestAccess(snapshot *Snapshot, request ResourceRequest) {
+	if !s.options.LowMemoryMode || snapshot == nil {
+		return
+	}
+
+	var projectPaths collections.Set[tspath.Path]
+	addProject := func(project *Project) {
+		if project != nil {
+			projectPaths.Add(project.Id())
+		}
+	}
+	for _, document := range request.Documents {
+		addProject(snapshot.GetDefaultProject(document))
+	}
+	for _, document := range request.ConfiguredProjectDocuments {
+		for _, project := range snapshot.GetProjectsContainingFile(document) {
+			projectPaths.Add(project.Id())
+		}
+	}
+	for _, projectPath := range request.Projects {
+		if snapshot.ProjectCollection.GetProjectByPath(projectPath) != nil {
+			projectPaths.Add(projectPath)
+		}
+	}
+	if request.ProjectTree != nil {
+		if request.ProjectTree.IsAllProjects() {
+			for projectPath := range snapshot.ProjectCollection.ProjectsByPath().Keys() {
+				projectPaths.Add(projectPath)
+			}
+		} else {
+			for _, projectPath := range request.ProjectTree.Projects() {
+				if snapshot.ProjectCollection.GetProjectByPath(projectPath) != nil {
+					projectPaths.Add(projectPath)
+				}
+			}
+		}
+	}
+	if request.AutoImports != "" {
+		addProject(snapshot.GetDefaultProject(request.AutoImports))
+	}
+	if projectPaths.Len() == 0 {
+		return
+	}
+
+	now := time.Now()
+	s.projectLastAccessMu.Lock()
+	defer s.projectLastAccessMu.Unlock()
+	for projectPath := range projectPaths.Keys() {
+		s.projectLastAccess[projectPath] = now
+	}
 }
 
 func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.DocumentUri, callerRef bool) (*Snapshot, *Project, *ls.LanguageService, error) {
@@ -1248,6 +1416,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 // This is intended to be used only for testing purposes.
 func (s *Session) WaitForBackgroundTasks() {
 	s.cancelIdleCacheClean()
+	s.stopLowMemoryMode()
 	s.backgroundQueue.Wait()
 }
 
@@ -1418,6 +1587,8 @@ func (s *Session) Close() {
 	s.cancelIdleCacheClean()
 	// Cancel periodic performance telemetry
 	s.stopPerformanceTelemetry()
+	// Cancel periodic low-memory cleanup
+	s.stopLowMemoryMode()
 	s.backgroundQueue.Close()
 }
 

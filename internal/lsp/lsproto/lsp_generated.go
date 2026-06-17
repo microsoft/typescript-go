@@ -28064,6 +28064,12 @@ type InitializationOptions struct {
 
 	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
 	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
+
+	// Enables low memory mode, which unloads idle projects and recreates them on demand.
+	LowMemoryMode *bool `json:"lowMemoryMode,omitzero"`
+
+	// Low memory mode idle time in milliseconds.
+	LowMemoryModeIdleTime *int32 `json:"lowMemoryModeIdleTime,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptions)(nil)
@@ -28112,6 +28118,20 @@ func (s *InitializationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("logVerbosity")
 			}
 			if err := json.UnmarshalDecode(dec, &s.LogVerbosity); err != nil {
+				return err
+			}
+		case `"lowMemoryMode"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("lowMemoryMode")
+			}
+			if err := json.UnmarshalDecode(dec, &s.LowMemoryMode); err != nil {
+				return err
+			}
+		case `"lowMemoryModeIdleTime"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("lowMemoryModeIdleTime")
+			}
+			if err := json.UnmarshalDecode(dec, &s.LowMemoryModeIdleTime); err != nil {
 				return err
 			}
 		default:
