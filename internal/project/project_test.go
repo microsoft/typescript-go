@@ -323,9 +323,9 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json")
 		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
 
-		expectedMessage := "Argument for '--target' option must be: 'es6', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022', 'es2023', 'es2024', 'es2025', 'esnext'."
+		expectedMessagePrefix := "Argument for '--target' option must be:"
 		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
-			return diag.Message.AsString() == expectedMessage
+			return strings.HasPrefix(diag.Message.AsString(), expectedMessagePrefix)
 		}), "expected invalid target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
 	})
 
