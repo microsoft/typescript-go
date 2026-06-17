@@ -100,6 +100,13 @@ func TestResolveOrganizeImportsSort(t *testing.T) {
 			want: OrganizeImportsSortNaturalIgnoreCase,
 		},
 		{
+			name: "unicode unknown case sensitivity stays auto for detection",
+			preferences: UserPreferences{
+				OrganizeImportsCollation: OrganizeImportsCollationUnicode,
+			},
+			want: OrganizeImportsSortAuto,
+		},
+		{
 			name: "ordinal ignore case maps to ordinal ignore case",
 			preferences: UserPreferences{
 				OrganizeImportsIgnoreCase: core.TSTrue,
@@ -143,6 +150,12 @@ func TestCompareOrganizeImportsNaturalStrings(t *testing.T) {
 			name: "numeric runs sort by numeric value",
 			a:    "a2",
 			b:    "a100",
+			want: -1,
+		},
+		{
+			name: "numeric runs with equal value use raw tie break",
+			a:    "a02",
+			b:    "a2",
 			want: -1,
 		},
 		{

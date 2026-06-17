@@ -53,10 +53,14 @@ func ResolveOrganizeImportsSort(preferences UserPreferences) OrganizeImportsSort
 	}
 
 	if preferences.OrganizeImportsCollation == OrganizeImportsCollationUnicode {
-		if preferences.OrganizeImportsIgnoreCase.IsTrue() {
+		switch preferences.OrganizeImportsIgnoreCase {
+		case core.TSTrue:
 			return OrganizeImportsSortNaturalIgnoreCase
+		case core.TSFalse:
+			return OrganizeImportsSortNatural
+		default:
+			return OrganizeImportsSortAuto
 		}
-		return OrganizeImportsSortNatural
 	}
 
 	switch preferences.OrganizeImportsIgnoreCase {
@@ -123,7 +127,10 @@ func compareOrganizeImportsUnicodeStrings(a string, b string, ignoreCase bool, c
 		}
 	}
 
-	return 0
+	if !accents {
+		return strings.Compare(b, a)
+	}
+	return strings.Compare(a, b)
 }
 
 func naturalCollationKey(s string) string {
@@ -199,7 +206,10 @@ func compareNumericText(a string, b string) int {
 	if len(aDigits) != len(bDigits) {
 		return cmp.Compare(len(aDigits), len(bDigits))
 	}
-	return strings.Compare(aDigits, bDigits)
+	if cmp := strings.Compare(aDigits, bDigits); cmp != 0 {
+		return cmp
+	}
+	return strings.Compare(a, b)
 }
 
 func compareOrganizeImportsCaseUpperFirst(a string, b string) int {

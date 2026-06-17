@@ -92,14 +92,13 @@ type UserPreferences struct {
 	// Default: TSUnknown ("auto" in strada), will perform detection
 	OrganizeImportsIgnoreCase core.Tristate `raw:"organizeImportsIgnoreCase" config:"preferences.organizeImports.caseSensitivity"` // !!!
 	// Indicates whether imports should be organized via an "ordinal" (binary) comparison using the numeric value of their
-	// code points, or via "unicode" collation (via the Unicode Collation Algorithm (https://unicode.org/reports/tr10/#Scope))
-	//
-	// using rules associated with the locale specified in organizeImportsCollationLocale.
+	// code points, or via "unicode" natural sorting. This implementation is locale-agnostic and approximates the practical
+	// import-sorting behavior rather than the full Unicode Collation Algorithm.
 	//
 	// Default: Ordinal
 	OrganizeImportsCollation OrganizeImportsCollation `raw:"organizeImportsCollation" config:"preferences.organizeImports.unicodeCollation"` // !!!
-	// Indicates the locale to use for "unicode" collation. If not specified, the locale `"en"` is used as an invariant
-	// for the sake of consistent sorting. Use `"auto"` to use the detected UI locale.
+	// Indicates the locale to use for "unicode" collation in legacy clients. This is accepted for compatibility, but
+	// currently ignored because organize-import sorting is deterministic and locale-agnostic.
 	//
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
@@ -112,16 +111,13 @@ type UserPreferences struct {
 	//
 	// Default: `false`
 	OrganizeImportsNumericCollation core.Tristate `raw:"organizeImportsNumericCollation" config:"preferences.organizeImports.numericCollation"` // !!!
-	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of collation. When
-	// `true`, characters with accents and other diacritics will be collated in the order defined by the locale specified
-	// in organizeImportsCollationLocale.
+	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of sorting.
 	//
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `true`
 	OrganizeImportsAccentCollation core.Tristate `raw:"organizeImportsAccentCollation" config:"preferences.organizeImports.accentCollation"` // !!!
-	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
-	// specified in organizeImportsCollationLocale is used.
+	// Indicates whether upper case or lower case should sort first.
 	//
 	// This permission is ignored if:
 	//	- organizeImportsCollation is not `unicode`
