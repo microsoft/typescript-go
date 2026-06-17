@@ -178,7 +178,7 @@ func init() {
 
 func newFSEventsBackend() *fsEventsBackend {
 	b := &fsEventsBackend{}
-	b.watcherBase.init(b)
+	b.init(b)
 	return b
 }
 
