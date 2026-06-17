@@ -12,8 +12,8 @@ const sourceDefinitionContext = "tsSupportsSourceDefinition";
 type SourceDefinitionResponse = Location | Location[] | LocationLink[] | null;
 
 export function registerSourceDefinitionFeature(client: LanguageClient): vscode.Disposable {
-    const capabilities = client.initializeResult?.capabilities as { customSourceDefinitionProvider?: boolean; } | undefined;
-    const enabled = !!capabilities?.customSourceDefinitionProvider;
+    const experimental = client.initializeResult?.capabilities?.experimental as { customSourceDefinitionProvider?: boolean; } | undefined;
+    const enabled = !!experimental?.customSourceDefinitionProvider;
     void vscode.commands.executeCommand("setContext", sourceDefinitionContext, enabled);
 
     if (!enabled) {
@@ -25,20 +25,20 @@ export function registerSourceDefinitionFeature(client: LanguageClient): vscode.
     const disposable = vscode.commands.registerCommand(sourceDefinitionCommand, async () => {
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
-            vscode.window.showErrorMessage("Go to Source Definition failed. No editor is active.");
+            vscode.window.showErrorMessage(vscode.l10n.t("Go to Source Definition failed. No editor is active."));
             return;
         }
 
         const { document } = activeEditor;
         if (!["javascript", "javascriptreact", "typescript", "typescriptreact"].includes(document.languageId)) {
-            vscode.window.showErrorMessage("Go to Source Definition failed. Unsupported file type.");
+            vscode.window.showErrorMessage(vscode.l10n.t("Go to Source Definition failed. Unsupported file type."));
             return;
         }
 
         const position = activeEditor.selection.active;
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window,
-            title: "Finding source definitions",
+            title: vscode.l10n.t("Finding source definitions"),
         }, async (_, token) => {
             let response: SourceDefinitionResponse;
             try {
@@ -70,7 +70,7 @@ export function registerSourceDefinitionFeature(client: LanguageClient): vscode.
                 position,
                 locations,
                 "goto",
-                "No source definitions found.",
+                vscode.l10n.t("No source definitions found."),
             );
         });
     });

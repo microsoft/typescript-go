@@ -42,10 +42,11 @@ declare class A {
 declare class Q {
     x: number;
 }
-declare const _default: {
-    new (): {
-        x: A;
-    };
-};
-export = _default;
-export declare var Another: typeof Q;
+export = Q_1;
+declare class Q_1 {
+    x: A;
+    constructor();
+}
+declare namespace Q_1 {
+    export { Q as Another };
+}

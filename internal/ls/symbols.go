@@ -73,7 +73,7 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 	var symbols []*lsproto.DocumentSymbol
 	expandoTargets := collections.Set[string]{}
 	addSymbolForNode := func(node *ast.Node, name *ast.Node, children []*lsproto.DocumentSymbol) {
-		if node.Flags&ast.NodeFlagsReparsed == 0 || node.Kind == ast.KindJSExportAssignment {
+		if node.Flags&ast.NodeFlagsReparsed == 0 {
 			symbol := l.newDocumentSymbol(node, name, children)
 			if symbol != nil {
 				symbols = append(symbols, symbol)
@@ -241,7 +241,7 @@ func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, nod
 					node.ForEachChild(visit)
 				}
 			}
-		case ast.KindExportAssignment, ast.KindJSExportAssignment:
+		case ast.KindExportAssignment:
 			if node.AsExportAssignment().IsExportEquals {
 				addSymbolForNode(node, nil /*name*/, getSymbolsForNode(node.Expression()))
 			} else {
@@ -560,16 +560,22 @@ func ProvideWorkspaceSymbols(
 	for i, info := range infos[0:count] {
 		node := info.declaration
 		sourceFile := ast.GetSourceFileOfNode(node)
-		pos := astnav.GetStartOfNode(node, sourceFile, false /*includeJsDoc*/)
 		container := getContainerNode(info.declaration)
 		var containerName *string
 		if container != nil {
 			containerName = strPtrTo(ast.GetDeclarationName(container))
 		}
+		// Use the name node's span so that VS selects just the symbol name (matching
+		// the TS5 navto behaviour). GetNameOfDeclaration is always non-nil here because
+		// computeDeclarationMap only adds declarations whose GetDeclarationName (string
+		// form) is non-empty, which implies a name node exists.
+		nameNode := ast.GetNameOfDeclaration(node)
+		nameStart := astnav.GetStartOfNode(nameNode, sourceFile, false /*includeJsDoc*/)
+		nameRange := core.NewTextRange(nameStart, nameNode.End())
 		var symbol lsproto.SymbolInformation
 		symbol.Name = info.name
 		symbol.Kind = getSymbolKindFromNode(info.declaration)
-		symbol.Location = converters.ToLSPLocation(sourceFile, core.NewTextRange(pos, node.End()))
+		symbol.Location = converters.ToLSPLocation(sourceFile, nameRange)
 		symbol.ContainerName = containerName
 		symbols[i] = &symbol
 	}

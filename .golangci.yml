@@ -65,6 +65,10 @@ linters:
       customlint:
         type: module
 
+    modernize:
+      disable:
+        - slicesbackward # https://github.com/golang/go/issues/78829
+
     depguard:
       rules:
         main:
@@ -107,7 +111,7 @@ linters:
       - path: internal/fourslash/tests/gen/
         linters:
           - misspell
-      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled)|cmd/tsgo'
+      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled|fswatch)|cmd/tsgo'
         text: should likely be used instead
       - path: '(.+)_test\.go$'
         text: should likely be used instead

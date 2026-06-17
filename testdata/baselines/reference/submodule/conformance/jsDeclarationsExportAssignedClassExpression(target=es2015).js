@@ -23,9 +23,11 @@ module.exports = class Thing {
 
 
 //// [index.d.ts]
-declare const _default: {
-    new (p: number): {
-        t: number;
-    };
-};
-export = _default;
+export = Thing;
+declare class Thing {
+    t: number;
+    /**
+     * @param {number} p
+     */
+    constructor(p: number);
+}

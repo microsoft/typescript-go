@@ -36,14 +36,15 @@ module.exports = Container;
 
 
 //// [obj.d.ts]
-declare const _default: {
-    new (): {
-        x: number;
-    };
-};
-export = _default;
+export = Obj;
+declare class Obj {
+    x: number;
+    constructor();
+}
 //// [index.d.ts]
+import Obj = require("./obj");
 declare class Container {
+    usage: Obj;
     constructor();
 }
 export = Container;

@@ -158,12 +158,9 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindNamedImports:
 		n := node.AsNamedImports()
 		return (boolToByte(n.Elements != nil) << 0)
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		n := node.AsExportAssignment()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Type != nil) << 1) | (boolToByte(n.Expression != nil) << 2)
-	case ast.KindCommonJSExport:
-		n := node.AsCommonJSExport()
-		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.Type != nil) << 2) | (boolToByte(n.Initializer != nil) << 3)
 	case ast.KindNamespaceExportDeclaration:
 		n := node.AsNamespaceExportDeclaration()
 		return (boolToByte(hasModifiers(n.Modifiers())) << 0) | (boolToByte(n.Name() != nil) << 1)
@@ -484,7 +481,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.ImportClause != nil) << 1) | (boolToByte(n.ModuleSpecifier != nil) << 2) | (boolToByte(n.Attributes != nil) << 3) | (boolToByte(n.Comment != nil) << 4)
 	case ast.KindJSDocCallbackTag:
 		n := node.AsJSDocCallbackTag()
-		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.FullName != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
+		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Name() != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 	case ast.KindJSDocOverloadTag:
 		n := node.AsJSDocOverloadTag()
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Comment != nil) << 2)
@@ -554,7 +551,7 @@ func getNodeCommonData(node *ast.Node) uint32 {
 			tokenIdx = 1
 		}
 		return tokenIdx << 24
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		n := node.AsExportAssignment()
 		return uint32(boolToByte(n.IsExportEquals)) << 24
 	case ast.KindExportSpecifier:

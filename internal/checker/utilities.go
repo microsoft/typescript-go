@@ -183,7 +183,7 @@ func isShorthandAmbientModule(node *ast.Node) bool {
 
 func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 	switch node.Parent.Kind {
-	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment, ast.KindJSExportAssignment,
+	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment,
 		ast.KindImportEqualsDeclaration, ast.KindNamespaceExport:
 		return node.Parent
 	case ast.KindQualifiedName:
@@ -806,22 +806,37 @@ func isDeclarationReadonly(declaration *ast.Node) bool {
 	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !ast.IsParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
+// orderedSetMapThreshold is the size at which an orderedSet materializes its dedup map.
+// Below this, contains() scans the values slice.
+const orderedSetMapThreshold = 16
+
 type orderedSet[T comparable] struct {
 	valuesByKey map[T]struct{}
 	values      []T
 }
 
 func (s *orderedSet[T]) contains(value T) bool {
+	if s.valuesByKey == nil {
+		return slices.Contains(s.values, value)
+	}
 	_, ok := s.valuesByKey[value]
 	return ok
 }
 
 func (s *orderedSet[T]) add(value T) {
+	s.values = append(s.values, value)
+	// Small sets are served by a linear scan over values; only materialize the map once the set
+	// grows large enough for hashing to win.
 	if s.valuesByKey == nil {
-		s.valuesByKey = make(map[T]struct{})
+		if len(s.values) <= orderedSetMapThreshold {
+			return
+		}
+		s.valuesByKey = make(map[T]struct{}, len(s.values))
+		for _, v := range s.values[:len(s.values)-1] {
+			s.valuesByKey[v] = struct{}{}
+		}
 	}
 	s.valuesByKey[value] = struct{}{}
-	s.values = append(s.values, value)
 }
 
 func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
@@ -1072,7 +1087,7 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 	}
 
 	return node.Parent.Kind == ast.KindImportEqualsDeclaration && node.Parent.AsImportEqualsDeclaration().ModuleReference == node ||
-		(node.Parent.Kind == ast.KindExportAssignment || node.Parent.Kind == ast.KindJSExportAssignment) && node.Parent.Expression() == node
+		node.Parent.Kind == ast.KindExportAssignment && node.Parent.Expression() == node
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
@@ -1809,4 +1824,21 @@ func CreateModeMismatchDetails(program Program, file *ast.SourceFile) Diagnostic
 		Message: diagnostics.To_convert_this_file_to_an_ECMAScript_module_create_a_local_package_json_file_with_type_Colon_module,
 		Args:    nil,
 	}
+}
+
+func walkUpOuterExpressions(node *ast.Node) *ast.Node {
+	parent := node.Parent
+	for parent != nil && ast.IsOuterExpression(parent, ast.OEKAll) {
+		parent = parent.Parent
+	}
+	return parent
+}
+
+func GetSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
+	parameters := accessor.Parameters()
+	if len(parameters) > 0 {
+		hasThis := len(parameters) == 2 && ast.IsThisParameter(parameters[0])
+		return parameters[core.IfElse(hasThis, 1, 0)]
+	}
+	return nil
 }

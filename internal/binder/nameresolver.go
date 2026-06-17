@@ -13,7 +13,6 @@ type NameResolver struct {
 	Globals                          ast.SymbolTable
 	ArgumentsSymbol                  *ast.Symbol
 	RequireSymbol                    *ast.Symbol
-	GetModuleSymbol                  func(sourceFile *ast.Node) *ast.Symbol
 	Lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
 	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
@@ -57,8 +56,18 @@ loop:
 					// - Type parameters of a function are in scope in the entire function declaration, including the parameter
 					//   list and return type. However, local types are only in scope in the function body.
 					// - parameters are only in the scope of function body
-					if meaning&result.Flags&ast.SymbolFlagsType != 0 {
-						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation == location.Type() || ast.IsParameterLike(lastLocation))
+					// This restriction does not apply to JSDoc comment types because they are parented
+					// at a higher level than type parameters would normally be
+					if meaning&result.Flags&ast.SymbolFlagsType != 0 && lastLocation.Kind != ast.KindJSDoc {
+						// type parameters are visible in parameter list, return type and type parameter list.
+						// Synthetic fake scopes are added for signatures so type parameters are accessible from them.
+						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 &&
+							(lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
+								lastLocation == location.Type() ||
+								lastLocation.Kind == ast.KindParameter ||
+								lastLocation.Kind == ast.KindJSDocParameterTag ||
+								lastLocation.Kind == ast.KindJSDocReturnTag ||
+								lastLocation.Kind == ast.KindTypeParameter)
 					}
 					if meaning&result.Flags&ast.SymbolFlagsVariable != 0 {
 						// expression inside parameter will lookup as normal variable scope when targeting es2015+
@@ -126,9 +135,12 @@ loop:
 				}
 			}
 			if name != ast.InternalSymbolNameDefault {
-				result = r.lookup(moduleExports, name, meaning&ast.SymbolFlagsModuleMember)
-				if result != nil {
-					break loop
+				if result = r.lookup(moduleExports, name, meaning&ast.SymbolFlagsModuleMember); result != nil {
+					if ast.IsSourceFile(location) && location.AsSourceFile().CommonJSModuleIndicator != nil && result.Flags&ast.SymbolFlagsType == 0 {
+						result = nil
+					} else {
+						break loop
+					}
 				}
 			}
 		case ast.KindEnumDeclaration:
@@ -290,6 +302,10 @@ loop:
 			lastSelfReferenceLocation = location
 		}
 		lastLocation = location
+		// !!! In Strada, JSDocTemplateTag/JSDocParameterTag/JSDocReturnTag locations skip to
+		// getEffectiveContainerForJSDocTemplateTag/getHostSignatureFromJSDoc instead of location.parent.
+		// This is a no-op currently because JSDoc nodes have no locals and getEffectiveJSDocHost is not
+		// fully ported for JS assignment patterns.
 		location = location.Parent
 	}
 	// We just climbed up parents looking for the name, meaning that we started in a descendant node of `lastLocation`.
@@ -300,25 +316,8 @@ loop:
 			r.SymbolReferenced(result, meaning)
 		}
 	}
-	if result == nil {
-		if lastLocation != nil &&
-			lastLocation.Kind == ast.KindSourceFile &&
-			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
-			name == "exports" &&
-			meaning&lastLocation.Symbol().Flags != 0 {
-			return lastLocation.Symbol()
-		}
-		if lastLocation != nil &&
-			r.GetModuleSymbol != nil &&
-			lastLocation.Kind == ast.KindSourceFile &&
-			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
-			name == "module" &&
-			meaning&lastLocation.Symbol().Flags != 0 {
-			return r.GetModuleSymbol(lastLocation)
-		}
-		if !excludeGlobals {
-			result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
-		}
+	if result == nil && !excludeGlobals {
+		result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
 	}
 	if result == nil {
 		if originalLocation != nil && ast.IsInJSFile(originalLocation) && originalLocation.Parent != nil {

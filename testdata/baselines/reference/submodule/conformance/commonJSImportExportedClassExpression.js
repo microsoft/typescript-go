@@ -30,10 +30,8 @@ function f(k) {
 
 
 //// [mod1.d.ts]
-export declare var K: {
-    new (): {
-        values(): void;
-    };
-};
+export declare class K {
+    values(): void;
+}
 //// [main.d.ts]
 export {};

@@ -3,7 +3,7 @@
 // var a = 10;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var a: number
 // | ```
 // | 
@@ -12,14 +12,14 @@
 //     var b = a;
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var b: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //             ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var a: number
 // | ```
 // | 
@@ -29,7 +29,7 @@
 //     var c = 10;
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var c: number
 // | ```
 // | 
@@ -37,7 +37,7 @@
 //     export var d = 10;
 //                ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var d: number
 // | ```
 // | 
@@ -46,7 +46,7 @@
 // var f: () => number;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var f: () => number
 // | ```
 // | 
@@ -54,14 +54,14 @@
 // var g = f;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var g: () => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var f: () => number
 // | ```
 // | 
@@ -69,7 +69,7 @@
 // f();
 // ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var f: () => number
 // | ```
 // | 
@@ -77,30 +77,39 @@
 // var h: { (a: string): number; (a: number): string; };
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | var h: { (a: string): number; (a: number): string; }
+// | ```typescript
+// | var h: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 // var i = h;
 //     ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | var i: { (a: string): number; (a: number): string; }
+// | ```typescript
+// | var i: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | var h: { (a: string): number; (a: number): string; }
+// | ```typescript
+// | var h: {
+// |     (a: string): number;
+// |     (a: number): string;
+// | }
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 // h(10);
 // ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var h: (a: number) => string
 // | ```
 // | 
@@ -108,7 +117,7 @@
 // h("hello");
 // ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var h: (a: string) => number
 // | ```
 // | 
@@ -127,7 +136,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar a: number\n```\n"
+        "value": "```typescript\nvar a: number\n```\n"
       },
       "range": {
         "start": {
@@ -154,7 +163,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar b: number\n```\n"
+        "value": "```typescript\nvar b: number\n```\n"
       },
       "range": {
         "start": {
@@ -181,7 +190,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar a: number\n```\n"
+        "value": "```typescript\nvar a: number\n```\n"
       },
       "range": {
         "start": {
@@ -208,7 +217,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar c: number\n```\n"
+        "value": "```typescript\nvar c: number\n```\n"
       },
       "range": {
         "start": {
@@ -235,7 +244,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar d: number\n```\n"
+        "value": "```typescript\nvar d: number\n```\n"
       },
       "range": {
         "start": {
@@ -262,7 +271,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar f: () => number\n```\n"
+        "value": "```typescript\nvar f: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -289,7 +298,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar g: () => number\n```\n"
+        "value": "```typescript\nvar g: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -316,7 +325,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar f: () => number\n```\n"
+        "value": "```typescript\nvar f: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -343,7 +352,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar f: () => number\n```\n"
+        "value": "```typescript\nvar f: () => number\n```\n"
       },
       "range": {
         "start": {
@@ -370,7 +379,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar h: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```typescript\nvar h: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -397,7 +406,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```typescript\nvar i: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -424,7 +433,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar h: { (a: string): number; (a: number): string; }\n```\n"
+        "value": "```typescript\nvar h: {\n    (a: string): number;\n    (a: number): string;\n}\n```\n"
       },
       "range": {
         "start": {
@@ -451,7 +460,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar h: (a: number) => string\n```\n"
+        "value": "```typescript\nvar h: (a: number) => string\n```\n"
       },
       "range": {
         "start": {
@@ -478,7 +487,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar h: (a: string) => number\n```\n"
+        "value": "```typescript\nvar h: (a: string) => number\n```\n"
       },
       "range": {
         "start": {

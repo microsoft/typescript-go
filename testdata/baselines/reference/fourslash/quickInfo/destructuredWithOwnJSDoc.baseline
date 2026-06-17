@@ -1,5 +1,6 @@
 // === QuickInfo ===
 === /destructuredWithOwnJSDoc.ts ===
+// 
 // interface Foo {
 //     /** This is bar from the interface */
 //     bar: string;
@@ -14,7 +15,7 @@
 //     /** Comment on bar destructuring. */ bar,
 //                                          ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const bar: string
 // | ```
 // | This is bar from the interface
@@ -22,7 +23,7 @@
 //     /** Comment on baz destructuring. */ baz
 //                                          ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const baz: number
 // | ```
 // | This is baz from the interface
@@ -32,9 +33,9 @@
 [
   {
     "marker": {
-      "Position": 251,
+      "Position": 252,
       "LSPosition": {
-        "line": 11,
+        "line": 12,
         "character": 41
       },
       "Name": "1",
@@ -43,15 +44,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst bar: string\n```\nThis is bar from the interface"
+        "value": "```typescript\nconst bar: string\n```\nThis is bar from the interface"
       },
       "range": {
         "start": {
-          "line": 11,
+          "line": 12,
           "character": 41
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "character": 44
         }
       }
@@ -59,9 +60,9 @@
   },
   {
     "marker": {
-      "Position": 297,
+      "Position": 298,
       "LSPosition": {
-        "line": 12,
+        "line": 13,
         "character": 41
       },
       "Name": "2",
@@ -70,15 +71,15 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst baz: number\n```\nThis is baz from the interface"
+        "value": "```typescript\nconst baz: number\n```\nThis is baz from the interface"
       },
       "range": {
         "start": {
-          "line": 12,
+          "line": 13,
           "character": 41
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "character": 44
         }
       }

@@ -26,6 +26,7 @@ const (
 	closingTagCmd               baselineCommand = "Closing Tag"
 	documentHighlightsCmd       baselineCommand = "documentHighlights"
 	findAllReferencesCmd        baselineCommand = "findAllReferences"
+	vsFindAllReferencesCmd      baselineCommand = "vsFindAllReferences"
 	goToDefinitionCmd           baselineCommand = "goToDefinition"
 	goToImplementationCmd       baselineCommand = "goToImplementation"
 	goToSourceDefinitionCmd     baselineCommand = "goToSourceDefinition"
@@ -78,7 +79,7 @@ func getBaselineFileName(t *testing.T, command baselineCommand) string {
 
 func getBaselineExtension(command baselineCommand) string {
 	switch command {
-	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, closingTagCmd:
+	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, closingTagCmd, vsFindAllReferencesCmd:
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
@@ -741,7 +742,8 @@ func (f *FourslashTest) getBaselineContentForFile(
 		if options.getLocationData != nil {
 			startMarker += options.getLocationData(span)
 		}
-		details = append(details,
+		details = append(
+			details,
 			&baselineDetail{pos: span.textSpan.Start, positionMarker: startMarker, span: &span, kind: detailKindTextStart},
 			&baselineDetail{pos: span.textSpan.End, positionMarker: core.OrElse(options.endMarker, "|]"), span: &span, kind: detailKindTextEnd},
 		)
@@ -1055,9 +1057,9 @@ func annotateContentWithTooltips[T comparable](
 	barWithGutter := "| " + strings.Repeat("-", 70)
 
 	// sort by file, then *backwards* by position in the file
-	// so we can insert multiple times on a line without counting
+	// so we can insert multiple times on a line without counting.
 	sorted := slices.Clone(markersAndItems)
-	slices.SortFunc(sorted, func(a, b markerAndItem[T]) int {
+	slices.SortStableFunc(sorted, func(a, b markerAndItem[T]) int {
 		if c := cmp.Compare(a.Marker.FileName(), b.Marker.FileName()); c != 0 {
 			return c
 		}

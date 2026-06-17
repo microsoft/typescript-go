@@ -125,7 +125,7 @@ type NodeList struct {
 }
 
 func (f *NodeFactory) NewNodeList(nodes []*Node) *NodeList {
-	list := f.nodeListPool.New()
+	list := f.nodeListArena.New()
 	list.Loc = core.UndefinedTextRange()
 	list.Nodes = nodes
 	return list
@@ -156,7 +156,7 @@ type ModifierList struct {
 }
 
 func (f *NodeFactory) NewModifierList(nodes []*Node) *ModifierList {
-	list := f.modifierListPool.New()
+	list := f.modifierListArena.New()
 	list.Loc = core.UndefinedTextRange()
 	list.Nodes = nodes
 	list.ModifierFlags = ModifiersToFlags(nodes)
@@ -164,7 +164,7 @@ func (f *NodeFactory) NewModifierList(nodes []*Node) *ModifierList {
 }
 
 func (list *ModifierList) Clone(f *NodeFactory) *ModifierList {
-	res := f.modifierListPool.New()
+	res := f.modifierListArena.New()
 	res.Loc = list.Loc
 	res.Nodes = list.Nodes
 	res.ModifierFlags = list.ModifierFlags
@@ -360,7 +360,7 @@ func (n *Node) Expression() *Node {
 		return n.AsThrowStatement().Expression
 	case KindExternalModuleReference:
 		return n.AsExternalModuleReference().Expression
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		return n.AsExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
@@ -449,7 +449,7 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsThrowStatement().Expression = expr
 	case KindExternalModuleReference:
 		n.AsExternalModuleReference().Expression = expr
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		n.AsExportAssignment().Expression = expr
 	case KindDecorator:
 		n.AsDecorator().Expression = expr
@@ -662,10 +662,8 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNonNullableType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		return n.AsExportAssignment().Type
-	case KindCommonJSExport:
-		return n.AsCommonJSExport().Type
 	case KindBinaryExpression:
 		return n.AsBinaryExpression().Type
 	default:
@@ -725,10 +723,8 @@ func (m *MutableNode) SetType(t *Node) {
 		n.AsJSDocNonNullableType().Type = t
 	case KindJSDocOptionalType:
 		n.AsJSDocOptionalType().Type = t
-	case KindExportAssignment, KindJSExportAssignment:
+	case KindExportAssignment:
 		n.AsExportAssignment().Type = t
-	case KindCommonJSExport:
-		n.AsCommonJSExport().Type = t
 	case KindBinaryExpression:
 		n.AsBinaryExpression().Type = t
 	default:
@@ -762,8 +758,6 @@ func (n *Node) Initializer() *Node {
 		return n.AsForInOrOfStatement().Initializer
 	case KindJsxAttribute:
 		return n.AsJsxAttribute().Initializer
-	case KindCommonJSExport:
-		return n.AsCommonJSExport().Initializer
 	}
 	panic("Unhandled case in Node.Initializer")
 }
@@ -791,8 +785,6 @@ func (m *MutableNode) SetInitializer(initializer *Node) {
 		n.AsForInOrOfStatement().Initializer = initializer
 	case KindJsxAttribute:
 		n.AsJsxAttribute().Initializer = initializer
-	case KindCommonJSExport:
-		n.AsCommonJSExport().Initializer = initializer
 	default:
 		panic("Unhandled case in mutableNode.SetInitializer")
 	}
@@ -1127,6 +1119,8 @@ func (n *Node) TypeExpression() *Node {
 		return n.AsJSDocTypeTag().TypeExpression
 	case KindJSDocTypedefTag:
 		return n.AsJSDocTypedefTag().TypeExpression
+	case KindJSDocCallbackTag:
+		return n.AsJSDocCallbackTag().TypeExpression
 	case KindJSDocSatisfiesTag:
 		return n.AsJSDocSatisfiesTag().TypeExpression
 	case KindJSDocThrowsTag:
@@ -1218,6 +1212,7 @@ func (node *NodeDefault) forEachChildIter(yield func(v *Node) bool) {
 func (node *NodeDefault) IterChildren() iter.Seq[*Node] {
 	return node.forEachChildIter
 }
+
 func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node                   { return node.AsNode() }
 func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                    { return nil }
 func (node *NodeDefault) Name() *DeclarationName                                { return nil }
@@ -1527,7 +1522,8 @@ func (node *ExportableBase) ExportableData() *ExportableBase { return node }
 
 // ModifiersBase
 
-func (node *ModifiersBase) Modifiers() *ModifierList { return node.modifiers }
+func (node *ModifiersBase) Modifiers() *ModifierList             { return node.modifiers }
+func (node *ModifiersBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 
 // LocalsContainerBase
 
@@ -1620,7 +1616,8 @@ func (node *CompositeBase) computeSubtreeFacts() SubtreeFacts {
 
 // TypeSyntaxBase
 
-func (node *TypeSyntaxBase) computeSubtreeFacts() SubtreeFacts   { return SubtreeContainsTypeScript }
+func (node *TypeSyntaxBase) computeSubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
+
 func (node *TypeSyntaxBase) propagateSubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
 
 func (node *Token) computeSubtreeFacts() SubtreeFacts {
@@ -1905,7 +1902,7 @@ func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
 }
 
 func IsAnyExportAssignment(node *Node) bool {
-	return node.Kind == KindExportAssignment || node.Kind == KindJSExportAssignment
+	return node.Kind == KindExportAssignment
 }
 
 func (node *ExportDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -2155,7 +2152,7 @@ func (node *NewExpression) propagateSubtreeFacts() SubtreeFacts {
 }
 
 func (node *MetaProperty) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name)
+	return propagateSubtreeFacts(node.name) &^ SubtreeContainsIdentifier
 }
 
 func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
@@ -2405,6 +2402,53 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat    core.ResolutionMode
 }
 
+// SourceFileDataKey identifies lazily-computed data attached to a SourceFile by
+// another package. Prefer regular SourceFile fields for ast-owned data.
+type SourceFileDataKey[T any] struct {
+	key sourceFileDataKey
+	_   [0]T
+}
+
+type sourceFileDataKey uint64
+
+var sourceFileDataKeyCounter atomic.Uint64
+
+type sourceFileDataCell[T any] struct {
+	once  sync.Once
+	value T
+}
+
+func NewSourceFileDataKey[T any]() *SourceFileDataKey[T] {
+	return &SourceFileDataKey[T]{key: sourceFileDataKey(sourceFileDataKeyCounter.Add(1))}
+}
+
+func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[T], compute func(*SourceFile) T) T {
+	cell := getSourceFileDataCell(file, key)
+	cell.once.Do(func() {
+		cell.value = compute(file)
+	})
+	return cell.value
+}
+
+func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *sourceFileDataCell[T] {
+	if key == nil || key.key == 0 {
+		panic("invalid SourceFileDataKey; use NewSourceFileDataKey")
+	}
+
+	file.dataMu.Lock()
+	defer file.dataMu.Unlock()
+
+	if file.data == nil {
+		file.data = make(map[sourceFileDataKey]any)
+	}
+	if cell, ok := file.data[key.key]; ok {
+		return cell.(*sourceFileDataCell[T])
+	}
+	cell := &sourceFileDataCell[T]{}
+	file.data[key.key] = cell
+	return cell
+}
+
 type CheckJsDirective struct {
 	Enabled bool
 	Range   CommentRange
@@ -2432,6 +2476,10 @@ type SourceFile struct {
 	text           string
 	Statements     *NodeList  // NodeList[*Statement]
 	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
+
+	// Fields for lazily-computed data owned by packages outside ast.
+	dataMu sync.Mutex
+	data   map[sourceFileDataKey]any
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
@@ -2845,7 +2893,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 				break
 			}
 			fallthrough
-		case KindVariableDeclaration, KindBindingElement, KindCommonJSExport:
+		case KindVariableDeclaration, KindBindingElement:
 			name := node.Name()
 			if name != nil {
 				if IsBindingPattern(name) {
@@ -2896,7 +2944,7 @@ func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
 			}
 		case KindBinaryExpression:
 			switch GetAssignmentDeclarationKind(node) {
-			case JSDeclarationKindThisProperty, JSDeclarationKindProperty:
+			case JSDeclarationKindExportsProperty, JSDeclarationKindThisProperty, JSDeclarationKindProperty:
 				addDeclaration(node)
 			}
 			node.ForEachChild(visit)
@@ -3003,4 +3051,12 @@ func forEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag,
 
 func visitEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag, v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocParameterOrPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+}
+
+func (f *NodeFactory) ReleaseArenas() {
+	*f = NodeFactory{
+		hooks:     f.hooks,
+		textCount: f.textCount,
+		nodeCount: f.nodeCount,
+	}
 }

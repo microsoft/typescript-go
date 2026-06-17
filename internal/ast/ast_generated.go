@@ -18,55 +18,55 @@ var (
 // ──────────────────────────────────────────────────────────────────────
 
 type NodeFactory struct {
-	hooks                             NodeFactoryHooks
-	arrayTypeNodePool                 core.Pool[ArrayTypeNode]
-	binaryExpressionPool              core.Pool[BinaryExpression]
-	blockPool                         core.Pool[Block]
-	callExpressionPool                core.Pool[CallExpression]
-	conditionalExpressionPool         core.Pool[ConditionalExpression]
-	constructSignatureDeclarationPool core.Pool[ConstructSignatureDeclaration]
-	elementAccessExpressionPool       core.Pool[ElementAccessExpression]
-	expressionStatementPool           core.Pool[ExpressionStatement]
-	expressionWithTypeArgumentsPool   core.Pool[ExpressionWithTypeArguments]
-	functionDeclarationPool           core.Pool[FunctionDeclaration]
-	functionTypeNodePool              core.Pool[FunctionTypeNode]
-	heritageClausePool                core.Pool[HeritageClause]
-	identifierPool                    core.Pool[Identifier]
-	ifStatementPool                   core.Pool[IfStatement]
-	importSpecifierPool               core.Pool[ImportSpecifier]
-	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
-	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
-	intersectionTypeNodePool          core.Pool[IntersectionTypeNode]
-	jsdocDeprecatedTagPool            core.Pool[JSDocDeprecatedTag]
-	jsdocPool                         core.Pool[JSDoc]
-	jsdocTextPool                     core.Pool[JSDocText]
-	jsdocUnknownTagPool               core.Pool[JSDocUnknownTag]
-	keywordExpressionPool             core.Pool[KeywordExpression]
-	keywordTypeNodePool               core.Pool[KeywordTypeNode]
-	literalTypeNodePool               core.Pool[LiteralTypeNode]
-	methodSignatureDeclarationPool    core.Pool[MethodSignatureDeclaration]
-	modifierListPool                  core.Pool[ModifierList]
-	nodeListPool                      core.Pool[NodeList]
-	numericLiteralPool                core.Pool[NumericLiteral]
-	parameterDeclarationPool          core.Pool[ParameterDeclaration]
-	parenthesizedExpressionPool       core.Pool[ParenthesizedExpression]
-	parenthesizedTypeNodePool         core.Pool[ParenthesizedTypeNode]
-	prefixUnaryExpressionPool         core.Pool[PrefixUnaryExpression]
-	propertyAccessExpressionPool      core.Pool[PropertyAccessExpression]
-	propertyAssignmentPool            core.Pool[PropertyAssignment]
-	propertySignatureDeclarationPool  core.Pool[PropertySignatureDeclaration]
-	returnStatementPool               core.Pool[ReturnStatement]
-	stringLiteralPool                 core.Pool[StringLiteral]
-	tokenPool                         core.Pool[Token]
-	typeAliasDeclarationPool          core.Pool[TypeAliasDeclaration]
-	typeLiteralNodePool               core.Pool[TypeLiteralNode]
-	typeOperatorNodePool              core.Pool[TypeOperatorNode]
-	typeParameterDeclarationPool      core.Pool[TypeParameterDeclaration]
-	typeReferenceNodePool             core.Pool[TypeReferenceNode]
-	unionTypeNodePool                 core.Pool[UnionTypeNode]
-	variableDeclarationListPool       core.Pool[VariableDeclarationList]
-	variableDeclarationPool           core.Pool[VariableDeclaration]
-	variableStatementPool             core.Pool[VariableStatement]
+	hooks                              NodeFactoryHooks
+	arrayTypeNodeArena                 core.Arena[ArrayTypeNode]
+	binaryExpressionArena              core.Arena[BinaryExpression]
+	blockArena                         core.Arena[Block]
+	callExpressionArena                core.Arena[CallExpression]
+	conditionalExpressionArena         core.Arena[ConditionalExpression]
+	constructSignatureDeclarationArena core.Arena[ConstructSignatureDeclaration]
+	elementAccessExpressionArena       core.Arena[ElementAccessExpression]
+	expressionStatementArena           core.Arena[ExpressionStatement]
+	expressionWithTypeArgumentsArena   core.Arena[ExpressionWithTypeArguments]
+	functionDeclarationArena           core.Arena[FunctionDeclaration]
+	functionTypeNodeArena              core.Arena[FunctionTypeNode]
+	heritageClauseArena                core.Arena[HeritageClause]
+	identifierArena                    core.Arena[Identifier]
+	ifStatementArena                   core.Arena[IfStatement]
+	importSpecifierArena               core.Arena[ImportSpecifier]
+	indexedAccessTypeNodeArena         core.Arena[IndexedAccessTypeNode]
+	interfaceDeclarationArena          core.Arena[InterfaceDeclaration]
+	intersectionTypeNodeArena          core.Arena[IntersectionTypeNode]
+	jsdocArena                         core.Arena[JSDoc]
+	jsdocDeprecatedTagArena            core.Arena[JSDocDeprecatedTag]
+	jsdocTextArena                     core.Arena[JSDocText]
+	jsdocUnknownTagArena               core.Arena[JSDocUnknownTag]
+	keywordExpressionArena             core.Arena[KeywordExpression]
+	keywordTypeNodeArena               core.Arena[KeywordTypeNode]
+	literalTypeNodeArena               core.Arena[LiteralTypeNode]
+	methodSignatureDeclarationArena    core.Arena[MethodSignatureDeclaration]
+	modifierListArena                  core.Arena[ModifierList]
+	nodeListArena                      core.Arena[NodeList]
+	numericLiteralArena                core.Arena[NumericLiteral]
+	parameterDeclarationArena          core.Arena[ParameterDeclaration]
+	parenthesizedExpressionArena       core.Arena[ParenthesizedExpression]
+	parenthesizedTypeNodeArena         core.Arena[ParenthesizedTypeNode]
+	prefixUnaryExpressionArena         core.Arena[PrefixUnaryExpression]
+	propertyAccessExpressionArena      core.Arena[PropertyAccessExpression]
+	propertyAssignmentArena            core.Arena[PropertyAssignment]
+	propertySignatureDeclarationArena  core.Arena[PropertySignatureDeclaration]
+	returnStatementArena               core.Arena[ReturnStatement]
+	stringLiteralArena                 core.Arena[StringLiteral]
+	tokenArena                         core.Arena[Token]
+	typeAliasDeclarationArena          core.Arena[TypeAliasDeclaration]
+	typeLiteralNodeArena               core.Arena[TypeLiteralNode]
+	typeOperatorNodeArena              core.Arena[TypeOperatorNode]
+	typeParameterDeclarationArena      core.Arena[TypeParameterDeclaration]
+	typeReferenceNodeArena             core.Arena[TypeReferenceNode]
+	unionTypeNodeArena                 core.Arena[UnionTypeNode]
+	variableDeclarationArena           core.Arena[VariableDeclaration]
+	variableDeclarationListArena       core.Arena[VariableDeclarationList]
+	variableStatementArena             core.Arena[VariableStatement]
 
 	nodeCount int
 	textCount int
@@ -299,7 +299,6 @@ type (
 	NamespaceImportNode               = Node
 	NamedImportsNode                  = Node
 	ExportAssignmentNode              = Node
-	CommonJSExportNode                = Node
 	NamespaceExportDeclarationNode    = Node
 	NamespaceExportNode               = Node
 	NamedExportsNode                  = Node
@@ -526,6 +525,7 @@ type (
 	ModuleExportName               = Node // Identifier | StringLiteral
 	PropertyName                   = Node // Identifier | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier | BigIntLiteral
 	ModuleBody                     = Node // ModuleBlock | ModuleDeclaration
+	JSDocFullName                  = Node // Identifier | ModuleDeclaration
 	ForInitializer                 = Node // Expression | MissingDeclaration | VariableDeclarationList
 	ModuleReference                = Node // Identifier | QualifiedName | ExternalModuleReference
 	NamedImportBindings            = Node // NamespaceImport | NamedImports
@@ -597,7 +597,7 @@ type Token struct {
 }
 
 func (f *NodeFactory) NewToken(kind TokenSyntaxKind) *Node {
-	data := f.tokenPool.New()
+	data := f.tokenArena.New()
 	return f.newNode(kind, data)
 }
 
@@ -790,7 +790,7 @@ type Identifier struct {
 }
 
 func (f *NodeFactory) NewIdentifier(text string) *Node {
-	data := f.identifierPool.New()
+	data := f.identifierArena.New()
 	data.Text = text
 	f.textCount++
 	return f.newNode(KindIdentifier, data)
@@ -991,7 +991,7 @@ type IfStatement struct {
 }
 
 func (f *NodeFactory) NewIfStatement(expression *Expression, thenStatement *Statement, elseStatement *Statement) *Node {
-	data := f.ifStatementPool.New()
+	data := f.ifStatementArena.New()
 	data.Expression = expression
 	data.ThenStatement = thenStatement
 	data.ElseStatement = elseStatement
@@ -1312,7 +1312,7 @@ type ReturnStatement struct {
 }
 
 func (f *NodeFactory) NewReturnStatement(expression *Expression) *Node {
-	data := f.returnStatementPool.New()
+	data := f.returnStatementArena.New()
 	data.Expression = expression
 	return f.newNode(KindReturnStatement, data)
 }
@@ -1737,7 +1737,7 @@ type ExpressionStatement struct {
 }
 
 func (f *NodeFactory) NewExpressionStatement(expression *Expression) *Node {
-	data := f.expressionStatementPool.New()
+	data := f.expressionStatementArena.New()
 	data.Expression = expression
 	return f.newNode(KindExpressionStatement, data)
 }
@@ -1782,7 +1782,7 @@ type Block struct {
 }
 
 func (f *NodeFactory) NewBlock(statements *StatementList, multiLine bool) *Node {
-	data := f.blockPool.New()
+	data := f.blockArena.New()
 	data.Statements = statements
 	data.MultiLine = multiLine
 	return f.newNode(KindBlock, data)
@@ -1827,7 +1827,7 @@ type VariableStatement struct {
 }
 
 func (f *NodeFactory) NewVariableStatement(modifiers *ModifierList, declarationList *VariableDeclarationListNode) *Node {
-	data := f.variableStatementPool.New()
+	data := f.variableStatementArena.New()
 	data.modifiers = modifiers
 	data.DeclarationList = declarationList
 	return f.newNode(KindVariableStatement, data)
@@ -1872,7 +1872,7 @@ type VariableDeclaration struct {
 }
 
 func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken *ExclamationToken, typeNode *TypeNode, initializer *Expression) *Node {
-	data := f.variableDeclarationPool.New()
+	data := f.variableDeclarationArena.New()
 	data.name = name
 	data.ExclamationToken = exclamationToken
 	data.Type = typeNode
@@ -1921,7 +1921,7 @@ type VariableDeclarationList struct {
 }
 
 func (f *NodeFactory) NewVariableDeclarationList(declarations *VariableDeclarationNodeList, flags NodeFlags) *Node {
-	data := f.variableDeclarationListPool.New()
+	data := f.variableDeclarationListArena.New()
 	data.Declarations = declarations
 	node := f.newNode(KindVariableDeclarationList, data)
 	node.Flags = flags
@@ -2011,7 +2011,7 @@ type ParameterDeclaration struct {
 }
 
 func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierList, dotDotDotToken *DotDotDotToken, name *BindingName, questionToken *QuestionToken, typeNode *TypeNode, initializer *Expression) *Node {
-	data := f.parameterDeclarationPool.New()
+	data := f.parameterDeclarationArena.New()
 	data.modifiers = modifiers
 	data.DotDotDotToken = dotDotDotToken
 	data.name = name
@@ -2163,7 +2163,7 @@ type FunctionDeclaration struct {
 }
 
 func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *AsteriskToken, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode, fullSignature *TypeNode, body *FunctionBody) *Node {
-	data := f.functionDeclarationPool.New()
+	data := f.functionDeclarationArena.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
 	data.name = name
@@ -2322,7 +2322,7 @@ type HeritageClause struct {
 }
 
 func (f *NodeFactory) NewHeritageClause(token Kind, types *ExpressionWithTypeArgumentsList) *Node {
-	data := f.heritageClausePool.New()
+	data := f.heritageClauseArena.New()
 	data.Token = token
 	data.Types = types
 	return f.newNode(KindHeritageClause, data)
@@ -2368,7 +2368,7 @@ type InterfaceDeclaration struct {
 }
 
 func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, heritageClauses *HeritageClauseList, members *TypeElementList) *Node {
-	data := f.interfaceDeclarationPool.New()
+	data := f.interfaceDeclarationArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -2425,7 +2425,7 @@ type TypeAliasDeclaration struct {
 }
 
 func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
-	data := f.typeAliasDeclarationPool.New()
+	data := f.typeAliasDeclarationArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -2434,7 +2434,7 @@ func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *Ide
 }
 
 func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
-	data := f.typeAliasDeclarationPool.New()
+	data := f.typeAliasDeclarationArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -2909,25 +2909,9 @@ func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEqual
 	return f.newNode(KindExportAssignment, data)
 }
 
-func (f *NodeFactory) NewJSExportAssignment(modifiers *ModifierList, isExportEquals bool, typeNode *TypeNode, expression *Expression) *Node {
-	data := &ExportAssignment{}
-	data.modifiers = modifiers
-	data.IsExportEquals = isExportEquals
-	data.Type = typeNode
-	data.Expression = expression
-	return f.newNode(KindJSExportAssignment, data)
-}
-
 func (f *NodeFactory) UpdateExportAssignment(node *ExportAssignment, modifiers *ModifierList, isExportEquals bool, typeNode *TypeNode, expression *Expression) *Node {
 	if modifiers != node.modifiers || isExportEquals != node.IsExportEquals || typeNode != node.Type || expression != node.Expression {
-		switch node.Kind {
-		case KindExportAssignment:
-			return updateNode(f.NewExportAssignment(modifiers, isExportEquals, typeNode, expression), node.AsNode(), f.hooks)
-		case KindJSExportAssignment:
-			return updateNode(f.NewJSExportAssignment(modifiers, isExportEquals, typeNode, expression), node.AsNode(), f.hooks)
-		default:
-			panic("unexpected kind in UpdateExportAssignment: " + node.Kind.String())
-		}
+		return updateNode(f.NewExportAssignment(modifiers, isExportEquals, typeNode, expression), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -2941,75 +2925,11 @@ func (node *ExportAssignment) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
-	switch node.Kind {
-	case KindExportAssignment:
-		return cloneNode(f.AsNodeFactory().NewExportAssignment(node.Modifiers(), node.IsExportEquals, node.Type, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-	case KindJSExportAssignment:
-		return cloneNode(f.AsNodeFactory().NewJSExportAssignment(node.Modifiers(), node.IsExportEquals, node.Type, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-	default:
-		panic("unexpected kind in ExportAssignment.Clone: " + node.Kind.String())
-	}
+	return cloneNode(f.AsNodeFactory().NewExportAssignment(node.Modifiers(), node.IsExportEquals, node.Type, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsExportAssignment(node *Node) bool {
 	return node.Kind == KindExportAssignment
-}
-
-func IsJSExportAssignment(node *Node) bool {
-	return node.Kind == KindJSExportAssignment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// CommonJSExport
-// ──────────────────────────────────────────────────────────────────────
-
-type CommonJSExport struct {
-	StatementBase
-	DeclarationBase
-	ExportableBase
-	ModifiersBase
-	name        *IdentifierNode
-	Type        *TypeNode
-	Initializer *Expression
-}
-
-func (f *NodeFactory) NewCommonJSExport(modifiers *ModifierList, name *IdentifierNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := &CommonJSExport{}
-	data.modifiers = modifiers
-	data.name = name
-	data.Type = typeNode
-	data.Initializer = initializer
-	return f.newNode(KindCommonJSExport, data)
-}
-
-func (f *NodeFactory) UpdateCommonJSExport(node *CommonJSExport, modifiers *ModifierList, name *IdentifierNode, typeNode *TypeNode, initializer *Expression) *Node {
-	if modifiers != node.modifiers || name != node.name || typeNode != node.Type || initializer != node.Initializer {
-		return updateNode(f.NewCommonJSExport(modifiers, name, typeNode, initializer), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *CommonJSExport) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) ||
-		visit(v, node.name) ||
-		visit(v, node.Type) ||
-		visit(v, node.Initializer)
-}
-
-func (node *CommonJSExport) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateCommonJSExport(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Type), v.visitNode(node.Initializer))
-}
-
-func (node *CommonJSExport) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewCommonJSExport(node.Modifiers(), node.name, node.Type, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *CommonJSExport) Name() *DeclarationName {
-	return node.name
-}
-
-func IsCommonJSExport(node *Node) bool {
-	return node.Kind == KindCommonJSExport
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -3253,7 +3173,7 @@ type ConstructSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	data := f.constructSignatureDeclarationPool.New()
+	data := f.constructSignatureDeclarationArena.New()
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = typeNode
@@ -3500,7 +3420,7 @@ type MethodSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	data := f.methodSignatureDeclarationPool.New()
+	data := f.methodSignatureDeclarationArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -3619,7 +3539,7 @@ type PropertySignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewPropertySignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := f.propertySignatureDeclarationPool.New()
+	data := f.propertySignatureDeclarationArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -3812,7 +3732,7 @@ type KeywordExpression struct {
 }
 
 func (f *NodeFactory) NewKeywordExpression(kind KeywordExpressionSyntaxKind) *Node {
-	data := f.keywordExpressionPool.New()
+	data := f.keywordExpressionArena.New()
 	return f.newNode(kind, data)
 }
 
@@ -3842,7 +3762,7 @@ type StringLiteral struct {
 }
 
 func (f *NodeFactory) NewStringLiteral(text string, tokenFlags TokenFlags) *Node {
-	data := f.stringLiteralPool.New()
+	data := f.stringLiteralArena.New()
 	data.Text = text
 	data.TokenFlags = tokenFlags & TokenFlagsStringLiteralFlags
 	f.textCount++
@@ -3866,7 +3786,7 @@ type NumericLiteral struct {
 }
 
 func (f *NodeFactory) NewNumericLiteral(text string, tokenFlags TokenFlags) *Node {
-	data := f.numericLiteralPool.New()
+	data := f.numericLiteralArena.New()
 	data.Text = text
 	data.TokenFlags = tokenFlags & TokenFlagsNumericLiteralFlags
 	f.textCount++
@@ -3971,7 +3891,7 @@ type BinaryExpression struct {
 }
 
 func (f *NodeFactory) NewBinaryExpression(modifiers *ModifierList, left *Expression, typeNode *TypeNode, operatorToken *BinaryOperatorToken, right *Expression) *Node {
-	data := f.binaryExpressionPool.New()
+	data := f.binaryExpressionArena.New()
 	data.modifiers = modifiers
 	data.Left = left
 	data.Type = typeNode
@@ -4018,7 +3938,7 @@ type PrefixUnaryExpression struct {
 }
 
 func (f *NodeFactory) NewPrefixUnaryExpression(operator Kind, operand *Expression) *Node {
-	data := f.prefixUnaryExpressionPool.New()
+	data := f.prefixUnaryExpressionArena.New()
 	data.Operator = operator
 	data.Operand = operand
 	return f.newNode(KindPrefixUnaryExpression, data)
@@ -4347,7 +4267,7 @@ type ConditionalExpression struct {
 }
 
 func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionToken *QuestionToken, whenTrue *Expression, colonToken *ColonToken, whenFalse *Expression) *Node {
-	data := f.conditionalExpressionPool.New()
+	data := f.conditionalExpressionArena.New()
 	data.Condition = condition
 	data.QuestionToken = questionToken
 	data.WhenTrue = whenTrue
@@ -4405,7 +4325,7 @@ type PropertyAccessExpression struct {
 }
 
 func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questionDotToken *QuestionDotToken, name *MemberName, flags NodeFlags) *Node {
-	data := f.propertyAccessExpressionPool.New()
+	data := f.propertyAccessExpressionArena.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.name = name
@@ -4455,7 +4375,7 @@ type ElementAccessExpression struct {
 }
 
 func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questionDotToken *QuestionDotToken, argumentExpression *Expression, flags NodeFlags) *Node {
-	data := f.elementAccessExpressionPool.New()
+	data := f.elementAccessExpressionArena.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.ArgumentExpression = argumentExpression
@@ -4508,7 +4428,7 @@ type CallExpression struct {
 }
 
 func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken *QuestionDotToken, typeArguments *TypeList, arguments *ElementList, flags NodeFlags) *Node {
-	data := f.callExpressionPool.New()
+	data := f.callExpressionArena.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.TypeArguments = typeArguments
@@ -4862,7 +4782,7 @@ type ParenthesizedExpression struct {
 }
 
 func (f *NodeFactory) NewParenthesizedExpression(expression *Expression) *Node {
-	data := f.parenthesizedExpressionPool.New()
+	data := f.parenthesizedExpressionArena.New()
 	data.Expression = expression
 	return f.newNode(KindParenthesizedExpression, data)
 }
@@ -5039,7 +4959,7 @@ type PropertyAssignment struct {
 }
 
 func (f *NodeFactory) NewPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := f.propertyAssignmentPool.New()
+	data := f.propertyAssignmentArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -5349,7 +5269,7 @@ type KeywordTypeNode struct {
 }
 
 func (f *NodeFactory) NewKeywordTypeNode(kind KeywordTypeSyntaxKind) *Node {
-	data := f.keywordTypeNodePool.New()
+	data := f.keywordTypeNodeArena.New()
 	return f.newNode(kind, data)
 }
 
@@ -5386,7 +5306,7 @@ type UnionTypeNode struct {
 }
 
 func (f *NodeFactory) NewUnionTypeNode(types *TypeList) *Node {
-	data := f.unionTypeNodePool.New()
+	data := f.unionTypeNodeArena.New()
 	data.Types = types
 	return f.newNode(KindUnionType, data)
 }
@@ -5424,7 +5344,7 @@ type IntersectionTypeNode struct {
 }
 
 func (f *NodeFactory) NewIntersectionTypeNode(types *TypeList) *Node {
-	data := f.intersectionTypeNodePool.New()
+	data := f.intersectionTypeNodeArena.New()
 	data.Types = types
 	return f.newNode(KindIntersectionType, data)
 }
@@ -5511,7 +5431,7 @@ type TypeOperatorNode struct {
 }
 
 func (f *NodeFactory) NewTypeOperatorNode(operator Kind, typeNode *TypeNode) *Node {
-	data := f.typeOperatorNodePool.New()
+	data := f.typeOperatorNodeArena.New()
 	data.Operator = operator
 	data.Type = typeNode
 	return f.newNode(KindTypeOperator, data)
@@ -5588,7 +5508,7 @@ type ArrayTypeNode struct {
 }
 
 func (f *NodeFactory) NewArrayTypeNode(elementType *TypeNode) *Node {
-	data := f.arrayTypeNodePool.New()
+	data := f.arrayTypeNodeArena.New()
 	data.ElementType = elementType
 	return f.newNode(KindArrayType, data)
 }
@@ -5627,7 +5547,7 @@ type IndexedAccessTypeNode struct {
 }
 
 func (f *NodeFactory) NewIndexedAccessTypeNode(objectType *TypeNode, indexType *TypeNode) *Node {
-	data := f.indexedAccessTypeNodePool.New()
+	data := f.indexedAccessTypeNodeArena.New()
 	data.ObjectType = objectType
 	data.IndexType = indexType
 	return f.newNode(KindIndexedAccessType, data)
@@ -5666,7 +5586,7 @@ type TypeReferenceNode struct {
 }
 
 func (f *NodeFactory) NewTypeReferenceNode(typeName *EntityName, typeArguments *TypeList) *Node {
-	data := f.typeReferenceNodePool.New()
+	data := f.typeReferenceNodeArena.New()
 	data.TypeName = typeName
 	data.TypeArguments = typeArguments
 	return f.newNode(KindTypeReference, data)
@@ -5707,7 +5627,7 @@ type ExpressionWithTypeArguments struct {
 }
 
 func (f *NodeFactory) NewExpressionWithTypeArguments(expression *Expression, typeArguments *TypeList) *Node {
-	data := f.expressionWithTypeArgumentsPool.New()
+	data := f.expressionWithTypeArgumentsArena.New()
 	data.Expression = expression
 	data.TypeArguments = typeArguments
 	return f.newNode(KindExpressionWithTypeArguments, data)
@@ -5746,7 +5666,7 @@ type LiteralTypeNode struct {
 }
 
 func (f *NodeFactory) NewLiteralTypeNode(literal *Node) *Node {
-	data := f.literalTypeNodePool.New()
+	data := f.literalTypeNodeArena.New()
 	data.Literal = literal
 	return f.newNode(KindLiteralType, data)
 }
@@ -6039,7 +5959,7 @@ type TypeLiteralNode struct {
 }
 
 func (f *NodeFactory) NewTypeLiteralNode(members *TypeElementList) *Node {
-	data := f.typeLiteralNodePool.New()
+	data := f.typeLiteralNodeArena.New()
 	data.Members = members
 	return f.newNode(KindTypeLiteral, data)
 }
@@ -6243,7 +6163,7 @@ type ParenthesizedTypeNode struct {
 }
 
 func (f *NodeFactory) NewParenthesizedTypeNode(typeNode *TypeNode) *Node {
-	data := f.parenthesizedTypeNodePool.New()
+	data := f.parenthesizedTypeNodeArena.New()
 	data.Type = typeNode
 	return f.newNode(KindParenthesizedType, data)
 }
@@ -6281,7 +6201,7 @@ type FunctionTypeNode struct {
 }
 
 func (f *NodeFactory) NewFunctionTypeNode(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
-	data := f.functionTypeNodePool.New()
+	data := f.functionTypeNodeArena.New()
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = typeNode
@@ -7135,7 +7055,7 @@ type JSDoc struct {
 }
 
 func (f *NodeFactory) NewJSDoc(comment *NodeList, tags *NodeList) *Node {
-	data := f.jsdocPool.New()
+	data := f.jsdocArena.New()
 	data.Comment = comment
 	data.Tags = tags
 	return f.newNode(KindJSDoc, data)
@@ -7424,7 +7344,7 @@ type JSDocUnknownTag struct {
 }
 
 func (f *NodeFactory) NewJSDocUnknownTag(tagName *IdentifierNode, comment *NodeList) *Node {
-	data := f.jsdocUnknownTagPool.New()
+	data := f.jsdocUnknownTagArena.New()
 	data.TagName = tagName
 	data.Comment = comment
 	return f.newNode(KindJSDocUnknownTag, data)
@@ -7737,7 +7657,7 @@ type JSDocDeprecatedTag struct {
 }
 
 func (f *NodeFactory) NewJSDocDeprecatedTag(tagName *IdentifierNode, comment *NodeList) *Node {
-	data := f.jsdocDeprecatedTagPool.New()
+	data := f.jsdocDeprecatedTagArena.New()
 	data.TagName = tagName
 	data.Comment = comment
 	return f.newNode(KindJSDocDeprecatedTag, data)
@@ -8061,21 +7981,21 @@ func IsJSDocImportTag(node *Node) bool {
 type JSDocCallbackTag struct {
 	JSDocTagBase
 	TypeExpression *TypeNode
-	FullName       *Node // Optional
+	name           *JSDocFullName // Optional
 }
 
-func (f *NodeFactory) NewJSDocCallbackTag(tagName *IdentifierNode, typeExpression *TypeNode, fullName *Node, comment *NodeList) *Node {
+func (f *NodeFactory) NewJSDocCallbackTag(tagName *IdentifierNode, typeExpression *TypeNode, name *JSDocFullName, comment *NodeList) *Node {
 	data := &JSDocCallbackTag{}
 	data.TagName = tagName
 	data.TypeExpression = typeExpression
-	data.FullName = fullName
+	data.name = name
 	data.Comment = comment
 	return f.newNode(KindJSDocCallbackTag, data)
 }
 
-func (f *NodeFactory) UpdateJSDocCallbackTag(node *JSDocCallbackTag, tagName *IdentifierNode, typeExpression *TypeNode, fullName *Node, comment *NodeList) *Node {
-	if tagName != node.TagName || typeExpression != node.TypeExpression || fullName != node.FullName || comment != node.Comment {
-		return updateNode(f.NewJSDocCallbackTag(tagName, typeExpression, fullName, comment), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateJSDocCallbackTag(node *JSDocCallbackTag, tagName *IdentifierNode, typeExpression *TypeNode, name *JSDocFullName, comment *NodeList) *Node {
+	if tagName != node.TagName || typeExpression != node.TypeExpression || name != node.name || comment != node.Comment {
+		return updateNode(f.NewJSDocCallbackTag(tagName, typeExpression, name, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -8083,16 +8003,20 @@ func (f *NodeFactory) UpdateJSDocCallbackTag(node *JSDocCallbackTag, tagName *Id
 func (node *JSDocCallbackTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) ||
 		visit(v, node.TypeExpression) ||
-		visit(v, node.FullName) ||
+		visit(v, node.name) ||
 		visitNodeList(v, node.Comment)
 }
 
 func (node *JSDocCallbackTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocCallbackTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNode(node.FullName), v.visitNodes(node.Comment))
+	return v.Factory.UpdateJSDocCallbackTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNode(node.name), v.visitNodes(node.Comment))
 }
 
 func (node *JSDocCallbackTag) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.name, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func (node *JSDocCallbackTag) Name() *DeclarationName {
+	return node.name
 }
 
 func IsJSDocCallbackTag(node *Node) bool {
@@ -8145,11 +8069,11 @@ func IsJSDocOverloadTag(node *Node) bool {
 
 type JSDocTypedefTag struct {
 	JSDocTagBase
-	TypeExpression *Node           // Optional
-	name           *IdentifierNode // Optional
+	TypeExpression *Node          // Optional
+	name           *JSDocFullName // Optional
 }
 
-func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression *Node, name *IdentifierNode, comment *NodeList) *Node {
+func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression *Node, name *JSDocFullName, comment *NodeList) *Node {
 	data := &JSDocTypedefTag{}
 	data.TagName = tagName
 	data.TypeExpression = typeExpression
@@ -8158,7 +8082,7 @@ func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression
 	return f.newNode(KindJSDocTypedefTag, data)
 }
 
-func (f *NodeFactory) UpdateJSDocTypedefTag(node *JSDocTypedefTag, tagName *IdentifierNode, typeExpression *Node, name *IdentifierNode, comment *NodeList) *Node {
+func (f *NodeFactory) UpdateJSDocTypedefTag(node *JSDocTypedefTag, tagName *IdentifierNode, typeExpression *Node, name *JSDocFullName, comment *NodeList) *Node {
 	if tagName != node.TagName || typeExpression != node.TypeExpression || name != node.name || comment != node.Comment {
 		return updateNode(f.NewJSDocTypedefTag(tagName, typeExpression, name, comment), node.AsNode(), f.hooks)
 	}
@@ -8545,7 +8469,7 @@ type ImportSpecifier struct {
 }
 
 func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleExportName, name *IdentifierNode) *Node {
-	data := f.importSpecifierPool.New()
+	data := f.importSpecifierArena.New()
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
@@ -8588,7 +8512,7 @@ type JSDocText struct {
 }
 
 func (f *NodeFactory) NewJSDocText(text []string) *Node {
-	data := f.jsdocTextPool.New()
+	data := f.jsdocTextArena.New()
 	data.text = text
 	f.textCount++
 	return f.newNode(KindJSDocText, data)
@@ -8750,7 +8674,7 @@ type TypeParameterDeclaration struct {
 }
 
 func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, expression *Expression, defaultType *TypeNode) *Node {
-	data := f.typeParameterDeclarationPool.New()
+	data := f.typeParameterDeclarationArena.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.Constraint = constraint
@@ -9129,10 +9053,6 @@ func (n *Node) AsNamedImports() *NamedImports {
 
 func (n *Node) AsExportAssignment() *ExportAssignment {
 	return n.data.(*ExportAssignment)
-}
-
-func (n *Node) AsCommonJSExport() *CommonJSExport {
-	return n.data.(*CommonJSExport)
 }
 
 func (n *Node) AsNamespaceExportDeclaration() *NamespaceExportDeclaration {
