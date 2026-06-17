@@ -1522,7 +1522,8 @@ func (node *ExportableBase) ExportableData() *ExportableBase { return node }
 
 // ModifiersBase
 
-func (node *ModifiersBase) Modifiers() *ModifierList { return node.modifiers }
+func (node *ModifiersBase) Modifiers() *ModifierList             { return node.modifiers }
+func (node *ModifiersBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 
 // LocalsContainerBase
 
@@ -2401,6 +2402,53 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat    core.ResolutionMode
 }
 
+// SourceFileDataKey identifies lazily-computed data attached to a SourceFile by
+// another package. Prefer regular SourceFile fields for ast-owned data.
+type SourceFileDataKey[T any] struct {
+	key sourceFileDataKey
+	_   [0]T
+}
+
+type sourceFileDataKey uint64
+
+var sourceFileDataKeyCounter atomic.Uint64
+
+type sourceFileDataCell[T any] struct {
+	once  sync.Once
+	value T
+}
+
+func NewSourceFileDataKey[T any]() *SourceFileDataKey[T] {
+	return &SourceFileDataKey[T]{key: sourceFileDataKey(sourceFileDataKeyCounter.Add(1))}
+}
+
+func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[T], compute func(*SourceFile) T) T {
+	cell := getSourceFileDataCell(file, key)
+	cell.once.Do(func() {
+		cell.value = compute(file)
+	})
+	return cell.value
+}
+
+func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *sourceFileDataCell[T] {
+	if key == nil || key.key == 0 {
+		panic("invalid SourceFileDataKey; use NewSourceFileDataKey")
+	}
+
+	file.dataMu.Lock()
+	defer file.dataMu.Unlock()
+
+	if file.data == nil {
+		file.data = make(map[sourceFileDataKey]any)
+	}
+	if cell, ok := file.data[key.key]; ok {
+		return cell.(*sourceFileDataCell[T])
+	}
+	cell := &sourceFileDataCell[T]{}
+	file.data[key.key] = cell
+	return cell
+}
+
 type CheckJsDirective struct {
 	Enabled bool
 	Range   CommentRange
@@ -2428,6 +2476,10 @@ type SourceFile struct {
 	text           string
 	Statements     *NodeList  // NodeList[*Statement]
 	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
+
+	// Fields for lazily-computed data owned by packages outside ast.
+	dataMu sync.Mutex
+	data   map[sourceFileDataKey]any
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
@@ -2999,4 +3051,12 @@ func forEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag,
 
 func visitEachChild_JSDocParameterOrPropertyTag(node *JSDocParameterOrPropertyTag, v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocParameterOrPropertyTag(node, v.visitNode(node.TagName), v.visitNode(node.name), node.IsBracketed, v.visitNode(node.TypeExpression), node.IsNameFirst, v.visitNodes(node.Comment))
+}
+
+func (f *NodeFactory) ReleaseArenas() {
+	*f = NodeFactory{
+		hooks:     f.hooks,
+		textCount: f.textCount,
+		nodeCount: f.nodeCount,
+	}
 }

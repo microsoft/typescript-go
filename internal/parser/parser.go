@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -11,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -567,12 +569,12 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 				p.nextToken()
 			}
 			if afterAwaitStatement < len(sourceFile.Statements.Nodes) {
-				nonAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
-				if statement.End() == nonAwaitStatement.Pos() {
+				lastAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement-1]
+				if statement.End() == lastAwaitStatement.End() {
 					// done reparsing this section
 					break
 				}
-				if statement.End() > nonAwaitStatement.Pos() {
+				if statement.End() > lastAwaitStatement.End() {
 					// we ate into the next statement, so we must continue reparsing the next span
 					i += 2
 					if i < len(p.possibleAwaitSpans) {
@@ -4582,11 +4584,12 @@ func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence
 }
 
 func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
+	lastOperand := leftOperand
 	for {
 		// We either have a binary operator here, or we're finished.  We call
 		// reScanGreaterToken so that we merge token sequences like > and = into >=
-		p.reScanGreaterThanToken()
-		newPrecedence := ast.GetBinaryOperatorPrecedence(p.token)
+		operator := p.reScanGreaterThanToken()
+		newPrecedence := ast.GetBinaryOperatorPrecedence(operator)
 		// Check the precedence to see if we should "take" this operator
 		// - For left associative operator (all operator but **), consume the operator,
 		//   recursively call the function below, and parse binaryExpression as a rightOperand
@@ -4609,7 +4612,7 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 		//      a ** b - c
 		//             ^token; leftOperand = b. Return b to the caller as a rightOperand
 		var consumeCurrentOperator bool
-		if p.token == ast.KindAsteriskAsteriskToken {
+		if operator == ast.KindAsteriskAsteriskToken {
 			consumeCurrentOperator = newPrecedence >= precedence
 		} else {
 			consumeCurrentOperator = newPrecedence > precedence
@@ -4617,10 +4620,10 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 		if !consumeCurrentOperator {
 			break
 		}
-		if p.token == ast.KindInKeyword && p.inDisallowInContext() {
+		if operator == ast.KindInKeyword && p.inDisallowInContext() {
 			break
 		}
-		if p.token == ast.KindAsKeyword || p.token == ast.KindSatisfiesKeyword {
+		if operator == ast.KindAsKeyword || operator == ast.KindSatisfiesKeyword {
 			// Make sure we *do* perform ASI for constructs like this:
 			//    var x = foo
 			//    as (Bar)
@@ -4629,16 +4632,28 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 			if p.hasPrecedingLineBreak() {
 				break
 			} else {
-				keywordKind := p.token
 				p.nextToken()
-				if keywordKind == ast.KindSatisfiesKeyword {
+				// When we have 'a ## b as SomeType' or 'a ## b satisfies SomeType', where ## is some binary
+				// operator, we want to stop parsing on any following operator with a higher precedence than ##
+				// because continuing would make it impossible to erase the `as` or `satisfies` without changing
+				// the meaning of the expression. See https://github.com/microsoft/TypeScript/issues/63527.
+				lastPrecedence := ast.OperatorPrecedenceHighest
+				if ast.IsBinaryExpression(lastOperand) {
+					lastPrecedence = ast.GetBinaryOperatorPrecedence(lastOperand.AsBinaryExpression().OperatorToken.Kind)
+				}
+				if operator == ast.KindSatisfiesKeyword {
 					leftOperand = p.makeSatisfiesExpression(leftOperand, p.parseType())
 				} else {
 					leftOperand = p.makeAsExpression(leftOperand, p.parseType())
 				}
+				// Stop if the precedence of the next operator is too high.
+				if ast.GetBinaryOperatorPrecedence(p.reScanGreaterThanToken()) > lastPrecedence {
+					break
+				}
 			}
 		} else {
 			leftOperand = p.makeBinaryExpression(leftOperand, p.parseTokenNode(), p.parseBinaryExpressionOrHigher(newPrecedence), pos)
+			lastOperand = leftOperand
 		}
 	}
 	return leftOperand
@@ -6483,27 +6498,38 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			if pos = skipTo(text, pos, "@"); pos < 0 {
 				break
 			}
-			pragmaName := extractName(text, pos+1)
-			if !(pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime") {
+			// Mirrors the /@(\S+)(\s+(?:\S.*)?)?$/gm pragma regex used by TypeScript: the '@'
+			// must be immediately followed by a non-whitespace pragma name, and the remainder
+			// of the line is consumed as that pragma's arguments. As a consequence, only the
+			// first '@'-token on a line is considered, so an unrelated '@token' earlier on the
+			// line (e.g. an email address) prevents a later '@jsx' on the same line from being
+			// treated as a pragma.
+			namePos := pos + 1
+			nameEnd := skipNonBlanks(text, namePos)
+			if nameEnd == namePos {
 				pos++
 				continue
 			}
-			start := skipBlanks(text, pos+len(pragmaName)+1)
-			pos = skipNonBlanks(text, start)
-			if pos == start {
-				break
+			lineEnd := lineEndPos(text, pos)
+			pragmaName := strings.ToLower(text[namePos:nameEnd])
+			if pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime" {
+				start := skipBlanks(text, nameEnd)
+				argEnd := skipNonBlanks(text, start)
+				if argEnd != start {
+					args := make(map[string]ast.PragmaArgument, 1)
+					args["factory"] = ast.PragmaArgument{
+						Name:      "factory",
+						Value:     text[start:argEnd],
+						TextRange: core.NewTextRange(commentRange.Pos()+start, commentRange.Pos()+argEnd),
+					}
+					pragmas = append(pragmas, ast.Pragma{
+						CommentRange: commentRange,
+						Name:         pragmaName,
+						Args:         args,
+					})
+				}
 			}
-			args := make(map[string]ast.PragmaArgument, 1)
-			args["factory"] = ast.PragmaArgument{
-				Name:      "factory",
-				Value:     text[start:pos],
-				TextRange: core.NewTextRange(commentRange.Pos()+start, commentRange.Pos()+pos),
-			}
-			pragmas = append(pragmas, ast.Pragma{
-				CommentRange: commentRange,
-				Name:         pragmaName,
-				Args:         args,
-			})
+			pos = lineEnd
 		}
 		return pragmas
 	}
@@ -6537,6 +6563,17 @@ func skipTo(text string, pos int, s string) int {
 		return -1
 	}
 	return pos + i
+}
+
+func lineEndPos(text string, pos int) int {
+	for pos < len(text) {
+		ch, size := utf8.DecodeRuneInString(text[pos:])
+		if stringutil.IsLineBreak(ch) {
+			return pos
+		}
+		pos += size
+	}
+	return len(text)
 }
 
 func extractName(text string, pos int) string {

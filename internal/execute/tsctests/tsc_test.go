@@ -248,6 +248,55 @@ func TestTscCommandline(t *testing.T) {
 	}
 }
 
+func TestTscMissingFiles(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "file in tsconfig does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(
+					`{
+					"files": ["./src/doesNotExist.ts"]
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./tsconfig.json"},
+		},
+		{
+			subScenario: "extensionless file in tsconfig does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(
+					`{
+					"files": ["./src/doesNotExist"]
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./tsconfig.json"},
+		},
+		{
+			subScenario: "extensionless file in extended tsconfig in different folder does not exist",
+			files: FileMap{
+				"/home/src/workspaces/project/src/tsconfig.json": stringtestutil.Dedent(
+					`{
+					"extends": "./../tsconfig.base.json",
+					}`,
+				),
+				"/home/src/workspaces/project/src/oops.ts": "export const abc = 10;",
+				"/home/src/workspaces/project/tsconfig.base.json": stringtestutil.Dedent(
+					`{
+					"files": ["./oops"],
+					}`,
+				),
+			},
+			commandLineArgs: []string{"-p", "./src/tsconfig.json"},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase.run(t, "commandLine")
+	}
+}
+
 func TestTscComposite(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -603,6 +652,27 @@ func TestTscDeclarationEmit(t *testing.T) {
 			files:           getBuildDeclarationEmitDtsReferenceAsTrippleSlashMap(true),
 			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--b", "--verbose"},
+		},
+		{
+			subScenario: "when ts file is referenced through triple slash from another project",
+			files: FileMap{
+				"/home/src/workspaces/solution/include/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { "composite": true, "declaration": true },
+					}`),
+				"/home/src/workspaces/solution/include/include.ts": stringtestutil.Dedent(`
+					export const include = 1;`),
+				"/home/src/workspaces/solution/src/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { "composite": true, "declaration": true },
+						"references": [{ "path": "../include" }],
+					}`),
+				"/home/src/workspaces/solution/src/main.ts": stringtestutil.Dedent(`
+					/// <reference path="../include/include.ts" preserve="true" />
+					export const main = 23;`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src", "--verbose"},
 		},
 		{
 			subScenario: "when declaration file used inferred type from referenced project",
