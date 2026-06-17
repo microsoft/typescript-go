@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -25,6 +26,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/lsp/lspwatcher"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
@@ -58,8 +60,8 @@ func NewServer(opts *ServerOptions) *Server {
 		r:                     opts.In,
 		w:                     opts.Out,
 		stderr:                opts.Err,
-		requestQueue:          make(chan *lsproto.RequestMessage, 100),
-		outgoingQueue:         make(chan *lsproto.Message, 100),
+		requestQueue:          newDynamicQueue[*lsproto.RequestMessage](),
+		outgoingQueue:         newDynamicQueue[*lsproto.Message](),
 		pendingClientRequests: make(map[jsonrpc.ID]pendingClientRequest),
 		pendingServerRequests: make(map[jsonrpc.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
@@ -159,8 +161,8 @@ type Server struct {
 	logger                  *logger
 	initStarted             atomic.Bool
 	clientSeq               atomic.Int32
-	requestQueue            chan *lsproto.RequestMessage
-	outgoingQueue           chan *lsproto.Message
+	requestQueue            *dynamicQueue[*lsproto.RequestMessage]
+	outgoingQueue           *dynamicQueue[*lsproto.Message]
 	pendingClientRequests   map[jsonrpc.ID]pendingClientRequest
 	pendingClientRequestsMu sync.Mutex
 	pendingServerRequests   map[jsonrpc.ID]chan *lsproto.ResponseMessage
@@ -171,15 +173,22 @@ type Server struct {
 	defaultLibraryPath string
 	typingsLocation    string
 
-	initializeParams   *lsproto.InitializeParams
-	clientCapabilities lsproto.ResolvedClientCapabilities
-	positionEncoding   lsproto.PositionEncodingKind
-	locale             locale.Locale
+	initializeParams      *lsproto.InitializeParams
+	initializationOptions *lsproto.InitializationOptions
+	clientCapabilities    lsproto.ResolvedClientCapabilities
+	positionEncoding      lsproto.PositionEncodingKind
+	locale                locale.Locale
 
 	watchEnabled     bool
 	telemetryEnabled bool
 	watcherID        atomic.Uint32
 	watchers         collections.SyncSet[project.WatcherID]
+	// builtinWatcher is non-nil when the server is running its own
+	// in-process file watcher instead of using LSP-based watching. It
+	// is enabled when the client lacks DynamicRegistration for
+	// workspace/didChangeWatchedFiles and the builtin watcher backend
+	// supports efficient recursive watching (Windows or FSEvents).
+	builtinWatcher *lspwatcher.Watcher
 
 	lastRequestTimeMs atomic.Int64
 
@@ -221,6 +230,13 @@ func (s *Server) InitComplete() <-chan struct{} { return s.initComplete }
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
+	if s.builtinWatcher != nil {
+		if err := s.builtinWatcher.WatchFiles(string(id), watchers); err != nil {
+			return fmt.Errorf("failed to register file watcher: %w", err)
+		}
+		s.watchers.Add(id)
+		return nil
+	}
 	_, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
@@ -243,6 +259,16 @@ func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers 
 
 // UnwatchFiles implements project.Client.
 func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
+	if s.builtinWatcher != nil {
+		if !s.watchers.Has(id) {
+			return fmt.Errorf("no file watcher exists with ID %s", id)
+		}
+		if err := s.builtinWatcher.UnwatchFiles(string(id)); err != nil {
+			return fmt.Errorf("failed to unregister file watcher: %w", err)
+		}
+		s.watchers.Delete(id)
+		return nil
+	}
 	if s.watchers.Has(id) {
 		_, err := sendClientRequest(ctx, s, lsproto.ClientUnregisterCapabilityInfo, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
@@ -307,7 +333,7 @@ func (s *Server) RefreshInlayHints(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceInlayHintRefreshInfo, lsproto.NoParams{}); err != nil {
+	if err := sendClientRequestFireAndForget(s, lsproto.WorkspaceInlayHintRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh inlay hints: %w", err)
 	}
 	return nil
@@ -318,7 +344,7 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.WorkspaceCodeLensRefreshInfo, lsproto.NoParams{}); err != nil {
+	if err := sendClientRequestFireAndForget(s, lsproto.WorkspaceCodeLensRefreshInfo, lsproto.NoParams{}); err != nil {
 		return fmt.Errorf("failed to refresh code lens: %w", err)
 	}
 	return nil
@@ -341,13 +367,14 @@ func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.UserPreferences != nil {
+		if opts := s.initializationOptions; opts.UserPreferences != nil {
+			userPrefs := *opts.UserPreferences
 			s.logger.Logf(
 				"received formatting options from initialization: %T\n%+v",
-				*s.initializeParams.InitializationOptions.UserPreferences,
-				*s.initializeParams.InitializationOptions.UserPreferences,
+				userPrefs,
+				userPrefs,
 			)
-			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
+			if config, ok := userPrefs.(map[string]any); ok {
 				return lsutil.ParseUserPreferences(map[string]any{"js/ts": config}), nil
 			}
 		}
@@ -473,7 +500,9 @@ func (s *Server) readLoop(ctx context.Context) error {
 			if req.Method == lsproto.MethodCancelRequest {
 				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
 			} else {
-				s.requestQueue <- req
+				if err := s.requestQueue.Put(ctx, req); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -497,76 +526,77 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 	ctx, lspExit := context.WithCancelCause(ctx)
 	defer lspExit(nil)
 	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case req := <-s.requestQueue:
-			s.lastRequestTimeMs.Store(time.Now().UnixMilli())
-			requestCtx := locale.WithLocale(ctx, s.locale)
-			var cancel context.CancelFunc
-			if req.ID != nil {
-				requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
-				s.pendingClientRequestsMu.Lock()
-				s.pendingClientRequests[*req.ID] = pendingClientRequest{
-					req:    req,
-					cancel: cancel,
-				}
-				s.pendingClientRequestsMu.Unlock()
-			}
+		req, err := s.requestQueue.Get(ctx)
+		if err != nil {
+			return err
+		}
 
-			handleError := func(err error) {
-				if errors.Is(err, context.Canceled) {
-					if err := s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled); err != nil {
-						lspExit(err)
-					}
-				} else if errors.Is(err, io.EOF) {
-					lspExit(nil)
-				} else {
-					if err := s.sendError(req.ID, err); err != nil {
-						lspExit(err)
-					}
-				}
+		s.lastRequestTimeMs.Store(time.Now().UnixMilli())
+		requestCtx := locale.WithLocale(ctx, s.locale)
+		var cancel context.CancelFunc
+		if req.ID != nil {
+			requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
+			s.pendingClientRequestsMu.Lock()
+			s.pendingClientRequests[*req.ID] = pendingClientRequest{
+				req:    req,
+				cancel: cancel,
 			}
+			s.pendingClientRequestsMu.Unlock()
+		}
 
-			removeRequest := func() {
-				if req.ID != nil {
-					defer cancel()
-					s.pendingClientRequestsMu.Lock()
-					defer s.pendingClientRequestsMu.Unlock()
-					delete(s.pendingClientRequests, *req.ID)
+		handleError := func(err error) {
+			if errors.Is(err, context.Canceled) {
+				if err := s.sendError(req.ID, lsproto.ErrorCodeRequestCancelled); err != nil {
+					lspExit(err)
 				}
-			}
-
-			if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
-				handleError(err)
-				removeRequest()
-			} else if doAsyncWork != nil {
-				go func() {
-					if lsError := doAsyncWork(); lsError != nil {
-						handleError(lsError)
-					}
-					removeRequest()
-				}()
+			} else if errors.Is(err, io.EOF) {
+				lspExit(nil)
 			} else {
-				removeRequest()
+				if err := s.sendError(req.ID, err); err != nil {
+					lspExit(err)
+				}
 			}
+		}
+
+		removeRequest := func() {
+			if req.ID != nil {
+				defer cancel()
+				s.pendingClientRequestsMu.Lock()
+				defer s.pendingClientRequestsMu.Unlock()
+				delete(s.pendingClientRequests, *req.ID)
+			}
+		}
+
+		if doAsyncWork, err := s.handleRequestOrNotification(requestCtx, req); err != nil {
+			handleError(err)
+			removeRequest()
+		} else if doAsyncWork != nil {
+			go func() {
+				if lsError := doAsyncWork(); lsError != nil {
+					handleError(lsError)
+				}
+				removeRequest()
+			}()
+		} else {
+			removeRequest()
 		}
 	}
 }
 
 func (s *Server) writeLoop(ctx context.Context) error {
 	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case msg := <-s.outgoingQueue:
-			if err := s.w.Write(msg); err != nil {
-				return fmt.Errorf("failed to write message: %w", err)
-			}
+		msg, err := s.outgoingQueue.Get(ctx)
+		if err != nil {
+			return err
+		}
+		if err := s.w.Write(msg); err != nil {
+			return fmt.Errorf("failed to write message: %w", err)
 		}
 	}
 }
 
+// WARNING: this should only be called in the async portion of a request handler,
+// otherwise a deadlock can occur.
 func sendClientRequest[Req, Resp any](ctx context.Context, s *Server, info lsproto.RequestInfo[Req, Resp], params Req) (Resp, error) {
 	id := jsonrpc.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
 	req := info.NewRequestMessage(id, params)
@@ -653,12 +683,7 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 
 // send writes a message to the outgoing queue, respecting context cancellation.
 func (s *Server) send(msg *lsproto.Message) error {
-	select {
-	case s.outgoingQueue <- msg:
-		return nil
-	case <-s.backgroundCtx.Done():
-		return s.backgroundCtx.Err()
-	}
+	return s.outgoingQueue.Put(s.backgroundCtx, msg)
 }
 
 // handleRequestOrNotification looks up the handler for the given request or notification, executes its synchronous work
@@ -685,7 +710,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			endTask()
 			if _, ok := errors.AsType[userFacingRequestFailedError](err); !ok {
 				s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
-			} else {
+			} else if !s.logger.IsTracing() {
 				s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
 			}
 			return nil, err
@@ -701,12 +726,18 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 					runtimetrace.LogSafe(ctx, "error", string(req.Method))
 					runtimetrace.LogUnsafef(ctx, "error", "%v", asyncWorkErr)
 				}
-				s.logger.Info(core.IfElse(isRealError, "error handling method '", "handled method '"), req.Method, "'", idStr, " in ", time.Since(start))
+				if isRealError {
+					s.logger.Info("error handling method '", req.Method, "'", idStr, " in ", time.Since(start))
+				} else if !s.logger.IsTracing() {
+					s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+				}
 				return asyncWorkErr
 			}, nil
 		}
 		endTask()
-		s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+		if !s.logger.IsTracing() {
+			s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+		}
 		return nil, nil
 	}
 	s.logger.Warn("unknown method '", req.Method, "'")
@@ -736,6 +767,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
 	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
 	registerNotificationHandler(handlers, lsproto.SetTraceInfo, (*Server).handleSetTrace)
+	registerNotificationHandler(handlers, lsproto.CustomSetLogVerbosityInfo, (*Server).handleSetLogVerbosity)
 	registerRequestHandler(handlers, lsproto.WorkspaceWillRenameFilesInfo, (*Server).handleWillRenameFiles)
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
@@ -762,9 +794,10 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
 
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVsOnAutoInsert)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVSOnAutoInsert)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentVSReferencesInfo, (*ls.LanguageService).ProvideVSReferences)
 	registerRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*ls.LanguageService).ProvideImplementations)
 
@@ -981,24 +1014,21 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 		stack := debug.Stack()
 		s.logger.Errorf("panic handling request %s: %v\n%s", req.Method, r, string(stack))
 		if req.ID != nil {
-			err := s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
-			if err != nil {
-				return
-			}
-
-			if s.telemetryEnabled {
-				_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
-					RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
-						Properties: &lsproto.RequestFailureTelemetryProperties{
-							ErrorCode:     lsproto.ErrorCodeInternalError.String(),
-							RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
-							Stack:         sanitizeStackTrace(string(stack)),
-						},
-					},
-				})
-			}
+			_ = s.sendError(req.ID, fmt.Errorf("%w: panic handling request %s: %v", lsproto.ErrorCodeInternalError, req.Method, r))
 		} else {
 			s.logger.Error("unhandled panic in notification", req.Method, r)
+		}
+
+		if s.telemetryEnabled {
+			_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+				RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+					Properties: &lsproto.RequestFailureTelemetryProperties{
+						ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+						RequestMethod: strings.ReplaceAll(string(req.Method), "/", "."),
+						Stack:         sanitizeStackTrace(string(stack)),
+					},
+				},
+			})
 		}
 	}
 }
@@ -1011,6 +1041,19 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	s.initStarted.Store(true)
 
 	s.initializeParams = params
+	// The spec types initializationOptions as nullable; treat both null and an
+	// absent value as empty options so the rest of the server can read fields
+	// off s.initializationOptions without nil-checking the container.
+	if params.InitializationOptions != nil && params.InitializationOptions.InitializationOptions != nil {
+		s.initializationOptions = params.InitializationOptions.InitializationOptions
+	} else {
+		s.initializationOptions = &lsproto.InitializationOptions{}
+	}
+	if s.initializationOptions.LogVerbosity != nil {
+		if v := *s.initializationOptions.LogVerbosity; isValidLogVerbosity(v) {
+			s.logger.SetVerbosity(v)
+		}
+	}
 	s.clientCapabilities = params.Capabilities.Resolve()
 	if s.clientCapabilities.Window.WorkDoneProgress {
 		s.projectProgress = newProjectLoadingProgress(s, s.progressDelay)
@@ -1029,10 +1072,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 
 	if s.initializeParams.Locale != nil {
 		s.locale, _ = locale.Parse(*s.initializeParams.Locale)
-	}
-
-	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
-		s.logger.SetVerbose(true)
 	}
 
 	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
@@ -1137,9 +1176,12 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
 			},
-			CustomSourceDefinitionProvider:       new(true),
-			CustomMultiDocumentHighlightProvider: new(true),
-			VSOnAutoInsertProvider: &lsproto.VsOnAutoInsertOptions{
+			Experimental: &lsproto.ExperimentalServerCapabilities{
+				CustomSourceDefinitionProvider:       new(true),
+				CustomMultiDocumentHighlightProvider: new(true),
+			},
+			VSReferencesProvider: new(true),
+			VSOnAutoInsertProvider: &lsproto.VSOnAutoInsertOptions{
 				VSTriggerCharacters: []string{">"},
 			},
 			Workspace: &lsproto.WorkspaceOptions{
@@ -1167,8 +1209,33 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
-	if s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration {
+	var disablePushDiagnostics bool
+	var enableTelemetry bool
+	if s.initializationOptions.DisablePushDiagnostics != nil {
+		disablePushDiagnostics = *s.initializationOptions.DisablePushDiagnostics
+	}
+	if s.initializationOptions.EnableTelemetry != nil {
+		enableTelemetry = *s.initializationOptions.EnableTelemetry
+	}
+	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
+	if hasDynamicWatchRegistration {
+		s.logger.Logf("file watching: using LSP client-side watching (client supports dynamic registration)")
 		s.watchEnabled = true
+	} else if fswatch.Default().HasFastRecursiveBackend() {
+		// The client cannot watch files itself, but the builtin watcher has a
+		// backend with efficient recursive watching (Windows or FSEvents), so
+		// fall back to watching files in-process.
+		s.logger.Logf("file watching: using builtin in-process watcher (client lacks dynamic watch registration)")
+		s.watchEnabled = true
+		s.builtinWatcher = lspwatcher.New(s.fs, func(changes []*lsproto.FileEvent) {
+			if s.session != nil {
+				s.session.DidChangeWatchedFiles(s.backgroundCtx, changes)
+			}
+		}, s.logger)
+	} else {
+		// The client cannot watch files and the builtin watcher backend lacks
+		// efficient recursive watching, so file watching is disabled.
+		s.logger.Logf("file watching: disabled (client lacks dynamic watch registration and builtin watcher backend is not fast-recursive)")
 	}
 
 	cwd := s.cwd
@@ -1186,16 +1253,6 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
-	var disablePushDiagnostics bool
-	var enableTelemetry bool
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil {
-		if s.initializeParams.InitializationOptions.DisablePushDiagnostics != nil {
-			disablePushDiagnostics = *s.initializeParams.InitializationOptions.DisablePushDiagnostics
-		}
-		if s.initializeParams.InitializationOptions.EnableTelemetry != nil {
-			enableTelemetry = *s.initializeParams.InitializationOptions.EnableTelemetry
-		}
-	}
 	s.telemetryEnabled = enableTelemetry
 
 	s.session = project.NewSession(&project.SessionInit{
@@ -1257,6 +1314,9 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 }
 
 func (s *Server) handleShutdown(ctx context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
+	if s.builtinWatcher != nil {
+		s.builtinWatcher.Close()
+	}
 	s.session.Close()
 	return lsproto.ShutdownResponse{}, nil
 }
@@ -1299,22 +1359,23 @@ func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, params *lsprot
 	return nil
 }
 
-func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTraceParams) error {
-	switch params.Value {
-	case "verbose":
-		s.logger.SetVerbose(true)
-	case "messages":
-		s.logger.SetVerbose(false)
-	case "off":
-		// !!! logging cannot be completely turned off for now
-		s.logger.SetVerbose(false)
-	default:
-		return fmt.Errorf("unknown trace value: %s", params.Value)
+func (s *Server) handleSetTrace(_ context.Context, _ *lsproto.SetTraceParams) error {
+	// $/setTrace is sent by vscode-languageclient when trace settings change.
+	// Server log verbosity is controlled separately by custom/setLogVerbosity,
+	// so this handler is intentionally a no-op.
+	return nil
+}
+
+func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLogVerbosityParams) error {
+	if !isValidLogVerbosity(params.Verbosity) {
+		return fmt.Errorf("%w: invalid log verbosity %d", lsproto.ErrorCodeInvalidParams, params.Verbosity)
 	}
+	s.logger.SetVerbosity(params.Verbosity)
 	return nil
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
+	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
 	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 }
 
@@ -1494,7 +1555,7 @@ func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService,
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
-func (s *Server) handleVsOnAutoInsert(ctx context.Context, ls *ls.LanguageService, params *lsproto.VsOnAutoInsertParams) (lsproto.VsOnAutoInsertResponse, error) {
+func (s *Server) handleVSOnAutoInsert(ctx context.Context, ls *ls.LanguageService, params *lsproto.VSOnAutoInsertParams) (lsproto.VSOnAutoInsertResponse, error) {
 	return ls.ProvideOnAutoInsert(ctx, params)
 }
 
@@ -1579,7 +1640,8 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 			programs,
 			snapshot.Converters(),
 			snapshot.UserPreferences(),
-			params.Query)
+			params.Query,
+		)
 	})
 	return resp, lsErr
 }
@@ -1635,7 +1697,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 	return defaultLs.ResolveCodeLens(
 		ctx,
 		codeLens,
-		s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName,
+		s.initializationOptions.CodeLensShowLocationsCommandName,
 		orchestrator,
 	)
 }

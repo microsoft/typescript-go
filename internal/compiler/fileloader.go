@@ -155,7 +155,7 @@ func processAllProgramFiles(
 		defer opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", map[string]any{"count": len(rootFiles)}, false)()
 	}
 	for index, rootFile := range rootFiles {
-		loader.addRootTask(rootFile, nil, &FileIncludeReason{kind: fileIncludeKindRootFile, data: index})
+		loader.addRootFileTask(rootFile, nil, &FileIncludeReason{kind: fileIncludeKindRootFile, data: index})
 	}
 	if len(rootFiles) > 0 && compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
@@ -200,6 +200,33 @@ func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReaso
 			includeReason:      includeReason,
 		})
 	}
+}
+
+func (p *fileLoader) addRootFileTask(fileName string, libFile *LibFile, includeReason *FileIncludeReason) {
+	currDir := p.opts.Host.GetCurrentDirectory()
+	absPath := tspath.GetNormalizedAbsolutePath(fileName, currDir)
+	containingFile := currDir
+	if p.opts.Config.ConfigFile != nil {
+		containingFile = tspath.GetNormalizedAbsolutePath(p.opts.Config.ConfigFile.SourceFile.FileName(), currDir)
+	}
+	resolvedFile, diagnostic := p.getSourceFileFromReference(absPath, fileName, containingFile, includeReason)
+	rootTask := &parseTask{
+		normalizedFilePath: resolvedFile,
+		libFile:            libFile,
+		includeReason:      includeReason,
+	}
+	if diagnostic != nil {
+		rootTask.normalizedFilePath = absPath
+		rootTask.processingDiagnostics = []*processingDiagnostic{{
+			kind: processingDiagnosticKindExplainingFileInclude,
+			data: &includeExplainingDiagnostic{
+				diagnosticReason: includeReason,
+				message:          diagnostic.message,
+				args:             diagnostic.args,
+			},
+		}}
+	}
+	p.rootTasks = append(p.rootTasks, rootTask)
 }
 
 func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
@@ -364,6 +391,7 @@ func (p *fileLoader) getSourceFileFromReference(
 	fileName string,
 	referenceText string,
 	containingFile string,
+	includeReason *FileIncludeReason,
 ) (string, *sourceFileFromReferenceDiagnostic) {
 	options := p.opts.Config.CompilerOptions()
 	allowNonTsExtensions := options.AllowNonTsExtensions.IsTrue()
@@ -382,7 +410,7 @@ func (p *fileLoader) getSourceFileFromReference(
 			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.File_0_not_found, args: []any{diagnosticFileName}}
 		}
 
-		if tspath.GetCanonicalFileName(containingFile, p.opts.Host.FS().UseCaseSensitiveFileNames()) == canonicalFileName {
+		if includeReason.isReferencedFile() && tspath.GetCanonicalFileName(containingFile, p.opts.Host.FS().UseCaseSensitiveFileNames()) == canonicalFileName {
 			return "", &sourceFileFromReferenceDiagnostic{message: diagnostics.A_file_cannot_have_a_reference_to_itself}
 		}
 		return fileName, nil
@@ -426,6 +454,7 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 		normalizedFileName,
 		moduleName,
 		containingFile,
+		includeReason,
 	)
 	if diagnostic != nil {
 		return nil, &processingDiagnostic{
@@ -519,7 +548,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			moduleNames = append(moduleNames, specifier)
 			t.importHelpersImportSpecifier = specifier
 		}
+	}
 
+	if file.ScriptKind == core.ScriptKindJSX || file.ScriptKind == core.ScriptKindTSX {
 		jsxImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
 		if jsxImport != "" {
 			specifier := p.createSyntheticImport(jsxImport, file)
