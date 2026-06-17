@@ -807,9 +807,8 @@ func (c *Checker) someSymbolTableInScope(
 // bindAnonymousDeclaration and aren't stored in any container's locals, so this
 // synthesized table lets someSymbolTableInScope expose them during accessibility checks.
 func (c *Checker) getClassExpressionNameTable(location *ast.Node) ast.SymbolTable {
-	nodeId := ast.GetNodeId(location)
 	if c.classExpressionNameTables != nil {
-		if table, ok := c.classExpressionNameTables[nodeId]; ok {
+		if table, ok := c.classExpressionNameTables[location]; ok {
 			return table
 		}
 	}
@@ -820,9 +819,9 @@ func (c *Checker) getClassExpressionNameTable(location *ast.Node) ast.SymbolTabl
 	}
 	table := ast.SymbolTable{nameText: classSymbol}
 	if c.classExpressionNameTables == nil {
-		c.classExpressionNameTables = make(map[ast.NodeId]ast.SymbolTable)
+		c.classExpressionNameTables = make(map[*ast.Node]ast.SymbolTable)
 	}
-	c.classExpressionNameTables[nodeId] = table
+	c.classExpressionNameTables[location] = table
 	return table
 }
 
