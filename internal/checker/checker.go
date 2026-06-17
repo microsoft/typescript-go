@@ -19050,6 +19050,16 @@ func (c *Checker) getBaseTypes(t *Type) []*Type {
 		return nil
 	}
 	data := t.AsInterfaceType()
+	if data == nil {
+		// `t` is an instantiation of a generic class, interface, or tuple type (a TypeReference
+		// that is not itself an interface type, e.g. `Box<string>`). Its base types are read from
+		// the shared declarations of the target rather than instantiated, mirroring the behavior
+		// of getBaseTypes in the original TypeScript compiler.
+		if ref := t.AsTypeReference(); ref != nil && ref.target != nil && ref.target != t {
+			return c.getBaseTypes(ref.target)
+		}
+		return nil
+	}
 	if !data.baseTypesResolved {
 		if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedBaseTypes) {
 			return data.resolvedBaseTypes
