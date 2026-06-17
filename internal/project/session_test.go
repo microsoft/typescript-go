@@ -165,6 +165,11 @@ func TestSession(t *testing.T) {
 		session.WaitForBackgroundTasks()
 
 		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+		assert.NilError(t, err)
+		assert.Equal(t, ls.GetProgram().GetSourceFile("/home/projects/TS/p1/src/index.ts").Text(), defaultFiles["/home/projects/TS/p1/src/index.ts"].(string))
 	})
 
 	t.Run("DidChangeFile", func(t *testing.T) {
