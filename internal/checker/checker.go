@@ -19051,10 +19051,11 @@ func (c *Checker) getBaseTypes(t *Type) []*Type {
 	}
 	data := t.AsInterfaceType()
 	if data == nil {
-		// `t` is an instantiation of a generic class, interface, or tuple type (a TypeReference
-		// that is not itself an interface type, e.g. `Box<string>`). Its base types are read from
-		// the shared declarations of the target rather than instantiated, mirroring the behavior
-		// of getBaseTypes in the original TypeScript compiler.
+		// `t` is an instantiation of a generic class or interface (a TypeReference that is not
+		// itself an interface type, e.g. `Box<string>`), which has no InterfaceType data of its
+		// own. Only the generic target carries ObjectFlagsClassOrInterface and the InterfaceType
+		// payload, so resolve base types from the target. Base types are read from the target's
+		// shared declarations and are therefore un-instantiated (`Base<T>`, not `Base<string>`).
 		if ref := t.AsTypeReference(); ref != nil && ref.target != nil && ref.target != t {
 			return c.getBaseTypes(ref.target)
 		}
