@@ -14255,7 +14255,7 @@ func getExcludedSymbolFlags(flags ast.SymbolFlags) ast.SymbolFlags {
 		result |= ast.SymbolFlagsAliasExcludes
 	}
 	if flags&ast.SymbolFlagsReplaceableByMethod != 0 {
-		result &= ^ast.SymbolFlagsMethod
+		result &^= ast.SymbolFlagsMethod
 	}
 	return result
 }
