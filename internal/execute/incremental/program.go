@@ -414,3 +414,25 @@ func (p *Program) ensurePackageJsonsForState() {
 		p.snapshot.packageJsons = core.Deduplicate(p.snapshot.packageJsons)
 	}
 }
+
+func (p *Program) PackageJsonLookupPaths() []string {
+	config := tspath.GetDirectoryPath(p.program.CommandLine().ConfigName())
+	if config == "" {
+		return nil
+	}
+
+	var packageJsons []string
+	p.program.PackageJsonCacheEntries(func(key tspath.Path, value *packagejson.InfoCacheEntry) bool {
+		if value == nil {
+			return true
+		}
+		packageJson := tspath.CombinePaths(value.PackageDirectory, "package.json")
+		if value.Exists() || value.DirectoryExists {
+			packageJson = p.host.FS().Realpath(packageJson)
+		}
+		packageJsons = append(packageJsons, packageJson)
+		return true
+	})
+	slices.Sort(packageJsons)
+	return core.Deduplicate(packageJsons)
+}

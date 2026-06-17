@@ -253,11 +253,15 @@ Watch Registrations::
 Directory watches::
   /home/src/tslibs/TS/Lib
   /user/username/projects/myproject
+  /user/username/projects/myproject/node_modules
+  /user/username/projects/myproject/node_modules/@types
   /user/username/projects/myproject/node_modules/@types/bar
   /user/username/projects/myproject/node_modules/@types/foo
   /user/username/projects/myproject/project1
+  /user/username/projects/myproject/project1/node_modules
   /user/username/projects/myproject/project1/node_modules/file
   /user/username/projects/myproject/project2
+  /user/username/projects/myproject/project2/node_modules
   /user/username/projects/myproject/project2/node_modules/file
 project1/tsconfig.json::
 SemanticDiagnostics::
@@ -386,11 +390,15 @@ Watch Registrations::
 Directory watches::
   /home/src/tslibs/TS/Lib
   /user/username/projects/myproject
+  /user/username/projects/myproject/node_modules
+  /user/username/projects/myproject/node_modules/@types
   /user/username/projects/myproject/node_modules/@types/bar
   /user/username/projects/myproject/node_modules/@types/foo
   /user/username/projects/myproject/project1
+  /user/username/projects/myproject/project1/node_modules
   /user/username/projects/myproject/project1/node_modules/file
   /user/username/projects/myproject/project2
+  /user/username/projects/myproject/project2/node_modules
   /user/username/projects/myproject/project2/node_modules/file
 project1/tsconfig.json::
 SemanticDiagnostics::

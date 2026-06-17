@@ -842,6 +842,9 @@ export const z = 10;
 
 Watch Registrations::
 Directory watches::
+  /home/src/workspace/projects
+  /home/src/workspace/projects/node_modules
+  /home/src/workspace/projects/node_modules/@typescript
   /home/src/workspace/projects/node_modules/@typescript/lib-dom
   /home/src/workspace/projects/node_modules/@typescript/lib-es5
   /home/src/workspace/projects/node_modules/@typescript/lib-esnext

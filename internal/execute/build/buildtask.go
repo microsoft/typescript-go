@@ -2,6 +2,7 @@ package build
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -63,6 +64,7 @@ type BuildTask struct {
 
 	buildInfoEntry   *buildInfoEntry
 	buildInfoEntryMu sync.Mutex
+	packageJsons     []string
 
 	errors             []*ast.Diagnostic
 	pending            atomic.Bool
@@ -231,6 +233,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	})
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
+	t.packageJsons = t.result.program.PackageJsonLookupPaths()
 	if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
 		(len(result.EmitResult.EmittedFiles) > 0 || t.status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
 		// Update time stamps for rest of the outputs
@@ -534,11 +537,15 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	}
 
 	for packageJson := range buildInfo.GetPackageJsons(getBuildInfoDirectory()) {
-		packageJsonStatus := checkInputFileTime(packageJson)
-		if packageJsonStatus != nil {
-			return packageJsonStatus
+		packageJsonTime := orchestrator.host.GetMTime(packageJson)
+		if packageJsonTime.IsZero() {
+			return &upToDateStatus{kind: upToDateStatusTypeInputFileMissing, data: packageJson}
+		}
+		if packageJsonTime.After(oldestOutputFileAndTime.time) {
+			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{packageJson, oldestOutputFileAndTime.file}}
 		}
 	}
+	t.packageJsons = slices.Collect(buildInfo.GetPackageJsons(getBuildInfoDirectory()))
 
 	return &upToDateStatus{
 		kind: core.IfElse(

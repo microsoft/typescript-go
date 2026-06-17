@@ -279,9 +279,9 @@ func (o *Orchestrator) resetCaches() {
 }
 
 func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch.EventKind, needsConfigUpdate, needsUpdate *atomic.Bool) {
-	normalizedPaths := make(map[tspath.Path]struct{}, len(changedPaths))
-	for eventPath := range changedPaths {
-		normalizedPaths[o.toPath(eventPath)] = struct{}{}
+	normalizedPaths := make(map[tspath.Path]fswatch.EventKind, len(changedPaths))
+	for eventPath, kind := range changedPaths {
+		normalizedPaths[o.toPath(eventPath)] = kind
 	}
 
 	for i := range o.order {
@@ -349,11 +349,18 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 					}
 				}
 				for packageJson := range bi.buildInfo.GetPackageJsons(buildInfoDir) {
-					if _, changed := normalizedPaths[o.toPath(packageJson)]; changed {
+					if o.packageJsonLookupChanged(packageJson, normalizedPaths) {
 						task.resetStatus()
 						needsUpdate.Store(true)
 						break
 					}
+				}
+			}
+			for _, packageJson := range task.packageJsons {
+				if o.packageJsonLookupChanged(packageJson, normalizedPaths) {
+					task.resetStatus()
+					needsUpdate.Store(true)
+					break
 				}
 			}
 		}
@@ -386,6 +393,19 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 			}
 		}
 	}
+}
+
+func (o *Orchestrator) packageJsonLookupChanged(packageJson string, changedPaths map[tspath.Path]fswatch.EventKind) bool {
+	packageJsonPath := o.toPath(packageJson)
+	if _, changed := changedPaths[packageJsonPath]; changed {
+		return true
+	}
+	for changedPath, kind := range changedPaths {
+		if kind == fswatch.EventDelete && tspath.ContainsPath(string(changedPath), string(packageJsonPath), o.comparePathsOptions) {
+			return true
+		}
+	}
+	return false
 }
 
 func (o *Orchestrator) computeDesiredWatches() map[string]bool {
@@ -458,17 +478,50 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 				}
 			}
 			for packageJson := range bi.buildInfo.GetPackageJsons(buildInfoDir) {
-				dir := tspath.GetDirectoryPath(packageJson)
-				if !watchmanager.IsDirCoveredByWatch(desiredDirs, dir, o.comparePathsOptions) {
-					if watchmanager.CanWatchDirectory(dir) {
-						desiredDirs[dir] = false
-					}
-				}
+				o.addPackageJsonWatchDirs(desiredDirs, packageJson)
 			}
+		}
+		for _, packageJson := range task.packageJsons {
+			o.addPackageJsonWatchDirs(desiredDirs, packageJson)
 		}
 	}
 
 	return o.wm.ResolveDesiredDirs(desiredDirs)
+}
+
+func (o *Orchestrator) addWatchDir(desiredDirs map[string]bool, dir string) {
+	if !watchmanager.IsDirCoveredByWatch(desiredDirs, dir, o.comparePathsOptions) && watchmanager.CanWatchDirectory(dir) {
+		desiredDirs[dir] = false
+	}
+}
+
+func (o *Orchestrator) addPackageJsonWatchDirs(desiredDirs map[string]bool, packageJson string) {
+	dir := tspath.GetDirectoryPath(packageJson)
+	dirs := []string{dir}
+	foundNodeModules := false
+	for current := dir; ; {
+		parent := tspath.GetDirectoryPath(current)
+		if parent == "" || parent == current {
+			break
+		}
+		dirs = append(dirs, parent)
+		if tspath.GetBaseFileName(parent) == "node_modules" {
+			foundNodeModules = true
+			if grandparent := tspath.GetDirectoryPath(parent); grandparent != "" && grandparent != parent {
+				dirs = append(dirs, grandparent)
+			}
+			break
+		}
+		current = parent
+	}
+
+	if !foundNodeModules {
+		o.addWatchDir(desiredDirs, dir)
+		return
+	}
+	for _, dir := range dirs {
+		o.addWatchDir(desiredDirs, dir)
+	}
 }
 
 func (o *Orchestrator) DoCycle() {
