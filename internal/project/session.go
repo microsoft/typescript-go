@@ -15,6 +15,7 @@ import (
 	osmemory "github.com/mackerelio/go-osstat/memory"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -1632,7 +1633,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), s.getConfigFileDiagnostics(ctx, addedProject), newSnapshot.converters)
 		},
 		func(configFilePath tspath.Path, removedProject *Project) {
 			if removedProject.Kind != KindConfigured {
@@ -1644,7 +1645,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), s.getConfigFileDiagnostics(ctx, newProject), newSnapshot.converters)
 		},
 	)
 	// Sync diagnostics for projects whose open-file state changed without a program update.
@@ -1661,7 +1662,7 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		if newHasOpenFiles && !oldHasOpenFiles &&
 			(newProject == oldProject || !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID())) {
 			// Project reopened without a program update
-			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(configFilePath), s.getConfigFileDiagnostics(ctx, newProject), newSnapshot.converters)
 		} else if !newHasOpenFiles && oldHasOpenFiles {
 			// Project closed
 			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, newSnapshot.converters)
@@ -1674,6 +1675,13 @@ func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
 		return false
 	}
 	return p.ProgramUpdateKind > ProgramUpdateKindCloned
+}
+
+func (s *Session) getConfigFileDiagnostics(ctx context.Context, p *Project) []*ast.Diagnostic {
+	return compiler.SortAndDeduplicateDiagnostics(slices.Concat(
+		p.Program.GetConfigFileParsingDiagnostics(),
+		p.GetProjectDiagnostics(ctx),
+	))
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
@@ -1716,7 +1724,7 @@ func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
 			continue
 		}
 		if project.checkerPool.TakeNewGlobalDiagnostics() {
-			s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(ctx), snapshot.converters)
+			s.publishProjectDiagnostics(ctx, string(project.configFilePath), s.getConfigFileDiagnostics(ctx, project), snapshot.converters)
 		}
 	}
 }

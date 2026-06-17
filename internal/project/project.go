@@ -212,8 +212,7 @@ func (p *Project) GetProgram() *compiler.Program {
 }
 
 // GetProjectDiagnostics returns program diagnostics combined with any global
-// diagnostics discovered during checking. These are the diagnostics reported on
-// the tsconfig.json file.
+// diagnostics discovered during checking.
 func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	var globalDiags []*ast.Diagnostic
 	if p.checkerPool != nil {
