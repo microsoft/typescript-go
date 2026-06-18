@@ -1,0 +1,365 @@
+# MODIFIED IN THIS FORK: 2025-10-02 Aleksei Berezkin f30777cda3c5b4a77cc5b46ad97604f4e16e3a4d Revert "WEB-74070 amd64 -> x64"
+# MODIFIED IN THIS FORK: 2025-10-02 Aleksei Berezkin 176bf7c9614b2d6e33d6a7fc14e743d2bf07528f WEB-74070 amd64 -> x64
+# MODIFIED IN THIS FORK: 2025-09-25 Vladislav Minaev ea2f806510b3c2736f219c9bb96f678715038667 Add executable permission to assembled binary
+# MODIFIED IN THIS FORK: 2025-09-25 Vladislav Minaev 15feabc9a5a69274a97a24361fc79b396e217290 add assemble workflow
+name: Assemble and Release
+
+on:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to use if not running on a tag (e.g. 1.2.3). Will be prefixed with v.'
+        default: ''
+        required: false
+        type: string
+      prerelease:
+        description: 'Mark the release as a prerelease'
+        default: false
+        required: true
+        type: boolean
+      make_release:
+        description: 'Create a GitHub Release and upload assets'
+        default: true
+        required: true
+        type: boolean
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-binaries:
+    name: Build ${{ matrix.name }}
+    if: github.ref_name == 'main' || github.ref_name == 'api-dev' || github.ref_name == 'api-dev-release'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-amd64
+            os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+          - name: linux-arm64
+            os: ubuntu-latest
+            goos: linux
+            goarch: arm64
+          - name: windows-amd64
+            os: windows-latest
+            goos: windows
+            goarch: amd64
+          - name: windows-arm64
+            os: ubuntu-latest
+            goos: windows
+            goarch: arm64
+          - name: darwin-arm64
+            os: macos-latest
+            goos: darwin
+            goarch: arm64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 'lts/*'
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: ./.github/actions/setup-go
+
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
+      - run: npm ci
+      - run: npx hereby build
+
+      - name: Include LICENSE and NOTICE.txt
+        run: |
+          set -euo pipefail
+          cp -f LICENSE NOTICE.txt built/local/
+          ls -lah built/local
+
+      - name: Upload platform binary artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: tsgo-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: built/local/*
+          retention-days: 1
+
+  pack-npm:
+    name: Pack npm packages
+    if: github.ref_name == 'main' || github.ref_name == 'api-dev' || github.ref_name == 'api-dev-release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 'lts/*'
+      - uses: ./.github/actions/setup-go
+
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
+      - run: npm ci
+
+      # --forRelease requires --setPrerelease. Derive the prerelease suffix from the version
+      # requested for this run (the workflow_dispatch version, or the tag name) so the npm
+      # package version matches the release tag. getVersion() in the Herebyfile builds the
+      # version as <base-from-internal/core/version.go>-<suffix>, e.g. suffix "dev.3" yields
+      # 7.0.0-dev.3 for a requested version of 7.0.0-dev.3.
+      - name: Compute prerelease suffix
+        id: ver
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$REF_TYPE" == "tag" && -n "$REF_NAME" ]]; then
+            VERSION="${REF_NAME#v}"
+          elif [[ -n "${INPUT_VERSION:-}" ]]; then
+            VERSION="$INPUT_VERSION"
+          else
+            VERSION="0.0.0-dev-${SHA:0:8}"
+          fi
+          if [[ "$VERSION" == *-* ]]; then
+            SUFFIX="${VERSION#*-}"
+          else
+            # No prerelease component in the requested version, but --forRelease requires one.
+            SUFFIX="dev"
+          fi
+          echo "Requested version: $VERSION -> setPrerelease: $SUFFIX"
+          echo "SUFFIX=$SUFFIX" >> "$GITHUB_OUTPUT"
+
+      # Build and pack the @typescript/native-preview meta package plus all per-platform
+      # packages. --forRelease enables cross-compilation of every supported platform (the
+      # Go binary is built with CGO_ENABLED=0, so this works from a single Linux runner).
+      # Signing is intentionally not invoked (it lives only in native-preview:release).
+      - name: Build and pack npm packages
+        env:
+          SUFFIX: ${{ steps.ver.outputs.SUFFIX }}
+        run: |
+          set -euo pipefail
+          npx hereby native-preview:build-packages --forRelease --setPrerelease="$SUFFIX"
+          npx hereby native-preview:pack-packages --forRelease --setPrerelease="$SUFFIX"
+
+      - run: ls -lah built/npm
+
+      - name: Upload npm package artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: native-preview-npm
+          path: |
+            built/npm/*.tgz
+            built/npm/publish-order.json
+
+  assemble:
+    name: Assemble per-platform archives
+    needs: build-binaries
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main' || github.ref_name == 'api-dev' || github.ref_name == 'api-dev-release'
+    outputs:
+      TAG_NAME: ${{ steps.meta.outputs.TAG_NAME }}
+      DO_RELEASE: ${{ steps.meta.outputs.DO_RELEASE }}
+      PRERELEASE: ${{ steps.meta.outputs.PRERELEASE }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Compute metadata
+        id: meta
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_PRERELEASE: ${{ inputs.prerelease }}
+          INPUT_MAKE_RELEASE: ${{ inputs.make_release }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$REF_TYPE" == "tag" && -n "$REF_NAME" ]]; then
+            TAG_NAME="$REF_NAME"
+          elif [[ -n "${INPUT_VERSION:-}" ]]; then
+            TAG_NAME="v$INPUT_VERSION"
+          else
+            TAG_NAME="v0.0.0-dev-${SHA:0:8}"
+          fi
+          if [[ "$REF_TYPE" == "tag" ]]; then
+            DO_RELEASE="true"
+          else
+            DO_RELEASE="${INPUT_MAKE_RELEASE:-true}"
+          fi
+          PRERELEASE="${INPUT_PRERELEASE:-false}"
+          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "DO_RELEASE=$DO_RELEASE" >> "$GITHUB_OUTPUT"
+          echo "PRERELEASE=$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Download all platform binaries
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          pattern: tsgo-*
+          path: dist
+          merge-multiple: false
+
+      - name: Package per-platform archives
+        env:
+          TAG_NAME: ${{ steps.meta.outputs.TAG_NAME }}
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          shopt -s nullglob
+          for dir in dist/tsgo-*; do
+            base="$(basename "$dir")"        # e.g., tsgo-linux-amd64
+            suffix="${base#tsgo-}"           # linux-amd64
+            GOOS="${suffix%-*}"              # linux
+            GOARCH="${suffix#*-}"            # amd64
+            PLATFORM_NAME="$GOOS"
+            ARCH_NAME="$GOARCH"
+            [[ "$GOARCH" == "amd64" ]] && ARCH_NAME="x64"
+            [[ "$GOOS" == "windows" ]] && PLATFORM_NAME="win32"
+            ARCHIVE="tsgo-${TAG_NAME}-${PLATFORM_NAME}-${ARCH_NAME}.zip"
+            echo "Packaging $dir -> release/$ARCHIVE"
+            (
+              cd "$dir"
+              chmod +x tsgo* 2>/dev/null || true
+              zip -9X "../../release/${ARCHIVE}" tsgo* *.d.ts LICENSE NOTICE.txt
+            )
+            sha256sum "release/${ARCHIVE}" | tee "release/${ARCHIVE}.sha256"
+          done
+          ls -lah release
+
+      - name: Upload assembled archives
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: tsgo-archives
+          path: |
+            release/*.zip
+            release/*.sha256
+
+
+  release:
+    name: Create GitHub Release
+    needs: [assemble, pack-npm]
+    if: ${{ needs.assemble.outputs.DO_RELEASE == 'true' && (github.ref_name == 'main' || github.ref_name == 'api-dev' || github.ref_name == 'api-dev-release') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download assembled archives
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: tsgo-archives
+          path: .
+
+      - name: Download npm packages
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: native-preview-npm
+          path: npm-dist
+
+      - name: Create or update release and upload assets
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          TAG_NAME: ${{ needs.assemble.outputs.TAG_NAME }}
+          PRERELEASE: ${{ needs.assemble.outputs.PRERELEASE }}
+        with:
+          script: |
+            const fs = require('fs');
+            const tagName = process.env.TAG_NAME;
+            const prerelease = process.env.PRERELEASE === 'true';
+            
+            // Fetch an existing release by tag. If it doesn't exist (404), create it. This makes the workflow idempotent.
+            let release;
+            try {
+              release = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tagName,
+              });
+            } catch (e) {
+              if (e.status === 404) {
+                release = await github.rest.repos.createRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_name: tagName,
+                  name: `tsgo ${tagName}`,
+                  body: `Release ${tagName}`,
+                  draft: false,
+                  prerelease,
+                  generate_release_notes: true,
+                });
+              } else {
+                // Any other error is unexpected and should fail the workflow.
+                throw e;
+              }
+            }
+            
+            const uploadUrl = (release.data?.upload_url) || (release.upload_url);
+            
+            // Upload the per-platform archives and matching checksums produced by the assemble job.
+            for (const entry of fs.readdirSync('.')) {
+              if (entry.endsWith('.zip')) {
+                console.log(`Uploading asset: ${entry}`);
+                await github.rest.repos.uploadReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  url: uploadUrl,
+                  headers: { "content-type": "application/zip" },
+                  name: entry,
+                  data: fs.readFileSync(entry),
+                });
+            
+                const sum = `${entry}.sha256`;
+                if (fs.existsSync(sum)) {
+                  console.log(`Uploading checksum: ${sum}`);
+                  await github.rest.repos.uploadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    url: uploadUrl,
+                    headers: { "content-type": "text/plain" },
+                    name: sum,
+                    data: fs.readFileSync(sum),
+                  });
+                }
+              }
+            }
+
+            // Upload the npm package tarballs (and publish manifest) produced by the pack-npm job.
+            const npmDir = 'npm-dist';
+            if (fs.existsSync(npmDir)) {
+              for (const entry of fs.readdirSync(npmDir)) {
+                const filePath = `${npmDir}/${entry}`;
+                if (entry.endsWith('.tgz')) {
+                  console.log(`Uploading npm package: ${entry}`);
+                  await github.rest.repos.uploadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    url: uploadUrl,
+                    headers: { "content-type": "application/gzip" },
+                    name: entry,
+                    data: fs.readFileSync(filePath),
+                  });
+                } else if (entry === 'publish-order.json') {
+                  console.log(`Uploading npm manifest: ${entry}`);
+                  await github.rest.repos.uploadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    url: uploadUrl,
+                    headers: { "content-type": "application/json" },
+                    name: entry,
+                    data: fs.readFileSync(filePath),
+                  });
+                }
+              }
+            }
