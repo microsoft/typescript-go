@@ -351,6 +351,9 @@ func (b *NodeBuilderImpl) reuseNegativeNumericLiteralType(source *ast.Node, inRe
 		return nil
 	}
 	unary := source.AsPrefixUnaryExpression()
+	if unary.Operator != ast.KindMinusToken {
+		return nil
+	}
 	operand := unary.Operand
 	if !ast.IsNumericLiteral(operand) || ast.NodeIsSynthesized(operand) {
 		return nil
