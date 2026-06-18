@@ -454,12 +454,9 @@ func (s *Scanner) charAndSize() (rune, int) {
 		if b := s.text[s.pos]; b < utf8.RuneSelf {
 			return rune(b), 1
 		}
-	}
-	r, size := utf8.DecodeRuneInString(s.text[s.pos:])
-	if size > 1 {
 		s.containsNonASCII = true
 	}
-	return r, size
+	return utf8.DecodeRuneInString(s.text[s.pos:])
 }
 
 // scanASCIIWhile advances s.pos over the longest run of ASCII bytes for which
@@ -470,7 +467,11 @@ func (s *Scanner) scanASCIIWhile(pred func(byte) bool) {
 	i := 0
 	for i < len(text) {
 		b := text[i]
-		if b >= utf8.RuneSelf || !pred(b) {
+		if b >= utf8.RuneSelf {
+			s.containsNonASCII = true
+			break
+		}
+		if !pred(b) {
 			break
 		}
 		i++
@@ -1611,6 +1612,9 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 		str := s.text[s.pos : s.pos+strLen]
 		if jsxAttributeString ||
 			strings.IndexByte(str, '\\') < 0 && strings.IndexByte(str, '\r') < 0 && strings.IndexByte(str, '\n') < 0 {
+			if !s.containsNonASCII {
+				s.containsNonASCII = stringutil.ContainsNonASCII(str)
+			}
 			s.pos += strLen + 1
 			return str
 		}
@@ -1641,6 +1645,9 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 			s.tokenFlags |= ast.TokenFlagsUnterminated
 			s.error(diagnostics.Unterminated_string_literal)
 			break
+		}
+		if ch >= utf8.RuneSelf {
+			s.containsNonASCII = true
 		}
 		s.pos++
 	}
