@@ -33,6 +33,7 @@ const (
 	PseudoTypeKindBoolean
 	PseudoTypeKindFalse
 	PseudoTypeKindTrue
+	PseudoTypeKindVoid
 	PseudoTypeKindSingleCallSignature
 	PseudoTypeKindTuple
 	PseudoTypeKindObjectLiteral
@@ -77,6 +78,7 @@ var (
 	PseudoTypeBoolean   = newPseudoType(PseudoTypeKindBoolean, &PseudoTypeBase{})
 	PseudoTypeFalse     = newPseudoType(PseudoTypeKindFalse, &PseudoTypeBase{})
 	PseudoTypeTrue      = newPseudoType(PseudoTypeKindTrue, &PseudoTypeBase{})
+	PseudoTypeVoid      = newPseudoType(PseudoTypeKindVoid, &PseudoTypeBase{})
 )
 
 // PseudoTypeDirect directly encodes the type referred to by a given TypeNode
@@ -98,16 +100,17 @@ func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*Ps
 // ErrorNodes field, collected during pseudochecker construction.
 type PseudoTypeInferred struct {
 	PseudoTypeBase
-	Expression *ast.Node
-	ErrorNodes []*ast.Node
+	Expression        *ast.Node
+	ErrorNodes        []*ast.Node
+	IsSignatureReturn bool
 }
 
-func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
-	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
+func NewPseudoTypeInferred(expr *ast.Node, isSignatureReturn bool) *PseudoType {
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, IsSignatureReturn: isSignatureReturn})
 }
 
-func NewPseudoTypeInferredWithErrors(expr *ast.Node, errorNodes []*ast.Node) *PseudoType {
-	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, ErrorNodes: errorNodes})
+func NewPseudoTypeInferredWithErrors(expr *ast.Node, isSignatureReturn bool, errorNodes []*ast.Node) *PseudoType {
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, ErrorNodes: errorNodes, IsSignatureReturn: isSignatureReturn})
 }
 
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }

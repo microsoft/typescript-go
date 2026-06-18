@@ -62,6 +62,9 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		} else {
 			b.ctx.tracker.ReportInferenceFallback(node)
 		}
+		if inferred.IsSignatureReturn {
+			return b.serializeReturnTypeForSignature(b.ch.getSignatureFromDeclaration(node), false)
+		}
 		// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
 		if ast.IsReturnStatement(node.Parent) {
 			enclosing := ast.GetContainingFunction(node)
@@ -171,6 +174,8 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindFalseKeyword))
 	case pseudochecker.PseudoTypeKindTrue:
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
+	case pseudochecker.PseudoTypeKindVoid:
+		return b.f.NewKeywordTypeNode(ast.KindVoidKeyword)
 	case pseudochecker.PseudoTypeKindSingleCallSignature:
 		d := t.AsPseudoTypeSingleCallSignature()
 		signature := b.ch.getSignatureFromDeclaration(d.Signature)
@@ -689,6 +694,9 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.getTypeFromTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
 		node := t.AsPseudoTypeInferred().Expression
+		if t.AsPseudoTypeInferred().IsSignatureReturn {
+			return b.ch.getReturnTypeOfSignature(b.ch.getSignatureFromDeclaration(node))
+		}
 		ty := b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(node))
 		return ty
 	case pseudochecker.PseudoTypeKindNoResult:
@@ -744,6 +752,8 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.falseType
 	case pseudochecker.PseudoTypeKindTrue:
 		return b.ch.trueType
+	case pseudochecker.PseudoTypeKindVoid:
+		return b.ch.voidType
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
 		return b.ch.getRegularTypeOfExpression(source) // big shortcut, uses cached expression types where possible

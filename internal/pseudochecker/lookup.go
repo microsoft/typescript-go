@@ -218,15 +218,19 @@ func (ch *PseudoChecker) createReturnFromSignature(fn *ast.Node) *PseudoType {
 
 func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoType {
 	var candidateExpr *ast.Node
+	hasReturn := false
 	if fn != nil && !ast.NodeIsMissing(fn.Body()) {
 		flags := ast.GetFunctionFlags(fn)
 		if flags&ast.FunctionFlagsAsyncGenerator != 0 {
-			return NewPseudoTypeNoResult(fn)
+			return NewPseudoTypeInferred(fn, true)
 		}
 
 		body := fn.Body()
 		if ast.IsBlock(body) {
 			ast.ForEachReturnStatement(body, func(stmt *ast.Node) bool {
+				if stmt.AsReturnStatement().Expression != nil {
+					hasReturn = true
+				}
 				if stmt.Parent != body { // Why bail on nested return statements?
 					candidateExpr = nil
 					return true
@@ -240,6 +244,7 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 				return false
 			})
 		} else {
+			hasReturn = true
 			candidateExpr = body
 		}
 	}
@@ -257,8 +262,10 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 		} else {
 			return ch.typeFromExpression(candidateExpr)
 		}
+	} else if !hasReturn {
+		return PseudoTypeVoid
 	}
-	return NewPseudoTypeNoResult(fn)
+	return NewPseudoTypeInferred(fn, true)
 }
 
 // This is basically `checkExpression` for pseudotypes
@@ -292,13 +299,13 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 	case ast.KindObjectLiteralExpression:
 		return ch.typeFromObjectLiteral(node.AsObjectLiteralExpression())
 	case ast.KindClassExpression:
-		return NewPseudoTypeInferred(node) // No possible annotation/directly mappable syntax
+		return NewPseudoTypeInferred(node, false) // No possible annotation/directly mappable syntax
 	case ast.KindTemplateExpression:
 		// templateLitWithHoles as const, not supported
 		if IsInConstContext(node) {
-			return NewPseudoTypeInferred(node)
+			return NewPseudoTypeInferred(node, false)
 		}
-		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeInferred(node), PseudoTypeString)
+		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeInferred(node, false), PseudoTypeString)
 	case ast.KindNumericLiteral:
 		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeNumericLiteral(node), PseudoTypeNumber)
 	case ast.KindNoSubstitutionTemplateLiteral:
@@ -312,12 +319,12 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 	case ast.KindFalseKeyword:
 		return NewPseudoTypeMaybeConstLocation(node, PseudoTypeFalse, PseudoTypeBoolean)
 	}
-	return NewPseudoTypeInferred(node)
+	return NewPseudoTypeInferred(node, false)
 }
 
 func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression) *PseudoType {
 	if errorNodes := ch.canGetTypeFromObjectLiteral(node); errorNodes != nil {
-		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), false, errorNodes)
 	}
 	// we are in a const context producing an object literal type, there are no shorthand or spread assignments
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
@@ -440,10 +447,10 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 
 func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) *PseudoType {
 	if errorNodes := ch.canGetTypeFromArrayLiteral(node); errorNodes != nil {
-		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), false, errorNodes)
 	}
 	if IsInConstContext(node.AsNode()) && isContextuallyTyped(node.AsNode()) {
-		return NewPseudoTypeInferred(node.AsNode()) // expr in an as const cast with a contextual type has variable readonly state, bail
+		return NewPseudoTypeInferred(node.AsNode(), false) // expr in an as const cast with a contextual type has variable readonly state, bail
 	}
 	// we are in a const context producing a tuple type, there are no spread elements
 	results := make([]*PseudoType, 0, len(node.Elements.Nodes))
@@ -522,10 +529,6 @@ func (ch *PseudoChecker) typeFromFunctionLikeExpression(node *ast.Node) *PseudoT
 		return NewPseudoTypeDirect(node.FunctionLikeData().FullSignature)
 	}
 	returnType := ch.createReturnFromSignature(node)
-	if returnType.Kind == PseudoTypeKindNoResult {
-		// no result for the return type can just be an inferred result for the whole expression
-		return NewPseudoTypeInferred(node.AsNode())
-	}
 	typeParameters := ch.cloneTypeParameters(node.FunctionLikeData().TypeParameters)
 	parameters := ch.cloneParameters(node.FunctionLikeData().Parameters)
 	return NewPseudoTypeSingleCallSignature(
