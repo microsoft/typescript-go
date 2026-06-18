@@ -5,6 +5,7 @@ import (
 	"iter"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -226,5 +227,7 @@ namespace N {
 	assert.Assert(t, file.ContainsNonASCII)
 	positionMap := file.GetPositionMap()
 	assert.Assert(t, !positionMap.IsAsciiOnly())
+	afterBoxDrawingCharacter := strings.Index(sourceText, "─") + len("─")
+	assert.Equal(t, positionMap.UTF8ToUTF16(afterBoxDrawingCharacter), afterBoxDrawingCharacter-2)
 	assert.Equal(t, positionMap.UTF8ToUTF16(len(sourceText)), len(sourceText)-2)
 }
