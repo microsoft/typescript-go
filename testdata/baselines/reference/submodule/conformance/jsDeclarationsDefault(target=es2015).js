@@ -123,12 +123,6 @@ export default Bar;
 declare const _default = 12;
 export default _default;
 export type default = string | number;
-/**
- * @typedef {string | number} default
- */
 //// [index6.d.ts]
 export default function func(): void;
 export type default = string | number;
-/**
- * @typedef {string | number} default
- */

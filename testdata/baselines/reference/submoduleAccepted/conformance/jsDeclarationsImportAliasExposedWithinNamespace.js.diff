@@ -27,22 +27,19 @@
      };
 -    type typeC = myTypes.typeB | Function;
 -}
+-/**
+- * @namespace myTypes
+- * @global
+- * @type {Object<string,*>}
+- */
+-export const myTypes: {
+-    [x: string]: any;
+-};
 +}
 +export declare namespace myTypes {
 +    export type typeC = myTypes.typeB | Function;
 +}
 +/** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
- /**
-- * @namespace myTypes
-- * @global
-- * @type {Object<string,*>}
-+ * @typedef myTypes.typeB
-+ * @property {myTypes.typeA}    prop1 - Prop 1.
-+ * @property {string}           prop2 - Prop 2.
-  */
--export const myTypes: {
--    [x: string]: any;
--};
 +/** @typedef {myTypes.typeB|Function} myTypes.typeC */
 +export { myTypes };
  //// [file2.d.ts]
@@ -60,7 +57,7 @@
  }
  /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
  /**
-@@= skipped -21, +30 lines =@@
+@@= skipped -21, +25 lines =@@
   * @param {testFnTypes.input} input - Input.
   * @returns {number|null} Result.
   */

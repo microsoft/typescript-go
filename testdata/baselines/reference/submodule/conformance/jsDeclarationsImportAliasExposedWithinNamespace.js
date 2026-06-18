@@ -79,11 +79,6 @@ export declare namespace myTypes {
     export type typeC = myTypes.typeB | Function;
 }
 /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
-/**
- * @typedef myTypes.typeB
- * @property {myTypes.typeA}    prop1 - Prop 1.
- * @property {string}           prop2 - Prop 2.
- */
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
 export { myTypes };
 //// [file2.d.ts]

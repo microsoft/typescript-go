@@ -32,9 +32,6 @@ let v1 = { x: "test" };
 export type Foo = {
     x: string;
 };
-/**
- * @typedef {{x: string}} Foo
- */
 declare const _default: {
     a: number;
     b: string;

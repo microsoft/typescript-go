@@ -138,18 +138,5 @@ declare const example2: {
 };
 type callback = (error: any, result: any) => any;
 declare const example3: {
-    /**
-     * @overload evaluate(options = {}, [callback])
-     *   Evaluate something
-     *   @note Something interesting
-     *   @param options [map]
-     *   @return [string] returns evaluation result
-     *   @return [null] returns nothing if callback provided
-     *   @callback callback function (error, result)
-     *     If callback is provided it will be called with evaluation result
-     *     @param error [Error]
-     *     @param result [String]
-     *   @see callback
-     */
     evaluate: (options: any, callback: any) => void;
 };

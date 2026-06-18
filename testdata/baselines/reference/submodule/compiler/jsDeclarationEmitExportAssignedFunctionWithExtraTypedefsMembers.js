@@ -25,10 +25,6 @@ module.exports = function loader(options) { };
 
 
 //// [index.d.ts]
-/**
- * @typedef Options
- * @property {string} opt
- */
 export type Options = {
     opt: string;
 };

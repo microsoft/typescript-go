@@ -865,6 +865,25 @@ func isJSDocLikeText(text string, comment ast.CommentRange) bool {
 		text[comment.Pos()+3] != '/'
 }
 
+func isConvertedJSDocDeclarationComment(text string, comment ast.CommentRange) bool {
+	if !isJSDocLikeText(text, comment) {
+		return false
+	}
+	for line := range strings.Lines(text[comment.Pos():comment.End()]) {
+		line = strings.TrimSpace(line)
+		line = strings.TrimSpace(strings.TrimPrefix(line, "*"))
+		if isJSDocTagLine(line, "typedef") || isJSDocTagLine(line, "callback") {
+			return true
+		}
+	}
+	return false
+}
+
+func isJSDocTagLine(line string, tag string) bool {
+	tag = "@" + tag
+	return strings.HasPrefix(line, tag) && (len(line) == len(tag) || line[len(tag)] == ' ' || line[len(tag)] == '\t')
+}
+
 func IsPinnedComment(text string, comment ast.CommentRange) bool {
 	return comment.Kind == ast.KindMultiLineCommentTrivia &&
 		comment.Len() > 5 &&
