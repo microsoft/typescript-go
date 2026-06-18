@@ -364,7 +364,11 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 	t.Run("error", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
-		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
+		diagnostics := c.result.Diagnostics
+		if c.result.Program != nil {
+			diagnostics = slices.Concat(c.result.Program.GetConfigFileParsingDiagnostics(), diagnostics)
+		}
+		tsbaseline.DoErrorBaseline(t, c.configuredName, files, diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
 			Subfolder:   suiteName,
 			IsSubmodule: isSubmodule,
 			DiffFixupOld: func(old string) string {
