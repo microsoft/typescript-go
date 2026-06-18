@@ -458,10 +458,7 @@ func (s *Scanner) scanASCIIWhile(pred func(byte) bool) {
 	i := 0
 	for i < len(text) {
 		b := text[i]
-		if b >= utf8.RuneSelf {
-			break
-		}
-		if !pred(b) {
+		if b >= utf8.RuneSelf || !pred(b) {
 			break
 		}
 		i++
