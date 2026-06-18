@@ -5,9 +5,9 @@
 
  //// [conn.d.ts]
 -export = Conn;
- /**
-  * @typedef {string | number} Whatever
-  */
+-/**
+- * @typedef {string | number} Whatever
+- */
 +export type Whatever = string | number;
  declare class Conn {
 +    constructor();
@@ -20,12 +20,11 @@
 -type Whatever = string | number;
 +export = Conn;
  //// [usage.d.ts]
--export type Conn = import("./conn");
- /**
-  * @typedef {import("./conn")} Conn
-  */
+ export type Conn = import("./conn");
+-/**
+- * @typedef {import("./conn")} Conn
+- */
 -export class Wrap {
-+export type Conn = import("./conn");
 +declare class Wrap {
 +    connItem: number;
 +    /** @type {import("./conn").Whatever} */

@@ -24,11 +24,6 @@ var res = x('a', 'b');
 
 
 //// [callbackTagVariadicType.d.ts]
-/**
- * @callback Foo
- * @param {...string} args
- * @returns {number}
- */
 export type Foo = (...args: string) => number;
 /** @type {Foo} */
 export declare const x: Foo;

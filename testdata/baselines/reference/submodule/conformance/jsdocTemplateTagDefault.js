@@ -129,10 +129,6 @@ function f3(a, b) { }
 
 
 //// [file.d.ts]
-/**
- * @template {string | number} [T=string] - ok: defaults are permitted
- * @typedef {[T]} A
- */
 type A<T extends string | number = string> = [T];
 /** @type {A} */ declare const aDefault1: A;
 /** @type {A} */ declare const aDefault2: A;
@@ -143,29 +139,6 @@ type C<T extends string | number = > = [T];
 type D<T extends string | number = > = [T];
 type E<T extends string | number = string, U> = [T, U];
 type G<T = U, U = T> = [T, U];
-/**
- * @template T
- * @template [U=T] - ok: default can reference earlier type parameter
- * @typedef {[T, U]} B
- */
-/**
- * @template {string | number} [T] - error: default requires an `=type`
- * @typedef {[T]} C
- */
-/**
- * @template {string | number} [T=] - error: default requires a `type`
- * @typedef {[T]} D
- */
-/**
- * @template {string | number} [T=string]
- * @template U - error: Required type parameters cannot follow optional type parameters
- * @typedef {[T, U]} E
- */
-/**
- * @template [T=U] - error: Type parameter defaults can only reference previously declared type parameters.
- * @template [U=T]
- * @typedef {[T, U]} G
- */
 /**
  * @template T
  * @template [U=T] - ok: default can reference earlier type parameter

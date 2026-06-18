@@ -1500,6 +1500,7 @@ func (tx *DeclarationTransformer) preservePartialJsDoc(updated *ast.Node, origin
 	if description == "" {
 		return
 	}
+	tx.EmitContext().SetCommentRange(updated, core.NewTextRange(original.End(), original.End()))
 	comment := "*\n * " + strings.ReplaceAll(description, "\n", "\n * ") + "\n "
 	tx.EmitContext().AddSyntheticLeadingComment(updated, ast.KindMultiLineCommentTrivia, comment, true /*hasTrailingNewLine*/)
 }
@@ -1665,13 +1666,15 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 
 func (tx *DeclarationTransformer) transformTypeAliasDeclaration(input *ast.TypeAliasDeclaration) *ast.Node {
 	tx.needsDeclare = false
-	return tx.Factory().UpdateTypeAliasDeclaration(
+	result := tx.Factory().UpdateTypeAliasDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
 		tx.Visitor().VisitNodes(input.TypeParameters),
 		tx.Visitor().Visit(input.Type),
 	)
+	tx.preservePartialJsDoc(result, input.AsNode())
+	return result
 }
 
 func (tx *DeclarationTransformer) transformInterfaceDeclaration(input *ast.InterfaceDeclaration) *ast.Node {

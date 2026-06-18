@@ -71,20 +71,11 @@ declare class Cls {
 }
 export default Cls;
 export type default = string | number;
-/**
- * @typedef {string | number} default
- */
 //// [index2.d.ts]
 export default class C {
 }
 export type default = string | number;
-/**
- * @typedef {string | number} default
- */
 //// [index3.d.ts]
 declare const x = 12;
 export { x as default };
 export type default = string | number;
-/**
- * @typedef {string | number} default
- */

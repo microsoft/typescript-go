@@ -119,18 +119,6 @@ type Oops = {
 };
 type Call = (x: T) => T;
 /**
- * @typedef Oops
- * @template T
- * @property {T} a
- * @property {T} b
- */
-/**
- * @callback Call
- * @template T
- * @param {T} x
- * @returns {T}
- */
-/**
  * @template T
  * @type {Call<T>}
  */

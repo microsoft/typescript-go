@@ -10,10 +10,6 @@
 -declare function _exports(options: Options): void;
 -export = _exports;
 -type Options = {
-+/**
-+ * @typedef Options
-+ * @property {string} opt
-+ */
 +export type Options = {
      opt: string;
  };

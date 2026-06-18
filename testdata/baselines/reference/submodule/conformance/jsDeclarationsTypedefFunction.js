@@ -35,11 +35,6 @@ const send = handlers => new Promise((resolve, reject) => {
 
 
 //// [foo.d.ts]
-/**
- * @typedef {{
- *   [id: string]: [Function, Function];
- * }} ResolveRejectMap
- */
 type ResolveRejectMap = {
     [id: string]: [Function, Function];
 };

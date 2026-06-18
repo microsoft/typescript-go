@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/jsdocTypedefDeclarationComment.ts] ////
+
+=== main.js ===
+export const value = 0;
+>value : 0
+>0 : 0
+
+/**
+ * Comment on the `Foo` type
+ *
+ * @typedef {Object} Foo
+ * @property {boolean} bool Whether `.bool` is true or not
+ */
+

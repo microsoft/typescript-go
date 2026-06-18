@@ -27,9 +27,14 @@
 +type BaseFactory = import('./base');
 +type BaseFactoryFactory = (factory: import('./base')) => any;
  /** @typedef {import('./base')} BaseFactory */
+-/**
+- * @callback BaseFactoryFactory
+- * @param {import('./base')} factory
+- */
+ /** @enum {import('./base')} */
+ declare const couldntThinkOfAny: {};
  /**
-  * @callback BaseFactoryFactory
-@@= skipped -26, +23 lines =@@
+@@= skipped -26, +19 lines =@@
   * @param {InstanceType<BaseFactory["Base"]>} base
   * @returns {InstanceType<BaseFactory["Base"]>}
   */

@@ -743,6 +743,9 @@ func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 }
 
 func (p *Printer) shouldWriteComment(comment ast.CommentRange) bool {
+	if p.Options.OnlyPrintJSDocStyle && p.currentSourceFile != nil && isConvertedJSDocDeclarationComment(p.currentSourceFile.Text(), comment) {
+		return false
+	}
 	return !p.Options.OnlyPrintJSDocStyle ||
 		p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text(), comment) ||
 		p.currentSourceFile != nil && IsPinnedComment(p.currentSourceFile.Text(), comment)

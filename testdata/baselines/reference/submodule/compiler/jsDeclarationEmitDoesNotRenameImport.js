@@ -48,10 +48,6 @@ import Test from './test/Test.js';
 export type Options = {
     test?: typeof import("./Test.js").default;
 };
-/**
- * @typedef {Object} Options
- * @property {typeof import("./Test.js").default} [test]
- */
 declare class X extends Test {
     test: import("./Test.js").default | undefined;
     /**
