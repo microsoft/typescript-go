@@ -846,21 +846,63 @@ export const lint = task({
     run: runLint,
 });
 
+export const lintAllOS = task({
+    name: "lint:all-os",
+    description: "Runs golangci-lint for each GOOS variant used by this repository.",
+    run: runLintAllOS,
+});
+
+const lintTargets = [
+    { name: "linux", env: { GOOS: "linux" } },
+    { name: "windows", env: { GOOS: "windows" } },
+    { name: "darwin", env: { GOOS: "darwin" } },
+    { name: "freebsd", env: { GOOS: "freebsd" } },
+    { name: "openbsd", env: { GOOS: "openbsd" } },
+    { name: "netbsd", env: { GOOS: "netbsd" } },
+    { name: "dragonfly", env: { GOOS: "dragonfly" } },
+    { name: "solaris", env: { GOOS: "solaris" } },
+    { name: "linux (noembed)", env: { GOOS: "linux" }, buildTags: ["noembed"] },
+];
+
 async function runLint() {
     await buildCustomLinter();
 
+    const resolvedCustomLinterPath = path.resolve(customLinterPath);
+    await runCustomLint(resolvedCustomLinterPath);
+    console.log("Linting _tools");
+    await runCustomLint(resolvedCustomLinterPath, { cwd: "./_tools" });
+}
+
+async function runLintAllOS() {
+    await buildCustomLinter();
+
+    const resolvedCustomLinterPath = path.resolve(customLinterPath);
+    for (const target of lintTargets) {
+        console.log(`Linting ${target.name}`);
+        await runCustomLint(resolvedCustomLinterPath, target);
+    }
+    console.log("Linting _tools");
+    await runCustomLint(resolvedCustomLinterPath, { cwd: "./_tools" });
+}
+
+/**
+ * @param {string} resolvedCustomLinterPath
+ * @param {object} [opts]
+ * @param {string} [opts.cwd]
+ * @param {Record<string, string>} [opts.env]
+ * @param {string[]} [opts.buildTags]
+ */
+async function runCustomLint(resolvedCustomLinterPath, opts = {}) {
     const lintArgs = ["run"];
-    if (defaultGoBuildTags.length) {
-        lintArgs.push("--build-tags", defaultGoBuildTags.join(","));
+    const buildTags = opts.buildTags ?? defaultGoBuildTags;
+    if (buildTags.length) {
+        lintArgs.push("--build-tags", buildTags.join(","));
     }
     if (options.fix) {
         lintArgs.push("--fix");
     }
 
-    const resolvedCustomLinterPath = path.resolve(customLinterPath);
-    await $`${resolvedCustomLinterPath} ${lintArgs}`;
-    console.log("Linting _tools");
-    await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} ${lintArgs}`;
+    await $({ cwd: opts.cwd, env: opts.env })`${resolvedCustomLinterPath} ${lintArgs}`;
 }
 
 export const installTools = task({
