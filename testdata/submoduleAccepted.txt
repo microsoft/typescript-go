@@ -45,6 +45,12 @@ fourslash/inlayHints/inlayHintsInteractiveFunctionParameterTypes1.baseline.diff
 
 ## regex checking ##
 
+## preserved escaped lone surrogate code units instead of U+FFFD ##
+conformance/unicodeExtendedEscapesInStrings10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInStrings11(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates11(target=es6).types.diff
+
 ## find all references ##
 fourslash/findAllReferences/isDefinitionAcrossGlobalProjects.baseline.jsonc.diff
 fourslash/findAllReferences/findAllRefsNonexistentPropertyNoCrash1.baseline.jsonc.diff
@@ -254,8 +260,6 @@ compiler/conflictingDeclarationsImportFromNamespace1.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace1.types.diff
 compiler/conflictingDeclarationsImportFromNamespace2.errors.txt.diff
 compiler/conflictingDeclarationsImportFromNamespace2.types.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.errors.txt.diff
-compiler/contravariantOnlyInferenceFromAnnotatedFunctionJs.types.diff
 
 ## more accurate types/symbols ##
 compiler/allowJscheckJsTypeParameterNoCrash.symbols.diff
@@ -378,18 +382,14 @@ compiler/accessorDeclarationEmitJs.js.diff
 compiler/argumentsPropertyNameInJsMode1.js.diff
 compiler/checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.errors.txt.diff
-compiler/declarationEmitExpandoPropertyPrivateName.js.diff
 compiler/declarationEmitExpandoPropertyPrivateName.symbols.diff
 compiler/declarationEmitExpandoPropertyPrivateName.types.diff
 compiler/declarationEmitExpandoWithGenericConstraint.js.diff
 compiler/declarationEmitExpandoWithGenericConstraint.symbols.diff
 compiler/declarationEmitExpandoWithGenericConstraint.types.diff
-compiler/declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitInvalidExport.js.diff
-compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
 compiler/declarationEmitLateBoundAssignments2.js.diff
@@ -413,7 +413,6 @@ compiler/checkJsTypeDefNoUnusedLocalMarked.types.diff
 compiler/circularObjectLiteralAccessors(target=es2015).types.diff
 compiler/circularTypeArgumentsLocalAndOuterNoCrash1.types.diff
 compiler/complexRecursiveCollections.errors.txt.diff
-compiler/computedPropertiesNarrowed.js.diff
 compiler/contextuallyTypedJsxAttribute2.types.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.symbols.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.types.diff
@@ -464,9 +463,6 @@ compiler/invalidUnicodeEscapeSequance.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance2.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance3.errors.txt.diff
 compiler/invalidUnicodeEscapeSequance4.errors.txt.diff
-
-## wrong errors ##
-compiler/classFieldSuperAccessibleJs1.errors.txt.diff
 
 ## deprecated errors ##
 compiler/declarationFileNoCrashOnExtraExportModifier.errors.txt.diff
@@ -788,7 +784,6 @@ conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=nodenext
 conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
 conformance/jsdocPrivateName2.errors.txt.diff
 conformance/jsdocImplements_missingType.errors.txt.diff
-conformance/symbolProperty24.errors.txt.diff
 
 ## Type arguments are dropped from anonymous mixin class types in error messages — e.g. `mixB<typeof A>.(Anonymous class)` becomes `mixB.(Anonymous class)`
 compiler/mixinPrivateAndProtected.errors.txt.diff
@@ -929,6 +924,13 @@ conformance/nodeModulesAllowJsTopLevelAwait(module=node16).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
+
+## JS declaration emit adds `export import` modifier for require-style import assignments
+## https://github.com/microsoft/typescript-go/issues/3542
+conformance/nodeModulesAllowJsImportAssignment(module=node16).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node18).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node20).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=nodenext).js.diff
 
 ## JS declaration emit now preserves side-effect imports, declaration order changes inconsequentially
 conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
@@ -1071,10 +1073,6 @@ conformance/jsDeclarationsFunctionKeywordPropExhaustive(target=es2015).js.diff
 conformance/nullPropertyName.js.diff
 conformance/typeFromPropertyAssignment29.js.diff
 
-## Expando function namespace removed entirely (Documented in CHANGES.md in section "Expando declarations")
-## Expando namespace with nested property assignments is completely removed from declaration emit
-compiler/expandoFunctionNestedAssigments.js.diff
-
 ## Namespace converted to type alias in declaration emit (Documented in CHANGES.md in section "JSDoc Tags and Types")
 ## `namespace Dotted { type Name = number }` → `type Dotted = number`
 conformance/jsDeclarationsImportNamespacedType.js.diff
@@ -1169,9 +1167,6 @@ compiler/nameCollisions.js.diff
 ## Empty namespace IIFE no longer emitted (empty IIFEs are dead code with no runtime effect)
 ## `namespace global {}` inside a class no longer generates an empty IIFE in JS output
 compiler/nestedGlobalNamespaceInClass.js.diff
-
-## Inline JSDoc parameter comments no longer emitted in function type declarations (comments are cosmetic; type signatures are identical)
-## Comments like `/** fooFunctionValue param */` stripped from declaration output
 
 ## JSDoc @typedef descriptions preserved inline instead of being converted to per-property comments (comment format change only; the type structure is identical)
 ## Full `@typedef`/`@property` JSDoc blocks are now preserved with the type alias
@@ -1405,6 +1400,15 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
+
+# CJS class expressions emit named class declarations instead of anonymous constructor types
+## https://github.com/microsoft/typescript-go/issues/3544
+conformance/commonJSImportExportedClassExpression.js.diff
+conformance/jsDeclarationsExportAssignedClassExpression(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymous(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedVisibility(target=es2015).js.diff
 
 # @callback/@overload variadic intepreted differently than strada
 ## https://github.com/microsoft/typescript-go/issues/3556

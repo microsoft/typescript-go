@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"slices"
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -91,17 +90,11 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	defer done()
 
 	var fixes []*CodeAction
-	var seen []*CodeAction // sorted for binary search dedup
 
 	addFix := func(action *CodeAction) {
 		if action == nil {
 			return
 		}
-		i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
-		if found {
-			return
-		}
-		seen = slices.Insert(seen, i, action)
 		fixes = append(fixes, action)
 	}
 
@@ -940,7 +933,8 @@ func (f *isolatedDeclarationsFixer) getExtraFlags(node *ast.Node, t *checker.Typ
 // createTypeOfFromEntityNameExpression creates a `typeof X` type query node.
 func (f *isolatedDeclarationsFixer) createTypeOfFromEntityNameExpression(node *ast.Node) *ast.TypeNode {
 	return f.changeTracker.NodeFactory.NewTypeQueryNode(
-		f.changeTracker.NodeFactory.DeepCloneNode(node), nil)
+		f.changeTracker.NodeFactory.DeepCloneNode(node), nil,
+	)
 }
 
 // typeFromArraySpreadElements decomposes an array literal with spread elements into

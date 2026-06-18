@@ -126,6 +126,31 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 
 ### Miscellaneous
 
+#### Template literal type inference pulls off a full Unicode code point for empty placeholders.
+
+When inferring through a template literal type with an empty delimiter, Corsa consumes a full Unicode code point rather than a single UTF-16 code unit.
+This diverges from Strada, which advances one UTF-16 code unit at a time and therefore splits a supplementary-plane character such as an emoji into its surrogate halves:
+
+```ts
+type Head<S> = S extends `${infer H}${string}` ? H : never;
+type Rest<S> = S extends `${string}${infer R}` ? R : never;
+
+type H = Head<"😀abc">; // Strada: "\uD83D"
+type R = Rest<"😀abc">; // Strada: "\uDE00abc"
+```
+
+In Corsa the emoji stays together:
+
+```ts
+type Head<S> = S extends `${infer H}${string}` ? H : never;
+type Rest<S> = S extends `${string}${infer R}` ? R : never;
+
+type H = Head<"😀abc">; // Corsa: "😀"
+type R = Rest<"😀abc">; // Corsa: "abc"
+```
+
+This means supplementary-plane characters such as emoji are not split into surrogate halves during template literal type inference.
+
 #### With `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
 
 ```js
@@ -272,6 +297,42 @@ function f(cu) {
 
 In Strada, `cu` incorrectly narrows to `C` inside the `if` block, unlike with TS assertion syntax.
 In Corsa, the behaviour is the same between TS and JS.
+
+#### `@overload` with arrow functions and function expressions
+
+In Strada, `@overload` can be used in JSDoc annotations for arrow functions and function expressions. Corsa more closely aligns with TypeScript by internally translating JSDoc constructs into synthetic TypeScript constructs which are then checked. However, since TypeScript itself currently doesn't support overload declarations with arrow function and function expressions, Corsa ignores `@overload` annotations on those constructs. Instead of writing:
+
+```js
+/**
+ * @overload
+ * @param {string} x
+ * @returns {string}
+ *
+ * @overload
+ * @param {number} x
+ * @returns {number}
+ *
+ * @param {string | number} x
+ * @returns {string | number}
+ */
+let f = x => x;
+```
+
+You should write:
+
+```js
+/**
+ * @type {{
+ *   (x: string): string;
+ *   (x: number): number;
+ * }}
+ * @param {string | number} x
+ * @returns {any}
+ */
+const f = x => x;
+```
+
+This works with both TS6 and TS7. Note the change to `any` for the return type annotation. This is to satisfy the assignment check.
 
 ### Expandos
 
