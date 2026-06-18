@@ -2066,7 +2066,8 @@ func (tx *DeclarationTransformer) collectThisPropertyAssignments(classNode *ast.
 	// Pre-populate seen with existing direct member nodes to avoid duplicates
 	for _, member := range members.Nodes {
 		if member.Name() != nil {
-			seen.Add(getThisPropertyAssignmentKey(member.Name(), member, false))
+			isStatic := ast.IsStatic(member)
+			seen.Add(getThisPropertyAssignmentKey(member.Name(), member, isStatic))
 		}
 	}
 	tx.seenProperties = seen

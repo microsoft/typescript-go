@@ -127,3 +127,23 @@ export class G {
 >sym2 : Symbol(sym2, Decl(main.js, 43, 5))
 }
 
+export class H {
+>H : Symbol(H, Decl(main.js, 49, 1))
+
+    static foo = () => {}
+>foo : Symbol(H.foo, Decl(main.js, 51, 16))
+
+    static {
+        this.foo = this.foo.bind(this);
+>this.foo : Symbol(H.foo, Decl(main.js, 51, 16))
+>this : Symbol(H, Decl(main.js, 49, 1))
+>foo : Symbol(H.foo, Decl(main.js, 51, 16))
+>this.foo.bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>this.foo : Symbol(H.foo, Decl(main.js, 51, 16))
+>this : Symbol(H, Decl(main.js, 49, 1))
+>foo : Symbol(H.foo, Decl(main.js, 51, 16))
+>bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>this : Symbol(H, Decl(main.js, 49, 1))
+    }
+}
+

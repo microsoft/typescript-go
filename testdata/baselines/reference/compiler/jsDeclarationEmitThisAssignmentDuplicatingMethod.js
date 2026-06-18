@@ -52,6 +52,13 @@ export class G {
     static[sym2]() {}
 }
 
+export class H {
+    static foo = () => {}
+    static {
+        this.foo = this.foo.bind(this);
+    }
+}
+
 
 
 
@@ -70,6 +77,7 @@ export declare class C {
     [sym](): void;
 }
 export declare class D {
+    bar: number;
     constructor();
     static bar(): void;
 }
@@ -84,5 +92,8 @@ export declare class F {
 declare const sym2: unique symbol;
 export declare class G {
     static [sym2](): void;
+}
+export declare class H {
+    static foo: () => void;
 }
 export {};

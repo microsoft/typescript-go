@@ -54,3 +54,10 @@ export class G {
     }
     static[sym2]() {}
 }
+
+export class H {
+    static foo = () => {}
+    static {
+        this.foo = this.foo.bind(this);
+    }
+}

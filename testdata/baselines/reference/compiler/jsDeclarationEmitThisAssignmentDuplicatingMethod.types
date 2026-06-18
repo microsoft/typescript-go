@@ -149,3 +149,26 @@ export class G {
 >sym2 : unique symbol
 }
 
+export class H {
+>H : H
+
+    static foo = () => {}
+>foo : () => void
+>() => {} : () => void
+
+    static {
+        this.foo = this.foo.bind(this);
+>this.foo = this.foo.bind(this) : () => void
+>this.foo : () => void
+>this : typeof H
+>foo : () => void
+>this.foo.bind(this) : () => void
+>this.foo.bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>this.foo : () => void
+>this : typeof H
+>foo : () => void
+>bind : { <T>(this: T, thisArg: ThisParameterType<T>): OmitThisParameter<T>; <T, A extends any[], B extends any[], R>(this: (this: T, ...args: [...A, ...B]) => R, thisArg: T, ...args: A): (...args: B) => R; }
+>this : typeof H
+    }
+}
+
