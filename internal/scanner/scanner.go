@@ -209,10 +209,9 @@ type Scanner struct {
 	skipTrivia      bool
 	ScannerState
 
-	containsNonASCII bool
-	numberCache      map[string]string
-	hexNumberCache   map[string]string
-	hexDigitCache    map[string]string
+	numberCache    map[string]string
+	hexNumberCache map[string]string
+	hexDigitCache  map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -320,13 +319,6 @@ func (scanner *Scanner) SetSkipTrivia(skip bool) {
 
 func (s *Scanner) HasUnicodeEscape() bool {
 	return s.tokenFlags&ast.TokenFlagsUnicodeEscape != 0
-}
-
-// ContainsNonASCII returns true if the scanner encountered any non-ASCII bytes
-// during scanning. This is useful for determining whether UTF-8 byte offsets
-// may differ from UTF-16 code unit offsets.
-func (s *Scanner) ContainsNonASCII() bool {
-	return s.containsNonASCII
 }
 
 func (s *Scanner) HasExtendedUnicodeEscape() bool {
@@ -454,7 +446,6 @@ func (s *Scanner) charAndSize() (rune, int) {
 		if b := s.text[s.pos]; b < utf8.RuneSelf {
 			return rune(b), 1
 		}
-		s.containsNonASCII = true
 	}
 	return utf8.DecodeRuneInString(s.text[s.pos:])
 }
@@ -468,7 +459,6 @@ func (s *Scanner) scanASCIIWhile(pred func(byte) bool) {
 	for i < len(text) {
 		b := text[i]
 		if b >= utf8.RuneSelf {
-			s.containsNonASCII = true
 			break
 		}
 		if !pred(b) {
@@ -1612,9 +1602,6 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 		str := s.text[s.pos : s.pos+strLen]
 		if jsxAttributeString ||
 			strings.IndexByte(str, '\\') < 0 && strings.IndexByte(str, '\r') < 0 && strings.IndexByte(str, '\n') < 0 {
-			if !s.containsNonASCII {
-				s.containsNonASCII = stringutil.ContainsNonASCII(str)
-			}
 			s.pos += strLen + 1
 			return str
 		}
@@ -1645,9 +1632,6 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 			s.tokenFlags |= ast.TokenFlagsUnterminated
 			s.error(diagnostics.Unterminated_string_literal)
 			break
-		}
-		if ch >= utf8.RuneSelf {
-			s.containsNonASCII = true
 		}
 		s.pos++
 	}
@@ -1858,7 +1842,6 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			var size int
 			ch, size = utf8.DecodeRuneInString(s.text[s.pos:])
 			s.pos += size
-			s.containsNonASCII = true
 		}
 		// LineContinuation: a backslash followed by a line terminator is "the empty code unit sequence".
 		if ch == '\u2028' || ch == '\u2029' {
