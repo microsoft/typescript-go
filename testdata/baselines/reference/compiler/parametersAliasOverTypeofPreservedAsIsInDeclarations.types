@@ -70,10 +70,10 @@ export function FunctionInterface(...args: Parameters<typeof overloadInterface>)
 >args : [arg: string, callback: (error: Error | null, result: boolean) => void]
 >overloadInterface : OverloadUnion
 
-export function FunctionInline(...args: Parameters<typeof overloadInterface>) {}
->FunctionInline : (arg: string, callback: (error: Error | null, result: boolean) => void) => void
->args : [arg: string, callback: (error: Error | null, result: boolean) => void]
->overloadInterface : OverloadUnion
+export function FunctionInline(...args: Parameters<typeof overloadInline>) {}
+>FunctionInline : (...args: Parameters<typeof overloadInline>) => void
+>args : [arg: string] | [arg: string, callback: (error: Error | null, result: boolean) => void]
+>overloadInline : ((arg: string) => Promise<boolean>) | ((arg: string, callback: (error: Error | null, result: boolean) => void) => void)
 
 export const FunctionAssignInterface = function (...args: Parameters<typeof overloadInterface>) {}
 >FunctionAssignInterface : (arg: string, callback: (error: Error | null, result: boolean) => void) => void

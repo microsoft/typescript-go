@@ -80,11 +80,11 @@ export function FunctionInterface(...args: Parameters<typeof overloadInterface>)
 >Parameters : Symbol(Parameters, Decl(lib.es5.d.ts, --, --))
 >overloadInterface : Symbol(overloadInterface, Decl(parametersAliasOverTypeofPreservedAsIsInDeclarations.ts, 5, 11))
 
-export function FunctionInline(...args: Parameters<typeof overloadInterface>) {}
+export function FunctionInline(...args: Parameters<typeof overloadInline>) {}
 >FunctionInline : Symbol(FunctionInline, Decl(parametersAliasOverTypeofPreservedAsIsInDeclarations.ts, 21, 83))
 >args : Symbol(args, Decl(parametersAliasOverTypeofPreservedAsIsInDeclarations.ts, 22, 31))
 >Parameters : Symbol(Parameters, Decl(lib.es5.d.ts, --, --))
->overloadInterface : Symbol(overloadInterface, Decl(parametersAliasOverTypeofPreservedAsIsInDeclarations.ts, 5, 11))
+>overloadInline : Symbol(overloadInline, Decl(parametersAliasOverTypeofPreservedAsIsInDeclarations.ts, 6, 11))
 
 export const FunctionAssignInterface = function (...args: Parameters<typeof overloadInterface>) {}
 >FunctionAssignInterface : Symbol(FunctionAssignInterface, Decl(parametersAliasOverTypeofPreservedAsIsInDeclarations.ts, 23, 12))

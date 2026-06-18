@@ -23,7 +23,7 @@ export class C {
 }
 
 export function FunctionInterface(...args: Parameters<typeof overloadInterface>) {}
-export function FunctionInline(...args: Parameters<typeof overloadInterface>) {}
+export function FunctionInline(...args: Parameters<typeof overloadInline>) {}
 export const FunctionAssignInterface = function (...args: Parameters<typeof overloadInterface>) {}
 export const FunctionAssignInline = function (...args: Parameters<typeof overloadInline>) {}
 export const ArrowInterface = (...args: Parameters<typeof overloadInterface>) => {}
@@ -62,7 +62,7 @@ export declare class C {
     classFieldArrowInline: (...args: Parameters<typeof overloadInline>) => void;
 }
 export declare function FunctionInterface(...args: Parameters<typeof overloadInterface>): void;
-export declare function FunctionInline(...args: Parameters<typeof overloadInterface>): void;
+export declare function FunctionInline(...args: Parameters<typeof overloadInline>): void;
 export declare const FunctionAssignInterface: (...args: Parameters<typeof overloadInterface>) => void;
 export declare const FunctionAssignInline: (...args: Parameters<typeof overloadInline>) => void;
 export declare const ArrowInterface: (...args: Parameters<typeof overloadInterface>) => void;
