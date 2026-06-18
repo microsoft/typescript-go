@@ -8,7 +8,7 @@ import type {
  * Interface for objects with an ID that can be tracked by the registry.
  */
 export interface Identifiable {
-    readonly id: string;
+    readonly id: number;
 }
 
 /**
@@ -35,9 +35,9 @@ export class ObjectRegistry<
     TType extends Identifiable,
     TSignature extends Identifiable = Identifiable,
 > {
-    private symbols: Map<string, TSymbol> = new Map();
-    private types: Map<string, TType> = new Map();
-    private signatures: Map<string, TSignature> = new Map();
+    private symbols: Map<number, TSymbol> = new Map();
+    private types: Map<number, TType> = new Map();
+    private signatures: Map<number, TSignature> = new Map();
     private factories: ObjectFactories<TSymbol, TType, TSignature>;
 
     constructor(factories: ObjectFactories<TSymbol, TType, TSignature>) {
@@ -66,10 +66,6 @@ export class ObjectRegistry<
         return type;
     }
 
-    getType(id: string): TType | undefined {
-        return this.types.get(id);
-    }
-
     getOrCreateSignature(data: SignatureResponse): TSignature {
         let signature = this.signatures.get(data.id);
         if (signature) {
@@ -79,6 +75,18 @@ export class ObjectRegistry<
         signature = this.factories.createSignature(data);
         this.signatures.set(data.id, signature);
         return signature;
+    }
+
+    getType(id: number): TType | undefined {
+        return this.types.get(id);
+    }
+
+    getSymbol(id: number): TSymbol | undefined {
+        return this.symbols.get(id);
+    }
+
+    getSignature(id: number): TSignature | undefined {
+        return this.signatures.get(id);
     }
 
     clear(): void {

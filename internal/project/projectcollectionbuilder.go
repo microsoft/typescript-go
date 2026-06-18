@@ -535,7 +535,8 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 				childConfig,
 				func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
 					return !projectTreeRequest.IsProjectReferenced(referencePath)
-				}) {
+				},
+			) {
 				return
 			}
 
@@ -994,10 +995,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 				if logger != nil {
 					logger.Log(fmt.Sprintf("Updating inferred project config with %d root files", len(rootFileNames)))
 				}
-				p.CommandLine = newCommandLine
-				p.commandLineWithTypingsFiles = nil
-				p.dirty = true
-				p.dirtyFilePath = ""
+				p.SetCommandLine(newCommandLine)
 			},
 		)
 		if !changed {
@@ -1033,9 +1031,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
 				entry.Change(func(p *Project) {
-					p.CommandLine = commandLine
-					p.commandLineWithTypingsFiles = nil
-					p.potentialProjectReferences = nil
+					p.SetCommandLine(commandLine)
 				})
 			}
 		}
@@ -1059,10 +1055,11 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		entry.Locked(func(entry dirty.Value[*Project]) {
 			entry.Change(func(project *Project) {
 				oldHost := project.host
+				oldCheckerPool := project.checkerPool
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
 				project.Program = result.Program
-				project.checkerPool = result.CheckerPool
+				project.checkerPool = result.Program.GetCheckerPool().(*checkerPool)
 				project.ProgramUpdateKind = result.UpdateKind
 				project.ProgramLastUpdate = b.newSnapshotID
 				if result.UpdateKind == ProgramUpdateKindCloned {
@@ -1074,6 +1071,9 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""
+				if oldCheckerPool != nil {
+					oldCheckerPool.Discard()
+				}
 			})
 		})
 	}
