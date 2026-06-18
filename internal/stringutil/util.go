@@ -85,7 +85,7 @@ func IsASCIILetter(ch rune) bool {
 }
 
 func ContainsNonASCII(s string) bool {
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if s[i] >= utf8.RuneSelf {
 			return true
 		}
