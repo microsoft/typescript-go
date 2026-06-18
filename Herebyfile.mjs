@@ -1647,6 +1647,7 @@ async function runBuildNativePreviewPackages() {
 
     const mainPackage = {
         ...inputPackageJson,
+        name: mainNativePreviewPackage.npmPackageName,
         optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
     };
 
