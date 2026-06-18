@@ -784,7 +784,7 @@ const (
 	OEKAssertions                                                             = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
 	OEKAll                                                                    = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
 	OEKAllExceptAssertionsOrExpressionsWithTypeArguments                      = OEKAll &^ OEKAssertions &^ OEKExpressionsWithTypeArguments
-	OEKExpressionTypePassthru                                                 = OEKParentheses | OEKAssignments | OEKComma
+	OEKExpressionTypePassthrough                                              = OEKParentheses | OEKAssignments | OEKComma
 )
 
 // Determines whether node is an "outer expression" of the provided kinds

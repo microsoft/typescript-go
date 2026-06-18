@@ -1184,7 +1184,7 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 	}
 
 	// Check if the expression is a class expression - emit as a class declaration + export assignment
-	unwrapped := ast.SkipOuterExpressions(expression, ast.OEKExpressionTypePassthru)
+	unwrapped := ast.SkipOuterExpressions(expression, ast.OEKExpressionTypePassthrough)
 	newId := tx.getNameOfExportedAssignedExpression(unwrapped, isExportEquals)
 	if ast.IsClassExpression(unwrapped) {
 		var mods []*ast.Node
