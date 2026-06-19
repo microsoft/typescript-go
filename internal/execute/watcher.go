@@ -195,7 +195,7 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool 
 	}
 
 	// Re-resolve in case newly added dirs don't exist
-	return w.wm.CoalesceDesiredDirs(w.wm.ResolveDesiredDirs(resolvedDirs), opts)
+	return w.wm.ResolveDesiredDirs(resolvedDirs)
 }
 
 func (w *Watcher) reconcileWatches(seenFilePaths []string) error {

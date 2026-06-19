@@ -1178,6 +1178,108 @@ func TestSubscribeMultipleDifferentDirs(t *testing.T) {
 	})
 }
 
+type countingWatcherImpl struct {
+	watcherBase
+	subscribed []*dirWatch
+	closed     []*dirWatch
+}
+
+func newCountingWatcherImpl() *countingWatcherImpl {
+	impl := &countingWatcherImpl{}
+	impl.watcherBase.init(impl)
+	return impl
+}
+
+func (b *countingWatcherImpl) start() error {
+	b.notifyStarted()
+	return nil
+}
+
+func (b *countingWatcherImpl) subscribe(w *dirWatch) error {
+	b.subscribed = append(b.subscribed, w)
+	return nil
+}
+
+func (b *countingWatcherImpl) closeWatch(w *dirWatch) error {
+	b.closed = append(b.closed, w)
+	return nil
+}
+
+func TestFastRecursiveWatcherConsolidatesSiblingDirectories(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	parent := filepath.Join(root, "node_modules", ".bun")
+	if err := os.MkdirAll(parent, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	var impl *countingWatcherImpl
+	watcherImpl := &watcher{
+		name: "fsevents",
+		factory: func() watcherImpl {
+			impl = newCountingWatcherImpl()
+			return impl
+		},
+	}
+
+	var subs []Watch
+	for i := range recursiveConsolidateThreshold + 2 {
+		dir := filepath.Join(parent, fmt.Sprintf("pkg%d", i))
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		sub, err := watcherImpl.WatchDirectory(dir, func([]Event, error) {})
+		if err != nil {
+			t.Fatal(err)
+		}
+		subs = append(subs, sub)
+	}
+	t.Cleanup(func() {
+		for _, sub := range subs {
+			_ = sub.Close()
+		}
+	})
+
+	if got := len(impl.subscribed); got != recursiveConsolidateThreshold {
+		t.Fatalf("expected %d subscriptions after consolidation, got %d", recursiveConsolidateThreshold, got)
+	}
+	consolidated := impl.subscribed[len(impl.subscribed)-1]
+	if consolidated.dir != parent || !consolidated.recursive {
+		t.Fatalf("expected consolidated recursive watch on %s, got dir=%s recursive=%v", parent, consolidated.dir, consolidated.recursive)
+	}
+
+	watcherImpl.mu.Lock()
+	_, hasPkgWatch := watcherImpl.dirWatches[watcherImpl.keyForDirWatch(filepath.Join(parent, "pkg11"), false)]
+	watcherImpl.mu.Unlock()
+	if hasPkgWatch {
+		t.Fatal("expected later package watch to reuse consolidated parent instead of creating its own stream")
+	}
+}
+
+func TestConsolidatedChildWatchFiltersAgainstRequestedDir(t *testing.T) {
+	t.Parallel()
+
+	parent := filepath.Join(t.TempDir(), "parent")
+	child := filepath.Join(parent, "child")
+	sibling := filepath.Join(parent, "sibling")
+	dw := newDirectWatcher(t, parent)
+
+	var got []Event
+	dw.watch(child, false, func(events []Event, err error) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, events...)
+	}, nil)
+	dw.events.update(filepath.Join(child, "file.ts"))
+	dw.events.update(filepath.Join(child, "nested", "file.ts"))
+	dw.events.update(filepath.Join(sibling, "file.ts"))
+	dw.triggerCallbacks()
+
+	assertEventSequence(t, got, []wantEvent{{EventUpdate, filepath.Join(child, "file.ts")}})
+}
+
 // ----- errors ------------------------------------------------------------
 
 func TestSubscribeMissingDirError(t *testing.T) {

@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
-	"slices"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -43,8 +41,6 @@ type WatchManager struct {
 	changedPaths    map[string]fswatch.EventKind
 	changedOverflow bool
 }
-
-const recursiveCoalesceThreshold = 10
 
 func NewWatchManager(warnWriter io.Writer, dirExists func(string) bool) *WatchManager {
 	return &WatchManager{
@@ -226,103 +222,6 @@ func (wm *WatchManager) ResolveDesiredDirs(desiredDirs map[string]bool) map[stri
 		}
 	}
 	return resolved
-}
-
-func (wm *WatchManager) CoalesceDesiredDirs(desiredDirs map[string]bool, opts tspath.ComparePathsOptions) map[string]bool {
-	if wm.backend == nil || !wm.backend.HasFastRecursiveBackend() || len(desiredDirs) < recursiveCoalesceThreshold {
-		return desiredDirs
-	}
-
-	pruned := removeDirsCoveredByRecursiveWatches(desiredDirs, opts)
-	coalesced := coalesceAncestorDirs(pruned, opts)
-	if len(coalesced) == len(desiredDirs) {
-		return desiredDirs
-	}
-	return coalesced
-}
-
-func removeDirsCoveredByRecursiveWatches(desiredDirs map[string]bool, opts tspath.ComparePathsOptions) map[string]bool {
-	result := make(map[string]bool, len(desiredDirs))
-	for dir, recursive := range desiredDirs {
-		covered := false
-		for parent, parentRecursive := range desiredDirs {
-			if parent == dir || !parentRecursive {
-				continue
-			}
-			if tspath.ContainsPath(parent, dir, opts) {
-				covered = true
-				break
-			}
-		}
-		if !covered {
-			result[dir] = recursive
-		}
-	}
-	return result
-}
-
-func coalesceAncestorDirs(desiredDirs map[string]bool, opts tspath.ComparePathsOptions) map[string]bool {
-	type candidate struct {
-		dir   string
-		depth int
-	}
-	counts := make(map[string]int)
-	for dir := range desiredDirs {
-		parent := tspath.GetDirectoryPath(dir)
-		for parent != "" && parent != dir {
-			if CanWatchDirectory(parent) {
-				counts[parent]++
-			}
-			next := tspath.GetDirectoryPath(parent)
-			if next == parent {
-				break
-			}
-			parent = next
-		}
-	}
-
-	candidates := make([]candidate, 0, len(counts))
-	for dir, count := range counts {
-		if count >= recursiveCoalesceThreshold {
-			candidates = append(candidates, candidate{dir: dir, depth: len(tspath.GetPathComponents(dir, opts.CurrentDirectory))})
-		}
-	}
-	slices.SortFunc(candidates, func(a, b candidate) int {
-		if a.depth != b.depth {
-			return b.depth - a.depth
-		}
-		return opts.GetComparer()(a.dir, b.dir)
-	})
-
-	remaining := make(map[string]bool, len(desiredDirs))
-	maps.Copy(remaining, desiredDirs)
-	selected := make(map[string]struct{})
-	for _, candidate := range candidates {
-		var covered []string
-		for dir := range remaining {
-			if tspath.ContainsPath(candidate.dir, dir, opts) {
-				covered = append(covered, dir)
-			}
-		}
-		if len(covered) < recursiveCoalesceThreshold {
-			continue
-		}
-		selected[candidate.dir] = struct{}{}
-		for _, dir := range covered {
-			delete(remaining, dir)
-		}
-	}
-
-	if len(selected) == 0 {
-		return desiredDirs
-	}
-
-	result := make(map[string]bool, len(remaining)+len(selected))
-	maps.Copy(result, remaining)
-	for dir := range selected {
-		result[dir] = true
-	}
-	return result
 }
 
 func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) error {
