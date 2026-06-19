@@ -16,6 +16,7 @@
 - Protocol JSON is `type`-tagged and **camelCase** (`exitCode`, `resolveTask`, etc.).
 - stdout is reserved for protocol JSONL only — compiler/diagnostic text must never reach the real stdout; route it to `Log`. Free-form errors go to stderr.
 - Release build flags: `-trimpath -ldflags=-s -w`, `CGO_ENABLED=0`. Do **not** use the `noembed` tag — the default build embeds `lib.d.ts`, making the binary self-contained.
+- **Builds/tests in this environment require `GOMODCACHE=/tmp/gomodcache`** prefixed on every `go build`/`go test` command (the default module cache is read-only).
 - Target platforms: `linux/amd64`, `linux/arm64`, `darwin/amd64`, `darwin/arm64`.
 - Out of scope (do not build): source-file cache across runs, reviewdog rdjson, `command`-override parsing, in-memory incremental Program reuse, Windows/linux-arm builds.
 
@@ -45,14 +46,20 @@ func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions
 // internal/execute/tsc/extendedconfigcache.go:15  (zero value usable)
 type ExtendedConfigCache struct { /* ... */ }
 
-// internal/compiler/host.go:33
+// internal/compiler/host.go (POST-PnP-merge signature — note the pnpApi param)
 func NewCachedFSCompilerHost(
     currentDirectory string,
     fs vfs.FS,
     defaultLibraryPath string,
     extendedConfigCache tsoptions.ExtendedConfigCache,
+    pnpApi *pnp.PnpApi,
     trace func(msg *diagnostics.Message, args ...any),
 ) CompilerHost
+
+// internal/pnp/pnp.go:9 — built-in PnP manifest discovery (walks up from cwd for .pnp.cjs; nil if none)
+func InitPnpApi(fs vfs.FS, cwd string) *pnp.PnpApi
+// internal/vfs/pnpvfs/pnpvfs.go:24 — wraps an FS to resolve Yarn virtual (zip) paths
+func From(fs vfs.FS) vfs.FS
 
 // internal/compiler/program.go:35 & :269
 type ProgramOptions struct {
@@ -511,8 +518,19 @@ The heart of the worker: given a package `cwd`, compile `tsconfig.build.json` th
 - Test: `internal/luchta/compile_test.go`
 
 **Interfaces:**
-- Consumes: `RelativizeOutputs`, `CleanOutputs` (Task 3).
-- Produces: `type CompileResult struct{ ExitCode int; Inputs, Outputs []string; Diagnostics string }`; `func CompilePackage(ctx context.Context, cwd string) CompileResult`. A `newRunSystem(cwd string, w io.Writer) *runSystem` implementing `tsc.System` and `tsoptions.ParseConfigHost`. A package-level hook `var newCompilerFS = func(cwd string) vfs.FS { return bundled.WrapFS(osvfs.FS()) }` so Task 7 can override FS construction for PnP.
+- Consumes: `RelativizeOutputs`, `CleanOutputs` (Task 3); the PnP API landed in Task 1 (`pnp.InitPnpApi`, `pnpvfs.From`, the `pnpApi` host-constructor param).
+- Produces: `type CompileResult struct{ ExitCode int; Inputs, Outputs []string; Diagnostics string }`; `func CompilePackage(ctx context.Context, cwd string) CompileResult`. A `newRunSystem(cwd string, fsys vfs.FS, libraryPath string, w io.Writer) *runSystem` implementing `tsc.System` and `tsoptions.ParseConfigHost`.
+
+**PnP wiring (folded in from former Task 6 — Task 1's merge made this trivial):** Per compile, build the FS and PnP API directly. `pnp.InitPnpApi` does its own upward search for `.pnp.cjs`, so no custom manifest discovery is needed:
+```go
+fsys := bundled.WrapFS(osvfs.FS())
+pnpApi := pnp.InitPnpApi(fsys, cwd) // nil when no .pnp.cjs above cwd
+if pnpApi != nil {
+    fsys = pnpvfs.From(fsys)
+}
+host := compiler.NewCachedFSCompilerHost(cwd, fsys, bundled.LibPath(), extendedConfigCache, pnpApi, nil)
+```
+Non-PnP packages get `pnpApi == nil` and the plain FS, so the Task 4 tests (no `.pnp.cjs`) still pass. The dedicated PnP resolution test lives in Task 6.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -643,13 +661,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
-	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
-
-// newCompilerFS builds the vfs for a package compile. Overridden in Task 7 to add PnP.
-var newCompilerFS = func(cwd string) vfs.FS { return bundled.WrapFS(osvfs.FS()) }
 
 type CompileResult struct {
 	ExitCode    int
@@ -664,7 +680,11 @@ var tsconfigCandidates = []string{"tsconfig.build.json", "tsconfig.json"}
 // that exists, parse it, clean stale outputs, build a Program, collect diagnostics,
 // and emit. Returns aggregated inputs/outputs and a non-zero ExitCode on any error.
 func CompilePackage(ctx context.Context, cwd string) CompileResult {
-	fsys := newCompilerFS(cwd)
+	fsys := bundled.WrapFS(osvfs.FS())
+	pnpApi := pnp.InitPnpApi(fsys, cwd) // nil when there is no .pnp.cjs above cwd
+	if pnpApi != nil {
+		fsys = pnpvfs.From(fsys)
+	}
 	var diagBuf bytes.Buffer
 	sys := newRunSystem(cwd, fsys, bundled.LibPath(), &diagBuf)
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
@@ -699,7 +719,7 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 			break
 		}
 
-		host := compiler.NewCachedFSCompilerHost(cwd, fsys, sys.DefaultLibraryPath(), extendedConfigCache, nil)
+		host := compiler.NewCachedFSCompilerHost(cwd, fsys, sys.DefaultLibraryPath(), extendedConfigCache, pnpApi, nil)
 		program := compiler.NewProgram(compiler.ProgramOptions{Config: parsed, Host: host})
 
 		diags := collectAllDiagnostics(ctx, program)
@@ -1033,53 +1053,45 @@ git commit -m "Add luchta-tsc-worker run loop and binary entry point"
 
 ---
 
-## Task 6: Wire Yarn PnP into the compile host
+## Task 6: PnP resolution test (wiring landed in Task 4)
 
-Replace the FS construction so the compiler resolves modules through Yarn PnP. Uses the API landed in Task 1; **before writing code, paste the Task 1 Step 5 notes here** (the `PnpApi()` accessor, the `pnpvfs` wrapper constructor, and the LSP's per-session PnP init you will mirror).
+The PnP wiring (`pnp.InitPnpApi` + `pnpvfs.From` + the `pnpApi` host param) was folded into Task 4's `CompilePackage`. This task proves that seam works: when a `.pnp.cjs` exists above the package, the PnP code path is taken, and (where reproducible) a PnP-only dependency resolves. Deep resolution correctness is already covered by PR #1966's own compiler tests (`testdata/tests/cases/compiler/pnp*.ts`); this task guards our worker's use of that machinery.
 
 **Files:**
-- Modify: `internal/luchta/compile.go` (the `newCompilerFS` hook and the host construction)
-- Create: `internal/luchta/pnp.go` (manifest discovery + cache)
+- Modify: `internal/luchta/compile.go` (extract the FS/PnP construction into a small testable helper)
 - Test: `internal/luchta/pnp_test.go`
 
 **Interfaces:**
-- Consumes: `internal/pnp` (`pnp.New…` from PR #1966), `internal/vfs/pnpvfs`, `compiler.CompilerHost.PnpApi` (exact names from Task 1 notes).
-- Produces: `func findPnpManifest(cwd string) (manifestPath string, ok bool)`; a process-wide, mutex-guarded cache of parsed PnP APIs keyed by manifest path.
+- Consumes: `pnp.InitPnpApi(fs vfs.FS, cwd string) *pnp.PnpApi`, `pnpvfs.From(fs vfs.FS) vfs.FS`, `bundled.WrapFS`, `osvfs.FS` (all landed in Task 1).
+- Produces: `func compilerFS(cwd string) (vfs.FS, *pnp.PnpApi)` — returns the (possibly PnP-wrapped) FS and the PnP API (nil when no `.pnp.cjs` is found above `cwd`).
 
-- [ ] **Step 1: Write the failing test (PnP fixture monorepo)**
+- [ ] **Step 1: Extract the helper in `compile.go`**
+
+Replace the inline FS/PnP block at the top of `CompilePackage` with a call to a named helper, so the seam is unit-testable:
 
 ```go
-package luchta
-
-import (
-	"context"
-	"path/filepath"
-	"testing"
-)
-
-// Builds a minimal Yarn PnP workspace where package "app" imports package "lib",
-// with a .pnp.data.json mapping both. Asserts that "app" type-checks (the import of
-// "lib" resolves only via PnP, since there is no node_modules).
-func TestCompilePackageResolvesViaPnp(t *testing.T) {
-	root := t.TempDir()
-	setupPnpFixture(t, root) // writes .pnp.data.json, packages/lib, packages/app
-
-	app := filepath.Join(root, "packages", "app")
-	res := CompilePackage(context.Background(), app)
-	if res.ExitCode != 0 {
-		t.Fatalf("PnP resolution failed: exit=%d diag=%s", res.ExitCode, res.Diagnostics)
+// compilerFS builds the vfs for compiling under cwd, enabling Yarn PnP when a
+// .pnp.cjs manifest exists at or above cwd. Returns the FS and the PnP API (nil
+// when not a PnP workspace).
+func compilerFS(cwd string) (vfs.FS, *pnp.PnpApi) {
+	fsys := bundled.WrapFS(osvfs.FS())
+	pnpApi := pnp.InitPnpApi(fsys, cwd)
+	if pnpApi != nil {
+		fsys = pnpvfs.From(fsys)
 	}
+	return fsys, pnpApi
 }
 ```
 
-> Write `setupPnpFixture` to match the data format that PR #1966's `internal/pnp` parser expects. Use one of the PR's own test fixtures as the template (found via `grep -rln "pnp.data.json\|packageRegistryData" internal/pnp`). The fixture needs: a root `.pnp.data.json` (or `.pnp.cjs` with embedded data) registering `lib` and `app` with their locations; `packages/lib` with a `tsconfig.json`, `package.json` (`"name":"lib"`, `"types":"dist/index.d.ts"`), and a built `dist/index.d.ts` exporting a symbol; `packages/app` with a `tsconfig.json` and `src/index.ts` doing `import { x } from "lib";`.
+And in `CompilePackage`:
 
-- [ ] **Step 2: Run test to verify it fails**
+```go
+	fsys, pnpApi := compilerFS(cwd)
+```
 
-Run: `go test ./internal/luchta/ -run 'Pnp' -v`
-Expected: FAIL — the import of `lib` does not resolve without PnP (or `findPnpManifest` is undefined).
+(Add the `vfs` import: `"github.com/microsoft/typescript-go/internal/vfs"`.)
 
-- [ ] **Step 3: Implement manifest discovery + cache (`pnp.go`)**
+- [ ] **Step 2: Write the failing test**
 
 ```go
 package luchta
@@ -1087,86 +1099,80 @@ package luchta
 import (
 	"os"
 	"path/filepath"
-	"sync"
+	"testing"
 )
 
-var pnpManifestNames = []string{".pnp.data.json", ".pnp.cjs"}
-
-// findPnpManifest walks upward from cwd looking for a PnP manifest.
-func findPnpManifest(cwd string) (string, bool) {
-	dir := cwd
-	for {
-		for _, name := range pnpManifestNames {
-			p := filepath.Join(dir, name)
-			if fileExists(p) {
-				return p, true
-			}
-		}
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			return "", false
-		}
-		dir = parent
+// Locate the simplest PnP fixture shipped by PR #1966.
+func pnpFixtureCjs(t *testing.T) string {
+	t.Helper()
+	// repo-relative: testdata/fixtures/pnp/pnp-yarn-v4.cjs
+	root, err := filepath.Abs(filepath.Join("..", "..", "testdata", "fixtures", "pnp"))
+	if err != nil {
+		t.Fatal(err)
 	}
-	_ = os.Stat
+	p := filepath.Join(root, "pnp-yarn-v4.cjs")
+	if !fileExists(p) {
+		t.Skipf("PnP fixture not found at %s", p)
+	}
+	return p
 }
 
-var (
-	pnpCacheMu sync.Mutex
-	pnpCache   = map[string]any{} // value type: the *pnp.PnpApi from PR #1966
-)
-
-// loadPnpApi returns a cached parsed PnP API for the given manifest path.
-// Replace `any`/the loader call with the concrete type + constructor from Task 1 notes.
-func loadPnpApi(manifestPath string) any {
-	pnpCacheMu.Lock()
-	defer pnpCacheMu.Unlock()
-	if api, ok := pnpCache[manifestPath]; ok {
-		return api
+func TestCompilerFSNoPnp(t *testing.T) {
+	cwd := t.TempDir() // no .pnp.cjs anywhere above a fresh temp dir
+	fsys, api := compilerFS(cwd)
+	if api != nil {
+		t.Fatalf("expected nil PnP API outside a PnP workspace")
 	}
-	api := /* pnp.NewFromManifest(manifestPath, osvfs.FS()) per Task 1 notes */ nil
-	pnpCache[manifestPath] = api
-	return api
+	if fsys == nil {
+		t.Fatalf("expected a non-nil base FS")
+	}
 }
-```
 
-- [ ] **Step 4: Rewire `newCompilerFS` and host construction in `compile.go`**
-
-Update the FS hook to wrap with `pnpvfs` when a manifest is present, and attach the PnP API to the host. Match the exact constructor + accessor names from your Task 1 notes:
-
-```go
-// in compile.go — replace the simple hook:
-var newCompilerFS = func(cwd string) vfs.FS {
-	base := bundled.WrapFS(osvfs.FS())
-	if manifest, ok := findPnpManifest(cwd); ok {
-		api := loadPnpApi(manifest)
-		if api != nil {
-			return pnpvfs.New(base, api) // exact constructor from Task 1 notes
-		}
+func TestCompilerFSDetectsPnp(t *testing.T) {
+	root := t.TempDir()
+	// Copy a real fixture manifest to the workspace root.
+	data, err := os.ReadFile(pnpFixtureCjs(t))
+	if err != nil {
+		t.Fatal(err)
 	}
-	return base
+	if err := os.WriteFile(filepath.Join(root, ".pnp.cjs"), data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	pkg := filepath.Join(root, "packages", "app")
+	if err := os.MkdirAll(pkg, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	_, api := compilerFS(pkg)
+	if api == nil {
+		t.Fatalf("expected non-nil PnP API when .pnp.cjs is present above cwd")
+	}
 }
 ```
 
-Then, where the host is built, attach the PnP API so the resolver uses it (the PR exposes this on the host; mirror `internal/lsp/server.go`'s per-session init). For example, if the PR adds an option/field:
+> If `pnp.InitPnpApi` requires the manifest's referenced directories to exist before it returns non-nil (i.e. it validates the manifest, not just its presence), `TestCompilerFSDetectsPnp` will fail. In that case, switch the assertion to construct the manifest scenario the way the PR's `internal/pnp` tests do — find them with `grep -rln "InitPnpApi\|\.pnp\.cjs" internal/pnp` and mirror their setup. Do not weaken the test to assert nothing; if a full setup is infeasible in a unit test, mark this case `t.Skip` with a comment pointing at the PR's compiler-level `pnp*.ts` tests that cover resolution, and keep `TestCompilerFSNoPnp` as the guaranteed gate.
 
-```go
-host := compiler.NewCachedFSCompilerHost(cwd, fsys, sys.DefaultLibraryPath(), extendedConfigCache, nil)
-// Attach PnP per Task 1 notes, e.g. host.SetPnpApi(api) or via a ProgramOptions field.
-```
+- [ ] **Step 3: Run test to verify it fails**
 
-> The precise wiring (FS wrapper vs. host accessor vs. ProgramOptions field) is whatever PR #1966 established — your Task 1 Step 5 notes are authoritative. Add `internal/pnp` and `internal/vfs/pnpvfs` to compile.go's imports.
+Run: `GOMODCACHE=/tmp/gomodcache go test ./internal/luchta/ -run 'CompilerFS' -v`
+Expected: FAIL — `undefined: compilerFS` (before Step 1 is applied) — then, after Step 1, the detection assertions drive any needed fixup.
 
-- [ ] **Step 5: Run test to verify it passes**
+- [ ] **Step 4: Make it pass**
 
-Run: `go test ./internal/luchta/ -run 'Pnp' -v`
-Expected: PASS. Also re-run the full package: `go test ./internal/luchta/...` — all prior tests still PASS (non-PnP packages must still compile because `findPnpManifest` returns false and the FS falls back to `bundled.WrapFS(osvfs.FS())`).
+Apply Step 1's helper, adjust the detection test per the note if the fixture needs more setup, and re-run.
+
+Run: `GOMODCACHE=/tmp/gomodcache go test ./internal/luchta/ -run 'CompilerFS' -v`
+Expected: PASS.
+
+- [ ] **Step 5: Full-package regression**
+
+Run: `GOMODCACHE=/tmp/gomodcache go test ./internal/luchta/...`
+Expected: PASS — all earlier tests still green (non-PnP packages get `pnpApi == nil`).
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add internal/luchta/pnp.go internal/luchta/pnp_test.go internal/luchta/compile.go
-git commit -m "Resolve modules via Yarn PnP in the compile host"
+git add internal/luchta/compile.go internal/luchta/pnp_test.go
+git commit -m "Test Yarn PnP detection in the compile FS seam"
 ```
 
 ---
