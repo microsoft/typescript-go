@@ -1010,7 +1010,7 @@ func TestSubscribeSymlinkDelete(t *testing.T) {
 	})
 }
 
-func TestSubscribeSymlinkedDirectory(t *testing.T) {
+func TestSubscribeSymlinkedDirectoryRebasesTargetEvents(t *testing.T) {
 	t.Parallel()
 	runForEachWatcher(t, func(t testingT, watcherImpl Watcher) {
 		dir := newTmpDir(t)
@@ -1022,11 +1022,51 @@ func TestSubscribeSymlinkedDirectory(t *testing.T) {
 		makeDirSymlink(t, target, link)
 
 		r, _ := subscribeFor(t, link, watcherImpl)
-		child := filepath.Join(link, "child")
-		if err := os.WriteFile(child, []byte("x"), 0o644); err != nil {
+		targetChild := filepath.Join(target, "child")
+		if err := os.WriteFile(targetChild, []byte("x"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		expectContains(t, r, EventUpdate, child)
+		expectContains(t, r, EventUpdate, filepath.Join(link, "child"))
+	})
+}
+
+func TestRecursiveSubscribeSymlinkedDirectoryDoesNotFollowDescendantSymlink(t *testing.T) {
+	t.Parallel()
+	runForEachWatcher(t, func(t testingT, watcherImpl Watcher) {
+		if watcherImpl.HasFastRecursiveBackend() {
+			t.Skip("fast recursive backends do not use the userspace recursive walk")
+		}
+		dir := newTmpDir(t)
+		target := filepath.Join(dir, "target")
+		if err := os.Mkdir(target, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		link := filepath.Join(dir, "link")
+		makeDirSymlink(t, target, link)
+
+		descendantTarget := filepath.Join(dir, "descendant-target")
+		if err := os.Mkdir(descendantTarget, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		descendantLink := filepath.Join(target, "descendant-link")
+		makeDirSymlink(t, descendantTarget, descendantLink)
+
+		r, _ := subscribeFor(t, link, watcherImpl)
+		logicalGrandchild := filepath.Join(link, "descendant-link", "grandchild")
+		physicalGrandchild := filepath.Join(descendantTarget, "grandchild")
+		if err := os.WriteFile(logicalGrandchild, []byte("x"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+
+		marker := filepath.Join(target, "marker")
+		if err := os.WriteFile(marker, []byte("flush"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+
+		got := expectContains(t, r, EventUpdate, filepath.Join(link, "marker"))
+		got = append(got, r.drainQuiet(2*maxWaitTime)...)
+		assertNoEventsForPath(t, got, logicalGrandchild, "expected no events through descendant symlink")
+		assertNoEventsForPath(t, got, physicalGrandchild, "expected no events for descendant symlink target")
 	})
 }
 

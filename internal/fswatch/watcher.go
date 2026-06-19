@@ -59,7 +59,11 @@ type Watcher interface {
 	// WatchDirectory watches dir for changes, calling fn with batched
 	// events. By default, only direct children are watched. Use
 	// [WithRecursive] to watch the entire directory tree.
-	// dir must be an absolute path to an existing directory.
+	// dir must be an absolute path to an existing directory. If dir is a
+	// symlink or reparse point to a directory, the OS subscription follows
+	// the target directory but delivered event paths remain rooted at dir.
+	// Userspace recursive traversal does not follow symlinked descendant
+	// directories.
 	// Returns [ErrUnavailable] if the watcher is not supported on
 	// the current platform.
 	WatchDirectory(dir string, fn WatchCallback, opts ...WatchOption) (Watch, error)
@@ -262,7 +266,7 @@ func (w *watcher) getImpl() (watcherImpl, error) {
 	return impl, nil
 }
 
-func (w *watcher) getOrCreateDirWatch(dir string, watchDir string, recursive bool) *dirWatch {
+func (w *watcher) getOrCreateDirWatch(dir string, physicalDir string, recursive bool) *dirWatch {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.dirWatches == nil {
@@ -278,7 +282,7 @@ func (w *watcher) getOrCreateDirWatch(dir string, watchDir string, recursive boo
 	if dw, ok := w.dirWatches[key]; ok {
 		return dw
 	}
-	dw := newDirWatch(dir, watchDir, w.debounce)
+	dw := newDirWatch(dir, physicalDir, w.debounce)
 	dw.recursive = recursive
 	w.dirWatches[key] = dw
 	return dw
@@ -309,14 +313,14 @@ func (w *watcher) WatchDirectory(dir string, fn WatchCallback, opts ...WatchOpti
 		return nil, errNotAbsolute
 	}
 	dir = canonicalizePath(dir)
-	watchDir := watchDirFor(dir)
+	physicalDir := physicalDirFor(dir)
 
 	var sopts watchOptions
 	for _, o := range opts {
 		o.applyWatchOption(&sopts)
 	}
 
-	dw := w.getOrCreateDirWatch(dir, watchDir, sopts.recursive)
+	dw := w.getOrCreateDirWatch(dir, physicalDir, sopts.recursive)
 	id, _ := dw.watch(fn, sopts.ignore)
 
 	impl, err := w.getImpl()
@@ -525,10 +529,13 @@ func (e *dirWatchError) Unwrap() error { return e.err }
 // dirWatch holds per-directory state: pending events, registered callbacks,
 // and a reference to the shared debouncer. Each watched directory has one.
 type dirWatch struct {
-	dir       string
-	watchDir  string
-	recursive bool
-	events    eventList
+	// dir is the caller-visible watch root used in delivered event paths.
+	dir string
+	// physicalDir is the path passed to OS watcher APIs. It differs from dir
+	// only when dir is a symlink or reparse point to a directory.
+	physicalDir string
+	recursive   bool
+	events      eventList
 
 	// state stores per-directory platform-specific bookkeeping (fsevents, windows).
 	state any
@@ -539,17 +546,17 @@ type dirWatch struct {
 	nextCBID  uint64
 }
 
-func newDirWatch(dir string, watchDir string, db *debounce) *dirWatch {
-	dw := &dirWatch{dir: dir, watchDir: watchDir}
+func newDirWatch(dir string, physicalDir string, db *debounce) *dirWatch {
+	dw := &dirWatch{dir: dir, physicalDir: physicalDir}
 	dw.debounce = db
 	dw.debounce.add(dw, func() { dw.triggerCallbacks() })
 	return dw
 }
 
-// watchDirFor returns the physical path to watch for dir. If dir is a
+// physicalDirFor returns the physical path to watch for dir. If dir is a
 // symlink or reparse point, events are subscribed on its realpath while
 // callbacks still use dir.
-func watchDirFor(dir string) string {
+func physicalDirFor(dir string) string {
 	if !osvfs.IsSymlink(dir) {
 		return dir
 	}
@@ -563,12 +570,12 @@ func watchDirFor(dir string) string {
 // displayPath maps a physical event path back under the caller-visible
 // watch root.
 func (dw *dirWatch) displayPath(watchPath string) string {
-	return rebasePath(watchPath, dw.watchDir, dw.dir)
+	return rebasePath(watchPath, dw.physicalDir, dw.dir)
 }
 
 // physicalPath maps a caller-visible path to the physical watched root.
 func (dw *dirWatch) physicalPath(displayPath string) string {
-	return rebasePath(displayPath, dw.dir, dw.watchDir)
+	return rebasePath(displayPath, dw.dir, dw.physicalDir)
 }
 
 // rebasePath replaces the from root in path with to, preserving any child

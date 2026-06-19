@@ -214,7 +214,7 @@ func (b *inotifyBackend) shutdown() {
 // virtual dispatch under b.mu (so it's serialized against handleEvent).
 func (b *inotifyBackend) subscribe(w *dirWatch) error {
 	if !w.recursive {
-		if _, err := b.watchDir(w, w.dir, w.watchDir); err != nil {
+		if _, err := b.watchDir(w, w.dir, w.physicalDir); err != nil {
 			return &dirWatchError{
 				err:      fmt.Errorf("inotify_add_watch on '%s' failed: %w", w.dir, err),
 				dirWatch: w,
@@ -222,7 +222,7 @@ func (b *inotifyBackend) subscribe(w *dirWatch) error {
 		}
 		return nil
 	}
-	if err := walkDir(w.watchDir, true, func(watchPath string, isDir bool) error {
+	if err := walkDir(w.physicalDir, true, func(watchPath string, isDir bool) error {
 		if !isDir {
 			return nil
 		}

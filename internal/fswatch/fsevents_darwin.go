@@ -189,7 +189,7 @@ func (b *fsEventsBackend) start() error {
 
 // checkWatcher mirrors the helper of the same name.
 func checkWatcher(w *dirWatch) error {
-	info, err := os.Stat(w.watchDir)
+	info, err := os.Stat(w.physicalDir)
 	if err != nil {
 		return &dirWatchError{err: err, dirWatch: w}
 	}
@@ -223,7 +223,7 @@ func (b *fsEventsBackend) startStream(w *dirWatch, since uint64) error {
 		return errMissingFSEventsState
 	}
 
-	dirCStr := append([]byte(w.watchDir), 0)
+	dirCStr := append([]byte(w.physicalDir), 0)
 	cfDir := cfStringCreate(0, unsafe.Pointer(&dirCStr[0]), cfStringEncodingUTF8)
 	defer cfRelease(cfDir)
 

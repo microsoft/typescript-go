@@ -460,7 +460,7 @@ func (b *kqueueBackend) subscribe(w *dirWatch) error {
 	// publishes the entries map to the event loop (via subsByPath),
 	// which could read it via compareDir while we're still populating it.
 	entries := map[string]*dirEntry{}
-	if err := walkDir(w.watchDir, w.recursive, func(watchPath string, isDir bool) error {
+	if err := walkDir(w.physicalDir, w.recursive, func(watchPath string, isDir bool) error {
 		path := w.displayPath(watchPath)
 		entries[path] = &dirEntry{path: path, watchPath: watchPath, isDir: isDir}
 		return nil

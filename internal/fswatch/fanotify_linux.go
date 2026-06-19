@@ -295,7 +295,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 			b.markMask = fanotifyMarkMaskMovedFromTo
 		} else {
 			b.markMask = fanotifyMarkMaskRename
-			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, w.watchDir)
+			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, w.physicalDir)
 			switch {
 			case err == nil:
 				// B5: pair the probe Add with a matching Remove. If
@@ -306,7 +306,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 				// flags the kernel just merges them. The probe is the
 				// only failure path we explicitly retry.
 				for {
-					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, w.watchDir)
+					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, w.physicalDir)
 					if rmErr == nil || !errors.Is(rmErr, unix.EINTR) {
 						break
 					}
@@ -317,7 +317,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 		}
 	}
 	if !w.recursive {
-		if err := b.markDir(w, w.dir, w.watchDir); err != nil {
+		if err := b.markDir(w, w.dir, w.physicalDir); err != nil {
 			return &dirWatchError{
 				err:      fmt.Errorf("fanotify_mark on '%s' failed: %w", w.dir, err),
 				dirWatch: w,
@@ -325,7 +325,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 		}
 		return nil
 	}
-	if err := walkDir(w.watchDir, true, func(watchPath string, isDir bool) error {
+	if err := walkDir(w.physicalDir, true, func(watchPath string, isDir bool) error {
 		if !isDir {
 			return nil
 		}
