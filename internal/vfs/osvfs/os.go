@@ -12,6 +12,7 @@ import (
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/nativepath"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/internal"
@@ -150,19 +151,8 @@ func (vfs *osFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 func (vfs *osFS) Realpath(path string) string {
-	return Realpath(path)
-}
-
-// Realpath returns the OS realpath for path.
-func Realpath(path string) string {
 	defer blockingOpSema.Acquire()()
 	return osFSRealpath(path)
-}
-
-// IsSymlink reports whether path is a symlink or reparse point.
-func IsSymlink(path string) bool {
-	defer blockingOpSema.Acquire()()
-	return isSymlink(path)
 }
 
 func osFSRealpath(path string) string {
@@ -170,7 +160,7 @@ func osFSRealpath(path string) string {
 
 	orig := path
 	path = filepath.FromSlash(path)
-	path, err := realpath(path)
+	path, err := nativepath.Realpath(path)
 	if err != nil {
 		return orig
 	}
@@ -179,6 +169,10 @@ func osFSRealpath(path string) string {
 		return orig
 	}
 	return tspath.NormalizeSlashes(path)
+}
+
+func isReparsePoint(path string) bool {
+	return nativepath.IsSymlinkOrReparsePoint(filepath.FromSlash(path))
 }
 
 func (vfs *osFS) writeFileWithFlag(path string, content string, flag int) error {

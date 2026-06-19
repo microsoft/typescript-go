@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"github.com/microsoft/typescript-go/internal/nativepath"
 )
 
 var errNilCallback = errors.New("fswatch: callback must not be nil")
@@ -557,10 +557,13 @@ func newDirWatch(dir string, physicalDir string, db *debounce) *dirWatch {
 // symlink or reparse point, events are subscribed on its realpath while
 // callbacks still use dir.
 func physicalDirFor(dir string) string {
-	if !osvfs.IsSymlink(dir) {
+	if !nativepath.IsSymlinkOrReparsePoint(dir) {
 		return dir
 	}
-	realpath := osvfs.Realpath(dir)
+	realpath, err := nativepath.Realpath(dir)
+	if err != nil {
+		return dir
+	}
 	if realpath == dir {
 		return dir
 	}
