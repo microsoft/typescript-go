@@ -341,7 +341,7 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 	}
 
 	// If the node is a numerical indexing literal, then add quotes around the property access.
-	if useAliasesForRename && entry.kind != entryKindRange && ast.IsNumericLiteral(entry.node) && ast.IsAccessExpression(entry.node.Parent) {
+	if entry.kind != entryKindRange && ast.IsNumericLiteral(entry.node) && ast.IsAccessExpression(entry.node.Parent) {
 		quote := getQuoteFromPreference(quotePreference)
 		return quote + newText + quote
 	}
