@@ -1,10 +1,15 @@
 package luchta
 
 import (
+	"bytes"
 	"context"
 	"path/filepath"
 	"slices"
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 func writeTsPackage(t *testing.T, dir, tsconfig, srcName, srcBody string) {
@@ -59,4 +64,18 @@ func TestCompilePackageNoTsconfig(t *testing.T) {
 	if !slices.Contains(res.Inputs, "src/**") {
 		t.Fatalf("expected default src/** input, got %v", res.Inputs)
 	}
+}
+
+// TestReportDiagnosticsNilParsedNoPanic verifies that reportDiagnostics does not
+// panic when parsed is nil (e.g. GetParsedCommandLineOfConfigFile returns nil on a
+// fatal config-read error). This guards against the nil-pointer dereference in
+// CreateDiagnosticReporter which immediately accesses options.Quiet.
+func TestReportDiagnosticsNilParsedNoPanic(t *testing.T) {
+	cwd := t.TempDir()
+	fsys := bundled.WrapFS(osvfs.FS())
+	var buf bytes.Buffer
+	sys := newRunSystem(cwd, fsys, bundled.LibPath(), &buf, nil)
+
+	// Must not panic even with nil parsed and an empty diagnostics slice.
+	reportDiagnostics(sys, &buf, nil, []*ast.Diagnostic{})
 }

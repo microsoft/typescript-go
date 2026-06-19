@@ -120,6 +120,9 @@ func reportDiagnostics(sys tsc.System, w *bytes.Buffer, parsed *tsoptions.Parsed
 	if parsed != nil {
 		opts = parsed.CompilerOptions()
 	}
+	if opts == nil {
+		opts = &core.CompilerOptions{}
+	}
 	report := tsc.CreateDiagnosticReporter(sys, w, locale.Default, opts)
 	for _, d := range diags {
 		report(d)
