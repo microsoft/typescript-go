@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
@@ -32,12 +33,20 @@ var tsconfigCandidates = []string{"tsconfig.build.json", "tsconfig.json"}
 // CompilePackage replicates the project's tsc worker: for each candidate tsconfig
 // that exists, parse it, clean stale outputs, build a Program, collect diagnostics,
 // and emit. Returns aggregated inputs/outputs and a non-zero ExitCode on any error.
-func CompilePackage(ctx context.Context, cwd string) CompileResult {
+// compilerFS builds the vfs for compiling under cwd, enabling Yarn PnP when a
+// .pnp.cjs manifest exists at or above cwd. Returns the FS and the PnP API (nil
+// when not a PnP workspace).
+func compilerFS(cwd string) (vfs.FS, *pnp.PnpApi) {
 	fsys := bundled.WrapFS(osvfs.FS())
 	pnpApi := pnp.InitPnpApi(fsys, cwd) // nil when there is no .pnp.cjs above cwd
 	if pnpApi != nil {
 		fsys = pnpvfs.From(fsys)
 	}
+	return fsys, pnpApi
+}
+
+func CompilePackage(ctx context.Context, cwd string) CompileResult {
+	fsys, pnpApi := compilerFS(cwd)
 	var diagBuf bytes.Buffer
 	sys := newRunSystem(cwd, fsys, bundled.LibPath(), &diagBuf, pnpApi)
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
