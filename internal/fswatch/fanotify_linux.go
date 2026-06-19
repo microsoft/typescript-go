@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"sync/atomic"
 	"unsafe"
 
@@ -148,6 +149,7 @@ func makeFanotifyHandleKey(fsid [2]int32, handleType int32, handleBytes []byte) 
 // fanotifySubscription mirrors inotifySubscription for the fanotify backend.
 type fanotifySubscription struct {
 	path     string
+	markPath string
 	dirWatch *dirWatch
 	key      fanotifyHandleKey
 }
@@ -284,6 +286,7 @@ func (b *fanotifyBackend) shutdown() {
 }
 
 func (b *fanotifyBackend) subscribe(w *dirWatch) error {
+	probeDir := evalSymlinksIfPossible(w.dir)
 	// Probe FAN_RENAME on the first subscribe using the actual watch
 	// directory. FAN_RENAME (Linux 5.17+) yields a single paired event
 	// for renames; when unavailable we fall back to FAN_MOVED_FROM/
@@ -294,7 +297,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 			b.markMask = fanotifyMarkMaskMovedFromTo
 		} else {
 			b.markMask = fanotifyMarkMaskRename
-			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, w.dir)
+			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, probeDir)
 			switch {
 			case err == nil:
 				// B5: pair the probe Add with a matching Remove. If
@@ -305,7 +308,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 				// flags the kernel just merges them. The probe is the
 				// only failure path we explicitly retry.
 				for {
-					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, w.dir)
+					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, probeDir)
 					if rmErr == nil || !errors.Is(rmErr, unix.EINTR) {
 						break
 					}
@@ -343,24 +346,42 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 }
 
 func (b *fanotifyBackend) markDir(w *dirWatch, path string) error {
-	if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, path); err != nil {
-		return err
+	markPath := path
+	if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, markPath); err != nil {
+		if !errors.Is(err, unix.ENOTDIR) {
+			return err
+		}
+		markPath = evalSymlinksIfPossible(path)
+		if markPath == path {
+			return err
+		}
+		if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, markPath); err != nil {
+			return err
+		}
 	}
-	handle, _, err := unix.NameToHandleAt(unix.AT_FDCWD, path, 0)
+	handle, _, err := unix.NameToHandleAt(unix.AT_FDCWD, markPath, 0)
 	if err != nil {
 		// Unmark since we can't track this directory without a handle.
-		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
+		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, markPath)
 		return fmt.Errorf("name_to_handle_at: %w", err)
 	}
 	var st unix.Statfs_t
-	if err := unix.Statfs(path, &st); err != nil {
-		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
+	if err := unix.Statfs(markPath, &st); err != nil {
+		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, markPath)
 		return fmt.Errorf("statfs: %w", err)
 	}
 	key := makeFanotifyHandleKey(st.Fsid.Val, handle.Type(), handle.Bytes())
-	sub := &fanotifySubscription{path: path, dirWatch: w, key: key}
+	sub := &fanotifySubscription{path: path, markPath: markPath, dirWatch: w, key: key}
 	b.subscriptions[key] = append(b.subscriptions[key], sub)
 	return nil
+}
+
+func evalSymlinksIfPossible(path string) string {
+	resolved, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return path
+	}
+	return resolved
 }
 
 // handleEvents reads and dispatches fanotify events from the fd.
@@ -728,7 +749,7 @@ func (b *fanotifyBackend) closeWatch(w *dirWatch) error {
 		for _, s := range list {
 			if s.dirWatch == w {
 				removedAny = true
-				removedPath = s.path
+				removedPath = s.markPath
 				continue
 			}
 			kept = append(kept, s)
