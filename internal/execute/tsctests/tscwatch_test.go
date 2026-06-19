@@ -1,6 +1,8 @@
 package tsctests
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -9,6 +11,37 @@ import (
 
 func TestWatch(t *testing.T) {
 	t.Parallel()
+	bunCoalescingTest := func() *tscInput {
+		files := FileMap{}
+		var index strings.Builder
+		var fileNames strings.Builder
+		fileNames.WriteString(`"index.ts"`)
+		for i := range 12 {
+			name := fmt.Sprintf("pkg%d", i)
+			value := fmt.Sprintf("value%d", i)
+			index.WriteString(fmt.Sprintf(`import { %[1]s } from "./node_modules/.bun/%[2]s/index"; %[1]s;`, value, name))
+			index.WriteString("\n")
+			files["/home/src/workspaces/project/node_modules/.bun/"+name+"/index.ts"] = fmt.Sprintf("export const %s = %d;", value, i)
+			fileNames.WriteString(fmt.Sprintf(`, "node_modules/.bun/%s/index.ts"`, name))
+		}
+		files["/home/src/workspaces/project/index.ts"] = index.String()
+		files["/home/src/workspaces/project/tsconfig.json"] = fmt.Sprintf(`{
+	"compilerOptions": {},
+	"files": [%s]
+}`, fileNames.String())
+		return &tscInput{
+			subScenario:     "watch coalesces many dependency directory watches",
+			files:           files,
+			commandLineArgs: []string{"--watch"},
+			watchBackendFail: func(dir string, recursive bool) error {
+				if strings.Contains(dir, "/node_modules/.bun/pkg") {
+					return errors.New("error starting FSEvents stream")
+				}
+				return nil
+			},
+			watchBackendFastRecursive: true,
+		}
+	}
 	testCases := []*tscInput{
 		{
 			subScenario: "watch with no tsconfig",
@@ -25,6 +58,7 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch", "--incremental"},
 		},
+		bunCoalescingTest(),
 		{
 			subScenario: "watch skips build when no files change",
 			files: FileMap{

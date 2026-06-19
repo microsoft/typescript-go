@@ -11,6 +11,7 @@ import (
 // WatchBackend abstracts fswatch.Watcher for testing
 type WatchBackend interface {
 	WatchDirectory(dir string, fn fswatch.WatchCallback, recursive bool, ignore func(string) bool) (io.Closer, error)
+	HasFastRecursiveBackend() bool
 }
 
 // CommandLineTestingWithWatchBackend is an optional extension of
@@ -30,6 +31,10 @@ func (b *FSWatchBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, re
 		opts = append(opts, fswatch.WithIgnore(ignore))
 	}
 	return b.Inner.WatchDirectory(dir, fn, opts...)
+}
+
+func (b *FSWatchBackend) HasFastRecursiveBackend() bool {
+	return b.Inner.HasFastRecursiveBackend()
 }
 
 func ShouldIgnoreWatchPath(path string) bool {

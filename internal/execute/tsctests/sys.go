@@ -135,6 +135,8 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *TestSys {
 	sys.forIncrementalCorrectness = forIncrementalCorrectness
 	sys.mockWatchBackend = NewMockWatchBackend()
 	sys.mockWatchBackend.DirectoryExists = sys.fs.FS.DirectoryExists
+	sys.mockWatchBackend.Fail = tscInput.watchBackendFail
+	sys.mockWatchBackend.FastRecursive = tscInput.watchBackendFastRecursive
 	sys.fsDiffer = &fsbaselineutil.FSDiffer{
 		FS:           sys.fs.FS.(iovfs.FsWithSys),
 		DefaultLibs:  func() *collections.SyncSet[string] { return sys.fs.defaultLibs },

@@ -453,7 +453,7 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 		}
 	}
 
-	return o.wm.ResolveDesiredDirs(desiredDirs)
+	return o.wm.CoalesceDesiredDirs(o.wm.ResolveDesiredDirs(desiredDirs), o.comparePathsOptions)
 }
 
 func (o *Orchestrator) DoCycle() {

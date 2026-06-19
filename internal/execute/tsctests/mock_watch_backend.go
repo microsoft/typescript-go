@@ -22,6 +22,8 @@ type MockWatchBackend struct {
 	mu              sync.Mutex
 	Dirs            map[string]*MockWatch
 	DirectoryExists func(string) bool // if set, WatchDirectory fails for non-existent dirs
+	Fail            func(dir string, recursive bool) error
+	FastRecursive   bool
 }
 
 var _ watchmanager.WatchBackend = (*MockWatchBackend)(nil)
@@ -60,9 +62,18 @@ func (m *MockWatchBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, 
 	if m.DirectoryExists != nil && !m.DirectoryExists(dir) {
 		return nil, fmt.Errorf("directory does not exist: %s", dir)
 	}
+	if m.Fail != nil {
+		if err := m.Fail(dir, recursive); err != nil {
+			return nil, err
+		}
+	}
 	w := &MockWatch{Path: dir, Callback: fn, Recursive: recursive, Ignore: ignore}
 	m.Dirs[dir] = w
 	return w, nil
+}
+
+func (m *MockWatchBackend) HasFastRecursiveBackend() bool {
+	return m.FastRecursive
 }
 
 // SendEvents routes events through the registered watch callbacks
