@@ -1435,49 +1435,118 @@ const mainNativePreviewPackage = {
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  * @typedef {{ vscodeTarget: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} NativePreviewExtension
+ * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  */
 void 0;
 
+/** @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]} */
+const nativePreviewVsixPlatforms = [
+    ["win32", "x64", "Microsoft400"],
+    ["win32", "arm64", "Microsoft400"],
+    ["linux", "x64", "LinuxSign", true],
+    ["linux", "arm", "LinuxSign"],
+    ["linux", "arm64", "LinuxSign", true],
+    ["darwin", "x64", "MacDeveloperHarden"],
+    ["darwin", "arm64", "MacDeveloperHarden"],
+    // Wasm?
+];
+
+/**
+ * Additional platforms to publish when building as the `typescript` package.
+ * Includes Go-buildable Node runtime targets beyond the VSIX platform set.
+ * BSD targets that are not in Node's supported-platforms table are best-effort
+ * and limited to mainstream 64-bit x64/arm64 architectures.
+ * @type {[os: OS, arch: Arch][]}
+ */
+const nativePreviewTypescriptOnlyPlatforms = [
+    ["aix", "ppc64"],
+    ["freebsd", "arm64"],
+    ["freebsd", "x64"],
+    ["linux", "loong64"],
+    ["linux", "mips64el"],
+    ["linux", "ppc64"],
+    ["linux", "riscv64"],
+    ["linux", "s390x"],
+    ["netbsd", "arm64"],
+    ["netbsd", "x64"],
+    ["openbsd", "arm64"],
+    ["openbsd", "x64"],
+    ["sunos", "x64"],
+];
+
+const ignoredGoTargets = new Map([
+    ["android/386", "Android is not a Node runtime target TypeScript supports"],
+    ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
+    ["android/arm", "Android is not a Node runtime target TypeScript supports"],
+    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
+    ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
+    ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
+    ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
+    ["linux/ppc64", "Node supports Linux ppc64le; npm's ppc64 CPU name cannot select big-endian ppc64 separately"],
+    ["netbsd/386", "NetBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["netbsd/arm", "NetBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/386", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/arm", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/ppc64", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/riscv64", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["solaris/amd64", "Node documents SmartOS/sunos rather than Oracle Solaris; sunos-x64 publishes illumos/amd64 for that runtime family"],
+    ["windows/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
+]);
+
+/**
+ * @param {string} os
+ * @returns {"windows" | "illumos" | "darwin" | "linux" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd"}
+ */
+function nodeToGOOS(os) {
+    switch (os) {
+        case "win32":
+            return "windows";
+        case "sunos":
+            return "illumos";
+        case "darwin":
+        case "linux":
+        case "aix":
+        case "android":
+        case "freebsd":
+        case "netbsd":
+        case "openbsd":
+            return os;
+        default:
+            throw new Error(`Unsupported OS: ${os}`);
+    }
+}
+
+/**
+ * @param {string} arch
+ * @param {string} os
+ * @returns {"amd64" | "386" | "mips64le" | "ppc64" | "ppc64le" | "arm" | "arm64" | "loong64" | "riscv64" | "s390x"}
+ */
+function nodeToGOARCH(arch, os) {
+    switch (arch) {
+        case "x64":
+            return "amd64";
+        case "ia32":
+            return "386";
+        case "mips64el":
+            return "mips64le";
+        case "ppc64":
+            return os === "aix" ? "ppc64" : "ppc64le";
+        case "arm":
+        case "arm64":
+        case "loong64":
+        case "riscv64":
+        case "s390x":
+            return arch;
+        default:
+            throw new Error(`Unsupported ARCH: ${arch}`);
+    }
+}
+
 const nativePreviewPlatforms = memoize(() => {
     /** @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]} */
-    const vsixPlatforms = [
-        ["win32", "x64", "Microsoft400"],
-        ["win32", "arm64", "Microsoft400"],
-        ["linux", "x64", "LinuxSign", true],
-        ["linux", "arm", "LinuxSign"],
-        ["linux", "arm64", "LinuxSign", true],
-        ["darwin", "x64", "MacDeveloperHarden"],
-        ["darwin", "arm64", "MacDeveloperHarden"],
-        // Wasm?
-    ];
-
-    /**
-     * Additional platforms to publish when building as the `typescript` package.
-     * Mirrors esbuild's platform matrix (minus android and ia32).
-     * @type {[os: OS, arch: Arch][]}
-     */
-    const typescriptOnlyPlatforms = publishAsTypescript
-        ? [
-            ["aix", "ppc64"],
-            ["freebsd", "arm64"],
-            ["freebsd", "x64"],
-            ["linux", "loong64"],
-            ["linux", "mips64el"],
-            ["linux", "ppc64"],
-            ["linux", "riscv64"],
-            ["linux", "s390x"],
-            ["netbsd", "arm64"],
-            ["netbsd", "x64"],
-            ["openbsd", "arm64"],
-            ["openbsd", "x64"],
-            ["sunos", "x64"],
-        ]
-        : [];
-
-    /** @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]} */
     let supportedPlatforms = [
-        ...vsixPlatforms,
-        ...typescriptOnlyPlatforms.map(([os, arch]) => /** @type {[OS, Arch, Cert]} */ ([os, arch, "LinuxSign"])),
+        ...nativePreviewVsixPlatforms,
+        ...(publishAsTypescript ? nativePreviewTypescriptOnlyPlatforms : []).map(([os, arch]) => /** @type {[OS, Arch, Cert]} */ ([os, arch, "LinuxSign"])),
     ];
 
     if (!options.forRelease) {
@@ -1492,7 +1561,7 @@ const nativePreviewPlatforms = memoize(() => {
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
 
-        const isVsixPlatform = vsixPlatforms.some(([vo, va]) => vo === os && va === arch);
+        const isVsixPlatform = nativePreviewVsixPlatforms.some(([vo, va]) => vo === os && va === arch);
         /** @type {NativePreviewExtension[]} */
         let extensions = [];
         if (produceNativePreviewVsix && isVsixPlatform) {
@@ -1530,56 +1599,113 @@ const nativePreviewPlatforms = memoize(() => {
             cert,
         };
     });
-
-    /**
-     * @param {string} os
-     * @returns {"windows" | "illumos" | "darwin" | "linux" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd"}
-     */
-    function nodeToGOOS(os) {
-        switch (os) {
-            case "win32":
-                return "windows";
-            case "sunos":
-                return "illumos";
-            case "darwin":
-            case "linux":
-            case "aix":
-            case "android":
-            case "freebsd":
-            case "netbsd":
-            case "openbsd":
-                return os;
-            default:
-                throw new Error(`Unsupported OS: ${os}`);
-        }
-    }
-
-    /**
-     * @param {string} arch
-     * @param {string} os
-     * @returns {"amd64" | "386" | "mips64le" | "ppc64" | "ppc64le" | "arm" | "arm64" | "loong64" | "riscv64" | "s390x"}
-     */
-    function nodeToGOARCH(arch, os) {
-        switch (arch) {
-            case "x64":
-                return "amd64";
-            case "ia32":
-                return "386";
-            case "mips64el":
-                return "mips64le";
-            case "ppc64":
-                return os === "aix" ? "ppc64" : "ppc64le";
-            case "arm":
-            case "arm64":
-            case "loong64":
-            case "riscv64":
-            case "s390x":
-                return arch;
-            default:
-                throw new Error(`Unsupported ARCH: ${arch}`);
-        }
-    }
 });
+
+export const checkNativePreviewPlatforms = task({
+    name: "native-preview:check-platforms",
+    hiddenFromTaskList: true,
+    run: runCheckNativePreviewPlatforms,
+});
+
+/**
+ * @param {GoDistTarget} target
+ */
+function goDistTargetToNativePreviewPlatform(target) {
+    const goTarget = `${target.GOOS}/${target.GOARCH}`;
+    if (ignoredGoTargets.has(goTarget)) {
+        return undefined;
+    }
+
+    /** @type {OS | undefined} */
+    let nodeOs;
+    switch (target.GOOS) {
+        case "windows":
+            nodeOs = "win32";
+            break;
+        case "illumos":
+            nodeOs = "sunos";
+            break;
+        case "aix":
+        case "android":
+        case "darwin":
+        case "freebsd":
+        case "linux":
+        case "netbsd":
+        case "openbsd":
+            nodeOs = target.GOOS;
+            break;
+        default:
+            return undefined;
+    }
+
+    /** @type {Arch | undefined} */
+    let nodeArch;
+    switch (target.GOARCH) {
+        case "386":
+            nodeArch = "ia32";
+            break;
+        case "amd64":
+            nodeArch = "x64";
+            break;
+        case "mips64le":
+            nodeArch = "mips64el";
+            break;
+        case "ppc64":
+            nodeArch = "ppc64";
+            break;
+        case "ppc64le":
+            nodeArch = "ppc64";
+            break;
+        case "arm":
+        case "arm64":
+        case "loong64":
+        case "riscv64":
+        case "s390x":
+            nodeArch = target.GOARCH;
+            break;
+        default:
+            return undefined;
+    }
+
+    return `${nodeOs}-${nodeArch}`;
+}
+
+async function runCheckNativePreviewPlatforms() {
+    const { stdout } = await $pipe`go tool dist list -json`;
+    /** @type {GoDistTarget[]} */
+    const goTargets = JSON.parse(stdout);
+    const goTargetSet = new Set(goTargets.map(({ GOOS, GOARCH }) => `${GOOS}/${GOARCH}`));
+
+    /** @type {[os: OS, arch: Arch][]} */
+    const packagePlatforms = [
+        ...nativePreviewVsixPlatforms.map(([os, arch]) => /** @type {[OS, Arch]} */ ([os, arch])),
+        ...nativePreviewTypescriptOnlyPlatforms.map(([os, arch]) => /** @type {[OS, Arch]} */ ([os, arch])),
+    ];
+    const actual = new Set(packagePlatforms.map(([os, arch]) => `${os}-${arch}`));
+    const expected = new Set(goTargets.map(goDistTargetToNativePreviewPlatform).filter(platform => platform !== undefined));
+
+    const errors = [];
+    for (const [os, arch] of packagePlatforms) {
+        const goTarget = `${nodeToGOOS(os)}/${nodeToGOARCH(arch, os)}`;
+        if (!goTargetSet.has(goTarget)) {
+            errors.push(`Configured package platform ${os}-${arch} maps to unsupported Go target ${goTarget}.`);
+        }
+    }
+
+    const missing = [...expected].filter(platform => !actual.has(platform));
+    if (missing.length) {
+        errors.push(`Missing package platform(s) for the current Go toolchain: ${missing.join(", ")}.`);
+    }
+
+    const extra = [...actual].filter(platform => !expected.has(platform));
+    if (extra.length) {
+        errors.push(`Unexpected package platform(s), or missing exclusion policy: ${extra.join(", ")}.`);
+    }
+
+    if (errors.length) {
+        throw new Error(`native-preview platform list is out of sync with 'go tool dist list':\n${errors.map(e => `  - ${e}`).join("\n")}`);
+    }
+}
 
 /**
  * Recursively strips `@typescript/source` export conditions from a package.json object.
