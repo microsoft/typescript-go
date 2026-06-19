@@ -2,6 +2,7 @@ package luchta
 
 import (
 	"bytes"
+	"encoding/json"
 	"strings"
 	"testing"
 )
@@ -50,4 +51,9 @@ func TestWriterEmitsTaggedCamelCase(t *testing.T) {
 	if lines := strings.Count(strings.TrimSpace(out), "\n"); lines != 2 {
 		t.Fatalf("want 3 lines (2 newlines), got %d:\n%s", lines, out)
 	}
+}
+
+func jsonString(s string) string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }
