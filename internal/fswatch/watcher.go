@@ -594,10 +594,30 @@ func rebasePath(path string, from string, to string) string {
 	if !strings.HasPrefix(path, from) {
 		return path
 	}
-	if len(path) <= len(from) || !os.IsPathSeparator(path[len(from)]) {
+	suffix := path[len(from):]
+	if len(from) > 0 && os.IsPathSeparator(from[len(from)-1]) {
+		return joinPathSuffix(to, suffix)
+	}
+	if len(suffix) == 0 || !os.IsPathSeparator(suffix[0]) {
 		return path
 	}
-	return to + path[len(from):]
+	return joinPathSuffix(to, suffix)
+}
+
+func joinPathSuffix(root string, suffix string) string {
+	if suffix == "" {
+		return root
+	}
+	if os.IsPathSeparator(suffix[0]) {
+		if len(root) > 0 && os.IsPathSeparator(root[len(root)-1]) {
+			return root + suffix[1:]
+		}
+		return root + suffix
+	}
+	if len(root) > 0 && os.IsPathSeparator(root[len(root)-1]) {
+		return root + suffix
+	}
+	return root + string(filepath.Separator) + suffix
 }
 
 func (dw *dirWatch) destroyDebounce() {

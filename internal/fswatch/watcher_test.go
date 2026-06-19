@@ -575,6 +575,68 @@ func containsEvent(got []Event, typ EventKind, path string) bool {
 	return false
 }
 
+func TestRebasePath(t *testing.T) {
+	t.Parallel()
+
+	volume := filepath.VolumeName(os.TempDir())
+	root := volume + string(filepath.Separator)
+	from := filepath.Join(root, "from")
+	to := filepath.Join(root, "to")
+
+	tests := []struct {
+		name string
+		path string
+		from string
+		to   string
+		want string
+	}{
+		{
+			name: "exact root",
+			path: from,
+			from: from,
+			to:   to,
+			want: to,
+		},
+		{
+			name: "child",
+			path: filepath.Join(from, "child"),
+			from: from,
+			to:   to,
+			want: filepath.Join(to, "child"),
+		},
+		{
+			name: "sibling",
+			path: filepath.Join(root, "from-sibling", "child"),
+			from: from,
+			to:   to,
+			want: filepath.Join(root, "from-sibling", "child"),
+		},
+		{
+			name: "from root",
+			path: filepath.Join(root, "child"),
+			from: root,
+			to:   to,
+			want: filepath.Join(to, "child"),
+		},
+		{
+			name: "to root",
+			path: filepath.Join(from, "child"),
+			from: from,
+			to:   root,
+			want: filepath.Join(root, "child"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if got := rebasePath(tt.path, tt.from, tt.to); got != tt.want {
+				t.Fatalf("rebasePath(%q, %q, %q) = %q, want %q", tt.path, tt.from, tt.to, got, tt.want)
+			}
+		})
+	}
+}
+
 // filterEventsForPaths returns only the events whose Path is in the
 // allowed set. Used to discard incidental dir-update events that some
 // backends emit for the parent dir of a touched file.
