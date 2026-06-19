@@ -572,7 +572,10 @@ func rebasePath(path string, from string, to string) string {
 	if path == from {
 		return to
 	}
-	if len(path) > len(from) && os.IsPathSeparator(path[len(from)]) && path[:len(from)] == from {
+	if !strings.HasPrefix(path, from) {
+		return path
+	}
+	if len(path) > len(from) && os.IsPathSeparator(path[len(from)]) {
 		return to + path[len(from):]
 	}
 	return path

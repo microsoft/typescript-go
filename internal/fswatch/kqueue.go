@@ -586,31 +586,43 @@ func (b *kqueueBackend) compareDir(_ int, path string, touched map[*dirWatch]str
 	subs = filteredSubs
 
 	dirStart := path + string(filepath.Separator)
-	baseEntry := subs[0].entries[path]
-	if baseEntry == nil {
-		return false
+	type diskSnapshot struct {
+		entries    []os.DirEntry
+		currentSet map[string]struct{}
 	}
-	watchPath := baseEntry.watchPath
-	watchDirStart := watchPath + string(filepath.Separator)
-
-	// Read the current dir contents from disk.
-	diskEntries, err := readEntries(watchPath)
-	if err != nil {
-		return false
-	}
+	snapshots := map[string]diskSnapshot{}
 
 	// Each subscription has its own entries map (built in subscribe).
 	// Multiple subs at the same path arise from multiple dirWatches
 	// covering overlapping subtrees; their maps are always distinct, so
 	// we iterate subs directly rather than trying to dedup by map identity.
-	currentSet := map[string]struct{}{}
-	for _, ent := range diskEntries {
-		fullPath := dirStart + ent.Name()
-		fullWatchPath := watchDirStart + ent.Name()
-		currentSet[fullPath] = struct{}{}
+	for _, sub := range subs {
+		baseEntry := sub.entries[path]
+		if baseEntry == nil {
+			continue
+		}
+		watchPath := baseEntry.watchPath
+		watchDirStart := watchPath + string(filepath.Separator)
 
-		for _, sub := range subs {
-			entries := sub.entries
+		snapshot, ok := snapshots[watchPath]
+		if !ok {
+			diskEntries, err := readEntries(watchPath)
+			if err != nil {
+				continue
+			}
+			snapshot.entries = diskEntries
+			snapshot.currentSet = make(map[string]struct{}, len(diskEntries))
+			for _, ent := range diskEntries {
+				snapshot.currentSet[dirStart+ent.Name()] = struct{}{}
+			}
+			snapshots[watchPath] = snapshot
+		}
+
+		entries := sub.entries
+		for _, ent := range snapshot.entries {
+			fullPath := dirStart + ent.Name()
+			fullWatchPath := watchDirStart + ent.Name()
+
 			existing := entries[fullPath]
 			if existing != nil {
 				if existing.state != nil {
@@ -687,12 +699,9 @@ func (b *kqueueBackend) compareDir(_ int, path string, touched map[*dirWatch]str
 				})
 			}
 		}
-	}
 
-	// Detect removals: entries directly under dirStart that no longer
-	// exist on disk.
-	for _, sub := range subs {
-		entries := sub.entries
+		// Detect removals: entries directly under dirStart that no longer
+		// exist on disk.
 		var toRemove []string
 		for p := range entries {
 			if !strings.HasPrefix(p, dirStart) {
@@ -702,7 +711,7 @@ func (b *kqueueBackend) compareDir(_ int, path string, touched map[*dirWatch]str
 			if strings.Contains(rest, string(filepath.Separator)) {
 				continue
 			}
-			if _, ok := currentSet[p]; ok {
+			if _, ok := snapshot.currentSet[p]; ok {
 				continue
 			}
 			toRemove = append(toRemove, p)

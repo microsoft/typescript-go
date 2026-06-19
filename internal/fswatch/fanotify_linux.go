@@ -147,10 +147,10 @@ func makeFanotifyHandleKey(fsid [2]int32, handleType int32, handleBytes []byte) 
 
 // fanotifySubscription mirrors inotifySubscription for the fanotify backend.
 type fanotifySubscription struct {
-	path     string
-	markPath string
-	dirWatch *dirWatch
-	key      fanotifyHandleKey
+	path      string
+	watchPath string
+	dirWatch  *dirWatch
+	key       fanotifyHandleKey
 }
 
 // fanotifyDfidName holds parsed directory FID + name from an info record.
@@ -360,7 +360,7 @@ func (b *fanotifyBackend) markDir(w *dirWatch, path string, markPath string) err
 		return fmt.Errorf("statfs: %w", err)
 	}
 	key := makeFanotifyHandleKey(st.Fsid.Val, handle.Type(), handle.Bytes())
-	sub := &fanotifySubscription{path: path, markPath: markPath, dirWatch: w, key: key}
+	sub := &fanotifySubscription{path: path, watchPath: markPath, dirWatch: w, key: key}
 	b.subscriptions[key] = append(b.subscriptions[key], sub)
 	return nil
 }
@@ -730,7 +730,7 @@ func (b *fanotifyBackend) closeWatch(w *dirWatch) error {
 		for _, s := range list {
 			if s.dirWatch == w {
 				removedAny = true
-				removedPath = s.markPath
+				removedPath = s.watchPath
 				continue
 			}
 			kept = append(kept, s)
