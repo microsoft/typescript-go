@@ -546,6 +546,9 @@ func newDirWatch(dir string, watchDir string, db *debounce) *dirWatch {
 	return dw
 }
 
+// watchDirFor returns the physical path to watch for dir. If dir is a
+// symlink or reparse point, events are subscribed on its realpath while
+// callbacks still use dir.
 func watchDirFor(dir string) string {
 	if !osvfs.IsSymlink(dir) {
 		return dir
@@ -557,14 +560,20 @@ func watchDirFor(dir string) string {
 	return canonicalizePath(filepath.Clean(realpath))
 }
 
+// displayPath maps a physical event path back under the caller-visible
+// watch root.
 func (dw *dirWatch) displayPath(watchPath string) string {
 	return rebasePath(watchPath, dw.watchDir, dw.dir)
 }
 
+// physicalPath maps a caller-visible path to the physical watched root.
 func (dw *dirWatch) physicalPath(displayPath string) string {
 	return rebasePath(displayPath, dw.dir, dw.watchDir)
 }
 
+// rebasePath replaces the from root in path with to, preserving any child
+// suffix. Prefix matches must end at a path separator so sibling paths like
+// "/foo2" are not rebased from "/foo".
 func rebasePath(path string, from string, to string) string {
 	if from == to {
 		return path
