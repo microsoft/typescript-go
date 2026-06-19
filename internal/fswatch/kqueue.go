@@ -587,8 +587,8 @@ func (b *kqueueBackend) compareDir(_ int, path string, touched map[*dirWatch]str
 
 	dirStart := path + string(filepath.Separator)
 	type diskSnapshot struct {
-		entries    []os.DirEntry
-		currentSet map[string]struct{}
+		entries             []os.DirEntry
+		currentDisplayPaths map[string]struct{}
 	}
 	snapshots := map[string]diskSnapshot{}
 
@@ -611,9 +611,9 @@ func (b *kqueueBackend) compareDir(_ int, path string, touched map[*dirWatch]str
 				continue
 			}
 			snapshot.entries = diskEntries
-			snapshot.currentSet = make(map[string]struct{}, len(diskEntries))
+			snapshot.currentDisplayPaths = make(map[string]struct{}, len(diskEntries))
 			for _, ent := range diskEntries {
-				snapshot.currentSet[dirStart+ent.Name()] = struct{}{}
+				snapshot.currentDisplayPaths[dirStart+ent.Name()] = struct{}{}
 			}
 			snapshots[watchPath] = snapshot
 		}
@@ -711,7 +711,7 @@ func (b *kqueueBackend) compareDir(_ int, path string, touched map[*dirWatch]str
 			if strings.Contains(rest, string(filepath.Separator)) {
 				continue
 			}
-			if _, ok := snapshot.currentSet[p]; ok {
+			if _, ok := snapshot.currentDisplayPaths[p]; ok {
 				continue
 			}
 			toRemove = append(toRemove, p)
