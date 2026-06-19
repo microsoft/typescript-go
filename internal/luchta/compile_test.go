@@ -66,6 +66,59 @@ func TestCompilePackageNoTsconfig(t *testing.T) {
 	}
 }
 
+// TestCompilePackageConcurrentRace verifies that CompilePackage is race-free when
+// called concurrently. Run with `go test -race` to exercise the parallel emit
+// and the goroutine-safe EmittedFiles assembly.
+func TestCompilePackageConcurrentRace(t *testing.T) {
+	const goroutines = 4
+
+	// Build a package with three source files so the emitter spawns multiple
+	// parallel goroutines internally.
+	makePkg := func(t *testing.T) string {
+		t.Helper()
+		cwd := t.TempDir()
+		tsconfig := `{
+			"compilerOptions": {"declaration": true, "outDir": "dist", "rootDir": "src", "module": "nodenext", "moduleResolution": "nodenext"},
+			"include": ["src/**/*"]
+		}`
+		mustWrite(t, filepath.Join(cwd, "tsconfig.json"), tsconfig)
+		mustWrite(t, filepath.Join(cwd, "src", "a.ts"), "export const a = 1;\n")
+		mustWrite(t, filepath.Join(cwd, "src", "b.ts"), "export const b = 2;\n")
+		mustWrite(t, filepath.Join(cwd, "src", "c.ts"), "export const c = 3;\n")
+		return cwd
+	}
+
+	// Each goroutine gets its own isolated package directory so they don't
+	// race on the filesystem either.
+	cwds := make([]string, goroutines)
+	for i := range cwds {
+		cwds[i] = makePkg(t)
+	}
+
+	type result struct {
+		res CompileResult
+		idx int
+	}
+	ch := make(chan result, goroutines)
+
+	for i := 0; i < goroutines; i++ {
+		i := i
+		go func() {
+			ch <- result{CompilePackage(context.Background(), cwds[i]), i}
+		}()
+	}
+
+	for range goroutines {
+		r := <-ch
+		if r.res.ExitCode != 0 {
+			t.Errorf("goroutine %d: exitCode=%d diagnostics=%s", r.idx, r.res.ExitCode, r.res.Diagnostics)
+		}
+		if len(r.res.Outputs) == 0 {
+			t.Errorf("goroutine %d: expected non-empty Outputs", r.idx)
+		}
+	}
+}
+
 // TestReportDiagnosticsNilParsedNoPanic verifies that reportDiagnostics does not
 // panic when parsed is nil (e.g. GetParsedCommandLineOfConfigFile returns nil on a
 // fatal config-read error). This guards against the nil-pointer dereference in

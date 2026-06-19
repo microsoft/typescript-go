@@ -86,12 +86,8 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 
 		diags := collectAllDiagnostics(ctx, program)
 
-		emitResult := program.Emit(ctx, compiler.EmitOptions{
-			WriteFile: func(fileName, text string, data *compiler.WriteFileData) error {
-				outputs = append(outputs, fileName)
-				return osvfs.FS().WriteFile(fileName, text)
-			},
-		})
+		emitResult := program.Emit(ctx, compiler.EmitOptions{})
+		outputs = append(outputs, emitResult.EmittedFiles...)
 		diags = append(diags, emitResult.Diagnostics...)
 
 		if len(diags) > 0 {
@@ -104,10 +100,12 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 	if inputs.Len() == 0 {
 		inputs.Add("src/**")
 	}
+	relativized := RelativizeOutputs(cwd, outputs)
+	sort.Strings(relativized)
 	return CompileResult{
 		ExitCode:    exitCode,
 		Inputs:      sortedKeys(inputs),
-		Outputs:     RelativizeOutputs(cwd, outputs),
+		Outputs:     relativized,
 		Diagnostics: diagBuf.String(),
 	}
 }
