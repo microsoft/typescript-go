@@ -8,17 +8,20 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
 type resolutionHostStub struct {
-	fs  vfs.FS
-	cwd string
+	fs     vfs.FS
+	cwd    string
+	pnpApi *pnp.PnpApi
 }
 
 func (h *resolutionHostStub) FS() vfs.FS                  { return h.fs }
 func (h *resolutionHostStub) GetCurrentDirectory() string { return h.cwd }
+func (h *resolutionHostStub) PnpApi() *pnp.PnpApi         { return h.pnpApi }
 
 // Regression test for https://github.com/microsoft/typescript-go/issues/3526.
 //
