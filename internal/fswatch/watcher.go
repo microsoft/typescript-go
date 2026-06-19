@@ -554,7 +554,7 @@ func watchDirFor(dir string) string {
 	if realpath == dir {
 		return dir
 	}
-	return canonicalizePath(filepath.Clean(filepath.FromSlash(realpath)))
+	return canonicalizePath(filepath.Clean(realpath))
 }
 
 func (dw *dirWatch) displayPath(watchPath string) string {
@@ -575,10 +575,10 @@ func rebasePath(path string, from string, to string) string {
 	if !strings.HasPrefix(path, from) {
 		return path
 	}
-	if len(path) > len(from) && os.IsPathSeparator(path[len(from)]) {
-		return to + path[len(from):]
+	if len(path) <= len(from) || !os.IsPathSeparator(path[len(from)]) {
+		return path
 	}
-	return path
+	return to + path[len(from):]
 }
 
 func (dw *dirWatch) destroyDebounce() {
