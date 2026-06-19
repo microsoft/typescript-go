@@ -3,11 +3,14 @@ package fswatch
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
 	"strings"
 	"sync"
+
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 var errNilCallback = errors.New("fswatch: callback must not be nil")
@@ -259,7 +262,7 @@ func (w *watcher) getImpl() (watcherImpl, error) {
 	return impl, nil
 }
 
-func (w *watcher) getOrCreateDirWatch(dir string, recursive bool) *dirWatch {
+func (w *watcher) getOrCreateDirWatch(dir string, watchDir string, recursive bool) *dirWatch {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.dirWatches == nil {
@@ -275,7 +278,7 @@ func (w *watcher) getOrCreateDirWatch(dir string, recursive bool) *dirWatch {
 	if dw, ok := w.dirWatches[key]; ok {
 		return dw
 	}
-	dw := newDirWatch(dir, w.debounce)
+	dw := newDirWatch(dir, watchDir, w.debounce)
 	dw.recursive = recursive
 	w.dirWatches[key] = dw
 	return dw
@@ -306,13 +309,14 @@ func (w *watcher) WatchDirectory(dir string, fn WatchCallback, opts ...WatchOpti
 		return nil, errNotAbsolute
 	}
 	dir = canonicalizePath(dir)
+	watchDir := watchDirFor(dir)
 
 	var sopts watchOptions
 	for _, o := range opts {
 		o.applyWatchOption(&sopts)
 	}
 
-	dw := w.getOrCreateDirWatch(dir, sopts.recursive)
+	dw := w.getOrCreateDirWatch(dir, watchDir, sopts.recursive)
 	id, _ := dw.watch(fn, sopts.ignore)
 
 	impl, err := w.getImpl()
@@ -522,6 +526,7 @@ func (e *dirWatchError) Unwrap() error { return e.err }
 // and a reference to the shared debouncer. Each watched directory has one.
 type dirWatch struct {
 	dir       string
+	watchDir  string
 	recursive bool
 	events    eventList
 
@@ -534,11 +539,43 @@ type dirWatch struct {
 	nextCBID  uint64
 }
 
-func newDirWatch(dir string, db *debounce) *dirWatch {
-	dw := &dirWatch{dir: dir}
+func newDirWatch(dir string, watchDir string, db *debounce) *dirWatch {
+	dw := &dirWatch{dir: dir, watchDir: watchDir}
 	dw.debounce = db
 	dw.debounce.add(dw, func() { dw.triggerCallbacks() })
 	return dw
+}
+
+func watchDirFor(dir string) string {
+	if !osvfs.IsSymlink(dir) {
+		return dir
+	}
+	realpath := osvfs.Realpath(dir)
+	if realpath == dir {
+		return dir
+	}
+	return canonicalizePath(filepath.Clean(filepath.FromSlash(realpath)))
+}
+
+func (dw *dirWatch) displayPath(watchPath string) string {
+	return rebasePath(watchPath, dw.watchDir, dw.dir)
+}
+
+func (dw *dirWatch) physicalPath(displayPath string) string {
+	return rebasePath(displayPath, dw.dir, dw.watchDir)
+}
+
+func rebasePath(path string, from string, to string) string {
+	if from == to {
+		return path
+	}
+	if path == from {
+		return to
+	}
+	if len(path) > len(from) && os.IsPathSeparator(path[len(from)]) && path[:len(from)] == from {
+		return to + path[len(from):]
+	}
+	return path
 }
 
 func (dw *dirWatch) destroyDebounce() {

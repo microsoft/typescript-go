@@ -12,7 +12,7 @@ import (
 // primary implementation on platforms without a native version, and is
 // tested on all platforms.
 func walkDirGeneric(dir string, recursive bool, fn func(path string, isDir bool) error) error {
-	info, err := os.Stat(dir)
+	info, err := os.Lstat(dir)
 	if err != nil {
 		return err
 	}

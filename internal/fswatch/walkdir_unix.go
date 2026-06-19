@@ -20,7 +20,7 @@ type walkState struct {
 // in each record drives the isDir flag without a stat.
 func walkDir(dir string, recursive bool, fn func(path string, isDir bool) error) error {
 	const openFlags = unix.O_RDONLY | unix.O_CLOEXEC | unix.O_DIRECTORY |
-		unix.O_NOCTTY | unix.O_NONBLOCK
+		unix.O_NOCTTY | unix.O_NONBLOCK | unix.O_NOFOLLOW
 	fd, err := unix.Open(dir, openFlags, 0)
 	if err != nil {
 		// Fall back to a path-based open when O_DIRECTORY rejects a

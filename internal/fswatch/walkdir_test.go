@@ -31,40 +31,6 @@ func TestWalkDirDoesNotFollowSymlinkedDir(t *testing.T) { //nolint:paralleltest 
 	runWalkDirTest(t, testWalkDirDoesNotFollowSymlinkedDir)
 }
 
-func TestWalkDirFollowsRootSymlinkedDir(t *testing.T) { //nolint:paralleltest // runWalkDirTest calls t.Parallel.
-	runWalkDirTest(t, testWalkDirFollowsRootSymlinkedDir)
-}
-
-func testWalkDirFollowsRootSymlinkedDir(t *testing.T, walk walkDirFunc) {
-	root := newTmpDir(t)
-	target := filepath.Join(t.TempDir(), "target")
-	if err := os.Mkdir(target, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(target, "child"), []byte("visible"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-
-	link := filepath.Join(root, "link")
-	if err := os.Symlink(target, link); err != nil {
-		t.Fatal(err)
-	}
-
-	found := map[string]bool{}
-	if err := walk(link, true, func(path string, isDir bool) error {
-		found[path] = isDir
-		return nil
-	}); err != nil {
-		t.Fatal(err)
-	}
-	if isDir, ok := found[link]; !ok || !isDir {
-		t.Fatalf("root symlink %q was not treated as a directory", link)
-	}
-	if _, ok := found[filepath.Join(link, "child")]; !ok {
-		t.Fatalf("missing child under root symlink %q", link)
-	}
-}
-
 func testWalkDirDoesNotFollowSymlinkedDir(t *testing.T, walk walkDirFunc) {
 	root := newTmpDir(t)
 	target := filepath.Join(t.TempDir(), "target")

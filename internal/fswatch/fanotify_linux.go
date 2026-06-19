@@ -6,7 +6,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"path/filepath"
 	"sync/atomic"
 	"unsafe"
 
@@ -286,7 +285,6 @@ func (b *fanotifyBackend) shutdown() {
 }
 
 func (b *fanotifyBackend) subscribe(w *dirWatch) error {
-	probeDir := evalSymlinksIfPossible(w.dir)
 	// Probe FAN_RENAME on the first subscribe using the actual watch
 	// directory. FAN_RENAME (Linux 5.17+) yields a single paired event
 	// for renames; when unavailable we fall back to FAN_MOVED_FROM/
@@ -297,7 +295,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 			b.markMask = fanotifyMarkMaskMovedFromTo
 		} else {
 			b.markMask = fanotifyMarkMaskRename
-			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, probeDir)
+			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, w.watchDir)
 			switch {
 			case err == nil:
 				// B5: pair the probe Add with a matching Remove. If
@@ -308,7 +306,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 				// flags the kernel just merges them. The probe is the
 				// only failure path we explicitly retry.
 				for {
-					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, probeDir)
+					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, w.watchDir)
 					if rmErr == nil || !errors.Is(rmErr, unix.EINTR) {
 						break
 					}
@@ -319,7 +317,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 		}
 	}
 	if !w.recursive {
-		if err := b.markDir(w, w.dir); err != nil {
+		if err := b.markDir(w, w.dir, w.watchDir); err != nil {
 			return &dirWatchError{
 				err:      fmt.Errorf("fanotify_mark on '%s' failed: %w", w.dir, err),
 				dirWatch: w,
@@ -327,11 +325,12 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 		}
 		return nil
 	}
-	if err := walkDir(w.dir, true, func(path string, isDir bool) error {
+	if err := walkDir(w.watchDir, true, func(watchPath string, isDir bool) error {
 		if !isDir {
 			return nil
 		}
-		if err := b.markDir(w, path); err != nil {
+		path := w.displayPath(watchPath)
+		if err := b.markDir(w, path, watchPath); err != nil {
 			return &dirWatchError{
 				err:      fmt.Errorf("fanotify_mark on '%s' failed: %w", path, err),
 				dirWatch: w,
@@ -345,19 +344,9 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 	return nil
 }
 
-func (b *fanotifyBackend) markDir(w *dirWatch, path string) error {
-	markPath := path
+func (b *fanotifyBackend) markDir(w *dirWatch, path string, markPath string) error {
 	if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, markPath); err != nil {
-		if !errors.Is(err, unix.ENOTDIR) {
-			return err
-		}
-		markPath = evalSymlinksIfPossible(path)
-		if markPath == path {
-			return err
-		}
-		if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, markPath); err != nil {
-			return err
-		}
+		return err
 	}
 	handle, _, err := unix.NameToHandleAt(unix.AT_FDCWD, markPath, 0)
 	if err != nil {
@@ -374,14 +363,6 @@ func (b *fanotifyBackend) markDir(w *dirWatch, path string) error {
 	sub := &fanotifySubscription{path: path, markPath: markPath, dirWatch: w, key: key}
 	b.subscriptions[key] = append(b.subscriptions[key], sub)
 	return nil
-}
-
-func evalSymlinksIfPossible(path string) string {
-	resolved, err := filepath.EvalSymlinks(path)
-	if err != nil {
-		return path
-	}
-	return resolved
 }
 
 // handleEvents reads and dispatches fanotify events from the fd.
@@ -489,11 +470,11 @@ func (b *fanotifyBackend) handleRenameEvent(mask uint64, dfidOld *fanotifyDfidNa
 			newPath := s.path + "/" + dfidNew.name
 			s.dirWatch.events.create(newPath)
 			if isDir && s.dirWatch.recursive {
-				_ = walkDir(newPath, true, func(p string, pIsDir bool) error {
+				_ = walkDir(s.dirWatch.physicalPath(newPath), true, func(p string, pIsDir bool) error {
 					if !pIsDir {
 						return nil
 					}
-					_ = b.markDir(s.dirWatch, p)
+					_ = b.markDir(s.dirWatch, s.dirWatch.displayPath(p), p)
 					return nil
 				})
 			}
@@ -585,11 +566,11 @@ func (b *fanotifyBackend) handleSubscription(mask uint64, dfid *fanotifyDfidName
 	if hasCreate {
 		w.events.create(path)
 		if isDir && w.recursive {
-			_ = walkDir(path, true, func(p string, pIsDir bool) error {
+			_ = walkDir(w.physicalPath(path), true, func(p string, pIsDir bool) error {
 				if !pIsDir {
 					return nil
 				}
-				_ = b.markDir(w, p)
+				_ = b.markDir(w, w.displayPath(p), p)
 				return nil
 			})
 		}

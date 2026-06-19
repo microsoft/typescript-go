@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -117,6 +118,18 @@ func newTmpDir(t testingT) string {
 	return resolved
 }
 
+func makeDirSymlink(t testingT, target string, link string) {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		if err := exec.Command("cmd", "/c", "mklink", "/J", link, target).Run(); err == nil {
+			return
+		}
+	}
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("directory symlink support is not available: %v", err)
+	}
+}
+
 // nameCounter generates unique file names per test to avoid collisions.
 var nameCounter atomic.Uint64
 
@@ -136,7 +149,7 @@ func subPath(dir string) string {
 // test gets its own debouncer so tests don't share goroutine state.
 func newDirectWatcher(t testingT, dir string) *dirWatch {
 	t.Helper()
-	w := newDirWatch(dir, newDebounce())
+	w := newDirWatch(dir, dir, newDebounce())
 	w.recursive = true
 	t.Cleanup(func() { w.destroyDebounce() })
 	return w
@@ -994,6 +1007,26 @@ func TestSubscribeSymlinkDelete(t *testing.T) {
 			t.Fatal(err)
 		}
 		expectEventSequence(t, r, []wantEvent{{EventDelete, f2}})
+	})
+}
+
+func TestSubscribeSymlinkedDirectory(t *testing.T) {
+	t.Parallel()
+	runForEachWatcher(t, func(t testingT, watcherImpl Watcher) {
+		dir := newTmpDir(t)
+		target := filepath.Join(dir, "target")
+		if err := os.Mkdir(target, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		link := filepath.Join(dir, "link")
+		makeDirSymlink(t, target, link)
+
+		r, _ := subscribeFor(t, link, watcherImpl)
+		child := filepath.Join(link, "child")
+		if err := os.WriteFile(child, []byte("x"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		expectContains(t, r, EventUpdate, child)
 	})
 }
 

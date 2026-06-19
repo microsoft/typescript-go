@@ -64,38 +64,6 @@ func TestLinuxFanotifySubscribeCleansUpAfterMarkFailure(t *testing.T) {
 	}
 }
 
-func TestLinuxFanotifySubscribeSymlinkedDir(t *testing.T) {
-	t.Parallel()
-	if !fanotifyAvailable() {
-		t.Skip("fanotify not available")
-	}
-
-	dir := newTmpDir(t)
-	target := filepath.Join(dir, "target")
-	if err := os.Mkdir(target, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	link := filepath.Join(dir, "link")
-	if err := os.Symlink(target, link); err != nil {
-		t.Fatal(err)
-	}
-
-	r := newRecorder(t)
-	r.watcher = Fanotify()
-	sub, err := Fanotify().WatchDirectory(link, r.callback, WithRecursive())
-	if err != nil {
-		t.Fatalf("subscribe: %v", err)
-	}
-	t.Cleanup(func() { _ = sub.Close() })
-	time.Sleep(settleSleep(Fanotify()))
-
-	child := filepath.Join(link, "child")
-	if err := os.WriteFile(child, []byte("x"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	expectContains(t, r, EventUpdate, child)
-}
-
 func TestLinuxFanotifyParseDfidNameRoundTrip(t *testing.T) {
 	t.Parallel()
 	dir := newTmpDir(t)

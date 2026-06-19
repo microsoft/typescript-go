@@ -150,8 +150,19 @@ func (vfs *osFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 func (vfs *osFS) Realpath(path string) string {
+	return Realpath(path)
+}
+
+// Realpath returns the OS realpath for path.
+func Realpath(path string) string {
 	defer blockingOpSema.Acquire()()
 	return osFSRealpath(path)
+}
+
+// IsSymlink reports whether path is a symlink or reparse point.
+func IsSymlink(path string) bool {
+	defer blockingOpSema.Acquire()()
+	return isSymlink(path)
 }
 
 func osFSRealpath(path string) string {
