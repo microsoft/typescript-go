@@ -686,7 +686,7 @@ func (l *LanguageService) getSymbolAndEntries(
 		}
 	} else {
 		options.use = referenceUseRename
-		options.useAliasesForRename = l.UserPreferences().UseAliasesForRename != core.TSFalse
+		options.useAliasesForRename = l.UserPreferences().UseAliasesForRename.IsTrueOrUnknown()
 	}
 	return l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options)
 }
