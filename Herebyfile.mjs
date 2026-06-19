@@ -224,6 +224,24 @@ export const tsgoBuild = task({
     },
 });
 
+const workerPlatforms = [
+    ["linux", "amd64"],
+    ["linux", "arm64"],
+    ["darwin", "amd64"],
+    ["darwin", "arm64"],
+];
+
+export const workerBuild = task({
+    name: "worker:build",
+    description: "Cross-compiles luchta-tsc-worker for linux and macOS.",
+    run: async () => {
+        for (const [goos, goarch] of workerPlatforms) {
+            const out = `./built/worker/${goos}-${goarch}/luchta-tsc-worker`;
+            await $({ env: { ...process.env, GOOS: goos, GOARCH: goarch, CGO_ENABLED: "0" } })`go build ${getReleaseBuildFlags()} -o ${out} ./cmd/luchta-tsc-worker`;
+        }
+    },
+});
+
 export const tsgo = task({
     name: "tsgo",
     dependencies: [lib, tsgoBuild],
