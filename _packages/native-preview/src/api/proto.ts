@@ -1,3 +1,4 @@
+import type { CompletionItemKind } from "#enums/completionItemKind";
 import {
     documentURIToFileName,
     fileNameToDocumentURI,
@@ -133,6 +134,8 @@ export interface SymbolResponse {
     checkFlags: number;
     declarations?: string[];
     valueDeclaration?: string;
+    parent?: number;
+    exportSymbol?: number;
 }
 
 export interface TypeResponse {
@@ -184,6 +187,7 @@ export interface IndexInfoResponse {
     keyType: TypeResponse;
     valueType: TypeResponse;
     isReadonly?: boolean;
+    declaration?: string;
 }
 
 export interface ProfileParams {
@@ -192,4 +196,25 @@ export interface ProfileParams {
 
 export interface ProfileResult {
     file: string;
+}
+
+export interface CompletionEntryLabelDetailsResponse {
+    detail?: string;
+    description?: string;
+}
+
+export interface CompletionEntryResponse {
+    name: string;
+    kind?: CompletionItemKind;
+    sortText?: string;
+    insertText?: string;
+    filterText?: string;
+    detail?: string;
+    labelDetails?: CompletionEntryLabelDetailsResponse;
+    symbol?: SymbolResponse;
+}
+
+export interface CompletionInfoResponse {
+    isIncomplete: boolean;
+    entries: CompletionEntryResponse[];
 }
