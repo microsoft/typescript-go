@@ -250,6 +250,24 @@ func TestProjectReferencesProgram(t *testing.T) {
 		assert.Assert(t, barFile != nil)
 	})
 
+	t.Run("references through symlink to a directory subpath (index file)", func(t *testing.T) {
+		t.Parallel()
+		files, aTest, bIndex := filesForSymlinkReferencesToDirectoryIndexSubpath("")
+		session, _ := projecttestutil.Setup(files)
+
+		uri := lsconv.FileNameToDocumentURI(aTest)
+		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
+
+		snapshot := session.Snapshot()
+		projects := snapshot.ProjectCollection.Projects()
+		assert.Equal(t, len(projects), 1)
+		p := projects[0]
+		assert.Equal(t, p.Kind, project.KindConfigured)
+
+		indexFile := p.Program.GetSourceFile(bIndex)
+		assert.Assert(t, indexFile != nil)
+	})
+
 	t.Run("when new file is added to referenced project", func(t *testing.T) {
 		t.Parallel()
 		files := filesForReferencedProjectProgram(false)
@@ -358,6 +376,27 @@ func filesForSymlinkReferencesInSubfolder(preserveSymlinks bool, scope string) (
 	addConfigForPackage(files, "A", preserveSymlinks, []string{"../B"})
 	addConfigForPackage(files, "B", preserveSymlinks, nil)
 	return files, aTest, bFoo, bBar
+}
+
+// filesForSymlinkReferencesToDirectoryIndexSubpath imports a directory subpath
+// (`b/lib/File`, whose source is `B/src/File/index.ts`) of a symlinked,
+// unbuilt referenced project. The resolver directory-probes the unbuilt subpath
+// before the package root, so the redirect must still map it to source.
+func filesForSymlinkReferencesToDirectoryIndexSubpath(scope string) (files map[string]any, aTest string, bIndex string) {
+	aTest = "/user/username/projects/myproject/packages/A/src/test.ts"
+	bIndex = "/user/username/projects/myproject/packages/B/src/File/index.ts"
+	files = map[string]any{
+		"/user/username/projects/myproject/packages/B/package.json": `{}`,
+		aTest: fmt.Sprintf(`
+			import { helper } from '%sb/lib/File';
+			helper();
+		`, scope),
+		bIndex: `export function helper() { }`,
+		fmt.Sprintf(`/user/username/projects/myproject/node_modules/%sb`, scope): vfstest.Symlink("/user/username/projects/myproject/packages/B"),
+	}
+	addConfigForPackage(files, "A", false, []string{"../B"})
+	addConfigForPackage(files, "B", false, nil)
+	return files, aTest, bIndex
 }
 
 func addConfigForPackage(files map[string]any, packageName string, preserveSymlinks bool, references []string) {

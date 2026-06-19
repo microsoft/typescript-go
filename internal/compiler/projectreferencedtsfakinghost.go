@@ -162,6 +162,31 @@ func (fs *projectReferenceDtsFakingVfs) handleDirectoryCouldBeSymlink(directory 
 	})
 }
 
+// registerNodeModulesSymlinkFromAncestor walks up from a node_modules path to
+// the nearest ancestor directory that actually exists on disk and, if that
+// directory is a symlink (e.g. a symlinked package root in a workspace install),
+// records it in knownSymlinks. This handles the case where the resolver probes a
+// path inside an unbuilt package before directory-probing the package root, so
+// handleDirectoryCouldBeSymlink has not fired for it yet.
+func (fs *projectReferenceDtsFakingVfs) registerNodeModulesSymlinkFromAncestor(fileOrDirectory string) {
+	if !strings.Contains(fileOrDirectory, "/node_modules/") {
+		return
+	}
+	realFS := fs.projectReferenceFileMapper.opts.Host.FS()
+	dir := tspath.GetDirectoryPath(fileOrDirectory)
+	for strings.Contains(dir+"/", "/node_modules/") {
+		if realFS.DirectoryExists(dir) {
+			fs.handleDirectoryCouldBeSymlink(dir)
+			return
+		}
+		parent := tspath.GetDirectoryPath(dir)
+		if parent == dir {
+			return
+		}
+		dir = parent
+	}
+}
+
 func (fs *projectReferenceDtsFakingVfs) fileOrDirectoryExistsUsingSource(fileOrDirectory string, isFile bool) bool {
 	fileOrDirectoryExistsUsingSource := core.IfElse(isFile, fs.fileExistsIfProjectReferenceDts, fs.directoryExistsIfProjectReferenceDeclDir)
 	// Check current directory or file
@@ -169,6 +194,13 @@ func (fs *projectReferenceDtsFakingVfs) fileOrDirectoryExistsUsingSource(fileOrD
 	if result != core.TSUnknown {
 		return result == core.TSTrue
 	}
+
+	// The resolver can probe a path inside an unbuilt referenced package (whose
+	// declaration outputs do not exist on disk) before it ever directory-probes
+	// that package's symlinked root, so the symlink may not be in knownSymlinks
+	// yet. Discover and register it on demand from the nearest existing ancestor
+	// directory, then fall through to the existing symlink-aware lookup.
+	fs.registerNodeModulesSymlinkFromAncestor(fileOrDirectory)
 
 	knownDirectoryLinks := fs.knownSymlinks.Directories()
 	if knownDirectoryLinks.Size() == 0 {
