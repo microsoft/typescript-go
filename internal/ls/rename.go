@@ -80,6 +80,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 	defer done()
 
 	quotePreference := lsutil.GetQuotePreference(sourceFile, l.UserPreferences())
+	useAliasesForRename := l.UserPreferences().UseAliasesForRename != core.TSFalse
 
 	for _, entry := range entries {
 		uri := l.getFileNameOfEntry(entry)
@@ -88,7 +89,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 		}
 		textEdit := &lsproto.TextEdit{
 			Range:   l.getRangeOfEntry(entry),
-			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, ch, quotePreference),
+			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, ch, quotePreference, useAliasesForRename),
 		}
 		changes[uri] = append(changes[uri], textEdit)
 	}
@@ -293,8 +294,8 @@ func (l *LanguageService) getNewFileNameForModuleRename(oldPath, specifierText, 
 	return newPath
 }
 
-func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, ch *checker.Checker, quotePreference lsutil.QuotePreference) string {
-	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
+func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *ReferenceEntry, newText string, ch *checker.Checker, quotePreference lsutil.QuotePreference, useAliasesForRename bool) string {
+	if useAliasesForRename && entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
 		node := ast.GetReparsedNodeForNode(entry.node)
 		kind := entry.kind
 		parent := node.Parent
@@ -340,7 +341,7 @@ func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *Refere
 	}
 
 	// If the node is a numerical indexing literal, then add quotes around the property access.
-	if entry.kind != entryKindRange && ast.IsNumericLiteral(entry.node) && ast.IsAccessExpression(entry.node.Parent) {
+	if useAliasesForRename && entry.kind != entryKindRange && ast.IsNumericLiteral(entry.node) && ast.IsAccessExpression(entry.node.Parent) {
 		quote := getQuoteFromPreference(quotePreference)
 		return quote + newText + quote
 	}
