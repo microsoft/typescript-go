@@ -1658,9 +1658,11 @@ async function runBuildNativePreviewPackages() {
     // Copy package contents excluding node_modules and dist (dist is copied separately after build).
     // The package.json "files" field controls what npm pack actually includes.
     await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist"));
-
     if (publishAsTypescript) {
-        await fs.promises.rename(path.join(mainPackageDir, "bin", "tsgo.js"), path.join(mainPackageDir, "bin", "tsc"));
+        await fs.promises.rename(path.join(mainPackageDir, "bin", "tsgo"), path.join(mainPackageDir, "bin", "tsc"));
+        await fs.promises.rename(path.join(mainPackageDir, "lib", "tsgo.js"), path.join(mainPackageDir, "lib", "tsc.js"));
+        await fs.promises.writeFile(path.join(mainPackageDir, "bin", "tsc"), '#!/usr/bin/env node\nimport "../lib/tsc.js";\n');
+        await fs.promises.chmod(path.join(mainPackageDir, "bin", "tsc"), 0o755);
     }
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
