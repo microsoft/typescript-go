@@ -832,7 +832,7 @@ func (r *EmitResolver) getReferenceResolver() binder.ReferenceResolver {
 	if r.referenceResolver == nil {
 		r.referenceResolver = binder.NewReferenceResolver(r.checker.compilerOptions, binder.ReferenceResolverHooks{
 			ResolveName:                            r.checker.resolveName,
-			GetResolvedSymbol:                      r.checker.getResolvedSymbolOrNil,
+			GetCachedResolvedSymbol:                r.checker.getCachedResolvedSymbol,
 			GetMergedSymbol:                        r.checker.getMergedSymbol,
 			GetParentOfSymbol:                      r.checker.getParentOfSymbol,
 			GetSymbolOfDeclaration:                 r.checker.getSymbolOfDeclaration,
