@@ -921,6 +921,46 @@ func TestParseJsonSourceFileConfigFileContentWithEmptyExtendedConfig(t *testing.
 	assert.DeepEqual(t, parsed.FileNames(), []string{"/project/main.ts"})
 }
 
+func TestParseJsonSourceFileConfigFileContentWithNonStringPathInExtendedConfig(t *testing.T) {
+	t.Parallel()
+	for _, propertyName := range []string{"include", "exclude", "files"} {
+		t.Run(propertyName, func(t *testing.T) {
+			t.Parallel()
+			files := map[string]string{
+				"/project/tsconfig.json": `{
+  "extends": "./base.json"
+}`,
+				"/project/base.json": `{ "` + propertyName + `": [1] }`,
+				"/project/main.ts":   "export const x = 1;",
+			}
+			host := tsoptionstest.NewVFSParseConfigHost(files, "/project", true /*useCaseSensitiveFileNames*/)
+			configFileName := "/project/tsconfig.json"
+			configFile := tsoptions.NewTsconfigSourceFileFromFilePath(
+				configFileName,
+				tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()),
+				files[configFileName],
+			)
+
+			parsed := tsoptions.ParseJsonSourceFileConfigFileContent(
+				configFile,
+				host,
+				host.GetCurrentDirectory(),
+				nil,
+				nil,
+				configFileName,
+				nil,
+				nil,
+				nil,
+			)
+
+			typeErrors := core.Filter(parsed.Errors, func(diagnostic *ast.Diagnostic) bool {
+				return diagnostic.Code() == diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code()
+			})
+			assert.Assert(t, len(typeErrors) >= 1)
+		})
+	}
+}
+
 func TestParseJsonSourceFileConfigFileContentDoesNotDuplicateUnquotedKeyDiagnostics(t *testing.T) {
 	t.Parallel()
 	parsed := tsoptionstest.GetParsedCommandLine(t, `{
