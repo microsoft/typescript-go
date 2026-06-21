@@ -35,6 +35,10 @@ import {
 } from "./protocol.ts";
 
 export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {
+    static get [Symbol.species](): ArrayConstructor {
+        return Array;
+    }
+
     parent: RemoteNode;
     hasTrailingComma?: boolean;
     transformFlags: number = 0;

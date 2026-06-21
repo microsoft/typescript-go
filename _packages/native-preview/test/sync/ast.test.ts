@@ -662,3 +662,52 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
         }
     });
 });
+
+describe("RemoteNodeList + Array species methods", () => {
+    const files = {
+        "/tsconfig.json": "{}",
+        "/src/index.ts": "const a = 1;\nconst b = 2;\nconst c = 3;\n",
+    };
+
+    test("map/filter/slice do not throw and return plain arrays", () => {
+        const api = spawnAPI(files);
+        try {
+            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
+            const statements = sf.statements;
+            assert.ok(statements.length >= 3);
+
+            // Species methods must not throw, and must produce a plain Array
+            // (not another RemoteNodeList; its prototype differs from Array.prototype).
+            assert.doesNotThrow(() => statements.map(s => s.kind));
+            const mapped = statements.map(s => s.kind);
+            assert.strictEqual(Object.getPrototypeOf(mapped), Array.prototype);
+            assert.deepStrictEqual(mapped, [...statements].map(s => s.kind));
+
+            const filtered = statements.filter(() => true);
+            assert.strictEqual(Object.getPrototypeOf(filtered), Array.prototype);
+            assert.strictEqual(filtered.length, statements.length);
+
+            const sliced = statements.slice(1);
+            assert.strictEqual(Object.getPrototypeOf(sliced), Array.prototype);
+            assert.strictEqual(sliced.length, statements.length - 1);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("iterator-based access is unaffected", () => {
+        const api = spawnAPI(files);
+        try {
+            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
+            const statements = sf.statements;
+
+            assert.strictEqual([...statements].length, statements.length);
+            assert.ok(statements.at(0));
+            assert.ok(statements[0]);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
