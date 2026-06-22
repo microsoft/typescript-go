@@ -1,7 +1,6 @@
 package project
 
 import (
-	"runtime"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -96,7 +95,6 @@ func (c *RefCountCache[K, V, AcquireArgs]) RefValue(identity K, value V) {
 		if c.tryRefEntry(entry) {
 			return
 		}
-		runtime.Gosched()
 	}
 }
 
