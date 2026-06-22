@@ -1,15 +1,12 @@
 package luchta
 
 import (
-	"bytes"
 	"context"
+	"encoding/json"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
-
-	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 func writeTsPackage(t *testing.T, dir, tsconfig, srcName, srcBody string) {
@@ -27,7 +24,10 @@ func TestCompilePackageSuccess(t *testing.T) {
 
 	res := CompilePackage(context.Background(), cwd)
 	if res.ExitCode != 0 {
-		t.Fatalf("exitCode=%d diagnostics=%s", res.ExitCode, res.Diagnostics)
+		t.Fatalf("exitCode=%d sarif=%s", res.ExitCode, DiagnosticsToSARIF(res.Diagnostics))
+	}
+	if len(res.Diagnostics) != 0 {
+		t.Fatalf("expected no diagnostics on success, got %s", DiagnosticsToSARIF(res.Diagnostics))
 	}
 	if !fileExists(filepath.Join(cwd, "dist", "index.js")) {
 		t.Fatalf("expected dist/index.js emitted; outputs=%v", res.Outputs)
@@ -50,8 +50,37 @@ func TestCompilePackageTypeError(t *testing.T) {
 	if res.ExitCode == 0 {
 		t.Fatalf("expected non-zero exit on type error")
 	}
-	if res.Diagnostics == "" {
-		t.Fatalf("expected diagnostic text")
+	if len(res.Diagnostics) == 0 {
+		t.Fatalf("expected diagnostics")
+	}
+
+	// The worker reports diagnostics as a SARIF document; verify it is
+	// well-formed and carries the error with a clickable location.
+	var log sarifLog
+	if err := json.Unmarshal([]byte(DiagnosticsToSARIF(res.Diagnostics)), &log); err != nil {
+		t.Fatalf("SARIF output is not valid JSON: %v", err)
+	}
+	if log.Version != "2.1.0" {
+		t.Fatalf("unexpected SARIF version %q", log.Version)
+	}
+	if len(log.Runs) != 1 || len(log.Runs[0].Results) == 0 {
+		t.Fatalf("expected at least one SARIF result, got %+v", log.Runs)
+	}
+	got := log.Runs[0].Results[0]
+	if got.Level != "error" {
+		t.Fatalf("expected error level, got %q", got.Level)
+	}
+	if !strings.HasPrefix(got.RuleID, "TS") {
+		t.Fatalf("expected TS-prefixed ruleId, got %q", got.RuleID)
+	}
+	if got.Message.Text == "" {
+		t.Fatalf("expected a non-empty message")
+	}
+	if len(got.Locations) == 0 || got.Locations[0].PhysicalLocation.Region == nil {
+		t.Fatalf("expected a physical location with a region, got %+v", got.Locations)
+	}
+	if region := got.Locations[0].PhysicalLocation.Region; region.StartLine < 1 || region.StartColumn < 1 {
+		t.Fatalf("expected 1-based region, got %+v", region)
 	}
 }
 
@@ -111,24 +140,10 @@ func TestCompilePackageConcurrentRace(t *testing.T) {
 	for range goroutines {
 		r := <-ch
 		if r.res.ExitCode != 0 {
-			t.Errorf("goroutine %d: exitCode=%d diagnostics=%s", r.idx, r.res.ExitCode, r.res.Diagnostics)
+			t.Errorf("goroutine %d: exitCode=%d sarif=%s", r.idx, r.res.ExitCode, DiagnosticsToSARIF(r.res.Diagnostics))
 		}
 		if len(r.res.Outputs) == 0 {
 			t.Errorf("goroutine %d: expected non-empty Outputs", r.idx)
 		}
 	}
-}
-
-// TestReportDiagnosticsNilParsedNoPanic verifies that reportDiagnostics does not
-// panic when parsed is nil (e.g. GetParsedCommandLineOfConfigFile returns nil on a
-// fatal config-read error). This guards against the nil-pointer dereference in
-// CreateDiagnosticReporter which immediately accesses options.Quiet.
-func TestReportDiagnosticsNilParsedNoPanic(t *testing.T) {
-	cwd := t.TempDir()
-	fsys := bundled.WrapFS(osvfs.FS())
-	var buf bytes.Buffer
-	sys := newRunSystem(cwd, fsys, bundled.LibPath(), &buf, nil)
-
-	// Must not panic even with nil parsed and an empty diagnostics slice.
-	reportDiagnostics(sys, &buf, nil, []*ast.Diagnostic{})
 }

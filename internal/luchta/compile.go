@@ -1,8 +1,8 @@
 package luchta
 
 import (
-	"bytes"
 	"context"
+	"io"
 	"path/filepath"
 	"sort"
 
@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -22,10 +21,16 @@ import (
 
 // CompileResult holds the outcome of compiling one package.
 type CompileResult struct {
-	ExitCode    int
-	Inputs      []string
-	Outputs     []string
-	Diagnostics string
+	ExitCode int
+	Inputs   []string
+	Outputs  []string
+	// Diagnostics are the raw compiler diagnostics, rendered into a SARIF
+	// report by the worker (see DiagnosticsToSARIF).
+	Diagnostics []*ast.Diagnostic
+	// InternalError is set for an operational failure that is not a code-level
+	// diagnostic (e.g. failing to clean stale outputs). The worker logs it to
+	// stderr rather than placing it in the SARIF report.
+	InternalError string
 }
 
 var tsconfigCandidates = []string{"tsconfig.build.json", "tsconfig.json"}
@@ -47,12 +52,13 @@ func compilerFS(cwd string) (vfs.FS, *pnp.PnpApi) {
 // and emit. Returns aggregated inputs/outputs and a non-zero ExitCode on any error.
 func CompilePackage(ctx context.Context, cwd string) CompileResult {
 	fsys, pnpApi := compilerFS(cwd)
-	var diagBuf bytes.Buffer
-	sys := newRunSystem(cwd, fsys, bundled.LibPath(), &diagBuf, pnpApi)
+	sys := newRunSystem(cwd, fsys, bundled.LibPath(), io.Discard, pnpApi)
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 
 	inputs := collections.NewSetWithSizeHint[string](4)
 	var outputs []string
+	var allDiags []*ast.Diagnostic
+	internalErr := ""
 	exitCode := 0
 
 	for _, name := range tsconfigCandidates {
@@ -66,7 +72,7 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 			configPath, &core.CompilerOptions{}, nil, sys, extendedConfigCache,
 		)
 		if len(errs) > 0 {
-			reportDiagnostics(sys, &diagBuf, parsed, errs)
+			allDiags = append(allDiags, errs...)
 			exitCode = 1
 			break
 		}
@@ -76,7 +82,7 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 
 		opts := parsed.CompilerOptions()
 		if err := CleanOutputs(cwd, outDirOf(opts), rootDirOf(opts), opts.NoEmit.IsTrue()); err != nil {
-			diagBuf.WriteString("clean outputs failed: " + err.Error() + "\n")
+			internalErr = "clean outputs failed: " + err.Error()
 			exitCode = 1
 			break
 		}
@@ -91,7 +97,7 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 		diags = append(diags, emitResult.Diagnostics...)
 
 		if len(diags) > 0 {
-			reportDiagnostics(sys, &diagBuf, parsed, diags)
+			allDiags = append(allDiags, diags...)
 			exitCode = 1
 			break
 		}
@@ -103,37 +109,32 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 	relativized := RelativizeOutputs(cwd, outputs)
 	sort.Strings(relativized)
 	return CompileResult{
-		ExitCode:    exitCode,
-		Inputs:      sortedKeys(inputs),
-		Outputs:     relativized,
-		Diagnostics: diagBuf.String(),
+		ExitCode:      exitCode,
+		Inputs:        sortedKeys(inputs),
+		Outputs:       relativized,
+		Diagnostics:   allDiags,
+		InternalError: internalErr,
 	}
 }
 
+// collectAllDiagnostics gathers pre-emit diagnostics exactly the way the tsc CLI
+// does (via compiler.GetDiagnosticsOfAnyProgram), so skipLibCheck and the
+// "don't report semantic errors when there are syntactic errors" behavior are
+// honored. Binder/duplicate-identifier errors surface through the semantic pass,
+// which filters declaration files under skipLibCheck; appending raw
+// GetBindDiagnostics(nil) here (as this previously did) wrongly reports errors
+// inside library .d.ts files — e.g. playwright-core's intentionally duplicated
+// `ElectronType` — even when skipLibCheck is set. Declaration-emit diagnostics
+// are collected separately from the subsequent program.Emit call.
 func collectAllDiagnostics(ctx context.Context, p *compiler.Program) []*ast.Diagnostic {
-	var d []*ast.Diagnostic
-	d = append(d, p.GetConfigFileParsingDiagnostics()...)
-	d = append(d, p.GetSyntacticDiagnostics(ctx, nil)...)
-	d = append(d, p.GetProgramDiagnostics()...)
-	d = append(d, p.GetBindDiagnostics(ctx, nil)...)
-	d = append(d, p.GetGlobalDiagnostics(ctx)...)
-	d = append(d, p.GetSemanticDiagnostics(ctx, nil)...)
-	d = append(d, p.GetDeclarationDiagnostics(ctx, nil)...)
-	return d
-}
-
-func reportDiagnostics(sys tsc.System, w *bytes.Buffer, parsed *tsoptions.ParsedCommandLine, diags []*ast.Diagnostic) {
-	var opts *core.CompilerOptions
-	if parsed != nil {
-		opts = parsed.CompilerOptions()
-	}
-	if opts == nil {
-		opts = &core.CompilerOptions{}
-	}
-	report := tsc.CreateDiagnosticReporter(sys, w, locale.Default, opts)
-	for _, d := range diags {
-		report(d)
-	}
+	return compiler.GetDiagnosticsOfAnyProgram(
+		ctx,
+		p,
+		nil,   // file == nil: gather across all (non-skipped) files
+		false, // skipNoEmitCheckForDtsDiagnostics
+		p.GetBindDiagnostics,
+		p.GetSemanticDiagnostics,
+	)
 }
 
 func outDirOf(o *core.CompilerOptions) string {

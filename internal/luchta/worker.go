@@ -56,10 +56,13 @@ func handleRun(ctx context.Context, w *Writer, run *Run) {
 		}
 	}()
 	res := CompilePackage(ctx, run.Cwd)
-	for _, line := range strings.Split(strings.TrimRight(res.Diagnostics, "\n"), "\n") {
-		if line != "" {
-			w.Log(run.ID, "stdout", line)
-		}
+	if res.InternalError != "" {
+		w.Log(run.ID, "stderr", res.InternalError)
+	}
+	// Emit diagnostics as a structured SARIF report rather than free-form text,
+	// so luchta can render IDE-clickable errors/warnings (see luchta PR #110).
+	if len(res.Diagnostics) > 0 {
+		w.Report(run.ID, sarifReportFilename, sarifMimeType, DiagnosticsToSARIF(res.Diagnostics))
 	}
 	w.Done(run.ID, res.ExitCode, res.Inputs, res.Outputs)
 }

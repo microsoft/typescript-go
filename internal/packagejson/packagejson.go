@@ -21,11 +21,16 @@ type PathFields struct {
 	Exports       ExportsOrImports `json:"exports"`
 }
 
+type PeerDependencyMeta struct {
+	Optional bool `json:"optional"`
+}
+
 type DependencyFields struct {
-	Dependencies         Expected[map[string]string] `json:"dependencies"`
-	DevDependencies      Expected[map[string]string] `json:"devDependencies"`
-	PeerDependencies     Expected[map[string]string] `json:"peerDependencies"`
-	OptionalDependencies Expected[map[string]string] `json:"optionalDependencies"`
+	Dependencies         Expected[map[string]string]             `json:"dependencies"`
+	DevDependencies      Expected[map[string]string]             `json:"devDependencies"`
+	PeerDependencies     Expected[map[string]string]             `json:"peerDependencies"`
+	PeerDependenciesMeta Expected[map[string]PeerDependencyMeta] `json:"peerDependenciesMeta"`
+	OptionalDependencies Expected[map[string]string]             `json:"optionalDependencies"`
 }
 
 // HasDependency returns true if the package.json has a dependency with the given name

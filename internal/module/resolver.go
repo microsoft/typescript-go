@@ -2,7 +2,6 @@ package module
 
 import (
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -1894,7 +1893,27 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		return ""
 	}
 	nodeModules := packageDirectory[:nodeModulesIndex+len("/node_modules")] + "/"
-	names := slices.AppendSeq(make([]string, 0, len(peerDependencies.Value)), maps.Keys(peerDependencies.Value))
+	// Optional peer dependencies do not change the package's own type
+	// declarations, so they must not contribute to the package identity.
+	// Including them fractures identity under Yarn PnP: the same physical
+	// package reached through different virtual instances can resolve a
+	// different subset of its *optional* peers depending on what each consumer
+	// happens to have installed (e.g. mongodb's optional 'snappy'/'@mongodb-js/zstd'),
+	// yielding distinct PackageIds for byte-identical .d.ts files. That defeats
+	// package deduplication and produces spurious "Type 'X' is not assignable to
+	// type 'X'" errors. Required peers (whose version genuinely affects the
+	// package's types, e.g. @types/react) are kept, preserving correct distinctions.
+	optionalPeers, _ := packageJsonInfo.Contents.PeerDependenciesMeta.GetValue()
+	names := make([]string, 0, len(peerDependencies.Value))
+	for name := range peerDependencies.Value {
+		if meta, ok := optionalPeers[name]; ok && meta.Optional {
+			continue
+		}
+		names = append(names, name)
+	}
+	if len(names) == 0 {
+		return ""
+	}
 	slices.Sort(names)
 	builder := strings.Builder{}
 	pnpApi := r.resolver.host.PnpApi()

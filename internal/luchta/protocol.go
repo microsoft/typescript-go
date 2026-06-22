@@ -76,6 +76,20 @@ func (w *Writer) Log(id, stream, line string) {
 	w.emit(logMsg{Type: "log", ID: id, Stream: stream, Line: line})
 }
 
+// Report attaches a file (with a MIME type) to the task result, per the luchta
+// worker protocol's `report` message. luchta persists it in the task cache and
+// pretty-prints known MIME types (e.g. SARIF) in `luchta logs`.
+func (w *Writer) Report(id, filename, mimeType, content string) {
+	type reportMsg struct {
+		Type     string `json:"type"`
+		ID       string `json:"id"`
+		Filename string `json:"filename"`
+		MimeType string `json:"mimeType"`
+		Content  string `json:"content"`
+	}
+	w.emit(reportMsg{Type: "report", ID: id, Filename: filename, MimeType: mimeType, Content: content})
+}
+
 func (w *Writer) Done(id string, exitCode int, inputs, outputs []string) {
 	type doneMsg struct {
 		Type     string   `json:"type"`
