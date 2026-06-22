@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// tsgo: TypeScript compiler executable entry point.
+// Uses process.execve for better performance when available, falling back to execFileSync.
+
 import getExePath from "#getExePath";
 import { execFileSync } from "node:child_process";
 
