@@ -13,6 +13,33 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func TestRefCountCacheRefValueRestoresDeletedEntry(t *testing.T) {
+	t.Parallel()
+
+	cache := NewRefCountCache(RefCountCacheOptions{}, func(_ string, value string) string {
+		return value
+	})
+
+	assert.Equal(t, cache.Acquire("key", "parsed"), "parsed")
+	cache.Deref("key")
+	assert.Assert(t, !cache.TryRef("key"))
+
+	cache.RefValue("key", "restored")
+	entry, ok := cache.entries.Load("key")
+	assert.Assert(t, ok)
+	assert.Equal(t, entry.value, "restored")
+	assert.Equal(t, entry.refCount, 1)
+
+	cache.RefValue("key", "ignored")
+	assert.Equal(t, entry.value, "restored")
+	assert.Equal(t, entry.refCount, 2)
+
+	cache.Deref("key")
+	cache.Deref("key")
+	_, ok = cache.entries.Load("key")
+	assert.Assert(t, !ok)
+}
+
 func TestRefCountingCaches(t *testing.T) {
 	t.Parallel()
 

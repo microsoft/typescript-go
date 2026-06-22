@@ -1,6 +1,7 @@
 package project
 
 import (
+	"runtime"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -60,20 +61,53 @@ func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
 // Ref increments the reference count for an existing entry.
 // Panics if the entry does not exist.
 func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
+	if c.TryRef(identity) {
+		return
+	}
+	panic("cache entry not found")
+}
+
+// TryRef increments the reference count for an existing entry.
+// Returns false if the entry does not exist.
+func (c *RefCountCache[K, V, AcquireArgs]) TryRef(identity K) bool {
 	entry, ok := c.entries.Load(identity)
 	if !ok {
-		panic("cache entry not found")
+		return false
 	}
+	return c.tryRefEntry(entry)
+}
+
+// RefValue increments the reference count for an entry, restoring it with value
+// if it was deleted before the ref could be taken.
+func (c *RefCountCache[K, V, AcquireArgs]) RefValue(identity K, value V) {
+	for {
+		entry, ok := c.entries.Load(identity)
+		if !ok {
+			entry = &refCountCacheEntry[V]{
+				value:    value,
+				refCount: 1,
+			}
+			existing, loaded := c.entries.LoadOrStore(identity, entry)
+			if !loaded {
+				return
+			}
+			entry = existing
+		}
+		if c.tryRefEntry(entry) {
+			return
+		}
+		runtime.Gosched()
+	}
+}
+
+func (c *RefCountCache[K, V, AcquireArgs]) tryRefEntry(entry *refCountCacheEntry[V]) bool {
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
 	if entry.refCount <= 0 && !c.Options.DisableDeletion {
-		// Entry was deleted while we were acquiring the lock
-		newEntry, _ := c.loadOrStoreNewLockedEntry(identity)
-		defer newEntry.mu.Unlock()
-		newEntry.value = entry.value
-		return
+		return false
 	}
 	entry.refCount++
+	return true
 }
 
 // Deref decrements the reference count for an entry.
