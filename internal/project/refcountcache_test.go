@@ -25,6 +25,8 @@ func TestRefCountCacheRefValueRestoresDeletedEntry(t *testing.T) {
 	assert.Assert(t, !cache.TryRef("key"))
 
 	cache.RefValue("key", "restored")
+	assert.Assert(t, cache.TryRef("key"))
+	cache.Deref("key")
 	assert.Equal(t, cache.Acquire("key", "ignored"), "restored")
 	cache.Deref("key")
 	cache.Deref("key")

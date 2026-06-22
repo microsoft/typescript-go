@@ -103,9 +103,8 @@ func (c *RefCountCache[K, V, AcquireArgs]) RefValue(identity K, value V) {
 			return
 		}
 		// The deleted entry was already removed from entries before we could ref it,
-		// so the next iteration will either store a replacement or race with another
-		// goroutine that did. If another goroutine wins, we'll ref its entry on the
-		// next iteration.
+		// so continue until this goroutine stores a replacement or another goroutine
+		// does. If another goroutine wins, we'll ref its entry on the next iteration.
 	}
 }
 
