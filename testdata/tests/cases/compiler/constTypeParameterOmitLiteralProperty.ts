@@ -25,8 +25,6 @@ export {
 import {
 BaseRootRoute,
  BaseRoute,
- ResolveFullPath,
- RouteConstraints,
  RouteOptions} from '@tanstack/router-core';
 export declare class Route<in out TRegister = unknown,
  in out TParentRoute extends RouteConstraints['TParentRoute'] = AnyRoute,
@@ -45,20 +43,13 @@ export declare class Route<in out TRegister = unknown,
  THandlers> {
 }
 export declare function createRoute<TRegister = unknown,
- TParentRoute extends RouteConstraints['TParentRoute'] = AnyRoute,
  TPath extends RouteConstraints['TPath'] = '/',
  TFullPath extends RouteConstraints['TFullPath'] = ResolveFullPath<TParentRoute,
  TPath>,
  const TServerMiddlewares = unknown>(options: RouteOptions<TRegister,
- TParentRoute,
- TId,
- TCustomId,
- TFullPath,
- TPath,
  TServerMiddlewares>): Route<TRegister,
  TParentRoute,
  TPath,
- TFullPath,
  TServerMiddlewares>;
 export declare class RootRoute<in out TRegister = unknown,
  in out TRouterContext = {
@@ -95,8 +86,6 @@ export {
 BaseRoute,
  BaseRootRoute} from './route.js';
 export type {
- ResolveFullPath,
- RouteOptions,
  RouteConstraints} from './route.js';
 export type {
  Register,
@@ -105,7 +94,6 @@ export type {
 
 // @filename: /node_modules/@tanstack/router-core/dist/esm/link.d.ts
 import {
-CatchAllPaths,
  RouteByPath,
  RouteToPath} from './routeInfo.js';
 import {
@@ -113,19 +101,12 @@ import {
  Expand,
  MakeDifferenceOptional,
  Updater } from './utils.js';
-export interface ParsePathParamsResult<in out TRequired,
- in out TOptional,
- in out TRest> {
-    required: TRequired;
-}
 export type ParsePathParamsSymbol<T extends string> = T extends `${string}$${infer TRight}` ? TRight extends `${string}/${string}` ? TRight extends `${infer TParam}/${infer TRest}` ? TParam extends '' ? ParsePathParamsResult<ParsePathParams<TRest>['required'],
  ParsePathParams<TRest>['rest']> : ParsePathParamsResult<TParam
 | ParsePathParams<TRest>['required'],
  ParsePathParams<TRest>['rest']> : never : TRight extends '' ? ParsePathParamsResult<never,
  never> : ParsePathParamsResult<TRight,
- never,
  never> : never;
-export type ParsePathParams<T extends string> = T extends `${string}[${string}` ? ParsePathParamsEscapeStart<T> : T extends `${string}]${string}` ? ParsePathParamsEscapeEnd<T> : T extends `${string}}${string}` ? ParsePathParamsBoundaryEnd<T> : T extends `${string}{${string}` ? ParsePathParamsBoundaryStart<T> : T extends `${string}$${string}` ? ParsePathParamsSymbol<T> : never;
 export type AddTrailingSlash<T> = T extends `${string}/` ? T : `${T & string}/`;
 export type ResolveRelativePath<TFrom,
  TTo = '.'> = string extends TFrom ? TTo : string extends TTo ? TFrom : undefined extends TTo ? TFrom : TTo extends string ? TFrom extends string ? TTo extends `/${string}` ? TTo : TTo extends `..${string}` ? ResolveParentPath<TFrom,
@@ -151,8 +132,6 @@ export type NavigateOptions<TRouter extends AnyRouter = RegisteredRouter,
  TMaskTo extends string = '.'> = ToOptions<TRouter,
  TFrom,
  TMaskTo>
-export interface NavigateOptionProps {
-}
 export type ToOptions<TRouter extends AnyRouter = RegisteredRouter,
  TFrom extends string = string,
  TTo extends string
@@ -160,20 +139,13 @@ export type ToOptions<TRouter extends AnyRouter = RegisteredRouter,
  TMaskTo extends string = '.'> = ToSubOptions<TRouter,
  TFrom,
  TTo>
-& MaskOptions<TRouter,
- TMaskFrom,
- TMaskTo>;
 export interface MaskOptions<in out TRouter extends AnyRouter,
- in out TMaskFrom extends string,
  in out TMaskTo extends string> {
 }
 export type ToSubOptions<TRouter extends AnyRouter = RegisteredRouter,
  TFrom extends string = string,
  TTo extends string
 | undefined = '.'> = ToSubOptionsProps<TRouter,
- TFrom,
- TTo>
-& SearchParamOptions<TRouter,
  TFrom,
  TTo>
 & PathParamOptions<TRouter,
@@ -190,15 +162,11 @@ export interface OptionalToOptions<in out TRouter extends AnyRouter,
     to?: ToPathOption<TRouter,
  TFrom,
  TTo>
-& {
-};
 }
 export type MakeToRequired<TRouter extends AnyRouter,
  TFrom extends string,
  TTo extends string
 | undefined> = string extends TFrom ? string extends TTo ? OptionalToOptions<TRouter,
- TTo> : TTo
-& CatchAllPaths<TRouter> extends never ? RequiredToOptions<TRouter,
  TTo> : OptionalToOptions<TRouter,
  TTo> : OptionalToOptions<TRouter,
  TFrom,
@@ -231,7 +199,6 @@ type ParamsReducer<TRouter extends AnyRouter,
 });
 export type ResolveRoute<TRouter extends AnyRouter,
  TFrom,
- TTo,
  TPath = ResolveRelativePath<TFrom,
  TTo>> = TPath extends string ? TFrom extends TPath ? RouteByPath<TRouter['routeTree'],
  TPath> : RouteByToPath<TRouter,
@@ -256,7 +223,6 @@ type ResolveRelativeToParams<TRouter extends AnyRouter,
  TFrom>,
  TToParams>;
 export interface MakeOptionalSearchParams<in out TRouter extends AnyRouter,
- in out TFrom,
  in out TTo> {
 }
 export interface MakeOptionalPathParams<in out TRouter extends AnyRouter,
@@ -270,34 +236,6 @@ export interface MakeOptionalPathParams<in out TRouter extends AnyRouter,
 & {
 });
 }
-type MakeRequiredParamsReducer<TRouter extends AnyRouter,
- TParamVariant extends ParamVariant,
- TFrom,
- TTo> = (string extends TFrom ? never : ResolveFromParams<TRouter,
- TFrom> extends ResolveRelativeToParams<TRouter,
- TParamVariant,
- TFrom,
- TTo> ? true : never)
-| (ParamsReducer<TRouter,
- TParamVariant,
- TFrom,
- TTo>
-& {
-});
-export interface MakeRequiredPathParams<in out TRouter extends AnyRouter,
- in out TFrom,
- in out TTo> {
-    params: MakeRequiredParamsReducer<TRouter,
- 'PATH',
- TFrom,
- TTo>
-& {
-};
-}
-export interface MakeRequiredSearchParams<in out TRouter extends AnyRouter,
- in out TFrom,
- in out TTo> {
-}
 export type IsRequired<TRouter extends AnyRouter,
  TParamVariant extends ParamVariant,
  TFrom,
@@ -305,14 +243,7 @@ export type IsRequired<TRouter extends AnyRouter,
  TTo> extends infer TPath ? undefined extends TPath ? never : TPath extends CatchAllPaths<TRouter> ? never : IsRequiredParams<ResolveRelativeToParams<TRouter,
  TTo>> : never;
 export type SearchParamOptions<TRouter extends AnyRouter,
- TFrom,
  TTo> = IsRequired<TRouter,
- 'SEARCH',
- TFrom,
- TTo> extends never ? MakeOptionalSearchParams<TRouter,
- TFrom,
- TTo> : MakeRequiredSearchParams<TRouter,
- TFrom,
  TTo>;
 export type PathParamOptions<TRouter extends AnyRouter,
  TFrom,
@@ -322,7 +253,6 @@ export type PathParamOptions<TRouter extends AnyRouter,
  TTo> extends never ? MakeOptionalPathParams<TRouter,
  TFrom,
  TTo> : MakeRequiredPathParams<TRouter,
- TFrom,
  TTo>;
 export type ToPathOption<TRouter extends AnyRouter = AnyRouter,
  TFrom extends string = string,
@@ -375,39 +305,14 @@ export interface RedirectFnRoute<in out TDefaultFrom extends string = string> {
 import {
  RedirectFnRoute } from './redirect.js';
 import {
- ParsePathParams } from './link.js';
-import {
  Assign,
  Constrain,
  NoInfer } from './utils.js';
-export type RoutePathOptions<TCustomId,
- TPath> = {
-    path: TPath;
-}
-| {
-};
 export type InferAllParams<TRoute> = TRoute extends {
     types: {
         allParams: infer TAllParams;
     };
 } ? TAllParams : {
-};
-export type ResolveRequiredParams<TPath extends string,
- T> = {
-    [K in ParsePathParams<TPath>['required']]: T;
-};
-export type ResolveOptionalParams<TPath extends string,
- T> = {
-};
-export type ResolveParams<TPath extends string,
- T = string> = ResolveRequiredParams<TPath,
- T>
-& ResolveOptionalParams<TPath,
- T>;
-export type ParamsOptions<in out TPath extends string,
- in out TParams> = {
-    params?: {
-    };
 };
 export type ResolveAllParamsFromParent<TParentRoute extends AnyRoute,
  TParams> = Assign<InferAllParams<TParentRoute>,
@@ -434,9 +339,6 @@ export interface RouteTypes<in out TRegister,
  TParams>;
     children: TChildren;
 }
-export type ResolveFullPath<TParentRoute extends AnyRoute,
- TPrefixed = RoutePrefix<TParentRoute['fullPath'],
- TPath>> = TPrefixed extends RootRouteId ? '/' : TPrefixed;
 export type RouteAddChildrenFn<in out TRegister,
  in out TParentRoute extends AnyRoute,
  in out TPath extends string,
@@ -513,90 +415,17 @@ export interface Route<in out TRegister,
  TServerMiddlewares,
  THandlers>;
 }
-export type RouteOptions<TRegister,
- TParentRoute extends AnyRoute = AnyRoute,
- TId extends string = string,
- TCustomId extends string = string,
- TFullPath extends string = string,
- TPath extends string = string,
- TParams = AnyPathParams,
- TLoaderDeps extends Record<string,
- any> = {
-},
- TLoaderFn = undefined,
- TRouterContext = {
-},
- TRouteContextFn = AnyContext,
- TBeforeLoadFn = AnyContext,
- TSSR = unknown,
- TServerMiddlewares = unknown,
- THandlers = undefined> = BaseRouteOptions<TRegister,
- TParentRoute,
- TId,
- TCustomId,
- TPath,
- NoInfer<TBeforeLoadFn>>;
-export type FileBaseRouteOptions<TRegister,
- TSearchValidator = undefined,
- TParams = {
-},
- TRouteContextFn = AnyContext,
- TBeforeLoadFn = AnyContext,
- THandlers = undefined> = ParamsOptions<TPath,
- TParams>
-& FilebaseRouteOptionsInterface<TRegister,
- THandlers>;
-export interface FilebaseRouteOptionsInterface<TRegister,
- THandlers = undefined> {
-}
-export type BaseRouteOptions<TRegister,
- TParentRoute extends AnyRoute = AnyRoute,
- TId extends string = string,
- TCustomId extends string = string,
- TPath extends string = string,
- THandlers = undefined> = RoutePathOptions<TCustomId,
- TPath>
-& FileBaseRouteOptions<TRegister,
- THandlers>
-& {
-    getParentRoute: () => TParentRoute;
-};
 export interface UpdatableRouteOptions<in out TParentRoute extends AnyRoute,
  in out TBeforeLoadFn> extends UpdatableStaticRouteOption,
- UpdatableRouteOptionsExtensions {
-}
-export interface RootRouteOptions<TRegister = unknown,
- TRouterContext = {
-},
- THandlers = undefined> extends Omit<RouteOptions<TRegister,
- THandlers>,
-| 'params'>,
  RootRouteOptionsExtensions {
-}
-export type RouteConstraints = {
-    TPath: string;
 };
 export declare class BaseRoute<in out TRegister = Register,
- in out TParentRoute extends AnyRoute = AnyRoute,
  in out TPath extends string = '/',
  in out TFullPath extends string = ResolveFullPath<TParentRoute,
  TPath>,
- in out TCustomId extends string = string,
  in out TId extends string = ResolveId<TParentRoute,
  TPath>,
- in out TSearchValidator = undefined,
  in out TParams = ResolveParams<TPath>,
- in out TRouterContext = AnyContext,
- in out TRouteContextFn = AnyContext,
- in out TBeforeLoadFn = AnyContext,
- in out TLoaderDeps extends Record<string,
- any> = {
-},
- in out TLoaderFn = undefined,
- in out TChildren = unknown,
- in out TFileRouteTypes = unknown,
- in out TSSR = unknown,
- in out TServerMiddlewares = unknown,
  in out THandlers = undefined> {
     get fullPath(): TFullPath;
     types: RouteTypes<TRegister,
@@ -617,8 +446,6 @@ export declare class BaseRoute<in out TRegister = Register,
  TSSR,
  TServerMiddlewares,
  THandlers>;
-    init: (opts: {
-    }) => void;
     addChildren: RouteAddChildrenFn<TRegister,
  TParentRoute,
  TPath,
@@ -636,25 +463,9 @@ export declare class BaseRoute<in out TRegister = Register,
  TSSR,
  TServerMiddlewares,
  THandlers>;
-    updateLoader: <TNewLoaderFn>(options: {
-    }) => BaseRoute<TRegister,
- THandlers>;
     redirect: RedirectFnRoute<TFullPath>;
 }
 export declare class BaseRootRoute<in out TRegister = Register,
- in out TSearchValidator = undefined,
- in out TRouterContext = {
-},
- in out TRouteContextFn = AnyContext,
- in out TBeforeLoadFn = AnyContext,
- in out TLoaderDeps extends Record<string,
- any> = {
-},
- in out TLoaderFn = undefined,
- in out TChildren = unknown,
- in out TFileRouteTypes = unknown,
- in out TSSR = unknown,
- in out TServerMiddlewares = unknown,
  in out THandlers = undefined> extends BaseRoute<TRegister,
  THandlers> {
 }
@@ -673,7 +484,6 @@ export type ParseRoute<TRouteTree,
 } ? unknown extends TChildren ? TAcc : TChildren extends ReadonlyArray<any> ? ParseRoute<TChildren[number],
 | TChildren[number]> : ParseRoute<TChildren[keyof TChildren],
 | TChildren[keyof TChildren]> : TAcc;
-export type ParentPath<TRouter extends AnyRouter> = TrailingSlashOptionByRouter<TRouter> extends 'always' ? '../' : TrailingSlashOptionByRouter<TRouter> extends 'never' ? '..' : '../'
 export type CodeRoutesByPath<TRouteTree extends AnyRoute> = ParseRoute<TRouteTree> extends infer TRoutes extends AnyRoute ? {
     [K in TRoutes as K['fullPath']]: K;
 } : never;
@@ -694,14 +504,9 @@ export interface Register {
 export type RegisteredRouter<TRegister = Register> = TRegister extends {
     router: infer TRouter;
 } ? TRouter : AnyRouter;
-export type RegisteredConfigType<TRegister,
- TKey> = TRegister extends {
-} ? TConfig extends {
-} ? TKey extends keyof TTypes ? TTypes[TKey] : unknown : unknown : unknown;
 export interface DefaultRouterOptionsExtensions {
 }
 export interface RouterOptions<TRouteTree extends AnyRoute,
- TRouterHistory extends RouterHistory = RouterHistory,
  TDehydrated = undefined> extends RouterOptionsExtensions {
     routeTree?: TRouteTree;
     ssr?: {
@@ -744,13 +549,9 @@ export declare class RouterCore<in out TRouteTree extends AnyRoute,
 }
 
 // @filename: /node_modules/@tanstack/router-core/dist/esm/utils.d.ts
-export type PickOptional<T> = {
-};
+
 export type Expand<T> = T extends object ? T extends infer O ? O extends Function ? O : {
-    [K in keyof O]: O[K];
 } : never : T;
-export type DeepPartial<T> = T extends object ? {
-} : T;
 export type MakeDifferenceOptional<TLeft,
  TRight> = keyof TLeft
 & keyof TRight extends never ? TRight : Omit<TRight,
@@ -775,9 +576,6 @@ export type ConstrainLiteral<T,
 export type MergeAllObjects<TUnion,
  TIntersected = UnionToIntersection<ExtractObjects<TUnion>>> = [keyof TIntersected] extends [never] ? never : {
 };
-export declare function deepEqual(a: any,
- opts?: {
-}): boolean;
 
 // @filename: /node_modules/@tanstack/router-core/package.json
 {"name":"@tanstack/router-core","type":"module","types":"dist/esm/index.d.ts","exports":{".":{"import":{"types":"./dist/esm/index.d.ts"}}}}
