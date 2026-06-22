@@ -3,12 +3,14 @@ package tsctests
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"gotest.tools/v3/assert"
 )
 
@@ -292,45 +294,58 @@ func TestBuildWatchStopsWhenContextIsCancelled(t *testing.T) {
 }
 
 // TestWatcherUpdateProgramFastPath verifies that the UpdateProgram optimization
-// produces correct compilation results for body-only edits and correctly falls
-// back to full NewProgram when imports change.
+// produces correct compilation results for body-only edits (fast path) and
+// correctly falls back to full NewProgram when imports change.
 func TestWatcherUpdateProgramFastPath(t *testing.T) {
 	t.Parallel()
-	w, sys := createTestWatcher(t)
 
-	_ = sys.fsFromFileMap().WriteFile(
-		"/home/src/workspaces/project/a.ts",
-		`const a: number = 2;`,
-	)
-	w.DoCycle()
+	input := &tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/a.ts":          `export const a: number = 1;`,
+			"/home/src/workspaces/project/b.ts":          `import { a } from "./a"; export const b = a;`,
+			"/home/src/workspaces/project/tsconfig.json": `{}`,
+		},
+		commandLineArgs: []string{"--watch"},
+	}
+	sys := newTestSys(input, false)
+	result := execute.CommandLine(context.Background(), sys, []string{"--watch"}, sys)
+	if result.Watcher == nil {
+		t.Fatal("expected Watcher to be non-nil in watch mode")
+	}
+	w := result.Watcher.(*execute.Watcher)
 
-	_ = sys.fsFromFileMap().WriteFile(
-		"/home/src/workspaces/project/a.ts",
-		`const a: number = "not a number";`,
-	)
-	w.DoCycle()
+	// Helper to write a file, send the event, cycle, and return output
+	editAndCycle := func(path, content string) string {
+		sys.currentWrite.Reset()
+		_ = sys.fsFromFileMap().WriteFile(path, content)
+		sys.mockWatchBackend.SendEvents([]fswatch.Event{
+			{Kind: fswatch.EventUpdate, Path: path},
+		})
+		w.DoCycle()
+		return sys.currentWrite.String()
+	}
 
-	_ = sys.fsFromFileMap().WriteFile(
-		"/home/src/workspaces/project/a.ts",
-		`const a: number = 3;`,
-	)
-	w.DoCycle()
+	// Body-only edit — should use UpdateProgram fast path, no errors
+	out := editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = 2;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after body edit, got: %s", out)
 
-	_ = sys.fsFromFileMap().WriteFile(
-		"/home/src/workspaces/project/a.ts",
-		`export const a: number = 3; export const c: number = 4;`,
-	)
-	w.DoCycle()
+	// Introduce a type error via body-only edit — fast path should detect it
+	out = editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = "not a number";`)
+	assert.Assert(t, !strings.Contains(out, "Found 0 errors"), "expected errors after type error, got: %s", out)
 
-	_ = sys.fsFromFileMap().WriteFile(
-		"/home/src/workspaces/project/b.ts",
-		`import { a, c } from "./a"; export const b = a + c;`,
-	)
-	w.DoCycle()
+	// Fix the type error — fast path should clear it
+	out = editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = 3;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after fix, got: %s", out)
 
-	_ = sys.fsFromFileMap().WriteFile(
-		"/home/src/workspaces/project/b.ts",
-		`import { a, c } from "./a"; export const b = a + c + 1;`,
-	)
-	w.DoCycle()
+	// Add a new export — import structure changes, falls back to NewProgram
+	out = editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = 3; export const c: number = 4;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after export addition, got: %s", out)
+
+	// Import the new export — import change forces full rebuild
+	out = editAndCycle("/home/src/workspaces/project/b.ts", `import { a, c } from "./a"; export const b = a + c;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after import change, got: %s", out)
+
+	// Body edit after import change — should use fast path again, no errors
+	out = editAndCycle("/home/src/workspaces/project/b.ts", `import { a, c } from "./a"; export const b = a + c + 1;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after body edit post-import-change, got: %s", out)
 }
