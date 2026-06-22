@@ -97,7 +97,8 @@ func (c *RefCountCache[K, V, AcquireArgs]) RefValue(identity K, value V) {
 		}
 		// The deleted entry has already been removed from entries while we held its
 		// lock, so the next iteration will either store a replacement or race with
-		// another goroutine that did.
+		// another goroutine that did. If another goroutine wins, we'll ref its entry
+		// on the next iteration.
 	}
 }
 

@@ -17,10 +17,10 @@ func TestRefCountCacheRefValueRestoresDeletedEntry(t *testing.T) {
 	t.Parallel()
 
 	cache := NewRefCountCache(RefCountCacheOptions{}, func(_ string, value string) string {
-		return value
+		return "parsed:" + value
 	})
 
-	assert.Equal(t, cache.Acquire("key", "parsed"), "parsed")
+	assert.Equal(t, cache.Acquire("key", "original"), "parsed:original")
 	cache.Deref("key")
 	assert.Assert(t, !cache.TryRef("key"))
 
