@@ -1,0 +1,6 @@
+//// [tests/cases/compiler/tsconfigExtendsEmptyConfigNoCrash.ts] ////
+
+=== main.ts ===
+export const x = 1;
+>x : Symbol(x, Decl(main.ts, 0, 12))
+
