@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/jsDeclarationEmitThisAssignmentWithBaseProperty.ts] ////
+
+=== component.d.ts ===
+export class Component {
+>Component : Symbol(Component, Decl(component.d.ts, 0, 0))
+
+    state: any;
+>state : Symbol(Component.state, Decl(component.d.ts, 0, 24))
+
+    constructor(props?: any);
+>props : Symbol(props, Decl(component.d.ts, 2, 16))
+}
+
+=== main.js ===
+import { Component } from "./component";
+>Component : Symbol(Component, Decl(main.js, 0, 8))
+
+export class C1 extends Component {
+>C1 : Symbol(C1, Decl(main.js, 0, 40))
+>Component : Symbol(Component, Decl(main.js, 0, 8))
+
+    state = { count: 0 };
+>state : Symbol(C1.state, Decl(main.js, 2, 35))
+>count : Symbol(count, Decl(main.js, 3, 13))
+}
+
+export class C2 extends Component {
+>C2 : Symbol(C2, Decl(main.js, 4, 1))
+>Component : Symbol(Component, Decl(main.js, 0, 8))
+
+    constructor() {
+        super({});
+>super : Symbol(Component, Decl(component.d.ts, 0, 0))
+
+        this.state = { count: 0 };
+>this.state : Symbol(C2.state, Decl(main.js, 8, 18))
+>this : Symbol(C2, Decl(main.js, 4, 1))
+>state : Symbol(C2.state, Decl(main.js, 8, 18))
+>count : Symbol(count, Decl(main.js, 9, 22))
+    }
+}
+
+=== mainTs.ts ===
+import { Component } from "./component";
+>Component : Symbol(Component, Decl(mainTs.ts, 0, 8))
+
+export class C1 extends Component {
+>C1 : Symbol(C1, Decl(mainTs.ts, 0, 40))
+>Component : Symbol(Component, Decl(mainTs.ts, 0, 8))
+
+    state = { count: 0 };
+>state : Symbol(C1.state, Decl(mainTs.ts, 2, 35))
+>count : Symbol(count, Decl(mainTs.ts, 3, 13))
+}
+
+export class C2 extends Component {
+>C2 : Symbol(C2, Decl(mainTs.ts, 4, 1))
+>Component : Symbol(Component, Decl(mainTs.ts, 0, 8))
+
+    constructor() {
+        super({});
+>super : Symbol(Component, Decl(component.d.ts, 0, 0))
+
+        this.state = { count: 0 };
+>this.state : Symbol(Component.state, Decl(component.d.ts, 0, 24))
+>this : Symbol(C2, Decl(mainTs.ts, 4, 1))
+>state : Symbol(Component.state, Decl(component.d.ts, 0, 24))
+>count : Symbol(count, Decl(mainTs.ts, 9, 22))
+    }
+}
+

@@ -2049,7 +2049,6 @@ func (tx *DeclarationTransformer) visitThisPropertyAssignments(node *ast.Node) *
 	if thisTarget != tx.enclosingDeclaration {
 		return nil // stop searching within new `this` contexts
 	}
-caseBlock:
 	switch ast.GetAssignmentDeclarationKind(node) {
 	case ast.JSDeclarationKindThisProperty:
 		name := ast.GetNameOfDeclaration(node)
@@ -2067,8 +2066,8 @@ caseBlock:
 			// there is a base type any assignments might be "from"
 			tx.tracker.ReportInferenceFallback(thisTarget) // Add an isolated declarations error on this class - we can't know how to transform this prop into an assignment without referring to type information
 			decls := tx.resolver.GetBaseDeclarationsForPropertyDeclaration(node)
-			if len(decls) > 0 {
-				break caseBlock // property lightly overrides a property in a base type - skip it
+			if len(decls) > 0 && !ast.IsConstructorDeclaration(thisContainer) {
+				break // property lightly overrides a property in a base type - skip it
 				// TODO: If the property has an explicit `@type` annotation, we should probably emit it (maybe with an `override` modifier) instead of skipping it
 			}
 		}

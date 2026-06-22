@@ -1,0 +1,85 @@
+//// [tests/cases/compiler/jsDeclarationEmitThisAssignmentWithBaseProperty.ts] ////
+
+=== component.d.ts ===
+export class Component {
+>Component : Component
+
+    state: any;
+>state : any
+
+    constructor(props?: any);
+>props : any
+}
+
+=== main.js ===
+import { Component } from "./component";
+>Component : typeof Component
+
+export class C1 extends Component {
+>C1 : C1
+>Component : Component
+
+    state = { count: 0 };
+>state : { count: number; }
+>{ count: 0 } : { count: number; }
+>count : number
+>0 : 0
+}
+
+export class C2 extends Component {
+>C2 : C2
+>Component : Component
+
+    constructor() {
+        super({});
+>super({}) : void
+>super : typeof Component
+>{} : {}
+
+        this.state = { count: 0 };
+>this.state = { count: 0 } : { count: number; }
+>this.state : any
+>this : this
+>state : any
+>{ count: 0 } : { count: number; }
+>count : number
+>0 : 0
+    }
+}
+
+=== mainTs.ts ===
+import { Component } from "./component";
+>Component : typeof Component
+
+export class C1 extends Component {
+>C1 : C1
+>Component : Component
+
+    state = { count: 0 };
+>state : { count: number; }
+>{ count: 0 } : { count: number; }
+>count : number
+>0 : 0
+}
+
+export class C2 extends Component {
+>C2 : C2
+>Component : Component
+
+    constructor() {
+        super({});
+>super({}) : void
+>super : typeof Component
+>{} : {}
+
+        this.state = { count: 0 };
+>this.state = { count: 0 } : { count: number; }
+>this.state : any
+>this : this
+>state : any
+>{ count: 0 } : { count: number; }
+>count : number
+>0 : 0
+    }
+}
+
