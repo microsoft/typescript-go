@@ -308,9 +308,13 @@ func (w *Watcher) doBuild() error {
 		if w.config.ConfigFile != nil && len(w.config.WildcardDirectories()) > 0 {
 			newConfig := w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 			if !slices.Equal(w.config.FileNames(), newConfig.FileNames()) {
-				w.watchSetDirty = true
+				w.config = newConfig
+			} else {
+				w.watchSetDirty = false
+				w.config = newConfig
 			}
-			w.config = newConfig
+		} else if !w.configModified {
+			w.watchSetDirty = false
 		}
 	}
 

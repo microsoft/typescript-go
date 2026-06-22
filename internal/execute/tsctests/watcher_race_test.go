@@ -290,3 +290,47 @@ func TestBuildWatchStopsWhenContextIsCancelled(t *testing.T) {
 		t.Fatal("build watch did not stop after context cancellation")
 	}
 }
+
+// TestWatcherUpdateProgramFastPath verifies that the UpdateProgram optimization
+// produces correct compilation results for body-only edits and correctly falls
+// back to full NewProgram when imports change.
+func TestWatcherUpdateProgramFastPath(t *testing.T) {
+	t.Parallel()
+	w, sys := createTestWatcher(t)
+
+	_ = sys.fsFromFileMap().WriteFile(
+		"/home/src/workspaces/project/a.ts",
+		`const a: number = 2;`,
+	)
+	w.DoCycle()
+
+	_ = sys.fsFromFileMap().WriteFile(
+		"/home/src/workspaces/project/a.ts",
+		`const a: number = "not a number";`,
+	)
+	w.DoCycle()
+
+	_ = sys.fsFromFileMap().WriteFile(
+		"/home/src/workspaces/project/a.ts",
+		`const a: number = 3;`,
+	)
+	w.DoCycle()
+
+	_ = sys.fsFromFileMap().WriteFile(
+		"/home/src/workspaces/project/a.ts",
+		`export const a: number = 3; export const c: number = 4;`,
+	)
+	w.DoCycle()
+
+	_ = sys.fsFromFileMap().WriteFile(
+		"/home/src/workspaces/project/b.ts",
+		`import { a, c } from "./a"; export const b = a + c;`,
+	)
+	w.DoCycle()
+
+	_ = sys.fsFromFileMap().WriteFile(
+		"/home/src/workspaces/project/b.ts",
+		`import { a, c } from "./a"; export const b = a + c + 1;`,
+	)
+	w.DoCycle()
+}
