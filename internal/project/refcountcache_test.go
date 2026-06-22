@@ -25,19 +25,19 @@ func TestRefCountCacheRefValueRestoresDeletedEntry(t *testing.T) {
 	assert.Assert(t, !cache.TryRef("key"))
 
 	cache.RefValue("key", "restored")
-	entry, ok := cache.entries.Load("key")
-	assert.Assert(t, ok)
-	assert.Equal(t, entry.value, "restored")
-	assert.Equal(t, entry.refCount, 1)
+	assert.Equal(t, cache.Acquire("key", "ignored"), "restored")
+	cache.Deref("key")
+	cache.Deref("key")
+	assert.Assert(t, !cache.Has("key"))
 
+	cache.RefValue("key", "restored")
 	cache.RefValue("key", "ignored")
-	assert.Equal(t, entry.value, "restored")
-	assert.Equal(t, entry.refCount, 2)
+	assert.Equal(t, cache.Acquire("key", "ignored"), "restored")
 
 	cache.Deref("key")
 	cache.Deref("key")
-	_, ok = cache.entries.Load("key")
-	assert.Assert(t, !ok)
+	cache.Deref("key")
+	assert.Assert(t, !cache.Has("key"))
 }
 
 func TestRefCountingCaches(t *testing.T) {
