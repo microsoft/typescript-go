@@ -278,6 +278,14 @@ type Session struct {
 	// latestSnapshot tracks the most recently created snapshot for computing diffs.
 	latestSnapshot SnapshotID
 
+	// openProjects and openFiles track the projects and files this session
+	// currently holds open in the project session's API state. The session holds
+	// at most one ref per project/file (opens are idempotent), so it can release
+	// exactly those refs on Close and never send a close for a ref it doesn't hold.
+	openProjects collections.Set[tspath.Path]
+	openFiles    collections.Set[tspath.Path]
+	openMu       sync.Mutex
+
 	cpuProfiler pprof.CPUProfiler
 }
 
@@ -619,34 +627,102 @@ func (s *Session) handleInitialize(ctx context.Context) (*InitializeResponse, er
 	}, nil
 }
 
-// handleUpdateSnapshot creates a new snapshot, optionally opening a project.
-// With no args, it adopts the latest LSP state.
-// With OpenProject set, it opens the specified project in the new snapshot.
+// handleUpdateSnapshot creates a new snapshot, optionally opening or closing
+// projects and files. With no args, it adopts the latest LSP state. Opens and
+// closes are ref-counted per session: the session holds at most one ref per
+// project/file, so repeated opens are idempotent and a close only releases a ref
+// the session is actually holding.
 func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapshotParams) (*UpdateSnapshotResponse, error) {
-	var snapshot *project.Snapshot
-
 	fileChanges := s.toFileChangeSummary(params.FileChanges)
 
-	if params.OpenProject != "" {
-		configFileName := s.toAbsoluteFileName(params.OpenProject)
-		_, newSnapshot, err := s.projectSession.APIOpenProject(ctx, configFileName, fileChanges)
-		if err != nil {
-			// APIOpenProject returns a ref'd snapshot even on error; release it.
-			newSnapshot.Deref(s.projectSession)
-			return nil, fmt.Errorf("%w: failed to load project: %w", ErrClientError, err)
+	s.openMu.Lock()
+	apiRequest := &project.APISnapshotRequest{}
+
+	// Open projects: only take a new ref for projects we aren't already holding open.
+	var openedProjects []tspath.Path
+	for _, p := range params.OpenProjects {
+		configFileName := p.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
+		configPath := s.toPath(configFileName)
+		if s.openProjects.Has(configPath) {
+			continue
 		}
-		snapshot = newSnapshot
-	} else {
-		var openFileURIs []lsproto.DocumentUri
-		for _, f := range params.OpenFiles {
-			openFileURIs = append(openFileURIs, f.ToURI())
+		if apiRequest.OpenProjects == nil {
+			apiRequest.OpenProjects = &collections.Set[string]{}
 		}
-		// Even when fileChanges is empty, APIUpdateWithFileChanges ensures all projects
-		// opened by the API are up to date. For an API connected to an LSP server, this
-		// brings the API state up to date with the LSP state and ensures projects the
-		// API cares about are ready to be queried.
-		snapshot = s.projectSession.APIUpdateWithFileChanges(ctx, fileChanges, openFileURIs)
+		apiRequest.OpenProjects.Add(configFileName)
+		openedProjects = append(openedProjects, configPath)
 	}
+
+	// Close projects: only release a ref we currently hold.
+	var closedProjects []tspath.Path
+	for _, p := range params.CloseProjects {
+		configPath := s.toPath(p.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory()))
+		if !s.openProjects.Has(configPath) {
+			continue
+		}
+		if apiRequest.CloseProjects == nil {
+			apiRequest.CloseProjects = &collections.Set[tspath.Path]{}
+		}
+		apiRequest.CloseProjects.Add(configPath)
+		closedProjects = append(closedProjects, configPath)
+	}
+
+	// Open files: only open files we aren't already holding open, so each file is
+	// held by at most one API ref from this session.
+	var openedFiles []tspath.Path
+	for _, f := range params.OpenFiles {
+		uri := f.ToURI()
+		path := s.toPath(uri.FileName())
+		if s.openFiles.Has(path) {
+			continue
+		}
+		if apiRequest.OpenFiles == nil {
+			apiRequest.OpenFiles = &collections.Set[lsproto.DocumentUri]{}
+		}
+		apiRequest.OpenFiles.Add(uri)
+		openedFiles = append(openedFiles, path)
+	}
+
+	// Close files: only release a ref we currently hold.
+	var closedFiles []tspath.Path
+	for _, f := range params.CloseFiles {
+		path := s.toPath(f.ToURI().FileName())
+		if !s.openFiles.Has(path) {
+			continue
+		}
+		if apiRequest.CloseFiles == nil {
+			apiRequest.CloseFiles = &collections.Set[tspath.Path]{}
+		}
+		apiRequest.CloseFiles.Add(path)
+		closedFiles = append(closedFiles, path)
+	}
+
+	// Even when nothing is opened or closed, APIUpdate ensures all projects and
+	// files opened by the API are up to date. For an API connected to an LSP server,
+	// this brings the API state up to date with the LSP state and ensures projects
+	// the API cares about are ready to be queried.
+	snapshot, err := s.projectSession.APIUpdate(ctx, fileChanges, apiRequest)
+	if err != nil {
+		s.openMu.Unlock()
+		// APIUpdate returns a ref'd snapshot even on error; release it.
+		snapshot.Deref(s.projectSession)
+		return nil, fmt.Errorf("%w: failed to update snapshot: %w", ErrClientError, err)
+	}
+
+	// Commit ref tracking now that the update succeeded.
+	for _, configPath := range openedProjects {
+		s.openProjects.Add(configPath)
+	}
+	for _, configPath := range closedProjects {
+		s.openProjects.Delete(configPath)
+	}
+	for _, path := range openedFiles {
+		s.openFiles.Add(path)
+	}
+	for _, path := range closedFiles {
+		s.openFiles.Delete(path)
+	}
+	s.openMu.Unlock()
 
 	// Create or ref-count snapshot data.
 	// If the same snapshot ID is returned (no changes), we increment the
@@ -723,7 +799,7 @@ func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any
 }
 
 // handleGetDefaultProjectForFile returns the default project for a given file,
-// or null if no project currently contains the file.
+// or nil if no project currently contains the file.
 func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *GetDefaultProjectForFileParams) (*ProjectResponse, error) {
 	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
@@ -2145,6 +2221,8 @@ func computeSnapshotChanges(prev *project.Snapshot, next *project.Snapshot) *Sna
 // Close closes the session and releases all active snapshots,
 // regardless of their ref counts.
 func (s *Session) Close() {
+	s.releaseOpenRefs()
+
 	s.snapshotsMu.Lock()
 	defer s.snapshotsMu.Unlock()
 	for handle := range s.snapshots {
@@ -2152,13 +2230,35 @@ func (s *Session) Close() {
 	}
 }
 
-func formatSessionID(id uint64) string {
-	return fmt.Sprintf("api-session-%d", id)
+// releaseOpenRefs releases every project and file ref this session is holding open
+// in the project session. This keeps the API's ref counts balanced when an API
+// session is shut down while sharing a longer-lived project session (e.g. one
+// backing an LSP server), so API-opened projects and files aren't leaked. Only
+// refs the session currently holds are closed, so it never over-releases.
+func (s *Session) releaseOpenRefs() {
+	s.openMu.Lock()
+	defer s.openMu.Unlock()
+
+	if s.openProjects.Len() == 0 && s.openFiles.Len() == 0 {
+		return
+	}
+
+	apiRequest := &project.APISnapshotRequest{}
+	if s.openProjects.Len() > 0 {
+		apiRequest.CloseProjects = s.openProjects.Clone()
+	}
+	if s.openFiles.Len() > 0 {
+		apiRequest.CloseFiles = s.openFiles.Clone()
+	}
+	snapshot, _ := s.projectSession.APIUpdate(context.Background(), project.FileChangeSummary{}, apiRequest)
+	snapshot.Deref(s.projectSession)
+
+	s.openProjects.Clear()
+	s.openFiles.Clear()
 }
 
-// toAbsoluteFileName converts a file name to an absolute path.
-func (s *Session) toAbsoluteFileName(fileName string) string {
-	return tspath.GetNormalizedAbsolutePath(fileName, s.projectSession.GetCurrentDirectory())
+func formatSessionID(id uint64) string {
+	return fmt.Sprintf("api-session-%d", id)
 }
 
 // toPath converts a file name to a normalized path.
