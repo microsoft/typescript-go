@@ -210,10 +210,12 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 								inference.candidates = slices.Delete(inference.candidates, index, index+1)
 								inference.candidateDepths = slices.Delete(inference.candidateDepths, index, index+1)
 							}
-							for index = 0; index < len(inference.candidateDepths); index++ {
+							index = 0
+							for index < len(inference.candidateDepths) {
 								if inference.candidateDepths[index] < n.depth {
 									break
 								}
+								index++
 							}
 							// Insert candidate at end or immediately before first candidate with lower depth.
 							// This ensures candidates with the highest depth are stored first.
