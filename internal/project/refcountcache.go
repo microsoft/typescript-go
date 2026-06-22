@@ -76,6 +76,12 @@ func (c *RefCountCache[K, V, AcquireArgs]) TryRef(identity K) bool {
 	return c.tryRefEntry(entry)
 }
 
+// RefIfPresent increments the reference count for an existing entry and does
+// nothing if the entry does not exist.
+func (c *RefCountCache[K, V, AcquireArgs]) RefIfPresent(identity K) {
+	c.TryRef(identity)
+}
+
 // RefValue increments the reference count for an entry, restoring it with value
 // if it was deleted before the ref could be taken. If another goroutine restores
 // the entry first, this refs that entry and ignores value.
