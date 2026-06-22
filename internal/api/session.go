@@ -671,7 +671,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	// held by at most one API ref from this session.
 	var openedFiles []tspath.Path
 	for _, f := range params.OpenFiles {
-		uri := f.ToURI()
+		uri := f.ToURI(s.projectSession.GetCurrentDirectory())
 		path := s.toPath(uri.FileName())
 		if s.openFiles.Has(path) {
 			continue
@@ -686,7 +686,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	// Close files: only release a ref we currently hold.
 	var closedFiles []tspath.Path
 	for _, f := range params.CloseFiles {
-		path := s.toPath(f.ToURI().FileName())
+		path := s.toPath(f.ToURI(s.projectSession.GetCurrentDirectory()).FileName())
 		if !s.openFiles.Has(path) {
 			continue
 		}
@@ -806,7 +806,7 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 		return nil, err
 	}
 
-	uri := params.File.ToURI()
+	uri := params.File.ToURI(s.projectSession.GetCurrentDirectory())
 	proj := sd.snapshot.GetDefaultProject(uri)
 	if proj == nil {
 		return nil, nil
@@ -2250,8 +2250,12 @@ func (s *Session) releaseOpenRefs() {
 	if s.openFiles.Len() > 0 {
 		apiRequest.CloseFiles = s.openFiles.Clone()
 	}
-	snapshot, _ := s.projectSession.APIUpdate(context.Background(), project.FileChangeSummary{}, apiRequest)
+	snapshot, err := s.projectSession.APIUpdate(context.Background(), project.FileChangeSummary{}, apiRequest)
+	// APIUpdate returns a ref'd snapshot even on error; always release it.
 	snapshot.Deref(s.projectSession)
+	if err != nil {
+		return
+	}
 
 	s.openProjects.Clear()
 	s.openFiles.Clear()
@@ -2277,16 +2281,17 @@ func (s *Session) toFileChangeSummary(changes *APIFileChanges) project.FileChang
 		summary.IncludesWatchChangeOutsideNodeModules = true
 		return summary
 	}
+	cwd := s.projectSession.GetCurrentDirectory()
 	for _, doc := range changes.Changed {
-		uri := doc.ToURI()
+		uri := doc.ToURI(cwd)
 		summary.Changed.Add(uri)
 	}
 	for _, doc := range changes.Created {
-		uri := doc.ToURI()
+		uri := doc.ToURI(cwd)
 		summary.Created.Add(uri)
 	}
 	for _, doc := range changes.Deleted {
-		uri := doc.ToURI()
+		uri := doc.ToURI(cwd)
 		summary.Deleted.Add(uri)
 	}
 	if summary.Changed.Len()+summary.Created.Len()+summary.Deleted.Len() > 0 {

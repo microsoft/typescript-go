@@ -227,11 +227,14 @@ func (d DocumentIdentifier) ToFileName() string {
 	return d.FileName
 }
 
-func (d DocumentIdentifier) ToURI() lsproto.DocumentUri {
+// ToURI returns the document URI for this identifier. An explicitly provided URI
+// is returned as-is; a file name is first normalized to an absolute path against
+// cwd before being converted to a URI.
+func (d DocumentIdentifier) ToURI(cwd string) lsproto.DocumentUri {
 	if d.URI != "" {
 		return d.URI
 	}
-	return lsconv.FileNameToDocumentURI(d.FileName)
+	return lsconv.FileNameToDocumentURI(tspath.GetNormalizedAbsolutePath(d.FileName, cwd))
 }
 
 func (d DocumentIdentifier) ToAbsoluteFileName(cwd string) string {

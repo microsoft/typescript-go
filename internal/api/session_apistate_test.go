@@ -139,4 +139,56 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		session.Close()
 		assert.Equal(t, session.openFiles.Len(), 0)
 	})
+
+	t.Run("relative file paths normalize consistently for open and close", func(t *testing.T) {
+		t.Parallel()
+		// The project session's current directory is "/", so a relative path
+		// resolves to the corresponding absolute path.
+		files := map[string]any{
+			"/src/tsconfig.json": `{ "compilerOptions": { "strict": true } }`,
+			"/src/index.ts":      `export const x = 1;`,
+		}
+		projectSession, _ := projecttestutil.Setup(files)
+		defer projectSession.Close()
+		session := NewSession(projectSession, nil)
+		defer session.Close()
+
+		// Open via a relative path; it should be tracked under the absolute path
+		// and resolve to the containing configured project.
+		openResp, err := session.handleUpdateSnapshot(context.Background(), &UpdateSnapshotParams{
+			OpenFiles: []DocumentIdentifier{{FileName: "src/index.ts"}},
+		})
+		assert.NilError(t, err)
+		assert.Equal(t, session.openFiles.Len(), 1)
+		assert.Assert(t, session.openFiles.Has(tspath.Path("/src/index.ts")))
+		assert.Assert(t, projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json")) != nil)
+
+		// getDefaultProjectForFile must also resolve a relative path to the same
+		// configured project (it builds a URI from the identifier internally).
+		proj, err := session.handleGetDefaultProjectForFile(context.Background(), &GetDefaultProjectForFileParams{
+			Snapshot: openResp.Snapshot,
+			File:     DocumentIdentifier{FileName: "src/index.ts"},
+		})
+		assert.NilError(t, err)
+		assert.Assert(t, proj != nil, "relative path should resolve to a default project")
+		assert.Equal(t, proj.ConfigFileName, "/src/tsconfig.json")
+
+		// Re-opening via the absolute path must match the relative open (no new ref).
+		_, err = session.handleUpdateSnapshot(context.Background(), &UpdateSnapshotParams{
+			OpenFiles: []DocumentIdentifier{{FileName: "/src/index.ts"}},
+		})
+		assert.NilError(t, err)
+		assert.Equal(t, session.openFiles.Len(), 1)
+
+		// Closing via a relative path must match the path stored when opening.
+		_, err = session.handleUpdateSnapshot(context.Background(), &UpdateSnapshotParams{
+			CloseFiles: []DocumentIdentifier{{FileName: "src/index.ts"}},
+		})
+		assert.NilError(t, err)
+		assert.Equal(t, session.openFiles.Len(), 0)
+		assert.Assert(t,
+			projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/src/tsconfig.json")) == nil,
+			"configured project should be unloaded after closing the relatively-pathed file",
+		)
+	})
 }
