@@ -207,8 +207,8 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 							// Candidate isn't present or is present with lower depth
 							if index >= 0 {
 								// Remove candidate with lower depth
-								inference.candidates = slices.Delete(inference.candidates, index, 1)
-								inference.candidateDepths = slices.Delete(inference.candidateDepths, index, 1)
+								inference.candidates = slices.Delete(inference.candidates, index, index+1)
+								inference.candidateDepths = slices.Delete(inference.candidateDepths, index, index+1)
 							}
 							for index = 0; index < len(inference.candidateDepths); index++ {
 								if inference.candidateDepths[index] < n.depth {
