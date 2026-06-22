@@ -11,9 +11,21 @@ export class Component {
 >props : any
 }
 
+export class WithAccessor {
+>WithAccessor : WithAccessor
+
+    get value(): number;
+>value : number
+
+    set value(v: number);
+>value : number
+>v : number
+}
+
 === main.js ===
-import { Component } from "./component";
+import { Component, WithAccessor } from "./component";
 >Component : typeof Component
+>WithAccessor : typeof WithAccessor
 
 export class C1 extends Component {
 >C1 : C1
@@ -44,6 +56,42 @@ export class C2 extends Component {
 >{ count: 0 } : { count: number; }
 >count : number
 >0 : 0
+    }
+}
+
+export class C3 extends Component {
+>C3 : C3
+>Component : Component
+
+    update() {
+>update : () => void
+
+        this.state = { count: 1 };
+>this.state = { count: 1 } : { count: number; }
+>this.state : any
+>this : this
+>state : any
+>{ count: 1 } : { count: number; }
+>count : number
+>1 : 1
+    }
+}
+
+export class C4 extends WithAccessor {
+>C4 : C4
+>WithAccessor : WithAccessor
+
+    constructor() {
+        super();
+>super() : void
+>super : typeof WithAccessor
+
+        this.value = 1;
+>this.value = 1 : 1
+>this.value : any
+>this : this
+>value : any
+>1 : 1
     }
 }
 
