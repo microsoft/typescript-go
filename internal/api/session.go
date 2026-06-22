@@ -647,7 +647,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 			continue
 		}
 		if apiRequest.OpenProjects == nil {
-			apiRequest.OpenProjects = &collections.Set[string]{}
+			apiRequest.OpenProjects = collections.NewSetWithSizeHint[string](len(params.OpenProjects))
 		}
 		apiRequest.OpenProjects.Add(configFileName)
 		openedProjects = append(openedProjects, configPath)
@@ -661,7 +661,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 			continue
 		}
 		if apiRequest.CloseProjects == nil {
-			apiRequest.CloseProjects = &collections.Set[tspath.Path]{}
+			apiRequest.CloseProjects = collections.NewSetWithSizeHint[tspath.Path](len(params.CloseProjects))
 		}
 		apiRequest.CloseProjects.Add(configPath)
 		closedProjects = append(closedProjects, configPath)
@@ -677,7 +677,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 			continue
 		}
 		if apiRequest.OpenFiles == nil {
-			apiRequest.OpenFiles = &collections.Set[lsproto.DocumentUri]{}
+			apiRequest.OpenFiles = collections.NewSetWithSizeHint[lsproto.DocumentUri](len(params.OpenFiles))
 		}
 		apiRequest.OpenFiles.Add(uri)
 		openedFiles = append(openedFiles, path)
@@ -691,7 +691,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 			continue
 		}
 		if apiRequest.CloseFiles == nil {
-			apiRequest.CloseFiles = &collections.Set[tspath.Path]{}
+			apiRequest.CloseFiles = collections.NewSetWithSizeHint[tspath.Path](len(params.CloseFiles))
 		}
 		apiRequest.CloseFiles.Add(path)
 		closedFiles = append(closedFiles, path)

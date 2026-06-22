@@ -129,6 +129,13 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 		assert.NilError(t, err)
 		assert.Equal(t, session.openFiles.Len(), 0)
 
+		// Closing the file also tears down the configured project that was
+		// auto-loaded to serve it, instead of leaking it.
+		assert.Assert(t,
+			projectSession.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/p/tsconfig.json")) == nil,
+			"configured project auto-loaded for the API-opened file should be unloaded after close",
+		)
+
 		session.Close()
 		assert.Equal(t, session.openFiles.Len(), 0)
 	})
