@@ -378,8 +378,9 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
-				// Duplicate entries only balance extra acquires from the old program.
-				// If one was already released, we don't have a SourceFile value to restore.
+				// Duplicate entries come from the old program's bookkeeping and only
+				// balance entries that were already acquired; unlike reused source files,
+				// they don't carry a SourceFile value that could restore a released entry.
 				p.host.builder.parseCache.TryRef(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
 			}
 		} else if dirtyFile != nil {
