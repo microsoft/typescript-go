@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -147,6 +148,7 @@ const (
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
+	MethodEmit      Method = "emit"
 
 	// Intrinsic type getters
 	MethodGetAnyType       Method = "getAnyType"
@@ -397,6 +399,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSuggestionDiagnostics:          unmarshallerFor[GetDiagnosticsParams],
 	MethodGetDeclarationDiagnostics:         unmarshallerFor[GetDiagnosticsParams],
 	MethodGetConfigFileParsingDiagnostics:   unmarshallerFor[GetProjectDiagnosticsParams],
+	MethodEmit:                              unmarshallerFor[EmitParams],
 	MethodStartCPUProfile:                   unmarshallerFor[ProfileParams],
 	MethodStopCPUProfile:                    noParams,
 	MethodSaveHeapProfile:                   unmarshallerFor[ProfileParams],
@@ -997,6 +1000,21 @@ type DiagnosticResponse struct {
 	RelatedInformation []*DiagnosticResponse `json:"relatedInformation,omitempty"`
 }
 
+// EmitParams are the parameters for the emit method.
+type EmitParams struct {
+	Snapshot         SnapshotID          `json:"snapshot"`
+	Project          ProjectID           `json:"project"`
+	TargetSourceFile *DocumentIdentifier `json:"targetSourceFile,omitempty"`
+	EmitOnly         uint32              `json:"emitOnly"`
+}
+
+// EmitResponse is the response for the emit method.
+type EmitResponse struct {
+	EmitSkipped  bool                  `json:"emitSkipped"`
+	Diagnostics  []*DiagnosticResponse `json:"diagnostics"`
+	EmittedFiles []string              `json:"emittedFiles"`
+}
+
 // NewDiagnosticResponse converts an ast.Diagnostic to a DiagnosticResponse.
 func NewDiagnosticResponse(d *ast.Diagnostic) *DiagnosticResponse {
 	pos := d.Pos()
@@ -1048,6 +1066,25 @@ func NewDiagnosticResponses(diags []*ast.Diagnostic) []*DiagnosticResponse {
 		result[i] = NewDiagnosticResponse(d)
 	}
 	return result
+}
+
+// NewEmitResponse converts a compiler.EmitResult to an EmitResponse.
+func NewEmitResponse(emitResult *compiler.EmitResult) *EmitResponse {
+	diagnostics := NewDiagnosticResponses(emitResult.Diagnostics)
+	if diagnostics == nil {
+		diagnostics = []*DiagnosticResponse{}
+	}
+
+	emittedFiles := emitResult.EmittedFiles
+	if emittedFiles == nil {
+		emittedFiles = []string{}
+	}
+
+	return &EmitResponse{
+		EmitSkipped:  emitResult.EmitSkipped,
+		Diagnostics:  diagnostics,
+		EmittedFiles: emittedFiles,
+	}
 }
 
 func unmarshalPayload(method string, payload json.Value) (any, error) {

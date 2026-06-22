@@ -35,6 +35,7 @@ import {
     API,
     type ConditionalType,
     DiagnosticCategory,
+    EmitFlags,
     type FreshableType,
     type IndexedAccessType,
     type IndexType,
@@ -3399,6 +3400,161 @@ describe("Program - diagnostics", () => {
             const project = snapshot.getProject("/tsconfig.json")!;
             const diags = await project.program.getDeclarationDiagnostics("/src/index.ts");
             assert.deepEqual(diags, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("Program - emit", () => {
+    const files = {
+        "/tsconfig.json": `{
+                "compilerOptions": {
+                    "outDir": "dist",
+                    "declaration": true,
+                }
+            }`,
+        "/src/index.ts": "export const x: number = 1;",
+        "/src/testing.ts": "export const y: string = 'typescript';",
+    };
+
+    test("emit all files", async () => {
+        const fs = createVirtualFileSystem({ ...files });
+
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: fs,
+        });
+
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emit();
+            assert.deepEqual(result, {
+                diagnostics: [],
+                emitSkipped: false,
+                emittedFiles: [
+                    "/dist/src/index.js",
+                    "/dist/src/index.d.ts",
+                    "/dist/src/testing.js",
+                    "/dist/src/testing.d.ts",
+                ],
+            });
+
+            const js = fs.readFile?.("/dist/src/index.js");
+            const dts = fs.readFile?.("/dist/src/index.d.ts");
+            const js2 = fs.readFile?.("/dist/src/testing.js");
+            const dts2 = fs.readFile?.("/dist/src/testing.d.ts");
+            assert.strictEqual(js, `export const x = 1;\n`);
+            assert.strictEqual(dts, `export declare const x: number;\n`);
+            assert.strictEqual(js2, `export const y = 'typescript';\n`);
+            assert.strictEqual(dts2, `export declare const y: string;\n`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit only dts", async () => {
+        const fs = createVirtualFileSystem({ ...files });
+
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: fs,
+        });
+
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emit(undefined, EmitFlags.OnlyDts);
+            assert.deepEqual(result, {
+                diagnostics: [],
+                emitSkipped: false,
+                emittedFiles: [
+                    "/dist/src/index.d.ts",
+                    "/dist/src/testing.d.ts",
+                ],
+            });
+
+            const js = fs.readFile?.("/dist/src/index.js");
+            const dts = fs.readFile?.("/dist/src/index.d.ts");
+            const js2 = fs.readFile?.("/dist/src/testing.js");
+            const dts2 = fs.readFile?.("/dist/src/testing.d.ts");
+            assert.strictEqual(js, undefined);
+            assert.strictEqual(dts, `export declare const x: number;\n`);
+            assert.strictEqual(js2, undefined);
+            assert.strictEqual(dts2, `export declare const y: string;\n`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit only js", async () => {
+        const fs = createVirtualFileSystem({ ...files });
+
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: fs,
+        });
+
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emit(undefined, EmitFlags.OnlyJs);
+            assert.deepEqual(result, {
+                diagnostics: [],
+                emitSkipped: false,
+                emittedFiles: [
+                    "/dist/src/index.js",
+                    "/dist/src/testing.js",
+                ],
+            });
+
+            const js = fs.readFile?.("/dist/src/index.js");
+            const dts = fs.readFile?.("/dist/src/index.d.ts");
+            const js2 = fs.readFile?.("/dist/src/testing.js");
+            const dts2 = fs.readFile?.("/dist/src/testing.d.ts");
+            assert.strictEqual(js, `export const x = 1;\n`);
+            assert.strictEqual(dts, undefined);
+            assert.strictEqual(js2, `export const y = 'typescript';\n`);
+            assert.strictEqual(dts2, undefined);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit only for one source file", async () => {
+        const fs = createVirtualFileSystem({ ...files });
+
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: fs,
+        });
+
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emit("/src/index.ts");
+            assert.deepEqual(result, {
+                diagnostics: [],
+                emitSkipped: false,
+                emittedFiles: [
+                    "/dist/src/index.js",
+                    "/dist/src/index.d.ts",
+                ],
+            });
+
+            const js = fs.readFile?.("/dist/src/index.js");
+            const dts = fs.readFile?.("/dist/src/index.d.ts");
+            const js2 = fs.readFile?.("/dist/src/testing.js");
+            const dts2 = fs.readFile?.("/dist/src/testing.d.ts");
+            assert.strictEqual(js, `export const x = 1;\n`);
+            assert.strictEqual(dts, `export declare const x: number;\n`);
+            assert.strictEqual(js2, undefined);
+            assert.strictEqual(dts2, undefined);
         }
         finally {
             await api.close();

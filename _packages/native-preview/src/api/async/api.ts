@@ -2,6 +2,7 @@
 import { CompletionItemKind } from "#enums/completionItemKind";
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
+import { EmitFlags } from "#enums/emitFlags";
 import { NodeBuilderFlags } from "#enums/nodeBuilderFlags";
 import { ObjectFlags } from "#enums/objectFlags";
 import { SignatureFlags } from "#enums/signatureFlags";
@@ -75,6 +76,7 @@ import type {
     CompletionOptions,
     ConditionalType,
     Diagnostic,
+    EmitResult,
     FreshableType,
     IdentifierTypePredicate,
     IndexedAccessType,
@@ -99,9 +101,9 @@ import type {
     UnionType,
 } from "./types.ts";
 
-export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export { CompletionItemKind, DiagnosticCategory, ElementFlags, EmitFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, EmitResult, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 export class API<FromLSP extends boolean = false> {
@@ -560,6 +562,25 @@ export class Program {
             project: this.projectId,
         });
         return data ?? [];
+    }
+
+    /**
+     * Emit the compiled JavaScript and declaration files for the whole project,
+     * or a specific file if provided.
+     * @param file - Optional source file whose compiled output is to be emitted.
+     *               If omitted, all files in the project will be considered.
+     * @param emitOnly - Optional flag to specify what kinds of files to emit
+     *                   (e.g. only JavaScript, only declarations, etc.). Defaults
+     *                   to emitting all files.
+     */
+    async emit(file?: DocumentIdentifier, emitOnly: EmitFlags = EmitFlags.All): Promise<EmitResult> {
+        const data = await this.client.apiRequest("emit", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { targetSourceFile: file } : {}),
+            emitOnly: emitOnly,
+        });
+        return data as EmitResult;
     }
 }
 

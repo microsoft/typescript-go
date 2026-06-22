@@ -262,3 +262,15 @@ export interface Diagnostic {
     /** Related diagnostic information */
     readonly relatedInformation?: readonly Diagnostic[];
 }
+
+/**
+ * The result of a TypeScript compiler `emit` operation.
+ */
+export interface EmitResult {
+    /** A boolean flag indicating that the compiler did not generate any output files */
+    emitSkipped: boolean;
+    /** A list of files that were emitted by the compiler */
+    emittedFiles: string[];
+    /** A list of diagnostics produced during the emit operation */
+    diagnostics: Diagnostic[];
+}
