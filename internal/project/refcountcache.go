@@ -77,7 +77,8 @@ func (c *RefCountCache[K, V, AcquireArgs]) TryRef(identity K) bool {
 }
 
 // RefValue increments the reference count for an entry, restoring it with value
-// if it was deleted before the ref could be taken.
+// if it was deleted before the ref could be taken. If another goroutine restores
+// the entry first, this refs that entry and ignores value.
 func (c *RefCountCache[K, V, AcquireArgs]) RefValue(identity K, value V) {
 	for {
 		entry, ok := c.entries.Load(identity)
