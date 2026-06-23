@@ -2340,6 +2340,25 @@ describe("Checker - getTypeArguments", () => {
             api.close();
         }
     });
+
+    test("does not panic for a non-reference type (issue #4338)", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const s: string = "";`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", `export const `.length);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.deepEqual(project.checker.getTypeArguments(type), []);
+        }
+        finally {
+            api.close();
+        }
+    });
 });
 
 describe("TypeParameter - isThisType", () => {

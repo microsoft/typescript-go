@@ -275,6 +275,12 @@ func (c *Checker) GetRestTypeOfSignature(sig *Signature) *Type {
 }
 
 func (c *Checker) GetTypeArguments(t *Type) []*Type {
+	// getTypeArguments assumes a type reference; non-reference types (e.g. the
+	// intrinsic `string`) would nil-deref through the public API. Match tsc's
+	// behavior of having no type arguments for them.
+	if t.objectFlags&ObjectFlagsReference == 0 {
+		return nil
+	}
 	return c.getTypeArguments(t)
 }
 
