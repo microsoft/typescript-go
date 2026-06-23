@@ -434,10 +434,12 @@ class ProjectObjectRegistry {
         this.signatures.clear();
     }
 
-    fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | undefined): T {
-        if (!handle) return undefined as unknown as T;
-        const cached = this.getType(handle);
-        if (cached) return cached as unknown as T;
+    fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): T {
+        if (handle !== false) {
+            if (!handle) return undefined as unknown as T;
+            const cached = this.getType(handle);
+            if (cached) return cached as unknown as T;
+        }
 
         const data = this.client.apiRequest<TypeResponse | null>(method, {
             snapshot: this.snapshotId,
@@ -1321,6 +1323,9 @@ class TypeObject implements Type {
     readonly baseType!: number;
     readonly substConstraint!: number;
 
+    private trueType: number | false; // false if not yet loaded
+    private falseType: number | false; // false if not yet loaded
+
     constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
 
@@ -1353,6 +1358,9 @@ class TypeObject implements Type {
         if (data.extendsType !== undefined) this.extendsType = data.extendsType;
         if (data.baseType !== undefined) this.baseType = data.baseType;
         if (data.substConstraint !== undefined) this.substConstraint = data.substConstraint;
+
+        this.trueType = false;
+        this.falseType = false;
     }
 
     getSymbol(): Symbol | undefined {
@@ -1417,6 +1425,18 @@ class TypeObject implements Type {
 
     getConstraint(): Type {
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
+    }
+
+    getTrueType(): Type | undefined {
+        const result = this.objectRegistry.fetchType(this, "getTrueTypeOfConditionalType", this.trueType);
+        this.trueType = result?.id;
+        return result;
+    }
+
+    getFalseType(): Type | undefined {
+        const result = this.objectRegistry.fetchType(this, "getFalseTypeOfConditionalType", this.falseType);
+        this.falseType = result?.id;
+        return result;
     }
 }
 
