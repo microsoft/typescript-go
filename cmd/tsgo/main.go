@@ -33,7 +33,8 @@ func runMain() int {
 }
 
 func exitCode(status tsc.ExitStatus) int {
-	if status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped {
+	switch status {
+	case tsc.ExitStatusDiagnosticsPresent_OutputsSkipped, tsc.ExitStatusDiagnosticsPresent_OutputsGenerated:
 		return 2
 	}
 	return int(status)
