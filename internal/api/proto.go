@@ -665,6 +665,8 @@ func literalValueToJSON(value any) any {
 	case bool:
 		return v
 	case jsnum.PseudoBigInt:
+		// Encode bigint literals as a signed decimal string (e.g. "-123"); the
+		// API client decodes this back into a real bigint. JSON has no bigint.
 		return v.String()
 	default:
 		return nil
@@ -701,6 +703,7 @@ type ResolveNameParams struct {
 // GetTypePropertyParams is used for all type sub-property endpoints.
 type GetTypePropertyParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"objectId"`
 }
 
@@ -713,6 +716,7 @@ type GetSymbolPropertyParams struct {
 // GetSignaturePropertyParams is used for all signature sub-property endpoints.
 type GetSignaturePropertyParams struct {
 	Snapshot  SnapshotID  `json:"snapshot"`
+	Project   ProjectID   `json:"project"`
 	Signature SignatureID `json:"objectId"`
 }
 
