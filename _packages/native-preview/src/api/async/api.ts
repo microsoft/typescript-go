@@ -239,6 +239,7 @@ export class Snapshot {
     private objectRegistry: SnapshotObjectRegistry;
     private disposed: boolean = false;
     private onDispose: () => void;
+    readonly internal: SnapshotInternalAPI;
 
     constructor(
         data: UpdateSnapshotResponse,
@@ -268,6 +269,8 @@ export class Snapshot {
             const project = new Project(projData, this.id, client, this.objectRegistry, sourceFileCache, toPath);
             this.projectMap.set(toPath(projData.configFileName), project);
         }
+
+        this.internal = new SnapshotInternalAPI(this.id, client);
     }
 
     getProjects(): readonly Project[] {
@@ -1074,6 +1077,47 @@ export class Emitter {
         return this.client.apiRequest<string>("printNode", {
             data: base64,
             ...options,
+        });
+    }
+}
+
+export class SnapshotInternalAPI {
+    private snapshotId: number;
+    private client: Client;
+
+    constructor(snapshotId: number, client: Client) {
+        this.snapshotId = snapshotId;
+        this.client = client;
+    }
+
+    /**
+     * Format a synthesized node with the correct indentation for insertion at a
+     * specific position in an existing source file.
+     *
+     * @param node The synthesized AST node to format.
+     * @param file The target file where the node will be inserted.
+     * @param position The UTF-16 code-unit offset in the target file for insertion.
+     * @returns The formatted text of the node, indented for the insertion position.
+     */
+    async formatNodeForInsertion(node: Node, file: DocumentIdentifier, position: number): Promise<string> {
+        // Resolve a project for this file
+        const data = await this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", {
+            snapshot: this.snapshotId,
+            file,
+        });
+        if (!data) {
+            throw new Error(`No project found for file: ${typeof file === "string" ? file : file.uri}`);
+        }
+        const projectId = data.id;
+
+        const encoded = encodeNode(node);
+        const base64 = uint8ArrayToBase64(encoded);
+        return this.client.apiRequest<string>("formatNodeForInsertion", {
+            snapshot: this.snapshotId,
+            project: projectId,
+            file,
+            position,
+            data: base64,
         });
     }
 }
