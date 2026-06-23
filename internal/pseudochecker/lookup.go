@@ -226,6 +226,9 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 
 		body := fn.Body()
 		if ast.IsBlock(body) {
+			if len(body.Statements()) == 0 {
+				return PseudoTypeVoid
+			}
 			ast.ForEachReturnStatement(body, func(stmt *ast.Node) bool {
 				if stmt.Parent != body { // Why bail on nested return statements?
 					candidateExpr = nil

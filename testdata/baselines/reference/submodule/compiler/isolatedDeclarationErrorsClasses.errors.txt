@@ -1,5 +1,4 @@
 isolatedDeclarationErrorsClasses.ts(3,5): error TS9012: Property must have an explicit type annotation with --isolatedDeclarations.
-isolatedDeclarationErrorsClasses.ts(4,5): error TS9008: Method must have an explicit return type annotation with --isolatedDeclarations.
 isolatedDeclarationErrorsClasses.ts(8,18): error TS7006: Parameter 'p' implicitly has an 'any' type.
 isolatedDeclarationErrorsClasses.ts(8,18): error TS9011: Parameter must have an explicit type annotation with --isolatedDeclarations.
 isolatedDeclarationErrorsClasses.ts(9,23): error TS9011: Parameter must have an explicit type annotation with --isolatedDeclarations.
@@ -11,7 +10,6 @@ isolatedDeclarationErrorsClasses.ts(36,5): error TS9038: Computed property names
 isolatedDeclarationErrorsClasses.ts(36,6): error TS2304: Cannot find name 'missing'.
 isolatedDeclarationErrorsClasses.ts(38,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsClasses.ts(40,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
-isolatedDeclarationErrorsClasses.ts(42,5): error TS9008: Method must have an explicit return type annotation with --isolatedDeclarations.
 isolatedDeclarationErrorsClasses.ts(42,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsClasses.ts(44,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsClasses.ts(44,35): error TS7006: Parameter 'v' implicitly has an 'any' type.
@@ -26,7 +24,7 @@ isolatedDeclarationErrorsClasses.ts(56,5): error TS7010: '[noAnnotationLiteralNa
 isolatedDeclarationErrorsClasses.ts(56,5): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 
 
-==== isolatedDeclarationErrorsClasses.ts (26 errors) ====
+==== isolatedDeclarationErrorsClasses.ts (24 errors) ====
     export class Cls {
     
         field = 1 + 1;
@@ -34,9 +32,6 @@ isolatedDeclarationErrorsClasses.ts(56,5): error TS9013: Expression type can't b
 !!! error TS9012: Property must have an explicit type annotation with --isolatedDeclarations.
 !!! related TS9029 isolatedDeclarationErrorsClasses.ts:3:5: Add a type annotation to the property field.
         method() {}
-        ~~~~~~
-!!! error TS9008: Method must have an explicit return type annotation with --isolatedDeclarations.
-!!! related TS9034 isolatedDeclarationErrorsClasses.ts:4:5: Add a return type to the method
     
         methodOk(): void {}
     
@@ -102,9 +97,6 @@ isolatedDeclarationErrorsClasses.ts(56,5): error TS9013: Expression type can't b
 !!! error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
     
         [noAnnotationStringName]() { }
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS9008: Method must have an explicit return type annotation with --isolatedDeclarations.
-!!! related TS9034 isolatedDeclarationErrorsClasses.ts:42:5: Add a return type to the method
         ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
     
