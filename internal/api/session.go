@@ -49,10 +49,9 @@ type snapshotData struct {
 
 // getProgram looks up a program from a project handle within this snapshot.
 func (sd *snapshotData) getProgram(projectHandle ProjectID) (*compiler.Program, error) {
-	projectName := parseProjectHandle(projectHandle)
-	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
-	if proj == nil {
-		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
+	proj, err := sd.getProject(projectHandle)
+	if err != nil {
+		return nil, err
 	}
 
 	program := proj.GetProgram()
@@ -61,6 +60,16 @@ func (sd *snapshotData) getProgram(projectHandle ProjectID) (*compiler.Program, 
 	}
 
 	return program, nil
+}
+
+// getProject looks up a project from a project handle within this snapshot.
+func (sd *snapshotData) getProject(projectHandle ProjectID) (*project.Project, error) {
+	projectName := parseProjectHandle(projectHandle)
+	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
+	if proj == nil {
+		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
+	}
+	return proj, nil
 }
 
 // nodeHandleFrom creates an index-based node handle (index.kind.path), building a node index table
@@ -2345,12 +2354,26 @@ func (s *Session) handleGetGlobalDiagnostics(ctx context.Context, params *GetPro
 		return nil, err
 	}
 
-	program, err := sd.getProgram(params.Project)
+	proj, err := sd.getProject(params.Project)
 	if err != nil {
 		return nil, err
 	}
 
-	diags := program.GetGlobalDiagnostics(ctx)
+	program := proj.GetProgram()
+	if program == nil {
+		return nil, fmt.Errorf("%w: project has no program", ErrClientError)
+	}
+
+	// Global diagnostics are accumulated lazily by the project's checker pool as
+	// files are checked. Force a full semantic pass so any global (non-file-specific)
+	// diagnostics are produced; otherwise this would return an empty result for
+	// projects using an external checker pool (the typical API case), since
+	// compiler.Program.GetGlobalDiagnostics only reports for the internal pool.
+	program.GetSemanticDiagnostics(ctx, nil)
+
+	diags := core.Filter(proj.GetProjectDiagnostics(ctx), func(d *ast.Diagnostic) bool {
+		return d.File() == nil
+	})
 	return NewDiagnosticResponses(diags), nil
 }
 

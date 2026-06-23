@@ -3526,6 +3526,33 @@ describe("Program - diagnostics", () => {
             api.close();
         }
     });
+
+    test("getGlobalDiagnostics returns file-less diagnostics from the checker", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": `{ "compilerOptions": { "noLib": true } }`,
+            "/src/index.ts": `export const x = [1, 2, 3];`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const diags = project.program.getGlobalDiagnostics();
+            // With noLib, the checker reports "Cannot find global type" diagnostics that
+            // are not associated with any source file.
+            assert.ok(diags.length > 0, "expected global diagnostics to be reported");
+            for (const diag of diags) {
+                assert.equal(diag.fileName, undefined);
+                assert.equal(diag.code, 2318);
+                assert.equal(diag.category, DiagnosticCategory.Error);
+            }
+            assert.ok(
+                diags.some(d => d.text === "Cannot find global type 'Array'."),
+                "expected a global diagnostic for the 'Array' type",
+            );
+        }
+        finally {
+            api.close();
+        }
+    });
 });
 
 describe("Checker - getReferencedSymbolsForNode", () => {
