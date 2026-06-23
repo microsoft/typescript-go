@@ -78,6 +78,7 @@ type Watcher struct {
 	seenFiles     *collections.Set[tspath.Path] // all build dependencies (for event filtering)
 	configMtimes  map[string]time.Time
 	watchSetDirty bool
+	programReady bool
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -318,7 +319,7 @@ func (w *Watcher) doBuild() error {
 		}
 	}
 
-	if w.program != nil && !w.configModified && !w.watchSetDirty {
+	if w.program != nil && w.programReady && !w.configModified && !w.watchSetDirty {
 		cached := cachedvfs.From(w.sys.FS())
 		innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), cached, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 		host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
@@ -370,6 +371,7 @@ func (w *Watcher) doBuild() error {
 		Config: w.config,
 		Host:   host,
 	}), w.program, nil, w.testing != nil)
+	w.programReady = true
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
@@ -435,11 +437,31 @@ func (w *Watcher) tryUpdateProgram(host *watchCompilerHost) bool {
 		return false
 	}
 
+	if oldFile := oldProgram.FilesByPath()[changedPath]; oldFile != nil {
+		if newFile := host.GetSourceFile(oldFile.ParseOptions()); newFile != nil {
+			if !equalJSXImplicitImport(oldProgram.Options(), oldFile, newFile) {
+				return false
+			}
+		}
+	}
+
 	newProgram, _, reused := oldProgram.UpdateProgram(changedPath, host, nil)
 	if reused {
 		w.program = incremental.NewProgram(newProgram, w.program, nil, w.testing != nil)
 	}
 	return reused
+}
+
+func equalJSXImplicitImport(options *core.CompilerOptions, oldFile *ast.SourceFile, newFile *ast.SourceFile) bool {
+	isJSX := func(file *ast.SourceFile) bool {
+		return file.ScriptKind == core.ScriptKindJSX || file.ScriptKind == core.ScriptKindTSX
+	}
+	if !isJSX(oldFile) && !isJSX(newFile) {
+		return true
+	}
+	oldImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(options, oldFile), options)
+	newImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(options, newFile), options)
+	return oldImport == newImport
 }
 
 func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventKind) {

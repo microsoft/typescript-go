@@ -293,6 +293,64 @@ func TestBuildWatchStopsWhenContextIsCancelled(t *testing.T) {
 	}
 }
 
+func TestWatcherStartsFromExistingBuildInfo(t *testing.T) {
+	t.Parallel()
+	input := &tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/index.ts":      `export const x: number = 1;`,
+			"/home/src/workspaces/project/tsconfig.json": `{"compilerOptions":{"composite":true},"files":["index.ts"]}`,
+		},
+	}
+	sys := newTestSys(input, false)
+
+	result := execute.CommandLine(context.Background(), sys, []string{"-p", "tsconfig.json", "--pretty", "false"}, sys)
+	assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
+	assert.Assert(t, sys.fsFromFileMap().FileExists("/home/src/workspaces/project/tsconfig.tsbuildinfo"))
+
+	sys.clearOutput()
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("watch startup with existing build info panicked: %v", r)
+		}
+	}()
+	result = execute.CommandLine(context.Background(), sys, []string{"--watch", "--noEmit", "--pretty", "false"}, sys)
+	assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
+	assert.Assert(t, result.Watcher != nil)
+}
+
+func TestWatcherRebuildsWhenJsxImportSourcePragmaChanges(t *testing.T) {
+	t.Parallel()
+	input := &tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/index.tsx": `/** @jsxImportSource foo */
+export const x = <div />;`,
+			"/home/src/workspaces/project/tsconfig.json": `{
+				"compilerOptions":{"jsx":"react-jsx","module":"esnext","moduleResolution":"bundler","noEmit":true},
+				"files":["index.tsx"]
+			}`,
+		},
+		commandLineArgs: []string{"--watch"},
+	}
+	sys := newTestSys(input, false)
+	result := execute.CommandLine(context.Background(), sys, []string{"--watch", "--pretty", "false"}, sys)
+	if result.Watcher == nil {
+		t.Fatal("expected Watcher to be non-nil in watch mode")
+	}
+	w := result.Watcher.(*execute.Watcher)
+
+	sys.currentWrite.Reset()
+	_ = sys.fsFromFileMap().WriteFile("/home/src/workspaces/project/index.tsx", `/** @jsxImportSource bar */
+export const x = <div />;`)
+	sys.mockWatchBackend.SendEvents([]fswatch.Event{
+		{Kind: fswatch.EventUpdate, Path: "/home/src/workspaces/project/index.tsx"},
+	})
+	w.DoCycle()
+
+	out := sys.currentWrite.String()
+	assert.Assert(t, strings.Contains(out, "bar/jsx-runtime"), "expected updated JSX runtime diagnostic, got: %s", out)
+	assert.Assert(t, !strings.Contains(out, "foo/jsx-runtime"), "expected stale JSX runtime diagnostic to be gone, got: %s", out)
+}
+
 // TestWatcherUpdateProgramFastPath verifies that the UpdateProgram optimization
 // produces correct compilation results for body-only edits (fast path) and
 // correctly falls back to full NewProgram when imports change.
