@@ -36,21 +36,24 @@ type snapshotData struct {
 	snapshot *project.Snapshot
 	refCount int
 
+	// Symbol IDs come from ast.GetSymbolId, a global atomic counter, so the same
+	// *ast.Symbol pointer always has the same unique ID across all projects in the
+	// snapshot. Symbols are registered snapshot-wide to ensure identity semantics:
+	// querying the same symbol from two different projects returns the same handle.
+	symbolRegistry   map[SymbolID]*ast.Symbol
+	symbolRegistryMu sync.RWMutex
+
 	projectRegistries   map[ProjectID]*projectRegistryData
 	projectRegistriesMu sync.RWMutex
 }
 
-// projectRegistryData holds per-project type, symbol, and signature registries.
-// Keeping registries per-project avoids ID collisions: each Checker allocates
-// type and signature IDs from its own sequential counter, so the same local ID
+// projectRegistryData holds per-project type and signature registries.
+// Types and signatures use per-checker sequential IDs, so the same local ID
 // can appear in multiple projects. Separate maps per project prevent collisions
 // and allow clean teardown when a project is removed.
 type projectRegistryData struct {
 	typeRegistry   map[TypeID]*checker.Type
 	typeRegistryMu sync.RWMutex
-
-	symbolRegistry   map[SymbolID]*ast.Symbol
-	symbolRegistryMu sync.RWMutex
 
 	signatureRegistry   map[SignatureID]*checker.Signature
 	signatureRegistryMu sync.RWMutex
@@ -100,21 +103,20 @@ func (sd *snapshotData) getOrCreateProjectRegistry(projectID ProjectID) *project
 	if sd.projectRegistries[projectID] == nil {
 		sd.projectRegistries[projectID] = &projectRegistryData{
 			typeRegistry:      make(map[TypeID]*checker.Type),
-			symbolRegistry:    make(map[SymbolID]*ast.Symbol),
 			signatureRegistry: make(map[SignatureID]*checker.Signature),
 		}
 	}
 	return sd.projectRegistries[projectID]
 }
 
-// newSymbolResponse registers a symbol in the project's registry and returns the response.
-func (sd *snapshotData) newSymbolResponse(projectID ProjectID, symbol *ast.Symbol) *SymbolResponse {
+// newSymbolResponse registers a symbol in the snapshot's registry and returns the response.
+func (sd *snapshotData) newSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
 	if symbol == nil {
 		return nil
 	}
 
 	resp := &SymbolResponse{
-		Id:         sd.registerSymbol(projectID, symbol),
+		Id:         sd.registerSymbol(symbol),
 		Name:       symbol.Name,
 		Flags:      uint32(symbol.Flags),
 		CheckFlags: uint32(symbol.CheckFlags),
@@ -142,22 +144,21 @@ func (sd *snapshotData) newSymbolResponse(projectID ProjectID, symbol *ast.Symbo
 	return resp
 }
 
-func (sd *snapshotData) registerSymbol(projectID ProjectID, symbol *ast.Symbol) SymbolID {
+func (sd *snapshotData) registerSymbol(symbol *ast.Symbol) SymbolID {
 	if symbol == nil {
 		return 0
 	}
 	id := SymbolHandle(symbol)
-	reg := sd.getOrCreateProjectRegistry(projectID)
-	reg.symbolRegistryMu.Lock()
-	defer reg.symbolRegistryMu.Unlock()
-	existing := reg.symbolRegistry[id]
+	sd.symbolRegistryMu.Lock()
+	defer sd.symbolRegistryMu.Unlock()
+	existing := sd.symbolRegistry[id]
 	if existing != nil {
 		if existing != symbol {
 			panic("duplicate symbol")
 		}
 		return id
 	}
-	reg.symbolRegistry[id] = symbol
+	sd.symbolRegistry[id] = symbol
 	return id
 }
 
@@ -189,29 +190,18 @@ func (sd *snapshotData) registerType(projectID ProjectID, t *checker.Type) TypeI
 	return id
 }
 
-// resolveSymbolHandle resolves a symbol handle within the project's registry.
-func (sd *snapshotData) resolveSymbolHandle(projectID ProjectID, handle SymbolID) (*ast.Symbol, error) {
+// resolveSymbolHandle resolves a symbol handle within the snapshot's registry.
+func (sd *snapshotData) resolveSymbolHandle(handle SymbolID) (*ast.Symbol, error) {
 	if handle == 0 {
 		return nil, fmt.Errorf("%w: empty symbol handle", ErrClientError)
 	}
-	if projectID == "" {
-		return nil, fmt.Errorf("%w: empty project ID for symbol handle %d", ErrClientError, handle)
-	}
 
-	sd.projectRegistriesMu.RLock()
-	reg := sd.projectRegistries[projectID]
-	sd.projectRegistriesMu.RUnlock()
-
-	if reg == nil {
-		return nil, fmt.Errorf("%w: symbol handle %d not found (no registry for project %s)", ErrClientError, handle, projectID)
-	}
-
-	reg.symbolRegistryMu.RLock()
-	symbol, ok := reg.symbolRegistry[handle]
-	reg.symbolRegistryMu.RUnlock()
+	sd.symbolRegistryMu.RLock()
+	symbol, ok := sd.symbolRegistry[handle]
+	sd.symbolRegistryMu.RUnlock()
 
 	if !ok {
-		return nil, fmt.Errorf("%w: symbol handle %d not found in project registry", ErrClientError, handle)
+		return nil, fmt.Errorf("%w: symbol handle %d not found in snapshot registry", ErrClientError, handle)
 	}
 
 	return symbol, nil
@@ -412,7 +402,7 @@ func (setup checkerSetup) newTypeResponse(t *checker.Type) *TypeResponse {
 }
 
 func (setup checkerSetup) newSymbolResponse(sym *ast.Symbol) *SymbolResponse {
-	return setup.sd.newSymbolResponse(setup.projectID, sym)
+	return setup.sd.newSymbolResponse(sym)
 }
 
 func (setup checkerSetup) newSignatureResponse(sig *checker.Signature) *SignatureResponse {
@@ -424,7 +414,7 @@ func (setup checkerSetup) resolveTypeHandle(id TypeID) (*checker.Type, error) {
 }
 
 func (setup checkerSetup) resolveSymbolHandle(id SymbolID) (*ast.Symbol, error) {
-	return setup.sd.resolveSymbolHandle(setup.projectID, id)
+	return setup.sd.resolveSymbolHandle(id)
 }
 
 func (setup checkerSetup) resolveSignatureHandle(id SignatureID) (*checker.Signature, error) {
@@ -753,6 +743,7 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		sd = &snapshotData{
 			snapshot:          snapshot,
 			refCount:          1,
+			symbolRegistry:    make(map[SymbolID]*ast.Symbol),
 			projectRegistries: make(map[ProjectID]*projectRegistryData),
 		}
 		s.snapshots[handle] = sd
@@ -1422,7 +1413,7 @@ func (s *Session) resolveSymbolPropertyOfType(params *GetTypePropertyParams, get
 	if result == nil {
 		return nil, nil
 	}
-	return sd.newSymbolResponse(params.Project, result), nil
+	return sd.newSymbolResponse(result), nil
 }
 
 // resolveSymbolTablePropertyOfSymbol resolves a symbol property of type `Symbol` and returns a symbol response.
@@ -1432,7 +1423,7 @@ func (s *Session) resolveSymbolPropertyOfSymbol(params *GetSymbolPropertyParams,
 		return nil, err
 	}
 
-	symbol, err := sd.resolveSymbolHandle(params.Project, params.Symbol)
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -1441,7 +1432,7 @@ func (s *Session) resolveSymbolPropertyOfSymbol(params *GetSymbolPropertyParams,
 	if result == nil {
 		return nil, nil
 	}
-	return sd.newSymbolResponse(params.Project, result), nil
+	return sd.newSymbolResponse(result), nil
 }
 
 // resolveSymbolTablePropertyOfSymbol resolves a symbol property of type `SymbolTable` and returns an array of symbol responses.
@@ -1451,7 +1442,7 @@ func (s *Session) resolveSymbolTablePropertyOfSymbol(params *GetSymbolPropertyPa
 		return nil, err
 	}
 
-	symbol, err := sd.resolveSymbolHandle(params.Project, params.Symbol)
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -1463,7 +1454,7 @@ func (s *Session) resolveSymbolTablePropertyOfSymbol(params *GetSymbolPropertyPa
 
 	results := make([]*SymbolResponse, 0, len(symbolTable))
 	for _, sub := range symbolTable {
-		results = append(results, sd.newSymbolResponse(params.Project, sub))
+		results = append(results, sd.newSymbolResponse(sub))
 	}
 	return results, nil
 }
@@ -1487,7 +1478,7 @@ func (s *Session) resolveSymbolArrayPropertyOfSignature(params *GetSignatureProp
 
 	results := make([]*SymbolResponse, len(symbols))
 	for i, sym := range symbols {
-		results[i] = sd.newSymbolResponse(params.Project, sym)
+		results[i] = sd.newSymbolResponse(sym)
 	}
 	return results, nil
 }
@@ -1508,7 +1499,7 @@ func (s *Session) resolveSymbolPropertyOfSignature(params *GetSignaturePropertyP
 	if result == nil {
 		return nil, nil
 	}
-	return sd.newSymbolResponse(params.Project, result), nil
+	return sd.newSymbolResponse(result), nil
 }
 
 func (s *Session) resolveTypeArrayPropertyOfSignature(params *GetSignaturePropertyParams, getter func(signature *checker.Signature) []*checker.Type) ([]*TypeResponse, error) {
@@ -2512,7 +2503,7 @@ func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *Ge
 			}
 		}
 		if item.Symbol != nil {
-			entry.Symbol = sd.newSymbolResponse(params.Project, item.Symbol)
+			entry.Symbol = sd.newSymbolResponse(item.Symbol)
 		}
 		entries = append(entries, entry)
 	}
@@ -2569,7 +2560,7 @@ func (s *Session) handleGetReferencedSymbolsForNode(ctx context.Context, params 
 			References: refs,
 		}
 		if sym := entry.DefinitionSymbol(); sym != nil {
-			re.Symbol = sd.newSymbolResponse(params.Project, sym)
+			re.Symbol = sd.newSymbolResponse(sym)
 		}
 		result = append(result, re)
 	}

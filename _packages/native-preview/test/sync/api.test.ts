@@ -708,6 +708,43 @@ describe("Source file cache keying across projects", () => {
     });
 });
 
+describe("Checker - symbol identity across projects", () => {
+    const sharedSymbolFiles = {
+        "/projectA/tsconfig.json": JSON.stringify({ files: ["../src/shared.ts"] }),
+        "/projectB/tsconfig.json": JSON.stringify({ files: ["../src/shared.ts"] }),
+        "/src/shared.ts": `export const sharedVar = 42;`,
+    };
+
+    test("getSymbolAtPosition returns same Symbol instance across projects", () => {
+        const api = spawnAPI(sharedSymbolFiles);
+        try {
+            api.updateSnapshot({ openProject: "/projectA/tsconfig.json" });
+            const snapshot = api.updateSnapshot({ openProject: "/projectB/tsconfig.json" });
+
+            const projectA = snapshot.getProject("/projectA/tsconfig.json")!;
+            const projectB = snapshot.getProject("/projectB/tsconfig.json")!;
+            assert.ok(projectA, "projectA should exist");
+            assert.ok(projectB, "projectB should exist");
+
+            const src = sharedSymbolFiles["/src/shared.ts"];
+            const varPos = src.indexOf("sharedVar");
+
+            const symbolA = projectA.checker.getSymbolAtPosition("/src/shared.ts", varPos);
+            const symbolB = projectB.checker.getSymbolAtPosition("/src/shared.ts", varPos);
+
+            assert.ok(symbolA, "symbolA should exist");
+            assert.ok(symbolB, "symbolB should exist");
+            assert.equal(symbolA.name, "sharedVar");
+            assert.equal(symbolB.name, "sharedVar");
+
+            assert.strictEqual(symbolA, symbolB, "Same source symbol queried from two projects should be the same object");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("Checker - types and signatures", () => {
     const checkerFiles = {
         "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
