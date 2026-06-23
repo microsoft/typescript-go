@@ -78,7 +78,7 @@ type Watcher struct {
 	seenFiles     *collections.Set[tspath.Path] // all build dependencies (for event filtering)
 	configMtimes  map[string]time.Time
 	watchSetDirty bool
-	programReady bool
+	programReady  bool
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
