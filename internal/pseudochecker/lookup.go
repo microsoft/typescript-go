@@ -218,7 +218,6 @@ func (ch *PseudoChecker) createReturnFromSignature(fn *ast.Node) *PseudoType {
 
 func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoType {
 	var candidateExpr *ast.Node
-	hasReturn := false
 	if fn != nil && !ast.NodeIsMissing(fn.Body()) {
 		flags := ast.GetFunctionFlags(fn)
 		if flags&ast.FunctionFlagsAsyncGenerator != 0 {
@@ -228,9 +227,6 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 		body := fn.Body()
 		if ast.IsBlock(body) {
 			ast.ForEachReturnStatement(body, func(stmt *ast.Node) bool {
-				if stmt.AsReturnStatement().Expression != nil {
-					hasReturn = true
-				}
 				if stmt.Parent != body { // Why bail on nested return statements?
 					candidateExpr = nil
 					return true
@@ -244,7 +240,6 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 				return false
 			})
 		} else {
-			hasReturn = true
 			candidateExpr = body
 		}
 	}
@@ -262,8 +257,6 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 		} else {
 			return ch.typeFromExpression(candidateExpr)
 		}
-	} else if !hasReturn {
-		return PseudoTypeVoid
 	}
 	return NewPseudoTypeInferred(fn, true)
 }

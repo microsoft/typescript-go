@@ -33,7 +33,6 @@ const (
 	PseudoTypeKindBoolean
 	PseudoTypeKindFalse
 	PseudoTypeKindTrue
-	PseudoTypeKindVoid
 	PseudoTypeKindSingleCallSignature
 	PseudoTypeKindTuple
 	PseudoTypeKindObjectLiteral
@@ -78,7 +77,6 @@ var (
 	PseudoTypeBoolean   = newPseudoType(PseudoTypeKindBoolean, &PseudoTypeBase{})
 	PseudoTypeFalse     = newPseudoType(PseudoTypeKindFalse, &PseudoTypeBase{})
 	PseudoTypeTrue      = newPseudoType(PseudoTypeKindTrue, &PseudoTypeBase{})
-	PseudoTypeVoid      = newPseudoType(PseudoTypeKindVoid, &PseudoTypeBase{})
 )
 
 // PseudoTypeDirect directly encodes the type referred to by a given TypeNode
