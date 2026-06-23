@@ -25,4 +25,4 @@ exports.CodePriceType = CodePriceType;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.B = exports.A = void 0;
 const enum_1 = require("./enum");
-({ A: exports.A, B: exports.B } = CodePriceType);
+({ A: exports.A, B: exports.B } = enum_1.CodePriceType);
