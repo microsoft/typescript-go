@@ -549,12 +549,18 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetESSymbolType)
 	case string(MethodGetSyntacticDiagnostics):
 		return s.handleGetSyntacticDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetBindDiagnostics):
+		return s.handleGetBindDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetSemanticDiagnostics):
 		return s.handleGetSemanticDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetSuggestionDiagnostics):
 		return s.handleGetSuggestionDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetDeclarationDiagnostics):
 		return s.handleGetDeclarationDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
+	case string(MethodGetProgramDiagnostics):
+		return s.handleGetProgramDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodGetGlobalDiagnostics):
+		return s.handleGetGlobalDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
 	case string(MethodGetConfigFileParsingDiagnostics):
 		return s.handleGetConfigFileParsingDiagnostics(ctx, parsed.(*GetProjectDiagnosticsParams))
 	case string(MethodStartCPUProfile):
@@ -2211,6 +2217,28 @@ func (s *Session) handleGetSyntacticDiagnostics(ctx context.Context, params *Get
 	return NewDiagnosticResponses(diags), nil
 }
 
+// handleGetBindDiagnostics returns bind diagnostics for a file or all files.
+func (s *Session) handleGetBindDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetBindDiagnostics(ctx, sourceFile)
+	return NewDiagnosticResponses(diags), nil
+}
+
 // handleGetSemanticDiagnostics returns semantic diagnostics for a file or all files.
 func (s *Session) handleGetSemanticDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
@@ -2290,6 +2318,39 @@ func (s *Session) handleGetConfigFileParsingDiagnostics(ctx context.Context, par
 	}
 
 	diags := program.GetConfigFileParsingDiagnostics()
+	return NewDiagnosticResponses(diags), nil
+}
+
+// handleGetProgramDiagnostics returns program-wide diagnostics, including options diagnostics.
+func (s *Session) handleGetProgramDiagnostics(ctx context.Context, params *GetProjectDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetProgramDiagnostics()
+	return NewDiagnosticResponses(diags), nil
+}
+
+// handleGetGlobalDiagnostics returns global (non-file-specific) semantic diagnostics.
+func (s *Session) handleGetGlobalDiagnostics(ctx context.Context, params *GetProjectDiagnosticsParams) ([]*DiagnosticResponse, error) {
+	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	diags := program.GetGlobalDiagnostics(ctx)
 	return NewDiagnosticResponses(diags), nil
 }
 
