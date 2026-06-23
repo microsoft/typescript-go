@@ -1531,3 +1531,57 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 		assert.Assert(t, len(second.Errors) > 0, "expected diagnostics for projB parse (cache hit on base), got 0")
 	})
 }
+
+// TestExtendedConfigConfigDirPathsAreNotCached verifies that ${configDir} in `paths` inherited from a
+// shared (cached) base config is resolved relative to each extending config's own directory, rather
+// than being substituted once and poisoning the cached base for later consumers.
+func TestExtendedConfigConfigDirPathsAreNotCached(t *testing.T) {
+	t.Parallel()
+
+	files := map[string]string{
+		"/base.json": `{
+  "compilerOptions": {
+    "paths": {
+      "@app/*": ["${configDir}/src/*"]
+    }
+  }
+}`,
+		"/projA/tsconfig.json": `{
+  "extends": "../base.json"
+}`,
+		"/projB/tsconfig.json": `{
+  "extends": "../base.json"
+}`,
+		"/projA/app.ts": "export {}",
+		"/projB/app.ts": "export {}",
+	}
+
+	host := tsoptionstest.NewVFSParseConfigHost(files, "/", true /*useCaseSensitiveFileNames*/)
+
+	parseConfig := func(configFileName string, cache tsoptions.ExtendedConfigCache) *tsoptions.ParsedCommandLine {
+		cfgPath := tspath.ToPath(configFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
+		jsonText, ok := host.FS().ReadFile(configFileName)
+		assert.Assert(t, ok, "missing %s in test fs", configFileName)
+		tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
+			SourceFile: parser.ParseSourceFile(ast.SourceFileParseOptions{FileName: configFileName, Path: cfgPath}, jsonText, core.ScriptKindJSON),
+		}
+		return tsoptions.ParseJsonSourceFileConfigFileContent(
+			tsConfigSourceFile,
+			host,
+			host.GetCurrentDirectory(),
+			nil,
+			nil,
+			configFileName,
+			nil,
+			nil,
+			cache,
+		)
+	}
+
+	cache := &memoCache{}
+	first := parseConfig("/projA/tsconfig.json", cache)
+	second := parseConfig("/projB/tsconfig.json", cache)
+
+	assert.DeepEqual(t, first.CompilerOptions().Paths.GetOrZero("@app/*"), []string{"/projA/src/*"})
+	assert.DeepEqual(t, second.CompilerOptions().Paths.GetOrZero("@app/*"), []string{"/projB/src/*"})
+}

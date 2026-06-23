@@ -1558,9 +1558,17 @@ func handleOptionConfigDirTemplateSubstitution(compilerOptions *core.CompilerOpt
 
 	// !!! don't hardcode this; use options declarations?
 
+	// Paths can be inherited (by pointer) from a cached extended config that other
+	// configs also extend, so clone before substituting to avoid poisoning the cache
+	// with this config's ${configDir} resolution.
+	var paths *collections.OrderedMap[string, []string]
 	for k, v := range compilerOptions.Paths.Entries() {
 		if substitution := getSubstitutedStringArrayWithConfigDirTemplate(v, basePath); substitution != nil {
-			compilerOptions.Paths.Set(k, substitution)
+			if paths == nil {
+				paths = compilerOptions.Paths.Clone()
+				compilerOptions.Paths = paths
+			}
+			paths.Set(k, substitution)
 		}
 	}
 
