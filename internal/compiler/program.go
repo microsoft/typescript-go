@@ -1631,6 +1631,11 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 
 	if options.EmitOnly != EmitOnlyForcedDts {
+		if p.Options().NoEmit.IsTrue() {
+			// Mirror handleNoEmitOptions: a single-file noEmit is skipped, but a whole-program
+			// noEmit is not, so a program with diagnostics reports DiagnosticsPresent_OutputsGenerated.
+			return &EmitResult{EmitSkipped: options.TargetSourceFile != nil}
+		}
 		result := HandleNoEmitOnError(
 			ctx,
 			p,

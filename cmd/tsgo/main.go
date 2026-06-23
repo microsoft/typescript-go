@@ -8,7 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
-	"github.com/microsoft/typescript-go/internal/execute/tsc"
 )
 
 func main() {
@@ -29,13 +28,5 @@ func runMain() int {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	result := execute.CommandLine(ctx, newSystem(), args, nil)
-	return exitCode(result.Status)
-}
-
-func exitCode(status tsc.ExitStatus) int {
-	switch status {
-	case tsc.ExitStatusDiagnosticsPresent_OutputsSkipped, tsc.ExitStatusDiagnosticsPresent_OutputsGenerated:
-		return 2
-	}
-	return int(status)
+	return int(result.Status)
 }
