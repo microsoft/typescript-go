@@ -1,0 +1,151 @@
+//// [tests/cases/compiler/recursiveTransformJsonAssignability.ts] ////
+
+=== recursiveTransformJsonAssignability.ts ===
+// https://github.com/microsoft/typescript-go/issues/4408
+
+type Transform<Base, From, To> = {
+>Transform : Symbol(Transform, Decl(recursiveTransformJsonAssignability.ts, 0, 0))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>From : Symbol(From, Decl(recursiveTransformJsonAssignability.ts, 2, 20))
+>To : Symbol(To, Decl(recursiveTransformJsonAssignability.ts, 2, 26))
+
+    [K in keyof Base]: Exclude<Base[K], undefined | null> extends never ? Base[K]
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+
+        : Exclude<Base[K], undefined | null> extends object
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+
+            ? Exclude<Base[K], undefined | null> extends From ? To | Extract<Base[K], null | undefined> : Transform<Base[K], From, To>
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+>From : Symbol(From, Decl(recursiveTransformJsonAssignability.ts, 2, 20))
+>To : Symbol(To, Decl(recursiveTransformJsonAssignability.ts, 2, 26))
+>Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+>Transform : Symbol(Transform, Decl(recursiveTransformJsonAssignability.ts, 0, 0))
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+>From : Symbol(From, Decl(recursiveTransformJsonAssignability.ts, 2, 20))
+>To : Symbol(To, Decl(recursiveTransformJsonAssignability.ts, 2, 26))
+
+        : Base[K];
+>Base : Symbol(Base, Decl(recursiveTransformJsonAssignability.ts, 2, 15))
+>K : Symbol(K, Decl(recursiveTransformJsonAssignability.ts, 3, 5))
+
+};
+
+type TransformJson<T> = Transform<T, Date | bigint, string>;
+>TransformJson : Symbol(TransformJson, Decl(recursiveTransformJsonAssignability.ts, 7, 2))
+>T : Symbol(T, Decl(recursiveTransformJsonAssignability.ts, 9, 19))
+>Transform : Symbol(Transform, Decl(recursiveTransformJsonAssignability.ts, 0, 0))
+>T : Symbol(T, Decl(recursiveTransformJsonAssignability.ts, 9, 19))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)
+
+type Shared = {
+>Shared : Symbol(Shared, Decl(recursiveTransformJsonAssignability.ts, 9, 60))
+
+    base: {
+>base : Symbol(base, Decl(recursiveTransformJsonAssignability.ts, 11, 15))
+
+        id: string;
+>id : Symbol(id, Decl(recursiveTransformJsonAssignability.ts, 12, 11))
+
+        meta: {
+>meta : Symbol(meta, Decl(recursiveTransformJsonAssignability.ts, 13, 19))
+
+            tags: string[];
+>tags : Symbol(tags, Decl(recursiveTransformJsonAssignability.ts, 14, 15))
+
+        };
+    };
+};
+
+type Variant = Shared & (
+>Variant : Symbol(Variant, Decl(recursiveTransformJsonAssignability.ts, 18, 2))
+>Shared : Symbol(Shared, Decl(recursiveTransformJsonAssignability.ts, 9, 60))
+
+    | { type: 1; value: { a: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 21, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 21, 16))
+>a : Symbol(a, Decl(recursiveTransformJsonAssignability.ts, 21, 25))
+
+    | { type: 2; value: { b: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 22, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 22, 16))
+>b : Symbol(b, Decl(recursiveTransformJsonAssignability.ts, 22, 25))
+
+    | { type: 3; value: { c: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 23, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 23, 16))
+>c : Symbol(c, Decl(recursiveTransformJsonAssignability.ts, 23, 25))
+
+    | { type: 4; value: { d: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 24, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 24, 16))
+>d : Symbol(d, Decl(recursiveTransformJsonAssignability.ts, 24, 25))
+
+    | { type: 5; value: { e: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 25, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 25, 16))
+>e : Symbol(e, Decl(recursiveTransformJsonAssignability.ts, 25, 25))
+
+    | { type: 6; value: { f: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 26, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 26, 16))
+>f : Symbol(f, Decl(recursiveTransformJsonAssignability.ts, 26, 25))
+
+    | { type: 7; value: { g: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 27, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 27, 16))
+>g : Symbol(g, Decl(recursiveTransformJsonAssignability.ts, 27, 25))
+
+    | { type: 8; value: { h: string } }
+>type : Symbol(type, Decl(recursiveTransformJsonAssignability.ts, 28, 7))
+>value : Symbol(value, Decl(recursiveTransformJsonAssignability.ts, 28, 16))
+>h : Symbol(h, Decl(recursiveTransformJsonAssignability.ts, 28, 25))
+
+);
+
+type X = {
+>X : Symbol(X, Decl(recursiveTransformJsonAssignability.ts, 29, 2))
+
+    root: {
+>root : Symbol(root, Decl(recursiveTransformJsonAssignability.ts, 31, 10))
+
+        levels: Array<{
+>levels : Symbol(levels, Decl(recursiveTransformJsonAssignability.ts, 32, 11))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 2 more)
+
+            items: Array<{
+>items : Symbol(items, Decl(recursiveTransformJsonAssignability.ts, 33, 23))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 2 more)
+
+                variants: Variant[];
+>variants : Symbol(variants, Decl(recursiveTransformJsonAssignability.ts, 34, 26))
+>Variant : Symbol(Variant, Decl(recursiveTransformJsonAssignability.ts, 18, 2))
+
+            }>;
+        }>;
+    };
+};
+
+declare const transformed: TransformJson<X>;
+>transformed : Symbol(transformed, Decl(recursiveTransformJsonAssignability.ts, 41, 13))
+>TransformJson : Symbol(TransformJson, Decl(recursiveTransformJsonAssignability.ts, 7, 2))
+>X : Symbol(X, Decl(recursiveTransformJsonAssignability.ts, 29, 2))
+
+const x: X = transformed;
+>x : Symbol(x, Decl(recursiveTransformJsonAssignability.ts, 42, 5))
+>X : Symbol(X, Decl(recursiveTransformJsonAssignability.ts, 29, 2))
+>transformed : Symbol(transformed, Decl(recursiveTransformJsonAssignability.ts, 41, 13))
+
