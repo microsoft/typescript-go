@@ -39,10 +39,6 @@ import {
     readSourceFileHash,
     RemoteSourceFile,
 } from "../node/node.ts";
-import {
-    type ObjectFactories,
-    ObjectRegistry,
-} from "../objectRegistry.ts";
 import type {
     APIOptions,
     LSPConnectionOptions,
@@ -78,6 +74,8 @@ import {
 import type {
     AssertsIdentifierTypePredicate,
     AssertsThisTypePredicate,
+    BigIntLiteralType,
+    BooleanLiteralType,
     CompletionEntry,
     CompletionInfo,
     CompletionOptions,
@@ -92,7 +90,9 @@ import type {
     IntersectionType,
     IntrinsicType,
     LiteralType,
+    NumberLiteralType,
     ObjectType,
+    StringLiteralType,
     StringMappingType,
     SubstitutionType,
     TemplateLiteralType,
@@ -109,7 +109,7 @@ import type {
 
 export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, ObjectType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 export class API<FromLSP extends boolean = false> {
@@ -240,9 +240,9 @@ export class Snapshot {
     private projectMap: Map<Path, Project>;
     private toPath: (fileName: string) => Path;
     private client: Client;
-    private objectRegistry: SnapshotObjectRegistry;
     private disposed: boolean = false;
     private onDispose: () => void;
+    private snapshotRegistry: SnapshotObjectRegistry;
 
     constructor(
         data: UpdateSnapshotResponse,
@@ -255,21 +255,11 @@ export class Snapshot {
         this.client = client;
         this.toPath = toPath;
         this.onDispose = onDispose;
+        this.snapshotRegistry = new SnapshotObjectRegistry(client, this.id);
 
-        this.objectRegistry = new SnapshotObjectRegistry(
-            {
-                createSymbol: symbolData => new Symbol(symbolData, this.objectRegistry),
-                createType: typeData => new TypeObject(typeData, this.objectRegistry),
-                createSignature: sigData => new Signature(sigData, this.objectRegistry),
-            },
-            client,
-            this.id,
-        );
-
-        // Create projects
         this.projectMap = new Map();
         for (const projData of data.projects) {
-            const project = new Project(projData, this.id, client, this.objectRegistry, sourceFileCache, toPath);
+            const project = new Project(projData, this.id, client, sourceFileCache, toPath, this.snapshotRegistry);
             this.projectMap.set(toPath(projData.configFileName), project);
         }
     }
@@ -301,7 +291,11 @@ export class Snapshot {
     dispose(): void {
         if (this.disposed) return;
         this.disposed = true;
-        this.objectRegistry.clear();
+        for (const project of this.projectMap.values()) {
+            project.dispose();
+        }
+        this.projectMap.clear();
+        this.snapshotRegistry.clear();
         this.onDispose();
         this.client.apiRequest("release", { snapshot: this.id });
     }
@@ -317,18 +311,128 @@ export class Snapshot {
     }
 }
 
-class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signature> {
-    private client: Client;
-    private snapshotId: number;
+class SnapshotObjectRegistry {
+    private readonly symbols: Map<number, Symbol> = new Map();
+    private readonly client: Client;
+    private readonly snapshotId: number;
 
-    constructor(
-        factories: ObjectFactories<Symbol, TypeObject, Signature>,
-        client: Client,
-        snapshotId: number,
-    ) {
-        super(factories);
+    constructor(client: Client, snapshotId: number) {
         this.client = client;
         this.snapshotId = snapshotId;
+    }
+
+    getOrCreateSymbol(data: SymbolResponse): Symbol {
+        let symbol = this.symbols.get(data.id);
+        if (!symbol) {
+            symbol = new Symbol(data, this);
+            this.symbols.set(data.id, symbol);
+        }
+        return symbol;
+    }
+
+    getSymbol(id: number): Symbol | undefined {
+        return this.symbols.get(id);
+    }
+
+    clear(): void {
+        this.symbols.clear();
+    }
+
+    fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined, projectId?: string): Symbol {
+        if (!handle) return undefined as unknown as Symbol;
+        const cached = this.getSymbol(handle);
+        if (cached) return cached;
+
+        const data = this.client.apiRequest<SymbolResponse | null>(method, {
+            snapshot: this.snapshotId,
+            project: projectId,
+            objectId: source.id,
+        });
+        if (!data) throw new Error(`${method} returned null symbol for ${source.constructor.name} ${source.id}`);
+        return this.getOrCreateSymbol(data);
+    }
+
+    fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[], projectId?: string): readonly Symbol[] {
+        if (handles) {
+            const result = new Array<Symbol>(handles.length);
+            let allCached = true;
+            for (let i = 0; i < handles.length; i++) {
+                const cached = this.getSymbol(handles[i]);
+                if (!cached) {
+                    allCached = false;
+                    break;
+                }
+                result[i] = cached;
+            }
+            if (allCached) return result;
+        }
+        const symbolData = this.client.apiRequest<SymbolResponse[] | null>(method, {
+            snapshot: this.snapshotId,
+            project: projectId,
+            objectId: source.id,
+        });
+        if (symbolData == null) return [];
+        else return symbolData.map(data => this.getOrCreateSymbol(data));
+    }
+}
+
+class ProjectObjectRegistry {
+    private client: Client;
+    private snapshotId: number;
+    private projectId: string;
+    private snapshotRegistry: SnapshotObjectRegistry;
+    private types: Map<number, TypeObject> = new Map();
+    private signatures: Map<number, Signature> = new Map();
+
+    constructor(
+        client: Client,
+        snapshotId: number,
+        projectId: string,
+        snapshotRegistry: SnapshotObjectRegistry,
+    ) {
+        this.client = client;
+        this.snapshotId = snapshotId;
+        this.projectId = projectId;
+        this.snapshotRegistry = snapshotRegistry;
+    }
+
+    getOrCreateSymbol(data: SymbolResponse): Symbol {
+        return this.snapshotRegistry.getOrCreateSymbol(data);
+    }
+
+    getSymbol(id: number): Symbol | undefined {
+        return this.snapshotRegistry.getSymbol(id);
+    }
+
+    getOrCreateType(data: TypeResponse): TypeObject {
+        let type = this.types.get(data.id);
+        if (!type) {
+            type = new TypeObject(data, this);
+            this.types.set(data.id, type);
+        }
+        return type;
+    }
+
+    getType(id: number): TypeObject | undefined {
+        return this.types.get(id);
+    }
+
+    getOrCreateSignature(data: SignatureResponse): Signature {
+        let sig = this.signatures.get(data.id);
+        if (!sig) {
+            sig = new Signature(data, this);
+            this.signatures.set(data.id, sig);
+        }
+        return sig;
+    }
+
+    getSignature(id: number): Signature | undefined {
+        return this.signatures.get(id);
+    }
+
+    clear(): void {
+        this.types.clear();
+        this.signatures.clear();
     }
 
     fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | undefined): T {
@@ -338,6 +442,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
 
         const data = this.client.apiRequest<TypeResponse | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
@@ -345,16 +450,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
     }
 
     fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined): Symbol {
-        if (!handle) return undefined as unknown as Symbol;
-        const cached = this.getSymbol(handle);
-        if (cached) return cached;
-
-        const data = this.client.apiRequest<SymbolResponse | null>(method, {
-            snapshot: this.snapshotId,
-            objectId: source.id,
-        });
-        if (!data) throw new Error(`${method} returned null symbol for ${source.constructor.name} ${source.id}`);
-        return this.getOrCreateSymbol(data);
+        return this.snapshotRegistry.fetchSymbol(source, method, handle, this.projectId);
     }
 
     fetchSignature(source: Symbol | Signature | Type, method: string, handle: number | undefined): Signature {
@@ -364,6 +460,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
 
         const data = this.client.apiRequest<SignatureResponse | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (!data) throw new Error(`${method} returned null signature for ${source.constructor.name} ${source.id}`);
@@ -386,6 +483,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
         }
         const typesData = this.client.apiRequest<TypeResponse[] | null>(method, {
             snapshot: this.snapshotId,
+            project: this.projectId,
             objectId: source.id,
         });
         if (typesData == null) return [];
@@ -393,25 +491,7 @@ class SnapshotObjectRegistry extends ObjectRegistry<Symbol, TypeObject, Signatur
     }
 
     fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[]): readonly Symbol[] {
-        if (handles) {
-            const result = new Array<Symbol>(handles.length);
-            let allCached = true;
-            for (let i = 0; i < handles.length; i++) {
-                const cached = this.getSymbol(handles[i]);
-                if (!cached) {
-                    allCached = false;
-                    break;
-                }
-                result[i] = cached;
-            }
-            if (allCached) return result;
-        }
-        const symbolData = this.client.apiRequest<SymbolResponse[] | null>(method, {
-            snapshot: this.snapshotId,
-            objectId: source.id,
-        });
-        if (symbolData == null) return [];
-        else return symbolData.map(data => this.getOrCreateSymbol(data));
+        return this.snapshotRegistry.fetchSymbols(source, method, handles, this.projectId);
     }
 }
 
@@ -430,9 +510,9 @@ export class Project {
         data: ProjectResponse,
         snapshotId: number,
         client: Client,
-        objectRegistry: SnapshotObjectRegistry,
         sourceFileCache: SourceFileCache,
         toPath: (fileName: string) => Path,
+        snapshotRegistry: SnapshotObjectRegistry,
     ) {
         this.id = data.id;
         this.configFileName = data.configFileName;
@@ -446,6 +526,7 @@ export class Project {
             sourceFileCache,
             toPath,
         );
+        const objectRegistry = new ProjectObjectRegistry(client, snapshotId, this.id, snapshotRegistry);
         this.checker = new Checker(
             snapshotId,
             this.id,
@@ -453,6 +534,10 @@ export class Project {
             objectRegistry,
         );
         this.emitter = new Emitter(client);
+    }
+
+    dispose(): void {
+        this.checker.dispose();
     }
 }
 
@@ -575,18 +660,22 @@ export class Checker {
     private snapshotId: number;
     private projectId: string;
     private client: Client;
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     constructor(
         snapshotId: number,
         projectId: string,
         client: Client,
-        objectRegistry: SnapshotObjectRegistry,
+        objectRegistry: ProjectObjectRegistry,
     ) {
         this.snapshotId = snapshotId;
         this.projectId = projectId;
         this.client = client;
         this.objectRegistry = objectRegistry;
+    }
+
+    dispose(): void {
+        this.objectRegistry.clear();
     }
 
     getSymbolAtLocation(node: Node): Symbol | undefined;
@@ -1170,13 +1259,13 @@ export class Symbol {
 }
 
 class TypeObject implements Type {
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     readonly id: number;
     readonly flags: TypeFlags;
     readonly objectFlags!: ObjectFlags;
     readonly symbol!: number;
-    readonly value!: string | number | boolean;
+    readonly value!: string | number | boolean | bigint;
     readonly intrinsicName!: string;
     readonly isThisType!: boolean;
     readonly freshType!: number;
@@ -1198,14 +1287,18 @@ class TypeObject implements Type {
     readonly baseType!: number;
     readonly substConstraint!: number;
 
-    constructor(data: TypeResponse, objectRegistry: SnapshotObjectRegistry) {
+    constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
 
         this.id = data.id;
         this.flags = data.flags;
         if (data.objectFlags !== undefined) this.objectFlags = data.objectFlags;
         if (data.symbol !== undefined) this.symbol = data.symbol;
-        if (data.value !== undefined) this.value = data.value;
+        if (data.value != null) {
+            // BigInt literal values are serialized as decimal strings (e.g. "-123") because
+            // JSON cannot represent bigint. Decode them back into a real bigint here.
+            this.value = (data.flags & TypeFlags.BigIntLiteral) ? BigInt(data.value) : data.value;
+        }
         if (data.intrinsicName !== undefined) this.intrinsicName = data.intrinsicName;
         if (data.isThisType !== undefined) this.isThisType = data.isThisType;
         if (data.freshType !== undefined) this.freshType = data.freshType;
@@ -1295,7 +1388,7 @@ class TypeObject implements Type {
 
 export class Signature {
     private flags: number;
-    private objectRegistry: SnapshotObjectRegistry;
+    private objectRegistry: ProjectObjectRegistry;
 
     readonly id: number;
     readonly declaration?: NodeHandle | undefined;
@@ -1304,7 +1397,7 @@ export class Signature {
     readonly thisParameter?: number | undefined;
     readonly target?: number | undefined;
 
-    constructor(data: SignatureResponse, objectRegistry: SnapshotObjectRegistry) {
+    constructor(data: SignatureResponse, objectRegistry: ProjectObjectRegistry) {
         this.id = data.id;
         this.flags = data.flags;
         this.objectRegistry = objectRegistry;
