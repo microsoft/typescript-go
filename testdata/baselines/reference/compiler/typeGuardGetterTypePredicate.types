@@ -1,0 +1,78 @@
+//// [tests/cases/compiler/typeGuardGetterTypePredicate.ts] ////
+
+=== typeGuardGetterTypePredicate.ts ===
+class Session {
+>Session : Session
+
+    user: string | null = null;
+>user : string | null
+
+    get hasUser(): this is { user: string } {
+>hasUser : boolean
+>user : string
+
+        return this.user !== null;
+>this.user !== null : boolean
+>this.user : string | null
+>this : this
+>user : string | null
+    }
+
+    hasUserMethod(): this is { user: string } {
+>hasUserMethod : () => this is { user: string; }
+>user : string
+
+        return this.user !== null;
+>this.user !== null : boolean
+>this.user : string | null
+>this : this
+>user : string | null
+    }
+}
+
+const session = new Session();
+>session : Session
+>new Session() : Session
+>Session : typeof Session
+
+if (session.hasUser) {
+>session.hasUser : boolean
+>session : Session
+>hasUser : boolean
+
+    session.user.toUpperCase();
+>session.user.toUpperCase() : string
+>session.user.toUpperCase : () => string
+>session.user : string
+>session : Session & { user: string; }
+>user : string
+>toUpperCase : () => string
+}
+
+if (session.hasUserMethod()) {
+>session.hasUserMethod() : boolean
+>session.hasUserMethod : () => this is { user: string; }
+>session : Session
+>hasUserMethod : () => this is { user: string; }
+
+    session.user.toUpperCase();
+>session.user.toUpperCase() : string
+>session.user.toUpperCase : () => string
+>session.user : string
+>session : Session & { user: string; }
+>user : string
+>toUpperCase : () => string
+}
+
+if (!session.hasUser) {
+>!session.hasUser : boolean
+>session.hasUser : boolean
+>session : Session
+>hasUser : boolean
+
+    session.user; // string | null
+>session.user : string | null
+>session : Session
+>user : string | null
+}
+

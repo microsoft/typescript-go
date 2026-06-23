@@ -397,6 +397,13 @@ func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue b
 		}
 		fallthrough
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+		if predicate := c.getTypePredicateOfPropertyAccess(expr); predicate != nil && (predicate.kind == TypePredicateKindThis || predicate.kind == TypePredicateKindIdentifier) {
+			if c.isOrContainsMatchingReference(f.reference, expr.Expression()) {
+				if narrowedType := c.narrowTypeByTypePredicate(f, t, predicate, expr, assumeTrue); narrowedType != t {
+					return narrowedType
+				}
+			}
+		}
 		return c.narrowTypeByTruthiness(f, t, expr, assumeTrue)
 	case ast.KindCallExpression:
 		return c.narrowTypeByCallExpression(f, t, expr, assumeTrue)
@@ -2424,13 +2431,49 @@ func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpress
 		if predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) {
 			return arguments[predicate.parameterIndex]
 		}
-	} else {
+	} else if ast.IsCallExpression(callExpression) {
 		invokedExpression := ast.SkipParentheses(callExpression.Expression())
 		if ast.IsAccessExpression(invokedExpression) {
 			return ast.SkipParentheses(invokedExpression.Expression())
 		}
+	} else if ast.IsPropertyAccessExpression(callExpression) || ast.IsElementAccessExpression(callExpression) {
+		return ast.SkipParentheses(callExpression.Expression())
 	}
 	return nil
+}
+
+func (c *Checker) getTypePredicateOfPropertyAccess(node *ast.Node) *TypePredicate {
+	if !ast.IsPropertyAccessExpression(node) && !ast.IsElementAccessExpression(node) {
+		return nil
+	}
+	objectExpr := node.Expression()
+	if objectExpr.Kind == ast.KindSuperKeyword {
+		return nil
+	}
+	var objectType *Type
+	if ast.IsOptionalChain(node) {
+		objectType = c.checkNonNullType(c.getOptionalExpressionType(c.checkExpression(objectExpr), objectExpr), objectExpr)
+	} else {
+		objectType = c.checkNonNullExpression(objectExpr)
+	}
+	propName, ok := c.getAccessedPropertyName(node)
+	if !ok {
+		return nil
+	}
+	prop := c.getPropertyOfType(objectType, propName)
+	if prop == nil || prop.Flags&ast.SymbolFlagsGetAccessor == 0 {
+		return nil
+	}
+	getter := ast.GetDeclarationOfKind(prop, ast.KindGetAccessor)
+	if getter == nil {
+		return nil
+	}
+	typeNode := getter.Type()
+	if typeNode == nil || !ast.IsTypePredicateNode(typeNode) {
+		return nil
+	}
+	sig := c.getSignatureFromDeclaration(getter)
+	return c.getTypePredicateOfSignature(sig)
 }
 
 func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.Node) *Type {

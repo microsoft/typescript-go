@@ -1,0 +1,71 @@
+//// [tests/cases/compiler/typeGuardGetterTypePredicate.ts] ////
+
+=== typeGuardGetterTypePredicate.ts ===
+class Session {
+>Session : Symbol(Session, Decl(typeGuardGetterTypePredicate.ts, 0, 0))
+
+    user: string | null = null;
+>user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+
+    get hasUser(): this is { user: string } {
+>hasUser : Symbol(Session.hasUser, Decl(typeGuardGetterTypePredicate.ts, 1, 31))
+>user : Symbol(user, Decl(typeGuardGetterTypePredicate.ts, 3, 28))
+
+        return this.user !== null;
+>this.user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+>this : Symbol(Session, Decl(typeGuardGetterTypePredicate.ts, 0, 0))
+>user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+    }
+
+    hasUserMethod(): this is { user: string } {
+>hasUserMethod : Symbol(Session.hasUserMethod, Decl(typeGuardGetterTypePredicate.ts, 5, 5))
+>user : Symbol(user, Decl(typeGuardGetterTypePredicate.ts, 7, 30))
+
+        return this.user !== null;
+>this.user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+>this : Symbol(Session, Decl(typeGuardGetterTypePredicate.ts, 0, 0))
+>user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+    }
+}
+
+const session = new Session();
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>Session : Symbol(Session, Decl(typeGuardGetterTypePredicate.ts, 0, 0))
+
+if (session.hasUser) {
+>session.hasUser : Symbol(Session.hasUser, Decl(typeGuardGetterTypePredicate.ts, 1, 31))
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>hasUser : Symbol(Session.hasUser, Decl(typeGuardGetterTypePredicate.ts, 1, 31))
+
+    session.user.toUpperCase();
+>session.user.toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
+>session.user : Symbol(user, Decl(typeGuardGetterTypePredicate.ts, 0, 15), Decl(typeGuardGetterTypePredicate.ts, 3, 28))
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>user : Symbol(user, Decl(typeGuardGetterTypePredicate.ts, 0, 15), Decl(typeGuardGetterTypePredicate.ts, 3, 28))
+>toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
+}
+
+if (session.hasUserMethod()) {
+>session.hasUserMethod : Symbol(Session.hasUserMethod, Decl(typeGuardGetterTypePredicate.ts, 5, 5))
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>hasUserMethod : Symbol(Session.hasUserMethod, Decl(typeGuardGetterTypePredicate.ts, 5, 5))
+
+    session.user.toUpperCase();
+>session.user.toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
+>session.user : Symbol(user, Decl(typeGuardGetterTypePredicate.ts, 0, 15), Decl(typeGuardGetterTypePredicate.ts, 7, 30))
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>user : Symbol(user, Decl(typeGuardGetterTypePredicate.ts, 0, 15), Decl(typeGuardGetterTypePredicate.ts, 7, 30))
+>toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
+}
+
+if (!session.hasUser) {
+>session.hasUser : Symbol(Session.hasUser, Decl(typeGuardGetterTypePredicate.ts, 1, 31))
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>hasUser : Symbol(Session.hasUser, Decl(typeGuardGetterTypePredicate.ts, 1, 31))
+
+    session.user; // string | null
+>session.user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+>session : Symbol(session, Decl(typeGuardGetterTypePredicate.ts, 12, 5))
+>user : Symbol(Session.user, Decl(typeGuardGetterTypePredicate.ts, 0, 15))
+}
+
