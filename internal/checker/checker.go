@@ -27735,6 +27735,8 @@ func (c *Checker) getSimplifiedType(t *Type, writing bool) *Type {
 		return c.getSimplifiedIndexedAccessType(t, writing)
 	case t.flags&TypeFlagsConditional != 0:
 		return c.getSimplifiedConditionalType(t, writing)
+	case t.flags&TypeFlagsIndex != 0:
+		return c.getSimplifiedIndexType(t)
 	}
 	return t
 }
@@ -27851,6 +27853,15 @@ func (c *Checker) getSimplifiedConditionalType(t *Type, writing bool) *Type {
 		} else if checkType.flags&TypeFlagsAny != 0 || c.isIntersectionEmpty(checkType, extendsType) {
 			return c.getSimplifiedType(falseType, writing)
 		}
+	}
+	return t
+}
+
+func (c *Checker) getSimplifiedIndexType(t *Type) *Type {
+	if c.isGenericMappedType(t.AsIndexType().target) &&
+		c.getNameTypeFromMappedType(t.AsIndexType().target) != nil &&
+		!c.isMappedTypeWithKeyofConstraintDeclaration(t.AsIndexType().target) {
+		return c.getIndexTypeForMappedType(t.AsIndexType().target, IndexFlagsNone)
 	}
 	return t
 }
