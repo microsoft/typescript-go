@@ -270,21 +270,40 @@ type Session struct {
 	// This is set to true when using MessagePackProtocol.
 	useBinaryResponses bool
 
-	// snapshots maps snapshot handles to their data.
-	// Each snapshot has its own symbol/type registries.
+	// snapshots maps snapshot handles to their data. Each snapshot has its own
+	// symbol/type registries.
+	//
+	// snapshotsMu guards the snapshots map and latestSnapshot. It is held only for
+	// short, map-bounded critical sections, never across slow work like a project
+	// snapshot update or checker queries. Read handlers (getSnapshotData and the
+	// language-service handlers built on it) take it for reading; handleRelease and
+	// the bookkeeping tail of handleUpdateSnapshot take it for writing. This is what
+	// lets queries against an existing snapshot run concurrently with the building of
+	// the next one.
 	snapshots   map[SnapshotID]*snapshotData
 	snapshotsMu sync.RWMutex
 
-	// latestSnapshot tracks the most recently created snapshot for computing diffs.
+	// latestSnapshot tracks the most recently created snapshot, used as the diff base
+	// for the next update. Guarded by snapshotsMu.
 	latestSnapshot SnapshotID
 
 	// openProjects and openFiles track the projects and files this session
 	// currently holds open in the project session's API state. The session holds
 	// at most one ref per project/file (opens are idempotent), so it can release
 	// exactly those refs on Close and never send a close for a ref it doesn't hold.
+	// Guarded by updateMu.
 	openProjects collections.Set[tspath.Path]
 	openFiles    collections.Set[tspath.Path]
-	openMu       sync.Mutex
+
+	// updateMu serializes the whole of handleUpdateSnapshot (and releaseOpenRefs)
+	// against other updates. Unlike snapshotsMu it is held across the slow
+	// projectSession.APIUpdate call, because building the request from
+	// openProjects/openFiles, applying it, committing the ref tracking, and advancing
+	// latestSnapshot must be one atomic step; otherwise concurrent updates could
+	// double-count refs or diff against a non-adjacent snapshot. Read handlers do NOT
+	// take this lock, so an in-flight update never blocks queries against existing
+	// snapshots. Lock ordering is updateMu -> snapshotsMu (never the reverse).
+	updateMu sync.Mutex
 
 	cpuProfiler pprof.CPUProfiler
 }
@@ -633,9 +652,15 @@ func (s *Session) handleInitialize(ctx context.Context) (*InitializeResponse, er
 // project/file, so repeated opens are idempotent and a close only releases a ref
 // the session is actually holding.
 func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapshotParams) (*UpdateSnapshotResponse, error) {
+	// Fully serialize updates: snapshot creation, ref tracking, and the
+	// latestSnapshot/diff bookkeeping must be atomic with respect to other updates,
+	// otherwise concurrent updates could compute diffs against a non-adjacent
+	// snapshot or leave latestSnapshot pointing at a stale snapshot.
+	s.updateMu.Lock()
+	defer s.updateMu.Unlock()
+
 	fileChanges := s.toFileChangeSummary(params.FileChanges)
 
-	s.openMu.Lock()
 	apiRequest := &project.APISnapshotRequest{}
 
 	// Open projects: only take a new ref for projects we aren't already holding open.
@@ -703,7 +728,6 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	// the API cares about are ready to be queried.
 	snapshot, err := s.projectSession.APIUpdate(ctx, fileChanges, apiRequest)
 	if err != nil {
-		s.openMu.Unlock()
 		// APIUpdate returns a ref'd snapshot even on error; release it.
 		snapshot.Deref(s.projectSession)
 		return nil, fmt.Errorf("%w: failed to update snapshot: %w", ErrClientError, err)
@@ -722,11 +746,11 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	for _, path := range closedFiles {
 		s.openFiles.Delete(path)
 	}
-	s.openMu.Unlock()
 
-	// Create or ref-count snapshot data.
-	// If the same snapshot ID is returned (no changes), we increment the
-	// ref count so each client-side Snapshot can be disposed independently.
+	// Create or ref-count snapshot data, then atomically read the previous latest
+	// snapshot (the diff base) and advance latestSnapshot to the new handle.
+	// If the same snapshot ID is returned (no changes), we increment the ref count
+	// so each client-side Snapshot can be disposed independently.
 	handle := snapshotHandle(snapshot)
 	s.snapshotsMu.Lock()
 	sd, exists := s.snapshots[handle]
@@ -745,6 +769,8 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 		}
 		s.snapshots[handle] = sd
 	}
+	prevSD := s.snapshots[s.latestSnapshot]
+	s.latestSnapshot = handle
 	s.snapshotsMu.Unlock()
 
 	// Build projects list
@@ -756,17 +782,9 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 
 	// Compute changes from the previous latest snapshot
 	var changes *SnapshotChanges
-	s.snapshotsMu.RLock()
-	prevSD := s.snapshots[s.latestSnapshot]
-	s.snapshotsMu.RUnlock()
 	if prevSD != nil {
 		changes = computeSnapshotChanges(prevSD.snapshot, snapshot)
 	}
-
-	// Update the latest snapshot
-	s.snapshotsMu.Lock()
-	s.latestSnapshot = handle
-	s.snapshotsMu.Unlock()
 
 	return &UpdateSnapshotResponse{
 		Snapshot: handle,
@@ -2236,8 +2254,8 @@ func (s *Session) Close() {
 // backing an LSP server), so API-opened projects and files aren't leaked. Only
 // refs the session currently holds are closed, so it never over-releases.
 func (s *Session) releaseOpenRefs() {
-	s.openMu.Lock()
-	defer s.openMu.Unlock()
+	s.updateMu.Lock()
+	defer s.updateMu.Unlock()
 
 	if s.openProjects.Len() == 0 && s.openFiles.Len() == 0 {
 		return
