@@ -2243,7 +2243,8 @@ func (s *Session) Close() {
 
 	s.snapshotsMu.Lock()
 	defer s.snapshotsMu.Unlock()
-	for handle := range s.snapshots {
+	for handle, sd := range s.snapshots {
+		sd.snapshot.Deref(s.projectSession)
 		delete(s.snapshots, handle)
 	}
 }
