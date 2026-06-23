@@ -701,6 +701,43 @@ describe("Source file cache keying across projects", () => {
     });
 });
 
+describe("Checker - symbol identity across projects", () => {
+    const sharedSymbolFiles = {
+        "/projectA/tsconfig.json": JSON.stringify({ files: ["../src/shared.ts"] }),
+        "/projectB/tsconfig.json": JSON.stringify({ files: ["../src/shared.ts"] }),
+        "/src/shared.ts": `export const sharedVar = 42;`,
+    };
+
+    test("getSymbolAtPosition returns same Symbol instance across projects", async () => {
+        const api = spawnAPI(sharedSymbolFiles);
+        try {
+            await api.updateSnapshot({ openProject: "/projectA/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/projectB/tsconfig.json" });
+
+            const projectA = snapshot.getProject("/projectA/tsconfig.json")!;
+            const projectB = snapshot.getProject("/projectB/tsconfig.json")!;
+            assert.ok(projectA, "projectA should exist");
+            assert.ok(projectB, "projectB should exist");
+
+            const src = sharedSymbolFiles["/src/shared.ts"];
+            const varPos = src.indexOf("sharedVar");
+
+            const symbolA = await projectA.checker.getSymbolAtPosition("/src/shared.ts", varPos);
+            const symbolB = await projectB.checker.getSymbolAtPosition("/src/shared.ts", varPos);
+
+            assert.ok(symbolA, "symbolA should exist");
+            assert.ok(symbolB, "symbolB should exist");
+            assert.equal(symbolA.name, "sharedVar");
+            assert.equal(symbolB.name, "sharedVar");
+
+            assert.strictEqual(symbolA, symbolB, "Same source symbol queried from two projects should be the same object");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 describe("Checker - types and signatures", () => {
     const checkerFiles = {
         "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
@@ -1548,6 +1585,121 @@ describe("Checker - intrinsic type getters", () => {
             const type = await project.checker.getESSymbolType();
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.ESSymbol);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("Checker - multi-project type ID uniqueness", () => {
+    test("intrinsic types from 3 projects in the same snapshot have non-colliding IDs", async () => {
+        const api = spawnAPI({
+            "/proj1/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj1/src/index.ts": `export const x = 1;`,
+            "/proj2/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj2/src/index.ts": `export const y = "hello";`,
+            "/proj3/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj3/src/index.ts": `export const z = true;`,
+        });
+        try {
+            // Open all 3 projects — each updateSnapshot accumulates open projects
+            await api.updateSnapshot({ openProject: "/proj1/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj2/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tsconfig.json" });
+
+            const proj1 = snapshot.getProject("/proj1/tsconfig.json")!;
+            const proj2 = snapshot.getProject("/proj2/tsconfig.json")!;
+            const proj3 = snapshot.getProject("/proj3/tsconfig.json")!;
+            assert.ok(proj1, "proj1 should be in final snapshot");
+            assert.ok(proj2, "proj2 should be in final snapshot");
+            assert.ok(proj3, "proj3 should be in final snapshot");
+
+            // Fetch several intrinsic types from each checker.
+            // If type IDs collide across checkers, registerType panics → API error.
+            const num1 = await proj1.checker.getNumberType();
+            const str1 = await proj1.checker.getStringType();
+            const bool1 = await proj1.checker.getBooleanType();
+            const any1 = await proj1.checker.getAnyType();
+            const num2 = await proj2.checker.getNumberType();
+            const str2 = await proj2.checker.getStringType();
+            const bool2 = await proj2.checker.getBooleanType();
+            const any2 = await proj2.checker.getAnyType();
+            const num3 = await proj3.checker.getNumberType();
+            const str3 = await proj3.checker.getStringType();
+            const bool3 = await proj3.checker.getBooleanType();
+            const any3 = await proj3.checker.getAnyType();
+
+            assert.ok(num1.flags & TypeFlags.Number, "proj1 number type");
+            assert.ok(str1.flags & TypeFlags.String, "proj1 string type");
+            assert.ok(bool1.flags & TypeFlags.Boolean, "proj1 boolean type");
+            assert.ok(any1.flags & TypeFlags.Any, "proj1 any type");
+
+            assert.ok(num2.flags & TypeFlags.Number, "proj2 number type");
+            assert.ok(str2.flags & TypeFlags.String, "proj2 string type");
+            assert.ok(bool2.flags & TypeFlags.Boolean, "proj2 boolean type");
+            assert.ok(any2.flags & TypeFlags.Any, "proj2 any type");
+
+            assert.ok(num3.flags & TypeFlags.Number, "proj3 number type");
+            assert.ok(str3.flags & TypeFlags.String, "proj3 string type");
+            assert.ok(bool3.flags & TypeFlags.Boolean, "proj3 boolean type");
+            assert.ok(any3.flags & TypeFlags.Any, "proj3 any type");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("symbol and signature handles from 3 projects in the same snapshot have non-colliding IDs", async () => {
+        const api = spawnAPI({
+            "/proj1/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj1/src/index.ts": `export function add(a: number, b: number): number { return a + b; }`,
+            "/proj2/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj2/src/index.ts": `export function greet(name: string): string { return "hello " + name; }`,
+            "/proj3/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/proj3/src/index.ts": `export function toggle(b: boolean): boolean { return !b; }`,
+        });
+        try {
+            await api.updateSnapshot({ openProject: "/proj1/tsconfig.json" });
+            await api.updateSnapshot({ openProject: "/proj2/tsconfig.json" });
+            const snapshot = await api.updateSnapshot({ openProject: "/proj3/tsconfig.json" });
+
+            const proj1 = snapshot.getProject("/proj1/tsconfig.json")!;
+            const proj2 = snapshot.getProject("/proj2/tsconfig.json")!;
+            const proj3 = snapshot.getProject("/proj3/tsconfig.json")!;
+
+            // Get a symbol from each project (exercises symbol registry)
+            const src1 = `export function add(a: number, b: number): number { return a + b; }`;
+            const src2 = `export function greet(name: string): string { return "hello " + name; }`;
+            const src3 = `export function toggle(b: boolean): boolean { return !b; }`;
+
+            const sym1 = await proj1.checker.getSymbolAtPosition("/proj1/src/index.ts", src1.indexOf("add"));
+            const sym2 = await proj2.checker.getSymbolAtPosition("/proj2/src/index.ts", src2.indexOf("greet"));
+            const sym3 = await proj3.checker.getSymbolAtPosition("/proj3/src/index.ts", src3.indexOf("toggle"));
+            assert.ok(sym1, "proj1 symbol");
+            assert.ok(sym2, "proj2 symbol");
+            assert.ok(sym3, "proj3 symbol");
+            assert.equal(sym1.name, "add", "proj1 symbol name");
+            assert.equal(sym2.name, "greet", "proj2 symbol name");
+            assert.equal(sym3.name, "toggle", "proj3 symbol name");
+
+            // Get type of each symbol, then signatures (exercises type + signature registries)
+            const type1 = await proj1.checker.getTypeOfSymbol(sym1);
+            const type2 = await proj2.checker.getTypeOfSymbol(sym2);
+            const type3 = await proj3.checker.getTypeOfSymbol(sym3);
+            assert.ok(type1, "proj1 function type");
+            assert.ok(type2, "proj2 function type");
+            assert.ok(type3, "proj3 function type");
+
+            const sigs1 = await proj1.checker.getSignaturesOfType(type1, SignatureKind.Call);
+            const sigs2 = await proj2.checker.getSignaturesOfType(type2, SignatureKind.Call);
+            const sigs3 = await proj3.checker.getSignaturesOfType(type3, SignatureKind.Call);
+            assert.equal(sigs1.length, 1, "proj1 has 1 call signature");
+            assert.equal(sigs2.length, 1, "proj2 has 1 call signature");
+            assert.equal(sigs3.length, 1, "proj3 has 1 call signature");
+            assert.equal(sigs1[0].parameters.length, 2, "proj1 add() has 2 params");
+            assert.equal(sigs2[0].parameters.length, 1, "proj2 greet() has 1 param");
+            assert.equal(sigs3[0].parameters.length, 1, "proj3 toggle() has 1 param");
         }
         finally {
             await api.close();
@@ -3438,6 +3590,113 @@ describe("Program - diagnostics", () => {
             await api.close();
         }
     });
+
+    test("getBindDiagnostics", async () => {
+        const source = `let x = 1;\nlet x = 2;`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const diags = await project.program.getBindDiagnostics("/src/index.ts");
+            assert.deepEqual(diags, [
+                {
+                    fileName: "/src/index.ts",
+                    ...rangeOf(source, "x", 0),
+                    code: 2451,
+                    category: DiagnosticCategory.Error,
+                    text: "Cannot redeclare block-scoped variable 'x'.",
+                },
+                {
+                    fileName: "/src/index.ts",
+                    ...rangeOf(source, "x", 1),
+                    code: 2451,
+                    category: DiagnosticCategory.Error,
+                    text: "Cannot redeclare block-scoped variable 'x'.",
+                },
+            ]);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getProgramDiagnostics", async () => {
+        const config = `{ "compilerOptions": { "moduleResolution": "bundler", "module": "nodenext" } }`;
+        const api = spawnAPI({
+            "/tsconfig.json": config,
+            "/src/index.ts": `export const x = 1;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const diags = await project.program.getProgramDiagnostics();
+            assert.deepEqual(diags, [
+                {
+                    fileName: "/tsconfig.json",
+                    ...rangeOf(config, `"bundler"`),
+                    code: 5095,
+                    category: DiagnosticCategory.Error,
+                    text: "Option 'bundler' can only be used when 'module' is set to 'preserve', 'commonjs', or 'es2015' or later.",
+                },
+                {
+                    fileName: "/tsconfig.json",
+                    ...rangeOf(config, `"bundler"`),
+                    code: 5109,
+                    category: DiagnosticCategory.Error,
+                    text: "Option 'moduleResolution' must be set to 'NodeNext' (or left unspecified) when option 'module' is set to 'NodeNext'.",
+                },
+            ]);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getGlobalDiagnostics", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": `export const x = 1;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const diags = await project.program.getGlobalDiagnostics();
+            assert.deepEqual(diags, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getGlobalDiagnostics returns file-less diagnostics from the checker", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": `{ "compilerOptions": { "noLib": true } }`,
+            "/src/index.ts": `export const x = [1, 2, 3];`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const diags = await project.program.getGlobalDiagnostics();
+            // With noLib, the checker reports "Cannot find global type" diagnostics that
+            // are not associated with any source file.
+            assert.ok(diags.length > 0, "expected global diagnostics to be reported");
+            for (const diag of diags) {
+                assert.equal(diag.fileName, undefined);
+                assert.equal(diag.code, 2318);
+                assert.equal(diag.category, DiagnosticCategory.Error);
+            }
+            assert.ok(
+                diags.some(d => d.text === "Cannot find global type 'Array'."),
+                "expected a global diagnostic for the 'Array' type",
+            );
+        }
+        finally {
+            await api.close();
+        }
+    });
 });
 
 describe("Checker - getReferencedSymbolsForNode", () => {
@@ -3483,6 +3742,138 @@ describe("Checker - getSignatureUsage", () => {
             // The call site should have a call expression
             const usage = usages.find(u => u.call !== undefined);
             assert.ok(usage, "Expected at least one usage with a call expression");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("getDefaultProjectForFile", () => {
+    test("finds inferred project for d.ts in node_modules after openFiles", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x = 1;`,
+            "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
+            "/node_modules/my-lib/index.d.ts": `export declare const foo: string;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            // The d.ts is not imported, so it is not in the project's program
+            const dtsSf = await project.program.getSourceFile("/node_modules/my-lib/index.d.ts");
+            assert.equal(dtsSf, undefined, "d.ts not in import graph should not be found via project.program.getSourceFile");
+
+            // Before opening the file, getDefaultProjectForFile returns undefined (no error)
+            const noProject = await snapshot.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts");
+            assert.equal(noProject, undefined, "getDefaultProjectForFile returns undefined for unloaded file");
+
+            // Load the file into the inferred project via updateSnapshot openFiles
+            const snapshot2 = await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.ts"] });
+            const defaultProject = await snapshot2.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts");
+            assert.ok(defaultProject, "getDefaultProjectForFile should find inferred project after openFiles");
+
+            const fooPos = `export declare const foo: string;`.indexOf("foo");
+            const fooType = await defaultProject.checker.getTypeAtPosition("/node_modules/my-lib/index.d.ts", fooPos);
+            assert.ok(fooType);
+            assert.ok(fooType.flags & TypeFlags.String);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("keeps previously opened files open across subsequent openFiles calls", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x = 1;`,
+            "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
+            "/node_modules/my-lib/index.d.ts": `export declare const foo: string;`,
+            "/node_modules/other-lib/package.json": JSON.stringify({ name: "other-lib", types: "./index.d.ts" }),
+            "/node_modules/other-lib/index.d.ts": `export declare const bar: number;`,
+        });
+        try {
+            await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.ts"] });
+
+            // Opening a second file in a later snapshot must not close the first one.
+            const snapshot = await api.updateSnapshot({ openFiles: ["/node_modules/other-lib/index.d.ts"] });
+
+            const firstProject = await snapshot.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts");
+            assert.ok(firstProject, "previously opened file should remain in the inferred project");
+            const secondProject = await snapshot.getDefaultProjectForFile("/node_modules/other-lib/index.d.ts");
+            assert.ok(secondProject, "newly opened file should be in the inferred project");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("opening a file resolves to a configured project via ancestor search", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x = 1;`,
+        });
+        try {
+            // Open the file without first opening the project. Like LSP's didOpen, this
+            // should search ancestor directories for a tsconfig that contains the file.
+            const snapshot = await api.updateSnapshot({ openFiles: ["/src/index.ts"] });
+            const defaultProject = await snapshot.getDefaultProjectForFile("/src/index.ts");
+            assert.ok(defaultProject, "should find a project for the opened file");
+            assert.equal(
+                defaultProject.configFileName,
+                "/tsconfig.json",
+                "opened file should resolve to the containing configured project, not the inferred project",
+            );
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("closeProjects releases a project opened via openProjects", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x = 1;`,
+        });
+        try {
+            const opened = await api.updateSnapshot({ openProjects: ["/tsconfig.json"] });
+            assert.ok(opened.getProject("/tsconfig.json"), "project should be open after openProjects");
+
+            const closed = await api.updateSnapshot({ closeProjects: ["/tsconfig.json"] });
+            assert.equal(
+                closed.getProject("/tsconfig.json"),
+                undefined,
+                "project should be unloaded after closeProjects",
+            );
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("closeFiles releases a file opened via openFiles", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x = 1;`,
+            "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
+            "/node_modules/my-lib/index.d.ts": `export declare const foo: string;`,
+        });
+        try {
+            await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const opened = await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.ts"] });
+            assert.ok(
+                await opened.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts"),
+                "file should resolve to a project after openFiles",
+            );
+
+            const closed = await api.updateSnapshot({ closeFiles: ["/node_modules/my-lib/index.d.ts"] });
+            assert.equal(
+                await closed.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts"),
+                undefined,
+                "file should no longer resolve to a project after closeFiles",
+            );
         }
         finally {
             await api.close();
