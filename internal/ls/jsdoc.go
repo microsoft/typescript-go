@@ -1,10 +1,12 @@
 package ls
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -17,28 +19,29 @@ type JSDocTagInfo struct {
 	Text string
 }
 
-// GetSymbolDocumentationComment renders a symbol's documentation comment (the leading
-// JSDoc text, without tags) as plain text. It backs the API's Symbol.getDocumentationComment.
+// GetSymbolDocumentationComment renders a symbol's documentation comment as plain text.
+// It backs the API's Symbol.getDocumentationComment and mirrors Strada's
+// getJsDocCommentsFromDeclarations: comments are gathered from each unique declaration,
+// deduplicated, and joined with line breaks. Like Strada, it does not resolve aliases —
+// consumers resolve aliases themselves (via getAliasedSymbol) and re-query if desired.
 func (l *LanguageService) GetSymbolDocumentationComment(c *checker.Checker, symbol *ast.Symbol) string {
 	if symbol == nil {
 		return ""
 	}
+	var parts []string
+	var seen collections.Set[*ast.Node]
 	for _, decl := range symbol.Declarations {
-		if doc := l.getDocumentationFromDeclaration(c, symbol, decl, decl, lsproto.MarkupKindPlainText, true /*commentOnly*/); doc != "" {
-			return doc
+		if decl == nil {
+			continue
+		}
+		if !seen.AddIfAbsent(decl) {
+			continue
+		}
+		if doc := l.getDocumentationFromDeclaration(c, symbol, decl, decl, lsproto.MarkupKindPlainText, true /*commentOnly*/); doc != "" && !slices.Contains(parts, doc) {
+			parts = append(parts, doc)
 		}
 	}
-	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
-		aliased := c.GetAliasedSymbol(symbol)
-		if aliased != nil && aliased != c.GetUnknownSymbol() {
-			for _, decl := range aliased.Declarations {
-				if doc := l.getDocumentationFromDeclaration(c, aliased, decl, decl, lsproto.MarkupKindPlainText, true /*commentOnly*/); doc != "" {
-					return doc
-				}
-			}
-		}
-	}
-	return ""
+	return strings.Join(parts, "\n")
 }
 
 // GetSymbolJSDocTags collects a symbol's JSDoc tags. It backs the API's Symbol.getJsDocTags
@@ -49,15 +52,14 @@ func (l *LanguageService) GetSymbolJSDocTags(symbol *ast.Symbol) []JSDocTagInfo 
 		return nil
 	}
 	var infos []JSDocTagInfo
-	seen := make(map[*ast.Node]struct{}, len(symbol.Declarations))
+	var seen collections.Set[*ast.Node]
 	for _, decl := range symbol.Declarations {
 		if decl == nil {
 			continue
 		}
-		if _, ok := seen[decl]; ok {
+		if !seen.AddIfAbsent(decl) {
 			continue
 		}
-		seen[decl] = struct{}{}
 		tags := declarationJSDocTags(decl)
 		// Skip comments containing @typedef/@callback since they're not associated with a
 		// particular declaration, unless they also carry @param/@return (treated as local docs).
