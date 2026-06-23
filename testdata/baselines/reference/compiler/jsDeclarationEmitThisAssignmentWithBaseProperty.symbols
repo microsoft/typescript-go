@@ -22,13 +22,21 @@ export class WithAccessor {
 >v : Symbol(v, Decl(component.d.ts, 7, 14))
 }
 
+export class WithMethod {
+>WithMethod : Symbol(WithMethod, Decl(component.d.ts, 8, 1))
+
+    method(): void;
+>method : Symbol(WithMethod.method, Decl(component.d.ts, 10, 25))
+}
+
 === main.js ===
-import { Component, WithAccessor } from "./component";
+import { Component, WithAccessor, WithMethod } from "./component";
 >Component : Symbol(Component, Decl(main.js, 0, 8))
 >WithAccessor : Symbol(WithAccessor, Decl(main.js, 0, 19))
+>WithMethod : Symbol(WithMethod, Decl(main.js, 0, 33))
 
 export class C1 extends Component {
->C1 : Symbol(C1, Decl(main.js, 0, 54))
+>C1 : Symbol(C1, Decl(main.js, 0, 66))
 >Component : Symbol(Component, Decl(main.js, 0, 8))
 
     state = { count: 0 };
@@ -91,6 +99,27 @@ export class C5 {
 >this.value : Symbol(C5.value, Decl(main.js, 28, 19))
 >this : Symbol(C5, Decl(main.js, 24, 1))
 >value : Symbol(C5.value, Decl(main.js, 28, 19))
+    }
+}
+
+export class C6 extends WithMethod {
+>C6 : Symbol(C6, Decl(main.js, 31, 1))
+>WithMethod : Symbol(WithMethod, Decl(main.js, 0, 33))
+
+    constructor() {
+        super();
+>super : Symbol(WithMethod, Decl(component.d.ts, 8, 1))
+
+        this.method = this.method.bind(this);
+>this.method : Symbol(C6.method, Decl(main.js, 35, 16))
+>this : Symbol(C6, Decl(main.js, 31, 1))
+>method : Symbol(C6.method, Decl(main.js, 35, 16))
+>this.method.bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>this.method : Symbol(C6.method, Decl(main.js, 35, 16))
+>this : Symbol(C6, Decl(main.js, 31, 1))
+>method : Symbol(C6.method, Decl(main.js, 35, 16))
+>bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>this : Symbol(C6, Decl(main.js, 31, 1))
     }
 }
 

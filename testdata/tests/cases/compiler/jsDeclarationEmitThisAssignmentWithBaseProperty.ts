@@ -15,8 +15,12 @@ export class WithAccessor {
     set value(v: number);
 }
 
+export class WithMethod {
+    method(): void;
+}
+
 // @filename: main.js
-import { Component, WithAccessor } from "./component";
+import { Component, WithAccessor, WithMethod } from "./component";
 
 export class C1 extends Component {
     state = { count: 0 };
@@ -46,6 +50,13 @@ export class C4 extends WithAccessor {
 export class C5 {
     constructor() {
         this.value = 1;
+    }
+}
+
+export class C6 extends WithMethod {
+    constructor() {
+        super();
+        this.method = this.method.bind(this);
     }
 }
 

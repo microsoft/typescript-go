@@ -2066,10 +2066,8 @@ caseBlock:
 		if thisTarget.ClassLikeData().HeritageClauses != nil && len(thisTarget.ClassLikeData().HeritageClauses.Nodes) > 0 && !isClassExtendingNull(thisTarget) {
 			// there is a base type any assignments might be "from"
 			tx.tracker.ReportInferenceFallback(thisTarget) // Add an isolated declarations error on this class - we can't know how to transform this prop into an assignment without referring to type information
-			decls := tx.resolver.GetBaseDeclarationsForPropertyDeclaration(node)
-			shouldSkipAssignment := len(decls) > 0 && (!ast.IsConstructorDeclaration(thisContainer) || core.Some(decls, ast.IsAccessor))
-			if shouldSkipAssignment {
-				break caseBlock // skip non-constructor assignments to base properties, and any assignment to a base accessor
+			if tx.resolver.IsThisPropertyAssignmentDeclarationRedundant(node) {
+				break caseBlock // skip assignments whose member is already provided by an `extends` base type (an inherited accessor/method, or an identical inherited property)
 				// TODO: If the property has an explicit `@type` annotation, we should probably emit it (maybe with an `override` modifier) instead of skipping it
 			}
 		}
