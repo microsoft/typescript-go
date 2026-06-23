@@ -397,7 +397,7 @@ func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue b
 		}
 		fallthrough
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
-		if predicate := c.getTypePredicateOfPropertyAccess(expr); predicate != nil && (predicate.kind == TypePredicateKindThis || predicate.kind == TypePredicateKindIdentifier) {
+		if predicate := c.getTypePredicateOfPropertyAccess(expr); predicate != nil && predicate.kind == TypePredicateKindThis {
 			if c.isOrContainsMatchingReference(f.reference, expr.Expression()) {
 				if narrowedType := c.narrowTypeByTypePredicate(f, t, predicate, expr, assumeTrue); narrowedType != t {
 					return narrowedType
@@ -2427,9 +2427,11 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 
 func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpression *ast.Node) *ast.Node {
 	if predicate.kind == TypePredicateKindIdentifier || predicate.kind == TypePredicateKindAssertsIdentifier {
-		arguments := callExpression.Arguments()
-		if predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) {
-			return arguments[predicate.parameterIndex]
+		if ast.IsCallExpression(callExpression) || ast.IsNewExpression(callExpression) {
+			arguments := callExpression.Arguments()
+			if predicate.parameterIndex >= 0 && int(predicate.parameterIndex) < len(arguments) {
+				return arguments[predicate.parameterIndex]
+			}
 		}
 	} else if ast.IsCallExpression(callExpression) {
 		invokedExpression := ast.SkipParentheses(callExpression.Expression())
@@ -2452,9 +2454,10 @@ func (c *Checker) getTypePredicateOfPropertyAccess(node *ast.Node) *TypePredicat
 	}
 	var objectType *Type
 	if ast.IsOptionalChain(node) {
-		objectType = c.checkNonNullType(c.getOptionalExpressionType(c.checkExpression(objectExpr), objectExpr), objectExpr)
+		leftType := c.checkExpression(objectExpr)
+		objectType = c.GetNonNullableType(c.getOptionalExpressionType(leftType, objectExpr))
 	} else {
-		objectType = c.checkNonNullExpression(objectExpr)
+		objectType = c.GetNonNullableType(c.checkExpression(objectExpr))
 	}
 	propName, ok := c.getAccessedPropertyName(node)
 	if !ok {
@@ -2473,7 +2476,11 @@ func (c *Checker) getTypePredicateOfPropertyAccess(node *ast.Node) *TypePredicat
 		return nil
 	}
 	sig := c.getSignatureFromDeclaration(getter)
-	return c.getTypePredicateOfSignature(sig)
+	predicate := c.getTypePredicateOfSignature(sig)
+	if predicate == nil || predicate.kind != TypePredicateKindThis {
+		return nil
+	}
+	return predicate
 }
 
 func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.Node) *Type {
