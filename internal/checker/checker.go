@@ -19046,21 +19046,10 @@ func findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
 }
 
 func (c *Checker) getBaseTypes(t *Type) []*Type {
-	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) == 0 {
+	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsTuple) == 0 {
 		return nil
 	}
 	data := t.AsInterfaceType()
-	if data == nil {
-		// `t` is an instantiation of a generic class or interface (a TypeReference that is not
-		// itself an interface type, e.g. `Box<string>`), which has no InterfaceType data of its
-		// own. Only the generic target carries ObjectFlagsClassOrInterface and the InterfaceType
-		// payload, so resolve base types from the target. Base types are read from the target's
-		// shared declarations and are therefore un-instantiated (`Base<T>`, not `Base<string>`).
-		if ref := t.AsTypeReference(); ref != nil && ref.target != nil && ref.target != t {
-			return c.getBaseTypes(ref.target)
-		}
-		return nil
-	}
 	if !data.baseTypesResolved {
 		if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedBaseTypes) {
 			return data.resolvedBaseTypes
