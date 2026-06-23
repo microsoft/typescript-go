@@ -92,7 +92,7 @@ type RecursionId struct {
 }
 
 // This function exists to constrain the types of values that can be used as recursion IDs.
-func asRecursionId[T *ast.Node | *ast.Symbol | *Type](value T) RecursionId {
+func asRecursionId[T *ast.Node | *ast.Symbol | *Type | *ConditionalRoot](value T) RecursionId {
 	return RecursionId{value: value}
 }
 
@@ -870,8 +870,8 @@ func getRecursionIdentity(t *Type) RecursionId {
 		return asRecursionId(t)
 	}
 	if t.flags&TypeFlagsConditional != 0 {
-		// The root object represents the origin of the conditional type
-		return asRecursionId(t.AsConditionalType().root.node.AsNode())
+		// The root object represents the origin of the conditional type.
+		return asRecursionId(t.AsConditionalType().root)
 	}
 	return asRecursionId(t)
 }
