@@ -522,10 +522,6 @@ func (ch *PseudoChecker) typeFromFunctionLikeExpression(node *ast.Node) *PseudoT
 		return NewPseudoTypeDirect(node.FunctionLikeData().FullSignature)
 	}
 	returnType := ch.createReturnFromSignature(node)
-	if returnType.Kind == PseudoTypeKindNoResult {
-		// no result for the return type can just be an inferred result for the whole expression
-		return NewPseudoTypeInferred(node.AsNode())
-	}
 	typeParameters := ch.cloneTypeParameters(node.FunctionLikeData().TypeParameters)
 	parameters := ch.cloneParameters(node.FunctionLikeData().Parameters)
 	return NewPseudoTypeSingleCallSignature(
