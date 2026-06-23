@@ -1287,15 +1287,11 @@ func (r *EmitResolver) GetBaseDeclarationsForPropertyDeclaration(node *ast.Node)
 		return nil
 	}
 	var decls []*ast.Node
-	collect := func(bases []*Type) {
-		for _, b := range bases {
-			baseProp := r.checker.getPropertyOfObjectType(b, s.Name)
-			if baseProp != nil {
-				decls = append(decls, baseProp.Declarations...)
-			}
+	for _, b := range r.checker.getBaseTypes(parentType) {
+		baseProp := r.checker.getPropertyOfObjectType(b, s.Name)
+		if baseProp != nil {
+			decls = append(decls, baseProp.Declarations...)
 		}
 	}
-	collect(r.checker.getBaseTypes(parentType))
-	collect(r.checker.getImplementsTypes(parentType))
 	return decls
 }

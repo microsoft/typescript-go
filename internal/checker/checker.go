@@ -19102,24 +19102,6 @@ func (c *Checker) getBaseTypes(t *Type) []*Type {
 	return data.resolvedBaseTypes
 }
 
-func (c *Checker) getImplementsTypes(t *Type) []*Type {
-	var resolvedImplementsTypes []*Type
-	if t.symbol.Declarations != nil {
-		for _, declaration := range t.symbol.Declarations {
-			if !ast.IsClassLike(declaration) {
-				continue
-			}
-			for _, node := range ast.GetImplementsTypeNodes(declaration) {
-				implementsType := c.getTypeFromTypeNode(node)
-				if !c.isErrorType(implementsType) {
-					resolvedImplementsTypes = append(resolvedImplementsTypes, implementsType)
-				}
-			}
-		}
-	}
-	return resolvedImplementsTypes
-}
-
 func (c *Checker) getTupleBaseType(t *Type) *Type {
 	typeParameters := t.AsTupleType().TypeParameters()
 	elementInfos := t.AsTupleType().elementInfos
