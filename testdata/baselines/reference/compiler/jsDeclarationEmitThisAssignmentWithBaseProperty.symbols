@@ -82,6 +82,18 @@ export class C4 extends WithAccessor {
     }
 }
 
+/** @implements {WithAccessor} */
+export class C5 {
+>C5 : Symbol(C5, Decl(main.js, 24, 1))
+
+    constructor() {
+        this.value = 1;
+>this.value : Symbol(C5.value, Decl(main.js, 28, 19))
+>this : Symbol(C5, Decl(main.js, 24, 1))
+>value : Symbol(C5.value, Decl(main.js, 28, 19))
+    }
+}
+
 === mainTs.ts ===
 import { Component } from "./component";
 >Component : Symbol(Component, Decl(mainTs.ts, 0, 8))

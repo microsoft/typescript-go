@@ -95,6 +95,20 @@ export class C4 extends WithAccessor {
     }
 }
 
+/** @implements {WithAccessor} */
+export class C5 {
+>C5 : C5
+
+    constructor() {
+        this.value = 1;
+>this.value = 1 : 1
+>this.value : any
+>this : this
+>value : any
+>1 : 1
+    }
+}
+
 === mainTs.ts ===
 import { Component } from "./component";
 >Component : typeof Component

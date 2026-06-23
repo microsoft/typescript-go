@@ -42,6 +42,13 @@ export class C4 extends WithAccessor {
     }
 }
 
+/** @implements {WithAccessor} */
+export class C5 {
+    constructor() {
+        this.value = 1;
+    }
+}
+
 // @filename: mainTs.ts
 import { Component } from "./component";
 
