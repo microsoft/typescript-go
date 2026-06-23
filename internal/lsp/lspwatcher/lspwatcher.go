@@ -25,6 +25,7 @@ const throttleWindow = 75 * time.Millisecond
 
 type watcherBackend interface {
 	WatchDirectory(dir string, fn fswatch.WatchCallback, opts ...fswatch.WatchOption) (io.Closer, error)
+	HasFastRecursiveBackend() bool
 }
 
 type defaultWatcherBackend struct {
@@ -33,6 +34,10 @@ type defaultWatcherBackend struct {
 
 func (d defaultWatcherBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, opts ...fswatch.WatchOption) (io.Closer, error) {
 	return d.watcher.WatchDirectory(dir, fn, opts...)
+}
+
+func (d defaultWatcherBackend) HasFastRecursiveBackend() bool {
+	return d.watcher.HasFastRecursiveBackend()
 }
 
 // Watcher manages a set of file system subscriptions identified by
@@ -286,7 +291,11 @@ func (w *watch) reconcile(emitSyntheticCreates bool) error {
 		if !w.watchingTarget && w.subscription != nil && w.watchedDirectory == ancestorDirectory {
 			return nil // already watching the correct ancestor
 		}
-		subscription, err := watcher.backend.WatchDirectory(ancestorDirectory, w.ancestorCallback())
+		var options []fswatch.WatchOption
+		if watcher.backend.HasFastRecursiveBackend() {
+			options = append(options, fswatch.WithRecursive())
+		}
+		subscription, err := watcher.backend.WatchDirectory(ancestorDirectory, w.ancestorCallback(), options...)
 		if err != nil {
 			return err
 		}
