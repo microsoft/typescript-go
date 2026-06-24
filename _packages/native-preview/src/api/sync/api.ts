@@ -799,7 +799,7 @@ export class Checker {
         });
         return (data ?? []).map(entry => ({
             definition: new NodeHandle(entry.definition),
-            symbol: entry.symbol ? this.objectRegistry.getOrCreateSymbol(entry.symbol) : undefined,
+            ...(entry.symbol ? { symbol: this.objectRegistry.getOrCreateSymbol(entry.symbol) } : {}),
             references: (entry.references ?? []).map(h => new NodeHandle(h)),
         }));
     }
@@ -812,7 +812,7 @@ export class Checker {
         });
         return (data ?? []).map(entry => ({
             name: new NodeHandle(entry.name),
-            call: entry.call ? new NodeHandle(entry.call) : undefined,
+            ...(entry.call ? { call: new NodeHandle(entry.call) } : {}),
         }));
     }
 
@@ -828,10 +828,10 @@ export class Checker {
         if (!data) return undefined;
         return {
             isIncomplete: data.isIncomplete,
-            entries: data.entries.map(e => ({
-                ...e,
-                symbol: e.symbol ? this.objectRegistry.getOrCreateSymbol(e.symbol) : undefined,
-            })),
+            entries: data.entries.map(e => {
+                const { symbol, ...entry } = e;
+                return symbol ? { ...entry, symbol: this.objectRegistry.getOrCreateSymbol(symbol) } : entry;
+            }),
         };
     }
 
@@ -1159,7 +1159,7 @@ export class Checker {
             keyType: this.objectRegistry.getOrCreateType(d.keyType),
             valueType: this.objectRegistry.getOrCreateType(d.valueType),
             isReadonly: d.isReadonly ?? false,
-            declaration: d.declaration ? new NodeHandle(d.declaration) : undefined,
+            ...(d.declaration ? { declaration: new NodeHandle(d.declaration) } : {}),
         }));
     }
 
