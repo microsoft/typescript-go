@@ -84,14 +84,42 @@ func TestCompilePackageTypeError(t *testing.T) {
 	}
 }
 
+// TestCompilePackageReportsAbsentTsconfigCandidates ensures every tsconfig the
+// build *could* parse is reported as a (literal) input, even when it does not
+// currently exist. luchta records a missing literal as an "absent" sentinel, so
+// adding that file later flips absent->present and busts the cache. If only the
+// existing candidate were reported, adding tsconfig.build.json to a package that
+// has only tsconfig.json would not trigger a rebuild.
+func TestCompilePackageReportsAbsentTsconfigCandidates(t *testing.T) {
+	cwd := t.TempDir()
+	writeTsPackage(t, cwd, `{
+		"compilerOptions": {"declaration": true, "outDir": "dist", "rootDir": "src", "module": "nodenext", "moduleResolution": "nodenext"},
+		"include": ["src/**/*"]
+	}`, "index.ts", "export const answer: number = 42;\n")
+
+	res := CompilePackage(context.Background(), cwd)
+	if res.ExitCode != 0 {
+		t.Fatalf("exitCode=%d sarif=%s", res.ExitCode, DiagnosticsToSARIF(res.Diagnostics))
+	}
+	for _, name := range tsconfigCandidates {
+		if !slices.Contains(res.Inputs, name) {
+			t.Fatalf("inputs missing candidate %q (must be reported even when absent): %v", name, res.Inputs)
+		}
+	}
+}
+
 func TestCompilePackageNoTsconfig(t *testing.T) {
 	cwd := t.TempDir()
 	res := CompilePackage(context.Background(), cwd)
 	if res.ExitCode != 0 {
 		t.Fatalf("missing tsconfig should be a no-op success, got %d", res.ExitCode)
 	}
-	if !slices.Contains(res.Inputs, "src/**") {
-		t.Fatalf("expected default src/** input, got %v", res.Inputs)
+	// Even with no tsconfig on disk, the candidates must be reported as absent
+	// literals so that adding one later triggers a rebuild.
+	for _, name := range tsconfigCandidates {
+		if !slices.Contains(res.Inputs, name) {
+			t.Fatalf("expected absent tsconfig candidate %q in inputs, got %v", name, res.Inputs)
+		}
 	}
 }
 

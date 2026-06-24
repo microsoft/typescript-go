@@ -61,12 +61,21 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 	internalErr := ""
 	exitCode := 0
 
+	// Report every tsconfig the build *could* parse as a literal input, even
+	// when it is currently absent. luchta records a missing literal as an
+	// "absent" sentinel, so adding the file later flips absent->present and
+	// busts the cache. Reporting only the existing candidate would let a newly
+	// added tsconfig.build.json (which this worker would then parse) go
+	// undetected and the cache would incorrectly skip the rebuild.
+	for _, name := range tsconfigCandidates {
+		inputs.Add(name)
+	}
+
 	for _, name := range tsconfigCandidates {
 		configPath := filepath.Join(cwd, name)
 		if !fsys.FileExists(configPath) {
 			continue
 		}
-		inputs.Add(name)
 
 		parsed, errs := tsoptions.GetParsedCommandLineOfConfigFile(
 			configPath, &core.CompilerOptions{}, nil, sys, extendedConfigCache,
@@ -103,9 +112,6 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 		}
 	}
 
-	if inputs.Len() == 0 {
-		inputs.Add("src/**")
-	}
 	relativized := RelativizeOutputs(cwd, outputs)
 	sort.Strings(relativized)
 	return CompileResult{
