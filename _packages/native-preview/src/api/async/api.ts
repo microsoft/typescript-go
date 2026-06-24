@@ -56,7 +56,10 @@ import type {
     UpdateSnapshotParams,
     UpdateSnapshotResponse,
 } from "../proto.ts";
-import { resolveFileName } from "../proto.ts";
+import {
+    resolveFileName,
+    toUpdateSnapshotRequest,
+} from "../proto.ts";
 import { SourceFileCache } from "../sourceFileCache.ts";
 import {
     Client,
@@ -147,11 +150,7 @@ export class API<FromLSP extends boolean = false> {
     async updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Promise<Snapshot> {
         await this.ensureInitialized();
 
-        const requestParams: UpdateSnapshotParams = params ?? {};
-        if (requestParams.openProject) {
-            requestParams.openProject = resolveFileName(requestParams.openProject);
-        }
-
+        const requestParams = toUpdateSnapshotRequest(params);
         const data = await this.client.apiRequest<UpdateSnapshotResponse>("updateSnapshot", requestParams);
 
         // Retain cached source files from previous snapshot for unchanged files
@@ -598,6 +597,19 @@ export class Program {
     }
 
     /**
+     * Get binder diagnostics for a specific file or all files.
+     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     */
+    async getBindDiagnostics(file?: DocumentIdentifier): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getBindDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            ...(file !== undefined ? { file } : {}),
+        });
+        return data ?? [];
+    }
+
+    /**
      * Get semantic (type-check) diagnostics for a specific file or all files.
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
      */
@@ -632,6 +644,28 @@ export class Program {
             snapshot: this.snapshotId,
             project: this.projectId,
             ...(file !== undefined ? { file } : {}),
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get program-wide diagnostics for the project, including compiler options diagnostics.
+     */
+    async getProgramDiagnostics(): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getProgramDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get global (non-file-specific) semantic diagnostics for the project.
+     */
+    async getGlobalDiagnostics(): Promise<readonly Diagnostic[]> {
+        const data = await this.client.apiRequest<Diagnostic[]>("getGlobalDiagnostics", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
         });
         return data ?? [];
     }
