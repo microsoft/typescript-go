@@ -25,7 +25,6 @@ const throttleWindow = 75 * time.Millisecond
 
 type watcherBackend interface {
 	WatchDirectory(dir string, fn fswatch.WatchCallback, opts ...fswatch.WatchOption) (io.Closer, error)
-	HasFastRecursiveBackend() bool
 }
 
 type defaultWatcherBackend struct {
@@ -34,10 +33,6 @@ type defaultWatcherBackend struct {
 
 func (d defaultWatcherBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, opts ...fswatch.WatchOption) (io.Closer, error) {
 	return d.watcher.WatchDirectory(dir, fn, opts...)
-}
-
-func (d defaultWatcherBackend) HasFastRecursiveBackend() bool {
-	return d.watcher.HasFastRecursiveBackend()
 }
 
 // Watcher manages a set of file system subscriptions identified by
@@ -71,10 +66,10 @@ type Watcher struct {
 //
 //   - a "target" subscription rooted directly at the requested directory, once
 //     it exists, or
-//   - an "ancestor" subscription on the nearest existing ancestor, used to
-//     detect the requested directory, or an intermediate path component,
-//     being created, after which the watch descends toward and eventually
-//     promotes to the target.
+//   - an "ancestor" subscription on the nearest existing ancestor
+//     (non-recursive), used to detect the requested directory — or an
+//     intermediate path component — being created, after which the watch
+//     descends toward and eventually promotes to the target.
 //
 // When the target materializes, synthetic create events are emitted for it
 // (and, depending on whether the watch is recursive, its immediate children or
@@ -291,20 +286,7 @@ func (w *watch) reconcile(emitSyntheticCreates bool) error {
 		if !w.watchingTarget && w.subscription != nil && w.watchedDirectory == ancestorDirectory {
 			return nil // already watching the correct ancestor
 		}
-		var options []fswatch.WatchOption
-		if watcher.backend.HasFastRecursiveBackend() {
-			watchPath := nextMissingPathComponent(ancestorDirectory, w.requestedDirectory)
-			var physicalWatchPaths []string
-			if physicalAncestor := watcher.fs.Realpath(ancestorDirectory); physicalAncestor != ancestorDirectory {
-				physicalWatchPaths = append(physicalWatchPaths, tspath.CombinePaths(physicalAncestor, tspath.GetBaseFileName(watchPath)))
-			}
-			options = append(
-				options,
-				fswatch.WithRecursive(),
-				fswatch.WithIgnore(ancestorWatchIgnore(watchPath, watcher.fs.UseCaseSensitiveFileNames(), physicalWatchPaths...)),
-			)
-		}
-		subscription, err := watcher.backend.WatchDirectory(ancestorDirectory, w.ancestorCallback(), options...)
+		subscription, err := watcher.backend.WatchDirectory(ancestorDirectory, w.ancestorCallback())
 		if err != nil {
 			return err
 		}
@@ -385,36 +367,6 @@ func (w *watch) handleTerminated() {
 func (w *watch) ancestorCallback() fswatch.WatchCallback {
 	return func(events []fswatch.Event, err error) {
 		_ = w.reconcile(true /*emitSyntheticCreates*/)
-	}
-}
-
-func nextMissingPathComponent(ancestorDirectory string, requestedDirectory string) string {
-	if ancestorDirectory == requestedDirectory {
-		return requestedDirectory
-	}
-	prefix := ancestorDirectory
-	if !strings.HasSuffix(prefix, "/") {
-		prefix += "/"
-	}
-	rest, ok := strings.CutPrefix(requestedDirectory, prefix)
-	if !ok {
-		return requestedDirectory
-	}
-	component, _, _ := strings.Cut(rest, "/")
-	return tspath.CombinePaths(ancestorDirectory, component)
-}
-
-func ancestorWatchIgnore(directory string, useCaseSensitiveFileNames bool, additionalDirectories ...string) func(path string) bool {
-	directories := append([]string{directory}, additionalDirectories...)
-	opts := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames}
-	return func(path string) bool {
-		normalizedPath := tspath.NormalizeSlashes(path)
-		for _, directory := range directories {
-			if tspath.ContainsPath(directory, normalizedPath, opts) {
-				return false
-			}
-		}
-		return true
 	}
 }
 

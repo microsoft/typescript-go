@@ -593,7 +593,7 @@ type dirWatch struct {
 	// dir is the caller-visible watch root used in delivered event paths.
 	dir string
 	// physicalDir is the path passed to OS watcher APIs. It differs from dir
-	// only when dir is a symlink or reparse point to a directory.
+	// when dir or an ancestor is a symlink or reparse point to a directory.
 	physicalDir string
 	recursive   bool
 	events      eventList
@@ -614,13 +614,10 @@ func newDirWatch(dir string, physicalDir string, db *debounce) *dirWatch {
 	return dw
 }
 
-// physicalDirFor returns the physical path to watch for dir. If dir is a
-// symlink or reparse point, events are subscribed on its realpath while
-// callbacks still use dir.
+// physicalDirFor returns the physical path to watch for dir. If dir, or an
+// ancestor of dir, is a symlink or reparse point, events are subscribed on its
+// realpath while callbacks still use dir.
 func physicalDirFor(dir string) string {
-	if !nativepath.IsSymlinkOrReparsePoint(dir) {
-		return dir
-	}
 	realpath, err := nativepath.Realpath(dir)
 	if err != nil {
 		return dir

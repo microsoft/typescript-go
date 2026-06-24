@@ -171,7 +171,6 @@ type fakeBackend struct {
 	closed   map[string]int
 	optCount map[string]int
 	failDirs map[string]error
-	fast     bool
 }
 
 func newFakeBackend() *fakeBackend {
@@ -198,10 +197,6 @@ func (f *fakeBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, opts 
 		f.closed[dir]++
 		return nil
 	}}, nil
-}
-
-func (f *fakeBackend) HasFastRecursiveBackend() bool {
-	return f.fast
 }
 
 // watchedDirs returns the directories currently subscribed, for assertions.
@@ -493,139 +488,6 @@ func TestWatcher_MissingDirectoryPromotesOnCreate(t *testing.T) {
 		}
 		return sawDir && sawChild
 	}, "synthetic create events for target and child")
-}
-
-func TestWatcher_MissingDirectoryFastRecursiveAncestor(t *testing.T) {
-	t.Parallel()
-
-	fs := bundled.WrapFS(osvfs.FS())
-	backend := newFakeBackend()
-	backend.fast = true
-	var (
-		mu  sync.Mutex
-		got []*lsproto.FileEvent
-	)
-	w := newWithBackend(fs, backend, func(changes []*lsproto.FileEvent) {
-		mu.Lock()
-		got = append(got, changes...)
-		mu.Unlock()
-	}, logging.NewLogger(os.Stderr))
-	t.Cleanup(w.Close)
-
-	base := t.TempDir()
-	baseNorm := tspath.NormalizeSlashes(base)
-	target := tspath.NormalizeSlashes(filepath.Join(base, "pkg"))
-	pattern := target + "/*"
-	kind := lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete
-
-	if err := w.WatchFiles("id", []*lsproto.FileSystemWatcher{{
-		GlobPattern: lsproto.PatternOrRelativePattern{Pattern: &pattern},
-		Kind:        &kind,
-	}}); err != nil {
-		t.Fatal(err)
-	}
-
-	backend.mu.Lock()
-	if got := backend.optCount[baseNorm]; got != 2 {
-		t.Fatalf("fast recursive backend should install recursive filtered ancestor watch, got %d options", got)
-	}
-	backend.mu.Unlock()
-
-	if err := os.MkdirAll(filepath.Join(base, "pkg"), 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(base, "pkg", "index.ts"), []byte("export {}"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	backend.emit(baseNorm, []fswatch.Event{
-		{Kind: fswatch.EventUpdate, Path: filepath.Join(base, "pkg", "index.ts")},
-	}, nil)
-
-	waitFor(t, func() bool { return backend.isWatching(target) }, "promotion from descendant event")
-
-	backend.mu.Lock()
-	if got := backend.optCount[target]; got != 0 {
-		t.Fatalf("non-recursive target watch should stay non-recursive, got %d options", got)
-	}
-	backend.mu.Unlock()
-
-	waitFor(t, func() bool {
-		mu.Lock()
-		defer mu.Unlock()
-		for _, e := range got {
-			if e.Type == lsproto.FileChangeTypeCreated && strings.HasSuffix(string(e.Uri), "/pkg/index.ts") {
-				return true
-			}
-		}
-		return false
-	}, "synthetic create for child")
-}
-
-func TestWatcher_FastRecursiveAncestorFilter(t *testing.T) {
-	t.Parallel()
-
-	ancestor := "/repo/base"
-	requested := "/repo/base/pkg/sub"
-	watchPath := nextMissingPathComponent(ancestor, requested)
-	if watchPath != "/repo/base/pkg" {
-		t.Fatalf("nextMissingPathComponent(%q, %q) = %q", ancestor, requested, watchPath)
-	}
-
-	ignore := ancestorWatchIgnore(watchPath, true)
-	cases := []struct {
-		path string
-		want bool
-	}{
-		{"/repo/base/pkg", false},
-		{"/repo/base/pkg/index.ts", false},
-		{"/repo/base/pkg/sub/index.ts", false},
-		{"/repo/base/pkg2/index.ts", true},
-		{"/repo/base/other/index.ts", true},
-		{"/repo/base", true},
-	}
-	for _, c := range cases {
-		if got := ignore(c.path); got != c.want {
-			t.Errorf("ignore(%q) = %v, want %v", c.path, got, c.want)
-		}
-	}
-}
-
-func TestWatcher_FastRecursiveAncestorFilterNormalizesSlashesAndCase(t *testing.T) {
-	t.Parallel()
-
-	ignore := ancestorWatchIgnore("C:/repo/base/pkg", false)
-	cases := []struct {
-		path string
-		want bool
-	}{
-		{`C:\repo\base\pkg\index.ts`, false},
-		{`c:\repo\base\pkg\sub\index.ts`, false},
-		{`C:\repo\base\pkg2\index.ts`, true},
-	}
-	for _, c := range cases {
-		if got := ignore(c.path); got != c.want {
-			t.Errorf("ignore(%q) = %v, want %v", c.path, got, c.want)
-		}
-	}
-}
-
-func TestWatcher_FastRecursiveAncestorFilterAllowsRealpathAlias(t *testing.T) {
-	t.Parallel()
-
-	ignore := ancestorWatchIgnore("/var/folders/base/pkg", true, "/private/var/folders/base/pkg")
-	cases := []struct {
-		path string
-		want bool
-	}{
-		{"/var/folders/base/pkg/index.ts", false},
-		{"/private/var/folders/base/pkg/index.ts", false},
-		{"/private/var/folders/base/pkg2/index.ts", true},
-	}
-	for _, c := range cases {
-		if got := ignore(c.path); got != c.want {
-			t.Errorf("ignore(%q) = %v, want %v", c.path, got, c.want)
-		}
-	}
 }
 
 func TestWatcher_MultiLevelDescend(t *testing.T) {

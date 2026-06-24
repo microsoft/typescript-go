@@ -637,6 +637,28 @@ func TestRebasePath(t *testing.T) {
 	}
 }
 
+func TestPhysicalDirForResolvesSymlinkAncestor(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	target := filepath.Join(root, "target")
+	if err := os.MkdirAll(filepath.Join(target, "nested"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(root, "link")
+	makeDirSymlink(t, target, link)
+
+	dir := filepath.Join(link, "nested")
+	want, err := filepath.EvalSymlinks(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want = canonicalizePath(filepath.Clean(want))
+	if got := physicalDirFor(dir); got != want {
+		t.Fatalf("physicalDirFor(%q) = %q, want %q", dir, got, want)
+	}
+}
+
 // filterEventsForPaths returns only the events whose Path is in the
 // allowed set. Used to discard incidental dir-update events that some
 // backends emit for the parent dir of a touched file.
