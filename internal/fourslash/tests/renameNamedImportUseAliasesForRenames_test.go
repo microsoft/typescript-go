@@ -30,7 +30,7 @@ func TestRenameNamedImportDefaultInNodeModules(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /index.ts
-import { /*import*/[|Foo|] } from "foo";
+import { /*fooImport*/[|Foo|] } from "foo";
 declare const f: Foo;
 // @Filename: /tsconfig.json
 {}
@@ -43,8 +43,8 @@ export interface Foo {
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyBaselineRename(t, nil /*preferences*/, "import")
-	f.VerifyBaselineRename(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSTrue}, "import")
-	f.GoToMarker(t, "import")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "fooImport")
+	f.VerifyBaselineRename(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSTrue}, "fooImport")
+	f.GoToMarker(t, "fooImport")
 	f.VerifyRenameFailed(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSFalse})
 }
