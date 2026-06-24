@@ -584,7 +584,7 @@ func (c *Checker) findFirstModifierExcept(node *ast.Node, allowedModifier ast.Ki
 }
 
 func isNonReparsedModifier(node *ast.Node) bool {
-	// JSDoc modifiers are attached as reparsed nodes; these checks only reject syntactic modifiers.
+	// Returns true for syntactic modifiers only; JSDoc modifiers have the Reparsed flag.
 	return ast.IsModifier(node) && node.Flags&ast.NodeFlagsReparsed == 0
 }
 
