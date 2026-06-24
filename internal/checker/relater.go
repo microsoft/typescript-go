@@ -4332,6 +4332,17 @@ func (r *Relater) isPropertySymbolTypeRelated(sourceProp *ast.Symbol, targetProp
 		return TernaryTrue
 	}
 	effectiveSource := getTypeOfSourceProperty(sourceProp)
+	// Fast path: query the relation cache directly before entering the recursive comparison
+	// path. This avoids the overhead of calling into isRelatedToEx and its normalization
+	// logic when the result is already cached (e.g. for repeated property types like string
+	// or "off"|"warn"|"error" across 100+ properties in large object literals).
+	if effectiveSource.flags&TypeFlagsObject != 0 && effectiveTarget.flags&TypeFlagsObject != 0 {
+		id, _ := getRelationKey(effectiveSource, effectiveTarget, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
+		if entry := r.relation.get(id); entry != RelationComparisonResultNone && entry&RelationComparisonResultSucceeded != 0 {
+			r.c.reliabilityFlags |= entry & (RelationComparisonResultReportsUnmeasurable | RelationComparisonResultReportsUnreliable)
+			return TernaryTrue
+		}
+	}
 	return r.isRelatedToEx(effectiveSource, effectiveTarget, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
 }
 
