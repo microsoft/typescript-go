@@ -2342,6 +2342,46 @@ describe("Checker - getTypeArguments", () => {
     });
 });
 
+describe("Type - getTypes", () => {
+    test("returns the constituents of a union type", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const u: string | number = "";`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", `export const `.length);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(type.getTypes().length, 2);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("does not panic for a non-union type", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const s: string = "";`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", `export const `.length);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.deepEqual(type.getTypes(), []);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("TypeParameter - isThisType", () => {
     test("isThisType is true for the polymorphic 'this' type in a class method", () => {
         const src = `\nexport class Builder {\n    setName(name: string): this { return this; }\n}\n`;

@@ -1395,7 +1395,15 @@ func (s *Session) handleGetRegularTypeOfType(_ context.Context, params *GetTypeP
 }
 
 func (s *Session) handleGetTypesOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
-	return s.resolveTypeArrayPropertyOfType(params, (*checker.Type).Types)
+	// Type.Types panics on anything that isn't a union/intersection or template
+	// literal; a user can call getTypes() on any type, so guard the boundary and
+	// return no constituent types for the rest.
+	return s.resolveTypeArrayPropertyOfType(params, func(t *checker.Type) []*checker.Type {
+		if t.Flags()&(checker.TypeFlagsUnionOrIntersection|checker.TypeFlagsTemplateLiteral) == 0 {
+			return nil
+		}
+		return t.Types()
+	})
 }
 
 func (s *Session) handleGetTypeParametersOfType(_ context.Context, params *GetTypePropertyParams) ([]*TypeResponse, error) {
