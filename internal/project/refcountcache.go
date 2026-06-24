@@ -60,62 +60,20 @@ func (c *RefCountCache[K, V, AcquireArgs]) Has(identity K) bool {
 // Ref increments the reference count for an existing entry.
 // Panics if the entry does not exist.
 func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
-	if c.TryRef(identity) {
-		return
-	}
-	panic("cache entry not found")
-}
-
-// TryRef increments the reference count for an existing entry.
-// Returns false if the entry does not exist.
-func (c *RefCountCache[K, V, AcquireArgs]) TryRef(identity K) bool {
 	entry, ok := c.entries.Load(identity)
 	if !ok {
-		return false
+		panic("cache entry not found")
 	}
-	return c.tryRefEntry(entry)
-}
-
-// RefIfPresent increments the reference count for an existing entry and does
-// nothing if the entry does not exist.
-func (c *RefCountCache[K, V, AcquireArgs]) RefIfPresent(identity K) {
-	c.TryRef(identity)
-}
-
-// RefValue increments the reference count for an entry, restoring it with value
-// if it was deleted before the ref could be taken. If another goroutine restores
-// the entry first, this refs that entry and ignores value.
-func (c *RefCountCache[K, V, AcquireArgs]) RefValue(identity K, value V) {
-	for {
-		entry, ok := c.entries.Load(identity)
-		if !ok {
-			entry = &refCountCacheEntry[V]{
-				value:    value,
-				refCount: 1,
-			}
-			existing, loaded := c.entries.LoadOrStore(identity, entry)
-			if !loaded {
-				return
-			}
-			entry = existing
-		}
-		if c.tryRefEntry(entry) {
-			return
-		}
-		// The deleted entry was already removed from entries before we could ref it,
-		// so continue until this goroutine stores a replacement or another goroutine
-		// does. If another goroutine wins, we'll ref its entry on the next iteration.
-	}
-}
-
-func (c *RefCountCache[K, V, AcquireArgs]) tryRefEntry(entry *refCountCacheEntry[V]) bool {
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
 	if entry.refCount <= 0 && !c.Options.DisableDeletion {
-		return false
+		// Entry was deleted while we were acquiring the lock
+		newEntry, _ := c.loadOrStoreNewLockedEntry(identity)
+		defer newEntry.mu.Unlock()
+		newEntry.value = entry.value
+		return
 	}
 	entry.refCount++
-	return true
 }
 
 // Deref decrements the reference count for an entry.

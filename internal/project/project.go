@@ -374,14 +374,11 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				// and it is the only file whose refcount is already accounted for.
 				if file != dirtyFile {
 					// UpdateProgram acquired the changed file only, so we need to ref everything else
-					p.host.builder.parseCache.RefValue(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind), file)
+					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
-				// Duplicate entries come from the old program's bookkeeping and only
-				// balance entries that were already acquired; unlike reused source files,
-				// they don't carry a SourceFile value that could restore a released entry.
-				p.host.builder.parseCache.RefIfPresent(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
 			}
 		} else if dirtyFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
