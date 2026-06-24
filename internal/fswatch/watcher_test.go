@@ -649,11 +649,7 @@ func TestPhysicalDirForResolvesSymlinkAncestor(t *testing.T) {
 	makeDirSymlink(t, target, link)
 
 	dir := filepath.Join(link, "nested")
-	want, err := filepath.EvalSymlinks(dir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	want = canonicalizePath(filepath.Clean(want))
+	want := physicalDirFor(filepath.Join(target, "nested"))
 	if got := physicalDirFor(dir); got != want {
 		t.Fatalf("physicalDirFor(%q) = %q, want %q", dir, got, want)
 	}
