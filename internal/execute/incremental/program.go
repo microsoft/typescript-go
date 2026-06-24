@@ -204,18 +204,11 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 	result := compiler.HandleNoEmitOptions(p, options.TargetSourceFile, func() *compiler.EmitResult {
 		return p.emitBuildInfo(ctx, options)
 	})
+	if ctx.Err() != nil {
+		return nil
+	}
 	if result != nil {
-		if ctx.Err() != nil {
-			return nil
-		}
-		if options.TargetSourceFile != nil {
-			return result
-		}
-
-		if p.snapshot.options.NoEmit.IsTrue() {
-			return result
-		}
-
+		return result
 	}
 
 	result = compiler.HandleNoEmitOnError(ctx, p, options.TargetSourceFile)

@@ -1729,6 +1729,9 @@ type ProgramLike interface {
 	Program() *Program
 }
 
+// HandleNoEmitOptions mirrors tsc's handleNoEmitOptions:
+// single-file noEmit reports emitSkipped, while whole-program noEmit uses the
+// buildInfo emit result when available and otherwise reports emitSkipped=false.
 func HandleNoEmitOptions(program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
 	if !program.Options().NoEmit.IsTrue() {
 		return nil
