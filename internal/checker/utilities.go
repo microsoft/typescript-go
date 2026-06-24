@@ -1742,7 +1742,7 @@ func (c *Checker) isJSLiteralType(t *Type) bool {
 		return core.Some(t.AsIntersectionType().types, c.isJSLiteralType)
 	}
 	if t.flags&TypeFlagsInstantiable != 0 {
-		constraint := c.getResolvedBaseConstraint(t, nil)
+		constraint := c.getResolvedBaseConstraint(t)
 		return constraint != t && c.isJSLiteralType(constraint)
 	}
 	return false
