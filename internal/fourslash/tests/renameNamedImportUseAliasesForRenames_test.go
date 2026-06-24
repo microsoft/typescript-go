@@ -26,7 +26,7 @@ export interface MyTypeA {
 	f.VerifyBaselineRename(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSTrue}, "import")
 }
 
-func TestRenameNamedImportUseAliasesForRenamesDefaultInNodeModules(t *testing.T) {
+func TestRenameNamedImportDefaultInNodeModules(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /index.ts
