@@ -1427,15 +1427,15 @@ class TypeObject implements Type {
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
     }
 
-    getTrueType(): Type | undefined {
+    getTrueType(): Type {
         const result = this.objectRegistry.fetchType(this, "getTrueTypeOfConditionalType", this.trueType);
-        this.trueType = result?.id;
+        this.trueType = result.id;
         return result;
     }
 
-    getFalseType(): Type | undefined {
+    getFalseType(): Type {
         const result = this.objectRegistry.fetchType(this, "getFalseTypeOfConditionalType", this.falseType);
-        this.falseType = result?.id;
+        this.falseType = result.id;
         return result;
     }
 }

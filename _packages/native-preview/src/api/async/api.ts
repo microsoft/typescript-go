@@ -1419,15 +1419,15 @@ class TypeObject implements Type {
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
     }
 
-    async getTrueType(): Promise<Type | undefined> {
+    async getTrueType(): Promise<Type> {
         const result = await this.objectRegistry.fetchType(this, "getTrueTypeOfConditionalType", this.trueType);
-        this.trueType = result?.id;
+        this.trueType = result.id;
         return result;
     }
 
-    async getFalseType(): Promise<Type | undefined> {
+    async getFalseType(): Promise<Type> {
         const result = await this.objectRegistry.fetchType(this, "getFalseTypeOfConditionalType", this.falseType);
-        this.falseType = result?.id;
+        this.falseType = result.id;
         return result;
     }
 }
