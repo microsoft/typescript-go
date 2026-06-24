@@ -47,6 +47,6 @@ export function cloneSourceFileData(sourceFile: SourceFile): Record<string, unkn
         moduleAugmentations: sourceFile.moduleAugmentations,
         ambientModuleNames: sourceFile.ambientModuleNames,
         externalModuleIndicator: sourceFile.externalModuleIndicator,
-        tokenCache: undefined,
+        tokenCache: undefined,
     };
 }
