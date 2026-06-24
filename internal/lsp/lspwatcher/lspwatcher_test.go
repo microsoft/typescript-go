@@ -495,6 +495,72 @@ func TestWatcher_MissingDirectoryPromotesOnCreate(t *testing.T) {
 	}, "synthetic create events for target and child")
 }
 
+func TestWatcher_MissingDirectoryFastRecursiveAncestor(t *testing.T) {
+	t.Parallel()
+
+	fs := bundled.WrapFS(osvfs.FS())
+	backend := newFakeBackend()
+	backend.fast = true
+	var (
+		mu  sync.Mutex
+		got []*lsproto.FileEvent
+	)
+	w := newWithBackend(fs, backend, func(changes []*lsproto.FileEvent) {
+		mu.Lock()
+		got = append(got, changes...)
+		mu.Unlock()
+	}, logging.NewLogger(os.Stderr))
+	t.Cleanup(w.Close)
+
+	base := t.TempDir()
+	baseNorm := tspath.NormalizeSlashes(base)
+	target := tspath.NormalizeSlashes(filepath.Join(base, "pkg"))
+	pattern := target + "/*"
+	kind := lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete
+
+	if err := w.WatchFiles("id", []*lsproto.FileSystemWatcher{{
+		GlobPattern: lsproto.PatternOrRelativePattern{Pattern: &pattern},
+		Kind:        &kind,
+	}}); err != nil {
+		t.Fatal(err)
+	}
+
+	backend.mu.Lock()
+	if got := backend.optCount[baseNorm]; got != 2 {
+		t.Fatalf("fast recursive backend should install recursive filtered ancestor watch, got %d options", got)
+	}
+	backend.mu.Unlock()
+
+	if err := os.MkdirAll(filepath.Join(base, "pkg"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(base, "pkg", "index.ts"), []byte("export {}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	backend.emit(baseNorm, []fswatch.Event{
+		{Kind: fswatch.EventUpdate, Path: filepath.Join(base, "pkg", "index.ts")},
+	}, nil)
+
+	waitFor(t, func() bool { return backend.isWatching(target) }, "promotion from descendant event")
+
+	backend.mu.Lock()
+	if got := backend.optCount[target]; got != 0 {
+		t.Fatalf("non-recursive target watch should stay non-recursive, got %d options", got)
+	}
+	backend.mu.Unlock()
+
+	waitFor(t, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		for _, e := range got {
+			if e.Type == lsproto.FileChangeTypeCreated && strings.HasSuffix(string(e.Uri), "/pkg/index.ts") {
+				return true
+			}
+		}
+		return false
+	}, "synthetic create for child")
+}
+
 func TestWatcher_FastRecursiveAncestorFilter(t *testing.T) {
 	t.Parallel()
 
