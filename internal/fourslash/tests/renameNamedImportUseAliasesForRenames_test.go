@@ -43,8 +43,8 @@ export interface Foo {
 
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
+	f.VerifyBaselineRename(t, nil /*preferences*/, "import")
+	f.VerifyBaselineRename(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSTrue}, "import")
 	f.GoToMarker(t, "import")
-	f.VerifyRenameSucceeded(t, nil /*preferences*/)
-	f.VerifyRenameSucceeded(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSTrue})
 	f.VerifyRenameFailed(t, &lsutil.UserPreferences{UseAliasesForRename: core.TSFalse})
 }
