@@ -1407,12 +1407,48 @@ func TestConsolidatedChildWatchFiltersAgainstRequestedDir(t *testing.T) {
 		}
 		got = append(got, events...)
 	}, nil)
+	dw.events.update(child)
 	dw.events.update(filepath.Join(child, "file.ts"))
 	dw.events.update(filepath.Join(child, "nested", "file.ts"))
 	dw.events.update(filepath.Join(sibling, "file.ts"))
 	dw.triggerCallbacks()
 
-	assertEventSequence(t, got, []wantEvent{{EventUpdate, filepath.Join(child, "file.ts")}})
+	gotW := toWantEvents(got)
+	want := []wantEvent{
+		{EventUpdate, child},
+		{EventUpdate, filepath.Join(child, "file.ts")},
+	}
+	cmpEvents := func(a, b wantEvent) int {
+		if a.Kind != b.Kind {
+			return cmp.Compare(a.Kind, b.Kind)
+		}
+		return cmp.Compare(a.Path, b.Path)
+	}
+	slices.SortFunc(gotW, cmpEvents)
+	slices.SortFunc(want, cmpEvents)
+	if !equalWantEvents(gotW, want) {
+		t.Fatalf("event mismatch\nwant: %v\n got: %v", want, gotW)
+	}
+}
+
+func TestRecursiveWatchWithIgnoreDoesNotFilterByLogicalRoot(t *testing.T) {
+	t.Parallel()
+
+	dir := filepath.Join(t.TempDir(), "root")
+	dw := newDirectWatcher(t, dir)
+
+	var got []Event
+	outsidePath := filepath.Join(t.TempDir(), "outside", "pkg", "index.ts")
+	dw.watch(dir, true, func(events []Event, err error) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, events...)
+	}, func(string) bool { return false })
+	dw.events.update(outsidePath)
+	dw.triggerCallbacks()
+
+	assertEventSequence(t, got, []wantEvent{{EventUpdate, outsidePath}})
 }
 
 // ----- errors ------------------------------------------------------------

@@ -735,10 +735,10 @@ func (dw *dirWatch) triggerCallbacks() {
 					continue
 				}
 				if cb.recursive {
-					if !isInDirectoryOrSelf(cb.dir, e.Path) {
+					if cb.dir != dw.dir && !isInDirectoryOrSelf(cb.dir, e.Path) {
 						continue
 					}
-				} else if !isDirectChild(cb.dir, e.Path) {
+				} else if !isDirectChild(cb.dir, e.Path) && !(cb.dir != dw.dir && e.Path == cb.dir) {
 					continue
 				}
 				filtered = append(filtered, e)

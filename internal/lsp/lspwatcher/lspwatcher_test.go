@@ -495,6 +495,73 @@ func TestWatcher_MissingDirectoryPromotesOnCreate(t *testing.T) {
 	}, "synthetic create events for target and child")
 }
 
+func TestWatcher_FastRecursiveAncestorFilter(t *testing.T) {
+	t.Parallel()
+
+	ancestor := "/repo/base"
+	requested := "/repo/base/pkg/sub"
+	watchPath := nextMissingPathComponent(ancestor, requested)
+	if watchPath != "/repo/base/pkg" {
+		t.Fatalf("nextMissingPathComponent(%q, %q) = %q", ancestor, requested, watchPath)
+	}
+
+	ignore := ancestorWatchIgnore(watchPath, true)
+	cases := []struct {
+		path string
+		want bool
+	}{
+		{"/repo/base/pkg", false},
+		{"/repo/base/pkg/index.ts", false},
+		{"/repo/base/pkg/sub/index.ts", false},
+		{"/repo/base/pkg2/index.ts", true},
+		{"/repo/base/other/index.ts", true},
+		{"/repo/base", true},
+	}
+	for _, c := range cases {
+		if got := ignore(c.path); got != c.want {
+			t.Errorf("ignore(%q) = %v, want %v", c.path, got, c.want)
+		}
+	}
+}
+
+func TestWatcher_FastRecursiveAncestorFilterNormalizesSlashesAndCase(t *testing.T) {
+	t.Parallel()
+
+	ignore := ancestorWatchIgnore("C:/repo/base/pkg", false)
+	cases := []struct {
+		path string
+		want bool
+	}{
+		{`C:\repo\base\pkg\index.ts`, false},
+		{`c:\repo\base\pkg\sub\index.ts`, false},
+		{`C:\repo\base\pkg2\index.ts`, true},
+	}
+	for _, c := range cases {
+		if got := ignore(c.path); got != c.want {
+			t.Errorf("ignore(%q) = %v, want %v", c.path, got, c.want)
+		}
+	}
+}
+
+func TestWatcher_FastRecursiveAncestorFilterAllowsRealpathAlias(t *testing.T) {
+	t.Parallel()
+
+	ignore := ancestorWatchIgnore("/var/folders/base/pkg", true, "/private/var/folders/base/pkg")
+	cases := []struct {
+		path string
+		want bool
+	}{
+		{"/var/folders/base/pkg/index.ts", false},
+		{"/private/var/folders/base/pkg/index.ts", false},
+		{"/private/var/folders/base/pkg2/index.ts", true},
+	}
+	for _, c := range cases {
+		if got := ignore(c.path); got != c.want {
+			t.Errorf("ignore(%q) = %v, want %v", c.path, got, c.want)
+		}
+	}
+}
+
 func TestWatcher_MultiLevelDescend(t *testing.T) {
 	t.Parallel()
 
