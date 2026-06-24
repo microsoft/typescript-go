@@ -1,3 +1,4 @@
+import type { TextDecoder as NodeTextDecoder } from "node:util";
 import {
     type FileReference,
     type Node,
@@ -6,7 +7,6 @@ import {
     SyntaxKind,
     TokenFlags,
 } from "../../ast/index.ts";
-import type { TextDecoder as NodeTextDecoder } from "node:util";
 import { MsgpackReader } from "./msgpack.ts";
 import {
     RemoteNode,

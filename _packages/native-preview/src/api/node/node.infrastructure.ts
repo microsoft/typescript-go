@@ -1,3 +1,4 @@
+import type { TextDecoder as NodeTextDecoder } from "node:util";
 import {
     type FileReference,
     ModifierFlags,
@@ -5,7 +6,6 @@ import {
     type NodeArray,
     SyntaxKind,
 } from "../../ast/index.ts";
-import type { TextDecoder as NodeTextDecoder } from "node:util";
 import {
     HEADER_OFFSET_HASH_HI0,
     HEADER_OFFSET_HASH_HI1,

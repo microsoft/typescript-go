@@ -1,3 +1,4 @@
+import type { TextEncoder as NodeTextEncoder } from "node:util";
 import type {
     FileReference,
     JSDocParameterOrPropertyTag,
@@ -7,7 +8,6 @@ import type {
     SourceFile,
     TemplateLiteralLikeNode,
 } from "../../ast/index.ts";
-import type { TextEncoder as NodeTextEncoder } from "node:util";
 import { SyntaxKind } from "../../ast/index.ts";
 import {
     getNodeCommonData,
