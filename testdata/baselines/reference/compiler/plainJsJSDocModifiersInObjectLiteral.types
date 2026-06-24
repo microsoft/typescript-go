@@ -1,0 +1,20 @@
+//// [tests/cases/compiler/plainJsJSDocModifiersInObjectLiteral.ts] ////
+
+=== test.js ===
+const obj = {
+>obj : { created(): void; onClose_(): void; }
+>{  /** @override */  created() {  },  /** @private */  onClose_() {  },} : { created(): void; onClose_(): void; }
+
+  /** @override */
+  created() {
+>created : () => void
+
+  },
+
+  /** @private */
+  onClose_() {
+>onClose_ : () => void
+
+  },
+};
+

@@ -576,11 +576,15 @@ func (c *Checker) reportObviousModifierErrors(node *ast.Node) bool {
 }
 
 func (c *Checker) findFirstModifierExcept(node *ast.Node, allowedModifier ast.Kind) *ast.Node {
-	modifier := core.Find(node.ModifierNodes(), ast.IsModifier)
+	modifier := core.Find(node.ModifierNodes(), isNonReparsedModifier)
 	if modifier != nil && modifier.Kind != allowedModifier {
 		return modifier
 	}
 	return nil
+}
+
+func isNonReparsedModifier(node *ast.Node) bool {
+	return ast.IsModifier(node) && node.Flags&ast.NodeFlagsReparsed == 0
 }
 
 func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
@@ -610,7 +614,7 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindShorthandPropertyAssignment,
 		ast.KindNamespaceExportDeclaration,
 		ast.KindMissingDeclaration:
-		return core.Find(node.ModifierNodes(), ast.IsModifier)
+		return core.Find(node.ModifierNodes(), isNonReparsedModifier)
 	default:
 		if node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
 			return nil
@@ -624,12 +628,12 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		case ast.KindClassExpression,
 			ast.KindInterfaceDeclaration,
 			ast.KindTypeAliasDeclaration:
-			return core.Find(node.ModifierNodes(), ast.IsModifier)
+			return core.Find(node.ModifierNodes(), isNonReparsedModifier)
 		case ast.KindVariableStatement:
 			if node.AsVariableStatement().DeclarationList.Flags&ast.NodeFlagsUsing != 0 {
 				return c.findFirstModifierExcept(node, ast.KindAwaitKeyword)
 			}
-			return core.Find(node.ModifierNodes(), ast.IsModifier)
+			return core.Find(node.ModifierNodes(), isNonReparsedModifier)
 		case ast.KindEnumDeclaration:
 			return c.findFirstModifierExcept(node, ast.KindConstKeyword)
 		default:
@@ -1066,13 +1070,13 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 		if modifiers := prop.ModifierNodes(); len(modifiers) != 0 {
 			if ast.CanHaveModifiers(prop) {
 				for _, mod := range modifiers {
-					if ast.IsModifier(mod) && (mod.Kind != ast.KindAsyncKeyword || prop.Kind != ast.KindMethodDeclaration) {
+					if isNonReparsedModifier(mod) && (mod.Kind != ast.KindAsyncKeyword || prop.Kind != ast.KindMethodDeclaration) {
 						c.grammarErrorOnNode(mod, diagnostics.X_0_modifier_cannot_be_used_here, scanner.GetTextOfNode(mod))
 					}
 				}
 			} else if ast.CanHaveIllegalModifiers(prop) {
 				for _, mod := range modifiers {
-					if ast.IsModifier(mod) {
+					if isNonReparsedModifier(mod) {
 						c.grammarErrorOnNode(mod, diagnostics.X_0_modifier_cannot_be_used_here, scanner.GetTextOfNode(mod))
 					}
 				}
@@ -1436,7 +1440,9 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 	if node.Kind == ast.KindMethodDeclaration {
 		if node.Parent.Kind == ast.KindObjectLiteralExpression {
 			// We only disallow modifier on a method declaration if it is a property of object-literal-expression
-			if modifiers := node.Modifiers(); modifiers != nil && !(len(modifiers.Nodes) == 1 && modifiers.Nodes[0].Kind == ast.KindAsyncKeyword) {
+			if core.Some(node.ModifierNodes(), func(modifier *ast.Node) bool {
+				return isNonReparsedModifier(modifier) && modifier.Kind != ast.KindAsyncKeyword
+			}) {
 				return c.grammarErrorOnFirstToken(node, diagnostics.Modifiers_cannot_appear_here)
 			}
 
