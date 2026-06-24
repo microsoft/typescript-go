@@ -1631,12 +1631,11 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 
 	if options.EmitOnly != EmitOnlyForcedDts {
-		if p.Options().NoEmit.IsTrue() {
-			// Mirror handleNoEmitOptions: a single-file noEmit is skipped, but a whole-program
-			// noEmit is not, so a program with diagnostics reports DiagnosticsPresent_OutputsGenerated.
-			return &EmitResult{EmitSkipped: options.TargetSourceFile != nil}
+		result := HandleNoEmitOptions(p, options.TargetSourceFile, nil)
+		if result != nil {
+			return result
 		}
-		result := HandleNoEmitOnError(
+		result = HandleNoEmitOnError(
 			ctx,
 			p,
 			options.TargetSourceFile,
@@ -1728,6 +1727,22 @@ type ProgramLike interface {
 	CommonSourceDirectory() string
 	IsSourceFileDefaultLibrary(path tspath.Path) bool
 	Program() *Program
+}
+
+func HandleNoEmitOptions(program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
+	if !program.Options().NoEmit.IsTrue() {
+		return nil
+	}
+	if file != nil {
+		return &EmitResult{EmitSkipped: true}
+	}
+	if emitBuildInfo != nil {
+		result := emitBuildInfo()
+		if result != nil {
+			return result
+		}
+	}
+	return &EmitResult{}
 }
 
 func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
