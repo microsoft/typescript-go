@@ -1671,9 +1671,9 @@ function emitRemoteNodeClassOpen(w: CodeWriter) {
     w.write(`        }`);
     w.write(`    }`);
     w.write(``);
-    w.write(`    get jsDoc(): readonly Node[] | undefined {`);
+    w.write(`    get jsDoc(): readonly Node[] {`);
     w.write(`        if (!this.hasChildren()) {`);
-    w.write(`            return undefined;`);
+    w.write(`            return undefined!;`);
     w.write(`        }`);
     w.write(`        let result: Node[] | undefined;`);
     w.write(`        let next = this.index + 1;`);
@@ -1685,7 +1685,7 @@ function emitRemoteNodeClassOpen(w: CodeWriter) {
     w.write(`            next = child.next;`);
     w.write(`        }`);
     w.write(`        while (next);`);
-    w.write(`        return result;`);
+    w.write(`        return result!;`);
     w.write(`    }`);
     w.write(``);
     w.write(`    getSourceFile(): SourceFile {`);

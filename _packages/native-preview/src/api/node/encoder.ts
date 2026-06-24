@@ -7,6 +7,7 @@ import type {
     SourceFile,
     TemplateLiteralLikeNode,
 } from "../../ast/index.ts";
+import type { TextEncoder as NodeTextEncoder } from "node:util";
 import { SyntaxKind } from "../../ast/index.ts";
 import {
     getNodeCommonData,
@@ -80,8 +81,8 @@ class StringTable {
     }
 }
 
-let _encoder: TextEncoder | undefined;
-function cachedEncoder(): TextEncoder {
+let _encoder: NodeTextEncoder | undefined;
+function cachedEncoder(): NodeTextEncoder {
     return _encoder ??= new TextEncoder();
 }
 

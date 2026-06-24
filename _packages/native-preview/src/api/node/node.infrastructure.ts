@@ -5,6 +5,7 @@ import {
     type NodeArray,
     SyntaxKind,
 } from "../../ast/index.ts";
+import type { TextDecoder as NodeTextDecoder } from "node:util";
 import {
     HEADER_OFFSET_HASH_HI0,
     HEADER_OFFSET_HASH_HI1,
@@ -45,7 +46,7 @@ export interface SourceFileInfo {
     readonly _offsetStringTable: number;
     readonly _offsetExtendedData: number;
     readonly _offsetStructuredData: number;
-    readonly _decoder: TextDecoder;
+    readonly _decoder: NodeTextDecoder;
     nodes: any[];
     readonly path?: string;
     readFileReferences(offset: number): readonly FileReference[];

@@ -234,9 +234,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         }
     }
 
-    get jsDoc(): readonly Node[] | undefined {
+    get jsDoc(): readonly Node[] {
         if (!this.hasChildren()) {
-            return undefined;
+            return undefined!;
         }
         let result: Node[] | undefined;
         let next = this.index + 1;
@@ -248,7 +248,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             next = child.next;
         }
         while (next);
-        return result;
+        return result!;
     }
 
     getSourceFile(): SourceFile {

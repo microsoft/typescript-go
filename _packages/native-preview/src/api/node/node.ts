@@ -6,6 +6,7 @@ import {
     SyntaxKind,
     TokenFlags,
 } from "../../ast/index.ts";
+import type { TextDecoder as NodeTextDecoder } from "node:util";
 import { MsgpackReader } from "./msgpack.ts";
 import {
     RemoteNode,
@@ -44,10 +45,10 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     readonly _offsetStringTable: number;
     readonly _offsetExtendedData: number;
     readonly _offsetStructuredData: number;
-    readonly _decoder: TextDecoder;
+    readonly _decoder: NodeTextDecoder;
     private _cachedText: string | undefined;
 
-    constructor(data: Uint8Array, decoder: TextDecoder) {
+    constructor(data: Uint8Array, decoder: NodeTextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         const offsetNodes = view.getUint32(HEADER_OFFSET_NODES, true);
         super(view, 1, undefined!, undefined!, offsetNodes);
