@@ -253,13 +253,12 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 			oldSignature = oldSignatureFormat.signatureWithDifferentOptions[0]
 		}
 	}
-	if newSignature == "" {
-		newSignature = h.program.snapshot.computeHash(getTextHandlingSourceMapForSignature(text, data))
-	}
 	// A composite project's d.ts can re-export another project's API via `export ... from "..."` whose text
 	// is stable even when that API changes; fold the re-exported d.ts versions in so the signature reflects it.
 	if reexportSuffix := h.getDeclarationReexportSignatureSuffix(file); reexportSuffix != "" {
-		newSignature = h.program.snapshot.computeHash(newSignature + "\n" + reexportSuffix)
+		newSignature = h.program.snapshot.computeHash(getTextHandlingSourceMapForSignature(text, data) + "\n" + reexportSuffix)
+	} else if newSignature == "" {
+		newSignature = h.program.snapshot.computeHash(getTextHandlingSourceMapForSignature(text, data))
 	}
 	// Dont write dts files if they didn't change
 	if newSignature == oldSignature {

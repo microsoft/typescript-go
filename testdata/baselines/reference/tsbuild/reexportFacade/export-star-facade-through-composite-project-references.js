@@ -158,7 +158,7 @@ export * from "../source/index";
 export * from "../source/index";
 
 //// [/user/username/projects/facade/facade/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../source/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",{"version":"e6a451c08997b100385569b7eaa8927c-export * from \"../source/index\";","signature":"7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"8261c887123c6d5fcc9b9453d80916d8-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"]]}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../source/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",{"version":"e6a451c08997b100385569b7eaa8927c-export * from \"../source/index\";","signature":"7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"158d569ea17ecd4dcfd73f9a3b1a115f-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"]]}
 //// [/user/username/projects/facade/facade/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -223,14 +223,14 @@ export * from "../source/index";
   "emitSignatures": [
     {
       "file": "./index.ts",
-      "signature": "8261c887123c6d5fcc9b9453d80916d8-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",
+      "signature": "158d569ea17ecd4dcfd73f9a3b1a115f-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",
       "original": [
         3,
-        "8261c887123c6d5fcc9b9453d80916d8-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"
+        "158d569ea17ecd4dcfd73f9a3b1a115f-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"
       ]
     }
   ],
-  "size": 1504
+  "size": 1471
 }
 //// [/user/username/projects/facade/source/index.d.ts] *new* 
 export type Status = "old";
@@ -443,7 +443,7 @@ Found 1 error in consumer/index.ts[90m:3[0m
 //// [/user/username/projects/facade/facade/index.d.ts] *rewrite with same content*
 //// [/user/username/projects/facade/facade/index.js] *rewrite with same content*
 //// [/user/username/projects/facade/facade/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../source/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n",{"version":"e6a451c08997b100385569b7eaa8927c-export * from \"../source/index\";","signature":"7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"17b276633617870ea124782354eeb16b-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n"]]}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../source/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n",{"version":"e6a451c08997b100385569b7eaa8927c-export * from \"../source/index\";","signature":"7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"aa26532ed10dd2bca3829448f2ca8eb3-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n"]]}
 //// [/user/username/projects/facade/facade/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -508,14 +508,14 @@ Found 1 error in consumer/index.ts[90m:3[0m
   "emitSignatures": [
     {
       "file": "./index.ts",
-      "signature": "17b276633617870ea124782354eeb16b-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n",
+      "signature": "aa26532ed10dd2bca3829448f2ca8eb3-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n",
       "original": [
         3,
-        "17b276633617870ea124782354eeb16b-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n"
+        "aa26532ed10dd2bca3829448f2ca8eb3-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=9b0886d42f77b756f7e196fff7faf468-export type Status = \"new\";\n"
       ]
     }
   ],
-  "size": 1504
+  "size": 1471
 }
 //// [/user/username/projects/facade/source/index.d.ts] *modified* 
 export type Status = "new";
@@ -700,7 +700,7 @@ Output::
 //// [/user/username/projects/facade/facade/index.d.ts] *rewrite with same content*
 //// [/user/username/projects/facade/facade/index.js] *rewrite with same content*
 //// [/user/username/projects/facade/facade/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../source/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",{"version":"e6a451c08997b100385569b7eaa8927c-export * from \"../source/index\";","signature":"7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"8261c887123c6d5fcc9b9453d80916d8-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"]]}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../source/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",{"version":"e6a451c08997b100385569b7eaa8927c-export * from \"../source/index\";","signature":"7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"158d569ea17ecd4dcfd73f9a3b1a115f-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"]]}
 //// [/user/username/projects/facade/facade/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -765,14 +765,14 @@ Output::
   "emitSignatures": [
     {
       "file": "./index.ts",
-      "signature": "8261c887123c6d5fcc9b9453d80916d8-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",
+      "signature": "158d569ea17ecd4dcfd73f9a3b1a115f-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n",
       "original": [
         3,
-        "8261c887123c6d5fcc9b9453d80916d8-7c2372fe894981acfb34a06a40fa7323-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"
+        "158d569ea17ecd4dcfd73f9a3b1a115f-export * from \"../source/index\";\n\n/user/username/projects/facade/source/index.d.ts=5a09cbbef2c0e6f8324b2a0c72b092db-export type Status = \"old\";\n"
       ]
     }
   ],
-  "size": 1504
+  "size": 1471
 }
 //// [/user/username/projects/facade/source/index.d.ts] *modified* 
 export type Status = "old";
