@@ -616,17 +616,6 @@ function assertHasRealPosition(node: Node): void {
     }
 }
 
-function isJSDocCommentContainingNode(node: Node): boolean {
-    return node.kind === SyntaxKind.JSDoc ||
-        node.kind === SyntaxKind.JSDocText ||
-        node.kind === SyntaxKind.JSDocTypeLiteral ||
-        node.kind === SyntaxKind.JSDocSignature ||
-        node.kind === SyntaxKind.JSDocLink ||
-        node.kind === SyntaxKind.JSDocLinkCode ||
-        node.kind === SyntaxKind.JSDocLinkPlain ||
-        isJSDocTag(node);
-}
-
 export function getChildren(node: Node, sourceFile: SourceFile = node.getSourceFile()): readonly Node[] {
     // A SyntaxList already holds its (pre-materialized) children.
     if (node.kind === SyntaxKind.SyntaxList) {
@@ -655,7 +644,7 @@ function createChildren(node: Node, sourceFile: SourceFile): readonly Node[] {
     const children: Node[] = [];
 
     // Inside a JSDoc comment there are no real tokens to synthesize.
-    if (isJSDocCommentContainingNode(node)) {
+    if (shouldSkipChild(node)) {
         node.forEachChild(child => void children.push(child));
         return children;
     }
