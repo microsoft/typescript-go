@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 	"time"
 )
@@ -103,4 +104,36 @@ func TestFSEventsSharedStreamRoutesEvents(t *testing.T) {
 	}
 	expectContains(t, recB, EventUpdate, fileB)
 	assertNoEventsForPath(t, recA.drainQuiet(500*time.Millisecond), fileB, "sibling watch saw event")
+}
+
+func TestFSEventsSharedStreamFallsBackToChunks(t *testing.T) {
+	t.Parallel()
+
+	const count = fseventsPathsPerStream*2 + 1
+	watches := make([]fseventsWatchSnapshot, 0, count)
+	for i := range count {
+		watches = append(watches, fseventsWatchSnapshot{
+			w:     &dirWatch{physicalDir: fmt.Sprintf("/watch/dir%04d", i)},
+			state: &fseventsState{},
+		})
+	}
+
+	var calls []int
+	streams, err := startFSEventsStreams(watches, func(paths []string) (*fseventsStream, error) {
+		calls = append(calls, len(paths))
+		if len(calls) == 1 {
+			return nil, errStreamStartFailed
+		}
+		return &fseventsStream{}, nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(streams) != 3 {
+		t.Fatalf("expected 3 chunked streams, got %d", len(streams))
+	}
+	wantCalls := []int{count, fseventsPathsPerStream, fseventsPathsPerStream, 1}
+	if !slices.Equal(calls, wantCalls) {
+		t.Fatalf("startStream calls = %v, want %v", calls, wantCalls)
+	}
 }

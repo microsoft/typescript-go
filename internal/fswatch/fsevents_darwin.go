@@ -241,6 +241,10 @@ func (b *fsEventsBackend) activeWatchesLocked() []fseventsWatchSnapshot {
 }
 
 func (b *fsEventsBackend) startStreams(watches []fseventsWatchSnapshot) ([]*fseventsStream, error) {
+	return startFSEventsStreams(watches, b.startStream)
+}
+
+func startFSEventsStreams(watches []fseventsWatchSnapshot, startStream func([]string) (*fseventsStream, error)) ([]*fseventsStream, error) {
 	if len(watches) == 0 {
 		return nil, nil
 	}
@@ -256,16 +260,22 @@ func (b *fsEventsBackend) startStreams(watches []fseventsWatchSnapshot) ([]*fsev
 	}
 	sort.Strings(paths)
 
+	stream, err := startStream(paths)
+	if err == nil {
+		return []*fseventsStream{stream}, nil
+	}
+
 	streams := make([]*fseventsStream, 0, (len(paths)+fseventsPathsPerStream-1)/fseventsPathsPerStream)
-	for len(paths) > 0 {
-		chunkLen := min(len(paths), fseventsPathsPerStream)
-		stream, err := b.startStream(paths[:chunkLen])
+	remainingPaths := paths
+	for len(remainingPaths) > 0 {
+		chunkLen := min(len(remainingPaths), fseventsPathsPerStream)
+		stream, err := startStream(remainingPaths[:chunkLen])
 		if err != nil {
 			stopFSEventsStreams(streams)
 			return nil, err
 		}
 		streams = append(streams, stream)
-		paths = paths[chunkLen:]
+		remainingPaths = remainingPaths[chunkLen:]
 	}
 	return streams, nil
 }
