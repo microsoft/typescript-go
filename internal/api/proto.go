@@ -68,6 +68,7 @@ const (
 	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
 	MethodGetDeclaredTypeOfSymbol  Method = "getDeclaredTypeOfSymbol"
 	MethodGetSourceFile            Method = "getSourceFile"
+	MethodGetSourceFileNames       Method = "getSourceFileNames"
 	MethodResolveName              Method = "resolveName"
 	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
 	MethodGetResolvedSignature     Method = "getResolvedSignature"
@@ -126,6 +127,7 @@ const (
 	MethodGetTypePredicateOfSignature       Method = "getTypePredicateOfSignature"
 	MethodGetBaseTypes                      Method = "getBaseTypes"
 	MethodGetPropertiesOfType               Method = "getPropertiesOfType"
+	MethodGetApparentType                   Method = "getApparentType"
 	MethodGetPropertyOfType                 Method = "getPropertyOfType"
 	MethodGetIndexInfosOfType               Method = "getIndexInfosOfType"
 	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
@@ -137,7 +139,9 @@ const (
 	MethodGetSignatureFromDeclaration       Method = "getSignatureFromDeclaration"
 	MethodGetExportSpecifierLocalTarget     Method = "getExportSpecifierLocalTargetSymbol"
 	MethodGetAliasedSymbol                  Method = "getAliasedSymbol"
+	MethodGetImmediateAliasedSymbol         Method = "getImmediateAliasedSymbol"
 	MethodGetExportsOfModule                Method = "getExportsOfModule"
+	MethodGetMemberInModuleExports          Method = "getMemberInModuleExports"
 	MethodGetJSDocTags                      Method = "getJsDocTags"
 	MethodGetDocumentationComment           Method = "getDocumentationComment"
 	MethodIsArrayType                       Method = "isArrayType"
@@ -345,6 +349,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
 	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
+	MethodGetSourceFileNames:       unmarshallerFor[GetSourceFileNamesParams],
 	MethodGetSymbolAtPosition:      unmarshallerFor[GetSymbolAtPositionParams],
 	MethodGetSymbolsAtPositions:    unmarshallerFor[GetSymbolsAtPositionsParams],
 	MethodGetSymbolAtLocation:      unmarshallerFor[GetSymbolAtLocationParams],
@@ -408,6 +413,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetTypePredicateOfSignature:       unmarshallerFor[CheckerSignatureParams],
 	MethodGetBaseTypes:                      unmarshallerFor[CheckerTypeParams],
 	MethodGetPropertiesOfType:               unmarshallerFor[CheckerTypeParams],
+	MethodGetApparentType:                   unmarshallerFor[CheckerTypeParams],
 	MethodGetPropertyOfType:                 unmarshallerFor[GetPropertyOfTypeParams],
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
@@ -417,7 +423,9 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSignatureFromDeclaration:       unmarshallerFor[CheckerNodeParams],
 	MethodGetExportSpecifierLocalTarget:     unmarshallerFor[CheckerNodeParams],
 	MethodGetAliasedSymbol:                  unmarshallerFor[CheckerSymbolParams],
+	MethodGetImmediateAliasedSymbol:         unmarshallerFor[CheckerSymbolParams],
 	MethodGetExportsOfModule:                unmarshallerFor[CheckerSymbolParams],
+	MethodGetMemberInModuleExports:          unmarshallerFor[GetMemberInModuleExportsParams],
 	MethodGetJSDocTags:                      unmarshallerFor[CheckerSymbolParams],
 	MethodGetDocumentationComment:           unmarshallerFor[CheckerSymbolParams],
 	MethodIsArrayType:                       unmarshallerFor[CheckerTypeParams],
@@ -738,6 +746,11 @@ type GetSourceFileParams struct {
 	File     DocumentIdentifier `json:"file"`
 }
 
+type GetSourceFileNamesParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+}
+
 type ResolveNameParams struct {
 	Snapshot       SnapshotID          `json:"snapshot"`
 	Project        ProjectID           `json:"project"`
@@ -989,6 +1002,14 @@ type GetPropertyOfTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
 	Project  ProjectID  `json:"project"`
 	Type     TypeID     `json:"type"`
+	Name     string     `json:"name"`
+}
+
+// GetMemberInModuleExportsParams are parameters for getMemberInModuleExports.
+type GetMemberInModuleExportsParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Symbol   SymbolID   `json:"symbol"`
 	Name     string     `json:"name"`
 }
 
