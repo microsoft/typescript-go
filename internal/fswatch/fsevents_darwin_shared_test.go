@@ -119,8 +119,10 @@ func TestFSEventsSharedStreamFallsBackToChunks(t *testing.T) {
 	}
 
 	var calls []int
-	streams, err := startFSEventsStreams(watches, func(paths []string) (*fseventsStream, error) {
+	var watchCalls []int
+	streams, err := startFSEventsStreams(watches, func(paths []string, streamWatches []fseventsWatchSnapshot) (*fseventsStream, error) {
 		calls = append(calls, len(paths))
+		watchCalls = append(watchCalls, len(streamWatches))
 		if len(calls) == 1 {
 			return nil, errStreamStartFailed
 		}
@@ -136,20 +138,24 @@ func TestFSEventsSharedStreamFallsBackToChunks(t *testing.T) {
 	if !slices.Equal(calls, wantCalls) {
 		t.Fatalf("startStream calls = %v, want %v", calls, wantCalls)
 	}
+	if !slices.Equal(watchCalls, wantCalls) {
+		t.Fatalf("startStream watch calls = %v, want %v", watchCalls, wantCalls)
+	}
 }
 
-func TestFSEventsActiveWatchesSnapshotFiltersToStreamPaths(t *testing.T) {
+func TestWatchesForFSEventsPaths(t *testing.T) {
 	t.Parallel()
 
-	b := newFSEventsBackend()
 	watchA := &dirWatch{physicalDir: "/watch/a"}
 	watchB := &dirWatch{physicalDir: "/watch/b"}
 	watchC := &dirWatch{physicalDir: "/watch/c"}
-	b.watches[watchA] = &fseventsState{}
-	b.watches[watchB] = &fseventsState{}
-	b.watches[watchC] = &fseventsState{}
+	watches := []fseventsWatchSnapshot{
+		{w: watchA, state: &fseventsState{}},
+		{w: watchB, state: &fseventsState{}},
+		{w: watchC, state: &fseventsState{}},
+	}
 
-	got := b.activeWatchesSnapshot([]string{"/watch/a", "/watch/c"})
+	got := watchesForFSEventsPaths(watches, []string{"/watch/a", "/watch/c"})
 	gotPaths := make([]string, 0, len(got))
 	for _, watch := range got {
 		gotPaths = append(gotPaths, watch.w.physicalDir)
@@ -158,7 +164,7 @@ func TestFSEventsActiveWatchesSnapshotFiltersToStreamPaths(t *testing.T) {
 
 	want := []string{"/watch/a", "/watch/c"}
 	if !slices.Equal(gotPaths, want) {
-		t.Fatalf("activeWatchesSnapshot paths = %v, want %v", gotPaths, want)
+		t.Fatalf("watchesForFSEventsPaths = %v, want %v", gotPaths, want)
 	}
 }
 

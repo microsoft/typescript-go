@@ -452,8 +452,7 @@ type streamCallback struct {
 	eventFile *os.File
 	queue     uintptr // per-stream serial dispatch queue
 	done      chan struct{}
-	backend   *fsEventsBackend
-	paths     []string
+	watches   []fseventsWatchSnapshot
 }
 
 type fsEventsCallbackPayload struct {
@@ -478,7 +477,7 @@ func (p *fsEventsCallbackPayload) close() {
 // callbacks. The per-stream serial queue serializes this stream's callbacks
 // and prevents cross-stream head-of-line blocking that a process-wide serial
 // queue would cause.
-func newStreamCallback(backend *fsEventsBackend, paths []string) (*streamCallback, error) {
+func newStreamCallback(watches []fseventsWatchSnapshot) (*streamCallback, error) {
 	var eventPipe [2]int
 	if err := unix.Pipe(eventPipe[:]); err != nil {
 		return nil, err
@@ -500,8 +499,7 @@ func newStreamCallback(backend *fsEventsBackend, paths []string) (*streamCallbac
 		eventFile:      os.NewFile(uintptr(eventPipe[0]), "fsevents-event"),
 		queue:          queue,
 		done:           make(chan struct{}),
-		backend:        backend,
-		paths:          slices.Clone(paths),
+		watches:        slices.Clone(watches),
 	}
 	go cb.eventLoop()
 	return cb, nil

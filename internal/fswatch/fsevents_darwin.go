@@ -166,7 +166,6 @@ type fseventsStream struct {
 	stream atomic.Uintptr
 	cb     *streamCallback
 	pinner runtime.Pinner
-	paths  []string
 }
 
 // ----- the watcherImpl -------------------------------------------------------
@@ -244,7 +243,7 @@ func (b *fsEventsBackend) startStreams(watches []fseventsWatchSnapshot) ([]*fsev
 	return startFSEventsStreams(watches, b.startStream)
 }
 
-func startFSEventsStreams(watches []fseventsWatchSnapshot, startStream func([]string) (*fseventsStream, error)) ([]*fseventsStream, error) {
+func startFSEventsStreams(watches []fseventsWatchSnapshot, startStream func([]string, []fseventsWatchSnapshot) (*fseventsStream, error)) ([]*fseventsStream, error) {
 	if len(watches) == 0 {
 		return nil, nil
 	}
@@ -260,7 +259,7 @@ func startFSEventsStreams(watches []fseventsWatchSnapshot, startStream func([]st
 	}
 	sort.Strings(paths)
 
-	stream, err := startStream(paths)
+	stream, err := startStream(paths, watches)
 	if err == nil {
 		return []*fseventsStream{stream}, nil
 	}
@@ -269,7 +268,8 @@ func startFSEventsStreams(watches []fseventsWatchSnapshot, startStream func([]st
 	remainingPaths := paths
 	for len(remainingPaths) > 0 {
 		chunkLen := min(len(remainingPaths), fseventsPathsPerStream)
-		stream, err := startStream(remainingPaths[:chunkLen])
+		chunkPaths := remainingPaths[:chunkLen]
+		stream, err := startStream(chunkPaths, watchesForFSEventsPaths(watches, chunkPaths))
 		if err != nil {
 			stopFSEventsStreams(streams)
 			return nil, err
@@ -280,8 +280,21 @@ func startFSEventsStreams(watches []fseventsWatchSnapshot, startStream func([]st
 	return streams, nil
 }
 
+func watchesForFSEventsPaths(watches []fseventsWatchSnapshot, paths []string) []fseventsWatchSnapshot {
+	if len(paths) == 0 {
+		return nil
+	}
+	filtered := make([]fseventsWatchSnapshot, 0, len(watches))
+	for _, watch := range watches {
+		if _, ok := slices.BinarySearch(paths, watch.w.physicalDir); ok {
+			filtered = append(filtered, watch)
+		}
+	}
+	return filtered
+}
+
 // startStream creates and starts one FSEventStream watching all supplied paths.
-func (b *fsEventsBackend) startStream(paths []string) (*fseventsStream, error) {
+func (b *fsEventsBackend) startStream(paths []string, watches []fseventsWatchSnapshot) (*fseventsStream, error) {
 	if len(paths) == 0 {
 		return nil, nil
 	}
@@ -310,11 +323,11 @@ func (b *fsEventsBackend) startStream(paths []string) (*fseventsStream, error) {
 	}
 	defer cfRelease(pathsToWatch)
 
-	cb, err := newStreamCallback(b, paths)
+	cb, err := newStreamCallback(watches)
 	if err != nil {
 		return nil, err
 	}
-	state := &fseventsStream{cb: cb, paths: slices.Clone(paths)}
+	state := &fseventsStream{cb: cb}
 	state.pinner.Pin(cb)
 
 	ctx := fsEventStreamContext{info: uintptr(unsafe.Pointer(cb))}
@@ -467,7 +480,7 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	paths := payload.paths
 	flags := payload.flags
 
-	watches := cb.backend.activeWatchesSnapshot(cb.paths)
+	watches := cb.watches
 	touched := map[*dirWatch]struct{}{}
 
 	for i := range numEvents {
@@ -494,6 +507,9 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 				overflow = errFSEventsTooMany
 			}
 			for _, watch := range watches {
+				if watch.state.terminated.Load() {
+					continue
+				}
 				if fseventsOverflowMatches(watch.w, path) {
 					watch.w.events.setError(overflow)
 					touched[watch.w] = struct{}{}
@@ -514,6 +530,9 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 		pathExistsKnown := false
 
 		for _, watch := range watches {
+			if watch.state.terminated.Load() {
+				continue
+			}
 			w := watch.w
 			displayPath, ok := fseventsDisplayPath(w, rawPath)
 			if !ok {
@@ -562,22 +581,6 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	for w := range touched {
 		w.notify()
 	}
-}
-
-func (b *fsEventsBackend) activeWatchesSnapshot(paths []string) []fseventsWatchSnapshot {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	watches := b.activeWatchesLocked()
-	if len(paths) == 0 {
-		return watches
-	}
-	filtered := watches[:0]
-	for _, watch := range watches {
-		if _, ok := slices.BinarySearch(paths, watch.w.physicalDir); ok {
-			filtered = append(filtered, watch)
-		}
-	}
-	return filtered
 }
 
 func fseventsDisplayPath(w *dirWatch, rawPath string) (string, bool) {
