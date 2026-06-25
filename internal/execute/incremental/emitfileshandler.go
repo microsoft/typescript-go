@@ -316,7 +316,7 @@ func (h *emitFilesHandler) getDeclarationReexportSignatureSuffix(file *ast.Sourc
 		return ""
 	}
 	slices.Sort(reexportVersions)
-	return strings.Join(reexportVersions, ",")
+	return strings.Join(reexportVersions, "\n")
 }
 
 func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
