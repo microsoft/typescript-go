@@ -301,10 +301,10 @@ func (w *watcher) findConsolidationDirLocked(dir string) string {
 		for _, dw := range w.dirWatches {
 			if isInDirectoryOrSelf(parent, dw.dir) {
 				count++
+				if count >= recursiveConsolidateThreshold {
+					return parent
+				}
 			}
-		}
-		if count >= recursiveConsolidateThreshold {
-			return parent
 		}
 		next := filepath.Dir(parent)
 		if next == parent {
@@ -749,6 +749,9 @@ func (dw *dirWatch) triggerCallbacks() {
 }
 
 func isInDirectoryOrSelf(dir, path string) bool {
+	if dir == "" {
+		return false
+	}
 	if path == dir {
 		return true
 	}
@@ -756,7 +759,13 @@ func isInDirectoryOrSelf(dir, path string) bool {
 		return false
 	}
 	rest := path[len(dir):]
-	return len(rest) > 0 && (rest[0] == '/' || rest[0] == filepath.Separator)
+	if len(rest) == 0 {
+		return false
+	}
+	if os.IsPathSeparator(dir[len(dir)-1]) {
+		return true
+	}
+	return os.IsPathSeparator(rest[0])
 }
 
 // isDirectChild reports whether path is an immediate child of dir.

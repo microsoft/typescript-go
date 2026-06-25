@@ -655,6 +655,41 @@ func TestPhysicalDirForResolvesSymlinkAncestor(t *testing.T) {
 	}
 }
 
+func TestIsInDirectoryOrSelf(t *testing.T) {
+	t.Parallel()
+
+	volume := filepath.VolumeName(os.TempDir())
+	root := volume + string(filepath.Separator)
+	parent := filepath.Join(root, "parent")
+	child := filepath.Join(parent, "child")
+	nested := filepath.Join(child, "nested")
+	siblingPrefix := filepath.Join(root, "parent-sibling")
+
+	tests := []struct {
+		name string
+		dir  string
+		path string
+		want bool
+	}{
+		{name: "exact", dir: parent, path: parent, want: true},
+		{name: "child", dir: parent, path: child, want: true},
+		{name: "nested", dir: parent, path: nested, want: true},
+		{name: "sibling prefix", dir: parent, path: siblingPrefix, want: false},
+		{name: "root self", dir: root, path: root, want: true},
+		{name: "root child", dir: root, path: filepath.Join(root, "child"), want: true},
+		{name: "empty dir", dir: "", path: child, want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if got := isInDirectoryOrSelf(tt.dir, tt.path); got != tt.want {
+				t.Fatalf("isInDirectoryOrSelf(%q, %q) = %v, want %v", tt.dir, tt.path, got, tt.want)
+			}
+		})
+	}
+}
+
 // filterEventsForPaths returns only the events whose Path is in the
 // allowed set. Used to discard incidental dir-update events that some
 // backends emit for the parent dir of a touched file.
