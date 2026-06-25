@@ -209,8 +209,10 @@ func checkWatcher(w *dirWatch) error {
 }
 
 var (
-	errStreamCreateNull  = errors.New("FSEventStreamCreate returned NULL")
-	errStreamStartFailed = errors.New("error starting FSEvents stream")
+	errCFStringCreateNull = errors.New("CFStringCreate returned NULL")
+	errCFArrayCreateNull  = errors.New("CFArrayCreate returned NULL")
+	errStreamCreateNull   = errors.New("FSEventStreamCreate returned NULL")
+	errStreamStartFailed  = errors.New("error starting FSEvents stream")
 )
 
 var (
@@ -294,7 +296,7 @@ func (b *fsEventsBackend) startStream(paths []string) (*fseventsStream, error) {
 			for _, cfString := range cfStrings {
 				cfRelease(cfString)
 			}
-			return nil, errStreamCreateNull
+			return nil, errCFStringCreateNull
 		}
 		cfStrings = append(cfStrings, cfDir)
 	}
@@ -306,7 +308,7 @@ func (b *fsEventsBackend) startStream(paths []string) (*fseventsStream, error) {
 
 	pathsToWatch := cfArrayCreate(0, unsafe.Pointer(&cfStrings[0]), len(cfStrings), 0)
 	if pathsToWatch == 0 {
-		return nil, errStreamCreateNull
+		return nil, errCFArrayCreateNull
 	}
 	defer cfRelease(pathsToWatch)
 

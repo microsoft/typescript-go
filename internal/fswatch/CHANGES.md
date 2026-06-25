@@ -127,6 +127,16 @@ can't starve event delivery on any of the others. In practice most callers will
 only ever use one backend (`Default()`), so this mainly matters for processes
 that mix backends, but the cost of the split is essentially nothing.
 
+### Shared FSEvents streams
+
+Upstream opens one macOS FSEventStream per subscription. Go's FSEvents backend
+shares streams across all logical directory watches in a backend instance. The
+fast path attempts one stream containing every active physical watch root; if
+that stream cannot be started, the backend retries with bounded path chunks.
+Events from shared streams are routed back to matching logical watches by path,
+so non-recursive and per-subscriber ignore semantics are preserved while using
+far fewer system-wide FSEvents stream slots.
+
 ## New backends
 
 **fanotify** (Linux, kernel ≥ 5.13) is the default on Linux when available. It
