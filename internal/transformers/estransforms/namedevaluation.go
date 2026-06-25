@@ -67,14 +67,12 @@ func isAnonymousFunctionDefinition(emitContext *printer.EmitContext, node *ast.E
 		if classHasDeclaredOrExplicitlyAssignedName(emitContext, node) {
 			return false
 		}
-		break
 	case ast.KindFunctionExpression:
 		if node.AsFunctionExpression().Name() != nil {
 			return false
 		}
-		break
 	case ast.KindArrowFunction:
-		break
+		// Do nothing.
 	default:
 		return false
 	}
