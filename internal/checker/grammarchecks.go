@@ -587,7 +587,7 @@ func (c *Checker) isCheckedModifier(node *ast.Node) bool {
 	if !ast.IsModifier(node) {
 		return false
 	}
-	// Reparsed JSDoc modifiers are checked in checkJs, but not plain JS.
+	// Check reparsed JSDoc modifiers unless diagnostics are filtered for plain JS.
 	return node.Flags&ast.NodeFlagsReparsed == 0 || !ast.IsPlainJSFile(ast.GetSourceFileOfNode(node), c.compilerOptions.CheckJs)
 }
 
