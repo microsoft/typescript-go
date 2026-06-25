@@ -1164,6 +1164,39 @@ const getVersion = memoize(() => {
     return version;
 });
 
+/**
+ * Computes the `major.minor` portion of a full semver version string.
+ * @param {string} version
+ */
+function getVersionMajorMinor(version) {
+    const match = version.match(/^(\d+\.\d+)/);
+    if (!match) {
+        throw new Error(`Failed to extract major.minor from version "${version}"`);
+    }
+    return match[1];
+}
+
+/**
+ * Writes the stub CJS `"."` entry point that exposes `version` and
+ * `versionMajorMinor`, so that backward-compatible version checks at the main
+ * export keep working. Using `exports.<name> =` assignments ensures
+ * cjs-module-lexer recognizes the named exports.
+ * @param {string} packageDir
+ * @param {string} version
+ */
+async function writeVersionStub(packageDir, version) {
+    const contents = [
+        "// This file is generated during packaging; do not edit by hand.",
+        "// Using `exports.<name> =` assignments ensures cjs-module-lexer recognizes",
+        "// the named exports for backward-compatible version checks at the main export.",
+        `exports.version = ${JSON.stringify(version)};`,
+        `exports.versionMajorMinor = ${JSON.stringify(getVersionMajorMinor(version))};`,
+        "",
+    ].join("\n");
+    await fs.promises.mkdir(path.join(packageDir, "lib"), { recursive: true });
+    await fs.promises.writeFile(path.join(packageDir, "lib", "version.cjs"), contents);
+}
+
 const extensionDir = path.resolve("./_extension");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
@@ -1579,6 +1612,7 @@ async function runBuildNativePreviewPackages() {
     await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist"));
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
+    await writeVersionStub(mainPackageDir, getVersion());
     await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
     await fs.promises.copyFile("NOTICE.txt", path.join(mainPackageDir, "NOTICE.txt"));
 
