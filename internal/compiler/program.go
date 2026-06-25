@@ -1361,10 +1361,17 @@ func isPlainJSError(sourceFile *ast.SourceFile, d *ast.Diagnostic) bool {
 		return false
 	}
 	if d.Code() == diagnostics.Modifiers_cannot_appear_here.Code() {
-		for _, clone := range sourceFile.ReparsedClones {
-			if ast.IsModifier(clone) && scanner.GetRangeOfTokenAtPosition(sourceFile, clone.Pos()) == d.Loc() {
-				return false
+		var walk func(node *ast.Node) bool
+		walk = func(node *ast.Node) bool {
+			for _, modifier := range node.ModifierNodes() {
+				if modifier.Flags&ast.NodeFlagsReparsed != 0 && scanner.GetRangeOfTokenAtPosition(sourceFile, modifier.Pos()) == d.Loc() {
+					return true
+				}
 			}
+			return node.ForEachChild(walk)
+		}
+		if sourceFile.AsNode().ForEachChild(walk) {
+				return false
 		}
 	}
 	return true
