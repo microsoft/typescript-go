@@ -161,3 +161,34 @@ func TestFSEventsActiveWatchesSnapshotFiltersToStreamPaths(t *testing.T) {
 		t.Fatalf("activeWatchesSnapshot paths = %v, want %v", gotPaths, want)
 	}
 }
+
+func TestFSEventsOverflowMatchesWatch(t *testing.T) {
+	t.Parallel()
+
+	w := &dirWatch{
+		dir:         "/logical/root",
+		physicalDir: "/physical/root",
+	}
+	cases := []struct {
+		name    string
+		rawPath string
+		want    bool
+	}{
+		{name: "physical root", rawPath: "/physical/root", want: true},
+		{name: "physical descendant", rawPath: "/physical/root/sub", want: true},
+		{name: "physical ancestor", rawPath: "/physical", want: true},
+		{name: "logical root", rawPath: "/logical/root", want: true},
+		{name: "logical descendant", rawPath: "/logical/root/sub", want: true},
+		{name: "logical ancestor", rawPath: "/logical", want: true},
+		{name: "unrelated", rawPath: "/other/root", want: false},
+		{name: "sibling prefix", rawPath: "/physical/root2", want: false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			t.Parallel()
+			if got := fseventsOverflowMatches(w, c.rawPath); got != c.want {
+				t.Fatalf("fseventsOverflowMatches(%q) = %v, want %v", c.rawPath, got, c.want)
+			}
+		})
+	}
+}

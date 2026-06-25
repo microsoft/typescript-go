@@ -494,8 +494,10 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 				overflow = errFSEventsTooMany
 			}
 			for _, watch := range watches {
-				watch.w.events.setError(overflow)
-				touched[watch.w] = struct{}{}
+				if fseventsOverflowMatches(watch.w, path) {
+					watch.w.events.setError(overflow)
+					touched[watch.w] = struct{}{}
+				}
 			}
 		}
 
@@ -571,7 +573,7 @@ func (b *fsEventsBackend) activeWatchesSnapshot(paths []string) []fseventsWatchS
 	}
 	filtered := watches[:0]
 	for _, watch := range watches {
-		if slices.Contains(paths, watch.w.physicalDir) {
+		if _, ok := slices.BinarySearch(paths, watch.w.physicalDir); ok {
 			filtered = append(filtered, watch)
 		}
 	}
@@ -586,4 +588,11 @@ func fseventsDisplayPath(w *dirWatch, rawPath string) (string, bool) {
 		return rawPath, true
 	}
 	return "", false
+}
+
+func fseventsOverflowMatches(w *dirWatch, rawPath string) bool {
+	if isInDirectoryOrSelf(w.physicalDir, rawPath) || isInDirectoryOrSelf(rawPath, w.physicalDir) {
+		return true
+	}
+	return w.physicalDir != w.dir && (isInDirectoryOrSelf(w.dir, rawPath) || isInDirectoryOrSelf(rawPath, w.dir))
 }
