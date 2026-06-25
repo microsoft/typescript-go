@@ -2,8 +2,8 @@
 
 === test.js ===
 const obj = {
->obj : { created(): void; onClose_(): void; }
->{  /** @override */  created() {  },  /** @private */  onClose_() {  },} : { created(): void; onClose_(): void; }
+>obj : { created(): void; onClose_(): void; value: number; }
+>{  /** @override */  created() {  },  /** @private */  onClose_() {  },  /** @readonly */  get value() {    return 1;  },  /** @protected */  set value(v) {  },} : { created(): void; onClose_(): void; value: number; }
 
   /** @override */
   created() {
@@ -14,6 +14,22 @@ const obj = {
   /** @private */
   onClose_() {
 >onClose_ : () => void
+
+  },
+
+  /** @readonly */
+  get value() {
+>value : number
+
+    return 1;
+>1 : 1
+
+  },
+
+  /** @protected */
+  set value(v) {
+>value : number
+>v : number
 
   },
 };

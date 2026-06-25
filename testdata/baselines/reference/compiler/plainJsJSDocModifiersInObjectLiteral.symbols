@@ -15,5 +15,19 @@ const obj = {
 >onClose_ : Symbol(onClose_, Decl(test.js, 3, 4))
 
   },
+
+  /** @readonly */
+  get value() {
+>value : Symbol(value, Decl(test.js, 7, 4), Decl(test.js, 12, 4))
+
+    return 1;
+  },
+
+  /** @protected */
+  set value(v) {
+>value : Symbol(value, Decl(test.js, 7, 4), Decl(test.js, 12, 4))
+>v : Symbol(v, Decl(test.js, 15, 12))
+
+  },
 };
 

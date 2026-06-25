@@ -11,4 +11,13 @@ const obj = {
   /** @private */
   onClose_() {
   },
+
+  /** @readonly */
+  get value() {
+    return 1;
+  },
+
+  /** @protected */
+  set value(v) {
+  },
 };

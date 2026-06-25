@@ -9,6 +9,15 @@ const obj = {
   /** @private */
   onClose_() {
   },
+
+  /** @readonly */
+  get value() {
+    return 1;
+  },
+
+  /** @protected */
+  set value(v) {
+  },
 };
 
 
@@ -20,4 +29,6 @@ declare const obj: {
     created(): void;
     /** @private */
     onClose_(): void;
+    /** @readonly */
+    value: number;
 };

@@ -1436,9 +1436,7 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 	if node.Kind == ast.KindMethodDeclaration {
 		if node.Parent.Kind == ast.KindObjectLiteralExpression {
 			// We only disallow modifier on a method declaration if it is a property of object-literal-expression
-			if core.Some(node.ModifierNodes(), func(modifier *ast.Node) bool {
-				return ast.IsModifier(modifier) && modifier.Kind != ast.KindAsyncKeyword
-			}) {
+			if modifiers := node.Modifiers(); modifiers != nil && !(len(modifiers.Nodes) == 1 && modifiers.Nodes[0].Kind == ast.KindAsyncKeyword) {
 				return c.grammarErrorOnFirstToken(node, diagnostics.Modifiers_cannot_appear_here)
 			}
 
