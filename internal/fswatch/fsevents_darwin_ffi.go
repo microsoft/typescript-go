@@ -75,7 +75,7 @@ import (
 //	  asm: return to FSEvents          fsEventsCallback(cb, payload)
 //	                                   classifies events,
 //	                                   frees payload,
-//	                                   posts to dirWatch.events
+//	                                   routes to matching dirWatch events
 //
 // The assembly callback never enters Go ABI; it stays entirely in C
 // context. One pipe per stream hands retained/copied callback payloads from
@@ -452,7 +452,7 @@ type streamCallback struct {
 	eventFile *os.File
 	queue     uintptr // per-stream serial dispatch queue
 	done      chan struct{}
-	dirWatch  *dirWatch
+	backend   *fsEventsBackend
 	closed    atomic.Bool
 }
 
@@ -478,7 +478,7 @@ func (p *fsEventsCallbackPayload) close() {
 // callbacks. The per-stream serial queue serializes this stream's callbacks
 // and prevents cross-stream head-of-line blocking that a process-wide serial
 // queue would cause.
-func newStreamCallback(w *dirWatch) (*streamCallback, error) {
+func newStreamCallback(backend *fsEventsBackend) (*streamCallback, error) {
 	var eventPipe [2]int
 	if err := unix.Pipe(eventPipe[:]); err != nil {
 		return nil, err
@@ -500,7 +500,7 @@ func newStreamCallback(w *dirWatch) (*streamCallback, error) {
 		eventFile:      os.NewFile(uintptr(eventPipe[0]), "fsevents-event"),
 		queue:          queue,
 		done:           make(chan struct{}),
-		dirWatch:       w,
+		backend:        backend,
 	}
 	go cb.eventLoop()
 	return cb, nil
