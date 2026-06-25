@@ -1360,11 +1360,11 @@ func isPlainJSError(sourceFile *ast.SourceFile, d *ast.Diagnostic) bool {
 	if !plainJSErrors.Has(d.Code()) {
 		return false
 	}
-	if d.Code() == diagnostics.Modifiers_cannot_appear_here.Code() {
+	if d.Code() == diagnostics.Modifiers_cannot_appear_here.Code() || d.Code() == diagnostics.X_0_modifier_cannot_be_used_here.Code() {
 		var walk func(node *ast.Node) bool
 		walk = func(node *ast.Node) bool {
 			for _, modifier := range node.ModifierNodes() {
-				if modifier.Flags&ast.NodeFlagsReparsed != 0 && scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()) == d.Loc() {
+				if modifier.Flags&ast.NodeFlagsReparsed != 0 && (scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()) == d.Loc() || modifier.Loc() == d.Loc()) {
 					return true
 				}
 			}
