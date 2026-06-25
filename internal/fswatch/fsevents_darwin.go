@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"slices"
 	"sort"
-	"strings"
 	"sync"
 	"sync/atomic"
 	"syscall"
@@ -101,8 +100,9 @@ import (
 //   flagMustScanSubDirs → ErrOverflow with detail (user/kernel/too-many).
 //
 // Root deletion:
-//   Detected in the callback; cb.closed is set so future callbacks are
-//   no-ops. Stream teardown is deferred to Close.
+//   Detected in the callback; the logical watch is marked terminated and
+//   receives ErrWatchTerminated. The shared stream remains active for other
+//   watches until the owner closes or reconciles the terminated watch.
 // ---------------------------------------------------------------------------
 
 // ----- FSEvents flag bits (from FSEvents.h) ------------------------------
@@ -166,6 +166,7 @@ type fseventsStream struct {
 	stream atomic.Uintptr
 	cb     *streamCallback
 	pinner runtime.Pinner
+	paths  []string
 }
 
 // ----- the watcherImpl -------------------------------------------------------
@@ -236,9 +237,6 @@ func (b *fsEventsBackend) activeWatchesLocked() []fseventsWatchSnapshot {
 		}
 		watches = append(watches, fseventsWatchSnapshot{w: w, state: state})
 	}
-	slices.SortFunc(watches, func(a, b fseventsWatchSnapshot) int {
-		return strings.Compare(a.w.physicalDir, b.w.physicalDir)
-	})
 	return watches
 }
 
@@ -312,11 +310,11 @@ func (b *fsEventsBackend) startStream(paths []string) (*fseventsStream, error) {
 	}
 	defer cfRelease(pathsToWatch)
 
-	cb, err := newStreamCallback(b)
+	cb, err := newStreamCallback(b, paths)
 	if err != nil {
 		return nil, err
 	}
-	state := &fseventsStream{cb: cb}
+	state := &fseventsStream{cb: cb, paths: slices.Clone(paths)}
 	state.pinner.Pin(cb)
 
 	ctx := fsEventStreamContext{info: uintptr(unsafe.Pointer(cb))}
@@ -457,10 +455,6 @@ func (b *fsEventsBackend) closeWatch(w *dirWatch) error {
 func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	defer payload.close()
 
-	if cb.closed.Load() {
-		return
-	}
-
 	const (
 		flagSize = unsafe.Sizeof(uint32(0))
 	)
@@ -473,7 +467,7 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	paths := payload.paths
 	flags := payload.flags
 
-	watches := cb.backend.activeWatchesSnapshot()
+	watches := cb.backend.activeWatchesSnapshot(cb.paths)
 	touched := map[*dirWatch]struct{}{}
 
 	for i := range numEvents {
@@ -568,10 +562,20 @@ func fsEventsCallback(cb *streamCallback, payload *fsEventsCallbackPayload) {
 	}
 }
 
-func (b *fsEventsBackend) activeWatchesSnapshot() []fseventsWatchSnapshot {
+func (b *fsEventsBackend) activeWatchesSnapshot(paths []string) []fseventsWatchSnapshot {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	return b.activeWatchesLocked()
+	watches := b.activeWatchesLocked()
+	if len(paths) == 0 {
+		return watches
+	}
+	filtered := watches[:0]
+	for _, watch := range watches {
+		if slices.Contains(paths, watch.w.physicalDir) {
+			filtered = append(filtered, watch)
+		}
+	}
+	return filtered
 }
 
 func fseventsDisplayPath(w *dirWatch, rawPath string) (string, bool) {

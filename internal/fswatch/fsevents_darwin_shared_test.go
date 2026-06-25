@@ -137,3 +137,27 @@ func TestFSEventsSharedStreamFallsBackToChunks(t *testing.T) {
 		t.Fatalf("startStream calls = %v, want %v", calls, wantCalls)
 	}
 }
+
+func TestFSEventsActiveWatchesSnapshotFiltersToStreamPaths(t *testing.T) {
+	t.Parallel()
+
+	b := newFSEventsBackend()
+	watchA := &dirWatch{physicalDir: "/watch/a"}
+	watchB := &dirWatch{physicalDir: "/watch/b"}
+	watchC := &dirWatch{physicalDir: "/watch/c"}
+	b.watches[watchA] = &fseventsState{}
+	b.watches[watchB] = &fseventsState{}
+	b.watches[watchC] = &fseventsState{}
+
+	got := b.activeWatchesSnapshot([]string{"/watch/a", "/watch/c"})
+	gotPaths := make([]string, 0, len(got))
+	for _, watch := range got {
+		gotPaths = append(gotPaths, watch.w.physicalDir)
+	}
+	slices.Sort(gotPaths)
+
+	want := []string{"/watch/a", "/watch/c"}
+	if !slices.Equal(gotPaths, want) {
+		t.Fatalf("activeWatchesSnapshot paths = %v, want %v", gotPaths, want)
+	}
+}
