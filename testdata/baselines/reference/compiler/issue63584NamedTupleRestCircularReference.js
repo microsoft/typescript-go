@@ -6,15 +6,15 @@ export type GoodDocNode =
     | ["i", ...GoodDocNode[]]
     | ["li", index: number, ...GoodDocNode[]];
 
-export type BadDocNode1 =
+export type NamedRestDocNode1 =
     | string
-    | ["i", ...tagged: BadDocNode1[]]
-    | ["li", index: number, ...BadDocNode1[]];
+    | ["i", ...tagged: NamedRestDocNode1[]]
+    | ["li", index: number, ...NamedRestDocNode1[]];
 
-export type BadDocNode2 =
+export type NamedRestDocNode2 =
     | string
-    | ["i", ...BadDocNode2[]]
-    | ["li", index: number, ...tagged: BadDocNode2[]];
+    | ["i", ...NamedRestDocNode2[]]
+    | ["li", index: number, ...tagged: NamedRestDocNode2[]];
 
 
 //// [issue63584NamedTupleRestCircularReference.js]
