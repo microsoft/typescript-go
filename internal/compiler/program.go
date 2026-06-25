@@ -1335,7 +1335,7 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
 		return core.Filter(diags, func(d *ast.Diagnostic) bool {
-			return isPlainJSError(d)
+			return plainJSErrors.Has(d.Code())
 		})
 	}
 
@@ -1354,10 +1354,6 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 		}
 	}
 	return filtered
-}
-
-func isPlainJSError(d *ast.Diagnostic) bool {
-	return plainJSErrors.Has(d.Code())
 }
 
 func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) ([]*ast.Diagnostic, map[int]ast.CommentDirective) {
