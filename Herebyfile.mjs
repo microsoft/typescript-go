@@ -1187,8 +1187,6 @@ function getVersionMajorMinor(version) {
 async function writeVersionStub(packageDir, version) {
     const contents = [
         "// This file is generated during packaging; do not edit by hand.",
-        "// Using `exports.<name> =` assignments ensures cjs-module-lexer recognizes",
-        "// the named exports for backward-compatible version checks at the main export.",
         `exports.version = ${JSON.stringify(version)};`,
         `exports.versionMajorMinor = ${JSON.stringify(getVersionMajorMinor(version))};`,
         "",
