@@ -164,6 +164,13 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		// If the node is not exported or it is not ambient module element (except import declaration)
 		if r.checker.getCombinedModifierFlagsCached(node)&ast.ModifierFlagsExport == 0 &&
 			!(node.Kind != ast.KindImportEqualsDeclaration && parent.Kind != ast.KindSourceFile && parent.Flags&ast.NodeFlagsAmbient != 0) {
+			// A declaration that is the target of an `export =` in its containing external
+			// module is externally visible, even though it isn't itself marked `export`.
+			// This mirrors the visibility marking done for export assignments, which would
+			// otherwise be skipped for modules that are referenced but never emitted.
+			if r.isExportEqualsTargetDeclaration(node) {
+				return true
+			}
 			return ast.IsGlobalSourceFile(parent)
 		}
 		// Exported members/ambient module elements (exception import declaration) are visible if parent is visible
@@ -231,6 +238,25 @@ func (r *EmitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 	default:
 		return false
 	}
+}
+
+// isExportEqualsTargetDeclaration reports whether the given declaration's symbol is the
+// entity referenced by an `export =` in its containing external module. Such a declaration
+// is externally visible because the `export =` re-exports it.
+func (r *EmitResolver) isExportEqualsTargetDeclaration(node *ast.Node) bool {
+	symbol := r.checker.getSymbolOfDeclaration(node)
+	if symbol == nil {
+		return false
+	}
+	moduleSymbol := r.checker.getExternalModuleContainer(node)
+	if moduleSymbol == nil || moduleSymbol.Exports == nil {
+		return false
+	}
+	exportEquals := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
+	if exportEquals == nil {
+		return false
+	}
+	return r.checker.getSymbolIfSameReference(exportEquals, symbol) != nil
 }
 
 func (r *EmitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFile) {
