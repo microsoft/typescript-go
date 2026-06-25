@@ -1335,7 +1335,7 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
 		return core.Filter(diags, func(d *ast.Diagnostic) bool {
-			return isPlainJSError(sourceFile, d)
+			return isPlainJSError(d)
 		})
 	}
 
@@ -1356,32 +1356,8 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 	return filtered
 }
 
-func isPlainJSError(sourceFile *ast.SourceFile, d *ast.Diagnostic) bool {
-	if !plainJSErrors.Has(d.Code()) {
-		return false
-	}
-	if (d.Code() == diagnostics.Modifiers_cannot_appear_here.Code() || d.Code() == diagnostics.X_0_modifier_cannot_be_used_here.Code()) &&
-		isDiagnosticForReparsedModifier(sourceFile, d) {
-		return false
-	}
-	return true
-}
-
-func isDiagnosticForReparsedModifier(sourceFile *ast.SourceFile, d *ast.Diagnostic) bool {
-	var walk func(node *ast.Node) bool
-	walk = func(node *ast.Node) bool {
-		for _, modifier := range node.ModifierNodes() {
-			if modifier.Flags&ast.NodeFlagsReparsed != 0 && diagnosticMatchesReparsedModifier(sourceFile, d, node, modifier) {
-				return true
-			}
-		}
-		return node.ForEachChild(walk)
-	}
-	return sourceFile.AsNode().ForEachChild(walk)
-}
-
-func diagnosticMatchesReparsedModifier(sourceFile *ast.SourceFile, d *ast.Diagnostic, node *ast.Node, modifier *ast.Node) bool {
-	return scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos()) == d.Loc() || modifier.Loc == d.Loc()
+func isPlainJSError(d *ast.Diagnostic) bool {
+	return plainJSErrors.Has(d.Code())
 }
 
 func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) ([]*ast.Diagnostic, map[int]ast.CommentDirective) {

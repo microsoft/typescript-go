@@ -523,14 +523,14 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			parent = parent.Expression()
 		}
 
-		canApplyModifier := parent.Kind == ast.KindPropertyDeclaration ||
+		canApplyJSDocModifier := parent.Kind == ast.KindPropertyDeclaration ||
 			parent.Kind == ast.KindConstructor ||
 			parent.Kind == ast.KindBinaryExpression
-		canApplyMethodModifier := p.parsingContexts&(1<<PCObjectLiteralMembers) == 0 &&
+		canApplyJSDocMethodModifier := p.parsingContexts&(1<<PCObjectLiteralMembers) == 0 &&
 			(parent.Kind == ast.KindMethodDeclaration ||
 				parent.Kind == ast.KindGetAccessor ||
 				parent.Kind == ast.KindSetAccessor)
-		if !canApplyModifier && !canApplyMethodModifier {
+		if !canApplyJSDocModifier && !canApplyJSDocMethodModifier {
 			return
 		}
 		{
