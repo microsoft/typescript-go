@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/issue63584NamedTupleRestCircularReference.ts] ////
+
+=== issue63584NamedTupleRestCircularReference.ts ===
+export type GoodDocNode =
+>GoodDocNode : Symbol(GoodDocNode, Decl(issue63584NamedTupleRestCircularReference.ts, 0, 0))
+
+    | string
+    | ["i", ...GoodDocNode[]]
+>GoodDocNode : Symbol(GoodDocNode, Decl(issue63584NamedTupleRestCircularReference.ts, 0, 0))
+
+    | ["li", index: number, ...GoodDocNode[]];
+>GoodDocNode : Symbol(GoodDocNode, Decl(issue63584NamedTupleRestCircularReference.ts, 0, 0))
+
+export type BadDocNode1 =
+>BadDocNode1 : Symbol(BadDocNode1, Decl(issue63584NamedTupleRestCircularReference.ts, 3, 46))
+
+    | string
+    | ["i", ...tagged: BadDocNode1[]]
+>BadDocNode1 : Symbol(BadDocNode1, Decl(issue63584NamedTupleRestCircularReference.ts, 3, 46))
+
+    | ["li", index: number, ...BadDocNode1[]];
+>BadDocNode1 : Symbol(BadDocNode1, Decl(issue63584NamedTupleRestCircularReference.ts, 3, 46))
+
+export type BadDocNode2 =
+>BadDocNode2 : Symbol(BadDocNode2, Decl(issue63584NamedTupleRestCircularReference.ts, 8, 46))
+
+    | string
+    | ["i", ...BadDocNode2[]]
+>BadDocNode2 : Symbol(BadDocNode2, Decl(issue63584NamedTupleRestCircularReference.ts, 8, 46))
+
+    | ["li", index: number, ...tagged: BadDocNode2[]];
+>BadDocNode2 : Symbol(BadDocNode2, Decl(issue63584NamedTupleRestCircularReference.ts, 8, 46))
+
