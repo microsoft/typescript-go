@@ -1371,7 +1371,7 @@ func isPlainJSError(sourceFile *ast.SourceFile, d *ast.Diagnostic) bool {
 			return node.ForEachChild(walk)
 		}
 		if sourceFile.AsNode().ForEachChild(walk) {
-				return false
+			return false
 		}
 	}
 	return true
