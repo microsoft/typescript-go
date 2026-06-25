@@ -1335,7 +1335,7 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
 		return core.Filter(diags, func(d *ast.Diagnostic) bool {
-			return plainJSErrors.Has(d.Code())
+			return isPlainJSError(sourceFile, d)
 		})
 	}
 
@@ -1354,6 +1354,20 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 		}
 	}
 	return filtered
+}
+
+func isPlainJSError(sourceFile *ast.SourceFile, d *ast.Diagnostic) bool {
+	if !plainJSErrors.Has(d.Code()) {
+		return false
+	}
+	if d.Code() == diagnostics.Modifiers_cannot_appear_here.Code() {
+		for _, clone := range sourceFile.ReparsedClones {
+			if ast.IsModifier(clone) && scanner.GetRangeOfTokenAtPosition(sourceFile, clone.Pos()) == d.Loc() {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) ([]*ast.Diagnostic, map[int]ast.CommentDirective) {

@@ -584,11 +584,7 @@ func (c *Checker) findFirstModifierExcept(node *ast.Node, allowedModifier ast.Ki
 }
 
 func (c *Checker) isCheckedModifier(node *ast.Node) bool {
-	if !ast.IsModifier(node) {
-		return false
-	}
-	// Check reparsed JSDoc modifiers unless diagnostics are filtered for plain JS.
-	return node.Flags&ast.NodeFlagsReparsed == 0 || !ast.IsPlainJSFile(ast.GetSourceFileOfNode(node), c.compilerOptions.CheckJs)
+	return ast.IsModifier(node)
 }
 
 func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
