@@ -1,6 +1,10 @@
-//// [tests/cases/compiler/plainJsJSDocModifiersInObjectLiteral.ts] ////
+//// [tests/cases/compiler/jsdocModifiersInObjectLiteral.ts] ////
 
 //// [test.js]
+// Object literal members aren't class-like members, so JSDoc modifiers like
+// @override or @readonly aren't real modifiers and must not produce grammar
+// errors, regardless of checkJs (#4437).
+
 const obj = {
   /** @override */
   created() {
@@ -18,6 +22,10 @@ const obj = {
   /** @protected */
   set value(v) {
   },
+
+  /** @public */
+  async load() {
+  },
 };
 
 
@@ -31,4 +39,6 @@ declare const obj: {
     onClose_(): void;
     /** @readonly */
     value: number;
+    /** @public */
+    load(): Promise<void>;
 };
