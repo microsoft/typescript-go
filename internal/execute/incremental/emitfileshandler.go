@@ -2,6 +2,8 @@ package incremental
 
 import (
 	"context"
+	"slices"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -254,6 +256,11 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 	if newSignature == "" {
 		newSignature = h.program.snapshot.computeHash(getTextHandlingSourceMapForSignature(text, data))
 	}
+	// A composite project's d.ts can re-export another project's API via `export ... from "..."` whose text
+	// is stable even when that API changes; fold the re-exported d.ts versions in so the signature reflects it.
+	if reexportSuffix := h.getDeclarationReexportSignatureSuffix(file); reexportSuffix != "" {
+		newSignature = h.program.snapshot.computeHash(newSignature + "\n" + reexportSuffix)
+	}
 	// Dont write dts files if they didn't change
 	if newSignature == oldSignature {
 		// If the signature was encoded as string the dts map options match so nothing to do
@@ -270,6 +277,46 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 	}
 	h.emitSignatures.Store(file.Path(), &emitSignature{signature: newSignature})
 	return false
+}
+
+// Returns versions of declaration (.d.ts) files in the transitive `export ... from` closure of the file.
+// Same-project re-exports resolve to .ts sources and are skipped
+func (h *emitFilesHandler) getDeclarationReexportSignatureSuffix(file *ast.SourceFile) string {
+	var reexportVersions []string
+	var visited collections.Set[tspath.Path]
+	var collect func(from *ast.SourceFile)
+	collect = func(from *ast.SourceFile) {
+		for _, statement := range from.Statements.Nodes {
+			if !ast.IsExportDeclaration(statement) {
+				continue
+			}
+			moduleSpecifier := statement.AsExportDeclaration().ModuleSpecifier
+			if moduleSpecifier == nil || !ast.IsStringLiteralLike(moduleSpecifier) {
+				continue
+			}
+			resolvedModule := h.program.program.GetResolvedModuleFromModuleSpecifier(from, moduleSpecifier)
+			if !resolvedModule.IsResolved() {
+				continue
+			}
+			resolvedFile := h.program.program.GetSourceFileForResolvedModule(resolvedModule.ResolvedFileName)
+			if resolvedFile == nil || !resolvedFile.IsDeclarationFile {
+				continue
+			}
+			if !visited.AddIfAbsent(resolvedFile.Path()) {
+				continue
+			}
+			if info, ok := h.program.snapshot.fileInfos.Load(resolvedFile.Path()); ok {
+				reexportVersions = append(reexportVersions, string(resolvedFile.Path())+"="+info.version)
+			}
+			collect(resolvedFile)
+		}
+	}
+	collect(file)
+	if len(reexportVersions) == 0 {
+		return ""
+	}
+	slices.Sort(reexportVersions)
+	return strings.Join(reexportVersions, ",")
 }
 
 func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
