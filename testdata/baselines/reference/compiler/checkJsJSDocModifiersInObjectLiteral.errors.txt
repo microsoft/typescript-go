@@ -1,0 +1,25 @@
+test.js(2,7): error TS1042: '@override ' modifier cannot be used here.
+test.js(3,3): error TS1184: Modifiers cannot appear here.
+test.js(6,7): error TS1042: '@private ' modifier cannot be used here.
+test.js(7,3): error TS1184: Modifiers cannot appear here.
+
+
+==== test.js (4 errors) ====
+    const obj = {
+      /** @override */
+          ~~~~~~~~~~
+!!! error TS1042: '@override ' modifier cannot be used here.
+      created() {
+      ~~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+      },
+    
+      /** @private */
+          ~~~~~~~~~
+!!! error TS1042: '@private ' modifier cannot be used here.
+      onClose_() {
+      ~~~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+      },
+    };
+    

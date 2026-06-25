@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/checkJsJSDocModifiersInObjectLiteral.ts] ////
+
+=== test.js ===
+const obj = {
+>obj : Symbol(obj, Decl(test.js, 0, 5))
+
+  /** @override */
+  created() {
+>created : Symbol(created, Decl(test.js, 0, 13))
+
+  },
+
+  /** @private */
+  onClose_() {
+>onClose_ : Symbol(onClose_, Decl(test.js, 3, 4))
+
+  },
+};
+
