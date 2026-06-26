@@ -52,7 +52,7 @@
     },
     "allowScripts": {
         "dprint@0.54.0": true,
-        "esbuild@0.28.0": true,
+        "esbuild@0.28.1": true,
         "@vscode/vsce-sign@2.0.9": true,
         "keytar@7.9.0": true
     }
