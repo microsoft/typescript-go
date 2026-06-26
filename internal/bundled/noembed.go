@@ -25,6 +25,8 @@ var executableDir = sync.OnceValue(func() string {
 		panic(fmt.Sprintf("bundled: failed to get executable path: %v", err))
 	}
 	exe = tspath.NormalizeSlashes(exe)
+	// Package managers may invoke tsgo through a bin symlink; resolve it so libs
+	// are found beside the real platform binary.
 	exe = osvfs.FS().Realpath(exe)
 	return tspath.GetDirectoryPath(exe)
 })

@@ -1568,6 +1568,9 @@ async function runBuildNativePreviewPackages() {
     const mainPackage = {
         ...inputPackageJson,
         optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+        scripts: {
+            postinstall: "node ./lib/optimizeBin.js",
+        },
     };
 
     const mainPackageDir = mainNativePreviewPackage.npmDir;
@@ -1618,6 +1621,7 @@ async function runBuildNativePreviewPackages() {
             bin: undefined,
             files: ["lib", "NOTICE.txt"],
             imports: undefined,
+            scripts: undefined,
             dependencies: undefined,
             name: npmPackageName,
             os: [nodeOs],
