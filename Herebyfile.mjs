@@ -1195,7 +1195,7 @@ function getPublishTag() {
             throw new Error("Publishing as 'typescript' requires a version before selecting an npm tag.");
         }
         const match = version.match(/-(dev|beta|rc)(?:[.-]|$)/);
-        if (match?.[1]) return match[1];
+        if (match?.[1]) return match[1] === "dev" ? "next" : match[1];
         if (version === nativePreviewReleaseVersion) return "latest";
         throw new Error(`Refusing to publish 'typescript' with the latest tag from non-release version ${version}.`);
     }
