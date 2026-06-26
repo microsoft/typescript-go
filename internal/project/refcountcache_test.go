@@ -265,9 +265,9 @@ func TestRefCountingCaches(t *testing.T) {
 			testFiles := map[string]any{
 				// entry.ts imports the canonical casing first, then pulls in a.ts and b.ts,
 				// which both import the same file through an upper-cased name.
-				"/user/username/projects/myproject/src/entry.ts":   "import { dep } from \"./sub/dep\";\nimport \"./a\";\nimport \"./b\";\nexport const e = dep;",
-				"/user/username/projects/myproject/src/a.ts":       "import { dep } from \"./sub/DEP\";\nexport const a = dep;",
-				"/user/username/projects/myproject/src/b.ts":       "import { dep } from \"./sub/DEP\";\nexport const b = dep;",
+				"/user/username/projects/myproject/src/entry.ts":   "import { dep } from './sub/dep';\nimport './a';\nimport './b';\nexport const e = dep;",
+				"/user/username/projects/myproject/src/a.ts":       "import { dep } from './sub/DEP';\nexport const a = dep;",
+				"/user/username/projects/myproject/src/b.ts":       "import { dep } from './sub/DEP';\nexport const b = dep;",
 				"/user/username/projects/myproject/src/sub/dep.ts": "export const dep = 1;",
 				"/user/username/projects/myproject/src/c.ts":       "export const c = 1;",
 			}
@@ -334,6 +334,8 @@ func TestRefCountingCaches(t *testing.T) {
 			session.WaitForBackgroundTasks()
 
 			// Closing the project releases everything cleanly.
+			// (The configured project is not disposed until another file in another project is opened,
+			// so we open an untitled file to trigger that.)
 			session.DidCloseFile(context.Background(), entryURI)
 			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "", lsproto.LanguageKindTypeScript)
 			session.WaitForBackgroundTasks()
