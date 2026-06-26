@@ -7,9 +7,9 @@
     },
     "dprint/json": {
         "file": "json.wasm",
-        "version": "0.21.3",
-        "checksum": "f34c8fbaeda1f42c479d4a5fa2c86f93d105c2d527ec61fffe912e4d9dc5cc77",
-        "url": "https://plugins.dprint.dev/json-0.21.3.wasm"
+        "version": "0.22.0",
+        "checksum": "eea81b9ca7d4a9c6d85c87c55a41d69e667dd06360d250094be854bf1a9bb972",
+        "url": "https://plugins.dprint.dev/json-0.22.0.wasm"
     },
     "g-plane/pretty_yaml": {
         "file": "pretty_yaml.wasm",
