@@ -96,7 +96,7 @@ if (publishAsTypescript && !nativePreviewReleaseVersion) {
     throw new Error("Publishing as 'typescript' requires hardcoding nativePreviewReleaseVersion.");
 }
 
-if (options.forRelease && !options.setPrerelease && !nativePreviewReleaseVersion) {
+if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
     throw new Error("forRelease requires setPrerelease");
 }
 
@@ -2142,8 +2142,8 @@ export const nativePreviewRelease = task({
     name: "native-preview:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease || !options.setPrerelease && !nativePreviewReleaseVersion) {
-            throw new Error("native-preview:release requires --forRelease and --setPrerelease flags, unless getNativePreviewReleaseVersion is hardcoded. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
+        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+            throw new Error("native-preview:release requires --forRelease and --setPrerelease flags, unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
         await runBuildNativePreviewPackages();
         await runSignNativePreviewPackages();
