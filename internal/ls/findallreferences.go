@@ -348,10 +348,9 @@ func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Nod
 func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
 	switch node.Kind {
 	case ast.KindPrivateIdentifier:
-		// !!!
-		// if (isJSDocMemberName(node.Parent)) {
-		// 	return true;
-		// }
+		if isJSDocMemberName(node.Parent) {
+			return true
+		}
 		return len(node.Text()) == len(searchSymbolName)
 	case ast.KindIdentifier:
 		return len(node.Text()) == len(searchSymbolName)
@@ -2651,4 +2650,17 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 	// Update cache with the actual result
 	state.inheritsFromCache[key] = inherits
 	return inherits
+}
+
+func isJSDocMemberName(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	if node.Kind == ast.KindIdentifier || node.Kind == ast.KindPrivateIdentifier {
+		return true
+	}
+	if node.Kind == ast.KindPropertyAccessExpression {
+		return isJSDocMemberName(node.AsPropertyAccessExpression().Name)
+	}
+	return false
 }
