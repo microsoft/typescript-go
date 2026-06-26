@@ -88,7 +88,6 @@ const options = /** @type {Options} */ (rawOptions);
 // support for extra hereby flags. Keep main's defaults publishing native-preview.
 const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("native-preview");
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
-const nativePreviewReleaseNpmTag = /** @type {string | undefined} */ (undefined);
 const produceNativePreviewVsix = /** @type {boolean} */ (true);
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
@@ -1185,10 +1184,6 @@ const getVersion = memoize(() => {
 });
 
 function getPublishTag() {
-    const releaseNpmTag = nativePreviewReleaseNpmTag;
-    if (releaseNpmTag) {
-        return releaseNpmTag;
-    }
     if (publishAsTypescript) {
         const version = getVersion();
         if (!version) {
