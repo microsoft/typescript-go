@@ -97,7 +97,7 @@ if (publishAsTypescript && !nativePreviewReleaseVersion) {
 }
 
 if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
-    throw new Error("forRelease requires setPrerelease");
+    throw new Error("forRelease requires setPrerelease unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled");
 }
 
 const defaultGoBuildTags = [

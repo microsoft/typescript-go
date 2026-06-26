@@ -11,7 +11,12 @@ export default function getExePath() {
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
     const pkgName = pkg.name;
     const baseName = pkgName.startsWith("@") ? pkgName.split("/")[1] : pkgName;
-    let binName = Object.keys(pkg.bin)[0];
+    const expectedBinName = baseName === "typescript" ? "tsc" : "tsgo";
+    const binNames = pkg.bin && typeof pkg.bin === "object" ? Object.keys(pkg.bin) : [];
+    if (binNames.length !== 1 || binNames[0] !== expectedBinName) {
+        throw new Error(`Expected ${pkgName} to declare exactly one bin entry named ${expectedBinName}.`);
+    }
+    let binName = expectedBinName;
     let exeDir;
 
     const expectedPackage = baseName + "-" + process.platform + "-" + process.arch;

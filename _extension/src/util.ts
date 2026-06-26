@@ -139,10 +139,12 @@ export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: st
             if (typeof name !== "string" || !bin || typeof bin !== "object") continue;
 
             const baseName = name.startsWith("@") ? name.split("/")[1] : name;
-            const binName = Object.keys(bin)[0];
-            if (!baseName || !binName) continue;
+            if (!baseName) continue;
+            const expectedBinName = baseName === "typescript" ? "tsc" : "tsgo";
+            const binNames = Object.keys(bin);
+            if (binNames.length !== 1 || binNames[0] !== expectedBinName) continue;
 
-            const exeName = `${binName}${process.platform === "win32" ? ".exe" : ""}`;
+            const exeName = `${expectedBinName}${process.platform === "win32" ? ".exe" : ""}`;
             const platformPackage = `${baseName}-${process.platform}-${process.arch}`;
             const nodeModules = name.startsWith("@")
                 ? vscode.Uri.joinPath(packagePath, "..", "..")
