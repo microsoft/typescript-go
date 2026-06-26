@@ -84,8 +84,8 @@ const { values: rawOptions } = parseArgs({
  */
 const options = /** @type {Options} */ (rawOptions);
 
-// Release branches can hardcode these constants instead of depending on pipeline
-// support for extra hereby flags. Keep main's defaults publishing native-preview.
+// Native release branches can edit these constants to publish a different
+// package flavor. Main's defaults publish @typescript/native-preview.
 const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("native-preview");
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
 const produceNativePreviewVsix = /** @type {boolean} */ (true);
@@ -1448,10 +1448,12 @@ const mainNativePreviewPackage = {
 void 0;
 
 /**
- * Platforms to publish when building as the `typescript` package.
+ * npm package platforms supported by the native release.
+ * The native-preview package publishes only the entries with vsix: true;
+ * the typescript package publishes the full list.
  * BSD targets that are not in Node's supported-platforms table are best-effort
  * and limited to mainstream 64-bit x64/arm64 architectures.
- * vsix/alpine are set only for the subset that also produces VSIXes.
+ * alpine is set only for the subset that also produces Alpine VSIXes.
  * cert defaults to LinuxSign.
  * @type {Platform[]}
  */
