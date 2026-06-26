@@ -2,57 +2,56 @@
 
 === mappedTypeOverAnyStructuralAssignability.ts ===
 // Reduced from yup@1.6.1; https://github.com/microsoft/typescript-go/issues/4451
-// ObjectSchema<{ foo, bar }> should be assignable to ObjectSchema<any>. tsgo
-// previously rejected this because getRecursionIdentity gave from-type-node
-// references their own object identity instead of their symbol, so the deeply
-// nested self-referential ObjectSchema instantiations were never recognized as
-// recursive and depth-limited, and the comparison ran to a spurious failure.
+// ObjectSchema<{ foo, bar }> should be assignable to ObjectSchema<any>, but tsgo
+// reports the mapped type Shape<any> as missing keys foo, bar; tsc accepts it.
+// The contravariant `concat` parameter flips the comparison so Shape<any> is
+// checked as the source against Shape<{ foo, bar }>.
 type Shape<T> = { [field in keyof T]-?: T[field]; };
 >Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 11))
->field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 19))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 11))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 11))
->field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 19))
+>T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 11))
+>field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 19))
+>T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 11))
+>T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 11))
+>field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 19))
 
 interface ObjectSchema<TIn> {
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 52))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 23))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
     __outputType: TIn extends {} ? {} : TIn;
->__outputType : Symbol(ObjectSchema.__outputType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 29))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 23))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 23))
+>__outputType : Symbol(ObjectSchema.__outputType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 29))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
     nullable(): ObjectSchema<TIn | null>;
->nullable : Symbol(ObjectSchema.nullable, Decl(mappedTypeOverAnyStructuralAssignability.ts, 8, 44))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 52))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 23))
+>nullable : Symbol(ObjectSchema.nullable, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 44))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
     fields: Shape<NonNullable<TIn>>;
->fields : Symbol(ObjectSchema.fields, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 41))
+>fields : Symbol(ObjectSchema.fields, Decl(mappedTypeOverAnyStructuralAssignability.ts, 8, 41))
 >Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
 >NonNullable : Symbol(NonNullable, Decl(lib.es5.d.ts, --, --))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 23))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
     concat(schema: this): this;
->concat : Symbol(ObjectSchema.concat, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 36))
->schema : Symbol(schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 11))
+>concat : Symbol(ObjectSchema.concat, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 36))
+>schema : Symbol(schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 11))
 
     partial(): ObjectSchema<Partial<TIn>>;
->partial : Symbol(ObjectSchema.partial, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 31))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 52))
+>partial : Symbol(ObjectSchema.partial, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 31))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
 >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 23))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 }
 declare const specific: ObjectSchema<{ foo: string; bar: number }>;
->specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 13))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 52))
->foo : Symbol(foo, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 38))
->bar : Symbol(bar, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 51))
+>specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 13))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>foo : Symbol(foo, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 38))
+>bar : Symbol(bar, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 51))
 
 const test: ObjectSchema<any> = specific;
->test : Symbol(test, Decl(mappedTypeOverAnyStructuralAssignability.ts, 15, 5))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 52))
->specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 13))
+>test : Symbol(test, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 5))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 13))
 

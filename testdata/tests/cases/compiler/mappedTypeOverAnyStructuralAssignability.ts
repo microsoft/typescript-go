@@ -3,11 +3,10 @@
 // @noEmit: true
 
 // Reduced from yup@1.6.1; https://github.com/microsoft/typescript-go/issues/4451
-// ObjectSchema<{ foo, bar }> should be assignable to ObjectSchema<any>. tsgo
-// previously rejected this because getRecursionIdentity gave from-type-node
-// references their own object identity instead of their symbol, so the deeply
-// nested self-referential ObjectSchema instantiations were never recognized as
-// recursive and depth-limited, and the comparison ran to a spurious failure.
+// ObjectSchema<{ foo, bar }> should be assignable to ObjectSchema<any>, but tsgo
+// reports the mapped type Shape<any> as missing keys foo, bar; tsc accepts it.
+// The contravariant `concat` parameter flips the comparison so Shape<any> is
+// checked as the source against Shape<{ foo, bar }>.
 type Shape<T> = { [field in keyof T]-?: T[field]; };
 interface ObjectSchema<TIn> {
     __outputType: TIn extends {} ? {} : TIn;
