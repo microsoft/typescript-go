@@ -1,0 +1,26 @@
+{
+    "dprint/typescript": {
+        "file": "typescript.wasm",
+        "version": "0.96.1",
+        "checksum": "9c52244de2c25a33addc7ddacff4443234a2dc4b5d3f34131262d1e0df35007c",
+        "url": "https://plugins.dprint.dev/typescript-0.96.1.wasm"
+    },
+    "dprint/json": {
+        "file": "json.wasm",
+        "version": "0.22.0",
+        "checksum": "eea81b9ca7d4a9c6d85c87c55a41d69e667dd06360d250094be854bf1a9bb972",
+        "url": "https://plugins.dprint.dev/json-0.22.0.wasm"
+    },
+    "g-plane/pretty_yaml": {
+        "file": "pretty_yaml.wasm",
+        "version": "0.6.0",
+        "checksum": "40a2fdda7040317eb1b23520f3a00769a5571eedb049c4ca9175c1b9eeba01ae",
+        "url": "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm"
+    },
+    "jakebailey/gofumpt": {
+        "file": "gofumpt.wasm",
+        "version": "0.0.12",
+        "checksum": "704753c2e4a700b66bb2bc72d79ee04d4b48afdba99fbc3bd1f3e6d1bc26b15e",
+        "url": "https://plugins.dprint.dev/jakebailey/gofumpt-v0.0.12.wasm"
+    }
+}
