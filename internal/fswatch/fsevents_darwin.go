@@ -401,27 +401,40 @@ func stopFSEventsStream(state *fseventsStream) {
 
 // subscribe mirrors `fsEventsBackend::subscribe`.
 func (b *fsEventsBackend) subscribe(w *dirWatch) error {
-	if err := checkWatcher(w); err != nil {
-		return err
+	return b.subscribeMany([]*dirWatch{w})
+}
+
+func (b *fsEventsBackend) subscribeMany(watchesToAdd []*dirWatch) error {
+	if len(watchesToAdd) == 0 {
+		return nil
+	}
+	states := make(map[*dirWatch]*fseventsState, len(watchesToAdd))
+	for _, w := range watchesToAdd {
+		if err := checkWatcher(w); err != nil {
+			return err
+		}
+		states[w] = &fseventsState{}
 	}
 
-	state := &fseventsState{}
-	w.state = state
-
 	b.mu.Lock()
-	b.watches[w] = state
+	for w, state := range states {
+		w.state = state
+		b.watches[w] = state
+	}
 	watches := b.activeWatchesLocked()
 	b.mu.Unlock()
 
 	streams, err := b.startStreams(watches)
 	if err != nil {
 		b.mu.Lock()
-		if b.watches[w] == state {
-			delete(b.watches, w)
-			w.state = nil
+		for w, state := range states {
+			if b.watches[w] == state {
+				delete(b.watches, w)
+				w.state = nil
+			}
 		}
 		b.mu.Unlock()
-		return &dirWatchError{err: err, dirWatch: w}
+		return &dirWatchError{err: err, dirWatch: watchesToAdd[0]}
 	}
 
 	b.mu.Lock()

@@ -9,11 +9,12 @@ simplifications, new features, and bugfixes.
 
 ### Method naming
 
-| C++ / JS               | Go                                 |
-| ---------------------- | ---------------------------------- |
-| `subscribe(dir, fn)`   | `WatchDirectory(dir, fn, opts...)` |
-| —                      | `WatchFile(path, fn)`              |
-| `unsubscribe(dir, fn)` | `w.Close()`                        |
+| C++ / JS               | Go                                          |
+| ---------------------- | ------------------------------------------- |
+| `subscribe(dir, fn)`   | `WatchDirectory(dir, fn, opts...)`          |
+| —                      | `WatchDirectories([]WatchDirectoryRequest)` |
+| —                      | `WatchFile(path, fn)`                       |
+| `unsubscribe(dir, fn)` | `w.Close()`                                 |
 
 ### Recursion default
 
@@ -54,6 +55,13 @@ Go adds functional options not present in the C++ API:
 `WatchFile(path, fn)` watches a single file by watching its parent directory
 non-recursively and filtering events to the target path. Multiple file watches
 in the same directory share one OS watch. Not available in the C++ API.
+
+### Batch directory watching
+
+`WatchDirectories` registers multiple directory watches in one call. It has the
+same logical behavior as repeated `WatchDirectory` calls, but lets backends batch
+the underlying OS subscription work. On macOS this avoids rebuilding the shared
+FSEvents stream once per logical watch during large watch reconciliations.
 
 ### Error delivery
 
