@@ -351,7 +351,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	// as a duplicate more than once would cause it to be released more times than it
 	// was acquired when the snapshot is disposed, leaving a dangling cache entry that
 	// panics the next time it is referenced.
-	recordedDuplicates := make(map[*parseTaskData]*collections.Set[string])
+	var recordedDuplicates map[*parseTaskData]*collections.Set[string]
 	collectFiles = func(tasks []*parseTask, seen map[*parseTaskData]string) {
 		for _, task := range tasks {
 			includeReason := task.includeReason
@@ -372,6 +372,9 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			// ensure we only walk each task once
 			if checkedName, ok := seen[data]; ok {
 				if task.file != nil && checkedName != task.normalizedFilePath {
+					if recordedDuplicates == nil {
+						recordedDuplicates = make(map[*parseTaskData]*collections.Set[string])
+					}
 					dups := recordedDuplicates[data]
 					if dups == nil {
 						dups = &collections.Set[string]{}
