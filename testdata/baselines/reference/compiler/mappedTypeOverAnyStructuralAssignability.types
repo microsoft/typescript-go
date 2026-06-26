@@ -2,188 +2,36 @@
 
 === mappedTypeOverAnyStructuralAssignability.ts ===
 // Reduced from yup@1.6.1; https://github.com/microsoft/typescript-go/issues/4451
-// ObjectSchema<MyValues> should be assignable to AnyObjectSchema (= ObjectSchema<any, ...>),
-// but tsgo reports the mapped type Shape<any> as missing keys foo, bar; tsc accepts it.
+// ObjectSchema<{ foo, bar }> should be assignable to ObjectSchema<any>, but tsgo
+// reports the mapped type Shape<any> as missing keys foo, bar; tsc accepts it.
+// The contravariant `concat` parameter flips the comparison so Shape<any> is
+// checked as the source against Shape<{ foo, bar }>.
+type Shape<T> = { [field in keyof T]-?: T[field]; };
+>Shape : Shape<T>
 
-type Maybe<T> = T | null | undefined;
->Maybe : Maybe<T>
+interface ObjectSchema<TIn> {
+    __outputType: TIn extends {} ? {} : TIn;
+>__outputType : TIn extends {} ? {} : TIn
 
-type Optionals<T> = Extract<T, null | undefined>;
->Optionals : Optionals<T>
+    nullable(): ObjectSchema<TIn | null>;
+>nullable : () => ObjectSchema<TIn | null>
 
-type Defined<T> = T extends undefined ? never : T;
->Defined : Defined<T>
-
-type _<T> = T extends {} ? {
->_ : _<T>
-
-    [k in keyof T]: T[k];
-} : T;
-type Flags = 's' | 'd' | '';
->Flags : Flags
-
-type ResolveFlags<T, F extends Flags, D = T> = Extract<F, 'd'> extends never ? T : D extends undefined ? T : Defined<T>;
->ResolveFlags : ResolveFlags<T, F, D>
-
-declare abstract class Schema<TType = any, TContext = any, TDefault = any, TFlags extends Flags = ''> implements ISchema<TType, TContext, TFlags, TDefault> {
->Schema : Schema<TType, TContext, TDefault, TFlags>
-
-    readonly __outputType: ResolveFlags<TType, TFlags, TDefault>;
->__outputType : ResolveFlags<TType, TFlags, TDefault>
-}
-declare class Reference<TValue = unknown> {
->Reference : Reference<TValue>
-}
-type ObjectShape = {
->ObjectShape : ObjectShape
-
-};
-type AnyObject = {
->AnyObject : AnyObject
-
-};
-type ResolveStrip<T extends ISchema<any>> = T extends ISchema<any, any, infer F> ? Extract<F, 's'> extends never ? T['__outputType'] : never : T['__outputType'];
->ResolveStrip : ResolveStrip<T>
-
-type TypeFromShape<S extends ObjectShape, _C> = {
->TypeFromShape : TypeFromShape<S, _C>
-
-    [K in keyof S]: S[K] extends ISchema<any> ? ResolveStrip<S[K]> : S[K] extends Reference<infer T> ? T : unknown;
-};
-type DefaultFromShape<Shape extends ObjectShape> = {
->DefaultFromShape : DefaultFromShape<Shape>
-
-};
-type MakePartial<T extends object> = {
->MakePartial : MakePartial<T>
-
-};
-interface ISchema<T, C = any, F extends Flags = any, D = any> {
-    __outputType: T;
->__outputType : T
-}
-interface ValidateOptions<TContext = {}> {
-    /**
-     */
-}
-interface MessageParams {
-}
-type Message<Extra extends Record<string, unknown> = any> = string | ((params: Extra & MessageParams) => unknown) | Record<PropertyKey, unknown>;
->Message : Message<Extra>
->params : Extra & MessageParams
-
-declare function create$6(): StringSchema;
->create$6 : () => StringSchema
-
-declare class StringSchema<TType extends Maybe<string> = string | undefined, TContext = AnyObject, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TType, TContext, TDefault, TFlags> {
->StringSchema : StringSchema<TType, TContext, TDefault, TFlags>
->Schema : Schema<TType, TContext, TDefault, TFlags>
-
-    length(length: number | Reference<number>, message?: Message<{
->length : (length: number | Reference<number>, message?: Message<{}>) => this
->length : number | Reference<number>
->message : Message<{}> | undefined
-
-    }>): this;
-    required(msg?: Message): StringSchema<NonNullable<TType>, TContext, TDefault, TFlags>;
->required : (msg?: Message) => StringSchema<NonNullable<TType>, TContext, TDefault, TFlags>
->msg : Message<any> | undefined
-}
-declare function create$5<T extends number, TContext extends Maybe<AnyObject> = AnyObject>(): NumberSchema<T | undefined, TContext>;
->create$5 : <T extends number, TContext extends Maybe<AnyObject> = AnyObject>() => NumberSchema<T | undefined, TContext>
-
-declare class NumberSchema<TType extends Maybe<number> = number | undefined, TContext = AnyObject, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TType, TContext, TDefault, TFlags> {
->NumberSchema : NumberSchema<TType, TContext, TDefault, TFlags>
->Schema : Schema<TType, TContext, TDefault, TFlags>
-
-    min(min: number | Reference<number>, message?: Message<{
->min : (min: number | Reference<number>, message?: Message<{}>) => this
->min : number | Reference<number>
->message : Message<{}> | undefined
-
-    }>): this;
-    required(msg?: Message): NumberSchema<NonNullable<TType>, TContext, TDefault, TFlags>;
->required : (msg?: Message) => NumberSchema<NonNullable<TType>, TContext, TDefault, TFlags>
->msg : Message<any> | undefined
-}
-type MakeKeysOptional<T> = T extends AnyObject ? _<MakePartial<T>> : T;
->MakeKeysOptional : MakeKeysOptional<T>
-
-type Shape<T extends Maybe<AnyObject>, C = any> = {
->Shape : Shape<T, C>
-
-    [field in keyof T]-?: ISchema<T[field], C> | Reference;
-};
-declare function create$3<C extends Maybe<AnyObject> = AnyObject, S extends ObjectShape = {}>(spec?: S): ObjectSchema<_<TypeFromShape<S, C>>, C, _<DefaultFromShape<S>>, "">;
->create$3 : <C extends Maybe<AnyObject> = AnyObject, S extends ObjectShape = {}>(spec?: S) => ObjectSchema<_<TypeFromShape<S, C>>, C, _<DefaultFromShape<S>>, "">
->spec : S | undefined
-
-interface ObjectSchema<TIn extends Maybe<AnyObject>, TContext = AnyObject, TDefault = any, TFlags extends Flags = ''> extends Schema<MakeKeysOptional<TIn>, TContext, TDefault, TFlags> {
-    nullable(msg?: Message): ObjectSchema<TIn | null, TContext, TDefault, TFlags>;
->nullable : (msg?: Message) => ObjectSchema<TIn | null, TContext, TDefault, TFlags>
->msg : Message<any> | undefined
-
-    fields: Shape<NonNullable<TIn>, TContext>;
->fields : Shape<NonNullable<TIn>, TContext>
+    fields: Shape<NonNullable<TIn>>;
+>fields : Shape<NonNullable<TIn>>
 
     concat(schema: this): this;
 >concat : (schema: this) => this
 >schema : this
 
-    partial(): ObjectSchema<Partial<TIn>, TContext, TDefault, TFlags>;
->partial : () => ObjectSchema<Partial<TIn>, TContext, TDefault, TFlags>
+    partial(): ObjectSchema<Partial<TIn>>;
+>partial : () => ObjectSchema<Partial<TIn>>
 }
-declare class ArraySchema<TIn extends any[] | null | undefined, TContext, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TIn, TContext, TDefault, TFlags> {
->ArraySchema : ArraySchema<TIn, TContext, TDefault, TFlags>
->Schema : Schema<TIn, TContext, TDefault, TFlags>
-
-    length(length: number | Reference<number>, message?: Message<{
->length : (length: number | Reference<number>, message?: Message<{}>) => this
->length : number | Reference<number>
->message : Message<{}> | undefined
-
-    }>): this;
-}
-type AnyTuple = [unknown, ...unknown[]];
->AnyTuple : AnyTuple
-
-declare function create$1<T extends AnyTuple>(schemas: {
->create$1 : <T extends AnyTuple>(schemas: {}) => TupleSchema<T | undefined, AnyObject, undefined, "">
->schemas : {}
-
-}): TupleSchema<T | undefined, AnyObject, undefined, "">;
-declare namespace create$1 {
-}
-declare class TupleSchema<TType extends Maybe<AnyTuple> = AnyTuple | undefined, TContext = AnyObject, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TType, TContext, TDefault, TFlags> {
->TupleSchema : TupleSchema<TType, TContext, TDefault, TFlags>
->Schema : Schema<TType, TContext, TDefault, TFlags>
-}
-type AnyObjectSchema = ObjectSchema<any, any, any, any>;
->AnyObjectSchema : AnyObjectSchema
-
-interface MyValues { foo: string; bar: number; }
+declare const specific: ObjectSchema<{ foo: string; bar: number }>;
+>specific : ObjectSchema<{ foo: string; bar: number; }>
 >foo : string
 >bar : number
 
-const specific: ObjectSchema<MyValues> = create$3({ foo: create$6().required(), bar: create$5().required() });
->specific : ObjectSchema<MyValues, AnyObject, any, "">
->create$3({ foo: create$6().required(), bar: create$5().required() }) : ObjectSchema<{ foo: never; bar: never; }, AnyObject, {}, "">
->create$3 : <C extends Maybe<AnyObject> = AnyObject, S extends ObjectShape = {}>(spec?: S) => ObjectSchema<_<TypeFromShape<S, C>>, C, _<DefaultFromShape<S>>, "">
->{ foo: create$6().required(), bar: create$5().required() } : { foo: StringSchema<string, AnyObject, undefined, "">; bar: NumberSchema<number, AnyObject, undefined, "">; }
->foo : StringSchema<string, AnyObject, undefined, "">
->create$6().required() : StringSchema<string, AnyObject, undefined, "">
->create$6().required : (msg?: Message) => StringSchema<string, AnyObject, undefined, "">
->create$6() : StringSchema<string | undefined, AnyObject, undefined, "">
->create$6 : () => StringSchema
->required : (msg?: Message) => StringSchema<string, AnyObject, undefined, "">
->bar : NumberSchema<number, AnyObject, undefined, "">
->create$5().required() : NumberSchema<number, AnyObject, undefined, "">
->create$5().required : (msg?: Message) => NumberSchema<number, AnyObject, undefined, "">
->create$5() : NumberSchema<number | undefined, AnyObject, undefined, "">
->create$5 : <T extends number, TContext extends Maybe<AnyObject> = AnyObject>() => NumberSchema<T | undefined, TContext>
->required : (msg?: Message) => NumberSchema<number, AnyObject, undefined, "">
-
-const test: AnyObjectSchema = specific;
->test : AnyObjectSchema
->specific : ObjectSchema<MyValues, AnyObject, any, "">
+const test: ObjectSchema<any> = specific;
+>test : ObjectSchema<any>
+>specific : ObjectSchema<{ foo: string; bar: number; }>
 

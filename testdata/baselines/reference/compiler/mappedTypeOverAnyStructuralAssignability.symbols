@@ -2,425 +2,56 @@
 
 === mappedTypeOverAnyStructuralAssignability.ts ===
 // Reduced from yup@1.6.1; https://github.com/microsoft/typescript-go/issues/4451
-// ObjectSchema<MyValues> should be assignable to AnyObjectSchema (= ObjectSchema<any, ...>),
-// but tsgo reports the mapped type Shape<any> as missing keys foo, bar; tsc accepts it.
+// ObjectSchema<{ foo, bar }> should be assignable to ObjectSchema<any>, but tsgo
+// reports the mapped type Shape<any> as missing keys foo, bar; tsc accepts it.
+// The contravariant `concat` parameter flips the comparison so Shape<any> is
+// checked as the source against Shape<{ foo, bar }>.
+type Shape<T> = { [field in keyof T]-?: T[field]; };
+>Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
+>T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 11))
+>field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 19))
+>T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 11))
+>T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 11))
+>field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 19))
 
-type Maybe<T> = T | null | undefined;
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 4, 11))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 4, 11))
+interface ObjectSchema<TIn> {
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
-type Optionals<T> = Extract<T, null | undefined>;
->Optionals : Symbol(Optionals, Decl(mappedTypeOverAnyStructuralAssignability.ts, 4, 37))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 15))
->Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 15))
+    __outputType: TIn extends {} ? {} : TIn;
+>__outputType : Symbol(ObjectSchema.__outputType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 29))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
-type Defined<T> = T extends undefined ? never : T;
->Defined : Symbol(Defined, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 49))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 13))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 13))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 13))
+    nullable(): ObjectSchema<TIn | null>;
+>nullable : Symbol(ObjectSchema.nullable, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 44))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
-type _<T> = T extends {} ? {
->_ : Symbol(_, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 50))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 7))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 7))
-
-    [k in keyof T]: T[k];
->k : Symbol(k, Decl(mappedTypeOverAnyStructuralAssignability.ts, 8, 5))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 7))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 7))
->k : Symbol(k, Decl(mappedTypeOverAnyStructuralAssignability.ts, 8, 5))
-
-} : T;
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 7, 7))
-
-type Flags = 's' | 'd' | '';
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
-
-type ResolveFlags<T, F extends Flags, D = T> = Extract<F, 'd'> extends never ? T : D extends undefined ? T : Defined<T>;
->ResolveFlags : Symbol(ResolveFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 28))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 18))
->F : Symbol(F, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 20))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->D : Symbol(D, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 37))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 18))
->Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
->F : Symbol(F, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 20))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 18))
->D : Symbol(D, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 37))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 18))
->Defined : Symbol(Defined, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 49))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 18))
-
-declare abstract class Schema<TType = any, TContext = any, TDefault = any, TFlags extends Flags = ''> implements ISchema<TType, TContext, TFlags, TDefault> {
->Schema : Symbol(Schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 120))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 30))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 42))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 58))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 74))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->ISchema : Symbol(ISchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 28, 2))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 30))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 42))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 74))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 58))
-
-    readonly __outputType: ResolveFlags<TType, TFlags, TDefault>;
->__outputType : Symbol(Schema.__outputType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 157))
->ResolveFlags : Symbol(ResolveFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 28))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 30))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 74))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 12, 58))
-}
-declare class Reference<TValue = unknown> {
->Reference : Symbol(Reference, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 1))
->TValue : Symbol(TValue, Decl(mappedTypeOverAnyStructuralAssignability.ts, 15, 24))
-}
-type ObjectShape = {
->ObjectShape : Symbol(ObjectShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 16, 1))
-
-};
-type AnyObject = {
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
-
-};
-type ResolveStrip<T extends ISchema<any>> = T extends ISchema<any, any, infer F> ? Extract<F, 's'> extends never ? T['__outputType'] : never : T['__outputType'];
->ResolveStrip : Symbol(ResolveStrip, Decl(mappedTypeOverAnyStructuralAssignability.ts, 20, 2))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 18))
->ISchema : Symbol(ISchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 28, 2))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 18))
->ISchema : Symbol(ISchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 28, 2))
->F : Symbol(F, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 77))
->Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
->F : Symbol(F, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 77))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 18))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 18))
-
-type TypeFromShape<S extends ObjectShape, _C> = {
->TypeFromShape : Symbol(TypeFromShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 161))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 22, 19))
->ObjectShape : Symbol(ObjectShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 16, 1))
->_C : Symbol(_C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 22, 41))
-
-    [K in keyof S]: S[K] extends ISchema<any> ? ResolveStrip<S[K]> : S[K] extends Reference<infer T> ? T : unknown;
->K : Symbol(K, Decl(mappedTypeOverAnyStructuralAssignability.ts, 23, 5))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 22, 19))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 22, 19))
->K : Symbol(K, Decl(mappedTypeOverAnyStructuralAssignability.ts, 23, 5))
->ISchema : Symbol(ISchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 28, 2))
->ResolveStrip : Symbol(ResolveStrip, Decl(mappedTypeOverAnyStructuralAssignability.ts, 20, 2))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 22, 19))
->K : Symbol(K, Decl(mappedTypeOverAnyStructuralAssignability.ts, 23, 5))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 22, 19))
->K : Symbol(K, Decl(mappedTypeOverAnyStructuralAssignability.ts, 23, 5))
->Reference : Symbol(Reference, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 1))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 23, 97))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 23, 97))
-
-};
-type DefaultFromShape<Shape extends ObjectShape> = {
->DefaultFromShape : Symbol(DefaultFromShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 24, 2))
->Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 25, 22))
->ObjectShape : Symbol(ObjectShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 16, 1))
-
-};
-type MakePartial<T extends object> = {
->MakePartial : Symbol(MakePartial, Decl(mappedTypeOverAnyStructuralAssignability.ts, 26, 2))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 27, 17))
-
-};
-interface ISchema<T, C = any, F extends Flags = any, D = any> {
->ISchema : Symbol(ISchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 28, 2))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 29, 18))
->C : Symbol(C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 29, 20))
->F : Symbol(F, Decl(mappedTypeOverAnyStructuralAssignability.ts, 29, 29))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->D : Symbol(D, Decl(mappedTypeOverAnyStructuralAssignability.ts, 29, 52))
-
-    __outputType: T;
->__outputType : Symbol(ISchema.__outputType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 29, 63))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 29, 18))
-}
-interface ValidateOptions<TContext = {}> {
->ValidateOptions : Symbol(ValidateOptions, Decl(mappedTypeOverAnyStructuralAssignability.ts, 31, 1))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 32, 26))
-
-    /**
-     */
-}
-interface MessageParams {
->MessageParams : Symbol(MessageParams, Decl(mappedTypeOverAnyStructuralAssignability.ts, 35, 1))
-}
-type Message<Extra extends Record<string, unknown> = any> = string | ((params: Extra & MessageParams) => unknown) | Record<PropertyKey, unknown>;
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
->Extra : Symbol(Extra, Decl(mappedTypeOverAnyStructuralAssignability.ts, 38, 13))
->Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
->params : Symbol(params, Decl(mappedTypeOverAnyStructuralAssignability.ts, 38, 71))
->Extra : Symbol(Extra, Decl(mappedTypeOverAnyStructuralAssignability.ts, 38, 13))
->MessageParams : Symbol(MessageParams, Decl(mappedTypeOverAnyStructuralAssignability.ts, 35, 1))
->Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
->PropertyKey : Symbol(PropertyKey, Decl(lib.es5.d.ts, --, --))
-
-declare function create$6(): StringSchema;
->create$6 : Symbol(create$6, Decl(mappedTypeOverAnyStructuralAssignability.ts, 38, 145))
->StringSchema : Symbol(StringSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 39, 42))
-
-declare class StringSchema<TType extends Maybe<string> = string | undefined, TContext = AnyObject, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TType, TContext, TDefault, TFlags> {
->StringSchema : Symbol(StringSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 39, 42))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 27))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 76))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 98))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 120))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->Schema : Symbol(Schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 120))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 27))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 76))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 98))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 120))
-
-    length(length: number | Reference<number>, message?: Message<{
->length : Symbol(StringSchema.length, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 199))
->length : Symbol(length, Decl(mappedTypeOverAnyStructuralAssignability.ts, 41, 11))
->Reference : Symbol(Reference, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 1))
->message : Symbol(message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 41, 46))
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
-
-    }>): this;
-    required(msg?: Message): StringSchema<NonNullable<TType>, TContext, TDefault, TFlags>;
->required : Symbol(StringSchema.required, Decl(mappedTypeOverAnyStructuralAssignability.ts, 42, 14))
->msg : Symbol(msg, Decl(mappedTypeOverAnyStructuralAssignability.ts, 43, 13))
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
->StringSchema : Symbol(StringSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 39, 42))
+    fields: Shape<NonNullable<TIn>>;
+>fields : Symbol(ObjectSchema.fields, Decl(mappedTypeOverAnyStructuralAssignability.ts, 8, 41))
+>Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
 >NonNullable : Symbol(NonNullable, Decl(lib.es5.d.ts, --, --))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 27))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 76))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 98))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 40, 120))
-}
-declare function create$5<T extends number, TContext extends Maybe<AnyObject> = AnyObject>(): NumberSchema<T | undefined, TContext>;
->create$5 : Symbol(create$5, Decl(mappedTypeOverAnyStructuralAssignability.ts, 44, 1))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 26))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 43))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->NumberSchema : Symbol(NumberSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 132))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 26))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 43))
-
-declare class NumberSchema<TType extends Maybe<number> = number | undefined, TContext = AnyObject, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TType, TContext, TDefault, TFlags> {
->NumberSchema : Symbol(NumberSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 132))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 27))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 76))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 98))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 120))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->Schema : Symbol(Schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 120))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 27))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 76))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 98))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 120))
-
-    min(min: number | Reference<number>, message?: Message<{
->min : Symbol(NumberSchema.min, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 199))
->min : Symbol(min, Decl(mappedTypeOverAnyStructuralAssignability.ts, 47, 8))
->Reference : Symbol(Reference, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 1))
->message : Symbol(message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 47, 40))
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
-
-    }>): this;
-    required(msg?: Message): NumberSchema<NonNullable<TType>, TContext, TDefault, TFlags>;
->required : Symbol(NumberSchema.required, Decl(mappedTypeOverAnyStructuralAssignability.ts, 48, 14))
->msg : Symbol(msg, Decl(mappedTypeOverAnyStructuralAssignability.ts, 49, 13))
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
->NumberSchema : Symbol(NumberSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 45, 132))
->NonNullable : Symbol(NonNullable, Decl(lib.es5.d.ts, --, --))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 27))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 76))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 98))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 46, 120))
-}
-type MakeKeysOptional<T> = T extends AnyObject ? _<MakePartial<T>> : T;
->MakeKeysOptional : Symbol(MakeKeysOptional, Decl(mappedTypeOverAnyStructuralAssignability.ts, 50, 1))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 51, 22))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 51, 22))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->_ : Symbol(_, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 50))
->MakePartial : Symbol(MakePartial, Decl(mappedTypeOverAnyStructuralAssignability.ts, 26, 2))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 51, 22))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 51, 22))
-
-type Shape<T extends Maybe<AnyObject>, C = any> = {
->Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 51, 71))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 52, 11))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->C : Symbol(C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 52, 38))
-
-    [field in keyof T]-?: ISchema<T[field], C> | Reference;
->field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 53, 5))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 52, 11))
->ISchema : Symbol(ISchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 28, 2))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 52, 11))
->field : Symbol(field, Decl(mappedTypeOverAnyStructuralAssignability.ts, 53, 5))
->C : Symbol(C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 52, 38))
->Reference : Symbol(Reference, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 1))
-
-};
-declare function create$3<C extends Maybe<AnyObject> = AnyObject, S extends ObjectShape = {}>(spec?: S): ObjectSchema<_<TypeFromShape<S, C>>, C, _<DefaultFromShape<S>>, "">;
->create$3 : Symbol(create$3, Decl(mappedTypeOverAnyStructuralAssignability.ts, 54, 2))
->C : Symbol(C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 26))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 65))
->ObjectShape : Symbol(ObjectShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 16, 1))
->spec : Symbol(spec, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 94))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 65))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 173))
->_ : Symbol(_, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 50))
->TypeFromShape : Symbol(TypeFromShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 21, 161))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 65))
->C : Symbol(C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 26))
->C : Symbol(C, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 26))
->_ : Symbol(_, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 50))
->DefaultFromShape : Symbol(DefaultFromShape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 24, 2))
->S : Symbol(S, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 65))
-
-interface ObjectSchema<TIn extends Maybe<AnyObject>, TContext = AnyObject, TDefault = any, TFlags extends Flags = ''> extends Schema<MakeKeysOptional<TIn>, TContext, TDefault, TFlags> {
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 173))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 23))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 52))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 74))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 90))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->Schema : Symbol(Schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 120))
->MakeKeysOptional : Symbol(MakeKeysOptional, Decl(mappedTypeOverAnyStructuralAssignability.ts, 50, 1))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 23))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 52))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 74))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 90))
-
-    nullable(msg?: Message): ObjectSchema<TIn | null, TContext, TDefault, TFlags>;
->nullable : Symbol(ObjectSchema.nullable, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 185))
->msg : Symbol(msg, Decl(mappedTypeOverAnyStructuralAssignability.ts, 57, 13))
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 173))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 23))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 52))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 74))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 90))
-
-    fields: Shape<NonNullable<TIn>, TContext>;
->fields : Symbol(ObjectSchema.fields, Decl(mappedTypeOverAnyStructuralAssignability.ts, 57, 82))
->Shape : Symbol(Shape, Decl(mappedTypeOverAnyStructuralAssignability.ts, 51, 71))
->NonNullable : Symbol(NonNullable, Decl(lib.es5.d.ts, --, --))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 23))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 52))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 
     concat(schema: this): this;
->concat : Symbol(ObjectSchema.concat, Decl(mappedTypeOverAnyStructuralAssignability.ts, 58, 46))
->schema : Symbol(schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 59, 11))
+>concat : Symbol(ObjectSchema.concat, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 36))
+>schema : Symbol(schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 11))
 
-    partial(): ObjectSchema<Partial<TIn>, TContext, TDefault, TFlags>;
->partial : Symbol(ObjectSchema.partial, Decl(mappedTypeOverAnyStructuralAssignability.ts, 59, 31))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 173))
+    partial(): ObjectSchema<Partial<TIn>>;
+>partial : Symbol(ObjectSchema.partial, Decl(mappedTypeOverAnyStructuralAssignability.ts, 10, 31))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
 >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 23))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 52))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 74))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 56, 90))
+>TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 6, 23))
 }
-declare class ArraySchema<TIn extends any[] | null | undefined, TContext, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TIn, TContext, TDefault, TFlags> {
->ArraySchema : Symbol(ArraySchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 61, 1))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 26))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 63))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 73))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 95))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->Schema : Symbol(Schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 120))
->TIn : Symbol(TIn, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 26))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 63))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 73))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 95))
+declare const specific: ObjectSchema<{ foo: string; bar: number }>;
+>specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 13))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>foo : Symbol(foo, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 38))
+>bar : Symbol(bar, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 51))
 
-    length(length: number | Reference<number>, message?: Message<{
->length : Symbol(ArraySchema.length, Decl(mappedTypeOverAnyStructuralAssignability.ts, 62, 172))
->length : Symbol(length, Decl(mappedTypeOverAnyStructuralAssignability.ts, 63, 11))
->Reference : Symbol(Reference, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 1))
->message : Symbol(message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 63, 46))
->Message : Symbol(Message, Decl(mappedTypeOverAnyStructuralAssignability.ts, 37, 1))
-
-    }>): this;
-}
-type AnyTuple = [unknown, ...unknown[]];
->AnyTuple : Symbol(AnyTuple, Decl(mappedTypeOverAnyStructuralAssignability.ts, 65, 1))
-
-declare function create$1<T extends AnyTuple>(schemas: {
->create$1 : Symbol(create$1, Decl(mappedTypeOverAnyStructuralAssignability.ts, 66, 40), Decl(mappedTypeOverAnyStructuralAssignability.ts, 68, 57))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 67, 26))
->AnyTuple : Symbol(AnyTuple, Decl(mappedTypeOverAnyStructuralAssignability.ts, 65, 1))
->schemas : Symbol(schemas, Decl(mappedTypeOverAnyStructuralAssignability.ts, 67, 46))
-
-}): TupleSchema<T | undefined, AnyObject, undefined, "">;
->TupleSchema : Symbol(TupleSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 70, 1))
->T : Symbol(T, Decl(mappedTypeOverAnyStructuralAssignability.ts, 67, 26))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
-
-declare namespace create$1 {
->create$1 : Symbol(create$1, Decl(mappedTypeOverAnyStructuralAssignability.ts, 66, 40), Decl(mappedTypeOverAnyStructuralAssignability.ts, 68, 57))
-}
-declare class TupleSchema<TType extends Maybe<AnyTuple> = AnyTuple | undefined, TContext = AnyObject, TDefault = undefined, TFlags extends Flags = ''> extends Schema<TType, TContext, TDefault, TFlags> {
->TupleSchema : Symbol(TupleSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 70, 1))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 26))
->Maybe : Symbol(Maybe, Decl(mappedTypeOverAnyStructuralAssignability.ts, 0, 0))
->AnyTuple : Symbol(AnyTuple, Decl(mappedTypeOverAnyStructuralAssignability.ts, 65, 1))
->AnyTuple : Symbol(AnyTuple, Decl(mappedTypeOverAnyStructuralAssignability.ts, 65, 1))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 79))
->AnyObject : Symbol(AnyObject, Decl(mappedTypeOverAnyStructuralAssignability.ts, 18, 2))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 101))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 123))
->Flags : Symbol(Flags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 9, 6))
->Schema : Symbol(Schema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 11, 120))
->TType : Symbol(TType, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 26))
->TContext : Symbol(TContext, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 79))
->TDefault : Symbol(TDefault, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 101))
->TFlags : Symbol(TFlags, Decl(mappedTypeOverAnyStructuralAssignability.ts, 71, 123))
-}
-type AnyObjectSchema = ObjectSchema<any, any, any, any>;
->AnyObjectSchema : Symbol(AnyObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 72, 1))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 173))
-
-interface MyValues { foo: string; bar: number; }
->MyValues : Symbol(MyValues, Decl(mappedTypeOverAnyStructuralAssignability.ts, 73, 56))
->foo : Symbol(MyValues.foo, Decl(mappedTypeOverAnyStructuralAssignability.ts, 74, 20))
->bar : Symbol(MyValues.bar, Decl(mappedTypeOverAnyStructuralAssignability.ts, 74, 33))
-
-const specific: ObjectSchema<MyValues> = create$3({ foo: create$6().required(), bar: create$5().required() });
->specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 75, 5))
->ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 55, 173))
->MyValues : Symbol(MyValues, Decl(mappedTypeOverAnyStructuralAssignability.ts, 73, 56))
->create$3 : Symbol(create$3, Decl(mappedTypeOverAnyStructuralAssignability.ts, 54, 2))
->foo : Symbol(foo, Decl(mappedTypeOverAnyStructuralAssignability.ts, 75, 51))
->create$6().required : Symbol(StringSchema.required, Decl(mappedTypeOverAnyStructuralAssignability.ts, 42, 14))
->create$6 : Symbol(create$6, Decl(mappedTypeOverAnyStructuralAssignability.ts, 38, 145))
->required : Symbol(StringSchema.required, Decl(mappedTypeOverAnyStructuralAssignability.ts, 42, 14))
->bar : Symbol(bar, Decl(mappedTypeOverAnyStructuralAssignability.ts, 75, 79))
->create$5().required : Symbol(NumberSchema.required, Decl(mappedTypeOverAnyStructuralAssignability.ts, 48, 14))
->create$5 : Symbol(create$5, Decl(mappedTypeOverAnyStructuralAssignability.ts, 44, 1))
->required : Symbol(NumberSchema.required, Decl(mappedTypeOverAnyStructuralAssignability.ts, 48, 14))
-
-const test: AnyObjectSchema = specific;
->test : Symbol(test, Decl(mappedTypeOverAnyStructuralAssignability.ts, 76, 5))
->AnyObjectSchema : Symbol(AnyObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 72, 1))
->specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 75, 5))
+const test: ObjectSchema<any> = specific;
+>test : Symbol(test, Decl(mappedTypeOverAnyStructuralAssignability.ts, 14, 5))
+>ObjectSchema : Symbol(ObjectSchema, Decl(mappedTypeOverAnyStructuralAssignability.ts, 5, 52))
+>specific : Symbol(specific, Decl(mappedTypeOverAnyStructuralAssignability.ts, 13, 13))
 
