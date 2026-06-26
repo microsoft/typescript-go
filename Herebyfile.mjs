@@ -92,6 +92,10 @@ const nativePreviewReleaseNpmTag = /** @type {string | undefined} */ (undefined)
 const produceNativePreviewVsix = /** @type {boolean} */ (true);
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
+if (publishAsTypescript && !nativePreviewReleaseVersion) {
+    throw new Error("Publishing as 'typescript' requires hardcoding nativePreviewReleaseVersion.");
+}
+
 if (options.forRelease && !options.setPrerelease && !nativePreviewReleaseVersion) {
     throw new Error("forRelease requires setPrerelease");
 }
@@ -1183,9 +1187,13 @@ function getPublishTag() {
     }
     if (publishAsTypescript) {
         const version = getVersion();
-        if (!version) return "latest";
+        if (!version) {
+            throw new Error("Publishing as 'typescript' requires a version before selecting an npm tag.");
+        }
         const match = version.match(/-(dev|beta|rc)(?:[.-]|$)/);
         if (match?.[1]) return match[1];
+        if (version === nativePreviewReleaseVersion) return "latest";
+        throw new Error(`Refusing to publish 'typescript' with the latest tag from non-release version ${version}.`);
     }
     return "latest";
 }
