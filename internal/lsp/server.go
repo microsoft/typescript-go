@@ -1091,6 +1091,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			DiagnosticProvider: &lsproto.DiagnosticOptionsOrRegistrationOptions{
 				Options: &lsproto.DiagnosticOptions{
+					Identifier:            new("typescript"),
 					InterFileDependencies: true,
 				},
 			},
