@@ -325,7 +325,7 @@ func TestRefCountingCaches(t *testing.T) {
 			session.DidChangeFile(context.Background(), entryURI, 3, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
 					WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
-						Text: "import { dep } from \"./sub/dep\";\nimport \"./a\";\nimport \"./b\";\nimport \"./c\";\nexport const e = dep + 0;",
+						Text: "import { dep } from './sub/dep';\nimport './a';\nimport './b';\nimport './c';\nexport const e = dep + 0;",
 					},
 				},
 			})
