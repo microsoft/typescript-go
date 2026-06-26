@@ -919,7 +919,12 @@ async function runUpdateDprintPlugins() {
             if (!response.ok) {
                 throw new Error(`Failed to download ${latest.url}: ${response.status} ${response.statusText}`);
             }
-            await fs.promises.writeFile(path.join(dprintPluginDir, fileName), Buffer.from(await response.arrayBuffer()));
+            const bytes = Buffer.from(await response.arrayBuffer());
+            const checksum = crypto.createHash("sha256").update(bytes).digest("hex");
+            if (checksum !== latest.checksum) {
+                throw new Error(`Checksum mismatch for ${latest.url}: expected ${latest.checksum}, got ${checksum}`);
+            }
+            await fs.promises.writeFile(path.join(dprintPluginDir, fileName), bytes);
             return [plugin, {
                 file: fileName,
                 version: latest.version,
@@ -955,7 +960,11 @@ async function getDprintLatestPluginMetadata(plugin) {
     if (typeof latest.version !== "string" || typeof latest.checksum !== "string") {
         throw new Error(`Invalid dprint plugin metadata from ${latestJsonUrl}`);
     }
-    if (!latest.url.endsWith(".wasm")) {
+    if (!/^[0-9a-f]{64}$/i.test(latest.checksum)) {
+        throw new Error(`Invalid dprint plugin checksum from ${latestJsonUrl}: ${latest.checksum}`);
+    }
+    const url = new URL(latest.url);
+    if (url.protocol !== "https:" || url.hostname !== "plugins.dprint.dev" || !url.pathname.endsWith(".wasm")) {
         throw new Error(`Invalid dprint plugin URL from ${latestJsonUrl}: ${latest.url}`);
     }
     return latest;
