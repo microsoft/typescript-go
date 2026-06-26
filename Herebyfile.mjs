@@ -1119,6 +1119,10 @@ export class Debouncer {
     constructor(timeout, action) {
         this._timeout = timeout;
         this._action = action;
+        /** @type {ReturnType<typeof setTimeout> | undefined} */
+        this._timer = undefined;
+        /** @type {Deferred<any> | undefined} */
+        this._deferred = undefined;
     }
 
     get empty() {
