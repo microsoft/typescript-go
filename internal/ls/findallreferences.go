@@ -2660,7 +2660,7 @@ func isJSDocMemberName(node *ast.Node) bool {
 		return true
 	}
 	if node.Kind == ast.KindPropertyAccessExpression {
-		return isJSDocMemberName(node.AsPropertyAccessExpression().Name)
+		return isJSDocMemberName((*ast.Node)(node.AsPropertyAccessExpression().Name()))
 	}
 	return false
 }
