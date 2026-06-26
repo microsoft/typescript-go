@@ -321,3 +321,40 @@ func TestRefCountingCaches(t *testing.T) {
 		})
 	})
 }
+
+func TestRefOrStore_ConcurrentDeletion(t *testing.T) {
+	t.Parallel()
+
+	// RefOrStore should not panic when an entry was concurrently deleted.
+	// This simulates the scenario where a snapshot disposal Derefs an entry to zero
+	// (deleting it) while CreateProgram is trying to Ref the same entry for a cloned program.
+	cache := NewRefCountCache(
+		RefCountCacheOptions{},
+		func(key string, _ int) string {
+			return "parsed:" + key
+		},
+	)
+
+	// Acquire an entry (refcount = 1)
+	value := cache.Acquire("fileA", 0)
+	assert.Equal(t, value, "parsed:fileA")
+
+	// Deref it to 0, which deletes it from the cache
+	cache.Deref("fileA")
+	assert.Assert(t, !cache.Has("fileA"), "entry should be deleted after Deref to 0")
+
+	// RefOrStore should not panic; it should re-create the entry with the provided value
+	cache.RefOrStore("fileA", "existing-value")
+	assert.Assert(t, cache.Has("fileA"), "entry should exist after RefOrStore")
+
+	// Verify the re-created entry has the correct value
+	entry, ok := cache.entries.Load("fileA")
+	assert.Assert(t, ok)
+	assert.Equal(t, entry.value, "existing-value")
+	assert.Equal(t, entry.refCount, 1)
+
+	// Deref to clean up
+	cache.Deref("fileA")
+	assert.Assert(t, !cache.Has("fileA"))
+}
+

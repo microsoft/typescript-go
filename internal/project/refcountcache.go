@@ -76,6 +76,35 @@ func (c *RefCountCache[K, V, AcquireArgs]) Ref(identity K) {
 	entry.refCount++
 }
 
+// RefOrStore increments the reference count for an existing entry,
+// or stores the given value as a new entry with refcount 1 if no entry exists.
+// This is safe to use when a concurrent Deref may have removed the entry
+// between the time the caller obtained the value and the time it calls RefOrStore.
+func (c *RefCountCache[K, V, AcquireArgs]) RefOrStore(identity K, value V) {
+	entry, ok := c.entries.Load(identity)
+	if !ok {
+		// Entry was concurrently deleted. Re-create it.
+		newEntry, loaded := c.loadOrStoreNewLockedEntry(identity)
+		defer newEntry.mu.Unlock()
+		if !loaded {
+			newEntry.value = value
+		}
+		return
+	}
+	entry.mu.Lock()
+	defer entry.mu.Unlock()
+	if entry.refCount <= 0 && !c.Options.DisableDeletion {
+		// Entry was deleted while we were acquiring the lock
+		newEntry, loaded := c.loadOrStoreNewLockedEntry(identity)
+		defer newEntry.mu.Unlock()
+		if !loaded {
+			newEntry.value = value
+		}
+		return
+	}
+	entry.refCount++
+}
+
 // Deref decrements the reference count for an entry.
 // When the refcount reaches zero, the entry is removed from the cache
 // (unless DisableDeletion is set).

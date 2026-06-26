@@ -373,12 +373,15 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				// Use pointer identity: dirtyFile is the exact instance UpdateProgram acquired,
 				// and it is the only file whose refcount is already accounted for.
 				if file != dirtyFile {
-					// UpdateProgram acquired the changed file only, so we need to ref everything else
-					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+					// UpdateProgram acquired the changed file only, so we need to ref everything else.
+					// Use RefOrStore because a concurrent snapshot disposal may have Deref'd the
+					// entry to zero and removed it between when UpdateProgram cloned the program
+					// and when we increment the refcount here.
+					p.host.builder.parseCache.RefOrStore(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind), file)
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
-				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				p.host.builder.parseCache.RefOrStore(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind), nil)
 			}
 		} else if dirtyFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
