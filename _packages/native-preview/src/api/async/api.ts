@@ -84,6 +84,7 @@ import type {
     InterfaceType,
     IntersectionType,
     IntrinsicType,
+    JSDocTagInfo,
     LiteralType,
     NumberLiteralType,
     ObjectType,
@@ -104,7 +105,7 @@ import type {
 
 export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
 export class API<FromLSP extends boolean = false> {
@@ -426,10 +427,12 @@ class ProjectObjectRegistry {
         this.signatures.clear();
     }
 
-    async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | undefined): Promise<T> {
-        if (!handle) return undefined as unknown as T;
-        const cached = this.getType(handle);
-        if (cached) return cached as unknown as T;
+    async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T> {
+        if (handle !== false) {
+            if (!handle) return undefined as unknown as T;
+            const cached = this.getType(handle);
+            if (cached) return cached as unknown as T;
+        }
 
         const data = await this.client.apiRequest<TypeResponse | null>(method, {
             snapshot: this.snapshotId,
@@ -581,6 +584,14 @@ export class Program {
         // Create a new RemoteSourceFile and cache it (set returns existing if hash matches)
         const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
         return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.projectId);
+    }
+
+    async getSourceFileNames(): Promise<readonly string[]> {
+        const data = await this.client.apiRequest<string[] | null>("getSourceFileNames", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+        });
+        return data ?? [];
     }
 
     /**
@@ -1089,6 +1100,22 @@ export class Checker {
         });
     }
 
+    async isArrayType(type: Type): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isArrayType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+    }
+
+    async isTupleType(type: Type): Promise<boolean> {
+        return this.client.apiRequest<boolean>("isTupleType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+    }
+
     async getReturnTypeOfSignature(signature: Signature): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getReturnTypeOfSignature", {
             snapshot: this.snapshotId,
@@ -1122,13 +1149,26 @@ export class Checker {
         } as TypePredicate;
     }
 
-    async getBaseTypes(type: Type): Promise<readonly Type[]> {
+    /**
+     * Get the base types of a class or interface type. A type with no base types
+     * yields an empty array.
+     */
+    async getBaseTypes(type: InterfaceType): Promise<readonly Type[]> {
         const data = await this.client.apiRequest<TypeResponse[] | null>("getBaseTypes", {
             snapshot: this.snapshotId,
             project: this.projectId,
             type: type.id,
         });
         return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
+    }
+
+    async getApparentType(type: Type): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getApparentType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
 
     async getPropertiesOfType(type: Type): Promise<readonly Symbol[]> {
@@ -1155,7 +1195,11 @@ export class Checker {
         }));
     }
 
-    async getConstraintOfTypeParameter(type: Type): Promise<Type | undefined> {
+    /**
+     * Get the constraint of a type parameter (the `T` in `<U extends T>`), or
+     * undefined if it has none.
+     */
+    async getConstraintOfTypeParameter(type: TypeParameter): Promise<Type | undefined> {
         const data = await this.client.apiRequest<TypeResponse | null>("getConstraintOfTypeParameter", {
             snapshot: this.snapshotId,
             project: this.projectId,
@@ -1164,7 +1208,110 @@ export class Checker {
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
 
-    async getTypeArguments(type: Type): Promise<readonly Type[]> {
+    async getBaseConstraintOfType(type: Type): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>("getBaseConstraintOfType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+        });
+        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+    }
+
+    async getPropertyOfType(type: Type, name: string): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getPropertyOfType", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            type: type.id,
+            name,
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    async getConstantValue(node: Node): Promise<string | number | undefined> {
+        const data = await this.client.apiRequest<string | number | null>("getConstantValue", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            location: getNodeId(node),
+        });
+        return data ?? undefined;
+    }
+
+    async getSignatureFromDeclaration(node: Node): Promise<Signature | undefined> {
+        const data = await this.client.apiRequest<SignatureResponse | null>("getSignatureFromDeclaration", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            location: getNodeId(node),
+        });
+        return data ? this.objectRegistry.getOrCreateSignature(data) : undefined;
+    }
+
+    async getExportSpecifierLocalTargetSymbol(node: Node): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getExportSpecifierLocalTargetSymbol", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            location: getNodeId(node),
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    async getAliasedSymbol(symbol: Symbol): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getAliasedSymbol", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    async getImmediateAliasedSymbol(symbol: Symbol): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getImmediateAliasedSymbol", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    async getExportsOfModule(symbol: Symbol): Promise<readonly Symbol[]> {
+        const data = await this.client.apiRequest<SymbolResponse[] | null>("getExportsOfModule", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+        return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
+    }
+
+    async getMemberInModuleExports(symbol: Symbol, name: string): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getMemberInModuleExports", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+            name,
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    async getJsDocTagsOfSymbol(symbol: Symbol): Promise<readonly JSDocTagInfo[]> {
+        const data = await this.client.apiRequest<JSDocTagInfo[] | null>("getJsDocTags", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+        return data ?? [];
+    }
+
+    async getDocumentationCommentOfSymbol(symbol: Symbol): Promise<string> {
+        return this.client.apiRequest<string>("getDocumentationComment", {
+            snapshot: this.snapshotId,
+            project: this.projectId,
+            symbol: symbol.id,
+        });
+    }
+
+    /**
+     * Get the type arguments of a type reference (e.g. the `string` in `Array<string>`).
+     */
+    async getTypeArguments(type: TypeReference): Promise<readonly Type[]> {
         const data = await this.client.apiRequest<TypeResponse[] | null>("getTypeArguments", {
             snapshot: this.snapshotId,
             project: this.projectId,
@@ -1282,6 +1429,14 @@ export class Symbol {
         if (!this.exportSymbol) return this;
         return this.objectRegistry.fetchSymbol(this, "getExportSymbolOfSymbol", this.exportSymbol);
     }
+
+    async getJsDocTags(checker: Checker): Promise<readonly JSDocTagInfo[]> {
+        return checker.getJsDocTagsOfSymbol(this);
+    }
+
+    async getDocumentationComment(checker: Checker): Promise<string> {
+        return checker.getDocumentationCommentOfSymbol(this);
+    }
 }
 
 class TypeObject implements Type {
@@ -1312,6 +1467,9 @@ class TypeObject implements Type {
     readonly extendsType!: number;
     readonly baseType!: number;
     readonly substConstraint!: number;
+
+    private trueType: number | false; // false if not yet loaded
+    private falseType: number | false; // false if not yet loaded
 
     constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
@@ -1345,6 +1503,9 @@ class TypeObject implements Type {
         if (data.extendsType !== undefined) this.extendsType = data.extendsType;
         if (data.baseType !== undefined) this.baseType = data.baseType;
         if (data.substConstraint !== undefined) this.substConstraint = data.substConstraint;
+
+        this.trueType = false;
+        this.falseType = false;
     }
 
     async getSymbol(): Promise<Symbol | undefined> {
@@ -1367,20 +1528,26 @@ class TypeObject implements Type {
         return this.objectRegistry.fetchType(this, "getRegularTypeOfType", this.regularType);
     }
 
-    async getTypes(): Promise<readonly Type[]> {
+    async getTypes(): Promise<readonly Type[] | undefined> {
+        // Only union, intersection, and template literal types have constituent
+        // types; any other kind has none, so return undefined rather than sending
+        // a request the server cannot satisfy.
+        if (!(this.flags & (TypeFlags.UnionOrIntersection | TypeFlags.TemplateLiteral))) {
+            return undefined;
+        }
         return this.objectRegistry.fetchTypes(this, "getTypesOfType");
     }
 
-    async getTypeParameters(): Promise<readonly Type[]> {
-        return this.objectRegistry.fetchTypes(this, "getTypeParametersOfType", this.typeParameters);
+    async getTypeParameters(): Promise<readonly TypeParameter[]> {
+        return this.objectRegistry.fetchTypes(this, "getTypeParametersOfType", this.typeParameters) as Promise<readonly TypeParameter[]>;
     }
 
-    async getOuterTypeParameters(): Promise<readonly Type[]> {
-        return this.objectRegistry.fetchTypes(this, "getOuterTypeParametersOfType", this.outerTypeParameters);
+    async getOuterTypeParameters(): Promise<readonly TypeParameter[]> {
+        return this.objectRegistry.fetchTypes(this, "getOuterTypeParametersOfType", this.outerTypeParameters) as Promise<readonly TypeParameter[]>;
     }
 
-    async getLocalTypeParameters(): Promise<readonly Type[]> {
-        return this.objectRegistry.fetchTypes(this, "getLocalTypeParametersOfType", this.localTypeParameters);
+    async getLocalTypeParameters(): Promise<readonly TypeParameter[]> {
+        return this.objectRegistry.fetchTypes(this, "getLocalTypeParametersOfType", this.localTypeParameters) as Promise<readonly TypeParameter[]>;
     }
 
     async getAliasTypeArguments(): Promise<readonly Type[]> {
@@ -1410,6 +1577,162 @@ class TypeObject implements Type {
     async getConstraint(): Promise<Type> {
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
     }
+
+    async getTrueType(): Promise<Type> {
+        const result = await this.objectRegistry.fetchType(this, "getTrueTypeOfConditionalType", this.trueType);
+        this.trueType = result.id;
+        return result;
+    }
+
+    async getFalseType(): Promise<Type> {
+        const result = await this.objectRegistry.fetchType(this, "getFalseTypeOfConditionalType", this.falseType);
+        this.falseType = result.id;
+        return result;
+    }
+
+    isUnionType(): this is UnionType {
+        return isUnionType(this);
+    }
+
+    isIntersectionType(): this is IntersectionType {
+        return isIntersectionType(this);
+    }
+
+    isObjectType(): this is ObjectType {
+        return isObjectType(this);
+    }
+
+    isIntrinsicType(): this is IntrinsicType {
+        return isIntrinsicType(this);
+    }
+
+    isLiteralType(): this is LiteralType {
+        return isLiteralType(this);
+    }
+
+    isStringLiteralType(): this is StringLiteralType {
+        return isStringLiteralType(this);
+    }
+
+    isNumberLiteralType(): this is NumberLiteralType {
+        return isNumberLiteralType(this);
+    }
+
+    isBigIntLiteralType(): this is BigIntLiteralType {
+        return isBigIntLiteralType(this);
+    }
+
+    isBooleanLiteralType(): this is BooleanLiteralType {
+        return isBooleanLiteralType(this);
+    }
+
+    isTypeReference(): this is TypeReference {
+        return isTypeReference(this);
+    }
+
+    isTupleType(): this is TupleType {
+        return isTupleType(this);
+    }
+
+    isIndexType(): this is IndexType {
+        return isIndexType(this);
+    }
+
+    isIndexedAccessType(): this is IndexedAccessType {
+        return isIndexedAccessType(this);
+    }
+
+    isConditionalType(): this is ConditionalType {
+        return isConditionalType(this);
+    }
+
+    isSubstitutionType(): this is SubstitutionType {
+        return isSubstitutionType(this);
+    }
+
+    isTemplateLiteralType(): this is TemplateLiteralType {
+        return isTemplateLiteralType(this);
+    }
+
+    isStringMappingType(): this is StringMappingType {
+        return isStringMappingType(this);
+    }
+
+    isTypeParameter(): this is TypeParameter {
+        return isTypeParameter(this);
+    }
+}
+
+export function isUnionType(type: Type): type is UnionType {
+    return (type.flags & TypeFlags.Union) !== 0;
+}
+
+export function isIntersectionType(type: Type): type is IntersectionType {
+    return (type.flags & TypeFlags.Intersection) !== 0;
+}
+
+export function isObjectType(type: Type): type is ObjectType {
+    return (type.flags & TypeFlags.Object) !== 0;
+}
+
+export function isIntrinsicType(type: Type): type is IntrinsicType {
+    return (type.flags & TypeFlags.Intrinsic) !== 0;
+}
+
+export function isLiteralType(type: Type): type is LiteralType {
+    return (type.flags & TypeFlags.Literal) !== 0;
+}
+
+export function isStringLiteralType(type: Type): type is StringLiteralType {
+    return (type.flags & TypeFlags.StringLiteral) !== 0;
+}
+
+export function isNumberLiteralType(type: Type): type is NumberLiteralType {
+    return (type.flags & TypeFlags.NumberLiteral) !== 0;
+}
+
+export function isBigIntLiteralType(type: Type): type is BigIntLiteralType {
+    return (type.flags & TypeFlags.BigIntLiteral) !== 0;
+}
+
+export function isBooleanLiteralType(type: Type): type is BooleanLiteralType {
+    return (type.flags & TypeFlags.BooleanLiteral) !== 0;
+}
+
+export function isTypeReference(type: Type): type is TypeReference {
+    return isObjectType(type) && (type.objectFlags & ObjectFlags.Reference) !== 0;
+}
+
+export function isTupleType(type: Type): type is TupleType {
+    return isObjectType(type) && (type.objectFlags & ObjectFlags.Tuple) !== 0;
+}
+
+export function isIndexType(type: Type): type is IndexType {
+    return (type.flags & TypeFlags.Index) !== 0;
+}
+
+export function isIndexedAccessType(type: Type): type is IndexedAccessType {
+    return (type.flags & TypeFlags.IndexedAccess) !== 0;
+}
+
+export function isConditionalType(type: Type): type is ConditionalType {
+    return (type.flags & TypeFlags.Conditional) !== 0;
+}
+
+export function isSubstitutionType(type: Type): type is SubstitutionType {
+    return (type.flags & TypeFlags.Substitution) !== 0;
+}
+
+export function isTemplateLiteralType(type: Type): type is TemplateLiteralType {
+    return (type.flags & TypeFlags.TemplateLiteral) !== 0;
+}
+
+export function isStringMappingType(type: Type): type is StringMappingType {
+    return (type.flags & TypeFlags.StringMapping) !== 0;
+}
+
+export function isTypeParameter(type: Type): type is TypeParameter {
+    return (type.flags & TypeFlags.TypeParameter) !== 0;
 }
 
 export class Signature {
@@ -1434,8 +1757,8 @@ export class Signature {
         this.target = data.target;
     }
 
-    async getTypeParameters(): Promise<readonly Type[]> {
-        return this.objectRegistry.fetchTypes(this, "getTypeParametersOfSignature", this.typeParameters);
+    async getTypeParameters(): Promise<readonly TypeParameter[]> {
+        return this.objectRegistry.fetchTypes(this, "getTypeParametersOfSignature", this.typeParameters) as Promise<readonly TypeParameter[]>;
     }
 
     async getParameters(): Promise<readonly Symbol[]> {

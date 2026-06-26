@@ -21,9 +21,6 @@
         "type": "git",
         "url": "https://github.com/microsoft/typescript-go.git"
     },
-    "publishConfig": {
-        "access": "public"
-    },
     "type": "module",
     "preferUnplugged": true,
     "engines": {
@@ -40,6 +37,7 @@
     },
     "exports": {
         "./package.json": "./package.json",
+        ".": "./lib/version.cjs",
         "./unstable/sync": {
             "@typescript/source": "./src/api/sync/api.ts",
             "default": "./dist/api/sync/api.js"
