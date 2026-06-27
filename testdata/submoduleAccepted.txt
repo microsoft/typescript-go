@@ -1223,6 +1223,9 @@ compiler/declarationEmitPropertyNumericStringKey.js.diff
 ## `typeof a` rest parameters and symbol references resolved to tuple/symbol types instead of typeof
 compiler/declarationEmitTypeofRest.js.diff
 
+## Isolated declarations reports implicit-undefined requirement instead of missing annotation for typed parameter initializers
+compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
+
 ## Namespace-qualified names simplified to unqualified where context allows (unqualified names are correct when already in scope; simplification reduces noise)
 ## `me.Things<me.Props>` → `Things<Props>` when namespace context makes qualification unnecessary
 compiler/defaultDeclarationEmitShadowedNamedCorrectly.js.diff
