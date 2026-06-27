@@ -629,6 +629,10 @@ conformance/ES5For-of36(target=es2015).errors.txt.diff
 conformance/ES5For-of37(target=es2015).errors.txt.diff
 conformance/forAwaitPerIterationBindingDownlevel(target=es2015).errors.txt.diff
 conformance/restParameterInDownlevelGenerator(target=es2015).errors.txt.diff
+compiler/deprecatedCompilerOptions1.errors.txt.diff
+compiler/deprecatedCompilerOptions3.errors.txt.diff
+compiler/deprecatedCompilerOptions4.errors.txt.diff
+compiler/deprecatedCompilerOptions5.errors.txt.diff
 
 ## Corsa reports errors both sides of an import circularity
 compiler/recursiveExportAssignmentAndFindAliasedType1.errors.txt.diff
