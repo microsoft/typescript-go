@@ -238,10 +238,13 @@ func (f *isolatedDeclarationsFixer) addTypeAnnotation(span core.TextRange) strin
 	}
 
 	nodeMissingType := findAncestorWithMissingType(nodeWithDiag)
-	if nodeMissingType != nil {
-		return f.fixIsolatedDeclarationError(nodeMissingType)
+	var description string
+	for _, target := range f.getMissingTypeTargets(nodeMissingType) {
+		if desc := f.fixIsolatedDeclarationError(target); desc != "" && description == "" {
+			description = desc
+		}
 	}
-	return ""
+	return description
 }
 
 func (f *isolatedDeclarationsFixer) createNamespaceForExpandoProperties(expandoFunc *ast.Node) string {
@@ -568,6 +571,51 @@ func (f *isolatedDeclarationsFixer) fixIsolatedDeclarationError(node *ast.Node) 
 	default:
 		return ""
 	}
+}
+
+func (f *isolatedDeclarationsFixer) getMissingTypeTargets(node *ast.Node) []*ast.Node {
+	if node == nil {
+		return nil
+	}
+	if f.fixedNodes[node] {
+		if ast.IsParameterDeclaration(node) {
+			return f.getMissingTypeTargets(findAncestorWithMissingType(node.Parent))
+		}
+		return nil
+	}
+	if ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) {
+		if targets := functionLikeTargetsInInitializer(node.Initializer()); len(targets) > 0 {
+			return targets
+		}
+	}
+	return []*ast.Node{node}
+}
+
+func functionLikeTargetsInInitializer(node *ast.Node) []*ast.Node {
+	var targets []*ast.Node
+	var visit func(*ast.Node)
+	visit = func(node *ast.Node) {
+		if node == nil {
+			return
+		}
+		if isValueSignatureDeclaration(node) {
+			if node.Type() == nil {
+				targets = append(targets, node)
+			}
+			return
+		}
+		if ast.IsObjectLiteralExpression(node) {
+			for _, prop := range node.AsObjectLiteralExpression().Properties.Nodes {
+				if ast.IsPropertyAssignment(prop) {
+					visit(prop.Initializer())
+				} else {
+					visit(prop)
+				}
+			}
+		}
+	}
+	visit(node)
+	return targets
 }
 
 func (f *isolatedDeclarationsFixer) addTypeToSignatureDeclaration(funcNode *ast.Node) string {

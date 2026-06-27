@@ -255,7 +255,11 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 				return NewPseudoTypeDirect(t)
 			}
 		} else {
-			return ch.typeFromExpression(candidateExpr)
+			expr := ch.typeFromExpression(candidateExpr)
+			if expr.Kind == PseudoTypeKindInferred && len(expr.AsPseudoTypeInferred().ErrorNodes) == 0 {
+				return NewPseudoTypeInferred(fn, true)
+			}
+			return expr
 		}
 	}
 	return NewPseudoTypeInferred(fn, true)
@@ -292,7 +296,7 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 	case ast.KindObjectLiteralExpression:
 		return ch.typeFromObjectLiteral(node.AsObjectLiteralExpression())
 	case ast.KindClassExpression:
-		return NewPseudoTypeInferred(node, false) // No possible annotation/directly mappable syntax
+		return NewPseudoTypeInferredWithErrors(node, false, []*ast.Node{node}) // No possible annotation/directly mappable syntax
 	case ast.KindTemplateExpression:
 		// templateLitWithHoles as const, not supported
 		if IsInConstContext(node) {
@@ -668,6 +672,9 @@ func (ch *PseudoChecker) typeFromParameterWorker(node *ast.ParameterDeclaration,
 	}
 	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.AsNode()) {
 		expr := ch.typeFromExpression(node.Initializer)
+		if expr.Kind == PseudoTypeKindInferred && len(expr.AsPseudoTypeInferred().ErrorNodes) == 0 {
+			return NewPseudoTypeNoResult(node.AsNode())
+		}
 		if !ch.strictNullChecks {
 			return expr
 		}

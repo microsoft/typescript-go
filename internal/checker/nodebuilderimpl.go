@@ -1720,8 +1720,11 @@ func (b *NodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
 }
 
 func (b *NodeBuilderImpl) serializeTypeForExpression(expr *ast.Node) *ast.Node {
-	// !!! TODO: shim, add node reuse
 	t := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
+	pt := b.pc.GetTypeOfExpression(expr)
+	if b.pseudoTypeEquivalentToType(pt, t, false, !b.ctx.suppressReportInferenceFallback) {
+		return b.pseudoTypeToNodeWithCheckerFallback(pt, t)
+	}
 	return b.typeToTypeNode(t)
 }
 
