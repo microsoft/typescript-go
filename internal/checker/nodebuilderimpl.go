@@ -2190,6 +2190,17 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	}
 
 	restoreFlags := b.saveRestoreFlags()
+	if declaration != nil && ast.GetAssignmentDeclarationKind(declaration) == ast.JSDeclarationKindProperty && declaration.Type() == nil {
+		oldSuppress := b.ctx.suppressReportInferenceFallback
+		b.ctx.suppressReportInferenceFallback = true
+		result := b.typeToTypeNode(t)
+		b.ctx.suppressReportInferenceFallback = oldSuppress
+		restoreFlags()
+		if result == nil {
+			return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+		}
+		return result
+	}
 	if t.flags&TypeFlagsUniqueESSymbol != 0 && t.symbol == symbol && (b.ctx.enclosingDeclaration == nil || core.Some(symbol.Declarations, func(d *ast.Declaration) bool {
 		return ast.GetSourceFileOfNode(d) == b.ctx.enclosingFile
 	})) {
