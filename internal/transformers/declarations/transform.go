@@ -78,6 +78,7 @@ type DeclarationTransformer struct {
 	suppressNewDiagnosticContexts    bool
 	witnessedCjsExports              collections.Set[string]
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
+	forceVisibleStatement            *ast.Node
 	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
 	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
 	seenProperties                   collections.Set[thisPropertyAssignmentKey]
@@ -403,15 +404,20 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 
 		next := tx.state.lateMarkedStatements[0]
 		tx.state.lateMarkedStatements = tx.state.lateMarkedStatements[1:]
+		original := tx.EmitContext().MostOriginal(next)
+		id := ast.GetNodeId(original)
+		if replacement, ok := tx.lateStatementReplacementMap[id]; ok && replacement != nil {
+			continue
+		}
 
 		saveNeedsDeclare := tx.needsDeclare
 		tx.needsDeclare = next.Parent != nil && ast.IsSourceFile(next.Parent)
+		tx.forceVisibleStatement = next
 
 		result := tx.transformTopLevelDeclaration(next)
 
+		tx.forceVisibleStatement = nil
 		tx.needsDeclare = saveNeedsDeclare
-		original := tx.EmitContext().MostOriginal(next)
-		id := ast.GetNodeId(original)
 		tx.lateStatementReplacementMap[id] = result
 	}
 
@@ -573,7 +579,8 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		return nil
 	}
 	if ast.IsDeclaration(input) {
-		if isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, input) {
+		forceVisible := tx.forceVisibleStatement != nil && input.Parent != nil && input.Parent.Parent == tx.forceVisibleStatement
+		if !forceVisible && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, input) {
 			return nil
 		}
 		if ast.HasDynamicName(input) {
@@ -1670,7 +1677,7 @@ func (tx *DeclarationTransformer) checkEntityNameVisibility(entityName *ast.Node
 
 // Transforms the direct child of a source file into zero or more replacement statements
 func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) *ast.Node {
-	if len(tx.state.lateMarkedStatements) > 0 {
+	if tx.forceVisibleStatement != nil && len(tx.state.lateMarkedStatements) > 0 {
 		// Remove duplicates of the current statement from the deferred work queue (this was done via orderedRemoveItem in strada - why? to ensure the same backing array? microop?)
 		tx.state.lateMarkedStatements = core.Filter(tx.state.lateMarkedStatements, func(node *ast.Node) bool { return node != input })
 	}
@@ -2172,11 +2179,13 @@ func (tx *DeclarationTransformer) walkBindingPattern(pattern *ast.BindingPattern
 }
 
 func (tx *DeclarationTransformer) transformVariableStatement(input *ast.VariableStatement) *ast.Node {
-	visible := false
-	for _, decl := range input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-		visible = getBindingNameVisible(tx.resolver, decl)
-		if visible {
-			break
+	visible := input.AsNode() == tx.forceVisibleStatement
+	if !visible {
+		for _, decl := range input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+			visible = getBindingNameVisible(tx.resolver, decl)
+			if visible {
+				break
+			}
 		}
 	}
 	if !visible {

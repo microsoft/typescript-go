@@ -3266,7 +3266,7 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 	if t.flags&TypeFlagsUniqueESSymbol != 0 {
 		if b.ctx.flags&nodebuilder.FlagsAllowUniqueESSymbolType == 0 {
-			if b.ch.IsValueSymbolAccessible(t.symbol, b.ctx.enclosingDeclaration) {
+			if b.ch.IsValueSymbolAccessible(t.symbol, b.ctx.enclosingDeclaration) || b.canEmitUniqueSymbolReference(t.symbol) {
 				b.ctx.approximateLength += 6
 				return b.symbolToTypeNode(t.symbol, ast.SymbolFlagsValue, nil)
 			}
@@ -3471,6 +3471,18 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 
 	panic("Should be unreachable.")
+}
+
+func (b *NodeBuilderImpl) canEmitUniqueSymbolReference(symbol *ast.Symbol) bool {
+	if symbol == nil || symbol.ValueDeclaration == nil || b.ctx.enclosingFile == nil {
+		return false
+	}
+	declaration := symbol.ValueDeclaration
+	if ast.GetSourceFileOfNode(declaration) != b.ctx.enclosingFile {
+		return false
+	}
+	container := ast.GetEnclosingBlockScopeContainer(declaration)
+	return ast.IsSourceFile(container) || ast.IsModuleDeclaration(container)
 }
 
 func (b *NodeBuilderImpl) newStringLiteral(text string) *ast.Node {

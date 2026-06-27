@@ -169,8 +169,37 @@ func (s *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration
 		s.classSymbolTracked = true
 		return false
 	}
+	if s.tryMarkSameFileTopLevelDeclaration(symbol, enclosingDeclaration) {
+		return false
+	}
 	issuedDiagnostic := s.handleSymbolAccessibilityError(s.resolver.IsSymbolAccessible(symbol, enclosingDeclaration, meaning /*shouldComputeAliasToMarkVisible*/, true))
 	return issuedDiagnostic
+}
+
+func (s *SymbolTrackerImpl) tryMarkSameFileTopLevelDeclaration(symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
+	if symbol == nil || symbol.ValueDeclaration == nil {
+		return false
+	}
+	declaration := symbol.ValueDeclaration
+	if !ast.IsVariableDeclaration(declaration) || ast.GetSourceFileOfNode(declaration) != s.state.currentSourceFile {
+		return false
+	}
+	container := ast.GetEnclosingBlockScopeContainer(declaration)
+	if !ast.IsSourceFile(container) && !ast.IsModuleDeclaration(container) {
+		return false
+	}
+	if declaration.Parent == nil || declaration.Parent.Parent == nil {
+		return false
+	}
+	statement := declaration.Parent.Parent
+	if !ast.IsLateVisibilityPaintedStatement(statement) {
+		return false
+	}
+	if enclosingDeclaration != nil && ast.FindAncestor(enclosingDeclaration, func(node *ast.Node) bool { return node == statement }) != nil {
+		return false
+	}
+	s.state.lateMarkedStatements = core.AppendIfUnique(s.state.lateMarkedStatements, statement)
+	return true
 }
 
 func (s *SymbolTrackerImpl) handleSymbolAccessibilityError(symbolAccessibilityResult printer.SymbolAccessibilityResult) bool {
