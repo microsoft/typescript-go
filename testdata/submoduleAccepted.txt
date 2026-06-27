@@ -398,6 +398,7 @@ compiler/declarationEmitLateBoundJSAssignments.js.diff
 compiler/declarationEmitLateBoundJSAssignments.symbols.diff
 compiler/declarationEmitLateBoundJSAssignments.types.diff
 compiler/declarationEmitMethodDeclaration.js.diff
+compiler/noImplicitThisBigThis.js.diff
 
 ## type/symbol differences of no consequence ##
 compiler/exportDefaultWithJSDoc1.types.diff
