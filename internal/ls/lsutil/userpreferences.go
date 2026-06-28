@@ -783,9 +783,9 @@ func serializeField(field reflect.Value) any {
 	case reflect.Bool:
 		return field.Bool()
 	case reflect.Int:
-		// Zero means "unset" for these preference fields (mirroring WithOverrides,
-		// which only applies non-zero overrides). Omit it so a partial config does
-		// not clobber defaults with zeros when round-tripped through withConfig.
+		// Zero means "unset" for these preference fields. Omit it so a partial
+		// config does not clobber defaults with zeros when round-tripped through
+		// withConfig.
 		i := field.Int()
 		if i == 0 {
 			return nil
@@ -824,28 +824,6 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // --- Helper methods ---
 
-// WithOverrides returns a copy of p with non-zero fields from overrides applied on top.
-// This is safe because all preference fields use types where zero = "not set":
-// Tristate (TSUnknown=0), int (0), string (""), slice (nil).
-func (p UserPreferences) WithOverrides(overrides UserPreferences) UserPreferences {
-	mergeNonZeroFields(reflect.ValueOf(&p).Elem(), reflect.ValueOf(&overrides).Elem())
-	return p
-}
-
-func mergeNonZeroFields(dst, src reflect.Value) {
-	for i := range dst.NumField() {
-		srcField := src.Field(i)
-		dstField := dst.Field(i)
-		if srcField.Kind() == reflect.Struct {
-			mergeNonZeroFields(dstField, srcField)
-			continue
-		}
-		if !srcField.IsZero() {
-			dstField.Set(srcField)
-		}
-	}
-}
-
 func (p UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
 	return modulespecifiers.UserPreferences{
 		ImportModuleSpecifierPreference:   p.ImportModuleSpecifierPreference,
@@ -875,11 +853,8 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	// Apply javascript, then typescript, then js/ts (highest precedence).
 	for _, section := range []string{"javascript", "typescript", "js/ts"} {
 		if item, ok := items[section]; ok && item != nil {
-			switch settings := item.(type) {
-			case map[string]any:
+			if settings, ok := item.(map[string]any); ok {
 				prefs = prefs.withConfig(settings)
-			case UserPreferences:
-				prefs = prefs.WithOverrides(settings)
 			}
 		}
 	}
