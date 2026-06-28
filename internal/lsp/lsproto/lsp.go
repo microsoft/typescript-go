@@ -92,14 +92,6 @@ func unmarshalPtrTo[T any](data []byte) (*T, error) {
 	return &v, nil
 }
 
-func unmarshalValue[T any](data []byte) (T, error) {
-	var v T
-	if err := json.Unmarshal(data, &v); err != nil {
-		return *new(T), fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
-	}
-	return v, nil
-}
-
 func unmarshalAny(data []byte) (any, error) {
 	var v any
 	if err := json.Unmarshal(data, &v); err != nil {
@@ -239,11 +231,11 @@ func (info RequestInfo[Params, Resp]) UnmarshalResult(result any) (Resp, error) 
 		return *new(Resp), fmt.Errorf("expected json.Value, got %T", result)
 	}
 
-	r, err := unmarshalResult(info.Method, raw)
-	if err != nil {
+	var r Resp
+	if err := json.Unmarshal(raw, &r); err != nil {
 		return *new(Resp), err
 	}
-	return r.(Resp), nil
+	return r, nil
 }
 
 func (info RequestInfo[Params, Resp]) NewRequestMessage(id *jsonrpc.ID, params Params) *RequestMessage {
