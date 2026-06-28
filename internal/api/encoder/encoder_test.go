@@ -53,63 +53,6 @@ func TestEncodeSourceFileWithUnicodeEscapes(t *testing.T) {
 	})
 }
 
-func TestEncodeSourceFilePreservesSurrogateEscapes(t *testing.T) {
-	t.Parallel()
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/test.ts",
-		Path:     "/test.ts",
-	}, `let s = "\uD83E\uDD80\uD800a\uDC00\uD7FF\uD801\uDBFF\uDFFF";`, core.ScriptKindTS)
-
-	buf, _, err := encoder.EncodeSourceFile(sourceFile)
-	assert.NilError(t, err)
-
-	text, ok := findExtendedNodeText(buf, ast.KindStringLiteral)
-	assert.Assert(t, ok)
-	assert.DeepEqual(t, text, []byte{
-		0xf0, 0x9f, 0xa6, 0x80, // \uD83E\uDD80
-		0xed, 0xa0, 0x80, // \uD800
-		'a',
-		0xed, 0xb0, 0x80, // \uDC00
-		0xed, 0x9f, 0xbf, // \uD7FF
-		0xed, 0xa0, 0x81, // \uD801
-		0xf4, 0x8f, 0xbf, 0xbf, // \uDBFF\uDFFF
-	})
-}
-
-func TestEncodeSourceFilePreservesTemplateSurrogateEscapes(t *testing.T) {
-	t.Parallel()
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/test.ts",
-		Path:     "/test.ts",
-	}, "let s = `\\uD800${1}\\uDC00`;", core.ScriptKindTS)
-
-	buf, _, err := encoder.EncodeSourceFile(sourceFile)
-	assert.NilError(t, err)
-
-	headText, ok := findExtendedNodeText(buf, ast.KindTemplateHead)
-	assert.Assert(t, ok)
-	assert.DeepEqual(t, headText, []byte{0xed, 0xa0, 0x80})
-
-	tailText, ok := findExtendedNodeText(buf, ast.KindTemplateTail)
-	assert.Assert(t, ok)
-	assert.DeepEqual(t, tailText, []byte{0xed, 0xb0, 0x80})
-}
-
-func TestEncodeSourceFileFallsBackForUnterminatedSurrogateEscape(t *testing.T) {
-	t.Parallel()
-	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName: "/test.ts",
-		Path:     "/test.ts",
-	}, `let s = "\uD800a`, core.ScriptKindTS)
-
-	buf, _, err := encoder.EncodeSourceFile(sourceFile)
-	assert.NilError(t, err)
-
-	text, ok := findExtendedNodeText(buf, ast.KindStringLiteral)
-	assert.Assert(t, ok)
-	assert.DeepEqual(t, text, []byte("\ufffda"))
-}
-
 func TestBuildNodeIndexTableMatchesEncode(t *testing.T) {
 	t.Parallel()
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
@@ -175,28 +118,6 @@ func BenchmarkBuildNodeIndexTable(b *testing.B) {
 
 func readUint32(buf []byte, offset int) uint32 {
 	return binary.LittleEndian.Uint32(buf[offset : offset+4])
-}
-
-func findExtendedNodeText(encoded []byte, kind ast.Kind) ([]byte, bool) {
-	offsetExtended := readUint32(encoded, encoder.HeaderOffsetExtendedData)
-	offsetNodes := readUint32(encoded, encoder.HeaderOffsetNodes)
-	for i := int(offsetNodes) + encoder.NodeSize; i < len(encoded); i += encoder.NodeSize {
-		if ast.Kind(readUint32(encoded, i+encoder.NodeOffsetKind)) != kind {
-			continue
-		}
-		data := readUint32(encoded, i+encoder.NodeOffsetData)
-		textIndex := readUint32(encoded, int(offsetExtended+(data&encoder.NodeDataStringIndexMask)))
-		return encodedString(encoded, textIndex), true
-	}
-	return nil, false
-}
-
-func encodedString(encoded []byte, stringIndex uint32) []byte {
-	offsetStringOffsets := readUint32(encoded, encoder.HeaderOffsetStringOffsets)
-	offsetStrings := readUint32(encoded, encoder.HeaderOffsetStringData)
-	strStart := readUint32(encoded, int(offsetStringOffsets+stringIndex*4))
-	strEnd := readUint32(encoded, int(offsetStringOffsets+stringIndex*4)+4)
-	return encoded[offsetStrings+strStart : offsetStrings+strEnd]
 }
 
 func formatEncodedSourceFile(encoded []byte) string {

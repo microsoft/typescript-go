@@ -470,7 +470,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
-	result.ContainsNonASCII = p.scanner.ContainsNonASCII()
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
@@ -569,12 +568,12 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 				p.nextToken()
 			}
 			if afterAwaitStatement < len(sourceFile.Statements.Nodes) {
-				nonAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
-				if statement.End() == nonAwaitStatement.Pos() {
+				lastAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement-1]
+				if statement.End() == lastAwaitStatement.End() {
 					// done reparsing this section
 					break
 				}
-				if statement.End() > nonAwaitStatement.Pos() {
+				if statement.End() > lastAwaitStatement.End() {
 					// we ate into the next statement, so we must continue reparsing the next span
 					i += 2
 					if i < len(p.possibleAwaitSpans) {
@@ -5247,8 +5246,14 @@ func (p *Parser) isTemplateStartOfTaggedTemplate() bool {
 
 func (p *Parser) tryParseTypeArgumentsInExpression() *ast.NodeList {
 	// TypeArguments must not be parsed in JavaScript files to avoid ambiguity with binary operators.
+	// Check the cheap preconditions before saving the parser state: unless the current token is `<`
+	// (or `<<`, which reScanLessThanToken would split), there is nothing to speculatively parse and
+	// the mark/rewind would be a no-op.
+	if p.contextFlags&ast.NodeFlagsJavaScriptFile != 0 || (p.token != ast.KindLessThanToken && p.token != ast.KindLessThanLessThanToken) {
+		return nil
+	}
 	state := p.mark()
-	if p.contextFlags&ast.NodeFlagsJavaScriptFile == 0 && p.reScanLessThanToken() == ast.KindLessThanToken {
+	if p.reScanLessThanToken() == ast.KindLessThanToken {
 		p.nextToken()
 		typeArguments := p.parseDelimitedList(PCTypeArguments, (*Parser).parseType)
 		// If it doesn't have the closing `>` then it's definitely not an type argument list.

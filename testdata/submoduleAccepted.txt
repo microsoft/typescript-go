@@ -45,6 +45,12 @@ fourslash/inlayHints/inlayHintsInteractiveFunctionParameterTypes1.baseline.diff
 
 ## regex checking ##
 
+## preserved escaped lone surrogate code units instead of U+FFFD ##
+conformance/unicodeExtendedEscapesInStrings10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInStrings11(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates11(target=es6).types.diff
+
 ## find all references ##
 fourslash/findAllReferences/isDefinitionAcrossGlobalProjects.baseline.jsonc.diff
 fourslash/findAllReferences/findAllRefsNonexistentPropertyNoCrash1.baseline.jsonc.diff
@@ -214,7 +220,6 @@ conformance/tsxReactEmit8(jsx=react-jsxdev).js.diff
 
 ## deprecated features ##
 compiler/allowJsClassThisTypeCrash.symbols.diff
-compiler/amdLikeInputDeclarationEmit.errors.txt.diff
 compiler/amdLikeInputDeclarationEmit.js.diff
 compiler/amdLikeInputDeclarationEmit.symbols.diff
 compiler/amdLikeInputDeclarationEmit.types.diff
@@ -384,7 +389,6 @@ compiler/declarationEmitExpandoWithGenericConstraint.types.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
 compiler/declarationEmitLateBoundAssignments2.js.diff
@@ -920,6 +924,13 @@ conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
 
+## JS declaration emit adds `export import` modifier for require-style import assignments
+## https://github.com/microsoft/typescript-go/issues/3542
+conformance/nodeModulesAllowJsImportAssignment(module=node16).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node18).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node20).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=nodenext).js.diff
+
 ## JS declaration emit now preserves side-effect imports, declaration order changes inconsequentially
 conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
 conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
@@ -962,12 +973,9 @@ compiler/nodeNextPackageSelfNameWithOutDirDeclDirNestedDirs.js.diff
 conformance/exportDefaultNamespace.js.diff
 conformance/jsDeclarationsClassStatic2.js.diff
 conformance/jsDeclarationsComputedNames(target=es2015).js.diff
-conformance/jsDeclarationsExportAssignedClassInstance1(target=es2015).js.diff
-conformance/jsDeclarationsExportAssignedClassInstance2(target=es2015).js.diff
 conformance/jsDeclarationsJson(target=es2015).js.diff
 conformance/jsDeclarationsPrivateFields01.js.diff
 conformance/jsDeclarationsReexportAliases(target=es2015).js.diff
-conformance/jsDeclarationsTypeReassignmentFromDeclaration.js.diff
 conformance/typedefOnStatements.js.diff
 conformance/typeTagNoErasure.js.diff
 conformance/recursiveTypeReferences2.js.diff
@@ -1060,10 +1068,6 @@ conformance/jsDeclarationsFunctionKeywordProp(target=es2015).js.diff
 conformance/jsDeclarationsFunctionKeywordPropExhaustive(target=es2015).js.diff
 conformance/nullPropertyName.js.diff
 conformance/typeFromPropertyAssignment29.js.diff
-
-## Expando function namespace removed entirely (Documented in CHANGES.md in section "Expando declarations")
-## Expando namespace with nested property assignments is completely removed from declaration emit
-compiler/expandoFunctionNestedAssigments.js.diff
 
 ## Namespace converted to type alias in declaration emit (Documented in CHANGES.md in section "JSDoc Tags and Types")
 ## `namespace Dotted { type Name = number }` → `type Dotted = number`
@@ -1250,7 +1254,6 @@ conformance/jsDeclarationsClassStaticMethodAugmentation(target=es2015).js.diff
 conformance/jsDeclarationsCrossfileMerge(target=es2015).js.diff
 conformance/jsDeclarationsDefaultsErr(target=es2015).js.diff
 conformance/jsDeclarationsFunctions.js.diff
-conformance/jsDeclarationsFunctionWithDefaultAssignedMember.js.diff
 conformance/jsDeclarationsFunctionJSDoc(target=es2015).js.diff
 conformance/jsDeclarationsClassAccessor.js.diff
 conformance/jsDeclarationsExportAssignedClassInstance3(target=es2015).js.diff
@@ -1359,7 +1362,6 @@ conformance/moduleExportsElementAccessAssignment.js.diff
 
 # CJS `module.exports = {}` now emits `export = _default` with inlined object type instead of named exports
 ## https://github.com/microsoft/typescript-go/issues/3543
-compiler/jsDeclarationEmitExportAssignedArray.js.diff
 compiler/jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.js.diff
 conformance/jsDeclarationsCommonjsRelativePath.js.diff
 conformance/jsDeclarationsDocCommentsOnConsts(target=es2015).js.diff
@@ -1392,6 +1394,15 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=node16).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
+
+# CJS class expressions emit named class declarations instead of anonymous constructor types
+## https://github.com/microsoft/typescript-go/issues/3544
+conformance/commonJSImportExportedClassExpression.js.diff
+conformance/jsDeclarationsExportAssignedClassExpression(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymous(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedVisibility(target=es2015).js.diff
 
 # @callback/@overload variadic intepreted differently than strada
 ## https://github.com/microsoft/typescript-go/issues/3556

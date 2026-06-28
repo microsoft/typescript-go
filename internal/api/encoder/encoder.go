@@ -308,6 +308,8 @@ type NodeIndexTable struct {
 	sortedIdx  []uint32 // indices into Nodes, sorted by node ID; built lazily
 }
 
+var nodeIndexTableKey = ast.NewSourceFileDataKey[*NodeIndexTable]()
+
 // GetIndex returns the encoder index for the given node.
 // On the first call the sortedIdx array is built (O(n log n) sort on a flat []uint32),
 // then subsequent calls use binary search (O(log n)). This turns out to be much faster than
@@ -386,10 +388,21 @@ func BuildNodeIndexTable(sourceFile *ast.SourceFile) *NodeIndexTable {
 	return &NodeIndexTable{Nodes: nodeTable}
 }
 
+func GetNodeIndexTable(sourceFile *ast.SourceFile) *NodeIndexTable {
+	return ast.GetOrComputeSourceFileData(sourceFile, nodeIndexTableKey, BuildNodeIndexTable)
+}
+
 // EncodeSourceFile encodes an entire source file AST into the binary format.
 // Returns the encoded bytes and a NodeIndexTable mapping encoder indices to AST nodes.
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, *NodeIndexTable, error) {
-	return encodeTree(sourceFile.AsNode(), sourceFile)
+	data, nodeTable, err := encodeTree(sourceFile.AsNode(), sourceFile)
+	if err != nil {
+		return nil, nil, err
+	}
+	nodeTable = ast.GetOrComputeSourceFileData(sourceFile, nodeIndexTableKey, func(*ast.SourceFile) *NodeIndexTable {
+		return nodeTable
+	})
+	return data, nodeTable, nil
 }
 
 // EncodeNode encodes an arbitrary AST node and its descendants into the binary format.
@@ -644,21 +657,21 @@ func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMa
 
 func recordExtendedData_TemplateHead(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	n := node.AsTemplateHead()
-	textIndex := strs.add(encodeTemplateTextForJS(n.Text, n.RawText), node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
 	rawTextIndex := strs.add(n.RawText, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, uint32(n.TemplateFlags))
 }
 
 func recordExtendedData_TemplateMiddle(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	n := node.AsTemplateMiddle()
-	textIndex := strs.add(encodeTemplateTextForJS(n.Text, n.RawText), node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
 	rawTextIndex := strs.add(n.RawText, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, uint32(n.TemplateFlags))
 }
 
 func recordExtendedData_TemplateTail(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	n := node.AsTemplateTail()
-	textIndex := strs.add(encodeTemplateTextForJS(n.Text, n.RawText), node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
 	rawTextIndex := strs.add(n.RawText, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, uint32(n.TemplateFlags))
 }
@@ -802,7 +815,7 @@ func getNodeCommonData_SyntheticExpression(_ *ast.Node) uint32 {
 
 func recordExtendedData_StringLiteral(node *ast.Node, strs *stringTable, _ *ast.PositionMap, extendedData *[]byte, _ *[]byte) {
 	n := node.AsStringLiteral()
-	textIndex := strs.add(encodeLiteralTextForJS(n.Text, node, strs), node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, uint32(n.TokenFlags))
 }
 
@@ -826,6 +839,6 @@ func recordExtendedData_RegularExpressionLiteral(node *ast.Node, strs *stringTab
 
 func recordExtendedData_NoSubstitutionTemplateLiteral(node *ast.Node, strs *stringTable, _ *ast.PositionMap, extendedData *[]byte, _ *[]byte) {
 	n := node.AsNoSubstitutionTemplateLiteral()
-	textIndex := strs.add(encodeLiteralTextForJS(n.Text, node, strs), node.Kind, node.Pos(), node.End())
+	textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
 	*extendedData = appendUint32s(*extendedData, textIndex, uint32(n.TemplateFlags))
 }

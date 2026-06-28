@@ -313,7 +313,8 @@ func getMeaningOfEntityNameReference(entityName *ast.Node) ast.SymbolFlags {
 	if entityName.Parent.Kind == ast.KindTypeQuery ||
 		entityName.Parent.Kind == ast.KindExpressionWithTypeArguments && !ast.IsPartOfTypeNode(entityName.Parent) ||
 		entityName.Parent.Kind == ast.KindComputedPropertyName ||
-		entityName.Parent.Kind == ast.KindTypePredicate && entityName.Parent.AsTypePredicateNode().ParameterName == entityName {
+		entityName.Parent.Kind == ast.KindTypePredicate && entityName.Parent.AsTypePredicateNode().ParameterName == entityName ||
+		entityName.Parent.Kind == ast.KindBinaryExpression {
 		// Typeof value
 		return ast.SymbolFlagsValue | ast.SymbolFlagsExportValue
 	}
@@ -896,6 +897,15 @@ func (r *EmitResolver) GetReferencedValueDeclarations(node *ast.IdentifierNode) 
 	return r.getReferenceResolver().GetReferencedValueDeclarations(node)
 }
 
+// IsNameResolvable returns `true` if the given `name` resolves to any symbol at `location`
+func (r *EmitResolver) IsNameResolvable(location *ast.Node, name string) bool {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	symbol := r.checker.resolveName(location, name, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+	return symbol != nil
+}
+
 func (r *EmitResolver) GetElementAccessExpressionName(expression *ast.ElementAccessExpression) string {
 	if !ast.IsParseTreeNode(expression.AsNode()) {
 		return ""
@@ -1258,4 +1268,48 @@ func (r *EmitResolver) TryJSTypeNodeToTypeNode(emitContext *printer.EmitContext,
 
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.TryJSTypeNodeToTypeNode(typeNode, enclosingDeclaration, flags, internalFlags, tracker)
+}
+
+// IsThisPropertyAssignmentDeclarationRedundant reports whether a JS `this.<name> = ...` expando
+// assignment should be omitted from declaration emit because the member it would synthesize is
+// already provided by an `extends` base type. This mirrors the skip condition in the checker's
+// serializePropertySymbol: an inherited member is redundant when it is identical to the assigned
+// one (same readonly-ness, optionality and type). Inherited accessors and methods are always
+// treated as redundant here, since accessors merge oddly with value assignments (and run via the
+// accessor at runtime), and `this`-expando props carry the ReplaceableByMethod contract, so a
+// rebind such as `this.method = this.method.bind(this)` must not override the base method.
+//
+// Only `extends` base types are considered. Members coming from `implements` clauses are not
+// inherited, so the class must redeclare them, and they are always emitted.
+func (r *EmitResolver) IsThisPropertyAssignmentDeclarationRedundant(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	s := r.checker.getSymbolOfDeclaration(node)
+	if s == nil || s.Parent == nil {
+		return false
+	}
+	parentType := r.checker.getDeclaredTypeOfSymbol(s.Parent)
+	if parentType == nil {
+		return false
+	}
+	for _, base := range r.checker.getBaseTypes(parentType) {
+		baseProp := r.checker.getPropertyOfType(base, s.Name)
+		if baseProp == nil {
+			continue
+		}
+		if baseProp.Flags&(ast.SymbolFlagsAccessor|ast.SymbolFlagsMethod|ast.SymbolFlagsFunction) != 0 {
+			return true
+		}
+		if r.checker.isReadonlySymbol(baseProp) == r.checker.isReadonlySymbol(s) &&
+			(s.Flags&ast.SymbolFlagsOptional) == (baseProp.Flags&ast.SymbolFlagsOptional) &&
+			r.checker.isTypeIdenticalTo(r.checker.getTypeOfSymbol(s), r.checker.getTypeOfSymbol(baseProp)) {
+			return true
+		}
+	}
+	return false
 }

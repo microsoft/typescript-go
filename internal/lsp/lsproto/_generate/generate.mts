@@ -1017,9 +1017,17 @@ function patchAndPreprocessModel() {
         }
 
         for (const prop of structure.properties) {
-            // Replace initializationOptions type with custom InitializationOptions
+            // Replace initializationOptions type with custom InitializationOptions.
+            // The spec types this field as LSPAny?, which includes null, so keep
+            // it nullable so a null value sent by loose clients is accepted.
             if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
-                prop.type = { kind: "reference", name: "InitializationOptions" };
+                prop.type = {
+                    kind: "or",
+                    items: [
+                        { kind: "reference", name: "InitializationOptions" },
+                        { kind: "base", name: "null" },
+                    ],
+                };
             }
 
             // Replace Data *any fields with custom typed Data fields
@@ -1714,6 +1722,11 @@ function formatDocumentation(s: string | undefined): string {
     for (let line of s.split("\n")) {
         line = line.trimEnd();
         line = line.replace(/(\w ) +/g, "$1");
+        // Some upstream docs include dangling block comment delimiters; remove them
+        // so they don't leak into generated `//` comments.
+        line = line.replace(/\s*\/\*+\s*/g, " ");
+        line = line.replace(/\s*\*+\/\s*/g, " ");
+        line = line.replace(/\s{2,}/g, " ").trimEnd();
         line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
         line = line.replace(/^@(since|proposed|deprecated)(.*)/, (_, tag, rest) => {
             lines.push("");
