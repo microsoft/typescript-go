@@ -296,6 +296,14 @@ export const generate = task({
     },
 });
 
+export const generateExtension = task({
+    name: "generate:extension",
+    description: "Generates files in the extension",
+    run: async () => {
+        await $`npm run -w _extension generateLocBundle`;
+    },
+});
+
 // ── Enum generation from Go source ──────────────────────────────
 
 /**
@@ -323,6 +331,7 @@ const enumDefs = [
     { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
 ];
 
 /**
@@ -1546,10 +1555,15 @@ async function runBuildNativePreviewPackages() {
     const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
     inputPackageJson.version = getVersion();
     delete inputPackageJson.private;
+    inputPackageJson.files = [...new Set([...(inputPackageJson.files ?? []), "NOTICE.txt"])];
     stripSourceConditions(inputPackageJson);
 
     const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
     inputPackageJson.gitHead = gitHead;
+    inputPackageJson.publishConfig = {
+        access: "public",
+        tag: "latest",
+    };
 
     const mainPackage = {
         ...inputPackageJson,
@@ -1566,7 +1580,7 @@ async function runBuildNativePreviewPackages() {
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
     await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
-    // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
+    await fs.promises.copyFile("NOTICE.txt", path.join(mainPackageDir, "NOTICE.txt"));
 
     // Build JS API and copy dist into the package.
     await $`npm run -w @typescript/native-preview build`;
@@ -1602,6 +1616,7 @@ async function runBuildNativePreviewPackages() {
         const packageJson = {
             ...inputPackageJson,
             bin: undefined,
+            files: ["lib", "NOTICE.txt"],
             imports: undefined,
             dependencies: undefined,
             name: npmPackageName,
@@ -1785,20 +1800,23 @@ async function runPackNativePreviewPackages() {
         await fs.promises.rename(filename, npmTarball);
     }));
 
-    // npm packages need to be published in reverse dep order, e.g. such that no package
-    // is published before its dependencies.
-    const publishOrder = [
-        ...platforms.map(p => p.npmTarball),
-        mainNativePreviewPackage.npmTarball,
-    ].map(p => path.basename(p));
+    // npm packages need to be published in dependency order: platform packages
+    // first, then the main package that references them as optionalDependencies.
+    const publishManifest = {
+        stages: [
+            platforms.map(p => ({
+                filename: path.basename(p.npmTarball),
+            })),
+            [
+                {
+                    filename: path.basename(mainNativePreviewPackage.npmTarball),
+                },
+            ],
+        ],
+    };
 
-    const publishManifest = publishOrder.map(pkg => ({
-        filename: pkg,
-        tag: "latest",
-    }));
-
-    const publishOrderPath = path.join(builtNpm, "publish-order.json");
-    await fs.promises.writeFile(publishOrderPath, JSON.stringify(publishManifest, undefined, 4) + "\n");
+    const publishManifestPath = path.join(builtNpm, "publish-manifest.json");
+    await fs.promises.writeFile(publishManifestPath, JSON.stringify(publishManifest, undefined, 4) + "\n");
 }
 
 export const packNativePreviewExtensions = task({

@@ -63,6 +63,7 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	CheckerPoolOptions     CheckerPoolOptions
 }
 
 type SessionInit struct {
@@ -189,12 +190,16 @@ func NewSession(init *SessionInit) *Session {
 	}
 	extendedConfigCache := NewExtendedConfigCache()
 
+	sessionLogger := init.Logger
+	if sessionLogger == nil {
+		sessionLogger = logging.NewNopLogger()
+	}
 	session := &Session{
 		backgroundCtx:       init.BackgroundCtx,
 		options:             init.Options,
 		toPath:              toPath,
 		client:              init.Client,
-		logger:              init.Logger,
+		logger:              sessionLogger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
@@ -1619,7 +1624,8 @@ func (s *Session) refreshCodeLensIfNeeded(oldPrefs lsutil.UserPreferences, newPr
 }
 
 func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
-	if oldPrefs.CustomConfigFileName != newPrefs.CustomConfigFileName {
+	if oldPrefs.CustomConfigFileName != newPrefs.CustomConfigFileName ||
+		oldPrefs.ReportStyleChecksAsWarnings != newPrefs.ReportStyleChecksAsWarnings {
 		s.ScheduleDiagnosticsRefresh()
 	}
 }

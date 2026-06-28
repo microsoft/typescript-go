@@ -159,6 +159,8 @@ func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []st
 type APISnapshotRequest struct {
 	OpenProjects  *collections.Set[string]
 	CloseProjects *collections.Set[tspath.Path]
+	OpenFiles     *collections.Set[lsproto.DocumentUri]
+	CloseFiles    *collections.Set[tspath.Path]
 }
 
 type ProjectTreeRequest struct {
@@ -327,7 +329,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		fs,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
-		s.ProjectCollection.apiOpenedProjects,
+		s.ProjectCollection.apiState,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
 		customConfigFileName,
@@ -535,6 +537,13 @@ func (s *Snapshot) Deref(session *Session) {
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			// This program is no longer referenced by any snapshot.
+			// Mark its checker pool as discarded so its idle-cleanup timer stops
+			// keeping the pool alive, allowing the pool and any idle checkers it
+			// still references to be reclaimed when the pool is garbage-collected.
+			if project.checkerPool != nil {
+				project.checkerPool.Discard()
+			}
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}

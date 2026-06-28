@@ -3,11 +3,14 @@ package fswatch
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
 	"strings"
 	"sync"
+
+	"github.com/microsoft/typescript-go/internal/nativepath"
 )
 
 var errNilCallback = errors.New("fswatch: callback must not be nil")
@@ -48,10 +51,19 @@ type Watcher interface {
 	Name() string
 	// Available reports whether this watcher works on the current OS.
 	Available() bool
+	// HasFastRecursiveBackend reports whether this watcher supports efficient
+	// recursive watching without requiring a full userspace tree walk. This is
+	// true for Windows (ReadDirectoryChangesW subtree mode) and macOS FSEvents
+	// (inherently recursive), and false for all other backends.
+	HasFastRecursiveBackend() bool
 	// WatchDirectory watches dir for changes, calling fn with batched
 	// events. By default, only direct children are watched. Use
 	// [WithRecursive] to watch the entire directory tree.
-	// dir must be an absolute path to an existing directory.
+	// dir must be an absolute path to an existing directory. If dir is a
+	// symlink or reparse point to a directory, the OS subscription follows
+	// the target directory but delivered event paths remain rooted at dir.
+	// Userspace recursive traversal does not follow symlinked descendant
+	// directories.
 	// Returns [ErrUnavailable] if the watcher is not supported on
 	// the current platform.
 	WatchDirectory(dir string, fn WatchCallback, opts ...WatchOption) (Watch, error)
@@ -214,6 +226,16 @@ func (w *watcher) String() string  { return w.name }
 func (w *watcher) Available() bool { return w.factory != nil }
 func (w *watcher) unexported()     {}
 
+// HasFastRecursiveBackend implements [Watcher.HasFastRecursiveBackend].
+func (w *watcher) HasFastRecursiveBackend() bool {
+	switch w.name {
+	case "windows", "fsevents":
+		return true
+	default:
+		return false
+	}
+}
+
 func (w *watcher) getImpl() (watcherImpl, error) {
 	w.mu.Lock()
 	if w.impl != nil {
@@ -244,7 +266,7 @@ func (w *watcher) getImpl() (watcherImpl, error) {
 	return impl, nil
 }
 
-func (w *watcher) getOrCreateDirWatch(dir string, recursive bool) *dirWatch {
+func (w *watcher) getOrCreateDirWatch(dir string, physicalDir string, recursive bool) *dirWatch {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.dirWatches == nil {
@@ -260,7 +282,7 @@ func (w *watcher) getOrCreateDirWatch(dir string, recursive bool) *dirWatch {
 	if dw, ok := w.dirWatches[key]; ok {
 		return dw
 	}
-	dw := newDirWatch(dir, w.debounce)
+	dw := newDirWatch(dir, physicalDir, w.debounce)
 	dw.recursive = recursive
 	w.dirWatches[key] = dw
 	return dw
@@ -291,13 +313,14 @@ func (w *watcher) WatchDirectory(dir string, fn WatchCallback, opts ...WatchOpti
 		return nil, errNotAbsolute
 	}
 	dir = canonicalizePath(dir)
+	physicalDir := physicalDirFor(dir)
 
 	var sopts watchOptions
 	for _, o := range opts {
 		o.applyWatchOption(&sopts)
 	}
 
-	dw := w.getOrCreateDirWatch(dir, sopts.recursive)
+	dw := w.getOrCreateDirWatch(dir, physicalDir, sopts.recursive)
 	id, _ := dw.watch(fn, sopts.ignore)
 
 	impl, err := w.getImpl()
@@ -506,9 +529,13 @@ func (e *dirWatchError) Unwrap() error { return e.err }
 // dirWatch holds per-directory state: pending events, registered callbacks,
 // and a reference to the shared debouncer. Each watched directory has one.
 type dirWatch struct {
-	dir       string
-	recursive bool
-	events    eventList
+	// dir is the caller-visible watch root used in delivered event paths.
+	dir string
+	// physicalDir is the path passed to OS watcher APIs. It differs from dir
+	// only when dir is a symlink or reparse point to a directory.
+	physicalDir string
+	recursive   bool
+	events      eventList
 
 	// state stores per-directory platform-specific bookkeeping (fsevents, windows).
 	state any
@@ -519,11 +546,78 @@ type dirWatch struct {
 	nextCBID  uint64
 }
 
-func newDirWatch(dir string, db *debounce) *dirWatch {
-	dw := &dirWatch{dir: dir}
+func newDirWatch(dir string, physicalDir string, db *debounce) *dirWatch {
+	dw := &dirWatch{dir: dir, physicalDir: physicalDir}
 	dw.debounce = db
 	dw.debounce.add(dw, func() { dw.triggerCallbacks() })
 	return dw
+}
+
+// physicalDirFor returns the physical path to watch for dir. If dir is a
+// symlink or reparse point, events are subscribed on its realpath while
+// callbacks still use dir.
+func physicalDirFor(dir string) string {
+	if !nativepath.IsSymlinkOrReparsePoint(dir) {
+		return dir
+	}
+	realpath, err := nativepath.Realpath(dir)
+	if err != nil {
+		return dir
+	}
+	if realpath == dir {
+		return dir
+	}
+	return canonicalizePath(filepath.Clean(realpath))
+}
+
+// displayPath maps a physical event path back under the caller-visible
+// watch root.
+func (dw *dirWatch) displayPath(watchPath string) string {
+	return rebasePath(watchPath, dw.physicalDir, dw.dir)
+}
+
+// physicalPath maps a caller-visible path to the physical watched root.
+func (dw *dirWatch) physicalPath(displayPath string) string {
+	return rebasePath(displayPath, dw.dir, dw.physicalDir)
+}
+
+// rebasePath replaces the from root in path with to, preserving any child
+// suffix. Prefix matches must end at a path separator so sibling paths like
+// "/foo2" are not rebased from "/foo".
+func rebasePath(path string, from string, to string) string {
+	if from == to {
+		return path
+	}
+	if path == from {
+		return to
+	}
+	if !strings.HasPrefix(path, from) {
+		return path
+	}
+	suffix := path[len(from):]
+	if len(from) > 0 && os.IsPathSeparator(from[len(from)-1]) {
+		return joinPathSuffix(to, suffix)
+	}
+	if len(suffix) == 0 || !os.IsPathSeparator(suffix[0]) {
+		return path
+	}
+	return joinPathSuffix(to, suffix)
+}
+
+func joinPathSuffix(root string, suffix string) string {
+	if suffix == "" {
+		return root
+	}
+	if os.IsPathSeparator(suffix[0]) {
+		if len(root) > 0 && os.IsPathSeparator(root[len(root)-1]) {
+			return root + suffix[1:]
+		}
+		return root + suffix
+	}
+	if len(root) > 0 && os.IsPathSeparator(root[len(root)-1]) {
+		return root + suffix
+	}
+	return root + string(filepath.Separator) + suffix
 }
 
 func (dw *dirWatch) destroyDebounce() {

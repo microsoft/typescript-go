@@ -313,7 +313,8 @@ func getMeaningOfEntityNameReference(entityName *ast.Node) ast.SymbolFlags {
 	if entityName.Parent.Kind == ast.KindTypeQuery ||
 		entityName.Parent.Kind == ast.KindExpressionWithTypeArguments && !ast.IsPartOfTypeNode(entityName.Parent) ||
 		entityName.Parent.Kind == ast.KindComputedPropertyName ||
-		entityName.Parent.Kind == ast.KindTypePredicate && entityName.Parent.AsTypePredicateNode().ParameterName == entityName {
+		entityName.Parent.Kind == ast.KindTypePredicate && entityName.Parent.AsTypePredicateNode().ParameterName == entityName ||
+		entityName.Parent.Kind == ast.KindBinaryExpression {
 		// Typeof value
 		return ast.SymbolFlagsValue | ast.SymbolFlagsExportValue
 	}
@@ -896,6 +897,15 @@ func (r *EmitResolver) GetReferencedValueDeclarations(node *ast.IdentifierNode) 
 	return r.getReferenceResolver().GetReferencedValueDeclarations(node)
 }
 
+// IsNameResolvable returns `true` if the given `name` resolves to any symbol at `location`
+func (r *EmitResolver) IsNameResolvable(location *ast.Node, name string) bool {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	symbol := r.checker.resolveName(location, name, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
+	return symbol != nil
+}
+
 func (r *EmitResolver) GetElementAccessExpressionName(expression *ast.ElementAccessExpression) string {
 	if !ast.IsParseTreeNode(expression.AsNode()) {
 		return ""
@@ -1258,4 +1268,31 @@ func (r *EmitResolver) TryJSTypeNodeToTypeNode(emitContext *printer.EmitContext,
 
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.TryJSTypeNodeToTypeNode(typeNode, enclosingDeclaration, flags, internalFlags, tracker)
+}
+
+func (r *EmitResolver) GetBaseDeclarationsForPropertyDeclaration(node *ast.Node) []*ast.Node {
+	if node == nil {
+		return nil
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	s := r.checker.getSymbolOfDeclaration(node)
+	if s == nil || s.Parent == nil {
+		return nil
+	}
+	parentType := r.checker.getDeclaredTypeOfSymbol(s.Parent)
+	if parentType == nil {
+		return nil
+	}
+	bases := r.checker.getBaseTypes(parentType)
+	for _, b := range bases {
+		baseProp := r.checker.getPropertyOfObjectType(b, s.Name)
+		if baseProp != nil {
+			return baseProp.Declarations
+			// TODO: return base declarations from all base types if any callers actually look at the list
+		}
+	}
+	return nil
 }

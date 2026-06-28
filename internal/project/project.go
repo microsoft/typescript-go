@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 
@@ -77,7 +78,7 @@ type Project struct {
 	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
 	typingsWatch      *WatchedFiles[PatternsAndIgnored]
 
-	checkerPool *CheckerPool
+	checkerPool *checkerPool
 
 	// installedTypingsInfo is the value of `project.ComputeTypingsInfo()` that was
 	// used during the most recently completed typings installation.
@@ -219,7 +220,8 @@ func (p *Project) GetProjectDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	if p.checkerPool != nil {
 		globalDiags = p.checkerPool.GetGlobalDiagnostics()
 	}
-	return compiler.SortAndDeduplicateDiagnostics(core.Concatenate(
+	return compiler.SortAndDeduplicateDiagnostics(slices.Concat(
+		p.Program.GetConfigFileParsingDiagnostics(),
 		p.Program.GetProgramDiagnostics(),
 		globalDiags,
 	))
@@ -342,15 +344,13 @@ func (p *Project) hasPotentialProjectReference(projectTreeRequest *ProjectTreeRe
 }
 
 type CreateProgramResult struct {
-	Program     *compiler.Program
-	UpdateKind  ProgramUpdateKind
-	CheckerPool *CheckerPool
+	Program    *compiler.Program
+	UpdateKind ProgramUpdateKind
 }
 
 func (p *Project) CreateProgram() CreateProgramResult {
 	updateKind := ProgramUpdateKindNewFiles
 	var programCloned bool
-	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
 	// Define a fresh CreateCheckerPool closure for this call. Each invocation of
@@ -358,19 +358,21 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	// the same project never share a captured variable through a stale closure
 	// stored in the old program's options.
 	createCheckerPool := func(program *compiler.Program) compiler.CheckerPool {
-		checkerPool = newCheckerPool(4, program, nil)
-		return checkerPool
+		return newCheckerPool(p.host.sessionOptions.CheckerPoolOptions, program, p.log)
 	}
 
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
 
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
-		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
+		var dirtyFile *ast.SourceFile
+		newProgram, dirtyFile, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
 			for _, file := range newProgram.SourceFiles() {
-				if file.Path() != p.dirtyFilePath {
+				// Use pointer identity: dirtyFile is the exact instance UpdateProgram acquired,
+				// and it is the only file whose refcount is already accounted for.
+				if file != dirtyFile {
 					// UpdateProgram acquired the changed file only, so we need to ref everything else
 					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 				}
@@ -378,11 +380,11 @@ func (p *Project) CreateProgram() CreateProgramResult {
 			for _, file := range newProgram.DuplicateSourceFiles() {
 				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
 			}
-		} else if newFile := newProgram.GetSourceFileByPath(p.dirtyFilePath); newFile != nil {
+		} else if dirtyFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
 			// reuse the old program. If it falls back to a full rebuild, release that
 			// speculative acquire so the rebuilt program is the only remaining owner.
-			p.host.builder.parseCache.Deref(NewParseCacheKey(newFile.ParseOptions(), newFile.Hash, newFile.ScriptKind))
+			p.host.builder.parseCache.Deref(NewParseCacheKey(dirtyFile.ParseOptions(), dirtyFile.Hash, dirtyFile.ScriptKind))
 		}
 	} else {
 		var typingsLocation string
@@ -407,9 +409,8 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	newProgram.BindSourceFiles()
 
 	return CreateProgramResult{
-		Program:     newProgram,
-		UpdateKind:  updateKind,
-		CheckerPool: checkerPool,
+		Program:    newProgram,
+		UpdateKind: updateKind,
 	}
 }
 
