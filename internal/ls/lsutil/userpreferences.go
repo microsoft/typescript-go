@@ -455,6 +455,48 @@ var typeSerializers = map[reflect.Type]func(any) any{
 			return "auto"
 		}
 	},
+	// These enums distinguish an unset zero value (e.g. "") from their effective
+	// default (e.g. "auto"): the parser promotes unset/unknown input to the
+	// non-zero default. Plain string serialization would therefore write "" for
+	// an unset field and the parser would read it back as the non-zero default,
+	// breaking round-tripping. Mirror the core.Tristate serializer above and omit
+	// the unset value (return nil) so it decodes back to the zero value. (Enums
+	// whose default already is their zero value, like the OrganizeImports* ones,
+	// round-trip without this.)
+	//
+	// TODO: These three are the only parsers whose fallback is a non-zero value;
+	// every other parser returns its zero value as the fallback. They should be
+	// made consistent: change the parser fallback to return the zero value and
+	// remove this serializer (relying on the default string serialization, which
+	// already omits ""). The consumer must then treat the zero value as the
+	// effective default. The two module-specifier enums are safe to convert (all
+	// read sites already treat the "" zero identically to the promoted default).
+	reflect.TypeFor[JsxAttributeCompletionStyle](): func(val any) any {
+		// TODO: make consistent with other enums (see note above). Unlike the
+		// module-specifier enums, the consumer in completions.go distinguishes
+		// JsxAttributeCompletionStyleUnknown from ...Auto, so converting this one
+		// requires updating that consumer to treat the zero value as "auto".
+		if v := val.(JsxAttributeCompletionStyle); v != JsxAttributeCompletionStyleUnknown {
+			return string(v)
+		}
+		return nil
+	},
+	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierPreference](): func(val any) any {
+		// TODO: make consistent with other enums (see note above): have the parser
+		// return the zero value (None) as its fallback and drop this serializer.
+		if v := val.(modulespecifiers.ImportModuleSpecifierPreference); v != "" {
+			return string(v)
+		}
+		return nil
+	},
+	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierEndingPreference](): func(val any) any {
+		// TODO: make consistent with other enums (see note above): have the parser
+		// return the zero value (None) as its fallback and drop this serializer.
+		if v := val.(modulespecifiers.ImportModuleSpecifierEndingPreference); v != "" {
+			return string(v)
+		}
+		return nil
+	},
 }
 
 // configPathParsers provides field-specific config value parsers that override the default
@@ -741,9 +783,21 @@ func serializeField(field reflect.Value) any {
 	case reflect.Bool:
 		return field.Bool()
 	case reflect.Int:
-		return int(field.Int())
+		// Zero means "unset" for these preference fields (mirroring WithOverrides,
+		// which only applies non-zero overrides). Omit it so a partial config does
+		// not clobber defaults with zeros when round-tripped through withConfig.
+		i := field.Int()
+		if i == 0 {
+			return nil
+		}
+		return int(i)
 	case reflect.String:
-		return field.String()
+		// Zero ("") means "unset"; omit it for the same reason as int above.
+		s := field.String()
+		if s == "" {
+			return nil
+		}
+		return s
 	case reflect.Slice:
 		if field.IsNil() {
 			return nil
