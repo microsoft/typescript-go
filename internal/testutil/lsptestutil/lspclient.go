@@ -17,51 +17,10 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-// LSPReader reads LSP messages from a channel.
-type LSPReader struct {
-	c <-chan *lsproto.Message
-}
-
-func (r *LSPReader) Read() (*lsproto.Message, error) {
-	msg, ok := <-r.c
-	if !ok {
-		return nil, io.EOF
-	}
-	return msg, nil
-}
-
-// LSPWriter writes LSP messages to a channel.
-type LSPWriter struct {
-	c chan<- *lsproto.Message
-}
-
-func (w *LSPWriter) Write(msg *lsproto.Message) error {
-	w.c <- msg
-	return nil
-}
-
-func (w *LSPWriter) Close() {
-	close(w.c)
-}
-
-var (
-	_ lsp.Reader = (*LSPReader)(nil)
-	_ lsp.Writer = (*LSPWriter)(nil)
-)
-
-// useFramedTransport selects how the test client and the server exchange
-// messages:
-//
-//   - false: messages are passed in-process as typed *lsproto.Message values
-//     over buffered channels. Fast, but message bodies are never serialized, so
-//     this does not exercise JSON (un)marshaling of params/results.
-//   - true: messages are encoded as real LSP "Content-Length"-framed JSON and
-//     streamed over byte pipes, exactly like communication with a real editor.
-//     This exercises the full marshal/unmarshal round-trip of every protocol
-//     data structure, which is what we want our test suites to cover.
-const useFramedTransport = true
-
-// clientTransport wires a test client to a server. The two directions are:
+// clientTransport wires a test client to a server using real LSP
+// "Content-Length"-framed JSON streamed over byte pipes, exactly like
+// communication with a real editor. This exercises the full marshal/unmarshal
+// round-trip of every protocol data structure. The two directions are:
 //
 //	client --(clientOut)--> serverIn --> server
 //	server --(serverOut)--> clientIn --> client
@@ -75,28 +34,15 @@ type clientTransport struct {
 }
 
 func newClientTransport() clientTransport {
-	if useFramedTransport {
-		clientToServerReader, clientToServerWriter := io.Pipe()
-		serverToClientReader, serverToClientWriter := io.Pipe()
-		return clientTransport{
-			serverIn:       lsp.ToReader(clientToServerReader),
-			serverOut:      lsp.ToWriter(serverToClientWriter),
-			clientIn:       lsp.ToReader(serverToClientReader),
-			clientOut:      lsp.ToWriter(clientToServerWriter),
-			closeClientOut: func() { _ = clientToServerWriter.Close() },
-			closeServerOut: func() { _ = serverToClientWriter.Close() },
-		}
-	}
-
-	clientToServer := make(chan *lsproto.Message, 100)
-	serverToClient := make(chan *lsproto.Message, 100)
+	clientToServerReader, clientToServerWriter := io.Pipe()
+	serverToClientReader, serverToClientWriter := io.Pipe()
 	return clientTransport{
-		serverIn:       &LSPReader{c: clientToServer},
-		serverOut:      &LSPWriter{c: serverToClient},
-		clientIn:       &LSPReader{c: serverToClient},
-		clientOut:      &LSPWriter{c: clientToServer},
-		closeClientOut: func() { close(clientToServer) },
-		closeServerOut: func() { close(serverToClient) },
+		serverIn:       lsp.ToReader(clientToServerReader),
+		serverOut:      lsp.ToWriter(serverToClientWriter),
+		clientIn:       lsp.ToReader(serverToClientReader),
+		clientOut:      lsp.ToWriter(clientToServerWriter),
+		closeClientOut: func() { _ = clientToServerWriter.Close() },
+		closeServerOut: func() { _ = serverToClientWriter.Close() },
 	}
 }
 
@@ -116,9 +62,9 @@ type LSPClient struct {
 
 	// inputWriterMu serializes writes to the server. The test goroutine (sending
 	// requests/notifications) and the MessageRouter goroutine (sending responses
-	// to server-initiated requests) both write to the same stream; with the
-	// framed transport a single message is written as multiple underlying writes
-	// (header, body, flush), so concurrent writers must not interleave.
+	// to server-initiated requests) both write to the same stream; a single
+	// message is written as multiple underlying writes (header, body, flush), so
+	// concurrent writers must not interleave.
 	inputWriterMu sync.Mutex
 
 	// OnServerRequest handles server-initiated requests (e.g., workspace/configuration).
