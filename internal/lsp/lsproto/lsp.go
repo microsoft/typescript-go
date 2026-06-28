@@ -199,10 +199,6 @@ type RequestInfo[Params, Resp any] struct {
 }
 
 func (info RequestInfo[Params, Resp]) UnmarshalResult(result any) (Resp, error) {
-	if r, ok := result.(Resp); ok {
-		return r, nil
-	}
-
 	raw, ok := result.(json.Value)
 	if !ok {
 		return *new(Resp), fmt.Errorf("expected json.Value, got %T", result)
@@ -246,21 +242,17 @@ func UnmarshalParams[T any](req *RequestMessage) (T, error) {
 	if req.Params == nil {
 		return params, nil
 	}
-	if raw, ok := req.Params.(json.Value); ok {
-		if len(raw) == 0 {
-			return params, nil
-		}
-		if err := json.Unmarshal(raw, &params); err != nil {
-			return params, fmt.Errorf("%w: %w", ErrorCodeInvalidParams, err)
-		}
+	raw, ok := req.Params.(json.Value)
+	if !ok {
+		return params, fmt.Errorf("%w: unexpected params type %T", ErrorCodeInvalidParams, req.Params)
+	}
+	if len(raw) == 0 {
 		return params, nil
 	}
-	// Params were set programmatically (e.g. in tests) rather than parsed from
-	// the wire; use them directly when they already have the expected type.
-	if typed, ok := req.Params.(T); ok {
-		return typed, nil
+	if err := json.Unmarshal(raw, &params); err != nil {
+		return params, fmt.Errorf("%w: %w", ErrorCodeInvalidParams, err)
 	}
-	return params, fmt.Errorf("%w: unexpected params type %T", ErrorCodeInvalidParams, req.Params)
+	return params, nil
 }
 
 type Null struct{}

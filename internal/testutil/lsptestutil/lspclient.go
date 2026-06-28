@@ -256,8 +256,7 @@ func SendRequest[Params, Resp any](t *testing.T, c *LSPClient, info lsproto.Requ
 	if !ok {
 		return nil, *new(Resp), false
 	}
-	// In framed transport the result arrives as a raw json.Value; UnmarshalResult
-	// decodes it into Resp (and is a no-op when it is already typed).
+	// The result arrives as a raw json.Value; decode it into Resp.
 	result, err := info.UnmarshalResult(resp.Result)
 	return resp.Message(), result, err == nil
 }
