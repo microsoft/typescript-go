@@ -2920,40 +2920,6 @@ function generateCode() {
 
     const requestsAndNotifications: (Request | Notification)[] = [...model.requests, ...model.notifications];
 
-    // Generate unmarshalParams function
-    writeLine("func unmarshalParams(method Method, data []byte) (any, error) {");
-    writeLine("\tswitch method {");
-
-    // Requests and notifications
-    for (const request of requestsAndNotifications) {
-        const methodName = methodNameIdentifier(request.method);
-
-        if (!request.params) {
-            writeLine(`\tcase Method${methodName}:`);
-            writeLine(`\t\treturn unmarshalEmpty(data)`);
-            continue;
-        }
-        if (Array.isArray(request.params)) {
-            throw new Error("Unexpected array type for request params: " + JSON.stringify(request.params));
-        }
-
-        const resolvedType = resolveType(request.params);
-
-        writeLine(`\tcase Method${methodName}:`);
-        if (resolvedType.name === "any") {
-            writeLine(`\t\treturn unmarshalAny(data)`);
-        }
-        else {
-            writeLine(`\t\treturn unmarshalPtrTo[${resolvedType.name}](data)`);
-        }
-    }
-
-    writeLine("\tdefault:");
-    writeLine(`\t\treturn unmarshalAny(data)`);
-    writeLine("\t}");
-    writeLine("}");
-    writeLine("");
-
     writeLine("// Methods");
     writeLine("const (");
     for (const request of requestsAndNotifications) {

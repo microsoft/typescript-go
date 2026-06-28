@@ -84,29 +84,6 @@ type URI string // !!!
 
 type Method string
 
-func unmarshalPtrTo[T any](data []byte) (*T, error) {
-	var v T
-	if err := json.Unmarshal(data, &v); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
-	}
-	return &v, nil
-}
-
-func unmarshalAny(data []byte) (any, error) {
-	var v any
-	if err := json.Unmarshal(data, &v); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal any: %w", err)
-	}
-	return v, nil
-}
-
-func unmarshalEmpty(data []byte) (any, error) {
-	if len(data) != 0 {
-		return nil, fmt.Errorf("expected empty, got: %s", string(data))
-	}
-	return nil, nil
-}
-
 func boolToInt(b bool) int {
 	if b {
 		return 1
@@ -256,6 +233,34 @@ func (info NotificationInfo[Params]) NewNotificationMessage(params Params) *Requ
 		Method: info.Method,
 		Params: params,
 	}
+}
+
+// UnmarshalParams decodes the params of an inbound request or notification
+// message into the requested type. Inbound messages store their params as a
+// raw [json.Value] (see [Message.UnmarshalJSON]); decoding is deferred to the
+// point of dispatch so that param types for methods the server never handles
+// are not forced into the binary. It returns the zero value when the message
+// carries no params.
+func UnmarshalParams[T any](req *RequestMessage) (T, error) {
+	var params T
+	if req.Params == nil {
+		return params, nil
+	}
+	if raw, ok := req.Params.(json.Value); ok {
+		if len(raw) == 0 {
+			return params, nil
+		}
+		if err := json.Unmarshal(raw, &params); err != nil {
+			return params, fmt.Errorf("%w: %w", ErrorCodeInvalidParams, err)
+		}
+		return params, nil
+	}
+	// Params were set programmatically (e.g. in tests) rather than parsed from
+	// the wire; use them directly when they already have the expected type.
+	if typed, ok := req.Params.(T); ok {
+		return typed, nil
+	}
+	return params, fmt.Errorf("%w: unexpected params type %T", ErrorCodeInvalidParams, req.Params)
 }
 
 type Null struct{}
