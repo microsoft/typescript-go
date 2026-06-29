@@ -574,6 +574,11 @@ func getSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName f
 	hasBest := false
 	checkedCandidates := 0
 	for candidate := range candidates {
+		checkedCandidates++
+		if maxCandidates > 0 && checkedCandidates > maxCandidates {
+			var zero T
+			return zero
+		}
 		candidateName := getName(candidate)
 		maxLen := max(len(candidateName), len(runeName))
 		minLen := min(len(candidateName), len(runeName))
@@ -585,11 +590,6 @@ func getSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName f
 			// Otherwise, don't bother, since a user would usually notice differences of a 2-character name.
 			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
-			}
-			checkedCandidates++
-			if maxCandidates > 0 && checkedCandidates > maxCandidates {
-				var zero T
-				return zero
 			}
 			distance := levenshteinWithMax(buffers, runeName, []rune(candidateName), bestDistance)
 			if distance < 0 {
