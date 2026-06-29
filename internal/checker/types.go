@@ -907,7 +907,8 @@ type UniqueESSymbolType struct {
 
 type ConstrainedType struct {
 	TypeBase
-	resolvedBaseConstraint *Type
+	immediateBaseConstraint *Type
+	resolvedBaseConstraint  *Type
 }
 
 func (t *ConstrainedType) AsConstrainedType() *ConstrainedType { return t }

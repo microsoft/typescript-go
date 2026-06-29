@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/recursiveMappedTypeDefaultConstraint.ts] ////
+
+=== recursiveMappedTypeDefaultConstraint.ts ===
+type Type = { values: string };
+>Type : Symbol(Type, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 0))
+>values : Symbol(values, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 13))
+
+type Wrapped<T extends Type> = { values: T["values"] };
+>Wrapped : Symbol(Wrapped, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 31))
+>T : Symbol(T, Decl(recursiveMappedTypeDefaultConstraint.ts, 2, 13))
+>Type : Symbol(Type, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 0))
+>values : Symbol(values, Decl(recursiveMappedTypeDefaultConstraint.ts, 2, 32))
+>T : Symbol(T, Decl(recursiveMappedTypeDefaultConstraint.ts, 2, 13))
+
+type FromObject<
+>FromObject : Symbol(FromObject, Decl(recursiveMappedTypeDefaultConstraint.ts, 2, 55))
+
+    Context extends Record<string, Type>,
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 4, 16))
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
+>Type : Symbol(Type, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 0))
+
+    Props extends Context,
+>Props : Symbol(Props, Decl(recursiveMappedTypeDefaultConstraint.ts, 5, 41))
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 4, 16))
+
+    Shape extends Record<keyof Props, Type> = {
+>Shape : Symbol(Shape, Decl(recursiveMappedTypeDefaultConstraint.ts, 6, 26))
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
+>Props : Symbol(Props, Decl(recursiveMappedTypeDefaultConstraint.ts, 5, 41))
+>Type : Symbol(Type, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 0))
+
+        [Key in keyof Props]: Wrapped<FromSchema<Context, Props[Key]>>;
+>Key : Symbol(Key, Decl(recursiveMappedTypeDefaultConstraint.ts, 8, 9))
+>Props : Symbol(Props, Decl(recursiveMappedTypeDefaultConstraint.ts, 5, 41))
+>Wrapped : Symbol(Wrapped, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 31))
+>FromSchema : Symbol(FromSchema, Decl(recursiveMappedTypeDefaultConstraint.ts, 10, 10))
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 4, 16))
+>Props : Symbol(Props, Decl(recursiveMappedTypeDefaultConstraint.ts, 5, 41))
+>Key : Symbol(Key, Decl(recursiveMappedTypeDefaultConstraint.ts, 8, 9))
+
+    },
+> = Shape;
+>Shape : Symbol(Shape, Decl(recursiveMappedTypeDefaultConstraint.ts, 6, 26))
+
+type FromSchema<Context extends Record<string, Type>, S> =
+>FromSchema : Symbol(FromSchema, Decl(recursiveMappedTypeDefaultConstraint.ts, 10, 10))
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 12, 16))
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
+>Type : Symbol(Type, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 0))
+>S : Symbol(S, Decl(recursiveMappedTypeDefaultConstraint.ts, 12, 53))
+
+    S extends Type ? FromSchema<Context, Context[keyof Context]> : never;
+>S : Symbol(S, Decl(recursiveMappedTypeDefaultConstraint.ts, 12, 53))
+>Type : Symbol(Type, Decl(recursiveMappedTypeDefaultConstraint.ts, 0, 0))
+>FromSchema : Symbol(FromSchema, Decl(recursiveMappedTypeDefaultConstraint.ts, 10, 10))
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 12, 16))
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 12, 16))
+>Context : Symbol(Context, Decl(recursiveMappedTypeDefaultConstraint.ts, 12, 16))
+
