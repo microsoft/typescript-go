@@ -360,7 +360,8 @@ func TestResolvePeerDependencyNilContentsRace(t *testing.T) {
 	close(fs.firstGate)
 	var firstResult resolutionResult
 	select {
-	case firstResult = <-results:
+	case result := <-results:
+		firstResult = result
 	case <-t.Context().Done():
 		t.Fatal("timed out waiting for first peer package.json lookup to finish")
 	}
