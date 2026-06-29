@@ -2,7 +2,6 @@ package incremental
 
 import (
 	"context"
-	"slices"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -314,7 +313,6 @@ func (h *emitFilesHandler) getDeclarationReexportSignatureSuffix(file *ast.Sourc
 	if len(reexportVersions) == 0 {
 		return ""
 	}
-	slices.Sort(reexportVersions)
 	return strings.Join(reexportVersions, "\n")
 }
 
