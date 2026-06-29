@@ -228,19 +228,34 @@ func (info NotificationInfo[Params]) NewNotificationMessage(params Params) *Requ
 // message into the requested type. Inbound messages store their params as a
 // raw [json.Value] (see [Message.UnmarshalJSON]); decoding is deferred to the
 // point of dispatch so that param types for methods the server never handles
-// are not forced into the binary. It returns the zero value when the message
-// carries no params.
+// are not forced into the binary.
+//
+// A [NoParams] method must be given no params; every other method must be given
+// params as an object or array. A violation returns [ErrorCodeInvalidParams].
 func UnmarshalParams[T any](req *RequestMessage) (T, error) {
 	var params T
-	if req.Params == nil {
+	var raw json.Value
+	if req.Params != nil {
+		v, ok := req.Params.(json.Value)
+		if !ok {
+			return params, fmt.Errorf("%w: unexpected params type %T", ErrorCodeInvalidParams, req.Params)
+		}
+		raw = v
+	}
+
+	// params is the zero value of T; this asserts on its type, i.e. whether the
+	// method was declared with NoParams.
+	if _, declaresNoParams := any(params).(NoParams); declaresNoParams {
+		if len(raw) != 0 {
+			return params, fmt.Errorf("%w: expected no params, got %s", ErrorCodeInvalidParams, raw)
+		}
 		return params, nil
 	}
-	raw, ok := req.Params.(json.Value)
-	if !ok {
-		return params, fmt.Errorf("%w: unexpected params type %T", ErrorCodeInvalidParams, req.Params)
-	}
-	if len(raw) == 0 {
-		return params, nil
+
+	// The base protocol defines params as `array | object`; reject anything else
+	// (absent, null, or a scalar).
+	if k := raw.Kind(); k != '{' && k != '[' {
+		return params, fmt.Errorf("%w: params must be an object or array", ErrorCodeInvalidParams)
 	}
 	if err := json.Unmarshal(raw, &params); err != nil {
 		return params, fmt.Errorf("%w: %w", ErrorCodeInvalidParams, err)
