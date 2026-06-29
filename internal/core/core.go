@@ -557,6 +557,14 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 //
 // @internal
 func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
+	return getSpellingSuggestion(name, candidates, getName, compare, 0 /*maxCandidates*/)
+}
+
+func GetSpellingSuggestionWithMaxCandidateCount[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int, maxCandidates int) T {
+	return getSpellingSuggestion(name, candidates, getName, compare, maxCandidates)
+}
+
+func getSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int, maxCandidates int) T {
 	runeName := []rune(name)
 	maximumLengthDifference := max(2, int(float64(len(runeName))*0.34))
 	bestDistance := math.Floor(float64(len(runeName))*0.4) + 0.9 // If the best result is worse than this, don't bother.
@@ -564,6 +572,7 @@ func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName f
 	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
 	hasBest := false
+	checkedCandidates := 0
 	for candidate := range candidates {
 		candidateName := getName(candidate)
 		maxLen := max(len(candidateName), len(runeName))
@@ -576,6 +585,11 @@ func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName f
 			// Otherwise, don't bother, since a user would usually notice differences of a 2-character name.
 			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
+			}
+			checkedCandidates++
+			if maxCandidates > 0 && checkedCandidates > maxCandidates {
+				var zero T
+				return zero
 			}
 			distance := levenshteinWithMax(buffers, runeName, []rune(candidateName), bestDistance)
 			if distance < 0 {

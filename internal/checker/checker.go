@@ -25665,6 +25665,10 @@ func (c *Checker) UnionTypes() iter.Seq[*Type] {
 }
 
 func (c *Checker) addTypesToUnion(typeSet []*Type, includes TypeFlags, types []*Type, needsSort bool) ([]*Type, TypeFlags, bool) {
+	if !needsSort && len(typeSet)+len(types) >= deferredUnionSortThreshold && (includes&TypeFlagsStringLiteral != 0 || core.Some(types, func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })) {
+		needsSort = true
+		typeSet = slices.Grow(typeSet, len(types))
+	}
 	var lastType *Type
 	for _, t := range types {
 		if t != lastType {
@@ -25708,9 +25712,8 @@ func (c *Checker) addTypeToUnion(typeSet []*Type, includes TypeFlags, t *Type, n
 				includes |= TypeFlagsIncludesNonWideningType
 			}
 		} else {
-			if needsSort || flags&TypeFlagsStringLiteral != 0 && len(typeSet) >= deferredUnionSortThreshold {
+			if needsSort {
 				typeSet = append(typeSet, t)
-				needsSort = true
 			} else if index, ok := slices.BinarySearchFunc(typeSet, t, CompareTypes); !ok {
 				typeSet = slices.Insert(typeSet, index, t)
 			}
@@ -27138,18 +27141,8 @@ func (c *Checker) getSuggestionForNonexistentIndexSignature(objectType *Type, ex
 const maxStringLiteralSuggestionCandidates = 10_000
 
 func (c *Checker) getSuggestedTypeForNonexistentStringLiteralType(source *Type, target *Type) *Type {
-	types := target.Types()
-	candidateCount := 0
-	for _, t := range types {
-		if t.flags&TypeFlagsStringLiteral != 0 {
-			candidateCount++
-			if candidateCount > maxStringLiteralSuggestionCandidates {
-				return nil
-			}
-		}
-	}
-	candidates := core.FilterSeq(types, func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
-	return core.GetSpellingSuggestion(getStringLiteralValue(source), candidates, getStringLiteralValue, CompareTypes)
+	candidates := core.FilterSeq(target.Types(), func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
+	return core.GetSpellingSuggestionWithMaxCandidateCount(getStringLiteralValue(source), candidates, getStringLiteralValue, CompareTypes, maxStringLiteralSuggestionCandidates)
 }
 
 func getIndexNodeForAccessExpression(accessNode *ast.Node) *ast.Node {
