@@ -10,13 +10,16 @@ import { TelemetryReporter } from "./telemetryReporting";
 import {
     getBuiltinExePath,
     getExe,
+    getNightlyExePath,
     getWorkspaceTsdkConfigValue,
     getWorkspaceTsdkForPrompt,
+    isNightlySelected,
     outputChannelName,
     readNativePreviewConfig,
     replacementExtensionId,
     resolveTsdkPath,
     resolveTsdkPathToExe,
+    selectNightly,
     updateWorkspaceTsdkConfig,
     useWorkspaceTsdkStorageKey,
     workspaceConfigBase,
@@ -408,20 +411,37 @@ async function updateTsdkConfig(detected: DetectedVersion): Promise<void> {
 async function promptSelectVersion(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.LogOutputChannel): Promise<void> {
     const currentExePath = client.getCurrentExe()?.path;
     const builtinExe = await getBuiltinExePath(context);
+    const nightlyExe = await getNightlyExePath();
     const workspaceVersions = await findWorkspaceNativePreviewPackages();
     const bundledVersion = context.extension.packageJSON.version as string;
     const items: VersionQuickPickItem[] = [];
 
-    // Bundled version
     items.push({
-        label: (currentExePath === builtinExe.path ? "• " : "") + vscode.l10n.t("Use Bundled Version"),
+        label: (currentExePath === builtinExe.path ? "• " : "") + vscode.l10n.t("Use Stable Bundled Version"),
         description: bundledVersion,
         detail: builtinExe.path,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
+            await selectNightly(context, false);
             outputChannel.appendLine("Switched to bundled tsgo version.");
         },
     });
+
+    if (nightlyExe) {
+        items.push({
+            label: (currentExePath === nightlyExe.path ? "• " : "") + vscode.l10n.t("Use Nightly Bundled Version"),
+            description: nightlyExe.version,
+            detail: nightlyExe.path,
+            run: async () => {
+                await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
+                await selectNightly(context, true);
+                outputChannel.appendLine(`Switched to nightly tsgo version (${nightlyExe.version}).`);
+            },
+        });
+    }
+    else if (isNightlySelected(context)) {
+        await selectNightly(context, false);
+    }
 
     // Workspace versions
     if (vscode.workspace.isTrusted) {

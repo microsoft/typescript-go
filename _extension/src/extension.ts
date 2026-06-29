@@ -9,6 +9,8 @@ import {
     getExplicitConfigTarget,
     getUseTsgo,
     getWinningTsgoConfigKey,
+    hasNativeTsdkConfigured,
+    hasTsdkConfigured,
     needsExtHostRestartOnChange,
 } from "./util";
 
@@ -55,7 +57,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
-        if (event.affectsConfiguration("typescript.experimental.useTsgo") || event.affectsConfiguration("js/ts.experimental.useTsgo")) {
+        if (
+            event.affectsConfiguration("typescript.experimental.useTsgo")
+            || event.affectsConfiguration("js/ts.experimental.useTsgo")
+            || event.affectsConfiguration("typescript.tsdk")
+            || event.affectsConfiguration("js/ts.tsdk.path")
+            || event.affectsConfiguration("typescript.native-preview.tsdk")
+        ) {
             // Debounce to coalesce rapid events when both settings are updated together.
             clearTimeout(configChangeTimeout);
             configChangeTimeout = setTimeout(async () => {
@@ -66,8 +74,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                     }
                 }
                 else {
-                    const useTsgo = getUseTsgo();
-                    if (useTsgo) {
+                    if (await shouldStartTsgo(context)) {
                         await sessionManager.restart(context);
                     }
                     else {
@@ -86,6 +93,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }
 
     const useTsgo = getUseTsgo();
+    const hasNativeTsdk = await hasNativeTsdkConfigured(context);
+    const hasTsdk = hasNativeTsdk || await hasTsdkConfigured();
 
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
@@ -118,13 +127,23 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         return;
     }
     else if (useTsgo === undefined) {
-        if (shouldOnboardTsgo) {
-            // First run after install: enable by default.
-            updateUseTsgoSetting(true);
+        if (!hasNativeTsdk) {
+            if (shouldOnboardTsgo && !hasTsdk) {
+                // First run after install: enable by default.
+                updateUseTsgoSetting(true);
+                return;
+            }
+            output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
             return;
         }
-        output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
-        return;
+    }
+
+    async function shouldStartTsgo(context: vscode.ExtensionContext): Promise<boolean> {
+        const useTsgo = getUseTsgo();
+        if (useTsgo !== undefined) {
+            return useTsgo;
+        }
+        return hasNativeTsdkConfigured(context);
     }
 
     let pluginWarningShown = false;

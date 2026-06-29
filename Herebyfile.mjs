@@ -1198,6 +1198,7 @@ function getPublishTag() {
 }
 
 const extensionDir = path.resolve("./_extension");
+const nightlyExtensionDir = path.resolve("./_extension-nightly");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 const builtSignTmp = path.resolve("./built/sign-tmp");
@@ -1441,7 +1442,7 @@ const mainNativePreviewPackage = {
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
- * @typedef {{ vscodeTarget: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
+ * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string; hasClientBundle: boolean }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
@@ -1575,19 +1576,26 @@ const getPlatforms = memoize(() => {
                 vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
             }
 
-            extensions = vscodeTargets.map(vscodeTarget => {
-                const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
-                const vsixPath = extensionDir + ".vsix";
-                const vsixManifestPath = extensionDir + ".manifest";
-                const vsixSignaturePath = extensionDir + ".signature.p7s";
-                return {
-                    vscodeTarget,
-                    extensionDir,
-                    vsixPath,
-                    vsixManifestPath,
-                    vsixSignaturePath,
-                };
-            });
+            extensions = vscodeTargets.flatMap(vscodeTarget =>
+                [
+                    { name: "typescript-vscode", sourceDir: extensionDir, hasClientBundle: true },
+                    { name: "typescript-nightly", sourceDir: nightlyExtensionDir, hasClientBundle: false },
+                ].map(({ name, sourceDir, hasClientBundle }) => {
+                    const extensionDir = path.join(builtVsix, `${name}-${vscodeTarget}`);
+                    const vsixPath = extensionDir + ".vsix";
+                    const vsixManifestPath = extensionDir + ".manifest";
+                    const vsixSignaturePath = extensionDir + ".signature.p7s";
+                    return {
+                        vscodeTarget,
+                        sourceDir,
+                        extensionDir,
+                        vsixPath,
+                        vsixManifestPath,
+                        vsixSignaturePath,
+                        hasClientBundle,
+                    };
+                })
+            );
         }
 
         return {
@@ -2085,18 +2093,20 @@ async function runPackVsixExtensions() {
 
     console.log("Version:", version);
 
-    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath, hasClientBundle }) => {
         const npmLibDir = path.join(npmDir, "lib");
         const extensionLibDir = path.join(thisExtensionDir, "lib");
         await fs.promises.mkdir(extensionLibDir, { recursive: true });
 
-        await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
+        await cpWithoutNodeModulesOrTsconfig(sourceDir, thisExtensionDir);
         await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
 
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
-        packageJson.main = "dist/extension.bundle.js";
+        if (hasClientBundle) {
+            packageJson.main = "dist/extension.bundle.js";
+        }
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
