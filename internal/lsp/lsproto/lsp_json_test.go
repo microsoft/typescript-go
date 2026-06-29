@@ -1,7 +1,7 @@
 package lsproto
 
 import (
-	"errors"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -900,46 +900,50 @@ func TestEnumStringValues(t *testing.T) {
 func TestRoundTrip(t *testing.T) {
 	t.Parallel()
 
-	roundTrip(t, "Range", &Range{
-		Start: Position{Line: 1, Character: 2},
-		End:   Position{Line: 3, Character: 4},
-	})
-	roundTrip(t, "TextEdit", &TextEdit{
-		Range:   Range{Start: Position{Line: 1, Character: 2}, End: Position{Line: 3, Character: 4}},
-		NewText: "hello",
-	})
-	roundTrip(t, "MarkupContent", &MarkupContent{Kind: MarkupKindMarkdown, Value: "**x**"})
-	roundTrip(t, "DidChangeConfigurationParams object", &DidChangeConfigurationParams{
-		Settings: map[string]any{"js/ts": map[string]any{"x": float64(1)}},
-	})
-	roundTrip(t, "DidChangeConfigurationParams null", &DidChangeConfigurationParams{Settings: nil})
-	roundTrip(t, "CompletionItem", &CompletionItem{
-		Label:            "pageXOffset",
-		Kind:             new(CompletionItemKindField),
-		SortText:         new("15"),
-		InsertTextFormat: new(InsertTextFormatPlainText),
-	})
-	// StringOrTuple union (string arm and tuple arm).
-	roundTrip(t, "ParameterInformation string label", &ParameterInformation{
-		Label: StringOrTuple{String: new("p: number")},
-	})
-	roundTrip(t, "ParameterInformation tuple label", &ParameterInformation{
-		Label: StringOrTuple{Tuple: &[2]uint32{0, 4}},
-	})
-}
+	tests := []struct {
+		name  string
+		value any
+	}{
+		{"Range", &Range{
+			Start: Position{Line: 1, Character: 2},
+			End:   Position{Line: 3, Character: 4},
+		}},
+		{"TextEdit", &TextEdit{
+			Range:   Range{Start: Position{Line: 1, Character: 2}, End: Position{Line: 3, Character: 4}},
+			NewText: "hello",
+		}},
+		{"MarkupContent", &MarkupContent{Kind: MarkupKindMarkdown, Value: "**x**"}},
+		{"DidChangeConfigurationParams object", &DidChangeConfigurationParams{
+			Settings: map[string]any{"js/ts": map[string]any{"x": float64(1)}},
+		}},
+		{"DidChangeConfigurationParams null", &DidChangeConfigurationParams{Settings: nil}},
+		{"CompletionItem", &CompletionItem{
+			Label:            "pageXOffset",
+			Kind:             new(CompletionItemKindField),
+			SortText:         new("15"),
+			InsertTextFormat: new(InsertTextFormatPlainText),
+		}},
+		// StringOrTuple union (string arm and tuple arm).
+		{"ParameterInformation string label", &ParameterInformation{
+			Label: StringOrTuple{String: new("p: number")},
+		}},
+		{"ParameterInformation tuple label", &ParameterInformation{
+			Label: StringOrTuple{Tuple: &[2]uint32{0, 4}},
+		}},
+	}
 
-func roundTrip[T any](t *testing.T, name string, v *T) {
-	t.Helper()
-	t.Run(name, func(t *testing.T) {
-		t.Parallel()
-		data, err := json.Marshal(v)
-		assert.NilError(t, err)
-		var got T
-		assert.NilError(t, json.Unmarshal(data, &got))
-		again, err := json.Marshal(&got)
-		assert.NilError(t, err)
-		assert.Equal(t, string(data), string(again), "re-marshal differs for %s", name)
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			data, err := json.Marshal(tt.value)
+			assert.NilError(t, err)
+			got := reflect.New(reflect.TypeOf(tt.value).Elem()).Interface()
+			assert.NilError(t, json.Unmarshal(data, got))
+			again, err := json.Marshal(got)
+			assert.NilError(t, err)
+			assert.Equal(t, string(data), string(again), "re-marshal differs")
+		})
+	}
 }
 
 // TestStrictnessMissingRequired confirms required fields are still enforced;
@@ -979,73 +983,54 @@ func TestStrictnessNotObject(t *testing.T) {
 func TestUnmarshalParamsRequiresParams(t *testing.T) {
 	t.Parallel()
 
-	wantInvalidParams := func(t *testing.T, err error) {
-		t.Helper()
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-		if !errors.Is(err, ErrorCodeInvalidParams) {
-			t.Fatalf("expected InvalidParams, got %v", err)
-		}
-	}
-	wantNoError := func(t *testing.T, err error) {
-		t.Helper()
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-	}
-
 	// NoParams: only truly-absent/empty params are accepted; null and any
 	// present value are rejected.
-	t.Run("NoParams/absent", func(t *testing.T) {
-		t.Parallel()
-		_, err := UnmarshalParams[NoParams](&RequestMessage{Params: nil})
-		wantNoError(t, err)
-	})
-	t.Run("NoParams/empty", func(t *testing.T) {
-		t.Parallel()
-		_, err := UnmarshalParams[NoParams](&RequestMessage{Params: json.Value(``)})
-		wantNoError(t, err)
-	})
-	t.Run("NoParams/null", func(t *testing.T) {
-		t.Parallel()
-		_, err := UnmarshalParams[NoParams](&RequestMessage{Params: json.Value(`null`)})
-		wantInvalidParams(t, err)
-	})
-	t.Run("NoParams/object", func(t *testing.T) {
-		t.Parallel()
-		_, err := UnmarshalParams[NoParams](&RequestMessage{Params: json.Value(`{}`)})
-		wantInvalidParams(t, err)
-	})
+	noParamsTests := []struct {
+		name    string
+		params  any
+		wantErr bool
+	}{
+		{"absent", nil, false},
+		{"empty", json.Value(``), false},
+		{"null", json.Value(`null`), true},
+		{"object", json.Value(`{}`), true},
+	}
+	for _, tt := range noParamsTests {
+		t.Run("NoParams/"+tt.name, func(t *testing.T) {
+			t.Parallel()
+			_, err := UnmarshalParams[NoParams](&RequestMessage{Params: tt.params})
+			if tt.wantErr {
+				assert.ErrorIs(t, err, ErrorCodeInvalidParams)
+			} else {
+				assert.NilError(t, err)
+			}
+		})
+	}
 
 	// Required-params method: only an object or array is accepted; absent,
 	// empty, null, and other scalars are rejected.
-	for _, tc := range []struct {
-		name   string
-		params any
+	typedTests := []struct {
+		name    string
+		params  any
+		wantErr bool
 	}{
-		{"absent", nil},
-		{"empty", json.Value(``)},
-		{"null", json.Value(`null`)},
-		{"number", json.Value(`5`)},
-		{"string", json.Value(`"x"`)},
-	} {
-		t.Run("typed/"+tc.name, func(t *testing.T) {
+		{"absent", nil, true},
+		{"empty", json.Value(``), true},
+		{"null", json.Value(`null`), true},
+		{"number", json.Value(`5`), true},
+		{"string", json.Value(`"x"`), true},
+		{"object", json.Value(`{"settings":{"x":1}}`), false},
+	}
+	for _, tt := range typedTests {
+		t.Run("typed/"+tt.name, func(t *testing.T) {
 			t.Parallel()
-			_, err := UnmarshalParams[*InitializeParams](&RequestMessage{Params: tc.params})
-			wantInvalidParams(t, err)
+			got, err := UnmarshalParams[*DidChangeConfigurationParams](&RequestMessage{Params: tt.params})
+			if tt.wantErr {
+				assert.ErrorIs(t, err, ErrorCodeInvalidParams)
+			} else {
+				assert.NilError(t, err)
+				assert.Assert(t, got != nil && got.Settings != nil)
+			}
 		})
 	}
-
-	// A real params object decodes.
-	t.Run("typed/present decodes", func(t *testing.T) {
-		t.Parallel()
-		got, err := UnmarshalParams[*DidChangeConfigurationParams](&RequestMessage{
-			Params: json.Value(`{"settings":{"x":1}}`),
-		})
-		wantNoError(t, err)
-		if got == nil || got.Settings == nil {
-			t.Fatalf("params not decoded: %#v", got)
-		}
-	})
 }

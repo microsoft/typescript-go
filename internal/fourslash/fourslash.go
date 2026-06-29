@@ -5490,19 +5490,22 @@ func (f *FourslashTest) VerifyBaselineDocumentSymbol(t *testing.T) {
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentDocumentSymbolInfo, params)
 	uri := lsconv.FileNameToDocumentURI(f.activeFilename)
-	spansToSymbol := make(map[documentSpan]*lsproto.DocumentSymbol)
-	seen := make(map[documentSpanKey]struct{})
+	symbolBySpan := make(map[documentSpanKey]*lsproto.DocumentSymbol)
 	if result.DocumentSymbols != nil {
 		for _, symbol := range *result.DocumentSymbols {
-			collectDocumentSymbolSpans(uri, symbol, spansToSymbol, seen)
+			collectDocumentSymbolSpans(uri, symbol, symbolBySpan)
 		}
+	}
+	spans := make([]documentSpan, 0, len(symbolBySpan))
+	for key, symbol := range symbolBySpan {
+		spans = append(spans, documentSpan{uri: key.uri, textSpan: key.textSpan, contextSpan: &symbol.Range})
 	}
 	f.addResultToBaseline(
 		t,
 		documentSymbolsCmd,
-		f.getBaselineForSpansWithFileContents(slices.Collect(maps.Keys(spansToSymbol)), baselineFourslashLocationsOptions{
+		f.getBaselineForSpansWithFileContents(spans, baselineFourslashLocationsOptions{
 			getLocationData: func(span documentSpan) string {
-				symbol := spansToSymbol[span]
+				symbol := symbolBySpan[documentSpanKey{uri: span.uri, textSpan: span.textSpan, contextSpan: *span.contextSpan}]
 				return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbol.Kind.String())
 			},
 		}),
@@ -5527,31 +5530,25 @@ func writeDocumentSymbolDetails(symbols []*lsproto.DocumentSymbol, indent int, b
 func collectDocumentSymbolSpans(
 	uri lsproto.DocumentUri,
 	symbol *lsproto.DocumentSymbol,
-	spansToSymbol map[documentSpan]*lsproto.DocumentSymbol,
-	seen map[documentSpanKey]struct{},
+	symbolBySpan map[documentSpanKey]*lsproto.DocumentSymbol,
 ) {
-	// Dedup by value rather than by the documentSpan key, which holds a pointer to
+	// Deduplicate by value rather than by the documentSpan key, which holds a pointer to
 	// the symbol's Range. The same logical symbol can be reached more than once
 	// (e.g. a merged declaration), and depending on transport those occurrences may
 	// be the same object (shared *Range) or independent copies (distinct *Range
 	// after a JSON round-trip). A value-based key collapses them consistently.
 	key := documentSpanKey{uri: uri, textSpan: symbol.SelectionRange, contextSpan: symbol.Range}
-	if _, ok := seen[key]; !ok {
-		seen[key] = struct{}{}
-		spansToSymbol[documentSpan{
-			uri:         uri,
-			textSpan:    symbol.SelectionRange,
-			contextSpan: &symbol.Range,
-		}] = symbol
+	if _, ok := symbolBySpan[key]; !ok {
+		symbolBySpan[key] = symbol
 	}
 	if symbol.Children != nil {
 		for _, child := range *symbol.Children {
-			collectDocumentSymbolSpans(uri, child, spansToSymbol, seen)
+			collectDocumentSymbolSpans(uri, child, symbolBySpan)
 		}
 	}
 }
 
-// documentSpanKey is a value-comparable variant of documentSpan used to dedup
+// documentSpanKey is a value-comparable variant of documentSpan used to deduplicate
 // document symbols regardless of pointer identity.
 type documentSpanKey struct {
 	uri         lsproto.DocumentUri
