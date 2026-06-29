@@ -2296,7 +2296,17 @@ function generateCode() {
                 const useOmitzero = prop.optional || prop.omitzeroValue;
                 const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
 
-                writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
+                // Strictness markers for the shared unmarshalStruct interpreter:
+                // required = must be present. A nilable field (pointer/slice/map,
+                // not omitzero) rejects an explicit JSON null by default; mark the
+                // rare spec-nullable ones with `nullable` so the interpreter allows it.
+                const required = !prop.optional && !prop.omitzeroValue;
+                const nilable = prop.optional || type.needsPointer || type.name.startsWith("[]") || type.name.startsWith("map[") || !!prop.omitzeroValue;
+                const nullable = nilable && (typeCanBeNull(prop.type) || !!prop.omitzeroValue);
+                const lspMarkers = [required ? "required" : "", nullable ? "nullable" : ""].filter(Boolean).join(",");
+                const lspTag = lspMarkers ? ` lsp:"${lspMarkers}"` : "";
+
+                writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"${lspTag}\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -2372,82 +2382,8 @@ function generateCode() {
         if ((requiredProps.length > 0 || hasNullRejectableFields) && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
-
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
-            if (requiredProps.length > 0) {
-                writeLine(`\tconst (`);
-                for (let i = 0; i < requiredProps.length; i++) {
-                    const prop = requiredProps[i];
-                    const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
-                    writeLine(`\t\tmissing${goFieldName(prop)}${iotaPrefix}`);
-                }
-                writeLine(`\t\t_missingLast`);
-                writeLine(`\t)`);
-                writeLine(`\tmissing := _missingLast - 1`);
-                writeLine("");
-            }
-
-            writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
-            writeLine(`\t\treturn errNotObject(k)`);
-            writeLine(`\t}`);
-            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
-            writeLine(`\t\treturn err`);
-            writeLine(`\t}`);
-            writeLine("");
-
-            writeLine(`\tfor dec.PeekKind() != '}' {`);
-            writeLine(`\t\tname, err := dec.ReadValue()`);
-            writeLine(`\t\tif err != nil {`);
-            writeLine(`\t\t\treturn err`);
-            writeLine(`\t\t}`);
-            writeLine(`\t\tswitch string(name) {`);
-
-            for (const prop of structure.properties) {
-                writeLine(`\t\tcase \`"${prop.name}"\`:`);
-                if (!prop.optional && !prop.omitzeroValue) {
-                    writeLine(`\t\t\tmissing &^= missing${goFieldName(prop)}`);
-                }
-                // Reject null for fields whose types cannot represent null but whose Go types
-                // silently accept it (pointers, slices, maps).
-                const resolvedType = resolveType(prop.type);
-                const goTypeAcceptsNull = (prop.optional || resolvedType.needsPointer || resolvedType.name.startsWith("[]") || resolvedType.name.startsWith("map[")) && !prop.omitzeroValue;
-                if (goTypeAcceptsNull && !typeCanBeNull(prop.type)) {
-                    writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
-                    writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
-                    writeLine(`\t\t\t}`);
-                }
-                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${goFieldName(prop)}); err != nil {`);
-                writeLine(`\t\t\t\treturn err`);
-                writeLine(`\t\t\t}`);
-            }
-
-            writeLine(`\t\tdefault:`);
-            writeLine(`\t\t\tif err := dec.SkipValue(); err != nil {`);
-            writeLine(`\t\t\t\treturn err`);
-            writeLine(`\t\t\t}`);
-            writeLine(`\t\t}`);
-            writeLine(`\t}`);
-            writeLine("");
-
-            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
-            writeLine(`\t\treturn err`);
-            writeLine(`\t}`);
-            writeLine("");
-
-            if (requiredProps.length > 0) {
-                writeLine(`\tif missing != 0 {`);
-                writeLine(`\t\tvar missingProps []string`);
-                for (const prop of requiredProps) {
-                    writeLine(`\t\tif missing&missing${goFieldName(prop)} != 0 {`);
-                    writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
-                    writeLine(`\t\t}`);
-                }
-                writeLine(`\t\treturn errMissing(missingProps)`);
-                writeLine(`\t}`);
-                writeLine("");
-            }
-
-            writeLine(`\treturn nil`);
+            writeLine(`\treturn unmarshalStruct(s, dec)`);
             writeLine(`}`);
             writeLine("");
         }
