@@ -8,6 +8,7 @@ import { ProjectStatus } from "./projectStatus";
 import { setupStatusBar } from "./statusBar";
 import { TelemetryReporter } from "./telemetryReporting";
 import {
+    enableNightlyExtensionVersion,
     getBuiltinExePath,
     getExe,
     getNightlyExePath,
@@ -411,7 +412,7 @@ async function updateTsdkConfig(detected: DetectedVersion): Promise<void> {
 async function promptSelectVersion(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.LogOutputChannel): Promise<void> {
     const currentExePath = client.getCurrentExe()?.path;
     const builtinExe = await getBuiltinExePath(context);
-    const nightlyExe = await getNightlyExePath();
+    const nightlyExe = enableNightlyExtensionVersion ? await getNightlyExePath() : undefined;
     const workspaceVersions = await findWorkspaceNativePreviewPackages();
     const bundledVersion = context.extension.packageJSON.version as string;
     const items: VersionQuickPickItem[] = [];

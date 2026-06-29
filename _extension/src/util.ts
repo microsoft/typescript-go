@@ -7,6 +7,7 @@ export const outputChannelName = "TypeScript 7 Native Preview";
 export const languageClientName = "TypeScript 7 Native Preview Language Server";
 export const replacementExtensionId = "TypeScriptTeam.vscode-typescript";
 export const nightlyExtensionId = "TypeScriptTeam.native-preview";
+export const enableNightlyExtensionVersion = false;
 
 export const jsTsLanguageModes = [
     "typescript",
@@ -90,11 +91,13 @@ export async function selectNightly(context: vscode.ExtensionContext, selected: 
 }
 
 async function getSelectedBundledExePath(context: vscode.ExtensionContext): Promise<ExeInfo> {
-    if (isNightlySelected(context)) {
+    if (enableNightlyExtensionVersion && isNightlySelected(context)) {
         const nightlyExe = await getNightlyExePath();
         if (nightlyExe) {
             return nightlyExe;
         }
+    }
+    if (isNightlySelected(context)) {
         await selectNightly(context, false);
     }
     return getBuiltinExePath(context);
