@@ -11618,15 +11618,7 @@ type IntegerOrString struct {
 var _ json.MarshalerTo = (*IntegerOrString)(nil)
 
 func (o *IntegerOrString) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of IntegerOrString should be set", boolToInt(o.Integer != nil)+boolToInt(o.String != nil))
-
-	if o.Integer != nil {
-		return json.MarshalEncode(enc, o.Integer)
-	}
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "IntegerOrString", false)
 }
 
 var _ json.UnmarshalerFrom = (*IntegerOrString)(nil)
@@ -11653,10 +11645,7 @@ type DocumentSelectorOrNull struct {
 var _ json.MarshalerTo = (*DocumentSelectorOrNull)(nil)
 
 func (o *DocumentSelectorOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.DocumentSelector != nil {
-		return json.MarshalEncode(enc, o.DocumentSelector)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "DocumentSelectorOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*DocumentSelectorOrNull)(nil)
@@ -11684,15 +11673,7 @@ type BooleanOrEmptyObject struct {
 var _ json.MarshalerTo = (*BooleanOrEmptyObject)(nil)
 
 func (o *BooleanOrEmptyObject) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrEmptyObject should be set", boolToInt(o.Boolean != nil)+boolToInt(o.EmptyObject != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.EmptyObject != nil {
-		return json.MarshalEncode(enc, o.EmptyObject)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrEmptyObject", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrEmptyObject)(nil)
@@ -11721,15 +11702,7 @@ type BooleanOrSemanticTokensFullDelta struct {
 var _ json.MarshalerTo = (*BooleanOrSemanticTokensFullDelta)(nil)
 
 func (o *BooleanOrSemanticTokensFullDelta) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrSemanticTokensFullDelta should be set", boolToInt(o.Boolean != nil)+boolToInt(o.SemanticTokensFullDelta != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.SemanticTokensFullDelta != nil {
-		return json.MarshalEncode(enc, o.SemanticTokensFullDelta)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrSemanticTokensFullDelta", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrSemanticTokensFullDelta)(nil)
@@ -11760,24 +11733,7 @@ type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
 var _ json.MarshalerTo = (*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile)(nil)
 
 func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile should be set", boolToInt(o.TextDocumentEdit != nil)+
-		boolToInt(o.CreateFile != nil)+
-		boolToInt(o.RenameFile != nil)+
-		boolToInt(o.DeleteFile != nil))
-
-	if o.TextDocumentEdit != nil {
-		return json.MarshalEncode(enc, o.TextDocumentEdit)
-	}
-	if o.CreateFile != nil {
-		return json.MarshalEncode(enc, o.CreateFile)
-	}
-	if o.RenameFile != nil {
-		return json.MarshalEncode(enc, o.RenameFile)
-	}
-	if o.DeleteFile != nil {
-		return json.MarshalEncode(enc, o.DeleteFile)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile)(nil)
@@ -11813,15 +11769,7 @@ type StringOrInlayHintLabelParts struct {
 var _ json.MarshalerTo = (*StringOrInlayHintLabelParts)(nil)
 
 func (o *StringOrInlayHintLabelParts) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrInlayHintLabelParts should be set", boolToInt(o.String != nil)+boolToInt(o.InlayHintLabelParts != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.InlayHintLabelParts != nil {
-		return json.MarshalEncode(enc, o.InlayHintLabelParts)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrInlayHintLabelParts", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrInlayHintLabelParts)(nil)
@@ -11849,15 +11797,7 @@ type StringOrMarkupContent struct {
 var _ json.MarshalerTo = (*StringOrMarkupContent)(nil)
 
 func (o *StringOrMarkupContent) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrMarkupContent should be set", boolToInt(o.String != nil)+boolToInt(o.MarkupContent != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.MarkupContent != nil {
-		return json.MarshalEncode(enc, o.MarkupContent)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrMarkupContent", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrMarkupContent)(nil)
@@ -11885,15 +11825,7 @@ type WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport st
 var _ json.MarshalerTo = (*WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
 func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", boolToInt(o.FullDocumentDiagnosticReport != nil)+boolToInt(o.UnchangedDocumentDiagnosticReport != nil))
-
-	if o.FullDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, o.FullDocumentDiagnosticReport)
-	}
-	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, o.UnchangedDocumentDiagnosticReport)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", false)
 }
 
 var _ json.UnmarshalerFrom = (*WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
@@ -11924,15 +11856,7 @@ type StringOrStringValue struct {
 var _ json.MarshalerTo = (*StringOrStringValue)(nil)
 
 func (o *StringOrStringValue) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrStringValue should be set", boolToInt(o.String != nil)+boolToInt(o.StringValue != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.StringValue != nil {
-		return json.MarshalEncode(enc, o.StringValue)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrStringValue", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrStringValue)(nil)
@@ -11959,10 +11883,7 @@ type IntegerOrNull struct {
 var _ json.MarshalerTo = (*IntegerOrNull)(nil)
 
 func (o *IntegerOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.Integer != nil {
-		return json.MarshalEncode(enc, o.Integer)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "IntegerOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*IntegerOrNull)(nil)
@@ -11989,10 +11910,7 @@ type StringOrNull struct {
 var _ json.MarshalerTo = (*StringOrNull)(nil)
 
 func (o *StringOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "StringOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrNull)(nil)
@@ -12019,10 +11937,7 @@ type DocumentUriOrNull struct {
 var _ json.MarshalerTo = (*DocumentUriOrNull)(nil)
 
 func (o *DocumentUriOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.DocumentUri != nil {
-		return json.MarshalEncode(enc, o.DocumentUri)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "DocumentUriOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*DocumentUriOrNull)(nil)
@@ -12049,10 +11964,7 @@ type InitializationOptionsOrNull struct {
 var _ json.MarshalerTo = (*InitializationOptionsOrNull)(nil)
 
 func (o *InitializationOptionsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.InitializationOptions != nil {
-		return json.MarshalEncode(enc, o.InitializationOptions)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "InitializationOptionsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptionsOrNull)(nil)
@@ -12079,10 +11991,7 @@ type WorkspaceFoldersOrNull struct {
 var _ json.MarshalerTo = (*WorkspaceFoldersOrNull)(nil)
 
 func (o *WorkspaceFoldersOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.WorkspaceFolders != nil {
-		return json.MarshalEncode(enc, o.WorkspaceFolders)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "WorkspaceFoldersOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*WorkspaceFoldersOrNull)(nil)
@@ -12110,15 +12019,7 @@ type StringOrStrings struct {
 var _ json.MarshalerTo = (*StringOrStrings)(nil)
 
 func (o *StringOrStrings) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrStrings should be set", boolToInt(o.String != nil)+boolToInt(o.Strings != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.Strings != nil {
-		return json.MarshalEncode(enc, o.Strings)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrStrings", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrStrings)(nil)
@@ -12146,15 +12047,7 @@ type TextDocumentContentChangePartialOrWholeDocument struct {
 var _ json.MarshalerTo = (*TextDocumentContentChangePartialOrWholeDocument)(nil)
 
 func (o *TextDocumentContentChangePartialOrWholeDocument) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentContentChangePartialOrWholeDocument should be set", boolToInt(o.Partial != nil)+boolToInt(o.WholeDocument != nil))
-
-	if o.Partial != nil {
-		return json.MarshalEncode(enc, o.Partial)
-	}
-	if o.WholeDocument != nil {
-		return json.MarshalEncode(enc, o.WholeDocument)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextDocumentContentChangePartialOrWholeDocument", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextDocumentContentChangePartialOrWholeDocument)(nil)
@@ -12184,15 +12077,7 @@ type TextEditOrInsertReplaceEdit struct {
 var _ json.MarshalerTo = (*TextEditOrInsertReplaceEdit)(nil)
 
 func (o *TextEditOrInsertReplaceEdit) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextEditOrInsertReplaceEdit should be set", boolToInt(o.TextEdit != nil)+boolToInt(o.InsertReplaceEdit != nil))
-
-	if o.TextEdit != nil {
-		return json.MarshalEncode(enc, o.TextEdit)
-	}
-	if o.InsertReplaceEdit != nil {
-		return json.MarshalEncode(enc, o.InsertReplaceEdit)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextEditOrInsertReplaceEdit", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextEditOrInsertReplaceEdit)(nil)
@@ -12225,24 +12110,7 @@ type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
 var _ json.MarshalerTo = (*MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings)(nil)
 
 func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings should be set", boolToInt(o.MarkupContent != nil)+
-		boolToInt(o.String != nil)+
-		boolToInt(o.MarkedStringWithLanguage != nil)+
-		boolToInt(o.MarkedStrings != nil))
-
-	if o.MarkupContent != nil {
-		return json.MarshalEncode(enc, o.MarkupContent)
-	}
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.MarkedStringWithLanguage != nil {
-		return json.MarshalEncode(enc, o.MarkedStringWithLanguage)
-	}
-	if o.MarkedStrings != nil {
-		return json.MarshalEncode(enc, o.MarkedStrings)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings", false)
 }
 
 var _ json.UnmarshalerFrom = (*MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings)(nil)
@@ -12283,10 +12151,7 @@ type UintegerOrNull struct {
 var _ json.MarshalerTo = (*UintegerOrNull)(nil)
 
 func (o *UintegerOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.Uinteger != nil {
-		return json.MarshalEncode(enc, o.Uinteger)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "UintegerOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*UintegerOrNull)(nil)
@@ -12314,15 +12179,7 @@ type LocationOrLocationUriOnly struct {
 var _ json.MarshalerTo = (*LocationOrLocationUriOnly)(nil)
 
 func (o *LocationOrLocationUriOnly) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of LocationOrLocationUriOnly should be set", boolToInt(o.Location != nil)+boolToInt(o.LocationUriOnly != nil))
-
-	if o.Location != nil {
-		return json.MarshalEncode(enc, o.Location)
-	}
-	if o.LocationUriOnly != nil {
-		return json.MarshalEncode(enc, o.LocationUriOnly)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "LocationOrLocationUriOnly", false)
 }
 
 var _ json.UnmarshalerFrom = (*LocationOrLocationUriOnly)(nil)
@@ -12353,18 +12210,7 @@ type WorkDoneProgressBeginOrReportOrEnd struct {
 var _ json.MarshalerTo = (*WorkDoneProgressBeginOrReportOrEnd)(nil)
 
 func (o *WorkDoneProgressBeginOrReportOrEnd) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of WorkDoneProgressBeginOrReportOrEnd should be set", boolToInt(o.Begin != nil)+boolToInt(o.Report != nil)+boolToInt(o.End != nil))
-
-	if o.Begin != nil {
-		return json.MarshalEncode(enc, o.Begin)
-	}
-	if o.Report != nil {
-		return json.MarshalEncode(enc, o.Report)
-	}
-	if o.End != nil {
-		return json.MarshalEncode(enc, o.End)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "WorkDoneProgressBeginOrReportOrEnd", false)
 }
 
 var _ json.UnmarshalerFrom = (*WorkDoneProgressBeginOrReportOrEnd)(nil)
@@ -12399,18 +12245,7 @@ type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
 var _ json.MarshalerTo = (*TextEditOrAnnotatedTextEditOrSnippetTextEdit)(nil)
 
 func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextEditOrAnnotatedTextEditOrSnippetTextEdit should be set", boolToInt(o.TextEdit != nil)+boolToInt(o.AnnotatedTextEdit != nil)+boolToInt(o.SnippetTextEdit != nil))
-
-	if o.TextEdit != nil {
-		return json.MarshalEncode(enc, o.TextEdit)
-	}
-	if o.AnnotatedTextEdit != nil {
-		return json.MarshalEncode(enc, o.AnnotatedTextEdit)
-	}
-	if o.SnippetTextEdit != nil {
-		return json.MarshalEncode(enc, o.SnippetTextEdit)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextEditOrAnnotatedTextEditOrSnippetTextEdit", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextEditOrAnnotatedTextEditOrSnippetTextEdit)(nil)
@@ -12443,15 +12278,7 @@ type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
 var _ json.MarshalerTo = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
 func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", boolToInt(o.FullDocumentDiagnosticReport != nil)+boolToInt(o.UnchangedDocumentDiagnosticReport != nil))
-
-	if o.FullDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, o.FullDocumentDiagnosticReport)
-	}
-	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, o.UnchangedDocumentDiagnosticReport)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", false)
 }
 
 var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
@@ -12482,15 +12309,7 @@ type TextDocumentSyncOptionsOrKind struct {
 var _ json.MarshalerTo = (*TextDocumentSyncOptionsOrKind)(nil)
 
 func (o *TextDocumentSyncOptionsOrKind) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentSyncOptionsOrKind should be set", boolToInt(o.Options != nil)+boolToInt(o.Kind != nil))
-
-	if o.Options != nil {
-		return json.MarshalEncode(enc, o.Options)
-	}
-	if o.Kind != nil {
-		return json.MarshalEncode(enc, o.Kind)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextDocumentSyncOptionsOrKind", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextDocumentSyncOptionsOrKind)(nil)
@@ -12518,15 +12337,7 @@ type BooleanOrHoverOptions struct {
 var _ json.MarshalerTo = (*BooleanOrHoverOptions)(nil)
 
 func (o *BooleanOrHoverOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrHoverOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.HoverOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.HoverOptions != nil {
-		return json.MarshalEncode(enc, o.HoverOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrHoverOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrHoverOptions)(nil)
@@ -12556,18 +12367,7 @@ type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions)(nil)
 
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DeclarationOptions != nil)+boolToInt(o.DeclarationRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DeclarationOptions != nil {
-		return json.MarshalEncode(enc, o.DeclarationOptions)
-	}
-	if o.DeclarationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DeclarationRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions)(nil)
@@ -12606,15 +12406,7 @@ type BooleanOrDefinitionOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDefinitionOptions)(nil)
 
 func (o *BooleanOrDefinitionOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDefinitionOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DefinitionOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DefinitionOptions != nil {
-		return json.MarshalEncode(enc, o.DefinitionOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDefinitionOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDefinitionOptions)(nil)
@@ -12644,18 +12436,7 @@ type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions)(nil)
 
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.TypeDefinitionOptions != nil)+boolToInt(o.TypeDefinitionRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.TypeDefinitionOptions != nil {
-		return json.MarshalEncode(enc, o.TypeDefinitionOptions)
-	}
-	if o.TypeDefinitionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TypeDefinitionRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions)(nil)
@@ -12695,18 +12476,7 @@ type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrImplementationOptionsOrImplementationRegistrationOptions)(nil)
 
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrImplementationOptionsOrImplementationRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.ImplementationOptions != nil)+boolToInt(o.ImplementationRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.ImplementationOptions != nil {
-		return json.MarshalEncode(enc, o.ImplementationOptions)
-	}
-	if o.ImplementationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.ImplementationRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrImplementationOptionsOrImplementationRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrImplementationOptionsOrImplementationRegistrationOptions)(nil)
@@ -12745,15 +12515,7 @@ type BooleanOrReferenceOptions struct {
 var _ json.MarshalerTo = (*BooleanOrReferenceOptions)(nil)
 
 func (o *BooleanOrReferenceOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrReferenceOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.ReferenceOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.ReferenceOptions != nil {
-		return json.MarshalEncode(enc, o.ReferenceOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrReferenceOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrReferenceOptions)(nil)
@@ -12782,15 +12544,7 @@ type BooleanOrDocumentHighlightOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDocumentHighlightOptions)(nil)
 
 func (o *BooleanOrDocumentHighlightOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDocumentHighlightOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DocumentHighlightOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DocumentHighlightOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentHighlightOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDocumentHighlightOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDocumentHighlightOptions)(nil)
@@ -12819,15 +12573,7 @@ type BooleanOrDocumentSymbolOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDocumentSymbolOptions)(nil)
 
 func (o *BooleanOrDocumentSymbolOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDocumentSymbolOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DocumentSymbolOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DocumentSymbolOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentSymbolOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDocumentSymbolOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDocumentSymbolOptions)(nil)
@@ -12856,15 +12602,7 @@ type BooleanOrCodeActionOptions struct {
 var _ json.MarshalerTo = (*BooleanOrCodeActionOptions)(nil)
 
 func (o *BooleanOrCodeActionOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrCodeActionOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.CodeActionOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.CodeActionOptions != nil {
-		return json.MarshalEncode(enc, o.CodeActionOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrCodeActionOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrCodeActionOptions)(nil)
@@ -12894,18 +12632,7 @@ type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions)(nil)
 
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DocumentColorOptions != nil)+boolToInt(o.DocumentColorRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DocumentColorOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentColorOptions)
-	}
-	if o.DocumentColorRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentColorRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions)(nil)
@@ -12944,15 +12671,7 @@ type BooleanOrWorkspaceSymbolOptions struct {
 var _ json.MarshalerTo = (*BooleanOrWorkspaceSymbolOptions)(nil)
 
 func (o *BooleanOrWorkspaceSymbolOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrWorkspaceSymbolOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.WorkspaceSymbolOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.WorkspaceSymbolOptions != nil {
-		return json.MarshalEncode(enc, o.WorkspaceSymbolOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrWorkspaceSymbolOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrWorkspaceSymbolOptions)(nil)
@@ -12981,15 +12700,7 @@ type BooleanOrDocumentFormattingOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDocumentFormattingOptions)(nil)
 
 func (o *BooleanOrDocumentFormattingOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDocumentFormattingOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DocumentFormattingOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DocumentFormattingOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentFormattingOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDocumentFormattingOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDocumentFormattingOptions)(nil)
@@ -13018,15 +12729,7 @@ type BooleanOrDocumentRangeFormattingOptions struct {
 var _ json.MarshalerTo = (*BooleanOrDocumentRangeFormattingOptions)(nil)
 
 func (o *BooleanOrDocumentRangeFormattingOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrDocumentRangeFormattingOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.DocumentRangeFormattingOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.DocumentRangeFormattingOptions != nil {
-		return json.MarshalEncode(enc, o.DocumentRangeFormattingOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrDocumentRangeFormattingOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrDocumentRangeFormattingOptions)(nil)
@@ -13055,15 +12758,7 @@ type BooleanOrRenameOptions struct {
 var _ json.MarshalerTo = (*BooleanOrRenameOptions)(nil)
 
 func (o *BooleanOrRenameOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrRenameOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.RenameOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.RenameOptions != nil {
-		return json.MarshalEncode(enc, o.RenameOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrRenameOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrRenameOptions)(nil)
@@ -13093,18 +12788,7 @@ type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions)(nil)
 
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.FoldingRangeOptions != nil)+boolToInt(o.FoldingRangeRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.FoldingRangeOptions != nil {
-		return json.MarshalEncode(enc, o.FoldingRangeOptions)
-	}
-	if o.FoldingRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.FoldingRangeRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions)(nil)
@@ -13144,18 +12828,7 @@ type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions)(nil)
 
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.SelectionRangeOptions != nil)+boolToInt(o.SelectionRangeRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.SelectionRangeOptions != nil {
-		return json.MarshalEncode(enc, o.SelectionRangeOptions)
-	}
-	if o.SelectionRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.SelectionRangeRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions)(nil)
@@ -13195,18 +12868,7 @@ type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions)(nil)
 
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.CallHierarchyOptions != nil)+boolToInt(o.CallHierarchyRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.CallHierarchyOptions != nil {
-		return json.MarshalEncode(enc, o.CallHierarchyOptions)
-	}
-	if o.CallHierarchyRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.CallHierarchyRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions)(nil)
@@ -13246,18 +12908,7 @@ type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions s
 var _ json.MarshalerTo = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions)(nil)
 
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.LinkedEditingRangeOptions != nil)+boolToInt(o.LinkedEditingRangeRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.LinkedEditingRangeOptions != nil {
-		return json.MarshalEncode(enc, o.LinkedEditingRangeOptions)
-	}
-	if o.LinkedEditingRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.LinkedEditingRangeRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions)(nil)
@@ -13296,15 +12947,7 @@ type SemanticTokensOptionsOrRegistrationOptions struct {
 var _ json.MarshalerTo = (*SemanticTokensOptionsOrRegistrationOptions)(nil)
 
 func (o *SemanticTokensOptionsOrRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of SemanticTokensOptionsOrRegistrationOptions should be set", boolToInt(o.Options != nil)+boolToInt(o.RegistrationOptions != nil))
-
-	if o.Options != nil {
-		return json.MarshalEncode(enc, o.Options)
-	}
-	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.RegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "SemanticTokensOptionsOrRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*SemanticTokensOptionsOrRegistrationOptions)(nil)
@@ -13335,18 +12978,7 @@ type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptions)(nil)
 
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrMonikerOptionsOrMonikerRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.MonikerOptions != nil)+boolToInt(o.MonikerRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.MonikerOptions != nil {
-		return json.MarshalEncode(enc, o.MonikerOptions)
-	}
-	if o.MonikerRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.MonikerRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrMonikerOptionsOrMonikerRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptions)(nil)
@@ -13386,18 +13018,7 @@ type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions)(nil)
 
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.TypeHierarchyOptions != nil)+boolToInt(o.TypeHierarchyRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.TypeHierarchyOptions != nil {
-		return json.MarshalEncode(enc, o.TypeHierarchyOptions)
-	}
-	if o.TypeHierarchyRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.TypeHierarchyRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions)(nil)
@@ -13437,18 +13058,7 @@ type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions)(nil)
 
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.InlineValueOptions != nil)+boolToInt(o.InlineValueRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.InlineValueOptions != nil {
-		return json.MarshalEncode(enc, o.InlineValueOptions)
-	}
-	if o.InlineValueRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.InlineValueRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions)(nil)
@@ -13488,18 +13098,7 @@ type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
 var _ json.MarshalerTo = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions)(nil)
 
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.InlayHintOptions != nil)+boolToInt(o.InlayHintRegistrationOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.InlayHintOptions != nil {
-		return json.MarshalEncode(enc, o.InlayHintOptions)
-	}
-	if o.InlayHintRegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.InlayHintRegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions)(nil)
@@ -13538,15 +13137,7 @@ type DiagnosticOptionsOrRegistrationOptions struct {
 var _ json.MarshalerTo = (*DiagnosticOptionsOrRegistrationOptions)(nil)
 
 func (o *DiagnosticOptionsOrRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of DiagnosticOptionsOrRegistrationOptions should be set", boolToInt(o.Options != nil)+boolToInt(o.RegistrationOptions != nil))
-
-	if o.Options != nil {
-		return json.MarshalEncode(enc, o.Options)
-	}
-	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.RegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "DiagnosticOptionsOrRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*DiagnosticOptionsOrRegistrationOptions)(nil)
@@ -13576,15 +13167,7 @@ type BooleanOrInlineCompletionOptions struct {
 var _ json.MarshalerTo = (*BooleanOrInlineCompletionOptions)(nil)
 
 func (o *BooleanOrInlineCompletionOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrInlineCompletionOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.InlineCompletionOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.InlineCompletionOptions != nil {
-		return json.MarshalEncode(enc, o.InlineCompletionOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrInlineCompletionOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrInlineCompletionOptions)(nil)
@@ -13613,15 +13196,7 @@ type PatternOrRelativePattern struct {
 var _ json.MarshalerTo = (*PatternOrRelativePattern)(nil)
 
 func (o *PatternOrRelativePattern) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of PatternOrRelativePattern should be set", boolToInt(o.Pattern != nil)+boolToInt(o.RelativePattern != nil))
-
-	if o.Pattern != nil {
-		return json.MarshalEncode(enc, o.Pattern)
-	}
-	if o.RelativePattern != nil {
-		return json.MarshalEncode(enc, o.RelativePattern)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "PatternOrRelativePattern", false)
 }
 
 var _ json.UnmarshalerFrom = (*PatternOrRelativePattern)(nil)
@@ -13649,15 +13224,7 @@ type RangeOrEditRangeWithInsertReplace struct {
 var _ json.MarshalerTo = (*RangeOrEditRangeWithInsertReplace)(nil)
 
 func (o *RangeOrEditRangeWithInsertReplace) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of RangeOrEditRangeWithInsertReplace should be set", boolToInt(o.Range != nil)+boolToInt(o.EditRangeWithInsertReplace != nil))
-
-	if o.Range != nil {
-		return json.MarshalEncode(enc, o.Range)
-	}
-	if o.EditRangeWithInsertReplace != nil {
-		return json.MarshalEncode(enc, o.EditRangeWithInsertReplace)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "RangeOrEditRangeWithInsertReplace", false)
 }
 
 var _ json.UnmarshalerFrom = (*RangeOrEditRangeWithInsertReplace)(nil)
@@ -13688,15 +13255,7 @@ type BooleanOrSaveOptions struct {
 var _ json.MarshalerTo = (*BooleanOrSaveOptions)(nil)
 
 func (o *BooleanOrSaveOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrSaveOptions should be set", boolToInt(o.Boolean != nil)+boolToInt(o.SaveOptions != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.SaveOptions != nil {
-		return json.MarshalEncode(enc, o.SaveOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrSaveOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrSaveOptions)(nil)
@@ -13725,15 +13284,7 @@ type TextDocumentContentOptionsOrRegistrationOptions struct {
 var _ json.MarshalerTo = (*TextDocumentContentOptionsOrRegistrationOptions)(nil)
 
 func (o *TextDocumentContentOptionsOrRegistrationOptions) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentContentOptionsOrRegistrationOptions should be set", boolToInt(o.Options != nil)+boolToInt(o.RegistrationOptions != nil))
-
-	if o.Options != nil {
-		return json.MarshalEncode(enc, o.Options)
-	}
-	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, o.RegistrationOptions)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextDocumentContentOptionsOrRegistrationOptions", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextDocumentContentOptionsOrRegistrationOptions)(nil)
@@ -13766,15 +13317,7 @@ type StringOrTuple struct {
 var _ json.MarshalerTo = (*StringOrTuple)(nil)
 
 func (o *StringOrTuple) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrTuple should be set", boolToInt(o.String != nil)+boolToInt(o.Tuple != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.Tuple != nil {
-		return json.MarshalEncode(enc, o.Tuple)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrTuple", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrTuple)(nil)
@@ -13802,15 +13345,7 @@ type StringOrBoolean struct {
 var _ json.MarshalerTo = (*StringOrBoolean)(nil)
 
 func (o *StringOrBoolean) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrBoolean should be set", boolToInt(o.String != nil)+boolToInt(o.Boolean != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrBoolean", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrBoolean)(nil)
@@ -13839,15 +13374,7 @@ type WorkspaceFolderOrURI struct {
 var _ json.MarshalerTo = (*WorkspaceFolderOrURI)(nil)
 
 func (o *WorkspaceFolderOrURI) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of WorkspaceFolderOrURI should be set", boolToInt(o.WorkspaceFolder != nil)+boolToInt(o.URI != nil))
-
-	if o.WorkspaceFolder != nil {
-		return json.MarshalEncode(enc, o.WorkspaceFolder)
-	}
-	if o.URI != nil {
-		return json.MarshalEncode(enc, o.URI)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "WorkspaceFolderOrURI", false)
 }
 
 var _ json.UnmarshalerFrom = (*WorkspaceFolderOrURI)(nil)
@@ -13875,15 +13402,7 @@ type BooleanOrClientSemanticTokensRequestFullDelta struct {
 var _ json.MarshalerTo = (*BooleanOrClientSemanticTokensRequestFullDelta)(nil)
 
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of BooleanOrClientSemanticTokensRequestFullDelta should be set", boolToInt(o.Boolean != nil)+boolToInt(o.ClientSemanticTokensRequestFullDelta != nil))
-
-	if o.Boolean != nil {
-		return json.MarshalEncode(enc, o.Boolean)
-	}
-	if o.ClientSemanticTokensRequestFullDelta != nil {
-		return json.MarshalEncode(enc, o.ClientSemanticTokensRequestFullDelta)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "BooleanOrClientSemanticTokensRequestFullDelta", false)
 }
 
 var _ json.UnmarshalerFrom = (*BooleanOrClientSemanticTokensRequestFullDelta)(nil)
@@ -13913,18 +13432,7 @@ type LocationOrLocationsOrDefinitionLinksOrNull struct {
 var _ json.MarshalerTo = (*LocationOrLocationsOrDefinitionLinksOrNull)(nil)
 
 func (o *LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of LocationOrLocationsOrDefinitionLinksOrNull is set", boolToInt(o.Location != nil)+boolToInt(o.Locations != nil)+boolToInt(o.DefinitionLinks != nil))
-
-	if o.Location != nil {
-		return json.MarshalEncode(enc, o.Location)
-	}
-	if o.Locations != nil {
-		return json.MarshalEncode(enc, o.Locations)
-	}
-	if o.DefinitionLinks != nil {
-		return json.MarshalEncode(enc, o.DefinitionLinks)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "LocationOrLocationsOrDefinitionLinksOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*LocationOrLocationsOrDefinitionLinksOrNull)(nil)
@@ -13971,10 +13479,7 @@ type FoldingRangesOrNull struct {
 var _ json.MarshalerTo = (*FoldingRangesOrNull)(nil)
 
 func (o *FoldingRangesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.FoldingRanges != nil {
-		return json.MarshalEncode(enc, o.FoldingRanges)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "FoldingRangesOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*FoldingRangesOrNull)(nil)
@@ -14003,18 +13508,7 @@ type LocationOrLocationsOrDeclarationLinksOrNull struct {
 var _ json.MarshalerTo = (*LocationOrLocationsOrDeclarationLinksOrNull)(nil)
 
 func (o *LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of LocationOrLocationsOrDeclarationLinksOrNull is set", boolToInt(o.Location != nil)+boolToInt(o.Locations != nil)+boolToInt(o.DeclarationLinks != nil))
-
-	if o.Location != nil {
-		return json.MarshalEncode(enc, o.Location)
-	}
-	if o.Locations != nil {
-		return json.MarshalEncode(enc, o.Locations)
-	}
-	if o.DeclarationLinks != nil {
-		return json.MarshalEncode(enc, o.DeclarationLinks)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "LocationOrLocationsOrDeclarationLinksOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*LocationOrLocationsOrDeclarationLinksOrNull)(nil)
@@ -14061,10 +13555,7 @@ type SelectionRangesOrNull struct {
 var _ json.MarshalerTo = (*SelectionRangesOrNull)(nil)
 
 func (o *SelectionRangesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.SelectionRanges != nil {
-		return json.MarshalEncode(enc, o.SelectionRanges)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "SelectionRangesOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*SelectionRangesOrNull)(nil)
@@ -14091,10 +13582,7 @@ type CallHierarchyItemsOrNull struct {
 var _ json.MarshalerTo = (*CallHierarchyItemsOrNull)(nil)
 
 func (o *CallHierarchyItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CallHierarchyItems != nil {
-		return json.MarshalEncode(enc, o.CallHierarchyItems)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "CallHierarchyItemsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*CallHierarchyItemsOrNull)(nil)
@@ -14121,10 +13609,7 @@ type CallHierarchyIncomingCallsOrNull struct {
 var _ json.MarshalerTo = (*CallHierarchyIncomingCallsOrNull)(nil)
 
 func (o *CallHierarchyIncomingCallsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CallHierarchyIncomingCalls != nil {
-		return json.MarshalEncode(enc, o.CallHierarchyIncomingCalls)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "CallHierarchyIncomingCallsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*CallHierarchyIncomingCallsOrNull)(nil)
@@ -14151,10 +13636,7 @@ type CallHierarchyOutgoingCallsOrNull struct {
 var _ json.MarshalerTo = (*CallHierarchyOutgoingCallsOrNull)(nil)
 
 func (o *CallHierarchyOutgoingCallsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CallHierarchyOutgoingCalls != nil {
-		return json.MarshalEncode(enc, o.CallHierarchyOutgoingCalls)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "CallHierarchyOutgoingCallsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*CallHierarchyOutgoingCallsOrNull)(nil)
@@ -14181,10 +13663,7 @@ type SemanticTokensOrNull struct {
 var _ json.MarshalerTo = (*SemanticTokensOrNull)(nil)
 
 func (o *SemanticTokensOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.SemanticTokens != nil {
-		return json.MarshalEncode(enc, o.SemanticTokens)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "SemanticTokensOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*SemanticTokensOrNull)(nil)
@@ -14212,15 +13691,7 @@ type SemanticTokensOrSemanticTokensDeltaOrNull struct {
 var _ json.MarshalerTo = (*SemanticTokensOrSemanticTokensDeltaOrNull)(nil)
 
 func (o *SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of SemanticTokensOrSemanticTokensDeltaOrNull is set", boolToInt(o.SemanticTokens != nil)+boolToInt(o.SemanticTokensDelta != nil))
-
-	if o.SemanticTokens != nil {
-		return json.MarshalEncode(enc, o.SemanticTokens)
-	}
-	if o.SemanticTokensDelta != nil {
-		return json.MarshalEncode(enc, o.SemanticTokensDelta)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "SemanticTokensOrSemanticTokensDeltaOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*SemanticTokensOrSemanticTokensDeltaOrNull)(nil)
@@ -14258,10 +13729,7 @@ type LinkedEditingRangesOrNull struct {
 var _ json.MarshalerTo = (*LinkedEditingRangesOrNull)(nil)
 
 func (o *LinkedEditingRangesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.LinkedEditingRanges != nil {
-		return json.MarshalEncode(enc, o.LinkedEditingRanges)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "LinkedEditingRangesOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*LinkedEditingRangesOrNull)(nil)
@@ -14288,10 +13756,7 @@ type WorkspaceEditOrNull struct {
 var _ json.MarshalerTo = (*WorkspaceEditOrNull)(nil)
 
 func (o *WorkspaceEditOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.WorkspaceEdit != nil {
-		return json.MarshalEncode(enc, o.WorkspaceEdit)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "WorkspaceEditOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*WorkspaceEditOrNull)(nil)
@@ -14318,10 +13783,7 @@ type MonikersOrNull struct {
 var _ json.MarshalerTo = (*MonikersOrNull)(nil)
 
 func (o *MonikersOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.Monikers != nil {
-		return json.MarshalEncode(enc, o.Monikers)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "MonikersOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*MonikersOrNull)(nil)
@@ -14348,10 +13810,7 @@ type TypeHierarchyItemsOrNull struct {
 var _ json.MarshalerTo = (*TypeHierarchyItemsOrNull)(nil)
 
 func (o *TypeHierarchyItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.TypeHierarchyItems != nil {
-		return json.MarshalEncode(enc, o.TypeHierarchyItems)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "TypeHierarchyItemsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*TypeHierarchyItemsOrNull)(nil)
@@ -14378,10 +13837,7 @@ type InlineValuesOrNull struct {
 var _ json.MarshalerTo = (*InlineValuesOrNull)(nil)
 
 func (o *InlineValuesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.InlineValues != nil {
-		return json.MarshalEncode(enc, o.InlineValues)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "InlineValuesOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*InlineValuesOrNull)(nil)
@@ -14408,10 +13864,7 @@ type InlayHintsOrNull struct {
 var _ json.MarshalerTo = (*InlayHintsOrNull)(nil)
 
 func (o *InlayHintsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.InlayHints != nil {
-		return json.MarshalEncode(enc, o.InlayHints)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "InlayHintsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*InlayHintsOrNull)(nil)
@@ -14439,15 +13892,7 @@ type RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport stru
 var _ json.MarshalerTo = (*RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
 func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", boolToInt(o.FullDocumentDiagnosticReport != nil)+boolToInt(o.UnchangedDocumentDiagnosticReport != nil))
-
-	if o.FullDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, o.FullDocumentDiagnosticReport)
-	}
-	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, o.UnchangedDocumentDiagnosticReport)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", false)
 }
 
 var _ json.UnmarshalerFrom = (*RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
@@ -14478,15 +13923,7 @@ type InlineCompletionListOrItemsOrNull struct {
 var _ json.MarshalerTo = (*InlineCompletionListOrItemsOrNull)(nil)
 
 func (o *InlineCompletionListOrItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of InlineCompletionListOrItemsOrNull is set", boolToInt(o.List != nil)+boolToInt(o.Items != nil))
-
-	if o.List != nil {
-		return json.MarshalEncode(enc, o.List)
-	}
-	if o.Items != nil {
-		return json.MarshalEncode(enc, o.Items)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "InlineCompletionListOrItemsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*InlineCompletionListOrItemsOrNull)(nil)
@@ -14516,10 +13953,7 @@ type MessageActionItemOrNull struct {
 var _ json.MarshalerTo = (*MessageActionItemOrNull)(nil)
 
 func (o *MessageActionItemOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.MessageActionItem != nil {
-		return json.MarshalEncode(enc, o.MessageActionItem)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "MessageActionItemOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*MessageActionItemOrNull)(nil)
@@ -14546,10 +13980,7 @@ type TextEditsOrNull struct {
 var _ json.MarshalerTo = (*TextEditsOrNull)(nil)
 
 func (o *TextEditsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.TextEdits != nil {
-		return json.MarshalEncode(enc, o.TextEdits)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "TextEditsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*TextEditsOrNull)(nil)
@@ -14577,15 +14008,7 @@ type CompletionItemsOrListOrNull struct {
 var _ json.MarshalerTo = (*CompletionItemsOrListOrNull)(nil)
 
 func (o *CompletionItemsOrListOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of CompletionItemsOrListOrNull is set", boolToInt(o.Items != nil)+boolToInt(o.List != nil))
-
-	if o.Items != nil {
-		return json.MarshalEncode(enc, o.Items)
-	}
-	if o.List != nil {
-		return json.MarshalEncode(enc, o.List)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "CompletionItemsOrListOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*CompletionItemsOrListOrNull)(nil)
@@ -14615,10 +14038,7 @@ type HoverOrNull struct {
 var _ json.MarshalerTo = (*HoverOrNull)(nil)
 
 func (o *HoverOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.Hover != nil {
-		return json.MarshalEncode(enc, o.Hover)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "HoverOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*HoverOrNull)(nil)
@@ -14645,10 +14065,7 @@ type SignatureHelpOrNull struct {
 var _ json.MarshalerTo = (*SignatureHelpOrNull)(nil)
 
 func (o *SignatureHelpOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.SignatureHelp != nil {
-		return json.MarshalEncode(enc, o.SignatureHelp)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "SignatureHelpOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*SignatureHelpOrNull)(nil)
@@ -14675,10 +14092,7 @@ type LocationsOrNull struct {
 var _ json.MarshalerTo = (*LocationsOrNull)(nil)
 
 func (o *LocationsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.Locations != nil {
-		return json.MarshalEncode(enc, o.Locations)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "LocationsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*LocationsOrNull)(nil)
@@ -14709,10 +14123,7 @@ type DocumentHighlightsOrNull struct {
 var _ json.MarshalerTo = (*DocumentHighlightsOrNull)(nil)
 
 func (o *DocumentHighlightsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.DocumentHighlights != nil {
-		return json.MarshalEncode(enc, o.DocumentHighlights)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "DocumentHighlightsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*DocumentHighlightsOrNull)(nil)
@@ -14740,15 +14151,7 @@ type SymbolInformationsOrDocumentSymbolsOrNull struct {
 var _ json.MarshalerTo = (*SymbolInformationsOrDocumentSymbolsOrNull)(nil)
 
 func (o *SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of SymbolInformationsOrDocumentSymbolsOrNull is set", boolToInt(o.SymbolInformations != nil)+boolToInt(o.DocumentSymbols != nil))
-
-	if o.SymbolInformations != nil {
-		return json.MarshalEncode(enc, o.SymbolInformations)
-	}
-	if o.DocumentSymbols != nil {
-		return json.MarshalEncode(enc, o.DocumentSymbols)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "SymbolInformationsOrDocumentSymbolsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*SymbolInformationsOrDocumentSymbolsOrNull)(nil)
@@ -14789,15 +14192,7 @@ type CommandOrCodeAction struct {
 var _ json.MarshalerTo = (*CommandOrCodeAction)(nil)
 
 func (o *CommandOrCodeAction) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of CommandOrCodeAction should be set", boolToInt(o.Command != nil)+boolToInt(o.CodeAction != nil))
-
-	if o.Command != nil {
-		return json.MarshalEncode(enc, o.Command)
-	}
-	if o.CodeAction != nil {
-		return json.MarshalEncode(enc, o.CodeAction)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "CommandOrCodeAction", false)
 }
 
 var _ json.UnmarshalerFrom = (*CommandOrCodeAction)(nil)
@@ -14829,10 +14224,7 @@ type CommandOrCodeActionArrayOrNull struct {
 var _ json.MarshalerTo = (*CommandOrCodeActionArrayOrNull)(nil)
 
 func (o *CommandOrCodeActionArrayOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CommandOrCodeActionArray != nil {
-		return json.MarshalEncode(enc, o.CommandOrCodeActionArray)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "CommandOrCodeActionArrayOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*CommandOrCodeActionArrayOrNull)(nil)
@@ -14860,15 +14252,7 @@ type SymbolInformationsOrWorkspaceSymbolsOrNull struct {
 var _ json.MarshalerTo = (*SymbolInformationsOrWorkspaceSymbolsOrNull)(nil)
 
 func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of SymbolInformationsOrWorkspaceSymbolsOrNull is set", boolToInt(o.SymbolInformations != nil)+boolToInt(o.WorkspaceSymbols != nil))
-
-	if o.SymbolInformations != nil {
-		return json.MarshalEncode(enc, o.SymbolInformations)
-	}
-	if o.WorkspaceSymbols != nil {
-		return json.MarshalEncode(enc, o.WorkspaceSymbols)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "SymbolInformationsOrWorkspaceSymbolsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*SymbolInformationsOrWorkspaceSymbolsOrNull)(nil)
@@ -14908,10 +14292,7 @@ type CodeLensesOrNull struct {
 var _ json.MarshalerTo = (*CodeLensesOrNull)(nil)
 
 func (o *CodeLensesOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.CodeLenses != nil {
-		return json.MarshalEncode(enc, o.CodeLenses)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "CodeLensesOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*CodeLensesOrNull)(nil)
@@ -14938,10 +14319,7 @@ type DocumentLinksOrNull struct {
 var _ json.MarshalerTo = (*DocumentLinksOrNull)(nil)
 
 func (o *DocumentLinksOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.DocumentLinks != nil {
-		return json.MarshalEncode(enc, o.DocumentLinks)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "DocumentLinksOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*DocumentLinksOrNull)(nil)
@@ -14970,18 +14348,7 @@ type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull struct 
 var _ json.MarshalerTo = (*RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull)(nil)
 
 func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull is set", boolToInt(o.Range != nil)+boolToInt(o.PrepareRenamePlaceholder != nil)+boolToInt(o.PrepareRenameDefaultBehavior != nil))
-
-	if o.Range != nil {
-		return json.MarshalEncode(enc, o.Range)
-	}
-	if o.PrepareRenamePlaceholder != nil {
-		return json.MarshalEncode(enc, o.PrepareRenamePlaceholder)
-	}
-	if o.PrepareRenameDefaultBehavior != nil {
-		return json.MarshalEncode(enc, o.PrepareRenameDefaultBehavior)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull)(nil)
@@ -15022,10 +14389,7 @@ type LSPAnyOrNull struct {
 var _ json.MarshalerTo = (*LSPAnyOrNull)(nil)
 
 func (o *LSPAnyOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.LSPAny != nil {
-		return json.MarshalEncode(enc, o.LSPAny)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "LSPAnyOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*LSPAnyOrNull)(nil)
@@ -15056,10 +14420,7 @@ type MultiDocumentHighlightsOrNull struct {
 var _ json.MarshalerTo = (*MultiDocumentHighlightsOrNull)(nil)
 
 func (o *MultiDocumentHighlightsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.MultiDocumentHighlights != nil {
-		return json.MarshalEncode(enc, o.MultiDocumentHighlights)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "MultiDocumentHighlightsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*MultiDocumentHighlightsOrNull)(nil)
@@ -15086,10 +14447,7 @@ type VSOnAutoInsertResponseItemOrNull struct {
 var _ json.MarshalerTo = (*VSOnAutoInsertResponseItemOrNull)(nil)
 
 func (o *VSOnAutoInsertResponseItemOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.VSOnAutoInsertResponseItem != nil {
-		return json.MarshalEncode(enc, o.VSOnAutoInsertResponseItem)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "VSOnAutoInsertResponseItemOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*VSOnAutoInsertResponseItemOrNull)(nil)
@@ -15116,10 +14474,7 @@ type VSReferenceItemsOrNull struct {
 var _ json.MarshalerTo = (*VSReferenceItemsOrNull)(nil)
 
 func (o *VSReferenceItemsOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	if o.VSReferenceItems != nil {
-		return json.MarshalEncode(enc, o.VSReferenceItems)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "VSReferenceItemsOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*VSReferenceItemsOrNull)(nil)
@@ -15148,18 +14503,7 @@ type RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTe
 var _ json.MarshalerTo = (*RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull)(nil)
 
 func (o *RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	assertAtMostOne("more than one element of RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull is set", boolToInt(o.RequestFailureTelemetryEvent != nil)+boolToInt(o.PerformanceStatsTelemetryEvent != nil)+boolToInt(o.ProjectInfoTelemetryEvent != nil))
-
-	if o.RequestFailureTelemetryEvent != nil {
-		return json.MarshalEncode(enc, o.RequestFailureTelemetryEvent)
-	}
-	if o.PerformanceStatsTelemetryEvent != nil {
-		return json.MarshalEncode(enc, o.PerformanceStatsTelemetryEvent)
-	}
-	if o.ProjectInfoTelemetryEvent != nil {
-		return json.MarshalEncode(enc, o.ProjectInfoTelemetryEvent)
-	}
-	return enc.WriteToken(json.Null)
+	return marshalUnion(o, enc, "RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull", true)
 }
 
 var _ json.UnmarshalerFrom = (*RequestFailureTelemetryEventOrPerformanceStatsTelemetryEventOrProjectInfoTelemetryEventOrNull)(nil)
@@ -15202,18 +14546,7 @@ type TextDocumentFilterLanguageOrSchemeOrPattern struct {
 var _ json.MarshalerTo = (*TextDocumentFilterLanguageOrSchemeOrPattern)(nil)
 
 func (o *TextDocumentFilterLanguageOrSchemeOrPattern) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of TextDocumentFilterLanguageOrSchemeOrPattern should be set", boolToInt(o.Language != nil)+boolToInt(o.Scheme != nil)+boolToInt(o.Pattern != nil))
-
-	if o.Language != nil {
-		return json.MarshalEncode(enc, o.Language)
-	}
-	if o.Scheme != nil {
-		return json.MarshalEncode(enc, o.Scheme)
-	}
-	if o.Pattern != nil {
-		return json.MarshalEncode(enc, o.Pattern)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "TextDocumentFilterLanguageOrSchemeOrPattern", false)
 }
 
 var _ json.UnmarshalerFrom = (*TextDocumentFilterLanguageOrSchemeOrPattern)(nil)
@@ -15251,15 +14584,7 @@ type StringOrMarkedStringWithLanguage struct {
 var _ json.MarshalerTo = (*StringOrMarkedStringWithLanguage)(nil)
 
 func (o *StringOrMarkedStringWithLanguage) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of StringOrMarkedStringWithLanguage should be set", boolToInt(o.String != nil)+boolToInt(o.MarkedStringWithLanguage != nil))
-
-	if o.String != nil {
-		return json.MarshalEncode(enc, o.String)
-	}
-	if o.MarkedStringWithLanguage != nil {
-		return json.MarshalEncode(enc, o.MarkedStringWithLanguage)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "StringOrMarkedStringWithLanguage", false)
 }
 
 var _ json.UnmarshalerFrom = (*StringOrMarkedStringWithLanguage)(nil)
@@ -15288,18 +14613,7 @@ type InlineValueTextOrVariableLookupOrEvaluatableExpression struct {
 var _ json.MarshalerTo = (*InlineValueTextOrVariableLookupOrEvaluatableExpression)(nil)
 
 func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSONTo(enc *json.Encoder) error {
-	assertOnlyOne("exactly one element of InlineValueTextOrVariableLookupOrEvaluatableExpression should be set", boolToInt(o.Text != nil)+boolToInt(o.VariableLookup != nil)+boolToInt(o.EvaluatableExpression != nil))
-
-	if o.Text != nil {
-		return json.MarshalEncode(enc, o.Text)
-	}
-	if o.VariableLookup != nil {
-		return json.MarshalEncode(enc, o.VariableLookup)
-	}
-	if o.EvaluatableExpression != nil {
-		return json.MarshalEncode(enc, o.EvaluatableExpression)
-	}
-	panic("unreachable")
+	return marshalUnion(o, enc, "InlineValueTextOrVariableLookupOrEvaluatableExpression", false)
 }
 
 var _ json.UnmarshalerFrom = (*InlineValueTextOrVariableLookupOrEvaluatableExpression)(nil)

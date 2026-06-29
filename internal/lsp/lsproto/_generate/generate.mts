@@ -2971,37 +2971,9 @@ function generateCode() {
         // Marshal method
         writeLine(`var _ json.MarshalerTo = (*${name})(nil)`);
         writeLine("");
-
-        writeLine(`func (o *${name}) MarshalJSONTo(enc *json.Encoder) error {`);
-
-        // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
-        // Always assert for non-nullable unions; for nullable unions, only when there are multiple fields.
-        if (!unionContainedNull || fieldEntries.length > 1) {
-            const parts = fieldEntries.map(e => `boolToInt(o.${e.fieldName} != nil)`);
-            const sum = parts.length > 3 ? parts.join(" +\n\t\t") : parts.join(" + ");
-            if (unionContainedNull) {
-                writeLine(`\tassertAtMostOne("more than one element of ${name} is set", ${sum})`);
-            }
-            else {
-                writeLine(`\tassertOnlyOne("exactly one element of ${name} should be set", ${sum})`);
-            }
-            writeLine("");
-        }
-
-        for (const entry of fieldEntries) {
-            writeLine(`\tif o.${entry.fieldName} != nil {`);
-            writeLine(`\t\treturn json.MarshalEncode(enc, o.${entry.fieldName})`);
-            writeLine(`\t}`);
-        }
-
-        // If all fields are nil, marshal as null (only for unions that can contain null)
-        if (unionContainedNull) {
-            writeLine(`\treturn enc.WriteToken(json.Null)`);
-        }
-        else {
-            writeLine(`\tpanic("unreachable")`);
-        }
+        writeLine(`func (o *${name}) MarshalJSONTo(enc *json.Encoder) error {`);
+        writeLine(`\treturn marshalUnion(o, enc, "${name}", ${unionContainedNull})`);
         writeLine(`}`);
         writeLine("");
 

@@ -121,3 +121,30 @@ func unmarshalStruct(v any, dec *json.Decoder) error {
 	}
 	return nil
 }
+
+// marshalUnion encodes a union struct whose fields are all pointers, exactly
+// one of which is set. It writes the single non-nil field; if nullable, an
+// empty union marshals as null, otherwise an empty union is a programming
+// error. The name is only used for the panic message.
+func marshalUnion(v any, enc *json.Encoder, name string, nullable bool) error {
+	rv := reflect.ValueOf(v).Elem()
+	set := -1
+	count := 0
+	for i := range rv.NumField() {
+		if !rv.Field(i).IsNil() {
+			count++
+			if set < 0 {
+				set = i
+			}
+		}
+	}
+	if nullable {
+		assertAtMostOne("more than one element of "+name+" is set", count)
+		if set < 0 {
+			return enc.WriteToken(json.Null)
+		}
+	} else {
+		assertOnlyOne("exactly one element of "+name+" should be set", count)
+	}
+	return json.MarshalEncode(enc, rv.Field(set).Interface())
+}
