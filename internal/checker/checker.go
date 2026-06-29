@@ -25554,7 +25554,10 @@ func (c *Checker) getUnionTypeEx(types []*Type, unionReduction UnionReduction, a
 }
 
 func (c *Checker) getUnionTypeWorker(types []*Type, unionReduction UnionReduction, alias *TypeAlias, origin *Type) *Type {
-	typeSet, includes := c.addTypesToUnion(make([]*Type, 0, len(types)), 0, types)
+	typeSet, includes, needsSort := c.addTypesToUnion(make([]*Type, 0, len(types)), 0, types, false /*needsSort*/)
+	if needsSort {
+		typeSet = sortAndDeduplicateTypes(typeSet)
+	}
 	if unionReduction != UnionReductionNone {
 		if includes&TypeFlagsAnyOrUnknown != 0 {
 			if includes&TypeFlagsAny != 0 {
@@ -25661,7 +25664,7 @@ func (c *Checker) UnionTypes() iter.Seq[*Type] {
 	return maps.Values(c.unionTypes)
 }
 
-func (c *Checker) addTypesToUnion(typeSet []*Type, includes TypeFlags, types []*Type) ([]*Type, TypeFlags) {
+func (c *Checker) addTypesToUnion(typeSet []*Type, includes TypeFlags, types []*Type, needsSort bool) ([]*Type, TypeFlags, bool) {
 	var lastType *Type
 	for _, t := range types {
 		if t != lastType {
@@ -25670,17 +25673,20 @@ func (c *Checker) addTypesToUnion(typeSet []*Type, includes TypeFlags, types []*
 				if t.alias != nil || u.origin != nil {
 					includes |= TypeFlagsUnion
 				}
-				typeSet, includes = c.addTypesToUnion(typeSet, includes, u.types)
+				typeSet = slices.Grow(typeSet, len(u.types))
+				typeSet, includes, needsSort = c.addTypesToUnion(typeSet, includes, u.types, needsSort)
 			} else {
-				typeSet, includes = c.addTypeToUnion(typeSet, includes, t)
+				typeSet, includes, needsSort = c.addTypeToUnion(typeSet, includes, t, needsSort)
 			}
 			lastType = t
 		}
 	}
-	return typeSet, includes
+	return typeSet, includes, needsSort
 }
 
-func (c *Checker) addTypeToUnion(typeSet []*Type, includes TypeFlags, t *Type) ([]*Type, TypeFlags) {
+const deferredUnionSortThreshold = 1_000
+
+func (c *Checker) addTypeToUnion(typeSet []*Type, includes TypeFlags, t *Type, needsSort bool) ([]*Type, TypeFlags, bool) {
 	flags := t.flags
 	// We ignore 'never' types in unions
 	if flags&TypeFlagsNever == 0 {
@@ -25702,12 +25708,31 @@ func (c *Checker) addTypeToUnion(typeSet []*Type, includes TypeFlags, t *Type) (
 				includes |= TypeFlagsIncludesNonWideningType
 			}
 		} else {
-			if index, ok := slices.BinarySearchFunc(typeSet, t, CompareTypes); !ok {
+			if needsSort || flags&TypeFlagsStringLiteral != 0 && len(typeSet) >= deferredUnionSortThreshold {
+				typeSet = append(typeSet, t)
+				needsSort = true
+			} else if index, ok := slices.BinarySearchFunc(typeSet, t, CompareTypes); !ok {
 				typeSet = slices.Insert(typeSet, index, t)
 			}
 		}
 	}
-	return typeSet, includes
+	return typeSet, includes, needsSort
+}
+
+func sortAndDeduplicateTypes(types []*Type) []*Type {
+	if len(types) < 2 {
+		return types
+	}
+	slices.SortStableFunc(types, CompareTypes)
+	unique := 1
+	for _, t := range types[1:] {
+		if CompareTypes(types[unique-1], t) != 0 {
+			types[unique] = t
+			unique++
+		}
+	}
+	clear(types[unique:])
+	return types[:unique]
 }
 
 func (c *Checker) addNamedUnions(namedUnions []*Type, types []*Type) []*Type {
@@ -27110,8 +27135,20 @@ func (c *Checker) getSuggestionForNonexistentIndexSignature(objectType *Type, ex
 	return suggestion + "." + suggestedMethod
 }
 
+const maxStringLiteralSuggestionCandidates = 10_000
+
 func (c *Checker) getSuggestedTypeForNonexistentStringLiteralType(source *Type, target *Type) *Type {
-	candidates := core.FilterSeq(target.Types(), func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
+	types := target.Types()
+	candidateCount := 0
+	for _, t := range types {
+		if t.flags&TypeFlagsStringLiteral != 0 {
+			candidateCount++
+			if candidateCount > maxStringLiteralSuggestionCandidates {
+				return nil
+			}
+		}
+	}
+	candidates := core.FilterSeq(types, func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
 	return core.GetSpellingSuggestion(getStringLiteralValue(source), candidates, getStringLiteralValue, CompareTypes)
 }
 
