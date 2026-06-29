@@ -1442,11 +1442,18 @@ const mainNativePreviewPackage = {
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
- * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string; hasClientBundle: boolean }} VsixExtension
+ * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
+ * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
 void 0;
+
+/** @type {VsixExtensionPackage[]} */
+const vsixExtensionPackages = [
+    { name: "typescript-vscode", sourceDir: extensionDir },
+    { name: "typescript-nightly", sourceDir: nightlyExtensionDir },
+];
 
 /**
  * npm package platforms supported by the native release.
@@ -1577,11 +1584,8 @@ const getPlatforms = memoize(() => {
             }
 
             extensions = vscodeTargets.flatMap(vscodeTarget =>
-                [
-                    { name: "typescript-vscode", sourceDir: extensionDir, hasClientBundle: true },
-                    { name: "typescript-nightly", sourceDir: nightlyExtensionDir, hasClientBundle: false },
-                ].map(({ name, sourceDir, hasClientBundle }) => {
-                    const extensionDir = path.join(builtVsix, `${name}-${vscodeTarget}`);
+                vsixExtensionPackages.map(({ name: packageName, sourceDir }) => {
+                    const extensionDir = path.join(builtVsix, `${packageName}-${vscodeTarget}`);
                     const vsixPath = extensionDir + ".vsix";
                     const vsixManifestPath = extensionDir + ".manifest";
                     const vsixSignaturePath = extensionDir + ".signature.p7s";
@@ -1592,7 +1596,6 @@ const getPlatforms = memoize(() => {
                         vsixPath,
                         vsixManifestPath,
                         vsixSignaturePath,
-                        hasClientBundle,
                     };
                 })
             );
@@ -2093,7 +2096,7 @@ async function runPackVsixExtensions() {
 
     console.log("Version:", version);
 
-    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath, hasClientBundle }) => {
+    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
         const npmLibDir = path.join(npmDir, "lib");
         const extensionLibDir = path.join(thisExtensionDir, "lib");
         await fs.promises.mkdir(extensionLibDir, { recursive: true });
@@ -2104,9 +2107,6 @@ async function runPackVsixExtensions() {
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
-        if (hasClientBundle) {
-            packageJson.main = "dist/extension.bundle.js";
-        }
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
