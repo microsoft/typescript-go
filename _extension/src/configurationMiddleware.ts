@@ -62,6 +62,13 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
             merged.customConfigFileName = legacyCustomConfigFileName;
         }
     }
+    if (configs[0].explicit?.trace?.server === undefined) {
+        const legacyTraceServer = legacyNativePreviewConfig.explicit?.trace?.server;
+        if (legacyTraceServer !== undefined) {
+            merged.trace ??= Object.create(null);
+            merged.trace.server = legacyTraceServer;
+        }
+    }
 
     return merged;
 }
