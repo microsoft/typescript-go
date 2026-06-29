@@ -311,7 +311,7 @@ func TestResolvePeerDependencyNilContentsRace(t *testing.T) {
 	const peerPkgJSON = "/repo/node_modules/peer/package.json"
 	files := map[string]string{
 		"/repo/node_modules/pkg/package.json": `{"name":"pkg","version":"1.0.0","types":"index.d.ts","peerDependencies":{"peer":"*"}}`,
-		"/repo/node_modules/pkg/index.d.ts":    "export declare const x: number;",
+		"/repo/node_modules/pkg/index.d.ts":   "export declare const x: number;",
 		peerPkgJSON:                           `{"name":"peer","version":"2.0.0"}`,
 		"/repo/src/a/file.ts":                 "",
 		"/repo/src/b/file.ts":                 "",
