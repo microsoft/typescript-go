@@ -27138,11 +27138,9 @@ func (c *Checker) getSuggestionForNonexistentIndexSignature(objectType *Type, ex
 	return suggestion + "." + suggestedMethod
 }
 
-const maxStringLiteralSuggestionCandidates = 10_000
-
 func (c *Checker) getSuggestedTypeForNonexistentStringLiteralType(source *Type, target *Type) *Type {
 	candidates := core.FilterSeq(target.Types(), func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
-	return core.GetSpellingSuggestionWithMaxCandidateCount(getStringLiteralValue(source), candidates, getStringLiteralValue, CompareTypes, maxStringLiteralSuggestionCandidates)
+	return core.GetSpellingSuggestionWithMaxCandidateCount(getStringLiteralValue(source), candidates, getStringLiteralValue, CompareTypes, 1000)
 }
 
 func getIndexNodeForAccessExpression(accessNode *ast.Node) *ast.Node {
