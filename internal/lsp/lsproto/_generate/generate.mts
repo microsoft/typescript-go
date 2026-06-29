@@ -2410,9 +2410,7 @@ function generateCode() {
             writeLine(`\tif s.RegisterOptions == nil {`);
             writeLine(`\t\tpanic("RegisterOptions must be set")`);
             writeLine(`\t}`);
-            const regParts = registrationMethods.map(r => `boolToInt(s.RegisterOptions.${r.fieldName} != nil)`);
-            const regSum = regParts.join(" +\n\t\t");
-            writeLine(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", ${regSum})`);
+            writeLine(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", countNonNil(s.RegisterOptions))`);
             writeLine("");
 
             writeLine(`\tif err := enc.WriteToken(json.BeginObject); err != nil {`);

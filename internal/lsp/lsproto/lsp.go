@@ -84,13 +84,6 @@ type URI string // !!!
 
 type Method string
 
-func boolToInt(b bool) int {
-	if b {
-		return 1
-	}
-	return 0
-}
-
 func errNotObject(k json.Kind) error {
 	return fmt.Errorf("expected object start, but encountered %v", k)
 }
