@@ -60,7 +60,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             clearTimeout(configChangeTimeout);
             configChangeTimeout = setTimeout(async () => {
                 if (needsExtHostRestartOnChange()) {
-                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript Native Preview setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
+                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript 7 Native Preview setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
                     if (selected) {
                         vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                     }
@@ -102,7 +102,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             const settingName = getWinningTsgoConfigKey() ?? "js/ts.experimental.useTsgo";
             const enableSettingString = vscode.l10n.t("Enable Setting");
             vscode.window.showWarningMessage(
-                vscode.l10n.t(`TypeScript Native Preview is running in development mode with "{0}" set to false.`, settingName),
+                vscode.l10n.t(`TypeScript 7 Native Preview is running in development mode with "{0}" set to false.`, settingName),
                 enableSettingString,
                 vscode.l10n.t("Ignore"),
             ).then(selected => {
@@ -114,7 +114,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
     }
     else if (useTsgo === false) {
-        output.appendLine(vscode.l10n.t("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it."));
+        output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
     else if (useTsgo === undefined) {
@@ -123,7 +123,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             updateUseTsgoSetting(true);
             return;
         }
-        output.appendLine(vscode.l10n.t("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it."));
+        output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
 
@@ -190,12 +190,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const uniqueExtensionNames = [...new Set(pluginExtensions.map(p => p.extensionId))];
         const extensionNames = uniqueExtensionNames.join(", ");
-        output.appendLine(`Extensions contributing tsserver plugins that will not apply with TypeScript Native Preview: ${extensionNames}`);
+        output.appendLine(`Extensions contributing tsserver plugins that will not apply with TypeScript 7 Native Preview: ${extensionNames}`);
 
         const message = uniqueExtensionNames.length === 1
             // Pick the first extension & plugin, even though extensions can have multiple plugins
-            ? vscode.l10n.t(`TypeScript server plugins from the "{0}" extension will not be loaded because TypeScript Native Preview is enabled globally.`, pluginExtensions[0].extensionId)
-            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
+            ? vscode.l10n.t(`TypeScript server plugins from the "{0}" extension will not be loaded because TypeScript 7 Native Preview is enabled globally.`, pluginExtensions[0].extensionId)
+            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript 7 Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
 
         const ok = vscode.l10n.t("OK");
         const disableInWorkspace = vscode.l10n.t("Disable Native Preview in Workspace");

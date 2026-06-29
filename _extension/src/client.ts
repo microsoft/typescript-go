@@ -31,6 +31,8 @@ import {
     ExeInfo,
     getExe,
     jsTsLanguageModes,
+    languageClientName,
+    readNativePreviewConfig,
 } from "./util";
 import { getLanguageForUri } from "./util";
 
@@ -146,12 +148,10 @@ export class Client implements vscode.Disposable {
             version: this.exe.version,
         });
 
-        // Get pprofDir
-        const config = vscode.workspace.getConfiguration("typescript.native-preview");
-        const pprofDir = config.get<string>("pprofDir");
+        const pprofDir = readNativePreviewConfig<string | undefined>("pprofDir", undefined);
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
-        const goMemLimit = config.get<string>("goMemLimit");
+        const goMemLimit = readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
         if (goMemLimit) {
             // Keep this regex aligned with the pattern in package.json.
@@ -184,8 +184,8 @@ export class Client implements vscode.Disposable {
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
 
         this.client = new LanguageClient(
-            "typescript.native-preview",
-            "typescript.native-preview-lsp",
+            "js/ts",
+            languageClientName,
             serverOptions,
             this.clientOptions,
         );
@@ -473,7 +473,7 @@ class ReportingErrorHandler implements ErrorHandler {
         if (resultingAction === CloseAction.DoNotRestart) {
             return {
                 action: resultingAction,
-                message: vscode.l10n.t(`The typescript.native-preview-lsp server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
+                message: vscode.l10n.t(`The TypeScript 7 Native Preview language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
             };
         }
 

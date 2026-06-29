@@ -27,7 +27,7 @@ export function registerEnablementCommands(context: vscode.ExtensionContext, tel
 }
 
 /**
- * Updates the TypeScript Native Preview setting and reloads extension host.
+ * Updates the TypeScript 7 Native Preview setting and reloads extension host.
  * Handles both `js/ts.experimental.useTsgo` and `typescript.experimental.useTsgo`.
  */
 export async function updateUseTsgoSetting(enable: boolean): Promise<void> {

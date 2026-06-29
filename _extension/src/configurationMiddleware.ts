@@ -36,6 +36,7 @@ const configSections = ["js/ts", "typescript", "javascript"];
  */
 function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string, any> {
     const configs = configSections.map(section => getInspectedConfiguration(section, resource));
+    const legacyNativePreviewConfig = getInspectedConfiguration("typescript.native-preview", resource);
 
     // Layer from lowest to highest precedence.
     // Use Object.create(null) so the object has no prototype to pollute.
@@ -52,6 +53,13 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
     for (let i = configs.length - 1; i >= 0; i--) {
         if (configs[i].explicit !== null) {
             merged = deepMerge(merged, configs[i].explicit!);
+        }
+    }
+
+    if (configs[0].explicit?.customConfigFileName === undefined) {
+        const legacyCustomConfigFileName = legacyNativePreviewConfig.explicit?.customConfigFileName;
+        if (legacyCustomConfigFileName !== undefined) {
+            merged.customConfigFileName = legacyCustomConfigFileName;
         }
     }
 

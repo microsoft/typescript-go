@@ -1,6 +1,6 @@
 {
-    "name": "native-preview",
-    "displayName": "TypeScript (Native Preview)",
+    "name": "vscode-typescript",
+    "displayName": "TypeScript 7 Native Preview",
     "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
     "description": "%description%",
@@ -34,15 +34,15 @@
     "contributes": {
         "configuration": [
             {
-                "title": "TypeScript Native Preview",
+                "title": "TypeScript 7 Native Preview",
                 "properties": {
-                    "typescript.native-preview.customConfigFileName": {
+                    "js/ts.customConfigFileName": {
                         "type": "string",
                         "default": "",
                         "description": "%native-preview.trace.customConfigFileName.description%",
                         "tags": ["experimental"]
                     },
-                    "typescript.native-preview.trace.server": {
+                    "js/ts.trace.server": {
                         "type": "string",
                         "enum": [
                             "off",
@@ -55,9 +55,74 @@
                             "experimental"
                         ]
                     },
+                    "js/ts.tsdk.path": {
+                        "type": "string",
+                        "description": "%native-preview.tsserver.tsdk.description%",
+                        "scope": "window",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "js/ts.pprofDir": {
+                        "type": "string",
+                        "description": "%native-preview.pprofDir.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "js/ts.additionalTsdkLocations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [],
+                        "description": "%native-preview.additionalTsdkLocations.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "js/ts.showDebugInfo": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "%native-preview.showDebugInfo.description%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "js/ts.goMemLimit": {
+                        "type": "string",
+                        "description": "%native-preview.goMemLimit.description%",
+                        "pattern": "^[0-9]+(([KMGT]i)?B)?$",
+                        "patternErrorMessage": "%native-preview.goMemLimit.error%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
+                    "typescript.native-preview.customConfigFileName": {
+                        "type": "string",
+                        "default": "",
+                        "description": "%native-preview.trace.customConfigFileName.description%",
+                        "deprecationMessage": "%native-preview.customConfigFileName.deprecation%",
+                        "tags": ["experimental"]
+                    },
+                    "typescript.native-preview.trace.server": {
+                        "type": "string",
+                        "enum": [
+                            "off",
+                            "messages",
+                            "verbose"
+                        ],
+                        "default": "verbose",
+                        "description": "%native-preview.trace.server.description%",
+                        "deprecationMessage": "%native-preview.trace.server.deprecation%",
+                        "tags": [
+                            "experimental"
+                        ]
+                    },
                     "typescript.native-preview.pprofDir": {
                         "type": "string",
                         "description": "%native-preview.pprofDir.description%",
+                        "deprecationMessage": "%native-preview.pprofDir.deprecation%",
                         "tags": [
                             "experimental"
                         ]
@@ -65,6 +130,7 @@
                     "typescript.native-preview.tsdk": {
                         "type": "string",
                         "description": "%native-preview.tsserver.tsdk.description%",
+                        "deprecationMessage": "%native-preview.tsdk.deprecation%",
                         "scope": "window",
                         "tags": [
                             "experimental"
@@ -77,6 +143,7 @@
                         },
                         "default": [],
                         "description": "%native-preview.additionalTsdkLocations.description%",
+                        "deprecationMessage": "%native-preview.additionalTsdkLocations.deprecation%",
                         "tags": [
                             "experimental"
                         ]
@@ -85,6 +152,7 @@
                         "type": "boolean",
                         "default": false,
                         "description": "%native-preview.showDebugInfo.description%",
+                        "deprecationMessage": "%native-preview.showDebugInfo.deprecation%",
                         "tags": [
                             "experimental"
                         ]
@@ -94,6 +162,7 @@
                         "description": "%native-preview.goMemLimit.description%",
                         "pattern": "^[0-9]+(([KMGT]i)?B)?$",
                         "patternErrorMessage": "%native-preview.goMemLimit.error%",
+                        "deprecationMessage": "%native-preview.goMemLimit.deprecation%",
                         "tags": [
                             "experimental"
                         ]
@@ -115,55 +184,55 @@
                 "command": "typescript.native-preview.enable",
                 "title": "%native-preview.enable.title%",
                 "enablement": "!typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.disable",
                 "title": "%native-preview.disable.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.restart",
                 "title": "%native-preview.restart.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.output.focus",
                 "title": "%native-preview.output.focus.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.reportIssue",
                 "title": "%native-preview.reportIssue.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.selectVersion",
                 "title": "%native-preview.selectVersion.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.goToSourceDefinition",
                 "title": "%native-preview.goToSourceDefinition.title%",
                 "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.sortImports",
                 "title": "%native-preview.sortImports.title%",
                 "enablement": "typescript.native-preview.serverRunning && (resourceLangId == typescript || resourceLangId == typescriptreact || resourceLangId == javascript || resourceLangId == javascriptreact)",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.removeUnusedImports",
                 "title": "%native-preview.removeUnusedImports.title%",
                 "enablement": "typescript.native-preview.serverRunning && (resourceLangId == typescript || resourceLangId == typescriptreact || resourceLangId == javascript || resourceLangId == javascriptreact)",
-                "category": "TypeScript Native Preview"
+                "category": "TypeScript 7 Native Preview"
             },
             {
                 "command": "typescript.native-preview.codeLens.showLocations",

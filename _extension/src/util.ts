@@ -3,6 +3,10 @@ import * as vscode from "vscode";
 
 export const aiConnectionString = "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255";
 
+export const outputChannelName = "TypeScript 7 Native Preview";
+export const languageClientName = "TypeScript 7 Native Preview Language Server";
+export const replacementExtensionId = "TypeScriptTeam.vscode-typescript";
+
 export const jsTsLanguageModes = [
     "typescript",
     "typescriptreact",
@@ -96,28 +100,131 @@ function workspaceResolve(relativePath: string): vscode.Uri {
 export const useWorkspaceTsdkStorageKey = "typescript.native-preview.useWorkspaceTsdk";
 
 export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo> {
-    const config = vscode.workspace.getConfiguration("typescript.native-preview");
-
-    let tsdk = config.get<string>("tsdk");
-    const exeInspection = config.inspect<string>("tsdk");
+    let tsdkCandidates = await getTsdkCandidates();
 
     // If tsdk is set at the workspace level, require both workspace trust and
     // explicit user opt-in. Workspace trust can be revoked after the memento is
     // set, so we must always check both.
-    if (tsdk && exeInspection?.workspaceValue !== undefined) {
+    if (tsdkCandidates.some(candidate => candidate.target !== vscode.ConfigurationTarget.Global)) {
         if (!vscode.workspace.isTrusted || !context.workspaceState.get<boolean>(useWorkspaceTsdkStorageKey, false)) {
-            tsdk = exeInspection.globalValue;
+            tsdkCandidates = tsdkCandidates.filter(candidate => candidate.target === vscode.ConfigurationTarget.Global);
         }
     }
 
-    if (tsdk) {
-        const exe = await resolveTsdkPathToExe(tsdk);
+    for (const candidate of tsdkCandidates) {
+        const exe = await resolveTsdkPathToExe(candidate.value);
         if (exe) {
             return exe;
         }
     }
 
     return getBuiltinExePath(context);
+}
+
+interface ExplicitConfigValue<T> {
+    value: T;
+    target: vscode.ConfigurationTarget;
+    order: number;
+}
+
+interface TsdkConfigSource {
+    section: string;
+    key: string;
+    nativeOnly: boolean;
+}
+
+const tsdkConfigSources: readonly TsdkConfigSource[] = [
+    { section: "js/ts", key: "tsdk.path", nativeOnly: true },
+    { section: "typescript", key: "tsdk", nativeOnly: true },
+    { section: "typescript.native-preview", key: "tsdk", nativeOnly: false },
+];
+
+export function readNativePreviewConfig<T>(key: string, defaultValue: T): T {
+    const explicit = getExplicitConfigValues<T>("js/ts", key)[0];
+    if (explicit) {
+        return explicit.value;
+    }
+    return vscode.workspace.getConfiguration("typescript.native-preview").get<T>(key, defaultValue);
+}
+
+export function getWorkspaceTsdkConfigValue(): string | undefined {
+    return vscode.workspace.getConfiguration("js/ts").inspect<string>("tsdk.path")?.workspaceValue;
+}
+
+export async function updateWorkspaceTsdkConfig(value: string): Promise<void> {
+    await vscode.workspace.getConfiguration("js/ts").update("tsdk.path", value, vscode.ConfigurationTarget.Workspace);
+}
+
+export async function getWorkspaceTsdkForPrompt(): Promise<string | undefined> {
+    const candidates = await getTsdkCandidates(candidate => candidate.target !== vscode.ConfigurationTarget.Global);
+    for (const candidate of candidates) {
+        if (await resolveTsdkPathToExe(candidate.value)) {
+            return candidate.value;
+        }
+    }
+    return undefined;
+}
+
+function getExplicitConfigValues<T>(section: string, key: string): ExplicitConfigValue<T>[] {
+    const inspection = vscode.workspace.getConfiguration(section).inspect<T>(key);
+    if (!inspection) {
+        return [];
+    }
+
+    const candidates: Array<{ value: T | undefined; target: vscode.ConfigurationTarget; order: number; }> = [
+        { value: inspection.workspaceFolderLanguageValue, target: vscode.ConfigurationTarget.WorkspaceFolder, order: 0 },
+        { value: inspection.workspaceFolderValue, target: vscode.ConfigurationTarget.WorkspaceFolder, order: 1 },
+        { value: inspection.workspaceLanguageValue, target: vscode.ConfigurationTarget.Workspace, order: 2 },
+        { value: inspection.workspaceValue, target: vscode.ConfigurationTarget.Workspace, order: 3 },
+        { value: inspection.globalLanguageValue, target: vscode.ConfigurationTarget.Global, order: 4 },
+        { value: inspection.globalValue, target: vscode.ConfigurationTarget.Global, order: 5 },
+    ];
+
+    const result: ExplicitConfigValue<T>[] = [];
+    for (const candidate of candidates) {
+        if (candidate.value !== undefined) {
+            result.push({
+                value: candidate.value,
+                target: candidate.target,
+                order: candidate.order,
+            });
+        }
+    }
+    return result.sort(compareExplicitConfigValues);
+}
+
+function compareExplicitConfigValues<T>(a: ExplicitConfigValue<T>, b: ExplicitConfigValue<T>): number {
+    return b.target - a.target || a.order - b.order;
+}
+
+async function getTsdkCandidates(filter?: (candidate: ExplicitConfigValue<string>) => boolean): Promise<ExplicitConfigValue<string>[]> {
+    const candidates: ExplicitConfigValue<string>[] = [];
+    for (let sourceIndex = 0; sourceIndex < tsdkConfigSources.length; sourceIndex++) {
+        const source = tsdkConfigSources[sourceIndex];
+        for (const candidate of getExplicitConfigValues<string>(source.section, source.key)) {
+            if (!candidate.value || typeof candidate.value !== "string") {
+                continue;
+            }
+            if (source.nativeOnly && await pathHasTsserverJs(candidate.value)) {
+                continue;
+            }
+            candidates.push({
+                ...candidate,
+                order: candidate.order + sourceIndex * 10,
+            });
+        }
+    }
+    return candidates.filter(filter ?? (() => true)).sort(compareExplicitConfigValues);
+}
+
+async function pathHasTsserverJs(tsdkPath: string): Promise<boolean> {
+    try {
+        await vscode.workspace.fs.stat(vscode.Uri.joinPath(workspaceResolve(tsdkPath), "tsserver.js"));
+        return true;
+    }
+    catch {
+        return false;
+    }
 }
 
 /**
