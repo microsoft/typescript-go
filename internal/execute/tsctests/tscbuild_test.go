@@ -1031,6 +1031,37 @@ func TestBuildDependencyUpdate(t *testing.T) {
 			},
 		},
 		{
+			subScenario: "rebuilds when missing dependency package json is added",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "my-dep";
+					export const value: string = myValue;
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/index.d.ts": "export declare const myValue: string;",
+				"/home/src/workspaces/project/node_modules/my-dep/alt.d.ts":   "export declare const myValue: number;",
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "add package json redirecting types to a declaration file with a breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/package.json", `{"types":"alt.d.ts"}`)
+					},
+				},
+			},
+		},
+		{
 			subScenario: "rebuilds when dependency package json redirects to a different declaration file",
 			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
@@ -1077,7 +1108,7 @@ func TestBuildDependencyUpdate(t *testing.T) {
 							"composite": true,
 							"outDir": "dist",
 							"paths": {
-								"abs-dep": ["D:/deps/dep.d.ts"]
+								"abs-dep": ["D:/work/deps/dep.d.ts"]
 							},
 							"strict": true
 						},
@@ -1088,7 +1119,7 @@ func TestBuildDependencyUpdate(t *testing.T) {
 					import { myValue } from "abs-dep";
 					export const value: string = myValue;
 				`),
-				"D:/deps/dep.d.ts": "export declare const myValue: string;",
+				"D:/work/deps/dep.d.ts": "export declare const myValue: string;",
 			},
 			cwd:              "C:/work/project",
 			windowsStyleRoot: "C:/",
@@ -1098,7 +1129,42 @@ func TestBuildDependencyUpdate(t *testing.T) {
 				{
 					caption: "update absolute non-root dependency with breaking type change",
 					edit: func(sys *TestSys) {
-						sys.writeFileNoError("D:/deps/dep.d.ts", "export declare const myValue: number;")
+						sys.writeFileNoError("D:/work/deps/dep.d.ts", "export declare const myValue: number;")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "watches absolute non-root dependency updates",
+			files: FileMap{
+				"C:/work/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"paths": {
+								"abs-dep": ["D:/work/deps/dep.d.ts"]
+							},
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"C:/work/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "abs-dep";
+					export const value: string = myValue;
+				`),
+				"D:/work/deps/dep.d.ts": "export declare const myValue: string;",
+			},
+			cwd:              "C:/work/project",
+			windowsStyleRoot: "C:/",
+			ignoreCase:       true,
+			commandLineArgs:  []string{"--b", "--verbose", "--watch"},
+			edits: []*tscEdit{
+				{
+					caption: "update absolute non-root dependency with breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("D:/work/deps/dep.d.ts", "export declare const myValue: number;")
 					},
 				},
 			},

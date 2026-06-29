@@ -463,10 +463,11 @@ type BuildInfo struct {
 	Version string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors       bool             `json:"errors,omitzero"`
-	CheckPending bool             `json:"checkPending,omitzero"`
-	Root         []*BuildInfoRoot `json:"root,omitzero"`
-	PackageJsons []string         `json:"packageJsons,omitzero"`
+	Errors              bool             `json:"errors,omitzero"`
+	CheckPending        bool             `json:"checkPending,omitzero"`
+	Root                []*BuildInfoRoot `json:"root,omitzero"`
+	PackageJsons        []string         `json:"packageJsons,omitzero"`
+	MissingPackageJsons []string         `json:"missingPackageJsons,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                             `json:"fileNames,omitzero"`
@@ -541,9 +542,17 @@ func (b *BuildInfo) IsEmitPending(resolved *tsoptions.ParsedCommandLine, buildIn
 }
 
 func (b *BuildInfo) GetPackageJsons(buildInfoDirectory string) iter.Seq[string] {
+	return getNormalizedPaths(b.PackageJsons, buildInfoDirectory)
+}
+
+func (b *BuildInfo) GetMissingPackageJsons(buildInfoDirectory string) iter.Seq[string] {
+	return getNormalizedPaths(b.MissingPackageJsons, buildInfoDirectory)
+}
+
+func getNormalizedPaths(paths []string, buildInfoDirectory string) iter.Seq[string] {
 	return func(yield func(string) bool) {
-		for _, packageJson := range b.PackageJsons {
-			if !yield(tspath.GetNormalizedAbsolutePath(packageJson, buildInfoDirectory)) {
+		for _, path := range paths {
+			if !yield(tspath.GetNormalizedAbsolutePath(path, buildInfoDirectory)) {
 				return
 			}
 		}

@@ -147,7 +147,7 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 //// [/user/username/projects/myproject/packages/pkg1/zzbuild/index.js] *rewrite with same content*
 //// [/user/username/projects/myproject/packages/pkg1/zzbuild/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":["../index.ts"],"semanticErrors":true}
+{"version":"FakeTSVersion","root":["../index.ts"],"missingPackageJsons":["../../../node_modules/pkg2/package.json"],"semanticErrors":true}
 //// [/user/username/projects/myproject/packages/pkg1/zzbuild/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -159,7 +159,10 @@ declare const console: { log(msg: any): void; };
       "original": "../index.ts"
     }
   ],
-  "size": 72,
+  "missingPackageJsons": [
+    "../../../node_modules/pkg2/package.json"
+  ],
+  "size": 138,
   "semanticErrors": true
 }
 

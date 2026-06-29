@@ -190,4 +190,9 @@ func (t *toSnapshot) setPackageJsons() {
 	} else {
 		t.snapshot.packageJsons = make([]string, 0)
 	}
+	if t.buildInfo.MissingPackageJsons != nil {
+		t.snapshot.missingPackageJsons = core.Map(t.buildInfo.MissingPackageJsons, t.toAbsolutePath)
+	} else {
+		t.snapshot.missingPackageJsons = make([]string, 0)
+	}
 }

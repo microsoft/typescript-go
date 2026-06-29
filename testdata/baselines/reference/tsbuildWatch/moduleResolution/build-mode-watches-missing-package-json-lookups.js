@@ -259,7 +259,7 @@ Directory '/node_modules' does not exist, skipping all lookups in it.
 
 //// [/user/username/projects/myproject/packages/pkg1/build/index.js] *rewrite with same content*
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":["../index.ts"],"semanticErrors":true}
+{"version":"FakeTSVersion","root":["../index.ts"],"missingPackageJsons":["../../../node_modules/pkg2/package.json"],"semanticErrors":true}
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -271,7 +271,10 @@ Directory '/node_modules' does not exist, skipping all lookups in it.
       "original": "../index.ts"
     }
   ],
-  "size": 72,
+  "missingPackageJsons": [
+    "../../../node_modules/pkg2/package.json"
+  ],
+  "size": 138,
   "semanticErrors": true
 }
 

@@ -545,7 +545,13 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{packageJson, oldestOutputFileAndTime.file}}
 		}
 	}
+	for packageJson := range buildInfo.GetMissingPackageJsons(getBuildInfoDirectory()) {
+		if !orchestrator.host.GetMTime(packageJson).IsZero() {
+			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{packageJson, oldestOutputFileAndTime.file}}
+		}
+	}
 	t.packageJsons = slices.Collect(buildInfo.GetPackageJsons(getBuildInfoDirectory()))
+	t.packageJsons = append(t.packageJsons, slices.Collect(buildInfo.GetMissingPackageJsons(getBuildInfoDirectory()))...)
 
 	return &upToDateStatus{
 		kind: core.IfElse(

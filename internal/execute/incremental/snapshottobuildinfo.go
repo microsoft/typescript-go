@@ -375,4 +375,7 @@ func (t *toBuildInfo) setPackageJsons() {
 	if len(t.snapshot.packageJsons) > 0 {
 		t.buildInfo.PackageJsons = core.Map(t.snapshot.packageJsons, t.relativeToBuildInfo)
 	}
+	if len(t.snapshot.missingPackageJsons) > 0 {
+		t.buildInfo.MissingPackageJsons = core.Map(t.snapshot.missingPackageJsons, t.relativeToBuildInfo)
+	}
 }

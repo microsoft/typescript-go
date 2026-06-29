@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -293,7 +294,8 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	}
 	if p.snapshot.packageJsons == nil {
 		p.ensurePackageJsonsForState()
-		if !slices.Equal(p.snapshot.packageJsons, p.snapshot.packageJsonsFromOldState) {
+		if !slices.Equal(p.snapshot.packageJsons, p.snapshot.packageJsonsFromOldState) ||
+			!slices.Equal(p.snapshot.missingPackageJsons, p.snapshot.missingPackageJsonsFromOldState) {
 			p.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
@@ -401,18 +403,31 @@ func (p *Program) ensurePackageJsonsForState() {
 	config := tspath.GetDirectoryPath(p.program.CommandLine().ConfigName())
 	if config != "" {
 		p.program.PackageJsonCacheEntries(func(key tspath.Path, value *packagejson.InfoCacheEntry) bool {
+			if value == nil {
+				return true
+			}
+			packageJson := tspath.CombinePaths(value.PackageDirectory, "package.json")
+			if value.Exists() || value.DirectoryExists {
+				packageJson = p.program.Host().FS().Realpath(packageJson)
+			}
 			if value.Exists() {
-				p.snapshot.packageJsons = append(p.snapshot.packageJsons, p.host.FS().Realpath(tspath.CombinePaths(value.PackageDirectory, "package.json")))
+				p.snapshot.packageJsons = append(p.snapshot.packageJsons, packageJson)
+			} else if strings.Contains(packageJson, "/node_modules/") {
+				p.snapshot.missingPackageJsons = append(p.snapshot.missingPackageJsons, packageJson)
 			}
 			return true
 		})
 	}
-	if p.snapshot.packageJsons == nil {
-		p.snapshot.packageJsons = make([]string, 0)
-	} else {
-		slices.Sort(p.snapshot.packageJsons)
-		p.snapshot.packageJsons = core.Deduplicate(p.snapshot.packageJsons)
+	p.snapshot.packageJsons = normalizePackageJsons(p.snapshot.packageJsons)
+	p.snapshot.missingPackageJsons = normalizePackageJsons(p.snapshot.missingPackageJsons)
+}
+
+func normalizePackageJsons(packageJsons []string) []string {
+	if packageJsons == nil {
+		return make([]string, 0)
 	}
+	slices.Sort(packageJsons)
+	return core.Deduplicate(packageJsons)
 }
 
 func (p *Program) PackageJsonLookupPaths() []string {
@@ -428,7 +443,7 @@ func (p *Program) PackageJsonLookupPaths() []string {
 		}
 		packageJson := tspath.CombinePaths(value.PackageDirectory, "package.json")
 		if value.Exists() || value.DirectoryExists {
-			packageJson = p.host.FS().Realpath(packageJson)
+			packageJson = p.program.Host().FS().Realpath(packageJson)
 		}
 		packageJsons = append(packageJsons, packageJson)
 		return true

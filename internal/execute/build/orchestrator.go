@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
 	"github.com/microsoft/typescript-go/internal/fswatch"
@@ -86,7 +87,7 @@ func (o *Orchestrator) toPath(fileName string) tspath.Path {
 }
 
 func (o *Orchestrator) resolveBuildInfoFileName(fileName string, buildInfoDir string) string {
-	if !strings.HasPrefix(fileName, ".") {
+	if incremental.IsBuildInfoFileNameDefaultLibrary(fileName) {
 		return tspath.CombinePaths(o.host.DefaultLibraryPath(), fileName)
 	}
 	return tspath.GetNormalizedAbsolutePath(fileName, buildInfoDir)
@@ -355,6 +356,13 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 						break
 					}
 				}
+				for packageJson := range bi.buildInfo.GetMissingPackageJsons(buildInfoDir) {
+					if o.packageJsonLookupChanged(packageJson, normalizedPaths) {
+						task.resetStatus()
+						needsUpdate.Store(true)
+						break
+					}
+				}
 			}
 			for _, packageJson := range task.packageJsons {
 				if o.packageJsonLookupChanged(packageJson, normalizedPaths) {
@@ -465,7 +473,7 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 			buildInfoDir := tspath.GetDirectoryPath(string(bi.path))
 			roots := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
 			for _, fileName := range bi.buildInfo.FileNames {
-				absPath := o.resolveBuildInfoFileName(fileName, buildInfoDir)
+				absPath := o.host.FS().Realpath(o.resolveBuildInfoFileName(fileName, buildInfoDir))
 				fp := o.toPath(absPath)
 				if roots.Has(fp) {
 					continue
@@ -478,6 +486,9 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 				}
 			}
 			for packageJson := range bi.buildInfo.GetPackageJsons(buildInfoDir) {
+				o.addPackageJsonWatchDirs(desiredDirs, packageJson)
+			}
+			for packageJson := range bi.buildInfo.GetMissingPackageJsons(buildInfoDir) {
 				o.addPackageJsonWatchDirs(desiredDirs, packageJson)
 			}
 		}

@@ -16,10 +16,11 @@ type readableBuildInfo struct {
 	Version   string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors       bool                     `json:"errors,omitzero"`
-	CheckPending bool                     `json:"checkPending,omitzero"`
-	Root         []*readableBuildInfoRoot `json:"root,omitzero"`
-	PackageJsons []string                 `json:"packageJsons,omitzero"`
+	Errors              bool                     `json:"errors,omitzero"`
+	CheckPending        bool                     `json:"checkPending,omitzero"`
+	Root                []*readableBuildInfoRoot `json:"root,omitzero"`
+	PackageJsons        []string                 `json:"packageJsons,omitzero"`
+	MissingPackageJsons []string                 `json:"missingPackageJsons,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
@@ -216,6 +217,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		LatestChangedDtsFile: buildInfo.LatestChangedDtsFile,
 		SemanticErrors:       buildInfo.SemanticErrors,
 		PackageJsons:         buildInfo.PackageJsons,
+		MissingPackageJsons:  buildInfo.MissingPackageJsons,
 		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()

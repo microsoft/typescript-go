@@ -121,7 +121,7 @@ import pg from "pg";
 pg.foo();
 
 //// [/home/src/workspaces/project/b/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["./src/index.ts"],"packageJsons":["./package.json","../node_modules/@types/pg/package.json"]}
+{"version":"FakeTSVersion","root":["./src/index.ts"],"packageJsons":["./package.json","../node_modules/@types/pg/package.json"],"missingPackageJsons":["../node_modules/pg/package.json"]}
 //// [/home/src/workspaces/project/b/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -137,7 +137,10 @@ pg.foo();
     "./package.json",
     "../node_modules/@types/pg/package.json"
   ],
-  "size": 128
+  "missingPackageJsons": [
+    "../node_modules/pg/package.json"
+  ],
+  "size": 186
 }
 
 a/tsconfig.json::

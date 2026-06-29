@@ -19,15 +19,19 @@ export const value: string = myValue;
 //// [D:/work/deps/dep.d.ts] *new* 
 export declare const myValue: string;
 
-tsgo --b --verbose
+tsgo --b --verbose --watch
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
 [[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output file 'dist/tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [C:/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -127,6 +131,12 @@ export const value = myValue;
   "size": 1347
 }
 
+Watch Registrations::
+Directory watches::
+  C:/home/src/tslibs/TS/Lib
+  C:/work/project
+  C:/work/project/src (recursive)
+  D:/work/deps
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    C:/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -140,9 +150,10 @@ Edit [0]:: update absolute non-root dependency with breaking type change
 //// [D:/work/deps/dep.d.ts] *modified* 
 export declare const myValue: number;
 
-tsgo --b --verbose
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -155,8 +166,7 @@ Output::
 [7m2[0m export const value: string = myValue;
 [7m [0m [91m             ~~~~~[0m
 
-
-Found 1 error in src/index.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [C:/work/project/dist/src/index.js] *rewrite with same content*
 //// [C:/work/project/dist/tsconfig.tsbuildinfo] *modified* 
@@ -245,6 +255,12 @@ Found 1 error in src/index.ts[90m:2[0m
   "size": 1518
 }
 
+Watch Registrations::
+Directory watches::
+  C:/home/src/tslibs/TS/Lib
+  C:/work/project
+  C:/work/project/src (recursive)
+  D:/work/deps
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    D:/work/deps/dep.d.ts
