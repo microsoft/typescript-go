@@ -248,8 +248,9 @@ func TestUpdateSnapshotResponseHandlesUnloadedAncestorProject(t *testing.T) {
 			assert.Assert(t, project.CompilerOptions != nil)
 		case ancestorConfigFileName:
 			foundAncestorProject = true
-			assert.Assert(t, project.RootFiles == nil)
-			assert.Assert(t, project.CompilerOptions == nil)
+			assert.Assert(t, project.RootFiles != nil)
+			assert.Equal(t, len(project.RootFiles), 0)
+			assert.Assert(t, project.CompilerOptions != nil)
 		}
 	}
 	assert.Assert(t, foundNestedProject)

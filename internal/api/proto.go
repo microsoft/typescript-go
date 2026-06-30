@@ -495,8 +495,10 @@ type ProjectResponse struct {
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
 	response := &ProjectResponse{
-		Id:             ProjectHandle(p),
-		ConfigFileName: p.Name(),
+		Id:              ProjectHandle(p),
+		ConfigFileName:  p.Name(),
+		RootFiles:       []string{},
+		CompilerOptions: &core.CompilerOptions{},
 	}
 	if p.CommandLine != nil {
 		response.RootFiles = p.CommandLine.FileNames()
