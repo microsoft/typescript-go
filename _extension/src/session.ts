@@ -8,19 +8,15 @@ import { ProjectStatus } from "./projectStatus";
 import { setupStatusBar } from "./statusBar";
 import { TelemetryReporter } from "./telemetryReporting";
 import {
-    enableContributedNightlyVersion,
-    getBuiltinExePath,
+    getDefaultExePath,
     getExe,
-    getNightlyExePath,
     getWorkspaceTsdkConfigValue,
     getWorkspaceTsdkForPrompt,
-    isNightlySelected,
     outputChannelName,
     readNativePreviewConfig,
     replacementExtensionId,
     resolveTsdkPath,
     resolveTsdkPathToExe,
-    selectNightly,
     updateWorkspaceTsdkConfig,
     useWorkspaceTsdkStorageKey,
     workspaceConfigBase,
@@ -411,38 +407,19 @@ async function updateTsdkConfig(detected: DetectedVersion): Promise<void> {
 
 async function promptSelectVersion(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.LogOutputChannel): Promise<void> {
     const currentExePath = client.getCurrentExe()?.path;
-    const builtinExe = await getBuiltinExePath(context);
-    const nightlyExe = enableContributedNightlyVersion ? await getNightlyExePath() : undefined;
+    const defaultExe = await getDefaultExePath(context);
     const workspaceVersions = await findWorkspaceNativePreviewPackages();
-    const bundledVersion = context.extension.packageJSON.version as string;
     const items: VersionQuickPickItem[] = [];
 
     items.push({
-        label: (currentExePath === builtinExe.path ? "• " : "") + vscode.l10n.t("Use Stable Bundled Version"),
-        description: bundledVersion,
-        detail: builtinExe.path,
+        label: (currentExePath === defaultExe.path ? "• " : "") + vscode.l10n.t("Use Bundled Version"),
+        description: defaultExe.version,
+        detail: defaultExe.path,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
-            await selectNightly(context, false);
-            outputChannel.appendLine("Switched to bundled tsgo version.");
+            outputChannel.appendLine("Switched to bundled TypeScript version.");
         },
     });
-
-    if (nightlyExe) {
-        items.push({
-            label: (currentExePath === nightlyExe.path ? "• " : "") + vscode.l10n.t("Use Nightly Bundled Version"),
-            description: nightlyExe.version,
-            detail: nightlyExe.path,
-            run: async () => {
-                await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
-                await selectNightly(context, true);
-                outputChannel.appendLine(`Switched to nightly tsgo version (${nightlyExe.version}).`);
-            },
-        });
-    }
-    else if (isNightlySelected(context)) {
-        await selectNightly(context, false);
-    }
 
     // Workspace versions
     if (vscode.workspace.isTrusted) {
@@ -485,7 +462,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         for (const loc of additionalLocations) {
             const resolved = await resolveTsdkPathToExe(loc);
             if (!resolved) continue;
-            if (resolved.path === builtinExe.path) continue;
+            if (resolved.path === defaultExe.path) continue;
             if (workspaceVersions.some(ws => ws.exePath === resolved.path)) continue;
             const isActive = currentExePath === resolved.path;
             items.push({
@@ -495,7 +472,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await updateWorkspaceTsdkConfig(loc);
-                    outputChannel.appendLine(`Switched to custom tsgo version at ${loc}.`);
+                    outputChannel.appendLine(`Switched to custom TypeScript version at ${loc}.`);
                 },
             });
         }

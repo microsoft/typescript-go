@@ -44,7 +44,6 @@ export interface ExeInfo {
 }
 
 const packagedExeBaseNames = ["tsc", "tsgo"];
-const selectedBundledExtensionStorageKey = "typescript.native-preview.selectedBundledExtension";
 
 export async function getBuiltinExePath(context: vscode.ExtensionContext): Promise<{ path: string; version: string; }> {
     if (context.extensionMode === vscode.ExtensionMode.Development) {
@@ -68,23 +67,12 @@ export async function getNightlyExePath(): Promise<ExeInfo | undefined> {
     return tryGetPackagedExePath(extension.extensionUri, extension.packageJSON?.version);
 }
 
-export function isNightlySelected(context: vscode.ExtensionContext): boolean {
-    return context.globalState.get<string>(selectedBundledExtensionStorageKey) === nightlyExtensionId;
-}
-
-export async function selectNightly(context: vscode.ExtensionContext, selected: boolean): Promise<void> {
-    await context.globalState.update(selectedBundledExtensionStorageKey, selected ? nightlyExtensionId : undefined);
-}
-
-async function getSelectedBundledExePath(context: vscode.ExtensionContext): Promise<ExeInfo> {
-    if (enableContributedNightlyVersion && isNightlySelected(context)) {
+export async function getDefaultExePath(context: vscode.ExtensionContext): Promise<ExeInfo> {
+    if (enableContributedNightlyVersion) {
         const nightlyExe = await getNightlyExePath();
         if (nightlyExe) {
             return nightlyExe;
         }
-    }
-    if (isNightlySelected(context)) {
-        await selectNightly(context, false);
     }
     return getBuiltinExePath(context);
 }
@@ -163,7 +151,7 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
         }
     }
 
-    return getSelectedBundledExePath(context);
+    return getDefaultExePath(context);
 }
 
 export async function hasTsdkConfigured(): Promise<boolean> {

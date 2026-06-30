@@ -1,4 +1,5 @@
 {
+  "Could not find a TypeScript executable in the extension package.": "Could not find a TypeScript executable in the extension package.",
   "TypeScript 7 Native Preview": "TypeScript 7 Native Preview",
   "$(beaker) tsgo {0}": "$(beaker) tsgo {0}",
   "TypeScript 7 Native Preview Language Server": "TypeScript 7 Native Preview Language Server",
@@ -32,8 +33,7 @@
   "PID": "PID",
   "Server PID copied to clipboard.": "Server PID copied to clipboard.",
   "{0} Commands": "{0} Commands",
-  "Use Stable Bundled Version": "Use Stable Bundled Version",
-  "Use Nightly Bundled Version": "Use Nightly Bundled Version",
+  "Use Bundled Version": "Use Bundled Version",
   "Use Workspace Version": "Use Workspace Version",
   "$(lock) Manage Workspace Trust to select a workspace version": "$(lock) Manage Workspace Trust to select a workspace version",
   "Use Custom Version": "Use Custom Version",
