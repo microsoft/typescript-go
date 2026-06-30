@@ -80,6 +80,7 @@ export class Client implements vscode.Disposable {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
                 logVerbosity: this.outputChannel.logLevel,
+                useWorkspaceDiagnostics: true,
             },
             errorHandler: this.errorHandler,
             middleware: {

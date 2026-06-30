@@ -53,17 +53,18 @@ const watchRequestTimeout = time.Second
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
-	CurrentDirectory       string
-	DefaultLibraryPath     string
-	TypingsLocation        string
-	PositionEncoding       lsproto.PositionEncodingKind
-	WatchEnabled           bool
-	LoggingEnabled         bool
-	TelemetryEnabled       bool
-	PushDiagnosticsEnabled bool
-	DebounceDelay          time.Duration
-	Locale                 locale.Locale
-	CheckerPoolOptions     CheckerPoolOptions
+	CurrentDirectory            string
+	DefaultLibraryPath          string
+	TypingsLocation             string
+	PositionEncoding            lsproto.PositionEncodingKind
+	WatchEnabled                bool
+	LoggingEnabled              bool
+	TelemetryEnabled            bool
+	PushDiagnosticsEnabled      bool
+	WorkspaceDiagnosticsEnabled bool
+	DebounceDelay               time.Duration
+	Locale                      locale.Locale
+	CheckerPoolOptions          CheckerPoolOptions
 }
 
 type SessionInit struct {
@@ -1617,11 +1618,12 @@ func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs l
 }
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
-	if !s.options.PushDiagnosticsEnabled {
+	if !s.options.PushDiagnosticsEnabled && !s.options.WorkspaceDiagnosticsEnabled {
 		return
 	}
 
 	ctx := s.backgroundCtx
+	var changed bool
 	oldProjects := oldSnapshot.ProjectCollection.ProjectsByPath()
 	newProjects := newSnapshot.ProjectCollection.ProjectsByPath()
 	oldOpenProjects := oldSnapshot.ProjectCollection.GetOpenConfiguredProjects()
@@ -1633,19 +1635,28 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 			if !shouldPublishProgramDiagnostics(addedProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			changed = true
+			if s.options.PushDiagnosticsEnabled {
+				s.publishProjectDiagnostics(ctx, string(configFilePath), addedProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			}
 		},
 		func(configFilePath tspath.Path, removedProject *Project) {
 			if removedProject.Kind != KindConfigured {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
+			changed = true
+			if s.options.PushDiagnosticsEnabled {
+				s.publishProjectDiagnostics(ctx, string(configFilePath), nil, oldSnapshot.converters)
+			}
 		},
 		func(configFilePath tspath.Path, oldProject, newProject *Project) {
 			if !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID()) || !newOpenProjects.Has(configFilePath) {
 				return
 			}
-			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			changed = true
+			if s.options.PushDiagnosticsEnabled {
+				s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			}
 		},
 	)
 	// Sync diagnostics for projects whose open-file state changed without a program update.
@@ -1662,11 +1673,20 @@ func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *
 		if newHasOpenFiles && !oldHasOpenFiles &&
 			(newProject == oldProject || !shouldPublishProgramDiagnostics(newProject, newSnapshot.ID())) {
 			// Project reopened without a program update
-			s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			changed = true
+			if s.options.PushDiagnosticsEnabled {
+				s.publishProjectDiagnostics(ctx, string(configFilePath), newProject.GetProjectDiagnostics(ctx), newSnapshot.converters)
+			}
 		} else if !newHasOpenFiles && oldHasOpenFiles {
 			// Project closed
-			s.publishProjectDiagnostics(ctx, string(configFilePath), nil, newSnapshot.converters)
+			changed = true
+			if s.options.PushDiagnosticsEnabled {
+				s.publishProjectDiagnostics(ctx, string(configFilePath), nil, newSnapshot.converters)
+			}
 		}
+	}
+	if changed && s.options.WorkspaceDiagnosticsEnabled && !s.options.PushDiagnosticsEnabled {
+		s.refreshDiagnostics(ctx)
 	}
 }
 
@@ -1691,11 +1711,17 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 	}
 }
 
+func (s *Session) refreshDiagnostics(ctx context.Context) {
+	if err := s.client.RefreshDiagnostics(ctx); err != nil && s.options.LoggingEnabled {
+		s.logger.Logf("Error refreshing diagnostics: %v", err)
+	}
+}
+
 // EnqueuePublishGlobalDiagnostics schedules a background check for new accumulated
 // global diagnostics from checker pools, re-publishing tsconfig diagnostics if changed.
 // Multiple calls are coalesced into a single background task.
 func (s *Session) EnqueuePublishGlobalDiagnostics() {
-	if !s.options.PushDiagnosticsEnabled {
+	if !s.options.PushDiagnosticsEnabled && !s.options.WorkspaceDiagnosticsEnabled {
 		return
 	}
 	if s.globalDiagPublishPending.CompareAndSwap(false, true) {
@@ -1717,9 +1743,44 @@ func (s *Session) publishGlobalDiagnostics(ctx context.Context) {
 			continue
 		}
 		if project.checkerPool.TakeNewGlobalDiagnostics() {
-			s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(ctx), snapshot.converters)
+			if s.options.PushDiagnosticsEnabled {
+				s.publishProjectDiagnostics(ctx, string(project.configFilePath), project.GetProjectDiagnostics(ctx), snapshot.converters)
+			} else if s.options.WorkspaceDiagnosticsEnabled {
+				s.refreshDiagnostics(ctx)
+			}
 		}
 	}
+}
+
+func (s *Session) ProvideWorkspaceDiagnostics(ctx context.Context) *lsproto.WorkspaceDiagnosticReport {
+	s.snapshotMu.RLock()
+	snapshot := s.snapshot
+	snapshot.ref()
+	s.snapshotMu.RUnlock()
+	defer snapshot.Deref(s)
+
+	openProjects := snapshot.ProjectCollection.GetOpenConfiguredProjects()
+	projects := snapshot.ProjectCollection.ProjectsByPath()
+	items := make([]lsproto.WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport, 0, openProjects.Len())
+	for configFilePath, project := range projects.Entries() {
+		if project.Kind != KindConfigured || project.Program == nil || !openProjects.Has(configFilePath) {
+			continue
+		}
+		diagnostics := project.GetProjectDiagnostics(ctx)
+		lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
+		for _, diag := range diagnostics {
+			lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPull(ctx, snapshot.converters, diag, snapshot.UserPreferences().ReportStyleChecksAsWarnings.IsTrue()))
+		}
+		items = append(items, lsproto.WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
+			FullDocumentDiagnosticReport: &lsproto.WorkspaceFullDocumentDiagnosticReport{
+				Kind:    lsproto.StringLiteralFull{},
+				Items:   lspDiagnostics,
+				Uri:     lsconv.FileNameToDocumentURI(string(configFilePath)),
+				Version: lsproto.IntegerOrNull{},
+			},
+		})
+	}
+	return &lsproto.WorkspaceDiagnosticReport{Items: items}
 }
 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {

@@ -348,6 +348,10 @@ func (s *Server) RefreshCodeLens(ctx context.Context) error {
 	return nil
 }
 
+func useWorkspaceDiagnostics(options *lsproto.InitializationOptions) bool {
+	return options != nil && options.UseWorkspaceDiagnostics != nil && *options.UseWorkspaceDiagnostics
+}
+
 // ProgressStart implements project.Client.
 func (s *Server) ProgressStart(message *diagnostics.Message, args ...any) {
 	if s.projectProgress != nil {
@@ -779,6 +783,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVSOnAutoInsert)
 
+	registerRequestHandler(handlers, lsproto.WorkspaceDiagnosticInfo, (*Server).handleWorkspaceDiagnostic)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentVSReferencesInfo, (*ls.LanguageService).ProvideVSReferences)
 	registerRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
@@ -1093,6 +1098,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				Options: &lsproto.DiagnosticOptions{
 					Identifier:            new("typescript"),
 					InterFileDependencies: true,
+					WorkspaceDiagnostics:  useWorkspaceDiagnostics(s.initializationOptions),
 				},
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
@@ -1192,10 +1198,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
-	var disablePushDiagnostics bool
+	workspaceDiagnosticsEnabled := useWorkspaceDiagnostics(s.initializationOptions)
+	disablePushDiagnostics := workspaceDiagnosticsEnabled
 	var enableTelemetry bool
 	if s.initializationOptions.DisablePushDiagnostics != nil {
-		disablePushDiagnostics = *s.initializationOptions.DisablePushDiagnostics
+		disablePushDiagnostics = disablePushDiagnostics || *s.initializationOptions.DisablePushDiagnostics
 	}
 	if s.initializationOptions.EnableTelemetry != nil {
 		enableTelemetry = *s.initializationOptions.EnableTelemetry
@@ -1241,16 +1248,17 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),
 		Options: &project.SessionOptions{
-			CurrentDirectory:       cwd,
-			DefaultLibraryPath:     s.defaultLibraryPath,
-			TypingsLocation:        s.typingsLocation,
-			PositionEncoding:       s.positionEncoding,
-			WatchEnabled:           s.watchEnabled,
-			LoggingEnabled:         true,
-			TelemetryEnabled:       enableTelemetry,
-			DebounceDelay:          500 * time.Millisecond,
-			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			Locale:                 s.locale,
+			CurrentDirectory:            cwd,
+			DefaultLibraryPath:          s.defaultLibraryPath,
+			TypingsLocation:             s.typingsLocation,
+			PositionEncoding:            s.positionEncoding,
+			WatchEnabled:                s.watchEnabled,
+			LoggingEnabled:              true,
+			TelemetryEnabled:            enableTelemetry,
+			DebounceDelay:               500 * time.Millisecond,
+			PushDiagnosticsEnabled:      !disablePushDiagnostics,
+			WorkspaceDiagnosticsEnabled: workspaceDiagnosticsEnabled,
+			Locale:                      s.locale,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
@@ -1360,6 +1368,11 @@ func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLog
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
 	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+}
+
+func (s *Server) handleWorkspaceDiagnostic(ctx context.Context, _ *lsproto.WorkspaceDiagnosticParams, _ *lsproto.RequestMessage) (lsproto.WorkspaceDiagnosticResponse, error) {
+	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
+	return s.session.ProvideWorkspaceDiagnostics(ctx), nil
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {

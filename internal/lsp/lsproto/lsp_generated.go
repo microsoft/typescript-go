@@ -28053,6 +28053,9 @@ type InitializationOptions struct {
 	// DisablePushDiagnostics disables automatic pushing of diagnostics to the client.
 	DisablePushDiagnostics *bool `json:"disablePushDiagnostics,omitzero"`
 
+	// UseWorkspaceDiagnostics enables reporting program diagnostics through workspace/diagnostic.
+	UseWorkspaceDiagnostics *bool `json:"useWorkspaceDiagnostics,omitzero"`
+
 	// The client-side command name that resolved references/implementations `CodeLens` should trigger. Arguments passed will be `(DocumentUri, Position, Location[])`.
 	CodeLensShowLocationsCommandName *string `json:"codeLensShowLocationsCommandName,omitzero"`
 
@@ -28087,6 +28090,13 @@ func (s *InitializationOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
 				return errNull("disablePushDiagnostics")
 			}
 			if err := json.UnmarshalDecode(dec, &s.DisablePushDiagnostics); err != nil {
+				return err
+			}
+		case `"useWorkspaceDiagnostics"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("useWorkspaceDiagnostics")
+			}
+			if err := json.UnmarshalDecode(dec, &s.UseWorkspaceDiagnostics); err != nil {
 				return err
 			}
 		case `"codeLensShowLocationsCommandName"`:
