@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/nativepath"
 )
@@ -251,6 +252,10 @@ func (w *watcher) HasFastRecursiveBackend() bool {
 	}
 }
 
+func (w *watcher) canShareRecursiveDirWatches() bool {
+	return w.name == "fsevents"
+}
+
 func (w *watcher) getImpl() (watcherImpl, error) {
 	w.mu.Lock()
 	if w.impl != nil {
@@ -302,7 +307,7 @@ func (w *watcher) findCoveringRecursiveWatchLocked(dir string) *dirWatch {
 }
 
 func (w *watcher) findConsolidationDirLocked(dir string) string {
-	if !w.HasFastRecursiveBackend() {
+	if !w.canShareRecursiveDirWatches() {
 		return ""
 	}
 	parent := filepath.Dir(dir)
@@ -339,7 +344,7 @@ func (w *watcher) getOrCreateDirWatch(dir string, physicalDir string, recursive 
 		w.debounce = newDebounce()
 	}
 
-	if w.HasFastRecursiveBackend() {
+	if w.canShareRecursiveDirWatches() {
 		if dw := w.findCoveringRecursiveWatchLocked(dir); dw != nil {
 			return dw
 		}
@@ -423,6 +428,15 @@ func (w *watcher) WatchDirectories(requests []WatchDirectoryRequest) ([]Watch, e
 			return nil, errNotAbsolute
 		}
 		dir = canonicalizePath(dir)
+		info, err := os.Stat(dir)
+		if err != nil {
+			rollback()
+			return nil, err
+		}
+		if !info.IsDir() {
+			rollback()
+			return nil, syscall.ENOTDIR
+		}
 		physicalDir := physicalDirFor(dir)
 
 		var sopts watchOptions
@@ -671,6 +685,7 @@ type callback struct {
 	recursive bool
 	fn        WatchCallback
 	ignore    func(path string) bool
+	sinceSeq  uint64
 }
 
 // dirWatchError associates an error with a specific directory watch.
@@ -814,15 +829,19 @@ func (dw *dirWatch) triggerCallbacks() {
 		dw.mu.Unlock()
 		return
 	}
-	events, err := dw.events.drain()
 	cbs := slices.Clone(dw.callbacks)
+	startSeqs := make([]uint64, len(cbs))
+	for i, cb := range cbs {
+		startSeqs[i] = cb.sinceSeq
+	}
+	eventsByCallback, err := dw.events.drainForSequences(startSeqs)
 	dw.mu.Unlock()
 
-	for _, cb := range cbs {
-		cbEvents := events
+	for i, cb := range cbs {
+		cbEvents := eventsByCallback[i]
 		if cb.ignore != nil || !cb.recursive || cb.dir != dw.dir {
-			filtered := make([]Event, 0, len(events))
-			for _, e := range events {
+			filtered := make([]Event, 0, len(cbEvents))
+			for _, e := range cbEvents {
 				if cb.ignore != nil && cb.ignore(e.Path) {
 					continue
 				}
@@ -885,7 +904,7 @@ func (dw *dirWatch) watch(dir string, recursive bool, fn WatchCallback, ignore f
 	defer dw.mu.Unlock()
 	dw.nextCBID++
 	id := dw.nextCBID
-	dw.callbacks = append(dw.callbacks, callback{id: id, dir: dir, recursive: recursive, fn: fn, ignore: ignore})
+	dw.callbacks = append(dw.callbacks, callback{id: id, dir: dir, recursive: recursive, fn: fn, ignore: ignore, sinceSeq: dw.events.sequence()})
 	return id, true
 }
 

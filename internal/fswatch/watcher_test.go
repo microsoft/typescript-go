@@ -503,7 +503,7 @@ type wantEvent struct {
 func toWantEvents(events []Event) []wantEvent {
 	out := make([]wantEvent, len(events))
 	for i, e := range events {
-		out[i] = wantEvent(e)
+		out[i] = wantEvent{Kind: e.Kind, Path: e.Path}
 	}
 	return out
 }
