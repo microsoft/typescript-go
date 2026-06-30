@@ -8434,6 +8434,9 @@ type Hover struct {
 
 	// Whether the verbosity level can be increased for this hover.
 	CanIncreaseVerbosity bool `json:"canIncreaseVerbosity,omitzero"`
+
+	// VS-specific rich content for hover display, containing classified text elements.
+	VSRawContent *json.Value `json:"_vs_rawContent,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*Hover)(nil)
@@ -8472,6 +8475,13 @@ func (s *Hover) UnmarshalJSONFrom(dec *json.Decoder) error {
 			}
 		case `"canIncreaseVerbosity"`:
 			if err := json.UnmarshalDecode(dec, &s.CanIncreaseVerbosity); err != nil {
+				return err
+			}
+		case `"_vs_rawContent"`:
+			if dec.PeekKind() == 'n' {
+				return errNull("_vs_rawContent")
+			}
+			if err := json.UnmarshalDecode(dec, &s.VSRawContent); err != nil {
 				return err
 			}
 		default:
@@ -29974,6 +29984,76 @@ func (s *VSClassifiedTextElement) UnmarshalJSONFrom(dec *json.Decoder) error {
 		}
 		if missing&missingVSType != 0 {
 			missingProps = append(missingProps, "_vs_type")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// A container element that holds child content elements with a layout style, used for VS hover display.
+type ContainerElement struct {
+	// The child elements of this container.
+	Elements []*VSClassifiedTextElement `json:"Elements"`
+
+	// The container style (0=Stacked, 1=Wrapped).
+	Style int32 `json:"Style"`
+}
+
+var _ json.UnmarshalerFrom = (*ContainerElement)(nil)
+
+func (s *ContainerElement) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingElements uint = 1 << iota
+		missingStyle
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"Elements"`:
+			missing &^= missingElements
+			if dec.PeekKind() == 'n' {
+				return errNull("Elements")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Elements); err != nil {
+				return err
+			}
+		case `"Style"`:
+			missing &^= missingStyle
+			if err := json.UnmarshalDecode(dec, &s.Style); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingElements != 0 {
+			missingProps = append(missingProps, "Elements")
+		}
+		if missing&missingStyle != 0 {
+			missingProps = append(missingProps, "Style")
 		}
 		return errMissing(missingProps)
 	}
