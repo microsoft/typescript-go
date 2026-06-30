@@ -1482,6 +1482,125 @@ func TestFastRecursiveWatcherConsolidatesSiblingDirectories(t *testing.T) {
 	}
 }
 
+func TestFastRecursiveWatcherDoesNotConsolidateSymlinkOutsideRoot(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	parent := filepath.Join(root, "node_modules", ".bun")
+	if err := os.MkdirAll(parent, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	var impl *countingWatcherImpl
+	watcherImpl := &watcher{
+		name: "fsevents",
+		factory: func() watcherImpl {
+			impl = newCountingWatcherImpl()
+			return impl
+		},
+	}
+
+	var subs []Watch
+	for i := range recursiveConsolidateThreshold {
+		dir := filepath.Join(parent, fmt.Sprintf("pkg%d", i))
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		sub, err := watcherImpl.WatchDirectory(dir, func([]Event, error) {})
+		if err != nil {
+			t.Fatal(err)
+		}
+		subs = append(subs, sub)
+	}
+	t.Cleanup(func() {
+		for _, sub := range subs {
+			_ = sub.Close()
+		}
+	})
+
+	consolidated := impl.subscribed[len(impl.subscribed)-1]
+	if consolidated.dir != parent || !consolidated.recursive {
+		t.Fatalf("expected consolidated recursive watch on %s, got dir=%s recursive=%v", parent, consolidated.dir, consolidated.recursive)
+	}
+
+	target := filepath.Join(root, "outside")
+	if err := os.MkdirAll(target, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(parent, "linked")
+	makeDirSymlink(t, target, link)
+
+	sub, err := watcherImpl.WatchDirectory(link, func([]Event, error) {})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = sub.Close() })
+
+	watch := sub.(*watch)
+	if watch.dw == consolidated {
+		t.Fatal("symlink outside consolidated physical root should keep its own watch")
+	}
+	if watch.dw.dir != link || watch.dw.physicalDir != physicalDirFor(link) {
+		t.Fatalf("expected watch on symlink root %s (%s), got %s (%s)", link, physicalDirFor(link), watch.dw.dir, watch.dw.physicalDir)
+	}
+}
+
+func TestConsolidatedSymlinkChildMapsSharedLogicalPath(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	physicalParent := filepath.Join(root, "physical-parent")
+	if err := os.MkdirAll(filepath.Join(physicalParent, "target"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	logicalParent := filepath.Join(root, "logical-parent")
+	makeDirSymlink(t, physicalParent, logicalParent)
+	link := filepath.Join(logicalParent, "link")
+	makeDirSymlink(t, filepath.Join(physicalParent, "target"), link)
+
+	cb := callback{
+		dir:              link,
+		physicalDir:      physicalDirFor(link),
+		watchDir:         logicalParent,
+		watchPhysicalDir: physicalDirFor(logicalParent),
+	}
+	event := Event{Kind: EventUpdate, Path: filepath.Join(logicalParent, "target", "file.ts")}
+	got := cb.mapEvent(event)
+	want := filepath.Join(link, "file.ts")
+	if got.Path != want {
+		t.Fatalf("mapEvent path = %q, want %q", got.Path, want)
+	}
+}
+
+func TestConsolidatedSymlinkChildTerminatesFromSharedLogicalPath(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	physicalParent := filepath.Join(root, "physical-parent")
+	if err := os.MkdirAll(filepath.Join(physicalParent, "target"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	logicalParent := filepath.Join(root, "logical-parent")
+	makeDirSymlink(t, physicalParent, logicalParent)
+	link := filepath.Join(logicalParent, "link")
+	makeDirSymlink(t, filepath.Join(physicalParent, "target"), link)
+
+	dw := newDirectWatcher(t, logicalParent)
+	dw.physicalDir = physicalDirFor(logicalParent)
+	id, _ := dw.watch(link, physicalDirFor(link), true, func([]Event, error) {}, nil)
+	err := errors.New("terminated")
+	if !dw.terminateCallbacksForDeletedRoot(filepath.Join(logicalParent, "target"), 1, err) {
+		t.Fatal("expected symlink child callback to terminate")
+	}
+	dw.mu.Lock()
+	defer dw.mu.Unlock()
+	for _, cb := range dw.callbacks {
+		if cb.id == id && !errors.Is(cb.terminal, err) {
+			t.Fatalf("terminal error = %v, want %v", cb.terminal, err)
+		}
+	}
+}
+
 func TestConsolidatedChildWatchFiltersAgainstRequestedDir(t *testing.T) {
 	t.Parallel()
 

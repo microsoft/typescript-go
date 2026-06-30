@@ -47,8 +47,8 @@ type eventList struct {
 }
 
 // create records a new-file event for path. Both create and update
-// produce EventUpdate externally; isCreated is tracked only for
-// coalescing (create+delete within a batch cancels out).
+// produce EventUpdate externally; sequence state tracks coalescing
+// (create+delete within a batch cancels out).
 func (el *eventList) create(path string) {
 	el.mu.Lock()
 	defer el.mu.Unlock()

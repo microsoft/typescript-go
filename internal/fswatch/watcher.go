@@ -294,10 +294,10 @@ func (w *watcher) keyForDirWatch(dir string, recursive bool) string {
 	return dir
 }
 
-func (w *watcher) findCoveringRecursiveWatchLocked(dir string) *dirWatch {
+func (w *watcher) findCoveringRecursiveWatchLocked(dir string, physicalDir string) *dirWatch {
 	var best *dirWatch
 	for _, dw := range w.dirWatches {
-		if !dw.recursive || !isInDirectoryOrSelf(dw.dir, dir) {
+		if !dw.recursive || !isInDirectoryOrSelf(dw.dir, dir) || !isInDirectoryOrSelf(dw.physicalDir, physicalDir) {
 			continue
 		}
 		if best == nil || len(dw.dir) > len(best.dir) {
@@ -307,7 +307,7 @@ func (w *watcher) findCoveringRecursiveWatchLocked(dir string) *dirWatch {
 	return best
 }
 
-func (w *watcher) findConsolidationDirLocked(dir string) string {
+func (w *watcher) findConsolidationDirLocked(dir string, physicalDir string) string {
 	if !w.canShareRecursiveDirWatches() {
 		return ""
 	}
@@ -316,9 +316,13 @@ func (w *watcher) findConsolidationDirLocked(dir string) string {
 		if filepath.Dir(parent) == parent {
 			break
 		}
+		physicalParent := physicalDirFor(parent)
+		if !isInDirectoryOrSelf(physicalParent, physicalDir) {
+			return ""
+		}
 		count := 1
 		for _, dw := range w.dirWatches {
-			if isInDirectoryOrSelf(parent, dw.dir) {
+			if isInDirectoryOrSelf(parent, dw.dir) && isInDirectoryOrSelf(physicalParent, dw.physicalDir) {
 				count++
 				if count >= recursiveConsolidateThreshold {
 					return parent
@@ -346,14 +350,14 @@ func (w *watcher) getOrCreateDirWatch(dir string, physicalDir string, recursive 
 	}
 
 	if w.canShareRecursiveDirWatches() {
-		if dw := w.findCoveringRecursiveWatchLocked(dir); dw != nil {
+		if dw := w.findCoveringRecursiveWatchLocked(dir, physicalDir); dw != nil {
 			return dw
 		}
-		if consolidationDir := w.findConsolidationDirLocked(dir); consolidationDir != "" {
+		if consolidationDir := w.findConsolidationDirLocked(dir, physicalDir); consolidationDir != "" {
 			dir = consolidationDir
 			physicalDir = physicalDirFor(dir)
 			recursive = true
-			if dw := w.findCoveringRecursiveWatchLocked(dir); dw != nil {
+			if dw := w.findCoveringRecursiveWatchLocked(dir, physicalDir); dw != nil {
 				return dw
 			}
 		}
@@ -690,15 +694,17 @@ func (b *watcherBase) handleWatcherError(werr *dirWatchError) {
 // ----- dirWatch: per-directory watch state -------------------------
 
 type callback struct {
-	id          uint64
-	dir         string
-	physicalDir string
-	recursive   bool
-	fn          WatchCallback
-	ignore      func(path string) bool
-	sinceSeq    uint64
-	terminal    error
-	delivered   bool
+	id               uint64
+	dir              string
+	physicalDir      string
+	watchDir         string
+	watchPhysicalDir string
+	recursive        bool
+	fn               WatchCallback
+	ignore           func(path string) bool
+	sinceSeq         uint64
+	terminal         error
+	delivered        bool
 }
 
 // dirWatchError associates an error with a specific directory watch.
@@ -919,10 +925,20 @@ func (dw *dirWatch) triggerCallbacks() {
 }
 
 func (cb callback) mapEvent(e Event) Event {
-	if cb.physicalDir != "" && cb.physicalDir != cb.dir && isInDirectoryOrSelf(cb.physicalDir, e.Path) {
-		e.Path = rebasePath(e.Path, cb.physicalDir, cb.dir)
+	if cb.physicalDir != "" && cb.physicalDir != cb.dir {
+		physicalPath := cb.eventPhysicalPath(e.Path)
+		if isInDirectoryOrSelf(cb.physicalDir, physicalPath) {
+			e.Path = rebasePath(physicalPath, cb.physicalDir, cb.dir)
+		}
 	}
 	return e
+}
+
+func (cb callback) eventPhysicalPath(path string) string {
+	if cb.watchPhysicalDir != "" && cb.watchDir != "" && cb.watchPhysicalDir != cb.watchDir && isInDirectoryOrSelf(cb.watchDir, path) {
+		return rebasePath(path, cb.watchDir, cb.watchPhysicalDir)
+	}
+	return path
 }
 
 func (dw *dirWatch) terminateCallbacksForDeletedRoot(path string, seq uint64, err error) bool {
@@ -934,7 +950,8 @@ func (dw *dirWatch) terminateCallbacksForDeletedRoot(path string, seq uint64, er
 		if cb.delivered || cb.terminal != nil || cb.sinceSeq >= seq {
 			continue
 		}
-		if isInDirectoryOrSelf(path, cb.dir) || (cb.physicalDir != cb.dir && isInDirectoryOrSelf(path, cb.physicalDir)) {
+		physicalPath := cb.eventPhysicalPath(path)
+		if isInDirectoryOrSelf(path, cb.dir) || (cb.physicalDir != cb.dir && isInDirectoryOrSelf(physicalPath, cb.physicalDir)) {
 			cb.terminal = err
 			changed = true
 		}
@@ -988,7 +1005,7 @@ func (dw *dirWatch) watch(dir string, physicalDir string, recursive bool, fn Wat
 	if dw.sequence != nil {
 		sinceSeq = dw.sequence()
 	}
-	dw.callbacks = append(dw.callbacks, callback{id: id, dir: dir, physicalDir: physicalDir, recursive: recursive, fn: fn, ignore: ignore, sinceSeq: sinceSeq})
+	dw.callbacks = append(dw.callbacks, callback{id: id, dir: dir, physicalDir: physicalDir, watchDir: dw.dir, watchPhysicalDir: dw.physicalDir, recursive: recursive, fn: fn, ignore: ignore, sinceSeq: sinceSeq})
 	return id, true
 }
 
