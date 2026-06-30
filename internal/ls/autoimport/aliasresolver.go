@@ -181,7 +181,7 @@ func (r *aliasResolver) GetNearestAncestorDirectoryWithPackageJson(dirname strin
 
 // GetPackageJsonInfo implements checker.Program.
 func (r *aliasResolver) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheEntry {
-	return nil
+	panic("unimplemented")
 }
 
 // GetProjectReferenceFromOutputDts implements checker.Program.
@@ -222,7 +222,7 @@ func (r *aliasResolver) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 
 // IsSourceFromProjectReference implements checker.Program.
 func (r *aliasResolver) IsSourceFromProjectReference(path tspath.Path) bool {
-	return false
+	panic("unimplemented")
 }
 
 // SourceFileMayBeEmitted implements checker.Program.
