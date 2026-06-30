@@ -127,14 +127,18 @@ func shouldRescanJsxIdentifier(node *ast.Node) bool {
 }
 
 func isLeftmostJsxTagName(node *ast.Node) bool {
-	current := node.Parent
-	if current.Expression() != node {
-		return false
-	}
-	for current.Parent != nil && ast.IsPropertyAccessExpression(current.Parent) && current.Parent.Expression() == current {
-		current = current.Parent
-	}
-	return current.Parent != nil && ast.IsJsxTagName(current)
+	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
+		switch {
+		case n.Parent == nil:
+			return ast.FindAncestorQuit
+		case ast.IsJsxTagName(n):
+			return ast.FindAncestorTrue
+		case ast.IsPropertyAccessExpression(n.Parent) && n.Parent.Expression() == n:
+			return ast.FindAncestorFalse
+		default:
+			return ast.FindAncestorQuit
+		}
+	}) != nil
 }
 
 func (s *formattingScanner) shouldRescanJsxText(node *ast.Node) bool {
