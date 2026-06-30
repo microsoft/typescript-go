@@ -37,9 +37,9 @@ type EmitResolver struct {
 	isValueAliasDeclaration func(node *ast.Node) bool
 	aliasMarkingVisitor     func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
-	jsxLinks                core.LinkStore[*ast.Node, JSXLinks]
-	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
-	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
+	jsxLinks                ast.NodeLinkStore[JSXLinks]
+	declarationLinks        ast.NodeLinkStore[DeclarationLinks]
+	declarationFileLinks    ast.NodeLinkStore[DeclarationFileLinks]
 }
 
 func newEmitResolver(checker *Checker) *EmitResolver {

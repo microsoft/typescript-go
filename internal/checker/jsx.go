@@ -497,7 +497,7 @@ func (c *Checker) getSuggestedSymbolForNonexistentJSXAttribute(name string, cont
 
 func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 	// An opening fragment is required in order for `getJsxNamespace` to give the fragment factory
-	links := c.sourceFileLinks.Get(ast.GetSourceFileOfNode(node))
+	links := c.sourceFileLinks.Get(ast.GetSourceFileOfNode(node).AsNode())
 	if links.jsxFragmentType != nil {
 		return links.jsxFragmentType
 	}
@@ -1344,7 +1344,7 @@ func (c *Checker) getJsxNamespace(location *ast.Node) string {
 	if location != nil {
 		file := ast.GetSourceFileOfNode(location)
 		if file != nil {
-			links := c.sourceFileLinks.Get(file)
+			links := c.sourceFileLinks.Get(file.AsNode())
 			if ast.IsJsxOpeningFragment(location) {
 				if links.localJsxFragmentNamespace != "" {
 					return links.localJsxFragmentNamespace
@@ -1390,7 +1390,7 @@ func (c *Checker) getJsxNamespace(location *ast.Node) string {
 }
 
 func (c *Checker) getLocalJsxNamespace(file *ast.SourceFile) string {
-	links := c.sourceFileLinks.Get(file)
+	links := c.sourceFileLinks.Get(file.AsNode())
 	if links.localJsxNamespace != "" {
 		return links.localJsxNamespace
 	}
@@ -1408,7 +1408,7 @@ func (c *Checker) getLocalJsxNamespace(file *ast.SourceFile) string {
 func (c *Checker) getJsxFactoryEntity(location *ast.Node) *ast.Node {
 	if location != nil {
 		c.getJsxNamespace(location)
-		if localJsxFactory := c.sourceFileLinks.Get(ast.GetSourceFileOfNode(location)).localJsxFactory; localJsxFactory != nil {
+		if localJsxFactory := c.sourceFileLinks.Get(ast.GetSourceFileOfNode(location).AsNode()).localJsxFactory; localJsxFactory != nil {
 			return localJsxFactory
 		}
 	}
@@ -1419,7 +1419,7 @@ func (c *Checker) getJsxFragmentFactoryEntity(location *ast.Node) *ast.EntityNam
 	if location != nil {
 		file := ast.GetSourceFileOfNode(location)
 		if file != nil {
-			links := c.sourceFileLinks.Get(file)
+			links := c.sourceFileLinks.Get(file.AsNode())
 			if links.localJsxFragmentFactory != nil {
 				return links.localJsxFragmentFactory
 			}

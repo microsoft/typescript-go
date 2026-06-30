@@ -666,32 +666,32 @@ type Checker struct {
 	indexInfoArena                              core.Arena[IndexInfo]
 	mergedSymbols                               map[*ast.Symbol]*ast.Symbol
 	factory                                     ast.NodeFactory
-	nodeLinks                                   core.LinkStore[*ast.Node, NodeLinks]
-	signatureLinks                              core.LinkStore[*ast.Node, SignatureLinks]
-	symbolNodeLinks                             core.LinkStore[*ast.Node, SymbolNodeLinks]
-	typeNodeLinks                               core.LinkStore[*ast.Node, TypeNodeLinks]
-	enumMemberLinks                             core.LinkStore[*ast.Node, EnumMemberLinks]
-	assertionLinks                              core.LinkStore[*ast.Node, AssertionLinks]
-	arrayLiteralLinks                           core.LinkStore[*ast.Node, ArrayLiteralLinks]
-	switchStatementLinks                        core.LinkStore[*ast.Node, SwitchStatementLinks]
-	jsxElementLinks                             core.LinkStore[*ast.Node, JsxElementLinks]
-	symbolReferenceLinks                        core.LinkStore[*ast.Symbol, SymbolReferenceLinks]
-	valueSymbolLinks                            core.LinkStore[*ast.Symbol, ValueSymbolLinks]
-	mappedSymbolLinks                           core.LinkStore[*ast.Symbol, MappedSymbolLinks]
-	deferredSymbolLinks                         core.LinkStore[*ast.Symbol, DeferredSymbolLinks]
-	aliasSymbolLinks                            core.LinkStore[*ast.Symbol, AliasSymbolLinks]
-	moduleSymbolLinks                           core.LinkStore[*ast.Symbol, ModuleSymbolLinks]
-	lateBoundLinks                              core.LinkStore[*ast.Symbol, LateBoundLinks]
-	exportTypeLinks                             core.LinkStore[*ast.Symbol, ExportTypeLinks]
-	membersAndExportsLinks                      core.LinkStore[*ast.Symbol, MembersAndExportsLinks]
-	typeAliasLinks                              core.LinkStore[*ast.Symbol, TypeAliasLinks]
-	declaredTypeLinks                           core.LinkStore[*ast.Symbol, DeclaredTypeLinks]
-	spreadLinks                                 core.LinkStore[*ast.Symbol, SpreadLinks]
-	varianceLinks                               core.LinkStore[*ast.Symbol, VarianceLinks]
-	ReverseMappedSymbolLinks                    core.LinkStore[*ast.Symbol, ReverseMappedSymbolLinks]
-	markedAssignmentSymbolLinks                 core.LinkStore[*ast.Symbol, MarkedAssignmentSymbolLinks]
-	symbolContainerLinks                        core.LinkStore[*ast.Symbol, ContainingSymbolLinks]
-	sourceFileLinks                             core.LinkStore[*ast.SourceFile, SourceFileLinks]
+	nodeLinks                                   ast.NodeLinkStore[NodeLinks]
+	signatureLinks                              ast.NodeLinkStore[SignatureLinks]
+	symbolNodeLinks                             ast.NodeLinkStore[SymbolNodeLinks]
+	typeNodeLinks                               ast.NodeLinkStore[TypeNodeLinks]
+	enumMemberLinks                             ast.NodeLinkStore[EnumMemberLinks]
+	assertionLinks                              ast.NodeLinkStore[AssertionLinks]
+	arrayLiteralLinks                           ast.NodeLinkStore[ArrayLiteralLinks]
+	switchStatementLinks                        ast.NodeLinkStore[SwitchStatementLinks]
+	jsxElementLinks                             ast.NodeLinkStore[JsxElementLinks]
+	symbolReferenceLinks                        ast.SymbolLinkStore[SymbolReferenceLinks]
+	valueSymbolLinks                            ast.SymbolLinkStore[ValueSymbolLinks]
+	mappedSymbolLinks                           ast.SymbolLinkStore[MappedSymbolLinks]
+	deferredSymbolLinks                         ast.SymbolLinkStore[DeferredSymbolLinks]
+	aliasSymbolLinks                            ast.SymbolLinkStore[AliasSymbolLinks]
+	moduleSymbolLinks                           ast.SymbolLinkStore[ModuleSymbolLinks]
+	lateBoundLinks                              ast.SymbolLinkStore[LateBoundLinks]
+	exportTypeLinks                             ast.SymbolLinkStore[ExportTypeLinks]
+	membersAndExportsLinks                      ast.SymbolLinkStore[MembersAndExportsLinks]
+	typeAliasLinks                              ast.SymbolLinkStore[TypeAliasLinks]
+	declaredTypeLinks                           ast.SymbolLinkStore[DeclaredTypeLinks]
+	spreadLinks                                 ast.SymbolLinkStore[SpreadLinks]
+	varianceLinks                               ast.SymbolLinkStore[VarianceLinks]
+	ReverseMappedSymbolLinks                    ast.SymbolLinkStore[ReverseMappedSymbolLinks]
+	markedAssignmentSymbolLinks                 ast.SymbolLinkStore[MarkedAssignmentSymbolLinks]
+	symbolContainerLinks                        ast.SymbolLinkStore[ContainingSymbolLinks]
+	sourceFileLinks                             ast.NodeLinkStore[SourceFileLinks]
 	regExpScanner                               *scanner.Scanner
 	patternForType                              map[*Type]*ast.Node
 	contextFreeTypes                            map[*ast.Node]*Type
@@ -2181,7 +2181,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 
 func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool) {
 	c.ctx = ctx
-	links := c.sourceFileLinks.Get(sourceFile)
+	links := c.sourceFileLinks.Get(sourceFile.AsNode())
 	if !links.typeChecked {
 		c.saveDeferredDiagnostics = true
 		if tr := c.tracer; tr != nil {
@@ -2471,14 +2471,14 @@ func (c *Checker) isSourceElementUnreachable(node *ast.Node) bool {
 // Delaying the type check of the body ensures foo has been assigned a type.
 func (c *Checker) checkNodeDeferred(node *ast.Node) {
 	enclosingFile := ast.GetSourceFileOfNode(node)
-	links := c.sourceFileLinks.Get(enclosingFile)
+	links := c.sourceFileLinks.Get(enclosingFile.AsNode())
 	if !links.typeChecked {
 		links.deferredNodes.Add(node)
 	}
 }
 
 func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
-	links := c.sourceFileLinks.Get(context)
+	links := c.sourceFileLinks.Get(context.AsNode())
 	for node := range links.deferredNodes.Values() {
 		if c.isCanceled() {
 			break
@@ -7016,7 +7016,7 @@ func (c *Checker) checkTypeParametersNotReferenced(root *ast.Node, typeParameter
 
 func (c *Checker) registerForUnusedIdentifiersCheck(node *ast.Node) {
 	sourceFile := ast.GetSourceFileOfNode(node)
-	links := c.sourceFileLinks.Get(sourceFile)
+	links := c.sourceFileLinks.Get(sourceFile.AsNode())
 	links.identifierCheckNodes = append(links.identifierCheckNodes, node)
 }
 
@@ -28336,7 +28336,7 @@ func (c *Checker) checkExternalEmitHelpers(location *ast.Node, helpers ExternalE
 	if helpersModule == c.unknownSymbol {
 		return
 	}
-	links := c.sourceFileLinks.Get(sourceFile)
+	links := c.sourceFileLinks.Get(sourceFile.AsNode())
 	if links.requestedExternalEmitHelpers&helpers != helpers {
 		uncheckedHelpers := helpers &^ links.requestedExternalEmitHelpers
 		for helper := ExternalEmitHelpersFirstEmitHelper; helper <= ExternalEmitHelpersLastEmitHelper; helper <<= 1 {
@@ -28422,7 +28422,7 @@ func (c *Checker) getHelperNames(helper ExternalEmitHelpers) []string {
 }
 
 func (c *Checker) resolveHelpersModule(file *ast.SourceFile, errorNode *ast.Node) *ast.Symbol {
-	links := c.sourceFileLinks.Get(file)
+	links := c.sourceFileLinks.Get(file.AsNode())
 	if links.externalHelpersModule == nil {
 		location := c.program.GetImportHelpersImportSpecifier(file.Path())
 		helpersModule := c.resolveExternalModule(location, externalHelpersModuleNameText, diagnostics.This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found, errorNode, false /*isForAugmentation*/)
