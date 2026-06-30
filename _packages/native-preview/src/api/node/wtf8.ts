@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+
 const surrogateLeadByte = 0xED;
 const surrogateSecondByteMin = 0xA0;
 const surrogateSecondByteMax = 0xBF;
@@ -18,6 +20,10 @@ function getSurrogateCodeUnit(bytes: Uint8Array, index: number): number {
     return 0xD000 | ((bytes[index + 1] & 0x3F) << 6) | (bytes[index + 2] & 0x3F);
 }
 
+function hasSurrogateLeadByte(bytes: Uint8Array): boolean {
+    return Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength).indexOf(surrogateLeadByte) >= 0;
+}
+
 function toUint8Array(input: NodeJS.AllowSharedBufferSource): Uint8Array {
     if (input instanceof Uint8Array) {
         return input;
@@ -35,6 +41,10 @@ export class Wtf8Decoder extends TextDecoder {
         }
 
         const bytes = toUint8Array(input);
+        if (!hasSurrogateLeadByte(bytes)) {
+            return super.decode(bytes, options);
+        }
+
         const parts: string[] = [];
         let segmentStart = 0;
 
