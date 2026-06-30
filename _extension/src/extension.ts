@@ -7,11 +7,13 @@ import {
 import {
     aiConnectionString,
     getExplicitConfigTarget,
+    getTsdkServerKind,
     getUseTsgo,
     getWinningTsgoConfigKey,
     hasNativeTsdkConfigured,
     hasTsdkConfigured,
     needsExtHostRestartOnChange,
+    readLanguageServerPreference,
 } from "./util";
 
 import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
@@ -60,6 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         if (
             event.affectsConfiguration("typescript.experimental.useTsgo")
             || event.affectsConfiguration("js/ts.experimental.useTsgo")
+            || event.affectsConfiguration("js/ts.languageServer.preference")
             || event.affectsConfiguration("typescript.tsdk")
             || event.affectsConfiguration("js/ts.tsdk.path")
             || event.affectsConfiguration("typescript.native-preview.tsdk")
@@ -93,8 +96,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }
 
     const useTsgo = getUseTsgo();
-    const hasNativeTsdk = await hasNativeTsdkConfigured(context);
-    const hasTsdk = hasNativeTsdk || await hasTsdkConfigured();
+    const tsdkServerKind = await getTsdkServerKind(context);
+    const hasNativeTsdk = tsdkServerKind === "lsp";
+    const hasTsdk = tsdkServerKind !== undefined || await hasTsdkConfigured();
 
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
@@ -139,6 +143,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }
 
     async function shouldStartTsgo(context: vscode.ExtensionContext): Promise<boolean> {
+        const tsdkServerKind = await getTsdkServerKind(context);
+        if (tsdkServerKind !== undefined) {
+            return tsdkServerKind === "lsp";
+        }
+        switch (readLanguageServerPreference()) {
+            case "preferLsp":
+                return true;
+            case "preferTsserver":
+                return false;
+        }
         const useTsgo = getUseTsgo();
         if (useTsgo !== undefined) {
             return useTsgo;

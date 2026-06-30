@@ -33,20 +33,23 @@ export function registerEnablementCommands(context: vscode.ExtensionContext, tel
 export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     const jsTsConfig = vscode.workspace.getConfiguration("js/ts");
     const tsConfig = vscode.workspace.getConfiguration("typescript");
+    const preference = enable ? "preferLsp" : "preferTsserver";
 
     const jsTsTarget = getExplicitConfigTarget(jsTsConfig, "experimental.useTsgo");
     const tsTarget = getExplicitConfigTarget(tsConfig, "experimental.useTsgo");
+    const preferenceTarget = getExplicitConfigTarget(jsTsConfig, "languageServer.preference");
 
     // If any are defined, we'll use the most-specific target,
     // but we'll only set it through `js/ts`.
-    if (jsTsTarget !== undefined || tsTarget !== undefined) {
-        const updates = [];
-
+    const updates: Thenable<void>[] = [];
+    if (jsTsTarget !== undefined || tsTarget !== undefined || preferenceTarget !== undefined) {
         const mostSpecificTarget = Math.max(
             jsTsTarget ?? vscode.ConfigurationTarget.Global,
             tsTarget ?? vscode.ConfigurationTarget.Global,
+            preferenceTarget ?? vscode.ConfigurationTarget.Global,
         );
         updates.push(jsTsConfig.update("experimental.useTsgo", enable, mostSpecificTarget));
+        updates.push(jsTsConfig.update("languageServer.preference", preference, mostSpecificTarget));
 
         // If `typescript` had the most-specific target
         // (or shared the most-specific target), then
@@ -56,6 +59,9 @@ export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
         }
 
         await Promise.all(updates);
+    }
+    else {
+        await jsTsConfig.update("languageServer.preference", preference, vscode.ConfigurationTarget.Global);
     }
 
     return restartExtHostOnChangeIfNeeded();

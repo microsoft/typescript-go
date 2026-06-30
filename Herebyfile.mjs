@@ -2107,6 +2107,7 @@ async function runPackVsixExtensions() {
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
+        packageJson.bundledTypeScriptVersion = getVersion();
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));

@@ -58,14 +58,6 @@
                             "experimental"
                         ]
                     },
-                    "js/ts.tsdk.path": {
-                        "type": "string",
-                        "description": "%native-preview.tsserver.tsdk.description%",
-                        "scope": "window",
-                        "tags": [
-                            "experimental"
-                        ]
-                    },
                     "js/ts.pprofDir": {
                         "type": "string",
                         "description": "%native-preview.pprofDir.description%",

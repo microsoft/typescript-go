@@ -43,6 +43,8 @@ export interface ExeInfo {
     version: string;
 }
 
+export type LanguageServerPreference = "auto" | "preferTsserver" | "preferLsp";
+
 const packagedExeBaseNames = ["tsc", "tsgo"];
 
 export async function getBuiltinExePath(context: vscode.ExtensionContext): Promise<{ path: string; version: string; }> {
@@ -159,12 +161,25 @@ export async function hasTsdkConfigured(): Promise<boolean> {
 }
 
 export async function hasNativeTsdkConfigured(context: vscode.ExtensionContext): Promise<boolean> {
-    for (const candidate of getTrustedTsdkCandidates(context, await getTsdkCandidates())) {
-        if (await resolveTsdkPathToExe(candidate.value)) {
-            return true;
+    return await getTsdkServerKind(context) === "lsp";
+}
+
+export async function getTsdkServerKind(context: vscode.ExtensionContext): Promise<"lsp" | "tsserver" | undefined> {
+    for (const candidate of getTrustedTsdkCandidates(context, await getTsdkCandidates({ nativeOnly: false }))) {
+        const kind = await classifyTsdk(candidate.value);
+        if (kind) {
+            return kind;
         }
     }
-    return false;
+}
+
+async function classifyTsdk(tsdkPath: string): Promise<"lsp" | "tsserver" | undefined> {
+    if (await pathHasTsserverJs(tsdkPath)) {
+        return "tsserver";
+    }
+    if (await resolveTsdkPathToExe(tsdkPath)) {
+        return "lsp";
+    }
 }
 
 function getTrustedTsdkCandidates(context: vscode.ExtensionContext, tsdkCandidates: ExplicitConfigValue<string>[]): ExplicitConfigValue<string>[] {
@@ -203,6 +218,18 @@ export function readNativePreviewConfig<T>(key: string, defaultValue: T): T {
         return explicit.value;
     }
     return vscode.workspace.getConfiguration("typescript.native-preview").get<T>(key, defaultValue);
+}
+
+export function readLanguageServerPreference(): LanguageServerPreference {
+    const preference = readUnifiedConfig<LanguageServerPreference>("languageServer.preference", "typescript", "languageServer.preference", undefined, "auto");
+    switch (preference) {
+        case "auto":
+        case "preferTsserver":
+        case "preferLsp":
+            return preference;
+        default:
+            return "auto";
+    }
 }
 
 export function getWorkspaceTsdkConfigValue(): string | undefined {
