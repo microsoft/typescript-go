@@ -685,7 +685,6 @@ type callback struct {
 	recursive bool
 	fn        WatchCallback
 	ignore    func(path string) bool
-	sinceSeq  uint64
 }
 
 // dirWatchError associates an error with a specific directory watch.
@@ -829,19 +828,15 @@ func (dw *dirWatch) triggerCallbacks() {
 		dw.mu.Unlock()
 		return
 	}
+	events, err := dw.events.drain()
 	cbs := slices.Clone(dw.callbacks)
-	startSeqs := make([]uint64, len(cbs))
-	for i, cb := range cbs {
-		startSeqs[i] = cb.sinceSeq
-	}
-	eventsByCallback, err := dw.events.drainForSequences(startSeqs)
 	dw.mu.Unlock()
 
-	for i, cb := range cbs {
-		cbEvents := eventsByCallback[i]
+	for _, cb := range cbs {
+		cbEvents := events
 		if cb.ignore != nil || !cb.recursive || cb.dir != dw.dir {
-			filtered := make([]Event, 0, len(cbEvents))
-			for _, e := range cbEvents {
+			filtered := make([]Event, 0, len(events))
+			for _, e := range events {
 				if cb.ignore != nil && cb.ignore(e.Path) {
 					continue
 				}
@@ -904,7 +899,7 @@ func (dw *dirWatch) watch(dir string, recursive bool, fn WatchCallback, ignore f
 	defer dw.mu.Unlock()
 	dw.nextCBID++
 	id := dw.nextCBID
-	dw.callbacks = append(dw.callbacks, callback{id: id, dir: dir, recursive: recursive, fn: fn, ignore: ignore, sinceSeq: dw.events.sequence()})
+	dw.callbacks = append(dw.callbacks, callback{id: id, dir: dir, recursive: recursive, fn: fn, ignore: ignore})
 	return id, true
 }
 

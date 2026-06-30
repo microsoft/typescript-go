@@ -28,10 +28,11 @@ type Event struct {
 }
 
 // eventEntry tracks coalescing state during a debounce batch.
+// The two booleans are independent: a file can be created then deleted
+// in the same batch, which cancels out (filtered by getEvents).
 type eventEntry struct {
-	createdSeq uint64
-	updatedSeq uint64
-	deletedSeq uint64
+	isCreated bool
+	isDeleted bool
 }
 
 // eventList coalesces filesystem events by path within a debounce window.
@@ -41,7 +42,6 @@ type eventList struct {
 	mu      sync.Mutex
 	entries map[string]*eventEntry
 	err     error
-	seq     uint64
 }
 
 // create records a new-file event for path. Both create and update
@@ -50,17 +50,15 @@ type eventList struct {
 func (el *eventList) create(path string) {
 	el.mu.Lock()
 	defer el.mu.Unlock()
-	seq := el.nextSeqLocked()
 	entry := el.getOrCreate(path)
-	if entry.isDeleted() {
+	if entry.isDeleted {
 		// Rapid delete+recreate: clear both flags so the entry
 		// emits EventUpdate (the default for non-deleted entries).
 		// https://github.com/parcel-bundler/watcher/issues/72
-		entry.deletedSeq = 0
-		entry.createdSeq = 0
-		entry.updatedSeq = seq
+		entry.isDeleted = false
+		entry.isCreated = false
 	} else {
-		entry.createdSeq = seq
+		entry.isCreated = true
 	}
 }
 
@@ -68,17 +66,15 @@ func (el *eventList) create(path string) {
 func (el *eventList) update(path string) {
 	el.mu.Lock()
 	defer el.mu.Unlock()
-	seq := el.nextSeqLocked()
-	el.getOrCreate(path).updatedSeq = seq
+	el.getOrCreate(path)
 }
 
 // remove records a delete event for path.
 func (el *eventList) remove(path string) {
 	el.mu.Lock()
 	defer el.mu.Unlock()
-	seq := el.nextSeqLocked()
 	entry := el.getOrCreate(path)
-	entry.deletedSeq = seq
+	entry.isDeleted = true
 }
 
 // size returns the number of tracked entries (including ones that may
@@ -92,17 +88,14 @@ func (el *eventList) size() int {
 // snapshotLocked returns the current set of pending events with
 // create+delete pairs filtered out. Caller must hold el.mu.
 func (el *eventList) snapshotLocked() []Event {
-	return el.snapshotSinceLocked(0)
-}
-
-// snapshotSinceLocked returns the current pending events whose last relevant
-// change happened after startSeq. Caller must hold el.mu.
-func (el *eventList) snapshotSinceLocked(startSeq uint64) []Event {
 	out := make([]Event, 0, len(el.entries))
 	for path, e := range el.entries {
-		kind, ok := e.kindSince(startSeq)
-		if !ok {
+		if e.isCreated && e.isDeleted {
 			continue
+		}
+		kind := EventUpdate
+		if e.isDeleted {
+			kind = EventDelete
 		}
 		out = append(out, Event{Kind: kind, Path: path})
 	}
@@ -124,21 +117,6 @@ func (el *eventList) drain() ([]Event, error) {
 	el.mu.Lock()
 	defer el.mu.Unlock()
 	out := el.snapshotLocked()
-	err := el.err
-	el.entries = nil
-	el.err = nil
-	return out, err
-}
-
-// drainForSequences snapshots pending events for each start sequence, then
-// clears the list.
-func (el *eventList) drainForSequences(startSeqs []uint64) ([][]Event, error) {
-	el.mu.Lock()
-	defer el.mu.Unlock()
-	out := make([][]Event, len(startSeqs))
-	for i, startSeq := range startSeqs {
-		out[i] = el.snapshotSinceLocked(startSeq)
-	}
 	err := el.err
 	el.entries = nil
 	el.err = nil
@@ -178,33 +156,4 @@ func (el *eventList) getOrCreate(path string) *eventEntry {
 	e := &eventEntry{}
 	el.entries[path] = e
 	return e
-}
-
-func (el *eventList) sequence() uint64 {
-	el.mu.Lock()
-	defer el.mu.Unlock()
-	return el.seq
-}
-
-func (el *eventList) nextSeqLocked() uint64 {
-	el.seq++
-	return el.seq
-}
-
-func (e *eventEntry) isDeleted() bool {
-	return e.deletedSeq > e.createdSeq && e.deletedSeq > e.updatedSeq
-}
-
-func (e *eventEntry) kindSince(startSeq uint64) (EventKind, bool) {
-	if e.deletedSeq > startSeq {
-		if e.createdSeq > startSeq && e.createdSeq < e.deletedSeq && e.updatedSeq < e.deletedSeq {
-			return 0, false
-		}
-		return EventDelete, true
-	}
-	seq := max(e.createdSeq, e.updatedSeq)
-	if seq > startSeq {
-		return EventUpdate, true
-	}
-	return 0, false
 }
