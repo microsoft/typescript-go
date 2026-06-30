@@ -929,12 +929,13 @@ func TestParseJsonSourceFileConfigFileContentReportsInvalidProjectReferences(t *
     { "path": true },
     { "circular": true },
     { "path": "./valid", "circular": "yes" },
-    { "path": "" }
+    { "path": "" },
+    { "path": "./ok", "circular": true }
   ]
 }`, map[string]string{"/project/main.ts": "export const x = 1;"}, "/project", true /*useCaseSensitiveFileNames*/)
 
 	assert.Assert(t, parsed != nil)
-	assert.Equal(t, len(parsed.ProjectReferences()), 0)
+	assertProjectReferences(t, parsed.ProjectReferences())
 	assertInvalidProjectReferenceDiagnostics(t, parsed.GetConfigFileParsingDiagnostics())
 }
 
@@ -947,7 +948,8 @@ func TestParseJsonConfigFileContentReportsInvalidProjectReferences(t *testing.T)
     { "path": true },
     { "circular": true },
     { "path": "./valid", "circular": "yes" },
-    { "path": "" }
+    { "path": "" },
+    { "path": "./ok", "circular": true }
   ]
 }`)
 	config := tsoptions.ParseJsonConfigFileContent(
@@ -962,8 +964,21 @@ func TestParseJsonConfigFileContentReportsInvalidProjectReferences(t *testing.T)
 	)
 
 	assert.Assert(t, config != nil)
-	assert.Equal(t, len(config.ProjectReferences()), 0)
+	assertProjectReferences(t, config.ProjectReferences())
 	assertInvalidProjectReferenceDiagnostics(t, config.GetConfigFileParsingDiagnostics())
+}
+
+func assertProjectReferences(t assert.TestingT, references []*core.ProjectReference) {
+	assert.Equal(t, len(references), 2)
+	assert.DeepEqual(t, references[0], &core.ProjectReference{
+		Path:         "/project/valid",
+		OriginalPath: "./valid",
+	})
+	assert.DeepEqual(t, references[1], &core.ProjectReference{
+		Path:         "/project/ok",
+		OriginalPath: "./ok",
+		Circular:     true,
+	})
 }
 
 func assertInvalidProjectReferenceDiagnostics(t assert.TestingT, diagnosticsList []*ast.Diagnostic) {

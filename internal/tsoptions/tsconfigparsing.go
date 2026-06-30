@@ -1363,7 +1363,6 @@ func parseJsonConfigFileContentWorker(
 				}
 				if ref.hasCircular && !ref.circularValid {
 					errors = append(errors, createDiagnosticAtProjectReferenceProperty(sourceFile, index, "circular", diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.circular", "boolean"))
-					continue
 				}
 				projectReferences = append(projectReferences, &core.ProjectReference{
 					Path:         tspath.GetNormalizedAbsolutePath(ref.reference.Path, basePath),
