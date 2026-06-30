@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"slices"
+	"sort"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -33,55 +34,40 @@ type checkerPool struct {
 
 var _ CheckerPool = (*checkerPool)(nil)
 
-// Process small contiguous blocks of files on the same checker before rotating
-// to the next checker. Adjacent files tend to share generic instantiations and
-// symbol/type links; assigning blocks to the least-loaded checker by text size
-// preserves that locality while keeping checker work balanced.
-const maxCheckerAssociationBlockSize = 32
-
-// getCheckerAssociationBlockSize chooses how many adjacent files to keep together
-// in the initial assignment pass. Very small projects use block size 1 so an
-// explicit --checkers value can still spread work across checkers; larger projects
-// use bigger blocks for locality, capped to avoid one checker receiving too large
-// a contiguous slice before the load balancer can rotate to another checker.
-func getCheckerAssociationBlockSize(fileCount int, checkerCount int) int {
-	const targetBlocksPerChecker = 4
-	if checkerCount <= 1 {
-		return maxCheckerAssociationBlockSize
-	}
-	return min(max(fileCount/(checkerCount*targetBlocksPerChecker), 1), maxCheckerAssociationBlockSize)
-}
+const checkerAssociationTextWeightDivisor = 100
 
 // getCheckerAssociationsForFileWeights builds the initial mapping from file index
-// to checker index. It walks files in program order, assigns one contiguous block
-// at a time to the currently least-loaded checker, then charges that checker for
-// the block's total file weight. This is a greedy balance between preserving
-// program-order locality within each block and distributing estimated checker work.
-// It is a list-scheduling-style assignment for identical machines, applied to
-// blocks of files rather than individual jobs; see https://en.wikipedia.org/wiki/List_scheduling.
+// to checker index using longest-processing-time-first scheduling. Files with
+// the largest estimated checker work are assigned first to the least-loaded
+// checker, minimizing the slowest checker bucket before graph refinement nudges
+// the mapping toward import locality.
 func getCheckerAssociationsForFileWeights(fileWeights []int, checkerCount int) []int {
 	if len(fileWeights) == 0 {
 		return nil
 	}
-	blockSize := getCheckerAssociationBlockSize(len(fileWeights), checkerCount)
 	associations := make([]int, len(fileWeights))
 	checkerWeights := make([]int, checkerCount)
-	for blockStart := 0; blockStart < len(fileWeights); blockStart += blockSize {
-		// Pick a checker before each block so a large earlier block makes the
-		// following blocks prefer other, lighter checkers.
+	fileIndices := make([]int, len(fileWeights))
+	for i := range fileIndices {
+		fileIndices[i] = i
+	}
+	sort.Slice(fileIndices, func(i, j int) bool {
+		left := fileIndices[i]
+		right := fileIndices[j]
+		if fileWeights[left] != fileWeights[right] {
+			return fileWeights[left] > fileWeights[right]
+		}
+		return left < right
+	})
+	for _, fileIndex := range fileIndices {
 		checkerIndex := 0
 		for i, weight := range checkerWeights[1:] {
 			if weight < checkerWeights[checkerIndex] {
 				checkerIndex = i + 1
 			}
 		}
-		blockEnd := min(blockStart+blockSize, len(fileWeights))
-		// Keep the whole block on the selected checker to retain locality among
-		// nearby files, while adding each file's weight to future load decisions.
-		for i := blockStart; i < blockEnd; i++ {
-			associations[i] = checkerIndex
-			checkerWeights[checkerIndex] += fileWeights[i]
-		}
+		associations[fileIndex] = checkerIndex
+		checkerWeights[checkerIndex] += fileWeights[fileIndex]
 	}
 	return associations
 }
@@ -234,11 +220,10 @@ func (p *checkerPool) createCheckers() {
 
 		fileWeights := make([]int, len(p.program.files))
 		for i, file := range p.program.files {
-			fileWeights[i] = len(file.Text())
+			fileWeights[i] = max(file.NodeCount+len(file.Text())/checkerAssociationTextWeightDivisor, 1)
 		}
 		// The association algorithm uses p.program.files indices throughout:
-		// start with a weight-balanced locality pass, then refine that mapping
-		// using import adjacency.
+		// start with a work-balanced pass, then refine that mapping using import adjacency.
 		associations := getCheckerAssociationsForFileWeights(fileWeights, checkerCount)
 		if checkerCount > 1 {
 			adjacentFiles := p.getImportAdjacency()

@@ -2,32 +2,6 @@ package compiler
 
 import "testing"
 
-func TestGetCheckerAssociationBlockSize(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name         string
-		fileCount    int
-		checkerCount int
-		want         int
-	}{
-		{name: "single checker uses max block", fileCount: 100, checkerCount: 1, want: maxCheckerAssociationBlockSize},
-		{name: "small project balances across checkers", fileCount: 16, checkerCount: 4, want: 1},
-		{name: "medium project uses smaller locality blocks", fileCount: 128, checkerCount: 4, want: 8},
-		{name: "large project caps block size", fileCount: 2000, checkerCount: 4, want: maxCheckerAssociationBlockSize},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
-
-			if got := getCheckerAssociationBlockSize(test.fileCount, test.checkerCount); got != test.want {
-				t.Fatalf("getCheckerAssociationBlockSize(%d, %d) = %d, want %d", test.fileCount, test.checkerCount, got, test.want)
-			}
-		})
-	}
-}
-
 func TestGetCheckerAssociationsForFileWeights(t *testing.T) {
 	t.Parallel()
 
@@ -50,20 +24,22 @@ func TestGetCheckerAssociationsForFileWeights(t *testing.T) {
 			want:         []int{0, 1, 1, 1, 1},
 		},
 		{
-			name: "medium project keeps contiguous locality blocks",
-			fileWeights: []int{
-				1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1,
-			},
+			name:         "heaviest files are scheduled first",
+			fileWeights:  []int{1, 100, 1, 1},
+			checkerCount: 2,
+			want:         []int{1, 0, 1, 1},
+		},
+		{
+			name:         "descending weights balance across least-loaded checker",
+			fileWeights:  []int{8, 7, 6, 5, 4, 3, 2, 1},
+			checkerCount: 3,
+			want:         []int{0, 1, 2, 2, 1, 0, 0, 1},
+		},
+		{
+			name:         "ties are assigned in file order",
+			fileWeights:  []int{1, 1, 1, 1, 1, 1, 1, 1},
 			checkerCount: 4,
-			want: []int{
-				0, 0, 1, 1, 2, 2, 3, 3,
-				0, 0, 1, 1, 2, 2, 3, 3,
-				0, 0, 1, 1, 2, 2, 3, 3,
-				0, 0, 1, 1, 2, 2, 3, 3,
-			},
+			want:         []int{0, 1, 2, 3, 0, 1, 2, 3},
 		},
 	}
 
