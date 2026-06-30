@@ -325,21 +325,22 @@ describe("SourceFile", () => {
 
             const mts = await program.getSourceFile("/src/esm.mts");
             assert.ok(mts);
-            assert.equal((await program.getSourceFileMetadata(mts))?.impliedNodeFormat, ModuleKind.ESNext);
+            assert.equal((await program.getSourceFileMetadata(mts.fileName))?.impliedNodeFormat, ModuleKind.ESNext);
+            assert.equal((await program.getSourceFileMetadataByPath(mts.path))?.impliedNodeFormat, ModuleKind.ESNext);
 
             const cts = await program.getSourceFile("/src/cjs.cts");
             assert.ok(cts);
-            assert.equal((await program.getSourceFileMetadata(cts))?.impliedNodeFormat, ModuleKind.CommonJS);
+            assert.equal((await program.getSourceFileMetadata(cts.fileName))?.impliedNodeFormat, ModuleKind.CommonJS);
 
             // A plain .ts file with no nearby `"type": "module"` is CommonJS.
             const index = await program.getSourceFile("/src/index.ts");
             assert.ok(index);
-            assert.equal((await program.getSourceFileMetadata(index))?.impliedNodeFormat, ModuleKind.CommonJS);
+            assert.equal((await program.getSourceFileMetadata(index.fileName))?.impliedNodeFormat, ModuleKind.CommonJS);
 
             // A plain .ts file under a `"type": "module"` package is ESM.
             const esmIndex = await program.getSourceFile("/esm/index.ts");
             assert.ok(esmIndex);
-            assert.equal((await program.getSourceFileMetadata(esmIndex))?.impliedNodeFormat, ModuleKind.ESNext);
+            assert.equal((await program.getSourceFileMetadata(esmIndex.fileName))?.impliedNodeFormat, ModuleKind.ESNext);
         }
         finally {
             await api.close();

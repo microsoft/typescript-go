@@ -333,21 +333,22 @@ describe("SourceFile", () => {
 
             const mts = program.getSourceFile("/src/esm.mts");
             assert.ok(mts);
-            assert.equal((program.getSourceFileMetadata(mts))?.impliedNodeFormat, ModuleKind.ESNext);
+            assert.equal((program.getSourceFileMetadata(mts.fileName))?.impliedNodeFormat, ModuleKind.ESNext);
+            assert.equal((program.getSourceFileMetadataByPath(mts.path))?.impliedNodeFormat, ModuleKind.ESNext);
 
             const cts = program.getSourceFile("/src/cjs.cts");
             assert.ok(cts);
-            assert.equal((program.getSourceFileMetadata(cts))?.impliedNodeFormat, ModuleKind.CommonJS);
+            assert.equal((program.getSourceFileMetadata(cts.fileName))?.impliedNodeFormat, ModuleKind.CommonJS);
 
             // A plain .ts file with no nearby `"type": "module"` is CommonJS.
             const index = program.getSourceFile("/src/index.ts");
             assert.ok(index);
-            assert.equal((program.getSourceFileMetadata(index))?.impliedNodeFormat, ModuleKind.CommonJS);
+            assert.equal((program.getSourceFileMetadata(index.fileName))?.impliedNodeFormat, ModuleKind.CommonJS);
 
             // A plain .ts file under a `"type": "module"` package is ESM.
             const esmIndex = program.getSourceFile("/esm/index.ts");
             assert.ok(esmIndex);
-            assert.equal((program.getSourceFileMetadata(esmIndex))?.impliedNodeFormat, ModuleKind.ESNext);
+            assert.equal((program.getSourceFileMetadata(esmIndex.fileName))?.impliedNodeFormat, ModuleKind.ESNext);
         }
         finally {
             api.close();

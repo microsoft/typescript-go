@@ -625,20 +625,30 @@ export class Program {
      * is not part of the program. Metadata is fetched lazily per file and cached on this
      * `Program` instance.
      */
-    getSourceFileMetadata(file: SourceFile): SourceFileMetadata | undefined {
-        let metadata = this.sourceFileMetadataCache.get(file.path);
+    getSourceFileMetadata(fileName: string): SourceFileMetadata | undefined {
+        return this.getSourceFileMetadataByPath(this.toPath(fileName));
+    }
+
+    /**
+     * Returns program-stored metadata for the source file at the given path, or `undefined`
+     * if the file is not part of the program. Like {@link getSourceFileMetadata}, but skips
+     * the file name to path conversion. Metadata is fetched lazily per file and cached on
+     * this `Program` instance.
+     */
+    getSourceFileMetadataByPath(path: Path): SourceFileMetadata | undefined {
+        let metadata = this.sourceFileMetadataCache.get(path);
         if (metadata === undefined) {
-            metadata = this.fetchSourceFileMetadata(file);
-            this.sourceFileMetadataCache.set(file.path, metadata);
+            metadata = this.fetchSourceFileMetadata(path);
+            this.sourceFileMetadataCache.set(path, metadata);
         }
         return metadata;
     }
 
-    private fetchSourceFileMetadata(file: SourceFile): SourceFileMetadata | undefined {
+    private fetchSourceFileMetadata(path: Path): SourceFileMetadata | undefined {
         const data = this.client.apiRequest<SourceFileMetadata | null>("getSourceFileMetadata", {
             snapshot: this.snapshotId,
             project: this.projectId,
-            file: file.fileName,
+            file: path,
         });
         return data ?? undefined;
     }
@@ -649,7 +659,7 @@ export class Program {
      * fetched lazily per file and cached on this `Program` instance.
      */
     isSourceFileFromExternalLibrary(file: SourceFile): boolean {
-        const metadata = this.getSourceFileMetadata(file);
+        const metadata = this.getSourceFileMetadataByPath(file.path);
         return metadata?.isFromExternalLibrary ?? false;
     }
 
@@ -659,7 +669,7 @@ export class Program {
      * `Program` instance.
      */
     isSourceFileDefaultLibrary(file: SourceFile): boolean {
-        const metadata = this.getSourceFileMetadata(file);
+        const metadata = this.getSourceFileMetadataByPath(file.path);
         return metadata?.isDefaultLibrary ?? false;
     }
 
