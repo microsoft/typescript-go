@@ -492,6 +492,10 @@ func (b *NodeBuilderImpl) typeNodeIsEquivalentToType(annotatedDeclaration *ast.N
 	return false
 }
 
+func (b *NodeBuilderImpl) canReuseExistingJSTypeNode(existing *ast.TypeNode, t *Type) bool {
+	return b.ch.getIntendedTypeFromJSDocTypeReference(existing) == nil && b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, t)
+}
+
 func (b *NodeBuilderImpl) existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing *ast.TypeNode, t *Type) bool {
 	// In JS, you can say something like `Foo` and get a `Foo<any>` implicitly - we don't want to preserve that original `Foo` in these cases, though.
 	if t.objectFlags&ObjectFlagsReference == 0 {
@@ -526,7 +530,7 @@ func (b *NodeBuilderImpl) tryReuseExistingNonParameterTypeNode(existing *ast.Typ
 	if annotationType == nil {
 		annotationType = b.getTypeFromTypeNode(existing, true)
 	}
-	if annotationType != nil && b.typeNodeIsEquivalentToType(host, t, annotationType) && b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, t) {
+	if annotationType != nil && b.typeNodeIsEquivalentToType(host, t, annotationType) && b.canReuseExistingJSTypeNode(existing, t) {
 		result := b.tryReuseExistingNodeHelper(existing)
 		if result != nil {
 			return result
@@ -1001,10 +1005,7 @@ func (b *NodeBuilderImpl) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
 	if len(name) > 0 {
 		return name
 	}
-	if symbol.Name == ast.InternalSymbolNameMissing {
-		return "__missing"
-	}
-	return symbol.Name
+	return ast.EscapeInternalSymbolName(symbol.Name)
 }
 
 // The full set of type parameters for a generic class or interface type consists of its outer type parameters plus
