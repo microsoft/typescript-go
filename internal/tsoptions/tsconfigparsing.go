@@ -1508,10 +1508,10 @@ func createDiagnosticAtProjectReferenceProperty(sourceFile *TsConfigSourceFile, 
 			if ast.IsArrayLiteralExpression(property.Initializer) {
 				elements := property.Initializer.Elements()
 				if len(elements) > index && ast.IsObjectLiteralExpression(elements[index]) {
-					if node := ForEachPropertyAssignment(elements[index].AsObjectLiteralExpression(), propertyName, func(property *ast.PropertyAssignment) *ast.Node {
+					if propertyNode := ForEachPropertyAssignment(elements[index].AsObjectLiteralExpression(), propertyName, func(property *ast.PropertyAssignment) *ast.Node {
 						return property.Initializer
-					}); node != nil {
-						return node
+					}); propertyNode != nil {
+						return propertyNode
 					}
 					return elements[index]
 				}
