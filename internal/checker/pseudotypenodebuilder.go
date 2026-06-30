@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/pseudochecker"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // pseudoTypeToNodeWithCheckerFallback is like pseudoTypeToNode but when the top-level pseudo type
@@ -46,6 +47,10 @@ func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.P
 
 // Maps a pseudochecker's pseudotypes into ast nodes and reports any inference fallback errors the pseudotype structure implies
 func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Node {
+	return b.pseudoTypeToNodeWorker(t, false /*inReusedLiteralCollection*/)
+}
+
+func (b *NodeBuilderImpl) pseudoTypeToNodeWorker(t *pseudochecker.PseudoType, inReusedLiteralCollection bool) *ast.Node {
 	debug.Assert(t != nil, "Attempted to serialize nil pseudotype")
 	switch t.Kind {
 	case pseudochecker.PseudoTypeKindDirect:
@@ -106,9 +111,9 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			}
 		}
 		if isInConstContext {
-			return b.pseudoTypeToNode(d.ConstType)
+			return b.pseudoTypeToNodeWorker(d.ConstType, inReusedLiteralCollection)
 		} else {
-			return b.pseudoTypeToNode(d.RegularType)
+			return b.pseudoTypeToNodeWorker(d.RegularType, inReusedLiteralCollection)
 		}
 	case pseudochecker.PseudoTypeKindUnion:
 		var res []*ast.Node
@@ -138,7 +143,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					continue
 				}
 			}
-			appendTypeNode(b.pseudoTypeToNode(m))
+			appendTypeNode(b.pseudoTypeToNodeWorker(m, inReusedLiteralCollection))
 		}
 		if len(res) == 1 {
 			return res[0]
@@ -188,14 +193,14 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			}
 			typeParams = b.f.NewNodeList(res)
 		}
-		params := b.pseudoParametersToNodeList(d.Parameters)
-		returnType := b.pseudoTypeToNode(d.ReturnType)
+		params := b.pseudoParametersToNodeList(d.Parameters, inReusedLiteralCollection)
+		returnType := b.pseudoTypeToNodeWorker(d.ReturnType, inReusedLiteralCollection)
 		return b.f.NewFunctionTypeNode(typeParams, params, returnType)
 	case pseudochecker.PseudoTypeKindTuple:
 		var res []*ast.Node
 		elements := t.AsPseudoTypeTuple().Elements
 		for _, e := range elements {
-			res = append(res, b.pseudoTypeToNode(e))
+			res = append(res, b.pseudoTypeToNodeWorker(e, true /*inReusedLiteralCollection*/))
 		}
 		// pseudo-tuples are implicitly `readonly` since they originate from `as const` contexts
 		// but strada *sometimes* fails to add the `readonly` modifier to the generated node.
@@ -223,7 +228,6 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// inaccessible `this` references inside the members are reported (TS2527).
 		restoreObjectLiteralFlags := b.saveRestoreFlags()
 		b.ctx.flags |= nodebuilder.FlagsInObjectTypeLiteral
-
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
 			if isConst || (e.Kind == pseudochecker.PseudoObjectElementKindPropertyAssignment && e.AsPseudoPropertyAssignment().Readonly) {
@@ -254,8 +258,8 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 						nil,
 						b.f.NewFunctionTypeNode(
 							typeParams,
-							b.pseudoParametersToNodeList(d.Parameters),
-							b.pseudoTypeToNode(d.ReturnType),
+							b.pseudoParametersToNodeList(d.Parameters, true /*inReusedLiteralCollection*/),
+							b.pseudoTypeToNodeWorker(d.ReturnType, true /*inReusedLiteralCollection*/),
 						),
 						nil,
 					)
@@ -266,8 +270,8 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					b.reuseName(e.Name, true /*isMethod*/),
 					nil,
 					typeParams,
-					b.pseudoParametersToNodeList(d.Parameters),
-					b.pseudoTypeToNode(d.ReturnType),
+					b.pseudoParametersToNodeList(d.Parameters, true /*inReusedLiteralCollection*/),
+					b.pseudoTypeToNodeWorker(d.ReturnType, true /*inReusedLiteralCollection*/),
 				)
 			case pseudochecker.PseudoObjectElementKindPropertyAssignment:
 				d := e.AsPseudoPropertyAssignment()
@@ -275,7 +279,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					modifiers,
 					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
-					b.pseudoTypeToNode(d.Type),
+					b.pseudoTypeToNodeWorker(d.Type, true /*inReusedLiteralCollection*/),
 					nil,
 				)
 			case pseudochecker.PseudoObjectElementKindSetAccessor:
@@ -284,7 +288,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					nil,
 					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
-					b.f.NewNodeList([]*ast.Node{b.pseudoParameterToNode(d.Parameter)}),
+					b.f.NewNodeList([]*ast.Node{b.pseudoParameterToNode(d.Parameter, true /*inReusedLiteralCollection*/)}),
 					nil,
 					nil,
 					nil,
@@ -296,7 +300,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					b.reuseName(e.Name, false /*isMethod*/),
 					nil,
 					nil,
-					b.pseudoTypeToNode(d.Type),
+					b.pseudoTypeToNodeWorker(d.Type, true /*inReusedLiteralCollection*/),
 					nil,
 					nil,
 				)
@@ -317,6 +321,9 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return result
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
+		if node := b.reuseNegativeNumericLiteralType(source, inReusedLiteralCollection); node != nil {
+			return node
+		}
 		return b.f.NewLiteralTypeNode(b.reuseNode(source))
 	default:
 		debug.AssertNever(t.Kind, "Unhandled pseudotype kind in pseudotype node construction")
@@ -324,15 +331,57 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	}
 }
 
-func (b *NodeBuilderImpl) pseudoParametersToNodeList(params []*pseudochecker.PseudoParameter) *ast.NodeList {
+// reuseNegativeNumericLiteralType handles the `-<numeric literal> as const` case (e.g. `-1e500 as const`).
+//
+// The scanner stores the canonical numeric form (e.g. `1e500` -> `Infinity`,
+// `123456789012345678901234567890` -> `1.2345678901234568e+29`) as a numeric literal's text. When the
+// negated literal expression is reused for declaration emit it is cloned and detached from its source
+// file, so the printer can no longer recover the original text and would otherwise emit the canonical
+// form (`-Infinity`). To match TypeScript, rebuild the operand from the original source text so the
+// authored literal is preserved exactly.
+//
+// This intentionally only applies to numeric literals (not BigInt literals, which always use their
+// canonical text) and skips literals with numeric separators or invalid text, mirroring the rules in
+// the printer's canUseOriginalText. Positive literals are unaffected: TypeScript emits their canonical
+// form (e.g. `0xFF as const` -> `255`), which is already the reused literal's text.
+func (b *NodeBuilderImpl) reuseNegativeNumericLiteralType(source *ast.Node, inReusedLiteralCollection bool) *ast.Node {
+	if inReusedLiteralCollection {
+		// Negative numeric literals nested inside a reused object/tuple `as const` literal use their
+		// canonical form (e.g. `[-1e500] as const` -> `readonly [-Infinity]`), matching TypeScript.
+		return nil
+	}
+	if !ast.IsPrefixUnaryExpression(source) {
+		return nil
+	}
+	unary := source.AsPrefixUnaryExpression()
+	if unary.Operator != ast.KindMinusToken {
+		return nil
+	}
+	operand := unary.Operand
+	if !ast.IsNumericLiteral(operand) || ast.NodeIsSynthesized(operand) {
+		return nil
+	}
+	if operand.AsNumericLiteral().TokenFlags&(ast.TokenFlagsIsInvalid|ast.TokenFlagsContainsSeparator) != 0 {
+		return nil
+	}
+	sourceFile := ast.GetSourceFileOfNode(operand)
+	if sourceFile == nil {
+		return nil
+	}
+	text := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, operand, false /*includeTrivia*/)
+	newOperand := b.f.NewNumericLiteral(text, operand.AsNumericLiteral().TokenFlags)
+	return b.f.NewLiteralTypeNode(b.f.NewPrefixUnaryExpression(unary.Operator, newOperand))
+}
+
+func (b *NodeBuilderImpl) pseudoParametersToNodeList(params []*pseudochecker.PseudoParameter, inReusedLiteralCollection bool) *ast.NodeList {
 	res := make([]*ast.Node, 0, len(params))
 	for _, p := range params {
-		res = append(res, b.pseudoParameterToNode(p))
+		res = append(res, b.pseudoParameterToNode(p, inReusedLiteralCollection))
 	}
 	return b.f.NewNodeList(res)
 }
 
-func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter) *ast.Node {
+func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter, inReusedLiteralCollection bool) *ast.Node {
 	var dotDotDot *ast.Node
 	var questionMark *ast.Node
 	if p.Rest {
@@ -347,7 +396,7 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		// matches strada behavior of always reserializing param names from scratch
 		b.parameterToParameterDeclarationName(p.Name.Parent.Symbol(), p.Name.Parent),
 		questionMark,
-		b.pseudoTypeToNode(p.Type),
+		b.pseudoTypeToNodeWorker(p.Type, inReusedLiteralCollection),
 		nil,
 	)
 	if original := p.Name.Parent; ast.IsParameterDeclaration(original) {
