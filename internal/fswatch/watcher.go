@@ -9,7 +9,6 @@ import (
 	"slices"
 	"strings"
 	"sync"
-	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/nativepath"
 )
@@ -428,15 +427,6 @@ func (w *watcher) WatchDirectories(requests []WatchDirectoryRequest) ([]Watch, e
 			return nil, errNotAbsolute
 		}
 		dir = canonicalizePath(dir)
-		info, err := os.Stat(dir)
-		if err != nil {
-			rollback()
-			return nil, err
-		}
-		if !info.IsDir() {
-			rollback()
-			return nil, syscall.ENOTDIR
-		}
 		physicalDir := physicalDirFor(dir)
 
 		var sopts watchOptions
