@@ -1,5 +1,5 @@
 # TypeScript Nightly
 
-This extension contains a nightly TypeScript server and API for `TypeScriptTeam.vscode-typescript`.
+This extension contains a nightly TypeScript server and API for the [TypeScript extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.vscode-typescript).
 
-It installs the TypeScript extension if needed. Use the TypeScript version selector in that extension to switch to this nightly server.
+If installed, this extension's version of TypeScript will be used by the TypeScript extension.
