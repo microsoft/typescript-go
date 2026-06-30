@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -417,4 +418,60 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Assert(t, !ok)
 		})
 	})
+}
+
+// TestRefCountCacheRefDeleteBeforeLoad is the deterministic counterpart to the
+// probabilistic TestParseCacheConcurrentSnapshotRace stress test. It reproduces
+// the production crash
+//
+//	panic("cache entry not found") at RefCountCache.Ref
+//
+// every single time, by forcing the one interleaving that triggers it.
+//
+// In the field, a goroutine in Project.CreateProgram's single-file clone path
+// calls parseCache.Ref(K) for a source file that a concurrent Snapshot.dispose
+// is Deref-ing to zero. Deref drives the entry's refCount to 0 and calls
+// entries.Delete(K). RefCountCache.Ref already tolerates ONE ordering of that
+// race: if the entry is still found by entries.Load but its refCount has
+// already hit 0 (the Delete raced Ref *after* the Load, while Ref was taking
+// the per-entry lock), Ref re-stores the entry and returns. But it does NOT
+// tolerate the other ordering: if entries.Delete(K) completes *before* Ref's
+// entries.Load(K), the load misses and Ref panics. Ref cannot recover locally
+// in that case because it has no AcquireArgs with which to re-parse the value,
+// so the real fix belongs in the snapshot/program ref-counting that is supposed
+// to keep K alive across the clone. This test pins the proximate mechanism.
+//
+// The refHook fires at the very start of Ref, before the load, and runs the
+// racing Deref exactly once, forcing the delete-before-load ordering on every
+// run rather than relying on scheduler luck.
+func TestRefCountCacheRefDeleteBeforeLoad(t *testing.T) {
+	t.Parallel()
+
+	cache := NewRefCountCache(
+		RefCountCacheOptions{},
+		func(key string, value string) string { return value },
+	)
+	// A single owner holds the entry: refCount == 1.
+	cache.Acquire("k", "value")
+
+	var once sync.Once
+	cache.refHook = func(identity string) {
+		once.Do(func() {
+			// The last other owner releases the entry: refCount 1 -> 0, and the
+			// entry is deleted from the map, all before Ref's entries.Load runs.
+			cache.Deref(identity)
+		})
+	}
+
+	defer func() {
+		r := recover()
+		if r == nil {
+			t.Fatal("expected Ref to panic with \"cache entry not found\" when the entry is deleted before the load, but it did not")
+		}
+		if msg, _ := r.(string); msg != "cache entry not found" {
+			t.Fatalf("unexpected panic value: %v", r)
+		}
+	}()
+
+	cache.Ref("k")
 }
