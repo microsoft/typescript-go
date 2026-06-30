@@ -71,3 +71,49 @@ func TestAliasResolverGetDiagnosticsDoesNotPanic(t *testing.T) {
 	// Type-checking this file's diagnostics must not panic.
 	ch.GetDiagnostics(context.Background(), sourceFile)
 }
+
+// Regression test for microsoft/typescript-go#4481.
+//
+// When a file exports a value whose type references a symbol from another module,
+// the checker's node builder calls GetSourceOfProjectReferenceIfOutputIncluded
+// to generate module specifiers. The aliasResolver must not panic.
+func TestAliasResolverGetSourceOfProjectReferenceDoesNotPanic(t *testing.T) {
+	t.Parallel()
+
+	files := map[string]string{
+		"/pkg/types.ts": "export interface Foo { x: number; }\n",
+		"/pkg/index.ts": "import { Foo } from './types';\nexport function getFoo(): Foo { return { x: 1 }; }\n",
+	}
+
+	fs := vfstest.FromMap(files, true /*useCaseSensitiveFileNames*/)
+	host := &fakeCloneHost{fs: fs}
+
+	typesFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/pkg/types.ts",
+		Path:     "/pkg/types.ts",
+	}, files["/pkg/types.ts"], core.ScriptKindTS)
+	binder.BindSourceFile(typesFile)
+
+	indexFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/pkg/index.ts",
+		Path:     "/pkg/index.ts",
+	}, files["/pkg/index.ts"], core.ScriptKindTS)
+	binder.BindSourceFile(indexFile)
+
+	resolver := module.NewResolver(host, core.EmptyCompilerOptions, "/pkg", "")
+	r := newAliasResolver(
+		[]*ast.SourceFile{typesFile, indexFile},
+		nil,
+		host,
+		resolver,
+		func(f string) tspath.Path { return tspath.Path(f) },
+		func(ast.HasFileName, string) {},
+	)
+
+	ch, _ := checker.NewChecker(r, nil)
+
+	// Getting diagnostics triggers the node builder which calls
+	// GetSourceOfProjectReferenceIfOutputIncluded for module specifier generation.
+	// This must not panic.
+	ch.GetDiagnostics(context.Background(), indexFile)
+}
