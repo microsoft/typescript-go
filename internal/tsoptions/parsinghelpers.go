@@ -74,11 +74,15 @@ func parseProjectReference(json any) []*core.ProjectReference {
 	var result []*core.ProjectReference
 	if v, ok := json.(*collections.OrderedMap[string, any]); ok {
 		var reference core.ProjectReference
-		if v, ok := v.Get("path"); ok {
-			reference.Path = v.(string)
+		if pathValue, ok := v.Get("path"); ok {
+			if pathStr, ok := pathValue.(string); ok {
+				reference.Path = pathStr
+			}
 		}
-		if v, ok := v.Get("circular"); ok {
-			reference.Circular = v.(bool)
+		if circularValue, ok := v.Get("circular"); ok {
+			if circularBool, ok := circularValue.(bool); ok {
+				reference.Circular = circularBool
+			}
 		}
 		result = append(result, &reference)
 	}
