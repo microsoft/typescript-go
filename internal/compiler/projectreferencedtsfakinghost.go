@@ -170,6 +170,10 @@ func (fs *projectReferenceDtsFakingVfs) fileOrDirectoryExistsUsingSource(fileOrD
 		return result == core.TSTrue
 	}
 
+	// Check if the directory or file is in node_modules and a symlinked package
+	if packageRoot := module.ParseNodeModuleFromPath(fileOrDirectory, true /*isFolder*/); packageRoot != "" {
+		fs.handleDirectoryCouldBeSymlink(packageRoot)
+	}
 	knownDirectoryLinks := fs.knownSymlinks.Directories()
 	if knownDirectoryLinks.Size() == 0 {
 		return false
