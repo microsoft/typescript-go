@@ -29360,6 +29360,134 @@ func (s *SetLogVerbosityParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return nil
 }
 
+// A project and its source files.
+type ProjectFilesProject struct {
+	// The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project, or an empty string for an inferred project.
+	ConfigFilePath string `json:"configFilePath"`
+
+	// The list of source file URIs in this project.
+	Files []DocumentUri `json:"files"`
+}
+
+var _ json.UnmarshalerFrom = (*ProjectFilesProject)(nil)
+
+func (s *ProjectFilesProject) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingConfigFilePath uint = 1 << iota
+		missingFiles
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"configFilePath"`:
+			missing &^= missingConfigFilePath
+			if err := json.UnmarshalDecode(dec, &s.ConfigFilePath); err != nil {
+				return err
+			}
+		case `"files"`:
+			missing &^= missingFiles
+			if dec.PeekKind() == 'n' {
+				return errNull("files")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingConfigFilePath != 0 {
+			missingProps = append(missingProps, "configFilePath")
+		}
+		if missing&missingFiles != 0 {
+			missingProps = append(missingProps, "files")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
+// Result for the custom/projectFiles request.
+type ProjectFilesResult struct {
+	// The list of projects and their source files.
+	Projects []*ProjectFilesProject `json:"projects"`
+}
+
+var _ json.UnmarshalerFrom = (*ProjectFilesResult)(nil)
+
+func (s *ProjectFilesResult) UnmarshalJSONFrom(dec *json.Decoder) error {
+	const (
+		missingProjects uint = 1 << iota
+		_missingLast
+	)
+	missing := _missingLast - 1
+
+	if k := dec.PeekKind(); k != '{' {
+		return errNotObject(k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	for dec.PeekKind() != '}' {
+		name, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+		switch string(name) {
+		case `"projects"`:
+			missing &^= missingProjects
+			if dec.PeekKind() == 'n' {
+				return errNull("projects")
+			}
+			if err := json.UnmarshalDecode(dec, &s.Projects); err != nil {
+				return err
+			}
+		default:
+			if err := dec.SkipValue(); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if missing != 0 {
+		var missingProps []string
+		if missing&missingProjects != 0 {
+			missingProps = append(missingProps, "projects")
+		}
+		return errMissing(missingProps)
+	}
+
+	return nil
+}
+
 // A PerformanceStatsTelemetryEvent is sent periodically with performance and resource usage statistics.
 type PerformanceStatsTelemetryEvent struct {
 	// The name of the telemetry event.
@@ -31461,6 +31589,8 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 		return unmarshalPtrTo[InitializeAPISessionParams](data)
 	case MethodCustomProjectInfo:
 		return unmarshalPtrTo[ProjectInfoParams](data)
+	case MethodCustomProjectFiles:
+		return unmarshalEmpty(data)
 	case MethodCustomTextDocumentSourceDefinition:
 		return unmarshalPtrTo[TextDocumentPositionParams](data)
 	case MethodCustomTextDocumentMultiDocumentHighlight:
@@ -31674,6 +31804,8 @@ func unmarshalResult(method Method, data []byte) (any, error) {
 		return unmarshalValue[CustomInitializeAPISessionResponse](data)
 	case MethodCustomProjectInfo:
 		return unmarshalValue[CustomProjectInfoResponse](data)
+	case MethodCustomProjectFiles:
+		return unmarshalValue[CustomProjectFilesResponse](data)
 	case MethodCustomTextDocumentSourceDefinition:
 		return unmarshalValue[CustomTextDocumentSourceDefinitionResponse](data)
 	case MethodCustomTextDocumentMultiDocumentHighlight:
@@ -31992,6 +32124,8 @@ const (
 	MethodCustomInitializeAPISession Method = "custom/initializeAPISession"
 	// Returns project information (e.g. the tsconfig.json path) for a given text document.
 	MethodCustomProjectInfo Method = "custom/projectInfo"
+	// Returns all projects and the list of source files in each project.
+	MethodCustomProjectFiles Method = "custom/projectFiles"
 	// Request to get source definitions for a position.
 	MethodCustomTextDocumentSourceDefinition Method = "custom/textDocument/sourceDefinition"
 	// Request to get document highlights across multiple files.
@@ -32540,6 +32674,12 @@ type CustomProjectInfoResponse = *ProjectInfoResult
 
 // Type mapping info for `custom/projectInfo`
 var CustomProjectInfoInfo = RequestInfo[*ProjectInfoParams, CustomProjectInfoResponse]{Method: MethodCustomProjectInfo}
+
+// Response type for `custom/projectFiles`
+type CustomProjectFilesResponse = *ProjectFilesResult
+
+// Type mapping info for `custom/projectFiles`
+var CustomProjectFilesInfo = RequestInfo[NoParams, CustomProjectFilesResponse]{Method: MethodCustomProjectFiles}
 
 // Response type for `custom/textDocument/sourceDefinition`
 type CustomTextDocumentSourceDefinitionResponse = *LocationOrLocationsOrDefinitionLinksOrNull

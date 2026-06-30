@@ -802,6 +802,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
+	registerRequestHandler(handlers, lsproto.CustomProjectFilesInfo, (*Server).handleProjectFiles)
 	return handlers
 })
 
@@ -1875,5 +1876,42 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	}
 	return &lsproto.ProjectInfoResult{
 		ConfigFilePath: configFilePath,
+	}, nil
+}
+
+func (s *Server) handleProjectFiles(_ context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.CustomProjectFilesResponse, error) {
+	snapshot := s.session.Snapshot()
+	if snapshot == nil {
+		return &lsproto.ProjectFilesResult{
+			Projects: []*lsproto.ProjectFilesProject{},
+		}, nil
+	}
+
+	allProjects := snapshot.ProjectCollection.Projects()
+	result := make([]*lsproto.ProjectFilesProject, 0, len(allProjects))
+
+	for _, proj := range allProjects {
+		if proj.Program == nil {
+			continue
+		}
+		configFilePath := ""
+		if proj.Kind == project.KindConfigured {
+			configFilePath = proj.Name()
+		}
+
+		sourceFiles := proj.Program.GetSourceFiles()
+		files := make([]lsproto.DocumentUri, 0, len(sourceFiles))
+		for _, sf := range sourceFiles {
+			files = append(files, lsconv.FileNameToDocumentURI(sf.FileName()))
+		}
+
+		result = append(result, &lsproto.ProjectFilesProject{
+			ConfigFilePath: configFilePath,
+			Files:          files,
+		})
+	}
+
+	return &lsproto.ProjectFilesResult{
+		Projects: result,
 	}, nil
 }
