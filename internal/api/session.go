@@ -127,7 +127,7 @@ func (sd *snapshotData) newSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
 
 	resp := &SymbolResponse{
 		Id:         sd.registerSymbol(symbol),
-		Name:       symbol.Name,
+		Name:       ast.EscapeSymbolName(symbol.Name),
 		Flags:      uint32(symbol.Flags),
 		CheckFlags: uint32(symbol.CheckFlags),
 	}
@@ -484,6 +484,14 @@ func (s *Session) setupChecker(ctx context.Context, snapshot SnapshotID, project
 // setupLanguageService creates a LanguageService for the given snapshot/project.
 // Unlike setupChecker, this does NOT acquire a checker from the pool, so callers that
 // only need an LS (and not a Checker) can avoid blocking on / holding a pooled checker.
+//
+// The LS acquires its own checker internally (keyed by the ctx's checker lifetime).
+// If a handler returns symbol/type/signature handles the client may later re-query
+// on the API checker (e.g. completion with IncludeSymbol -> GetTypeOfSymbol), wrap
+// ctx with core.WithCheckerLifetime(ctx, core.CheckerLifetimeAPI) so those handles
+// are produced on the persistent API checker and stay resolvable. Only safe when the
+// LS operation acquires a checker exactly once; nested acquisitions (e.g. find-all-
+// references) would deadlock on the single-slot persistent checker.
 func (s *Session) setupLanguageService(sd *snapshotData, program *compiler.Program, projectHandle ProjectID, activeFile string) (*ls.LanguageService, error) {
 	projectName := parseProjectHandle(projectHandle)
 	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
@@ -527,6 +535,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSourceFile(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetSourceFileNames):
 		return s.handleGetSourceFileNames(ctx, parsed.(*GetSourceFileNamesParams))
+	case string(MethodGetSourceFileMetadata):
+		return s.handleGetSourceFileMetadata(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetSymbolAtPosition):
 		return s.handleGetSymbolAtPosition(ctx, parsed.(*GetSymbolAtPositionParams))
 	case string(MethodGetSymbolsAtPositions):
@@ -703,6 +713,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetBigIntType)
 	case string(MethodGetESSymbolType):
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetESSymbolType)
+	case string(MethodGetWellKnownSymbols):
+		return s.handleGetWellKnownSymbols(ctx, parsed.(*GetIntrinsicTypeParams))
 	case string(MethodGetSyntacticDiagnostics):
 		return s.handleGetSyntacticDiagnostics(ctx, parsed.(*GetDiagnosticsParams))
 	case string(MethodGetBindDiagnostics):
@@ -1018,7 +1030,7 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, nil
 	}
 
-	// Encode the full source file
+	// Encode the full source file.
 	data, _, err := encoder.EncodeSourceFile(sourceFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
@@ -1051,6 +1063,34 @@ func (s *Session) handleGetSourceFileNames(ctx context.Context, params *GetSourc
 		result[i] = sourceFile.FileName()
 	}
 	return result, nil
+}
+
+// handleGetSourceFileMetadata returns program-stored metadata for a single source file.
+// The client fetches this lazily per file and caches it.
+func (s *Session) handleGetSourceFileMetadata(ctx context.Context, params *GetSourceFileParams) (*SourceFileMetadata, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, nil
+	}
+
+	metaData := program.GetSourceFileMetaData(sourceFile.Path())
+	return &SourceFileMetadata{
+		IsDefaultLibrary:      program.IsSourceFileDefaultLibrary(sourceFile.Path()),
+		IsFromExternalLibrary: program.IsSourceFileFromExternalLibrary(sourceFile),
+		PackageJsonType:       metaData.PackageJsonType,
+		PackageJsonDirectory:  metaData.PackageJsonDirectory,
+		ImpliedNodeFormat:     metaData.ImpliedNodeFormat,
+	}, nil
 }
 
 // handleGetSymbolAtPosition returns the symbol at a position in a file.
@@ -2080,6 +2120,22 @@ func (s *Session) handleGetIntrinsicType(ctx context.Context, params *GetIntrins
 	return setup.newTypeResponse(t), nil
 }
 
+// handleGetWellKnownSymbols returns the handle ids of the per-checker singleton
+// symbols (unknown, undefined, arguments) so the client can identify them by id.
+func (s *Session) handleGetWellKnownSymbols(ctx context.Context, params *GetIntrinsicTypeParams) (*WellKnownSymbolsResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	return &WellKnownSymbolsResponse{
+		Unknown:   setup.sd.registerSymbol(setup.checker.GetUnknownSymbol()),
+		Undefined: setup.sd.registerSymbol(setup.checker.GetUndefinedSymbol()),
+		Arguments: setup.sd.registerSymbol(setup.checker.GetArgumentsSymbol()),
+	}, nil
+}
+
 // handleIsContextSensitive returns whether a node is context-sensitive.
 func (s *Session) handleIsContextSensitive(ctx context.Context, params *GetContextualTypeParams) (bool, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -3080,6 +3136,9 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 
 // handleGetCompletionsAtPosition returns completions at a position in a document.
 func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *GetCompletionsAtPositionParams) (*CompletionInfoResponse, error) {
+	if params.IncludeSymbol {
+		ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeAPI)
+	}
 	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err
