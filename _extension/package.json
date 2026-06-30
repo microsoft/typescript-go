@@ -20,6 +20,9 @@
     "engines": {
         "vscode": "^1.110.0"
     },
+    "extensionKind": [
+        "workspace"
+    ],
     "capabilities": {
         "untrustedWorkspaces": {
             "supported": false
