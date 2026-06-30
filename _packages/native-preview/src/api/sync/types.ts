@@ -138,11 +138,11 @@ export interface TypeReference extends ObjectType {
 /** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
 export interface InterfaceType extends TypeReference {
     /** Get all type parameters (outer + local, excluding thisType) */
-    getTypeParameters(): readonly Type[];
+    getTypeParameters(): readonly TypeParameter[];
     /** Get outer type parameters from enclosing declarations */
-    getOuterTypeParameters(): readonly Type[];
+    getOuterTypeParameters(): readonly TypeParameter[];
     /** Get local type parameters declared on this interface/class */
-    getLocalTypeParameters(): readonly Type[];
+    getLocalTypeParameters(): readonly TypeParameter[];
 }
 
 /** Tuple types (ObjectFlags.Tuple) */
@@ -195,6 +195,10 @@ export interface ConditionalType extends Type {
     getCheckType(): Type;
     /** Get the extends type U in `T extends U ? X : Y` */
     getExtendsType(): Type;
+    /** Get the true type X in `T extends U ? X : Y` */
+    getTrueType(): Type;
+    /** Get the false type Y in `T extends U ? X : Y` */
+    getFalseType(): Type;
 }
 
 /** Substitution types (TypeFlags.Substitution) */

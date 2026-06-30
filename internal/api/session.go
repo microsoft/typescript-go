@@ -487,6 +487,14 @@ func (s *Session) setupChecker(ctx context.Context, snapshot SnapshotID, project
 // setupLanguageService creates a LanguageService for the given snapshot/project.
 // Unlike setupChecker, this does NOT acquire a checker from the pool, so callers that
 // only need an LS (and not a Checker) can avoid blocking on / holding a pooled checker.
+//
+// The LS acquires its own checker internally (keyed by the ctx's checker lifetime).
+// If a handler returns symbol/type/signature handles the client may later re-query
+// on the API checker (e.g. completion with IncludeSymbol -> GetTypeOfSymbol), wrap
+// ctx with core.WithCheckerLifetime(ctx, core.CheckerLifetimeAPI) so those handles
+// are produced on the persistent API checker and stay resolvable. Only safe when the
+// LS operation acquires a checker exactly once; nested acquisitions (e.g. find-all-
+// references) would deadlock on the single-slot persistent checker.
 func (s *Session) setupLanguageService(sd *snapshotData, program *compiler.Program, projectHandle ProjectID, activeFile string) (*ls.LanguageService, error) {
 	projectName := parseProjectHandle(projectHandle)
 	proj := sd.snapshot.ProjectCollection.GetProjectByPath(projectName)
@@ -598,6 +606,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetBaseTypeOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetConstraintOfType):
 		return s.handleGetConstraintOfType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetTrueTypeOfConditionalType):
+		return s.handleGetTrueTypeOfConditionalType(ctx, parsed.(*GetTypePropertyParams))
+	case string(MethodGetFalseTypeOfConditionalType):
+		return s.handleGetFalseTypeOfConditionalType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetTypeParametersOfSignature):
 		return s.handleGetTypeParametersOfSignature(ctx, parsed.(*GetSignaturePropertyParams))
 	case string(MethodGetParametersOfSignature):
@@ -2795,6 +2807,36 @@ func (s *Session) handleGetTypeArguments(ctx context.Context, params *CheckerTyp
 	return results, nil
 }
 
+func (s *Session) handleGetTrueTypeOfConditionalType(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Project, params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	return setup.sd.newTypeResponse(params.Project, setup.checker.GetTrueTypeOfConditionalType(t)), nil
+}
+
+func (s *Session) handleGetFalseTypeOfConditionalType(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.sd.resolveTypeHandle(params.Project, params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	return setup.sd.newTypeResponse(params.Project, setup.checker.GetFalseTypeOfConditionalType(t)), nil
+}
+
 func (sd *snapshotData) resolveNodeHandle(program *compiler.Program, handle NodeHandle) (*ast.Node, error) {
 	s := string(handle)
 	// Format: "index.kind.path" — we need index and path, kind is informational only.
@@ -3222,6 +3264,9 @@ func (s *Session) handleGetSignatureUsages(ctx context.Context, params *GetSigna
 
 // handleGetCompletionsAtPosition returns completions at a position in a document.
 func (s *Session) handleGetCompletionsAtPosition(ctx context.Context, params *GetCompletionsAtPositionParams) (*CompletionInfoResponse, error) {
+	if params.IncludeSymbol {
+		ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeAPI)
+	}
 	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err

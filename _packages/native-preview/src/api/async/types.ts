@@ -130,11 +130,11 @@ export interface TypeReference extends ObjectType {
 /** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
 export interface InterfaceType extends TypeReference {
     /** Get all type parameters (outer + local, excluding thisType) */
-    getTypeParameters(): Promise<readonly Type[]>;
+    getTypeParameters(): Promise<readonly TypeParameter[]>;
     /** Get outer type parameters from enclosing declarations */
-    getOuterTypeParameters(): Promise<readonly Type[]>;
+    getOuterTypeParameters(): Promise<readonly TypeParameter[]>;
     /** Get local type parameters declared on this interface/class */
-    getLocalTypeParameters(): Promise<readonly Type[]>;
+    getLocalTypeParameters(): Promise<readonly TypeParameter[]>;
 }
 
 /** Tuple types (ObjectFlags.Tuple) */
@@ -187,6 +187,10 @@ export interface ConditionalType extends Type {
     getCheckType(): Promise<Type>;
     /** Get the extends type U in `T extends U ? X : Y` */
     getExtendsType(): Promise<Type>;
+    /** Get the true type X in `T extends U ? X : Y` */
+    getTrueType(): Promise<Type>;
+    /** Get the false type Y in `T extends U ? X : Y` */
+    getFalseType(): Promise<Type>;
 }
 
 /** Substitution types (TypeFlags.Substitution) */
