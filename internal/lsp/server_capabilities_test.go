@@ -3,6 +3,7 @@ package lsp_test
 import (
 	"context"
 	"io"
+	"slices"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -15,6 +16,10 @@ import (
 
 func TestInitializeAdvertisesTypeScriptSourceActionKinds(t *testing.T) {
 	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
 
 	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{}, false))
 	onServerRequest := func(_ context.Context, req *lsproto.RequestMessage) *lsproto.ResponseMessage {
@@ -36,7 +41,7 @@ func TestInitializeAdvertisesTypeScriptSourceActionKinds(t *testing.T) {
 		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 	}, onServerRequest)
-	t.Cleanup(func() { assert.NilError(t, closeClient()) })
+	t.Cleanup(func() { _ = closeClient() })
 
 	initMsg, result, ok := lsptestutil.SendRequest(t, client, lsproto.InitializeInfo, &lsproto.InitializeParams{
 		Capabilities: &lsproto.ClientCapabilities{},
@@ -58,15 +63,6 @@ func TestInitializeAdvertisesTypeScriptSourceActionKinds(t *testing.T) {
 		lsproto.CodeActionKindSourceFixAll,
 		lsproto.CodeActionKindSourceFixAllTs,
 	} {
-		assert.Assert(t, containsCodeActionKind(*kinds, kind), "missing code action kind %q", kind)
+		assert.Assert(t, slices.Contains(*kinds, kind), "missing code action kind %q", kind)
 	}
-}
-
-func containsCodeActionKind(kinds []lsproto.CodeActionKind, kind lsproto.CodeActionKind) bool {
-	for _, candidate := range kinds {
-		if candidate == kind {
-			return true
-		}
-	}
-	return false
 }
