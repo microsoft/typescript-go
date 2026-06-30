@@ -921,6 +921,69 @@ func TestParseJsonSourceFileConfigFileContentWithEmptyExtendedConfig(t *testing.
 	assert.DeepEqual(t, parsed.FileNames(), []string{"/project/main.ts"})
 }
 
+func TestParseJsonSourceFileConfigFileContentReportsInvalidProjectReferences(t *testing.T) {
+	t.Parallel()
+	parsed := tsoptionstest.GetParsedCommandLine(t, `{
+  "files": ["/project/main.ts"],
+  "references": [
+    { "path": true },
+    { "circular": true },
+    { "path": "./valid", "circular": "yes" },
+    { "path": "" }
+  ]
+}`, map[string]string{"/project/main.ts": "export const x = 1;"}, "/project", true /*useCaseSensitiveFileNames*/)
+
+	assert.Assert(t, parsed != nil)
+	assert.Equal(t, len(parsed.ProjectReferences()), 0)
+	assertInvalidProjectReferenceDiagnostics(t, parsed.GetConfigFileParsingDiagnostics())
+}
+
+func TestParseJsonConfigFileContentReportsInvalidProjectReferences(t *testing.T) {
+	t.Parallel()
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{"/project/main.ts": "export const x = 1;"}, "/project", true /*useCaseSensitiveFileNames*/)
+	parsed, _ := tsoptions.ParseConfigFileTextToJson("/project/tsconfig.json", tspath.Path("/project/tsconfig.json"), `{
+  "files": ["/project/main.ts"],
+  "references": [
+    { "path": true },
+    { "circular": true },
+    { "path": "./valid", "circular": "yes" },
+    { "path": "" }
+  ]
+}`)
+	config := tsoptions.ParseJsonConfigFileContent(
+		parsed,
+		host,
+		host.GetCurrentDirectory(),
+		nil,
+		"/project/tsconfig.json",
+		nil,
+		nil,
+		nil,
+	)
+
+	assert.Assert(t, config != nil)
+	assert.Equal(t, len(config.ProjectReferences()), 0)
+	assertInvalidProjectReferenceDiagnostics(t, config.GetConfigFileParsingDiagnostics())
+}
+
+func assertInvalidProjectReferenceDiagnostics(t assert.TestingT, diagnosticsList []*ast.Diagnostic) {
+	assert.Equal(t, len(diagnosticsList), 4)
+	expected := []struct {
+		code int32
+		args []string
+	}{
+		{diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(), []string{"reference.path", "string"}},
+		{diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(), []string{"reference.path", "string"}},
+		{diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(), []string{"reference.circular", "boolean"}},
+		{diagnostics.Compiler_option_0_cannot_be_given_an_empty_string.Code(), []string{"reference.path"}},
+	}
+	for index, expectedDiagnostic := range expected {
+		diagnostic := diagnosticsList[index]
+		assert.Equal(t, diagnostic.Code(), expectedDiagnostic.code)
+		assert.DeepEqual(t, diagnostic.MessageArgs(), expectedDiagnostic.args)
+	}
+}
+
 func TestParseJsonSourceFileConfigFileContentDoesNotDuplicateUnquotedKeyDiagnostics(t *testing.T) {
 	t.Parallel()
 	parsed := tsoptionstest.GetParsedCommandLine(t, `{
