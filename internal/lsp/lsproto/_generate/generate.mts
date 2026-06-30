@@ -45,6 +45,12 @@ const customStructures: Structure[] = [
                 documentation: "DisablePushDiagnostics disables automatic pushing of diagnostics to the client.",
             },
             {
+                name: "useWorkspaceDiagnostics",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "UseWorkspaceDiagnostics enables reporting program diagnostics through workspace/diagnostic.",
+            },
+            {
                 name: "codeLensShowLocationsCommandName",
                 type: { kind: "base", name: "string" },
                 optional: true,

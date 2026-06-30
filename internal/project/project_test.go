@@ -32,6 +32,15 @@ func filterDiagnosticsByURI(calls []publishDiagnosticsCall, uri lsproto.Document
 	return result
 }
 
+func findWorkspaceDiagnostic(report *lsproto.WorkspaceDiagnosticReport, uri lsproto.DocumentUri) *lsproto.WorkspaceFullDocumentDiagnosticReport {
+	for i := range report.Items {
+		if item := report.Items[i].FullDocumentDiagnosticReport; item != nil && item.Uri == uri {
+			return item
+		}
+	}
+	return nil
+}
+
 // These tests explicitly verify ProgramUpdateKind using subtests with shared helpers.
 func TestProjectProgramUpdateKind(t *testing.T) {
 	t.Parallel()
@@ -522,6 +531,84 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Assert(t, len(reopenedCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after reopening file")
 		lastReopenedCall := reopenedCalls[len(reopenedCalls)-1]
 		assert.Equal(t, len(lastReopenedCall.Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after reopening file")
+	})
+}
+
+func TestWorkspaceDiagnostics(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	setup := func(files map[string]any) (*project.Session, *projecttestutil.SessionUtils) {
+		return projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+			CurrentDirectory:            "/",
+			DefaultLibraryPath:          bundled.LibPath(),
+			TypingsLocation:             projecttestutil.TestTypingsLocation,
+			PositionEncoding:            lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:                true,
+			LoggingEnabled:              true,
+			WorkspaceDiagnosticsEnabled: true,
+			PushDiagnosticsEnabled:      false,
+		})
+	}
+
+	t.Run("returns current tsconfig diagnostics without publish", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		assert.Equal(t, len(utils.Client().PublishDiagnosticsCalls()), 0, "expected no PublishDiagnostics calls")
+		report := session.ProvideWorkspaceDiagnostics(context.Background())
+		item := findWorkspaceDiagnostic(report, "file:///src/tsconfig.json")
+		assert.Assert(t, item != nil, "expected workspace diagnostic item for tsconfig.json")
+		assert.Assert(t, slices.ContainsFunc(item.Items, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), "Argument for '--target' option must be:")
+		}), "expected invalid target diagnostic on tsconfig.json, got: %v", item.Items)
+	})
+
+	t.Run("includes global diagnostics after checking without publish", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "es2020"
+				}
+			}`,
+			"/src/index.ts": `export function f() {
+				using x = { [Symbol.dispose]() {} };
+			}`,
+		}
+		session, utils := setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		ls, err := session.GetLanguageService(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		_, err = ls.ProvideDiagnostics(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.EnqueuePublishGlobalDiagnostics()
+		session.WaitForBackgroundTasks()
+
+		assert.Equal(t, len(utils.Client().PublishDiagnosticsCalls()), 0, "expected no PublishDiagnostics calls")
+		assert.Assert(t, len(utils.Client().RefreshDiagnosticsCalls()) > 0, "expected diagnostics refresh after new global diagnostics")
+		report := session.ProvideWorkspaceDiagnostics(context.Background())
+		item := findWorkspaceDiagnostic(report, "file:///src/tsconfig.json")
+		assert.Assert(t, item != nil, "expected workspace diagnostic item for tsconfig.json")
+		assert.Assert(t, slices.ContainsFunc(item.Items, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), "Cannot find global")
+		}), "expected a 'Cannot find global' diagnostic on tsconfig.json, got: %v", item.Items)
 	})
 }
 
