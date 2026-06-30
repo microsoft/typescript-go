@@ -328,11 +328,11 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'source/tsconfig.json'...
 
-[[90mHH:MM:SS AM[0m] Project 'facade/tsconfig.json' is out of date because output 'facade/tsconfig.tsbuildinfo' is older than input 'source'
+[[90mHH:MM:SS AM[0m] Project 'facade/tsconfig.json' is out of date because output 'facade/tsconfig.tsbuildinfo' is older than input 'source/index.d.ts'
 
 [[90mHH:MM:SS AM[0m] Building project 'facade/tsconfig.json'...
 
-[[90mHH:MM:SS AM[0m] Project 'consumer/tsconfig.json' is out of date because output 'consumer/tsconfig.tsbuildinfo' is older than input 'facade'
+[[90mHH:MM:SS AM[0m] Project 'consumer/tsconfig.json' is out of date because output 'consumer/tsconfig.tsbuildinfo' is older than input 'source/index.d.ts'
 
 [[90mHH:MM:SS AM[0m] Building project 'consumer/tsconfig.json'...
 
@@ -611,7 +611,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'source/tsconfig.json'...
 
-[[90mHH:MM:SS AM[0m] Project 'facade/tsconfig.json' is out of date because output 'facade/tsconfig.tsbuildinfo' is older than input 'source'
+[[90mHH:MM:SS AM[0m] Project 'facade/tsconfig.json' is out of date because output 'facade/tsconfig.tsbuildinfo' is older than input 'source/index.d.ts'
 
 [[90mHH:MM:SS AM[0m] Building project 'facade/tsconfig.json'...
 
