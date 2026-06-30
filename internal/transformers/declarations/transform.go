@@ -352,6 +352,13 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements = tx.appendCjsExports(combinedStatements)
 	combinedStatements.Loc = statements.Loc // setTextRange
+	needsRangeAdjustment := ast.IsInJSFile(node.AsNode()) &&
+		len(node.Statements.Nodes) > 0 &&
+		!ast.IsDeclarationStatement(node.Statements.Nodes[0]) &&
+		len(combinedStatements.Nodes) > 0
+	if needsRangeAdjustment {
+		combinedStatements.Loc = core.NewTextRange(combinedStatements.Nodes[0].Pos(), statements.Loc.End())
+	}
 	if ast.IsExternalOrCommonJSModule(node) {
 		if ast.IsInJSFile(node.AsNode()) {
 			if exportEquals := node.Symbol.Exports[ast.InternalSymbolNameExportEquals]; exportEquals != nil && len(exportEquals.Declarations) > 1 {
