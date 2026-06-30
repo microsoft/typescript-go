@@ -51,6 +51,7 @@ var OnRtls;
     (function (Carrello) {
         var Home;
         (function (Home) {
+            var mappa = OnRtls.Mappa;
             class SensmapViewModel {
                 constructor() {
                     var x = new mappa.MappaViewModel(null, null, 2 /* mappa.TipoCamera.Camera3D */);
