@@ -503,7 +503,7 @@ type wantEvent struct {
 func toWantEvents(events []Event) []wantEvent {
 	out := make([]wantEvent, len(events))
 	for i, e := range events {
-		out[i] = wantEvent(e)
+		out[i] = wantEvent{Kind: e.Kind, Path: e.Path}
 	}
 	return out
 }
@@ -1491,13 +1491,13 @@ func TestConsolidatedChildWatchFiltersAgainstRequestedDir(t *testing.T) {
 	dw := newDirectWatcher(t, parent)
 
 	var got []Event
-	dw.watch(child, false, func(events []Event, err error) {
+	dw.watch(child, child, false, func(events []Event, err error) {
 		if err != nil {
 			t.Fatal(err)
 		}
 		got = append(got, events...)
 	}, nil)
-	dw.events.update(child)
+	dw.events.updateWatchRootAt(child, 1)
 	dw.events.update(filepath.Join(child, "file.ts"))
 	dw.events.update(filepath.Join(child, "nested", "file.ts"))
 	dw.events.update(filepath.Join(sibling, "file.ts"))
@@ -1521,6 +1521,27 @@ func TestConsolidatedChildWatchFiltersAgainstRequestedDir(t *testing.T) {
 	}
 }
 
+func TestConsolidatedChildWatchIgnoresEventsBeforeSubscribe(t *testing.T) {
+	t.Parallel()
+
+	parent := filepath.Join(t.TempDir(), "parent")
+	child := filepath.Join(parent, "child")
+	dw := newDirectWatcher(t, parent)
+
+	dw.events.update(child)
+	var got []Event
+	dw.watch(child, child, true, func(events []Event, err error) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, events...)
+	}, nil)
+	dw.events.remove(child)
+	dw.triggerCallbacks()
+
+	assertEventSequence(t, got, []wantEvent{{EventDelete, child}})
+}
+
 func TestRecursiveWatchWithIgnoreDoesNotFilterByLogicalRoot(t *testing.T) {
 	t.Parallel()
 
@@ -1529,7 +1550,7 @@ func TestRecursiveWatchWithIgnoreDoesNotFilterByLogicalRoot(t *testing.T) {
 
 	var got []Event
 	outsidePath := filepath.Join(t.TempDir(), "outside", "pkg", "index.ts")
-	dw.watch(dir, true, func(events []Event, err error) {
+	dw.watch(dir, dir, true, func(events []Event, err error) {
 		if err != nil {
 			t.Fatal(err)
 		}
