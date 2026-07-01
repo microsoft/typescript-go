@@ -254,6 +254,8 @@ func (w *watcher) HasFastRecursiveBackend() bool {
 }
 
 func (w *watcher) canShareRecursiveDirWatches() bool {
+	// TODO: Re-enable this for Windows once coalesced recursive watches have
+	// more real-world bake time.
 	return w.name == "fsevents"
 }
 

@@ -112,6 +112,14 @@ func (el *eventList) remove(path string) {
 	el.removeLocked(path, seq)
 }
 
+func (el *eventList) removeAndGetSequence(path string) uint64 {
+	el.mu.Lock()
+	defer el.mu.Unlock()
+	seq := el.nextSeqLocked()
+	el.removeLocked(path, seq)
+	return seq
+}
+
 func (el *eventList) removeAt(path string, seq uint64) {
 	el.mu.Lock()
 	defer el.mu.Unlock()
