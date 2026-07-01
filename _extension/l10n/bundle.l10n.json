@@ -1,5 +1,7 @@
 {
   "Could not find a TypeScript executable in the extension package.": "Could not find a TypeScript executable in the extension package.",
+  "Cannot start native TypeScript server for selection kind: {0}": "Cannot start native TypeScript server for selection kind: {0}",
+  "Could not resolve TypeScript server from tsdk path: {0}": "Could not resolve TypeScript server from tsdk path: {0}",
   "TypeScript 7 Native Preview": "TypeScript 7 Native Preview",
   "$(beaker) tsgo {0}": "$(beaker) tsgo {0}",
   "TypeScript 7 Native Preview Language Server": "TypeScript 7 Native Preview Language Server",
@@ -51,6 +53,7 @@
   "File is not part of opened folders": "File is not part of opened folders",
   "Open Config File": "Open Config File",
   "TypeScript 7 Native Preview Project Status": "TypeScript 7 Native Preview Project Status",
+  "Error prompting to use workspace version: {0}": "Error prompting to use workspace version: {0}",
   "TypeScript 7 Native Preview setting has changed. Restart extensions to apply changes.": "TypeScript 7 Native Preview setting has changed. Restart extensions to apply changes.",
   "Restart Extensions": "Restart Extensions",
   "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.": "The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable.",
@@ -59,7 +62,6 @@
   "TypeScript 7 Native Preview is running in development mode with \"{0}\" set to false.": "TypeScript 7 Native Preview is running in development mode with \"{0}\" set to false.",
   "Ignore": "Ignore",
   "TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it.": "TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it.",
-  "Error prompting to use workspace version: {0}": "Error prompting to use workspace version: {0}",
   "TypeScript server plugins from the \"{0}\" extension will not be loaded because TypeScript 7 Native Preview is enabled globally.": "TypeScript server plugins from the \"{0}\" extension will not be loaded because TypeScript 7 Native Preview is enabled globally.",
   "{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript 7 Native Preview is enabled globally: {1}": "{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript 7 Native Preview is enabled globally: {1}",
   "Disable Native Preview in Workspace": "Disable Native Preview in Workspace",
