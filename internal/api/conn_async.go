@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
@@ -20,6 +21,10 @@ type AsyncConn struct {
 	rwc      io.ReadWriteCloser
 	protocol Protocol
 	handler  Handler
+
+	// collectTiming, when true, measures the wall-clock time spent handling each
+	// request and attaches it to the response as timing metadata.
+	collectTiming bool
 
 	// For server→client requests
 	seq       atomic.Int64
@@ -42,6 +47,12 @@ func NewAsyncConnWithProtocol(rwc io.ReadWriteCloser, protocol Protocol, handler
 		handler:  handler,
 		pending:  make(map[jsonrpc.ID]chan *Message),
 	}
+}
+
+// SetCollectTiming enables or disables per-request server processing-time
+// measurement. When enabled, responses carry the processing time as metadata.
+func (c *AsyncConn) SetCollectTiming(enabled bool) {
+	c.collectTiming = enabled
 }
 
 // Run starts processing messages on the connection.
@@ -90,6 +101,8 @@ func (c *AsyncConn) handleRequest(ctx context.Context, msg *Message) {
 	var result any
 	var err error
 
+	start := time.Now()
+
 	// Recover from panics and convert to error response with stack trace
 	defer func() {
 		if r := recover(); r != nil {
@@ -121,7 +134,7 @@ func (c *AsyncConn) handleRequest(ctx context.Context, msg *Message) {
 			Message: err.Error(),
 		})
 	} else {
-		writeErr = c.protocol.WriteResponse(msg.ID, result)
+		writeErr = c.protocol.WriteResponse(msg.ID, maybeTimed(result, start, c.collectTiming))
 	}
 
 	if writeErr != nil {

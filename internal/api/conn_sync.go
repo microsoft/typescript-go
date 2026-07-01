@@ -7,6 +7,7 @@ import (
 	"io"
 	"runtime/debug"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
@@ -18,6 +19,10 @@ type SyncConn struct {
 	rwc      io.ReadWriteCloser
 	protocol Protocol
 	handler  Handler
+
+	// collectTiming, when true, measures the wall-clock time spent handling each
+	// request and attaches it to the response as timing metadata.
+	collectTiming bool
 
 	// mu serializes all protocol operations (reads and writes).
 	// This ensures that concurrent calls from handler goroutines (e.g., project code
@@ -32,6 +37,12 @@ func NewSyncConn(rwc io.ReadWriteCloser, protocol Protocol, handler Handler) *Sy
 		protocol: protocol,
 		handler:  handler,
 	}
+}
+
+// SetCollectTiming enables or disables per-request server processing-time
+// measurement. When enabled, responses carry the processing time as metadata.
+func (c *SyncConn) SetCollectTiming(enabled bool) {
+	c.collectTiming = enabled
 }
 
 // Run starts processing messages on the connection.
@@ -69,6 +80,8 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 	var result any
 	var err error
 
+	start := time.Now()
+
 	// Recover from panics and convert to error response with stack trace
 	defer func() {
 		if r := recover(); r != nil {
@@ -100,7 +113,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 			Message: err.Error(),
 		})
 	} else {
-		writeErr = c.protocol.WriteResponse(msg.ID, result)
+		writeErr = c.protocol.WriteResponse(msg.ID, maybeTimed(result, start, c.collectTiming))
 	}
 
 	if writeErr != nil {

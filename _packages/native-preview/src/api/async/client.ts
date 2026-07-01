@@ -20,6 +20,11 @@ import {
     isSpawnOptions,
     resolveExePath,
 } from "../options.ts";
+import {
+    disabledTimingInfo,
+    TimingCollector,
+    type TimingInfo,
+} from "../timing.ts";
 
 export type { ClientOptions, ClientSocketOptions, ClientSpawnOptions };
 
@@ -33,9 +38,13 @@ export class Client {
     private connection: MessageConnection | undefined;
     private options: ClientOptions;
     private connected = false;
+    private timing: TimingCollector | undefined;
 
     constructor(options: ClientOptions) {
         this.options = options;
+        if (isSpawnOptions(options) && options.collectTiming) {
+            this.timing = new TimingCollector();
+        }
     }
 
     async connect(): Promise<void> {
@@ -59,6 +68,10 @@ export class Client {
                 "--cwd",
                 options.cwd ?? process.cwd(),
             ];
+
+            if (options.collectTiming) {
+                args.push("--timing");
+            }
 
             // Enable virtual FS callbacks for each provided FS function
             const enabledCallbacks: string[] = [];
@@ -142,7 +155,32 @@ export class Client {
         }
 
         const requestType = new RequestType<unknown, T, void>(method);
-        return this.connection.sendRequest(requestType, params);
+        if (!this.timing) {
+            return this.connection.sendRequest(requestType, params);
+        }
+
+        // When timing is enabled the server wraps its result in an envelope
+        // carrying its own processing time (see jsonrpcTimedResult on the Go
+        // side). Round-trip latency is measured here; byte counts approximate
+        // the wire payload via the serialized JSON.
+        const bytesSent = params === undefined ? 0 : Buffer.byteLength(JSON.stringify(params), "utf-8");
+        const start = performance.now();
+        const envelope = (await this.connection.sendRequest(requestType, params)) as unknown as {
+            result: T;
+            serverTimeMicros: number;
+        };
+        const roundTripMs = performance.now() - start;
+        const result = envelope?.result as T;
+        this.timing.record({
+            method,
+            roundTripMs,
+            bytesSent,
+            bytesReceived: result === undefined || result === null
+                ? 0
+                : Buffer.byteLength(JSON.stringify(result), "utf-8"),
+            serverTimeMicros: envelope?.serverTimeMicros,
+        });
+        return result;
     }
 
     async apiRequestBinary(method: string, params?: unknown): Promise<Uint8Array | undefined> {
@@ -150,6 +188,14 @@ export class Client {
         if (!response) return undefined;
         const buffer = Buffer.from(response.data, "base64");
         return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+    }
+
+    getTimingInfo(): TimingInfo {
+        return this.timing ? this.timing.getInfo() : disabledTimingInfo();
+    }
+
+    resetTimingInfo(): void {
+        this.timing?.reset();
     }
 
     async close(): Promise<void> {

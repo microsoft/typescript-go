@@ -66,6 +66,11 @@ import {
     toUpdateSnapshotRequest,
 } from "../proto.ts";
 import { SourceFileCache } from "../sourceFileCache.ts";
+import type {
+    RequestTiming,
+    TimingAccumulators,
+    TimingInfo,
+} from "../timing.ts";
 import {
     Client,
     type ClientSocketOptions,
@@ -110,6 +115,7 @@ import type {
 
 export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions, SourceFileMetadata };
+export type { RequestTiming, TimingAccumulators, TimingInfo };
 export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
@@ -201,6 +207,27 @@ export class API<FromLSP extends boolean = false> {
 
     clearSourceFileCache(): void {
         this.sourceFileCache.clear();
+    }
+
+    /**
+     * Returns a snapshot of collected timing information (round-trip latency,
+     * bytes transferred, server processing time, and estimated transport
+     * overhead) for requests made through this API instance.
+     *
+     * Collection must be enabled via the `collectTiming` option. When it is not,
+     * the returned snapshot has `enabled: false` and zeroed totals.
+     *
+     * Server processing time is reported over both transports: the synchronous
+     * (MessagePack) transport appends it as a footer, and the asynchronous
+     * (JSON-RPC) transport wraps each result in a timing envelope.
+     */
+    getTimingInfo(): TimingInfo {
+        return this.client.getTimingInfo();
+    }
+
+    /** Clears all accumulated timing totals and recent-request history. */
+    resetTimingInfo(): void {
+        this.client.resetTimingInfo();
     }
 }
 
