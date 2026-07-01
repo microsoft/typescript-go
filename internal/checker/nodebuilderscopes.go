@@ -173,8 +173,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 						originalParam = originalParameters[pIndex]
 					}
 					if originalParameters != nil && originalParam != param {
-						// Can't reference parameters that come from an expansion
-						// Can't reference the original expanded parameter either
+						// Can't reference the original expanded parameter name
 						if originalParam != nil {
 							add(originalParam.Name, b.ch.unknownSymbol)
 						}
