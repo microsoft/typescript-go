@@ -148,10 +148,12 @@ export class Client implements vscode.Disposable {
             version: this.exe.version,
         });
 
-        const pprofDir = readNativePreviewConfig<string | undefined>("pprofDir", undefined);
+        const pprofDir = readNativePreviewConfig<string | undefined>("server.pprofDir", undefined)
+            ?? readNativePreviewConfig<string | undefined>("pprofDir", undefined);
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
-        const goMemLimit = readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
+        const goMemLimit = readNativePreviewConfig<string | undefined>("server.goMemLimit", undefined)
+            ?? readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
         if (goMemLimit) {
             // Keep this regex aligned with the pattern in package.json.

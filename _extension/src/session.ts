@@ -518,7 +518,8 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
     }
 
     // Additional tsdk locations from settings
-    const additionalLocations = readNativePreviewConfig("additionalTsdkLocations", [] as string[]);
+    const additionalLocations = readNativePreviewConfig("tsdk.additionalLocations", [] as string[]);
+    additionalLocations.push(...readNativePreviewConfig("additionalTsdkLocations", [] as string[]));
     if (additionalLocations.length > 0) {
         items.push({
             label: "",

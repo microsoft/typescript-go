@@ -60,14 +60,14 @@
                             "experimental"
                         ]
                     },
-                    "js/ts.pprofDir": {
+                    "js/ts.server.pprofDir": {
                         "type": "string",
                         "description": "%native-preview.pprofDir.description%",
                         "tags": [
                             "experimental"
                         ]
                     },
-                    "js/ts.additionalTsdkLocations": {
+                    "js/ts.tsdk.additionalLocations": {
                         "type": "array",
                         "items": {
                             "type": "string"
@@ -86,7 +86,7 @@
                             "experimental"
                         ]
                     },
-                    "js/ts.goMemLimit": {
+                    "js/ts.server.goMemLimit": {
                         "type": "string",
                         "description": "%native-preview.goMemLimit.description%",
                         "pattern": "^[0-9]+(([KMGT]i)?B)?$",
