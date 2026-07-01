@@ -157,6 +157,7 @@ function getJSDocTypeParameterTags(typeParam: TypeParameterDeclaration): JSDocTe
     return result;
 }
 
+// Keep in sync with ast.GetNextJSDocCommentLocation.
 function getNextJSDocCommentLocation(node: Node): Node | undefined {
     const parent = node.parent;
     if (parent) {
