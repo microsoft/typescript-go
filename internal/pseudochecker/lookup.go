@@ -156,7 +156,7 @@ func (ch *PseudoChecker) typeFromAccessor(accessor *ast.Node) *PseudoType {
 			if accessorDeclarations.SetAccessor != nil {
 				errorNodes = append(errorNodes, accessorDeclarations.SetAccessor.AsNode())
 			}
-			res = NewPseudoTypeInferredWithErrors(res.AsPseudoTypeInferred().Expression, false, errorNodes) // Move error up to the accessor
+			res = NewPseudoTypeInferredWithErrors(res.AsPseudoTypeInferred().Expression, res.AsPseudoTypeInferred().IsSignatureReturn, errorNodes) // Move error up to the accessor
 		}
 		return res
 	}
