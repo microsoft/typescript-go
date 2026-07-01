@@ -3,12 +3,14 @@ package tsctests
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"gotest.tools/v3/assert"
 )
 
@@ -289,4 +291,119 @@ func TestBuildWatchStopsWhenContextIsCancelled(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("build watch did not stop after context cancellation")
 	}
+}
+
+func TestWatcherStartsFromExistingBuildInfo(t *testing.T) {
+	t.Parallel()
+	input := &tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/index.ts":      `export const x: number = 1;`,
+			"/home/src/workspaces/project/tsconfig.json": `{"compilerOptions":{"composite":true},"files":["index.ts"]}`,
+		},
+	}
+	sys := newTestSys(input, false)
+
+	result := execute.CommandLine(context.Background(), sys, []string{"-p", "tsconfig.json", "--pretty", "false"}, sys)
+	assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
+	assert.Assert(t, sys.fsFromFileMap().FileExists("/home/src/workspaces/project/tsconfig.tsbuildinfo"))
+
+	sys.clearOutput()
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("watch startup with existing build info panicked: %v", r)
+		}
+	}()
+	result = execute.CommandLine(context.Background(), sys, []string{"--watch", "--noEmit", "--pretty", "false"}, sys)
+	assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
+	assert.Assert(t, result.Watcher != nil)
+}
+
+func TestWatcherRebuildsWhenJsxImportSourcePragmaChanges(t *testing.T) {
+	t.Parallel()
+	input := &tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/index.tsx": `/** @jsxImportSource foo */
+export const x = <div />;`,
+			"/home/src/workspaces/project/tsconfig.json": `{
+				"compilerOptions":{"jsx":"react-jsx","module":"esnext","moduleResolution":"bundler","noEmit":true},
+				"files":["index.tsx"]
+			}`,
+		},
+		commandLineArgs: []string{"--watch"},
+	}
+	sys := newTestSys(input, false)
+	result := execute.CommandLine(context.Background(), sys, []string{"--watch", "--pretty", "false"}, sys)
+	if result.Watcher == nil {
+		t.Fatal("expected Watcher to be non-nil in watch mode")
+	}
+	w := result.Watcher.(*execute.Watcher)
+
+	sys.currentWrite.Reset()
+	_ = sys.fsFromFileMap().WriteFile("/home/src/workspaces/project/index.tsx", `/** @jsxImportSource bar */
+export const x = <div />;`)
+	sys.mockWatchBackend.SendEvents([]fswatch.Event{
+		{Kind: fswatch.EventUpdate, Path: "/home/src/workspaces/project/index.tsx"},
+	})
+	w.DoCycle()
+
+	out := sys.currentWrite.String()
+	assert.Assert(t, strings.Contains(out, "bar/jsx-runtime"), "expected updated JSX runtime diagnostic, got: %s", out)
+	assert.Assert(t, !strings.Contains(out, "foo/jsx-runtime"), "expected stale JSX runtime diagnostic to be gone, got: %s", out)
+}
+
+// TestWatcherUpdateProgramFastPath verifies that the UpdateProgram optimization
+// produces correct compilation results for body-only edits (fast path) and
+// correctly falls back to full NewProgram when imports change.
+func TestWatcherUpdateProgramFastPath(t *testing.T) {
+	t.Parallel()
+
+	input := &tscInput{
+		files: FileMap{
+			"/home/src/workspaces/project/a.ts":          `export const a: number = 1;`,
+			"/home/src/workspaces/project/b.ts":          `import { a } from "./a"; export const b = a;`,
+			"/home/src/workspaces/project/tsconfig.json": `{}`,
+		},
+		commandLineArgs: []string{"--watch"},
+	}
+	sys := newTestSys(input, false)
+	result := execute.CommandLine(context.Background(), sys, []string{"--watch"}, sys)
+	if result.Watcher == nil {
+		t.Fatal("expected Watcher to be non-nil in watch mode")
+	}
+	w := result.Watcher.(*execute.Watcher)
+
+	// Helper to write a file, send the event, cycle, and return output
+	editAndCycle := func(path, content string) string {
+		sys.currentWrite.Reset()
+		_ = sys.fsFromFileMap().WriteFile(path, content)
+		sys.mockWatchBackend.SendEvents([]fswatch.Event{
+			{Kind: fswatch.EventUpdate, Path: path},
+		})
+		w.DoCycle()
+		return sys.currentWrite.String()
+	}
+
+	// Body-only edit — should use UpdateProgram fast path, no errors
+	out := editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = 2;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after body edit, got: %s", out)
+
+	// Introduce a type error via body-only edit — fast path should detect it
+	out = editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = "not a number";`)
+	assert.Assert(t, !strings.Contains(out, "Found 0 errors"), "expected errors after type error, got: %s", out)
+
+	// Fix the type error — fast path should clear it
+	out = editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = 3;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after fix, got: %s", out)
+
+	// Add a new export — import structure changes, falls back to NewProgram
+	out = editAndCycle("/home/src/workspaces/project/a.ts", `export const a: number = 3; export const c: number = 4;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after export addition, got: %s", out)
+
+	// Import the new export — import change forces full rebuild
+	out = editAndCycle("/home/src/workspaces/project/b.ts", `import { a, c } from "./a"; export const b = a + c;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after import change, got: %s", out)
+
+	// Body edit after import change — should use fast path again, no errors
+	out = editAndCycle("/home/src/workspaces/project/b.ts", `import { a, c } from "./a"; export const b = a + c + 1;`)
+	assert.Assert(t, strings.Contains(out, "Found 0 errors"), "expected 0 errors after body edit post-import-change, got: %s", out)
 }
