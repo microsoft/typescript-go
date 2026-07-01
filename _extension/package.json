@@ -222,12 +222,6 @@
                 "category": "TypeScript 7"
             },
             {
-                "command": "typescript.selectTypeScriptVersion",
-                "title": "%native-preview.selectVersion.title%",
-                "enablement": "typescript.native-preview.serverRunning",
-                "category": "TypeScript 7"
-            },
-            {
                 "command": "typescript.native-preview.goToSourceDefinition",
                 "title": "%native-preview.goToSourceDefinition.title%",
                 "enablement": "typescript.native-preview.serverRunning",

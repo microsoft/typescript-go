@@ -372,6 +372,11 @@ interface VersionQuickPickItem extends vscode.QuickPickItem {
     restart?: boolean;
 }
 
+function readStringArrayConfig(key: string): string[] {
+    const value = readNativePreviewConfig<unknown>(key, undefined);
+    return Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : [];
+}
+
 interface DetectedVersion {
     folder: vscode.WorkspaceFolder;
     version: string;
@@ -518,8 +523,10 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
     }
 
     // Additional tsdk locations from settings
-    const additionalLocations = readNativePreviewConfig("tsdk.additionalLocations", [] as string[]);
-    additionalLocations.push(...readNativePreviewConfig("additionalTsdkLocations", [] as string[]));
+    const additionalLocations = [
+        ...readStringArrayConfig("tsdk.additionalLocations"),
+        ...readStringArrayConfig("additionalTsdkLocations"),
+    ];
     if (additionalLocations.length > 0) {
         items.push({
             label: "",
