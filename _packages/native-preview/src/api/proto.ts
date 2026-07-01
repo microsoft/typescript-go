@@ -1,6 +1,9 @@
 import type { CompletionItemKind } from "#enums/completionItemKind";
 import type { ModuleKind } from "#enums/moduleKind";
-import type { __String, Path } from "../ast/index.ts";
+import type {
+    __String,
+    Path,
+} from "../ast/index.ts";
 import {
     documentURIToFileName,
     fileNameToDocumentURI,
