@@ -38,7 +38,7 @@
   "Use Workspace Version": "Use Workspace Version",
   "$(lock) Manage Workspace Trust to select a workspace version": "$(lock) Manage Workspace Trust to select a workspace version",
   "Use Custom Version": "Use Custom Version",
-  "Select the TypeScript 7 version to use": "Select the TypeScript 7 version to use",
+  "Select the TypeScript version used for JavaScript and TypeScript language features": "Select the TypeScript version used for JavaScript and TypeScript language features",
   "Allow": "Allow",
   "Dismiss": "Dismiss",
   "Never in this Workspace": "Never in this Workspace",

@@ -390,7 +390,6 @@ interface DetectedVersion {
 
 interface StradaVersion {
     version: string;
-    tsserverPath: string;
 }
 
 async function getStradaVersion(): Promise<StradaVersion | undefined> {
@@ -409,7 +408,6 @@ async function getStradaExtensionVersion(extensionId: string, pathToTypescript: 
         const packageJson = JSON.parse(await vscode.workspace.fs.readFile(vscode.Uri.joinPath(packagePath, "package.json")).then(buffer => buffer.toString()));
         return {
             version: typeof packageJson.version === "string" ? packageJson.version : "unknown",
-            tsserverPath: tsserverPath.fsPath,
         };
     }
     catch {
@@ -473,7 +471,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         items.push({
             label: vscode.l10n.t("Use Bundled Version"),
             description: stradaVersion.version,
-            detail: stradaVersion.tsserverPath,
+            detail: "",
             beforeRun: stopServer,
             run: async () => {
                 await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
@@ -560,7 +558,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
     }
 
     const selected = await vscode.window.showQuickPick<VersionQuickPickItem>(items, {
-        placeHolder: vscode.l10n.t("Select the TypeScript 7 version to use"),
+        placeHolder: vscode.l10n.t("Select the TypeScript version used for JavaScript and TypeScript language features"),
     });
 
     if (selected) {
