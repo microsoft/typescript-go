@@ -161,6 +161,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		SkipDefaultLibCheck: core.TSTrue,
 		Target:              core.ScriptTargetLatestStandard,
 		Jsx:                 core.JsxEmitPreserve,
+		AllowJs:             core.TSTrue,
 	}
 	harnessOptions := harnessutil.HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: rootDir}
 	harnessutil.SetOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, &harnessOptions, rootDir, true /*allowUnknownOptions*/)
