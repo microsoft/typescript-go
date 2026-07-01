@@ -173,6 +173,11 @@ class Session implements vscode.Disposable {
             await vscode.commands.executeCommand("typescript.native-preview.restart");
         }));
 
+        // TODO: Support the standard reload/go-to-project-config commands while
+        // Strada leaves their command palette entries visible in native mode:
+        // typescript.reloadProjects, javascript.reloadProjects,
+        // typescript.goToProjectConfig, and javascript.goToProjectConfig.
+
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", () => {
             showCommands(this.client);
         }));
