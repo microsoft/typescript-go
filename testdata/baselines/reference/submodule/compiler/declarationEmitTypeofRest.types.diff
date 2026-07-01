@@ -1,0 +1,13 @@
+--- old.declarationEmitTypeofRest.types
++++ new.declarationEmitTypeofRest.types
+@@= skipped -22, +22 lines =@@
+ >Symbol : SymbolConstructor
+
+ export const v2 = (...a: [n: "n", a: "a"]): {
+->v2 : (n: "n", a: "a") => { a: [n: "n", a: "a"]; n: unique symbol; }
+->(...a: [n: "n", a: "a"]): {    /** r rest param */    a: typeof a,    /** module var */    n: typeof n,} => {    return null!} : (n: "n", a: "a") => { a: [n: "n", a: "a"]; n: unique symbol; }
++>v2 : (n: "n", a: "a") => { a: [n: "n", a: "a"]; n: typeof n; }
++>(...a: [n: "n", a: "a"]): {    /** r rest param */    a: typeof a,    /** module var */    n: typeof n,} => {    return null!} : (n: "n", a: "a") => { a: [n: "n", a: "a"]; n: typeof n; }
+ >a : [n: "n", a: "a"]
+
+     /** r rest param */
