@@ -1676,13 +1676,12 @@ func (s *Session) resolveSymbolPropertyOfSymbol(params *GetSymbolPropertyParams,
 // Results are sorted using the checker's canonical symbol ordering so that API consumers receive
 // a stable, deterministic order instead of Go's randomized map iteration order.
 func (s *Session) resolveSymbolTablePropertyOfSymbol(ctx context.Context, params *GetSymbolPropertyParams, getter func(*ast.Symbol) ast.SymbolTable) ([]*SymbolResponse, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err
 	}
-	defer setup.done()
 
-	symbol, err := setup.resolveSymbolHandle(params.Symbol)
+	symbol, err := sd.resolveSymbolHandle(params.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -1691,6 +1690,18 @@ func (s *Session) resolveSymbolTablePropertyOfSymbol(ctx context.Context, params
 	if len(symbolTable) == 0 {
 		return nil, nil
 	}
+	if len(symbolTable) == 1 {
+		for _, sub := range symbolTable {
+			return []*SymbolResponse{sd.newSymbolResponse(sub, params.Project)}, nil
+		}
+	}
+
+	// More than one symbol, need a checker to sort
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
 
 	symbols := make([]*ast.Symbol, 0, len(symbolTable))
 	for _, sub := range symbolTable {
