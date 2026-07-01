@@ -340,6 +340,13 @@ func (c *Checker) sortSymbols(symbols []*ast.Symbol) {
 	slices.SortFunc(symbols, c.compareSymbols)
 }
 
+// CompareSymbols compares two symbols to produce a stable, deterministic ordering.
+// It orders by the containing file's index in the program and then by declaration
+// position, falling back to name and symbol id.
+func (c *Checker) CompareSymbols(s1, s2 *ast.Symbol) int {
+	return c.compareSymbols(s1, s2)
+}
+
 func (c *Checker) compareSymbolsWorker(s1, s2 *ast.Symbol) int {
 	if s1 == s2 {
 		return 0

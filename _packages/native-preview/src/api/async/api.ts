@@ -252,9 +252,9 @@ export class Snapshot {
         this.client = client;
         this.toPath = toPath;
         this.onDispose = onDispose;
-        this.snapshotRegistry = new SnapshotObjectRegistry(client, this.id);
-
         this.projectMap = new Map();
+        this.snapshotRegistry = new SnapshotObjectRegistry(client, this.id, projectId => this.projectMap.get(projectId));
+
         for (const projData of data.projects) {
             const project = new Project(projData, this.id, client, sourceFileCache, toPath, this.snapshotRegistry);
             this.projectMap.set(toPath(projData.configFileName), project);
@@ -312,10 +312,17 @@ class SnapshotObjectRegistry {
     private readonly symbols: Map<number, Symbol> = new Map();
     private readonly client: Client;
     private readonly snapshotId: number;
+    private readonly resolveProject: (projectId: Path) => Project | undefined;
 
-    constructor(client: Client, snapshotId: number) {
+    constructor(client: Client, snapshotId: number, resolveProject: (projectId: Path) => Project | undefined) {
         this.client = client;
         this.snapshotId = snapshotId;
+        this.resolveProject = resolveProject;
+    }
+
+    /** Resolve a project id (a config file path) to its Project within this snapshot. */
+    getProject(projectId: Path): Project | undefined {
+        return this.resolveProject(projectId);
     }
 
     getOrCreateSymbol(data: SymbolResponse): Symbol {
@@ -335,7 +342,7 @@ class SnapshotObjectRegistry {
         this.symbols.clear();
     }
 
-    async fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined, projectId?: string): Promise<Symbol> {
+    async fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined, projectId?: Path): Promise<Symbol> {
         if (!handle) return undefined as unknown as Symbol;
         const cached = this.getSymbol(handle);
         if (cached) return cached;
@@ -349,7 +356,7 @@ class SnapshotObjectRegistry {
         return this.getOrCreateSymbol(data);
     }
 
-    async fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[], projectId?: string): Promise<readonly Symbol[]> {
+    async fetchSymbols(source: Symbol | Signature | Type, method: string, handles?: readonly number[], projectId?: Path): Promise<readonly Symbol[]> {
         if (handles) {
             const result = new Array<Symbol>(handles.length);
             let allCached = true;
@@ -376,7 +383,7 @@ class SnapshotObjectRegistry {
 class ProjectObjectRegistry {
     private client: Client;
     private snapshotId: number;
-    private projectId: string;
+    private projectId: Path;
     private snapshotRegistry: SnapshotObjectRegistry;
     private types: Map<number, TypeObject> = new Map();
     private signatures: Map<number, Signature> = new Map();
@@ -384,7 +391,7 @@ class ProjectObjectRegistry {
     constructor(
         client: Client,
         snapshotId: number,
-        projectId: string,
+        projectId: Path,
         snapshotRegistry: SnapshotObjectRegistry,
     ) {
         this.client = client;
@@ -399,6 +406,15 @@ class ProjectObjectRegistry {
 
     getSymbol(id: number): Symbol | undefined {
         return this.snapshotRegistry.getSymbol(id);
+    }
+
+    /** The Project this registry belongs to, used as the canonical project for handles it produces. */
+    getOwnProject(): Project {
+        const project = this.snapshotRegistry.getProject(this.projectId);
+        if (!project) {
+            throw new Error(`ProjectObjectRegistry references unknown project '${this.projectId}'`);
+        }
+        return project;
     }
 
     getOrCreateType(data: TypeResponse): TypeObject {
@@ -507,7 +523,7 @@ class ProjectObjectRegistry {
 }
 
 export class Project {
-    readonly id: string;
+    readonly id: Path;
     readonly configFileName: string;
     readonly compilerOptions: Record<string, unknown>;
     readonly rootFiles: readonly string[];
@@ -554,7 +570,7 @@ export class Project {
 
 export class Program {
     private snapshotId: number;
-    private projectId: string;
+    private projectId: Path;
     private client: Client;
     private sourceFileCache: SourceFileCache;
     private toPath: (fileName: string) => Path;
@@ -563,7 +579,7 @@ export class Program {
 
     constructor(
         snapshotId: number,
-        projectId: string,
+        projectId: Path,
         client: Client,
         sourceFileCache: SourceFileCache,
         toPath: (fileName: string) => Path,
@@ -766,14 +782,14 @@ export class Program {
 
 export class Checker {
     private snapshotId: number;
-    private projectId: string;
+    private projectId: Path;
     private client: Client;
     private objectRegistry: ProjectObjectRegistry;
     private wellKnownSymbols: Promise<{ unknown: number; undefined: number; arguments: number; }> | undefined;
 
     constructor(
         snapshotId: number,
-        projectId: string,
+        projectId: Path,
         client: Client,
         objectRegistry: ProjectObjectRegistry,
     ) {
@@ -868,7 +884,7 @@ export class Checker {
             file,
             symbol: symbol.id,
         });
-        return (data ?? []).map(h => new NodeHandle(h));
+        return (data ?? []).map(h => new NodeHandle(h, this.objectRegistry.getOwnProject()));
     }
 
     async getReferencedSymbolsForNode(node: Node, position: number): Promise<ReferencedSymbolEntry[]> {
@@ -878,10 +894,11 @@ export class Checker {
             node: getNodeId(node),
             position,
         });
+        const canonicalProject = this.objectRegistry.getOwnProject();
         return (data ?? []).map(entry => ({
-            definition: new NodeHandle(entry.definition),
+            definition: new NodeHandle(entry.definition, canonicalProject),
             symbol: entry.symbol ? this.objectRegistry.getOrCreateSymbol(entry.symbol) : undefined,
-            references: (entry.references ?? []).map(h => new NodeHandle(h)),
+            references: (entry.references ?? []).map(h => new NodeHandle(h, canonicalProject)),
         }));
     }
 
@@ -891,9 +908,10 @@ export class Checker {
             project: this.projectId,
             signatureDecl: getNodeId(signatureDecl),
         });
+        const canonicalProject = this.objectRegistry.getOwnProject();
         return (data ?? []).map(entry => ({
-            name: new NodeHandle(entry.name),
-            call: entry.call ? new NodeHandle(entry.call) : undefined,
+            name: new NodeHandle(entry.name, canonicalProject),
+            call: entry.call ? new NodeHandle(entry.call, canonicalProject) : undefined,
         }));
     }
 
@@ -1275,7 +1293,7 @@ export class Checker {
             keyType: this.objectRegistry.getOrCreateType(d.keyType),
             valueType: this.objectRegistry.getOrCreateType(d.valueType),
             isReadonly: d.isReadonly ?? false,
-            declaration: d.declaration ? new NodeHandle(d.declaration) : undefined,
+            declaration: d.declaration ? new NodeHandle(d.declaration, this.objectRegistry.getOwnProject()) : undefined,
         }));
     }
 
@@ -1470,22 +1488,30 @@ export class Emitter {
 }
 
 export class NodeHandle {
+    /**
+     * The project this handle was produced in, used as the default for {@link resolve}.
+     * Node handles are only meaningful within a project's program, so the producing project
+     * is remembered so callers don't have to pass it explicitly.
+     */
+    private readonly canonicalProject: Project;
     readonly index: number;
     readonly kind: SyntaxKind;
     readonly path: Path;
 
-    constructor(handle: string) {
+    constructor(handle: string, canonicalProject: Project) {
         const parsed = parseNodeHandle(handle);
         this.index = parsed.index;
         this.kind = parsed.kind;
         this.path = parsed.path;
+        this.canonicalProject = canonicalProject;
     }
 
     /**
-     * Resolve this handle to the actual AST node by fetching the source file
-     * from the given project and looking up the node by index.
+     * Resolve this handle to the actual AST node by fetching the source file from a project
+     * and looking up the node by index. If no project is passed, the project that produced
+     * the handle is used.
      */
-    async resolve(project: Project): Promise<Node | undefined> {
+    async resolve(project: Project = this.canonicalProject): Promise<Node | undefined> {
         const sourceFile = await project.program.getSourceFile(this.path);
         if (!sourceFile) {
             return undefined;
@@ -1514,6 +1540,12 @@ export interface SignatureUsage {
 
 export class Symbol {
     private objectRegistry: SnapshotObjectRegistry;
+    /**
+     * The project this symbol was first observed in, used as the default project for
+     * lookups that need a project context (members/exports/parent). Symbols are shared
+     * snapshot-wide, so these lookups can otherwise be ambiguous about which project to use.
+     */
+    private readonly canonicalProject: Project;
 
     readonly id: number;
     /** The escaped (`__String`) name, used as the key in member/export tables. */
@@ -1537,15 +1569,20 @@ export class Symbol {
         this.name = unescapeLeadingUnderscores(data.name);
         this.flags = data.flags;
         this.checkFlags = data.checkFlags;
-        this.declarations = (data.declarations ?? []).map(d => new NodeHandle(d));
-        this.valueDeclaration = data.valueDeclaration ? new NodeHandle(data.valueDeclaration) : undefined;
+        const canonicalProject = objectRegistry.getProject(data.project);
+        if (!canonicalProject) {
+            throw new Error(`Symbol ${data.id} references unknown canonical project '${data.project}'`);
+        }
+        this.canonicalProject = canonicalProject;
+        this.declarations = (data.declarations ?? []).map(d => new NodeHandle(d, canonicalProject));
+        this.valueDeclaration = data.valueDeclaration ? new NodeHandle(data.valueDeclaration, canonicalProject) : undefined;
 
         if (data.parent !== undefined) this.parent = data.parent;
         if (data.exportSymbol !== undefined) this.exportSymbol = data.exportSymbol;
     }
 
     async getParent(): Promise<Symbol | undefined> {
-        return this.objectRegistry.fetchSymbol(this, "getParentOfSymbol", this.parent);
+        return this.objectRegistry.fetchSymbol(this, "getParentOfSymbol", this.parent, this.canonicalProject.id);
     }
 
     /**
@@ -1565,7 +1602,7 @@ export class Symbol {
     }
 
     private async fetchSymbolTable(method: string): Promise<ReadonlyMap<__String, Symbol>> {
-        const symbols = await this.objectRegistry.fetchSymbols(this, method);
+        const symbols = await this.objectRegistry.fetchSymbols(this, method, undefined, this.canonicalProject.id);
         const table = new Map<__String, Symbol>();
         for (const symbol of symbols) {
             table.set(symbol.escapedName, symbol);
@@ -1575,7 +1612,7 @@ export class Symbol {
 
     async getExportSymbol(): Promise<Symbol> {
         if (!this.exportSymbol) return this;
-        return this.objectRegistry.fetchSymbol(this, "getExportSymbolOfSymbol", this.exportSymbol);
+        return this.objectRegistry.fetchSymbol(this, "getExportSymbolOfSymbol", this.exportSymbol, this.canonicalProject.id);
     }
 
     async getJsDocTags(checker: Checker): Promise<readonly JSDocTagInfo[]> {
@@ -1931,7 +1968,7 @@ export class Signature {
         this.id = data.id;
         this.flags = data.flags;
         this.objectRegistry = objectRegistry;
-        this.declaration = data.declaration ? new NodeHandle(data.declaration) : undefined;
+        this.declaration = data.declaration ? new NodeHandle(data.declaration, objectRegistry.getOwnProject()) : undefined;
         this.typeParameters = data.typeParameters ?? [];
         this.parameters = data.parameters ?? [];
         this.thisParameter = data.thisParameter;
