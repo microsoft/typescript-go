@@ -27,6 +27,24 @@ x; y;`,
 	)
 }
 
+func TestOrganizeImports_sortModuleSpecifiersTsKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `import x from "lib2";
+import y from "lib1";
+x; y;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyOrganizeImports(
+		t,
+		`import y from "lib1";
+import x from "lib2";
+x; y;`,
+		lsproto.CodeActionKindSourceSortImportsTs,
+		&lsutil.UserPreferences{OrganizeImportsSort: lsutil.OrganizeImportsSortOrdinalIgnoreCase},
+	)
+}
+
 func TestOrganizeImports_sortModuleSpecifiers_relativeVsRelative(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

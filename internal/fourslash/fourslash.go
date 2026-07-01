@@ -1790,9 +1790,13 @@ func (f *FourslashTest) VerifyCodeFixAll(t *testing.T, options VerifyCodeFixAllO
 // VerifySourceFixAll verifies that requesting a source.fixAll code action produces the expected file content.
 // This tests the on-save code path where VS Code requests source.fixAll.
 func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string) {
+	f.VerifySourceFixAllWithKind(t, expectedContent, lsproto.CodeActionKindSourceFixAll)
+}
+
+func (f *FourslashTest) VerifySourceFixAllWithKind(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind) {
 	t.Helper()
 
-	only := []lsproto.CodeActionKind{lsproto.CodeActionKindSourceFixAll}
+	only := []lsproto.CodeActionKind{codeActionKind}
 	params := &lsproto.CodeActionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -1814,7 +1818,7 @@ func (f *FourslashTest) VerifySourceFixAll(t *testing.T, expectedContent string)
 
 	var selected *lsproto.CodeAction
 	for _, item := range *result.CommandOrCodeActionArray {
-		if item.CodeAction == nil || item.CodeAction.Kind == nil || *item.CodeAction.Kind != lsproto.CodeActionKindSourceFixAll {
+		if item.CodeAction == nil || item.CodeAction.Kind == nil || *item.CodeAction.Kind != codeActionKind {
 			continue
 		}
 		selected = item.CodeAction
