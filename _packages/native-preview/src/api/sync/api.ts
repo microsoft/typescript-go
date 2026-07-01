@@ -52,6 +52,7 @@ import {
     toPath,
 } from "../path.ts";
 import type {
+    CompilerOptions,
     CompletionInfoResponse,
     ConfigResponse,
     DocumentIdentifier,
@@ -121,11 +122,9 @@ import type {
     UnionType,
 } from "./types.ts";
 
-export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions, SourceFileMetadata };
-export type { RequestTiming, TimingAccumulators, TimingInfo };
-export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
+export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 export class API<FromLSP extends boolean = false> {
     private client: Client;
@@ -550,7 +549,7 @@ class ProjectObjectRegistry {
 export class Project {
     readonly id: Path;
     readonly configFileName: string;
-    readonly compilerOptions: Record<string, unknown>;
+    readonly compilerOptions: CompilerOptions;
     readonly rootFiles: readonly string[];
 
     readonly program: Program;
@@ -573,7 +572,7 @@ export class Project {
         this.client = client;
         this.program = new Program(
             snapshotId,
-            this.id,
+            this,
             client,
             sourceFileCache,
             toPath,
@@ -595,7 +594,7 @@ export class Project {
 
 export class Program {
     private snapshotId: number;
-    private projectId: Path;
+    private project: Project;
     private client: Client;
     private sourceFileCache: SourceFileCache;
     private toPath: (fileName: string) => Path;
@@ -604,16 +603,20 @@ export class Program {
 
     constructor(
         snapshotId: number,
-        projectId: Path,
+        project: Project,
         client: Client,
         sourceFileCache: SourceFileCache,
         toPath: (fileName: string) => Path,
     ) {
         this.snapshotId = snapshotId;
-        this.projectId = projectId;
+        this.project = project;
         this.client = client;
         this.sourceFileCache = sourceFileCache;
         this.toPath = toPath;
+    }
+
+    getCompilerOptions(): CompilerOptions {
+        return this.project.compilerOptions;
     }
 
     getSourceFile(file: DocumentIdentifier): SourceFile | undefined {
@@ -621,7 +624,7 @@ export class Program {
         const path = this.toPath(fileName);
 
         // Check if we already have a retained cache entry for this (snapshot, project) pair
-        const retained = this.sourceFileCache.getRetained(path, this.snapshotId, this.projectId);
+        const retained = this.sourceFileCache.getRetained(path, this.snapshotId, this.project.id);
         if (retained) {
             return retained;
         }
@@ -629,7 +632,7 @@ export class Program {
         // Fetch from server
         const binaryData = this.client.apiRequestBinary("getSourceFile", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             file,
         });
         if (!binaryData) {
@@ -642,13 +645,13 @@ export class Program {
 
         // Create a new RemoteSourceFile and cache it (set returns existing if hash matches)
         const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
-        return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.projectId);
+        return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.project.id);
     }
 
     getSourceFileNames(): readonly string[] {
         const data = this.client.apiRequest<string[] | null>("getSourceFileNames", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
         });
         return data ?? [];
     }
@@ -680,7 +683,7 @@ export class Program {
     private fetchSourceFileMetadata(path: Path): SourceFileMetadata | undefined {
         const data = this.client.apiRequest<SourceFileMetadata | null>("getSourceFileMetadata", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             file: path,
         });
         return data ?? undefined;
@@ -713,7 +716,7 @@ export class Program {
     getSyntacticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getSyntacticDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { file } : {}),
         });
         return data ?? [];
@@ -726,7 +729,7 @@ export class Program {
     getBindDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getBindDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { file } : {}),
         });
         return data ?? [];
@@ -739,7 +742,7 @@ export class Program {
     getSemanticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getSemanticDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { file } : {}),
         });
         return data ?? [];
@@ -752,7 +755,7 @@ export class Program {
     getSuggestionDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getSuggestionDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { file } : {}),
         });
         return data ?? [];
@@ -765,7 +768,7 @@ export class Program {
     getDeclarationDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getDeclarationDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { file } : {}),
         });
         return data ?? [];
@@ -777,7 +780,7 @@ export class Program {
     getProgramDiagnostics(): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getProgramDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
         });
         return data ?? [];
     }
@@ -788,7 +791,7 @@ export class Program {
     getGlobalDiagnostics(): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getGlobalDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
         });
         return data ?? [];
     }
@@ -799,7 +802,7 @@ export class Program {
     getConfigFileParsingDiagnostics(): readonly Diagnostic[] {
         const data = this.client.apiRequest<Diagnostic[]>("getConfigFileParsingDiagnostics", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
         });
         return data ?? [];
     }
