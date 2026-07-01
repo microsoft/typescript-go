@@ -8,7 +8,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -56,7 +58,7 @@ func (l *LanguageService) getJSDocSnippetCompletion(ctx context.Context, file *a
 		CompletionItem: &lsproto.CompletionItem{
 			Label:            "/** */",
 			Kind:             new(lsproto.CompletionItemKindText),
-			Detail:           new("JSDoc comment"),
+			Detail:           new(diagnostics.JSDoc_comment.Localize(locale.FromContext(ctx))),
 			SortText:         new("\x00"),
 			InsertTextFormat: insertTextFormat,
 			TextEdit:         editRange,
