@@ -2945,6 +2945,58 @@ func TestBuildReexport(t *testing.T) {
 	}
 }
 
+func TestBuildReexportFacade(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "export star facade through composite project references",
+			files: FileMap{
+				"/user/username/projects/facade/source/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                }`),
+				"/user/username/projects/facade/source/index.ts": `export type Status = "old";`,
+				"/user/username/projects/facade/facade/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                    "references": [{ "path": "../source" }],
+                }`),
+				"/user/username/projects/facade/facade/index.ts": `export * from "../source/index";`,
+				"/user/username/projects/facade/consumer/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                    "references": [{ "path": "../facade" }],
+                }`),
+				"/user/username/projects/facade/consumer/index.ts": stringtestutil.Dedent(`
+                    import type { Status } from "../facade/index";
+
+                    export const status: "old" = null as unknown as Status;
+                `),
+			},
+			cwd:             `/user/username/projects/facade`,
+			commandLineArgs: []string{"-b", "consumer", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "Change re-exported type in source project",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText(`/user/username/projects/facade/source/index.ts`, `"old"`, `"new"`)
+					},
+				},
+				{
+					caption: "Revert re-exported type in source project",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText(`/user/username/projects/facade/source/index.ts`, `"new"`, `"old"`)
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "reexportFacade")
+	}
+}
+
 func TestBuildResolveJsonModule(t *testing.T) {
 	t.Parallel()
 	type buildResolveJsonModuleScenario struct {
