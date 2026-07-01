@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"slices"
+	"sort"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -32,6 +33,112 @@ type checkerPool struct {
 }
 
 var _ CheckerPool = (*checkerPool)(nil)
+
+const checkerAssociationTextWeightDivisor = 100
+
+// getCheckerAssociationsForFileWeights builds the initial mapping from file index
+// to checker index using longest-processing-time-first scheduling. Files with
+// the largest estimated checker work are assigned first to the least-loaded
+// checker, minimizing the slowest checker bucket before graph refinement nudges
+// the mapping toward import locality.
+func getCheckerAssociationsForFileWeights(fileWeights []int, checkerCount int) []int {
+	if len(fileWeights) == 0 {
+		return nil
+	}
+	associations := make([]int, len(fileWeights))
+	checkerWeights := make([]int, checkerCount)
+	fileIndices := make([]int, len(fileWeights))
+	for i := range fileIndices {
+		fileIndices[i] = i
+	}
+	sort.Slice(fileIndices, func(i, j int) bool {
+		left := fileIndices[i]
+		right := fileIndices[j]
+		if fileWeights[left] != fileWeights[right] {
+			return fileWeights[left] > fileWeights[right]
+		}
+		return left < right
+	})
+	for _, fileIndex := range fileIndices {
+		checkerIndex := 0
+		for i, weight := range checkerWeights[1:] {
+			if weight < checkerWeights[checkerIndex] {
+				checkerIndex = i + 1
+			}
+		}
+		associations[fileIndex] = checkerIndex
+		checkerWeights[checkerIndex] += fileWeights[fileIndex]
+	}
+	return associations
+}
+
+// refineCheckerAssociationsByGraph nudges the initial file-index-to-checker-index
+// mapping toward the import graph. For each file, it counts which checkers own the
+// file's import neighbors and moves the file to the checker with the largest net
+// neighbor gain, as long as the move stays within a small load-balance cap. This
+// favors sharing cached checker state among related files without letting dense
+// import clusters undo the weight balancing from the initial pass.
+// This is a deliberately small one-vertex local-search refinement, similar in
+// spirit to balanced graph-partitioning heuristics like Kernighan-Lin and
+// Fiduccia-Mattheyses, but without their heavier gain queues or swap sequences;
+// see https://en.wikipedia.org/wiki/Kernighan%E2%80%93Lin_algorithm and
+// https://en.wikipedia.org/wiki/Fiduccia%E2%80%93Mattheyses_algorithm.
+func refineCheckerAssociationsByGraph(associations []int, fileWeights []int, adjacentFiles [][]int, checkerCount int) {
+	if len(associations) == 0 || checkerCount <= 1 {
+		return
+	}
+	checkerWeights := make([]int, checkerCount)
+	totalWeight := 0
+	maxFileWeight := 0
+	// Reconstruct checker loads from the current mapping, and remember the
+	// largest single file because any legal cap must be able to fit it.
+	for i, checkerIndex := range associations {
+		checkerWeights[checkerIndex] += fileWeights[i]
+		totalWeight += fileWeights[i]
+		maxFileWeight = max(maxFileWeight, fileWeights[i])
+	}
+	averageCheckerWeight := (totalWeight + checkerCount - 1) / checkerCount
+	maxCheckerWeight := max(maxFileWeight, averageCheckerWeight+averageCheckerWeight/50)
+	neighborCounts := make([]int, checkerCount)
+	// Make a bounded number of greedy passes. Later moves can create better
+	// placements for files already visited, but this should remain a cheap,
+	// predictable refinement rather than an expensive graph partitioner.
+	for range 2 {
+		moved := false
+		for fileIndex, currentChecker := range associations {
+			// Count how many import neighbors of this file are currently assigned
+			// to each checker.
+			clear(neighborCounts)
+			for _, adjacentFile := range adjacentFiles[fileIndex] {
+				neighborCounts[associations[adjacentFile]]++
+			}
+			bestChecker := currentChecker
+			bestGain := 0
+			for candidate := range checkerCount {
+				if candidate == currentChecker || checkerWeights[candidate]+fileWeights[fileIndex] > maxCheckerWeight {
+					continue
+				}
+				gain := neighborCounts[candidate] - neighborCounts[currentChecker]
+				// Prefer a checker that gains more colocated import neighbors. If
+				// the gain is tied, prefer the lighter checker so equal-quality
+				// graph moves still improve balance.
+				if gain > bestGain || gain == bestGain && gain > 0 && checkerWeights[candidate] < checkerWeights[bestChecker] {
+					bestChecker = candidate
+					bestGain = gain
+				}
+			}
+			if bestChecker != currentChecker {
+				associations[fileIndex] = bestChecker
+				checkerWeights[currentChecker] -= fileWeights[fileIndex]
+				checkerWeights[bestChecker] += fileWeights[fileIndex]
+				moved = true
+			}
+		}
+		if !moved {
+			break
+		}
+	}
+}
 
 func newCheckerPool(program *Program) *checkerPool {
 	return newCheckerPoolWithTracing(program, nil)
@@ -111,11 +218,49 @@ func (p *checkerPool) createCheckers() {
 
 		wg.RunAndWait()
 
+		fileWeights := make([]int, len(p.program.files))
+		for i, file := range p.program.files {
+			fileWeights[i] = max(file.NodeCount+len(file.Text())/checkerAssociationTextWeightDivisor, 1)
+		}
+		// The association algorithm uses p.program.files indices throughout:
+		// start with a work-balanced pass, then refine that mapping using import adjacency.
+		associations := getCheckerAssociationsForFileWeights(fileWeights, checkerCount)
+		if checkerCount > 1 {
+			adjacentFiles := p.getImportAdjacency()
+			refineCheckerAssociationsByGraph(associations, fileWeights, adjacentFiles, checkerCount)
+		}
 		p.fileAssociations = make(map[*ast.SourceFile]*checker.Checker, len(p.program.files))
 		for i, file := range p.program.files {
-			p.fileAssociations[file] = p.checkers[i%checkerCount]
+			p.fileAssociations[file] = p.checkers[associations[i]]
 		}
 	})
+}
+
+// getImportAdjacency returns an undirected import graph represented by file
+// index. A directed import from A to B makes both files adjacent because either
+// file can benefit from sharing checker caches with the other.
+func (p *checkerPool) getImportAdjacency() [][]int {
+	fileIndices := make(map[*ast.SourceFile]int, len(p.program.files))
+	for i, file := range p.program.files {
+		fileIndices[file] = i
+	}
+	adjacentFiles := make([][]int, len(p.program.files))
+	for fileIndex, file := range p.program.files {
+		resolvedModules := p.program.resolvedModules[file.Path()]
+		for _, resolved := range resolvedModules {
+			if resolved == nil || !resolved.IsResolved() {
+				continue
+			}
+			importedFile := p.program.GetSourceFileForResolvedModule(resolved.ResolvedFileName)
+			importedIndex, ok := fileIndices[importedFile]
+			if !ok || importedIndex == fileIndex {
+				continue
+			}
+			adjacentFiles[fileIndex] = append(adjacentFiles[fileIndex], importedIndex)
+			adjacentFiles[importedIndex] = append(adjacentFiles[importedIndex], fileIndex)
+		}
+	}
+	return adjacentFiles
 }
 
 // Runs `cb` for each checker in the pool concurrently, locking and unlocking checker mutexes as it goes,
