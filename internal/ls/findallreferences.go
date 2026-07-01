@@ -299,8 +299,7 @@ func getContextNode(node *ast.Node) *ast.Node {
 		return core.IfElse(node.Parent.Kind == ast.KindExpressionStatement, node.Parent, node)
 
 	case ast.KindForOfStatement, ast.KindForInStatement:
-		// !!! not implemented
-		return nil
+		return node
 
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
 		if ast.IsArrayLiteralOrObjectLiteralDestructuringPattern(node.Parent) {
@@ -310,8 +309,7 @@ func getContextNode(node *ast.Node) *ast.Node {
 		}
 		return node
 	case ast.KindSwitchStatement:
-		// !!! not implemented
-		return nil
+		return node
 	default:
 		return node
 	}
