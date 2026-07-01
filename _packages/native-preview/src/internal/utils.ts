@@ -6,8 +6,6 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
 /**
  * Safer version of `Function` which should not be called.
  * Every function should be assignable to this, but this should not be assignable to every function.
- *
- * @internal
  */
 export type AnyFunction = (...args: never[]) => void;
 
@@ -25,8 +23,6 @@ export interface MapLike<T> {
  *
  * @param map A map-like.
  * @param key A property key.
- *
- * @internal
  */
 export function hasProperty(map: MapLike<any>, key: string): boolean {
     return hasOwnProperty.call(map, key);
