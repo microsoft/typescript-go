@@ -1057,7 +1057,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 	} else {
 		newCompilerOptions := b.inferredProject.Value().CommandLine.CompilerOptions()
 		if b.compilerOptionsForInferredProjects != nil {
-			newCompilerOptions = b.compilerOptionsForInferredProjects
+			newCompilerOptions = ensureAllowJsForInferredProject(b.compilerOptionsForInferredProjects)
 		}
 		newCommandLine := tsoptions.NewParsedCommandLine(newCompilerOptions, rootFileNames, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: b.fs.fs.UseCaseSensitiveFileNames(),
