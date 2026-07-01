@@ -21357,7 +21357,8 @@ func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjec
 func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string, skipObjectFunctionPropertyAugment bool) *ast.Symbol {
 	propFlags := ast.SymbolFlagsNone
 	var singleProp *ast.Symbol
-	var propSet collections.OrderedSet[*ast.Symbol]
+	var propSet orderedSet[*ast.Symbol]
+	propSet.init(0)
 	var indexTypes []*Type
 	isUnion := containingType.flags&TypeFlagsUnion != 0
 	// Flags we want to propagate to the result if they exist in all source symbols
@@ -21397,10 +21398,10 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 						// back and not `Array<string>.length` when we're looking at a `.length` access on a `string[] | number[]`
 						mergedInstantiations = singleProp.Parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.Parent)) != 0
 					} else {
-						if propSet.Size() == 0 {
-							propSet.Add(singleProp)
+						if len(propSet.values) == 0 {
+							propSet.add(singleProp)
 						}
-						propSet.Add(prop)
+						propSet.addIfAbsent(prop)
 					}
 					// classes created by mixins are represented as intersections
 					// and overriding a property in a derived class redefines it completely at runtime
@@ -21457,14 +21458,14 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		}
 	}
 	if singleProp == nil || isUnion &&
-		(propSet.Size() != 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
+		(len(propSet.values) != 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
 		checkFlags&(ast.CheckFlagsContainsPrivate|ast.CheckFlagsContainsProtected) != 0 &&
-		!(propSet.Size() != 0 && c.hasCommonDeclaration(&propSet)) {
+		!(len(propSet.values) != 0 && c.hasCommonDeclaration(&propSet)) {
 		// No property was found, or, in a union, a property has a private or protected declaration in one
 		// constituent, but is missing or has a different declaration in another constituent.
 		return nil
 	}
-	if propSet.Size() == 0 && checkFlags&ast.CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
+	if len(propSet.values) == 0 && checkFlags&ast.CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
 		if !mergedInstantiations {
 			return singleProp
 		}
@@ -21488,8 +21489,8 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		links.writeType = c.getWriteTypeOfSymbol(singleProp)
 		return clone
 	}
-	if propSet.Size() == 0 {
-		propSet.Add(singleProp)
+	if len(propSet.values) == 0 {
+		propSet.add(singleProp)
 	}
 	var declarations []*ast.Node
 	var firstType *Type
@@ -21498,7 +21499,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	var writeTypes []*Type
 	var firstValueDeclaration *ast.Node
 	var hasNonUniformValueDeclaration bool
-	for prop := range propSet.Values() {
+	for _, prop := range propSet.values {
 		if firstValueDeclaration == nil {
 			firstValueDeclaration = prop.ValueDeclaration
 		} else if prop.ValueDeclaration != nil && prop.ValueDeclaration != firstValueDeclaration {
@@ -21581,9 +21582,9 @@ func isPrototypeProperty(symbol *ast.Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsMethod != 0 || symbol.CheckFlags&ast.CheckFlagsSyntheticMethod != 0
 }
 
-func (c *Checker) hasCommonDeclaration(symbols *collections.OrderedSet[*ast.Symbol]) bool {
+func (c *Checker) hasCommonDeclaration(symbols *orderedSet[*ast.Symbol]) bool {
 	var commonDeclarations collections.Set[*ast.Node]
-	for symbol := range symbols.Values() {
+	for _, symbol := range symbols.values {
 		if len(symbol.Declarations) == 0 {
 			return false
 		}
@@ -25922,7 +25923,7 @@ func (c *Checker) intersectTypes(type1 *Type, type2 *Type) *Type {
 	case type2 == nil:
 		return type1
 	}
-	return c.getIntersectionType([]*Type{type1, type2})
+	return c.getIntersectionType2(type1, type2)
 }
 
 type IntersectionFlags uint32
@@ -25947,9 +25948,14 @@ func (c *Checker) getIntersectionType(types []*Type) *Type {
 	return c.getIntersectionTypeEx(types, IntersectionFlagsNone, nil /*alias*/)
 }
 
+func (c *Checker) getIntersectionType2(type1 *Type, type2 *Type) *Type {
+	types := [...]*Type{type1, type2}
+	return c.getIntersectionTypeEx(types[:], IntersectionFlagsNone, nil /*alias*/)
+}
+
 func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, alias *TypeAlias) *Type {
 	var orderedTypes orderedSet[*Type]
-	orderedTypes.values = make([]*Type, 0, len(types))
+	orderedTypes.init(len(types))
 	includes := c.addTypesToIntersection(&orderedTypes, 0, types)
 	typeSet := orderedTypes.values
 	objectFlags := ObjectFlagsNone
@@ -26103,12 +26109,12 @@ func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, 
 				// the denormalized origin has fewer constituents than the union itself.
 				var origin *Type
 				if core.Some(constituents, isIntersectionType) && getConstituentCountOfTypes(constituents) > getConstituentCountOfTypes(typeSet) {
-					origin = c.newIntersectionType(ObjectFlagsNone, typeSet)
+					origin = c.newIntersectionType(ObjectFlagsNone, orderedTypes.valuesForStorage(typeSet))
 				}
 				result = c.getUnionTypeEx(constituents, UnionReductionLiteral, alias, origin)
 			}
 		} else {
-			result = c.newIntersectionType(objectFlags|c.getPropagatingFlagsOfTypes(types /*excludeKinds*/, TypeFlagsNullable), typeSet)
+			result = c.newIntersectionType(objectFlags|c.getPropagatingFlagsOfTypes(types /*excludeKinds*/, TypeFlagsNullable), orderedTypes.valuesForStorage(typeSet))
 			result.alias = alias
 		}
 		c.intersectionTypes[key] = result
