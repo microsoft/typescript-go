@@ -1140,6 +1140,69 @@ func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.Use
 	return f.getCompletions(t, userPreferences)
 }
 
+func (f *FourslashTest) VerifyJSDocCompletion(t *testing.T, markerInput MarkerInput, expectedOffset int, expectedText string, generateReturnInDocTemplate *bool) {
+	t.Helper()
+	f.goToMarkerInput(t, markerInput)
+	script := f.getScriptInfo(f.activeFilename)
+	insertStart := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.Insert(t, "/**")
+
+	var userPreferences *lsutil.UserPreferences
+	if generateReturnInDocTemplate != nil {
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.GenerateReturnInDocTemplate = core.BoolToTristate(*generateReturnInDocTemplate)
+		userPreferences = &prefs
+	}
+
+	list := f.getCompletions(t, userPreferences)
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, insertStart, insertStart+3, "")
+	f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(insertStart))
+	if list == nil {
+		t.Fatalf("%sExpected JSDoc completion, got nil completion list.", f.getCurrentPositionPrefix())
+	}
+	item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
+		return item.Label == "/** */"
+	})
+	if item == nil {
+		t.Fatalf("%sExpected JSDoc completion item, got %#v.", f.getCurrentPositionPrefix(), list.Items)
+	}
+	if item.TextEdit == nil || item.TextEdit.InsertReplaceEdit == nil {
+		t.Fatalf("%sExpected JSDoc completion to have insert/replace edit, got %#v.", f.getCurrentPositionPrefix(), item.TextEdit)
+	}
+	assert.Equal(t, item.TextEdit.InsertReplaceEdit.NewText, expectedText, f.getCurrentPositionPrefix())
+	_ = expectedOffset // The completion path uses snippet placeholders for caret placement.
+}
+
+func (f *FourslashTest) VerifyNoJSDocCompletion(t *testing.T, markerInput MarkerInput) {
+	t.Helper()
+	f.goToMarkerInput(t, markerInput)
+	script := f.getScriptInfo(f.activeFilename)
+	insertStart := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.Insert(t, "/**")
+
+	list := f.getCompletions(t, nil /*userPreferences*/)
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, insertStart, insertStart+3, "")
+	f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(insertStart))
+	if list == nil {
+		return
+	}
+	if item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool { return item.Label == "/** */" }); item != nil {
+		t.Fatalf("%sDid not expect JSDoc completion item.", f.getCurrentPositionPrefix())
+	}
+}
+
+func (f *FourslashTest) goToMarkerInput(t *testing.T, markerInput MarkerInput) {
+	t.Helper()
+	switch marker := markerInput.(type) {
+	case string:
+		f.GoToMarker(t, marker)
+	case *Marker:
+		f.goToMarker(t, marker)
+	default:
+		t.Fatalf("Invalid marker input type: %T. Expected string or *Marker.", markerInput)
+	}
+}
+
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
 	t.Helper()
 	params := &lsproto.CompletionParams{
