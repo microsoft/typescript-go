@@ -1,0 +1,99 @@
+//// [tests/cases/compiler/forLoopInitializerAlwaysThrowsInTryCatch.ts] ////
+
+=== forLoopInitializerAlwaysThrowsInTryCatch.ts ===
+// Repro from github.com/microsoft/TypeScript/issues/63092
+// A for-loop initializer that always throws, wrapped in try/catch,
+// should not cause a stack overflow in control flow analysis.
+
+function test1(v: 0 | 1 | 2) {
+>test1 : Symbol(test1, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 0, 0))
+>v : Symbol(v, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 4, 15))
+
+  try {
+    for (
+      (function () {
+        throw new Error("");
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+
+      })();
+      v;
+>v : Symbol(v, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 4, 15))
+
+      v++
+>v : Symbol(v, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 4, 15))
+
+    ) {}
+  } catch (e) {}
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 13, 11))
+
+  v;
+>v : Symbol(v, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 4, 15))
+}
+
+function test2() {
+>test2 : Symbol(test2, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 15, 1))
+
+  try {
+    for (
+      (function () { throw "1"; })();
+      (function* () { throw "2"; })();
+      (function* () { throw "3"; })()
+    ) {}
+  } catch (e) {}
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 24, 11))
+}
+
+function test3() {
+>test3 : Symbol(test3, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 25, 1))
+
+  let x = 0;
+>x : Symbol(x, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 28, 5))
+
+  while (true) {
+    try {
+      for (
+        (function () { throw new Error(""); })();
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+
+        true;
+        x++
+>x : Symbol(x, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 28, 5))
+
+      ) {
+        break;
+        continue;
+      }
+    } catch (e) {}
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 39, 13))
+  }
+}
+
+function test4() {
+>test4 : Symbol(test4, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 41, 1))
+
+  let x = 0;
+>x : Symbol(x, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 44, 5))
+
+  outer: for (; x < 10; x++) {
+>x : Symbol(x, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 44, 5))
+>x : Symbol(x, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 44, 5))
+
+    try {
+      inner: for (
+        (function () { throw new Error(""); })();
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+
+        true;
+        x++
+>x : Symbol(x, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 44, 5))
+
+      ) {
+        continue inner;
+      }
+    } catch (e) {}
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 54, 13))
+  }
+}
+
+
+
