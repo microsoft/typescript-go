@@ -26,8 +26,11 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 	program, file := l.getProgramAndFile(uri)
 
 	if l.UserPreferences().EnableValidation.IsFalse() {
+		diagnostics := []*lsproto.Diagnostic{}
 		return lsproto.RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
-			FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{},
+			FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
+				Items: diagnostics,
+			},
 		}, nil
 	}
 
