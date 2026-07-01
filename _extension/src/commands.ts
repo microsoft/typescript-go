@@ -64,6 +64,11 @@ export async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     return restartExtHostOnChangeIfNeeded();
 }
 
+export async function updateWorkspaceUseTsgoSetting(enable: boolean): Promise<void> {
+    await vscode.workspace.getConfiguration("js/ts").update("experimental.useTsgo", enable, vscode.ConfigurationTarget.Workspace);
+    return restartExtHostOnChangeIfNeeded();
+}
+
 export const codeLensShowLocationsCommandName = "typescript.native-preview.codeLens.showLocations";
 export function registerCodeLensShowLocationsCommand(): vscode.Disposable {
     return vscode.commands.registerCommand(codeLensShowLocationsCommandName, showCodeLensLocations);

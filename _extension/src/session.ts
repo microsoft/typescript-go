@@ -4,7 +4,7 @@ import { ActiveJsTsEditorTracker } from "./activeJsTsEditorTracker";
 import { Client } from "./client";
 import {
     registerCodeLensShowLocationsCommand,
-    updateUseTsgoSetting,
+    updateWorkspaceUseTsgoSetting,
 } from "./commands";
 import { ManagedFileContextManager } from "./managedFileContext";
 import { ProjectStatus } from "./projectStatus";
@@ -69,7 +69,7 @@ export class SessionManager implements vscode.Disposable {
             this.outputChannel.appendLine(`Restarting ${outputChannelName}...`);
             await this.currentSession.dispose();
         }
-        this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter);
+        this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop());
         return this.currentSession.start(context);
     }
 
@@ -109,12 +109,14 @@ class Session implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
     private telemetryReporter: TelemetryReporter;
     private initializedEventEmitter: vscode.EventEmitter<void>;
+    private stopSession: () => Promise<void>;
 
     constructor(
         context: vscode.ExtensionContext,
         outputChannel: vscode.LogOutputChannel,
         initializedEventEmitter: vscode.EventEmitter<void>,
         telemetryReporter: TelemetryReporter,
+        stopSession: () => Promise<void>,
     ) {
         this.client = new Client(outputChannel, initializedEventEmitter, telemetryReporter);
         this.disposables.push(this.client);
@@ -122,6 +124,7 @@ class Session implements vscode.Disposable {
         this.outputChannel = outputChannel;
         this.telemetryReporter = telemetryReporter;
         this.initializedEventEmitter = initializedEventEmitter;
+        this.stopSession = stopSession;
         this.registerCommands();
     }
 
@@ -163,7 +166,7 @@ class Session implements vscode.Disposable {
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.selectTypeScriptVersion", async () => {
-            await promptSelectVersion(this.context, this.client, this.outputChannel);
+            await promptSelectVersion(this.context, this.client, this.outputChannel, this.stopSession);
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.restartTsServer", async () => {
@@ -369,6 +372,7 @@ async function showCommands(client: Client): Promise<void> {
 
 interface VersionQuickPickItem extends vscode.QuickPickItem {
     run(): Promise<void>;
+    beforeRun?(): Promise<void>;
     restart?: boolean;
 }
 
@@ -458,7 +462,7 @@ async function updateTsdkConfig(detected: DetectedVersion): Promise<void> {
     await updateWorkspaceTsdkConfig(newValue);
 }
 
-async function promptSelectVersion(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.LogOutputChannel): Promise<void> {
+async function promptSelectVersion(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.LogOutputChannel, stopServer: () => Promise<void>): Promise<void> {
     const currentExePath = client.getCurrentExe()?.path;
     const defaultExe = await getDefaultExePath(context);
     const stradaVersion = await getStradaVersion();
@@ -470,9 +474,10 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
             label: vscode.l10n.t("Use Bundled Version"),
             description: stradaVersion.version,
             detail: stradaVersion.tsserverPath,
+            beforeRun: stopServer,
             run: async () => {
                 await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
-                await updateUseTsgoSetting(false);
+                await updateWorkspaceUseTsgoSetting(false);
                 outputChannel.appendLine("Switched to bundled TypeScript version.");
             },
         });
@@ -485,7 +490,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         restart: true,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
-            await updateUseTsgoSetting(true);
+            await updateWorkspaceUseTsgoSetting(true);
             outputChannel.appendLine("Switched to TypeScript 7.");
         },
     });
@@ -502,7 +507,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await updateTsdkConfig(wsVersion);
-                    await updateUseTsgoSetting(true);
+                    await updateWorkspaceUseTsgoSetting(true);
                     outputChannel.appendLine(`Switched to workspace tsgo version (${wsVersion.version}).`);
                 },
             });
@@ -547,7 +552,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
                 run: async () => {
                     await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
                     await updateWorkspaceTsdkConfig(loc);
-                    await updateUseTsgoSetting(true);
+                    await updateWorkspaceUseTsgoSetting(true);
                     outputChannel.appendLine(`Switched to custom TypeScript version at ${loc}.`);
                 },
             });
@@ -559,6 +564,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
     });
 
     if (selected) {
+        await selected.beforeRun?.();
         await selected.run();
         if (selected.restart) {
             await vscode.commands.executeCommand("typescript.native-preview.restart");
