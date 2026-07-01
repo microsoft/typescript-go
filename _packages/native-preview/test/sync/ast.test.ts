@@ -630,18 +630,18 @@ describe("RemoteNodeList inherited array methods", () => {
             // "this.view.getUint32 is not a function" via ArraySpeciesCreate.
             const filtered = statements.filter(() => true);
             assert.ok(Array.isArray(filtered));
-            assert.strictEqual(Object.getPrototypeOf(filtered), Array.prototype);
+            assert.strictEqual(Object.getPrototypeOf(filtered), Array.prototype);
             assert.strictEqual(filtered.length, 2);
             assert.strictEqual(filtered[0], statements[0]);
 
             const mapped = statements.map(s => s.kind);
-            assert.ok(Array.isArray(mapped));
-            assert.strictEqual(Object.getPrototypeOf(mapped), Array.prototype);
+            assert.ok(Array.isArray(mapped));
+            assert.strictEqual(Object.getPrototypeOf(mapped), Array.prototype);
             assert.deepStrictEqual(mapped, [statements[0].kind, statements[1].kind]);
 
             const sliced = statements.slice(1);
-            assert.ok(Array.isArray(sliced));
-            assert.strictEqual(Object.getPrototypeOf(sliced), Array.prototype);
+            assert.ok(Array.isArray(sliced));
+            assert.strictEqual(Object.getPrototypeOf(sliced), Array.prototype);
             assert.strictEqual(sliced.length, 1);
             assert.strictEqual(sliced[0], statements[1]);
         }
