@@ -68,6 +68,15 @@ func (s *SymbolTrackerImpl) isBoundExpando(node *ast.Node) bool {
 	return s.resolver.IsExpandoFunctionDeclarationUnsafe(ref)
 }
 
+func (s *SymbolTrackerImpl) isChildOfBoundExpando(node *ast.Node) bool {
+	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
+		if ast.IsSourceFile(n) || ast.IsBlock(n) {
+			return ast.FindAncestorQuit
+		}
+		return ast.ToFindAncestorResult(s.isBoundExpando(n))
+	}) != nil
+}
+
 // ReportInferenceFallback implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
 	if !s.state.isolatedDeclarations {
@@ -79,7 +88,7 @@ func (s *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
 	if s.state.resolver.IsExpandoFunctionDeclarationUnsafe(node) { // within a node builder call that should already lock the checker, use the unsafe call
 		s.state.reportExpandoFunctionErrors(node)
 	}
-	if !s.isBoundExpando(node) { // expando props get an error when their host is visited by the above, this prevents a follow-on error on a non-inferrable expression
+	if !s.isChildOfBoundExpando(node) { // expando props get an error when their host is visited by the above, this prevents a follow-on error on a non-inferrable expression
 		s.state.addDiagnostic(s.getIsolatedDeclarationError(node))
 	}
 }
