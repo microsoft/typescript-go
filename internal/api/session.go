@@ -139,8 +139,15 @@ func (sd *snapshotData) newSymbolResponse(symbol *ast.Symbol, canonicalProject P
 
 	id, project := sd.registerSymbol(symbol, canonicalProject)
 	resp := &SymbolResponse{
+<<<<<<< HEAD
+		Id:         sd.registerSymbol(symbol),
+||||||| 288f23d050
+		Id:         sd.registerSymbol(symbol),
+		Name:       symbol.Name,
+=======
 		Id:         id,
 		Project:    project,
+>>>>>>> main
 		Name:       ast.EscapeSymbolName(symbol.Name),
 		Flags:      uint32(symbol.Flags),
 		CheckFlags: uint32(symbol.CheckFlags),
