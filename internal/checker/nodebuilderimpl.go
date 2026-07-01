@@ -2735,7 +2735,10 @@ func (b *NodeBuilderImpl) shouldWriteTypeOfFunctionSymbol(symbol *ast.Symbol, ty
 					isNonLocalFunctionSymbol = true
 					break
 				}
-				if ast.IsFunctionExpressionOrArrowFunction(declaration) && ast.IsVariableDeclaration(declaration.Parent) && (declaration.Parent.Parent.Parent.Parent.Kind == ast.KindSourceFile || declaration.Parent.Parent.Parent.Parent.Kind == ast.KindModuleBlock) {
+				if ast.IsFunctionExpressionOrArrowFunction(declaration) && ast.IsVariableDeclaration(declaration.Parent) &&
+					ast.IsVariableDeclarationList(declaration.Parent.Parent) && ast.IsVariableStatement(declaration.Parent.Parent.Parent) &&
+					declaration.Parent.Parent.Parent.Parent != nil &&
+					(declaration.Parent.Parent.Parent.Parent.Kind == ast.KindSourceFile || declaration.Parent.Parent.Parent.Parent.Kind == ast.KindModuleBlock) {
 					isNonLocalFunctionSymbol = true
 					isFunctionExpressionSymbol = true
 					break
