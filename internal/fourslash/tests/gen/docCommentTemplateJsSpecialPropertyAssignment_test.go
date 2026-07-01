@@ -14,7 +14,8 @@ func TestDocCommentTemplateJsSpecialPropertyAssignment(t *testing.T) {
 	fourslash.SkipIfFailing(t)
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /a.js
+	const content = `// @allowJs: true
+// @Filename: /a.js
 /*0*/module.exports = function(a) {};
 const myNamespace  = {};
 /*1*/myNamespace.myExport = function(x) {};`

@@ -15,6 +15,7 @@ func TestDocCommentTemplateExportAssignmentJS(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
+// @allowJs: true
 // @checkJs: true
 // @Filename: index.js
 /** /**/ */

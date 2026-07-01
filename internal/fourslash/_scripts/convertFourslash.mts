@@ -4478,11 +4478,13 @@ interface GoTest {
 
 function generateGoTest(test: GoTest, isServer: boolean): string {
     const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_").replaceAll(/[^a-zA-Z0-9_]/g, "");
-    const content = test.content;
     const neededImports = new Set<string>();
     neededImports.add(IMPORT_FOURSLASH);
     neededImports.add(IMPORT_TESTUTIL);
     const hasDocCommentTemplateCommands = test.commands.some(hasDocCommentTemplateCommand);
+    const content = hasDocCommentTemplateCommands && /@Filename: .*\.jsx?/i.test(test.content)
+        ? prependLineToGoStringLiteral(test.content, "// @allowJs: true")
+        : test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd, neededImports)).join("\n");
     // Scan the generated command code for package-qualified names that may come from
     // parsed command fields (e.g. UserPreferences generated during parsing).
@@ -4490,6 +4492,13 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
     // because they won't appear in TypeScript test content strings.
     if (/\bcore\./.test(commands)) {
         neededImports.add(IMPORT_CORE);
+    }
+
+    function prependLineToGoStringLiteral(literal: string, line: string): string {
+        if (!literal.startsWith("`")) {
+            throw new Error(`Expected raw Go string literal, got ${literal}`);
+        }
+        return "`" + line + "\n" + literal.slice(1);
     }
     if (/\bls\./.test(commands)) {
         neededImports.add(IMPORT_LS);

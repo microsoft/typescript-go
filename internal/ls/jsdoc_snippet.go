@@ -350,12 +350,12 @@ func isNonEmptyJSDoc(jsdoc *ast.Node) bool {
 }
 
 func hasJSDocTags(node *ast.Node, file *ast.SourceFile) bool {
-	for _, jsdoc := range node.JSDoc(file) {
-		if tags := jsdoc.AsJSDoc().Tags; tags != nil && len(tags.Nodes) > 0 {
-			return true
-		}
+	jsdocs := node.JSDoc(file)
+	if len(jsdocs) == 0 {
+		return false
 	}
-	return false
+	tags := jsdocs[len(jsdocs)-1].AsJSDoc().Tags
+	return tags != nil && len(tags.Nodes) > 0
 }
 
 func templateToSnippet(template string) string {
