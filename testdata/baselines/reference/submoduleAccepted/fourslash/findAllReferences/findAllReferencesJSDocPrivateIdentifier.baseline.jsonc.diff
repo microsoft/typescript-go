@@ -1,0 +1,26 @@
+--- old.findAllReferencesJSDocPrivateIdentifier.baseline.jsonc
++++ new.findAllReferencesJSDocPrivateIdentifier.baseline.jsonc
+@@= skipped --1, +0 lines =@@
++// === findAllReferences ===
++// === /findAllReferencesJSDocPrivateIdentifier.ts ===
++// 
++// class C {
++//     /*FIND ALL REFS*/[|#field|];
++//     /**
++//      * @see C.#field
++//      */
++// --- (line: 7) skipped ---
++
++
++
++// === findAllReferences ===
++// === /findAllReferencesJSDocPrivateIdentifier.ts ===
++// 
++// class C {
++//     #field;
++//     /**
++//      * @see C./*FIND ALL REFS*/#field
++//      */
++//     method() {}
++// }
++// 
