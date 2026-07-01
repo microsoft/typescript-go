@@ -33,8 +33,8 @@ export interface ExtensionAPI {
 
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-    const hasStradaApi = hasStradaServerSelectionApi();
-    await vscode.commands.executeCommand("setContext", "typescript.native-preview.fallbackMode", !hasStradaApi);
+    const isStradaServerSelectionOwner = hasStradaServerSelectionConfiguration();
+    await vscode.commands.executeCommand("setContext", "typescript.native-preview.fallbackMode", !isStradaServerSelectionOwner);
 
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
@@ -94,7 +94,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         stop: () => sessionManager.stop(),
     };
 
-    if (hasStradaApi) {
+    if (isStradaServerSelectionOwner) {
         return api;
     }
 
@@ -235,24 +235,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }
 }
 
-function hasStradaServerSelectionApi(): boolean {
+function hasStradaServerSelectionConfiguration(): boolean {
     const extension = vscode.extensions.getExtension("vscode.typescript-language-features");
-    if (!extension?.isActive) {
+    if (!extension) {
         return false;
     }
 
-    const exports: unknown = extension.exports;
-    if (!exports || typeof exports !== "object") {
-        return false;
-    }
-
-    const getAPI: unknown = (exports as { getAPI?: unknown; }).getAPI;
-    if (typeof getAPI !== "function") {
-        return false;
-    }
-
-    const api: unknown = getAPI(0);
-    return !!api && typeof api === "object" && typeof (api as { getServerSelection?: unknown; }).getServerSelection === "function";
+    const configurations = extension.packageJSON?.contributes?.configuration;
+    const configurationArray = Array.isArray(configurations) ? configurations : [configurations];
+    return configurationArray.some(configuration => !!configuration?.properties?.["js/ts.languageServer.preference"]);
 }
 
 const suppressedPluginExtensionIds: Set<string> = new Set([
