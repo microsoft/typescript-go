@@ -173,9 +173,9 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 						originalParam = originalParameters[pIndex]
 					}
 					if originalParameters != nil && originalParam != param {
-						// Can't reference the original expanded parameter name
+						// Can't reference the expanded parameter name, just the original, unless we've expanded the param list for some reason
 						if originalParam != nil {
-							add(originalParam.Name, b.ch.unknownSymbol)
+							add(originalParam.Name, originalParam)
 						}
 					} else if !core.Some(param.Declarations, func(d *ast.Node) bool {
 						var bindElement func(e *ast.BindingElement)
