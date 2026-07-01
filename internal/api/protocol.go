@@ -25,6 +25,16 @@ type serverTimedResult struct {
 	processingTimeMicros uint32
 }
 
+// timingStart returns the current time when timing collection is enabled, or
+// the zero time otherwise. This avoids reading the clock on the request hot
+// path when timing is disabled (the default).
+func timingStart(enabled bool) time.Time {
+	if enabled {
+		return time.Now()
+	}
+	return time.Time{}
+}
+
 // maybeTimed wraps a successful handler result with the server's processing
 // time when timing collection is enabled. Otherwise the result is returned
 // unchanged. start marks the moment request handling began.

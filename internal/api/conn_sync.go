@@ -7,7 +7,6 @@ import (
 	"io"
 	"runtime/debug"
 	"sync"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
@@ -80,7 +79,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 	var result any
 	var err error
 
-	start := time.Now()
+	start := timingStart(c.collectTiming)
 
 	// Recover from panics and convert to error response with stack trace
 	defer func() {

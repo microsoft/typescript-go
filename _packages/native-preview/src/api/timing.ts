@@ -22,9 +22,9 @@ export interface RequestTiming {
     /** Number of response payload bytes received from the server. */
     bytesReceived: number;
     /**
-     * Server-side processing time in milliseconds, when the transport reports
-     * it. Available on the synchronous (MessagePack) transport; `undefined` on
-     * the asynchronous (JSON-RPC) transport, which has no channel for it.
+     * Server-side processing time in milliseconds, as reported by the transport.
+     * It is `undefined` only in the rare case a response arrives without the expected
+     * timing metadata (e.g. a malformed or empty response).
      */
     serverTimeMs: number | undefined;
     /**
