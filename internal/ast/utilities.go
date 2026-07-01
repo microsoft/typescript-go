@@ -440,6 +440,7 @@ func isExpressionKind(kind Kind) bool {
 		KindSpreadElement,
 		KindAsExpression,
 		KindOmittedExpression,
+		KindCommaListExpression,
 		KindPartiallyEmittedExpression,
 		KindSatisfiesExpression:
 		return true
@@ -457,7 +458,7 @@ func IsCommaExpression(node *Node) bool {
 }
 
 func IsCommaSequence(node *Node) bool {
-	return IsCommaExpression(node)
+	return IsCommaExpression(node) || IsCommaListExpression(node)
 }
 
 func IsIterationStatement(node *Node, lookInLabeledStatements bool) bool {

@@ -1082,6 +1082,10 @@ export interface PartiallyEmittedExpression extends LeftHandSideExpressionBase {
     readonly kind: SyntaxKind.PartiallyEmittedExpression;
     readonly expression: Expression;
 }
+export interface CommaListExpression extends ExpressionBase {
+    readonly kind: SyntaxKind.CommaListExpression;
+    readonly elements: NodeArray<Expression>;
+}
 export interface JsxElement extends PrimaryExpressionBase {
     readonly kind: SyntaxKind.JsxElement;
     readonly openingElement: JsxOpeningElement;
