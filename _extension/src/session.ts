@@ -385,10 +385,15 @@ interface StradaVersion {
 }
 
 async function getStradaVersion(): Promise<StradaVersion | undefined> {
-    const extension = vscode.extensions.getExtension("vscode.typescript-language-features");
+    return await getStradaExtensionVersion("ms-vscode.vscode-typescript-next", ["node_modules", "typescript"])
+        ?? await getStradaExtensionVersion("vscode.typescript-language-features", ["..", "node_modules", "typescript"]);
+}
+
+async function getStradaExtensionVersion(extensionId: string, pathToTypescript: string[]): Promise<StradaVersion | undefined> {
+    const extension = vscode.extensions.getExtension(extensionId);
     if (!extension) return undefined;
 
-    const packagePath = vscode.Uri.joinPath(extension.extensionUri, "..", "node_modules", "typescript");
+    const packagePath = vscode.Uri.joinPath(extension.extensionUri, ...pathToTypescript);
     const tsserverPath = vscode.Uri.joinPath(packagePath, "lib", "tsserver.js");
     try {
         await vscode.workspace.fs.stat(tsserverPath);
