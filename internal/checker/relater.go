@@ -1357,6 +1357,10 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			c.inVarianceComputation = true
 			c.resolutionStart = len(c.typeResolutions)
 		}
+		c.varianceStack = append(c.varianceStack, symbol)
+		defer func() {
+			c.varianceStack = c.varianceStack[:len(c.varianceStack)-1]
+		}()
 		links.variances = []VarianceFlags{}
 		variances := make([]VarianceFlags, len(typeParameters))
 		for i, tp := range typeParameters {
@@ -1386,7 +1390,11 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				// type). To determine this we compare instantiations where the type parameter is
 				// replaced with marker types that are known to be unrelated.
 				if variance == VarianceFlagsBivariant && c.isTypeAssignableTo(c.createMarkerType(symbol, tp, c.markerOtherType), typeWithSuper) {
-					variance = VarianceFlagsIndependent
+					if c.reliabilityFlags&(RelationComparisonResultReportsUnmeasurable|RelationComparisonResultReportsUnreliable) == 0 {
+						variance = VarianceFlagsIndependent
+					} else {
+						variance = VarianceFlagsInvariant
+					}
 				}
 				if c.reliabilityFlags&RelationComparisonResultReportsUnmeasurable != 0 {
 					variance |= VarianceFlagsUnmeasurable
@@ -1425,6 +1433,21 @@ func (c *Checker) createMarkerType(symbol *ast.Symbol, source *Type, target *Typ
 
 func (c *Checker) isMarkerType(t *Type) bool {
 	return c.markerTypes.Has(t)
+}
+
+func (c *Checker) reportUnreliableNonlocalVarianceCycle(symbol *ast.Symbol, source *Type, target *Type) {
+	if !c.inVarianceComputation || len(c.varianceStack) == 0 || c.varianceStack[len(c.varianceStack)-1] == symbol {
+		return
+	}
+	if !slices.Contains(c.varianceStack[:len(c.varianceStack)-1], symbol) {
+		return
+	}
+	declaredType := c.getDeclaredTypeOfSymbol(c.varianceStack[len(c.varianceStack)-1])
+	if declaredType.flags&TypeFlagsStructuredType == 0 || len(c.getSignaturesOfType(declaredType, SignatureKindCall)) == 0 && len(c.getSignaturesOfType(declaredType, SignatureKindConstruct)) == 0 {
+		return
+	}
+	c.instantiateType(source, c.reportUnreliableMapper)
+	c.instantiateType(target, c.reportUnreliableMapper)
 }
 
 func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
@@ -3829,6 +3852,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			// effectively means we measure variance only from type parameter occurrences that aren't nested in
 			// recursive instantiations of the generic type.
 			if len(variances) == 0 {
+				r.c.reportUnreliableNonlocalVarianceCycle(source.Target().symbol, source, target)
 				return TernaryUnknown
 			}
 			varianceResult, ok := relateVariances(r.c.getTypeArguments(source), r.c.getTypeArguments(target), variances, intersectionState)
