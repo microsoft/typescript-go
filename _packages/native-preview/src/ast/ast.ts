@@ -1,6 +1,7 @@
 // ast.ts — Hand-written AST type definitions
 // Generated types are in ast.generated.ts
 
+import type { InternalSymbolName } from "#enums/internalSymbolName";
 import type { LanguageVariant } from "#enums/languageVariant";
 import type { NodeFlags } from "#enums/nodeFlags";
 import type { ScriptKind } from "#enums/scriptKind";
@@ -26,6 +27,15 @@ export * from "./ast.generated.ts";
 
 export type Path = string & { __pathBrand: any; };
 
+/**
+ * The escaped form of a symbol/identifier name. Internal compiler names are
+ * prefixed with `__` (e.g. `__type`, `__call`), and user names that already
+ * begin with `__` carry an extra leading underscore. Use
+ * {@link unescapeLeadingUnderscores} to recover the display name and
+ * {@link escapeLeadingUnderscores} to produce a key from a display name.
+ */
+export type __String = (string & { __escapedIdentifier: void; }) | InternalSymbolName;
+
 export interface TextRange {
     pos: number;
     end: number;
@@ -45,7 +55,7 @@ export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
     readonly flags: NodeFlags;
     readonly parent: Node;
-    readonly jsDoc?: readonly Node[];
+    readonly jsDoc?: readonly Node[] | undefined;
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
     getSourceFile(): SourceFile;
     getStart(sourceFile?: SourceFile, includeJsDocComment?: boolean): number;

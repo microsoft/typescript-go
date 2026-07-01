@@ -36,6 +36,12 @@ import {
 } from "./protocol.ts";
 
 export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {
+    // Inherited Array methods like filter/map/slice use ArraySpeciesCreate, which would
+    // otherwise call `new RemoteNodeList(length)` and fail. Produce a plain Array instead.
+    static get [Symbol.species](): ArrayConstructor {
+        return Array;
+    }
+
     parent: RemoteNode;
     hasTrailingComma?: boolean;
     transformFlags: number = 0;
@@ -322,44 +328,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
 
     private getNamedChild(propertyName: string): RemoteNode | RemoteNodeList | undefined {
-        // JSDocPropertyTag and JSDocParameterTag have runtime-dependent child order based on isNameFirst.
-        // Handle them before the general childProperties lookup.
         const kind = this.kind;
-        if (kind === SyntaxKind.JSDocPropertyTag) {
-            let order: number;
-            switch (propertyName) {
-                case "name":
-                    order = this.isNameFirst ? 0 : 1;
-                    break;
-                case "typeExpression":
-                    order = this.isNameFirst ? 1 : 0;
-                    break;
-                default:
-                    return undefined;
-            }
-            return this.getChildAtOrder(order);
-        }
-        else if (kind === SyntaxKind.JSDocParameterTag) {
-            let order: number;
-            switch (propertyName) {
-                case "tagName":
-                    order = 0;
-                    break;
-                case "name":
-                    order = this.isNameFirst ? 1 : 2;
-                    break;
-                case "typeExpression":
-                    order = this.isNameFirst ? 2 : 1;
-                    break;
-                case "comment":
-                    order = 3;
-                    break;
-                default:
-                    return undefined;
-            }
-            return this.getChildAtOrder(order);
-        }
-
         const propertyNames = childProperties[kind];
         if (!propertyNames) {
             return undefined;

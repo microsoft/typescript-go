@@ -1511,6 +1511,12 @@ function emitNodeGeneratedImports(w: CodeWriter) {
 
 function emitRemoteNodeList(w: CodeWriter) {
     w.write(`export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {`);
+    w.write(`    // Inherited Array methods like filter/map/slice use ArraySpeciesCreate, which would`);
+    w.write(`    // otherwise call \`new RemoteNodeList(length)\` and fail. Produce a plain Array instead.`);
+    w.write(`    static get [Symbol.species](): ArrayConstructor {`);
+    w.write(`        return Array;`);
+    w.write(`    }`);
+    w.write(``);
     w.write(`    parent: RemoteNode;`);
     w.write(`    hasTrailingComma?: boolean;`);
     w.write(`    transformFlags: number = 0;`);
@@ -1759,30 +1765,7 @@ function emitRemoteNodeClassOpen(w: CodeWriter) {
     w.write(`    }`);
     w.write(``);
     w.write(`    private getNamedChild(propertyName: string): RemoteNode | RemoteNodeList | undefined {`);
-    w.write(`        // JSDocPropertyTag and JSDocParameterTag have runtime-dependent child order based on isNameFirst.`);
-    w.write(`        // Handle them before the general childProperties lookup.`);
     w.write(`        const kind = this.kind;`);
-    w.write(`        if (kind === SyntaxKind.JSDocPropertyTag) {`);
-    w.write(`            let order: number;`);
-    w.write(`            switch (propertyName) {`);
-    w.write(`                case "name": order = this.isNameFirst ? 0 : 1; break;`);
-    w.write(`                case "typeExpression": order = this.isNameFirst ? 1 : 0; break;`);
-    w.write(`                default: return undefined;`);
-    w.write(`            }`);
-    w.write(`            return this.getChildAtOrder(order);`);
-    w.write(`        }`);
-    w.write(`        else if (kind === SyntaxKind.JSDocParameterTag) {`);
-    w.write(`            let order: number;`);
-    w.write(`            switch (propertyName) {`);
-    w.write(`                case "tagName": order = 0; break;`);
-    w.write(`                case "name": order = this.isNameFirst ? 1 : 2; break;`);
-    w.write(`                case "typeExpression": order = this.isNameFirst ? 2 : 1; break;`);
-    w.write(`                case "comment": order = 3; break;`);
-    w.write(`                default: return undefined;`);
-    w.write(`            }`);
-    w.write(`            return this.getChildAtOrder(order);`);
-    w.write(`        }`);
-    w.write(``);
     w.write(`        const propertyNames = childProperties[kind];`);
     w.write(`        if (!propertyNames) {`);
     w.write(`            return undefined;`);

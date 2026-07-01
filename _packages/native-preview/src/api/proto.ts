@@ -1,4 +1,9 @@
 import type { CompletionItemKind } from "#enums/completionItemKind";
+import type { ModuleKind } from "#enums/moduleKind";
+import type {
+    __String,
+    Path,
+} from "../ast/index.ts";
 import {
     documentURIToFileName,
     fileNameToDocumentURI,
@@ -161,7 +166,7 @@ export interface UpdateSnapshotResponse {
 }
 
 export interface ProjectResponse {
-    id: string;
+    id: Path;
     configFileName: string;
     compilerOptions: Record<string, unknown>;
     rootFiles: string[];
@@ -172,9 +177,23 @@ export interface SourceFileResponse {
     data: string;
 }
 
+export interface SourceFileMetadata {
+    isDefaultLibrary: boolean;
+    isFromExternalLibrary: boolean;
+    packageJsonType: string;
+    packageJsonDirectory: string;
+    impliedNodeFormat: ModuleKind;
+}
+
 export interface SymbolResponse {
     id: number;
-    name: string;
+    /**
+     * The project the symbol was first observed in. Used as the default project for
+     * follow-up lookups that need a project context (e.g. members/exports), since symbols
+     * are shared snapshot-wide and such lookups can vary by project.
+     */
+    project: Path;
+    name: __String;
     flags: number;
     checkFlags: number;
     declarations?: string[];
