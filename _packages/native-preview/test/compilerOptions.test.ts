@@ -16,10 +16,11 @@ const goOptionsPath = join(repoRoot, "internal", "core", "compileroptions.go");
 const tsOptionsPath = join(testDir, "..", "src", "api", "compilerOptions.ts");
 
 /**
- * Extracts the JSON tag names of the *public* fields of the Go
+ * Extracts the JSON tag names of the *public, non-deprecated* fields of the Go
  * `core.CompilerOptions` struct — i.e. every field declared before the
- * `// Internal fields` marker. Fields at/after that marker are CLI/debug/internal
- * options that are intentionally not part of the public API type.
+ * `// Internal fields` marker that is not annotated with a `// Deprecated:`
+ * comment. Fields at/after the internal marker are CLI/debug/internal options,
+ * and deprecated fields are intentionally omitted from the public API type.
  */
 function getGoPublicOptionNames(): Set<string> {
     const source = readFileSync(goOptionsPath, "utf-8");
@@ -32,8 +33,22 @@ function getGoPublicOptionNames(): Set<string> {
     body = body.slice(0, internalMarker);
 
     const names = new Set<string>();
-    for (const [, name] of body.matchAll(/`json:"([^",]+)/g)) {
-        names.add(name);
+    let prevDeprecated = false;
+    for (const rawLine of body.split("\n")) {
+        const line = rawLine.trim();
+        if (line === "") continue;
+
+        const tagMatch = line.match(/`json:"([^",]+)/);
+        if (tagMatch) {
+            // A field's `// Deprecated:` doc comment sits on the line directly above it.
+            if (!prevDeprecated) {
+                names.add(tagMatch[1]);
+            }
+            prevDeprecated = false;
+        }
+        else {
+            prevDeprecated = line.startsWith("// Deprecated:");
+        }
     }
     return names;
 }
@@ -71,8 +86,8 @@ describe("CompilerOptions type stays in sync with Go", () => {
             missing,
             [],
             `The following public compiler options exist in internal/core/compileroptions.go but are missing from `
-                + `src/api/compilerOptions.ts. Add them (before the deprecated group), or, if they are internal, move `
-                + `them after the "// Internal fields" marker in the Go struct:\n  ${missing.join("\n  ")}`,
+                + `src/api/compilerOptions.ts. Add them, or, if they are internal, move them after the `
+                + `"// Internal fields" marker (or annotate them with a "// Deprecated:" comment) in the Go struct:\n  ${missing.join("\n  ")}`,
         );
     });
 
