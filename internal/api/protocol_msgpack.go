@@ -202,18 +202,6 @@ func (p *MessagePackProtocol) WriteResponse(id *jsonrpc.ID, result any) error {
 		method = id.String()
 	}
 
-	// When timing collection is enabled, the handler result is wrapped with the
-	// server's processing time, which is appended as a little-endian uint32
-	// (microseconds) footer after the payload. The client strips these 4 bytes
-	// before decoding.
-	var processingTimeMicros uint32
-	appendTimingFooter := false
-	if timed, ok := result.(serverTimedResult); ok {
-		result = timed.result
-		processingTimeMicros = timed.processingTimeMicros
-		appendTimingFooter = true
-	}
-
 	var payload []byte
 	var err error
 
@@ -225,11 +213,6 @@ func (p *MessagePackProtocol) WriteResponse(id *jsonrpc.ID, result any) error {
 		if err != nil {
 			return err
 		}
-	}
-
-	if appendTimingFooter {
-		footer := binary.LittleEndian.AppendUint32(nil, processingTimeMicros)
-		payload = append(payload, footer...)
 	}
 
 	return p.writeTuple(MessageTypeResponse, method, payload)

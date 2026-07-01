@@ -111,9 +111,8 @@ export class SyncRpcChannel {
 
     private methodBufCache = new Map<string, Buffer>();
 
-    // When true, the server appends a 4-byte little-endian uint32 footer
-    // (server processing time in microseconds) to every response payload. The
-    // footer is stripped here and exposed via the `last*` fields below.
+    // When true, the wire-level byte sizes of each request/response are
+    // recorded and exposed via the `last*` fields below.
     private readonly collectTiming: boolean;
 
     // Wire-level measurements for the most recently completed request. Only
@@ -121,7 +120,6 @@ export class SyncRpcChannel {
     // after a request returns (the channel is strictly serial).
     lastBytesSent = 0;
     lastBytesReceived = 0;
-    lastServerTimeMicros: number | undefined = undefined;
 
     private _msgType = 0;
     private _msgName: Buffer = EMPTY_BUF;
@@ -289,7 +287,6 @@ export class SyncRpcChannel {
                 ? Buffer.byteLength(payload, "utf-8")
                 : payload.length;
             this.lastBytesReceived = 0;
-            this.lastServerTimeMicros = undefined;
         }
         this.writeTuple(MSG_REQUEST, methodBuf, payload);
 
@@ -305,7 +302,7 @@ export class SyncRpcChannel {
                         );
                     }
                     if (this.collectTiming) {
-                        return this.stripTimingFooter(this._msgPayload);
+                        this.lastBytesReceived = this._msgPayload.length;
                     }
                     return this._msgPayload;
                 }
@@ -325,28 +322,6 @@ export class SyncRpcChannel {
                     throw new Error(`Invalid message type from child: ${this._msgType}`);
             }
         }
-    }
-
-    /**
-     * Strip the 4-byte little-endian uint32 timing footer (server processing
-     * time in microseconds) the server appends to every response payload when
-     * timing collection is enabled. Records the parsed value and the remaining
-     * data length, and returns the payload with the footer removed.
-     */
-    private stripTimingFooter(payload: Buffer): Buffer {
-        if (payload.length < 4) {
-            // Malformed/empty response: nothing to strip.
-            this.lastServerTimeMicros = undefined;
-            this.lastBytesReceived = payload.length;
-            return payload;
-        }
-        const dataLen = payload.length - 4;
-        this.lastServerTimeMicros = payload.readUInt32LE(dataLen);
-        this.lastBytesReceived = dataLen;
-        // subarray shares the underlying ArrayBuffer at byteOffset 0 (payloads
-        // come from readExact, which allocates a dedicated backing buffer), so
-        // downstream absolute-offset views over `.buffer` remain valid.
-        return payload.subarray(0, dataLen);
     }
 
     // ── Callback handling ───────────────────────────────────────────

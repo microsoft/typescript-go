@@ -210,20 +210,23 @@ export class API<FromLSP extends boolean = false> {
     }
 
     /**
-     * Returns a snapshot of collected timing information (round-trip latency,
-     * bytes transferred, server processing time, and estimated transport
-     * overhead) for requests made through this API instance.
+     * Returns a snapshot of collected timing information for requests made
+     * through this API instance: client-measured round-trip latency and bytes
+     * transferred, folded together with the server's own per-request processing
+     * time and an estimated transport overhead (round-trip minus server time).
      *
-     * Collection must be enabled via the `collectTiming` option. When it is not,
-     * the returned snapshot has `enabled: false` and zeroed totals.
+     * Fetching the snapshot issues a lightweight request to the server to
+     * retrieve its timing collection. Collection must be enabled via the
+     * `collectTiming` option; when it is not, the returned snapshot has
+     * `enabled: false` and zeroed totals.
      */
-    getTimingInfo(): TimingInfo {
+    getTimingInfo(): Promise<TimingInfo> {
         return this.client.getTimingInfo();
     }
 
-    /** Clears all accumulated timing totals and recent-request history. */
-    resetTimingInfo(): void {
-        this.client.resetTimingInfo();
+    /** Clears all accumulated timing totals and recent-request history, on both the client and the server. */
+    resetTimingInfo(): Promise<void> {
+        return this.client.resetTimingInfo();
     }
 }
 

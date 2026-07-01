@@ -1,11 +1,16 @@
 /**
  * Client-side collection of per-request timing and transfer measurements.
  *
- * When enabled, each request records its round-trip latency, the number of
- * payload bytes sent and received, and (when the transport reports it) the
- * server's own processing time. From those, an estimated transport overhead
- * (round-trip minus server processing time) is derived per request and across
- * running totals.
+ * When enabled, each request records its round-trip latency and the number of
+ * payload bytes sent and received, accumulated into running totals and a
+ * fixed-size ring buffer of the most recent requests.
+ *
+ * The server measures its own per-request processing time independently. When a
+ * timing snapshot is requested, the client fetches the server's collection via
+ * a `getServerTiming` request and folds it into the returned {@link TimingInfo},
+ * yielding per-request and total server processing time and an estimated
+ * transport overhead (round-trip minus server processing time). Normal response
+ * messages are left unchanged.
  */
 
 /** Number of most-recent requests retained in the ring buffer. */
@@ -21,20 +26,20 @@ export interface RequestTiming {
     bytesSent: number;
     /** Number of response payload bytes received from the server. */
     bytesReceived: number;
-    /**
-     * Server-side processing time in milliseconds, as reported by the transport.
-     * It is `undefined` only in the rare case a response arrives without the expected
-     * timing metadata (e.g. a malformed or empty response).
-     */
-    serverTimeMs: number | undefined;
-    /**
-     * Estimated transport overhead (round-trip minus server processing time) in
-     * milliseconds. Only present when {@link serverTimeMs} is known. Clamped to
-     * be non-negative.
-     */
-    transportOverheadMs: number | undefined;
     /** Wall-clock timestamp ({@link Date.now}) captured when the request completed. */
     timestamp: number;
+    /**
+     * Server-side processing time for this request, in milliseconds, as folded
+     * in from the server's own timing collection. Undefined when server timing
+     * for the request could not be matched.
+     */
+    serverTimeMs?: number;
+    /**
+     * Estimated transport overhead for this request, in milliseconds
+     * (`roundTripMs - serverTimeMs`, clamped to be non-negative). Present
+     * exactly when {@link serverTimeMs} is.
+     */
+    transportOverheadMs?: number;
 }
 
 /** Running totals accumulated across every measured request. */
@@ -47,11 +52,11 @@ export interface TimingAccumulators {
     totalBytesSent: number;
     /** Total response payload bytes received. */
     totalBytesReceived: number;
-    /** Sum of server processing time across requests that reported it, in milliseconds. */
+    /** Sum of server-side processing time, in milliseconds. */
     totalServerTimeMs: number;
     /**
-     * Sum of estimated transport overhead across requests that reported server
-     * time, in milliseconds.
+     * Estimated total transport overhead, in milliseconds
+     * (`totalRoundTripMs - totalServerTimeMs`, clamped to be non-negative).
      */
     totalTransportOverheadMs: number;
 }
@@ -75,11 +80,45 @@ export interface TimingSample {
     roundTripMs: number;
     bytesSent: number;
     bytesReceived: number;
+}
+
+/**
+ * A single server-side request's processing-time sample, as returned by a
+ * `getServerTiming` request. This is an internal wire shape; consumers see the
+ * folded-in {@link RequestTiming.serverTimeMs}.
+ */
+export interface ServerRequestTiming {
+    /** The API method that was handled. */
+    method: string;
+    /** Server-side processing time, in milliseconds. */
+    processingTimeMs: number;
+    /** Unix timestamp in milliseconds captured when the request completed. */
+    timestamp: number;
+}
+
+/** Running totals accumulated on the server across every handled request. */
+export interface ServerTimingTotals {
+    /** Total number of requests handled. */
+    requestCount: number;
+    /** Sum of server-side processing time, in milliseconds. */
+    totalProcessingTimeMs: number;
+}
+
+/**
+ * A snapshot of the server's own timing collection, retrieved via a
+ * `getServerTiming` request. This is an internal wire shape used to compute the
+ * server-derived fields of {@link TimingInfo}.
+ */
+export interface ServerTimingInfo {
+    /** Whether server-side timing collection is enabled. */
+    enabled: boolean;
+    /** Running totals across every request the server handled. */
+    totals: ServerTimingTotals;
     /**
-     * Server processing time in microseconds, as reported by the transport, or
-     * `undefined` if the transport does not report it.
+     * The most recent requests as seen by the server, ordered from oldest to
+     * newest.
      */
-    serverTimeMicros: number | undefined;
+    recentRequests: ServerRequestTiming[];
 }
 
 function emptyAccumulators(): TimingAccumulators {
@@ -102,6 +141,55 @@ export function disabledTimingInfo(): TimingInfo {
     };
 }
 
+/** Returns a snapshot representing disabled server-side timing collection. */
+export function disabledServerTimingInfo(): ServerTimingInfo {
+    return {
+        enabled: false,
+        totals: { requestCount: 0, totalProcessingTimeMs: 0 },
+        recentRequests: [],
+    };
+}
+
+/**
+ * Folds a server-side timing snapshot into a client-side snapshot, producing a
+ * combined {@link TimingInfo} with per-request and total server processing time
+ * plus estimated transport overhead.
+ *
+ * Recent requests are paired newest-to-newest and only matched when the method
+ * names agree, so that requests recorded by only one side (e.g. the meta
+ * requests used to fetch timing) do not misalign the two ring buffers.
+ */
+export function combineTimingInfo(client: TimingInfo, server: ServerTimingInfo): TimingInfo {
+    if (!client.enabled) {
+        return client;
+    }
+
+    const totalServerTimeMs = server.totals.totalProcessingTimeMs;
+    const totals: TimingAccumulators = {
+        ...client.totals,
+        totalServerTimeMs,
+        totalTransportOverheadMs: Math.max(0, client.totals.totalRoundTripMs - totalServerTimeMs),
+    };
+
+    const recentRequests = client.recentRequests.map(r => ({ ...r }));
+    const serverRecent = server.recentRequests;
+    const pairs = Math.min(recentRequests.length, serverRecent.length);
+    for (let i = 1; i <= pairs; i++) {
+        const c = recentRequests[recentRequests.length - i];
+        const s = serverRecent[serverRecent.length - i];
+        if (c.method === s.method) {
+            c.serverTimeMs = s.processingTimeMs;
+            c.transportOverheadMs = Math.max(0, c.roundTripMs - s.processingTimeMs);
+        }
+    }
+
+    return {
+        enabled: true,
+        totals,
+        recentRequests,
+    };
+}
+
 /**
  * Accumulates request timing samples into running totals and a fixed-size ring
  * buffer of the most recent requests.
@@ -115,16 +203,6 @@ export class TimingCollector {
 
     /** Records a single request's measurements. */
     record(sample: TimingSample): void {
-        const serverTimeMs = sample.serverTimeMicros === undefined
-            ? undefined
-            : sample.serverTimeMicros / 1000;
-        let transportOverheadMs: number | undefined;
-        if (serverTimeMs !== undefined) {
-            transportOverheadMs = Math.max(0, sample.roundTripMs - serverTimeMs);
-            this.totals.totalServerTimeMs += serverTimeMs;
-            this.totals.totalTransportOverheadMs += transportOverheadMs;
-        }
-
         this.totals.requestCount++;
         this.totals.totalRoundTripMs += sample.roundTripMs;
         this.totals.totalBytesSent += sample.bytesSent;
@@ -135,8 +213,6 @@ export class TimingCollector {
             roundTripMs: sample.roundTripMs,
             bytesSent: sample.bytesSent,
             bytesReceived: sample.bytesReceived,
-            serverTimeMs,
-            transportOverheadMs,
             timestamp: Date.now(),
         };
 

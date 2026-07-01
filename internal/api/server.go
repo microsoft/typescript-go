@@ -28,10 +28,10 @@ type StdioServerOptions struct {
 	// When false (default), uses MessagePack protocol with sync connection.
 	Async bool
 	// CollectTiming enables per-request server processing-time measurement.
-	// When enabled, each successful response carries the server's processing
-	// time as timing metadata for the client to consume: the MessagePack
-	// protocol appends a fixed-size footer, and the JSON-RPC protocol wraps the
-	// result in an envelope. Error responses carry no timing metadata.
+	// When enabled, the server accumulates each request's processing time into
+	// running totals and a recent-request ring buffer. Response messages are
+	// left unchanged; the client folds this data into its own timing snapshot
+	// on demand via getServerTiming / resetServerTiming requests.
 	CollectTiming bool
 }
 

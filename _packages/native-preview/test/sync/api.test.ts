@@ -4906,7 +4906,7 @@ test("Benchmarks", () => {
 });
 
 describe("Timing", () => {
-    test("collects round-trip, byte, and server timing info", () => {
+    test("collects combined client, server, and transport timing info", () => {
         const api = new API({
             cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
             fs: createVirtualFileSystem({ ...defaultFiles }),
@@ -4925,11 +4925,20 @@ describe("Timing", () => {
             const sourceFile = project.program.getSourceFile("/src/index.ts");
             assert.ok(sourceFile);
 
+            // Client-side timing: round-trip latency and byte counts.
             info = api.getTimingInfo();
             assert.ok(info.totals.requestCount >= 2, "expected at least two measured requests");
             assert.ok(info.totals.totalBytesSent > 0);
             assert.ok(info.totals.totalBytesReceived > 0);
             assert.ok(info.totals.totalRoundTripMs >= 0);
+
+            // Server-side timing is folded into the same snapshot.
+            assert.ok(info.totals.totalServerTimeMs >= 0);
+            assert.ok(info.totals.totalTransportOverheadMs >= 0);
+            assert.equal(
+                info.totals.totalTransportOverheadMs,
+                Math.max(0, info.totals.totalRoundTripMs - info.totals.totalServerTimeMs),
+            );
 
             // The ring buffer retains at most the 5 most recent requests.
             assert.ok(info.recentRequests.length > 0);
@@ -4941,24 +4950,25 @@ describe("Timing", () => {
                 assert.ok(r.bytesSent >= 0);
                 assert.ok(r.bytesReceived >= 0);
                 assert.ok(typeof r.method === "string" && r.method.length > 0);
+                assert.equal(typeof r.timestamp, "number");
                 // Transport overhead is present exactly when server time is.
                 assert.equal(r.transportOverheadMs === undefined, r.serverTimeMs === undefined);
                 if (r.serverTimeMs !== undefined) {
+                    assert.ok(r.serverTimeMs >= 0);
                     assert.equal(r.transportOverheadMs, Math.max(0, r.roundTripMs - r.serverTimeMs));
                 }
             }
 
-            // Server processing time is reported over both transports.
+            // Server processing time is folded in for the recent requests.
             assert.ok(info.recentRequests.every(r => r.serverTimeMs !== undefined), "server time should be reported");
-            assert.ok(info.recentRequests.every(r => (r.serverTimeMs as number) >= 0));
-            assert.ok(info.totals.totalServerTimeMs >= 0);
-            assert.ok(info.totals.totalTransportOverheadMs >= 0);
 
-            // Reset clears totals and history.
+            // Reset clears totals and history on both client and server.
             api.resetTimingInfo();
             info = api.getTimingInfo();
             assert.equal(info.enabled, true);
             assert.equal(info.totals.requestCount, 0);
+            assert.equal(info.totals.totalServerTimeMs, 0);
+            assert.equal(info.totals.totalTransportOverheadMs, 0);
             assert.equal(info.recentRequests.length, 0);
         }
         finally {

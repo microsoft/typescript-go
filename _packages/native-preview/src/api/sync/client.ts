@@ -8,7 +8,9 @@ import {
 } from "../options.ts";
 import { SyncRpcChannel } from "../syncChannel.ts";
 import {
+    combineTimingInfo,
     disabledTimingInfo,
+    type ServerTimingInfo,
     TimingCollector,
     type TimingInfo,
 } from "../timing.ts";
@@ -98,12 +100,27 @@ export class Client {
         return this.channel.requestBinarySync("echo", payload);
     }
 
+    /**
+     * Returns a combined timing snapshot: client-measured round-trip and byte
+     * counts folded together with the server's own per-request processing time
+     * (fetched via a getServerTiming request) and estimated transport overhead.
+     */
     getTimingInfo(): TimingInfo {
-        return this.timing ? this.timing.getInfo() : disabledTimingInfo();
+        if (!this.timing) {
+            return disabledTimingInfo();
+        }
+        const local = this.timing.getInfo();
+        // requestSync bypasses recordTiming, so this query does not pollute the
+        // client-side collector.
+        const result = this.channel.requestSync("getServerTiming", "");
+        return combineTimingInfo(local, JSON.parse(result) as ServerTimingInfo);
     }
 
     resetTimingInfo(): void {
-        this.timing?.reset();
+        if (!this.timing) return;
+        this.timing.reset();
+        // Keep the server's collection in sync so combined totals stay meaningful.
+        this.channel.requestSync("resetServerTiming", "");
     }
 
     private recordTiming(method: string, start: number): void {
@@ -113,7 +130,6 @@ export class Client {
             roundTripMs: performance.now() - start,
             bytesSent: this.channel.lastBytesSent,
             bytesReceived: this.channel.lastBytesReceived,
-            serverTimeMicros: this.channel.lastServerTimeMicros,
         });
     }
 

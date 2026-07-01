@@ -7,6 +7,7 @@ import (
 	"io"
 	"runtime/debug"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
@@ -19,9 +20,9 @@ type SyncConn struct {
 	protocol Protocol
 	handler  Handler
 
-	// collectTiming, when true, measures the wall-clock time spent handling each
-	// request and attaches it to the response as timing metadata.
-	collectTiming bool
+	// timing, when non-nil, accumulates the wall-clock time spent handling each
+	// request. Clients retrieve the collected data via a getServerTiming request.
+	timing *timingCollector
 
 	// mu serializes all protocol operations (reads and writes).
 	// This ensures that concurrent calls from handler goroutines (e.g., project code
@@ -39,9 +40,14 @@ func NewSyncConn(rwc io.ReadWriteCloser, protocol Protocol, handler Handler) *Sy
 }
 
 // SetCollectTiming enables or disables per-request server processing-time
-// measurement. When enabled, responses carry the processing time as metadata.
+// measurement. When enabled, the connection accumulates timing that clients can
+// retrieve via a getServerTiming request.
 func (c *SyncConn) SetCollectTiming(enabled bool) {
-	c.collectTiming = enabled
+	if enabled {
+		c.timing = newTimingCollector()
+	} else {
+		c.timing = nil
+	}
 }
 
 // Run starts processing messages on the connection.
@@ -76,10 +82,37 @@ func (c *SyncConn) Run(ctx context.Context) error {
 
 // handleRequest processes an incoming request.
 func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
+	// Intercept the meta-requests for collected server timing before dispatching
+	// to the handler, so they are answered directly and not themselves recorded.
+	switch msg.Method {
+	case string(MethodGetServerTiming):
+		c.mu.Lock()
+		writeErr := c.protocol.WriteResponse(msg.ID, serverTimingSnapshot(c.timing))
+		c.mu.Unlock()
+		if writeErr != nil {
+			panic(fmt.Sprintf("api: failed to write server timing response: %v", writeErr))
+		}
+		return
+	case string(MethodResetServerTiming):
+		if c.timing != nil {
+			c.timing.reset()
+		}
+		c.mu.Lock()
+		writeErr := c.protocol.WriteResponse(msg.ID, nil)
+		c.mu.Unlock()
+		if writeErr != nil {
+			panic(fmt.Sprintf("api: failed to write reset server timing response: %v", writeErr))
+		}
+		return
+	}
+
 	var result any
 	var err error
 
-	start := timingStart(c.collectTiming)
+	start := time.Time{}
+	if c.timing != nil {
+		start = time.Now()
+	}
 
 	// Recover from panics and convert to error response with stack trace
 	defer func() {
@@ -102,6 +135,10 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 
 	result, err = c.handler.HandleRequest(ctx, msg.Method, msg.Params)
 
+	if c.timing != nil {
+		c.timing.record(msg.Method, time.Since(start))
+	}
+
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -112,7 +149,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 			Message: err.Error(),
 		})
 	} else {
-		writeErr = c.protocol.WriteResponse(msg.ID, maybeTimed(result, start, c.collectTiming))
+		writeErr = c.protocol.WriteResponse(msg.ID, result)
 	}
 
 	if writeErr != nil {
