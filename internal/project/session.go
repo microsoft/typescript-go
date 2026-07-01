@@ -36,6 +36,8 @@ const (
 	UpdateReasonUnknown UpdateReason = iota
 	UpdateReasonDidOpenFile
 	UpdateReasonDidCloseFile
+	UpdateReasonDidChangeFile
+	UpdateReasonDiagnosticsRefresh
 	UpdateReasonDidChangeCompilerOptionsForInferredProjects
 	UpdateReasonRequestedLanguageServicePendingChanges
 	UpdateReasonRequestedLanguageServiceProjectNotLoaded
@@ -61,9 +63,12 @@ type SessionOptions struct {
 	LoggingEnabled         bool
 	TelemetryEnabled       bool
 	PushDiagnosticsEnabled bool
-	DebounceDelay          time.Duration
-	Locale                 locale.Locale
-	CheckerPoolOptions     CheckerPoolOptions
+	// PushFileDiagnosticsEnabled pushes per-file diagnostics for open files,
+	// for clients that do not support pull diagnostics.
+	PushFileDiagnosticsEnabled bool
+	DebounceDelay              time.Duration
+	Locale                     locale.Locale
+	CheckerPoolOptions         CheckerPoolOptions
 }
 
 type SessionInit struct {
@@ -175,6 +180,14 @@ type Session struct {
 	// task should be enqueued. It is reset when the task runs, coalescing multiple
 	// requests into a single background task.
 	globalDiagPublishPending atomic.Bool
+
+	// pushedDiagnosticsFiles tracks open files whose last published diagnostics
+	// were non-empty, so redundant empty publishes can be skipped.
+	pushedDiagnosticsFiles collections.SyncSet[tspath.Path]
+}
+
+func (s *Session) pushFileDiagnosticsEnabled() bool {
+	return s.options.PushDiagnosticsEnabled && s.options.PushFileDiagnosticsEnabled
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -334,13 +347,16 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
-	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind:    FileChangeKindChange,
 		URI:     uri,
 		Version: version,
 		Changes: changes,
 	})
+	s.pendingFileChangesMu.Unlock()
+	if s.pushFileDiagnosticsEnabled() {
+		s.ScheduleSnapshotUpdate(UpdateReasonDidChangeFile)
+	}
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
@@ -392,6 +408,12 @@ func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Contex
 }
 
 func (s *Session) ScheduleDiagnosticsRefresh() {
+	if s.pushFileDiagnosticsEnabled() {
+		// Push-only clients can't re-pull in response to workspace/diagnostic/refresh.
+		s.ScheduleSnapshotUpdate(UpdateReasonDiagnosticsRefresh)
+		return
+	}
+
 	s.diagnosticsRefreshMu.Lock()
 	defer s.diagnosticsRefreshMu.Unlock()
 
@@ -503,12 +525,23 @@ func (s *Session) ScheduleSnapshotUpdate(reason UpdateReason) {
 			return
 		}
 
-		s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+		change := SnapshotChange{
 			reason:      reason,
 			fileChanges: fileChanges,
 			ataChanges:  ataChanges,
 			newConfig:   newConfig,
-		})
+		}
+		if s.pushFileDiagnosticsEnabled() {
+			// Request open documents so dirty programs are rebuilt eagerly;
+			// push-only clients send no requests that would otherwise do it.
+			documents := make([]lsproto.DocumentUri, 0, len(overlays))
+			for _, overlay := range overlays {
+				documents = append(documents, lsconv.FileNameToDocumentURI(overlay.FileName()))
+			}
+			slices.Sort(documents)
+			change.ResourceRequest = ResourceRequest{Documents: documents}
+		}
+		s.UpdateSnapshot(ctx, overlays, change)
 	})
 }
 
@@ -1237,6 +1270,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			}
 		}
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
+		s.publishOpenFileDiagnostics(oldSnapshot, newSnapshot)
 		s.sendProjectInfoTelemetryForNewProjects(oldSnapshot, newSnapshot)
 		s.warmAutoImportCache(ctx, change, oldSnapshot, newSnapshot)
 	})
@@ -1686,6 +1720,66 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{
 		Uri:         lsconv.FileNameToDocumentURI(configFilePath),
 		Diagnostics: lspDiagnostics,
+	}); err != nil && s.options.LoggingEnabled {
+		s.logger.Logf("Error publishing diagnostics: %v", err)
+	}
+}
+
+// publishOpenFileDiagnostics pushes diagnostics for open files after a
+// snapshot update, for clients that do not support pull diagnostics.
+func (s *Session) publishOpenFileDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	if !s.pushFileDiagnosticsEnabled() {
+		return
+	}
+
+	ctx := s.backgroundCtx
+	for path, overlay := range oldSnapshot.fs.overlays {
+		if _, stillOpen := newSnapshot.fs.overlays[path]; !stillOpen && s.pushedDiagnosticsFiles.Has(path) {
+			s.pushedDiagnosticsFiles.Delete(path)
+			s.publishFileDiagnostics(ctx, lsconv.FileNameToDocumentURI(overlay.FileName()), nil, nil)
+		}
+	}
+
+	for path, overlay := range newSnapshot.fs.overlays {
+		uri := lsconv.FileNameToDocumentURI(overlay.FileName())
+		project := newSnapshot.GetDefaultProject(uri)
+		if project == nil {
+			continue
+		}
+		program := project.GetProgram()
+		if program == nil {
+			continue
+		}
+		_, wasOpen := oldSnapshot.fs.overlays[path]
+		if wasOpen && project.ProgramLastUpdate != newSnapshot.ID() {
+			continue
+		}
+		languageService := ls.NewLanguageService(project.configFilePath, program, newSnapshot, overlay.FileName())
+		diagnostics := languageService.ProvidePushDiagnostics(ctx, uri)
+		if len(diagnostics) == 0 {
+			if !s.pushedDiagnosticsFiles.Has(path) {
+				continue
+			}
+			s.pushedDiagnosticsFiles.Delete(path)
+		} else {
+			s.pushedDiagnosticsFiles.Add(path)
+		}
+		version := overlay.Version()
+		s.publishFileDiagnostics(ctx, uri, &version, diagnostics)
+	}
+}
+
+func (s *Session) publishFileDiagnostics(ctx context.Context, uri lsproto.DocumentUri, version *int32, diagnostics []*lsproto.Diagnostic) {
+	if diagnostics == nil {
+		diagnostics = []*lsproto.Diagnostic{}
+	}
+	if !lsproto.GetClientCapabilities(ctx).TextDocument.PublishDiagnostics.VersionSupport {
+		version = nil
+	}
+	if err := s.client.PublishDiagnostics(ctx, &lsproto.PublishDiagnosticsParams{
+		Uri:         uri,
+		Version:     version,
+		Diagnostics: diagnostics,
 	}); err != nil && s.options.LoggingEnabled {
 		s.logger.Logf("Error publishing diagnostics: %v", err)
 	}
