@@ -141,7 +141,7 @@ func (r *aliasResolver) GetResolvedModules() map[tspath.Path]module.ModeAwareCac
 
 // GetSymlinkCache implements checker.Program.
 func (r *aliasResolver) GetSymlinkCache() *symlinks.KnownSymlinks {
-	panic("unimplemented")
+	return nil
 }
 
 // GetSourceFileMetaData implements checker.Program.
@@ -176,7 +176,7 @@ func (r *aliasResolver) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleRe
 
 // GetNearestAncestorDirectoryWithPackageJson implements checker.Program.
 func (r *aliasResolver) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
-	panic("unimplemented")
+	return ""
 }
 
 // GetPackageJsonInfo implements checker.Program.
@@ -191,7 +191,7 @@ func (r *aliasResolver) GetProjectReferenceFromOutputDts(path tspath.Path) *tsop
 
 // GetProjectReferenceFromSource implements checker.Program.
 func (r *aliasResolver) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
-	panic("unimplemented")
+	return nil
 }
 
 // GetRedirectForResolution implements checker.Program.
@@ -201,7 +201,7 @@ func (r *aliasResolver) GetRedirectForResolution(file ast.HasFileName) *tsoption
 
 // GetRedirectTargets implements checker.Program.
 func (r *aliasResolver) GetRedirectTargets(path tspath.Path) []string {
-	panic("unimplemented")
+	return nil
 }
 
 // GetResolvedModuleFromModuleSpecifier implements checker.Program.
@@ -210,8 +210,9 @@ func (r *aliasResolver) GetResolvedModuleFromModuleSpecifier(file ast.HasFileNam
 }
 
 // GetSourceOfProjectReferenceIfOutputIncluded implements checker.Program.
+// The aliasResolver has no project references, so just return the original file name.
 func (r *aliasResolver) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
-	panic("unimplemented")
+	return file.FileName()
 }
 
 // IsSourceFileDefaultLibrary implements checker.Program.
