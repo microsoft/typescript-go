@@ -18,7 +18,7 @@ async function installReplacement() {
     }
     catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        await vscode.window.showErrorMessage(`Failed to install ${newExtensionId}: ${message}`);
+        await vscode.window.showErrorMessage(vscode.l10n.t("Failed to install {0}: {1}", newExtensionId, message));
     }
 }
 
