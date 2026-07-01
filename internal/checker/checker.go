@@ -3086,7 +3086,7 @@ func (c *Checker) getTypePredicateParent(node *ast.Node) *ast.SignatureDeclarati
 	parent := node.Parent
 	switch parent.Kind {
 	case ast.KindArrowFunction, ast.KindCallSignature, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
-		ast.KindMethodDeclaration, ast.KindMethodSignature:
+		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindGetAccessor:
 		if node == parent.Type() {
 			return parent
 		}
