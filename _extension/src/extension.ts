@@ -111,7 +111,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }));
     context.subscriptions.push({ dispose: () => clearTimeout(configChangeTimeout) });
 
+    const hasOnboardedTsgoStateKey = "hasOnboardedTsgo";
+    const shouldOnboardTsgo = !context.globalState.get<boolean>(hasOnboardedTsgoStateKey);
+    if (shouldOnboardTsgo) {
+        await context.globalState.update(hasOnboardedTsgoStateKey, true);
+    }
+
     const useTsgo = getUseTsgo();
+    if (useTsgo === undefined && shouldOnboardTsgo) {
+        updateUseTsgoSetting(true);
+        return api;
+    }
+
     const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         if (!tsExtension) {

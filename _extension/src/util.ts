@@ -7,7 +7,7 @@ export const outputChannelName = "TypeScript 7";
 export const languageClientName = "TypeScript 7 Language Server";
 export const replacementExtensionId = "TypeScriptTeam.vscode-typescript";
 export const nightlyExtensionId = "TypeScriptTeam.native-preview";
-export const enableContributedNightlyVersion = false;
+export const enableContributedNightlyVersion = true;
 
 export const jsTsLanguageModes = [
     "typescript",
