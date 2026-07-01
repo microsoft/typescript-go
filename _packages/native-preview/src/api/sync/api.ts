@@ -224,10 +224,6 @@ export class API<FromLSP extends boolean = false> {
      *
      * Collection must be enabled via the `collectTiming` option. When it is not,
      * the returned snapshot has `enabled: false` and zeroed totals.
-     *
-     * Server processing time is reported over both transports: the synchronous
-     * (MessagePack) transport appends it as a footer, and the asynchronous
-     * (JSON-RPC) transport wraps each result in a timing envelope.
      */
     getTimingInfo(): TimingInfo {
         return this.client.getTimingInfo();
