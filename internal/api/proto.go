@@ -500,12 +500,17 @@ type ProjectResponse struct {
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
-	return &ProjectResponse{
+	response := &ProjectResponse{
 		Id:              ProjectHandle(p),
 		ConfigFileName:  p.Name(),
-		RootFiles:       p.CommandLine.FileNames(),
-		CompilerOptions: p.CommandLine.CompilerOptions(),
+		RootFiles:       []string{},
+		CompilerOptions: &core.CompilerOptions{},
 	}
+	if p.CommandLine != nil {
+		response.RootFiles = p.CommandLine.FileNames()
+		response.CompilerOptions = p.CommandLine.CompilerOptions()
+	}
+	return response
 }
 
 type GetSymbolAtPositionParams struct {
