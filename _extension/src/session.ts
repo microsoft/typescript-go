@@ -158,9 +158,19 @@ class Session implements vscode.Disposable {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.output.focus", () => {
             this.outputChannel.show();
         }));
+        this.disposables.push(vscode.commands.registerCommand("typescript.openTsServerLog", () => {
+            this.outputChannel.show();
+        }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.selectTypeScriptVersion", async () => {
             await promptSelectVersion(this.context, this.client, this.outputChannel);
+        }));
+
+        this.disposables.push(vscode.commands.registerCommand("typescript.restartTsServer", async () => {
+            if (await this.tryRestartClient(this.context)) {
+                return;
+            }
+            await vscode.commands.executeCommand("typescript.native-preview.restart");
         }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", () => {
