@@ -181,6 +181,9 @@ go.work.sum
 # Re-add vendored license/notice files (see hereby generate:vendor)
 !_packages/native-preview/vendor/**/*.txt
 
+# Re-add vendored dprint plugins.
+!_tools/dprint-plugins/*.wasm
+
 # Local baselines
 testdata/baselines/local
 testdata/baselines/tmp

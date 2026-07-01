@@ -920,6 +920,22 @@ export const installTools = task({
     },
 });
 
+const dprintPluginDir = path.join(__dirname, "_tools", "dprint-plugins");
+const dprintPluginMetadataPath = path.join(dprintPluginDir, "versions.json");
+
+const dprintPlugins = {
+    "dprint/typescript": "typescript.wasm",
+    "dprint/json": "json.wasm",
+    "g-plane/pretty_yaml": "pretty_yaml.wasm",
+    "jakebailey/gofumpt": "gofumpt.wasm",
+};
+
+export const updateDprintPlugins = task({
+    name: "update:dprint-plugins",
+    description: "Updates the vendored dprint plugin files.",
+    run: runUpdateDprintPlugins,
+});
+
 export const format = task({
     name: "format",
     description: "Formats the repo.",
@@ -937,6 +953,68 @@ export const checkFormat = task({
         await $`dprint check`;
     },
 });
+
+async function runUpdateDprintPlugins() {
+    const plugins = Object.entries(dprintPlugins);
+    const expectedFileNames = new Set(Object.values(dprintPlugins));
+    await fs.promises.mkdir(dprintPluginDir, { recursive: true });
+    const metadata = Object.fromEntries(
+        await Promise.all(plugins.map(async ([plugin, fileName]) => {
+            const latest = await getDprintLatestPluginMetadata(plugin);
+            const response = await fetch(latest.url);
+            if (!response.ok) {
+                throw new Error(`Failed to download ${latest.url}: ${response.status} ${response.statusText}`);
+            }
+            const bytes = Buffer.from(await response.arrayBuffer());
+            const checksum = crypto.createHash("sha256").update(bytes).digest("hex");
+            if (checksum !== latest.checksum) {
+                throw new Error(`Checksum mismatch for ${latest.url}: expected ${latest.checksum}, got ${checksum}`);
+            }
+            await fs.promises.writeFile(path.join(dprintPluginDir, fileName), bytes);
+            return [plugin, {
+                file: fileName,
+                version: latest.version,
+                checksum: latest.checksum,
+                url: latest.url,
+            }];
+        })),
+    );
+    await fs.promises.writeFile(dprintPluginMetadataPath, JSON.stringify(metadata, undefined, 4) + "\n");
+
+    for (const entry of await fs.promises.readdir(dprintPluginDir)) {
+        if (entry.endsWith(".wasm") && !expectedFileNames.has(entry)) {
+            await fs.promises.unlink(path.join(dprintPluginDir, entry));
+        }
+    }
+
+    console.log("Vendored dprint plugins are ready.");
+}
+
+/**
+ * @param {string} plugin
+ */
+async function getDprintLatestPluginMetadata(plugin) {
+    const latestJsonUrl = `https://plugins.dprint.dev/${plugin}/latest.json`;
+    const response = await fetch(latestJsonUrl);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch ${latestJsonUrl}: ${response.status} ${response.statusText}`);
+    }
+    const latest = await response.json();
+    if (!latest || typeof latest.url !== "string") {
+        throw new Error(`Invalid dprint plugin metadata from ${latestJsonUrl}`);
+    }
+    if (typeof latest.version !== "string" || typeof latest.checksum !== "string") {
+        throw new Error(`Invalid dprint plugin metadata from ${latestJsonUrl}`);
+    }
+    if (!/^[0-9a-f]{64}$/i.test(latest.checksum)) {
+        throw new Error(`Invalid dprint plugin checksum from ${latestJsonUrl}: ${latest.checksum}`);
+    }
+    const url = new URL(latest.url);
+    if (url.protocol !== "https:" || url.hostname !== "plugins.dprint.dev" || !url.pathname.endsWith(".wasm")) {
+        throw new Error(`Invalid dprint plugin URL from ${latestJsonUrl}: ${latest.url}`);
+    }
+    return latest;
+}
 
 const scriptTsconfigs = [
     "./_scripts/tsconfig.json",
