@@ -3013,6 +3013,10 @@ describe("Checker - getTypeArguments", () => {
         }
     });
 
+    test("does not panic for a non-reference type (issue #4338)", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export const s: string = "";`,
     test("a wrongly-typed call throws on the client without taking down the server", () => {
         const src = `export const s: string = ""; export const arr: Array<number> = [1];`;
         const api = spawnAPI({
@@ -3022,6 +3026,11 @@ describe("Checker - getTypeArguments", () => {
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", `export const `.length);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.deepEqual(project.checker.getTypeArguments(type), []);
 
             // `string` is not a type reference. When getTypeArguments is reached
             // with one, the server panics, but the per-request panic recovery
