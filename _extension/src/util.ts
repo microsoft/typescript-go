@@ -44,6 +44,13 @@ export interface ExeInfo {
 }
 
 export type LanguageServerPreference = "auto" | "preferTsserver" | "preferLsp";
+export interface JsTsServerSelection {
+    kind: "tsserver" | "lsp";
+    source: "bundled" | "user" | "workspace";
+    tsdk: string | undefined;
+    preference?: LanguageServerPreference;
+    reason?: string;
+}
 
 const packagedExeBaseNames = ["tsc", "tsgo"];
 
@@ -145,7 +152,21 @@ function workspaceResolve(relativePath: string): vscode.Uri {
  */
 export const useWorkspaceTsdkStorageKey = "typescript.native-preview.useWorkspaceTsdk";
 
-export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo> {
+export async function getExe(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<ExeInfo> {
+    if (selection) {
+        if (selection.kind !== "lsp") {
+            throw new Error(vscode.l10n.t("Cannot start native TypeScript server for selection kind: {0}", selection.kind));
+        }
+        if (selection.tsdk) {
+            const exe = await resolveTsdkPathToExe(selection.tsdk);
+            if (exe) {
+                return exe;
+            }
+            throw new Error(vscode.l10n.t("Could not resolve TypeScript server from tsdk path: {0}", selection.tsdk));
+        }
+        return getDefaultExePath(context);
+    }
+
     for (const candidate of getTrustedTsdkCandidates(context, await getTsdkCandidates())) {
         const exe = await resolveTsdkPathToExe(candidate.value);
         if (exe) {

@@ -285,11 +285,10 @@ export class Client implements vscode.Disposable {
      * Restart the language server if the executable path has not changed.
      * Returns true if a restart was performed.
      */
-    async tryRestart(context: vscode.ExtensionContext): Promise<boolean> {
+    async tryRestart(exe: ExeInfo): Promise<boolean> {
         if (!this.client) {
             return Promise.reject(new Error(vscode.l10n.t("Language client is not initialized")));
         }
-        const exe = await getExe(context);
         if (exe.path !== this.exe?.path) {
             return false;
         }

@@ -12,6 +12,7 @@ import {
     getExe,
     getWorkspaceTsdkConfigValue,
     getWorkspaceTsdkForPrompt,
+    JsTsServerSelection,
     outputChannelName,
     readNativePreviewConfig,
     replacementExtensionId,
@@ -28,6 +29,7 @@ import {
  */
 export class SessionManager implements vscode.Disposable {
     currentSession?: Session;
+    private currentSelection?: JsTsServerSelection;
     private disposables: vscode.Disposable[] = [];
     private outputChannel: vscode.LogOutputChannel;
     private initializedEventEmitter: vscode.EventEmitter<void>;
@@ -48,7 +50,8 @@ export class SessionManager implements vscode.Disposable {
     registerCommands(context: vscode.ExtensionContext): void {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", async () => {
             this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
-            if (await this.currentSession?.tryRestartClient(context)) {
+            const exe = await getExe(context, this.currentSelection);
+            if (await this.currentSession?.tryRestartClient(exe)) {
                 // Language client was able to restart without a full session restart
                 return;
             }
@@ -57,7 +60,8 @@ export class SessionManager implements vscode.Disposable {
         }));
     }
 
-    start(context: vscode.ExtensionContext): Promise<void> {
+    start(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<void> {
+        this.currentSelection = selection;
         return this.restart(context);
     }
 
@@ -67,7 +71,7 @@ export class SessionManager implements vscode.Disposable {
             await this.currentSession.dispose();
         }
         this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter);
-        return this.currentSession.start(context);
+        return this.currentSession.start(context, this.currentSelection);
     }
 
     async stop(): Promise<void> {
@@ -122,8 +126,8 @@ class Session implements vscode.Disposable {
         this.registerCommands();
     }
 
-    async start(context: vscode.ExtensionContext): Promise<void> {
-        const exe = await getExe(context);
+    async start(context: vscode.ExtensionContext, selection?: JsTsServerSelection): Promise<void> {
+        const exe = await getExe(context, selection);
         await this.client.start(exe);
         this.disposables.push(setupStatusBar(exe.version));
 
@@ -145,8 +149,8 @@ class Session implements vscode.Disposable {
         await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
     }
 
-    tryRestartClient(context: vscode.ExtensionContext): Promise<boolean> {
-        return this.client.tryRestart(context);
+    tryRestartClient(exe: { path: string; version: string; }): Promise<boolean> {
+        return this.client.tryRestart(exe);
     }
 
     registerCommands(): void {

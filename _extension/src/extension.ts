@@ -7,13 +7,10 @@ import {
 import {
     aiConnectionString,
     getExplicitConfigTarget,
-    getTsdkServerKind,
     getUseTsgo,
     getWinningTsgoConfigKey,
-    hasNativeTsdkConfigured,
-    hasTsdkConfigured,
+    JsTsServerSelection,
     needsExtHostRestartOnChange,
-    readLanguageServerPreference,
 } from "./util";
 
 import { TelemetryReporter as VSCodeTelemetryReporter } from "@vscode/extension-telemetry";
@@ -30,6 +27,8 @@ import assert from "node:assert";
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
     initializeAPIConnection(pipe?: string): Promise<string>;
+    start(selection?: JsTsServerSelection): Promise<void>;
+    stop(): Promise<void>;
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
@@ -57,15 +56,51 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const sessionManager = new SessionManager(context, output, languageServerInitializedEventEmitter, telemetryReporter);
     context.subscriptions.push(sessionManager);
 
+    let pluginWarningShown = false;
+    const onDidChangeExtensions = vscode.extensions.onDidChange(() => {
+        if (sessionManager.currentSession) {
+            warnAboutTsServerPlugins(context, output);
+        }
+    });
+    context.subscriptions.push(onDidChangeExtensions);
+
+    function onLanguageServerInitialized(listener: () => void): vscode.Disposable {
+        if (sessionManager.currentSession?.client.isInitialized) {
+            listener();
+        }
+        return languageServerInitializedEventEmitter.event(listener);
+    }
+
+    async function startNativeServer(selection?: JsTsServerSelection): Promise<void> {
+        if (selection?.kind && selection.kind !== "lsp") {
+            await sessionManager.stop();
+            return;
+        }
+        await sessionManager.start(context, selection);
+        warnAboutTsServerPlugins(context, output);
+        promptUseWorkspaceVersion(context).catch(err => {
+            output.appendLine(vscode.l10n.t(`Error prompting to use workspace version: {0}`, String(err)));
+        });
+    }
+
+    const api: ExtensionAPI = {
+        onLanguageServerInitialized: onLanguageServerInitialized,
+        async initializeAPIConnection(pipe?: string): Promise<string> {
+            return sessionManager.initializeAPIConnection(pipe);
+        },
+        start: startNativeServer,
+        stop: () => sessionManager.stop(),
+    };
+
+    if (hasStradaServerSelectionApi()) {
+        return api;
+    }
+
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
         if (
             event.affectsConfiguration("typescript.experimental.useTsgo")
             || event.affectsConfiguration("js/ts.experimental.useTsgo")
-            || event.affectsConfiguration("js/ts.languageServer.preference")
-            || event.affectsConfiguration("typescript.tsdk")
-            || event.affectsConfiguration("js/ts.tsdk.path")
-            || event.affectsConfiguration("typescript.native-preview.tsdk")
         ) {
             // Debounce to coalesce rapid events when both settings are updated together.
             clearTimeout(configChangeTimeout);
@@ -89,21 +124,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     }));
     context.subscriptions.push({ dispose: () => clearTimeout(configChangeTimeout) });
 
-    const hasOnboardedTsgoStateKey = "hasOnboardedTsgo";
-    const shouldOnboardTsgo = !context.globalState.get<boolean>(hasOnboardedTsgoStateKey);
-    if (shouldOnboardTsgo) {
-        await context.globalState.update(hasOnboardedTsgoStateKey, true);
-    }
-
     const useTsgo = getUseTsgo();
-    const tsdkServerKind = await getTsdkServerKind(context);
-    const hasNativeTsdk = tsdkServerKind === "lsp";
-    const hasTsdk = tsdkServerKind !== undefined || await hasTsdkConfigured();
-
+    const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
     if (context.extensionMode === vscode.ExtensionMode.Development) {
-        const tsExtension = vscode.extensions.getExtension("vscode.typescript-language-features");
         if (!tsExtension) {
-            if (!useTsgo) {
+            if (useTsgo === false) {
                 vscode.window.showWarningMessage(
                     vscode.l10n.t("The built-in TypeScript extension is disabled. Sync launch.json with launch.template.json to reenable."),
                     vscode.l10n.t("OK"),
@@ -126,67 +151,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             return;
         }
     }
-    else if (useTsgo === false) {
+    else if (useTsgo !== true) {
         output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
         return;
     }
-    else if (useTsgo === undefined) {
-        if (!hasNativeTsdk) {
-            if (shouldOnboardTsgo && !hasTsdk) {
-                // First run after install: enable by default.
-                updateUseTsgoSetting(true);
-                return;
-            }
-            output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
-            return;
-        }
-    }
 
     async function shouldStartTsgo(context: vscode.ExtensionContext): Promise<boolean> {
-        const tsdkServerKind = await getTsdkServerKind(context);
-        if (tsdkServerKind !== undefined) {
-            return tsdkServerKind === "lsp";
-        }
-        switch (readLanguageServerPreference()) {
-            case "preferLsp":
-                return true;
-            case "preferTsserver":
-                return false;
-        }
         const useTsgo = getUseTsgo();
-        if (useTsgo !== undefined) {
-            return useTsgo;
+        if (context.extensionMode === vscode.ExtensionMode.Development && !vscode.extensions.getExtension("vscode.typescript-language-features")) {
+            return useTsgo !== false;
         }
-        return hasNativeTsdkConfigured(context);
+        return useTsgo === true;
     }
 
-    let pluginWarningShown = false;
-    const onDidChangeExtensions = vscode.extensions.onDidChange(() => {
-        warnAboutTsServerPlugins(context, output);
-    });
-    context.subscriptions.push(onDidChangeExtensions);
-    warnAboutTsServerPlugins(context, output);
+    await startNativeServer();
 
-    await sessionManager.start(context);
-
-    // Prompt user to use workspace version if one is detected and they haven't opted in yet.
-    promptUseWorkspaceVersion(context).catch(err => {
-        output.appendLine(vscode.l10n.t(`Error prompting to use workspace version: {0}`, String(err)));
-    });
-
-    function onLanguageServerInitialized(listener: () => void): vscode.Disposable {
-        if (sessionManager.currentSession?.client.isInitialized) {
-            listener();
-        }
-        return languageServerInitializedEventEmitter.event(listener);
-    }
-
-    return {
-        onLanguageServerInitialized: onLanguageServerInitialized,
-        async initializeAPIConnection(pipe?: string): Promise<string> {
-            return sessionManager.initializeAPIConnection(pipe);
-        },
-    };
+    return api;
 
     async function warnAboutTsServerPlugins(context: vscode.ExtensionContext, output: vscode.LogOutputChannel): Promise<void> {
         // Never show more than once.
@@ -251,6 +231,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             await context.globalState.update(pluginWarningDismissedKey, true);
         }
     }
+}
+
+function hasStradaServerSelectionApi(): boolean {
+    const extension = vscode.extensions.getExtension("vscode.typescript-language-features");
+    if (!extension?.isActive) {
+        return false;
+    }
+
+    const exports: unknown = extension.exports;
+    if (!exports || typeof exports !== "object") {
+        return false;
+    }
+
+    const getAPI: unknown = (exports as { getAPI?: unknown; }).getAPI;
+    if (typeof getAPI !== "function") {
+        return false;
+    }
+
+    const api: unknown = getAPI(0);
+    return !!api && typeof api === "object" && typeof (api as { getServerSelection?: unknown; }).getServerSelection === "function";
 }
 
 const suppressedPluginExtensionIds: Set<string> = new Set([
