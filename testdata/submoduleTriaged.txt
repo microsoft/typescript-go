@@ -7,7 +7,6 @@
 compiler/isolatedDeclarationErrorsExpandoFunctions.errors.txt.diff
 compiler/isolatedDeclarationErrorsClasses.errors.txt.diff
 compiler/isolatedDeclarationErrorsExpressions.errors.txt.diff
-compiler/isolatedDeclarationErrorsClassesExpressions.errors.txt.diff
 compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
 compiler/isolatedDeclarationErrors.errors.txt.diff
 
