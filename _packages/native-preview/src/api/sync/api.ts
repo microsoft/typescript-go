@@ -117,7 +117,7 @@ import type {
 } from "./types.ts";
 
 export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions, SourceFileMetadata };
+export type { __String, APIOptions, ClientSocketOptions, ClientSpawnOptions, DocumentIdentifier, DocumentPosition, LSPConnectionOptions, SourceFileMetadata };
 export type { AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, NumberLiteralType, ObjectType, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 
@@ -1455,9 +1455,9 @@ export class Checker {
 }
 
 export interface PrintNodeOptions {
-    preserveSourceNewlines?: boolean;
-    neverAsciiEscape?: boolean;
-    terminateUnterminatedLiterals?: boolean;
+    preserveSourceNewlines?: boolean | undefined;
+    neverAsciiEscape?: boolean | undefined;
+    terminateUnterminatedLiterals?: boolean | undefined;
 }
 
 export class Emitter {
@@ -1507,7 +1507,7 @@ export interface ReferencedSymbolEntry {
     /** The node handle for the symbol's definition. */
     definition: NodeHandle;
     /** The resolved symbol for the definition, if available. */
-    symbol?: Symbol;
+    symbol?: Symbol | undefined;
     /** The node handles for each reference to the symbol. */
     references: NodeHandle[];
 }
@@ -1517,7 +1517,7 @@ export interface SignatureUsage {
     /** The node handle for the name reference. */
     name: NodeHandle;
     /** The node handle for the call expression, if the reference is invoked. */
-    call?: NodeHandle;
+    call?: NodeHandle | undefined;
 }
 
 export class Symbol {
