@@ -56,11 +56,10 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
     let explicit: Record<string, any> = Object.create(null);
     for (let i = configs.length - 1; i >= 0; i--) {
         if (configs[i].explicit !== null) {
+            applyConfigAliases(configs[i].explicit!);
             explicit = deepMerge(explicit, configs[i].explicit!);
         }
     }
-
-    applyConfigAliases(explicit);
 
     return deepMerge(defaults, explicit);
 }

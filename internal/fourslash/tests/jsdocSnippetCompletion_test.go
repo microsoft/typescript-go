@@ -63,6 +63,23 @@ function abcdef(x) { return x; }
 	assert.Equal(t, list.Items[0].TextEdit.InsertReplaceEdit.NewText, "/**\n * $0\n * @param x ${1}\n * @returns ${2}\n */")
 }
 
+func TestJSDocSnippetCompletionPreservesCRLF(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = "/*completion*/ */\r\nfunction abcdef(x) { return x; }\r\n"
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.GoToMarker(t, "completion")
+	f.Insert(t, "/**")
+
+	userPreferences := lsutil.NewDefaultUserPreferences()
+	userPreferences.FormatCodeSettings.NewLineCharacter = "\r\n"
+	list := f.GetCompletions(t, &userPreferences)
+	assert.Assert(t, list != nil)
+	assert.Equal(t, len(list.Items), 1)
+	assert.Equal(t, list.Items[0].TextEdit.InsertReplaceEdit.NewText, "/**\r\n * $0\r\n * @param x ${1}\r\n * @returns ${2}\r\n */")
+}
+
 func TestJSDocSnippetCompletionRespectsGenerateReturnPreference(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

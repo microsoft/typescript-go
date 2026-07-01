@@ -43,7 +43,7 @@ func (l *LanguageService) getJSDocSnippetCompletion(ctx context.Context, file *a
 	insertText := template.newText
 	var insertTextFormat *lsproto.InsertTextFormat
 	if clientSupportsItemSnippet(ctx) {
-		insertText = templateToSnippet(insertText)
+		insertText = templateToSnippet(insertText, newLine)
 		insertTextFormat = new(lsproto.InsertTextFormatSnippet)
 	}
 
@@ -358,19 +358,19 @@ func hasJSDocTags(node *ast.Node, file *ast.SourceFile) bool {
 	return tags != nil && len(tags.Nodes) > 0
 }
 
-func templateToSnippet(template string) string {
+func templateToSnippet(template string, newLine string) string {
 	if template == "/** */" {
-		return "/**\n * $0\n */"
+		return "/**" + newLine + " * $0" + newLine + " */"
 	}
 
 	snippetIndex := 1
 	template = escapeSnippetText(template)
-	template = stripJSDocTemplateIndentation(template)
-	return transformJSDocTemplateLines(template, &snippetIndex)
+	template = stripJSDocTemplateIndentation(template, newLine)
+	return transformJSDocTemplateLines(template, newLine, &snippetIndex)
 }
 
-func stripJSDocTemplateIndentation(template string) string {
-	lines := strings.Split(template, "\n")
+func stripJSDocTemplateIndentation(template string, newLine string) string {
+	lines := strings.Split(template, newLine)
 	for i, line := range lines {
 		trimmed := strings.TrimLeft(line, " \t")
 		if strings.HasPrefix(trimmed, "/") {
@@ -379,11 +379,11 @@ func stripJSDocTemplateIndentation(template string) string {
 			lines[i] = " " + trimmed
 		}
 	}
-	return strings.Join(lines, "\n")
+	return strings.Join(lines, newLine)
 }
 
-func transformJSDocTemplateLines(template string, snippetIndex *int) string {
-	lines := strings.Split(template, "\n")
+func transformJSDocTemplateLines(template string, newLine string, snippetIndex *int) string {
+	lines := strings.Split(template, newLine)
 	for i, line := range lines {
 		if i > 0 && strings.HasPrefix(lines[i-1], "/**") && lineHasOnlyJSDocAsterisk(line) {
 			lines[i] = line + "$0"
@@ -397,7 +397,7 @@ func transformJSDocTemplateLines(template string, snippetIndex *int) string {
 			lines[i] = transformed
 		}
 	}
-	return strings.Join(lines, "\n")
+	return strings.Join(lines, newLine)
 }
 
 func lineHasOnlyJSDocAsterisk(line string) bool {
