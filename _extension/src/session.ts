@@ -238,6 +238,41 @@ class Session implements vscode.Disposable {
             }
         }));
 
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.dev.startFlightRecorder", async () => {
+            try {
+                await this.client.startFlightRecorder();
+                vscode.commands.executeCommand("setContext", "typescript.native-preview.flightRecorderRunning", true);
+                vscode.window.showInformationMessage('Flight recorder started. Use "Capture Flight Recorder Snapshot" to write a trace.');
+            }
+            catch (error) {
+                vscode.window.showErrorMessage(`Failed to start flight recorder: ${error}`);
+                vscode.commands.executeCommand("setContext", "typescript.native-preview.flightRecorderRunning", false);
+            }
+        }));
+
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.dev.snapshotFlightRecorder", async () => {
+            const dir = await promptForProfileDirectory();
+            if (!dir) return;
+            try {
+                const file = await this.client.snapshotFlightRecorder(dir);
+                vscode.window.showInformationMessage(`Flight recorder snapshot saved to: ${file}`);
+            }
+            catch (error) {
+                vscode.window.showErrorMessage(`Failed to capture flight recorder snapshot: ${error}`);
+            }
+        }));
+
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.dev.stopFlightRecorder", async () => {
+            try {
+                await this.client.stopFlightRecorder();
+                vscode.commands.executeCommand("setContext", "typescript.native-preview.flightRecorderRunning", false);
+                vscode.window.showInformationMessage("Flight recorder stopped.");
+            }
+            catch (error) {
+                vscode.window.showErrorMessage(`Failed to stop flight recorder: ${error}`);
+            }
+        }));
+
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.initializeAPIConnection", async () => {
             const result = await this.client.initializeAPISession();
             return result.pipe;

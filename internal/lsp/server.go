@@ -30,6 +30,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
+	"github.com/microsoft/typescript-go/internal/runtimetrace"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"golang.org/x/sync/errgroup"
@@ -211,7 +212,8 @@ type Server struct {
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
 
-	cpuProfiler pprof.CPUProfiler
+	cpuProfiler    pprof.CPUProfiler
+	flightRecorder runtimetrace.FlightRecorder
 
 	progressDelay   time.Duration
 	projectProgress *projectLoadingProgress
@@ -699,6 +701,10 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	ctx = lsproto.WithClientCapabilities(ctx, &s.clientCapabilities)
 
 	if handler := handlers()[req.Method]; handler != nil {
+		ctx, endTask := runtimetrace.NewTask(ctx, "lsp."+string(req.Method))
+		if req.ID != nil {
+			runtimetrace.LogSafe(ctx, "lsp", req.ID.String())
+		}
 		start := time.Now()
 		doAsyncWork, err := handler(s, ctx, req)
 		idStr := ""
@@ -706,6 +712,11 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			idStr = " (" + req.ID.String() + ")"
 		}
 		if err != nil {
+			if !errors.Is(err, context.Canceled) {
+				runtimetrace.LogSafe(ctx, "error", string(req.Method))
+				runtimetrace.LogUnsafef(ctx, "error", "%v", err)
+			}
+			endTask()
 			if _, ok := errors.AsType[userFacingRequestFailedError](err); !ok {
 				s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
 			} else if !s.logger.IsTracing() {
@@ -715,10 +726,15 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		}
 		if doAsyncWork != nil {
 			return func() error {
+				defer endTask()
 				// note: ctx.Err() has to be checked in the async work to allow async handlers to cleanup resources correctly
 				asyncWorkErr := doAsyncWork()
 				_, isUserFacing := errors.AsType[userFacingRequestFailedError](asyncWorkErr)
 				isRealError := asyncWorkErr != nil && !isUserFacing
+				if asyncWorkErr != nil && !errors.Is(asyncWorkErr, context.Canceled) {
+					runtimetrace.LogSafe(ctx, "error", string(req.Method))
+					runtimetrace.LogUnsafef(ctx, "error", "%v", asyncWorkErr)
+				}
 				if isRealError {
 					s.logger.Info("error handling method '", req.Method, "'", idStr, " in ", time.Since(start))
 				} else if !s.logger.IsTracing() {
@@ -727,6 +743,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 				return asyncWorkErr
 			}, nil
 		}
+		endTask()
 		if !s.logger.IsTracing() {
 			s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
 		}
@@ -808,6 +825,9 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CustomSaveAllocProfileInfo, (*Server).handleSaveAllocProfile)
 	registerRequestHandler(handlers, lsproto.CustomStartCPUProfileInfo, (*Server).handleStartCPUProfile)
 	registerRequestHandler(handlers, lsproto.CustomStopCPUProfileInfo, (*Server).handleStopCPUProfile)
+	registerRequestHandler(handlers, lsproto.CustomStartFlightRecorderInfo, (*Server).handleStartFlightRecorder)
+	registerRequestHandler(handlers, lsproto.CustomSnapshotFlightRecorderInfo, (*Server).handleSnapshotFlightRecorder)
+	registerRequestHandler(handlers, lsproto.CustomStopFlightRecorderInfo, (*Server).handleStopFlightRecorder)
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
@@ -1865,6 +1885,44 @@ func (s *Server) handleStopCPUProfile(_ context.Context, _ lsproto.NoParams, _ *
 	}
 	s.logger.Info("CPU profile saved to: ", filePath)
 	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleStartFlightRecorder(_ context.Context, params *lsproto.FlightRecorderStartParams, _ *lsproto.RequestMessage) (lsproto.StartFlightRecorderResponse, error) {
+	cfg := runtimetrace.FlightRecorderConfig{}
+	if params != nil {
+		minAge := ""
+		if params.MinAge != nil {
+			minAge = *params.MinAge
+		}
+		if err := cfg.SetMinAgeString(minAge); err != nil {
+			return lsproto.Null{}, err
+		}
+		if params.MaxBytes != nil {
+			cfg.MaxBytes = uint64(*params.MaxBytes)
+		}
+	}
+	if err := s.flightRecorder.Start(cfg); err != nil {
+		return lsproto.Null{}, err
+	}
+	s.logger.Info("Flight recorder started")
+	return lsproto.Null{}, nil
+}
+
+func (s *Server) handleSnapshotFlightRecorder(_ context.Context, params *lsproto.ProfileParams, _ *lsproto.RequestMessage) (*lsproto.ProfileResult, error) {
+	filePath, err := s.flightRecorder.Snapshot(params.Dir)
+	if err != nil {
+		return nil, err
+	}
+	s.logger.Info("Flight recorder snapshot saved to: ", filePath)
+	return &lsproto.ProfileResult{File: filePath}, nil
+}
+
+func (s *Server) handleStopFlightRecorder(_ context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.StopFlightRecorderResponse, error) {
+	if err := s.flightRecorder.Stop(); err != nil {
+		return lsproto.Null{}, err
+	}
+	s.logger.Info("Flight recorder stopped")
+	return lsproto.Null{}, nil
 }
 
 func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectInfoParams, _ *lsproto.RequestMessage) (lsproto.CustomProjectInfoResponse, error) {

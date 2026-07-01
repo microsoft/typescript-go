@@ -136,7 +136,7 @@ func (p *checkerPool) GetChecker(ctx context.Context, file *ast.SourceFile) (*ch
 	case core.CheckerLifetimeDiagnostics:
 		return p.getDiagnosticsChecker(ctx, requestID)
 	case core.CheckerLifetimeAPI:
-		return p.getPersistentChecker()
+		return p.getPersistentChecker(ctx)
 	default:
 		return p.getQueryChecker(ctx, requestID, file)
 	}
@@ -230,7 +230,7 @@ func (p *checkerPool) getDiagnosticsChecker(ctx context.Context, requestID strin
 
 	if p.checkers[diagIndex] == nil {
 		p.log("checkerpool: Creating diagnostics checker")
-		c, _ := checker.NewChecker(p.program, nil)
+		c, _ := checker.NewChecker(ctx, p.program, nil)
 		p.checkers[diagIndex] = c
 	}
 
@@ -275,7 +275,7 @@ func (p *checkerPool) getQueryChecker(ctx context.Context, requestID string, fil
 	}
 
 	// Find any available query checker or create one.
-	c, index := p.findOrCreateQueryCheckerLocked()
+	c, index := p.findOrCreateQueryCheckerLocked(ctx)
 	p.heldBy[index] = holdTag(requestID)
 	p.log(fmt.Sprintf("checkerpool: Acquired query checker %d for request %s", index, holdTag(requestID)))
 	if requestID != "" {
@@ -293,7 +293,7 @@ func (p *checkerPool) getQueryChecker(ctx context.Context, requestID string, fil
 // findOrCreateQueryCheckerLocked returns an idle query checker or creates one
 // in the first empty slot. The semaphore guarantees at least one slot is
 // available. Must be called with p.mu held.
-func (p *checkerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
+func (p *checkerPool) findOrCreateQueryCheckerLocked(ctx context.Context) (*checker.Checker, int) {
 	// Prefer an existing idle checker.
 	for i := 1; i < len(p.checkers); i++ {
 		if c := p.checkers[i]; c != nil && p.heldBy[i] == "" {
@@ -304,7 +304,7 @@ func (p *checkerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	for i := 1; i < len(p.checkers); i++ {
 		if p.checkers[i] == nil {
 			p.log(fmt.Sprintf("checkerpool: Creating query checker %d", i))
-			c, _ := checker.NewChecker(p.program, nil)
+			c, _ := checker.NewChecker(ctx, p.program, nil)
 			p.checkers[i] = c
 			return c, i
 		}
@@ -312,13 +312,13 @@ func (p *checkerPool) findOrCreateQueryCheckerLocked() (*checker.Checker, int) {
 	panic("checkerpool: no available query slot despite holding semaphore token")
 }
 
-func (p *checkerPool) getPersistentChecker() (*checker.Checker, func()) {
+func (p *checkerPool) getPersistentChecker(ctx context.Context) (*checker.Checker, func()) {
 	p.persistentSem <- struct{}{}
 	p.mu.Lock()
 
 	if p.persistentChecker == nil {
 		p.log("checkerpool: Creating persistent checker")
-		c, _ := checker.NewChecker(p.program, nil)
+		c, _ := checker.NewChecker(ctx, p.program, nil)
 		p.persistentChecker = c
 	}
 

@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
+	"github.com/microsoft/typescript-go/internal/runtimetrace"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -290,6 +291,7 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
+	defer runtimetrace.Region(context.TODO(), "tsc.performIncrementalCompilation")()
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
@@ -339,6 +341,7 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
+	defer runtimetrace.Region(context.TODO(), "tsc.performCompilation")()
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 
 	tr := startTracingIfNeeded(sys, config, testing)
