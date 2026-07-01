@@ -33,6 +33,8 @@ export interface ExtensionAPI {
 
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
+    const hasStradaApi = hasStradaServerSelectionApi();
+    await vscode.commands.executeCommand("setContext", "typescript.native-preview.fallbackMode", !hasStradaApi);
 
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
@@ -92,7 +94,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         stop: () => sessionManager.stop(),
     };
 
-    if (hasStradaServerSelectionApi()) {
+    if (hasStradaApi) {
         return api;
     }
 

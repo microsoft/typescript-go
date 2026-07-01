@@ -274,6 +274,10 @@
         "menus": {
             "commandPalette": [
                 {
+                    "command": "typescript.native-preview.selectVersion",
+                    "when": "typescript.native-preview.fallbackMode"
+                },
+                {
                     "command": "typescript.native-preview.goToSourceDefinition",
                     "when": "typescript.native-preview.serverRunning && tsSupportsSourceDefinition"
                 },
