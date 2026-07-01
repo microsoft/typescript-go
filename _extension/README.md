@@ -1,4 +1,4 @@
-# TypeScript 7 Native Preview
+# TypeScript 7
 
 This extension provides the native implementation of the TypeScript language service. It provides features like go-to-definition, completions, errors and diagnostics, quick info/tooltip hovers, and more.
 
@@ -6,7 +6,7 @@ This extension provides the native implementation of the TypeScript language ser
 
 1. Install the extension from the marketplace.
 2. Open a TypeScript or JavaScript file (`.ts`) in your editor.
-3. Activate the extension with the command `TypeScript 7 Native Preview: Enable (Experimental)`, or update your settings below:
+3. Activate the extension with the command `TypeScript 7: Enable (Experimental)`, or update your settings below:
 
 ## Configuration
 
@@ -15,7 +15,7 @@ You can enable this extension by modifying the following settings:
 ```jsonc
 {
     // UI Setting:
-    // TypeScript 7 Native Preview > Experimental: Use Tsgo
+    // TypeScript 7 > Experimental: Use Tsgo
     "js/ts.experimental.useTsgo": true,
 
     // Optional: use an @typescript/native-preview package or tsgo binary directory.

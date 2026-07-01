@@ -285,10 +285,11 @@ export class Client implements vscode.Disposable {
      * Restart the language server if the executable path has not changed.
      * Returns true if a restart was performed.
      */
-    async tryRestart(exe: ExeInfo): Promise<boolean> {
+    async tryRestart(context: vscode.ExtensionContext): Promise<boolean> {
         if (!this.client) {
             return Promise.reject(new Error(vscode.l10n.t("Language client is not initialized")));
         }
+        const exe = await getExe(context);
         if (exe.path !== this.exe?.path) {
             return false;
         }
@@ -472,7 +473,7 @@ class ReportingErrorHandler implements ErrorHandler {
         if (resultingAction === CloseAction.DoNotRestart) {
             return {
                 action: resultingAction,
-                message: vscode.l10n.t(`The TypeScript 7 Native Preview language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
+                message: vscode.l10n.t(`The TypeScript 7 language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
             };
         }
 

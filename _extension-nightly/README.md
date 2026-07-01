@@ -1,4 +1,4 @@
-# TypeScript Nightly
+# TypeScript 7 Nightly
 
 This extension contains a nightly TypeScript server and API for the [TypeScript extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.vscode-typescript).
 

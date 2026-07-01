@@ -9,7 +9,6 @@ import {
     getExplicitConfigTarget,
     getUseTsgo,
     getWinningTsgoConfigKey,
-    JsTsServerSelection,
     needsExtHostRestartOnChange,
 } from "./util";
 
@@ -27,14 +26,10 @@ import assert from "node:assert";
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
     initializeAPIConnection(pipe?: string): Promise<string>;
-    start(selection?: JsTsServerSelection): Promise<void>;
-    stop(): Promise<void>;
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
-    const isStradaServerSelectionOwner = hasStradaServerSelectionConfiguration();
-    await vscode.commands.executeCommand("setContext", "typescript.native-preview.fallbackMode", !isStradaServerSelectionOwner);
 
     const telemetryReporter = createTelemetryReporter(new VSCodeTelemetryReporter(aiConnectionString));
     context.subscriptions.push(telemetryReporter);
@@ -73,12 +68,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         return languageServerInitializedEventEmitter.event(listener);
     }
 
-    async function startNativeServer(selection?: JsTsServerSelection): Promise<void> {
-        if (selection?.kind && selection.kind !== "lsp") {
-            await sessionManager.stop();
-            return;
-        }
-        await sessionManager.start(context, selection);
+    async function startNativeServer(): Promise<void> {
+        await sessionManager.start(context);
         warnAboutTsServerPlugins(context, output);
         promptUseWorkspaceVersion(context).catch(err => {
             output.appendLine(vscode.l10n.t(`Error prompting to use workspace version: {0}`, String(err)));
@@ -90,13 +81,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         async initializeAPIConnection(pipe?: string): Promise<string> {
             return sessionManager.initializeAPIConnection(pipe);
         },
-        start: startNativeServer,
-        stop: () => sessionManager.stop(),
     };
-
-    if (isStradaServerSelectionOwner) {
-        return api;
-    }
 
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
@@ -108,7 +93,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             clearTimeout(configChangeTimeout);
             configChangeTimeout = setTimeout(async () => {
                 if (needsExtHostRestartOnChange()) {
-                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript 7 Native Preview setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
+                    const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript 7 setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
                     if (selected) {
                         vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                     }
@@ -142,7 +127,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             const settingName = getWinningTsgoConfigKey() ?? "js/ts.experimental.useTsgo";
             const enableSettingString = vscode.l10n.t("Enable Setting");
             vscode.window.showWarningMessage(
-                vscode.l10n.t(`TypeScript 7 Native Preview is running in development mode with "{0}" set to false.`, settingName),
+                vscode.l10n.t(`TypeScript 7 is running in development mode with "{0}" set to false.`, settingName),
                 enableSettingString,
                 vscode.l10n.t("Ignore"),
             ).then(selected => {
@@ -154,7 +139,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
     }
     else if (useTsgo !== true) {
-        output.appendLine(vscode.l10n.t("TypeScript 7 Native Preview is disabled. Select 'Enable TypeScript 7 Native Preview (Experimental)' in the command palette to enable it."));
+        output.appendLine(vscode.l10n.t("TypeScript 7 is disabled. Select 'Enable TypeScript 7 (Experimental)' in the command palette to enable it."));
         return;
     }
 
@@ -205,12 +190,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const uniqueExtensionNames = [...new Set(pluginExtensions.map(p => p.extensionId))];
         const extensionNames = uniqueExtensionNames.join(", ");
-        output.appendLine(`Extensions contributing tsserver plugins that will not apply with TypeScript 7 Native Preview: ${extensionNames}`);
+        output.appendLine(`Extensions contributing tsserver plugins that will not apply with TypeScript 7: ${extensionNames}`);
 
         const message = uniqueExtensionNames.length === 1
             // Pick the first extension & plugin, even though extensions can have multiple plugins
-            ? vscode.l10n.t(`TypeScript server plugins from the "{0}" extension will not be loaded because TypeScript 7 Native Preview is enabled globally.`, pluginExtensions[0].extensionId)
-            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript 7 Native Preview is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
+            ? vscode.l10n.t(`TypeScript server plugins from the "{0}" extension will not be loaded because TypeScript 7 is enabled globally.`, pluginExtensions[0].extensionId)
+            : vscode.l10n.t(`{0} extensions contribute TypeScript server plugins that will not be loaded because TypeScript 7 is enabled globally: {1}`, uniqueExtensionNames.length, extensionNames);
 
         const ok = vscode.l10n.t("OK");
         const disableInWorkspace = vscode.l10n.t("Disable Native Preview in Workspace");
@@ -233,17 +218,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             await context.globalState.update(pluginWarningDismissedKey, true);
         }
     }
-}
-
-function hasStradaServerSelectionConfiguration(): boolean {
-    const extension = vscode.extensions.getExtension("vscode.typescript-language-features");
-    if (!extension) {
-        return false;
-    }
-
-    const configurations = extension.packageJSON?.contributes?.configuration;
-    const configurationArray = Array.isArray(configurations) ? configurations : [configurations];
-    return configurationArray.some(configuration => !!configuration?.properties?.["js/ts.languageServer.preference"]);
 }
 
 const suppressedPluginExtensionIds: Set<string> = new Set([

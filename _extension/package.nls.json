@@ -25,11 +25,11 @@
     "native-preview.sortImports.title": "Sort Imports",
     "native-preview.removeUnusedImports.title": "Remove Unused Imports",
     "native-preview.codeLens.showLocations.title": "Show References of CodeLens",
-    "native-preview.dev.runGC.title": "TypeScript 7 Native Preview: Run Garbage Collection",
-    "native-preview.dev.saveHeapProfile.title": "TypeScript 7 Native Preview: Save Heap Profile",
-    "native-preview.dev.saveAllocProfile.title": "TypeScript 7 Native Preview: Save Allocation Profile",
-    "native-preview.dev.startCPUProfile.title": "TypeScript 7 Native Preview: Start CPU Profile",
-    "native-preview.dev.stopCPUProfile.title": "TypeScript 7 Native Preview: Stop CPU Profile",
-    "native-preview.initializeAPIConnection.ui.title": "TypeScript 7 Native Preview: Initialize API Connection",
+    "native-preview.dev.runGC.title": "TypeScript 7: Run Garbage Collection",
+    "native-preview.dev.saveHeapProfile.title": "TypeScript 7: Save Heap Profile",
+    "native-preview.dev.saveAllocProfile.title": "TypeScript 7: Save Allocation Profile",
+    "native-preview.dev.startCPUProfile.title": "TypeScript 7: Start CPU Profile",
+    "native-preview.dev.stopCPUProfile.title": "TypeScript 7: Stop CPU Profile",
+    "native-preview.initializeAPIConnection.ui.title": "TypeScript 7: Initialize API Connection",
     "developer": "Developer"
 }
