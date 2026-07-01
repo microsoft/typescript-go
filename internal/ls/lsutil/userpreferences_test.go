@@ -558,6 +558,34 @@ func TestUserPreferencesParseJSDocCompletionPreferences(t *testing.T) {
 		})
 		assert.Equal(t, prefs.EnableJSDocCompletions, core.TSTrue)
 	})
+
+	t.Run("unified jsdoc generateReturns setting", func(t *testing.T) {
+		t.Parallel()
+		prefs := ParseUserPreferences(map[string]any{
+			"js/ts": map[string]any{
+				"suggest": map[string]any{
+					"jsdoc": map[string]any{
+						"generateReturns": false,
+					},
+				},
+			},
+		})
+		assert.Equal(t, prefs.GenerateReturnInDocTemplate, core.TSFalse)
+	})
+
+	t.Run("language jsdoc generateReturns setting", func(t *testing.T) {
+		t.Parallel()
+		prefs := ParseUserPreferences(map[string]any{
+			"typescript": map[string]any{
+				"suggest": map[string]any{
+					"jsdoc": map[string]any{
+						"generateReturns": false,
+					},
+				},
+			},
+		})
+		assert.Equal(t, prefs.GenerateReturnInDocTemplate, core.TSFalse)
+	})
 }
 
 func TestUserPreferencesParseATA(t *testing.T) {
