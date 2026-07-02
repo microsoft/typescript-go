@@ -1636,7 +1636,11 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 
 	if options.EmitOnly != EmitOnlyForcedDts {
-		result := HandleNoEmitOnError(
+		result := HandleNoEmitOptions(p, options.TargetSourceFile, nil)
+		if result != nil {
+			return result
+		}
+		result = HandleNoEmitOnError(
 			ctx,
 			p,
 			options.TargetSourceFile,
@@ -1728,6 +1732,25 @@ type ProgramLike interface {
 	CommonSourceDirectory() string
 	IsSourceFileDefaultLibrary(path tspath.Path) bool
 	Program() *Program
+}
+
+// HandleNoEmitOptions mirrors tsc's handleNoEmitOptions:
+// single-file noEmit reports emitSkipped, while whole-program noEmit uses the
+// buildInfo emit result when available and otherwise reports emitSkipped=false.
+func HandleNoEmitOptions(program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
+	if !program.Options().NoEmit.IsTrue() {
+		return nil
+	}
+	if file != nil {
+		return &EmitResult{EmitSkipped: true}
+	}
+	if emitBuildInfo != nil {
+		result := emitBuildInfo()
+		if result != nil {
+			return result
+		}
+	}
+	return &EmitResult{}
 }
 
 func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
