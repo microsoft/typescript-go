@@ -1,0 +1,290 @@
+//// [tests/cases/compiler/recursiveMappedTypeAssignableToAugmentedRecursiveType.ts] ////
+
+=== /types.d.ts ===
+declare module "estree" {
+>"estree" : Symbol("estree", Decl(types.d.ts, 0, 0))
+
+    export interface Program extends BaseNode { body: Array<Directive | Statement | ModuleDeclaration>; }
+>Program : Symbol(Program, Decl(types.d.ts, 0, 25))
+>body : Symbol(Program.body, Decl(types.d.ts, 1, 47))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 3 more)
+>Directive : Symbol(Directive, Decl(types.d.ts, 1, 105))
+>Statement : Symbol(Statement, Decl(types.d.ts, 2, 86))
+>ModuleDeclaration : Symbol(ModuleDeclaration, Decl(types.d.ts, 11, 98))
+
+    export interface Directive extends BaseNode { body: BlockStatement | Expression; }
+>Directive : Symbol(Directive, Decl(types.d.ts, 1, 105))
+>body : Symbol(Directive.body, Decl(types.d.ts, 2, 49))
+>BlockStatement : Symbol(BlockStatement)
+>Expression : Symbol(Expression)
+
+    export type Statement = Declaration;
+>Statement : Symbol(Statement, Decl(types.d.ts, 2, 86))
+>Declaration : Symbol(Declaration, Decl(types.d.ts, 3, 40))
+
+    export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDeclaration;
+>Declaration : Symbol(Declaration, Decl(types.d.ts, 3, 40))
+>FunctionDeclaration : Symbol(FunctionDeclaration, Decl(types.d.ts, 4, 91))
+>VariableDeclaration : Symbol(VariableDeclaration, Decl(types.d.ts, 5, 98))
+>ClassDeclaration : Symbol(ClassDeclaration, Decl(types.d.ts, 10, 97))
+
+    export interface FunctionDeclaration extends MaybeNamedFunctionDeclaration { id: Identifier; }
+>FunctionDeclaration : Symbol(FunctionDeclaration, Decl(types.d.ts, 4, 91))
+>id : Symbol(FunctionDeclaration.id, Decl(types.d.ts, 5, 80))
+>Identifier : Symbol(Identifier)
+
+    export interface VariableDeclaration extends BaseDeclaration { consequent: Statement[]; }
+>VariableDeclaration : Symbol(VariableDeclaration, Decl(types.d.ts, 5, 98))
+>consequent : Symbol(VariableDeclaration.consequent, Decl(types.d.ts, 6, 66))
+>Statement : Symbol(Statement, Decl(types.d.ts, 2, 86))
+
+    export type Literal = SimpleLiteral | RegExpLiteral | BigIntLiteral;
+>Literal : Symbol(Literal, Decl(types.d.ts, 6, 93))
+>SimpleLiteral : Symbol(SimpleLiteral, Decl(types.d.ts, 7, 72))
+>RegExpLiteral : Symbol(RegExpLiteral, Decl(types.d.ts, 8, 112))
+>BigIntLiteral : Symbol(BigIntLiteral, Decl(types.d.ts, 9, 117))
+
+    export interface SimpleLiteral extends BaseNode, BaseExpression { value: string | boolean | number | null; }
+>SimpleLiteral : Symbol(SimpleLiteral, Decl(types.d.ts, 7, 72))
+>value : Symbol(SimpleLiteral.value, Decl(types.d.ts, 8, 69))
+
+    export interface RegExpLiteral extends BaseNode, BaseExpression { value?: RegExp | null | undefined; regex: {}; }
+>RegExpLiteral : Symbol(RegExpLiteral, Decl(types.d.ts, 8, 112))
+>value : Symbol(RegExpLiteral.value, Decl(types.d.ts, 9, 69))
+>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.regexp.d.ts, --, --) ... and 2 more)
+>regex : Symbol(RegExpLiteral.regex, Decl(types.d.ts, 9, 104))
+
+    export interface BigIntLiteral extends BaseNode, BaseExpression { raw?: string | undefined; }
+>BigIntLiteral : Symbol(BigIntLiteral, Decl(types.d.ts, 9, 117))
+>raw : Symbol(BigIntLiteral.raw, Decl(types.d.ts, 10, 69))
+
+    export interface ClassDeclaration extends MaybeNamedClassDeclaration { property: Identifier; }
+>ClassDeclaration : Symbol(ClassDeclaration, Decl(types.d.ts, 10, 97))
+>property : Symbol(ClassDeclaration.property, Decl(types.d.ts, 11, 74))
+>Identifier : Symbol(Identifier)
+
+    export type ModuleDeclaration = ExportAllDeclaration;
+>ModuleDeclaration : Symbol(ModuleDeclaration, Decl(types.d.ts, 11, 98))
+>ExportAllDeclaration : Symbol(ExportAllDeclaration, Decl(types.d.ts, 12, 57))
+
+    export interface ExportAllDeclaration extends BaseModuleDeclaration { source: Literal; }
+>ExportAllDeclaration : Symbol(ExportAllDeclaration, Decl(types.d.ts, 12, 57))
+>source : Symbol(ExportAllDeclaration.source, Decl(types.d.ts, 13, 73))
+>Literal : Symbol(Literal, Decl(types.d.ts, 6, 93))
+}
+
+declare module "estree-jsx" {
+>"estree-jsx" : Symbol("estree-jsx", Decl(types.d.ts, 14, 1))
+
+    export * from "estree";
+}
+
+declare module "hast" {
+>"hast" : Symbol("hast", Decl(types.d.ts, 18, 1), Decl(types.d.ts, 36, 1))
+
+    export type ElementContent = ElementContentMap[keyof ElementContentMap];
+>ElementContent : Symbol(ElementContent, Decl(types.d.ts, 20, 23))
+>ElementContentMap : Symbol(ElementContentMap, Decl(types.d.ts, 39, 68))
+>ElementContentMap : Symbol(ElementContentMap, Decl(types.d.ts, 39, 68))
+
+    export type RootContent = RootContentMap[keyof RootContentMap];
+>RootContent : Symbol(RootContent, Decl(types.d.ts, 21, 76))
+>RootContentMap : Symbol(RootContentMap, Decl(types.d.ts, 22, 67))
+>RootContentMap : Symbol(RootContentMap, Decl(types.d.ts, 22, 67))
+
+    export interface RootContentMap { comment: Comment; doctype: Doctype; element: Element; text: Text; }
+>RootContentMap : Symbol(RootContentMap, Decl(types.d.ts, 22, 67))
+>comment : Symbol(RootContentMap.comment, Decl(types.d.ts, 23, 37))
+>Comment : Symbol(Comment, Decl(types.d.ts, 23, 105))
+>doctype : Symbol(RootContentMap.doctype, Decl(types.d.ts, 23, 55))
+>Doctype : Symbol(Doctype, Decl(types.d.ts, 24, 97))
+>element : Symbol(RootContentMap.element, Decl(types.d.ts, 23, 73))
+>Element : Symbol(Element, Decl(types.d.ts, 25, 99))
+>text : Symbol(RootContentMap.text, Decl(types.d.ts, 23, 91))
+>Text : Symbol(Text, Decl(types.d.ts, 27, 112))
+
+    export interface Comment extends Literal { type: "comment"; data?: CommentData | undefined; }
+>Comment : Symbol(Comment, Decl(types.d.ts, 23, 105))
+>type : Symbol(Comment.type, Decl(types.d.ts, 24, 46))
+>data : Symbol(Comment.data, Decl(types.d.ts, 24, 63))
+>CommentData : Symbol(CommentData)
+
+    export interface Doctype extends UnistNode { type: "doctype"; data?: DoctypeData | undefined; }
+>Doctype : Symbol(Doctype, Decl(types.d.ts, 24, 97))
+>type : Symbol(Doctype.type, Decl(types.d.ts, 25, 48))
+>data : Symbol(Doctype.data, Decl(types.d.ts, 25, 65))
+>DoctypeData : Symbol(DoctypeData)
+
+    export interface Element extends Parent { type: "element"; tagName: string; properties: Properties; children: ElementContent[]; content?: Root | undefined; data?: ElementData | undefined; }
+>Element : Symbol(Element, Decl(types.d.ts, 25, 99))
+>type : Symbol(Element.type, Decl(types.d.ts, 26, 45))
+>tagName : Symbol(Element.tagName, Decl(types.d.ts, 26, 62))
+>properties : Symbol(Element.properties, Decl(types.d.ts, 26, 79))
+>Properties : Symbol(Properties)
+>children : Symbol(Element.children, Decl(types.d.ts, 26, 103))
+>ElementContent : Symbol(ElementContent, Decl(types.d.ts, 20, 23))
+>content : Symbol(Element.content, Decl(types.d.ts, 26, 131))
+>Root : Symbol(Root, Decl(types.d.ts, 26, 193))
+>data : Symbol(Element.data, Decl(types.d.ts, 26, 159))
+>ElementData : Symbol(ElementData)
+
+    export interface Root extends Parent { type: "root"; children: RootContent[]; data?: RootData | undefined; }
+>Root : Symbol(Root, Decl(types.d.ts, 26, 193))
+>type : Symbol(Root.type, Decl(types.d.ts, 27, 42))
+>children : Symbol(Root.children, Decl(types.d.ts, 27, 56))
+>RootContent : Symbol(RootContent, Decl(types.d.ts, 21, 76))
+>data : Symbol(Root.data, Decl(types.d.ts, 27, 81))
+>RootData : Symbol(RootData)
+
+    export interface Text extends Literal { type: "text"; data?: TextData | undefined; }
+>Text : Symbol(Text, Decl(types.d.ts, 27, 112))
+>type : Symbol(Text.type, Decl(types.d.ts, 28, 43))
+>data : Symbol(Text.data, Decl(types.d.ts, 28, 57))
+>TextData : Symbol(TextData)
+}
+
+declare module "mdast-util-mdx-jsx" {
+>"mdast-util-mdx-jsx" : Symbol("mdast-util-mdx-jsx", Decl(types.d.ts, 29, 1))
+
+    import type { Program } from "estree-jsx";
+>Program : Symbol(Program, Decl(types.d.ts, 32, 17))
+
+    export interface MdxJsxExpressionAttribute extends Node { estree?: Program | null | undefined; }
+>MdxJsxExpressionAttribute : Symbol(MdxJsxExpressionAttribute, Decl(types.d.ts, 32, 46))
+>Node : Symbol(Node, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
+>estree : Symbol(MdxJsxExpressionAttribute.estree, Decl(types.d.ts, 33, 61))
+>Program : Symbol(Program, Decl(types.d.ts, 32, 17))
+
+    export interface MdxJsxAttribute extends Node { data?: MdxJsxAttributeData | undefined; }
+>MdxJsxAttribute : Symbol(MdxJsxAttribute, Decl(types.d.ts, 33, 100))
+>Node : Symbol(Node, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
+>data : Symbol(MdxJsxAttribute.data, Decl(types.d.ts, 34, 51))
+>MdxJsxAttributeData : Symbol(MdxJsxAttributeData)
+
+    export interface MdxJsxTextElementHast extends HastParent { attributes: Array<MdxJsxAttribute | MdxJsxExpressionAttribute>; }
+>MdxJsxTextElementHast : Symbol(MdxJsxTextElementHast, Decl(types.d.ts, 34, 93))
+>attributes : Symbol(MdxJsxTextElementHast.attributes, Decl(types.d.ts, 35, 63))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 3 more)
+>MdxJsxAttribute : Symbol(MdxJsxAttribute, Decl(types.d.ts, 33, 100))
+>MdxJsxExpressionAttribute : Symbol(MdxJsxExpressionAttribute, Decl(types.d.ts, 32, 46))
+}
+
+declare module "hast" {
+>"hast" : Symbol("hast", Decl(types.d.ts, 18, 1), Decl(types.d.ts, 36, 1))
+
+    import type { MdxJsxTextElementHast } from "mdast-util-mdx-jsx";
+>MdxJsxTextElementHast : Symbol(MdxJsxTextElementHast, Decl(types.d.ts, 39, 17))
+
+    interface ElementContentMap { mdxJsxTextElement: MdxJsxTextElementHast; }
+>ElementContentMap : Symbol(ElementContentMap, Decl(types.d.ts, 39, 68))
+>mdxJsxTextElement : Symbol(ElementContentMap.mdxJsxTextElement, Decl(types.d.ts, 40, 33))
+>MdxJsxTextElementHast : Symbol(MdxJsxTextElementHast, Decl(types.d.ts, 39, 17))
+}
+
+=== /repro.ts ===
+import "mdast-util-mdx-jsx";
+import type { Root } from "hast";
+>Root : Symbol(Root, Decl(repro.ts, 1, 13))
+
+type Transform<Base, From, To> = {
+>Transform : Symbol(Transform, Decl(repro.ts, 1, 33))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>From : Symbol(From, Decl(repro.ts, 3, 20))
+>To : Symbol(To, Decl(repro.ts, 3, 26))
+
+    [K in keyof Base]: Exclude<Base[K], undefined | null> extends never ? Base[K]
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+
+        : Exclude<Base[K], undefined | null> extends object ? Exclude<Base[K], undefined | null> extends From ? To | Extract<Base[K], null | undefined> : Transform<Base[K], From, To>
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+>Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+>From : Symbol(From, Decl(repro.ts, 3, 20))
+>To : Symbol(To, Decl(repro.ts, 3, 26))
+>Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+>Transform : Symbol(Transform, Decl(repro.ts, 1, 33))
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+>From : Symbol(From, Decl(repro.ts, 3, 20))
+>To : Symbol(To, Decl(repro.ts, 3, 26))
+
+        : Base[K];
+>Base : Symbol(Base, Decl(repro.ts, 3, 15))
+>K : Symbol(K, Decl(repro.ts, 4, 5))
+
+};
+type TransformJson<T> = Transform<T, Date | bigint, string>;
+>TransformJson : Symbol(TransformJson, Decl(repro.ts, 7, 2))
+>T : Symbol(T, Decl(repro.ts, 8, 19))
+>Transform : Symbol(Transform, Decl(repro.ts, 1, 33))
+>T : Symbol(T, Decl(repro.ts, 8, 19))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)
+
+declare function fetchJson<T>(): TransformJson<T>;
+>fetchJson : Symbol(fetchJson, Decl(repro.ts, 8, 60))
+>T : Symbol(T, Decl(repro.ts, 10, 27))
+>TransformJson : Symbol(TransformJson, Decl(repro.ts, 7, 2))
+>T : Symbol(T, Decl(repro.ts, 10, 27))
+
+declare function parseDate(s: string): Date;
+>parseDate : Symbol(parseDate, Decl(repro.ts, 10, 50))
+>s : Symbol(s, Decl(repro.ts, 11, 27))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)
+
+interface IMessage { createdAt: Date; content: Root; }
+>IMessage : Symbol(IMessage, Decl(repro.ts, 11, 44))
+>createdAt : Symbol(IMessage.createdAt, Decl(repro.ts, 13, 20))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)
+>content : Symbol(IMessage.content, Decl(repro.ts, 13, 37))
+>Root : Symbol(Root, Decl(repro.ts, 1, 13))
+
+interface IAggregate { createdAt: Date; messages: IMessage[]; }
+>IAggregate : Symbol(IAggregate, Decl(repro.ts, 13, 54))
+>createdAt : Symbol(IAggregate.createdAt, Decl(repro.ts, 14, 22))
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)
+>messages : Symbol(IAggregate.messages, Decl(repro.ts, 14, 39))
+>IMessage : Symbol(IMessage, Decl(repro.ts, 11, 44))
+
+export function getAggregate(): IAggregate {
+>getAggregate : Symbol(getAggregate, Decl(repro.ts, 14, 63))
+>IAggregate : Symbol(IAggregate, Decl(repro.ts, 13, 54))
+
+    const response = fetchJson<TransformJson<IAggregate>>();
+>response : Symbol(response, Decl(repro.ts, 17, 9))
+>fetchJson : Symbol(fetchJson, Decl(repro.ts, 8, 60))
+>TransformJson : Symbol(TransformJson, Decl(repro.ts, 7, 2))
+>IAggregate : Symbol(IAggregate, Decl(repro.ts, 13, 54))
+
+    return { ...response, createdAt: parseDate(response.createdAt), messages: response.messages.map(message => ({ ...message, createdAt: parseDate(message.createdAt) })) };
+>response : Symbol(response, Decl(repro.ts, 17, 9))
+>createdAt : Symbol(createdAt, Decl(repro.ts, 18, 25))
+>parseDate : Symbol(parseDate, Decl(repro.ts, 10, 50))
+>response.createdAt : Symbol(createdAt, Decl(repro.ts, 14, 22))
+>response : Symbol(response, Decl(repro.ts, 17, 9))
+>createdAt : Symbol(createdAt, Decl(repro.ts, 14, 22))
+>messages : Symbol(messages, Decl(repro.ts, 18, 67))
+>response.messages.map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>response.messages : Symbol(messages, Decl(repro.ts, 14, 39))
+>response : Symbol(response, Decl(repro.ts, 17, 9))
+>messages : Symbol(messages, Decl(repro.ts, 14, 39))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>message : Symbol(message, Decl(repro.ts, 18, 100))
+>message : Symbol(message, Decl(repro.ts, 18, 100))
+>createdAt : Symbol(createdAt, Decl(repro.ts, 18, 125))
+>parseDate : Symbol(parseDate, Decl(repro.ts, 10, 50))
+>message.createdAt : Symbol(createdAt, Decl(repro.ts, 13, 20))
+>message : Symbol(message, Decl(repro.ts, 18, 100))
+>createdAt : Symbol(createdAt, Decl(repro.ts, 13, 20))
+}
+

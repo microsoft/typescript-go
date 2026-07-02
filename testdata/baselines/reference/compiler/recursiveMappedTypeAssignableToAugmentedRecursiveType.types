@@ -1,0 +1,187 @@
+//// [tests/cases/compiler/recursiveMappedTypeAssignableToAugmentedRecursiveType.ts] ////
+
+=== /types.d.ts ===
+declare module "estree" {
+>"estree" : typeof import("estree")
+
+    export interface Program extends BaseNode { body: Array<Directive | Statement | ModuleDeclaration>; }
+>body : (Directive | ExportAllDeclaration | Declaration)[]
+
+    export interface Directive extends BaseNode { body: BlockStatement | Expression; }
+>body : any
+
+    export type Statement = Declaration;
+>Statement : Declaration
+
+    export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDeclaration;
+>Declaration : Declaration
+
+    export interface FunctionDeclaration extends MaybeNamedFunctionDeclaration { id: Identifier; }
+>id : Identifier
+
+    export interface VariableDeclaration extends BaseDeclaration { consequent: Statement[]; }
+>consequent : Declaration[]
+
+    export type Literal = SimpleLiteral | RegExpLiteral | BigIntLiteral;
+>Literal : Literal
+
+    export interface SimpleLiteral extends BaseNode, BaseExpression { value: string | boolean | number | null; }
+>value : string | number | boolean | null
+
+    export interface RegExpLiteral extends BaseNode, BaseExpression { value?: RegExp | null | undefined; regex: {}; }
+>value : RegExp | null | undefined
+>regex : {}
+
+    export interface BigIntLiteral extends BaseNode, BaseExpression { raw?: string | undefined; }
+>raw : string | undefined
+
+    export interface ClassDeclaration extends MaybeNamedClassDeclaration { property: Identifier; }
+>property : Identifier
+
+    export type ModuleDeclaration = ExportAllDeclaration;
+>ModuleDeclaration : ExportAllDeclaration
+
+    export interface ExportAllDeclaration extends BaseModuleDeclaration { source: Literal; }
+>source : Literal
+}
+
+declare module "estree-jsx" {
+>"estree-jsx" : typeof import("estree-jsx")
+
+    export * from "estree";
+}
+
+declare module "hast" {
+>"hast" : typeof import("hast")
+
+    export type ElementContent = ElementContentMap[keyof ElementContentMap];
+>ElementContent : import("mdast-util-mdx-jsx").MdxJsxTextElementHast
+
+    export type RootContent = RootContentMap[keyof RootContentMap];
+>RootContent : RootContent
+
+    export interface RootContentMap { comment: Comment; doctype: Doctype; element: Element; text: Text; }
+>comment : Comment
+>doctype : Doctype
+>element : Element
+>text : Text
+
+    export interface Comment extends Literal { type: "comment"; data?: CommentData | undefined; }
+>type : "comment"
+>data : any
+
+    export interface Doctype extends UnistNode { type: "doctype"; data?: DoctypeData | undefined; }
+>type : "doctype"
+>data : any
+
+    export interface Element extends Parent { type: "element"; tagName: string; properties: Properties; children: ElementContent[]; content?: Root | undefined; data?: ElementData | undefined; }
+>type : "element"
+>tagName : string
+>properties : Properties
+>children : import("mdast-util-mdx-jsx").MdxJsxTextElementHast[]
+>content : Root | undefined
+>data : any
+
+    export interface Root extends Parent { type: "root"; children: RootContent[]; data?: RootData | undefined; }
+>type : "root"
+>children : RootContent[]
+>data : any
+
+    export interface Text extends Literal { type: "text"; data?: TextData | undefined; }
+>type : "text"
+>data : any
+}
+
+declare module "mdast-util-mdx-jsx" {
+>"mdast-util-mdx-jsx" : typeof import("mdast-util-mdx-jsx")
+
+    import type { Program } from "estree-jsx";
+>Program : Program
+
+    export interface MdxJsxExpressionAttribute extends Node { estree?: Program | null | undefined; }
+>estree : Program | null | undefined
+
+    export interface MdxJsxAttribute extends Node { data?: MdxJsxAttributeData | undefined; }
+>data : any
+
+    export interface MdxJsxTextElementHast extends HastParent { attributes: Array<MdxJsxAttribute | MdxJsxExpressionAttribute>; }
+>attributes : (MdxJsxAttribute | MdxJsxExpressionAttribute)[]
+}
+
+declare module "hast" {
+>"hast" : typeof import("hast")
+
+    import type { MdxJsxTextElementHast } from "mdast-util-mdx-jsx";
+>MdxJsxTextElementHast : MdxJsxTextElementHast
+
+    interface ElementContentMap { mdxJsxTextElement: MdxJsxTextElementHast; }
+>mdxJsxTextElement : MdxJsxTextElementHast
+}
+
+=== /repro.ts ===
+import "mdast-util-mdx-jsx";
+import type { Root } from "hast";
+>Root : Root
+
+type Transform<Base, From, To> = {
+>Transform : Transform<Base, From, To>
+
+    [K in keyof Base]: Exclude<Base[K], undefined | null> extends never ? Base[K]
+        : Exclude<Base[K], undefined | null> extends object ? Exclude<Base[K], undefined | null> extends From ? To | Extract<Base[K], null | undefined> : Transform<Base[K], From, To>
+        : Base[K];
+};
+type TransformJson<T> = Transform<T, Date | bigint, string>;
+>TransformJson : Transform<T, bigint | Date, string>
+
+declare function fetchJson<T>(): TransformJson<T>;
+>fetchJson : <T>() => TransformJson<T>
+
+declare function parseDate(s: string): Date;
+>parseDate : (s: string) => Date
+>s : string
+
+interface IMessage { createdAt: Date; content: Root; }
+>createdAt : Date
+>content : Root
+
+interface IAggregate { createdAt: Date; messages: IMessage[]; }
+>createdAt : Date
+>messages : IMessage[]
+
+export function getAggregate(): IAggregate {
+>getAggregate : () => IAggregate
+
+    const response = fetchJson<TransformJson<IAggregate>>();
+>response : Transform<Transform<IAggregate, bigint | Date, string>, bigint | Date, string>
+>fetchJson<TransformJson<IAggregate>>() : Transform<Transform<IAggregate, bigint | Date, string>, bigint | Date, string>
+>fetchJson : <T>() => TransformJson<T>
+
+    return { ...response, createdAt: parseDate(response.createdAt), messages: response.messages.map(message => ({ ...message, createdAt: parseDate(message.createdAt) })) };
+>{ ...response, createdAt: parseDate(response.createdAt), messages: response.messages.map(message => ({ ...message, createdAt: parseDate(message.createdAt) })) } : { createdAt: Date; messages: { content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }[]; }
+>response : Transform<Transform<IAggregate, bigint | Date, string>, bigint | Date, string>
+>createdAt : Date
+>parseDate(response.createdAt) : Date
+>parseDate : (s: string) => Date
+>response.createdAt : string
+>response : Transform<Transform<IAggregate, bigint | Date, string>, bigint | Date, string>
+>createdAt : string
+>messages : { content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }[]
+>response.messages.map(message => ({ ...message, createdAt: parseDate(message.createdAt) })) : { content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }[]
+>response.messages.map : <U>(callbackfn: (value: Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>, index: number, array: Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>[]) => U, thisArg?: any) => U[]
+>response.messages : Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>[]
+>response : Transform<Transform<IAggregate, bigint | Date, string>, bigint | Date, string>
+>messages : Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>[]
+>map : <U>(callbackfn: (value: Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>, index: number, array: Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>[]) => U, thisArg?: any) => U[]
+>message => ({ ...message, createdAt: parseDate(message.createdAt) }) : (message: Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>) => { content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }
+>message : Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>
+>({ ...message, createdAt: parseDate(message.createdAt) }) : { content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }
+>{ ...message, createdAt: parseDate(message.createdAt) } : { content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }
+>message : Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>
+>createdAt : Date
+>parseDate(message.createdAt) : Date
+>parseDate : (s: string) => Date
+>message.createdAt : string
+>message : Transform<Transform<IMessage, bigint | Date, string>, bigint | Date, string>
+>createdAt : string
+}
+
