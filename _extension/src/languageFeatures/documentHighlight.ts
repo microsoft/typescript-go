@@ -78,7 +78,8 @@ export function registerMultiDocumentHighlightFeature(
             return { dispose() {} };
         }
         return vscode.languages.registerMultiDocumentHighlightProvider(selector, new MultiDocumentHighlightProvider(client));
-    } catch {
+    }
+    catch {
         return { dispose() {} };
     }
 }
