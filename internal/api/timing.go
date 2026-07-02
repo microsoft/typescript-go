@@ -126,10 +126,11 @@ func disabledServerTimingInfo() serverTimingInfo {
 }
 
 // durationToMillis converts a duration to fractional milliseconds, clamped to be
-// non-negative.
+// non-negative. It preserves sub-microsecond precision by converting from the
+// full nanosecond duration.
 func durationToMillis(d time.Duration) float64 {
 	if d < 0 {
 		return 0
 	}
-	return float64(d.Microseconds()) / 1000
+	return float64(d) / float64(time.Millisecond)
 }

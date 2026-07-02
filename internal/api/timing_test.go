@@ -89,4 +89,7 @@ func TestDurationToMillis(t *testing.T) {
 	assert.Equal(t, durationToMillis(1500*time.Microsecond), 1.5)
 	assert.Equal(t, durationToMillis(0), 0.0)
 	assert.Equal(t, durationToMillis(-5*time.Second), 0.0)
+	// Sub-microsecond durations retain precision rather than truncating to 0.
+	assert.Equal(t, durationToMillis(500*time.Nanosecond), 0.0005)
+	assert.Equal(t, durationToMillis(1234*time.Nanosecond), 0.001234)
 }

@@ -111,13 +111,15 @@ export class SyncRpcChannel {
 
     private methodBufCache = new Map<string, Buffer>();
 
-    // When true, the wire-level byte sizes of each request/response are
-    // recorded and exposed via the `last*` fields below.
+    // When true, the payload byte lengths of each request/response are recorded
+    // and exposed via the `last*` fields below. These count only the JSON/binary
+    // payload bytes, not the MessagePack tuple framing (message type, method
+    // name, and length headers).
     private readonly collectTiming: boolean;
 
-    // Wire-level measurements for the most recently completed request. Only
-    // meaningful when `collectTiming` is true. Callers read these immediately
-    // after a request returns (the channel is strictly serial).
+    // Per-request payload byte measurements for the most recently completed
+    // request. Only meaningful when `collectTiming` is true. Callers read these
+    // immediately after a request returns (the channel is strictly serial).
     lastBytesSent = 0;
     lastBytesReceived = 0;
 
