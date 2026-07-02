@@ -5062,6 +5062,92 @@ test("Benchmarks", () => {
     runBenchmarks({ singleIteration: true });
 });
 
+describe("Timing", () => {
+    test("collects combined client, server, and transport timing info", () => {
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: createVirtualFileSystem({ ...defaultFiles }),
+            collectTiming: true,
+        });
+        try {
+            // Baseline: enabled, but nothing measured yet.
+            let info = api.getTimingInfo();
+            assert.equal(info.enabled, true);
+            assert.equal(info.totals.requestCount, 0);
+            assert.equal(info.recentRequests.length, 0);
+
+            // Exercise a JSON request and a binary source-file request.
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            // Client-side timing: round-trip latency and byte counts.
+            info = api.getTimingInfo();
+            assert.ok(info.totals.requestCount >= 2, "expected at least two measured requests");
+            assert.ok(info.totals.totalBytesSent > 0);
+            assert.ok(info.totals.totalBytesReceived > 0);
+            assert.ok(info.totals.totalRoundTripMs >= 0);
+
+            // Server-side timing is folded into the same snapshot.
+            assert.ok(info.totals.totalServerTimeMs >= 0);
+            assert.ok(info.totals.totalTransportOverheadMs >= 0);
+            assert.equal(
+                info.totals.totalTransportOverheadMs,
+                Math.max(0, info.totals.totalRoundTripMs - info.totals.totalServerTimeMs),
+            );
+
+            // The ring buffer retains at most the 5 most recent requests.
+            assert.ok(info.recentRequests.length > 0);
+            assert.ok(info.recentRequests.length <= 5);
+            assert.ok(info.recentRequests.length <= info.totals.requestCount);
+
+            for (const r of info.recentRequests) {
+                assert.ok(r.roundTripMs >= 0);
+                assert.ok(r.bytesSent >= 0);
+                assert.ok(r.bytesReceived >= 0);
+                assert.ok(typeof r.method === "string" && r.method.length > 0);
+                assert.equal(typeof r.timestamp, "number");
+                // Transport overhead is present exactly when server time is.
+                assert.equal(r.transportOverheadMs === undefined, r.serverTimeMs === undefined);
+                if (r.serverTimeMs !== undefined) {
+                    assert.ok(r.serverTimeMs >= 0);
+                    assert.equal(r.transportOverheadMs, Math.max(0, r.roundTripMs - r.serverTimeMs));
+                }
+            }
+
+            // Server processing time is folded in for the recent requests.
+            assert.ok(info.recentRequests.every(r => r.serverTimeMs !== undefined), "server time should be reported");
+
+            // Reset clears totals and history on both client and server.
+            api.resetTimingInfo();
+            info = api.getTimingInfo();
+            assert.equal(info.enabled, true);
+            assert.equal(info.totals.requestCount, 0);
+            assert.equal(info.totals.totalServerTimeMs, 0);
+            assert.equal(info.totals.totalTransportOverheadMs, 0);
+            assert.equal(info.recentRequests.length, 0);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("is disabled by default", () => {
+        const api = spawnAPI();
+        try {
+            api.parseConfigFile("/tsconfig.json");
+            const info = api.getTimingInfo();
+            assert.equal(info.enabled, false);
+            assert.equal(info.totals.requestCount, 0);
+            assert.equal(info.recentRequests.length, 0);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
     return new API({
         cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
