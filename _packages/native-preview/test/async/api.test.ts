@@ -5077,16 +5077,16 @@ describe("Timing", () => {
             // Client-side timing: round-trip latency and byte counts.
             info = await api.getTimingInfo();
             assert.ok(info.totals.requestCount >= 2, "expected at least two measured requests");
-            assert.ok(info.totals.totalBytesSent > 0);
-            assert.ok(info.totals.totalBytesReceived > 0);
-            assert.ok(info.totals.totalRoundTripMs >= 0);
+            assert.ok(info.totals.bytesSent > 0);
+            assert.ok(info.totals.bytesReceived > 0);
+            assert.ok(info.totals.roundTripMs >= 0);
 
             // Server-side timing is folded into the same snapshot.
-            assert.ok(info.totals.totalServerTimeMs >= 0);
-            assert.ok(info.totals.totalTransportOverheadMs >= 0);
+            assert.ok(info.totals.serverTimeMs >= 0);
+            assert.ok(info.totals.transportOverheadMs >= 0);
             assert.equal(
-                info.totals.totalTransportOverheadMs,
-                Math.max(0, info.totals.totalRoundTripMs - info.totals.totalServerTimeMs),
+                info.totals.transportOverheadMs,
+                Math.max(0, info.totals.roundTripMs - info.totals.serverTimeMs),
             );
 
             // The ring buffer retains at most the 5 most recent requests.
@@ -5116,9 +5116,68 @@ describe("Timing", () => {
             info = await api.getTimingInfo();
             assert.equal(info.enabled, true);
             assert.equal(info.totals.requestCount, 0);
-            assert.equal(info.totals.totalServerTimeMs, 0);
-            assert.equal(info.totals.totalTransportOverheadMs, 0);
+            assert.equal(info.totals.serverTimeMs, 0);
+            assert.equal(info.totals.transportOverheadMs, 0);
             assert.equal(info.recentRequests.length, 0);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("tracks source-file node materialization", async () => {
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: createVirtualFileSystem({ ...defaultFiles }),
+            collectTiming: true,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const sourceFile = await project.program.getSourceFile("/src/index.ts");
+            assert.ok(sourceFile);
+
+            // The source file node itself is pre-cached, so before walking the
+            // tree no descendant nodes have been materialized.
+            let info = await api.getTimingInfo();
+            const before = info.totals.nodesMaterialized;
+            assert.equal(info.totals.sourceFilesFetched, 1, "one source file was fetched");
+            assert.ok(info.totals.nodesFetched > 0, "the fetched file contributes materializable nodes");
+            assert.equal(info.totals.nodesMaterialized, 0, "nothing walked yet, so no nodes materialized");
+
+            // Walk the whole tree to force lazy materialization of every node.
+            let visited = 0;
+            sourceFile.forEachChild(function visit(node) {
+                visited++;
+                node.forEachChild(visit);
+            });
+            assert.ok(visited > 0, "expected to visit at least one node");
+
+            info = await api.getTimingInfo();
+            assert.ok(
+                info.totals.nodesMaterialized > before,
+                "walking the tree should materialize nodes",
+            );
+            assert.ok(
+                info.totals.nodesMaterialized >= visited,
+                "every visited node should have been materialized",
+            );
+
+            // A full walk materializes (nearly) every fetched node, so the share
+            // of fetched nodes materialized should be substantial.
+            assert.equal(info.totals.sourceFilesFetched, 1);
+            assert.ok(
+                info.totals.nodesMaterialized > 0
+                    && info.totals.nodesMaterialized <= info.totals.nodesFetched,
+                "materialized nodes should be in (0, nodesFetched]",
+            );
+
+            // Reset clears materialization totals along with the rest.
+            await api.resetTimingInfo();
+            info = await api.getTimingInfo();
+            assert.equal(info.totals.nodesMaterialized, 0);
+            assert.equal(info.totals.sourceFilesFetched, 0);
+            assert.equal(info.totals.nodesFetched, 0);
         }
         finally {
             await api.close();
@@ -5132,6 +5191,9 @@ describe("Timing", () => {
             const info = await api.getTimingInfo();
             assert.equal(info.enabled, false);
             assert.equal(info.totals.requestCount, 0);
+            assert.equal(info.totals.nodesMaterialized, 0);
+            assert.equal(info.totals.sourceFilesFetched, 0);
+            assert.equal(info.totals.nodesFetched, 0);
             assert.equal(info.recentRequests.length, 0);
         }
         finally {

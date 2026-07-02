@@ -123,6 +123,16 @@ export class Client {
         this.channel.requestSync("resetServerTiming", "");
     }
 
+    /**
+     * Returns the timing collector that per-node materialization is reported
+     * into, or undefined when timing collection is disabled. The returned
+     * collector is the same one folded into {@link getTimingInfo}, so
+     * materialization totals surface alongside request timings.
+     */
+    getTimingCollector(): TimingCollector | undefined {
+        return this.timing;
+    }
+
     private recordTiming(method: string, start: number): void {
         if (!this.timing) return;
         this.timing.record({

@@ -44,21 +44,40 @@ export interface RequestTiming {
 
 /** Running totals accumulated across every measured request. */
 export interface TimingAccumulators {
-    /** Total number of requests measured. */
+    /** Number of requests measured. */
     requestCount: number;
     /** Sum of round-trip latencies, in milliseconds. */
-    totalRoundTripMs: number;
-    /** Total request payload bytes sent. */
-    totalBytesSent: number;
-    /** Total response payload bytes received. */
-    totalBytesReceived: number;
+    roundTripMs: number;
+    /** Sum of request payload bytes sent. */
+    bytesSent: number;
+    /** Sum of response payload bytes received. */
+    bytesReceived: number;
     /** Sum of server-side processing time, in milliseconds. */
-    totalServerTimeMs: number;
+    serverTimeMs: number;
     /**
      * Estimated total transport overhead, in milliseconds
-     * (`totalRoundTripMs - totalServerTimeMs`, clamped to be non-negative).
+     * (`roundTripMs - serverTimeMs`, clamped to be non-negative).
      */
-    totalTransportOverheadMs: number;
+    transportOverheadMs: number;
+    /**
+     * Number of AST nodes materialized from binary source-file responses as the
+     * client walked the returned trees. Materialization is lazy and happens on
+     * demand, so this accrues after the originating request completes.
+     */
+    nodesMaterialized: number;
+    /**
+     * Number of source files fetched from the server (each decoded into a
+     * lazily-materialized tree).
+     */
+    sourceFilesFetched: number;
+    /**
+     * Number of AST nodes across all fetched source files that can be
+     * materialized on demand. Each fetched file contributes its full node count
+     * (excluding the pre-materialized source-file node), whether or not those
+     * nodes are ever walked. Serves as the denominator for the share of fetched
+     * nodes that end up materialized (`nodesMaterialized / nodesFetched`).
+     */
+    nodesFetched: number;
 }
 
 /** A point-in-time snapshot of collected timing information. */
@@ -124,11 +143,14 @@ export interface ServerTimingInfo {
 function emptyAccumulators(): TimingAccumulators {
     return {
         requestCount: 0,
-        totalRoundTripMs: 0,
-        totalBytesSent: 0,
-        totalBytesReceived: 0,
-        totalServerTimeMs: 0,
-        totalTransportOverheadMs: 0,
+        roundTripMs: 0,
+        bytesSent: 0,
+        bytesReceived: 0,
+        serverTimeMs: 0,
+        transportOverheadMs: 0,
+        nodesMaterialized: 0,
+        sourceFilesFetched: 0,
+        nodesFetched: 0,
     };
 }
 
@@ -164,11 +186,11 @@ export function combineTimingInfo(client: TimingInfo, server: ServerTimingInfo):
         return client;
     }
 
-    const totalServerTimeMs = server.totals.totalProcessingTimeMs;
+    const serverTimeMs = server.totals.totalProcessingTimeMs;
     const totals: TimingAccumulators = {
         ...client.totals,
-        totalServerTimeMs,
-        totalTransportOverheadMs: Math.max(0, client.totals.totalRoundTripMs - totalServerTimeMs),
+        serverTimeMs,
+        transportOverheadMs: Math.max(0, client.totals.roundTripMs - serverTimeMs),
     };
 
     const recentRequests = client.recentRequests.map(r => ({ ...r }));
@@ -204,9 +226,9 @@ export class TimingCollector {
     /** Records a single request's measurements. */
     record(sample: TimingSample): void {
         this.totals.requestCount++;
-        this.totals.totalRoundTripMs += sample.roundTripMs;
-        this.totals.totalBytesSent += sample.bytesSent;
-        this.totals.totalBytesReceived += sample.bytesReceived;
+        this.totals.roundTripMs += sample.roundTripMs;
+        this.totals.bytesSent += sample.bytesSent;
+        this.totals.bytesReceived += sample.bytesReceived;
 
         const entry: RequestTiming = {
             method: sample.method,
@@ -223,6 +245,25 @@ export class TimingCollector {
             this.ring[this.head] = entry;
             this.head = (this.head + 1) % RECENT_REQUEST_CAPACITY;
         }
+    }
+
+    /**
+     * Records a single AST node materialization. Called on demand as the consumer
+     * walks a binary source-file response's tree, so it is not tied to any one
+     * request.
+     */
+    recordMaterialization(): void {
+        this.totals.nodesMaterialized++;
+    }
+
+    /**
+     * Records a fetched source file: increments the fetched-file counter and adds
+     * the file's materializable node count to the fetched-node total, which serves
+     * as the denominator for the share of fetched nodes that end up materialized.
+     */
+    recordSourceFileFetched(materializableNodeCount: number): void {
+        this.totals.sourceFilesFetched++;
+        this.totals.nodesFetched += materializableNodeCount;
     }
 
     /** Returns a snapshot of the collected timing information. */
