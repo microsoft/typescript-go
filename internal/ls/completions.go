@@ -186,7 +186,7 @@ const (
 	CompletionKindString
 )
 
-var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " "}
+var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " ", "*"}
 
 // All commit characters, valid when `isNewIdentifierLocation` is false.
 var allCommitCharacters = []string{".", ",", ";"}
@@ -343,6 +343,10 @@ func (l *LanguageService) getCompletionsAtPosition(
 			return &CompletionList{IsIncomplete: true}, nil
 		}
 		return nil, nil
+	}
+
+	if jsDocSnippetCompletion := l.getJSDocSnippetCompletion(ctx, file, position); jsDocSnippetCompletion != nil {
+		return jsDocSnippetCompletion, nil
 	}
 
 	compilerOptions := l.GetProgram().Options()
@@ -2686,7 +2690,7 @@ func getRelevantTokens(position int, file *ast.SourceFile) (contextToken *ast.No
 	return previousToken, previousToken
 }
 
-// "." | '"' | "'" | "`" | "/" | "@" | "<" | "#" | " "
+// "." | '"' | "'" | "`" | "/" | "@" | "<" | "#" | " " | "*"
 type CompletionsTriggerCharacter = string
 
 func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCharacter, contextToken *ast.Node, position int) bool {
@@ -2717,6 +2721,8 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 		return contextToken.Kind == ast.KindLessThanSlashToken && ast.IsJsxClosingElement(contextToken.Parent)
 	case " ":
 		return contextToken != nil && contextToken.Kind == ast.KindImportKeyword && contextToken.Parent.Kind == ast.KindSourceFile
+	case "*":
+		return isPotentiallyValidJSDocSnippetCompletionPosition(file, position)
 	default:
 		panic("Unknown trigger character: " + triggerCharacter)
 	}
