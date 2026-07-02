@@ -46,6 +46,7 @@ export class Client implements vscode.Disposable {
     private client?: LanguageClient;
 
     private isDisposed = false;
+    private isStopping = false;
     private disposables: vscode.Disposable[] = [];
     isInitialized = false;
 
@@ -87,6 +88,12 @@ export class Client implements vscode.Disposable {
             middleware: {
                 workspace: {
                     ...configurationMiddleware,
+                    didChangeWatchedFile: (event, next) => {
+                        if (this.isStopping || this.isDisposed) {
+                            return Promise.resolve();
+                        }
+                        return next(event);
+                    },
                 },
                 sendNotification: sendNotificationMiddleware,
                 provideHover: () => undefined,
@@ -142,6 +149,7 @@ export class Client implements vscode.Disposable {
     }
 
     async start(exe: ExeInfo): Promise<void> {
+        this.isStopping = false;
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
         this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
@@ -261,6 +269,7 @@ export class Client implements vscode.Disposable {
             return;
         }
         this.isDisposed = true;
+        this.isStopping = true;
         await Promise.all(this.disposables.map(d => d.dispose()));
     }
 
@@ -291,6 +300,7 @@ export class Client implements vscode.Disposable {
         if (!this.client) {
             return Promise.reject(new Error(vscode.l10n.t("Language client is not initialized")));
         }
+        this.isStopping = false;
         const exe = await getExe(context);
         if (exe.path !== this.exe?.path) {
             return false;

@@ -6,7 +6,6 @@ import {
     registerCodeLensShowLocationsCommand,
     updateWorkspaceUseTsgoSetting,
 } from "./commands";
-import { ManagedFileContextManager } from "./managedFileContext";
 import { ProjectStatus } from "./projectStatus";
 import { setupStatusBar } from "./statusBar";
 import { TelemetryReporter } from "./telemetryReporting";
@@ -117,6 +116,7 @@ class Session implements vscode.Disposable {
     }
 
     async start(context: vscode.ExtensionContext): Promise<void> {
+        await vscode.commands.executeCommand("setContext", "typescript.isManagedFile", false);
         const exe = await getExe(context);
         await this.client.start(exe);
         this.disposables.push(setupStatusBar(exe));
@@ -124,9 +124,6 @@ class Session implements vscode.Disposable {
         // Set up active editor tracker and UI features
         const activeEditorTracker = new ActiveJsTsEditorTracker();
         this.disposables.push(activeEditorTracker);
-
-        const managedFileContext = new ManagedFileContextManager(activeEditorTracker);
-        this.disposables.push(managedFileContext);
 
         const projectStatus = new ProjectStatus(this.client, activeEditorTracker, this.initializedEventEmitter.event);
         this.disposables.push(projectStatus);
@@ -146,7 +143,7 @@ class Session implements vscode.Disposable {
     registerCommands(): void {
         this.disposables.push(registerCodeLensShowLocationsCommand());
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.restartTsServer", async () => {
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.restart", async () => {
             this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
             if (await this.tryRestartClient(this.context)) {
                 return;
@@ -155,11 +152,11 @@ class Session implements vscode.Disposable {
             await this.restartSession();
         }));
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.openTsServerLog", () => {
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.output.focus", () => {
             this.outputChannel.show();
         }));
 
-        this.disposables.push(vscode.commands.registerCommand("typescript.selectTypeScriptVersion", async () => {
+        this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.selectVersion", async () => {
             await promptSelectVersion(this.context, this.client, this.outputChannel, this.stopSession);
         }));
 
@@ -292,12 +289,12 @@ async function showCommands(client: Client): Promise<void> {
         {
             label: vscode.l10n.t("$(refresh) Restart Server"),
             description: vscode.l10n.t("Restart the TypeScript language server"),
-            command: "typescript.restartTsServer",
+            command: "typescript.native-preview.restart",
         },
         {
             label: vscode.l10n.t("$(output) Show Output"),
             description: vscode.l10n.t("Show the TypeScript output log"),
-            command: "typescript.openTsServerLog",
+            command: "typescript.native-preview.output.focus",
         },
         {
             label: vscode.l10n.t("$(report) Report Issue"),
@@ -307,7 +304,7 @@ async function showCommands(client: Client): Promise<void> {
         {
             label: vscode.l10n.t("$(versions) Select Version"),
             description: vscode.l10n.t("Choose between bundled and workspace versions"),
-            command: "typescript.selectTypeScriptVersion",
+            command: "typescript.native-preview.selectVersion",
         },
         {
             label: vscode.l10n.t("$(stop-circle) Disable TypeScript 7"),
@@ -554,7 +551,7 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         await selected.beforeRun?.();
         await selected.run();
         if (selected.restart) {
-            await vscode.commands.executeCommand("typescript.restartTsServer");
+            await vscode.commands.executeCommand("typescript.native-preview.restart");
         }
     }
 }
@@ -605,7 +602,7 @@ export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext
         if (result === allow) {
             if (!vscode.workspace.isTrusted) return;
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
-            await vscode.commands.executeCommand("typescript.restartTsServer");
+            await vscode.commands.executeCommand("typescript.native-preview.restart");
         }
         else if (result === suppress) {
             await context.workspaceState.update(suppressKey, true);
@@ -633,7 +630,7 @@ export async function promptUseWorkspaceVersion(context: vscode.ExtensionContext
             if (!vscode.workspace.isTrusted) return;
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, true);
             await updateTsdkConfig(wsVersion);
-            await vscode.commands.executeCommand("typescript.restartTsServer");
+            await vscode.commands.executeCommand("typescript.native-preview.restart");
         }
         else if (result === suppress) {
             await context.workspaceState.update(suppressKey, true);
