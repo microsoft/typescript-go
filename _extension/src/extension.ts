@@ -42,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     // but for now we just construct it to ensure shared properties are set for telemetry.
     void new ExperimentationService(telemetryReporter, context.extension.id, version, context.globalState);
 
-    const output = vscode.window.createOutputChannel("TypeScript", { log: true });
+    const output = vscode.window.createOutputChannel("TypeScript 7", { log: true });
     context.subscriptions.push(output);
 
     const languageServerInitializedEventEmitter = new vscode.EventEmitter<void>();

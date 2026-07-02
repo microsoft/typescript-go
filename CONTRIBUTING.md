@@ -76,7 +76,7 @@ This will launch a new VS Code instance which uses the Corsa LS as the backend.
 
 #### Collecting Logs
 
-The extension provides a single output channel, **TypeScript**, in VS Code's Output panel. It shows both server log messages and (optionally) LSP protocol traces.
+The extension provides a single output channel, **TypeScript 7**, in VS Code's Output panel. It shows both server log messages and (optionally) LSP protocol traces.
 
 The output channel's **log level** (the gear icon next to the channel dropdown) controls what is visible:
 
