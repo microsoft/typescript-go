@@ -75,7 +75,7 @@ type SessionInit struct {
 	Logger        logging.Logger
 	NpmExecutor   ata.NpmExecutor
 	ParseCache    *ParseCache
-	PnpApi *pnp.PnpApi
+	PnpApi        *pnp.PnpApi
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -371,7 +371,11 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 		case lsproto.FileChangeTypeCreated:
 			kind = FileChangeKindWatchCreate
 		case lsproto.FileChangeTypeChanged:
-			kind = FileChangeKindWatchChange
+			if s.pnpApi != nil && strings.HasSuffix(change.Uri.FileName(), ".pnp.cjs") {
+				kind = FileChangeKindPnpInstall
+			} else {
+				kind = FileChangeKindWatchChange
+			}
 		case lsproto.FileChangeTypeDeleted:
 			kind = FileChangeKindWatchDelete
 		default:
@@ -1377,10 +1381,12 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		func(_ tspath.Path, addedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.programFilesWatch)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.typingsWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.pnpManifestWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.programFilesWatch, nil)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.typingsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.pnpManifestWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
@@ -1395,6 +1401,13 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			} else {
 				if s.watches.IsPending(newProject.typingsWatch.ID()) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
+				}
+			}
+			if oldProject.pnpManifestWatch.ID() != newProject.pnpManifestWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.pnpManifestWatch, newProject.pnpManifestWatch)...)
+			} else {
+				if s.watches.IsPending(newProject.pnpManifestWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.pnpManifestWatch)...)
 				}
 			}
 		},

@@ -46,6 +46,13 @@ func findBrokenPeerDependencies(specifier string, parent *Locator) []Locator {
 	return []Locator{}
 }
 
+func (p *PnpApi) GetManifestPath() string {
+	if p.manifest == nil {
+		return ""
+	}
+	return tspath.CombinePaths(p.manifest.dirPath, ".pnp.cjs")
+}
+
 func (p *PnpApi) RefreshManifest() error {
 	var newData *PnpManifestData
 	var err error

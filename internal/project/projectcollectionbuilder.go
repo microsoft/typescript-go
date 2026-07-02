@@ -1148,6 +1148,14 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
 					project.programFilesWatch = project.CloneWatchers()
+					if project.pnpManifestWatch != nil && b.pnpApi != nil {
+						pnpManifestPath := b.pnpApi.GetManifestPath()
+						if pnpManifestPath != "" {
+							project.pnpManifestWatch = project.pnpManifestWatch.Clone(PatternsAndIgnored{
+								patternsInsideWorkspace: []string{pnpManifestPath},
+							})
+						}
+					}
 				}
 				project.dirty = false
 				project.dirtyFilePath = ""

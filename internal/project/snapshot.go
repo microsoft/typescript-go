@@ -320,6 +320,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
+	if session.pnpApi != nil && change.fileChanges.InvalidateAll {
+		if err := session.pnpApi.RefreshManifest(); err != nil {
+			logger.Logf("Failed to refresh PnP manifest: %v", err)
+		}
+	}
+
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
 		// !!! mark inferred projects as dirty?
