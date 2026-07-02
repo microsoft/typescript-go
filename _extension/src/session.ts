@@ -15,9 +15,7 @@ import {
     getExe,
     getWorkspaceTsdkConfigValue,
     getWorkspaceTsdkForPrompt,
-    outputChannelName,
     readNativePreviewConfig,
-    replacementExtensionId,
     resolveTsdkPath,
     resolveTsdkPathToExe,
     updateWorkspaceTsdkConfig,
@@ -66,7 +64,7 @@ export class SessionManager implements vscode.Disposable {
 
     async restart(context: vscode.ExtensionContext): Promise<void> {
         if (this.currentSession) {
-            this.outputChannel.appendLine(`Restarting ${outputChannelName}...`);
+            this.outputChannel.appendLine("Restarting TypeScript language server...");
             await this.currentSession.dispose();
         }
         this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop());
@@ -131,7 +129,7 @@ class Session implements vscode.Disposable {
     async start(context: vscode.ExtensionContext): Promise<void> {
         const exe = await getExe(context);
         await this.client.start(exe);
-        this.disposables.push(setupStatusBar(exe.version));
+        this.disposables.push(setupStatusBar(exe));
 
         // Set up active editor tracker and UI features
         const activeEditorTracker = new ActiveJsTsEditorTracker();
@@ -192,7 +190,7 @@ class Session implements vscode.Disposable {
         this.disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
             this.telemetryReporter.sendTelemetryEvent("command.reportIssue");
             vscode.commands.executeCommand("workbench.action.openIssueReporter", {
-                extensionId: replacementExtensionId,
+                extensionId: this.context.extension.id,
             });
         }));
 
@@ -294,12 +292,12 @@ async function showCommands(client: Client): Promise<void> {
     const commands: CommandItem[] = [
         {
             label: vscode.l10n.t("$(refresh) Restart Server"),
-            description: vscode.l10n.t("Restart the TypeScript 7 language server"),
+            description: vscode.l10n.t("Restart the TypeScript language server"),
             command: "typescript.restartTsServer",
         },
         {
             label: vscode.l10n.t("$(output) Show Output"),
-            description: vscode.l10n.t("Show the TypeScript 7 output log"),
+            description: vscode.l10n.t("Show the TypeScript output log"),
             command: "typescript.openTsServerLog",
         },
         {

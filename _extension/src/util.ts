@@ -3,9 +3,7 @@ import * as vscode from "vscode";
 
 export const aiConnectionString = "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255";
 
-export const outputChannelName = "TypeScript 7";
-export const languageClientName = "TypeScript 7 Language Server";
-export const replacementExtensionId = "TypeScriptTeam.vscode-typescript";
+export const languageClientName = "TypeScript Language Server";
 export const nightlyExtensionId = "TypeScriptTeam.native-preview";
 export const enableContributedNightlyVersion = true;
 
@@ -41,17 +39,19 @@ export function isJsConfigOrTsConfigFileName(fileName: string): boolean {
 export interface ExeInfo {
     path: string;
     version: string;
+    name: string;
+    isLocal?: boolean;
 }
 
 const packagedExeBaseNames = ["tsc", "tsgo"];
 
-export async function getBuiltinExePath(context: vscode.ExtensionContext): Promise<{ path: string; version: string; }> {
+export async function getBuiltinExePath(context: vscode.ExtensionContext): Promise<ExeInfo> {
     if (context.extensionMode === vscode.ExtensionMode.Development) {
         const exeName = `tsgo${process.platform === "win32" ? ".exe" : ""}`;
         const exe = context.asAbsolutePath(path.join("../", "built", "local", exeName));
         try {
             await vscode.workspace.fs.stat(vscode.Uri.file(exe));
-            return { path: exe, version: "(local)" };
+            return { path: exe, version: "(local)", name: "tsgo", isLocal: true };
         }
         catch {}
     }
@@ -94,6 +94,7 @@ async function tryGetPackagedExePath(extensionUri: vscode.Uri, version: unknown)
             return {
                 path: withLongPathPrefix(exePath.fsPath),
                 version: typeof version === "string" ? version : "unknown",
+                name: baseName,
             };
         }
         catch {}
@@ -307,7 +308,7 @@ export function resolveTsdkPath(tsdkPath: string): string {
     return path.normalize(workspaceResolve(tsdkPath).fsPath);
 }
 
-export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: string; version: string; } | undefined> {
+export async function resolveTsdkPathToExe(tsdkPath: string): Promise<ExeInfo | undefined> {
     const resolved = workspaceResolve(tsdkPath);
     for (const packagePath of [resolved, vscode.Uri.joinPath(resolved, "..")]) {
         try {
@@ -330,7 +331,7 @@ export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: st
                 : vscode.Uri.joinPath(packagePath, "..");
             const exePath = vscode.Uri.joinPath(nodeModules, "@typescript", platformPackage, "lib", exeName);
             await vscode.workspace.fs.stat(exePath);
-            return { path: withLongPathPrefix(exePath.fsPath), version: typeof packageJson.version === "string" ? packageJson.version : "unknown" };
+            return { path: withLongPathPrefix(exePath.fsPath), version: typeof packageJson.version === "string" ? packageJson.version : "unknown", name: expectedBinName };
         }
         catch {}
     }
@@ -338,7 +339,7 @@ export async function resolveTsdkPathToExe(tsdkPath: string): Promise<{ path: st
         try {
             const exePath = vscode.Uri.joinPath(resolved, `${baseName}${process.platform === "win32" ? ".exe" : ""}`);
             await vscode.workspace.fs.stat(exePath);
-            return { path: withLongPathPrefix(exePath.fsPath), version: "(local)" };
+            return { path: withLongPathPrefix(exePath.fsPath), version: "(local)", name: baseName, isLocal: true };
         }
         catch {}
     }

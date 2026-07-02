@@ -15,7 +15,7 @@
     "native-preview.additionalTsdkLocations.deprecation": "This setting has moved to js/ts.tsdk.additionalLocations.",
     "native-preview.showDebugInfo.deprecation": "This setting has moved to js/ts.showDebugInfo.",
     "native-preview.goMemLimit.deprecation": "This setting has moved to js/ts.server.goMemLimit.",
-    "native-preview.enable.title": "Enable (Experimental)",
+    "native-preview.enable.title": "Enable TypeScript 7",
     "native-preview.disable.title": "Disable",
     "native-preview.restart.title": "Restart Language Server",
     "native-preview.output.focus.title": "Show Output",

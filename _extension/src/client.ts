@@ -141,7 +141,7 @@ export class Client implements vscode.Disposable {
         };
     }
 
-    async start(exe: { path: string; version: string; }): Promise<void> {
+    async start(exe: ExeInfo): Promise<void> {
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
         this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
@@ -475,7 +475,7 @@ class ReportingErrorHandler implements ErrorHandler {
         if (resultingAction === CloseAction.DoNotRestart) {
             return {
                 action: resultingAction,
-                message: vscode.l10n.t(`The TypeScript 7 language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
+                message: vscode.l10n.t(`The TypeScript language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
             };
         }
 

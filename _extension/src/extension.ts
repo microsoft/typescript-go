@@ -44,7 +44,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     registerEnablementCommands(context, telemetryReporter);
 
-    const output = vscode.window.createOutputChannel("typescript-native-preview", { log: true });
+    const output = vscode.window.createOutputChannel("TypeScript", { log: true });
     context.subscriptions.push(output);
 
     const languageServerInitializedEventEmitter = new vscode.EventEmitter<void>();
@@ -150,7 +150,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         }
     }
     else if (useTsgo !== true) {
-        output.appendLine(vscode.l10n.t("TypeScript 7 is disabled. Select 'Enable TypeScript 7 (Experimental)' in the command palette to enable it."));
+        output.appendLine(vscode.l10n.t("TypeScript 7 is disabled. Select 'TypeScript: Enable TypeScript 7' in the command palette to enable it."));
         return;
     }
 
