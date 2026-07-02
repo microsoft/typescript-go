@@ -213,6 +213,10 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
+func (r *Resolver) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
+	r.caches.packageJsonInfoCache.Range(f)
+}
+
 func (r *tracer) traceResolutionUsingProjectReference(redirectedReference ResolvedProjectReference) {
 	if redirectedReference != nil && redirectedReference.CompilerOptions() != nil {
 		r.write(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.ConfigName())
@@ -1917,7 +1921,7 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		}
 
 		peerPackageJson := r.getPackageJsonInfo(peerDependencyPath)
-		if peerPackageJson != nil {
+		if peerPackageJson.Exists() {
 			version := peerPackageJson.Contents.Version.Value
 			builder.WriteString("+")
 			builder.WriteString(name)
@@ -2053,7 +2057,10 @@ func getNodeResolutionFeatures(options *core.CompilerOptions) NodeResolutionFeat
 
 func moveToNextDirectorySeparatorIfAvailable(path string, prevSeparatorIndex int, isFolder bool) int {
 	offset := prevSeparatorIndex + 1
-	nextSeparatorIndex := strings.Index(path[offset:], "/")
+	nextSeparatorIndex := -1
+	if offset <= len(path) {
+		nextSeparatorIndex = strings.Index(path[offset:], "/")
+	}
 	if nextSeparatorIndex == -1 {
 		if isFolder {
 			return len(path)
