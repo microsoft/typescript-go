@@ -4,12 +4,12 @@
 // https://github.com/microsoft/TypeScript/issues/58790
 
 function mixin<T extends { new (...args: any[]): {} }>(superclass: T) {
->mixin : <T extends { new (...args: any[]): {}; }>(superclass: T) => { new (...args: any[]): (Anonymous class); prototype: mixin.(Anonymous class); } & T
+>mixin : <T extends { new (...args: any[]): {}; }>(superclass: T) => { new (...args: any[]): (Anonymous class); prototype: mixin<any>.(Anonymous class); } & T
 >args : any[]
 >superclass : T
 
   return class extends superclass {
->class extends superclass {    get validationTarget(): HTMLElement {      return document.createElement("input");    }  } : { new (...args: any[]): (Anonymous class); prototype: mixin.(Anonymous class); } & T
+>class extends superclass {    get validationTarget(): HTMLElement {      return document.createElement("input");    }  } : { new (...args: any[]): (Anonymous class); prototype: mixin<any>.(Anonymous class); } & T
 >superclass : {}
 
     get validationTarget(): HTMLElement {
@@ -42,8 +42,8 @@ class BaseClass {
 
 class MyClass extends mixin(BaseClass) {
 >MyClass : MyClass
->mixin(BaseClass) : mixin.(Anonymous class) & BaseClass
->mixin : <T extends { new (...args: any[]): {}; }>(superclass: T) => { new (...args: any[]): (Anonymous class); prototype: mixin.(Anonymous class); } & T
+>mixin(BaseClass) : mixin<typeof BaseClass>.(Anonymous class) & BaseClass
+>mixin : <T extends { new (...args: any[]): {}; }>(superclass: T) => { new (...args: any[]): (Anonymous class); prototype: mixin<any>.(Anonymous class); } & T
 >BaseClass : typeof BaseClass
 
   get validationTarget(): HTMLElement {

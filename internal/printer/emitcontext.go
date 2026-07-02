@@ -536,6 +536,7 @@ type emitNode struct {
 	leadingComments           []SynthesizedComment
 	trailingComments          []SynthesizedComment
 	typeNode                  *ast.TypeNode
+	identifierTypeArguments   *ast.NodeList
 }
 
 // NOTE: This method is not guaranteed to be thread-safe
@@ -1001,6 +1002,22 @@ func (c *EmitContext) SetTypeNode(node *ast.Node, typeNode *ast.TypeNode) {
 func (c *EmitContext) GetTypeNode(node *ast.Node) *ast.TypeNode {
 	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
 		return emitNode.typeNode
+	}
+	return nil
+}
+
+// SetIdentifierTypeArguments stores type arguments on a synthesized identifier so they can be
+// emitted alongside it. This is not syntactically valid, but is used when emitting diagnostics,
+// quick info, and signature help for qualified names whose segments carry type arguments (e.g.
+// `Foo<T>.Bar`).
+func (c *EmitContext) SetIdentifierTypeArguments(node *ast.Node, typeArguments *ast.NodeList) {
+	c.emitNodes.Get(node).identifierTypeArguments = typeArguments
+}
+
+// GetIdentifierTypeArguments gets the type arguments stored on a synthesized identifier by SetIdentifierTypeArguments.
+func (c *EmitContext) GetIdentifierTypeArguments(node *ast.Node) *ast.NodeList {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		return emitNode.identifierTypeArguments
 	}
 	return nil
 }

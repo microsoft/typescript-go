@@ -34,7 +34,7 @@ function B3<W>() {
 // extends can call B
 class K extends B1<number>() {
 >K : K
->B1<number>() : B1.(Anonymous class)
+>B1<number>() : B1<number>.(Anonymous class)
 >B1 : <U>() => typeof (Anonymous class)
 
     namae: string;
@@ -42,7 +42,7 @@ class K extends B1<number>() {
 }
 class C extends (new B2<number>().anon) {
 >C : C
->(new B2<number>().anon) : B2.(Anonymous class)
+>(new B2<number>().anon) : B2<number>.(Anonymous class)
 >new B2<number>().anon : typeof (Anonymous class)
 >new B2<number>() : B2<number>
 >B2 : typeof B2
@@ -58,7 +58,7 @@ let b3Number = B3<number>();
 
 class S extends b3Number<string> {
 >S : S
->b3Number : B3.Inner<string>
+>b3Number : B3<number>.Inner<string>
 
     nom: string;
 >nom : string

@@ -1108,10 +1108,17 @@ func (p *Printer) emitIdentifierText(node *ast.Identifier) {
 	if p.IdToSymbol != nil {
 		if symbol, ok := p.IdToSymbol[node.AsNode()]; ok {
 			p.writeSymbol(text, symbol)
-			return
+		} else {
+			p.write(text)
 		}
+	} else {
+		p.write(text)
 	}
-	p.write(text)
+	// Call emitList directly since it could be an array of TypeParameterDeclarations _or_ type arguments.
+	// This is not syntactically valid, but is used when emitting diagnostics, quickinfo, and signature help.
+	if typeArguments := p.emitContext.GetIdentifierTypeArguments(node.AsNode()); typeArguments != nil {
+		p.emitList((*Printer).emitTypeParameterDeclarationNode, node.AsNode(), typeArguments, LFTypeParameters)
+	}
 }
 
 func (p *Printer) emitIdentifierName(node *ast.Identifier) {

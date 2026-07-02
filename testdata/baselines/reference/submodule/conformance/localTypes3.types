@@ -69,21 +69,21 @@ function f2() {
 >10 : 10
 
     let v = new C("hello");
->v : f.C<string>
->new C("hello") : f.C<string>
+>v : f<number>.C<string>
+>new C("hello") : f<number>.C<string>
 >C : typeof C
 >"hello" : "hello"
 
     let x = v.x;
 >x : number
 >v.x : number
->v : f.C<string>
+>v : f<number>.C<string>
 >x : number
 
     let y = v.y;
 >y : string
 >v.y : string
->v : f.C<string>
+>v : f<number>.C<string>
 >y : string
 }
 
@@ -117,20 +117,20 @@ function f3() {
 >"hello" : "hello"
 
     let v = new C();
->v : f.C
->new C() : f.C
+>v : f<number, string>.C
+>new C() : f<number, string>.C
 >C : typeof C
 
     let x = v.x;
 >x : number
 >v.x : number
->v : f.C
+>v : f<number, string>.C
 >x : number
 
     let y = v.y;
 >y : string
 >v.y : string
->v : f.C
+>v : f<number, string>.C
 >y : string
 }
 

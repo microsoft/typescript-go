@@ -257,29 +257,40 @@ func (b *NodeBuilderImpl) checkTypeExpandability(t *Type) {
 	}
 }
 
+// shiftTypeArgumentsOntoLastIdentifier smuggles typeArguments onto the last identifier of an
+// entity name (cloning it and its containing QualifiedName as necessary) so the type arguments
+// survive being requalified into a longer entity name (e.g. when combining `Foo<T>` with `.Bar`
+// into `Foo<T>.Bar`, since only the outermost TypeReferenceNode/ImportTypeNode may carry real
+// type arguments syntactically).
+func (b *NodeBuilderImpl) shiftTypeArgumentsOntoLastIdentifier(entityName *ast.Node, typeArguments *ast.NodeList) *ast.Node {
+	if ast.IsIdentifier(entityName) {
+		if b.e.GetIdentifierTypeArguments(entityName) != typeArguments {
+			clone := entityName.Clone(b.f)
+			b.e.SetIdentifierTypeArguments(clone, typeArguments)
+			return clone
+		}
+		return entityName
+	}
+	qualifiedName := entityName.AsQualifiedName()
+	if b.e.GetIdentifierTypeArguments(qualifiedName.Right) != typeArguments {
+		rightClone := qualifiedName.Right.Clone(b.f)
+		b.e.SetIdentifierTypeArguments(rightClone, typeArguments)
+		return b.f.UpdateQualifiedName(qualifiedName, qualifiedName.Left, rightClone)
+	}
+	return entityName
+}
+
 func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.TypeNode) *ast.TypeNode {
 	if ast.IsImportTypeNode(root) {
 		// first shift type arguments
-
-		// !!! In the old emitter, an Identifier could have type arguments for use with quickinfo:
-		// typeArguments := root.TypeArguments
-		// qualifier := root.AsImportTypeNode().Qualifier
-		// if qualifier != nil {
-		// 	if ast.IsIdentifier(qualifier) {
-		// 		if typeArguments != getIdentifierTypeArguments(qualifier) {
-		// 			qualifier = setIdentifierTypeArguments(b.f.CloneNode(qualifier), typeArguments)
-		// 		}
-		// 	} else {
-		// 		if typeArguments != getIdentifierTypeArguments(qualifier.Right) {
-		// 			qualifier = b.f.UpdateQualifiedName(qualifier, qualifier.Left, setIdentifierTypeArguments(b.f.cloneNode(qualifier.Right), typeArguments))
-		// 		}
-		// 	}
-		// }
-		// !!! Without the above, nested type args are silently elided
 		imprt := root.AsImportTypeNode()
+		typeArguments := imprt.TypeArguments
+		qualifier := imprt.Qualifier
+		if qualifier != nil {
+			qualifier = b.shiftTypeArgumentsOntoLastIdentifier(qualifier, typeArguments)
+		}
 		// then move qualifiers
 		ids := getAccessStack(ref)
-		qualifier := root.AsImportTypeNode().Qualifier
 		for _, id := range ids {
 			if qualifier != nil {
 				qualifier = b.f.NewQualifiedName(qualifier, id)
@@ -290,14 +301,9 @@ func (b *NodeBuilderImpl) appendReferenceToType(root *ast.TypeNode, ref *ast.Typ
 		return b.f.UpdateImportTypeNode(imprt, imprt.IsTypeOf, imprt.Argument, imprt.Attributes, qualifier, ref.TypeArgumentList())
 	} else if ast.IsTypeReferenceNode(root) {
 		typeRef := root.AsTypeReferenceNode()
-		if b.ctx.flags&nodebuilder.FlagsUseInstantiationExpressions != 0 && typeRef.TypeArguments != nil && len(typeRef.TypeArguments.Nodes) != 0 {
-			expr := b.createExpressionWithTypeArguments(b.createAccessExpression(typeRef.TypeName), typeRef.TypeArguments)
-			for _, id := range getAccessStack(ref) {
-				expr = b.f.NewPropertyAccessExpression(expr, nil, id, ast.NodeFlagsNone)
-			}
-			return expr
-		}
-		var typeName *ast.Node = typeRef.TypeName
+		// first shift type arguments
+		typeName := b.shiftTypeArgumentsOntoLastIdentifier(typeRef.TypeName, typeRef.TypeArguments)
+		// then move qualifiers
 		for _, id := range getAccessStack(ref) {
 			typeName = b.f.NewQualifiedName(typeName, id)
 		}
@@ -645,7 +651,7 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 		// module is root, must use `ImportTypeNode`
 		var nonRootParts *ast.Node
 		if len(chain) > 1 {
-			nonRootParts = b.createAccessFromSymbolChain(chain, len(chain)-1, 1, typeArguments)
+			nonRootParts = b.createAccessFromSymbolChain(chain, len(chain)-1, 1, nil)
 		}
 		typeParameterNodes := typeArguments
 		if typeParameterNodes == nil {
@@ -708,9 +714,11 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 		b.ctx.approximateLength += len(specifier) + 10 // specifier + import("")
 		if nonRootParts == nil || ast.IsEntityName(nonRootParts) {
 			if nonRootParts != nil {
-				// !!! TODO: smuggle type arguments out
-				// const lastId = isIdentifier(nonRootParts) ? nonRootParts : nonRootParts.right;
-				// setIdentifierTypeArguments(lastId, /*typeArguments*/ undefined);
+				lastId := nonRootParts
+				if ast.IsQualifiedName(nonRootParts) {
+					lastId = nonRootParts.AsQualifiedName().Right
+				}
+				b.e.SetIdentifierTypeArguments(lastId, nil)
 			}
 			return b.f.NewImportTypeNode(isTypeOf, lit, attributes, nonRootParts, typeParameterNodes)
 		}
@@ -728,17 +736,16 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 	if ast.IsIndexedAccessTypeNode(entityName) {
 		return entityName // Indexed accesses can never be `typeof`
 	}
-	if ast.IsEntityName(entityName) {
-		if isTypeOf {
-			return b.f.NewTypeQueryNode(entityName, nil)
-		}
-		return b.f.NewTypeReferenceNode(entityName, typeArguments)
+	if isTypeOf {
+		return b.f.NewTypeQueryNode(entityName, nil)
 	}
-	if isTypeOf && ast.IsExpressionWithTypeArguments(entityName) {
-		expr := entityName.AsExpressionWithTypeArguments()
-		return b.f.NewTypeQueryNode(b.f.DeepCloneNode(expr.Expression), expr.TypeArguments)
+	lastId := entityName
+	if ast.IsQualifiedName(entityName) {
+		lastId = entityName.AsQualifiedName().Right
 	}
-	return entityName
+	lastTypeArgs := b.e.GetIdentifierTypeArguments(lastId)
+	b.e.SetIdentifierTypeArguments(lastId, nil)
+	return b.f.NewTypeReferenceNode(entityName, lastTypeArgs)
 }
 
 func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAccessTypeNode {
@@ -833,13 +840,13 @@ func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 
 	identifier := b.newIdentifier(symbolName, symbol)
 	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
+	if typeParameterNodes != nil {
+		b.e.SetIdentifierTypeArguments(identifier, typeParameterNodes)
+	}
 
 	if index > stopper {
 		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
-		if b.ctx.flags&nodebuilder.FlagsUseInstantiationExpressions == 0 || ast.IsEntityName(lhs) && (typeParameterNodes == nil || len(typeParameterNodes.Nodes) == 0) {
-			return b.f.NewQualifiedName(lhs, identifier)
-		}
-		return b.createExpressionWithTypeArguments(b.f.NewPropertyAccessExpression(b.createAccessExpression(lhs), nil, identifier, ast.NodeFlagsNone), typeParameterNodes)
+		return b.f.NewQualifiedName(lhs, identifier)
 	}
 	return identifier
 }

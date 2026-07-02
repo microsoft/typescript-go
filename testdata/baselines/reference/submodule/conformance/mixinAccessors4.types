@@ -18,13 +18,13 @@ class A {
 }
 
 function Mixin<T extends typeof A>(Super: T) {
->Mixin : <T extends typeof A>(Super: T) => { new (...args: any[]): B; prototype: Mixin.B; } & T
+>Mixin : <T extends typeof A>(Super: T) => { new (...args: any[]): B; prototype: Mixin<any>.B; } & T
 >A : typeof A
 >Super : T
 
   return class B extends Super {
->class B extends Super {    get myName(): string {      return "B";    }  } : { new (...args: any[]): B; prototype: Mixin.B; } & T
->B : { new (...args: any[]): B; prototype: Mixin.B; } & T
+>class B extends Super {    get myName(): string {      return "B";    }  } : { new (...args: any[]): B; prototype: Mixin<any>.B; } & T
+>B : { new (...args: any[]): B; prototype: Mixin<any>.B; } & T
 >Super : A
 
     get myName(): string {
@@ -38,8 +38,8 @@ function Mixin<T extends typeof A>(Super: T) {
 
 class C extends Mixin(A) {
 >C : C
->Mixin(A) : Mixin.B & A
->Mixin : <T extends typeof A>(Super: T) => { new (...args: any[]): B; prototype: Mixin.B; } & T
+>Mixin(A) : Mixin<typeof A>.B & A
+>Mixin : <T extends typeof A>(Super: T) => { new (...args: any[]): B; prototype: Mixin<any>.B; } & T
 >A : typeof A
 
   get myName(): string {

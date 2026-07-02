@@ -421,11 +421,6 @@ compiler/declarationEmitHigherOrderRetainedGenerics.types.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.js.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.types.diff
 compiler/declarationEmitMappedTypePreservesTypeParameterConstraint.types.diff
-compiler/anonClassDeclarationEmitIsAnon.types.diff
-compiler/baseConstraintOfDecorator.types.diff
-compiler/baseExpressionTypeParameters.types.diff
-compiler/declarationEmitGenericTypeParamerSerialization3.types.diff
-compiler/declarationEmitLocalClassDeclarationMixin.types.diff
 
 ## better error spans/suggestions ##
 compiler/awaitInNonAsyncFunction.errors.txt.diff
@@ -783,11 +778,6 @@ conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
 conformance/jsdocPrivateName2.errors.txt.diff
 conformance/jsdocImplements_missingType.errors.txt.diff
 
-## Type arguments are dropped from anonymous mixin class types in error messages — e.g. `mixB<typeof A>.(Anonymous class)` becomes `mixB.(Anonymous class)`
-compiler/mixinPrivateAndProtected.errors.txt.diff
-conformance/mixinAccessors3.errors.txt.diff
-conformance/typeArgumentInferenceWithClassExpression2.errors.txt.diff
-
 ## One error instead of 3 emitted for `<T>(arg) => expr` in JSX-syntax files
 conformance/nodeModulesForbidenSyntax(module=node16).errors.txt.diff
 conformance/nodeModulesForbidenSyntax(module=node18).errors.txt.diff
@@ -813,7 +803,6 @@ conformance/scannerS7.6_A4.2_T1.errors.txt.diff
 
 ## `JSX.IntrinsicAttributes` shortened to `IntrinsicAttributes`, `React.ReactNode` to `ReactNode` in error and related messages
 compiler/tsxNotUsingApparentTypeOfSFC.errors.txt.diff
-conformance/mixinAccessors3.errors.txt.diff
 conformance/tsxGenericAttributesType5.errors.txt.diff
 conformance/tsxGenericAttributesType6.errors.txt.diff
 conformance/tsxGenericAttributesType7.errors.txt.diff
