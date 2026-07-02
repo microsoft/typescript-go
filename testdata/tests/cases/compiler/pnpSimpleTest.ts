@@ -77,8 +77,8 @@ export declare function helperB(value: number): string;
 
 // @filename: /tsconfig.json
 {
+  "exclude": [".pnp.cjs"],
   "compilerOptions": {
-    "exclude": [".pnp.cjs"],
     "rootDir": ".",
     "declaration": true,
     "outDir": "./dist"

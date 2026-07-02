@@ -3,8 +3,8 @@
 
 ==== /tsconfig.json (0 errors) ====
     {
+      "exclude": [".pnp.cjs"],
       "compilerOptions": {
-        "exclude": [".pnp.cjs"],
         "rootDir": ".",
         "declaration": true,
         "outDir": "./dist"
