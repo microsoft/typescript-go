@@ -795,7 +795,9 @@ func (w *formatSpanWorker) trimTrailingWhitespacesForRemainingRange(trivias []Te
 				w.trimTrailingWitespacesForPositions(startPos, trivia.Loc.Pos()-1, w.previousRange)
 			}
 
-			startPos = trivia.Loc.End() + 1
+			if trivia.Loc.End()+1 > startPos {
+				startPos = trivia.Loc.End() + 1
+			}
 		}
 	}
 
