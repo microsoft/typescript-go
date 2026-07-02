@@ -6,7 +6,7 @@ This extension provides the native implementation of the TypeScript language ser
 
 1. Install the extension from the marketplace.
 2. Open a TypeScript or JavaScript file (`.ts`) in your editor.
-3. Activate the extension with the command `TypeScript 7: Enable (Experimental)`, or update your settings below:
+3. Activate the extension with the command `TypeScript: Enable TypeScript 7`, or update your settings below:
 
 ## Configuration
 
