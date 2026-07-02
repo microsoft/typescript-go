@@ -1,106 +1,27 @@
-/repro.ts(19,69): error TS2322: Type '{ content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }[]' is not assignable to type 'IMessage[]'.
-  Type '{ content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }' is not assignable to type 'IMessage'.
-    The types of 'content.children' are incompatible between these types.
-      Type 'Transform<Transform<RootContent, bigint | Date, string>, bigint | Date, string>[]' is not assignable to type 'RootContent[]'.
-        Type 'Transform<Transform<RootContent, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'RootContent'.
-          Type 'Transform<Transform<Element, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'RootContent'.
-            Type 'Transform<Transform<Element, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'Element'.
-              Types of property 'children' are incompatible.
-                Type 'Transform<Transform<MdxJsxTextElementHast, bigint | Date, string>, bigint | Date, string>[]' is not assignable to type 'MdxJsxTextElementHast[]'.
-                  Type 'Transform<Transform<MdxJsxTextElementHast, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxTextElementHast'.
-                    Types of property 'attributes' are incompatible.
-                      Type 'Transform<Transform<MdxJsxAttribute | MdxJsxExpressionAttribute, bigint | Date, string>, bigint | Date, string>[]' is not assignable to type '(MdxJsxAttribute | MdxJsxExpressionAttribute)[]'.
-                        Type 'Transform<Transform<MdxJsxAttribute | MdxJsxExpressionAttribute, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxAttribute | MdxJsxExpressionAttribute'.
-                          Type 'Transform<Transform<MdxJsxAttribute, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxAttribute | MdxJsxExpressionAttribute'.
-                            Type 'Transform<Transform<MdxJsxAttribute, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxAttribute'.
-                              Types of property 'addEventListener' are incompatible.
-                                Type 'Transform<Transform<(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) => void, bigint | Date, string>, bigint | Date, string>' is not assignable to type '(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) => void'.
-                                  Type 'Transform<Transform<(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) => void, bigint | Date, string>, bigint | Date, string>' provides no match for the signature '(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined): void'.
+recursiveMappedTypeAssignableToAugmentedRecursiveType.ts(14,7): error TS2322: Type 'Transform<Transform<Root>>' is not assignable to type 'Root'.
+  Types of property 'child' are incompatible.
+    Type 'Transform<Transform<Child>>' is not assignable to type 'Child'.
+      Type 'Transform<Transform<Root>>' is not assignable to type 'Child'.
 
 
-==== /types.d.ts (0 errors) ====
-    declare module "estree" {
-        export interface Program extends BaseNode { body: Array<Directive | Statement | ModuleDeclaration>; }
-        export interface Directive extends BaseNode { body: BlockStatement | Expression; }
-        export type Statement = Declaration;
-        export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDeclaration;
-        export interface FunctionDeclaration extends MaybeNamedFunctionDeclaration { id: Identifier; }
-        export interface VariableDeclaration extends BaseDeclaration { consequent: Statement[]; }
-        export type Literal = SimpleLiteral | RegExpLiteral | BigIntLiteral;
-        export interface SimpleLiteral extends BaseNode, BaseExpression { value: string | boolean | number | null; }
-        export interface RegExpLiteral extends BaseNode, BaseExpression { value?: RegExp | null | undefined; regex: {}; }
-        export interface BigIntLiteral extends BaseNode, BaseExpression { raw?: string | undefined; }
-        export interface ClassDeclaration extends MaybeNamedClassDeclaration { property: Identifier; }
-        export type ModuleDeclaration = ExportAllDeclaration;
-        export interface ExportAllDeclaration extends BaseModuleDeclaration { source: Literal; }
-    }
-    
-    declare module "estree-jsx" {
-        export * from "estree";
-    }
-    
-    declare module "hast" {
-        export type ElementContent = ElementContentMap[keyof ElementContentMap];
-        export type RootContent = RootContentMap[keyof RootContentMap];
-        export interface RootContentMap { comment: Comment; doctype: Doctype; element: Element; text: Text; }
-        export interface Comment extends Literal { type: "comment"; data?: CommentData | undefined; }
-        export interface Doctype extends UnistNode { type: "doctype"; data?: DoctypeData | undefined; }
-        export interface Element extends Parent { type: "element"; tagName: string; properties: Properties; children: ElementContent[]; content?: Root | undefined; data?: ElementData | undefined; }
-        export interface Root extends Parent { type: "root"; children: RootContent[]; data?: RootData | undefined; }
-        export interface Text extends Literal { type: "text"; data?: TextData | undefined; }
-    }
-    
-    declare module "mdast-util-mdx-jsx" {
-        import type { Program } from "estree-jsx";
-        export interface MdxJsxExpressionAttribute extends Node { estree?: Program | null | undefined; }
-        export interface MdxJsxAttribute extends Node { data?: MdxJsxAttributeData | undefined; }
-        export interface MdxJsxTextElementHast extends HastParent { attributes: Array<MdxJsxAttribute | MdxJsxExpressionAttribute>; }
-    }
-    
-    declare module "hast" {
-        import type { MdxJsxTextElementHast } from "mdast-util-mdx-jsx";
-        interface ElementContentMap { mdxJsxTextElement: MdxJsxTextElementHast; }
-    }
-    
-==== /repro.ts (1 errors) ====
-    import "mdast-util-mdx-jsx";
-    import type { Root } from "hast";
-    
-    type Transform<Base, From, To> = {
-        [K in keyof Base]: Exclude<Base[K], undefined | null> extends never ? Base[K]
-            : Exclude<Base[K], undefined | null> extends object ? Exclude<Base[K], undefined | null> extends From ? To | Extract<Base[K], null | undefined> : Transform<Base[K], From, To>
-            : Base[K];
+==== recursiveMappedTypeAssignableToAugmentedRecursiveType.ts (1 errors) ====
+    type Transform<T> = {
+        [K in keyof T]: T[K] extends object ? Transform<T[K]> : T[K];
     };
-    type TransformJson<T> = Transform<T, Date | bigint, string>;
     
-    declare function fetchJson<T>(): TransformJson<T>;
-    declare function parseDate(s: string): Date;
+    type Child = ChildMap[keyof ChildMap];
     
-    interface IMessage { createdAt: Date; content: Root; }
-    interface IAggregate { createdAt: Date; messages: IMessage[]; }
+    interface ChildMap { root: Root; }
+    interface Root { child: Child; }
     
-    export function getAggregate(): IAggregate {
-        const response = fetchJson<TransformJson<IAggregate>>();
-        return { ...response, createdAt: parseDate(response.createdAt), messages: response.messages.map(message => ({ ...message, createdAt: parseDate(message.createdAt) })) };
-                                                                        ~~~~~~~~
-!!! error TS2322: Type '{ content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }[]' is not assignable to type 'IMessage[]'.
-!!! error TS2322:   Type '{ content: Transform<Transform<Root, bigint | Date, string>, bigint | Date, string>; createdAt: Date; }' is not assignable to type 'IMessage'.
-!!! error TS2322:     The types of 'content.children' are incompatible between these types.
-!!! error TS2322:       Type 'Transform<Transform<RootContent, bigint | Date, string>, bigint | Date, string>[]' is not assignable to type 'RootContent[]'.
-!!! error TS2322:         Type 'Transform<Transform<RootContent, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'RootContent'.
-!!! error TS2322:           Type 'Transform<Transform<Element, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'RootContent'.
-!!! error TS2322:             Type 'Transform<Transform<Element, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'Element'.
-!!! error TS2322:               Types of property 'children' are incompatible.
-!!! error TS2322:                 Type 'Transform<Transform<MdxJsxTextElementHast, bigint | Date, string>, bigint | Date, string>[]' is not assignable to type 'MdxJsxTextElementHast[]'.
-!!! error TS2322:                   Type 'Transform<Transform<MdxJsxTextElementHast, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxTextElementHast'.
-!!! error TS2322:                     Types of property 'attributes' are incompatible.
-!!! error TS2322:                       Type 'Transform<Transform<MdxJsxAttribute | MdxJsxExpressionAttribute, bigint | Date, string>, bigint | Date, string>[]' is not assignable to type '(MdxJsxAttribute | MdxJsxExpressionAttribute)[]'.
-!!! error TS2322:                         Type 'Transform<Transform<MdxJsxAttribute | MdxJsxExpressionAttribute, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxAttribute | MdxJsxExpressionAttribute'.
-!!! error TS2322:                           Type 'Transform<Transform<MdxJsxAttribute, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxAttribute | MdxJsxExpressionAttribute'.
-!!! error TS2322:                             Type 'Transform<Transform<MdxJsxAttribute, bigint | Date, string>, bigint | Date, string>' is not assignable to type 'MdxJsxAttribute'.
-!!! error TS2322:                               Types of property 'addEventListener' are incompatible.
-!!! error TS2322:                                 Type 'Transform<Transform<(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) => void, bigint | Date, string>, bigint | Date, string>' is not assignable to type '(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) => void'.
-!!! error TS2322:                                   Type 'Transform<Transform<(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) => void, bigint | Date, string>, bigint | Date, string>' provides no match for the signature '(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined): void'.
-!!! related TS6500 /repro.ts:15:41: The expected type comes from property 'messages' which is declared here on type 'IAggregate'
-    }
+    interface ChildMap { element: XMLElement; }
+    interface XMLElement { parent: Root; fn(): void; }
+    
+    declare const root: Transform<Transform<Root>>;
+    const result: Root = root;
+          ~~~~~~
+!!! error TS2322: Type 'Transform<Transform<Root>>' is not assignable to type 'Root'.
+!!! error TS2322:   Types of property 'child' are incompatible.
+!!! error TS2322:     Type 'Transform<Transform<Child>>' is not assignable to type 'Child'.
+!!! error TS2322:       Type 'Transform<Transform<Root>>' is not assignable to type 'Child'.
     
