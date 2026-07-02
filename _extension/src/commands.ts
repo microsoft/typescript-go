@@ -12,17 +12,17 @@ import {
     restartExtHostOnChangeIfNeeded,
 } from "./util";
 
-export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: tr.TelemetryReporter): void {
+export function registerEnablementCommands(context: vscode.ExtensionContext, telemetryReporter: tr.TelemetryReporter, stopSession: () => Promise<void>): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
         telemetryReporter.sendTelemetryEvent("command.enableNativePreview");
         updateUseTsgoSetting(true);
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.disable", () => {
-        // Fire and forget, because this will restart the extension host and cause an error if we await
+    context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.disable", async () => {
         telemetryReporter.sendTelemetryEvent("command.disableNativePreview");
-        updateUseTsgoSetting(false);
+        await stopSession();
+        await updateUseTsgoSetting(false);
     }));
 }
 

@@ -42,8 +42,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     // but for now we just construct it to ensure shared properties are set for telemetry.
     void new ExperimentationService(telemetryReporter, context.extension.id, version, context.globalState);
 
-    registerEnablementCommands(context, telemetryReporter);
-
     const output = vscode.window.createOutputChannel("TypeScript", { log: true });
     context.subscriptions.push(output);
 
@@ -52,6 +50,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
     const sessionManager = new SessionManager(context, output, languageServerInitializedEventEmitter, telemetryReporter);
     context.subscriptions.push(sessionManager);
+    registerEnablementCommands(context, telemetryReporter, () => sessionManager.stop());
 
     let pluginWarningShown = false;
     const onDidChangeExtensions = vscode.extensions.onDidChange(() => {
@@ -223,6 +222,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
 
         const selected = await vscode.window.showWarningMessage(message, ...options);
         if (selected === disableInWorkspace) {
+            await sessionManager.stop();
             await vscode.workspace.getConfiguration("js/ts").update("experimental.useTsgo", false, vscode.ConfigurationTarget.Workspace);
         }
         else if (selected === dontShowAgain) {
