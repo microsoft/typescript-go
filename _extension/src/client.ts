@@ -199,7 +199,6 @@ export class Client implements vscode.Disposable {
             serverOptions,
             this.clientOptions,
         );
-        this.disposables.push(this.client);
 
         // Register a static feature to advertise verbosityLevel support in hover capabilities.
         this.client.registerFeature(
@@ -264,13 +263,27 @@ export class Client implements vscode.Disposable {
         );
     }
 
+    async stop(): Promise<void> {
+        if (this.isDisposed) {
+            return;
+        }
+        this.isStopping = true;
+        this.isInitialized = false;
+        const disposables = this.disposables.splice(0);
+        await Promise.all(disposables.map(d => d.dispose()));
+        await this.client?.stop();
+    }
+
     async dispose(): Promise<void> {
         if (this.isDisposed) {
             return;
         }
         this.isDisposed = true;
         this.isStopping = true;
-        await Promise.all(this.disposables.map(d => d.dispose()));
+        this.isInitialized = false;
+        const disposables = this.disposables.splice(0);
+        await Promise.all(disposables.map(d => d.dispose()));
+        await this.client?.dispose();
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {

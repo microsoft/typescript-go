@@ -51,7 +51,7 @@ export class SessionManager implements vscode.Disposable {
     async restart(context: vscode.ExtensionContext): Promise<void> {
         if (this.currentSession) {
             this.outputChannel.appendLine("Restarting TypeScript language server...");
-            await this.currentSession.dispose();
+            await this.currentSession.stop();
         }
         this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop(), () => this.restart(context));
         return this.currentSession.start(context);
@@ -59,7 +59,7 @@ export class SessionManager implements vscode.Disposable {
 
     async stop(): Promise<void> {
         if (this.currentSession) {
-            await this.currentSession.dispose();
+            await this.currentSession.stop();
             this.currentSession = undefined;
         }
     }
@@ -105,7 +105,6 @@ class Session implements vscode.Disposable {
         restartSession: () => Promise<void>,
     ) {
         this.client = new Client(outputChannel, initializedEventEmitter, telemetryReporter);
-        this.disposables.push(this.client);
         this.context = context;
         this.outputChannel = outputChannel;
         this.telemetryReporter = telemetryReporter;
@@ -270,10 +269,21 @@ class Session implements vscode.Disposable {
         }));
     }
 
-    async dispose(): Promise<void> {
+    private async disposeSessionState(): Promise<void> {
         await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
         await vscode.commands.executeCommand("setContext", "typescript.native-preview.cpuProfileRunning", false);
-        await Promise.all(this.disposables.map(d => d.dispose()));
+        const disposables = this.disposables.splice(0);
+        await Promise.all(disposables.map(d => d.dispose()));
+    }
+
+    async stop(): Promise<void> {
+        await this.disposeSessionState();
+        await this.client.stop();
+    }
+
+    async dispose(): Promise<void> {
+        await this.disposeSessionState();
+        await this.client.dispose();
     }
 }
 
