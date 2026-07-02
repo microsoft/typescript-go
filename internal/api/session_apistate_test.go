@@ -194,12 +194,12 @@ func TestSessionTracksAndReleasesAPIRefs(t *testing.T) {
 	})
 }
 
-// TestUpdateSnapshotResponseHandlesUnloadedAncestorProject verifies that API
-// updateSnapshot can serialize a snapshot containing both a loaded nested
-// project and an unloaded ancestor project. This covers the case where opening a
-// file loads its nearest configured project while solution search discovers an
-// ancestor tsconfig placeholder whose command line is still nil.
-func TestUpdateSnapshotResponseHandlesUnloadedAncestorProject(t *testing.T) {
+// TestUpdateSnapshotResponseSkipsUnloadedAncestorProject verifies that API
+// updateSnapshot does not report unloaded ancestor project placeholders. This
+// covers the case where opening a file loads its nearest configured project
+// while solution search discovers an ancestor tsconfig placeholder whose command
+// line is still nil.
+func TestUpdateSnapshotResponseSkipsUnloadedAncestorProject(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -248,11 +248,8 @@ func TestUpdateSnapshotResponseHandlesUnloadedAncestorProject(t *testing.T) {
 			assert.Assert(t, project.CompilerOptions != nil)
 		case ancestorConfigFileName:
 			foundAncestorProject = true
-			assert.Assert(t, project.RootFiles != nil)
-			assert.Equal(t, len(project.RootFiles), 0)
-			assert.Assert(t, project.CompilerOptions != nil)
 		}
 	}
 	assert.Assert(t, foundNestedProject)
-	assert.Assert(t, foundAncestorProject)
+	assert.Assert(t, !foundAncestorProject)
 }

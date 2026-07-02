@@ -494,17 +494,15 @@ type ProjectResponse struct {
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
-	response := &ProjectResponse{
+	if p == nil || p.CommandLine == nil {
+		panic("NewProjectResponse called with unloaded project")
+	}
+	return &ProjectResponse{
 		Id:              ProjectHandle(p),
 		ConfigFileName:  p.Name(),
-		RootFiles:       []string{},
-		CompilerOptions: &core.CompilerOptions{},
+		RootFiles:       p.CommandLine.FileNames(),
+		CompilerOptions: p.CommandLine.CompilerOptions(),
 	}
-	if p.CommandLine != nil {
-		response.RootFiles = p.CommandLine.FileNames()
-		response.CompilerOptions = p.CommandLine.CompilerOptions()
-	}
-	return response
 }
 
 type GetSymbolAtPositionParams struct {
