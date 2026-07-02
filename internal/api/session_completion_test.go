@@ -95,7 +95,7 @@ func TestCompletionSymbolTypeIsResolvable(t *testing.T) {
 //
 // setupLanguageService called Project.ConfigFilePath(), which is only valid for
 // configured projects and panics for inferred ones. The fix uses Project.ID(),
-// which returns the same underlying path for both project kinds without panicking.
+// which returns the project's path for both configured and inferred projects without panicking.
 func TestCompletionOnInferredProject(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
