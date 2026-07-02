@@ -462,10 +462,9 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
     const items: VersionQuickPickItem[] = [];
 
     if (stradaVersion) {
-        const builtInDescription = versionDescription(stradaVersion.version);
         items.push({
-            label: versionLabel(stradaVersion.version, version => vscode.l10n.t("Use Built-in TypeScript {0}", version), vscode.l10n.t("Use Built-in TypeScript")),
-            description: builtInDescription,
+            label: vscode.l10n.t("Use Built-in TypeScript"),
+            description: stradaVersion.version,
             detail: "",
             beforeRun: stopServer,
             run: async () => {
@@ -476,11 +475,10 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
         });
     }
 
-    const defaultDescription = versionDescription(defaultExe.version);
     items.push({
-        label: (currentExePath === defaultExe.path ? "• " : "") + versionLabel(defaultExe.version, version => vscode.l10n.t("Use TypeScript 7 {0}", version), vscode.l10n.t("Use TypeScript 7")),
-        description: defaultDescription,
-        detail: defaultExe.path,
+        label: (currentExePath === defaultExe.path ? "• " : "") + vscode.l10n.t("Use TypeScript 7"),
+        description: defaultExe.version,
+        detail: "",
         restart: true,
         run: async () => {
             await context.workspaceState.update(useWorkspaceTsdkStorageKey, false);
@@ -564,18 +562,6 @@ async function promptSelectVersion(context: vscode.ExtensionContext, client: Cli
             await vscode.commands.executeCommand("typescript.native-preview.restart");
         }
     }
-}
-
-function versionLabel(version: string, format: (version: string) => string, fallback: string): string {
-    return isVersionLike(version) ? format(version) : fallback;
-}
-
-function versionDescription(version: string): string | undefined {
-    return isVersionLike(version) ? undefined : version;
-}
-
-function isVersionLike(version: string): boolean {
-    return /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version);
 }
 
 /**
