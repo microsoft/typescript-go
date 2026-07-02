@@ -8,6 +8,7 @@ import {
     SyntaxKind,
     TokenFlags,
 } from "../../ast/index.ts";
+import type { TimingCollector } from "../timing.ts";
 import { MsgpackReader } from "./msgpack.ts";
 import {
     RemoteNode,
@@ -16,6 +17,7 @@ import {
 import {
     NODE_EXTENDED_DATA_MASK,
     type SourceFileInfo,
+    type TextDecoder,
 } from "./node.infrastructure.ts";
 import {
     HEADER_OFFSET_EXTENDED_DATA,
@@ -28,6 +30,7 @@ import {
     NODE_OFFSET_KIND,
     NODE_OFFSET_PARENT,
 } from "./protocol.ts";
+import { Wtf8Decoder } from "./wtf8.ts";
 
 // Re-export everything consumers need from the other two files.
 export { RemoteNode, RemoteNodeList } from "./node.generated.ts";
@@ -47,11 +50,17 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     readonly _offsetExtendedData: number;
     readonly _offsetStructuredData: number;
     readonly _decoder: TextDecoder;
-    private _cachedText: string | undefined;
-
+    readonly _timing: TimingCollector | undefined;
     private _lineStarts: readonly number[] | undefined;
+    private _cachedText: string | undefined;
+    private _cachedReferencedFiles: readonly FileReference[] | undefined;
+    private _cachedTypeReferenceDirectives: readonly FileReference[] | undefined;
+    private _cachedLibReferenceDirectives: readonly FileReference[] | undefined;
+    private _cachedImports: readonly Node[] | undefined;
+    private _cachedModuleAugmentations: readonly Node[] | undefined;
+    private _cachedAmbientModuleNames: readonly string[] | undefined;
 
-    constructor(data: Uint8Array, decoder: TextDecoder) {
+    constructor(data: Uint8Array, decoder: TextDecoder, timing?: TimingCollector) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         const offsetNodes = view.getUint32(HEADER_OFFSET_NODES, true);
         super(view, 1, undefined!, undefined!, offsetNodes);
@@ -62,8 +71,12 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
         this._offsetExtendedData = view.getUint32(HEADER_OFFSET_EXTENDED_DATA, true);
         this._offsetStructuredData = view.getUint32(HEADER_OFFSET_STRUCTURED_DATA, true);
         this._decoder = decoder;
+        this._timing = timing;
         this.nodes = Array((view.byteLength - offsetNodes) / NODE_LEN);
         this.nodes[1] = this;
+        // Every node slot is materializable on demand except the nil sentinel at
+        // index 0 and the source-file node at index 1, which is pre-materialized.
+        timing?.recordSourceFileFetched(Math.max(0, this.nodes.length - 2));
     }
 
     readFileReferences(structuredDataOffset: number): readonly FileReference[] {
@@ -135,6 +148,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
             const parent = parentIndex === index ? this : this.getOrCreateNodeAtIndex(parentIndex) as RemoteNode;
             node = new RemoteNode(this.view, index, parent, this, this._offsetNodes);
             this.nodes[index] = node;
+            this._timing?.recordMaterialization();
         }
         return node as Node;
     }
@@ -164,33 +178,51 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     }
 
     get referencedFiles(): readonly FileReference[] {
+        if (this._cachedReferencedFiles !== undefined) return this._cachedReferencedFiles;
         const offset = this.view.getUint32(this.extendedDataOffset + 20, true);
-        return this.readFileReferences(offset);
+        const files = this.readFileReferences(offset);
+        this._cachedReferencedFiles = files;
+        return files;
     }
 
     get typeReferenceDirectives(): readonly FileReference[] {
+        if (this._cachedTypeReferenceDirectives !== undefined) return this._cachedTypeReferenceDirectives;
         const offset = this.view.getUint32(this.extendedDataOffset + 24, true);
-        return this.readFileReferences(offset);
+        const directives = this.readFileReferences(offset);
+        this._cachedTypeReferenceDirectives = directives;
+        return directives;
     }
 
     get libReferenceDirectives(): readonly FileReference[] {
+        if (this._cachedLibReferenceDirectives !== undefined) return this._cachedLibReferenceDirectives;
         const offset = this.view.getUint32(this.extendedDataOffset + 28, true);
-        return this.readFileReferences(offset);
+        const directives = this.readFileReferences(offset);
+        this._cachedLibReferenceDirectives = directives;
+        return directives;
     }
 
     get imports(): readonly Node[] {
+        if (this._cachedImports !== undefined) return this._cachedImports;
         const offset = this.view.getUint32(this.extendedDataOffset + 32, true);
-        return this.readNodeIndexArray(offset);
+        const imports = this.readNodeIndexArray(offset);
+        this._cachedImports = imports;
+        return imports;
     }
 
     get moduleAugmentations(): readonly Node[] {
+        if (this._cachedModuleAugmentations !== undefined) return this._cachedModuleAugmentations;
         const offset = this.view.getUint32(this.extendedDataOffset + 36, true);
-        return this.readNodeIndexArray(offset);
+        const moduleAugmentations = this.readNodeIndexArray(offset);
+        this._cachedModuleAugmentations = moduleAugmentations;
+        return moduleAugmentations;
     }
 
     get ambientModuleNames(): readonly string[] {
+        if (this._cachedAmbientModuleNames !== undefined) return this._cachedAmbientModuleNames;
         const offset = this.view.getUint32(this.extendedDataOffset + 40, true);
-        return this.readStringArray(offset);
+        const names = this.readStringArray(offset);
+        this._cachedAmbientModuleNames = names;
+        return names;
     }
 
     get externalModuleIndicator(): Node | true | undefined {
@@ -313,7 +345,7 @@ export function parseNodeHandle(handle: string): ParsedNodeHandle {
  * (e.g. from typeToTypeNode) that don't have a source file.
  */
 export function decodeNode(data: Uint8Array): Node {
-    const sf = new RemoteSourceFile(data, new TextDecoder());
+    const sf = new RemoteSourceFile(data, new Wtf8Decoder());
     return sf as unknown as Node;
 }
 

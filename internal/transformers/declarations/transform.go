@@ -1965,6 +1965,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	extendsClause := getEffectiveBaseTypeNode(input.AsNode())
 
 	if extendsClause != nil && !ast.IsEntityNameExpression(extendsClause.AsExpressionWithTypeArguments().Expression) && extendsClause.AsExpressionWithTypeArguments().Expression.Kind != ast.KindNullKeyword {
+		tx.tracker.ReportInferenceFallback(extendsClause.AsExpressionWithTypeArguments().Expression) // Add an isolated declarations error on this extends clause
 		oldId := "default"
 		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().Text()) > 0 {
 			oldId = input.Name().Text()
@@ -2066,9 +2067,8 @@ caseBlock:
 		if thisTarget.ClassLikeData().HeritageClauses != nil && len(thisTarget.ClassLikeData().HeritageClauses.Nodes) > 0 && !isClassExtendingNull(thisTarget) {
 			// there is a base type any assignments might be "from"
 			tx.tracker.ReportInferenceFallback(thisTarget) // Add an isolated declarations error on this class - we can't know how to transform this prop into an assignment without referring to type information
-			decls := tx.resolver.GetBaseDeclarationsForPropertyDeclaration(node)
-			if len(decls) > 0 {
-				break caseBlock // property lightly overrides a property in a base type - skip it
+			if tx.resolver.IsThisPropertyAssignmentDeclarationRedundant(node) {
+				break caseBlock // skip assignments whose member is already provided by an `extends` base type (an inherited accessor/method, or an identical inherited property)
 				// TODO: If the property has an explicit `@type` annotation, we should probably emit it (maybe with an `override` modifier) instead of skipping it
 			}
 		}

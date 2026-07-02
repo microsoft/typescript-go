@@ -7,7 +7,7 @@ import (
 	"math"
 	"os"
 	"runtime"
-	"sync/atomic"
+	"slices"
 	"syscall"
 	"unsafe"
 
@@ -75,7 +75,7 @@ import (
 //	  asm: return to FSEvents          fsEventsCallback(cb, payload)
 //	                                   classifies events,
 //	                                   frees payload,
-//	                                   posts to dirWatch.events
+//	                                   routes to matching dirWatch events
 //
 // The assembly callback never enters Go ABI; it stays entirely in C
 // context. One pipe per stream hands retained/copied callback payloads from
@@ -375,6 +375,15 @@ func fsEventStreamFlushSync(stream uintptr) {
 	_, _, _ = syscall_syscall6(fse_FSEventStreamFlushSync_trampoline_addr, stream, 0, 0, 0, 0, 0)
 }
 
+//go:cgo_import_dynamic fse_FSEventsGetCurrentEventId FSEventsGetCurrentEventId "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
+
+var fse_FSEventsGetCurrentEventId_trampoline_addr uintptr
+
+func fsEventsGetCurrentEventID() uint64 {
+	r1, _, _ := syscall_syscall6(fse_FSEventsGetCurrentEventId_trampoline_addr, 0, 0, 0, 0, 0, 0)
+	return uint64(r1)
+}
+
 //go:cgo_import_dynamic fse_FSEventStreamStop FSEventStreamStop "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
 
 var fse_FSEventStreamStop_trampoline_addr uintptr
@@ -452,14 +461,14 @@ type streamCallback struct {
 	eventFile *os.File
 	queue     uintptr // per-stream serial dispatch queue
 	done      chan struct{}
-	dirWatch  *dirWatch
-	closed    atomic.Bool
+	watches   []fseventsWatchSnapshot
 }
 
 type fsEventsCallbackPayload struct {
 	numEvents uintptr
 	paths     uintptr
 	flags     uintptr
+	ids       uintptr
 }
 
 func (p *fsEventsCallbackPayload) close() {
@@ -470,6 +479,7 @@ func (p *fsEventsCallbackPayload) close() {
 		cfRelease(p.paths)
 	}
 	libcFree(p.flags)
+	libcFree(p.ids)
 	libcFree(uintptr(unsafe.Pointer(p)))
 }
 
@@ -478,7 +488,7 @@ func (p *fsEventsCallbackPayload) close() {
 // callbacks. The per-stream serial queue serializes this stream's callbacks
 // and prevents cross-stream head-of-line blocking that a process-wide serial
 // queue would cause.
-func newStreamCallback(w *dirWatch) (*streamCallback, error) {
+func newStreamCallback(watches []fseventsWatchSnapshot) (*streamCallback, error) {
 	var eventPipe [2]int
 	if err := unix.Pipe(eventPipe[:]); err != nil {
 		return nil, err
@@ -500,7 +510,7 @@ func newStreamCallback(w *dirWatch) (*streamCallback, error) {
 		eventFile:      os.NewFile(uintptr(eventPipe[0]), "fsevents-event"),
 		queue:          queue,
 		done:           make(chan struct{}),
-		dirWatch:       w,
+		watches:        slices.Clone(watches),
 	}
 	go cb.eventLoop()
 	return cb, nil
