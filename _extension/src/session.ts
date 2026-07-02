@@ -43,19 +43,6 @@ export class SessionManager implements vscode.Disposable {
         this.outputChannel = outputChannel;
         this.telemetryReporter = telemetryReporter;
         this.initializedEventEmitter = initializedEventEmitter;
-        this.registerCommands(context);
-    }
-
-    registerCommands(context: vscode.ExtensionContext): void {
-        this.disposables.push(vscode.commands.registerCommand("typescript.restartTsServer", async () => {
-            this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
-            if (await this.currentSession?.tryRestartClient(context)) {
-                // Language client was able to restart without a full session restart
-                return;
-            }
-
-            await this.restart(context);
-        }));
     }
 
     start(context: vscode.ExtensionContext): Promise<void> {
@@ -67,7 +54,7 @@ export class SessionManager implements vscode.Disposable {
             this.outputChannel.appendLine("Restarting TypeScript language server...");
             await this.currentSession.dispose();
         }
-        this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop());
+        this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop(), () => this.restart(context));
         return this.currentSession.start(context);
     }
 
@@ -108,6 +95,7 @@ class Session implements vscode.Disposable {
     private telemetryReporter: TelemetryReporter;
     private initializedEventEmitter: vscode.EventEmitter<void>;
     private stopSession: () => Promise<void>;
+    private restartSession: () => Promise<void>;
 
     constructor(
         context: vscode.ExtensionContext,
@@ -115,6 +103,7 @@ class Session implements vscode.Disposable {
         initializedEventEmitter: vscode.EventEmitter<void>,
         telemetryReporter: TelemetryReporter,
         stopSession: () => Promise<void>,
+        restartSession: () => Promise<void>,
     ) {
         this.client = new Client(outputChannel, initializedEventEmitter, telemetryReporter);
         this.disposables.push(this.client);
@@ -123,6 +112,7 @@ class Session implements vscode.Disposable {
         this.telemetryReporter = telemetryReporter;
         this.initializedEventEmitter = initializedEventEmitter;
         this.stopSession = stopSession;
+        this.restartSession = restartSession;
         this.registerCommands();
     }
 
@@ -155,6 +145,15 @@ class Session implements vscode.Disposable {
 
     registerCommands(): void {
         this.disposables.push(registerCodeLensShowLocationsCommand());
+
+        this.disposables.push(vscode.commands.registerCommand("typescript.restartTsServer", async () => {
+            this.telemetryReporter.sendTelemetryEvent("command.restartLanguageServer");
+            if (await this.tryRestartClient(this.context)) {
+                return;
+            }
+
+            await this.restartSession();
+        }));
 
         this.disposables.push(vscode.commands.registerCommand("typescript.openTsServerLog", () => {
             this.outputChannel.show();
