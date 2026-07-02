@@ -24,6 +24,13 @@ import type { MessageSignature } from "vscode-languageserver-protocol";
 // Sections merged together. Earlier sections take precedence over later ones.
 const configSections = ["js/ts", "typescript", "javascript"];
 
+const configAliases = [
+    ["validate.enabled", "validate.enable"],
+    ["format.enabled", "format.enable"],
+    ["autoClosingTags.enabled", "autoClosingTags"],
+    ["suggest.jsdoc.enabled", "suggest.completeJSDocs"],
+] as const;
+
 /**
  * Build a single merged configuration object from all config sections.
  *
@@ -38,39 +45,38 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
     const configs = configSections.map(section => getInspectedConfiguration(section, resource));
     const legacyNativePreviewConfig = getInspectedConfiguration("typescript.native-preview", resource);
 
-    // Layer from lowest to highest precedence.
-    // Use Object.create(null) so the object has no prototype to pollute.
-    let merged: Record<string, any> = Object.create(null);
-
     // Defaults: javascript < typescript < js/ts
+    let defaults: Record<string, any> = Object.create(null);
     for (let i = configs.length - 1; i >= 0; i--) {
         if (configs[i].defaults !== null) {
-            merged = deepMerge(merged, configs[i].defaults!);
+            defaults = deepMerge(defaults, configs[i].defaults!);
         }
     }
 
     // Explicit values: javascript < typescript < js/ts
+    let explicit: Record<string, any> = Object.create(null);
     for (let i = configs.length - 1; i >= 0; i--) {
         if (configs[i].explicit !== null) {
-            merged = deepMerge(merged, configs[i].explicit!);
+            applyConfigAliases(configs[i].explicit!);
+            explicit = deepMerge(explicit, configs[i].explicit!);
         }
     }
 
-    if (configs[0].explicit?.customConfigFileName === undefined) {
+    if (explicit.customConfigFileName === undefined) {
         const legacyCustomConfigFileName = legacyNativePreviewConfig.explicit?.customConfigFileName;
         if (legacyCustomConfigFileName !== undefined) {
-            merged.customConfigFileName = legacyCustomConfigFileName;
+            explicit.customConfigFileName = legacyCustomConfigFileName;
         }
     }
-    if (configs[0].explicit?.trace?.server === undefined) {
+    if (explicit.trace?.server === undefined) {
         const legacyTraceServer = legacyNativePreviewConfig.explicit?.trace?.server;
         if (legacyTraceServer !== undefined) {
-            merged.trace ??= Object.create(null);
-            merged.trace.server = legacyTraceServer;
+            explicit.trace ??= Object.create(null);
+            explicit.trace.server = legacyTraceServer;
         }
     }
 
-    return merged;
+    return deepMerge(defaults, explicit);
 }
 
 /**
@@ -171,6 +177,29 @@ function setNestedValue(obj: Record<string, any>, dottedKey: string, value: any)
     const lastPart = parts[parts.length - 1];
     if (!prototypeKeys.has(lastPart)) {
         current[lastPart] = value;
+    }
+}
+
+function getNestedValue(obj: Record<string, any>, dottedKey: string): any {
+    const parts = dottedKey.split(".");
+    let current: any = obj;
+    for (const part of parts) {
+        if (prototypeKeys.has(part) || current === null || typeof current !== "object" || !(part in current)) {
+            return undefined;
+        }
+        current = current[part];
+    }
+    return current;
+}
+
+function applyConfigAliases(explicit: Record<string, any>): void {
+    for (const [preferred, fallback] of configAliases) {
+        if (getNestedValue(explicit, preferred) === undefined) {
+            const fallbackValue = getNestedValue(explicit, fallback);
+            if (fallbackValue !== undefined) {
+                setNestedValue(explicit, preferred, fallbackValue);
+            }
+        }
     }
 }
 

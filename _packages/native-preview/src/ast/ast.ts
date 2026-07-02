@@ -15,6 +15,7 @@ import type {
     PropertyAccessExpression,
     PunctuationSyntaxKind,
     Statement,
+    ThisExpression,
     Token,
 } from "./ast.generated.ts";
 
@@ -55,7 +56,7 @@ export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
     readonly flags: NodeFlags;
     readonly parent: Node;
-    readonly jsDoc?: readonly Node[];
+    readonly jsDoc?: readonly Node[] | undefined;
     forEachChild<T>(visitor: (node: Node) => T, visitArray?: (nodes: NodeArray<Node>) => T): T | undefined;
     getSourceFile(): SourceFile;
     getStart(sourceFile?: SourceFile, includeJsDocComment?: boolean): number;
@@ -110,3 +111,7 @@ export interface PropertyAccessEntityNameExpression extends PropertyAccessExpres
 
 export type EntityNameExpression = Identifier | PropertyAccessEntityNameExpression;
 export type EntityNameOrEntityNameExpression = EntityName | EntityNameExpression;
+
+export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
+    readonly expression: Identifier | ThisExpression | JsxTagNamePropertyAccess;
+}
