@@ -1279,8 +1279,9 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		Context:  &lsproto.CompletionContext{},
 	}
 	if userPreferences != nil {
-		config := f.userPreferences.WithOverrides(*userPreferences)
-		reset := f.ConfigureWithReset(t, config)
+		preferences := *userPreferences
+		preferences.FormatCodeSettings = f.userPreferences.FormatCodeSettings
+		reset := f.ConfigureWithReset(t, preferences)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
