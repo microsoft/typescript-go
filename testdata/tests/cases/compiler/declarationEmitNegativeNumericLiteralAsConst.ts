@@ -1,5 +1,5 @@
 // @declaration: true
-// @target: esnext
+// @target: es2020, esnext
 
 // https://github.com/microsoft/typescript-go/issues/4116
 // Negative numeric literals whose values do not round-trip through their

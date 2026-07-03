@@ -190,6 +190,7 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 // The printer prints the literal from the source node's original text when possible (e.g. `1e500`
 // rather than the normalized value text `Infinity` stored on the node).
 func (f *NodeFactory) NewNumericLiteralFromNode(textSourceNode *ast.Node) *ast.Node {
+	debug.Assert(textSourceNode != nil && ast.IsNumericLiteral(textSourceNode), "textSourceNode must be a NumericLiteral.")
 	node := f.NewNumericLiteral(textSourceNode.Text(), ast.TokenFlagsNone)
 	if f.emitContext.textSource == nil {
 		f.emitContext.textSource = make(map[*ast.StringLiteralNode]*ast.Node)
