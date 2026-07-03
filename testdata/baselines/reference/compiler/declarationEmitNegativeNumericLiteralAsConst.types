@@ -1,0 +1,85 @@
+//// [tests/cases/compiler/declarationEmitNegativeNumericLiteralAsConst.ts] ////
+
+=== declarationEmitNegativeNumericLiteralAsConst.ts ===
+// https://github.com/microsoft/typescript-go/issues/4116
+// Negative numeric literals whose values do not round-trip through their
+// normalized text must keep their original source text in declaration emit.
+export const a = -1e500 as const;
+>a : -Infinity
+>-1e500 as const : -Infinity
+>-1e500 : -Infinity
+>1e500 : Infinity
+
+export const b = -123456789012345678901234567890 as const;
+>b : -1.2345678901234568e+29
+>-123456789012345678901234567890 as const : -1.2345678901234568e+29
+>-123456789012345678901234567890 : -1.2345678901234568e+29
+>123456789012345678901234567890 : 1.2345678901234568e+29
+
+export const c = 1e500 as const;
+>c : Infinity
+>1e500 as const : Infinity
+>1e500 : Infinity
+
+export const d = -5 as const;
+>d : -5
+>-5 as const : -5
+>-5 : -5
+>5 : 5
+
+export const e = -0x10 as const;
+>e : -16
+>-0x10 as const : -16
+>-0x10 : -16
+>0x10 : 16
+
+export const f = -1_000_000_000_000_000_000_000_000 as const;
+>f : -1e+24
+>-1_000_000_000_000_000_000_000_000 as const : -1e+24
+>-1_000_000_000_000_000_000_000_000 : -1e+24
+>1_000_000_000_000_000_000_000_000 : 1e+24
+
+export const big = -123n as const;
+>big : -123n
+>-123n as const : -123n
+>-123n : -123n
+>123n : 123n
+
+export function fn() { return -1e500 as const; }
+>fn : () => -1e500
+>-1e500 as const : -Infinity
+>-1e500 : -Infinity
+>1e500 : Infinity
+
+export const arrow = () => -1e500 as const;
+>arrow : () => -1e500
+>() => -1e500 as const : () => -1e500
+>-1e500 as const : -Infinity
+>-1e500 : -Infinity
+>1e500 : Infinity
+
+export const withParam = (p = -1e500 as const) => 0;
+>withParam : (p?: -1e500) => number
+>(p = -1e500 as const) => 0 : (p?: -1e500) => number
+>p : -Infinity
+>-1e500 as const : -Infinity
+>-1e500 : -Infinity
+>1e500 : Infinity
+>0 : 0
+
+// Members of object and tuple types print normalized values, matching TypeScript 6.0.
+export const obj = { n: -1e500 } as const;
+>obj : { readonly n: -1e500; }
+>{ n: -1e500 } as const : { readonly n: -1e500; }
+>{ n: -1e500 } : { readonly n: -1e500; }
+>n : -Infinity
+>-1e500 : -Infinity
+>1e500 : Infinity
+
+export const arr = [-1e500] as const;
+>arr : readonly [-Infinity]
+>[-1e500] as const : readonly [-Infinity]
+>[-1e500] : readonly [-Infinity]
+>-1e500 : -Infinity
+>1e500 : Infinity
+

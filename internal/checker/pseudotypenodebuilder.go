@@ -194,9 +194,16 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindTuple:
 		var res []*ast.Node
 		elements := t.AsPseudoTypeTuple().Elements
+		// strada only implements syntactic serialization of object/array literals for
+		// isolatedDeclarations error reporting and discards the resulting nodes, so members
+		// always print like checker-built nodes (e.g. normalized numeric literal values)
+		// rather than reusing original source text.
+		oldInStructural := b.ctx.inStructuralPseudoType
+		b.ctx.inStructuralPseudoType = true
 		for _, e := range elements {
 			res = append(res, b.pseudoTypeToNode(e))
 		}
+		b.ctx.inStructuralPseudoType = oldInStructural
 		// pseudo-tuples are implicitly `readonly` since they originate from `as const` contexts
 		// but strada *sometimes* fails to add the `readonly` modifier to the generated node.
 		result := b.f.NewTupleTypeNode(b.f.NewNodeList(res))
@@ -223,6 +230,11 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// inaccessible `this` references inside the members are reported (TS2527).
 		restoreObjectLiteralFlags := b.saveRestoreFlags()
 		b.ctx.flags |= nodebuilder.FlagsInObjectTypeLiteral
+
+		// See the tuple case above: members of object literal types print like checker-built
+		// nodes in strada, so don't reuse original source text for literals within them.
+		oldInStructural := b.ctx.inStructuralPseudoType
+		b.ctx.inStructuralPseudoType = true
 
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
@@ -309,6 +321,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				cleanup()
 			}
 		}
+		b.ctx.inStructuralPseudoType = oldInStructural
 		restoreObjectLiteralFlags()
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
 		if b.ctx.flags&nodebuilder.FlagsMultilineObjectLiterals == 0 {
@@ -317,6 +330,18 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return result
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
+		if !b.ctx.inStructuralPseudoType && ast.IsPrefixUnaryExpression(source) && ast.IsNumericLiteral(source.AsPrefixUnaryExpression().Operand) {
+			// In strada, node reuse cloned shallowly, so the operand of a reused negative numeric
+			// literal was still the original parsed node and printed from its original source text
+			// (e.g. `-1e500`). Corsa's reuse deep-clones the whole expression, severing the operand
+			// from its source file and printing its normalized value text instead (`-Infinity`).
+			// Keep a link from the synthesized operand back to the original node so the printer can
+			// still find the source text.
+			operand := source.AsPrefixUnaryExpression().Operand
+			prefix := b.f.NewPrefixUnaryExpression(source.AsPrefixUnaryExpression().Operator, b.e.Factory.NewNumericLiteralFromNode(operand))
+			b.ctx.approximateLength += source.Loc.End() - source.Loc.Pos()
+			return b.f.NewLiteralTypeNode(b.setTextRange(prefix, source))
+		}
 		return b.f.NewLiteralTypeNode(b.reuseNode(source))
 	default:
 		debug.AssertNever(t.Kind, "Unhandled pseudotype kind in pseudotype node construction")

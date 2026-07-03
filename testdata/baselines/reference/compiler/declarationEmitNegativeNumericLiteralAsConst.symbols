@@ -1,0 +1,57 @@
+//// [tests/cases/compiler/declarationEmitNegativeNumericLiteralAsConst.ts] ////
+
+=== declarationEmitNegativeNumericLiteralAsConst.ts ===
+// https://github.com/microsoft/typescript-go/issues/4116
+// Negative numeric literals whose values do not round-trip through their
+// normalized text must keep their original source text in declaration emit.
+export const a = -1e500 as const;
+>a : Symbol(a, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 3, 12))
+>const : Symbol(const)
+
+export const b = -123456789012345678901234567890 as const;
+>b : Symbol(b, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 4, 12))
+>const : Symbol(const)
+
+export const c = 1e500 as const;
+>c : Symbol(c, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 5, 12))
+>const : Symbol(const)
+
+export const d = -5 as const;
+>d : Symbol(d, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 6, 12))
+>const : Symbol(const)
+
+export const e = -0x10 as const;
+>e : Symbol(e, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 7, 12))
+>const : Symbol(const)
+
+export const f = -1_000_000_000_000_000_000_000_000 as const;
+>f : Symbol(f, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 8, 12))
+>const : Symbol(const)
+
+export const big = -123n as const;
+>big : Symbol(big, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 9, 12))
+>const : Symbol(const)
+
+export function fn() { return -1e500 as const; }
+>fn : Symbol(fn, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 9, 34))
+>const : Symbol(const)
+
+export const arrow = () => -1e500 as const;
+>arrow : Symbol(arrow, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 11, 12))
+>const : Symbol(const)
+
+export const withParam = (p = -1e500 as const) => 0;
+>withParam : Symbol(withParam, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 12, 12))
+>p : Symbol(p, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 12, 26))
+>const : Symbol(const)
+
+// Members of object and tuple types print normalized values, matching TypeScript 6.0.
+export const obj = { n: -1e500 } as const;
+>obj : Symbol(obj, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 14, 12))
+>n : Symbol(n, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 14, 20))
+>const : Symbol(const)
+
+export const arr = [-1e500] as const;
+>arr : Symbol(arr, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 15, 12))
+>const : Symbol(const)
+

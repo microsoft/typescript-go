@@ -186,6 +186,18 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 	return node
 }
 
+// Allocates a new NumericLiteral whose source text is derived from the provided NumericLiteral node.
+// The printer prints the literal from the source node's original text when possible (e.g. `1e500`
+// rather than the normalized value text `Infinity` stored on the node).
+func (f *NodeFactory) NewNumericLiteralFromNode(textSourceNode *ast.Node) *ast.Node {
+	node := f.NewNumericLiteral(textSourceNode.Text(), ast.TokenFlagsNone)
+	if f.emitContext.textSource == nil {
+		f.emitContext.textSource = make(map[*ast.StringLiteralNode]*ast.Node)
+	}
+	f.emitContext.textSource[node] = textSourceNode
+	return node
+}
+
 //
 // Common Tokens
 //

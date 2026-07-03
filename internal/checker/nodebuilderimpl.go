@@ -79,6 +79,7 @@ type NodeBuilderContext struct {
 	reverseMappedStack              []*ast.Symbol
 	enclosingSymbolTypes            map[ast.SymbolId]*Type
 	suppressReportInferenceFallback bool
+	inStructuralPseudoType          bool
 	remappedSymbolReferences        map[ast.SymbolId]*ast.Symbol
 
 	// per signature scope state

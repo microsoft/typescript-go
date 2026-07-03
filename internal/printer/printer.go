@@ -213,6 +213,11 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 			}
 		}
 	}
+	if ast.IsNumericLiteral(node) {
+		if textSourceNode, ok := p.emitContext.textSource[node]; ok && textSourceNode != nil && ast.IsNumericLiteral(textSourceNode) {
+			return p.getLiteralTextOfNode(textSourceNode, ast.GetSourceFileOfNode(textSourceNode), flags)
+		}
+	}
 	// !!! Printer option to control whether to terminate unterminated literals
 	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
