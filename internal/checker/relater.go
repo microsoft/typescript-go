@@ -3206,7 +3206,7 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 		// needs to have its constraint hoisted into an intersection with said type parameter, this way
 		// the type param can be compared with itself in the target (with the influence of its constraint to match other parts)
 		// For example, if `T extends 1 | 2` and `U extends 2 | 3` and we compare `T & U` to `T & U & (1 | 2 | 3)`
-		if result == TernaryFalse && (source.flags&TypeFlagsIntersection != 0 || source.flags&TypeFlagsTypeParameter != 0 && target.flags&TypeFlagsUnion != 0) {
+		if result == TernaryFalse && r.expandingFlags&ExpandingFlagsSource == 0 && (source.flags&TypeFlagsIntersection != 0 || source.flags&TypeFlagsTypeParameter != 0 && target.flags&TypeFlagsUnion != 0) {
 			var sourceTypes []*Type
 			if source.flags&TypeFlagsIntersection != 0 {
 				sourceTypes = source.Types()
