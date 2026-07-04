@@ -181,17 +181,18 @@ const (
 	MethodPrintNode Method = "printNode"
 
 	// Intrinsic type getters
-	MethodGetAnyType       Method = "getAnyType"
-	MethodGetStringType    Method = "getStringType"
-	MethodGetNumberType    Method = "getNumberType"
-	MethodGetBooleanType   Method = "getBooleanType"
-	MethodGetVoidType      Method = "getVoidType"
-	MethodGetUndefinedType Method = "getUndefinedType"
-	MethodGetNullType      Method = "getNullType"
-	MethodGetNeverType     Method = "getNeverType"
-	MethodGetUnknownType   Method = "getUnknownType"
-	MethodGetBigIntType    Method = "getBigIntType"
-	MethodGetESSymbolType  Method = "getESSymbolType"
+	MethodGetAnyType          Method = "getAnyType"
+	MethodGetStringType       Method = "getStringType"
+	MethodGetNumberType       Method = "getNumberType"
+	MethodGetBooleanType      Method = "getBooleanType"
+	MethodGetVoidType         Method = "getVoidType"
+	MethodGetUndefinedType    Method = "getUndefinedType"
+	MethodGetNullType         Method = "getNullType"
+	MethodGetNeverType        Method = "getNeverType"
+	MethodGetUnknownType      Method = "getUnknownType"
+	MethodGetBigIntType       Method = "getBigIntType"
+	MethodGetESSymbolType     Method = "getESSymbolType"
+	MethodGetNonPrimitiveType Method = "getNonPrimitiveType"
 
 	// Well-known per-checker symbols
 	MethodGetWellKnownSymbols Method = "getWellKnownSymbols"
@@ -462,6 +463,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetUnknownType:                    unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetBigIntType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetESSymbolType:                   unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetNonPrimitiveType:               unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetWellKnownSymbols:               unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetSyntacticDiagnostics:           unmarshallerFor[GetDiagnosticsParams],
 	MethodGetBindDiagnostics:                unmarshallerFor[GetDiagnosticsParams],
