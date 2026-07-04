@@ -57,7 +57,8 @@ func (l *LanguageService) getStringLiteralCompletions(
 	contextToken *ast.Node,
 	checker *checker.Checker,
 	compilerOptions *core.CompilerOptions,
-) *lsproto.CompletionList {
+	includeSymbols bool,
+) *CompletionList {
 	if isInReferenceComment(file, position) {
 		entries := l.getTripleSlashReferenceCompletions(file, position, l.GetProgram(), checker)
 		return l.convertPathCompletions(ctx, entries, file, position)
@@ -81,6 +82,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 			position,
 			checker,
 			compilerOptions,
+			includeSymbols,
 		)
 	}
 	return nil
@@ -94,7 +96,8 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	position int,
 	typeChecker *checker.Checker,
 	options *core.CompilerOptions,
-) *lsproto.CompletionList {
+	includeSymbols bool,
+) *CompletionList {
 	if completion == nil {
 		return nil
 	}
@@ -121,6 +124,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			position,
 			file,
 			options,
+			includeSymbols, /*includeSymbols*/
 		)
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.hasIndexSignature)
 		itemDefaults := l.setItemDefaults(
@@ -131,7 +135,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			&defaultCommitCharacters,
 			optionalReplacementRange,
 		)
-		return &lsproto.CompletionList{
+		return &CompletionList{
 			IsIncomplete: false,
 			ItemDefaults: itemDefaults,
 			Items:        items,
@@ -146,9 +150,9 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		} else {
 			quoteChar = printer.QuoteCharDoubleQuote
 		}
-		items := core.Map(completion.types, func(t *checker.StringLiteralType) *lsproto.CompletionItem {
+		items := core.Map(completion.types, func(t *checker.StringLiteralType) *CompletionItem {
 			name := printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar)
-			return l.createLSPCompletionItem(
+			lspItem := l.createLSPCompletionItem(
 				ctx,
 				name,
 				"", /*insertText*/
@@ -170,6 +174,9 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				nil,   /*additionalTextEdits*/
 				nil,   /*detail*/
 			)
+			return &CompletionItem{
+				CompletionItem: lspItem,
+			}
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
 		itemDefaults := l.setItemDefaults(
@@ -180,7 +187,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			&defaultCommitCharacters,
 			nil, /*optionalReplacementSpan*/
 		)
-		return &lsproto.CompletionList{
+		return &CompletionList{
 			IsIncomplete: false,
 			ItemDefaults: itemDefaults,
 			Items:        items,
@@ -195,10 +202,10 @@ func (l *LanguageService) convertPathCompletions(
 	pathCompletions []*pathCompletion,
 	file *ast.SourceFile,
 	position int,
-) *lsproto.CompletionList {
+) *CompletionList {
 	isNewIdentifierLocation := true // The user may type in a path that doesn't yet exist, creating a "new identifier" with respect to the collection of identifiers the server is aware of.
 	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
-	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *lsproto.CompletionItem {
+	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *CompletionItem {
 		var replacementSpan *lsproto.Range
 		if pathCompletion.textRange != nil {
 			replacementSpan = new(l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file))
@@ -207,7 +214,7 @@ func (l *LanguageService) convertPathCompletions(
 		if !strings.HasSuffix(pathCompletion.name, pathCompletion.extension) {
 			detail += pathCompletion.extension
 		}
-		return l.createLSPCompletionItem(
+		lspItem := l.createLSPCompletionItem(
 			ctx,
 			pathCompletion.name,
 			"", /*insertText*/
@@ -229,6 +236,9 @@ func (l *LanguageService) convertPathCompletions(
 			nil,   /*additionalTextEdits*/
 			&detail,
 		)
+		return &CompletionItem{
+			CompletionItem: lspItem,
+		}
 	})
 	itemDefaults := l.setItemDefaults(
 		ctx,
@@ -238,7 +248,7 @@ func (l *LanguageService) convertPathCompletions(
 		&defaultCommitCharacters,
 		nil, /*optionalReplacementSpan*/
 	)
-	return &lsproto.CompletionList{
+	return &CompletionList{
 		IsIncomplete: false,
 		ItemDefaults: itemDefaults,
 		Items:        items,

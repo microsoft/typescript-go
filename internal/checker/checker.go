@@ -11,7 +11,6 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -288,7 +287,8 @@ type InferenceContext struct {
 
 type InferenceInfo struct {
 	typeParameter    *Type             // Type parameter for which inferences are being made
-	candidates       []*Type           // Candidates in covariant positions
+	candidates       []*Type           // Candidates in covariant positions in decreasing depth order
+	candidateDepths  []int             // Type argument depths of covariant inferences
 	contraCandidates []*Type           // Candidates in contravariant positions
 	inferredType     *Type             // Cache for resolved inferred type
 	priority         InferencePriority // Priority of current inference set
@@ -587,9 +587,11 @@ type Checker struct {
 	compareSymbolChains                         func([]*ast.Symbol, []*ast.Symbol) int
 	TypeCount                                   uint32
 	SymbolCount                                 uint32
+	SignatureCount                              uint32
 	TotalInstantiationCount                     uint32
 	instantiationCount                          uint32
 	instantiationDepth                          uint32
+	conditionalConstraintDepth                  uint32
 	inlineLevel                                 int
 	serializationLevel                          int
 	currentNode                                 *ast.Node
@@ -649,6 +651,7 @@ type Checker struct {
 	moduleSymbols                               map[*ast.Node]*ast.Symbol
 	globalThisSymbol                            *ast.Symbol
 	symbolTableAliasCache                       map[symbolTableID][]*ast.Symbol
+	classExpressionNameTables                   map[ast.NodeId]ast.SymbolTable
 	resolveName                                 func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	resolveNameForSymbolSuggestion              func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
 	tupleTypes                                  map[CacheHashKey]*Type
@@ -14090,7 +14093,11 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 			// reset flag when merging instantiated module into value module that has only const enums
 			target.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 		}
-		target.Flags |= source.Flags
+		sourceFlags := source.Flags
+		if target.Flags&ast.SymbolFlagsConstEnumOnlyModule == 0 {
+			sourceFlags &^= ast.SymbolFlagsConstEnumOnlyModule
+		}
+		target.Flags |= sourceFlags
 		if source.ValueDeclaration != nil {
 			binder.SetValueDeclaration(target, source.ValueDeclaration)
 		}
@@ -14252,6 +14259,9 @@ func getExcludedSymbolFlags(flags ast.SymbolFlags) ast.SymbolFlags {
 	}
 	if flags&ast.SymbolFlagsAlias != 0 {
 		result |= ast.SymbolFlagsAliasExcludes
+	}
+	if flags&ast.SymbolFlagsReplaceableByMethod != 0 {
+		result &^= ast.SymbolFlagsMethod
 	}
 	return result
 }
@@ -15989,15 +15999,30 @@ func (c *Checker) lateBindIndexSignature(parent *ast.Symbol, earlySymbols ast.Sy
 	}
 }
 
+func isNotReplacableByMethod(decl *ast.Node) bool {
+	return decl.Symbol().Flags&ast.SymbolFlagsReplaceableByMethod == 0
+}
+
 // Adds a declaration to a late-bound dynamic member. This performs the same function for
 // late-bound members that `addDeclarationToSymbol` in binder.ts performs for early-bound
 // members.
 func (c *Checker) addDeclarationToLateBoundSymbol(symbol *ast.Symbol, member *ast.Node, symbolFlags ast.SymbolFlags) {
 	debug.Assert(symbol.CheckFlags&ast.CheckFlagsLate != 0, "Expected a late-bound symbol.")
-	symbol.Flags |= symbolFlags
 	c.lateBoundLinks.Get(member.Symbol()).lateSymbol = symbol
 	if len(symbol.Declarations) == 0 || member.Symbol().Flags&ast.SymbolFlagsReplaceableByMethod == 0 {
+		symbol.Flags |= symbolFlags
 		symbol.Declarations = append(symbol.Declarations, member)
+	} else if symbol.Flags&ast.SymbolFlagsReplaceableByMethod != 0 && member.Symbol().Flags&ast.SymbolFlagsMethod != 0 {
+		// Remove all replacable-by-method members, along with their flags.
+		symbol.Declarations = append(core.Filter(symbol.Declarations, isNotReplacableByMethod), member)
+		oldFlags := symbol.Flags
+		symbol.Flags = ast.SymbolFlagsNone
+		for _, d := range symbol.Declarations {
+			symbol.Flags |= d.Symbol().Flags
+		}
+		if oldFlags&ast.SymbolFlagsAccessor != 0 {
+			symbol.Flags |= ast.SymbolFlagsAccessor
+		}
 	}
 	if symbolFlags&ast.SymbolFlagsValue != 0 {
 		binder.SetValueDeclaration(symbol, member)
@@ -18999,7 +19024,7 @@ func (c *Checker) resolveObjectTypeMembers(t *Type, source *Type, typeParameters
 	} else {
 		instantiated = true
 		mapper = newTypeMapper(typeParameters, typeArguments)
-		members = c.instantiateSymbolTable(resolved.declaredMembers, mapper, len(typeParameters) == 1 /*mappingThisOnly*/)
+		members = c.instantiateSymbolTable(resolved.declaredMembers, mapper)
 		callSignatures = c.instantiateSignatures(resolved.declaredCallSignatures, mapper)
 		constructSignatures = c.instantiateSignatures(resolved.declaredConstructSignatures, mapper)
 		indexInfos = c.instantiateIndexInfos(resolved.declaredIndexInfos, mapper)
@@ -19045,7 +19070,7 @@ func findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
 }
 
 func (c *Checker) getBaseTypes(t *Type) []*Type {
-	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) == 0 {
+	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsTuple) == 0 {
 		return nil
 	}
 	data := t.AsInterfaceType()
@@ -20606,8 +20631,6 @@ func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
 	}
 }
 
-// The mappingThisOnly flag indicates that the only type parameter being mapped is "this". When the flag is true,
-// we check symbols to see if we can quickly conclude they are free of "this" references, thus needing no instantiation.
 func (c *Checker) createInstantiatedSymbolTable(symbols []*ast.Symbol, m *TypeMapper) ast.SymbolTable {
 	if len(symbols) == 0 {
 		return nil
@@ -20619,20 +20642,14 @@ func (c *Checker) createInstantiatedSymbolTable(symbols []*ast.Symbol, m *TypeMa
 	return result
 }
 
-// The mappingThisOnly flag indicates that the only type parameter being mapped is "this". When the flag is true,
-// we check symbols to see if we can quickly conclude they are free of "this" references, thus needing no instantiation.
-func (c *Checker) instantiateSymbolTable(symbols ast.SymbolTable, m *TypeMapper, mappingThisOnly bool) ast.SymbolTable {
+func (c *Checker) instantiateSymbolTable(symbols ast.SymbolTable, m *TypeMapper) ast.SymbolTable {
 	if len(symbols) == 0 {
 		return nil
 	}
 	result := make(ast.SymbolTable, len(symbols))
 	for id, symbol := range symbols {
 		if c.isNamedMember(symbol, id) {
-			if mappingThisOnly && isThisless(symbol) {
-				result[id] = symbol
-			} else {
-				result[id] = c.instantiateSymbol(symbol, m)
-			}
+			result[id] = c.instantiateSymbol(symbol, m)
 		}
 	}
 	return result
@@ -20643,6 +20660,9 @@ func (c *Checker) instantiateSymbol(symbol *ast.Symbol, m *TypeMapper) *ast.Symb
 		return nil
 	}
 	links := c.valueSymbolLinks.Get(symbol)
+	if m != nil && m.MapsThisOnly() && isThisless(symbol) {
+		return symbol
+	}
 	// If the type of the symbol is already resolved, and if that type could not possibly
 	// be affected by instantiation, simply return the symbol itself.
 	if links.resolvedType != nil && !c.couldContainTypeVariables(links.resolvedType) {
@@ -20675,7 +20695,7 @@ func (c *Checker) instantiateSymbol(symbol *ast.Symbol, m *TypeMapper) *ast.Symb
 	return result
 }
 
-// Returns true if the class or interface member given by the symbol is free of "this" references. The
+// Returns true if the parameter or class/interface member given by the symbol is free of "this" references. The
 // function may return false for symbols that are actually free of "this" references because it is not
 // feasible to perform a complete analysis in all cases. In particular, property members with types
 // inferred from their initializers and function members with inferred return types are conservatively
@@ -20685,6 +20705,8 @@ func isThisless(symbol *ast.Symbol) bool {
 		declaration := symbol.Declarations[0]
 		if declaration != nil {
 			switch declaration.Kind {
+			case ast.KindParameter:
+				return isThislessVariableLikeDeclaration(declaration)
 			case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 				return isThislessVariableLikeDeclaration(declaration)
 			case ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
@@ -21545,7 +21567,7 @@ func (c *Checker) getTargetSymbol(s *ast.Symbol) *ast.Symbol {
 	// if symbol is instantiated its flags are not copied from the 'target'
 	// so we'll need to get back original 'target' symbol to work with correct set of flags
 	// NOTE: cast to TransientSymbol should be safe because only TransientSymbols have CheckFlags.Instantiated
-	if s.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+	if s != nil && s.CheckFlags&ast.CheckFlagsInstantiated != 0 {
 		return c.valueSymbolLinks.Get(s).target
 	}
 	return s
@@ -25131,7 +25153,9 @@ func (c *Checker) newSubstitutionType(baseType *Type, constraint *Type) *Type {
 }
 
 func (c *Checker) newSignature(flags SignatureFlags, declaration *ast.Node, typeParameters []*Type, thisParameter *ast.Symbol, parameters []*ast.Symbol, resolvedReturnType *Type, resolvedTypePredicate *TypePredicate, minArgumentCount int) *Signature {
+	c.SignatureCount++
 	sig := c.signatureArena.New()
+	sig.id = SignatureId(c.SignatureCount)
 	sig.flags = flags
 	sig.declaration = declaration
 	sig.typeParameters = typeParameters
@@ -25926,7 +25950,6 @@ func (c *Checker) getIntersectionType(types []*Type) *Type {
 func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, alias *TypeAlias) *Type {
 	var orderedTypes orderedSet[*Type]
 	orderedTypes.values = make([]*Type, 0, len(types))
-	orderedTypes.valuesByKey = make(map[*Type]struct{}, len(types))
 	includes := c.addTypesToIntersection(&orderedTypes, 0, types)
 	typeSet := orderedTypes.values
 	objectFlags := ObjectFlagsNone
@@ -27403,7 +27426,13 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		}
 		return c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
 	case t.flags&TypeFlagsConditional != 0:
-		return c.getNextBaseConstraint(c.getConstraintFromConditionalType(t), stack)
+		if c.conditionalConstraintDepth >= 100 {
+			return nil
+		}
+		c.conditionalConstraintDepth++
+		constraint := c.getConstraintFromConditionalType(t)
+		c.conditionalConstraintDepth--
+		return c.getNextBaseConstraint(constraint, stack)
 	case t.flags&TypeFlagsSubstitution != 0:
 		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
 	case c.isGenericTupleType(t):
@@ -27718,6 +27747,16 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 		return core.IfElse(cached == c.circularConstraintType, t, cached)
 	}
 	c.cachedTypes[key] = t
+	result := c.getSimplifiedIndexedAccessTypeWorker(t, writing)
+	if result != t {
+		// If the simplification is a union type that includes t, remove t from the type.
+		result = c.removeType(result, t)
+		c.cachedTypes[key] = result
+	}
+	return result
+}
+
+func (c *Checker) getSimplifiedIndexedAccessTypeWorker(t *Type, writing bool) *Type {
 	// We recursively simplify the object type as it may in turn be an indexed access type. For example, with
 	// '{ [P in T]: { [Q in U]: number } }[T][U]' we want to first simplify the inner indexed access type.
 	objectType := c.getSimplifiedType(t.AsIndexedAccessType().objectType, writing)
@@ -27726,7 +27765,6 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 	// T[A | B] -> T[A] & T[B] (writing)
 	distributedOverIndex := c.distributeObjectOverIndexType(objectType, indexType, writing)
 	if distributedOverIndex != nil {
-		c.cachedTypes[key] = distributedOverIndex
 		return distributedOverIndex
 	}
 	// Only do the inner distributions if the index can no longer be instantiated to cause index distribution again
@@ -27736,7 +27774,6 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 		// (T & U)[K] -> T[K] & U[K]
 		distributedOverObject := c.distributeIndexOverObjectType(objectType, indexType, writing)
 		if distributedOverObject != nil {
-			c.cachedTypes[key] = distributedOverObject
 			return distributedOverObject
 		}
 	}
@@ -27748,7 +27785,6 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 	if c.isGenericTupleType(objectType) && indexType.flags&TypeFlagsNumberLike != 0 {
 		elementType := c.getElementTypeOfSliceOfTupleType(objectType, core.IfElse(indexType.flags&TypeFlagsNumber != 0, 0, objectType.TargetTupleType().fixedLength), 0 /*endSkipCount*/, writing, false)
 		if elementType != nil {
-			c.cachedTypes[key] = elementType
 			return elementType
 		}
 	}
@@ -27757,11 +27793,9 @@ func (c *Checker) getSimplifiedIndexedAccessType(t *Type, writing bool) *Type {
 	// For example, for an index access { [P in K]: Box<T[P]> }[X], we construct the type Box<T[X]>.
 	if c.isGenericMappedType(objectType) {
 		if c.getMappedTypeNameTypeKind(objectType) != MappedTypeNameTypeKindRemapping {
-			result := c.mapType(c.substituteIndexedMappedType(objectType, t.AsIndexedAccessType().indexType), func(t *Type) *Type {
+			return c.mapType(c.substituteIndexedMappedType(objectType, t.AsIndexedAccessType().indexType), func(t *Type) *Type {
 				return c.getSimplifiedType(t, writing)
 			})
-			c.cachedTypes[key] = result
-			return result
 		}
 	}
 	return t
@@ -28006,6 +28040,12 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 	case ReferenceHintDecorator:
 		c.markDecoratorAliasReferenced(location)
 	case ReferenceHintUnspecified:
+		if ast.IsJsxTagName(location) && isJsxIntrinsicTagName(location) {
+			return // builtin JSX tag names aren't real type refs by most metrics, but are expressions, so must be filtered
+		}
+		if ast.FindAncestor(location, func(n *ast.Node) bool { return ast.IsMetaProperty(n) }) != nil {
+			return // identifiers in meta properties shouldn't be resolved, but are expressions, so must be filtered
+		}
 		// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
 		// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}` or `q` in `import r = q`
 		// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
@@ -28893,7 +28933,7 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 				sb.WriteString(texts[i+1])
 			case c.isGenericIndexType(t) || c.isPatternLiteralPlaceholderType(t):
 				newTypes = append(newTypes, t)
-				newTexts = append(newTexts, sb.String())
+				newTexts = append(newTexts, stringutil.CombineSurrogatePairs(sb.String()))
 				sb.Reset()
 				sb.WriteString(texts[i+1])
 			default:
@@ -28906,9 +28946,9 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 		return c.stringType
 	}
 	if len(newTypes) == 0 {
-		return c.getStringLiteralType(sb.String())
+		return c.getStringLiteralType(stringutil.CombineSurrogatePairs(sb.String()))
 	}
-	newTexts = append(newTexts, sb.String())
+	newTexts = append(newTexts, stringutil.CombineSurrogatePairs(sb.String()))
 	if core.Every(newTexts, func(t string) bool { return t == "" }) {
 		if core.Every(newTypes, func(t *Type) bool { return t.flags&TypeFlagsString != 0 }) {
 			return c.stringType
@@ -28959,15 +28999,15 @@ func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
 func applyStringMapping(symbol *ast.Symbol, str string) string {
 	switch intrinsicTypeKinds[symbol.Name] {
 	case IntrinsicTypeKindUppercase:
-		return strings.ToUpper(str)
+		return stringutil.ToUpperJS(str)
 	case IntrinsicTypeKindLowercase:
-		return strings.ToLower(str)
+		return stringutil.ToLowerJS(str)
 	case IntrinsicTypeKindCapitalize:
-		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToUpper(str[:size]) + str[size:]
+		_, size := stringutil.DecodeJSStringRune(str)
+		return stringutil.ToUpperJS(str[:size]) + str[size:]
 	case IntrinsicTypeKindUncapitalize:
-		_, size := utf8.DecodeRuneInString(str)
-		return strings.ToLower(str[:size]) + str[size:]
+		_, size := stringutil.DecodeJSStringRune(str)
+		return stringutil.ToLowerJS(str[:size]) + str[size:]
 	}
 	return str
 }

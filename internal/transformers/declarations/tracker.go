@@ -15,6 +15,11 @@ type SymbolTrackerImpl struct {
 	host          DeclarationEmitHost
 	fallbackStack []*ast.Node
 
+	// For detecting class expression self-references during member serialization.
+	// When set, TrackSymbol will record usage without reporting accessibility errors.
+	watchedClassSymbol *ast.Symbol
+	classSymbolTracked bool
+
 	getIsolatedDeclarationError func(node *ast.Node) *ast.Diagnostic
 }
 
@@ -52,17 +57,38 @@ func (s *SymbolTrackerImpl) ReportInaccessibleUniqueSymbolError() {
 	}
 }
 
+func (s *SymbolTrackerImpl) isBoundExpando(node *ast.Node) bool {
+	if !(ast.IsExpandoPropertyDeclaration(node) && ast.IsPropertyAccessExpression(node.AsBinaryExpression().Left)) {
+		return false
+	}
+	ref := s.resolver.GetReferencedValueDeclarationUnsafe(ast.GetLeftmostExpression(node.AsBinaryExpression().Left, true))
+	if ref == nil {
+		return false
+	}
+	return s.resolver.IsExpandoFunctionDeclarationUnsafe(ref)
+}
+
+func (s *SymbolTrackerImpl) isChildOfBoundExpando(node *ast.Node) bool {
+	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
+		if ast.IsSourceFile(n) || ast.IsBlock(n) {
+			return ast.FindAncestorQuit
+		}
+		return ast.ToFindAncestorResult(s.isBoundExpando(n))
+	}) != nil
+}
+
 // ReportInferenceFallback implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
-	if !s.state.isolatedDeclarations || ast.IsSourceFileJS(s.state.currentSourceFile) {
+	if !s.state.isolatedDeclarations {
 		return
 	}
 	if ast.GetSourceFileOfNode(node) != s.state.currentSourceFile {
 		return // Nested error on a declaration in another file - ignore, will be reemitted if file is in the output file set
 	}
-	if ast.IsVariableDeclaration(node) && s.state.resolver.IsExpandoFunctionDeclarationUnsafe(node) { // within a node builder call that should already lock the checker, use the unsafe call
+	if s.state.resolver.IsExpandoFunctionDeclarationUnsafe(node) { // within a node builder call that should already lock the checker, use the unsafe call
 		s.state.reportExpandoFunctionErrors(node)
-	} else {
+	}
+	if !s.isChildOfBoundExpando(node) { // expando props get an error when their host is visited by the above, this prevents a follow-on error on a non-inferrable expression
 		s.state.addDiagnostic(s.getIsolatedDeclarationError(node))
 	}
 }
@@ -156,6 +182,13 @@ func (s *SymbolTrackerImpl) errorDeclarationNameWithFallback() string {
 // TrackSymbol implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool {
 	if symbol.Flags&ast.SymbolFlagsTypeParameter != 0 {
+		return false
+	}
+	// When watching for a class expression symbol, record its usage without
+	// reporting accessibility errors — the caller will handle visibility by
+	// wrapping the class in a namespace.
+	if s.watchedClassSymbol != nil && symbol == s.watchedClassSymbol {
+		s.classSymbolTracked = true
 		return false
 	}
 	issuedDiagnostic := s.handleSymbolAccessibilityError(s.resolver.IsSymbolAccessible(symbol, enclosingDeclaration, meaning /*shouldComputeAliasToMarkVisible*/, true))

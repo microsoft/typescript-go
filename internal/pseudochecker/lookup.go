@@ -24,11 +24,7 @@ func (ch *PseudoChecker) GetReturnTypeOfSignature(signatureNode *ast.Node) *Pseu
 }
 
 func (ch *PseudoChecker) GetTypeOfAccessor(accessor *ast.Node) *PseudoType {
-	annotated := ch.typeFromAccessor(accessor)
-	if annotated.Kind == PseudoTypeKindNoResult {
-		return ch.inferAccessorType(accessor)
-	}
-	return annotated
+	return ch.typeFromAccessor(accessor)
 }
 
 func (ch *PseudoChecker) GetTypeOfExpression(node *ast.Node) *PseudoType {
@@ -154,16 +150,17 @@ func (ch *PseudoChecker) typeFromAccessor(accessor *ast.Node) *PseudoType {
 		return NewPseudoTypeDirect(accessorType)
 	}
 	if accessorDeclarations.GetAccessor != nil {
-		return ch.createReturnFromSignature(accessorDeclarations.GetAccessor.AsNode())
+		res := ch.createReturnFromSignature(accessorDeclarations.GetAccessor.AsNode())
+		if res.Kind == PseudoTypeKindInferred && len(res.AsPseudoTypeInferred().ErrorNodes) == 0 {
+			errorNodes := []*ast.Node{accessorDeclarations.GetAccessor.AsNode()}
+			if accessorDeclarations.SetAccessor != nil {
+				errorNodes = append(errorNodes, accessorDeclarations.SetAccessor.AsNode())
+			}
+			res = NewPseudoTypeInferredWithErrors(res.AsPseudoTypeInferred().Expression, res.AsPseudoTypeInferred().IsSignatureReturn, errorNodes) // Move error up to the accessor
+		}
+		return res
 	}
 	return NewPseudoTypeNoResult(accessor)
-}
-
-func (ch *PseudoChecker) inferAccessorType(node *ast.Node) *PseudoType {
-	if node.Kind == ast.KindGetAccessor {
-		return ch.createReturnFromSignature(node)
-	}
-	return NewPseudoTypeNoResult(node)
 }
 
 func (ch *PseudoChecker) getTypeAnnotationFromAllAccessorDeclarations(node *ast.Node, accessors ast.AllAccessorDeclarations) *ast.Node {
@@ -221,7 +218,7 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 	if fn != nil && !ast.NodeIsMissing(fn.Body()) {
 		flags := ast.GetFunctionFlags(fn)
 		if flags&ast.FunctionFlagsAsyncGenerator != 0 {
-			return NewPseudoTypeNoResult(fn)
+			return NewPseudoTypeInferred(fn, true)
 		}
 
 		body := fn.Body()
@@ -258,7 +255,7 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 			return ch.typeFromExpression(candidateExpr)
 		}
 	}
-	return NewPseudoTypeNoResult(fn)
+	return NewPseudoTypeInferred(fn, true)
 }
 
 // This is basically `checkExpression` for pseudotypes
@@ -292,13 +289,13 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 	case ast.KindObjectLiteralExpression:
 		return ch.typeFromObjectLiteral(node.AsObjectLiteralExpression())
 	case ast.KindClassExpression:
-		return NewPseudoTypeInferred(node) // No possible annotation/directly mappable syntax
+		return NewPseudoTypeInferredWithErrors(node, false, []*ast.Node{node}) // No possible annotation/directly mappable syntax
 	case ast.KindTemplateExpression:
 		// templateLitWithHoles as const, not supported
 		if IsInConstContext(node) {
-			return NewPseudoTypeInferred(node)
+			return NewPseudoTypeInferred(node, false)
 		}
-		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeInferred(node), PseudoTypeString)
+		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeInferred(node, false), PseudoTypeString)
 	case ast.KindNumericLiteral:
 		return NewPseudoTypeMaybeConstLocation(node, NewPseudoTypeNumericLiteral(node), PseudoTypeNumber)
 	case ast.KindNoSubstitutionTemplateLiteral:
@@ -312,12 +309,12 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 	case ast.KindFalseKeyword:
 		return NewPseudoTypeMaybeConstLocation(node, PseudoTypeFalse, PseudoTypeBoolean)
 	}
-	return NewPseudoTypeInferred(node)
+	return NewPseudoTypeInferred(node, false)
 }
 
 func (ch *PseudoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression) *PseudoType {
 	if errorNodes := ch.canGetTypeFromObjectLiteral(node); errorNodes != nil {
-		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), false, errorNodes)
 	}
 	// we are in a const context producing an object literal type, there are no shorthand or spread assignments
 	if node.Properties == nil || len(node.Properties.Nodes) == 0 {
@@ -440,10 +437,10 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 
 func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) *PseudoType {
 	if errorNodes := ch.canGetTypeFromArrayLiteral(node); errorNodes != nil {
-		return NewPseudoTypeInferredWithErrors(node.AsNode(), errorNodes)
+		return NewPseudoTypeInferredWithErrors(node.AsNode(), false, errorNodes)
 	}
 	if IsInConstContext(node.AsNode()) && isContextuallyTyped(node.AsNode()) {
-		return NewPseudoTypeInferred(node.AsNode()) // expr in an as const cast with a contextual type has variable readonly state, bail
+		return NewPseudoTypeInferred(node.AsNode(), false) // expr in an as const cast with a contextual type has variable readonly state, bail
 	}
 	// we are in a const context producing a tuple type, there are no spread elements
 	results := make([]*PseudoType, 0, len(node.Elements.Nodes))
@@ -522,10 +519,6 @@ func (ch *PseudoChecker) typeFromFunctionLikeExpression(node *ast.Node) *PseudoT
 		return NewPseudoTypeDirect(node.FunctionLikeData().FullSignature)
 	}
 	returnType := ch.createReturnFromSignature(node)
-	if returnType.Kind == PseudoTypeKindNoResult {
-		// no result for the return type can just be an inferred result for the whole expression
-		return NewPseudoTypeInferred(node.AsNode())
-	}
 	typeParameters := ch.cloneTypeParameters(node.FunctionLikeData().TypeParameters)
 	parameters := ch.cloneParameters(node.FunctionLikeData().Parameters)
 	return NewPseudoTypeSingleCallSignature(
@@ -582,13 +575,13 @@ func typeNodeCouldReferToUndefined(node *ast.Node) bool {
 }
 
 // see this as the inverse of `canAddUndefined` in `expressionToTypeNode` in strada
-func couldAlreadyReferToUndefinedType(t *PseudoType) bool {
+func CouldAlreadyReferToUndefinedType(t *PseudoType) bool {
 	if t.Kind == PseudoTypeKindNoResult || t.Kind == PseudoTypeKindInferred || isUndefinedPseudoType(t) {
 		return true
 	}
 	if t.Kind == PseudoTypeKindMaybeConstLocation {
 		mc := t.AsPseudoTypeMaybeConstLocation()
-		return couldAlreadyReferToUndefinedType(mc.RegularType) // if we're even asking this question, it's not a `const` location
+		return CouldAlreadyReferToUndefinedType(mc.RegularType) // if we're even asking this question, it's not a `const` location
 	}
 	if t.Kind == PseudoTypeKindDirect {
 		// inspect the direct type node
@@ -596,7 +589,7 @@ func couldAlreadyReferToUndefinedType(t *PseudoType) bool {
 		return typeNodeCouldReferToUndefined(node)
 	}
 	if t.Kind == PseudoTypeKindUnion {
-		return core.Some(t.AsPseudoTypeUnion().Types, couldAlreadyReferToUndefinedType)
+		return core.Some(t.AsPseudoTypeUnion().Types, CouldAlreadyReferToUndefinedType)
 	}
 	return false
 }
@@ -628,7 +621,7 @@ func addUndefinedIfDefinitelyRequired(expr *PseudoType) *PseudoType {
 	// in Strada, this reached into the checker to see if `undefined` was necessary, using `isRequiredOptionalParameter` from the emit resolver,
 	// but that's not required on top of the syntactic checks to get the same behavior. (If we get the type wrong, it'll mismatch later and be discarded
 	// for an inference error since corsa actually validates that pseudotypes semantically match the inferred type the checker produces)
-	if couldAlreadyReferToUndefinedType(expr) {
+	if CouldAlreadyReferToUndefinedType(expr) {
 		return expr // will just error later, more like than not, unless the `undefined` is explicit in the pseudo
 	}
 	// Explicitly add an `| undefined`
@@ -672,6 +665,9 @@ func (ch *PseudoChecker) typeFromParameterWorker(node *ast.ParameterDeclaration,
 	}
 	if node.Initializer != nil && ast.IsIdentifier(node.Name()) && !isContextuallyTyped(node.AsNode()) {
 		expr := ch.typeFromExpression(node.Initializer)
+		if expr != nil && (expr.Kind == PseudoTypeKindInferred && len(expr.AsPseudoTypeInferred().ErrorNodes) == 0) {
+			expr = NewPseudoTypeInferredWithErrors(expr.AsPseudoTypeInferred().Expression, false, []*ast.Node{node.AsNode()}) // Move error up to the parameter
+		}
 		if !ch.strictNullChecks {
 			return expr
 		}

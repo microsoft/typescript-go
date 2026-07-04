@@ -382,6 +382,13 @@ export const m = mod;
   "size": 1972
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -523,6 +530,13 @@ export const newFileConst = 30;
 //// [/user/username/projects/sample1/logic/tsconfig.tsbuildinfo] *mTime changed*
 //// [/user/username/projects/sample1/tests/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/core/newfile.ts
@@ -652,6 +666,13 @@ export class someClass2 {
 //// [/user/username/projects/sample1/logic/tsconfig.tsbuildinfo] *mTime changed*
 //// [/user/username/projects/sample1/tests/tsconfig.tsbuildinfo] *mTime changed*
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)
+  /user/username/projects/sample1/logic (recursive)
+  /user/username/projects/sample1/tests
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/core/newfile.ts

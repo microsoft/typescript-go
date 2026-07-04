@@ -960,8 +960,9 @@ func readJsonConfigFile(fileName string, path tspath.Path, readFile func(fileNam
 			}, text, core.ScriptKindJSON),
 		}, diagnostic
 	} else {
+		factory := &ast.NodeFactory{}
 		file := &TsConfigSourceFile{
-			SourceFile: (&ast.NodeFactory{}).NewSourceFile(ast.SourceFileParseOptions{FileName: fileName, Path: path}, "", nil, (&ast.NodeFactory{}).NewToken(ast.KindEndOfFile)).AsSourceFile(),
+			SourceFile: factory.NewSourceFile(ast.SourceFileParseOptions{FileName: fileName, Path: path}, "", factory.NewNodeList([]*ast.Node{}), factory.NewToken(ast.KindEndOfFile)).AsSourceFile(),
 		}
 		file.SourceFile.SetDiagnostics(diagnostic)
 		return file, diagnostic
@@ -1012,19 +1013,25 @@ func ParseExtendedConfig(
 	host ParseConfigHost,
 	extendedConfigCache ExtendedConfigCache,
 ) *ExtendedConfigCacheEntry {
-	var extendedConfig *parsedTsconfig
-	var entryErrors []*ast.Diagnostic
-	extendedResult, err := readJsonConfigFile(fileName, path, host.FS().ReadFile)
-	entryErrors = append(entryErrors, err...)
-	if len(extendedResult.SourceFile.Diagnostics()) == 0 {
-		extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
-		entryErrors = append(entryErrors, err...)
-	}
-	return &ExtendedConfigCacheEntry{
+	extendedResult, readErrors := readJsonConfigFile(fileName, path, host.FS().ReadFile)
+	entry := &ExtendedConfigCacheEntry{
 		extendedResult: extendedResult,
-		extendedConfig: extendedConfig,
-		errors:         entryErrors,
 	}
+
+	if len(readErrors) > 0 {
+		entry.errors = readErrors
+		return entry
+	}
+
+	if parseDiagnostics := extendedResult.SourceFile.Diagnostics(); len(parseDiagnostics) > 0 {
+		entry.errors = parseDiagnostics
+		return entry
+	}
+
+	var parseErrors []*ast.Diagnostic
+	entry.extendedConfig, parseErrors = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(fileName), tspath.GetBaseFileName(fileName), resolutionStack, extendedConfigCache)
+	entry.errors = parseErrors
+	return entry
 }
 
 // parseConfig just extracts options/include/exclude/files out of a config file.
@@ -1084,8 +1091,12 @@ func parseConfig(
 					if rawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
 						if slice, _ := rawMap.GetOrZero(propertyName).([]any); slice != nil {
 							value := core.Map(slice, func(path any) any {
-								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
-									return path.(string)
+								pathStr, isString := path.(string)
+								if !isString {
+									return path
+								}
+								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(pathStr) {
+									return pathStr
 								} else {
 									if relativeDifference == "" {
 										t := tspath.ComparePathsOptions{
@@ -1094,7 +1105,7 @@ func parseConfig(
 										}
 										relativeDifference = tspath.ConvertToRelativePath(tspath.GetDirectoryPath(extendedConfigPath), t)
 									}
-									return tspath.CombinePaths(relativeDifference, path.(string))
+									return tspath.CombinePaths(relativeDifference, pathStr)
 								}
 							})
 							if propertyName == "include" {
@@ -1551,9 +1562,14 @@ func handleOptionConfigDirTemplateSubstitution(compilerOptions *core.CompilerOpt
 
 	// !!! don't hardcode this; use options declarations?
 
+	var paths *collections.OrderedMap[string, []string]
 	for k, v := range compilerOptions.Paths.Entries() {
 		if substitution := getSubstitutedStringArrayWithConfigDirTemplate(v, basePath); substitution != nil {
-			compilerOptions.Paths.Set(k, substitution)
+			if paths == nil {
+				paths = compilerOptions.Paths.Clone()
+				compilerOptions.Paths = paths
+			}
+			paths.Set(k, substitution)
 		}
 	}
 

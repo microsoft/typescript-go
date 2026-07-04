@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -25,6 +26,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/lsp/lspwatcher"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
@@ -170,15 +172,22 @@ type Server struct {
 	defaultLibraryPath string
 	typingsLocation    string
 
-	initializeParams   *lsproto.InitializeParams
-	clientCapabilities lsproto.ResolvedClientCapabilities
-	positionEncoding   lsproto.PositionEncodingKind
-	locale             locale.Locale
+	initializeParams      *lsproto.InitializeParams
+	initializationOptions *lsproto.InitializationOptions
+	clientCapabilities    lsproto.ResolvedClientCapabilities
+	positionEncoding      lsproto.PositionEncodingKind
+	locale                locale.Locale
 
 	watchEnabled     bool
 	telemetryEnabled bool
 	watcherID        atomic.Uint32
 	watchers         collections.SyncSet[project.WatcherID]
+	// builtinWatcher is non-nil when the server is running its own
+	// in-process file watcher instead of using LSP-based watching. It
+	// is enabled when the client lacks DynamicRegistration for
+	// workspace/didChangeWatchedFiles and the builtin watcher backend
+	// supports efficient recursive watching (Windows or FSEvents).
+	builtinWatcher *lspwatcher.Watcher
 
 	lastRequestTimeMs atomic.Int64
 
@@ -219,6 +228,13 @@ func (s *Server) InitComplete() <-chan struct{} { return s.initComplete }
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
+	if s.builtinWatcher != nil {
+		if err := s.builtinWatcher.WatchFiles(string(id), watchers); err != nil {
+			return fmt.Errorf("failed to register file watcher: %w", err)
+		}
+		s.watchers.Add(id)
+		return nil
+	}
 	_, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
@@ -241,6 +257,16 @@ func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers 
 
 // UnwatchFiles implements project.Client.
 func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
+	if s.builtinWatcher != nil {
+		if !s.watchers.Has(id) {
+			return fmt.Errorf("no file watcher exists with ID %s", id)
+		}
+		if err := s.builtinWatcher.UnwatchFiles(string(id)); err != nil {
+			return fmt.Errorf("failed to unregister file watcher: %w", err)
+		}
+		s.watchers.Delete(id)
+		return nil
+	}
 	if s.watchers.Has(id) {
 		_, err := sendClientRequest(ctx, s, lsproto.ClientUnregisterCapabilityInfo, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
@@ -339,13 +365,14 @@ func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferences, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	if !caps.Workspace.Configuration {
-		if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && s.initializeParams.InitializationOptions.UserPreferences != nil {
+		if opts := s.initializationOptions; opts.UserPreferences != nil {
+			userPrefs := *opts.UserPreferences
 			s.logger.Logf(
 				"received formatting options from initialization: %T\n%+v",
-				*s.initializeParams.InitializationOptions.UserPreferences,
-				*s.initializeParams.InitializationOptions.UserPreferences,
+				userPrefs,
+				userPrefs,
 			)
-			if config, ok := (*s.initializeParams.InitializationOptions.UserPreferences).(map[string]any); ok {
+			if config, ok := userPrefs.(map[string]any); ok {
 				return lsutil.ParseUserPreferences(map[string]any{"js/ts": config}), nil
 			}
 		}
@@ -442,7 +469,14 @@ func (s *Server) readLoop(ctx context.Context) error {
 		if s.initializeParams == nil && msg.Kind == jsonrpc.MessageKindRequest {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodInitialize {
-				resp, err := s.handleInitialize(ctx, req.Params.(*lsproto.InitializeParams), req)
+				params, err := lsproto.UnmarshalParams[*lsproto.InitializeParams](req)
+				if err != nil {
+					if err := s.sendError(req.ID, err); err != nil {
+						return err
+					}
+					continue
+				}
+				resp, err := s.handleInitialize(ctx, params, req)
 				if err != nil {
 					return err
 				}
@@ -469,7 +503,9 @@ func (s *Server) readLoop(ctx context.Context) error {
 		} else {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodCancelRequest {
-				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
+				if params, err := lsproto.UnmarshalParams[*lsproto.CancelParams](req); err == nil && params != nil {
+					s.cancelRequest(params.Id)
+				}
 			} else {
 				if err := s.requestQueue.Put(ctx, req); err != nil {
 					return err
@@ -784,10 +820,9 @@ func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.Noti
 			return nil, lsproto.ErrorCodeServerNotInitialized
 		}
 
-		var params Req
-		// Ignore empty params; all generated params are either pointers or any.
-		if req.Params != nil {
-			params = req.Params.(Req)
+		params, err := lsproto.UnmarshalParams[Req](req)
+		if err != nil {
+			return nil, err
 		}
 		if err := fn(s, ctx, params); err != nil {
 			return nil, err
@@ -806,10 +841,9 @@ func registerRequestHandler[Req, Resp any](
 			return nil, lsproto.ErrorCodeServerNotInitialized
 		}
 
-		var params Req
-		// Ignore empty params.
-		if req.Params != nil {
-			params = req.Params.(Req)
+		params, err := lsproto.UnmarshalParams[Req](req)
+		if err != nil {
+			return nil, err
 		}
 		resp, err := fn(s, ctx, params, req)
 		if err != nil {
@@ -824,10 +858,9 @@ func registerRequestHandler[Req, Resp any](
 
 func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
-		var params Req
-		// Ignore empty params.
-		if req.Params != nil {
-			params = req.Params.(Req)
+		params, err := lsproto.UnmarshalParams[Req](req)
+		if err != nil {
+			return nil, err
 		}
 		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
@@ -852,10 +885,9 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 
 func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
-		var params Req
-		// Ignore empty params.
-		if req.Params != nil {
-			params = req.Params.(Req)
+		params, err := lsproto.UnmarshalParams[Req](req)
+		if err != nil {
+			return nil, err
 		}
 		return s.session.WithLanguageServiceAndSnapshot(ctx, params.TextDocumentURI(), func(languageService *ls.LanguageService, snapshot *project.Snapshot) (func() error, error) {
 			return func() error {
@@ -892,10 +924,9 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	fn func(*ls.LanguageService, context.Context, Req, ls.CrossProjectOrchestrator) (Resp, error),
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) (func() error, error) {
-		var params Req
-		// Ignore empty params.
-		if req.Params != nil {
-			params = req.Params.(Req)
+		params, err := lsproto.UnmarshalParams[Req](req)
+		if err != nil {
+			return nil, err
 		}
 		// !!! sheetal: multiple projects that contain the file through symlinks
 		defaultLs, orchestrator, err := s.getLanguageServiceAndCrossProjectOrchestrator(ctx, params.TextDocumentURI(), req)
@@ -994,8 +1025,16 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	s.initStarted.Store(true)
 
 	s.initializeParams = params
-	if params.InitializationOptions != nil && params.InitializationOptions.LogVerbosity != nil {
-		if v := *params.InitializationOptions.LogVerbosity; isValidLogVerbosity(v) {
+	// The spec types initializationOptions as nullable; treat both null and an
+	// absent value as empty options so the rest of the server can read fields
+	// off s.initializationOptions without nil-checking the container.
+	if params.InitializationOptions != nil && params.InitializationOptions.InitializationOptions != nil {
+		s.initializationOptions = params.InitializationOptions.InitializationOptions
+	} else {
+		s.initializationOptions = &lsproto.InitializationOptions{}
+	}
+	if s.initializationOptions.LogVerbosity != nil {
+		if v := *s.initializationOptions.LogVerbosity; isValidLogVerbosity(v) {
 			s.logger.SetVerbosity(v)
 		}
 	}
@@ -1056,13 +1095,16 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			DiagnosticProvider: &lsproto.DiagnosticOptionsOrRegistrationOptions{
 				Options: &lsproto.DiagnosticOptions{
+					Identifier:            new("typescript"),
 					InterFileDependencies: true,
 				},
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
 				TriggerCharacters: &ls.TriggerCharacters,
 				ResolveProvider:   new(true),
-				// !!! other options
+				CompletionItem: &lsproto.ServerCompletionItemOptions{
+					LabelDetailsSupport: new(true),
+				},
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
 				TriggerCharacters:   &[]string{"(", ",", "<"},
@@ -1154,8 +1196,33 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
-	if s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration {
+	var disablePushDiagnostics bool
+	var enableTelemetry bool
+	if s.initializationOptions.DisablePushDiagnostics != nil {
+		disablePushDiagnostics = *s.initializationOptions.DisablePushDiagnostics
+	}
+	if s.initializationOptions.EnableTelemetry != nil {
+		enableTelemetry = *s.initializationOptions.EnableTelemetry
+	}
+	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
+	if hasDynamicWatchRegistration {
+		s.logger.Logf("file watching: using LSP client-side watching (client supports dynamic registration)")
 		s.watchEnabled = true
+	} else if fswatch.Default().HasFastRecursiveBackend() {
+		// The client cannot watch files itself, but the builtin watcher has a
+		// backend with efficient recursive watching (Windows or FSEvents), so
+		// fall back to watching files in-process.
+		s.logger.Logf("file watching: using builtin in-process watcher (client lacks dynamic watch registration)")
+		s.watchEnabled = true
+		s.builtinWatcher = lspwatcher.New(s.fs, func(changes []*lsproto.FileEvent) {
+			if s.session != nil {
+				s.session.DidChangeWatchedFiles(s.backgroundCtx, changes)
+			}
+		}, s.logger)
+	} else {
+		// The client cannot watch files and the builtin watcher backend lacks
+		// efficient recursive watching, so file watching is disabled.
+		s.logger.Logf("file watching: disabled (client lacks dynamic watch registration and builtin watcher backend is not fast-recursive)")
 	}
 
 	cwd := s.cwd
@@ -1173,16 +1240,6 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
-	var disablePushDiagnostics bool
-	var enableTelemetry bool
-	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil {
-		if s.initializeParams.InitializationOptions.DisablePushDiagnostics != nil {
-			disablePushDiagnostics = *s.initializeParams.InitializationOptions.DisablePushDiagnostics
-		}
-		if s.initializeParams.InitializationOptions.EnableTelemetry != nil {
-			enableTelemetry = *s.initializeParams.InitializationOptions.EnableTelemetry
-		}
-	}
 	s.telemetryEnabled = enableTelemetry
 
 	s.session = project.NewSession(&project.SessionInit{
@@ -1244,6 +1301,9 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 }
 
 func (s *Server) handleShutdown(ctx context.Context, _ lsproto.NoParams, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
+	if s.builtinWatcher != nil {
+		s.builtinWatcher.Close()
+	}
 	s.session.Close()
 	return lsproto.ShutdownResponse{}, nil
 }
@@ -1302,6 +1362,7 @@ func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLog
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
+	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
 	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 }
 
@@ -1623,7 +1684,7 @@ func (s *Server) handleCodeLensResolve(ctx context.Context, codeLens *lsproto.Co
 	return defaultLs.ResolveCodeLens(
 		ctx,
 		codeLens,
-		s.initializeParams.InitializationOptions.CodeLensShowLocationsCommandName,
+		s.initializationOptions.CodeLensShowLocationsCommandName,
 		orchestrator,
 	)
 }
