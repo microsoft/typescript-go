@@ -1,1 +1,6 @@
-{ "type": "module", "devDependencies": { "json": "^11.0.0", "npm": "^11.18.0" } }
+{
+    "type": "module",
+    "devDependencies": {
+        "json": "^11.0.0"
+    }
+}
