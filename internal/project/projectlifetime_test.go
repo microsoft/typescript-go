@@ -287,7 +287,6 @@ func TestProjectLifetime(t *testing.T) {
 	// The failure was independent of the order in which didOpen and the create
 	// watch event arrived, so both orderings are covered.
 	runNewFileScenario := func(t *testing.T, openBeforeCreateEvent bool) {
-		t.Parallel()
 		files := map[string]any{
 			"/home/projects/TS/monorepo/tsconfig.json": `{
 				"compilerOptions": {
@@ -345,10 +344,12 @@ func TestProjectLifetime(t *testing.T) {
 	}
 
 	t.Run("newly created file joins configured project with ./-prefixed includes (didOpen before create event)", func(t *testing.T) {
+		t.Parallel()
 		runNewFileScenario(t, true)
 	})
 
 	t.Run("newly created file joins configured project with ./-prefixed includes (create event before didOpen)", func(t *testing.T) {
+		t.Parallel()
 		runNewFileScenario(t, false)
 	})
 
