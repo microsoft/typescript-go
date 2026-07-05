@@ -26,6 +26,7 @@ import {
     createIfStatement,
     createNodeArray,
     createNumericLiteral,
+    createSourceFile,
     createStringLiteral,
     createToken,
     NodeObject,
@@ -530,6 +531,19 @@ describe("RemoteNode + cloneNode", () => {
             assert.notStrictEqual(clone, sf);
             assert.ok(clone instanceof NodeObject);
             assert.strictEqual(clone.statements, sf.statements);
+            assert.strictEqual(clone.text, sf.text);
+            assert.strictEqual(clone.fileName, sf.fileName);
+            assert.strictEqual(clone.path, sf.path);
+            assert.strictEqual(clone.scriptKind, sf.scriptKind);
+            assert.strictEqual(clone.languageVariant, sf.languageVariant);
+            assert.strictEqual(clone.isDeclarationFile, sf.isDeclarationFile);
+            assert.strictEqual(clone.referencedFiles, sf.referencedFiles);
+            assert.strictEqual(clone.typeReferenceDirectives, sf.typeReferenceDirectives);
+            assert.strictEqual(clone.libReferenceDirectives, sf.libReferenceDirectives);
+            assert.strictEqual(clone.imports, sf.imports);
+            assert.strictEqual(clone.moduleAugmentations, sf.moduleAugmentations);
+            assert.strictEqual(clone.ambientModuleNames, sf.ambientModuleNames);
+            assert.strictEqual(clone.externalModuleIndicator, sf.externalModuleIndicator);
 
             assert.strictEqual(clone.kind, sf.kind);
             assert.strictEqual(clone.pos, sf.pos);
@@ -620,6 +634,39 @@ describe("RemoteNode + visitEachChild", () => {
     });
 });
 
+describe("RemoteNodeList inherited array methods", () => {
+    test("filter/map/slice return plain arrays without throwing", () => {
+        const api = spawnAPI();
+        try {
+            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
+            const statements = sf.statements;
+            assert.strictEqual(statements.length, 2);
+
+            // These inherited Array methods previously threw
+            // "this.view.getUint32 is not a function" via ArraySpeciesCreate.
+            const filtered = statements.filter(() => true);
+            assert.ok(Array.isArray(filtered));
+            assert.strictEqual(Object.getPrototypeOf(filtered), Array.prototype);
+            assert.strictEqual(filtered.length, 2);
+            assert.strictEqual(filtered[0], statements[0]);
+
+            const mapped = statements.map(s => s.kind);
+            assert.ok(Array.isArray(mapped));
+            assert.strictEqual(Object.getPrototypeOf(mapped), Array.prototype);
+            assert.deepStrictEqual(mapped, [statements[0].kind, statements[1].kind]);
+
+            const sliced = statements.slice(1);
+            assert.ok(Array.isArray(sliced));
+            assert.strictEqual(Object.getPrototypeOf(sliced), Array.prototype);
+            assert.strictEqual(sliced.length, 1);
+            assert.strictEqual(sliced[0], statements[1]);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
 describe("RemoteNode + getSynthesizedDeepClone", () => {
     test("deep clones a remote import declaration", () => {
         const api = spawnAPI();
@@ -658,6 +705,33 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
                 assert.ok(node instanceof NodeObject);
                 node.forEachChild(visit);
             });
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("deep clone of remote SourceFile preserves top-level metadata references", () => {
+        const api = spawnAPI();
+        try {
+            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/foo.ts");
+            const referencedFiles = sf.referencedFiles;
+            const typeReferenceDirectives = sf.typeReferenceDirectives;
+            const libReferenceDirectives = sf.libReferenceDirectives;
+            const imports = sf.imports;
+            const moduleAugmentations = sf.moduleAugmentations;
+            const ambientModuleNames = sf.ambientModuleNames;
+
+            const clone = getSynthesizedDeepClone(sf);
+
+            assert.notStrictEqual(clone, sf);
+            assert.strictEqual(clone.referencedFiles, referencedFiles);
+            assert.strictEqual(clone.typeReferenceDirectives, typeReferenceDirectives);
+            assert.strictEqual(clone.libReferenceDirectives, libReferenceDirectives);
+            assert.strictEqual(clone.imports, imports);
+            assert.strictEqual(clone.moduleAugmentations, moduleAugmentations);
+            assert.strictEqual(clone.ambientModuleNames, ambientModuleNames);
+            assert.strictEqual(clone.externalModuleIndicator, sf.externalModuleIndicator);
         }
         finally {
             api.close();

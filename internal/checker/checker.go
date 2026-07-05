@@ -287,7 +287,8 @@ type InferenceContext struct {
 
 type InferenceInfo struct {
 	typeParameter    *Type             // Type parameter for which inferences are being made
-	candidates       []*Type           // Candidates in covariant positions
+	candidates       []*Type           // Candidates in covariant positions in decreasing depth order
+	candidateDepths  []int             // Type argument depths of covariant inferences
 	contraCandidates []*Type           // Candidates in contravariant positions
 	inferredType     *Type             // Cache for resolved inferred type
 	priority         InferencePriority // Priority of current inference set
@@ -590,6 +591,7 @@ type Checker struct {
 	TotalInstantiationCount                     uint32
 	instantiationCount                          uint32
 	instantiationDepth                          uint32
+	conditionalConstraintDepth                  uint32
 	inlineLevel                                 int
 	serializationLevel                          int
 	currentNode                                 *ast.Node
@@ -14091,7 +14093,11 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 			// reset flag when merging instantiated module into value module that has only const enums
 			target.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 		}
-		target.Flags |= source.Flags
+		sourceFlags := source.Flags
+		if target.Flags&ast.SymbolFlagsConstEnumOnlyModule == 0 {
+			sourceFlags &^= ast.SymbolFlagsConstEnumOnlyModule
+		}
+		target.Flags |= sourceFlags
 		if source.ValueDeclaration != nil {
 			binder.SetValueDeclaration(target, source.ValueDeclaration)
 		}
@@ -19064,7 +19070,7 @@ func findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
 }
 
 func (c *Checker) getBaseTypes(t *Type) []*Type {
-	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) == 0 {
+	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsTuple) == 0 {
 		return nil
 	}
 	data := t.AsInterfaceType()
@@ -27420,20 +27426,13 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		}
 		return c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
 	case t.flags&TypeFlagsConditional != 0:
-		d := t.AsConditionalType()
-		if d.root.isDistributive && c.cachedTypes[CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: t.id}] != t {
-			constraint := c.getSimplifiedType(d.checkType, false /*writing*/)
-			if constraint == d.checkType {
-				constraint = c.getNextBaseConstraint(constraint, stack)
-			}
-			if constraint != nil && constraint != d.checkType {
-				instantiated := c.getConditionalTypeInstantiation(t, prependTypeMapping(d.root.checkType, constraint, d.mapper), true /*forConstraint*/, nil)
-				if instantiated.flags&TypeFlagsNever == 0 {
-					return c.getNextBaseConstraint(instantiated, stack)
-				}
-			}
+		if c.conditionalConstraintDepth >= 100 {
+			return nil
 		}
-		return c.getNextBaseConstraint(c.getDefaultConstraintOfConditionalType(t), stack)
+		c.conditionalConstraintDepth++
+		constraint := c.getConstraintFromConditionalType(t)
+		c.conditionalConstraintDepth--
+		return c.getNextBaseConstraint(constraint, stack)
 	case t.flags&TypeFlagsSubstitution != 0:
 		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
 	case c.isGenericTupleType(t):
@@ -28041,6 +28040,12 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 	case ReferenceHintDecorator:
 		c.markDecoratorAliasReferenced(location)
 	case ReferenceHintUnspecified:
+		if ast.IsJsxTagName(location) && isJsxIntrinsicTagName(location) {
+			return // builtin JSX tag names aren't real type refs by most metrics, but are expressions, so must be filtered
+		}
+		if ast.FindAncestor(location, func(n *ast.Node) bool { return ast.IsMetaProperty(n) }) != nil {
+			return // identifiers in meta properties shouldn't be resolved, but are expressions, so must be filtered
+		}
 		// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
 		// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}` or `q` in `import r = q`
 		// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
