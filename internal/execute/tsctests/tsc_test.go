@@ -942,6 +942,52 @@ func TestTscDeclarationEmit(t *testing.T) {
 			cwd:             "/user/username/projects/myproject",
 			commandLineArgs: []string{"-p", "pkg3", "--explainFiles"},
 		},
+		{
+			subScenario: "expando function properties for function only referenced via typeof",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"strict": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"allowJs": true,
+							"checkJs": true,
+							"outDir": "dist",
+						},
+					}`),
+				"/home/src/workspaces/project/mainTs.ts": stringtestutil.Dedent(`
+					declare function wrap<T>(component: T): T;
+
+					function FunctionComponent() { return null; }
+					FunctionComponent.propTypes = { num: 0 };
+
+					const ArrowComponent = () => null;
+					ArrowComponent.propTypes = { num: 0 };
+
+					function UnusedComponent() { return null; }
+					UnusedComponent.propTypes = { num: 0 };
+
+					export const WrappedFunction = wrap(FunctionComponent);
+					export const WrappedArrow = wrap(ArrowComponent);
+				`),
+				"/home/src/workspaces/project/mainJs.js": stringtestutil.Dedent(`
+					/**
+					 * @template T
+					 * @param {T} component
+					 * @returns {T}
+					 */
+					function wrap(component) { return component; }
+
+					function FunctionComponent() { return null; }
+					FunctionComponent.propTypes = { num: 0 };
+
+					export const WrappedFunction = wrap(FunctionComponent);
+				`),
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"-p", "."},
+		},
 	}
 
 	for _, test := range testCases {

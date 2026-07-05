@@ -78,8 +78,9 @@ type DeclarationTransformer struct {
 	suppressNewDiagnosticContexts    bool
 	witnessedCjsExports              collections.Set[string]
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
-	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
-	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	expandoHosts                     map[ast.NodeId]*ast.Node               // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
+	expandoMembers                   map[ast.NodeId][]*ast.Node             // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	deferredExpandoAssignments       map[ast.NodeId][]*ast.BinaryExpression // expando assignments whose host wasn't visible when collected, processed if the host is late-marked visible
 	seenProperties                   collections.Set[thisPropertyAssignmentKey]
 	thisPropertyAssignmentsCollected []*ast.Node
 	rawReferencedFiles               []ReferencedFilePair
@@ -293,6 +294,7 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.lateStatementReplacementMap = make(map[ast.NodeId]*ast.Node)
 	tx.expandoHosts = make(map[ast.NodeId]*ast.Node)
 	tx.expandoMembers = make(map[ast.NodeId][]*ast.Node)
+	tx.deferredExpandoAssignments = make(map[ast.NodeId][]*ast.BinaryExpression)
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
@@ -403,6 +405,16 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 
 		next := tx.state.lateMarkedStatements[0]
 		tx.state.lateMarkedStatements = tx.state.lateMarkedStatements[1:]
+
+		// If expando assignments on this statement were skipped because it wasn't visible
+		// when they were collected, process them now that it has been marked visible.
+		nextId := ast.GetNodeId(tx.EmitContext().MostOriginal(next))
+		if deferred, ok := tx.deferredExpandoAssignments[nextId]; ok {
+			delete(tx.deferredExpandoAssignments, nextId)
+			for _, assignment := range deferred {
+				tx.transformExpandoAssignment(assignment)
+			}
+		}
 
 		saveNeedsDeclare := tx.needsDeclare
 		tx.needsDeclare = next.Parent != nil && ast.IsSourceFile(next.Parent)
@@ -2729,6 +2741,11 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	if ast.IsDeclaration(declaration) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, declaration) {
+		// The host isn't visible (yet) - printing the type of a visible declaration may still
+		// late-mark it as visible (e.g. an exported variable whose type prints as `typeof host`),
+		// so defer the assignment to be processed if and when that happens.
+		hostId := tx.getExpandoHostId(declaration)
+		tx.deferredExpandoAssignments[hostId] = append(tx.deferredExpandoAssignments[hostId], node)
 		return
 	}
 
