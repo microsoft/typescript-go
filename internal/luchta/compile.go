@@ -22,7 +22,6 @@ import (
 // CompileResult holds the outcome of compiling one package.
 type CompileResult struct {
 	ExitCode int
-	Inputs   []string
 	Outputs  []string
 	// Diagnostics are the raw compiler diagnostics, rendered into a SARIF
 	// report by the worker (see DiagnosticsToSARIF).
@@ -47,29 +46,67 @@ func compilerFS(cwd string) (vfs.FS, *pnp.PnpApi) {
 	return fsys, pnpApi
 }
 
+// ResolveInputs parses tsconfig.json (and tsconfig.build.json if present) to
+// extract the include patterns without performing any compilation. Returns
+// the include globs plus the tsconfig file names, suitable for cache invalidation.
+// This is a static metadata read only — no typecheck/emit.
+func ResolveInputs(cwd string) ([]string, error) {
+	fsys, _ := compilerFS(cwd)
+	sys := newRunSystem(cwd, fsys, bundled.LibPath(), io.Discard, nil)
+	extendedConfigCache := &tsc.ExtendedConfigCache{}
+
+	inputs := collections.NewSetWithSizeHint[string](4)
+
+	// Report every tsconfig the build *could* parse as a literal input, even
+	// when it is currently absent. luchta records a missing literal as an
+	// "absent" sentinel, so adding the file later flips absent->present and
+	// busts the cache.
+	for _, name := range tsconfigCandidates {
+		inputs.Add(name)
+	}
+
+	foundTsconfig := false
+	for _, name := range tsconfigCandidates {
+		configPath := filepath.Join(cwd, name)
+		if !fsys.FileExists(configPath) {
+			continue
+		}
+
+		foundTsconfig = true
+		parsed, errs := tsoptions.GetParsedCommandLineOfConfigFile(
+			configPath, &core.CompilerOptions{}, nil, sys, extendedConfigCache,
+		)
+		if len(errs) > 0 {
+			// Return what we have so far on error — caller can fall back to accept
+			return sortedKeys(inputs), nil
+		}
+		for _, p := range includePatterns(parsed) {
+			inputs.Add(p)
+		}
+	}
+
+	// If no tsconfig was found, add the default include pattern
+	if !foundTsconfig {
+		for _, p := range includePatterns(nil) {
+			inputs.Add(p)
+		}
+	}
+
+	return sortedKeys(inputs), nil
+}
+
 // CompilePackage replicates the project's tsc worker: for each candidate tsconfig
 // that exists, parse it, clean stale outputs, build a Program, collect diagnostics,
-// and emit. Returns aggregated inputs/outputs and a non-zero ExitCode on any error.
+// and emit. Returns aggregated outputs and a non-zero ExitCode on any error.
 func CompilePackage(ctx context.Context, cwd string) CompileResult {
 	fsys, pnpApi := compilerFS(cwd)
 	sys := newRunSystem(cwd, fsys, bundled.LibPath(), io.Discard, pnpApi)
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 
-	inputs := collections.NewSetWithSizeHint[string](4)
 	var outputs []string
 	var allDiags []*ast.Diagnostic
 	internalErr := ""
 	exitCode := 0
-
-	// Report every tsconfig the build *could* parse as a literal input, even
-	// when it is currently absent. luchta records a missing literal as an
-	// "absent" sentinel, so adding the file later flips absent->present and
-	// busts the cache. Reporting only the existing candidate would let a newly
-	// added tsconfig.build.json (which this worker would then parse) go
-	// undetected and the cache would incorrectly skip the rebuild.
-	for _, name := range tsconfigCandidates {
-		inputs.Add(name)
-	}
 
 	for _, name := range tsconfigCandidates {
 		configPath := filepath.Join(cwd, name)
@@ -84,9 +121,6 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 			allDiags = append(allDiags, errs...)
 			exitCode = 1
 			break
-		}
-		for _, p := range includePatterns(parsed) {
-			inputs.Add(p)
 		}
 
 		opts := parsed.CompilerOptions()
@@ -116,7 +150,6 @@ func CompilePackage(ctx context.Context, cwd string) CompileResult {
 	sort.Strings(relativized)
 	return CompileResult{
 		ExitCode:      exitCode,
-		Inputs:        sortedKeys(inputs),
 		Outputs:       relativized,
 		Diagnostics:   allDiags,
 		InternalError: internalErr,
