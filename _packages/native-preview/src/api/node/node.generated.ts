@@ -165,10 +165,12 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         if (index < 0) {
             index = this.length + index;
         }
+        // Walk the raw buffer following each node's `next` pointer instead of
+        // materializing every intermediate RemoteNode just to read it.
+        const offsetNodes = this.sourceFile._offsetNodes;
         let next = this.index + 1;
         for (let i = 0; i < index; i++) {
-            const child = this.getOrCreateChildAtNodeIndex(next);
-            next = child.next;
+            next = this.view.getUint32(offsetNodes + next * NODE_LEN + NODE_OFFSET_NEXT, true);
         }
         return this.getOrCreateChildAtNodeIndex(next) as RemoteNode;
     }

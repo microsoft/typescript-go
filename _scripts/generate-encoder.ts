@@ -1600,10 +1600,12 @@ function emitRemoteNodeList(w: CodeWriter) {
     w.write(`        if (index < 0) {`);
     w.write(`            index = this.length + index;`);
     w.write(`        }`);
+    w.write(`        // Walk the raw buffer following each node's \`next\` pointer instead of`);
+    w.write(`        // materializing every intermediate RemoteNode just to read it.`);
+    w.write(`        const offsetNodes = this.sourceFile._offsetNodes;`);
     w.write(`        let next = this.index + 1;`);
     w.write(`        for (let i = 0; i < index; i++) {`);
-    w.write(`            const child = this.getOrCreateChildAtNodeIndex(next);`);
-    w.write(`            next = child.next;`);
+    w.write(`            next = this.view.getUint32(offsetNodes + next * NODE_LEN + NODE_OFFSET_NEXT, true);`);
     w.write(`        }`);
     w.write(`        return this.getOrCreateChildAtNodeIndex(next) as RemoteNode;`);
     w.write(`    }`);
