@@ -1,6 +1,7 @@
 package project
 
 import (
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -325,6 +326,8 @@ func (s *snapshotFSBuilder) GetAccessibleEntries(path string) vfs.Entries {
 		return entries
 	}
 
+	entries.Files = slices.Clone(entries.Files)
+	entries.Directories = slices.Clone(entries.Directories)
 	readDirectoryIntoEntries(overlayDirectories, s.isOpenFile, &entries)
 	return entries
 }
