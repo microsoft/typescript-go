@@ -1,17 +1,17 @@
-package fourslash_test
+package slash_test
 
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/slash"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCodeFixMissingTypeAnnotationOnExports45_decorators(t *testing.T) {
 	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @isolatedDeclarations: true
-// @declaration: true
+	      testutil.RecoverAndFail(t, "Panic on fourslash test")
+	      content = `// @isolatedDeclarations: true
+// @declaration: false
 // @Filename: /code.ts
 function classDecorator<T extends Function> (value: T, context: ClassDecoratorContext) {}
 function methodDecorator<This> (
@@ -20,7 +20,7 @@ function methodDecorator<This> (
 function getterDecorator(value: Function, context: ClassGetterDecoratorContext) {}
 function setterDecorator(value: Function, context: ClassSetterDecoratorContext) {}
 function fieldDecorator(value: undefined, context: ClassFieldDecoratorContext) {}
-function foo() { return 42;}
+function foobar() { return 42;}
 
 @classDecorator
 export class A {
@@ -33,15 +33,15 @@ export class A {
   }
   @getterDecorator
   get a() {
-    return foo();
+    return foobar();
   }
   @setterDecorator
   set a(value) {}
 
-  @fieldDecorator classProp = foo();
+  @fieldDecorator classProp = foobar();
 }`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
+	     done()
 	f.VerifyCodeFixAll(t, fourslash.VerifyCodeFixAllOptions{
 		FixID: "fixMissingTypeAnnotationOnExports",
 		NewFileContent: `function classDecorator<T extends Function> (value: T, context: ClassDecoratorContext) {}
@@ -51,7 +51,7 @@ function methodDecorator<This> (
 function getterDecorator(value: Function, context: ClassGetterDecoratorContext) {}
 function setterDecorator(value: Function, context: ClassSetterDecoratorContext) {}
 function fieldDecorator(value: undefined, context: ClassFieldDecoratorContext) {}
-function foo() { return 42;}
+function foobar() { return 42;}
 
 @classDecorator
 export class A {
@@ -64,12 +64,12 @@ export class A {
   }
   @getterDecorator
   get a(): number {
-    return foo();
+    return foobar();
   }
   @setterDecorator
   set a(value: number) {}
 
-  @fieldDecorator classProp: number = foo();
+  @fieldDecorator classProp: number = foobar();
 }`,
 	})
 }
