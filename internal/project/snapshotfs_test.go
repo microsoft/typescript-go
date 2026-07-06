@@ -524,15 +524,17 @@ func TestSnapshotFSBuilder(t *testing.T) {
 			toPath,
 		)
 
-		_ = builder.GetAccessibleEntries("/src")
+		_ = builder.fs.GetAccessibleEntries("/src")
 
+		start := make(chan struct{})
 		var wg sync.WaitGroup
 		for range 50 {
 			wg.Go(func() {
-				// Must not mutate the shared cached entries in place.
+				<-start
 				_ = builder.GetAccessibleEntries("/src")
 			})
 		}
+		close(start)
 		wg.Wait()
 
 		// Sanity: the overlay is still reported after all the concurrent calls.
