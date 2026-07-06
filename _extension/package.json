@@ -106,6 +106,22 @@
                         "tags": [
                             "experimental"
                         ]
+                    },
+                    "js/ts.languageServer.showFailedResponses": {
+                        "type": "string",
+                        "enum": [
+                            "always",
+                            "never",
+                            "auto"
+                        ],
+                        "enumDescriptions": [
+                            "%native-preview.showFailedResponses.always%",
+                            "%native-preview.showFailedResponses.never%",
+                            "%native-preview.showFailedResponses.auto%"
+                        ],
+                        "default": "auto",
+                        "description": "%native-preview.showFailedResponses.description%",
+                        "scope": "window"
                     }
                 }
             }
