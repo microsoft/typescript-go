@@ -107,7 +107,7 @@
                             "experimental"
                         ]
                     },
-                    "js/ts.languageServer.showFailedResponses": {
+                    "js/ts.server.showFailedResponses": {
                         "type": "string",
                         "enum": [
                             "always",

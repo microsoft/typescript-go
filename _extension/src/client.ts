@@ -386,7 +386,7 @@ class NativePreviewLanguageClient extends LanguageClient {
     ): T {
         const setting = vscode.workspace
             .getConfiguration("js/ts")
-            .get<"always" | "never" | "auto">("languageServer.showFailedResponses", "auto");
+            .get<"always" | "never" | "auto">("server.showFailedResponses", "auto");
         const effectiveSetting = setting === "auto" ? (isInsiders() ? "always" : "never") : setting;
 
         let effectiveShowNotification = showNotification;
