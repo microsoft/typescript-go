@@ -160,6 +160,12 @@ export interface TupleType extends InterfaceType {
     readonly readonly: boolean;
 }
 
+/** Tuple type references (Checker#isTupleType) */
+export interface TupleTypeReference extends TypeReference {
+    /** Get the target type */
+    getTarget(): Promise<TupleType>;
+}
+
 /** Union or intersection types (TypeFlags.Union | TypeFlags.Intersection) */
 export interface UnionOrIntersectionType extends Type {
     /** Get the constituent types */
@@ -173,6 +179,9 @@ export interface UnionType extends UnionOrIntersectionType {
 /** Intersection types (TypeFlags.Intersection) */
 export interface IntersectionType extends UnionOrIntersectionType {
 }
+
+/** Structured types (TypeFlags.StructuredType) */
+export type StructuredType = ObjectType | UnionType | IntersectionType;
 
 /** Type parameters (TypeFlags.TypeParameter) */
 export interface TypeParameter extends Type {
