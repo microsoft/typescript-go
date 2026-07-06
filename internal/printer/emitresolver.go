@@ -104,16 +104,19 @@ type EmitResolver interface {
 	IsLiteralConstDeclaration(node *ast.Node) bool
 	RequiresAddingImplicitUndefined(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
 	IsDeclarationVisible(node *ast.Node) bool
+	IsNameResolvable(location *ast.Node, name string) bool
 	IsImportRequiredByAugmentation(decl *ast.ImportDeclaration) bool
 	IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node) bool
 	IsImplementationOfOverload(node *ast.SignatureDeclaration) bool
 	GetEnumMemberValue(node *ast.Node) evaluator.Result
 	IsLateBound(node *ast.Node) bool
 	IsOptionalParameter(node *ast.Node) bool
+	IsThisPropertyAssignmentDeclarationRedundant(node *ast.Node) bool
 
 	// isolatedDeclarations-specific declaration emit
 	GetPropertiesOfContainerFunction(node *ast.Node) []*ast.Symbol
 	RequiresAddingImplicitUndefinedUnsafe(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
+	GetReferencedValueDeclarationUnsafe(node *ast.IdentifierNode) *ast.Declaration
 
 	// Node construction for declaration emit
 	CreateTypeOfDeclaration(emitContext *EmitContext, declaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node

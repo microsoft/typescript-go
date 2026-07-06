@@ -8,4 +8,3 @@
 -export const y: 2;
 +export declare var y: 2;
 +export declare var x: 1;
-+export declare var y: 2;

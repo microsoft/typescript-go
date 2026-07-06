@@ -152,6 +152,11 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) *packagejson.InfoCacheE
 	return nil
 }
 
+// PackageJsonCacheEntries iterates on all package json cache entries.
+func (p *Program) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
+	p.resolver.PackageJsonCacheEntries(f)
+}
+
 // GetRedirectTargets returns the list of file paths that redirect to the given path.
 // These are files from the same package (same name@version) installed in different locations.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
@@ -247,10 +252,10 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 			}
 		}
 
-		return p.GetSourceFile(fileName)
+		return p.GetSourceFileForResolvedModule(fileName)
 	}
 	if allowNonTsExtensions {
-		extensionless := p.GetSourceFile(fileName)
+		extensionless := p.GetSourceFileForResolvedModule(fileName)
 		if extensionless != nil {
 			return extensionless
 		}
@@ -258,7 +263,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 
 	// Only try adding extensions from the first supported group (which should be .ts/.tsx/.d.ts)
 	for _, ext := range supportedExtensions[0] {
-		result := p.GetSourceFile(fileName + ext)
+		result := p.GetSourceFileForResolvedModule(fileName + ext)
 		if result != nil {
 			return result
 		}
@@ -281,7 +286,11 @@ func NewProgram(opts ProgramOptions) *Program {
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 // createCheckerPool, if non-nil, overrides the CreateCheckerPool stored in the old program's options,
 // ensuring each caller uses a fresh closure and avoiding data races on captured variables.
-func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost, createCheckerPool func(*Program) CheckerPool) (*Program, bool) {
+// The returned *ast.SourceFile is the changed file as acquired through newHost; it is nil
+// only if the host cannot locate the file (e.g. it was deleted). Callers that manage
+// host-side parse caches must release this exact pointer when the old program could not be
+// reused, since it was acquired speculatively before that decision was made.
+func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost, createCheckerPool func(*Program) CheckerPool) (*Program, *ast.SourceFile, bool) {
 	newOpts := p.opts
 	newOpts.Host = newHost
 	if createCheckerPool != nil {
@@ -297,11 +306,14 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	_, inRedirectFiles := p.redirectFilesByPath[changedFilePath]
 	_, isRedirectTarget := p.redirectTargetsMap[changedFilePath]
 	if inRedirectFiles || isRedirectTarget {
-		return NewProgram(newOpts), false
+		return NewProgram(newOpts), newFile, false
 	}
 
 	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(newOpts), false
+		return NewProgram(newOpts), newFile, false
+	}
+	if oldNeedsImportHelpers := p.importHelpersImportSpecifiers[oldFile.Path()] != nil; oldNeedsImportHelpers != p.needsImportHelpersImportSpecifier(newFile) {
+		return NewProgram(newOpts), newFile, false
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
@@ -322,7 +334,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
 	updateFileIncludeProcessor(result)
-	return result, true
+	return result, newFile, true
 }
 
 func (p *Program) initCheckerPool() {
@@ -339,6 +351,11 @@ func (p *Program) initCheckerPool() {
 	}
 }
 
+// GetCheckerPool returns the checker pool associated with this program.
+func (p *Program) GetCheckerPool() CheckerPool {
+	return p.checkerPool
+}
+
 func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
@@ -350,6 +367,20 @@ func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool 
 		slices.EqualFunc(file1.TypeReferenceDirectives, file2.TypeReferenceDirectives, equalFileReferences) &&
 		slices.EqualFunc(file1.LibReferenceDirectives, file2.LibReferenceDirectives, equalFileReferences) &&
 		equalCheckJSDirectives(file1.CheckJsDirective, file2.CheckJsDirective)
+}
+
+func (p *Program) needsImportHelpersImportSpecifier(file *ast.SourceFile) bool {
+	redirect, _ := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
+	if !optionsForFile.ImportHelpers.IsTrue() {
+		return false
+	}
+	isJavaScriptFile := ast.IsSourceFileJS(file)
+	isExternalModuleFile := ast.IsExternalModule(file)
+	if !isJavaScriptFile && (file.IsDeclarationFile || (!optionsForFile.GetIsolatedModules() && !isExternalModuleFile)) {
+		return false
+	}
+	return true
 }
 
 func equalModuleSpecifiers(n1 *ast.Node, n2 *ast.Node) bool {
@@ -1733,9 +1764,12 @@ func GetDiagnosticsOfAnyProgram(
 	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
 	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, file)...)
-	allDiagnostics = append(allDiagnostics, program.GetProgramDiagnostics()...)
 
+	// If we didn't have any syntactic errors, then also try getting the program (options),
+	// global and semantic errors.
 	if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+		allDiagnostics = append(allDiagnostics, program.GetProgramDiagnostics()...)
+
 		// Do binding early so we can track the time.
 		getBindDiagnostics(ctx, file)
 

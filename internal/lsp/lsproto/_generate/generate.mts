@@ -62,6 +62,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "EnableTelemetry enables sending telemetry events from the server to the client.",
             },
+            {
+                name: "logVerbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                optional: true,
+                documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -167,7 +173,37 @@ const customStructures: Structure[] = [
         ],
     },
     {
-        name: "VsOnAutoInsertOptions",
+        name: "ExperimentalServerCapabilities",
+        properties: [
+            {
+                name: "customSourceDefinitionProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
+            },
+            {
+                name: "customMultiDocumentHighlightProvider",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
+            },
+        ],
+        documentation: "ExperimentalServerCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "ExperimentalClientCapabilities",
+        properties: [
+            {
+                name: "hoverVerbosityLevel",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "The client supports hover verbosityLevel requests and canIncreaseVerbosity responses.",
+            },
+        ],
+        documentation: "ExperimentalClientCapabilities contains experimental capabilities under development.",
+    },
+    {
+        name: "VSOnAutoInsertOptions",
         properties: [
             {
                 name: "_vs_triggerCharacters",
@@ -178,7 +214,7 @@ const customStructures: Structure[] = [
         documentation: "Options for the textDocument/_vs_onAutoInsert provider capability.",
     },
     {
-        name: "VsReferenceItem",
+        name: "VSReferenceItem",
         properties: [
             {
                 name: "_vs_id",
@@ -193,7 +229,7 @@ const customStructures: Structure[] = [
             },
             {
                 name: "_vs_kind",
-                type: { kind: "array", element: { kind: "reference", name: "VsReferenceKind" } },
+                type: { kind: "array", element: { kind: "reference", name: "VSReferenceKind" } },
                 optional: true,
                 documentation: "The kind(s) of this reference (read, write, etc.).",
             },
@@ -204,7 +240,7 @@ const customStructures: Structure[] = [
             },
             {
                 name: "_vs_definitionText",
-                type: { kind: "reference", name: "ClassifiedTextElement" },
+                type: { kind: "reference", name: "VSClassifiedTextElement" },
                 optional: true,
                 documentation: "Classified display text for the definition (used for grouping headers in the UI).",
             },
@@ -224,7 +260,7 @@ const customStructures: Structure[] = [
         documentation: "A VS-specific reference item with grouping support for Find All References.",
     },
     {
-        name: "VsOnAutoInsertParams",
+        name: "VSOnAutoInsertParams",
         properties: [
             {
                 name: "_vs_textDocument",
@@ -245,7 +281,7 @@ const customStructures: Structure[] = [
         documentation: "Parameters for the textDocument/_vs_onAutoInsert request.",
     },
     {
-        name: "VsOnAutoInsertResponseItem",
+        name: "VSOnAutoInsertResponseItem",
         properties: [
             {
                 name: "_vs_textEditFormat",
@@ -373,6 +409,17 @@ const customStructures: Structure[] = [
             },
         ],
         documentation: "Result for the custom/projectInfo request.",
+    },
+    {
+        name: "SetLogVerbosityParams",
+        properties: [
+            {
+                name: "verbosity",
+                type: { kind: "reference", name: "LogVerbosity" },
+                documentation: "The log verbosity level.",
+            },
+        ],
+        documentation: "Parameters for the custom/setLogVerbosity notification.",
     },
     {
         name: "PerformanceStatsTelemetryEvent",
@@ -511,7 +558,7 @@ const customStructures: Structure[] = [
         documentation: "Parameters for the custom/textDocument/multiDocumentHighlight request.",
     },
     {
-        name: "ClassifiedTextRun",
+        name: "VSClassifiedTextRun",
         properties: [
             {
                 name: "ClassificationTypeName",
@@ -545,11 +592,11 @@ const customStructures: Structure[] = [
         documentation: "A classified text run with text and classification type, used for colorized display in VS.",
     },
     {
-        name: "ClassifiedTextElement",
+        name: "VSClassifiedTextElement",
         properties: [
             {
                 name: "Runs",
-                type: { kind: "array", element: { kind: "reference", name: "ClassifiedTextRun" } },
+                type: { kind: "array", element: { kind: "reference", name: "VSClassifiedTextRun" } },
                 documentation: "The classified text runs that make up this element.",
             },
             {
@@ -564,7 +611,20 @@ const customStructures: Structure[] = [
 
 const customEnumerations: Enumeration[] = [
     {
-        name: "VsReferenceKind",
+        name: "LogVerbosity",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All logging disabled." },
+            { name: "Trace", value: 1, documentation: "Most verbose; includes LSP request/response traces." },
+            { name: "Debug", value: 2, documentation: "Verbose server logs." },
+            { name: "Info", value: 3, documentation: "Normal server logs." },
+            { name: "Warning", value: 4, documentation: "Warnings only." },
+            { name: "Error", value: 5, documentation: "Errors only." },
+        ],
+        documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
+    {
+        name: "VSReferenceKind",
         type: { kind: "base", name: "integer" },
         values: [
             { name: "Inactive", value: 0 },
@@ -740,12 +800,12 @@ const customRequests: Request[] = [
     },
     {
         method: "textDocument/_vs_onAutoInsert",
-        typeName: "VsOnAutoInsertRequest",
-        params: { kind: "reference", name: "VsOnAutoInsertParams" },
+        typeName: "VSOnAutoInsertRequest",
+        params: { kind: "reference", name: "VSOnAutoInsertParams" },
         result: {
             kind: "or",
             items: [
-                { kind: "reference", name: "VsOnAutoInsertResponseItem" },
+                { kind: "reference", name: "VSOnAutoInsertResponseItem" },
                 { kind: "base", name: "null" },
             ],
         },
@@ -754,17 +814,27 @@ const customRequests: Request[] = [
     },
     {
         method: "textDocument/_vs_references",
-        typeName: "VsReferencesRequest",
+        typeName: "VSReferencesRequest",
         params: { kind: "reference", name: "ReferenceParams" },
         result: {
             kind: "or",
             items: [
-                { kind: "array", element: { kind: "reference", name: "VsReferenceItem" } },
+                { kind: "array", element: { kind: "reference", name: "VSReferenceItem" } },
                 { kind: "base", name: "null" },
             ],
         },
         messageDirection: "clientToServer",
         documentation: "VS-specific request for Find All References with grouped reference items.",
+    },
+];
+
+const customNotifications: Notification[] = [
+    {
+        method: "custom/setLogVerbosity",
+        typeName: "CustomSetLogVerbosityNotification",
+        params: { kind: "reference", name: "SetLogVerbosityParams" },
+        messageDirection: "clientToServer",
+        documentation: "Notification to set the server's log verbosity level based on the output channel's log level.",
     },
 ];
 
@@ -865,14 +935,8 @@ function patchAndPreprocessModel() {
         // Patch ServerCapabilities to add custom tsgo capability flags
         if (structure.name === "ServerCapabilities") {
             structure.properties.push({
-                name: "customSourceDefinitionProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides source definition support via custom/textDocument/sourceDefinition.",
-            });
-            structure.properties.push({
                 name: "_vs_onAutoInsertProvider",
-                type: { kind: "reference", name: "VsOnAutoInsertOptions" },
+                type: { kind: "reference", name: "VSOnAutoInsertOptions" },
                 optional: true,
                 documentation: "Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.",
             });
@@ -942,40 +1006,28 @@ function patchAndPreprocessModel() {
             );
         }
 
-        // Patch HoverClientCapabilities to add verbosityLevel support flag
-        if (structure.name === "HoverClientCapabilities") {
-            structure.properties.push({
-                name: "verbosityLevel",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The client supports the `verbosityLevel` property on `HoverParams` and `canIncreaseVerbosity` on `Hover`.",
-            });
-        }
-
         // Patch SignatureInformation to add VS-specific colorized label
         if (structure.name === "SignatureInformation") {
             structure.properties.push({
                 name: "_vs_colorizedLabel",
-                type: { kind: "reference", name: "ClassifiedTextElement" },
+                type: { kind: "reference", name: "VSClassifiedTextElement" },
                 optional: true,
                 documentation: "A colorized label for the signature, providing classified text runs for VS syntax coloring.",
             });
         }
 
-        // Patch ServerCapabilities to add custom tsgo capability flags
-        if (structure.name === "ServerCapabilities") {
-            structure.properties.push({
-                name: "customMultiDocumentHighlightProvider",
-                type: { kind: "base", name: "boolean" },
-                optional: true,
-                documentation: "The server provides multi-document highlight support via custom/textDocument/multiDocumentHighlight.",
-            });
-        }
-
         for (const prop of structure.properties) {
-            // Replace initializationOptions type with custom InitializationOptions
+            // Replace initializationOptions type with custom InitializationOptions.
+            // The spec types this field as LSPAny?, which includes null, so keep
+            // it nullable so a null value sent by loose clients is accepted.
             if (prop.name === "initializationOptions" && prop.type.kind === "reference" && prop.type.name === "LSPAny") {
-                prop.type = { kind: "reference", name: "InitializationOptions" };
+                prop.type = {
+                    kind: "or",
+                    items: [
+                        { kind: "reference", name: "InitializationOptions" },
+                        { kind: "base", name: "null" },
+                    ],
+                };
             }
 
             // Replace Data *any fields with custom typed Data fields
@@ -1033,6 +1085,7 @@ function patchAndPreprocessModel() {
     model.enumerations.push(...customEnumerations);
     model.structures.push(...customStructures, ...syntheticStructures);
     model.requests.push(...customRequests);
+    model.notifications.push(...customNotifications);
 
     // Build structure map for preprocessing
     const structureMap = new Map<string, Structure>();
@@ -1078,9 +1131,22 @@ function patchAndPreprocessModel() {
         structure.extends = undefined;
         structure.mixins = undefined;
 
-        // Remove experimental properties from ServerCapabilities and ClientCapabilities
-        if (structure.name === "ServerCapabilities" || structure.name === "ClientCapabilities") {
-            structure.properties = structure.properties.filter(p => p.name !== "experimental");
+        // Replace experimental LSPAny with typed ExperimentalClientCapabilities in ClientCapabilities
+        if (structure.name === "ClientCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalClientCapabilities" };
+                expProp.optional = true;
+            }
+        }
+
+        // Replace experimental LSPAny with typed ExperimentalServerCapabilities in ServerCapabilities
+        if (structure.name === "ServerCapabilities") {
+            const expProp = structure.properties.find(p => p.name === "experimental");
+            if (expProp) {
+                expProp.type = { kind: "reference", name: "ExperimentalServerCapabilities" };
+                expProp.optional = true;
+            }
         }
 
         // Remove method and registerOptions from Registration (handled by custom codegen)
@@ -1656,6 +1722,11 @@ function formatDocumentation(s: string | undefined): string {
     for (let line of s.split("\n")) {
         line = line.trimEnd();
         line = line.replace(/(\w ) +/g, "$1");
+        // Some upstream docs include dangling block comment delimiters; remove them
+        // so they don't leak into generated `//` comments.
+        line = line.replace(/\s*\/\*+\s*/g, " ");
+        line = line.replace(/\s*\*+\/\s*/g, " ");
+        line = line.replace(/\s{2,}/g, " ").trimEnd();
         line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
         line = line.replace(/^@(since|proposed|deprecated)(.*)/, (_, tag, rest) => {
             lines.push("");
@@ -2225,7 +2296,17 @@ function generateCode() {
                 const useOmitzero = prop.optional || prop.omitzeroValue;
                 const goType = (prop.optional || type.needsPointer) && !prop.omitzeroValue ? `*${type.name}` : type.name;
 
-                writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"\``);
+                // Strictness markers for the shared unmarshalStruct interpreter:
+                // required = must be present. A nilable field (pointer/slice/map,
+                // not omitzero) rejects an explicit JSON null by default; mark the
+                // rare spec-nullable ones with `nullable` so the interpreter allows it.
+                const required = !prop.optional && !prop.omitzeroValue;
+                const nilable = prop.optional || type.needsPointer || type.name.startsWith("[]") || type.name.startsWith("map[") || !!prop.omitzeroValue;
+                const nullable = nilable && (typeCanBeNull(prop.type) || !!prop.omitzeroValue);
+                const lspMarkers = [required ? "required" : "", nullable ? "nullable" : ""].filter(Boolean).join(",");
+                const lspTag = lspMarkers ? ` lsp:"${lspMarkers}"` : "";
+
+                writeLine(`\t${goFieldName(prop)} ${goType} \`json:"${prop.name}${useOmitzero ? ",omitzero" : ""}"${lspTag}\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -2301,82 +2382,8 @@ function generateCode() {
         if ((requiredProps.length > 0 || hasNullRejectableFields) && structure.name !== "Registration") {
             writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
-
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *json.Decoder) error {`);
-            if (requiredProps.length > 0) {
-                writeLine(`\tconst (`);
-                for (let i = 0; i < requiredProps.length; i++) {
-                    const prop = requiredProps[i];
-                    const iotaPrefix = i === 0 ? " uint = 1 << iota" : "";
-                    writeLine(`\t\tmissing${goFieldName(prop)}${iotaPrefix}`);
-                }
-                writeLine(`\t\t_missingLast`);
-                writeLine(`\t)`);
-                writeLine(`\tmissing := _missingLast - 1`);
-                writeLine("");
-            }
-
-            writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
-            writeLine(`\t\treturn errNotObject(k)`);
-            writeLine(`\t}`);
-            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
-            writeLine(`\t\treturn err`);
-            writeLine(`\t}`);
-            writeLine("");
-
-            writeLine(`\tfor dec.PeekKind() != '}' {`);
-            writeLine(`\t\tname, err := dec.ReadValue()`);
-            writeLine(`\t\tif err != nil {`);
-            writeLine(`\t\t\treturn err`);
-            writeLine(`\t\t}`);
-            writeLine(`\t\tswitch string(name) {`);
-
-            for (const prop of structure.properties) {
-                writeLine(`\t\tcase \`"${prop.name}"\`:`);
-                if (!prop.optional && !prop.omitzeroValue) {
-                    writeLine(`\t\t\tmissing &^= missing${goFieldName(prop)}`);
-                }
-                // Reject null for fields whose types cannot represent null but whose Go types
-                // silently accept it (pointers, slices, maps).
-                const resolvedType = resolveType(prop.type);
-                const goTypeAcceptsNull = (prop.optional || resolvedType.needsPointer || resolvedType.name.startsWith("[]") || resolvedType.name.startsWith("map[")) && !prop.omitzeroValue;
-                if (goTypeAcceptsNull && !typeCanBeNull(prop.type)) {
-                    writeLine(`\t\t\tif dec.PeekKind() == 'n' {`);
-                    writeLine(`\t\t\t\treturn errNull("${prop.name}")`);
-                    writeLine(`\t\t\t}`);
-                }
-                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${goFieldName(prop)}); err != nil {`);
-                writeLine(`\t\t\t\treturn err`);
-                writeLine(`\t\t\t}`);
-            }
-
-            writeLine(`\t\tdefault:`);
-            writeLine(`\t\t\tif err := dec.SkipValue(); err != nil {`);
-            writeLine(`\t\t\t\treturn err`);
-            writeLine(`\t\t\t}`);
-            writeLine(`\t\t}`);
-            writeLine(`\t}`);
-            writeLine("");
-
-            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
-            writeLine(`\t\treturn err`);
-            writeLine(`\t}`);
-            writeLine("");
-
-            if (requiredProps.length > 0) {
-                writeLine(`\tif missing != 0 {`);
-                writeLine(`\t\tvar missingProps []string`);
-                for (const prop of requiredProps) {
-                    writeLine(`\t\tif missing&missing${goFieldName(prop)} != 0 {`);
-                    writeLine(`\t\t\tmissingProps = append(missingProps, "${prop.name}")`);
-                    writeLine(`\t\t}`);
-                }
-                writeLine(`\t\treturn errMissing(missingProps)`);
-                writeLine(`\t}`);
-                writeLine("");
-            }
-
-            writeLine(`\treturn nil`);
+            writeLine(`\treturn unmarshalStruct(s, dec)`);
             writeLine(`}`);
             writeLine("");
         }
@@ -2403,9 +2410,7 @@ function generateCode() {
             writeLine(`\tif s.RegisterOptions == nil {`);
             writeLine(`\t\tpanic("RegisterOptions must be set")`);
             writeLine(`\t}`);
-            const regParts = registrationMethods.map(r => `boolToInt(s.RegisterOptions.${r.fieldName} != nil)`);
-            const regSum = regParts.join(" +\n\t\t");
-            writeLine(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", ${regSum})`);
+            writeLine(`\tassertOnlyOne("exactly one element of RegisterOptions should be set", countNonNil(s.RegisterOptions))`);
             writeLine("");
 
             writeLine(`\tif err := enc.WriteToken(json.BeginObject); err != nil {`);
@@ -2849,70 +2854,6 @@ function generateCode() {
 
     const requestsAndNotifications: (Request | Notification)[] = [...model.requests, ...model.notifications];
 
-    // Generate unmarshalParams function
-    writeLine("func unmarshalParams(method Method, data []byte) (any, error) {");
-    writeLine("\tswitch method {");
-
-    // Requests and notifications
-    for (const request of requestsAndNotifications) {
-        const methodName = methodNameIdentifier(request.method);
-
-        if (!request.params) {
-            writeLine(`\tcase Method${methodName}:`);
-            writeLine(`\t\treturn unmarshalEmpty(data)`);
-            continue;
-        }
-        if (Array.isArray(request.params)) {
-            throw new Error("Unexpected array type for request params: " + JSON.stringify(request.params));
-        }
-
-        const resolvedType = resolveType(request.params);
-
-        writeLine(`\tcase Method${methodName}:`);
-        if (resolvedType.name === "any") {
-            writeLine(`\t\treturn unmarshalAny(data)`);
-        }
-        else {
-            writeLine(`\t\treturn unmarshalPtrTo[${resolvedType.name}](data)`);
-        }
-    }
-
-    writeLine("\tdefault:");
-    writeLine(`\t\treturn unmarshalAny(data)`);
-    writeLine("\t}");
-    writeLine("}");
-    writeLine("");
-
-    // Generate unmarshalResult function
-    writeLine("func unmarshalResult(method Method, data []byte) (any, error) {");
-    writeLine("\tswitch method {");
-
-    // Only requests have results, not notifications
-    for (const request of model.requests) {
-        const methodName = methodNameIdentifier(request.method);
-
-        if (!("result" in request)) {
-            continue;
-        }
-
-        let responseTypeName: string;
-        if (request.typeName && request.typeName.endsWith("Request")) {
-            responseTypeName = request.typeName.replace(/Request$/, "Response");
-        }
-        else {
-            responseTypeName = `${methodName}Response`;
-        }
-
-        writeLine(`\tcase Method${methodName}:`);
-        writeLine(`\t\treturn unmarshalValue[${responseTypeName}](data)`);
-    }
-
-    writeLine("\tdefault:");
-    writeLine(`\t\treturn unmarshalAny(data)`);
-    writeLine("\t}");
-    writeLine("}");
-    writeLine("");
-
     writeLine("// Methods");
     writeLine("const (");
     for (const request of requestsAndNotifications) {
@@ -3028,37 +2969,9 @@ function generateCode() {
         // Marshal method
         writeLine(`var _ json.MarshalerTo = (*${name})(nil)`);
         writeLine("");
-
-        writeLine(`func (o *${name}) MarshalJSONTo(enc *json.Encoder) error {`);
-
-        // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
-        // Always assert for non-nullable unions; for nullable unions, only when there are multiple fields.
-        if (!unionContainedNull || fieldEntries.length > 1) {
-            const parts = fieldEntries.map(e => `boolToInt(o.${e.fieldName} != nil)`);
-            const sum = parts.length > 3 ? parts.join(" +\n\t\t") : parts.join(" + ");
-            if (unionContainedNull) {
-                writeLine(`\tassertAtMostOne("more than one element of ${name} is set", ${sum})`);
-            }
-            else {
-                writeLine(`\tassertOnlyOne("exactly one element of ${name} should be set", ${sum})`);
-            }
-            writeLine("");
-        }
-
-        for (const entry of fieldEntries) {
-            writeLine(`\tif o.${entry.fieldName} != nil {`);
-            writeLine(`\t\treturn json.MarshalEncode(enc, o.${entry.fieldName})`);
-            writeLine(`\t}`);
-        }
-
-        // If all fields are nil, marshal as null (only for unions that can contain null)
-        if (unionContainedNull) {
-            writeLine(`\treturn enc.WriteToken(json.Null)`);
-        }
-        else {
-            writeLine(`\tpanic("unreachable")`);
-        }
+        writeLine(`func (o *${name}) MarshalJSONTo(enc *json.Encoder) error {`);
+        writeLine(`\treturn marshalUnion(o, enc, "${name}", ${unionContainedNull})`);
         writeLine(`}`);
         writeLine("");
 

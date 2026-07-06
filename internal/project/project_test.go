@@ -2,11 +2,14 @@ package project_test
 
 import (
 	"context"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
@@ -188,6 +191,79 @@ func TestProject(t *testing.T) {
 		_, err = session.GetLanguageService(context.Background(), uri2)
 		assert.NilError(t, err)
 	})
+
+	t.Run("inferred project rebuilt twice in one snapshot after typings install does not crash", func(t *testing.T) {
+		t.Parallel()
+		// Reproduces the nil-command-line crash in (*Program).SingleThreaded (issue #3873).
+		//
+		// `getCommandLineWithTypingsFiles` memoizes `commandLineWithTypingsFiles` behind a
+		// `sync.Once`. When `CommandLine` (or the inferred roots) change, the cached value is
+		// reset to nil but the `Once` is NOT reset. `Project.Clone()` produces a fresh `Once`,
+		// so the first mutation of a project within a snapshot normally clears the staleness.
+		// But if the *same* in-snapshot clone has its program built, then its roots change, then
+		// its program is built again, the second build hits a consumed `Once` and reads the nil
+		// cached value, passing a nil command line to `compiler.NewProgram`.
+		//
+		// This sequence is produced within a single snapshot by `DidRequestFile`'s
+		// build -> cleanupInferredProject -> build path, when:
+		//   1. the inferred project has installed typings (so the `Once` path is taken), and
+		//   2. a pending content change marks the inferred project dirty (forcing build #1), and
+		//   3. a pending tsconfig creation moves another open file out of the inferred project,
+		//      so `cleanupInferredProject` changes the inferred roots between the two builds.
+		files := map[string]any{
+			"/user/username/projects/project1/a.js":         ``,
+			"/user/username/projects/project1/package.json": `{"name":"p1","dependencies":{"jquery":"^3.1.0"}}`,
+			"/user/username/projects/project1/b.ts":         `export const y = 1;`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"jquery": `declare const $: { x: number }`,
+			},
+		})
+
+		aURI := lsproto.DocumentUri("file:///user/username/projects/project1/a.js")
+		bURI := lsproto.DocumentUri("file:///user/username/projects/project1/b.ts")
+
+		// 1) Open the file that triggers ATA, plus another file that joins the inferred project.
+		session.DidOpenFile(context.Background(), aURI, 1, ``, lsproto.LanguageKindJavaScript)
+		session.DidOpenFile(context.Background(), bURI, 1, files["/user/username/projects/project1/b.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// 2) Let ATA install jquery typings, then build the inferred program so its
+		//    typings files are populated.
+		session.WaitForBackgroundTasks()
+		npmCalls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Assert(t, len(npmCalls) > 0, "expected at least one npm install call from ATA")
+		_, err := session.GetLanguageService(context.Background(), aURI)
+		assert.NilError(t, err)
+
+		// 3) Queue two pending changes that will be flushed together in the next snapshot:
+		//    - a content change to a.js (marks the inferred project dirty -> first program build)
+		//    - creation of a tsconfig.json that captures b.ts (moves it out of the inferred
+		//      project, so cleanupInferredProject shrinks the inferred roots between builds).
+		session.DidChangeFile(context.Background(), aURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `// changed`}},
+		})
+		err = utils.FS().WriteFile("/user/username/projects/project1/tsconfig.json", `{"compilerOptions":{},"files":["b.ts"]}`)
+		assert.NilError(t, err)
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{
+				Type: lsproto.FileChangeTypeCreated,
+				Uri:  "file:///user/username/projects/project1/tsconfig.json",
+			},
+		})
+
+		// 4) Flush the pending changes and the request in a single snapshot. With the bug,
+		//    the inferred project's program is built, its roots change, and it is rebuilt with
+		//    a nil command line, panicking in (*Program).SingleThreaded.
+		defer func() {
+			if r := recover(); r != nil {
+				t.Fatalf("crash reproduced (issue #3873): %v", r)
+			}
+		}()
+		_, err = session.GetLanguageService(context.Background(), aURI)
+		assert.NilError(t, err)
+	})
 }
 
 func TestPushDiagnostics(t *testing.T) {
@@ -225,6 +301,34 @@ func TestPushDiagnostics(t *testing.T) {
 		}
 		assert.Assert(t, tsconfigCall != nil, "expected PublishDiagnostics call for tsconfig.json")
 		assert.Assert(t, len(tsconfigCall.Params.Diagnostics) > 0, "expected at least one diagnostic")
+	})
+
+	t.Run("publishes config parsing diagnostics on initial program creation", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json")
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+
+		expectedMessage := "Argument for '--target' option must be:"
+		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), expectedMessage)
+		}), "expected invalid target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
 	})
 
 	t.Run("clears diagnostics when project is removed", func(t *testing.T) {
@@ -321,6 +425,68 @@ func TestPushDiagnostics(t *testing.T) {
 		calls := utils.Client().PublishDiagnosticsCalls()
 		// Should not have any calls since inferred projects don't have tsconfig.json
 		assert.Equal(t, len(calls), 0, "expected no PublishDiagnostics calls for inferred projects")
+	})
+
+	t.Run("does not publish when validation is disabled", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.EnableValidation = core.TSFalse
+		session.Configure(prefs)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		for _, call := range calls {
+			assert.Equal(t, len(call.Params.Diagnostics), 0, "expected only empty PublishDiagnostics calls when validation is disabled")
+		}
+	})
+
+	t.Run("clears diagnostics when validation is disabled", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected initial PublishDiagnostics call for tsconfig.json")
+		assert.Assert(t, len(tsconfigCalls[len(tsconfigCalls)-1].Params.Diagnostics) > 0, "expected initial diagnostics")
+
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.EnableValidation = core.TSFalse
+		session.Configure(prefs)
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls = utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", len(calls)-1)
+		if len(tsconfigCalls) == 0 {
+			tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		}
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected diagnostics to be cleared when validation is disabled")
 	})
 
 	t.Run("publishes global diagnostics after checking", func(t *testing.T) {

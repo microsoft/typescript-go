@@ -145,6 +145,31 @@ func TestBuildCommandLine(t *testing.T) {
 	testCases := slices.Concat(
 		[]*tscInput{
 			{
+				subScenario: "included tsconfig json can be imported as json input",
+				files: FileMap{
+					"/home/src/workspaces/project/index.ts": `import tsconfig from "./tsconfig.json" with { type: "json" };
+declare global {
+    interface ImportAttributes {
+        type: "json";
+    }
+}
+console.log(tsconfig);`,
+					"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"module": "preserve",
+							"moduleResolution": "bundler",
+							"noEmit": true,
+							"resolveJsonModule": true,
+							"strict": true,
+							"target": "esnext"
+						},
+						"include": ["index.ts", "tsconfig.json"]
+					}`),
+				},
+				commandLineArgs: []string{"--build"},
+			},
+			{
 				subScenario:     "help",
 				files:           FileMap{},
 				commandLineArgs: []string{"--build", "--help"},
@@ -944,6 +969,213 @@ func TestBuildFileDelete(t *testing.T) {
 	}
 }
 
+func TestBuildDependencyUpdate(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			// https://github.com/microsoft/typescript-go/issues/2666
+			subScenario: "rebuilds when dependency in node_modules is updated",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "my-dep";
+					export const value: string = myValue;
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/package.json": stringtestutil.Dedent(`
+					{
+						"name": "my-dep",
+						"version": "1.0.0",
+						"types": "index.d.ts"
+					}
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/index.d.ts": "export declare const myValue: string;",
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption: "update dependency d.ts with breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: number;")
+					},
+				},
+				{
+					caption: "restore dependency d.ts",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: string;")
+					},
+				},
+				{
+					caption: "update dependency d.ts timestamp without changing text",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts", "export declare const myValue: string;")
+					},
+				},
+				noChange,
+				{
+					caption: "delete dependency d.ts",
+					edit: func(sys *TestSys) {
+						sys.removeNoError("/home/src/workspaces/project/node_modules/my-dep/index.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "rebuilds when missing dependency package json is added",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "my-dep";
+					export const value: string = myValue;
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/index.d.ts": "export declare const myValue: string;",
+				"/home/src/workspaces/project/node_modules/my-dep/alt.d.ts":   "export declare const myValue: number;",
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "add package json redirecting types to a declaration file with a breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/node_modules/my-dep/package.json", `{"types":"alt.d.ts"}`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: "rebuilds when dependency package json redirects to a different declaration file",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "my-dep";
+					export const value: string = myValue;
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/package.json": stringtestutil.Dedent(`
+					{
+						"name": "my-dep",
+						"version": "1.0.0",
+						"types": "index.d.ts"
+					}
+				`),
+				"/home/src/workspaces/project/node_modules/my-dep/index.d.ts": "export declare const myValue: string;",
+				"/home/src/workspaces/project/node_modules/my-dep/alt.d.ts":   "export declare const myValue: number;",
+			},
+			cwd:             "/home/src/workspaces/project",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "redirect package types to a declaration file with a breaking type change",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/node_modules/my-dep/package.json", "index.d.ts", "alt.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "rebuilds when absolute non-root dependency is updated",
+			files: FileMap{
+				"C:/work/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"paths": {
+								"abs-dep": ["D:/work/deps/dep.d.ts"]
+							},
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"C:/work/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "abs-dep";
+					export const value: string = myValue;
+				`),
+				"D:/work/deps/dep.d.ts": "export declare const myValue: string;",
+			},
+			cwd:              "C:/work/project",
+			windowsStyleRoot: "C:/",
+			ignoreCase:       true,
+			commandLineArgs:  []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "update absolute non-root dependency with breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("D:/work/deps/dep.d.ts", "export declare const myValue: number;")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "watches absolute non-root dependency updates",
+			files: FileMap{
+				"C:/work/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "dist",
+							"paths": {
+								"abs-dep": ["D:/work/deps/dep.d.ts"]
+							},
+							"strict": true
+						},
+						"include": ["src/**/*"]
+					}
+				`),
+				"C:/work/project/src/index.ts": stringtestutil.Dedent(`
+					import { myValue } from "abs-dep";
+					export const value: string = myValue;
+				`),
+				"D:/work/deps/dep.d.ts": "export declare const myValue: string;",
+			},
+			cwd:              "C:/work/project",
+			windowsStyleRoot: "C:/",
+			ignoreCase:       true,
+			commandLineArgs:  []string{"--b", "--verbose", "--watch"},
+			edits: []*tscEdit{
+				{
+					caption: "update absolute non-root dependency with breaking type change",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("D:/work/deps/dep.d.ts", "export declare const myValue: number;")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "dependencyUpdate")
+	}
+}
+
 func TestBuildInferredTypeFromTransitiveModule(t *testing.T) {
 	t.Parallel()
 	getBuildInferredTypeFromTransitiveModuleMap := func(isolatedModules bool, lazyExtraContents string) FileMap {
@@ -1226,6 +1458,99 @@ func TestBuildInferredTypeFromMonorepoReference(t *testing.T) {
 
 	for _, test := range testCases {
 		test.run(t, "inferredTypeFromMonorepoReference")
+	}
+}
+
+func TestBuildDeclarationEmitForReferencedProjectTypesSubpath(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			// https://github.com/microsoft/typescript-go/issues/3617
+			// This package.json exposes the same files under two exports subpaths
+			// (`./src/*` and `./types/*`), so both `import("@scope/dep/src/...")` and
+			// `import("@scope/dep/types/...")` are technically valid module specifiers for
+			// the inferred type. The point of this test is not that one is "correct" and
+			// the other "wrong", but that we pick the same one Strada does: when ranking
+			// candidate paths, project-reference redirects (here the emitted `./types`
+			// `.d.ts`) sort ahead of non-redirect paths (the symlinked `./src` source).
+			// A regression in `comparePathsByRedirect` had inverted that ordering, causing
+			// the `./src/*` specifier to win instead.
+			subScenario: "declaration emit names referenced project type via types subpath",
+			files: FileMap{
+				"/home/src/workspaces/solution/packages/dep/package.json": stringtestutil.Dedent(`
+					{
+						"name": "@scope/dep",
+						"version": "1.0.0",
+						"exports": {
+							"./src/*": "./src/*",
+							"./types/*": "./types/*",
+							".": { "types": "./types/index.d.ts", "default": "./src/index.ts" }
+						}
+					}`),
+				"/home/src/workspaces/solution/packages/dep/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"rootDir": "src",
+							"outDir": "types",
+							"declarationDir": "types",
+							"strict": true
+						},
+						"include": ["src"]
+					}`),
+				"/home/src/workspaces/solution/packages/dep/src/index.ts": stringtestutil.Dedent(`
+					import type { ComponentTypes as NewComponentTypes } from "./themes/componentTypes/index.js"
+					export type { NewComponentTypes }`),
+				"/home/src/workspaces/solution/packages/dep/src/themes/componentTypes/index.ts": stringtestutil.Dedent(`
+					import type FormFieldLayout from "./formFieldLayout.js"
+					export type ComponentTypes = {
+						formFieldLayout: () => FormFieldLayout
+					}`),
+				"/home/src/workspaces/solution/packages/dep/src/themes/componentTypes/formFieldLayout.ts": stringtestutil.Dedent(`
+					export type FormFieldLayout = {
+						textColor: string
+						fontSize: string
+					}
+					export default FormFieldLayout`),
+				"/home/src/workspaces/solution/packages/consumer/package.json": stringtestutil.Dedent(`
+					{
+						"name": "@scope/consumer",
+						"version": "1.0.0"
+					}`),
+				"/home/src/workspaces/solution/packages/consumer/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"declaration": true,
+							"emitDeclarationOnly": true,
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"rootDir": "src",
+							"outDir": "types",
+							"declarationDir": "types",
+							"strict": true
+						},
+						"include": ["src"],
+						"references": [{ "path": "../dep" }]
+					}`),
+				"/home/src/workspaces/solution/packages/consumer/src/index.ts": stringtestutil.Dedent(`
+					import type { NewComponentTypes } from "@scope/dep"
+					declare const c: NewComponentTypes
+					export const style = c.formFieldLayout()`),
+				"/home/src/workspaces/solution/node_modules/@scope/dep":      vfstest.Symlink("/home/src/workspaces/solution/packages/dep"),
+				"/home/src/workspaces/solution/node_modules/@scope/consumer": vfstest.Symlink("/home/src/workspaces/solution/packages/consumer"),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "packages/consumer", "--verbose"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "declarationEmitForReferencedProjectTypesSubpath")
 	}
 }
 
@@ -2219,6 +2544,23 @@ func TestBuildProgramUpdates(t *testing.T) {
 			},
 			cwd:             "/user/username/projects/project",
 			commandLineArgs: []string{"--b", "-i", "-w"},
+		},
+		{
+			subScenario: "tsbuildinfo has fewer fileInfos than fileNames",
+			files: FileMap{
+				"/user/username/projects/project/src/a.ts":      "export const a = 1;",
+				"/user/username/projects/project/src/b.ts":      "export const b = 2;",
+				"/user/username/projects/project/tsconfig.json": `{"compilerOptions":{"composite":true,"outDir":"dist"},"files":["src/a.ts","src/b.ts"]}`,
+				"/user/username/projects/project/dist/tsconfig.tsbuildinfo": `{
+					"version": "FakeTSVersion",
+					"fileNames": ["lib.es2025.full.d.ts", "../src/a.ts", "../src/b.ts"],
+					"fileInfos": ["abc123"],
+					"options": {"composite": true, "outDir": "./"},
+					"root": [2, 3]
+				}`,
+			},
+			cwd:             "/user/username/projects/project",
+			commandLineArgs: []string{"--b", "-v"},
 		},
 		{
 			subScenario: "when root is source from project reference",

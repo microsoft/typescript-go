@@ -894,7 +894,9 @@ func decodeEntities(text string) string {
 		entity := text[1:semi]
 		decoded, ok := decodeEntity(entity)
 		if ok {
-			result.WriteRune(decoded)
+			// Use the JS-string encoder so lone surrogates (e.g. "&#xD800;")
+			// are preserved rather than being lost to U+FFFD by WriteRune.
+			result.WriteString(stringutil.EncodeJSStringRune(decoded))
 		} else {
 			result.WriteString(text[:semi+1])
 		}
@@ -921,7 +923,7 @@ func decodeEntity(entity string) (rune, bool) {
 		}
 
 		base := 10
-		if entity[0] == 'x' || entity[0] == 'X' {
+		if entity[0] == 'x' {
 			base = 16
 			entity = entity[1:]
 		}

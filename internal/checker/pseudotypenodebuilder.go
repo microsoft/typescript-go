@@ -30,7 +30,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNodeWithCheckerFallback(t *pseudochecker.P
 		return result
 	} else if t.Kind == pseudochecker.PseudoTypeKindDirect {
 		existing := t.AsPseudoTypeDirect().TypeNode
-		if !b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, checkerType) {
+		if !b.canReuseExistingJSTypeNode(existing, checkerType) {
 			if !b.ctx.suppressReportInferenceFallback {
 				b.ctx.tracker.ReportInferenceFallback(existing)
 			}
@@ -61,6 +61,9 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 			b.ctx.tracker.ReportInferenceFallback(node.Parent)
 		} else {
 			b.ctx.tracker.ReportInferenceFallback(node)
+		}
+		if inferred.IsSignatureReturn {
+			return b.serializeReturnTypeForSignature(b.ch.getSignatureFromDeclaration(node), false)
 		}
 		// use symbol type from parent declaration to automatically handle expression type widening without duplicating logic
 		if ast.IsReturnStatement(node.Parent) {
@@ -110,7 +113,24 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 	case pseudochecker.PseudoTypeKindUnion:
 		var res []*ast.Node
 		var hasElidedType bool
+		var hasUndefined bool
 		members := t.AsPseudoTypeUnion().Types
+		var appendTypeNode func(node *ast.Node)
+		appendTypeNode = func(node *ast.Node) {
+			if ast.IsUnionTypeNode(node) {
+				for _, node := range node.AsUnionTypeNode().Types.Nodes {
+					appendTypeNode(node)
+				}
+				return
+			}
+			if node.Kind == ast.KindUndefinedKeyword {
+				if hasUndefined {
+					return
+				}
+				hasUndefined = true
+			}
+			res = append(res, node)
+		}
 		for _, m := range members {
 			if !b.ch.strictNullChecks {
 				if m.Kind == pseudochecker.PseudoTypeKindUndefined || m.Kind == pseudochecker.PseudoTypeKindNull {
@@ -118,7 +138,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 					continue
 				}
 			}
-			res = append(res, b.pseudoTypeToNode(m))
+			appendTypeNode(b.pseudoTypeToNode(m))
 		}
 		if len(res) == 1 {
 			return res[0]
@@ -197,6 +217,12 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		// Just something to keep in mind if the ID checker keeps growing.
 		isConst := b.ch.isConstContext(elements[0].Name.Parent.Parent)
 		newElements := make([]*ast.Node, 0, len(elements))
+
+		// Member types are serialized within an object type literal, so set the
+		// corresponding flag to mirror createTypeNodeFromObjectType. This ensures
+		// inaccessible `this` references inside the members are reported (TS2527).
+		restoreObjectLiteralFlags := b.saveRestoreFlags()
+		b.ctx.flags |= nodebuilder.FlagsInObjectTypeLiteral
 
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
@@ -283,6 +309,7 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 				cleanup()
 			}
 		}
+		restoreObjectLiteralFlags()
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
 		if b.ctx.flags&nodebuilder.FlagsMultilineObjectLiterals == 0 {
 			b.e.AddEmitFlags(result, printer.EFSingleLine)
@@ -314,7 +341,7 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 	if p.Optional {
 		questionMark = b.f.NewToken(ast.KindQuestionToken)
 	}
-	return b.f.NewParameterDeclaration(
+	parameter := b.f.NewParameterDeclaration(
 		nil,
 		dotDotDot,
 		// matches strada behavior of always reserializing param names from scratch
@@ -323,6 +350,10 @@ func (b *NodeBuilderImpl) pseudoParameterToNode(p *pseudochecker.PseudoParameter
 		b.pseudoTypeToNode(p.Type),
 		nil,
 	)
+	if original := p.Name.Parent; ast.IsParameterDeclaration(original) {
+		b.setCommentRange(parameter, original)
+	}
+	return parameter
 }
 
 // see `typeNodeIsEquivalentToType` in strada, but applied more broadly here, so is setup to handle more equivalences - strada only used it via
@@ -338,9 +369,12 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 	if typeFromPseudo == type_ {
 		return true
 	}
+	undefinedStripped := type_
+	if isOptionalAnnotated {
+		undefinedStripped = b.ch.getTypeWithFacts(type_, TypeFactsNEUndefined)
+	}
 	if typeFromPseudo != nil && type_ != nil {
 		if isOptionalAnnotated {
-			undefinedStripped := b.ch.getTypeWithFacts(type_, TypeFactsNEUndefined)
 			if undefinedStripped == typeFromPseudo {
 				return true
 			}
@@ -386,7 +420,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		if type_ == nil {
 			return false
 		}
-		targetProps := b.ch.getPropertiesOfType(type_)
+		targetProps := b.ch.getPropertiesOfType(undefinedStripped)
 		// Count total declarations across all target prop symbols to handle getter/setter pairs,
 		// which are two elements in pt.Elements but only one symbol in targetProps.
 		targetDeclCount := 0
@@ -400,7 +434,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			var targetProp *ast.Symbol
 			elemSymbol := e.Name.Parent.Symbol()
 			if elemSymbol != nil {
-				targetProp = b.ch.getPropertyOfType(type_, elemSymbol.Name)
+				targetProp = b.ch.getPropertyOfType(undefinedStripped, elemSymbol.Name)
 			}
 			if targetProp == nil {
 				// Name lookup failed or returned no result; search target properties
@@ -490,16 +524,16 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		return true
 	case pseudochecker.PseudoTypeKindTuple:
 		pt := t.AsPseudoTypeTuple()
-		if type_ == nil || !isTupleType(type_) {
+		if undefinedStripped == nil || !isTupleType(undefinedStripped) {
 			return false
 		}
-		tupleTarget := type_.TargetTupleType()
+		tupleTarget := undefinedStripped.TargetTupleType()
 		// Pseudo-tuples come from `as const` array literals, so they only ever have required elements.
 		// If the target tuple has optional, rest, or variadic elements, the structures can't match.
 		if tupleTarget.combinedFlags&ElementFlagsNonRequired != 0 {
 			return false
 		}
-		elementTypes := b.ch.getTypeArguments(type_)
+		elementTypes := b.ch.getTypeArguments(undefinedStripped)
 		if len(pt.Elements) != len(elementTypes) {
 			return false
 		}
@@ -510,7 +544,7 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 		}
 		return true
 	case pseudochecker.PseudoTypeKindSingleCallSignature:
-		targetSig := b.ch.getSingleCallSignature(type_)
+		targetSig := b.ch.getSingleCallSignature(undefinedStripped)
 		if targetSig == nil {
 			return false
 		}
@@ -661,6 +695,9 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.getTypeFromTypeNode(t.AsPseudoTypeDirect().TypeNode)
 	case pseudochecker.PseudoTypeKindInferred:
 		node := t.AsPseudoTypeInferred().Expression
+		if t.AsPseudoTypeInferred().IsSignatureReturn {
+			return b.ch.getReturnTypeOfSignature(b.ch.getSignatureFromDeclaration(node))
+		}
 		ty := b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(node))
 		return ty
 	case pseudochecker.PseudoTypeKindNoResult:
