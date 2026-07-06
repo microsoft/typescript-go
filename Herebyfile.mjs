@@ -1237,6 +1237,7 @@ function getPublishTag() {
 }
 
 const extensionDir = path.resolve("./_extension");
+const nightlyExtensionDir = path.resolve("./_extension-nightly");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 const builtSignTmp = path.resolve("./built/sign-tmp");
@@ -1490,6 +1491,7 @@ void 0;
 /** @type {VsixExtensionPackage[]} */
 const vsixExtensionPackages = [
     { name: "native-preview", sourceDir: extensionDir },
+    { name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir },
 ];
 
 /**
