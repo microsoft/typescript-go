@@ -136,6 +136,85 @@ func TestResolveInputsNoTsconfig(t *testing.T) {
 	}
 }
 
+func TestResolveInputsIncludeGlobWithoutMatchingFiles(t *testing.T) {
+	cwd := t.TempDir()
+	// tsconfig declares an include glob, but NO matching source files exist on
+	// disk. ResolveInputs must still return the declared glob pattern, proving
+	// it reads the raw include specs rather than enumerating files.
+	mustWrite(t, filepath.Join(cwd, "tsconfig.json"), `{
+		"compilerOptions": {"outDir": "dist"},
+		"include": ["lib/**/*.ts", "types/**"]
+	}`)
+
+	inputs, err := ResolveInputs(cwd)
+	if err != nil {
+		t.Fatalf("ResolveInputs: %v", err)
+	}
+	for _, want := range []string{"lib/**/*.ts", "types/**", "tsconfig.json", "tsconfig.build.json"} {
+		if !slices.Contains(inputs, want) {
+			t.Fatalf("inputs missing %q: %v", want, inputs)
+		}
+	}
+	// Must NOT contain the default fallback when include is explicitly set.
+	if slices.Contains(inputs, "src/**") {
+		t.Fatalf("unexpected default src/** when include is explicit: %v", inputs)
+	}
+}
+
+func TestResolveInputsIncludeFromExtends(t *testing.T) {
+	cwd := t.TempDir()
+	// The child tsconfig has no include of its own; it inherits include from an
+	// extended base config. ResolveInputs must resolve `extends` and surface the
+	// inherited include pattern.
+	mustWrite(t, filepath.Join(cwd, "tsconfig.base.json"), `{
+		"include": ["packages/**/*.ts"]
+	}`)
+	mustWrite(t, filepath.Join(cwd, "tsconfig.json"), `{
+		"extends": "./tsconfig.base.json",
+		"compilerOptions": {"outDir": "dist"}
+	}`)
+
+	inputs, err := ResolveInputs(cwd)
+	if err != nil {
+		t.Fatalf("ResolveInputs: %v", err)
+	}
+	if !slices.Contains(inputs, "packages/**/*.ts") {
+		t.Fatalf("inputs missing include inherited via extends: %v", inputs)
+	}
+	// The extended (base) config lives in the SAME package dir, so its path must
+	// be reported as an input so edits to the base config bust the cache.
+	if !slices.Contains(inputs, "tsconfig.base.json") {
+		t.Fatalf("inputs missing same-package extended base config path: %v", inputs)
+	}
+}
+
+func TestResolveInputsExtendsFromSubdirIsTracked(t *testing.T) {
+	cwd := t.TempDir()
+	// Base config in a subdirectory of the package (still same-package,
+	// non-escaping) must be tracked as an input.
+	mustWrite(t, filepath.Join(cwd, "config", "tsconfig.base.json"), `{
+		"include": ["lib/**/*.ts"]
+	}`)
+	mustWrite(t, filepath.Join(cwd, "tsconfig.json"), `{
+		"extends": "./config/tsconfig.base.json",
+		"compilerOptions": {"outDir": "dist"}
+	}`)
+
+	inputs, err := ResolveInputs(cwd)
+	if err != nil {
+		t.Fatalf("ResolveInputs: %v", err)
+	}
+	// tsoptions rebases the base config's include patterns relative to the base
+	// config's own directory, so "lib/**/*.ts" from config/ becomes
+	// "config/lib/**/*.ts".
+	if !slices.Contains(inputs, "config/lib/**/*.ts") {
+		t.Fatalf("inputs missing rebased include inherited via subdir extends: %v", inputs)
+	}
+	if !slices.Contains(inputs, "config/tsconfig.base.json") {
+		t.Fatalf("inputs missing subdir extended base config path: %v", inputs)
+	}
+}
+
 func TestCompilePackageConcurrentRace(t *testing.T) {
 	const goroutines = 4
 
