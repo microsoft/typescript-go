@@ -49,7 +49,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     protected index: number;
     private _byteIndex: number;
     // Cursor memoizing the last resolved (logical index -> node index) so that
-    // sequential forward access (index loops, for..of via at(), forEach/map/
+    // sequential forward access (index loops and list[i], plus forEach/map/
     // reduce/filter) resumes instead of re-walking from the head, turning an
     // O(n) pass over the whole list from O(n^2) into O(n).
     private _cursorIndex: number = 0;
