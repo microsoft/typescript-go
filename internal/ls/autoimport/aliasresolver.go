@@ -210,9 +210,8 @@ func (r *aliasResolver) GetResolvedModuleFromModuleSpecifier(file ast.HasFileNam
 }
 
 // GetSourceOfProjectReferenceIfOutputIncluded implements checker.Program.
-// The aliasResolver has no project references, so just return the original file name.
 func (r *aliasResolver) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
-	return file.FileName()
+	panic("unimplemented")
 }
 
 // IsSourceFileDefaultLibrary implements checker.Program.

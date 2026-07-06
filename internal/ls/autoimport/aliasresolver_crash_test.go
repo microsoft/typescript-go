@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -73,21 +72,23 @@ func TestAliasResolverGetDiagnosticsDoesNotPanic(t *testing.T) {
 	ch, _ := checker.NewChecker(r, nil)
 
 	// Type-checking this file's diagnostics must not panic.
-	ch.GetDiagnostics(context.Background(), sourceFile)
+	if diagnostics := ch.GetDiagnostics(context.Background(), sourceFile); len(diagnostics) != 0 {
+		t.Fatalf("expected no diagnostics under noCheck, got %d", len(diagnostics))
+	}
 }
 
 // Regression test for microsoft/typescript-go#4481.
 //
-// When a file exports a value whose type references a symbol from another module,
-// the checker's node builder calls GetSourceOfProjectReferenceIfOutputIncluded
-// to generate module specifiers. The aliasResolver must not panic.
-func TestAliasResolverGetSourceOfProjectReferenceDoesNotPanic(t *testing.T) {
+// Auto-import export extraction resolves export aliases with a checker whose
+// compiler options have noCheck enabled. Missing re-exports should not build
+// diagnostics during alias resolution, since doing so calls into node builder
+// just to stringify a diagnostic that will be thrown away.
+func TestAliasResolverMissingReexportDoesNotUseNodeBuilder(t *testing.T) {
 	t.Parallel()
 
 	files := map[string]string{
-		"/pkg/types.ts":    "export interface Foo { x: number; }\n",
-		"/pkg/index.ts":    "import { Foo } from './types';\nexport function getFoo(): Foo { return { x: 1 }; }\n",
-		"/pkg/consumer.ts": "",
+		"/pkg/types.ts": "export interface Foo { x: number; }\nexport const value: Foo = { x: 1 };\n",
+		"/pkg/index.ts": "export { Missing } from './types';\n",
 	}
 
 	fs := vfstest.FromMap(files, true /*useCaseSensitiveFileNames*/)
@@ -103,11 +104,10 @@ func TestAliasResolverGetSourceOfProjectReferenceDoesNotPanic(t *testing.T) {
 	}
 	host := &fakeCloneHost{fs: fs, sourceFiles: sourceFiles}
 	indexFile := sourceFiles["/pkg/index.ts"]
-	consumerFile := sourceFiles["/pkg/consumer.ts"]
 
 	resolver := module.NewResolver(host, core.EmptyCompilerOptions, "/pkg", "")
 	r := newAliasResolver(
-		[]*ast.SourceFile{sourceFiles["/pkg/types.ts"], indexFile, consumerFile},
+		[]*ast.SourceFile{sourceFiles["/pkg/types.ts"], indexFile},
 		nil,
 		host,
 		resolver,
@@ -116,12 +116,6 @@ func TestAliasResolverGetSourceOfProjectReferenceDoesNotPanic(t *testing.T) {
 	)
 
 	ch, _ := checker.NewChecker(r, nil)
-
-	getFooSymbol := indexFile.Symbol.Exports["getFoo"]
-	tpe := ch.GetTypeOfSymbol(getFooSymbol)
-
-	// Serializing getFoo's type in a different file has to synthesize a module
-	// specifier for Foo, which calls GetSourceOfProjectReferenceIfOutputIncluded.
-	// This must not panic.
-	ch.TypeToTypeNode(tpe, consumerFile.AsNode(), nodebuilder.FlagsNone, nil)
+	extractor := newSymbolExtractor("", ch, func(f string) tspath.Path { return tspath.Path(f) }, nil)
+	_ = (&exportExtractor{symbolExtractor: extractor, moduleResolver: resolver}).extractFromFile(indexFile)
 }
