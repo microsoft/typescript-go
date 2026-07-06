@@ -141,7 +141,7 @@ type snapshotFSBuilder struct {
 	diskDirectories            *dirty.Map[tspath.Path, dirty.CloneableMap[tspath.Path, string]]
 	nodeModulesRealpathAliases *dirty.SyncMap[tspath.Path, *realpathAliasSet]
 	toPath                     func(string) tspath.Path
-	accessibleEntries 			collections.SyncMap[tspath.Path, vfs.Entries]
+	accessibleEntries          collections.SyncMap[tspath.Path, vfs.Entries]
 }
 
 func newSnapshotFSBuilder(
