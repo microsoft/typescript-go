@@ -89,13 +89,15 @@ const options = /** @type {Options} */ (rawOptions);
 const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("native-preview");
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
 const produceNativePreviewVsix = /** @type {boolean} */ (true);
+const produceTypeScriptNightlyVsix = /** @type {boolean} */ (false);
+const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
 if (publishAsTypescript && !nativePreviewReleaseVersion) {
     throw new Error("Publishing as 'typescript' requires hardcoding nativePreviewReleaseVersion.");
 }
 
-if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
     throw new Error("forRelease requires setPrerelease unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled");
 }
 
@@ -1490,8 +1492,8 @@ void 0;
 
 /** @type {VsixExtensionPackage[]} */
 const vsixExtensionPackages = [
-    { name: "native-preview", sourceDir: extensionDir },
-    { name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir },
+    ...(produceNativePreviewVsix ? [{ name: "native-preview", sourceDir: extensionDir }] : []),
+    ...(produceTypeScriptNightlyVsix ? [{ name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir }] : []),
 ];
 
 /**
@@ -1615,7 +1617,7 @@ const getPlatforms = memoize(() => {
 
         /** @type {VsixExtension[]} */
         let extensions = [];
-        if (produceNativePreviewVsix && vsix) {
+        if (produceAnyVsix && vsix) {
             /** @type {string[]} */
             const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
             if (alpine) {
@@ -2193,7 +2195,7 @@ export const nativePreviewRelease = task({
     name: "native-preview:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
             throw new Error("native-preview:release requires --forRelease and --setPrerelease flags, unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
         await runBuildNativePreviewPackages();
