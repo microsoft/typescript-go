@@ -5,6 +5,7 @@ import (
 	"io"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -51,7 +52,13 @@ func compilerFS(cwd string) (vfs.FS, *pnp.PnpApi) {
 // the include globs plus the tsconfig file names, suitable for cache invalidation.
 // This is a static metadata read only — no typecheck/emit.
 func ResolveInputs(cwd string) ([]string, error) {
-	fsys, _ := compilerFS(cwd)
+	// NOTE: deliberately does NOT use compilerFS here. compilerFS calls
+	// pnp.InitPnpApi, which loads and parses the workspace .pnp.cjs (multiple MB)
+	// on every invocation (~30ms). Yarn PnP resolution is only needed to compile
+	// modules, not to read a tsconfig's include/exclude GLOB patterns. Using the
+	// plain bundled OS filesystem keeps resolve-time input calculation cheap and
+	// avoids re-parsing .pnp.cjs once per task during the resolve phase.
+	fsys := bundled.WrapFS(osvfs.FS())
 	sys := newRunSystem(cwd, fsys, bundled.LibPath(), io.Discard, nil)
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 
@@ -82,6 +89,19 @@ func ResolveInputs(cwd string) ([]string, error) {
 		}
 		for _, p := range includePatterns(parsed) {
 			inputs.Add(p)
+		}
+		// Track tsconfig files pulled in via `extends` so edits to a base config
+		// bust this task's cache. Only same-package (non-escaping) paths are added
+		// as literal inputs; base configs in OTHER workspace packages are already
+		// covered by luchta's package-dependency hash (the base package is an
+		// upstream dependency), so a `../`-escaping input is intentionally skipped
+		// to keep inputs resolvable within the package directory.
+		for _, ext := range parsed.ExtendedSourceFiles() {
+			rel, err := filepath.Rel(cwd, ext)
+			if err != nil || rel == "" || strings.HasPrefix(rel, "..") || filepath.IsAbs(rel) {
+				continue
+			}
+			inputs.Add(filepath.ToSlash(rel))
 		}
 	}
 
