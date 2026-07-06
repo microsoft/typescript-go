@@ -364,10 +364,6 @@ func (c *Checker) checkTypeRelatedToEx(
 	headMessage *diagnostics.Message,
 	diagnosticOutput *[]*ast.Diagnostic,
 ) bool {
-	if c.compilerOptions.NoCheck.IsTrue() {
-		errorNode = nil
-		diagnosticOutput = nil
-	}
 	r := c.getRelater()
 	r.relation = relation
 	r.errorNode = errorNode
