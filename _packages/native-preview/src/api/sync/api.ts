@@ -821,7 +821,7 @@ export class Program {
     emit(file?: DocumentIdentifier, emitOnly: EmitFlags = EmitFlags.All): EmitResult {
         const data = this.client.apiRequest("emit", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { targetSourceFile: file } : {}),
             emitOnly: emitOnly,
         });

@@ -813,7 +813,7 @@ export class Program {
     async emit(file?: DocumentIdentifier, emitOnly: EmitFlags = EmitFlags.All): Promise<EmitResult> {
         const data = await this.client.apiRequest("emit", {
             snapshot: this.snapshotId,
-            project: this.projectId,
+            project: this.project.id,
             ...(file !== undefined ? { targetSourceFile: file } : {}),
             emitOnly: emitOnly,
         });
