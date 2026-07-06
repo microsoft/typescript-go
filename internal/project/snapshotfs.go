@@ -326,8 +326,8 @@ func (s *snapshotFSBuilder) GetAccessibleEntries(path string) vfs.Entries {
 		return entries
 	}
 
-	entries.Files = slices.Clone(entries.Files)
-	entries.Directories = slices.Clone(entries.Directories)
+	entries.Files = slices.Clip(entries.Files)
+	entries.Directories = slices.Clip(entries.Directories)
 	readDirectoryIntoEntries(overlayDirectories, s.isOpenFile, &entries)
 	return entries
 }
