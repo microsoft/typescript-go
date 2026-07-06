@@ -374,7 +374,7 @@ function isInsiders(): boolean {
 }
 
 // LanguageClient subclass that lets the user control whether a failed request
-// surfaces an error notification, via the `js/ts.languageServer.showFailedResponses` setting.
+// surfaces an error notification, via the `js/ts.server.showFailedResponses` setting.
 class NativePreviewLanguageClient extends LanguageClient {
     override handleFailedRequest<T>(
         type: MessageSignature,
