@@ -69,30 +69,31 @@ const (
 	// the connection itself and is not recorded.
 	MethodResetServerTiming Method = "resetServerTiming"
 
-	MethodInitialize               Method = "initialize"
-	MethodUpdateSnapshot           Method = "updateSnapshot"
-	MethodUpdateTemporarySnapshot  Method = "updateTemporarySnapshot"
-	MethodParseConfigFile          Method = "parseConfigFile"
-	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
-	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
-	MethodGetSymbolsAtPositions    Method = "getSymbolsAtPositions"
-	MethodGetSymbolAtLocation      Method = "getSymbolAtLocation"
-	MethodGetSymbolsAtLocations    Method = "getSymbolsAtLocations"
-	MethodGetTypeOfSymbol          Method = "getTypeOfSymbol"
-	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
-	MethodGetDeclaredTypeOfSymbol  Method = "getDeclaredTypeOfSymbol"
-	MethodGetSourceFile            Method = "getSourceFile"
-	MethodGetSourceFileNames       Method = "getSourceFileNames"
-	MethodGetSourceFileMetadata    Method = "getSourceFileMetadata"
+	MethodInitialize                Method = "initialize"
+	MethodUpdateSnapshot            Method = "updateSnapshot"
+	MethodUpdateTemporarySnapshot   Method = "updateTemporarySnapshot"
+	MethodParseConfigFile           Method = "parseConfigFile"
+	MethodGetDefaultProjectForFile  Method = "getDefaultProjectForFile"
+	MethodGetSymbolAtPosition       Method = "getSymbolAtPosition"
+	MethodGetSymbolsAtPositions     Method = "getSymbolsAtPositions"
+	MethodGetSymbolAtLocation       Method = "getSymbolAtLocation"
+	MethodGetSymbolsAtLocations     Method = "getSymbolsAtLocations"
+	MethodGetTypeOfSymbol           Method = "getTypeOfSymbol"
+	MethodGetTypesOfSymbols         Method = "getTypesOfSymbols"
+	MethodGetDeclaredTypeOfSymbol   Method = "getDeclaredTypeOfSymbol"
+	MethodGetDeclaredTypesOfSymbols Method = "getDeclaredTypesOfSymbols"
+	MethodGetSourceFile             Method = "getSourceFile"
+	MethodGetSourceFileNames        Method = "getSourceFileNames"
+	MethodGetSourceFileMetadata     Method = "getSourceFileMetadata"
 	MethodGetConfigFileNames       Method = "getConfigFileNames"
 	MethodGetConfigSourceFile      Method = "getConfigSourceFile"
-	MethodResolveName              Method = "resolveName"
-	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
-	MethodGetResolvedSignature     Method = "getResolvedSignature"
-	MethodGetTypeAtLocation        Method = "getTypeAtLocation"
-	MethodGetTypeAtLocations       Method = "getTypeAtLocations"
-	MethodGetTypeAtPosition        Method = "getTypeAtPosition"
-	MethodGetTypesAtPositions      Method = "getTypesAtPositions"
+	MethodResolveName               Method = "resolveName"
+	MethodGetSignaturesOfType       Method = "getSignaturesOfType"
+	MethodGetResolvedSignature      Method = "getResolvedSignature"
+	MethodGetTypeAtLocation         Method = "getTypeAtLocation"
+	MethodGetTypeAtLocations        Method = "getTypeAtLocations"
+	MethodGetTypeAtPosition         Method = "getTypeAtPosition"
+	MethodGetTypesAtPositions       Method = "getTypesAtPositions"
 
 	// Symbol sub-property methods
 	MethodGetParentOfSymbol       Method = "getParentOfSymbol"
@@ -160,9 +161,13 @@ const (
 	MethodGetSignatureFromDeclaration       Method = "getSignatureFromDeclaration"
 	MethodGetExportSpecifierLocalTarget     Method = "getExportSpecifierLocalTargetSymbol"
 	MethodGetAliasedSymbol                  Method = "getAliasedSymbol"
+	MethodGetAliasedSymbols                 Method = "getAliasedSymbols"
 	MethodGetImmediateAliasedSymbol         Method = "getImmediateAliasedSymbol"
+	MethodGetImmediateAliasedSymbols        Method = "getImmediateAliasedSymbols"
 	MethodGetExportsOfModule                Method = "getExportsOfModule"
+	MethodGetExportsOfModules               Method = "getExportsOfModules"
 	MethodGetMemberInModuleExports          Method = "getMemberInModuleExports"
+	MethodGetMembersInModuleExports         Method = "getMembersInModuleExports"
 	MethodGetJSDocTags                      Method = "getJsDocTags"
 	MethodGetDocumentationComment           Method = "getDocumentationComment"
 	MethodIsArrayType                       Method = "isArrayType"
@@ -187,7 +192,7 @@ const (
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
-	MethodPrintNode          Method = "printNode"
+	MethodPrintNode Method = "printNode"
 	MethodEmit               Method = "emit"
 	MethodEmitToString       Method = "emitToString"
 	MethodGetJavaScriptEmit  Method = "getJavaScriptEmit"
@@ -385,31 +390,32 @@ type UpdateSnapshotResponse struct {
 }
 
 var unmarshalers = map[Method]func([]byte) (any, error){
-	MethodRelease:                  unmarshallerFor[ReleaseParams],
-	MethodInitialize:               noParams,
-	MethodUpdateSnapshot:           unmarshallerFor[UpdateSnapshotParams],
-	MethodUpdateTemporarySnapshot:  unmarshallerFor[UpdateTemporarySnapshotParams],
-	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
-	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
-	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
-	MethodGetSourceFileNames:       unmarshallerFor[GetSourceFileNamesParams],
-	MethodGetSourceFileMetadata:    unmarshallerFor[GetSourceFileParams],
+	MethodRelease:                   unmarshallerFor[ReleaseParams],
+	MethodInitialize:                noParams,
+	MethodUpdateSnapshot:            unmarshallerFor[UpdateSnapshotParams],
+	MethodUpdateTemporarySnapshot:   unmarshallerFor[UpdateTemporarySnapshotParams],
+	MethodParseConfigFile:           unmarshallerFor[ParseConfigFileParams],
+	MethodGetDefaultProjectForFile:  unmarshallerFor[GetDefaultProjectForFileParams],
+	MethodGetSourceFile:             unmarshallerFor[GetSourceFileParams],
+	MethodGetSourceFileNames:        unmarshallerFor[GetSourceFileNamesParams],
+	MethodGetSourceFileMetadata:     unmarshallerFor[GetSourceFileParams],
 	MethodGetConfigFileNames:       unmarshallerFor[GetProjectDiagnosticsParams],
 	MethodGetConfigSourceFile:      unmarshallerFor[GetSourceFileParams],
-	MethodGetSymbolAtPosition:      unmarshallerFor[GetSymbolAtPositionParams],
-	MethodGetSymbolsAtPositions:    unmarshallerFor[GetSymbolsAtPositionsParams],
-	MethodGetSymbolAtLocation:      unmarshallerFor[GetSymbolAtLocationParams],
-	MethodGetSymbolsAtLocations:    unmarshallerFor[GetSymbolsAtLocationsParams],
-	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
-	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
-	MethodGetDeclaredTypeOfSymbol:  unmarshallerFor[GetTypeOfSymbolParams],
-	MethodResolveName:              unmarshallerFor[ResolveNameParams],
-	MethodGetSignaturesOfType:      unmarshallerFor[GetSignaturesOfTypeParams],
-	MethodGetResolvedSignature:     unmarshallerFor[GetResolvedSignatureParams],
-	MethodGetTypeAtLocation:        unmarshallerFor[GetTypeAtLocationParams],
-	MethodGetTypeAtLocations:       unmarshallerFor[GetTypeAtLocationsParams],
-	MethodGetTypeAtPosition:        unmarshallerFor[GetTypeAtPositionParams],
-	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
+	MethodGetSymbolAtPosition:       unmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetSymbolsAtPositions:     unmarshallerFor[GetSymbolsAtPositionsParams],
+	MethodGetSymbolAtLocation:       unmarshallerFor[GetSymbolAtLocationParams],
+	MethodGetSymbolsAtLocations:     unmarshallerFor[GetSymbolsAtLocationsParams],
+	MethodGetTypeOfSymbol:           unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetTypesOfSymbols:         unmarshallerFor[GetTypesOfSymbolsParams],
+	MethodGetDeclaredTypeOfSymbol:   unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetDeclaredTypesOfSymbols: unmarshallerFor[GetTypesOfSymbolsParams],
+	MethodResolveName:               unmarshallerFor[ResolveNameParams],
+	MethodGetSignaturesOfType:       unmarshallerFor[GetSignaturesOfTypeParams],
+	MethodGetResolvedSignature:      unmarshallerFor[GetResolvedSignatureParams],
+	MethodGetTypeAtLocation:         unmarshallerFor[GetTypeAtLocationParams],
+	MethodGetTypeAtLocations:        unmarshallerFor[GetTypeAtLocationsParams],
+	MethodGetTypeAtPosition:         unmarshallerFor[GetTypeAtPositionParams],
+	MethodGetTypesAtPositions:       unmarshallerFor[GetTypesAtPositionsParams],
 
 	MethodGetParentOfSymbol:       unmarshallerFor[GetSymbolPropertyParams],
 	MethodGetMembersOfSymbol:      unmarshallerFor[GetSymbolPropertyParams],
@@ -473,9 +479,13 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSignatureFromDeclaration:       unmarshallerFor[CheckerNodeParams],
 	MethodGetExportSpecifierLocalTarget:     unmarshallerFor[CheckerNodeParams],
 	MethodGetAliasedSymbol:                  unmarshallerFor[CheckerSymbolParams],
+	MethodGetAliasedSymbols:                 unmarshallerFor[CheckerSymbolsParams],
 	MethodGetImmediateAliasedSymbol:         unmarshallerFor[CheckerSymbolParams],
+	MethodGetImmediateAliasedSymbols:        unmarshallerFor[CheckerSymbolsParams],
 	MethodGetExportsOfModule:                unmarshallerFor[CheckerSymbolParams],
+	MethodGetExportsOfModules:               unmarshallerFor[CheckerSymbolsParams],
 	MethodGetMemberInModuleExports:          unmarshallerFor[GetMemberInModuleExportsParams],
+	MethodGetMembersInModuleExports:         unmarshallerFor[GetMembersInModuleExportsParams],
 	MethodGetJSDocTags:                      unmarshallerFor[CheckerSymbolParams],
 	MethodGetDocumentationComment:           unmarshallerFor[CheckerSymbolParams],
 	MethodIsArrayType:                       unmarshallerFor[CheckerTypeParams],
@@ -546,11 +556,11 @@ type GetDefaultProjectForFileParams struct {
 }
 
 type ProjectResponse struct {
-	Id                ProjectID             `json:"id"`
-	ConfigFileName    string                `json:"configFileName"`
+	Id              ProjectID             `json:"id"`
+	ConfigFileName  string                `json:"configFileName"`
 	ParsedCommandLine *ConfigFileResponse   `json:"parsedCommandLine"`
-	RootFiles         []string              `json:"rootFiles"`
-	CompilerOptions   *core.CompilerOptions `json:"compilerOptions"`
+	RootFiles       []string              `json:"rootFiles"`
+	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
 }
 
 func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *ConfigFileResponse {
@@ -580,11 +590,11 @@ func NewProjectResponse(p *project.Project) *ProjectResponse {
 		panic("NewProjectResponse called with unloaded project")
 	}
 	return &ProjectResponse{
-		Id:                ProjectHandle(p),
-		ConfigFileName:    p.Name(),
+		Id:              ProjectHandle(p),
+		ConfigFileName:  p.Name(),
 		ParsedCommandLine: NewConfigFileResponse(p.CommandLine),
-		RootFiles:         p.CommandLine.FileNames(),
-		CompilerOptions:   p.CommandLine.CompilerOptions(),
+		RootFiles:       p.CommandLine.FileNames(),
+		CompilerOptions: p.CommandLine.CompilerOptions(),
 	}
 }
 
@@ -1193,6 +1203,24 @@ type CheckerSymbolParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
 	Project  ProjectID  `json:"project"`
 	Symbol   SymbolID   `json:"symbol"`
+}
+
+// CheckerSymbolsParams are parameters for checker methods that operate on a list of symbols.
+type CheckerSymbolsParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	Symbols  []SymbolID `json:"symbols"`
+}
+
+type MemberInModuleExportsRequest struct {
+	Symbol SymbolID `json:"symbol"`
+	Name   string   `json:"name"`
+}
+
+type GetMembersInModuleExportsParams struct {
+	Snapshot SnapshotID                     `json:"snapshot"`
+	Project  ProjectID                      `json:"project"`
+	Requests []MemberInModuleExportsRequest `json:"requests"`
 }
 
 // JSDocTagInfo is a single JSDoc tag, mirroring Strada's JSDocTagInfo but with the tag text
