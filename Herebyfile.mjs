@@ -1816,6 +1816,22 @@ async function runBuildNativePreviewPackages() {
         inputPackageJson.bin = {
             tsc: "./bin/tsc",
         };
+        inputPackageJson.description = "TypeScript is a language for application scale JavaScript development";
+        inputPackageJson.homepage = "https://www.typescriptlang.org/";
+        inputPackageJson.keywords = [
+            "TypeScript",
+            "Microsoft",
+            "compiler",
+            "language",
+            "javascript",
+        ];
+        inputPackageJson.bugs = {
+            url: "https://github.com/microsoft/TypeScript/issues",
+        };
+        inputPackageJson.repository = {
+            type: "git",
+            url: "https://github.com/microsoft/TypeScript.git",
+        };
         delete inputPackageJson.scripts;
         delete inputPackageJson.devDependencies;
     }
@@ -1846,6 +1862,7 @@ async function runBuildNativePreviewPackages() {
         await fs.promises.rename(path.join(mainPackageDir, "lib", "tsgo.js"), path.join(mainPackageDir, "lib", "tsc.js"));
         await fs.promises.writeFile(path.join(mainPackageDir, "bin", "tsc"), '#!/usr/bin/env node\nimport "../lib/tsc.js";\n');
         await fs.promises.chmod(path.join(mainPackageDir, "bin", "tsc"), 0o755);
+        await fs.promises.copyFile(path.join(inputDir, "typescript-package-readme.md"), path.join(mainPackageDir, "README.md"));
     }
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
