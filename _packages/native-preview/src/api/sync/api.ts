@@ -544,6 +544,17 @@ class ProjectObjectRegistry {
         if (typesData == null) return [];
         return typesData.map(data => this.getOrCreateType(data));
     }
+
+    // Checker-level endpoints keyed by `type` (not `objectId`) that resolve to a
+    // single optional type, e.g. a type parameter's constraint or default.
+    fetchCheckerType(source: Type, method: string): Type | undefined {
+        const data = this.client.apiRequest<TypeResponse | null>(method, {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+        });
+        return data ? this.getOrCreateType(data) : undefined;
+    }
 }
 
 export class Project {
@@ -1785,8 +1796,17 @@ class TypeObject implements Type {
         return this.objectRegistry.fetchType(this, "getBaseTypeOfType", this.baseType);
     }
 
-    getConstraint(): Type {
+    getConstraint(): Type | undefined {
+        // Type parameters resolve their constraint through the checker, whereas
+        // substitution types carry a preloaded constraint handle.
+        if (this.flags & TypeFlags.TypeParameter) {
+            return this.objectRegistry.fetchCheckerType(this, "getConstraintOfTypeParameter");
+        }
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
+    }
+
+    getDefault(): Type | undefined {
+        return this.objectRegistry.fetchCheckerType(this, "getDefaultFromTypeParameter");
     }
 
     getTrueType(): Type {
