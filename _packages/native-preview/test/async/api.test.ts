@@ -5301,6 +5301,23 @@ describe("Program - diagnostics", () => {
             await api.close();
         }
     });
+
+    test("diagnostics with empty files array returns empty", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/a.ts": `const a: = 1;`,
+            "/src/b.ts": `const b: = 2;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const diags = await project.program.getSyntacticDiagnostics([]);
+            assert.deepEqual(diags, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
 });
 
 describe("Checker - getReferencedSymbolsForNode", () => {

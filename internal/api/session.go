@@ -3104,7 +3104,7 @@ func (s *Session) getDiagnostics(ctx context.Context, params *GetDiagnosticsPara
 		return nil, err
 	}
 
-	if len(params.Files) > 0 {
+	if params.Files != nil {
 		var allDiags []*ast.Diagnostic
 		for _, file := range params.Files {
 			sourceFile, err := s.resolveOptionalSourceFile(program, &file)
