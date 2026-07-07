@@ -3,8 +3,10 @@ import type {
     SourceFile,
     Statement,
 } from "@typescript/native-preview/unstable/ast";
-import { SyntaxKind } from "@typescript/native-preview/unstable/ast";
-import { TokenFlags } from "@typescript/native-preview/unstable/ast";
+import {
+    SyntaxKind,
+    TokenFlags,
+} from "@typescript/native-preview/unstable/ast";
 import {
     createArrayLiteralExpression,
     createBlock,

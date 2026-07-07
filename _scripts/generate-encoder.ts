@@ -1524,7 +1524,7 @@ function emitRemoteNodeList(w: CodeWriter) {
     w.write(`    protected index: number;`);
     w.write(`    private _byteIndex: number;`);
     w.write(`    // Cursor memoizing the last resolved (logical index -> node index) so that`);
-    w.write(`    // sequential forward access (index loops and list[i], plus forEach/map/`);
+    w.write(`    // sequential forward access (index loops and list[i], plus forEach/map/`);
     w.write(`    // reduce/filter) resumes instead of re-walking from the head, turning an`);
     w.write(`    // O(n) pass over the whole list from O(n^2) into O(n).`);
     w.write(`    private _cursorIndex: number = 0;`);
