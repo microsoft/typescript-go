@@ -88,8 +88,8 @@ const options = /** @type {Options} */ (rawOptions);
 // package flavor. Main's defaults publish @typescript/native-preview.
 const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("native-preview");
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
-const produceNativePreviewVsix = /** @type {boolean} */ (true);
-const produceTypeScriptNightlyVsix = /** @type {boolean} */ (false);
+const produceNativePreviewVsix = /** @type {boolean} */ (false);
+const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
 const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
