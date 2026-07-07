@@ -1050,11 +1050,24 @@ export class Checker {
      * declared type cannot be determined the checker yields the error type (use
      * {@link Type.isErrorType} to detect it).
      */
-    async getDeclaredTypeOfSymbol(symbol: Symbol): Promise<Type> {
+    async getDeclaredTypeOfSymbol(symbol: Symbol): Promise<Type>;
+    async getDeclaredTypeOfSymbol(symbols: readonly Symbol[]): Promise<Type[]>;
+    async getDeclaredTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<Type | Type[]> {
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = await this.client.apiRequest<TypeResponse[]>("getDeclaredTypesOfSymbols", {
+                snapshot: this.snapshotId,
+                project: this.project.id,
+                symbols: symbolOrSymbols.map(s => s.id),
+            });
+            return data.map((d, i) => {
+                return this.objectRegistry.getOrCreateType(d);
+            });
+        }
+        const sym = symbolOrSymbols as Symbol;
         const data = await this.client.apiRequest<TypeResponse>("getDeclaredTypeOfSymbol", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            symbol: symbol.id,
+            symbol: sym.id,
         });
         return this.objectRegistry.getOrCreateType(data);
     }
@@ -1526,20 +1539,45 @@ export class Checker {
      * an unresolved alias the checker yields the unknown symbol (use
      * {@link Checker.isUnknownSymbol} to detect it).
      */
-    async getAliasedSymbol(symbol: Symbol): Promise<Symbol> {
+    async getAliasedSymbol(symbol: Symbol): Promise<Symbol>;
+    async getAliasedSymbol(symbols: readonly Symbol[]): Promise<Symbol[]>;
+    async getAliasedSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<Symbol | Symbol[]> {
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = await this.client.apiRequest<SymbolResponse[]>("getAliasedSymbols", {
+                snapshot: this.snapshotId,
+                project: this.project.id,
+                symbols: symbolOrSymbols.map(s => s.id),
+            });
+            return data.map((d, i) => {
+                if (!d) throw new Error(`getAliasedSymbol returned no symbol for symbol ${symbolOrSymbols[i].id}`);
+                return this.objectRegistry.getOrCreateSymbol(d);
+            });
+        }
+        const sym = symbolOrSymbols as Symbol;
         const data = await this.client.apiRequest<SymbolResponse>("getAliasedSymbol", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            symbol: symbol.id,
+            symbol: sym.id,
         });
         return this.objectRegistry.getOrCreateSymbol(data);
     }
 
-    async getImmediateAliasedSymbol(symbol: Symbol): Promise<Symbol | undefined> {
+    async getImmediateAliasedSymbol(symbol: Symbol): Promise<Symbol | undefined>;
+    async getImmediateAliasedSymbol(symbols: readonly Symbol[]): Promise<(Symbol | undefined)[]>;
+    async getImmediateAliasedSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<Symbol | (Symbol | undefined)[] | undefined> {
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getImmediateAliasedSymbols", {
+                snapshot: this.snapshotId,
+                project: this.project.id,
+                symbols: symbolOrSymbols.map(s => s.id),
+            });
+            return data.map(d => d ? this.objectRegistry.getOrCreateSymbol(d) : undefined);
+        }
+        const sym = symbolOrSymbols as Symbol;
         const data = await this.client.apiRequest<SymbolResponse | null>("getImmediateAliasedSymbol", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            symbol: symbol.id,
+            symbol: sym.id,
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
@@ -1600,21 +1638,46 @@ export class Checker {
         return signature.id === (await this.getWellKnownSignatures()).unknown;
     }
 
-    async getExportsOfModule(symbol: Symbol): Promise<readonly Symbol[]> {
-        const data = await this.client.apiRequest<SymbolResponse[] | null>("getExportsOfModule", {
+    async getExportsOfModule(symbol: Symbol): Promise<readonly Symbol[]>;
+    async getExportsOfModule(symbols: readonly Symbol[]): Promise<readonly (readonly Symbol[])[]>;
+    async getExportsOfModule(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<readonly Symbol[] | readonly (readonly Symbol[])[]> {
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = await this.client.apiRequest<SymbolResponse[][]>("getExportsOfModules", {
+                snapshot: this.snapshotId,
+                project: this.project.id,
+                symbols: symbolOrSymbols.map(s => s.id),
+            });
+            return data.map(d => d ? d.map(s => this.objectRegistry.getOrCreateSymbol(s)) : []);
+        }
+        const sym = symbolOrSymbols as Symbol;
+        const data = await this.client.apiRequest<SymbolResponse[]>("getExportsOfModule", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            symbol: symbol.id,
+            symbol: sym.id,
         });
         return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
     }
 
-    async getMemberInModuleExports(symbol: Symbol, name: string): Promise<Symbol | undefined> {
+    async getMemberInModuleExports(symbol: Symbol, name: string): Promise<Symbol | undefined>;
+    async getMemberInModuleExports(requests: readonly { symbol: Symbol; name: string; }[]): Promise<(Symbol | undefined)[]>;
+    async getMemberInModuleExports(
+        symbolOrRequests: Symbol | readonly { symbol: Symbol; name: string; }[],
+        name?: string,
+    ): Promise<Symbol | (Symbol | undefined)[] | undefined> {
+        if (Array.isArray(symbolOrRequests)) {
+            const data = await this.client.apiRequest<(SymbolResponse | null)[]>("getMembersInModuleExports", {
+                snapshot: this.snapshotId,
+                project: this.project.id,
+                requests: symbolOrRequests.map(r => ({ symbol: r.symbol.id, name: r.name })),
+            });
+            return data.map(d => d ? this.objectRegistry.getOrCreateSymbol(d) : undefined);
+        }
+        const sym = symbolOrRequests as Symbol;
         const data = await this.client.apiRequest<SymbolResponse | null>("getMemberInModuleExports", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            symbol: symbol.id,
-            name,
+            symbol: sym.id,
+            name: name!,
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }

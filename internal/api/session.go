@@ -610,6 +610,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
 	case string(MethodGetDeclaredTypeOfSymbol):
 		return s.handleGetDeclaredTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
+	case string(MethodGetDeclaredTypesOfSymbols):
+		return s.handleGetDeclaredTypesOfSymbols(ctx, parsed.(*GetTypesOfSymbolsParams))
 	case string(MethodResolveName):
 		return s.handleResolveName(ctx, parsed.(*ResolveNameParams))
 	case string(MethodGetSignaturesOfType):
@@ -744,12 +746,20 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetExportSpecifierLocalTargetSymbol(ctx, parsed.(*CheckerNodeParams))
 	case string(MethodGetAliasedSymbol):
 		return s.handleGetAliasedSymbol(ctx, parsed.(*CheckerSymbolParams))
+	case string(MethodGetAliasedSymbols):
+		return s.handleGetAliasedSymbols(ctx, parsed.(*CheckerSymbolsParams))
 	case string(MethodGetImmediateAliasedSymbol):
 		return s.handleGetImmediateAliasedSymbol(ctx, parsed.(*CheckerSymbolParams))
+	case string(MethodGetImmediateAliasedSymbols):
+		return s.handleGetImmediateAliasedSymbols(ctx, parsed.(*CheckerSymbolsParams))
 	case string(MethodGetExportsOfModule):
 		return s.handleGetExportsOfModule(ctx, parsed.(*CheckerSymbolParams))
+	case string(MethodGetExportsOfModules):
+		return s.handleGetExportsOfModules(ctx, parsed.(*CheckerSymbolsParams))
 	case string(MethodGetMemberInModuleExports):
 		return s.handleGetMemberInModuleExports(ctx, parsed.(*GetMemberInModuleExportsParams))
+	case string(MethodGetMembersInModuleExports):
+		return s.handleGetMembersInModuleExports(ctx, parsed.(*GetMembersInModuleExportsParams))
 	case string(MethodGetJSDocTags):
 		return s.handleGetJSDocTags(ctx, parsed.(*CheckerSymbolParams))
 	case string(MethodGetDocumentationComment):
@@ -2810,6 +2820,132 @@ func (s *Session) handleGetMemberInModuleExports(ctx context.Context, params *Ge
 	}
 
 	return setup.newSymbolResponse(member), nil
+}
+
+func (s *Session) handleGetDeclaredTypesOfSymbols(ctx context.Context, params *GetTypesOfSymbolsParams) ([]*TypeResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	results := make([]*TypeResponse, len(params.Symbols))
+	for i, symHandle := range params.Symbols {
+		symbol, err := setup.resolveSymbolHandle(symHandle)
+		if err != nil {
+			return nil, err
+		}
+		if symbol == nil {
+			continue
+		}
+		t := setup.checker.GetDeclaredTypeOfSymbol(symbol)
+		if t != nil {
+			results[i] = setup.newTypeResponse(t)
+		}
+	}
+	return results, nil
+}
+
+func (s *Session) handleGetAliasedSymbols(ctx context.Context, params *CheckerSymbolsParams) ([]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	results := make([]*SymbolResponse, len(params.Symbols))
+	for i, symHandle := range params.Symbols {
+		symbol, err := setup.resolveSymbolHandle(symHandle)
+		if err != nil {
+			return nil, err
+		}
+		if symbol == nil {
+			continue
+		}
+		aliased := setup.checker.GetAliasedSymbol(symbol)
+		if aliased != nil {
+			results[i] = setup.newSymbolResponse(aliased)
+		}
+	}
+	return results, nil
+}
+
+func (s *Session) handleGetImmediateAliasedSymbols(ctx context.Context, params *CheckerSymbolsParams) ([]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	results := make([]*SymbolResponse, len(params.Symbols))
+	for i, symHandle := range params.Symbols {
+		symbol, err := setup.resolveSymbolHandle(symHandle)
+		if err != nil {
+			return nil, err
+		}
+		if symbol == nil {
+			continue
+		}
+		aliased := setup.checker.GetImmediateAliasedSymbol(symbol)
+		if aliased != nil {
+			results[i] = setup.newSymbolResponse(aliased)
+		}
+	}
+	return results, nil
+}
+
+func (s *Session) handleGetExportsOfModules(ctx context.Context, params *CheckerSymbolsParams) ([][]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	results := make([][]*SymbolResponse, len(params.Symbols))
+	for i, symHandle := range params.Symbols {
+		symbol, err := setup.resolveSymbolHandle(symHandle)
+		if err != nil {
+			return nil, err
+		}
+		if symbol == nil {
+			continue
+		}
+		exports := setup.checker.GetExportsOfModule(symbol)
+		if len(exports) == 0 {
+			continue
+		}
+		slices.SortFunc(exports, setup.checker.CompareSymbols)
+		symbolResponses := make([]*SymbolResponse, len(exports))
+		for j, exp := range exports {
+			symbolResponses[j] = setup.newSymbolResponse(exp)
+		}
+		results[i] = symbolResponses
+	}
+	return results, nil
+}
+
+func (s *Session) handleGetMembersInModuleExports(ctx context.Context, params *GetMembersInModuleExportsParams) ([]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	results := make([]*SymbolResponse, len(params.Requests))
+	for i, req := range params.Requests {
+		symbol, err := setup.resolveSymbolHandle(req.Symbol)
+		if err != nil {
+			return nil, err
+		}
+		if symbol == nil {
+			continue
+		}
+		member := setup.checker.TryGetMemberInModuleExports(req.Name, symbol)
+		if member != nil {
+			results[i] = setup.newSymbolResponse(member)
+		}
+	}
+	return results, nil
 }
 
 // handleGetJSDocTags returns the JSDoc tags of a symbol as structured name/text pairs.
