@@ -17,7 +17,7 @@
     ],
     "capabilities": {
         "untrustedWorkspaces": {
-            "supported": false
+            "supported": true
         }
     },
     "files": [
