@@ -7,9 +7,11 @@
 +// class C {
 +//     /*FIND ALL REFS*/[|#field|];
 +//     /**
-+//      * @see C.#field
++//      * @see C.[|#field|]
 +//      */
-+// --- (line: 7) skipped ---
++//     method() {}
++// }
++// 
 +
 +
 +
@@ -17,9 +19,9 @@
 +// === /findAllReferencesJSDocPrivateIdentifier.ts ===
 +// 
 +// class C {
-+//     #field;
++//     [|#field|];
 +//     /**
-+//      * @see C./*FIND ALL REFS*/#field
++//      * @see C./*FIND ALL REFS*/[|#field|]
 +//      */
 +//     method() {}
 +// }

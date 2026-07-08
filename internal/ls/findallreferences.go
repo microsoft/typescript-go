@@ -2653,14 +2653,18 @@ func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Sy
 }
 
 func isJSDocMemberName(node *ast.Node) bool {
-	if node == nil {
+	if !ast.IsQualifiedName(node) || !ast.IsJSDocNameReferenceContext(node) {
 		return false
 	}
-	if node.Kind == ast.KindIdentifier || node.Kind == ast.KindPrivateIdentifier {
-		return true
-	}
-	if node.Kind == ast.KindPropertyAccessExpression {
-		return isJSDocMemberName(node.AsPropertyAccessExpression().Name())
+	for ast.IsQualifiedName(node) {
+		if ast.IsPrivateIdentifier(node.AsQualifiedName().Right) {
+			return true
+		}
+		left := node.AsQualifiedName().Left
+		if !ast.IsQualifiedName(left) {
+			return false
+		}
+		node = left
 	}
 	return false
 }

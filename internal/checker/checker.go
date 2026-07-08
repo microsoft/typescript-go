@@ -2556,7 +2556,17 @@ func (c *Checker) resolveJSDocMemberName(name *ast.Node) *ast.Symbol {
 				if t == nil {
 					t = c.getDeclaredTypeOfSymbol(symbol)
 				}
-				return c.getPropertyOfType(t, name.AsQualifiedName().Right.Text())
+				right := name.AsQualifiedName().Right
+				if ast.IsPrivateIdentifier(right) {
+					for _, prop := range c.getPropertiesOfType(t) {
+						decl := prop.ValueDeclaration
+						if decl != nil && ast.IsPrivateIdentifierClassElementDeclaration(decl) && decl.Name().Text() == right.Text() {
+							return prop
+						}
+					}
+					return nil
+				}
+				return c.getPropertyOfType(t, right.Text())
 			}
 		}
 	}

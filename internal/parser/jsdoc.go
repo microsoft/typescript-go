@@ -745,7 +745,7 @@ func (p *Parser) parseJSDocLinkName() *ast.Node {
 		for p.parseOptional(ast.KindDotToken) {
 			var right *ast.IdentifierNode
 			if p.token == ast.KindPrivateIdentifier {
-				right = p.createMissingIdentifier()
+				right = p.parsePrivateIdentifier()
 			} else {
 				right = p.parseIdentifierName()
 			}
