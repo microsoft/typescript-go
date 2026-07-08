@@ -1248,7 +1248,7 @@ const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 const builtPublishedPlatformPackages = path.resolve("./built/published-platform-packages");
 const builtSignTmp = path.resolve("./built/sign-tmp");
-const publishedTypeScriptAliasPackageName = "typescript7";
+const publishedTypeScriptAliasPackageName = "@typescript/typescript7";
 const releasePackageEnv = { COREPACK_STRICT_ENABLE_PROJECT_SPEC: "0", COREPACK_STRICT_ENABLED: "0" };
 
 const getSignTempDir = memoize(async () => {
