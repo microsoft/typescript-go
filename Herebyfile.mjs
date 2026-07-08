@@ -68,7 +68,6 @@ const { values: rawOptions } = parseArgs({
 
         setPrerelease: { type: "string" },
         forRelease: { type: "boolean" },
-        usePublishedPlatformPackagesForVsix: { type: "boolean", default: parseEnvBoolean("USE_PUBLISHED_PLATFORM_PACKAGES_FOR_VSIX") },
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
         noembed: { type: "boolean", default: parseEnvBoolean("NOEMBED") },
@@ -92,7 +91,7 @@ const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} 
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
 const produceNativePreviewVsix = /** @type {boolean} */ (false);
 const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
-const usePublishedPlatformPackagesForVsix = /** @type {boolean} */ (options.usePublishedPlatformPackagesForVsix);
+const usePublishedPlatformPackagesForVsix = /** @type {boolean} */ (false);
 const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
