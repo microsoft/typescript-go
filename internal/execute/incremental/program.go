@@ -212,7 +212,7 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 		return nil
 	}
 	if result != nil {
-		if emitBuildInfo != nil || options.TargetSourceFile != nil {
+		if options.TargetSourceFile != nil || p.Options().NoEmit.IsTrue() {
 			return result
 		}
 
