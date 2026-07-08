@@ -1491,7 +1491,7 @@ const mainNativePreviewPackage = {
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
- * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
+ * @typedef {{ nodeOs: string; vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
@@ -1639,6 +1639,7 @@ const getPlatforms = memoize(() => {
                     const vsixManifestPath = extensionDir + ".manifest";
                     const vsixSignaturePath = extensionDir + ".signature.p7s";
                     return {
+                        nodeOs: os,
                         vscodeTarget,
                         sourceDir,
                         extensionDir,
@@ -2324,7 +2325,7 @@ async function runPackVsixExtensions() {
 
     console.log("Version:", version);
 
-    await Promise.all(extensions.map(async ({ npmDir, npmPackageName, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+    await Promise.all(extensions.map(async ({ npmDir, npmPackageName, nodeOs, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
         const npmLibDir = usePublishedPlatformPackagesForVsix
             ? await getPublishedPlatformPackageLibDir(npmPackageName)
             : path.join(npmDir, "lib");
@@ -2333,6 +2334,7 @@ async function runPackVsixExtensions() {
 
         await cpWithoutNodeModulesOrTsconfig(sourceDir, thisExtensionDir);
         await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
+        await fs.promises.chmod(path.join(extensionLibDir, nativePreviewExeName(nodeOs)), 0o755);
 
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
