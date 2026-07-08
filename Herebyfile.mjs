@@ -88,10 +88,10 @@ const options = /** @type {Options} */ (rawOptions);
 // Native release branches can edit these constants to publish a fixed stable version.
 // Main publishes prerelease builds of the TypeScript package.
 const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("typescript");
-const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
-const produceNativePreviewVsix = /** @type {boolean} */ (false);
-const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
-const usePublishedPlatformPackagesForVsix = /** @type {boolean} */ (false);
+const nativePreviewReleaseVersion = /** @type {string | undefined} */ ("7.0.2");
+const produceNativePreviewVsix = /** @type {boolean} */ (true);
+const produceTypeScriptNightlyVsix = /** @type {boolean} */ (false);
+const usePublishedPlatformPackagesForVsix = /** @type {boolean} */ (true);
 const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
@@ -100,9 +100,6 @@ if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersio
 }
 if (usePublishedPlatformPackagesForVsix && !publishAsTypescript) {
     throw new Error("usePublishedPlatformPackagesForVsix requires nativePreviewReleaseProfile to be 'typescript'");
-}
-if (usePublishedPlatformPackagesForVsix && !options.forRelease) {
-    throw new Error("usePublishedPlatformPackagesForVsix requires forRelease");
 }
 
 const defaultGoBuildTags = [
@@ -1811,7 +1808,7 @@ export const buildNativePreviewPackages = task({
 
 async function runBuildNativePreviewPackages() {
     if (usePublishedPlatformPackagesForVsix) {
-        getPublishedTypeScriptVersion();
+        checkPublishedPlatformPackagesForVsix();
         await rimraf(builtNpm);
         console.log("Skipping npm package builds; VSIX packaging will use published platform packages.");
         return;
@@ -1986,6 +1983,7 @@ async function runSignNativePreviewPackages() {
         throw new Error("This task should not be run in non-release builds.");
     }
     if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
         console.log("Skipping npm package signing; VSIX packaging will use published platform packages.");
         return;
     }
@@ -2109,6 +2107,7 @@ export const packNativePreviewPackages = task({
 
 async function runPackNativePreviewPackages() {
     if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
         await rimraf(builtNpm);
         console.log("Skipping npm package packing; VSIX packaging will use published platform packages.");
         return;
@@ -2182,6 +2181,13 @@ function getPublishedTypeScriptVersion() {
         throw new Error(`usePublishedPlatformPackagesForVsix requires ${publishedTypeScriptAliasPackageName}@${version} to match release version ${expectedVersion}.`);
     }
     return version;
+}
+
+function checkPublishedPlatformPackagesForVsix() {
+    if (!options.forRelease) {
+        throw new Error("usePublishedPlatformPackagesForVsix requires forRelease");
+    }
+    getPublishedTypeScriptVersion();
 }
 
 const getPackageLock = memoize(() => JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8")));
@@ -2291,7 +2297,7 @@ async function runPackVsixExtensions() {
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
     if (usePublishedPlatformPackagesForVsix) {
-        getPublishedTypeScriptVersion();
+        checkPublishedPlatformPackagesForVsix();
         publishedPlatformPackageLibDirs.clear();
         await rimraf(builtPublishedPlatformPackages);
     }
