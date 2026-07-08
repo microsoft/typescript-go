@@ -1812,6 +1812,7 @@ export const buildNativePreviewPackages = task({
 
 async function runBuildNativePreviewPackages() {
     if (usePublishedPlatformPackagesForVsix) {
+        getPublishedTypeScriptVersion();
         await rimraf(builtNpm);
         console.log("Skipping npm package builds; VSIX packaging will use published platform packages.");
         return;
@@ -2176,7 +2177,12 @@ const getPublishedTypeScriptPackageJson = memoize(() => {
 });
 
 function getPublishedTypeScriptVersion() {
-    return getPublishedTypeScriptPackageJson().version;
+    const version = getPublishedTypeScriptPackageJson().version;
+    const expectedVersion = getVersion();
+    if (usePublishedPlatformPackagesForVsix && version !== expectedVersion) {
+        throw new Error(`usePublishedPlatformPackagesForVsix requires ${publishedTypeScriptAliasPackageName}@${version} to match release version ${expectedVersion}.`);
+    }
+    return version;
 }
 
 const getPackageLock = memoize(() => JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8")));
@@ -2286,6 +2292,7 @@ async function runPackVsixExtensions() {
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
     if (usePublishedPlatformPackagesForVsix) {
+        getPublishedTypeScriptVersion();
         publishedPlatformPackageLibDirs.clear();
         await rimraf(builtPublishedPlatformPackages);
     }
