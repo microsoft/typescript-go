@@ -2178,7 +2178,7 @@ function getPublishedTypeScriptVersion() {
     const version = getPublishedTypeScriptPackageJson().version;
     const expectedVersion = getVersion();
     if (usePublishedPlatformPackagesForVsix && version !== expectedVersion) {
-        throw new Error(`usePublishedPlatformPackagesForVsix requires ${publishedTypeScriptAliasPackageName}@${version} to match release version ${expectedVersion}.`);
+        throw new Error(`usePublishedPlatformPackagesForVsix requires ${publishedTypeScriptAliasPackageName}'s installed version (${version}) to match release version ${expectedVersion}.`);
     }
     return version;
 }
