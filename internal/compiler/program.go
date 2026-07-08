@@ -1730,7 +1730,7 @@ type ProgramLike interface {
 func HandleNoEmitOptions(ctx context.Context, program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
 	if !program.Options().NoEmit.IsTrue() {
 		if !program.Options().NoEmitOnError.IsTrue() {
-			return nil // No emit on error is not set, so we can proceed with emitting
+			return nil // noEmitOnError is not set, so we can proceed with emitting
 		}
 
 		diagnostics := GetDiagnosticsOfAnyProgram(
@@ -1742,7 +1742,7 @@ func HandleNoEmitOptions(ctx context.Context, program ProgramLike, file *ast.Sou
 			program.GetSemanticDiagnostics,
 		)
 		if len(diagnostics) == 0 {
-			return nil // No diagnostics, so we can proceed with emitting
+			return nil // noEmitOnError is set, but there are no diagnostics
 		}
 		return &EmitResult{
 			Diagnostics: diagnostics,

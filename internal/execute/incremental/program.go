@@ -208,7 +208,10 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 		return nil
 	}
 	if result != nil {
-		if options.TargetSourceFile != nil || p.Options().NoEmit.IsTrue() {
+		if p.Options().NoEmit.IsTrue() {
+			return result
+		}
+		if options.TargetSourceFile != nil {
 			return result
 		}
 
