@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/zipoverlay"
 )
 
 // StdioServerOptions configures the STDIO-based API server.
@@ -69,7 +70,7 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		transport = t
 	}
 
-	fs := bundled.WrapFS(osvfs.FS())
+	fs := bundled.WrapFS(zipoverlay.Wrap(osvfs.FS()))
 
 	// Wrap the base FS with callbackFS if callbacks are requested
 	var callbackFS *callbackFS

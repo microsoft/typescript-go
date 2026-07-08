@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
@@ -159,6 +160,31 @@ type Resolver struct {
 	typingsLocation string
 	projectName     string
 	// reportDiagnostic: DiagnosticReporter
+
+	pnpOnce     sync.Once
+	pnpManifest *pnp.Manifest
+}
+
+// getPnpManifest discovers and loads the Yarn PnP manifest governing this
+// program, once. It returns nil when the project is not a PnP project. Discovery
+// walks up from the tsconfig directory (or the current directory) for a
+// .pnp.data.json / .pnp.cjs sidecar.
+func (r *Resolver) getPnpManifest() *pnp.Manifest {
+	r.pnpOnce.Do(func() {
+		fs := r.host.FS()
+		startDir := r.host.GetCurrentDirectory()
+		if r.compilerOptions.ConfigFilePath != "" {
+			startDir = tspath.GetDirectoryPath(r.compilerOptions.ConfigFilePath)
+		}
+		manifestPath := pnp.Find(startDir, fs.FileExists)
+		if manifestPath == "" {
+			return
+		}
+		if m, ok := pnp.Load(manifestPath, fs.ReadFile); ok {
+			r.pnpManifest = m
+		}
+	})
+	return r.pnpManifest
 }
 
 type ResolverOptions struct {
@@ -979,6 +1005,26 @@ func (r *resolutionState) getOutputDirectoriesForBaseDirectory(commonSourceDirGu
 }
 
 func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOnly bool) *resolved {
+	// Under Yarn PnP there is no node_modules tree; the manifest maps a package
+	// to its on-disk location. PnP governs package resolution for any importer it
+	// owns; when it doesn't own the importer (an ignored path) it reports
+	// "not governed" and the classic walk below runs.
+	if manifest := r.resolver.getPnpManifest(); manifest != nil {
+		result, governed := r.loadModuleFromPnp(manifest, typesScopeOnly)
+		if !result.shouldContinueSearching() {
+			return result
+		}
+		if governed {
+			// PnP owns this importer but the specifier is not resolvable through the
+			// manifest (undeclared dependency, unfulfilled peer, or a declared
+			// package whose file is missing). Do NOT fall through to the classic
+			// ancestor node_modules walk — that would resolve a phantom dependency
+			// from a stray node_modules the manifest does not sanction. Report "not
+			// found" so the caller still consults typeRoots but skips the walk.
+			return continueSearching()
+		}
+	}
+
 	mode := core.ResolutionModeCommonJS
 	if r.esmMode || r.conditionMatches("import") {
 		mode = core.ResolutionModeESM
@@ -1008,6 +1054,66 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOn
 		return r.loadModuleFromNearestNodeModulesDirectoryWorker(secondaryExtensions, mode, typesScopeOnly)
 	}
 	return continueSearching()
+}
+
+// loadModuleFromPnp resolves r.name through the Yarn PnP manifest, mirroring the
+// classic walk's shape: preferred (TS/DTS) extensions on the implementation
+// package first, then a DTS lookup in the matching @types package, then fallback
+// (JS/JSON) extensions on the implementation. It returns a hit (governed true),
+// or continueSearching() together with whether PnP governs the importer:
+// governed is false only when the importer is outside PnP's control (an ignored
+// path), in which case the caller runs the classic walk; when governed is true
+// but nothing resolved, the caller must not run the classic walk.
+func (r *resolutionState) loadModuleFromPnp(manifest *pnp.Manifest, typesScopeOnly bool) (*resolved, bool) {
+	tryLoad := func(ext extensions, res pnp.Result) *resolved {
+		if res.Status != pnp.Success {
+			return continueSearching()
+		}
+		rest := strings.TrimPrefix(res.Subpath, "/")
+		candidate := res.PackageDir
+		if rest != "" {
+			candidate = tspath.RemoveTrailingDirectorySeparator(tspath.NormalizePath(tspath.CombinePaths(res.PackageDir, rest)))
+		}
+		return r.loadModuleFromResolvedPackageDirectory(ext, candidate, rest, res.PackageDir)
+	}
+
+	priorityExtensions := r.extensions & (extensionsTypeScript | extensionsDeclaration)
+	secondaryExtensions := r.extensions & ^(extensionsTypeScript | extensionsDeclaration)
+
+	implResult := manifest.Resolve(r.name, r.containingDirectory)
+	// An ignored importer (not owned by PnP) short-circuits to the classic walk.
+	if implResult.Status == pnp.Skipped {
+		return continueSearching(), false
+	}
+
+	// (1) preferred extensions in the implementation package
+	if priorityExtensions != 0 && !typesScopeOnly {
+		if result := tryLoad(priorityExtensions, implResult); !result.shouldContinueSearching() {
+			return result, true
+		}
+	}
+
+	// (1ii) DTS in the @types package
+	if r.extensions&extensionsDeclaration != 0 {
+		packageName, subpath := ParsePackageName(r.name)
+		typesSpecifier := GetTypesPackageName(packageName)
+		if subpath != "" {
+			typesSpecifier += "/" + subpath
+		}
+		typesResult := manifest.Resolve(typesSpecifier, r.containingDirectory)
+		if result := tryLoad(extensionsDeclaration, typesResult); !result.shouldContinueSearching() {
+			return result, true
+		}
+	}
+
+	// (2) fallback extensions in the implementation package
+	if secondaryExtensions != 0 && !typesScopeOnly {
+		if result := tryLoad(secondaryExtensions, implResult); !result.shouldContinueSearching() {
+			return result, true
+		}
+	}
+
+	return continueSearching(), true
 }
 
 func (r *resolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext extensions, mode core.ResolutionMode, typesScopeOnly bool) *resolved {
@@ -1069,7 +1175,16 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 	if packageName == "" {
 		packageDirectory = candidate
 	}
+	return r.loadModuleFromResolvedPackageDirectory(ext, candidate, rest, packageDirectory)
+}
 
+// loadModuleFromResolvedPackageDirectory performs file / directory / exports /
+// typesVersions resolution once the package's on-disk directory is known. It is
+// shared by the classic node_modules walk (which derives packageDirectory from a
+// node_modules folder) and Yarn PnP (which gets packageDirectory from the PnP
+// manifest). candidate is packageDirectory joined with rest (the subpath within
+// the package, "" for a bare package specifier).
+func (r *resolutionState) loadModuleFromResolvedPackageDirectory(ext extensions, candidate string, rest string, packageDirectory string) *resolved {
 	if r.resolvePackageDirectoryOnly {
 		if r.resolver.host.FS().DirectoryExists(packageDirectory) {
 			return &resolved{path: packageDirectory}

@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/zipoverlay"
 	"golang.org/x/term"
 )
 
@@ -68,7 +69,7 @@ func newSystem() *osSys {
 
 	return &osSys{
 		cwd:                tspath.NormalizePath(cwd),
-		fs:                 bundled.WrapFS(osvfs.FS()),
+		fs:                 bundled.WrapFS(zipoverlay.Wrap(osvfs.FS())),
 		defaultLibraryPath: bundled.LibPath(),
 		writer:             os.Stdout,
 		start:              time.Now(),
