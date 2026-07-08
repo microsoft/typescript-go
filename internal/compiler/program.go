@@ -1631,14 +1631,11 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 
 	if options.EmitOnly != EmitOnlyForcedDts {
-		result := HandleNoEmitOptions(p, options.TargetSourceFile, nil)
-		if result != nil {
-			return result
-		}
-		result = HandleNoEmitOnError(
+		result := HandleNoEmitOptions(
 			ctx,
 			p,
 			options.TargetSourceFile,
+			nil,
 		)
 		if result != nil || ctx.Err() != nil {
 			return result
@@ -1729,12 +1726,28 @@ type ProgramLike interface {
 	Program() *Program
 }
 
-// HandleNoEmitOptions mirrors tsc's handleNoEmitOptions:
-// single-file noEmit reports emitSkipped, while whole-program noEmit uses the
-// buildInfo emit result when available and otherwise reports emitSkipped=false.
-func HandleNoEmitOptions(program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
+// HandleNoEmitOptions mirrors tsc's handleNoEmitOptions.
+func HandleNoEmitOptions(ctx context.Context, program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
 	if !program.Options().NoEmit.IsTrue() {
-		return nil
+		if !program.Options().NoEmitOnError.IsTrue() {
+			return nil // No emit on error is not set, so we can proceed with emitting
+		}
+
+		diagnostics := GetDiagnosticsOfAnyProgram(
+			ctx,
+			program,
+			file,
+			true,
+			program.GetBindDiagnostics,
+			program.GetSemanticDiagnostics,
+		)
+		if len(diagnostics) == 0 {
+			return nil // No diagnostics, so we can proceed with emitting
+		}
+		return &EmitResult{
+			Diagnostics: diagnostics,
+			EmitSkipped: true,
+		}
 	}
 	if file != nil {
 		return &EmitResult{EmitSkipped: true}
@@ -1746,28 +1759,6 @@ func HandleNoEmitOptions(program ProgramLike, file *ast.SourceFile, emitBuildInf
 		}
 	}
 	return &EmitResult{}
-}
-
-func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
-	if !program.Options().NoEmitOnError.IsTrue() {
-		return nil // No emit on error is not set, so we can proceed with emitting
-	}
-
-	diagnostics := GetDiagnosticsOfAnyProgram(
-		ctx,
-		program,
-		file,
-		true,
-		program.GetBindDiagnostics,
-		program.GetSemanticDiagnostics,
-	)
-	if len(diagnostics) == 0 {
-		return nil // No diagnostics, so we can proceed with emitting
-	}
-	return &EmitResult{
-		Diagnostics: diagnostics,
-		EmitSkipped: true,
-	}
 }
 
 func GetDiagnosticsOfAnyProgram(

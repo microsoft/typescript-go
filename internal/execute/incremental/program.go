@@ -201,22 +201,14 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, file *ast.Source
 func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	p.panicIfNoProgram("Emit")
 
-	result := compiler.HandleNoEmitOptions(p, options.TargetSourceFile, func() *compiler.EmitResult {
+	result := compiler.HandleNoEmitOptions(ctx, p, options.TargetSourceFile, func() *compiler.EmitResult {
 		return p.emitBuildInfo(ctx, options)
 	})
 	if ctx.Err() != nil {
 		return nil
 	}
 	if result != nil {
-		return result
-	}
-
-	result = compiler.HandleNoEmitOnError(ctx, p, options.TargetSourceFile)
-	if ctx.Err() != nil {
-		return nil
-	}
-	if result != nil {
-		if options.TargetSourceFile != nil {
+		if options.TargetSourceFile != nil || p.Options().NoEmit.IsTrue() {
 			return result
 		}
 
