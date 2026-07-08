@@ -38,13 +38,14 @@ declare namespace FunctionComponent {
         num: number;
     };
 }
-export declare const WrappedFunction: typeof FunctionComponent;
-export declare const WrappedArrow: {
-    (): null;
-    propTypes: {
+declare function ArrowComponent(): null;
+declare namespace ArrowComponent {
+    var propTypes: {
         num: number;
     };
-};
+}
+export declare const WrappedFunction: typeof FunctionComponent;
+export declare const WrappedArrow: typeof ArrowComponent;
 export {};
 //// [mainJs.d.ts]
 declare function FunctionComponent(): null;

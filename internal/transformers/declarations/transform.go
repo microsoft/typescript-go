@@ -406,16 +406,6 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 		next := tx.state.lateMarkedStatements[0]
 		tx.state.lateMarkedStatements = tx.state.lateMarkedStatements[1:]
 
-		// If expando assignments on this statement were skipped because it wasn't visible
-		// when they were collected, process them now that it has been marked visible.
-		nextId := ast.GetNodeId(tx.EmitContext().MostOriginal(next))
-		if deferred, ok := tx.deferredExpandoAssignments[nextId]; ok {
-			delete(tx.deferredExpandoAssignments, nextId)
-			for _, assignment := range deferred {
-				tx.transformExpandoAssignment(assignment)
-			}
-		}
-
 		saveNeedsDeclare := tx.needsDeclare
 		tx.needsDeclare = next.Parent != nil && ast.IsSourceFile(next.Parent)
 
@@ -1714,7 +1704,9 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 	}
 	original := tx.EmitContext().MostOriginal(input)
 	id := ast.GetNodeId(original)
-	if _, ok := tx.expandoHosts[id]; ok {
+	_, isExpandoHost := tx.expandoHosts[id]
+	_, hasDeferredExpandoAssignments := tx.deferredExpandoAssignments[id]
+	if isExpandoHost || hasDeferredExpandoAssignments {
 		return tx.createFullExpandoBlock(id)
 	}
 
@@ -2740,11 +2732,12 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return
 	}
 
+	hostId := tx.getExpandoHostId(declaration)
+
 	if ast.IsDeclaration(declaration) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, declaration) {
 		// The host isn't visible (yet) - printing the type of a visible declaration may still
 		// late-mark it as visible (e.g. an exported variable whose type prints as `typeof host`),
 		// so defer the assignment to be processed if and when that happens.
-		hostId := tx.getExpandoHostId(declaration)
 		tx.deferredExpandoAssignments[hostId] = append(tx.deferredExpandoAssignments[hostId], node)
 		return
 	}
@@ -2766,7 +2759,6 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		localName = tx.Factory().NewGeneratedNameForNode(node.AsNode())
 	}
 
-	hostId := tx.getExpandoHostId(declaration)
 	_, cleanupDiagnosticContext := tx.setupDiagnosticContext(node.AsNode())
 	defer cleanupDiagnosticContext()
 
@@ -2893,6 +2885,15 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 }
 
 func (tx *DeclarationTransformer) createFullExpandoBlock(id ast.NodeId) *ast.Node {
+	// Process any expando assignments on this host that were skipped because it wasn't
+	// visible when they were collected - if it's still not visible, they simply get
+	// re-deferred, and are dropped if the host is never late-marked visible.
+	if deferred, ok := tx.deferredExpandoAssignments[id]; ok {
+		delete(tx.deferredExpandoAssignments, id)
+		for _, assignment := range deferred {
+			tx.transformExpandoAssignment(assignment)
+		}
+	}
 	n := tx.expandoHosts[id]
 	if addOns, ok := tx.expandoMembers[id]; ok {
 		var modifiers *ast.ModifierList
