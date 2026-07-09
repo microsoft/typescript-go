@@ -395,6 +395,18 @@ export interface Diagnostic {
     readonly relatedInformation?: readonly Diagnostic[] | undefined;
 }
 
+export interface EmitOutputFile {
+    readonly fileName: string;
+    readonly text: string;
+    readonly sourceFileName?: string | undefined;
+}
+
+export interface EmitToStringResult {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly outputFiles: readonly EmitOutputFile[];
+}
+
 export interface ImportSymbolAction {
     readonly kind: "importSymbol";
     readonly symbol: Symbol;

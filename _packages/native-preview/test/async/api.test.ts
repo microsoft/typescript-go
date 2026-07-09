@@ -46,6 +46,7 @@ import {
     CheckFlags,
     type ConditionalType,
     DiagnosticCategory,
+    EmitOnly,
     type FreshableType,
     type ImportAdderAction,
     type IndexedAccessType,
@@ -4640,6 +4641,117 @@ export const obj = { m: 1, s: "hi", b: true };
             // With the option, the closing slash is added
             const textWith = await project.emitter.printNode(regexNode, { terminateUnterminatedLiterals: true });
             assert.strictEqual(textWith, "/asdfasf/");
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("Program - emitToString", () => {
+    test("emitToString single file produces JS output", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
+            "/src/a.ts": `export const a: number = 1;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emitToString("/src/a.ts");
+            assert.equal(result.emitSkipped, false);
+            assert.ok(result.outputFiles.length > 0);
+            const jsFile = result.outputFiles.find(f => f.fileName.endsWith(".js"));
+            assert.ok(jsFile, "should produce a .js file");
+            assert.ok(jsFile.text.includes("export const a = 1"), "JS output should contain the declaration");
+            assert.equal(jsFile.sourceFileName, "/src/a.ts");
+            assert.deepEqual(result.diagnostics, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit multiple files produces output for each", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
+            "/src/a.ts": `export const a: number = 1;`,
+            "/src/b.ts": `export const b: string = "hello";`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emitToString(["/src/a.ts", "/src/b.ts"]);
+            assert.equal(result.emitSkipped, false);
+            const jsFiles = result.outputFiles.filter(f => f.fileName.endsWith(".js"));
+            assert.equal(jsFiles.length, 2);
+            assert.ok(jsFiles.some(f => f.sourceFileName === "/src/a.ts"));
+            assert.ok(jsFiles.some(f => f.sourceFileName === "/src/b.ts"));
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit with no file emits all files", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
+            "/src/a.ts": `export const a = 1;`,
+            "/src/b.ts": `export const b = 2;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emitToString();
+            assert.equal(result.emitSkipped, false);
+            const jsFiles = result.outputFiles.filter(f => f.fileName.endsWith(".js"));
+            assert.ok(jsFiles.length >= 2, "should emit at least 2 JS files");
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit with empty array returns empty", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
+            "/src/a.ts": `export const a = 1;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emitToString([]);
+            assert.equal(result.emitSkipped, false);
+            assert.deepEqual(result.outputFiles, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit single file respects emitOnly", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020", declaration: true } }),
+            "/src/a.ts": `export const a: number = 1;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            const all = await project.program.emitToString("/src/a.ts");
+            assert.equal(all.emitSkipped, false);
+            assert.ok(all.outputFiles.some(f => f.fileName.endsWith(".js")));
+            assert.ok(all.outputFiles.some(f => f.fileName.endsWith(".d.ts")));
+            assert.ok(all.outputFiles.every(f => f.sourceFileName === "/src/a.ts"));
+
+            const jsOnly = await project.program.emitToString("/src/a.ts", EmitOnly.OnlyJs);
+            assert.equal(jsOnly.emitSkipped, false);
+            assert.ok(jsOnly.outputFiles.some(f => f.fileName.endsWith(".js")));
+            assert.ok(!jsOnly.outputFiles.some(f => f.fileName.endsWith(".d.ts")));
+
+            const dtsOnly = await project.program.emitToString("/src/a.ts", EmitOnly.OnlyDts);
+            assert.equal(dtsOnly.emitSkipped, false);
+            assert.ok(dtsOnly.outputFiles.some(f => f.fileName.endsWith(".d.ts")));
+            assert.ok(!dtsOnly.outputFiles.some(f => f.fileName.endsWith(".js")));
         }
         finally {
             await api.close();
