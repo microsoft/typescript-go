@@ -503,14 +503,11 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 	return true
 }
 
-func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
-	var sourceFiles []*ast.SourceFile
-	if targetSourceFile != nil {
-		sourceFiles = []*ast.SourceFile{targetSourceFile}
-	} else {
-		sourceFiles = host.SourceFiles()
+func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFiles []*ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
+	if targetSourceFiles == nil {
+		targetSourceFiles = host.SourceFiles()
 	}
-	return core.Filter(sourceFiles, func(sourceFile *ast.SourceFile) bool {
+	return core.Filter(targetSourceFiles, func(sourceFile *ast.SourceFile) bool {
 		return sourceFileMayBeEmitted(sourceFile, host, forceDtsEmit)
 	})
 }
@@ -521,7 +518,7 @@ func isSourceFileNotJson(file *ast.SourceFile) bool {
 
 func getDeclarationDiagnostics(host EmitHost, file *ast.SourceFile) []*ast.Diagnostic {
 	// TODO: use p.getSourceFilesToEmit cache
-	fullFiles := core.Filter(getSourceFilesToEmit(host, file, false), isSourceFileNotJson)
+	fullFiles := core.Filter(getSourceFilesToEmit(host, core.SingleElementSlice(file), false), isSourceFileNotJson)
 	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == file }) {
 		return []*ast.Diagnostic{}
 	}

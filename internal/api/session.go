@@ -2322,35 +2322,22 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 		outputFiles.Add(&EmitOutputFile{FileName: fileName, Text: text, SourceFileName: sourceFileName})
 		return nil
 	}
-
+	var targetSourceFiles []*ast.SourceFile
 	if params.Files != nil {
-		var allDiags []*ast.Diagnostic
-		emitSkipped := false
+		targetSourceFiles = make([]*ast.SourceFile, 0, len(params.Files))
 		for _, file := range params.Files {
 			sourceFile, err := s.resolveOptionalSourceFile(program, &file)
 			if err != nil {
 				return nil, err
 			}
-			result := program.Emit(ctx, compiler.EmitOptions{
-				TargetSourceFile: sourceFile,
-				EmitOnly:         emitOnly,
-				WriteFile:        writeFile,
-			})
-			allDiags = append(allDiags, result.Diagnostics...)
-			if result.EmitSkipped {
-				emitSkipped = true
-			}
+			targetSourceFiles = append(targetSourceFiles, sourceFile)
 		}
-		return &EmitResponse{
-			EmitSkipped: emitSkipped,
-			Diagnostics: NewDiagnosticResponses(allDiags),
-			OutputFiles: outputFiles.ToSlice(),
-		}, nil
 	}
 
 	result := program.Emit(ctx, compiler.EmitOptions{
-		EmitOnly:  emitOnly,
-		WriteFile: writeFile,
+		EmitOnly:          emitOnly,
+		WriteFile:         writeFile,
+		TargetSourceFiles: targetSourceFiles,
 	})
 
 	return &EmitResponse{

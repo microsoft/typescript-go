@@ -716,14 +716,14 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
 }
 
-func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
-	if targetSourceFile == nil && !forceDtsEmit {
+func (p *Program) getSourceFilesToEmit(targetSourceFiles []*ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
+	if targetSourceFiles == nil && !forceDtsEmit {
 		p.sourceFilesToEmitOnce.Do(func() {
 			p.sourceFilesToEmit = getSourceFilesToEmit(p, nil, false)
 		})
 		return p.sourceFilesToEmit
 	}
-	return getSourceFilesToEmit(p, targetSourceFile, forceDtsEmit)
+	return getSourceFilesToEmit(p, targetSourceFiles, forceDtsEmit)
 }
 
 func (p *Program) verifyCompilerOptions() {
@@ -1613,9 +1613,9 @@ type WriteFileData struct {
 type WriteFile func(fileName string, text string, data *WriteFileData) error
 
 type EmitOptions struct {
-	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
-	EmitOnly         EmitOnly
-	WriteFile        WriteFile
+	TargetSourceFiles []*ast.SourceFile // Single file to emit. If `nil`, emits all files
+	EmitOnly          EmitOnly
+	WriteFile         WriteFile
 }
 
 type EmitResult struct {
@@ -1640,7 +1640,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 		result := HandleNoEmitOnError(
 			ctx,
 			p,
-			options.TargetSourceFile,
+			options.TargetSourceFiles,
 		)
 		if result != nil || ctx.Err() != nil {
 			return result
@@ -1655,7 +1655,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	var emitters []*emitter
-	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
+	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFiles, options.EmitOnly == EmitOnlyForcedDts)
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
@@ -1731,7 +1731,7 @@ type ProgramLike interface {
 	Program() *Program
 }
 
-func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
+func HandleNoEmitOnError(ctx context.Context, program ProgramLike, files []*ast.SourceFile) *EmitResult {
 	if !program.Options().NoEmitOnError.IsTrue() {
 		return nil // No emit on error is not set, so we can proceed with emitting
 	}
@@ -1739,7 +1739,7 @@ func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.Sou
 	diagnostics := GetDiagnosticsOfAnyProgram(
 		ctx,
 		program,
-		file,
+		files,
 		true,
 		program.GetBindDiagnostics,
 		program.GetSemanticDiagnostics,
@@ -1756,7 +1756,7 @@ func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.Sou
 func GetDiagnosticsOfAnyProgram(
 	ctx context.Context,
 	program ProgramLike,
-	file *ast.SourceFile,
+	files []*ast.SourceFile,
 	skipNoEmitCheckForDtsDiagnostics bool,
 	getBindDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic,
 	getSemanticDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic,
@@ -1764,7 +1764,17 @@ func GetDiagnosticsOfAnyProgram(
 	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
 	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
-	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, file)...)
+	appendDiagnosticsForAllFiles := func(diagnostics []*ast.Diagnostic, getDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+		if files == nil {
+			return append(diagnostics, getDiagnostics(ctx, nil)...)
+		}
+		for _, file := range files {
+			diagnostics = append(allDiagnostics, getDiagnostics(ctx, file)...)
+		}
+		return diagnostics
+	}
+
+	allDiagnostics = appendDiagnosticsForAllFiles(allDiagnostics, program.GetSyntacticDiagnostics)
 
 	// If we didn't have any syntactic errors, then also try getting the program (options),
 	// global and semantic errors.
@@ -1772,19 +1782,19 @@ func GetDiagnosticsOfAnyProgram(
 		allDiagnostics = append(allDiagnostics, program.GetProgramDiagnostics()...)
 
 		// Do binding early so we can track the time.
-		getBindDiagnostics(ctx, file)
+		appendDiagnosticsForAllFiles(nil, getBindDiagnostics)
 
 		if program.Options().ListFilesOnly.IsFalseOrUnknown() {
 			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
-				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
+				allDiagnostics = appendDiagnosticsForAllFiles(allDiagnostics, getSemanticDiagnostics)
 				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
 				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}
 
 			if (skipNoEmitCheckForDtsDiagnostics || program.Options().NoEmit.IsTrue()) && program.Options().GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
-				allDiagnostics = append(allDiagnostics, program.GetDeclarationDiagnostics(ctx, file)...)
+				allDiagnostics = appendDiagnosticsForAllFiles(allDiagnostics, program.GetDeclarationDiagnostics)
 			}
 		}
 	}
