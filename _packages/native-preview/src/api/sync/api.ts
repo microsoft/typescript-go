@@ -11,6 +11,7 @@ import { CheckFlags } from "#enums/checkFlags";
 import { CompletionItemKind } from "#enums/completionItemKind";
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
+import { EmitOnly } from "#enums/emitOnly";
 import { ModuleKind } from "#enums/moduleKind";
 import { NodeBuilderFlags } from "#enums/nodeBuilderFlags";
 import { ObjectFlags } from "#enums/objectFlags";
@@ -101,6 +102,8 @@ import type {
     CompletionOptions,
     ConditionalType,
     Diagnostic,
+    EmitOutputFile,
+    EmitResult,
     FreshableType,
     GetImportEditsForSymbolsOptions,
     IdentifierTypePredicate,
@@ -962,6 +965,18 @@ export class Program {
             project: this.project.id,
         });
         return data ?? [];
+    }
+
+    emit(file?: DocumentIdentifier | readonly DocumentIdentifier[], emitOnly?: EmitOnly): EmitResult {
+        const files = file === undefined ? undefined
+            : Array.isArray(file) ? file
+            : [file];
+        return this.client.apiRequest<EmitResult>("emit", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            files,
+            emitOnly,
+        });
     }
 }
 

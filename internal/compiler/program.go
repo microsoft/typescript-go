@@ -1607,6 +1607,7 @@ type WriteFileData struct {
 	BuildInfo       any
 	Diagnostics     []*ast.Diagnostic
 	SkippedDtsWrite bool
+	SourceFile      *ast.SourceFile
 }
 
 type WriteFile func(fileName string, text string, data *WriteFileData) error

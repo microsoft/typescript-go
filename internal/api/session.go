@@ -706,6 +706,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleTypeToString(ctx, parsed.(*TypeToTypeNodeParams))
 	case string(MethodPrintNode):
 		return s.handlePrintNode(ctx, parsed.(*PrintNodeParams))
+	case string(MethodEmit):
+		return s.handleEmit(ctx, parsed.(*EmitParams))
 	case string(MethodIsContextSensitive):
 		return s.handleIsContextSensitive(ctx, parsed.(*GetContextualTypeParams))
 	case string(MethodGetReturnTypeOfSignature):
@@ -2292,6 +2294,70 @@ func (s *Session) handlePrintNode(_ context.Context, params *PrintNodeParams) (s
 		TerminateUnterminatedLiterals: params.TerminateUnterminatedLiterals,
 	}, printer.PrintHandlers{}, nil)
 	return p.Emit(node, nil), nil
+}
+
+func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	emitOnly := compiler.EmitAll
+	if params.EmitOnly != nil {
+		emitOnly = compiler.EmitOnly(*params.EmitOnly)
+	}
+
+	var outputFiles collections.SyncSet[*EmitOutputFile]
+	writeFile := func(fileName string, text string, data *compiler.WriteFileData) error {
+		var sourceFileName *string
+		if data.SourceFile != nil {
+			name := data.SourceFile.FileName()
+			sourceFileName = &name
+		}
+		outputFiles.Add(&EmitOutputFile{FileName: fileName, Text: text, SourceFileName: sourceFileName})
+		return nil
+	}
+
+	if params.Files != nil {
+		var allDiags []*ast.Diagnostic
+		emitSkipped := false
+		for _, file := range params.Files {
+			sourceFile, err := s.resolveOptionalSourceFile(program, &file)
+			if err != nil {
+				return nil, err
+			}
+			result := program.Emit(ctx, compiler.EmitOptions{
+				TargetSourceFile: sourceFile,
+				EmitOnly:         emitOnly,
+				WriteFile:        writeFile,
+			})
+			allDiags = append(allDiags, result.Diagnostics...)
+			if result.EmitSkipped {
+				emitSkipped = true
+			}
+		}
+		return &EmitResponse{
+			EmitSkipped: emitSkipped,
+			Diagnostics: NewDiagnosticResponses(allDiags),
+			OutputFiles: outputFiles.ToSlice(),
+		}, nil
+	}
+
+	result := program.Emit(ctx, compiler.EmitOptions{
+		EmitOnly:  emitOnly,
+		WriteFile: writeFile,
+	})
+
+	return &EmitResponse{
+		EmitSkipped: result.EmitSkipped,
+		Diagnostics: NewDiagnosticResponses(result.Diagnostics),
+		OutputFiles: outputFiles.ToSlice(),
+	}, nil
 }
 
 // handleGetIntrinsicType returns an intrinsic type (any, string, number, etc.).

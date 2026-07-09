@@ -184,6 +184,7 @@ const (
 
 	// Emitter methods
 	MethodPrintNode Method = "printNode"
+	MethodEmit      Method = "emit"
 
 	// Intrinsic type getters
 	MethodGetAnyType       Method = "getAnyType"
@@ -475,6 +476,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
 	MethodGetCompletionsAtPosition:          unmarshallerFor[GetCompletionsAtPositionParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
+	MethodEmit:                              unmarshallerFor[EmitParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetNumberType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -1086,6 +1088,25 @@ type PrintNodeParams struct {
 	PreserveSourceNewlines        bool   `json:"preserveSourceNewlines,omitempty"`
 	NeverAsciiEscape              bool   `json:"neverAsciiEscape,omitempty"`
 	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
+}
+
+type EmitParams struct {
+	Snapshot SnapshotID           `json:"snapshot"`
+	Project  ProjectID            `json:"project"`
+	Files    []DocumentIdentifier `json:"files,omitempty"`
+	EmitOnly *byte                `json:"emitOnly,omitempty"`
+}
+
+type EmitOutputFile struct {
+	FileName       string  `json:"fileName"`
+	Text           string  `json:"text"`
+	SourceFileName *string `json:"sourceFileName,omitempty"`
+}
+
+type EmitResponse struct {
+	EmitSkipped bool                  `json:"emitSkipped"`
+	Diagnostics []*DiagnosticResponse `json:"diagnostics"`
+	OutputFiles []*EmitOutputFile     `json:"outputFiles"`
 }
 
 // CheckerTypeParams are parameters for checker methods that operate on a type.

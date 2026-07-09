@@ -398,3 +398,15 @@ export type ImportAdderAction = ImportSymbolAction;
 export interface GetImportEditsForSymbolsOptions {
     readonly isValidTypeOnlyUseSite?: boolean;
 }
+
+export interface EmitOutputFile {
+    readonly fileName: string;
+    readonly text: string;
+    readonly sourceFileName?: string | undefined;
+}
+
+export interface EmitResult {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly outputFiles: readonly EmitOutputFile[];
+}
