@@ -130,5 +130,17 @@
     "JSDoc comment": {
         "category": "Message",
         "code": 100019
+    },
+    "Content mapper file extension '{0}' must begin with a '.'.": {
+        "category": "Error",
+        "code": 100020
+    },
+    "Content mapper file extension '{0}' is a built-in extension and cannot be registered by a content mapper.": {
+        "category": "Error",
+        "code": 100021
+    },
+    "Content mapper file extension '{0}' is registered by more than one content mapper.": {
+        "category": "Error",
+        "code": 100022
     }
 }

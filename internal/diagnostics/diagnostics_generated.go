@@ -4310,6 +4310,12 @@ var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_
 
 var JSDoc_comment = &Message{code: 100019, category: CategoryMessage, key: "JSDoc_comment_100019", text: "JSDoc comment"}
 
+var Content_mapper_file_extension_0_must_begin_with_a = &Message{code: 100020, category: CategoryError, key: "Content_mapper_file_extension_0_must_begin_with_a_100020", text: "Content mapper file extension '{0}' must begin with a '.'."}
+
+var Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper = &Message{code: 100021, category: CategoryError, key: "Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper_100021", text: "Content mapper file extension '{0}' is a built-in extension and cannot be registered by a content mapper."}
+
+var Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper = &Message{code: 100022, category: CategoryError, key: "Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper_100022", text: "Content mapper file extension '{0}' is registered by more than one content mapper."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8620,6 +8626,12 @@ func keyToMessage(key Key) *Message {
 		return Sort_Imports
 	case "JSDoc_comment_100019":
 		return JSDoc_comment
+	case "Content_mapper_file_extension_0_must_begin_with_a_100020":
+		return Content_mapper_file_extension_0_must_begin_with_a
+	case "Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper_100021":
+		return Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper
+	case "Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper_100022":
+		return Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper
 	default:
 		return nil
 	}

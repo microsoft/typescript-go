@@ -85,6 +85,48 @@ func parseProjectReference(json any) []*core.ProjectReference {
 	return result
 }
 
+func parseContentMapper(json any) (*core.ContentMapper, []*ast.Diagnostic) {
+	v, ok := json.(*collections.OrderedMap[string, any])
+	if !ok {
+		return nil, nil
+	}
+	var errors []*ast.Diagnostic
+	mapper := &core.ContentMapper{}
+	if command, ok := v.Get("command"); ok {
+		if strs, valid := parseStringArrayStrict(command); valid {
+			mapper.Command = strs
+		} else {
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.command", "string[]"))
+		}
+	}
+	if extensions, ok := v.Get("extensions"); ok {
+		if strs, valid := parseStringArrayStrict(extensions); valid {
+			mapper.Extensions = strs
+		} else {
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.extensions", "string[]"))
+		}
+	}
+	return mapper, errors
+}
+
+// parseStringArrayStrict returns the string slice and true only if value is an array whose
+// elements are all strings. A missing element or wrong element type yields false.
+func parseStringArrayStrict(value any) ([]string, bool) {
+	arr, ok := value.([]any)
+	if !ok {
+		return nil, false
+	}
+	result := make([]string, 0, len(arr))
+	for _, v := range arr {
+		str, ok := v.(string)
+		if !ok {
+			return nil, false
+		}
+		result = append(result, str)
+	}
+	return result, true
+}
+
 func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
 	result := collections.NewOrderedMapWithSizeHint[string, any](6)
 	if m, ok := json.(*collections.OrderedMap[string, any]); ok {
@@ -99,6 +141,9 @@ func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
 		}
 		if v, ok := m.Get("references"); ok {
 			result.Set("references", v)
+		}
+		if v, ok := m.Get("contentMappers"); ok {
+			result.Set("contentMappers", v)
 		}
 		if v, ok := m.Get("extends"); ok {
 			if str, ok := v.(string); ok {

@@ -1031,7 +1031,6 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*existingOptionsRaw*/
 		configFileName,
 		nil, /*resolutionStack*/
-		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
 

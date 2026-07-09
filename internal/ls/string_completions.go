@@ -1007,7 +1007,7 @@ func (l *LanguageService) getExtensionOptions(
 	mode core.ResolutionMode,
 	checker *checker.Checker,
 ) *extensionOptions {
-	extensionsToSearch := getSupportedExtensionsForModuleResolution(options, checker)
+	extensionsToSearch := getSupportedExtensionsForModuleResolution(options, l.GetProgram().CommandLine().ContentMapperExtensions(), checker)
 
 	return &extensionOptions{
 		extensionsToSearch:  extensionsToSearch,
@@ -1018,7 +1018,7 @@ func (l *LanguageService) getExtensionOptions(
 	}
 }
 
-func getSupportedExtensionsForModuleResolution(options *core.CompilerOptions, checker *checker.Checker) []string {
+func getSupportedExtensionsForModuleResolution(options *core.CompilerOptions, extraExtensions []string, checker *checker.Checker) []string {
 	/** file extensions from ambient modules declarations e.g. *.css */
 	var extensions []string
 	if checker != nil {
@@ -1031,7 +1031,7 @@ func getSupportedExtensionsForModuleResolution(options *core.CompilerOptions, ch
 			extensions = append(extensions, name[1:])
 		}
 	}
-	supportedExtensions := tsoptions.GetSupportedExtensions(options, nil /*extraFileExtensions*/)
+	supportedExtensions := tsoptions.GetSupportedExtensions(options, extraExtensions)
 	for _, ext := range supportedExtensions {
 		extensions = append(extensions, ext...)
 	}

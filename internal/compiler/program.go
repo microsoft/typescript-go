@@ -234,7 +234,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	// Still, without the failed lookup reporting that only the loader does, this isn't terribly complicated
 
 	fileName := tspath.ResolvePath(tspath.GetDirectoryPath(origin.FileName()), ref.FileName)
-	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), nil /*extraFileExtensions*/)
+	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), p.CommandLine().ContentMapperExtensions())
 	supportedExtensions := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(p.Options(), supportedExtensionsBase)
 	allowNonTsExtensions := p.Options().AllowNonTsExtensions.IsTrue()
 	if tspath.HasExtension(fileName) {
@@ -701,7 +701,7 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 		return false
 	}
 
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX {
 		return true
 	}
 
@@ -709,11 +709,10 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, p.Options())
 	isPlainJS := ast.IsPlainJSFile(sourceFile, p.Options().CheckJs)
 
-	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
+	// By default, only type-check .ts, .tsx, plain JS, and checked JS
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
-	// - external: files that are added by plugins
-	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {

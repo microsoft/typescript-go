@@ -345,6 +345,7 @@ const enumDefs = [
     { name: "ModuleDetectionKind", goPrefix: "ModuleDetectionKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NewLineKind", goPrefix: "NewLineKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
     { name: "JsxEmit", goPrefix: "JsxEmit", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ScriptKind", goPrefix: "ScriptKind", goFile: "internal/core/scriptkind.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },

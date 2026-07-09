@@ -125,7 +125,7 @@ func processAllProgramFiles(
 ) processedFiles {
 	compilerOptions := opts.Config.CompilerOptions()
 	rootFiles := opts.Config.FileNames()
-	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
+	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, opts.Config.ContentMapperExtensions())
 	supportedExtensionsWithJsonIfResolveJsonModule := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)
 	var maxNodeModuleJsDepth int
 	if p := opts.Config.CompilerOptions().MaxNodeModuleJsDepth; p != nil {

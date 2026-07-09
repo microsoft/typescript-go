@@ -91,7 +91,6 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 				nil, /*existingOptionsRaw*/
 				configFileName,
 				nil, /*resolutionStack*/
-				nil, /*extraFileExtensions*/
 				nil, /*extendedConfigCache*/
 			)
 			tsConfigFileUnitData = data

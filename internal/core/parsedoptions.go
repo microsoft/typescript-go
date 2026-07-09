@@ -7,4 +7,5 @@ type ParsedOptions struct {
 
 	FileNames         []string            `json:"fileNames"`
 	ProjectReferences []*ProjectReference `json:"projectReferences"`
+	ContentMappers    []*ContentMapper    `json:"contentMappers"`
 }
