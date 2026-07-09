@@ -303,6 +303,19 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
+		title:               "does not panic when reference path is not a string",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+                "files": [],
+                "references": [{ "path": 3 }]
+            }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    map[string]string{"/apath/a.ts": ""},
+		}},
+	},
+	{
 		title: "exclude outDir unless overridden",
 		input: []testConfig{{
 			jsonText: `{
