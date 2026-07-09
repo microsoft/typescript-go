@@ -101,10 +101,12 @@ import type {
     ObjectType,
     StringLiteralType,
     StringMappingType,
+    StructuredType,
     SubstitutionType,
     TemplateLiteralType,
     ThisTypePredicate,
     TupleType,
+    TupleTypeReference,
     Type,
     TypeParameter,
     TypePredicate,
@@ -116,7 +118,10 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, TupleTypeReference, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+
+/** Path identifying the inferred (unconfigured) project in snapshots. */
+export const inferredProjectName = "/dev/null/inferred" as const;
 
 export class API<FromLSP extends boolean = false> {
     private client: Client;
@@ -535,6 +540,17 @@ class ProjectObjectRegistry {
         });
         if (typesData == null) return [];
         return typesData.map(data => this.getOrCreateType(data));
+    }
+
+    // Fetches a single type from a checker-level endpoint keyed by `type` (not
+    // `objectId`), returning undefined when the server has no result.
+    async fetchTypeByType(source: Type, method: string): Promise<Type | undefined> {
+        const data = await this.client.apiRequest<TypeResponse | null>(method, {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+        });
+        return data ? this.getOrCreateType(data) : undefined;
     }
 }
 
@@ -1847,8 +1863,17 @@ class TypeObject implements Type {
         return this.objectRegistry.fetchType(this, "getBaseTypeOfType", this.baseType);
     }
 
-    async getConstraint(): Promise<Type> {
-        return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
+    async getConstraint(): Promise<Type | undefined> {
+        // Substitution types carry their constraint as a sub-property (objectId-keyed);
+        // type parameters resolve their constraint through the checker (type-keyed).
+        if (this.flags & TypeFlags.Substitution) {
+            return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
+        }
+        return this.objectRegistry.fetchTypeByType(this, "getConstraintOfTypeParameter");
+    }
+
+    async getDefault(): Promise<Type | undefined> {
+        return this.objectRegistry.fetchTypeByType(this, "getDefaultOfTypeParameter");
     }
 
     async getTrueType(): Promise<Type> {
@@ -1953,6 +1978,10 @@ class TypeObject implements Type {
     isTypeParameter(): this is TypeParameter {
         return isTypeParameter(this);
     }
+
+    isStructuredType(): this is StructuredType {
+        return isStructuredType(this);
+    }
 }
 
 export function isUnionType(type: Type): type is UnionType {
@@ -2039,6 +2068,10 @@ export function isStringMappingType(type: Type): type is StringMappingType {
 
 export function isTypeParameter(type: Type): type is TypeParameter {
     return (type.flags & TypeFlags.TypeParameter) !== 0;
+}
+
+export function isStructuredType(type: Type): type is StructuredType {
+    return (type.flags & TypeFlags.StructuredType) !== 0;
 }
 
 export class Signature {
