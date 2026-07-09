@@ -551,6 +551,8 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
 		redirectTargetsMap:                   redirectTargetsMap,
 		redirectFilesByPath:                  redirectFilesByPath,
+		contentMapperForFile:                 loader.contentMapperForFile,
+		contentMapperDiagnostics:             loader.contentMapperDiagnostics,
 	}
 }
 

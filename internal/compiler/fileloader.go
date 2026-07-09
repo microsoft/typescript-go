@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"cmp"
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -12,6 +13,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -23,6 +26,10 @@ type libResolution struct {
 	resolution  *module.ResolvedModule
 	trace       []module.DiagAndArgs
 }
+
+// maxContentMapperFailures is the number of transform failures a single content mapper may accumulate
+// before it is disabled for the rest of the program.
+const maxContentMapperFailures = 5
 
 type LibFile struct {
 	Name     string
@@ -42,6 +49,7 @@ type fileLoader struct {
 	comparePathsOptions                            tspath.ComparePathsOptions
 	supportedExtensions                            [][]string
 	supportedExtensionsWithJsonIfResolveJsonModule [][]string
+	contentMapperExtensions                        []string
 
 	filesParser *filesParser
 	rootTasks   []*parseTask
@@ -57,6 +65,13 @@ type fileLoader struct {
 
 	pathForLibFileCache       collections.SyncMap[string, *LibFile]
 	pathForLibFileResolutions collections.SyncMap[tspath.Path, *libResolution]
+
+	// contentMapperMu guards the content-mapper bookkeeping below, which is written concurrently as
+	// content-mapped files are parsed across worker goroutines.
+	contentMapperMu          sync.Mutex
+	contentMapperForFile     map[tspath.Path]*core.ContentMapper
+	contentMapperFailures    map[*core.ContentMapper]int
+	contentMapperDiagnostics []*ast.Diagnostic
 }
 
 type redirectsFile struct {
@@ -111,7 +126,11 @@ type processedFiles struct {
 	redirectTargetsMap map[tspath.Path][]string
 	// filesByPath for redirect files
 	redirectFilesByPath map[tspath.Path]*redirectsFile
-	finishedProcessing  bool
+	// Association from a content-mapped source file path to the content mapper that produced it.
+	contentMapperForFile map[tspath.Path]*core.ContentMapper
+	// Program-level diagnostics reported when a content mapper fails fatally (reported once per mapper).
+	contentMapperDiagnostics []*ast.Diagnostic
+	finishedProcessing       bool
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -145,9 +164,10 @@ func processAllProgramFiles(
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
 		supportedExtensions: supportedExtensions,
 		supportedExtensionsWithJsonIfResolveJsonModule: supportedExtensionsWithJsonIfResolveJsonModule,
+		contentMapperExtensions:                        opts.Config.ContentMapperExtensions(),
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
-	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
+	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName, opts.Config.ContentMapperExtensions())
 	if opts.Tracing != nil {
 		defer opts.Tracing.Push(tracing.PhaseProgram, "processRootFiles", map[string]any{"count": len(rootFiles)}, false)()
 	}
@@ -367,12 +387,166 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	}
 	path := p.toPath(t.normalizedFilePath)
 	options := p.projectReferenceFileMapper.getCompilerOptionsForFile(t)
-	sourceFile := p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
+	parseOptions := ast.SourceFileParseOptions{
 		FileName:                       t.normalizedFilePath,
 		Path:                           path,
 		ExternalModuleIndicatorOptions: ast.GetExternalModuleIndicatorOptions(t.normalizedFilePath, options, t.metadata),
-	})
+	}
+	if tspath.FileExtensionIsOneOf(t.normalizedFilePath, p.contentMapperExtensions) {
+		return p.parseContentMappedFile(parseOptions)
+	}
+	return p.opts.Host.GetSourceFile(parseOptions)
+}
+
+// parseContentMappedFile reads a foreign file, transforms its content into TypeScript via the content
+// mapper runner, and parses the result, preserving the original file name and retaining the
+// untransformed text on the source file. Content mapper extensions only reach the parser when content
+// mappers are configured, and configured content mappers require a runner; a content-mapped file that
+// arrives without a runner is an invalid internal state and panics.
+//
+// When the runner returns an error the file is added with empty content and a per-file diagnostic
+// describing the failure. To avoid drowning the output when a mapper is systematically broken (e.g. a
+// version mismatch that makes it fail on every file), a mapper is disabled after maxContentMapperFailures
+// failures: at that point a single program diagnostic reports that the mapper was disabled, and every
+// subsequent file it would have handled is silently substituted with an empty file. It returns nil only
+// if the file cannot be read.
+func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	content, ok := p.opts.Host.FS().ReadFile(opts.FileName)
+	if !ok {
+		return nil
+	}
+	if p.opts.ContentMapperRunner == nil {
+		panic(fmt.Sprintf("content mapper runner is required to load content-mapped file %q", opts.FileName))
+	}
+	mapper := p.matchContentMapper(opts.FileName)
+	p.recordContentMapper(opts.Path, mapper)
+	// The mapper's identity is part of its contract (reported at initialize); it is what we attribute
+	// failures to, so we use it directly rather than substituting anything when it is absent.
+	label := mapper.Identity()
+	if p.contentMapperDisabled(mapper) {
+		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
+		return p.emptyContentMappedFile(opts, content)
+	}
+	result, err := p.opts.ContentMapperRunner.Transform(opts.FileName, content)
+	if err != nil {
+		sourceFile := p.emptyContentMappedFile(opts, content)
+		if p.recordContentMapperFailure(mapper, label) {
+			sourceFile.SetDiagnostics([]*ast.Diagnostic{
+				ast.NewDiagnostic(
+					sourceFile,
+					core.NewTextRange(0, 0),
+					diagnostics.The_content_mapper_0_failed_to_transform_this_file_Colon_1,
+					label,
+					err.Error(),
+				),
+			})
+		}
+		return sourceFile
+	}
+	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
+		sourceFile := p.emptyContentMappedFile(opts, content)
+		if p.recordContentMapperFailure(mapper, label) {
+			sourceFile.SetDiagnostics([]*ast.Diagnostic{contentMapperMappingDiagnostic(sourceFile, label, problem)})
+		}
+		return sourceFile
+	}
+	sourceFile := parser.ParseSourceFile(opts, result.Text, result.ScriptKind)
+	if result.Text != content {
+		sourceFile.SetOriginalText(content)
+	}
+	sourceFile.SetSpanMap(result.Mappings)
+	sourceFile.SetContentMapper(label)
+	if len(result.Diagnostics) > 0 {
+		// The runner produces diagnostics without a source file (it doesn't have one yet); associate
+		// them with the file now so they are reported against it.
+		for _, diagnostic := range result.Diagnostics {
+			diagnostic.SetFile(sourceFile)
+		}
+		sourceFile.SetDiagnostics(append(sourceFile.Diagnostics(), result.Diagnostics...))
+	}
 	return sourceFile
+}
+
+// contentMapperMappingDiagnostic builds the diagnostic reported against a mapper that produced an
+// invalid span map, including the offsets involved so the mapper's author can locate the problem.
+func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem *spanmap.Problem) *ast.Diagnostic {
+	loc := core.NewTextRange(0, 0)
+	switch problem.Kind {
+	case spanmap.ProblemCoverage:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_output_offset_1, label, int(problem.GenPos))
+	case spanmap.ProblemOutOfBounds:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OrigPos))
+	case spanmap.ProblemVerbatimMismatch:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_offset_1_original_offset_2, label, int(problem.GenPos), int(problem.OrigPos))
+	default:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)
+	}
+}
+
+// emptyContentMappedFile produces an empty TypeScript source file for a content-mapped file whose
+// transform could not be used, retaining the original content for diagnostics. Importers see it as an
+// empty module rather than triggering a "cannot find module" error.
+func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, content string) *ast.SourceFile {
+	sourceFile := parser.ParseSourceFile(opts, "", core.ScriptKindTS)
+	sourceFile.SetOriginalText(content)
+	return sourceFile
+}
+
+// matchContentMapper returns the configured content mapper whose extensions include fileName.
+func (p *fileLoader) matchContentMapper(fileName string) *core.ContentMapper {
+	for _, mapper := range p.opts.Config.ContentMappers() {
+		if tspath.FileExtensionIsOneOf(fileName, mapper.Extensions) {
+			return mapper
+		}
+	}
+	return nil
+}
+
+// recordContentMapper associates a content-mapped file with the mapper that produced it, so the
+// program can report the mapping without re-matching extensions.
+func (p *fileLoader) recordContentMapper(path tspath.Path, mapper *core.ContentMapper) {
+	if mapper == nil {
+		return
+	}
+	p.contentMapperMu.Lock()
+	defer p.contentMapperMu.Unlock()
+	if p.contentMapperForFile == nil {
+		p.contentMapperForFile = make(map[tspath.Path]*core.ContentMapper)
+	}
+	p.contentMapperForFile[path] = mapper
+}
+
+// contentMapperDisabled reports whether mapper has exceeded its failure budget and been disabled.
+func (p *fileLoader) contentMapperDisabled(mapper *core.ContentMapper) bool {
+	if mapper == nil {
+		return false
+	}
+	p.contentMapperMu.Lock()
+	defer p.contentMapperMu.Unlock()
+	return p.contentMapperFailures[mapper] >= maxContentMapperFailures
+}
+
+// recordContentMapperFailure counts a transform failure for mapper. It returns whether the failure
+// should be reported for this file (false once the mapper is already disabled). On the failure that
+// reaches maxContentMapperFailures it appends a single program diagnostic disabling the mapper.
+func (p *fileLoader) recordContentMapperFailure(mapper *core.ContentMapper, label string) bool {
+	p.contentMapperMu.Lock()
+	defer p.contentMapperMu.Unlock()
+	if p.contentMapperFailures == nil {
+		p.contentMapperFailures = make(map[*core.ContentMapper]int)
+	}
+	if p.contentMapperFailures[mapper] >= maxContentMapperFailures {
+		return false
+	}
+	p.contentMapperFailures[mapper]++
+	if p.contentMapperFailures[mapper] >= maxContentMapperFailures {
+		p.contentMapperDiagnostics = append(p.contentMapperDiagnostics, ast.NewCompilerDiagnostic(
+			diagnostics.The_content_mapper_0_failed_1_times_and_will_not_be_used,
+			label,
+			maxContentMapperFailures,
+		))
+	}
+	return true
 }
 
 func (p *fileLoader) isSupportedExtension(canonicalFileName string) bool {
@@ -591,7 +765,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			resolvedFileName := resolvedModule.ResolvedFileName
 			isFromNodeModulesSearch := resolvedModule.IsExternalLibraryImport
 			// Don't treat redirected files as JS files.
-			isJsFile := !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) && p.projectReferenceFileMapper.getRedirectParsedCommandLineForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName))) == nil
+			isJsFile := !resolvedModule.ResolvedUsingExtraExtensions && !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) && p.projectReferenceFileMapper.getRedirectParsedCommandLineForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName))) == nil
 			isJsFileFromNodeModules := isFromNodeModulesSearch && isJsFile && strings.Contains(resolvedFileName, "/node_modules/")
 
 			// add file to program only if:

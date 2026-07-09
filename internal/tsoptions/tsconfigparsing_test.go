@@ -30,10 +30,11 @@ import (
 )
 
 type testConfig struct {
-	jsonText       string
-	configFileName string
-	basePath       string
-	allFileList    map[string]string
+	jsonText        string
+	configFileName  string
+	basePath        string
+	allFileList     map[string]string
+	existingOptions *core.CompilerOptions
 }
 
 var parseConfigFileTextToJsonTests = []struct {
@@ -824,7 +825,7 @@ func getParsedWithJsonApi(config testConfig, host tsoptions.ParseConfigHost, bas
 		parsed,
 		host,
 		basePath,
-		nil,
+		config.existingOptions,
 		configFileName,
 		/*resolutionStack*/ nil,
 		/*extendedConfigCache*/ nil,
@@ -1020,6 +1021,7 @@ func TestContentMappers(t *testing.T) {
 			"/src/app.ts":        "export {}",
 			"/src/Component.vue": "<template></template>",
 		},
+		existingOptions: &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue},
 	}
 	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 		"json api":           getParsedWithJsonApi,
@@ -1045,6 +1047,35 @@ func TestContentMappers(t *testing.T) {
 			// The .vue file is picked up by the include glob because its extension is registered.
 			assert.Assert(t, slices.Contains(parsed.FileNames(), "/src/Component.vue"), "expected /src/Component.vue in %v", parsed.FileNames())
 			assert.Assert(t, slices.Contains(parsed.FileNames(), "/src/app.ts"), "expected /src/app.ts in %v", parsed.FileNames())
+		})
+	}
+}
+
+func TestContentMappersRequireFlag(t *testing.T) {
+	t.Parallel()
+
+	config := testConfig{
+		jsonText:       `{ "contentMappers": [{ "command": ["vue-mapper"], "extensions": [".vue"] }] }`,
+		configFileName: "tsconfig.json",
+		basePath:       "/",
+		allFileList:    map[string]string{"/app.ts": "export {}"},
+		// existingOptions omitted: --dangerouslyLoadExternalPlugins is not set.
+	}
+	expectedCode := diagnostics.Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled.Code()
+	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
+		"json api":           getParsedWithJsonApi,
+		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			allFileLists := map[string]string{"/tsconfig.json": config.jsonText}
+			maps.Copy(allFileLists, config.allFileList)
+			host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
+			parsed := getParsed(config, host, config.basePath)
+			found := slices.ContainsFunc(parsed.Errors, func(d *ast.Diagnostic) bool {
+				return d.Code() == expectedCode
+			})
+			assert.Assert(t, found, "expected diagnostic %d, got errors: %v", expectedCode, parsed.Errors)
 		})
 	}
 }
@@ -1093,10 +1124,11 @@ func TestContentMappersValidation(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 			config := testConfig{
-				jsonText:       `{ "contentMappers": ` + test.contentMappers + ` }`,
-				configFileName: "tsconfig.json",
-				basePath:       "/",
-				allFileList:    map[string]string{"/app.ts": "export {}"},
+				jsonText:        `{ "contentMappers": ` + test.contentMappers + ` }`,
+				configFileName:  "tsconfig.json",
+				basePath:        "/",
+				allFileList:     map[string]string{"/app.ts": "export {}"},
+				existingOptions: &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue},
 			}
 			for apiName, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 				"json api":           getParsedWithJsonApi,
@@ -1132,7 +1164,7 @@ func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfi
 		tsConfigSourceFile,
 		host,
 		host.GetCurrentDirectory(),
-		nil,
+		config.existingOptions,
 		nil,
 		configFileName,
 		/*resolutionStack*/ nil,

@@ -1355,6 +1355,9 @@ func parseJsonConfigFileContentWorker(
 			}
 		}
 	}
+	if len(contentMappers) > 0 && !(parsedConfig.options != nil && parsedConfig.options.DangerouslyLoadExternalPlugins.IsTrue()) {
+		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled))
+	}
 
 	getFileNames := func(basePath string) ([]string, int) {
 		parsedConfigOptions := parsedConfig.options

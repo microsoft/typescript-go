@@ -1,0 +1,24 @@
+=== Content-mapped files ===
+
+//// [Component.vue] (ScriptKind: ScriptKindTS, ContentMapper: [.vue])
+--- Original ---
+<template>
+  <div>{{ greeting }}</div>
+</template>
+
+<script lang="ts">
+const greeting: number = "not a number";
+export { greeting };
+</script>
+
+--- Transformed ---
+const greeting: number = "not a number";
+export { greeting };
+
+=== Diagnostics ===
+
+Component.vue:6:7 - error TS2322: Type 'string' is not assignable to type 'number'.
+
+6 const greeting: number = "not a number";
+        ~~~~~~~~
+

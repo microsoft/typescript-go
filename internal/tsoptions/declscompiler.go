@@ -308,6 +308,14 @@ var optionsForCompiler = []*CommandLineOption{
 		DefaultValueDescription: false,
 	},
 	{
+		Name:                    "dangerouslyLoadExternalPlugins",
+		Kind:                    CommandLineOptionTypeBoolean,
+		Category:                diagnostics.Command_line_Options,
+		IsCommandLineOnly:       true,
+		Description:             diagnostics.Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation,
+		DefaultValueDescription: false,
+	},
+	{
 		Name:                     "ignoreConfig",
 		Kind:                     CommandLineOptionTypeBoolean,
 		ShowInSimplifiedHelpView: true,

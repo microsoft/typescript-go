@@ -5352,6 +5352,10 @@ func (d *fourslashDiagnostic) Category() diagnostics.Category {
 	return d.category
 }
 
+func (d *fourslashDiagnostic) Source() string {
+	return ""
+}
+
 func (d *fourslashDiagnostic) Localize(locale locale.Locale) string {
 	return d.message
 }

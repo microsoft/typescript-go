@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
@@ -2471,8 +2472,11 @@ type SourceFile struct {
 	fileName       string // For debugging convenience
 	parseOptions   SourceFileParseOptions
 	text           string
-	Statements     *NodeList  // NodeList[*Statement]
-	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
+	originalText   string           // For content-mapped files, the untransformed source text; empty otherwise.
+	spanMap        *spanmap.SpanMap // For content-mapped files, maps transformed positions back to the original text.
+	contentMapper  string           // For content-mapped files, the identity of the mapper that produced this file.
+	Statements     *NodeList        // NodeList[*Statement]
+	EndOfFileToken *TokenNode       // TokenNode[*EndOfFileToken]
 
 	// Fields for lazily-computed data owned by packages outside ast.
 	dataMu sync.Mutex
@@ -2563,6 +2567,49 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) Text() string {
 	return node.text
+}
+
+// OriginalText returns the untransformed source text for content-mapped files, or Text() otherwise.
+func (node *SourceFile) OriginalText() string {
+	if node.originalText != "" {
+		return node.originalText
+	}
+	return node.text
+}
+
+// SetOriginalText records the untransformed source text of a content-mapped file, whose Text() holds
+// the transformed TypeScript.
+func (node *SourceFile) SetOriginalText(text string) {
+	node.originalText = text
+}
+
+// CanMapToOriginal reports whether this file carries a span map, i.e. whether positions in its
+// transformed Text() can be mapped back to the original content.
+func (node *SourceFile) CanMapToOriginal() bool {
+	return node.spanMap != nil
+}
+
+// ContentMapper returns the identity of the content mapper that produced this file, or "" if the file
+// was not produced by a content mapper (or the mapper did not identify itself).
+func (node *SourceFile) ContentMapper() string {
+	return node.contentMapper
+}
+
+// SetContentMapper records the identity of the content mapper that produced this file.
+func (node *SourceFile) SetContentMapper(identity string) {
+	node.contentMapper = identity
+}
+
+// SetSpanMap records the span map that maps positions in this file's transformed Text() back to its
+// original, untransformed content.
+func (node *SourceFile) SetSpanMap(spanMap *spanmap.SpanMap) {
+	node.spanMap = spanMap
+}
+
+// MapRangeToOriginal maps a range in this file's transformed Text() to the corresponding range in its
+// original content, along with the fidelity of the result. Files without a span map map identically.
+func (node *SourceFile) MapRangeToOriginal(r core.TextRange) (core.TextRange, spanmap.Fidelity) {
+	return node.spanMap.MapSpan(r)
 }
 
 func (node *SourceFile) FileName() string {

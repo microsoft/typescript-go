@@ -131,7 +131,7 @@ func (l *LanguageService) newSourceDefResolver(
 		options:       options,
 		getSourceFile: program.GetSourceFile,
 		resolveFrom:   resolveFrom,
-		resolver:      module.NewResolver(program.Host(), noDtsOptions, program.GetGlobalTypingsCacheLocation(), ""),
+		resolver:      module.NewResolver(program.Host(), noDtsOptions, program.GetGlobalTypingsCacheLocation(), "", program.CommandLine().ContentMapperExtensions()),
 	}
 }
 

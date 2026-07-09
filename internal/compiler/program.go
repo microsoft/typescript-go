@@ -41,6 +41,7 @@ type ProgramOptions struct {
 	TypingsLocation             string
 	ProjectName                 string
 	Tracing                     *tracing.Tracing
+	ContentMapperRunner         ContentMapperRunner
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -402,9 +403,15 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 func (p *Program) SourceFiles() []*ast.SourceFile               { return p.files }
 func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.duplicateSourceFiles }
 func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
-func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
-func (p *Program) Host() CompilerHost                           { return p.opts.Host }
-func (p *Program) Tracing() *tracing.Tracing                    { return p.opts.Tracing }
+
+// GetContentMapper returns the content mapper that produced the given source file, or nil if the
+// file was not produced by a content mapper.
+func (p *Program) GetContentMapper(file *ast.SourceFile) *core.ContentMapper {
+	return p.contentMapperForFile[file.Path()]
+}
+func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
+func (p *Program) Host() CompilerHost                        { return p.opts.Host }
+func (p *Program) Tracing() *tracing.Tracing                 { return p.opts.Tracing }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -674,8 +681,9 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(core.Concatenate(
+	return SortAndDeduplicateDiagnostics(slices.Concat(
 		p.programDiagnostics,
+		p.contentMapperDiagnostics,
 		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics(),
 	))
 }

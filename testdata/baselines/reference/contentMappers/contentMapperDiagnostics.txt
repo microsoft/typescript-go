@@ -1,0 +1,22 @@
+=== Content-mapped files ===
+
+//// [Component.vue] (ScriptKind: ScriptKindTS, ContentMapper: [.vue])
+--- Original ---
+<template>
+  <div>{{ greeting }}</div>
+</template>
+
+<script lang="ts">
+export const greeting = "hello" oops
+</script>
+
+--- Transformed ---
+export const greeting = "hello";
+
+=== Diagnostics ===
+
+Component.vue:6:33 - error vue1002: Unexpected token.
+
+6 export const greeting = "hello" oops
+                                  ~~~~
+

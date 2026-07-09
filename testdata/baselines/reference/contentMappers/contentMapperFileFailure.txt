@@ -1,0 +1,20 @@
+=== Content-mapped files ===
+
+//// [Component.vue] (ScriptKind: ScriptKindTS, ContentMapper: [.vue])
+--- Original ---
+<template>original</template>
+--- Transformed ---
+
+
+=== Diagnostics ===
+
+Component.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: broken pipe
+
+1 
+  ~
+
+app.ts:1:26 - error TS2306: File '/src/Component.vue' is not a module.
+
+1 import { greeting } from "./Component.vue";
+                           ~~~~~~~~~~~~~~~~~
+
