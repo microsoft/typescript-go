@@ -278,6 +278,34 @@ describe("SourceFile", () => {
         }
     });
 
+    test("getSourceFiles returns a source file for every program file name", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({
+                compilerOptions: {
+                    moduleResolution: "node10",
+                    noLib: true,
+                },
+            }),
+            "/src/index.ts": `import { foo } from "./foo";\nimport { bar } from "my-lib";\nexport const result = foo + bar;`,
+            "/src/foo.ts": `export const foo = 42;`,
+            "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
+            "/node_modules/my-lib/index.d.ts": `export declare const bar: number;`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const fileNames = project.program.getSourceFileNames();
+            const sourceFiles = project.program.getSourceFiles();
+            assert.deepEqual(
+                sourceFiles.map(sourceFile => sourceFile.fileName),
+                fileNames,
+            );
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("source file metadata identifies external library and default library files", () => {
         const api = spawnAPI({
             "/tsconfig.json": JSON.stringify({

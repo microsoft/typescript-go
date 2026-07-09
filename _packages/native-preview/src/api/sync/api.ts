@@ -657,6 +657,23 @@ export class Program {
     }
 
     /**
+     * Returns all source files in the program. Convenience wrapper over
+     * {@link getSourceFileNames} and {@link getSourceFile}; any file that cannot
+     * be loaded is omitted.
+     */
+    getSourceFiles(): readonly SourceFile[] {
+        const fileNames = this.getSourceFileNames();
+        const result: SourceFile[] = [];
+        for (const fileName of fileNames) {
+            const sourceFile = this.getSourceFile(fileName);
+            if (sourceFile) {
+                result.push(sourceFile);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Returns program-stored metadata for the given source file, or `undefined` if the file
      * is not part of the program. Metadata is fetched lazily per file and cached on this
      * `Program` instance.
