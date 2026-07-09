@@ -48,6 +48,8 @@ import {
     createUnionTypeNode,
 } from "@typescript/native-preview/unstable/ast/factory";
 import { visitEachChild } from "@typescript/native-preview/unstable/ast/visitor";
+import { createVirtualFileSystem } from "@typescript/native-preview/unstable/fs";
+import type { FileSystem } from "@typescript/native-preview/unstable/fs";
 import {
     API,
     type BigIntLiteralType,
@@ -75,8 +77,6 @@ import {
     type TypeReference,
     type UnionOrIntersectionType,
 } from "@typescript/native-preview/unstable/sync";
-import { createVirtualFileSystem } from "@typescript/native-preview/unstable/fs";
-import type { FileSystem } from "@typescript/native-preview/unstable/fs";
 import assert from "node:assert";
 import { globSync } from "node:fs";
 import { resolve } from "node:path";
