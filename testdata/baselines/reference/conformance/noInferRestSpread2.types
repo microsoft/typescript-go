@@ -1,0 +1,118 @@
+//// [tests/cases/conformance/types/typeRelationships/typeInference/noInferRestSpread2.ts] ////
+
+=== noInferRestSpread2.ts ===
+// https://github.com/microsoft/TypeScript/issues/63627
+
+function arr1(a: [number, ...NoInfer<[]>]) {}
+>arr1 : (a: [number, ...NoInfer<[]>]) => void
+>a : [number]
+
+arr1([1]);
+>arr1([1]) : void
+>arr1 : (a: [number, ...NoInfer<[]>]) => void
+>[1] : [number]
+>1 : 1
+
+function arr2(a: [number, ...[]]) {}
+>arr2 : (a: [number, ...[]]) => void
+>a : [number]
+
+arr2([1]);
+>arr2([1]) : void
+>arr2 : (a: [number, ...[]]) => void
+>[1] : [number]
+>1 : 1
+
+function fun1(a: (x: number, ...o: NoInfer<[]>) => void) {}
+>fun1 : (a: (x: number, ...o: NoInfer<[]>) => void) => void
+>a : (x: number) => void
+>x : number
+>o : []
+
+fun1(x => {});
+>fun1(x => {}) : void
+>fun1 : (a: (x: number, ...o: NoInfer<[]>) => void) => void
+>x => {} : (x: number) => void
+>x : number
+
+function fun2(a: (x: number, ...o: []) => void) {}
+>fun2 : (a: (x: number, ...o: []) => void) => void
+>a : (x: number) => void
+>x : number
+>o : []
+
+fun2(x => {});
+>fun2(x => {}) : void
+>fun2 : (a: (x: number, ...o: []) => void) => void
+>x => {} : (x: number) => void
+>x : number
+
+function func1<A extends unknown[]>(
+>func1 : <A extends unknown[]>(args: A, fn: (x: number, ...args: NoInfer<A>) => void) => void
+
+  args: A,
+>args : A
+
+  fn: (x: number, ...args: NoInfer<A>) => void,
+>fn : (x: number, ...args: NoInfer<A>) => void
+>x : number
+>args : NoInfer<A>
+
+) {}
+
+func1([] as const, x => {});
+>func1([] as const, x => {}) : void
+>func1 : <A extends unknown[]>(args: A, fn: (x: number, ...args: NoInfer<A>) => void) => void
+>[] as const : []
+>[] : []
+>x => {} : (x: number) => void
+>x : number
+
+function func2<A extends unknown[]>(
+>func2 : <A extends unknown[]>(args: A, fn: (...args: NoInfer<A>) => void) => void
+
+  args: A,
+>args : A
+
+  fn: (...args: NoInfer<A>) => void,
+>fn : (...args: NoInfer<A>) => void
+>args : NoInfer<A>
+
+) {}
+
+function foo(u: number, v: number) {
+>foo : (u: number, v: number) => void
+>u : number
+>v : number
+
+  func2([u, v] as const, () => {});
+>func2([u, v] as const, () => {}) : void
+>func2 : <A extends unknown[]>(args: A, fn: (...args: NoInfer<A>) => void) => void
+>[u, v] as const : [number, number]
+>[u, v] : [number, number]
+>u : number
+>v : number
+>() => {} : () => void
+
+  func2([u, v] as const, (x: number) => {});
+>func2([u, v] as const, (x: number) => {}) : void
+>func2 : <A extends unknown[]>(args: A, fn: (...args: NoInfer<A>) => void) => void
+>[u, v] as const : [number, number]
+>[u, v] : [number, number]
+>u : number
+>v : number
+>(x: number) => {} : (x: number) => void
+>x : number
+
+  func2([u, v] as const, (x: number, y: number) => {});
+>func2([u, v] as const, (x: number, y: number) => {}) : void
+>func2 : <A extends unknown[]>(args: A, fn: (...args: NoInfer<A>) => void) => void
+>[u, v] as const : [number, number]
+>[u, v] : [number, number]
+>u : number
+>v : number
+>(x: number, y: number) => {} : (x: number, y: number) => void
+>x : number
+>y : number
+}
+
