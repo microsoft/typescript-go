@@ -2,118 +2,19 @@
 
 === nullishCoalescingAlwaysNullFalsePositive.ts ===
 // Repro for https://github.com/microsoft/TypeScript/issues/63642
-// TS2871 false positive: conditional with ?? null in true branch over spread-of-union
+// TS2871 false positive: conditional with ?? null in true branch
 
-const make = (s: string | null) =>
->make : (s: string | null) => { paymentIntentId: string | null; transferGroup: string | null; }
->(s: string | null) =>  s === null    ? { paymentIntentId: null, transferGroup: null }    : { paymentIntentId: s as string | null, transferGroup: s as string | null } : (s: string | null) => { paymentIntentId: string | null; transferGroup: string | null; }
->s : string | null
+declare let a: unknown, b: unknown;
+>a : unknown
+>b : unknown
 
-  s === null
->s === null    ? { paymentIntentId: null, transferGroup: null }    : { paymentIntentId: s as string | null, transferGroup: s as string | null } : { paymentIntentId: string | null; transferGroup: string | null; }
->s === null : boolean
->s : string | null
-
-    ? { paymentIntentId: null, transferGroup: null }
->{ paymentIntentId: null, transferGroup: null } : { paymentIntentId: null; transferGroup: null; }
->paymentIntentId : null
->transferGroup : null
-
-    : { paymentIntentId: s as string | null, transferGroup: s as string | null }
->{ paymentIntentId: s as string | null, transferGroup: s as string | null } : { paymentIntentId: string | null; transferGroup: string | null; }
->paymentIntentId : string | null
->s as string | null : string | null
->s : string
->transferGroup : string | null
->s as string | null : string | null
->s : string
-
-const decorated = [null, 'pi_1'].map(s => ({ tag: s, ...make(s) }))
->decorated : { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }[]
->[null, 'pi_1'].map(s => ({ tag: s, ...make(s) })) : { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }[]
->[null, 'pi_1'].map : <U>(callbackfn: (value: string | null, index: number, array: (string | null)[]) => U, thisArg?: any) => U[]
->[null, 'pi_1'] : (string | null)[]
->'pi_1' : "pi_1"
->map : <U>(callbackfn: (value: string | null, index: number, array: (string | null)[]) => U, thisArg?: any) => U[]
->s => ({ tag: s, ...make(s) }) : (s: string | null) => { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }
->s : string | null
->({ tag: s, ...make(s) }) : { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }
->{ tag: s, ...make(s) } : { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }
->tag : string | null
->s : string | null
->make(s) : { paymentIntentId: string | null; transferGroup: string | null; }
->make : (s: string | null) => { paymentIntentId: string | null; transferGroup: string | null; }
->s : string | null
-
-const localTxMap = new Map<string, string>()
->localTxMap : Map<string, string>
->new Map<string, string>() : Map<string, string>
->Map : MapConstructor
-
-const groupMap = new Map<string, string>()
->groupMap : Map<string, string>
->new Map<string, string>() : Map<string, string>
->Map : MapConstructor
-
-// Should not produce TS2871 on the parenthesized conditional
-const rows = decorated.map(({ paymentIntentId, transferGroup }) => ({
->rows : { localTransactionId: string | null; }[]
->decorated.map(({ paymentIntentId, transferGroup }) => ({  localTransactionId: (paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null),})) : { localTransactionId: string | null; }[]
->decorated.map : <U>(callbackfn: (value: { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }, index: number, array: { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }[]) => U, thisArg?: any) => U[]
->decorated : { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }[]
->map : <U>(callbackfn: (value: { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }, index: number, array: { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }[]) => U, thisArg?: any) => U[]
->({ paymentIntentId, transferGroup }) => ({  localTransactionId: (paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null),}) : ({ paymentIntentId, transferGroup }: { paymentIntentId: string | null; transferGroup: string | null; tag: string | null; }) => { localTransactionId: string | null; }
->paymentIntentId : string | null
->transferGroup : string | null
->({  localTransactionId: (paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null),}) : { localTransactionId: string | null; }
->{  localTransactionId: (paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null),} : { localTransactionId: string | null; }
-
-  localTransactionId: (paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)
->localTransactionId : string | null
->(paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null) : string | null
->(paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null) : string | null
->paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null : string | null
->paymentIntentId : string | null
->localTxMap.get(paymentIntentId) ?? null : string | null
->localTxMap.get(paymentIntentId) : string | undefined
->localTxMap.get : (key: string) => string | undefined
->localTxMap : Map<string, string>
->get : (key: string) => string | undefined
->paymentIntentId : string
-
-    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null),
->(transferGroup ? groupMap.get(transferGroup) ?? null : null) : string | null
->transferGroup ? groupMap.get(transferGroup) ?? null : null : string | null
->transferGroup : string | null
->groupMap.get(transferGroup) ?? null : string | null
->groupMap.get(transferGroup) : string | undefined
->groupMap.get : (key: string) => string | undefined
->groupMap : Map<string, string>
->get : (key: string) => string | undefined
->transferGroup : string
-
-}))
-console.log(rows)
->console.log(rows) : void
->console.log : (...data: any[]) => void
->console : Console
->log : (...data: any[]) => void
->rows : { localTransactionId: string | null; }[]
-
-// Additional cases: ?? semantics
-declare function maybeString(): string | undefined;
->maybeString : () => string | undefined
-
-// x ?? null: can be non-null when x returns a string — NOT always nullish
-const a = (maybeString() ?? null) ?? "fallback";
->a : string
->(maybeString() ?? null) ?? "fallback" : string
->(maybeString() ?? null) : string | null
->maybeString() ?? null : string | null
->maybeString() : string | undefined
->maybeString : () => string | undefined
->"fallback" : "fallback"
-
-// null ?? null: always nullish (should still error on the left side of ??)
-// (no assertion here, just ensuring no false positive from above)
+const p = (a ? b ?? null : null) ?? 0;
+>p : {}
+>(a ? b ?? null : null) ?? 0 : {}
+>(a ? b ?? null : null) : {} | null
+>a ? b ?? null : null : {} | null
+>a : unknown
+>b ?? null : {} | null
+>b : unknown
+>0 : 0
 
