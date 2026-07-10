@@ -30,6 +30,7 @@ import {
     type TypeNode,
     unescapeLeadingUnderscores,
 } from "../../ast/index.ts";
+import { assertNever } from "../../internal/utils.ts";
 import {
     encodeNode,
     uint8ArrayToBase64,
@@ -596,25 +597,18 @@ export class Project {
 
     getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[] {
         const requestActions: ImportAdderActionRequest[] = actions.map(action => {
-            const requestAction = action as ImportAdderAction & { kind: string; symbol?: Symbol; };
-            switch (requestAction.kind) {
+            switch (action.kind) {
                 case "importSymbol":
-                    const symbol = requestAction.symbol?.id;
-                    if (symbol === undefined) {
-                        return {
-                            kind: "importSymbol",
-                        } as ImportAdderActionRequest;
-                    }
                     const importSymbolAction: ImportSymbolActionRequest = {
                         kind: "importSymbol",
-                        symbol,
+                        symbol: action.symbol.id,
                     };
                     if (action.isValidTypeOnlyUseSite !== undefined) {
                         importSymbolAction.isValidTypeOnlyUseSite = action.isValidTypeOnlyUseSite;
                     }
                     return importSymbolAction;
                 default:
-                    return requestAction as unknown as ImportAdderActionRequest;
+                    return assertNever(action.kind);
             }
         });
 

@@ -297,7 +297,7 @@ describe("Snapshot", () => {
 
             await assert.rejects( // @sync: assert.throws(
                 () => project.getImportAdderEdits("/src/index.ts", [{ kind: "unknown", symbol: symbol.id } as unknown as ImportAdderAction]),
-                /unknown import adder action kind "unknown"/,
+                /Debug Failure\. Illegal value: "unknown"/,
             );
             await assert.rejects( // @sync: assert.throws(
                 () => project.getImportAdderEdits("/src/index.ts", [{ kind: "importSymbol", symbol: { ...symbol, id: 999_999_999 } } as unknown as ImportAdderAction]),
