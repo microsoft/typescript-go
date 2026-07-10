@@ -958,6 +958,16 @@ function patchAndPreprocessModel() {
             });
         }
 
+        // Patch CodeActionParams so clients can provide per-document editor formatting options.
+        if (structure.name === "CodeActionParams") {
+            structure.properties.push({
+                name: "formattingOptions",
+                type: { kind: "reference", name: "FormattingOptions" },
+                optional: true,
+                documentation: "Formatting options for edits produced by the code action.",
+            });
+        }
+
         // Patch Hover to add canIncreaseVerbosity
         if (structure.name === "Hover") {
             structure.properties.push(
