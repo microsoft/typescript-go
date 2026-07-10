@@ -121,14 +121,14 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 	close(t.reportDone)
 }
 
-func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	// Wait on upstream tasks to complete
 	t.waitOnUpstream()
 	if t.pending.Load() {
 		t.status = t.getUpToDateStatus(orchestrator, path)
 		t.reportUpToDateStatus(orchestrator)
 		if !t.handleStatusThatDoesntRequireBuild(orchestrator) {
-			t.compileAndEmit(orchestrator, path)
+			t.compileAndEmit(ctx, orchestrator, path)
 			t.updateDownstream(orchestrator, path)
 		} else {
 			if t.resolved != nil {
@@ -188,7 +188,7 @@ func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 	}
 }
 
-func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	t.errors = nil
 	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
 		t.result.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
@@ -217,9 +217,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	t.result.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
 	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
 
-	// The build orchestrator does not thread a per-task context today; cancellation
-	// for `tsc -b` is handled at the orchestrator level.
-	result, statistics := tsc.EmitAndReportStatistics(context.Background(), tsc.EmitInput{
+	result, statistics := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
 		Sys:                orchestrator.opts.Sys,
 		ProgramLike:        t.result.program,
 		Program:            program,
@@ -236,6 +234,14 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	})
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
+	if result.Status == tsc.ExitStatusCanceled {
+		// The compile was canceled (e.g. SIGINT). Its result is incomplete
+		// (result.EmitResult is nil), so do not update output timestamps or mark the
+		// project up-to-date, and leave buildKind as None so it is not counted as
+		// built. report() propagates the canceled exit status (it dominates via max),
+		// and rangeTask stops scheduling further projects.
+		return
+	}
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()
 	if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
 		(len(result.EmitResult.EmittedFiles) > 0 || t.status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {

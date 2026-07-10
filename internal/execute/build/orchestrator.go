@@ -229,12 +229,16 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}
 	o.GenerateGraph(nil)
-	result := o.buildOrClean()
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
+		// In watch mode the initial build, like each watch cycle, runs to completion;
+		// cancellation is observed at the RunLoop boundary (see the TODO in DoCycle).
+		result := o.buildOrClean(context.Background())
 		o.Watch(ctx)
 		result.Watcher = o
+		return result
 	}
-	return result
+	// Non-watch `tsc -b`: honor cancellation so a long build responds to SIGINT.
+	return o.buildOrClean(ctx)
 }
 
 func (o *Orchestrator) Watch(ctx context.Context) {
@@ -265,7 +269,7 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 func (o *Orchestrator) updateWatch() {
 	oldCache := o.host.mTimes
 	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
-	o.rangeTask(func(path tspath.Path, task *BuildTask) {
+	o.rangeTask(context.Background(), func(_ context.Context, path tspath.Path, task *BuildTask) {
 		task.updateWatch(o, oldCache)
 	})
 }
@@ -390,7 +394,7 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 		for eventPath := range changedPaths {
 			if o.host.FS().DirectoryExists(eventPath) {
 				if o.wm.IsPathUnderWatch(eventPath, opts) {
-					o.rangeTask(func(path tspath.Path, task *BuildTask) {
+					o.rangeTask(context.Background(), func(_ context.Context, path tspath.Path, task *BuildTask) {
 						task.resetStatus()
 						task.reportDone = make(chan struct{})
 						task.done = make(chan struct{})
@@ -554,7 +558,7 @@ func (o *Orchestrator) DoCycle() {
 
 	if overflow {
 		// Overflow: reset all tasks to force a full rebuild.
-		o.rangeTask(func(path tspath.Path, task *BuildTask) {
+		o.rangeTask(context.Background(), func(_ context.Context, path tspath.Path, task *BuildTask) {
 			task.resetConfig(o, path)
 			task.reportDone = make(chan struct{})
 			task.done = make(chan struct{})
@@ -577,7 +581,11 @@ func (o *Orchestrator) DoCycle() {
 		o.GenerateGraphReusingOldTasks()
 	}
 
-	o.buildOrClean()
+	// TODO: like the CLI watcher, a build watch cycle runs to completion; cancellation
+	// is only observed between cycles in WatchManager.RunLoop. Thread the RunLoop context
+	// through DoCycle to make a long rebuild interruptible (and handle ExitStatusCanceled
+	// by discarding the partial cycle).
+	o.buildOrClean(context.Background())
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
@@ -588,7 +596,7 @@ func (o *Orchestrator) DoCycle() {
 	o.resetCaches()
 }
 
-func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
+func (o *Orchestrator) buildOrClean(ctx context.Context) tsc.CommandLineResult {
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() && o.opts.Command.BuildOptions.Verbose.IsTrue() {
 		o.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
@@ -600,9 +608,15 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 	var buildResult orchestratorResult
 	if len(o.errors) == 0 {
 		buildResult.statistics.Projects = len(o.Order())
-		o.rangeTask(func(path tspath.Path, task *BuildTask) {
-			o.buildOrCleanProject(task, path, &buildResult)
+		o.rangeTask(ctx, func(ctx context.Context, path tspath.Path, task *BuildTask) {
+			o.buildOrCleanProject(ctx, task, path, &buildResult)
 		})
+		if ctx.Err() != nil {
+			// The build was canceled (e.g. SIGINT). rangeTask stops scheduling further
+			// projects; report the aborted status even if cancellation landed before any
+			// project produced one.
+			buildResult.result.Status = tsc.ExitStatusCanceled
+		}
 	} else {
 		// Circularity errors prevent any project from being built
 		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
@@ -616,7 +630,7 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 	return buildResult.result
 }
 
-func (o *Orchestrator) rangeTask(f func(path tspath.Path, task *BuildTask)) {
+func (o *Orchestrator) rangeTask(ctx context.Context, f func(ctx context.Context, path tspath.Path, task *BuildTask)) {
 	numRoutines := 4
 	if o.opts.Command.CompilerOptions.SingleThreaded.IsTrue() {
 		numRoutines = 1
@@ -637,7 +651,13 @@ func (o *Orchestrator) rangeTask(f func(path tspath.Path, task *BuildTask)) {
 	}
 	runTask := func() {
 		for path, task, ok := getNextTask(); ok; path, task, ok = getNextTask() {
-			f(path, task)
+			// Stop scheduling further projects once canceled (e.g. SIGINT). Tasks
+			// already in flight finish on their own; the compile they run is
+			// interruptible via the context threaded into compileAndEmit.
+			if ctx.Err() != nil {
+				return
+			}
+			f(ctx, path, task)
 		}
 	}
 
@@ -652,12 +672,12 @@ func (o *Orchestrator) rangeTask(f func(path tspath.Path, task *BuildTask)) {
 	}
 }
 
-func (o *Orchestrator) buildOrCleanProject(task *BuildTask, path tspath.Path, buildResult *orchestratorResult) {
+func (o *Orchestrator) buildOrCleanProject(ctx context.Context, task *BuildTask, path tspath.Path, buildResult *orchestratorResult) {
 	task.result = &taskResult{}
 	task.result.reportStatus = o.createBuilderStatusReporter(task)
 	task.result.diagnosticReporter = o.createDiagnosticReporter(task)
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() {
-		task.buildProject(o, path)
+		task.buildProject(ctx, o, path)
 	} else {
 		task.cleanProject(o, path)
 	}

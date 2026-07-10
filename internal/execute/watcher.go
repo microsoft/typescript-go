@@ -368,8 +368,15 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventK
 }
 
 func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
-	// Watch-cycle cancellation is handled at the RunLoop level (see WatchManager.RunLoop),
-	// so the per-cycle compile runs to completion.
+	// Watch-cycle cancellation is currently handled only at the RunLoop level (see
+	// WatchManager.RunLoop), which checks ctx.Done() between cycles; a compile already
+	// in flight runs to completion.
+	//
+	// TODO: thread the RunLoop context through DoCycle -> doBuild -> compileAndEmit and
+	// pass it here instead of context.Background(), so a long rebuild becomes
+	// interruptible at the checker's granularity. Doing so also requires handling an
+	// ExitStatusCanceled result (discard the partial cycle, keep the prior program)
+	// rather than reporting incomplete diagnostics.
 	return tsc.EmitFilesAndReportErrors(context.Background(), tsc.EmitInput{
 		Sys:                w.sys,
 		ProgramLike:        w.program,
