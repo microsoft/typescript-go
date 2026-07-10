@@ -293,7 +293,7 @@ func performIncrementalCompilation(
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	mapperRunner := tsc.ResolveContentMapperRunner(testing, config)
 	buildInfoReadStart := sys.Now()
-	oldProgram := incremental.ReadBuildInfoProgram(config, mapperRunner, incremental.NewBuildInfoReader(host), host)
+	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
 
 	tr := startTracingIfNeeded(sys, config, testing)

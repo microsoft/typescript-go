@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -85,18 +86,18 @@ func parseProjectReference(json any) []*core.ProjectReference {
 	return result
 }
 
-func parseContentMapper(json any) (*core.ContentMapper, []*ast.Diagnostic) {
+func parseContentMapper(json any) (*contentmapper.Mapper, []*ast.Diagnostic) {
 	v, ok := json.(*collections.OrderedMap[string, any])
 	if !ok {
 		return nil, nil
 	}
 	var errors []*ast.Diagnostic
-	mapper := &core.ContentMapper{}
-	if command, ok := v.Get("command"); ok {
-		if strs, valid := parseStringArrayStrict(command); valid {
-			mapper.Command = strs
+	mapper := &contentmapper.Mapper{}
+	if pkg, ok := v.Get("package"); ok {
+		if str, valid := pkg.(string); valid && str != "" {
+			mapper.Package = str
 		} else {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.command", "string[]"))
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.package", "string"))
 		}
 	}
 	if extensions, ok := v.Get("extensions"); ok {

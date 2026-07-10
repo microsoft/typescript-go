@@ -8,7 +8,7 @@
 
 === Diagnostics ===
 
-Component.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: broken pipe
+Component.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: broken pipe
 
 1 
   ~

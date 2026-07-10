@@ -111,6 +111,11 @@ type Fields struct {
 	HeaderFields
 	PathFields
 	DependencyFields
+	ContentMapper Expected[ContentMapperFields] `json:"tsContentMapper"`
+}
+
+type ContentMapperFields struct {
+	Exec Expected[[]string] `json:"exec"`
 }
 
 func Parse(data []byte) (Fields, error) {

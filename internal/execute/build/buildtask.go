@@ -201,7 +201,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	mapperRunner := tsc.ResolveContentMapperRunner(orchestrator.opts.Testing, t.resolved)
 	var oldProgram *incremental.Program
 	if !orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
-		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, mapperRunner, orchestrator.host, orchestrator.host)
+		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
 	}
 	compileTimes.BuildInfoReadTime = orchestrator.opts.Sys.Now().Sub(buildInfoReadStart)
 	parseStart := orchestrator.opts.Sys.Now()
@@ -346,8 +346,7 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	}
 
 	// If a configured content mapper's identity has changed, files it produced may be stale.
-	mapperRunner := tsc.ResolveContentMapperRunner(orchestrator.opts.Testing, t.resolved)
-	if !buildInfo.ContentMapperIdentitiesMatch(compiler.ContentMapperIdentities(mapperRunner, t.resolved)) {
+	if !buildInfo.ContentMapperIdentitiesMatch(incremental.ContentMapperIdentities(t.resolved)) {
 		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
 	}
 

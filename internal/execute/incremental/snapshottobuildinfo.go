@@ -52,7 +52,7 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 	buildInfo.Errors = snapshot.hasErrors.IsTrue()
 	buildInfo.SemanticErrors = snapshot.hasSemanticErrors
 	buildInfo.CheckPending = snapshot.checkPending
-	buildInfo.ContentMapperIdentities = program.ContentMapperIdentities()
+	buildInfo.ContentMapperIdentities = ContentMapperIdentities(program.CommandLine())
 	to.setPackageJsons()
 	return buildInfo
 }

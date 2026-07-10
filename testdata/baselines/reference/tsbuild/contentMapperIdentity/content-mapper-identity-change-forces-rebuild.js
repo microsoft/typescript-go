@@ -5,13 +5,19 @@ Input::
 export const app = 1;
 //// [/home/src/workspaces/project/index.ts] *new* 
 export const local = 1;
+//// [/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json] *new* 
+{
+    "name": "vue-ts-mapper",
+    "version": "1.0.0",
+    "tsContentMapper": { "exec": ["node", "./mapper.js"] }
+}
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
     "compilerOptions": {
         "incremental": true
     },
     "contentMappers": [
-        { "command": ["vue"], "extensions": [".vue"] }
+        { "package": "vue-ts-mapper", "extensions": [".vue"] }
     ]
 }
 
@@ -55,7 +61,7 @@ export const app = 1;
 export const local = 1;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue@1.0.0"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"},"652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
+{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue-ts-mapper@1.0.0"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"},"652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -105,7 +111,7 @@ export const local = 1;
       "impliedNodeFormat": "CommonJS"
     }
   ],
-  "size": 1056
+  "size": 1066
 }
 
 tsconfig.json::
@@ -129,7 +135,13 @@ Output::
 
 
 
-Edit [1]:: bump content mapper version
+Edit [1]:: upgrade the content mapper package to a new version
+//// [/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json] *modified* 
+{
+    "name": "vue-ts-mapper",
+    "version": "2.0.0",
+    "tsContentMapper": { "exec": ["node", "./mapper.js"] }
+}
 
 tsgo --build --verbose --dangerouslyLoadExternalPlugins
 ExitStatus:: Success
@@ -144,7 +156,7 @@ Output::
 //// [/home/src/workspaces/project/app.vue.js] *rewrite with same content*
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue@2.0.0"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"},"652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
+{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue-ts-mapper@2.0.0"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"},"652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
 tsconfig.json::

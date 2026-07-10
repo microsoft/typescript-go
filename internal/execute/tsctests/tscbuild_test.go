@@ -309,20 +309,29 @@ func TestBuildContentMapperIdentity(t *testing.T) {
 						"incremental": true
 					},
 					"contentMappers": [
-						{ "command": ["vue"], "extensions": [".vue"] }
+						{ "package": "vue-ts-mapper", "extensions": [".vue"] }
 					]
 				}`),
 				"/home/src/workspaces/project/index.ts": `export const local = 1;`,
 				"/home/src/workspaces/project/app.vue":  `export const app = 1;`,
+				"/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json": stringtestutil.Dedent(`
+				{
+					"name": "vue-ts-mapper",
+					"version": "1.0.0",
+					"tsContentMapper": { "exec": ["node", "./mapper.js"] }
+				}`),
 			},
-			commandLineArgs:      []string{"--build", "--verbose", "--dangerouslyLoadExternalPlugins"},
-			contentMapperVersion: "1.0.0",
+			commandLineArgs: []string{"--build", "--verbose", "--dangerouslyLoadExternalPlugins"},
 			edits: []*tscEdit{
 				noChange,
 				{
-					caption: "bump content mapper version",
+					caption: "upgrade the content mapper package to a new version",
 					edit: func(sys *TestSys) {
-						sys.contentMapperVersion = "2.0.0"
+						sys.replaceFileText(
+							"/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json",
+							`"version": "1.0.0"`,
+							`"version": "2.0.0"`,
+						)
 					},
 				},
 				noChange,

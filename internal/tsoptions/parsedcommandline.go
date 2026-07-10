@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/glob"
@@ -309,7 +310,7 @@ func (p *ParsedCommandLine) ProjectReferences() []*core.ProjectReference {
 	return p.ParsedConfig.ProjectReferences
 }
 
-func (p *ParsedCommandLine) ContentMappers() []*core.ContentMapper {
+func (p *ParsedCommandLine) ContentMappers() []*contentmapper.Mapper {
 	if p == nil || p.ParsedConfig == nil {
 		return nil
 	}
@@ -319,7 +320,7 @@ func (p *ParsedCommandLine) ContentMappers() []*core.ContentMapper {
 // ContentMapperExtensions returns the flattened list of file extensions registered by the
 // config's content mappers.
 func (p *ParsedCommandLine) ContentMapperExtensions() []string {
-	return core.FlatMap(p.ContentMappers(), func(m *core.ContentMapper) []string {
+	return core.FlatMap(p.ContentMappers(), func(m *contentmapper.Mapper) []string {
 		return m.Extensions
 	})
 }

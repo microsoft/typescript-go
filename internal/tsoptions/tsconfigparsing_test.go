@@ -1011,15 +1011,16 @@ func TestContentMappers(t *testing.T) {
 	config := testConfig{
 		jsonText: `{
 			"contentMappers": [
-				{ "command": ["vue-mapper"], "extensions": [".vue"] }
+				{ "package": "vue-mapper", "extensions": [".vue"] }
 			],
 			"include": ["src"]
 		}`,
 		configFileName: "tsconfig.json",
 		basePath:       "/",
 		allFileList: map[string]string{
-			"/src/app.ts":        "export {}",
-			"/src/Component.vue": "<template></template>",
+			"/src/app.ts":                           "export {}",
+			"/src/Component.vue":                    "<template></template>",
+			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"] } }`,
 		},
 		existingOptions: &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue},
 	}
@@ -1040,9 +1041,15 @@ func TestContentMappers(t *testing.T) {
 
 			mappers := parsed.ContentMappers()
 			assert.Equal(t, len(mappers), 1)
-			assert.DeepEqual(t, mappers[0].Command, []string{"vue-mapper"})
+			assert.Equal(t, mappers[0].Package, "vue-mapper")
 			assert.DeepEqual(t, mappers[0].Extensions, []string{".vue"})
 			assert.DeepEqual(t, parsed.ContentMapperExtensions(), []string{".vue"})
+
+			// The package.json is resolved during parsing, populating name, version, and exec.
+			assert.Equal(t, mappers[0].Name, "vue-mapper")
+			assert.Equal(t, mappers[0].Version, "1.2.3")
+			assert.DeepEqual(t, mappers[0].Exec, []string{"node", "./mapper.js"})
+			assert.Equal(t, mappers[0].PackageDirectory, "/node_modules/vue-mapper")
 
 			// The .vue file is picked up by the include glob because its extension is registered.
 			assert.Assert(t, slices.Contains(parsed.FileNames(), "/src/Component.vue"), "expected /src/Component.vue in %v", parsed.FileNames())
@@ -1055,7 +1062,7 @@ func TestContentMappersRequireFlag(t *testing.T) {
 	t.Parallel()
 
 	config := testConfig{
-		jsonText:       `{ "contentMappers": [{ "command": ["vue-mapper"], "extensions": [".vue"] }] }`,
+		jsonText:       `{ "contentMappers": [{ "package": "vue-mapper", "extensions": [".vue"] }] }`,
 		configFileName: "tsconfig.json",
 		basePath:       "/",
 		allFileList:    map[string]string{"/app.ts": "export {}"},
@@ -1090,32 +1097,32 @@ func TestContentMappersValidation(t *testing.T) {
 	}{
 		{
 			name:           "extension without leading dot",
-			contentMappers: `[{ "command": ["vue-mapper"], "extensions": ["vue"] }]`,
+			contentMappers: `[{ "package": "vue-mapper", "extensions": ["vue"] }]`,
 			expectedCode:   diagnostics.Content_mapper_file_extension_0_must_begin_with_a.Code(),
 		},
 		{
 			name:           "built-in extension",
-			contentMappers: `[{ "command": ["x"], "extensions": [".ts"] }]`,
+			contentMappers: `[{ "package": "x", "extensions": [".ts"] }]`,
 			expectedCode:   diagnostics.Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper.Code(),
 		},
 		{
 			name:           "duplicate extension across mappers",
-			contentMappers: `[{ "command": ["a"], "extensions": [".vue"] }, { "command": ["b"], "extensions": [".vue"] }]`,
+			contentMappers: `[{ "package": "a", "extensions": [".vue"] }, { "package": "b", "extensions": [".vue"] }]`,
 			expectedCode:   diagnostics.Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper.Code(),
 		},
 		{
 			name:           "extensions is not an array",
-			contentMappers: `[{ "command": ["x"], "extensions": ".vue" }]`,
+			contentMappers: `[{ "package": "x", "extensions": ".vue" }]`,
 			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
 		},
 		{
 			name:           "extensions contains a non-string",
-			contentMappers: `[{ "command": ["x"], "extensions": [".vue", 1] }]`,
+			contentMappers: `[{ "package": "x", "extensions": [".vue", 1] }]`,
 			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
 		},
 		{
-			name:           "command is not an array",
-			contentMappers: `[{ "command": "x", "extensions": [".vue"] }]`,
+			name:           "package is not a string",
+			contentMappers: `[{ "package": ["x"], "extensions": [".vue"] }]`,
 			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
 		},
 	}
@@ -1140,10 +1147,16 @@ func TestContentMappersValidation(t *testing.T) {
 					maps.Copy(allFileLists, config.allFileList)
 					host := tsoptionstest.NewVFSParseConfigHost(allFileLists, config.basePath, true /*useCaseSensitiveFileNames*/)
 					parsed := getParsed(config, host, config.basePath)
-					found := slices.ContainsFunc(parsed.Errors, func(d *ast.Diagnostic) bool {
+					diagnostic := core.Find(parsed.Errors, func(d *ast.Diagnostic) bool {
 						return d.Code() == test.expectedCode
 					})
-					assert.Assert(t, found, "expected diagnostic %d, got errors: %v", test.expectedCode, parsed.Errors)
+					assert.Assert(t, diagnostic != nil, "expected diagnostic %d, got errors: %v", test.expectedCode, parsed.Errors)
+
+					// With the jsonSourceFile API the diagnostic is located at the offending tsconfig syntax.
+					if apiName == "jsonSourceFile api" {
+						assert.Assert(t, diagnostic.File() != nil, "expected diagnostic %d to have a source file", test.expectedCode)
+						assert.Assert(t, diagnostic.Len() > 0, "expected diagnostic %d to have a non-empty location", test.expectedCode)
+					}
 				})
 			}
 		})

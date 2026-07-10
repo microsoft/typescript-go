@@ -41,7 +41,7 @@ func NewBuildInfoReader(
 	return &buildInfoReader{host: host}
 }
 
-func ReadBuildInfoProgram(config *tsoptions.ParsedCommandLine, runner compiler.ContentMapperRunner, reader BuildInfoReader, host compiler.CompilerHost) *Program {
+func ReadBuildInfoProgram(config *tsoptions.ParsedCommandLine, reader BuildInfoReader, host compiler.CompilerHost) *Program {
 	// Read buildInfo file
 	buildInfo := reader.ReadBuildInfo(config)
 	if buildInfo == nil || !buildInfo.IsValidVersion() || !buildInfo.IsIncremental() {
@@ -49,7 +49,7 @@ func ReadBuildInfoProgram(config *tsoptions.ParsedCommandLine, runner compiler.C
 	}
 	// If any configured content mapper's identity has changed, files it produced may be stale, so the
 	// old program cannot be reused.
-	if !buildInfo.ContentMapperIdentitiesMatch(compiler.ContentMapperIdentities(runner, config)) {
+	if !buildInfo.ContentMapperIdentitiesMatch(ContentMapperIdentities(config)) {
 		return nil
 	}
 

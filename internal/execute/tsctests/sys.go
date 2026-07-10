@@ -134,7 +134,6 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *TestSys {
 	}, currentWrite)
 	sys.env = tscInput.env
 	sys.forIncrementalCorrectness = forIncrementalCorrectness
-	sys.contentMapperVersion = tscInput.contentMapperVersion
 	sys.mockWatchBackend = NewMockWatchBackend()
 	sys.mockWatchBackend.DirectoryExists = sys.fs.FS.DirectoryExists
 	sys.fsDiffer = &fsbaselineutil.FSDiffer{
@@ -168,8 +167,6 @@ type TestSys struct {
 	cwd                string
 	env                map[string]string
 	clock              *TestClock
-
-	contentMapperVersion string
 }
 
 var (
@@ -327,28 +324,17 @@ func (s *TestSys) WatchBackend() watchmanager.WatchBackend {
 }
 
 // GetContentMapperRunner stands in for a real mapper host, returning a runner that transforms foreign
-// files verbatim and derives each mapper's identity from its command and the sys-controlled version (so
-// a test can bump the version between builds to simulate a mapper upgrade).
-func (s *TestSys) GetContentMapperRunner(mappers []*core.ContentMapper) compiler.ContentMapperRunner {
-	if len(mappers) == 0 {
+// files verbatim. Mapper identity is resolved during tsconfig parsing, so the runner only performs
+// transformation. The content is expected to already be valid TypeScript, which keeps the
+// identity-preserving span map valid.
+func (s *TestSys) GetContentMapperRunner(config *tsoptions.ParsedCommandLine) compiler.ContentMapperRunner {
+	if len(config.ContentMappers()) == 0 {
 		return nil
 	}
-	return testContentMapperRunner{version: s.contentMapperVersion}
+	return testContentMapperRunner{}
 }
 
-// testContentMapperRunner transforms a foreign file's content verbatim into TypeScript. The content is
-// therefore expected to already be valid TypeScript, which keeps the identity-preserving span map valid.
-type testContentMapperRunner struct {
-	version string
-}
-
-func (r testContentMapperRunner) Identity(mapper *core.ContentMapper) string {
-	name := mapper.Command[0]
-	if r.version == "" {
-		return name
-	}
-	return name + "@" + r.version
-}
+type testContentMapperRunner struct{}
 
 func (testContentMapperRunner) Transform(fileName string, content string) (compiler.ContentMapperResult, error) {
 	return compiler.ContentMapperResult{

@@ -10,6 +10,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -69,8 +70,8 @@ type fileLoader struct {
 	// contentMapperMu guards the content-mapper bookkeeping below, which is written concurrently as
 	// content-mapped files are parsed across worker goroutines.
 	contentMapperMu          sync.Mutex
-	contentMapperForFile     map[tspath.Path]*core.ContentMapper
-	contentMapperFailures    map[*core.ContentMapper]int
+	contentMapperForFile     map[tspath.Path]*contentmapper.Mapper
+	contentMapperFailures    map[*contentmapper.Mapper]int
 	contentMapperDiagnostics []*ast.Diagnostic
 }
 
@@ -127,7 +128,7 @@ type processedFiles struct {
 	// filesByPath for redirect files
 	redirectFilesByPath map[tspath.Path]*redirectsFile
 	// Association from a content-mapped source file path to the content mapper that produced it.
-	contentMapperForFile map[tspath.Path]*core.ContentMapper
+	contentMapperForFile map[tspath.Path]*contentmapper.Mapper
 	// Program-level diagnostics reported when a content mapper fails fatally (reported once per mapper).
 	contentMapperDiagnostics []*ast.Diagnostic
 	finishedProcessing       bool
@@ -420,7 +421,7 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	}
 	mapper := p.matchContentMapper(opts.FileName)
 	p.recordContentMapper(opts.Path, mapper)
-	label := p.opts.ContentMapperRunner.Identity(mapper)
+	label := mapper.Name
 	if p.contentMapperDisabled(mapper) {
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, content)
@@ -491,7 +492,7 @@ func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, con
 }
 
 // matchContentMapper returns the configured content mapper whose extensions include fileName.
-func (p *fileLoader) matchContentMapper(fileName string) *core.ContentMapper {
+func (p *fileLoader) matchContentMapper(fileName string) *contentmapper.Mapper {
 	for _, mapper := range p.opts.Config.ContentMappers() {
 		if tspath.FileExtensionIsOneOf(fileName, mapper.Extensions) {
 			return mapper
@@ -502,20 +503,20 @@ func (p *fileLoader) matchContentMapper(fileName string) *core.ContentMapper {
 
 // recordContentMapper associates a content-mapped file with the mapper that produced it, so the
 // program can report the mapping without re-matching extensions.
-func (p *fileLoader) recordContentMapper(path tspath.Path, mapper *core.ContentMapper) {
+func (p *fileLoader) recordContentMapper(path tspath.Path, mapper *contentmapper.Mapper) {
 	if mapper == nil {
 		return
 	}
 	p.contentMapperMu.Lock()
 	defer p.contentMapperMu.Unlock()
 	if p.contentMapperForFile == nil {
-		p.contentMapperForFile = make(map[tspath.Path]*core.ContentMapper)
+		p.contentMapperForFile = make(map[tspath.Path]*contentmapper.Mapper)
 	}
 	p.contentMapperForFile[path] = mapper
 }
 
 // contentMapperDisabled reports whether mapper has exceeded its failure budget and been disabled.
-func (p *fileLoader) contentMapperDisabled(mapper *core.ContentMapper) bool {
+func (p *fileLoader) contentMapperDisabled(mapper *contentmapper.Mapper) bool {
 	if mapper == nil {
 		return false
 	}
@@ -527,11 +528,11 @@ func (p *fileLoader) contentMapperDisabled(mapper *core.ContentMapper) bool {
 // recordContentMapperFailure counts a transform failure for mapper. It returns whether the failure
 // should be reported for this file (false once the mapper is already disabled). On the failure that
 // reaches maxContentMapperFailures it appends a single program diagnostic disabling the mapper.
-func (p *fileLoader) recordContentMapperFailure(mapper *core.ContentMapper, label string) bool {
+func (p *fileLoader) recordContentMapperFailure(mapper *contentmapper.Mapper, label string) bool {
 	p.contentMapperMu.Lock()
 	defer p.contentMapperMu.Unlock()
 	if p.contentMapperFailures == nil {
-		p.contentMapperFailures = make(map[*core.ContentMapper]int)
+		p.contentMapperFailures = make(map[*contentmapper.Mapper]int)
 	}
 	if p.contentMapperFailures[mapper] >= maxContentMapperFailures {
 		return false

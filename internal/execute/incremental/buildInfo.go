@@ -493,8 +493,27 @@ func (b *BuildInfo) IsValidVersion() bool {
 	return b.Version == core.Version()
 }
 
+// ContentMapperIdentities returns the sorted identities of the content mappers configured in config, as
+// resolved during tsconfig parsing, used to detect when a mapper implementation has changed between
+// builds. Mappers with no resolved name are omitted, and the result is sorted so that merely reordering
+// content mappers in tsconfig does not force a rebuild. Returns nil when no mapper has an identity.
+func ContentMapperIdentities(config *tsoptions.ParsedCommandLine) []string {
+	mappers := config.ContentMappers()
+	identities := make([]string, 0, len(mappers))
+	for _, mapper := range mappers {
+		if identity := mapper.Identity(); identity != "" {
+			identities = append(identities, identity)
+		}
+	}
+	if len(identities) == 0 {
+		return nil
+	}
+	slices.Sort(identities)
+	return identities
+}
+
 // ContentMapperIdentitiesMatch reports whether the content mapper identities recorded in this build info
-// match the given current identities (as produced by compiler.ContentMapperIdentities).
+// match the given current identities (as produced by ContentMapperIdentities).
 func (b *BuildInfo) ContentMapperIdentitiesMatch(current []string) bool {
 	return slices.Equal(b.ContentMapperIdentities, current)
 }

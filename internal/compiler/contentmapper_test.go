@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -25,59 +26,10 @@ import (
 
 type fakeContentMapperRunner struct {
 	transform func(fileName string, content string) (compiler.ContentMapperResult, error)
-	identity  string
 }
 
 func (r fakeContentMapperRunner) Transform(fileName string, content string) (compiler.ContentMapperResult, error) {
 	return r.transform(fileName, content)
-}
-
-func (r fakeContentMapperRunner) Identity(mapper *core.ContentMapper) string {
-	if r.identity == "" {
-		return "vue-mapper@1.0.0"
-	}
-	return r.identity
-}
-
-// identityRunner is a runner whose only interesting behavior is the identity it reports per mapper.
-type identityRunner func(*core.ContentMapper) string
-
-func (f identityRunner) Identity(mapper *core.ContentMapper) string { return f(mapper) }
-
-func (identityRunner) Transform(fileName string, content string) (compiler.ContentMapperResult, error) {
-	return compiler.ContentMapperResult{}, nil
-}
-
-func TestContentMapperIdentities(t *testing.T) {
-	t.Parallel()
-
-	config := &tsoptions.ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
-			CompilerOptions: &core.CompilerOptions{},
-			ContentMappers: []*core.ContentMapper{
-				{Command: []string{"vue"}},
-				{Command: []string{"svelte"}},
-				{Command: []string{"anon"}},
-			},
-		},
-	}
-
-	// No runner means no identities to record.
-	assert.Assert(t, compiler.ContentMapperIdentities(nil, config) == nil)
-
-	// Identities come from the runner; "anon" reports none and is omitted, and the result is sorted so
-	// reordering content mappers in tsconfig does not change it.
-	runner := identityRunner(func(mapper *core.ContentMapper) string {
-		switch mapper.Command[0] {
-		case "vue":
-			return "vue@2.0.0"
-		case "svelte":
-			return "svelte@3.0.0"
-		default:
-			return ""
-		}
-	})
-	assert.DeepEqual(t, compiler.ContentMapperIdentities(runner, config), []string{"svelte@3.0.0", "vue@2.0.0"})
 }
 
 const vueRawContent = "<template>original</template>"
@@ -114,7 +66,7 @@ func newContentMapperProgram(t *testing.T, runner compiler.ContentMapperRunner, 
 				Module:           core.ModuleKindESNext,
 				ModuleResolution: core.ModuleResolutionKindBundler,
 			},
-			ContentMappers: []*core.ContentMapper{{Command: []string{"vue"}, Extensions: []string{".vue"}}},
+			ContentMappers: []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0"}}},
 		},
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{

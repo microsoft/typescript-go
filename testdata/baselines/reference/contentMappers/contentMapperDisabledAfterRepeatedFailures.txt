@@ -44,29 +44,29 @@
 
 === Diagnostics ===
 
-C.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: mapper protocol version mismatch
+C.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: mapper protocol version mismatch
 
 1 
   ~
 
-D.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: mapper protocol version mismatch
+D.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: mapper protocol version mismatch
 
 1 
   ~
 
-E.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: mapper protocol version mismatch
+E.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: mapper protocol version mismatch
 
 1 
   ~
 
-F.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: mapper protocol version mismatch
+F.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: mapper protocol version mismatch
 
 1 
   ~
 
-G.vue:1:1 - error TS100025: The content mapper 'vue-mapper@1.0.0' failed to transform this file: mapper protocol version mismatch
+G.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: mapper protocol version mismatch
 
 1 
   ~
 
-error TS100026: The content mapper 'vue-mapper@1.0.0' failed 5 times and will not be used.
+error TS100026: The content mapper 'vue-mapper' failed 5 times and will not be used.
