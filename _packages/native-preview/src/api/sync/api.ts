@@ -58,6 +58,7 @@ import type {
     DocumentIdentifier,
     DocumentPosition,
     ImportAdderActionRequest,
+    ImportSymbolActionRequest,
     IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
@@ -595,21 +596,23 @@ export class Project {
 
     getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[] {
         const requestActions: ImportAdderActionRequest[] = actions.map(action => {
-            const requestAction = action as ImportAdderAction & { kind: string; symbol?: Symbol | number; };
+            const requestAction = action as ImportAdderAction & { kind: string; symbol?: Symbol; };
             switch (requestAction.kind) {
                 case "importSymbol":
-                    const symbol = typeof requestAction.symbol === "number" ? requestAction.symbol : requestAction.symbol?.id;
+                    const symbol = requestAction.symbol?.id;
                     if (symbol === undefined) {
                         return {
                             kind: "importSymbol",
-                            isValidTypeOnlyUseSite: action.isValidTypeOnlyUseSite,
                         } as ImportAdderActionRequest;
                     }
-                    return {
+                    const importSymbolAction: ImportSymbolActionRequest = {
                         kind: "importSymbol",
                         symbol,
-                        isValidTypeOnlyUseSite: action.isValidTypeOnlyUseSite,
-                    } as ImportAdderActionRequest;
+                    };
+                    if (action.isValidTypeOnlyUseSite !== undefined) {
+                        importSymbolAction.isValidTypeOnlyUseSite = action.isValidTypeOnlyUseSite;
+                    }
+                    return importSymbolAction;
                 default:
                     return requestAction as unknown as ImportAdderActionRequest;
             }
@@ -627,11 +630,19 @@ export class Project {
     getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options: GetImportEditsForSymbolsOptions = {}): readonly TextEdit[] {
         return this.getImportAdderEdits(
             file,
-            symbols.map(symbol => ({
-                kind: "importSymbol",
-                symbol,
-                isValidTypeOnlyUseSite: options.isValidTypeOnlyUseSite,
-            })),
+            symbols.map((symbol): ImportAdderAction => {
+                if (options.isValidTypeOnlyUseSite !== undefined) {
+                    return {
+                        kind: "importSymbol",
+                        symbol,
+                        isValidTypeOnlyUseSite: options.isValidTypeOnlyUseSite,
+                    };
+                }
+                return {
+                    kind: "importSymbol",
+                    symbol,
+                };
+            }),
         );
     }
 
