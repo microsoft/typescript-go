@@ -350,7 +350,7 @@ func (w *formatSpanWorker) processChildNode(
 		return inheritedIndentation
 	}
 	if isGrammarError(parent, child) {
-		if w.originalRange.Overlaps(child.Loc) {
+		if w.originalRange.Overlaps(child.Loc) || child.End() < w.originalRange.Pos() {
 			w.formattingScanner.skipToEndOf(&child.Loc)
 		}
 		return inheritedIndentation
