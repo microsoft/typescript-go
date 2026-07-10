@@ -155,19 +155,25 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			p.locks[checkerIdx].Lock()
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
-				// Once the context is canceled, the checker enters a canceled state and
-				// reusing it for the next file would panic in checkNotCanceled. Stop early.
+				checker := p.checkers[checkerIdx]
+				// Stop feeding this checker once cancellation is in play: ctx.Err()
+				// means nothing we produce will be used, and WasCanceled() means the
+				// checker is already poisoned so reusing it would panic in
+				// checkNotCanceled. The two coincide in the compile path today (one
+				// context, single-use pool), but WasCanceled() states the actual reuse
+				// precondition rather than a proxy for it, and guards against a checker
+				// canceled by some other context.
 				//
-				// This guard is only necessary because the diagnostics APIs return a bare
-				// []*ast.Diagnostic with no error channel: a canceled check yields an empty
-				// (incomplete) slice that is indistinguishable from a clean result, so
-				// cancellation is signaled out-of-band via the checker's canceled state
-				// rather than a returned error. If those APIs returned (diags, error), the
-				// caller would stop on the error and this guard would be unnecessary.
-				if ctx.Err() != nil {
+				// This out-of-band check is only necessary because the diagnostics APIs
+				// return a bare []*ast.Diagnostic with no error channel: a canceled check
+				// yields an empty (incomplete) slice indistinguishable from a clean result,
+				// so cancellation is signaled via checker state rather than a returned error.
+				// If those APIs returned (diags, error), the caller would stop on the error
+				// and this guard would be unnecessary.
+				if ctx.Err() != nil || checker.WasCanceled() {
 					break
 				}
-				if checker := p.checkers[checkerIdx]; checker == p.fileAssociations[file] {
+				if checker == p.fileAssociations[file] {
 					cb(checker, i, file)
 				}
 			}

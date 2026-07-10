@@ -55,6 +55,18 @@ func TestTscNoEmitCancellation(t *testing.T) {
 				"/home/src/workspaces/project/c.ts":          badSource,
 			},
 		},
+		{
+			// Build mode (`tsc -b`): exercises the context threaded through the build
+			// orchestrator (Start -> buildOrClean -> rangeTask -> buildProject ->
+			// compileAndEmit). A canceled build must abort rather than run the project's
+			// compile to completion.
+			name: "build mode",
+			args: []string{"-b"},
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "composite": true, "strict": true } }`,
+				"/home/src/workspaces/project/main.ts":       badSource,
+			},
+		},
 	}
 
 	for _, tc := range testCases {
