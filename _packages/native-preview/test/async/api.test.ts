@@ -48,6 +48,7 @@ import {
     type FreshableType,
     type IndexedAccessType,
     type IndexType,
+    inferredProjectName,
     type InterfaceType,
     type IntrinsicType,
     isErrorType,
@@ -59,6 +60,7 @@ import {
     type StringMappingType,
     SymbolFlags,
     type TemplateLiteralType,
+    type TupleTypeReference,
     TypeFlags,
     type TypeParameter,
     TypePredicateKind,
@@ -264,6 +266,34 @@ describe("SourceFile", () => {
                 "/node_modules/my-lib/index.d.ts",
                 "/src/index.ts",
             ]);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getSourceFiles returns a source file for every program file name", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({
+                compilerOptions: {
+                    moduleResolution: "node10",
+                    noLib: true,
+                },
+            }),
+            "/src/index.ts": `import { foo } from "./foo";\nimport { bar } from "my-lib";\nexport const result = foo + bar;`,
+            "/src/foo.ts": `export const foo = 42;`,
+            "/node_modules/my-lib/package.json": JSON.stringify({ name: "my-lib", types: "./index.d.ts" }),
+            "/node_modules/my-lib/index.d.ts": `export declare const bar: number;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const fileNames = await project.program.getSourceFileNames();
+            const sourceFiles = await project.program.getSourceFiles();
+            assert.deepEqual(
+                sourceFiles.map(sourceFile => sourceFile.fileName),
+                fileNames,
+            );
         }
         finally {
             await api.close();
@@ -3184,6 +3214,126 @@ describe("Checker - getConstraintOfTypeParameter", () => {
     });
 });
 
+describe("TypeParameter - getConstraint / getDefault", () => {
+    test("returns the constraint and default of a type parameter", async () => {
+        const src = `export function identity<T extends string = "x">(v: T): T { return v; }`;
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("identity<"));
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const sigs = await project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(sigs.length > 0);
+            const typeParams = await sigs[0].getTypeParameters();
+            assert.ok(typeParams.length > 0);
+            const typeParam = typeParams[0];
+            assert.ok(typeParam.isTypeParameter());
+
+            const constraint = await typeParam.getConstraint();
+            assert.ok(constraint);
+            assert.ok(constraint.flags & TypeFlags.String, `Expected string constraint, got flags ${constraint.flags}`);
+
+            const defaultType = await typeParam.getDefault();
+            assert.ok(defaultType);
+            assert.ok(defaultType.flags & TypeFlags.StringLiteral, `Expected string literal default, got flags ${defaultType.flags}`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("returns undefined when a type parameter has no constraint or default", async () => {
+        const src = `export function identity<T>(v: T): T { return v; }`;
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("identity<"));
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const sigs = await project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(sigs.length > 0);
+            const typeParams = await sigs[0].getTypeParameters();
+            assert.ok(typeParams.length > 0);
+            const typeParam = typeParams[0];
+
+            assert.equal(await typeParam.getConstraint(), undefined);
+            assert.equal(await typeParam.getDefault(), undefined);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("Type - isStructuredType", () => {
+    test("is true for object types and false for primitives", async () => {
+        const src = `export interface I { a: number; }\nexport const n: number = 1;`;
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            const iSymbol = await project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("I {"));
+            assert.ok(iSymbol);
+            const iType = await project.checker.getDeclaredTypeOfSymbol(iSymbol);
+            assert.ok(iType);
+            assert.ok(iType.isStructuredType());
+            assert.ok(iType.flags & TypeFlags.StructuredType);
+
+            const nSymbol = await project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("n:"));
+            assert.ok(nSymbol);
+            const nType = await project.checker.getTypeOfSymbol(nSymbol);
+            assert.ok(nType);
+            assert.equal(nType.isStructuredType(), false);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
+describe("Type - TupleTypeReference", () => {
+    test("getTarget on a tuple reference yields the tuple target", async () => {
+        const src = `export const tup: [number, string] = [1, "a"];`;
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("tup"));
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            assert.equal(await project.checker.isTupleType(type), true);
+
+            const tupleRef = type as TupleTypeReference;
+            const target = await tupleRef.getTarget();
+            assert.ok(target.isTupleType());
+            assert.equal(target.fixedLength, 2);
+            assert.equal(target.elementFlags.length, 2);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 describe("Checker - getTypeArguments", () => {
     test("returns type arguments of a generic instantiation", async () => {
         const api = spawnAPI({
@@ -4980,6 +5130,7 @@ describe("getDefaultProjectForFile", () => {
             const snapshot2 = await api.updateSnapshot({ openFiles: ["/node_modules/my-lib/index.d.ts"] });
             const defaultProject = await snapshot2.getDefaultProjectForFile("/node_modules/my-lib/index.d.ts");
             assert.ok(defaultProject, "getDefaultProjectForFile should find inferred project after openFiles");
+            assert.equal(defaultProject.id, inferredProjectName);
 
             const fooPos = `export declare const foo: string;`.indexOf("foo");
             const fooType = await defaultProject.checker.getTypeAtPosition("/node_modules/my-lib/index.d.ts", fooPos);

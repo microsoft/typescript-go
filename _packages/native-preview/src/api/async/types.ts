@@ -86,6 +86,8 @@ export interface Type {
     isStringMappingType(): this is StringMappingType;
     /** Whether this type is a type parameter */
     isTypeParameter(): this is TypeParameter;
+    /** Whether this type is a structured type (object, union, or intersection) */
+    isStructuredType(): this is StructuredType;
 }
 
 /**
@@ -128,8 +130,15 @@ export interface BooleanLiteralType extends LiteralType {
     readonly value: boolean;
 }
 
+/**
+ * Structured types — object, union, and intersection types (TypeFlags.StructuredType).
+ * Common supertype of {@link ObjectType} and {@link UnionOrIntersectionType}.
+ */
+export interface StructuredType extends Type {
+}
+
 /** Object types (TypeFlags.Object) */
-export interface ObjectType extends Type {
+export interface ObjectType extends StructuredType {
     /** Object flags — use to determine the specific kind of object type. */
     readonly objectFlags: ObjectFlags;
 }
@@ -138,6 +147,15 @@ export interface ObjectType extends Type {
 export interface TypeReference extends ObjectType {
     /** Get the generic target type (e.g. Array for Array<string>) */
     getTarget(): Promise<Type>;
+}
+
+/**
+ * Tuple type references (ObjectFlags.Reference whose target is a {@link TupleType}) —
+ * e.g. `[string, number]`. This is the type for which `Checker.isTupleType` returns true.
+ */
+export interface TupleTypeReference extends TypeReference {
+    /** Get the tuple target type describing element flags, arity, and readonly-ness. */
+    getTarget(): Promise<TupleType>;
 }
 
 /** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
@@ -161,7 +179,7 @@ export interface TupleType extends InterfaceType {
 }
 
 /** Union or intersection types (TypeFlags.Union | TypeFlags.Intersection) */
-export interface UnionOrIntersectionType extends Type {
+export interface UnionOrIntersectionType extends StructuredType {
     /** Get the constituent types */
     getTypes(): Promise<readonly Type[]>;
 }
@@ -178,6 +196,10 @@ export interface IntersectionType extends UnionOrIntersectionType {
 export interface TypeParameter extends Type {
     /** True if this is the synthetic `this` type of an interface, class, or tuple */
     readonly isThisType?: boolean | undefined;
+    /** Get the constraint of this type parameter (the `T` in `<X extends T>`), if any */
+    getConstraint(): Promise<Type | undefined>;
+    /** Get the default of this type parameter (the `T` in `<X = T>`), if any */
+    getDefault(): Promise<Type | undefined>;
 }
 
 /** Index types — keyof T (TypeFlags.Index) */
@@ -209,7 +231,7 @@ export interface ConditionalType extends Type {
 /** Substitution types (TypeFlags.Substitution) */
 export interface SubstitutionType extends Type {
     getBaseType(): Promise<Type>;
-    getConstraint(): Promise<Type>;
+    getConstraint(): Promise<Type | undefined>;
 }
 
 /** Template literal types (TypeFlags.TemplateLiteral) */
