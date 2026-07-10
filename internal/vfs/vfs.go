@@ -6,7 +6,7 @@ import (
 )
 
 //go:generate go tool github.com/matryer/moq -fmt goimports -out vfsmock/mock_generated.go -pkg vfsmock . FS
-//go:generate go tool mvdan.cc/gofumpt -w vfsmock/mock_generated.go
+//go:generate npx dprint fmt vfsmock/mock_generated.go
 
 // FS is a file system abstraction.
 type FS interface {
@@ -21,6 +21,9 @@ type FS interface {
 	ReadFile(path string) (contents string, ok bool)
 
 	WriteFile(path string, data string) error
+
+	// AppendFile appends data to the file at path, creating it if it does not exist.
+	AppendFile(path string, data string) error
 
 	// Removes `path` and all its contents. Will return the first error it encounters.
 	Remove(path string) error
@@ -49,6 +52,12 @@ type FS interface {
 type Entries struct {
 	Files       []string
 	Directories []string
+	// Symlinks contains the names of entries in Files or Directories that were
+	// originally symbolic links (or reparse points) on disk. The names are the
+	// same as those in Files/Directories (i.e., the link name, not the target).
+	// nil means symlink information is not available and the entries may need
+	// to be re-checked for symlinks.
+	Symlinks map[string]struct{}
 }
 
 type (

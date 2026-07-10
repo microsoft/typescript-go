@@ -10,7 +10,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -114,6 +113,50 @@ func TestSession(t *testing.T) {
 		})
 	})
 
+	t.Run("watchChange and didOpen in same batch rebuilds program", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"strict": true
+				}
+			}`,
+			"/home/projects/TS/p1/src/a.ts": "export const a = 1;\n",
+			"/home/projects/TS/p1/src/b.ts": "export const b = 1;\n",
+		}
+		session, utils := projecttestutil.Setup(files)
+		oldContent := files["/home/projects/TS/p1/src/a.ts"].(string)
+
+		// Open b.ts to create the project; a.ts is included via tsconfig.
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/b.ts", 1, files["/home/projects/TS/p1/src/b.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// Verify a.ts is in the program with the original content.
+		ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/b.ts")
+		assert.NilError(t, err)
+		assert.Equal(t, ls.GetProgram().GetSourceFile("/home/projects/TS/p1/src/a.ts").Text(), oldContent)
+
+		// Modify a.ts on disk (simulate a build tool or git checkout).
+		newContent := "export const a = 2;\nexport const extra = true;\n"
+		err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", newContent)
+		assert.NilError(t, err)
+
+		// Queue a watch event for the disk change (not flushed yet).
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{Type: lsproto.FileChangeTypeChanged, Uri: "file:///home/projects/TS/p1/src/a.ts"},
+		})
+
+		// Open a.ts in the editor—flushes both watch event and didOpen together.
+		// Before the fix, processChanges would discard the watch event,
+		// leaving the project with a stale SourceFile and a mismatched line map.
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/a.ts", 1, newContent, lsproto.LanguageKindTypeScript)
+
+		// The program's SourceFile must reflect the overlay (new) content.
+		ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/a.ts")
+		assert.NilError(t, err)
+		assert.Equal(t, ls.GetProgram().GetSourceFile("/home/projects/TS/p1/src/a.ts").Text(), newContent)
+	})
+
 	t.Run("DidChangeFile", func(t *testing.T) {
 		t.Parallel()
 		t.Run("update file and program", func(t *testing.T) {
@@ -151,6 +194,44 @@ func TestSession(t *testing.T) {
 			// Program should change due to the file content change
 			assert.Check(t, programAfter != programBefore)
 			assert.Equal(t, programAfter.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "export const x = 2;")
+		})
+
+		t.Run("update untitled file", func(t *testing.T) {
+			t.Parallel()
+			session, _ := projecttestutil.Setup(defaultFiles)
+
+			session.DidOpenFile(context.Background(), "untitled:Untitled-1", 1, "let x = 1;", lsproto.LanguageKindTypeScript)
+
+			lsBefore, err := session.GetLanguageService(context.Background(), "untitled:Untitled-1")
+			assert.NilError(t, err)
+			programBefore := lsBefore.GetProgram()
+			untitledFileName := lsproto.DocumentUri("untitled:Untitled-1").FileName()
+			assert.Equal(t, programBefore.GetSourceFile(untitledFileName).Text(), "let x = 1;")
+
+			session.DidChangeFile(context.Background(), "untitled:Untitled-1", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					Partial: new(lsproto.TextDocumentContentChangePartial{
+						Range: lsproto.Range{
+							Start: lsproto.Position{
+								Line:      0,
+								Character: 8,
+							},
+							End: lsproto.Position{
+								Line:      0,
+								Character: 9,
+							},
+						},
+						Text: "2",
+					}),
+				},
+			})
+
+			lsAfter, err := session.GetLanguageService(context.Background(), "untitled:Untitled-1")
+			assert.NilError(t, err)
+			programAfter := lsAfter.GetProgram()
+
+			assert.Check(t, programAfter != programBefore)
+			assert.Equal(t, programAfter.GetSourceFile(untitledFileName).Text(), "let x = 2;")
 		})
 
 		t.Run("unchanged source files are reused", func(t *testing.T) {
@@ -456,7 +537,8 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			program2 := ls2.GetProgram()
 
-			assert.Equal(t,
+			assert.Equal(
+				t,
 				program1.GetSourceFile("/home/projects/TS/p1/src/x.ts"),
 				program2.GetSourceFile("/home/projects/TS/p1/src/x.ts"),
 			)
@@ -587,18 +669,7 @@ func TestSession(t *testing.T) {
 					programBefore := lsBefore.GetProgram()
 					session.WaitForBackgroundTasks()
 
-					var xWatched bool
-				outer:
-					for _, call := range utils.Client().WatchFilesCalls() {
-						for _, watcher := range call.Watchers {
-							// On case-insensitive FS, glob patterns use lowercased paths.
-							if core.Must(glob.Parse(*watcher.GlobPattern.Pattern)).Match("/home/projects/ts/x.ts") {
-								xWatched = true
-								break outer
-							}
-						}
-					}
-					assert.Check(t, xWatched)
+					assert.Check(t, utils.WatchesFile("/home/projects/ts/x.ts"))
 
 					err = utils.FS().WriteFile("/home/projects/TS/x.ts", `export const x = 2;`)
 					assert.NilError(t, err)
@@ -840,6 +911,94 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 		})
 
+		t.Run("delete sibling folder schedules diagnostics refresh", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["index.ts"]
+				}`,
+				"/home/projects/TS/p1/index.ts": `import { content } from "./f/content";
+
+export const value = content;`,
+				"/home/projects/TS/p1/f/content.ts": `export const content = 1;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			contentURI := lsproto.DocumentUri("file:///home/projects/TS/p1/f/content.ts")
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), contentURI, 1, files["/home/projects/TS/p1/f/content.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+			err = utils.FS().Remove("/home/projects/TS/p1/f")
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/f",
+				},
+			})
+			session.DidCloseFile(context.Background(), contentURI)
+			session.WaitForBackgroundTasks()
+
+			refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+			assert.Assert(t, refreshCount > baselineRefreshCount,
+				"expected RefreshDiagnostics to be called after deleting /home/projects/TS/p1/f, got %d calls (baseline %d)",
+				refreshCount, baselineRefreshCount)
+		})
+
+		t.Run("delete sibling folder schedules diagnostics refresh after opening third file", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"files": ["index.ts", "third.ts"]
+				}`,
+				"/home/projects/TS/p1/index.ts": `import { content } from "./f/content";
+
+export const value = content;`,
+				"/home/projects/TS/p1/f/content.ts": `export const content = 1;`,
+				"/home/projects/TS/p1/third.ts":     `export const third = 3;`,
+			}
+			session, utils := projecttestutil.Setup(files)
+			contentURI := lsproto.DocumentUri("file:///home/projects/TS/p1/f/content.ts")
+			thirdURI := lsproto.DocumentUri("file:///home/projects/TS/p1/third.ts")
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), contentURI, 1, files["/home/projects/TS/p1/f/content.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+			assert.NilError(t, err)
+			session.WaitForBackgroundTasks()
+
+			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+			err = utils.FS().Remove("/home/projects/TS/p1/f")
+			assert.NilError(t, err)
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeDeleted,
+					Uri:  "file:///home/projects/TS/p1/f",
+				},
+			})
+			session.DidOpenFile(context.Background(), thirdURI, 1, files["/home/projects/TS/p1/third.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.WaitForBackgroundTasks()
+
+			refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+			assert.Assert(t, refreshCount > baselineRefreshCount,
+				"expected RefreshDiagnostics to be called after deleting /home/projects/TS/p1/f and opening /home/projects/TS/p1/third.ts, got %d calls (baseline %d)",
+				refreshCount, baselineRefreshCount)
+		})
+
 		t.Run("create explicitly included file", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
@@ -1060,6 +1219,80 @@ func TestSession(t *testing.T) {
 			assert.Equal(t, len(diags), 0)
 		})
 
+		t.Run("symlinked node_modules package.json change invalidates resolution", func(t *testing.T) {
+			t.Parallel()
+			// Set up a project that imports a symlinked node_modules package.
+			// The package resolves via "main" in package.json to dist/index.js.
+			files := map[string]any{
+				"/home/projects/myproject/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true,
+						"module": "nodenext",
+						"moduleResolution": "nodenext"
+					},
+					"files": ["src/index.ts"]
+				}`,
+				"/home/projects/myproject/src/index.ts": `import { foo } from "mylib";`,
+				// The real package lives as a sibling directory
+				"/home/projects/mylib/package.json": `{
+					"name": "mylib",
+					"main": "dist/index.js"
+				}`,
+				"/home/projects/mylib/dist/index.js":   `exports.foo = function() { return 1; };`,
+				"/home/projects/mylib/dist/index.d.ts": `export declare function foo(): number;`,
+				// node_modules/mylib is a symlink to the sibling
+				"/home/projects/myproject/node_modules/mylib": vfstest.Symlink("/home/projects/mylib"),
+			}
+
+			session, utils := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+				CurrentDirectory:   "/home/projects/myproject",
+				DefaultLibraryPath: bundled.LibPath(),
+				TypingsLocation:    projecttestutil.TestTypingsLocation,
+				PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+				WatchEnabled:       true,
+				LoggingEnabled:     true,
+			})
+			session.DidOpenFile(context.Background(), "file:///home/projects/myproject/src/index.ts", 1, files["/home/projects/myproject/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			// Initial state: import resolves successfully via package.json main -> dist/index.d.ts
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/myproject/src/index.ts")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			session.WaitForBackgroundTasks()
+			diags := program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/myproject/src/index.ts"))
+			for _, d := range diags {
+				t.Logf("initial diagnostic: %s", d.String())
+			}
+			assert.Equal(t, len(diags), 0, "import should resolve initially")
+
+			// Assert: watched file globs cover the realpath of package.json and dist/index.d.ts.
+			// With a workspace dir set, watchers use RelativePattern with a base URI.
+			assert.Check(t, utils.WatchesFile("/home/projects/mylib/package.json"), "realpath of package.json should be watched")
+			assert.Check(t, utils.WatchesFile("/home/projects/mylib/dist/index.d.ts"), "realpath of dist/index.d.ts should be watched")
+
+			// Edit package.json to remove "main" field
+			err = utils.FS().WriteFile("/home/projects/mylib/package.json", `{
+				"name": "mylib"
+			}`)
+			assert.NilError(t, err)
+
+			// Fire watch event for the realpath of the changed package.json.
+			// A real editor would fire this for the realpath since it watches realpaths.
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeChanged,
+					Uri:  "file:///home/projects/mylib/package.json",
+				},
+			})
+
+			// After removing "main" from package.json, the import should no longer resolve.
+			ls, err = session.GetLanguageService(context.Background(), "file:///home/projects/myproject/src/index.ts")
+			assert.NilError(t, err)
+			program = ls.GetProgram()
+			diags = program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/myproject/src/index.ts"))
+			assert.Assert(t, len(diags) > 0, "import should fail after removing main from package.json")
+		})
+
 		t.Run("create file in non-existent directory", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]any{
@@ -1159,18 +1392,45 @@ func TestSession(t *testing.T) {
 		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 
-		session.Configure(lsutil.NewUserConfig(nil))
+		session.Configure(lsutil.NewDefaultUserPreferences())
 		// Change user preferences for code lens and inlay hints.
-		newPrefs := session.Config().TS()
-		newPrefs.CodeLens.ReferencesCodeLensEnabled = !newPrefs.CodeLens.ReferencesCodeLensEnabled
-		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = !newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints
+		newPrefs := session.Config()
+		newPrefs.CodeLens.ReferencesCodeLensEnabled = core.TSTrue
+		newPrefs.InlayHints.IncludeInlayFunctionLikeReturnTypeHints = core.TSTrue
 
-		session.Configure(lsutil.NewUserConfig(newPrefs))
+		session.Configure(newPrefs)
 
 		codeLensRefreshCalls := utils.Client().RefreshCodeLensCalls()
 		inlayHintsRefreshCalls := utils.Client().RefreshInlayHintsCalls()
 		assert.Equal(t, len(codeLensRefreshCalls), 1, "expected one RefreshCodeLens call after code lens preference change")
 		assert.Equal(t, len(inlayHintsRefreshCalls), 1, "expected one RefreshInlayHints call after inlay hints preference change")
+	})
+
+	t.Run("schedules diagnostics refresh when reportStyleChecksAsWarnings changes", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": "{}",
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// Record the baseline count of RefreshDiagnostics calls.
+		baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+
+		// Toggle reportStyleChecksAsWarnings (default is true, so set it to false).
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.ReportStyleChecksAsWarnings = core.TSFalse
+		session.Configure(prefs)
+		session.WaitForBackgroundTasks()
+
+		refreshCount := len(utils.Client().RefreshDiagnosticsCalls())
+		assert.Assert(t, refreshCount > baselineRefreshCount,
+			"expected RefreshDiagnostics to be called after reportStyleChecksAsWarnings change, got %d calls (baseline %d)",
+			refreshCount, baselineRefreshCount)
 	})
 
 	t.Run("config parsing", func(t *testing.T) {
@@ -1185,36 +1445,132 @@ func TestSession(t *testing.T) {
 		assert.NilError(t, err)
 
 		configMap1 := map[string]any{
-			"UseAliasesForRename":       true,
-			"QuotePreference":           "single",
-			"OrganizeImportsIgnoreCase": true,
+			"preferences": map[string]any{
+				"useAliasesForRenames": true,
+				"quoteStyle":           "single",
+			},
+			"unstable": map[string]any{
+				"organizeImportsSort": "ordinalIgnoreCase",
+			},
 		}
-		// set "typescript" options only
-		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"typescript": configMap1}))
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{"js/ts": configMap1}))
 		actualConfig1 := session.Config()
 		expectedPrefs1 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs1.UseAliasesForRename = core.TSTrue
 		expectedPrefs1.QuotePreference = lsutil.QuotePreferenceSingle
-		expectedPrefs1.OrganizeImportsIgnoreCase = core.TSTrue
+		expectedPrefs1.OrganizeImportsSort = lsutil.OrganizeImportsSortOrdinalIgnoreCase
 
-		// "javascript" options should default to ts
-		assert.DeepEqual(t, *actualConfig1.TS(), *expectedPrefs1)
-		assert.DeepEqual(t, *actualConfig1.JS(), *expectedPrefs1)
+		assert.DeepEqual(t, actualConfig1, expectedPrefs1)
 
 		configMap2 := map[string]any{
-			"UseAliasesForRename":       false,
-			"QuotePreference":           "double",
-			"OrganizeImportsIgnoreCase": false,
+			"preferences": map[string]any{
+				"useAliasesForRenames": false,
+				"quoteStyle":           "double",
+			},
+			"unstable": map[string]any{
+				"organizeImportsSort": "ordinal",
+			},
 		}
-		// set "javascript" options only
-		session.Configure(lsutil.ParseNewUserConfig(map[string]any{"javascript": configMap2}))
+		session.Configure(lsutil.ParseUserPreferences(map[string]any{"js/ts": configMap2}))
 		actualConfig2 := session.Config()
 		expectedPrefs2 := lsutil.NewDefaultUserPreferences()
 		expectedPrefs2.UseAliasesForRename = core.TSFalse
 		expectedPrefs2.QuotePreference = lsutil.QuotePreferenceDouble
-		expectedPrefs2.OrganizeImportsIgnoreCase = core.TSFalse
-		// "typescript" options should not change
-		assert.DeepEqual(t, *actualConfig2.TS(), *expectedPrefs1)
-		assert.DeepEqual(t, *actualConfig2.JS(), *expectedPrefs2)
+		expectedPrefs2.OrganizeImportsSort = lsutil.OrganizeImportsSortOrdinal
+
+		assert.DeepEqual(t, actualConfig2, expectedPrefs2)
+	})
+
+	t.Run("language service for closed files", func(t *testing.T) {
+		t.Parallel()
+
+		t.Run("closed file in configured project not yet opened", func(t *testing.T) {
+			t.Parallel()
+			// Set up a project where a tsconfig exists but no files have been opened.
+			// Requesting language service for a file covered by that tsconfig should
+			// work even though the file was never opened via didOpen.
+			files := map[string]any{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true,
+						"strict": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `export const x: number = 1;`,
+			}
+			session, _ := projecttestutil.Setup(files)
+
+			// Do NOT open any file. Directly request language service for a closed file
+			// that belongs to the configured project.
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			assert.NilError(t, err)
+			assert.Assert(t, ls != nil)
+			program := ls.GetProgram()
+			assert.Assert(t, program != nil)
+			sourceFile := program.GetSourceFile("/home/projects/TS/p1/src/index.ts")
+			assert.Assert(t, sourceFile != nil)
+			assert.Equal(t, sourceFile.Text(), `export const x: number = 1;`)
+		})
+
+		t.Run("closed file with no configured project creates inferred project", func(t *testing.T) {
+			t.Parallel()
+			// Set up a file that has no tsconfig. Requesting language service for it
+			// should create an inferred project even though the file was never opened.
+			files := map[string]any{
+				"/home/projects/TS/loose/index.ts": `const greeting: string = "hello";`,
+			}
+			session, _ := projecttestutil.Setup(files)
+
+			// Do NOT open any file. Directly request language service for a closed file
+			// that has no configured project.
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/loose/index.ts")
+			assert.NilError(t, err)
+			assert.Assert(t, ls != nil)
+			program := ls.GetProgram()
+			assert.Assert(t, program != nil)
+			sourceFile := program.GetSourceFile("/home/projects/TS/loose/index.ts")
+			assert.Assert(t, sourceFile != nil)
+			assert.Equal(t, sourceFile.Text(), `const greeting: string = "hello";`)
+		})
+	})
+
+	t.Run("jsconfig.json used for JS files when tsconfig.json exists in same directory", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"strict": true
+				}
+			}`,
+			"/home/projects/TS/p1/jsconfig.json": `{
+				"compilerOptions": {
+					"noLib": true,
+					"checkJs": true
+				}
+			}`,
+			"/home/projects/TS/p1/index.ts": `export const x: number = 1;`,
+			"/home/projects/TS/p1/app.js":   `/** @type {number} */ var y = "not a number";`,
+		}
+		session, _ := projecttestutil.Setup(files)
+
+		// Open the JS file - it should be assigned to the jsconfig.json project, not tsconfig.json
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/app.js", 1, files["/home/projects/TS/p1/app.js"].(string), lsproto.LanguageKindJavaScript)
+
+		snapshot := session.Snapshot()
+		jsURI := lsproto.DocumentUri("file:///home/projects/TS/p1/app.js")
+		defaultProject := snapshot.GetDefaultProject(jsURI)
+		assert.Assert(t, defaultProject != nil, "JS file should have a default project")
+		assert.Equal(t, defaultProject.Name(), "/home/projects/TS/p1/jsconfig.json", "JS file should belong to jsconfig.json project, not tsconfig.json")
+
+		// Open the TS file - it should be assigned to tsconfig.json project
+		session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/index.ts", 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		snapshot = session.Snapshot()
+		tsURI := lsproto.DocumentUri("file:///home/projects/TS/p1/index.ts")
+		defaultTSProject := snapshot.GetDefaultProject(tsURI)
+		assert.Assert(t, defaultTSProject != nil, "TS file should have a default project")
+		assert.Equal(t, defaultTSProject.Name(), "/home/projects/TS/p1/tsconfig.json", "TS file should belong to tsconfig.json project")
 	})
 }

@@ -34,7 +34,7 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsMethodDeclaration(node) ||
 		ast.IsMethodSignatureDeclaration(node) ||
 		ast.IsFunctionDeclaration(node) ||
-		ast.IsParameter(node) ||
+		ast.IsParameterDeclaration(node) ||
 		ast.IsTypeParameterDeclaration(node) ||
 		ast.IsExpressionWithTypeArguments(node) ||
 		ast.IsImportEqualsDeclaration(node) ||
@@ -44,34 +44,18 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsIndexSignatureDeclaration(node) ||
 		ast.IsPropertyAccessExpression(node) ||
 		ast.IsElementAccessExpression(node) ||
-		ast.IsBinaryExpression(node) // || // !!! TODO: JSDoc support
+		ast.IsBinaryExpression(node) ||
+		ast.IsCallExpression(node) // || // !!! TODO: JSDoc support
 	/* ast.IsJSDocTypeAlias(node); */
 }
 
-func hasInferredType(node *ast.Node) bool {
-	// Debug.type<HasInferredType>(node); // !!!
-	switch node.Kind {
-	case ast.KindParameter,
-		ast.KindPropertySignature,
-		ast.KindPropertyDeclaration,
-		ast.KindBindingElement,
-		ast.KindPropertyAccessExpression,
-		ast.KindElementAccessExpression,
-		ast.KindBinaryExpression,
-		ast.KindCallExpression,
-		ast.KindVariableDeclaration,
-		ast.KindExportAssignment,
-		ast.KindJSExportAssignment,
-		ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
-		ast.KindJSDocParameterTag,
-		ast.KindJSDocPropertyTag,
-		ast.KindCommonJSExport:
-		return true
-	default:
-		// assertType<never>(node); // !!!
-		return false
+func canReuseModifierNodes(nodes []*ast.Node) bool {
+	for _, node := range nodes {
+		if ast.IsModifier(node) && node.Flags&ast.NodeFlagsReparsed != 0 {
+			return false
+		}
 	}
+	return true
 }
 
 func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver printer.EmitResolver, node *ast.Node) bool {
@@ -92,7 +76,6 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		ast.KindImportDeclaration,
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
-		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
 		return false
 	case ast.KindClassStaticBlockDeclaration:
@@ -132,7 +115,8 @@ func isEnclosingDeclaration(node *ast.Node) bool {
 		ast.IsInterfaceDeclaration(node) ||
 		ast.IsFunctionLike(node) ||
 		ast.IsIndexSignatureDeclaration(node) ||
-		ast.IsMappedTypeNode(node)
+		ast.IsMappedTypeNode(node) ||
+		ast.IsVariableDeclaration(node)
 }
 
 func isAlwaysType(node *ast.Node) bool {
@@ -142,8 +126,8 @@ func isAlwaysType(node *ast.Node) bool {
 	return false
 }
 
-func maskModifierFlags(host DeclarationEmitHost, node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {
-	flags := host.GetEffectiveDeclarationFlags(node, modifierMask) | modifierAdditions
+func maskModifierFlags(node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {
+	flags := (ast.GetCombinedModifierFlags(node) & modifierMask) | modifierAdditions
 	if flags&ast.ModifierFlagsDefault != 0 && (flags&ast.ModifierFlagsExport == 0) {
 		// A non-exported default is a nonsequitor - we usually try to remove all export modifiers
 		// from statements in ambient declarations; but a default export must retain its export modifier to be syntactically valid
@@ -160,31 +144,6 @@ func unwrapParenthesizedExpression(o *ast.Node) *ast.Node {
 		o = o.Expression()
 	}
 	return o
-}
-
-func isPrimitiveLiteralValue(node *ast.Node, includeBigInt bool) bool {
-	// !!! Debug.type<PrimitiveLiteral>(node);
-	switch node.Kind {
-	case ast.KindTrueKeyword,
-		ast.KindFalseKeyword,
-		ast.KindNumericLiteral,
-		ast.KindStringLiteral,
-		ast.KindNoSubstitutionTemplateLiteral:
-		return true
-	case ast.KindBigIntLiteral:
-		return includeBigInt
-	case ast.KindPrefixUnaryExpression:
-		if node.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
-			return ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand) || (includeBigInt && ast.IsBigIntLiteral(node.AsPrefixUnaryExpression().Operand))
-		}
-		if node.AsPrefixUnaryExpression().Operator == ast.KindPlusToken {
-			return ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand)
-		}
-		return false
-	default:
-		// !!! assertType<never>(node);
-		return false
-	}
 }
 
 func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParameterDeclaration) bool {

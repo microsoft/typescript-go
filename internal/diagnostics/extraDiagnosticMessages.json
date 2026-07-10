@@ -94,5 +94,41 @@
     "Deduplicate packages with the same name and version.": {
         "category": "Message",
         "code": 100011
+    },
+    "Loading": {
+        "category": "Message",
+        "code": 100012
+    },
+    "Project '{0}'": {
+        "category": "Message",
+        "code": 100014
+    },
+    "Installing types for '{0}'": {
+        "category": "Message",
+        "code": 100013
+    },
+    "Fix All": {
+        "category": "Message",
+        "code": 100015
+    },
+    "Organize Imports": {
+        "category": "Message",
+        "code": 100016
+    },
+    "Remove Unused Imports": {
+        "category": "Message",
+        "code": 100017
+    },
+    "Sort Imports": {
+        "category": "Message",
+        "code": 100018
+    },
+    "File rename is not supported by the editor": {
+        "category": "Error",
+        "code": 8040
+    },
+    "JSDoc comment": {
+        "category": "Message",
+        "code": 100019
     }
 }

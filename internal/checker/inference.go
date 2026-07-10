@@ -27,6 +27,7 @@ type InferenceState struct {
 	sourceStack       []*Type
 	targetStack       []*Type
 	next              *InferenceState
+	depth             int
 }
 
 func (c *Checker) getInferenceState() *InferenceState {
@@ -98,10 +99,16 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		}
 		return
 	}
-	if target.flags&TypeFlagsUnion != 0 && source.flags&TypeFlagsNever == 0 {
+	if target.flags&TypeFlagsUnion != 0 {
+		var sourceTypes []*Type
+		if source.flags&TypeFlagsUnion != 0 {
+			sourceTypes = source.Types()
+		} else {
+			sourceTypes = []*Type{source}
+		}
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
-		tempSources, tempTargets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
+		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
@@ -181,6 +188,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 				}
 				if n.priority < inference.priority {
 					inference.candidates = nil
+					inference.candidateDepths = nil
 					inference.contraCandidates = nil
 					inference.topLevel = true
 					inference.priority = n.priority
@@ -193,9 +201,28 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 							inference.contraCandidates = append(inference.contraCandidates, candidate)
 							clearCachedInferences(n.inferences)
 						}
-					} else if !slices.Contains(inference.candidates, candidate) {
-						inference.candidates = append(inference.candidates, candidate)
-						clearCachedInferences(n.inferences)
+					} else {
+						index := slices.Index(inference.candidates, candidate)
+						if index < 0 || inference.candidateDepths[index] < n.depth {
+							// Candidate isn't present or is present with lower depth
+							if index >= 0 {
+								// Remove candidate with lower depth
+								inference.candidates = slices.Delete(inference.candidates, index, index+1)
+								inference.candidateDepths = slices.Delete(inference.candidateDepths, index, index+1)
+							}
+							index = 0
+							for index < len(inference.candidateDepths) {
+								if inference.candidateDepths[index] < n.depth {
+									break
+								}
+								index++
+							}
+							// Insert candidate at end or immediately before first candidate with lower depth.
+							// This ensures candidates with the highest depth are stored first.
+							inference.candidates = slices.Insert(inference.candidates, index, candidate)
+							inference.candidateDepths = slices.Insert(inference.candidateDepths, index, n.depth)
+							clearCachedInferences(n.inferences)
+						}
 					}
 				}
 				if n.priority&InferencePriorityReturnType == 0 && target.flags&TypeFlagsTypeParameter != 0 && inference.topLevel && !c.isTypeParameterAtTopLevel(n.originalTarget, target, 0) {
@@ -276,6 +303,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 }
 
 func (c *Checker) inferFromTypeArguments(n *InferenceState, sourceTypes []*Type, targetTypes []*Type, variances []VarianceFlags) {
+	n.depth++
 	for i := range min(len(sourceTypes), len(targetTypes)) {
 		if i < len(variances) && variances[i]&VarianceFlagsVarianceMask == VarianceFlagsContravariant {
 			c.inferFromContravariantTypes(n, sourceTypes[i], targetTypes[i])
@@ -283,6 +311,7 @@ func (c *Checker) inferFromTypeArguments(n *InferenceState, sourceTypes []*Type,
 			c.inferFromTypes(n, sourceTypes[i], targetTypes[i])
 		}
 	}
+	n.depth--
 }
 
 func (c *Checker) inferWithPriority(n *InferenceState, source *Type, target *Type, newPriority InferencePriority) {
@@ -386,7 +415,12 @@ func (c *Checker) inferToMultipleTypes(n *InferenceState, source *Type, targets 
 	typeVariableCount := 0
 	if targetFlags&TypeFlagsUnion != 0 {
 		var nakedTypeVariable *Type
-		sources := source.Distributed()
+		var sources []*Type
+		if source.flags&TypeFlagsUnion != 0 {
+			sources = source.Types()
+		} else {
+			sources = []*Type{source}
+		}
 		matched := make([]bool, len(sources))
 		inferenceCircularity := false
 		// First infer to types that are not naked type variables. For each source type we
@@ -702,7 +736,9 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 							if constraint != nil && isTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
 								impliedArity := constraint.TargetTupleType().fixedLength
 								c.inferFromTypes(n, c.sliceTupleType(source, startLength, sourceArity-(startLength+impliedArity)), elementTypes[startLength])
-								c.inferFromTypes(n, c.getElementTypeOfSliceOfTupleType(source, startLength+impliedArity, endLength, false, false), elementTypes[startLength+1])
+								if restType := c.getElementTypeOfSliceOfTupleType(source, startLength+impliedArity, endLength, false, false); restType != nil {
+									c.inferFromTypes(n, restType, elementTypes[startLength+1])
+								}
 							}
 						}
 					} else if elementInfos[startLength].flags&ElementFlagsRest != 0 && elementInfos[startLength+1].flags&ElementFlagsVariadic != 0 {
@@ -714,9 +750,13 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 								impliedArity := constraint.TargetTupleType().fixedLength
 								endIndex := sourceArity - getEndElementCount(target.TargetTupleType(), ElementFlagsFixed)
 								startIndex := endIndex - impliedArity
-								trailingSlice := c.createTupleTypeEx(c.getTypeArguments(source)[startIndex:endIndex], source.TargetTupleType().elementInfos[startIndex:endIndex], false /*readonly*/)
-								c.inferFromTypes(n, c.getElementTypeOfSliceOfTupleType(source, startLength, endLength+impliedArity, false, false), elementTypes[startLength])
-								c.inferFromTypes(n, trailingSlice, elementTypes[startLength+1])
+								if startIndex >= startLength {
+									trailingSlice := c.createTupleTypeEx(c.getTypeArguments(source)[startIndex:endIndex], source.TargetTupleType().elementInfos[startIndex:endIndex], false /*readonly*/)
+									if restType := c.getElementTypeOfSliceOfTupleType(source, startLength, endLength+impliedArity, false, false); restType != nil {
+										c.inferFromTypes(n, restType, elementTypes[startLength])
+									}
+									c.inferFromTypes(n, trailingSlice, elementTypes[startLength+1])
+								}
 							}
 						}
 					}
@@ -1434,9 +1474,9 @@ func (c *Checker) isTypeParameterAtTopLevelInReturnType(signature *Signature, ty
 
 func (c *Checker) getTypeFromInference(inference *InferenceInfo) *Type {
 	switch {
-	case inference.candidates != nil:
+	case len(inference.candidates) != 0:
 		return c.getUnionTypeEx(inference.candidates, UnionReductionSubtype, nil, nil)
-	case inference.contraCandidates != nil:
+	case len(inference.contraCandidates) != 0:
 		return c.getIntersectionType(inference.contraCandidates)
 	}
 	return nil
@@ -1556,6 +1596,7 @@ func cloneInferenceInfo(info *InferenceInfo) *InferenceInfo {
 	return &InferenceInfo{
 		typeParameter:    info.typeParameter,
 		candidates:       slices.Clone(info.candidates),
+		candidateDepths:  slices.Clone(info.candidateDepths),
 		contraCandidates: slices.Clone(info.contraCandidates),
 		inferredType:     info.inferredType,
 		priority:         info.priority,
@@ -1578,13 +1619,13 @@ func hasInferenceCandidates(info *InferenceInfo) bool {
 }
 
 func hasInferenceCandidatesOrDefault(info *InferenceInfo) bool {
-	return info.candidates != nil || info.contraCandidates != nil || hasTypeParameterDefault(info.typeParameter)
+	return hasInferenceCandidates(info) || hasTypeParameterDefault(info.typeParameter)
 }
 
 func hasTypeParameterDefault(tp *Type) bool {
 	if tp.symbol != nil {
 		for _, d := range tp.symbol.Declarations {
-			if ast.IsTypeParameterDeclaration(d) && d.AsTypeParameter().DefaultType != nil {
+			if ast.IsTypeParameterDeclaration(d) && d.AsTypeParameterDeclaration().DefaultType != nil {
 				return true
 			}
 		}

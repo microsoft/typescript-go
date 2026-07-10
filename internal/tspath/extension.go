@@ -1,7 +1,6 @@
 package tspath
 
 import (
-	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -50,8 +49,8 @@ func RemoveFileExtension(path string) string {
 			return path[:len(path)-len(ext)]
 		}
 	}
-	// Otherwise just remove single dot extension, if any
-	return path[:len(path)-len(filepath.Ext(path))] //nolint:forbidigo
+
+	return path
 }
 
 func TryGetExtensionFromPath(p string) string {
@@ -131,9 +130,13 @@ func GetDeclarationEmitExtensionForPath(path string) string {
 		return ExtensionDmts
 	case FileExtensionIsOneOf(path, []string{ExtensionCjs, ExtensionCts}):
 		return ExtensionDcts
-	case FileExtensionIsOneOf(path, []string{ExtensionJson}):
-		return `.d.json.ts` // Drive-by redefinition of json declaration file output name so if it's ever enabled, it behaves well
+	case FileExtensionIsOneOf(path, []string{ExtensionTs, ExtensionTsx, ExtensionJs, ExtensionJsx}):
+		return ExtensionDts
 	default:
+		ext := GetAnyExtensionFromPath(path, nil, false)
+		if ext != "" {
+			return ".d" + ext + ".ts"
+		}
 		return ExtensionDts
 	}
 }
@@ -159,7 +162,7 @@ func ChangeAnyExtension(path string, ext string, extensions []string, ignoreCase
 }
 
 func ChangeExtension(path string, newExtension string) string {
-	return ChangeAnyExtension(path, newExtension, extensionsToRemove /*ignoreCase*/, false)
+	return ChangeAnyExtension(path, newExtension, extensionsToRemove, false /*ignoreCase*/)
 }
 
 // Like `changeAnyExtension`, but declaration file extensions are recognized
@@ -186,8 +189,10 @@ func GetPossibleOriginalInputExtensionForExtension(path string) []string {
 	if FileExtensionIsOneOf(path, []string{ExtensionDcts, ExtensionCjs, ExtensionCts}) {
 		return []string{ExtensionCts, ExtensionCjs}
 	}
-	if FileExtensionIs(path, ".d.json.ts") {
-		return []string{ExtensionJson}
+	// Handle any custom .d.x.ts extension (e.g., .d.json.ts -> .json, .d.css.ts -> .css)
+	if ext := GetDeclarationFileExtension(path); ext != "" && ext != ExtensionDts {
+		inner := ext[len(".d.") : len(ext)-len(".ts")]
+		return []string{"." + inner}
 	}
 	return []string{ExtensionTsx, ExtensionTs, ExtensionJsx, ExtensionJs}
 }

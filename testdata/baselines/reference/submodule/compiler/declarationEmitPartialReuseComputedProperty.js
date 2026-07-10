@@ -25,15 +25,11 @@ export declare const n = "A";
 export declare const poz = 1;
 export declare const neg = -1;
 export declare const o: () => {
-    A: string;
+    [n]: string;
     foo: string;
-    1: number;
-    [-1]: number;
+    [poz]: number;
+    [neg]: number;
 };
 //// [b.d.ts]
-export declare const g: () => {
-    A: string;
-    foo: string;
-    1: number;
-    [-1]: number;
-};
+import { o } from "./a";
+export declare const g: typeof o;

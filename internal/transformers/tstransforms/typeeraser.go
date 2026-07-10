@@ -96,7 +96,17 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindIndexSignature:
 		return nil
 
-	case ast.KindJSExportAssignment, ast.KindJSImportDeclaration:
+	case ast.KindInKeyword, ast.KindOutKeyword:
+		// TypeScript `in`/`out` variance modifiers are elided. These keywords are only
+		// meaningful as modifiers on type parameters (which are themselves elided), but they may
+		// appear as a grammar error on other declarations and must not leak into the emitted JS.
+		// The `in` binary operator shares this token kind, so only elide when used as a modifier.
+		if tx.parentNode == nil || !ast.IsBinaryExpression(tx.parentNode) {
+			return nil
+		}
+		return tx.Visitor().VisitEachChild(node)
+
+	case ast.KindJSImportDeclaration:
 		// reparsed commonjs are elided
 		return nil
 	case ast.KindTypeAliasDeclaration,
@@ -137,7 +147,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindConstructor:
 		n := node.AsConstructorDeclaration()
-		if n.Body == nil {
+		if ast.NodeIsMissing(n.Body) {
 			// TypeScript overloads are elided
 			return nil
 		}
@@ -145,7 +155,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindMethodDeclaration:
 		n := node.AsMethodDeclaration()
-		if n.Body == nil {
+		if ast.NodeIsMissing(n.Body) {
 			// TypeScript overloads are elided
 			return nil
 		}
@@ -153,7 +163,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindGetAccessor:
 		n := node.AsGetAccessorDeclaration()
-		if n.Body == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
+		if ast.NodeIsMissing(n.Body) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
 			// Abstract accessors are elided
 			return nil
 		}
@@ -165,7 +175,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindSetAccessor:
 		n := node.AsSetAccessorDeclaration()
-		if n.Body == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
+		if ast.NodeIsMissing(n.Body) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
 			// Abstract accessors are elided
 			return nil
 		}
@@ -177,7 +187,11 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
-		return tx.Factory().UpdateVariableDeclaration(n, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		updated := tx.Factory().UpdateVariableDeclaration(n, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNode(n.Initializer))
+		if n.Type != nil {
+			tx.EmitContext().SetTypeNode(updated.AsVariableDeclaration().Name(), n.Type)
+		}
+		return updated
 
 	case ast.KindHeritageClause:
 		n := node.AsHeritageClause()
@@ -185,7 +199,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript `implements` clauses are elided
 			return nil
 		}
-		return tx.Factory().UpdateHeritageClause(n, tx.Visitor().VisitNodes(n.Types))
+		return tx.Factory().UpdateHeritageClause(n, n.Token, tx.Visitor().VisitNodes(n.Types))
 
 	case ast.KindClassDeclaration:
 		n := node.AsClassDeclaration()
@@ -197,7 +211,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindFunctionDeclaration:
 		n := node.AsFunctionDeclaration()
-		if n.Body == nil {
+		if ast.NodeIsMissing(n.Body) {
 			// TypeScript overloads are elided
 			return tx.elide(node)
 		}
@@ -236,7 +250,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
-		return tx.Factory().UpdateCallExpression(n, tx.Visitor().VisitNode(n.Expression), n.QuestionDotToken, nil, tx.Visitor().VisitNodes(n.Arguments))
+		return tx.Factory().UpdateCallExpression(n, tx.Visitor().VisitNode(n.Expression), n.QuestionDotToken, nil, tx.Visitor().VisitNodes(n.Arguments), n.Flags)
 
 	case ast.KindNewExpression:
 		n := node.AsNewExpression()
@@ -244,7 +258,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindTaggedTemplateExpression:
 		n := node.AsTaggedTemplateExpression()
-		return tx.Factory().UpdateTaggedTemplateExpression(n, tx.Visitor().VisitNode(n.Tag), n.QuestionDotToken, nil, tx.Visitor().VisitNode(n.Template))
+		return tx.Factory().UpdateTaggedTemplateExpression(n, tx.Visitor().VisitNode(n.Tag), n.QuestionDotToken, nil, tx.Visitor().VisitNode(n.Template), n.Flags)
 
 	case ast.KindNonNullExpression, ast.KindTypeAssertionExpression, ast.KindAsExpression, ast.KindSatisfiesExpression:
 		partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(node.Expression()))
@@ -255,7 +269,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindParenthesizedExpression:
 		if !ast.IsJSDocTypeAssertion(node) {
 			n := node.AsParenthesizedExpression()
-			expression := ast.SkipOuterExpressions(n.Expression, ^(ast.OEKAssertions | ast.OEKExpressionsWithTypeArguments))
+			expression := ast.SkipOuterExpressions(n.Expression, ast.OEKAllExceptAssertionsOrExpressionsWithTypeArguments)
 			if ast.IsAssertionExpression(expression) || ast.IsSatisfiesExpression(expression) {
 				partial := tx.Factory().NewPartiallyEmittedExpression(tx.Visitor().VisitNode(n.Expression))
 				tx.EmitContext().SetOriginal(partial, node)

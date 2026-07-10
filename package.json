@@ -7,20 +7,21 @@
         "node": ">=20.19"
     },
     "devDependencies": {
-        "@types/adm-zip": "^0.5.7",
+        "@types/adm-zip": "^0.5.8",
         "@types/node": "latest",
         "@types/tmp": "^0.2.6",
         "@types/which": "^3.0.4",
-        "adm-zip": "^0.5.16",
+        "@unicode/unicode-15.1.0": "^1.6.17",
+        "adm-zip": "^0.5.17",
         "chokidar": "^5.0.0",
-        "dprint": "^0.52.0",
+        "dprint": "^0.55.1",
         "execa": "^9.6.1",
         "glob": "^13.0.6",
-        "hereby": "^1.12.0",
+        "hereby": "^1.15.1",
         "p-limit": "^7.3.0",
         "picocolors": "^1.1.1",
-        "tmp": "^0.2.5",
-        "typescript": "^5.9.3",
+        "tmp": "^0.2.7",
+        "typescript": "^6.0.3",
         "which": "^6.0.1"
     },
     "scripts": {
@@ -37,11 +38,23 @@
     },
     "workspaces": [
         "./_extension",
+        "./_extension-nightly",
         "./_packages/*"
     ],
-    "packageManager": "npm@11.11.0+sha512.f36811c4aae1fde639527368ae44c571d050006a608d67a191f195a801a52637a312d259186254aa3a3799b05335b7390539cf28656d18f0591a1125ba35f973",
+    "overrides": {
+        "@microsoft/applicationinsights-web-basic": "3.3.11",
+        "@microsoft/1ds-core-js": "4.3.11",
+        "@microsoft/1ds-post-js": "4.3.11"
+    },
+    "packageManager": "npm@11.17.0+sha512.3eeaf18997b11070d313849268b23766b9db0068997dec9471073170fe43fa17f2b4d0337bf0f52330ee2274e7f5754b21b01052742e48f5c9c74d8b1e32ef43",
     "volta": {
         "node": "22.22.0",
-        "npm": "11.11.0"
+        "npm": "11.17.0"
+    },
+    "allowScripts": {
+        "dprint@0.55.1": true,
+        "esbuild@0.28.1": true,
+        "@vscode/vsce-sign@2.0.9": true,
+        "keytar@7.9.0": true
     }
 }

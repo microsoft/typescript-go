@@ -43,6 +43,23 @@ type DeclarationEmitHost interface {
 	GetEmitResolver() printer.EmitResolver
 }
 
+type thisPropertyAssignmentKey struct {
+	name      string
+	node      *ast.Node
+	isStatic  bool
+	isPrivate bool
+}
+
+func getThisPropertyAssignmentKey(name *ast.Node, node *ast.Node, isStatic bool) thisPropertyAssignmentKey {
+	isPrivate := ast.IsPrivateIdentifier(name)
+	if name != nil && !ast.IsDynamicName(name) {
+		if nameText, ok := ast.TryGetTextOfPropertyName(name); ok {
+			return thisPropertyAssignmentKey{name: nameText, isStatic: isStatic, isPrivate: isPrivate}
+		}
+	}
+	return thisPropertyAssignmentKey{node: node, isStatic: isStatic, isPrivate: isPrivate}
+}
+
 type DeclarationTransformer struct {
 	transformers.Transformer
 	host                DeclarationEmitHost
@@ -59,11 +76,27 @@ type DeclarationTransformer struct {
 	enclosingDeclaration             *ast.Node
 	resultHasExternalModuleIndicator bool
 	suppressNewDiagnosticContexts    bool
+	witnessedCjsExports              collections.Set[string]
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
-	expandoHosts                     collections.Set[ast.NodeId]
+	expandoHosts                     map[ast.NodeId]*ast.Node               // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
+	expandoMembers                   map[ast.NodeId][]*ast.Node             // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	deferredExpandoAssignments       map[ast.NodeId][]*ast.BinaryExpression // expando assignments whose host wasn't visible when collected, processed if the host is late-marked visible
+	seenProperties                   collections.Set[thisPropertyAssignmentKey]
+	thisPropertyAssignmentsCollected []*ast.Node
 	rawReferencedFiles               []ReferencedFilePair
 	rawTypeReferenceDirectives       []*ast.FileReference
 	rawLibReferenceDirectives        []*ast.FileReference
+	bindingNameVisitor               *ast.NodeVisitor
+	expressionVisitor                *ast.NodeVisitor
+	cjsExportAssignmentVisitor       *ast.NodeVisitor
+	exportStrippingVisitor           *ast.NodeVisitor
+	thisPropertyVisitor              *ast.NodeVisitor
+
+	cjsExportAssignment          *ast.Node
+	cjsExportMembers             []*ast.Node
+	cjsExportAssignmentName      *ast.Node // tracks the name node used for `export =` in CJS module.exports assignments
+	declareStrippingVisitor      *ast.NodeVisitor
+	inClassExpressionDeclaration bool // true when serializing members of a class expression kept as a class declaration
 }
 
 // TODO: Convert to transformers.TransformerFactory signature to allow more automatic composition with other transforms
@@ -81,7 +114,28 @@ func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitCo
 		declarationFilePath: declarationFilePath,
 		declarationMapPath:  declarationMapPath,
 	}
+	tx.state.reportExpandoFunctionErrors = func(node *ast.Node) {
+		if !tx.state.isolatedDeclarations {
+			return
+		}
+		props := resolver.GetPropertiesOfContainerFunction(node)
+		for _, p := range props {
+			if ast.IsExpandoPropertyDeclaration(p.ValueDeclaration) {
+				errorTarget := p.ValueDeclaration
+				if ast.IsBinaryExpression(errorTarget) {
+					errorTarget = errorTarget.AsBinaryExpression().Left
+				}
+				tx.state.addDiagnostic(createDiagnosticForNode(errorTarget, diagnostics.Assigning_properties_to_functions_without_declaring_them_is_not_supported_with_isolatedDeclarations_Add_an_explicit_declaration_for_the_properties_assigned_to_this_function))
+			}
+		}
+	}
 	tx.NewTransformer(tx.visit, context)
+	tx.bindingNameVisitor = tx.EmitContext().NewNodeVisitor(tx.visitBindingName)
+	tx.expressionVisitor = tx.EmitContext().NewNodeVisitor(tx.visitNestedExpression)
+	tx.exportStrippingVisitor = tx.EmitContext().NewNodeVisitor(tx.stripExportModifiers)
+	tx.thisPropertyVisitor = tx.EmitContext().NewNodeVisitor(tx.visitThisPropertyAssignments)
+	tx.cjsExportAssignmentVisitor = tx.EmitContext().NewNodeVisitor(tx.visitCJSExportAssignments)
+	tx.declareStrippingVisitor = tx.EmitContext().NewNodeVisitor(tx.stripDeclareModifiers)
 	return tx
 }
 
@@ -189,9 +243,7 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindImportDeclaration,
 		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
-		ast.KindJSExportAssignment,
-		ast.KindExportAssignment,
-		ast.KindCommonJSExport:
+		ast.KindExportAssignment:
 		return tx.visitDeclarationStatements(node)
 	// statements we elide
 	case ast.KindBreakStatement,
@@ -212,10 +264,9 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindWithStatement,
 		ast.KindNotEmittedStatement,
 		ast.KindBlock,
-		ast.KindMissingDeclaration:
+		ast.KindMissingDeclaration,
+		ast.KindExpressionStatement:
 		return nil
-	case ast.KindExpressionStatement:
-		return tx.visitExpressionStatement(node.AsExpressionStatement())
 	// parts of things, things we just visit children of
 	default:
 		return tx.visitDeclarationSubtree(node)
@@ -227,6 +278,7 @@ func throwDiagnostic(result printer.SymbolAccessibilityResult) *SymbolAccessibil
 }
 
 func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
+	tx.cjsExportAssignmentName = nil
 	if node.IsDeclarationFile {
 		return node.AsNode()
 	}
@@ -240,13 +292,16 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.suppressNewDiagnosticContexts = false
 	tx.state.lateMarkedStatements = make([]*ast.Node, 0)
 	tx.lateStatementReplacementMap = make(map[ast.NodeId]*ast.Node)
-	tx.expandoHosts = collections.Set[ast.NodeId]{}
+	tx.expandoHosts = make(map[ast.NodeId]*ast.Node)
+	tx.expandoMembers = make(map[ast.NodeId][]*ast.Node)
+	tx.deferredExpandoAssignments = make(map[ast.NodeId][]*ast.BinaryExpression)
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
+	tx.witnessedCjsExports.Clear()
 	tx.state.currentSourceFile = node
 	tx.collectFileReferences(node)
-	tx.resolver.PrecalculateDeclarationEmitVisibility(node)
+	tx.resolver.PrecalculateDeclarationEmitVisibility(tx.EmitContext().MostOriginal(node.AsNode()).AsSourceFile())
 	updated := tx.transformSourceFile(node)
 	tx.state.currentSourceFile = nil
 	return updated
@@ -258,10 +313,46 @@ func (tx *DeclarationTransformer) collectFileReferences(sourceFile *ast.SourceFi
 	tx.rawLibReferenceDirectives = append(tx.rawLibReferenceDirectives, sourceFile.LibReferenceDirectives...)
 }
 
+func nodeOrSyntaxListChildren(node *ast.Node) []*ast.Node {
+	if ast.IsSyntaxList(node) {
+		return node.AsSyntaxList().Children
+	}
+	return []*ast.Node{node}
+}
+
+func flattenSyntaxLists(nodes []*ast.Node) []*ast.Node {
+	return core.FlatMap(nodes, nodeOrSyntaxListChildren)
+}
+
+func (tx *DeclarationTransformer) appendCjsExports(combinedStatements *ast.StatementList) *ast.StatementList {
+	result := []*ast.Node{}
+	if tx.cjsExportAssignment != nil {
+		result = append(result, tx.cjsExportAssignment)
+	}
+	result = append(result, tx.cjsExportMembers...)
+	result = append(result, combinedStatements.Nodes...)
+	statementNodes := flattenSyntaxLists(result)
+	if len(statementNodes) != len(combinedStatements.Nodes) {
+		combinedStatements = tx.Factory().NewNodeList(statementNodes)
+	}
+	return combinedStatements
+}
+
 func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast.Node {
+	tx.cjsExportAssignment = nil
+	tx.cjsExportAssignmentName = nil
+	tx.cjsExportMembers = nil
+	defer func() {
+		tx.cjsExportAssignment = nil
+		tx.cjsExportAssignmentName = nil
+		tx.cjsExportMembers = nil
+	}()
+	tx.cjsExportAssignmentVisitor.VisitNode(node.AsNode()) // collect nested module.exports= assignments
+	tx.expressionVisitor.VisitNode(node.AsNode())          // collect expando members (requires any export assignment be located in advance)
 	var combinedStatements *ast.StatementList
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
+	combinedStatements = tx.appendCjsExports(combinedStatements)
 	combinedStatements.Loc = statements.Loc // setTextRange
 	if ast.IsExternalOrCommonJSModule(node) {
 		if ast.IsInJSFile(node.AsNode()) {
@@ -269,9 +360,6 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 				for _, node := range exportEquals.Declarations {
 					tx.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Multiple_module_exports_assignments_cannot_be_serialized_for_declaration_emit))
 				}
-			}
-			for _, node := range node.NestedCJSExports {
-				tx.state.addDiagnostic(createDiagnosticForNode(node, diagnostics.Nested_CommonJS_export_constructs_cannot_be_serialized_for_declaration_emit))
 			}
 		}
 		if !tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker) {
@@ -353,7 +441,7 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 					if needsScopeMarker(elem) {
 						tx.needsScopeFixMarker = true
 					}
-					if ast.IsSourceFile(statement.Parent) && ast.IsExternalModuleIndicator(replacement) {
+					if ast.IsSourceFile(statement.Parent) && ast.IsExternalModuleIndicator(elem) {
 						tx.resultHasExternalModuleIndicator = true
 					}
 				}
@@ -460,6 +548,28 @@ func (tx *DeclarationTransformer) getTypeReferences() (result []*ast.FileReferen
 	return result
 }
 
+func (tx *DeclarationTransformer) setupDiagnosticContext(input *ast.Node) (bool, func()) {
+	canProdiceDiagnostic := canProduceDiagnostics(input)
+	oldWithinObjectLiteralType := tx.suppressNewDiagnosticContexts
+	shouldEnterSuppressNewDiagnosticsContextContext := (input.Kind == ast.KindTypeLiteral || input.Kind == ast.KindMappedType) && !(input.Parent.Kind == ast.KindTypeAliasDeclaration || input.Parent.Kind == ast.KindJSTypeAliasDeclaration)
+
+	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
+	if canProdiceDiagnostic && !tx.suppressNewDiagnosticContexts {
+		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(input)
+	}
+	oldName := tx.state.errorNameNode
+
+	if shouldEnterSuppressNewDiagnosticsContextContext {
+		tx.suppressNewDiagnosticContexts = true
+	}
+
+	return canProdiceDiagnostic, func() {
+		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+		tx.state.errorNameNode = oldName
+		tx.suppressNewDiagnosticContexts = oldWithinObjectLiteralType
+	}
+}
+
 func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.Node {
 	if tx.shouldStripInternal(input) {
 		return nil
@@ -474,13 +584,11 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 				// In isolated declarations TSC needs to error on these as we don't know the type in a DTE.
 				if !tx.resolver.IsDefinitelyReferenceToGlobalSymbolObject(input.Name().Expression()) {
 					if ast.IsClassDeclaration(input.Parent) || ast.IsObjectLiteralExpression(input.Parent) {
-						// !!! TODO: isolatedDeclarations diagnostics
-						// context.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations))
+						tx.state.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations))
 						return nil
 					} else if (ast.IsInterfaceDeclaration(input.Parent) || ast.IsTypeLiteralNode(input.Parent)) && !ast.IsEntityNameExpression(input.Name().Expression()) {
 						// Type declarations just need to double-check that the input computed name is an entity name expression
-						// !!! TODO: isolatedDeclarations diagnostics
-						// context.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_properties_must_be_number_or_string_literals_variables_or_dotted_expressions_with_isolatedDeclarations))
+						tx.state.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_properties_must_be_number_or_string_literals_variables_or_dotted_expressions_with_isolatedDeclarations))
 						return nil
 					}
 				}
@@ -499,24 +607,17 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		return nil
 	}
 
+	if ast.IsHeritageClause(input) && (len(input.AsHeritageClause().Types.Nodes) == 0 || (len(input.AsHeritageClause().Types.Nodes) == 1 && ast.NodeIsMissing(input.AsHeritageClause().Types.Nodes[0]))) {
+		return nil
+	}
+
 	previousEnclosingDeclaration := tx.enclosingDeclaration
 	if isEnclosingDeclaration(input) {
 		tx.enclosingDeclaration = input
 	}
 
-	canProdiceDiagnostic := canProduceDiagnostics(input)
-	oldWithinObjectLiteralType := tx.suppressNewDiagnosticContexts
-	shouldEnterSuppressNewDiagnosticsContextContext := (input.Kind == ast.KindTypeLiteral || input.Kind == ast.KindMappedType) && !(input.Parent.Kind == ast.KindTypeAliasDeclaration || input.Parent.Kind == ast.KindJSTypeAliasDeclaration)
-
-	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
-	if canProdiceDiagnostic && !tx.suppressNewDiagnosticContexts {
-		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(input)
-	}
-	oldName := tx.state.errorNameNode
-
-	if shouldEnterSuppressNewDiagnosticsContextContext {
-		tx.suppressNewDiagnosticContexts = true
-	}
+	canProdiceDiagnostic, cleanupDiagnosticContext := tx.setupDiagnosticContext(input)
+	defer cleanupDiagnosticContext()
 
 	var result *ast.Node
 
@@ -548,11 +649,11 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindVariableDeclaration:
 		result = tx.transformVariableDeclaration(input.AsVariableDeclaration())
 	case ast.KindTypeParameter:
-		result = tx.transformTypeParameterDeclaration(input.AsTypeParameter())
+		result = tx.transformTypeParameterDeclaration(input.AsTypeParameterDeclaration())
 	case ast.KindExpressionWithTypeArguments:
 		result = tx.transformExpressionWithTypeArguments(input.AsExpressionWithTypeArguments())
 	case ast.KindTypeReference:
-		result = tx.transformTypeReference(input.AsTypeReference())
+		result = tx.transformTypeReference(input.AsTypeReferenceNode())
 	case ast.KindConditionalType:
 		result = tx.transformConditionalTypeNode(input.AsConditionalTypeNode())
 	case ast.KindFunctionType:
@@ -596,9 +697,6 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	}
 
 	tx.enclosingDeclaration = previousEnclosingDeclaration
-	tx.state.getSymbolAccessibilityDiagnostic = oldDiag
-	tx.state.errorNameNode = oldName
-	tx.suppressNewDiagnosticContexts = oldWithinObjectLiteralType
 	return result
 }
 
@@ -649,6 +747,7 @@ func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageCl
 	}
 	return tx.Factory().UpdateHeritageClause(
 		clause,
+		clause.Token,
 		tx.Visitor().VisitNodes(tx.Factory().NewNodeList(retainedClauses)),
 	)
 }
@@ -734,6 +833,9 @@ func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.T
 }
 
 func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
+	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil && ast.IsVariableDeclarationInitializedToRequire(input.AsNode()) {
+		return tx.transformCjsRequireVariableDeclaration(input)
+	}
 	if ast.IsBindingPattern(input.Name()) {
 		return tx.recreateBindingPattern(input.Name().AsBindingPattern())
 	}
@@ -746,6 +848,38 @@ func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.Variab
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
+}
+
+func (tx *DeclarationTransformer) transformCjsRequireVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
+	specifier := tx.rewriteModuleSpecifier(input.AsNode(), input.Initializer.AsCallExpression().Arguments.Nodes[0])
+	if ast.IsIdentifier(input.Name()) {
+		// `const x = require("something")` -> `import x = require("something")`
+		return tx.Factory().NewImportEqualsDeclaration(nil, false, input.Name(), tx.Factory().NewExternalModuleReference(specifier))
+	} else if ast.IsArrayBindingPattern(input.Name()) {
+		// TODO: Is this actually reachable? should we error on this?
+		return nil
+	} else { // object binding pattern
+
+		// `const {x, y: z} = require("something")` -> `import {x, y as z} from "something"`
+		b := input.Name().AsBindingPattern()
+		var importSpecifiers []*ast.Node
+		for _, elem := range b.Elements.Nodes {
+			if !ast.IsIdentifier(elem.Name()) {
+				continue // nested destructuring, bail
+			}
+			importSpecifiers = append(importSpecifiers, tx.Factory().NewImportSpecifier(false, elem.PropertyName(), elem.Name()))
+		}
+		return tx.Factory().NewImportDeclaration(
+			nil,
+			tx.Factory().NewImportClause(
+				ast.KindUnknown,
+				nil,
+				tx.Factory().NewNamedImports(tx.Factory().NewNodeList(importSpecifiers)),
+			),
+			specifier,
+			nil,
+		)
+	}
 }
 
 func (tx *DeclarationTransformer) recreateBindingPattern(input *ast.BindingPattern) *ast.Node {
@@ -814,7 +948,7 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	return tx.Factory().UpdatePropertySignatureDeclaration(
+	result := tx.Factory().UpdatePropertySignatureDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -822,6 +956,8 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()), // TODO: possible strada bug (fixed here) - const property signatures never initialized
 	)
+	tx.preservePartialJsDoc(result, input.AsNode())
+	return result
 }
 
 func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.PropertyDeclaration) *ast.Node {
@@ -894,10 +1030,10 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 			}
 		}
 		if valueParam == nil {
-			// TODO: strada bug - no type printed on set accessor missing arg as though private
+			// When synthesizing a missing value parameter, emit `value: any` for non-private accessors to match TypeScript's declaration emit behavior.
 			var t *ast.Node
 			if !isPrivate {
-				t = tx.Factory().NewKeywordExpression(ast.KindAnyKeyword)
+				t = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
 			}
 			valueParam = tx.Factory().NewParameterDeclaration(
 				nil,
@@ -938,15 +1074,16 @@ func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *
 func (tx *DeclarationTransformer) omitPrivateMethodType(input *ast.Node) *ast.Node {
 	if input.Symbol() != nil && len(input.Symbol().Declarations) > 0 && input.Symbol().Declarations[0] != input {
 		return nil
-	} else {
-		return tx.Factory().NewPropertyDeclaration(
-			tx.ensureModifiers(input),
-			input.Name(),
-			nil,
-			nil,
-			nil,
-		)
 	}
+	result := tx.Factory().NewPropertyDeclaration(
+		tx.ensureModifiers(input),
+		input.Name(),
+		nil,
+		nil,
+		nil,
+	)
+	tx.preserveJsDoc(result, input)
+	return result
 }
 
 func (tx *DeclarationTransformer) transformMethodSignatureDeclaration(input *ast.MethodSignatureDeclaration) *ast.Node {
@@ -1007,44 +1144,8 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			tx.rewriteModuleSpecifier(input, input.ModuleSpecifier()),
 			tx.tryGetResolutionModeOverride(input.AsExportDeclaration().Attributes),
 		)
-	case ast.KindCommonJSExport:
-		if ast.IsSourceFile(input.Parent) {
-			return tx.transformCommonJSExport(input, input.Name())
-		}
-		return nil
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
-		if ast.IsSourceFile(input.Parent) {
-			tx.resultHasExternalModuleIndicator = true
-		}
-		tx.resultHasScopeMarker = true
-		if input.Expression().Kind == ast.KindIdentifier {
-			return input
-		}
-		// expression is non-identifier, create _default typed variable to reference
-		newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
-			return &SymbolAccessibilityDiagnostic{
-				diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
-				errorNode:         input,
-			}
-		}
-		tx.tracker.PushErrorFallbackNode(input)
-		type_ := tx.ensureType(input, false)
-		varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
-		tx.tracker.PopErrorFallbackNode()
-		var modList *ast.ModifierList
-		if tx.needsDeclare {
-			modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-		} else {
-			modList = tx.Factory().NewModifierList([]*ast.Node{})
-		}
-		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
-
-		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
-		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
-		tx.preserveJsDoc(statement, input)
-		tx.removeAllComments(assignment)
-		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
+	case ast.KindExportAssignment:
+		return tx.transformExportAssignment(input, input, input.Expression(), input.AsExportAssignment().IsExportEquals)
 	default:
 		id := ast.GetNodeId(tx.EmitContext().MostOriginal(input))
 		if tx.lateStatementReplacementMap[id] == nil {
@@ -1055,9 +1156,266 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 	}
 }
 
+func (tx *DeclarationTransformer) tryGetNameOfAssignedExpression(unwrapped *ast.Node) *ast.Node {
+	var nameNode *ast.Node
+	var nameText string
+	if !ast.IsPropertyAccessExpression(unwrapped) && unwrapped.Name() != nil {
+		nameText = unwrapped.Name().Text()
+	} else if ast.IsIdentifier(unwrapped) {
+		nameText = unwrapped.Text()
+	}
+	if nameText != "" && nameText != "default" {
+		if tx.resolver.IsNameResolvable(tx.enclosingDeclaration, nameText) {
+			// create a unique name that shares the same text as its' base
+			nameNode = tx.Factory().NewUniqueNameEx(nameText, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		} else {
+			// use the node's name as-is, since it's not otherwise in-scope
+			nameNode = tx.Factory().NewIdentifier(nameText)
+		}
+	}
+	return nameNode
+}
+
+func (tx *DeclarationTransformer) getNameOfExportedAssignedExpression(unwrapped *ast.Node, isExportEquals bool) *ast.Node {
+	nameNode := tx.tryGetNameOfAssignedExpression(unwrapped)
+	if nameNode == nil {
+		// fallback to a default name
+		if isExportEquals && ast.IsSourceFileJS(tx.state.currentSourceFile) {
+			// only JS files prefer to use `_exports` for export assignments - TS has always used `_default` for both `export=` and `export default`
+			nameNode = tx.Factory().NewUniqueNameEx("_exports", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		} else {
+			nameNode = tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		}
+	}
+	tx.cjsExportAssignmentName = nameNode
+	return nameNode
+}
+
+func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, assignment *ast.Node, expression *ast.Node, isExportEquals bool) *ast.Node {
+	if ast.IsSourceFile(input.Parent) {
+		tx.resultHasExternalModuleIndicator = true
+	}
+	tx.resultHasScopeMarker = true
+	if ast.IsIdentifier(expression) && (ast.IsSourceFile(input.Parent) || ast.IsModuleBlock(input.Parent)) {
+		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, expression)
+		tx.preserveJsDoc(exportAssignment, input)
+		return exportAssignment
+	}
+
+	// Check if the expression is a class expression - emit as a class declaration + export assignment
+	unwrapped := ast.SkipOuterExpressions(expression, ast.OEKExpressionTypePassthrough)
+	newId := tx.getNameOfExportedAssignedExpression(unwrapped, isExportEquals)
+	if ast.IsClassExpression(unwrapped) {
+		var mods []*ast.Node
+		if tx.needsDeclare {
+			mods = append(mods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+		}
+		classDecl := tx.transformClassExpressionToDeclaration(unwrapped, newId, tx.Factory().NewModifierList(mods))
+		tx.preserveJsDoc(classDecl, input)
+		// Reuse the same name node for the export so unique names resolve consistently
+		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, newId)
+		tx.removeAllComments(exportAssignment)
+		return tx.Factory().NewSyntaxList([]*ast.Node{exportAssignment, classDecl})
+	} else if ast.IsFunctionLike(unwrapped) {
+		// Promote function or arrow function expressions to a function declaration
+		var mods []*ast.Node
+		if tx.needsDeclare {
+			mods = append(mods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+		}
+		funcDecl := tx.transformFunctionLikeToDeclaration(unwrapped, newId, tx.Factory().NewModifierList(mods))
+		tx.preserveJsDoc(funcDecl, input)
+		// Reuse the same name node for the export so unique names resolve consistently
+		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, newId)
+		tx.removeAllComments(exportAssignment)
+		return tx.Factory().NewSyntaxList([]*ast.Node{exportAssignment, funcDecl})
+	}
+
+	// expression is non-identifier, create _default typed variable to reference
+	tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+		return &SymbolAccessibilityDiagnostic{
+			diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+			errorNode:         input,
+		}
+	}
+	tx.cjsExportAssignmentName = newId
+	tx.tracker.PushErrorFallbackNode(assignment)
+	var type_, initializer *ast.Node
+	if ast.IsPrimitiveLiteralValue(unwrapParenthesizedExpression(expression), true) {
+		initializer = tx.resolver.CreateLiteralConstValue(tx.EmitContext(), tx.EmitContext().ParseNode(assignment), tx.tracker)
+	}
+	if initializer == nil {
+		type_ = tx.ensureType(assignment, false)
+	}
+	varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, initializer)
+	tx.tracker.PopErrorFallbackNode()
+	var modList *ast.ModifierList
+	if tx.needsDeclare {
+		modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+	} else {
+		modList = tx.Factory().NewModifierList([]*ast.Node{})
+	}
+	statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
+	exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, newId)
+	// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+	tx.preserveJsDoc(statement, input)
+	return tx.Factory().NewSyntaxList([]*ast.Node{statement, exportAssignment})
+}
+
+func (tx *DeclarationTransformer) transformFunctionLikeToDeclaration(unwrapped *ast.Node, funcName *ast.Node, mods *ast.ModifierList) *ast.Node {
+	d := unwrapped.FunctionLikeData()
+	return tx.Factory().NewFunctionDeclaration(
+		mods,
+		nil,
+		funcName,
+		tx.ensureTypeParams(unwrapped, d.TypeParameters),
+		tx.updateParamList(unwrapped, d.Parameters),
+		tx.ensureType(unwrapped, false),
+		tx.Visitor().VisitNode(d.FullSignature),
+		nil,
+	)
+}
+
+func (tx *DeclarationTransformer) transformBinaryExpressionToExportDeclaration(input *ast.Node, name *ast.Node) *ast.Node {
+	propertyName := input.AsBinaryExpression().Right
+
+	// track alias target so referenced declarations are included in the output
+	tx.tracker.handleSymbolAccessibilityError(tx.resolver.IsEntityNameVisible(propertyName, tx.enclosingDeclaration))
+
+	if ast.IsIdentifier(name) && propertyName.Text() == name.Text() {
+		propertyName = nil
+	}
+
+	return tx.Factory().NewExportDeclaration(
+		nil,
+		false,
+		tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, propertyName, name)})),
+		nil,
+		nil,
+	)
+}
+
 func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name *ast.Node) *ast.Node {
+	res := tx.transformCommonJSExportWorker(input, name)
+	if res == nil {
+		return res
+	}
+	return tx.wrapInCJSExportNamespace(res)
+}
+
+func (tx *DeclarationTransformer) transformCommonJSExportWorker(input *ast.Node, name *ast.Node) *ast.Node {
+	var nameText string
+	if ast.IsIdentifier(name) || ast.IsStringLiteral(name) {
+		nameText = name.Text()
+	}
+	if tx.witnessedCjsExports.Has(nameText) && nameText != "" {
+		return nil // Already emitted this export name
+	}
+	tx.witnessedCjsExports.Add(nameText)
 	tx.resultHasExternalModuleIndicator = true
 	tx.resultHasScopeMarker = true
+	// only transform cjs exports to shorthand at the top-level of a source file, otherwise we uniformly emit nested exports with a type annotation
+	if isCommonJSAliasExport(input) && ast.IsExpressionStatement(input.Parent) && ast.IsSourceFile(input.Parent.Parent) {
+		// export { name }
+		// export { source as name }
+		return tx.transformBinaryExpressionToExportDeclaration(input, name)
+	}
+
+	// Check if the RHS is a class expression - emit as a class declaration instead of a typed variable
+	if ast.IsBinaryExpression(input) {
+		if rhs := unwrapParenthesizedExpression(input.AsBinaryExpression().Right); ast.IsClassExpression(rhs) {
+			ce := rhs.AsClassExpression()
+			classExprName := ce.Name()
+			hasExprName := classExprName != nil && len(classExprName.Text()) > 0
+
+			if hasExprName {
+				// Set up TrackSymbol watch to detect if the class expression's own
+				// symbol is referenced during member type serialization.
+				tx.tracker.watchedClassSymbol = rhs.Symbol()
+				tx.tracker.classSymbolTracked = false
+				defer func() {
+					tx.tracker.watchedClassSymbol = nil
+					tx.tracker.classSymbolTracked = false
+				}()
+
+				// Serialize class members using the class expression name, which
+				// triggers TrackSymbol for any self-referential member types.
+				className := tx.Factory().NewIdentifier(classExprName.Text())
+				classMods := []*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)}
+				classDecl := tx.transformClassExpressionToDeclaration(rhs, className, tx.Factory().NewModifierList(classMods))
+				tx.preserveJsDoc(classDecl, input)
+
+				// Determine if namespace isolation is needed:
+				// - The class expression name differs from the export name, OR
+				// - The class's own symbol was used in a member's serialized type
+				namesDiffer := !ast.IsIdentifier(name) || classExprName.Text() != name.Text()
+				needsIsolation := namesDiffer || tx.tracker.classSymbolTracked
+
+				if needsIsolation {
+					nsName := tx.Factory().NewUniqueNameEx("_ns", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+					var nsMods []*ast.Node
+					if tx.needsDeclare {
+						nsMods = append(nsMods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+					}
+					nsDecl := tx.Factory().NewModuleDeclaration(
+						tx.Factory().NewModifierList(nsMods),
+						ast.KindNamespaceKeyword,
+						nsName,
+						tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
+					)
+
+					aliasBase := "_exported"
+					if nameText := name.Text(); ast.IsIdentifier(name) && scanner.IsIdentifierText("_"+nameText, core.LanguageVariantStandard) {
+						aliasBase = "_" + nameText
+					}
+					importAlias := tx.Factory().NewUniqueNameEx(aliasBase, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+					qualifiedName := tx.Factory().NewQualifiedName(nsName, className)
+					importDecl := tx.Factory().NewImportEqualsDeclaration(nil, false, importAlias, qualifiedName)
+
+					exportSpecifier := tx.Factory().NewExportSpecifier(false, importAlias, name)
+					exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{exportSpecifier})), nil, nil)
+					tx.removeAllComments(exportDecl)
+
+					return tx.Factory().NewSyntaxList(append([]*ast.Node{nsDecl, importDecl}, exportDecl))
+				}
+
+				// No isolation needed: names match and no self-references.
+				// Update modifiers to include declare if needed.
+				var mods []*ast.Node
+				mods = append(mods, tx.Factory().NewModifier(ast.KindExportKeyword))
+				if tx.needsDeclare {
+					mods = append(mods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+				}
+				classDecl = tx.Factory().UpdateClassDeclaration(
+					classDecl.AsClassDeclaration(),
+					tx.Factory().NewModifierList(mods),
+					classDecl.AsClassDeclaration().Name(),
+					classDecl.AsClassDeclaration().TypeParameters,
+					classDecl.AsClassDeclaration().HeritageClauses,
+					classDecl.AsClassDeclaration().Members,
+				)
+				return classDecl
+			}
+			var mods []*ast.Node
+			mods = append(mods, tx.Factory().NewModifier(ast.KindExportKeyword))
+			if tx.needsDeclare {
+				mods = append(mods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+			}
+			className := name
+			if !ast.IsIdentifier(className) {
+				className = tx.Factory().NewUniqueNameEx("_class", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+			}
+			classDecl := tx.transformClassExpressionToDeclaration(rhs, className, tx.Factory().NewModifierList(mods))
+			tx.preserveJsDoc(classDecl, input)
+			if !ast.IsIdentifier(name) {
+				// Non-identifier name: emit class declaration + named export
+				exportDecl := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, className, name)})), nil, nil)
+				tx.removeAllComments(exportDecl)
+				return tx.Factory().NewSyntaxList([]*ast.Node{classDecl, exportDecl})
+			}
+			return classDecl
+		}
+	}
+
 	if ast.IsIdentifier(name) {
 		if name.Text() == "default" {
 			// const _default: Type; export default _default;
@@ -1078,14 +1436,15 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 			} else {
 				modList = tx.Factory().NewModifierList([]*ast.Node{})
 			}
-			statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+			statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
 
 			assignment := tx.Factory().NewExportAssignment(input.Modifiers(), false, nil, newId)
 			// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 			tx.preserveJsDoc(statement, input)
 			tx.removeAllComments(assignment)
 			return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
-		} else {
+		} else if tx.host.GetEmitResolver().GetReferencedValueDeclaration(name) == input || tx.host.GetEmitResolver().GetReferencedValueDeclaration(name) == nil {
+			// only inline to a export var if the `name` lookup points at this assignment or nothing - if it points at something else, we must use a temp name
 			// export var name: Type
 			tx.tracker.PushErrorFallbackNode(input)
 			type_ := tx.ensureType(input, false)
@@ -1097,35 +1456,98 @@ func (tx *DeclarationTransformer) transformCommonJSExport(input *ast.Node, name 
 			} else {
 				modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)})
 			}
-			return tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
+			return tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsNone))
 		}
-	} else {
-		// const _exported: Type; export {_exported as "name"};
-		newId := tx.Factory().NewUniqueNameEx("_exported", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
-			return &SymbolAccessibilityDiagnostic{
-				diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
-				errorNode:         input,
-			}
-		}
-		tx.tracker.PushErrorFallbackNode(input)
-		type_ := tx.ensureType(input, false)
-		varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
-		tx.tracker.PopErrorFallbackNode()
-		var modList *ast.ModifierList
-		if tx.needsDeclare {
-			modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-		} else {
-			modList = tx.Factory().NewModifierList([]*ast.Node{})
-		}
-		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
-
-		assignment := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, newId, name)})), nil, nil)
-		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
-		tx.preserveJsDoc(statement, input)
-		tx.removeAllComments(assignment)
-		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
 	}
+	// const _exported: Type; export {_exported as "name"};
+	newId := tx.Factory().NewUniqueNameEx("_exported", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+	tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+		return &SymbolAccessibilityDiagnostic{
+			diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
+			errorNode:         input,
+		}
+	}
+	tx.tracker.PushErrorFallbackNode(input)
+	type_ := tx.ensureType(input, false)
+	varDecl := tx.Factory().NewVariableDeclaration(newId, nil, type_, nil)
+	tx.tracker.PopErrorFallbackNode()
+	var modList *ast.ModifierList
+	if tx.needsDeclare {
+		modList = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
+	} else {
+		modList = tx.Factory().NewModifierList([]*ast.Node{})
+	}
+	statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst))
+
+	assignment := tx.Factory().NewExportDeclaration(nil, false, tx.Factory().NewNamedExports(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewExportSpecifier(false, newId, name)})), nil, nil)
+	// Remove comments from the export declaration and copy them onto the synthetic _default declaration
+	tx.preserveJsDoc(statement, input)
+	tx.removeAllComments(assignment)
+	return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
+}
+
+func (tx *DeclarationTransformer) wrapInCJSExportNamespace(content *ast.Node) *ast.Node {
+	if tx.cjsExportAssignmentName == nil {
+		return content
+	}
+	// Reuse the same name node so unique names resolve consistently with the class/export
+	nsName := tx.cjsExportAssignmentName
+	var members []*ast.Node
+	if content.Kind == ast.KindSyntaxList {
+		members = content.AsSyntaxList().Children
+	} else {
+		members = []*ast.Node{content}
+	}
+	var nsMods []*ast.Node
+	if tx.needsDeclare {
+		nsMods = append(nsMods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+	}
+	members, _ = tx.declareStrippingVisitor.VisitSlice(members)
+	return tx.Factory().NewModuleDeclaration(
+		tx.Factory().NewModifierList(nsMods),
+		ast.KindNamespaceKeyword,
+		nsName,
+		tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(members)),
+	)
+}
+
+func isCommonJSAliasExport(node *ast.Node) bool {
+	if ast.IsBinaryExpression(node) && ast.IsIdentifier(node.AsBinaryExpression().Right) {
+		if symbol := node.Symbol(); symbol != nil && len(symbol.Declarations) == 1 {
+			return true
+		}
+	}
+	return false
+}
+
+// transformClassExpressionToDeclaration converts a class expression into a class declaration
+// for use in CJS export declarations (e.g., exports.K = class K {} or module.exports = class Thing {}).
+// This delegates to the shared buildClassMembers helper to stay in sync with transformClassDeclaration.
+func (tx *DeclarationTransformer) transformClassExpressionToDeclaration(classExpr *ast.Node, className *ast.Node, modifiers *ast.ModifierList) *ast.Node {
+	previousEnclosingDeclaration := tx.enclosingDeclaration
+	tx.enclosingDeclaration = classExpr
+	previousInClassExpressionDeclaration := tx.inClassExpressionDeclaration
+	tx.inClassExpressionDeclaration = true
+	defer func() {
+		tx.enclosingDeclaration = previousEnclosingDeclaration
+		tx.inClassExpressionDeclaration = previousInClassExpressionDeclaration
+	}()
+
+	var extraMembers []*ast.Node
+	if ast.IsInJSFile(classExpr) {
+		extraMembers = tx.collectThisPropertyAssignments(classExpr)
+	}
+	members := tx.buildClassMembers(classExpr, extraMembers...)
+	typeParameters := tx.ensureTypeParams(classExpr, classExpr.AsClassExpression().TypeParameters)
+	heritageClauses := tx.Visitor().VisitNodes(classExpr.AsClassExpression().HeritageClauses)
+
+	return tx.Factory().NewClassDeclaration(
+		modifiers,
+		className,
+		typeParameters,
+		heritageClauses,
+		members,
+	)
 }
 
 func (tx *DeclarationTransformer) rewriteModuleSpecifier(parent *ast.Node, input *ast.Node) *ast.Node {
@@ -1152,6 +1574,22 @@ func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast
 	tx.EmitContext().AssignCommentRange(updated, original)
 }
 
+func (tx *DeclarationTransformer) preservePartialJsDoc(updated *ast.Node, original *ast.Node) {
+	if original.Flags&ast.NodeFlagsReparsed == 0 {
+		return
+	}
+	jsdoc := core.FirstOrNil(original.EagerJSDoc(ast.GetSourceFileOfNode(original)))
+	if jsdoc == nil {
+		return
+	}
+	description := scanner.GetTextOfJSDocComment(jsdoc.AsJSDoc().Comment)
+	if description == "" {
+		return
+	}
+	comment := "*\n * " + strings.ReplaceAll(description, "\n", "\n * ") + "\n "
+	tx.EmitContext().AddSyntheticLeadingComment(updated, ast.KindMultiLineCommentTrivia, comment, true /*hasTrailingNewLine*/)
+}
+
 func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
 	tx.EmitContext().AddEmitFlags(node, printer.EFNoComments)
 	// !!! TODO: Also remove synthetic trailing/leading comments added by transforms
@@ -1172,8 +1610,22 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 
 	// Should be removed createTypeOfDeclaration will actually now reuse the existing annotation so there is no real need to duplicate type walking
 	// Left in for now to minimize diff during syntactic type node builder refactor
-	if !ast.IsExportAssignment(node) && !ast.IsBindingElement(node) && node.Type() != nil && (!ast.IsParameter(node) || !tx.resolver.RequiresAddingImplicitUndefined(node, nil, tx.enclosingDeclaration)) {
-		return tx.Visitor().Visit(node.Type())
+	if !ast.IsExportAssignment(node) && !ast.IsBindingElement(node) && node.Type() != nil && (!ast.IsParameterDeclaration(node) || !tx.resolver.RequiresAddingImplicitUndefined(node, nil, tx.enclosingDeclaration)) {
+		if tx.state.currentSourceFile.IsJS() {
+			// JS types have a heap of constructs we can't directly emit into .d.ts files; the node builder contains logic to remap those where possible, so we invoke it here
+			// In strada we always built js declarations symbolically, so all js type nodes went through this postprocessing
+			jsFlags := declarationEmitNodeBuilderFlags
+			if tx.inClassExpressionDeclaration {
+				jsFlags &^= nodebuilder.FlagsWriteClassExpressionAsTypeLiteral
+			}
+			res := tx.resolver.TryJSTypeNodeToTypeNode(tx.EmitContext(), node.Type(), tx.enclosingDeclaration, jsFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+			if res != nil {
+				return res
+			}
+			// otherwise, fall back to full serialization
+		} else {
+			return tx.Visitor().Visit(node.Type())
+		}
 	}
 
 	oldErrorNameNode := tx.state.errorNameNode
@@ -1187,10 +1639,14 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 	}
 	var typeNode *ast.Node
 
-	if hasInferredType(node) {
-		typeNode = tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+	flags := declarationEmitNodeBuilderFlags
+	if tx.inClassExpressionDeclaration {
+		flags &^= nodebuilder.FlagsWriteClassExpressionAsTypeLiteral
+	}
+	if ast.HasInferredType(node) {
+		typeNode = tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, flags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else if ast.IsFunctionLike(node) {
-		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
+		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, flags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else {
 		debug.AssertNever(node)
 	}
@@ -1246,6 +1702,14 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 	if ast.IsFunctionLike(input) && tx.resolver.IsImplementationOfOverload(input) {
 		return nil
 	}
+	original := tx.EmitContext().MostOriginal(input)
+	id := ast.GetNodeId(original)
+	_, isExpandoHost := tx.expandoHosts[id]
+	_, hasDeferredExpandoAssignments := tx.deferredExpandoAssignments[id]
+	if isExpandoHost || hasDeferredExpandoAssignments {
+		return tx.createFullExpandoBlock(id)
+	}
+
 	previousEnclosingDeclaration := tx.enclosingDeclaration
 	if isEnclosingDeclaration(input) {
 		tx.enclosingDeclaration = input
@@ -1310,6 +1774,9 @@ func (tx *DeclarationTransformer) transformInterfaceDeclaration(input *ast.Inter
 }
 
 func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.FunctionDeclaration) *ast.Node {
+	if tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) {
+		tx.state.reportExpandoFunctionErrors(input.AsNode())
+	}
 	return tx.Factory().UpdateFunctionDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
@@ -1354,7 +1821,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 			if tx.needsScopeFixMarker {
 				lateStatements = tx.Factory().NewNodeList(append(lateStatements.Nodes, createEmptyExports(tx.Factory().AsNodeFactory())))
 			} else {
-				lateStatements = tx.EmitContext().NewNodeVisitor(tx.stripExportModifiers).VisitNodes(lateStatements)
+				lateStatements = tx.exportStrippingVisitor.VisitNodes(lateStatements)
 			}
 		}
 
@@ -1400,7 +1867,8 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 	if statement == nil {
 		return nil
 	}
-	if ast.IsImportEqualsDeclaration(statement) || tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(statement), ast.ModifierFlagsDefault) != 0 || !ast.CanHaveModifiers(statement) {
+	parseNode := tx.EmitContext().ParseNode(statement)
+	if ast.IsImportEqualsDeclaration(statement) || (parseNode != nil && tx.host.GetEffectiveDeclarationFlags(parseNode, ast.ModifierFlagsDefault) != 0) || !ast.CanHaveModifiers(statement) {
 		// `export import` statements should remain as-is, as imports are _not_ implicitly exported in an ambient namespace
 		// Likewise, `export default` classes and the like and just be `default`, so we preserve their `export` modifiers, too
 		return statement
@@ -1415,14 +1883,11 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 	return ast.ReplaceModifiers(tx.Factory().AsNodeFactory(), statement, tx.Factory().NewModifierList(modifiers))
 }
 
-func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDeclaration) *ast.Node {
-	tx.state.errorNameNode = input.Name()
-	tx.tracker.PushErrorFallbackNode(input.AsNode())
-	defer tx.tracker.PopErrorFallbackNode()
-
-	modifiers := tx.ensureModifiers(input.AsNode())
-	typeParameters := tx.ensureTypeParams(input.AsNode(), input.TypeParameters)
-	ctor := ast.GetFirstConstructorWithBody(input.AsNode())
+// buildClassMembers builds the member list for a class-like node (ClassDeclaration or ClassExpression).
+// It handles parameter properties, private identifiers, late-bound index signatures, and visited members.
+// Extra members (e.g., this-property assignments from JS files) can be passed via extraMembers.
+func (tx *DeclarationTransformer) buildClassMembers(classNode *ast.Node, extraMembers ...*ast.Node) *ast.NodeList {
+	ctor := ast.GetFirstConstructorWithBody(classNode)
 	var parameterProperties []*ast.Node
 	if ctor != nil {
 		oldDiag := tx.state.getSymbolAccessibilityDiagnostic
@@ -1452,40 +1917,59 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	// When the class has at least one private identifier, create a unique constant identifier to retain the nominal typing behavior
 	// Prevents other classes with the same public members from being used in place of the current class
 	var privateIdentifier *ast.Node
-	if core.Some(input.Members.Nodes, func(member *ast.Node) bool { return member.Name() != nil && ast.IsPrivateIdentifier(member.Name()) }) {
-		privateIdentifier = tx.Factory().NewPropertyDeclaration(
-			nil,
-			tx.Factory().NewPrivateIdentifier("#private"),
-			nil,
-			nil,
-			nil,
-		)
+	if core.Some(classNode.ClassLikeData().Members.Nodes, func(member *ast.Node) bool {
+		return member.Name() != nil && ast.IsPrivateIdentifier(member.Name())
+	}) {
+		privateIdentifier = tx.Factory().NewPropertyDeclaration(nil, tx.Factory().NewPrivateIdentifier("#private"), nil, nil, nil)
 	}
 
 	lateIndexes := tx.resolver.CreateLateBoundIndexSignatures(
 		tx.EmitContext(),
-		input.AsNode(),
+		classNode,
 		tx.enclosingDeclaration,
 		declarationEmitNodeBuilderFlags,
 		declarationEmitInternalNodeBuilderFlags,
 		tx.tracker,
 	)
 
-	memberNodes := make([]*ast.Node, 0, len(input.Members.Nodes))
+	memberNodes := make([]*ast.Node, 0, len(classNode.ClassLikeData().Members.Nodes))
 	if privateIdentifier != nil {
 		memberNodes = append(memberNodes, privateIdentifier)
 	}
 	memberNodes = append(memberNodes, lateIndexes...)
 	memberNodes = append(memberNodes, parameterProperties...)
-	visitResult := tx.Visitor().VisitNodes(input.Members)
+	memberNodes = append(memberNodes, extraMembers...)
+	visitResult := tx.Visitor().VisitNodes(classNode.ClassLikeData().Members)
 	if visitResult != nil && len(visitResult.Nodes) > 0 {
 		memberNodes = append(memberNodes, visitResult.Nodes...)
 	}
-	members := tx.Factory().NewNodeList(memberNodes)
+	return tx.Factory().NewNodeList(memberNodes)
+}
+
+func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDeclaration) *ast.Node {
+	previousEnclosingDeclaration := tx.enclosingDeclaration
+	tx.enclosingDeclaration = input.AsNode()
+	defer func() { tx.enclosingDeclaration = previousEnclosingDeclaration }()
+
+	tx.state.errorNameNode = input.Name()
+	tx.tracker.PushErrorFallbackNode(input.AsNode())
+	defer tx.tracker.PopErrorFallbackNode()
+
+	modifiers := tx.ensureModifiers(input.AsNode())
+	typeParameters := tx.ensureTypeParams(input.AsNode(), input.TypeParameters)
+
+	// Collect this.x property assignments from constructors and static blocks in JS files
+	var extraMembers []*ast.Node
+	if ast.IsInJSFile(input.AsNode()) {
+		extraMembers = tx.collectThisPropertyAssignments(input.AsNode())
+	}
+
+	members := tx.buildClassMembers(input.AsNode(), extraMembers...)
 
 	extendsClause := getEffectiveBaseTypeNode(input.AsNode())
 
 	if extendsClause != nil && !ast.IsEntityNameExpression(extendsClause.AsExpressionWithTypeArguments().Expression) && extendsClause.AsExpressionWithTypeArguments().Expression.Kind != ast.KindNullKeyword {
+		tx.tracker.ReportInferenceFallback(extendsClause.AsExpressionWithTypeArguments().Expression) // Add an isolated declarations error on this extends clause
 		oldId := "default"
 		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().Text()) > 0 {
 			oldId = input.Name().Text()
@@ -1511,10 +1995,11 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		}
 		statement := tx.Factory().NewVariableStatement(
 			mods,
-			tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})),
+			tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst),
 		)
 		newHeritageClause := tx.Factory().UpdateHeritageClause(
 			extendsClause.Parent.AsHeritageClause(),
+			extendsClause.Parent.AsHeritageClause().Token,
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().UpdateExpressionWithTypeArguments(
 					extendsClause.AsExpressionWithTypeArguments(),
@@ -1555,6 +2040,120 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	)
 }
 
+func (tx *DeclarationTransformer) visitThisPropertyAssignments(node *ast.Node) *ast.Node {
+	var thisTarget *ast.Node
+	isStatic := false
+	thisContainer := ast.GetThisContainer(node, false, false)
+	thisTarget = thisContainer.Parent
+	if thisTarget == nil {
+		return nil // thisContainer was source file, can't have expando-this
+	}
+	if ast.HasStaticModifier(thisContainer) || ast.IsClassStaticBlockDeclaration(thisContainer) {
+		isStatic = true
+	}
+	if thisTarget != tx.enclosingDeclaration {
+		return nil // stop searching within new `this` contexts
+	}
+caseBlock:
+	switch ast.GetAssignmentDeclarationKind(node) {
+	case ast.JSDeclarationKindThisProperty:
+		name := ast.GetNameOfDeclaration(node)
+		base := tx.resolver.GetReferencedMemberValueDeclaration(node)
+		key := getThisPropertyAssignmentKey(name, node, isStatic)
+		if base == nil || tx.seenProperties.Has(key) {
+			break
+		}
+		tx.seenProperties.Add(key)
+
+		// problem: this prop might be overriding a prop from a base type. The checker has special bails for override compat comparisons for binary expression properties,
+		// but what we transform to won't - so we either need to match the base type (for example, if it's a getter/setter) or emit nothing
+		// See `checkKindsOfPropertyMemberOverrides` in the checker for what we're trying to satisfy here
+		if thisTarget.ClassLikeData().HeritageClauses != nil && len(thisTarget.ClassLikeData().HeritageClauses.Nodes) > 0 && !isClassExtendingNull(thisTarget) {
+			// there is a base type any assignments might be "from"
+			tx.tracker.ReportInferenceFallback(thisTarget) // Add an isolated declarations error on this class - we can't know how to transform this prop into an assignment without referring to type information
+			if tx.resolver.IsThisPropertyAssignmentDeclarationRedundant(node) {
+				break caseBlock // skip assignments whose member is already provided by an `extends` base type (an inherited accessor/method, or an identical inherited property)
+				// TODO: If the property has an explicit `@type` annotation, we should probably emit it (maybe with an `override` modifier) instead of skipping it
+			}
+		}
+
+		var mods *ast.ModifierList
+		if isStatic {
+			mods = tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindStaticKeyword)})
+		}
+		if ast.HasDynamicName(node) {
+			if !transformers.IsSimpleInlineableExpression(name) {
+				break // Member either becomes an index signature or is a reassignment
+			}
+			tx.checkName(node)
+			name = tx.Factory().NewComputedPropertyName(name) // Convert `this[foo] = expr` to `[foo]: Type`
+		}
+		if ast.GetTextOfPropertyName(name) == "constructor" {
+			break // `constructor` is a builtin class member, not allowed to redeclare it
+		}
+		if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.Text(), core.LanguageVariantStandard) {
+			name = tx.Factory().NewStringLiteralFromNode(name)
+		}
+		prop := tx.Factory().NewPropertyDeclaration(
+			mods,
+			name,
+			nil,
+			tx.ensureType(node, false),
+			nil,
+		)
+		if ast.IsExpressionStatement(node.Parent) {
+			tx.preserveJsDoc(prop, node.Parent)
+		}
+		tx.thisPropertyAssignmentsCollected = append(tx.thisPropertyAssignmentsCollected, prop)
+	}
+	return tx.thisPropertyVisitor.VisitEachChild(node)
+}
+
+func isClassExtendingNull(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
+	heritage := node.ClassLikeData().HeritageClauses
+	if heritage == nil {
+		return false
+	}
+	if len(heritage.Nodes) > 1 || len(heritage.Nodes) == 0 {
+		return false
+	}
+	for _, expA := range heritage.Nodes[0].AsHeritageClause().Types.Nodes {
+		expr := expA.AsExpressionWithTypeArguments().Expression
+		if expr != nil && expr.Kind == ast.KindNullKeyword {
+			return true
+		}
+	}
+	return false
+}
+
+// collectThisPropertyAssignments finds `this.x = expr` assignments in constructors, methods, and static blocks
+// of JS classes and synthesizes PropertyDeclaration nodes for each unique property name.
+func (tx *DeclarationTransformer) collectThisPropertyAssignments(classNode *ast.Node) []*ast.Node {
+	members := classNode.ClassLikeData().Members
+	seen := collections.Set[thisPropertyAssignmentKey]{}
+	// Pre-populate seen with existing direct member nodes to avoid duplicates
+	for _, member := range members.Nodes {
+		if member.Name() != nil {
+			isStatic := ast.IsStatic(member)
+			seen.Add(getThisPropertyAssignmentKey(member.Name(), member, isStatic))
+		}
+	}
+	tx.seenProperties = seen
+	defer tx.seenProperties.Clear()
+	tx.thisPropertyAssignmentsCollected = []*ast.Node{}
+	defer func() {
+		tx.thisPropertyAssignmentsCollected = nil
+	}()
+
+	for _, n := range members.Nodes {
+		tx.thisPropertyVisitor.VisitEachChild(n)
+	}
+	return tx.thisPropertyAssignmentsCollected
+}
+
 func (tx *DeclarationTransformer) walkBindingPattern(pattern *ast.BindingPattern, param *ast.Node) []*ast.Node {
 	var elems []*ast.Node
 	for _, elem := range pattern.Elements.Nodes {
@@ -1588,23 +2187,47 @@ func (tx *DeclarationTransformer) transformVariableStatement(input *ast.Variable
 		return nil
 	}
 
-	nodes := tx.Visitor().VisitNodes(input.DeclarationList.AsVariableDeclarationList().Declarations)
-	if nodes != nil && len(nodes.Nodes) == 0 {
+	inputNodes := input.DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+	var extraImports []*ast.Node
+	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
+		var normalDeclarations []*ast.Node
+		var imports []*ast.Node
+		for _, n := range inputNodes {
+			if ast.IsVariableDeclarationInitializedToRequire(n) {
+				imports = append(imports, n)
+			} else {
+				normalDeclarations = append(normalDeclarations, n)
+			}
+		}
+		inputNodes = normalDeclarations
+		extraImports, _ = tx.Visitor().VisitSlice(imports)
+	}
+
+	nodes, _ := tx.Visitor().VisitSlice(inputNodes)
+	if len(nodes) == 0 {
+		if len(extraImports) > 0 {
+			return tx.Factory().NewSyntaxList(extraImports)
+		}
 		return nil
 	}
+	nodeList := tx.Factory().NewNodeList(nodes)
 
 	modifiers := tx.ensureModifiers(input.AsNode())
 
 	var declList *ast.Node
 	if ast.IsVarUsing(input.DeclarationList) || ast.IsVarAwaitUsing(input.DeclarationList) {
-		declList = tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, nodes)
+		declList = tx.Factory().NewVariableDeclarationList(nodeList, ast.NodeFlagsConst)
 		tx.EmitContext().SetOriginal(declList, input.DeclarationList)
 		tx.EmitContext().SetCommentRange(declList, input.DeclarationList.Loc)
 		declList.Loc = input.DeclarationList.Loc
 	} else {
-		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodes)
+		declList = tx.Factory().UpdateVariableDeclarationList(input.DeclarationList.AsVariableDeclarationList(), nodeList, input.DeclarationList.Flags)
 	}
-	return tx.Factory().UpdateVariableStatement(input, modifiers, declList)
+	res := tx.Factory().UpdateVariableStatement(input, modifiers, declList)
+	if len(extraImports) > 0 {
+		return tx.Factory().NewSyntaxList(append(extraImports, res))
+	}
+	return res
 }
 
 func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclaration) *ast.Node {
@@ -1617,21 +2240,27 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 				return nil
 			}
 
-			// !!! TODO: isolatedDeclarations support
-			// if (
-			// 	isolatedDeclarations && m.initializer && enumValue?.hasExternalReferences &&
-			// 	// This will be its own compiler error instead, so don't report.
-			// 	!isComputedPropertyName(m.name)
-			// ) {
-			// 	context.addDiagnostic(createDiagnosticForNode(m, Diagnostics.Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations));
-			// }
-
 			// Rewrite enum values to their constants, if available
 			enumValue := tx.resolver.GetEnumMemberValue(m)
+
+			if tx.state.isolatedDeclarations && m.Initializer() != nil && enumValue.HasExternalReferences &&
+				// This will be its own compiler error instead, so don't report.
+				!ast.IsComputedPropertyName(m.Name()) {
+				tx.state.addDiagnostic(createDiagnosticForNode(m, diagnostics.Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations))
+			}
+
 			var newInitializer *ast.Node
 			switch value := enumValue.Value.(type) {
 			case jsnum.Number:
-				if value >= 0 {
+				if value.IsInf() {
+					if value > 0 {
+						newInitializer = tx.Factory().NewIdentifier("Infinity")
+					} else {
+						newInitializer = tx.Factory().NewPrefixUnaryExpression(ast.KindMinusToken, tx.Factory().NewIdentifier("Infinity"))
+					}
+				} else if value.IsNaN() {
+					newInitializer = tx.Factory().NewIdentifier("NaN")
+				} else if value >= 0 {
 					newInitializer = tx.Factory().NewNumericLiteral(value.String(), ast.TokenFlagsNone)
 				} else {
 					newInitializer = tx.Factory().NewPrefixUnaryExpression(
@@ -1653,7 +2282,7 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 }
 
 func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierList {
-	currentFlags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsAll)
+	currentFlags := ast.GetCombinedModifierFlags(tx.EmitContext().ParseNode(node)) & ast.ModifierFlagsAll
 	newFlags := tx.ensureModifierFlags(node)
 	if currentFlags == newFlags {
 		// Elide decorators
@@ -1661,7 +2290,9 @@ func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierL
 		if mods == nil {
 			return mods
 		}
-		return tx.Factory().NewModifierList(core.Filter(mods.Nodes, ast.IsModifier))
+		if canReuseModifierNodes(mods.Nodes) {
+			return tx.Factory().NewModifierList(core.Filter(mods.Nodes, ast.IsModifier))
+		}
 	}
 	result := ast.CreateModifiersFromModifierFlags(newFlags, tx.Factory().NewModifier)
 	if len(result) == 0 {
@@ -1681,10 +2312,10 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
 	}
-	if ast.IsImplicitlyExportedJSTypeAlias(node) {
+	if ast.IsImplicitlyExportedJSDocDeclaration(node) {
 		additions |= ast.ModifierFlagsExport
 	}
-	return maskModifierFlags(tx.host, node, mask, additions)
+	return maskModifierFlags(node, mask, additions)
 }
 
 func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.TypeParameterList) *ast.TypeParameterList {
@@ -1749,7 +2380,7 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 		p,
 		nil,
 		p.DotDotDotToken,
-		tx.filterBindingPatternInitializers(p.Name()),
+		tx.bindingNameVisitor.VisitNode(p.Name()),
 		questionToken,
 		tx.ensureType(p.AsNode(), true),
 		tx.ensureNoInitializer(p.AsNode()),
@@ -1761,7 +2392,7 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node {
 	if tx.shouldPrintWithInitializer(node) {
 		unwrappedInitializer := unwrapParenthesizedExpression(node.Initializer())
-		if !isPrimitiveLiteralValue(unwrappedInitializer, true) {
+		if !ast.IsPrimitiveLiteralValue(unwrappedInitializer, true) {
 			tx.tracker.ReportInferenceFallback(node)
 		}
 		return tx.resolver.CreateLiteralConstValue(tx.EmitContext(), tx.EmitContext().ParseNode(node), tx.tracker)
@@ -1769,35 +2400,19 @@ func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node 
 	return nil
 }
 
-func (tx *DeclarationTransformer) filterBindingPatternInitializers(node *ast.Node) *ast.Node {
-	if node.Kind == ast.KindIdentifier {
+func (tx *DeclarationTransformer) visitBindingName(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindIdentifier, ast.KindOmittedExpression:
 		return node
-	} else {
-		// TODO: visitor to avoid always making new nodes?
-		elements := make([]*ast.Node, 0, len(node.Elements()))
-		for _, elem := range node.Elements() {
-			if elem.Kind == ast.KindOmittedExpression {
-				elements = append(elements, elem)
-				continue
-			}
-			if elem.PropertyName() != nil && ast.IsComputedPropertyName(elem.PropertyName()) && ast.IsEntityNameExpression(elem.PropertyName().Expression()) {
-				tx.checkEntityNameVisibility(elem.PropertyName().Expression(), tx.enclosingDeclaration)
-			}
-			if elem.Name() == nil {
-				elements = append(elements, elem)
-				continue
-			}
-
-			elements = append(elements, tx.Factory().UpdateBindingElement(
-				elem.AsBindingElement(),
-				elem.AsBindingElement().DotDotDotToken,
-				elem.PropertyName(),
-				tx.filterBindingPatternInitializers(elem.Name()),
-				nil,
-			))
+	case ast.KindArrayBindingPattern, ast.KindObjectBindingPattern:
+		return node.VisitEachChild(tx.bindingNameVisitor)
+	case ast.KindBindingElement:
+		if node.PropertyName() != nil && ast.IsComputedPropertyName(node.PropertyName()) && ast.IsEntityNameExpression(node.PropertyName().Expression()) {
+			tx.checkEntityNameVisibility(node.PropertyName().Expression(), tx.enclosingDeclaration)
 		}
-		elemList := tx.Factory().NewNodeList(elements)
-		return tx.Factory().UpdateBindingPattern(node.AsBindingPattern(), elemList)
+		return tx.Factory().UpdateBindingElement(node.AsBindingElement(), node.AsBindingElement().DotDotDotToken, node.PropertyName(), tx.bindingNameVisitor.VisitNode(node.Name()), nil /*initializer*/)
+	default:
+		return node
 	}
 }
 
@@ -1914,10 +2529,9 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 	}
 	// Augmentation of export depends on import
 	if tx.resolver.IsImportRequiredByAugmentation(decl) {
-		// IsolatedDeclarations support
-		// if (isolatedDeclarations) {
-		// 	context.addDiagnostic(createDiagnosticForNode(decl, Diagnostics.Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_supported_with_isolatedDeclarations));
-		// }
+		if tx.state.isolatedDeclarations {
+			tx.state.addDiagnostic(createDiagnosticForNode(decl.AsNode(), diagnostics.Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_supported_with_isolatedDeclarations))
+		}
 		return tx.Factory().UpdateImportDeclaration(
 			decl,
 			decl.Modifiers(),
@@ -1941,7 +2555,7 @@ func (tx *DeclarationTransformer) transformJSDocTypeLiteral(input *ast.JSDocType
 	return replacement
 }
 
-func (tx *DeclarationTransformer) transformJSDocPropertyTag(input *ast.JSDocPropertyTag) *ast.Node {
+func (tx *DeclarationTransformer) transformJSDocPropertyTag(input *ast.JSDocParameterOrPropertyTag) *ast.Node {
 	replacement := tx.Factory().NewPropertySignatureDeclaration(
 		nil,
 		tx.Visitor().Visit(input.TagName),
@@ -1987,118 +2601,237 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 	return replacement
 }
 
-func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
-	expression := node.Expression
-	if expression == nil {
+func (tx *DeclarationTransformer) getNameExpressionPreferringIdentifier(nameExpr *ast.Node) *ast.Node {
+	if ast.IsNumericLiteral(nameExpr) {
+		// Numeric property names are string properties in JS; convert to string literal
+		nameExpr = tx.Factory().NewStringLiteral(nameExpr.Text(), ast.TokenFlagsNone)
+	}
+	if ast.IsStringLiteralLike(nameExpr) && scanner.IsIdentifierText(nameExpr.Text(), core.LanguageVariantStandard) {
+		result := tx.Factory().NewIdentifier(nameExpr.Text()) // prefer non-string literal names where possible
+		kwKind := scanner.IdentifierToKeywordKind(result.AsIdentifier())
+		// keep keywords as strings, except `default`, which has special reformulations in the transformer
+		if kwKind == ast.KindUnknown || kwKind == ast.KindDefaultKeyword {
+			// fake this into a parse tree node so the reference resolver resolves the node via `resolveName`
+			result.Parent = nameExpr.Parent
+			result.Flags &^= ast.NodeFlagsSynthesized
+			// intentionally leave Loc unset so the string isn't used as the text source of the identifier
+			return result
+		}
+	}
+	return nameExpr
+}
+
+func isNotDeclareModifier(mod *ast.Modifier) bool {
+	return mod.Kind != ast.KindDeclareKeyword
+}
+
+func (tx *DeclarationTransformer) stripDeclareModifiers(node *ast.Node) *ast.Node {
+	if node == nil {
 		return nil
 	}
-	switch ast.GetAssignmentDeclarationKind(expression) {
-	case ast.JSDeclarationKindProperty:
-		return tx.transformExpandoAssignment(expression.AsBinaryExpression())
-	case ast.JSDeclarationKindObjectDefinePropertyExports:
-		if ast.IsSourceFile(node.Parent) {
-			return tx.transformCommonJSExport(expression, expression.Arguments()[1])
+	mods := node.Modifiers()
+	if mods != nil {
+		flags := node.ModifierFlags()
+		if flags&ast.ModifierFlagsAmbient != 0 {
+			filtered := core.Filter(mods.Nodes, isNotDeclareModifier)
+			node.AsMutable().SetModifiers(tx.Factory().NewModifierList(filtered))
 		}
+	}
+	return node // no need to recur into children, only strip at top-level
+}
+
+func (tx *DeclarationTransformer) visitCJSExportAssignments(expression *ast.Node) *ast.Node {
+	if expression != nil {
+		_, cleanupDiagnosticContext := tx.setupDiagnosticContext(expression)
+		defer cleanupDiagnosticContext()
+		switch ast.GetAssignmentDeclarationKind(expression) {
+		case ast.JSDeclarationKindModuleExports:
+			if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
+				result := tx.transformExportAssignment(expression.Parent, expression, expression.AsBinaryExpression().Right, true /*isExportEquals*/)
+				if result != nil {
+					tx.cjsExportAssignment = result
+					tx.resultHasScopeMarker = true
+					tx.resultHasExternalModuleIndicator = true
+				}
+			}
+		}
+		return tx.cjsExportAssignmentVisitor.VisitEachChild(expression) // recur through the whole tree, looking for module.exports=
 	}
 	return nil
 }
 
-func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) *ast.Node {
+func (tx *DeclarationTransformer) visitNestedExpression(expression *ast.Node) *ast.Node {
+	if expression != nil {
+		_, cleanupDiagnosticContext := tx.setupDiagnosticContext(expression)
+		defer cleanupDiagnosticContext()
+		switch ast.GetAssignmentDeclarationKind(expression) {
+		case ast.JSDeclarationKindProperty:
+			tx.transformExpandoAssignment(expression.AsBinaryExpression())
+		case ast.JSDeclarationKindExportsProperty:
+			if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
+				result := tx.transformCommonJSExport(expression, tx.getNameExpressionPreferringIdentifier(ast.GetElementOrPropertyAccessName(expression.AsBinaryExpression().Left)))
+				if result != nil {
+					tx.cjsExportMembers = append(tx.cjsExportMembers, result)
+				}
+			}
+		case ast.JSDeclarationKindObjectDefinePropertyExports:
+			if tx.state.currentSourceFile.CommonJSModuleIndicator != nil {
+				result := tx.transformCommonJSExport(expression, tx.getNameExpressionPreferringIdentifier(expression.Arguments()[1]))
+				if result != nil {
+					tx.cjsExportMembers = append(tx.cjsExportMembers, result)
+				}
+			}
+		}
+		return tx.expressionVisitor.VisitEachChild(expression) // recur through the whole tree, looking for special assignments
+	}
+	return nil
+}
+
+func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) {
 	left := node.Left
 
 	symbol := node.Symbol
 	if symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
-		return nil
+		return
 	}
 
 	ns := ast.GetLeftmostAccessExpression(left)
 	if ns == nil || ns.Kind != ast.KindIdentifier {
-		return nil
+		return
 	}
 
 	declaration := tx.resolver.GetReferencedValueDeclaration(ns)
 	if declaration == nil {
-		return nil
+		return
+	}
+
+	if tx.shouldStripInternal(declaration) {
+		return
 	}
 
 	if ast.IsVariableDeclaration(declaration) && declaration.Type() != nil {
-		return nil
+		return
+	}
+
+	if ast.IsFunctionDeclaration(declaration) && declaration.FunctionLikeData().FullSignature != nil {
+		return
+	}
+
+	if ast.IsVariableDeclaration(declaration) && !ast.IsFunctionLike(declaration.Initializer()) {
+		return // We're going to add a type, no need to dupe members with a namespace
 	}
 
 	host := declaration.Symbol()
 	if host == nil {
-		return nil
+		return
 	}
 
 	name := tx.Factory().NewIdentifier(ns.Text())
 	property := tx.tryGetPropertyName(left)
 	if property == "" || !scanner.IsIdentifierText(property, core.LanguageVariantStandard) {
-		return nil
+		return
+	}
+
+	hostId := tx.getExpandoHostId(declaration)
+
+	if ast.IsDeclaration(declaration) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, declaration) {
+		// The host isn't visible (yet) - printing the type of a visible declaration may still
+		// late-mark it as visible (e.g. an exported variable whose type prints as `typeof host`),
+		// so defer the assignment to be processed if and when that happens.
+		tx.deferredExpandoAssignments[hostId] = append(tx.deferredExpandoAssignments[hostId], node)
+		return
+	}
+
+	if ast.IsFunctionDeclaration(declaration) && !shouldEmitFunctionProperties(declaration.AsFunctionDeclaration()) {
+		return
 	}
 
 	tx.transformExpandoHost(name, declaration)
 
-	if ast.IsFunctionDeclaration(declaration) && !shouldEmitFunctionProperties(declaration.AsFunctionDeclaration()) {
-		return nil
+	exportName := tx.Factory().NewIdentifier(property)
+	localName := tx.tryGetNameOfAssignedExpression(node.AsNode())
+	if localName == nil && !tx.resolver.IsNameResolvable(tx.enclosingDeclaration, property) && !ast.IsNonContextualKeyword(scanner.StringToToken(exportName.Text())) {
+		// use exportName as localName if there won't be any conflicts or keyword issues
+		localName = exportName
+	}
+	if localName == nil || ast.IsNonContextualKeyword(scanner.StringToToken(localName.Text())) {
+		// fallback to a generated name if the localName doesn't exist or is a keyword
+		localName = tx.Factory().NewGeneratedNameForNode(node.AsNode())
 	}
 
-	isNonContextualKeywordName := ast.IsNonContextualKeyword(scanner.StringToToken(property))
-	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left), tx.Factory().NewIdentifier(property))
+	_, cleanupDiagnosticContext := tx.setupDiagnosticContext(node.AsNode())
+	defer cleanupDiagnosticContext()
+
+	if ast.IsIdentifier(node.Right) {
+		// alias-like, emit an `export {name}` or `export {name as alias}`
+		result := tx.transformBinaryExpressionToExportDeclaration(node.AsNode(), exportName)
+		tx.expandoMembers[hostId] = append(tx.expandoMembers[hostId], result)
+		return
+	}
+
+	preexistingExpandoHasExport := core.Some(tx.expandoMembers[hostId], ast.IsExportDeclaration)
+	var varModifiers *ast.ModifierList
+
+	if preexistingExpandoHasExport {
+		varModifiers = tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(ast.ModifierFlagsExport, tx.Factory().NewModifier))
+	}
 
 	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
-
 	declarationData := synthesizedNamespace.DeclarationData()
 	declarationData.Symbol = host
-
 	containerData := synthesizedNamespace.LocalsContainerData()
 	containerData.Locals = make(ast.SymbolTable, 0)
+	containerData.Locals[localName.Text()] = symbol
 
-	saveDiag := tx.state.getSymbolAccessibilityDiagnostic
-	tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(node.AsNode())
-	t := tx.resolver.CreateTypeOfExpression(tx.EmitContext(), left, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
-	tx.state.getSymbolAccessibilityDiagnostic = saveDiag
+	oldEnclosing := tx.enclosingDeclaration
+	tx.enclosingDeclaration = synthesizedNamespace
+	defer func() {
+		tx.enclosingDeclaration = oldEnclosing
+	}()
 
 	statements := []*ast.Statement{
 		tx.Factory().NewVariableStatement(
-			nil, /*modifiers*/
+			varModifiers,
 			tx.Factory().NewVariableDeclarationList(
-				ast.NodeFlagsNone,
 				tx.Factory().NewNodeList([]*ast.Node{
-					tx.Factory().NewVariableDeclaration(exportName, nil /*exclamationToken*/, t, nil /*initializer*/),
+					tx.Factory().NewVariableDeclaration(localName, nil /*exclamationToken*/, tx.ensureType(node.AsNode(), false), nil /*initializer*/),
 				}),
+				ast.NodeFlagsNone,
 			),
 		),
 	}
 
-	if isNonContextualKeywordName {
+	if localName.Text() != exportName.Text() {
 		namedExports := tx.Factory().NewNamedExports(tx.Factory().NewNodeList(
 			[]*ast.Node{
-				tx.Factory().NewExportSpecifier(false /*isTypeOnly*/, exportName, tx.Factory().NewIdentifier(left.Name().Text())),
+				tx.Factory().NewExportSpecifier(false /*isTypeOnly*/, localName, exportName),
 			},
 		))
 		statements = append(statements, tx.Factory().NewExportDeclaration(nil /*modifiers*/, false /*isTypeOnly*/, namedExports, nil /*moduleSpecifier*/, nil /*attributes*/))
 	}
 
-	flags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(declaration), ast.ModifierFlagsAll)
-	modifierFlags := ast.ModifierFlagsAmbient
-
-	if flags&ast.ModifierFlagsExport != 0 {
-		if flags&ast.ModifierFlagsDefault == 0 {
-			modifierFlags |= ast.ModifierFlagsExport
+	if len(statements) > 1 && !preexistingExpandoHasExport {
+		// Add an `export` modifier to all existing expando members so they remain exported after the `export {}` is added
+		for _, decl := range tx.expandoMembers[hostId] {
+			modifierFlags := ast.ModifierFlagsExport | ast.GetCombinedModifierFlags(decl)
+			decl.AsMutable().SetModifiers(tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier)))
 		}
-		tx.resultHasScopeMarker = true
-		tx.resultHasExternalModuleIndicator = true
 	}
+	tx.expandoMembers[hostId] = append(tx.expandoMembers[hostId], statements...)
+}
 
-	return tx.Factory().NewModuleDeclaration(tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier)), ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(statements)))
+func (tx *DeclarationTransformer) getExpandoHostId(declaration *ast.Declaration) ast.NodeId {
+	root := core.IfElse(ast.IsVariableDeclaration(declaration), declaration.Parent.Parent, declaration)
+	id := ast.GetNodeId(tx.EmitContext().MostOriginal(root))
+	return id
 }
 
 func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declaration *ast.Declaration) {
 	root := core.IfElse(ast.IsVariableDeclaration(declaration), declaration.Parent.Parent, declaration)
-	id := ast.GetNodeId(tx.EmitContext().MostOriginal(root))
+	id := tx.getExpandoHostId(declaration)
 
-	if tx.expandoHosts.Has(id) {
+	if _, ok := tx.expandoHosts[id]; ok {
 		return
 	}
 
@@ -2116,6 +2849,9 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 		modifierFlags ^= ast.ModifierFlagsExport
 	}
 
+	_, cleanupDiagnosticContext := tx.setupDiagnosticContext(declaration)
+	defer cleanupDiagnosticContext()
+
 	modifiers := tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier))
 	replacement := make([]*ast.Node, 0)
 
@@ -2127,15 +2863,73 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 		typeParameters, parameters, asteriskToken := extractExpandoHostParams(fn)
 		replacement = append(replacement, tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(fn, typeParameters), tx.updateParamList(fn, parameters), tx.ensureType(fn, false), nil /*fullSignature*/, nil /*body*/))
 	} else {
+		tx.expandoHosts[id] = tx.transformTopLevelDeclaration(declaration)
 		return
 	}
 
+	tx.state.reportExpandoFunctionErrors(declaration)
+
 	if defaultExport {
+		if ast.IsSourceFile(declaration.Parent) {
+			tx.resultHasExternalModuleIndicator = true
+		}
+		tx.resultHasScopeMarker = true
 		replacement = append(replacement, tx.Factory().NewExportAssignment(nil /*modifiers*/, false /*isExportEquals*/, nil /*typeNode*/, name))
 	}
 
-	tx.expandoHosts.Add(id)
-	tx.lateStatementReplacementMap[id] = tx.Factory().NewSyntaxList(replacement)
+	// store host result to be added to the output when it's actually visited
+	tx.expandoHosts[id] = tx.Factory().NewSyntaxList(replacement)
+	if _, ok := tx.lateStatementReplacementMap[id]; ok {
+		tx.lateStatementReplacementMap[id] = tx.createFullExpandoBlock(id)
+	}
+}
+
+func (tx *DeclarationTransformer) createFullExpandoBlock(id ast.NodeId) *ast.Node {
+	// Process any expando assignments on this host that were skipped because it wasn't
+	// visible when they were collected - if it's still not visible, they simply get
+	// re-deferred, and are dropped if the host is never late-marked visible.
+	if deferred, ok := tx.deferredExpandoAssignments[id]; ok {
+		delete(tx.deferredExpandoAssignments, id)
+		for _, assignment := range deferred {
+			tx.transformExpandoAssignment(assignment)
+		}
+	}
+	n := tx.expandoHosts[id]
+	if addOns, ok := tx.expandoMembers[id]; ok {
+		var modifiers *ast.ModifierList
+		var name *ast.Node
+		var host []*ast.Node
+		if n != nil && n.Kind == ast.KindSyntaxList {
+			// find the first named syntax list element and use its' name & modifiers
+			for c := range n.AsSyntaxList().IterChildren() {
+				if c.Name() != nil {
+					name = c.Name().Clone(tx.Factory())
+					if c.Modifiers() != nil {
+						modifiers = c.Modifiers().Clone(tx.Factory().AsNodeFactory())
+					}
+					break
+				}
+			}
+			host = n.AsSyntaxList().Children
+		} else if n != nil {
+			name = n.Name().Clone(tx.Factory())
+			if n.Modifiers() != nil {
+				modifiers = n.Modifiers().Clone(tx.Factory().AsNodeFactory())
+			}
+			host = []*ast.Node{n}
+		}
+		if name != nil {
+			moduleDecl := tx.Factory().NewModuleDeclaration(
+				modifiers,
+				ast.KindNamespaceKeyword,
+				name,
+				tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(addOns)),
+			)
+			members := append(host, moduleDecl)
+			return tx.Factory().NewSyntaxList(members)
+		}
+	}
+	return n
 }
 
 func extractExpandoHostParams(node *ast.Node) (typeParameters *ast.TypeParameterList, parameters *ast.ParameterList, asteriskToken *ast.TokenNode) {

@@ -12,7 +12,6 @@ export default hello.hello
 {
     "compilerOptions": {
         "composite": true,
-        "moduleResolution": "node",
         "module": "commonjs",
         "resolveJsonModule": true,
         "esModuleInterop": true,
@@ -39,10 +38,10 @@ Output::
 [7m1[0m import hello from "./hello.json"
 [7m [0m [91m                  ~~~~~~~~~~~~~~[0m
 
-TSFILE:  /home/src/workspaces/solution/project/dist/src/hello.json
-TSFILE:  /home/src/workspaces/solution/project/dist/src/index.js
-TSFILE:  /home/src/workspaces/solution/project/dist/src/index.d.ts
-TSFILE:  /home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo
+TSFILE: /home/src/workspaces/solution/project/dist/src/hello.json
+TSFILE: /home/src/workspaces/solution/project/dist/src/index.js
+TSFILE: /home/src/workspaces/solution/project/dist/src/index.d.ts
+TSFILE: /home/src/workspaces/solution/project/dist/tsconfig.tsbuildinfo
 ../../tslibs/TS/Lib/lib.es2025.full.d.ts
    Default library for target 'ES2025'
 project/src/hello.json

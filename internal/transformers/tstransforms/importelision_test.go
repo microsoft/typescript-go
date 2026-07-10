@@ -98,6 +98,10 @@ func (p *fakeProgram) IsSourceFromProjectReference(path tspath.Path) bool {
 	return false
 }
 
+func (p *fakeProgram) GetPackagesMap() map[string]bool {
+	return nil
+}
+
 func (p *fakeProgram) GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
 	return nil
 }
@@ -253,10 +257,9 @@ func TestImportElision(t *testing.T) {
 					}
 					return nil
 				},
-			})
+			}, nil)
 
 			emitResolver := c.GetEmitResolver()
-			emitResolver.MarkLinkedReferencesRecursively(file)
 
 			opts := &transformers.TransformOptions{CompilerOptions: compilerOptions, Context: printer.NewEmitContext(), EmitResolver: emitResolver, Resolver: emitResolver}
 			file = tstransforms.NewTypeEraserTransformer(opts).TransformSourceFile(file)

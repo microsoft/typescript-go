@@ -19,6 +19,17 @@ func (l *LanguageService) ProvideDefinition(
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 ) (lsproto.DefinitionResponse, error) {
+	if l.UserPreferences().PreferGoToSourceDefinition {
+		return l.ProvideSourceDefinition(ctx, documentURI, position)
+	}
+	return l.provideDefinitionWorker(ctx, documentURI, position)
+}
+
+func (l *LanguageService) provideDefinitionWorker(
+	ctx context.Context,
+	documentURI lsproto.DocumentUri,
+	position lsproto.Position,
+) (lsproto.DefinitionResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
@@ -66,10 +77,22 @@ func (l *LanguageService) ProvideDefinition(
 
 	declarations := getDeclarationsFromLocation(c, node)
 	calledDeclaration := tryGetSignatureDeclaration(c, node)
-	if calledDeclaration != nil {
-		// If we can resolve a call signature, remove all function-like declarations and add that signature.
-		nonFunctionDeclarations := core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return !ast.IsFunctionLike(node) })
-		declarations = append(nonFunctionDeclarations, calledDeclaration)
+	if calledDeclaration != nil && !(ast.IsJsxOpeningLikeElement(node.Parent) && isJsxConstructorLike(calledDeclaration)) {
+		symbol := c.GetSymbolAtLocation(getDeclarationNameForKeyword(node))
+		if symbol != nil && core.Some(c.GetRootSymbols(symbol), func(rootSymbol *ast.Symbol) bool {
+			return symbolMatchesSignature(rootSymbol, calledDeclaration)
+		}) {
+			if !ast.IsConstructorDeclaration(calledDeclaration) {
+				declarations = nil
+			} else {
+				declarations = core.Filter(slices.Clip(declarations), func(node *ast.Node) bool {
+					return node != calledDeclaration && (ast.IsClassDeclaration(node) || ast.IsClassExpression(node))
+				})
+			}
+		} else {
+			declarations = core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return node != calledDeclaration })
+		}
+		declarations = append(declarations, calledDeclaration)
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, reference), nil
 }
@@ -130,7 +153,7 @@ type fileRange struct {
 }
 
 func (l *LanguageService) createDefinitionLocations(
-	originSelectionRange *lsproto.Range,
+	originSelectionRange lsproto.Range,
 	clientSupportsLink bool,
 	declarations []*ast.Node,
 	reference *refInfo,
@@ -150,7 +173,7 @@ func (l *LanguageService) createDefinitionLocations(
 			},
 		}
 		locations = append(locations, &lsproto.LocationLink{
-			OriginSelectionRange: originSelectionRange,
+			OriginSelectionRange: &originSelectionRange,
 			TargetUri:            lsconv.FileNameToDocumentURI(reference.fileName),
 			TargetRange:          targetRange,
 			TargetSelectionRange: targetRange,
@@ -161,14 +184,19 @@ func (l *LanguageService) createDefinitionLocations(
 		file := ast.GetSourceFileOfNode(decl)
 		fileName := file.FileName()
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		nameRange := createRangeFromNode(name, file)
+		var nameRange core.TextRange
+		if name.Kind == ast.KindEmptyStatement {
+			nameRange = core.NewTextRange(name.Pos(), name.Pos())
+		} else {
+			nameRange = createRangeFromNode(name, file)
+		}
 		if locationRanges.AddIfAbsent(fileRange{fileName, nameRange}) {
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
 			targetSelectionLoc := l.getMappedLocation(fileName, nameRange)
 			targetLoc := l.getMappedLocation(fileName, *contextRange)
 			locations = append(locations, &lsproto.LocationLink{
-				OriginSelectionRange: originSelectionRange,
+				OriginSelectionRange: &originSelectionRange,
 				TargetSelectionRange: targetSelectionLoc.Range,
 				TargetUri:            targetLoc.Uri,
 				TargetRange:          targetLoc.Range,
@@ -329,6 +357,31 @@ func tryGetSignatureDeclaration(typeChecker *checker.Checker, node *ast.Node) *a
 		}
 	}
 	return nil
+}
+
+func isJsxConstructorLike(node *ast.Node) bool {
+	switch {
+	case ast.IsConstructorDeclaration(node),
+		ast.IsConstructorTypeNode(node),
+		ast.IsCallSignatureDeclaration(node),
+		ast.IsConstructSignatureDeclaration(node):
+		return true
+	default:
+		return false
+	}
+}
+
+func symbolMatchesSignature(symbol *ast.Symbol, calledDeclaration *ast.Node) bool {
+	if symbol == nil || calledDeclaration == nil {
+		return false
+	}
+	calledSymbol := calledDeclaration.Symbol()
+	if symbol == calledSymbol || calledSymbol != nil && symbol == calledSymbol.Parent {
+		return true
+	}
+	parent := calledDeclaration.Parent
+	return parent != nil && (ast.IsAssignmentExpression(parent, false /*excludeCompoundAssignment*/) ||
+		!ast.IsCallLikeExpression(parent) && ast.CanHaveSymbol(parent) && symbol == parent.Symbol())
 }
 
 func getSymbolForOverriddenMember(typeChecker *checker.Checker, node *ast.Node) *ast.Symbol {

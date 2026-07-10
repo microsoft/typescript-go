@@ -1,9 +1,11 @@
 package scanner
 
 import (
+	"maps"
 	"math"
 	"strconv"
 	"strings"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -534,8 +536,8 @@ func (p *regExpParser) scanClassRanges() {
 			if minCharacter == "" {
 				continue
 			}
-			minCharacterValue, minSize := decodeClassAtomRune(minCharacter)
-			maxCharacterValue, maxSize := decodeClassAtomRune(maxCharacter)
+			minCharacterValue, minSize := stringutil.DecodeJSStringRune(minCharacter)
+			maxCharacterValue, maxSize := stringutil.DecodeJSStringRune(maxCharacter)
 			if len(minCharacter) == minSize && len(maxCharacter) == maxSize && minCharacterValue > maxCharacterValue {
 				p.error(diagnostics.Range_out_of_order_in_character_class, minStart, p.pos()-minStart)
 			}
@@ -641,8 +643,8 @@ func (p *regExpParser) scanClassSetExpression() {
 				if secondOperand == "" {
 					p.error(diagnostics.A_character_class_range_must_not_be_bounded_by_another_character_class, secondStart, p.pos()-secondStart)
 				} else if operand != "" {
-					minCharacterValue, minSize := decodeClassAtomRune(operand)
-					maxCharacterValue, maxSize := decodeClassAtomRune(secondOperand)
+					minCharacterValue, minSize := stringutil.DecodeJSStringRune(operand)
+					maxCharacterValue, maxSize := stringutil.DecodeJSStringRune(secondOperand)
 					if len(operand) == minSize && len(secondOperand) == maxSize && minCharacterValue > maxCharacterValue {
 						p.error(diagnostics.Range_out_of_order_in_character_class, start, p.pos()-start)
 					}
@@ -951,11 +953,7 @@ func (p *regExpParser) scanCharacterClassEscape() bool {
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyName(name string) string {
-	candidates := make([]string, 0, len(nonBinaryUnicodeProperties))
-	for k := range nonBinaryUnicodeProperties {
-		candidates = append(candidates, k)
-	}
-	return core.GetSpellingSuggestion(name, candidates, func(s string) string { return s })
+	return core.GetSpellingSuggestionForStrings(name, maps.Keys(nonBinaryUnicodeProperties))
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName string, value string) string {
@@ -963,25 +961,15 @@ func (p *regExpParser) getSpellingSuggestionForUnicodePropertyValue(propertyName
 	if values == nil {
 		return ""
 	}
-	candidates := make([]string, 0, values.Len())
-	for k := range values.Keys() {
-		candidates = append(candidates, k)
-	}
-	return core.GetSpellingSuggestion(value, candidates, func(s string) string { return s })
+	return core.GetSpellingSuggestionForStrings(value, maps.Keys(values.Keys()))
 }
 
 func (p *regExpParser) getSpellingSuggestionForUnicodePropertyNameOrValue(name string) string {
-	var candidates []string
-	for k := range valuesOfNonBinaryUnicodeProperties["General_Category"].Keys() {
-		candidates = append(candidates, k)
-	}
-	for k := range binaryUnicodeProperties.Keys() {
-		candidates = append(candidates, k)
-	}
-	for k := range binaryUnicodePropertiesOfStrings.Keys() {
-		candidates = append(candidates, k)
-	}
-	return core.GetSpellingSuggestion(name, candidates, func(s string) string { return s })
+	return core.GetSpellingSuggestionForStrings(name, core.ConcatenateSeq(
+		maps.Keys(valuesOfNonBinaryUnicodeProperties["General_Category"].Keys()),
+		maps.Keys(binaryUnicodeProperties.Keys()),
+		maps.Keys(binaryUnicodePropertiesOfStrings.Keys()),
+	))
 }
 
 func (p *regExpParser) scanWordCharacters() string {
@@ -1008,7 +996,7 @@ func (p *regExpParser) scanSourceCharacter() string {
 			p.incPos(size)
 			low := p.pendingLowSurrogate
 			p.pendingLowSurrogate = 0
-			return encodeSurrogate(low)
+			return stringutil.EncodeJSStringRune(low)
 		}
 		ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
 		if ch == utf8.RuneError || size == 0 {
@@ -1016,19 +1004,23 @@ func (p *regExpParser) scanSourceCharacter() string {
 			p.incPos(1)
 			return string(p.text()[p.pos()-1])
 		}
-		if ch >= surrSelf {
+		if utf16.RuneLen(ch) == 2 {
 			// Non-BMP character: emit the high surrogate first WITHOUT advancing.
 			// The low surrogate will be emitted on the next call, which also advances.
-			high := surr1 + (ch-surrSelf)>>10
-			low := surr2 + (ch-surrSelf)&0x3FF
+			high, low := stringutil.CodePointToSurrogatePair(ch)
 			p.pendingLowSurrogate = low
-			return encodeSurrogate(high)
+			return stringutil.EncodeJSStringRune(high)
 		}
 		p.incPos(size)
 		return string(ch)
 	}
 	ch, size := utf8.DecodeRuneInString(p.text()[p.pos():])
-	if size == 0 || ch == utf8.RuneError {
+	if size == 0 {
+		return ""
+	}
+	if ch == utf8.RuneError {
+		// Invalid UTF-8; consume the byte to avoid infinite loops.
+		p.incPos(size)
 		return ""
 	}
 	p.incPos(size)
@@ -1062,11 +1054,7 @@ func (p *regExpParser) run() {
 		if !p.groupSpecifiers[reference.name] {
 			p.error(diagnostics.There_is_no_capturing_group_named_0_in_this_regular_expression, reference.pos, reference.end-reference.pos, reference.name)
 			if len(p.groupSpecifiers) > 0 {
-				specifiers := make([]string, 0, len(p.groupSpecifiers))
-				for k := range p.groupSpecifiers {
-					specifiers = append(specifiers, k)
-				}
-				suggestion := core.GetSpellingSuggestion(reference.name, specifiers, func(s string) string { return s })
+				suggestion := core.GetSpellingSuggestionForStrings(reference.name, maps.Keys(p.groupSpecifiers))
 				if suggestion != "" {
 					p.error(diagnostics.Did_you_mean_0, reference.pos, reference.end-reference.pos, suggestion)
 				}

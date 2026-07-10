@@ -199,7 +199,9 @@ func iterateBaseline(allFiles []*harnessutil.TestFile, fullWalker *typeWriterWal
 	for _, file := range allFiles {
 		unitName := file.UnitName
 		var typeLines strings.Builder
-		typeLines.WriteString("=== " + unitName + " ===\r\n")
+		typeLines.WriteString("=== ")
+		typeLines.WriteString(unitName)
+		typeLines.WriteString(" ===\r\n")
 		codeLines := codeLinesRegexp.Split(file.Content, -1)
 		var results []*typeWriterResult
 		if isSymbolBaseline {
@@ -419,7 +421,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	var symbolString strings.Builder
 	symbolString.Grow(256)
 	symbolString.WriteString("Symbol(")
-	symbolString.WriteString(strings.ReplaceAll(fileChecker.SymbolToStringEx(symbol, node.Parent, ast.SymbolFlagsNone, checker.SymbolFormatFlagsAllowAnyNodeKind), ast.InternalSymbolNamePrefix, "__"))
+	symbolString.WriteString(ast.EscapeAllInternalSymbolNames(fileChecker.SymbolToStringEx(symbol, node.Parent, ast.SymbolFlagsNone, checker.SymbolFormatFlagsAllowAnyNodeKind)))
 	count := 0
 	for _, declaration := range symbol.Declarations {
 		if count >= 5 {

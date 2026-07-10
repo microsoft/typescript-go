@@ -54,15 +54,47 @@ module.exports = {testFn, testFnTypes};
 
 
 //// [file.d.ts]
-export type myTypes = string | RegExp | Array<string | RegExp>;
-export type myTypes = {
-    prop1: myTypes.typeA;
-    prop2: string;
-};
-export type myTypes = myTypes.typeB | Function;
-export declare var myTypes: any;
+export { myTypes };
+/**
+ * @namespace myTypes
+ * @global
+ * @type {Object<string,*>}
+ */
+declare const myTypes: Record<string, any>;
+export declare namespace myTypes {
+    export type typeA = string | RegExp | Array<string | RegExp>;
+}
+export declare namespace myTypes {
+    export type typeB = {
+        /**
+         * - Prop 1.
+         */
+        prop1: myTypes.typeA;
+        /**
+         * - Prop 2.
+         */
+        prop2: string;
+    };
+}
+export declare namespace myTypes {
+    export type typeC = myTypes.typeB | Function;
+}
 //// [file2.d.ts]
-export type testFnTypes = boolean | myTypes.typeC;
+declare const _exports: {
+    testFn: typeof testFn;
+    testFnTypes: Record<string, any>;
+};
+export = _exports;
+import { myTypes } from './file.js';
+/**
+ * @namespace testFnTypes
+ * @global
+ * @type {Object<string,*>}
+ */
+declare const testFnTypes: Record<string, any>;
+export declare namespace testFnTypes {
+    export type input = boolean | myTypes.typeC;
+}
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
 /**
  * @function testFn
@@ -71,8 +103,3 @@ export type testFnTypes = boolean | myTypes.typeC;
  * @returns {number|null} Result.
  */
 declare function testFn(input: testFnTypes.input): number | null;
-declare const _default: {
-    testFn: typeof testFn;
-    testFnTypes: any;
-};
-export = _default;

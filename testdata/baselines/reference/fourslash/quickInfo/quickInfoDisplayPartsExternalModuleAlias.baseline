@@ -3,14 +3,14 @@
 // import a1 = require("./quickInfoDisplayPartsExternalModuleAlias_file0");
 //        ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (alias) module a1
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | module a1
 // | ```
 // | 
@@ -18,7 +18,7 @@
 // new a1.m1.c();
 //     ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (alias) module a1
 // | ```
 // | 
@@ -26,14 +26,14 @@
 // export import a2 = require("./quickInfoDisplayPartsExternalModuleAlias_file0");
 //               ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (alias) module a1
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | module a1
 // | ```
 // | 
@@ -41,7 +41,7 @@
 // new a2.m1.c();
 //     ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (alias) module a1
 // | ```
 // | 
@@ -60,7 +60,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(alias) module a1\n```\n"
+        "value": "```typescript\n(alias) module a1\n```\n"
       },
       "range": {
         "start": {
@@ -71,7 +71,8 @@
           "line": 0,
           "character": 9
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -87,7 +88,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nmodule a1\n```\n"
+        "value": "```typescript\nmodule a1\n```\n"
       },
       "range": {
         "start": {
@@ -98,7 +99,8 @@
           "line": 0,
           "character": 69
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -114,7 +116,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(alias) module a1\n```\n"
+        "value": "```typescript\n(alias) module a1\n```\n"
       },
       "range": {
         "start": {
@@ -125,7 +127,8 @@
           "line": 1,
           "character": 6
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -141,7 +144,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(alias) module a1\n```\n"
+        "value": "```typescript\n(alias) module a1\n```\n"
       },
       "range": {
         "start": {
@@ -152,7 +155,8 @@
           "line": 2,
           "character": 16
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -168,7 +172,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nmodule a1\n```\n"
+        "value": "```typescript\nmodule a1\n```\n"
       },
       "range": {
         "start": {
@@ -179,7 +183,8 @@
           "line": 2,
           "character": 76
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -195,7 +200,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(alias) module a1\n```\n"
+        "value": "```typescript\n(alias) module a1\n```\n"
       },
       "range": {
         "start": {
@@ -206,7 +211,8 @@
           "line": 3,
           "character": 6
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   }
 ]

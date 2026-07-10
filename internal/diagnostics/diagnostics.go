@@ -15,7 +15,7 @@ import (
 
 //go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go -locdir ./loc
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Category -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -w diagnostics_generated.go loc_generated.go stringer_generated.go
+//go:generate npx dprint fmt diagnostics_generated.go loc_generated.go stringer_generated.go
 
 type Category int32
 
@@ -147,4 +147,13 @@ func StringifyArgs(args []any) []string {
 		}
 	}
 	return result
+}
+
+func NewAdHocMessage(message string) *Message {
+	return &Message{
+		code:     -1,
+		category: CategoryError,
+		key:      "-1",
+		text:     message,
+	}
 }

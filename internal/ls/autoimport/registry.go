@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -26,6 +25,57 @@ import (
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
+)
+
+var knownRecursiveSearchPackages = collections.NewSetFromItems(
+	"@material-ui/core",
+	"@material-ui/icons",
+	"@sap/cds",
+	"@testing-library/react-native",
+	"ajv",
+	"asap",
+	"async",
+	"aws-sdk",
+	"braintree-web",
+	"core-js",
+	"core-js-pure",
+	"crypto-js",
+	"cypress-mochawesome-reporter",
+	"dd-trace",
+	"dumi",
+	"dva",
+	"egg-mock",
+	"electron-log",
+	"es-abstract",
+	"es6-promise",
+	"eslint-config-taro",
+	"expo",
+	"expo-router",
+	"flow-remove-types",
+	"gatsby",
+	"glamor",
+	"gluegun",
+	"graphology-indices",
+	"graphology-traversal",
+	"graphology-utils",
+	"jest-expo",
+	"lodash",
+	"lodash-es",
+	"moment",
+	"mz",
+	"next",
+	"pdfjs-dist",
+	"protobufjs",
+	"react-app-polyfill",
+	"react-dev-utils",
+	"react-devtools-inline",
+	"recast",
+	"semver",
+	"stylelint-config-html",
+	"umi",
+	"web3-provider-engine",
+	"webpack",
 )
 
 type newProgramStructure int
@@ -35,6 +85,32 @@ const (
 	newProgramStructureSameFileNames
 	newProgramStructureDifferentFileNames
 )
+
+// bucketBuildPreferences holds user preferences that affect how a bucket is
+// built. When any of these change between builds, the bucket must be rebuilt.
+// Adding a new preference here automatically integrates it into the rebuild
+// checks via Equal.
+type bucketBuildPreferences struct {
+	fileExcludePatterns                 []string
+	autoImportEntrypointDirectorySearch core.Tristate
+}
+
+func bucketBuildPreferencesFromUserPreferences(prefs lsutil.UserPreferences) bucketBuildPreferences {
+	return bucketBuildPreferences{
+		fileExcludePatterns:                 prefs.AutoImportFileExcludePatterns,
+		autoImportEntrypointDirectorySearch: prefs.AutoImportEntrypointDirectorySearch,
+	}
+}
+
+func (p bucketBuildPreferences) Equal(other bucketBuildPreferences) bool {
+	return core.UnorderedEqual(p.fileExcludePatterns, other.fileExcludePatterns) &&
+		p.autoImportEntrypointDirectorySearch == other.autoImportEntrypointDirectorySearch
+}
+
+func (p bucketBuildPreferences) Clone() bucketBuildPreferences {
+	p.fileExcludePatterns = slices.Clone(p.fileExcludePatterns)
+	return p
+}
 
 // BucketState represents the dirty state of a bucket.
 // In general, a bucket can be used for an auto-imports request if it is clean
@@ -53,15 +129,30 @@ type BucketState struct {
 	dirtyFile           tspath.Path
 	multipleFilesDirty  bool
 	newProgramStructure newProgramStructure
-	// fileExcludePatterns is the value of the corresponding user preference when
+	// buildPreferences holds the user preferences that were in effect when
 	// the bucket was built. If changed, the bucket should be rebuilt.
-	fileExcludePatterns []string
+	buildPreferences bucketBuildPreferences
 	// dirtyPackages is the set of package names that need to be re-indexed.
-	// This is used for granular updates: when a file in a project reference package
+	// This is used for granular updates: when a file in a local workspace package
 	// changes, only that package needs to be re-extracted rather than rebuilding
-	// the entire node_modules bucket. If nil, no granular updates are pending.
+	// the entire node_modules bucket.
+	// If nil, no granular updates are pending.
 	// If set but multipleFilesDirty is true, the entire bucket needs to be rebuilt.
 	dirtyPackages *collections.Set[string]
+	// recursiveSearchPackages tracks which packages were recursively directory-searched
+	// when the bucket was built. nil means all non-exports packages were searched
+	// (e.g. when the autoImportEntrypointDirectorySearch preference is enabled).
+	// A non-nil set lists only the specific packages that were searched.
+	// Used for rebuild detection: a rebuild is triggered when target packages are
+	// not a subset of the currently searched packages.
+	recursiveSearchPackages *collections.Set[string]
+}
+
+func (b BucketState) Clone() BucketState {
+	b.buildPreferences = b.buildPreferences.Clone()
+	b.dirtyPackages = b.dirtyPackages.Clone()
+	b.recursiveSearchPackages = b.recursiveSearchPackages.Clone()
+	return b
 }
 
 func (b BucketState) Dirty() bool {
@@ -82,10 +173,14 @@ func (b BucketState) DirtyPackages() *collections.Set[string] {
 	return b.dirtyPackages
 }
 
-func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences *lsutil.UserPreferences) bool {
+func (b BucketState) RecursiveSearchPackages() *collections.Set[string] {
+	return b.recursiveSearchPackages
+}
+
+func (b BucketState) possiblyNeedsRebuildForFile(file tspath.Path, preferences lsutil.UserPreferences) bool {
 	return b.newProgramStructure > 0 ||
 		b.hasDirtyFileBesides(file) ||
-		!core.UnorderedEqual(b.fileExcludePatterns, preferences.AutoImportFileExcludePatterns) ||
+		!b.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(preferences)) ||
 		b.dirtyPackages.Len() > 0
 }
 
@@ -93,24 +188,51 @@ func (b BucketState) hasDirtyFileBesides(file tspath.Path) bool {
 	return b.multipleFilesDirty || b.dirtyFile != "" && b.dirtyFile != file
 }
 
+// recursiveSearchSubset reports whether target is a subset of current.
+// nil represents "all packages" — a superset of every concrete set.
+// Returns true if the current set already covers everything the target needs,
+// meaning no rebuild is required for recursive search purposes.
+func recursiveSearchSubset(target, current *collections.Set[string]) bool {
+	if target == nil {
+		// Target wants all packages searched — only satisfied if current is also all.
+		return current == nil
+	}
+	if current == nil {
+		// Current searched all packages, so any concrete target is satisfied.
+		return true
+	}
+	return target.IsSubsetOf(current)
+}
+
 type RegistryBucket struct {
 	state BucketState
 
 	// Paths maps file paths to package names. For project buckets, the package name
 	// is always empty string. For node_modules buckets, this enables reverse lookup
-	// from path to package for granular updates. Only paths eligible for granular
-	// update (project reference packages) have entries here.
+	// from path to package for granular updates. Only paths for local workspace
+	// packages (symlinked and within the workspace root) have entries here, since
+	// their realpaths are outside node_modules and need reverse lookup for dirty
+	// detection.
+	//
+	// Paths is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	Paths map[tspath.Path]string
 	// PackageFiles maps package names to their file paths and file names.
 	// All package directory names in node_modules are keys; indexed packages have
 	// non-nil maps with path→fileName entries, unindexed packages have nil maps.
 	// This enables efficient removal of a package's files during granular updates
 	// without iterating through all entries. Only defined for node_modules buckets.
+	//
+	// PackageFiles is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	PackageFiles map[string]map[tspath.Path]string
 	// ResolvedPackageNames is only defined for project buckets. It is the set of
 	// package names that were resolved from imports in the project's program files.
 	// This is passed to node_modules buckets so they include packages that are
 	// directly imported even if not listed in package.json dependencies.
+	//
+	// ResolvedPackageNames is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	ResolvedPackageNames *collections.Set[string]
 	// DependencyNames is only defined for node_modules buckets. It is the set of
 	// package names that will be included in the bucket if present in the directory,
@@ -118,11 +240,19 @@ type RegistryBucket struct {
 	// active programs. If nil, all packages are included because at least one open
 	// file has access to this node_modules directory without being filtered by a
 	// package.json.
+	//
+	// DependencyNames is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	DependencyNames *collections.Set[string]
 	// AmbientModuleNames is only defined for node_modules buckets. It is the set of
 	// ambient module names found while extracting exports in the bucket.
+	//
+	// AmbientModuleNames is considered immutable after the bucket is finalized.
+	// It should be fully replaced rather than mutated while changing a bucket.
 	AmbientModuleNames map[string][]string
-	Index              *Index[*Export]
+	// Index is considered immutable after the bucket is finalized.
+	// It should be cloned and replaced rather than mutated while changing a bucket.
+	Index *Index[*Export]
 }
 
 func newRegistryBucket() *RegistryBucket {
@@ -136,7 +266,7 @@ func newRegistryBucket() *RegistryBucket {
 
 func (b *RegistryBucket) Clone() *RegistryBucket {
 	return &RegistryBucket{
-		state:                b.state,
+		state:                b.state.Clone(),
 		Paths:                b.Paths,
 		PackageFiles:         b.PackageFiles,
 		ResolvedPackageNames: b.ResolvedPackageNames,
@@ -192,7 +322,7 @@ func (d *directory) Clone() *directory {
 
 type Registry struct {
 	toPath          func(fileName string) tspath.Path
-	userPreferences *lsutil.UserPreferences
+	userPreferences lsutil.UserPreferences
 
 	// exports      map[tspath.Path][]*RawExport
 	directories map[tspath.Path]*directory
@@ -208,7 +338,7 @@ type Registry struct {
 	specifierCache map[tspath.Path]*collections.SyncMap[tspath.Path, string]
 }
 
-func NewRegistry(toPath func(fileName string) tspath.Path, preferences *lsutil.UserPreferences) *Registry {
+func NewRegistry(toPath func(fileName string) tspath.Path, preferences lsutil.UserPreferences) *Registry {
 	return &Registry{
 		toPath:          toPath,
 		userPreferences: preferences,
@@ -216,7 +346,7 @@ func NewRegistry(toPath func(fileName string) tspath.Path, preferences *lsutil.U
 	}
 }
 
-func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path, preferences *lsutil.UserPreferences) bool {
+func (r *Registry) IsPreparedForImportingFile(fileName string, projectPath tspath.Path, preferences lsutil.UserPreferences) bool {
 	if r == nil {
 		return false
 	}
@@ -262,7 +392,7 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange, host Regist
 	}
 	builder := newRegistryBuilder(r, host)
 	if change.UserPreferences != nil {
-		builder.userPreferences = change.UserPreferences
+		builder.userPreferences = *change.UserPreferences
 		if !core.UnorderedEqual(builder.userPreferences.AutoImportSpecifierExcludeRegexes, r.userPreferences.AutoImportSpecifierExcludeRegexes) {
 			builder.specifierCache.Clear()
 		}
@@ -376,7 +506,7 @@ type registryBuilder struct {
 	host RegistryCloneHost
 	base *Registry
 
-	userPreferences *lsutil.UserPreferences
+	userPreferences lsutil.UserPreferences
 	directories     *dirty.Map[tspath.Path, *directory]
 	nodeModules     *dirty.Map[tspath.Path, *RegistryBucket]
 	projects        *dirty.Map[tspath.Path, *RegistryBucket]
@@ -392,7 +522,7 @@ func newRegistryBuilder(registry *Registry, host RegistryCloneHost) *registryBui
 		host: host,
 		base: registry,
 
-		userPreferences:    registry.userPreferences.OrDefault(),
+		userPreferences:    registry.userPreferences,
 		directories:        dirty.NewMap(registry.directories),
 		nodeModules:        dirty.NewMap(registry.nodeModules),
 		projects:           dirty.NewMap(registry.projects),
@@ -503,11 +633,6 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 			})
 		}
 
-		if packageJsonChanged {
-			// package.json changes affecting node_modules are handled by comparing dependencies in updateIndexes
-			return
-		}
-
 		if hasNodeModules {
 			if _, ok := b.nodeModules.Get(dirPath); !ok {
 				b.nodeModules.Add(dirPath, newRegistryBucket())
@@ -518,12 +643,15 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 	}
 
 	var addedNodeModulesDirs, removedNodeModulesDirs []tspath.Path
+	packageJsonChanged := func(dirName string) bool {
+		uri := lsconv.FileNameToDocumentURI(tspath.CombinePaths(dirName, "package.json"))
+		return change.Changed.Has(uri) || change.Deleted.Has(uri) || change.Created.Has(uri)
+	}
 	core.DiffMapsFunc(
 		b.base.directories,
 		neededDirectories,
 		func(dir *directory, dirName string) bool {
-			packageJsonUri := lsconv.FileNameToDocumentURI(tspath.CombinePaths(dirName, "package.json"))
-			return !change.Changed.Has(packageJsonUri) && !change.Deleted.Has(packageJsonUri) && !change.Created.Has(packageJsonUri)
+			return !packageJsonChanged(dirName) && dir.hasNodeModules == b.host.FS().DirectoryExists(tspath.CombinePaths(dirName, "node_modules"))
 		},
 		func(dirPath tspath.Path, dirName string) {
 			// Need and don't have
@@ -549,13 +677,13 @@ func (b *registryBuilder) updateBucketAndDirectoryExistence(change RegistryChang
 			}
 		},
 		func(dirPath tspath.Path, dir *directory, dirName string) {
-			// package.json may have changed
-			updateDirectory(dirPath, dirName, true)
+			updateDirectory(dirPath, dirName, packageJsonChanged(dirName))
 			if logger != nil {
 				logger.Logf("Changed directory: %s", dirPath)
 			}
 		},
 	)
+
 	if logger != nil {
 		for _, dirPath := range addedNodeModulesDirs {
 			logger.Logf("Added node_modules bucket: %s", dirPath)
@@ -615,8 +743,8 @@ func (b *registryBuilder) markBucketsDirty(change RegistryChange, logger *loggin
 						}
 					}
 				} else {
-					// Check if this path (possibly a realpath of a symlinked package) is in any bucket's Paths.
-					// This handles symlinked packages where the realpath doesn't contain /node_modules/.
+					// Check if this path (possibly a realpath of a workspace package) is in any bucket's Paths.
+					// This handles local workspace packages where the realpath doesn't contain /node_modules/.
 					for bucketDirPath := range cleanNodeModulesBuckets {
 						entry := core.FirstResult(b.nodeModules.Get(bucketDirPath))
 						if packageName, ok := entry.Value().Paths[path]; ok {
@@ -667,7 +795,6 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		packageNames          *collections.Set[string]
 		directoryPackageNames *collections.Set[string]
 		discovered            []*discoveredPackage
-		discoverErr           error
 	}
 
 	projectPath, _ := b.host.GetDefaultProject(change.RequestedFile)
@@ -685,16 +812,30 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	// We need all projects because a node_modules directory can be used by multiple projects.
 	allResolvedPackageNames := make(map[tspath.Path]*collections.Set[string])
 	projectReferenceOutputs := make(map[tspath.Path]string)
+	// Compute which packages have implicit deep imports (subpath imports in packages
+	// without exports). These packages need recursive directory search to discover
+	// all auto-importable files, even when the preference is disabled.
+	allDeepImportPackages := &collections.Set[string]{}
 	b.projects.Range(func(entry *dirty.MapEntry[tspath.Path, *RegistryBucket]) bool {
 		program := b.host.GetProgramForProject(entry.Key())
 		if program != nil {
 			allResolvedPackageNames[entry.Key()] = getResolvedPackageNames(ctx, program)
 			addProjectReferenceOutputMappings(program, projectReferenceOutputs)
+			for name := range program.DeepImportPackageNames().Keys() {
+				allDeepImportPackages.Add(name)
+			}
 		}
 		return true
 	})
 
 	fileExcludePatterns := b.userPreferences.ParsedAutoImportFileExcludePatterns(b.host.FS().UseCaseSensitiveFileNames())
+
+	// Determine which packages need recursive directory search for this build.
+	// nil means all packages (preference is enabled for all).
+	var targetRecursivePackages *collections.Set[string]
+	if !b.userPreferences.AutoImportEntrypointDirectorySearch.IsTrue() {
+		targetRecursivePackages = allDeepImportPackages
+	}
 
 	// --- Collect node_modules tasks ---
 	var nodeModulesTasks []*nodeModulesBucketTask
@@ -706,7 +847,8 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			// !!! Optimization: handle different dependency set via granular updates
 			needsFullRebuild := bucketState.multipleFilesDirty ||
 				!nodeModulesBucket.Value().DependencyNames.Equals(dependencies) ||
-				!core.UnorderedEqual(bucketState.fileExcludePatterns, b.userPreferences.AutoImportFileExcludePatterns)
+				!bucketState.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(b.userPreferences)) ||
+				!recursiveSearchSubset(targetRecursivePackages, bucketState.recursiveSearchPackages)
 			dirtyPackages := bucketState.DirtyPackages()
 			canDoGranularUpdate := !needsFullRebuild && dirtyPackages.Len() > 0
 
@@ -732,61 +874,123 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		return nil, false
 	})
 
+	var nodeModulesLogger *logging.LogTree
+	if logger != nil && len(nodeModulesTasks) > 0 {
+		nodeModulesLogger = logger.Fork("Building node_modules indexes")
+	}
+
 	// --- Phase 1: Discovery (parallel per bucket) ---
 	// Resolve package.json and realpath for each package in each bucket.
+	discoveryStart := time.Now()
 	for _, task := range nodeModulesTasks {
 		wg.Go(func() {
 			if task.isUpdate {
 				task.packageNames = task.dirtyPackages
 			} else {
-				var err error
-				task.directoryPackageNames, err = getPackageNamesInNodeModules(tspath.CombinePaths(task.dirName, "node_modules"), b.host.FS())
-				if err != nil {
-					task.discoverErr = err
-					return
-				}
+				task.directoryPackageNames = getPackageNamesInNodeModules(tspath.CombinePaths(task.dirName, "node_modules"), b.host.FS())
 				task.packageNames = core.Coalesce(task.dependencyNames, task.directoryPackageNames)
 			}
 			task.discovered = b.discoverBucketPackages(task.packageNames, task.dirName, task.dirPath)
 		})
 	}
 	wg.Wait()
+	if nodeModulesLogger != nil {
+		nodeModulesLogger.Logf("Discovered packages: %v", time.Since(discoveryStart))
+	}
 
-	// --- Deduplicate by realpath ---
-	// Collect unique realpaths across all buckets so each physical package is extracted only once.
-	uniquePackages := make(map[string]*discoveredPackage)
+	// --- Phase 2: Extraction (parallel per unique realpath) ---
+	// Extract from main packages first. If a main package has no TypeScript entrypoints,
+	// we fall back to extracting from @types in a second pass. Packages with no main
+	// package extract directly from @types in the primary pass.
+	extractionStart := time.Now()
+	seen := make(map[string]bool)
+	extractionCache := make(map[string]*perPackageExtractionResult)
+	var extractionMu sync.Mutex
+	// Collect all packages that have an @types fallback. After the primary pass, we
+	// filter to only those whose main extraction failed, then deduplicate by typesRealpath.
+	var typesFallbackCandidates []*discoveredPackage
 	for _, task := range nodeModulesTasks {
-		if task.discoverErr != nil {
-			continue
-		}
 		for _, pkg := range task.discovered {
 			if pkg.realpath != "" {
-				if _, exists := uniquePackages[pkg.realpath]; !exists {
-					uniquePackages[pkg.realpath] = pkg
+				if !seen[pkg.realpath] {
+					seen[pkg.realpath] = true
+					enableDirSearch := targetRecursivePackages == nil ||
+						targetRecursivePackages.Has(pkg.packageName) ||
+						knownRecursiveSearchPackages.Has(pkg.packageName)
+					// Record actual directory-searched packages so the stored set
+					// reflects reality for rebuild detection and stats.
+					if enableDirSearch && targetRecursivePackages != nil {
+						targetRecursivePackages.Add(pkg.packageName)
+					}
+					wg.Go(func() {
+						if ctx.Err() != nil {
+							return
+						}
+						result := b.extractPackage(ctx, pkg.packageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, enableDirSearch)
+						if result != nil {
+							extractionMu.Lock()
+							extractionCache[pkg.realpath] = result
+							extractionMu.Unlock()
+						}
+					})
+				}
+				if pkg.typesRealpath != "" {
+					typesFallbackCandidates = append(typesFallbackCandidates, pkg)
+				}
+			} else if pkg.typesRealpath != "" {
+				if !seen[pkg.typesRealpath] {
+					seen[pkg.typesRealpath] = true
+					// @types packages always get directory search
+					if targetRecursivePackages != nil {
+						targetRecursivePackages.Add(pkg.packageName)
+					}
+					wg.Go(func() {
+						if ctx.Err() != nil {
+							return
+						}
+						result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, true /*enableDirectorySearch*/)
+						if result != nil {
+							extractionMu.Lock()
+							extractionCache[pkg.typesRealpath] = result
+							extractionMu.Unlock()
+						}
+					})
 				}
 			}
 		}
 	}
-	b.uniquePackageCount = len(uniquePackages)
+	wg.Wait()
 
-	// --- Phase 2: Extraction (parallel per unique realpath) ---
-	// Each physical package is extracted exactly once, regardless of how many buckets reference it.
-	extractionCache := make(map[string]*perPackageExtractionResult, len(uniquePackages))
-	var extractionMu sync.Mutex
-	for _, pkg := range uniquePackages {
+	// For packages whose main extraction yielded nothing, fall back to @types.
+	for _, pkg := range typesFallbackCandidates {
+		extractionMu.Lock()
+		mainExtracted := extractionCache[pkg.realpath] != nil
+		extractionMu.Unlock()
+		if mainExtracted || seen[pkg.typesRealpath] {
+			continue
+		}
+		seen[pkg.typesRealpath] = true
+		// @types fallback packages always get directory search
+		if targetRecursivePackages != nil {
+			targetRecursivePackages.Add(pkg.packageName)
+		}
 		wg.Go(func() {
 			if ctx.Err() != nil {
 				return
 			}
-			result := b.extractPackage(ctx, pkg, projectReferenceOutputs, fileExcludePatterns)
+			result := b.extractPackage(ctx, pkg.typesPackageJson, pkg.packageName, projectReferenceOutputs, fileExcludePatterns, true /*enableDirectorySearch*/)
 			if result != nil {
 				extractionMu.Lock()
-				extractionCache[pkg.realpath] = result
+				extractionCache[pkg.typesRealpath] = result
 				extractionMu.Unlock()
 			}
 		})
 	}
 	wg.Wait()
+	if nodeModulesLogger != nil {
+		nodeModulesLogger.Logf("Extracted exports: %v (%d packages)", time.Since(extractionStart), len(seen))
+	}
+	b.uniquePackageCount = len(seen)
 
 	// --- Phase 3: Bucket building (parallel per bucket) ---
 	// Each bucket installs the shared extraction results and builds its index.
@@ -795,19 +999,17 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 	for _, task := range nodeModulesTasks {
 		br := &bucketBuildResult{entry: task.entry}
 		allResults = append(allResults, br)
-		if task.discoverErr != nil {
-			br.err = task.discoverErr
-			continue
-		}
 		wg.Go(func() {
 			if task.isUpdate {
 				b.updateNodeModulesBucket(
 					ctx, br, task.existingBucket, task.dirtyPackages, task.discovered, extractionCache,
-					logger.Fork("Updating node_modules bucket "+task.dirName))
+					targetRecursivePackages, nodeModulesLogger.Fork(task.dirName),
+				)
 			} else {
 				b.buildNodeModulesBucket(
 					ctx, br, task.dependencyNames, task.dirPath, task.discovered, task.directoryPackageNames, extractionCache,
-					logger.Fork("Building node_modules bucket "+task.dirName))
+					targetRecursivePackages, nodeModulesLogger.Fork(task.dirName),
+				)
 			}
 		})
 	}
@@ -817,7 +1019,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		program := b.host.GetProgramForProject(projectPath)
 		resolvedPackageNames := allResolvedPackageNames[projectPath]
 		shouldRebuild := project.Value().state.hasDirtyFileBesides(change.RequestedFile) ||
-			!core.UnorderedEqual(project.Value().state.fileExcludePatterns, b.userPreferences.AutoImportFileExcludePatterns)
+			!project.Value().state.buildPreferences.Equal(bucketBuildPreferencesFromUserPreferences(b.userPreferences))
 		if !shouldRebuild && project.Value().state.newProgramStructure > 0 {
 			if !project.Value().ResolvedPackageNames.Equals(resolvedPackageNames) || hasNewNonNodeModulesFiles(program, project.Value()) {
 				shouldRebuild = true
@@ -831,12 +1033,12 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 			wg.Go(func() {
 				b.buildProjectBucket(
 					ctx, br, projectPath, resolvedPackageNames,
-					logger.Fork("Building project bucket "+string(projectPath)))
+					logger.Fork("Building project bucket "+string(projectPath)),
+				)
 			})
 		}
 	}
 
-	start := time.Now()
 	wg.Wait()
 
 	for _, br := range allResults {
@@ -893,7 +1095,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 					// no-op
 				},
 			)
-			ch, _ := checker.NewChecker(aliasResolver)
+			ch, _ := checker.NewChecker(aliasResolver, nil)
 			br.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
 				extractor := b.newExportExtractor(source.packageName, ch, moduleResolver, b.host.FS().Realpath)
@@ -906,11 +1108,11 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 		}
 	}
 
-	if logger != nil && len(allResults) > 0 {
+	if nodeModulesLogger != nil {
 		if secondPassFileCount > 0 {
-			logger.Logf("%d files required second pass, took %v", secondPassFileCount, time.Since(secondPassStart))
+			nodeModulesLogger.Logf("%d files required second pass, took %v", secondPassFileCount, time.Since(secondPassStart))
 		}
-		logger.Logf("Built %d indexes in %v", len(allResults), time.Since(start))
+		nodeModulesLogger.Logf("Total: %v", time.Since(discoveryStart))
 	}
 }
 
@@ -1031,16 +1233,13 @@ func (b *registryBuilder) buildProjectBucket(
 	var skippedFileCount int
 	var combinedStats extractorStats
 
-outer:
 	for _, file := range program.GetSourceFiles() {
 		if isIgnoredFile(program, file) {
 			continue
 		}
-		for _, excludePattern := range fileExcludePatterns {
-			if matched, _ := excludePattern.MatchString(file.FileName()); matched {
-				skippedFileCount++
-				continue outer
-			}
+		if fileExcludePatterns != nil && fileExcludePatterns.MatchString(file.FileName()) {
+			skippedFileCount++
+			continue
 		}
 		// Skip all node_modules files - they are always handled by node_modules buckets.
 		// This simplifies the logic and ensures exports are indexed consistently.
@@ -1083,7 +1282,7 @@ outer:
 	result.bucket.Paths = paths
 	result.bucket.Index = idx
 	result.bucket.ResolvedPackageNames = resolvedPackageNames
-	result.bucket.state.fileExcludePatterns = b.userPreferences.AutoImportFileExcludePatterns
+	result.bucket.state.buildPreferences = bucketBuildPreferencesFromUserPreferences(b.userPreferences)
 
 	if logger != nil {
 		logger.Logf("Extracted exports: %v (%d exports, %d used checker, %d created checkers)", indexStart.Sub(start), combinedStats.exports.Load(), combinedStats.usedChecker.Load(), checkerCount())
@@ -1127,11 +1326,17 @@ func (b *registryBuilder) computeDependenciesForNodeModulesDirectory(change Regi
 
 // discoveredPackage represents a package found during the discovery phase.
 // It holds the resolved package.json and realpath for deduplication.
+// When both a real package and a corresponding @types package exist (e.g., react + @types/react),
+// both are stored so extraction can fall back to the @types package if the real package has no
+// TypeScript entrypoints.
 type discoveredPackage struct {
-	packageName string
-	packageJson *packagejson.InfoCacheEntry
-	realpath    string
-	dirPath     tspath.Path // bucket directory path (used as extraction context)
+	packageName      string
+	packageJson      *packagejson.InfoCacheEntry
+	realpath         string
+	typesPackageJson *packagejson.InfoCacheEntry
+	typesRealpath    string
+	dirPath          tspath.Path // bucket directory path (used as extraction context)
+	isLocal          bool        // true if realpath is within the workspace root
 }
 
 // perPackageExtractionResult holds the extraction output for one physical package.
@@ -1145,7 +1350,7 @@ type perPackageExtractionResult struct {
 	statsExports                     int
 	statsUsedChecker                 int
 	skippedEntrypoints               int
-	isProjectReference               bool
+	isSymlinked                      bool
 	failedAmbientModuleLookupSources map[tspath.Path]*failedAmbientModuleLookupSource
 	failedAmbientModuleLookupTargets *collections.Set[string]
 }
@@ -1156,7 +1361,7 @@ type packageExtractionResult struct {
 	packageFiles                             map[string]map[tspath.Path]string
 	ambientModuleNames                       map[string][]string
 	entrypoints                              [][]*module.ResolvedEntrypoint
-	projectReferencePackages                 *collections.Set[string]
+	workspacePackages                        *collections.Set[string]
 	possibleFailedAmbientModuleLookupSources *collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]
 	possibleFailedAmbientModuleLookupTargets *collections.SyncSet[string]
 	stats                                    extractorStats
@@ -1174,52 +1379,67 @@ func (b *registryBuilder) discoverBucketPackages(
 	for packageName := range packageNames.Keys() {
 		typesPackageName := module.GetTypesPackageName(packageName)
 		packageJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", packageName, "package.json"))
-		if !packageJson.DirectoryExists {
-			packageJson = b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
+		var typesPackageJson *packagejson.InfoCacheEntry
+		if packageName != typesPackageName {
+			typesJson := b.host.GetPackageJson(tspath.CombinePaths(dirName, "node_modules", typesPackageName, "package.json"))
+			if typesJson.DirectoryExists {
+				typesPackageJson = typesJson
+			}
 		}
 		var realpath string
 		if packageJson.DirectoryExists {
 			realpath = b.host.FS().Realpath(packageJson.PackageDirectory)
 		}
+		var typesRealpath string
+		if typesPackageJson != nil {
+			typesRealpath = b.host.FS().Realpath(typesPackageJson.PackageDirectory)
+		}
+		isLocal := realpath != "" &&
+			!strings.Contains(realpath, "/node_modules/") &&
+			tspath.ContainsPath(
+				b.host.GetCurrentDirectory(),
+				realpath,
+				tspath.ComparePathsOptions{UseCaseSensitiveFileNames: b.host.FS().UseCaseSensitiveFileNames()},
+			)
 		result = append(result, &discoveredPackage{
-			packageName: packageName,
-			packageJson: packageJson,
-			realpath:    realpath,
-			dirPath:     dirPath,
+			packageName:      packageName,
+			packageJson:      packageJson,
+			realpath:         realpath,
+			typesPackageJson: typesPackageJson,
+			typesRealpath:    typesRealpath,
+			dirPath:          dirPath,
+			isLocal:          isLocal,
 		})
 	}
 	return result
 }
 
-// extractPackage extracts exports from a single discovered package.
+// extractPackage extracts exports from a single package.json.
 // This runs once per unique realpath during the extraction phase.
 // Returns nil if the package has no extractable entrypoints.
 func (b *registryBuilder) extractPackage(
 	ctx context.Context,
-	pkg *discoveredPackage,
+	packageJson *packagejson.InfoCacheEntry,
+	packageName string,
 	projectReferenceOutputs map[tspath.Path]string,
-	fileExcludePatterns []*regexp2.Regexp,
+	fileExcludePatterns *vfsmatch.SpecMatcher,
+	enableDirectorySearch bool,
 ) *perPackageExtractionResult {
-	packageJson := pkg.packageJson
-	packageName := pkg.packageName
-
+	if packageJson == nil || !packageJson.DirectoryExists {
+		return nil
+	}
 	toRealpath, toSymlink := getPackageRealpathFuncs(b.host.FS(), packageJson.PackageDirectory)
 	resolver := getModuleResolver(b.host, toRealpath, b.resolverOptions)
-	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName)
+	packageEntrypoints := resolver.GetEntrypointsFromPackageJsonInfo(packageJson, packageName, enableDirectorySearch)
 	if packageEntrypoints == nil {
 		return nil
 	}
 
 	var skippedEntrypoints int
-	if len(fileExcludePatterns) > 0 {
+	if fileExcludePatterns != nil {
 		count := len(packageEntrypoints)
 		packageEntrypoints = slices.DeleteFunc(packageEntrypoints, func(entrypoint *module.ResolvedEntrypoint) bool {
-			for _, excludePattern := range fileExcludePatterns {
-				if matched, _ := excludePattern.MatchString(entrypoint.ResolvedFileName); matched {
-					return true
-				}
-			}
-			return false
+			return fileExcludePatterns.MatchString(entrypoint.ResolvedFileName)
 		})
 		skippedEntrypoints = count - len(packageEntrypoints)
 	}
@@ -1251,7 +1471,6 @@ func (b *registryBuilder) extractPackage(
 			fileName = toSymlink(inputFileName)
 			realpathFileName = inputFileName
 			realpathPath = b.base.toPath(realpathFileName)
-			result.isProjectReference = true
 		}
 
 		if !seenFiles.AddIfAbsent(realpathPath) {
@@ -1260,6 +1479,7 @@ func (b *registryBuilder) extractPackage(
 		if fileName != realpathFileName {
 			symlinkPath := b.base.toPath(fileName)
 			symlinks[realpathPath] = pathAndFileName{path: symlinkPath, fileName: fileName}
+			result.isSymlinked = true
 		}
 		wg.Go(func() {
 			file := b.host.GetSourceFile(realpathFileName, realpathPath)
@@ -1281,9 +1501,10 @@ func (b *registryBuilder) extractPackage(
 		}
 	})
 
-	ch, _ := checker.NewChecker(aliasResolver)
+	ch, _ := checker.NewChecker(aliasResolver, nil)
 	extractor := b.newExportExtractor(packageName, ch, resolver, toRealpath)
 
+	var nonModuleFiles collections.Set[tspath.Path]
 	for _, entrypoint := range aliasResolver.rootFiles {
 		if ctx.Err() != nil {
 			return nil
@@ -1293,15 +1514,31 @@ func (b *registryBuilder) extractPackage(
 			result.ambientModules[name] = append(result.ambientModules[name], entrypoint.FileName())
 		}
 		result.packageFiles[entrypoint.Path()] = entrypoint.FileName()
-		if symlink, ok := aliasResolver.symlinks[entrypoint.Path()]; ok {
+		symlink, hasSymlink := aliasResolver.symlinks[entrypoint.Path()]
+		if hasSymlink {
 			result.packageFiles[symlink.path] = symlink.fileName
 		}
+
+		hasExports := len(fileExports) > 0 && entrypoint.ExternalModuleIndicator != nil
 		if source, ok := result.failedAmbientModuleLookupSources[entrypoint.Path()]; !ok {
 			result.exports[entrypoint.Path()] = fileExports
 		} else {
 			source.packageName = packageName
+			hasExports = entrypoint.ExternalModuleIndicator != nil
+		}
+
+		if !hasExports {
+			nonModuleFiles.Add(entrypoint.Path())
+			if hasSymlink {
+				nonModuleFiles.Add(symlink.path)
+			}
 		}
 	}
+
+	// Discard entrypoints for non-module files and empty modules.
+	result.entrypoints = slices.DeleteFunc(result.entrypoints, func(ep *module.ResolvedEntrypoint) bool {
+		return nonModuleFiles.Has(b.base.toPath(ep.ResolvedFileName))
+	})
 
 	stats := extractor.Stats()
 	result.statsExports = int(stats.exports.Load())
@@ -1319,13 +1556,16 @@ func installExtractions(
 		exports:                                  make(map[tspath.Path][]*Export),
 		packageFiles:                             make(map[string]map[tspath.Path]string),
 		ambientModuleNames:                       make(map[string][]string),
-		projectReferencePackages:                 &collections.Set[string]{},
+		workspacePackages:                        &collections.Set[string]{},
 		possibleFailedAmbientModuleLookupSources: &collections.SyncMap[tspath.Path, *failedAmbientModuleLookupSource]{},
 		possibleFailedAmbientModuleLookupTargets: &collections.SyncSet[string]{},
 	}
 
 	for _, pkg := range discovered {
 		extraction := extractionCache[pkg.realpath]
+		if extraction == nil {
+			extraction = extractionCache[pkg.typesRealpath]
+		}
 		if extraction == nil {
 			continue
 		}
@@ -1346,8 +1586,8 @@ func installExtractions(
 		for target := range extraction.failedAmbientModuleLookupTargets.Keys() {
 			result.possibleFailedAmbientModuleLookupTargets.Add(target)
 		}
-		if extraction.isProjectReference {
-			result.projectReferencePackages.Add(pkg.packageName)
+		if extraction.isSymlinked && pkg.isLocal {
+			result.workspacePackages.Add(pkg.packageName)
 		}
 		result.stats.exports.Add(int32(extraction.statsExports))
 		result.stats.usedChecker.Add(int32(extraction.statsUsedChecker))
@@ -1365,6 +1605,7 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	discovered []*discoveredPackage,
 	directoryPackageNames *collections.Set[string],
 	extractionCache map[string]*perPackageExtractionResult,
+	recursiveSearchPackages *collections.Set[string],
 	logger *logging.LogTree,
 ) {
 	if ctx.Err() != nil {
@@ -1372,7 +1613,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		return
 	}
 
-	start := time.Now()
 	extraction := installExtractions(discovered, extractionCache)
 
 	indexStart := time.Now()
@@ -1384,9 +1624,9 @@ func (b *registryBuilder) buildNodeModulesBucket(
 	}
 
 	// Build Paths as reverse mapping from path to package name.
-	// Only include paths for packages that are project references (eligible for granular updates).
+	// Only include paths for local workspace packages (eligible for granular updates).
 	paths := make(map[tspath.Path]string)
-	for pkgName := range extraction.projectReferencePackages.Keys() {
+	for pkgName := range extraction.workspacePackages.Keys() {
 		if files, ok := extraction.packageFiles[pkgName]; ok {
 			for path := range files {
 				paths[path] = pkgName
@@ -1401,7 +1641,8 @@ func (b *registryBuilder) buildNodeModulesBucket(
 		AmbientModuleNames: extraction.ambientModuleNames,
 		Paths:              paths,
 		state: BucketState{
-			fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
+			buildPreferences:        bucketBuildPreferencesFromUserPreferences(b.userPreferences),
+			recursiveSearchPackages: recursiveSearchPackages.Clone(),
 		},
 	}
 	result.entrypoints = make(map[tspath.Path][]*module.ResolvedEntrypoint, len(extraction.exports))
@@ -1438,7 +1679,6 @@ func (b *registryBuilder) buildNodeModulesBucket(
 			logger.Logf("Skipped %d entrypoints due to exclude patterns", extraction.skippedEntrypointsCount)
 		}
 		logger.Logf("Built index: %v", time.Since(indexStart))
-		logger.Logf("Bucket total: %v", time.Since(start))
 	}
 
 	result.err = ctx.Err()
@@ -1453,6 +1693,7 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	dirtyPackages *collections.Set[string],
 	discovered []*discoveredPackage,
 	extractionCache map[string]*perPackageExtractionResult,
+	recursiveSearchPackages *collections.Set[string],
 	logger *logging.LogTree,
 ) {
 	if ctx.Err() != nil {
@@ -1486,8 +1727,8 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		}
 		newPaths[path] = pkgName
 	}
-	// Add paths for newly extracted project reference packages
-	for pkgName := range extraction.projectReferencePackages.Keys() {
+	// Add paths for newly extracted workspace packages
+	for pkgName := range extraction.workspacePackages.Keys() {
 		if files, ok := extraction.packageFiles[pkgName]; ok {
 			for path := range files {
 				newPaths[path] = pkgName
@@ -1547,7 +1788,8 @@ func (b *registryBuilder) updateNodeModulesBucket(
 		AmbientModuleNames: newAmbientModuleNames,
 		Paths:              newPaths,
 		state: BucketState{
-			fileExcludePatterns: b.userPreferences.AutoImportFileExcludePatterns,
+			buildPreferences:        bucketBuildPreferencesFromUserPreferences(b.userPreferences),
+			recursiveSearchPackages: recursiveSearchPackages.Clone(),
 		},
 	}
 	result.entrypoints = newEntrypoints
@@ -1558,7 +1800,6 @@ func (b *registryBuilder) updateNodeModulesBucket(
 	if logger != nil {
 		logger.Logf("Granular update of %d packages: %v (%d exports)", dirtyPackages.Len(), indexStart.Sub(start), extraction.stats.exports.Load())
 		logger.Logf("Built index: %v", time.Since(indexStart))
-		logger.Logf("Bucket total: %v", time.Since(start))
 	}
 
 	result.err = ctx.Err()

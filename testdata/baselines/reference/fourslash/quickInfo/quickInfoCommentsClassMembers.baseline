@@ -4,7 +4,7 @@
 // class c1 {
 //       ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class c1
 // | ```
 // | This is comment for c1
@@ -13,7 +13,7 @@
 //     public p1: number;
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.p1: number
 // | ```
 // | p1 is property of c1
@@ -22,7 +22,7 @@
 //     public p2(/** number to add*/b: number) {
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.p2(b: number): number
 // | ```
 // | sum with property
@@ -33,7 +33,7 @@
 //     public get p3() {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.p3: number
 // | ```
 // | getter property 1
@@ -41,7 +41,7 @@
 //         return this.p2(this.p1);
 //                     ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.p2(b: number): number
 // | ```
 // | sum with property
@@ -51,7 +51,7 @@
 //     public set p3(/** this is value*/value: number) {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.p3: number
 // | ```
 // | getter property 1
@@ -59,7 +59,7 @@
 //         this.p1 = this.p2(value);
 //                        ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.p2(b: number): number
 // | ```
 // | sum with property
@@ -69,7 +69,7 @@
 //     private pp1: number;
 //             ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.pp1: number
 // | ```
 // | pp1 is property of c1
@@ -78,7 +78,7 @@
 //     private pp2(/** number to add*/b: number) {
 //             ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.pp2(b: number): number
 // | ```
 // | sum with property
@@ -89,7 +89,7 @@
 //     private get pp3() {
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.pp3: number
 // | ```
 // | getter property 2
@@ -97,7 +97,7 @@
 //         return this.pp2(this.pp1);
 //                     ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.pp2(b: number): number
 // | ```
 // | sum with property
@@ -107,7 +107,7 @@
 //     private set pp3( /** this is value*/value: number) {
 //                 ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.pp3: number
 // | ```
 // | getter property 2
@@ -115,7 +115,7 @@
 //         this.pp1 = this.pp2(value);
 //                         ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.pp2(b: number): number
 // | ```
 // | sum with property
@@ -125,7 +125,7 @@
 //     constructor() {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | constructor c1(): c1
 // | ```
 // | Constructor method
@@ -135,7 +135,7 @@
 //     static s1: number;
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.s1: number
 // | ```
 // | s1 is static property of c1
@@ -144,7 +144,7 @@
 //     static s2(/** number to add*/b: number) {
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.s2(b: number): number
 // | ```
 // | static sum with property
@@ -155,7 +155,7 @@
 //     static get s3() {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.s3: number
 // | ```
 // | static getter property
@@ -163,7 +163,7 @@
 //         return c1.s2(c1.s1);
 //                   ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.s2(b: number): number
 // | ```
 // | static sum with property
@@ -173,7 +173,7 @@
 //     static set s3( /** this is value*/value: number) {
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.s3: number
 // | ```
 // | static getter property
@@ -181,7 +181,7 @@
 //         c1.s1 = c1.s2(value);
 //                    ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.s2(b: number): number
 // | ```
 // | static sum with property
@@ -190,7 +190,7 @@
 //     public nc_p1: number;
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.nc_p1: number
 // | ```
 // | 
@@ -198,7 +198,7 @@
 //     public nc_p2(b: number) {
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_p2(b: number): number
 // | ```
 // | 
@@ -208,7 +208,7 @@
 //     public get nc_p3() {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_p3: number
 // | ```
 // | 
@@ -216,7 +216,7 @@
 //         return this.nc_p2(this.nc_p1);
 //                     ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_p2(b: number): number
 // | ```
 // | 
@@ -225,7 +225,7 @@
 //     public set nc_p3(value: number) {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_p3: number
 // | ```
 // | 
@@ -233,7 +233,7 @@
 //         this.nc_p1 = this.nc_p2(value);
 //                           ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_p2(b: number): number
 // | ```
 // | 
@@ -242,7 +242,7 @@
 //     private nc_pp1: number;
 //             ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.nc_pp1: number
 // | ```
 // | 
@@ -250,7 +250,7 @@
 //     private nc_pp2(b: number) {
 //             ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_pp2(b: number): number
 // | ```
 // | 
@@ -260,7 +260,7 @@
 //     private get nc_pp3() {
 //                 ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_pp3: number
 // | ```
 // | 
@@ -268,7 +268,7 @@
 //         return this.nc_pp2(this.nc_pp1);
 //                     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_pp2(b: number): number
 // | ```
 // | 
@@ -277,7 +277,7 @@
 //     private set nc_pp3(value: number) {
 //                 ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_pp3: number
 // | ```
 // | 
@@ -285,7 +285,7 @@
 //         this.nc_pp1 = this.nc_pp2(value);
 //                            ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_pp2(b: number): number
 // | ```
 // | 
@@ -294,7 +294,7 @@
 //     static nc_s1: number;
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.nc_s1: number
 // | ```
 // | 
@@ -302,7 +302,7 @@
 //     static nc_s2(b: number) {
 //            ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_s2(b: number): number
 // | ```
 // | 
@@ -312,7 +312,7 @@
 //     static get nc_s3() {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_s3: number
 // | ```
 // | 
@@ -320,7 +320,7 @@
 //         return c1.nc_s2(c1.nc_s1);
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_s2(b: number): number
 // | ```
 // | 
@@ -329,7 +329,7 @@
 //     static set nc_s3(value: number) {
 //                ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_s3: number
 // | ```
 // | 
@@ -337,7 +337,7 @@
 //         c1.nc_s1 = c1.nc_s2(value);
 //                       ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_s2(b: number): number
 // | ```
 // | 
@@ -347,14 +347,14 @@
 // var i1 = new c1();
 //     ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1: c1
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //              ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | constructor c1(): c1
 // | ```
 // | Constructor method
@@ -362,7 +362,7 @@
 // var i1_p = i1.p1;
 //     ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_p: number
 // | ```
 // | 
@@ -370,14 +370,14 @@
 // var i1_f = i1.p2;
 //     ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_f: (b: number) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //               ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.p2(b: number): number
 // | ```
 // | sum with property
@@ -385,14 +385,14 @@
 // var i1_r = i1.p2(20);
 //     ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_r: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //               ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.p2(b: number): number
 // | ```
 // | sum with property
@@ -400,14 +400,14 @@
 // var i1_prop = i1.p3;
 //     ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_prop: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                  ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.p3: number
 // | ```
 // | getter property 1
@@ -415,14 +415,14 @@
 // i1.p3 = i1_prop;
 //    ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.p3: number
 // | ```
 // | getter property 1
 // | ----------------------------------------------------------------------
 //         ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_prop: number
 // | ```
 // | 
@@ -430,14 +430,14 @@
 // var i1_nc_p = i1.nc_p1;
 //     ^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_nc_p: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                  ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.nc_p1: number
 // | ```
 // | 
@@ -445,14 +445,14 @@
 // var i1_ncf = i1.nc_p2;
 //     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_ncf: (b: number) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                 ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_p2(b: number): number
 // | ```
 // | 
@@ -460,14 +460,14 @@
 // var i1_ncr = i1.nc_p2(20);
 //     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_ncr: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                 ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_p2(b: number): number
 // | ```
 // | 
@@ -475,14 +475,14 @@
 // var i1_ncprop = i1.nc_p3;
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_ncprop: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_p3: number
 // | ```
 // | 
@@ -490,14 +490,14 @@
 // i1.nc_p3 = i1_ncprop;
 //    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_p3: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_ncprop: number
 // | ```
 // | 
@@ -505,21 +505,21 @@
 // var i1_s_p = c1.s1;
 //     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_p: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //              ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class c1
 // | ```
 // | This is comment for c1
 // | ----------------------------------------------------------------------
 //                 ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.s1: number
 // | ```
 // | s1 is static property of c1
@@ -527,14 +527,14 @@
 // var i1_s_f = c1.s2;
 //     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_f: (b: number) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                 ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.s2(b: number): number
 // | ```
 // | static sum with property
@@ -542,14 +542,14 @@
 // var i1_s_r = c1.s2(20);
 //     ^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_r: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                 ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.s2(b: number): number
 // | ```
 // | static sum with property
@@ -557,14 +557,14 @@
 // var i1_s_prop = c1.s3;
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_prop: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                    ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.s3: number
 // | ```
 // | static getter property
@@ -572,14 +572,14 @@
 // c1.s3 = i1_s_prop;
 //    ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.s3: number
 // | ```
 // | static getter property
 // | ----------------------------------------------------------------------
 //         ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_prop: number
 // | ```
 // | 
@@ -587,14 +587,14 @@
 // var i1_s_nc_p = c1.nc_s1;
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_nc_p: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) c1.nc_s1: number
 // | ```
 // | 
@@ -602,14 +602,14 @@
 // var i1_s_ncf = c1.nc_s2;
 //     ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_ncf: (b: number) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_s2(b: number): number
 // | ```
 // | 
@@ -617,14 +617,14 @@
 // var i1_s_ncr = c1.nc_s2(20);
 //     ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_ncr: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) c1.nc_s2(b: number): number
 // | ```
 // | 
@@ -632,14 +632,14 @@
 // var i1_s_ncprop = c1.nc_s3;
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_ncprop: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                      ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_s3: number
 // | ```
 // | 
@@ -647,14 +647,14 @@
 // c1.nc_s3 = i1_s_ncprop;
 //    ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) c1.nc_s3: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_s_ncprop: number
 // | ```
 // | 
@@ -662,14 +662,14 @@
 // var i1_c = c1;
 //     ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var i1_c: typeof c1
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //            ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class c1
 // | ```
 // | This is comment for c1
@@ -696,14 +696,14 @@
 // cProperties_i.p2 = cProperties_i.p1;
 //               ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) cProperties.p2: number
 // | ```
 // | setter only property
 // | ----------------------------------------------------------------------
 //                                  ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) cProperties.p1: number
 // | ```
 // | getter only property
@@ -711,14 +711,14 @@
 // cProperties_i.nc_p2 = cProperties_i.nc_p1;
 //               ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) cProperties.nc_p2: number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                                     ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (accessor) cProperties.nc_p1: number
 // | ```
 // | 
@@ -731,18 +731,17 @@
 //     constructor(/**more info about a*/public a: number) {
 //     ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | constructor cWithConstructorProperty(a: number): cWithConstructorProperty
 // | ```
 // | this is class cWithConstructorProperty's constructor
 // | 
 // | *@param* `a` — this is first parameter a
-// | 
 // | ----------------------------------------------------------------------
 //         var bbbb = 10;
 //             ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var bbbb: number
 // | ```
 // | 
@@ -750,28 +749,28 @@
 //         this.a = a + 2 + bbbb;
 //         ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | this: this
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //              ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) cWithConstructorProperty.a: number
 // | ```
 // | more info about a
 // | ----------------------------------------------------------------------
 //                  ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (parameter) a: number
 // | ```
 // | more info about a
 // | ----------------------------------------------------------------------
 //                          ^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var bbbb: number
 // | ```
 // | 
@@ -792,7 +791,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c1\n```\nThis is comment for c1"
+        "value": "```typescript\nclass c1\n```\nThis is comment for c1"
       },
       "range": {
         "start": {
@@ -803,7 +802,8 @@
           "line": 1,
           "character": 8
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -819,7 +819,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.p1: number\n```\np1 is property of c1"
+        "value": "```typescript\n(property) c1.p1: number\n```\np1 is property of c1"
       },
       "range": {
         "start": {
@@ -846,7 +846,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.p2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.p2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -873,7 +873,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.p3: number\n```\ngetter property 1"
+        "value": "```typescript\n(accessor) c1.p3: number\n```\ngetter property 1"
       },
       "range": {
         "start": {
@@ -900,7 +900,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.p2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.p2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -927,7 +927,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.p3: number\n```\ngetter property 1"
+        "value": "```typescript\n(accessor) c1.p3: number\n```\ngetter property 1"
       },
       "range": {
         "start": {
@@ -954,7 +954,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.p2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.p2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -981,7 +981,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.pp1: number\n```\npp1 is property of c1"
+        "value": "```typescript\n(property) c1.pp1: number\n```\npp1 is property of c1"
       },
       "range": {
         "start": {
@@ -1008,7 +1008,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.pp2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.pp2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -1035,7 +1035,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.pp3: number\n```\ngetter property 2"
+        "value": "```typescript\n(accessor) c1.pp3: number\n```\ngetter property 2"
       },
       "range": {
         "start": {
@@ -1062,7 +1062,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.pp2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.pp2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -1089,7 +1089,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.pp3: number\n```\ngetter property 2"
+        "value": "```typescript\n(accessor) c1.pp3: number\n```\ngetter property 2"
       },
       "range": {
         "start": {
@@ -1116,7 +1116,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.pp2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.pp2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -1143,7 +1143,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c1(): c1\n```\nConstructor method"
+        "value": "```typescript\nconstructor c1(): c1\n```\nConstructor method"
       },
       "range": {
         "start": {
@@ -1154,7 +1154,8 @@
           "line": 31,
           "character": 15
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -1170,7 +1171,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.s1: number\n```\ns1 is static property of c1"
+        "value": "```typescript\n(property) c1.s1: number\n```\ns1 is static property of c1"
       },
       "range": {
         "start": {
@@ -1197,7 +1198,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
+        "value": "```typescript\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
       },
       "range": {
         "start": {
@@ -1224,7 +1225,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.s3: number\n```\nstatic getter property"
+        "value": "```typescript\n(accessor) c1.s3: number\n```\nstatic getter property"
       },
       "range": {
         "start": {
@@ -1251,7 +1252,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
+        "value": "```typescript\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
       },
       "range": {
         "start": {
@@ -1278,7 +1279,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.s3: number\n```\nstatic getter property"
+        "value": "```typescript\n(accessor) c1.s3: number\n```\nstatic getter property"
       },
       "range": {
         "start": {
@@ -1305,7 +1306,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
+        "value": "```typescript\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
       },
       "range": {
         "start": {
@@ -1332,7 +1333,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.nc_p1: number\n```\n"
+        "value": "```typescript\n(property) c1.nc_p1: number\n```\n"
       },
       "range": {
         "start": {
@@ -1359,7 +1360,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_p2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_p2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1386,7 +1387,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_p3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_p3: number\n```\n"
       },
       "range": {
         "start": {
@@ -1413,7 +1414,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_p2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_p2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1440,7 +1441,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_p3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_p3: number\n```\n"
       },
       "range": {
         "start": {
@@ -1467,7 +1468,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_p2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_p2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1494,7 +1495,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.nc_pp1: number\n```\n"
+        "value": "```typescript\n(property) c1.nc_pp1: number\n```\n"
       },
       "range": {
         "start": {
@@ -1521,7 +1522,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_pp2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_pp2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1548,7 +1549,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_pp3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_pp3: number\n```\n"
       },
       "range": {
         "start": {
@@ -1575,7 +1576,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_pp2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_pp2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1602,7 +1603,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_pp3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_pp3: number\n```\n"
       },
       "range": {
         "start": {
@@ -1629,7 +1630,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_pp2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_pp2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1656,7 +1657,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.nc_s1: number\n```\n"
+        "value": "```typescript\n(property) c1.nc_s1: number\n```\n"
       },
       "range": {
         "start": {
@@ -1683,7 +1684,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_s2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_s2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1710,7 +1711,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_s3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_s3: number\n```\n"
       },
       "range": {
         "start": {
@@ -1737,7 +1738,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_s2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_s2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1764,7 +1765,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_s3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_s3: number\n```\n"
       },
       "range": {
         "start": {
@@ -1791,7 +1792,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_s2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_s2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -1818,7 +1819,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1: c1\n```\n"
+        "value": "```typescript\nvar i1: c1\n```\n"
       },
       "range": {
         "start": {
@@ -1829,7 +1830,8 @@
           "line": 78,
           "character": 6
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -1845,7 +1847,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c1(): c1\n```\nConstructor method"
+        "value": "```typescript\nconstructor c1(): c1\n```\nConstructor method"
       },
       "range": {
         "start": {
@@ -1856,7 +1858,8 @@
           "line": 78,
           "character": 15
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -1872,7 +1875,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_p: number\n```\n"
+        "value": "```typescript\nvar i1_p: number\n```\n"
       },
       "range": {
         "start": {
@@ -1899,7 +1902,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_f: (b: number) => number\n```\n"
+        "value": "```typescript\nvar i1_f: (b: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -1926,7 +1929,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.p2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.p2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -1953,7 +1956,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_r: number\n```\n"
+        "value": "```typescript\nvar i1_r: number\n```\n"
       },
       "range": {
         "start": {
@@ -1980,7 +1983,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.p2(b: number): number\n```\nsum with property"
+        "value": "```typescript\n(method) c1.p2(b: number): number\n```\nsum with property"
       },
       "range": {
         "start": {
@@ -2007,7 +2010,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_prop: number\n```\n"
+        "value": "```typescript\nvar i1_prop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2034,7 +2037,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.p3: number\n```\ngetter property 1"
+        "value": "```typescript\n(accessor) c1.p3: number\n```\ngetter property 1"
       },
       "range": {
         "start": {
@@ -2061,7 +2064,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.p3: number\n```\ngetter property 1"
+        "value": "```typescript\n(accessor) c1.p3: number\n```\ngetter property 1"
       },
       "range": {
         "start": {
@@ -2088,7 +2091,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_prop: number\n```\n"
+        "value": "```typescript\nvar i1_prop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2115,7 +2118,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_nc_p: number\n```\n"
+        "value": "```typescript\nvar i1_nc_p: number\n```\n"
       },
       "range": {
         "start": {
@@ -2142,7 +2145,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.nc_p1: number\n```\n"
+        "value": "```typescript\n(property) c1.nc_p1: number\n```\n"
       },
       "range": {
         "start": {
@@ -2169,7 +2172,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_ncf: (b: number) => number\n```\n"
+        "value": "```typescript\nvar i1_ncf: (b: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -2196,7 +2199,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_p2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_p2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -2223,7 +2226,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_ncr: number\n```\n"
+        "value": "```typescript\nvar i1_ncr: number\n```\n"
       },
       "range": {
         "start": {
@@ -2250,7 +2253,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_p2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_p2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -2277,7 +2280,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_ncprop: number\n```\n"
+        "value": "```typescript\nvar i1_ncprop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2304,7 +2307,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_p3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_p3: number\n```\n"
       },
       "range": {
         "start": {
@@ -2331,7 +2334,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_p3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_p3: number\n```\n"
       },
       "range": {
         "start": {
@@ -2358,7 +2361,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_ncprop: number\n```\n"
+        "value": "```typescript\nvar i1_ncprop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2385,7 +2388,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_p: number\n```\n"
+        "value": "```typescript\nvar i1_s_p: number\n```\n"
       },
       "range": {
         "start": {
@@ -2412,7 +2415,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c1\n```\nThis is comment for c1"
+        "value": "```typescript\nclass c1\n```\nThis is comment for c1"
       },
       "range": {
         "start": {
@@ -2423,7 +2426,8 @@
           "line": 89,
           "character": 15
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -2439,7 +2443,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.s1: number\n```\ns1 is static property of c1"
+        "value": "```typescript\n(property) c1.s1: number\n```\ns1 is static property of c1"
       },
       "range": {
         "start": {
@@ -2466,7 +2470,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_f: (b: number) => number\n```\n"
+        "value": "```typescript\nvar i1_s_f: (b: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -2493,7 +2497,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
+        "value": "```typescript\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
       },
       "range": {
         "start": {
@@ -2520,7 +2524,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_r: number\n```\n"
+        "value": "```typescript\nvar i1_s_r: number\n```\n"
       },
       "range": {
         "start": {
@@ -2547,7 +2551,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
+        "value": "```typescript\n(method) c1.s2(b: number): number\n```\nstatic sum with property"
       },
       "range": {
         "start": {
@@ -2574,7 +2578,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_prop: number\n```\n"
+        "value": "```typescript\nvar i1_s_prop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2601,7 +2605,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.s3: number\n```\nstatic getter property"
+        "value": "```typescript\n(accessor) c1.s3: number\n```\nstatic getter property"
       },
       "range": {
         "start": {
@@ -2628,7 +2632,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.s3: number\n```\nstatic getter property"
+        "value": "```typescript\n(accessor) c1.s3: number\n```\nstatic getter property"
       },
       "range": {
         "start": {
@@ -2655,7 +2659,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_prop: number\n```\n"
+        "value": "```typescript\nvar i1_s_prop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2682,7 +2686,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_nc_p: number\n```\n"
+        "value": "```typescript\nvar i1_s_nc_p: number\n```\n"
       },
       "range": {
         "start": {
@@ -2709,7 +2713,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) c1.nc_s1: number\n```\n"
+        "value": "```typescript\n(property) c1.nc_s1: number\n```\n"
       },
       "range": {
         "start": {
@@ -2736,7 +2740,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_ncf: (b: number) => number\n```\n"
+        "value": "```typescript\nvar i1_s_ncf: (b: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -2763,7 +2767,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_s2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_s2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -2790,7 +2794,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_ncr: number\n```\n"
+        "value": "```typescript\nvar i1_s_ncr: number\n```\n"
       },
       "range": {
         "start": {
@@ -2817,7 +2821,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c1.nc_s2(b: number): number\n```\n"
+        "value": "```typescript\n(method) c1.nc_s2(b: number): number\n```\n"
       },
       "range": {
         "start": {
@@ -2844,7 +2848,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_ncprop: number\n```\n"
+        "value": "```typescript\nvar i1_s_ncprop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2871,7 +2875,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_s3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_s3: number\n```\n"
       },
       "range": {
         "start": {
@@ -2898,7 +2902,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) c1.nc_s3: number\n```\n"
+        "value": "```typescript\n(accessor) c1.nc_s3: number\n```\n"
       },
       "range": {
         "start": {
@@ -2925,7 +2929,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_ncprop: number\n```\n"
+        "value": "```typescript\nvar i1_s_ncprop: number\n```\n"
       },
       "range": {
         "start": {
@@ -2952,7 +2956,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_c: typeof c1\n```\n"
+        "value": "```typescript\nvar i1_c: typeof c1\n```\n"
       },
       "range": {
         "start": {
@@ -2963,7 +2967,8 @@
           "line": 99,
           "character": 8
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -2979,7 +2984,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c1\n```\nThis is comment for c1"
+        "value": "```typescript\nclass c1\n```\nThis is comment for c1"
       },
       "range": {
         "start": {
@@ -2990,7 +2995,8 @@
           "line": 99,
           "character": 13
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -3006,7 +3012,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) cProperties.p2: number\n```\nsetter only property"
+        "value": "```typescript\n(accessor) cProperties.p2: number\n```\nsetter only property"
       },
       "range": {
         "start": {
@@ -3033,7 +3039,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) cProperties.p1: number\n```\ngetter only property"
+        "value": "```typescript\n(accessor) cProperties.p1: number\n```\ngetter only property"
       },
       "range": {
         "start": {
@@ -3060,7 +3066,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) cProperties.nc_p2: number\n```\n"
+        "value": "```typescript\n(accessor) cProperties.nc_p2: number\n```\n"
       },
       "range": {
         "start": {
@@ -3087,7 +3093,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(accessor) cProperties.nc_p1: number\n```\n"
+        "value": "```typescript\n(accessor) cProperties.nc_p1: number\n```\n"
       },
       "range": {
         "start": {
@@ -3114,7 +3120,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor cWithConstructorProperty(a: number): cWithConstructorProperty\n```\nthis is class cWithConstructorProperty's constructor\n\n*@param* `a` — this is first parameter a\n"
+        "value": "```typescript\nconstructor cWithConstructorProperty(a: number): cWithConstructorProperty\n```\nthis is class cWithConstructorProperty's constructor\n\n*@param* `a` — this is first parameter a"
       },
       "range": {
         "start": {
@@ -3125,7 +3131,8 @@
           "line": 126,
           "character": 15
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -3141,7 +3148,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar bbbb: number\n```\n"
+        "value": "```typescript\nvar bbbb: number\n```\n"
       },
       "range": {
         "start": {
@@ -3168,7 +3175,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nthis: this\n```\n"
+        "value": "```typescript\nthis: this\n```\n"
       },
       "range": {
         "start": {
@@ -3195,7 +3202,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) cWithConstructorProperty.a: number\n```\nmore info about a"
+        "value": "```typescript\n(property) cWithConstructorProperty.a: number\n```\nmore info about a"
       },
       "range": {
         "start": {
@@ -3222,7 +3229,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) a: number\n```\nmore info about a"
+        "value": "```typescript\n(parameter) a: number\n```\nmore info about a"
       },
       "range": {
         "start": {
@@ -3249,7 +3256,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar bbbb: number\n```\n"
+        "value": "```typescript\nvar bbbb: number\n```\n"
       },
       "range": {
         "start": {

@@ -17,15 +17,15 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format comment issue reproduction", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -68,15 +68,15 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format JSDoc with tab indentation", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -105,15 +105,15 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format comment inside multi-line argument list", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -138,15 +138,15 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("format comment in chained method calls", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -172,15 +172,15 @@ func TestCommentFormatting(t *testing.T) {
 	// Regression test for issue #1928 - panic when formatting chained method call with comment
 	t.Run("format chained method call with comment (issue #1928)", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false, // Use tabs
+				ConvertTabsToSpaces:    core.TSFalse, // Use tabs
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")
@@ -205,15 +205,15 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("multiline comment inside block that opens on first line (issue #2649)", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false,
+				ConvertTabsToSpaces:    core.TSFalse,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 		}, "\n")
 
@@ -234,15 +234,15 @@ func TestCommentFormatting(t *testing.T) {
 
 	t.Run("single-line comment inside block that opens on first line (issue #2649)", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         0,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    false,
+				ConvertTabsToSpaces:    core.TSFalse,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 		}, "\n")
 
@@ -262,20 +262,120 @@ func TestCommentFormatting(t *testing.T) {
 	})
 }
 
+func TestFormatSelectionPreservesComments(t *testing.T) {
+	t.Parallel()
+
+	t.Run("format selection should not delete block comment when selection ends inside comment", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    core.TSTrue,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: core.TSTrue,
+			},
+		}, "\n")
+
+		// Reproduce: const test/* comment */=5;
+		// When selecting a range that ends inside the comment (before */), format selection should not delete the comment.
+		originalText := `const test/* comment */=5;`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		// Select a range that starts at the beginning of the line and ends inside the block comment.
+		// This covers `const test/* comment`, stopping before the closing `*/`.
+		commentStart := strings.Index(originalText, "/*")
+		selectionEnd := commentStart + len("/* comment") // ends inside the comment, before the closing `*/`
+
+		edits := format.FormatSelection(ctx, sourceFile, 0, selectionEnd)
+		formatted := applyBulkEdits(originalText, edits)
+
+		// The entire statement should be preserved unchanged
+		assert.Equal(t, formatted, originalText, "format selection should not delete the block comment or alter the statement")
+	})
+
+	t.Run("format selection should not delete block comment when selection starts inside comment", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    core.TSTrue,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: core.TSTrue,
+			},
+		}, "\n")
+
+		originalText := `const test/* comment */=5;`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		// Select from inside the comment to the end
+		commentStart := strings.Index(originalText, "/*")
+		selectionStart := commentStart + 3 // inside the comment
+
+		edits := format.FormatSelection(ctx, sourceFile, selectionStart, len(originalText))
+		formatted := applyBulkEdits(originalText, edits)
+
+		// The entire statement should be preserved unchanged
+		assert.Equal(t, formatted, originalText, "format selection should not delete the block comment or alter the statement")
+	})
+
+	t.Run("full document format should preserve block comment and add spaces", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
+			EditorSettings: lsutil.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    core.TSTrue,
+				IndentStyle:            lsutil.IndentStyleSmart,
+				TrimTrailingWhitespace: core.TSTrue,
+			},
+			InsertSpaceBeforeAndAfterBinaryOperators: core.TSTrue,
+		}, "\n")
+
+		originalText := `const test/* comment */=5;`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		edits := format.FormatDocument(ctx, sourceFile)
+		formatted := applyBulkEdits(originalText, edits)
+
+		// Full document format should preserve the comment and add spaces around `=`
+		assert.Equal(t, "const test/* comment */ = 5;", formatted, "full format should preserve the block comment and add spaces")
+	})
+}
+
 func TestSliceBoundsPanic(t *testing.T) {
 	t.Parallel()
 
 	t.Run("format code with trailing semicolon should not panic", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &lsutil.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), lsutil.FormatCodeSettings{
 			EditorSettings: lsutil.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
 				BaseIndentSize:         4,
 				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
+				ConvertTabsToSpaces:    core.TSTrue,
 				IndentStyle:            lsutil.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
+				TrimTrailingWhitespace: core.TSTrue,
 			},
 			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
 		}, "\n")

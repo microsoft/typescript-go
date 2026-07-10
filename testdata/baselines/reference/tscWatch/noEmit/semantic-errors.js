@@ -13,7 +13,8 @@ const a: number = "hello"
 tsgo -w
 ExitStatus:: Success
 Output::
-build starting at HH:MM:SS AM
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
 
 [7m1[0m const a: number = "hello"
@@ -22,7 +23,8 @@ build starting at HH:MM:SS AM
 
 Found 1 error in a.ts[90m:1[0m
 
-build finished in d.ddds
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -47,6 +49,10 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -60,9 +66,15 @@ const a = "hello";
 
 
 Output::
-build starting at HH:MM:SS AM
-build finished in d.ddds
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
 
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
+
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -81,13 +93,19 @@ Edit [1]:: emit after fixing error
 
 
 Output::
-build starting at HH:MM:SS AM
-build finished in d.ddds
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/workspaces/project/a.js] *new* 
 "use strict";
 const a = "hello";
 
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -104,9 +122,15 @@ Edit [2]:: no emit run after fixing error
 
 
 Output::
-build starting at HH:MM:SS AM
-build finished in d.ddds
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
 
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
+
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -118,7 +142,8 @@ const a: number = "hello"
 
 
 Output::
-build starting at HH:MM:SS AM
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
 
 [7m1[0m const a: number = "hello"
@@ -127,8 +152,13 @@ build starting at HH:MM:SS AM
 
 Found 1 error in a.ts[90m:1[0m
 
-build finished in d.ddds
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
+
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -147,7 +177,8 @@ Edit [4]:: emit when error
 
 
 Output::
-build starting at HH:MM:SS AM
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
 
 [7m1[0m const a: number = "hello"
@@ -156,9 +187,14 @@ build starting at HH:MM:SS AM
 
 Found 1 error in a.ts[90m:1[0m
 
-build finished in d.ddds
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
 //// [/home/src/workspaces/project/a.js] *rewrite with same content*
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
@@ -175,7 +211,8 @@ Edit [5]:: no emit run when error
 
 
 Output::
-build starting at HH:MM:SS AM
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
 
 [7m1[0m const a: number = "hello"
@@ -184,8 +221,13 @@ build starting at HH:MM:SS AM
 
 Found 1 error in a.ts[90m:1[0m
 
-build finished in d.ddds
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
+
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::

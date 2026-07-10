@@ -2,15 +2,37 @@ package project_test
 
 import (
 	"context"
+	"slices"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
+
+type publishDiagnosticsCall = struct {
+	Ctx    context.Context
+	Params *lsproto.PublishDiagnosticsParams
+}
+
+// filterDiagnosticsByURI returns all PublishDiagnostics calls matching the given URI,
+// starting from the given index.
+func filterDiagnosticsByURI(calls []publishDiagnosticsCall, uri lsproto.DocumentUri, from int) []publishDiagnosticsCall {
+	var result []publishDiagnosticsCall
+	for i := from; i < len(calls); i++ {
+		if calls[i].Params.Uri == uri {
+			result = append(result, calls[i])
+		}
+	}
+	return result
+}
 
 // These tests explicitly verify ProgramUpdateKind using subtests with shared helpers.
 func TestProjectProgramUpdateKind(t *testing.T) {
@@ -169,6 +191,79 @@ func TestProject(t *testing.T) {
 		_, err = session.GetLanguageService(context.Background(), uri2)
 		assert.NilError(t, err)
 	})
+
+	t.Run("inferred project rebuilt twice in one snapshot after typings install does not crash", func(t *testing.T) {
+		t.Parallel()
+		// Reproduces the nil-command-line crash in (*Program).SingleThreaded (issue #3873).
+		//
+		// `getCommandLineWithTypingsFiles` memoizes `commandLineWithTypingsFiles` behind a
+		// `sync.Once`. When `CommandLine` (or the inferred roots) change, the cached value is
+		// reset to nil but the `Once` is NOT reset. `Project.Clone()` produces a fresh `Once`,
+		// so the first mutation of a project within a snapshot normally clears the staleness.
+		// But if the *same* in-snapshot clone has its program built, then its roots change, then
+		// its program is built again, the second build hits a consumed `Once` and reads the nil
+		// cached value, passing a nil command line to `compiler.NewProgram`.
+		//
+		// This sequence is produced within a single snapshot by `DidRequestFile`'s
+		// build -> cleanupInferredProject -> build path, when:
+		//   1. the inferred project has installed typings (so the `Once` path is taken), and
+		//   2. a pending content change marks the inferred project dirty (forcing build #1), and
+		//   3. a pending tsconfig creation moves another open file out of the inferred project,
+		//      so `cleanupInferredProject` changes the inferred roots between the two builds.
+		files := map[string]any{
+			"/user/username/projects/project1/a.js":         ``,
+			"/user/username/projects/project1/package.json": `{"name":"p1","dependencies":{"jquery":"^3.1.0"}}`,
+			"/user/username/projects/project1/b.ts":         `export const y = 1;`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"jquery": `declare const $: { x: number }`,
+			},
+		})
+
+		aURI := lsproto.DocumentUri("file:///user/username/projects/project1/a.js")
+		bURI := lsproto.DocumentUri("file:///user/username/projects/project1/b.ts")
+
+		// 1) Open the file that triggers ATA, plus another file that joins the inferred project.
+		session.DidOpenFile(context.Background(), aURI, 1, ``, lsproto.LanguageKindJavaScript)
+		session.DidOpenFile(context.Background(), bURI, 1, files["/user/username/projects/project1/b.ts"].(string), lsproto.LanguageKindTypeScript)
+
+		// 2) Let ATA install jquery typings, then build the inferred program so its
+		//    typings files are populated.
+		session.WaitForBackgroundTasks()
+		npmCalls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Assert(t, len(npmCalls) > 0, "expected at least one npm install call from ATA")
+		_, err := session.GetLanguageService(context.Background(), aURI)
+		assert.NilError(t, err)
+
+		// 3) Queue two pending changes that will be flushed together in the next snapshot:
+		//    - a content change to a.js (marks the inferred project dirty -> first program build)
+		//    - creation of a tsconfig.json that captures b.ts (moves it out of the inferred
+		//      project, so cleanupInferredProject shrinks the inferred roots between builds).
+		session.DidChangeFile(context.Background(), aURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `// changed`}},
+		})
+		err = utils.FS().WriteFile("/user/username/projects/project1/tsconfig.json", `{"compilerOptions":{},"files":["b.ts"]}`)
+		assert.NilError(t, err)
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{
+				Type: lsproto.FileChangeTypeCreated,
+				Uri:  "file:///user/username/projects/project1/tsconfig.json",
+			},
+		})
+
+		// 4) Flush the pending changes and the request in a single snapshot. With the bug,
+		//    the inferred project's program is built, its roots change, and it is rebuilt with
+		//    a nil command line, panicking in (*Program).SingleThreaded.
+		defer func() {
+			if r := recover(); r != nil {
+				t.Fatalf("crash reproduced (issue #3873): %v", r)
+			}
+		}()
+		_, err = session.GetLanguageService(context.Background(), aURI)
+		assert.NilError(t, err)
+	})
 }
 
 func TestPushDiagnostics(t *testing.T) {
@@ -206,6 +301,34 @@ func TestPushDiagnostics(t *testing.T) {
 		}
 		assert.Assert(t, tsconfigCall != nil, "expected PublishDiagnostics call for tsconfig.json")
 		assert.Assert(t, len(tsconfigCall.Params.Diagnostics) > 0, "expected at least one diagnostic")
+	})
+
+	t.Run("publishes config parsing diagnostics on initial program creation", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json")
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+
+		expectedMessage := "Argument for '--target' option must be:"
+		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), expectedMessage)
+		}), "expected invalid target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
 	})
 
 	t.Run("clears diagnostics when project is removed", func(t *testing.T) {
@@ -302,5 +425,330 @@ func TestPushDiagnostics(t *testing.T) {
 		calls := utils.Client().PublishDiagnosticsCalls()
 		// Should not have any calls since inferred projects don't have tsconfig.json
 		assert.Equal(t, len(calls), 0, "expected no PublishDiagnostics calls for inferred projects")
+	})
+
+	t.Run("does not publish when validation is disabled", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.EnableValidation = core.TSFalse
+		session.Configure(prefs)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		for _, call := range calls {
+			assert.Equal(t, len(call.Params.Diagnostics), 0, "expected only empty PublishDiagnostics calls when validation is disabled")
+		}
+	})
+
+	t.Run("clears diagnostics when validation is disabled", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "nope"
+				}
+			}`,
+			"/src/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected initial PublishDiagnostics call for tsconfig.json")
+		assert.Assert(t, len(tsconfigCalls[len(tsconfigCalls)-1].Params.Diagnostics) > 0, "expected initial diagnostics")
+
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.EnableValidation = core.TSFalse
+		session.Configure(prefs)
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls = utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", len(calls)-1)
+		if len(tsconfigCalls) == 0 {
+			tsconfigCalls = filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		}
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected diagnostics to be cleared when validation is disabled")
+	})
+
+	t.Run("publishes global diagnostics after checking", func(t *testing.T) {
+		t.Parallel()
+		// Use a target/lib that does not include Disposable, then write code that needs it.
+		// This triggers a deferred "Cannot find global type 'Disposable'" global diagnostic
+		// during checking, which should be accumulated and published on the tsconfig URI.
+		files := map[string]any{
+			"/src/tsconfig.json": `{
+				"compilerOptions": {
+					"target": "es2020"
+				}
+			}`,
+			"/src/index.ts": `export function f() {
+				using x = { [Symbol.dispose]() {} };
+			}`,
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		// Request semantic diagnostics to trigger checking, which triggers the global type resolvers.
+		ls, err := session.GetLanguageService(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		// Drain background tasks from DidOpenFile (publishProgramDiagnostics, etc.)
+		// before triggering global diagnostics, to avoid racing with publishGlobalDiagnostics.
+		session.WaitForBackgroundTasks()
+
+		_, err = ls.ProvideDiagnostics(projecttestutil.WithRequestID(context.Background()), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		// Enqueue global diagnostics publishing (normally done by the LSP server after each request).
+		session.EnqueuePublishGlobalDiagnostics()
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		// Find the last call for tsconfig.json
+		var lastTsconfigCall *struct {
+			Ctx    context.Context
+			Params *lsproto.PublishDiagnosticsParams
+		}
+		for i := len(calls) - 1; i >= 0; i-- {
+			if calls[i].Params.Uri == "file:///src/tsconfig.json" {
+				lastTsconfigCall = &calls[i]
+				break
+			}
+		}
+		assert.Assert(t, lastTsconfigCall != nil, "expected PublishDiagnostics call for tsconfig.json")
+		// Should have global diagnostics (e.g., Cannot find global type 'Disposable')
+		hasGlobalDiag := false
+		for _, diag := range lastTsconfigCall.Params.Diagnostics {
+			if strings.Contains(diag.Message.AsString(), "Cannot find global") {
+				hasGlobalDiag = true
+				break
+			}
+		}
+		assert.Assert(t, hasGlobalDiag, "expected a 'Cannot find global' diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+	})
+
+	t.Run("cleans tsconfig diagnostics after TS files close and restores them after TS file is reopened", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{"compilerOptions": {"baseUrl": "."}}`,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		uri := lsproto.DocumentUri("file:///src/index.ts")
+		session.DidOpenFile(context.Background(), uri, 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after opening file")
+		assert.Equal(t, len(tsconfigCalls[0].Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after opening file")
+
+		callsBeforeClose := len(calls)
+
+		session.DidCloseFile(context.Background(), uri)
+		session.WaitForBackgroundTasks()
+
+		// Cleans up diagnostics after close
+		calls = utils.Client().PublishDiagnosticsCalls()
+		clearCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeClose)
+		assert.Assert(t, len(clearCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after project close")
+		lastClearCall := clearCalls[len(clearCalls)-1]
+		assert.Equal(t, len(lastClearCall.Params.Diagnostics), 0, "expected empty diagnostics after project close")
+
+		callsBeforeReopen := len(calls)
+
+		session.DidOpenFile(context.Background(), uri, 2, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err = session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// Restores diagnostics after reopen
+		calls = utils.Client().PublishDiagnosticsCalls()
+		reopenedCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeReopen)
+		assert.Assert(t, len(reopenedCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after reopening file")
+		lastReopenedCall := reopenedCalls[len(reopenedCalls)-1]
+		assert.Equal(t, len(lastReopenedCall.Params.Diagnostics), 1, "expected one diagnostic on tsconfig.json after reopening file")
+	})
+}
+
+func TestDisplayName(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	t.Run("configured project returns relative config path", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/tsconfig.json": `{}`,
+			"/home/projects/index.ts":      "export const x = 1;",
+		}
+		session, _ := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/index.ts", 1, "export const x = 1;", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///home/projects/index.ts"))
+		assert.NilError(t, err)
+
+		snapshot := session.Snapshot()
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/tsconfig.json"))
+		assert.Assert(t, configured != nil)
+		assert.Equal(t, configured.DisplayName("/home/projects"), "tsconfig.json")
+	})
+
+	t.Run("configured project with nested config", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/sub/tsconfig.json": `{}`,
+			"/home/projects/sub/index.ts":      "export const x = 1;",
+		}
+		session, _ := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/sub/index.ts", 1, "export const x = 1;", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///home/projects/sub/index.ts"))
+		assert.NilError(t, err)
+
+		snapshot := session.Snapshot()
+		configured := snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/sub/tsconfig.json"))
+		assert.Assert(t, configured != nil)
+		assert.Equal(t, configured.DisplayName("/home/projects"), "sub/tsconfig.json")
+	})
+
+	t.Run("inferred project returns directory base name", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/index.ts": "export const x = 1;",
+		}
+		session, _ := projecttestutil.SetupWithOptions(files, &project.SessionOptions{
+			CurrentDirectory:       "/home/projects",
+			DefaultLibraryPath:     bundled.LibPath(),
+			PositionEncoding:       lsproto.PositionEncodingKindUTF8,
+			WatchEnabled:           true,
+			LoggingEnabled:         true,
+			PushDiagnosticsEnabled: true,
+		})
+		session.DidOpenFile(context.Background(), "file:///home/projects/index.ts", 1, "export const x = 1;", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///home/projects/index.ts"))
+		assert.NilError(t, err)
+
+		snapshot := session.Snapshot()
+		inferred := snapshot.ProjectCollection.InferredProject()
+		assert.Assert(t, inferred != nil)
+		name := inferred.DisplayName("/home")
+		assert.Equal(t, name, "projects")
+	})
+}
+
+func TestProgressNotifications(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	t.Run("emits progress for configured project loading", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/tsconfig.json": `{}`,
+			"/home/projects/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/index.ts", 1, "export const x = 1;", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///home/projects/index.ts"))
+		assert.NilError(t, err)
+
+		startCalls := utils.Client().ProgressStartCalls()
+		finishCalls := utils.Client().ProgressFinishCalls()
+
+		assert.Assert(t, len(startCalls) > 0, "expected at least one ProgressStart call")
+		assert.Assert(t, len(finishCalls) > 0, "expected at least one ProgressFinish call")
+
+		foundProjectStart := false
+		for _, call := range startCalls {
+			if call.Message == diagnostics.Project_0 {
+				foundProjectStart = true
+				break
+			}
+		}
+		assert.Assert(t, foundProjectStart, "expected ProgressStart with Project_0 message")
+
+		foundProjectFinish := false
+		for _, call := range finishCalls {
+			if call.Message == diagnostics.Project_0 {
+				foundProjectFinish = true
+				break
+			}
+		}
+		assert.Assert(t, foundProjectFinish, "expected ProgressFinish with Project_0 message")
+	})
+
+	t.Run("emits progress for inferred project loading", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/index.ts": "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/index.ts", 1, "export const x = 1;", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///home/projects/index.ts"))
+		assert.NilError(t, err)
+
+		startCalls := utils.Client().ProgressStartCalls()
+		finishCalls := utils.Client().ProgressFinishCalls()
+
+		assert.Assert(t, len(startCalls) > 0, "expected at least one ProgressStart call")
+		assert.Assert(t, len(finishCalls) > 0, "expected at least one ProgressFinish call")
+
+		foundProjectStart := false
+		for _, call := range startCalls {
+			if call.Message == diagnostics.Project_0 {
+				foundProjectStart = true
+				break
+			}
+		}
+		assert.Assert(t, foundProjectStart, "expected ProgressStart with Project_0 message")
+	})
+
+	t.Run("each start has a matching finish", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/tsconfig.json": `{}`,
+			"/home/projects/a.ts":          "export const a = 1;",
+			"/home/projects/b.ts":          "export const b = 2;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///home/projects/a.ts", 1, "export const a = 1;", lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///home/projects/a.ts"))
+		assert.NilError(t, err)
+
+		startCalls := utils.Client().ProgressStartCalls()
+		finishCalls := utils.Client().ProgressFinishCalls()
+
+		starts := 0
+		finishes := 0
+		for _, call := range startCalls {
+			if call.Message == diagnostics.Project_0 {
+				starts++
+			}
+		}
+		for _, call := range finishCalls {
+			if call.Message == diagnostics.Project_0 {
+				finishes++
+			}
+		}
+		assert.Equal(t, starts, finishes, "ProgressStart and ProgressFinish calls for Project_0 should be balanced")
 	})
 }

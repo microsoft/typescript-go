@@ -87,6 +87,41 @@ func TestCommandLineParseResult(t *testing.T) {
 	}
 }
 
+func TestResponseFileDoesNotPanic(t *testing.T) {
+	t.Parallel()
+
+	// Passing `@` with an empty or relative filename should not panic.
+	// It should produce a diagnostic error instead.
+	cwd := t.TempDir()
+	t.Run("empty response file", func(t *testing.T) {
+		t.Parallel()
+		parsed := tsoptions.ParseCommandLineTestWorker(nil, []string{"@"}, osvfs.FS(), cwd)
+		assert.Assert(t, len(parsed.Errors) > 0, "expected an error for empty response file name")
+	})
+
+	t.Run("relative response file", func(t *testing.T) {
+		t.Parallel()
+		parsed := tsoptions.ParseCommandLineTestWorker(nil, []string{"@blah"}, osvfs.FS(), cwd)
+		assert.Assert(t, len(parsed.Errors) > 0, "expected an error for non-existent response file")
+	})
+}
+
+func TestParseCommandLineTypeRootsRelativePath(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/home/project/bug.ts": `let x = 1;`,
+	}, "/home/project", true)
+
+	cmdLine := tsoptions.ParseCommandLine([]string{"--typeRoots", "t", "bug.ts"}, host)
+
+	typeRoots := cmdLine.CompilerOptions().TypeRoots
+	assert.Assert(t, typeRoots != nil, "typeRoots should not be nil")
+	assert.Equal(t, len(typeRoots), 1)
+	assert.Assert(t, tspath.IsRootedDiskPath(typeRoots[0]), "typeRoots entry should be an absolute path, got: %s", typeRoots[0])
+	assert.Assert(t, strings.HasSuffix(typeRoots[0], "/t"), "typeRoots entry should end with '/t', got: %s", typeRoots[0])
+}
+
 func TestCustomConditionsNullOverride(t *testing.T) {
 	t.Parallel()
 
@@ -217,7 +252,7 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 		tsBaseline := parseExistingCompilerBaseline(t, originalBaseline)
 
 		// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
-		parsed := tsoptions.ParseCommandLineTestWorker(f.optDecls, f.commandLine, osvfs.FS())
+		parsed := tsoptions.ParseCommandLineTestWorker(f.optDecls, f.commandLine, osvfs.FS(), t.TempDir())
 
 		newBaselineFileNames := strings.Join(parsed.FileNames, ",")
 		assert.Equal(t, tsBaseline.fileNames, newBaselineFileNames)
@@ -279,7 +314,16 @@ func formatNewBaseline(
 ) string {
 	var formatted strings.Builder
 	formatted.WriteString("Args::\n")
-	formatted.WriteString("[\"" + strings.Join(commandLine, "\", \"") + "\"]")
+	formatted.WriteByte('[')
+	for i, arg := range commandLine {
+		if i > 0 {
+			formatted.WriteString(", ")
+		}
+		formatted.WriteByte('"')
+		formatted.WriteString(arg)
+		formatted.WriteByte('"')
+	}
+	formatted.WriteByte(']')
 	formatted.WriteString("\n\nCompilerOptions::\n")
 	formatted.Write(opts)
 	// todo: watch options not implemented
@@ -393,11 +437,16 @@ func formatNewBaselineBuild(
 ) string {
 	var formatted strings.Builder
 	formatted.WriteString("Args::\n")
-	if len(commandLine) == 0 {
-		formatted.WriteString("[]")
-	} else {
-		formatted.WriteString("[\"" + strings.Join(commandLine, "\", \"") + "\"]")
+	formatted.WriteByte('[')
+	for i, arg := range commandLine {
+		if i > 0 {
+			formatted.WriteString(", ")
+		}
+		formatted.WriteByte('"')
+		formatted.WriteString(arg)
+		formatted.WriteByte('"')
 	}
+	formatted.WriteByte(']')
 	formatted.WriteString("\n\nbuildOptions::\n")
 	formatted.Write(opts)
 	formatted.WriteString("\n\ncompilerOptions::\n")

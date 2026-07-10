@@ -62,14 +62,14 @@ const test = (base) => {
 
 
 //// [base.d.ts]
+export = BaseFactory;
 declare class Base {
     constructor();
 }
 declare function BaseFactory(): Base;
 declare namespace BaseFactory {
-    var Base: typeof Base;
+    export { Base };
 }
-export = BaseFactory;
 //// [file.d.ts]
 type BaseFactory = import('./base');
 type BaseFactoryFactory = (factory: import('./base')) => any;
@@ -85,4 +85,4 @@ declare const couldntThinkOfAny: {};
  * @param {InstanceType<BaseFactory["Base"]>} base
  * @returns {InstanceType<BaseFactory["Base"]>}
  */
-declare const test: (base: any) => any;
+declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;

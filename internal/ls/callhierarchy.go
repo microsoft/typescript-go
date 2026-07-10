@@ -205,38 +205,10 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 			kwPos := scanner.SkipTrivia(sourceFile.Text(), moveRangePastModifiers(node).Pos())
 			return "(anonymous)", kwPos, kwPos + 5 // "class".length
 		}
-		debug.AssertIsDefined(declName, "Expected call hierarchy item to have a name")
+		debug.Assert(declName != nil, "Expected call hierarchy item to have a name")
 	}
 
-	if ast.IsIdentifier(declName) {
-		text = declName.Text()
-	} else if ast.IsStringOrNumericLiteralLike(declName) {
-		text = declName.Text()
-	} else if ast.IsComputedPropertyName(declName) {
-		expr := declName.Expression()
-		if ast.IsStringOrNumericLiteralLike(expr) {
-			text = expr.Text()
-		}
-	}
-
-	if text == "" {
-		c, done := program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(node))
-		defer done()
-		symbol := c.GetSymbolAtLocation(declName)
-		if symbol != nil {
-			text = c.SymbolToString(symbol)
-		}
-	}
-
-	// get the text from printing the node on a single line without comments...
-	if text == "" {
-		sourceFile := ast.GetSourceFileOfNode(node)
-		writer, putWriter := printer.GetSingleLineStringWriter()
-		defer putWriter()
-		p := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
-		p.Write(node, sourceFile, writer, nil)
-		text = writer.String()
-	}
+	text = getTextOfCallHierarchyName(program, node, declName, node)
 
 	sourceFile := ast.GetSourceFileOfNode(node)
 	namePos := scanner.SkipTrivia(sourceFile.Text(), declName.Pos())
@@ -244,21 +216,50 @@ func getCallHierarchyItemName(program *compiler.Program, node *ast.Node) (text s
 	return text, namePos, declName.End()
 }
 
-func getCallHierarchyItemContainerName(node *ast.Node) string {
+func getTextOfCallHierarchyName(program *compiler.Program, sourceNode *ast.Node, name *ast.Node, printNode *ast.Node) string {
+	if ast.IsIdentifier(name) || ast.IsStringOrNumericLiteralLike(name) {
+		return name.Text()
+	}
+	if ast.IsComputedPropertyName(name) {
+		expr := name.Expression()
+		if ast.IsStringOrNumericLiteralLike(expr) {
+			return expr.Text()
+		}
+	}
+
+	c, done := program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(sourceNode))
+	defer done()
+	symbol := c.GetSymbolAtLocation(name)
+	if symbol != nil {
+		text := c.SymbolToString(symbol)
+		if text != "" {
+			return text
+		}
+	}
+
+	sourceFile := ast.GetSourceFileOfNode(sourceNode)
+	writer, putWriter := printer.GetSingleLineStringWriter()
+	defer putWriter()
+	p := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+	p.Write(printNode, sourceFile, writer, nil)
+	return writer.String()
+}
+
+func getCallHierarchyItemContainerName(program *compiler.Program, node *ast.Node) string {
 	if isAssignedExpression(node) {
 		parent := node.Parent
 		if ast.IsPropertyDeclaration(parent) && ast.IsClassLike(parent.Parent) {
 			if ast.IsClassExpression(parent.Parent) {
 				if assignedName := ast.GetAssignedName(parent.Parent); assignedName != nil {
-					return assignedName.Text()
+					return getTextOfCallHierarchyName(program, node, assignedName, assignedName)
 				}
 			} else {
 				if name := parent.Parent.Name(); name != nil {
-					return name.Text()
+					return getTextOfCallHierarchyName(program, node, name, name)
 				}
 			}
 		}
-		if ast.IsModuleBlock(parent.Parent.Parent.Parent) {
+		if parent.Parent.Parent != nil && parent.Parent.Parent.Parent != nil && ast.IsModuleBlock(parent.Parent.Parent.Parent) {
 			modParent := parent.Parent.Parent.Parent.Parent
 			if ast.IsModuleDeclaration(modParent) {
 				if name := modParent.Name(); name != nil && ast.IsIdentifier(name) {
@@ -273,11 +274,11 @@ func getCallHierarchyItemContainerName(node *ast.Node) string {
 	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
 		if node.Parent.Kind == ast.KindObjectLiteralExpression {
 			if assignedName := ast.GetAssignedName(node.Parent); assignedName != nil {
-				return assignedName.Text()
+				return getTextOfCallHierarchyName(program, node, assignedName, assignedName)
 			}
 		}
 		if name := ast.GetNameOfDeclaration(node.Parent); name != nil {
-			return name.Text()
+			return getTextOfCallHierarchyName(program, node, name, name)
 		}
 	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindModuleDeclaration:
 		if ast.IsModuleBlock(node.Parent) {
@@ -498,7 +499,7 @@ func resolveCallHierarchyDeclaration(program *compiler.Program, location *ast.No
 func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, node *ast.Node) *lsproto.CallHierarchyItem {
 	sourceFile := ast.GetSourceFileOfNode(node)
 	nameText, namePos, nameEnd := getCallHierarchyItemName(program, node)
-	containerName := getCallHierarchyItemContainerName(node)
+	containerName := getCallHierarchyItemContainerName(program, node)
 
 	kind := getSymbolKindFromNode(node)
 
@@ -568,9 +569,7 @@ func (l *LanguageService) convertCallSiteGroupToIncomingCall(program *compiler.P
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
-	slices.SortFunc(fromRanges, func(a, b lsproto.Range) int {
-		return lsproto.CompareRanges(&a, &b)
-	})
+	slices.SortFunc(fromRanges, lsproto.CompareRanges)
 
 	return &lsproto.CallHierarchyIncomingCall{
 		From:       l.createCallHierarchyItem(program, entries[0].declaration),
@@ -652,7 +651,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 			if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
 				return 0
 			}
-			return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
+			return lsproto.CompareRanges(a.FromRanges[0], b.FromRanges[0])
 		})
 	}
 	return result, err
@@ -927,9 +926,7 @@ func (l *LanguageService) convertCallSiteGroupToOutgoingCall(program *compiler.P
 		fromRanges[i] = l.converters.ToLSPRange(script, entry.textRange)
 	}
 
-	slices.SortFunc(fromRanges, func(a, b lsproto.Range) int {
-		return lsproto.CompareRanges(&a, &b)
-	})
+	slices.SortFunc(fromRanges, lsproto.CompareRanges)
 
 	return &lsproto.CallHierarchyOutgoingCall{
 		To:         l.createCallHierarchyItem(program, entries[0].declaration),
@@ -970,7 +967,7 @@ func (l *LanguageService) getOutgoingCalls(program *compiler.Program, declaratio
 		if len(a.FromRanges) == 0 || len(b.FromRanges) == 0 {
 			return 0
 		}
-		return lsproto.CompareRanges(&a.FromRanges[0], &b.FromRanges[0])
+		return lsproto.CompareRanges(a.FromRanges[0], b.FromRanges[0])
 	})
 
 	return result

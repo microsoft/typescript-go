@@ -1,6 +1,7 @@
 package tsctests
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"maps"
@@ -16,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
@@ -102,7 +104,7 @@ func GetFileMapWithBuild(files FileMap, commandLineArgs []string) FileMap {
 	sys := newTestSys(&tscInput{
 		files: maps.Clone(files),
 	}, false)
-	execute.CommandLine(sys, commandLineArgs, sys)
+	execute.CommandLine(context.Background(), sys, commandLineArgs, sys)
 	sys.fs.writtenFiles.Range(func(key string) bool {
 		if text, ok := sys.fsFromFileMap().ReadFile(key); ok {
 			files[key] = text
@@ -131,6 +133,8 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *TestSys {
 	}, currentWrite)
 	sys.env = tscInput.env
 	sys.forIncrementalCorrectness = forIncrementalCorrectness
+	sys.mockWatchBackend = NewMockWatchBackend()
+	sys.mockWatchBackend.DirectoryExists = sys.fs.FS.DirectoryExists
 	sys.fsDiffer = &fsbaselineutil.FSDiffer{
 		FS:           sys.fs.FS.(iovfs.FsWithSys),
 		DefaultLibs:  func() *collections.SyncSet[string] { return sys.fs.defaultLibs },
@@ -155,6 +159,7 @@ type TestSys struct {
 	tracer                    *harnessutil.TracerForBaselining
 	fsDiffer                  *fsbaselineutil.FSDiffer
 	forIncrementalCorrectness bool
+	mockWatchBackend          *MockWatchBackend
 
 	fs                 *testFs
 	defaultLibraryPath string
@@ -308,8 +313,13 @@ func (s *TestSys) writeHeaderToBaseline(builder *strings.Builder, program *incre
 		builder.WriteString(tspath.GetRelativePathFromDirectory(s.cwd, configFilePath, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: s.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          s.GetCurrentDirectory(),
-		}) + "::\n")
+		}))
+		builder.WriteString("::\n")
 	}
+}
+
+func (s *TestSys) WatchBackend() watchmanager.WatchBackend {
+	return s.mockWatchBackend
 }
 
 func (s *TestSys) OnProgram(program *incremental.Program) {
@@ -320,10 +330,14 @@ func (s *TestSys) OnProgram(program *incremental.Program) {
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
 			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
-				s.programBaselines.WriteString("*refresh*    " + file.FileName() + "\n")
+				s.programBaselines.WriteString("*refresh*    ")
+				s.programBaselines.WriteString(file.FileName())
+				s.programBaselines.WriteString("\n")
 			}
 		} else {
-			s.programBaselines.WriteString("*not cached* " + file.FileName() + "\n")
+			s.programBaselines.WriteString("*not cached* ")
+			s.programBaselines.WriteString(file.FileName())
+			s.programBaselines.WriteString("\n")
 		}
 	}
 
@@ -333,11 +347,17 @@ func (s *TestSys) OnProgram(program *incremental.Program) {
 		if kind, ok := testingData.UpdatedSignatureKinds[file.Path()]; ok {
 			switch kind {
 			case incremental.SignatureUpdateKindComputedDts:
-				s.programBaselines.WriteString("(computed .d.ts) " + file.FileName() + "\n")
+				s.programBaselines.WriteString("(computed .d.ts) ")
+				s.programBaselines.WriteString(file.FileName())
+				s.programBaselines.WriteString("\n")
 			case incremental.SignatureUpdateKindStoredAtEmit:
-				s.programBaselines.WriteString("(stored at emit) " + file.FileName() + "\n")
+				s.programBaselines.WriteString("(stored at emit) ")
+				s.programBaselines.WriteString(file.FileName())
+				s.programBaselines.WriteString("\n")
 			case incremental.SignatureUpdateKindUsedVersion:
-				s.programBaselines.WriteString("(used version)   " + file.FileName() + "\n")
+				s.programBaselines.WriteString("(used version)   ")
+				s.programBaselines.WriteString(file.FileName())
+				s.programBaselines.WriteString("\n")
 			}
 		}
 	}
@@ -359,11 +379,15 @@ func (s *TestSys) OnProgram(program *incremental.Program) {
 		s.writeHeaderToBaseline(&s.programIncludeBaselines, program)
 		s.programIncludeBaselines.WriteString("!!! Expected all files to have include reasons\nfilesWithoutIncludeReason::\n")
 		for _, file := range filesWithoutIncludeReason {
-			s.programIncludeBaselines.WriteString("  " + file + "\n")
+			s.programIncludeBaselines.WriteString("  ")
+			s.programIncludeBaselines.WriteString(file)
+			s.programIncludeBaselines.WriteString("\n")
 		}
 		s.programIncludeBaselines.WriteString("filesNotInProgramWithIncludeReason::\n")
 		for _, file := range fileNotInProgramWithIncludeReason {
-			s.programIncludeBaselines.WriteString("  " + file + "\n")
+			s.programIncludeBaselines.WriteString("  ")
+			s.programIncludeBaselines.WriteString(file)
+			s.programIncludeBaselines.WriteString("\n")
 		}
 	}
 }

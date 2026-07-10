@@ -23,7 +23,7 @@ func parseSourceFile(code string) *ast.SourceFile {
 func TestDecodeSourceFile_Basic(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let x = 1;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -38,7 +38,7 @@ func TestDecodeSourceFile_Basic(t *testing.T) {
 func TestDecodeSourceFile_Statements(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let a = 1;\nlet b = 2;\nlet c = 3;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -52,7 +52,7 @@ func TestDecodeSourceFile_Statements(t *testing.T) {
 func TestDecodeSourceFile_VariableDeclaration(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let x = 1;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -89,7 +89,7 @@ func TestDecodeSourceFile_VariableDeclarationListFlags(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			sf := parseSourceFile(tt.code)
-			buf, err := encoder.EncodeSourceFile(sf)
+			buf, _, err := encoder.EncodeSourceFile(sf)
 			assert.NilError(t, err)
 
 			decoded, err := encoder.DecodeSourceFile(buf)
@@ -105,7 +105,7 @@ func TestDecodeSourceFile_VariableDeclarationListFlags(t *testing.T) {
 func TestDecodeSourceFile_FunctionDeclaration(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("function add(a: number, b: number): number { return a + b; }")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -127,7 +127,7 @@ func TestDecodeSourceFile_FunctionDeclaration(t *testing.T) {
 func TestDecodeSourceFile_ImportDeclaration(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile(`import { bar } from "bar";`)
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -150,7 +150,7 @@ func TestDecodeSourceFile_ImportDeclaration(t *testing.T) {
 func TestDecodeSourceFile_IfStatement(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("if (true) { } else { }")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -167,7 +167,7 @@ func TestDecodeSourceFile_IfStatement(t *testing.T) {
 func TestDecodeSourceFile_TemplateExpression(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let x = `hello ${name} world`;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -190,7 +190,7 @@ func TestDecodeSourceFile_TemplateExpression(t *testing.T) {
 func TestDecodeSourceFile_ExportModifier(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("export function foo() {}")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -206,7 +206,7 @@ func TestDecodeSourceFile_Positions(t *testing.T) {
 	t.Parallel()
 	code := "let x = 1;"
 	sf := parseSourceFile(code)
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -219,7 +219,7 @@ func TestDecodeSourceFile_Positions(t *testing.T) {
 func TestDecodeSourceFile_ClassDeclaration(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("class Foo { bar(): void {} }")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -248,7 +248,7 @@ func TestDecodeNodes_SubtreeRoundTrip(t *testing.T) {
 	visitor.VisitEachChild(sf.AsNode())
 	assert.Assert(t, funcNode != nil)
 
-	buf, err := encoder.EncodeNode(funcNode, sf)
+	buf, _, err := encoder.EncodeNode(funcNode, sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeNodes(buf)
@@ -266,7 +266,7 @@ func TestDecodeNodes_SubtreeRoundTrip(t *testing.T) {
 func TestDecodeSourceFile_BinaryExpression(t *testing.T) {
 	t.Parallel()
 	sf := parseSourceFile("let x = 1 + 2;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -285,7 +285,7 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 	t.Parallel()
 	// "this" must decode as KeywordExpression, not Token, or the printer panics
 	sf := parseSourceFile("const x = this;")
-	buf, err := encoder.EncodeSourceFile(sf)
+	buf, _, err := encoder.EncodeSourceFile(sf)
 	assert.NilError(t, err)
 
 	decoded, err := encoder.DecodeSourceFile(buf)
@@ -299,6 +299,125 @@ func TestDecodeSourceFile_KeywordExpressions(t *testing.T) {
 	assert.Assert(t, thisExpr.AsKeywordExpression() != nil)
 }
 
+func TestDecodeSourceFile_EmptyModuleBlock(t *testing.T) {
+	t.Parallel()
+	sf := parseSourceFile("namespace N { }")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	// Navigate: namespace N { } -> ModuleDeclaration -> ModuleBlock
+	mod := decoded.Statements.Nodes[0].AsModuleDeclaration()
+	assert.Assert(t, mod.Body != nil)
+	block := mod.Body.AsModuleBlock()
+	// Statements must be non-nil even when empty, otherwise the printer panics
+	assert.Assert(t, block.Statements != nil)
+	assert.Equal(t, len(block.Statements.Nodes), 0)
+}
+
+func TestDecodeSourceFile_EmptyBlockAndParams(t *testing.T) {
+	t.Parallel()
+	// Empty blocks and parameter lists must decode with non-nil NodeLists (not nil),
+	// matching parser behavior. Previously the decoder left them nil, crashing the printer.
+	sf := parseSourceFile("function foo() {}")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	funcDecl := decoded.Statements.Nodes[0].AsFunctionDeclaration()
+	assert.Assert(t, funcDecl.Parameters != nil, "FunctionDeclaration.Parameters must be non-nil for foo()")
+	assert.Equal(t, len(funcDecl.Parameters.Nodes), 0)
+	assert.Assert(t, funcDecl.Body != nil)
+	block := funcDecl.Body.AsBlock()
+	assert.Assert(t, block.Statements != nil, "Block.Statements must be non-nil for empty blocks")
+	assert.Equal(t, len(block.Statements.Nodes), 0)
+}
+
+func TestDecodeSourceFile_ArrowFunctionEmptyParams(t *testing.T) {
+	t.Parallel()
+	// `() => {}` must decode with non-nil Parameters (empty NodeList),
+	// matching parser behavior. Previously the decoder left it nil, crashing the printer.
+	sf := parseSourceFile("const f = () => {};")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	decl := decoded.Statements.Nodes[0].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+	arrow := decl.Initializer.AsArrowFunction()
+	assert.Assert(t, arrow.Parameters != nil, "ArrowFunction.Parameters must be non-nil for () => {}")
+	assert.Equal(t, len(arrow.Parameters.Nodes), 0)
+	assert.Assert(t, arrow.Body != nil)
+	block := arrow.Body.AsBlock()
+	assert.Assert(t, block.Statements != nil, "Block.Statements must be non-nil for empty body")
+	assert.Equal(t, len(block.Statements.Nodes), 0)
+}
+
+func TestDecodeSourceFile_FunctionExpressionEmptyParams(t *testing.T) {
+	t.Parallel()
+	// `function() {}` must decode with non-nil Parameters (empty NodeList).
+	sf := parseSourceFile("const f = function() {};")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	decl := decoded.Statements.Nodes[0].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].AsVariableDeclaration()
+	funcExpr := decl.Initializer.AsFunctionExpression()
+	assert.Assert(t, funcExpr.Parameters != nil, "FunctionExpression.Parameters must be non-nil for function() {}")
+	assert.Equal(t, len(funcExpr.Parameters.Nodes), 0)
+}
+
+func TestDecodeSourceFile_PostfixUnaryOperator(t *testing.T) {
+	t.Parallel()
+	sf := parseSourceFile("let i = 0; i++;")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	exprStmt := decoded.Statements.Nodes[1].AsExpressionStatement()
+	postfix := exprStmt.Expression.AsPostfixUnaryExpression()
+	assert.Equal(t, postfix.Operator, ast.KindPlusPlusToken)
+	assert.Equal(t, postfix.Operand.Kind, ast.KindIdentifier)
+}
+
+func TestDecodeSourceFile_PrefixUnaryOperator(t *testing.T) {
+	t.Parallel()
+	sf := parseSourceFile("let x = true; !x;")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	exprStmt := decoded.Statements.Nodes[1].AsExpressionStatement()
+	prefix := exprStmt.Expression.AsPrefixUnaryExpression()
+	assert.Equal(t, prefix.Operator, ast.KindExclamationToken)
+	assert.Equal(t, prefix.Operand.Kind, ast.KindIdentifier)
+}
+
+func TestDecodeSourceFile_PostfixDecrement(t *testing.T) {
+	t.Parallel()
+	sf := parseSourceFile("let n = 5; n--;")
+	buf, _, err := encoder.EncodeSourceFile(sf)
+	assert.NilError(t, err)
+
+	decoded, err := encoder.DecodeSourceFile(buf)
+	assert.NilError(t, err)
+
+	exprStmt := decoded.Statements.Nodes[1].AsExpressionStatement()
+	postfix := exprStmt.Expression.AsPostfixUnaryExpression()
+	assert.Equal(t, postfix.Operator, ast.KindMinusMinusToken)
+}
+
 func BenchmarkDecodeSourceFile(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	filePath := filepath.Join(repo.TypeScriptSubmodulePath(), "src/compiler/checker.ts")
@@ -310,7 +429,7 @@ func BenchmarkDecodeSourceFile(b *testing.B) {
 		Path:     "/checker.ts",
 	}, code, core.ScriptKindTS)
 
-	buf, err := encoder.EncodeSourceFile(sourceFile)
+	buf, _, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(b, err)
 
 	b.Run("parse", func(b *testing.B) {

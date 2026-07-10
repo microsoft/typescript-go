@@ -89,7 +89,6 @@ const button: Button = createButton();
         "target": "es5",
         "module": "esnext",
         "lib": ["ES5"],
-        "moduleResolution": "node",
         "outDir": "dist",
     },
     "include": ["src"],
@@ -248,6 +247,12 @@ Resolving real path for '/home/src/projects/component-type-checker/node_modules/
 [7m3[0m         "target": "es5",
 [7m [0m [91m                  ~~~~~[0m
 
+[96mtsconfig.json[0m:[93m6[0m:[93m9[0m - [91merror[0m[90m TS5011: [0mThe common source directory of 'tsconfig.json' is './src'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.
+  Visit https://aka.ms/ts6 for migration information.
+
+[7m6[0m         "outDir": "dist",
+[7m [0m [91m        ~~~~~~~~[0m
+
 ../../../../tslibs/TS/Lib/lib.es5.d.ts
    Library 'lib.es5.d.ts' specified in compilerOptions
 ../../node_modules/.pnpm/@component-type-checker+button@0.0.1/node_modules/@component-type-checker/button/src/index.ts
@@ -264,7 +269,7 @@ Resolving real path for '/home/src/projects/component-type-checker/node_modules/
 src/app.tsx
    Matched by include pattern 'src' in 'tsconfig.json'
 
-Found 1 error in tsconfig.json[90m:3[0m
+Found 2 errors in the same file, starting at: tsconfig.json[90m:3[0m
 
 //// [/home/src/projects/component-type-checker/packages/app/dist/src/app.js] *new* 
 import { createButton } from "@component-type-checker/button";

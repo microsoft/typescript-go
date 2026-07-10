@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -160,6 +161,7 @@ type declarationCompilationContext struct {
 	harnessSettings  *harnessutil.HarnessOptions
 	options          *core.CompilerOptions
 	currentDirectory string
+	configFile       *tsoptions.TsConfigSourceFile
 }
 
 func prepareDeclarationCompilationContext(
@@ -173,8 +175,11 @@ func prepareDeclarationCompilationContext(
 ) *declarationCompilationContext {
 	if options.Declaration.IsTrue() && len(result.Diagnostics) == 0 {
 		if options.EmitDeclarationOnly.IsTrue() {
-			if result.JS.Size() > 0 || (result.DTS.Size() == 0 && !options.NoEmit.IsTrue()) {
+			if result.JS.Size() > 0 {
 				panic("Only declaration files should be generated when emitDeclarationOnly:true")
+			}
+			if result.DTS.Size() == 0 && !options.NoEmit.IsTrue() {
+				panic("Expected at least one declaration file to be emitted when emitDeclarationOnly:true and no errors were generated")
 			}
 		} else if result.DTS.Size() != result.GetNumberOfJSFiles(false /*includeJson*/) {
 			panic("There were no errors and declFiles generated did not match number of js files generated")
@@ -237,11 +242,12 @@ func prepareDeclarationCompilationContext(
 			declOtherFiles = addDtsFile(file, declOtherFiles)
 		}
 		return &declarationCompilationContext{
-			declInputFiles,
-			declOtherFiles,
-			harnessSettings,
-			options,
-			core.IfElse(len(currentDirectory) > 0, currentDirectory, harnessSettings.CurrentDirectory),
+			declInputFiles:   declInputFiles,
+			declOtherFiles:   declOtherFiles,
+			harnessSettings:  harnessSettings,
+			options:          options,
+			currentDirectory: core.IfElse(len(currentDirectory) > 0, currentDirectory, harnessSettings.CurrentDirectory),
+			configFile:       result.Program.Program().CommandLine().ConfigFile,
 		}
 	}
 	return nil
@@ -257,6 +263,12 @@ func compileDeclarationFiles(t *testing.T, context *declarationCompilationContex
 	if context == nil {
 		return nil
 	}
+	var tsconfig *tsoptions.ParsedCommandLine
+	if context.configFile != nil {
+		tsconfig = &tsoptions.ParsedCommandLine{
+			ConfigFile: context.configFile,
+		}
+	}
 	declFileCompilationResult := harnessutil.CompileFilesEx(t,
 		context.declInputFiles,
 		context.declOtherFiles,
@@ -264,7 +276,7 @@ func compileDeclarationFiles(t *testing.T, context *declarationCompilationContex
 		context.options,
 		context.currentDirectory,
 		symlinks,
-		nil)
+		tsconfig)
 	return &declarationCompilationResult{
 		context.declInputFiles,
 		context.declOtherFiles,
