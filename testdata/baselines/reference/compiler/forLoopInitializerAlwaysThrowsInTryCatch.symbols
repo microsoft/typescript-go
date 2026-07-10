@@ -1,0 +1,88 @@
+//// [tests/cases/compiler/forLoopInitializerAlwaysThrowsInTryCatch.ts] ////
+
+=== forLoopInitializerAlwaysThrowsInTryCatch.ts ===
+// Test 1: The original crash case
+function test1() {
+>test1 : Symbol(test1, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 0, 0))
+
+    try {
+        for ((() => { throw new Error(); })(); ;) {
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+        }
+    } catch (e) {
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 5, 13))
+    }
+}
+
+// Test 2: Unlabelled break and continue inside the unreachable body
+function test2() {
+>test2 : Symbol(test2, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 7, 1))
+
+    try {
+        for ((() => { throw new Error(); })(); ;) {
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+
+            if (Math.random()) {
+>Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2025.float16.d.ts, --, --))
+>random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+                break;
+            } else {
+                continue;
+            }
+        }
+    } catch (e) {
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 19, 13))
+    }
+}
+
+// Test 3: Nested loops where inner loop has unreachable body with break/continue
+// Verifies that break/continue don't leak and pollute the outer loop's CFG
+function test3() {
+>test3 : Symbol(test3, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 21, 1))
+
+    while (true) {
+        try {
+            for ((() => { throw new Error(); })(); ;) {
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+
+                if (Math.random()) {
+>Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2025.float16.d.ts, --, --))
+>random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+                    break;
+                } else {
+                    continue;
+                }
+            }
+        } catch (e) {
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 35, 17))
+        }
+    }
+}
+
+// Test 4: Labeled break and continue inside the unreachable body
+function test4() {
+>test4 : Symbol(test4, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 38, 1))
+
+    try {
+        label1: for ((() => { throw new Error(); })(); ;) {
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+
+            if (Math.random()) {
+>Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2025.float16.d.ts, --, --))
+>random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+                break label1;
+            } else {
+                continue label1;
+            }
+        }
+    } catch (e) {
+>e : Symbol(e, Decl(forLoopInitializerAlwaysThrowsInTryCatch.ts, 50, 13))
+    }
+}
+
