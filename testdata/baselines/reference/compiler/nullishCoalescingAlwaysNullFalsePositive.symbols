@@ -1,0 +1,84 @@
+//// [tests/cases/compiler/nullishCoalescingAlwaysNullFalsePositive.ts] ////
+
+=== nullishCoalescingAlwaysNullFalsePositive.ts ===
+// Repro for https://github.com/microsoft/TypeScript/issues/63642
+// TS2871 false positive: conditional with ?? null in true branch over spread-of-union
+
+const make = (s: string | null) =>
+>make : Symbol(make, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 5))
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 14))
+
+  s === null
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 14))
+
+    ? { paymentIntentId: null, transferGroup: null }
+>paymentIntentId : Symbol(paymentIntentId, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 5, 7))
+>transferGroup : Symbol(transferGroup, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 5, 30))
+
+    : { paymentIntentId: s as string | null, transferGroup: s as string | null }
+>paymentIntentId : Symbol(paymentIntentId, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 6, 7))
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 14))
+>transferGroup : Symbol(transferGroup, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 6, 44))
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 14))
+
+const decorated = [null, 'pi_1'].map(s => ({ tag: s, ...make(s) }))
+>decorated : Symbol(decorated, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 5))
+>[null, 'pi_1'].map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 37))
+>tag : Symbol(tag, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 44))
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 37))
+>make : Symbol(make, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 5))
+>s : Symbol(s, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 37))
+
+const localTxMap = new Map<string, string>()
+>localTxMap : Symbol(localTxMap, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 8, 5))
+>Map : Symbol(Map, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+
+const groupMap = new Map<string, string>()
+>groupMap : Symbol(groupMap, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 9, 5))
+>Map : Symbol(Map, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+
+// Should not produce TS2871 on the parenthesized conditional
+const rows = decorated.map(({ paymentIntentId, transferGroup }) => ({
+>rows : Symbol(rows, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 5))
+>decorated.map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>decorated : Symbol(decorated, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 5))
+>map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+>paymentIntentId : Symbol(paymentIntentId, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 29))
+>transferGroup : Symbol(transferGroup, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 46))
+
+  localTransactionId: (paymentIntentId ? localTxMap.get(paymentIntentId) ?? null : null)
+>localTransactionId : Symbol(localTransactionId, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 69))
+>paymentIntentId : Symbol(paymentIntentId, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 29))
+>localTxMap.get : Symbol(Map.get, Decl(lib.es2015.collection.d.ts, --, --))
+>localTxMap : Symbol(localTxMap, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 8, 5))
+>get : Symbol(Map.get, Decl(lib.es2015.collection.d.ts, --, --))
+>paymentIntentId : Symbol(paymentIntentId, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 29))
+
+    ?? (transferGroup ? groupMap.get(transferGroup) ?? null : null),
+>transferGroup : Symbol(transferGroup, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 46))
+>groupMap.get : Symbol(Map.get, Decl(lib.es2015.collection.d.ts, --, --))
+>groupMap : Symbol(groupMap, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 9, 5))
+>get : Symbol(Map.get, Decl(lib.es2015.collection.d.ts, --, --))
+>transferGroup : Symbol(transferGroup, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 46))
+
+}))
+console.log(rows)
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>rows : Symbol(rows, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 11, 5))
+
+// Additional cases: ?? semantics
+declare function maybeString(): string | undefined;
+>maybeString : Symbol(maybeString, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 15, 17))
+
+// x ?? null: can be non-null when x returns a string — NOT always nullish
+const a = (maybeString() ?? null) ?? "fallback";
+>a : Symbol(a, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 21, 5))
+>maybeString : Symbol(maybeString, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 15, 17))
+
+// null ?? null: always nullish (should still error on the left side of ??)
+// (no assertion here, just ensuring no false positive from above)
+
