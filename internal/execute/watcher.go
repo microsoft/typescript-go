@@ -185,12 +185,16 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool 
 	resolvedDirs := w.wm.ResolveDesiredDirs(desiredDirs)
 
 	opts := w.comparePathsOptions()
+	toAddDirs := make(map[string]bool) // dir → should add
 	for _, filePath := range seenFilePaths {
 		dir := tspath.GetDirectoryPath(filePath)
-		if !watchmanager.IsDirCoveredByWatch(resolvedDirs, dir, opts) {
-			if watchmanager.CanWatchDirectory(dir) {
-				resolvedDirs[dir] = false
-			}
+		if _, has := toAddDirs[dir]; !has {
+			toAddDirs[dir] = !watchmanager.IsDirCoveredByWatch(resolvedDirs, dir, opts) && watchmanager.CanWatchDirectory(dir)
+		}
+	}
+	for dir, shouldAdd := range toAddDirs {
+		if shouldAdd {
+			resolvedDirs[dir] = false
 		}
 	}
 
