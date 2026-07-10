@@ -23225,7 +23225,7 @@ func (c *Checker) createNormalizedTupleTypeEx(target *Type, elementTypes []*Type
 		return c.createTypeReferenceEx(target, elementTypes, objectFlags)
 	}
 	if d.combinedFlags&ElementFlagsVariadic != 0 {
-		elementTypes = core.MapIndex(elementTypes, func(t *Type, i int) *Type {
+		elementTypes = core.SameMapIndex(elementTypes, func(t *Type, i int) *Type {
 			if i < len(d.elementInfos) && d.elementInfos[i].flags&ElementFlagsVariadic != 0 {
 				return c.normalizeNoInferSpread(t)
 			}
