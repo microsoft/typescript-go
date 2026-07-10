@@ -115,7 +115,7 @@ func (w *Watcher) start(ctx context.Context) {
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
-	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
+	w.program = incremental.ReadBuildInfoProgram(w.config, tsc.ResolveContentMapperRunner(w.testing, w.config), incremental.NewBuildInfoReader(host), host)
 
 	if w.configFileName != "" {
 		w.configFilePaths = append([]string{w.configFileName}, w.config.ExtendedSourceFiles()...)
@@ -304,8 +304,9 @@ func (w *Watcher) doBuild() error {
 	}
 
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
-		Config: w.config,
-		Host:   host,
+		Config:              w.config,
+		Host:                host,
+		ContentMapperRunner: tsc.ResolveContentMapperRunner(w.testing, w.config),
 	}), w.program, nil, w.testing != nil)
 
 	result := w.compileAndEmit()

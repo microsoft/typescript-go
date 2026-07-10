@@ -250,6 +250,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
 		minValue:                1,
 	},
+	{
+		Name:                    "dangerouslyLoadExternalPlugins",
+		Kind:                    CommandLineOptionTypeBoolean,
+		Category:                diagnostics.Command_line_Options,
+		IsCommandLineOnly:       true,
+		Description:             diagnostics.Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation,
+		DefaultValueDescription: false,
+	},
 }
 
 var optionsForCompiler = []*CommandLineOption{
@@ -305,14 +313,6 @@ var optionsForCompiler = []*CommandLineOption{
 		Category:                diagnostics.Command_line_Options,
 		IsCommandLineOnly:       true,
 		Description:             diagnostics.Print_names_of_files_that_are_part_of_the_compilation_and_then_stop_processing,
-		DefaultValueDescription: false,
-	},
-	{
-		Name:                    "dangerouslyLoadExternalPlugins",
-		Kind:                    CommandLineOptionTypeBoolean,
-		Category:                diagnostics.Command_line_Options,
-		IsCommandLineOnly:       true,
-		Description:             diagnostics.Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation,
 		DefaultValueDescription: false,
 	},
 	{

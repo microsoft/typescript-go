@@ -198,9 +198,10 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	configTime, _ := orchestrator.host.configTimes.Load(path)
 	compileTimes.ConfigTime = configTime
 	buildInfoReadStart := orchestrator.opts.Sys.Now()
+	mapperRunner := tsc.ResolveContentMapperRunner(orchestrator.opts.Testing, t.resolved)
 	var oldProgram *incremental.Program
 	if !orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
-		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
+		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, mapperRunner, orchestrator.host, orchestrator.host)
 	}
 	compileTimes.BuildInfoReadTime = orchestrator.opts.Sys.Now().Sub(buildInfoReadStart)
 	parseStart := orchestrator.opts.Sys.Now()
@@ -210,6 +211,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 			host:  orchestrator.host,
 			trace: tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
 		},
+		ContentMapperRunner: mapperRunner,
 	})
 	compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
 	changesComputeStart := orchestrator.opts.Sys.Now()
@@ -341,6 +343,12 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	// build info version
 	if !buildInfo.IsValidVersion() {
 		return &upToDateStatus{kind: upToDateStatusTypeTsVersionOutputOfDate, data: buildInfo.Version}
+	}
+
+	// If a configured content mapper's identity has changed, files it produced may be stale.
+	mapperRunner := tsc.ResolveContentMapperRunner(orchestrator.opts.Testing, t.resolved)
+	if !buildInfo.ContentMapperIdentitiesMatch(compiler.ContentMapperIdentities(mapperRunner, t.resolved)) {
+		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
 	}
 
 	// Report errors if build info indicates errors

@@ -409,6 +409,12 @@ func (p *Program) Options() *core.CompilerOptions               { return p.opts.
 func (p *Program) GetContentMapper(file *ast.SourceFile) *core.ContentMapper {
 	return p.contentMapperForFile[file.Path()]
 }
+
+// ContentMapperIdentities returns the sorted identities of the configured content mappers, as reported
+// by the content mapper runner, for recording in build info.
+func (p *Program) ContentMapperIdentities() []string {
+	return ContentMapperIdentities(p.opts.ContentMapperRunner, p.opts.Config)
+}
 func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
 func (p *Program) Host() CompilerHost                        { return p.opts.Host }
 func (p *Program) Tracing() *tracing.Tracing                 { return p.opts.Tracing }

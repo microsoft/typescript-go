@@ -949,7 +949,7 @@ func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLi
 	}
 	program := compiler.NewProgram(programOptions)
 	if config.CompilerOptions().Incremental.IsTrue() {
-		oldProgram := incremental.ReadBuildInfoProgram(config, getTestBuildInfoReader(host), host)
+		oldProgram := incremental.ReadBuildInfoProgram(config, programOptions.ContentMapperRunner, getTestBuildInfoReader(host), host)
 		incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), false)
 		return incrementalProgram
 	}

@@ -7,9 +7,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -60,6 +62,14 @@ type CommandLineTesting interface {
 	OnWatchStatusReportEnd()
 	GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any)
 	OnProgram(program *incremental.Program)
+	GetContentMapperRunner(mappers []*core.ContentMapper) compiler.ContentMapperRunner
+}
+
+func ResolveContentMapperRunner(testing CommandLineTesting, config *tsoptions.ParsedCommandLine) compiler.ContentMapperRunner {
+	if testing == nil {
+		return nil
+	}
+	return testing.GetContentMapperRunner(config.ContentMappers())
 }
 
 type CompileTimes struct {

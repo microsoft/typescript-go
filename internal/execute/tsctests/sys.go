@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
 	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
@@ -133,6 +134,7 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *TestSys {
 	}, currentWrite)
 	sys.env = tscInput.env
 	sys.forIncrementalCorrectness = forIncrementalCorrectness
+	sys.contentMapperVersion = tscInput.contentMapperVersion
 	sys.mockWatchBackend = NewMockWatchBackend()
 	sys.mockWatchBackend.DirectoryExists = sys.fs.FS.DirectoryExists
 	sys.fsDiffer = &fsbaselineutil.FSDiffer{
@@ -166,6 +168,8 @@ type TestSys struct {
 	cwd                string
 	env                map[string]string
 	clock              *TestClock
+
+	contentMapperVersion string
 }
 
 var (
@@ -320,6 +324,42 @@ func (s *TestSys) writeHeaderToBaseline(builder *strings.Builder, program *incre
 
 func (s *TestSys) WatchBackend() watchmanager.WatchBackend {
 	return s.mockWatchBackend
+}
+
+// GetContentMapperRunner stands in for a real mapper host, returning a runner that transforms foreign
+// files verbatim and derives each mapper's identity from its command and the sys-controlled version (so
+// a test can bump the version between builds to simulate a mapper upgrade).
+func (s *TestSys) GetContentMapperRunner(mappers []*core.ContentMapper) compiler.ContentMapperRunner {
+	if len(mappers) == 0 {
+		return nil
+	}
+	return testContentMapperRunner{version: s.contentMapperVersion}
+}
+
+// testContentMapperRunner transforms a foreign file's content verbatim into TypeScript. The content is
+// therefore expected to already be valid TypeScript, which keeps the identity-preserving span map valid.
+type testContentMapperRunner struct {
+	version string
+}
+
+func (r testContentMapperRunner) Identity(mapper *core.ContentMapper) string {
+	name := mapper.Command[0]
+	if r.version == "" {
+		return name
+	}
+	return name + "@" + r.version
+}
+
+func (testContentMapperRunner) Transform(fileName string, content string) (compiler.ContentMapperResult, error) {
+	return compiler.ContentMapperResult{
+		Text:       content,
+		ScriptKind: core.ScriptKindTS,
+		Mappings: spanmap.New([]spanmap.Segment{{
+			GenEnd:  core.TextPos(len(content)),
+			OrigEnd: core.TextPos(len(content)),
+			Kind:    spanmap.KindVerbatim,
+		}}),
+	}, nil
 }
 
 func (s *TestSys) OnProgram(program *incremental.Program) {

@@ -420,9 +420,7 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	}
 	mapper := p.matchContentMapper(opts.FileName)
 	p.recordContentMapper(opts.Path, mapper)
-	// The mapper's identity is part of its contract (reported at initialize); it is what we attribute
-	// failures to, so we use it directly rather than substituting anything when it is absent.
-	label := mapper.Identity()
+	label := p.opts.ContentMapperRunner.Identity(mapper)
 	if p.contentMapperDisabled(mapper) {
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, content)
