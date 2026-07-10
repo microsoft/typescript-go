@@ -16441,7 +16441,12 @@ func (c *Checker) getNonMissingTypeOfSymbol(symbol *ast.Symbol) *Type {
 func (c *Checker) getTypeOfInstantiatedSymbol(symbol *ast.Symbol) *Type {
 	links := c.valueSymbolLinks.Get(symbol)
 	if links.resolvedType == nil {
-		links.resolvedType = c.instantiateType(c.getTypeOfSymbol(links.target), links.mapper)
+		declaration := links.target.ValueDeclaration
+		t := c.instantiateType(c.getTypeOfSymbol(links.target), links.mapper)
+		if declaration != nil && ast.IsParameterDeclaration(declaration) && hasDotDotDotToken(declaration) {
+			t = c.normalizeNoInferSpread(t)
+		}
+		links.resolvedType = t
 	}
 	return links.resolvedType
 }
@@ -16518,9 +16523,14 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	}
 	var result *Type
 	switch declaration.Kind {
-	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindVariableDeclaration,
+	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindVariableDeclaration,
 		ast.KindBindingElement:
 		result = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
+	case ast.KindParameter:
+		result = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
+		if hasDotDotDotToken(declaration) {
+			result = c.normalizeNoInferSpread(result)
+		}
 	case ast.KindPropertyAssignment:
 		result = c.checkPropertyAssignment(declaration, CheckModeNormal)
 	case ast.KindShorthandPropertyAssignment:
@@ -23215,6 +23225,12 @@ func (c *Checker) createNormalizedTupleTypeEx(target *Type, elementTypes []*Type
 		return c.createTypeReferenceEx(target, elementTypes, objectFlags)
 	}
 	if d.combinedFlags&ElementFlagsVariadic != 0 {
+		elementTypes = core.MapIndex(elementTypes, func(t *Type, i int) *Type {
+			if i < len(d.elementInfos) && d.elementInfos[i].flags&ElementFlagsVariadic != 0 {
+				return c.normalizeNoInferSpread(t)
+			}
+			return t
+		})
 		for i, e := range elementTypes {
 			if i < len(d.elementInfos) && d.elementInfos[i].flags&ElementFlagsVariadic != 0 && e.flags&(TypeFlagsNever|TypeFlagsUnion) != 0 {
 				// Transform [A, ...(X | Y | Z)] into [A, ...X] | [A, ...Y] | [A, ...Z]
@@ -23254,6 +23270,19 @@ func (c *Checker) createNormalizedTupleTypeEx(target *Type, elementTypes []*Type
 		return c.createTypeReferenceEx(tupleTarget, n.types, objectFlags)
 	}
 	return tupleTarget
+}
+
+func (c *Checker) normalizeNoInferSpread(t *Type) *Type {
+	if !c.isNoInferType(t) {
+		return t
+	}
+	return c.mapType(t.AsSubstitutionType().baseType, func(element *Type) *Type {
+		if !isTupleType(element) {
+			return c.getNoInferType(t)
+		}
+		target := element.TargetTupleType()
+		return c.createTupleTypeEx(core.Map(c.getElementTypes(element), c.getNoInferType), target.elementInfos, target.readonly)
+	})
 }
 
 func (c *Checker) createNormalizedTupleType(target *Type, elementTypes []*Type) *Type {
