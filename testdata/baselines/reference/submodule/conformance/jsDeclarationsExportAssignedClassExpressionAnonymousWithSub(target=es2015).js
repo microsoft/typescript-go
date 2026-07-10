@@ -34,16 +34,17 @@ module.exports.Sub = class {
 
 
 //// [index.d.ts]
-declare const _default: {
-    new (p: number): {
-        t: number;
-    };
-};
-export = _default;
-export declare var Sub: {
-    new (): {
-        instance: {
-            t: number;
-        };
-    };
-};
+export = _exports;
+declare class _exports {
+    t: number;
+    /**
+     * @param {number} p
+     */
+    constructor(p: number);
+}
+declare namespace _exports {
+    export class Sub {
+        instance: import(".");
+        constructor();
+    }
+}

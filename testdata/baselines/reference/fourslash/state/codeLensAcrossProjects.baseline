@@ -162,56 +162,26 @@ Config File Names::
   "params": {
     "settings": {
       "js/ts": {
-        "FormatCodeSettings": null,
-        "QuotePreference": "",
-        "LazyConfiguredProjectsFromExternalProject": false,
-        "MaximumHoverLength": 0,
-        "IncludeCompletionsForModuleExports": null,
-        "IncludeCompletionsForImportStatements": null,
-        "IncludeAutomaticOptionalChainCompletions": null,
-        "IncludeCompletionsWithClassMemberSnippets": null,
-        "IncludeCompletionsWithObjectLiteralMethodSnippets": null,
-        "JsxAttributeCompletionStyle": "",
-        "ImportModuleSpecifierPreference": "",
-        "ImportModuleSpecifierEnding": "",
-        "IncludePackageJsonAutoImports": "",
-        "AutoImportSpecifierExcludeRegexes": [],
-        "AutoImportFileExcludePatterns": [],
-        "PreferTypeOnlyAutoImports": null,
-        "OrganizeImportsIgnoreCase": null,
-        "OrganizeImportsCollation": false,
-        "OrganizeImportsLocale": "",
-        "OrganizeImportsNumericCollation": false,
-        "OrganizeImportsAccentCollation": false,
-        "OrganizeImportsCaseFirst": 0,
-        "OrganizeImportsTypeOrder": 0,
-        "AllowTextChangesInNewFiles": false,
-        "UseAliasesForRename": null,
-        "AllowRenameOfImportPath": null,
-        "ProvideRefactorNotApplicableReason": false,
-        "InlayHints": {
-          "IncludeInlayParameterNameHints": "",
-          "IncludeInlayParameterNameHintsWhenArgumentMatchesName": false,
-          "IncludeInlayFunctionParameterTypeHints": false,
-          "IncludeInlayVariableTypeHints": false,
-          "IncludeInlayVariableTypeHintsWhenTypeMatchesName": false,
-          "IncludeInlayPropertyDeclarationTypeHints": false,
-          "IncludeInlayFunctionLikeReturnTypeHints": false,
-          "IncludeInlayEnumMemberValueHints": false
+        "implementationsCodeLens": {
+          "enabled": true,
+          "showOnAllClassMethods": true,
+          "showOnInterfaceMethods": true
         },
-        "CodeLens": {
-          "ReferencesCodeLensEnabled": true,
-          "ImplementationsCodeLensEnabled": true,
-          "ReferencesCodeLensShowOnAllFunctions": true,
-          "ImplementationsCodeLensShowOnInterfaceMethods": true,
-          "ImplementationsCodeLensShowOnAllClassMethods": true
+        "preferences": {
+          "organizeImports": {
+            "caseFirst": "default",
+            "sort": "auto",
+            "typeOrder": "auto",
+            "unicodeCollation": "ordinal"
+          }
         },
-        "ExcludeLibrarySymbolsInNavTo": false,
-        "DisableSuggestions": false,
-        "DisableLineTextInReferences": false,
-        "DisplayPartsForJSDoc": false,
-        "ReportStyleChecksAsWarnings": false,
-        "CustomConfigFileName": ""
+        "referencesCodeLens": {
+          "enabled": true,
+          "showOnAllFunctions": true
+        },
+        "unstable": {
+          "preferGoToSourceDefinition": false
+        }
       }
     }
   }
@@ -611,84 +581,64 @@ Config::
   "params": {
     "settings": {
       "js/ts": {
-        "FormatCodeSettings": {
-          "BaseIndentSize": 0,
-          "IndentSize": 4,
-          "TabSize": 4,
-          "NewLineCharacter": "\n",
-          "ConvertTabsToSpaces": true,
-          "IndentStyle": 2,
-          "TrimTrailingWhitespace": true,
-          "InsertSpaceAfterCommaDelimiter": true,
-          "InsertSpaceAfterSemicolonInForStatements": true,
-          "InsertSpaceBeforeAndAfterBinaryOperators": true,
-          "InsertSpaceAfterConstructor": false,
-          "InsertSpaceAfterKeywordsInControlFlowStatements": true,
-          "InsertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
-          "InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
-          "InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
-          "InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
-          "InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces": null,
-          "InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
-          "InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
-          "InsertSpaceAfterTypeAssertion": null,
-          "InsertSpaceBeforeFunctionParenthesis": false,
-          "PlaceOpenBraceOnNewLineForFunctions": false,
-          "PlaceOpenBraceOnNewLineForControlBlocks": false,
-          "InsertSpaceBeforeTypeAnnotation": null,
-          "IndentMultiLineObjectLiteralBeginningOnBlankLine": null,
-          "Semicolons": "ignore",
-          "IndentSwitchCase": true
+        "autoClosingTags": {
+          "enabled": true
         },
-        "QuotePreference": "",
-        "LazyConfiguredProjectsFromExternalProject": false,
-        "MaximumHoverLength": 0,
-        "IncludeCompletionsForModuleExports": true,
-        "IncludeCompletionsForImportStatements": true,
-        "IncludeAutomaticOptionalChainCompletions": null,
-        "IncludeCompletionsWithClassMemberSnippets": null,
-        "IncludeCompletionsWithObjectLiteralMethodSnippets": null,
-        "JsxAttributeCompletionStyle": "",
-        "ImportModuleSpecifierPreference": "",
-        "ImportModuleSpecifierEnding": "",
-        "IncludePackageJsonAutoImports": "",
-        "AutoImportSpecifierExcludeRegexes": [],
-        "AutoImportFileExcludePatterns": [],
-        "PreferTypeOnlyAutoImports": null,
-        "OrganizeImportsIgnoreCase": null,
-        "OrganizeImportsCollation": false,
-        "OrganizeImportsLocale": "",
-        "OrganizeImportsNumericCollation": false,
-        "OrganizeImportsAccentCollation": false,
-        "OrganizeImportsCaseFirst": 0,
-        "OrganizeImportsTypeOrder": 0,
-        "AllowTextChangesInNewFiles": false,
-        "UseAliasesForRename": null,
-        "AllowRenameOfImportPath": true,
-        "ProvideRefactorNotApplicableReason": true,
-        "InlayHints": {
-          "IncludeInlayParameterNameHints": "",
-          "IncludeInlayParameterNameHintsWhenArgumentMatchesName": false,
-          "IncludeInlayFunctionParameterTypeHints": false,
-          "IncludeInlayVariableTypeHints": false,
-          "IncludeInlayVariableTypeHintsWhenTypeMatchesName": false,
-          "IncludeInlayPropertyDeclarationTypeHints": false,
-          "IncludeInlayFunctionLikeReturnTypeHints": false,
-          "IncludeInlayEnumMemberValueHints": false
+        "format": {
+          "convertTabsToSpaces": true,
+          "enabled": true,
+          "indentSize": 4,
+          "indentStyle": 2,
+          "indentSwitchCase": true,
+          "insertSpaceAfterCommaDelimiter": true,
+          "insertSpaceAfterConstructor": false,
+          "insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+          "insertSpaceAfterKeywordsInControlFlowStatements": true,
+          "insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+          "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+          "insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+          "insertSpaceAfterSemicolonInForStatements": true,
+          "insertSpaceBeforeAndAfterBinaryOperators": true,
+          "insertSpaceBeforeFunctionParenthesis": false,
+          "newLineCharacter": "\n",
+          "placeOpenBraceOnNewLineForControlBlocks": false,
+          "placeOpenBraceOnNewLineForFunctions": false,
+          "semicolons": "ignore",
+          "tabSize": 4,
+          "trimTrailingWhitespace": true
         },
-        "CodeLens": {
-          "ReferencesCodeLensEnabled": false,
-          "ImplementationsCodeLensEnabled": false,
-          "ReferencesCodeLensShowOnAllFunctions": false,
-          "ImplementationsCodeLensShowOnInterfaceMethods": false,
-          "ImplementationsCodeLensShowOnAllClassMethods": false
+        "preferences": {
+          "organizeImports": {
+            "caseFirst": "default",
+            "sort": "auto",
+            "typeOrder": "auto",
+            "unicodeCollation": "ordinal"
+          }
         },
-        "ExcludeLibrarySymbolsInNavTo": true,
-        "DisableSuggestions": false,
-        "DisableLineTextInReferences": true,
-        "DisplayPartsForJSDoc": true,
-        "ReportStyleChecksAsWarnings": true,
-        "CustomConfigFileName": ""
+        "reportStyleChecksAsWarnings": true,
+        "suggest": {
+          "autoImports": true,
+          "includeCompletionsForImportStatements": true,
+          "jsdoc": {
+            "enabled": true,
+            "generateReturns": true
+          }
+        },
+        "unstable": {
+          "allowRenameOfImportPath": true,
+          "disableLineTextInReferences": true,
+          "displayPartsForJSDoc": true,
+          "preferGoToSourceDefinition": false,
+          "provideRefactorNotApplicableReason": true
+        },
+        "validate": {
+          "enabled": true
+        },
+        "workspaceSymbols": {
+          "excludeLibrarySymbols": true
+        }
       }
     }
   }

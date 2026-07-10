@@ -4,7 +4,7 @@
 // var lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var lambdaFoo: (a: number, b: number) => number
 // | ```
 // | lambdaFoo var comment
@@ -12,7 +12,7 @@
 // var lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
 //     ^^^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var lambddaNoVarComment: (a: number, b: number) => number
 // | ```
 // | 
@@ -21,7 +21,7 @@
 // function anotherFunc(a: number) {
 //          ^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function anotherFunc(a: number): string
 // | ```
 // | 
@@ -31,16 +31,16 @@
 //     var lambdaVar = /** inner docs */(b: string) => {
 //         ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var lambdaVar: (b: string) => string
 // | ```
 // | documentation
 // | 
-// | *@param* `b` — inner parameter 
+// | *@param* `b` — inner parameter
 // | ----------------------------------------------------------------------
 //                                       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (parameter) b: string
 // | ```
 // | 
@@ -48,7 +48,7 @@
 //         var localVar = "Hello ";
 //             ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var localVar: string
 // | ```
 // | 
@@ -56,14 +56,14 @@
 //         return localVar + b;
 //                ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var localVar: string
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                           ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (parameter) b: string
 // | ```
 // | 
@@ -72,12 +72,12 @@
 //     return lambdaVar("World") + a;
 //            ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var lambdaVar: (b: string) => string
 // | ```
 // | documentation
 // | 
-// | *@param* `b` — inner parameter 
+// | *@param* `b` — inner parameter
 // | ----------------------------------------------------------------------
 // }
 // /**
@@ -88,16 +88,14 @@
 // var assigned = /**
 //     ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var assigned: (s: string) => number
 // | ```
 // | On variable
 // | 
 // | *@param* `s` — the first parameter!
 // | 
-// | 
 // | *@returns* — the parameter's length
-// | 
 // | ----------------------------------------------------------------------
 //                 * Summary on expression
 //                 * @param s param on expression
@@ -108,16 +106,14 @@
 // assigned("hey");
 // ^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var assigned: (s: string) => number
 // | ```
 // | On variable
 // | 
 // | *@param* `s` — the first parameter!
 // | 
-// | 
 // | *@returns* — the parameter's length
-// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -133,7 +129,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambdaFoo: (a: number, b: number) => number\n```\nlambdaFoo var comment"
+        "value": "```typescript\nvar lambdaFoo: (a: number, b: number) => number\n```\nlambdaFoo var comment"
       },
       "range": {
         "start": {
@@ -160,7 +156,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambddaNoVarComment: (a: number, b: number) => number\n```\n"
+        "value": "```typescript\nvar lambddaNoVarComment: (a: number, b: number) => number\n```\n"
       },
       "range": {
         "start": {
@@ -187,7 +183,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction anotherFunc(a: number): string\n```\n"
+        "value": "```typescript\nfunction anotherFunc(a: number): string\n```\n"
       },
       "range": {
         "start": {
@@ -214,7 +210,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter "
+        "value": "```typescript\nvar lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter"
       },
       "range": {
         "start": {
@@ -241,7 +237,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) b: string\n```\n"
+        "value": "```typescript\n(parameter) b: string\n```\n"
       },
       "range": {
         "start": {
@@ -268,7 +264,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar localVar: string\n```\n"
+        "value": "```typescript\nvar localVar: string\n```\n"
       },
       "range": {
         "start": {
@@ -295,7 +291,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar localVar: string\n```\n"
+        "value": "```typescript\nvar localVar: string\n```\n"
       },
       "range": {
         "start": {
@@ -322,7 +318,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) b: string\n```\n"
+        "value": "```typescript\n(parameter) b: string\n```\n"
       },
       "range": {
         "start": {
@@ -349,7 +345,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter "
+        "value": "```typescript\nvar lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter"
       },
       "range": {
         "start": {
@@ -376,7 +372,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n\n*@returns* — the parameter's length\n"
+        "value": "```typescript\nvar assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n*@returns* — the parameter's length"
       },
       "range": {
         "start": {
@@ -403,7 +399,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n\n*@returns* — the parameter's length\n"
+        "value": "```typescript\nvar assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n*@returns* — the parameter's length"
       },
       "range": {
         "start": {

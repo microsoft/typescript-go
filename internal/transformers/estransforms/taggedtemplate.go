@@ -44,12 +44,13 @@ func (tx *taggedTemplateTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 
 	if len(tx.taggedTemplateStringDeclarations) > 0 {
 		visitedSourceFile := visited.AsSourceFile()
-		statements := append(visitedSourceFile.Statements.Nodes[:len(visitedSourceFile.Statements.Nodes):len(visitedSourceFile.Statements.Nodes)],
+		statements := append(
+			visitedSourceFile.Statements.Nodes[:len(visitedSourceFile.Statements.Nodes):len(visitedSourceFile.Statements.Nodes)],
 			tx.Factory().NewVariableStatement(
 				nil, /*modifiers*/
 				tx.Factory().NewVariableDeclarationList(
-					ast.NodeFlagsNone,
 					tx.Factory().NewNodeList(tx.taggedTemplateStringDeclarations),
+					ast.NodeFlagsNone,
 				),
 			),
 		)
@@ -106,7 +107,8 @@ func (tx *taggedTemplateTransformer) processTaggedTemplateExpression(node *ast.T
 	// variables from outside of the current compilation. In the future, we can revisit this behavior.
 	if ast.IsExternalModule(tx.currentSourceFile) {
 		tempVar := f.NewUniqueName("templateObject")
-		tx.taggedTemplateStringDeclarations = append(tx.taggedTemplateStringDeclarations,
+		tx.taggedTemplateStringDeclarations = append(
+			tx.taggedTemplateStringDeclarations,
 			f.NewVariableDeclaration(tempVar, nil, nil, nil),
 		)
 		templateArguments[0] = f.NewLogicalORExpression(
@@ -122,7 +124,7 @@ func (tx *taggedTemplateTransformer) processTaggedTemplateExpression(node *ast.T
 	return call
 }
 
-func createTemplateCooked(f *printer.NodeFactory, template *ast.TemplateLiteralLikeBase) *ast.Node {
+func createTemplateCooked(f *printer.NodeFactory, template *ast.TemplateLiteralLikeNodeBase) *ast.Node {
 	if template.TemplateFlags&ast.TokenFlagsIsInvalid != 0 {
 		return f.NewVoidZeroExpression()
 	}

@@ -27,13 +27,16 @@ var (
 )
 
 func comparePathsByRedirect(a ModulePath, b ModulePath, useCaseSensitiveFileNames bool) int {
-	if a.IsRedirect == b.IsRedirect {
-		return tspath.ComparePaths(a.FileName, b.FileName, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
+	// Redirects sort first, matching Strada's compareBooleans(b.isRedirect, a.isRedirect).
+	if c := core.CompareBooleans(b.IsRedirect, a.IsRedirect); c != 0 {
+		return c
 	}
-	if a.IsRedirect {
-		return 1
+	if c := tspath.CompareNumberOfDirectorySeparators(a.FileName, b.FileName); c != 0 {
+		return c
 	}
-	return -1
+	// Strada relies on Map insertion order to break remaining ties deterministically;
+	// Go maps are unordered, so compare paths to keep the ordering stable.
+	return tspath.ComparePaths(a.FileName, b.FileName, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames})
 }
 
 func PathIsBareSpecifier(path string) bool {
@@ -149,6 +152,23 @@ func GetJSExtensionForDeclarationFileExtension(ext string) string {
 		// .d.json.ts and the like
 		return ext[len(".d") : len(ext)-len(tspath.ExtensionTs)]
 	}
+}
+
+// TryGetRealFileNameForNonJSDeclarationFileName remaps files like `foo.d.json.ts` or
+// `foo.module.d.css.ts` back to their real non-JS names.
+func TryGetRealFileNameForNonJSDeclarationFileName(fileName string) string {
+	baseName := tspath.GetBaseFileName(fileName)
+	// Ends with .ts, contains ".d.", and is NOT a standard .d.ts file
+	if !strings.HasSuffix(fileName, tspath.ExtensionTs) ||
+		!strings.Contains(baseName, ".d.") ||
+		strings.HasSuffix(baseName, tspath.ExtensionDts) {
+		return ""
+	}
+	noExtension := tspath.RemoveExtension(fileName, tspath.ExtensionTs)
+	lastDotIndex := strings.LastIndex(noExtension, ".")
+	ext := noExtension[lastDotIndex:]
+	before, _, _ := strings.Cut(noExtension, ".d.")
+	return before + ext
 }
 
 func getJSExtensionForFile(fileName string, options *core.CompilerOptions) string {

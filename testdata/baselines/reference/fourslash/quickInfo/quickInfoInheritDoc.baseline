@@ -37,15 +37,17 @@
 //     public static doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string {
 //                   ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
-// | (method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string
+// | ```typescript
+// | (method) SubClass.doSomethingUseful(mySpecificStuff?: {
+// |     tiger: string;
+// |     lion: string;
+// | }): string
 // | ```
 // | 
 // | 
 // | *@inheritDoc*
 // | 
 // | *@param* `mySpecificStuff` — Description of my specific parameter.
-// | 
 // | ----------------------------------------------------------------------
 //         let useful = '';
 // 
@@ -62,7 +64,7 @@
 //     public static func1(stuff1: any): void {
 //                   ^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) SubClass.func1(stuff1: any): void
 // | ```
 // | 
@@ -71,9 +73,7 @@
 // | 
 // | *@param* `stuff1` — SubClass.func1.stuff1
 // | 
-// | 
 // | *@returns* — SubClass.func1.returns
-// | 
 // | ----------------------------------------------------------------------
 //     }
 // 
@@ -85,13 +85,12 @@
 //     public static readonly someProperty: string = 'specific to this class value'
 //                            ^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (property) SubClass.someProperty: string
 // | ```
 // | text over tag
 // | 
 // | *@inheritDoc* — text after tag
-// | 
 // | ----------------------------------------------------------------------
 // }
 [
@@ -108,7 +107,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string\n```\n\n\n*@inheritDoc*\n\n*@param* `mySpecificStuff` — Description of my specific parameter.\n"
+        "value": "```typescript\n(method) SubClass.doSomethingUseful(mySpecificStuff?: {\n    tiger: string;\n    lion: string;\n}): string\n```\n\n\n*@inheritDoc*\n\n*@param* `mySpecificStuff` — Description of my specific parameter."
       },
       "range": {
         "start": {
@@ -135,7 +134,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) SubClass.func1(stuff1: any): void\n```\n\n\n*@inheritDoc*\n\n*@param* `stuff1` — SubClass.func1.stuff1\n\n\n*@returns* — SubClass.func1.returns\n"
+        "value": "```typescript\n(method) SubClass.func1(stuff1: any): void\n```\n\n\n*@inheritDoc*\n\n*@param* `stuff1` — SubClass.func1.stuff1\n\n*@returns* — SubClass.func1.returns"
       },
       "range": {
         "start": {
@@ -162,7 +161,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) SubClass.someProperty: string\n```\ntext over tag\n\n*@inheritDoc* — text after tag\n"
+        "value": "```typescript\n(property) SubClass.someProperty: string\n```\ntext over tag\n\n*@inheritDoc* — text after tag"
       },
       "range": {
         "start": {

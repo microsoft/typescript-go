@@ -12,13 +12,12 @@
 // new C().m // and here (with a different thing trying to access undefined)
 //         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | (method) C.m(): void
 // | ```
 // | 
 // | 
 // | *@deprecated* — Use PerspectiveCamera.setFocalLength .setFocalLength() and PerspectiveCamera.filmGauge .filmGauge instead.
-// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -34,7 +33,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) C.m(): void\n```\n\n\n*@deprecated* — Use PerspectiveCamera.setFocalLength .setFocalLength() and PerspectiveCamera.filmGauge .filmGauge instead.\n"
+        "value": "```typescript\n(method) C.m(): void\n```\n\n\n*@deprecated* — Use PerspectiveCamera.setFocalLength .setFocalLength() and PerspectiveCamera.filmGauge .filmGauge instead."
       },
       "range": {
         "start": {

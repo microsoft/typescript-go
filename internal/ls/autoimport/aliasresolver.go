@@ -216,7 +216,7 @@ func (r *aliasResolver) GetSourceOfProjectReferenceIfOutputIncluded(file ast.Has
 
 // IsSourceFileDefaultLibrary implements checker.Program.
 func (r *aliasResolver) IsSourceFileDefaultLibrary(path tspath.Path) bool {
-	panic("unimplemented")
+	return false
 }
 
 // IsSourceFromProjectReference implements checker.Program.
@@ -227,6 +227,10 @@ func (r *aliasResolver) IsSourceFromProjectReference(path tspath.Path) bool {
 // SourceFileMayBeEmitted implements checker.Program.
 func (r *aliasResolver) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	panic("unimplemented")
+}
+
+func (r *aliasResolver) GetPackagesMap() map[string]bool {
+	return nil
 }
 
 var _ checker.Program = (*aliasResolver)(nil)

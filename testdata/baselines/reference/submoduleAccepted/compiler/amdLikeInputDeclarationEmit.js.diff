@@ -5,7 +5,7 @@
 
  //// [ExtendedClass.d.ts]
 -export = ExtendedClass;
--declare const ExtendedClass: new () => {
--    f: () => "something";
--} & import("deps/BaseClass");
-+export {};
+ declare const ExtendedClass: new () => {
+     f: () => "something";
+ } & import("deps/BaseClass");
++export = ExtendedClass;

@@ -3,7 +3,7 @@
 // class c {
 //       ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class c
 // | ```
 // | 
@@ -12,14 +12,14 @@
 // type t1 = c;
 //      ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | type t1 = c
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //           ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | class c
 // | ```
 // | 
@@ -27,21 +27,21 @@
 // var cInstance: t1 = new c();
 //     ^^^^^^^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | var cInstance: c
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | type t1 = c
 // | ```
 // | 
 // | ----------------------------------------------------------------------
 //                         ^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | constructor c(): c
 // | ```
 // | 
@@ -60,7 +60,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c\n```\n"
+        "value": "```typescript\nclass c\n```\n"
       },
       "range": {
         "start": {
@@ -71,7 +71,8 @@
           "line": 0,
           "character": 7
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -87,7 +88,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype t1 = c\n```\n"
+        "value": "```typescript\ntype t1 = c\n```\n"
       },
       "range": {
         "start": {
@@ -98,7 +99,8 @@
           "line": 2,
           "character": 7
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -114,7 +116,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c\n```\n"
+        "value": "```typescript\nclass c\n```\n"
       },
       "range": {
         "start": {
@@ -125,7 +127,8 @@
           "line": 2,
           "character": 11
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -141,7 +144,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance: c\n```\n"
+        "value": "```typescript\nvar cInstance: c\n```\n"
       },
       "range": {
         "start": {
@@ -152,7 +155,8 @@
           "line": 3,
           "character": 13
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -168,7 +172,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype t1 = c\n```\n"
+        "value": "```typescript\ntype t1 = c\n```\n"
       },
       "range": {
         "start": {
@@ -179,7 +183,8 @@
           "line": 3,
           "character": 17
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   },
   {
@@ -195,7 +200,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c(): c\n```\n"
+        "value": "```typescript\nconstructor c(): c\n```\n"
       },
       "range": {
         "start": {
@@ -206,7 +211,8 @@
           "line": 3,
           "character": 25
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   }
 ]

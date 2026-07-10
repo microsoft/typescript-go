@@ -24,12 +24,13 @@ var (
 // configFileRegistry, producing a new clone with `finalize()` after
 // all changes have been made.
 type configFileRegistryBuilder struct {
-	fs                   *sourceFS
-	isOpenFile           func(tspath.Path) bool
-	extendedConfigCache  *ExtendedConfigCache
-	snapshotID           uint64
-	sessionOptions       *SessionOptions
-	customConfigFileName string
+	hasRelativePatternCapability bool
+	fs                           *sourceFS
+	isOpenFile                   func(tspath.Path) bool
+	extendedConfigCache          *ExtendedConfigCache
+	snapshotID                   uint64
+	sessionOptions               *SessionOptions
+	customConfigFileName         string
 
 	base                        *ConfigFileRegistry
 	configs                     *dirty.SyncMap[tspath.Path, *configFileEntry]
@@ -38,6 +39,7 @@ type configFileRegistryBuilder struct {
 }
 
 func newConfigFileRegistryBuilder(
+	hasRelativePatternCapability bool,
 	fs *snapshotFSBuilder,
 	oldConfigFileRegistry *ConfigFileRegistry,
 	extendedConfigCache *ExtendedConfigCache,
@@ -47,14 +49,15 @@ func newConfigFileRegistryBuilder(
 	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
-		fs:                          newSourceFS(false, fs, fs.toPath),
-		isOpenFile:                  fs.isOpenFile,
-		base:                        oldConfigFileRegistry,
-		sessionOptions:              sessionOptions,
-		extendedConfigCache:         extendedConfigCache,
-		snapshotID:                  snapshotID,
-		customConfigFileName:        customConfigFileName,
-		customConfigFileNameChanged: customConfigFileName != oldConfigFileRegistry.customConfigFileName,
+		hasRelativePatternCapability: hasRelativePatternCapability,
+		fs:                           newSourceFS(false, fs, fs.toPath),
+		isOpenFile:                   fs.isOpenFile,
+		base:                         oldConfigFileRegistry,
+		sessionOptions:               sessionOptions,
+		extendedConfigCache:          extendedConfigCache,
+		snapshotID:                   snapshotID,
+		customConfigFileName:         customConfigFileName,
+		customConfigFileNameChanged:  customConfigFileName != oldConfigFileRegistry.customConfigFileName,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -233,8 +236,8 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 
 	slices.Sort(globs)
 	entry.rootFilesWatch = entry.rootFilesWatch.Clone(PatternsAndIgnored{
-		patterns: globs,
-		ignored:  ignored,
+		patternsInsideWorkspace: globs,
+		ignored:                 ignored,
 	})
 }
 
@@ -243,7 +246,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 // in the cache. Each `acquireConfigForProject` call that passes a `project` should be accompanied
 // by an eventual `releaseConfigForProject` call with the same project.
 func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(fileName))
+	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(c.hasRelativePatternCapability, fileName))
 	var needsRetainProject bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
@@ -269,7 +272,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 // Each `acquireConfigForFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
 func (c *configFileRegistryBuilder) acquireConfigForFile(configFileName string, configFilePath tspath.Path, filePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(configFileName))
+	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(c.hasRelativePatternCapability, configFileName))
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
@@ -366,7 +369,7 @@ func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) cha
 			affectedProjects = core.CopyMapInto(affectedProjects, entry.retainingProjects)
 			if entry.pendingReload != PendingReloadFull {
 				text, ok := c.FS().ReadFile(entry.fileName)
-				if !ok || text != entry.commandLine.ConfigFile.SourceFile.Text() {
+				if !ok || entry.commandLine == nil || text != entry.commandLine.ConfigFile.SourceFile.Text() {
 					entry.pendingReload = PendingReloadFull
 				} else {
 					entry.pendingReload = PendingReloadFileNames
@@ -598,13 +601,20 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 		}
 	}
 
-	skip := skipSearchInDirectoryOfFile
+	// When searching for ancestor of a config file, determine which config types to skip
+	// in the starting directory. This matches TSServer's forEachConfigFileLocation behavior:
+	// - For ancestor of tsconfig.json: skip tsconfig.json but still check jsconfig.json
+	// - For ancestor of jsconfig.json: skip both tsconfig.json and jsconfig.json
+	skipTsconfig := skipSearchInDirectoryOfFile
+	skipJsconfig := skipSearchInDirectoryOfFile && !strings.HasSuffix(fileName, "/tsconfig.json")
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
-		if !skip {
+		if !skipTsconfig {
 			tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
 			if c.FS().FileExists(tsconfigPath) {
 				return tsconfigPath, true
 			}
+		}
+		if !skipJsconfig {
 			jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
 			if c.FS().FileExists(jsconfigPath) {
 				return jsconfigPath, true
@@ -613,7 +623,8 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
 		}
-		skip = false
+		skipTsconfig = false
+		skipJsconfig = false
 		return "", false
 	})
 	logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
@@ -695,7 +706,7 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
-func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []string, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
+func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, resolutionStack []tspath.Path, host tsoptions.ParseConfigHost) *tsoptions.ExtendedConfigCacheEntry {
 	var content string
 	fh := c.fs.GetFileByPath(fileName, path)
 	if fh != nil {

@@ -210,8 +210,8 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 	statementsUpdated := false
 	if tx.filenameDeclaration != nil {
 		statements = tx.insertStatementAfterCustomPrologue(statements, tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(
-			ast.NodeFlagsConst,
 			tx.Factory().NewNodeList([]*ast.Node{tx.filenameDeclaration}),
+			ast.NodeFlagsConst,
 		)))
 		statementsUpdated = true
 	}
@@ -243,7 +243,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 				for _, elem := range sorted {
 					asBindingElems = append(asBindingElems, tx.Factory().NewBindingElement(nil, elem.PropertyName(), elem.AsImportSpecifier().Name(), nil))
 				}
-				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
+				s := tx.Factory().NewVariableStatement(nil, tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(
 					tx.Factory().NewBindingPattern(ast.KindObjectBindingPattern, tx.Factory().NewNodeList(asBindingElems)),
 					nil,
 					nil,
@@ -251,8 +251,9 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 						tx.Factory().NewIdentifier("require"),
 						nil,
 						nil,
-						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone),
-				)})))
+						tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewStringLiteral(importSource, ast.TokenFlagsNone)}), ast.NodeFlagsNone,
+					),
+				)}), ast.NodeFlagsConst))
 				ast.SetParentInChildren(s)
 				newStatements = append(newStatements, s)
 			}
@@ -877,10 +878,25 @@ func decodeEntities(text string) string {
 			break
 		}
 
+		// Skip past any intervening '&' characters between the current '&'
+		// and the ';'. Each such '&' is not part of a valid entity, so emit
+		// it (and any text before the next '&') as literals.
+		for {
+			nextAmp := strings.IndexByte(text[1:semi], '&')
+			if nextAmp < 0 {
+				break
+			}
+			result.WriteString(text[:nextAmp+1])
+			text = text[nextAmp+1:]
+			semi -= nextAmp + 1
+		}
+
 		entity := text[1:semi]
 		decoded, ok := decodeEntity(entity)
 		if ok {
-			result.WriteRune(decoded)
+			// Use the JS-string encoder so lone surrogates (e.g. "&#xD800;")
+			// are preserved rather than being lost to U+FFFD by WriteRune.
+			result.WriteString(stringutil.EncodeJSStringRune(decoded))
 		} else {
 			result.WriteString(text[:semi+1])
 		}
@@ -907,7 +923,7 @@ func decodeEntity(entity string) (rune, bool) {
 		}
 
 		base := 10
-		if entity[0] == 'x' || entity[0] == 'X' {
+		if entity[0] == 'x' {
 			base = 16
 			entity = entity[1:]
 		}

@@ -414,7 +414,8 @@ func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 			c.valueSymbolLinks.Get(symbol).containingType.Types(),
 			func(t *Type) *ast.Symbol {
 				return c.getPropertyOfType(t, symbol.Name)
-			})
+			},
+		)
 	}
 	if symbol.Flags&ast.SymbolFlagsTransient != 0 {
 		if c.spreadLinks.Has(symbol) {
@@ -569,6 +570,44 @@ func (c *Checker) IsSymbolReferencedInFile(
 		}
 	}
 	return false
+}
+
+// GetReferencesToSymbolInFile returns all identifier nodes in the file that reference the given symbol.
+func (c *Checker) GetReferencesToSymbolInFile(
+	sourceFile *ast.SourceFile,
+	symbol *ast.Symbol,
+) []*ast.Node {
+	identifierText := symbol.Name
+	var result []*ast.Node
+	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
+		if !ast.IsIdentifier(token) {
+			continue
+		}
+		id := token.AsIdentifier()
+		if id.Text != identifierText {
+			continue
+		}
+		refSymbol := c.GetSymbolAtLocation(token)
+		if refSymbol == symbol {
+			result = append(result, token)
+			continue
+		}
+		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
+			shorthandSymbol := c.GetShorthandAssignmentValueSymbol(token.Parent)
+			if shorthandSymbol == symbol {
+				result = append(result, token)
+				continue
+			}
+		}
+		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
+			localSymbol := c.getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier())
+			if localSymbol == symbol {
+				result = append(result, token)
+				continue
+			}
+		}
+	}
+	return result
 }
 
 func (c *Checker) getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier) *ast.Symbol {
@@ -755,7 +794,8 @@ func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
 			if constraint != nil {
 				return c.instantiateType(
 					constraint,
-					newTypeMapper(typeParameters, c.getEffectiveTypeArguments(node.Parent, typeParameters)))
+					newTypeMapper(typeParameters, c.getEffectiveTypeArguments(node.Parent, typeParameters)),
+				)
 			}
 		}
 	}
@@ -831,7 +871,8 @@ func (c *Checker) GetConstantValue(node *ast.Node) any {
 			ast.SymbolFlagsValue,
 			true,  /*ignoreErrors*/
 			false, /*dontResolveAlias*/
-			nil /*location*/)
+			nil,   /*location*/
+		)
 	}
 	if symbol != nil && symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
 		// inline property\index accesses only for const enums
@@ -878,6 +919,11 @@ func (c *Checker) GetCandidateSignaturesForStringLiteralCompletions(call *ast.Ca
 	}
 
 	return candidates
+}
+
+// GetTypeAtPosition returns the type of a parameter at a given index in a signature.
+func (c *Checker) GetTypeAtPosition(s *Signature, pos int) *Type {
+	return c.getTypeAtPosition(s, pos)
 }
 
 func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
@@ -1062,4 +1108,33 @@ func (c *Checker) getTypeOfAssignmentPattern(expr *ast.Node) *Type {
 
 func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
 	return c.getSignatureFromDeclaration(node)
+}
+
+// IsLibSymbolForHoverVerbosity returns true if a symbol is declared in a lib file.
+func (c *Checker) IsLibSymbolForHoverVerbosity(symbol *ast.Symbol) bool {
+	if symbol == nil {
+		return false
+	}
+	for _, decl := range symbol.Declarations {
+		sf := ast.GetSourceFileOfNode(decl)
+		if sf != nil && c.program.IsSourceFileDefaultLibrary(sf.Path()) {
+			return true
+		}
+	}
+	return false
+}
+
+// IsLibTypeForHoverVerbosity returns true if a type is declared in a lib file.
+// Don't expand types like Array or Promise, instead treating them as opaque.
+func (c *Checker) IsLibTypeForHoverVerbosity(t *Type) bool {
+	var symbol *ast.Symbol
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		symbol = t.Target().Symbol()
+	} else {
+		symbol = t.Symbol()
+	}
+	if c.IsLibSymbolForHoverVerbosity(symbol) {
+		return true
+	}
+	return isTupleType(t)
 }

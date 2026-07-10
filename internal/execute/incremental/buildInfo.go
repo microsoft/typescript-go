@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"iter"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -194,19 +195,27 @@ func (b *BuildInfoReferenceMapEntry) UnmarshalJSON(data []byte) error {
 
 type BuildInfoDiagnostic struct {
 	// BuildInfoFileId if it is for a File thats other than its stored for
-	File               BuildInfoFileId        `json:"file,omitzero"`
-	NoFile             bool                   `json:"noFile,omitzero"`
-	Pos                int                    `json:"pos,omitzero"`
-	End                int                    `json:"end,omitzero"`
-	Code               int32                  `json:"code,omitzero"`
-	Category           diagnostics.Category   `json:"category,omitzero"`
-	MessageKey         diagnostics.Key        `json:"messageKey,omitzero"`
-	MessageArgs        []string               `json:"messageArgs,omitzero"`
-	MessageChain       []*BuildInfoDiagnostic `json:"messageChain,omitzero"`
-	RelatedInformation []*BuildInfoDiagnostic `json:"relatedInformation,omitzero"`
-	ReportsUnnecessary bool                   `json:"reportsUnnecessary,omitzero"`
-	ReportsDeprecated  bool                   `json:"reportsDeprecated,omitzero"`
-	SkippedOnNoEmit    bool                   `json:"skippedOnNoEmit,omitzero"`
+	File               BuildInfoFileId          `json:"file,omitzero"`
+	NoFile             bool                     `json:"noFile,omitzero"`
+	Pos                int                      `json:"pos,omitzero"`
+	End                int                      `json:"end,omitzero"`
+	Code               int32                    `json:"code,omitzero"`
+	Category           diagnostics.Category     `json:"category,omitzero"`
+	MessageKey         diagnostics.Key          `json:"messageKey,omitzero"`
+	MessageArgs        []string                 `json:"messageArgs,omitzero"`
+	MessageChain       []*BuildInfoDiagnostic   `json:"messageChain,omitzero"`
+	RelatedInformation []*BuildInfoDiagnostic   `json:"relatedInformation,omitzero"`
+	ReportsUnnecessary bool                     `json:"reportsUnnecessary,omitzero"`
+	ReportsDeprecated  bool                     `json:"reportsDeprecated,omitzero"`
+	SkippedOnNoEmit    bool                     `json:"skippedOnNoEmit,omitzero"`
+	RepopulateInfo     *BuildInfoRepopulateInfo `json:"repopulateInfo,omitzero"`
+}
+
+type BuildInfoRepopulateInfo struct {
+	Kind            ast.RepopulateDiagnosticKind `json:"kind"`
+	ModuleReference string                       `json:"moduleReference,omitzero"`
+	Mode            core.ResolutionMode          `json:"mode,omitzero"`
+	PackageName     string                       `json:"packageName,omitzero"`
 }
 
 type BuildInfoDiagnosticsOfFile struct {
@@ -454,9 +463,11 @@ type BuildInfo struct {
 	Version string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors       bool             `json:"errors,omitzero"`
-	CheckPending bool             `json:"checkPending,omitzero"`
-	Root         []*BuildInfoRoot `json:"root,omitzero"`
+	Errors              bool             `json:"errors,omitzero"`
+	CheckPending        bool             `json:"checkPending,omitzero"`
+	Root                []*BuildInfoRoot `json:"root,omitzero"`
+	PackageJsons        []string         `json:"packageJsons,omitzero"`
+	MissingPackageJsons []string         `json:"missingPackageJsons,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                             `json:"fileNames,omitzero"`
@@ -484,11 +495,21 @@ func (b *BuildInfo) IsIncremental() bool {
 	return b != nil && len(b.FileNames) != 0
 }
 
+func IsBuildInfoFileNameDefaultLibrary(fileName string) bool {
+	return !tspath.PathIsRelative(fileName) && !tspath.PathIsAbsolute(fileName)
+}
+
 func (b *BuildInfo) fileName(fileId BuildInfoFileId) string {
+	if fileId < 1 || int(fileId) > len(b.FileNames) {
+		return ""
+	}
 	return b.FileNames[fileId-1]
 }
 
 func (b *BuildInfo) fileInfo(fileId BuildInfoFileId) *BuildInfoFileInfo {
+	if fileId < 1 || int(fileId) > len(b.FileInfos) {
+		return nil
+	}
 	return b.FileInfos[fileId-1]
 }
 
@@ -520,6 +541,24 @@ func (b *BuildInfo) IsEmitPending(resolved *tsoptions.ParsedCommandLine, buildIn
 	return false
 }
 
+func (b *BuildInfo) GetPackageJsons(buildInfoDirectory string) iter.Seq[string] {
+	return getNormalizedPaths(b.PackageJsons, buildInfoDirectory)
+}
+
+func (b *BuildInfo) GetMissingPackageJsons(buildInfoDirectory string) iter.Seq[string] {
+	return getNormalizedPaths(b.MissingPackageJsons, buildInfoDirectory)
+}
+
+func getNormalizedPaths(paths []string, buildInfoDirectory string) iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for _, path := range paths {
+			if !yield(tspath.GetNormalizedAbsolutePath(path, buildInfoDirectory)) {
+				return
+			}
+		}
+	}
+}
+
 func (b *BuildInfo) GetBuildInfoRootInfoReader(buildInfoDirectory string, comparePathOptions tspath.ComparePathsOptions) *BuildInfoRootInfoReader {
 	resolvedRootFileInfos := make(map[tspath.Path]*BuildInfoFileInfo, len(b.FileNames))
 	// Roots of the File
@@ -531,10 +570,17 @@ func (b *BuildInfo) GetBuildInfoRootInfoReader(buildInfoDirectory string, compar
 
 	// Create map from resolvedRoot to Root
 	for _, resolved := range b.ResolvedRoot {
-		resolvedToRoot[toPath(b.fileName(resolved.Resolved))] = toPath(b.fileName(resolved.Root))
+		resolvedRoot := b.fileName(resolved.Resolved)
+		root := b.fileName(resolved.Root)
+		if resolvedRoot != "" && root != "" {
+			resolvedToRoot[toPath(resolvedRoot)] = toPath(root)
+		}
 	}
 
 	addRoot := func(resolvedRoot string, fileInfo *BuildInfoFileInfo) {
+		if resolvedRoot == "" {
+			return
+		}
 		resolvedRootPath := toPath(resolvedRoot)
 		if rootPath, ok := resolvedToRoot[resolvedRootPath]; ok {
 			rootToResolved.Set(rootPath, resolvedRootPath)

@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/zeebo/xxh3"
 )
 
@@ -117,6 +118,9 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 	if f.depth == 2000 {
 		// We have made 2000 recursive invocations. To avoid overflowing the call stack we report an error
 		// and disable further control flow analysis in the containing function or module body.
+		if tr := c.tracer; tr != nil {
+			tr.Instant(tracing.PhaseCheckTypes, "getTypeAtFlowNode_DepthLimit", map[string]any{"depth": f.depth})
+		}
 		c.flowAnalysisDisabled = true
 		c.reportFlowControlError(f.reference)
 		return FlowType{t: c.errorType}
@@ -252,6 +256,13 @@ func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) Flow
 		if !c.isReachableFlowNode(flow) {
 			return FlowType{t: c.unreachableNeverType}
 		}
+		// A matching dotted name might also be an expando property on a function *expression*,
+		// in which case we continue control flow analysis back to the function's declaration
+		if ast.IsVariableDeclaration(node) && (ast.IsInJSFile(node) || ast.IsVarConstLike(node)) {
+			if init := node.Initializer(); init != nil && ast.IsFunctionExpressionOrArrowFunction(init) {
+				return c.getTypeAtFlowNode(f, flow.Antecedent)
+			}
+		}
 		return FlowType{t: f.declaredType}
 	}
 	// for (const _ in ref) acts as a nonnull on ref
@@ -310,7 +321,7 @@ func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *Ty
 			if c.isMatchingReference(f.reference, predicateArgument) {
 				return c.getNarrowedType(t, predicate.t, assumeTrue, false /*checkDerived*/)
 			}
-			if c.strictNullChecks && c.optionalChainContainsReference(predicateArgument, f.reference) && (assumeTrue && !(c.hasTypeFacts(predicate.t, TypeFactsEQUndefined)) || !assumeTrue && everyType(predicate.t, c.IsNullableType)) {
+			if c.strictNullChecks && c.optionalChainContainsReference(predicateArgument, f.reference) && (assumeTrue && !c.hasTypeFacts(predicate.t, TypeFactsEQUndefined) || !assumeTrue && everyType(predicate.t, c.IsNullableType)) {
 				t = c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
 			}
 			access := c.getDiscriminantPropertyAccess(f, predicateArgument, t)
@@ -1431,7 +1442,7 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		if ast.IsIdentifier(expr) {
 			symbol := c.getResolvedSymbol(expr)
 			declaration := c.getExportSymbolOfValueSymbolIfExported(symbol).ValueDeclaration
-			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameter(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
+			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameterDeclaration(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
 				return declaration
 			}
 		}
@@ -1559,7 +1570,7 @@ func (c *Checker) reportFlowControlError(node *ast.Node) {
 	block := ast.FindAncestor(node, ast.IsFunctionOrModuleBlock)
 	sourceFile := ast.GetSourceFileOfNode(node)
 	span := scanner.GetRangeOfTokenAtPosition(sourceFile, block.StatementList().Pos())
-	c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
+	c.addDiagnostic(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
 }
 
 func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
@@ -1702,7 +1713,7 @@ func (c *Checker) getAccessedPropertyName(access *ast.Node) (string, bool) {
 	if ast.IsBindingElement(access) {
 		return c.getDestructuringPropertyName(access)
 	}
-	if ast.IsParameter(access) {
+	if ast.IsParameterDeclaration(access) {
 		return strconv.Itoa(slices.Index(access.Parent.Parameters(), access)), true
 	}
 	return "", false
@@ -1733,16 +1744,11 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 			return name, true
 		}
 	}
-	if hasOnlyExpressionInitializer(declaration) && c.isBlockScopedNameDeclaredBeforeUse(declaration, node) {
-		initializer := declaration.Initializer()
-		if initializer != nil {
-			var initializerType *Type
-			if ast.IsBindingPattern(declaration.Parent) {
-				initializerType = c.getTypeForBindingElement(declaration)
-			} else {
-				initializerType = c.getTypeOfExpression(initializer)
-			}
-			if initializerType != nil {
+	// We exclude binding elements because their initializers don't solely determine their types and resolving
+	// full types can cause circularities (see https://github.com/microsoft/TypeScript/issues/63192).
+	if hasOnlyExpressionInitializer(declaration) && !ast.IsBindingElement(declaration) && c.isBlockScopedNameDeclaredBeforeUse(declaration, node) {
+		if initializer := declaration.Initializer(); initializer != nil {
+			if initializerType := c.getTypeOfExpression(initializer); initializerType != nil {
 				return tryGetNameFromType(initializerType)
 			}
 		} else if ast.IsEnumMember(declaration) {
@@ -1803,7 +1809,7 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		rootDeclaration := ast.GetRootDeclaration(node.Parent)
-		if ast.IsParameter(rootDeclaration) || ast.IsVariableDeclaration(rootDeclaration) && ast.IsCatchClause(rootDeclaration.Parent) {
+		if ast.IsParameterDeclaration(rootDeclaration) || ast.IsVariableDeclaration(rootDeclaration) && ast.IsCatchClause(rootDeclaration.Parent) {
 			return !c.isSomeSymbolAssigned(rootDeclaration)
 		}
 		return ast.IsVariableDeclaration(rootDeclaration) && c.isVarConstLike(rootDeclaration)
@@ -1966,15 +1972,11 @@ func (c *Checker) getSwitchClauseTypeOfWitnesses(node *ast.Node) []string {
 		witnesses := make([]string, len(clauses))
 		for i, clause := range clauses {
 			if clause.Kind == ast.KindCaseClause {
-				var text string
-				if ast.IsStringLiteralLike(clause.Expression()) {
-					text = clause.Expression().Text()
-				}
-				if text == "" {
+				if !ast.IsStringLiteralLike(clause.Expression()) {
 					witnesses = nil
 					break
 				}
-				if !slices.Contains(witnesses, text) {
+				if text := clause.Expression().Text(); !slices.Contains(witnesses, text) {
 					witnesses[i] = text
 				}
 			}
@@ -2168,7 +2170,7 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 }
 
 func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {
-	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameter(node)) && node.Type() != nil ||
+	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameterDeclaration(node)) && node.Type() != nil ||
 		c.isExpandoPropertyFunctionWithReturnTypeAnnotation(node)
 }
 
@@ -2310,6 +2312,9 @@ func (c *Checker) getTypeOfDestructuredArrayElement(t *Type, index int) *Type {
 }
 
 func (c *Checker) includeUndefinedInIndexSignature(t *Type) *Type {
+	if t == nil {
+		return nil
+	}
 	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue {
 		return c.getUnionType([]*Type{t, c.missingType})
 	}

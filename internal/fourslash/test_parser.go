@@ -153,7 +153,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 
 	}
 
-	if hasTSConfig && len(globalOptions) > 0 && !isStateBaseliningEnabled(globalOptions) {
+	if hasTSConfig && hasUnsupportedGlobalOptionsWithConfig(globalOptions) && !isStateBaseliningEnabled(globalOptions) {
 		t.Fatalf("It is not allowed to use global options along with config files.")
 	}
 
@@ -165,6 +165,18 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 		GlobalOptions:   globalOptions,
 		Ranges:          ranges,
 	}
+}
+
+func hasUnsupportedGlobalOptionsWithConfig(globalOptions map[string]string) bool {
+	for option := range globalOptions {
+		switch strings.ToLower(option) {
+		case "symlink", "link", "usecasesensitivefilenames":
+			continue
+		default:
+			return true
+		}
+	}
+	return false
 }
 
 func isConfigFile(fileName string) bool {
@@ -290,7 +302,7 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 				flush(i - 1)
 				lastNormalCharPosition = i + 1
 				difference += 2
-			} else if previousCharacter == '/' && currentCharacter == '*' {
+			} else if previousCharacter == '/' && currentCharacter == '*' && (i+1 >= len(content) || content[i+1] != '/') {
 				// found a possible marker start
 				state = stateInSlashStarMarker
 				openMarker = &locationInformation{

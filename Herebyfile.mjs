@@ -17,6 +17,10 @@ import pc from "picocolors";
 import tmp from "tmp";
 import which from "which";
 
+if (process.platform === "win32") {
+    process.chdir(fs.realpathSync.native(process.cwd()));
+}
+
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
@@ -80,8 +84,17 @@ const { values: rawOptions } = parseArgs({
  */
 const options = /** @type {Options} */ (rawOptions);
 
-if (options.forRelease && !options.setPrerelease) {
-    throw new Error("forRelease requires setPrerelease");
+// Native release branches can edit these constants to publish a fixed stable version.
+// Main publishes prerelease builds of the TypeScript package.
+const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("typescript");
+const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
+const produceNativePreviewVsix = /** @type {boolean} */ (false);
+const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
+const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
+const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
+
+if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
+    throw new Error("forRelease requires setPrerelease unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled");
 }
 
 const defaultGoBuildTags = [
@@ -292,6 +305,14 @@ export const generate = task({
     },
 });
 
+export const generateExtension = task({
+    name: "generate:extension",
+    description: "Generates files in the extension",
+    run: async () => {
+        await $`npm run -w _extension generateLocBundle`;
+    },
+});
+
 // ── Enum generation from Go source ──────────────────────────────
 
 /**
@@ -300,33 +321,45 @@ export const generate = task({
  *   goPrefix: string;
  *   goFile: string;
  *   outDir: string;
- *   constEnum?: boolean;
+ *   stringEnum?: boolean;
+ *   valueReplacements?: Record<string, string>;
  * }} EnumDef
  */
 
 /** @type {EnumDef[]} */
 const enumDefs = [
-    // @typescript/api enums
-    { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/api/src/enums" },
-    { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/api/src/enums" },
-    // @typescript/ast enums
-    { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind.go", outDir: "_packages/ast/src/enums" },
-    { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/ast/src/enums" },
-    { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/ast/src/enums" },
-    { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/ast/src/enums", constEnum: true },
+    { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ElementFlags", goPrefix: "ElementFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "TypePredicateKind", goPrefix: "TypePredicateKind", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "DiagnosticCategory", goPrefix: "Category", goFile: "internal/diagnostics/diagnostics.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SyntaxKind", goPrefix: "Kind", goFile: "internal/ast/kind_generated.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "OuterExpressionKinds", goPrefix: "OEK", goFile: "internal/ast/utilities.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModuleKind", goPrefix: "ModuleKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModuleResolutionKind", goPrefix: "ModuleResolutionKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModuleDetectionKind", goPrefix: "ModuleDetectionKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "NewLineKind", goPrefix: "NewLineKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "JsxEmit", goPrefix: "JsxEmit", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
+    // String enum: Go stores internal names with a "\xFE" sentinel prefix, but the escaped
+    // form sent over the wire uses "__" (see EscapeSymbolName), so map the sentinel accordingly.
+    { name: "InternalSymbolName", goPrefix: "InternalSymbolName", goFile: "internal/ast/symbol.go", outDir: "_packages/native-preview/src/enums", stringEnum: true, valueReplacements: { InternalSymbolNamePrefix: "__" } },
 ];
 
 /**
  * @param {string} block
- * @param {string} prefix
+ * @param {EnumDef} def
  * @returns {{ name: string, value: string }[]}
  */
-function parseGoConstBlock(block, prefix) {
+function parseGoConstBlock(block, def) {
+    const prefix = def.goPrefix;
     const members = [];
     let iotaCounter = 0;
     let hasIota = false;
@@ -349,7 +382,10 @@ function parseGoConstBlock(block, prefix) {
         const memberName = goName.slice(prefix.length);
 
         let tsValue;
-        if (goValue === "iota") {
+        if (def.stringEnum) {
+            tsValue = parseGoStringValue(goValue, def.valueReplacements ?? {});
+        }
+        else if (goValue === "iota") {
             tsValue = String(iotaCounter);
             hasIota = true;
         }
@@ -371,6 +407,31 @@ function parseGoConstBlock(block, prefix) {
 }
 
 /**
+ * Resolve a Go string-constant expression (e.g. `Prefix + "call"` or `"export="`)
+ * into a quoted, JS-escaped TypeScript string literal. `replacements` maps bare
+ * Go identifiers (such as a sentinel-prefix constant) to their literal value.
+ * @param {string} goValue
+ * @param {Record<string, string>} replacements
+ * @returns {string}
+ */
+function parseGoStringValue(goValue, replacements) {
+    let result = "";
+    for (const part of goValue.split("+").map(p => p.trim())) {
+        if (Object.prototype.hasOwnProperty.call(replacements, part)) {
+            result += replacements[part];
+            continue;
+        }
+        const stringMatch = part.match(/^"((?:[^"\\]|\\.)*)"$/);
+        if (stringMatch === null) {
+            throw new Error(`Cannot parse string enum value: ${goValue}`);
+        }
+        // Interpret Go escape sequences via JSON, then re-stringify below.
+        result += JSON.parse(`"${stringMatch[1]}"`);
+    }
+    return JSON.stringify(result);
+}
+
+/**
  * @param {EnumDef} def
  * @returns {{ name: string, value: string }[]}
  */
@@ -379,7 +440,7 @@ function parseGoEnum(def) {
     const constBlockRegex = /const\s*\(([\s\S]*?)\n\)/g;
 
     for (const match of source.matchAll(constBlockRegex)) {
-        const members = parseGoConstBlock(match[1], def.goPrefix);
+        const members = parseGoConstBlock(match[1], def);
         if (members.length > 0) return topoSortMembers(members);
     }
 
@@ -435,21 +496,10 @@ function topoSortMembers(members) {
  * @returns {string}
  */
 function renderEnumTS(def, members) {
-    const header = [
-        "//",
-        "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "// !!! THIS FILE IS AUTO-GENERATED — DO NOT EDIT !!!",
-        "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "//",
-        `// Source: ${def.goFile}`,
-        "// Regenerate: npx hereby generate:enums",
-        "//",
-        "",
-    ].join("\n");
+    const header = `// Code generated by Herebyfile.mjs generate:enums from ${def.goFile}. DO NOT EDIT.\n\n`;
 
-    const constKeyword = def.constEnum ? "const " : "";
     const lines = members.map(m => `    ${m.name} = ${m.value},`);
-    return `${header}export ${constKeyword}enum ${def.name} {\n${lines.join("\n")}\n}\n`;
+    return `${header}export enum ${def.name} {\n${lines.join("\n")}\n}\n`;
 }
 
 async function runGenerateEnums() {
@@ -506,6 +556,40 @@ export const generateEnums = task({
     name: "generate:enums",
     description: "Generates TypeScript enum files from Go source.",
     run: runGenerateEnums,
+});
+
+export const generateAST = task({
+    name: "generate:ast",
+    description: "Generates AST and encoder files from ast.json.",
+    run: () => $`node --experimental-strip-types --no-warnings ./_scripts/generate.ts`,
+});
+
+// ── Vendored npm dependencies ───────────────────────────────────
+
+const vendorJsonrpcDir = "_packages/native-preview/vendor/vscode-jsonrpc";
+const vendorJsonrpcSrc = "node_modules/vscode-jsonrpc";
+// Files copied verbatim from the installed vscode-jsonrpc package into the
+// vendored copy. Only the runtime files needed by the `#vscode-jsonrpc/node`
+// import (lib + typings + package.json) plus license/readme are vendored.
+const vendorJsonrpcFiles = ["package.json", "README.md", "License.txt", "lib", "typings"];
+
+async function runGenerateVendor() {
+    const src = path.join(__dirname, vendorJsonrpcSrc);
+    const dest = path.join(__dirname, vendorJsonrpcDir);
+    if (!fs.existsSync(src)) {
+        throw new Error(`${vendorJsonrpcSrc} is not installed; run \`npm ci\` first.`);
+    }
+    await rimraf(dest);
+    await fs.promises.mkdir(dest, { recursive: true });
+    for (const file of vendorJsonrpcFiles) {
+        await cpRecursive(path.join(src, file), path.join(dest, file));
+    }
+}
+
+export const generateVendor = task({
+    name: "generate:vendor",
+    description: "Updates the vendored copy of vscode-jsonrpc from node_modules.",
+    run: runGenerateVendor,
 });
 
 const coverageDir = path.join(__dirname, "coverage");
@@ -704,7 +788,7 @@ async function runTestTools() {
 }
 
 async function runTestAPI() {
-    await $`npm run -w @typescript/api test`;
+    await $`npm run -w @typescript/native-preview test:only`;
 }
 
 export const testTools = task({
@@ -715,23 +799,23 @@ export const testTools = task({
 
 export const buildAPI = task({
     name: "build:api",
-    description: "Builds @typescript/api and @typescript/ast.",
+    description: "Builds @typescript/native-preview JS API.",
     run: async () => {
-        await $`npm run -w @typescript/api build`;
+        await $`npm run -w @typescript/native-preview build`;
     },
 });
 
 export const buildAPITests = task({
     name: "build:api:test",
-    description: "Builds the @typescript/api tests.",
+    description: "Builds the @typescript/native-preview JS API tests.",
     run: async () => {
-        await $`npm run -w @typescript/api build:test`;
+        await $`npm run -w @typescript/native-preview build:test`;
     },
 });
 
 export const testAPI = task({
     name: "test:api",
-    description: "Runs the @typescript/api tests.",
+    description: "Runs the @typescript/native-preview JS API tests.",
     dependencies: [tsgo, buildAPITests],
     run: runTestAPI,
 });
@@ -853,6 +937,23 @@ export const checkFormat = task({
     description: "Checks that the repo is formatted.",
     run: async () => {
         await $`dprint check`;
+    },
+});
+
+const scriptTsconfigs = [
+    "./_scripts/tsconfig.json",
+    "./internal/fourslash/_scripts/tsconfig.json",
+    "./internal/lsp/lsproto/_generate/tsconfig.json",
+];
+
+export const checkScripts = task({
+    name: "check:scripts",
+    description: "Type-checks TypeScript scripts.",
+    run: async () => {
+        for (const tsconfig of scriptTsconfigs) {
+            console.log(`Type-checking ${tsconfig}`);
+            await $`tsc -p ${tsconfig}`;
+        }
     },
 });
 
@@ -1054,6 +1155,10 @@ export class Debouncer {
     constructor(timeout, action) {
         this._timeout = timeout;
         this._action = action;
+        /** @type {ReturnType<typeof setTimeout> | undefined} */
+        this._timer = undefined;
+        /** @type {Deferred<any> | undefined} */
+        this._deferred = undefined;
     }
 
     get empty() {
@@ -1093,6 +1198,10 @@ export class Debouncer {
 }
 
 const getVersion = memoize(() => {
+    if (nativePreviewReleaseVersion) {
+        return nativePreviewReleaseVersion;
+    }
+
     const f = fs.readFileSync("./internal/core/version.go", "utf8");
 
     const match = f.match(/var version\s*=\s*"(\d+\.\d+\.\d+)(-[^"]+)?"/);
@@ -1111,7 +1220,22 @@ const getVersion = memoize(() => {
     return version;
 });
 
+function getPublishTag() {
+    if (publishAsTypescript) {
+        const version = getVersion();
+        if (!version) {
+            throw new Error("Publishing as 'typescript' requires a version before selecting an npm tag.");
+        }
+        const match = version.match(/-(dev|beta|rc)(?:[.-]|$)/);
+        if (match?.[1]) return match[1] === "dev" ? "next" : match[1];
+        if (version === nativePreviewReleaseVersion) return "latest";
+        throw new Error(`Refusing to publish 'typescript' with the latest tag from non-release version ${version}.`);
+    }
+    return "latest";
+}
+
 const extensionDir = path.resolve("./_extension");
+const nightlyExtensionDir = path.resolve("./_extension-nightly");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 const builtSignTmp = path.resolve("./built/sign-tmp");
@@ -1345,68 +1469,181 @@ function cpWithoutNodeModulesOrTsconfig(src, dest) {
 }
 
 const mainNativePreviewPackage = {
-    npmPackageName: "@typescript/native-preview",
-    npmDir: path.join(builtNpm, "native-preview"),
-    npmTarball: path.join(builtNpm, "native-preview.tgz"),
+    npmPackageName: publishAsTypescript ? "typescript" : "@typescript/native-preview",
+    npmDir: path.join(builtNpm, publishAsTypescript ? "typescript" : "native-preview"),
+    npmTarball: path.join(builtNpm, publishAsTypescript ? "typescript.tgz" : "native-preview.tgz"),
 };
 
 /**
- * @typedef {"win32" | "linux" | "darwin"} OS
- * @typedef {"x64" | "arm" | "arm64"} Arch
+ * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos"} OS
+ * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
+ * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
+ * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
+ * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
+ * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
 void 0;
 
-const nativePreviewPlatforms = memoize(() => {
-    /** @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]} */
-    let supportedPlatforms = [
-        ["win32", "x64", "Microsoft400"],
-        ["win32", "arm64", "Microsoft400"],
-        ["linux", "x64", "LinuxSign", true],
-        ["linux", "arm", "LinuxSign"],
-        ["linux", "arm64", "LinuxSign", true],
-        ["darwin", "x64", "MacDeveloperHarden"],
-        ["darwin", "arm64", "MacDeveloperHarden"],
-        // Wasm?
-    ];
+/** @type {VsixExtensionPackage[]} */
+const vsixExtensionPackages = [
+    ...(produceNativePreviewVsix ? [{ name: "native-preview", sourceDir: extensionDir }] : []),
+    ...(produceTypeScriptNightlyVsix ? [{ name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir }] : []),
+];
+
+/**
+ * npm package platforms supported by the native release.
+ * The native-preview package publishes only the entries with vsix: true;
+ * the typescript package publishes the full list.
+ * BSD targets that are not in Node's supported-platforms table are best-effort
+ * and limited to mainstream 64-bit x64/arm64 architectures.
+ * alpine is set only for the subset that also produces Alpine VSIXes.
+ * cert defaults to LinuxSign.
+ * @type {Platform[]}
+ */
+const platforms = [
+    { os: "win32", arch: "x64", vsix: true, cert: "Microsoft400" },
+    { os: "win32", arch: "arm64", vsix: true, cert: "Microsoft400" },
+    { os: "linux", arch: "x64", vsix: true, alpine: true },
+    { os: "linux", arch: "arm", vsix: true },
+    { os: "linux", arch: "arm64", vsix: true, alpine: true },
+    { os: "darwin", arch: "x64", vsix: true, cert: "MacDeveloperHarden" },
+    { os: "darwin", arch: "arm64", vsix: true, cert: "MacDeveloperHarden" },
+    { os: "aix", arch: "ppc64" },
+    { os: "freebsd", arch: "arm64" },
+    { os: "freebsd", arch: "x64" },
+    { os: "linux", arch: "loong64" },
+    { os: "linux", arch: "mips64el" },
+    { os: "linux", arch: "ppc64" },
+    { os: "linux", arch: "riscv64" },
+    { os: "linux", arch: "s390x" },
+    { os: "netbsd", arch: "arm64" },
+    { os: "netbsd", arch: "x64" },
+    { os: "openbsd", arch: "arm64" },
+    { os: "openbsd", arch: "x64" },
+    { os: "sunos", arch: "x64" },
+    // Wasm?
+];
+
+const ignoredGoTargets = new Map([
+    ["android/386", "Android is not a Node runtime target TypeScript supports"],
+    ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
+    ["android/arm", "Android is not a Node runtime target TypeScript supports"],
+    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
+    ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
+    ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
+    ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
+    ["linux/ppc64", "Node supports Linux ppc64le; npm's ppc64 CPU name cannot select big-endian ppc64 separately"],
+    ["netbsd/386", "NetBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["netbsd/arm", "NetBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/386", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/arm", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/ppc64", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["openbsd/riscv64", "OpenBSD is not in Node's supported-platforms table and is limited here to mainstream 64-bit x64/arm64"],
+    ["solaris/amd64", "Node documents SmartOS/sunos rather than Oracle Solaris; sunos-x64 publishes illumos/amd64 for that runtime family"],
+    ["windows/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
+]);
+
+/**
+ * @param {string} os
+ * @returns {"windows" | "illumos" | "darwin" | "linux" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd"}
+ */
+function nodeToGOOS(os) {
+    switch (os) {
+        case "win32":
+            return "windows";
+        case "sunos":
+            return "illumos";
+        case "darwin":
+        case "linux":
+        case "aix":
+        case "android":
+        case "freebsd":
+        case "netbsd":
+        case "openbsd":
+            return os;
+        default:
+            throw new Error(`Unsupported OS: ${os}`);
+    }
+}
+
+/**
+ * @param {string} arch
+ * @param {string} os
+ * @returns {"amd64" | "386" | "mips64le" | "ppc64" | "ppc64le" | "arm" | "arm64" | "loong64" | "riscv64" | "s390x"}
+ */
+function nodeToGOARCH(arch, os) {
+    switch (arch) {
+        case "x64":
+            return "amd64";
+        case "ia32":
+            return "386";
+        case "mips64el":
+            return "mips64le";
+        case "ppc64":
+            return os === "aix" ? "ppc64" : "ppc64le";
+        case "arm":
+        case "arm64":
+        case "loong64":
+        case "riscv64":
+        case "s390x":
+            return arch;
+        default:
+            throw new Error(`Unsupported ARCH: ${arch}`);
+    }
+}
+
+const getPlatforms = memoize(() => {
+    const publishTag = getPublishTag();
+    let supportedPlatforms = publishAsTypescript && publishTag !== "next"
+        ? platforms
+        : platforms.filter(({ vsix }) => vsix);
 
     if (!options.forRelease) {
-        supportedPlatforms = supportedPlatforms.filter(([os, arch]) => os === process.platform && arch === process.arch);
+        supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => os === process.platform && arch === process.arch);
         assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
     }
 
-    return supportedPlatforms.map(([os, arch, cert, alpine]) => {
-        const npmDirName = `native-preview-${os}-${arch}`;
+    return supportedPlatforms.map(({ os, arch, cert = "LinuxSign", vsix, alpine }) => {
+        const packageBaseName = publishAsTypescript ? "typescript" : "native-preview";
+        const npmDirName = `${packageBaseName}-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
 
-        /** @type {VSCodeTarget[]} */
-        const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
-        if (alpine) {
-            vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
-        }
+        /** @type {VsixExtension[]} */
+        let extensions = [];
+        if (produceAnyVsix && vsix) {
+            /** @type {string[]} */
+            const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
+            if (alpine) {
+                vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
+            }
 
-        const extensions = vscodeTargets.map(vscodeTarget => {
-            const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
-            const vsixPath = extensionDir + ".vsix";
-            const vsixManifestPath = extensionDir + ".manifest";
-            const vsixSignaturePath = extensionDir + ".signature.p7s";
-            return {
-                vscodeTarget,
-                extensionDir,
-                vsixPath,
-                vsixManifestPath,
-                vsixSignaturePath,
-            };
-        });
+            extensions = vscodeTargets.flatMap(vscodeTarget =>
+                vsixExtensionPackages.map(({ name: packageName, sourceDir }) => {
+                    const extensionDir = path.join(builtVsix, `${packageName}-${vscodeTarget}`);
+                    const vsixPath = extensionDir + ".vsix";
+                    const vsixManifestPath = extensionDir + ".manifest";
+                    const vsixSignaturePath = extensionDir + ".signature.p7s";
+                    return {
+                        vscodeTarget,
+                        sourceDir,
+                        extensionDir,
+                        vsixPath,
+                        vsixManifestPath,
+                        vsixSignaturePath,
+                    };
+                })
+            );
+        }
 
         return {
             nodeOs: os,
             nodeArch: arch,
             goos: nodeToGOOS(os),
-            goarch: nodeToGOARCH(arch),
+            goarch: nodeToGOARCH(arch, os),
             npmPackageName,
             npmDirName,
             npmDir,
@@ -1415,41 +1652,145 @@ const nativePreviewPlatforms = memoize(() => {
             cert,
         };
     });
-
-    /**
-     * @param {string} os
-     * @returns {"darwin" | "linux" | "windows"}
-     */
-    function nodeToGOOS(os) {
-        switch (os) {
-            case "darwin":
-                return "darwin";
-            case "linux":
-                return "linux";
-            case "win32":
-                return "windows";
-            default:
-                throw new Error(`Unsupported OS: ${os}`);
-        }
-    }
-
-    /**
-     * @param {string} arch
-     * @returns {"amd64" | "arm" | "arm64"}
-     */
-    function nodeToGOARCH(arch) {
-        switch (arch) {
-            case "x64":
-                return "amd64";
-            case "arm":
-                return "arm";
-            case "arm64":
-                return "arm64";
-            default:
-                throw new Error(`Unsupported ARCH: ${arch}`);
-        }
-    }
 });
+
+export const checkPlatforms = task({
+    name: "native-preview:check-platforms",
+    hiddenFromTaskList: true,
+    run: runCheckPlatforms,
+});
+
+/**
+ * @param {GoDistTarget} target
+ */
+function goDistTargetToPlatform(target) {
+    const goTarget = `${target.GOOS}/${target.GOARCH}`;
+    if (ignoredGoTargets.has(goTarget)) {
+        return undefined;
+    }
+
+    /** @type {OS | undefined} */
+    let nodeOs;
+    switch (target.GOOS) {
+        case "windows":
+            nodeOs = "win32";
+            break;
+        case "illumos":
+            nodeOs = "sunos";
+            break;
+        case "aix":
+        case "android":
+        case "darwin":
+        case "freebsd":
+        case "linux":
+        case "netbsd":
+        case "openbsd":
+            nodeOs = target.GOOS;
+            break;
+        default:
+            return undefined;
+    }
+
+    /** @type {Arch | undefined} */
+    let nodeArch;
+    switch (target.GOARCH) {
+        case "386":
+            nodeArch = "ia32";
+            break;
+        case "amd64":
+            nodeArch = "x64";
+            break;
+        case "mips64le":
+            nodeArch = "mips64el";
+            break;
+        case "ppc64":
+            nodeArch = "ppc64";
+            break;
+        case "ppc64le":
+            nodeArch = "ppc64";
+            break;
+        case "arm":
+        case "arm64":
+        case "loong64":
+        case "riscv64":
+        case "s390x":
+            nodeArch = target.GOARCH;
+            break;
+        default:
+            return undefined;
+    }
+
+    return `${nodeOs}-${nodeArch}`;
+}
+
+async function runCheckPlatforms() {
+    const { stdout } = await $pipe`go tool dist list -json`;
+    /** @type {GoDistTarget[]} */
+    const goTargets = JSON.parse(stdout);
+    const goTargetSet = new Set(goTargets.map(({ GOOS, GOARCH }) => `${GOOS}/${GOARCH}`));
+
+    /** @type {[os: OS, arch: Arch][]} */
+    const packagePlatforms = platforms.map(({ os, arch }) => /** @type {[OS, Arch]} */ ([os, arch]));
+    const actual = new Set(packagePlatforms.map(([os, arch]) => `${os}-${arch}`));
+    const expected = new Set(goTargets.map(goDistTargetToPlatform).filter(platform => platform !== undefined));
+
+    const errors = [];
+    for (const [os, arch] of packagePlatforms) {
+        const goTarget = `${nodeToGOOS(os)}/${nodeToGOARCH(arch, os)}`;
+        if (!goTargetSet.has(goTarget)) {
+            errors.push(`Configured package platform ${os}-${arch} maps to unsupported Go target ${goTarget}.`);
+        }
+    }
+
+    const missing = [...expected].filter(platform => !actual.has(platform));
+    if (missing.length) {
+        errors.push(`Missing package platform(s) for the current Go toolchain: ${missing.join(", ")}.`);
+    }
+
+    const extra = [...actual].filter(platform => !expected.has(platform));
+    if (extra.length) {
+        errors.push(`Unexpected package platform(s), or missing exclusion policy: ${extra.join(", ")}.`);
+    }
+
+    if (errors.length) {
+        throw new Error(`native-preview platform list is out of sync with 'go tool dist list':\n${errors.map(e => `  - ${e}`).join("\n")}`);
+    }
+}
+
+/**
+ * Recursively strips `@typescript/source` export conditions from a package.json object.
+ * Processes `exports` and `imports` fields, skipping past subpath keys (starting with "."
+ * or "#") and recursing into condition objects. After removal, simplifies objects that have
+ * only a single `default` key down to their bare value.
+ * @param {Record<string, any>} packageJson
+ */
+function stripSourceConditions(packageJson) {
+    for (const field of ["exports", "imports"]) {
+        if (packageJson[field] != null && typeof packageJson[field] === "object") {
+            packageJson[field] = stripConditionsFromValue(packageJson[field]);
+        }
+    }
+}
+
+/**
+ * @param {any} value
+ * @returns {any}
+ */
+function stripConditionsFromValue(value) {
+    if (value == null || typeof value !== "object") {
+        return value;
+    }
+    delete value["@typescript/source"];
+    for (const key of Object.keys(value)) {
+        value[key] = stripConditionsFromValue(value[key]);
+    }
+    // Simplify: if only "default" remains, collapse to its value.
+    const keys = Object.keys(value);
+    if (keys.length === 1 && keys[0] === "default") {
+        return value["default"];
+    }
+    return value;
+}
 
 export const buildNativePreviewPackages = task({
     name: "native-preview:build-packages",
@@ -1460,20 +1801,49 @@ export const buildNativePreviewPackages = task({
 async function runBuildNativePreviewPackages() {
     await rimraf(builtNpm);
 
-    const platforms = nativePreviewPlatforms();
+    const platforms = getPlatforms();
 
     const inputDir = "./_packages/native-preview";
 
     const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
     inputPackageJson.version = getVersion();
     delete inputPackageJson.private;
-    delete inputPackageJson.engines;
+    inputPackageJson.files = [...new Set([...(inputPackageJson.files ?? []), "NOTICE.txt"])];
+    if (publishAsTypescript) {
+        inputPackageJson.bin = {
+            tsc: "./bin/tsc",
+        };
+        inputPackageJson.description = "TypeScript is a language for application scale JavaScript development";
+        inputPackageJson.homepage = "https://www.typescriptlang.org/";
+        inputPackageJson.keywords = [
+            "TypeScript",
+            "Microsoft",
+            "compiler",
+            "language",
+            "javascript",
+        ];
+        inputPackageJson.bugs = {
+            url: "https://github.com/microsoft/TypeScript/issues",
+        };
+        inputPackageJson.repository = {
+            type: "git",
+            url: "https://github.com/microsoft/TypeScript.git",
+        };
+        delete inputPackageJson.scripts;
+        delete inputPackageJson.devDependencies;
+    }
+    stripSourceConditions(inputPackageJson);
 
     const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
     inputPackageJson.gitHead = gitHead;
+    inputPackageJson.publishConfig = {
+        access: "public",
+        tag: getPublishTag(),
+    };
 
     const mainPackage = {
         ...inputPackageJson,
+        name: mainNativePreviewPackage.npmPackageName,
         optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
     };
 
@@ -1481,19 +1851,58 @@ async function runBuildNativePreviewPackages() {
 
     await fs.promises.mkdir(mainPackageDir, { recursive: true });
 
-    await cpWithoutNodeModulesOrTsconfig(inputDir, mainPackageDir);
+    // Copy package contents excluding node_modules and dist (dist is copied separately after build).
+    // The package.json "files" field controls what npm pack actually includes.
+    await cpRecursive(inputDir, mainPackageDir, p => !p.endsWith("/node_modules") && !p.includes("/dist"));
+    if (publishAsTypescript) {
+        await fs.promises.rename(path.join(mainPackageDir, "bin", "tsgo"), path.join(mainPackageDir, "bin", "tsc"));
+        await fs.promises.rename(path.join(mainPackageDir, "lib", "tsgo.js"), path.join(mainPackageDir, "lib", "tsc.js"));
+        await fs.promises.writeFile(path.join(mainPackageDir, "bin", "tsc"), '#!/usr/bin/env node\nimport "../lib/tsc.js";\n');
+        await fs.promises.chmod(path.join(mainPackageDir, "bin", "tsc"), 0o755);
+        await fs.promises.copyFile(path.join(inputDir, "typescript-package-readme.md"), path.join(mainPackageDir, "README.md"));
+    }
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
     await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
-    // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
+    await fs.promises.copyFile("NOTICE.txt", path.join(mainPackageDir, "NOTICE.txt"));
 
-    const extraFlags = getReleaseBuildFlags(options.setPrerelease ? getVersion() : undefined);
+    // Build JS API and copy dist into the package.
+    await $`npm run -w @typescript/native-preview build`;
+    await cpRecursive(path.join(inputDir, "dist"), path.join(mainPackageDir, "dist"));
+
+    // Validate that .d.ts files contain no external imports (all imports must start with "." or "#").
+    const dtsFiles = await glob(`${mainPackageDir}/dist/**/*.d.ts`);
+    const importErrors = [];
+    for (const dtsFile of dtsFiles) {
+        const content = await fs.promises.readFile(dtsFile, "utf-8");
+        const relPath = path.relative(mainPackageDir, dtsFile);
+        for (const [i, line] of content.split("\n").entries()) {
+            // Match: import ... from "specifier" / export ... from "specifier"
+            const fromMatch = line.match(/(?:import|export)\s.*?\sfrom\s+["']([^"']+)["']/);
+            if (fromMatch && !fromMatch[1].startsWith(".") && !fromMatch[1].startsWith("#")) {
+                importErrors.push(`${relPath}:${i + 1}: external import declaration "${fromMatch[1]}"`);
+            }
+            // Match: import("specifier")
+            for (const m of line.matchAll(/import\(["']([^"']+)["']\)/g)) {
+                if (!m[1].startsWith(".") && !m[1].startsWith("#")) {
+                    importErrors.push(`${relPath}:${i + 1}: external dynamic import "${m[1]}"`);
+                }
+            }
+        }
+    }
+    if (importErrors.length) {
+        throw new Error(`Found external imports in .d.ts files:\n${importErrors.map(e => "  " + e).join("\n")}`);
+    }
+
+    const extraFlags = getReleaseBuildFlags(options.setPrerelease || nativePreviewReleaseVersion ? getVersion() : undefined);
 
     const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
         const packageJson = {
             ...inputPackageJson,
             bin: undefined,
+            files: ["lib", "NOTICE.txt"],
             imports: undefined,
+            dependencies: undefined,
             name: npmPackageName,
             os: [nodeOs],
             cpu: [nodeArch],
@@ -1518,8 +1927,9 @@ async function runBuildNativePreviewPackages() {
 
         await generateLibs(out);
 
+        const exeName = nativePreviewExeName(nodeOs);
         await buildTsgo({
-            out,
+            out: publishAsTypescript ? path.join(out, exeName) : out,
             env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
             extraFlags,
         });
@@ -1545,12 +1955,20 @@ export const signNativePreviewPackages = task({
     run: runSignNativePreviewPackages,
 });
 
+/**
+ * @param {string} nodeOs
+ */
+function nativePreviewExeName(nodeOs) {
+    const baseName = publishAsTypescript ? "tsc" : "tsgo";
+    return nodeOs === "win32" ? `${baseName}.exe` : baseName;
+}
+
 async function runSignNativePreviewPackages() {
     if (!options.forRelease) {
         throw new Error("This task should not be run in non-release builds.");
     }
 
-    const platforms = nativePreviewPlatforms();
+    const platforms = getPlatforms();
 
     /** @type {Map<Cert, { tmpName: string; path: string }[]>} */
     const filelistByCert = new Map();
@@ -1561,7 +1979,7 @@ async function runSignNativePreviewPackages() {
         }
         certFilelist.push({
             tmpName: npmDirName,
-            path: path.join(npmDir, "lib", nodeOs === "win32" ? "tsgo.exe" : "tsgo"),
+            path: path.join(npmDir, "lib", nativePreviewExeName(nodeOs)),
         });
     }
 
@@ -1668,34 +2086,49 @@ export const packNativePreviewPackages = task({
 });
 
 async function runPackNativePreviewPackages() {
-    const platforms = nativePreviewPlatforms();
+    const platforms = getPlatforms();
     await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
         const { stdout } = await $pipe`npm pack --json ${npmDir}`;
         const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
         await fs.promises.rename(filename, npmTarball);
     }));
 
-    // npm packages need to be published in reverse dep order, e.g. such that no package
-    // is published before its dependencies.
-    const publishOrder = [
-        ...platforms.map(p => p.npmTarball),
-        mainNativePreviewPackage.npmTarball,
-    ].map(p => path.basename(p));
+    // npm packages need to be published in dependency order: platform packages
+    // first, then the main package that references them as optionalDependencies.
+    const publishManifest = {
+        stages: [
+            platforms.map(p => ({
+                filename: path.basename(p.npmTarball),
+            })),
+            [
+                {
+                    filename: path.basename(mainNativePreviewPackage.npmTarball),
+                },
+            ],
+        ],
+    };
 
-    const publishOrderPath = path.join(builtNpm, "publish-order.txt");
-    await fs.promises.writeFile(publishOrderPath, publishOrder.join("\n") + "\n");
+    const publishManifestPath = path.join(builtNpm, "publish-manifest.json");
+    await fs.promises.writeFile(publishManifestPath, JSON.stringify(publishManifest, undefined, 4) + "\n");
 }
 
-export const packNativePreviewExtensions = task({
+export const packVsixExtensions = task({
     name: "native-preview:pack-extensions",
     hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
-    run: runPackNativePreviewExtensions,
+    run: runPackVsixExtensions,
 });
 
-async function runPackNativePreviewExtensions() {
+async function runPackVsixExtensions() {
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
+
+    const platforms = getPlatforms();
+    const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+    if (!extensions.length) {
+        console.log("No VSIX targets configured; skipping extension packaging.");
+        return;
+    }
 
     // We don't use vscode:prepublish, as that would run the build for each package below.
     await $({ cwd: extensionDir })`npm run bundle:release`;
@@ -1718,21 +2151,18 @@ async function runPackNativePreviewExtensions() {
 
     console.log("Version:", version);
 
-    const platforms = nativePreviewPlatforms();
-    const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
-
-    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
         const npmLibDir = path.join(npmDir, "lib");
         const extensionLibDir = path.join(thisExtensionDir, "lib");
         await fs.promises.mkdir(extensionLibDir, { recursive: true });
 
-        await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
+        await cpWithoutNodeModulesOrTsconfig(sourceDir, thisExtensionDir);
         await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
 
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
-        packageJson.main = "dist/extension.bundle.js";
+        packageJson.bundledTypeScriptVersion = getVersion();
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
@@ -1746,19 +2176,23 @@ async function runPackNativePreviewExtensions() {
     }));
 }
 
-export const signNativePreviewExtensions = task({
+export const signVsixExtensions = task({
     name: "native-preview:sign-extensions",
     hiddenFromTaskList: true,
-    run: runSignNativePreviewExtensions,
+    run: runSignVsixExtensions,
 });
 
-async function runSignNativePreviewExtensions() {
+async function runSignVsixExtensions() {
     if (!options.forRelease) {
         throw new Error("This task should not be run in non-release builds.");
     }
 
-    const platforms = nativePreviewPlatforms();
+    const platforms = getPlatforms();
     const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+    if (!extensions.length) {
+        console.log("No VSIX targets configured; skipping extension signing.");
+        return;
+    }
 
     await sign({
         SignFileRecordList: [
@@ -1775,14 +2209,14 @@ export const nativePreviewRelease = task({
     name: "native-preview:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease || !options.setPrerelease) {
-            throw new Error("native-preview:release requires --forRelease and --setPrerelease flags. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
+        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
+            throw new Error("native-preview:release requires --forRelease and --setPrerelease flags, unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
         await runBuildNativePreviewPackages();
         await runSignNativePreviewPackages();
         await runPackNativePreviewPackages();
-        await runPackNativePreviewExtensions();
-        await runSignNativePreviewExtensions();
+        await runPackVsixExtensions();
+        await runSignVsixExtensions();
         await runCleanSignTempDirectory();
     },
 });
@@ -1790,7 +2224,7 @@ export const nativePreviewRelease = task({
 export const nativePreview = task({
     name: "native-preview",
     hiddenFromTaskList: true,
-    dependencies: options.forRelease ? undefined : [packNativePreviewPackages, packNativePreviewExtensions],
+    dependencies: options.forRelease ? undefined : [packNativePreviewPackages, packVsixExtensions],
     run: options.forRelease ? async () => {
         throw new Error("This task should not be run in release builds.");
     } : undefined,

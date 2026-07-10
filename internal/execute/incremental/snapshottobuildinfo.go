@@ -52,6 +52,7 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 	buildInfo.Errors = snapshot.hasErrors.IsTrue()
 	buildInfo.SemanticErrors = snapshot.hasSemanticErrors
 	buildInfo.CheckPending = snapshot.checkPending
+	to.setPackageJsons()
 	return buildInfo
 }
 
@@ -135,6 +136,7 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsFromFileNameDiagnostics(diagnostics 
 			ReportsUnnecessary: d.reportsUnnecessary,
 			ReportsDeprecated:  d.reportsDeprecated,
 			SkippedOnNoEmit:    d.skippedOnNoEmit,
+			RepopulateInfo:     toBuildInfoRepopulateInfo(d.repopulateInfo),
 		}
 	})
 }
@@ -162,8 +164,21 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsFromDiagnostics(filePath tspath.Path
 			ReportsUnnecessary: d.ReportsUnnecessary(),
 			ReportsDeprecated:  d.ReportsDeprecated(),
 			SkippedOnNoEmit:    d.SkippedOnNoEmit(),
+			RepopulateInfo:     toBuildInfoRepopulateInfo(d.RepopulateInfo()),
 		}
 	})
+}
+
+func toBuildInfoRepopulateInfo(info *ast.RepopulateDiagnosticInfo) *BuildInfoRepopulateInfo {
+	if info == nil {
+		return nil
+	}
+	return &BuildInfoRepopulateInfo{
+		Kind:            info.Kind,
+		ModuleReference: info.ModuleReference,
+		Mode:            info.Mode,
+		PackageName:     info.PackageName,
+	}
 }
 
 func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *DiagnosticsOrBuildInfoDiagnosticsWithFileName) *BuildInfoDiagnosticsOfFile {
@@ -354,4 +369,13 @@ func (t *toBuildInfo) setRootOfNonIncrementalProgram() {
 			NonIncremental: t.relativeToBuildInfo(string(tspath.ToPath(fileName, t.comparePathsOptions.CurrentDirectory, t.comparePathsOptions.UseCaseSensitiveFileNames))),
 		}
 	})
+}
+
+func (t *toBuildInfo) setPackageJsons() {
+	if len(t.snapshot.packageJsons) > 0 {
+		t.buildInfo.PackageJsons = core.Map(t.snapshot.packageJsons, t.relativeToBuildInfo)
+	}
+	if len(t.snapshot.missingPackageJsons) > 0 {
+		t.buildInfo.MissingPackageJsons = core.Map(t.snapshot.missingPackageJsons, t.relativeToBuildInfo)
+	}
 }

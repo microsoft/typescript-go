@@ -41,7 +41,7 @@ type Snapshot struct {
 	AutoImports                        *autoimport.Registry
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	allUserPreferences                 *lsutil.UserConfig
+	userPreferences                    lsutil.UserPreferences
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -55,14 +55,11 @@ func NewSnapshot(
 	sessionOptions *SessionOptions,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
-	allUserPreferences *lsutil.UserConfig,
+	userPreferences lsutil.UserPreferences,
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
-	if allUserPreferences == nil {
-		allUserPreferences = lsutil.NewUserConfig(nil) // disallow nil config
-	}
 	s := &Snapshot{
 		id: id,
 
@@ -71,9 +68,9 @@ func NewSnapshot(
 
 		fs:                                 fs,
 		ConfigFileRegistry:                 configFileRegistry,
-		ProjectCollection:                  &ProjectCollection{toPath: toPath},
+		ProjectCollection:                  &ProjectCollection{toPath: toPath, openFiles: openFilePaths(fs.overlays)},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		allUserPreferences:                 allUserPreferences,
+		userPreferences:                    userPreferences,
 		AutoImports:                        autoImports,
 		autoImportsWatch:                   autoImportsWatch,
 	}
@@ -111,16 +108,12 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
-func (s *Snapshot) GetPreferences(activeFile string) *lsutil.UserPreferences {
-	return s.allUserPreferences.GetPreferences(activeFile)
+func (s *Snapshot) GetPreferences(activeFile string) lsutil.UserPreferences {
+	return s.userPreferences
 }
 
-func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
-	// returns `ts`
-	if s.allUserPreferences.TS() != nil {
-		return s.allUserPreferences.TS()
-	}
-	return lsutil.NewDefaultUserPreferences()
+func (s *Snapshot) UserPreferences() lsutil.UserPreferences {
+	return s.userPreferences
 }
 
 func (s *Snapshot) Converters() *lsconv.Converters {
@@ -151,6 +144,10 @@ func (s *Snapshot) DirectoryExists(path string) bool {
 	return s.fs.fs.DirectoryExists(path)
 }
 
+func (s *Snapshot) FileExists(path string) bool {
+	return s.fs.fs.FileExists(path)
+}
+
 func (s *Snapshot) GetDirectories(path string) []string {
 	return s.fs.fs.GetAccessibleEntries(path).Directories
 }
@@ -162,6 +159,8 @@ func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []st
 type APISnapshotRequest struct {
 	OpenProjects  *collections.Set[string]
 	CloseProjects *collections.Set[tspath.Path]
+	OpenFiles     *collections.Set[lsproto.DocumentUri]
+	CloseFiles    *collections.Set[tspath.Path]
 }
 
 type ProjectTreeRequest struct {
@@ -213,7 +212,7 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	newConfig                          *lsutil.UserConfig
+	newConfig                          *lsutil.UserPreferences
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
@@ -267,6 +266,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		switch change.reason {
 		case UpdateReasonDidOpenFile:
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
+		case UpdateReasonDidCloseFile:
+			logger.Logf("Reason: DidCloseFile - %v", change.fileChanges.Closed)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
@@ -285,7 +286,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
 		if change.fileChanges.InvalidateAll {
@@ -304,6 +305,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	} else {
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
+		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
@@ -317,7 +319,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	// Compute effective customConfigFileName from user preferences
 	customConfigFileName := s.ConfigFileRegistry.customConfigFileName
 	if change.newConfig != nil {
-		customConfigFileName = change.newConfig.TS().CustomConfigFileName
+		customConfigFileName = change.newConfig.CustomConfigFileName
 	}
 
 	newSnapshotID := session.snapshotID.Add(1)
@@ -327,7 +329,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		fs,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
-		s.ProjectCollection.apiOpenedProjects,
+		s.ProjectCollection.apiState,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
 		customConfigFileName,
@@ -405,9 +407,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	config := s.allUserPreferences
+	config := s.userPreferences
 	if change.newConfig != nil {
-		config = config.Merge(change.newConfig)
+		config = *change.newConfig
 	}
 
 	autoImportHost := newAutoImportRegistryCloneHost(
@@ -427,7 +429,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 	oldAutoImports := s.AutoImports
 	if oldAutoImports == nil {
-		oldAutoImports = autoimport.NewRegistry(s.toPath, s.allUserPreferences.GetPreferences(string(prepareAutoImports)))
+		oldAutoImports = autoimport.NewRegistry(s.toPath, s.userPreferences)
 	}
 	var autoImportsWatch *WatchedFiles[map[tspath.Path]string]
 	autoImports, err := oldAutoImports.Clone(ctx, autoimport.RegistryChange{
@@ -437,7 +439,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		Created:         change.fileChanges.Created,
 		Deleted:         change.fileChanges.Deleted,
 		RebuiltPrograms: projectsWithNewProgramStructure,
-		UserPreferences: config.GetPreferences(string(prepareAutoImports)),
+		UserPreferences: change.newConfig,
 	}, autoImportHost, logger.Fork("UpdateAutoImports"))
 	if err == nil {
 		autoImportsWatch = s.autoImportsWatch.Clone(autoImports.NodeModulesDirectories())
@@ -505,6 +507,21 @@ func (s *Snapshot) ref() {
 	}
 }
 
+// tryRef attempts to increment the snapshot's reference count. If the
+// snapshot is already disposed (refCount == 0), it returns false without
+// modifying the count. On success the caller must eventually call Deref.
+func (s *Snapshot) tryRef() bool {
+	for {
+		rc := s.refCount.Load()
+		if rc <= 0 {
+			return false
+		}
+		if s.refCount.CompareAndSwap(rc, rc+1) {
+			return true
+		}
+	}
+}
+
 // Deref decrements the snapshot's reference count. When the count reaches
 // zero, the snapshot is disposed and its resources are released.
 func (s *Snapshot) Deref(session *Session) {
@@ -520,6 +537,13 @@ func (s *Snapshot) Deref(session *Session) {
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			// This program is no longer referenced by any snapshot.
+			// Mark its checker pool as discarded so its idle-cleanup timer stops
+			// keeping the pool alive, allowing the pool and any idle checkers it
+			// still references to be reclaimed when the pool is garbage-collected.
+			if project.checkerPool != nil {
+				project.checkerPool.Discard()
+			}
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}

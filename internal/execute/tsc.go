@@ -19,21 +19,47 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
+	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+func startTracingIfNeeded(sys tsc.System, config *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) *tracing.Tracing {
+	traceDir := config.CompilerOptions().GenerateTrace
+	if traceDir == "" {
+		return nil
+	}
+	configFilePath := ""
+	if config.ConfigFile != nil && config.ConfigFile.SourceFile != nil {
+		configFilePath = config.ConfigFile.SourceFile.FileName()
+	}
+	tr, err := tracing.StartTracing(sys.FS(), traceDir, configFilePath, testing != nil)
+	if err != nil {
+		fmt.Fprintf(sys.Writer(), "Warning: Failed to start tracing: %v\n", err)
+	}
+	return tr
+}
+
+func stopTracing(sys tsc.System, tr *tracing.Tracing) {
+	if tr == nil {
+		return
+	}
+	if err := tr.StopTracing(); err != nil {
+		fmt.Fprintf(sys.Writer(), "Warning: Failed to stop tracing: %v\n", err)
+	}
+}
+
+func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
-			return tscBuildCompilation(sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys), testing)
+			return tscBuildCompilation(ctx, sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys), testing)
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
-	return tscCompilation(sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
+	return tscCompilation(ctx, sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
 }
 
 func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
@@ -61,7 +87,7 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 	return tsc.ExitStatusSuccess
 }
 
-func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+func tscBuildCompilation(ctx context.Context, sys tsc.System, buildCommand *tsoptions.ParsedBuildCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	locale := buildCommand.Locale()
 	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, buildCommand.CompilerOptions)
 
@@ -89,10 +115,10 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		Command: buildCommand,
 		Testing: testing,
 	})
-	return orchestrator.Start()
+	return orchestrator.Start(ctx)
 }
 
-func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	configFileName := ""
 	locale := commandLine.Locale()
 	reportDiagnostic := tsc.CreateDiagnosticReporter(sys, sys.Writer(), locale, commandLine.CompilerOptions())
@@ -175,9 +201,9 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	configForCompilation := commandLine
 	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	var compileTimes tsc.CompileTimes
+	var commandLineRaw *collections.OrderedMap[string, any]
 	if configFileName != "" {
 		configStart := sys.Now()
-		var commandLineRaw *collections.OrderedMap[string, any]
 		if raw, ok := commandLine.Raw.(*collections.OrderedMap[string, any]); ok {
 			// Wrap command line options in a "compilerOptions" key to match tsconfig.json structure
 			wrapped := &collections.OrderedMap[string, any]{}
@@ -208,11 +234,12 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 			sys,
 			configForCompilation,
 			compilerOptionsFromCommandLine,
+			commandLineRaw,
 			reportDiagnostic,
 			reportErrorSummary,
 			testing,
 		)
-		watcher.start()
+		watcher.start(ctx)
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
 		return performIncrementalCompilation(
@@ -267,11 +294,14 @@ func performIncrementalCompilation(
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
-	// todo: cache, statistics, tracing
+
+	tr := startTracingIfNeeded(sys, config, testing)
+
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:  config,
+		Host:    host,
+		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
@@ -287,7 +317,11 @@ func performIncrementalCompilation(
 		Writer:             sys.Writer(),
 		CompileTimes:       compileTimes,
 		Testing:            testing,
+		Tracing:            tr,
 	})
+
+	stopTracing(sys, tr)
+
 	if testing != nil {
 		testing.OnProgram(incrementalProgram)
 	}
@@ -306,11 +340,14 @@ func performCompilation(
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
-	// todo: cache, statistics, tracing
+
+	tr := startTracingIfNeeded(sys, config, testing)
+
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:  config,
+		Host:    host,
+		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
@@ -323,7 +360,11 @@ func performCompilation(
 		Writer:             sys.Writer(),
 		CompileTimes:       compileTimes,
 		Testing:            testing,
+		Tracing:            tr,
 	})
+
+	stopTracing(sys, tr)
+
 	return tsc.CommandLineResult{
 		Status: result.Status,
 	}

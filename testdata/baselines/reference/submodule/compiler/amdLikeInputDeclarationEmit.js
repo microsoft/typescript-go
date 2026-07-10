@@ -33,4 +33,7 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
 
 
 //// [ExtendedClass.d.ts]
-export {};
+declare const ExtendedClass: new () => {
+    f: () => "something";
+} & import("deps/BaseClass");
+export = ExtendedClass;

@@ -8,27 +8,27 @@ function foo() {
     module.exports = exports = function (o) {
 >module.exports = exports = function (o) {        return (o == null) ? create(base) : defineProperties(Object(o), descriptors);    } : (o: any) => any
 >module.exports : (o: any) => any
->module : { "export=": (o: any) => any; }
+>module : { exports: (o: any) => any; }
 >exports : (o: any) => any
 >exports = function (o) {        return (o == null) ? create(base) : defineProperties(Object(o), descriptors);    } : (o: any) => any
->exports : any
+>exports : (o: any) => any
 >function (o) {        return (o == null) ? create(base) : defineProperties(Object(o), descriptors);    } : (o: any) => any
 >o : any
 
         return (o == null) ? create(base) : defineProperties(Object(o), descriptors);
->(o == null) ? create(base) : defineProperties(Object(o), descriptors) : any
+>(o == null) ? create(base) : defineProperties(Object(o), descriptors) : error
 >(o == null) : boolean
 >o == null : boolean
 >o : any
->create(base) : any
->create : any
->base : any
->defineProperties(Object(o), descriptors) : any
->defineProperties : any
+>create(base) : error
+>create : error
+>base : error
+>defineProperties(Object(o), descriptors) : error
+>defineProperties : error
 >Object(o) : any
 >Object : ObjectConstructor
 >o : any
->descriptors : any
+>descriptors : error
 
     };
     const m = function () {
@@ -39,8 +39,8 @@ function foo() {
     }
     exports.methods = m;
 >exports.methods = m : () => void
->exports.methods : any
->exports : typeof import(".")
+>exports.methods : error
+>exports : (o: any) => any
 >methods : any
 >m : () => void
 }

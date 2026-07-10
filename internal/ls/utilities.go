@@ -304,7 +304,7 @@ func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) 
 	return l.converters.PositionToLineAndCharacter(file, core.TextPos(position))
 }
 
-func quote(file *ast.SourceFile, preferences *lsutil.UserPreferences, text string) string {
+func quote(file *ast.SourceFile, preferences lsutil.UserPreferences, text string) string {
 	// Editors can pass in undefined or empty string - we want to infer the preference in those cases.
 	quotePreference := lsutil.GetQuotePreference(file, preferences)
 	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
@@ -608,14 +608,14 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	if node.Kind == ast.KindExtendsKeyword {
 		// ... <T /**/extends [|U|]> ...
 		if parent.Kind == ast.KindTypeParameter {
-			if constraint := parent.AsTypeParameter().Constraint; constraint != nil && constraint.Kind == ast.KindTypeReference {
-				return constraint.AsTypeReference().TypeName
+			if constraint := parent.AsTypeParameterDeclaration().Constraint; constraint != nil && constraint.Kind == ast.KindTypeReference {
+				return constraint.AsTypeReferenceNode().TypeName
 			}
 		}
 		// ... T /**/extends [|U|] ? ...
 		if parent.Kind == ast.KindConditionalType {
 			if extendsType := parent.AsConditionalTypeNode().ExtendsType; extendsType != nil && extendsType.Kind == ast.KindTypeReference {
-				return extendsType.AsTypeReference().TypeName
+				return extendsType.AsTypeReferenceNode().TypeName
 			}
 		}
 	}
@@ -838,7 +838,7 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 
 func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 	switch node.Kind {
-	case ast.KindVariableDeclaration, ast.KindCommonJSExport, ast.KindParameter, ast.KindBindingElement,
+	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement,
 		ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment,
 		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
 		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindCatchClause, ast.KindJsxAttribute:
@@ -860,7 +860,7 @@ func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 		}
 
 	case ast.KindEnumDeclaration, ast.KindNamedImports, ast.KindImportSpecifier, ast.KindImportEqualsDeclaration, ast.KindImportDeclaration,
-		ast.KindJSImportDeclaration, ast.KindExportAssignment, ast.KindJSExportAssignment, ast.KindExportDeclaration:
+		ast.KindJSImportDeclaration, ast.KindExportAssignment, ast.KindExportDeclaration:
 		return ast.SemanticMeaningAll
 
 	// An external module can be a Value
@@ -1269,7 +1269,7 @@ func getContainingObjectLiteralElementWorker(node *ast.Node) *ast.Node {
 			return nil
 		}
 		fallthrough
-	case ast.KindIdentifier:
+	case ast.KindIdentifier, ast.KindJsxNamespacedName:
 		if isObjectLiteralOrJsxElement(node.Parent) && (node.Parent.Parent.Kind == ast.KindObjectLiteralExpression || node.Parent.Parent.Kind == ast.KindJsxAttributes) && node.Parent.Name() == node {
 			return node.Parent
 		}
@@ -1360,7 +1360,8 @@ func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Chec
 	case ast.KindBinaryExpression:
 		if isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
 			return typeChecker.GetTypeAtLocation(
-				core.IfElse(node == parent.AsBinaryExpression().Right, parent.AsBinaryExpression().Left, parent.AsBinaryExpression().Right))
+				core.IfElse(node == parent.AsBinaryExpression().Right, parent.AsBinaryExpression().Left, parent.AsBinaryExpression().Right),
+			)
 		}
 		return typeChecker.GetContextualType(node, contextFlags)
 	case ast.KindCaseClause:

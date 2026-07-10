@@ -78,9 +78,18 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 	pos := 0
 	i := 0
 	for i < len(s) {
-		ch, size := utf8.DecodeRuneInString(s[i:])
+		ch, size := stringutil.DecodeJSStringRune(s[i:])
 
 		escape := false
+		if ch >= 0xD800 && ch <= 0xDFFF {
+			escape = true
+		} else if ch == utf8.RuneError && size == 1 {
+			// A stray byte that is not valid UTF-8 (for example, a fragment of a
+			// surrogate sentinel left behind by code that sliced the string by
+			// byte). Escape it as the Unicode replacement character so the output
+			// is always well-formed rather than containing raw invalid bytes.
+			escape = true
+		}
 
 		// This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,
 		// paragraphSeparator, and nextLine. The latter three are just desirable to suppress new lines in
@@ -136,6 +145,8 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 					ch -= 0x10000
 					encodeUtf16EscapeSequence(b, (ch&0b11111111110000000000>>10)+0xD800)
 					encodeUtf16EscapeSequence(b, (ch&0b00000000001111111111)+0xDC00)
+				} else if ch >= 0xD800 && ch <= 0xDFFF {
+					encodeUtf16EscapeSequence(b, ch)
 				} else if ch == 0 {
 					if i+1 < len(s) && stringutil.IsDigit(rune(s[i+1])) {
 						// If the null character is followed by digits, print as a hex escape to prevent the result from
@@ -335,7 +346,7 @@ func RangeIsOnSingleLine(r core.TextRange, sourceFile *ast.SourceFile) bool {
 	return rangeStartIsOnSameLineAsRangeEnd(r, r, sourceFile)
 }
 
-func rangeStartPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
+func RangeStartPositionsAreOnSameLine(range1 core.TextRange, range2 core.TextRange, sourceFile *ast.SourceFile) bool {
 	return PositionsAreOnSameLine(
 		getStartPositionOfRange(range1, sourceFile, false /*includeComments*/),
 		getStartPositionOfRange(range2, sourceFile, false /*includeComments*/),
@@ -408,14 +419,13 @@ func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.Sour
 	return -1
 }
 
-func siblingNodePositionsAreComparable(previousNode *ast.Node, nextNode *ast.Node) bool {
+func siblingNodePositionsAreComparable(emitContext *EmitContext, previousNode *ast.Node, nextNode *ast.Node) bool {
 	if nextNode.Pos() < previousNode.End() {
 		return false
 	}
 
-	// TODO(rbuckton)
-	// previousNode = getOriginalNode(previousNode);
-	// nextNode = getOriginalNode(nextNode);
+	previousNode = emitContext.MostOriginal(previousNode)
+	nextNode = emitContext.MostOriginal(nextNode)
 	parent := previousNode.Parent
 	if parent == nil || parent != nextNode.Parent {
 		return false
@@ -487,8 +497,6 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		return parent.AsIntersectionTypeNode().Types
 	case ast.KindArrayLiteralExpression, ast.KindTupleType, ast.KindNamedImports, ast.KindNamedExports:
 		return parent.ElementList()
-	case ast.KindCommaListExpression:
-		panic("not implemented")
 	case ast.KindObjectLiteralExpression, ast.KindJsxAttributes:
 		return parent.PropertyList()
 	case ast.KindCallExpression:
@@ -556,12 +564,12 @@ func canHaveDecorators(node *ast.Node) bool {
 	return false
 }
 
-func originalNodesHaveSameParent(nodeA *ast.Node, nodeB *ast.Node) bool {
-	// TODO(rbuckton): nodeA = getOriginalNode(nodeA)
+func originalNodesHaveSameParent(emitContext *EmitContext, nodeA *ast.Node, nodeB *ast.Node) bool {
+	nodeA = emitContext.MostOriginal(nodeA)
 	if nodeA.Parent != nil {
-		// For performance, do not call `getOriginalNode` for `nodeB` if `nodeA` doesn't even
+		// For performance, do not call `MostOriginal` for `nodeB` if `nodeA` doesn't even
 		// have a parent node.
-		// TODO(rbuckton): nodeB = getOriginalNode(nodeB)
+		nodeB = emitContext.MostOriginal(nodeB)
 		return nodeA.Parent == nodeB.Parent
 	}
 	return false
@@ -586,7 +594,7 @@ func tryGetEnd(node interface{ End() int }) (int, bool) {
 		if v != nil {
 			return v.End(), true
 		}
-	case (core.TextRange):
+	case core.TextRange:
 		return v.End(), true
 	default:
 		panic(fmt.Sprintf("unhandled type: %T", node))
@@ -852,7 +860,7 @@ func IsRecognizedTripleSlashComment(text string, commentRange ast.CommentRange) 
 
 func isJSDocLikeText(text string, comment ast.CommentRange) bool {
 	return comment.Kind == ast.KindMultiLineCommentTrivia &&
-		comment.Len() > 5 &&
+		comment.Len() >= 5 &&
 		text[comment.Pos()+2] == '*' &&
 		text[comment.Pos()+3] != '/'
 }
@@ -912,16 +920,25 @@ func newLineCharacterCache(source sourcemap.Source) *lineCharacterCache {
 // offset from the start of that line for the given byte position.
 func (c *lineCharacterCache) getLineAndCharacter(pos int) (line int, character core.UTF16Offset) {
 	line = scanner.ComputeLineOfPosition(c.lineMap, pos)
-	if c.hasCached && line == c.cachedLine && pos >= c.cachedPos {
+	lineStart := int(c.lineMap[line])
+	// When pos is beyond the source text (e.g., for error-recovery tokens like
+	// missing closing braces), we can't slice past the text end. Compute the
+	// UTF-16 length up to EOF and add the remaining byte offset arithmetically,
+	// matching TypeScript's computeLineAndCharacterOfPosition which uses
+	// arithmetic (position - lineStarts[lineNumber]) and handles this implicitly.
+	endPos := min(pos, len(c.text))
+	if c.hasCached && line == c.cachedLine && endPos >= c.cachedPos {
 		// Incremental: only count UTF-16 code units from the last cached position.
-		character = c.cachedChar + core.UTF16Len(c.text[c.cachedPos:pos])
+		character = c.cachedChar + core.UTF16Len(c.text[c.cachedPos:endPos])
 	} else {
 		// Full computation from line start.
-		character = core.UTF16Len(c.text[c.lineMap[line]:pos])
+		character = core.UTF16Len(c.text[lineStart:endPos])
 	}
+	cachedChar := character
+	character += core.UTF16Offset(pos - endPos)
 	c.cachedLine = line
-	c.cachedPos = pos
-	c.cachedChar = character
+	c.cachedPos = endPos
+	c.cachedChar = cachedChar
 	c.hasCached = true
 	return line, character
 }

@@ -1,8 +1,7 @@
 package incremental
 
 import (
-	"strings"
-
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -18,7 +17,7 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, config *tsoptions.ParsedCommandLi
 		filePathSet:        make([]*collections.Set[tspath.Path], 0, len(buildInfo.FileIdsList)),
 	}
 	to.filePaths = core.Map(buildInfo.FileNames, func(fileName string) tspath.Path {
-		if !strings.HasPrefix(fileName, ".") {
+		if IsBuildInfoFileNameDefaultLibrary(fileName) {
 			return tspath.ToPath(tspath.CombinePaths(host.DefaultLibraryPath(), fileName), host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
 		}
 		return tspath.ToPath(fileName, to.buildInfoDirectory, config.UseCaseSensitiveFileNames())
@@ -43,6 +42,7 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, config *tsoptions.ParsedCommandLi
 	to.snapshot.hasErrors = core.IfElse(buildInfo.Errors, core.TSTrue, core.TSFalse)
 	to.snapshot.hasSemanticErrors = buildInfo.SemanticErrors
 	to.snapshot.checkPending = buildInfo.CheckPending
+	to.setPackageJsons()
 	return &to.snapshot
 }
 
@@ -86,6 +86,7 @@ func (t *toSnapshot) toBuildInfoDiagnosticsWithFileName(diagnostics []*BuildInfo
 			reportsUnnecessary: d.ReportsUnnecessary,
 			reportsDeprecated:  d.ReportsDeprecated,
 			skippedOnNoEmit:    d.SkippedOnNoEmit,
+			repopulateInfo:     fromBuildInfoRepopulateInfo(d.RepopulateInfo),
 		}
 	})
 }
@@ -93,6 +94,18 @@ func (t *toSnapshot) toBuildInfoDiagnosticsWithFileName(diagnostics []*BuildInfo
 func (t *toSnapshot) toDiagnosticsOrBuildInfoDiagnosticsWithFileName(dig *BuildInfoDiagnosticsOfFile) *DiagnosticsOrBuildInfoDiagnosticsWithFileName {
 	return &DiagnosticsOrBuildInfoDiagnosticsWithFileName{
 		buildInfoDiagnostics: t.toBuildInfoDiagnosticsWithFileName(dig.Diagnostics),
+	}
+}
+
+func fromBuildInfoRepopulateInfo(info *BuildInfoRepopulateInfo) *ast.RepopulateDiagnosticInfo {
+	if info == nil {
+		return nil
+	}
+	return &ast.RepopulateDiagnosticInfo{
+		Kind:            info.Kind,
+		ModuleReference: info.ModuleReference,
+		Mode:            info.Mode,
+		PackageName:     info.PackageName,
 	}
 }
 
@@ -168,5 +181,18 @@ func (t *toSnapshot) setAffectedFilesPendingEmit() {
 	ownOptionsEmitKind := GetFileEmitKind(t.snapshot.options)
 	for _, pendingEmit := range t.buildInfo.AffectedFilesPendingEmit {
 		t.snapshot.affectedFilesPendingEmit.Store(t.toFilePath(pendingEmit.FileId), core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind))
+	}
+}
+
+func (t *toSnapshot) setPackageJsons() {
+	if t.buildInfo.PackageJsons != nil {
+		t.snapshot.packageJsons = core.Map(t.buildInfo.PackageJsons, t.toAbsolutePath)
+	} else {
+		t.snapshot.packageJsons = make([]string, 0)
+	}
+	if t.buildInfo.MissingPackageJsons != nil {
+		t.snapshot.missingPackageJsons = core.Map(t.buildInfo.MissingPackageJsons, t.toAbsolutePath)
+	} else {
+		t.snapshot.missingPackageJsons = make([]string, 0)
 	}
 }

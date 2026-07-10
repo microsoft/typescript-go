@@ -11,13 +11,12 @@
 // const foo = t => t.y;
 //       ^^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | const foo: (t: T) => number
 // | ```
 // | 
 // | 
 // | *@template* `T` — Comment Text
-// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -33,7 +32,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst foo: (t: T) => number\n```\n\n\n*@template* `T` — Comment Text\n"
+        "value": "```typescript\nconst foo: (t: T) => number\n```\n\n\n*@template* `T` — Comment Text"
       },
       "range": {
         "start": {
@@ -44,7 +43,8 @@
           "line": 8,
           "character": 9
         }
-      }
+      },
+      "canIncreaseVerbosity": true
     }
   }
 ]

@@ -63,22 +63,41 @@ func parseNumber(value any) *int {
 	if num, ok := value.(int); ok {
 		return &num
 	}
+	if num, ok := value.(float64); ok {
+		n := int(num)
+		return &n
+	}
 	return nil
 }
 
-func parseProjectReference(json any) []*core.ProjectReference {
-	var result []*core.ProjectReference
+type projectReferenceParseResult struct {
+	reference     core.ProjectReference
+	hasPath       bool
+	pathValid     bool
+	hasCircular   bool
+	circularValid bool
+}
+
+func parseProjectReference(json any) *projectReferenceParseResult {
 	if v, ok := json.(*collections.OrderedMap[string, any]); ok {
-		var reference core.ProjectReference
-		if v, ok := v.Get("path"); ok {
-			reference.Path = v.(string)
+		result := &projectReferenceParseResult{}
+		if value, ok := v.Get("path"); ok {
+			result.hasPath = true
+			if path, ok := value.(string); ok {
+				result.reference.Path = path
+				result.pathValid = true
+			}
 		}
-		if v, ok := v.Get("circular"); ok {
-			reference.Circular = v.(bool)
+		if value, ok := v.Get("circular"); ok {
+			result.hasCircular = true
+			if circular, ok := value.(bool); ok {
+				result.reference.Circular = circular
+				result.circularValid = true
+			}
 		}
-		result = append(result, &reference)
+		return result
 	}
-	return result
+	return nil
 }
 
 func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
@@ -118,6 +137,7 @@ func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
 type optionParser interface {
 	ParseOption(key string, value any) []*ast.Diagnostic
 	UnknownOptionDiagnostic() *diagnostics.Message
+	UnknownDidYouMeanDiagnostic() *diagnostics.Message
 }
 
 type compilerOptionsParser struct {
@@ -132,6 +152,10 @@ func (o *compilerOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return extraKeyDiagnostics("compilerOptions")
 }
 
+func (o *compilerOptionsParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
+	return extraKeyDidYouMeanDiagnostics("compilerOptions")
+}
+
 type watchOptionsParser struct {
 	*core.WatchOptions
 }
@@ -142,6 +166,10 @@ func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnosti
 
 func (o *watchOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return extraKeyDiagnostics("watchOptions")
+}
+
+func (o *watchOptionsParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
+	return extraKeyDidYouMeanDiagnostics("watchOptions")
 }
 
 type typeAcquisitionParser struct {
@@ -156,6 +184,10 @@ func (o *typeAcquisitionParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return extraKeyDiagnostics("typeAcquisition")
 }
 
+func (o *typeAcquisitionParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
+	return extraKeyDidYouMeanDiagnostics("typeAcquisition")
+}
+
 type buildOptionsParser struct {
 	*core.BuildOptions
 }
@@ -166,6 +198,10 @@ func (o *buildOptionsParser) ParseOption(key string, value any) []*ast.Diagnosti
 
 func (o *buildOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return extraKeyDiagnostics("buildOptions")
+}
+
+func (o *buildOptionsParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
+	return extraKeyDidYouMeanDiagnostics("buildOptions")
 }
 
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
@@ -619,6 +655,14 @@ func ConvertOptionToAbsolutePath(o string, v any, optionMap CommandLineOptionNam
 			if arr, ok := v.([]string); ok {
 				return core.Map(arr, func(item string) string {
 					return tspath.GetNormalizedAbsolutePath(item, cwd)
+				}), true
+			}
+			if arr, ok := v.([]any); ok {
+				return core.Map(arr, func(item any) any {
+					if s, isStr := item.(string); isStr {
+						return tspath.GetNormalizedAbsolutePath(s, cwd)
+					}
+					return item
 				}), true
 			}
 		}

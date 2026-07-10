@@ -94,18 +94,26 @@ func (t *PseudoType) AsPseudoTypeDirect() *PseudoTypeDirect { return t.data.(*Ps
 // PseudoTypeInferred directly encodes the type referred to by a given Expression
 // These represent cases where the expression was too complex for the pseudochecker.
 // Most of the time, these locations will produce an error under ID.
+// Specific error nodes (shorthand properties, spread assignments, etc.) are stored on the
+// ErrorNodes field, collected during pseudochecker construction.
 type PseudoTypeInferred struct {
 	PseudoTypeBase
-	Expression *ast.Node
+	Expression        *ast.Node
+	ErrorNodes        []*ast.Node
+	IsSignatureReturn bool
 }
 
-func NewPseudoTypeInferred(expr *ast.Node) *PseudoType {
-	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr})
+func NewPseudoTypeInferred(expr *ast.Node, isSignatureReturn bool) *PseudoType {
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, IsSignatureReturn: isSignatureReturn})
+}
+
+func NewPseudoTypeInferredWithErrors(expr *ast.Node, isSignatureReturn bool, errorNodes []*ast.Node) *PseudoType {
+	return newPseudoType(PseudoTypeKindInferred, &PseudoTypeInferred{Expression: expr, ErrorNodes: errorNodes, IsSignatureReturn: isSignatureReturn})
 }
 
 func (t *PseudoType) AsPseudoTypeInferred() *PseudoTypeInferred { return t.data.(*PseudoTypeInferred) }
 
-// PseudoTypeNoResult is anlogous to PseudoTypeInferred in that it references a case
+// PseudoTypeNoResult is analogous to PseudoTypeInferred in that it references a case
 // where the type was too complex for the pseudochecker. Rather than an expression, however,
 // it is referring to the return type of a signature or declaration.
 type PseudoTypeNoResult struct {
@@ -253,16 +261,18 @@ func newPseudoObjectElement(kind PseudoObjectElementKind, name *ast.Node, option
 
 type PseudoObjectMethod struct {
 	PseudoObjectElement
-	Signature  *ast.Node
-	Parameters []*PseudoParameter
-	ReturnType *PseudoType
+	Signature      *ast.Node
+	TypeParameters []*ast.TypeParameterDeclaration
+	Parameters     []*PseudoParameter
+	ReturnType     *PseudoType
 }
 
-func NewPseudoObjectMethod(signature *ast.Node, name *ast.Node, optional bool, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
+func NewPseudoObjectMethod(signature *ast.Node, name *ast.Node, optional bool, typeParameters []*ast.TypeParameterDeclaration, parameters []*PseudoParameter, returnType *PseudoType) *PseudoObjectElement {
 	return newPseudoObjectElement(PseudoObjectElementKindMethod, name, optional, &PseudoObjectMethod{
-		Signature:  signature,
-		Parameters: parameters,
-		ReturnType: returnType,
+		Signature:      signature,
+		TypeParameters: typeParameters,
+		Parameters:     parameters,
+		ReturnType:     returnType,
 	})
 }
 

@@ -19,7 +19,7 @@
 // f1()
 // ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function f1(): void
 // | ```
 // | 
@@ -29,24 +29,22 @@
 // f2()
 // ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function f2(): void
 // | ```
 // | 
 // | 
 // | *@throws* — {E} description
-// | 
 // | ----------------------------------------------------------------------
 // f3()
 // ^^
 // | ----------------------------------------------------------------------
-// | ```tsx
+// | ```typescript
 // | function f3(): void
 // | ```
 // | 
 // | 
 // | *@throws* — description
-// | 
 // | ----------------------------------------------------------------------
 [
   {
@@ -62,7 +60,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f1(): void\n```\n\n\n*@throws* — {E}"
+        "value": "```typescript\nfunction f1(): void\n```\n\n\n*@throws* — {E}"
       },
       "range": {
         "start": {
@@ -89,7 +87,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f2(): void\n```\n\n\n*@throws* — {E} description\n"
+        "value": "```typescript\nfunction f2(): void\n```\n\n\n*@throws* — {E} description"
       },
       "range": {
         "start": {
@@ -116,7 +114,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction f3(): void\n```\n\n\n*@throws* — description\n"
+        "value": "```typescript\nfunction f3(): void\n```\n\n\n*@throws* — description"
       },
       "range": {
         "start": {

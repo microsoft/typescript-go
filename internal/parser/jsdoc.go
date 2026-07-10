@@ -78,7 +78,7 @@ func (p *Parser) withJSDoc(node *ast.Node, info jsdocScannerInfo) []*ast.Node {
 
 	// Should only be called once per node
 	p.hasDeprecatedTag = false
-	jsdoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
+	jsdoc := p.nodeSliceArena.NewSlice(len(ranges))[:0]
 	pos := node.Pos()
 	for _, comment := range ranges {
 		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End(), pos); parsed != nil {
@@ -193,11 +193,13 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 func (p *Parser) parseJSDocCommentWorker(start int, end int, fullStart int, indent int) *ast.Node {
 	// Initially we can parse out a tag.  We also have seen a starting asterisk.
 	// This is so that /** * @type */ doesn't parse.
-	tags := p.nodeSlicePool.NewSlice(1)[:0]
+	tags := p.nodeSliceArena.NewSlice(1)[:0]
 	tagsPos := -1
 	tagsEnd := -1
 	state := jsdocStateSawAsterisk
-	commentParts := p.nodeSlicePool.NewSlice(1)[:0]
+	backtickCount := 0
+	inFencedCodeBlock := false
+	commentParts := p.nodeSliceArena.NewSlice(1)[:0]
 	comments := p.jsdocCommentsSpace
 	commentsPos := -1
 	linkEnd := start
@@ -219,10 +221,22 @@ func (p *Parser) parseJSDocCommentWorker(start int, end int, fullStart int, inde
 	}
 loop:
 	for {
+		// Detect fenced code blocks by counting consecutive backtick tokens.
+		// Three or more consecutive backticks toggle the fenced code block state.
+		if p.token != ast.KindBacktickToken && backtickCount > 0 {
+			if backtickCount >= 3 {
+				inFencedCodeBlock = !inFencedCodeBlock
+			}
+			backtickCount = 0
+		}
 		switch p.token {
 		case ast.KindAtToken:
-			if !p.scanner.CanFollowJSDocAt() {
-				state = jsdocStateSavingComments
+			if inFencedCodeBlock || !p.scanner.CanFollowJSDocAt() {
+				if inFencedCodeBlock {
+					state = jsdocStateSavingBackticks
+				} else {
+					state = jsdocStateSavingComments
+				}
 				pushComment(p.scanner.TokenText())
 				break
 			}
@@ -280,10 +294,15 @@ loop:
 			break loop
 		case ast.KindJSDocCommentTextToken:
 			if state != jsdocStateSavingBackticks {
-				state = jsdocStateSavingComments
+				if inFencedCodeBlock {
+					state = jsdocStateSavingBackticks
+				} else {
+					state = jsdocStateSavingComments
+				}
 			}
 			pushComment(p.scanner.TokenValue())
 		case ast.KindBacktickToken:
+			backtickCount++
 			if state == jsdocStateSavingBackticks {
 				state = jsdocStateSavingComments
 			} else {
@@ -291,6 +310,11 @@ loop:
 			}
 			pushComment(p.scanner.TokenText())
 		case ast.KindOpenBraceToken:
+			if inFencedCodeBlock {
+				state = jsdocStateSavingBackticks
+				pushComment(p.scanner.TokenText())
+				break
+			}
 			state = jsdocStateSavingComments
 			commentEnd := p.scanner.TokenFullStart()
 			linkStart := p.scanner.TokenEnd() - 1
@@ -299,7 +323,7 @@ loop:
 				if linkEnd == start {
 					comments = removeLeadingNewlines(comments)
 				}
-				jsdocText := p.finishNodeWithEnd(p.factory.NewJSDocText(p.stringSlicePool.Clone(comments)), linkEnd, commentEnd)
+				jsdocText := p.finishNodeWithEnd(p.factory.NewJSDocText(p.stringSliceArena.Clone(comments)), linkEnd, commentEnd)
 				commentParts = append(commentParts, jsdocText, link)
 				comments = comments[:0]
 				linkEnd = p.scanner.TokenEnd()
@@ -311,7 +335,11 @@ loop:
 			// wasn't a tag, we can no longer parse a tag on this line until we hit the next
 			// line break.
 			if state != jsdocStateSavingBackticks {
-				state = jsdocStateSavingComments
+				if inFencedCodeBlock {
+					state = jsdocStateSavingBackticks
+				} else {
+					state = jsdocStateSavingComments
+				}
 			}
 			pushComment(p.scanner.TokenText())
 		}
@@ -329,7 +357,7 @@ loop:
 
 	if len(comments) > 0 {
 		comments[len(comments)-1] = strings.TrimRightFunc(comments[len(comments)-1], unicode.IsSpace)
-		jsdocText := p.finishNodeWithEnd(p.factory.NewJSDocText(p.stringSlicePool.Clone(comments)), linkEnd, commentsPos)
+		jsdocText := p.finishNodeWithEnd(p.factory.NewJSDocText(p.stringSliceArena.Clone(comments)), linkEnd, commentsPos)
 		commentParts = append(commentParts, jsdocText)
 	}
 
@@ -523,6 +551,8 @@ func (p *Parser) parseTagComments(indent int, initialMargin *string) *ast.NodeLi
 	p.jsdocTagCommentsPartsSpace = nil
 	linkEnd := -1
 	state := jsdocStateBeginningOfLine
+	backtickCount := 0
+	inFencedCodeBlock := false
 	if indent < 0 {
 		panic("indent must be a natural number")
 	}
@@ -545,6 +575,14 @@ func (p *Parser) parseTagComments(indent int, initialMargin *string) *ast.NodeLi
 	tok := p.token
 loop:
 	for {
+		// Detect fenced code blocks by counting consecutive backtick tokens.
+		// Three or more consecutive backticks toggle the fenced code block state.
+		if tok != ast.KindBacktickToken && backtickCount > 0 {
+			if backtickCount >= 3 {
+				inFencedCodeBlock = !inFencedCodeBlock
+			}
+			backtickCount = 0
+		}
 		switch tok {
 		case ast.KindNewLineTrivia:
 			state = jsdocStateBeginningOfLine
@@ -552,11 +590,15 @@ loop:
 			comments = append(comments, p.scanner.TokenText())
 			indent = 0
 		case ast.KindAtToken:
-			if p.scanner.CanFollowJSDocAt() {
+			if !inFencedCodeBlock && p.scanner.CanFollowJSDocAt() {
 				p.scanner.ResetPos(p.scanner.TokenEnd() - 1)
 				break loop
 			}
-			state = jsdocStateSavingComments
+			if inFencedCodeBlock {
+				state = jsdocStateSavingBackticks
+			} else {
+				state = jsdocStateSavingComments
+			}
 			pushComment(p.scanner.TokenText())
 		case ast.KindEndOfFile:
 			// Done
@@ -569,10 +611,19 @@ loop:
 			// if the whitespace crosses the margin, take only the whitespace that passes the margin
 			if margin > -1 && indent+len(whitespace) > margin {
 				comments = append(comments, whitespace[max(margin-indent, 0):])
-				state = jsdocStateSavingComments
+				if inFencedCodeBlock {
+					state = jsdocStateSavingBackticks
+				} else {
+					state = jsdocStateSavingComments
+				}
 			}
 			indent += len(whitespace)
 		case ast.KindOpenBraceToken:
+			if inFencedCodeBlock {
+				state = jsdocStateSavingBackticks
+				pushComment(p.scanner.TokenText())
+				break
+			}
 			state = jsdocStateSavingComments
 			commentEnd := p.scanner.TokenFullStart()
 			linkStart := p.scanner.TokenEnd() - 1
@@ -584,7 +635,7 @@ loop:
 				} else {
 					commentStart = commentsPos
 				}
-				text := p.finishNodeWithEnd(p.factory.NewJSDocText(p.stringSlicePool.Clone(comments)), commentStart, commentEnd)
+				text := p.finishNodeWithEnd(p.factory.NewJSDocText(p.stringSliceArena.Clone(comments)), commentStart, commentEnd)
 				parts = append(parts, text)
 				parts = append(parts, link)
 				comments = comments[:0]
@@ -593,6 +644,7 @@ loop:
 				pushComment(p.scanner.TokenText())
 			}
 		case ast.KindBacktickToken:
+			backtickCount++
 			if state == jsdocStateSavingBackticks {
 				state = jsdocStateSavingComments
 			} else {
@@ -601,7 +653,11 @@ loop:
 			pushComment(p.scanner.TokenText())
 		case ast.KindJSDocCommentTextToken:
 			if state != jsdocStateSavingBackticks {
-				state = jsdocStateSavingComments
+				if inFencedCodeBlock {
+					state = jsdocStateSavingBackticks
+				} else {
+					state = jsdocStateSavingComments
+				}
 				// leading identifiers start recording as well
 			}
 			pushComment(p.scanner.TokenValue())
@@ -616,7 +672,11 @@ loop:
 			fallthrough
 		default:
 			if state != jsdocStateSavingBackticks {
-				state = jsdocStateSavingComments
+				if inFencedCodeBlock {
+					state = jsdocStateSavingBackticks
+				} else {
+					state = jsdocStateSavingComments
+				}
 				// leading identifiers start recording as well
 			}
 			pushComment(p.scanner.TokenText())
@@ -631,6 +691,7 @@ loop:
 	p.jsdocTagCommentsSpace = comments[:0]
 
 	comments = removeLeadingNewlines(comments)
+	comments = removeTrailingWhitespace(comments)
 	if len(comments) > 0 {
 		var commentStart int
 		if linkEnd > -1 {
@@ -638,14 +699,14 @@ loop:
 		} else {
 			commentStart = commentsPos
 		}
-		text := p.finishNode(p.factory.NewJSDocText(p.stringSlicePool.Clone(comments)), commentStart)
+		text := p.finishNode(p.factory.NewJSDocText(p.stringSliceArena.Clone(comments)), commentStart)
 		parts = append(parts, text)
 	}
 
 	p.jsdocTagCommentsPartsSpace = parts[:0]
 
 	if len(parts) > 0 {
-		return p.newNodeList(core.NewTextRange(commentsPos, p.scanner.TokenEnd()), p.nodeSlicePool.Clone(parts))
+		return p.newNodeList(core.NewTextRange(commentsPos, p.scanner.TokenEnd()), p.nodeSliceArena.Clone(parts))
 	}
 	return nil
 }
@@ -789,11 +850,8 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 		isNameFirst = true
 	}
 	var result *ast.Node /* JSDocPropertyTag | JSDocParameterTag */
-	if target == propertyLikeParseProperty {
-		result = p.factory.NewJSDocPropertyTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment)
-	} else {
-		result = p.factory.NewJSDocParameterTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment)
-	}
+	kind := core.IfElse(target == propertyLikeParseProperty, ast.KindJSDocPropertyTag, ast.KindJSDocParameterTag)
+	result = p.factory.NewJSDocParameterOrPropertyTag(kind, tagName, name, isBracketed, typeExpression, isNameFirst, comment)
 	return p.finishNode(result, start)
 }
 
@@ -808,9 +866,10 @@ func (p *Parser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.Enti
 				p.rewind(state)
 				break
 			}
-			if child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag {
+			switch child.Kind {
+			case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
 				children = append(children, child)
-			} else if child.Kind == ast.KindJSDocTemplateTag {
+			case ast.KindJSDocTemplateTag:
 				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			}
 		}
@@ -930,10 +989,38 @@ func (p *Parser) parseThisTag(start int, tagName *ast.IdentifierNode, margin int
 	return p.finishNode(result, start)
 }
 
+func (p *Parser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
+	start := p.scanner.TokenStart()
+	if !tokenIsIdentifierOrKeyword(p.token) {
+		return nil
+	}
+	typeNameOrNamespaceName := p.parseJSDocIdentifierName(nil)
+	if p.parseOptionalJsdoc(ast.KindDotToken) {
+		body := p.parseJSDocTypeNameWithNamespace(true /*nested*/)
+		jsDocNamespaceNode := p.factory.NewModuleDeclaration(
+			nil,                      /*modifiers*/
+			ast.KindNamespaceKeyword, /*keyword*/
+			typeNameOrNamespaceName,
+			body,
+		)
+		if nested {
+			jsDocNamespaceNode.Flags |= ast.NodeFlagsNestedNamespace
+		}
+		return p.finishNode(jsDocNamespaceNode, start)
+	}
+	if nested {
+		typeNameOrNamespaceName.Flags |= ast.NodeFlagsIdentifierIsInJSDocNamespace
+	}
+	return typeNameOrNamespaceName
+}
+
 func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	typeExpression := p.tryParseTypeExpression()
 	p.skipWhitespaceOrAsterisk()
-	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	fullName := p.parseJSDocTypeNameWithNamespace(false /*nested*/)
+	if fullName == nil {
+		fullName = p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	}
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 
@@ -950,11 +1037,11 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 				p.rewind(state)
 				break
 			}
-			if child.Kind == ast.KindJSDocTemplateTag {
-				break
-			}
 			hasChildren = true
-			if child.Kind == ast.KindJSDocTypeTag {
+			switch child.Kind {
+			case ast.KindJSDocTemplateTag:
+				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+			case ast.KindJSDocTypeTag:
 				if childTypeTag == nil {
 					childTypeTag = child.AsJSDocTypeTag()
 				} else {
@@ -963,9 +1050,8 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 						related := ast.NewDiagnostic(nil, core.NewTextRange(0, 0), diagnostics.The_tag_was_first_specified_here)
 						lastError.AddRelatedInfo(related)
 					}
-					break
 				}
-			} else {
+			default:
 				jsdocPropertyTags = append(jsdocPropertyTags, child)
 			}
 		}
@@ -1025,16 +1111,16 @@ func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 		}
 		if child.Kind == ast.KindJSDocTemplateTag {
 			p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
-			break
+		} else {
+			parameters = append(parameters, child)
 		}
-		parameters = append(parameters, child)
 	}
 	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), parameters)
 }
 
 func (p *Parser) parseJSDocSignature(start int, indent int) *ast.Node {
 	parameters := p.parseCallbackTagParameters(indent)
-	var returnTag *ast.JSDocTag
+	var returnTag *ast.Node
 	state := p.mark()
 	if p.parseOptionalJsdoc(ast.KindAtToken) {
 		tag := p.parseTag(nil, indent)
@@ -1049,7 +1135,10 @@ func (p *Parser) parseJSDocSignature(start int, indent int) *ast.Node {
 }
 
 func (p *Parser) parseCallbackTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	fullName := p.parseJSDocTypeNameWithNamespace(false /*nested*/)
+	if fullName == nil {
+		fullName = p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	}
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 	typeExpression := p.parseJSDocSignature(p.nodePos(), indent)
@@ -1184,7 +1273,7 @@ func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
 	if ast.NodeIsMissing(name) {
 		return nil
 	}
-	return p.finishNode(p.factory.NewTypeParameterDeclaration(modifiers, name, nil /*constraint*/, defaultType), typeParameterPos)
+	return p.finishNode(p.factory.NewTypeParameterDeclaration(modifiers, name, nil /*constraint*/, nil /*expression*/, defaultType), typeParameterPos)
 }
 
 func (p *Parser) parseTemplateTagTypeParameters() *ast.TypeParameterList {
