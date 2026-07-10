@@ -352,7 +352,6 @@ const (
 	NodeCheckFlagsAssignmentsMarked                        NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
 	NodeCheckFlagsContainsClassWithPrivateIdentifiers      NodeCheckFlags = 1 << 20 // Marked on all block-scoped containers containing a class with private identifiers.
 	NodeCheckFlagsContainsSuperPropertyInStaticInitializer NodeCheckFlags = 1 << 21 // Marked on all block-scoped containers containing a static initializer with 'super.x' or 'super[x]'.
-	NodeCheckFlagsInCheckIdentifier                        NodeCheckFlags = 1 << 22
 	NodeCheckFlagsInitializerIsUndefined                   NodeCheckFlags = 1 << 24
 	NodeCheckFlagsInitializerIsUndefinedComputed           NodeCheckFlags = 1 << 25
 )
