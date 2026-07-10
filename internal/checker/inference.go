@@ -419,7 +419,7 @@ func compareTypesAndDepth(t1, t2 *Type) int {
 // Return the depth of the given type up to the given maximum depth. For generic aliased types
 // and type references, the depth is one plus the largest type argument depth. For union and
 // intersection types, the depth is the largest constituent type depth. For all other types,
-// the depth is zero. The maxinmum depth limits infinite recursion of circular types.
+// the depth is zero. The maximum depth limits infinite recursion of circular types.
 func getTypeDepth(t *Type, maxDepth int) int {
 	if maxDepth != 0 {
 		if t.alias != nil && len(t.alias.typeArguments) != 0 {
