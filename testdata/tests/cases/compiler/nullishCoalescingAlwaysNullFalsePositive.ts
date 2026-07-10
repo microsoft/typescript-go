@@ -5,3 +5,6 @@
 
 declare let a: unknown, b: unknown;
 const p = (a ? b ?? null : null) ?? 0;
+
+declare let x: string | null | undefined;
+const q = (x ??= null) ?? 0;

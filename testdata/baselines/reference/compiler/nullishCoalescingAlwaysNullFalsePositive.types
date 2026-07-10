@@ -18,3 +18,14 @@ const p = (a ? b ?? null : null) ?? 0;
 >b : unknown
 >0 : 0
 
+declare let x: string | null | undefined;
+>x : string | null | undefined
+
+const q = (x ??= null) ?? 0;
+>q : string | 0
+>(x ??= null) ?? 0 : string | 0
+>(x ??= null) : string | null
+>x ??= null : string | null
+>x : string | null | undefined
+>0 : 0
+

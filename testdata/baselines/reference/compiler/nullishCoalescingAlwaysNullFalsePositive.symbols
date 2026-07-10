@@ -13,3 +13,10 @@ const p = (a ? b ?? null : null) ?? 0;
 >a : Symbol(a, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 11))
 >b : Symbol(b, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 3, 23))
 
+declare let x: string | null | undefined;
+>x : Symbol(x, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 6, 11))
+
+const q = (x ??= null) ?? 0;
+>q : Symbol(q, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 7, 5))
+>x : Symbol(x, Decl(nullishCoalescingAlwaysNullFalsePositive.ts, 6, 11))
+
