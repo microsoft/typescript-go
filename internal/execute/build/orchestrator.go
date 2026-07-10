@@ -229,16 +229,20 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}
 	o.GenerateGraph(nil)
+	result := o.buildOrClean(ctx)
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		// Watch mode: the initial build runs to completion; cancellation is observed
-		// at the RunLoop boundary (see the TODO in DoCycle).
-		result := o.buildOrClean(context.Background())
+		// If we were already cancelled return now, but treat it as success.
+		// in watch mode this is the only way to exit.
+		if result.Status == tsc.ExitStatusCanceled {
+			result.Status = tsc.ExitStatusSuccess
+			return result
+		}
 		o.Watch(ctx)
 		result.Watcher = o
 		return result
 	}
 	// Non-watch `tsc -b`: honor cancellation so a long build responds to SIGINT.
-	return o.buildOrClean(ctx)
+	return result
 }
 
 func (o *Orchestrator) Watch(ctx context.Context) {
@@ -609,11 +613,8 @@ func (o *Orchestrator) buildOrClean(ctx context.Context) tsc.CommandLineResult {
 		o.rangeTask(ctx, func(ctx context.Context, path tspath.Path, task *BuildTask) {
 			o.buildOrCleanProject(ctx, task, path, &buildResult)
 		})
-		if ctx.Err() != nil {
-			// Report the aborted status even if cancellation landed before any project
-			// produced one.
-			buildResult.result.Status = tsc.ExitStatusCanceled
-		}
+		// A canceled task surfaces ExitStatusCanceled through its own report(), so the
+		// aggregated status reflects cancellation without a separate override here.
 	} else {
 		// Circularity errors prevent any project from being built
 		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
@@ -648,11 +649,10 @@ func (o *Orchestrator) rangeTask(ctx context.Context, f func(ctx context.Context
 	}
 	runTask := func() {
 		for path, task, ok := getNextTask(); ok; path, task, ok = getNextTask() {
-			// Stop scheduling further projects once canceled; in-flight tasks finish
-			// (their compile is interruptible via ctx).
-			if ctx.Err() != nil {
-				return
-			}
+			// f is called for every task, even after cancellation: each task must
+			// complete its lifecycle (close its done/reportDone channels) or the
+			// upstream/report waiters of other tasks deadlock. Cancellation is observed
+			// inside buildProject, which skips the compile but still completes the task.
 			f(ctx, path, task)
 		}
 	}

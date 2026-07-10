@@ -74,9 +74,15 @@ type BuildTask struct {
 	dirty              bool
 }
 
-func (t *BuildTask) waitOnUpstream() {
+func (t *BuildTask) waitOnUpstream(ctx context.Context) {
 	for _, upstream := range t.upStream {
-		<-upstream.task.done
+		select {
+		case <-upstream.task.done:
+		case <-ctx.Done():
+			// Canceled while waiting: stop blocking. buildProject observes the
+			// cancellation and completes this task without building.
+			return
+		}
 	}
 }
 
@@ -123,13 +129,19 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 
 func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	// Wait on upstream tasks to complete
-	t.waitOnUpstream()
-	if t.pending.Load() {
+	t.waitOnUpstream(ctx)
+	// Canceled before we started the compile: skip the expensive work but still fall
+	// through to unblockDownstream so downstream and report waiters don't deadlock. An
+	// in-flight compile aborts on its own (the checker polls ctx) and surfaces
+	// ExitStatusCanceled via compileAndEmit.
+	if ctx.Err() != nil {
+		t.result.exitStatus = tsc.ExitStatusCanceled
+	} else if t.pending.Load() {
 		t.status = t.getUpToDateStatus(orchestrator, path)
 		t.reportUpToDateStatus(orchestrator)
 		if !t.handleStatusThatDoesntRequireBuild(orchestrator) {
 			t.compileAndEmit(ctx, orchestrator, path)
-			t.updateDownstream(orchestrator, path)
+			t.updateDownstream(ctx, orchestrator, path)
 		} else {
 			if t.resolved != nil {
 				for _, diagnostic := range t.resolved.GetConfigFileParsingDiagnostics() {
@@ -152,7 +164,13 @@ func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator
 	t.unblockDownstream()
 }
 
-func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) updateDownstream(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
+	// A canceled compile leaves t.status and t.result partial (no buildKind, stale
+	// up-to-date status). Don't propagate that to downstream tasks: on cancellation
+	// buildProject reports ExitStatusCanceled and nothing else.
+	if ctx.Err() != nil {
+		return
+	}
 	if t.isInitialCycle {
 		return
 	}
@@ -235,9 +253,12 @@ func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrat
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
 	if result.Status == tsc.ExitStatusCanceled {
-		// Canceled: the result is incomplete (EmitResult is nil). Don't update
-		// timestamps, mark the project up-to-date, or count it as built. report()
-		// still propagates the canceled status.
+		// Canceled: the result is incomplete (EmitResult is nil). Leave the task
+		// partial on purpose -- don't update timestamps, set buildKind, record
+		// packageJsons, or overwrite t.status -- so nothing partial is reported. The
+		// caller (buildProject) skips updateDownstream, and report() sees buildKind
+		// unset, so the project is not counted as built. Only ExitStatusCanceled
+		// propagates.
 		return
 	}
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()
