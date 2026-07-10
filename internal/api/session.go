@@ -1642,7 +1642,7 @@ func (s *Session) handleGetImportAdderEdits(ctx context.Context, params *GetImpo
 			if action.IsValidTypeOnlyUseSite != nil {
 				isValidTypeOnlyUseSite = *action.IsValidTypeOnlyUseSite
 			}
-			addImportFromExportedSymbol(ctx, importAdder, view, program, ch, symbol, isValidTypeOnlyUseSite)
+			importAdder.AddImportFromExportedSymbol(symbol, isValidTypeOnlyUseSite)
 		default:
 			return nil, fmt.Errorf("%w: unknown import adder action kind %q", ErrClientError, action.Kind)
 		}
@@ -1652,71 +1652,6 @@ func (s *Session) handleGetImportAdderEdits(ctx context.Context, params *GetImpo
 		return []*TextEdit{}, nil
 	}
 	return toAPITextEdits(sourceFile, workingSnapshot.Converters(), importAdder.Edits()), nil
-}
-
-func addImportFromExportedSymbol(
-	ctx context.Context,
-	importAdder autoimport.ImportAdder,
-	view *autoimport.View,
-	program *compiler.Program,
-	ch *checker.Checker,
-	symbol *ast.Symbol,
-	isValidTypeOnlyUseSite bool,
-) {
-	exportedSymbol := resolveSymbolInProgram(program, ch, symbol)
-	if exportedSymbol == nil {
-		exportedSymbol = symbol
-	}
-
-	export := autoimport.SymbolToExport(ch.GetMergedSymbol(ch.SkipAlias(exportedSymbol)), ch)
-	if export == nil {
-		return
-	}
-
-	exports := view.SearchByExportID(export.ExportID)
-	if len(exports) == 0 {
-		exports = []*autoimport.Export{export}
-	}
-
-	fixes := core.FlatMap(exports, func(export *autoimport.Export) []*autoimport.Fix {
-		return view.GetFixes(ctx, export, false /*forJSX*/, isValidTypeOnlyUseSite, nil /*usagePosition*/)
-	})
-	slices.SortFunc(fixes, func(a, b *autoimport.Fix) int {
-		return view.CompareFixesForRanking(a, b)
-	})
-	if len(fixes) > 0 {
-		importAdder.AddImportFix(fixes[0])
-	}
-}
-
-func resolveSymbolInProgram(program *compiler.Program, ch *checker.Checker, symbol *ast.Symbol) *ast.Symbol {
-	for _, decl := range symbol.Declarations {
-		sourceFile := ast.GetSourceFileOfNode(decl)
-		if sourceFile == nil {
-			continue
-		}
-		workingSourceFile := program.GetSourceFileByPath(sourceFile.Path())
-		if workingSourceFile == nil {
-			continue
-		}
-		if workingSourceFile.Symbol != nil {
-			if exportedSymbol := workingSourceFile.Symbol.Exports[symbol.Name]; exportedSymbol != nil {
-				return exportedSymbol
-			}
-		}
-		name := ast.GetNameOfDeclaration(decl)
-		if name == nil {
-			name = decl
-		}
-		workingName := astnav.GetTokenAtPosition(workingSourceFile, name.Pos())
-		if workingName == nil {
-			continue
-		}
-		if workingSymbol := ch.GetSymbolAtLocation(workingName); workingSymbol != nil {
-			return workingSymbol
-		}
-	}
-	return nil
 }
 
 func toAPITextEdits(sourceFile *ast.SourceFile, converters *lsconv.Converters, edits []*lsproto.TextEdit) []*TextEdit {
