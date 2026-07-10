@@ -156,20 +156,10 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
 				checker := p.checkers[checkerIdx]
-				// Stop feeding this checker once cancellation is in play: ctx.Err()
-				// means nothing we produce will be used, and WasCanceled() means the
-				// checker is already poisoned so reusing it would panic in
-				// checkNotCanceled. The two coincide in the compile path today (one
-				// context, single-use pool), but WasCanceled() states the actual reuse
-				// precondition rather than a proxy for it, and guards against a checker
-				// canceled by some other context.
-				//
-				// This out-of-band check is only necessary because the diagnostics APIs
-				// return a bare []*ast.Diagnostic with no error channel: a canceled check
-				// yields an empty (incomplete) slice indistinguishable from a clean result,
-				// so cancellation is signaled via checker state rather than a returned error.
-				// If those APIs returned (diags, error), the caller would stop on the error
-				// and this guard would be unnecessary.
+				// A canceled checker panics on reuse (checkNotCanceled), so stop feeding
+				// it more files. This guard is needed because the diagnostics APIs return
+				// []*ast.Diagnostic with no error channel: a canceled check is signaled by
+				// checker state, not a returned error.
 				if ctx.Err() != nil || checker.WasCanceled() {
 					break
 				}

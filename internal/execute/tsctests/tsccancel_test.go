@@ -9,20 +9,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 )
 
-// TestTscNoEmitCancellation verifies that interrupting a `--noEmit` compile via
-// the context passed to execute.CommandLine (which the CLI wires to SIGINT/SIGTERM
-// in cmd/tsgo/main.go) aborts the compile promptly rather than running it to
-// completion.
-//
-// A pre-canceled context deterministically exercises the same isCanceled() polling
-// the checker uses for a mid-flight SIGINT (see internal/checker/utilities.go), so
-// it covers both the "already canceled" and "canceled during check" cases.
+// TestTscNoEmitCancellation verifies that a canceled context (wired to SIGINT in
+// cmd/tsgo/main.go) aborts a compile instead of running it to completion. A
+// pre-canceled context deterministically hits the same checker cancellation polling
+// a mid-flight SIGINT would.
 func TestTscNoEmitCancellation(t *testing.T) {
 	t.Parallel()
 
-	// Each file contains a type error so we can prove whether the checker ran to
-	// completion: if it did, the diagnostic is reported; if the compile was
-	// abandoned on cancellation, it is not.
+	// A type error lets us tell whether the checker ran to completion: if it did,
+	// the diagnostic is reported; if aborted, it is not.
 	const badSource = `const x: number = "not a number";`
 
 	testCases := []struct {
@@ -31,8 +26,7 @@ func TestTscNoEmitCancellation(t *testing.T) {
 		files FileMap
 	}{
 		{
-			// Single file: exercises the top-level cancellation short-circuit in
-			// EmitFilesAndReportErrors / GetDiagnosticsOfAnyProgram.
+			// Top-level short-circuit in EmitFilesAndReportErrors.
 			name: "single file",
 			args: []string{"--noEmit"},
 			files: FileMap{
@@ -41,11 +35,9 @@ func TestTscNoEmitCancellation(t *testing.T) {
 			},
 		},
 		{
-			// Multiple files under --singleThreaded funnel through a single checker,
-			// so the per-file loop in checkerPool.forEachCheckerGroupDo reuses the
-			// same checker across files. Once the first file cancels it, reusing it
-			// for the next file would panic in checkNotCanceled without the guard
-			// there. This case pins that guard.
+			// --singleThreaded funnels all files through one checker, so
+			// forEachCheckerGroupDo reuses it across files. Pins the guard that stops
+			// reuse after cancellation (else checkNotCanceled panics on the 2nd file).
 			name: "multi file single checker",
 			args: []string{"--noEmit", "--singleThreaded"},
 			files: FileMap{
@@ -56,10 +48,7 @@ func TestTscNoEmitCancellation(t *testing.T) {
 			},
 		},
 		{
-			// Build mode (`tsc -b`): exercises the context threaded through the build
-			// orchestrator (Start -> buildOrClean -> rangeTask -> buildProject ->
-			// compileAndEmit). A canceled build must abort rather than run the project's
-			// compile to completion.
+			// `tsc -b`: exercises the context threaded through the build orchestrator.
 			name: "build mode",
 			args: []string{"-b"},
 			files: FileMap{
@@ -82,15 +71,12 @@ func TestTscNoEmitCancellation(t *testing.T) {
 
 			result := execute.CommandLine(ctx, sys, tc.args, sys)
 
-			// The compile should short-circuit with a distinct canceled status
-			// instead of running the checker to completion (and it must not panic
-			// reusing a canceled checker).
+			// Aborts with a distinct status (and must not panic reusing a canceled checker).
 			if result.Status != tsc.ExitStatusCanceled {
 				t.Errorf("status = %v, want ExitStatusCanceled (compile should abort on cancellation)", result.Status)
 			}
 
-			// Because the check was abandoned, its (incomplete) diagnostics must not
-			// be reported: the type errors should be absent from the output.
+			// Aborted checks must not report their incomplete diagnostics.
 			if out := sys.getOutput(true); strings.Contains(out, "error TS") {
 				t.Errorf("expected no diagnostics to be reported after cancellation; got output:\n%s", out)
 			}
