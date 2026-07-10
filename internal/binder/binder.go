@@ -1897,6 +1897,7 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 		b.bind(stmt.Condition)
 		b.bindIterativeStatement(stmt.Statement, postLoopLabel, preIncrementorLabel)
 		b.bind(stmt.Incrementor)
+		b.currentFlow = b.unreachableFlow
 		return
 	}
 	b.addAntecedent(preLoopLabel, b.currentFlow)
