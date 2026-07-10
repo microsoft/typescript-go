@@ -101,9 +101,8 @@ func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result Comp
 		},
 	)
 
-	// If the compile was canceled (e.g. SIGINT), the checker stops early and the
-	// diagnostics above are incomplete. Do not emit or report them as a complete
-	// result; abort with a distinct status instead.
+	// On cancellation the diagnostics above are incomplete; abort rather than emit
+	// or report them as a complete result.
 	if ctx.Err() != nil {
 		result.Status = ExitStatusCanceled
 		return result

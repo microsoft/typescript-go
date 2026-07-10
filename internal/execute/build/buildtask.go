@@ -235,11 +235,9 @@ func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrat
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
 	if result.Status == tsc.ExitStatusCanceled {
-		// The compile was canceled (e.g. SIGINT). Its result is incomplete
-		// (result.EmitResult is nil), so do not update output timestamps or mark the
-		// project up-to-date, and leave buildKind as None so it is not counted as
-		// built. report() propagates the canceled exit status (it dominates via max),
-		// and rangeTask stops scheduling further projects.
+		// Canceled: the result is incomplete (EmitResult is nil). Don't update
+		// timestamps, mark the project up-to-date, or count it as built. report()
+		// still propagates the canceled status.
 		return
 	}
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()

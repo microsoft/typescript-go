@@ -230,8 +230,8 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	}
 	o.GenerateGraph(nil)
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		// In watch mode the initial build, like each watch cycle, runs to completion;
-		// cancellation is observed at the RunLoop boundary (see the TODO in DoCycle).
+		// Watch mode: the initial build runs to completion; cancellation is observed
+		// at the RunLoop boundary (see the TODO in DoCycle).
 		result := o.buildOrClean(context.Background())
 		o.Watch(ctx)
 		result.Watcher = o
@@ -581,10 +581,8 @@ func (o *Orchestrator) DoCycle() {
 		o.GenerateGraphReusingOldTasks()
 	}
 
-	// TODO: like the CLI watcher, a build watch cycle runs to completion; cancellation
-	// is only observed between cycles in WatchManager.RunLoop. Thread the RunLoop context
-	// through DoCycle to make a long rebuild interruptible (and handle ExitStatusCanceled
-	// by discarding the partial cycle).
+	// TODO: thread the RunLoop context through DoCycle so a long rebuild is
+	// interruptible mid-cycle, not just between cycles (see the CLI watcher's TODO).
 	o.buildOrClean(context.Background())
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()
@@ -612,9 +610,8 @@ func (o *Orchestrator) buildOrClean(ctx context.Context) tsc.CommandLineResult {
 			o.buildOrCleanProject(ctx, task, path, &buildResult)
 		})
 		if ctx.Err() != nil {
-			// The build was canceled (e.g. SIGINT). rangeTask stops scheduling further
-			// projects; report the aborted status even if cancellation landed before any
-			// project produced one.
+			// Report the aborted status even if cancellation landed before any project
+			// produced one.
 			buildResult.result.Status = tsc.ExitStatusCanceled
 		}
 	} else {
@@ -651,9 +648,8 @@ func (o *Orchestrator) rangeTask(ctx context.Context, f func(ctx context.Context
 	}
 	runTask := func() {
 		for path, task, ok := getNextTask(); ok; path, task, ok = getNextTask() {
-			// Stop scheduling further projects once canceled (e.g. SIGINT). Tasks
-			// already in flight finish on their own; the compile they run is
-			// interruptible via the context threaded into compileAndEmit.
+			// Stop scheduling further projects once canceled; in-flight tasks finish
+			// (their compile is interruptible via ctx).
 			if ctx.Err() != nil {
 				return
 			}
