@@ -1,0 +1,13 @@
+--- old.unionCallMixedTypeParameterPresence.symbols
++++ new.unionCallMixedTypeParameterPresence.symbols
+@@= skipped -36, +36 lines =@@
+
+ const e2 = e.f((e) => e);
+ >e2 : Symbol(e2, Decl(unionCallMixedTypeParameterPresence.ts, 9, 5))
+->e.f : Symbol(f, Decl(unionCallMixedTypeParameterPresence.ts, 2, 18), Decl(unionCallMixedTypeParameterPresence.ts, 2, 18), Decl(unionCallMixedTypeParameterPresence.ts, 5, 17))
++>e.f : Symbol(f, Decl(unionCallMixedTypeParameterPresence.ts, 2, 18), Decl(unionCallMixedTypeParameterPresence.ts, 5, 17))
+ >e : Symbol(e, Decl(unionCallMixedTypeParameterPresence.ts, 8, 13))
+->f : Symbol(f, Decl(unionCallMixedTypeParameterPresence.ts, 2, 18), Decl(unionCallMixedTypeParameterPresence.ts, 2, 18), Decl(unionCallMixedTypeParameterPresence.ts, 5, 17))
++>f : Symbol(f, Decl(unionCallMixedTypeParameterPresence.ts, 2, 18), Decl(unionCallMixedTypeParameterPresence.ts, 5, 17))
+ >e : Symbol(e, Decl(unionCallMixedTypeParameterPresence.ts, 9, 16))
+ >e : Symbol(e, Decl(unionCallMixedTypeParameterPresence.ts, 9, 16))

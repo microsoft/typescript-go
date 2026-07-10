@@ -1,0 +1,19 @@
+--- old.mixinAccessModifiers.symbols
++++ new.mixinAccessModifiers.symbols
+@@= skipped -388, +388 lines =@@
+ >b : Symbol(b, Decl(mixinAccessModifiers.ts, 127, 71))
+
+ 	x.privateMethod(); // Error, private constituent makes method inaccessible
+->x.privateMethod : Symbol(ProtectedGeneric.privateMethod, Decl(mixinAccessModifiers.ts, 107, 27), Decl(mixinAccessModifiers.ts, 107, 27))
++>x.privateMethod : Symbol(ProtectedGeneric.privateMethod, Decl(mixinAccessModifiers.ts, 107, 27))
+ >x : Symbol(x, Decl(mixinAccessModifiers.ts, 127, 12))
+->privateMethod : Symbol(ProtectedGeneric.privateMethod, Decl(mixinAccessModifiers.ts, 107, 27), Decl(mixinAccessModifiers.ts, 107, 27))
++>privateMethod : Symbol(ProtectedGeneric.privateMethod, Decl(mixinAccessModifiers.ts, 107, 27))
+
+ 	x.protectedMethod(); // Error, protected when all constituents are protected
+->x.protectedMethod : Symbol(ProtectedGeneric.protectedMethod, Decl(mixinAccessModifiers.ts, 108, 27), Decl(mixinAccessModifiers.ts, 108, 27))
++>x.protectedMethod : Symbol(ProtectedGeneric.protectedMethod, Decl(mixinAccessModifiers.ts, 108, 27))
+ >x : Symbol(x, Decl(mixinAccessModifiers.ts, 127, 12))
+->protectedMethod : Symbol(ProtectedGeneric.protectedMethod, Decl(mixinAccessModifiers.ts, 108, 27), Decl(mixinAccessModifiers.ts, 108, 27))
++>protectedMethod : Symbol(ProtectedGeneric.protectedMethod, Decl(mixinAccessModifiers.ts, 108, 27))
+ }

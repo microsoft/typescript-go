@@ -1,0 +1,14 @@
+--- old.typeParameterExtendingUnion1.symbols
++++ new.typeParameterExtendingUnion1.symbols
+@@= skipped -34, +34 lines =@@
+ >T : Symbol(T, Decl(typeParameterExtendingUnion1.ts, 8, 11))
+
+     a.run();
+->a.run : Symbol(Animal.run, Decl(typeParameterExtendingUnion1.ts, 0, 14), Decl(typeParameterExtendingUnion1.ts, 0, 14))
++>a.run : Symbol(Animal.run, Decl(typeParameterExtendingUnion1.ts, 0, 14))
+ >a : Symbol(a, Decl(typeParameterExtendingUnion1.ts, 8, 32))
+->run : Symbol(Animal.run, Decl(typeParameterExtendingUnion1.ts, 0, 14), Decl(typeParameterExtendingUnion1.ts, 0, 14))
++>run : Symbol(Animal.run, Decl(typeParameterExtendingUnion1.ts, 0, 14))
+
+     run(a);
+ >run : Symbol(run, Decl(typeParameterExtendingUnion1.ts, 2, 33))
