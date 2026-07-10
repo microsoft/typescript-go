@@ -36,6 +36,7 @@ const (
 	ExitStatusInvalidProject_OutputsSkipped        ExitStatus = 3
 	ExitStatusProjectReferenceCycle_OutputsSkipped ExitStatus = 4
 	ExitStatusNotImplemented                       ExitStatus = 5
+	ExitStatusCanceled                             ExitStatus = 6
 )
 
 type Watcher interface {

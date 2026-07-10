@@ -1,6 +1,7 @@
 package build
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strings"
@@ -216,7 +217,9 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	t.result.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
 	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
 
-	result, statistics := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	// The build orchestrator does not thread a per-task context today; cancellation
+	// for `tsc -b` is handled at the orchestrator level.
+	result, statistics := tsc.EmitAndReportStatistics(context.Background(), tsc.EmitInput{
 		Sys:                orchestrator.opts.Sys,
 		ProgramLike:        t.result.program,
 		Program:            program,

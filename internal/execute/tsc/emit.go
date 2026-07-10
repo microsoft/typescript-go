@@ -42,9 +42,9 @@ type EmitInput struct {
 	Tracing            *tracing.Tracing
 }
 
-func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
+func EmitAndReportStatistics(ctx context.Context, input EmitInput) (CompileAndEmitResult, *Statistics) {
 	var statistics *Statistics
-	result := EmitFilesAndReportErrors(input)
+	result := EmitFilesAndReportErrors(ctx, input)
 	if result.Status != ExitStatusSuccess {
 		// compile exited early
 		return result, nil
@@ -70,9 +70,8 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 	return result, statistics
 }
 
-func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
+func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
-	ctx := context.Background()
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
 		ctx,
@@ -101,6 +100,14 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			return diags
 		},
 	)
+
+	// If the compile was canceled (e.g. SIGINT), the checker stops early and the
+	// diagnostics above are incomplete. Do not emit or report them as a complete
+	// result; abort with a distinct status instead.
+	if ctx.Err() != nil {
+		result.Status = ExitStatusCanceled
+		return result
+	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !input.ProgramLike.Options().ListFilesOnly.IsTrue() {

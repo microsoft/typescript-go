@@ -155,6 +155,18 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			p.locks[checkerIdx].Lock()
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
+				// Once the context is canceled, the checker enters a canceled state and
+				// reusing it for the next file would panic in checkNotCanceled. Stop early.
+				//
+				// This guard is only necessary because the diagnostics APIs return a bare
+				// []*ast.Diagnostic with no error channel: a canceled check yields an empty
+				// (incomplete) slice that is indistinguishable from a clean result, so
+				// cancellation is signaled out-of-band via the checker's canceled state
+				// rather than a returned error. If those APIs returned (diags, error), the
+				// caller would stop on the error and this guard would be unnecessary.
+				if ctx.Err() != nil {
+					break
+				}
 				if checker := p.checkers[checkerIdx]; checker == p.fileAssociations[file] {
 					cb(checker, i, file)
 				}

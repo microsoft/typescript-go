@@ -591,6 +591,11 @@ func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, source
 				continue
 			}
 			wg.Queue(func() {
+				// A checker obtained from the pool may already be in a canceled state from a
+				// prior file; reusing it would panic in checkNotCanceled. Skip once canceled.
+				if ctx.Err() != nil {
+					return
+				}
 				c, done := p.checkerPool.GetChecker(ctx, file)
 				diagnostics[i] = collect(ctx, c, file)
 				done()
@@ -1778,6 +1783,14 @@ func GetDiagnosticsOfAnyProgram(
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
+				// If checking was canceled, the checker is now in a canceled state and must not
+				// be reused (GetGlobalDiagnostics/GetDeclarationDiagnostics would panic in
+				// checkNotCanceled). The diagnostics gathered so far are incomplete and will be
+				// discarded by the caller, so stop here. See checkerPool.forEachCheckerGroupDo
+				// for why this out-of-band check is needed (diagnostics APIs have no error channel).
+				if ctx.Err() != nil {
+					return allDiagnostics
+				}
 				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
 				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}

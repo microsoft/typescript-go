@@ -243,6 +243,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
 		return performIncrementalCompilation(
+			ctx,
 			sys,
 			configForCompilation,
 			reportDiagnostic,
@@ -253,6 +254,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		)
 	}
 	return performCompilation(
+		ctx,
 		sys,
 		configForCompilation,
 		reportDiagnostic,
@@ -282,6 +284,7 @@ func getTraceFromSys(sys tsc.System, locale locale.Locale, testing tsc.CommandLi
 }
 
 func performIncrementalCompilation(
+	ctx context.Context,
 	sys tsc.System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
@@ -307,7 +310,7 @@ func performIncrementalCompilation(
 	changesComputeStart := sys.Now()
 	incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), testing != nil)
 	compileTimes.ChangesComputeTime = sys.Now().Sub(changesComputeStart)
-	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, _ := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
 		Sys:                sys,
 		ProgramLike:        incrementalProgram,
 		Program:            incrementalProgram.GetProgram(),
@@ -331,6 +334,7 @@ func performIncrementalCompilation(
 }
 
 func performCompilation(
+	ctx context.Context,
 	sys tsc.System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
@@ -350,7 +354,7 @@ func performCompilation(
 		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
-	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, _ := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
 		Sys:                sys,
 		ProgramLike:        program,
 		Program:            program,
