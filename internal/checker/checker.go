@@ -13684,21 +13684,26 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 			parent := declaration.Parent.Parent
 			rootDeclaration := ast.GetRootDeclaration(parent)
 			if ast.IsVariableDeclaration(rootDeclaration) && c.getCombinedNodeFlagsCached(rootDeclaration)&ast.NodeFlagsConstant != 0 || ast.IsParameterDeclaration(rootDeclaration) {
-				parentType := c.getTypeForBindingElementParent(parent, CheckModeNormal)
-				var parentTypeConstraint *Type
-				if parentType != nil {
-					parentTypeConstraint = c.mapType(parentType, c.getBaseConstraintOrType)
-				}
-				if parentTypeConstraint != nil && parentTypeConstraint.flags&TypeFlagsUnion != 0 && !(ast.IsParameterDeclaration(rootDeclaration) && c.isSomeSymbolAssigned(rootDeclaration)) {
-					pattern := declaration.Parent
-					narrowedType := c.getFlowTypeOfReferenceEx(pattern, parentTypeConstraint, parentTypeConstraint, nil /*flowContainer*/, getFlowNodeOfNode(location))
-					if narrowedType.flags&TypeFlagsNever != 0 {
-						t = c.neverType
-					} else {
-						// Destructurings are validated against the parent type elsewhere. Here we disable tuple bounds
-						// checks because the narrowed type may have lower arity than the full parent type. For example,
-						// for the declaration [x, y]: [1, 2] | [3], we may have narrowed the parent type to just [3].
-						t = c.getBindingElementTypeFromParentType(declaration, narrowedType, true /*noTupleBoundsCheck*/)
+				links := c.nodeLinks.Get(parent)
+				if links.flags&NodeCheckFlagsInCheckIdentifier == 0 {
+					links.flags |= NodeCheckFlagsInCheckIdentifier
+					parentType := c.getTypeForBindingElementParent(parent, CheckModeNormal)
+					var parentTypeConstraint *Type
+					if parentType != nil {
+						parentTypeConstraint = c.mapType(parentType, c.getBaseConstraintOrType)
+					}
+					links.flags &^= NodeCheckFlagsInCheckIdentifier
+					if parentTypeConstraint != nil && parentTypeConstraint.flags&TypeFlagsUnion != 0 && !(ast.IsParameterDeclaration(rootDeclaration) && c.isSomeSymbolAssigned(rootDeclaration)) {
+						pattern := declaration.Parent
+						narrowedType := c.getFlowTypeOfReferenceEx(pattern, parentTypeConstraint, parentTypeConstraint, nil /*flowContainer*/, getFlowNodeOfNode(location))
+						if narrowedType.flags&TypeFlagsNever != 0 {
+							t = c.neverType
+						} else {
+							// Destructurings are validated against the parent type elsewhere. Here we disable tuple bounds
+							// checks because the narrowed type may have lower arity than the full parent type. For example,
+							// for the declaration [x, y]: [1, 2] | [3], we may have narrowed the parent type to just [3].
+							t = c.getBindingElementTypeFromParentType(declaration, narrowedType, true /*noTupleBoundsCheck*/)
+						}
 					}
 				}
 			}
