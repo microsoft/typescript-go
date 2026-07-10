@@ -57,6 +57,8 @@ func (test *tscInput) executeCommand(sys *TestSys, baselineBuilder *strings.Buil
 		baselineBuilder.WriteString("ExitStatus:: ProjectReferenceCycle_OutputsSkipped")
 	case tsc.ExitStatusNotImplemented:
 		baselineBuilder.WriteString("ExitStatus:: NotImplemented")
+	case tsc.ExitStatusCanceled:
+		baselineBuilder.WriteString("ExitStatus:: Canceled")
 	default:
 		panic(fmt.Sprintf("UnknownExitStatus %d", result.Status))
 	}
