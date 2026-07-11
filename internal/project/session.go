@@ -374,14 +374,22 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 		})
 
 		if !hasRelevantChange {
+			fileName := change.Uri.FileName()
 			uriStr := string(change.Uri)
 			i := strings.LastIndexByte(uriStr, '.')
 			if i < 0 || strings.LastIndexByte(uriStr, '/') > i {
-				// Extensionless paths might be directories. 
+				// Extensionless paths might be directories.
 				// For creations/changes, we can check the file system.
-				// For deletions, it might already be gone from disk, so we conservatively treat it as relevant.
-				if kind == FileChangeKindWatchDelete || s.fs.fs.DirectoryExists(change.Uri.FileName()) {
-					hasRelevantChange = true
+				// For deletions, consult the current snapshot cache to avoid treating extensionless file deletions as relevant.
+				if kind != FileChangeKindWatchDelete {
+					hasRelevantChange = s.fs.fs.DirectoryExists(fileName)
+				} else {
+					s.snapshotMu.RLock()
+					snapshot := s.snapshot
+					s.snapshotMu.RUnlock()
+					if _, ok := snapshot.fs.diskDirectories[s.toPath(fileName)]; ok {
+						hasRelevantChange = true
+					}
 				}
 			} else {
 				switch uriStr[i:] {
