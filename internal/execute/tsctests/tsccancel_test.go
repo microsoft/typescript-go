@@ -63,11 +63,15 @@ func TestTscCancellationAborts(t *testing.T) {
 	var bad, inferred strings.Builder
 	for i := range 50 {
 		x := strings.Repeat("x", i+1)
-		bad.WriteString("export const v" + x + `: number = "not a number";` + "\n")
+		bad.WriteString("export const v")
+		bad.WriteString(x)
+		bad.WriteString(`: number = "not a number";` + "\n")
 		// Inferred return types force type serialization during declaration emit
 		// (SerializeReturnTypeForSignature -> node reuse -> checkNotCanceled), a
 		// distinct checker-reuse path from plain semantic checking.
-		inferred.WriteString("export function make" + x + "() { return { a: 1, b: 'x', deep: [1, 2, 3] as const }; }\n")
+		inferred.WriteString("export function make")
+		inferred.WriteString(x)
+		inferred.WriteString("() { return { a: 1, b: 'x', deep: [1, 2, 3] as const }; }\n")
 	}
 	badSrc, inferredSrc := bad.String(), inferred.String()
 
