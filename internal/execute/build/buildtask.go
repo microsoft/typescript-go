@@ -74,16 +74,18 @@ type BuildTask struct {
 	dirty              bool
 }
 
-func (t *BuildTask) waitOnUpstream(ctx context.Context) {
+// Returns true when upstream is done, false when cancelled
+func (t *BuildTask) waitOnUpstream(ctx context.Context) bool {
 	for _, upstream := range t.upStream {
 		select {
 		case <-upstream.task.done:
 		case <-ctx.Done():
 			// Canceled while waiting: stop blocking. buildProject observes the
 			// cancellation and completes this task without building.
-			return
+			return false
 		}
 	}
+	return true
 }
 
 func (t *BuildTask) unblockDownstream() {
@@ -129,12 +131,8 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 
 func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	// Wait on upstream tasks to complete
-	t.waitOnUpstream(ctx)
-	// Canceled before we started the compile: skip the expensive work but still fall
-	// through to unblockDownstream so downstream and report waiters don't deadlock. An
-	// in-flight compile aborts on its own (the checker polls ctx) and surfaces
-	// ExitStatusCanceled via compileAndEmit.
-	if ctx.Err() != nil {
+	if !t.waitOnUpstream(ctx) {
+		// We were cancelled while waiting, just set the status and unblockDownstream
 		t.result.exitStatus = tsc.ExitStatusCanceled
 	} else if t.pending.Load() {
 		t.status = t.getUpToDateStatus(orchestrator, path)
@@ -165,14 +163,12 @@ func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator
 }
 
 func (t *BuildTask) updateDownstream(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
-	// This seeds dependents' in-memory rebuild state (status, pending) from this
-	// project's result; it never touches emitted outputs. Skip it once canceled: the
-	// result may be from a compile that aborted mid-emit, and propagating its partial
-	// HasChangedDtsFile would corrupt downstream up-to-date decisions.
+	// Skip notifying downstream if we are canceled. Canceled builds may have partial results
+	// which could be otherwise handled improperly by downstream tasks.
 	//
-	// Today this only fires in one-shot `tsc -b`, where downStream is empty and the
-	// body below is a no-op anyway. It becomes load-bearing once DoCycle threads a
-	// real (cancelable) context into watch rebuilds, where downStream is populated.
+	// In one-shot `tsc -b`, downStream is empty so the body below is a no-op.
+	// In watch mode, downStream is populated and this runs on subsequent rebuild cycles.
+	// Once DoCycle threads a cancelable context, the early-return here becomes load-bearing.
 	if ctx.Err() != nil {
 		return
 	}
