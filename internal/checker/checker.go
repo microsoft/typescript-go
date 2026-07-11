@@ -13657,7 +13657,8 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 	declaration := symbol.ValueDeclaration
 	if declaration != nil && (!ast.GetRootDeclaration(declaration).Loc.ContainsInclusive(location.Pos()) ||
 		ast.GetSourceFileOfNode(declaration) != ast.GetSourceFileOfNode(location) ||
-		c.getControlFlowContainer(declaration) != c.getControlFlowContainer(location)) {
+		c.getControlFlowContainer(declaration) != c.getControlFlowContainer(location) ||
+		c.isSameScopedBindingElement(location, declaration)) {
 		switch {
 		// If we have a non-rest binding element with no initializer declared as a const variable or a const-like
 		// parameter (a parameter for which there are no assignments in the function body), and if the parent type
