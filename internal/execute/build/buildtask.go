@@ -165,9 +165,14 @@ func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator
 }
 
 func (t *BuildTask) updateDownstream(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
-	// A canceled compile leaves t.status and t.result partial (no buildKind, stale
-	// up-to-date status). Don't propagate that to downstream tasks: on cancellation
-	// buildProject reports ExitStatusCanceled and nothing else.
+	// This seeds dependents' in-memory rebuild state (status, pending) from this
+	// project's result; it never touches emitted outputs. Skip it once canceled: the
+	// result may be from a compile that aborted mid-emit, and propagating its partial
+	// HasChangedDtsFile would corrupt downstream up-to-date decisions.
+	//
+	// Today this only fires in one-shot `tsc -b`, where downStream is empty and the
+	// body below is a no-op anyway. It becomes load-bearing once DoCycle threads a
+	// real (cancelable) context into watch rebuilds, where downStream is populated.
 	if ctx.Err() != nil {
 		return
 	}
