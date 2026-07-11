@@ -375,9 +375,9 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 		if !hasRelevantChange {
 			fileName := change.Uri.FileName()
-			uriStr := string(change.Uri)
-			i := strings.LastIndexByte(uriStr, '.')
-			if i < 0 || strings.LastIndexByte(uriStr, '/') > i {
+			pathStr := string(s.toPath(fileName))
+			i := strings.LastIndexByte(pathStr, '.')
+			if i < 0 || strings.LastIndexByte(pathStr, '/') > i {
 				// Extensionless paths might be directories.
 				// For creations/changes, we can check the file system.
 				// For deletions, consult the current snapshot cache to avoid treating extensionless file deletions as relevant.
@@ -392,7 +392,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 					}
 				}
 			} else {
-				switch uriStr[i:] {
+				switch pathStr[i:] {
 				case ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json":
 					hasRelevantChange = true
 				}
