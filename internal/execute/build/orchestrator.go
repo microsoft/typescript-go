@@ -231,8 +231,8 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	o.GenerateGraph(nil)
 	result := o.buildOrClean(ctx)
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		// If we were already cancelled return now, but treat it as success.
-		// in watch mode this is the only way to exit.
+		// If we were already canceled return now, but treat it as success.
+		// In watch mode this is the only way to exit.
 		if result.Status == tsc.ExitStatusCanceled {
 			result.Status = tsc.ExitStatusSuccess
 			return result
