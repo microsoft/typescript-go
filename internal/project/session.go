@@ -375,7 +375,8 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 		if !hasRelevantChange {
 			fileName := change.Uri.FileName()
-			pathStr := string(s.toPath(fileName))
+			path := s.toPath(fileName).RemoveTrailingDirectorySeparator()
+			pathStr := string(path)
 			i := strings.LastIndexByte(pathStr, '.')
 			if i < 0 || strings.LastIndexByte(pathStr, '/') > i {
 				// Extensionless paths might be directories.
@@ -387,7 +388,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 					s.snapshotMu.RLock()
 					snapshot := s.snapshot
 					s.snapshotMu.RUnlock()
-					if _, ok := snapshot.fs.diskDirectories[s.toPath(fileName)]; ok {
+					if _, ok := snapshot.fs.diskDirectories[path]; ok {
 						hasRelevantChange = true
 					}
 				}
