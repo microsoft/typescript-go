@@ -3546,7 +3546,8 @@ func (b *NodeBuilderImpl) lookupInstantiatedTypeArgumentNodes(chain []*ast.Symbo
 		}
 
 		targetSymbol := symbol
-		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+		// Preserve a class/interface/function declaration merged with an alias.
+		if getClassInterfaceOrFunctionDeclaration(targetSymbol) == nil && symbol.Flags&ast.SymbolFlagsAlias != 0 {
 			targetSymbol = b.ch.resolveAlias(symbol)
 		}
 
