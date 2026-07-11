@@ -2029,14 +2029,6 @@ func (f *FourslashTest) applyEditsToContent(content string, edits []*lsproto.Tex
 }
 
 func (f *FourslashTest) VerifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences) {
-	f.verifyOrganizeImports(t, expectedContent, codeActionKind, preferences, nil)
-}
-
-func (f *FourslashTest) VerifyOrganizeImportsWithFormattingOptions(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, formattingOptions *lsproto.FormattingOptions) {
-	f.verifyOrganizeImports(t, expectedContent, codeActionKind, nil, formattingOptions)
-}
-
-func (f *FourslashTest) verifyOrganizeImports(t *testing.T, expectedContent string, codeActionKind lsproto.CodeActionKind, preferences *lsutil.UserPreferences, formattingOptions *lsproto.FormattingOptions) {
 	t.Helper()
 
 	if preferences != nil {
@@ -2055,7 +2047,6 @@ func (f *FourslashTest) verifyOrganizeImports(t *testing.T, expectedContent stri
 		Context: &lsproto.CodeActionContext{
 			Only: &[]lsproto.CodeActionKind{codeActionKind},
 		},
-		FormattingOptions: formattingOptions,
 	}
 
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)

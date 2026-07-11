@@ -13,7 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -85,7 +84,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 		for _, kind := range *params.Context.Only {
 			matchingKinds := getOrganizeImportsActionsForKind(kind)
 			for _, matchingKind := range matchingKinds {
-				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind, params.FormattingOptions)
+				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind)
 				actions = append(actions, *organizeAction)
 			}
 
@@ -343,19 +342,13 @@ func (l *LanguageService) createOrganizeImportsAction(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	kind lsproto.CodeActionKind,
-	formattingOptions *lsproto.FormattingOptions,
 ) *lsproto.CommandOrCodeAction {
 	title := getOrganizeImportsActionTitle(ctx, kind)
-	formatOptions := l.FormatOptions()
-	if formattingOptions != nil {
-		formatOptions = lsutil.FromLSFormatOptions(formatOptions, formattingOptions)
-	}
 	changes := l.OrganizeImports(
 		ctx,
 		file,
 		program,
 		kind,
-		formatOptions,
 	)
 	if len(changes) == 0 {
 		return &lsproto.CommandOrCodeAction{

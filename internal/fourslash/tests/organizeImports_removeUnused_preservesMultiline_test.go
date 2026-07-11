@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -59,7 +60,7 @@ export { a, c };`,
 	)
 }
 
-func TestOrganizeImports_removeUnusedUsesFormatOptions(t *testing.T) {
+func TestOrganizeImports_removeUnusedUsesLanguageServiceFormatOptions(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import {
@@ -71,10 +72,16 @@ func TestOrganizeImports_removeUnusedUsesFormatOptions(t *testing.T) {
 export { a, c };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImportsWithFormattingOptions(
+	preferences := lsutil.ParseUserPreferences(map[string]any{
+		"editor": map[string]any{
+			"tabSize":      2,
+			"insertSpaces": false,
+		},
+	})
+	f.VerifyOrganizeImports(
 		t,
 		"import {\n\ta,\n\tc\n} from \"module\";\n\nexport { a, c };",
 		lsproto.CodeActionKindSourceRemoveUnusedImports,
-		&lsproto.FormattingOptions{TabSize: 2, InsertSpaces: false},
+		&preferences,
 	)
 }
