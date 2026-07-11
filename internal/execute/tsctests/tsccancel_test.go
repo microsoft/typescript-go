@@ -11,84 +11,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 )
 
-// TestTscPreCanceledCompilation verifies that a context canceled before the compile
-// starts aborts immediately with ExitStatusCanceled and reports no diagnostics,
-// without panicking on checker reuse.
-func TestTscPreCanceledCompilation(t *testing.T) {
-	t.Parallel()
-
-	// A type error lets us tell whether the checker ran to completion: if it did,
-	// the diagnostic is reported; if aborted, it is not.
-	const badSource = `const x: number = "not a number";`
-
-	testCases := []struct {
-		name  string
-		args  []string
-		files FileMap
-	}{
-		{
-			// Top-level short-circuit in EmitFilesAndReportErrors.
-			name: "single file",
-			args: []string{"--noEmit"},
-			files: FileMap{
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "noEmit": true, "strict": true } }`,
-				"/home/src/workspaces/project/main.ts":       badSource,
-			},
-		},
-		{
-			// --singleThreaded funnels all files through one checker, so
-			// forEachCheckerGroupDo reuses it across files.
-			name: "multi file single checker",
-			args: []string{"--noEmit", "--singleThreaded"},
-			files: FileMap{
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "noEmit": true, "strict": true } }`,
-				"/home/src/workspaces/project/a.ts":          badSource,
-				"/home/src/workspaces/project/b.ts":          badSource,
-				"/home/src/workspaces/project/c.ts":          badSource,
-			},
-		},
-		{
-			// `tsc -b`: exercises the context threaded through the build orchestrator.
-			name: "build mode",
-			args: []string{"-b"},
-			files: FileMap{
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "composite": true, "strict": true } }`,
-				"/home/src/workspaces/project/main.ts":       badSource,
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			sys := newTestSys(&tscInput{
-				commandLineArgs: tc.args,
-				files:           tc.files,
-			}, false)
-
-			ctx, cancel := context.WithCancel(context.Background())
-			cancel() // simulate SIGINT delivered before the compile starts
-
-			result := execute.CommandLine(ctx, sys, tc.args, sys)
-
-			// Aborts with a distinct status (and must not panic reusing a canceled checker).
-			if result.Status != tsc.ExitStatusCanceled {
-				t.Errorf("status = %v, want ExitStatusCanceled (compile should abort on cancellation)", result.Status)
-			}
-
-			// Aborted checks must not report their incomplete diagnostics.
-			if out := sys.getOutput(true); strings.Contains(out, "error TS") {
-				t.Errorf("expected no diagnostics to be reported after cancellation; got output:\n%s", out)
-			}
-		})
-	}
-}
-
 // cancelAfterNPolls is a context that reports itself canceled only after Err has
 // been polled pollThreshold times while still uncanceled. The checker polls
-// ctx.Err() between top-level statements (checkSourceElements), so this lands the
-// cancellation *after* checking has begun rather than before it starts -- the case
-// a pre-canceled context cannot exercise. Once tripped it stays canceled.
+// ctx.Err() between top-level statements (checkSourceElements), so a small threshold
+// lands the cancellation *after* checking has begun rather than before it starts --
+// the case a pre-canceled context cannot exercise. Once tripped it stays canceled.
 type cancelAfterNPolls struct {
 	context.Context
 	pollThreshold int32
@@ -118,74 +45,83 @@ func (c *cancelAfterNPolls) Err() error {
 	return nil
 }
 
-func (c *cancelAfterNPolls) Done() <-chan struct{} {
-	return c.done
-}
+func (c *cancelAfterNPolls) Done() <-chan struct{} { return c.done }
 
-// TestTscMidCheckCancellation cancels the context after type-checking has already
-// begun (not before it starts). This exercises the paths a pre-canceled context
-// skips: a checker actually runs, sets wasCanceled, and would panic in
-// checkNotCanceled on the second GetGlobalDiagnostics / on reuse across files if
-// the cancellation guards were missing.
-func TestTscMidCheckCancellation(t *testing.T) {
+// TestTscCancellationAborts verifies that a canceled compile aborts with
+// ExitStatusCanceled and never reports its (incomplete) diagnostics -- both when the
+// signal arrives before the compile starts and when it lands mid-check, where a
+// checker actually runs and is marked canceled. The mid-check cases are what would
+// panic in checkNotCanceled if the reuse guards were missing (a canceled checker fed
+// more files, or asked for global/declaration diagnostics again).
+func TestTscCancellationAborts(t *testing.T) {
 	t.Parallel()
 
-	// Many top-level statements per file so the checker polls ctx.Err() often and
-	// cancellation reliably lands mid-check, across more than one file.
-	var badStatements strings.Builder
+	// Many statements per file so a mid-check cancellation reliably lands while
+	// checking, across more than one file. The type errors let us tell whether the
+	// checker ran to completion: if it did the diagnostics are reported, if aborted
+	// they are not. Distinct names per statement keep the checker busy.
+	var bad, inferred strings.Builder
 	for i := range 50 {
-		badStatements.WriteString("export const v")
-		badStatements.WriteString(strings.Repeat("x", i+1))
-		badStatements.WriteString(`: number = "not a number";` + "\n")
+		x := strings.Repeat("x", i+1)
+		bad.WriteString("export const v" + x + `: number = "not a number";` + "\n")
+		// Inferred return types force type serialization during declaration emit
+		// (SerializeReturnTypeForSignature -> node reuse -> checkNotCanceled), a
+		// distinct checker-reuse path from plain semantic checking.
+		inferred.WriteString("export function make" + x + "() { return { a: 1, b: 'x', deep: [1, 2, 3] as const }; }\n")
 	}
-	badSrc := badStatements.String()
-
-	// Inferred return types force the checker to serialize types during declaration
-	// emit (SerializeReturnTypeForSignature -> node reuse -> checkNotCanceled), a
-	// distinct reuse path from plain semantic checking.
-	var inferredSrc strings.Builder
-	for i := range 50 {
-		inferredSrc.WriteString("export function make")
-		inferredSrc.WriteString(strings.Repeat("x", i+1))
-		inferredSrc.WriteString("() { return { a: 1, b: 'x', deep: [1, 2, 3] as const }; }\n")
-	}
+	badSrc, inferredSrc := bad.String(), inferred.String()
 
 	testCases := []struct {
 		name     string
 		args     []string
 		tsconfig string
 		src      string
+		midCheck bool // cancel during checking rather than before the compile starts
 	}{
 		{
-			// Single checker reused across files: after it cancels on an early file,
-			// forEachCheckerGroupDo must stop feeding it later files.
-			name:     "single checker",
-			args:     []string{"--noEmit", "--singleThreaded"},
+			name:     "pre-canceled single file",
+			args:     []string{"--noEmit"},
 			tsconfig: `{ "compilerOptions": { "noEmit": true, "strict": true } }`,
 			src:      badSrc,
 		},
 		{
-			// tsc -b through the incremental program + orchestrator, which also reaches
-			// GetGlobalDiagnostics from emitBuildInfo -> ensureHasErrorsForState.
-			name:     "build mode",
+			name:     "pre-canceled build mode",
 			args:     []string{"-b"},
 			tsconfig: `{ "compilerOptions": { "composite": true, "strict": true } }`,
 			src:      badSrc,
 		},
 		{
-			// Declaration emit reuses checkers to serialize types; a canceled checker
-			// must not be handed to GetDeclarationDiagnostics.
-			name:     "declaration emit",
+			// --singleThreaded funnels all files through one checker, so after it
+			// cancels on an early file forEachCheckerGroupDo must stop feeding it later
+			// files.
+			name:     "mid-check single checker",
+			args:     []string{"--noEmit", "--singleThreaded"},
+			tsconfig: `{ "compilerOptions": { "noEmit": true, "strict": true } }`,
+			src:      badSrc,
+			midCheck: true,
+		},
+		{
+			// tsc -b through the incremental program + orchestrator, which also reaches
+			// GetGlobalDiagnostics from emitBuildInfo -> ensureHasErrorsForState.
+			name:     "mid-check build mode",
+			args:     []string{"-b"},
+			tsconfig: `{ "compilerOptions": { "composite": true, "strict": true } }`,
+			src:      badSrc,
+			midCheck: true,
+		},
+		{
+			// A canceled checker must not be handed to GetDeclarationDiagnostics.
+			name:     "mid-check declaration emit",
 			args:     []string{"--noEmit", "--declaration", "--singleThreaded"},
 			tsconfig: `{ "compilerOptions": { "noEmit": true, "declaration": true, "strict": true } }`,
-			src:      inferredSrc.String(),
+			src:      inferredSrc,
+			midCheck: true,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-
 			sys := newTestSys(&tscInput{
 				commandLineArgs: tc.args,
 				files: FileMap{
@@ -196,40 +132,65 @@ func TestTscMidCheckCancellation(t *testing.T) {
 				},
 			}, false)
 
-			// Let checking start, then cancel. The threshold is small relative to the
-			// number of statements so cancellation lands well before checking finishes.
-			ctx := newCancelAfterNPolls(5)
+			result, midChecked := runWithCancellation(t, sys, tc.args, tc.midCheck)
 
-			resultCh := make(chan tsc.CommandLineResult, 1)
-			go func() {
-				resultCh <- execute.CommandLine(ctx, sys, tc.args, sys)
-			}()
-
-			select {
-			case result := <-resultCh:
-				// The run must abort (not run to completion) once canceled mid-check,
-				// and must not panic in checkNotCanceled.
-				if result.Status != tsc.ExitStatusCanceled {
-					t.Errorf("status = %v, want ExitStatusCanceled", result.Status)
-				}
-				// The cancellation must actually have landed mid-check, otherwise this
-				// test is not exercising what it claims.
-				if !ctx.tripped.Load() {
-					t.Error("expected cancellation to trip during checking, but it never did")
-				}
-			case <-time.After(30 * time.Second):
-				t.Fatal("compile did not abort after mid-check cancellation")
+			// Aborts with a distinct status (and must not panic reusing a canceled checker).
+			if result.Status != tsc.ExitStatusCanceled {
+				t.Errorf("status = %v, want ExitStatusCanceled", result.Status)
+			}
+			// Aborted checks must not report their incomplete diagnostics.
+			if out := sys.getOutput(true); strings.Contains(out, "error TS") {
+				t.Errorf("expected no diagnostics after cancellation; got output:\n%s", out)
+			}
+			// A mid-check case that never tripped during checking isn't testing what it claims.
+			if tc.midCheck && !midChecked {
+				t.Error("expected cancellation to trip during checking, but it never did")
 			}
 		})
 	}
 }
 
-// TestTscCancellationSweep cancels at every successive point in the compile by
-// increasing the poll threshold one step at a time. It walks cancellation past the
-// check phase and into emit, covering windows a single fixed threshold would miss:
-// the no-emit-on-error recheck that runs during emit, the emit-returns-nil path, and
-// declaration-emit type serialization. At no threshold may the run panic, and it
-// must always end Canceled or Success (if it finished before the trip).
+// runWithCancellation runs the command line under a canceled context and returns the
+// result. When midCheck is false the context is canceled before the run starts; when
+// true it is canceled after checking has begun, and the returned bool reports whether
+// that mid-check cancellation actually tripped. The run is guarded by a timeout so a
+// regression that ignores cancellation fails loudly instead of hanging.
+func runWithCancellation(t *testing.T, sys *TestSys, args []string, midCheck bool) (tsc.CommandLineResult, bool) {
+	t.Helper()
+	var (
+		ctx        context.Context
+		midChecked func() bool
+	)
+	if midCheck {
+		// Threshold small relative to the statement count so cancellation lands well
+		// before checking finishes.
+		c := newCancelAfterNPolls(5)
+		ctx, midChecked = c, c.tripped.Load
+	} else {
+		canceled, cancel := context.WithCancel(context.Background())
+		cancel()
+		ctx, midChecked = canceled, func() bool { return false }
+	}
+
+	resultCh := make(chan tsc.CommandLineResult, 1)
+	go func() {
+		resultCh <- execute.CommandLine(ctx, sys, args, sys)
+	}()
+	select {
+	case result := <-resultCh:
+		return result, midChecked()
+	case <-time.After(30 * time.Second):
+		t.Fatal("compile did not abort after cancellation")
+		return tsc.CommandLineResult{}, false
+	}
+}
+
+// TestTscCancellationSweep steps the cancellation point across the whole compile by
+// increasing the poll threshold one step at a time, walking past the check phase and
+// into emit. This covers windows a single fixed threshold would miss -- the
+// no-emit-on-error recheck that runs during emit, the emit-returns-nil path, and
+// declaration-emit type serialization -- and asserts that at no point does the run
+// panic or report a partial result as success.
 func TestTscCancellationSweep(t *testing.T) {
 	t.Parallel()
 
