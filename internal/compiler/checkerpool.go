@@ -137,6 +137,11 @@ func (p *checkerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
 	p.createCheckers()
 	globalDiagnostics := make([][]*ast.Diagnostic, len(p.checkers))
 	p.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
+		// A canceled checker panics if asked for diagnostics (checkNotCanceled), and
+		// its results are discarded once canceled anyway. Skip it.
+		if checker.WasCanceled() {
+			return
+		}
 		globalDiagnostics[idx] = checker.GetGlobalDiagnostics()
 	})
 	return SortAndDeduplicateDiagnostics(slices.Concat(globalDiagnostics...))
@@ -156,11 +161,8 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
 				checker := p.checkers[checkerIdx]
-				// A canceled checker panics on reuse (checkNotCanceled), so stop feeding
-				// it more files. This guard is needed because the diagnostics APIs return
-				// []*ast.Diagnostic with no error channel: a canceled check is signaled by
-				// checker state, not a returned error.
-				if ctx.Err() != nil || checker.WasCanceled() {
+				// Check for cancellation
+				if ctx.Err() != nil {
 					break
 				}
 				if checker == p.fileAssociations[file] {
