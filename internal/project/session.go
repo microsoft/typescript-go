@@ -393,8 +393,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 					}
 				}
 			} else {
-				switch pathStr[i:] {
-				case ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json":
+				if isRelevantExtension(pathStr[i:]) {
 					hasRelevantChange = true
 				}
 			}
@@ -406,8 +405,8 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	s.pendingFileChangesMu.Unlock()
 
 	if hasRelevantChange {
-		// Schedule a debounced diagnostics refresh only for file types
-		// that can affect the TypeScript program.
+		// Schedule a debounced diagnostics refresh only for paths
+		// that can affect the TypeScript program (relevant extensions or directories).
 		s.ScheduleDiagnosticsRefresh()
 	}
 	s.cancelWarmAutoImportCache()
