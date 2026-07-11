@@ -27,18 +27,21 @@ func runMain() int {
 		}
 	}
 
-	// Notify on our own channel rather than using signal.NotifyContext: we need the
-	// actual signal so a canceled run can exit with the conventional 128+signum code,
-	// matching the JS tsc (which installs no handler and lets node's default fire).
+	// Use signal.Notify with our own channel rather than signal.NotifyContext: the
+	// latter's context can't tell us which signal fired, and we need it to exit like
+	// the JS tsc, which installs no handler and lets node terminate via the signal.
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	defer signal.Stop(sigCh)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	var receivedSignal os.Signal
+	// canceledBy carries the interrupting signal (if any) to the code below. It is
+	// written before cancel() and thus before CommandLine can observe cancellation.
+	canceledBy := make(chan os.Signal, 1)
 	go func() {
 		select {
-		case receivedSignal = <-sigCh:
+		case sig := <-sigCh:
+			canceledBy <- sig
 			cancel()
 		case <-ctx.Done():
 		}
@@ -46,17 +49,18 @@ func runMain() int {
 
 	result := execute.CommandLine(ctx, newSystem(), args, nil)
 
-	if result.Status == tsc.ExitStatusCanceled && receivedSignal != nil {
-		// A signal interrupted the run. Restore the default disposition and re-raise so
-		// the process terminates via the signal itself: this yields the conventional
-		// exit code (130 for SIGINT, 143 for SIGTERM) and lets the runtime reset the
-		// terminal, exactly as an unhandled signal would.
-		signal.Reset(receivedSignal)
-		if sig, ok := receivedSignal.(syscall.Signal); ok {
-			_ = syscall.Kill(os.Getpid(), sig)
-			// Block until the re-raised signal is delivered; do not fall through to a
-			// normal return, which would exit 6 and mask the signal.
-			select {}
+	if result.Status == tsc.ExitStatusCanceled {
+		// A signal canceled the run. Re-raise it so we terminate via the signal itself,
+		// yielding the conventional exit code (130 for SIGINT, 143 for SIGTERM) and the
+		// terminal reset an unhandled signal would produce.
+		select {
+		case sig := <-canceledBy:
+			if s, ok := sig.(syscall.Signal); ok {
+				signal.Reset(s)
+				_ = syscall.Kill(os.Getpid(), s)
+				return 128 + int(s) // fallback in case the signal doesn't land promptly
+			}
+		default:
 		}
 	}
 	return int(result.Status)

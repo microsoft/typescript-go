@@ -130,30 +130,55 @@ func (c *cancelAfterNPolls) Done() <-chan struct{} {
 func TestTscMidCheckCancellation(t *testing.T) {
 	t.Parallel()
 
-	// Enough top-level statements across multiple files that the checker polls
-	// ctx.Err() many times, so cancellation reliably lands mid-check.
-	var manyStatements strings.Builder
+	// Many top-level statements per file so the checker polls ctx.Err() often and
+	// cancellation reliably lands mid-check, across more than one file.
+	var badStatements strings.Builder
 	for i := range 50 {
-		manyStatements.WriteString("export const v")
-		manyStatements.WriteString(strings.Repeat("x", i+1))
-		manyStatements.WriteString(`: number = "not a number";` + "\n")
+		badStatements.WriteString("export const v")
+		badStatements.WriteString(strings.Repeat("x", i+1))
+		badStatements.WriteString(`: number = "not a number";` + "\n")
 	}
-	src := manyStatements.String()
+	badSrc := badStatements.String()
+
+	// Inferred return types force the checker to serialize types during declaration
+	// emit (SerializeReturnTypeForSignature -> node reuse -> checkNotCanceled), a
+	// distinct reuse path from plain semantic checking.
+	var inferredSrc strings.Builder
+	for i := range 50 {
+		inferredSrc.WriteString("export function make")
+		inferredSrc.WriteString(strings.Repeat("x", i+1))
+		inferredSrc.WriteString("() { return { a: 1, b: 'x', deep: [1, 2, 3] as const }; }\n")
+	}
 
 	testCases := []struct {
-		name string
-		args []string
+		name     string
+		args     []string
+		tsconfig string
+		src      string
 	}{
 		{
 			// Single checker reused across files: after it cancels on an early file,
 			// forEachCheckerGroupDo must stop feeding it later files.
-			name: "single checker",
-			args: []string{"--noEmit", "--singleThreaded"},
+			name:     "single checker",
+			args:     []string{"--noEmit", "--singleThreaded"},
+			tsconfig: `{ "compilerOptions": { "noEmit": true, "strict": true } }`,
+			src:      badSrc,
 		},
 		{
-			// tsc -b through the incremental program + orchestrator.
-			name: "build mode",
-			args: []string{"-b"},
+			// tsc -b through the incremental program + orchestrator, which also reaches
+			// GetGlobalDiagnostics from emitBuildInfo -> ensureHasErrorsForState.
+			name:     "build mode",
+			args:     []string{"-b"},
+			tsconfig: `{ "compilerOptions": { "composite": true, "strict": true } }`,
+			src:      badSrc,
+		},
+		{
+			// Declaration emit reuses checkers to serialize types; a canceled checker
+			// must not be handed to GetDeclarationDiagnostics.
+			name:     "declaration emit",
+			args:     []string{"--noEmit", "--declaration", "--singleThreaded"},
+			tsconfig: `{ "compilerOptions": { "noEmit": true, "declaration": true, "strict": true } }`,
+			src:      inferredSrc.String(),
 		},
 	}
 
@@ -161,20 +186,14 @@ func TestTscMidCheckCancellation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			files := FileMap{
-				"/home/src/workspaces/project/a.ts": src,
-				"/home/src/workspaces/project/b.ts": src,
-				"/home/src/workspaces/project/c.ts": src,
-			}
-			if tc.name == "build mode" {
-				files["/home/src/workspaces/project/tsconfig.json"] = `{ "compilerOptions": { "composite": true, "strict": true } }`
-			} else {
-				files["/home/src/workspaces/project/tsconfig.json"] = `{ "compilerOptions": { "noEmit": true, "strict": true } }`
-			}
-
 			sys := newTestSys(&tscInput{
 				commandLineArgs: tc.args,
-				files:           files,
+				files: FileMap{
+					"/home/src/workspaces/project/tsconfig.json": tc.tsconfig,
+					"/home/src/workspaces/project/a.ts":          tc.src,
+					"/home/src/workspaces/project/b.ts":          tc.src,
+					"/home/src/workspaces/project/c.ts":          tc.src,
+				},
 			}, false)
 
 			// Let checking start, then cancel. The threshold is small relative to the
@@ -200,6 +219,76 @@ func TestTscMidCheckCancellation(t *testing.T) {
 				}
 			case <-time.After(30 * time.Second):
 				t.Fatal("compile did not abort after mid-check cancellation")
+			}
+		})
+	}
+}
+
+// TestTscCancellationSweep cancels at every successive point in the compile by
+// increasing the poll threshold one step at a time. It walks cancellation past the
+// check phase and into emit, covering windows a single fixed threshold would miss:
+// the no-emit-on-error recheck that runs during emit, the emit-returns-nil path, and
+// declaration-emit type serialization. At no threshold may the run panic, and it
+// must always end Canceled or Success (if it finished before the trip).
+func TestTscCancellationSweep(t *testing.T) {
+	t.Parallel()
+
+	configs := []struct {
+		name     string
+		tsconfig string
+	}{
+		{
+			// noEmitOnError + incremental: emit performs the internal no-emit-on-error
+			// recheck, the path where a mid-emit cancellation makes Emit return nil.
+			name:     "incremental noEmitOnError",
+			tsconfig: `{ "compilerOptions": { "outDir": "out", "incremental": true, "noEmitOnError": true, "strict": true } }`,
+		},
+		{
+			// declaration emit serializes inferred types via the checker during emit.
+			name:     "declaration",
+			tsconfig: `{ "compilerOptions": { "outDir": "out", "declaration": true, "noEmitOnError": true, "strict": true } }`,
+		},
+	}
+
+	for _, cfg := range configs {
+		t.Run(cfg.name, func(t *testing.T) {
+			t.Parallel()
+			files := FileMap{
+				"/home/src/workspaces/project/tsconfig.json": cfg.tsconfig,
+				"/home/src/workspaces/project/a.ts":          "export const a = 1;\nexport function f() { return { x: 1, y: 'z' }; }\n",
+				"/home/src/workspaces/project/b.ts":          "export const b = 2;\nexport function g() { return [1, 2, 3] as const; }\n",
+			}
+
+			// Upper bound comfortably exceeds a full clean run's poll count for this
+			// project, so the sweep covers check, the second global-diagnostics pass,
+			// and emit.
+			for threshold := int32(1); threshold <= 150; threshold++ {
+				sys := newTestSys(&tscInput{
+					commandLineArgs: []string{"--singleThreaded"},
+					files:           files,
+				}, false)
+				ctx := newCancelAfterNPolls(threshold)
+
+				var result tsc.CommandLineResult
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							t.Fatalf("threshold=%d: panicked (want clean abort): %v", threshold, r)
+						}
+					}()
+					result = execute.CommandLine(ctx, sys, []string{"--singleThreaded"}, sys)
+				}()
+
+				// Success only if cancellation never tripped (the build outran it);
+				// otherwise it must be a clean Canceled. Anything else means partial
+				// state leaked out.
+				if ctx.tripped.Load() {
+					if result.Status != tsc.ExitStatusCanceled {
+						t.Fatalf("threshold=%d: status = %v, want ExitStatusCanceled", threshold, result.Status)
+					}
+				} else if result.Status != tsc.ExitStatusSuccess {
+					t.Fatalf("threshold=%d: status = %v, want ExitStatusSuccess (cancellation never tripped)", threshold, result.Status)
+				}
 			}
 		})
 	}

@@ -1761,6 +1761,11 @@ func HandleNoEmitOnError(ctx context.Context, program ProgramLike, files []*ast.
 	if !program.Options().NoEmitOnError.IsTrue() {
 		return nil // No emit on error is not set, so we can proceed with emitting
 	}
+	if ctx.Err() != nil {
+		// Canceled: don't re-run diagnostics on checkers that may already be canceled
+		// (checkNotCanceled would panic). The emit is being abandoned regardless.
+		return nil
+	}
 
 	diagnostics := GetDiagnosticsOfAnyProgram(
 		ctx,
@@ -1815,8 +1820,13 @@ func GetDiagnosticsOfAnyProgram(
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = appendDiagnosticsForAllFiles(allDiagnostics, getSemanticDiagnostics)
+				// Stop once canceled: the diagnostics are discarded anyway, and the calls
+				// below (GetGlobalDiagnostics, GetDeclarationDiagnostics) reuse the now
+				// canceled checkers, which panics in checkNotCanceled.
+				if ctx.Err() != nil {
+					return allDiagnostics
+				}
 				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
-				// Safe after cancellation: GetGlobalDiagnostics skips canceled checkers.
 				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}
 

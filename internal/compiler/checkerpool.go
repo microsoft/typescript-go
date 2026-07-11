@@ -160,12 +160,12 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			p.locks[checkerIdx].Lock()
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
-				checker := p.checkers[checkerIdx]
-				// Check for cancellation
+				// Stop once canceled: feeding another file to a checker that already
+				// canceled mid-check would panic in checkNotCanceled.
 				if ctx.Err() != nil {
 					break
 				}
-				if checker == p.fileAssociations[file] {
+				if checker := p.checkers[checkerIdx]; checker == p.fileAssociations[file] {
 					cb(checker, i, file)
 				}
 			}
