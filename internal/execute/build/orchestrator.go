@@ -585,8 +585,7 @@ func (o *Orchestrator) DoCycle() {
 		o.GenerateGraphReusingOldTasks()
 	}
 
-	// TODO: thread the RunLoop context through DoCycle so a long rebuild is
-	// interruptible mid-cycle, not just between cycles (see the CLI watcher's TODO).
+	// TODO: propagate a proper context here and support cancellation with cycle
 	o.buildOrClean(context.Background())
 	o.updateWatch()
 	desiredDirs := o.computeDesiredWatches()

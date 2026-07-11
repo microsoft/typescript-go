@@ -591,11 +591,6 @@ func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, source
 				continue
 			}
 			wg.Queue(func() {
-				// Skip once canceled: a pooled checker may already be canceled from a
-				// prior file, and reusing it would panic in checkNotCanceled.
-				if ctx.Err() != nil {
-					return
-				}
 				c, done := p.checkerPool.GetChecker(ctx, file)
 				diagnostics[i] = collect(ctx, c, file)
 				done()
@@ -1783,13 +1778,8 @@ func GetDiagnosticsOfAnyProgram(
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
 				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
-				// Once canceled, the checker must not be reused (GetGlobalDiagnostics /
-				// GetDeclarationDiagnostics would panic in checkNotCanceled). The partial
-				// diagnostics are discarded by the caller. See forEachCheckerGroupDo.
-				if ctx.Err() != nil {
-					return allDiagnostics
-				}
 				// Ask for the global diagnostics again (they were empty above); we may have found new during checking, e.g. missing globals.
+				// Safe after cancellation: GetGlobalDiagnostics skips canceled checkers.
 				allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 			}
 

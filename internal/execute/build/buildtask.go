@@ -254,11 +254,7 @@ func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrat
 	t.result.statistics = statistics
 	if result.Status == tsc.ExitStatusCanceled {
 		// Canceled: the result is incomplete (EmitResult is nil). Leave the task
-		// partial on purpose -- don't update timestamps, set buildKind, record
-		// packageJsons, or overwrite t.status -- so nothing partial is reported. The
-		// caller (buildProject) skips updateDownstream, and report() sees buildKind
-		// unset, so the project is not counted as built. Only ExitStatusCanceled
-		// propagates.
+		// partial on purpose. Only ExitStatusCanceled propagates.
 		return
 	}
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()

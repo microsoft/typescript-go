@@ -45,8 +45,8 @@ type EmitInput struct {
 func EmitAndReportStatistics(ctx context.Context, input EmitInput) (CompileAndEmitResult, *Statistics) {
 	var statistics *Statistics
 	result := EmitFilesAndReportErrors(ctx, input)
-	if result.Status != ExitStatusSuccess {
-		// compile exited early
+	if result.Status != ExitStatusSuccess || result.EmitResult == nil {
+		// compile exited early (e.g. errors or cancellation); EmitResult may be nil
 		return result, nil
 	}
 	result.times.totalTime = input.Sys.SinceStart()
@@ -115,6 +115,13 @@ func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result Comp
 			WriteFile: input.WriteFile,
 		})
 		result.times.emitTime = input.Sys.Now().Sub(emitStart)
+		// Emit returns nil if it was canceled partway through (e.g. cancellation
+		// during the internal no-emit-on-error recheck). Abort rather than report a
+		// nil result as success.
+		if ctx.Err() != nil {
+			result.Status = ExitStatusCanceled
+			return result
+		}
 	}
 	if emitResult != nil {
 		allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
