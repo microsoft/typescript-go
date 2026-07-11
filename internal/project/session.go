@@ -355,6 +355,7 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 
 func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.FileEvent) {
 	fileChanges := make([]FileChange, 0, len(changes))
+	hasRelevantChange := false
 	for _, change := range changes {
 		var kind FileChangeKind
 		switch change.Type {
@@ -371,14 +372,35 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 			Kind: kind,
 			URI:  change.Uri,
 		})
+
+		if !hasRelevantChange {
+			uriStr := string(change.Uri)
+			i := strings.LastIndexByte(uriStr, '.')
+			if i < 0 || strings.LastIndexByte(uriStr, '/') > i {
+				// Extensionless paths might be directories. 
+				// For creations/changes, we can check the file system.
+				// For deletions, it might already be gone from disk, so we conservatively treat it as relevant.
+				if kind == FileChangeKindWatchDelete || s.fs.fs.DirectoryExists(change.Uri.FileName()) {
+					hasRelevantChange = true
+				}
+			} else {
+				switch uriStr[i:] {
+				case ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json":
+					hasRelevantChange = true
+				}
+			}
+		}
 	}
 
 	s.pendingFileChangesMu.Lock()
 	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
 	s.pendingFileChangesMu.Unlock()
 
-	// Schedule a debounced diagnostics refresh
-	s.ScheduleDiagnosticsRefresh()
+	if hasRelevantChange {
+		// Schedule a debounced diagnostics refresh only for file types
+		// that can affect the TypeScript program.
+		s.ScheduleDiagnosticsRefresh()
+	}
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 }
