@@ -1892,13 +1892,12 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	if b.currentFlow == b.unreachableFlow {
 		// If the initializer makes flow unreachable (e.g. a throwing IIFE), bail out early
 		// to avoid creating a disconnected cycle in the flow graph. We still bind children to ensure
-		// AST completion, but bind them under a disconnected start flow so break/continue/labels
-		// are still processed without polluting the containing CFG.
-		b.currentFlow = b.newFlowNode(ast.FlowFlagsStart)
+		// AST completion, but bind them with isolated break/continue targets so they don't leak outward.
+		dummyBreakTarget := b.createBranchLabel()
+		dummyContinueTarget := b.createBranchLabel()
 		b.bind(stmt.Condition)
-		b.bindIterativeStatement(stmt.Statement, postLoopLabel, preIncrementorLabel)
+		b.bindIterativeStatement(stmt.Statement, dummyBreakTarget, dummyContinueTarget)
 		b.bind(stmt.Incrementor)
-		b.currentFlow = b.unreachableFlow
 		return
 	}
 	b.addAntecedent(preLoopLabel, b.currentFlow)
