@@ -1389,11 +1389,11 @@ export const value = content;`,
 				}`,
 				"/home/projects/TS/p1/src/index.ts": `export const x = 1;`,
 			}
-	session, utils := projecttestutil.Setup(files)
+			session, utils := projecttestutil.Setup(files)
 
-	session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.WaitForBackgroundTasks()
-			
+
 			baselineRefreshCount := len(utils.Client().RefreshDiagnosticsCalls())
 
 			// Scenario A: irrelevant .svg
