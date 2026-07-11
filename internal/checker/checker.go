@@ -13655,10 +13655,7 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node, igno
 func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node) *Type {
 	t := c.getTypeOfSymbol(symbol)
 	declaration := symbol.ValueDeclaration
-	if declaration != nil && (!ast.GetRootDeclaration(declaration).Loc.ContainsInclusive(location.Pos()) ||
-		ast.GetSourceFileOfNode(declaration) != ast.GetSourceFileOfNode(location) ||
-		c.getControlFlowContainer(declaration) != c.getControlFlowContainer(location) ||
-		c.isSameScopedBindingElement(location, declaration)) {
+	if declaration != nil {
 		switch {
 		// If we have a non-rest binding element with no initializer declared as a const variable or a const-like
 		// parameter (a parameter for which there are no assignments in the function body), and if the parent type
@@ -13684,8 +13681,15 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 		// as if it occurred in the specified location. We then recompute the narrowed binding element type by
 		// destructuring from the narrowed parent type.
 		case ast.IsBindingElement(declaration) && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) && len(declaration.Parent.Elements()) >= 2:
+			rootDeclaration := ast.GetRootDeclaration(declaration)
+			rootInitializer := rootDeclaration.Initializer()
+			// Avoid declaration circularity without blocking binding defaults or nested callbacks.
+			if rootInitializer != nil &&
+				ast.IsNodeDescendantOf(location, rootInitializer) &&
+				c.getControlFlowContainer(declaration) == c.getControlFlowContainer(location) {
+				break
+			}
 			parent := declaration.Parent.Parent
-			rootDeclaration := ast.GetRootDeclaration(parent)
 			if ast.IsVariableDeclaration(rootDeclaration) && c.getCombinedNodeFlagsCached(rootDeclaration)&ast.NodeFlagsConstant != 0 || ast.IsParameterDeclaration(rootDeclaration) {
 				links := c.nodeLinks.Get(parent)
 				if links.flags&NodeCheckFlagsInCheckIdentifier == 0 {
