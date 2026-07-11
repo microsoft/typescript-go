@@ -13655,7 +13655,7 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node, igno
 func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node) *Type {
 	t := c.getTypeOfSymbol(symbol)
 	declaration := symbol.ValueDeclaration
-	if declaration != nil && !ast.GetRootDeclaration(declaration).Loc.ContainsInclusive(location.Pos()) {
+	if declaration != nil && (!ast.GetRootDeclaration(declaration).Loc.ContainsInclusive(location.Pos()) || ast.GetSourceFileOfNode(declaration) != ast.GetSourceFileOfNode(location)) {
 		switch {
 		// If we have a non-rest binding element with no initializer declared as a const variable or a const-like
 		// parameter (a parameter for which there are no assignments in the function body), and if the parent type
