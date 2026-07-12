@@ -1,19 +1,19 @@
 {
-  "features": {
-    "ghcr.io/devcontainers-extra/features/dprint-asdf:2": {
-      "version": "2.0.16",
-      "resolved": "ghcr.io/devcontainers-extra/features/dprint-asdf@sha256:743592450641776dbb6579258a46717970ef66ba6b83f529b017117741628ed7",
-      "integrity": "sha256:743592450641776dbb6579258a46717970ef66ba6b83f529b017117741628ed7"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "version": "1.1.0",
-      "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671",
-      "integrity": "sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671"
-    },
-    "ghcr.io/devcontainers/features/node:2": {
-      "version": "2.1.0",
-      "resolved": "ghcr.io/devcontainers/features/node@sha256:586c9a6f7dd40bd3ba2cd41e7f2f88dcc31fbe5d1442afcbf07ffbc66b686857",
-      "integrity": "sha256:586c9a6f7dd40bd3ba2cd41e7f2f88dcc31fbe5d1442afcbf07ffbc66b686857"
+    "features": {
+        "ghcr.io/devcontainers-extra/features/dprint-asdf:2": {
+            "version": "2.0.16",
+            "resolved": "ghcr.io/devcontainers-extra/features/dprint-asdf@sha256:743592450641776dbb6579258a46717970ef66ba6b83f529b017117741628ed7",
+            "integrity": "sha256:743592450641776dbb6579258a46717970ef66ba6b83f529b017117741628ed7"
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {
+            "version": "1.1.0",
+            "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671",
+            "integrity": "sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671"
+        },
+        "ghcr.io/devcontainers/features/node:2": {
+            "version": "2.1.0",
+            "resolved": "ghcr.io/devcontainers/features/node@sha256:586c9a6f7dd40bd3ba2cd41e7f2f88dcc31fbe5d1442afcbf07ffbc66b686857",
+            "integrity": "sha256:586c9a6f7dd40bd3ba2cd41e7f2f88dcc31fbe5d1442afcbf07ffbc66b686857"
+        }
     }
-  }
 }
