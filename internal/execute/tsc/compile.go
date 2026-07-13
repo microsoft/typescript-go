@@ -9,10 +9,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapperhost"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/locale"
-	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -64,14 +64,17 @@ type CommandLineTesting interface {
 	OnWatchStatusReportEnd()
 	GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any)
 	OnProgram(program *incremental.Program)
-	GetContentMapperHost(ctx context.Context, config *tsoptions.ParsedCommandLine) contentmapperhost.Host
 }
 
-func ResolveContentMapperHost(ctx context.Context, testing CommandLineTesting, config *tsoptions.ParsedCommandLine) contentmapperhost.Host {
-	if testing == nil {
+// NewContentMapperHost creates a content mapper host when content mappers are enabled via the
+// --dangerouslyLoadExternalPlugins flag, spawning mapper processes through the system's Spawn. It returns
+// nil otherwise, in which case no content-mapped files can be loaded. The caller owns the host and must
+// Close it when the compilation session ends.
+func NewContentMapperHost(ctx context.Context, sys System, options *core.CompilerOptions) contentmapperhost.Host {
+	if !options.DangerouslyLoadExternalPlugins.IsTrue() {
 		return nil
 	}
-	return testing.GetContentMapperHost(ctx, config)
+	return contentmapperhost.New(ctx, sys)
 }
 
 type CompileTimes struct {

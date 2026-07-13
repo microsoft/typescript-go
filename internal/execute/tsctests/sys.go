@@ -366,18 +366,6 @@ func (s *TestSys) WatchBackend() watchmanager.WatchBackend {
 	return s.mockWatchBackend
 }
 
-// GetContentMapper stands in for a real mapper host. It returns the production host, but wired to
-// TestSys.Spawn, which serves an in-process mapper over a net.Pipe rather than spawning a
-// subprocess. This exercises the full IPC stack (handshake, transform, decode) in tests. Mapper identity
-// is resolved during tsconfig parsing, so the in-process mapper only performs the verbatim transform; the
-// content is expected to already be valid TypeScript, which keeps the identity-preserving span map valid.
-func (s *TestSys) GetContentMapperHost(ctx context.Context, config *tsoptions.ParsedCommandLine) contentmapperhost.Host {
-	if len(config.ContentMappers()) == 0 {
-		return nil
-	}
-	return contentmapperhost.New(ctx, s)
-}
-
 func (s *TestSys) OnProgram(program *incremental.Program) {
 	s.writeHeaderToBaseline(&s.programBaselines, program)
 

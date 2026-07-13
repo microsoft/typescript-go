@@ -198,7 +198,6 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	configTime, _ := orchestrator.host.configTimes.Load(path)
 	compileTimes.ConfigTime = configTime
 	buildInfoReadStart := orchestrator.opts.Sys.Now()
-	contentMapperHost := tsc.ResolveContentMapperHost(orchestrator.ctx, orchestrator.opts.Testing, t.resolved)
 	var oldProgram *incremental.Program
 	if !orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
 		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
@@ -211,7 +210,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 			host:  orchestrator.host,
 			trace: tsc.GetTraceWithWriterFromSys(&t.result.builder, orchestrator.opts.Command.Locale(), orchestrator.opts.Testing),
 		},
-		ContentMapperHost: contentMapperHost,
+		ContentMapperHost: orchestrator.contentMapperHost,
 	})
 	compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
 	changesComputeStart := orchestrator.opts.Sys.Now()

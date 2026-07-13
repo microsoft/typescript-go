@@ -294,7 +294,7 @@ func performIncrementalCompilation(
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
-	contentMapperHost := tsc.ResolveContentMapperHost(ctx, testing, config)
+	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -347,6 +347,8 @@ func performCompilation(
 ) tsc.CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 
+	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+
 	tr := startTracingIfNeeded(sys, config, testing)
 
 	parseStart := sys.Now()
@@ -354,7 +356,7 @@ func performCompilation(
 		Config:            config,
 		Host:              host,
 		Tracing:           tr,
-		ContentMapperHost: tsc.ResolveContentMapperHost(ctx, testing, config),
+		ContentMapperHost: contentMapperHost,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{

@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -67,6 +68,10 @@ type Orchestrator struct {
 	// ctx bounds the whole build session (the CLI signal context); it is set by Start and used to bound
 	// resources that outlive a single project build, such as content mapper processes.
 	ctx context.Context
+	// contentMapperHost transforms content-mapped files; it is created once per build session (when
+	// enabled) and shared across all projects so mapper processes are consolidated. It closes itself when
+	// ctx is cancelled (see contentmapperhost.New).
+	contentMapperHost contentmapperhost.Host
 
 	// order generation result
 	tasks  *collections.SyncMap[tspath.Path, *BuildTask]
@@ -230,6 +235,7 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 
 func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	o.ctx = ctx
+	o.contentMapperHost = tsc.NewContentMapperHost(ctx, o.opts.Sys, o.opts.Command.CompilerOptions)
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}

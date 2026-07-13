@@ -82,6 +82,7 @@ type dialFunc func(ctx context.Context, mapper *contentmapper.Mapper) (ipc.Conn,
 type host struct {
 	ctx    context.Context
 	cancel context.CancelFunc
+	stop   func() bool
 	dial   dialFunc
 
 	mu    sync.Mutex
@@ -108,9 +109,9 @@ type Spawner interface {
 }
 
 // New creates a Host that spawns each mapper's process via the given spawner and drives it over a
-// JSON-RPC connection. The context bounds the lifetime of the spawned processes and their connections: it
-// is the CLI's signal context or the LSP's request/session context, and cancelling it (or calling Close)
-// tears every mapper down.
+// JSON-RPC connection. The host's lifetime is bound to ctx: cancelling it (e.g. the CLI's signal context
+// on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
+// context need not close the host explicitly. Close does the same synchronously.
 func New(ctx context.Context, spawner Spawner) Host {
 	return newWithDial(ctx, func(ctx context.Context, mapper *contentmapper.Mapper) (ipc.Conn, io.Closer, []string, error) {
 		if len(mapper.Exec) == 0 {
@@ -132,8 +133,10 @@ func New(ctx context.Context, spawner Spawner) Host {
 }
 
 func newWithDial(ctx context.Context, dial dialFunc) *host {
-	ctx, cancel := context.WithCancel(ctx)
-	return &host{ctx: ctx, cancel: cancel, dial: dial, conns: make(map[string]*mapperConn)}
+	hostCtx, cancel := context.WithCancel(ctx)
+	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, conns: make(map[string]*mapperConn)}
+	h.stop = context.AfterFunc(ctx, func() { _ = h.Close() })
+	return h
 }
 
 // Transform sends the file's content to the mapper's process and decodes the transformed result. The
@@ -160,8 +163,10 @@ func (h *host) Transform(mapper *contentmapper.Mapper, request Request) (Result,
 	return decodeTransformResult(raw)
 }
 
-// Close shuts down every mapper process.
+// Close shuts down every mapper process. It is safe to call more than once and is invoked automatically
+// when the context passed to New is cancelled.
 func (h *host) Close() error {
+	h.stop()
 	h.cancel()
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -183,6 +188,9 @@ func (h *host) Close() error {
 func (h *host) connFor(mapper *contentmapper.Mapper) (ipc.Conn, []string, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
+	if h.conns == nil {
+		return nil, nil, errors.New("content mapper host is closed")
+	}
 	key := mapper.Identity()
 	if mc, ok := h.conns[key]; ok {
 		return mc.conn, mc.optionKeys, mc.err
