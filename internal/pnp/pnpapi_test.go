@@ -66,9 +66,6 @@ func TestResolveUnqualified(t *testing.T) {
 	}
 
 	for si := range suites {
-		if si != 0 {
-			continue
-		}
 		testSuite := &suites[si]
 
 		rawManifest := &testSuite.Manifest
