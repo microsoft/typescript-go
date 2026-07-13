@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -55,7 +56,8 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 		MaxTruncationLength: maxTruncLen,
 	}
 
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc)
+	vsCapability := caps.VSSupportsVisualStudioExtensions
+	quickInfo, documentation, quickInfoRuns := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc, vsCapability)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -82,27 +84,55 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 		hover.CanIncreaseVerbosity = vc.CanIncreaseVerbosity && !vc.Truncated
 	}
 
+	// Clients that support Visual Studio extensions (e.g. VS itself, when Corsa/Native TS Preview is
+	// enabled) render `_vs_rawContent` in place of `contents`. Without it, VS shows plain markdown
+	// with no symbol icon and no syntax coloring, unlike the legacy TSServer-backed hover path.
+	if vsCapability && len(quickInfoRuns) > 0 {
+		kind := lsutil.ScriptElementKindKeyword
+		var modifiers lsutil.ScriptElementKindModifier
+		if symbol != nil {
+			// Resolve aliases to their target before computing the icon kind, so e.g. `import { x }`
+			// shows the icon for whatever `x` actually is (const, function, ...) rather than a
+			// generic alias icon. GetSymbolModifiers already accounts for the alias target itself.
+			iconSymbol := symbol
+			if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+				if resolved := c.GetAliasedSymbol(symbol); resolved != nil && resolved != symbol {
+					iconSymbol = resolved
+				}
+			}
+			kind = lsutil.GetSymbolKind(c, iconSymbol, rangeNode)
+			modifiers = lsutil.GetSymbolModifiers(c, symbol)
+		}
+		imageId := getVSHoverImageId(kind, modifiers)
+		var documentationRuns []*lsproto.VSClassifiedTextRun
+		if documentation != "" {
+			documentationRuns = []*lsproto.VSClassifiedTextRun{{ClassificationTypeName: string(lsproto.ClassificationTypeNameText), Text: documentation}}
+		}
+		hover.VSRawContent = buildVSHoverRawContent(imageId, quickInfoRuns, documentationRuns)
+	}
+
 	return lsproto.HoverOrNull{Hover: hover}, nil
 }
 
-func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext) (string, string) {
-	info := getQuickInfoAndDeclarationAtLocation(c, symbol, node, vc, false /*vsCapability*/, getMeaningFromLocation(node))
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext, vsCapability bool) (string, string, []*lsproto.VSClassifiedTextRun) {
+	info := getQuickInfoAndDeclarationAtLocation(c, symbol, node, vc, vsCapability, getMeaningFromLocation(node))
 	quickInfo := info.displayParts.String()
 	if quickInfo == "" {
-		return "", ""
+		return "", "", nil
 	}
+	quickInfoRuns := info.displayParts.GetRuns()
 
 	documentation := l.documentationFromSignature(c, symbol, getCallOrNewExpression(node), node, contentFormat, false /*commentOnly*/)
 	if documentation != "" {
-		return quickInfo, documentation
+		return quickInfo, documentation, quickInfoRuns
 	}
 
 	documentation = l.getDocumentationFromDeclaration(c, symbol, info.declaration, node, contentFormat, false /*commentOnly*/)
 	if documentation != "" {
-		return quickInfo, documentation
+		return quickInfo, documentation, quickInfoRuns
 	}
 
-	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat)
+	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat), quickInfoRuns
 }
 
 func (l *LanguageService) documentationFromSignature(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
