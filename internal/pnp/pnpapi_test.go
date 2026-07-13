@@ -66,9 +66,6 @@ func TestResolveUnqualified(t *testing.T) {
 	}
 
 	for si := range suites {
-		if si != 0 {
-			continue
-		}
 		testSuite := &suites[si]
 
 		rawManifest := &testSuite.Manifest
@@ -100,41 +97,6 @@ func TestResolveUnqualified(t *testing.T) {
 				}
 			})
 		}
-	}
-}
-
-func TestResolveUnqualifiedFallbackAlias(t *testing.T) {
-	t.Parallel()
-	expectationsPath := filepath.Join(repo.TestDataPath(), "fixtures", "pnp", "test-expectations.json")
-
-	content, err := os.ReadFile(expectationsPath)
-	if err != nil {
-		t.Fatalf("Assertion failed: Expected the expectations to be found: %v", err)
-	}
-
-	var suites []TestSuite
-	if err = json.Unmarshal(content, &suites); err != nil {
-		t.Fatalf("Assertion failed: Expected the expectations to be loaded: %v", err)
-	}
-
-	if len(suites) < 2 {
-		t.Fatalf("Assertion failed: Expected fallback expectations to be present")
-	}
-
-	rawManifest := &suites[1].Manifest
-	manifest, err := parseManifestFromData(rawManifest.String(), "/path/to/project")
-	if err != nil {
-		t.Fatalf("failed to init pnp manifest: %v", err)
-	}
-
-	pnpApi := &PnpApi{fs: osvfs.FS(), url: "/path/to/project/.pnp.cjs", manifest: manifest}
-	res, unqualifiedErr := pnpApi.ResolveToUnqualified("alias", "/path/to/project/fooo")
-
-	if unqualifiedErr != nil {
-		t.Fatalf("expected fallback alias to resolve, got error: %v", unqualifiedErr.Message)
-	}
-	if res != "/path/to/project/test-1/" {
-		t.Fatalf("expected fallback alias to resolve to %q, got %q", "/path/to/project/test-1/", res)
 	}
 }
 
