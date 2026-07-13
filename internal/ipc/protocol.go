@@ -1,4 +1,4 @@
-package api
+package ipc
 
 import (
 	"github.com/microsoft/typescript-go/internal/jsonrpc"

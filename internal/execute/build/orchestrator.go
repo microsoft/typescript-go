@@ -64,6 +64,10 @@ type Orchestrator struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	host                *host
 
+	// ctx bounds the whole build session (the CLI signal context); it is set by Start and used to bound
+	// resources that outlive a single project build, such as content mapper processes.
+	ctx context.Context
+
 	// order generation result
 	tasks  *collections.SyncMap[tspath.Path, *BuildTask]
 	order  []string
@@ -225,6 +229,7 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 }
 
 func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
+	o.ctx = ctx
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}

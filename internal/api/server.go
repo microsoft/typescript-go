@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -55,16 +56,16 @@ func NewStdioServer(options *StdioServerOptions) *StdioServer {
 
 // Run starts the server and blocks until the connection closes.
 func (s *StdioServer) Run(ctx context.Context) error {
-	var transport Transport
+	var transport ipc.Transport
 	if s.options.PipePath != "" {
-		t, err := NewPipeTransport(s.options.PipePath)
+		t, err := ipc.NewPipeTransport(s.options.PipePath)
 		if err != nil {
 			return fmt.Errorf("failed to create pipe transport: %w", err)
 		}
 		defer t.Close()
 		transport = t
 	} else {
-		t := NewStdioTransport(s.options.In, s.options.Out)
+		t := ipc.NewStdioTransport(s.options.In, s.options.Out)
 		defer t.Close()
 		transport = t
 	}
@@ -102,15 +103,15 @@ func (s *StdioServer) Run(ctx context.Context) error {
 	}
 
 	// Create protocol and connection based on async mode
-	var conn Conn
+	var conn ipc.Conn
 	if s.options.Async {
-		protocol := NewJSONRPCProtocol(rwc)
-		asyncConn := NewAsyncConnWithProtocol(rwc, protocol, session)
+		protocol := ipc.NewJSONRPCProtocol(rwc)
+		asyncConn := ipc.NewAsyncConnWithProtocol(rwc, protocol, session)
 		asyncConn.SetCollectTiming(s.options.CollectTiming)
 		conn = asyncConn
 	} else {
 		protocol := NewMessagePackProtocol(rwc)
-		syncConn := NewSyncConn(rwc, protocol, session)
+		syncConn := ipc.NewSyncConn(rwc, protocol, session)
 		syncConn.SetCollectTiming(s.options.CollectTiming)
 		conn = syncConn
 	}

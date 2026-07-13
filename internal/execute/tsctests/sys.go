@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"net"
 	"strconv"
 	"strings"
 	"sync"
@@ -12,12 +13,15 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
+	"github.com/microsoft/typescript-go/internal/ipc"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
@@ -235,6 +239,45 @@ func (s *TestSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
+// Spawn stands up an in-process mapper that speaks the real content mapper protocol over a net.Pipe, so
+// tests can exercise the full IPC stack without a subprocess. The mapper transforms content verbatim.
+func (s *TestSys) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+	client, server := net.Pipe()
+	go func() { _ = ipc.NewAsyncConn(server, verbatimContentMapper{}).Run(context.Background()) }()
+	return client, nil
+}
+
+// verbatimContentMapper is an in-process content mapper that returns its input unchanged, with an
+// identity span map and no diagnostics. The input is expected to already be valid TypeScript.
+type verbatimContentMapper struct{}
+
+func (verbatimContentMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapperhost.MethodInitialize:
+		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion}, nil
+	case contentmapperhost.MethodTransform:
+		var p contentmapperhost.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		mappings, err := spanmap.New([]spanmap.Segment{{
+			GenEnd:  core.TextPos(len(p.Content)),
+			OrigEnd: core.TextPos(len(p.Content)),
+			Kind:    spanmap.KindVerbatim,
+		}}).Marshal()
+		if err != nil {
+			return nil, err
+		}
+		return contentmapperhost.TransformResult{Text: p.Content, Mappings: json.Value(mappings)}, nil
+	default:
+		return nil, fmt.Errorf("unexpected method %s", method)
+	}
+}
+
+func (verbatimContentMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {
+	return nil
+}
+
 func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {
 	if result != nil {
 		for _, file := range result.EmittedFiles {
@@ -323,29 +366,16 @@ func (s *TestSys) WatchBackend() watchmanager.WatchBackend {
 	return s.mockWatchBackend
 }
 
-// GetContentMapperRunner stands in for a real mapper host, returning a runner that transforms foreign
-// files verbatim. Mapper identity is resolved during tsconfig parsing, so the runner only performs
-// transformation. The content is expected to already be valid TypeScript, which keeps the
-// identity-preserving span map valid.
-func (s *TestSys) GetContentMapperRunner(config *tsoptions.ParsedCommandLine) compiler.ContentMapperRunner {
+// GetContentMapper stands in for a real mapper host. It returns the production host, but wired to
+// TestSys.Spawn, which serves an in-process mapper over a net.Pipe rather than spawning a
+// subprocess. This exercises the full IPC stack (handshake, transform, decode) in tests. Mapper identity
+// is resolved during tsconfig parsing, so the in-process mapper only performs the verbatim transform; the
+// content is expected to already be valid TypeScript, which keeps the identity-preserving span map valid.
+func (s *TestSys) GetContentMapperHost(ctx context.Context, config *tsoptions.ParsedCommandLine) contentmapperhost.Host {
 	if len(config.ContentMappers()) == 0 {
 		return nil
 	}
-	return testContentMapperRunner{}
-}
-
-type testContentMapperRunner struct{}
-
-func (testContentMapperRunner) Transform(fileName string, content string) (compiler.ContentMapperResult, error) {
-	return compiler.ContentMapperResult{
-		Text:       content,
-		ScriptKind: core.ScriptKindTS,
-		Mappings: spanmap.New([]spanmap.Segment{{
-			GenEnd:  core.TextPos(len(content)),
-			OrigEnd: core.TextPos(len(content)),
-			Kind:    spanmap.KindVerbatim,
-		}}),
-	}, nil
+	return contentmapperhost.New(ctx, s)
 }
 
 func (s *TestSys) OnProgram(program *incremental.Program) {

@@ -1,4 +1,4 @@
-package api
+package ipc
 
 import (
 	"context"
@@ -111,7 +111,7 @@ func (c *AsyncConn) handleRequest(ctx context.Context, msg *Message) {
 		writeErr := c.protocol.WriteResponse(msg.ID, serverTimingSnapshot(c.timing))
 		c.writeMu.Unlock()
 		if writeErr != nil {
-			panic(fmt.Sprintf("api: failed to write server timing response: %v", writeErr))
+			panic(fmt.Sprintf("ipc: failed to write server timing response: %v", writeErr))
 		}
 		return
 	case string(MethodResetServerTiming):
@@ -122,7 +122,7 @@ func (c *AsyncConn) handleRequest(ctx context.Context, msg *Message) {
 		writeErr := c.protocol.WriteResponse(msg.ID, nil)
 		c.writeMu.Unlock()
 		if writeErr != nil {
-			panic(fmt.Sprintf("api: failed to write reset server timing response: %v", writeErr))
+			panic(fmt.Sprintf("ipc: failed to write reset server timing response: %v", writeErr))
 		}
 		return
 	}
@@ -149,7 +149,7 @@ func (c *AsyncConn) handleRequest(ctx context.Context, msg *Message) {
 			c.writeMu.Unlock()
 
 			if writeErr != nil {
-				panic(fmt.Sprintf("api: failed to write panic error response: %v (original panic: %v)", writeErr, r))
+				panic(fmt.Sprintf("ipc: failed to write panic error response: %v (original panic: %v)", writeErr, r))
 			}
 		}
 	}()
@@ -174,7 +174,7 @@ func (c *AsyncConn) handleRequest(ctx context.Context, msg *Message) {
 	}
 
 	if writeErr != nil {
-		panic(fmt.Sprintf("api: failed to write response: %v", writeErr))
+		panic(fmt.Sprintf("ipc: failed to write response: %v", writeErr))
 	}
 }
 
@@ -217,7 +217,7 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (json.V
 		return nil, ctx.Err()
 	case resp := <-responseChan:
 		if resp.Error != nil {
-			return nil, fmt.Errorf("api: remote error [%d]: %s", resp.Error.Code, resp.Error.Message)
+			return nil, fmt.Errorf("ipc: remote error [%d]: %s", resp.Error.Code, resp.Error.Message)
 		}
 		return resp.Result, nil
 	}

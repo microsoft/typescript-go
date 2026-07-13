@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/fswatch"
+	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -1748,7 +1749,7 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 		pipePath = s.generateAPIPipePath()
 	}
 
-	transport, err := api.NewPipeTransport(pipePath)
+	transport, err := ipc.NewPipeTransport(pipePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create API transport: %w", err)
 	}
@@ -1783,7 +1784,7 @@ func (s *Server) handleInitializeAPISession(ctx context.Context, params *lsproto
 			}
 		}()
 
-		conn := api.NewAsyncConn(rwc, apiSession)
+		conn := ipc.NewAsyncConn(rwc, apiSession)
 		if apiErr := conn.Run(apiCtx); apiErr != nil {
 			s.logger.Errorf("API session %s: %v", apiSession.ID(), apiErr)
 		}
@@ -1801,7 +1802,7 @@ func (s *Server) generateAPIPipePath() string {
 	// Generate a high-entropy path using time and random source
 	now := time.Now().UnixNano()
 	rnd := rand.Uint64()
-	return api.GeneratePipePath(fmt.Sprintf("tsgo-api-%x-%x", now, rnd))
+	return ipc.GeneratePipePath(fmt.Sprintf("tsgo-api-%x-%x", now, rnd))
 }
 
 func (s *Server) removeAPISession(id string) {

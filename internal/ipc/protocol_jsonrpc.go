@@ -1,4 +1,4 @@
-package api
+package ipc
 
 import (
 	"io"

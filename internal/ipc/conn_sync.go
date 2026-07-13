@@ -1,4 +1,4 @@
-package api
+package ipc
 
 import (
 	"context"
@@ -75,7 +75,7 @@ func (c *SyncConn) Run(ctx context.Context) error {
 			c.handleNotification(ctx, msg)
 		} else {
 			// Responses are not expected in the main loop - they are read inline by Call().
-			return errors.New("api: unexpected response message in sync connection")
+			return errors.New("ipc: unexpected response message in sync connection")
 		}
 	}
 }
@@ -90,7 +90,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 		writeErr := c.protocol.WriteResponse(msg.ID, serverTimingSnapshot(c.timing))
 		c.mu.Unlock()
 		if writeErr != nil {
-			panic(fmt.Sprintf("api: failed to write server timing response: %v", writeErr))
+			panic(fmt.Sprintf("ipc: failed to write server timing response: %v", writeErr))
 		}
 		return
 	case string(MethodResetServerTiming):
@@ -101,7 +101,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 		writeErr := c.protocol.WriteResponse(msg.ID, nil)
 		c.mu.Unlock()
 		if writeErr != nil {
-			panic(fmt.Sprintf("api: failed to write reset server timing response: %v", writeErr))
+			panic(fmt.Sprintf("ipc: failed to write reset server timing response: %v", writeErr))
 		}
 		return
 	}
@@ -128,7 +128,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 			c.mu.Unlock()
 
 			if writeErr != nil {
-				panic(fmt.Sprintf("api: failed to write panic error response: %v (original panic: %v)", writeErr, r))
+				panic(fmt.Sprintf("ipc: failed to write panic error response: %v (original panic: %v)", writeErr, r))
 			}
 		}
 	}()
@@ -153,7 +153,7 @@ func (c *SyncConn) handleRequest(ctx context.Context, msg *Message) {
 	}
 
 	if writeErr != nil {
-		panic(fmt.Sprintf("api: failed to write response: %v", writeErr))
+		panic(fmt.Sprintf("ipc: failed to write response: %v", writeErr))
 	}
 }
 
@@ -191,13 +191,13 @@ func (c *SyncConn) Call(ctx context.Context, method string, params any) (json.Va
 
 	if msg.IsResponse() && msg.ID != nil && msg.ID.String() == method {
 		if msg.Error != nil {
-			return nil, fmt.Errorf("api: remote error [%d]: %s", msg.Error.Code, msg.Error.Message)
+			return nil, fmt.Errorf("ipc: remote error [%d]: %s", msg.Error.Code, msg.Error.Message)
 		}
 		return msg.Result, nil
 	}
 
 	// Unexpected message while waiting for response
-	return nil, fmt.Errorf("api: unexpected message while waiting for %q response", method)
+	return nil, fmt.Errorf("ipc: unexpected message while waiting for %q response", method)
 }
 
 // Notify sends a notification to the client (no response expected).

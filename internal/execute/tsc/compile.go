@@ -1,12 +1,14 @@
 package tsc
 
 import (
+	"context"
 	"io"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -23,6 +25,7 @@ type System interface {
 	WriteOutputIsTTY() bool
 	GetWidthOfTerminal() int
 	GetEnvironmentVariable(name string) string
+	Spawn(command []string, dir string) (io.ReadWriteCloser, error)
 
 	Now() time.Time
 	SinceStart() time.Duration
@@ -61,14 +64,14 @@ type CommandLineTesting interface {
 	OnWatchStatusReportEnd()
 	GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any)
 	OnProgram(program *incremental.Program)
-	GetContentMapperRunner(config *tsoptions.ParsedCommandLine) compiler.ContentMapperRunner
+	GetContentMapperHost(ctx context.Context, config *tsoptions.ParsedCommandLine) contentmapperhost.Host
 }
 
-func ResolveContentMapperRunner(testing CommandLineTesting, config *tsoptions.ParsedCommandLine) compiler.ContentMapperRunner {
+func ResolveContentMapperHost(ctx context.Context, testing CommandLineTesting, config *tsoptions.ParsedCommandLine) contentmapperhost.Host {
 	if testing == nil {
 		return nil
 	}
-	return testing.GetContentMapperRunner(config)
+	return testing.GetContentMapperHost(ctx, config)
 }
 
 type CompileTimes struct {

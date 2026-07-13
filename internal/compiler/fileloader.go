@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -400,12 +401,12 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 }
 
 // parseContentMappedFile reads a foreign file, transforms its content into TypeScript via the content
-// mapper runner, and parses the result, preserving the original file name and retaining the
+// mapper host, and parses the result, preserving the original file name and retaining the
 // untransformed text on the source file. Content mapper extensions only reach the parser when content
-// mappers are configured, and configured content mappers require a runner; a content-mapped file that
-// arrives without a runner is an invalid internal state and panics.
+// mappers are configured, and configured content mappers require a host; a content-mapped file that
+// arrives without a host is an invalid internal state and panics.
 //
-// When the runner returns an error the file is added with empty content and a per-file diagnostic
+// When the host returns an error the file is added with empty content and a per-file diagnostic
 // describing the failure. To avoid drowning the output when a mapper is systematically broken (e.g. a
 // version mismatch that makes it fail on every file), a mapper is disabled after maxContentMapperFailures
 // failures: at that point a single program diagnostic reports that the mapper was disabled, and every
@@ -416,8 +417,8 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	if !ok {
 		return nil
 	}
-	if p.opts.ContentMapperRunner == nil {
-		panic(fmt.Sprintf("content mapper runner is required to load content-mapped file %q", opts.FileName))
+	if p.opts.ContentMapperHost == nil {
+		panic(fmt.Sprintf("content mapper host is required to load content-mapped file %q", opts.FileName))
 	}
 	mapper := p.matchContentMapper(opts.FileName)
 	p.recordContentMapper(opts.Path, mapper)
@@ -426,7 +427,12 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, content)
 	}
-	result, err := p.opts.ContentMapperRunner.Transform(opts.FileName, content)
+	result, err := p.opts.ContentMapperHost.Transform(mapper, contentmapperhost.Request{
+		FileName:        opts.FileName,
+		Content:         content,
+		ConfigFileName:  p.opts.Config.CompilerOptions().ConfigFilePath,
+		CompilerOptions: p.opts.Config.CompilerOptions(),
+	})
 	if err != nil {
 		sourceFile := p.emptyContentMappedFile(opts, content)
 		if p.recordContentMapperFailure(mapper, label) {

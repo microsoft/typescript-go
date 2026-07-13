@@ -65,6 +65,10 @@ type Watcher struct {
 	reportWatchStatus              tsc.DiagnosticReporter
 	testing                        tsc.CommandLineTesting
 
+	// ctx bounds the whole watch session (the CLI signal context); it is set by start and used to bound
+	// resources that outlive a single cycle, such as content mapper processes.
+	ctx context.Context
+
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
 	configModified      bool
@@ -112,6 +116,7 @@ func createWatcher(
 }
 
 func (w *Watcher) start(ctx context.Context) {
+	w.ctx = ctx
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
@@ -304,9 +309,9 @@ func (w *Watcher) doBuild() error {
 	}
 
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
-		Config:              w.config,
-		Host:                host,
-		ContentMapperRunner: tsc.ResolveContentMapperRunner(w.testing, w.config),
+		Config:            w.config,
+		Host:              host,
+		ContentMapperHost: tsc.ResolveContentMapperHost(w.ctx, w.testing, w.config),
 	}), w.program, nil, w.testing != nil)
 
 	result := w.compileAndEmit()

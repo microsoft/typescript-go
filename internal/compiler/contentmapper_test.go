@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -24,13 +25,15 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-type fakeContentMapperRunner struct {
-	transform func(fileName string, content string) (compiler.ContentMapperResult, error)
+type fakeContentMapperHost struct {
+	transform func(fileName string, content string) (contentmapperhost.Result, error)
 }
 
-func (r fakeContentMapperRunner) Transform(fileName string, content string) (compiler.ContentMapperResult, error) {
-	return r.transform(fileName, content)
+func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapperhost.Request) (contentmapperhost.Result, error) {
+	return r.transform(request.FileName, request.Content)
 }
+
+func (fakeContentMapperHost) Close() error { return nil }
 
 const vueRawContent = "<template>original</template>"
 
@@ -47,7 +50,7 @@ func synthesizedSpanMap(transformed string) *spanmap.SpanMap {
 	}})
 }
 
-func newContentMapperProgram(t *testing.T, runner compiler.ContentMapperRunner, files map[string]string, rootFiles []string) *compiler.Program {
+func newContentMapperProgram(t *testing.T, contentMapperHost contentmapperhost.Host, files map[string]string, rootFiles []string) *compiler.Program {
 	t.Helper()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -70,9 +73,9 @@ func newContentMapperProgram(t *testing.T, runner compiler.ContentMapperRunner, 
 		},
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{
-		Config:              config,
-		Host:                compiler.NewCompilerHost("/src", fs, bundled.LibPath(), nil, nil),
-		ContentMapperRunner: runner,
+		Config:            config,
+		Host:              compiler.NewCompilerHost("/src", fs, bundled.LibPath(), nil, nil),
+		ContentMapperHost: contentMapperHost,
 		// Load files on the calling goroutine for deterministic diagnostics ordering.
 		SingleThreaded: core.TSTrue,
 	})
@@ -91,7 +94,7 @@ func TestContentMapperDiagnostics(t *testing.T) {
 	t.Parallel()
 
 	// A mapper reports problems it finds in the file's content (e.g. a syntax error in the embedded
-	// script) as result.Diagnostics. A real runner deserializes these from another process: it does
+	// script) as result.Diagnostics. A real host deserializes these from another process: it does
 	// not have our diagnostics.Message values, so it builds each one from an already-localized message,
 	// a code namespaced by the mapper's own source prefix, and a range into the original content.
 	const componentVue = `<template>
@@ -107,12 +110,12 @@ export const greeting = "hello" oops
 console.log(greeting);`,
 		"/src/Component.vue": componentVue,
 	}
-	runner := fakeContentMapperRunner{
-		transform: func(fileName string, content string) (compiler.ContentMapperResult, error) {
+	contentMapperHost := fakeContentMapperHost{
+		transform: func(fileName string, content string) (contentmapperhost.Result, error) {
 			// The mapper turns the <script> block into valid TypeScript but reports the stray token it
 			// found, pointing back into the original .vue content.
 			start := strings.Index(content, "oops")
-			return compiler.ContentMapperResult{
+			return contentmapperhost.Result{
 				Text:       "export const greeting = \"hello\";\n",
 				ScriptKind: core.ScriptKindTS,
 				Mappings:   synthesizedSpanMap("export const greeting = \"hello\";\n"),
@@ -129,7 +132,7 @@ console.log(greeting);`,
 			}, nil
 		},
 	}
-	program := newContentMapperProgram(t, runner, files, []string{"/src/app.ts"})
+	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
 	baseline.Run(t, "contentMapperDiagnostics.txt", contentMapperBaseline(program, collectContentMapperDiagnostics(program)), baseline.Options{Subfolder: "contentMappers"})
 }
 
@@ -149,9 +152,9 @@ func TestContentMapperSpanMapping(t *testing.T) {
 console.log(greeting);`,
 		"/src/Component.vue": componentVue,
 	}
-	runner := fakeContentMapperRunner{
-		transform: func(fileName string, content string) (compiler.ContentMapperResult, error) {
-			return compiler.ContentMapperResult{
+	contentMapperHost := fakeContentMapperHost{
+		transform: func(fileName string, content string) (contentmapperhost.Result, error) {
+			return contentmapperhost.Result{
 				Text:       scriptBody,
 				ScriptKind: core.ScriptKindTS,
 				Mappings: spanmap.New([]spanmap.Segment{{
@@ -164,7 +167,7 @@ console.log(greeting);`,
 			}, nil
 		},
 	}
-	program := newContentMapperProgram(t, runner, files, []string{"/src/app.ts"})
+	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
 	baseline.Run(t, "contentMapperSpanMapping.txt", contentMapperBaseline(program, collectContentMapperDiagnostics(program)), baseline.Options{Subfolder: "contentMappers"})
 }
 
@@ -179,16 +182,16 @@ func TestContentMapperGeneratedCode(t *testing.T) {
 		"/src/app.ts":        `import "./Component.vue";`,
 		"/src/Component.vue": "<template>\n  <Widget />\n</template>\n",
 	}
-	runner := fakeContentMapperRunner{
-		transform: func(fileName string, content string) (compiler.ContentMapperResult, error) {
-			return compiler.ContentMapperResult{
+	contentMapperHost := fakeContentMapperHost{
+		transform: func(fileName string, content string) (contentmapperhost.Result, error) {
+			return contentmapperhost.Result{
 				Text:       transformed,
 				ScriptKind: core.ScriptKindTS,
 				Mappings:   synthesizedSpanMap(transformed),
 			}, nil
 		},
 	}
-	program := newContentMapperProgram(t, runner, files, []string{"/src/app.ts"})
+	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
 	baseline.Run(t, "contentMapperGeneratedCode.txt", contentMapperBaseline(program, collectContentMapperDiagnostics(program)), baseline.Options{Subfolder: "contentMappers"})
 }
 
@@ -238,16 +241,16 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 				"/src/app.ts":        `import "./Component.vue";`,
 				"/src/Component.vue": original,
 			}
-			runner := fakeContentMapperRunner{
-				transform: func(fileName string, content string) (compiler.ContentMapperResult, error) {
-					return compiler.ContentMapperResult{
+			contentMapperHost := fakeContentMapperHost{
+				transform: func(fileName string, content string) (contentmapperhost.Result, error) {
+					return contentmapperhost.Result{
 						Text:       transformed,
 						ScriptKind: core.ScriptKindTS,
 						Mappings:   tc.mappings,
 					}, nil
 				},
 			}
-			program := newContentMapperProgram(t, runner, files, []string{"/src/app.ts"})
+			program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
 			diags := collectContentMapperDiagnostics(program)
 			found := slices.ContainsFunc(diags, func(d *ast.Diagnostic) bool { return d.Code() == tc.wantCode })
 			assert.Assert(t, found, "expected diagnostic TS%d attributing the invalid mapping, got: %v", tc.wantCode, diags)
@@ -263,12 +266,12 @@ func TestContentMapperFileFailure(t *testing.T) {
 export const bad: number = greeting;`,
 		"/src/Component.vue": vueRawContent,
 	}
-	runner := fakeContentMapperRunner{
-		transform: func(fileName string, content string) (compiler.ContentMapperResult, error) {
-			return compiler.ContentMapperResult{}, errors.New("broken pipe")
+	contentMapperHost := fakeContentMapperHost{
+		transform: func(fileName string, content string) (contentmapperhost.Result, error) {
+			return contentmapperhost.Result{}, errors.New("broken pipe")
 		},
 	}
-	program := newContentMapperProgram(t, runner, files, []string{"/src/app.ts"})
+	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
 	baseline.Run(t, "contentMapperFileFailure.txt", contentMapperBaseline(program, collectContentMapperDiagnostics(program)), baseline.Options{Subfolder: "contentMappers"})
 }
 
@@ -294,12 +297,12 @@ import "./G.vue";`,
 		"/src/F.vue": vueRawContent,
 		"/src/G.vue": vueRawContent,
 	}
-	runner := fakeContentMapperRunner{
-		transform: func(fileName string, content string) (compiler.ContentMapperResult, error) {
-			return compiler.ContentMapperResult{}, errors.New("mapper protocol version mismatch")
+	contentMapperHost := fakeContentMapperHost{
+		transform: func(fileName string, content string) (contentmapperhost.Result, error) {
+			return contentmapperhost.Result{}, errors.New("mapper protocol version mismatch")
 		},
 	}
-	program := newContentMapperProgram(t, runner, files, []string{"/src/app.ts"})
+	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
 	baseline.Run(t, "contentMapperDisabledAfterRepeatedFailures.txt", contentMapperBaseline(program, collectContentMapperDiagnostics(program)), baseline.Options{Subfolder: "contentMappers"})
 }
 

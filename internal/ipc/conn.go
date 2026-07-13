@@ -1,4 +1,4 @@
-package api
+package ipc
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	ErrConnClosed     = errors.New("api: connection closed")
-	ErrRequestTimeout = errors.New("api: request timeout")
+	ErrConnClosed     = errors.New("ipc: connection closed")
+	ErrRequestTimeout = errors.New("ipc: request timeout")
 )
 
 // Handler processes incoming API requests and notifications.

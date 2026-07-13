@@ -1,8 +1,15 @@
-package api
+package ipc
 
 import (
 	"sync"
 	"time"
+)
+
+// Method names for the generic connection-level timing feature, handled by the connection itself rather
+// than the handler when timing collection is enabled.
+const (
+	MethodGetServerTiming   = "getServerTiming"
+	MethodResetServerTiming = "resetServerTiming"
 )
 
 // serverRecentRequestCapacity is the number of most-recent requests retained in

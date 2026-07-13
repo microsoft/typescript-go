@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -404,7 +405,7 @@ type Session struct {
 }
 
 // Ensure Session implements Handler
-var _ Handler = (*Session)(nil)
+var _ ipc.Handler = (*Session)(nil)
 
 // SessionOptions configures an API session.
 type SessionOptions struct {
