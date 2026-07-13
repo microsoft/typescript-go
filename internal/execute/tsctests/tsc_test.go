@@ -4718,3 +4718,30 @@ func TestGenerateTrace(t *testing.T) {
 		c.run(t, "generateTrace")
 	}
 }
+
+func TestTscContentMapperEmit(t *testing.T) {
+	t.Parallel()
+	(&tscInput{
+		subScenario: "content-mapped files are not emitted",
+		files: FileMap{
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"outDir": "./dist"
+				},
+				"contentMappers": [
+					{ "package": "vue-ts-mapper", "extensions": [".vue"] }
+				]
+			}`),
+			"/home/src/workspaces/project/index.ts": `export const local = 1;`,
+			"/home/src/workspaces/project/app.vue":  `export const app = 1;`,
+			"/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json": stringtestutil.Dedent(`
+			{
+				"name": "vue-ts-mapper",
+				"version": "1.0.0",
+				"tsContentMapper": { "exec": ["node", "./mapper.js"] }
+			}`),
+		},
+		commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
+	}).run(t, "contentMapperEmit")
+}

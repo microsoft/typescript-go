@@ -461,6 +461,12 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 		return false
 	}
 
+	// Content-mapped files are type-checking-only inputs; their output is owned by the external content
+	// mapper or build tool, so the compiler never emits for them (not even under forced declaration emit).
+	if sourceFile.ContentMapper() != "" {
+		return false
+	}
+
 	// Source file from node_modules are not emitted
 	if host.IsSourceFileFromExternalLibrary(sourceFile) {
 		return false

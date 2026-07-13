@@ -425,7 +425,7 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	label := mapper.Name
 	if p.contentMapperDisabled(mapper) {
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
-		return p.emptyContentMappedFile(opts, content)
+		return p.emptyContentMappedFile(opts, content, label)
 	}
 	result, err := p.opts.ContentMapperHost.Transform(mapper, contentmapperhost.Request{
 		FileName:        opts.FileName,
@@ -434,7 +434,7 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 		CompilerOptions: p.opts.Config.CompilerOptions(),
 	})
 	if err != nil {
-		sourceFile := p.emptyContentMappedFile(opts, content)
+		sourceFile := p.emptyContentMappedFile(opts, content, label)
 		if p.recordContentMapperFailure(mapper, label) {
 			sourceFile.SetDiagnostics([]*ast.Diagnostic{
 				ast.NewDiagnostic(
@@ -449,7 +449,7 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 		return sourceFile
 	}
 	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
-		sourceFile := p.emptyContentMappedFile(opts, content)
+		sourceFile := p.emptyContentMappedFile(opts, content, label)
 		if p.recordContentMapperFailure(mapper, label) {
 			sourceFile.SetDiagnostics([]*ast.Diagnostic{contentMapperMappingDiagnostic(sourceFile, label, problem)})
 		}
@@ -490,10 +490,12 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 
 // emptyContentMappedFile produces an empty TypeScript source file for a content-mapped file whose
 // transform could not be used, retaining the original content for diagnostics. Importers see it as an
-// empty module rather than triggering a "cannot find module" error.
-func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, content string) *ast.SourceFile {
+// empty module rather than triggering a "cannot find module" error. It is still marked as content-mapped
+// so it is excluded from emit like a successfully mapped file.
+func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, content string, label string) *ast.SourceFile {
 	sourceFile := parser.ParseSourceFile(opts, "", core.ScriptKindTS)
 	sourceFile.SetOriginalText(content)
+	sourceFile.SetContentMapper(label)
 	return sourceFile
 }
 
