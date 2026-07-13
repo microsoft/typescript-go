@@ -554,6 +554,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleInitialize(ctx)
 	case string(MethodUpdateSnapshot):
 		return s.handleUpdateSnapshot(ctx, parsed.(*UpdateSnapshotParams))
+	case string(MethodUpdateTemporarySnapshot):
+		return s.handleUpdateTemporarySnapshot(ctx, parsed.(*UpdateTemporarySnapshotParams))
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
 	case string(MethodGetDefaultProjectForFile):
@@ -961,6 +963,64 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	// Compute changes from the previous latest snapshot
 	var changes *SnapshotChanges
 	if prevSD != nil {
+		changes = computeSnapshotChanges(prevSD.snapshot, snapshot)
+	}
+
+	return &UpdateSnapshotResponse{
+		Snapshot: handle,
+		Projects: projectResponses,
+		Changes:  changes,
+	}, nil
+}
+
+// handleUpdateTemporarySnapshot creates a temporary snapshot that overrides the
+// content of a single file, without opening/closing any projects or files and
+// without advancing the session's latest snapshot.
+func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *UpdateTemporarySnapshotParams) (*UpdateSnapshotResponse, error) {
+	// Serialize against other updates so the diff base (the current latest snapshot)
+	// is stable while we build the temporary snapshot.
+	s.updateMu.Lock()
+	defer s.updateMu.Unlock()
+
+	uri := params.File.ToURI(s.projectSession.GetCurrentDirectory())
+
+	snapshot := s.projectSession.APIUpdateTemporary(ctx, uri, params.NewText)
+
+	// Store the snapshot so its handlers can resolve it and it can be released.
+	handle := snapshotHandle(snapshot)
+	s.snapshotsMu.Lock()
+	sd, exists := s.snapshots[handle]
+	if exists {
+		// !!! this shouldn't happen; ask andrew
+		snapshot.Deref(s.projectSession)
+		sd.refCount++
+	} else {
+		sd = &snapshotData{
+			snapshot:                snapshot,
+			refCount:                1,
+			symbolRegistry:          make(map[SymbolID]*ast.Symbol),
+			symbolCanonicalProjects: make(map[SymbolID]ProjectID),
+			projectRegistries:       make(map[ProjectID]*projectRegistryData),
+		}
+		s.snapshots[handle] = sd
+	}
+	prevSD := s.snapshots[s.latestSnapshot]
+	s.snapshotsMu.Unlock()
+
+	// Build projects list
+	projects := snapshot.ProjectCollection.Projects()
+	projectResponses := make([]*ProjectResponse, 0, len(projects))
+	for _, proj := range projects {
+		if proj.CommandLine == nil {
+			continue
+		}
+		projectResponses = append(projectResponses, NewProjectResponse(proj))
+	}
+
+	// Compute changes from the current latest snapshot so the client can retain
+	// cached source files for unchanged files.
+	var changes *SnapshotChanges
+	if prevSD != nil && prevSD.snapshot != snapshot { // !!! can this happen?
 		changes = computeSnapshotChanges(prevSD.snapshot, snapshot)
 	}
 

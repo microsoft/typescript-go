@@ -216,6 +216,38 @@ export class API<FromLSP extends boolean = false> {
         this.sourceFileCache.clear();
     }
 
+    runWithTemporaryFileUpdate(file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | void): void {
+        this.ensureInitialized();
+
+        const data = this.client.apiRequest<UpdateSnapshotResponse>("updateTemporarySnapshot", { file, newText });
+
+        // Retain cached source files from the latest snapshot for files unchanged by
+        // the temporary update. The temporary snapshot is not the latest snapshot, so
+        // we never release the latest snapshot's cache here.
+        if (this.latestSnapshot) {
+            this.sourceFileCache.retainForSnapshot(data.snapshot, this.latestSnapshot.id, data.changes);
+        }
+
+        const snapshot = new Snapshot(
+            data,
+            this.client,
+            this.sourceFileCache,
+            this.toPath!,
+            () => {
+                this.activeSnapshots.delete(snapshot);
+                this.sourceFileCache.releaseSnapshot(snapshot.id);
+            },
+        );
+        this.activeSnapshots.add(snapshot);
+
+        try {
+            cb(snapshot);
+        }
+        finally {
+            snapshot.dispose();
+        }
+    }
+
     /**
      * Returns a snapshot of collected timing information for requests made
      * through this API instance: client-measured round-trip latency and bytes
