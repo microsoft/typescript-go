@@ -1,6 +1,6 @@
-//// [tests/cases/conformance/controlFlow/dependentDestructuredVariablesRefereinceInDeclaration1.ts] ////
+//// [tests/cases/conformance/controlFlow/dependentDestructuredVariablesReferenceInDeclaration1.ts] ////
 
-=== dependentDestructuredVariablesRefereinceInDeclaration1.ts ===
+=== dependentDestructuredVariablesReferenceInDeclaration1.ts ===
 // https://github.com/microsoft/TypeScript/issues/62993
 
 {
