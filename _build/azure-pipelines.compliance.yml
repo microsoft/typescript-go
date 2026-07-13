@@ -45,5 +45,6 @@ extends:
                 retryCountOnTaskFailure: 3
 
               - task: ComponentGovernanceComponentDetection@0
-                condition: succeededOrFailed()
-                continueOnError: True
+                    displayName: Run Component Governance Detection
+                      condition: succeededOrFailed()
+                    continueOnError: true
