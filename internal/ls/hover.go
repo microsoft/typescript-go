@@ -57,7 +57,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 
 	vsCapability := caps.VSSupportsVisualStudioExtensions
-	quickInfo, documentation, quickInfoRuns := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc, vsCapability)
+	quickInfo, documentation, vsDocumentation, quickInfoRuns := l.getQuickInfoAndDocumentationForSymbol(c, symbol, rangeNode, contentFormat, vc, vsCapability)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -105,8 +105,8 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 		}
 		imageId := getVSHoverImageId(kind, modifiers)
 		var documentationRuns []*lsproto.VSClassifiedTextRun
-		if documentation != "" {
-			documentationRuns = []*lsproto.VSClassifiedTextRun{{ClassificationTypeName: string(lsproto.ClassificationTypeNameText), Text: documentation}}
+		if docText := strings.TrimLeft(vsDocumentation, "\n"); docText != "" {
+			documentationRuns = []*lsproto.VSClassifiedTextRun{{ClassificationTypeName: string(lsproto.ClassificationTypeNameText), Text: docText}}
 		}
 		hover.VSRawContent = buildVSHoverRawContent(imageId, quickInfoRuns, documentationRuns)
 	}
@@ -114,25 +114,47 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	return lsproto.HoverOrNull{Hover: hover}, nil
 }
 
-func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext, vsCapability bool) (string, string, []*lsproto.VSClassifiedTextRun) {
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, vc *checker.VerbosityContext, vsCapability bool) (string, string, string, []*lsproto.VSClassifiedTextRun) {
 	info := getQuickInfoAndDeclarationAtLocation(c, symbol, node, vc, vsCapability, getMeaningFromLocation(node))
 	quickInfo := info.displayParts.String()
 	if quickInfo == "" {
-		return "", "", nil
+		return "", "", "", nil
 	}
 	quickInfoRuns := info.displayParts.GetRuns()
 
-	documentation := l.documentationFromSignature(c, symbol, getCallOrNewExpression(node), node, contentFormat, false /*commentOnly*/)
-	if documentation != "" {
-		return quickInfo, documentation, quickInfoRuns
+	documentation := l.getDocumentationForSymbol(c, symbol, node, info.declaration, contentFormat, false /*commentOnly*/)
+
+	// VS's rich hover (_vs_rawContent) renders documentation as plain colorized text with no Markdown
+	// parser, so it can't use the tag section (@param/@returns/@example/@see, etc.) that
+	// getDocumentationFromDeclaration renders with '*@tag*' bolding and ```-fenced @example blocks --
+	// those would show up as literal asterisks/backticks. This also matches the legacy TSServer-backed
+	// VS hover (TypeScript-VS's HoverService.cs), which only ever surfaced the JSDoc summary
+	// (TSServer's quickinfo `documentation`) and never included the tag section at all (TSServer
+	// exposes tags via a separate `tags` field that legacy VS hover never read). So request
+	// comment-only, plain-text documentation for the VS path instead of reusing `documentation`.
+	var vsDocumentation string
+	if vsCapability {
+		vsDocumentation = l.getDocumentationForSymbol(c, symbol, node, info.declaration, lsproto.MarkupKindPlainText, true /*commentOnly*/)
 	}
 
-	documentation = l.getDocumentationFromDeclaration(c, symbol, info.declaration, node, contentFormat, false /*commentOnly*/)
+	return quickInfo, documentation, vsDocumentation, quickInfoRuns
+}
+
+// getDocumentationForSymbol tries each documentation source in turn (call-signature documentation,
+// declaration JSDoc, alias target JSDoc) and returns the first non-empty result, formatted for
+// contentFormat. commentOnly restricts the result to the JSDoc summary, excluding the @tag section.
+func (l *LanguageService) getDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, declaration *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+	documentation := l.documentationFromSignature(c, symbol, getCallOrNewExpression(node), node, contentFormat, commentOnly)
 	if documentation != "" {
-		return quickInfo, documentation, quickInfoRuns
+		return documentation
 	}
 
-	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat), quickInfoRuns
+	documentation = l.getDocumentationFromDeclaration(c, symbol, declaration, node, contentFormat, commentOnly)
+	if documentation != "" {
+		return documentation
+	}
+
+	return l.documentationFromAlias(c, symbol, node, contentFormat, commentOnly)
 }
 
 func (l *LanguageService) documentationFromSignature(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
@@ -153,7 +175,7 @@ func (l *LanguageService) documentationFromSignature(c *checker.Checker, symbol 
 	return ""
 }
 
-func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) string {
+func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if symbol == nil || symbol.Flags&ast.SymbolFlagsAlias == 0 {
 		return ""
 	}
@@ -174,7 +196,7 @@ func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast
 			continue
 		}
 
-		if documentation := l.getDocumentationFromDeclaration(c, candidate, aliasedDeclaration, node, contentFormat, false /*commentOnly*/); documentation != "" {
+		if documentation := l.getDocumentationFromDeclaration(c, candidate, aliasedDeclaration, node, contentFormat, commentOnly); documentation != "" {
 			return documentation
 		}
 	}
