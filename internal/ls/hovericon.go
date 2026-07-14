@@ -14,35 +14,35 @@ const vsImageCatalogGuid = "ae27a6b0-e345-4288-96df-5eaf394ee369"
 // consumed by TypeScript-VS's ImageIdMapping.cs for hover tooltips. Corsa (this LSP server) has no
 // TSServer/Roslyn dependency to reuse that mapping from, so the values are duplicated here.
 const (
-	imageIdWarning         int32 = 0x00000637
-	imageIdKeyword         int32 = 0x00000635
-	imageIdModulePrivate   int32 = 0x0000077D
-	imageIdModuleProtected int32 = 0x0000077E
-	imageIdModulePublic    int32 = 0x0000077F
-	imageIdType            int32 = 0x00000CA1
-	imageIdNamespace       int32 = 0x0000079F
-	imageIdClassPrivate    int32 = 0x000001D7
-	imageIdClassProtected  int32 = 0x000001D8
-	imageIdClassPublic     int32 = 0x000001D9
+	imageIdWarning            int32 = 0x00000637
+	imageIdKeyword            int32 = 0x00000635
+	imageIdModulePrivate      int32 = 0x0000077D
+	imageIdModuleProtected    int32 = 0x0000077E
+	imageIdModulePublic       int32 = 0x0000077F
+	imageIdType               int32 = 0x00000CA1
+	imageIdNamespace          int32 = 0x0000079F
+	imageIdClassPrivate       int32 = 0x000001D7
+	imageIdClassProtected     int32 = 0x000001D8
+	imageIdClassPublic        int32 = 0x000001D9
 	imageIdInterfacePrivate   int32 = 0x00000646
 	imageIdInterfaceProtected int32 = 0x00000647
 	imageIdInterfacePublic    int32 = 0x00000648
-	imageIdEnumPrivate     int32 = 0x00000469
-	imageIdEnumProtected   int32 = 0x0000046A
-	imageIdEnumPublic      int32 = 0x0000046B
-	imageIdEnumMember      int32 = 0x00000465
-	imageIdLocalVariable   int32 = 0x000006D3
-	imageIdPropertyPrivate   int32 = 0x00000982
-	imageIdPropertyProtected int32 = 0x00000983
-	imageIdPropertyPublic    int32 = 0x00000984
-	imageIdMethodPrivate   int32 = 0x00000756
-	imageIdMethodProtected int32 = 0x00000757
-	imageIdMethodPublic    int32 = 0x00000758
-	imageIdLabel           int32 = 0x0000067D
-	imageIdAssembly        int32 = 0x000000C4
-	imageIdConstantPrivate   int32 = 0x0000026A
-	imageIdConstantProtected int32 = 0x0000026B
-	imageIdConstantPublic    int32 = 0x0000026C
+	imageIdEnumPrivate        int32 = 0x00000469
+	imageIdEnumProtected      int32 = 0x0000046A
+	imageIdEnumPublic         int32 = 0x0000046B
+	imageIdEnumMember         int32 = 0x00000465
+	imageIdLocalVariable      int32 = 0x000006D3
+	imageIdPropertyPrivate    int32 = 0x00000982
+	imageIdPropertyProtected  int32 = 0x00000983
+	imageIdPropertyPublic     int32 = 0x00000984
+	imageIdMethodPrivate      int32 = 0x00000756
+	imageIdMethodProtected    int32 = 0x00000757
+	imageIdMethodPublic       int32 = 0x00000758
+	imageIdLabel              int32 = 0x0000067D
+	imageIdAssembly           int32 = 0x000000C4
+	imageIdConstantPrivate    int32 = 0x0000026A
+	imageIdConstantProtected  int32 = 0x0000026B
+	imageIdConstantPublic     int32 = 0x0000026C
 )
 
 func newVSImageId(id int32) *lsproto.VSImageId {
