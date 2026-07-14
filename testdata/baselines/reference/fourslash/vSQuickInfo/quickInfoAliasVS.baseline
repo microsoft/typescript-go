@@ -16,7 +16,7 @@
 // |       [punctuation] ": "
 // |       [string] "0"
 // |   ClassifiedTextElement
-// |     [text] "Doc\n\n*@tag* — Tag text"
+// |     [text] "Doc"
 // | ----------------------------------------------------------------------
 === /c.ts ===
 // /**
@@ -45,7 +45,7 @@
 // |       [punctuation] ": "
 // |       [string] "0"
 // |   ClassifiedTextElement
-// |     [text] "Doc\n\n*@tag* — Tag text"
+// |     [text] "Doc"
 // | ----------------------------------------------------------------------
 
 
@@ -136,7 +136,7 @@
             "Runs": [
               {
                 "ClassificationTypeName": "text",
-                "Text": "Doc\n\n*@tag* — Tag text",
+                "Text": "Doc",
                 "_vs_type": "ClassifiedTextRun"
               }
             ],
@@ -233,7 +233,7 @@
             "Runs": [
               {
                 "ClassificationTypeName": "text",
-                "Text": "Doc\n\n*@tag* — Tag text",
+                "Text": "Doc",
                 "_vs_type": "ClassifiedTextRun"
               }
             ],
