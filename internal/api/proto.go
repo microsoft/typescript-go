@@ -340,8 +340,6 @@ type UpdateTemporarySnapshotParams struct {
 	File DocumentIdentifier `json:"file"`
 	// NewText is the temporary content for the file.
 	NewText string `json:"newText"`
-	// LanguageKind overrides the script kind inferred from File for a newly opened overlay.
-	LanguageKind lsproto.LanguageKind `json:"languageKind,omitempty"`
 }
 
 // ProjectFileChanges describes what source files changed within a single project.

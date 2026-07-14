@@ -1017,7 +1017,10 @@ func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *Upd
 
 	uri := params.File.ToURI(s.projectSession.GetCurrentDirectory())
 
-	snapshot := s.projectSession.APIUpdateTemporary(ctx, baseSD.snapshot, uri, params.NewText, params.LanguageKind)
+	snapshot, err := s.projectSession.APIUpdateTemporary(ctx, baseSD.snapshot, uri, params.NewText)
+	if err != nil {
+		return nil, fmt.Errorf("%w: failed to update temporary snapshot: %w", ErrClientError, err)
+	}
 
 	handle := snapshotHandle(snapshot)
 	s.snapshotsMu.Lock()

@@ -2,11 +2,12 @@ package project
 
 import (
 	"context"
+	"fmt"
 	"maps"
 
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // APIUpdate creates a new snapshot incorporating the given file changes and the
@@ -35,17 +36,21 @@ func (s *Session) APIUpdate(ctx context.Context, apiFileChanges FileChangeSummar
 // APIUpdateTemporary creates a snapshot that layers a temporary in-memory content
 // override for a file on top of baseSnapshot.
 // The caller must retain baseSnapshot for the duration of this call.
-// The returned snapshot carries a single reference (the clone ref); the caller
-// must call snapshot.Deref(s) when done.
-func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri, newText string, languageKind lsproto.LanguageKind) *Snapshot {
+// An error is returned if the file name does not have a recognized script extension.
+// On success, the returned snapshot carries a single reference (the clone ref);
+// the caller must call snapshot.Deref(s) when done.
+func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri, newText string) (*Snapshot, error) {
 	path := uri.Path(baseSnapshot.UseCaseSensitiveFileNames())
+	scriptKind := core.GetScriptKindFromFileName(uri.FileName())
+	if scriptKind == core.ScriptKindUnknown {
+		return nil, fmt.Errorf("unsupported file extension: %s", uri.FileName())
+	}
 
 	overlays := maps.Clone(baseSnapshot.fs.overlays)
-	version := int32(0)
-	scriptKind := lsconv.LanguageKindToScriptKind(languageKind)
-	if scriptKind == core.ScriptKindUnknown {
-		scriptKind = core.GetScriptKindFromFileName(uri.FileName())
+	if overlays == nil {
+		overlays = make(map[tspath.Path]*Overlay)
 	}
+	version := int32(0)
 	var fileChanges FileChangeSummary
 	if existing := overlays[path]; existing != nil {
 		version = existing.Version() + 1
@@ -62,5 +67,5 @@ func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot
 			Documents: []lsproto.DocumentUri{uri},
 		},
 	}, overlays, s)
-	return newSnapshot
+	return newSnapshot, nil
 }

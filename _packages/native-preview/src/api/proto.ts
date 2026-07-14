@@ -147,8 +147,6 @@ export interface UpdateTemporarySnapshotParams {
     file: DocumentIdentifier;
     /** The temporary content for the file. */
     newText: string;
-    /** The language mode to use when the temporary update opens a new overlay. */
-    languageKind?: string;
 }
 
 /**

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
@@ -140,7 +139,7 @@ func TestUpdateTemporarySnapshotAddsUnopenedFile(t *testing.T) {
 	assert.NilError(t, err)
 }
 
-func TestUpdateTemporarySnapshotUsesLanguageKind(t *testing.T) {
+func TestUpdateTemporarySnapshotRejectsUnsupportedExtension(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -155,20 +154,12 @@ func TestUpdateTemporarySnapshotUsesLanguageKind(t *testing.T) {
 	const fileName = "/home/projects/p/src/temporary.custom"
 	baseResp, err := session.handleUpdateSnapshot(ctx, &UpdateSnapshotParams{})
 	assert.NilError(t, err)
-	tempResp, err := session.handleUpdateTemporarySnapshot(ctx, &UpdateTemporarySnapshotParams{
-		Snapshot:     baseResp.Snapshot,
-		File:         DocumentIdentifier{FileName: fileName},
-		NewText:      "export const temporary = 1;",
-		LanguageKind: lsproto.LanguageKindTypeScript,
+	_, err = session.handleUpdateTemporarySnapshot(ctx, &UpdateTemporarySnapshotParams{
+		Snapshot: baseResp.Snapshot,
+		File:     DocumentIdentifier{FileName: fileName},
+		NewText:  "export const temporary = 1;",
 	})
-	assert.NilError(t, err)
-
-	file := session.snapshots[tempResp.Snapshot].snapshot.GetFile(fileName)
-	assert.Assert(t, file != nil)
-	assert.Equal(t, file.Kind(), core.ScriptKindTS)
-
-	_, err = session.handleRelease(ctx, &ReleaseParams{Snapshot: tempResp.Snapshot})
-	assert.NilError(t, err)
+	assert.ErrorContains(t, err, "unsupported file extension")
 }
 
 func TestUpdateTemporarySnapshotUsesClientSnapshotAsBase(t *testing.T) {
