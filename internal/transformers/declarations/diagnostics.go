@@ -343,7 +343,7 @@ func getReturnTypeVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilit
 				diagnostics.Return_type_of_method_from_exported_interface_has_or_is_using_private_name_0,
 			)
 		}
-	case ast.KindFunctionDeclaration:
+	case ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindFunctionExpression:
 		return selectDiagnosticBasedOnModuleName(
 			symbolAccessibilityResult,
 			diagnostics.Return_type_of_exported_function_has_or_is_using_name_0_from_external_module_1_but_cannot_be_named,
@@ -413,7 +413,7 @@ func getParameterDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symb
 			)
 		}
 
-	case ast.KindFunctionDeclaration, ast.KindFunctionType:
+	case ast.KindFunctionDeclaration, ast.KindFunctionType, ast.KindArrowFunction, ast.KindFunctionExpression:
 		return selectDiagnosticBasedOnModuleName(
 			symbolAccessibilityResult,
 			diagnostics.Parameter_0_of_exported_function_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named,
@@ -453,7 +453,7 @@ func getTypeParameterConstraintVisibilityDiagnosticMessage(node *ast.Node, symbo
 		} else {
 			return diagnostics.Type_parameter_0_of_method_from_exported_interface_has_or_is_using_private_name_1
 		}
-	case ast.KindFunctionType, ast.KindFunctionDeclaration:
+	case ast.KindFunctionType, ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindFunctionExpression:
 		return diagnostics.Type_parameter_0_of_exported_function_has_or_is_using_private_name_1
 
 	case ast.KindInferType:
