@@ -1428,19 +1428,6 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return unmarshalStruct(s, dec)
 }
 
-// A partial result for a document diagnostic report.
-//
-// Since: 3.17.0
-type DocumentDiagnosticReportPartialResult struct {
-	RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments" lsp:"required"`
-}
-
-var _ json.UnmarshalerFrom = (*DocumentDiagnosticReportPartialResult)(nil)
-
-func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *json.Decoder) error {
-	return unmarshalStruct(s, dec)
-}
-
 // Cancellation data returned from a diagnostic request.
 //
 // Since: 3.17.0
@@ -4476,47 +4463,16 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.D
 	return unmarshalStruct(s, dec)
 }
 
-// A diagnostic report with a full set of problems.
+// A partial result for a document diagnostic report.
 //
 // Since: 3.17.0
-type FullDocumentDiagnosticReport struct {
-	// A full document diagnostic report.
-	Kind StringLiteralFull `json:"kind" lsp:"required"`
-
-	// An optional result id. If provided it will
-	// be sent on the next diagnostic request for the
-	// same document.
-	ResultId *string `json:"resultId,omitzero"`
-
-	// The actual items.
-	Items []*Diagnostic `json:"items" lsp:"required"`
+type DocumentDiagnosticReportPartialResult struct {
+	RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments" lsp:"required"`
 }
 
-var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReport)(nil)
+var _ json.UnmarshalerFrom = (*DocumentDiagnosticReportPartialResult)(nil)
 
-func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
-	return unmarshalStruct(s, dec)
-}
-
-// A diagnostic report indicating that the last returned
-// report is still accurate.
-//
-// Since: 3.17.0
-type UnchangedDocumentDiagnosticReport struct {
-	// A document diagnostic report indicating
-	// no changes to the last result. A server can
-	// only return `unchanged` if result ids are
-	// provided.
-	Kind StringLiteralUnchanged `json:"kind" lsp:"required"`
-
-	// A result id which will be sent on the next
-	// diagnostic request for the same document.
-	ResultId string `json:"resultId" lsp:"required"`
-}
-
-var _ json.UnmarshalerFrom = (*UnchangedDocumentDiagnosticReport)(nil)
-
-func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
+func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return unmarshalStruct(s, dec)
 }
 
@@ -6435,6 +6391,50 @@ type FileOperationPattern struct {
 var _ json.UnmarshalerFrom = (*FileOperationPattern)(nil)
 
 func (s *FileOperationPattern) UnmarshalJSONFrom(dec *json.Decoder) error {
+	return unmarshalStruct(s, dec)
+}
+
+// A diagnostic report with a full set of problems.
+//
+// Since: 3.17.0
+type FullDocumentDiagnosticReport struct {
+	// A full document diagnostic report.
+	Kind StringLiteralFull `json:"kind" lsp:"required"`
+
+	// An optional result id. If provided it will
+	// be sent on the next diagnostic request for the
+	// same document.
+	ResultId *string `json:"resultId,omitzero"`
+
+	// The actual items.
+	Items []*Diagnostic `json:"items" lsp:"required"`
+}
+
+var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReport)(nil)
+
+func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
+	return unmarshalStruct(s, dec)
+}
+
+// A diagnostic report indicating that the last returned
+// report is still accurate.
+//
+// Since: 3.17.0
+type UnchangedDocumentDiagnosticReport struct {
+	// A document diagnostic report indicating
+	// no changes to the last result. A server can
+	// only return `unchanged` if result ids are
+	// provided.
+	Kind StringLiteralUnchanged `json:"kind" lsp:"required"`
+
+	// A result id which will be sent on the next
+	// diagnostic request for the same document.
+	ResultId string `json:"resultId" lsp:"required"`
+}
+
+var _ json.UnmarshalerFrom = (*UnchangedDocumentDiagnosticReport)(nil)
+
+func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return unmarshalStruct(s, dec)
 }
 
@@ -11846,37 +11846,6 @@ func (o *StringOrMarkupContent) UnmarshalJSONFrom(dec *json.Decoder) error {
 	}
 }
 
-type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
-	FullDocumentDiagnosticReport      *FullDocumentDiagnosticReport
-	UnchangedDocumentDiagnosticReport *UnchangedDocumentDiagnosticReport
-}
-
-var _ json.MarshalerTo = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
-
-func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *json.Encoder) error {
-	return marshalUnion(o, enc, "FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", false)
-}
-
-var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
-
-func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
-
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	switch string(jsonObjectRawField(data, "kind")) {
-	case `"full"`:
-		o.FullDocumentDiagnosticReport = new(FullDocumentDiagnosticReport)
-		return json.Unmarshal(data, o.FullDocumentDiagnosticReport)
-	case `"unchanged"`:
-		o.UnchangedDocumentDiagnosticReport = new(UnchangedDocumentDiagnosticReport)
-		return json.Unmarshal(data, o.UnchangedDocumentDiagnosticReport)
-	}
-	return errInvalidValue("FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", data)
-}
-
 type WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
 	UnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
@@ -12328,6 +12297,37 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *js
 		o.TextEdit = new(TextEdit)
 		return json.Unmarshal(data, o.TextEdit)
 	}
+}
+
+type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
+	FullDocumentDiagnosticReport      *FullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport *UnchangedDocumentDiagnosticReport
+}
+
+var _ json.MarshalerTo = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
+
+func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *json.Encoder) error {
+	return marshalUnion(o, enc, "FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", false)
+}
+
+var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
+
+func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json.Decoder) error {
+	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	switch string(jsonObjectRawField(data, "kind")) {
+	case `"full"`:
+		o.FullDocumentDiagnosticReport = new(FullDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.FullDocumentDiagnosticReport)
+	case `"unchanged"`:
+		o.UnchangedDocumentDiagnosticReport = new(UnchangedDocumentDiagnosticReport)
+		return json.Unmarshal(data, o.UnchangedDocumentDiagnosticReport)
+	}
+	return errInvalidValue("FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", data)
 }
 
 type TextDocumentSyncOptionsOrKind struct {
