@@ -91,11 +91,14 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 
 	var fixes []*CodeAction
 
-	addFix := func(action *CodeAction) {
-		if action == nil {
-			return
+	addFix := func(action *CodeAction, err error) error {
+		if err != nil {
+			return err
 		}
-		fixes = append(fixes, action)
+		if action != nil {
+			fixes = append(fixes, action)
+		}
+		return nil
 	}
 
 	// Match TS ordering: Full annotation, Relative annotation, Widened annotation,
@@ -103,24 +106,30 @@ func getIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *CodeFix
 	modes := []typePrintMode{typePrintModeFull, typePrintModeRelative, typePrintModeWidened}
 
 	for _, mode := range modes {
-		addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+		if err := addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 			f.typePrintMode = mode
 			return f.addTypeAnnotation(fixContext.Span)
-		}))
+		})); err != nil {
+			return nil, err
+		}
 	}
 
 	for _, mode := range modes {
-		addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+		if err := addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 			f.typePrintMode = mode
 			return f.addInlineAssertion(fixContext.Span)
-		}))
+		})); err != nil {
+			return nil, err
+		}
 	}
 
 	// extractAsVariable only in Full mode
-	addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
+	if err := addFix(tryCodeAction(ctx, fixContext, ch, func(f *isolatedDeclarationsFixer) string {
 		f.typePrintMode = typePrintModeFull
 		return f.extractAsVariable(fixContext.Span)
-	}))
+	})); err != nil {
+		return nil, err
+	}
 
 	return fixes, nil
 }
@@ -130,12 +139,17 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 	defer done()
 
 	changeTracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
+	importAdder, err := createImportAdder(ctx, fixContext, ch)
+	if err != nil {
+		return nil, err
+	}
 
 	fixer := &isolatedDeclarationsFixer{
 		sourceFile:    fixContext.SourceFile,
 		program:       fixContext.Program,
 		checker:       ch,
 		changeTracker: changeTracker,
+		importAdder:   importAdder,
 		locale:        locale.FromContext(ctx),
 		fixedNodes:    make(map[*ast.Node]bool),
 		typePrintMode: typePrintModeFull,
@@ -149,12 +163,17 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 		}
 	}
 
-	for _, sym := range fixer.symbolsToImport {
-		fixer.addSymbolToExistingImport(sym)
+	if importAdder == nil {
+		for _, sym := range fixer.symbolsToImport {
+			fixer.addSymbolToExistingImport(sym)
+		}
 	}
 
 	changes := changeTracker.GetChanges()
 	fileChanges := changes[fixContext.SourceFile.FileName()]
+	if importAdder != nil && importAdder.HasFixes() {
+		fileChanges = append(fileChanges, importAdder.Edits()...)
+	}
 	if len(fileChanges) == 0 {
 		return nil, nil
 	}
@@ -165,12 +184,12 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 	}, nil
 }
 
-func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.Checker, fn func(*isolatedDeclarationsFixer) string) *CodeAction {
+func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.Checker, fn func(*isolatedDeclarationsFixer) string) (*CodeAction, error) {
 	changeTracker := change.NewTracker(ctx, fixContext.Program.Options(), fixContext.LS.FormatOptions(), fixContext.LS.converters)
-
-	var importAdder autoimport.ImportAdder
-	// importAdder may be nil if the auto-import registry is not available;
-	// type node transformation still works without it, just without adding imports.
+	importAdder, err := createImportAdder(ctx, fixContext, ch)
+	if err != nil {
+		return nil, err
+	}
 
 	fixer := &isolatedDeclarationsFixer{
 		sourceFile:    fixContext.SourceFile,
@@ -184,12 +203,13 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 
 	description := fn(fixer)
 	if description == "" {
-		return nil
+		return nil, nil
 	}
 
-	// Add any symbols that need to be imported to existing import declarations
-	for _, sym := range fixer.symbolsToImport {
-		fixer.addSymbolToExistingImport(sym)
+	if importAdder == nil {
+		for _, sym := range fixer.symbolsToImport {
+			fixer.addSymbolToExistingImport(sym)
+		}
 	}
 
 	changes := changeTracker.GetChanges()
@@ -201,7 +221,7 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 	}
 
 	if len(fileChanges) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	return &CodeAction{
@@ -209,7 +229,7 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 		Changes:           fileChanges,
 		FixID:             fixMissingTypeAnnotationOnExportsFixID,
 		FixAllDescription: diagnostics.Add_all_missing_type_annotations.Localize(locale.FromContext(ctx)),
-	}
+	}, nil
 }
 
 // isolatedDeclarationsFixer encapsulates the state for fixing isolated declarations errors.
@@ -1197,7 +1217,13 @@ func (f *isolatedDeclarationsFixer) typeToMinimizedReferenceType(t *checker.Type
 	referenceTypeNode, importableSymbols := autoimport.TryGetAutoImportableReferenceFromTypeNode(typeNode, idToSymbol)
 	if referenceTypeNode != nil {
 		typeNode = referenceTypeNode
-		f.symbolsToImport = append(f.symbolsToImport, importableSymbols...)
+		if f.importAdder != nil {
+			for _, symbol := range importableSymbols {
+				f.importAdder.AddImportFromExportedSymbol(symbol, true /*isValidTypeOnlyUseSite*/)
+			}
+		} else {
+			f.symbolsToImport = append(f.symbolsToImport, importableSymbols...)
+		}
 	}
 	return typeNode
 }
