@@ -334,10 +334,14 @@ type UpdateSnapshotParams struct {
 // UpdateTemporarySnapshotParams are the parameters for creating a temporary
 // snapshot that overrides a single file's content.
 type UpdateTemporarySnapshotParams struct {
+	// Snapshot is the current client snapshot on which to layer the temporary update.
+	Snapshot SnapshotID `json:"snapshot"`
 	// File identifies the file whose content is temporarily overridden.
 	File DocumentIdentifier `json:"file"`
 	// NewText is the temporary content for the file.
 	NewText string `json:"newText"`
+	// LanguageKind overrides the script kind inferred from File for a newly opened overlay.
+	LanguageKind lsproto.LanguageKind `json:"languageKind,omitempty"`
 }
 
 // ProjectFileChanges describes what source files changed within a single project.

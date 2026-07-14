@@ -222,17 +222,18 @@ export class API<FromLSP extends boolean = false> {
         this.sourceFileCache.clear();
     }
 
-    runWithTemporaryFileUpdate(file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | void): void {
+    runWithTemporaryFileUpdate(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | void): void {
         this.ensureInitialized();
 
-        const data = this.client.apiRequest<UpdateSnapshotResponse>("updateTemporarySnapshot", { file, newText });
+        if (!this.activeSnapshots.has(baseSnapshot) || baseSnapshot.isDisposed()) {
+            throw new Error("Cannot run a temporary file update on an inactive snapshot");
+        }
+        const data = this.client.apiRequest<UpdateSnapshotResponse>("updateTemporarySnapshot", { snapshot: baseSnapshot.id, file, newText });
 
-        // Retain cached source files from the latest snapshot for files unchanged by
+        // Retain cached source files from the base snapshot for files unchanged by
         // the temporary update. The temporary snapshot is not the latest snapshot, so
         // we never release the latest snapshot's cache here.
-        if (this.latestSnapshot) {
-            this.sourceFileCache.retainForSnapshot(data.snapshot, this.latestSnapshot.id, data.changes);
-        }
+        this.sourceFileCache.retainForSnapshot(data.snapshot, baseSnapshot.id, data.changes);
 
         const snapshot = new Snapshot(
             data,

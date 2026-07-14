@@ -2,9 +2,12 @@ package api
 
 import (
 	"context"
+	"slices"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
@@ -56,8 +59,9 @@ func TestUpdateTemporarySnapshot(t *testing.T) {
 	// Create a temporary snapshot whose content introduces a type error.
 	const badText = "export const x: string = 1;"
 	tempResp, err := session.handleUpdateTemporarySnapshot(ctx, &UpdateTemporarySnapshotParams{
-		File:    DocumentIdentifier{FileName: fileName},
-		NewText: badText,
+		Snapshot: baseHandle,
+		File:     DocumentIdentifier{FileName: fileName},
+		NewText:  badText,
 	})
 	assert.NilError(t, err)
 	assert.Assert(t, tempResp.Snapshot != baseHandle, "temporary snapshot should have a distinct handle")
@@ -95,4 +99,113 @@ func TestUpdateTemporarySnapshot(t *testing.T) {
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(baseDiagsFinal), 0, "base snapshot should remain valid after releasing the temporary snapshot")
+}
+
+func TestUpdateTemporarySnapshotAddsUnopenedFile(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	const existingFileName = "/home/projects/p/src/index.ts"
+	const temporaryFileName = "/home/projects/p/src/temporary.ts"
+	files := map[string]any{
+		"/home/projects/p/tsconfig.json": `{ "include": ["src/**/*.ts"] }`,
+		existingFileName:                 "export const existing = 1;",
+	}
+	projectSession, _ := projecttestutil.Setup(files)
+	defer projectSession.Close()
+	session := NewSession(projectSession, nil)
+	defer session.Close()
+
+	ctx := context.Background()
+	baseResp, err := session.handleUpdateSnapshot(ctx, &UpdateSnapshotParams{
+		OpenFiles: []DocumentIdentifier{{FileName: existingFileName}},
+	})
+	assert.NilError(t, err)
+	assert.Equal(t, len(baseResp.Projects), 1)
+	assert.Assert(t, !slices.Contains(baseResp.Projects[0].RootFiles, temporaryFileName))
+
+	tempResp, err := session.handleUpdateTemporarySnapshot(ctx, &UpdateTemporarySnapshotParams{
+		Snapshot: baseResp.Snapshot,
+		File:     DocumentIdentifier{FileName: temporaryFileName},
+		NewText:  "export const temporary = 1;",
+	})
+	assert.NilError(t, err)
+	assert.Equal(t, len(tempResp.Projects), 1)
+	assert.Assert(t, slices.Contains(tempResp.Projects[0].RootFiles, temporaryFileName), "temporary file should be included in the configured project")
+	assert.Assert(t, !slices.Contains(baseResp.Projects[0].RootFiles, temporaryFileName), "base snapshot should remain unchanged")
+
+	_, err = session.handleRelease(ctx, &ReleaseParams{Snapshot: tempResp.Snapshot})
+	assert.NilError(t, err)
+}
+
+func TestUpdateTemporarySnapshotUsesLanguageKind(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	projectSession, _ := projecttestutil.Setup(map[string]any{})
+	defer projectSession.Close()
+	session := NewSession(projectSession, nil)
+	defer session.Close()
+
+	ctx := context.Background()
+	const fileName = "/home/projects/p/src/temporary.custom"
+	baseResp, err := session.handleUpdateSnapshot(ctx, &UpdateSnapshotParams{})
+	assert.NilError(t, err)
+	tempResp, err := session.handleUpdateTemporarySnapshot(ctx, &UpdateTemporarySnapshotParams{
+		Snapshot:     baseResp.Snapshot,
+		File:         DocumentIdentifier{FileName: fileName},
+		NewText:      "export const temporary = 1;",
+		LanguageKind: lsproto.LanguageKindTypeScript,
+	})
+	assert.NilError(t, err)
+
+	file := session.snapshots[tempResp.Snapshot].snapshot.GetFile(fileName)
+	assert.Assert(t, file != nil)
+	assert.Equal(t, file.Kind(), core.ScriptKindTS)
+
+	_, err = session.handleRelease(ctx, &ReleaseParams{Snapshot: tempResp.Snapshot})
+	assert.NilError(t, err)
+}
+
+func TestUpdateTemporarySnapshotUsesClientSnapshotAsBase(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	const fileName = "/home/projects/p/src/index.ts"
+	const laterFileName = "/home/projects/p/src/later.ts"
+	files := map[string]any{
+		"/home/projects/p/tsconfig.json": `{ "include": ["src/**/*.ts"] }`,
+		fileName:                         "export const existing = 1;",
+	}
+	projectSession, _ := projecttestutil.Setup(files)
+	defer projectSession.Close()
+	session := NewSession(projectSession, nil)
+	defer session.Close()
+
+	ctx := context.Background()
+	baseResp, err := session.handleUpdateSnapshot(ctx, &UpdateSnapshotParams{
+		OpenFiles: []DocumentIdentifier{{FileName: fileName}},
+	})
+	assert.NilError(t, err)
+
+	laterURI := DocumentIdentifier{FileName: laterFileName}.ToURI(projectSession.GetCurrentDirectory())
+	projectSession.DidOpenFile(ctx, laterURI, 1, "export const later = 1;", lsproto.LanguageKindTypeScript)
+
+	tempResp, err := session.handleUpdateTemporarySnapshot(ctx, &UpdateTemporarySnapshotParams{
+		Snapshot: baseResp.Snapshot,
+		File:     DocumentIdentifier{FileName: fileName},
+		NewText:  "export const existing = 2;",
+	})
+	assert.NilError(t, err)
+	assert.Equal(t, len(tempResp.Projects), 1)
+	assert.Assert(t, !slices.Contains(tempResp.Projects[0].RootFiles, laterFileName), "temporary snapshot should not include files opened after the client snapshot")
+
+	_, err = session.handleRelease(ctx, &ReleaseParams{Snapshot: tempResp.Snapshot})
+	assert.NilError(t, err)
 }

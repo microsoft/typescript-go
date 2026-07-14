@@ -5,8 +5,8 @@ import (
 	"maps"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // APIUpdate creates a new snapshot incorporating the given file changes and the
@@ -33,39 +33,28 @@ func (s *Session) APIUpdate(ctx context.Context, apiFileChanges FileChangeSummar
 }
 
 // APIUpdateTemporary creates a snapshot that layers a temporary in-memory content
-// override for a single file on top of the session's current snapshot. Unlike
-// APIUpdate, it does not mutate any session state: the session's current snapshot,
-// overlays, and pending file changes are left untouched, and the new snapshot is
-// not adopted as the session's current snapshot, so it is never observed by other
-// requests and is discarded once the caller releases it. This mirrors tsserver's
-// runWithTemporaryFileUpdate, which temporarily edits a file's content, runs a
-// query against the resulting program, then reverts.
-//
+// override for a file on top of baseSnapshot.
+// The caller must retain baseSnapshot for the duration of this call.
 // The returned snapshot carries a single reference (the clone ref); the caller
 // must call snapshot.Deref(s) when done.
-func (s *Session) APIUpdateTemporary(ctx context.Context, uri lsproto.DocumentUri, newText string) *Snapshot {
-	s.snapshotUpdateMu.Lock()
-	defer s.snapshotUpdateMu.Unlock()
-
-	baseSnapshot := s.snapshot
+func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri, newText string, languageKind lsproto.LanguageKind) *Snapshot {
 	path := uri.Path(baseSnapshot.UseCaseSensitiveFileNames())
 
-	// Build the new overlay set from the base snapshot's overlays plus a temporary
-	// override for the target file.
 	overlays := maps.Clone(baseSnapshot.fs.overlays)
-	if overlays == nil {
-		overlays = make(map[tspath.Path]*Overlay)
-	}
 	version := int32(0)
-	scriptKind := core.GetScriptKindFromFileName(uri.FileName())
-	if existing, ok := overlays[path]; ok {
+	scriptKind := lsconv.LanguageKindToScriptKind(languageKind)
+	if scriptKind == core.ScriptKindUnknown {
+		scriptKind = core.GetScriptKindFromFileName(uri.FileName())
+	}
+	var fileChanges FileChangeSummary
+	if existing := overlays[path]; existing != nil {
 		version = existing.Version() + 1
 		scriptKind = existing.Kind()
+		fileChanges.Changed.Add(uri)
+	} else {
+		fileChanges.Opened = uri
 	}
 	overlays[path] = newOverlay(uri.FileName(), newText, version, scriptKind)
-
-	var fileChanges FileChangeSummary
-	fileChanges.Changed.Add(uri)
 
 	newSnapshot := baseSnapshot.Clone(ctx, SnapshotChange{
 		fileChanges: fileChanges,

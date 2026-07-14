@@ -454,6 +454,34 @@ func (s *Session) getSnapshotData(handle SnapshotID) (*snapshotData, error) {
 	return sd, nil
 }
 
+// retainSnapshotData pins snapshot data while an operation builds a derived snapshot.
+func (s *Session) retainSnapshotData(handle SnapshotID) (*snapshotData, error) {
+	s.snapshotsMu.Lock()
+	defer s.snapshotsMu.Unlock()
+	sd, ok := s.snapshots[handle]
+	if !ok {
+		return nil, fmt.Errorf("%w: snapshot %d not found", ErrClientError, handle)
+	}
+	sd.refCount++
+	return sd, nil
+}
+
+func (s *Session) releaseSnapshot(handle SnapshotID) error {
+	s.snapshotsMu.Lock()
+	sd := s.snapshots[handle]
+	if sd == nil {
+		s.snapshotsMu.Unlock()
+		return fmt.Errorf("%w: snapshot %d not found", ErrClientError, handle)
+	}
+	sd.refCount--
+	if sd.refCount <= 0 {
+		delete(s.snapshots, handle)
+		sd.snapshot.Deref(s.projectSession)
+	}
+	s.snapshotsMu.Unlock()
+	return nil
+}
+
 // checkerSetup holds the common context needed by handlers that require a type checker.
 type checkerSetup struct {
 	sd        *snapshotData
@@ -981,21 +1009,20 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 // content of a single file, without opening/closing any projects or files and
 // without advancing the session's latest snapshot.
 func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *UpdateTemporarySnapshotParams) (*UpdateSnapshotResponse, error) {
-	// Serialize against other updates so the diff base (the current latest snapshot)
-	// is stable while we build the temporary snapshot.
-	s.updateMu.Lock()
-	defer s.updateMu.Unlock()
+	baseSD, err := s.retainSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = s.releaseSnapshot(params.Snapshot) }()
 
 	uri := params.File.ToURI(s.projectSession.GetCurrentDirectory())
 
-	snapshot := s.projectSession.APIUpdateTemporary(ctx, uri, params.NewText)
+	snapshot := s.projectSession.APIUpdateTemporary(ctx, baseSD.snapshot, uri, params.NewText, params.LanguageKind)
 
-	// Store the snapshot so its handlers can resolve it and it can be released.
 	handle := snapshotHandle(snapshot)
 	s.snapshotsMu.Lock()
 	sd, exists := s.snapshots[handle]
 	if exists {
-		// !!! this shouldn't happen; ask andrew
 		snapshot.Deref(s.projectSession)
 		sd.refCount++
 	} else {
@@ -1008,7 +1035,6 @@ func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *Upd
 		}
 		s.snapshots[handle] = sd
 	}
-	prevSD := s.snapshots[s.latestSnapshot]
 	s.snapshotsMu.Unlock()
 
 	// Build projects list
@@ -1021,12 +1047,9 @@ func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *Upd
 		projectResponses = append(projectResponses, NewProjectResponse(proj))
 	}
 
-	// Compute changes from the current latest snapshot so the client can retain
+	// Compute changes from the requested base snapshot so the client can retain
 	// cached source files for unchanged files.
-	var changes *SnapshotChanges
-	if prevSD != nil && prevSD.snapshot != snapshot { // !!! can this happen?
-		changes = computeSnapshotChanges(prevSD.snapshot, snapshot)
-	}
+	changes := computeSnapshotChanges(baseSD.snapshot, snapshot)
 
 	return &UpdateSnapshotResponse{
 		Snapshot: handle,
@@ -1042,19 +1065,9 @@ func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any
 		return nil, fmt.Errorf("%w: empty handle", ErrClientError)
 	}
 
-	s.snapshotsMu.Lock()
-	sd := s.snapshots[params.Snapshot]
-	if sd == nil {
-		s.snapshotsMu.Unlock()
-		return nil, fmt.Errorf("%w: snapshot %d not found", ErrClientError, params.Snapshot)
+	if err := s.releaseSnapshot(params.Snapshot); err != nil {
+		return nil, err
 	}
-	sd.refCount--
-	if sd.refCount <= 0 {
-		delete(s.snapshots, params.Snapshot)
-		// Release the API session's ref on the project snapshot.
-		sd.snapshot.Deref(s.projectSession)
-	}
-	s.snapshotsMu.Unlock()
 	return true, nil
 }
 

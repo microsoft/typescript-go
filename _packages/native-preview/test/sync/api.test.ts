@@ -5383,9 +5383,13 @@ describe("runWithTemporaryFileUpdate", () => {
             const baseDiags = project.program.getSemanticDiagnostics("/src/index.ts");
             assert.equal(baseDiags.length, 0);
 
+            // Keep a newer snapshot active to verify any active snapshot can be the base.
+            const latestSnapshot = api.updateSnapshot();
+            assert.notEqual(latestSnapshot.id, snapshot.id);
+
             // Inside the callback, the file has the temporary (erroneous) content.
             let errorCount = -1;
-            api.runWithTemporaryFileUpdate("/src/index.ts", `export const x: string = 1;`, tempSnapshot => {
+            api.runWithTemporaryFileUpdate(snapshot, "/src/index.ts", `export const x: string = 1;`, tempSnapshot => {
                 const tempProject = tempSnapshot.getProject("/tsconfig.json")!;
                 const diags = tempProject.program.getSemanticDiagnostics("/src/index.ts");
                 errorCount = diags.length;

@@ -141,10 +141,14 @@ export interface UpdateSnapshotParams extends LSPUpdateSnapshotParams {
  * for the caller's own queries and must be released when done.
  */
 export interface UpdateTemporarySnapshotParams {
+    /** The current client snapshot on which to layer the temporary update. */
+    snapshot: number;
     /** The file whose content is temporarily overridden. */
     file: DocumentIdentifier;
     /** The temporary content for the file. */
     newText: string;
+    /** The language mode to use when the temporary update opens a new overlay. */
+    languageKind?: string;
 }
 
 /**
