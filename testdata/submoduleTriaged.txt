@@ -17,7 +17,6 @@ compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsxdev,module=commonjs,m
 compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsxdev,module=commonjs,moduledetection=force).errors.txt.diff
 compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsxdev,module=commonjs,moduledetection=legacy).errors.txt.diff
 compiler/incorrectRecursiveMappedTypeConstraint.errors.txt.diff
-compiler/interfaceMayNotBeExtendedWitACall.errors.txt.diff
 compiler/noUnusedLocals_selfReference.errors.txt.diff
 compiler/reverseMappedPartiallyInferableTypes.errors.txt.diff
 compiler/typeParameterWithInvalidConstraintType.errors.txt.diff
