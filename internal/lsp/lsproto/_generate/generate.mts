@@ -648,7 +648,7 @@ const customStructures: Structure[] = [
         name: "VSContainerElement",
         properties: [
             {
-                name: "ElementStyle",
+                name: "Style",
                 type: { kind: "reference", name: "VSContainerElementStyle" },
                 documentation: "Layout style for the child elements.",
             },

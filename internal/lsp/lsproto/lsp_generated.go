@@ -9372,8 +9372,8 @@ func (s *VSImageElement) UnmarshalJSONFrom(dec *json.Decoder) error {
 
 // A container element that groups other VS rich-content elements (images, classified text, or nested containers). Used to build the VS hover raw content that combines a symbol icon with colorized text.
 type VSContainerElement struct {
-	// Layout style for the child elements.
-	ElementStyle VSContainerElementStyle `json:"ElementStyle" lsp:"required"`
+	// Layout style for the child elements. Must be named exactly "Style" on the wire (not "ElementStyle") to match Microsoft.VisualStudio.LanguageServer.Protocol.ContainerElementConverter, which looks up this property by that literal name.
+	Style VSContainerElementStyle `json:"Style" lsp:"required"`
 
 	// The child elements contained within this container.
 	Elements []VSImageElementOrClassifiedTextElementOrContainerElement `json:"Elements" lsp:"required"`

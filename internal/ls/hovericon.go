@@ -135,7 +135,7 @@ func buildVSHoverRawContent(imageId *lsproto.VSImageId, quickInfoRuns []*lsproto
 	}
 
 	displayLine := &lsproto.VSContainerElement{
-		ElementStyle: lsproto.VSContainerElementStyleWrapped,
+		Style: lsproto.VSContainerElementStyleWrapped,
 		Elements: []lsproto.VSImageElementOrClassifiedTextElementOrContainerElement{
 			{ImageElement: &lsproto.VSImageElement{ImageId: imageId}},
 			{ClassifiedTextElement: &lsproto.VSClassifiedTextElement{Runs: quickInfoRuns}},
@@ -147,7 +147,7 @@ func buildVSHoverRawContent(imageId *lsproto.VSImageId, quickInfoRuns []*lsproto
 	}
 
 	return &lsproto.VSContainerElement{
-		ElementStyle: lsproto.VSContainerElementStyleStacked,
+		Style: lsproto.VSContainerElementStyleStacked,
 		Elements: []lsproto.VSImageElementOrClassifiedTextElementOrContainerElement{
 			{ContainerElement: displayLine},
 			{ClassifiedTextElement: &lsproto.VSClassifiedTextElement{Runs: documentationRuns}},
