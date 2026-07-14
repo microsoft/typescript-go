@@ -2913,14 +2913,14 @@ func renderVSContainerElement(el *lsproto.VSContainerElement, indent string) []s
 			imageId := child.ImageElement.ImageId
 			lines = append(lines, fmt.Sprintf("%sImageElement { Guid: %s, Id: 0x%X }", childIndent, imageId.Guid, imageId.Id))
 		case child.ClassifiedTextElement != nil:
-			lines = append(lines, fmt.Sprintf("%sClassifiedTextElement", childIndent))
+			lines = append(lines, childIndent+"ClassifiedTextElement")
 			for _, run := range child.ClassifiedTextElement.Runs {
 				lines = append(lines, fmt.Sprintf("%s  [%s] %q", childIndent, run.ClassificationTypeName, run.Text))
 			}
 		case child.ContainerElement != nil:
 			lines = append(lines, renderVSContainerElement(child.ContainerElement, childIndent)...)
 		default:
-			lines = append(lines, fmt.Sprintf("%s<empty union element>", childIndent))
+			lines = append(lines, childIndent+"<empty union element>")
 		}
 	}
 	return lines
