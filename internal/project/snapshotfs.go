@@ -527,7 +527,8 @@ func (s *snapshotFSBuilder) reloadEntryIfContentChanged(entry *dirty.SyncMapEntr
 		})
 		return true
 	}
-	if xxh3.HashString128(content) == cachedHash {
+	newHash := xxh3.HashString128(content)
+	if newHash == cachedHash {
 		entry.Locked(func(e dirty.Value[*diskFile]) {
 			if e.Value() != nil && !e.Value().MatchesDiskText() {
 				e.Change(func(file *diskFile) {
@@ -543,7 +544,7 @@ func (s *snapshotFSBuilder) reloadEntryIfContentChanged(entry *dirty.SyncMapEntr
 		}
 		e.Change(func(file *diskFile) {
 			file.content = content
-			file.hash = xxh3.HashString128(content)
+			file.hash = newHash
 			file.needsReload = false
 		})
 	})
