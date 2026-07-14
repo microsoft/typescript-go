@@ -7,7 +7,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // APIUpdate creates a new snapshot incorporating the given file changes and the
@@ -47,9 +46,6 @@ func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot
 	}
 
 	overlays := maps.Clone(baseSnapshot.fs.overlays)
-	if overlays == nil {
-		overlays = make(map[tspath.Path]*Overlay)
-	}
 	version := int32(0)
 	var fileChanges FileChangeSummary
 	if existing := overlays[path]; existing != nil {
