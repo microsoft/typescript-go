@@ -222,7 +222,7 @@ export class API<FromLSP extends boolean = false> {
         this.sourceFileCache.clear();
     }
 
-    runWithTemporaryFileUpdate(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | void): void {
+    runWithTemporaryFileUpdate(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void): void {
         this.ensureInitialized();
 
         if (!this.activeSnapshots.has(baseSnapshot) || baseSnapshot.isDisposed()) {
