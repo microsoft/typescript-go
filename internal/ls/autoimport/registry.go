@@ -1095,7 +1095,7 @@ func (b *registryBuilder) updateIndexes(ctx context.Context, change RegistryChan
 					// no-op
 				},
 			)
-			ch, _ := checker.NewChecker(aliasResolver, nil)
+			ch, _ := checker.NewChecker(ctx, aliasResolver, nil)
 			br.possibleFailedAmbientModuleLookupSources.Range(func(path tspath.Path, source *failedAmbientModuleLookupSource) bool {
 				sourceFile := aliasResolver.GetSourceFile(source.fileName)
 				extractor := b.newExportExtractor(source.packageName, ch, moduleResolver, b.host.FS().Realpath)
@@ -1253,7 +1253,10 @@ func (b *registryBuilder) buildProjectBucket(
 		}
 		wg.Go(func() {
 			if ctx.Err() == nil {
-				checker, done := getChecker()
+				checker, done, err := getChecker(ctx)
+				if err != nil {
+					return
+				}
 				defer done()
 				extractor := b.newExportExtractor("", checker, moduleResolver, nil)
 				fileExports := extractor.extractFromFile(file)
@@ -1501,7 +1504,7 @@ func (b *registryBuilder) extractPackage(
 		}
 	})
 
-	ch, _ := checker.NewChecker(aliasResolver, nil)
+	ch, _ := checker.NewChecker(ctx, aliasResolver, nil)
 	extractor := b.newExportExtractor(packageName, ch, resolver, toRealpath)
 
 	var nonModuleFiles collections.Set[tspath.Path]

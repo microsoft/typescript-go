@@ -1,6 +1,7 @@
 package tstransforms_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -118,7 +119,7 @@ func (p *fakeProgram) SourceFiles() []*ast.SourceFile {
 	return p.files
 }
 
-func (p *fakeProgram) BindSourceFiles() {
+func (p *fakeProgram) BindSourceFiles(_ context.Context) {
 	wg := core.NewWorkGroup(p.singleThreaded)
 	for _, file := range p.files {
 		if !file.IsBound() {
@@ -226,7 +227,7 @@ func TestImportElision(t *testing.T) {
 
 			compilerOptions := &core.CompilerOptions{}
 
-			c, _ := checker.NewChecker(&fakeProgram{
+			c, _ := checker.NewChecker(t.Context(), &fakeProgram{
 				singleThreaded:  true,
 				compilerOptions: compilerOptions,
 				files:           files,

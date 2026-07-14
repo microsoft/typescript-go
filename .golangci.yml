@@ -77,6 +77,8 @@ linters:
               desc: 'Use "github.com/microsoft/typescript-go/internal/json" instead.'
             - pkg: 'github.com/go-json-experiment/json'
               desc: 'Use "github.com/microsoft/typescript-go/internal/json" instead.'
+            - pkg: 'runtime/trace$'
+              desc: 'Use "github.com/microsoft/typescript-go/internal/runtimetrace" instead.'
 
     forbidigo:
       analyze-types: true
@@ -96,7 +98,7 @@ linters:
       - path: internal/fourslash/tests/gen/
         linters:
           - misspell
-      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled|fswatch|nativepath)|cmd/tsgo'
+      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|runtimetrace|execute/tsctests|bundled|fswatch|nativepath)|cmd/tsgo'
         text: should likely be used instead
       - path: '(.+)_test\.go$'
         text: should likely be used instead

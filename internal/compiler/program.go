@@ -24,6 +24,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/runtimetrace"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/symlinks"
@@ -272,6 +273,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 }
 
 func NewProgram(opts ProgramOptions) *Program {
+	defer runtimetrace.Region(context.TODO(), "compiler.NewProgram")()
 	p := &Program{opts: opts}
 	if p.opts.Tracing != nil {
 		defer p.opts.Tracing.Push(tracing.PhaseProgram, "createProgram", map[string]any{"configFilePath": opts.Config.CompilerOptions().ConfigFilePath}, true)()
@@ -447,11 +449,17 @@ func (p *Program) SingleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
-func (p *Program) BindSourceFiles() {
+func (p *Program) BindSourceFiles(ctx context.Context) {
+	defer runtimetrace.Region(ctx, "compiler.BindSourceFiles")()
+	if runtimetrace.IsEnabled() {
+		runtimetrace.LogSafef(ctx, "bind", "files=%d", len(p.files))
+	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
+				defer runtimetrace.Region(ctx, "binder.BindSourceFile")()
+				runtimetrace.LogUnsafef(ctx, "bind", "file=%s", file.FileName())
 				if p.opts.Tracing != nil {
 					defer p.opts.Tracing.Push(tracing.PhaseBind, "bindSourceFile", map[string]any{"path": string(file.Path())}, true)()
 				}
@@ -465,14 +473,14 @@ func (p *Program) BindSourceFiles() {
 // Return the type checker associated with the program.
 func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func()) {
 	if p.compilerCheckerPool != nil {
-		return p.compilerCheckerPool.getCheckerNonExclusive()
+		return p.compilerCheckerPool.getCheckerNonExclusive(ctx)
 	}
 	return p.checkerPool.GetChecker(ctx, nil)
 }
 
-func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
+func (p *Program) ForEachCheckerParallel(ctx context.Context, cb func(idx int, c *checker.Checker)) {
 	if p.compilerCheckerPool != nil {
-		p.compilerCheckerPool.forEachCheckerParallel(cb)
+		p.compilerCheckerPool.forEachCheckerParallel(ctx, cb)
 	}
 }
 
@@ -482,7 +490,7 @@ func (p *Program) ForEachCheckerParallel(cb func(idx int, c *checker.Checker)) {
 // representations of types) should be obtained from checkers returned by this method.
 func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	if p.compilerCheckerPool != nil {
-		return p.compilerCheckerPool.getCheckerForFileNonExclusive(file)
+		return p.compilerCheckerPool.getCheckerForFileNonExclusive(ctx, file)
 	}
 	return p.checkerPool.GetChecker(ctx, file)
 }
@@ -602,6 +610,7 @@ func (p *Program) collectCheckerDiagnosticsFromFiles(ctx context.Context, source
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	defer runtimetrace.Region(ctx, "compiler.GetSyntacticDiagnostics")()
 	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		diags := core.Concatenate(file.Diagnostics(), file.JSDiagnostics())
 		// For JS files that won't be checked by the checker (no checkJs/ts-check), we need
@@ -649,7 +658,7 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 	if sourceFile != nil {
 		binder.BindSourceFile(sourceFile)
 	} else {
-		p.BindSourceFiles()
+		p.BindSourceFiles(ctx)
 	}
 	return p.collectDiagnostics(ctx, sourceFile, false /*concurrent*/, func(_ context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 		return file.BindDiagnostics()
@@ -657,6 +666,7 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	defer runtimetrace.Region(ctx, "compiler.GetSemanticDiagnostics")()
 	return p.collectCheckerDiagnostics(ctx, sourceFile, p.getSemanticDiagnosticsWithChecker)
 }
 
@@ -670,6 +680,7 @@ func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Conte
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	defer runtimetrace.Region(ctx, "compiler.GetSuggestionDiagnostics")()
 	return p.collectCheckerDiagnostics(ctx, sourceFile, p.getSuggestionDiagnosticsWithChecker)
 }
 
@@ -1297,7 +1308,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 		return nil
 	}
 	if p.compilerCheckerPool != nil {
-		return p.compilerCheckerPool.GetGlobalDiagnostics()
+		return p.compilerCheckerPool.GetGlobalDiagnostics(ctx)
 	}
 	// For external pools (project system), global diagnostics are collected
 	// incrementally as checkers are used, not via a bulk query.
@@ -1305,6 +1316,7 @@ func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	defer runtimetrace.Region(ctx, "compiler.GetDeclarationDiagnostics")()
 	return p.collectDiagnostics(ctx, sourceFile, true /*concurrent*/, p.getDeclarationDiagnosticsForFile)
 }
 
@@ -1495,7 +1507,7 @@ func (p *Program) SymbolCount() int {
 	}
 	var val atomic.Uint32
 	val.Store(uint32(count))
-	p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
+	p.ForEachCheckerParallel(context.TODO(), func(_ int, c *checker.Checker) {
 		val.Add(c.SymbolCount)
 	})
 	return int(val.Load())
@@ -1503,7 +1515,7 @@ func (p *Program) SymbolCount() int {
 
 func (p *Program) TypeCount() int {
 	var val atomic.Uint32
-	p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
+	p.ForEachCheckerParallel(context.TODO(), func(_ int, c *checker.Checker) {
 		val.Add(c.TypeCount)
 	})
 	return int(val.Load())
@@ -1511,7 +1523,7 @@ func (p *Program) TypeCount() int {
 
 func (p *Program) InstantiationCount() int {
 	var val atomic.Uint32
-	p.ForEachCheckerParallel(func(_ int, c *checker.Checker) {
+	p.ForEachCheckerParallel(context.TODO(), func(_ int, c *checker.Checker) {
 		val.Add(c.TotalInstantiationCount)
 	})
 	return int(val.Load())
@@ -1631,6 +1643,7 @@ type SourceMapEmitResult struct {
 }
 
 func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
+	defer runtimetrace.Region(ctx, "compiler.Emit")()
 	if tr := p.opts.Tracing; tr != nil {
 		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
 	}
@@ -1655,6 +1668,9 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	var emitters []*emitter
 	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
+	if runtimetrace.IsEnabled() {
+		runtimetrace.LogSafef(ctx, "emit", "files=%d", len(sourceFiles))
+	}
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
@@ -1677,7 +1693,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			// attach writer and perform emit
 			emitter.writer = writer
 			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.EmitOnly == EmitOnlyForcedDts)
-			emitter.emit()
+			emitter.emit(ctx)
 			emitter.writer = nil
 
 			// put the writer back in the pool
