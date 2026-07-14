@@ -30,7 +30,6 @@ compiler/incorrectRecursiveMappedTypeConstraint.errors.txt.diff
 compiler/interfaceMayNotBeExtendedWitACall.errors.txt.diff
 compiler/isolatedModulesExportImportUninstantiatedNamespace.errors.txt.diff
 compiler/missingCloseParenStatements(alwaysstrict=true).errors.txt.diff
-compiler/noUnusedLocals_selfReference.errors.txt.diff
 compiler/reverseMappedPartiallyInferableTypes.errors.txt.diff
 compiler/shorthandPropertyAssignmentsInDestructuring(target=es2015).errors.txt.diff
 compiler/shorthandPropertyAssignmentsInDestructuring_ES6.errors.txt.diff
