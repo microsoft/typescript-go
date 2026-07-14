@@ -108,8 +108,8 @@ describe("API", () => {
             assert.deepEqual(config.fileNames, []);
             assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
             assert.deepEqual(config.projectReferences, [
-                { circular: false, originalPath: './harness', path: '/harness' },
-                { circular: false, originalPath: './server', path: '/server'}
+                { circular: false, originalPath: "./harness", path: "/harness" },
+                { circular: false, originalPath: "./server", path: "/server" },
             ]);
         }
         finally {

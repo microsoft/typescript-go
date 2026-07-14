@@ -91,8 +91,8 @@ export interface ProjectReference {
 
 export interface ConfigResponse {
     options: Record<string, unknown>;
-    fileNames: readonly string[];
-    projectReferences?: readonly ProjectReference[];
+    fileNames: string[];
+    projectReferences?: ProjectReference[];
 }
 
 export interface LSPUpdateSnapshotParams {
