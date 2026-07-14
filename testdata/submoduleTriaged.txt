@@ -15,12 +15,6 @@ compiler/accessorInferredReturnTypeErrorInReturnStatement.errors.txt.diff
 compiler/aliasInaccessibleModule.errors.txt.diff
 compiler/aliasInaccessibleModule.types.diff
 compiler/classExpressionWithDecorator1.errors.txt.diff
-compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=auto).errors.txt.diff
-compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=force).errors.txt.diff
-compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=legacy).errors.txt.diff
-compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsxdev,module=commonjs,moduledetection=auto).errors.txt.diff
-compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsxdev,module=commonjs,moduledetection=force).errors.txt.diff
-compiler/commentsOnJSXExpressionsArePreserved(jsx=react-jsxdev,module=commonjs,moduledetection=legacy).errors.txt.diff
 compiler/declarationEmitNameConflictsWithAlias.errors.txt.diff
 compiler/declarationEmitNameConflictsWithAlias.types.diff
 compiler/declarationEmitTypeofThisInClass.errors.txt.diff
@@ -49,10 +43,6 @@ conformance/classStaticBlock6(target=es2015).errors.txt.diff
 conformance/initializerReferencingConstructorLocals.errors.txt.diff
 conformance/initializerReferencingConstructorParameters.errors.txt.diff
 conformance/jsdocDisallowedInTypescript.errors.txt.diff
-conformance/jsxJsxsCjsTransformKeyPropCustomImport(jsx=react-jsx).errors.txt.diff
-conformance/jsxJsxsCjsTransformKeyPropCustomImport(jsx=react-jsxdev).errors.txt.diff
-conformance/jsxJsxsCjsTransformKeyPropCustomImportPragma(jsx=react-jsx).errors.txt.diff
-conformance/jsxJsxsCjsTransformKeyPropCustomImportPragma(jsx=react-jsxdev).errors.txt.diff
 conformance/parserClassDeclaration1.errors.txt.diff
 conformance/parserClassDeclaration6.errors.txt.diff
 conformance/parserComputedPropertyName16.errors.txt.diff
@@ -71,7 +61,6 @@ conformance/recursiveMappedTypes.errors.txt.diff
 conformance/symbolProperty53.errors.txt.diff
 conformance/symbolProperty54.errors.txt.diff
 conformance/thisInObjectLiterals.errors.txt.diff
-conformance/tsxSpreadChildrenInvalidType(jsx=react-jsx,target=es2015).errors.txt.diff
 conformance/typeofThis.errors.txt.diff
 conformance/typeofThisWithImplicitThis.errors.txt.diff
 conformance/withStatements.errors.txt.diff
