@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"maps"
-	"net"
 	"strconv"
 	"strings"
 	"sync"
@@ -13,17 +12,14 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
-	"github.com/microsoft/typescript-go/internal/ipc"
-	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
-	"github.com/microsoft/typescript-go/internal/spanmap"
+	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
@@ -239,43 +235,11 @@ func (s *TestSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-// Spawn stands up an in-process mapper that speaks the real content mapper protocol over a net.Pipe, so
-// tests can exercise the full IPC stack without a subprocess. The mapper transforms content verbatim.
+// Spawn serves the fake content mappers in-process, selecting the implementation by the exec command the
+// mapper package declares (see internal/testutil/contentmappertest), so tests exercise the full IPC stack
+// without spawning a subprocess.
 func (s *TestSys) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	client, server := net.Pipe()
-	go func() { _ = ipc.NewAsyncConn(server, verbatimContentMapper{}).Run(context.Background()) }()
-	return client, nil
-}
-
-// verbatimContentMapper is an in-process content mapper that returns its input unchanged, with an
-// identity span map and no diagnostics. The input is expected to already be valid TypeScript.
-type verbatimContentMapper struct{}
-
-func (verbatimContentMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
-	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion}, nil
-	case contentmapperhost.MethodTransform:
-		var p contentmapperhost.TransformParams
-		if err := json.Unmarshal(params, &p); err != nil {
-			return nil, err
-		}
-		mappings, err := spanmap.New([]spanmap.Segment{{
-			GenEnd:  core.TextPos(len(p.Content)),
-			OrigEnd: core.TextPos(len(p.Content)),
-			Kind:    spanmap.KindVerbatim,
-		}}).Marshal()
-		if err != nil {
-			return nil, err
-		}
-		return contentmapperhost.TransformResult{Text: p.Content, Mappings: json.Value(mappings)}, nil
-	default:
-		return nil, fmt.Errorf("unexpected method %s", method)
-	}
-}
-
-func (verbatimContentMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {
-	return nil
+	return contentmappertest.NewSpawner().Spawn(command, dir)
 }
 
 func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {

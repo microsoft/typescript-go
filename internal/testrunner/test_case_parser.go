@@ -49,7 +49,7 @@ var fourslashDirectives = []string{"emitthisfile"}
 // Given a test file containing // @FileName directives,
 // return an array of named units of code to be added to an existing compiler instance.
 func makeUnitsFromTest(code string, fileName string) testCaseContent {
-	testUnits, symlinks, currentDirectory, _, _ := ParseTestFilesAndSymlinks(
+	testUnits, symlinks, currentDirectory, globalOptions, _ := ParseTestFilesAndSymlinks(
 		code,
 		fileName,
 		func(filename string, content string, fileOptions map[string]string) (*testUnit, error) {
@@ -66,7 +66,15 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	for _, data := range testUnits {
 		allFiles[tspath.GetNormalizedAbsolutePath(data.name, currentDirectory)] = data.content
 	}
-	parseConfigHost := tsoptionstest.NewVFSParseConfigHost(allFiles, currentDirectory, true /*useCaseSensitiveFileNames*/)
+	parseConfigHost := tsoptionstest.NewVFSParseConfigHostWithSymlinks(allFiles, symlinks, currentDirectory, true /*useCaseSensitiveFileNames*/)
+
+	// Content mappers are gated behind --dangerouslyLoadExternalPlugins, a command-line-only option. A test
+	// opts in with a top-level `// @dangerouslyLoadExternalPlugins: true`, which we surface to the config
+	// parse as an existing option so the gate passes and the mappers register.
+	var existingOptions *core.CompilerOptions
+	if globalOptions["dangerouslyloadexternalplugins"] == "true" {
+		existingOptions = &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue}
+	}
 
 	// check if project has tsconfig.json in the list of files
 	var tsConfig *tsoptions.ParsedCommandLine
@@ -87,7 +95,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 				tsConfigSourceFile,
 				parseConfigHost,
 				configDir,
-				nil, /*existingOptions*/
+				existingOptions,
 				nil, /*existingOptionsRaw*/
 				configFileName,
 				nil, /*resolutionStack*/

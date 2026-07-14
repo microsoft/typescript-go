@@ -20,6 +20,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -29,6 +31,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -184,6 +187,11 @@ func CompileFilesEx(
 		compilerOptions.TypeRoots[i] = tspath.GetNormalizedAbsolutePath(typeRoot, currentDirectory)
 	}
 
+	var contentMappers []*contentmapper.Mapper
+	if tsconfig != nil && tsconfig.ParsedConfig != nil {
+		contentMappers = tsconfig.ParsedConfig.ContentMappers
+	}
+
 	// Create fake FS for testing
 	testfs := map[string]any{}
 	for _, file := range inputFiles {
@@ -223,6 +231,7 @@ func CompileFilesEx(
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: compilerOptions,
 			FileNames:       programFileNames,
+			ContentMappers:  contentMappers,
 		},
 		ConfigFile: configFile,
 		Errors:     errors,
@@ -619,6 +628,15 @@ func compileFilesWithHost(
 	// }
 
 	ctx := context.Background()
+
+	// Content mappers, when trusted, are served in-process by the test mapper (see contentmappertest).
+	// The host is shared by the pre- and post-emit programs and torn down when this compilation finishes.
+	var contentMapperHost contentmapperhost.Host
+	if config.CompilerOptions().DangerouslyLoadExternalPlugins.IsTrue() && len(config.ContentMappers()) > 0 {
+		contentMapperHost = contentmapperhost.New(ctx, contentmappertest.NewSpawner())
+		defer contentMapperHost.Close()
+	}
+
 	var preErrors []*ast.Diagnostic
 	preCompilerOptions := config.CompilerOptions().Clone()
 	preCompilerOptions.TraceResolution = core.TSFalse
@@ -626,11 +644,12 @@ func compileFilesWithHost(
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: preCompilerOptions,
 			FileNames:       config.FileNames(),
+			ContentMappers:  config.ContentMappers(),
 		},
 		ConfigFile: config.ConfigFile,
 		Errors:     config.Errors,
 	}
-	preProgram := createProgram(host, preConfig)
+	preProgram := createProgram(host, preConfig, contentMapperHost)
 	preErrors = append(preErrors, preProgram.GetConfigFileParsingDiagnostics()...)
 	preErrors = append(preErrors, preProgram.GetProgramDiagnostics()...)
 	preErrors = append(preErrors, preProgram.GetSyntacticDiagnostics(ctx, nil)...)
@@ -644,7 +663,7 @@ func compileFilesWithHost(
 	}
 	preErrors = compiler.SortAndDeduplicateDiagnostics(preErrors)
 
-	postProgram := createProgram(host, config)
+	postProgram := createProgram(host, config, contentMapperHost)
 	emitResult := postProgram.Emit(ctx, compiler.EmitOptions{})
 	var postErrors []*ast.Diagnostic
 	postErrors = append(postErrors, postProgram.GetConfigFileParsingDiagnostics()...)
@@ -936,16 +955,17 @@ func getTestBuildInfoReader(host compiler.CompilerHost) *testBuildInfoReader {
 	return &testBuildInfoReader{inner: incremental.NewBuildInfoReader(host)}
 }
 
-func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) compiler.ProgramLike {
+func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine, contentMapperHost contentmapperhost.Host) compiler.ProgramLike {
 	var singleThreaded core.Tristate
 	if testutil.TestProgramIsSingleThreaded() {
 		singleThreaded = core.TSTrue
 	}
 
 	programOptions := compiler.ProgramOptions{
-		Config:         config,
-		Host:           host,
-		SingleThreaded: singleThreaded,
+		Config:            config,
+		Host:              host,
+		SingleThreaded:    singleThreaded,
+		ContentMapperHost: contentMapperHost,
 	}
 	program := compiler.NewProgram(programOptions)
 	if config.CompilerOptions().Incremental.IsTrue() {

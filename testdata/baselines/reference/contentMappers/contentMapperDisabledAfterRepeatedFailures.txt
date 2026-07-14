@@ -44,6 +44,7 @@
 
 === Diagnostics ===
 
+error TS100026: The content mapper 'vue-mapper' failed 5 times and will not be used.
 C.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform this file: mapper protocol version mismatch
 
 1 
@@ -69,4 +70,3 @@ G.vue:1:1 - error TS100025: The content mapper 'vue-mapper' failed to transform 
 1 
   ~
 
-error TS100026: The content mapper 'vue-mapper' failed 5 times and will not be used.

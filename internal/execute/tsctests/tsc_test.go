@@ -4739,9 +4739,92 @@ func TestTscContentMapperEmit(t *testing.T) {
 			{
 				"name": "vue-ts-mapper",
 				"version": "1.0.0",
-				"tsContentMapper": { "exec": ["node", "./mapper.js"] }
+				"tsContentMapper": { "exec": ["verbatim-mapper"] }
 			}`),
 		},
 		commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
 	}).run(t, "contentMapperEmit")
+}
+
+func TestTscContentMapperFailures(t *testing.T) {
+	t.Parallel()
+	failMapperPackageJSON := stringtestutil.Dedent(`
+	{
+		"name": "fail",
+		"version": "1.0.0",
+		"tsContentMapper": { "exec": ["failing-mapper"] }
+	}`)
+	failMapperTSConfig := stringtestutil.Dedent(`
+	{
+		"contentMappers": [
+			{ "package": "fail", "extensions": [".vue"] }
+		]
+	}`)
+	testCases := []*tscInput{
+		{
+			subScenario: "transform failure reports a per-file error",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json":                  failMapperTSConfig,
+				"/home/src/workspaces/project/index.ts":                       `import "./app.vue";`,
+				"/home/src/workspaces/project/app.vue":                        `<template>hi</template>`,
+				"/home/src/workspaces/project/node_modules/fail/package.json": failMapperPackageJSON,
+			},
+			commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
+		},
+		{
+			subScenario: "mapper is disabled after repeated failures",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": failMapperTSConfig,
+				"/home/src/workspaces/project/index.ts": stringtestutil.Dedent(`
+					import "./a.vue";
+					import "./b.vue";
+					import "./c.vue";
+					import "./d.vue";
+					import "./e.vue";
+					import "./f.vue";
+					import "./g.vue";`),
+				"/home/src/workspaces/project/a.vue":                          `<template>a</template>`,
+				"/home/src/workspaces/project/b.vue":                          `<template>b</template>`,
+				"/home/src/workspaces/project/c.vue":                          `<template>c</template>`,
+				"/home/src/workspaces/project/d.vue":                          `<template>d</template>`,
+				"/home/src/workspaces/project/e.vue":                          `<template>e</template>`,
+				"/home/src/workspaces/project/f.vue":                          `<template>f</template>`,
+				"/home/src/workspaces/project/g.vue":                          `<template>g</template>`,
+				"/home/src/workspaces/project/node_modules/fail/package.json": failMapperPackageJSON,
+			},
+			// --singleThreaded makes file loading order deterministic so the same files exceed the failure
+			// threshold on every run.
+			commandLineArgs: []string{"--dangerouslyLoadExternalPlugins", "--singleThreaded"},
+		},
+	}
+	for _, test := range testCases {
+		test.run(t, "contentMapperFailures")
+	}
+}
+
+func TestTscContentMapperSynthesized(t *testing.T) {
+	t.Parallel()
+	(&tscInput{
+		subScenario: "diagnostics in synthesized code render on the generated text",
+		files: FileMap{
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"contentMappers": [
+					{ "package": "synth", "extensions": [".vue"] }
+				]
+			}`),
+			"/home/src/workspaces/project/index.ts": `import "./app.vue";`,
+			"/home/src/workspaces/project/app.vue": stringtestutil.Dedent(`
+				<template>
+					<Widget />
+				</template>`),
+			"/home/src/workspaces/project/node_modules/synth/package.json": stringtestutil.Dedent(`
+			{
+				"name": "synth",
+				"version": "1.0.0",
+				"tsContentMapper": { "exec": ["synthesizing-mapper"] }
+			}`),
+		},
+		commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
+	}).run(t, "contentMapperSynthesized")
 }

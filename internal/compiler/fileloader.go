@@ -436,22 +436,20 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	if err != nil {
 		sourceFile := p.emptyContentMappedFile(opts, content, label)
 		if p.recordContentMapperFailure(mapper, label) {
-			sourceFile.SetDiagnostics([]*ast.Diagnostic{
-				ast.NewDiagnostic(
-					sourceFile,
-					core.NewTextRange(0, 0),
-					diagnostics.The_content_mapper_0_failed_to_transform_this_file_Colon_1,
-					label,
-					err.Error(),
-				),
-			})
+			p.addContentMapperDiagnostic(ast.NewDiagnostic(
+				sourceFile,
+				core.NewTextRange(0, 0),
+				diagnostics.The_content_mapper_0_failed_to_transform_this_file_Colon_1,
+				label,
+				err.Error(),
+			))
 		}
 		return sourceFile
 	}
 	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
 		sourceFile := p.emptyContentMappedFile(opts, content, label)
 		if p.recordContentMapperFailure(mapper, label) {
-			sourceFile.SetDiagnostics([]*ast.Diagnostic{contentMapperMappingDiagnostic(sourceFile, label, problem)})
+			p.addContentMapperDiagnostic(contentMapperMappingDiagnostic(sourceFile, label, problem))
 		}
 		return sourceFile
 	}
@@ -554,6 +552,12 @@ func (p *fileLoader) recordContentMapperFailure(mapper *contentmapper.Mapper, la
 		))
 	}
 	return true
+}
+
+func (p *fileLoader) addContentMapperDiagnostic(diagnostic *ast.Diagnostic) {
+	p.contentMapperMu.Lock()
+	defer p.contentMapperMu.Unlock()
+	p.contentMapperDiagnostics = append(p.contentMapperDiagnostics, diagnostic)
 }
 
 func (p *fileLoader) isSupportedExtension(canonicalFileName string) bool {
