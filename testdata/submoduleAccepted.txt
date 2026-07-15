@@ -1433,3 +1433,6 @@ compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
 compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
 compiler/accessorInferredReturnTypeErrorInReturnStatement.errors.txt.diff
 conformance/thisInObjectLiterals.errors.txt.diff
+
+# Better circularity handling in computed name checking
+compiler/blockScopedBindingUsedBeforeDef.errors.txt.diff
