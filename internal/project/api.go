@@ -40,19 +40,21 @@ func (s *Session) APIUpdate(ctx context.Context, apiFileChanges FileChangeSummar
 // the caller must call snapshot.Deref(s) when done.
 func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri, newText string) (*Snapshot, error) {
 	path := uri.Path(baseSnapshot.UseCaseSensitiveFileNames())
-	scriptKind := core.GetScriptKindFromFileName(uri.FileName())
-	if scriptKind == core.ScriptKindUnknown {
-		return nil, fmt.Errorf("unsupported file extension: %s", uri.FileName())
-	}
 
 	overlays := maps.Clone(baseSnapshot.fs.overlays)
 	version := int32(0)
 	var fileChanges FileChangeSummary
-	if existing := overlays[path]; existing != nil {
+	existing := overlays[path]
+	var scriptKind core.ScriptKind
+	if existing != nil {
 		version = existing.Version() + 1
 		scriptKind = existing.Kind()
 		fileChanges.Changed.Add(uri)
 	} else {
+		scriptKind = core.GetScriptKindFromFileName(uri.FileName())
+		if scriptKind == core.ScriptKindUnknown {
+			return nil, fmt.Errorf("unsupported file extension: %s", uri.FileName())
+		}
 		fileChanges.Opened = uri
 	}
 	overlays[path] = newOverlay(uri.FileName(), newText, version, scriptKind)
