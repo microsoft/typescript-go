@@ -525,7 +525,7 @@ func (s *Session) setupLanguageService(sd *snapshotData, program *compiler.Progr
 	if proj == nil {
 		return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectName)
 	}
-	return ls.NewLanguageService(proj.ConfigFilePath(), program, sd.snapshot, activeFile), nil
+	return ls.NewLanguageService(proj.ID(), program, sd.snapshot, activeFile), nil
 }
 
 // HandleRequest implements Handler.
@@ -948,9 +948,12 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 
 	// Build projects list
 	projects := snapshot.ProjectCollection.Projects()
-	projectResponses := make([]*ProjectResponse, len(projects))
-	for i, proj := range projects {
-		projectResponses[i] = NewProjectResponse(proj)
+	projectResponses := make([]*ProjectResponse, 0, len(projects))
+	for _, proj := range projects {
+		if proj.CommandLine == nil {
+			continue
+		}
+		projectResponses = append(projectResponses, NewProjectResponse(proj))
 	}
 
 	// Compute changes from the previous latest snapshot
