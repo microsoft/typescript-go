@@ -1283,7 +1283,7 @@ func (tx *DeclarationTransformer) transformFunctionLikeToDeclaration(unwrapped *
 		// If a full signature type node is present, emit as a variable statement to reuse it
 		return tx.Factory().NewVariableStatement(
 			mods,
-			tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(funcName, nil, tx.Visitor().Visit(sig), nil)}), ast.NodeFlagsConst),
+			tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(funcName, nil, tx.Visitor().VisitNode(sig), nil)}), ast.NodeFlagsConst),
 		)
 	}
 }
