@@ -28,16 +28,25 @@ func (l *LanguageService) GetSymbolDocumentationComment(c *checker.Checker, symb
 	if symbol == nil {
 		return ""
 	}
+	return l.getDocumentationFromDeclarations(c, symbol, symbol.Declarations, nil, lsproto.MarkupKindPlainText, true /*commentOnly*/)
+}
+
+// getDocumentationFromDeclarations gathers and deduplicates documentation from a set of declarations.
+func (l *LanguageService) getDocumentationFromDeclarations(c *checker.Checker, symbol *ast.Symbol, declarations []*ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	var parts []string
 	var seen collections.Set[*ast.Node]
-	for _, decl := range symbol.Declarations {
+	for _, decl := range declarations {
 		if decl == nil {
 			continue
 		}
 		if !seen.AddIfAbsent(decl) {
 			continue
 		}
-		if doc := l.getDocumentationFromDeclaration(c, symbol, decl, decl, lsproto.MarkupKindPlainText, true /*commentOnly*/); doc != "" && !slices.Contains(parts, doc) {
+		documentationLocation := location
+		if documentationLocation == nil {
+			documentationLocation = decl
+		}
+		if doc := l.getDocumentationFromDeclaration(c, symbol, decl, documentationLocation, contentFormat, commentOnly); doc != "" && !slices.Contains(parts, doc) {
 			parts = append(parts, doc)
 		}
 	}
