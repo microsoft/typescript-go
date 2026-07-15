@@ -23,7 +23,7 @@ func TestResolveContentMapperManifest(t *testing.T) {
 		"/home/project/node_modules/vue-ts-mapper/package.json": `{
 			"name": "vue-ts-mapper",
 			"version": "1.2.3",
-			"tsContentMapper": { "exec": ["node", "./dist/mapper.js"] }
+			"tsContentMapper": { "exec": ["node", "./dist/mapper.js"], "compilerOptions": ["target", "jsx"] }
 		}`,
 		"/home/node_modules/@scope/noversion/package.json": `{
 			"name": "@scope/noversion",
@@ -52,6 +52,7 @@ func TestResolveContentMapperManifest(t *testing.T) {
 	assert.Equal(t, manifest.Version, "1.2.3")
 	assert.Equal(t, packageDirectory, "/home/project/node_modules/vue-ts-mapper")
 	assert.DeepEqual(t, manifest.Exec, []string{"node", "./dist/mapper.js"})
+	assert.DeepEqual(t, manifest.CompilerOptions, []string{"target", "jsx"})
 
 	// Resolution walks up node_modules; a package with no version resolves to a name and empty version.
 	manifest, _, diagnostic = resolveContentMapperManifest(host, "/home/project/src/tsconfig.json", "@scope/noversion")

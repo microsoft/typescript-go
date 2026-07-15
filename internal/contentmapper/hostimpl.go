@@ -1,21 +1,14 @@
-// Package contentmapperhost drives the configured content mappers: it spawns each mapper's package as a
-// child process and talks to it over a JSON-RPC connection (reusing internal/ipc), turning foreign file
-// content into TypeScript. Processes are consolidated by mapper identity, so many projects that use the
-// same mapper version share a single process.
-package contentmapperhost
+package contentmapper
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"io"
-	"reflect"
-	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ipc"
@@ -39,9 +32,6 @@ type InitializeParams struct {
 // InitializeResult is the mapper's response to the initialize request.
 type InitializeResult struct {
 	ProtocolVersion int `json:"protocolVersion"`
-	// CompilerOptions names the compiler options (e.g. "target", "jsx") whose values the mapper wants to
-	// receive on each transform. Options not listed are not sent.
-	CompilerOptions []string `json:"compilerOptions,omitempty"`
 }
 
 // TransformParams is the parameter object for the transform request.
@@ -74,9 +64,8 @@ type Diagnostic struct {
 }
 
 // dialFunc establishes a running connection to a mapper. In production it spawns the mapper's process;
-// tests substitute an in-memory connection. It returns the connection, a closer that tears it down, and
-// the compiler option names the mapper declared it depends on.
-type dialFunc func(ctx context.Context, mapper *contentmapper.Mapper) (ipc.Conn, io.Closer, []string, error)
+// tests substitute an in-memory connection. It returns the connection and a closer that tears it down.
+type dialFunc func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, error)
 
 // host manages one child process per mapper identity. It is the production implementation of Host.
 type host struct {
@@ -92,8 +81,6 @@ type host struct {
 type mapperConn struct {
 	conn   ipc.Conn
 	closer io.Closer
-	// optionKeys are the compiler option names the mapper declared in initialize.
-	optionKeys []string
 	// err, when non-nil, records that this mapper failed to start; it is cached so we do not repeatedly
 	// try (and fail) to spawn a broken mapper.
 	err error
@@ -101,34 +88,40 @@ type mapperConn struct {
 
 var _ Host = (*host)(nil)
 
-// Spawner starts a content mapper's process, returning its stdio as an io.ReadWriteCloser (Read is the
+// Spawner starts a child process, returning its stdio as an io.ReadWriteCloser (Read is the
 // process's stdout, Write is its stdin) whose Close tears the process down. This seam keeps os/exec out
 // of this package: production hosts spawn a real process, tests supply an in-process pipe.
 type Spawner interface {
 	Spawn(command []string, dir string) (io.ReadWriteCloser, error)
 }
 
-// New creates a Host that spawns each mapper's process via the given spawner and drives it over a
+// SpawnerFunc adapts a spawn function to the Spawner interface.
+type SpawnerFunc func(command []string, dir string) (io.ReadWriteCloser, error)
+
+func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+	return f(command, dir)
+}
+
+// NewHost creates a Host that spawns each mapper's process via the given spawner and drives it over a
 // JSON-RPC connection. The host's lifetime is bound to ctx: cancelling it (e.g. the CLI's signal context
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
-func New(ctx context.Context, spawner Spawner) Host {
-	return newWithDial(ctx, func(ctx context.Context, mapper *contentmapper.Mapper) (ipc.Conn, io.Closer, []string, error) {
+func NewHost(ctx context.Context, spawner Spawner) Host {
+	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, error) {
 		if len(mapper.Exec) == 0 {
-			return nil, nil, nil, fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
+			return nil, nil, fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
 		}
 		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
-		optionKeys, err := handshake(ctx, conn)
-		if err != nil {
+		if err := handshake(ctx, conn); err != nil {
 			_ = rwc.Close()
-			return nil, nil, nil, fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
+			return nil, nil, fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
 		}
-		return conn, rwc, optionKeys, nil
+		return conn, rwc, nil
 	})
 }
 
@@ -142,12 +135,12 @@ func newWithDial(ctx context.Context, dial dialFunc) *host {
 // Transform sends the file's content to the mapper's process and decodes the transformed result. The
 // mapper receives the subset of the project's compiler options it declared in initialize (an empty
 // object if it declared none) and the project's tsconfig file name.
-func (h *host) Transform(mapper *contentmapper.Mapper, request Request) (Result, error) {
-	conn, optionKeys, err := h.connFor(mapper)
+func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
+	conn, err := h.connFor(mapper)
 	if err != nil {
 		return Result{}, err
 	}
-	options, err := marshalDeclaredOptions(request.CompilerOptions, optionKeys)
+	options, err := mapper.MarshalDeclaredOptions(request.CompilerOptions)
 	if err != nil {
 		return Result{}, err
 	}
@@ -183,36 +176,35 @@ func (h *host) Close() error {
 }
 
 // connFor returns the connection for a mapper's identity, spawning its process on first use. Mappers
-// sharing an identity share a single process; the dial is serialized so an identity is spawned once. It
-// also returns the compiler option names that mapper declared it depends on.
-func (h *host) connFor(mapper *contentmapper.Mapper) (ipc.Conn, []string, error) {
+// sharing an identity share a single process; the dial is serialized so an identity is spawned once.
+func (h *host) connFor(mapper *Mapper) (ipc.Conn, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.conns == nil {
-		return nil, nil, errors.New("content mapper host is closed")
+		return nil, errors.New("content mapper host is closed")
 	}
 	key := mapper.Identity()
 	if mc, ok := h.conns[key]; ok {
-		return mc.conn, mc.optionKeys, mc.err
+		return mc.conn, mc.err
 	}
-	conn, closer, optionKeys, err := h.dial(h.ctx, mapper)
-	h.conns[key] = &mapperConn{conn: conn, closer: closer, optionKeys: optionKeys, err: err}
-	return conn, optionKeys, err
+	conn, closer, err := h.dial(h.ctx, mapper)
+	h.conns[key] = &mapperConn{conn: conn, closer: closer, err: err}
+	return conn, err
 }
 
-func handshake(ctx context.Context, conn ipc.Conn) ([]string, error) {
+func handshake(ctx context.Context, conn ipc.Conn) error {
 	raw, err := conn.Call(ctx, MethodInitialize, InitializeParams{ProtocolVersion: ProtocolVersion})
 	if err != nil {
-		return nil, err
+		return err
 	}
 	var res InitializeResult
 	if err := json.Unmarshal(raw, &res); err != nil {
-		return nil, err
+		return err
 	}
 	if res.ProtocolVersion != ProtocolVersion {
-		return nil, fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
+		return fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
 	}
-	return res.CompilerOptions, nil
+	return nil
 }
 
 func decodeTransformResult(raw json.Value) (Result, error) {
@@ -248,47 +240,6 @@ func decodeTransformResult(raw json.Value) (Result, error) {
 		))
 	}
 	return result, nil
-}
-
-// compilerOptionFields maps each CompilerOptions option name (its json tag) to its struct field index.
-var compilerOptionFields = sync.OnceValue(func() map[string]int {
-	t := reflect.TypeFor[core.CompilerOptions]()
-	fields := make(map[string]int, t.NumField())
-	for i := range t.NumField() {
-		name, _, _ := strings.Cut(t.Field(i).Tag.Get("json"), ",")
-		if name != "" && name != "-" {
-			fields[name] = i
-		}
-	}
-	return fields
-})
-
-// marshalDeclaredOptions marshals just the named compiler options, in the given order, skipping any that
-// are unset. Marshaling only the requested fields avoids serializing the whole CompilerOptions when a
-// mapper depends on few options (or none).
-func marshalDeclaredOptions(options *core.CompilerOptions, names []string) (*collections.OrderedMap[string, json.Value], error) {
-	out := collections.NewOrderedMapWithSizeHint[string, json.Value](len(names))
-	if options == nil || len(names) == 0 {
-		return out, nil
-	}
-	fields := compilerOptionFields()
-	v := reflect.ValueOf(options).Elem()
-	for _, name := range names {
-		i, ok := fields[name]
-		if !ok {
-			continue
-		}
-		field := v.Field(i)
-		if field.IsZero() {
-			continue
-		}
-		raw, err := json.Marshal(field.Interface())
-		if err != nil {
-			return nil, err
-		}
-		out.Set(name, json.Value(raw))
-	}
-	return out, nil
 }
 
 // rejectHandler rejects any request initiated by the mapper. The content mapper protocol is currently

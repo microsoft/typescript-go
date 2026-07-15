@@ -107,7 +107,7 @@ func TestValidate(t *testing.T) {
 	testCases := []struct {
 		name     string
 		segs     []spanmap.Segment
-		wantKind spanmap.ProblemKind
+		wantKind spanmap.MappingErrorKind
 		wantOK   bool
 	}{
 		{
@@ -123,7 +123,7 @@ func TestValidate(t *testing.T) {
 		{
 			name:     "gap leaves transformed uncovered",
 			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized}},
-			wantKind: spanmap.ProblemCoverage,
+			wantKind: spanmap.MappingErrorKindCoverage,
 		},
 		{
 			name: "overlap",
@@ -131,17 +131,17 @@ func TestValidate(t *testing.T) {
 				{GenStart: 0, GenEnd: 10, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized},
 				{GenStart: 5, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized},
 			},
-			wantKind: spanmap.ProblemCoverage,
+			wantKind: spanmap.MappingErrorKindCoverage,
 		},
 		{
 			name:     "original out of bounds",
 			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: core.TextPos(len(original) + 10), Kind: spanmap.KindSynthesized}},
-			wantKind: spanmap.ProblemOutOfBounds,
+			wantKind: spanmap.MappingErrorKindOutOfBounds,
 		},
 		{
 			name:     "verbatim text mismatch",
 			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: core.TextPos(len(transformed)), Kind: spanmap.KindVerbatim}},
-			wantKind: spanmap.ProblemVerbatimMismatch,
+			wantKind: spanmap.MappingErrorKindVerbatimMismatch,
 		},
 	}
 
@@ -164,5 +164,5 @@ func TestValidateNilIsRequired(t *testing.T) {
 	var m *spanmap.SpanMap
 	problem := m.Validate("abc", "abc")
 	assert.Assert(t, problem != nil)
-	assert.Equal(t, problem.Kind, spanmap.ProblemMissing)
+	assert.Equal(t, problem.Kind, spanmap.MappingErrorKindMissing)
 }

@@ -3,6 +3,8 @@ package project
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -100,6 +102,24 @@ func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 		return c.builder.parseCache.Acquire(key, fh)
 	}
 	return nil
+}
+
+// GetContentMappedSourceFile implements compiler.CompilerHost.
+func (c *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
+	c.ensureAlive()
+	fh := c.sourceFS.GetFileByPath(parseOptions.FileName, parseOptions.Path)
+	if fh == nil {
+		return nil, nil
+	}
+	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), mapper.TransformIdentity(options))
+	return c.builder.parseCache.AcquireOrError(key, func() (*ast.SourceFile, error) {
+		file, err := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.builder.contentMapperHost)
+		if err != nil {
+			return nil, err
+		}
+		file.Hash = key.Hash
+		return file, nil
+	})
 }
 
 // Trace implements compiler.CompilerHost.

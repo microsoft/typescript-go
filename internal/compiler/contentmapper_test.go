@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -18,16 +17,16 @@ import (
 )
 
 type fakeContentMapperHost struct {
-	transform func(fileName string, content string) (contentmapperhost.Result, error)
+	transform func(fileName string, content string) (contentmapper.Result, error)
 }
 
-func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapperhost.Request) (contentmapperhost.Result, error) {
+func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapper.Request) (contentmapper.Result, error) {
 	return r.transform(request.FileName, request.Content)
 }
 
 func (fakeContentMapperHost) Close() error { return nil }
 
-func newContentMapperProgram(t *testing.T, contentMapperHost contentmapperhost.Host, files map[string]string, rootFiles []string) *compiler.Program {
+func newContentMapperProgram(t *testing.T, contentMapperHost contentmapper.Host, files map[string]string, rootFiles []string) *compiler.Program {
 	t.Helper()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -39,7 +38,7 @@ func newContentMapperProgram(t *testing.T, contentMapperHost contentmapperhost.H
 	}
 
 	config := &tsoptions.ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &tsoptions.ParsedOptions{
 			FileNames: rootFiles,
 			CompilerOptions: &core.CompilerOptions{
 				SkipLibCheck:     core.TSTrue,
@@ -50,9 +49,8 @@ func newContentMapperProgram(t *testing.T, contentMapperHost contentmapperhost.H
 		},
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{
-		Config:            config,
-		Host:              compiler.NewCompilerHost("/src", fs, bundled.LibPath(), nil, nil),
-		ContentMapperHost: contentMapperHost,
+		Config: config,
+		Host:   compiler.NewCompilerHost("/src", fs, bundled.LibPath(), nil, nil, contentMapperHost),
 		// Load files on the calling goroutine for deterministic diagnostics ordering.
 		SingleThreaded: core.TSTrue,
 	})
@@ -114,8 +112,8 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 				"/src/Component.vue": original,
 			}
 			contentMapperHost := fakeContentMapperHost{
-				transform: func(fileName string, content string) (contentmapperhost.Result, error) {
-					return contentmapperhost.Result{
+				transform: func(fileName string, content string) (contentmapper.Result, error) {
+					return contentmapper.Result{
 						Text:       transformed,
 						ScriptKind: core.ScriptKindTS,
 						Mappings:   tc.mappings,

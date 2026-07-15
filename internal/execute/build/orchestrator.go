@@ -12,7 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -70,8 +70,8 @@ type Orchestrator struct {
 	ctx context.Context
 	// contentMapperHost transforms content-mapped files; it is created once per build session (when
 	// enabled) and shared across all projects so mapper processes are consolidated. It closes itself when
-	// ctx is cancelled (see contentmapperhost.New).
-	contentMapperHost contentmapperhost.Host
+	// ctx is cancelled (see contentmapper.New).
+	contentMapperHost contentmapper.Host
 
 	// order generation result
 	tasks  *collections.SyncMap[tspath.Path, *BuildTask]
@@ -707,6 +707,7 @@ func NewOrchestrator(opts Options) *Orchestrator {
 			orchestrator.opts.Sys.GetCurrentDirectory(),
 			orchestrator.opts.Sys.FS(),
 			orchestrator.opts.Sys.DefaultLibraryPath(),
+			nil,
 			nil,
 			nil,
 		),

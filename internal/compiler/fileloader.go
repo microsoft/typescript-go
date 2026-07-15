@@ -2,7 +2,7 @@ package compiler
 
 import (
 	"cmp"
-	"fmt"
+	"errors"
 	"slices"
 	"strings"
 	"sync"
@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -88,6 +87,12 @@ type DuplicateSourceFile struct {
 	ParseOptions ast.SourceFileParseOptions
 	Hash         xxh3.Uint128
 	ScriptKind   core.ScriptKind
+	// ContentMapper is the identity of the content mapper that produced this file,
+	// or "" if the file is not content-mapped.
+	ContentMapper string
+	// IsContentMapperFailureStub reports whether the file is an empty placeholder
+	// from a failed transform.
+	IsContentMapperFailureStub bool
 }
 
 var _ ast.HasFileName = (*redirectsFile)(nil)
@@ -400,86 +405,55 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	return p.opts.Host.GetSourceFile(parseOptions)
 }
 
-// parseContentMappedFile reads a foreign file, transforms its content into TypeScript via the content
-// mapper host, and parses the result, preserving the original file name and retaining the
-// untransformed text on the source file. Content mapper extensions only reach the parser when content
-// mappers are configured, and configured content mappers require a host; a content-mapped file that
-// arrives without a host is an invalid internal state and panics.
+// parseContentMappedFile produces a foreign file's TypeScript source file via the host's content
+// mapper, preserving the original file name and retaining the untransformed text on the
+// source file. Content mapper extensions only reach the parser when content mappers are configured.
 //
-// When the host returns an error the file is added with empty content and a per-file diagnostic
+// When the host reports a failure the file is added with empty content and a per-file diagnostic
 // describing the failure. To avoid drowning the output when a mapper is systematically broken (e.g. a
 // version mismatch that makes it fail on every file), a mapper is disabled after maxContentMapperFailures
 // failures: at that point a single program diagnostic reports that the mapper was disabled, and every
 // subsequent file it would have handled is silently substituted with an empty file. It returns nil only
 // if the file cannot be read.
 func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
-	content, ok := p.opts.Host.FS().ReadFile(opts.FileName)
-	if !ok {
-		return nil
-	}
-	if p.opts.ContentMapperHost == nil {
-		panic(fmt.Sprintf("content mapper host is required to load content-mapped file %q", opts.FileName))
-	}
-	mapper := p.matchContentMapper(opts.FileName)
+	mapper := p.opts.Config.GetContentMapperForFileName(opts.FileName)
 	p.recordContentMapper(opts.Path, mapper)
 	label := mapper.Name
 	if p.contentMapperDisabled(mapper) {
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
-		return p.emptyContentMappedFile(opts, content, label)
+		return p.emptyContentMappedFile(opts, label)
 	}
-	result, err := p.opts.ContentMapperHost.Transform(mapper, contentmapperhost.Request{
-		FileName:        opts.FileName,
-		Content:         content,
-		ConfigFileName:  p.opts.Config.CompilerOptions().ConfigFilePath,
-		CompilerOptions: p.opts.Config.CompilerOptions(),
-	})
+	sourceFile, err := p.opts.Host.GetContentMappedSourceFile(opts, mapper, p.opts.Config.CompilerOptions())
 	if err != nil {
-		sourceFile := p.emptyContentMappedFile(opts, content, label)
+		sourceFile := p.emptyContentMappedFile(opts, label)
 		if p.recordContentMapperFailure(mapper, label) {
-			p.addContentMapperDiagnostic(ast.NewDiagnostic(
-				sourceFile,
-				core.NewTextRange(0, 0),
-				diagnostics.The_content_mapper_0_failed_to_transform_this_file_Colon_1,
-				label,
-				err.Error(),
-			))
+			if problem, ok := errors.AsType[*spanmap.MappingError](err); ok {
+				p.addContentMapperDiagnostic(contentMapperMappingDiagnostic(sourceFile, label, problem))
+			} else {
+				p.addContentMapperDiagnostic(ast.NewDiagnostic(
+					sourceFile,
+					core.NewTextRange(0, 0),
+					diagnostics.The_content_mapper_0_failed_to_transform_this_file_Colon_1,
+					label,
+					err.Error(),
+				))
+			}
 		}
 		return sourceFile
-	}
-	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
-		sourceFile := p.emptyContentMappedFile(opts, content, label)
-		if p.recordContentMapperFailure(mapper, label) {
-			p.addContentMapperDiagnostic(contentMapperMappingDiagnostic(sourceFile, label, problem))
-		}
-		return sourceFile
-	}
-	sourceFile := parser.ParseSourceFile(opts, result.Text, result.ScriptKind)
-	if result.Text != content {
-		sourceFile.SetOriginalText(content)
-	}
-	sourceFile.SetSpanMap(result.Mappings)
-	sourceFile.SetContentMapper(label)
-	if len(result.Diagnostics) > 0 {
-		// The runner produces diagnostics without a source file (it doesn't have one yet); associate
-		// them with the file now so they are reported against it.
-		for _, diagnostic := range result.Diagnostics {
-			diagnostic.SetFile(sourceFile)
-		}
-		sourceFile.SetDiagnostics(append(sourceFile.Diagnostics(), result.Diagnostics...))
 	}
 	return sourceFile
 }
 
 // contentMapperMappingDiagnostic builds the diagnostic reported against a mapper that produced an
 // invalid span map, including the offsets involved so the mapper's author can locate the problem.
-func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem *spanmap.Problem) *ast.Diagnostic {
+func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem *spanmap.MappingError) *ast.Diagnostic {
 	loc := core.NewTextRange(0, 0)
 	switch problem.Kind {
-	case spanmap.ProblemCoverage:
+	case spanmap.MappingErrorKindCoverage:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_output_offset_1, label, int(problem.GenPos))
-	case spanmap.ProblemOutOfBounds:
+	case spanmap.MappingErrorKindOutOfBounds:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OrigPos))
-	case spanmap.ProblemVerbatimMismatch:
+	case spanmap.MappingErrorKindVerbatimMismatch:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_offset_1_original_offset_2, label, int(problem.GenPos), int(problem.OrigPos))
 	default:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)
@@ -490,21 +464,12 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 // transform could not be used, retaining the original content for diagnostics. Importers see it as an
 // empty module rather than triggering a "cannot find module" error. It is still marked as content-mapped
 // so it is excluded from emit like a successfully mapped file.
-func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, content string, label string) *ast.SourceFile {
+func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, label string) *ast.SourceFile {
+	content, _ := p.opts.Host.FS().ReadFile(opts.FileName)
 	sourceFile := parser.ParseSourceFile(opts, "", core.ScriptKindTS)
 	sourceFile.SetOriginalText(content)
 	sourceFile.SetContentMapper(label)
 	return sourceFile
-}
-
-// matchContentMapper returns the configured content mapper whose extensions include fileName.
-func (p *fileLoader) matchContentMapper(fileName string) *contentmapper.Mapper {
-	for _, mapper := range p.opts.Config.ContentMappers() {
-		if tspath.FileExtensionIsOneOf(fileName, mapper.Extensions) {
-			return mapper
-		}
-	}
-	return nil
 }
 
 // recordContentMapper associates a content-mapped file with the mapper that produced it, so the

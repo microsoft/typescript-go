@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -31,6 +32,7 @@ type ProjectCollectionBuilder struct {
 	sessionOptions      *SessionOptions
 	parseCache          *ParseCache
 	extendedConfigCache *ExtendedConfigCache
+	contentMapperHost   contentmapper.Host
 	toPath              func(fileName string) tspath.Path
 
 	ctx                                context.Context
@@ -65,6 +67,7 @@ func newProjectCollectionBuilder(
 	customConfigFileName string,
 	parseCache *ParseCache,
 	extendedConfigCache *ExtendedConfigCache,
+	contentMapperHost contentmapper.Host,
 	client Client,
 ) *ProjectCollectionBuilder {
 	return &ProjectCollectionBuilder{
@@ -75,6 +78,7 @@ func newProjectCollectionBuilder(
 		sessionOptions:                     sessionOptions,
 		parseCache:                         parseCache,
 		extendedConfigCache:                extendedConfigCache,
+		contentMapperHost:                  contentMapperHost,
 		base:                               oldProjectCollection,
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(lsproto.GetClientCapabilities(ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport, fs, oldConfigFileRegistry, extendedConfigCache, newSnapshotID, sessionOptions, customConfigFileName, nil),
 		newSnapshotID:                      newSnapshotID,

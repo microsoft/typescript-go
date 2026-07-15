@@ -21,7 +21,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -220,7 +219,15 @@ func CompileFilesEx(
 	fs = bundled.WrapFS(fs)
 	fs = NewOutputRecorderFS(fs)
 
-	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory)
+	// Content mappers, when trusted, are served in-process by the test mapper (see contentmappertest).
+	// The host is shared by the pre- and post-emit programs and torn down when this compilation finishes.
+	var contentMapperHost contentmapper.Host
+	if compilerOptions.DangerouslyLoadExternalPlugins.IsTrue() && len(contentMappers) > 0 {
+		contentMapperHost = contentmapper.NewHost(context.Background(), contentmappertest.NewSpawner())
+		defer contentMapperHost.Close()
+	}
+
+	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory, contentMapperHost)
 	var configFile *tsoptions.TsConfigSourceFile
 	var errors []*ast.Diagnostic
 	if tsconfig != nil {
@@ -228,7 +235,7 @@ func CompileFilesEx(
 		errors = tsconfig.Errors
 	}
 	result := compileFilesWithHost(host, &tsoptions.ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &tsoptions.ParsedOptions{
 			CompilerOptions: compilerOptions,
 			FileNames:       programFileNames,
 			ContentMappers:  contentMappers,
@@ -596,13 +603,13 @@ func (t *TracerForBaselining) Reset() {
 	t.packageJsonCache = make(map[tspath.Path]bool)
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) *cachedCompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string, contentMapperHost contentmapper.Host) *cachedCompilerHost {
 	tracer := NewTracerForBaselining(tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          currentDirectory,
 	}, &strings.Builder{})
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace, contentMapperHost),
 		tracer:       tracer,
 	}
 }
@@ -629,19 +636,11 @@ func compileFilesWithHost(
 
 	ctx := context.Background()
 
-	// Content mappers, when trusted, are served in-process by the test mapper (see contentmappertest).
-	// The host is shared by the pre- and post-emit programs and torn down when this compilation finishes.
-	var contentMapperHost contentmapperhost.Host
-	if config.CompilerOptions().DangerouslyLoadExternalPlugins.IsTrue() && len(config.ContentMappers()) > 0 {
-		contentMapperHost = contentmapperhost.New(ctx, contentmappertest.NewSpawner())
-		defer contentMapperHost.Close()
-	}
-
 	var preErrors []*ast.Diagnostic
 	preCompilerOptions := config.CompilerOptions().Clone()
 	preCompilerOptions.TraceResolution = core.TSFalse
 	preConfig := &tsoptions.ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &tsoptions.ParsedOptions{
 			CompilerOptions: preCompilerOptions,
 			FileNames:       config.FileNames(),
 			ContentMappers:  config.ContentMappers(),
@@ -649,7 +648,7 @@ func compileFilesWithHost(
 		ConfigFile: config.ConfigFile,
 		Errors:     config.Errors,
 	}
-	preProgram := createProgram(host, preConfig, contentMapperHost)
+	preProgram := createProgram(host, preConfig)
 	preErrors = append(preErrors, preProgram.GetConfigFileParsingDiagnostics()...)
 	preErrors = append(preErrors, preProgram.GetProgramDiagnostics()...)
 	preErrors = append(preErrors, preProgram.GetSyntacticDiagnostics(ctx, nil)...)
@@ -663,7 +662,7 @@ func compileFilesWithHost(
 	}
 	preErrors = compiler.SortAndDeduplicateDiagnostics(preErrors)
 
-	postProgram := createProgram(host, config, contentMapperHost)
+	postProgram := createProgram(host, config)
 	emitResult := postProgram.Emit(ctx, compiler.EmitOptions{})
 	var postErrors []*ast.Diagnostic
 	postErrors = append(postErrors, postProgram.GetConfigFileParsingDiagnostics()...)
@@ -955,17 +954,16 @@ func getTestBuildInfoReader(host compiler.CompilerHost) *testBuildInfoReader {
 	return &testBuildInfoReader{inner: incremental.NewBuildInfoReader(host)}
 }
 
-func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine, contentMapperHost contentmapperhost.Host) compiler.ProgramLike {
+func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) compiler.ProgramLike {
 	var singleThreaded core.Tristate
 	if testutil.TestProgramIsSingleThreaded() {
 		singleThreaded = core.TSTrue
 	}
 
 	programOptions := compiler.ProgramOptions{
-		Config:            config,
-		Host:              host,
-		SingleThreaded:    singleThreaded,
-		ContentMapperHost: contentMapperHost,
+		Config:         config,
+		Host:           host,
+		SingleThreaded: singleThreaded,
 	}
 	program := compiler.NewProgram(programOptions)
 	if config.CompilerOptions().Incremental.IsTrue() {

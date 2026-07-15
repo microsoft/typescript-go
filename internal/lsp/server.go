@@ -16,6 +16,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/fswatch"
@@ -47,6 +48,9 @@ type ServerOptions struct {
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
+	// Spawn launches a child process, returning its stdio as an io.ReadWriteCloser (Read is its stdout,
+	// Write is its stdin). It is nil when the host cannot spawn processes. Currently used for content mappers.
+	Spawn              func(command []string, dir string) (io.ReadWriteCloser, error)
 	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
 	SetParentProcessID func(parentPID int)
 }
@@ -70,6 +74,7 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
+		spawn:                 opts.Spawn,
 		startWatchdog:         opts.SetParentProcessID,
 		initComplete:          make(chan struct{}),
 		progressDelay:         opts.ProgressDelay,
@@ -183,6 +188,14 @@ type Server struct {
 	telemetryEnabled bool
 	watcherID        atomic.Uint32
 	watchers         collections.SyncSet[project.WatcherID]
+
+	// contentMapperRegistrationMu serializes RegisterContentMapperExtensions so the method is correctly
+	// synchronized on its own rather than relying on callers to serialize it. It guards
+	// contentMapperExtensionsRegistered and the ordered unregister/register requests the method sends.
+	contentMapperRegistrationMu sync.Mutex
+	// contentMapperExtensionsRegistered records whether a content mapper text document sync
+	// registration is currently active with the client, so it can be replaced or removed.
+	contentMapperExtensionsRegistered bool
 	// builtinWatcher is non-nil when the server is running its own
 	// in-process file watcher instead of using LSP-based watching. It
 	// is enabled when the client lacks DynamicRegistration for
@@ -211,6 +224,7 @@ type Server struct {
 	parseCache *project.ParseCache
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
+	spawn      func(command []string, dir string) (io.ReadWriteCloser, error)
 
 	cpuProfiler pprof.CPUProfiler
 
@@ -286,6 +300,83 @@ func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 	}
 
 	return fmt.Errorf("no file watcher exists with ID %s", id)
+}
+
+const (
+	contentMapperDidOpenRegistrationID   = "content-mapper-did-open"
+	contentMapperDidChangeRegistrationID = "content-mapper-did-change"
+	contentMapperDidCloseRegistrationID  = "content-mapper-did-close"
+)
+
+// RegisterContentMapperExtensions implements project.Client. It dynamically registers text document
+// synchronization for the given foreign file extensions so the editor forwards their open/change/close
+// notifications to the server. It is called with the full desired set each time it changes; an empty
+// slice removes any prior registration.
+func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions []string) error {
+	if !s.clientCapabilities.TextDocument.Synchronization.DynamicRegistration {
+		return nil
+	}
+
+	s.contentMapperRegistrationMu.Lock()
+	defer s.contentMapperRegistrationMu.Unlock()
+
+	if s.contentMapperExtensionsRegistered {
+		if _, err := sendClientRequest(ctx, s, lsproto.ClientUnregisterCapabilityInfo, &lsproto.UnregistrationParams{
+			Unregisterations: []*lsproto.Unregistration{
+				{Id: contentMapperDidOpenRegistrationID, Method: string(lsproto.MethodTextDocumentDidOpen)},
+				{Id: contentMapperDidChangeRegistrationID, Method: string(lsproto.MethodTextDocumentDidChange)},
+				{Id: contentMapperDidCloseRegistrationID, Method: string(lsproto.MethodTextDocumentDidClose)},
+			},
+		}); err != nil {
+			return fmt.Errorf("failed to unregister content mapper text document sync: %w", err)
+		}
+		s.contentMapperExtensionsRegistered = false
+	}
+
+	if len(extensions) == 0 {
+		return nil
+	}
+
+	filters := make([]lsproto.TextDocumentFilterLanguageOrSchemeOrPattern, 0, len(extensions))
+	for _, ext := range extensions {
+		filters = append(filters, lsproto.TextDocumentFilterLanguageOrSchemeOrPattern{
+			Pattern: &lsproto.TextDocumentFilterPattern{
+				Pattern: lsproto.PatternOrRelativePattern{Pattern: new("**/*" + ext)},
+			},
+		})
+	}
+	selector := lsproto.DocumentSelectorOrNull{DocumentSelector: &filters}
+
+	if _, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
+		Registrations: []*lsproto.Registration{
+			{
+				Id: contentMapperDidOpenRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentDidOpen: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperDidChangeRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentDidChange: &lsproto.TextDocumentChangeRegistrationOptions{
+						DocumentSelector: selector,
+						SyncKind:         lsproto.TextDocumentSyncKindIncremental,
+					},
+				},
+			},
+			{
+				Id: contentMapperDidCloseRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentDidClose: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+		},
+	}); err != nil {
+		return fmt.Errorf("failed to register content mapper text document sync: %w", err)
+	}
+
+	s.contentMapperExtensionsRegistered = true
+	return nil
 }
 
 // RefreshDiagnostics implements project.Client.
@@ -1205,6 +1296,10 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	if s.initializationOptions.EnableTelemetry != nil {
 		enableTelemetry = *s.initializationOptions.EnableTelemetry
 	}
+	var dangerouslyLoadExternalPlugins bool
+	if s.initializationOptions.DangerouslyLoadExternalPlugins != nil {
+		dangerouslyLoadExternalPlugins = *s.initializationOptions.DangerouslyLoadExternalPlugins
+	}
 	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
 	if hasDynamicWatchRegistration {
 		s.logger.Logf("file watching: using LSP client-side watching (client supports dynamic registration)")
@@ -1246,21 +1341,23 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),
 		Options: &project.SessionOptions{
-			CurrentDirectory:       cwd,
-			DefaultLibraryPath:     s.defaultLibraryPath,
-			TypingsLocation:        s.typingsLocation,
-			PositionEncoding:       s.positionEncoding,
-			WatchEnabled:           s.watchEnabled,
-			LoggingEnabled:         true,
-			TelemetryEnabled:       enableTelemetry,
-			DebounceDelay:          500 * time.Millisecond,
-			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			Locale:                 s.locale,
+			CurrentDirectory:               cwd,
+			DefaultLibraryPath:             s.defaultLibraryPath,
+			TypingsLocation:                s.typingsLocation,
+			PositionEncoding:               s.positionEncoding,
+			WatchEnabled:                   s.watchEnabled,
+			LoggingEnabled:                 true,
+			TelemetryEnabled:               enableTelemetry,
+			DebounceDelay:                  500 * time.Millisecond,
+			PushDiagnosticsEnabled:         !disablePushDiagnostics,
+			Locale:                         s.locale,
+			DangerouslyLoadExternalPlugins: dangerouslyLoadExternalPlugins,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
 		Client:      s,
 		NpmExecutor: s,
+		Spawner:     s.contentMapperSpawner(),
 		ParseCache:  s.parseCache,
 	})
 
@@ -1822,6 +1919,15 @@ func (s *Server) SetCompilerOptionsForInferredProjects(ctx context.Context, opti
 // NpmInstall implements ata.NpmExecutor
 func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 	return s.npmInstall(cwd, args)
+}
+
+// contentMapperSpawner adapts the server's spawn callback to a content mapper spawner, or returns nil when
+// the server cannot spawn processes.
+func (s *Server) contentMapperSpawner() contentmapper.Spawner {
+	if s.spawn == nil {
+		return nil
+	}
+	return contentmapper.SpawnerFunc(s.spawn)
 }
 
 // Developer/debugging command handlers

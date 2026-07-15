@@ -6,6 +6,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
@@ -56,6 +58,14 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 		return h.sourceFiles.loadOrStore(opts, h.host.GetSourceFile, false /* allowZero */)
 	}
 	return h.host.GetSourceFile(opts)
+}
+
+func (h *host) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
+	content, ok := h.FS().ReadFile(parseOptions.FileName)
+	if !ok {
+		return nil, nil
+	}
+	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.orchestrator.contentMapperHost)
 }
 
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {

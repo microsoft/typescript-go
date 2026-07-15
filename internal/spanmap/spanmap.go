@@ -6,6 +6,7 @@
 package spanmap
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -61,36 +62,49 @@ type SpanMap struct {
 // Validation failures. A content mapper is required to provide a valid span map; these describe the
 // ways a map can be malformed, so the compiler can attribute the failure to the mapper precisely and
 // point the mapper's author at the offending location.
-type ProblemKind int32
+type MappingErrorKind int
 
 const (
-	// ProblemMissing means no mappings were provided at all.
-	ProblemMissing ProblemKind = iota
-	// ProblemCoverage means the segments do not tile the entire transformed text (a gap, overlap, or a
+	// MappingErrorKindMissing means no mappings were provided at all.
+	MappingErrorKindMissing MappingErrorKind = iota
+	// MappingErrorKindCoverage means the segments do not tile the entire transformed text (a gap, overlap, or a
 	// segment extending past the end of the transformed text).
-	ProblemCoverage
-	// ProblemOutOfBounds means a segment's original span lies outside the original text.
-	ProblemOutOfBounds
-	// ProblemVerbatimMismatch means a verbatim segment's generated and original text differ.
-	ProblemVerbatimMismatch
+	MappingErrorKindCoverage
+	// MappingErrorKindOutOfBounds means a segment's original span lies outside the original text.
+	MappingErrorKindOutOfBounds
+	// MappingErrorKindVerbatimMismatch means a verbatim segment's generated and original text differ.
+	MappingErrorKindVerbatimMismatch
 )
 
-// Problem describes a single span map validation failure, including the offsets involved so the mapper's
+// MappingError describes a single span map validation failure, including the offsets involved so the mapper's
 // author can locate it. GenPos is an offset into the transformed output; OrigPos is an offset into the
 // original content. Either may be unused (zero) depending on Kind.
-type Problem struct {
-	Kind    ProblemKind
+type MappingError struct {
+	Kind    MappingErrorKind
 	GenPos  core.TextPos
 	OrigPos core.TextPos
+}
+
+func (p *MappingError) Error() string {
+	switch p.Kind {
+	case MappingErrorKindCoverage:
+		return fmt.Sprintf("content mapper position mappings do not cover the transformed output near output offset %d", p.GenPos)
+	case MappingErrorKindOutOfBounds:
+		return fmt.Sprintf("content mapper position mapping points outside the original content at original offset %d", p.OrigPos)
+	case MappingErrorKindVerbatimMismatch:
+		return fmt.Sprintf("content mapper verbatim mapping does not match the original content at output offset %d, original offset %d", p.GenPos, p.OrigPos)
+	default:
+		return "content mapper did not provide the required position mappings"
+	}
 }
 
 // Validate enforces the content-mapper span map contract against the transformed and original text: the
 // segments must tile the whole transformed text with no gaps or overlaps, every original span must lie
 // within the original text, and every verbatim segment's text must match the original exactly. It
 // returns the first violation found, or nil if the map is valid.
-func (m *SpanMap) Validate(transformed, original string) *Problem {
+func (m *SpanMap) Validate(transformed, original string) *MappingError {
 	if m == nil || len(m.segments) == 0 {
-		return &Problem{Kind: ProblemMissing}
+		return &MappingError{Kind: MappingErrorKindMissing}
 	}
 	genLen := core.TextPos(len(transformed))
 	origLen := core.TextPos(len(original))
@@ -98,21 +112,21 @@ func (m *SpanMap) Validate(transformed, original string) *Problem {
 	for i := range m.segments {
 		s := &m.segments[i]
 		if s.GenStart != expectedGenStart || s.GenEnd < s.GenStart || s.GenEnd > genLen {
-			return &Problem{Kind: ProblemCoverage, GenPos: expectedGenStart}
+			return &MappingError{Kind: MappingErrorKindCoverage, GenPos: expectedGenStart}
 		}
 		expectedGenStart = s.GenEnd
 		if s.OrigStart < 0 || s.OrigEnd < s.OrigStart || s.OrigEnd > origLen {
-			return &Problem{Kind: ProblemOutOfBounds, GenPos: s.GenStart, OrigPos: s.OrigEnd}
+			return &MappingError{Kind: MappingErrorKindOutOfBounds, GenPos: s.GenStart, OrigPos: s.OrigEnd}
 		}
 		if s.Kind == KindVerbatim {
 			if s.GenEnd-s.GenStart != s.OrigEnd-s.OrigStart ||
 				transformed[s.GenStart:s.GenEnd] != original[s.OrigStart:s.OrigEnd] {
-				return &Problem{Kind: ProblemVerbatimMismatch, GenPos: s.GenStart, OrigPos: s.OrigStart}
+				return &MappingError{Kind: MappingErrorKindVerbatimMismatch, GenPos: s.GenStart, OrigPos: s.OrigStart}
 			}
 		}
 	}
 	if expectedGenStart != genLen {
-		return &Problem{Kind: ProblemCoverage, GenPos: expectedGenStart}
+		return &MappingError{Kind: MappingErrorKindCoverage, GenPos: expectedGenStart}
 	}
 	return nil
 }

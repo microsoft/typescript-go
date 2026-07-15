@@ -9,7 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -70,8 +70,8 @@ type Watcher struct {
 	// resources that outlive a single cycle, such as content mapper processes.
 	ctx context.Context
 	// contentMapperHost transforms content-mapped files; it is created once per watch session (when
-	// enabled) and reused across cycles. It closes itself when ctx is cancelled (see contentmapperhost.New).
-	contentMapperHost contentmapperhost.Host
+	// enabled) and reused across cycles. It closes itself when ctx is cancelled (see contentmapper.New).
+	contentMapperHost contentmapper.Host
 
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
@@ -124,7 +124,7 @@ func (w *Watcher) start(ctx context.Context) {
 	w.contentMapperHost = tsc.NewContentMapperHost(ctx, w.sys, w.config.CompilerOptions())
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
-	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), nil)
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
 
 	if w.configFileName != "" {
@@ -146,7 +146,7 @@ func (w *Watcher) start(ctx context.Context) {
 	w.wm.Unlock()
 
 	if w.testing == nil {
-		// The content mapper host closes itself when ctx is cancelled (see contentmapperhost.New).
+		// The content mapper host closes itself when ctx is cancelled (see contentmapper.New).
 		w.wm.RunLoop(ctx, w.DoCycle)
 	}
 }
@@ -297,7 +297,7 @@ func (w *Watcher) doBuild() error {
 
 	cached := cachedvfs.From(w.sys.FS())
 	tfs := &trackingvfs.FS{Inner: cached}
-	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperHost)
 	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 	var wildcardDirs map[string]bool
@@ -315,9 +315,8 @@ func (w *Watcher) doBuild() error {
 	}
 
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
-		Config:            w.config,
-		Host:              host,
-		ContentMapperHost: w.contentMapperHost,
+		Config: w.config,
+		Host:   host,
 	}), w.program, nil, w.testing != nil)
 
 	result := w.compileAndEmit()

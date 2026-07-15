@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
@@ -43,16 +42,17 @@ func testMapper() *contentmapper.Mapper {
 			Extensions: []string{".box"},
 		},
 		Manifest: contentmapper.Manifest{
-			Name:    contentmappertest.PackageName,
-			Version: "1.0.0",
-			Exec:    []string{contentmappertest.ExecName},
+			Name:            contentmappertest.PackageName,
+			Version:         "1.0.0",
+			Exec:            []string{contentmappertest.ExecName},
+			CompilerOptions: contentmappertest.DeclaredOptions,
 		},
 		PackageDirectory: "/node_modules/" + contentmappertest.PackageName,
 	}
 }
 
-func transformRequest() contentmapperhost.Request {
-	return contentmapperhost.Request{
+func transformRequest() contentmapper.Request {
+	return contentmapper.Request{
 		FileName:        "/app.box",
 		Content:         "export const version = #{target};\n",
 		ConfigFileName:  "/tsconfig.json",
@@ -65,7 +65,7 @@ func transformRequest() contentmapperhost.Request {
 // of a compiler-option token.
 func TestInProcessSpanKinds(t *testing.T) {
 	t.Parallel()
-	host := contentmapperhost.New(t.Context(), contentmappertest.NewSpawner())
+	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner())
 	defer host.Close()
 
 	result, err := host.Transform(testMapper(), transformRequest())
@@ -102,7 +102,7 @@ func TestInProcessSpanKinds(t *testing.T) {
 // subprocess and drives it over stdio through the production content mapper host.
 func TestOutOfProcess(t *testing.T) {
 	t.Parallel()
-	host := contentmapperhost.New(t.Context(), execSpawner{})
+	host := contentmapper.NewHost(t.Context(), execSpawner{})
 	defer host.Close()
 
 	result, err := host.Transform(testMapper(), transformRequest())

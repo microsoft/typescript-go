@@ -15,7 +15,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -43,7 +42,6 @@ type ProgramOptions struct {
 	TypingsLocation             string
 	ProjectName                 string
 	Tracing                     *tracing.Tracing
-	ContentMapperHost           contentmapperhost.Host
 }
 
 func (p *ProgramOptions) canUseProjectReferenceSource() bool {
@@ -301,7 +299,20 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	}
 
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+	var newFile *ast.SourceFile
+	if oldFile.ContentMapper() != "" {
+		// Content-mapped files are produced by running an external transform, which a plain reparse can't
+		// reproduce. Re-run the transform through the host; any failure (or a missing file) falls back to
+		// a full rebuild so the file loader's failure policy runs.
+		mapper := newOpts.Config.GetContentMapperForFileName(oldFile.FileName())
+		var err error
+		newFile, err = newHost.GetContentMappedSourceFile(oldFile.ParseOptions(), mapper, newOpts.Config.CompilerOptions())
+		if err != nil {
+			return NewProgram(newOpts), nil, false
+		}
+	} else {
+		newFile = newHost.GetSourceFile(oldFile.ParseOptions())
+	}
 
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets

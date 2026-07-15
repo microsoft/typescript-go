@@ -293,8 +293,8 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
 	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing), contentMapperHost)
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -303,10 +303,9 @@ func performIncrementalCompilation(
 
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config:            config,
-		Host:              host,
-		Tracing:           tr,
-		ContentMapperHost: contentMapperHost,
+		Config:  config,
+		Host:    host,
+		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
@@ -345,18 +344,16 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
-
 	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing), contentMapperHost)
 
 	tr := startTracingIfNeeded(sys, config, testing)
 
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config:            config,
-		Host:              host,
-		Tracing:           tr,
-		ContentMapperHost: contentMapperHost,
+		Config:  config,
+		Host:    host,
+		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{

@@ -335,6 +335,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
+		session.contentMapperHost,
 		session.client,
 	)
 
@@ -545,10 +546,14 @@ func (s *Snapshot) dispose(session *Session) {
 				project.checkerPool.Discard()
 			}
 			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub() {
+					session.parseCache.Deref(parseCacheKeyForFile(file))
+				}
 			}
 			for _, file := range project.Program.DuplicateSourceFiles() {
-				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub {
+					session.parseCache.Deref(parseCacheKeyForDuplicate(file))
+				}
 			}
 		}
 	}

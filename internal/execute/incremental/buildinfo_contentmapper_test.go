@@ -12,7 +12,7 @@ import (
 
 func configWithMappers(mappers ...*contentmapper.Mapper) *tsoptions.ParsedCommandLine {
 	return &tsoptions.ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &tsoptions.ParsedOptions{
 			CompilerOptions: &core.CompilerOptions{},
 			ContentMappers:  mappers,
 		},

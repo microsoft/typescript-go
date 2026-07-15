@@ -1,4 +1,4 @@
-package contentmapperhost_test
+package contentmapper_test
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -23,10 +22,10 @@ type fakeMapper struct{}
 
 func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion}, nil
-	case contentmapperhost.MethodTransform:
-		var p contentmapperhost.TransformParams
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
@@ -38,10 +37,10 @@ func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.
 		if err != nil {
 			return nil, err
 		}
-		return contentmapperhost.TransformResult{
+		return contentmapper.TransformResult{
 			Text:     p.Content,
 			Mappings: json.Value(mappings),
-			Diagnostics: []contentmapperhost.Diagnostic{{
+			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "boom",
 				Start:       0,
 				Length:      3,
@@ -78,11 +77,11 @@ func (s *fakeSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, e
 
 func TestRunnerTransform(t *testing.T) {
 	t.Parallel()
-	r := contentmapperhost.New(t.Context(), &fakeSpawner{})
+	r := contentmapper.NewHost(t.Context(), &fakeSpawner{})
 	defer r.Close()
 
 	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
-	result, err := r.Transform(mapper, contentmapperhost.Request{FileName: "/a.vue", Content: "export const x = 1;"})
+	result, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "export const x = 1;"})
 	assert.NilError(t, err)
 	assert.Equal(t, result.Text, "export const x = 1;")
 	assert.Equal(t, result.ScriptKind, core.ScriptKindTS)
@@ -94,7 +93,7 @@ func TestRunnerTransform(t *testing.T) {
 func TestRunnerConsolidatesByIdentity(t *testing.T) {
 	t.Parallel()
 	var spawner fakeSpawner
-	r := contentmapperhost.New(t.Context(), &spawner)
+	r := contentmapper.NewHost(t.Context(), &spawner)
 	defer r.Close()
 
 	// Two logically-separate mappers with the same identity share one process.
@@ -103,7 +102,7 @@ func TestRunnerConsolidatesByIdentity(t *testing.T) {
 	svelte := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "svelte", Version: "2.0.0", Exec: []string{"svelte-mapper"}}}
 
 	for _, m := range []*contentmapper.Mapper{vueA, vueB, vueA, svelte} {
-		_, err := r.Transform(m, contentmapperhost.Request{FileName: "/x", Content: "y"})
+		_, err := r.Transform(m, contentmapper.Request{FileName: "/x", Content: "y"})
 		assert.NilError(t, err)
 	}
 	assert.Equal(t, spawner.spawns.Load(), int32(2), "expected one process per identity")
@@ -112,17 +111,16 @@ func TestRunnerConsolidatesByIdentity(t *testing.T) {
 // recordingMapper captures (as JSON) the options it receives on transform so a test can assert the host
 // forwarded only the declared subset, in order.
 type recordingMapper struct {
-	declared []string
 	mu       sync.Mutex
 	received string
 }
 
 func (m *recordingMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion, CompilerOptions: m.declared}, nil
-	case contentmapperhost.MethodTransform:
-		var p contentmapperhost.TransformParams
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
@@ -133,7 +131,7 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		m.mu.Lock()
 		m.received = string(raw)
 		m.mu.Unlock()
-		return contentmapperhost.TransformResult{Text: p.Content}, nil
+		return contentmapper.TransformResult{Text: p.Content}, nil
 	default:
 		return nil, fmt.Errorf("unexpected method %s", method)
 	}
@@ -145,15 +143,15 @@ func (m *recordingMapper) HandleNotification(ctx context.Context, method string,
 
 func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	t.Parallel()
-	mapper := &recordingMapper{declared: []string{"target", "jsx"}}
-	r := contentmapperhost.New(t.Context(), &fakeSpawner{handler: mapper})
+	mapper := &recordingMapper{}
+	r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapper})
 	defer r.Close()
 
 	// target is declared and set (forwarded); jsx is declared but unset (omitted); strict is set but
 	// undeclared (excluded).
 	_, err := r.Transform(
-		&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}},
-		contentmapperhost.Request{
+		&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, CompilerOptions: []string{"target", "jsx"}}},
+		contentmapper.Request{
 			FileName:        "/a.vue",
 			Content:         "x",
 			CompilerOptions: &core.CompilerOptions{Target: core.ScriptTargetES2020, Strict: core.TSTrue},

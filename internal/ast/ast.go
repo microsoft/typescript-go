@@ -2595,6 +2595,12 @@ func (node *SourceFile) ContentMapper() string {
 	return node.contentMapper
 }
 
+// IsContentMapperFailureStub reports whether this file is the empty placeholder produced when a content
+// mapper's transform failed: it came from a content mapper but carries no span map.
+func (node *SourceFile) IsContentMapperFailureStub() bool {
+	return node.contentMapper != "" && node.spanMap == nil
+}
+
 // SetContentMapper records the identity of the content mapper that produced this file.
 func (node *SourceFile) SetContentMapper(identity string) {
 	node.contentMapper = identity

@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -70,11 +70,11 @@ type CommandLineTesting interface {
 // --dangerouslyLoadExternalPlugins flag, spawning mapper processes through the system's Spawn. It returns
 // nil otherwise, in which case no content-mapped files can be loaded. The caller owns the host and must
 // Close it when the compilation session ends.
-func NewContentMapperHost(ctx context.Context, sys System, options *core.CompilerOptions) contentmapperhost.Host {
+func NewContentMapperHost(ctx context.Context, sys System, options *core.CompilerOptions) contentmapper.Host {
 	if !options.DangerouslyLoadExternalPlugins.IsTrue() {
 		return nil
 	}
-	return contentmapperhost.New(ctx, sys)
+	return contentmapper.NewHost(ctx, sys)
 }
 
 type CompileTimes struct {

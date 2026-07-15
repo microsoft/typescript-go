@@ -15,7 +15,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/contentmapperhost"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -43,9 +43,9 @@ const (
 // original source, so it maps to a single synthesized segment anchored at the start of the original.
 const preamble = "const __VERSION = \"1.0.0\";\n"
 
-// declaredOptions are the compiler options the mapper asks to receive on each transform. Their values are
-// substituted into the body wherever a #{name} token appears.
-var declaredOptions = []string{"target", "jsx"}
+// DeclaredOptions are the compiler options the mapper depends on, declared in its package.json manifest.
+// Their values are substituted into the body wherever a #{name} token appears.
+var DeclaredOptions = []string{"target", "jsx"}
 
 const (
 	// diagnosticSource is the prefix the mapper's own diagnostics render with (e.g. "box1000").
@@ -62,7 +62,7 @@ func (noNotifications) HandleNotification(ctx context.Context, method string, pa
 	return nil
 }
 
-// Handler implements the content mapper protocol (see internal/contentmapperhost). It answers the
+// Handler implements the content mapper protocol (see internal/contentmapper). It answers the
 // initialize handshake and transforms foreign file content into TypeScript.
 type Handler struct{ noNotifications }
 
@@ -70,13 +70,12 @@ var _ ipc.Handler = Handler{}
 
 func (Handler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{
-			ProtocolVersion: contentmapperhost.ProtocolVersion,
-			CompilerOptions: declaredOptions,
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{
+			ProtocolVersion: contentmapper.ProtocolVersion,
 		}, nil
-	case contentmapperhost.MethodTransform:
-		var p contentmapperhost.TransformParams
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
@@ -84,7 +83,7 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 		if err != nil {
 			return nil, err
 		}
-		return contentmapperhost.TransformResult{
+		return contentmapper.TransformResult{
 			Text:        text,
 			ScriptKind:  core.ScriptKindTS,
 			Mappings:    mappings,
@@ -100,10 +99,10 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 // atom substitutions for #{option} tokens whose value comes from a declared compiler option. An
 // interpolation token that is never closed on its line is reported as a mapper syntax error (in original
 // coordinates) and substituted with `undefined` so the generated TypeScript stays well-formed.
-func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapperhost.Diagnostic, error) {
+func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, error) {
 	var gen strings.Builder
 	var segments []spanmap.Segment
-	var diagnostics []contentmapperhost.Diagnostic
+	var diagnostics []contentmapper.Diagnostic
 
 	gen.WriteString(preamble)
 	segments = append(segments, spanmap.Segment{
@@ -161,7 +160,7 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 		if closeRel < 0 {
 			writeVerbatim(pos, tokenStart)
 			writeAtom("undefined", tokenStart, lineEnd)
-			diagnostics = append(diagnostics, contentmapperhost.Diagnostic{
+			diagnostics = append(diagnostics, contentmapper.Diagnostic{
 				MessageText: "Unclosed interpolation.",
 				Start:       tokenStart,
 				Length:      lineEnd - tokenStart,
@@ -210,10 +209,10 @@ type verbatimHandler struct{ noNotifications }
 
 func (verbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion}, nil
-	case contentmapperhost.MethodTransform:
-		var p contentmapperhost.TransformParams
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
@@ -225,7 +224,7 @@ func (verbatimHandler) HandleRequest(ctx context.Context, method string, params 
 		if err != nil {
 			return nil, err
 		}
-		return contentmapperhost.TransformResult{Text: p.Content, Mappings: json.Value(mappings)}, nil
+		return contentmapper.TransformResult{Text: p.Content, Mappings: json.Value(mappings)}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -237,9 +236,9 @@ type failingHandler struct{ noNotifications }
 
 func (failingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion}, nil
-	case contentmapperhost.MethodTransform:
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+	case contentmapper.MethodTransform:
 		return nil, errors.New("content mapper failed to transform the file")
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -256,9 +255,9 @@ type synthesizingHandler struct{ noNotifications }
 
 func (synthesizingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
-	case contentmapperhost.MethodInitialize:
-		return contentmapperhost.InitializeResult{ProtocolVersion: contentmapperhost.ProtocolVersion}, nil
-	case contentmapperhost.MethodTransform:
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+	case contentmapper.MethodTransform:
 		mappings, err := spanmap.New([]spanmap.Segment{{
 			GenEnd:    core.TextPos(len(synthesizedOutput)),
 			OrigStart: 0,
@@ -268,7 +267,7 @@ func (synthesizingHandler) HandleRequest(ctx context.Context, method string, par
 		if err != nil {
 			return nil, err
 		}
-		return contentmapperhost.TransformResult{
+		return contentmapper.TransformResult{
 			Text:       synthesizedOutput,
 			ScriptKind: core.ScriptKindTS,
 			Mappings:   json.Value(mappings),
@@ -297,10 +296,10 @@ func handlerForExec(command []string) (ipc.Handler, error) {
 	}
 }
 
-// NewSpawner returns a contentmapperhost.Spawner that serves the fake mappers in-process. It selects the
+// NewSpawner returns a contentmapper.Spawner that serves the fake mappers in-process. It selects the
 // implementation by the exec command a mapper package declares (see the *Exec constants), standing it up
 // over a net.Pipe so tests exercise the full IPC stack without spawning a real subprocess.
-func NewSpawner() contentmapperhost.Spawner {
+func NewSpawner() contentmapper.Spawner {
 	return spawner{}
 }
 
@@ -318,10 +317,15 @@ func (spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
 
 // PackageJSON returns the contents of a package.json that selects the given mapper via its
 // tsContentMapper.exec command (one of the *Exec constants), for use as a node_modules fixture in tests.
+// The transforming mapper (ExecName) declares the compiler options it depends on; the others declare none.
 func PackageJSON(exec string) string {
+	compilerOptions := ""
+	if exec == ExecName {
+		compilerOptions = `, "compilerOptions": ["target", "jsx"]`
+	}
 	return fmt.Sprintf(`{
 	"name": %q,
 	"version": "1.0.0",
-	"tsContentMapper": { "exec": [%q] }
-}`, PackageName, exec)
+	"tsContentMapper": { "exec": [%q]%s }
+}`, PackageName, exec, compilerOptions)
 }

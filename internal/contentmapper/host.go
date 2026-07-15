@@ -1,8 +1,7 @@
-package contentmapperhost
+package contentmapper
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 )
@@ -41,7 +40,7 @@ type Host interface {
 	//
 	// A non-nil error indicates the mapper itself failed to produce a result — for example the
 	// host hit a broken pipe, a process crash, or could not deserialize the mapper's response.
-	Transform(mapper *contentmapper.Mapper, request Request) (result Result, err error)
+	Transform(mapper *Mapper, request Request) (result Result, err error)
 	// Close shuts down every mapper process the host spawned.
 	Close() error
 }

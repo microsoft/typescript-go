@@ -1368,6 +1368,10 @@ func parseJsonConfigFileContentWorker(
 	}
 	if len(contentMappers) > 0 && !(parsedConfig.options != nil && parsedConfig.options.DangerouslyLoadExternalPlugins.IsTrue()) {
 		errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled), contentMapperSourceFile, getContentMappersKeySyntax(contentMapperSourceFile)))
+		// Without the flag the mappers are not trusted to run, so drop them entirely: their extensions are
+		// not registered and their files are not intercepted (they are treated as unknown foreign files).
+		contentMappers = nil
+		contentMapperExtensions = nil
 	} else if len(contentMappers) > 0 {
 		// Resolve each mapper's package.json now so its name, version, and run command are available to
 		// everything downstream (diagnostics, build-info staleness) without executing anything.
@@ -1429,7 +1433,7 @@ func parseJsonConfigFileContentWorker(
 
 	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)
 	return &ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &ParsedOptions{
 			CompilerOptions: parsedConfig.options,
 			TypeAcquisition: parsedConfig.typeAcquisition,
 			// WatchOptions:      nil,

@@ -382,9 +382,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 					}
 					if dups.AddIfAbsent(task.normalizedFilePath) {
 						duplicateSourceFiles = append(duplicateSourceFiles, &DuplicateSourceFile{
-							ParseOptions: task.file.ParseOptions(),
-							Hash:         task.file.Hash,
-							ScriptKind:   task.file.ScriptKind,
+							ParseOptions:               task.file.ParseOptions(),
+							Hash:                       task.file.Hash,
+							ScriptKind:                 task.file.ScriptKind,
+							ContentMapper:              task.file.ContentMapper(),
+							IsContentMapperFailureStub: task.file.IsContentMapperFailureStub(),
 						})
 					}
 				}
@@ -425,9 +427,11 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 						// program, but we still parsed this file and acquired it through
 						// the host, so snapshot disposal must release that extra owner.
 						duplicateSourceFiles = append(duplicateSourceFiles, &DuplicateSourceFile{
-							ParseOptions: file.ParseOptions(),
-							Hash:         file.Hash,
-							ScriptKind:   file.ScriptKind,
+							ParseOptions:               file.ParseOptions(),
+							Hash:                       file.Hash,
+							ScriptKind:                 file.ScriptKind,
+							ContentMapper:              file.ContentMapper(),
+							IsContentMapperFailureStub: file.IsContentMapperFailureStub(),
 						})
 					}
 					redirectTargetsMap[packageIdFile.Path()] = append(redirectTargetsMap[packageIdFile.Path()], task.normalizedFilePath)

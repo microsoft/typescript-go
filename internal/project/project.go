@@ -372,19 +372,21 @@ func (p *Project) CreateProgram() CreateProgramResult {
 			for _, file := range newProgram.SourceFiles() {
 				// Use pointer identity: dirtyFile is the exact instance UpdateProgram acquired,
 				// and it is the only file whose refcount is already accounted for.
-				if file != dirtyFile {
+				if file != dirtyFile && !file.IsContentMapperFailureStub() {
 					// UpdateProgram acquired the changed file only, so we need to ref everything else
-					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+					p.host.builder.parseCache.Ref(parseCacheKeyForFile(file))
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
-				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub {
+					p.host.builder.parseCache.Ref(parseCacheKeyForDuplicate(file))
+				}
 			}
 		} else if dirtyFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
 			// reuse the old program. If it falls back to a full rebuild, release that
 			// speculative acquire so the rebuilt program is the only remaining owner.
-			p.host.builder.parseCache.Deref(NewParseCacheKey(dirtyFile.ParseOptions(), dirtyFile.Hash, dirtyFile.ScriptKind))
+			p.host.builder.parseCache.Deref(parseCacheKeyForFile(dirtyFile))
 		}
 	} else {
 		var typingsLocation string
