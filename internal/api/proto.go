@@ -145,6 +145,7 @@ const (
 	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
 	MethodGetBaseConstraintOfType           Method = "getBaseConstraintOfType"
 	MethodGetTypeArguments                  Method = "getTypeArguments"
+	MethodGetImportAdderEdits               Method = "getImportAdderEdits"
 	MethodGetTrueTypeOfConditionalType      Method = "getTrueTypeOfConditionalType"
 	MethodGetFalseTypeOfConditionalType     Method = "getFalseTypeOfConditionalType"
 	MethodGetConstantValue                  Method = "getConstantValue"
@@ -195,6 +196,9 @@ const (
 
 	// Well-known per-checker symbols
 	MethodGetWellKnownSymbols Method = "getWellKnownSymbols"
+
+	// Well-known per-checker signatures
+	MethodGetWellKnownSignatures Method = "getWellKnownSignatures"
 
 	// Profiling methods
 	MethodStartCPUProfile Method = "startCPUProfile"
@@ -435,6 +439,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
 	MethodGetBaseConstraintOfType:           unmarshallerFor[CheckerTypeParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
+	MethodGetImportAdderEdits:               unmarshallerFor[GetImportAdderEditsParams],
 	MethodGetConstantValue:                  unmarshallerFor[CheckerNodeParams],
 	MethodGetSignatureFromDeclaration:       unmarshallerFor[CheckerNodeParams],
 	MethodGetExportSpecifierLocalTarget:     unmarshallerFor[CheckerNodeParams],
@@ -463,6 +468,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetBigIntType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetESSymbolType:                   unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetWellKnownSymbols:               unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetWellKnownSignatures:            unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetSyntacticDiagnostics:           unmarshallerFor[GetDiagnosticsParams],
 	MethodGetBindDiagnostics:                unmarshallerFor[GetDiagnosticsParams],
 	MethodGetSemanticDiagnostics:            unmarshallerFor[GetDiagnosticsParams],
@@ -913,6 +919,13 @@ type WellKnownSymbolsResponse struct {
 	Arguments SymbolID `json:"arguments"`
 }
 
+// WellKnownSignaturesResponse carries the handle id of the per-checker singleton
+// unknown signature (the signature the checker yields when a call cannot be
+// resolved) so the client can identify it by id without a round-trip on every check.
+type WellKnownSignaturesResponse struct {
+	Unknown SignatureID `json:"unknown"`
+}
+
 // GetBaseTypeOfLiteralTypeParams returns the base type of a literal type.
 type GetBaseTypeOfLiteralTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
@@ -1001,6 +1014,31 @@ type GetTypesAtPositionsParams struct {
 	Project   ProjectID          `json:"project"`
 	File      DocumentIdentifier `json:"file"`
 	Positions []uint32           `json:"positions"`
+}
+
+type ImportAdderActionKind string
+
+const (
+	ImportAdderActionKindImportSymbol ImportAdderActionKind = "importSymbol"
+)
+
+type ImportAdderAction struct {
+	Kind                   ImportAdderActionKind `json:"kind"`
+	Symbol                 SymbolID              `json:"symbol,omitempty"`
+	IsValidTypeOnlyUseSite *bool                 `json:"isValidTypeOnlyUseSite,omitempty"`
+}
+
+type GetImportAdderEditsParams struct {
+	Snapshot SnapshotID          `json:"snapshot"`
+	Project  ProjectID           `json:"project"`
+	File     DocumentIdentifier  `json:"file"`
+	Actions  []ImportAdderAction `json:"actions"`
+}
+
+type TextEdit struct {
+	Pos     int    `json:"pos"`
+	End     int    `json:"end"`
+	NewText string `json:"newText"`
 }
 
 // TypeToTypeNodeParams are the parameters for the typeToTypeNode method.
