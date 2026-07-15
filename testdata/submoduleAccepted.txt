@@ -1428,3 +1428,29 @@ conformance/noInferRedeclaration.js.diff
 
 # Better isolatedDeclarations error issued on cast initializer before required parameter
 compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
+
+# deduplicated union/intersection properties' declarations
+compiler/arrayDestructuringInSwitch1.symbols.diff
+compiler/arraySlice.symbols.diff
+compiler/bestChoiceType.symbols.diff
+compiler/callsOnComplexSignatures.symbols.diff
+compiler/contextualOverloadListFromArrayUnion.symbols.diff
+compiler/controlFlowArrayErrors.symbols.diff
+compiler/discriminateWithOptionalProperty4(exactoptionalpropertytypes=false).symbols.diff
+compiler/discriminateWithOptionalProperty4(exactoptionalpropertytypes=true).symbols.diff
+compiler/neverAsDiscriminantType(strict=false).symbols.diff
+compiler/neverAsDiscriminantType(strict=true).symbols.diff
+compiler/recursiveArrayNotCircular.symbols.diff
+compiler/silentNeverPropagation.symbols.diff
+compiler/sliceResultCast.symbols.diff
+compiler/typeParameterExtendingUnion1.symbols.diff
+compiler/typeParameterExtendingUnion2.symbols.diff
+compiler/typeParameterLeak.symbols.diff
+compiler/typeVariableConstraintIntersections.symbols.diff
+compiler/unionCallMixedTypeParameterPresence.symbols.diff
+compiler/unionOfArraysFilterCall.symbols.diff
+compiler/unionOfClassCalls.symbols.diff
+conformance/bivariantInferences.symbols.diff
+conformance/intersectionOfUnionNarrowing.symbols.diff
+conformance/mixinAccessModifiers.symbols.diff
+conformance/objectLiteralNormalization.symbols.diff

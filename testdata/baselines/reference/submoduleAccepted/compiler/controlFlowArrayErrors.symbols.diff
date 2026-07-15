@@ -1,0 +1,14 @@
+--- old.controlFlowArrayErrors.symbols
++++ new.controlFlowArrayErrors.symbols
+@@= skipped -122, +122 lines =@@
+ >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 37, 7))
+
+     x.push(99);  // Error
+->x.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>x.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 37, 7))
+->push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+ }
+
+ function f7() {
