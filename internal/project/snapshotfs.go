@@ -479,7 +479,8 @@ func (s *snapshotFSBuilder) invalidateNodeModulesCache() {
 
 func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) FileChangeSummary {
 	if change.Changed.Len() > 0 {
-		var filteredChanged collections.Set[lsproto.DocumentUri]
+		var filteredChanged collections.SyncSet[lsproto.DocumentUri]
+		wg := core.NewWorkGroup(false)
 		for uri := range change.Changed.Keys() {
 			path := s.toPath(uri.FileName())
 			if _, ok := s.overlays[path]; ok {
@@ -491,11 +492,18 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) FileChangeS
 				filteredChanged.Add(uri)
 				continue
 			}
-			if s.reloadEntryIfContentChanged(entry) {
-				filteredChanged.Add(uri)
-			}
+			wg.Queue(func() {
+				if s.reloadEntryIfContentChanged(entry) {
+					filteredChanged.Add(uri)
+				}
+			})
 		}
-		change.Changed = filteredChanged
+		wg.RunAndWait()
+		newChanged := collections.NewSetWithSizeHint[lsproto.DocumentUri](filteredChanged.Size())
+		for uri := range filteredChanged.Keys() {
+			newChanged.Add(uri)
+		}
+		change.Changed = *newChanged
 	}
 	for uri := range change.Deleted.Keys() {
 		path := s.toPath(uri.FileName())
@@ -507,48 +515,37 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) FileChangeS
 }
 
 func (s *snapshotFSBuilder) reloadEntryIfContentChanged(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) (changed bool) {
-	var fileName string
-	var cachedHash xxh3.Uint128
+	file := entry.Value()
+	if file == nil {
+		return true
+	}
+	content, ok := s.fs.ReadFile(file.fileName)
+	changed = true
 	entry.Locked(func(e dirty.Value[*diskFile]) {
-		if e.Value() != nil {
-			fileName = e.Value().fileName
-			cachedHash = e.Value().hash
+		cur := e.Value()
+		if cur == nil {
+			return
 		}
-	})
-	if fileName == "" {
-		return true
-	}
-	content, ok := s.fs.ReadFile(fileName)
-	if !ok {
-		entry.Locked(func(e dirty.Value[*diskFile]) {
-			if e.Value() != nil {
-				e.Delete()
-			}
-		})
-		return true
-	}
-	newHash := xxh3.HashString128(content)
-	if newHash == cachedHash {
-		entry.Locked(func(e dirty.Value[*diskFile]) {
-			if e.Value() != nil && !e.Value().MatchesDiskText() {
+		if !ok {
+			e.Delete()
+			return
+		}
+		if content == cur.content {
+			changed = false
+			if !cur.MatchesDiskText() {
 				e.Change(func(file *diskFile) {
 					file.needsReload = false
 				})
 			}
-		})
-		return false
-	}
-	entry.Locked(func(e dirty.Value[*diskFile]) {
-		if e.Value() == nil {
 			return
 		}
 		e.Change(func(file *diskFile) {
 			file.content = content
-			file.hash = newHash
+			file.hash = xxh3.HashString128(content)
 			file.needsReload = false
 		})
 	})
-	return true
+	return changed
 }
 
 // expandRealpathAliases adds synthetic URIs to the Changed and Deleted sets for
