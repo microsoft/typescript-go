@@ -22,10 +22,11 @@ import type {
  * ```
  */
 export interface Type {
+    /** Type flags — use to determine the specific kind of type. */
+    readonly flags: TypeFlags;
+
     /** Unique identifier for this type */
     readonly id: number;
-    /** Type flags — use to determine the specific kind of type */
-    readonly flags: TypeFlags;
 
     /** Get the symbol associated with this type, if any */
     getSymbol(): Promise<Symbol | undefined>;
@@ -35,6 +36,56 @@ export interface Type {
 
     /** Get the symbol of the type alias this type was instantiated from, if any */
     getAliasSymbol(): Promise<Symbol | undefined>;
+
+    /**
+     * Get the base types of this type, or `undefined` if it is not a class or
+     * interface type.
+     */
+    getBaseTypes(): Promise<readonly Type[] | undefined>;
+
+    /** Whether this type is a class or interface type */
+    isClassOrInterface(): this is InterfaceType;
+    /** Whether this type is a union type */
+    isUnionType(): this is UnionType;
+    /** Whether this type is an intersection type */
+    isIntersectionType(): this is IntersectionType;
+    /** Whether this type is an object type */
+    isObjectType(): this is ObjectType;
+    /** Whether this type is an intrinsic primitive type */
+    isIntrinsicType(): this is IntrinsicType;
+    /**
+     * Whether this is the error type — the placeholder produced when a type
+     * cannot be determined (e.g. an unresolved reference).
+     */
+    isErrorType(): boolean;
+    /** Whether this type is a literal type */
+    isLiteralType(): this is LiteralType;
+    /** Whether this type is a string literal type */
+    isStringLiteralType(): this is StringLiteralType;
+    /** Whether this type is a number literal type */
+    isNumberLiteralType(): this is NumberLiteralType;
+    /** Whether this type is a bigint literal type */
+    isBigIntLiteralType(): this is BigIntLiteralType;
+    /** Whether this type is a boolean literal type */
+    isBooleanLiteralType(): this is BooleanLiteralType;
+    /** Whether this type is a type reference */
+    isTypeReference(): this is TypeReference;
+    /** Whether this type is a tuple type */
+    isTupleType(): this is TupleType;
+    /** Whether this type is an index type (`keyof T`) */
+    isIndexType(): this is IndexType;
+    /** Whether this type is an indexed access type (`T[K]`) */
+    isIndexedAccessType(): this is IndexedAccessType;
+    /** Whether this type is a conditional type */
+    isConditionalType(): this is ConditionalType;
+    /** Whether this type is a substitution type */
+    isSubstitutionType(): this is SubstitutionType;
+    /** Whether this type is a template literal type */
+    isTemplateLiteralType(): this is TemplateLiteralType;
+    /** Whether this type is a string mapping type */
+    isStringMappingType(): this is StringMappingType;
+    /** Whether this type is a type parameter */
+    isTypeParameter(): this is TypeParameter;
 }
 
 /**
@@ -79,7 +130,7 @@ export interface BooleanLiteralType extends LiteralType {
 
 /** Object types (TypeFlags.Object) */
 export interface ObjectType extends Type {
-    /** Object flags — use to determine the specific kind of object type */
+    /** Object flags — use to determine the specific kind of object type. */
     readonly objectFlags: ObjectFlags;
 }
 
@@ -92,11 +143,11 @@ export interface TypeReference extends ObjectType {
 /** Interface types — classes and interfaces (ObjectFlags.ClassOrInterface) */
 export interface InterfaceType extends TypeReference {
     /** Get all type parameters (outer + local, excluding thisType) */
-    getTypeParameters(): Promise<readonly Type[]>;
+    getTypeParameters(): Promise<readonly TypeParameter[]>;
     /** Get outer type parameters from enclosing declarations */
-    getOuterTypeParameters(): Promise<readonly Type[]>;
+    getOuterTypeParameters(): Promise<readonly TypeParameter[]>;
     /** Get local type parameters declared on this interface/class */
-    getLocalTypeParameters(): Promise<readonly Type[]>;
+    getLocalTypeParameters(): Promise<readonly TypeParameter[]>;
 }
 
 /** Tuple types (ObjectFlags.Tuple) */
@@ -126,7 +177,7 @@ export interface IntersectionType extends UnionOrIntersectionType {
 /** Type parameters (TypeFlags.TypeParameter) */
 export interface TypeParameter extends Type {
     /** True if this is the synthetic `this` type of an interface, class, or tuple */
-    readonly isThisType?: boolean;
+    readonly isThisType?: boolean | undefined;
 }
 
 /** Index types — keyof T (TypeFlags.Index) */
@@ -149,6 +200,10 @@ export interface ConditionalType extends Type {
     getCheckType(): Promise<Type>;
     /** Get the extends type U in `T extends U ? X : Y` */
     getExtendsType(): Promise<Type>;
+    /** Get the true type X in `T extends U ? X : Y` */
+    getTrueType(): Promise<Type>;
+    /** Get the false type Y in `T extends U ? X : Y` */
+    getFalseType(): Promise<Type>;
 }
 
 /** Substitution types (TypeFlags.Substitution) */
@@ -227,32 +282,42 @@ export interface IndexInfo {
     /** Whether the index signature is readonly */
     readonly isReadonly: boolean;
     /** The index signature declaration, if any */
-    readonly declaration?: NodeHandle;
+    readonly declaration?: NodeHandle | undefined;
+}
+
+/**
+ * A single JSDoc tag attached to a symbol — e.g. `@param`, `@returns`.
+ */
+export interface JSDocTagInfo {
+    /** The tag name, without the leading `@` — e.g. `"param"`. */
+    readonly name: string;
+    /** The rendered tag text, if any — e.g. `"a the first number"` for `@param a the first number`. */
+    readonly text?: string | undefined;
 }
 
 export interface CompletionEntryLabelDetails {
-    detail?: string;
-    description?: string;
+    detail?: string | undefined;
+    description?: string | undefined;
 }
 
 /** Options for {@link Checker.getCompletionsAtPosition}. */
 export interface CompletionOptions {
-    triggerCharacter?: string;
+    triggerCharacter?: string | undefined;
     /** Include a `symbol` property on each completion entry. Only populated for symbol-based completions (not keywords or literals). */
-    includeSymbol?: boolean;
+    includeSymbol?: boolean | undefined;
 }
 
 /** A single completion item returned by {@link Checker.getCompletionsAtPosition}. */
 export interface CompletionEntry {
     readonly name: string;
-    readonly kind?: CompletionItemKind;
-    readonly sortText?: string;
-    readonly insertText?: string;
-    readonly filterText?: string;
-    readonly detail?: string;
-    readonly labelDetails?: CompletionEntryLabelDetails;
+    readonly kind?: CompletionItemKind | undefined;
+    readonly sortText?: string | undefined;
+    readonly insertText?: string | undefined;
+    readonly filterText?: string | undefined;
+    readonly detail?: string | undefined;
+    readonly labelDetails?: CompletionEntryLabelDetails | undefined;
     /** The symbol associated with this completion entry. Only set when `includeSymbol: true` is passed and a symbol is available. */
-    readonly symbol?: Symbol;
+    readonly symbol?: Symbol | undefined;
 }
 
 /** The result of {@link Checker.getCompletionsAtPosition}. */
@@ -266,7 +331,7 @@ export interface CompletionInfo {
  */
 export interface Diagnostic {
     /** File name of the source file this diagnostic belongs to, if any */
-    readonly fileName?: string;
+    readonly fileName?: string | undefined;
     /** Start position of the diagnostic */
     readonly pos: number;
     /** End position of the diagnostic */
@@ -278,11 +343,23 @@ export interface Diagnostic {
     /** Localized diagnostic message text */
     readonly text: string;
     /** Whether this diagnostic highlights unnecessary code */
-    readonly reportsUnnecessary?: boolean;
+    readonly reportsUnnecessary?: boolean | undefined;
     /** Whether this diagnostic highlights deprecated code */
-    readonly reportsDeprecated?: boolean;
+    readonly reportsDeprecated?: boolean | undefined;
     /** Chained diagnostic messages */
-    readonly messageChain?: readonly Diagnostic[];
+    readonly messageChain?: readonly Diagnostic[] | undefined;
     /** Related diagnostic information */
-    readonly relatedInformation?: readonly Diagnostic[];
+    readonly relatedInformation?: readonly Diagnostic[] | undefined;
+}
+
+export interface ImportSymbolAction {
+    readonly kind: "importSymbol";
+    readonly symbol: Symbol;
+    readonly isValidTypeOnlyUseSite?: boolean;
+}
+
+export type ImportAdderAction = ImportSymbolAction;
+
+export interface GetImportEditsForSymbolsOptions {
+    readonly isValidTypeOnlyUseSite?: boolean;
 }

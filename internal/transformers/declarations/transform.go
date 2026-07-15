@@ -78,8 +78,9 @@ type DeclarationTransformer struct {
 	suppressNewDiagnosticContexts    bool
 	witnessedCjsExports              collections.Set[string]
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
-	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
-	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	expandoHosts                     map[ast.NodeId]*ast.Node               // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
+	expandoMembers                   map[ast.NodeId][]*ast.Node             // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	deferredExpandoAssignments       map[ast.NodeId][]*ast.BinaryExpression // expando assignments whose host wasn't visible when collected, processed if the host is late-marked visible
 	seenProperties                   collections.Set[thisPropertyAssignmentKey]
 	thisPropertyAssignmentsCollected []*ast.Node
 	rawReferencedFiles               []ReferencedFilePair
@@ -293,13 +294,14 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.lateStatementReplacementMap = make(map[ast.NodeId]*ast.Node)
 	tx.expandoHosts = make(map[ast.NodeId]*ast.Node)
 	tx.expandoMembers = make(map[ast.NodeId][]*ast.Node)
+	tx.deferredExpandoAssignments = make(map[ast.NodeId][]*ast.BinaryExpression)
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.witnessedCjsExports.Clear()
 	tx.state.currentSourceFile = node
 	tx.collectFileReferences(node)
-	tx.resolver.PrecalculateDeclarationEmitVisibility(node)
+	tx.resolver.PrecalculateDeclarationEmitVisibility(tx.EmitContext().MostOriginal(node.AsNode()).AsSourceFile())
 	updated := tx.transformSourceFile(node)
 	tx.state.currentSourceFile = nil
 	return updated
@@ -1702,7 +1704,9 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 	}
 	original := tx.EmitContext().MostOriginal(input)
 	id := ast.GetNodeId(original)
-	if _, ok := tx.expandoHosts[id]; ok {
+	_, isExpandoHost := tx.expandoHosts[id]
+	_, hasDeferredExpandoAssignments := tx.deferredExpandoAssignments[id]
+	if isExpandoHost || hasDeferredExpandoAssignments {
 		return tx.createFullExpandoBlock(id)
 	}
 
@@ -1965,6 +1969,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	extendsClause := getEffectiveBaseTypeNode(input.AsNode())
 
 	if extendsClause != nil && !ast.IsEntityNameExpression(extendsClause.AsExpressionWithTypeArguments().Expression) && extendsClause.AsExpressionWithTypeArguments().Expression.Kind != ast.KindNullKeyword {
+		tx.tracker.ReportInferenceFallback(extendsClause.AsExpressionWithTypeArguments().Expression) // Add an isolated declarations error on this extends clause
 		oldId := "default"
 		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().Text()) > 0 {
 			oldId = input.Name().Text()
@@ -2066,9 +2071,8 @@ caseBlock:
 		if thisTarget.ClassLikeData().HeritageClauses != nil && len(thisTarget.ClassLikeData().HeritageClauses.Nodes) > 0 && !isClassExtendingNull(thisTarget) {
 			// there is a base type any assignments might be "from"
 			tx.tracker.ReportInferenceFallback(thisTarget) // Add an isolated declarations error on this class - we can't know how to transform this prop into an assignment without referring to type information
-			decls := tx.resolver.GetBaseDeclarationsForPropertyDeclaration(node)
-			if len(decls) > 0 {
-				break caseBlock // property lightly overrides a property in a base type - skip it
+			if tx.resolver.IsThisPropertyAssignmentDeclarationRedundant(node) {
+				break caseBlock // skip assignments whose member is already provided by an `extends` base type (an inherited accessor/method, or an identical inherited property)
 				// TODO: If the property has an explicit `@type` annotation, we should probably emit it (maybe with an `override` modifier) instead of skipping it
 			}
 		}
@@ -2728,7 +2732,13 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return
 	}
 
+	hostId := tx.getExpandoHostId(declaration)
+
 	if ast.IsDeclaration(declaration) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, declaration) {
+		// The host isn't visible (yet) - printing the type of a visible declaration may still
+		// late-mark it as visible (e.g. an exported variable whose type prints as `typeof host`),
+		// so defer the assignment to be processed if and when that happens.
+		tx.deferredExpandoAssignments[hostId] = append(tx.deferredExpandoAssignments[hostId], node)
 		return
 	}
 
@@ -2749,7 +2759,6 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		localName = tx.Factory().NewGeneratedNameForNode(node.AsNode())
 	}
 
-	hostId := tx.getExpandoHostId(declaration)
 	_, cleanupDiagnosticContext := tx.setupDiagnosticContext(node.AsNode())
 	defer cleanupDiagnosticContext()
 
@@ -2876,6 +2885,15 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 }
 
 func (tx *DeclarationTransformer) createFullExpandoBlock(id ast.NodeId) *ast.Node {
+	// Process any expando assignments on this host that were skipped because it wasn't
+	// visible when they were collected - if it's still not visible, they simply get
+	// re-deferred, and are dropped if the host is never late-marked visible.
+	if deferred, ok := tx.deferredExpandoAssignments[id]; ok {
+		delete(tx.deferredExpandoAssignments, id)
+		for _, assignment := range deferred {
+			tx.transformExpandoAssignment(assignment)
+		}
+	}
 	n := tx.expandoHosts[id]
 	if addOns, ok := tx.expandoMembers[id]; ok {
 		var modifiers *ast.ModifierList

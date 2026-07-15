@@ -1,52 +1,31 @@
 isolatedDeclarationErrorsExpandoFunctions.ts(3,1): error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-isolatedDeclarationErrorsExpandoFunctions.ts(3,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsExpandoFunctions.ts(4,1): error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-isolatedDeclarationErrorsExpandoFunctions.ts(4,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsExpandoFunctions.ts(5,1): error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-isolatedDeclarationErrorsExpandoFunctions.ts(5,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsExpandoFunctions.ts(6,1): error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-isolatedDeclarationErrorsExpandoFunctions.ts(6,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsExpandoFunctions.ts(7,1): error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-isolatedDeclarationErrorsExpandoFunctions.ts(7,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 isolatedDeclarationErrorsExpandoFunctions.ts(8,1): error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-isolatedDeclarationErrorsExpandoFunctions.ts(8,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
-isolatedDeclarationErrorsExpandoFunctions.ts(9,1): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
 
 
-==== isolatedDeclarationErrorsExpandoFunctions.ts (13 errors) ====
+==== isolatedDeclarationErrorsExpandoFunctions.ts (6 errors) ====
     export function foo() {}
     
     foo.apply = () => {}
     ~~~~~~~~~
 !!! error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-    ~~~~~~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     foo.call = ()=> {}
     ~~~~~~~~
 !!! error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     foo.bind = ()=> {}
     ~~~~~~~~
 !!! error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     foo.caller = ()=> {}
     ~~~~~~~~~~
 !!! error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-    ~~~~~~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     foo.toString = ()=> {}
     ~~~~~~~~~~~~
 !!! error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-    ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     foo.length = 10
     ~~~~~~~~~~
 !!! error TS9023: Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function.
-    ~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     foo.length = 10
-    ~~~~~~~~~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
     

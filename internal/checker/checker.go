@@ -287,7 +287,8 @@ type InferenceContext struct {
 
 type InferenceInfo struct {
 	typeParameter    *Type             // Type parameter for which inferences are being made
-	candidates       []*Type           // Candidates in covariant positions
+	candidates       []*Type           // Candidates in covariant positions in decreasing depth order
+	candidateDepths  []int             // Type argument depths of covariant inferences
 	contraCandidates []*Type           // Candidates in contravariant positions
 	inferredType     *Type             // Cache for resolved inferred type
 	priority         InferencePriority // Priority of current inference set
@@ -590,6 +591,7 @@ type Checker struct {
 	TotalInstantiationCount                     uint32
 	instantiationCount                          uint32
 	instantiationDepth                          uint32
+	conditionalConstraintDepth                  uint32
 	inlineLevel                                 int
 	serializationLevel                          int
 	currentNode                                 *ast.Node
@@ -13831,7 +13833,7 @@ func (c *Checker) getReferencedValueOrAliasSymbol(reference *ast.Node) *ast.Symb
 	if resolvedSymbol != nil && resolvedSymbol != c.unknownSymbol {
 		return resolvedSymbol
 	}
-	return c.resolveName(reference, reference.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias, nil, true /*isUse*/, false /*excludeGlobals*/)
+	return c.resolveName(reference, reference.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias, nil, false /*isUse*/, false /*excludeGlobals*/)
 }
 
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
@@ -14091,7 +14093,11 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 			// reset flag when merging instantiated module into value module that has only const enums
 			target.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 		}
-		target.Flags |= source.Flags
+		sourceFlags := source.Flags
+		if target.Flags&ast.SymbolFlagsConstEnumOnlyModule == 0 {
+			sourceFlags &^= ast.SymbolFlagsConstEnumOnlyModule
+		}
+		target.Flags |= sourceFlags
 		if source.ValueDeclaration != nil {
 			binder.SetValueDeclaration(target, source.ValueDeclaration)
 		}
@@ -19064,7 +19070,7 @@ func findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
 }
 
 func (c *Checker) getBaseTypes(t *Type) []*Type {
-	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) == 0 {
+	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsTuple) == 0 {
 		return nil
 	}
 	data := t.AsInterfaceType()
@@ -26659,8 +26665,9 @@ func (c *Checker) isKeyTypeIncluded(keyType *Type, include TypeFlags) bool {
 }
 
 func (c *Checker) checkComputedPropertyName(node *ast.Node) *Type {
-	links := c.typeNodeLinks.Get(node.Expression())
+	links := c.typeNodeLinks.Get(node)
 	if links.resolvedType == nil {
+		links.resolvedType = c.circularConstraintType
 		if (ast.IsTypeLiteralNode(node.Parent.Parent) || ast.IsClassLike(node.Parent.Parent) || ast.IsInterfaceDeclaration(node.Parent.Parent)) &&
 			ast.IsBinaryExpression(node.Expression()) && node.Expression().AsBinaryExpression().OperatorToken.Kind == ast.KindInKeyword &&
 			!ast.IsAccessor(node.Parent) {
@@ -27420,20 +27427,13 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		}
 		return c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
 	case t.flags&TypeFlagsConditional != 0:
-		d := t.AsConditionalType()
-		if d.root.isDistributive && c.cachedTypes[CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: t.id}] != t {
-			constraint := c.getSimplifiedType(d.checkType, false /*writing*/)
-			if constraint == d.checkType {
-				constraint = c.getNextBaseConstraint(constraint, stack)
-			}
-			if constraint != nil && constraint != d.checkType {
-				instantiated := c.getConditionalTypeInstantiation(t, prependTypeMapping(d.root.checkType, constraint, d.mapper), true /*forConstraint*/, nil)
-				if instantiated.flags&TypeFlagsNever == 0 {
-					return c.getNextBaseConstraint(instantiated, stack)
-				}
-			}
+		if c.conditionalConstraintDepth >= 100 {
+			return nil
 		}
-		return c.getNextBaseConstraint(c.getDefaultConstraintOfConditionalType(t), stack)
+		c.conditionalConstraintDepth++
+		constraint := c.getConstraintFromConditionalType(t)
+		c.conditionalConstraintDepth--
+		return c.getNextBaseConstraint(constraint, stack)
 	case t.flags&TypeFlagsSubstitution != 0:
 		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
 	case c.isGenericTupleType(t):
@@ -28041,28 +28041,97 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 	case ReferenceHintDecorator:
 		c.markDecoratorAliasReferenced(location)
 	case ReferenceHintUnspecified:
-		// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
-		// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}` or `q` in `import r = q`
-		// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
-		if ast.IsIdentifier(location) &&
-			(ast.IsExpressionNode(location) ||
-				ast.IsShorthandPropertyAssignment(location.Parent) ||
-				(ast.IsImportEqualsDeclaration(location.Parent) &&
-					location.Parent.AsImportEqualsDeclaration().ModuleReference == location)) &&
-			shouldMarkIdentifierAliasReferenced(location) {
-			if ast.IsPropertyAccessOrQualifiedName(location.Parent) {
-				var left *ast.Node
-				if ast.IsPropertyAccessExpression(location.Parent) {
-					left = location.Parent.Expression()
-				} else {
-					left = location.Parent.AsQualifiedName().Left
-				}
-				if left != location {
-					return // Only mark the LHS (the RHS is a property lookup)
+		if location.Flags&ast.NodeFlagsInWithStatement != 0 {
+			// We cannot answer semantic questions within a with block, do not proceed any further
+			return
+		}
+		if ast.IsJsxTagName(location) && isJsxIntrinsicTagName(location) {
+			return // builtin JSX tag names aren't real type refs by most metrics, but are expressions, so must be filtered
+		}
+		if ast.IsIdentifier(location) {
+			// A shorthand property with an object-assignment-initializer (e.g. `{ s = 5 }`) is only valid inside a
+			// destructuring assignment target. When it appears in an ordinary object literal expression, the checker
+			// checks the initializer and never resolves the property name, so resolving it here would report a spurious
+			// "No value exists in scope for the shorthand property" diagnostic. Skip such names to match checking.
+			if parent := location.Parent; ast.IsShorthandPropertyAssignment(parent) &&
+				parent.Name() == location &&
+				parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil &&
+				!ast.IsAssignmentTarget(parent.Parent) {
+				return
+			}
+			res := ast.FindManyAncestors(location, ast.IsMetaProperty, ast.IsDecorator, ast.IsYieldExpression, ast.IsForInOrOfStatement, ast.IsComputedPropertyName, ast.IsHeritageClause)
+			metaProperty := res[0]
+			decorator := res[1]
+			yieldExpr := res[2]
+			forNode := res[3]
+			computedName := res[4]
+			heritageClause := res[5]
+			if metaProperty != nil {
+				return // identifiers in meta properties shouldn't be resolved, but are expressions, so must be filtered
+			}
+			if decorator != nil {
+				// Decorators on nodes that cannot be decorated (e.g. class expressions, static blocks,
+				// `this` parameters) are never resolved during normal checking, so resolving them here would
+				// report spurious diagnostics. Only bail out for such invalid-position decorators; valid
+				// decorator expressions must still be resolved and marked for emit.
+				decorated := decorator.Parent
+				if decorated != nil && !ast.NodeCanBeDecorated(c.legacyDecorators, decorated, decorated.Parent, decorated.Parent.Parent) {
+					return
 				}
 			}
-			c.markIdentifierAliasReferenced(location)
-			return
+			// The operand of a 'yield' expression is only checked when the containing function is a
+			// generator. Outside a generator (or outside any function), checkYieldExpression returns
+			// early and never checks the operand, so resolving identifiers in it here would report a
+			// spurious "Cannot find name" diagnostic.
+			if yieldExpr != nil {
+				fn := ast.GetContainingFunction(yieldExpr)
+				if fn == nil || ast.GetFunctionFlags(fn)&ast.FunctionFlagsGenerator == 0 {
+					return
+				}
+			}
+			// The right-hand side of a 'for-in'/'for-of' statement whose initializer is an empty variable
+			// declaration list (a grammar error, e.g. `for (var of X)`) is never checked, because the RHS
+			// is only checked while inferring the type of a variable declaration and there is none here.
+			// Resolving identifiers in the RHS here would report spurious diagnostics.
+			if forNode != nil {
+				data := forNode.AsForInOrOfStatement()
+				if ast.IsVariableDeclarationList(data.Initializer) &&
+					len(data.Initializer.AsVariableDeclarationList().Declarations.Nodes) == 0 &&
+					data.Expression != nil &&
+					(location == data.Expression || ast.IsNodeDescendantOf(location, data.Expression)) {
+					return
+				}
+			}
+			// Computed property names on enum members are a grammar error and are never checked
+			// (checkEnumMember only checks the member initializer, not the name), so resolving
+			// identifiers in them here would report a spurious "Cannot find name" diagnostic.
+			if computedName != nil && ast.IsEnumMember(computedName.Parent) {
+				return
+			}
+			// extends heritage clauses on interfaces are errors and are unchecked
+			if heritageClause != nil && ast.IsInterfaceDeclaration(heritageClause.Parent) {
+				return
+			}
+			// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
+			// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}` or `q` in `import r = q`
+			// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
+			if (ast.IsExpressionNode(location) ||
+				ast.IsShorthandPropertyAssignment(location.Parent)) &&
+				shouldMarkIdentifierAliasReferenced(location) {
+				if ast.IsPropertyAccessOrQualifiedName(location.Parent) {
+					var left *ast.Node
+					if ast.IsPropertyAccessExpression(location.Parent) {
+						left = location.Parent.Expression()
+					} else {
+						left = location.Parent.AsQualifiedName().Left
+					}
+					if left != location {
+						return // Only mark the LHS (the RHS is a property lookup)
+					}
+				}
+				c.markIdentifierAliasReferenced(location)
+				return
+			}
 		}
 		if ast.IsPropertyAccessOrQualifiedName(location) {
 			topProp := location
@@ -28150,8 +28219,11 @@ func isInternalModuleImportEqualsDeclaration(node *ast.Node) bool {
 }
 
 func (c *Checker) markIdentifierAliasReferenced(location *ast.IdentifierNode) {
+	if ast.IsThisInTypeQuery(location) {
+		return
+	}
 	symbol := c.getResolvedSymbol(location)
-	if symbol != nil && symbol != c.argumentsSymbol && symbol != c.unknownSymbol && !ast.IsThisInTypeQuery(location) {
+	if symbol != nil && symbol != c.argumentsSymbol && symbol != c.unknownSymbol {
 		c.markAliasReferenced(symbol, location)
 	}
 }
