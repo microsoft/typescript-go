@@ -1452,18 +1452,10 @@ func markAsSynthetic(node *ast.Node) bool {
 }
 
 func (c *Checker) getJsxNamespaceContainerForImplicitImport(location *ast.Node) *ast.Symbol {
-	var file *ast.SourceFile
-	var links *JsxElementLinks
-	if location != nil {
-		if file = ast.GetSourceFileOfNode(location); file != nil {
-			links = c.jsxElementLinks.Get(file.AsNode())
-		}
-	}
-	if links != nil && links.jsxImplicitImportContainer != nil {
+	file := ast.GetSourceFileOfNode(location)
+	links := c.jsxElementLinks.Get(file.AsNode())
+	if links.jsxImplicitImportContainer != nil {
 		return core.IfElse(links.jsxImplicitImportContainer == c.unknownSymbol, nil, links.jsxImplicitImportContainer)
-	}
-	if links == nil {
-		return nil
 	}
 	canonicalErrorTag := links.firstJSXTagInFile
 	if canonicalErrorTag == nil {
