@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/arrowFunctionVisibilityPanic.ts] ////
+
+=== arrowFunctionVisibilityPanic.ts ===
+// Regression test for #4629
+// This forces the compiler to trigger a symbol-accessibility diagnostic 
+// for an ArrowFunction by using a locally scoped (unnameable) type.
+
+export const funcWithPrivateParam = (() => {
+>funcWithPrivateParam : Symbol(funcWithPrivateParam, Decl(arrowFunctionVisibilityPanic.ts, 4, 12))
+
+    interface PrivateType {
+>PrivateType : Symbol(PrivateType, Decl(arrowFunctionVisibilityPanic.ts, 4, 44))
+
+        secret: string;
+>secret : Symbol(PrivateType.secret, Decl(arrowFunctionVisibilityPanic.ts, 5, 27))
+    }
+    return (p: PrivateType) => p;
+>p : Symbol(p, Decl(arrowFunctionVisibilityPanic.ts, 8, 12))
+>PrivateType : Symbol(PrivateType, Decl(arrowFunctionVisibilityPanic.ts, 4, 44))
+>p : Symbol(p, Decl(arrowFunctionVisibilityPanic.ts, 8, 12))
+
+})();

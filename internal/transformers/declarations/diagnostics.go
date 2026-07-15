@@ -21,10 +21,16 @@ func wrapSimpleDiagnosticSelector(node *ast.Node, selector func(node *ast.Node, 
 		if diagnosticMessage == nil {
 			return nil
 		}
+
+		typeName := ast.GetNameOfDeclaration(node)
+		if typeName == nil {
+			typeName = node // Fallback ensures we always have a node for diagnostic formatting (avoids missing-argument panics).
+		}
+
 		return &SymbolAccessibilityDiagnostic{
 			errorNode:         node,
 			diagnosticMessage: diagnosticMessage,
-			typeName:          ast.GetNameOfDeclaration(node),
+			typeName:          typeName,
 		}
 	}
 }
@@ -137,6 +143,14 @@ func getMethodNameVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilit
 }
 
 func createGetSymbolAccessibilityDiagnosticForNode(node *ast.Node) GetSymbolAccessibilityDiagnostic {
+	// Arrow functions and their parameters do not emit visibility diagnostics directly.
+	// We catch them here to prevent routing them to handlers that will panic.
+	if node.Kind == ast.KindArrowFunction || (node.Parent != nil && node.Parent.Kind == ast.KindArrowFunction) {
+		return func(printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+			return nil
+		}
+	}
+
 	if ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node) || ast.IsBinaryExpression(node) || ast.IsBindingElement(node) || ast.IsConstructorDeclaration(node) {
 		return wrapSimpleDiagnosticSelector(node, getVariableDeclarationTypeVisibilityDiagnosticMessage)
 	} else if ast.IsSetAccessorDeclaration(node) || ast.IsGetAccessorDeclaration(node) {

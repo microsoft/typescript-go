@@ -1,0 +1,16 @@
+arrowFunctionVisibilityPanic.ts(5,14): error TS4025: Exported variable 'funcWithPrivateParam' has or is using private name 'PrivateType'.
+
+
+==== arrowFunctionVisibilityPanic.ts (1 errors) ====
+    // Regression test for #4629
+    // This forces the compiler to trigger a symbol-accessibility diagnostic 
+    // for an ArrowFunction by using a locally scoped (unnameable) type.
+    
+    export const funcWithPrivateParam = (() => {
+                 ~~~~~~~~~~~~~~~~~~~~
+!!! error TS4025: Exported variable 'funcWithPrivateParam' has or is using private name 'PrivateType'.
+        interface PrivateType {
+            secret: string;
+        }
+        return (p: PrivateType) => p;
+    })();
