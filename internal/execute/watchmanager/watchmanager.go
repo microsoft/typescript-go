@@ -311,9 +311,9 @@ func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {
 // already present in the set, or when it is contained within a recursive watch
 // directory already in the set.
 type DirWatchSet struct {
-	opts tspath.ComparePathsOptions
-	dirs map[string]bool
-	present map[string]struct{}
+	opts      tspath.ComparePathsOptions
+	dirs      map[string]bool
+	present   map[string]struct{}
 	recursive []string
 }
 
