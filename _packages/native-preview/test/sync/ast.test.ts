@@ -8,8 +8,10 @@ import type {
     VariableStatement,
 } from "@typescript/native-preview/unstable/ast";
 import {
+    getTokenAtPosition,
     isImportDeclaration,
     isNamedImports,
+    isValidTypeOnlyAliasUseSite,
     SyntaxKind,
     TokenFlags,
 } from "@typescript/native-preview/unstable/ast";
@@ -448,6 +450,58 @@ describe("getSynthesizedDeepClones", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Type-only import use sites
+// ---------------------------------------------------------------------------
+
+describe("isValidTypeOnlyAliasUseSite", () => {
+    test("classifies syntactic type-only import use sites", () => {
+        const source = `
+type TypeUse = TypeOnlyName;
+const valueUse = ValueName;
+const shorthandUse = { ShorthandName };
+interface InterfaceUse extends InterfaceBase {}
+class ImplementsUse implements ImplementsBase {}
+class ExtendsUse extends ExtendsBase {}
+abstract class AbstractComputed {
+    abstract [AbstractKey](): void;
+}
+interface InterfaceComputed {
+    [InterfaceKey]: string;
+}
+type TypeQueryUse = typeof TypeQueryName;
+/** @link JSDocLinkBase#JSDocLinkMember */
+class JSDocLinkUse {}
+/** @augments JSDocAugmentsBase */
+class JSDocAugmentsUse {}
+`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+        });
+        try {
+            const sourceFile = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
+            const tokenAt = (text: string) => getTokenAtPosition(sourceFile, source.indexOf(text));
+
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("TypeOnlyName")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ValueName")), false);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ShorthandName")), false);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("InterfaceBase")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ImplementsBase")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ExtendsBase")), false);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("AbstractKey")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("InterfaceKey")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("TypeQueryName")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("JSDocLinkBase")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("JSDocLinkMember")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("JSDocAugmentsBase")), true);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+// ---------------------------------------------------------------------------
 // Integration: visitor transformation
 // ---------------------------------------------------------------------------
 
@@ -627,6 +681,39 @@ describe("RemoteNode + visitEachChild", () => {
             assert.notStrictEqual(result, importDecl);
             assert.strictEqual(result.kind, SyntaxKind.ImportDeclaration);
             assert.strictEqual((result.moduleSpecifier as StringLiteralLikeNode).text, "./bar");
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("RemoteNodeList inherited array methods", () => {
+    test("filter/map/slice return plain arrays without throwing", () => {
+        const api = spawnAPI();
+        try {
+            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
+            const statements = sf.statements;
+            assert.strictEqual(statements.length, 2);
+
+            // These inherited Array methods previously threw
+            // "this.view.getUint32 is not a function" via ArraySpeciesCreate.
+            const filtered = statements.filter(() => true);
+            assert.ok(Array.isArray(filtered));
+            assert.strictEqual(Object.getPrototypeOf(filtered), Array.prototype);
+            assert.strictEqual(filtered.length, 2);
+            assert.strictEqual(filtered[0], statements[0]);
+
+            const mapped = statements.map(s => s.kind);
+            assert.ok(Array.isArray(mapped));
+            assert.strictEqual(Object.getPrototypeOf(mapped), Array.prototype);
+            assert.deepStrictEqual(mapped, [statements[0].kind, statements[1].kind]);
+
+            const sliced = statements.slice(1);
+            assert.ok(Array.isArray(sliced));
+            assert.strictEqual(Object.getPrototypeOf(sliced), Array.prototype);
+            assert.strictEqual(sliced.length, 1);
+            assert.strictEqual(sliced[0], statements[1]);
         }
         finally {
             api.close();

@@ -84,18 +84,16 @@ const { values: rawOptions } = parseArgs({
  */
 const options = /** @type {Options} */ (rawOptions);
 
-// Native release branches can edit these constants to publish a different
-// package flavor. Main's defaults publish @typescript/native-preview.
-const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("native-preview");
+// Native release branches can edit these constants to publish a fixed stable version.
+// Main publishes prerelease builds of the TypeScript package.
+const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("typescript");
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
-const produceNativePreviewVsix = /** @type {boolean} */ (true);
+const produceNativePreviewVsix = /** @type {boolean} */ (false);
+const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
+const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
-if (publishAsTypescript && !nativePreviewReleaseVersion) {
-    throw new Error("Publishing as 'typescript' requires hardcoding nativePreviewReleaseVersion.");
-}
-
-if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
     throw new Error("forRelease requires setPrerelease unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled");
 }
 
@@ -323,6 +321,8 @@ export const generateExtension = task({
  *   goPrefix: string;
  *   goFile: string;
  *   outDir: string;
+ *   stringEnum?: boolean;
+ *   valueReplacements?: Record<string, string>;
  * }} EnumDef
  */
 
@@ -340,17 +340,26 @@ const enumDefs = [
     { name: "NodeFlags", goPrefix: "NodeFlags", goFile: "internal/ast/nodeflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "OuterExpressionKinds", goPrefix: "OEK", goFile: "internal/ast/utilities.go", outDir: "_packages/native-preview/src/enums" },
     { name: "ModifierFlags", goPrefix: "ModifierFlags", goFile: "internal/ast/modifierflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModuleKind", goPrefix: "ModuleKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModuleResolutionKind", goPrefix: "ModuleResolutionKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ModuleDetectionKind", goPrefix: "ModuleDetectionKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "NewLineKind", goPrefix: "NewLineKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "JsxEmit", goPrefix: "JsxEmit", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
+    // String enum: Go stores internal names with a "\xFE" sentinel prefix, but the escaped
+    // form sent over the wire uses "__" (see EscapeSymbolName), so map the sentinel accordingly.
+    { name: "InternalSymbolName", goPrefix: "InternalSymbolName", goFile: "internal/ast/symbol.go", outDir: "_packages/native-preview/src/enums", stringEnum: true, valueReplacements: { InternalSymbolNamePrefix: "__" } },
 ];
 
 /**
  * @param {string} block
- * @param {string} prefix
+ * @param {EnumDef} def
  * @returns {{ name: string, value: string }[]}
  */
-function parseGoConstBlock(block, prefix) {
+function parseGoConstBlock(block, def) {
+    const prefix = def.goPrefix;
     const members = [];
     let iotaCounter = 0;
     let hasIota = false;
@@ -373,7 +382,10 @@ function parseGoConstBlock(block, prefix) {
         const memberName = goName.slice(prefix.length);
 
         let tsValue;
-        if (goValue === "iota") {
+        if (def.stringEnum) {
+            tsValue = parseGoStringValue(goValue, def.valueReplacements ?? {});
+        }
+        else if (goValue === "iota") {
             tsValue = String(iotaCounter);
             hasIota = true;
         }
@@ -395,6 +407,31 @@ function parseGoConstBlock(block, prefix) {
 }
 
 /**
+ * Resolve a Go string-constant expression (e.g. `Prefix + "call"` or `"export="`)
+ * into a quoted, JS-escaped TypeScript string literal. `replacements` maps bare
+ * Go identifiers (such as a sentinel-prefix constant) to their literal value.
+ * @param {string} goValue
+ * @param {Record<string, string>} replacements
+ * @returns {string}
+ */
+function parseGoStringValue(goValue, replacements) {
+    let result = "";
+    for (const part of goValue.split("+").map(p => p.trim())) {
+        if (Object.prototype.hasOwnProperty.call(replacements, part)) {
+            result += replacements[part];
+            continue;
+        }
+        const stringMatch = part.match(/^"((?:[^"\\]|\\.)*)"$/);
+        if (stringMatch === null) {
+            throw new Error(`Cannot parse string enum value: ${goValue}`);
+        }
+        // Interpret Go escape sequences via JSON, then re-stringify below.
+        result += JSON.parse(`"${stringMatch[1]}"`);
+    }
+    return JSON.stringify(result);
+}
+
+/**
  * @param {EnumDef} def
  * @returns {{ name: string, value: string }[]}
  */
@@ -403,7 +440,7 @@ function parseGoEnum(def) {
     const constBlockRegex = /const\s*\(([\s\S]*?)\n\)/g;
 
     for (const match of source.matchAll(constBlockRegex)) {
-        const members = parseGoConstBlock(match[1], def.goPrefix);
+        const members = parseGoConstBlock(match[1], def);
         if (members.length > 0) return topoSortMembers(members);
     }
 
@@ -1198,6 +1235,7 @@ function getPublishTag() {
 }
 
 const extensionDir = path.resolve("./_extension");
+const nightlyExtensionDir = path.resolve("./_extension-nightly");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 const builtSignTmp = path.resolve("./built/sign-tmp");
@@ -1441,11 +1479,18 @@ const mainNativePreviewPackage = {
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
- * @typedef {{ vscodeTarget: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
+ * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
+ * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
 void 0;
+
+/** @type {VsixExtensionPackage[]} */
+const vsixExtensionPackages = [
+    ...(produceNativePreviewVsix ? [{ name: "native-preview", sourceDir: extensionDir }] : []),
+    ...(produceTypeScriptNightlyVsix ? [{ name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir }] : []),
+];
 
 /**
  * npm package platforms supported by the native release.
@@ -1550,7 +1595,8 @@ function nodeToGOARCH(arch, os) {
 }
 
 const getPlatforms = memoize(() => {
-    let supportedPlatforms = publishAsTypescript
+    const publishTag = getPublishTag();
+    let supportedPlatforms = publishAsTypescript && publishTag !== "next"
         ? platforms
         : platforms.filter(({ vsix }) => vsix);
 
@@ -1568,26 +1614,29 @@ const getPlatforms = memoize(() => {
 
         /** @type {VsixExtension[]} */
         let extensions = [];
-        if (produceNativePreviewVsix && vsix) {
+        if (produceAnyVsix && vsix) {
             /** @type {string[]} */
             const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
             if (alpine) {
                 vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
             }
 
-            extensions = vscodeTargets.map(vscodeTarget => {
-                const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
-                const vsixPath = extensionDir + ".vsix";
-                const vsixManifestPath = extensionDir + ".manifest";
-                const vsixSignaturePath = extensionDir + ".signature.p7s";
-                return {
-                    vscodeTarget,
-                    extensionDir,
-                    vsixPath,
-                    vsixManifestPath,
-                    vsixSignaturePath,
-                };
-            });
+            extensions = vscodeTargets.flatMap(vscodeTarget =>
+                vsixExtensionPackages.map(({ name: packageName, sourceDir }) => {
+                    const extensionDir = path.join(builtVsix, `${packageName}-${vscodeTarget}`);
+                    const vsixPath = extensionDir + ".vsix";
+                    const vsixManifestPath = extensionDir + ".manifest";
+                    const vsixSignaturePath = extensionDir + ".signature.p7s";
+                    return {
+                        vscodeTarget,
+                        sourceDir,
+                        extensionDir,
+                        vsixPath,
+                        vsixManifestPath,
+                        vsixSignaturePath,
+                    };
+                })
+            );
         }
 
         return {
@@ -1764,6 +1813,22 @@ async function runBuildNativePreviewPackages() {
         inputPackageJson.bin = {
             tsc: "./bin/tsc",
         };
+        inputPackageJson.description = "TypeScript is a language for application scale JavaScript development";
+        inputPackageJson.homepage = "https://www.typescriptlang.org/";
+        inputPackageJson.keywords = [
+            "TypeScript",
+            "Microsoft",
+            "compiler",
+            "language",
+            "javascript",
+        ];
+        inputPackageJson.bugs = {
+            url: "https://github.com/microsoft/TypeScript/issues",
+        };
+        inputPackageJson.repository = {
+            type: "git",
+            url: "https://github.com/microsoft/TypeScript.git",
+        };
         delete inputPackageJson.scripts;
         delete inputPackageJson.devDependencies;
     }
@@ -1794,6 +1859,7 @@ async function runBuildNativePreviewPackages() {
         await fs.promises.rename(path.join(mainPackageDir, "lib", "tsgo.js"), path.join(mainPackageDir, "lib", "tsc.js"));
         await fs.promises.writeFile(path.join(mainPackageDir, "bin", "tsc"), '#!/usr/bin/env node\nimport "../lib/tsc.js";\n');
         await fs.promises.chmod(path.join(mainPackageDir, "bin", "tsc"), 0o755);
+        await fs.promises.copyFile(path.join(inputDir, "typescript-package-readme.md"), path.join(mainPackageDir, "README.md"));
     }
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
@@ -2085,18 +2151,18 @@ async function runPackVsixExtensions() {
 
     console.log("Version:", version);
 
-    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
         const npmLibDir = path.join(npmDir, "lib");
         const extensionLibDir = path.join(thisExtensionDir, "lib");
         await fs.promises.mkdir(extensionLibDir, { recursive: true });
 
-        await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
+        await cpWithoutNodeModulesOrTsconfig(sourceDir, thisExtensionDir);
         await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
 
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
-        packageJson.main = "dist/extension.bundle.js";
+        packageJson.bundledTypeScriptVersion = getVersion();
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
@@ -2143,7 +2209,7 @@ export const nativePreviewRelease = task({
     name: "native-preview:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
             throw new Error("native-preview:release requires --forRelease and --setPrerelease flags, unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
         await runBuildNativePreviewPackages();
