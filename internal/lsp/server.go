@@ -303,15 +303,16 @@ func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 }
 
 const (
-	contentMapperDidOpenRegistrationID   = "content-mapper-did-open"
-	contentMapperDidChangeRegistrationID = "content-mapper-did-change"
-	contentMapperDidCloseRegistrationID  = "content-mapper-did-close"
+	contentMapperDidOpenRegistrationID    = "content-mapper-did-open"
+	contentMapperDidChangeRegistrationID  = "content-mapper-did-change"
+	contentMapperDidCloseRegistrationID   = "content-mapper-did-close"
+	contentMapperDiagnosticRegistrationID = "content-mapper-diagnostic"
 )
 
 // RegisterContentMapperExtensions implements project.Client. It dynamically registers text document
-// synchronization for the given foreign file extensions so the editor forwards their open/change/close
-// notifications to the server. It is called with the full desired set each time it changes; an empty
-// slice removes any prior registration.
+// synchronization and pull diagnostics for the given foreign file extensions so the editor forwards their
+// open/change/close notifications to the server and requests diagnostics for them. It is called with the
+// full desired set each time it changes; an empty slice removes any prior registration.
 func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions []string) error {
 	if !s.clientCapabilities.TextDocument.Synchronization.DynamicRegistration {
 		return nil
@@ -326,6 +327,7 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 				{Id: contentMapperDidOpenRegistrationID, Method: string(lsproto.MethodTextDocumentDidOpen)},
 				{Id: contentMapperDidChangeRegistrationID, Method: string(lsproto.MethodTextDocumentDidChange)},
 				{Id: contentMapperDidCloseRegistrationID, Method: string(lsproto.MethodTextDocumentDidClose)},
+				{Id: contentMapperDiagnosticRegistrationID, Method: string(lsproto.MethodTextDocumentDiagnostic)},
 			},
 		}); err != nil {
 			return fmt.Errorf("failed to unregister content mapper text document sync: %w", err)
@@ -368,6 +370,16 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 				Id: contentMapperDidCloseRegistrationID,
 				RegisterOptions: &lsproto.RegisterOptions{
 					TextDocumentDidClose: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperDiagnosticRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentDiagnostic: &lsproto.DiagnosticRegistrationOptions{
+						DocumentSelector:      selector,
+						Identifier:            new("typescript"),
+						InterFileDependencies: true,
+					},
 				},
 			},
 		},

@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -288,10 +289,11 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	if opts.relatedInformation {
 		relatedInformation = make([]*lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
 		for _, related := range diagnostic.RelatedInformation() {
+			script, loc := diagnosticScriptAndRange(related.File(), related.Loc(), related.Source())
 			relatedInformation = append(relatedInformation, &lsproto.DiagnosticRelatedInformation{
 				Location: lsproto.Location{
 					Uri:   FileNameToDocumentURI(related.File().FileName()),
-					Range: converters.ToLSPRange(related.File(), related.Loc()),
+					Range: converters.ToLSPRange(script, loc),
 				},
 				Message: related.Localize(locale),
 			})
@@ -312,7 +314,8 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	// For diagnostics without a file (e.g., program diagnostics), use a zero range
 	var lspRange lsproto.Range
 	if diagnostic.File() != nil {
-		lspRange = converters.ToLSPRange(diagnostic.File(), diagnostic.Loc())
+		script, loc := diagnosticScriptAndRange(diagnostic.File(), diagnostic.Loc(), diagnostic.Source())
+		lspRange = converters.ToLSPRange(script, loc)
 	}
 
 	var code *lsproto.IntegerOrString
@@ -338,6 +341,38 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 		Tags:               ptrToSliceIfNonEmpty(tags),
 	}
 }
+
+// diagnosticScriptAndRange resolves the text basis and range to report a diagnostic against. For a
+// content-mapped file it maps the diagnostic's transformed range back to the original text so
+// the range lines up with what the editor shows; the original text's line map is already what
+// getLineMap returns for the file. A range in synthesized code has no original counterpart, so it is
+// surfaced at the top of the file. Non-mapped files are returned unchanged.
+func diagnosticScriptAndRange(file *ast.SourceFile, loc core.TextRange, source string) (Script, core.TextRange) {
+	if file == nil || !file.CanMapToOriginal() {
+		return file, loc
+	}
+	original := originalTextScript{fileName: file.FileName(), text: file.OriginalText()}
+	if source != "" {
+		// A content mapper's own diagnostics already carry original-text ranges.
+		return original, loc
+	}
+	mapped, fidelity := file.MapRangeToOriginal(loc)
+	if fidelity == spanmap.FidelityNone {
+		// Entirely synthesized code has no original location; surface it at the top of the file.
+		return original, core.NewTextRange(0, 0)
+	}
+	return original, mapped
+}
+
+// originalTextScript presents a content-mapped file's original (untransformed) text as a Script, so that
+// ranges already mapped into that text convert to the correct line/character positions.
+type originalTextScript struct {
+	fileName string
+	text     string
+}
+
+func (s originalTextScript) FileName() string { return s.fileName }
+func (s originalTextScript) Text() string     { return s.text }
 
 func messageChainToString(diagnostic *ast.Diagnostic, locale locale.Locale) string {
 	if len(diagnostic.MessageChain()) == 0 {

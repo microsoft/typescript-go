@@ -137,3 +137,58 @@ func TestContentMapperInProject(t *testing.T) {
 		assert.Assert(t, rebuiltBox == boxFile, "expected the unchanged content-mapped file to be reused from the parse cache, not re-transformed")
 	})
 }
+
+// TestContentMapperDiagnostics verifies that compiler diagnostics on a content-mapped file are reported
+// against the original (untransformed) text: the mapper prepends a synthesized preamble line, so a
+// diagnostic in the body would land one line too low if its transformed range were used verbatim.
+func TestContentMapperDiagnostics(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ExecName),
+		"/home/project/app.box":                          "export const version = #{target};\nexport const bad: string = version;\n",
+		"/home/project/main.ts":                          "import \"./app.box\";\n",
+	}
+
+	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home/project",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	// Open the .box with a foreign language id, matching how an editor opens a content-mapped file.
+	session.DidOpenFile(ctx, "file:///home/project/app.box", 1, files["/home/project/app.box"].(string), lsproto.LanguageKind("box"))
+
+	ls, err := session.GetLanguageService(ctx, "file:///home/project/app.box")
+	assert.NilError(t, err)
+
+	resp, err := ls.ProvideDiagnostics(ctx, "file:///home/project/app.box")
+	assert.NilError(t, err)
+	report := resp.FullDocumentDiagnosticReport
+	assert.Assert(t, report != nil, "expected a full diagnostic report")
+
+	// The assignability error (TS2322) is on `version` in `export const bad: string = version;`, which is
+	// original line 1. The transformed text prepends a synthesized preamble line, so an unmapped range
+	// would report it on line 2; the span map must place it back on line 1.
+	var found bool
+	for _, d := range report.Items {
+		if d.Code != nil && d.Code.Integer != nil && *d.Code.Integer == 2322 {
+			found = true
+			assert.Equal(t, d.Range.Start.Line, uint32(1), "type error should map back to the original .box line")
+		}
+	}
+	assert.Assert(t, found, "expected a type-assignability diagnostic on app.box")
+}

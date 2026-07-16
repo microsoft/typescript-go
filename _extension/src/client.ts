@@ -135,10 +135,16 @@ export class Client implements vscode.Disposable {
                             }
 
                             if (selector.pattern !== undefined) {
-                                // VS Code's glob matcher is not available via the API;
-                                // see: https://github.com/microsoft/vscode/issues/237304
-                                // But, we're only called on selectors passed above, so just ignore this for now.
-                                throw new Error("Not implemented");
+                                // VS Code's full glob matcher is not available via the API
+                                // (microsoft/vscode#237304), but content mapper registrations only ever
+                                // use simple "**/*<ext>" patterns, so match those by suffix. Any other
+                                // pattern falls through to the next selector.
+                                const glob = typeof selector.pattern === "string" ? selector.pattern : selector.pattern.pattern;
+                                const globPrefix = "**/*";
+                                if (glob.startsWith(globPrefix) && resource.path.endsWith(glob.slice(globPrefix.length))) {
+                                    return true;
+                                }
+                                continue;
                             }
 
                             return true;
