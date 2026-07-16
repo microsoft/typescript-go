@@ -16,16 +16,17 @@ import (
 func TestFormatDocumentGrammarErrorInitializer(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	content := "// @Filename: /a.ts\n" +
-		"const f = () => {\n" +
-		"  const v = x as A & {\n" +
-		"    a: { b: C\n" +
-		"  }\n" +
-		"  const m: T[] = [\n" +
-		"    { g: () => { nav(`${z}`) } },\n" +
-		"  ]\n" +
-		"  const n: T[] =\n" +
-		"}\n"
+	content := `// @Filename: /a.ts
+const f = () => {
+  const v = x as A & {
+    a: { b: C
+  }
+  const m: T[] = [
+    { g: () => { nav(` + "`${z}`" + `) } },
+  ]
+  const n: T[] =
+}
+`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.FormatDocument(t, "/a.ts")
