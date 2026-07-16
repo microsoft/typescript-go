@@ -4,6 +4,7 @@ package fswatch
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -118,4 +119,46 @@ func TestFanotifyCrossWatcherSameFs(t *testing.T) {
 			t.Fatalf("watcher B got phantom events: %v", toWantEvents(gotB))
 		}
 	})
+}
+
+func TestLinuxFanotifyMaybeWrapUnsupportedFilesystem(t *testing.T) {
+	t.Parallel()
+
+	// Errnos that indicate the filesystem cannot support fanotify FID-based
+	// watching are tagged with ErrFilesystemUnsupported so higher layers can
+	// fall back to inotify (issue #63646).
+	for _, errno := range []error{unix.EOPNOTSUPP, unix.ENODEV} {
+		wrapped := maybeWrapUnsupportedFilesystem(fmt.Errorf("name_to_handle_at: %w", errno))
+		if !errors.Is(wrapped, ErrFilesystemUnsupported) {
+			t.Errorf("expected %v to be tagged ErrFilesystemUnsupported", errno)
+		}
+		if !errors.Is(wrapped, errno) {
+			t.Errorf("expected wrapped error to still unwrap to %v", errno)
+		}
+	}
+
+	// Unrelated errnos are returned unchanged.
+	other := maybeWrapUnsupportedFilesystem(unix.EACCES)
+	if errors.Is(other, ErrFilesystemUnsupported) {
+		t.Errorf("EACCES should not be tagged ErrFilesystemUnsupported")
+	}
+}
+
+func TestLinuxFanotifyUnsupportedTagSurvivesDirWatchError(t *testing.T) {
+	t.Parallel()
+
+	// Closes the loop between maybeWrapUnsupportedFilesystem and the higher
+	// layers: the tag must survive the exact wrapping that markDir + subscribe
+	// apply (fmt.Errorf with %w, then dirWatchError) so that errors.Is still
+	// finds ErrFilesystemUnsupported at the WatchDirectories boundary. Catches a
+	// regression such as a %w->%v change or a dropped dirWatchError.Unwrap.
+	inner := maybeWrapUnsupportedFilesystem(fmt.Errorf("name_to_handle_at: %w", unix.EOPNOTSUPP))
+	subErr := error(&dirWatchError{err: fmt.Errorf("fanotify_mark on '%s' failed: %w", "/x", inner)})
+
+	if !errors.Is(subErr, ErrFilesystemUnsupported) {
+		t.Error("ErrFilesystemUnsupported did not survive dirWatchError wrapping")
+	}
+	if !errors.Is(subErr, unix.EOPNOTSUPP) {
+		t.Error("underlying errno did not survive dirWatchError wrapping")
+	}
 }
