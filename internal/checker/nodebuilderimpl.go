@@ -2221,7 +2221,9 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
 		if (pt == nil || pt.Kind == pseudochecker.PseudoTypeKindNoResult) && ast.IsBinaryExpression(declaration) {
-			if decl := core.Find(symbol.Declarations, hasTypeAnnotation); decl != nil {
+			if decl := core.Find(symbol.Declarations, func(d *ast.Declaration) bool {
+				return hasTypeAnnotation(d) && ast.HasInferredType(d)
+			}); decl != nil {
 				// Binary expressions have a first-in-wins type annotation system. The first one with an annotation supplies the type for the rest.
 				pt = b.pc.GetTypeOfDeclaration(decl)
 			}
