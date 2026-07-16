@@ -19,6 +19,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/pprof"
@@ -452,6 +454,34 @@ func (s *Session) getSnapshotData(handle SnapshotID) (*snapshotData, error) {
 	return sd, nil
 }
 
+// retainSnapshotData pins snapshot data while an operation builds a derived snapshot.
+func (s *Session) retainSnapshotData(handle SnapshotID) (*snapshotData, error) {
+	s.snapshotsMu.Lock()
+	defer s.snapshotsMu.Unlock()
+	sd, ok := s.snapshots[handle]
+	if !ok {
+		return nil, fmt.Errorf("%w: snapshot %d not found", ErrClientError, handle)
+	}
+	sd.refCount++
+	return sd, nil
+}
+
+func (s *Session) releaseSnapshot(handle SnapshotID) error {
+	s.snapshotsMu.Lock()
+	sd := s.snapshots[handle]
+	if sd == nil {
+		s.snapshotsMu.Unlock()
+		return fmt.Errorf("%w: snapshot %d not found", ErrClientError, handle)
+	}
+	sd.refCount--
+	if sd.refCount <= 0 {
+		delete(s.snapshots, handle)
+		sd.snapshot.Deref(s.projectSession)
+	}
+	s.snapshotsMu.Unlock()
+	return nil
+}
+
 // checkerSetup holds the common context needed by handlers that require a type checker.
 type checkerSetup struct {
 	sd        *snapshotData
@@ -554,6 +584,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleInitialize(ctx)
 	case string(MethodUpdateSnapshot):
 		return s.handleUpdateSnapshot(ctx, parsed.(*UpdateSnapshotParams))
+	case string(MethodUpdateTemporarySnapshot):
+		return s.handleUpdateTemporarySnapshot(ctx, parsed.(*UpdateTemporarySnapshotParams))
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
 	case string(MethodGetDefaultProjectForFile):
@@ -696,6 +728,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetBaseConstraintOfType(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetTypeArguments):
 		return s.handleGetTypeArguments(ctx, parsed.(*CheckerTypeParams))
+	case string(MethodGetImportAdderEdits):
+		return s.handleGetImportAdderEdits(ctx, parsed.(*GetImportAdderEditsParams))
 	case string(MethodGetConstantValue):
 		return s.handleGetConstantValue(ctx, parsed.(*CheckerNodeParams))
 	case string(MethodGetSignatureFromDeclaration):
@@ -971,6 +1005,62 @@ func (s *Session) handleUpdateSnapshot(ctx context.Context, params *UpdateSnapsh
 	}, nil
 }
 
+// handleUpdateTemporarySnapshot creates a temporary snapshot that overrides the
+// content of a single file, without opening/closing any projects or files and
+// without advancing the session's latest snapshot.
+func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *UpdateTemporarySnapshotParams) (*UpdateSnapshotResponse, error) {
+	baseSD, err := s.retainSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = s.releaseSnapshot(params.Snapshot) }()
+
+	uri := params.File.ToURI(s.projectSession.GetCurrentDirectory())
+
+	snapshot, err := s.projectSession.APIUpdateTemporary(ctx, baseSD.snapshot, uri, params.NewText)
+	if err != nil {
+		return nil, fmt.Errorf("%w: failed to update temporary snapshot: %w", ErrClientError, err)
+	}
+
+	handle := snapshotHandle(snapshot)
+	s.snapshotsMu.Lock()
+	sd, exists := s.snapshots[handle]
+	if exists {
+		snapshot.Deref(s.projectSession)
+		sd.refCount++
+	} else {
+		sd = &snapshotData{
+			snapshot:                snapshot,
+			refCount:                1,
+			symbolRegistry:          make(map[SymbolID]*ast.Symbol),
+			symbolCanonicalProjects: make(map[SymbolID]ProjectID),
+			projectRegistries:       make(map[ProjectID]*projectRegistryData),
+		}
+		s.snapshots[handle] = sd
+	}
+	s.snapshotsMu.Unlock()
+
+	// Build projects list
+	projects := snapshot.ProjectCollection.Projects()
+	projectResponses := make([]*ProjectResponse, 0, len(projects))
+	for _, proj := range projects {
+		if proj.CommandLine == nil {
+			continue
+		}
+		projectResponses = append(projectResponses, NewProjectResponse(proj))
+	}
+
+	// Compute changes from the requested base snapshot so the client can retain
+	// cached source files for unchanged files.
+	changes := computeSnapshotChanges(baseSD.snapshot, snapshot)
+
+	return &UpdateSnapshotResponse{
+		Snapshot: handle,
+		Projects: projectResponses,
+		Changes:  changes,
+	}, nil
+}
+
 // handleRelease decrements the ref count for a snapshot.
 // The snapshot and its registries are only cleaned up when the ref count reaches zero.
 func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any, error) {
@@ -978,19 +1068,9 @@ func (s *Session) handleRelease(ctx context.Context, params *ReleaseParams) (any
 		return nil, fmt.Errorf("%w: empty handle", ErrClientError)
 	}
 
-	s.snapshotsMu.Lock()
-	sd := s.snapshots[params.Snapshot]
-	if sd == nil {
-		s.snapshotsMu.Unlock()
-		return nil, fmt.Errorf("%w: snapshot %d not found", ErrClientError, params.Snapshot)
+	if err := s.releaseSnapshot(params.Snapshot); err != nil {
+		return nil, err
 	}
-	sd.refCount--
-	if sd.refCount <= 0 {
-		delete(s.snapshots, params.Snapshot)
-		// Release the API session's ref on the project snapshot.
-		sd.snapshot.Deref(s.projectSession)
-	}
-	s.snapshotsMu.Unlock()
 	return true, nil
 }
 
@@ -1557,6 +1637,112 @@ func (s *Session) handleGetThisParameterOfSignature(_ context.Context, params *G
 
 func (s *Session) handleGetTargetOfSignature(_ context.Context, params *GetSignaturePropertyParams) (*SignatureResponse, error) {
 	return s.resolveSignaturePropertyOfSignature(params, (*checker.Signature).Target)
+}
+
+func (s *Session) handleGetImportAdderEdits(ctx context.Context, params *GetImportAdderEditsParams) ([]*TextEdit, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	projectPath := parseProjectHandle(params.Project)
+	workingSnapshot := sd.snapshot
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+	}
+
+	userPreferences := workingSnapshot.UserPreferences()
+	if registry := workingSnapshot.AutoImportRegistry(); registry == nil ||
+		!registry.IsPreparedForImportingFile(sourceFile.FileName(), projectPath, userPreferences) {
+		preparedSnapshot := s.projectSession.GetSnapshotWithAutoImports(ctx, workingSnapshot, params.File.ToURI(s.projectSession.GetCurrentDirectory()))
+		defer preparedSnapshot.Deref(s.projectSession)
+
+		workingSnapshot = preparedSnapshot
+		proj := workingSnapshot.ProjectCollection.GetProjectByPath(projectPath)
+		if proj == nil {
+			return nil, fmt.Errorf("%w: project %s not found", ErrClientError, projectPath)
+		}
+		program = proj.GetProgram()
+		if program == nil {
+			return nil, fmt.Errorf("%w: project has no program", ErrClientError)
+		}
+		sourceFile = program.GetSourceFile(params.File.ToFileName())
+		if sourceFile == nil {
+			return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+		}
+		userPreferences = workingSnapshot.UserPreferences()
+	}
+
+	registry := workingSnapshot.AutoImportRegistry()
+	if registry == nil {
+		return []*TextEdit{}, nil
+	}
+
+	ch, done := program.GetTypeChecker(ctx)
+	defer done()
+
+	view := autoimport.NewView(
+		registry,
+		sourceFile,
+		projectPath,
+		program,
+		userPreferences.ModuleSpecifierPreferences(),
+	)
+	importAdder := autoimport.NewImportAdder(
+		ctx,
+		program,
+		ch,
+		sourceFile,
+		view,
+		workingSnapshot.GetPreferences(sourceFile.FileName()).FormatCodeSettings,
+		workingSnapshot.Converters(),
+		userPreferences,
+	)
+
+	for i, action := range params.Actions {
+		switch action.Kind {
+		case ImportAdderActionKindImportSymbol:
+			if action.Symbol == 0 {
+				return nil, fmt.Errorf("%w: import adder action %d missing symbol", ErrClientError, i)
+			}
+			symbol, err := sd.resolveSymbolHandle(action.Symbol)
+			if err != nil {
+				return nil, err
+			}
+			isValidTypeOnlyUseSite := true
+			if action.IsValidTypeOnlyUseSite != nil {
+				isValidTypeOnlyUseSite = *action.IsValidTypeOnlyUseSite
+			}
+			importAdder.AddImportFromExportedSymbol(symbol, isValidTypeOnlyUseSite)
+		default:
+			return nil, fmt.Errorf("%w: unknown import adder action kind %q", ErrClientError, action.Kind)
+		}
+	}
+
+	if !importAdder.HasFixes() {
+		return []*TextEdit{}, nil
+	}
+	return toAPITextEdits(sourceFile, workingSnapshot.Converters(), importAdder.Edits()), nil
+}
+
+func toAPITextEdits(sourceFile *ast.SourceFile, converters *lsconv.Converters, edits []*lsproto.TextEdit) []*TextEdit {
+	positionMap := sourceFile.GetPositionMap()
+	result := make([]*TextEdit, len(edits))
+	for i, edit := range edits {
+		start := converters.LineAndCharacterToPosition(sourceFile, edit.Range.Start)
+		end := converters.LineAndCharacterToPosition(sourceFile, edit.Range.End)
+		result[i] = &TextEdit{
+			Pos:     positionMap.UTF8ToUTF16(int(start)),
+			End:     positionMap.UTF8ToUTF16(int(end)),
+			NewText: edit.NewText,
+		}
+	}
+	return result
 }
 
 // resolveTypePropertyOfType resolves a type property of type `Type` and returns a type response.
