@@ -269,17 +269,7 @@ var styleCheckDiagnostics = collections.NewSetFromItems(
 
 func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic, opts diagnosticOptions) *lsproto.Diagnostic {
 	locale := locale.FromContext(ctx)
-	var severity lsproto.DiagnosticSeverity
-	switch diagnostic.Category() {
-	case diagnostics.CategorySuggestion:
-		severity = lsproto.DiagnosticSeverityHint
-	case diagnostics.CategoryMessage:
-		severity = lsproto.DiagnosticSeverityInformation
-	case diagnostics.CategoryWarning:
-		severity = lsproto.DiagnosticSeverityWarning
-	default:
-		severity = lsproto.DiagnosticSeverityError
-	}
+	severity := diagnosticSeverity(diagnostic.Category())
 
 	if opts.reportStyleChecksAsWarnings && severity == lsproto.DiagnosticSeverityError && styleCheckDiagnostics.Has(diagnostic.Code()) {
 		severity = lsproto.DiagnosticSeverityWarning
@@ -373,6 +363,20 @@ type originalTextScript struct {
 
 func (s originalTextScript) FileName() string { return s.fileName }
 func (s originalTextScript) Text() string     { return s.text }
+
+// diagnosticSeverity maps a diagnostic category to its LSP severity.
+func diagnosticSeverity(category diagnostics.Category) lsproto.DiagnosticSeverity {
+	switch category {
+	case diagnostics.CategorySuggestion:
+		return lsproto.DiagnosticSeverityHint
+	case diagnostics.CategoryMessage:
+		return lsproto.DiagnosticSeverityInformation
+	case diagnostics.CategoryWarning:
+		return lsproto.DiagnosticSeverityWarning
+	default:
+		return lsproto.DiagnosticSeverityError
+	}
+}
 
 func messageChainToString(diagnostic *ast.Diagnostic, locale locale.Locale) string {
 	if len(diagnostic.MessageChain()) == 0 {

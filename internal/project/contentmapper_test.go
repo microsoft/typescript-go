@@ -192,3 +192,69 @@ func TestContentMapperDiagnostics(t *testing.T) {
 	}
 	assert.Assert(t, found, "expected a type-assignability diagnostic on app.box")
 }
+
+// TestContentMapperSynthesizedDiagnostics verifies that compiler errors in a mapper's fully synthesized
+// output (which have no location in the original file) are not dropped or scattered at position 0, but
+// collected into a single aggregate diagnostic at the top of the file whose related information carries
+// the real messages.
+func TestContentMapperSynthesizedDiagnostics(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.SynthesizingExec),
+		"/home/project/app.box":                          "anything\n",
+		"/home/project/main.ts":                          "import \"./app.box\";\n",
+	}
+
+	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home/project",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	session.DidOpenFile(ctx, "file:///home/project/app.box", 1, files["/home/project/app.box"].(string), lsproto.LanguageKind("box"))
+
+	ls, err := session.GetLanguageService(ctx, "file:///home/project/app.box")
+	assert.NilError(t, err)
+
+	// The aggregate carries the underlying messages as related information, which the converter only emits
+	// when the client advertises support for it.
+	caps := &lsproto.ResolvedClientCapabilities{}
+	caps.TextDocument.Diagnostic.RelatedInformation = true
+	diagCtx := lsproto.WithClientCapabilities(ctx, caps)
+	resp, err := ls.ProvideDiagnostics(diagCtx, "file:///home/project/app.box")
+	assert.NilError(t, err)
+	report := resp.FullDocumentDiagnosticReport
+	assert.Assert(t, report != nil, "expected a full diagnostic report")
+
+	// The synthesizing mapper emits `export const el = jsxRuntime(Widget);` with a fully synthesized span
+	// map, so its "Cannot find name" errors have no location in app.box. They must be folded into a single
+	// aggregate at the top of the file, with the real messages preserved as related information.
+	assert.Equal(t, len(report.Items), 1, "synthesized errors should collapse to a single aggregate diagnostic")
+	aggregate := report.Items[0]
+	assert.Equal(t, aggregate.Range.Start.Line, uint32(0), "aggregate should sit at the top of the file")
+	assert.Assert(t, aggregate.Code != nil && aggregate.Code.Integer != nil && *aggregate.Code.Integer == 100037, "aggregate should carry the content-mapper diagnostic code")
+	assert.Assert(t, aggregate.RelatedInformation != nil, "aggregate should carry related information")
+	related := *aggregate.RelatedInformation
+	assert.Assert(t, len(related) >= 1, "expected the real messages as related information")
+	var sawCannotFindName bool
+	for _, info := range related {
+		if strings.Contains(info.Message, "Cannot find name") {
+			sawCannotFindName = true
+		}
+	}
+	assert.Assert(t, sawCannotFindName, "expected the underlying compiler messages to be preserved")
+}
