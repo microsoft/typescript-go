@@ -34,6 +34,20 @@ export interface DocumentPosition {
     position: number;
 }
 
+export interface TextEdit {
+    pos: number;
+    end: number;
+    newText: string;
+}
+
+export interface ImportSymbolActionRequest {
+    kind: "importSymbol";
+    symbol: number;
+    isValidTypeOnlyUseSite?: boolean;
+}
+
+export type ImportAdderActionRequest = ImportSymbolActionRequest;
+
 /**
  * Resolves a DocumentIdentifier to a file name.
  * If the identifier contains a URI, it is converted to a file name.
@@ -118,6 +132,21 @@ export type FileChanges = FileChangeSummary | { invalidateAll: true; };
  */
 export interface UpdateSnapshotParams extends LSPUpdateSnapshotParams {
     fileChanges?: FileChanges;
+}
+
+/**
+ * Parameters for updateTemporarySnapshot. Unlike {@link UpdateSnapshotParams}, this
+ * only overrides a single file's content: it does not open or close projects/files
+ * and does not advance the session's latest snapshot. The resulting snapshot is only
+ * for the caller's own queries and must be released when done.
+ */
+export interface UpdateTemporarySnapshotParams {
+    /** The current client snapshot on which to layer the temporary update. */
+    snapshot: number;
+    /** The file whose content is temporarily overridden. */
+    file: DocumentIdentifier;
+    /** The temporary content for the file. */
+    newText: string;
 }
 
 /**
