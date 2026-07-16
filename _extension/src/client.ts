@@ -34,6 +34,7 @@ import {
     jsTsLanguageModes,
     languageClientName,
     readNativePreviewConfig,
+    readUnifiedConfig,
 } from "./util";
 import { getLanguageForUri } from "./util";
 
@@ -401,6 +402,11 @@ function isInsiders(): boolean {
 // LanguageClient subclass that lets the user control whether a failed request
 // surfaces an error notification, via the `js/ts.server.showFailedResponses` setting.
 class NativePreviewLanguageClient extends LanguageClient {
+    protected override getLocale(): string {
+        const locale = readUnifiedConfig("locale", "typescript", "locale", undefined, "auto");
+        return locale && locale !== "auto" ? locale : super.getLocale();
+    }
+
     override handleFailedRequest<T>(
         type: MessageSignature,
         token: vscode.CancellationToken | undefined,

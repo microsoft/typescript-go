@@ -85,6 +85,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
         if (
+            sessionManager.currentSession
+            && (
+                event.affectsConfiguration("js/ts.locale")
+                || event.affectsConfiguration("typescript.locale")
+            )
+        ) {
+            void sessionManager.restart(context);
+        }
+
+        if (
             event.affectsConfiguration("typescript.experimental.useTsgo")
             || event.affectsConfiguration("js/ts.experimental.useTsgo")
         ) {
