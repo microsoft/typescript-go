@@ -1445,3 +1445,6 @@ conformance/mappedTypeProperties.errors.txt.diff
 
 # Vastly different parsing
 conformance/jsdocDisallowedInTypescript.errors.txt.diff
+
+# Differing/better spans/related info for some errors
+compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
