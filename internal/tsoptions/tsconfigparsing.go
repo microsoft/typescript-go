@@ -1358,7 +1358,7 @@ func parseJsonConfigFileContentWorker(
 					continue
 				}
 				if ref.reference.Path == "" {
-					errors = append(errors, createDiagnosticAtProjectReferenceProperty(sourceFile, index, "path", diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "reference.path"))
+					errors = append(errors, createDiagnosticAtProjectReferenceProperty(sourceFile, index, "path", diagnostics.A_project_reference_path_cannot_be_an_empty_string_Did_you_mean))
 					continue
 				}
 				if ref.hasCircular && !ref.circularValid {

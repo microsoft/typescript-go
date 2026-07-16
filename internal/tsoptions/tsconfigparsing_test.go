@@ -303,6 +303,19 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
+		title:               "generates errors for empty reference path",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+                "references": [{ "path": "" }],
+                "files": ["a.ts"]
+            }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    map[string]string{"/apath/a.ts": ""},
+		}},
+	},
+	{
 		title: "exclude outDir unless overridden",
 		input: []testConfig{{
 			jsonText: `{
