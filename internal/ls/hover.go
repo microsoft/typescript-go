@@ -102,6 +102,11 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 		return quickInfo, documentation
 	}
 
+	documentation = l.documentationFromRootSymbols(c, symbol, node, contentFormat)
+	if documentation != "" {
+		return quickInfo, documentation
+	}
+
 	return quickInfo, l.documentationFromAlias(c, symbol, node, contentFormat)
 }
 
@@ -150,6 +155,44 @@ func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast
 	}
 
 	return ""
+}
+
+func (l *LanguageService) documentationFromRootSymbols(c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind) string {
+	if symbol == nil {
+		return ""
+	}
+
+	var docs []string
+	for _, rootSymbol := range c.GetRootSymbols(symbol) {
+		if rootSymbol == nil {
+			continue
+		}
+		declaration := rootSymbol.ValueDeclaration
+		if declaration == nil {
+			declaration = core.FirstOrNil(rootSymbol.Declarations)
+		}
+		if declaration == nil {
+			continue
+		}
+		if documentation := l.getDocumentationFromDeclaration(c, rootSymbol, declaration, node, contentFormat, false /*commentOnly*/); documentation != "" {
+			docs = core.AppendIfUnique(docs, documentation)
+		}
+	}
+
+	if len(docs) == 0 {
+		return ""
+	}
+	if len(docs) == 1 {
+		return docs[0]
+	}
+
+	var b strings.Builder
+	b.WriteString(docs[0])
+	for _, doc := range docs[1:] {
+		b.WriteString("\n")
+		b.WriteString(doc)
+	}
+	return b.String()
 }
 
 func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
