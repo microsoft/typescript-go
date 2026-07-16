@@ -46,6 +46,7 @@ import {
     type ConditionalType,
     DiagnosticCategory,
     type FreshableType,
+    type ImportAdderAction,
     type IndexedAccessType,
     type IndexType,
     type InterfaceType,
@@ -59,6 +60,7 @@ import {
     type StringMappingType,
     SymbolFlags,
     type TemplateLiteralType,
+    type TextEdit,
     TypeFlags,
     type TypeParameter,
     TypePredicateKind,
@@ -182,6 +184,125 @@ describe("Snapshot", () => {
             const type = await project.checker.getTypeOfSymbol(symbol);
             assert.ok(type);
             assert.ok(type.flags & TypeFlags.NumberLiteral);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getImportEditsForSymbols adds a named import", async () => {
+        const source = `const value = foo;\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+            "/src/foo.ts": `export const foo = 1;\n`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/foo.ts", "export const ".length);
+            assert.ok(symbol);
+
+            const edits = await project.getImportEditsForSymbols("/src/index.ts", [await symbol.getExportSymbol()]);
+
+            assert.equal(applyTextEdits(source, edits), `import { foo } from "./foo";\n\nconst value = foo;\n`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getImportAdderEdits coalesces multiple importSymbol actions", async () => {
+        const source = `const value = foo + bar;\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+            "/src/foo.ts": `export const foo = 1;\nexport const bar = 2;\n`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const foo = await project.checker.getSymbolAtPosition("/src/foo.ts", "export const ".length);
+            const bar = await project.checker.getSymbolAtPosition("/src/foo.ts", "export const foo = 1;\nexport const ".length);
+            assert.ok(foo);
+            assert.ok(bar);
+
+            const edits = await project.getImportAdderEdits("/src/index.ts", [
+                { kind: "importSymbol", symbol: await foo.getExportSymbol() },
+                { kind: "importSymbol", symbol: await bar.getExportSymbol() },
+            ]);
+
+            assert.equal(applyTextEdits(source, edits), `import { bar, foo } from "./foo";\n\nconst value = foo + bar;\n`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getImportAdderEdits adds to an existing import", async () => {
+        const source = `import { foo } from "./foo";\nconst value = foo + bar;\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+            "/src/foo.ts": `export const foo = 1;\nexport const bar = 2;\n`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const bar = await project.checker.getSymbolAtPosition("/src/foo.ts", "export const foo = 1;\nexport const ".length);
+            assert.ok(bar);
+
+            const edits = await project.getImportAdderEdits("/src/index.ts", [
+                { kind: "importSymbol", symbol: await bar.getExportSymbol() },
+            ]);
+
+            assert.equal(applyTextEdits(source, edits), `import { bar, foo } from "./foo";\nconst value = foo + bar;\n`);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getImportAdderEdits returns no edits for non-exported symbols", async () => {
+        const source = `const value = local;\n`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+            "/src/foo.ts": `const local = 1;\n`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/foo.ts", "const ".length);
+            assert.ok(symbol);
+
+            const edits = await project.getImportAdderEdits("/src/index.ts", [
+                { kind: "importSymbol", symbol },
+            ]);
+
+            assert.deepEqual(edits, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("getImportAdderEdits rejects invalid actions", async () => {
+        const api = spawnAPI();
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/foo.ts", 13);
+            assert.ok(symbol);
+
+            await assert.rejects( // @sync: assert.throws(
+                () => project.getImportAdderEdits("/src/index.ts", [{ kind: "unknown", symbol: symbol.id } as unknown as ImportAdderAction]),
+                /Debug Failure\. Illegal value: "unknown"/,
+            );
+            await assert.rejects( // @sync: assert.throws(
+                () => project.getImportAdderEdits("/src/index.ts", [{ kind: "importSymbol", symbol: { ...symbol, id: 999_999_999 } } as unknown as ImportAdderAction]),
+                /symbol handle \d+ not found/,
+            );
         }
         finally {
             await api.close();
@@ -5254,6 +5375,49 @@ describe("Timing", () => {
     });
 });
 
+describe("runWithTemporaryFileUpdate", () => {
+    test("temporary file update is visible in the callback and reverted afterward", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/index.ts": `export const x: number = 1;`,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            // The original content type-checks cleanly.
+            const baseDiags = await project.program.getSemanticDiagnostics("/src/index.ts");
+            assert.equal(baseDiags.length, 0);
+
+            // Keep a newer snapshot active to verify any active snapshot can be the base.
+            const latestSnapshot = await api.updateSnapshot();
+            assert.notEqual(latestSnapshot.id, snapshot.id);
+
+            // Inside the callback, the file has the temporary (erroneous) content.
+            let errorCount = -1;
+            await api.runWithTemporaryFileUpdate(snapshot, "/src/index.ts", `export const x: string = 1;`, async tempSnapshot => {
+                const tempProject = tempSnapshot.getProject("/tsconfig.json")!;
+                const diags = await tempProject.program.getSemanticDiagnostics("/src/index.ts");
+                errorCount = diags.length;
+            });
+            assert.ok(errorCount > 0, "temporary content should produce a semantic error inside the callback");
+
+            // The original snapshot is unaffected by the temporary update.
+            const afterDiags = await project.program.getSemanticDiagnostics("/src/index.ts");
+            assert.equal(afterDiags.length, 0);
+
+            // Subsequent regular updates still work and diff against the real latest snapshot.
+            const snapshot2 = await api.updateSnapshot();
+            const project2 = snapshot2.getProject("/tsconfig.json")!;
+            const diags2 = await project2.program.getSemanticDiagnostics("/src/index.ts");
+            assert.equal(diags2.length, 0);
+        }
+        finally {
+            await api.close();
+        }
+    });
+});
+
 function spawnAPI(files: Record<string, string> = { ...defaultFiles }) {
     return new API({
         cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
@@ -5280,4 +5444,13 @@ function rangeOf(source: string, searchString: string, occurrence: number = 0): 
         }
     }
     return { pos: index, end: index + searchString.length };
+}
+
+function applyTextEdits(source: string, edits: readonly TextEdit[]): string {
+    const sorted = [...edits].sort((a, b) => b.pos - a.pos);
+    let result = source;
+    for (const edit of sorted) {
+        result = result.slice(0, edit.pos) + edit.newText + result.slice(edit.end);
+    }
+    return result;
 }
