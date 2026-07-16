@@ -13,3 +13,6 @@ compiler/incorrectRecursiveMappedTypeConstraint.errors.txt.diff
 compiler/reverseMappedPartiallyInferableTypes.errors.txt.diff
 compiler/typeParameterWithInvalidConstraintType.errors.txt.diff
 conformance/recursiveMappedTypes.errors.txt.diff
+
+# previously submoduleAccepted baselines which have TS-1 errors that need fixing
+compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
