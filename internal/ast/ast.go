@@ -2583,10 +2583,11 @@ func (node *SourceFile) SetOriginalText(text string) {
 	node.originalText = text
 }
 
-// CanMapToOriginal reports whether this file carries a span map, i.e. whether positions in its
-// transformed Text() can be mapped back to the original content.
-func (node *SourceFile) CanMapToOriginal() bool {
-	return node.spanMap != nil
+// SpanMap returns the span map that maps positions in this file's transformed Text() back to its
+// original, untransformed content, or nil if the file is not content-mapped (or is a failure stub).
+// The returned map is nil-safe: a nil map maps positions identically.
+func (node *SourceFile) SpanMap() *spanmap.SpanMap {
+	return node.spanMap
 }
 
 // ContentMapper returns the identity of the content mapper that produced this file, or "" if the file
@@ -2610,12 +2611,6 @@ func (node *SourceFile) SetContentMapper(identity string) {
 // original, untransformed content.
 func (node *SourceFile) SetSpanMap(spanMap *spanmap.SpanMap) {
 	node.spanMap = spanMap
-}
-
-// MapRangeToOriginal maps a range in this file's transformed Text() to the corresponding range in its
-// original content, along with the fidelity of the result. Files without a span map map identically.
-func (node *SourceFile) MapRangeToOriginal(r core.TextRange) (core.TextRange, spanmap.Fidelity) {
-	return node.spanMap.MapSpan(r)
 }
 
 func (node *SourceFile) FileName() string {

@@ -338,7 +338,7 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 // getLineMap returns for the file. A range in synthesized code has no original counterpart, so it is
 // surfaced at the top of the file. Non-mapped files are returned unchanged.
 func diagnosticScriptAndRange(file *ast.SourceFile, loc core.TextRange, source string) (Script, core.TextRange) {
-	if file == nil || !file.CanMapToOriginal() {
+	if file == nil || file.SpanMap() == nil {
 		return file, loc
 	}
 	original := originalTextScript{fileName: file.FileName(), text: file.OriginalText()}
@@ -346,7 +346,7 @@ func diagnosticScriptAndRange(file *ast.SourceFile, loc core.TextRange, source s
 		// A content mapper's own diagnostics already carry original-text ranges.
 		return original, loc
 	}
-	mapped, fidelity := file.MapRangeToOriginal(loc)
+	mapped, fidelity := file.SpanMap().MapSpan(loc)
 	if fidelity == spanmap.FidelityNone {
 		// Entirely synthesized code has no original location; surface it at the top of the file.
 		return original, core.NewTextRange(0, 0)

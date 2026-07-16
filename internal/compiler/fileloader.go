@@ -449,8 +449,8 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem *spanmap.MappingError) *ast.Diagnostic {
 	loc := core.NewTextRange(0, 0)
 	switch problem.Kind {
-	case spanmap.MappingErrorKindCoverage:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_output_offset_1, label, int(problem.GenPos))
+	case spanmap.MappingErrorKindOverlap:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_near_output_offset_1, label, int(problem.GenPos))
 	case spanmap.MappingErrorKindOutOfBounds:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OrigPos))
 	case spanmap.MappingErrorKindVerbatimMismatch:

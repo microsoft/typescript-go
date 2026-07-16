@@ -80,10 +80,10 @@ func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[
 // file, and so has no meaningful position to report against the original file.
 func isSynthesizedContentMappedDiagnostic(diag *ast.Diagnostic) bool {
 	file := diag.File()
-	if file == nil || !file.CanMapToOriginal() || diag.Source() != "" {
+	if file == nil || file.SpanMap() == nil || diag.Source() != "" {
 		return false
 	}
-	_, fidelity := file.MapRangeToOriginal(diag.Loc())
+	_, fidelity := file.SpanMap().MapSpan(diag.Loc())
 	return fidelity == spanmap.FidelityNone
 }
 

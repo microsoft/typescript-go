@@ -104,14 +104,9 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 	var segments []spanmap.Segment
 	var diagnostics []contentmapper.Diagnostic
 
+	// The preamble is synthesized glue with no original counterpart; it is left uncovered (a gap), which
+	// the span map treats as synthesized.
 	gen.WriteString(preamble)
-	segments = append(segments, spanmap.Segment{
-		GenStart:  0,
-		GenEnd:    core.TextPos(gen.Len()),
-		OrigStart: 0,
-		OrigEnd:   0,
-		Kind:      spanmap.KindSynthesized,
-	})
 
 	writeVerbatim := func(from, to int) {
 		if to <= from {
@@ -249,8 +244,8 @@ func (failingHandler) HandleRequest(ctx context.Context, method string, params j
 // so the compiler reports errors that, being fully synthesized, can only be shown against this text.
 const synthesizedOutput = "export const el = jsxRuntime(Widget);\n"
 
-// synthesizingHandler emits synthesizedOutput with a fully synthesized span map, so compiler diagnostics
-// in it map to no original location.
+// synthesizingHandler emits synthesizedOutput with an empty span map (fully synthesized), so compiler
+// diagnostics in it map to no original location.
 type synthesizingHandler struct{ noNotifications }
 
 func (synthesizingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
@@ -258,12 +253,7 @@ func (synthesizingHandler) HandleRequest(ctx context.Context, method string, par
 	case contentmapper.MethodInitialize:
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
 	case contentmapper.MethodTransform:
-		mappings, err := spanmap.New([]spanmap.Segment{{
-			GenEnd:    core.TextPos(len(synthesizedOutput)),
-			OrigStart: 0,
-			OrigEnd:   0,
-			Kind:      spanmap.KindSynthesized,
-		}}).Marshal()
+		mappings, err := spanmap.New(nil).Marshal()
 		if err != nil {
 			return nil, err
 		}

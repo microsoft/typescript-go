@@ -68,15 +68,13 @@ func collectContentMapperDiagnostics(program *compiler.Program) []*ast.Diagnosti
 func TestContentMapperInvalidMappings(t *testing.T) {
 	t.Parallel()
 
-	// Mappings are a required, enforced part of the content mapper contract. Each malformed map is
-	// attributed to the mapper with a specific diagnostic instead of surfacing untrustworthy positions.
 	const transformed = "export const x = 1;\n"
 	const original = "<template>x</template>\n"
 
-	verbatimAll := func(kind spanmap.Kind, origEnd int) *spanmap.SpanMap {
+	atomAll := func(origEnd int) *spanmap.SpanMap {
 		return spanmap.New([]spanmap.Segment{{
 			GenStart: 0, GenEnd: core.TextPos(len(transformed)),
-			OrigStart: 0, OrigEnd: core.TextPos(origEnd), Kind: kind,
+			OrigStart: 0, OrigEnd: core.TextPos(origEnd), Kind: spanmap.KindAtom,
 		}})
 	}
 
@@ -85,21 +83,26 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 		mappings *spanmap.SpanMap
 		wantCode int32
 	}{
-		{"missing", nil, 100027},
 		{
-			"coverage",
-			spanmap.New([]spanmap.Segment{{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized}}),
-			100028,
+			"overlap",
+			spanmap.New([]spanmap.Segment{
+				{GenStart: 0, GenEnd: 10, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindAtom},
+				{GenStart: 5, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindAtom},
+			}),
+			100038,
 		},
 		{
 			"outOfBounds",
-			verbatimAll(spanmap.KindSynthesized, len(original)+50),
+			atomAll(len(original) + 50),
 			100029,
 		},
 		{
 			// A verbatim segment whose original text differs from the transformed text.
 			"verbatimMismatch",
-			verbatimAll(spanmap.KindVerbatim, len(transformed)),
+			spanmap.New([]spanmap.Segment{{
+				GenStart: 0, GenEnd: core.TextPos(len(transformed)),
+				OrigStart: 0, OrigEnd: core.TextPos(len(transformed)), Kind: spanmap.KindVerbatim,
+			}}),
 			100030,
 		},
 	}

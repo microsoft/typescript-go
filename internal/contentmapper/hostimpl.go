@@ -50,7 +50,8 @@ type TransformResult struct {
 	Text        string          `json:"text"`
 	ScriptKind  core.ScriptKind `json:"scriptKind,omitempty"`
 	Diagnostics []Diagnostic    `json:"diagnostics,omitempty"`
-	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal). Empty means identity mapping.
+	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal). Absent or empty means the output
+	// is fully synthesized (no part corresponds to the original).
 	Mappings json.Value `json:"mappings,omitempty"`
 }
 
@@ -222,12 +223,17 @@ func decodeTransformResult(raw json.Value) (Result, error) {
 		Text:       res.Text,
 		ScriptKind: scriptKind,
 	}
+	// A successful transform always carries a span map. Absent or empty mappings describe fully
+	// synthesized output (no segment corresponds to the original), so decode to an empty map rather than
+	// nil, which would mean "not content-mapped".
 	if len(res.Mappings) > 0 {
 		mappings, err := spanmap.Unmarshal(res.Mappings)
 		if err != nil {
 			return Result{}, err
 		}
 		result.Mappings = mappings
+	} else {
+		result.Mappings = spanmap.New(nil)
 	}
 	for _, d := range res.Diagnostics {
 		result.Diagnostics = append(result.Diagnostics, ast.NewExternalDiagnostic(

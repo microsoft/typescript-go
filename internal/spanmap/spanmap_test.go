@@ -25,9 +25,8 @@ func TestMapSpanVerbatim(t *testing.T) {
 func TestMapSpanAtom(t *testing.T) {
 	t.Parallel()
 
-	// Generated [0,3) ("jsx") maps to nothing; [3,14) ("MyComponent") is an atom of the original.
+	// Generated [0,3) is a synthesized gap; [3,14) ("MyComponent") is an atom of the original [60,71).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 3, OrigStart: 50, OrigEnd: 50, Kind: spanmap.KindSynthesized},
 		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom},
 	})
 
@@ -38,13 +37,27 @@ func TestMapSpanAtom(t *testing.T) {
 	assert.Equal(t, fidelity, spanmap.FidelityAtom)
 }
 
-func TestMapSpanSynthesized(t *testing.T) {
+func TestMapSpanSynthesizedGap(t *testing.T) {
 	t.Parallel()
 
+	// A gap between two verbatim segments is synthesized: it maps to the insertion point (the preceding
+	// segment's original end) with no fidelity.
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 30, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim},
 	})
 
+	got, fidelity := m.MapSpan(core.NewTextRange(12, 15))
+	assert.Equal(t, got.Pos(), 110)
+	assert.Equal(t, got.End(), 110)
+	assert.Equal(t, fidelity, spanmap.FidelityNone)
+}
+
+func TestMapSpanEmptyIsSynthesized(t *testing.T) {
+	t.Parallel()
+
+	// An empty map describes fully synthesized output: everything maps to the start with no fidelity.
+	m := spanmap.New(nil)
 	got, fidelity := m.MapSpan(core.NewTextRange(5, 10))
 	assert.Equal(t, got.Pos(), 0)
 	assert.Equal(t, got.End(), 0)
@@ -65,7 +78,7 @@ func TestMapSpanCrossingSegments(t *testing.T) {
 	assert.Equal(t, fidelity, spanmap.FidelityApproximate)
 }
 
-func TestMapSpanNilAndEmptyIdentity(t *testing.T) {
+func TestMapSpanNilIdentity(t *testing.T) {
 	t.Parallel()
 
 	var m *spanmap.SpanMap
@@ -79,7 +92,6 @@ func TestMarshalRoundTrip(t *testing.T) {
 	t.Parallel()
 
 	original := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 3, OrigStart: 50, OrigEnd: 50, Kind: spanmap.KindSynthesized},
 		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom},
 		{GenStart: 14, GenEnd: 24, OrigStart: 71, OrigEnd: 81, Kind: spanmap.KindVerbatim},
 	})
@@ -116,26 +128,26 @@ func TestValidate(t *testing.T) {
 			wantOK: true,
 		},
 		{
-			name:   "valid synthesized",
-			segs:   []spanmap.Segment{{GenStart: 0, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized}},
+			name:   "empty is valid",
+			segs:   nil,
 			wantOK: true,
 		},
 		{
-			name:     "gap leaves transformed uncovered",
-			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized}},
-			wantKind: spanmap.MappingErrorKindCoverage,
+			name:   "gap is allowed",
+			segs:   []spanmap.Segment{{GenStart: 3, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindAtom}},
+			wantOK: true,
 		},
 		{
 			name: "overlap",
 			segs: []spanmap.Segment{
-				{GenStart: 0, GenEnd: 10, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized},
-				{GenStart: 5, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindSynthesized},
+				{GenStart: 0, GenEnd: 10, OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindAtom},
+				{GenStart: 5, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: 0, Kind: spanmap.KindAtom},
 			},
-			wantKind: spanmap.MappingErrorKindCoverage,
+			wantKind: spanmap.MappingErrorKindOverlap,
 		},
 		{
 			name:     "original out of bounds",
-			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: core.TextPos(len(original) + 10), Kind: spanmap.KindSynthesized}},
+			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: core.TextPos(len(original) + 10), Kind: spanmap.KindAtom}},
 			wantKind: spanmap.MappingErrorKindOutOfBounds,
 		},
 		{
@@ -159,10 +171,8 @@ func TestValidate(t *testing.T) {
 	}
 }
 
-func TestValidateNilIsRequired(t *testing.T) {
+func TestValidateNilIsValid(t *testing.T) {
 	t.Parallel()
 	var m *spanmap.SpanMap
-	problem := m.Validate("abc", "abc")
-	assert.Assert(t, problem != nil)
-	assert.Equal(t, problem.Kind, spanmap.MappingErrorKindMissing)
+	assert.Assert(t, m.Validate("abc", "abc") == nil)
 }
