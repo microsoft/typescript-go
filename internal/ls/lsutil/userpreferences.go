@@ -1,6 +1,7 @@
 package lsutil
 
 import (
+	"maps"
 	"reflect"
 	"slices"
 	"strings"
@@ -887,9 +888,7 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
 			unstableEditorSettings := make(map[string]any, len(editorSettings)+2)
-			for key, value := range editorSettings {
-				unstableEditorSettings[key] = value
-			}
+			maps.Copy(unstableEditorSettings, editorSettings)
 			// VS Code editor settings use "insertSpaces" and "tabSize"; map them to
 			// tsserver raw formatting setting names consumed by "unstable".
 			if tabSize, ok := unstableEditorSettings["tabSize"]; ok {
