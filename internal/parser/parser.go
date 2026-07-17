@@ -2184,7 +2184,9 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, jsdoc jsdocScann
 	}
 	// Proposal (microsoft/TypeScript#46135): an ambient module keyed on import
 	// attributes, e.g. `declare module "*" with { type: "text" } { ... }`. Only
-	// string-literal-named ambient modules may carry a `with`/`assert` clause.
+	// string-literal-named ambient modules may carry the clause. This reuses the
+	// shared import-attributes parser, so the deprecated `assert { ... }` spelling
+	// is recognized here and reported (TS2880) exactly as it is on an import.
 	var attributes *ast.Node
 	if keyword != ast.KindGlobalKeyword {
 		attributes = p.tryParseImportAttributes()

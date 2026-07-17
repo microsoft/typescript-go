@@ -1933,8 +1933,9 @@ func GetImportAttributes(node *Node) *Node {
 }
 
 // ImportAttributesToMap collects the string-valued attributes of an
-// `ImportAttributes` node (the contents of a `with { ... }` / `assert { ... }`
-// clause) into a name->value map. Non-string values are skipped.
+// `ImportAttributes` node (the contents of a `with { ... }` clause, or the
+// deprecated `assert { ... }` form) into a name->value map. Non-string values
+// are skipped.
 func ImportAttributesToMap(attributes *Node) map[string]string {
 	nodes := attributes.AsImportAttributes().Attributes.Nodes
 	result := make(map[string]string, len(nodes))
