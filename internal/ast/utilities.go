@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -1951,12 +1952,14 @@ func ImportAttributesToMap(attributes *Node) map[string]string {
 // ImportAttributesKey returns a stable, order-independent string key for the
 // string-valued attributes of an `ImportAttributes` node. Used to give
 // attribute-keyed ambient modules distinct symbol names so they neither merge
-// with nor shadow the plain ambient module of the same name.
+// with nor shadow the plain ambient module of the same name. Names and values are
+// quoted so that distinct attribute sets cannot collide into one key (e.g.
+// `{ a: "b,c=d" }` vs `{ a: "b", c: "d" }`).
 func ImportAttributesKey(attributes *Node) string {
 	m := ImportAttributesToMap(attributes)
 	pairs := make([]string, 0, len(m))
 	for name, value := range m {
-		pairs = append(pairs, name+"="+value)
+		pairs = append(pairs, strconv.Quote(name)+":"+strconv.Quote(value))
 	}
 	slices.Sort(pairs)
 	return "{" + strings.Join(pairs, ",") + "}"

@@ -5123,6 +5123,17 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 		c.error(node.Name(), diagnostics.Augmentations_for_the_global_scope_should_have_declare_modifier_unless_they_appear_in_already_ambient_context)
 	}
 	isAmbientExternalModule := ast.IsAmbientModule(node)
+	if attributes := node.AsModuleDeclaration().Attributes; attributes != nil {
+		// Attribute values on an attribute-keyed ambient module declaration
+		// (microsoft/TypeScript#46135) must be string literals, mirroring the rule
+		// for import/export attribute values. Ambient module declarations do not go
+		// through the import/export attribute validation, so check them here.
+		for _, attr := range attributes.AsImportAttributes().Attributes.Nodes {
+			if !ast.IsStringLiteral(attr.AsImportAttribute().Value) {
+				c.error(attr.AsImportAttribute().Value, diagnostics.Import_attribute_values_must_be_string_literal_expressions)
+			}
+		}
+	}
 	contextErrorMessage := core.IfElse(isAmbientExternalModule,
 		diagnostics.An_ambient_module_declaration_is_only_allowed_at_the_top_level_in_a_file,
 		diagnostics.A_namespace_declaration_is_only_allowed_at_the_top_level_of_a_namespace_or_module)
@@ -15070,19 +15081,20 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		withoutAtTypePrefix := moduleReference[len("@types/"):]
 		c.error(errorNode, diagnostics.Cannot_import_type_declaration_files_Consider_importing_0_instead_of_1, withoutAtTypePrefix, moduleReference)
 	}
+	// An import that carries attributes (`import x from "..." with { type: "..." }`)
+	// may be typed by an ambient module keyed on those attributes
+	// (microsoft/TypeScript#46135). This is consulted before the plain ambient and
+	// file resolution, so an attribute-keyed declaration wins over both a plain
+	// `declare module` of the same specifier and a real file the specifier resolves
+	// to. Imports without attributes, and attributes with no matching declaration
+	// (e.g. the built-in `type: "json"` behavior), fall straight through.
+	if attributedModule := c.tryResolveAttributedAmbientModule(location, moduleReference); attributedModule != nil {
+		return attributedModule
+	}
+
 	ambientModule := c.tryFindAmbientModule(moduleReference, true /*withAugmentations*/)
 	if ambientModule != nil {
 		return ambientModule
-	}
-
-	// An import that carries attributes (`import x from "..." with { type: "..." }`)
-	// may be typed by an ambient module keyed on those attributes
-	// (microsoft/TypeScript#46135). This is consulted before file resolution so that
-	// an attribute-keyed declaration can type an import whose specifier also resolves
-	// to a real file. Imports without attributes, and attributes with no matching
-	// declaration (e.g. the built-in `type: "json"` behavior), are unaffected.
-	if attributedModule := c.tryResolveAttributedAmbientModule(location, moduleReference); attributedModule != nil {
-		return attributedModule
 	}
 
 	importingSourceFile := ast.GetSourceFileOfNode(location)
@@ -15475,8 +15487,11 @@ func (c *Checker) tryFindAmbientModule(moduleName string, withAugmentations bool
 // against ambient module declarations keyed on import attributes
 // (microsoft/TypeScript#46135). A declaration matches when its attribute set
 // exactly equals the import's attributes and its specifier pattern (`*`, `*.ext`,
-// or an exact name) matches the module reference. As with pattern ambient modules,
-// a more specific pattern wins (exact over `*.ext` over `*`).
+// or an exact name) matches the module reference. Specificity follows the pattern
+// ambient module rule: an exact match wins, otherwise the pattern with the longest
+// prefix before the `*` wins. (A trailing-only pattern such as `*.ext` has an empty
+// prefix and therefore does not outrank a bare `*`; that tie is left to declaration
+// order, as with plain pattern ambient modules.)
 func (c *Checker) tryResolveAttributedAmbientModule(location *ast.Node, moduleReference string) *ast.Symbol {
 	if len(c.attributedAmbientModules) == 0 {
 		return nil
@@ -15495,7 +15510,12 @@ func (c *Checker) tryResolveAttributedAmbientModule(location *ast.Node, moduleRe
 		if !importAttributesMatch(importAttributes, candidate.Attributes) {
 			continue
 		}
-		if pattern.StarIndex == -1 || pattern.StarIndex > longestMatchPrefixLength {
+		if pattern.StarIndex == -1 {
+			// An exact match is the most specific possible; same-key exact
+			// declarations have already merged, so at most one can match here.
+			return c.getMergedSymbol(candidate.Symbol)
+		}
+		if pattern.StarIndex > longestMatchPrefixLength {
 			best = candidate
 			longestMatchPrefixLength = pattern.StarIndex
 		}
