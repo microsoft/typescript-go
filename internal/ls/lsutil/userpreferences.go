@@ -886,7 +886,23 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	// editor < javascript < typescript < js/ts
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
-			prefs = prefs.withConfig(map[string]any{"unstable": editorSettings})
+			unstableEditorSettings := make(map[string]any, len(editorSettings)+2)
+			for key, value := range editorSettings {
+				unstableEditorSettings[key] = value
+			}
+			// VS Code editor settings use "insertSpaces" and "tabSize"; map them to
+			// tsserver raw formatting setting names consumed by "unstable".
+			if tabSize, ok := unstableEditorSettings["tabSize"]; ok {
+				if _, hasIndentSize := unstableEditorSettings["indentSize"]; !hasIndentSize {
+					unstableEditorSettings["indentSize"] = tabSize
+				}
+			}
+			if insertSpaces, ok := unstableEditorSettings["insertSpaces"]; ok {
+				if _, hasConvertTabs := unstableEditorSettings["convertTabsToSpaces"]; !hasConvertTabs {
+					unstableEditorSettings["convertTabsToSpaces"] = insertSpaces
+				}
+			}
+			prefs = prefs.withConfig(map[string]any{"unstable": unstableEditorSettings})
 		}
 	}
 	// Apply javascript, then typescript, then js/ts (highest precedence).
