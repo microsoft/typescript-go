@@ -23678,21 +23678,25 @@ func (c *Checker) getTypeArgumentsForAliasSymbol(symbol *ast.Symbol) []*Type {
 }
 
 func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) []*Type {
-	declaration := symbol.ValueDeclaration
-	if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsFunction) == 0 {
-		declaration = core.Find(symbol.Declarations, func(d *ast.Node) bool {
-			if ast.IsInterfaceDeclaration(d) {
-				return true
-			}
-			if !ast.IsVariableDeclaration(d) {
-				return false
-			}
-			initializer := d.Initializer()
-			return initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer)
-		})
-	}
+	declaration := getClassInterfaceOrFunctionDeclaration(symbol)
 	debug.Assert(declaration != nil, "Class was missing valueDeclaration -OR- non-class had no interface declarations")
 	return c.getOuterTypeParameters(declaration, false /*includeThisTypes*/)
+}
+
+func getClassInterfaceOrFunctionDeclaration(symbol *ast.Symbol) *ast.Node {
+	if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsFunction) != 0 {
+		return symbol.ValueDeclaration
+	}
+	return core.Find(symbol.Declarations, func(d *ast.Node) bool {
+		if ast.IsInterfaceDeclaration(d) {
+			return true
+		}
+		if !ast.IsVariableDeclaration(d) {
+			return false
+		}
+		initializer := d.Initializer()
+		return initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer)
+	})
 }
 
 // Return the outer type parameters of a node or undefined if the node has no outer type parameters.
