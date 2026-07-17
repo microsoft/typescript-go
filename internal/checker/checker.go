@@ -764,6 +764,7 @@ type Checker struct {
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
 	patternAmbientModuleAugmentations           ast.SymbolTable
+	attributedAmbientModules                    []*ast.AttributedAmbientModule
 	globalObjectType                            *Type
 	globalFunctionType                          *Type
 	globalCallableFunctionType                  *Type
@@ -1316,6 +1317,7 @@ func (c *Checker) initializeChecker() {
 			}
 		}
 		c.patternAmbientModules = append(c.patternAmbientModules, file.PatternAmbientModules...)
+		c.attributedAmbientModules = append(c.attributedAmbientModules, file.AttributedAmbientModules...)
 		augmentations = append(augmentations, file.ModuleAugmentations)
 		if file.Symbol != nil {
 			// Merge in UMD exports with first-in-wins semantics (see #9771)
@@ -15073,6 +15075,16 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		return ambientModule
 	}
 
+	// An import that carries attributes (`import x from "..." with { type: "..." }`)
+	// may be typed by an ambient module keyed on those attributes
+	// (microsoft/TypeScript#46135). This is consulted before file resolution so that
+	// an attribute-keyed declaration can type an import whose specifier also resolves
+	// to a real file. Imports without attributes, and attributes with no matching
+	// declaration (e.g. the built-in `type: "json"` behavior), are unaffected.
+	if attributedModule := c.tryResolveAttributedAmbientModule(location, moduleReference); attributedModule != nil {
+		return attributedModule
+	}
+
 	importingSourceFile := ast.GetSourceFileOfNode(location)
 	var (
 		contextSpecifier *ast.Node
@@ -15457,6 +15469,78 @@ func (c *Checker) tryFindAmbientModule(moduleName string, withAugmentations bool
 		return c.getMergedSymbol(symbol)
 	}
 	return symbol
+}
+
+// tryResolveAttributedAmbientModule matches an import that carries attributes
+// against ambient module declarations keyed on import attributes
+// (microsoft/TypeScript#46135). A declaration matches when its attribute set
+// exactly equals the import's attributes and its specifier pattern (`*`, `*.ext`,
+// or an exact name) matches the module reference. As with pattern ambient modules,
+// a more specific pattern wins (exact over `*.ext` over `*`).
+func (c *Checker) tryResolveAttributedAmbientModule(location *ast.Node, moduleReference string) *ast.Symbol {
+	if len(c.attributedAmbientModules) == 0 {
+		return nil
+	}
+	importAttributes := getImportAttributesForResolution(location)
+	if importAttributes == nil {
+		return nil
+	}
+	var best *ast.AttributedAmbientModule
+	longestMatchPrefixLength := -1
+	for _, candidate := range c.attributedAmbientModules {
+		pattern := candidate.Pattern
+		if !pattern.Matches(moduleReference) {
+			continue
+		}
+		if !importAttributesMatch(importAttributes, candidate.Attributes) {
+			continue
+		}
+		if pattern.StarIndex == -1 || pattern.StarIndex > longestMatchPrefixLength {
+			best = candidate
+			longestMatchPrefixLength = pattern.StarIndex
+		}
+	}
+	if best == nil {
+		return nil
+	}
+	return c.getMergedSymbol(best.Symbol)
+}
+
+// getImportAttributesForResolution returns the `with { ... }` attributes clause
+// governing the import/export at the given resolution location, or nil.
+func getImportAttributesForResolution(location *ast.Node) *ast.Node {
+	if location.Parent != nil && ast.IsStringLiteralLike(location) {
+		switch location.Parent.Kind {
+		case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
+			return location.Parent.AsImportDeclaration().Attributes
+		case ast.KindExportDeclaration:
+			return location.Parent.AsExportDeclaration().Attributes
+		}
+	}
+	if decl := ast.FindAncestor(location, ast.IsImportDeclarationOrJSImportDeclaration); decl != nil {
+		return decl.AsImportDeclaration().Attributes
+	}
+	if decl := ast.FindAncestor(location, ast.IsExportDeclaration); decl != nil {
+		return decl.AsExportDeclaration().Attributes
+	}
+	return nil
+}
+
+// importAttributesMatch reports whether the import's attributes exactly equal the
+// attributes declared on an attribute-keyed ambient module (same keys, same
+// string values).
+func importAttributesMatch(importAttributes *ast.Node, ambientAttributes *ast.Node) bool {
+	a := ast.ImportAttributesToMap(importAttributes)
+	b := ast.ImportAttributesToMap(ambientAttributes)
+	if len(a) != len(b) {
+		return false
+	}
+	for name, value := range b {
+		if other, ok := a[name]; !ok || other != value {
+			return false
+		}
+	}
+	return true
 }
 
 func (c *Checker) GetAmbientModules() []*ast.Symbol {

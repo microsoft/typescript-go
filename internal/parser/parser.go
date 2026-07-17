@@ -2182,13 +2182,20 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, jsdoc jsdocScann
 		// parse string literal
 		name = p.parseLiteralExpression(true /*intern*/)
 	}
+	// Proposal (microsoft/TypeScript#46135): an ambient module keyed on import
+	// attributes, e.g. `declare module "*" with { type: "text" } { ... }`. Only
+	// string-literal-named ambient modules may carry a `with`/`assert` clause.
+	var attributes *ast.Node
+	if keyword != ast.KindGlobalKeyword {
+		attributes = p.tryParseImportAttributes()
+	}
 	var body *ast.Node
 	if p.token == ast.KindOpenBraceToken {
 		body = p.parseModuleBlock()
 	} else {
 		p.parseSemicolon()
 	}
-	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, body), pos)
+	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, attributes, body), pos)
 	p.withJSDoc(result, jsdoc)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
@@ -2224,7 +2231,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, jsdoc jsdocScannerIn
 	} else {
 		body = p.parseModuleBlock()
 	}
-	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, body), pos)
+	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, nil /*attributes*/, body), pos)
 	p.withJSDoc(result, jsdoc)
 	p.checkJSSyntax(result)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier

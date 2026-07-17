@@ -1265,6 +1265,7 @@ export interface ModuleDeclaration extends DeclarationBase, StatementBase, Modif
     readonly kind: SyntaxKind.ModuleDeclaration;
     readonly keyword: SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword;
     readonly name: ModuleName;
+    readonly attributes?: ImportAttributes;
     readonly body?: ModuleBody;
 }
 export interface ImportEqualsDeclaration extends DeclarationBase, StatementBase, ModifiersBase {
