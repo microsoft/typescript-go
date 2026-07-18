@@ -1,0 +1,106 @@
+//// [tests/cases/conformance/types/typeRelationships/typeInference/noInferRestSpread2.ts] ////
+
+=== noInferRestSpread2.ts ===
+// https://github.com/microsoft/TypeScript/issues/63627
+
+function arr1(a: [number, ...NoInfer<[]>]) {}
+>arr1 : Symbol(arr1, Decl(noInferRestSpread2.ts, 0, 0))
+>a : Symbol(a, Decl(noInferRestSpread2.ts, 2, 14))
+>NoInfer : Symbol(NoInfer, Decl(lib.es5.d.ts, --, --))
+
+arr1([1]);
+>arr1 : Symbol(arr1, Decl(noInferRestSpread2.ts, 0, 0))
+
+function arr2(a: [number, ...[]]) {}
+>arr2 : Symbol(arr2, Decl(noInferRestSpread2.ts, 3, 10))
+>a : Symbol(a, Decl(noInferRestSpread2.ts, 5, 14))
+
+arr2([1]);
+>arr2 : Symbol(arr2, Decl(noInferRestSpread2.ts, 3, 10))
+
+function fun1(a: (x: number, ...o: NoInfer<[]>) => void) {}
+>fun1 : Symbol(fun1, Decl(noInferRestSpread2.ts, 6, 10))
+>a : Symbol(a, Decl(noInferRestSpread2.ts, 8, 14))
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 8, 18))
+>o : Symbol(o, Decl(noInferRestSpread2.ts, 8, 28))
+>NoInfer : Symbol(NoInfer, Decl(lib.es5.d.ts, --, --))
+
+fun1(x => {});
+>fun1 : Symbol(fun1, Decl(noInferRestSpread2.ts, 6, 10))
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 9, 5))
+
+function fun2(a: (x: number, ...o: []) => void) {}
+>fun2 : Symbol(fun2, Decl(noInferRestSpread2.ts, 9, 14))
+>a : Symbol(a, Decl(noInferRestSpread2.ts, 11, 14))
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 11, 18))
+>o : Symbol(o, Decl(noInferRestSpread2.ts, 11, 28))
+
+fun2(x => {});
+>fun2 : Symbol(fun2, Decl(noInferRestSpread2.ts, 9, 14))
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 12, 5))
+
+function func1<A extends unknown[]>(
+>func1 : Symbol(func1, Decl(noInferRestSpread2.ts, 12, 14))
+>A : Symbol(A, Decl(noInferRestSpread2.ts, 14, 15))
+
+  args: A,
+>args : Symbol(args, Decl(noInferRestSpread2.ts, 14, 36))
+>A : Symbol(A, Decl(noInferRestSpread2.ts, 14, 15))
+
+  fn: (x: number, ...args: NoInfer<A>) => void,
+>fn : Symbol(fn, Decl(noInferRestSpread2.ts, 15, 10))
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 16, 7))
+>args : Symbol(args, Decl(noInferRestSpread2.ts, 16, 17))
+>NoInfer : Symbol(NoInfer, Decl(lib.es5.d.ts, --, --))
+>A : Symbol(A, Decl(noInferRestSpread2.ts, 14, 15))
+
+) {}
+
+func1([] as const, x => {});
+>func1 : Symbol(func1, Decl(noInferRestSpread2.ts, 12, 14))
+>const : Symbol(const)
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 19, 18))
+
+function func2<A extends unknown[]>(
+>func2 : Symbol(func2, Decl(noInferRestSpread2.ts, 19, 28))
+>A : Symbol(A, Decl(noInferRestSpread2.ts, 21, 15))
+
+  args: A,
+>args : Symbol(args, Decl(noInferRestSpread2.ts, 21, 36))
+>A : Symbol(A, Decl(noInferRestSpread2.ts, 21, 15))
+
+  fn: (...args: NoInfer<A>) => void,
+>fn : Symbol(fn, Decl(noInferRestSpread2.ts, 22, 10))
+>args : Symbol(args, Decl(noInferRestSpread2.ts, 23, 7))
+>NoInfer : Symbol(NoInfer, Decl(lib.es5.d.ts, --, --))
+>A : Symbol(A, Decl(noInferRestSpread2.ts, 21, 15))
+
+) {}
+
+function foo(u: number, v: number) {
+>foo : Symbol(foo, Decl(noInferRestSpread2.ts, 24, 4))
+>u : Symbol(u, Decl(noInferRestSpread2.ts, 26, 13))
+>v : Symbol(v, Decl(noInferRestSpread2.ts, 26, 23))
+
+  func2([u, v] as const, () => {});
+>func2 : Symbol(func2, Decl(noInferRestSpread2.ts, 19, 28))
+>u : Symbol(u, Decl(noInferRestSpread2.ts, 26, 13))
+>v : Symbol(v, Decl(noInferRestSpread2.ts, 26, 23))
+>const : Symbol(const)
+
+  func2([u, v] as const, (x: number) => {});
+>func2 : Symbol(func2, Decl(noInferRestSpread2.ts, 19, 28))
+>u : Symbol(u, Decl(noInferRestSpread2.ts, 26, 13))
+>v : Symbol(v, Decl(noInferRestSpread2.ts, 26, 23))
+>const : Symbol(const)
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 28, 26))
+
+  func2([u, v] as const, (x: number, y: number) => {});
+>func2 : Symbol(func2, Decl(noInferRestSpread2.ts, 19, 28))
+>u : Symbol(u, Decl(noInferRestSpread2.ts, 26, 13))
+>v : Symbol(v, Decl(noInferRestSpread2.ts, 26, 23))
+>const : Symbol(const)
+>x : Symbol(x, Decl(noInferRestSpread2.ts, 29, 26))
+>y : Symbol(y, Decl(noInferRestSpread2.ts, 29, 36))
+}
+
