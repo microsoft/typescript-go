@@ -23219,6 +23219,8 @@ func (c *Checker) mayResolveTypeAlias(node *ast.Node) bool {
 		return true
 	case ast.KindTypeOperator:
 		return node.AsTypeOperatorNode().Operator != ast.KindUniqueKeyword && c.mayResolveTypeAlias(node.Type())
+	case ast.KindArrayType:
+		return c.mayResolveTypeAlias(node.AsArrayTypeNode().ElementType)
 	case ast.KindParenthesizedType, ast.KindOptionalType, ast.KindNamedTupleMember:
 		return c.mayResolveTypeAlias(node.Type())
 	case ast.KindRestType:
