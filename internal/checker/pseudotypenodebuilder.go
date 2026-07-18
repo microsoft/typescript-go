@@ -174,6 +174,8 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindFalseKeyword))
 	case pseudochecker.PseudoTypeKindTrue:
 		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
+	case pseudochecker.PseudoTypeKindVoid:
+		return b.f.NewKeywordTypeNode(ast.KindVoidKeyword)
 	case pseudochecker.PseudoTypeKindSingleCallSignature:
 		d := t.AsPseudoTypeSingleCallSignature()
 		signature := b.ch.getSignatureFromDeclaration(d.Signature)
@@ -753,6 +755,8 @@ func (b *NodeBuilderImpl) pseudoTypeToType(t *pseudochecker.PseudoType) *Type {
 		return b.ch.falseType
 	case pseudochecker.PseudoTypeKindTrue:
 		return b.ch.trueType
+	case pseudochecker.PseudoTypeKindVoid:
+		return b.ch.voidType
 	case pseudochecker.PseudoTypeKindStringLiteral, pseudochecker.PseudoTypeKindNumericLiteral, pseudochecker.PseudoTypeKindBigIntLiteral:
 		source := t.AsPseudoTypeLiteral().Node
 		return b.ch.getRegularTypeOfExpression(source) // big shortcut, uses cached expression types where possible
