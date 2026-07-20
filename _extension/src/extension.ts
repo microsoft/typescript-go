@@ -83,24 +83,36 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     };
 
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
+    let pendingLocaleChange = false;
+    let pendingUseTsgoChange = false;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
         if (
-            sessionManager.currentSession
-            && (
-                event.affectsConfiguration("js/ts.locale")
-                || event.affectsConfiguration("typescript.locale")
-            )
+            event.affectsConfiguration("js/ts.locale")
+            || event.affectsConfiguration("typescript.locale")
         ) {
-            void sessionManager.restart(context);
+            pendingLocaleChange = true;
         }
 
         if (
             event.affectsConfiguration("typescript.experimental.useTsgo")
             || event.affectsConfiguration("js/ts.experimental.useTsgo")
         ) {
-            // Debounce to coalesce rapid events when both settings are updated together.
-            clearTimeout(configChangeTimeout);
-            configChangeTimeout = setTimeout(async () => {
+            pendingUseTsgoChange = true;
+        }
+
+        if (!pendingLocaleChange && !pendingUseTsgoChange) {
+            return;
+        }
+
+        // Debounce to coalesce rapid events when multiple settings are updated together.
+        clearTimeout(configChangeTimeout);
+        configChangeTimeout = setTimeout(async () => {
+            const hadLocaleChange = pendingLocaleChange;
+            const hadUseTsgoChange = pendingUseTsgoChange;
+            pendingLocaleChange = false;
+            pendingUseTsgoChange = false;
+
+            if (hadUseTsgoChange) {
                 if (needsExtHostRestartOnChange()) {
                     const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript 7 setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
                     if (selected) {
@@ -115,8 +127,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                         await sessionManager.stop();
                     }
                 }
-            }, 100);
-        }
+            }
+            else if (hadLocaleChange && sessionManager.currentSession) {
+                await sessionManager.restart(context);
+            }
+        }, 100);
     }));
     context.subscriptions.push({ dispose: () => clearTimeout(configChangeTimeout) });
 
