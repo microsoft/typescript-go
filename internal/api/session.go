@@ -2612,24 +2612,6 @@ func (s *Session) handleGetBaseConstraintOfType(ctx context.Context, params *Che
 	return setup.newTypeResponse(constraint), nil
 }
 
-func (s *Session) handleGetDefaultFromTypeParameter(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return nil, err
-	}
-	defer setup.done()
-
-	t, err := setup.resolveTypeHandle(params.Type)
-	if err != nil {
-		return nil, err
-	}
-	defaultType := setup.checker.GetDefaultFromTypeParameter(t)
-	if defaultType == nil {
-		return nil, nil
-	}
-	return setup.newTypeResponse(defaultType), nil
-}
-
 // handleGetPropertyOfType returns a named property symbol of a type.
 func (s *Session) handleGetPropertyOfType(ctx context.Context, params *GetPropertyOfTypeParams) (*SymbolResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)

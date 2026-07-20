@@ -1965,12 +1965,6 @@ class TypeObject implements Type {
         return infos.find(info => (info.keyType.flags & TypeFlags.Number) !== 0)?.valueType;
     }
 
-    async getDefault(): Promise<Type | undefined> {
-        const result = await this.objectRegistry.fetchOptionalType(this, "getDefaultFromTypeParameter", this.default);
-        this.default = result ? result.id : 0;
-        return result;
-    }
-
     async getApparentType(): Promise<Type> {
         const result = await this.objectRegistry.fetchType(this, "getApparentType", this.apparentType);
         this.apparentType = result.id;

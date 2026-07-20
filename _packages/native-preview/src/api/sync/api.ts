@@ -1973,12 +1973,6 @@ class TypeObject implements Type {
         return infos.find(info => (info.keyType.flags & TypeFlags.Number) !== 0)?.valueType;
     }
 
-    getDefault(): Type | undefined {
-        const result = this.objectRegistry.fetchOptionalType(this, "getDefaultFromTypeParameter", this.default);
-        this.default = result ? result.id : 0;
-        return result;
-    }
-
     getApparentType(): Type {
         const result = this.objectRegistry.fetchType(this, "getApparentType", this.apparentType);
         this.apparentType = result.id;

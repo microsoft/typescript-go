@@ -30,8 +30,6 @@ import {
     isTypeNode,
     isVariableDeclarationList,
     isVariableStatement,
-    type JSDoc,
-    type JSDocTypedefTag,
     type Node,
     type NodeArray,
     NodeFlags,
@@ -1777,12 +1775,6 @@ export const tuple: readonly [number, string?, ...boolean[]] = [1];
             api.close();
         }
     });
-
-    function assertJSDocTypedefParent(tag: JSDocTypedefTag): JSDoc {
-        return tag.parent;
-    }
-
-    void assertJSDocTypedefParent;
 
     test("UnionOrIntersectionType.getTypes() returns union members", () => {
         const { type, api } = getTypeAtName(spawnAPI(typeFiles), "union:");
