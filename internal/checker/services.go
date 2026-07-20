@@ -443,8 +443,8 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 	var target *ast.Symbol
 	next := symbol
 	for {
-		if c.valueSymbolLinks.Has(next) {
-			next = c.valueSymbolLinks.Get(next).target
+		if links := c.valueSymbolLinks.TryGet(next); links != nil {
+			next = links.target
 		} else if c.exportTypeLinks.Has(next) {
 			next = c.exportTypeLinks.Get(next).target
 		} else {
