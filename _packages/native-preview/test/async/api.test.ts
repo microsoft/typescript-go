@@ -22,6 +22,8 @@ import {
     isTypeNode,
     isVariableDeclarationList,
     isVariableStatement,
+    type JSDoc,
+    type JSDocTypedefTag,
     type Node,
     type NodeArray,
     NodeFlags,
@@ -43,6 +45,7 @@ import { visitEachChild } from "@typescript/native-preview/unstable/ast/visitor"
 import {
     API,
     type BigIntLiteralType,
+    CheckFlags,
     type ConditionalType,
     DiagnosticCategory,
     type FreshableType,
@@ -56,6 +59,7 @@ import {
     ModifierFlags,
     ModuleKind,
     ObjectFlags,
+    type Signature,
     SignatureKind,
     type StringMappingType,
     SymbolFlags,
@@ -1312,11 +1316,60 @@ export class Cache {
             const callSigs = await project.checker.getSignaturesOfType(type, SignatureKind.Call);
             assert.ok(callSigs.length > 0);
             const sig = callSigs[0];
+            const typeCallSigs = await type.getCallSignatures();
+            assert.deepEqual(typeCallSigs, callSigs);
+            assert.ok((await sig.getReturnType()).flags & TypeFlags.Number);
+            assert.ok((await sig.getTypeParameterAtPosition(0)).flags & TypeFlags.Number);
             assert.ok(sig.id);
             assert.ok(sig.parameters.length >= 2);
             assert.ok(sig.hasRestParameter);
             assert.ok(!sig.isConstruct);
             assert.ok(!sig.isAbstract);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("checker and object methods share cached results", async () => {
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: createVirtualFileSystem(checkerFiles),
+            collectTiming: true,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = checkerFiles["/src/main.ts"];
+            const symbol = await project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("add("));
+            assert.ok(symbol);
+            const type = await project.checker.getTypeOfSymbol(symbol);
+            let signature: Signature | undefined;
+
+            async function assertOneRequest(callback: () => Promise<void>) {
+                await api.resetTimingInfo();
+                await callback();
+                assert.equal((await api.getTimingInfo()).totals.requestCount, 1);
+            }
+
+            await assertOneRequest(async () => {
+                const properties = await type.getProperties();
+                assert.strictEqual(await project.checker.getPropertiesOfType(type), properties);
+            });
+            await assertOneRequest(async () => {
+                const signatures = await type.getCallSignatures();
+                assert.strictEqual(await project.checker.getSignaturesOfType(type, SignatureKind.Call), signatures);
+                signature = signatures[0];
+            });
+            await assertOneRequest(async () => {
+                const nonNullable = await project.checker.getNonNullableType(type);
+                assert.strictEqual(await type.getNonNullableType(), nonNullable);
+            });
+            await assertOneRequest(async () => {
+                assert.ok(signature);
+                const returnType = await project.checker.getReturnTypeOfSignature(signature);
+                assert.strictEqual(await signature.getReturnType(), returnType);
+            });
         }
         finally {
             await api.close();
@@ -1610,6 +1663,21 @@ export const value = 1;
             await api.close();
         }
     });
+
+    test("checkFlags is typed as CheckFlags", async () => {
+        const api = spawnAPI(symbolFiles);
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = await project.checker.getSymbolAtPosition("/src/mod.ts", symbolFiles["/src/mod.ts"].indexOf("Animal"));
+            assert.ok(symbol);
+            const checkFlags: CheckFlags = symbol.checkFlags;
+            assert.equal(checkFlags & CheckFlags.Readonly, 0);
+        }
+        finally {
+            await api.close();
+        }
+    });
 });
 
 describe("Type - getSymbol", () => {
@@ -1683,11 +1751,22 @@ export const tuple: readonly [number, string?, ...boolean[]] = [1];
             const target = await ref.getTarget();
             assert.ok(target);
             assert.ok(target.flags & TypeFlags.Object);
+            const properties = await type.getProperties();
+            assert.ok(properties.some(property => property.name === "length"));
+            assert.equal((await type.getProperty("length"))?.name, "length");
+            assert.ok((await type.getApparentProperties()).length >= properties.length);
+            assert.strictEqual(await type.getNonNullableType(), type);
         }
         finally {
             await api.close();
         }
     });
+
+    function assertJSDocTypedefParent(tag: JSDocTypedefTag): JSDoc {
+        return tag.parent;
+    }
+
+    void assertJSDocTypedefParent;
 
     test("UnionOrIntersectionType.getTypes() returns union members", async () => {
         const { type, api } = await getTypeAtName(spawnAPI(typeFiles), "union:");

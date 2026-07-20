@@ -1,3 +1,4 @@
+import type { CheckFlags } from "#enums/checkFlags";
 import type { CompletionItemKind } from "#enums/completionItemKind";
 import type { ModuleKind } from "#enums/moduleKind";
 import type {
@@ -227,7 +228,7 @@ export interface SymbolResponse {
     project: Path;
     name: __String;
     flags: number;
-    checkFlags: number;
+    checkFlags: CheckFlags;
     declarations?: string[];
     valueDeclaration?: string;
     parent?: number;
