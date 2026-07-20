@@ -484,7 +484,13 @@ class ProjectObjectRegistry {
             project: this.project.id,
             objectId: source.id,
         });
-        if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        if (!data) {
+            // A lazily-resolved sub-property (handle === false) may legitimately be
+            // absent, e.g. a type parameter with no constraint or default. A cached
+            // or preloaded handle, on the other hand, should always resolve.
+            if (handle === false) return undefined as unknown as T;
+            throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        }
         return this.getOrCreateType(data) as unknown as T;
     }
 
@@ -543,17 +549,6 @@ class ProjectObjectRegistry {
         });
         if (typesData == null) return [];
         return typesData.map(data => this.getOrCreateType(data));
-    }
-
-    // Checker-level endpoints keyed by `type` (not `objectId`) that resolve to a
-    // single optional type, e.g. a type parameter's constraint or default.
-    fetchCheckerType(source: Type, method: string): Type | undefined {
-        const data = this.client.apiRequest<TypeResponse | null>(method, {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: source.id,
-        });
-        return data ? this.getOrCreateType(data) : undefined;
     }
 }
 
@@ -1692,6 +1687,8 @@ class TypeObject implements Type {
 
     private trueType: number | false; // false if not yet loaded
     private falseType: number | false; // false if not yet loaded
+    private constraint: number | false; // false if not yet loaded (type parameter)
+    private default: number | false; // false if not yet loaded (type parameter)
 
     constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
@@ -1728,6 +1725,8 @@ class TypeObject implements Type {
 
         this.trueType = false;
         this.falseType = false;
+        this.constraint = false;
+        this.default = false;
     }
 
     getSymbol(): Symbol | undefined {
@@ -1797,16 +1796,20 @@ class TypeObject implements Type {
     }
 
     getConstraint(): Type | undefined {
-        // Type parameters resolve their constraint through the checker, whereas
-        // substitution types carry a preloaded constraint handle.
+        // Type parameters resolve their constraint lazily through the checker,
+        // whereas substitution types carry a preloaded constraint handle.
         if (this.flags & TypeFlags.TypeParameter) {
-            return this.objectRegistry.fetchCheckerType(this, "getConstraintOfTypeParameter");
+            const result = this.objectRegistry.fetchType(this, "getConstraintOfType", this.constraint);
+            this.constraint = result ? result.id : 0;
+            return result;
         }
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
     }
 
     getDefault(): Type | undefined {
-        return this.objectRegistry.fetchCheckerType(this, "getDefaultFromTypeParameter");
+        const result = this.objectRegistry.fetchType(this, "getDefaultFromTypeParameter", this.default);
+        this.default = result ? result.id : 0;
+        return result;
     }
 
     getTrueType(): Type {
