@@ -315,10 +315,7 @@ function generateAstGenerated(): string {
         const name = baseTsName(base);
         const extendsClause = resolveBaseExtends(base);
         const brandProp = base.brand ? `\n    readonly ${base.brand}: any;` : "";
-        let fields = generateBaseFields(base);
-        if (name === "JSDocTagBase") {
-            fields += "\n    readonly parent: JSDoc | JSDocTypeLiteral;";
-        }
+        const fields = generateBaseFields(base);
         parts.push(`export interface ${name} extends ${extendsClause} {${brandProp}${fields}\n}`);
     }
 
@@ -352,9 +349,6 @@ function generateAstGenerated(): string {
             const propType = m.type.formatTypeScript();
             const opt = m.optional ? "?" : "";
             memberLines += `\n    readonly ${propName}${opt}: ${propType};`;
-        }
-        if (interfaceName === "JSDocTypedefTag" || interfaceName === "JSDocCallbackTag" || interfaceName === "JSDocOverloadTag" || interfaceName === "JSDocImportTag") {
-            memberLines += "\n    readonly parent: JSDoc;";
         }
 
         parts.push(`export interface ${interfaceName}${typeParamStr} extends ${extendsClause} {${kindLine}${memberLines}\n}`);

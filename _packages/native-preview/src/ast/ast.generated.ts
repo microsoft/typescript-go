@@ -486,7 +486,6 @@ export interface UnionOrIntersectionTypeNodeBase extends TypeNodeBase {
 export interface JSDocTagBase extends NodeBase {
     readonly tagName: Identifier;
     readonly comment?: NodeArray<JSDocComment>;
-    readonly parent: JSDoc | JSDocTypeLiteral;
 }
 export interface JSDocCommentBase extends NodeBase {
     readonly text: string;
@@ -1240,24 +1239,20 @@ export interface JSDocImportTag extends JSDocTagBase {
     readonly importClause?: ImportClause;
     readonly moduleSpecifier: Expression;
     readonly attributes?: ImportAttributes;
-    readonly parent: JSDoc;
 }
 export interface JSDocCallbackTag extends JSDocTagBase {
     readonly kind: SyntaxKind.JSDocCallbackTag;
     readonly typeExpression: TypeNode;
     readonly name?: JSDocFullName;
-    readonly parent: JSDoc;
 }
 export interface JSDocOverloadTag extends JSDocTagBase {
     readonly kind: SyntaxKind.JSDocOverloadTag;
     readonly typeExpression: TypeNode;
-    readonly parent: JSDoc;
 }
 export interface JSDocTypedefTag extends JSDocTagBase {
     readonly kind: SyntaxKind.JSDocTypedefTag;
     readonly typeExpression?: Node;
     readonly name?: JSDocFullName;
-    readonly parent: JSDoc;
 }
 export interface JSDocSignature extends JSDocTypeBase, FunctionLikeBase {
     readonly kind: SyntaxKind.JSDocSignature;
