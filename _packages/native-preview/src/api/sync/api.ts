@@ -1449,7 +1449,7 @@ export class Checker {
 
     /** Get the apparent type of a type. Always returns a type. */
     getApparentType(type: Type): Type {
-        return (type as TypeObject).getApparentType();
+        return type.getApparentType();
     }
 
     getPropertiesOfType(type: Type): readonly Symbol[] {
@@ -1457,7 +1457,7 @@ export class Checker {
     }
 
     getIndexInfosOfType(type: Type): readonly IndexInfo[] {
-        return (type as TypeObject).getIndexInfos();
+        return type.getIndexInfos();
     }
 
     /**

@@ -1441,7 +1441,7 @@ export class Checker {
 
     /** Get the apparent type of a type. Always returns a type. */
     async getApparentType(type: Type): Promise<Type> {
-        return (type as TypeObject).getApparentType();
+        return type.getApparentType();
     }
 
     async getPropertiesOfType(type: Type): Promise<readonly Symbol[]> {
@@ -1449,7 +1449,7 @@ export class Checker {
     }
 
     async getIndexInfosOfType(type: Type): Promise<readonly IndexInfo[]> {
-        return (type as TypeObject).getIndexInfos();
+        return type.getIndexInfos();
     }
 
     /**

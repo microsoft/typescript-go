@@ -1374,6 +1374,14 @@ export class Cache {
                 assert.strictEqual(type.getNonNullableType(), nonNullable);
             });
             assertOneRequest(() => {
+                const apparentType = type.getApparentType();
+                assert.strictEqual(project.checker.getApparentType(type), apparentType);
+            });
+            assertOneRequest(() => {
+                const indexInfos = type.getIndexInfos();
+                assert.strictEqual(project.checker.getIndexInfosOfType(type), indexInfos);
+            });
+            assertOneRequest(() => {
                 assert.ok(signature);
                 const returnType = project.checker.getReturnTypeOfSignature(signature);
                 assert.strictEqual(signature.getReturnType(), returnType);

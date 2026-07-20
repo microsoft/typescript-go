@@ -41,6 +41,9 @@ export interface Type {
     /** Get the properties of the apparent type of this type. */
     getApparentProperties(): Promise<readonly Symbol[]>;
 
+    /** Get the apparent type of this type. */
+    getApparentType(): Promise<Type>;
+
     /** Get the call signatures of this type. */
     getCallSignatures(): Promise<readonly Signature[]>;
 
@@ -55,6 +58,9 @@ export interface Type {
 
     /** Get this type's number index value type, if present. */
     getNumberIndexType(): Promise<Type | undefined>;
+
+    /** Get all index information for this type. */
+    getIndexInfos(): Promise<readonly IndexInfo[]>;
 
     /** Get the type arguments of the type alias this type was instantiated from, if any */
     getAliasTypeArguments(): Promise<readonly Type[]>;

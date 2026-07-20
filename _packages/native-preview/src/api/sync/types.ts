@@ -49,6 +49,9 @@ export interface Type {
     /** Get the properties of the apparent type of this type. */
     getApparentProperties(): readonly Symbol[];
 
+    /** Get the apparent type of this type. */
+    getApparentType(): Type;
+
     /** Get the call signatures of this type. */
     getCallSignatures(): readonly Signature[];
 
@@ -63,6 +66,9 @@ export interface Type {
 
     /** Get this type's number index value type, if present. */
     getNumberIndexType(): Type | undefined;
+
+    /** Get all index information for this type. */
+    getIndexInfos(): readonly IndexInfo[];
 
     /** Get the type arguments of the type alias this type was instantiated from, if any */
     getAliasTypeArguments(): readonly Type[];
