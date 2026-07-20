@@ -600,6 +600,15 @@ class ProjectObjectRegistry {
         return data ? data.map(symbol => this.getOrCreateSymbol(symbol)) : [];
     }
 
+    fetchApparentPropertiesOfType(source: Type): readonly Symbol[] {
+        const data = this.client.apiRequest<SymbolResponse[] | null>("getApparentPropertiesOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            objectId: source.id,
+        });
+        return data ? data.map(symbol => this.getOrCreateSymbol(symbol)) : [];
+    }
+
     fetchPropertyOfType(source: Type, name: string): Symbol | undefined {
         const data = this.client.apiRequest<SymbolResponse | null>("getPropertyOfType", {
             snapshot: this.snapshotId,
@@ -1924,7 +1933,7 @@ class TypeObject implements Type {
 
     getApparentProperties(): readonly Symbol[] {
         if (this.apparentProperties === false) {
-            this.apparentProperties = this.getApparentPropertiesWorker();
+            this.apparentProperties = this.objectRegistry.fetchApparentPropertiesOfType(this);
         }
         return this.apparentProperties;
     }
@@ -1979,10 +1988,6 @@ class TypeObject implements Type {
         return result;
     }
 
-    private getApparentPropertiesWorker(): readonly Symbol[] {
-        return (this.getApparentType()).getProperties();
-    }
-
     getIndexInfos(): readonly IndexInfo[] {
         if (this.indexInfos === false) {
             this.indexInfos = this.objectRegistry.fetchIndexInfosOfType(this);
@@ -1999,11 +2004,11 @@ class TypeObject implements Type {
     }
 
     getFreshType(): FreshableType | undefined {
-        return this.objectRegistry.fetchType(this, "getFreshTypeOfType", this.freshType);
+        return this.objectRegistry.fetchOptionalType(this, "getFreshTypeOfType", this.freshType);
     }
 
     getRegularType(): FreshableType | undefined {
-        return this.objectRegistry.fetchType(this, "getRegularTypeOfType", this.regularType);
+        return this.objectRegistry.fetchOptionalType(this, "getRegularTypeOfType", this.regularType);
     }
 
     getTypes(): readonly Type[] | undefined {

@@ -1337,6 +1337,25 @@ export class Cache {
         }
     });
 
+    test("getApparentProperties includes CallableFunction members", () => {
+        const api = spawnAPI(checkerFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = checkerFiles["/src/main.ts"];
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("add("));
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            const propertyNames = (type.getApparentProperties()).map(property => property.name);
+            assert.ok(propertyNames.includes("apply"));
+            assert.ok(propertyNames.includes("call"));
+            assert.ok(propertyNames.includes("bind"));
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("checker and object methods share cached results", () => {
         const api = new API({
             cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),

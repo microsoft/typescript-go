@@ -718,6 +718,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetBaseTypes(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetPropertiesOfType):
 		return s.handleGetPropertiesOfType(ctx, parsed.(*CheckerTypeParams))
+	case string(MethodGetApparentPropertiesOfType):
+		return s.handleGetApparentPropertiesOfType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetApparentType):
 		return s.handleGetApparentType(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetPropertyOfType):
@@ -2502,6 +2504,28 @@ func (s *Session) handleGetPropertiesOfType(ctx context.Context, params *Checker
 		results[i] = setup.newSymbolResponse(prop)
 	}
 
+	return results, nil
+}
+
+// handleGetApparentPropertiesOfType returns the apparent properties of a type,
+// including CallableFunction or NewableFunction members where applicable.
+func (s *Session) handleGetApparentPropertiesOfType(ctx context.Context, params *GetTypePropertyParams) ([]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	t, err := setup.resolveTypeHandle(params.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	props := setup.checker.GetApparentProperties(t)
+	results := make([]*SymbolResponse, len(props))
+	for i, prop := range props {
+		results[i] = setup.newSymbolResponse(prop)
+	}
 	return results, nil
 }
 

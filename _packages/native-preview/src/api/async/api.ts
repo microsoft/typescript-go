@@ -592,6 +592,15 @@ class ProjectObjectRegistry {
         return data ? data.map(symbol => this.getOrCreateSymbol(symbol)) : [];
     }
 
+    async fetchApparentPropertiesOfType(source: Type): Promise<readonly Symbol[]> {
+        const data = await this.client.apiRequest<SymbolResponse[] | null>("getApparentPropertiesOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            objectId: source.id,
+        });
+        return data ? data.map(symbol => this.getOrCreateSymbol(symbol)) : [];
+    }
+
     async fetchPropertyOfType(source: Type, name: string): Promise<Symbol | undefined> {
         const data = await this.client.apiRequest<SymbolResponse | null>("getPropertyOfType", {
             snapshot: this.snapshotId,
@@ -1916,7 +1925,7 @@ class TypeObject implements Type {
 
     async getApparentProperties(): Promise<readonly Symbol[]> {
         if (this.apparentProperties === false) {
-            this.apparentProperties = await this.getApparentPropertiesWorker();
+            this.apparentProperties = await this.objectRegistry.fetchApparentPropertiesOfType(this);
         }
         return this.apparentProperties;
     }
@@ -1971,10 +1980,6 @@ class TypeObject implements Type {
         return result;
     }
 
-    private async getApparentPropertiesWorker(): Promise<readonly Symbol[]> {
-        return (await this.getApparentType()).getProperties();
-    }
-
     async getIndexInfos(): Promise<readonly IndexInfo[]> {
         if (this.indexInfos === false) {
             this.indexInfos = await this.objectRegistry.fetchIndexInfosOfType(this);
@@ -1991,11 +1996,11 @@ class TypeObject implements Type {
     }
 
     async getFreshType(): Promise<FreshableType | undefined> {
-        return this.objectRegistry.fetchType(this, "getFreshTypeOfType", this.freshType);
+        return this.objectRegistry.fetchOptionalType(this, "getFreshTypeOfType", this.freshType);
     }
 
     async getRegularType(): Promise<FreshableType | undefined> {
-        return this.objectRegistry.fetchType(this, "getRegularTypeOfType", this.regularType);
+        return this.objectRegistry.fetchOptionalType(this, "getRegularTypeOfType", this.regularType);
     }
 
     async getTypes(): Promise<readonly Type[] | undefined> {
