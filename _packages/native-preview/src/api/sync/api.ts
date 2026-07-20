@@ -484,13 +484,25 @@ class ProjectObjectRegistry {
             project: this.project.id,
             objectId: source.id,
         });
-        if (!data) {
-            // A lazily-resolved sub-property (handle === false) may legitimately be
-            // absent, e.g. a type parameter with no constraint or default. A cached
-            // or preloaded handle, on the other hand, should always resolve.
-            if (handle === false) return undefined as unknown as T;
-            throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        return this.getOrCreateType(data) as unknown as T;
+    }
+
+    // Like fetchType, but uses checker-keyed params (type:) and returns undefined when the server
+    // reports no result. Use for optional checker endpoints like getConstraintOfTypeParameter.
+    fetchOptionalType<T extends Type>(source: Type, method: string, handle: number | false): T | undefined {
+        if (handle !== false) {
+            if (!handle) return undefined;
+            const cached = this.getType(handle);
+            if (cached) return cached as unknown as T;
         }
+
+        const data = this.client.apiRequest<TypeResponse | null>(method, {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+        });
+        if (!data) return undefined;
         return this.getOrCreateType(data) as unknown as T;
     }
 
@@ -1799,7 +1811,7 @@ class TypeObject implements Type {
         // Type parameters resolve their constraint lazily through the checker,
         // whereas substitution types carry a preloaded constraint handle.
         if (this.flags & TypeFlags.TypeParameter) {
-            const result = this.objectRegistry.fetchType(this, "getConstraintOfType", this.constraint);
+            const result = this.objectRegistry.fetchOptionalType(this, "getConstraintOfTypeParameter", this.constraint);
             this.constraint = result ? result.id : 0;
             return result;
         }
@@ -1807,7 +1819,7 @@ class TypeObject implements Type {
     }
 
     getDefault(): Type | undefined {
-        const result = this.objectRegistry.fetchType(this, "getDefaultFromTypeParameter", this.default);
+        const result = this.objectRegistry.fetchOptionalType(this, "getDefaultFromTypeParameter", this.default);
         this.default = result ? result.id : 0;
         return result;
     }

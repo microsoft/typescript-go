@@ -693,7 +693,7 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 	case string(MethodGetConstraintOfTypeParameter):
 		return s.handleGetConstraintOfTypeParameter(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetDefaultFromTypeParameter):
-		return s.handleGetDefaultFromTypeParameter(ctx, parsed.(*GetTypePropertyParams))
+		return s.handleGetDefaultFromTypeParameter(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetBaseConstraintOfType):
 		return s.handleGetBaseConstraintOfType(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetTypeArguments):
@@ -1575,27 +1575,10 @@ func (s *Session) handleGetBaseTypeOfType(_ context.Context, params *GetTypeProp
 	return s.resolveTypePropertyOfType(params, func(t *checker.Type) *checker.Type { return t.AsSubstitutionType().BaseType() })
 }
 
-func (s *Session) handleGetConstraintOfType(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
-	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
-	if err != nil {
-		return nil, err
-	}
-	defer setup.done()
-
-	t, err := setup.resolveTypeHandle(params.Type)
-	if err != nil {
-		return nil, err
-	}
-
-	// Type parameters resolve their constraint through the checker, whereas
-	// substitution types carry it directly.
-	var constraint *checker.Type
-	if t.Flags()&checker.TypeFlagsTypeParameter != 0 {
-		constraint = setup.checker.GetConstraintOfTypeParameter(t)
-	} else {
-		constraint = t.AsSubstitutionType().SubstConstraint()
-	}
-	return setup.newTypeResponse(constraint), nil
+// handleGetConstraintOfType returns the constraint of a substitution type.
+// Type parameter constraints are handled by handleGetConstraintOfTypeParameter.
+func (s *Session) handleGetConstraintOfType(_ context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+	return s.resolveTypePropertyOfType(params, func(t *checker.Type) *checker.Type { return t.AsSubstitutionType().SubstConstraint() })
 }
 
 func (s *Session) handleGetTypeParametersOfSignature(_ context.Context, params *GetSignaturePropertyParams) ([]*TypeResponse, error) {
@@ -2462,7 +2445,7 @@ func (s *Session) handleGetConstraintOfTypeParameter(ctx context.Context, params
 }
 
 // handleGetDefaultFromTypeParameter returns the default type of a type parameter.
-func (s *Session) handleGetDefaultFromTypeParameter(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
+func (s *Session) handleGetDefaultFromTypeParameter(ctx context.Context, params *CheckerTypeParams) (*TypeResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err

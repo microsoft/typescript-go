@@ -434,7 +434,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetPropertyOfType:                 unmarshallerFor[GetPropertyOfTypeParams],
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
 	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
-	MethodGetDefaultFromTypeParameter:       unmarshallerFor[GetTypePropertyParams],
+	MethodGetDefaultFromTypeParameter:       unmarshallerFor[CheckerTypeParams],
 	MethodGetBaseConstraintOfType:           unmarshallerFor[CheckerTypeParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
 	MethodGetConstantValue:                  unmarshallerFor[CheckerNodeParams],
