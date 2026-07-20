@@ -691,9 +691,9 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 	case string(MethodGetIndexInfosOfType):
 		return s.handleGetIndexInfosOfType(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetConstraintOfTypeParameter):
-		return s.handleGetConstraintOfTypeParameter(ctx, parsed.(*CheckerTypeParams))
+		return s.handleGetConstraintOfTypeParameter(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetDefaultFromTypeParameter):
-		return s.handleGetDefaultFromTypeParameter(ctx, parsed.(*CheckerTypeParams))
+		return s.handleGetDefaultFromTypeParameter(ctx, parsed.(*GetTypePropertyParams))
 	case string(MethodGetBaseConstraintOfType):
 		return s.handleGetBaseConstraintOfType(ctx, parsed.(*CheckerTypeParams))
 	case string(MethodGetTypeArguments):
@@ -2424,7 +2424,7 @@ func (s *Session) handleGetIndexInfosOfType(ctx context.Context, params *Checker
 }
 
 // handleGetConstraintOfTypeParameter returns the constraint of a type parameter.
-func (s *Session) handleGetConstraintOfTypeParameter(ctx context.Context, params *CheckerTypeParams) (*TypeResponse, error) {
+func (s *Session) handleGetConstraintOfTypeParameter(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err
@@ -2445,7 +2445,7 @@ func (s *Session) handleGetConstraintOfTypeParameter(ctx context.Context, params
 }
 
 // handleGetDefaultFromTypeParameter returns the default type of a type parameter.
-func (s *Session) handleGetDefaultFromTypeParameter(ctx context.Context, params *CheckerTypeParams) (*TypeResponse, error) {
+func (s *Session) handleGetDefaultFromTypeParameter(ctx context.Context, params *GetTypePropertyParams) (*TypeResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
 		return nil, err

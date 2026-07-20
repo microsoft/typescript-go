@@ -464,25 +464,7 @@ class ProjectObjectRegistry {
         this.signatures.clear();
     }
 
-    async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T> {
-        if (handle !== false) {
-            if (!handle) return undefined as unknown as T;
-            const cached = this.getType(handle);
-            if (cached) return cached as unknown as T;
-        }
-
-        const data = await this.client.apiRequest<TypeResponse | null>(method, {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            objectId: source.id,
-        });
-        if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
-        return this.getOrCreateType(data) as unknown as T;
-    }
-
-    // Like fetchType, but uses checker-keyed params (type:) and returns undefined when the server
-    // reports no result. Use for optional checker endpoints like getConstraintOfTypeParameter.
-    async fetchOptionalType<T extends Type>(source: Type, method: string, handle: number | false): Promise<T | undefined> {
+    async fetchOptionalType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T | undefined> {
         if (handle !== false) {
             if (!handle) return undefined;
             const cached = this.getType(handle);
@@ -492,10 +474,16 @@ class ProjectObjectRegistry {
         const data = await this.client.apiRequest<TypeResponse | null>(method, {
             snapshot: this.snapshotId,
             project: this.project.id,
-            type: source.id,
+            objectId: source.id,
         });
         if (!data) return undefined;
         return this.getOrCreateType(data) as unknown as T;
+    }
+
+    async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T> {
+        const result = await this.fetchOptionalType<T>(source, method, handle);
+        if (result === undefined) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        return result;
     }
 
     async fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined): Promise<Symbol> {
@@ -1341,7 +1329,7 @@ export class Checker {
         const data = await this.client.apiRequest<TypeResponse | null>("getConstraintOfTypeParameter", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            type: type.id,
+            objectId: type.id,
         });
         return data ? this.objectRegistry.getOrCreateType(data) : undefined;
     }
