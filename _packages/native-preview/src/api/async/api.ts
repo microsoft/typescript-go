@@ -482,7 +482,7 @@ class ProjectObjectRegistry {
 
     async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T> {
         const result = await this.fetchOptionalType<T>(source, method, handle);
-        if (result === undefined) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        if (result === undefined) throw new Error(`${method} returned no type for ${source.constructor.name} ${source.id}`);
         return result;
     }
 
