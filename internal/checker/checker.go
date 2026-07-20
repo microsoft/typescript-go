@@ -659,7 +659,7 @@ type Checker struct {
 	propertiesTypes                             map[PropertiesTypesKey]*Type
 	diagnostics                                 ast.DiagnosticsCollection
 	suggestionDiagnostics                       ast.DiagnosticsCollection
-	symbolArena                                 core.Arena[ast.Symbol]
+	symbolArena                                 core.Arena[transientSymbol]
 	signatureArena                              core.Arena[Signature]
 	indexInfoArena                              core.Arena[IndexInfo]
 	mergedSymbols                               map[*ast.Symbol]*ast.Symbol
@@ -14021,9 +14021,11 @@ func (c *Checker) hasParseDiagnostics(sourceFile *ast.SourceFile) bool {
 
 func (c *Checker) newSymbol(flags ast.SymbolFlags, name string) *ast.Symbol {
 	c.SymbolCount++
-	result := c.symbolArena.New()
+	entry := c.symbolArena.New()
+	result := &entry.symbol
 	result.Flags = flags | ast.SymbolFlagsTransient
 	result.Name = name
+	result.CheckerData = &entry.data
 	return result
 }
 
