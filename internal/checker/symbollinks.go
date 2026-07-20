@@ -4,7 +4,7 @@ import "github.com/microsoft/typescript-go/internal/ast"
 
 // transientSymbol co-allocates a checker-created symbol with its value symbol links, reached via
 // symbol.CheckerData. Such symbols are owned by the creating Checker alone and must never be
-// handed to another checker; binder symbols use c.valueSymbolLinks (only via the accessors).
+// handed to another checker; binder symbols use c.binderValueSymbolLinks (only via the accessors).
 type transientSymbol struct {
 	symbol ast.Symbol
 	data   checkerSymbolData
@@ -22,7 +22,7 @@ func (c *Checker) getValueSymbolLinks(symbol *ast.Symbol) *ValueSymbolLinks {
 			return &data.valueLinks
 		}
 	}
-	return c.valueSymbolLinks.Get(symbol)
+	return c.binderValueSymbolLinks.Get(symbol)
 }
 
 func (c *Checker) tryGetValueSymbolLinks(symbol *ast.Symbol) *ValueSymbolLinks {
@@ -34,5 +34,5 @@ func (c *Checker) tryGetValueSymbolLinks(symbol *ast.Symbol) *ValueSymbolLinks {
 			return nil
 		}
 	}
-	return c.valueSymbolLinks.TryGet(symbol)
+	return c.binderValueSymbolLinks.TryGet(symbol)
 }
