@@ -21,6 +21,9 @@ import (
 func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 	changes := map[string][]*lsproto.TextEdit{}
 	for sourceFile, changesInFile := range t.changes.M {
+		if t.unmappableFiles.Has(sourceFile.FileName()) {
+			continue
+		}
 		// order changes by start position
 		// If the start position is the same, put the shorter range first, since an empty range (x, x) may precede (x, y) but not vice-versa.
 		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(a.Range, b.Range) })
@@ -62,7 +65,8 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		return change.NewText
 	}
 
-	pos := int(t.converters.LineAndCharacterToPosition(sourceFile, change.Range.Start))
+	position, _ := t.converters.FromLSPPosition(sourceFile, change.Range.Start)
+	pos := int(position)
 	formatNode := func(n *ast.Node) string {
 		return t.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, change.options)
 	}
@@ -159,7 +163,7 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 // method on the changeTracker because use of converters
 // GetAdjustedRange computes the adjusted range for a node in a source file, accounting for trivia.
 func (t *Tracker) GetAdjustedRange(sourceFile *ast.SourceFile, startNode *ast.Node, endNode *ast.Node, leadingOption LeadingTriviaOption, trailingOption TrailingTriviaOption) lsproto.Range {
-	return t.converters.ToLSPRange(
+	return t.toLSPEditRange(
 		sourceFile,
 		core.NewTextRange(
 			t.getAdjustedStartPosition(sourceFile, startNode, leadingOption, false),

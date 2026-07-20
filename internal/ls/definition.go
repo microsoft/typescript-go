@@ -34,7 +34,11 @@ func (l *LanguageService) provideDefinitionWorker(
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	pos := int(l.converters.LineAndCharacterToPosition(file, position))
+	textPos, fidelity := l.converters.FromLSPPosition(file, position)
+	if !fidelity.IsSingleSegment() {
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
+	}
+	pos := int(textPos)
 	node := astnav.GetTouchingPropertyName(file, pos)
 	reference := getReferenceAtPosition(file, pos, program)
 
@@ -42,7 +46,7 @@ func (l *LanguageService) provideDefinitionWorker(
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
 
-	originSelectionRange := l.createLspRangeFromNode(node, file)
+	originSelectionRange, _ := l.createLspRangeFromNode(node, file)
 	if reference != nil && reference.file != nil {
 		return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{}, reference), nil
 	}
@@ -106,11 +110,16 @@ func (l *LanguageService) ProvideTypeDefinition(
 	clientSupportsLink := caps.TextDocument.TypeDefinition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
+	textPos, fidelity := l.converters.FromLSPPosition(file, position)
+	if !fidelity.IsSingleSegment() {
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
+	}
+	pos := int(textPos)
+	node := astnav.GetTouchingPropertyName(file, pos)
 	if node.Kind == ast.KindSourceFile {
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
-	originSelectionRange := l.createLspRangeFromNode(node, file)
+	originSelectionRange, _ := l.createLspRangeFromNode(node, file)
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
@@ -160,6 +169,8 @@ func (l *LanguageService) createDefinitionLocations(
 ) lsproto.DefinitionResponse {
 	locations := make([]*lsproto.LocationLink, 0)
 	locationRanges := collections.Set[fileRange]{}
+	concreteTargets := collections.Set[lsproto.DocumentUri]{}
+	var fileFallbacks []*lsproto.LocationLink
 
 	if reference != nil {
 		targetRange := lsproto.Range{
@@ -193,14 +204,34 @@ func (l *LanguageService) createDefinitionLocations(
 		if locationRanges.AddIfAbsent(fileRange{fileName, nameRange}) {
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
-			targetSelectionLoc := l.getMappedLocation(fileName, nameRange)
-			targetLoc := l.getMappedLocation(fileName, *contextRange)
+			targetSelectionLoc, selectionFidelity := l.getMappedLocation(fileName, nameRange)
+			if !selectionFidelity.IsSingleSegment() {
+				zeroRange := lsproto.Range{}
+				fileFallbacks = append(fileFallbacks, &lsproto.LocationLink{
+					OriginSelectionRange: &originSelectionRange,
+					TargetSelectionRange: zeroRange,
+					TargetUri:            targetSelectionLoc.Uri,
+					TargetRange:          zeroRange,
+				})
+				continue
+			}
+			targetLoc, contextFidelity := l.getMappedLocation(fileName, *contextRange)
+			if contextFidelity.IsNone() || targetLoc.Uri != targetSelectionLoc.Uri {
+				targetLoc = targetSelectionLoc
+			}
+			concreteTargets.Add(targetSelectionLoc.Uri)
 			locations = append(locations, &lsproto.LocationLink{
 				OriginSelectionRange: &originSelectionRange,
 				TargetSelectionRange: targetSelectionLoc.Range,
 				TargetUri:            targetLoc.Uri,
 				TargetRange:          targetLoc.Range,
 			})
+		}
+	}
+	for _, fallback := range fileFallbacks {
+		if !concreteTargets.Has(fallback.TargetUri) {
+			concreteTargets.Add(fallback.TargetUri)
+			locations = append(locations, fallback)
 		}
 	}
 
@@ -221,7 +252,10 @@ func createLocationsFromLinks(links []*lsproto.LocationLink) lsproto.DefinitionR
 }
 
 func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange) lsproto.DefinitionResponse {
-	mappedLocation := l.getMappedLocation(file.FileName(), textRange)
+	mappedLocation, fidelity := l.getMappedLocation(file.FileName(), textRange)
+	if fidelity.IsNone() {
+		mappedLocation.Range = lsproto.Range{}
+	}
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
 		Location: &mappedLocation,
 	}

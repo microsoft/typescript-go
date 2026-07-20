@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 
+import { CancellationToken } from "vscode-languageclient";
 import {
     ClientCapabilities,
     CloseAction,
@@ -37,6 +38,24 @@ import {
 } from "./util";
 import { getLanguageForUri } from "./util";
 
+// Registration IDs the server uses for content mapper capabilities all share this prefix (see
+// RegisterContentMapperExtensions in internal/lsp/server.go). The extension watches for these dynamic
+// registrations to learn which foreign file extensions are content-mapped.
+const contentMapperRegistrationPrefix = "content-mapper-";
+
+// ContentMapperRegisterOptions is the subset of a dynamic registration's options that our server sends
+// for content mapper capabilities: a document selector of simple glob-pattern filters (see
+// RegisterContentMapperExtensions in internal/lsp/server.go).
+interface ContentMapperRegisterOptions {
+    documentSelector?: ReadonlyArray<{ pattern: string; }>;
+}
+
+// extractPatternFilters reuses the server's glob-pattern filters so the extension's custom providers match
+// the same content-mapped files.
+function extractPatternFilters(registerOptions: ContentMapperRegisterOptions | undefined): vscode.DocumentFilter[] {
+    return (registerOptions?.documentSelector ?? []).map(({ pattern }) => ({ pattern }));
+}
+
 export class Client implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
     private initializedEventEmitter: vscode.EventEmitter<void>;
@@ -50,6 +69,14 @@ export class Client implements vscode.Disposable {
     private isStopping = false;
     private disposables: vscode.Disposable[] = [];
     isInitialized = false;
+
+    // Document filters for content-mapped file extensions, keyed by the server's registration ID. These
+    // augment the static jsTs document selector so the extension's custom language-feature providers
+    // (hover, multi-document highlight, on-auto-insert) also cover content-mapped files.
+    private contentMapperFiltersById = new Map<string, vscode.DocumentFilter[]>();
+    // Disposables for the custom providers registered against the current (selector-scoped) document set.
+    // Re-registered whenever the set of content-mapped extensions changes.
+    private selectorScopedFeatures: vscode.Disposable[] = [];
 
     private exe: ExeInfo | undefined;
     private errorHandler: ReportingErrorHandler;
@@ -100,6 +127,18 @@ export class Client implements vscode.Disposable {
                 },
                 sendNotification: sendNotificationMiddleware,
                 provideHover: () => undefined,
+                handleRegisterCapability: async (params, next) => {
+                    await next(params, CancellationToken.None);
+                    if (this.trackContentMapperRegistrations(params.registrations)) {
+                        this.registerSelectorScopedFeatures();
+                    }
+                },
+                handleUnregisterCapability: async (params, next) => {
+                    await next(params, CancellationToken.None);
+                    if (this.trackContentMapperUnregistrations(params.unregisterations)) {
+                        this.registerSelectorScopedFeatures();
+                    }
+                },
             },
             diagnosticCollectionName: "typescript-push",
             diagnosticPullOptions: {
@@ -265,10 +304,76 @@ export class Client implements vscode.Disposable {
         this.disposables.push(
             logLevelListener,
             serverTelemetryListener,
-            registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
             registerSourceDefinitionFeature(this.client),
-            registerHoverFeature(this.documentSelector, this.client),
             registerOnAutoInsertFeature(this.documentSelector, this.client),
+        );
+        // Register the selector-scoped custom providers (hover, multi-document highlight). These start
+        // scoped to the static jsTs selector and expand as content-mapped extensions register.
+        this.registerSelectorScopedFeatures();
+    }
+
+    // trackContentMapperRegistrations records the content-mapped document filters carried by the server's
+    // dynamic capability registrations. Returns whether the known set of content-mapper filters changed.
+    private trackContentMapperRegistrations(registrations: ReadonlyArray<{ id: string; registerOptions?: ContentMapperRegisterOptions; }>): boolean {
+        let changed = false;
+        for (const registration of registrations) {
+            if (!registration.id.startsWith(contentMapperRegistrationPrefix)) {
+                continue;
+            }
+            const filters = extractPatternFilters(registration.registerOptions);
+            if (filters.length > 0) {
+                this.contentMapperFiltersById.set(registration.id, filters);
+                changed = true;
+            }
+            else if (this.contentMapperFiltersById.delete(registration.id)) {
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    // trackContentMapperUnregistrations forgets the filters for any content-mapper registration the server
+    // has removed. Returns whether the known set of content-mapper filters changed.
+    private trackContentMapperUnregistrations(unregistrations: ReadonlyArray<{ id: string; }>): boolean {
+        let changed = false;
+        for (const unregistration of unregistrations) {
+            if (this.contentMapperFiltersById.delete(unregistration.id)) {
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    // selectorScopedDocumentSelector is the static jsTs selector plus every active content-mapper filter,
+    // deduplicated. The custom providers are registered against it so they also cover content-mapped files.
+    private selectorScopedDocumentSelector(): vscode.DocumentSelector {
+        const seen = new Set<string>();
+        const filters: vscode.DocumentFilter[] = [];
+        for (const list of this.contentMapperFiltersById.values()) {
+            for (const filter of list) {
+                const key = typeof filter.pattern === "string" ? filter.pattern : JSON.stringify(filter.pattern);
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    filters.push(filter);
+                }
+            }
+        }
+        return [...this.documentSelector, ...filters];
+    }
+
+    // registerSelectorScopedFeatures (re)registers the custom language-feature providers whose scope must
+    // track the set of content-mapped extensions. Existing registrations are disposed first.
+    private registerSelectorScopedFeatures(): void {
+        for (const disposable of this.selectorScopedFeatures.splice(0)) {
+            disposable.dispose();
+        }
+        if (!this.client || this.isStopping || this.isDisposed) {
+            return;
+        }
+        const selector = this.selectorScopedDocumentSelector();
+        this.selectorScopedFeatures.push(
+            registerMultiDocumentHighlightFeature(selector, this.client),
+            registerHoverFeature(selector, this.client),
         );
     }
 
@@ -278,6 +383,10 @@ export class Client implements vscode.Disposable {
         }
         this.isStopping = true;
         this.isInitialized = false;
+        for (const disposable of this.selectorScopedFeatures.splice(0)) {
+            disposable.dispose();
+        }
+        this.contentMapperFiltersById.clear();
         const disposables = this.disposables.splice(0);
         await Promise.all(disposables.map(d => d.dispose()));
         await this.client?.stop();
@@ -290,6 +399,10 @@ export class Client implements vscode.Disposable {
         this.isDisposed = true;
         this.isStopping = true;
         this.isInitialized = false;
+        for (const disposable of this.selectorScopedFeatures.splice(0)) {
+            disposable.dispose();
+        }
+        this.contentMapperFiltersById.clear();
         const disposables = this.disposables.splice(0);
         await Promise.all(disposables.map(d => d.dispose()));
         await this.client?.dispose();

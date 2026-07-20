@@ -46,7 +46,13 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 
 func (l *LanguageService) GetRenameInfo(ctx context.Context, newName string, documentURI lsproto.DocumentUri, position lsproto.Position) RenameInfo {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	pos := int(l.converters.LineAndCharacterToPosition(sourceFile, position))
+	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, position)
+	if !fidelity.IsExact() {
+		// In a content-mapped file the cursor is outside a verbatim span, so a rename originating here
+		// could not be written back to the original text.
+		return getRenameInfoError(ctx, diagnostics.You_cannot_rename_this_element)
+	}
+	pos := int(textPos)
 
 	node := astnav.GetTouchingPropertyName(sourceFile, pos)
 	node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
@@ -87,8 +93,14 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 		if l.UserPreferences().AllowRenameOfImportPath != core.TSTrue && entry.node != nil && ast.IsStringLiteralLike(entry.node) && ast.TryGetImportFromModuleSpecifier(entry.node) != nil {
 			continue
 		}
+		rng, ok := l.renameEditRange(entry)
+		if !ok {
+			// The occurrence lies outside a verbatim span of a content-mapped file, so it cannot be
+			// written back to the original text. Skip it and keep renaming the remaining occurrences.
+			continue
+		}
 		textEdit := &lsproto.TextEdit{
-			Range:   l.getRangeOfEntry(entry),
+			Range:   rng,
 			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, ch, quotePreference, useAliasesForRename),
 		}
 		changes[uri] = append(changes[uri], textEdit)
@@ -98,6 +110,23 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 			Changes: &changes,
 		},
 	}, nil
+}
+
+// renameEditRange returns the LSP range at which a rename occurrence should be edited. For occurrences in
+// content-mapped files it maps the transformed range strictly, returning ok=false when the occurrence is
+// not fully within a single verbatim span, so the caller can skip an edit that cannot be applied to the
+// original text.
+func (l *LanguageService) renameEditRange(entry *ReferenceEntry) (lsproto.Range, bool) {
+	l.resolveEntry(entry)
+	if entry.node == nil {
+		return l.getRangeOfEntry(entry), true
+	}
+	sourceFile := ast.GetSourceFileOfNode(entry.node)
+	if sourceFile == nil || sourceFile.SpanMap() == nil {
+		return l.getRangeOfEntry(entry), true
+	}
+	lspRange, fidelity := l.converters.ToLSPRange(sourceFile, *entry.textRange)
+	return lspRange, fidelity.IsExact()
 }
 
 // getRenameInfoForNode performs detailed validation for a rename operation on a specific node.
@@ -266,10 +295,14 @@ func (l *LanguageService) getRenameInfoForModule(ctx context.Context, newName st
 	start := specifier.Pos() + 1 + indexAfterLastSlash
 	length := len(specifier.Text()) - indexAfterLastSlash
 
+	triggerSpan, fidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length))
+	if !fidelity.IsExact() {
+		return RenameInfo{}, false
+	}
 	return RenameInfo{
 		CanRename:    true,
 		DisplayName:  specifier.Text()[indexAfterLastSlash:],
-		TriggerSpan:  l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, start+length)),
+		TriggerSpan:  triggerSpan,
 		FileToRename: displayName,
 		NewFileName:  newFileName,
 	}, true
@@ -371,9 +404,13 @@ func getRenameInfoSuccess(node *ast.Node, sourceFile *ast.SourceFile, displayNam
 		start++
 		end--
 	}
+	triggerSpan, fidelity := converters.ToLSPRange(sourceFile, core.NewTextRange(start, end))
+	if !fidelity.IsExact() {
+		return RenameInfo{CanRename: false}
+	}
 	return RenameInfo{
 		CanRename:   true,
 		DisplayName: displayName,
-		TriggerSpan: converters.ToLSPRange(sourceFile, core.NewTextRange(start, end)),
+		TriggerSpan: triggerSpan,
 	}
 }

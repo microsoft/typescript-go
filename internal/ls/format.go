@@ -16,9 +16,13 @@ import (
 func (l *LanguageService) toLSProtoTextEdits(file *ast.SourceFile, changes []core.TextChange) []*lsproto.TextEdit {
 	result := make([]*lsproto.TextEdit, 0, len(changes))
 	for _, c := range changes {
+		lspRange, fidelity := l.converters.ToLSPRange(file, core.NewTextRange(c.Pos(), c.End()))
+		if !fidelity.IsExact() {
+			return nil
+		}
 		result = append(result, &lsproto.TextEdit{
 			NewText: c.NewText,
-			Range:   l.createLspRangeFromBounds(c.Pos(), c.End(), file),
+			Range:   lspRange,
 		})
 	}
 	return result
@@ -53,11 +57,12 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 	}
 	_, file := l.getProgramAndFile(documentURI)
 	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
+	formatRange, _ := l.converters.FromLSPRange(file, r)
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
 		ctx,
 		file,
 		formatOpts,
-		l.converters.FromLSPRange(file, r),
+		formatRange,
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
@@ -74,11 +79,15 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 	}
 	_, file := l.getProgramAndFile(documentURI)
 	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
+	textPos, fidelity := l.converters.FromLSPPosition(file, position)
+	if !fidelity.IsExact() {
+		return lsproto.TextEditsOrNull{}, nil
+	}
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
 		ctx,
 		file,
 		formatOpts,
-		int(l.converters.LineAndCharacterToPosition(file, position)),
+		int(textPos),
 		character,
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil

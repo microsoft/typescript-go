@@ -29,6 +29,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
@@ -52,7 +53,7 @@ type FourslashTest struct {
 	stateBaseline *stateBaseline
 
 	scriptInfos map[string]*scriptInfo
-	converters  *lsconv.Converters
+	converters  *testConverters
 
 	stateEnableFormatting   bool
 	reportFormatOnTypeCrash bool
@@ -75,6 +76,24 @@ type scriptInfo struct {
 	content  string
 	lineMap  *lsconv.LSPLineMap
 	version  int32
+}
+
+type testConverters struct {
+	*lsconv.Converters
+}
+
+func newTestConverters(converters *lsconv.Converters) *testConverters {
+	return &testConverters{Converters: converters}
+}
+
+func (c *testConverters) PositionToLineAndCharacter(script lsconv.Script, position core.TextPos) lsproto.Position {
+	lspPosition, _ := c.ToLSPPosition(script, position)
+	return lspPosition
+}
+
+func (c *testConverters) LineAndCharacterToPosition(script lsconv.Script, position lsproto.Position) core.TextPos {
+	textPosition, _ := c.FromLSPPosition(script, position)
+	return textPosition
 }
 
 type textEditSpan struct {
@@ -101,6 +120,10 @@ func (s *scriptInfo) editContent(change core.TextChange) {
 func (s *scriptInfo) Text() string {
 	return s.content
 }
+
+func (s *scriptInfo) OriginalText() string { return s.content }
+
+func (s *scriptInfo) SpanMap() *spanmap.SpanMap { return nil }
 
 func (s *scriptInfo) FileName() string {
 	return s.fileName
@@ -185,13 +208,13 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		ParseCache: parseCache,
 	}
 
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
+	converters := newTestConverters(lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
 			return nil
 		}
 		return scriptInfo.lineMap
-	})
+	}))
 
 	f := &FourslashTest{
 		testData:                &testData,
@@ -1264,7 +1287,7 @@ func (f *FourslashTest) verifyCompletionsResult(
 }
 
 func isEmptyExpectedList(expected *CompletionsExpectedList) bool {
-	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0)
+	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0 && len(expected.Items.Unsorted) == 0)
 }
 
 func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemDefaults, expected *CompletionsExpectedItemDefaults, prefix string) {
@@ -2543,11 +2566,12 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 				locations = locs
 			}
 
+			codeLensRange, _ := f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range)
 			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
 				marker: &RangeMarker{
 					fileName: openFile,
 					LSRange:  resolvedCodeLens.Range,
-					Range:    f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range),
+					Range:    codeLensRange,
 				},
 				markerName: "/*CODELENS: " + resolvedCodeLens.Command.Title + "*/",
 			}))
@@ -3914,7 +3938,7 @@ func (f *FourslashTest) editScriptAndUpdateMarkersWorker(t *testing.T, fileName 
 				start := updatePosition(rangeMarker.Range.Pos(), editStart, editEnd, change.NewText)
 				end := updatePosition(rangeMarker.Range.End(), editStart, editEnd, change.NewText)
 				rangeMarker.Range = core.NewTextRange(start, end)
-				rangeMarker.LSRange = f.converters.ToLSPRange(script, rangeMarker.Range)
+				rangeMarker.LSRange, _ = f.converters.ToLSPRange(script, rangeMarker.Range)
 			}
 		}
 	}
@@ -3932,13 +3956,17 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 	return pos + len(newText) - (editEnd - editStart)
 }
 
+func (f *FourslashTest) fromLSPRange(script *scriptInfo, r lsproto.Range) core.TextRange {
+	textRange, _ := f.converters.FromLSPRange(script, r)
+	return textRange
+}
+
 func (f *FourslashTest) editScript(t *testing.T, fileName string, change core.TextChange) *scriptInfo {
 	script := f.getOrLoadScriptInfo(fileName)
 	if script == nil {
 		panic(fmt.Sprintf("Script info for file %s not found", fileName))
 	}
-
-	changeRange := f.converters.ToLSPRange(script, core.NewTextRange(change.Pos(), change.End()))
+	changeRange, _ := f.converters.ToLSPRange(script, core.NewTextRange(change.Pos(), change.End()))
 	script.editContent(change)
 	if err := f.vfs.WriteFile(fileName, script.content); err != nil {
 		t.Fatalf("failed to write to VFS for %s: %v", fileName, err)
@@ -4492,9 +4520,9 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		))
 
 		currentFile := newScriptInfo(f.activeFilename, fileContent)
-		converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
+		converters := newTestConverters(lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 			return currentFile.lineMap
-		})
+		}))
 		var list []*lsproto.CompletionItem
 		if result.Items == nil || len(*result.Items) == 0 {
 			if result.List == nil || result.List.Items == nil || len(result.List.Items) == 0 {
@@ -4704,7 +4732,7 @@ func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.Rena
 			script := f.getOrLoadScriptInfo(fileName)
 			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
 				return core.TextChange{
-					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					TextRange: f.fromLSPRange(script, edit.Range),
 					NewText:   edit.NewText,
 				}
 			})
@@ -4721,7 +4749,7 @@ func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.Rena
 				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
 					textEdit := edit.TextEdit
 					return core.TextChange{
-						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						TextRange: f.fromLSPRange(script, textEdit.Range),
 						NewText:   textEdit.NewText,
 					}
 				})
@@ -4783,7 +4811,7 @@ func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.Fi
 			script := f.getOrLoadScriptInfo(fileName)
 			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
 				return core.TextChange{
-					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					TextRange: f.fromLSPRange(script, edit.Range),
 					NewText:   edit.NewText,
 				}
 			})
@@ -4800,7 +4828,7 @@ func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.Fi
 				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
 					textEdit := edit.TextEdit
 					return core.TextChange{
-						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						TextRange: f.fromLSPRange(script, textEdit.Range),
 						NewText:   textEdit.NewText,
 					}
 				})
@@ -5056,7 +5084,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	fileName := f.activeFilename
 	var lspRange lsproto.Range
 	if span == nil {
-		lspRange = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
+		lspRange, _ = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
 	} else {
 		lspRange = *span
 	}
@@ -5319,6 +5347,10 @@ func (f *fourslashDiagnosticFile) Text() string {
 	return f.file.Content
 }
 
+func (f *fourslashDiagnosticFile) OriginalText() string { return f.file.Content }
+
+func (f *fourslashDiagnosticFile) SpanMap() *spanmap.SpanMap { return nil }
+
 func (f *fourslashDiagnosticFile) ECMALineMap() []core.TextPos {
 	if f.ecmaLineMap == nil {
 		f.ecmaLineMap = core.ComputeECMALineStarts(f.file.Content)
@@ -5397,7 +5429,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 			}
 			relatedDiagnostic := &fourslashDiagnostic{
 				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
-				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
+				loc:      f.fromLSPRange(relatedScriptInfo, info.Location.Range),
 				code:     code,
 				category: category,
 				message:  info.Message,
@@ -5413,7 +5445,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 				Content:  scriptInfo.content,
 			},
 		},
-		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
+		loc:                f.fromLSPRange(scriptInfo, lspDiagnostic.Range),
 		code:               code,
 		category:           category,
 		message:            lspDiagnostic.Message.AsString(),

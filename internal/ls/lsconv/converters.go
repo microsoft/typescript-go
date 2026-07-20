@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -26,9 +27,15 @@ type Converters struct {
 	positionEncoding lsproto.PositionEncodingKind
 }
 
+// Script is a source text the converters operate over. For a content-mapped file, Text() is the content
+// mapper's transformed output and SpanMap() returns the map from that output back to the original text
+// (OriginalText()); output ranges are then automatically converted to original coordinates (see
+// ToLSPRange). For an ordinary file SpanMap() is nil and OriginalText() equals Text().
 type Script interface {
 	FileName() string
 	Text() string
+	SpanMap() *spanmap.SpanMap
+	OriginalText() string
 }
 
 func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LSPLineMap) *Converters {
@@ -38,32 +45,90 @@ func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap fun
 	}
 }
 
-func (c *Converters) ToLSPRange(script Script, textRange core.TextRange) lsproto.Range {
+// The To*/From* conversions map between an editor's coordinates and the coordinates the language service
+// operates over. A content-mapped Script (SpanMap() != nil) is mapped through its span map; any other
+// Script passes through unchanged.
+
+func (c *Converters) ToLSPRange(script Script, textRange core.TextRange) (lsproto.Range, spanmap.Fidelity) {
+	script, textRange, fidelity := mapOutputToOriginal(script, textRange)
 	return lsproto.Range{
-		Start: c.PositionToLineAndCharacter(script, core.TextPos(textRange.Pos())),
-		End:   c.PositionToLineAndCharacter(script, core.TextPos(textRange.End())),
-	}
+		Start: c.positionToLineAndCharacter(script, core.TextPos(textRange.Pos())),
+		End:   c.positionToLineAndCharacter(script, core.TextPos(textRange.End())),
+	}, fidelity
 }
 
-func (c *Converters) FromLSPRange(script Script, textRange lsproto.Range) core.TextRange {
-	return core.NewTextRange(
-		int(c.LineAndCharacterToPosition(script, textRange.Start)),
-		int(c.LineAndCharacterToPosition(script, textRange.End)),
-	)
+// ToLSPPosition is the single-position analog of ToLSPRange.
+func (c *Converters) ToLSPPosition(script Script, position core.TextPos) (lsproto.Position, spanmap.Fidelity) {
+	script, position, fidelity := mapOutputPositionToOriginal(script, position)
+	return c.positionToLineAndCharacter(script, position), fidelity
 }
 
-func (c *Converters) FromLSPTextChange(script Script, change *lsproto.TextDocumentContentChangePartial) core.TextChange {
-	return core.TextChange{
-		TextRange: c.FromLSPRange(script, change.Range),
-		NewText:   change.Text,
-	}
-}
-
-func (c *Converters) ToLSPLocation(script Script, rng core.TextRange) lsproto.Location {
+func (c *Converters) ToLSPLocation(script Script, rng core.TextRange) (lsproto.Location, spanmap.Fidelity) {
+	lspRange, fidelity := c.ToLSPRange(script, rng)
 	return lsproto.Location{
 		Uri:   FileNameToDocumentURI(script.FileName()),
-		Range: c.ToLSPRange(script, rng),
+		Range: lspRange,
+	}, fidelity
+}
+
+// FromLSPRange converts an incoming LSP range to the offset range the language service operates over,
+// mapping a content-mapped file's original text forward into its transformed text; it is the input analog
+// of ToLSPRange.
+func (c *Converters) FromLSPRange(script Script, textRange lsproto.Range) (core.TextRange, spanmap.Fidelity) {
+	spans := script.SpanMap()
+	if spans == nil {
+		return core.NewTextRange(
+			int(c.lineAndCharacterToPosition(script, textRange.Start)),
+			int(c.lineAndCharacterToPosition(script, textRange.End)),
+		), spanmap.FidelityExact
 	}
+	// A content-mapped script's line map is its original text's, so convert against that text and then map
+	// the resulting original range forward into the transformed text.
+	original := originalTextScript{fileName: script.FileName(), text: script.OriginalText()}
+	origRange := core.NewTextRange(
+		int(c.lineAndCharacterToPosition(original, textRange.Start)),
+		int(c.lineAndCharacterToPosition(original, textRange.End)),
+	)
+	return spans.MapRangeToGenerated(origRange)
+}
+
+// FromLSPPosition is the single-position analog of FromLSPRange.
+func (c *Converters) FromLSPPosition(script Script, position lsproto.Position) (core.TextPos, spanmap.Fidelity) {
+	spans := script.SpanMap()
+	if spans == nil {
+		return c.lineAndCharacterToPosition(script, position), spanmap.FidelityExact
+	}
+	original := originalTextScript{fileName: script.FileName(), text: script.OriginalText()}
+	origOffset := c.lineAndCharacterToPosition(original, position)
+	return spans.MapPositionToGenerated(origOffset)
+}
+
+func (c *Converters) FromLSPTextChange(script Script, change *lsproto.TextDocumentContentChangePartial) (core.TextChange, spanmap.Fidelity) {
+	textRange, fidelity := c.FromLSPRange(script, change.Range)
+	return core.TextChange{
+		TextRange: textRange,
+		NewText:   change.Text,
+	}, fidelity
+}
+
+// mapOutputToOriginal maps a range in a content mapper's transformed output back to its original text,
+// returning a Script over that original text and the mapping fidelity. Scripts that carry no span map are
+// returned unchanged with FidelityExact.
+func mapOutputToOriginal(script Script, textRange core.TextRange) (Script, core.TextRange, spanmap.Fidelity) {
+	if script.SpanMap() == nil {
+		return script, textRange, spanmap.FidelityExact
+	}
+	mapped, fidelity := script.SpanMap().MapSpan(textRange)
+	return originalTextScript{fileName: script.FileName(), text: script.OriginalText()}, mapped, fidelity
+}
+
+// mapOutputPositionToOriginal is the single-position analog of mapOutputToOriginal.
+func mapOutputPositionToOriginal(script Script, position core.TextPos) (Script, core.TextPos, spanmap.Fidelity) {
+	if script.SpanMap() == nil {
+		return script, position, spanmap.FidelityExact
+	}
+	mapped, fidelity := script.SpanMap().MapPosition(position)
+	return originalTextScript{fileName: script.FileName(), text: script.OriginalText()}, mapped, fidelity
 }
 
 func LanguageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
@@ -142,8 +207,9 @@ func FileNameToDocumentURI(fileName string) lsproto.DocumentUri {
 	return lsproto.DocumentUri("file://" + volume + strings.Join(parts, "/"))
 }
 
-func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter lsproto.Position) core.TextPos {
+func (c *Converters) lineAndCharacterToPosition(script Script, lineAndCharacter lsproto.Position) core.TextPos {
 	// UTF-8/16 0-indexed line and character to UTF-8 offset
+	debug.Assert(script.SpanMap() == nil, "raw coordinate conversion requires a non-content-mapped script")
 
 	lineMap := c.getLineMap(script.FileName())
 
@@ -192,8 +258,9 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	return core.TextPos(pos)
 }
 
-func (c *Converters) PositionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
+func (c *Converters) positionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
+	debug.Assert(script.SpanMap() == nil, "raw coordinate conversion requires a non-content-mapped script")
 
 	position = max(0, min(position, core.TextPos(len(script.Text()))))
 
@@ -280,10 +347,16 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 		relatedInformation = make([]*lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
 		for _, related := range diagnostic.RelatedInformation() {
 			script, loc := diagnosticScriptAndRange(related.File(), related.Loc(), related.Source())
+			relatedRange, fidelity := converters.ToLSPRange(script, loc)
+			if fidelity.IsNone() {
+				// Related diagnostic information cannot omit its location. Use an explicit file-level
+				// location instead of presenting the synthesized span's insertion point as related source.
+				relatedRange = lsproto.Range{}
+			}
 			relatedInformation = append(relatedInformation, &lsproto.DiagnosticRelatedInformation{
 				Location: lsproto.Location{
 					Uri:   FileNameToDocumentURI(related.File().FileName()),
-					Range: converters.ToLSPRange(script, loc),
+					Range: relatedRange,
 				},
 				Message: related.Localize(locale),
 			})
@@ -305,7 +378,13 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	var lspRange lsproto.Range
 	if diagnostic.File() != nil {
 		script, loc := diagnosticScriptAndRange(diagnostic.File(), diagnostic.Loc(), diagnostic.Source())
-		lspRange = converters.ToLSPRange(script, loc)
+		var fidelity spanmap.Fidelity
+		lspRange, fidelity = converters.ToLSPRange(script, loc)
+		if fidelity.IsNone() {
+			// Diagnostics must carry a range. A zero range honestly means "this file" when the
+			// diagnostic arose entirely in synthesized code and has no original source span.
+			lspRange = lsproto.Range{}
+		}
 	}
 
 	var code *lsproto.IntegerOrString
@@ -361,8 +440,10 @@ type originalTextScript struct {
 	text     string
 }
 
-func (s originalTextScript) FileName() string { return s.fileName }
-func (s originalTextScript) Text() string     { return s.text }
+func (s originalTextScript) FileName() string        { return s.fileName }
+func (s originalTextScript) Text() string            { return s.text }
+func (s originalTextScript) OriginalText() string    { return s.text }
+func (originalTextScript) SpanMap() *spanmap.SpanMap { return nil }
 
 // diagnosticSeverity maps a diagnostic category to its LSP severity.
 func diagnosticSeverity(category diagnostics.Category) lsproto.DiagnosticSeverity {

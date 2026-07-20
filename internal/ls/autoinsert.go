@@ -18,7 +18,10 @@ func (l *LanguageService) ProvideOnAutoInsert(ctx context.Context, params *lspro
 	}
 
 	_, sourceFile := l.getProgramAndFile(params.VSTextDocument.Uri)
-	position := l.converters.LineAndCharacterToPosition(sourceFile, params.VSPosition)
+	position, fidelity := l.converters.FromLSPPosition(sourceFile, params.VSPosition)
+	if !fidelity.IsExact() {
+		return lsproto.VSOnAutoInsertResponse{}, nil
+	}
 
 	token := astnav.FindPrecedingToken(sourceFile, int(position))
 	if token == nil {

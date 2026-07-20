@@ -307,14 +307,16 @@ func (l *LanguageService) newDocumentSymbol(node *ast.Node, name *ast.Node, chil
 	}
 	result.Name = text
 	result.Kind = getSymbolKindFromNode(node)
-	result.Range = lsproto.Range{
-		Start: l.converters.PositionToLineAndCharacter(file, core.TextPos(nodeStartPos)),
-		End:   l.converters.PositionToLineAndCharacter(file, core.TextPos(node.End())),
+	selectionRange, selectionFidelity := l.converters.ToLSPRange(file, core.NewTextRange(nameStartPos, nameEndPos))
+	if !selectionFidelity.IsSingleSegment() {
+		return nil
 	}
-	result.SelectionRange = lsproto.Range{
-		Start: l.converters.PositionToLineAndCharacter(file, core.TextPos(nameStartPos)),
-		End:   l.converters.PositionToLineAndCharacter(file, core.TextPos(nameEndPos)),
+	symbolRange, rangeFidelity := l.converters.ToLSPRange(file, core.NewTextRange(nodeStartPos, node.End()))
+	if rangeFidelity.IsNone() {
+		symbolRange = selectionRange
 	}
+	result.Range = symbolRange
+	result.SelectionRange = selectionRange
 	if children == nil {
 		children = []*lsproto.DocumentSymbol{}
 	}
@@ -556,8 +558,8 @@ func ProvideWorkspaceSymbols(
 	// Sort the DeclarationInfos and return the top 256 matches.
 	slices.SortFunc(infos, compareDeclarationInfos)
 	count := min(len(infos), 256)
-	symbols := make([]*lsproto.SymbolInformation, count)
-	for i, info := range infos[0:count] {
+	symbols := make([]*lsproto.SymbolInformation, 0, count)
+	for _, info := range infos[0:count] {
 		node := info.declaration
 		sourceFile := ast.GetSourceFileOfNode(node)
 		container := getContainerNode(info.declaration)
@@ -572,12 +574,17 @@ func ProvideWorkspaceSymbols(
 		nameNode := ast.GetNameOfDeclaration(node)
 		nameStart := astnav.GetStartOfNode(nameNode, sourceFile, false /*includeJsDoc*/)
 		nameRange := core.NewTextRange(nameStart, nameNode.End())
+		location, fidelity := converters.ToLSPLocation(sourceFile, nameRange)
+		if !fidelity.IsSingleSegment() {
+			// The name has no counterpart in the original text, so there is nothing to navigate to.
+			continue
+		}
 		var symbol lsproto.SymbolInformation
 		symbol.Name = info.name
 		symbol.Kind = getSymbolKindFromNode(info.declaration)
-		symbol.Location = converters.ToLSPLocation(sourceFile, nameRange)
+		symbol.Location = location
 		symbol.ContainerName = containerName
-		symbols[i] = &symbol
+		symbols = append(symbols, &symbol)
 	}
 
 	return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{SymbolInformations: &symbols}, nil

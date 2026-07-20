@@ -30,7 +30,11 @@ func (l *LanguageService) ProvideSourceDefinition(
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	pos := int(l.converters.LineAndCharacterToPosition(file, position))
+	textPos, fidelity := l.converters.FromLSPPosition(file, position)
+	if !fidelity.IsSingleSegment() {
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
+	}
+	pos := int(textPos)
 	resolver := l.newSourceDefResolver(program, file.FileName())
 	node := astnav.GetTouchingPropertyName(file, pos)
 
@@ -38,13 +42,13 @@ func (l *LanguageService) ProvideSourceDefinition(
 		// Triple-slash directives are comments, not AST nodes, so
 		// GetTouchingPropertyName returns the SourceFile node.
 		if declarations, ref := resolver.resolveTripleSlashReference(file, pos, program); len(declarations) != 0 {
-			originSelectionRange := l.createLspRangeFromBounds(ref.Pos(), ref.End(), file)
+			originSelectionRange, _ := l.createLspRangeFromBounds(ref.Pos(), ref.End(), file)
 			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 		}
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
 
-	originSelectionRange := l.createLspRangeFromNode(node, file)
+	originSelectionRange, _ := l.createLspRangeFromNode(node, file)
 
 	// If the cursor is directly on a module specifier string, resolve to the
 	// implementation file's entry point.

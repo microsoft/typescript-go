@@ -102,12 +102,13 @@ const (
 )
 
 type ReferenceEntry struct {
-	kind      entryKind
-	node      *ast.Node
-	context   *ast.Node // !!! ContextWithStartAndEndNode, optional
-	fileName  string
-	textRange *core.TextRange
-	lspRange  *lsproto.Location
+	kind       entryKind
+	node       *ast.Node
+	context    *ast.Node // !!! ContextWithStartAndEndNode, optional
+	fileName   string
+	textRange  *core.TextRange
+	lspRange   *lsproto.Location
+	unmappable bool
 }
 
 // Node returns the AST node for this reference entry.
@@ -172,8 +173,9 @@ func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) lsproto.Docu
 	return l.resolveEntry(entry).lspRange.Uri
 }
 
-func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) lsproto.Location {
-	return *l.resolveEntry(entry).lspRange
+func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) (lsproto.Location, bool) {
+	resolved := l.resolveEntry(entry)
+	return *resolved.lspRange, !resolved.unmappable
 }
 
 func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
@@ -184,8 +186,9 @@ func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
 		entry.fileName = sourceFile.FileName()
 	}
 	if entry.lspRange == nil {
-		location := l.getMappedLocation(entry.fileName, *entry.textRange)
+		location, fidelity := l.getMappedLocation(entry.fileName, *entry.textRange)
 		entry.lspRange = &location
+		entry.unmappable = !fidelity.IsSingleSegment()
 	}
 	return entry
 }
@@ -315,15 +318,6 @@ func getContextNode(node *ast.Node) *ast.Node {
 	default:
 		return node
 	}
-}
-
-// utils
-func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) lsproto.Range {
-	if sourceFile == nil {
-		sourceFile = ast.GetSourceFileOfNode(node)
-	}
-	textRange := getRangeOfNode(node, sourceFile, endNode)
-	return l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), sourceFile)
 }
 
 func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) core.TextRange {
@@ -508,17 +502,25 @@ func (l *LanguageService) getNonLocalDefinition(ctx context.Context, entry *Symb
 		if isDefinitionVisible(emitResolver, d) {
 			file, startPos := getFileAndStartPosFromDeclaration(d)
 			fileName := file.FileName()
+			lspPosition, fidelity := l.converters.ToLSPPosition(file, startPos)
+			if fidelity.IsNone() {
+				continue
+			}
 			return &nonLocalDefinition{
 				position: position{
 					uri: lsconv.FileNameToDocumentURI(fileName),
-					pos: l.converters.PositionToLineAndCharacter(file, startPos),
+					pos: lspPosition,
 				},
 				GetSourcePosition: sync.OnceValue(func() lsproto.HasTextDocumentPosition {
 					mapped := l.tryGetSourcePosition(fileName, startPos)
 					if mapped != nil {
+						mappedPosition, mappedFidelity := l.converters.ToLSPPosition(l.getScript(mapped.FileName), core.TextPos(mapped.Pos))
+						if mappedFidelity.IsNone() {
+							return nil
+						}
 						return &position{
 							uri: lsconv.FileNameToDocumentURI(mapped.FileName),
-							pos: l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+							pos: mappedPosition,
 						}
 					}
 					return nil
@@ -526,9 +528,13 @@ func (l *LanguageService) getNonLocalDefinition(ctx context.Context, entry *Symb
 				GetGeneratedPosition: sync.OnceValue(func() lsproto.HasTextDocumentPosition {
 					mapped := l.tryGetGeneratedPosition(fileName, startPos)
 					if mapped != nil {
+						mappedPosition, mappedFidelity := l.converters.ToLSPPosition(l.getScript(mapped.FileName), core.TextPos(mapped.Pos))
+						if mappedFidelity.IsNone() {
+							return nil
+						}
 						return &position{
 							uri: lsconv.FileNameToDocumentURI(mapped.FileName),
-							pos: l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+							pos: mappedPosition,
 						}
 					}
 					return nil
@@ -598,16 +604,16 @@ func (l *LanguageService) forEachOriginalDefinitionLocation(
 			// Map to ts position
 			mapped := l.tryGetSourcePosition(file.FileName(), startPos)
 			if mapped != nil {
-				cb(
-					lsconv.FileNameToDocumentURI(mapped.FileName),
-					l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
-				)
+				lspPosition, fidelity := l.converters.ToLSPPosition(l.getScript(mapped.FileName), core.TextPos(mapped.Pos))
+				if !fidelity.IsNone() {
+					cb(lsconv.FileNameToDocumentURI(mapped.FileName), lspPosition)
+				}
 			}
 		} else if program.IsSourceFromProjectReference(l.toPath(fileName)) {
-			cb(
-				lsconv.FileNameToDocumentURI(fileName),
-				l.converters.PositionToLineAndCharacter(file, startPos),
-			)
+			lspPosition, fidelity := l.converters.ToLSPPosition(file, startPos)
+			if !fidelity.IsNone() {
+				cb(lsconv.FileNameToDocumentURI(fileName), lspPosition)
+			}
 		}
 	}
 }
@@ -628,7 +634,11 @@ type SymbolAndEntriesData struct {
 func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
+	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, documentPosition)
+	if !fidelity.IsSingleSegment() {
+		return SymbolAndEntriesData{}, false
+	}
+	position := int(textPos)
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 	if isRename {
@@ -766,7 +776,10 @@ func (l *LanguageService) symbolAndEntriesToVSReferences(ctx context.Context, pa
 				continue
 			}
 
-			refLocation := l.getLocationOfEntry(ref)
+			refLocation, ok := l.getLocationOfEntry(ref)
+			if !ok {
+				continue
+			}
 
 			// Determine read/write kind
 			kind := lsproto.VSReferenceKindRead
@@ -816,7 +829,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 			node = originalNode
 		}
 
-		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		loc, ok := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		if !ok {
+			return nil
+		}
 		return &referencedSymbolDefinitionInfo{
 			node:        node,
 			location:    loc,
@@ -828,7 +844,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 		if node == nil {
 			return nil
 		}
-		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		loc, ok := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		if !ok {
+			return nil
+		}
 		return &referencedSymbolDefinitionInfo{
 			node:     node,
 			location: loc,
@@ -843,7 +862,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 			return nil
 		}
 		name := scanner.TokenToString(node.Kind)
-		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		loc, ok := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		if !ok {
+			return nil
+		}
 		return &referencedSymbolDefinitionInfo{
 			node:     node,
 			location: loc,
@@ -862,7 +884,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 			return nil
 		}
 		element := l.getDefinitionKindAndDisplayParts(ctx, symbol, node, vsCapability)
-		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		loc, ok := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		if !ok {
+			return nil
+		}
 		return &referencedSymbolDefinitionInfo{
 			node:        node,
 			location:    loc,
@@ -874,7 +899,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 		if node == nil {
 			return nil
 		}
-		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		loc, ok := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		if !ok {
+			return nil
+		}
 		return &referencedSymbolDefinitionInfo{
 			node:     node,
 			location: loc,
@@ -888,7 +916,10 @@ func (l *LanguageService) definitionToReferencedSymbolDefinitionInfo(ctx context
 			return nil
 		}
 		node := def.tripleSlashFileRef.file.AsNode()
-		loc := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		loc, ok := l.getLocationOfEntry(&ReferenceEntry{kind: entryKindNode, node: node})
+		if !ok {
+			return nil
+		}
 		return &referencedSymbolDefinitionInfo{
 			node:     node,
 			location: loc,
@@ -998,19 +1029,24 @@ func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
 }
 
 func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
-	locations := make([]lsproto.Location, len(entries))
-	for i, entry := range entries {
-		locations[i] = l.getLocationOfEntry(entry)
+	locations := make([]lsproto.Location, 0, len(entries))
+	for _, entry := range entries {
+		if location, ok := l.getLocationOfEntry(entry); ok {
+			locations = append(locations, location)
+		}
 	}
 	return locations
 }
 
 func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []*lsproto.LocationLink {
-	links := make([]*lsproto.LocationLink, len(entries))
-	for i, entry := range entries {
+	links := make([]*lsproto.LocationLink, 0, len(entries))
+	for _, entry := range entries {
 
 		// Get the selection range (the actual reference)
-		loc := l.getLocationOfEntry(entry)
+		loc, ok := l.getLocationOfEntry(entry)
+		if !ok {
+			continue
+		}
 		targetSelectionRange := loc.Range
 		targetRange := targetSelectionRange
 
@@ -1019,16 +1055,18 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 			// Get the context range (broader scope including declaration context)
 			contextTextRange := toContextRange(entry.textRange, l.program.GetSourceFile(entry.fileName), entry.context)
 			if contextTextRange != nil {
-				contextLocation := l.getMappedLocation(entry.fileName, *contextTextRange)
-				targetRange = contextLocation.Range
+				contextLocation, fidelity := l.getMappedLocation(entry.fileName, *contextTextRange)
+				if !fidelity.IsNone() && contextLocation.Uri == loc.Uri {
+					targetRange = contextLocation.Range
+				}
 			}
 		}
 
-		links[i] = &lsproto.LocationLink{
+		links = append(links, &lsproto.LocationLink{
 			TargetUri:            lsconv.FileNameToDocumentURI(entry.fileName),
 			TargetRange:          targetRange,
 			TargetSelectionRange: targetSelectionRange,
-		}
+		})
 	}
 	return links
 }

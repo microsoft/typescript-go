@@ -6,17 +6,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func (l *LanguageService) getMappedLocation(fileName string, fileRange core.TextRange) lsproto.Location {
+func (l *LanguageService) getMappedLocation(fileName string, fileRange core.TextRange) (lsproto.Location, spanmap.Fidelity) {
 	startPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.Pos()))
 	if startPos == nil {
-		lspRange := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
+		lspRange, fidelity := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
 		return lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(fileName),
 			Range: lspRange,
-		}
+		}, fidelity
 	}
 	endPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.End()))
 	if endPos == nil || endPos.FileName != startPos.FileName || endPos.Pos < startPos.Pos {
@@ -29,11 +30,11 @@ func (l *LanguageService) getMappedLocation(fileName string, fileRange core.Text
 		}
 	}
 	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
-	lspRange := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
+	lspRange, fidelity := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
 	return lsproto.Location{
 		Uri:   lsconv.FileNameToDocumentURI(startPos.FileName),
 		Range: lspRange,
-	}
+	}, fidelity
 }
 
 type script struct {
@@ -49,7 +50,22 @@ func (s *script) Text() string {
 	return s.text
 }
 
-func (l *LanguageService) getScript(fileName string) *script {
+// SpanMap and OriginalText satisfy lsconv.Script for a plain (non-content-mapped) file: it carries no
+// span map and its original text is its own text.
+func (s *script) SpanMap() *spanmap.SpanMap { return nil }
+
+func (s *script) OriginalText() string { return s.text }
+
+func (l *LanguageService) getScript(fileName string) lsconv.Script {
+	if program := l.GetProgram(); program != nil {
+		if file := program.GetSourceFile(fileName); file != nil {
+			// Use a program lookup first so we get mappable scripts for content-mapped files
+			return file
+		}
+	}
+	// Fall back to getting the plain text from the file system. This happens when fileName
+	// is the result of a .d.ts.map mapping back to a source file whose declaration file is
+	// part of the program instead of the source.
 	text, ok := l.host.ReadFile(fileName)
 	if !ok {
 		return nil

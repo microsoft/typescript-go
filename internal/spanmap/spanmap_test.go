@@ -88,6 +88,155 @@ func TestMapSpanNilIdentity(t *testing.T) {
 	assert.Equal(t, fidelity, spanmap.FidelityExact)
 }
 
+func TestMapPosition(t *testing.T) {
+	t.Parallel()
+
+	// Generated [0,10) is a verbatim copy of original [100,110); [10,20) is an atom of original [200,210).
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindAtom},
+	})
+
+	testCases := []struct {
+		name     string
+		pos      core.TextPos
+		want     core.TextPos
+		fidelity spanmap.Fidelity
+	}{
+		{"verbatim interpolates", 3, 103, spanmap.FidelityExact},
+		{"atom maps to its start", 25, 200, spanmap.FidelityAtom},
+		{"gap maps to insertion point", 15, 110, spanmap.FidelityNone},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			got, fidelity := m.MapPosition(tc.pos)
+			assert.Equal(t, got, tc.want)
+			assert.Equal(t, fidelity, tc.fidelity)
+			// MapPosition must agree with MapSpan on a zero-length range.
+			span, spanFidelity := m.MapSpan(core.NewTextRange(int(tc.pos), int(tc.pos)))
+			assert.Equal(t, got, core.TextPos(span.Pos()))
+			assert.Equal(t, fidelity, spanFidelity)
+		})
+	}
+}
+
+func TestMapPositionNilIdentity(t *testing.T) {
+	t.Parallel()
+
+	var m *spanmap.SpanMap
+	got, fidelity := m.MapPosition(7)
+	assert.Equal(t, got, core.TextPos(7))
+	assert.Equal(t, fidelity, spanmap.FidelityExact)
+}
+
+func TestMapRangeToGeneratedVerbatim(t *testing.T) {
+	t.Parallel()
+
+	// Generated [0,10) is a verbatim copy of original [100,110).
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim},
+	})
+
+	got, fidelity := m.MapRangeToGenerated(core.NewTextRange(103, 107))
+	assert.Equal(t, got.Pos(), 3)
+	assert.Equal(t, got.End(), 7)
+	assert.Equal(t, fidelity, spanmap.FidelityExact)
+}
+
+func TestMapRangeToGeneratedAtom(t *testing.T) {
+	t.Parallel()
+
+	// Generated [3,14) is an atom of the original [60,71).
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom},
+	})
+
+	// A span inside the original atom maps to the whole generated span.
+	got, fidelity := m.MapRangeToGenerated(core.NewTextRange(63, 67))
+	assert.Equal(t, got.Pos(), 3)
+	assert.Equal(t, got.End(), 14)
+	assert.Equal(t, fidelity, spanmap.FidelityAtom)
+}
+
+func TestMapRangeToGeneratedGap(t *testing.T) {
+	t.Parallel()
+
+	// An original range with no covering segment has no generated counterpart: it maps to the insertion
+	// point (the preceding segment's generated end) with no fidelity.
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim},
+	})
+
+	got, fidelity := m.MapRangeToGenerated(core.NewTextRange(150, 160))
+	assert.Equal(t, got.Pos(), 10)
+	assert.Equal(t, got.End(), 10)
+	assert.Equal(t, fidelity, spanmap.FidelityNone)
+}
+
+func TestMapRangeToGeneratedNilIdentity(t *testing.T) {
+	t.Parallel()
+
+	var m *spanmap.SpanMap
+	got, fidelity := m.MapRangeToGenerated(core.NewTextRange(3, 7))
+	assert.Equal(t, got.Pos(), 3)
+	assert.Equal(t, got.End(), 7)
+	assert.Equal(t, fidelity, spanmap.FidelityExact)
+}
+
+func TestMapPositionToGenerated(t *testing.T) {
+	t.Parallel()
+
+	// Original [100,110) is a verbatim copy of generated [0,10); [200,210) is an atom of generated [20,30).
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindAtom},
+	})
+
+	testCases := []struct {
+		name     string
+		pos      core.TextPos
+		want     core.TextPos
+		fidelity spanmap.Fidelity
+	}{
+		{"verbatim interpolates", 103, 3, spanmap.FidelityExact},
+		{"atom maps to its start", 205, 20, spanmap.FidelityAtom},
+		{"gap maps to insertion point", 150, 10, spanmap.FidelityNone},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			got, fidelity := m.MapPositionToGenerated(tc.pos)
+			assert.Equal(t, got, tc.want)
+			assert.Equal(t, fidelity, tc.fidelity)
+			// MapPositionToGenerated must agree with MapRangeToGenerated on a zero-length range.
+			span, spanFidelity := m.MapRangeToGenerated(core.NewTextRange(int(tc.pos), int(tc.pos)))
+			assert.Equal(t, got, core.TextPos(span.Pos()))
+			assert.Equal(t, fidelity, spanFidelity)
+		})
+	}
+}
+
+func TestMapRangeToGeneratedRoundTrip(t *testing.T) {
+	t.Parallel()
+
+	// Original spans are out of order relative to generated spans, exercising the reverse index.
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 0, GenEnd: 10, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim},
+		{GenStart: 10, GenEnd: 20, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim},
+	})
+
+	for _, r := range []core.TextRange{core.NewTextRange(2, 8), core.NewTextRange(12, 18)} {
+		orig, fidelity := m.MapSpan(r)
+		assert.Equal(t, fidelity, spanmap.FidelityExact)
+		back, backFidelity := m.MapRangeToGenerated(orig)
+		assert.Equal(t, backFidelity, spanmap.FidelityExact)
+		assert.Equal(t, back.Pos(), r.Pos())
+		assert.Equal(t, back.End(), r.End())
+	}
+}
+
 func TestMarshalRoundTrip(t *testing.T) {
 	t.Parallel()
 

@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testrunner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -213,6 +214,12 @@ func (t *TestFileInfo) Text() string {
 	return t.Content
 }
 
+// OriginalText implements lsconv.Script.
+func (t *TestFileInfo) OriginalText() string { return t.Content }
+
+// SpanMap implements lsconv.Script.
+func (t *TestFileInfo) SpanMap() *spanmap.SpanMap { return nil }
+
 var _ lsconv.Script = (*TestFileInfo)(nil)
 
 const emitThisFileOption = "emitthisfile"
@@ -414,9 +421,9 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 	outputString := output.String()
 	// Set LS positions for markers
 	lineMap := lsconv.ComputeLSPLineStarts(outputString)
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
+	converters := newTestConverters(lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 		return lineMap
-	})
+	}))
 
 	emit := fileOptions[emitThisFileOption] == "true"
 

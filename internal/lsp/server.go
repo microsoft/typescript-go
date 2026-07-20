@@ -303,10 +303,19 @@ func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 }
 
 const (
-	contentMapperDidOpenRegistrationID    = "content-mapper-did-open"
-	contentMapperDidChangeRegistrationID  = "content-mapper-did-change"
-	contentMapperDidCloseRegistrationID   = "content-mapper-did-close"
-	contentMapperDiagnosticRegistrationID = "content-mapper-diagnostic"
+	contentMapperDidOpenRegistrationID           = "content-mapper-did-open"
+	contentMapperDidChangeRegistrationID         = "content-mapper-did-change"
+	contentMapperDidCloseRegistrationID          = "content-mapper-did-close"
+	contentMapperDiagnosticRegistrationID        = "content-mapper-diagnostic"
+	contentMapperHoverRegistrationID             = "content-mapper-hover"
+	contentMapperSignatureHelpRegistrationID     = "content-mapper-signature-help"
+	contentMapperDefinitionRegistrationID        = "content-mapper-definition"
+	contentMapperTypeDefinitionRegistrationID    = "content-mapper-type-definition"
+	contentMapperImplementationRegistrationID    = "content-mapper-implementation"
+	contentMapperReferencesRegistrationID        = "content-mapper-references"
+	contentMapperDocumentHighlightRegistrationID = "content-mapper-document-highlight"
+	contentMapperCompletionRegistrationID        = "content-mapper-completion"
+	contentMapperRenameRegistrationID            = "content-mapper-rename"
 )
 
 // RegisterContentMapperExtensions implements project.Client. It dynamically registers text document
@@ -328,6 +337,15 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 				{Id: contentMapperDidChangeRegistrationID, Method: string(lsproto.MethodTextDocumentDidChange)},
 				{Id: contentMapperDidCloseRegistrationID, Method: string(lsproto.MethodTextDocumentDidClose)},
 				{Id: contentMapperDiagnosticRegistrationID, Method: string(lsproto.MethodTextDocumentDiagnostic)},
+				{Id: contentMapperHoverRegistrationID, Method: string(lsproto.MethodTextDocumentHover)},
+				{Id: contentMapperSignatureHelpRegistrationID, Method: string(lsproto.MethodTextDocumentSignatureHelp)},
+				{Id: contentMapperDefinitionRegistrationID, Method: string(lsproto.MethodTextDocumentDefinition)},
+				{Id: contentMapperTypeDefinitionRegistrationID, Method: string(lsproto.MethodTextDocumentTypeDefinition)},
+				{Id: contentMapperImplementationRegistrationID, Method: string(lsproto.MethodTextDocumentImplementation)},
+				{Id: contentMapperReferencesRegistrationID, Method: string(lsproto.MethodTextDocumentReferences)},
+				{Id: contentMapperDocumentHighlightRegistrationID, Method: string(lsproto.MethodTextDocumentDocumentHighlight)},
+				{Id: contentMapperCompletionRegistrationID, Method: string(lsproto.MethodTextDocumentCompletion)},
+				{Id: contentMapperRenameRegistrationID, Method: string(lsproto.MethodTextDocumentRename)},
 			},
 		}); err != nil {
 			return fmt.Errorf("failed to unregister content mapper text document sync: %w", err)
@@ -379,6 +397,74 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 						DocumentSelector:      selector,
 						Identifier:            new("typescript"),
 						InterFileDependencies: true,
+					},
+				},
+			},
+			{
+				Id: contentMapperHoverRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentHover: &lsproto.HoverRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperSignatureHelpRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentSignatureHelp: &lsproto.SignatureHelpRegistrationOptions{
+						DocumentSelector:    selector,
+						TriggerCharacters:   &ls.SignatureHelpTriggerCharacters,
+						RetriggerCharacters: &ls.SignatureHelpRetriggerCharacters,
+					},
+				},
+			},
+			{
+				Id: contentMapperDefinitionRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentDefinition: &lsproto.DefinitionRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperTypeDefinitionRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentTypeDefinition: &lsproto.TypeDefinitionRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperImplementationRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentImplementation: &lsproto.ImplementationRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperReferencesRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentReferences: &lsproto.ReferenceRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperDocumentHighlightRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentDocumentHighlight: &lsproto.DocumentHighlightRegistrationOptions{DocumentSelector: selector},
+				},
+			},
+			{
+				Id: contentMapperCompletionRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentCompletion: &lsproto.CompletionRegistrationOptions{
+						DocumentSelector:  selector,
+						TriggerCharacters: &ls.CompletionTriggerCharacters,
+						ResolveProvider:   new(true),
+						CompletionItem: &lsproto.ServerCompletionItemOptions{
+							LabelDetailsSupport: new(true),
+						},
+					},
+				},
+			},
+			{
+				Id: contentMapperRenameRegistrationID,
+				RegisterOptions: &lsproto.RegisterOptions{
+					TextDocumentRename: &lsproto.RenameRegistrationOptions{
+						DocumentSelector: selector,
+						PrepareProvider:  new(true),
 					},
 				},
 			},
@@ -1204,15 +1290,15 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				},
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
-				TriggerCharacters: &ls.TriggerCharacters,
+				TriggerCharacters: &ls.CompletionTriggerCharacters,
 				ResolveProvider:   new(true),
 				CompletionItem: &lsproto.ServerCompletionItemOptions{
 					LabelDetailsSupport: new(true),
 				},
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
-				TriggerCharacters:   &[]string{"(", ",", "<"},
-				RetriggerCharacters: &[]string{")"},
+				TriggerCharacters:   &ls.SignatureHelpTriggerCharacters,
+				RetriggerCharacters: &ls.SignatureHelpRetriggerCharacters,
 			},
 			DocumentFormattingProvider: &lsproto.BooleanOrDocumentFormattingOptions{
 				Boolean: new(true),

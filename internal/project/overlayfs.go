@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/zeebo/xxh3"
@@ -141,6 +142,13 @@ func (o *Overlay) Version() int32 {
 func (o *Overlay) Text() string {
 	return o.content
 }
+
+// SpanMap and OriginalText satisfy lsconv.Script. An overlay holds the editor's raw text (for a
+// content-mapped file, that is the original foreign text, not the transformed output), so it never
+// carries a span map and its original text is its own text.
+func (o *Overlay) SpanMap() *spanmap.SpanMap { return nil }
+
+func (o *Overlay) OriginalText() string { return o.content }
 
 // MatchesDiskText may return false negatives, but never false positives.
 func (o *Overlay) MatchesDiskText() bool {
@@ -355,7 +363,8 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				})
 				for _, textChange := range change.Changes {
 					if partialChange := textChange.Partial; partialChange != nil {
-						newContent := converters.FromLSPTextChange(o, partialChange).ApplyTo(o.content)
+						textChange, _ := converters.FromLSPTextChange(o, partialChange)
+						newContent := textChange.ApplyTo(o.content)
 						o = newOverlay(o.fileName, newContent, change.Version, o.kind)
 					} else if wholeChange := textChange.WholeDocument; wholeChange != nil {
 						o = newOverlay(o.fileName, wholeChange.Text, change.Version, o.kind)

@@ -38,7 +38,11 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 
 func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.MultiDocumentHighlightsOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(documentUri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
+	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, documentPosition)
+	if !fidelity.IsSingleSegment() {
+		return lsproto.MultiDocumentHighlightsOrNull{}, nil
+	}
+	position := int(textPos)
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
 	// Cheap JSX check before resolving files to search.
@@ -51,16 +55,14 @@ func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, d
 		var highlights []*lsproto.DocumentHighlight
 		kind := lsproto.DocumentHighlightKindRead
 		if openingElement != nil {
-			highlights = append(highlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(openingElement, sourceFile),
-				Kind:  &kind,
-			})
+			if lspRange, fidelity := l.createLspRangeFromNode(openingElement, sourceFile); !fidelity.IsNone() {
+				highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
+			}
 		}
 		if closingElement != nil {
-			highlights = append(highlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(closingElement, sourceFile),
-				Kind:  &kind,
-			})
+			if lspRange, fidelity := l.createLspRangeFromNode(closingElement, sourceFile); !fidelity.IsNone() {
+				highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
+			}
 		}
 		multiHighlights := []*lsproto.MultiDocumentHighlight{
 			{Uri: documentUri, Highlights: highlights},
@@ -218,10 +220,9 @@ func (l *LanguageService) highlightSpans(nodes []*ast.Node, sourceFile *ast.Sour
 	kind := lsproto.DocumentHighlightKindRead
 	for _, node := range nodes {
 		if node != nil {
-			highlights = append(highlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(node, sourceFile),
-				Kind:  &kind,
-			})
+			if lspRange, fidelity := l.createLspRangeFromNode(node, sourceFile); !fidelity.IsNone() {
+				highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
+			}
 		}
 	}
 	return highlights
@@ -276,19 +277,18 @@ func (l *LanguageService) getIfElseOccurrences(ifStatement *ast.IfStatement, sou
 				}
 			}
 			if shouldCombine {
-				highlights = append(highlights, &lsproto.DocumentHighlight{
-					Range: l.createLspRangeFromBounds(scanner.SkipTrivia(sourceFile.Text(), elseKeyword.Pos()), ifKeyword.End(), sourceFile),
-					Kind:  &kind,
-				})
+				lspRange, fidelity := l.createLspRangeFromBounds(scanner.SkipTrivia(sourceFile.Text(), elseKeyword.Pos()), ifKeyword.End(), sourceFile)
+				if !fidelity.IsNone() {
+					highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
+				}
 				i++ // skip the next keyword
 				continue
 			}
 		}
 		// Ordinary case: just highlight the keyword.
-		highlights = append(highlights, &lsproto.DocumentHighlight{
-			Range: l.createLspRangeFromNode(keywords[i], sourceFile),
-			Kind:  &kind,
-		})
+		if lspRange, fidelity := l.createLspRangeFromNode(keywords[i], sourceFile); !fidelity.IsNone() {
+			highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
+		}
 	}
 	return highlights
 }

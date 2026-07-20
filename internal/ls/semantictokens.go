@@ -151,8 +151,12 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
-	start := int(l.converters.LineAndCharacterToPosition(file, rng.Start))
-	end := int(l.converters.LineAndCharacterToPosition(file, rng.End))
+	textRange, fidelity := l.converters.FromLSPRange(file, rng)
+	if fidelity.IsNone() {
+		return lsproto.SemanticTokensOrNull{}, nil
+	}
+	start := textRange.Pos()
+	end := textRange.End()
 
 	tokens := l.collectSemanticTokensInRange(ctx, c, file, program, start, end)
 
@@ -528,9 +532,14 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast
 		tokenStart := scanner.GetTokenPosOfNode(token.node, file, false)
 		tokenEnd := token.node.End()
 
-		// Convert both start and end positions to LSP coordinates, then compute length
-		startPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenStart))
-		endPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenEnd))
+		// Semantic tokens must describe one concrete source segment; synthesized and cross-segment
+		// tokens do not identify a coherent token in the original text.
+		lspRange, fidelity := converters.ToLSPRange(file, core.NewTextRange(tokenStart, tokenEnd))
+		if !fidelity.IsSingleSegment() {
+			continue
+		}
+		startPos := lspRange.Start
+		endPos := lspRange.End
 
 		// Length is the character difference when on the same line
 		var tokenLength uint32

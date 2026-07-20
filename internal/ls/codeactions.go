@@ -117,11 +117,13 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					continue
 				}
 
-				position := l.converters.LineAndCharacterToPosition(file, diag.Range.Start)
-				endPosition := l.converters.LineAndCharacterToPosition(file, diag.Range.End)
+				span, fidelity := l.converters.FromLSPRange(file, diag.Range)
+				if fidelity.IsNone() {
+					continue
+				}
 				fixContext := &CodeFixContext{
 					SourceFile: file,
-					Span:       core.NewTextRange(int(position), int(endPosition)),
+					Span:       span,
 					ErrorCode:  errorCode,
 					Program:    program,
 					LS:         l,

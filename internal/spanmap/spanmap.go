@@ -9,6 +9,7 @@ package spanmap
 import (
 	"fmt"
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -42,6 +43,24 @@ const (
 	FidelityNone
 )
 
+// IsExact reports whether the mapping was fully faithful — the input fell within a single verbatim span —
+// so the result maps 1:1 and can host a text edit written back to the original.
+func (f Fidelity) IsExact() bool {
+	return f == FidelityExact
+}
+
+// IsSingleSegment reports whether the input fell within one segment, verbatim or atom, so the result is a
+// concrete location rather than a best-effort approximation across boundaries or a synthesized gap.
+func (f Fidelity) IsSingleSegment() bool {
+	return f == FidelityExact || f == FidelityAtom
+}
+
+// IsNone reports whether the input had no original counterpart, meaning the mapped result is a synthesized
+// gap that does not correspond to any location in the original text.
+func (f Fidelity) IsNone() bool {
+	return f == FidelityNone
+}
+
 // Segment maps a contiguous generated span to an original span.
 type Segment struct {
 	GenStart  core.TextPos
@@ -56,6 +75,11 @@ type Segment struct {
 // original counterpart). An empty SpanMap therefore describes fully synthesized output.
 type SpanMap struct {
 	segments []Segment
+
+	// origOnce guards lazy construction of origSorted, the segments ordered by OrigStart, used by
+	// MapRangeToGenerated for reverse (original -> generated) lookups.
+	origOnce   sync.Once
+	origSorted []Segment
 }
 
 // Validation failures. A content mapper is required to provide a valid span map; these describe the
@@ -173,6 +197,24 @@ func (m *SpanMap) MapSpan(r core.TextRange) (core.TextRange, Fidelity) {
 	return core.NewTextRange(int(origStart), int(origEnd)), FidelityApproximate
 }
 
+// MapPosition maps a single generated position to the corresponding original position, along with the
+// fidelity of the result. It is the single-position analog of MapSpan: a position in a gap (or in an empty
+// map) is synthesized and maps to the insertion point with FidelityNone. A nil SpanMap maps identically.
+func (m *SpanMap) MapPosition(pos core.TextPos) (core.TextPos, Fidelity) {
+	if m == nil {
+		return pos, FidelityExact
+	}
+	idx, in := m.segmentIndexAt(pos)
+	if !in {
+		return m.insertionPoint(idx), FidelityNone
+	}
+	seg := &m.segments[idx]
+	if seg.Kind == KindVerbatim {
+		return clamp(seg.OrigStart+(pos-seg.GenStart), seg.OrigStart, seg.OrigEnd), FidelityExact
+	}
+	return seg.OrigStart, FidelityAtom
+}
+
 // segmentIndexAt returns the index of the segment containing pos and true, or, when pos lies in a gap,
 // the index of the segment immediately before pos (-1 if none) and false.
 func (m *SpanMap) segmentIndexAt(pos core.TextPos) (int, bool) {
@@ -218,6 +260,123 @@ func (m *SpanMap) mapHigh(pos core.TextPos, idx int, in bool) core.TextPos {
 		return clamp(seg.OrigStart+(pos-seg.GenStart), seg.OrigStart, seg.OrigEnd)
 	}
 	return seg.OrigEnd
+}
+
+// MapRangeToGenerated maps an original range to the corresponding range in the generated text, along with
+// the fidelity of the result; it is the inverse of MapSpan. An original range lying entirely in a gap
+// (no segment covers it) is synthesized-in-reverse: it maps to the insertion point in the generated text
+// with FidelityNone. A nil SpanMap maps identically.
+func (m *SpanMap) MapRangeToGenerated(r core.TextRange) (core.TextRange, Fidelity) {
+	if m == nil {
+		return r, FidelityExact
+	}
+	segs := m.origIndex()
+	origStart := core.TextPos(r.Pos())
+	origEnd := max(core.TextPos(r.End()), origStart)
+
+	startIdx, startIn := reverseIndexAt(segs, origStart)
+	endProbe := origEnd
+	if origEnd > origStart {
+		endProbe = origEnd - 1
+	}
+	endIdx, endIn := reverseIndexAt(segs, endProbe)
+
+	if startIdx == endIdx && startIn == endIn {
+		if startIn {
+			seg := &segs[startIdx]
+			if seg.Kind == KindVerbatim {
+				genStart := clamp(seg.GenStart+(origStart-seg.OrigStart), seg.GenStart, seg.GenEnd)
+				genEnd := clamp(seg.GenStart+(origEnd-seg.OrigStart), genStart, seg.GenEnd)
+				return core.NewTextRange(int(genStart), int(genEnd)), FidelityExact
+			}
+			return core.NewTextRange(int(seg.GenStart), int(seg.GenEnd)), FidelityAtom
+		}
+		// Entirely within a single gap: no generated counterpart.
+		pos := reverseInsertionPoint(segs, startIdx)
+		return core.NewTextRange(int(pos), int(pos)), FidelityNone
+	}
+
+	genStart := reverseMapLow(segs, origStart, startIdx, startIn)
+	genEnd := max(reverseMapHigh(segs, origEnd, endIdx, endIn), genStart)
+	return core.NewTextRange(int(genStart), int(genEnd)), FidelityApproximate
+}
+
+// MapPositionToGenerated maps a single original position to the corresponding generated position, along
+// with the fidelity of the result; it is the single-position inverse of MapPosition. A position in a gap
+// maps to the insertion point in the generated text with FidelityNone. A nil SpanMap maps identically.
+func (m *SpanMap) MapPositionToGenerated(pos core.TextPos) (core.TextPos, Fidelity) {
+	if m == nil {
+		return pos, FidelityExact
+	}
+	segs := m.origIndex()
+	idx, in := reverseIndexAt(segs, pos)
+	if !in {
+		return reverseInsertionPoint(segs, idx), FidelityNone
+	}
+	seg := &segs[idx]
+	if seg.Kind == KindVerbatim {
+		return clamp(seg.GenStart+(pos-seg.OrigStart), seg.GenStart, seg.GenEnd), FidelityExact
+	}
+	return seg.GenStart, FidelityAtom
+}
+
+// origIndex returns the segments ordered by OrigStart, building it once on first use.
+func (m *SpanMap) origIndex() []Segment {
+	m.origOnce.Do(func() {
+		m.origSorted = slices.Clone(m.segments)
+		slices.SortFunc(m.origSorted, func(a, b Segment) int {
+			return int(a.OrigStart - b.OrigStart)
+		})
+	})
+	return m.origSorted
+}
+
+// reverseIndexAt returns the index (within a slice ordered by OrigStart) of the segment whose original
+// span contains pos and true, or, when pos lies in a gap, the index of the segment immediately before pos
+// (-1 if none) and false.
+func reverseIndexAt(segs []Segment, pos core.TextPos) (int, bool) {
+	idx, found := slices.BinarySearchFunc(segs, pos, func(s Segment, p core.TextPos) int {
+		return int(s.OrigStart - p)
+	})
+	if found {
+		return idx, true
+	}
+	prev := idx - 1
+	if prev >= 0 && pos < segs[prev].OrigEnd {
+		return prev, true
+	}
+	return prev, false
+}
+
+// reverseInsertionPoint returns the generated offset where content following segment prev sits: the
+// generated end of that segment, or 0 before the first segment.
+func reverseInsertionPoint(segs []Segment, prev int) core.TextPos {
+	if prev < 0 {
+		return 0
+	}
+	return segs[prev].GenEnd
+}
+
+func reverseMapLow(segs []Segment, pos core.TextPos, idx int, in bool) core.TextPos {
+	if !in {
+		return reverseInsertionPoint(segs, idx)
+	}
+	seg := &segs[idx]
+	if seg.Kind == KindVerbatim {
+		return clamp(seg.GenStart+(pos-seg.OrigStart), seg.GenStart, seg.GenEnd)
+	}
+	return seg.GenStart
+}
+
+func reverseMapHigh(segs []Segment, pos core.TextPos, idx int, in bool) core.TextPos {
+	if !in {
+		return reverseInsertionPoint(segs, idx)
+	}
+	seg := &segs[idx]
+	if seg.Kind == KindVerbatim {
+		return clamp(seg.GenStart+(pos-seg.OrigStart), seg.GenStart, seg.GenEnd)
+	}
+	return seg.GenEnd
 }
 
 func clamp(v, lo, hi core.TextPos) core.TextPos {

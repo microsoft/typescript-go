@@ -18,7 +18,10 @@ func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *ls
 
 	var results []*lsproto.SelectionRange
 	for _, position := range params.Positions {
-		pos := l.converters.LineAndCharacterToPosition(sourceFile, position)
+		pos, fidelity := l.converters.FromLSPPosition(sourceFile, position)
+		if !fidelity.IsSingleSegment() {
+			return lsproto.SelectionRangesOrNull{}, nil
+		}
 		selectionRange := getSmartSelectionRange(l, sourceFile, int(pos))
 		if selectionRange != nil {
 			results = append(results, selectionRange)
@@ -49,7 +52,10 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 			return current
 		}
 
-		lspRange := l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, end))
+		lspRange, fidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, end))
+		if fidelity.IsNone() {
+			return current
+		}
 
 		if current != nil && current.Range == lspRange {
 			return current
@@ -78,9 +84,8 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		if pos1 == pos2 {
 			return true
 		}
-		lspPos1 := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(pos1))
-		lspPos2 := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(pos2))
-		return lspPos1.Line == lspPos2.Line
+		lineStarts := sourceFile.ECMALineMap()
+		return scanner.ComputeLineOfPosition(lineStarts, pos1) == scanner.ComputeLineOfPosition(lineStarts, pos2)
 	}
 
 	shouldSkipNode := func(node *ast.Node, parent *ast.Node) bool {
@@ -111,7 +116,10 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		return false
 	}
 
-	fullRange := l.converters.ToLSPRange(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()))
+	fullRange, fidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()))
+	if fidelity.IsNone() {
+		return nil
+	}
 	result := &lsproto.SelectionRange{
 		Range: fullRange,
 	}
