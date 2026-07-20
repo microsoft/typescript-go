@@ -44,7 +44,7 @@ func testMapper() *contentmapper.Mapper {
 		Manifest: contentmapper.Manifest{
 			Name:            contentmappertest.PackageName,
 			Version:         "1.0.0",
-			Exec:            []string{contentmappertest.ExecName},
+			Exec:            []string{contentmappertest.TransformingMapper},
 			CompilerOptions: contentmappertest.DeclaredOptions,
 		},
 		PackageDirectory: "/node_modules/" + contentmappertest.PackageName,
@@ -96,6 +96,51 @@ func TestInProcessSpanKinds(t *testing.T) {
 	atomRange, atomFidelity := result.Mappings.MapSpan(core.NewTextRange(atomStart, atomStart+len("7")))
 	assert.Equal(t, atomFidelity, spanmap.FidelityAtom)
 	assert.Equal(t, original[atomRange.Pos():atomRange.End()], "#{target}")
+}
+
+func TestComponentMapperSpanKinds(t *testing.T) {
+	t.Parallel()
+	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner())
+	defer host.Close()
+
+	mapper := testMapper()
+	mapper.Manifest.Exec = []string{contentmappertest.ComponentMapper}
+	mapper.Manifest.CompilerOptions = nil
+	content := `<component name="ProfileCard">
+<template><h1>{{ title + suffix }}</h1></template>
+<script lang="ts">
+export const title = "Hello";
+export const suffix = "!";
+</script>`
+	result, err := host.Transform(mapper, contentmapper.Request{FileName: "/app.box", Content: content})
+	assert.NilError(t, err)
+
+	scriptStart := strings.Index(result.Text, "export const title")
+	_, exact := result.Mappings.MapSpan(core.NewTextRange(scriptStart, scriptStart+len("export")))
+	assert.Equal(t, exact, spanmap.FidelityExact)
+
+	templateTitle := strings.LastIndex(result.Text, "title")
+	_, atom := result.Mappings.MapSpan(core.NewTextRange(templateTitle, templateTitle+len("title")))
+	assert.Equal(t, atom, spanmap.FidelityAtom)
+
+	expressionStart := strings.Index(result.Text, "title + suffix")
+	_, approximate := result.Mappings.MapSpan(core.NewTextRange(expressionStart, expressionStart+len("title + suffix")))
+	assert.Equal(t, approximate, spanmap.FidelityApproximate)
+
+	renderStart := strings.Index(result.Text, "__render")
+	_, none := result.Mappings.MapSpan(core.NewTextRange(renderStart, renderStart+len("__render")))
+	assert.Equal(t, none, spanmap.FidelityNone)
+
+	markupStart := strings.Index(content, "<h1>")
+	_, reverseNone := result.Mappings.MapPositionToGenerated(core.TextPos(markupStart))
+	assert.Equal(t, reverseNone, spanmap.FidelityNone)
+
+	componentName := strings.Index(result.Text, "ProfileCard")
+	_, componentNameFidelity := result.Mappings.MapSpan(core.NewTextRange(componentName, componentName+len("ProfileCard")))
+	assert.Equal(t, componentNameFidelity, spanmap.FidelityAtom)
+	componentDeclaration := strings.Index(result.Text, "export class ProfileCard")
+	_, componentDeclarationFidelity := result.Mappings.MapSpan(core.NewTextRange(componentDeclaration, componentDeclaration+len("export class ProfileCard {}")))
+	assert.Equal(t, componentDeclarationFidelity, spanmap.FidelityApproximate)
 }
 
 // TestOutOfProcess exercises the real out-of-process IPC path: it spawns the test binary as a mapper

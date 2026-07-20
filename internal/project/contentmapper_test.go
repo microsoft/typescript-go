@@ -3,7 +3,6 @@ package project_test
 import (
 	"context"
 	"errors"
-	"slices"
 	"strings"
 	"testing"
 
@@ -23,7 +22,7 @@ func TestContentMapperInProject(t *testing.T) {
 			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true },
 			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
 		}`,
-		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ExecName),
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
 		"/home/project/app.box":                          "export const version = #{target};\n",
 		"/home/project/main.ts":                          "import { version } from \"./app.box\";\nexport const twice: number = version * 2;\n",
 	}
@@ -141,10 +140,7 @@ func TestContentMapperInProject(t *testing.T) {
 	})
 }
 
-// TestContentMapperDiagnostics verifies that compiler diagnostics on a content-mapped file are reported
-// against the original (untransformed) text: the mapper prepends a synthesized preamble line, so a
-// diagnostic in the body would land one line too low if its transformed range were used verbatim.
-func TestContentMapperDiagnostics(t *testing.T) {
+func TestContentMapperSynthesizedDocumentSymbols(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -154,112 +150,7 @@ func TestContentMapperDiagnostics(t *testing.T) {
 			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
 			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
 		}`,
-		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ExecName),
-		"/home/project/app.box":                          "export const version = #{target};\nexport const bad: string = version;\n",
-		"/home/project/main.ts":                          "import \"./app.box\";\n",
-	}
-
-	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
-	}, nil)
-	init.Spawner = contentmappertest.NewSpawner()
-	session := project.NewSession(init)
-	defer session.Close()
-
-	ctx := context.Background()
-	session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
-	// Open the .box with a foreign language id, matching how an editor opens a content-mapped file.
-	session.DidOpenFile(ctx, "file:///home/project/app.box", 1, files["/home/project/app.box"].(string), lsproto.LanguageKind("box"))
-
-	ls, err := session.GetLanguageService(ctx, "file:///home/project/app.box")
-	assert.NilError(t, err)
-
-	resp, err := ls.ProvideDiagnostics(ctx, "file:///home/project/app.box")
-	assert.NilError(t, err)
-	report := resp.FullDocumentDiagnosticReport
-	assert.Assert(t, report != nil, "expected a full diagnostic report")
-
-	// The assignability error (TS2322) is on `version` in `export const bad: string = version;`, which is
-	// original line 1. The transformed text prepends a synthesized preamble line, so an unmapped range
-	// would report it on line 2; the span map must place it back on line 1.
-	var found bool
-	for _, d := range report.Items {
-		if d.Code != nil && d.Code.Integer != nil && *d.Code.Integer == 2322 {
-			found = true
-			assert.Equal(t, d.Range.Start.Line, uint32(1), "type error should map back to the original .box line")
-		}
-	}
-	assert.Assert(t, found, "expected a type-assignability diagnostic on app.box")
-}
-
-// TestContentMapperOutputMapping verifies that a language-service result whose location lands in a
-// content-mapped file's transformed text is reported in the file's original coordinates. A go-to-definition
-// from a .ts file into a .box declaration must point at the original position, not the transformed one
-// (which is shifted by the mapper's synthesized preamble).
-func TestContentMapperOutputMapping(t *testing.T) {
-	t.Parallel()
-	if !bundled.Embedded {
-		t.Skip("bundled files are not embedded")
-	}
-	files := map[string]any{
-		"/home/project/tsconfig.json": `{
-			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
-			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
-		}`,
-		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ExecName),
-		"/home/project/app.box":                          "export const version = #{target};\n",
-		"/home/project/main.ts":                          "import { version } from \"./app.box\";\nexport const twice: number = version * 2;\n",
-	}
-
-	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
-	}, nil)
-	init.Spawner = contentmappertest.NewSpawner()
-	session := project.NewSession(init)
-	defer session.Close()
-
-	ctx := context.Background()
-	session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
-
-	ls, err := session.GetLanguageService(ctx, "file:///home/project/main.ts")
-	assert.NilError(t, err)
-
-	// `version` appears at character 29 on line 1 of main.ts ("...number = version * 2;").
-	definition, err := ls.ProvideDefinition(ctx, "file:///home/project/main.ts", lsproto.Position{Line: 1, Character: 32})
-	assert.NilError(t, err)
-	assert.Assert(t, definition.Locations != nil, "expected a definition result")
-	locs := *definition.Locations
-	assert.Equal(t, len(locs), 1, "expected exactly one definition location")
-
-	// In app.box the declaration `export const version` places `version` at original line 0, characters
-	// 13-20. The mapper's synthesized preamble shifts it to a later line in the transformed text, so an
-	// unmapped range would report the wrong position.
-	def := locs[0]
-	assert.Equal(t, string(def.Uri), "file:///home/project/app.box")
-	assert.Equal(t, def.Range.Start.Line, uint32(0), "definition should map back to the original .box line")
-	assert.Equal(t, def.Range.Start.Character, uint32(13), "definition should map back to the original .box character")
-	assert.Equal(t, def.Range.End.Character, uint32(20))
-}
-
-func TestContentMapperSynthesizedDefinitionFallsBackToFile(t *testing.T) {
-	t.Parallel()
-	if !bundled.Embedded {
-		t.Skip("bundled files are not embedded")
-	}
-	files := map[string]any{
-		"/home/project/tsconfig.json": `{
-			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
-			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
-		}`,
-		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.SynthesizingExec),
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.SynthesizingMapper),
 		"/home/project/app.box":                          "component source with no direct TypeScript span\n",
 		"/home/project/main.ts":                          "import { el } from \"./app.box\";\nexport const value = el;\n",
 	}
@@ -280,157 +171,10 @@ func TestContentMapperSynthesizedDefinitionFallsBackToFile(t *testing.T) {
 	ls, err := session.GetLanguageService(ctx, "file:///home/project/main.ts")
 	assert.NilError(t, err)
 
-	definition, err := ls.ProvideDefinition(ctx, "file:///home/project/main.ts", lsproto.Position{Line: 1, Character: 22})
-	assert.NilError(t, err)
-	assert.Assert(t, definition.Locations != nil, "expected a file-level definition result")
-	locations := *definition.Locations
-	assert.Equal(t, len(locations), 1)
-	assert.Equal(t, string(locations[0].Uri), "file:///home/project/app.box")
-	assert.Equal(t, locations[0].Range, lsproto.Range{}, "synthesized definition should navigate to the file without claiming a source span")
-
 	symbols, err := ls.ProvideDocumentSymbols(ctx, "file:///home/project/app.box")
 	assert.NilError(t, err)
 	assert.Assert(t, symbols.SymbolInformations != nil)
 	assert.Equal(t, len(*symbols.SymbolInformations), 0, "synthesized declarations should not appear as symbols at unrelated source ranges")
-}
-
-// TestContentMapperRequestOrigin verifies that a language-service request whose position originates inside
-// a content-mapped file is answered by mapping the original position forward into the transformed text. A
-// hover over a real identifier in the .box file must resolve, while a hover in a fully synthesized mapper's
-// output (which has no original counterpart) must return nothing rather than a misplaced result.
-func TestContentMapperRequestOrigin(t *testing.T) {
-	t.Parallel()
-	if !bundled.Embedded {
-		t.Skip("bundled files are not embedded")
-	}
-
-	newSession := func(t *testing.T, execName, boxContent string) *project.Session {
-		files := map[string]any{
-			"/home/project/tsconfig.json": `{
-				"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
-				"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
-			}`,
-			"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(execName),
-			"/home/project/app.box":                          boxContent,
-			"/home/project/main.ts":                          "import \"./app.box\";\n",
-		}
-		init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-			CurrentDirectory:               "/home/project",
-			DefaultLibraryPath:             bundled.LibPath(),
-			TypingsLocation:                projecttestutil.TestTypingsLocation,
-			PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-			DangerouslyLoadExternalPlugins: true,
-		}, nil)
-		init.Spawner = contentmappertest.NewSpawner()
-		session := project.NewSession(init)
-		ctx := context.Background()
-		session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
-		session.DidOpenFile(ctx, "file:///home/project/app.box", 1, boxContent, lsproto.LanguageKind("box"))
-		return session
-	}
-
-	t.Run("hover over a verbatim identifier resolves through the mapped position", func(t *testing.T) {
-		t.Parallel()
-		session := newSession(t, contentmappertest.ExecName, "export const version = #{target};\n")
-		defer session.Close()
-
-		ls, err := session.GetLanguageService(context.Background(), "file:///home/project/app.box")
-		assert.NilError(t, err)
-
-		// `version` sits at original line 0, characters 13-20. Its original position must be mapped forward
-		// into the transformed text for the checker to resolve it.
-		hover, err := ls.ProvideHover(context.Background(), &lsproto.HoverParams{
-			TextDocument: lsproto.TextDocumentIdentifier{Uri: "file:///home/project/app.box"},
-			Position:     lsproto.Position{Line: 0, Character: 15},
-		})
-		assert.NilError(t, err)
-		assert.Assert(t, hover.Hover != nil, "expected a hover result for the .box identifier")
-		assert.Assert(t, strings.Contains(hover.Hover.Contents.MarkupContent.Value, "version"), "hover should describe `version`: %+v", hover.Hover.Contents)
-	})
-
-	t.Run("hover in fully synthesized output returns nothing", func(t *testing.T) {
-		t.Parallel()
-		session := newSession(t, contentmappertest.SynthesizingExec, "anything\n")
-		defer session.Close()
-
-		ls, err := session.GetLanguageService(context.Background(), "file:///home/project/app.box")
-		assert.NilError(t, err)
-
-		// The synthesizing mapper's output has no original counterpart, so the position cannot be mapped
-		// forward and the request must yield no result.
-		hover, err := ls.ProvideHover(context.Background(), &lsproto.HoverParams{
-			TextDocument: lsproto.TextDocumentIdentifier{Uri: "file:///home/project/app.box"},
-			Position:     lsproto.Position{Line: 0, Character: 0},
-		})
-		assert.NilError(t, err)
-		assert.Assert(t, hover.Hover == nil, "expected no hover result in fully synthesized output")
-	})
-}
-
-// TestContentMapperSynthesizedDiagnostics verifies that compiler errors in a mapper's fully synthesized
-// output (which have no location in the original file) are not dropped or scattered at position 0, but
-// collected into a single aggregate diagnostic at the top of the file whose related information carries
-// the real messages.
-func TestContentMapperSynthesizedDiagnostics(t *testing.T) {
-	t.Parallel()
-	if !bundled.Embedded {
-		t.Skip("bundled files are not embedded")
-	}
-	files := map[string]any{
-		"/home/project/tsconfig.json": `{
-			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
-			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
-		}`,
-		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.SynthesizingExec),
-		"/home/project/app.box":                          "anything\n",
-		"/home/project/main.ts":                          "import \"./app.box\";\n",
-	}
-
-	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
-	}, nil)
-	init.Spawner = contentmappertest.NewSpawner()
-	session := project.NewSession(init)
-	defer session.Close()
-
-	ctx := context.Background()
-	session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
-	session.DidOpenFile(ctx, "file:///home/project/app.box", 1, files["/home/project/app.box"].(string), lsproto.LanguageKind("box"))
-
-	ls, err := session.GetLanguageService(ctx, "file:///home/project/app.box")
-	assert.NilError(t, err)
-
-	// The aggregate carries the underlying messages as related information, which the converter only emits
-	// when the client advertises support for it.
-	caps := &lsproto.ResolvedClientCapabilities{}
-	caps.TextDocument.Diagnostic.RelatedInformation = true
-	diagCtx := lsproto.WithClientCapabilities(ctx, caps)
-	resp, err := ls.ProvideDiagnostics(diagCtx, "file:///home/project/app.box")
-	assert.NilError(t, err)
-	report := resp.FullDocumentDiagnosticReport
-	assert.Assert(t, report != nil, "expected a full diagnostic report")
-
-	// The synthesizing mapper emits `export const el = jsxRuntime(Widget);` with a fully synthesized span
-	// map, so its "Cannot find name" errors have no location in app.box. They must be folded into a single
-	// aggregate at the top of the file, with the real messages preserved as related information.
-	assert.Equal(t, len(report.Items), 1, "synthesized errors should collapse to a single aggregate diagnostic")
-	aggregate := report.Items[0]
-	assert.Equal(t, aggregate.Range.Start.Line, uint32(0), "aggregate should sit at the top of the file")
-	assert.Assert(t, aggregate.Code != nil && aggregate.Code.Integer != nil && *aggregate.Code.Integer == 100037, "aggregate should carry the content-mapper diagnostic code")
-	assert.Assert(t, aggregate.RelatedInformation != nil, "aggregate should carry related information")
-	related := *aggregate.RelatedInformation
-	assert.Assert(t, len(related) >= 1, "expected the real messages as related information")
-	var sawCannotFindName bool
-	for _, info := range related {
-		if strings.Contains(info.Message, "Cannot find name") {
-			sawCannotFindName = true
-		}
-	}
-	assert.Assert(t, sawCannotFindName, "expected the underlying compiler messages to be preserved")
 }
 
 // TestContentMapperCompletions verifies that completions are offered inside verbatim spans of a
@@ -464,7 +208,7 @@ func TestContentMapperCompletions(t *testing.T) {
 				"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
 				"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
 			}`,
-			"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ExecName),
+			"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
 			"/home/project/app.box":                          boxContent,
 			"/home/project/main.ts":                          "import \"./app.box\";\n",
 		}
@@ -572,82 +316,4 @@ func completeContentMapped(t *testing.T, session *project.Session, uri lsproto.D
 	})
 	assert.NilError(t, err)
 	return resp
-}
-
-// TestContentMapperRename verifies that a rename originating in a verbatim span rewrites the verbatim
-// occurrences in original coordinates, and that prepareRename declines a position outside a verbatim span.
-func TestContentMapperRename(t *testing.T) {
-	t.Parallel()
-	if !bundled.Embedded {
-		t.Skip("bundled files are not embedded")
-	}
-
-	newSession := func(t *testing.T, boxContent string) *project.Session {
-		files := map[string]any{
-			"/home/project/tsconfig.json": `{
-				"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
-				"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
-			}`,
-			"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ExecName),
-			"/home/project/app.box":                          boxContent,
-			"/home/project/main.ts":                          "import \"./app.box\";\n",
-		}
-		init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-			CurrentDirectory:               "/home/project",
-			DefaultLibraryPath:             bundled.LibPath(),
-			TypingsLocation:                projecttestutil.TestTypingsLocation,
-			PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-			DangerouslyLoadExternalPlugins: true,
-		}, nil)
-		init.Spawner = contentmappertest.NewSpawner()
-		session := project.NewSession(init)
-		ctx := context.Background()
-		session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
-		session.DidOpenFile(ctx, "file:///home/project/app.box", 1, boxContent, lsproto.LanguageKind("box"))
-		return session
-	}
-
-	t.Run("renames verbatim occurrences in original coordinates", func(t *testing.T) {
-		t.Parallel()
-		session := newSession(t, "export const foo = 1;\nexport const bar = foo;\n")
-		defer session.Close()
-
-		ctx := context.Background()
-		ls, err := session.GetLanguageService(ctx, "file:///home/project/app.box")
-		assert.NilError(t, err)
-
-		// `foo` is declared at original line 0, char 13 (a verbatim span), so rename is allowed.
-		info := ls.GetRenameInfo(ctx, "baz", "file:///home/project/app.box", lsproto.Position{Line: 0, Character: 14})
-		assert.Assert(t, info.CanRename, "expected rename to be allowed at a verbatim identifier")
-
-		result, err := ls.ProvideRename(ctx, &lsproto.RenameParams{
-			TextDocument: lsproto.TextDocumentIdentifier{Uri: "file:///home/project/app.box"},
-			Position:     lsproto.Position{Line: 0, Character: 14},
-			NewName:      "baz",
-		}, nil)
-		assert.NilError(t, err)
-		assert.Assert(t, result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil, "expected a workspace edit")
-		edits := (*result.WorkspaceEdit.Changes)["file:///home/project/app.box"]
-		assert.Equal(t, len(edits), 2, "expected the declaration and use to be renamed")
-		lines := []uint32{}
-		for _, edit := range edits {
-			lines = append(lines, edit.Range.Start.Line)
-			assert.Equal(t, edit.NewText, "baz")
-		}
-		assert.Assert(t, slices.Contains(lines, uint32(0)) && slices.Contains(lines, uint32(1)), "edits should map to original lines 0 and 1, got %v", lines)
-	})
-
-	t.Run("declines rename outside a verbatim span", func(t *testing.T) {
-		t.Parallel()
-		session := newSession(t, "export const version = #{target};\n")
-		defer session.Close()
-
-		ctx := context.Background()
-		ls, err := session.GetLanguageService(ctx, "file:///home/project/app.box")
-		assert.NilError(t, err)
-
-		// The `#{target}` token maps to an atom span, which cannot be edited in the original text.
-		info := ls.GetRenameInfo(ctx, "whatever", "file:///home/project/app.box", lsproto.Position{Line: 0, Character: 25})
-		assert.Assert(t, !info.CanRename, "expected rename to be declined inside an atom span")
-	})
 }

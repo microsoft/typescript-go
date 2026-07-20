@@ -986,7 +986,7 @@ func (l *LanguageService) symbolAndEntriesToImplementations(ctx context.Context,
 		links := l.convertEntriesToLocationLinks(entries)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
-	locations := l.convertEntriesToLocations(entries)
+	locations := l.convertEntriesToLocations(entries, nil /*definitionSymbol*/)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
@@ -1001,7 +1001,11 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 		})
 	}
 
-	return l.convertEntriesToLocations(references)
+	var definitionSymbol *ast.Symbol
+	if includeDeclarations && s.definition != nil {
+		definitionSymbol = s.definition.symbol
+	}
+	return l.convertEntriesToLocations(references, definitionSymbol)
 }
 
 func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
@@ -1028,11 +1032,25 @@ func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
 	})
 }
 
-func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
-	locations := make([]lsproto.Location, 0, len(entries))
+func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry, definitionSymbol *ast.Symbol) []lsproto.Location {
+	// A synthesized declaration has no source span, but it still represents the symbol's definition in
+	// that file. Mirror go-to-definition's file-level fallback while continuing to omit synthesized uses.
+	concreteFiles := collections.Set[lsproto.DocumentUri]{}
 	for _, entry := range entries {
 		if location, ok := l.getLocationOfEntry(entry); ok {
+			concreteFiles.Add(location.Uri)
+		}
+	}
+
+	locations := make([]lsproto.Location, 0, len(entries))
+	for _, entry := range entries {
+		location, ok := l.getLocationOfEntry(entry)
+		if ok {
 			locations = append(locations, location)
+		} else if isDeclarationOfSymbol(entry.node, definitionSymbol) && !concreteFiles.Has(location.Uri) {
+			location.Range = lsproto.Range{}
+			locations = append(locations, location)
+			concreteFiles.Add(location.Uri)
 		}
 	}
 	return locations

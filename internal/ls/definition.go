@@ -216,7 +216,7 @@ func (l *LanguageService) createDefinitionLocations(
 				continue
 			}
 			targetLoc, contextFidelity := l.getMappedLocation(fileName, *contextRange)
-			if contextFidelity.IsNone() || targetLoc.Uri != targetSelectionLoc.Uri {
+			if contextFidelity.IsNone() || targetLoc.Uri != targetSelectionLoc.Uri || !lspRangeContains(targetLoc.Range, targetSelectionLoc.Range) {
 				targetLoc = targetSelectionLoc
 			}
 			concreteTargets.Add(targetSelectionLoc.Uri)
@@ -239,6 +239,11 @@ func (l *LanguageService) createDefinitionLocations(
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &locations}
 	}
 	return createLocationsFromLinks(locations)
+}
+
+func lspRangeContains(outer, inner lsproto.Range) bool {
+	return lsproto.ComparePositions(outer.Start, inner.Start) <= 0 &&
+		lsproto.ComparePositions(inner.End, outer.End) <= 0
 }
 
 func createLocationsFromLinks(links []*lsproto.LocationLink) lsproto.DefinitionResponse {

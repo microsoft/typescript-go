@@ -172,6 +172,9 @@ func (l *LanguageService) getRenameInfoForNode(ctx context.Context, newName stri
 }
 
 func nodeIsEligibleForRename(node *ast.Node) bool {
+	if node == nil {
+		return false
+	}
 	switch node.Kind {
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,

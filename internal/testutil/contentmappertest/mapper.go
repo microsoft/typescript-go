@@ -23,18 +23,21 @@ import (
 )
 
 const (
-	// ExecName selects the full transforming mapper (synthesized preamble + verbatim body + option-token
+	// TransformingMapper selects the full transforming mapper (synthesized preamble + verbatim body + option-token
 	// atoms). This is the "realistic" mapper used by most content-mapper tests.
-	ExecName = "compiler-test-mapper"
-	// VerbatimExec selects a mapper that copies its input through unchanged with an identity span map. The
+	TransformingMapper = "compiler-test-mapper"
+	// VerbatimMapper selects a mapper that copies its input through unchanged with an identity span map. The
 	// input is expected to already be valid TypeScript.
-	VerbatimExec = "verbatim-mapper"
-	// FailingExec selects a mapper that initializes but fails every transform request, exercising the
+	VerbatimMapper = "verbatim-mapper"
+	// FailingMapper selects a mapper that initializes but fails every transform request, exercising the
 	// per-file failure and mapper-disabled paths.
-	FailingExec = "failing-mapper"
-	// SynthesizingExec selects a mapper that emits synthesized TypeScript with no original counterpart, so
+	FailingMapper = "failing-mapper"
+	// SynthesizingMapper selects a mapper that emits synthesized TypeScript with no original counterpart, so
 	// compiler diagnostics in it are reported against the generated text.
-	SynthesizingExec = "synthesizing-mapper"
+	SynthesizingMapper = "synthesizing-mapper"
+	// ComponentMapper selects a Vue-like mapper that extracts <script> contents verbatim, lowers identifiers
+	// in {{ template expressions }} as atom mappings, omits markup, and synthesizes component glue.
+	ComponentMapper = "component-mapper"
 	// PackageName is the conventional npm package name for the mapper in test fixtures.
 	PackageName = "mapper"
 )
@@ -267,27 +270,162 @@ func (synthesizingHandler) HandleRequest(ctx context.Context, method string, par
 	}
 }
 
-// handlerForExec selects the mapper implementation named by a package.json's tsContentMapper.exec command.
-func handlerForExec(command []string) (ipc.Handler, error) {
+type componentHandler struct{ noNotifications }
+
+func (componentHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		text, mappings, err := transformComponent(p.Content)
+		if err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{
+			Text:       text,
+			ScriptKind: core.ScriptKindTS,
+			Mappings:   mappings,
+		}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
+}
+
+func transformComponent(content string) (string, json.Value, error) {
+	var gen strings.Builder
+	var segments []spanmap.Segment
+
+	writeSynthesized := func(text string) {
+		gen.WriteString(text)
+	}
+	writeMapped := func(text string, origStart, origEnd int, kind spanmap.Kind) {
+		genStart := core.TextPos(gen.Len())
+		gen.WriteString(text)
+		segments = append(segments, spanmap.Segment{
+			GenStart:  genStart,
+			GenEnd:    core.TextPos(gen.Len()),
+			OrigStart: core.TextPos(origStart),
+			OrigEnd:   core.TextPos(origEnd),
+			Kind:      kind,
+		})
+	}
+
+	scriptOpen := strings.Index(content, "<script")
+	if scriptOpen >= 0 {
+		openEndRel := strings.IndexByte(content[scriptOpen:], '>')
+		if openEndRel < 0 {
+			return "", nil, errors.New("contentmappertest: unclosed <script> tag")
+		}
+		scriptStart := scriptOpen + openEndRel + 1
+		closeRel := strings.Index(content[scriptStart:], "</script>")
+		if closeRel < 0 {
+			return "", nil, errors.New("contentmappertest: missing </script> tag")
+		}
+		scriptEnd := scriptStart + closeRel
+		writeMapped(content[scriptStart:scriptEnd], scriptStart, scriptEnd, spanmap.KindVerbatim)
+	}
+
+	writeSynthesized("\nfunction __render() {\n")
+	for searchStart := 0; searchStart < len(content); {
+		openRel := strings.Index(content[searchStart:], "{{")
+		if openRel < 0 {
+			break
+		}
+		exprStart := searchStart + openRel + len("{{")
+		closeRel := strings.Index(content[exprStart:], "}}")
+		if closeRel < 0 {
+			return "", nil, errors.New("contentmappertest: unclosed template expression")
+		}
+		exprEnd := exprStart + closeRel
+		writeSynthesized("  void (")
+		for pos := exprStart; pos < exprEnd; {
+			if !isIdentifierStart(content[pos]) {
+				writeSynthesized(content[pos : pos+1])
+				pos++
+				continue
+			}
+			end := pos + 1
+			for end < exprEnd && isIdentifierPart(content[end]) {
+				end++
+			}
+			writeMapped(content[pos:end], pos, end, spanmap.KindAtom)
+			pos = end
+		}
+		writeSynthesized(");\n")
+		searchStart = exprEnd + len("}}")
+	}
+	writeSynthesized("}\n")
+	if nameStart, nameEnd, ok := componentNameRange(content); ok {
+		writeSynthesized("export class ")
+		writeMapped(content[nameStart:nameEnd], nameStart, nameEnd, spanmap.KindAtom)
+		writeSynthesized(" {}\n")
+	}
+	writeSynthesized("export default {};\n")
+
+	mappings, err := spanmap.New(segments).Marshal()
+	if err != nil {
+		return "", nil, err
+	}
+	return gen.String(), json.Value(mappings), nil
+}
+
+func componentNameRange(content string) (start, end int, ok bool) {
+	componentStart := strings.Index(content, "<component")
+	if componentStart < 0 {
+		return 0, 0, false
+	}
+	tagEndRel := strings.IndexByte(content[componentStart:], '>')
+	if tagEndRel < 0 {
+		return 0, 0, false
+	}
+	tag := content[componentStart : componentStart+tagEndRel]
+	nameRel := strings.Index(tag, `name="`)
+	if nameRel < 0 {
+		return 0, 0, false
+	}
+	start = componentStart + nameRel + len(`name="`)
+	endRel := strings.IndexByte(content[start:], '"')
+	if endRel < 0 {
+		return 0, 0, false
+	}
+	return start, start + endRel, true
+}
+
+func isIdentifierStart(ch byte) bool {
+	return ch == '_' || ch == '$' || ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
+}
+
+func isIdentifierPart(ch byte) bool {
+	return isIdentifierStart(ch) || ch >= '0' && ch <= '9'
+}
+
+// handlerForMapper selects the mapper implementation named by a package.json's tsContentMapper.exec command.
+func handlerForMapper(command []string) (ipc.Handler, error) {
 	if len(command) == 0 {
 		return nil, errors.New("contentmappertest: empty mapper command")
 	}
 	switch command[0] {
-	case ExecName:
+	case TransformingMapper:
 		return Handler{}, nil
-	case VerbatimExec:
+	case VerbatimMapper:
 		return verbatimHandler{}, nil
-	case FailingExec:
+	case FailingMapper:
 		return failingHandler{}, nil
-	case SynthesizingExec:
+	case SynthesizingMapper:
 		return synthesizingHandler{}, nil
+	case ComponentMapper:
+		return componentHandler{}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unknown mapper command %v", command)
 	}
 }
 
 // NewSpawner returns a contentmapper.Spawner that serves the fake mappers in-process. It selects the
-// implementation by the exec command a mapper package declares (see the *Exec constants), standing it up
+// implementation named by the mapper package, standing it up
 // over a net.Pipe so tests exercise the full IPC stack without spawning a real subprocess.
 func NewSpawner() contentmapper.Spawner {
 	return spawner{}
@@ -296,7 +434,7 @@ func NewSpawner() contentmapper.Spawner {
 type spawner struct{}
 
 func (spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	handler, err := handlerForExec(command)
+	handler, err := handlerForMapper(command)
 	if err != nil {
 		return nil, err
 	}
@@ -306,16 +444,16 @@ func (spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
 }
 
 // PackageJSON returns the contents of a package.json that selects the given mapper via its
-// tsContentMapper.exec command (one of the *Exec constants), for use as a node_modules fixture in tests.
-// The transforming mapper (ExecName) declares the compiler options it depends on; the others declare none.
-func PackageJSON(exec string) string {
+// tsContentMapper.exec command, for use as a node_modules fixture in tests. TransformingMapper declares
+// the compiler options it depends on; the others declare none.
+func PackageJSON(mapper string) string {
 	compilerOptions := ""
-	if exec == ExecName {
+	if mapper == TransformingMapper {
 		compilerOptions = `, "compilerOptions": ["target", "jsx"]`
 	}
 	return fmt.Sprintf(`{
 	"name": %q,
 	"version": "1.0.0",
 	"tsContentMapper": { "exec": [%q]%s }
-}`, PackageName, exec, compilerOptions)
+}`, PackageName, mapper, compilerOptions)
 }

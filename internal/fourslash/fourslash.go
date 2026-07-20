@@ -15,6 +15,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -154,6 +155,19 @@ var parseCache = project.NewParseCache(
 )
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
+	return NewFourslashWithOptions(t, content, &FourslashOptions{Capabilities: capabilities})
+}
+
+type FourslashOptions struct {
+	Capabilities                   *lsproto.ClientCapabilities
+	ContentMapperSpawner           contentmapper.Spawner
+	DangerouslyLoadExternalPlugins bool
+}
+
+func NewFourslashWithOptions(t *testing.T, content string, options *FourslashOptions) (*FourslashTest, func()) {
+	if options == nil {
+		options = &FourslashOptions{}
+	}
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
@@ -207,6 +221,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 		ParseCache: parseCache,
 	}
+	if options.ContentMapperSpawner != nil {
+		serverOpts.Spawn = options.ContentMapperSpawner.Spawn
+	}
 
 	converters := newTestConverters(lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
@@ -235,7 +252,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
 	client.SetCompilerOptionsForInferredProjects(compilerOptions)
-	f.initialize(t, capabilities)
+	f.initialize(t, options.Capabilities, options.DangerouslyLoadExternalPlugins)
 
 	if testData.isStateBaseliningEnabled() {
 		// Single baseline, so initialize project state baseline too
@@ -339,13 +356,17 @@ func getBaseFileNameFromTest(t *testing.T) string {
 
 const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 
-func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
+func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities, dangerouslyLoadExternalPlugins bool) {
+	initializationOptions := &lsproto.InitializationOptions{
+		CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
+	}
+	if dangerouslyLoadExternalPlugins {
+		initializationOptions.DangerouslyLoadExternalPlugins = new(true)
+	}
 	params := &lsproto.InitializeParams{
 		Locale: new("en-US"),
 		InitializationOptions: &lsproto.InitializationOptionsOrNull{
-			InitializationOptions: &lsproto.InitializationOptions{
-				CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
-			},
+			InitializationOptions: initializationOptions,
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
@@ -4006,6 +4027,9 @@ func (f *FourslashTest) getOrLoadScriptInfo(fileName string) *scriptInfo {
 func (f *FourslashTest) VerifyQuickInfoAt(t *testing.T, marker string, expectedText string, expectedDocumentation string) {
 	f.GoToMarker(t, marker)
 	hover := f.getQuickInfoAtCurrentPosition(t)
+	if hover == nil {
+		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
+	}
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
@@ -4017,9 +4041,6 @@ func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hov
 		Position: f.currentCaretPosition,
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
-	if result.Hover == nil {
-		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
-	}
 	return result.Hover
 }
 
