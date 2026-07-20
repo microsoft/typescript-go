@@ -363,7 +363,7 @@ func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn fu
 			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
 			signatureLinks.resolvedSignature = nil
 			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
-				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
+				symbolLinks := c.getValueSymbolLinks(c.getSymbolOfDeclaration(ancestorNode))
 				resolvedType := symbolLinks.resolvedType
 				cachedTypes[symbolLinks] = resolvedType
 				symbolLinks.resolvedType = nil
@@ -402,7 +402,7 @@ func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 }
 
 func (c *Checker) GetMappedTypeSymbolOfProperty(symbol *ast.Symbol) *ast.Symbol {
-	if valueLinks := c.valueSymbolLinks.TryGet(symbol); valueLinks != nil {
+	if valueLinks := c.tryGetValueSymbolLinks(symbol); valueLinks != nil {
 		return valueLinks.containingType.symbol
 	}
 	return nil
@@ -411,7 +411,7 @@ func (c *Checker) GetMappedTypeSymbolOfProperty(symbol *ast.Symbol) *ast.Symbol 
 func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	if symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
 		return core.MapNonNil(
-			c.valueSymbolLinks.Get(symbol).containingType.Types(),
+			c.getValueSymbolLinks(symbol).containingType.Types(),
 			func(t *Type) *ast.Symbol {
 				return c.getPropertyOfType(t, symbol.Name)
 			},
@@ -443,7 +443,7 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 	var target *ast.Symbol
 	next := symbol
 	for {
-		if links := c.valueSymbolLinks.TryGet(next); links != nil {
+		if links := c.tryGetValueSymbolLinks(next); links != nil {
 			next = links.target
 		} else if c.exportTypeLinks.Has(next) {
 			next = c.exportTypeLinks.Get(next).target
