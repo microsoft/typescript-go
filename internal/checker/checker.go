@@ -22346,6 +22346,23 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 }
 
 func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bool {
+	var tpDeclaration *ast.Node
+	if tp.symbol != nil {
+		declarations := tp.symbol.Declarations
+		switch {
+		case len(declarations) == 1:
+			tpDeclaration = declarations[0]
+		case tp.AsTypeParameter().isThisType && core.Some(declarations, ast.IsClassDeclaration):
+			// A class/interface merge gives polymorphic `this` a symbol with multiple
+			// declarations. Select the declaration that actually contains this node.
+			for _, declaration := range declarations {
+				if isNodeDescendantOf(node, declaration) {
+					tpDeclaration = declaration
+					break
+				}
+			}
+		}
+	}
 	var containsReference func(*ast.Node) bool
 	containsReference = func(node *ast.Node) bool {
 		switch node.Kind {
@@ -22361,7 +22378,6 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 			firstIdentifier := ast.GetFirstIdentifier(entityName)
 			if !ast.IsThisIdentifier(firstIdentifier) {
 				firstIdentifierSymbol := c.getResolvedSymbol(firstIdentifier)
-				tpDeclaration := tp.symbol.Declarations[0] // There is exactly one declaration, otherwise `containsReference` is not called
 				var tpScope *ast.Node
 				switch {
 				case ast.IsTypeParameterDeclaration(tpDeclaration):
@@ -22384,12 +22400,11 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 		}
 		return node.ForEachChild(containsReference)
 	}
-	// If the type parameter doesn't have exactly one declaration, if there are intervening statement blocks
-	// between the node and the type parameter declaration, if the node contains actual references to the
-	// type parameter, or if the node contains type queries that we can't prove couldn't contain references to the type parameter,
-	// we consider the type parameter possibly referenced.
-	if tp.symbol != nil && len(tp.symbol.Declarations) == 1 {
-		container := tp.symbol.Declarations[0].Parent
+	// For regular type parameters with multiple declarations, or a polymorphic `this` whose containing
+	// declaration can't be identified, conservatively assume a reference. We do the same when there are
+	// intervening statement blocks, actual references, or type queries whose references can't be disproved.
+	if tpDeclaration != nil {
+		container := tpDeclaration.Parent
 		for n := node; n != container; n = n.Parent {
 			if n == nil || ast.IsBlock(n) || ast.IsConditionalTypeNode(n) && containsReference(n.AsConditionalTypeNode().ExtendsType) {
 				return true
