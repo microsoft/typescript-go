@@ -2160,7 +2160,15 @@ func (b *NodeBuilderImpl) indexInfoToIndexSignatureDeclarationHelper(indexInfo *
 }
 
 func hasTypeAnnotation(declaration *ast.Declaration) bool {
-	return declaration != nil && declaration.Type() != nil
+	if declaration == nil || declaration.Type() == nil {
+		return false
+	}
+	// Type alias declarations have a .Type() that is their type definition, not a type annotation on a value.
+	// Exclude them so callers don't mistake them for annotated value declarations.
+	if ast.IsTypeAliasDeclaration(declaration) || ast.IsJSTypeAliasDeclaration(declaration) {
+		return false
+	}
+	return true
 }
 
 /**
@@ -2221,9 +2229,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
 		if (pt == nil || pt.Kind == pseudochecker.PseudoTypeKindNoResult) && ast.IsBinaryExpression(declaration) {
-			if decl := core.Find(symbol.Declarations, func(d *ast.Declaration) bool {
-				return hasTypeAnnotation(d) && ast.HasInferredType(d)
-			}); decl != nil {
+			if decl := core.Find(symbol.Declarations, hasTypeAnnotation); decl != nil {
 				// Binary expressions have a first-in-wins type annotation system. The first one with an annotation supplies the type for the rest.
 				pt = b.pc.GetTypeOfDeclaration(decl)
 			}
