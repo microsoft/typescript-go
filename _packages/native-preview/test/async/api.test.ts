@@ -73,14 +73,24 @@ import {
 import { createVirtualFileSystem } from "@typescript/native-preview/unstable/fs";
 import type { FileSystem } from "@typescript/native-preview/unstable/fs";
 import assert from "node:assert";
-import { globSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+    globSync,
+    mkdirSync,
+    mkdtempSync,
+    readFileSync,
+    rmSync,
+    writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import {
+    join,
+    resolve,
+} from "node:path";
 import {
     describe,
     test,
 } from "node:test";
 import { fileURLToPath } from "node:url";
-import { EmitFlags } from "../../src/enums/emitFlags.ts";
 import { runBenchmarks } from "./api.bench.ts";
 
 const defaultFiles = {
@@ -4650,7 +4660,7 @@ export const obj = { m: 1, s: "hi", b: true };
 
 describe("Program - emitToString", () => {
     test("emitToString single file produces JS output", async () => {
-        const api = spawnAPI({
+        const { api, fs } = spawnAPIWithFS({
             "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
             "/src/a.ts": `export const a: number = 1;`,
         });
@@ -4665,6 +4675,7 @@ describe("Program - emitToString", () => {
             assert.ok(jsFile.text.includes("export const a = 1"), "JS output should contain the declaration");
             assert.equal(jsFile.sourceFileName, "/src/a.ts");
             assert.deepEqual(result.diagnostics, []);
+            assert.equal(fs.readFile?.("/src/a.js"), undefined);
         }
         finally {
             await api.close();
@@ -4684,6 +4695,7 @@ describe("Program - emitToString", () => {
             assert.equal(result.emitSkipped, false);
             const jsFiles = result.outputFiles.filter(f => f.fileName.endsWith(".js"));
             assert.equal(jsFiles.length, 2);
+            assert.deepEqual(jsFiles.map(f => f.fileName), ["/src/a.js", "/src/b.js"]);
             assert.ok(jsFiles.some(f => f.sourceFileName === "/src/a.ts"));
             assert.ok(jsFiles.some(f => f.sourceFileName === "/src/b.ts"));
         }
@@ -5562,7 +5574,7 @@ describe("Program - emit", () => {
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = await project.program.emit(undefined, EmitFlags.OnlyDts);
+            const result = await project.program.emit(undefined, EmitOnly.OnlyDts);
             assert.deepEqual(result, {
                 diagnostics: [],
                 emitSkipped: false,
@@ -5597,7 +5609,7 @@ describe("Program - emit", () => {
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = await project.program.emit(undefined, EmitFlags.OnlyJs);
+            const result = await project.program.emit(undefined, EmitOnly.OnlyJs);
             assert.deepEqual(result, {
                 diagnostics: [],
                 emitSkipped: false,
@@ -5655,6 +5667,142 @@ describe("Program - emit", () => {
             await api.close();
         }
     });
+
+    test("emit selected files and an empty selection", async () => {
+        const { api, fs } = spawnAPIWithFS({ ...files });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            const selected = await project.program.emit(["/src/testing.ts"]);
+            assert.deepEqual(selected.emittedFiles, [
+                "/dist/src/testing.js",
+                "/dist/src/testing.d.ts",
+            ]);
+            assert.equal(fs.readFile?.("/dist/src/index.js"), undefined);
+            assert.equal(fs.readFile?.("/dist/src/testing.js"), `export const y = 'typescript';\n`);
+
+            const empty = await project.program.emit([]);
+            assert.deepEqual(empty, {
+                diagnostics: [],
+                emitSkipped: false,
+                emittedFiles: [],
+            });
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit writes directly to the host filesystem when no VFS is configured", async () => {
+        const root = mkdtempSync(join(tmpdir(), "tsgo-api-emit-"));
+        const src = join(root, "src");
+        const config = join(root, "tsconfig.json");
+        mkdirSync(src);
+        writeFileSync(config, JSON.stringify({
+            compilerOptions: {
+                declaration: true,
+                outDir: "dist",
+                rootDir: "src",
+            },
+        }));
+        writeFileSync(join(src, "index.ts"), "export const value: number = 1;");
+
+        const api = new API({ cwd: root });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: config });
+            const project = snapshot.getProject(config)!;
+            const result = await project.program.emit();
+            assert.deepEqual(result.diagnostics, []);
+            assert.equal(readFileSync(join(root, "dist", "index.js"), "utf8"), "export const value = 1;\n");
+            assert.equal(readFileSync(join(root, "dist", "index.d.ts"), "utf8"), "export declare const value: number;\n");
+        }
+        finally {
+            await api.close();
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    test("noEmitOnError reports diagnostics without writing output", async () => {
+        const { api, fs } = spawnAPIWithFS({
+            "/tsconfig.json": JSON.stringify({
+                compilerOptions: {
+                    noEmitOnError: true,
+                    outDir: "dist",
+                },
+            }),
+            "/src/index.ts": "const value: string = 1;",
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emit();
+            assert.equal(result.emitSkipped, true);
+            assert.ok(result.diagnostics.length > 0);
+            assert.deepEqual(result.emittedFiles, []);
+            assert.equal(fs.readFile?.("/dist/src/index.js"), undefined);
+
+            const stringResult = await project.program.emitToString();
+            assert.equal(stringResult.emitSkipped, true);
+            assert.ok(stringResult.diagnostics.length > 0);
+            assert.deepEqual(stringResult.outputFiles, []);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("emit rejects unknown files and invalid emitOnly values", async () => {
+        const api = spawnAPI({ ...files });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            let error: unknown;
+            try {
+                await project.program.emit("/src/missing.ts");
+            }
+            catch (e) {
+                error = e;
+            }
+            assert.match(String(error), /source file not found/);
+
+            error = undefined;
+            try {
+                await project.program.emitToString(undefined, 999 as EmitOnly);
+            }
+            catch (e) {
+                error = e;
+            }
+            assert.match(String(error), /invalid emitOnly value/);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    // @sync-skip-block-start
+    test("emit reports async VFS write failures as diagnostics", async () => {
+        const fs = createVirtualFileSystem({ ...files });
+        fs.writeFile = () => {
+            throw new Error("write failed");
+        };
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs,
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const result = await project.program.emit("/src/index.ts");
+            assert.deepEqual(result.emittedFiles, []);
+            assert.ok(result.diagnostics.some(d => d.text.includes("write failed")));
+        }
+        finally {
+            await api.close();
+        }
+    });
+    // @sync-skip-block-end
 });
 
 test("Benchmarks", async () => {

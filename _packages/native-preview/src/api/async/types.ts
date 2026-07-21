@@ -393,6 +393,12 @@ export interface EmitOutputFile {
     readonly sourceFileName?: string | undefined;
 }
 
+export interface EmitResult {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly emittedFiles: readonly string[];
+}
+
 export interface EmitToStringResult {
     readonly emitSkipped: boolean;
     readonly diagnostics: readonly Diagnostic[];

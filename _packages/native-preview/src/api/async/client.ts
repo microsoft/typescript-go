@@ -132,15 +132,13 @@ export class Client {
     private registerFSCallbacks(connection: MessageConnection, fs: FileSystem | undefined): void {
         if (!fs) return;
         for (const name of fsCallbackNames) {
-            // writeFile is a special case because it has two parameters instead of one,
-            // so we handle it separately by destructuring the arguments from the JSON
-            // payload and passing them to the callback.
             if (name === "writeFile") {
                 if (!fs.writeFile) continue;
+                const callback = fs.writeFile;
 
                 const requestType = new RequestType<{ path: string; data: string; }, unknown, void>(name);
                 connection.onRequest(requestType, (arg: { path: string; data: string; }) => {
-                    fs.writeFile?.(arg.path, arg.data);
+                    callback(arg.path, arg.data);
                     return null;
                 });
 

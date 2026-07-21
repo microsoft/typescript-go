@@ -184,6 +184,7 @@ const (
 
 	// Emitter methods
 	MethodPrintNode    Method = "printNode"
+	MethodEmit         Method = "emit"
 	MethodEmitToString Method = "emitToString"
 
 	// Intrinsic type getters
@@ -476,7 +477,8 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
 	MethodGetCompletionsAtPosition:          unmarshallerFor[GetCompletionsAtPositionParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
-	MethodEmitToString:                      unmarshallerFor[EmitToStringParams],
+	MethodEmit:                              unmarshallerFor[EmitParams],
+	MethodEmitToString:                      unmarshallerFor[EmitParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetNumberType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -1090,11 +1092,17 @@ type PrintNodeParams struct {
 	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
 }
 
-type EmitToStringParams struct {
+type EmitParams struct {
 	Snapshot SnapshotID           `json:"snapshot"`
 	Project  ProjectID            `json:"project"`
 	Files    []DocumentIdentifier `json:"files,omitempty"`
-	EmitOnly *byte                `json:"emitOnly,omitempty"`
+	EmitOnly *uint32              `json:"emitOnly,omitempty"`
+}
+
+type EmitResponse struct {
+	EmitSkipped  bool                  `json:"emitSkipped"`
+	Diagnostics  []*DiagnosticResponse `json:"diagnostics"`
+	EmittedFiles []string              `json:"emittedFiles"`
 }
 
 type EmitOutputFile struct {

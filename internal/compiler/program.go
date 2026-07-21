@@ -1613,7 +1613,7 @@ type WriteFileData struct {
 type WriteFile func(fileName string, text string, data *WriteFileData) error
 
 type EmitOptions struct {
-	TargetSourceFiles []*ast.SourceFile // Single file to emit. If `nil`, emits all files
+	TargetSourceFiles []*ast.SourceFile // Source files to emit. If `nil`, emits all files
 	EmitOnly          EmitOnly
 	WriteFile         WriteFile
 }

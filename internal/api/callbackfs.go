@@ -197,17 +197,17 @@ func (fs *callbackFS) Realpath(path string) string {
 	return fs.base.Realpath(path)
 }
 
-// WriteFile implements vfs.FS
+// WriteFile implements vfs.FS.
 func (fs *callbackFS) WriteFile(path string, data string) error {
 	if fs.isEnabled(callbackWriteFile) {
-		data := struct {
+		payload := struct {
 			Path string `json:"path"`
 			Data string `json:"data"`
 		}{Path: path, Data: data}
 
-		_, err := fs.call(callbackWriteFile, data)
+		_, err := fs.call(callbackWriteFile, payload)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		return nil
 	}

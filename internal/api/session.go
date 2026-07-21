@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"slices"
 	"strconv"
@@ -706,8 +707,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleTypeToString(ctx, parsed.(*TypeToTypeNodeParams))
 	case string(MethodPrintNode):
 		return s.handlePrintNode(ctx, parsed.(*PrintNodeParams))
+	case string(MethodEmit):
+		return s.handleEmit(ctx, parsed.(*EmitParams))
 	case string(MethodEmitToString):
-		return s.handleEmitToString(ctx, parsed.(*EmitToStringParams))
+		return s.handleEmitToString(ctx, parsed.(*EmitParams))
 	case string(MethodIsContextSensitive):
 		return s.handleIsContextSensitive(ctx, parsed.(*GetContextualTypeParams))
 	case string(MethodGetReturnTypeOfSignature):
@@ -2296,55 +2299,125 @@ func (s *Session) handlePrintNode(_ context.Context, params *PrintNodeParams) (s
 	return p.Emit(node, nil), nil
 }
 
-func (s *Session) handleEmitToString(ctx context.Context, params *EmitToStringParams) (*EmitToStringResponse, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResponse, error) {
+	program, options, err := s.getEmitOptions(params)
+	if err != nil {
+		return nil, err
+	}
+	options.WriteFile = func(fileName string, text string, _ *compiler.WriteFileData) error {
+		return s.projectSession.FS().WriteFile(fileName, text)
+	}
+	result, err := emitProgram(ctx, program, options)
+	if err != nil {
+		return nil, err
+	}
+	emittedFiles := slices.Clone(result.EmittedFiles)
+	if emittedFiles == nil {
+		emittedFiles = []string{}
+	}
+	return &EmitResponse{
+		EmitSkipped:  result.EmitSkipped,
+		Diagnostics:  nonNilDiagnostics(result.Diagnostics),
+		EmittedFiles: emittedFiles,
+	}, nil
+}
+
+func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*EmitToStringResponse, error) {
+	program, options, err := s.getEmitOptions(params)
 	if err != nil {
 		return nil, err
 	}
 
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	emitOnly := compiler.EmitAll
-	if params.EmitOnly != nil {
-		emitOnly = compiler.EmitOnly(*params.EmitOnly)
-	}
-
-	var outputFiles collections.SyncSet[*EmitOutputFile]
-	writeFile := func(fileName string, text string, data *compiler.WriteFileData) error {
+	var mu sync.Mutex
+	outputFiles := make([]*EmitOutputFile, 0)
+	options.WriteFile = func(fileName string, text string, data *compiler.WriteFileData) error {
 		var sourceFileName *string
 		if data.SourceFile != nil {
 			name := data.SourceFile.FileName()
 			sourceFileName = &name
 		}
-		outputFiles.Add(&EmitOutputFile{FileName: fileName, Text: text, SourceFileName: sourceFileName})
+		mu.Lock()
+		outputFiles = append(outputFiles, &EmitOutputFile{FileName: fileName, Text: text, SourceFileName: sourceFileName})
+		mu.Unlock()
 		return nil
 	}
+
+	result, err := emitProgram(ctx, program, options)
+	if err != nil {
+		return nil, err
+	}
+	slices.SortFunc(outputFiles, func(a, b *EmitOutputFile) int {
+		return strings.Compare(a.FileName, b.FileName)
+	})
+	return &EmitToStringResponse{
+		EmitSkipped: result.EmitSkipped,
+		Diagnostics: nonNilDiagnostics(result.Diagnostics),
+		OutputFiles: outputFiles,
+	}, nil
+}
+
+func (s *Session) getEmitOptions(params *EmitParams) (*compiler.Program, compiler.EmitOptions, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+
+	emitOnly, err := getEmitOnly(params.EmitOnly)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+
 	var targetSourceFiles []*ast.SourceFile
 	if params.Files != nil {
 		targetSourceFiles = make([]*ast.SourceFile, 0, len(params.Files))
 		for _, file := range params.Files {
 			sourceFile, err := s.resolveOptionalSourceFile(program, &file)
 			if err != nil {
-				return nil, err
+				return nil, compiler.EmitOptions{}, err
 			}
 			targetSourceFiles = append(targetSourceFiles, sourceFile)
 		}
 	}
 
-	result := program.Emit(ctx, compiler.EmitOptions{
+	return program, compiler.EmitOptions{
 		EmitOnly:          emitOnly,
-		WriteFile:         writeFile,
 		TargetSourceFiles: targetSourceFiles,
-	})
-
-	return &EmitToStringResponse{
-		EmitSkipped: result.EmitSkipped,
-		Diagnostics: NewDiagnosticResponses(result.Diagnostics),
-		OutputFiles: outputFiles.ToSlice(),
 	}, nil
+}
+
+func getEmitOnly(value *uint32) (compiler.EmitOnly, error) {
+	if value == nil {
+		return compiler.EmitAll, nil
+	}
+	if *value > uint32(compiler.EmitOnlyForcedDts) {
+		return compiler.EmitAll, fmt.Errorf("%w: invalid emitOnly value: %d", ErrClientError, *value)
+	}
+	emitOnly := compiler.EmitOnly(*value)
+	return emitOnly, nil
+}
+
+func emitProgram(ctx context.Context, program *compiler.Program, options compiler.EmitOptions) (*compiler.EmitResult, error) {
+	result := program.Emit(ctx, options)
+	if result != nil {
+		return result, nil
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	return nil, errors.New("compiler emit returned nil result")
+}
+
+func nonNilDiagnostics(diags []*ast.Diagnostic) []*DiagnosticResponse {
+	result := NewDiagnosticResponses(diags)
+	if result == nil {
+		return []*DiagnosticResponse{}
+	}
+	return result
 }
 
 // handleGetIntrinsicType returns an intrinsic type (any, string, number, etc.).

@@ -58,9 +58,6 @@ export class Client {
 
         if (options.fs) {
             for (const name of enabledCallbacks) {
-                // writeFile is a special case because it has two parameters instead of one,
-                // so we handle it separately by destructuring the arguments from the JSON
-                // payload and passing them to the callback.
                 if (name === "writeFile") {
                     if (!options.fs.writeFile) continue;
                     const callback = options.fs.writeFile;

@@ -95,6 +95,7 @@ import type {
     ConditionalType,
     Diagnostic,
     EmitOutputFile,
+    EmitResult,
     EmitToStringResult,
     FreshableType,
     GetImportEditsForSymbolsOptions,
@@ -127,7 +128,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutputFile, EmitToStringResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutputFile, EmitResult, EmitToStringResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 export class API<FromLSP extends boolean = false> {
     private client: Client;
@@ -959,17 +960,42 @@ export class Program {
         return data ?? [];
     }
 
-    async emitToString(file?: DocumentIdentifier | readonly DocumentIdentifier[], emitOnly?: EmitOnly): Promise<EmitToStringResult> {
-        const files = file === undefined ? undefined
-            : Array.isArray(file) ? file
-            : [file];
-        return this.client.apiRequest<EmitToStringResult>("emitToString", {
+    /**
+     * Emits files to the configured filesystem.
+     *
+     * When the API has a virtual filesystem with a `writeFile` callback, output
+     * is written there. Otherwise, the server writes directly to the host filesystem.
+     */
+    async emit(files?: DocumentIdentifier | readonly DocumentIdentifier[], emitOnly?: EmitOnly): Promise<EmitResult> {
+        return this.client.apiRequest<EmitResult>("emit", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            files,
+            files: normalizeEmitFiles(files),
             emitOnly,
         });
     }
+
+    /**
+     * Emits files and returns their contents without writing to the filesystem.
+     */
+    async emitToString(files?: DocumentIdentifier | readonly DocumentIdentifier[], emitOnly?: EmitOnly): Promise<EmitToStringResult> {
+        return this.client.apiRequest<EmitToStringResult>("emitToString", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            files: normalizeEmitFiles(files),
+            emitOnly,
+        });
+    }
+}
+
+function normalizeEmitFiles(files: DocumentIdentifier | readonly DocumentIdentifier[] | undefined): readonly DocumentIdentifier[] | undefined {
+    return files === undefined ? undefined
+        : isDocumentIdentifierArray(files) ? files
+        : [files];
+}
+
+function isDocumentIdentifierArray(files: DocumentIdentifier | readonly DocumentIdentifier[]): files is readonly DocumentIdentifier[] {
+    return Array.isArray(files);
 }
 
 export class Checker {
