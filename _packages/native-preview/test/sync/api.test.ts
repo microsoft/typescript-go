@@ -100,6 +100,25 @@ describe("API", () => {
             const config = api.parseConfigFile("/tsconfig.json");
             assert.deepEqual(config.fileNames, ["/src/index.ts", "/src/foo.ts"]);
             assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+            assert.equal(config.projectReferences, undefined);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseConfigFile includes projectReferences", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ references: [{ path: "./harness" }, { path: "./server" }] }),
+        });
+        try {
+            const config = api.parseConfigFile("/tsconfig.json");
+            assert.deepEqual(config.fileNames, []);
+            assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+            assert.deepEqual(config.projectReferences, [
+                { circular: false, originalPath: "./harness", path: "/harness" },
+                { circular: false, originalPath: "./server", path: "/server" },
+            ]);
         }
         finally {
             api.close();
@@ -3320,6 +3339,69 @@ describe("Checker - getConstraintOfTypeParameter", () => {
             const constraint = project.checker.getConstraintOfTypeParameter(typeParams[0]);
             assert.ok(constraint);
             assert.ok(constraint.flags & TypeFlags.String, `Expected string constraint, got flags ${constraint.flags}`);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Checker - TypeParameter getters", () => {
+    test("getConstraint() and getDefault() return the constraint and default types", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export function f<T extends string = "hello">(x: T): T { return x; }`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export function f<T extends string = "hello">(x: T): T { return x; }`;
+            const pos = src.indexOf("f<");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const sigs = project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(sigs.length > 0);
+            const typeParams = sigs[0].getTypeParameters();
+            assert.ok(typeParams.length > 0, "Should have type parameters");
+            const typeParam = typeParams[0] as TypeParameter;
+
+            const constraint = typeParam.getConstraint();
+            assert.ok(constraint);
+            assert.ok(constraint.flags & TypeFlags.String, `Expected string constraint, got flags ${constraint.flags}`);
+
+            const defaultType = typeParam.getDefault();
+            assert.ok(defaultType);
+            assert.ok(defaultType.flags & TypeFlags.StringLiteral, `Expected string literal default, got flags ${defaultType.flags}`);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getConstraint() and getDefault() return undefined when there is none", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export function f<T>(x: T): T { return x; }`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export function f<T>(x: T): T { return x; }`;
+            const pos = src.indexOf("f<");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const sigs = project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(sigs.length > 0);
+            const typeParams = sigs[0].getTypeParameters();
+            assert.ok(typeParams.length > 0, "Should have type parameters");
+            const typeParam = typeParams[0] as TypeParameter;
+
+            assert.equal(typeParam.getConstraint(), undefined);
+            assert.equal(typeParam.getDefault(), undefined);
         }
         finally {
             api.close();
