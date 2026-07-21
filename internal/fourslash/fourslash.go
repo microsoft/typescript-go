@@ -155,7 +155,8 @@ var parseCache = project.NewParseCache(
 )
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
-	return NewFourslashWithOptions(t, content, &FourslashOptions{Capabilities: capabilities})
+	_, testPath, _, _ := runtime.Caller(1)
+	return newFourslash(t, content, &FourslashOptions{Capabilities: capabilities}, testPath)
 }
 
 type FourslashOptions struct {
@@ -165,6 +166,11 @@ type FourslashOptions struct {
 }
 
 func NewFourslashWithOptions(t *testing.T, content string, options *FourslashOptions) (*FourslashTest, func()) {
+	_, testPath, _, _ := runtime.Caller(1)
+	return newFourslash(t, content, options, testPath)
+}
+
+func newFourslash(t *testing.T, content string, options *FourslashOptions, testPath string) (*FourslashTest, func()) {
 	if options == nil {
 		options = &FourslashOptions{}
 	}
@@ -264,7 +270,6 @@ func NewFourslashWithOptions(t *testing.T, content string, options *FourslashOpt
 		f.activeFilename = f.testData.Files[0].fileName
 	}
 
-	_, testPath, _, _ := runtime.Caller(1)
 	return f, func() {
 		t.Helper()
 		err := closeClient()

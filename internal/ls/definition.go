@@ -204,6 +204,10 @@ func (l *LanguageService) createDefinitionLocations(
 		if locationRanges.AddIfAbsent(fileRange{fileName, nameRange}) {
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
+			if !nameRange.ContainedBy(*contextRange) {
+				enclosingRange := core.NewTextRange(min(nameRange.Pos(), contextRange.Pos()), max(nameRange.End(), contextRange.End()))
+				contextRange = &enclosingRange
+			}
 			targetSelectionLoc, selectionFidelity := l.getMappedLocation(fileName, nameRange)
 			if !selectionFidelity.IsSingleSegment() {
 				zeroRange := lsproto.Range{}
