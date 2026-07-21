@@ -1,0 +1,46 @@
+main.ts(18,22): error TS2320: Interface 'TableRowProps' cannot simultaneously extend types 'TableKeyedProps' and 'Omit<HTMLAttributes, "onMouseDown">'.
+  Named property 'role' of types 'TableKeyedProps' and 'Omit<HTMLAttributes, "onMouseDown">' are not identical.
+
+
+==== lib.d.ts (0 errors) ====
+    export interface TableCommonProps {
+        style?: string;
+        className?: string;
+        role?: string;
+    }
+    
+    export interface TableKeyedProps extends TableCommonProps {
+        key: string;
+    }
+    
+    export interface TableRowProps extends TableKeyedProps {}
+    
+==== main.ts (1 errors) ====
+    import type { TableRowProps } from "./lib";
+    
+    type AriaRole =
+        | "alert"
+        | "button"
+        | "checkbox"
+        | "dialog"
+        | "grid"
+        | "row"
+        | (string & {});
+    
+    interface HTMLAttributes {
+        role?: AriaRole | undefined;
+        onMouseDown?: (() => void) | undefined;
+    }
+    
+    declare module "./lib" {
+        export interface TableRowProps extends Omit<HTMLAttributes, "onMouseDown"> {
+                         ~~~~~~~~~~~~~
+!!! error TS2320: Interface 'TableRowProps' cannot simultaneously extend types 'TableKeyedProps' and 'Omit<HTMLAttributes, "onMouseDown">'.
+!!! error TS2320:   Named property 'role' of types 'TableKeyedProps' and 'Omit<HTMLAttributes, "onMouseDown">' are not identical.
+            "data-test-id"?: string;
+        }
+    }
+    
+    declare const row: TableRowProps;
+    row.role;
+    

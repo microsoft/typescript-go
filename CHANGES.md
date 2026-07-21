@@ -203,6 +203,12 @@ function f(...args) {
 f("something"); // Still allowed
 ```
 
+#### `skipLibCheck` no longer suppresses merged-interface conflict errors when user code participates in the merge.
+
+When an interface has merged declarations across files, Corsa now consistently reports inheritance/compatibility errors if any merged declaration is in user code, even when another merged declaration is in a `.d.ts` file covered by `skipLibCheck`.
+
+This matches TS7 behavior and avoids nondeterministic diagnostics that previously depended on declaration-check ordering.
+
 ### JSDoc Types
 
 #### JSDoc variadic types are now only synonyms for array types.
