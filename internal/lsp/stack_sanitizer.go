@@ -24,10 +24,21 @@ func sanitizeStackTrace(stack string) string {
 	// TODO: should we just look for the first '(' and
 	// just strip everything before the prior newline?
 	startIndex := strings.Index(stack, "runtime/debug.Stack()")
-	if startIndex < 0 {
-		return ""
+	if startIndex >= 0 {
+		stack = stack[startIndex:]
+	} else {
+		// For stacks that have already had recovery frames trimmed
+		// (e.g., from PanicWithStack), find the first line containing our module.
+		moduleIndex := strings.Index(stack, "typescript-go/internal")
+		if moduleIndex < 0 {
+			return ""
+		}
+		// Back up to the beginning of the line containing our module.
+		lineStart := strings.LastIndex(stack[:moduleIndex], "\n")
+		if lineStart >= 0 {
+			stack = stack[lineStart+1:]
+		}
 	}
-	stack = stack[startIndex:]
 
 	result := &strings.Builder{}
 
