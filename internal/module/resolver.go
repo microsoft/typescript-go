@@ -1445,7 +1445,11 @@ func (r *resolutionState) loadModuleFromFileNoImplicitExtensions(extensions exte
 	extensionless := tspath.RemoveFileExtension(candidate)
 	if extensionless == candidate {
 		// Once TS native extensions are handled, handle arbitrary extensions for declaration file mapping
-		extensionless = candidate[:strings.LastIndex(candidate, ".")]
+		extension := tspath.GetLongestExtensionFromPath(candidate, r.resolver.extraExtensions, false)
+		if extension == "" {
+			extension = candidate[strings.LastIndex(candidate, "."):]
+		}
+		extensionless = tspath.RemoveExtension(candidate, extension)
 	}
 
 	extension := candidate[len(extensionless):]

@@ -328,8 +328,9 @@ func (p *ParsedCommandLine) ContentMapperExtensions() []string {
 // GetContentMapperForFileName returns the configured content mapper whose extensions include fileName,
 // or nil if no content mapper is registered for the file's extension.
 func (p *ParsedCommandLine) GetContentMapperForFileName(fileName string) *contentmapper.Mapper {
+	extension := tspath.GetLongestExtensionFromPath(fileName, p.ContentMapperExtensions(), false)
 	for _, mapper := range p.ContentMappers() {
-		if tspath.FileExtensionIsOneOf(fileName, mapper.Extensions) {
+		if slices.Contains(mapper.Extensions, extension) {
 			return mapper
 		}
 	}

@@ -422,6 +422,8 @@ func (p *Program) Options() *core.CompilerOptions               { return p.opts.
 func (p *Program) GetContentMapper(file *ast.SourceFile) *contentmapper.Mapper {
 	return p.contentMapperForFile[file.Path()]
 }
+
+func (p *Program) ContentMapperExtensions() []string         { return p.opts.Config.ContentMapperExtensions() }
 func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
 func (p *Program) Host() CompilerHost                        { return p.opts.Host }
 func (p *Program) Tracing() *tracing.Tracing                 { return p.opts.Tracing }

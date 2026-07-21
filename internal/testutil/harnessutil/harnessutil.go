@@ -845,6 +845,9 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 			path = tspath.CombinePaths(tspath.ResolvePath(c.Host.GetCurrentDirectory(), c.Options.OutDir), path)
 		}
 	}
+	if ext == tspath.GetDeclarationEmitExtensionForPath(path) {
+		return outputpaths.ChangeToDeclarationExtension(path, c.Program.Program())
+	}
 	return tspath.ChangeExtension(path, ext)
 }
 

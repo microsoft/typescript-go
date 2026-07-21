@@ -3,6 +3,7 @@ package tsoptions
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -13,6 +14,15 @@ type resolveContentMapperHost struct {
 	fs vfs.FS
 }
 
+func TestGetContentMapperForFileNameUsesLongestExtension(t *testing.T) {
+	t.Parallel()
+	zMapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "z", Extensions: []string{".z"}}}
+	yzMapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "yz", Extensions: []string{".y.z"}}}
+	commandLine := &ParsedCommandLine{ParsedConfig: &ParsedOptions{ContentMappers: []*contentmapper.Mapper{zMapper, yzMapper}}}
+
+	assert.Equal(t, commandLine.GetContentMapperForFileName("/src/Component.y.z"), yzMapper)
+	assert.Equal(t, commandLine.GetContentMapperForFileName("/src/Component.z"), zMapper)
+}
 func (h resolveContentMapperHost) FS() vfs.FS                  { return h.fs }
 func (h resolveContentMapperHost) GetCurrentDirectory() string { return "/home/project" }
 
