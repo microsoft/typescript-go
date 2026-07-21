@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 )
@@ -46,4 +47,76 @@ card.se/*incoming*/ttings;
 	f.VerifyCompletions(t, "incoming", propertyCompletions("settings"))
 	f.VerifyCompletions(t, "atom", nil)
 	f.VerifyCompletions(t, "markup", nil)
+}
+
+func TestContentMapperModulePathCompletions(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	content := `// @Filename: /tsconfig.json
+{
+	"compilerOptions": {
+		"target": "es2020",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"strict": true
+	},
+	"contentMappers": [
+		{ "package": "mapper", "extensions": [".vue"] }
+	],
+	"files": ["main.ts", "Loaded.vue"]
+}
+
+// @Filename: /node_modules/mapper/package.json
+` + contentmappertest.PackageJSON(contentmappertest.ComponentMapper) + `
+
+// @Filename: /Loaded.vue
+<component name="Loaded">
+<script lang="ts">
+export const loaded = true;
+</script>
+
+// @Filename: /Unloaded.vue
+// @noOpen: true
+<component name="Unloaded">
+<script lang="ts">
+export const unloaded = true;
+</script>
+
+// @Filename: /main.ts
+import { loaded } from "./Loaded.vue";
+import {} from "./[|/*loadedPath*/Lo|]";
+import {} from "./[|/*unloadedPath*/Un|]";
+`
+	f, done := fourslash.NewFourslashWithOptions(t, content, &fourslash.FourslashOptions{
+		ContentMapperSpawner:           contentmappertest.NewSpawner(),
+		DangerouslyLoadExternalPlugins: true,
+	})
+	defer done()
+
+	pathCompletion := func(label string, rangeIndex int) *fourslash.CompletionsExpectedList {
+		return &fourslash.CompletionsExpectedList{
+			IsIncomplete: false,
+			ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+				CommitCharacters: &[]string{},
+				EditRange:        Ignored,
+			},
+			Items: &fourslash.CompletionsExpectedItems{
+				Includes: []fourslash.CompletionsExpectedItem{
+					&lsproto.CompletionItem{
+						Label:  label,
+						Detail: new(label),
+						Kind:   new(lsproto.CompletionItemKindFile),
+						TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+							TextEdit: &lsproto.TextEdit{
+								NewText: label,
+								Range:   f.Ranges()[rangeIndex].LSRange,
+							},
+						},
+					},
+				},
+			},
+		}
+	}
+	f.VerifyCompletions(t, "loadedPath", pathCompletion("Loaded.vue", 0))
+	f.VerifyCompletions(t, "unloadedPath", pathCompletion("Unloaded.vue", 1))
 }

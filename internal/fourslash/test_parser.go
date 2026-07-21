@@ -202,6 +202,7 @@ type TestFileInfo struct {
 	// The contents of the file (with markers, etc stripped out)
 	Content string
 	emit    bool
+	open    bool
 }
 
 // FileName implements lsconv.Script.
@@ -222,7 +223,10 @@ func (t *TestFileInfo) SpanMap() *spanmap.SpanMap { return nil }
 
 var _ lsconv.Script = (*TestFileInfo)(nil)
 
-const emitThisFileOption = "emitthisfile"
+const (
+	emitThisFileOption = "emitthisfile"
+	noOpenFileOption   = "noopen"
+)
 
 type parserState int
 
@@ -431,6 +435,7 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 		fileName: fileName,
 		Content:  outputString,
 		emit:     emit,
+		open:     fileOptions[noOpenFileOption] != "true",
 	}
 
 	slices.SortStableFunc(rangeMarkers, func(a, b *RangeMarker) int {

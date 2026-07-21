@@ -265,7 +265,9 @@ func newFourslash(t *testing.T, content string, options *FourslashOptions, testP
 		f.stateBaseline = newStateBaseline(fsFromMap.(iovfs.FsWithSys))
 	} else {
 		for _, file := range testData.Files {
-			f.openFile(t, file.fileName)
+			if file.open {
+				f.openFile(t, file.fileName)
+			}
 		}
 		f.activeFilename = f.testData.Files[0].fileName
 	}

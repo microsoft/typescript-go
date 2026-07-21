@@ -44,7 +44,7 @@ var optionRegex = regexp.MustCompile(`(?m)^\/{2}\s*@(\w+)\s*:\s*([^\r\n]*)`)
 var linkRegex = regexp.MustCompile(`(?m)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*([^\r\n]*)`)
 
 // File-specific directives used by fourslash tests
-var fourslashDirectives = []string{"emitthisfile"}
+var fourslashDirectives = []string{"emitthisfile", "noopen"}
 
 // Given a test file containing // @FileName directives,
 // return an array of named units of code to be added to an existing compiler instance.
