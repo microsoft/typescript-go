@@ -1018,7 +1018,10 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []lsproto.DocumentUri) []*ls.LanguageService {
 	snapshot := s.getSnapshot(
 		ctx,
-		ResourceRequest{Documents: uris},
+		ResourceRequest{
+			Documents:   uris,
+			ProjectTree: &ProjectTreeRequest{},
+		},
 		false, /*callerRef*/
 	)
 
